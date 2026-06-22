@@ -52,6 +52,7 @@ from zephyr.governance.compliance_rule import ComplianceRule
 
 class AuditAction(str, Enum):
     """审计动作类型"""
+
     ALLOW = "allow"
     BLOCK = "block"
     FLAG = "flag"
@@ -61,6 +62,7 @@ class AuditAction(str, Enum):
 @dataclass(frozen=True)
 class AuditDecision:
     """审计决策记录（写入 policy_decision_ledger.jsonl）"""
+
     decision_id: str
     action: AuditAction
     rule_id: str
@@ -78,7 +80,8 @@ class SecurityGateway(abc.ABC):
 
     INV-015：AISG 拦截门禁 — 任何跳过 AISG 的 AI 指令执行均违反此不变量。
     """
-    _instance: ClassVar["SecurityGateway | None"] = None
+
+    _instance: ClassVar[SecurityGateway | None] = None
 
     @abc.abstractmethod
     def pre_filter(self, content: str, source: str) -> bool:
@@ -107,17 +110,16 @@ class ComplianceEngine(abc.ABC):
       - 规则按 severity 排序：critical > high > medium > low
       - enforcement_action 决定了处理方式：block（硬阻断）/ warn（告警）/ log（记录）
     """
-    _registry: ClassVar[dict[str, type["ComplianceEngine"]]] = {}
+
+    _registry: ClassVar[dict[str, type[ComplianceEngine]]] = {}
 
     @abc.abstractmethod
-    def evaluate(self, context: dict[str, Any],
-                 idempotency_key: str) -> list[ComplianceRule]:
+    def evaluate(self, context: dict[str, Any], idempotency_key: str) -> list[ComplianceRule]:
         """评估给定上下文，返回应执行的合规规则列表"""
         ...
 
     @abc.abstractmethod
-    def enforce(self, rule: ComplianceRule,
-                context: dict[str, Any]) -> AuditDecision:
+    def enforce(self, rule: ComplianceRule, context: dict[str, Any]) -> AuditDecision:
         """对合规规则做出审计裁决"""
         ...
 

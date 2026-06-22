@@ -27,6 +27,7 @@ Risk: R39 — FLE repair breaks pipeline; pipeline failure triggers new FLE cycl
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class CrossModuleIntegration:
     dependencies: dict[str, str] = field(default_factory=dict)

@@ -17,7 +17,6 @@ ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程
 的 TRAE 窗口，发现后 force kill 其全家进程树。零用户干预。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -31,12 +30,12 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     "IdeHealthDaemon",
-    "scan_ghost_windows",
-    "kill_ghost_windows",
-    "track_task_process",
-    "kill_task_processes",
     "cleanup_completed_tasks",
+    "kill_ghost_windows",
+    "kill_task_processes",
     "register_daemon",
+    "scan_ghost_windows",
+    "track_task_process",
 ]
 
 _TRAE_PROCESS_NAME = "Trae CN"
@@ -49,14 +48,17 @@ def _get_trae_processes() -> list[dict[str, Any]]:
     procs: list[dict[str, Any]] = []
     try:
         import psutil
+
         for p in psutil.process_iter(["pid", "name"]):
             try:
                 info = p.info
                 if info.get("name") == _TRAE_PROCESS_NAME:
-                    procs.append({
-                        "pid": info["pid"],
-                        "name": info["name"],
-                    })
+                    procs.append(
+                        {
+                            "pid": info["pid"],
+                            "name": info["name"],
+                        }
+                    )
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
     except ImportError:
@@ -70,16 +72,22 @@ def _get_window_configs_from_cmdlines(pids: list[int]) -> dict[str, set[int]]:
     返回 {window_config_uuid: {pid, pid, ...}}。
     """
     import re
+
     windows: dict[str, set[int]] = {}
     for pid in pids:
         try:
             import subprocess
+
             result = subprocess.run(
                 [
-                    "powershell", "-NoProfile", "-Command",
-                    f"(Get-WmiObject Win32_Process -Filter \"ProcessId={pid}\").CommandLine",
+                    "powershell",
+                    "-NoProfile",
+                    "-Command",
+                    f'(Get-WmiObject Win32_Process -Filter "ProcessId={pid}").CommandLine',
                 ],
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             cmdline = result.stdout
             match = re.search(r"vscode-window-config=vscode:([a-f0-9-]+)", cmdline)
@@ -97,18 +105,23 @@ def _get_visible_window_configs() -> set[str]:
     返回 {config_id, ...}。
     """
     import re
+
     visible: set[str] = set()
     try:
         result = subprocess.run(
             [
-                "powershell", "-NoProfile", "-Command",
+                "powershell",
+                "-NoProfile",
+                "-Command",
                 "Get-Process -Name 'Trae CN' -ErrorAction SilentlyContinue | "
                 "Where-Object { $_.MainWindowTitle -ne '' } | "
                 "ForEach-Object { "
-                "  try { (Get-WmiObject Win32_Process -Filter \\\"ProcessId=$($_.Id)\\\").CommandLine } catch {} "
+                '  try { (Get-WmiObject Win32_Process -Filter \\"ProcessId=$($_.Id)\\").CommandLine } catch {} '
                 "}",
             ],
-            capture_output=True, text=True, timeout=15,
+            capture_output=True,
+            text=True,
+            timeout=15,
         )
         for match in re.finditer(r"vscode-window-config=vscode:([a-f0-9-]+)", result.stdout):
             visible.add(match.group(1))
@@ -121,17 +134,20 @@ def _get_mainwindow_handle_map() -> dict[int, int]:
     """
     返回 {pid: MainWindowHandle}，仅含 TRAE 进程。
     """
-    import re
     handle_map: dict[int, int] = {}
     try:
         result = subprocess.run(
             [
-                "powershell", "-NoProfile", "-Command",
+                "powershell",
+                "-NoProfile",
+                "-Command",
                 "Get-Process -Name 'Trae CN' -ErrorAction SilentlyContinue | "
                 "Select-Object Id, MainWindowHandle | "
                 "ForEach-Object { '{0}:{1}' -f $_.Id, $_.MainWindowHandle }",
             ],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         for line in result.stdout.strip().split("\n"):
             line = line.strip()
@@ -173,11 +189,13 @@ def scan_ghost_windows() -> list[dict[str, Any]]:
             if pid in handle_map and handle_map[pid] == 0:
                 ghost_pids.append(pid)
         if ghost_pids:
-            ghosts.append({
-                "config_id": config_id,
-                "pids": sorted(ghost_pids),
-                "pid_count": len(ghost_pids),
-            })
+            ghosts.append(
+                {
+                    "config_id": config_id,
+                    "pids": sorted(ghost_pids),
+                    "pid_count": len(ghost_pids),
+                }
+            )
 
     return ghosts
 
@@ -201,6 +219,7 @@ def kill_ghost_windows(ghosts: list[dict[str, Any]] | None = None) -> list[int]:
             except OSError:
                 try:
                     import psutil
+
                     psutil.Process(pid).terminate()
                     killed.append(pid)
                     logger.info("ide_health_daemon: psutil-terminated ghost PID %d", pid)
@@ -228,6 +247,7 @@ def _force_kill_pid(pid: int) -> bool:
     except OSError:
         try:
             import psutil
+
             psutil.Process(pid).terminate()
             return True
         except Exception:
@@ -254,8 +274,8 @@ def kill_task_processes(task_id: str) -> list[int]:
 def cleanup_completed_tasks() -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     try:
-        from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
         from zephyr.governance.persistence.task_repo import TaskRepository
+
         repo = TaskRepository()
         completed_statuses = ["COMPLETED", "FAILED", "CANCELLED"]
         tasks: list[dict[str, Any]] = []
@@ -272,14 +292,15 @@ def cleanup_completed_tasks() -> list[dict[str, Any]]:
         tracked_ids = list(_task_process_map.keys())
 
     for task_id in tracked_ids:
-        if any(t.task_id == task_id and t.status.value.upper() in completed_statuses
-               for t in tasks):
+        if any(t.task_id == task_id and t.status.value.upper() in completed_statuses for t in tasks):
             killed = kill_task_processes(task_id)
-            results.append({
-                "task_id": task_id,
-                "killed": killed,
-                "killed_count": len(killed),
-            })
+            results.append(
+                {
+                    "task_id": task_id,
+                    "killed": killed,
+                    "killed_count": len(killed),
+                }
+            )
 
     return results
 
@@ -305,6 +326,7 @@ class IdeHealthDaemon:
 
     def _loop(self) -> None:
         import time
+
         while self._running:
             try:
                 ghosts = scan_ghost_windows()
@@ -337,6 +359,7 @@ def register_daemon() -> None:
     _daemon_instance = IdeHealthDaemon()
     try:
         from zephyr.integration.shared_08.lifecycle.daemon_registry import registry
+
         registry.register(
             name="ide_health_daemon",
             start_fn=_daemon_instance.start,

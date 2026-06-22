@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.integrity_self_check import IntegritySelfCheck, IntegrityCheck, EXPECTED_MODULES
+    from zephyr.security.access_control.integrity_self_check import EXPECTED_MODULES, IntegrityCheck, IntegritySelfCheck
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as e:
@@ -26,7 +28,6 @@ except Exception as e:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestIntegrityCheck:
-
     def test_default_values(self):
         ic = IntegrityCheck(module_name="test_mod")
         assert ic.module_name == "test_mod"
@@ -43,7 +44,6 @@ class TestIntegrityCheck:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestExpectedModules:
-
     def test_expected_modules_not_empty(self):
         assert len(EXPECTED_MODULES) > 0
 
@@ -55,7 +55,6 @@ class TestExpectedModules:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestIntegritySelfCheck:
-
     def test_check_all_returns_list(self):
         checker = IntegritySelfCheck()
         results = checker.check_all()

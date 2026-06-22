@@ -29,21 +29,21 @@ gate_repo.py — gates 表持久化仓库（AUDIT-07 P1-5: 从 gate_engine.py �
   - conn 参数非空时，不管理事务（由调用方负责 BEGIN/COMMIT/ROLLBACK）
   - conn 参数为 None 时，自行 BEGIN IMMEDIATE → COMMIT/ROLLBACK
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import json
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 
 __all__ = [
-    "GateRunRecord",
     "GateRepo",
+    "GateRunRecord",
 ]
 
 
@@ -81,7 +81,7 @@ class GateRepo:
         gate_run_id = f"gr-{uuid.uuid4()}"
         composite_gate_id = f"{gate_id}:{task_id}" if task_id else gate_id
         details_json = json.dumps(violations, ensure_ascii=False)
-        created_at = evaluated_at or datetime.now(timezone.utc).isoformat()
+        created_at = evaluated_at or datetime.now(UTC).isoformat()
 
         target = conn if conn is not None else self._conn
         manage_tx = conn is None

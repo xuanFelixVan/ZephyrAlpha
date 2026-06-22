@@ -27,90 +27,37 @@ FileExtensionHandler — FileExtensionHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class FileExtensionHandler(CheckTypeHandler):
-
-
     name = "file_extension"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        deliverables = list(task.deliverables or [])
 
-                violations = []
+        allowed = list(params.get("allowed_extensions", []))
 
+        from pathlib import Path as _P
 
-                deliverables = list(task.deliverables or [])
+        for p in deliverables:
+            ext = _P(p).suffix.lower()
 
+            if allowed and ext not in allowed:
+                violations.append({"message": f"Disallowed extension '{ext}': {p}", "severity": check.severity})
 
-                allowed = list(params.get("allowed_extensions", []))
-
-
-                from pathlib import Path as _P
-
-
-                for p in deliverables:
-
-
-                    ext = _P(p).suffix.lower()
-
-
-                    if allowed and ext not in allowed:
-
-
-                        violations.append({"message": f"Disallowed extension '{ext}': {p}", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

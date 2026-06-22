@@ -27,6 +27,7 @@ Risk: R55 — Sandbox success, production failure due to environmental differenc
 
 from dataclasses import dataclass
 
+
 @dataclass
 class DigitalTwinSandbox:
     fidelity: float = 0.8

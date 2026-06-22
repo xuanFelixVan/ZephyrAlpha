@@ -26,6 +26,7 @@ class DelegationBridge:
         self._available = False
         try:
             from zephyr.governance.escalation_engine import EscalationEngine
+
             self._engine = EscalationEngine(name="audit-orchestrator", hooks_enabled=False)
             self._available = True
         except ImportError:
@@ -38,6 +39,7 @@ class DelegationBridge:
             return None
         try:
             from zephyr.governance.escalation_engine import RuleCategory
+
             event = self._engine.evaluate(
                 category=RuleCategory.CASCADE_FAILURE,
                 description=f"Delegation to {target} failed: {reason}",
@@ -56,6 +58,7 @@ class DelegationBridge:
             return None
         try:
             from zephyr.governance.escalation_engine import RuleCategory
+
             event = self._engine.evaluate(
                 category=RuleCategory.TIMEOUT,
                 description=f"Delegation to {target} timed out",
@@ -72,6 +75,7 @@ class DelegationBridge:
     def is_available(self) -> bool:
         return self._available
 
+
 class AuditDelegationBridge:
     def __init__(self, config=None):
         self.config = config or {}
@@ -81,5 +85,6 @@ class AuditDelegationBridge:
 
     def verify(self, delegation_id):
         return True
+
 
 _MAX_DELEGATION_DEPTH = 5

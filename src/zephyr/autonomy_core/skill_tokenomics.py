@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_tokenomics
+# [MODULE] zephyr.autonomy_core.skill_tokenomics
 
 # [INVARIANTS] none
 
@@ -31,14 +31,17 @@ Version: 0.2.0
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
+
 
 class SkillBudgetPreset(str, Enum):
     TIGHT = "tight"
     NORMAL = "normal"
     GENEROUS = "generous"
 
+
 BudgetLevel = SkillBudgetPreset
+
 
 @dataclass
 class TokenBudget:
@@ -67,6 +70,7 @@ class TokenBudget:
     def is_warning(self) -> bool:
         return self.usage_ratio >= self.warn_threshold
 
+
 @dataclass
 class UsageRecord:
     skill_id: str
@@ -87,19 +91,19 @@ class UsageRecord:
         input_price, output_price = pricing.get(self.model, (1.0, 2.0))
         return (self.tokens / 1_000_000) * ((input_price + output_price) / 2)
 
-class SkillTokenomics:
 
-    _PRESET_BUDGETS: Dict[SkillBudgetPreset, int] = {
+class SkillTokenomics:
+    _PRESET_BUDGETS: dict[SkillBudgetPreset, int] = {
         SkillBudgetPreset.TIGHT: 4096,
         SkillBudgetPreset.NORMAL: 16384,
         SkillBudgetPreset.GENEROUS: 65536,
     }
 
     def __init__(self, daily_budget_tokens: int = 500_000):
-        self._budgets: Dict[str, TokenBudget] = {}
+        self._budgets: dict[str, TokenBudget] = {}
         self._daily_budget = TokenBudget(max_tokens=daily_budget_tokens, hard_cap=False)
-        self._usage_history: List[UsageRecord] = []
-        self._skill_stats: Dict[str, Dict[str, Any]] = {}
+        self._usage_history: list[UsageRecord] = []
+        self._skill_stats: dict[str, dict[str, Any]] = {}
         self._cost_tracker: float = 0.0
 
     # --- Budget Management ---
@@ -110,7 +114,7 @@ class SkillTokenomics:
         max_tokens: int,
         hard_cap: bool = True,
         warn_threshold: float = 0.8,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         budget = TokenBudget(
             max_tokens=max_tokens,
             hard_cap=hard_cap,
@@ -126,14 +130,14 @@ class SkillTokenomics:
             "budget_set": True,
         }
 
-    def set_preset_budget(self, skill_id: str, level: SkillBudgetPreset) -> Dict[str, Any]:
+    def set_preset_budget(self, skill_id: str, level: SkillBudgetPreset) -> dict[str, Any]:
         max_tokens = self._PRESET_BUDGETS.get(level, 16384)
         return self.set_budget(skill_id, max_tokens)
 
-    def get_budget(self, skill_id: str) -> Optional[TokenBudget]:
+    def get_budget(self, skill_id: str) -> TokenBudget | None:
         return self._budgets.get(skill_id)
 
-    def reset_budget(self, skill_id: str) -> Dict[str, Any]:
+    def reset_budget(self, skill_id: str) -> dict[str, Any]:
         budget = self._budgets.get(skill_id)
         if budget is None:
             return {"skill_id": skill_id, "reset": False, "reason": "No budget found"}
@@ -158,7 +162,7 @@ class SkillTokenomics:
         tokens: int,
         model: str = "",
         purpose: str = "",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         budget = self._budgets.get(skill_id)
         if budget is None:
             budget = TokenBudget(max_tokens=16384)
@@ -193,7 +197,7 @@ class SkillTokenomics:
             "budget_warning": budget.is_warning,
         }
 
-    def check_before_consume(self, skill_id: str, estimated_tokens: int) -> Dict[str, Any]:
+    def check_before_consume(self, skill_id: str, estimated_tokens: int) -> dict[str, Any]:
         budget = self._budgets.get(skill_id)
         if budget is None:
             return {"allowed": True, "reason": "No budget — allow all"}
@@ -209,42 +213,42 @@ class SkillTokenomics:
 
     # --- Optimization Suggestions ---
 
-    def suggest_optimizations(self) -> List[Dict[str, Any]]:
-        suggestions: List[Dict[str, Any]] = []
+    def suggest_optimizations(self) -> list[dict[str, Any]]:
+        suggestions: list[dict[str, Any]] = []
 
         for sid, budget in self._budgets.items():
             if budget.usage_ratio > 0.9:
-                suggestions.append({
-                    "skill_id": sid,
-                    "type": "budget_near_exhausted",
-                    "current_usage_pct": round(budget.usage_ratio * 100, 1),
-                    "suggestion": "Increase budget or trim skill prompt",
-                })
+                suggestions.append(
+                    {
+                        "skill_id": sid,
+                        "type": "budget_near_exhausted",
+                        "current_usage_pct": round(budget.usage_ratio * 100, 1),
+                        "suggestion": "Increase budget or trim skill prompt",
+                    }
+                )
 
         daily_ratio = self._daily_budget.max_tokens / (self._daily_budget.max_tokens + self._daily_budget.remaining + 1)
         if self._daily_budget.usage_ratio > 0.8:
-            suggestions.append({
-                "skill_id": "_global",
-                "type": "daily_budget_warning",
-                "current_usage_pct": round(self._daily_budget.usage_ratio * 100, 1),
-                "suggestion": "Consider reducing less critical skill invocations",
-            })
+            suggestions.append(
+                {
+                    "skill_id": "_global",
+                    "type": "daily_budget_warning",
+                    "current_usage_pct": round(self._daily_budget.usage_ratio * 100, 1),
+                    "suggestion": "Consider reducing less critical skill invocations",
+                }
+            )
 
         return suggestions
 
     # --- Analytics ---
 
-    def get_usage_report(self, skill_id: Optional[str] = None) -> Dict[str, Any]:
-        target_history = (
-            [r for r in self._usage_history if r.skill_id == skill_id]
-            if skill_id
-            else self._usage_history
-        )
+    def get_usage_report(self, skill_id: str | None = None) -> dict[str, Any]:
+        target_history = [r for r in self._usage_history if r.skill_id == skill_id] if skill_id else self._usage_history
 
         total_tokens = sum(r.tokens for r in target_history)
         total_cost = sum(r.estimated_cost_usd for r in target_history)
 
-        by_model: Dict[str, int] = {}
+        by_model: dict[str, int] = {}
         for r in target_history:
             by_model[r.model] = by_model.get(r.model, 0) + r.tokens
 
@@ -270,9 +274,9 @@ class SkillTokenomics:
             },
         }
 
-    def get_top_consumers(self, n: int = 5) -> List[Dict[str, Any]]:
-        by_skill: Dict[str, int] = {}
-        by_skill_cost: Dict[str, float] = {}
+    def get_top_consumers(self, n: int = 5) -> list[dict[str, Any]]:
+        by_skill: dict[str, int] = {}
+        by_skill_cost: dict[str, float] = {}
         for r in self._usage_history:
             by_skill[r.skill_id] = by_skill.get(r.skill_id, 0) + r.tokens
             by_skill_cost[r.skill_id] = by_skill_cost.get(r.skill_id, 0.0) + r.estimated_cost_usd
@@ -287,7 +291,7 @@ class SkillTokenomics:
             for sid, tokens in ranked
         ]
 
-    def forecast_budget(self, skill_id: str, calls_per_hour: float, tokens_per_call: int) -> Dict[str, Any]:
+    def forecast_budget(self, skill_id: str, calls_per_hour: float, tokens_per_call: int) -> dict[str, Any]:
         budget = self._budgets.get(skill_id)
         hourly_burn = calls_per_hour * tokens_per_call
 
@@ -297,8 +301,6 @@ class SkillTokenomics:
             "tokens_per_call": tokens_per_call,
             "hourly_burn": hourly_burn,
             "budget_remaining": budget.remaining if budget else None,
-            "hours_until_exhausted": (
-                budget.remaining / hourly_burn if budget and hourly_burn > 0 else None
-            ),
+            "hours_until_exhausted": (budget.remaining / hourly_burn if budget and hourly_burn > 0 else None),
         }
         return result

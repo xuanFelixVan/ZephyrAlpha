@@ -26,6 +26,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class ValidationResult:
     fix_id: str
@@ -36,6 +37,7 @@ class ValidationResult:
     new_clones_introduced: int = 0
     metrics_improved: bool = False
     detail: str = ""
+
 
 @dataclass
 class SuccessValidator:
@@ -63,4 +65,9 @@ class SuccessValidator:
     def summary(self) -> dict[str, Any]:
         total = len(self.results)
         success_count = sum(1 for r in self.results if r.success)
-        return {"total_fixes": total, "successful": success_count, "failed": total - success_count, "success_rate": success_count / max(total, 1)}
+        return {
+            "total_fixes": total,
+            "successful": success_count,
+            "failed": total - success_count,
+            "success_rate": success_count / max(total, 1),
+        }

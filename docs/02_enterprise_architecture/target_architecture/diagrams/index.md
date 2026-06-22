@@ -71,8 +71,8 @@ title: Diagrams
 ## 排除规则
 
 - ❌ 非 Mermaid 图表（.png/.svg）→ 由 .mmd 渲染生成，不入库
-- ❌ 图表使用说明 → target-architecture/index.md §6
+- ❌ 图表使用说明 → target_architecture/index.md §6
 
 ## 父级目录
 
-- 父级：[target-architecture/index.md](../index.md)
+- 父级：[target_architecture/index.md](../index.md)

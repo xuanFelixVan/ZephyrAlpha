@@ -27,6 +27,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
+
 class DuplicateType(str, Enum):
     EXACT = "exact"
     RENAMED = "renamed"
@@ -35,6 +36,7 @@ class DuplicateType(str, Enum):
     NEAR_MISS = "near_miss"
     MODERATE = "moderate"
 
+
 @dataclass
 class GeneratedDuplicate:
     original: str
@@ -42,6 +44,7 @@ class GeneratedDuplicate:
     dup_type: DuplicateType
     path_a: str = ""
     path_b: str = ""
+
 
 @dataclass
 class MockDuplicateGenerator:

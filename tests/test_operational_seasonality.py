@@ -13,11 +13,9 @@
 from datetime import datetime
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.ops.diagnosers.operational_seasonality import (
-    OpMode,
     OperationalSeasonality,
+    OpMode,
 )
 
 

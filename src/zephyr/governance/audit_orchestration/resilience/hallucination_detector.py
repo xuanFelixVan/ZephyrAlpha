@@ -72,8 +72,8 @@ Depends      : ADR-0035（Intent 三阶段）、ADR-0039（CoVe 策略）、
 - LLM 调用通过 Protocol 注入，生产环境再提供真实 caller
 - 审计写入通过可选的 ``audit_logger`` 注入，默认跳过
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import hashlib
 import json
@@ -96,16 +96,16 @@ from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 
 __all__ = [
-    "TriggerLevel",
-    "RiskLevel",
-    "FallbackMode",
-    "CoVeStepError",
-    "ModelCaller",
-    "ModelCallResult",
-    "HallucinationResult",
-    "BudgetState",
-    "HallucinationDetector",
     "KEYWORD_HALLU_RULES",
+    "BudgetState",
+    "CoVeStepError",
+    "FallbackMode",
+    "HallucinationDetector",
+    "HallucinationResult",
+    "ModelCallResult",
+    "ModelCaller",
+    "RiskLevel",
+    "TriggerLevel",
     "build_detector_with_defaults",
 ]
 

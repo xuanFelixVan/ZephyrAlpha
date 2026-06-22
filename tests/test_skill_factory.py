@@ -12,10 +12,10 @@
 
 from __future__ import annotations
 
-import os
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+
+import pytest
 
 from zephyr.autonomy_core.skill_factory import SkillFactory
 
@@ -85,11 +85,7 @@ class TestFindSection:
 class TestExtractModuleInfo:
     def test_basic_extraction(self):
         sf = SkillFactory()
-        blueprint = (
-            "# Core Operations\n- op1\n- op2\n"
-            "# Constraints\n- c1\n"
-            "# Common Errors\n- e1\n"
-        )
+        blueprint = "# Core Operations\n- op1\n- op2\n# Constraints\n- c1\n# Common Errors\n- e1\n"
         info = sf._extract_module_info("test-mod", blueprint)
         assert info["module_name"] == "test-mod"
         assert "op1" in info["core_operations"]

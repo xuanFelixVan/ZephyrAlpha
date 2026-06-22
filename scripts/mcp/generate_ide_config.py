@@ -30,9 +30,7 @@ def generate_ide_configs() -> dict[str, bool]:
     results: dict[str, bool] = {}
     for ide_name, target_path in ide_targets.items():
         target_path.parent.mkdir(parents=True, exist_ok=True)
-        ide_config = {
-            "mcpServers": {}
-        }
+        ide_config = {"mcpServers": {}}
         for sid, srv in servers.items():
             if srv.get("status") == "planning":
                 continue

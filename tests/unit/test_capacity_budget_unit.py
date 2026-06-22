@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """容量预算单元测试——验证并发上限 + WIP Limit 强制执行。"""
 
 
@@ -13,7 +14,6 @@ import pytest
 
 from zephyr.trading.orchestrator.capacity_budget import (
     CapacityBudgetController,
-    SystemPool,
 )
 
 

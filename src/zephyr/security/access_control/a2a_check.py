@@ -3,9 +3,11 @@
 
 ALLOWED_TALK_PAIRS = None  # stub constant
 
+
 def verify_a2a_pair(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'verify_a2a_pair not implemented')
+    raise NotImplementedError("verify_a2a_pair not implemented")
+
 
 __all__ = [
     "ALLOWED_TALK_PAIRS",

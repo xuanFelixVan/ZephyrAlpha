@@ -27,99 +27,43 @@ ContentLengthHandler — ContentLengthHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class ContentLengthHandler(CheckTypeHandler):
-
-
     name = "content_length"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        deliverables = list(task.deliverables or [])
 
-                violations = []
+        dep_paths = [project_root / p for p in deliverables]
 
+        min_chars = int(params.get("min_chars", 100))
 
-                deliverables = list(task.deliverables or [])
+        for fp in dep_paths:
+            try:
+                text = fp.read_text(encoding="utf-8")
 
+            except (FileNotFoundError, UnicodeDecodeError):
+                continue
 
-                dep_paths = [project_root / p for p in deliverables]
+            if len(text.strip()) < min_chars:
+                violations.append(
+                    {"message": f"Content too short: {fp} ({len(text.strip())} chars)", "severity": check.severity}
+                )
 
-
-                min_chars = int(params.get("min_chars", 100))
-
-
-                for fp in dep_paths:
-
-
-                    try:
-
-
-                        text = fp.read_text(encoding="utf-8")
-
-
-                    except (FileNotFoundError, UnicodeDecodeError):
-
-
-                        continue
-
-
-                    if len(text.strip()) < min_chars:
-
-
-                        violations.append({"message": f"Content too short: {fp} ({len(text.strip())} chars)", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

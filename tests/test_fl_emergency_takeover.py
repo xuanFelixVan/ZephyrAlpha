@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_emergency_takeover.py
 
-import pytest
 from zephyr.ops.gates.emergency_takeover import EmergencyTakeover
 
 

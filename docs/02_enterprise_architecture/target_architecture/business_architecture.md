@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-01-BUSINESS-ARCH
 title: Target Architecture — Business Architecture / 目标架构：业务架构
 doc_type: architecture_view

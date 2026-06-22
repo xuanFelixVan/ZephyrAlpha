@@ -42,7 +42,6 @@ safety_level: L
     streamlit run frontend/app.py
 """
 
-
 from __future__ import annotations
 
 from typing import Any
@@ -52,6 +51,8 @@ try:
 except ImportError:
     st = None
 
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.infra_ops.dashboard.components.fitness_functions import (
     FitnessDashboardData,
     fetch_fitness_data,
@@ -77,9 +78,6 @@ from zephyr.infra_ops.dashboard.components.task_progress import (
     fetch_task_progress,
     render_task_progress,
 )
-from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
-from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.governance.persistence.sqlite_schema import init_db
 
 __all__ = [
     "DashboardApp",

@@ -15,7 +15,6 @@
 AST 解析文件，提取 9 个维度的引用信息。
 """
 
-
 from __future__ import annotations
 
 import ast
@@ -27,22 +26,16 @@ from zephyr.governance.semantic_audit.models import ExtractedReferences
 
 logger = logging.getLogger(__name__)
 
-_BLUEPRINT_HEADER_RE = re.compile(
-    r"^#\s*\[(?P<key>[A-Z_]+)\]\s*(?P<value>.*)", re.MULTILINE
-)
+_BLUEPRINT_HEADER_RE = re.compile(r"^#\s*\[(?P<key>[A-Z_]+)\]\s*(?P<value>.*)", re.MULTILINE)
 _INTERNAL_RULE_RE = re.compile(r"\b[A-Z]{2,5}-\d{3,4}\b")
 _MODULE_ID_RE = re.compile(r"\b(MOD|DOC|TPL|REG|GOV|PS|MTH|IRN|TASK|KBG|CP|KE|STD|BLP)-\w+-\d+\b")
 _SECTION_REF_RE = re.compile(r"§\d+\.\d+(?:\.\d+)?")
 _SCRIPT_REF_RE = re.compile(r"`\.\./scripts/([^`]+)`|scripts/([\w/]+\.py)")
-_BLUEPRINT_LINK_RE = re.compile(
-    r"\(file://[^)]+\.md[^)]*\)|\[[^]]*\]\([^)]*blueprint[^)]*\.md[^)]*\)"
-)
+_BLUEPRINT_LINK_RE = re.compile(r"\(file://[^)]+\.md[^)]*\)|\[[^]]*\]\([^)]*blueprint[^)]*\.md[^)]*\)")
 _NUMERIC_CLAIM_RE = re.compile(
     r"\b(\d+(?:\.\d+)?)\s*(个|条|项|files?|scripts?|modules?|gates?|registr(?:y|ies)|lines?)\b"
 )
-_DEPENDS_ON_RE = re.compile(
-    r'depends_on\s*[=:]\s*\[([^\]]+)\]'
-)
+_DEPENDS_ON_RE = re.compile(r"depends_on\s*[=:]\s*\[([^\]]+)\]")
 
 
 def _parse_path(path_str: str) -> list[str]:
@@ -90,10 +83,7 @@ class ReferenceExtractor:
             if script:
                 refs.script_refs.append(script)
 
-        refs.numeric_claims = [
-            {"value": m.group(1), "unit": m.group(2)}
-            for m in _NUMERIC_CLAIM_RE.finditer(content)
-        ]
+        refs.numeric_claims = [{"value": m.group(1), "unit": m.group(2)} for m in _NUMERIC_CLAIM_RE.finditer(content)]
 
         return refs
 

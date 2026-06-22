@@ -6,16 +6,15 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 ==================================================
 蓝图: MOD-INF-035（曾用ID: ARC-0001）§6.2
 借鉴: Microsoft Magentic-One + K8s Controller Manager + Google A2A
 """
-
 
 from __future__ import annotations
 
@@ -24,17 +23,18 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from zephyr.shared.protocols.a2a.a2a_registry import A2ARegistryProtocol as A2ARegistry
-    from zephyr.shared.protocols.a2a.layer3_coordination import A2AProtocolGateway
-    from zephyr.integration.local_model.embedding_router import EmbeddingRouter
+    from zephyr.governance.model_router import ModelRouter
+    from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
     from zephyr.governance.vector_memory.ollama_chat import OllamaChat
+    from zephyr.integration.local_model.embedding_router import EmbeddingRouter
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
     from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
-    from zephyr.governance.model_router import ModelRouter
     from zephyr.ops.scheduler import FeedbackLoopScheduler
-    from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+    from zephyr.shared.protocols.a2a.a2a_registry import A2ARegistryProtocol as A2ARegistry
+    from zephyr.shared.protocols.a2a.layer3_coordination import A2AProtocolGateway
 
 
+from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
 from zephyr.trading.ai_audit_logger import AiAuditLogger
 from zephyr.trading.auto_integrator import AutoIntegrator
 from zephyr.trading.capability_registry import CapabilityRegistry
@@ -43,7 +43,7 @@ from zephyr.trading.dream_cycle import DreamCycle
 from zephyr.trading.feedback_loop import FeedbackLoop
 from zephyr.trading.finalizer import Finalizer
 from zephyr.trading.health_monitor import HealthMonitor, ReconciliationReport
-from zephyr.trading.integration_registry import IntegrationRegistry, IntegrationPoint
+from zephyr.trading.integration_registry import IntegrationPoint, IntegrationRegistry
 from zephyr.trading.lifecycle_manager import BootReport, LifecycleManager, ShutdownReport
 from zephyr.trading.module_onboarding_scanner import ModuleOnboardingScanner
 from zephyr.trading.night_shift_queue import NightShiftEntry, NightShiftQueue
@@ -53,7 +53,6 @@ from zephyr.trading.status_dashboard import StatusDashboard
 from zephyr.trading.stop_gate import StopGate
 from zephyr.trading.work_dag import WorkItem
 from zephyr.trading.work_orchestrator import WorkOrchestrator
-from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +137,7 @@ class AutoRuntimeCore:
         if report.success:
             try:
                 from zephyr.trading.resource_optimization import ResourceOptimizationEngine
+
                 ResourceOptimizationEngine().start_monitor(interval=30.0)
             except Exception:
                 pass
@@ -155,6 +155,7 @@ class AutoRuntimeCore:
 
     def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
         import requests
+
         try:
             resp = requests.get(
                 f"{self._config.ollama_base_url}/api/tags",
@@ -165,8 +166,8 @@ class AutoRuntimeCore:
             return False
 
     def _ensure_ollama_running(self) -> bool:
-        import subprocess
         import os
+        import subprocess
         import time
 
         try:
@@ -189,6 +190,7 @@ class AutoRuntimeCore:
     def _init_escalation_protocol(self) -> None:
         try:
             from zephyr.governance.coldstart_manager import ColdstartManager
+
             cm = ColdstartManager()
             cm.initialize()
             logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
@@ -197,29 +199,33 @@ class AutoRuntimeCore:
 
         try:
             from zephyr.governance.adapter import auto_subscribe_eventbus
+
             auto_subscribe_eventbus()
         except Exception:
             logger.debug("Escalation EventBus auto-subscribe skipped")
 
     def _register_task_system_cron_jobs(self) -> None:
         from zephyr.trading.boot_cron_jobs import register_boot_cron_jobs
+
         project_root = Path(__file__).resolve().parents[3]
         register_boot_cron_jobs(self._circadian_scheduler, self._work_orchestrator, project_root)
 
     def _register_task_system_hooks(self) -> None:
         from zephyr.trading.boot_hooks import register_boot_hooks
+
         register_boot_hooks()
 
     def _start_task_queue(self) -> None:
         try:
             from zephyr.shared.shared_services.queue.task_queue import TaskQueue
+
             self._task_queue = TaskQueue()
 
             def _dispatch_handler(item: object) -> bool:
                 try:
-                    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
                     from zephyr.governance.persistence.task_repo import TaskRepository
                     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
                     tr = TaskRepository()
                     po = PipelineOrchestrator()
                     task_id = getattr(item, "task_id", "")
@@ -240,6 +246,7 @@ class AutoRuntimeCore:
     def _start_blueprint_watcher(self) -> None:
         try:
             import importlib
+
             _mod = importlib.import_module("zephyr.infrastructure.file_watcher")
             BlueprintWatcher = _mod.BlueprintWatcher
             self._blueprint_watcher = BlueprintWatcher(poll_interval=60.0, auto_decompose=True)
@@ -251,6 +258,7 @@ class AutoRuntimeCore:
     def _start_fle_scheduler(self) -> None:
         try:
             from zephyr.ops.scheduler import FeedbackLoopScheduler
+
             self._fle_scheduler = FeedbackLoopScheduler(poll_interval=30.0)
             self._fle_scheduler.start()
             logger.info("FLE Scheduler started (interval=30s, pipelines: FLE->Orc, FLE->DB)")
@@ -260,6 +268,7 @@ class AutoRuntimeCore:
     def _run_boot_triple_alignment(self) -> None:
         try:
             from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
+
             result = check_triple_alignment(warn_only=True)
             errors = [v for v in result.violations if v.severity.value == "ERROR"]
             if errors:
@@ -280,27 +289,26 @@ class AutoRuntimeCore:
 
     def _start_local_models(self, report: BootReport) -> None:
         if not self._ollama_alive():
-            report.errors.append(
-                f"ollama: not reachable at {self._config.ollama_base_url}, attempting auto-start..."
-            )
+            report.errors.append(f"ollama: not reachable at {self._config.ollama_base_url}, attempting auto-start...")
             if self._ensure_ollama_running():
                 report.components_started.append("ollama_auto_started")
                 report.steps_completed += 1
             else:
                 report.errors.append(
-                    "ollama: could not auto-start. "
-                    "Please install Ollama (https://ollama.com) and run 'ollama serve'"
+                    "ollama: could not auto-start. Please install Ollama (https://ollama.com) and run 'ollama serve'"
                 )
                 return
 
         try:
             from zephyr.governance.vector_memory.ollama_chat import OllamaChat
+
             self._ollama_chat = OllamaChat()
             if self._ollama_chat.available:
                 self._audit_logger.log_registration("ollama-chat", "VERIFY_OK")
                 report.components_started.append("08_ollama_chat_verify")
                 report.steps_completed += 1
                 import time
+
                 time.sleep(2.0)
             else:
                 report.errors.append("ollama_chat: not available (Ollama may not be running)")
@@ -309,6 +317,7 @@ class AutoRuntimeCore:
 
         try:
             from zephyr.integration.local_model.embedding_router import EmbeddingRouter
+
             self._embedding_router = EmbeddingRouter(backend="ollama")
             self._embedding_router.warmup()
             self._audit_logger.log_registration("embedding-router", "WARMUP_OK")
@@ -319,6 +328,7 @@ class AutoRuntimeCore:
 
         try:
             from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
+
             self._local_scheduler = LocalModelScheduler(
                 embedding_router=self._embedding_router,
                 ollama_chat=self._ollama_chat,
@@ -332,6 +342,7 @@ class AutoRuntimeCore:
 
         try:
             from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+
             self._vms = InProcessVectorMemory()
             self._vms.start()
             logger.info("VMS started via AutoRuntimeCore.boot()")
@@ -341,6 +352,7 @@ class AutoRuntimeCore:
     def _init_task_learner(self, report: BootReport) -> None:
         try:
             from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
+
             self._task_learner = ModelTaskMatrix()
             report.components_started.append("13_task_learner_init")
             report.steps_completed += 1
@@ -350,6 +362,7 @@ class AutoRuntimeCore:
     def _init_model_router(self) -> None:
         try:
             from zephyr.governance.model_router import ModelRouter
+
             self._model_router = ModelRouter()
         except Exception:
             self._model_router = None
@@ -433,6 +446,7 @@ class AutoRuntimeCore:
                 pass
         try:
             from zephyr.integration.shared_08.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+
             ResourceOptimizationEngine().stop_monitor()
         except Exception:
             pass
@@ -552,37 +566,44 @@ class AutoRuntimeCore:
     def _init_a2a(self) -> None:
         try:
             import importlib
+
             _a2a_mod = importlib.import_module("zephyr.shared.protocols.a2a")
             _gw_mod = importlib.import_module("zephyr.shared.protocols.a2a.layer3_coordination.a2a_protocol_gateway")
             card_registry = _a2a_mod.card_registry
             A2AProtocolGateway = _gw_mod.A2AProtocolGateway
             self._a2a_registry = card_registry
             self._a2a_protocol_gateway = A2AProtocolGateway()
-            self._integration_registry.register(IntegrationPoint(
-                point_id="a2a-protocol",
-                target_system="A2AProtocol",
-                interface="zephyr.shared.protocols.a2a:card_registry",
-                protocol="python_import",
-                sla="best_effort",
-                status="CONNECTED",
-            ))
+            self._integration_registry.register(
+                IntegrationPoint(
+                    point_id="a2a-protocol",
+                    target_system="A2AProtocol",
+                    interface="zephyr.shared.protocols.a2a:card_registry",
+                    protocol="python_import",
+                    sla="best_effort",
+                    status="CONNECTED",
+                )
+            )
             self._audit_logger.log_registration("a2a-protocol", "INIT_OK")
-        except Exception as e:
-            self._integration_registry.register(IntegrationPoint(
-                point_id="a2a-protocol",
-                target_system="A2AProtocol",
-                interface="zephyr.shared.protocols.a2a:card_registry",
-                protocol="python_import",
-                sla="best_effort",
-                status="DISCONNECTED",
-            ))
+        except Exception:
+            self._integration_registry.register(
+                IntegrationPoint(
+                    point_id="a2a-protocol",
+                    target_system="A2AProtocol",
+                    interface="zephyr.shared.protocols.a2a:card_registry",
+                    protocol="python_import",
+                    sla="best_effort",
+                    status="DISCONNECTED",
+                )
+            )
 
     def sync_a2a_to_capability_registry(self) -> int:
         from zephyr.trading.capability_sync import CapabilitySync
+
         return CapabilitySync(self._registry).sync_a2a(self._a2a_registry)
 
     def sync_skills_to_capability_registry(self) -> int:
         from zephyr.trading.capability_sync import CapabilitySync
+
         skill_registry_path = Path(__file__).resolve().parent.parent / "agent-spec" / "skill-registry.yaml"
         return CapabilitySync(self._registry).sync_skills(skill_registry_path)
 

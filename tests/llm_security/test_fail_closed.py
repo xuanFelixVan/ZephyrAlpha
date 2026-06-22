@@ -144,12 +144,14 @@ class TestFailClosed:
             ("cost_asymmetry", ["l5_resource_protection"]),
         ]
         from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+
         gw = LSGSecurityGateway()
         for name, expected_layers in consequences:
             for layer_name in expected_layers:
                 layer = gw.get_layer(layer_name)
-                assert layer is not None, \
+                assert layer is not None, (
                     f"Consequence '{name}' requires layer '{layer_name}' but it is missing from LSG"
+                )
 
         decisions = [SecurityDecision.BLOCK, SecurityDecision.DENY, SecurityDecision.ALLOW, SecurityDecision.FLAG]
         assert SecurityDecision.BLOCK in decisions

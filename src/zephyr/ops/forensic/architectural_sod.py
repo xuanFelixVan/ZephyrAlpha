@@ -52,7 +52,9 @@ class SoDConflict:
 class ArchitecturalSoD:
     role_assignments: dict[str, SoDRole] = field(default_factory=dict)
     conflicts: list[SoDConflict] = field(default_factory=list)
-    forbidden_transitions: set[tuple[str, str]] = field(default_factory=lambda: {("DIAGNOSER", "EXECUTOR"), ("EXECUTOR", "VERIFIER")})
+    forbidden_transitions: set[tuple[str, str]] = field(
+        default_factory=lambda: {("DIAGNOSER", "EXECUTOR"), ("EXECUTOR", "VERIFIER")}
+    )
 
     def register(self, instance_id: str, role: SoDRole) -> None:
         self.role_assignments[instance_id] = role

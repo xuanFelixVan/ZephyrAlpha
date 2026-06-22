@@ -28,7 +28,6 @@
   - AST 解析变更文件,提取新增/变更的函数（函数粒度而非文件粒度）
 """
 
-
 from __future__ import annotations
 
 import ast
@@ -129,7 +128,7 @@ class DiffDetector:
         functions: list[ChangedFunction] = []
 
         class _FunctionVisitor(ast.NodeVisitor):
-            def visit_FunctionDef(self, node: ast.FunctionDef) -> None:  # noqa: N802
+            def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
                 end = node.end_lineno or node.lineno
                 functions.append(
                     ChangedFunction(
@@ -142,9 +141,7 @@ class DiffDetector:
                 )
                 self.generic_visit(node)
 
-            def visit_AsyncFunctionDef(  # noqa: N802
-                self, node: ast.AsyncFunctionDef
-            ) -> None:
+            def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
                 end = node.end_lineno or node.lineno
                 functions.append(
                     ChangedFunction(

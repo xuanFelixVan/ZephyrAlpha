@@ -11,16 +11,14 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 生成失败返回空标签
 # [TESTS] tests/orphan-judge/test_swid_tag.py
-
 import hashlib
-import json
 import uuid
-from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.security.access_control.orphan_judge.models import JudgmentRecord
 
 __all__ = ["SwidTag", "generate_swid"]
+
 
 class SwidTag:
     def __init__(self, tag_creator: str = "orphan-judge") -> None:
@@ -29,6 +27,7 @@ class SwidTag:
 
     def build(self, record: JudgmentRecord, file_content: str = "") -> dict[str, Any]:
         return generate_swid(record, file_content, self.tag_creator, self.tag_id)
+
 
 def generate_swid(
     record: JudgmentRecord,

@@ -27,13 +27,10 @@ memory_bank.py — AI 读写结构化持久上下文 (DD: memory_bank, TASK-014 
 
 from __future__ import annotations
 
-import json
-import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
-UTC = timezone.utc
+UTC = UTC
 
 BANK_FILES = [
     "project_brief.md",
@@ -61,7 +58,7 @@ class MemoryBank:
         for fname in BANK_FILES:
             fp = self._root / fname
             if not fp.exists():
-                fp.write_text(f"# {fname.replace('.md','').replace('_',' ').title()}\n\n", encoding="utf-8")
+                fp.write_text(f"# {fname.replace('.md', '').replace('_', ' ').title()}\n\n", encoding="utf-8")
 
     def read_file(self, filename: str) -> str:
         self._validate_filename(filename)

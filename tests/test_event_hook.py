@@ -10,16 +10,13 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_event_hook.py
 
-import pytest
 
 from zephyr.governance.ops_governance.event_hook import HookRegistry, TransitionEvent, hook_registry
 
 
 class TestTransitionEvent:
     def test_creation_with_required_fields(self):
-        event = TransitionEvent(
-            task_id="DW-001", from_status="PENDING", to_status="IN_PROGRESS", note="started"
-        )
+        event = TransitionEvent(task_id="DW-001", from_status="PENDING", to_status="IN_PROGRESS", note="started")
         assert event.task_id == "DW-001"
         assert event.from_status == "PENDING"
         assert event.to_status == "IN_PROGRESS"
@@ -29,8 +26,12 @@ class TestTransitionEvent:
 
     def test_creation_with_all_fields(self):
         event = TransitionEvent(
-            task_id="DW-002", from_status="IN_PROGRESS", to_status="COMPLETED",
-            note="done", session_id="session-001", metadata={"key": "val"},
+            task_id="DW-002",
+            from_status="IN_PROGRESS",
+            to_status="COMPLETED",
+            note="done",
+            session_id="session-001",
+            metadata={"key": "val"},
         )
         assert event.session_id == "session-001"
         assert event.metadata == {"key": "val"}
@@ -62,8 +63,10 @@ class TestHookRegistry:
 
     def test_unregister(self):
         registry = HookRegistry()
+
         def cb(e):
             pass
+
         registry.register(cb, name="removable")
         assert len(registry._hooks) == 1
         result = registry.unregister(cb)
@@ -85,10 +88,13 @@ class TestHookRegistry:
     def test_exception_isolation(self):
         registry = HookRegistry()
         results = []
+
         def bad_cb(e):
             raise RuntimeError("boom")
+
         def good_cb(e):
             results.append(e.task_id)
+
         registry.register(bad_cb, priority=1, name="bad")
         registry.register(good_cb, priority=2, name="good")
         event = TransitionEvent(task_id="DW-102", from_status="A", to_status="B", note="")

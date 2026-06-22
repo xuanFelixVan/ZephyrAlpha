@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-167 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.contracts.core.trace_context
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-TRACE-001 ====
 from dataclasses import dataclass
 from datetime import datetime
@@ -49,6 +39,7 @@ AI Prompt
     所有跨层传递的数据对象中都嵌入了一个可选的 trace_context 字段。 如果你是 L00（数据入口），你 MUST 在首次产生 NormalizedMarketData 时创建新的 TraceContext，生成 UUID 作为 trace_id。 如果你是 L02/L03/L05/L06/L07（中间层），你在处理数据时 MUST： 1. 从上游数据中取出 trace_context； 2. 为本层创建一个新的 span（span_id 用 UUID，记录 parent_span_id 指向上游）； 3. 设置 root_cause_layer 为本层的标识（如 "factor"）； 4. 将更新后的 trace_context 嵌入到本层产出的数据对象中。 不要丢掉 trace_context——没有它，排障等于瞎猜。
 """
 
+
 @dataclass(frozen=True)
 class TraceContext:
     created_at: datetime
@@ -58,5 +49,6 @@ class TraceContext:
     trace_id: str
     parent_span_id: str | None = None
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-TRACE-001 ====

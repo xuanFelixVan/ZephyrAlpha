@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.trading.boot_hooks import register_boot_hooks
 
 _HOOK_REGISTRY_PATH = "zephyr.governance.event_hook.hook_registry"
@@ -25,23 +23,18 @@ _TASK_REPO_PATH = "zephyr.data.persistence.task_repo.TaskRepository"
 class TestRegisterBootHooks:
     def test_registers_three_hooks(self):
         mock_registry = MagicMock()
-        with patch(_HOOK_REGISTRY_PATH, mock_registry):
-            with patch(_TASK_REPO_PATH, create=True):
-                register_boot_hooks()
+        with patch(_HOOK_REGISTRY_PATH, mock_registry), patch(_TASK_REPO_PATH, create=True):
+            register_boot_hooks()
         assert mock_registry.register.call_count >= 3
-        names = [
-            call.kwargs.get("name", "")
-            for call in mock_registry.register.call_args_list
-        ]
+        names = [call.kwargs.get("name", "") for call in mock_registry.register.call_args_list]
         assert "auto_unblock_dependents" in names
         assert "auto_retry_on_failure" in names
         assert "triple_alignment_on_verified" in names
 
     def test_hook_priorities(self):
         mock_registry = MagicMock()
-        with patch(_HOOK_REGISTRY_PATH, mock_registry):
-            with patch(_TASK_REPO_PATH, create=True):
-                register_boot_hooks()
+        with patch(_HOOK_REGISTRY_PATH, mock_registry), patch(_TASK_REPO_PATH, create=True):
+            register_boot_hooks()
         priorities = {
             call.kwargs.get("name", ""): call.kwargs.get("priority", 0)
             for call in mock_registry.register.call_args_list
@@ -63,12 +56,11 @@ class TestRegisterBootHooks:
 
         mock_registry.register.side_effect = _capture
 
-        with patch(_HOOK_REGISTRY_PATH, mock_registry):
-            with patch(_TASK_REPO_PATH, create=True) as mock_repo_cls:
-                mock_repo = MagicMock()
-                mock_repo.list_by_dependency.side_effect = RuntimeError("db error")
-                mock_repo_cls.return_value = mock_repo
-                register_boot_hooks()
+        with patch(_HOOK_REGISTRY_PATH, mock_registry), patch(_TASK_REPO_PATH, create=True) as mock_repo_cls:
+            mock_repo = MagicMock()
+            mock_repo.list_by_dependency.side_effect = RuntimeError("db error")
+            mock_repo_cls.return_value = mock_repo
+            register_boot_hooks()
 
         cb = captured.get("auto_unblock_dependents")
         assert cb is not None
@@ -85,12 +77,11 @@ class TestRegisterBootHooks:
 
         mock_registry.register.side_effect = _capture
 
-        with patch(_HOOK_REGISTRY_PATH, mock_registry):
-            with patch(_TASK_REPO_PATH, create=True) as mock_repo_cls:
-                mock_repo = MagicMock()
-                mock_repo.get.return_value = None
-                mock_repo_cls.return_value = mock_repo
-                register_boot_hooks()
+        with patch(_HOOK_REGISTRY_PATH, mock_registry), patch(_TASK_REPO_PATH, create=True) as mock_repo_cls:
+            mock_repo = MagicMock()
+            mock_repo.get.return_value = None
+            mock_repo_cls.return_value = mock_repo
+            register_boot_hooks()
 
         cb = captured.get("auto_retry_on_failure")
         assert cb is not None
@@ -100,8 +91,7 @@ class TestRegisterBootHooks:
 
     def test_ide_health_daemon_registration_attempted(self):
         mock_registry = MagicMock()
-        with patch(_HOOK_REGISTRY_PATH, mock_registry):
-            with patch(_TASK_REPO_PATH, create=True):
-                with patch("zephyr.trading.ide_health_daemon.register_daemon", create=True) as mock_daemon:
-                    register_boot_hooks()
-                    mock_daemon.assert_called_once()
+        with patch(_HOOK_REGISTRY_PATH, mock_registry), patch(_TASK_REPO_PATH, create=True):
+            with patch("zephyr.trading.ide_health_daemon.register_daemon", create=True) as mock_daemon:
+                register_boot_hooks()
+                mock_daemon.assert_called_once()

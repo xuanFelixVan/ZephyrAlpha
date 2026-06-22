@@ -144,6 +144,7 @@ class TestExhaustionAlerts:
 
     def test_alerts_with_low_target_burn_rate(self):
         from zephyr.ops.diagnosers.slo_capacity_metrics import SLOWindow
+
         scm = SLOCapacityMetrics(windows={"1h": SLOWindow(1.0, target_burn_rate=0.5)})
         for _ in range(10):
             scm.record(success=False)

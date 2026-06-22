@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import logging
-from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import (
@@ -97,14 +96,14 @@ class SelfHealAgent:
             if self._consecutive_failures >= self._circuit_threshold:
                 self._circuit_open = True
                 action.status = FixStatus.FAILED
-                action.metadata["error"] = f"Circuit breaker opened after {self._consecutive_failures} consecutive failures"
+                action.metadata["error"] = (
+                    f"Circuit breaker opened after {self._consecutive_failures} consecutive failures"
+                )
                 action.escalated = True
                 return action
         action.status = FixStatus.FAILED
         action.metadata["error"] = f"Max rounds ({self._max_rounds}) exceeded"
-        action.metadata["round_history"] = [
-            {"round": r["round"], "phase": r["phase"]} for r in self._round_history
-        ]
+        action.metadata["round_history"] = [{"round": r["round"], "phase": r["phase"]} for r in self._round_history]
         return action
 
     def _observe(self, target: str, diagnose_fn: Any) -> dict[str, Any]:
@@ -151,7 +150,9 @@ class SelfHealAgent:
                 return result
             return FixAction(action_type="self_heal", target=target, status=FixStatus.COMPLETED)
         except Exception as exc:
-            return FixAction(action_type="self_heal", target=target, status=FixStatus.FAILED, metadata={"error": str(exc)})
+            return FixAction(
+                action_type="self_heal", target=target, status=FixStatus.FAILED, metadata={"error": str(exc)}
+            )
 
     def _validate(self, target: str, validate_fn: Any) -> ValidationResult:
         try:

@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.scheduler_health
-
 # [INVARIANTS] HealthReporter.report() returns dict with all 20 health keys
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] zephyr.observability.feedback_loop.scheduler
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -44,6 +34,7 @@ from zephyr.ops.evolution.self_modification_rate_limiter import SelfModification
 from zephyr.ops.forensic.guard_complexity_budget import GuardComplexityBudget
 from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
 from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
+
 
 @dataclass
 class HealthReporter:

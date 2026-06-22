@@ -12,19 +12,11 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from unittest.mock import MagicMock
 
-import pytest
-
 from zephyr.ops.evolution_engine import (
-    DEFAULT_THRESHOLDS,
     EvolutionEngine,
-    EvolutionProposal,
     EvolutionReport,
-    EvolutionSignal,
-    FeedbackLayer,
-    Severity,
     evolve,
 )
 

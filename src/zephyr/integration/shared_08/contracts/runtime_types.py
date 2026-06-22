@@ -3,7 +3,7 @@
 # [MODULE] zephyr.integration.shared_08.contracts.runtime_types
 # [INVARIANTS] RuntimeConfig是纯数据模型;由zephyr.trading.runtime_config重新导出以保持向后兼容
 # [MODIFY-GUARD] src/zephyr/runtime/runtime_config.py
-# [CONSUMERS] scripts.construction.start_brain;scripts.a2a_full_verification;scripts.construction.local_layer_daemon;zephyr.orchestration.runtime_core
+# [CONSUMERS] scripts.construction.start_brain;scripts.a2a_full_verification;scripts.construction.local_layer_daemon;zephyr.trading
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -22,7 +22,6 @@ DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 
 
 class RuntimeConfig(BaseModel):
-
     model_config = BASE_CONFIG
 
     poll_interval: float = Field(default=5.0, description="调和循环轮询间隔(秒)")
@@ -37,7 +36,9 @@ class RuntimeConfig(BaseModel):
     dream_archive_dir: Path = Field(default=DATA_DIR / "dream_archive", description="知识固化归档目录")
     feedback_proposal_dir: Path = Field(default=DATA_DIR / "feedback_proposals", description="进化提案目录")
     health_snapshot_dir: Path = Field(default=DATA_DIR / "health_snapshots", description="健康快照目录")
-    circadian_state_path: Path = Field(default=DATA_DIR / "circadian_tasks" / "schedule-state.json", description="生物钟状态路径")
+    circadian_state_path: Path = Field(
+        default=DATA_DIR / "circadian_tasks" / "schedule-state.json", description="生物钟状态路径"
+    )
 
     auto_start_l2: bool = Field(default=True, description="启动时自动启动 L2 本地模型")
     auto_start_l3: bool = Field(default=False, description="启动时自动启动 L3 API（默认关闭，夜班激活）")
@@ -73,4 +74,4 @@ class RuntimeConfig(BaseModel):
     )
 
 
-__all__ = ["RuntimeConfig", "DATA_DIR"]
+__all__ = ["DATA_DIR", "RuntimeConfig"]

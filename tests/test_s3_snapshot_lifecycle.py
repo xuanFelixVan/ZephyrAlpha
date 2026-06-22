@@ -13,10 +13,8 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-
-import pytest
 
 from zephyr.governance.s3_snapshot_lifecycle import (
     FastPurgeResult,
@@ -95,7 +93,7 @@ class TestClassifySnapshots:
 
     def test_hot_snapshot(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         manifest = SnapshotManifest(
             snapshot_key="snap1",
             created_at=now - timedelta(days=5),
@@ -111,7 +109,7 @@ class TestClassifySnapshots:
 
     def test_expired_snapshot(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path)
-        old = datetime.now(timezone.utc) - timedelta(days=400)
+        old = datetime.now(UTC) - timedelta(days=400)
         manifest = SnapshotManifest(
             snapshot_key="snap_old",
             created_at=old,
@@ -126,7 +124,7 @@ class TestClassifySnapshots:
 
     def test_warm_snapshot(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         manifest = SnapshotManifest(
             snapshot_key="snap_warm",
             created_at=now - timedelta(days=10),
@@ -141,7 +139,7 @@ class TestClassifySnapshots:
 
     def test_cold_snapshot_by_age(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         manifest = SnapshotManifest(
             snapshot_key="snap_cold",
             created_at=now - timedelta(days=100),
@@ -158,7 +156,7 @@ class TestClassifySnapshots:
 class TestFastPurge:
     def test_dry_run_no_deletion(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         manifest = SnapshotManifest(
             snapshot_key="snap_purge",
             created_at=now - timedelta(days=200),
@@ -177,7 +175,7 @@ class TestFastPurge:
 
     def test_actual_purge_deletes(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         manifest = SnapshotManifest(
             snapshot_key="snap_del",
             created_at=now - timedelta(days=200),
@@ -194,7 +192,7 @@ class TestFastPurge:
 
     def test_purge_nothing_recent(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         manifest = SnapshotManifest(
             snapshot_key="snap_recent",
             created_at=now - timedelta(days=1),
@@ -260,7 +258,7 @@ class TestRegisterSnapshot:
 class TestTouchReference:
     def test_touch_updates_reference_time(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         old_time = now - timedelta(days=100)
         manifest = SnapshotManifest(
             snapshot_key="touch_me",

@@ -22,7 +22,6 @@
 """LLM 模型注册表（CT-MODEL-REGISTRY）——deepseek/opus/gpt等模型版本+性能基线。"""
 
 from __future__ import annotations
-from pydantic import BaseModel
 
 MODELS: dict[str, dict] = {
     "deepseek-chat": {"provider": "deepseek", "tier": "standard", "token_limit": 65536},
@@ -32,6 +31,7 @@ MODELS: dict[str, dict] = {
     "gpt-5.2": {"provider": "openai", "tier": "premium", "token_limit": 128000},
     "gpt-4o-mini": {"provider": "openai", "tier": "standard", "token_limit": 128000},
 }
+
 
 class ModelRegistry:
     def get(self, model_id: str) -> dict | None:

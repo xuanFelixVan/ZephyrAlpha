@@ -8,13 +8,11 @@
 
 """Test suite: auto-fix-engine core — AutoFixEngine init + fix_safety validation + basic fix workflow"""
 
-import os
 import tempfile
-import time
 
 import pytest
 
-from zephyr.security.access_control.auto_fix_engine_03.engine import AutoFixEngine, _NO_AUTO_FIX_TYPES
+from zephyr.security.access_control.auto_fix_engine_03.engine import _NO_AUTO_FIX_TYPES, AutoFixEngine
 from zephyr.security.access_control.auto_fix_engine_03.fix_safety import (
     CascadeBreaker,
     FixValidator,
@@ -98,7 +96,9 @@ class TestAutoFixEngineNoAutoFixTypes:
     def test_behavioral_audit_red_cancelled(self, engine):
         action = engine.fix("behavioral_audit_red", "some_target")
         assert action.status == FixStatus.CANCELLED
-        assert "no-auto-fix" in action.metadata.get("reason", "").lower() or "no-auto-fix list" in action.metadata.get("reason", "")
+        assert "no-auto-fix" in action.metadata.get("reason", "").lower() or "no-auto-fix list" in action.metadata.get(
+            "reason", ""
+        )
 
     def test_security_critical_cancelled(self, engine):
         action = engine.fix("security_critical", "some_target")
@@ -270,7 +270,7 @@ class TestWriteSafety:
         filepath = str(tmp_path / "test_write.txt")
         result = WriteSafety.atomic_write(filepath, "hello world")
         assert result is True
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             assert f.read() == "hello world"
 
     def test_atomic_write_verify(self, tmp_path):

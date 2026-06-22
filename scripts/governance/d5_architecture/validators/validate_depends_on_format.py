@@ -40,7 +40,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXCLUDE_DIRS, REPO_ROOT, SCAN_EXTENSIONS_MD, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXCLUDE_DIRS, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_raw_from_file
 from _shared.walk import iter_files
@@ -185,10 +185,10 @@ def main() -> None:
     args = parser.parse_args()
     print("\n[DEP-FMT] 开始扫描 depends_on 格式...", file=sys.stderr)
     findings, stats = scan_all_files()
-    print(f'  扫描 .md 文件: {stats['total_md']}', file=sys.stderr)
-    print(f'  有 depends_on 的文件: {stats['has_depends_on']}', file=sys.stderr)
-    print(f'  全结构化（合规）: {stats['all_structured']}', file=sys.stderr)
-    print(f'  含旧式格式: {stats['has_old_format']}', file=sys.stderr)
+    print(f"  扫描 .md 文件: {stats['total_md']}", file=sys.stderr)
+    print(f"  有 depends_on 的文件: {stats['has_depends_on']}", file=sys.stderr)
+    print(f"  全结构化（合规）: {stats['all_structured']}", file=sys.stderr)
+    print(f"  含旧式格式: {stats['has_old_format']}", file=sys.stderr)
     if args.verbose and stats["has_old_format"] == 0:
         print("\n  合规文件清单:", file=sys.stderr)
         for filepath in iter_files(DOCS_DIR, extensions=SCAN_EXTENSIONS_MD, exclude_dirs=_EXTRA_EXCLUDE):
@@ -206,8 +206,8 @@ def main() -> None:
     if findings:
         print(f"\n  不合规条目: {len(findings)}", file=sys.stderr)
         for f in findings:
-            print(f'\n  [{f['severity']}] {f['file']}', file=sys.stderr)
-            print(f'    {f['detail']}', file=sys.stderr)
+            print(f"\n  [{f['severity']}] {f['file']}", file=sys.stderr)
+            print(f"    {f['detail']}", file=sys.stderr)
     if args.fix:
         old_style_count = sum(1 for f in findings if f["type"] == "old_format_string")
         if old_style_count == 0:
@@ -230,19 +230,15 @@ def main() -> None:
                         tmp_path = f"{filepath}.{os.getpid()}.tmp"
 
                         try:
-
                             Path(tmp_path).write_text(new_content, encoding="utf-8")
 
                             os.replace(tmp_path, filepath)
 
                         except PermissionError:
-
                             try:
-
                                 os.remove(tmp_path)
 
                             except OSError:
-
                                 pass
                         print(f"  [FIXED] {rel} → {count} 个条目已转为占位格式", file=sys.stderr)
                         fixed_files += 1

@@ -13,16 +13,15 @@
 import os
 import tempfile
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import MagicMock
 
-import pytest
 import yaml
 
 from zephyr.governance.runbook_generator import (
     build_runbook_frontmatter,
-    generate_runbook,
     generate_bulk_runbook,
+    generate_runbook,
 )
 
 
@@ -39,7 +38,7 @@ def _make_event(
     event = MagicMock()
     event.event_id = event_id or uuid.UUID("12345678-1234-5678-1234-567812345678")
     event.detector_id = detector_id
-    event.timestamp = datetime(2026, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
+    event.timestamp = datetime(2026, 1, 15, 10, 30, 0, tzinfo=UTC)
     event.severity = MagicMock(value=severity_value)
     event.state = MagicMock(value=state_value)
     event.scan_level = MagicMock(value=scan_level_value)
@@ -151,10 +150,7 @@ class TestGenerateRunbook:
 
 class TestGenerateBulkRunbook:
     def test_creates_files(self):
-        events = [
-            _make_event(event_id=uuid.UUID(f"00000000-0000-0000-0000-{i:012d}"))
-            for i in range(1, 4)
-        ]
+        events = [_make_event(event_id=uuid.UUID(f"00000000-0000-0000-0000-{i:012d}")) for i in range(1, 4)]
         with tempfile.TemporaryDirectory() as tmpdir:
             paths = generate_bulk_runbook(events, tmpdir)
             assert len(paths) == 3

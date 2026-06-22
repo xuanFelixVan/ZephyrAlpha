@@ -33,7 +33,6 @@ Design:
   - Warm-up for preloading hot files
 """
 
-
 from __future__ import annotations
 
 import json
@@ -43,11 +42,9 @@ import threading
 import time
 from collections import OrderedDict
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import yaml
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.integration.shared_08.lifecycle.resource_optimization_models import CacheStats
@@ -58,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 
 class _CacheEntry:
-    __slots__ = ("data", "size_bytes", "mtime", "access_time")
+    __slots__ = ("access_time", "data", "mtime", "size_bytes")
 
     def __init__(self, data: Any, size_bytes: int, mtime: float) -> None:
         self.data = data
@@ -142,6 +139,7 @@ class FileCache:
 
     def get_stats(self) -> CacheStats:
         from zephyr.integration.shared_08.lifecycle.resource_optimization_models import CacheStats as _CacheStats
+
         with self._lock:
             total = self._hit_count + self._miss_count
             hit_rate = self._hit_count / total if total > 0 else 0.0
@@ -163,7 +161,7 @@ class FileCache:
         except OSError:
             return None
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 raw = f.read()
             if path.endswith((".yaml", ".yml")):
                 data = yaml.safe_load(raw)

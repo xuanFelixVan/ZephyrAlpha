@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.shared.dependency.dependency_graph import (
     CycleDetection,
     DependencyGraph,
@@ -50,7 +48,9 @@ class TestCycleDetection:
 
 class TestKillChain:
     def test_creation(self):
-        kc = KillChain(task_id="T-001", chain_depth=2, chain_path=["T-001", "T-002", "T-003"], direct_deps=1, transitive_deps=2)
+        kc = KillChain(
+            task_id="T-001", chain_depth=2, chain_path=["T-001", "T-002", "T-003"], direct_deps=1, transitive_deps=2
+        )
         assert kc.task_id == "T-001"
         assert kc.chain_depth == 2
         assert kc.direct_deps == 1

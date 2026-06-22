@@ -6,23 +6,23 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
-# Re-export shim — canonical location is now zephyr.orchestration.pipeline_routing.backpressure_types
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
+# Re-export shim — canonical location is now zephyr.integration.backpressure_types
 
 import importlib as _il
-_mod = _il.import_module("zephyr.orchestration.pipeline_routing.backpressure_types")
+
+_mod = _il.import_module("zephyr.integration.backpressure_types")
 BackpressureThrottle = _mod.BackpressureThrottle
 
 __all__ = ["BackpressureThrottle"]
 
 # ==== BEGIN CODGEN:CTR-BP-002 ====
-from dataclasses import dataclass, field
-
-from typing import Optional
+from dataclasses import dataclass
 
 from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -47,6 +47,7 @@ AI Prompt
     THROTTLE 比 PAUSE 轻：不是完全暂停，而是降到每秒 max_rate_per_sec 条。 典型的场景是下游队列开始堆积但还没满——先降速观察，如果仍然堆积再升级为 PAUSE。
 """
 
+
 @dataclass(frozen=True)
 class BackpressureThrottle:
     idempotency_key: str
@@ -58,181 +59,7 @@ class BackpressureThrottle:
     symbol: str
     action: str = "THROTTLE"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-BP-002 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -41,11 +41,7 @@ _FIX_TEMPLATES: dict[str, str] = {
         "证据: {evidence}\n"
         "操作: 检查 depends_on 声明,验证目标模块是否已重构,更新 at 章节号。"
     ),
-    "default": (
-        "修复建议: 语义断裂 — {target_location}\n"
-        "证据: {evidence}\n"
-        "操作: 人工审查是否需要修复。"
-    ),
+    "default": ("修复建议: 语义断裂 — {target_location}\n证据: {evidence}\n操作: 人工审查是否需要修复。"),
 }
 
 _ESTIMATED_TOKENS_RE = re.compile(r"\S+")

@@ -20,19 +20,20 @@
 # [TESTS] pytest tests/test_version.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.__version__ import (
+    MIN_COMPATIBLE_SHARED_VERSION,
+    VersionMismatchError,
     __version__,
     __version_info__,
-    MIN_COMPATIBLE_SHARED_VERSION,
+    _parse_semver,
     check_shared_version,
     version_compatible,
     version_eq,
-    version_lt,
-    version_lte,
     version_gt,
     version_gte,
-    _parse_semver,
-    VersionMismatchError,
+    version_lt,
+    version_lte,
 )
 
 

@@ -17,6 +17,7 @@ Broker API 特征模式（匹配以下任一即标记）：
 
 exit: 0=pass, 1=violation found
 """
+
 from __future__ import annotations
 
 import re
@@ -43,8 +44,14 @@ BROKER_PATTERNS = [
     (re.compile(r"import\s+futu", re.IGNORECASE), "富途 SDK 直接引用"),
     (re.compile(r"from\s+longport", re.IGNORECASE), "LongPort SDK 直接引用"),
     (re.compile(r"longbridge", re.IGNORECASE), "LongBridge SDK 直接引用"),
-    (re.compile(r"broker_submit_order|broker_place_order|broker_execute|submit_to_broker", re.IGNORECASE), "Broker 下单调用"),
-    (re.compile(r"BrokerInterface|BrokerAdapter|BaseBroker", re.IGNORECASE), "Broker 接口直接引用（应只通过 adapters/ 使用）"),
+    (
+        re.compile(r"broker_submit_order|broker_place_order|broker_execute|submit_to_broker", re.IGNORECASE),
+        "Broker 下单调用",
+    ),
+    (
+        re.compile(r"BrokerInterface|BrokerAdapter|BaseBroker", re.IGNORECASE),
+        "Broker 接口直接引用（应只通过 adapters/ 使用）",
+    ),
 ]
 
 EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "shared", "gates", "mcp", "pipeline"}
@@ -75,9 +82,7 @@ def check_file(file_path: Path) -> list[str]:
             continue
         for pattern, description in BROKER_PATTERNS:
             if pattern.search(stripped):
-                violations.append(
-                    f"  {file_path.relative_to(REPO_ROOT)}:{i}: {description} — \"{stripped[:120]}\""
-                )
+                violations.append(f'  {file_path.relative_to(REPO_ROOT)}:{i}: {description} — "{stripped[:120]}"')
                 break
     return violations
 

@@ -28,7 +28,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -55,8 +55,8 @@ class Risk(BaseModel):
     mitigation_plan: str = ""
     affected_contracts: list[str] = Field(default_factory=list)
     status: RiskStatus = RiskStatus.OPEN
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class ConflictResolution(BaseModel):
@@ -95,7 +95,7 @@ class RiskRegistry:
         if risk is None:
             return False
         risk.status = RiskStatus.MITIGATED
-        risk.updated_at = datetime.now(timezone.utc)
+        risk.updated_at = datetime.now(UTC)
         return True
 
     def accept(self, risk_id: str) -> bool:
@@ -103,5 +103,5 @@ class RiskRegistry:
         if risk is None:
             return False
         risk.status = RiskStatus.ACCEPTED
-        risk.updated_at = datetime.now(timezone.utc)
+        risk.updated_at = datetime.now(UTC)
         return True

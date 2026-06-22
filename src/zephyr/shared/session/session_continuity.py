@@ -31,9 +31,10 @@ Session Continuity — AI 对话断点续传。
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class SessionState:
@@ -47,6 +48,7 @@ class SessionState:
     timestamp_utc: str
     metadata: dict[str, Any] = field(default_factory=dict)
 
+
 @dataclass
 class ContinuityContext:
     task_id: str
@@ -55,8 +57,8 @@ class ContinuityContext:
     key_state: dict[str, Any]
     next_action: str
 
-class SessionContinuity:
 
+class SessionContinuity:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
         self._sessions_dir = self._project_root / "session-logs"
@@ -67,17 +69,21 @@ class SessionContinuity:
         session_path = self._sessions_dir / f"{state.session_id}.json"
 
         session_path.write_text(
-            json.dumps({
-                "session_id": state.session_id,
-                "dialogue_number": state.dialogue_number,
-                "current_layer": state.current_layer,
-                "cards_completed": state.cards_completed,
-                "cards_failed": state.cards_failed,
-                "last_checkpoint_json": state.last_checkpoint_json,
-                "last_journal_line": state.last_journal_line,
-                "timestamp_utc": state.timestamp_utc,
-                "metadata": state.metadata,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "session_id": state.session_id,
+                    "dialogue_number": state.dialogue_number,
+                    "current_layer": state.current_layer,
+                    "cards_completed": state.cards_completed,
+                    "cards_failed": state.cards_failed,
+                    "last_checkpoint_json": state.last_checkpoint_json,
+                    "last_journal_line": state.last_journal_line,
+                    "timestamp_utc": state.timestamp_utc,
+                    "metadata": state.metadata,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )
 
@@ -158,8 +164,8 @@ class SessionContinuity:
 
         dispatch_info = self.validate_sys_master_dispatch()
         if dispatch_info["valid"]:
-            print(f"\n  >>> MUST READ: SYS-MASTER-001 §0 分派表")
-            print(f"  >>> 路径: docs/03_modules/_sys-master/blueprint.md")
+            print("\n  >>> MUST READ: SYS-MASTER-001 §0 分派表")
+            print("  >>> 路径: docs/03_modules/_sys-master/blueprint.md")
             print(f"  >>> 版本: {dispatch_info.get('version', '?')}")
             print(f"  >>> 施工进度: {dispatch_info.get('construction_progress', '?')}")
             print(f"  >>> 分派域数: {dispatch_info.get('dispatch_domains', 0)}")
@@ -176,6 +182,7 @@ class SessionContinuity:
 
         try:
             import re
+
             text = sys_master.read_text(encoding="utf-8")
             if text.startswith("\ufeff"):
                 text = text[1:]
@@ -184,6 +191,7 @@ class SessionContinuity:
                 return {"valid": False, "error": "no YAML frontmatter"}
 
             import yaml
+
             fm = yaml.safe_load(fm_match.group(1)) or {}
 
             ai_role = fm.get("ai_role_instruction", "")
@@ -193,17 +201,11 @@ class SessionContinuity:
             else:
                 ai_rules_count = 0
 
-            dispatch_section = re.search(
-                r"### 0\.2 AI Agent 分派表.*?\n\n((?:\|.*\n)+)",
-                text, re.MULTILINE
-            )
+            dispatch_section = re.search(r"### 0\.2 AI Agent 分派表.*?\n\n((?:\|.*\n)+)", text, re.MULTILINE)
             dispatch_domains = 0
             if dispatch_section:
                 lines = dispatch_section.group(1).strip().split("\n")
-                dispatch_domains = len(
-                    [l for l in lines
-                     if l.startswith("|") and "---" not in l and "任务域" not in l]
-                )
+                dispatch_domains = len([l for l in lines if l.startswith("|") and "---" not in l and "任务域" not in l])
 
             return {
                 "valid": True,
@@ -224,7 +226,7 @@ class SessionContinuity:
         cards_failed: list[str] | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> Path:
-        now_utc = datetime.now(timezone.utc).isoformat()
+        now_utc = datetime.now(UTC).isoformat()
 
         state = SessionState(
             session_id=session_id,

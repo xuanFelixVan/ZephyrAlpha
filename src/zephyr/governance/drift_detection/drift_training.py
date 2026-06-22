@@ -56,6 +56,7 @@ class DriftTrainingPattern:
         injected: 是否已将模式注入 Prompt/AGENTS.md。
         effectiveness: 注入后的抑制效果（0.0~1.0），None 表示未追踪。
     """
+
     pattern_id: str
     detector_id: str
     frequency: int
@@ -78,6 +79,7 @@ class AITrainingLoopResult:
         patterns_injected: 已注入 Prompt 的模式数。
         patterns_suppressed: 被有效抑制的模式数（effectiveness > 0.5）。
     """
+
     detector_name: str = "ai_training_loop"
     patterns_extracted: int = 0
     patterns_injected: int = 0
@@ -157,9 +159,9 @@ def inject_patterns_to_prompt(
     """
     lines: list[str] = ["## AI Error-Prone Patterns (from drift training loop)", ""]
     for p in patterns[:5]:
-        lines.append(f"- **[{p.detector_id}]** freq={p.frequency}: " f"{p.root_cause_summary[:150]}")
+        lines.append(f"- **[{p.detector_id}]** freq={p.frequency}: {p.root_cause_summary[:150]}")
     lines.append("")
-    lines.append(f"> These {len(patterns)} patterns were extracted from " f"drift events. Avoid repeating them.")
+    lines.append(f"> These {len(patterns)} patterns were extracted from drift events. Avoid repeating them.")
     return "\n".join(lines)
 
 
@@ -208,7 +210,7 @@ def detect_ai_training_loop(project_root: str) -> list[DriftEvent]:
                 detector_id="ai_training_loop",
                 severity=Severity.INFO,
                 source_file="drift_training_loop",
-                description=(f"AI error pattern [{p.detector_id}] " f"recurred {p.frequency} times in 30 days"),
+                description=(f"AI error pattern [{p.detector_id}] recurred {p.frequency} times in 30 days"),
                 details=(
                     f"Root cause: {p.root_cause_summary[:200]}. "
                     f"Injected: {p.injected}, "
@@ -231,9 +233,7 @@ def detect_ai_training_loop(project_root: str) -> list[DriftEvent]:
                     detector_id="ai_training_loop",
                     severity=Severity.INFO,
                     source_file="AGENTS.md",
-                    description=(
-                        f"Pattern {p.pattern_id} suppressed " f"by {p.effectiveness:.0%} after prompt injection"
-                    ),
+                    description=(f"Pattern {p.pattern_id} suppressed by {p.effectiveness:.0%} after prompt injection"),
                     details="Candidate for permanent inclusion in AGENTS.md",
                     timestamp=datetime.now(UTC),
                     state=DriftState.DETECTED,
@@ -276,6 +276,7 @@ class CrossLanguageConfig:
         agnostic_dimensions: 语言无关的漂移维度（D5-* 系列）。
         fallback_on_unsupported: 不支持的语言是否回退到通用检查。
     """
+
     enabled_languages: list[str] = field(default_factory=lambda: ["Python"])
     agnostic_dimensions: list[str] = field(default_factory=LANGUAGE_AGNOSTIC_DIMENSIONS.copy)
     fallback_on_unsupported: bool = True
@@ -427,7 +428,7 @@ def detect_cross_language_drift(project_root: str) -> list[DriftEvent]:
                     f"{len(CROSS_LANG_CONFIG.agnostic_dimensions)} "
                     f"agnostic dimensions"
                 ),
-                details=(f"Language-agnostic dims: " f"{CROSS_LANG_CONFIG.agnostic_dimensions}"),
+                details=(f"Language-agnostic dims: {CROSS_LANG_CONFIG.agnostic_dimensions}"),
                 timestamp=datetime.now(UTC),
                 state=DriftState.DETECTED,
                 scan_level=ScanLevel.STANDARD,

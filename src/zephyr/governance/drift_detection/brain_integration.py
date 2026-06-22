@@ -20,13 +20,19 @@
 # [TESTS]
 
 """ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation"""
+
 from __future__ import annotations
 
-import asyncio, logging, os, subprocess, threading, traceback, uuid
+import asyncio
+import logging
+import os
+import subprocess
+import threading
+import traceback
+import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +41,13 @@ _PROJECT_ROOT = os.environ.get(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
 )
 
+
 class ProbeStatus:
     PASS = "PASS"
     WARN = "WARN"
     FAIL = "FAIL"
     SKIPPED = "SKIPPED"
+
 
 @dataclass
 class L0StartupResult:
@@ -54,6 +62,7 @@ class L0StartupResult:
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
+
 @dataclass
 class L1ReadinessResult:
     phase: str = "L1_READINESS"
@@ -67,6 +76,7 @@ class L1ReadinessResult:
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
+
 @dataclass
 class L2LivenessResult:
     phase: str = "L2_LIVENESS"
@@ -77,6 +87,7 @@ class L2LivenessResult:
     correlation_findings: int = 0
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+
 
 @dataclass
 class L3ReconcileResult:
@@ -90,10 +101,11 @@ class L3ReconcileResult:
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
+
 @dataclass
 class FullProbeResult:
     probe_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    started_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    started_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     completed_at: str = ""
     l0: L0StartupResult = field(default_factory=L0StartupResult)
     l1: L1ReadinessResult = field(default_factory=L1ReadinessResult)
@@ -104,7 +116,7 @@ class FullProbeResult:
     total_warnings: int = 0
 
     def mark_completed(self):
-        self.completed_at = datetime.now(timezone.utc).isoformat()
+        self.completed_at = datetime.now(UTC).isoformat()
         self.total_errors = sum(len(r.errors) for r in [self.l0, self.l1, self.l2, self.l3])
         self.total_warnings = sum(len(r.warnings) for r in [self.l0, self.l1, self.l2, self.l3])
         if self.l0.status == ProbeStatus.FAIL:
@@ -128,10 +140,16 @@ class FullProbeResult:
         return (
             "probe=" + self.probe_id[:8] + " "
             "L0=" + self.l0.status + " L1=" + self.l1.status + " "
-            "L2=" + str(self.l2.scan_events_found) + "events L3="
-            + str(self.l3.fix_applied) + "fixed/" + str(self.l3.verify_events_remaining)
-            + "remain ->" + self.classification
+            "L2="
+            + str(self.l2.scan_events_found)
+            + "events L3="
+            + str(self.l3.fix_applied)
+            + "fixed/"
+            + str(self.l3.verify_events_remaining)
+            + "remain ->"
+            + self.classification
         )
+
 
 def _run_async(coro):
     try:
@@ -144,7 +162,9 @@ def _run_async(coro):
             loop.close()
     else:
         import concurrent.futures
+
         future = concurrent.futures.Future()
+
         def _runner():
             new_loop = asyncio.new_event_loop()
             try:
@@ -154,6 +174,7 @@ def _run_async(coro):
                 future.set_exception(exc)
             finally:
                 new_loop.close()
+
         t = threading.Thread(target=_runner, daemon=True)
         t.start()
         t.join(timeout=120)
@@ -162,15 +183,20 @@ def _run_async(coro):
 
 def _l0_startup_probe(project_root, result):
     try:
-        from zephyr.governance.drift_detection.self_check import bootstrap_self_check, check_core_files, check_registry_parsable
         from pathlib import Path as _Path
+
+        from zephyr.governance.drift_detection.self_check import (
+            bootstrap_self_check,
+            check_core_files,
+            check_registry_parsable,
+        )
 
         base = _Path(__file__).parent
         core_results = check_core_files(base)
         missing_files = [k for k, v in core_results.items() if v == "MISSING"]
         result.core_integrity_checks = len(core_results)
         result.core_integrity_failed = len(missing_files)
-        result.core_integrity_ok = (result.core_integrity_failed == 0)
+        result.core_integrity_ok = result.core_integrity_failed == 0
         if not result.core_integrity_ok:
             result.errors.append("core_integrity: MISSING " + ", ".join(missing_files[:5]))
 
@@ -187,10 +213,14 @@ def _l0_startup_probe(project_root, result):
         if env_check_path.exists():
             proc = subprocess.run(
                 [os.sys.executable, str(env_check_path)],
-                capture_output=True, text=True, timeout=60,
-                cwd=project_root, encoding="utf-8", errors="replace",
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=project_root,
+                encoding="utf-8",
+                errors="replace",
             )
-            result.env_ok = (proc.returncode == 0)
+            result.env_ok = proc.returncode == 0
             result.env_details = proc.stdout.strip()[:500]
         else:
             result.env_ok = True
@@ -212,15 +242,20 @@ def _l0_startup_probe(project_root, result):
 
 def _l1_readiness_probe(project_root, result):
     import re
+
     try:
         session_check_path = Path(project_root) / "scripts" / "governance" / "session_startup_check.py"
         if session_check_path.exists():
             proc = subprocess.run(
                 [os.sys.executable, str(session_check_path)],
-                capture_output=True, text=True, timeout=120,
-                cwd=project_root, encoding="utf-8", errors="replace",
+                capture_output=True,
+                text=True,
+                timeout=120,
+                cwd=project_root,
+                encoding="utf-8",
+                errors="replace",
             )
-            result.startup_check_ok = (proc.returncode == 0)
+            result.startup_check_ok = proc.returncode == 0
             output = proc.stdout.strip()
             passed_m = re.search(r"PASSED[:\s]+(\d+)", output, re.IGNORECASE)
             total_m = re.search(r"TOTAL[:\s]+(\d+)", output, re.IGNORECASE)
@@ -237,10 +272,14 @@ def _l1_readiness_probe(project_root, result):
         if gate_check_path.exists():
             proc = subprocess.run(
                 [os.sys.executable, str(gate_check_path)],
-                capture_output=True, text=True, timeout=60,
-                cwd=project_root, encoding="utf-8", errors="replace",
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=project_root,
+                encoding="utf-8",
+                errors="replace",
             )
-            result.gate_selfcheck_ok = (proc.returncode == 0)
+            result.gate_selfcheck_ok = proc.returncode == 0
         else:
             result.gate_selfcheck_ok = False
             result.warnings.append("gate_engine_selfcheck.py not found")
@@ -266,6 +305,7 @@ def _l2_liveness_probe(result):
 
         try:
             from zephyr.governance.drift_detection.orphan_scanner import OrphanScanner
+
             scanner = OrphanScanner()
             orphans = scanner.scan()
             result.orphan_resources = len(orphans)
@@ -274,6 +314,7 @@ def _l2_liveness_probe(result):
 
         try:
             from zephyr.governance.drift_detection.credibility_engine import CredibilityEngine
+
             engine = CredibilityEngine()
             for evt in getattr(scan_result, "events", [])[:10]:
                 engine.compute(
@@ -289,6 +330,7 @@ def _l2_liveness_probe(result):
 
         try:
             from zephyr.governance.drift_detection.correlation_engine import CorrelationEngine
+
             corr_engine = CorrelationEngine()
             co_occurrence = corr_engine.compute_co_occurrence()
             result.correlation_findings = len(co_occurrence)
@@ -310,7 +352,8 @@ def _l2_liveness_probe(result):
 def _l3_reconcile(result, scan_level="LIGHT"):
     try:
         try:
-            from zephyr.governance.drift_detection.forensics_engine import ForensicsEngine, ForensicsConfig
+            from zephyr.governance.drift_detection.forensics_engine import ForensicsConfig, ForensicsEngine
+
             forensics = ForensicsEngine(ForensicsConfig())
             forensics.build_timeline()
             result.forensics_reports = len(forensics.timeline_entries)
@@ -318,12 +361,15 @@ def _l3_reconcile(result, scan_level="LIGHT"):
             pass
 
         from zephyr.governance.rule_enforcement.drift_detector import trigger_recovery
-        recovery = trigger_recovery({
-            "module_id": "MOD-INF-023",
-            "changed_files": [],
-            "commit_message": "",
-            "scan_level": scan_level,
-        })
+
+        recovery = trigger_recovery(
+            {
+                "module_id": "MOD-INF-023",
+                "changed_files": [],
+                "commit_message": "",
+                "scan_level": scan_level,
+            }
+        )
 
         fix_results = recovery.get("fix_results", []) or []
         for fr in fix_results:
@@ -337,6 +383,7 @@ def _l3_reconcile(result, scan_level="LIGHT"):
         result.cascade_alerts = len(cascade_alerts)
 
         from zephyr.governance.drift_detection.drift_engine import ScanLevel, scan
+
         verify_result = _run_async(scan(level=ScanLevel.LIGHT))
         result.verify_events_remaining = verify_result.total_drift_events
 

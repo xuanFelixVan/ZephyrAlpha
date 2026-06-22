@@ -96,27 +96,40 @@ class FLEDogfoodMonitor:
             self.self_health = FLESelfHealth.HEALTHY
 
         if self.self_health != FLESelfHealth.HEALTHY:
-            self.dogfood_events.append({
-                "ts": now,
-                "health": self.self_health.value,
-                "issues": issues,
-            })
+            self.dogfood_events.append(
+                {
+                    "ts": now,
+                    "health": self.self_health.value,
+                    "issues": issues,
+                }
+            )
 
         return {
             "self_health": self.self_health.value,
             "issues": issues,
             "missed_cycles": self.missed_cycles,
             "recommendation": (
-                "trigger_external_watchdog" if self.self_health == FLESelfHealth.CRITICAL
-                else "reduce_self_check_interval" if self.self_health == FLESelfHealth.SICK
-                else "log_and_continue" if self.self_health == FLESelfHealth.DEGRADED
+                "trigger_external_watchdog"
+                if self.self_health == FLESelfHealth.CRITICAL
+                else "reduce_self_check_interval"
+                if self.self_health == FLESelfHealth.SICK
+                else "log_and_continue"
+                if self.self_health == FLESelfHealth.DEGRADED
                 else "continue"
             ),
         }
 
     def get_self_slo_compliance(self) -> dict:
         return {
-            "uptime_percent": round(100.0 * (1.0 - len([e for e in self.dogfood_events if e["health"] == FLESelfHealth.CRITICAL.value]) / max(len(self.dogfood_events), 1)), 1),
+            "uptime_percent": round(
+                100.0
+                * (
+                    1.0
+                    - len([e for e in self.dogfood_events if e["health"] == FLESelfHealth.CRITICAL.value])
+                    / max(len(self.dogfood_events), 1)
+                ),
+                1,
+            ),
             "degradation_events": len([e for e in self.dogfood_events if e["health"] != FLESelfHealth.HEALTHY.value]),
             "last_health": self.self_health.value,
             "healthy": self.self_health == FLESelfHealth.HEALTHY,

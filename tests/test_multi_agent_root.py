@@ -10,15 +10,14 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_multi_agent_root.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.multi_agent import (
-    AgentRole,
-    TaskStatus,
-    MergeStrategy,
     AgentCard,
+    AgentRole,
     DispatchedTask,
-    TaskDispatch,
+    MergeStrategy,
     ResultMerge,
+    TaskDispatch,
+    TaskStatus,
 )
 
 

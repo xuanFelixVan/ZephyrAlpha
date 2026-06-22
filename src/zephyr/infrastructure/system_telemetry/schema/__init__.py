@@ -67,4 +67,15 @@ class SchemaSubsystem:
         if "registered_schemas" not in self._schema:
             self._schema["registered_schemas"] = {}
         self._schema["registered_schemas"][schema_name] = version
-__all__ = ['SchemaSubsystem', 'check_compatibility', 'get_namespaces', 'get_version', 'parts', 'register_schema', 'tgt_parts', 'validate_metric_name']
+
+
+__all__ = [
+    "SchemaSubsystem",
+    "check_compatibility",
+    "get_namespaces",
+    "get_version",
+    "parts",
+    "register_schema",
+    "tgt_parts",
+    "validate_metric_name",
+]

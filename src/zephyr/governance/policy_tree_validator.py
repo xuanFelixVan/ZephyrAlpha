@@ -23,10 +23,10 @@ from __future__ import annotations
 
 """策略树自动一致性校验器 — 虚线箭头影响分析."""
 
-import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class ValidationViolation:
@@ -36,11 +36,13 @@ class ValidationViolation:
     expected: object = None
     severity: str = "WARN"
 
+
 @dataclass
 class PolicyTreeReport:
     valid: bool = False
     violations: list[ValidationViolation] = field(default_factory=list)
     impact_analysis: str = ""
+
 
 class PolicyTreeValidator:
     """策略树一致性 + 影响分析."""
@@ -60,44 +62,52 @@ class PolicyTreeValidator:
 
         for key, expected_type in self._REQUIRED_KEYS.items():
             if key not in policy:
-                violations.append(ValidationViolation(
-                    path=f"root.{key}",
-                    rule="required_key_missing",
-                    actual=None,
-                    expected=expected_type.__name__,
-                    severity="ERROR",
-                ))
+                violations.append(
+                    ValidationViolation(
+                        path=f"root.{key}",
+                        rule="required_key_missing",
+                        actual=None,
+                        expected=expected_type.__name__,
+                        severity="ERROR",
+                    )
+                )
             elif not isinstance(policy[key], expected_type):
-                violations.append(ValidationViolation(
-                    path=f"root.{key}",
-                    rule="type_mismatch",
-                    actual=type(policy[key]).__name__,
-                    expected=expected_type.__name__,
-                    severity="ERROR",
-                ))
+                violations.append(
+                    ValidationViolation(
+                        path=f"root.{key}",
+                        rule="type_mismatch",
+                        actual=type(policy[key]).__name__,
+                        expected=expected_type.__name__,
+                        severity="ERROR",
+                    )
+                )
 
         if "thresholds" in policy and isinstance(policy["thresholds"], dict):
             t = policy["thresholds"]
             for th_key in ["high_confidence", "medium_confidence", "low_confidence"]:
                 if th_key in t and not (0 < t[th_key] <= 1):
-                    violations.append(ValidationViolation(
-                        path=f"thresholds.{th_key}",
-                        rule="out_of_range",
-                        actual=t[th_key],
-                        expected="0.0-1.0",
-                        severity="ERROR",
-                    ))
+                    violations.append(
+                        ValidationViolation(
+                            path=f"thresholds.{th_key}",
+                            rule="out_of_range",
+                            actual=t[th_key],
+                            expected="0.0-1.0",
+                            severity="ERROR",
+                        )
+                    )
 
         if "auto_fix" in policy and isinstance(policy["auto_fix"], dict):
             af = policy["auto_fix"]
             if af.get("doom_loop_max_attempts", 0) < 1:
-                violations.append(ValidationViolation(
-                    path="auto_fix.doom_loop_max_attempts",
-                    rule="must_be_positive",
-                    actual=af["doom_loop_max_attempts"],
-                    expected=">=1",
-                    severity="WARN",
-                ))
+                violations.append(
+                    ValidationViolation(
+                        path="auto_fix.doom_loop_max_attempts",
+                        rule="must_be_positive",
+                        actual=af["doom_loop_max_attempts"],
+                        expected=">=1",
+                        severity="WARN",
+                    )
+                )
 
         valid = len([v for v in violations if v.severity == "ERROR"]) == 0
 
@@ -112,6 +122,7 @@ class PolicyTreeValidator:
     def validate_from_file(self, config_path: str | Path) -> PolicyTreeReport:
         """从 Python config 对象校验."""
         from zephyr.governance.config import POLICY_TREE
+
         return self.validate(POLICY_TREE)
 
     @staticmethod

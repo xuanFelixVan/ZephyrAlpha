@@ -19,4 +19,4 @@ from zephyr.integration.shared_08.timestamp_utils import (
     utcnow,
 )
 
-__all__ = ["Timestamp", "NaiveDatetimeError", "utcnow", "ensure_utc", "to_local", "from_unix_ns"]
+__all__ = ["NaiveDatetimeError", "Timestamp", "ensure_utc", "from_unix_ns", "to_local", "utcnow"]

@@ -14,25 +14,22 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
-from pathlib import Path
 
 import pytest
 
 from zephyr.trading.orchestrator.hallucination_detector import (
     BudgetState,
-    CoVeStepError,
     FallbackMode,
     HallucinationDetector,
     HallucinationResult,
-    KEYWORD_HALLU_RULES,
     ModelCallResult,
     RiskLevel,
     TriggerLevel,
     _contains_negation,
-    _numeric_out_of_range,
-    _suspect_citations,
     _frozen_asset_mutation,
     _missing_files,
+    _numeric_out_of_range,
+    _suspect_citations,
     _token_overlap,
     build_detector_with_defaults,
 )
@@ -79,7 +76,9 @@ class TestModelCallResult:
 
 class TestHallucinationResult:
     def test_minimal_creation(self):
-        r = HallucinationResult(claim="test claim", is_hallucination=False, confidence=0.9, risk_level="L", inconsistency_score=0.1)
+        r = HallucinationResult(
+            claim="test claim", is_hallucination=False, confidence=0.9, risk_level="L", inconsistency_score=0.1
+        )
         assert r.claim == "test claim"
         assert r.is_hallucination is False
         assert r.triggered is True
@@ -286,10 +285,12 @@ class TestHallucinationDetectorDetectSingleModel:
     def test_single_model_primary_only(self):
         def mock_primary(prompt, *, purpose):
             return ModelCallResult(
-                content=json.dumps({
-                    "baseline_answer": "test answer",
-                    "verify_questions": ["q1?", "q2?", "q3?"],
-                }),
+                content=json.dumps(
+                    {
+                        "baseline_answer": "test answer",
+                        "verify_questions": ["q1?", "q2?", "q3?"],
+                    }
+                ),
                 cost_usd=0.001,
                 success=True,
             )
@@ -304,21 +305,25 @@ class TestHallucinationDetectorDetectFullCoVe:
     def test_full_cove_consistent(self):
         def mock_primary(prompt, *, purpose):
             return ModelCallResult(
-                content=json.dumps({
-                    "baseline_answer": "the sky is blue",
-                    "verify_questions": ["what color is the sky?", "is the sky blue?", "does the sky appear blue?"],
-                }),
+                content=json.dumps(
+                    {
+                        "baseline_answer": "the sky is blue",
+                        "verify_questions": ["what color is the sky?", "is the sky blue?", "does the sky appear blue?"],
+                    }
+                ),
                 cost_usd=0.001,
                 success=True,
             )
 
         def mock_verifier(prompt, *, purpose):
             return ModelCallResult(
-                content=json.dumps([
-                    {"question": "what color is the sky?", "answer": "blue", "confidence_self": 0.9},
-                    {"question": "is the sky blue?", "answer": "yes it is blue", "confidence_self": 0.95},
-                    {"question": "does the sky appear blue?", "answer": "the sky is blue", "confidence_self": 0.9},
-                ]),
+                content=json.dumps(
+                    [
+                        {"question": "what color is the sky?", "answer": "blue", "confidence_self": 0.9},
+                        {"question": "is the sky blue?", "answer": "yes it is blue", "confidence_self": 0.95},
+                        {"question": "does the sky appear blue?", "answer": "the sky is blue", "confidence_self": 0.9},
+                    ]
+                ),
                 cost_usd=0.001,
                 success=True,
             )
@@ -333,7 +338,10 @@ class TestHallucinationDetectorDetectFullCoVe:
         def mock_primary(prompt, *, purpose):
             return ModelCallResult(success=False, error="API unreachable")
 
-        d = HallucinationDetector(primary_caller=mock_primary, verifier_caller=lambda p, **kw: ModelCallResult(content="[]", cost_usd=0.001, success=True))
+        d = HallucinationDetector(
+            primary_caller=mock_primary,
+            verifier_caller=lambda p, **kw: ModelCallResult(content="[]", cost_usd=0.001, success=True),
+        )
         result = d.detect("some claim", risk_level=RiskLevel.L)
         assert result.fallback_used == FallbackMode.KEYWORD.value
 

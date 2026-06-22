@@ -20,10 +20,11 @@
 # [TESTS] pytest tests/test_resilience_circuit_breaker.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.resilience.circuit_breaker import (
-    CircuitState,
     CircuitBreaker,
     CircuitOpenError,
+    CircuitState,
 )
 
 
@@ -72,6 +73,7 @@ class TestCircuitBreakerTransitions:
         cb.record_failure()
         assert cb.state == CircuitState.OPEN
         import time
+
         time.sleep(0.01)
         state = cb._transition()
         assert state == CircuitState.HALF_OPEN
@@ -80,6 +82,7 @@ class TestCircuitBreakerTransitions:
         cb = CircuitBreaker("test", failure_threshold=1, recovery_timeout_ms=0)
         cb.record_failure()
         import time
+
         time.sleep(0.01)
         cb._transition()
         cb.record_success()
@@ -89,6 +92,7 @@ class TestCircuitBreakerTransitions:
         cb = CircuitBreaker("test", failure_threshold=1, recovery_timeout_ms=0)
         cb.record_failure()
         import time
+
         time.sleep(0.01)
         cb._transition()
         cb.record_failure()
@@ -111,16 +115,20 @@ class TestCircuitBreakerCall:
 
     def test_call_propagates_exception_and_records_failure(self):
         cb = CircuitBreaker("test", failure_threshold=3)
+
         def failing():
             raise ValueError("boom")
+
         with pytest.raises(ValueError):
             cb.call(failing)
         assert cb.failure_count == 1
 
     def test_call_opens_after_enough_failures(self):
         cb = CircuitBreaker("test", failure_threshold=2)
+
         def failing():
             raise ValueError("boom")
+
         with pytest.raises(ValueError):
             cb.call(failing)
         with pytest.raises(ValueError):
@@ -133,6 +141,7 @@ class TestCircuitBreakerCall:
 class TestCircuitOpenError:
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         err = CircuitOpenError("test_cb")
         assert isinstance(err, ZephyrBaseError)
         assert err.circuit_name == "test_cb"

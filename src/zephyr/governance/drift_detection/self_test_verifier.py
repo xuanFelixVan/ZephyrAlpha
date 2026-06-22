@@ -26,15 +26,12 @@ module_id: MOD-INF-023
 至少 8 项收敛性检查（循环import / 逻辑碎片化 / 级联递归等）。
 对标 blueprint.md §2.20 / TASK-INF-0021。
 """
+
 from __future__ import annotations
 
-import hashlib
 import os
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -48,7 +45,7 @@ class VerifierResult:
 class SelfTestVerifier:
     MIN_CHECKS: int = 8
 
-    def __init__(self, base_dir: Optional[str] = None) -> None:
+    def __init__(self, base_dir: str | None = None) -> None:
         if base_dir is None:
             base_dir = os.path.dirname(os.path.abspath(__file__))
         self._base_dir = base_dir
@@ -56,13 +53,14 @@ class SelfTestVerifier:
     def check_circular_import(self) -> dict[str, str]:
         try:
             import ast
+
             deps: dict[str, set[str]] = {}
             for fname in os.listdir(self._base_dir):
                 if not fname.endswith(".py") or fname.startswith("__"):
                     continue
                 fp = os.path.join(self._base_dir, fname)
                 try:
-                    with open(fp, "r", encoding="utf-8") as fh:
+                    with open(fp, encoding="utf-8") as fh:
                         tree = ast.parse(fh.read(), filename=fname)
                 except (SyntaxError, UnicodeDecodeError, OSError):
                     continue
@@ -75,6 +73,7 @@ class SelfTestVerifier:
             visited: set[str] = set()
             stack: set[str] = set()
             circular: list[str] = []
+
             def dfs(node: str) -> None:
                 if node in stack:
                     circular.append(node)
@@ -86,6 +85,7 @@ class SelfTestVerifier:
                 for child in deps.get(node, set()):
                     dfs(child)
                 stack.discard(node)
+
             for n in deps:
                 dfs(n)
             if circular:
@@ -103,7 +103,8 @@ class SelfTestVerifier:
             if not os.path.exists(cascade_path):
                 return {"check": "cascade_recursion", "status": "FAIL", "detail": "cascade_detector.py MISSING"}
             import ast
-            with open(state_machine_path, "r", encoding="utf-8") as fh:
+
+            with open(state_machine_path, encoding="utf-8") as fh:
                 tree = ast.parse(fh.read(), filename="state_machine.py")
             has_auto_transition = False
             has_fix_failed_guard = False
@@ -118,13 +119,18 @@ class SelfTestVerifier:
                                         has_fix_failed_guard = True
             if not has_auto_transition:
                 return {"check": "cascade_recursion", "status": "FAIL", "detail": "Missing auto_transition guard"}
-            return {"check": "cascade_recursion", "status": "PASS", "detail": "Cascade guard + auto_transition verified"}
+            return {
+                "check": "cascade_recursion",
+                "status": "PASS",
+                "detail": "Cascade guard + auto_transition verified",
+            }
         except Exception as e:
             return {"check": "cascade_recursion", "status": "ERROR", "detail": str(e)[:100]}
 
     def check_logic_fragmentation(self) -> dict[str, str]:
         try:
             import ast
+
             file_func_counts: dict[str, int] = {}
             file_class_counts: dict[str, int] = {}
             for fname in os.listdir(self._base_dir):
@@ -132,7 +138,7 @@ class SelfTestVerifier:
                     continue
                 fp = os.path.join(self._base_dir, fname)
                 try:
-                    with open(fp, "r", encoding="utf-8") as fh:
+                    with open(fp, encoding="utf-8") as fh:
                         tree = ast.parse(fh.read(), filename=fname)
                 except (SyntaxError, UnicodeDecodeError, OSError):
                     continue
@@ -164,7 +170,8 @@ class SelfTestVerifier:
             return {"check": "data_integrity", "status": "FAIL", "detail": "_detector-registry.yaml MISSING"}
         try:
             import yaml
-            with open(registry, "r", encoding="utf-8") as fh:
+
+            with open(registry, encoding="utf-8") as fh:
                 data = yaml.safe_load(fh)
             if data is None:
                 return {"check": "data_integrity", "status": "FAIL", "detail": "Registry is empty"}
@@ -177,18 +184,37 @@ class SelfTestVerifier:
             ids = [d.get("id", "") for d in all_dets if isinstance(d, dict)]
             duplicates = [i for i in ids if ids.count(i) > 1]
             if duplicates:
-                return {"check": "data_integrity", "status": "FAIL", "detail": f"Duplicate detector IDs: {list(set(duplicates))}"}
-            return {"check": "data_integrity", "status": "PASS", "detail": f"{len(all_dets)} detectors, no duplicate IDs"}
+                return {
+                    "check": "data_integrity",
+                    "status": "FAIL",
+                    "detail": f"Duplicate detector IDs: {list(set(duplicates))}",
+                }
+            return {
+                "check": "data_integrity",
+                "status": "PASS",
+                "detail": f"{len(all_dets)} detectors, no duplicate IDs",
+            }
         except Exception as e:
             return {"check": "data_integrity", "status": "FAIL", "detail": f"Registry parse error: {e}"}
 
     def check_file_completeness(self) -> dict[str, str]:
         required = [
-            "drift_models.py", "drift_engine.py", "reconciler.py", "state_machine.py",
-            "baseline_manager.py", "detector_dispatcher.py", "scan_mutex.py",
-            "drift_hotfix_bypass.py", "suppression_learner.py", "gate_persistence.py",
-            "headless_scanner.py", "cross_module_score.py", "self_check.py",
-            "integration_test_runner.py", "_detector-registry.yaml", "__init__.py",
+            "drift_models.py",
+            "drift_engine.py",
+            "reconciler.py",
+            "state_machine.py",
+            "baseline_manager.py",
+            "detector_dispatcher.py",
+            "scan_mutex.py",
+            "drift_hotfix_bypass.py",
+            "suppression_learner.py",
+            "gate_persistence.py",
+            "headless_scanner.py",
+            "cross_module_score.py",
+            "self_check.py",
+            "integration_test_runner.py",
+            "_detector-registry.yaml",
+            "__init__.py",
         ]
         missing = [f for f in required if not os.path.exists(os.path.join(self._base_dir, f))]
         if missing:
@@ -200,7 +226,7 @@ class SelfTestVerifier:
             mutex_path = os.path.join(self._base_dir, "scan_mutex.py")
             if not os.path.exists(mutex_path):
                 return {"check": "race_condition", "status": "FAIL", "detail": "scan_mutex.py MISSING"}
-            with open(mutex_path, "r", encoding="utf-8") as fh:
+            with open(mutex_path, encoding="utf-8") as fh:
                 content = fh.read()
             has_lock = "Lock" in content or "lock" in content or "mutex" in content.lower()
             has_context = "contextmanager" in content.lower() or "with" in content
@@ -218,14 +244,14 @@ class SelfTestVerifier:
             sm_path = os.path.join(self._base_dir, "state_machine.py")
             if not os.path.exists(sm_path):
                 return {"check": "ttl_expiry", "status": "FAIL", "detail": "state_machine.py MISSING"}
-            with open(sm_path, "r", encoding="utf-8") as fh:
+            with open(sm_path, encoding="utf-8") as fh:
                 content = fh.read()
             has_ttl = "TTL_DETECTED_HOURS" in content or "check_ttl" in content
             has_dead_letter = "DEAD_LETTER" in content
             ckpt_path = os.path.join(self._base_dir, "drift_engine.py")
             has_checkpoint = False
             if os.path.exists(ckpt_path):
-                with open(ckpt_path, "r", encoding="utf-8") as fh:
+                with open(ckpt_path, encoding="utf-8") as fh:
                     engine_content = fh.read()
                 has_checkpoint = "CheckpointWriter" in engine_content
             if has_ttl and has_dead_letter and has_checkpoint:
@@ -234,9 +260,12 @@ class SelfTestVerifier:
                 return {"check": "ttl_expiry", "status": "PASS", "detail": "TTL + DEAD_LETTER guards present"}
             else:
                 missing_parts = []
-                if not has_ttl: missing_parts.append("TTL_DETECTED_HOURS")
-                if not has_dead_letter: missing_parts.append("DEAD_LETTER")
-                if not has_checkpoint: missing_parts.append("CheckpointWriter")
+                if not has_ttl:
+                    missing_parts.append("TTL_DETECTED_HOURS")
+                if not has_dead_letter:
+                    missing_parts.append("DEAD_LETTER")
+                if not has_checkpoint:
+                    missing_parts.append("CheckpointWriter")
                 return {"check": "ttl_expiry", "status": "FAIL", "detail": f"Missing: {missing_parts}"}
         except Exception as e:
             return {"check": "ttl_expiry", "status": "ERROR", "detail": str(e)[:100]}
@@ -246,13 +275,17 @@ class SelfTestVerifier:
             sm_path = os.path.join(self._base_dir, "state_machine.py")
             if not os.path.exists(sm_path):
                 return {"check": "dead_letter", "status": "FAIL", "detail": "state_machine.py MISSING"}
-            with open(sm_path, "r", encoding="utf-8") as fh:
+            with open(sm_path, encoding="utf-8") as fh:
                 content = fh.read()
             has_dead_letter = "DEAD_LETTER" in content
             has_dead_transition_from = "DETECTED" in content and "DEAD_LETTER" in content
             has_dead_transition_to = "DEAD_LETTER" in content and "ACKNOWLEDGED" in content
             if has_dead_letter and has_dead_transition_from:
-                return {"check": "dead_letter", "status": "PASS", "detail": "DEAD_LETTER pathway: DETECTED→DEAD_LETTER→ACKNOWLEDGED"}
+                return {
+                    "check": "dead_letter",
+                    "status": "PASS",
+                    "detail": "DEAD_LETTER pathway: DETECTED→DEAD_LETTER→ACKNOWLEDGED",
+                }
             elif has_dead_letter:
                 return {"check": "dead_letter", "status": "PASS", "detail": "DEAD_LETTER state defined"}
             else:
@@ -276,5 +309,7 @@ class SelfTestVerifier:
             test_id=uuid.uuid4(),
             passed=passed,
             checks=checks,
-            summary=f"{sum(1 for c in checks if c['status']=='PASS')}/{len(checks)} checks passed" if passed else "FAILURES",
+            summary=f"{sum(1 for c in checks if c['status'] == 'PASS')}/{len(checks)} checks passed"
+            if passed
+            else "FAILURES",
         )

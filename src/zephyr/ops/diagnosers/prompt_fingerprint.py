@@ -25,8 +25,8 @@ Blindspot: LLM prompts drift silently over time without version tracking.
 Risk: R14 — Prompt drift causes diagnostic inconsistency across sessions.
 """
 
-from dataclasses import dataclass
 import hashlib
+from dataclasses import dataclass
 
 
 @dataclass

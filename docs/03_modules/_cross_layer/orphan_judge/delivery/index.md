@@ -2,9 +2,11 @@
 doc_type: index
 status: Active
 generated: '2026-05-08'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-INF-029
 title: Delivery
 module_id: MOD-012
+updated: "2026-06-22"
+---
 
 # Delivery — 孤儿判定子系统交付记录
 
@@ -38,4 +40,4 @@ module_id: MOD-012
 
 ## 父级目录
 
-- 父级：[orphan-judge](../blueprint.md)
+- 父级：[orphan_judge](../blueprint.md)

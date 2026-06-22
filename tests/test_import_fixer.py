@@ -16,7 +16,9 @@ from pathlib import Path
 
 import pytest
 
-import_mod = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.import_fixer", reason="import_fixer not available")
+import_mod = pytest.importorskip(
+    "zephyr.security.access_control.auto_fix_engine_03.import_fixer", reason="import_fixer not available"
+)
 ImportFixer = import_mod.ImportFixer
 
 models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
@@ -147,11 +149,13 @@ class TestImportFixerTryFixModule:
     def test_short_module_name_returns_none(self):
         fixer = ImportFixer()
         from pathlib import Path
+
         result = fixer._try_fix_module("zephyr", Path("src"))
         assert result is None
 
     def test_nonexistent_module_returns_none(self):
         fixer = ImportFixer()
         from pathlib import Path
+
         result = fixer._try_fix_module("zephyr.nonexistent.module.xyz", Path("src"))
         assert result is None or isinstance(result, str)

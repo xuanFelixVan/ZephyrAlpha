@@ -14,6 +14,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 废弃路径写入检测（ABS-18 — 禁止在废弃路径下新建文件）
@@ -56,6 +57,7 @@ DEPRECATED_PATH_PREFIXES = [
 ]
 ALLOWED_IN_DOCS_ROOT = {"docs/migration-declaration.md", "docs/index.md", "docs/README.md"}
 
+
 def get_new_files() -> list[str]:
     """获取新增文件列表"""
     new_files = []
@@ -75,6 +77,7 @@ def get_new_files() -> list[str]:
     return list(set(new_files))
     "get new files."
 
+
 def check_deprecated_path_writes() -> list[dict]:
     """check deprecated path writes."""
     findings = []
@@ -92,6 +95,7 @@ def check_deprecated_path_writes() -> list[dict]:
     return findings
     "check deprecated path writes."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="废弃路径写入检测（ABS-18）")
@@ -101,13 +105,14 @@ def main() -> None:
     if findings:
         print(f"\n[DEPR-PATH-WRITE] {len(findings)} 个新文件写入废弃路径！", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] {f['file']}', file=sys.stderr)
-            print(f'    废弃路径: {f['deprecated_prefix']}', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['file']}", file=sys.stderr)
+            print(f"    废弃路径: {f['deprecated_prefix']}", file=sys.stderr)
     else:
         print("[DEPR-PATH-WRITE] 无废弃路径写入", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

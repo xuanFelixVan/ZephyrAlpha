@@ -16,23 +16,21 @@ import json
 import sqlite3
 from io import StringIO
 from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from zephyr.governance.self_test import (
-    SelfTest,
-    SelfTestReport,
     CheckResult,
     CheckStatus,
-    _check_sqlite_integrity,
-    _check_ke_count,
+    SelfTest,
+    SelfTestReport,
     _check_category_coverage,
-    _check_wal_health,
-    _check_freeze_state,
-    _check_tombstone_integrity,
-    _check_silent_period,
     _check_filesystem_permissions,
+    _check_freeze_state,
+    _check_ke_count,
+    _check_silent_period,
+    _check_sqlite_integrity,
+    _check_tombstone_integrity,
+    _check_wal_health,
 )
 
 
@@ -96,6 +94,7 @@ class TestSelfTest:
     def test_run_with_fail_check(self, tmp_path: Path):
         def _fail_check(root):
             return CheckResult(1, "FailTest", CheckStatus.FAIL, "broken")
+
         st = SelfTest(project_root=tmp_path)
         st.CHECK_FUNCTIONS = [_fail_check]
         report = st.run()
@@ -105,6 +104,7 @@ class TestSelfTest:
     def test_run_with_warn_check(self, tmp_path: Path):
         def _warn_check(root):
             return CheckResult(1, "WarnTest", CheckStatus.WARN, "meh")
+
         st = SelfTest(project_root=tmp_path)
         st.CHECK_FUNCTIONS = [_warn_check]
         report = st.run()
@@ -114,6 +114,7 @@ class TestSelfTest:
     def test_run_exception_in_check(self, tmp_path: Path):
         def _boom(root):
             raise RuntimeError("boom")
+
         st = SelfTest(project_root=tmp_path)
         st.CHECK_FUNCTIONS = [_boom]
         report = st.run()

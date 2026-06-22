@@ -17,8 +17,6 @@ import hmac
 import json
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.integrity import IntegrityVerifier, MerkleAggregator
 
 
@@ -261,7 +259,7 @@ class TestBoundaryConditions:
         events: list[dict] = []
         prev_hash = ""
         for i in range(50):
-            event: dict = {"event_type": f"t{i%5}", "timestamp": f"2026-01-{i+1:02d}", "prev_entry_hash": prev_hash}
+            event: dict = {"event_type": f"t{i % 5}", "timestamp": f"2026-01-{i + 1:02d}", "prev_entry_hash": prev_hash}
             verify_event = {k: v for k, v in event.items() if k not in ("entry_hash", "hmac_signature")}
             prev_hash = hashlib.sha256(
                 json.dumps(verify_event, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")

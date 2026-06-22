@@ -127,9 +127,8 @@ class TestNoopSpan:
         assert span.status == "OK"
 
     def test_error_finish(self):
-        with pytest.raises(ValueError):
-            with ss.noop_span("test:error") as span:
-                raise ValueError("test error")
+        with pytest.raises(ValueError), ss.noop_span("test:error") as span:
+            raise ValueError("test error")
         assert span.status == "ERROR"
 
     def test_with_attributes(self):

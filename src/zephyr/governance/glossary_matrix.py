@@ -11,16 +11,15 @@ from __future__ import annotations
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
-
-from typing import Optional
-
 from pydantic import BaseModel
+
 
 class GlossaryEntry(BaseModel):
     term: str
     definition: str
     domain: str
     acronym: str = ""
+
 
 GLOSSARY: dict[str, GlossaryEntry] = {
     "Alpha": GlossaryEntry(term="Alpha", definition="超额收益——策略相对基准的超额回报", domain="量化", acronym="α"),
@@ -47,10 +46,13 @@ GLOSSARY: dict[str, GlossaryEntry] = {
     "Benchmark": GlossaryEntry(term="Benchmark", definition="业绩基准——如S&P500/沪深300", domain="量化"),
 }
 
-def lookup(term: str) -> Optional[GlossaryEntry]:
+
+def lookup(term: str) -> GlossaryEntry | None:
     return GLOSSARY.get(term)
+
 
 def list_terms() -> list[str]:
     return sorted(GLOSSARY.keys())
+
 
 GLOSSARY_COUNT: int = len(GLOSSARY)

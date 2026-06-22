@@ -17,21 +17,19 @@
 
 from __future__ import annotations
 
-import pytest
 from datetime import datetime
 
-from zephyr.shared.shared_services.models import TaskCard
+import pytest
+
+from zephyr.autonomy_core.engine import SpecEngine
 from zephyr.autonomy_core.integration.pipeline_bridge import (
     PipelineSkillBridge,
-    SkillContextInjector,
-    SkillInjectionResult,
 )
 from zephyr.autonomy_core.skill_loader import SkillLoader
-from zephyr.autonomy_core.engine import SpecEngine, UpgradeResult
+from zephyr.shared.shared_services.models import TaskCard
 
 
 class TestSkillBridgeIntegration:
-
     def test_inject_for_database_task(self):
         """数据库任务 → 应匹配 database-specialist + implementer."""
         bridge = PipelineSkillBridge()
@@ -99,7 +97,6 @@ class TestSkillBridgeIntegration:
 
 
 class TestPipelineOrchestratorSkillFlow:
-
     def test_dispatch_includes_skill_injection(self):
         """PipelineOrchestrator.dispatch(dry_run=True) 结果含 skill_injection 字段."""
         try:
@@ -178,7 +175,10 @@ class TestPipelineOrchestratorSkillFlow:
         )
 
         output = PipelineOrchestrator._call_model(
-            "M1", "A", "deepseek", task,
+            "M1",
+            "A",
+            "deepseek",
+            task,
             token_divisor=1,
             dry_run=True,
             skill_injection=injection,
@@ -190,7 +190,6 @@ class TestPipelineOrchestratorSkillFlow:
 
 
 class TestSpecEngineIntegration:
-
     def test_engine_status_report(self):
         """SpecEngine.status() 应返回系统技能统计."""
         engine = SpecEngine()
@@ -215,7 +214,6 @@ class TestSpecEngineIntegration:
 
 
 class TestSkillLoaderL3References:
-
     def test_l3_references_available(self):
         """已注册 Skill 的 L3 references 能被列出."""
         loader = SkillLoader()

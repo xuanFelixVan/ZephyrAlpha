@@ -80,7 +80,9 @@ class TestHealthMonitorDelegation:
 
     def test_pressure_level_fallback_on_import_error(self):
         monitor = HealthMonitor()
-        with patch.dict("sys.modules", {"zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine": None}):
+        with patch.dict(
+            "sys.modules", {"zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine": None}
+        ):
             level = monitor.pressure_level()
             assert isinstance(level, PressureLevel)
 
@@ -108,8 +110,9 @@ class TestAutoRuntimeCoreLifecycle:
             core = AutoRuntimeCore()
             # _start_local_models connects to local Ollama (HTTP/localhost:11434).
             # Without Ollama it hangs 25s+, must mock.
-            with patch.object(core, "_start_local_models"), patch.object(
-                core._lifecycle, "boot_sequence", return_value=BootReport(success=True)
+            with (
+                patch.object(core, "_start_local_models"),
+                patch.object(core._lifecycle, "boot_sequence", return_value=BootReport(success=True)),
             ):
                 core.boot()
             mock_engine.start_monitor.assert_called_once_with(interval=30.0)
@@ -124,8 +127,9 @@ class TestAutoRuntimeCoreLifecycle:
             return_value=mock_engine,
         ):
             core = AutoRuntimeCore()
-            with patch.object(core, "_start_local_models"), patch.object(
-                core._lifecycle, "shutdown_sequence", return_value=ShutdownReport()
+            with (
+                patch.object(core, "_start_local_models"),
+                patch.object(core._lifecycle, "shutdown_sequence", return_value=ShutdownReport()),
             ):
                 core.shutdown()
             mock_engine.stop_monitor.assert_called_once()

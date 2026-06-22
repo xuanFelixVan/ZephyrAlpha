@@ -3,19 +3,26 @@
 # [MODULE] zephyr.infrastructure.health_monitor
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
-# [CONSUMERS] 
+# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 
 """Health Monitor — 全系统健康聚合模块"""
-from zephyr.infrastructure.health_monitor.health_aggregator import HealthAggregator, SystemHealth, HealthReport, check_all
+
+from zephyr.infrastructure.health_monitor.health_aggregator import (
+    HealthAggregator,
+    HealthReport,
+    SystemHealth,
+    check_all,
+)
+
 __all__ = [
     "HealthAggregator",
-    "SystemHealth",
     "HealthReport",
+    "SystemHealth",
     "check_all",
     "health_aggregator",
 ]

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """AI Agent 质量反馈闭环（CT-AGENT-QUALITY）——task完成质量评分+agent绩效追踪。"""
 
+
 class AgentQualityTracker:
     def __init__(self):
         self._scores: dict[str, list[float]] = {}

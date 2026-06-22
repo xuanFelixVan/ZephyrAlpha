@@ -1,12 +1,13 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/sync_rule_registry.py | §
 """
 Checks that every RULE-ZERO through RULE-N in .trae/rules/project_rules.md
-has a corresponding TRAE-* entry in the rule-registry.md TRAE domain.
+has a corresponding TRAE-* entry in the _index.yaml TRAE domain.
 
 Exit codes: 0 = synced, 1 = drift detected, 2 = error
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -16,15 +17,15 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
-
 
 __manifest__ = """
 args: []
 description: >
   TRAE 规则登记同步校验 —— 扫描 .trae/rules/project_rules.md 中所有 RULE-* 条目，
-  检查是否已在 rule-registry.md 的 TRAE 域中登记。RULE-FOUR（创建即注册协议）的执行验证。
+  检查是否已在 _index.yaml 的 TRAE 域中登记。RULE-FOUR（创建即注册协议）的执行验证。
   Exit 0 = CLEAN, Exit 1 = DRIFT（缺失/孤儿登记）。
 dimensions:
 - D3
@@ -34,14 +35,13 @@ timeout_seconds: 15
 warn_only: false
 """
 
-import os
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 PROJECT_RULES = ROOT / ".trae" / "rules" / "project_rules.md"
-RULE_REGISTRY = ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule-registry.md"
+RULE_REGISTRY = ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "_index.yaml"
 
 
 def extract_rules_from_project() -> dict[str, str]:
@@ -67,7 +67,7 @@ def extract_rules_from_project() -> dict[str, str]:
 
 
 def extract_trae_from_registry() -> dict[str, str]:
-    """Parse rule-registry.md → {TRAE-NNN: description text}."""
+    """Parse _index.yaml → {TRAE-NNN: description text}."""
     if not RULE_REGISTRY.exists():
         print(f"ERROR: {RULE_REGISTRY} not found")
         sys.exit(EXIT_ERROR)
@@ -122,7 +122,7 @@ def main() -> int:
         if trae_id is None:
             missing.append(f"  {rule_id} (unmappable: {summary})")
         elif trae_id not in trae_entries:
-            missing.append(f"  {rule_id} → {trae_id} (missing in rule-registry.md): {summary}")
+            missing.append(f"  {rule_id} → {trae_id} (missing in _index.yaml): {summary}")
 
     for trae_id in sorted(trae_entries):
         # Reverse lookup: which RULE maps to this TRAE?
@@ -132,15 +132,13 @@ def main() -> int:
                 mapped_from = rid
                 break
         if mapped_from is None:
-            orphaned.append(
-                f"  {trae_id} ({trae_entries[trae_id][:80]}) — no corresponding RULE-* in project_rules.md"
-            )
+            orphaned.append(f"  {trae_id} ({trae_entries[trae_id][:80]}) — no corresponding RULE-* in project_rules.md")
 
     print(f"project_rules.md: {len(rules)} RULE-* entries")
-    print(f"rule-registry.md:  {len(trae_entries)} TRAE-* entries")
+    print(f"_index.yaml:  {len(trae_entries)} TRAE-* entries")
 
     if missing:
-        print(f"\n[MISSING] {len(missing)} RULE-* not registered in rule-registry.md:")
+        print(f"\n[MISSING] {len(missing)} RULE-* not registered in _index.yaml:")
         for m in missing:
             print(m)
 

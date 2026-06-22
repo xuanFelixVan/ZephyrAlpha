@@ -15,13 +15,9 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.hallucination_guard import (
     FileState,
     HallucinationGuard,
-    HallucinationResult,
-    VerificationRound,
 )
 
 
@@ -105,7 +101,17 @@ class TestVerifyRound:
 
         guard = HallucinationGuard(project_root=tmp_path)
         actual = guard.compute_actual_state(files=[str(py_file)])
-        claimed = [{"path": s.path, "md5": s.md5, "sha256": s.sha256, "line_count": s.line_count, "function_signatures": s.function_signatures, "class_names": s.class_names} for s in actual]
+        claimed = [
+            {
+                "path": s.path,
+                "md5": s.md5,
+                "sha256": s.sha256,
+                "line_count": s.line_count,
+                "function_signatures": s.function_signatures,
+                "class_names": s.class_names,
+            }
+            for s in actual
+        ]
 
         vr = guard.verify_round(claimed, files=[str(py_file)])
         assert vr.passed is True
@@ -119,7 +125,16 @@ class TestVerifyRound:
         py_file.write_text("x = 1\n", encoding="utf-8")
 
         guard = HallucinationGuard(project_root=tmp_path)
-        claimed = [{"path": str(py_file.relative_to(tmp_path)), "md5": "bad_md5", "sha256": "", "line_count": 1, "function_signatures": [], "class_names": []}]
+        claimed = [
+            {
+                "path": str(py_file.relative_to(tmp_path)),
+                "md5": "bad_md5",
+                "sha256": "",
+                "line_count": 1,
+                "function_signatures": [],
+                "class_names": [],
+            }
+        ]
 
         vr = guard.verify_round(claimed, files=[str(py_file)])
         assert vr.passed is False
@@ -127,7 +142,16 @@ class TestVerifyRound:
 
     def test_missing_file_in_claim(self, tmp_path):
         guard = HallucinationGuard(project_root=tmp_path)
-        claimed = [{"path": "ghost.py", "md5": "abc", "sha256": "", "line_count": 0, "function_signatures": [], "class_names": []}]
+        claimed = [
+            {
+                "path": "ghost.py",
+                "md5": "abc",
+                "sha256": "",
+                "line_count": 0,
+                "function_signatures": [],
+                "class_names": [],
+            }
+        ]
         vr = guard.verify_round(claimed, files=[])
         assert vr.passed is False
         assert len(vr.mismatches) > 0
@@ -147,7 +171,17 @@ class TestVerifyRound:
 
         guard = HallucinationGuard(project_root=tmp_path)
         actual = guard.compute_actual_state(files=[str(py_file)])
-        claimed = [{"path": s.path, "md5": s.md5, "sha256": s.sha256, "line_count": 999, "function_signatures": s.function_signatures, "class_names": s.class_names} for s in actual]
+        claimed = [
+            {
+                "path": s.path,
+                "md5": s.md5,
+                "sha256": s.sha256,
+                "line_count": 999,
+                "function_signatures": s.function_signatures,
+                "class_names": s.class_names,
+            }
+            for s in actual
+        ]
 
         vr = guard.verify_round(claimed, files=[str(py_file)])
         assert vr.passed is False
@@ -164,7 +198,17 @@ class TestRunFullVerification:
 
         guard = HallucinationGuard(project_root=tmp_path)
         actual = guard.compute_actual_state(files=[str(py_file)])
-        claimed = [{"path": s.path, "md5": s.md5, "sha256": s.sha256, "line_count": s.line_count, "function_signatures": s.function_signatures, "class_names": s.class_names} for s in actual]
+        claimed = [
+            {
+                "path": s.path,
+                "md5": s.md5,
+                "sha256": s.sha256,
+                "line_count": s.line_count,
+                "function_signatures": s.function_signatures,
+                "class_names": s.class_names,
+            }
+            for s in actual
+        ]
 
         result = guard.run_full_verification([claimed, claimed, claimed], files=[str(py_file)])
         assert result.detected is False
@@ -175,7 +219,16 @@ class TestRunFullVerification:
 
     def test_all_rounds_fail_triggers_hallucination(self, tmp_path):
         guard = HallucinationGuard(project_root=tmp_path)
-        bad_claim = [{"path": "fake.py", "md5": "wrong", "sha256": "", "line_count": 0, "function_signatures": [], "class_names": []}]
+        bad_claim = [
+            {
+                "path": "fake.py",
+                "md5": "wrong",
+                "sha256": "",
+                "line_count": 0,
+                "function_signatures": [],
+                "class_names": [],
+            }
+        ]
 
         result = guard.run_full_verification([bad_claim, bad_claim, bad_claim], files=[])
         assert result.detected is True
@@ -185,7 +238,16 @@ class TestRunFullVerification:
 
     def test_max_rounds_capped_at_three(self, tmp_path):
         guard = HallucinationGuard(project_root=tmp_path)
-        bad_claim = [{"path": "fake.py", "md5": "wrong", "sha256": "", "line_count": 0, "function_signatures": [], "class_names": []}]
+        bad_claim = [
+            {
+                "path": "fake.py",
+                "md5": "wrong",
+                "sha256": "",
+                "line_count": 0,
+                "function_signatures": [],
+                "class_names": [],
+            }
+        ]
 
         result = guard.run_full_verification([bad_claim] * 5, files=[])
         assert result.rounds_executed == 3
@@ -193,7 +255,16 @@ class TestRunFullVerification:
     def test_inconclusive_when_no_passes_but_not_all_fail(self, tmp_path):
         guard = HallucinationGuard(project_root=tmp_path)
         good_claim: list[dict] = []
-        bad_claim = [{"path": "fake.py", "md5": "wrong", "sha256": "", "line_count": 0, "function_signatures": [], "class_names": []}]
+        bad_claim = [
+            {
+                "path": "fake.py",
+                "md5": "wrong",
+                "sha256": "",
+                "line_count": 0,
+                "function_signatures": [],
+                "class_names": [],
+            }
+        ]
 
         result = guard.run_full_verification([bad_claim, bad_claim], files=[])
         assert result.final_verdict == "INCONCLUSIVE"

@@ -23,7 +23,7 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["ColdStart", "BootstrapPhase", "BootstrapVerificationError"]
+__all__: list[str] = ["BootstrapPhase", "BootstrapVerificationError", "ColdStart"]
 
 _REGISTRY_PATH: Path = Path(__file__).parent / "_scenario-registry.yaml"
 
@@ -74,7 +74,6 @@ class BootstrapVerificationError(RuntimeError):
 
 
 class ColdStart:
-
     def __init__(self, registry_path: Path | None = None) -> None:
         self._registry_path: Path = registry_path or _REGISTRY_PATH
         self._phase: BootstrapPhase = BootstrapPhase.SCAN
@@ -126,13 +125,27 @@ class ColdStart:
 
         new_scenario = {
             "scenario_id": scenario_id,
-            "name": template["name"].replace("{module_name}", identifier).replace("{server_id}", identifier).replace("{script_path}", identifier),
-            "description": template["description"].replace("{module_name}", identifier).replace("{server_id}", identifier).replace("{script_path}", identifier),
+            "name": template["name"]
+            .replace("{module_name}", identifier)
+            .replace("{server_id}", identifier)
+            .replace("{script_path}", identifier),
+            "description": template["description"]
+            .replace("{module_name}", identifier)
+            .replace("{server_id}", identifier)
+            .replace("{script_path}", identifier),
             "tier": template["tier"],
             "severity": template["severity"],
-            "target_module": template["target_module"].replace("{module_name}", identifier).replace("{script_path}", identifier),
-            "injection_vector": template["injection_vector"].replace("{module_name}", identifier).replace("{server_id}", identifier).replace("{script_path}", identifier),
-            "defense": template["defense"].replace("{module_name}", identifier).replace("{server_id}", identifier).replace("{script_path}", identifier),
+            "target_module": template["target_module"]
+            .replace("{module_name}", identifier)
+            .replace("{script_path}", identifier),
+            "injection_vector": template["injection_vector"]
+            .replace("{module_name}", identifier)
+            .replace("{server_id}", identifier)
+            .replace("{script_path}", identifier),
+            "defense": template["defense"]
+            .replace("{module_name}", identifier)
+            .replace("{server_id}", identifier)
+            .replace("{script_path}", identifier),
             "blast_radius": template["blast_radius"],
             "auto_cleanup": True,
             "realism_score": 0.7,

@@ -8,9 +8,8 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 
-__all__ = ['app']
-
+__all__ = ["app"]

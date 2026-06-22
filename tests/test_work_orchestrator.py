@@ -20,8 +20,10 @@ import yaml
 from zephyr.trading.work_dag import WorkDAG, WorkEdge, WorkItem, WorkNode
 from zephyr.trading.work_orchestrator import WorkOrchestrator
 
+
 def _make_registry():
     return MagicMock()
+
 
 class TestWorkOrchestratorInit:
     def test_default_slots(self):
@@ -31,6 +33,7 @@ class TestWorkOrchestratorInit:
     def test_custom_slots(self):
         wo = WorkOrchestrator(_make_registry(), max_parallel_l1=2, max_parallel_l2=5, max_parallel_l3=3)
         assert wo._slots == {"trae": 2, "local": 5, "api": 3}
+
 
 class TestRegisterDag:
     def test_register_and_get(self):
@@ -49,6 +52,7 @@ class TestRegisterDag:
         wo.register_dag(WorkDAG(dag_id="d2"))
         dags = wo.list_dags()
         assert len(dags) == 2
+
 
 class TestLoadDags:
     def test_load_from_dir(self, tmp_path: Path):
@@ -73,10 +77,13 @@ class TestLoadDags:
         dag_dir = tmp_path / "dags"
         dag_dir.mkdir()
         (dag_dir / "bad.yaml").write_text("not: valid: yaml: {{{", encoding="utf-8")
-        (dag_dir / "good.yaml").write_text(yaml.dump({"dag_id": "good-1", "nodes": [], "edges": []}, allow_unicode=True), encoding="utf-8")
+        (dag_dir / "good.yaml").write_text(
+            yaml.dump({"dag_id": "good-1", "nodes": [], "edges": []}, allow_unicode=True), encoding="utf-8"
+        )
         wo = WorkOrchestrator(_make_registry(), dag_dir=dag_dir)
         count = wo.load_dags()
         assert count == 1
+
 
 class TestSubmit:
     def test_submit_assigns_id(self):
@@ -109,6 +116,7 @@ class TestSubmit:
         wo.submit(item)
         assert item.status == "PENDING"
 
+
 class TestSubmitDag:
     def test_submit_dag_creates_items(self):
         wo = WorkOrchestrator(_make_registry())
@@ -129,6 +137,7 @@ class TestSubmitDag:
         result = wo.submit_dag("missing")
         assert result == ""
 
+
 class TestScheduleNext:
     def test_schedule_returns_ready_items(self):
         wo = WorkOrchestrator(_make_registry())
@@ -141,6 +150,7 @@ class TestScheduleNext:
     def test_schedule_empty(self):
         wo = WorkOrchestrator(_make_registry())
         assert wo.schedule_next() == []
+
 
 class TestSlotManagement:
     def test_acquire_and_release(self):
@@ -159,6 +169,7 @@ class TestSlotManagement:
         wo = WorkOrchestrator(_make_registry())
         wo.release_slot("local")
         assert wo._slots_used["local"] == 0
+
 
 class TestCompleteItem:
     def test_complete_success(self):
@@ -191,6 +202,7 @@ class TestCompleteItem:
         wo.complete_item("wi-1", result={"done": True})
         assert wo.status("wi-2") == "READY"
 
+
 class TestStatus:
     def test_status_of_submitted_item(self):
         wo = WorkOrchestrator(_make_registry())
@@ -200,6 +212,7 @@ class TestStatus:
     def test_status_missing(self):
         wo = WorkOrchestrator(_make_registry())
         assert wo.status("missing") is None
+
 
 class TestPendingCount:
     def test_pending_count(self):
@@ -215,11 +228,13 @@ class TestPendingCount:
         counts = wo.pending_count()
         assert counts == {"trae": 0, "local": 0, "api": 0}
 
+
 class TestRunningCount:
     def test_running_count(self):
         wo = WorkOrchestrator(_make_registry())
         counts = wo.running_count()
         assert counts == {"trae": 0, "local": 0, "api": 0}
+
 
 class TestResolveLayerAndPriority:
     def test_resolve_layer(self):

@@ -28,8 +28,8 @@ Graceful Shutdown — 优雅关机 (盲点 #28, M-32)
 
 import signal
 import time
-from dataclasses import dataclass
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 
 class GracefulShutdown:
@@ -39,7 +39,7 @@ class GracefulShutdown:
 
     SNAPSHOT_WINDOW_MS = 1750
 
-    def __init__(self, signal_file: Optional[str] = None):
+    def __init__(self, signal_file: str | None = None):
         self.signal_file = signal_file
         self._handlers: list[Callable] = []
         self._shutting_down = False
@@ -68,6 +68,7 @@ class GracefulShutdown:
 
     def take_snapshot(self) -> dict:
         import psutil
+
         try:
             process = psutil.Process()
             mem = process.memory_info().rss / 1024 / 1024

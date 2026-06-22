@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+
 from zephyr.integration.shared_08.security.capability import (
     Capability,
     CapabilityDenied,

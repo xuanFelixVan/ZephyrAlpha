@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] vet returns structured dict; scan_vulnerabilities returns list
 # [TESTS] tests/test_skill_security.py
 
-import pytest
 from zephyr.autonomy_core.skill_security import SkillSecurity
 
 

@@ -32,8 +32,8 @@ Usage:
     matcher = FailurePatternMatcher()
     matcher.activate()
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import logging
 import re

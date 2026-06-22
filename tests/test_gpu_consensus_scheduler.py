@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import asyncio
-
 import pytest
 
 from zephyr.trading.gpu_consensus_scheduler import (
@@ -352,19 +350,19 @@ class TestParseModelResponse:
 
     def test_fallback_red_on_invalid_json(self):
         scheduler = _no_gpu_scheduler()
-        text = '{this is not valid json and contains red flag}'
+        text = "{this is not valid json and contains red flag}"
         result = scheduler._parse_model_response(text, "model-c")
         assert result["verdict"] == "RED"
 
     def test_fallback_yellow_on_invalid_json(self):
         scheduler = _no_gpu_scheduler()
-        text = '{invalid json with yellow warning}'
+        text = "{invalid json with yellow warning}"
         result = scheduler._parse_model_response(text, "model-d")
         assert result["verdict"] == "YELLOW"
 
     def test_fallback_no_keyword_pass_on_invalid_json(self):
         scheduler = _no_gpu_scheduler()
-        text = '{broken json no color keyword}'
+        text = "{broken json no color keyword}"
         result = scheduler._parse_model_response(text, "model-e")
         assert result["verdict"] == "PASS"
 
@@ -397,7 +395,7 @@ class TestParseModelResponse:
 
     def test_red_takes_precedence_over_yellow_in_fallback(self):
         scheduler = _no_gpu_scheduler()
-        text = '{broken json with both red and yellow}'
+        text = "{broken json with both red and yellow}"
         result = scheduler._parse_model_response(text, "model-i")
         assert result["verdict"] == "RED"
 
@@ -532,8 +530,7 @@ class TestSubmitBatch:
     async def test_batch_submit(self):
         scheduler = _no_gpu_scheduler()
         requests = [
-            ConsensusRequest(request_id=f"batch-{i}", protection_level=ProtectionLevel.normal)
-            for i in range(3)
+            ConsensusRequest(request_id=f"batch-{i}", protection_level=ProtectionLevel.normal) for i in range(3)
         ]
         results = await scheduler.submit_batch(requests)
         assert len(results) == 3

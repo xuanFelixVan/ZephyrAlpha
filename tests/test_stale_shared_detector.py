@@ -9,8 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.stale_shared_detector import StaleSharedDetector
+
 
 class TestStaleSharedDetector:
     def test_instantiation(self):
@@ -24,17 +24,13 @@ class TestStaleSharedDetector:
 
     def test_detect_with_stale_function(self):
         det = StaleSharedDetector()
-        funcs = [
-            {"name": "old_func", "caller_count": 0, "last_used_at": "2020-01-01T00:00:00Z"}
-        ]
+        funcs = [{"name": "old_func", "caller_count": 0, "last_used_at": "2020-01-01T00:00:00Z"}]
         result = det.detect(funcs)
         assert "old_func" in result
 
     def test_detect_with_active_function(self):
         det = StaleSharedDetector()
-        funcs = [
-            {"name": "active_func", "caller_count": 5, "last_used_at": "2020-01-01T00:00:00Z"}
-        ]
+        funcs = [{"name": "active_func", "caller_count": 5, "last_used_at": "2020-01-01T00:00:00Z"}]
         result = det.detect(funcs)
         assert "active_func" not in result
 

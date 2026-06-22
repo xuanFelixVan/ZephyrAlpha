@@ -6,10 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """Can-I-Deploy 预部署门禁单元测试。"""
 
 
 import pytest
+
 from zephyr.governance.rule_enforcement.can_i_deploy import CanIDeploy
 
 

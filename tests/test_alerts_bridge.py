@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.alerts import BudgetAlert, BudgetSeverity, BudgetType
 
 
@@ -107,6 +105,7 @@ class TestBudgetAlert:
 class TestBridgeReexport:
     def test_all_exports_available(self):
         from zephyr.governance.alerts import __all__
+
         assert "BudgetAlert" in __all__
         assert "BudgetSeverity" in __all__
         assert "BudgetType" in __all__
@@ -114,9 +113,14 @@ class TestBridgeReexport:
     def test_reexported_classes_match_source(self):
         from zephyr.shared.contracts.escalation.budget_alert import (
             BudgetAlert as SrcAlert,
+        )
+        from zephyr.shared.contracts.escalation.budget_alert import (
             BudgetSeverity as SrcSeverity,
+        )
+        from zephyr.shared.contracts.escalation.budget_alert import (
             BudgetType as SrcType,
         )
+
         assert BudgetAlert is SrcAlert
         assert BudgetSeverity is SrcSeverity
         assert BudgetType is SrcType

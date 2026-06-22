@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_guardrails
+# [MODULE] zephyr.autonomy_core.skill_guardrails
 
 # [INVARIANTS] none
 
@@ -29,23 +29,30 @@ Version: 0.3.0
 Runtime guardrails: budget/mutation/output checks
 """
 
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
-DESTRUCTIVE = {"rm -rf": "critical", "DROP TABLE": "critical", "TRUNCATE": "high", "DELETE FROM": "high",
-               "format c:": "critical", "rmdir /s": "high"}
+DESTRUCTIVE = {
+    "rm -rf": "critical",
+    "DROP TABLE": "critical",
+    "TRUNCATE": "high",
+    "DELETE FROM": "high",
+    "format c:": "critical",
+    "rmdir /s": "high",
+}
+
 
 class SkillGuardrails:
     MIN_OUTPUT = 5
 
     def __init__(self):
-        self._violations: List[Dict[str, Any]] = []
+        self._violations: list[dict[str, Any]] = []
         self._active = True
 
     @property
     def allowed(self) -> bool:
         return self._active and len(self._violations) == 0
 
-    def check_pre_execution(self, skill_id: str, operation: str, budget_remaining: Optional[int] = None) -> Dict[str, Any]:
+    def check_pre_execution(self, skill_id: str, operation: str, budget_remaining: int | None = None) -> dict[str, Any]:
         v = []
         if budget_remaining is not None and budget_remaining <= 0:
             v.append({"type": "budget_exhausted", "severity": "blocking"})
@@ -56,7 +63,7 @@ class SkillGuardrails:
         self._violations.extend(v)
         return {"allowed": len(v) == 0, "skill_id": skill_id, "operation": operation[:200], "violations": v}
 
-    def check_output(self, skill_id: str, output: str) -> Dict[str, Any]:
+    def check_output(self, skill_id: str, output: str) -> dict[str, Any]:
         v = []
         if len(output.strip()) < self.MIN_OUTPUT:
             v.append({"type": "too_short", "severity": "warning"})

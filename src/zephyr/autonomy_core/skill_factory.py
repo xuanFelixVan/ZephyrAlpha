@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_factory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_factory
+# [MODULE] zephyr.autonomy_core.skill_factory
 
 # [INVARIANTS] none
 
@@ -21,11 +21,11 @@
 
 import os
 import re
-import yaml
+from collections.abc import Generator
 from pathlib import Path
-from typing import Dict, Any, Tuple, List, Iterator, Generator
+from typing import Any
 
-from zephyr.autonomy_core.skill_model import SkillTier, SkillType, SkillStatus
+import yaml
 
 _BASE_DIR = Path(__file__).resolve().parent
 _SKILLS_DIR = _BASE_DIR / "skills"
@@ -36,12 +36,11 @@ _PROJECT_ROOT = _BASE_DIR.parent.parent.parent
 
 
 class SkillFactory:
-
     def __init__(self):
         self.template_path = _FACTORY_DIR / "skill-template.md"
 
     def _load_template(self) -> str:
-        with open(self.template_path, "r", encoding="utf-8") as f:
+        with open(self.template_path, encoding="utf-8") as f:
             return f.read()
 
     def _read_blueprint(self, blueprint_path: str) -> str:
@@ -56,7 +55,7 @@ class SkillFactory:
                     path = legacy
         return path.read_text(encoding="utf-8")
 
-    def _extract_module_info(self, module_name: str, blueprint_content: str) -> Dict[str, str]:
+    def _extract_module_info(self, module_name: str, blueprint_content: str) -> dict[str, str]:
         core_ops = self._find_section(blueprint_content, ["核心操作", "Core Operations", "操作"])
         constraints = self._find_section(blueprint_content, ["约束", "Constraints", "限制"])
         errors = self._find_section(blueprint_content, ["常见错误", "Common Errors", "错误模式", "Error Patterns"])
@@ -67,18 +66,18 @@ class SkillFactory:
             "common_errors": errors or "待填写",
         }
 
-    def _find_section(self, content: str, keywords: List[str]) -> str:
+    def _find_section(self, content: str, keywords: list[str]) -> str:
         for kw in keywords:
             pattern = rf"^#{{1,3}}\s+.*{re.escape(kw)}.*$"
             match = re.search(pattern, content, re.MULTILINE | re.IGNORECASE)
             if match:
                 start = match.start()
-                next_section = re.search(r"^#{1,3}\s+", content[match.end():], re.MULTILINE)
+                next_section = re.search(r"^#{1,3}\s+", content[match.end() :], re.MULTILINE)
                 end = match.end() + next_section.start() if next_section else len(content)
                 return content[start:end].strip()
         return ""
 
-    def _render_template(self, template: str, info: Dict[str, str]) -> str:
+    def _render_template(self, template: str, info: dict[str, str]) -> str:
         result = template
         result = result.replace("{{MODULE_NAME}}", info["module_name"])
         result = result.replace("{{CORE_OPERATIONS}}", info["core_operations"])
@@ -111,11 +110,11 @@ class SkillFactory:
         registry = self._load_registry()
         return len(registry.get("skills", {}).get("domain", {}))
 
-    def _load_registry(self) -> Dict[str, Any]:
-        with open(_REGISTRY_PATH, "r", encoding="utf-8") as f:
+    def _load_registry(self) -> dict[str, Any]:
+        with open(_REGISTRY_PATH, encoding="utf-8") as f:
             return yaml.safe_load(f) or {}
 
-    def _save_registry(self, registry: Dict[str, Any]):
+    def _save_registry(self, registry: dict[str, Any]):
         tmp_path = f"{_REGISTRY_PATH}.{os.getpid()}.tmp"
         try:
             with open(tmp_path, "w", encoding="utf-8") as f:
@@ -163,9 +162,9 @@ class SkillFactory:
         self._update_registry(module_name, skill_id, str(skill_path.relative_to(_SKILLS_DIR)))
         return skill_path
 
-    def bootstrap_sequence(self, module_name: str, blueprint_path: str) -> Generator[Tuple[str, str], None, None]:
+    def bootstrap_sequence(self, module_name: str, blueprint_path: str) -> Generator[tuple[str, str], None, None]:
         yield ("create_blueprint", f"Blueprint verified: {blueprint_path}")
         skill_path = self.generate_domain_skill(module_name, blueprint_path)
         yield ("factory_generate", f"Skill generated: {skill_path}")
         yield ("human_review", "Awaiting human review of generated SKILL.md")
-        yield ("register", f"Skill registered in skill-registry.yaml")
+        yield ("register", "Skill registered in skill-registry.yaml")

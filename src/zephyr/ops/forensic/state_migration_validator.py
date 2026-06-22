@@ -113,9 +113,12 @@ class StateMigrationValidator:
             "divergence_pct": round(divergence_pct, 2),
             "diverged_count": len(diverged_fields),
             "recommendation": (
-                "rollback_and_investigate" if result == MigrationResult.INCOMPATIBLE
-                else "review_diverged_fields" if result == MigrationResult.PARTIAL
-                else "proceed" if result == MigrationResult.COMPATIBLE
+                "rollback_and_investigate"
+                if result == MigrationResult.INCOMPATIBLE
+                else "review_diverged_fields"
+                if result == MigrationResult.PARTIAL
+                else "proceed"
+                if result == MigrationResult.COMPATIBLE
                 else "proceed_with_caution"
             ),
         }
@@ -136,9 +139,7 @@ class StateMigrationValidator:
             "partial": partial,
             "compatible": len(results) - incompatible - partial,
             "recommendation": (
-                "block_upgrade" if incompatible > 0
-                else "upgrade_with_monitoring" if partial > 0
-                else "safe_to_upgrade"
+                "block_upgrade" if incompatible > 0 else "upgrade_with_monitoring" if partial > 0 else "safe_to_upgrade"
             ),
         }
 
@@ -149,5 +150,9 @@ class StateMigrationValidator:
     def overall_migration_health(self) -> float:
         if not self.migration_results:
             return 1.0
-        safe = sum(1 for r in self.migration_results if r["result"] in (MigrationResult.COMPATIBLE.value, MigrationResult.MIGRATED.value))
+        safe = sum(
+            1
+            for r in self.migration_results
+            if r["result"] in (MigrationResult.COMPATIBLE.value, MigrationResult.MIGRATED.value)
+        )
         return round(safe / len(self.migration_results), 3)

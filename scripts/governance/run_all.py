@@ -45,11 +45,10 @@ import re
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import yaml
 
@@ -149,6 +148,7 @@ try:
         FindingTaskBridge,
         bridge_findings_to_tasks,
     )
+
     BRIDGE_AVAILABLE = True
 except ImportError:
     BRIDGE_AVAILABLE = False
@@ -187,6 +187,7 @@ except ImportError:
                 "D12": "AI幻觉检测",
             }
             return _LABELS.get(self.value, self.value)
+
 
 if FINDING_AVAILABLE:
     _P_TO_SEVERITY = {
@@ -240,6 +241,7 @@ _FILE_PATH_PATTERN = re.compile(r"((?:src|tests|scripts|docs|config|schemas)[/\\
 
 _REGISTRY_CACHE: dict | None = None
 
+
 def _load_script_registry() -> dict[str, Any]:
     """加载脚本注册表并从 script_manifest.yaml 解析元数据。
 
@@ -276,6 +278,7 @@ def _load_script_registry() -> dict[str, Any]:
     _REGISTRY_CACHE = registry
     return registry
 
+
 def _get_registry() -> dict[str, Any]:
     """获取脚本注册表（惰性加载，支持缓存）。
 
@@ -283,6 +286,7 @@ def _get_registry() -> dict[str, Any]:
         dict: 脚本名 -> 元数据映射
     """
     return _load_script_registry()
+
 
 def _str_to_dimension(dim_str: str) -> Dimension:
     """将维度字符串转换为 Dimension 枚举值。
@@ -301,6 +305,7 @@ def _str_to_dimension(dim_str: str) -> Dimension:
         raise KeyError(f"非法维度值 '{dim_str}'。合法值: {sorted(dim_map.keys())}")
     return dim_map[dim_str]
 
+
 def _is_skip_line(line: str) -> bool:
     """检查输出行是否属于应跳过的统计摘要行。
 
@@ -311,6 +316,7 @@ def _is_skip_line(line: str) -> bool:
         bool: True 表示应跳过，False 表示应解析为 Finding
     """
     return any(p.match(line) for p in SKIP_PATTERNS)
+
 
 def _has_error_indicator(line: str) -> bool:
     """检查输出行是否包含错误指示符。
@@ -332,6 +338,7 @@ def _has_error_indicator(line: str) -> bool:
         return True
     return False
 
+
 def list_registered_scripts() -> None:
     """列出所有注册脚本及其维度映射。
 
@@ -349,6 +356,7 @@ def list_registered_scripts() -> None:
         print(f"    维度: {dims}  |  优先级: {meta['priority']}  |  超时: {meta['timeout_seconds']}s", file=sys.stderr)
         print(f"    {meta['description']}", file=sys.stderr)
         print(file=sys.stderr)
+
 
 def run_script(script_name: str, meta: dict, warn_only: bool = False) -> tuple[int, str, str]:
     """执行单个审计脚本并捕获输出。
@@ -386,6 +394,7 @@ def run_script(script_name: str, meta: dict, warn_only: bool = False) -> tuple[i
     except OSError as e:
         return 2, "", f"OS 错误: {e}"
 
+
 def _extract_file_path(line: str) -> tuple[str, str]:
     """从输出行中提取文件路径和描述文本。
 
@@ -403,6 +412,7 @@ def _extract_file_path(line: str) -> tuple[str, str]:
         rest = line[: m.start()].strip() + " " + line[m.end() :].strip()
         return path, rest.strip().strip(":")
     return "", line
+
 
 def _parse_jsonl_to_findings(
     jsonl_text: str,
@@ -459,6 +469,7 @@ def _parse_jsonl_to_findings(
         except (json.JSONDecodeError, KeyError, ValueError):
             continue
     return findings
+
 
 def parse_script_output_to_findings(
     script_name: str,
@@ -542,6 +553,7 @@ def parse_script_output_to_findings(
 
     return findings
 
+
 def _run_env_check() -> None:
     """_run_env_check implementation."""
     env_check_path = SCRIPTS_DIR / "env_check.py"
@@ -577,6 +589,7 @@ def _run_env_check() -> None:
         print("请手动运行: python scripts/governance/env_check.py --install", file=sys.stderr)
         sys.exit(EXIT_FINDINGS)
 
+
 def _topological_sort_dimensions(dimensions: list[Dimension]) -> list[Dimension]:
     """按 §5.3 三条依赖链对维度进行拓扑排序。
 
@@ -611,6 +624,7 @@ def _topological_sort_dimensions(dimensions: list[Dimension]) -> list[Dimension]
                 break
     return result
 
+
 def _check_script_encoding(script_name: str) -> bool:
     """检查脚本是否符合 §5.5 编码铁律。
 
@@ -633,9 +647,10 @@ def _check_script_encoding(script_name: str) -> bool:
         return True
     if "sys.stdout.reconfigure(encoding='utf-8')" in content:
         return True
-    if "sys.stdout.reconfigure(encoding=\"utf-8\")" in content:
+    if 'sys.stdout.reconfigure(encoding="utf-8")' in content:
         return True
     return False
+
 
 def _append_sla_metrics(
     scan_type: str,
@@ -667,6 +682,7 @@ def _append_sla_metrics(
     SLA_METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(SLA_METRICS_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
 
 def _try_jsonl_run(script_name: str, meta: dict, warn_only: bool = False) -> list[Finding] | None:
     """尝试以 --jsonl 模式运行脚本，返回 Finding 列表。
@@ -718,7 +734,11 @@ def _execute_one_script(
             findings = jl_result
         else:
             findings = parse_script_output_to_findings(
-                script_name, meta["dimensions"], stdout, exit_code, warn_only,
+                script_name,
+                meta["dimensions"],
+                stdout,
+                exit_code,
+                warn_only,
             )
 
     return {
@@ -768,19 +788,19 @@ def run_all_dimensions(
             def _make_executor(wo: bool):
                 def _exec(sn: str, m: dict) -> dict:
                     return _execute_one_script(sn, m, wo)
+
                 return _exec
 
-            bulkhead_tasks = [
-                (name, meta, _make_executor(warn_only), None)
-                for name, meta in script_tasks
-            ]
+            bulkhead_tasks = [(name, meta, _make_executor(warn_only), None) for name, meta in script_tasks]
 
             print(f"\n  并行执行 {len(script_tasks)} 个唯一脚本 (BulkheadExecutorV2 四池隔离) ...", file=sys.stderr)
 
             def _on_complete(result: dict) -> None:
                 if result.get("enc_violation"):
                     encoding_violations.append(result["enc_violation"])
-                    print(f"\n    [ENC] {result['enc_violation']}: 编码铁律违规 — 缺少 UTF-8 stdout 声明", file=sys.stderr)
+                    print(
+                        f"\n    [ENC] {result['enc_violation']}: 编码铁律违规 — 缺少 UTF-8 stdout 声明", file=sys.stderr
+                    )
 
             dispatch_result = bulkhead.dispatch_with_locks(bulkhead_tasks, on_complete=_on_complete)
 
@@ -794,7 +814,10 @@ def run_all_dimensions(
                 total_failed += 1
                 print(f"    [SKIP] {s['script_name']}: {s['reason']}", file=sys.stderr)
 
-            print(f"    {len(script_tasks)}/{len(script_tasks)} 完成 (pools: {dispatch_result.get('pools', {})})", file=sys.stderr)
+            print(
+                f"    {len(script_tasks)}/{len(script_tasks)} 完成 (pools: {dispatch_result.get('pools', {})})",
+                file=sys.stderr,
+            )
 
         except ImportError:
             print("  [WARN] BulkheadExecutorV2 不可用, 回退 ThreadPoolExecutor", file=sys.stderr)
@@ -826,10 +849,7 @@ def _run_with_threadpool(
     completed = 0
 
     with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
-        futures = {
-            executor.submit(_execute_one_script, name, meta, warn_only): name
-            for name, meta in script_tasks
-        }
+        futures = {executor.submit(_execute_one_script, name, meta, warn_only): name for name, meta in script_tasks}
         for future in as_completed(futures):
             result = future.result()
             completed += 1
@@ -854,19 +874,24 @@ def _get_changed_files(diff_ref: str = "HEAD~1") -> frozenset[str]:
     """_get_changed_files implementation."""
     result = subprocess.run(
         ["git", "diff", "--name-only", diff_ref],
-        capture_output=True, text=True, timeout=30,
-        cwd=str(REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=30,
+        cwd=str(REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     if result.returncode != 0:
         result = subprocess.run(
             ["git", "diff", "--name-only", "--cached"],
-            capture_output=True, text=True, timeout=30,
-            cwd=str(REPO_ROOT), encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            timeout=30,
+            cwd=str(REPO_ROOT),
+            encoding="utf-8",
+            errors="replace",
         )
-    return frozenset(
-        line.strip().replace("\\", "/")
-        for line in result.stdout.split("\n") if line.strip()
-    )
+    return frozenset(line.strip().replace("\\", "/") for line in result.stdout.split("\n") if line.strip())
 
 
 _FILE_DIMENSION_MAP: tuple[tuple[str, str], ...] = (
@@ -1031,9 +1056,7 @@ def main() -> None:
                 resolved.add(tag)
         required_tags = frozenset(resolved)
 
-    filtered_registry = _filter_registry(
-        _get_registry(), required_tags=required_tags, depth=args.depth
-    )
+    filtered_registry = _filter_registry(_get_registry(), required_tags=required_tags, depth=args.depth)
 
     if args.diff_ref:
         changed = _get_changed_files(args.diff_ref)
@@ -1042,17 +1065,28 @@ def main() -> None:
             return
         relevant_dims = _map_files_to_dimensions(changed)
         dimensions_to_run = [d for d in dimensions_to_run if d.value in relevant_dims]
-        print(f"\n[增量模式] {len(changed)} 变更文件 → {len(relevant_dims)} 相关维度: "
-              f"{', '.join(sorted(relevant_dims))}", file=sys.stderr)
+        print(
+            f"\n[增量模式] {len(changed)} 变更文件 → {len(relevant_dims)} 相关维度: {', '.join(sorted(relevant_dims))}",
+            file=sys.stderr,
+        )
 
     if args.dry_run:
         registry = filtered_registry
         unique_scripts: set[str] = set()
         dimensions_sorted = _topological_sort_dimensions(dimensions_to_run)
         print(f"\n[DRY RUN] 将扫描 {len(dimensions_sorted)} 个维度（拓扑排序后）：", file=sys.stderr)
-        print(f"  链A (D1→D3→D5→D8): {[d for d in ('D1','D3','D5','D8') if any(dv.value==d for dv in dimensions_sorted)]}", file=sys.stderr)
-        print(f"  链B (D2→D4→D11→D9→D12): {[d for d in ('D2','D4','D11','D9','D12') if any(dv.value==d for dv in dimensions_sorted)]}", file=sys.stderr)
-        print(f"  链C (D6→D7→D10): {[d for d in ('D6','D7','D10') if any(dv.value==d for dv in dimensions_sorted)]}", file=sys.stderr)
+        print(
+            f"  链A (D1→D3→D5→D8): {[d for d in ('D1', 'D3', 'D5', 'D8') if any(dv.value == d for dv in dimensions_sorted)]}",
+            file=sys.stderr,
+        )
+        print(
+            f"  链B (D2→D4→D11→D9→D12): {[d for d in ('D2', 'D4', 'D11', 'D9', 'D12') if any(dv.value == d for dv in dimensions_sorted)]}",
+            file=sys.stderr,
+        )
+        print(
+            f"  链C (D6→D7→D10): {[d for d in ('D6', 'D7', 'D10') if any(dv.value == d for dv in dimensions_sorted)]}",
+            file=sys.stderr,
+        )
         for dim in dimensions_sorted:
             scripts = [name for name, meta in registry.items() if dim in meta["dimensions"]]
             unique_scripts.update(scripts)
@@ -1083,11 +1117,13 @@ def main() -> None:
     print("  ZephyrAlpha 脚本系统 — 全维度扫描", file=sys.stderr)
     mode_tag = " [warn-only]" if args.warn_only else ""
     print(f"  时间: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}{mode_tag}", file=sys.stderr)
-    print(f"  维度: {len(dimensions_sorted)} 个（拓扑排序: "
-          f"A={[d for d in ('D1','D3','D5','D8') if any(dv.value==d for dv in dimensions_sorted)]}, "
-          f"B={[d for d in ('D2','D4','D11','D9','D12') if any(dv.value==d for dv in dimensions_sorted)]}, "
-          f"C={[d for d in ('D6','D7','D10') if any(dv.value==d for dv in dimensions_sorted)]})"
-          , file=sys.stderr)
+    print(
+        f"  维度: {len(dimensions_sorted)} 个（拓扑排序: "
+        f"A={[d for d in ('D1', 'D3', 'D5', 'D8') if any(dv.value == d for dv in dimensions_sorted)]}, "
+        f"B={[d for d in ('D2', 'D4', 'D11', 'D9', 'D12') if any(dv.value == d for dv in dimensions_sorted)]}, "
+        f"C={[d for d in ('D6', 'D7', 'D10') if any(dv.value == d for dv in dimensions_sorted)]})",
+        file=sys.stderr,
+    )
     print(f"  输出: {output_path}", file=sys.stderr)
     print(f"  全局硬超时: {GLOBAL_HARD_TIMEOUT_SECONDS}s", file=sys.stderr)
     print(f"{'=' * 60}\n", file=sys.stderr)
@@ -1154,7 +1190,7 @@ def main() -> None:
         print(f"  编码铁律违规: {len(enc_violations)} 脚本 → {', '.join(enc_violations)}", file=sys.stderr)
     print(f"  Finding 总计: {total_findings}", file=sys.stderr)
     if global_timeout_reached:
-        print(f"  ⚠ 全局硬超时触发", file=sys.stderr)
+        print("  ⚠ 全局硬超时触发", file=sys.stderr)
     print(f"{'─' * 60}", file=sys.stderr)
 
     if FINDING_AVAILABLE and collection is not None and total_findings > 0:
@@ -1177,28 +1213,33 @@ def main() -> None:
     if BRIDGE_AVAILABLE and FINDING_AVAILABLE and collection is not None and total_findings > 0:
         audit_findings: list[AuditFinding] = []
         for f in collection:
-            audit_findings.append(AuditFinding(
-                finding_id=f.finding_id,
-                dimension=_DIMENSION_TO_AUDIT_LABEL.get(f.dimension.value, "governance"),
-                severity=_SEVERITY_TO_AUDIT.get(f.severity, "medium"),
-                description=f.description,
-                source_script="run_all.py",
-                source_file=f.target_file,
-                suggested_fix=f.recommendation,
-            ))
+            audit_findings.append(
+                AuditFinding(
+                    finding_id=f.finding_id,
+                    dimension=_DIMENSION_TO_AUDIT_LABEL.get(f.dimension.value, "governance"),
+                    severity=_SEVERITY_TO_AUDIT.get(f.severity, "medium"),
+                    description=f.description,
+                    source_script="run_all.py",
+                    source_file=f.target_file,
+                    suggested_fix=f.recommendation,
+                )
+            )
         bridge_result = bridge_findings_to_tasks(
             audit_findings,
             db_path=REPO_ROOT / "data" / "databases" / "governance.db",
             dry_run=args.dry_run,
         )
-        print(f"\n  [CT-ORC-SCRIPT-001] 桥接完成: {bridge_result.tasks_created}/{len(audit_findings)} tasks创建",
-              file=sys.stderr)
+        print(
+            f"\n  [CT-ORC-SCRIPT-001] 桥接完成: {bridge_result.tasks_created}/{len(audit_findings)} tasks创建",
+            file=sys.stderr,
+        )
         if bridge_result.errors:
             print(f"    ⚠ 失败: {len(bridge_result.errors)}", file=sys.stderr)
 
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(final_exit_code)
+
 
 if __name__ == "__main__":
     main()

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_self_upgrade_canary.py
 
-import pytest
 
 from zephyr.ops.evolution.self_upgrade_canary import (
     CanaryPhase,

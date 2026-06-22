@@ -25,10 +25,9 @@ from pathlib import Path
 
 from _migration_shared import (
     BATCH_TO_GROUP,
-    PROJECT_ROOT,
     MIGRATION_LOG_FILE,
+    PROJECT_ROOT,
     filter_by_batch,
-    filter_by_all_batches,
     load_mapping,
     load_migration_log,
 )
@@ -120,7 +119,7 @@ def check_imports_resolvable(mappings: list[dict]) -> list[str]:
                 stripped = line.strip()
                 if not stripped.startswith(("from ", "import ")):
                     continue
-                match = re.match(r'^(?:from|import)\s+([a-zA-Z_][\w.]*)', stripped)
+                match = re.match(r"^(?:from|import)\s+([a-zA-Z_][\w.]*)", stripped)
                 if not match:
                     continue
                 mod_path = match.group(1).split(".")
@@ -136,8 +135,7 @@ def check_imports_resolvable(mappings: list[dict]) -> list[str]:
                 if init_path.exists():
                     continue
                 errors.append(
-                    f"IMPORT: {py_file.relative_to(PROJECT_ROOT)}:{line_no} "
-                    f"cannot resolve '{match.group(1)}'"
+                    f"IMPORT: {py_file.relative_to(PROJECT_ROOT)}:{line_no} cannot resolve '{match.group(1)}'"
                 )
     return errors
 

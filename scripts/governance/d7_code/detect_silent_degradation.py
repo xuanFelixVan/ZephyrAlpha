@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 静默降级检测（COND-45 — 降级路径必须有日志）
@@ -43,6 +44,7 @@ import argparse
 
 DEGRADATION_KEYWORDS = {"fallback", "default", "degraded", "degradation", "circuit_breaker", "retry"}
 
+
 def has_logging(stmts: list) -> bool:
     """判断函数是否包含日志记录"""
     for stmt in stmts:
@@ -68,6 +70,7 @@ def has_logging(stmts: list) -> bool:
                 return True
     return False
     "判断函数是否包含日志记录."
+
 
 def check_silent_degradation(filepath: Path) -> list[dict]:
     """检查静默降级"""
@@ -98,6 +101,7 @@ def check_silent_degradation(filepath: Path) -> list[dict]:
     return findings
     "检查静默降级."
 
+
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="静默降级检测（COND-45）")
@@ -114,7 +118,7 @@ def main() -> None:
     if all_findings:
         print(f"\n[SILENT-DEGRADATION] {len(all_findings)} 个静默降级:", file=sys.stderr)
         for f in all_findings:
-            print(f'  [{f['severity']}] {f['file']}:{f['line']}', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['file']}:{f['line']}", file=sys.stderr)
             print("    降级路径无日志写入", file=sys.stderr)
     else:
         print("[SILENT-DEGRADATION] 无静默降级", file=sys.stderr)
@@ -122,6 +126,7 @@ def main() -> None:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
     "入口函数."
+
 
 if __name__ == "__main__":
     main()

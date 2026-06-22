@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 """Signal Synthesis sub-package"""
+
 from __future__ import annotations
 
 from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase

@@ -103,7 +103,10 @@ class SandboxServer(BaseMCPServer):
             raise MCPError(-32602, f"unsupported language: {language!r}")
 
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".py", delete=False, encoding="utf-8",
+            mode="w",
+            suffix=".py",
+            delete=False,
+            encoding="utf-8",
         ) as tmp:
             tmp.write(code)
             tmp_path = tmp.name
@@ -129,10 +132,7 @@ class SandboxServer(BaseMCPServer):
 
             stdout = result.stdout[:MAX_OUTPUT_BYTES]
             stderr = result.stderr[:MAX_OUTPUT_BYTES]
-            truncated = (
-                len(result.stdout) > MAX_OUTPUT_BYTES
-                or len(result.stderr) > MAX_OUTPUT_BYTES
-            )
+            truncated = len(result.stdout) > MAX_OUTPUT_BYTES or len(result.stderr) > MAX_OUTPUT_BYTES
 
             return {
                 "stdout": stdout,

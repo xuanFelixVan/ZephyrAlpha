@@ -15,8 +15,6 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.symbol_index import SymbolIndex
 
 
@@ -109,7 +107,7 @@ class TestSymbolIndex:
         si = SymbolIndex()
         for name in ["a", "b"]:
             with tempfile.NamedTemporaryFile(suffix=".py", mode="w", encoding="utf-8", delete=False) as f:
-                f.write(f"def common_func():\n    pass\n")
+                f.write("def common_func():\n    pass\n")
                 f.flush()
                 si.index_file(f.name)
         result = si.lookup_function("common_func")

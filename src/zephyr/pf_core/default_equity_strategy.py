@@ -44,7 +44,6 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timezone
 from decimal import Decimal
 from enum import Enum
 
@@ -154,7 +153,7 @@ class DefaultEquityStrategy(StrategyBase):
 
         max_single = self._risk_limits.get("max_single_position", 0.10)
         weights = {}
-        for (symbol, _), score in zip(scored, abs_scores):
+        for (symbol, _), score in zip(scored, abs_scores, strict=False):
             w = score / total
             w = min(w, max_single)
             weights[symbol] = w

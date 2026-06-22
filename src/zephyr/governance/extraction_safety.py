@@ -28,7 +28,6 @@
   - 部分共享提取计划（LCS 公共核心 60% + 差异保留）
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -69,13 +68,13 @@ class ExtractionSafety:
     """安全提取评估器."""
 
     UNSAFE_PATTERNS: list[dict[str, Any]] = [
-        {"name": "high_caller_count",   "threshold": 10, "desc": "调用方>10"},
-        {"name": "platform_code",       "pattern": "__init__", "desc": "__init__.py入口"},
-        {"name": "public_api",          "flag": "is_public_api", "desc": "公开API"},
-        {"name": "hot_path",            "flag": "is_hot_path", "desc": "性能热点"},
-        {"name": "codegen",             "flag": "is_codegen", "desc": "生成代码"},
-        {"name": "vendored",            "flag": "is_vendored", "desc": "Vendored代码"},
-        {"name": "stub_function",       "pattern": "NotImplementedError|pass", "desc": "Stub函数"},
+        {"name": "high_caller_count", "threshold": 10, "desc": "调用方>10"},
+        {"name": "platform_code", "pattern": "__init__", "desc": "__init__.py入口"},
+        {"name": "public_api", "flag": "is_public_api", "desc": "公开API"},
+        {"name": "hot_path", "flag": "is_hot_path", "desc": "性能热点"},
+        {"name": "codegen", "flag": "is_codegen", "desc": "生成代码"},
+        {"name": "vendored", "flag": "is_vendored", "desc": "Vendored代码"},
+        {"name": "stub_function", "pattern": "NotImplementedError|pass", "desc": "Stub函数"},
     ]
 
     # ── 公共 API ──────────────────────────────────────────────

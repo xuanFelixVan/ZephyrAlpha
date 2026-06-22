@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 日志输出敏感关键词检测（ABS-31 — 禁止 print/log 密钥密码）
@@ -57,6 +58,7 @@ LOG_SENSITIVE_PATTERNS = [
 ]
 EXCLUDE_FILES = {"detect_keywords_in_logs.py", "detect_secrets.py"}
 
+
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
     findings = []
@@ -80,6 +82,7 @@ def scan_file(filepath: Path) -> list[dict]:
     return findings
     "扫描单个文件并返回发现列表."
 
+
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     """扫描仓库并返回发现列表."""
     if scan_dir is None:
@@ -101,6 +104,7 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     return (all_findings, files_scanned, 0)
     "扫描仓库并返回发现列表."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="日志输出敏感关键词检测")
@@ -114,13 +118,14 @@ def main() -> None:
             f"\n[LOG-SENSITIVE] {len(findings)} 日志输出含敏感关键词（扫描 {files_scanned} 文件）:\n", file=sys.stderr
         )
         for f in findings:
-            print(f'  [{f['pattern']}] {f['file']}:{f['line']}', file=sys.stderr)
-            print(f'    {f['matched'][:180]}', file=sys.stderr)
+            print(f"  [{f['pattern']}] {f['file']}:{f['line']}", file=sys.stderr)
+            print(f"    {f['matched'][:180]}", file=sys.stderr)
         print(file=sys.stderr)
     print(f"Scanned {files_scanned} files, {len(findings)} findings, {errors} errors", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

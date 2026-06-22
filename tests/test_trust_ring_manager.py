@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import json
-import os
-from pathlib import Path
-
 import pytest
 
 from zephyr.governance.trust_ring_manager import (

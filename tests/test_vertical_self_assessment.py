@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_vertical_self_assessment.py
 
-import pytest
 
 from zephyr.ops.diagnosers.vertical_self_assessment import VerticalSelfAssessment
 

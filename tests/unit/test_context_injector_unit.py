@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for context_injector.py (T-2-12, C39)
 =================================================
@@ -16,13 +17,14 @@ Minimum: 10 tests
 from pathlib import Path
 
 import pytest
+
 from zephyr.autonomy_core.context_injector import (
     ContextInjector,
     InjectedContext,
     RetrievalMode,
 )
-from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.governance.kb.chromadb_init import init_chromadb
+from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo
 from zephyr.shared.shared_services.observability_02.token_utils import estimate_tokens
 
@@ -121,7 +123,7 @@ class TestContextInjector:
     def test_token_budget_respected(self, kb_env: KbRepo) -> None:
         for i in range(20):
             kb_env.create(
-                ke_id=f"KE-{300+i:03d}",
+                ke_id=f"KE-{300 + i:03d}",
                 title=f"KE {i}",
                 category="test",
                 source_file=f"file{i}.md",
@@ -135,7 +137,7 @@ class TestContextInjector:
     def test_max_sources_limit(self, kb_env: KbRepo) -> None:
         for i in range(20):
             kb_env.create(
-                ke_id=f"KE-{400+i:03d}",
+                ke_id=f"KE-{400 + i:03d}",
                 title=f"KE {i}",
                 category="test",
                 source_file=f"file{i}.md",

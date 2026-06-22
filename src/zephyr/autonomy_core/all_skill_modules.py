@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_all_skill_modules | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.all_skill_modules
+# [MODULE] zephyr.autonomy_core.all_skill_modules
 
 # [INVARIANTS] none
 
@@ -25,9 +25,6 @@ Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
 """
-
-
-from typing import Dict, Any, List
 
 
 class AllSkillModules:
@@ -88,7 +85,7 @@ class AllSkillModules:
     ]
 
     @classmethod
-    def all_modules(cls) -> List[str]:
+    def all_modules(cls) -> list[str]:
         return cls.MODULE_LIST
 
     @classmethod

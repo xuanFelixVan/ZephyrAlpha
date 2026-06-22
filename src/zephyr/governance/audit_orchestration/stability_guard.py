@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class StabilityGuard:
     def lock_api(self, module: str, exports: list[str]) -> dict:
         return {"module": module, "exports": exports, "locked": True}

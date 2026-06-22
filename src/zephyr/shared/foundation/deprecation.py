@@ -40,8 +40,8 @@ AI 不确定是否可以删除旧代码的问题。
 SSoT: MOD-INF-016 §2.13 shared-deprecation
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import functools
 import os
@@ -50,11 +50,11 @@ from collections.abc import Callable
 from typing import Any
 
 __all__ = [
-    "deprecated",
-    "DeprecationMode",
-    "set_deprecation_mode",
-    "get_deprecation_mode",
     "DeprecatedAPIError",
+    "DeprecationMode",
+    "deprecated",
+    "get_deprecation_mode",
+    "set_deprecation_mode",
 ]
 
 

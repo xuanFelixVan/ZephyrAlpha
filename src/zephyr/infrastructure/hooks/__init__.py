@@ -2,4 +2,4 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 from zephyr.infrastructure.hooks.event_hook import HookRegistry, TransitionEvent, hook_registry
 
-__all__ = ['HookRegistry', 'TransitionEvent', 'event_hook', 'hook_registry']
+__all__ = ["HookRegistry", "TransitionEvent", "event_hook", "hook_registry"]

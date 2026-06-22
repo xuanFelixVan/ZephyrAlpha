@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_self_ha.py
 
-import pytest
 
 from zephyr.ops.detectors.self_ha import SelfHA
 

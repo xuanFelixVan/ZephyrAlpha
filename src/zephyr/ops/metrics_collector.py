@@ -28,7 +28,6 @@ Task: T-1-19 | experimental | GLM-5.1
 Depends: sqlite_schema.py (T-1-04), task_repo.py (T-1-04)
 """
 
-
 from __future__ import annotations
 
 import json
@@ -250,12 +249,14 @@ class MetricsCollector:
             self._conn.close()
             self._conn = None
 
+
 class MetricSnapshot:
-    def __init__(self, metric_name='', value=0.0, timestamp=None, tags=None):
+    def __init__(self, metric_name="", value=0.0, timestamp=None, tags=None):
         self.metric_name = metric_name
         self.value = value
         self.timestamp = timestamp
         self.tags = tags or {}
+
 
 class EMABaseline:
     def __init__(self, alpha=0.3, initial_value=None):

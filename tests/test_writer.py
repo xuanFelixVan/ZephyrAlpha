@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -83,7 +82,7 @@ class TestAuditWriter:
         event = {"event_type": "file_write", "agent_id": "a"}
         writer.write(event)
         log_path = writer._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "timestamp" in written
 
@@ -91,7 +90,7 @@ class TestAuditWriter:
         event = {"event_type": "file_write", "agent_id": "a"}
         writer.write(event)
         log_path = writer._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "entry_hash" in written
         assert "prev_hash" in written
@@ -100,7 +99,7 @@ class TestAuditWriter:
         event = {"event_type": "file_write", "agent_id": "a"}
         writer.write(event)
         log_path = writer._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "hmac_signature" in written
 
@@ -108,7 +107,7 @@ class TestAuditWriter:
         event = {"event_type": "file_write", "agent_id": "a"}
         writer.write(event)
         log_path = writer._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "lamport_time" in written
         assert "lamport_clock_counter" in written
@@ -120,7 +119,7 @@ class TestAuditWriter:
         hash1 = writer.write(event1)
         hash2 = writer.write(event2)
         log_path = writer._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             lines = f.readlines()
         second = json.loads(lines[1])
         assert second["prev_hash"] == hash1
@@ -137,7 +136,7 @@ class TestAuditWriter:
         long_trace = "x" * 600
         result = writer.write_with_cot(event, reasoning_trace=long_trace)
         log_path = writer._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert len(written["reasoning_trace"]) <= 500
 
@@ -180,7 +179,7 @@ class TestAuditWriter:
         event = {"event_type": "heartbeat", "agent_id": "a"}
         writer.write(event)
         log_path = writer._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert written["entry_id"].startswith("AUD-T-")
 
@@ -188,7 +187,7 @@ class TestAuditWriter:
         event = {"event_type": "file_detail", "agent_id": "a"}
         writer.write(event)
         log_path = writer._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert written["entry_id"].startswith("AUD-F-")
 
@@ -205,6 +204,6 @@ class TestAuditWriter:
         event = {"event_type": "file_write", "agent_id": "a"}
         w.write(event)
         log_path = w._event_log_path
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "hmac_signature" not in written or written.get("hmac_signature") is not None

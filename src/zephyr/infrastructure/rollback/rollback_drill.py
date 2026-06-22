@@ -31,18 +31,14 @@ RollbackDrill — 定期回滚演练调度器 (DiRT-style)。
 
 from __future__ import annotations
 
-import hashlib
 import json
-import os
 import random
 import sqlite3
 import subprocess
-import threading
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -74,7 +70,6 @@ CHAOS_SCENARIOS: list[ChaosScenario] = [
 
 
 class RollbackDrill:
-
     DRILL_SCHEDULE_DAY: int = 5
     DRILL_SCHEDULE_HOUR: int = 3
     MAX_CONSECUTIVE_FAILS: int = 2
@@ -88,7 +83,7 @@ class RollbackDrill:
         self._automatic_rollback_melted = False
 
     def is_drill_time(self) -> bool:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         return now.weekday() == self.DRILL_SCHEDULE_DAY and now.hour == self.DRILL_SCHEDULE_HOUR
 
     def select_random_commit(self) -> str:
@@ -99,14 +94,14 @@ class RollbackDrill:
         return random.choice(lines)
 
     def run_drill(self, force_chaos: str = "") -> DrillResult:
-        drill_id = f"DRILL-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
+        drill_id = f"DRILL-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}"
         start_time = time.time()
 
         commit_sha = self.select_random_commit()
         if not commit_sha:
             return DrillResult(
                 drill_id=drill_id,
-                timestamp_utc=datetime.now(timezone.utc).isoformat(),
+                timestamp_utc=datetime.now(UTC).isoformat(),
                 commit_sha="",
                 duration_ms=0,
                 conflict_rate=0.0,
@@ -130,7 +125,9 @@ class RollbackDrill:
             result = subprocess.run(
                 ["git", "revert", "--no-edit", commit_sha],
                 cwd=str(worktree_path),
-                capture_output=True, text=True, timeout=30,
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
             if result.returncode == 0:
                 details.append(f"Revert succeeded: {commit_sha}")
@@ -156,7 +153,7 @@ class RollbackDrill:
 
         result = DrillResult(
             drill_id=drill_id,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
             commit_sha=commit_sha,
             duration_ms=duration_ms,
             conflict_rate=0.0 if success else 1.0,
@@ -201,7 +198,7 @@ class RollbackDrill:
             "alert": "P0_ROLLBACK_DRILL_MELTDOWN",
             "consecutive_fails": self._consecutive_fails,
             "action": "ALL automatic rollbacks suspended",
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "timestamp_utc": datetime.now(UTC).isoformat(),
         }
         alert_path = self._project_root / ".zephyr/ROLLBACK_MELTDOWN.json"
         alert_path.write_text(json.dumps(alert, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -209,17 +206,21 @@ class RollbackDrill:
     def _save_drill_result(self, result: DrillResult) -> None:
         log_path = self._drill_log_dir / f"{result.drill_id}.json"
         log_path.write_text(
-            json.dumps({
-                "drill_id": result.drill_id,
-                "timestamp_utc": result.timestamp_utc,
-                "commit_sha": result.commit_sha,
-                "duration_ms": result.duration_ms,
-                "conflict_rate": result.conflict_rate,
-                "db_integrity_pass": result.db_integrity_pass,
-                "chaos_scenario": result.chaos_scenario,
-                "success": result.success,
-                "details": result.details,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "drill_id": result.drill_id,
+                    "timestamp_utc": result.timestamp_utc,
+                    "commit_sha": result.commit_sha,
+                    "duration_ms": result.duration_ms,
+                    "conflict_rate": result.conflict_rate,
+                    "db_integrity_pass": result.db_integrity_pass,
+                    "chaos_scenario": result.chaos_scenario,
+                    "success": result.success,
+                    "details": result.details,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )
 
@@ -236,7 +237,9 @@ class RollbackDrill:
             result = subprocess.run(
                 ["git"] + args,
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=timeout,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
             )
             return result.stdout
         except Exception:

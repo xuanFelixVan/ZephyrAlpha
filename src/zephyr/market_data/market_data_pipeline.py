@@ -2,43 +2,35 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-004 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.market_data.market_data_pipeline
 # [DOMAIN] D-MKT_DATA
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date
 from enum import Enum
-from typing import Optional
 
 logger = logging.getLogger(__name__)
+
 
 class Interval(str, Enum):
     DAILY = "daily"
     MINUTE_1 = "1min"
     MINUTE_5 = "5min"
 
+
 class ValidationStatus(str, Enum):
     PASS = "PASS"
     WARN = "WARN"
     VIOLATED = "VIOLATED"
+
 
 @dataclass
 class ValidationReport:
@@ -48,12 +40,14 @@ class ValidationReport:
     consistency_ok: bool = True
     status: ValidationStatus = ValidationStatus.PASS
 
+
 @dataclass
 class FeatureStoreSchema:
     symbol: str = ""
     date: date = date.today()
     factor_name: str = ""
     value: float = 0.0
+
 
 @dataclass
 class AkshareProvider:
@@ -65,6 +59,7 @@ class AkshareProvider:
         interval: Interval = Interval.DAILY,
     ) -> dict[str, object]:
         return {"symbol": symbol, "start": start, "end": end, "interval": interval.value, "status": "pending"}
+
 
 @dataclass
 class DataValidator:
@@ -86,6 +81,7 @@ class DataValidator:
     @staticmethod
     def check_consistency(sources: list[dict[str, object]]) -> bool:
         return True
+
 
 class MarketDataPipeline:
     def __init__(self) -> None:

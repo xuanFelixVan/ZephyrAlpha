@@ -1,9 +1,9 @@
 # [A_module] module_id=MOD-ORC_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §ports
-# [MODULE] zephyr.orchestration.pipeline_routing.ports
+# [MODULE] zephyr.integration.ports
 # [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.infrastructure.a2a_protocol.governance
 # [MODIFY-GUARD] blueprint.md §ports; pipeline/__init__.py __all__
-# [CONSUMERS] zephyr.orchestration.pipeline_routing.pipeline_orchestrator;zephyr.orchestration.pipeline_routing.layer_router
+# [CONSUMERS] zephyr.integration.pipeline_orchestrator;zephyr.integration.layer_router
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -17,15 +17,14 @@ by defining structural interfaces that pipeline depends on instead of importing
 mcp concrete implementations directly.
 """
 
-
 from __future__ import annotations
 
 from typing import Any, Protocol, runtime_checkable
 
 __all__ = [
     "BlueprintSearchProtocol",
-    "MCPServerProtocol",
     "DocumentGuardProtocol",
+    "MCPServerProtocol",
 ]
 
 

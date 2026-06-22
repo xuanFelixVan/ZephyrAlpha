@@ -2,7 +2,6 @@
 # ==== BEGIN CODGEN:CTR-P1-003 ====
 from dataclasses import dataclass, field
 
-from typing import Dict
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -24,8 +23,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class CapitalAllocationResult:
@@ -37,181 +37,7 @@ class CapitalAllocationResult:
     total_allocated_weight: float
     rebalance_threshold: float = 0.05
     schema_version: str = "1.0"
-    strategy_allocations: Dict[str, float] = field(default_factory=dict)
+    strategy_allocations: dict[str, float] = field(default_factory=dict)
+
 
 # ==== END CODGEN:CTR-P1-003 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

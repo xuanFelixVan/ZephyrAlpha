@@ -36,12 +36,12 @@ warn_only: false
 """
 
 import json
-import os
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
+
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -145,15 +145,15 @@ def check_sqlite_schema() -> dict[str, Any]:
         conn = sqlite3.connect(str(_DB_PATH))
         required_tables = ["tasks", "events", "knowledge", "gates", "circuit_breaker_state", "task_files"]
         for table in required_tables:
-            row = conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table,)
-            ).fetchone()
+            row = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()
             if not row:
                 issues.append(f"表缺失: {table}")
 
         try:
-            conn.execute("INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?,?,?,?,?)",
-                        ("selfcheck-test", "GX:test", 1, "{}", datetime.now(UTC).isoformat()))
+            conn.execute(
+                "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?,?,?,?,?)",
+                ("selfcheck-test", "GX:test", 1, "{}", datetime.now(UTC).isoformat()),
+            )
             conn.execute("DELETE FROM gates WHERE gate_run_id='selfcheck-test'")
         except Exception as exc:
             issues.append(f"写入测试失败: {exc}")
@@ -174,7 +174,10 @@ def check_gate_engine_import() -> dict[str, Any]:
     """Check compliance and report findings."""
     issues: list[str] = []
     try:
-        from zephyr.governance.rule_enforcement.gate_engine import GateEngine, GateResult, GateViolation, GateViolationError
+        from zephyr.governance.rule_enforcement.gate_engine import (
+            GateEngine,
+        )
+
         engine = GateEngine()
         gates = engine.load_gates()
         if len(gates) < 8:
@@ -188,7 +191,7 @@ def check_gate_engine_import() -> dict[str, Any]:
     return {
         "label": "S8. Gate Engine 导入验证",
         "passed": len(issues) == 0,
-        "detail": f"API 可用" if not issues else "",
+        "detail": "API 可用" if not issues else "",
         "issues": issues,
     }
 
@@ -197,7 +200,7 @@ def check_circuit_breaker_import() -> dict[str, Any]:
     """Check compliance and report findings."""
     issues: list[str] = []
     try:
-        from zephyr.governance.rule_enforcement.circuit_breaker import CircuitBreakerCheck
+        pass
     except Exception as exc:
         issues.append(f"circuit_breaker 导入失败: {exc}")
 
@@ -216,7 +219,12 @@ def check_gate_registry_consistency() -> dict[str, Any]:
     issues: list[str] = []
     registry = _GATES_DIR / "_registry.yaml"
     if not registry.exists():
-        return {"label": "S10. 门禁注册一致性", "passed": False, "detail": "_registry.yaml 不存在", "issues": ["文件缺失"]}
+        return {
+            "label": "S10. 门禁注册一致性",
+            "passed": False,
+            "detail": "_registry.yaml 不存在",
+            "issues": ["文件缺失"],
+        }
 
     try:
         data = yaml.safe_load(registry.read_text(encoding="utf-8"))
@@ -227,7 +235,12 @@ def check_gate_registry_consistency() -> dict[str, Any]:
     for entry in data.get("gates", []):
         registry_gate_ids.add(entry.get("gate_id", ""))
 
-    yaml_files = sorted(_GATES_DIR.glob("*.yaml")) + sorted(_GATES_DIR.glob("task/*.yaml")) + sorted(_GATES_DIR.glob("admission/*.yaml")) + sorted(_GATES_DIR.glob("invariants/*.yaml"))
+    yaml_files = (
+        sorted(_GATES_DIR.glob("*.yaml"))
+        + sorted(_GATES_DIR.glob("task/*.yaml"))
+        + sorted(_GATES_DIR.glob("admission/*.yaml"))
+        + sorted(_GATES_DIR.glob("invariants/*.yaml"))
+    )
     yaml_gate_ids = set()
     for yf in yaml_files:
         if yf.name.startswith("_"):
@@ -272,12 +285,20 @@ def check_checktype_coverage() -> dict[str, Any]:
 
     issues: list[str] = []
     code_types = {
-        "encoding", "line_ending", "file_extension", "frontmatter",
-        "content_length", "path_blacklist",
-        "content_quality", "field_presence",
-        "classification", "regex_pattern",
-        "audit_findings_resolved", "circuit_breaker",
-        "blueprint_read_check", "zero_residue_check",
+        "encoding",
+        "line_ending",
+        "file_extension",
+        "frontmatter",
+        "content_length",
+        "path_blacklist",
+        "content_quality",
+        "field_presence",
+        "classification",
+        "regex_pattern",
+        "audit_findings_resolved",
+        "circuit_breaker",
+        "blueprint_read_check",
+        "zero_residue_check",
     }
     known_shadow_types = {"position_limit", "leverage_limit", "strategy_correlation"}
 
@@ -346,7 +367,7 @@ def main() -> None:
 
     sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 
-    print(f"=== Gate Engine Bootstrap Self-Check ===")
+    print("=== Gate Engine Bootstrap Self-Check ===")
     print(f"时间: {datetime.now(UTC).isoformat()}")
     print(f"项目: {_PROJECT_ROOT}")
     print(f"门禁目录: {_GATES_DIR}")

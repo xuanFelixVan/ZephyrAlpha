@@ -4,10 +4,11 @@ CI Entry: Drift Detector E2E Pipeline Check
 ============================================
 Tier 8 — 每次 CI 全量回归时运行 drift E2E + 自检 + 注册表一致性。
 """
+
 from __future__ import annotations
 
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
@@ -17,7 +18,9 @@ def run_pytest(test_module: str) -> bool:
     """run_pytest implementation."""
     result = subprocess.run(
         [sys.executable, "-m", "pytest", test_module, "-x", "--tb=short", "-q", "--no-header"],
-        capture_output=False, text=True, timeout=120,
+        capture_output=False,
+        text=True,
+        timeout=120,
         cwd=str(PROJECT_ROOT),
     )
     return result.returncode == 0

@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_diversity_constraint.py -q
 from __future__ import annotations
-import pytest
+
 from zephyr.autonomy_core.diversity_constraint import DiversityConstraint, DiversityReport
 
 

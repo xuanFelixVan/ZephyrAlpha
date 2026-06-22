@@ -11,14 +11,15 @@ from __future__ import annotations
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
+from dataclasses import dataclass
 
-from dataclasses import dataclass, field
 
 @dataclass
 class ReviewChunk:
     level: str
     chunk_id: str
     time_budget_minutes: int = 30
+
 
 REVIEW_DIMENSIONS: dict[str, str] = {
     "consistency": "语义割裂检测",

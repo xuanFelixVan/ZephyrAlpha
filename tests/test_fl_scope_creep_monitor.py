@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_scope_creep_monitor.py
 
-import pytest
 from zephyr.ops.gates.scope_creep_monitor import ScopeCreepMonitor, ScopeEvent
 
 

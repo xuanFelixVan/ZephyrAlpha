@@ -32,7 +32,6 @@
   semantic_10x  → KILL_SWITCH（疑似 runaway agent）
 """
 
-
 from __future__ import annotations
 
 import hashlib
@@ -127,14 +126,21 @@ class ActionHistory:
             self._purge_expired()
             result = self._check_dedup(sig, target_file_region)
             self._buffer.append(sig)
-            if result.action in (DedupAction.WARN, DedupAction.BLOCK, DedupAction.HALT, DedupAction.TRIGGER_KILL_SWITCH):
-                self._loop_events.append(LoopEvent(
-                    fingerprint=sig.fingerprint,
-                    tool_name=tool_name,
-                    count=result.identical_count,
-                    action=result.action,
-                    reason=result.reason,
-                ))
+            if result.action in (
+                DedupAction.WARN,
+                DedupAction.BLOCK,
+                DedupAction.HALT,
+                DedupAction.TRIGGER_KILL_SWITCH,
+            ):
+                self._loop_events.append(
+                    LoopEvent(
+                        fingerprint=sig.fingerprint,
+                        tool_name=tool_name,
+                        count=result.identical_count,
+                        action=result.action,
+                        reason=result.reason,
+                    )
+                )
             if target_file_region:
                 self._file_region_counts[target_file_region] = self._file_region_counts.get(target_file_region, 0) + 1
 
@@ -142,23 +148,58 @@ class ActionHistory:
 
     def _check_dedup(self, sig: ActionSignature, target_file_region: str = "") -> DedupResult:
         identical_count = sum(1 for s in self._buffer if s.fingerprint == sig.fingerprint)
-        semantic_count = sum(1 for s in self._buffer if s.tool_params_semantic_hash and s.tool_params_semantic_hash == sig.tool_params_semantic_hash)
+        semantic_count = sum(
+            1
+            for s in self._buffer
+            if s.tool_params_semantic_hash and s.tool_params_semantic_hash == sig.tool_params_semantic_hash
+        )
 
         if semantic_count >= _SEMANTIC_KILL_THRESHOLD:
-            return DedupResult(action=DedupAction.TRIGGER_KILL_SWITCH, reason=f"语义重复 {semantic_count}x — 疑似 runaway agent", identical_count=semantic_count, fingerprint=sig.fingerprint)
+            return DedupResult(
+                action=DedupAction.TRIGGER_KILL_SWITCH,
+                reason=f"语义重复 {semantic_count}x — 疑似 runaway agent",
+                identical_count=semantic_count,
+                fingerprint=sig.fingerprint,
+            )
 
         if target_file_region and self._file_region_counts.get(target_file_region, 0) >= _SPIRAL_THRESHOLD:
-            return DedupResult(action=DedupAction.HALT, reason=f"自修复螺旋 — {target_file_region} 被修改 {self._file_region_counts[target_file_region]}x", identical_count=self._file_region_counts[target_file_region], fingerprint=sig.fingerprint)
+            return DedupResult(
+                action=DedupAction.HALT,
+                reason=f"自修复螺旋 — {target_file_region} 被修改 {self._file_region_counts[target_file_region]}x",
+                identical_count=self._file_region_counts[target_file_region],
+                fingerprint=sig.fingerprint,
+            )
 
-        no_effect_count = sum(1 for s in self._buffer if s.tool_name == sig.tool_name and s.output_effect_hash == sig.output_effect_hash and sig.output_effect_hash)
+        no_effect_count = sum(
+            1
+            for s in self._buffer
+            if s.tool_name == sig.tool_name
+            and s.output_effect_hash == sig.output_effect_hash
+            and sig.output_effect_hash
+        )
         if no_effect_count >= _NO_EFFECT_THRESHOLD:
-            return DedupResult(action=DedupAction.WARN, reason=f"无效果动作链 — {sig.tool_name} 连续 {no_effect_count}x 无输出变化", identical_count=no_effect_count, fingerprint=sig.fingerprint)
+            return DedupResult(
+                action=DedupAction.WARN,
+                reason=f"无效果动作链 — {sig.tool_name} 连续 {no_effect_count}x 无输出变化",
+                identical_count=no_effect_count,
+                fingerprint=sig.fingerprint,
+            )
 
         if identical_count >= _IDENTICAL_BLOCK_THRESHOLD:
-            return DedupResult(action=DedupAction.BLOCK, reason=f"重复动作循环 — {sig.tool_name} 重复 {identical_count}x", identical_count=identical_count, fingerprint=sig.fingerprint)
+            return DedupResult(
+                action=DedupAction.BLOCK,
+                reason=f"重复动作循环 — {sig.tool_name} 重复 {identical_count}x",
+                identical_count=identical_count,
+                fingerprint=sig.fingerprint,
+            )
 
         if identical_count >= _IDENTICAL_WARN_THRESHOLD:
-            return DedupResult(action=DedupAction.WARN, reason=f"重复动作警告 — {sig.tool_name} 重复 {identical_count}x", identical_count=identical_count, fingerprint=sig.fingerprint)
+            return DedupResult(
+                action=DedupAction.WARN,
+                reason=f"重复动作警告 — {sig.tool_name} 重复 {identical_count}x",
+                identical_count=identical_count,
+                fingerprint=sig.fingerprint,
+            )
 
         return DedupResult(action=DedupAction.ALLOW, identical_count=identical_count, fingerprint=sig.fingerprint)
 

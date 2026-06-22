@@ -39,8 +39,8 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -66,11 +66,16 @@ class TrustScore:
     last_updated: str
 
     @classmethod
-    def from_ledger(cls, entries: list[TrustEntry]) -> "TrustScore":
+    def from_ledger(cls, entries: list[TrustEntry]) -> TrustScore:
         if not entries:
-            return cls(score=0.5, tier=1, total_entries=0,
-                       positive_deltas=0, negative_deltas=0,
-                       last_updated=datetime.now(timezone.utc).isoformat())
+            return cls(
+                score=0.5,
+                tier=1,
+                total_entries=0,
+                positive_deltas=0,
+                negative_deltas=0,
+                last_updated=datetime.now(UTC).isoformat(),
+            )
 
         score = 0.5
         positive = 0
@@ -87,9 +92,7 @@ class TrustScore:
 
         if score > 0.8:
             tier = 2
-        elif score > 0.5:
-            tier = 1
-        elif score > -0.3:
+        elif score > 0.5 or score > -0.3:
             tier = 1
         else:
             tier = 0
@@ -114,7 +117,7 @@ class TrustTierPerms:
     needs_human_approval: bool = True
 
     @classmethod
-    def from_tier(cls, tier: int) -> "TrustTierPerms":
+    def from_tier(cls, tier: int) -> TrustTierPerms:
         if tier == 2:
             return cls(
                 tier=2,
@@ -144,7 +147,6 @@ class TrustTierPerms:
 
 
 class ContinuousTrust:
-
     POSITIVE_DELTA = 0.1
     NEGATIVE_DELTA = -0.1
     CRITICAL_FAILURE_DELTA = -0.3
@@ -165,8 +167,8 @@ class ContinuousTrust:
         execution_id: str = "",
     ) -> TrustEntry:
         entry = TrustEntry(
-            entry_id=f"TRUST-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}-{os.urandom(4).hex()}",
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            entry_id=f"TRUST-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}-{os.urandom(4).hex()}",
+            timestamp_utc=datetime.now(UTC).isoformat(),
             trust_delta=trust_delta,
             reason=reason,
             operation=operation,
@@ -176,15 +178,18 @@ class ContinuousTrust:
 
         self._ledger_dir.mkdir(parents=True, exist_ok=True)
 
-        line = json.dumps({
-            "entry_id": entry.entry_id,
-            "timestamp_utc": entry.timestamp_utc,
-            "trust_delta": entry.trust_delta,
-            "reason": entry.reason,
-            "operation": entry.operation,
-            "commit_sha": entry.commit_sha,
-            "execution_id": entry.execution_id,
-        }, ensure_ascii=False)
+        line = json.dumps(
+            {
+                "entry_id": entry.entry_id,
+                "timestamp_utc": entry.timestamp_utc,
+                "trust_delta": entry.trust_delta,
+                "reason": entry.reason,
+                "operation": entry.operation,
+                "commit_sha": entry.commit_sha,
+                "execution_id": entry.execution_id,
+            },
+            ensure_ascii=False,
+        )
 
         with open(self._ledger_path, "a", encoding="utf-8") as f:
             f.write(line + "\n")
@@ -285,15 +290,17 @@ class ContinuousTrust:
                 if not line:
                     continue
                 data = json.loads(line)
-                entries.append(TrustEntry(
-                    entry_id=data["entry_id"],
-                    timestamp_utc=data["timestamp_utc"],
-                    trust_delta=data["trust_delta"],
-                    reason=data["reason"],
-                    operation=data.get("operation", ""),
-                    commit_sha=data.get("commit_sha", ""),
-                    execution_id=data.get("execution_id", ""),
-                ))
+                entries.append(
+                    TrustEntry(
+                        entry_id=data["entry_id"],
+                        timestamp_utc=data["timestamp_utc"],
+                        trust_delta=data["trust_delta"],
+                        reason=data["reason"],
+                        operation=data.get("operation", ""),
+                        commit_sha=data.get("commit_sha", ""),
+                        execution_id=data.get("execution_id", ""),
+                    )
+                )
         except (json.JSONDecodeError, KeyError):
             pass
 
@@ -306,14 +313,18 @@ class ContinuousTrust:
         self._ledger_dir.mkdir(parents=True, exist_ok=True)
 
         self._score_path.write_text(
-            json.dumps({
-                "score": score.score,
-                "tier": score.tier,
-                "total_entries": score.total_entries,
-                "positive_deltas": score.positive_deltas,
-                "negative_deltas": score.negative_deltas,
-                "last_updated": score.last_updated,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "score": score.score,
+                    "tier": score.tier,
+                    "total_entries": score.total_entries,
+                    "positive_deltas": score.positive_deltas,
+                    "negative_deltas": score.negative_deltas,
+                    "last_updated": score.last_updated,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )
 

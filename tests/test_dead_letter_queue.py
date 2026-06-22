@@ -14,10 +14,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import pytest
-
 from zephyr.integration.dead_letter_queue import DeadLetterQueue
-from zephyr.integration.models import DeadLetterEntry, ModuleResult, ModuleStatus, PipelineStatus
+from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineStatus
 
 
 @dataclass
@@ -31,7 +29,7 @@ def _make_results(statuses: list[ModuleStatus], errors: list[list[str]] | None =
         errs = errors[i] if errors and i < len(errors) else (["error"] if s == ModuleStatus.FAILURE else [])
         results.append(
             ModuleResult(
-                module_id=f"M{i+1}",
+                module_id=f"M{i + 1}",
                 pipeline="A",
                 model="deepseek",
                 status=s,

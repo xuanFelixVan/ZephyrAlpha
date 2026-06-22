@@ -6,12 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """context-engine.management — auto-generated package init."""
-from . import context_evictor
-from . import context_rot_model
 
-__all__ = ['context_budget_tracker', 'context_evictor', 'context_rot_model']
+from . import context_evictor, context_rot_model
 
+__all__ = ["context_budget_tracker", "context_evictor", "context_rot_model"]

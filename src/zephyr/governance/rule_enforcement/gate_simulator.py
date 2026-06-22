@@ -25,12 +25,13 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
 from zephyr.governance.rule_enforcement.gate_pipeline import GatePipeline
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class SimulationReport:
@@ -38,7 +39,7 @@ class SimulationReport:
     results: list[GateResult]
     overall: GateStatus
     duration_ms: float
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def summary(self) -> str:
         pass_count = sum(1 for r in self.results if r.status == GateStatus.PASS)
@@ -48,6 +49,7 @@ class SimulationReport:
             f"({pass_count}P/{fail_count}F/{len(self.results)}T) "
             f"in {self.duration_ms:.0f}ms"
         )
+
 
 class GateSimulator:
     def __init__(self) -> None:
@@ -78,10 +80,13 @@ class GateSimulator:
     def clear_history(self) -> None:
         self._reports.clear()
 
+
 __all__ = ["GateSimulator", "SimulationReport"]
+
 
 def main() -> None:
     pass
+
 
 if __name__ == "__main__":
     main()

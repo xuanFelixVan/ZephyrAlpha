@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.scheduler_health import HealthReporter
 
 
@@ -32,12 +30,26 @@ class TestHealthReporter:
     def test_report_has_required_keys(self):
         result = self.reporter.report()
         expected_keys = [
-            "dogfood", "bottleneck", "degradation", "throttle",
-            "bus_factor", "e2e", "storage", "numerical",
-            "hygiene", "L2_guard_consistency", "L2_guard_conflicts",
-            "L2_guard_oscillation", "L3_cascade", "L3_mod_rate_limiter",
-            "L3_entropy", "L4_diminishing_returns", "L4_complexity_budget",
-            "cold_start", "context_pressure", "session_consistency",
+            "dogfood",
+            "bottleneck",
+            "degradation",
+            "throttle",
+            "bus_factor",
+            "e2e",
+            "storage",
+            "numerical",
+            "hygiene",
+            "L2_guard_consistency",
+            "L2_guard_conflicts",
+            "L2_guard_oscillation",
+            "L3_cascade",
+            "L3_mod_rate_limiter",
+            "L3_entropy",
+            "L4_diminishing_returns",
+            "L4_complexity_budget",
+            "cold_start",
+            "context_pressure",
+            "session_consistency",
         ]
         for key in expected_keys:
             assert key in result, f"Missing key: {key}"

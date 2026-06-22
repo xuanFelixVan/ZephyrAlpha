@@ -19,15 +19,10 @@
 
 # [TESTS]
 
-import os
-import re
-import sys
 import threading
 import time
-from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -58,7 +53,7 @@ class AccessRule(BaseModel):
 
 class IsolationPolicy(BaseModel):
     level: IsolationLevel = IsolationLevel.PROCESS
-    rules: List[AccessRule] = Field(default_factory=list)
+    rules: list[AccessRule] = Field(default_factory=list)
     enforcement_mode: str = "fail_closed"
 
 
@@ -81,39 +76,74 @@ class LSGIsolation:
     - Python 模块加载白名单: 只允许加载明确声明的系统模块
     """
 
-    _DEFAULT_SCOPED_DIRS: Tuple[str, ...] = (
+    _DEFAULT_SCOPED_DIRS: tuple[str, ...] = (
         "src/zephyr/llm-security",
         "/tmp",
         "_journals",
     )
 
-    _WHITELIST_MODULES: Set[str] = {
-        "abc", "asyncio", "collections", "copy", "dataclasses",
-        "datetime", "enum", "functools", "hashlib", "hmac",
-        "importlib", "inspect", "io", "itertools", "json",
-        "logging", "math", "os", "pathlib", "re", "struct",
-        "sys", "threading", "time", "traceback", "types", "typing",
-        "uuid", "warnings", "weakref", "textwrap", "zoneinfo",
-        "pydantic", "yaml",
+    _WHITELIST_MODULES: set[str] = {
+        "abc",
+        "asyncio",
+        "collections",
+        "copy",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "functools",
+        "hashlib",
+        "hmac",
+        "importlib",
+        "inspect",
+        "io",
+        "itertools",
+        "json",
+        "logging",
+        "math",
+        "os",
+        "pathlib",
+        "re",
+        "struct",
+        "sys",
+        "threading",
+        "time",
+        "traceback",
+        "types",
+        "typing",
+        "uuid",
+        "warnings",
+        "weakref",
+        "textwrap",
+        "zoneinfo",
+        "pydantic",
+        "yaml",
     }
 
-    _FORBIDDEN_MODULES: Set[str] = {
-        "ctypes", "subprocess", "socket", "requests", "urllib",
-        "http.client", "http.server", "smtplib", "ftplib",
-        "telnetlib", "poplib", "imaplib", "nntplib",
+    _FORBIDDEN_MODULES: set[str] = {
+        "ctypes",
+        "subprocess",
+        "socket",
+        "requests",
+        "urllib",
+        "http.client",
+        "http.server",
+        "smtplib",
+        "ftplib",
+        "telnetlib",
+        "poplib",
+        "imaplib",
+        "nntplib",
     }
 
     def __init__(self, level: IsolationLevel = IsolationLevel.PROCESS):
         self._level = level
-        self._audit_log: List[IsolationAuditEntry] = []
+        self._audit_log: list[IsolationAuditEntry] = []
         self._lock = threading.Lock()
         self._policy = IsolationPolicy(level=level)
 
     def check_file_access(self, path: str, pattern: AccessPattern) -> bool:
         normalized = str(Path(path).resolve()).replace("\\", "/")
-        allowed = any(
-            d in normalized for d in self._DEFAULT_SCOPED_DIRS
-        ) or "/tmp" in normalized
+        allowed = any(d in normalized for d in self._DEFAULT_SCOPED_DIRS) or "/tmp" in normalized
 
         self._log_audit(pattern, normalized, allowed)
         return allowed
@@ -149,14 +179,17 @@ class LSGIsolation:
             self._audit_log.append(entry)
             if len(self._audit_log) > 5000:
                 self._audit_log = self._audit_log[-2500:]
-        write_to_core("llm_isolation_audit", {
-            "pattern": pattern.value,
-            "target": target,
-            "allowed": allowed,
-        })
+        write_to_core(
+            "llm_isolation_audit",
+            {
+                "pattern": pattern.value,
+                "target": target,
+                "allowed": allowed,
+            },
+        )
 
     @property
-    def audit_log(self) -> List[IsolationAuditEntry]:
+    def audit_log(self) -> list[IsolationAuditEntry]:
         return list(self._audit_log)
 
     @property

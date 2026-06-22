@@ -9,10 +9,6 @@
 
 from __future__ import annotations
 
-import pytest
-
-from zephyr.trading.orchestrator.contract_registry import ContractRegistry
-from zephyr.trading.orchestrator.contract_router import ContractRouter
 from zephyr.governance.contract import (
     EXIT_CODE_TO_GATE_ACTION,
     PIPELINE_ACTIONS,
@@ -21,6 +17,8 @@ from zephyr.governance.contract import (
     get_pipeline_action,
     resolve_exit_code,
 )
+from zephyr.trading.orchestrator.contract_registry import ContractRegistry
+from zephyr.trading.orchestrator.contract_router import ContractRouter
 
 
 def test_ct_rbk_gate_registered():
@@ -98,6 +96,4 @@ def test_pipeline_actions_covers_all_gate_actions():
     all_gates = {action for action, _ in EXIT_CODE_TO_GATE_ACTION.values()}
     for gate in all_gates:
         if gate != "UNKNOWN":
-            assert gate in PIPELINE_ACTIONS, (
-                f"Gate action '{gate}' missing from PIPELINE_ACTIONS"
-            )
+            assert gate in PIPELINE_ACTIONS, f"Gate action '{gate}' missing from PIPELINE_ACTIONS"

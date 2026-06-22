@@ -32,13 +32,12 @@ L3 Global Kill:   完全禁用所有自动回滚——仅限 token-gated
 自动递进升级: L1→L2→L3 逐级升级直到修复。
 """
 
-
 from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -70,7 +69,6 @@ class KillSwitchStatus:
 
 
 class KillSwitchManager:
-
     KILL_SWITCH_FILE: str = ".zephyr/kill_switches.jsonl"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -87,7 +85,7 @@ class KillSwitchManager:
         if level == KillLevel.L3_GLOBAL and not token:
             raise ValueError("L3_GLOBAL requires BREAK_GLASS token")
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         entry = KillSwitchEntry(
             level=level,
             target=target,
@@ -180,7 +178,7 @@ class KillSwitchManager:
         if not self._kill_path.exists():
             return []
         entries: list[dict[str, Any]] = []
-        with open(self._kill_path, "r", encoding="utf-8") as f:
+        with open(self._kill_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:

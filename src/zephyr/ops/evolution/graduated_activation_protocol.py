@@ -88,12 +88,14 @@ class GraduatedActivationProtocol:
             rule["failure_count"] += 1
             if rule["stage"] != ActivationStage.CANARY:
                 rule["stage"] = ActivationStage.ROLLED_BACK
-                self.rollback_history.append({
-                    "ts": time.time(),
-                    "rule_id": rule_id,
-                    "from_stage": rule["stage"].value,
-                    "reason": "failure_in_production",
-                })
+                self.rollback_history.append(
+                    {
+                        "ts": time.time(),
+                        "rule_id": rule_id,
+                        "from_stage": rule["stage"].value,
+                        "reason": "failure_in_production",
+                    }
+                )
 
     def evaluate_promotion(self, rule_id: str) -> dict:
         rule = self.rules.get(rule_id)
@@ -102,7 +104,10 @@ class GraduatedActivationProtocol:
 
         total = rule["total_applications"]
         if total < self.min_samples_per_stage:
-            return {"decision": PromotionDecision.HOLD.value, "reason": f"insufficient_samples:{total}<{self.min_samples_per_stage}"}
+            return {
+                "decision": PromotionDecision.HOLD.value,
+                "reason": f"insufficient_samples:{total}<{self.min_samples_per_stage}",
+            }
 
         success_rate = rule["success_count"] / max(total, 1)
         elapsed = time.time() - rule["activated_at"]
@@ -115,13 +120,15 @@ class GraduatedActivationProtocol:
                 decision = PromotionDecision.PROMOTE
                 rule["stage"] = ActivationStage.BETA
                 rule["promoted_at"] = time.time()
-                self.promotion_history.append({
-                    "ts": time.time(),
-                    "rule_id": rule_id,
-                    "from": ActivationStage.CANARY.value,
-                    "to": ActivationStage.BETA.value,
-                    "success_rate": round(success_rate, 3),
-                })
+                self.promotion_history.append(
+                    {
+                        "ts": time.time(),
+                        "rule_id": rule_id,
+                        "from": ActivationStage.CANARY.value,
+                        "to": ActivationStage.BETA.value,
+                        "success_rate": round(success_rate, 3),
+                    }
+                )
             elif success_rate < 0.80 and total >= self.min_samples_per_stage:
                 decision = PromotionDecision.ROLLBACK
                 rule["stage"] = ActivationStage.ROLLED_BACK
@@ -131,13 +138,15 @@ class GraduatedActivationProtocol:
                 decision = PromotionDecision.PROMOTE
                 rule["stage"] = ActivationStage.STABLE
                 rule["promoted_at"] = time.time()
-                self.promotion_history.append({
-                    "ts": time.time(),
-                    "rule_id": rule_id,
-                    "from": ActivationStage.BETA.value,
-                    "to": ActivationStage.STABLE.value,
-                    "success_rate": round(success_rate, 3),
-                })
+                self.promotion_history.append(
+                    {
+                        "ts": time.time(),
+                        "rule_id": rule_id,
+                        "from": ActivationStage.BETA.value,
+                        "to": ActivationStage.STABLE.value,
+                        "success_rate": round(success_rate, 3),
+                    }
+                )
             elif success_rate < self.canary_success_threshold:
                 decision = PromotionDecision.ROLLBACK
                 rule["stage"] = ActivationStage.ROLLED_BACK

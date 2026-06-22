@@ -29,10 +29,9 @@
 方法: 分析 Agent 间没有显式 A2A 消息但访问了相同资源的场景
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -63,10 +62,13 @@ class A2ALatentComm:
                     for j in range(i + 1, len(agents)):
                         confidence = min(1.0, len(agents) * 0.3)
                         if confidence >= self._threshold:
-                            signals.append(LatentCommSignal(
-                                agent_a=agents[i], agent_b=agents[j],
-                                shared_resource=resource,
-                                signal_type="shared_resource_access",
-                                confidence=round(confidence, 2),
-                            ))
+                            signals.append(
+                                LatentCommSignal(
+                                    agent_a=agents[i],
+                                    agent_b=agents[j],
+                                    shared_resource=resource,
+                                    signal_type="shared_resource_access",
+                                    confidence=round(confidence, 2),
+                                )
+                            )
         return signals

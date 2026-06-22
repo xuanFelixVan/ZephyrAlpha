@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3315
 title: 2.1 业务核心层（C 轨 14 层）
 category: documentation

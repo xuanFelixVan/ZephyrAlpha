@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.exchange_reg_monitor import ExchangeRegMonitor
 
 

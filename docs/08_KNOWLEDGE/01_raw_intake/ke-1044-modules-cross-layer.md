@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-1044
 status: active
 title: 5.5 `03_modules/_cross_layer/` — 跨层模块

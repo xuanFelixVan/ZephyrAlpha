@@ -2,28 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.spiral_ews
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
-from dataclasses import dataclass, field
 from collections import deque
+from dataclasses import dataclass, field
+
 
 @dataclass
 class SpiralSignal:
@@ -34,8 +25,8 @@ class SpiralSignal:
     level: str
     timestamp: float = field(default_factory=time.time)
 
-class SpiralEarlyWarningSystem:
 
+class SpiralEarlyWarningSystem:
     def __init__(self, window: int = 10, threshold: float = 1.5):
         self._window = window
         self._threshold = threshold

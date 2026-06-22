@@ -42,29 +42,34 @@
     - shutdown() 按逆序关闭 9 子系统 + 停止后台线程
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
 import os
-import sys
 import threading
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.infrastructure.system_telemetry.health import HealthSubsystem
 from zephyr.infrastructure.system_telemetry.alerts import AlertSubsystem
+from zephyr.infrastructure.system_telemetry.health import HealthSubsystem
 from zephyr.infrastructure.system_telemetry.profiles import ProfileSubsystem
 from zephyr.infrastructure.system_telemetry.schema import SchemaSubsystem
 
 _logger = logging.getLogger(__name__)
 
 _SHUTDOWN_ORDER = [
-    "metrics", "logs", "traces", "ai_behavior",
-    "health", "profiles", "alerts", "schema", "archive",
+    "metrics",
+    "logs",
+    "traces",
+    "ai_behavior",
+    "health",
+    "profiles",
+    "alerts",
+    "schema",
+    "archive",
 ]
 
 _RING_SIZE = 4096
@@ -167,7 +172,7 @@ class MetricsFacade:
 
     def _record(self, kind: str, name: str, value: float, tags: dict) -> dict:
         point = {
-            "ts": datetime.now(timezone.utc).isoformat(),
+            "ts": datetime.now(UTC).isoformat(),
             "module_id": self._module_id,
             "kind": kind,
             "name": name,
@@ -196,7 +201,7 @@ class LogsFacade:
 
     def _log(self, level: str, message: str, labels: dict) -> dict:
         record = {
-            "ts": datetime.now(timezone.utc).isoformat(),
+            "ts": datetime.now(UTC).isoformat(),
             "level": level,
             "module_id": self._module_id,
             "message": message,
@@ -213,9 +218,9 @@ class _Span:
         self.operation_name = operation_name
         self._test_mode = test_mode
         self._attributes: dict[str, Any] = {}
-        self._start = datetime.now(timezone.utc)
+        self._start = datetime.now(UTC)
 
-    def __enter__(self) -> "_Span":
+    def __enter__(self) -> _Span:
         return self
 
     def __exit__(self, *exc: Any) -> None:
@@ -228,14 +233,19 @@ class _Span:
         self._attributes.update(kwargs)
 
     def end(self) -> dict:
-        elapsed = (datetime.now(timezone.utc) - self._start).total_seconds()
+        elapsed = (datetime.now(UTC) - self._start).total_seconds()
         result = {
             "operation": self.operation_name,
             "elapsed_s": elapsed,
             "attributes": dict(self._attributes),
         }
         if not self._test_mode:
-            _logger.info("trace span=%s elapsed=%.3fs attrs=%s", self.operation_name, elapsed, json.dumps(self._attributes, default=str))
+            _logger.info(
+                "trace span=%s elapsed=%.3fs attrs=%s",
+                self.operation_name,
+                elapsed,
+                json.dumps(self._attributes, default=str),
+            )
         return result
 
 
@@ -249,6 +259,7 @@ class TracesFacade:
             return _Span(operation_name, test_mode=True)
         try:
             from zephyr.infrastructure.system_telemetry.traces.span_stub import noop_span
+
             return _RealSpanBridge(operation_name, noop_span)
         except Exception:
             return _Span(operation_name, test_mode=self._test_mode)
@@ -290,7 +301,7 @@ class AIBehaviorFacade:
     def record(self, decision: str, model: str = "", reason: str = "", **extra: Any) -> dict:
         if self._test_mode:
             return {
-                "ts": datetime.now(timezone.utc).isoformat(),
+                "ts": datetime.now(UTC).isoformat(),
                 "module_id": self._module_id,
                 "decision": decision,
                 "model": model,
@@ -301,6 +312,7 @@ class AIBehaviorFacade:
             from zephyr.infrastructure.system_telemetry.ai_behavior.event_sink import (
                 emit_ai_behavior_event,
             )
+
             event = emit_ai_behavior_event(
                 model_name=model or "unknown",
                 task_type=decision,
@@ -313,10 +325,13 @@ class AIBehaviorFacade:
         except Exception:
             _logger.info(
                 "ai_behavior decision=%s model=%s reason=%s extra=%s",
-                decision, model, reason, json.dumps(extra, default=str),
+                decision,
+                model,
+                reason,
+                json.dumps(extra, default=str),
             )
             return {
-                "ts": datetime.now(timezone.utc).isoformat(),
+                "ts": datetime.now(UTC).isoformat(),
                 "module_id": self._module_id,
                 "decision": decision,
                 "model": model,
@@ -333,12 +348,15 @@ class ArchiveFacade:
     def next_batch_id(self, prefix: str = "arc") -> str:
         if self._test_mode:
             import uuid
+
             return f"{prefix}-{uuid.uuid4().hex[:12]}"
         try:
             from zephyr.infrastructure.system_telemetry.archive.cold_stub import next_archive_batch_id
+
             return next_archive_batch_id(prefix)
         except Exception:
             import uuid
+
             batch_id = f"{prefix}-{uuid.uuid4().hex[:12]}"
             _logger.info("archive batch_id=%s module=%s", batch_id, self._module_id)
             return batch_id
@@ -371,9 +389,11 @@ class Telemetry:
         self.archive = ArchiveFacade(module_id, test_mode)
 
         from zephyr.infrastructure.system_telemetry.health_aggregator import HealthAggregator
+
         self._health_aggregator = HealthAggregator()
 
         from zephyr.infrastructure.system_telemetry.watchdog import Watchdog
+
         self._watchdog = Watchdog(watchdog_id=f"wd-{module_id}")
 
         if not test_mode:
@@ -387,7 +407,8 @@ class Telemetry:
             self._start_scheduler()
             _logger.info(
                 "Telemetry initialized module=%s env=%s auto=True",
-                module_id, environment,
+                module_id,
+                environment,
             )
 
     def _start_scheduler(self) -> None:
@@ -422,7 +443,8 @@ class Telemetry:
             self._watchdog_tick()
         elif task == "archive_check":
             try:
-                from zephyr.infrastructure.system_telemetry.archive import rotate_by_ttl, daily_backup_sqlite
+                from zephyr.infrastructure.system_telemetry.archive import daily_backup_sqlite, rotate_by_ttl
+
                 rotate_by_ttl()
                 daily_backup_sqlite()
             except Exception:

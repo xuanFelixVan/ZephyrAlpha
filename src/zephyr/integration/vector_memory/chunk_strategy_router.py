@@ -62,10 +62,18 @@ class Chunk(BaseModel):
 
 
 class ChunkStrategyRouter:
-    VALID_STRATEGIES: ClassVar[frozenset[str]] = frozenset({
-        "semantic", "ast_aware", "paragraph", "heading_aware",
-        "rule_level", "section_aware", "session_level", "time_window",
-    })
+    VALID_STRATEGIES: ClassVar[frozenset[str]] = frozenset(
+        {
+            "semantic",
+            "ast_aware",
+            "paragraph",
+            "heading_aware",
+            "rule_level",
+            "section_aware",
+            "session_level",
+            "time_window",
+        }
+    )
 
     def route(self, text: str, strategy: str) -> list[Chunk]:
         if strategy not in self.VALID_STRATEGIES:

@@ -5,11 +5,21 @@ Reads architecture-contract.yaml and validates all .md/.yaml files under
 docs/01_policies_and_standards/ for directory compliance, frontmatter fields,
 and doc_type / rule_form consistency.
 """
+
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
 
 __manifest__ = """
 args: []
@@ -35,7 +45,9 @@ def main() -> int:
     """Validate architecture compliance against contract."""
     import yaml
 
-    contract_path = _PROJ / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "architecture-contract.yaml"
+    contract_path = (
+        _PROJ / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "architecture-contract.yaml"
+    )
     errors = 0
 
     if not contract_path.exists():

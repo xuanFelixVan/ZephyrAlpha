@@ -37,8 +37,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -79,7 +79,6 @@ class VerificationResult:
 
 
 class ExternalMerkleProof:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -97,17 +96,19 @@ class ExternalMerkleProof:
 
             content = full_path.read_bytes()
             file_hash = hashlib.sha256(content).hexdigest()
-            leaves.append(MerkleNode(
-                hash_value=file_hash,
-                file_path=file_path,
-            ))
+            leaves.append(
+                MerkleNode(
+                    hash_value=file_hash,
+                    file_path=file_path,
+                )
+            )
 
         if not leaves:
             return MerkleTree(
                 root_hash=hashlib.sha256(b"").hexdigest(),
                 leaves=[],
                 tree_height=0,
-                timestamp_utc=datetime.now(timezone.utc).isoformat(),
+                timestamp_utc=datetime.now(UTC).isoformat(),
                 commit_sha=commit_sha,
             )
 
@@ -118,7 +119,7 @@ class ExternalMerkleProof:
             root_hash=root.hash_value,
             leaves=leaves,
             tree_height=tree_height,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
             commit_sha=commit_sha,
         )
 
@@ -148,9 +149,7 @@ class ExternalMerkleProof:
                     else:
                         proof_hashes.append(left)
 
-                combined = hashlib.sha256(
-                    (left + right).encode("utf-8")
-                ).hexdigest()
+                combined = hashlib.sha256((left + right).encode("utf-8")).hexdigest()
                 next_level.append(combined)
 
             current_level = next_level
@@ -182,7 +181,8 @@ class ExternalMerkleProof:
             verified=verified,
             root_hash=computed_hash,
             expected_root=proof.root_hash,
-            details="Merkle proof verification successful" if verified
+            details="Merkle proof verification successful"
+            if verified
             else f"Merkle proof verification FAILED: computed={computed_hash[:12]}... != expected={proof.root_hash[:12]}...",
         )
 
@@ -243,10 +243,7 @@ class ExternalMerkleProof:
             "tree_height": tree.tree_height,
             "timestamp_utc": tree.timestamp_utc,
             "commit_sha": tree.commit_sha,
-            "leaves": [
-                {"file_path": leaf.file_path, "hash": leaf.hash_value}
-                for leaf in tree.leaves
-            ],
+            "leaves": [{"file_path": leaf.file_path, "hash": leaf.hash_value} for leaf in tree.leaves],
         }
 
         output_path.write_text(
@@ -268,11 +265,13 @@ class ExternalMerkleProof:
             combined = left.hash_value + right.hash_value
             parent_hash = hashlib.sha256(combined.encode("utf-8")).hexdigest()
 
-            parents.append(MerkleNode(
-                hash_value=parent_hash,
-                left=left,
-                right=right,
-            ))
+            parents.append(
+                MerkleNode(
+                    hash_value=parent_hash,
+                    left=left,
+                    right=right,
+                )
+            )
 
         return ExternalMerkleProof._build_merkle_tree(parents)
 

@@ -10,16 +10,18 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.vibe_coding_guard import (
-        VibeCodingGuard,
-        VibeCodingAudit,
         VIBE_CODING_PATTERNS,
+        VibeCodingAudit,
+        VibeCodingGuard,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

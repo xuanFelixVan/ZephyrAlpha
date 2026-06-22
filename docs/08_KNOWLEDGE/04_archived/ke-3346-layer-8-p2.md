@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3346
 title: 2.5 蓝图 layer 字段与目录不一致（8 个文件，P2）
 category: documentation

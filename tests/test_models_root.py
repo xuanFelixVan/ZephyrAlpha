@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import UTC, datetime
 
 import pytest
 
@@ -183,7 +182,7 @@ class TestFixAction:
 
     def test_fingerprint_auto_computed(self):
         action = FixAction(action_type="test", target="f.py", before="abc")
-        expected = hashlib.sha256("test:f.py:abc".encode()).hexdigest()[:16]
+        expected = hashlib.sha256(b"test:f.py:abc").hexdigest()[:16]
         assert action.fingerprint == expected
 
     def test_fingerprint_not_overwritten_if_provided(self):
@@ -197,8 +196,10 @@ class TestFixAction:
 
     def test_custom_level_and_status(self):
         action = FixAction(
-            action_type="llm_fix", target="t.py",
-            level=FixLevel.L2_LLM, status=FixStatus.IN_PROGRESS,
+            action_type="llm_fix",
+            target="t.py",
+            level=FixLevel.L2_LLM,
+            status=FixStatus.IN_PROGRESS,
             confidence=FixConfidence.MEDIUM,
         )
         assert action.level == FixLevel.L2_LLM
@@ -244,9 +245,12 @@ class TestFixHistory:
 
     def test_custom_values(self):
         fh = FixHistory(
-            action_type="drift_fix", target="x.py",
-            before_hash="h1", after_hash="h2",
-            success=True, verifier="pytest",
+            action_type="drift_fix",
+            target="x.py",
+            before_hash="h1",
+            after_hash="h2",
+            success=True,
+            verifier="pytest",
         )
         assert fh.success is True
         assert fh.verifier == "pytest"
@@ -305,8 +309,11 @@ class TestFixHealthReport:
 
     def test_unhealthy_state(self):
         hr = FixHealthReport(
-            healthy=False, budget_ok=False, cascade_active=True,
-            dead_letter_count=5, approval_queue_size=3,
+            healthy=False,
+            budget_ok=False,
+            cascade_active=True,
+            dead_letter_count=5,
+            approval_queue_size=3,
         )
         assert hr.healthy is False
         assert hr.cascade_active is True

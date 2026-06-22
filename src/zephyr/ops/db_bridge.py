@@ -19,12 +19,11 @@
 
 # [TESTS]
 
-"""CT-FLE-DB-001: FLE -> zephyr.orchestration.db formal contract path adapter.
+"""CT-FLE-DB-001: FLE -> zephyr.trading.db formal contract path adapter.
 
-Routes MetricsCollector writes through the canonical zephyr.orchestration.db connection
+Routes MetricsCollector writes through the canonical zephyr.trading.db connection
 instead of opening a separate raw sqlite3 connection.
 """
-
 
 from __future__ import annotations
 
@@ -34,7 +33,7 @@ from typing import Any
 
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
-__all__ = ["record_via_db_contract", "bulk_record_via_db_contract"]
+__all__ = ["bulk_record_via_db_contract", "record_via_db_contract"]
 
 _logger = logging.getLogger(__name__)
 
@@ -77,13 +76,13 @@ def record_via_db_contract(
     try:
         _ensure_table(conn)
         import json
+
         tags_json = json.dumps(tags or [], ensure_ascii=False)
         cursor = conn.execute(
             "INSERT INTO fle_metrics (metric_type, metric_name, metric_value, "
             "tags, session_id, task_id, cost_usd, token_count) "
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            (metric_type, metric_name, metric_value, tags_json,
-             session_id, task_id, cost_usd, token_count),
+            (metric_type, metric_name, metric_value, tags_json, session_id, task_id, cost_usd, token_count),
         )
         conn.commit()
         return cursor.lastrowid or 0
@@ -104,6 +103,7 @@ def bulk_record_via_db_contract(
     try:
         _ensure_table(conn)
         import json
+
         count = 0
         for rec in records:
             tags_json = json.dumps(rec.get("tags", []), ensure_ascii=False)

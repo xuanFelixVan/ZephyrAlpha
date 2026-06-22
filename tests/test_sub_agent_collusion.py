@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.forensic.sub_agent_collusion import SubAgentCollusion, VotePair
 
 
@@ -74,7 +72,7 @@ class TestSubAgentCollusion:
         sac = SubAgentCollusion()
         for i in range(3):
             sac.record("A", "B", f"act-{i}", "APPROVE")
-            sac.record("B", "A", f"act-{i+10}", "APPROVE")
+            sac.record("B", "A", f"act-{i + 10}", "APPROVE")
         rings = sac.detect_ring()
         assert "A->B" in rings
         assert "B->A" in rings

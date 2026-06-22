@@ -27,6 +27,7 @@ Risk: R167 — Repair on subsystem A breaks subsystem B; cascading failure.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class BlastRadius:
     dependency_graph: dict[str, list[str]] = field(default_factory=dict)

@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 legacy_protocol = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.legacy_protocol",
     reason="legacy_protocol module not available",

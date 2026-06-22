@@ -21,10 +21,8 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.drift_fix import DriftFixHandler
-from zephyr.shared.shared_services.events import DriftEvent, DriftType, DriftState
+from zephyr.shared.shared_services.events import DriftEvent, DriftState, DriftType
 
 
 class TestDriftFixHandlerInit:

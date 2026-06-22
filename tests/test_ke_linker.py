@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-import pytest
-
-from zephyr.shared.knowledge.ke_linker import KELink, KELinker, KEGraph
+from zephyr.shared.knowledge.ke_linker import KEGraph, KELink, KELinker
 
 
 class TestKELink:

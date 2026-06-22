@@ -13,13 +13,10 @@
 from datetime import datetime
 from unittest.mock import MagicMock
 
-import pytest
-
 from zephyr.ops.auto_evolution import (
     AutoEvolution,
     AutoEvolutionConfig,
     AutoEvolutionEngine,
-    AutoEvolutionOutcome,
     AutoTrigger,
     AutoTriggerType,
     FitnessSnapshot,
@@ -28,8 +25,6 @@ from zephyr.ops.auto_evolution import (
 )
 from zephyr.ops.evolution_engine import (
     EvolutionEngine,
-    EvolutionSignal,
-    FeedbackLayer,
     Severity,
 )
 
@@ -100,15 +95,23 @@ class TestCountConsecutiveBelow:
 
     def test_all_below(self):
         snaps = [
-            FitnessSnapshot(knowledge_activation=0.1, compliance_rate=0.9, hallucination_interception=0.8, taken_at=datetime.now()),
-            FitnessSnapshot(knowledge_activation=0.2, compliance_rate=0.9, hallucination_interception=0.8, taken_at=datetime.now()),
+            FitnessSnapshot(
+                knowledge_activation=0.1, compliance_rate=0.9, hallucination_interception=0.8, taken_at=datetime.now()
+            ),
+            FitnessSnapshot(
+                knowledge_activation=0.2, compliance_rate=0.9, hallucination_interception=0.8, taken_at=datetime.now()
+            ),
         ]
         assert _count_consecutive_below(snaps, lambda s: s.knowledge_activation, 0.5) == 2
 
     def test_last_above(self):
         snaps = [
-            FitnessSnapshot(knowledge_activation=0.6, compliance_rate=0.9, hallucination_interception=0.8, taken_at=datetime.now()),
-            FitnessSnapshot(knowledge_activation=0.1, compliance_rate=0.9, hallucination_interception=0.8, taken_at=datetime.now()),
+            FitnessSnapshot(
+                knowledge_activation=0.6, compliance_rate=0.9, hallucination_interception=0.8, taken_at=datetime.now()
+            ),
+            FitnessSnapshot(
+                knowledge_activation=0.1, compliance_rate=0.9, hallucination_interception=0.8, taken_at=datetime.now()
+            ),
         ]
         assert _count_consecutive_below(snaps, lambda s: s.knowledge_activation, 0.5) == 1
 

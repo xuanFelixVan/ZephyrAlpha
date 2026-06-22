@@ -3,17 +3,16 @@ import os
 import sys
 import tempfile
 import warnings
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from zephyr.governance.rule_enforcement.task_types import Task, TaskStatus, TaskNamespace
-from zephyr.shared.shared_services.models import TaskCard
-from zephyr.governance.persistence.task_repo import TaskRepository, TaskNotFoundError
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.governance.persistence.task_repo import TaskNotFoundError, TaskRepository
+from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
+from zephyr.integration.shared.schema.severity_types import SafetyLevel
 
 _NOW = datetime.now(UTC)
 

@@ -17,6 +17,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 文档 TTL 过期检测（GOV-DOC-006 §一/§三 — TTL合法值+过期文件+LATEST命名）
@@ -47,6 +48,7 @@ from datetime import datetime
 
 VALID_TTL_VALUES = {"permanent", "periodic_review_90d", "30d", "7d", "session"}
 DATED_SNAPSHOT_PATTERN = re.compile("-\\d{4}-\\d{2}-\\d{2}\\.(json|yaml|yml|md)$", re.IGNORECASE)
+
 
 def scan_ttl_violations() -> list[dict]:
     """扫描文档 TTL 违规"""
@@ -114,6 +116,7 @@ def scan_ttl_violations() -> list[dict]:
     return findings
     "扫描文档 TTL 违规."
 
+
 def scan_dated_snapshots() -> list[dict]:
     """扫描过期快照."""
     findings = []
@@ -136,6 +139,7 @@ def scan_dated_snapshots() -> list[dict]:
     return findings
     "扫描过期快照."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="文档 TTL 过期检测（GOV-DOC-006 §一/§三）")
@@ -147,13 +151,14 @@ def main() -> None:
     if all_findings:
         print(f"\n[DOC-TTL] {len(all_findings)} 个 TTL/快照违规:", file=sys.stderr)
         for f in all_findings:
-            print(f'  [{f['severity']}] {f['file']}', file=sys.stderr)
-            print(f'    {f['detail']}', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['file']}", file=sys.stderr)
+            print(f"    {f['detail']}", file=sys.stderr)
     else:
         print("[DOC-TTL] 文档 TTL 合规", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
+
 
 if __name__ == "__main__":
     main()

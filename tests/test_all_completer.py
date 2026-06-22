@@ -17,7 +17,9 @@ from pathlib import Path
 
 import pytest
 
-completer_mod = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.all_completer", reason="all_completer not available")
+completer_mod = pytest.importorskip(
+    "zephyr.security.access_control.auto_fix_engine_03.all_completer", reason="all_completer not available"
+)
 AllCompleter = completer_mod.AllCompleter
 
 models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")

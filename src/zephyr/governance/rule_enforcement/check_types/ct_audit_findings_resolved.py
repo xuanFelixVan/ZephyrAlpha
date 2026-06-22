@@ -27,81 +27,34 @@ AuditFindingsResolvedHandler — AuditFindingsResolvedHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class AuditFindingsResolvedHandler(CheckTypeHandler):
-
-
     name = "audit_findings_resolved"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        findings = getattr(task, "audit_findings", None) or []
 
-                violations = []
+        unresolved = [f for f in findings if getattr(f, "status", "") != "resolved"]
 
+        for f in unresolved:
+            violations.append(
+                {"message": f"Unresolved audit finding: {getattr(f, 'finding_id', f)}", "severity": check.severity}
+            )
 
-                findings = getattr(task, "audit_findings", None) or []
-
-
-                unresolved = [f for f in findings if getattr(f, "status", "") != "resolved"]
-
-
-                for f in unresolved:
-
-
-                    violations.append({"message": f"Unresolved audit finding: {getattr(f, 'finding_id', f)}", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

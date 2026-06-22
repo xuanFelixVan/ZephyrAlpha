@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.provider_failover import FALLBACK_CHAIN, ProviderFailover
 
 

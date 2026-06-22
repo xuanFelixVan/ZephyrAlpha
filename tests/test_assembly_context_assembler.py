@@ -11,17 +11,18 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import os
 import tempfile
+
 import pytest
 
 try:
     from zephyr.autonomy_core.context_assembler import (
-        ContextAssembler,
         AssembledContext,
-        AssemblyError,
+        ContextAssembler,
         FileEntry,
     )
 except Exception as _exc:
@@ -62,12 +63,22 @@ class TestContextAssembler:
         assert any("MISSING_FILE_PATH" in e for e in result.errors)
 
     def test_validate_complete_context(self):
-        ctx = AssembledContext(file_count=2, entries=[FileEntry(file_path="a.py", exists=True, readable=True), FileEntry(file_path="b.py", exists=True, readable=True)])
+        ctx = AssembledContext(
+            file_count=2,
+            entries=[
+                FileEntry(file_path="a.py", exists=True, readable=True),
+                FileEntry(file_path="b.py", exists=True, readable=True),
+            ],
+        )
         asm = ContextAssembler()
         assert asm.validate(ctx) is True
 
     def test_validate_incomplete_context(self):
-        ctx = AssembledContext(file_count=0, entries=[FileEntry(file_path="a.py", exists=False, readable=False)], errors=["FILE_NOT_FOUND: a.py"])
+        ctx = AssembledContext(
+            file_count=0,
+            entries=[FileEntry(file_path="a.py", exists=False, readable=False)],
+            errors=["FILE_NOT_FOUND: a.py"],
+        )
         asm = ContextAssembler()
         assert asm.validate(ctx) is False
 

@@ -1,10 +1,10 @@
 # [A_module] module_id=MOD-SHR_alert_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
-import uuid
 
 
 class AlertSeverity(Enum):
@@ -40,7 +40,7 @@ class AlertManager:
         )
         self._alerts.append(alert)
         if len(self._alerts) > self._max_alerts:
-            self._alerts = self._alerts[-self._max_alerts:]
+            self._alerts = self._alerts[-self._max_alerts :]
         return alert
 
     def raise_alert(self, title: str, severity: AlertSeverity, source: str, message: str, **metadata: Any) -> Alert:

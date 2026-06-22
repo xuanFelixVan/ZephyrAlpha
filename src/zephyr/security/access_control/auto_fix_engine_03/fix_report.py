@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_report
-
 # [INVARIANTS] 报告MUST包含所有修复结果;MUST包含预算状态
-
 # [MODIFY-GUARD] blueprint.md §3
-
 # [CONSUMERS] engine.py;__main__.py;MOD-INF-027(audit-orchestrator)
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ReportError
-
 # [TESTS] tests/auto-fix-engine/test_fix_report.py
-
 import json
 import logging
 from datetime import UTC, datetime
@@ -29,19 +19,20 @@ from typing import Any
 from zephyr.security.access_control.auto_fix_engine_03.models import (
     BudgetInfo,
     FixAction,
-    FixConfidence,
-    FixLevel,
     FixReport,
     FixStatus,
 )
 
 logger = logging.getLogger(__name__)
 
+
 class FixReportGenerator:
     def __init__(self) -> None:
         self._history: list[FixReport] = []
 
-    def generate(self, actions: list[FixAction], budget_info: BudgetInfo | None = None, cascade_alerts: list[str] | None = None) -> FixReport:
+    def generate(
+        self, actions: list[FixAction], budget_info: BudgetInfo | None = None, cascade_alerts: list[str] | None = None
+    ) -> FixReport:
         succeeded = sum(1 for a in actions if a.status == FixStatus.COMPLETED)
         failed = sum(1 for a in actions if a.status == FixStatus.FAILED)
         escalated = sum(1 for a in actions if a.status == FixStatus.APPROVAL_PENDING or a.escalated)
@@ -101,16 +92,18 @@ class FixReportGenerator:
         summary = self.generate_summary(report)
         actions_data = []
         for a in report.actions:
-            actions_data.append({
-                "action_id": a.action_id,
-                "action_type": a.action_type,
-                "level": a.level.value,
-                "status": a.status.value,
-                "target": a.target,
-                "confidence": a.confidence.value,
-                "verified": a.verified,
-                "escalated": a.escalated,
-            })
+            actions_data.append(
+                {
+                    "action_id": a.action_id,
+                    "action_type": a.action_type,
+                    "level": a.level.value,
+                    "status": a.status.value,
+                    "target": a.target,
+                    "confidence": a.confidence.value,
+                    "verified": a.verified,
+                    "escalated": a.escalated,
+                }
+            )
         summary["actions"] = actions_data
         return json.dumps(summary, indent=2, ensure_ascii=False)
 

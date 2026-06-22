@@ -5,16 +5,15 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-from __future__ import annotations
-"""
-Unit tests for wave_generator.py (ADR-003)
-"""
+"""Unit tests for wave_generator.py (ADR-003)"""
 
+from __future__ import annotations
 
 import json
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.trading.orchestrator.wave_generator import WaveGenerator
 

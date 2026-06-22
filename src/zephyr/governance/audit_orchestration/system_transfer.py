@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class SystemTransferManager:
     def transfer(self, system: str, from_owner: str, to_owner: str) -> dict:
         return {"system": system, "from": from_owner, "to": to_owner, "status": "transferred"}

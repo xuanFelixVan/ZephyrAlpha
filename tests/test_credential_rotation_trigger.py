@@ -69,11 +69,13 @@ class TestCredentialPatterns:
 
     def test_aws_key_pattern(self):
         import re
+
         aws_name, aws_pat = [p for p in CREDENTIAL_PATTERNS if p[0] == "AWS_KEY"][0]
         assert re.search(aws_pat, "AKIAIOSFODNN7EXAMPLE")
 
     def test_github_token_pattern(self):
         import re
+
         gh_name, gh_pat = [p for p in CREDENTIAL_PATTERNS if p[0] == "GITHUB_TOKEN"][0]
         assert re.search(gh_pat, "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn")
 
@@ -107,18 +109,14 @@ class TestScanAndRotate:
         assert result.exit_code == 0
 
     def test_env_file_with_api_key(self, trigger: CredentialRotationTrigger, tmp_path: Path):
-        (tmp_path / ".env").write_text(
-            'API_KEY="abcdefgh12345678"\nAPP_NAME=MyApp\n', encoding="utf-8"
-        )
+        (tmp_path / ".env").write_text('API_KEY="abcdefgh12345678"\nAPP_NAME=MyApp\n', encoding="utf-8")
         result = trigger.scan_and_rotate()
         assert result.files_scanned == 1
         assert result.credentials_detected >= 1
         assert result.exit_code == 0
 
     def test_aws_key_leak(self, trigger: CredentialRotationTrigger, tmp_path: Path):
-        (tmp_path / ".env").write_text(
-            "AWS_ACCESS=AKIAIOSFODNN7EXAMPLE\n", encoding="utf-8"
-        )
+        (tmp_path / ".env").write_text("AWS_ACCESS=AKIAIOSFODNN7EXAMPLE\n", encoding="utf-8")
         result = trigger.scan_and_rotate()
         assert result.leaks_detected >= 1
         assert result.exit_code == 43
@@ -132,9 +130,7 @@ class TestScanAndRotate:
         assert result.exit_code == 43
 
     def test_private_key_detected(self, trigger: CredentialRotationTrigger, tmp_path: Path):
-        (tmp_path / "config.yaml").write_text(
-            "key: |\n  -----BEGIN RSA PRIVATE KEY-----\n  data\n", encoding="utf-8"
-        )
+        (tmp_path / "config.yaml").write_text("key: |\n  -----BEGIN RSA PRIVATE KEY-----\n  data\n", encoding="utf-8")
         result = trigger.scan_and_rotate()
         assert result.credentials_detected >= 1
 
@@ -155,9 +151,7 @@ class TestScanAndRotate:
         assert result.credentials_rotated == 0
 
     def test_details_populated_on_detection(self, trigger: CredentialRotationTrigger, tmp_path: Path):
-        (tmp_path / ".env").write_text(
-            'API_KEY="abcdefgh12345678"\n', encoding="utf-8"
-        )
+        (tmp_path / ".env").write_text('API_KEY="abcdefgh12345678"\n', encoding="utf-8")
         result = trigger.scan_and_rotate()
         assert len(result.details) >= 1
 

@@ -75,9 +75,7 @@ def check_d1_sanity(findings_path: Path) -> tuple[bool, list[str]]:
 
     d1_count = len(d1_findings)
     if d1_count > MAX_D1_FINDINGS_WARNING:
-        violations.append(
-            f"D1 Finding 数量异常: {d1_count} > {MAX_D1_FINDINGS_WARNING} — 可能扫描到过多问题"
-        )
+        violations.append(f"D1 Finding 数量异常: {d1_count} > {MAX_D1_FINDINGS_WARNING} — 可能扫描到过多问题")
 
     orphans = [f for f in d1_findings if f.get("diagnosis_type") == "ORPHAN_FILE"]
     if len(orphans) > 10:

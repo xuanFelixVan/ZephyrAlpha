@@ -34,7 +34,6 @@ Manages MCP (Model Context Protocol) tool contract templates:
   - Persist templates to disk as JSON
 """
 
-
 from __future__ import annotations
 
 import json

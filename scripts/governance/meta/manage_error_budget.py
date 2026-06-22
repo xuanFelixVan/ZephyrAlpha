@@ -31,13 +31,12 @@ warn_only: false
 """
 
 
-import os
 import argparse
 import json as json_mod
+import os
 import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -48,8 +47,8 @@ _KILL_SWITCH_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "kill_switc
 # 从 thresholds.yaml 读取阈值
 _THRESHOLDS_PATH = _REPO_ROOT / "scripts" / "governance" / "_shared" / "thresholds.yaml"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load_thresholds() -> dict:
@@ -76,14 +75,15 @@ def _save_eb(data: dict) -> None:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
-    
+
         os.replace(tmp_path, _EB_PATH)
     except PermissionError:
         try:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def _init_eb() -> dict:
     """_init_eb implementation."""
     t = _load_thresholds()
@@ -188,7 +188,7 @@ def _activate_feature_freeze(data: dict, reason: str) -> dict:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             yaml.dump(ks_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
+
         os.replace(tmp_path, _KILL_SWITCH_PATH)
     except PermissionError:
         try:
@@ -205,18 +205,18 @@ def record_consumption(consumption_type: str, percent: float, detail: str = "") 
 
     data["budget"]["accuracy_consumed_percent"] += percent
     data["budget"]["accuracy_consumed_percent"] = round(data["budget"]["accuracy_consumed_percent"], 4)
-    data["budget"]["accuracy_remaining_percent"] = round(
-        5.0 - data["budget"]["accuracy_consumed_percent"], 4
-    )
+    data["budget"]["accuracy_remaining_percent"] = round(5.0 - data["budget"]["accuracy_consumed_percent"], 4)
 
     log = data.setdefault("consumption_log", [])
-    log.append({
-        "timestamp": now.isoformat(),
-        "event": consumption_type,
-        "consumed_percent": percent,
-        "detail": detail,
-        "source": "run_all.py",
-    })
+    log.append(
+        {
+            "timestamp": now.isoformat(),
+            "event": consumption_type,
+            "consumed_percent": percent,
+            "detail": detail,
+            "source": "run_all.py",
+        }
+    )
     if len(log) > 1000:
         data["consumption_log"] = log[-500:]
 
@@ -280,12 +280,15 @@ def status(json_output: bool = False) -> dict:
         b = data["budget"]
         br = data["burn_rate"]
         ff = data["feature_freeze"]
-        print(f"\n[ERROR-BUDGET] 当前状态", file=sys.stderr)
-        print(f"  可用性: {b['remaining_minutes']}/{b['total_minutes']} min ({b['remaining_percent']:.1f}%)", file=sys.stderr)
+        print("\n[ERROR-BUDGET] 当前状态", file=sys.stderr)
+        print(
+            f"  可用性: {b['remaining_minutes']}/{b['total_minutes']} min ({b['remaining_percent']:.1f}%)",
+            file=sys.stderr,
+        )
         print(f"  准确率: {b['accuracy_remaining_percent']:.2f}% 剩余", file=sys.stderr)
         print(f"  Burn Rate 1h: {br['last_1h_percent']:.2f}% {'🔴' if br['critical_alert'] else '🟢'}", file=sys.stderr)
         print(f"  Feature Freeze: {'🔴 ACTIVE' if ff['active'] else '🟢 INACTIVE'}", file=sys.stderr)
-        if ff['active']:
+        if ff["active"]:
             print(f"    原因: {ff['reason']}", file=sys.stderr)
             print(f"    自动解冻: {ff.get('auto_lift_at', '手动')}", file=sys.stderr)
     return data

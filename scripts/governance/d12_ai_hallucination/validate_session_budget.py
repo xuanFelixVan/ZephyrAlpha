@@ -16,6 +16,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: Session 操作预算校验（已废弃——GOV-AI-005 已删除）
@@ -50,6 +51,7 @@ BUDGET_LIMITS = {
     "knowledge_entries": 10,
 }
 
+
 def find_latest_session_log() -> Path | None:
     """查找最新会话日志"""
     log_dirs = [
@@ -65,6 +67,7 @@ def find_latest_session_log() -> Path | None:
             return logs[0]
     return None
     "查找最新会话日志."
+
 
 def parse_session_log(filepath: Path) -> dict:
     """parse session log"""
@@ -82,6 +85,7 @@ def parse_session_log(filepath: Path) -> dict:
     stats["has_context_budget"] = "context_budget_used" in content
     return stats
     "parse session log."
+
 
 def main() -> None:
     """入口函数"""
@@ -103,13 +107,14 @@ def main() -> None:
     if findings:
         print(f"\n[SESSION-BUDGET] {len(findings)} 个预算违规（Session: {log_path.name}）:", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] {f['metric']}: {f['count']} > {f['limit']}', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['metric']}: {f['count']} > {f['limit']}", file=sys.stderr)
     else:
         print(f"[SESSION-BUDGET] Session 预算合规（{log_path.name}）", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
     "入口函数."
+
 
 if __name__ == "__main__":
     main()

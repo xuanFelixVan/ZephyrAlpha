@@ -11,18 +11,20 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import json
-import tempfile
 import os
+import tempfile
+
 import pytest
 
 try:
     from zephyr.autonomy_core.architecture_context_loader import (
-        load_architecture_context_dict,
-        format_architecture_context_excerpt,
         DEFAULT_ARCH_CONTEXT_PATH,
+        format_architecture_context_excerpt,
+        load_architecture_context_dict,
     )
 except Exception as _exc:
     pytest.skip(f"cannot import architecture_context_loader: {_exc}", allow_module_level=True)
@@ -31,6 +33,7 @@ except Exception as _exc:
 class TestLoadArchitectureContextDict:
     def test_load_nonexistent_path_returns_empty(self):
         from pathlib import Path
+
         result = load_architecture_context_dict(Path(tempfile.mktemp(suffix=".json")))
         assert result == {}
 
@@ -40,7 +43,9 @@ class TestLoadArchitectureContextDict:
             json.dump(data, f)
             tmp = f.name
         try:
-            result = load_architecture_context_dict(type('P', (), {'is_file': lambda s: True, 'read_text': lambda s, encoding: json.dumps(data)})())
+            result = load_architecture_context_dict(
+                type("P", (), {"is_file": lambda s: True, "read_text": lambda s, encoding: json.dumps(data)})()
+            )
         finally:
             os.unlink(tmp)
 
@@ -83,4 +88,5 @@ class TestFormatArchitectureContextExcerpt:
 
     def test_default_arch_context_path_is_path(self):
         from pathlib import Path
+
         assert isinstance(DEFAULT_ARCH_CONTEXT_PATH, Path)

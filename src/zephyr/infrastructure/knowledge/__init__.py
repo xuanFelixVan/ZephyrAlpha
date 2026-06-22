@@ -6,13 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.knowledge — auto-generated package init."""
-from . import ke_linker
-from . import ke_structurer
-from . import kms_interface
 
-__all__ = ['ke_linker', 'ke_structurer', 'kms_interface']
+from . import ke_linker, ke_structurer, kms_interface
 
+__all__ = ["ke_linker", "ke_structurer", "kms_interface"]

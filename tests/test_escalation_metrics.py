@@ -11,6 +11,7 @@
 # [TESTS] tests/test_escalation_metrics.py
 
 import pytest
+
 from zephyr.governance.escalation_metrics import EscalationMetrics
 
 

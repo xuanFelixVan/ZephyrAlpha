@@ -2,27 +2,16 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-008 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-
 # [MODULE] zephyr.portfolio.core.performance_attribution_report
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-P1-009 ====
-
 from dataclasses import dataclass, field
 
 # ---
@@ -49,6 +38,7 @@ AI Prompt
 
 """
 
+
 @dataclass(frozen=True)
 class PerformanceAttributionReport:
     portfolio_id: str
@@ -62,5 +52,6 @@ class PerformanceAttributionReport:
     idempotency_key: str
     factor_contributions: dict[str, float] = field(default_factory=dict)
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-009 ====

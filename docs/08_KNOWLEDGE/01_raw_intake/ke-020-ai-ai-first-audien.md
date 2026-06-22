@@ -58,4 +58,3 @@ category: agent_instruction
   - 远期：所有手工维护类索引（PS-IDX-001 等）的数字改为 auto-generated——消除手动维护数字的根本性漂移
 
 - **专业参考**：OpenAPI → Machine-First spec + Human-Second docs（spec 是 canonical，Swagger UI 是派生）/ Terraform → `.tf.json` Machine-First + `terraform-docs` Human-Second / K8s CRD → YAML for API Server + `kubectl explain` for human / ISO 42010 → Architecture Description 可以有多种 View，但 Canonical Model 必须是精确可追溯的
-

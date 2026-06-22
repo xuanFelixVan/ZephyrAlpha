@@ -468,7 +468,7 @@ directories:
     note: "7 个子?"
 
 
-  - path: "docs/01_policies_and_standards/meta/"
+  - path: "docs/01_policies_and_standards/rules/"
 
     responsibility: "元层标准——规则生命周?/ 分类仲裁 / 术语映射 / 行为边界"
 
@@ -484,7 +484,7 @@ directories:
 
     status: active
 
-    note: "12 个文件，含规则注册表"
+    note: "已迁移——原 meta/ 下 12 个文件迁移至 rules/trae_XXX 和 _registry/vocabularies/"
 
 
 

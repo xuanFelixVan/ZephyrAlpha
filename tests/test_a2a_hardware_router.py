@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 mod = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_hardware_router",
     reason="a2a_hardware_router module not available",

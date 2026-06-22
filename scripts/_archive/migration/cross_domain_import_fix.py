@@ -181,6 +181,7 @@ CROSS_DOMAIN_MAPPINGS: dict[str, str] = {
     "zephyr.governance.rule_enforcement.phase_check_registry": "zephyr.resilience.rollback.phase_check_registry",
 }
 
+
 def _verify_mappings() -> list[str]:
     errors: list[str] = []
     for old_mod, new_mod in CROSS_DOMAIN_MAPPINGS.items():
@@ -266,7 +267,7 @@ def main() -> None:
 
     prefix_map = _build_prefix_mapping(CROSS_DOMAIN_MAPPINGS)
 
-    print(f"\nStep 3: Scanning .py files for replacements...")
+    print("\nStep 3: Scanning .py files for replacements...")
     py_files: list[Path] = []
     scan_dirs = [ZEPHYR_SRC, PROJECT_ROOT / "frontend", PROJECT_ROOT / "tests"]
     for scan_dir in scan_dirs:
@@ -300,7 +301,7 @@ def main() -> None:
                 total_errors += 1
                 print(f"  ERROR: {result['file']}")
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Files updated: {total_updated}")
     print(f"  Import changes: {total_changes}")
     print(f"  Errors: {total_errors}")

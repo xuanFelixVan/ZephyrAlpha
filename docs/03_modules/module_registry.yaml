@@ -488,7 +488,8 @@ modules:
     status: Active
     version: 1.0.0
   construction_plan:
-    status: completed- module_id: MOD-INF-042
+    status: completed
+    module_id: MOD-INF-042
   name: local-model
   domain: integration
   functional_domain: infra

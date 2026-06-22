@@ -15,6 +15,7 @@ L11 — ML Training Base
 
 模型训练核心抽象。包含模型元数据、训练器基类和模型注册表。
 """
+
 from __future__ import annotations
 
 import abc
@@ -26,6 +27,7 @@ from typing import Any, ClassVar
 @dataclass(frozen=True)
 class ModelMetadata:
     """模型注册元数据"""
+
     model_id: str
     model_version: str
     model_type: str
@@ -46,11 +48,11 @@ class ModelTrainerBase(abc.ABC):
       - validate(): 验证模型性能，返回验证指标
       - 训练完成后将模型注册到 ModelRegistry
     """
-    _registry: ClassVar[dict[str, type["ModelTrainerBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[ModelTrainerBase]]] = {}
 
     @abc.abstractmethod
-    def train(self, features: dict[str, Any], target: Any,
-              idempotency_key: str) -> dict[str, float]:
+    def train(self, features: dict[str, Any], target: Any, idempotency_key: str) -> dict[str, float]:
         """训练模型，返回训练指标"""
         ...
 
@@ -72,15 +74,14 @@ class ModelRegistry:
       - 注册（register）→ 激活（activate）→ 废弃（deprecate）
       - 每模型保留完整 lineage（训练数据 → 特征 → 参数 → 指标）
     """
+
     _registry: ClassVar[dict[str, type[ModelTrainerBase]]] = {}
 
     @classmethod
     def register(cls, trainer_cls: type[ModelTrainerBase]) -> type[ModelTrainerBase]:
         """注册训练器类，关联模型 ID"""
         if not hasattr(trainer_cls, "__model_id__"):
-            raise AttributeError(
-                f"{trainer_cls.__name__} 缺少 __model_id__ 属性"
-            )
+            raise AttributeError(f"{trainer_cls.__name__} 缺少 __model_id__ 属性")
         mid = trainer_cls.__model_id__
         if mid in cls._registry:
             raise ValueError(f"模型 ID {mid!r} 已注册")
@@ -100,6 +101,6 @@ class ModelRegistry:
 
 __all__ = [
     "ModelMetadata",
-    "ModelTrainerBase",
     "ModelRegistry",
+    "ModelTrainerBase",
 ]

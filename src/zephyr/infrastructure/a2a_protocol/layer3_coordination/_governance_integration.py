@@ -9,11 +9,60 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
+"""Re-export bridge for layer3_coordination governance integration symbols.
 
-from .a2a_dashboard import A2ADashboard, DashboardPanel
-from .a2a_governance_adapter import A2AGovernanceAdapter, GovernanceCheckResult
-from .a2a_tracing import A2ATracing, Span
-from .a2a_protocol_gateway import A2AProtocolGateway, GatewayResult
-from .a2a_frame_negotiation import A2AFrameNegotiation, FrameOffer, NegotiatedFrame
-from .spec_sync import SpecSync, SpecSyncEntry
-from .a2a_formal_verification import A2AFormalVerification, VerificationStatus, PropertyCheck, VerificationReport
+Aggregates 17 symbols from 7 source modules to preserve backward compatibility
+for ``from layer3_coordination._governance_integration import ...`` consumers.
+"""
+
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_dashboard import (
+    A2ADashboard,
+    DashboardPanel,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_formal_verification import (
+    A2AFormalVerification,
+    PropertyCheck,
+    VerificationReport,
+    VerificationStatus,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_frame_negotiation import (
+    A2AFrameNegotiation,
+    FrameOffer,
+    NegotiatedFrame,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_governance_adapter import (
+    A2AGovernanceAdapter,
+    GovernanceCheckResult,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway import (
+    A2AProtocolGateway,
+    GatewayResult,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_tracing import (
+    A2ATracing,
+    Span,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.spec_sync import (
+    SpecSync,
+    SpecSyncEntry,
+)
+
+__all__ = [
+    "A2ADashboard",
+    "A2AFormalVerification",
+    "A2AFrameNegotiation",
+    "A2AGovernanceAdapter",
+    "A2AProtocolGateway",
+    "A2ATracing",
+    "DashboardPanel",
+    "FrameOffer",
+    "GatewayResult",
+    "GovernanceCheckResult",
+    "NegotiatedFrame",
+    "PropertyCheck",
+    "Span",
+    "SpecSync",
+    "SpecSyncEntry",
+    "VerificationReport",
+    "VerificationStatus",
+]

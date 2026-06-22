@@ -53,15 +53,13 @@ from typing import Any, ClassVar
 
 import numpy as np
 
-from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.integration.vector_memory.collection_manager import (
-    ALLOWED_DIMENSIONS,
     COLLECTION_NAMES,
     COLLECTION_SCHEMAS,
-    DesignPrinciplesEnforcer,
-    CollectionInfo,
-    VMSError,
     VMS_PERSIST_DIR,
+    CollectionInfo,
+    DesignPrinciplesEnforcer,
+    VMSError,
 )
 
 _logger = logging.getLogger(__name__)
@@ -99,9 +97,7 @@ class FAISSCollectionManager:
 
     def __init__(self, persist_dir: Path | str | None = None) -> None:
         if not _FAISS_AVAILABLE:
-            raise VMSError(
-                "FAISS 未安装，请执行 pip install faiss-cpu>=1.8.0"
-            )
+            raise VMSError("FAISS 未安装，请执行 pip install faiss-cpu>=1.8.0")
         self._persist_dir = Path(persist_dir) if persist_dir is not None else VMS_PERSIST_DIR
         self._persist_dir.mkdir(parents=True, exist_ok=True)
         self._indices: dict[str, faiss.Index] = {}
@@ -199,9 +195,7 @@ class FAISSCollectionManager:
         strict: bool = True,
     ) -> CollectionInfo:
         if index_type not in self._INDEX_TYPES:
-            raise ValueError(
-                f"未知索引类型: {index_type}。允许值: {', '.join(self._INDEX_TYPES)}"
-            )
+            raise ValueError(f"未知索引类型: {index_type}。允许值: {', '.join(self._INDEX_TYPES)}")
 
         schema = COLLECTION_SCHEMAS.get(name, {})
         if dim is None:
@@ -248,11 +242,20 @@ class FAISSCollectionManager:
         self._indices[name] = self._load_index_readonly(name)
         self._index_types[name] = index_type
 
-        index_desc = "IndexHNSW" if index_type == self._INDEX_HNSW else \
-                     "IndexIVFPQ" if index_type == self._INDEX_IVF_PQ else "IndexFlat"
+        index_desc = (
+            "IndexHNSW"
+            if index_type == self._INDEX_HNSW
+            else "IndexIVFPQ"
+            if index_type == self._INDEX_IVF_PQ
+            else "IndexFlat"
+        )
         _logger.info(
             "FAISSCollectionManager: 创建 %s '%s' (%dd, %s, type=%s)",
-            index_desc, name, dim, chunk_strategy, index_type,
+            index_desc,
+            name,
+            dim,
+            chunk_strategy,
+            index_type,
         )
         return CollectionInfo(
             name=name,
@@ -289,7 +292,9 @@ class FAISSCollectionManager:
             min_needed = 30 * ivf_index.nlist
             _logger.info(
                 "IVF 训练: '%s' 累积 %d/%d vectors, 暂不训练",
-                collection_name, buffered, min_needed,
+                collection_name,
+                buffered,
+                min_needed,
             )
             return
 
@@ -318,9 +323,7 @@ class FAISSCollectionManager:
             index = faiss.read_index(str(index_path))
             actual_dim = index.d
             if vector.shape[1] != actual_dim:
-                raise VMSError(
-                    f"向量维度 {vector.shape[1]} 不匹配 Collection '{collection_name}' 实际 {actual_dim}d"
-                )
+                raise VMSError(f"向量维度 {vector.shape[1]} 不匹配 Collection '{collection_name}' 实际 {actual_dim}d")
             assigned_id = index.ntotal
             if hasattr(index, "is_trained") and not index.is_trained:
                 index.train(vector.astype(np.float32))
@@ -393,23 +396,25 @@ class FAISSCollectionManager:
         for name in COLLECTION_NAMES:
             schema = COLLECTION_SCHEMAS[name]
             exists = self._index_path(name).exists()
-            results.append(CollectionInfo(
-                name=name,
-                dimension=schema["dimension"],
-                chunk_strategy=schema["chunk_strategy"],
-                ttl_days=schema["ttl_days"],
-                ai_autonomy_level=schema["ai_autonomy_level"],
-                embedding_model=schema["embedding_model"],
-                metadata={
-                    "dimension": schema["dimension"],
-                    "chunk_strategy": schema["chunk_strategy"],
-                    "ttl_days": schema["ttl_days"],
-                    "ai_autonomy_level": schema["ai_autonomy_level"],
-                    "embedding_model": schema["embedding_model"],
-                    "hnsw:space": schema["hnsw:space"],
-                },
-                exists=exists,
-            ))
+            results.append(
+                CollectionInfo(
+                    name=name,
+                    dimension=schema["dimension"],
+                    chunk_strategy=schema["chunk_strategy"],
+                    ttl_days=schema["ttl_days"],
+                    ai_autonomy_level=schema["ai_autonomy_level"],
+                    embedding_model=schema["embedding_model"],
+                    metadata={
+                        "dimension": schema["dimension"],
+                        "chunk_strategy": schema["chunk_strategy"],
+                        "ttl_days": schema["ttl_days"],
+                        "ai_autonomy_level": schema["ai_autonomy_level"],
+                        "embedding_model": schema["embedding_model"],
+                        "hnsw:space": schema["hnsw:space"],
+                    },
+                    exists=exists,
+                )
+            )
         return results
 
     def write_with_provenance(

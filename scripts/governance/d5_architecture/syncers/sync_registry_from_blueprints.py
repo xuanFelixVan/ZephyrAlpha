@@ -10,10 +10,10 @@ changelog: 默认在 --write 且相对当前文件 blueprints[] 有差异时，�
 
 exit codes: 0=pass, 1=findings, 2=error
 """
+
 from __future__ import annotations
 
 import os
-
 
 __manifest__ = {
     "args": ["--write", "--no-changelog"],
@@ -97,9 +97,7 @@ def validate_layer_consistency(filepath: Path, fm: dict[str, Any]) -> list[str]:
         return []
     if declared != expected:
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-        return [
-            f"LAYER MISMATCH: {rel} — frontmatter layer={declared}，物理路径要求={expected}"
-        ]
+        return [f"LAYER MISMATCH: {rel} — frontmatter layer={declared}，物理路径要求={expected}"]
     return []
 
 
@@ -362,6 +360,8 @@ def run_dry_run(registry: dict[str, Any], new_entries: list[dict[str, Any]], fil
     else:
         print("No differences. Registry is in sync.")
         return EXIT_PASS
+
+
 def run_write(
     registry: dict[str, Any],
     new_entries: list[dict[str, Any]],
@@ -401,19 +401,15 @@ def run_write(
     tmp_path = f"{BLUEPRINT_REGISTRY_PATH}.{os.getpid()}.tmp"
 
     try:
-
         Path(tmp_path).write_text(content, encoding="utf-8")
 
         os.replace(tmp_path, BLUEPRINT_REGISTRY_PATH)
 
     except PermissionError:
-
         try:
-
             os.remove(tmp_path)
 
         except OSError:
-
             pass
     print(f"Wrote: {len(new_entries)} blueprints to {BLUEPRINT_REGISTRY_PATH}")
 
@@ -437,6 +433,8 @@ def run_write(
             pass
     print(f"Wrote: {len(module_entries)} modules to {MODULE_REGISTRY_PATH}")
     return EXIT_PASS
+
+
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="同步 blueprint-registry.yaml 与磁盘 blueprint.md 文件")
@@ -467,7 +465,9 @@ def main() -> None:
         layer_warnings.extend(validate_layer_consistency(fp, fm))
 
     if layer_warnings:
-        print(f"\n[LAYER-CHECK] {len(layer_warnings)} 个 layer 不一致警告 (registry 记录与物理路径不符):", file=sys.stderr)
+        print(
+            f"\n[LAYER-CHECK] {len(layer_warnings)} 个 layer 不一致警告 (registry 记录与物理路径不符):", file=sys.stderr
+        )
         for w in layer_warnings:
             print(f"  ⚠ {w}", file=sys.stderr)
         print("", file=sys.stderr)

@@ -1,12 +1,23 @@
 rule_id: TRAE-025
 title: 方法论-决策与执行
+version: 1.0.0
+layer: L2
+module_id: TRAE-025
+depends_on:
+- TRAE-024
+tags:
+- TRAE
+- methodology_decision
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - MTH-004
 - MTH-005
 - MTH-007
 - MTH-008
 - MTH-009
-layer: L2
 severity: warning
 scope: methodology_decision
 domain: TRAE
@@ -116,7 +127,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
   version: "1.2.1"
   last_modified: "2026-06-21"
   change_history:

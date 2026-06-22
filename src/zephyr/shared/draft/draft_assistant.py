@@ -32,15 +32,13 @@ Draft Assistant — 想法 → MTH-012 蓝图骨架生成。
     - Owner 填充 + 涌现式血肉补全
 """
 
-
 from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -65,7 +63,6 @@ class DraftInput:
 
 
 class DraftAssistant:
-
     def __init__(self, output_dir: Path | None = None) -> None:
         self._output_dir = output_dir or Path("data/drafts")
 
@@ -77,14 +74,14 @@ class DraftAssistant:
         constraints = self._extract_constraints(input_data.idea_text)
 
         draft = BlueprintDraft(
-            draft_id=f"DRAFT-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            draft_id=f"DRAFT-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             idea_summary=input_data.idea_text[:200],
             module_id=module_id,
             layer=layer,
             targets=targets,
             boundaries=boundaries,
             constraints=constraints,
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
         )
 
         self._save_draft(draft)
@@ -93,20 +90,20 @@ class DraftAssistant:
 
     def render_blueprint_skeleton(self, draft: BlueprintDraft) -> str:
         lines = [
-            f"---",
-            f"module_id: \"{draft.module_id}\"",
-            f"layer: \"{draft.layer}\"",
-            f"version: \"0.1.0-draft\"",
-            f"draft_id: \"{draft.draft_id}\"",
-            f"generated_at: \"{draft.generated_at}\"",
-            f"---",
-            f"",
+            "---",
+            f'module_id: "{draft.module_id}"',
+            f'layer: "{draft.layer}"',
+            'version: "0.1.0-draft"',
+            f'draft_id: "{draft.draft_id}"',
+            f'generated_at: "{draft.generated_at}"',
+            "---",
+            "",
             f"# {draft.module_id} — Blueprint Draft",
-            f"",
-            f"## Idea Summary",
+            "",
+            "## Idea Summary",
             f"{draft.idea_summary}",
-            f"",
-            f"## Targets",
+            "",
+            "## Targets",
         ]
         for t in draft.targets:
             lines.append(f"- {t}")
@@ -185,15 +182,19 @@ class DraftAssistant:
         self._output_dir.mkdir(parents=True, exist_ok=True)
         draft_path = self._output_dir / f"{draft.draft_id}.json"
         draft_path.write_text(
-            json.dumps({
-                "draft_id": draft.draft_id,
-                "idea_summary": draft.idea_summary,
-                "module_id": draft.module_id,
-                "layer": draft.layer,
-                "targets": draft.targets,
-                "boundaries": draft.boundaries,
-                "constraints": draft.constraints,
-                "generated_at": draft.generated_at,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "draft_id": draft.draft_id,
+                    "idea_summary": draft.idea_summary,
+                    "module_id": draft.module_id,
+                    "layer": draft.layer,
+                    "targets": draft.targets,
+                    "boundaries": draft.boundaries,
+                    "constraints": draft.constraints,
+                    "generated_at": draft.generated_at,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )

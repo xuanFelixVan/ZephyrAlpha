@@ -9,13 +9,9 @@
 测试 L3 InputGuard — 参数级护栏
 """
 
-import pytest
-
 from zephyr.security.access_control.input_guard import (
-    InputGuard,
     InputDecision,
-    DANGEROUS_PATTERNS,
-    TRUSTED_PACKAGES,
+    InputGuard,
 )
 
 
@@ -39,6 +35,7 @@ class TestDangerousPatterns:
 class TestEncodingBypass:
     def test_base64_rm_rf_detected(self):
         import base64
+
         encoded = base64.b64encode(b"rm -rf /tmp").decode()
         guard = InputGuard()
         result = guard.check_params("execute_command", {"command": encoded})

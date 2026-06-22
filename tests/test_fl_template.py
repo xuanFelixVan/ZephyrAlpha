@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.template import SKELETONS
 
 
@@ -42,7 +40,16 @@ class TestSkeletonsContent:
                 assert "class " in value, f"Skeleton {key} missing class definition"
 
     def test_keys_follow_subdirectory_convention(self):
-        valid_prefixes = {"diagnosers/", "gates/", "collectors/", "detectors/", "verifiers/", "actors/", "evolution/", "docs/"}
+        valid_prefixes = {
+            "diagnosers/",
+            "gates/",
+            "collectors/",
+            "detectors/",
+            "verifiers/",
+            "actors/",
+            "evolution/",
+            "docs/",
+        }
         for key in SKELETONS:
             has_valid_prefix = any(key.startswith(prefix) for prefix in valid_prefixes)
             assert has_valid_prefix, f"Key {key} does not follow subdirectory convention"

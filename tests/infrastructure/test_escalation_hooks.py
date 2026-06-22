@@ -12,15 +12,16 @@ into the EscalationEngine's hook system.
 
 Blueprint: docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md D-022-07~D-022-30
 """
+
 from unittest.mock import patch
 
 import pytest
 
 from zephyr.governance.escalation import (
     EscalationEngine,
-    RuleCategory,
     EscalationLevel,
     EscalationState,
+    RuleCategory,
 )
 
 
@@ -42,11 +43,20 @@ class TestExtensionHookLoading:
         detectors = engine._extension_detectors
         assert len(detectors) >= 16
         expected = [
-            "PersuasionDetector", "DeadlockDetector", "DriftDetector",
-            "EscalationLoopDetector", "ConfidenceEstimator",
-            "VigilRuntime", "FormalVerifier", "ProviderFailover",
-            "CredentialGuard", "MerkleAudit", "SBOMGuard",
-            "ClockGuard", "CommandChainGate", "CompositionalSafetyTester",
+            "PersuasionDetector",
+            "DeadlockDetector",
+            "DriftDetector",
+            "EscalationLoopDetector",
+            "ConfidenceEstimator",
+            "VigilRuntime",
+            "FormalVerifier",
+            "ProviderFailover",
+            "CredentialGuard",
+            "MerkleAudit",
+            "SBOMGuard",
+            "ClockGuard",
+            "CommandChainGate",
+            "CompositionalSafetyTester",
         ]
         for name in expected:
             assert name in detectors, f"{name} not loaded"

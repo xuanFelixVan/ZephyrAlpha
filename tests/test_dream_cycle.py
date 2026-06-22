@@ -17,8 +17,6 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 
-import pytest
-
 from zephyr.trading.dream_cycle import DreamCycle, DreamReport
 
 

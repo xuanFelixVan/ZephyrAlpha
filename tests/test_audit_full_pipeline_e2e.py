@@ -11,10 +11,7 @@
 # [TESTS] test_audit_full_pipeline_e2e.py
 
 import json
-import os
-import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -28,22 +25,32 @@ FindingRemediation = finding_model.RemediationAction
 RemediationPriority = finding_model.RemediationPriority
 generate_finding_id = finding_model.generate_finding_id
 
-finding_ingest_mod = pytest.importorskip("zephyr.governance.audit_trail.finding_ingest", reason="finding_ingest not available")
+finding_ingest_mod = pytest.importorskip(
+    "zephyr.governance.audit_trail.finding_ingest", reason="finding_ingest not available"
+)
 FindingIngest = finding_ingest_mod.FindingIngest
 IngestResult = finding_ingest_mod.IngestResult
 
-pipeline_mod = pytest.importorskip("zephyr.governance.audit_trail.pipeline_runner", reason="pipeline_runner not available")
+pipeline_mod = pytest.importorskip(
+    "zephyr.governance.audit_trail.pipeline_runner", reason="pipeline_runner not available"
+)
 PipelineRunner = pipeline_mod.PipelineRunner
 PipelineResult = pipeline_mod.PipelineResult
 
-adapter_mod = pytest.importorskip("zephyr.audit_orchestrator.text_to_finding_adapter", reason="text_to_finding_adapter not available")
+adapter_mod = pytest.importorskip(
+    "zephyr.audit_orchestrator.text_to_finding_adapter", reason="text_to_finding_adapter not available"
+)
 TextToFindingAdapter = adapter_mod.TextToFindingAdapter
 
-phase_check_mod = pytest.importorskip("zephyr.infrastructure.rollback.phase_check_registry", reason="phase_check_registry not available")
+phase_check_mod = pytest.importorskip(
+    "zephyr.infrastructure.rollback.phase_check_registry", reason="phase_check_registry not available"
+)
 GateResult = phase_check_mod.GateResult
 check_critical_findings = phase_check_mod.check_critical_findings
 
-auto_fix_mod = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.engine", reason="auto-fix-engine not available")
+auto_fix_mod = pytest.importorskip(
+    "zephyr.security.access_control.auto_fix_engine_03.engine", reason="auto-fix-engine not available"
+)
 AutoFixEngine = auto_fix_mod.AutoFixEngine
 
 
@@ -55,21 +62,23 @@ def _make_finding_jsonl(
     description: str = "missing field",
     file_path: str = "src/zephyr/foo.py",
 ) -> str:
-    return json.dumps({
-        "finding_id": finding_id,
-        "dimension": dimension,
-        "severity": severity,
-        "category": category,
-        "target": {"file_path": file_path, "line_range": "1-10"},
-        "description": description,
-        "evidence": "test evidence",
-        "impact": {"blast_radius": "file"},
-        "remediation": {"action": "FIX", "priority": "P1"},
-        "lifecycle": {"status": "OPEN"},
-        "traceability": {"related_adr": [], "related_ke": [], "related_finding": []},
-        "timestamp": "2026-05-26T12:00:00+00:00",
-        "recommendation_block": {"recommendation": "", "recommendation_type": "", "recommended_action": ""},
-    })
+    return json.dumps(
+        {
+            "finding_id": finding_id,
+            "dimension": dimension,
+            "severity": severity,
+            "category": category,
+            "target": {"file_path": file_path, "line_range": "1-10"},
+            "description": description,
+            "evidence": "test evidence",
+            "impact": {"blast_radius": "file"},
+            "remediation": {"action": "FIX", "priority": "P1"},
+            "lifecycle": {"status": "OPEN"},
+            "traceability": {"related_adr": [], "related_ke": [], "related_finding": []},
+            "timestamp": "2026-05-26T12:00:00+00:00",
+            "recommendation_block": {"recommendation": "", "recommendation_type": "", "recommended_action": ""},
+        }
+    )
 
 
 class TestFindingIngestE2E:

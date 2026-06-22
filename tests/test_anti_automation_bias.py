@@ -15,12 +15,9 @@ from __future__ import annotations
 from zephyr.governance.anti_automation_bias import (
     AntiAutomationBias,
     AntiSycophancyFilter,
-    BiasPattern,
     FatigueLevel,
     OversightAction,
     ReviewDecision,
-    ReviewRecord,
-    SycophancyProbe,
 )
 
 
@@ -248,9 +245,7 @@ class TestAntiSycophancyFilterNormalizeFraming:
 
 class TestAntiSycophancyFilterVerifyConsistency:
     def test_consistent_decisions(self):
-        probes = AntiSycophancyFilter.verify_consistency(
-            "content", ["variant-a", "variant-b"], lambda x: "allow"
-        )
+        probes = AntiSycophancyFilter.verify_consistency("content", ["variant-a", "variant-b"], lambda x: "allow")
         assert len(probes) == 2
         assert all(p.consistent for p in probes)
 
@@ -262,9 +257,7 @@ class TestAntiSycophancyFilterVerifyConsistency:
             call_count += 1
             return "allow" if call_count == 1 else "block"
 
-        probes = AntiSycophancyFilter.verify_consistency(
-            "content", ["variant-a"], decision_fn
-        )
+        probes = AntiSycophancyFilter.verify_consistency("content", ["variant-a"], decision_fn)
         assert len(probes) == 1
         assert probes[0].consistent is False
 

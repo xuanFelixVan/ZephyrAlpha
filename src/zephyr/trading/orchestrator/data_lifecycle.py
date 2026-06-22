@@ -34,6 +34,7 @@ DATA_LIFECYCLE: dict[str, dict] = {
     "session_logs": {"hot_days": 30, "cold_days": 365, "archive_policy": "keep"},
 }
 
+
 class DataLifecycleManager:
     def get_policy(self, data_type: str) -> dict | None:
         return DATA_LIFECYCLE.get(data_type)

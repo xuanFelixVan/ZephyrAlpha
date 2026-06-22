@@ -35,17 +35,18 @@ from dataclasses import dataclass, field
 from enum import Enum, unique
 from typing import Any
 
-from zephyr.shared.protocols.a2a.a2a_coordination import (  # noqa: F401
-    TaskStatus,
-    MergeStrategy,
+from zephyr.shared.protocols.a2a.a2a_coordination import (
     DispatchedTask,
+    MergeStrategy,
     ResultMerge,
+    TaskStatus,
 )
 
 
 @unique
 class AgentRole(str, Enum):
     """Multi-agent orchestration role (differs from shared AgentRole IntEnum for arbitration)."""
+
     COORDINATOR = "coordinator"
     BUILDER = "builder"
     REVIEWER = "reviewer"
@@ -76,7 +77,7 @@ class AgentCard:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "AgentCard":
+    def from_dict(cls, data: dict[str, Any]) -> AgentCard:
         return cls(
             agent_id=data["agent_id"],
             role=AgentRole(data["role"]),
@@ -101,9 +102,7 @@ class TaskDispatch:
 
     def assign(self, task_id: str, description: str, required_role: AgentRole | None = None) -> DispatchedTask | None:
         candidates = [
-            (aid, card)
-            for aid, card in self.agents.items()
-            if required_role is None or card.role == required_role
+            (aid, card) for aid, card in self.agents.items() if required_role is None or card.role == required_role
         ]
 
         if not candidates:
@@ -118,11 +117,7 @@ class TaskDispatch:
         return task
 
     def assign_to_capable(self, task_id: str, description: str, required_capability: str) -> DispatchedTask | None:
-        candidates = [
-            (aid, card)
-            for aid, card in self.agents.items()
-            if required_capability in card.capabilities
-        ]
+        candidates = [(aid, card) for aid, card in self.agents.items() if required_capability in card.capabilities]
 
         if not candidates:
             return None
@@ -140,11 +135,11 @@ class TaskDispatch:
 
 
 __all__ = [
-    "AgentRole",
-    "MergeStrategy",
-    "TaskStatus",
     "AgentCard",
+    "AgentRole",
     "DispatchedTask",
-    "TaskDispatch",
+    "MergeStrategy",
     "ResultMerge",
+    "TaskDispatch",
+    "TaskStatus",
 ]

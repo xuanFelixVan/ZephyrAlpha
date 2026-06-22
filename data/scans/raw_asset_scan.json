@@ -28637,9 +28637,9 @@
       "is_binary": false
     },
     {
-      "relative_path": "docs/01_policies_and_standards/meta/terminology-mapping-reference.md",
-      "absolute_path": "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\meta\\terminology-mapping-reference.md",
-      "file_name": "terminology-mapping-reference.md",
+      "relative_path": "docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml",
+      "absolute_path": "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\meta\\_registry/vocabularies/terminology_mapping.yaml",
+      "file_name": "_registry/vocabularies/terminology_mapping.yaml",
       "extension": ".md",
       "size_bytes": 12389,
       "mtime_utc": "2026-05-06T14:32:53.110288Z",

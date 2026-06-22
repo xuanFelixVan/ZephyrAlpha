@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for agent_orchestrator.py (T-3-10, A22)
 ===================================================
@@ -21,6 +22,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+
 from zephyr.trading.orchestrator.agent_orchestrator import (
     DEFAULT_ROLE_DOMAIN_MATRIX,
     AgentOrchestrator,
@@ -396,7 +398,7 @@ class TestAgentOrchestrator:
             directive_mapping=self.mapping,
             sanitize_llm_context=False,
         )
-        assert orch._input_sanitizer is None  # noqa: SLF001
+        assert orch._input_sanitizer is None
         res = orch.orchestrate(
             domain="D0",
             directive_chain="325",

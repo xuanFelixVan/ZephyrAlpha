@@ -30,10 +30,10 @@ CLI Summary — CLI 友好施工汇总。
 """
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class BuildSummary:
@@ -46,15 +46,13 @@ class BuildSummary:
     duration_s: float
     timestamp_utc: str
 
-class CLISummary:
 
+class CLISummary:
     def __init__(self, output_dir: Path | None = None) -> None:
         self._output_dir = output_dir or Path("data/observability/summaries")
 
     def generate(self, summary: BuildSummary) -> str:
-        status_icon = {"completed": "[OK]", "failed": "[FAIL]", "partial": "[WARN]"}.get(
-            summary.status, "[???]"
-        )
+        status_icon = {"completed": "[OK]", "failed": "[FAIL]", "partial": "[WARN]"}.get(summary.status, "[???]")
 
         lines = [
             f"  {status_icon} {summary.task_id}",
@@ -77,11 +75,11 @@ class CLISummary:
 
         lines = [
             "=" * 60,
-            f"Build Session Summary — {datetime.now(timezone.utc).isoformat()}",
+            f"Build Session Summary — {datetime.now(UTC).isoformat()}",
             "=" * 60,
             f"  Tasks: {len(summaries)} ({len(failed)} failed)",
             f"  Files: +{total_created} created, ~{total_modified} modified",
-            f"  Total Time: {total_duration:.1f}s ({total_duration/60:.1f}m)",
+            f"  Total Time: {total_duration:.1f}s ({total_duration / 60:.1f}m)",
             "",
         ]
 
@@ -101,16 +99,20 @@ class CLISummary:
         output_path = self._output_dir / f"{summary.task_id}_summary.json"
 
         output_path.write_text(
-            json.dumps({
-                "task_id": summary.task_id,
-                "status": summary.status,
-                "files_created": summary.files_created,
-                "files_modified": summary.files_modified,
-                "warnings": summary.warnings,
-                "errors": summary.errors,
-                "duration_s": summary.duration_s,
-                "timestamp_utc": summary.timestamp_utc,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "task_id": summary.task_id,
+                    "status": summary.status,
+                    "files_created": summary.files_created,
+                    "files_modified": summary.files_modified,
+                    "warnings": summary.warnings,
+                    "errors": summary.errors,
+                    "duration_s": summary.duration_s,
+                    "timestamp_utc": summary.timestamp_utc,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )
 

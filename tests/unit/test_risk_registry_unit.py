@@ -6,10 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """风险注册表单元测试——验证 R-MOD-1~34 风险追踪。"""
 
 
 import pytest
+
 from zephyr.trading.orchestrator.risk_registry import RiskRegistry, RiskStatus
 
 

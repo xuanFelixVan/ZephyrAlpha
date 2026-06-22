@@ -1,12 +1,23 @@
 rule_id: TRAE-032
 title: 模块治理-准入与生命周期
+version: 1.1.2
+layer: L1
+module_id: TRAE-032
+depends_on:
+- TRAE-034
+tags:
+- TRAE
+- module_governance
+- L1
+stability: stable
+safety_level: H
+ai_autonomy: human_gated
 aliases:
 - MOD-001
 - MOD-002
 - MOD-003
 - MOD-004
 - MOD-005
-layer: L1
 severity: error
 scope: module_governance
 domain: TRAE
@@ -42,8 +53,7 @@ sections:
       fail: 任一未满足
     actions:
     - type: mandatory
-      step: 准入否决条件5项快速检查：1.module_id已存在→否决 2.depends_on含不存在ID→否决 3.status非法→否决 4.P0未分配runtime_plane→否决
-        5.功能域重叠→否决
+      step: 准入否决条件5项快速检查：1.module_id已存在→否决 2.depends_on含不存在ID→否决 3.status非法→否决 4.P0未分配runtime_plane→否决 5.功能域重叠→否决
     - type: mandatory
       step: 四级筛选依次通过：MAD-001→MAD-002→MAD-003→MAD-004
     - type: mandatory
@@ -60,8 +70,7 @@ sections:
     - 禁止功能域重叠——创建平行蓝图覆盖已有子域
     gov_mod_001_scope:
       section_type: context
-      applies_to: architecture-model/下所有新模块 + active模块的接口修改/依赖变更/status变化/优先级调整(变更视同重新注入)
-        + 从候选池注入正式目录的迁移模块
+      applies_to: architecture-model/下所有新模块 + active模块的接口修改/依赖变更/status变化/优先级调整(变更视同重新注入) + 从候选池注入正式目录的迁移模块
       not_applies_to: '纯文档类文件(doc_type: template/register) + 临时草稿(status: draft且未申请注入)'
       third_party_extra: 第三方模块除四级筛选外还须通过§10专项安全检查(来源信任/许可证合规/安全审计/隔离声明)
     gov_mod_001_escalation:
@@ -89,10 +98,7 @@ sections:
         fail: 暂停等待声明完成
     gov_mod_001_record_template:
       section_type: examples
-      format: '{"module_id": "GOV-MOD-XXX", "admission_records": [{"date": "ISO8601",
-        "reviewer": "AI/Owner", "p1_arch": "passed/failed", "p2_phase": "passed/failed",
-        "p3_dep": "passed/failed", "p4_iface": "passed/failed", "p0_extras": "passed/N/A",
-        "decision": "admitted/deferred/rejected/paused", "override": false}]}'
+      format: '{"module_id": "GOV-MOD-XXX", "admission_records": [{"date": "ISO8601", "reviewer": "AI/Owner", "p1_arch": "passed/failed", "p2_phase": "passed/failed", "p3_dep": "passed/failed", "p4_iface": "passed/failed", "p0_extras": "passed/N/A", "decision": "admitted/deferred/rejected/paused", "override": false}]}'
       note: 四级筛选通过=准入临时通过——最终注入以GOV-MOD-005全部INJ检查通过为准
     gov_mod_001_normative_refs:
       section_type: principles
@@ -293,8 +299,7 @@ sections:
     - 禁止重新分配archived模块的module_id
     gov_mod_003_scope:
       section_type: context
-      applies_to: architecture-model/下所有模块 + 01_policies_and_standards/下所有doc_type文件
-        + 候选池中的模块
+      applies_to: architecture-model/下所有模块 + 01_policies_and_standards/下所有doc_type文件 + 候选池中的模块
       not_applies_to: '临时草稿(ttl: session) + 纯引用文件'
     gov_mod_003_stage_details:
       section_type: context
@@ -633,7 +638,7 @@ metadata:
   change_policy: stable
   impact_level: H
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   version: "1.1.2"
   last_modified: "2026-06-21"
   change_history:
@@ -659,8 +664,7 @@ metadata:
     - P1修复——references.rule_ids去重(5个TRAE-032重复项→1个)，符合RQ-02规范
   - version: 1.0.0
     date: '2026-06-13'
-    change: '初始提取——从module_admission_policy.md §5/§7提取模块准入四级筛选与否决条件；源文件已迁移为本规则文件（status:
-      migrated）'
+    change: '初始提取——从module_admission_policy.md §5/§7提取模块准入四级筛选与否决条件；源文件已迁移为本规则文件（status: migrated）'
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

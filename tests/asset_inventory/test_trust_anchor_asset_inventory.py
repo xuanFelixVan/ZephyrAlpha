@@ -7,8 +7,8 @@
 # [TESTS] —
 """Tests for MOD-INF-026 §26 Trust Anchor module."""
 
+from datetime import datetime
 from pathlib import Path
-from datetime import datetime, timezone
 
 from zephyr.infrastructure.asset_inventory.trust_anchor import (
     TripleTrustAnchorGate,

@@ -38,8 +38,8 @@ G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A）
 
 Safety : M（治理层代码，门禁失败阻断入库）
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import hashlib
 import re
@@ -50,18 +50,18 @@ from typing import Any
 
 import yaml
 
-from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.gate import GateResult
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.kb.storage.kb_repo import KbRepo
+from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
+from zephyr.shared.contracts.gate import GateResult
 
 __all__ = [
-    "IngestResult",
-    "IngestGate",
-    "BLACKLIST_PATTERNS",
-    "REQUIRED_FRONTMATTER_FIELDS",
     "ALLOWED_EXTENSIONS",
+    "BLACKLIST_PATTERNS",
     "MIN_CONTENT_CHARS",
+    "REQUIRED_FRONTMATTER_FIELDS",
+    "IngestGate",
+    "IngestResult",
 ]
 
 REQUIRED_FRONTMATTER_FIELDS = ["module_id", "title", "category"]

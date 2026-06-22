@@ -1,14 +1,23 @@
 # [A_module] module_id=MOD-UNK_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] zephyr.observability
 
-from . import feedback_loop
-
-from zephyr.shared.adaptive_sampler import AdaptiveSampler, SamplingDecision
-from zephyr.shared.reasoning_spans import ReasoningSpans, ReasoningSpan
-
 import importlib as _importlib
 
-__all__ = ["feedback_loop", "AdaptiveSampler", "SamplingDecision", "ReasoningSpans", "ReasoningSpan", "TCAEngineBase", "AttributionEngineBase", "analytics_base"]
+from zephyr.shared.adaptive_sampler import AdaptiveSampler, SamplingDecision
+from zephyr.shared.reasoning_spans import ReasoningSpan, ReasoningSpans
+
+from . import feedback_loop
+
+__all__ = [
+    "AdaptiveSampler",
+    "AttributionEngineBase",
+    "ReasoningSpan",
+    "ReasoningSpans",
+    "SamplingDecision",
+    "TCAEngineBase",
+    "analytics_base",
+    "feedback_loop",
+]
 
 
 def __getattr__(name):

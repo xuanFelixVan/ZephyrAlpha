@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import patch, MagicMock
-
-import pytest
+from unittest.mock import MagicMock, patch
 
 from zephyr.autonomy_core.skill_consensus import SkillConsensus, VoteResult
 
@@ -50,16 +48,12 @@ class TestVoteResultInit:
 
 class TestReachConsensus:
     def test_consensus_reached(self):
-        result = SkillConsensus.reach_consensus(
-            ["sk-a", "sk-b"], {"sk-a": "yes", "sk-b": "yes"}
-        )
+        result = SkillConsensus.reach_consensus(["sk-a", "sk-b"], {"sk-a": "yes", "sk-b": "yes"})
         assert result["consensus_reached"] is True
         assert result["unique_opinions"] == 1
 
     def test_no_consensus(self):
-        result = SkillConsensus.reach_consensus(
-            ["sk-a", "sk-b"], {"sk-a": "yes", "sk-b": "no"}
-        )
+        result = SkillConsensus.reach_consensus(["sk-a", "sk-b"], {"sk-a": "yes", "sk-b": "no"})
         assert result["consensus_reached"] is False
         assert result["unique_opinions"] == 2
 
@@ -69,9 +63,7 @@ class TestReachConsensus:
         assert result["unique_opinions"] == 0
 
     def test_single_voter(self):
-        result = SkillConsensus.reach_consensus(
-            ["sk-a"], {"sk-a": "maybe"}
-        )
+        result = SkillConsensus.reach_consensus(["sk-a"], {"sk-a": "maybe"})
         assert result["consensus_reached"] is True
         assert result["unique_opinions"] == 1
 
@@ -122,7 +114,7 @@ class TestMajorityVote:
         mock_fdm = MagicMock()
         mock_fdm.current_state.return_value = {"freshness_score": 50}
         with patch(
-            "zephyr.orchestration.agent_lifecycle.skill_freshness.FreshnessDecayModel",
+            "zephyr.autonomy_core.skill_freshness.FreshnessDecayModel",
             return_value=mock_fdm,
         ):
             winner, result = SkillConsensus.majority_vote(

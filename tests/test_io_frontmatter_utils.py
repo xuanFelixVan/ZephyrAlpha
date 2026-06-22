@@ -19,13 +19,11 @@
 
 # [TESTS] pytest tests/test_io_frontmatter_utils.py -q
 
-import pytest
-from pathlib import Path
 from zephyr.integration.shared_08.frontmatter_utils import (
+    extract_body,
     parse_frontmatter,
     parse_frontmatter_from_file,
     parse_yaml_header,
-    extract_body,
 )
 
 

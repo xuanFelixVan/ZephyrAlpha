@@ -11,6 +11,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -20,7 +21,6 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_PASS
-
 
 __manifest__ = """
 args: []
@@ -47,22 +47,30 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 _THRESHOLDS_PATH = _REPO_ROOT / "scripts" / "governance" / "_shared" / "thresholds.yaml"
 _AUDIT_LOG_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "threshold_changes_audit.jsonl"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _get_git_diff() -> str:
     """_get_git_diff implementation."""
     result = subprocess.run(
         ["git", "diff", "--cached", "--", str(_THRESHOLDS_PATH)],
-        capture_output=True, text=True, timeout=10,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=10,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     if result.returncode != 0 or not result.stdout.strip():
         result = subprocess.run(
             ["git", "diff", "--", str(_THRESHOLDS_PATH)],
-            capture_output=True, text=True, timeout=10,
-            cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=str(_REPO_ROOT),
+            encoding="utf-8",
+            errors="replace",
         )
     return result.stdout.strip()
 
@@ -104,7 +112,7 @@ def main() -> None:
     with open(_AUDIT_LOG_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(audit_entry, ensure_ascii=False) + "\n")
 
-    print(f"\n[THRESHOLD-AUDIT] ⚠ 关键阈值已变更", file=sys.stderr)
+    print("\n[THRESHOLD-AUDIT] ⚠ 关键阈值已变更", file=sys.stderr)
     print(f"  时间: {timestamp}", file=sys.stderr)
     print(f"  审计日志: {_AUDIT_LOG_PATH.relative_to(_REPO_ROOT)}", file=sys.stderr)
     print(f"  变更摘要:\n{diff[:500]}", file=sys.stderr)

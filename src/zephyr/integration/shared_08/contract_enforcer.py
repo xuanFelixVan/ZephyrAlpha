@@ -122,7 +122,9 @@ def enforce_output(
                         report,
                     )
             return result
+
         return wrapper  # type: ignore[return-value]
+
     return decorator
 
 
@@ -185,7 +187,9 @@ def enforce_input(
                         report,
                     )
             return func(*args, **kwargs)
+
         return wrapper  # type: ignore[return-value]
+
     return decorator
 
 
@@ -196,10 +200,12 @@ def enforce(
     trace_required: bool = False,
 ) -> Callable[[F], F]:
     """组合装饰器——同时校验入参和返回值。"""
+
     def decorator(func: F) -> F:
         fn = enforce_output(contract_type, mode, trace_required)(func)
         fn = enforce_input(contract_type, input_param, mode, trace_required)(fn)
         return fn
+
     return decorator
 
 

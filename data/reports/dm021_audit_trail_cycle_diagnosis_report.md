@@ -1,8 +1,8 @@
 # DM-021: audit_trail 循环依赖诊断报告
 
-**任务卡ID**: DM-021  
-**诊断日期**: 2026-06-14  
-**诊断状态**: COMPLETED  
+**任务卡ID**: DM-021
+**诊断日期**: 2026-06-14
+**诊断状态**: COMPLETED
 **诊断范围**: `src/zephyr/governance/audit_trail/`, `src/zephyr/governance/audit_orchestrator/`, `src/zephyr/governance/finding_model.py`
 
 ---
@@ -21,11 +21,11 @@
 
 ### Cycle 1 (len=2) [true_cycle]
 ```
-audit_trail/__init__.py 
-    → audit_orchestrator/text_to_finding_adapter.py 
+audit_trail/__init__.py
+    → audit_orchestrator/text_to_finding_adapter.py
     → audit_trail/__init__.py
 ```
-**根因**: 
+**根因**:
 - `audit_trail/__init__.py:17` 硬导入 `from zephyr.governance.audit_orchestrator.text_to_finding_adapter import TextToFindingAdapter`
 - `text_to_finding_adapter.py:18` 硬导入 `from zephyr.governance.audit_trail.finding_model import AuditFinding`
 
@@ -35,11 +35,11 @@ audit_trail/__init__.py
 
 ### Cycle 2 (len=2) [true_cycle]
 ```
-audit_trail/__init__.py 
-    → audit_trail/pipeline_runner.py 
+audit_trail/__init__.py
+    → audit_trail/pipeline_runner.py
     → audit_trail/__init__.py
 ```
-**根因**: 
+**根因**:
 - `audit_trail/__init__.py:16` 硬导入 `from zephyr.governance.audit_trail.pipeline_runner import PipelineRunner, ...`
 - `pipeline_runner.py:26` 硬导入 `from zephyr.governance.audit_trail.finding_model import AuditFinding`
 
@@ -49,9 +49,9 @@ audit_trail/__init__.py
 
 ### Cycle 3 (len=3) [multi_node_cycle]
 ```
-audit_trail/__init__.py 
-    → audit_trail/pipeline_runner.py 
-    → audit_orchestrator/text_to_finding_adapter.py 
+audit_trail/__init__.py
+    → audit_trail/pipeline_runner.py
+    → audit_orchestrator/text_to_finding_adapter.py
     → audit_trail/__init__.py
 ```
 **根因**: Cycle 1 和 Cycle 2 的组合效应。
@@ -62,12 +62,12 @@ audit_trail/__init__.py
 
 ### Cycle 4 (len=3) [multi_node_cycle]
 ```
-audit_trail/__init__.py 
-    → audit_trail/cli.py 
-    → behavioral_auditor/drift_engine.py 
+audit_trail/__init__.py
+    → audit_trail/cli.py
+    → behavioral_auditor/drift_engine.py
     → audit_trail/__init__.py
 ```
-**根因**: 
+**根因**:
 - `audit_trail/__init__.py` 导入 `cli.py`
 - `cli.py` 导入 `behavioral_auditor/drift_engine.py`
 - `drift_engine.py:124` 硬导入 `from zephyr.governance.audit_trail.finding_model import AuditFinding`
@@ -78,13 +78,13 @@ audit_trail/__init__.py
 
 ### Cycle 5 (len=4) [multi_node_cycle]
 ```
-adversarial_validation/defense_runner.py 
-    → audit_trail/__init__.py 
-    → audit_trail/cli.py 
-    → adversarial_validation/validator.py 
+adversarial_validation/defense_runner.py
+    → audit_trail/__init__.py
+    → audit_trail/cli.py
+    → adversarial_validation/validator.py
     → adversarial_validation/defense_runner.py
 ```
-**根因**: 
+**根因**:
 - `defense_runner.py:22` 硬导入 `from zephyr.governance.audit_trail.finding_model import AuditFinding`
 - `audit_trail/__init__.py` 导入 `cli.py`
 - `cli.py` 导入 `validator.py`
@@ -96,12 +96,12 @@ adversarial_validation/defense_runner.py
 
 ### Cycle 6 (len=3) [multi_node_cycle]
 ```
-audit_trail/__init__.py 
-    → audit_trail/cli.py 
-    → orphan_judge/judge.py 
+audit_trail/__init__.py
+    → audit_trail/cli.py
+    → orphan_judge/judge.py
     → audit_trail/__init__.py
 ```
-**根因**: 
+**根因**:
 - `audit_trail/__init__.py` 导入 `cli.py`
 - `cli.py` 导入 `orphan_judge/judge.py`
 - `judge.py:47` 硬导入 `from zephyr.governance.audit_trail.finding_model import AuditFinding`
@@ -112,12 +112,12 @@ audit_trail/__init__.py
 
 ### Cycle 7 (len=3) [multi_node_cycle]
 ```
-audit_trail/__init__.py 
-    → audit_trail/cli.py 
-    → audit_trail/audit_admission_controller.py 
+audit_trail/__init__.py
+    → audit_trail/cli.py
+    → audit_trail/audit_admission_controller.py
     → audit_trail/__init__.py
 ```
-**根因**: 
+**根因**:
 - `audit_trail/__init__.py:13` 硬导入 `from zephyr.governance.audit_trail.audit_admission_controller import AuditAdmissionController, AdmissionResult`
 - `audit_admission_controller.py:20` 硬导入 `from zephyr.governance.audit_trail.finding_model import AuditFinding`
 
@@ -127,8 +127,8 @@ audit_trail/__init__.py
 
 ### Cycle 8 (len=2) [true_cycle]
 ```
-audit_trail/__init__.py 
-    → audit_trail/audit_admission_controller.py 
+audit_trail/__init__.py
+    → audit_trail/audit_admission_controller.py
     → audit_trail/__init__.py
 ```
 **根因**: 与 Cycle 7 相同，是同一双向导入的不同视角。
@@ -276,5 +276,5 @@ CIRCULAR DEPENDENCIES:
 
 ---
 
-**报告生成时间**: 2026-06-14T15:54:00Z  
+**报告生成时间**: 2026-06-14T15:54:00Z
 **诊断工具版本**: diagnose_depgraph.py v3.1.0

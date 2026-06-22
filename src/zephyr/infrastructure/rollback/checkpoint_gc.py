@@ -35,10 +35,9 @@ CheckpointGC — Checkpoint 垃圾回收。
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -51,7 +50,6 @@ class GCResult:
 
 
 class CheckpointGC:
-
     MAX_SNAPSHOTS: int = 100
     MAX_AGE_DAYS: int = 90
     PRESERVE_KNOWN_GOOD: int = 5
@@ -69,9 +67,9 @@ class CheckpointGC:
         total_before = len(snapshots)
 
         known_good_commits = self._get_known_good_commits()
-        preserved: set[str] = set(known_good_commits[-self.PRESERVE_KNOWN_GOOD:])
+        preserved: set[str] = set(known_good_commits[-self.PRESERVE_KNOWN_GOOD :])
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         to_delete: list[Path] = []
 
         for sp in snapshots:
@@ -109,7 +107,7 @@ class CheckpointGC:
             return []
 
         commits: list[str] = []
-        with open(ledger_path, "r", encoding="utf-8") as f:
+        with open(ledger_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:

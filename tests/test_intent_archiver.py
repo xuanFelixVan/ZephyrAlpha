@@ -13,14 +13,10 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from pathlib import Path
-
-import pytest
 
 from zephyr.governance.intent_archiver import (
     IntentArchiver,
-    IntentArchiveStatus,
     IntentRecord,
 )
 
@@ -64,7 +60,7 @@ class TestArchive:
         assert record.operation_id == "OP-001"
         assert record.intent_text == "Fix critical bug in module X"
         assert record.author == "agent-1"
-        assert record.content_hash == hashlib.sha256("Fix critical bug in module X".encode()).hexdigest()
+        assert record.content_hash == hashlib.sha256(b"Fix critical bug in module X").hexdigest()
 
     def test_archive_creates_file(self, tmp_path):
         archiver = IntentArchiver(project_root=tmp_path)
@@ -151,6 +147,7 @@ class TestGetIntent:
 
     def test_multiple_archives_returns_correct(self, tmp_path):
         import time
+
         archiver = IntentArchiver(project_root=tmp_path)
         archiver.archive("OP-030", "First intent")
         time.sleep(0.01)

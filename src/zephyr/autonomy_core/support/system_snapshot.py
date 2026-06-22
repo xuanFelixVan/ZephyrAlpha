@@ -2,32 +2,23 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
-
 # [MODULE] zephyr.autonomy_core.support.system_snapshot
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 """
 SystemSnapshotter — M1 系统状态镜像（CL-017 RI 扩展模式）
 ==========================================================
 任务编号 : T-V2-006（experimental）
 权限层级 : AI-Modifiable（快照输出）/ Human-Gated（门禁通过率阈值）
-真源声明 : ai-autonomy-authority-registry.md §2.11 (CL-017)
+真源声明 : ai_autonomy_authority_registry.yaml §2.11 (CL-017)
 关联决策 : rationale-log R83（CL-017 升级为 RI 扩展模式）
 创建日期 : 2026-04-27
 版本     : v1.0.0
@@ -97,6 +88,7 @@ _GATE_FILES: dict[str, str] = {
 # 数据模型
 # ---------------------------------------------------------------------------
 
+
 class SystemSnapshot(BaseModel):
     """M1 系统状态镜像（Pydantic v2 frozen）。
 
@@ -123,16 +115,20 @@ class SystemSnapshot(BaseModel):
     registry_hashes: dict[str, str]
     blueprint_v12_pass_rate: float = Field(ge=-1.0, le=1.0)
 
+
 # ---------------------------------------------------------------------------
 # 异常
 # ---------------------------------------------------------------------------
 
+
 class SnapshotBuildError(RuntimeError):
     """系统快照构建失败（不抛出到 M1 主流程，仅内部记录）。"""
+
 
 # ---------------------------------------------------------------------------
 # SystemSnapshotter
 # ---------------------------------------------------------------------------
+
 
 class SystemSnapshotter:
     """M1 内部组件：在 build() pipeline 末尾生成系统状态镜像。
@@ -229,12 +225,7 @@ class SystemSnapshotter:
 
         文件不存在时返回 "unavailable"。
         """
-        log_path = (
-            self._repo_root
-            / "docs"
-            / "02_enterprise_architecture"
-            / "architecture-rationale-log.md"
-        )
+        log_path = self._repo_root / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
         if not log_path.exists():
             return "unavailable"
         try:

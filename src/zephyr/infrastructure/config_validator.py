@@ -32,11 +32,9 @@ M-12 ConfigValidator — 配置参数校验器
 from __future__ import annotations
 
 import json
-import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -127,9 +125,7 @@ class ConfigValidator:
         self._check_empty_values(config, result)
         result.checked_fields = len(config) if isinstance(config, dict) else 0
 
-        if strict and (result.errors or result.warnings):
-            result.valid = False
-        elif result.errors:
+        if (strict and (result.errors or result.warnings)) or result.errors:
             result.valid = False
 
         return result
@@ -163,9 +159,7 @@ class ConfigValidator:
                 for range_key, (lo, hi) in self._NUMERIC_RANGES.items():
                     if range_key in key.lower():
                         if value < lo or value > hi:
-                            result.warnings.append(
-                                f"{key}={value} 超出建议范围 [{lo}, {hi}]"
-                            )
+                            result.warnings.append(f"{key}={value} 超出建议范围 [{lo}, {hi}]")
                         break
 
     def _check_empty_values(

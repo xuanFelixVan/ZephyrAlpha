@@ -12,9 +12,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -67,7 +66,7 @@ class SBOMReport(BaseModel):
 
 def generate_sbom(deps: list[DepInfo]) -> SBOMReport:
     report = SBOMReport(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         dependencies=deps,
     )
     for d in deps:

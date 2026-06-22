@@ -26,13 +26,12 @@ module_id: MOD-INF-023
 关联引擎：co_occurrence(Jaccard) / causal_chain(Granger) / dimension_cluster。
 对标 blueprint.md §5.2 / TASK-INF-0026 / D-023-09。
 """
+
 from __future__ import annotations
 
-import sqlite3
 import os
+import sqlite3
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Optional
 
 
 @dataclass
@@ -44,12 +43,13 @@ class CorrelationReport:
 
 
 class CorrelationEngine:
-
-    def __init__(self, db_path: Optional[str] = None) -> None:
+    def __init__(self, db_path: str | None = None) -> None:
         if db_path is None:
             db_path = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-                "data", "databases", "governance.db",
+                "data",
+                "databases",
+                "governance.db",
             )
         self._db_path = db_path
 
@@ -57,9 +57,7 @@ class CorrelationEngine:
         if not os.path.exists(self._db_path):
             return {}
         conn = sqlite3.connect(self._db_path)
-        rows = conn.execute(
-            "SELECT scan_id, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'"
-        ).fetchall()
+        rows = conn.execute("SELECT scan_id, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'").fetchall()
         conn.close()
 
         scan_sets: dict[str, set[str]] = {}

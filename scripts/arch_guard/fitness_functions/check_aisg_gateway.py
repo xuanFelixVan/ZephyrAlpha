@@ -8,6 +8,7 @@ check_aisg_gateway.py — AISG 拦截门禁 (INV-015) Phase B 升级
 
 exit: 0=pass, 1=fail, 2=config error
 """
+
 from __future__ import annotations
 
 import sys
@@ -32,17 +33,19 @@ def main() -> int:
 
     total += 1
     if not aisg_config.get("enabled"):
-        errors.append(
-            "arch_guard.ai_security_gateway.enabled 未显式设为 true（INV-015 需激活）"
-        )
+        errors.append("arch_guard.ai_security_gateway.enabled 未显式设为 true（INV-015 需激活）")
     else:
         passed += 1
 
     aisg_paths = [
         REPO_ROOT / "src" / "zephyr" / "compliance" / "security_gateway_base.py",
         REPO_ROOT / "src" / "zephyr" / "compliance" / "aisg_sandbox.py",
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-        / "catalogs" / "ai-autonomy-authority-registry.md",
+        REPO_ROOT
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "catalogs"
+        / "ai_autonomy_authority_registry.yaml",
     ]
 
     for p in aisg_paths:

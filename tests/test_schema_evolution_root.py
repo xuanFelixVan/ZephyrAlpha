@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_schema_evolution_root.py
 
-import pytest
 
 from zephyr.ops.collectors.schema_evolution import SchemaEvolution
 

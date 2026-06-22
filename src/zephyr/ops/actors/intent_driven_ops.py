@@ -27,6 +27,7 @@ Risk: R159 — FLE "fixes" something owner intentionally configured.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class IntentDrivenOps:
     declared_intents: list[str] = field(default_factory=list)

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.atomic_injector import AtomicInjector, AtomicResult
 
 

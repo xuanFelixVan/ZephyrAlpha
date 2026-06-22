@@ -87,11 +87,13 @@ class NumericalStabilityGuard:
         if classification != NumAnomaly.CLEAN:
             if metric_name not in self.quarantine:
                 self.quarantine[metric_name] = []
-            self.quarantine[metric_name].append({
-                "original": value,
-                "sanitized": sanitized,
-                "anomaly": classification.value,
-            })
+            self.quarantine[metric_name].append(
+                {
+                    "original": value,
+                    "sanitized": sanitized,
+                    "anomaly": classification.value,
+                }
+            )
             if metric_name not in self.anomaly_counts:
                 self.anomaly_counts[metric_name] = {}
             self.anomaly_counts[metric_name][classification.value] = (

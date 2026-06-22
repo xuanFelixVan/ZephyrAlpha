@@ -29,6 +29,7 @@ R516: MetaGuardLatencyBudget
 import time
 from dataclasses import dataclass, field
 
+
 @dataclass
 class MetaGuardLatencyBudget:
     guard_latencies: dict[str, list[float]] = field(default_factory=dict)
@@ -44,7 +45,7 @@ class MetaGuardLatencyBudget:
             self.guard_latencies[guard_id] = []
         self.guard_latencies[guard_id].append(latency_ms)
         if len(self.guard_latencies[guard_id]) > self.max_samples_per_guard:
-            self.guard_latencies[guard_id] = self.guard_latencies[guard_id][-self.max_samples_per_guard:]
+            self.guard_latencies[guard_id] = self.guard_latencies[guard_id][-self.max_samples_per_guard :]
 
     def set_priority(self, guard_id: str, priority: float) -> None:
         self.priority_ranking[guard_id] = priority
@@ -93,7 +94,11 @@ class MetaGuardLatencyBudget:
                 break
 
         if freed > 0:
-            entry = {"timestamp": time.time(), "freed_ms": round(freed, 1), "downgraded_count": len(self.downgraded_guards)}
+            entry = {
+                "timestamp": time.time(),
+                "freed_ms": round(freed, 1),
+                "downgraded_count": len(self.downgraded_guards),
+            }
 
     def is_active(self, guard_id: str) -> bool:
         return guard_id not in self.downgraded_guards

@@ -14,6 +14,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 锚点文件删除检测（ABS-14 / GOV-DOC-007 §一 — 7个不可触碰锚点文件）
@@ -41,13 +42,14 @@ import argparse
 
 ANCHOR_FILES = [
     "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml",
-    "docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md",
+    "docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml",
     "docs/01_policies_and_standards/_registry/catalogs/architecture-model/index.yaml",
     "docs/01_policies_and_standards/governance/architecture/adr/index.md",
     "AGENTS.md",
     ".pre_commit-config.yaml",
     ".roomodes",
 ]
+
 
 def get_staged_deletions() -> list[str]:
     """获取暂存区删除文件列表"""
@@ -65,6 +67,7 @@ def get_staged_deletions() -> list[str]:
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         return []
 
+
 def get_working_tree_deletions() -> list[str]:
     """获取暂存区删除文件列表."""
     try:
@@ -81,6 +84,7 @@ def get_working_tree_deletions() -> list[str]:
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         return []
     "获取工作树删除文件列表."
+
 
 def check_anchor_deletions() -> list[dict]:
     """检查锚点文件删除"""
@@ -100,6 +104,7 @@ def check_anchor_deletions() -> list[dict]:
     return findings
     "检查锚点文件删除."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="锚点文件删除检测（ABS-14 / GOV-DOC-007 §一）")
@@ -110,8 +115,8 @@ def main() -> None:
         print(f"\n[ANCHOR-DELETE] {len(findings)} 个锚点文件正在被删除！", file=sys.stderr)
         for f in findings:
             stage = "STAGED" if f["staged"] else "WORKING"
-            print(f'  [{f['severity']}] [{stage}] {f['deleted_path']}', file=sys.stderr)
-            print(f'    锚点文件: {f['anchor']}', file=sys.stderr)
+            print(f"  [{f['severity']}] [{stage}] {f['deleted_path']}", file=sys.stderr)
+            print(f"    锚点文件: {f['anchor']}", file=sys.stderr)
         print("\n  锚点文件不可删除——这是项目核心基础设施。", file=sys.stderr)
     else:
         print("[ANCHOR-DELETE] 无锚点文件删除操作", file=sys.stderr)
@@ -119,6 +124,7 @@ def main() -> None:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
     "入口函数."
+
 
 if __name__ == "__main__":
     main()

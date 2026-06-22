@@ -21,13 +21,12 @@
 
 """Batch1 基础设施层契约 — 15条 Pydantic v2 Schema（SLO/Error Budget/Token Budget/Kill Switch/Sandbox/Graceful Degradation）."""
 
-
-from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
 class CT_SLO_001(BaseModel):
     """capacity_slo.yaml Schema 定义."""
+
     slo_id: str
     metric: str
     target: float
@@ -37,6 +36,7 @@ class CT_SLO_001(BaseModel):
 
 class CT_SLO_002(BaseModel):
     """SLO measurement window 定义."""
+
     fast_cycle: dict = Field(default_factory=lambda: {"1h": 14.4, "6h": 6.0})
     medium_cycle: dict = Field(default_factory=lambda: {"24h": 3.0, "7d": 1.0})
     slow_cycle: dict = Field(default_factory=lambda: {"28d": 1.0})
@@ -44,6 +44,7 @@ class CT_SLO_002(BaseModel):
 
 class CT_EB_001(BaseModel):
     """Error Budget 计算公式."""
+
     slo_id: str
     budget_total: float
     budget_consumed: float
@@ -53,6 +54,7 @@ class CT_EB_001(BaseModel):
 
 class CT_EB_002(BaseModel):
     """Burn Rate 阈值契约."""
+
     threshold_1h: float = 14.4
     threshold_6h: float = 6.0
     threshold_3d: float = 3.0
@@ -61,13 +63,15 @@ class CT_EB_002(BaseModel):
 
 class CT_EB_003(BaseModel):
     """五级响应动作契约."""
+
     tier: str
     threshold: float
-    actions: List[str] = Field(default_factory=list)
+    actions: list[str] = Field(default_factory=list)
 
 
 class CT_TB_001(BaseModel):
     """Token Budget 四级定义."""
+
     level: str
     dimension: str
     default_limit: int
@@ -76,21 +80,24 @@ class CT_TB_001(BaseModel):
 
 class CT_TB_002(BaseModel):
     """Pre-flight 预估接口."""
+
     estimated_tokens: int
-    actual_tokens: Optional[int] = None
-    accuracy_ratio: Optional[float] = None
+    actual_tokens: int | None = None
+    accuracy_ratio: float | None = None
 
 
 class CT_KS_001(BaseModel):
     """Kill Switch 信号格式."""
+
     active: bool = False
     mode: str = "normal"
-    triggered_by: Optional[str] = None
-    triggered_at: Optional[str] = None
+    triggered_by: str | None = None
+    triggered_at: str | None = None
 
 
 class CT_KS_002(BaseModel):
     """熔断状态切换契约."""
+
     from_state: str
     to_state: str
     reason: str
@@ -99,19 +106,22 @@ class CT_KS_002(BaseModel):
 
 class CT_SB_001(BaseModel):
     """Sandbox 子进程隔离规范."""
+
     max_memory_mb: int = 512
     max_cpu_seconds: int = 30
-    allowed_syscalls: List[str] = Field(default_factory=list)
+    allowed_syscalls: list[str] = Field(default_factory=list)
 
 
 class CT_GD_001(BaseModel):
     """降级链 YAML Schema."""
+
     chain_id: str
-    levels: List[dict] = Field(default_factory=list)
+    levels: list[dict] = Field(default_factory=list)
 
 
 class CT_GD_002(BaseModel):
     """模型路由接口."""
+
     current_model: str
     fallback_model: str
     switch_threshold: float
@@ -119,12 +129,14 @@ class CT_GD_002(BaseModel):
 
 class CT_GD_003(BaseModel):
     """输出截断策略."""
+
     max_output_tokens: int = 4096
     truncation_strategy: str = "semantic_boundary"
 
 
 class CT_SC_001(BaseModel):
     """语义缓存键格式."""
+
     cache_key: str
     hash_algorithm: str = "sha256"
     ttl_seconds: int = 3600
@@ -132,6 +144,7 @@ class CT_SC_001(BaseModel):
 
 class CT_SC_002(BaseModel):
     """ChromaDB 向量存储契约."""
+
     collection_name: str
     dimension: int = 1536
     distance_metric: str = "cosine"

@@ -58,11 +58,13 @@ class StochasticDiagnosisVerifier:
     def record_diagnosis_run(self, anomaly_id: str, run_index: int, root_cause: str, confidence: float) -> None:
         if anomaly_id not in self.diagnosis_runs:
             self.diagnosis_runs[anomaly_id] = []
-        self.diagnosis_runs[anomaly_id].append({
-            "run": run_index,
-            "root_cause": root_cause,
-            "confidence": confidence,
-        })
+        self.diagnosis_runs[anomaly_id].append(
+            {
+                "run": run_index,
+                "root_cause": root_cause,
+                "confidence": confidence,
+            }
+        )
 
     def verify_stability(self, anomaly_id: str) -> dict:
         runs = self.diagnosis_runs.get(anomaly_id, [])
@@ -85,26 +87,24 @@ class StochasticDiagnosisVerifier:
         self.stability_scores[anomaly_id] = consensus_ratio
 
         if not stable:
-            self.unstable_diagnoses.append({
-                "ts": time.time(),
-                "anomaly_id": anomaly_id,
-                "top_cause": top_cause,
-                "consensus_ratio": round(consensus_ratio, 3),
-                "all_causes": dict(root_cause_counts),
-            })
+            self.unstable_diagnoses.append(
+                {
+                    "ts": time.time(),
+                    "anomaly_id": anomaly_id,
+                    "top_cause": top_cause,
+                    "consensus_ratio": round(consensus_ratio, 3),
+                    "all_causes": dict(root_cause_counts),
+                }
+            )
 
         return {
             "stable": stable,
             "consensus_cause": top_cause if stable else None,
             "consensus_ratio": round(consensus_ratio, 3),
-            "cause_distribution": {
-                k: round(v / len(runs), 3) for k, v in root_cause_counts.items()
-            },
+            "cause_distribution": {k: round(v / len(runs), 3) for k, v in root_cause_counts.items()},
             "total_reruns": len(runs),
             "recommendation": (
-                "act_on_consensus" if stable
-                else "request_human_review" if consensus_ratio < 0.4
-                else "increase_reruns"
+                "act_on_consensus" if stable else "request_human_review" if consensus_ratio < 0.4 else "increase_reruns"
             ),
         }
 

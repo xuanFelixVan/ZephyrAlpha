@@ -27,6 +27,7 @@ Risk: R165 — Anomalies persist undetected after "resolved" marking.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ResolutionTracker:
     tracked: dict[str, str] = field(default_factory=dict)

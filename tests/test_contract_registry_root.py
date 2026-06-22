@@ -15,11 +15,11 @@ from __future__ import annotations
 import pytest
 
 from zephyr.trading.orchestrator.contract_registry import (
+    CONTRACTS,
     AIReadOnlyHint,
     Contract,
     ContractCallResult,
     ContractRegistry,
-    CONTRACTS,
     TelemetryType,
 )
 
@@ -204,8 +204,7 @@ class TestContractRegistry:
         s = registry.stats()
         total = s["total_contracts"]
         callable_count = sum(
-            1 for c in CONTRACTS.values()
-            if c.ai_read_only_hint.name not in ("DO_NOT_CALL", "IMPL_REQUIRED")
+            1 for c in CONTRACTS.values() if c.ai_read_only_hint.name not in ("DO_NOT_CALL", "IMPL_REQUIRED")
         )
         expected_pct = round(callable_count / max(total, 1) * 100, 1)
         assert s["readiness_pct"] == expected_pct

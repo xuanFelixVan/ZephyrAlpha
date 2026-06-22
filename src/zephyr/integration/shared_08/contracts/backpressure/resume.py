@@ -6,23 +6,23 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
-# Re-export shim — canonical location is now zephyr.orchestration.pipeline_routing.backpressure_types
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
+# Re-export shim — canonical location is now zephyr.integration.backpressure_types
 
 import importlib as _il
-_mod = _il.import_module("zephyr.orchestration.pipeline_routing.backpressure_types")
+
+_mod = _il.import_module("zephyr.integration.backpressure_types")
 BackpressureResume = _mod.BackpressureResume
 
 __all__ = ["BackpressureResume"]
 
 # ==== BEGIN CODGEN:CTR-BP-003 ====
-from dataclasses import dataclass, field
-
-from typing import Optional
+from dataclasses import dataclass
 
 from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -47,6 +47,7 @@ AI Prompt
     当之前的 PAUSE/THROTTLE 条件解除后（如队列清空、GC 完成），MUST 发送 RESUME 恢复信号。 不要在 RESUME 后立即取消——先观察一个周期确认稳定。
 """
 
+
 @dataclass(frozen=True)
 class BackpressureResume:
     idempotency_key: str
@@ -57,180 +58,7 @@ class BackpressureResume:
     symbol: str
     action: str = "RESUME"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-BP-003 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -35,7 +35,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -46,7 +46,9 @@ READ_PATTERNS = [
 ]
 
 WRITE_PATTERNS = [
-    re.compile(r"(?:Write|write|创建|写入|保存).*?['\"]?([^'\"\s]+\.(?:py|md|yaml|yml|json|toml))['\"]?", re.IGNORECASE),
+    re.compile(
+        r"(?:Write|write|创建|写入|保存).*?['\"]?([^'\"\s]+\.(?:py|md|yaml|yml|json|toml))['\"]?", re.IGNORECASE
+    ),
     re.compile(r"(?:SearchReplace|Edit).*?file_path.*?['\"]([^'\"]+)['\"]", re.IGNORECASE),
 ]
 
@@ -87,7 +89,9 @@ def check_session_log(session_log_path: str) -> list[str]:
             if normalized not in read_files:
                 findings.append(f"IRN-008 FAIL: file '{filepath}' written at line {line_num} without prior Read record")
             elif read_files[normalized] > line_num:
-                findings.append(f"IRN-008 FAIL: file '{filepath}' written at line {line_num} before Read at line {read_files[normalized]}")
+                findings.append(
+                    f"IRN-008 FAIL: file '{filepath}' written at line {line_num} before Read at line {read_files[normalized]}"
+                )
     return findings
 
 
@@ -111,7 +115,9 @@ def check_file_read_before_write(session_log_path: str, target_file: str) -> lis
     if first_write is not None and first_read is None:
         findings.append(f"IRN-008 FAIL: file '{target_file}' written at line {first_write} without any Read record")
     elif first_write is not None and first_read is not None and first_read > first_write:
-        findings.append(f"IRN-008 FAIL: file '{target_file}' written at line {first_write} before Read at line {first_read}")
+        findings.append(
+            f"IRN-008 FAIL: file '{target_file}' written at line {first_write} before Read at line {first_read}"
+        )
     return findings
 
 

@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """L05 — Portfolio Construction Strategies
 
 Phase C 具体策略实现包。
@@ -22,4 +22,4 @@ from zephyr.pf_core.default_equity_strategy import (
     RebalanceMode,
 )
 
-__all__ = ['DefaultEquityStrategy', 'RebalanceMode', 'default_equity_strategy']
+__all__ = ["DefaultEquityStrategy", "RebalanceMode", "default_equity_strategy"]

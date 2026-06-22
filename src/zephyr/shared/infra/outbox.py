@@ -44,8 +44,8 @@ AI 施工约定：
 SSoT: MOD-INF-016 §2.21 shared-outbox
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import asyncio
 import logging
@@ -57,15 +57,14 @@ from enum import Enum, unique
 from typing import Any, Protocol
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
-from zephyr.shared.contracts.core.base_event import BaseEvent as _BaseEvent, generate_idempotency_key as _generate_idempotency_key
 
 __all__ = [
-    "OutboxStatus",
-    "OutboxError",
-    "OutboxEntry",
-    "OutboxStore",
     "MemoryOutboxStore",
+    "OutboxEntry",
+    "OutboxError",
     "OutboxPublisher",
+    "OutboxStatus",
+    "OutboxStore",
 ]
 
 logger = logging.getLogger(__name__)

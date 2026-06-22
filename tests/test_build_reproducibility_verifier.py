@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_build_reproducibility_verifier.py
 
-import pytest
 
 from zephyr.ops.verifiers.build_reproducibility_verifier import (
     BuildIntegrity,

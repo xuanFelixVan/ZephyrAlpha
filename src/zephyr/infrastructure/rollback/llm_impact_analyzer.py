@@ -36,7 +36,6 @@ import subprocess
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 
 class RiskLevel(str, Enum):
@@ -59,25 +58,45 @@ class ImpactAnalysis:
 
 
 HIGH_RISK_KEYWORDS: set[str] = {
-    "drop table", "delete from", "truncate", "rm -rf", "force push",
-    "DROP TABLE", "DELETE FROM", "TRUNCATE",
-    "os.remove", "os.unlink", "shutil.rmtree",
-    "eval(", "exec(", "subprocess.Popen",
-    "password", "secret", "token", "api_key",
-    "__import__", "importlib",
+    "drop table",
+    "delete from",
+    "truncate",
+    "rm -rf",
+    "force push",
+    "DROP TABLE",
+    "DELETE FROM",
+    "TRUNCATE",
+    "os.remove",
+    "os.unlink",
+    "shutil.rmtree",
+    "eval(",
+    "exec(",
+    "subprocess.Popen",
+    "password",
+    "secret",
+    "token",
+    "api_key",
+    "__import__",
+    "importlib",
 }
 
 MEDIUM_RISK_KEYWORDS: set[str] = {
-    "ALTER TABLE", "ALTER COLUMN", "modify",
-    "git reset", "git checkout --",
-    "pickle.loads", "pickle.dumps",
-    "executemany", "execute(",
-    "@dataclass", "class ", "def ",
+    "ALTER TABLE",
+    "ALTER COLUMN",
+    "modify",
+    "git reset",
+    "git checkout --",
+    "pickle.loads",
+    "pickle.dumps",
+    "executemany",
+    "execute(",
+    "@dataclass",
+    "class ",
+    "def ",
 }
 
 
 class LLMImpactAnalyzer:
-
     def __init__(self, project_root: Path | None = None, use_llm: bool = False) -> None:
         self._project_root = project_root or Path.cwd()
         self._use_llm = use_llm
@@ -164,7 +183,9 @@ class LLMImpactAnalyzer:
             result = subprocess.run(
                 ["git", "show", "--format=%B", "-p", commit_sha],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=15,
+                capture_output=True,
+                text=True,
+                timeout=15,
             )
             return result.stdout or ""
         except Exception:

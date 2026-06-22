@@ -2,8 +2,8 @@
 import os
 import re
 import sys
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 
@@ -24,9 +24,16 @@ OPTIONAL_FIELDS = {
 }
 
 ALL_FIELDS_ORDER = [
-    "BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD",
-    "CONSUMERS", "STABILITY", "SAFETY", "AI_AUTONOMY",
-    "ERROR_CONTRACT", "TESTS",
+    "BLUEPRINT",
+    "MODULE",
+    "INVARIANTS",
+    "MODIFY-GUARD",
+    "CONSUMERS",
+    "STABILITY",
+    "SAFETY",
+    "AI_AUTONOMY",
+    "ERROR_CONTRACT",
+    "TESTS",
 ]
 
 HEADER_PATTERN = re.compile(r"^#\s*\[(\w+)\]\s*(.*)")
@@ -46,7 +53,7 @@ def scan_file(filepath: Path):
     rel = filepath.relative_to(SRC_ROOT.parent.parent)
     module_path = "zephyr." + ".".join(filepath.relative_to(SRC_ROOT).with_suffix("").parts)
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         lines = f.readlines()
 
     header_lines = []
@@ -151,20 +158,20 @@ def main():
     print()
     print("MISSING FIELD STATISTICS (required + optional):")
     print(f"  {'Field':<20} {'Missing':>8} {'Fixed':>8}")
-    print(f"  {'-'*20} {'-'*8} {'-'*8}")
+    print(f"  {'-' * 20} {'-' * 8} {'-' * 8}")
     for f in ALL_FIELDS_ORDER:
         req_tag = " (REQ)" if f in REQUIRED_FIELDS else " (opt)"
         print(f"  {f + req_tag:<20} {missing_stats.get(f, 0):>8} {fixed_stats.get(f, 0):>8}")
     print()
     if files_fixed > 0:
         print("Defaults applied for missing required fields:")
-        print(f"  [STABILITY]     evolving")
-        print(f"  [SAFETY]        L")
-        print(f"  [AI_AUTONOMY]   ai_modifiable")
-        print(f"  [INVARIANTS]    none")
-        print(f"  [MODIFY-GUARD]  none")
-        print(f"  [MODULE]        auto-derived from file path")
-        print(f"  [BLUEPRINT]     auto-derived from file path")
+        print("  [STABILITY]     evolving")
+        print("  [SAFETY]        L")
+        print("  [AI_AUTONOMY]   ai_modifiable")
+        print("  [INVARIANTS]    none")
+        print("  [MODIFY-GUARD]  none")
+        print("  [MODULE]        auto-derived from file path")
+        print("  [BLUEPRINT]     auto-derived from file path")
     print("=" * 70)
 
 

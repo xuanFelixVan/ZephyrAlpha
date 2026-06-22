@@ -14,7 +14,9 @@ Exit codes:
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -32,7 +34,6 @@ tags:
 - Critical
 """
 
-import json
 import re
 import sys
 from datetime import UTC, datetime, timedelta
@@ -43,7 +44,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 SESSION_LOGS_DIR = REPO_ROOT / "session-logs"
 BYPASS_PATTERNS = [
@@ -98,11 +99,13 @@ def _extract_bypass_events(log_path: Path) -> list[dict]:
             start = max(0, match.start() - 200)
             end = min(len(content), match.end() + 200)
             context = content[start:end].replace("\n", " ").strip()
-            events.append({
-                "file": str(log_path.relative_to(REPO_ROOT)).replace("\\", "/"),
-                "match": match.group(),
-                "context": context[:500],
-            })
+            events.append(
+                {
+                    "file": str(log_path.relative_to(REPO_ROOT)).replace("\\", "/"),
+                    "match": match.group(),
+                    "context": context[:500],
+                }
+            )
     return events
 
 

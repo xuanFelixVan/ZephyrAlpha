@@ -25,7 +25,6 @@ GateStatisticsComponent · 门禁统计（通过率/阻断率/趋势）
 ========================================================
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field

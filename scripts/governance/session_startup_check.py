@@ -26,13 +26,12 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
-
-
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent))
 
@@ -92,7 +91,7 @@ def main() -> int:
 
     if args.json:
         report = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "phases": results,
         }
         print(json.dumps(report, indent=2, ensure_ascii=False))
@@ -106,7 +105,9 @@ def main() -> int:
             for c in r["checks"]:
                 print(f"  {_emoji(GateResult(c['result']))} {c['name']}: {c['result']}")
 
-        worst = max((GateResult(r["overall"]) for r in results), key=lambda x: ["GREEN", "YELLOW", "RED"].index(x.value))
+        worst = max(
+            (GateResult(r["overall"]) for r in results), key=lambda x: ["GREEN", "YELLOW", "RED"].index(x.value)
+        )
         print(f"\n{'=' * 60}")
         print(f"  最终判定: {_emoji(worst)} {worst.value}")
         if worst == GateResult.GREEN:

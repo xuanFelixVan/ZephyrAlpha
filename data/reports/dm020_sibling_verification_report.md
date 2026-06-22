@@ -1,9 +1,9 @@
 # DM-020: 复查验证 DM-019 sibling 边修复结果
 
-**任务卡ID**: DM-020  
-**执行时间**: 2026-06-14  
-**执行模型**: qwen  
-**类型**: 只读复查  
+**任务卡ID**: DM-020
+**执行时间**: 2026-06-14
+**执行模型**: qwen
+**类型**: 只读复查
 
 ---
 
@@ -78,8 +78,8 @@ SELECT COUNT(*) FROM edges;
 
 **验证命令**:
 ```sql
-SELECT COUNT(*) FROM edges 
-WHERE from_node NOT IN (SELECT node_id FROM nodes) 
+SELECT COUNT(*) FROM edges
+WHERE from_node NOT IN (SELECT node_id FROM nodes)
    OR to_node NOT IN (SELECT node_id FROM nodes);
 -- 结果: 0
 ```
@@ -184,14 +184,14 @@ SELECT COUNT(*) FROM edges;
 -- 结果: 7608
 
 -- 断裂边数
-SELECT COUNT(*) FROM edges 
-WHERE from_node NOT IN (SELECT node_id FROM nodes) 
+SELECT COUNT(*) FROM edges
+WHERE from_node NOT IN (SELECT node_id FROM nodes)
    OR to_node NOT IN (SELECT node_id FROM nodes);
 -- 结果: 0
 ```
 
 ---
 
-**报告生成时间**: 2026-06-14T16:00:00Z  
-**验证人**: AI Agent (qwen)  
+**报告生成时间**: 2026-06-14T16:00:00Z
+**验证人**: AI Agent (qwen)
 **任务状态**: 完成

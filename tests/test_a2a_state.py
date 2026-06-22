@@ -11,10 +11,11 @@
 # [TESTS] tests/test_a2a_state.py
 
 import pytest
+
 from zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_state import (
-    A2ATaskStatus,
-    A2ATask,
     A2AStateMachine,
+    A2ATask,
+    A2ATaskStatus,
 )
 
 

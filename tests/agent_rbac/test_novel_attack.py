@@ -6,11 +6,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """新攻击 / cybersec 2026 专项测试."""
+
 from __future__ import annotations
 
-import pytest
-from zephyr.security.access_control.novel_attack_guard import NovelAttackGuard
 from zephyr.security.access_control.cybersec_2026_guard import Cybersec2026Guard
+from zephyr.security.access_control.novel_attack_guard import NovelAttackGuard
 
 
 class TestNovelAttack:

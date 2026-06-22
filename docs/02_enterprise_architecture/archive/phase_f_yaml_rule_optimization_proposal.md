@@ -2,7 +2,7 @@
 module_id: EA-DOC-018
 title: 阶段F — YAML规则文件优化与精简施工方案
 doc_type: discussion
-status: in_progress
+status: Active
 version: 2.0.0
 layer: L1
 owner: architecture

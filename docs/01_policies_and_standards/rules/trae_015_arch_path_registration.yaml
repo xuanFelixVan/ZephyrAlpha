@@ -1,5 +1,16 @@
 rule_id: TRAE-015
 title: 架构约束-路径与注册
+version: 1.0.0
+layer: L1
+module_id: TRAE-015
+depends_on: []
+tags:
+- TRAE
+- architecture_path_registry
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - ARCH-013
 - ARCH-014
@@ -7,7 +18,6 @@ aliases:
 - ARCH-016
 - ARCH-017
 - ARCH-018
-layer: L1
 severity: error
 scope: architecture_path_registry
 domain: TRAE
@@ -164,7 +174,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

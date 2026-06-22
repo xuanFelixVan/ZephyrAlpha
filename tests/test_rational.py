@@ -11,8 +11,6 @@
 # [TESTS] python -m pytest tests/test_rational.py -q
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.rational import KEJustificationGenerator, SelectedKE
 
 

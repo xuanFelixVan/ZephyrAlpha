@@ -23,29 +23,37 @@ E2E 集成测试：全流水线贯通测试
 
 Phase D | Safety: MEDIUM
 """
+
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
-from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pandas as pd
-import pytest
 
+from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
+from zephyr.ex_core.execution_engine import (
+    AlgoType,
+    ExecutionConfig,
+    ExecutionEngine,
+)
+from zephyr.ex_core.order_manager import OrderManager
+from zephyr.governance.compliance_gate_a6.default_security_gateway import (
+    DefaultSecurityGateway,
+)
 from zephyr.governance.default_quality_gate import (
     DefaultQualityGate,
 )
-from zephyr.signal_fundamental.strategy.implementations.default_capital_allocator import (
-    AllocationMethod,
-    DefaultCapitalAllocator,
+from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import (
+    DefaultInferenceEngine,
 )
-from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import (
-    DefaultSignalAggregator,
+from zephyr.pf_core.default_equity_strategy import (
+    DefaultEquityStrategy,
+    RebalanceMode,
 )
-from zephyr.risk.implementations.default_position_limit_checker import (
-    DefaultPositionLimitChecker,
+from zephyr.pf_core.default_tca_engine import (
+    DefaultTCAEngine,
 )
 from zephyr.risk.implementations.default_risk_limits_calculator import (
     DefaultRiskLimitsCalculator,
@@ -56,54 +64,37 @@ from zephyr.risk.implementations.default_risk_manager_orchestrator import (
 from zephyr.risk.implementations.default_risk_validator import (
     DefaultRiskValidator,
 )
-from zephyr.risk.implementations.default_stop_loss_engine import (
-    DefaultStopLossEngine,
-    StopLossRules,
-)
 from zephyr.risk.stop_loss import evaluate_stop_loss
-from zephyr.pf_core.default_equity_strategy import (
-    DefaultEquityStrategy,
-    RebalanceMode,
+from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import (
+    DefaultSignalAggregator,
 )
-from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
-from zephyr.ex_core.adapters.broker_interface import BrokerInterface
-from zephyr.ex_core.execution_engine import (
-    AlgoType,
-    ExecutionConfig,
-    ExecutionEngine,
-)
-from zephyr.ex_core.order_manager import OrderManager
-from zephyr.pf_core.default_attribution_engine import (
-    DefaultAttributionEngine,
-)
-from zephyr.pf_core.default_tca_engine import (
-    DefaultTCAEngine,
+from zephyr.signal_fundamental.strategy.implementations.default_capital_allocator import (
+    AllocationMethod,
+    DefaultCapitalAllocator,
 )
 from zephyr.simulation.default_backtest_engine import (
-    BacktestConfig,
     DefaultBacktestEngine,
-)
-from zephyr.governance.compliance_gate_a6.default_security_gateway import (
-    DefaultSecurityGateway,
-)
-from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import (
-    DefaultInferenceEngine,
 )
 from zephyr.simulation.implementations.default_experiment_pipeline import (
     DefaultExperimentPipeline,
 )
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
-
 UNIVERSE_CSI300 = [
-    "600519", "000858", "601318", "600036", "000333",
-    "601166", "600900", "601398", "600276", "000001",  # top-10 representative
+    "600519",
+    "000858",
+    "601318",
+    "600036",
+    "000333",
+    "601166",
+    "600900",
+    "601398",
+    "600276",
+    "000001",  # top-10 representative
 ]
 
 
@@ -241,7 +232,7 @@ class TestE2EFullPipeline:
             strategy_id="default-equity",
             filled_quantity=Decimal("200"),
             fill_price=Decimal("101"),
-            fill_timestamp=datetime.now(timezone.utc),
+            fill_timestamp=datetime.now(UTC),
             commission=Decimal("6"),
             idempotency_key=str(uuid.uuid4()),
         )
@@ -262,17 +253,21 @@ class TestE2EFullPipeline:
         engine = DefaultBacktestEngine()
 
         dates = pd.date_range("2025-01-01", periods=20, freq="B")
-        data = pd.DataFrame({
-            "date": dates,
-            "open": 100.0,
-            "high": 102.0,
-            "low": 98.0,
-            "close": 101.0,
-            "volume": 1000000,
-        }).set_index("date")
+        data = pd.DataFrame(
+            {
+                "date": dates,
+                "open": 100.0,
+                "high": 102.0,
+                "low": 98.0,
+                "close": 101.0,
+                "volume": 1000000,
+            }
+        ).set_index("date")
 
         signals = pd.DataFrame(
-            1.0, index=dates, columns=["600519"],
+            1.0,
+            index=dates,
+            columns=["600519"],
         )
 
         result = engine.run(data, signals, initial_capital=1000000.0)
@@ -360,7 +355,7 @@ class TestCrossLayerContractAlignment:
             signal_value=0.8,
             signal_direction="COMPOSITE",
             confidence=0.9,
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             generation_latency_ms=5,
             idempotency_key=str(uuid.uuid4()),
             regime="momentum",
@@ -384,7 +379,7 @@ class TestCrossLayerContractAlignment:
             low=99.0,
             close=101.0,
             volume=1000000,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
         assert isinstance(report, QualityReport)
         assert report.quality_score > 0.5
@@ -396,7 +391,6 @@ class TestOrderManagerLifecycle:
 
     def test_full_lifecycle(self):
         """订单 PENDING → SUBMITTED → FILLED 全生命周期"""
-        from zephyr.integration.shared_08.contracts.position import PositionSnapshot
 
         broker = SimulationBroker()
         broker.connect()

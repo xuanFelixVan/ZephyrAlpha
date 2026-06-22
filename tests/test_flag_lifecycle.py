@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_flag_lifecycle.py
 
-import pytest
 
 from zephyr.ops.detectors.flag_lifecycle import FlagLifecycle
 

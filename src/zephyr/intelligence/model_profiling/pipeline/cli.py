@@ -34,9 +34,7 @@ model-profiler.cli — 模型性能检测命令行入口
 
 from __future__ import annotations
 
-import json
 import sys
-from pathlib import Path
 
 
 def cmd_discover() -> None:
@@ -54,7 +52,7 @@ def cmd_discover() -> None:
 
     print(f"\n共发现 {len(models)} 个 Ollama 模型:\n")
     print(f"  {'模型名':<30} {'大小':>8} {'参数量':>12} {'量化':>10}")
-    print(f"  {'-'*30} {'-'*8} {'-'*12} {'-'*10}")
+    print(f"  {'-' * 30} {'-' * 8} {'-' * 12} {'-' * 10}")
     for m in sorted(models, key=lambda x: x.size_bytes, reverse=True):
         print(f"  {m.name:<30} {m.size_gb:>7.1f}GB {m.parameter_size:>12} {m.quantization_level:>10}")
 
@@ -70,7 +68,7 @@ def cmd_quick(model_name: str) -> None:
         return
 
     print(f"\n  {model_name} — 快速评测")
-    print(f"  {'─'*50}")
+    print(f"  {'─' * 50}")
     print(f"  综合评分: {profile.average_score:.3f}")
     print(f"  通过率:   {profile.passed_tests}/{profile.total_tests}")
     print(f"  延迟 P50: {profile.latency_p50_ms:.0f}ms")
@@ -136,27 +134,27 @@ def cmd_drift(model_name: str) -> None:
 
     report = detect_drift(history)
     print(f"\n  {model_name} — 漂移检测")
-    print(f"  {'─'*50}")
+    print(f"  {'─' * 50}")
     print(f"  最新: {report.get('latest_date', '?')}")
     print(f"  上次: {report.get('previous_date', '?')}")
     print(f"  漂移: {'⚠  检测到漂移!' if report.get('drift_detected') else '✓ 无显著漂移'}")
     details = report.get("details", {})
     if details:
         print(f"  分数变化: {details.get('score_delta', 0):+.4f}")
-        print(f"  延迟变化: {details.get('latency_delta_ms', 0):+.1f}ms ({details.get('latency_increase_pct', 0):+.1f}%)")
+        print(
+            f"  延迟变化: {details.get('latency_delta_ms', 0):+.1f}ms ({details.get('latency_increase_pct', 0):+.1f}%)"
+        )
         print(f"  吞吐变化: {details.get('throughput_delta_tok_per_sec', 0):+.1f} tok/s")
         print(f"  幻觉变化: {details.get('hallucination_rate_delta', 0):+.4f}")
         cat_drift = details.get("category_drift", {})
         if cat_drift:
-            print(f"  分维度:")
+            print("  分维度:")
             for cat, delta in cat_drift.items():
                 print(f"    {cat}: {delta:+.4f}")
     print()
 
 
 def cmd_history() -> None:
-    from pathlib import Path
-
     base = Path("data/model_profiles")
     if not base.exists():
         print("暂无 benchmark 历史记录。")

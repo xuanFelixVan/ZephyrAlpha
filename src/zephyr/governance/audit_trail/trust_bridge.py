@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回UNKNOWN信任级别
 # [TESTS] tests/audit-orchestrator/test_trust_bridge.py
-
 import logging
 from typing import Any
 
@@ -19,12 +18,14 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["TrustBridge"]
 
+
 class TrustBridge:
     def __init__(self) -> None:
         self._engine = None
         self._available = False
         try:
             from zephyr.governance.audit_trail.trust_engine import TrustEngine
+
             self._engine = TrustEngine()
             self._available = True
         except ImportError:
@@ -62,6 +63,7 @@ class TrustBridge:
 
     def is_available(self) -> bool:
         return self._available
+
 
 class AuditTrustBridge:
     def __init__(self, config=None):

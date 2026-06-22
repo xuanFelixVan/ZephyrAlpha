@@ -9,9 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
-from pathlib import Path
 from zephyr.governance.ssot_registrar import SSOTRegistrar
+
 
 class TestSSOTRegistrar:
     def test_instantiation_default(self):
@@ -24,9 +23,7 @@ class TestSSOTRegistrar:
 
     def test_register(self, tmp_path):
         reg = SSOTRegistrar(manifest_path=str(tmp_path / "manifest.yaml"))
-        result = reg.register(
-            "func_a", "module_a", signature="(x) -> int", caller_count=3
-        )
+        result = reg.register("func_a", "module_a", signature="(x) -> int", caller_count=3)
         assert isinstance(result, dict)
 
     def test_register_empty(self, tmp_path):

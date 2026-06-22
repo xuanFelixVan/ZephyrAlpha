@@ -12,12 +12,10 @@
 
 from __future__ import annotations
 
-import abc
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 
 import pytest
-
 
 l04 = pytest.importorskip("zephyr.risk", reason="l04-risk-management not importable")
 
@@ -29,7 +27,6 @@ from zephyr.risk.risk_manager_base import (
     RiskReport,
     StopLossEngineBase,
 )
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimitsCalculator
 from zephyr.risk.risk_validator import (
     RiskValidator,
     ViolatedConstraint,
@@ -41,7 +38,7 @@ from zephyr.risk.stop_loss import (
     reset_kill_switch,
     trigger_kill_switch,
 )
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
+from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits, RiskLimitsCalculator
 
 
 class _ConcreteRiskManager(RiskManagerBase):
@@ -50,6 +47,7 @@ class _ConcreteRiskManager(RiskManagerBase):
             from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import (
                 RiskLimitViolationError,
             )
+
             raise RiskLimitViolationError(
                 error_id="err-001",
                 portfolio_id="test",
@@ -74,7 +72,7 @@ class _ConcreteRiskManager(RiskManagerBase):
 
     def generate_limits(self, portfolio_id):
         return RiskLimits(
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             idempotency_key="ik-limits",
             max_single_position=0.10,
             max_gross_leverage=1.5,
@@ -87,13 +85,15 @@ class _ConcreteRiskValidator(RiskValidator):
     def validate_order(self, symbol, target_weight, current_holdings, limits):
         max_pos = limits.get("max_single_position", 0.10) if isinstance(limits, dict) else 0.10
         if target_weight > max_pos:
-            return [ViolationDetail(
-                constraint=ViolatedConstraint.POSITION_LIMIT,
-                description="exceeds position limit",
-                limit_value=Decimal(str(max_pos)),
-                actual_value=Decimal(str(target_weight)),
-                severity="HALT",
-            )]
+            return [
+                ViolationDetail(
+                    constraint=ViolatedConstraint.POSITION_LIMIT,
+                    description="exceeds position limit",
+                    limit_value=Decimal(str(max_pos)),
+                    actual_value=Decimal(str(target_weight)),
+                    severity="HALT",
+                )
+            ]
         return []
 
     def validate_portfolio(self, holdings, market_values, total_nav, limits):
@@ -105,7 +105,7 @@ class _ConcreteRiskLimitsCalculator(RiskLimitsCalculator):
 
     def calculate(self, positions, market_values, total_nav, factor_signals=None):
         return RiskLimits(
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             idempotency_key="ik-calc",
             max_single_position=0.10,
             max_gross_leverage=1.5,
@@ -115,26 +115,35 @@ class _ConcreteRiskLimitsCalculator(RiskLimitsCalculator):
 class _ConcreteOrchestrator(RiskManagerOrchestratorBase):
     def pre_trade_check(self, order, limits, positions):
         return RiskCheckResult(
-            check_id="chk-1", rule_name="position_limit", passed=True,
-            limit_value=Decimal("0.10"), actual_value=Decimal("0.05"),
+            check_id="chk-1",
+            rule_name="position_limit",
+            passed=True,
+            limit_value=Decimal("0.10"),
+            actual_value=Decimal("0.05"),
         )
 
     def post_trade_check(self, fill, positions):
         return RiskCheckResult(
-            check_id="chk-2", rule_name="post_trade", passed=True,
-            limit_value=Decimal("0"), actual_value=Decimal("0"),
+            check_id="chk-2",
+            rule_name="post_trade",
+            passed=True,
+            limit_value=Decimal("0"),
+            actual_value=Decimal("0"),
         )
 
     def daily_pnl_check(self, daily_pnl, loss_limit):
         passed = daily_pnl >= -loss_limit
         return RiskCheckResult(
-            check_id="chk-3", rule_name="daily_pnl", passed=passed,
-            limit_value=loss_limit, actual_value=daily_pnl,
+            check_id="chk-3",
+            rule_name="daily_pnl",
+            passed=passed,
+            limit_value=loss_limit,
+            actual_value=daily_pnl,
         )
 
     def aggregate_report(self):
         return RiskReport(
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             portfolio_id="test",
             overall_pass=True,
         )
@@ -145,7 +154,9 @@ class _ConcreteStopLossEngine(StopLossEngineBase):
         stop_pct = Decimal(str(rules.get("stop_pct", 0.05)))
         triggered = current_price <= entry_price * (Decimal("1") - stop_pct)
         return RiskCheckResult(
-            check_id="sl-1", rule_name="stop_loss", passed=not triggered,
+            check_id="sl-1",
+            rule_name="stop_loss",
+            passed=not triggered,
             limit_value=entry_price * (Decimal("1") - stop_pct),
             actual_value=current_price,
         )
@@ -158,30 +169,42 @@ class _ConcretePositionLimitChecker(PositionLimitCheckerBase):
     def check_single_position(self, symbol, weight, limit):
         passed = weight <= limit
         return RiskCheckResult(
-            check_id="plc-1", rule_name="single_position", passed=passed,
-            limit_value=Decimal(str(limit)), actual_value=Decimal(str(weight)),
+            check_id="plc-1",
+            rule_name="single_position",
+            passed=passed,
+            limit_value=Decimal(str(limit)),
+            actual_value=Decimal(str(weight)),
         )
 
     def check_sector_concentration(self, sector, weight, limit):
         passed = weight <= limit
         return RiskCheckResult(
-            check_id="plc-2", rule_name="sector_concentration", passed=passed,
-            limit_value=Decimal(str(limit)), actual_value=Decimal(str(weight)),
+            check_id="plc-2",
+            rule_name="sector_concentration",
+            passed=passed,
+            limit_value=Decimal(str(limit)),
+            actual_value=Decimal(str(weight)),
         )
 
     def check_gross_leverage(self, current_leverage, limit):
         passed = current_leverage <= limit
         return RiskCheckResult(
-            check_id="plc-3", rule_name="gross_leverage", passed=passed,
-            limit_value=Decimal(str(limit)), actual_value=Decimal(str(current_leverage)),
+            check_id="plc-3",
+            rule_name="gross_leverage",
+            passed=passed,
+            limit_value=Decimal(str(limit)),
+            actual_value=Decimal(str(current_leverage)),
         )
 
 
 class TestRiskCheckResult:
     def test_creation_defaults(self):
         r = RiskCheckResult(
-            check_id="c1", rule_name="r1", passed=True,
-            limit_value=Decimal("0.1"), actual_value=Decimal("0.05"),
+            check_id="c1",
+            rule_name="r1",
+            passed=True,
+            limit_value=Decimal("0.1"),
+            actual_value=Decimal("0.05"),
         )
         assert r.check_id == "c1"
         assert r.passed is True
@@ -189,16 +212,22 @@ class TestRiskCheckResult:
 
     def test_frozen_immutability(self):
         r = RiskCheckResult(
-            check_id="c1", rule_name="r1", passed=True,
-            limit_value=Decimal("0.1"), actual_value=Decimal("0.05"),
+            check_id="c1",
+            rule_name="r1",
+            passed=True,
+            limit_value=Decimal("0.1"),
+            actual_value=Decimal("0.05"),
         )
         with pytest.raises(AttributeError):
             r.passed = False
 
     def test_custom_severity(self):
         r = RiskCheckResult(
-            check_id="c1", rule_name="r1", passed=False,
-            limit_value=Decimal("0.1"), actual_value=Decimal("0.2"),
+            check_id="c1",
+            rule_name="r1",
+            passed=False,
+            limit_value=Decimal("0.1"),
+            actual_value=Decimal("0.2"),
             severity="HALT",
         )
         assert r.severity == "HALT"
@@ -207,7 +236,7 @@ class TestRiskCheckResult:
 class TestRiskReport:
     def test_empty_checks_no_failures(self):
         report = RiskReport(
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             portfolio_id="p1",
         )
         assert report.failed_checks == []
@@ -216,13 +245,15 @@ class TestRiskReport:
 
     def test_failed_checks_property(self):
         checks = [
-            RiskCheckResult(check_id="1", rule_name="r", passed=True,
-                            limit_value=Decimal("0"), actual_value=Decimal("0")),
-            RiskCheckResult(check_id="2", rule_name="r", passed=False,
-                            limit_value=Decimal("0.1"), actual_value=Decimal("0.2")),
+            RiskCheckResult(
+                check_id="1", rule_name="r", passed=True, limit_value=Decimal("0"), actual_value=Decimal("0")
+            ),
+            RiskCheckResult(
+                check_id="2", rule_name="r", passed=False, limit_value=Decimal("0.1"), actual_value=Decimal("0.2")
+            ),
         ]
         report = RiskReport(
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             portfolio_id="p1",
             checks=checks,
             overall_pass=False,
@@ -232,7 +263,7 @@ class TestRiskReport:
 
     def test_frozen_immutability(self):
         report = RiskReport(
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             portfolio_id="p1",
         )
         with pytest.raises(AttributeError):
@@ -261,8 +292,10 @@ class TestViolationDetail:
 
     def test_frozen(self):
         v = ViolationDetail(
-            constraint="c", description="d",
-            limit_value=Decimal("0"), actual_value=Decimal("0"),
+            constraint="c",
+            description="d",
+            limit_value=Decimal("0"),
+            actual_value=Decimal("0"),
         )
         with pytest.raises(AttributeError):
             v.constraint = "other"
@@ -282,7 +315,7 @@ class TestRiskManagerBase:
     def test_concrete_validate_position_pass(self):
         mgr = _ConcreteRiskManager()
         limits = RiskLimits(
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             idempotency_key="ik",
             max_single_position=0.10,
         )
@@ -291,20 +324,21 @@ class TestRiskManagerBase:
     def test_concrete_validate_position_fail(self):
         mgr = _ConcreteRiskManager()
         limits = RiskLimits(
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             idempotency_key="ik",
             max_single_position=0.10,
         )
         from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import (
             RiskLimitViolationError,
         )
+
         with pytest.raises(RiskLimitViolationError):
             mgr.validate_position("AAPL", 0.20, limits)
 
     def test_check_portfolio_no_violations(self):
         mgr = _ConcreteRiskManager()
         limits = RiskLimits(
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             idempotency_key="ik",
             max_single_position=0.50,
         )
@@ -335,17 +369,27 @@ class TestRiskValidator:
         assert result[0].severity == "HALT"
 
     def test_is_kill_switch_triggered_with_halt(self):
-        violations = [ViolationDetail(
-            constraint="c", description="d",
-            limit_value=Decimal("0"), actual_value=Decimal("0"), severity="HALT",
-        )]
+        violations = [
+            ViolationDetail(
+                constraint="c",
+                description="d",
+                limit_value=Decimal("0"),
+                actual_value=Decimal("0"),
+                severity="HALT",
+            )
+        ]
         assert RiskValidator.is_kill_switch_triggered(violations) is True
 
     def test_is_kill_switch_triggered_with_warning_only(self):
-        violations = [ViolationDetail(
-            constraint="c", description="d",
-            limit_value=Decimal("0"), actual_value=Decimal("0"), severity="WARNING",
-        )]
+        violations = [
+            ViolationDetail(
+                constraint="c",
+                description="d",
+                limit_value=Decimal("0"),
+                actual_value=Decimal("0"),
+                severity="WARNING",
+            )
+        ]
         assert RiskValidator.is_kill_switch_triggered(violations) is False
 
     def test_is_kill_switch_triggered_empty(self):
@@ -456,7 +500,8 @@ class TestEvaluateStopLoss:
 
     def test_time_based_triggered(self):
         from datetime import timedelta
-        entry = datetime.now(timezone.utc) - timedelta(days=30)
+
+        entry = datetime.now(UTC) - timedelta(days=30)
         pos = {"entry_price": 100, "qty": 100, "entry_date": entry}
         assert evaluate_stop_loss(pos, 100, {"method": "time_based", "max_hold_days": 20}) is True
 
@@ -466,7 +511,10 @@ class TestEvaluateStopLoss:
 
     def test_volatility_triggered(self):
         pos = {"entry_price": 100, "qty": 100}
-        assert evaluate_stop_loss(pos, 94, {"method": "volatility", "current_volatility": 0.02, "vol_multiplier": 2.0}) is True
+        assert (
+            evaluate_stop_loss(pos, 94, {"method": "volatility", "current_volatility": 0.02, "vol_multiplier": 2.0})
+            is True
+        )
 
     def test_empty_position(self):
         assert evaluate_stop_loss({}, 100, {}) is False
@@ -495,10 +543,12 @@ class TestTriggerKillSwitch:
 
 class TestResetKillSwitch:
     def test_reset_success(self):
-        result = reset_kill_switch({
-            "confirmed_by": "admin",
-            "override_reason": "verified safe",
-        })
+        result = reset_kill_switch(
+            {
+                "confirmed_by": "admin",
+                "override_reason": "verified safe",
+            }
+        )
         assert result is True
 
     def test_reset_empty_confirmation(self):
@@ -516,8 +566,10 @@ class TestStopLossResult:
 
     def test_full_creation(self):
         r = StopLossResult(
-            triggered=True, reason="stop hit",
-            stop_price=Decimal("95"), method="fixed_pct",
+            triggered=True,
+            reason="stop hit",
+            stop_price=Decimal("95"),
+            method="fixed_pct",
             kill_switch_activated=True,
         )
         assert r.method == "fixed_pct"

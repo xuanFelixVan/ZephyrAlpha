@@ -26,9 +26,7 @@ Task: MOD-INF-012 | Safety: M
 """
 
 import sqlite3
-import time
 
-import pytest
 from zephyr.governance.query_metrics import (
     PercentileTracker,
     QueryMetrics,
@@ -37,7 +35,6 @@ from zephyr.governance.query_metrics import (
 
 
 class TestPercentileTracker:
-
     def test_empty_stats(self):
         pt = PercentileTracker(max_size=10)
         s = pt.stats()
@@ -75,7 +72,6 @@ class TestPercentileTracker:
 
 
 class TestQueryMetricsLifecycle:
-
     def test_singleton(self):
         qm1 = QueryMetrics.instance()
         qm2 = QueryMetrics.instance()
@@ -118,7 +114,6 @@ class TestQueryMetricsLifecycle:
 
 
 class TestQueryMetricsTracking:
-
     def test_track_decorator_normal(self, tmp_path):
         db_path = tmp_path / "qm_track.db"
         qm = QueryMetrics(db_path)
@@ -175,7 +170,6 @@ class TestQueryMetricsTracking:
 
 
 class TestQueryMetricsGlobalInstance:
-
     def test_global_instance_exists(self):
         assert query_metrics is not None
         assert isinstance(query_metrics, QueryMetrics)

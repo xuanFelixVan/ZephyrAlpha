@@ -8,31 +8,51 @@ from __future__ import annotations
 # [CONSUMERS] AutoRuntime Core health check phase
 # [STABILITY] evolving; [SAFETY] L; [AI_AUTONOMY] ai_modifiable
 # [TESTS] scripts/connect/health_check.py --trigger
-# [ERROR_CONTRACT] 
+# [ERROR_CONTRACT]
 """全系统健康聚合 — check_all_systems()"""
 
-import logging, time
+import logging
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
-from typing import Any
 
 logger = logging.getLogger(__name__)
-__all__ = ["HealthAggregator", "SystemHealth", "HealthReport", "check_all"]
+__all__ = ["HealthAggregator", "HealthReport", "SystemHealth", "check_all"]
+
 
 @dataclass
 class SystemHealth:
-    system: str; status: str = "OK"; latency_ms: float = 0; details: str = ""
+    system: str
+    status: str = "OK"
+    latency_ms: float = 0
+    details: str = ""
 
-@dataclass  
+
+@dataclass
 class HealthReport:
     systems: list[SystemHealth] = field(default_factory=list)
-    ok_count: int = 0; warn_count: int = 0; fail_count: int = 0
-    overall: str = "OK"; total_ms: float = 0
+    ok_count: int = 0
+    warn_count: int = 0
+    fail_count: int = 0
+    overall: str = "OK"
+    total_ms: float = 0
+
 
 SYSTEMS_CHECK = [
-    "orchestrator","gate_engine","pipeline","script_system","context-engine",
-    "knowledge_base","vector-memory","mcp","llm-security","telemetry","feedback-loop","database",
+    "orchestrator",
+    "gate_engine",
+    "pipeline",
+    "script_system",
+    "context-engine",
+    "knowledge_base",
+    "vector-memory",
+    "mcp",
+    "llm-security",
+    "telemetry",
+    "feedback-loop",
+    "database",
 ]
+
 
 class HealthAggregator:
     def check_all(self, max_workers: int = 6) -> HealthReport:
@@ -43,25 +63,42 @@ class HealthAggregator:
             for f in as_completed(futures):
                 h = f.result()
                 report.systems.append(h)
-                if h.status == "FAIL": report.fail_count += 1
-                elif h.status == "WARN": report.warn_count += 1
-                else: report.ok_count += 1
-        report.overall = "OK" if report.fail_count==0 else "WARN" if report.warn_count<3 else "FAIL"
-        report.total_ms = round((time.perf_counter()-t0)*1000)
-        logger.info("[HEALTH] %s ok=%d warn=%d fail=%d (%dms)", report.overall, report.ok_count, report.warn_count, report.fail_count, report.total_ms)
+                if h.status == "FAIL":
+                    report.fail_count += 1
+                elif h.status == "WARN":
+                    report.warn_count += 1
+                else:
+                    report.ok_count += 1
+        report.overall = "OK" if report.fail_count == 0 else "WARN" if report.warn_count < 3 else "FAIL"
+        report.total_ms = round((time.perf_counter() - t0) * 1000)
+        logger.info(
+            "[HEALTH] %s ok=%d warn=%d fail=%d (%dms)",
+            report.overall,
+            report.ok_count,
+            report.warn_count,
+            report.fail_count,
+            report.total_ms,
+        )
         return report
 
     def _check_one(self, system: str) -> SystemHealth:
         t0 = time.perf_counter()
         try:
             import importlib
+
             mod = importlib.import_module(f"zephyr.{system}")
-            if hasattr(mod,"health_check"):
+            if hasattr(mod, "health_check"):
                 r = mod.health_check()
-                return SystemHealth(system, r.get("status","OK"), round((time.perf_counter()-t0)*1000), str(r.get("details","?"))[:200])
-            return SystemHealth(system, "OK", round((time.perf_counter()-t0)*1000), "module exists")
+                return SystemHealth(
+                    system,
+                    r.get("status", "OK"),
+                    round((time.perf_counter() - t0) * 1000),
+                    str(r.get("details", "?"))[:200],
+                )
+            return SystemHealth(system, "OK", round((time.perf_counter() - t0) * 1000), "module exists")
         except Exception as e:
-            return SystemHealth(system, "WARN", round((time.perf_counter()-t0)*1000), str(e)[:200])
+            return SystemHealth(system, "WARN", round((time.perf_counter() - t0) * 1000), str(e)[:200])
+
 
 def check_all() -> HealthReport:
     return HealthAggregator().check_all()

@@ -34,10 +34,9 @@ from __future__ import annotations
 
 import ast
 import sys
-from collections import defaultdict, deque
+from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Set
 
 PROJECT_ROOT = Path(__file__).parents[4]
 SRC_ROOT = PROJECT_ROOT / "src" / "zephyr"
@@ -86,9 +85,8 @@ class ScanResult:
     def summary(self) -> str:
         if self.passed:
             return f"[PASS] EN-001: No circular dependencies ({len(self.topological_order)} nodes)"
-        return (
-            f"[FAIL] EN-001: {len(self.cycles)} cycle(s) detected\n"
-            + "\n".join(f"  Cycle: {' → '.join(c)}" for c in self.cycles)
+        return f"[FAIL] EN-001: {len(self.cycles)} cycle(s) detected\n" + "\n".join(
+            f"  Cycle: {' → '.join(c)}" for c in self.cycles
         )
 
 

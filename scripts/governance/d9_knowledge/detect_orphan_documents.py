@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 孤立文档检测（DOC-008#4 — 无入边引用的文件）
@@ -44,6 +45,7 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 
 import argparse
+
 
 def build_reference_graph() -> tuple[dict[str, set[str]], dict[str, str]]:
     """构建引用关系图."""
@@ -99,6 +101,7 @@ def build_reference_graph() -> tuple[dict[str, set[str]], dict[str, str]]:
     return dict(referenced_by), module_to_file, all_files
     """构建引用关系图."""
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="孤立文档检测（DOC-008#4）")
@@ -146,6 +149,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

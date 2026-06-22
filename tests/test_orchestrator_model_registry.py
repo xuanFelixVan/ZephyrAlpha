@@ -10,9 +10,8 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_orchestrator_model_registry.py
 
-import pytest
 
-from zephyr.trading.orchestrator.model_registry import ModelRegistry, MODELS
+from zephyr.trading.orchestrator.model_registry import MODELS, ModelRegistry
 
 
 class TestModelRegistryInstantiation:
@@ -89,9 +88,12 @@ class TestListAll:
         registry = ModelRegistry()
         result = registry.list_all()
         expected_keys = [
-            "deepseek-chat", "deepseek-reasoner",
-            "claude-opus-4", "claude-haiku-3.5",
-            "gpt-5.2", "gpt-4o-mini",
+            "deepseek-chat",
+            "deepseek-reasoner",
+            "claude-opus-4",
+            "claude-haiku-3.5",
+            "gpt-5.2",
+            "gpt-4o-mini",
         ]
         for key in expected_keys:
             assert key in result

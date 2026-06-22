@@ -47,7 +47,6 @@ LocalModelScheduler — L2 本地模型 24/7 调度循环
     scheduler.stop()
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -62,26 +61,34 @@ _log = logging.getLogger(__name__)
 POLL_INTERVAL_S: float = 5.0
 RESULT_TTL_S: float = 300.0
 
-EMBEDDING_CAPABILITIES: frozenset[str] = frozenset({
-    "vector_embedding",
-})
+EMBEDDING_CAPABILITIES: frozenset[str] = frozenset(
+    {
+        "vector_embedding",
+    }
+)
 
-SEARCH_CAPABILITIES: frozenset[str] = frozenset({
-    "semantic_search",
-})
+SEARCH_CAPABILITIES: frozenset[str] = frozenset(
+    {
+        "semantic_search",
+    }
+)
 
-RERANKING_CAPABILITIES: frozenset[str] = frozenset({
-    "reranking",
-})
+RERANKING_CAPABILITIES: frozenset[str] = frozenset(
+    {
+        "reranking",
+    }
+)
 
-INFERENCE_CAPABILITIES: frozenset[str] = frozenset({
-    "task_classification",
-    "tag_completion",
-    "summary_extraction",
-    "anomaly_triage",
-    "query_rewrite",
-    "naming_suggest",
-})
+INFERENCE_CAPABILITIES: frozenset[str] = frozenset(
+    {
+        "task_classification",
+        "tag_completion",
+        "summary_extraction",
+        "anomaly_triage",
+        "query_rewrite",
+        "naming_suggest",
+    }
+)
 
 ALL_LOCAL_CAPABILITIES: frozenset[str] = (
     EMBEDDING_CAPABILITIES | SEARCH_CAPABILITIES | RERANKING_CAPABILITIES | INFERENCE_CAPABILITIES
@@ -167,9 +174,13 @@ class LocalModelScheduler:
         self._thread = threading.Thread(target=self._run, daemon=True, name="LocalModelScheduler")
         self._thread.start()
         from zephyr.integration.shared_08.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+
         try:
             ResourceOptimizationEngine().register_daemon(
-                "local-model-scheduler", self.start, self.stop, priority=3,
+                "local-model-scheduler",
+                self.start,
+                self.stop,
+                priority=3,
             )
         except Exception:
             pass
@@ -179,12 +190,17 @@ class LocalModelScheduler:
         self._running = False
         if self._thread is not None:
             self._thread.join(timeout=10.0)
-        _log.info("LocalModelScheduler: 已停止 (completed=%d failed=%d)", self._stats.get("completed", 0), self._stats.get("failed", 0))
+        _log.info(
+            "LocalModelScheduler: 已停止 (completed=%d failed=%d)",
+            self._stats.get("completed", 0),
+            self._stats.get("failed", 0),
+        )
 
     def ensure_models(self) -> None:
         if self._embedding_router is None:
             try:
                 from zephyr.integration.local_model.embedding_router import EmbeddingRouter
+
                 self._embedding_router = EmbeddingRouter(backend="ollama")
                 self._embedding_router.warmup()
                 _log.info("LocalModelScheduler: EmbeddingRouter 自动初始化")
@@ -194,6 +210,7 @@ class LocalModelScheduler:
         if self._ollama_chat is None:
             try:
                 from zephyr.integration.local_model.ollama_chat import OllamaChat
+
                 self._ollama_chat = OllamaChat()
                 if self._ollama_chat.available:
                     _log.info("LocalModelScheduler: OllamaChat 自动初始化")
@@ -249,11 +266,15 @@ class LocalModelScheduler:
             err_msg = str(exc)
             if self._should_retry(err_msg) and task.retries < task.max_retries:
                 task.retries += 1
-                backoff_s = min(2 ** task.retries, 15)
+                backoff_s = min(2**task.retries, 15)
                 _log.warning(
                     "LocalModelScheduler: %s (%s) retry %d/%d in %ds: %s",
-                    task.task_id, task.capability,
-                    task.retries, task.max_retries, backoff_s, err_msg,
+                    task.task_id,
+                    task.capability,
+                    task.retries,
+                    task.max_retries,
+                    backoff_s,
+                    err_msg,
                 )
                 time.sleep(backoff_s)
                 self._task_queue.put(task)
@@ -346,9 +367,7 @@ class LocalModelScheduler:
         now = time.time()
         with self._lock:
             expired = [
-                tid
-                for tid, t in self._results.items()
-                if t.finished_at and (now - t.finished_at) > RESULT_TTL_S
+                tid for tid, t in self._results.items() if t.finished_at and (now - t.finished_at) > RESULT_TTL_S
             ]
             for tid in expired:
                 del self._results[tid]

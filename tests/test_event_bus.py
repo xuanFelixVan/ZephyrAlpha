@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.shared.shared_services.events.event_bus import DomainEvent, EventBus, EventType
 
 

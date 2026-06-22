@@ -11,14 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_merkle_hourly.py
-
 import logging
-from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["MerkleHourlyBridge"]
+
 
 class MerkleHourlyBridge:
     def __init__(self) -> None:
@@ -26,6 +25,7 @@ class MerkleHourlyBridge:
         self._available = False
         try:
             from zephyr.governance.merkle_hourly import HourlyMerkleAggregator
+
             self._aggregator = HourlyMerkleAggregator()
             self._available = True
         except ImportError:

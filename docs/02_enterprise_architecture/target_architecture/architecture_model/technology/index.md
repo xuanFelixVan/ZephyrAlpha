@@ -2,7 +2,7 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: Technology
 module_id: GOV-048
 
@@ -21,8 +21,8 @@ module_id: GOV-048
 
 ## 排除规则（不应放入本目录的内容）
 
-- ❌ 前端技术栈 → `02_enterprise_architecture/target-architecture/architecture-model/frontend/`
+- ❌ 前端技术栈 → `02_enterprise_architecture/target_architecture/architecture_model/frontend/`
 
 ## 父级目录
 
-- 父级：[architecture-model](../index.md)
+- 父级：[architecture_model](../index.md)

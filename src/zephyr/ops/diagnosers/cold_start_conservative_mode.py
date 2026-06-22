@@ -31,11 +31,13 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 
+
 class ColdStartPhase(str, Enum):
     COLLECT_ONLY = "collect_only"
     WITH_DETECT = "with_detect"
     WITH_DIAGNOSE = "with_diagnose"
     FULL_ENABLED = "full_enabled"
+
 
 @dataclass
 class ColdStartConservativeMode:
@@ -43,12 +45,14 @@ class ColdStartConservativeMode:
     current_cycle: int = 0
     phase: ColdStartPhase = ColdStartPhase.COLLECT_ONLY
 
-    phase_thresholds: dict[ColdStartPhase, int] = field(default_factory=lambda: {
-        ColdStartPhase.COLLECT_ONLY: 100,
-        ColdStartPhase.WITH_DETECT: 300,
-        ColdStartPhase.WITH_DIAGNOSE: 500,
-        ColdStartPhase.FULL_ENABLED: 500,
-    })
+    phase_thresholds: dict[ColdStartPhase, int] = field(
+        default_factory=lambda: {
+            ColdStartPhase.COLLECT_ONLY: 100,
+            ColdStartPhase.WITH_DETECT: 300,
+            ColdStartPhase.WITH_DIAGNOSE: 500,
+            ColdStartPhase.FULL_ENABLED: 500,
+        }
+    )
     threshold_multiplier: float = 3.0
     blocked_actions: set[str] = field(default_factory=lambda: {"SELF_UPGRADE", "PROMPT_EVOLVE", "KNOWLEDGE_INJECT"})
 
@@ -77,8 +81,10 @@ class ColdStartConservativeMode:
         if self.phase == ColdStartPhase.FULL_ENABLED:
             return 1.0
         phases = [
-            ColdStartPhase.COLLECT_ONLY, ColdStartPhase.WITH_DETECT,
-            ColdStartPhase.WITH_DIAGNOSE, ColdStartPhase.FULL_ENABLED,
+            ColdStartPhase.COLLECT_ONLY,
+            ColdStartPhase.WITH_DETECT,
+            ColdStartPhase.WITH_DIAGNOSE,
+            ColdStartPhase.FULL_ENABLED,
         ]
         idx = phases.index(self.phase)
         decay = 1.0 - idx / 3.0

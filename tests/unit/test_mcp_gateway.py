@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """MCP Gateway 单元测试（MOD-INF-013 §12 Phase 5）。"""
 
 
@@ -15,9 +16,6 @@ import time
 import pytest
 
 from zephyr.infrastructure._base_server import (
-    ERR_GATE_FAILED,
-    ERR_RBAC_DENIED,
-    ERR_TOOL_EXECUTION,
     ERR_TOOL_NOT_FOUND,
 )
 from zephyr.infrastructure.gateway_server import MCPGateway, create_gateway
@@ -33,54 +31,79 @@ class TestMCPGateway:
     """Gateway 基础功能测试。"""
 
     def test_initialize(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "initialize",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+            }
+        )
         result = resp.get("result", {})
         assert result.get("protocolVersion") == "2024-11-05"
         assert result.get("serverInfo", {}).get("name") == "mcp_gateway"
         assert "capabilities" in result
 
     def test_ping(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "ping",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "ping",
+            }
+        )
         result = resp.get("result", {})
         assert result.get("pong") is True
         assert result.get("gateway") is True
 
     def test_tools_list_aggregates(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "tools/list", "_session_id": "test01",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/list",
+                "_session_id": "test01",
+            }
+        )
         result = resp.get("result", {})
         assert result["count"] > 0
         assert result["source"] == "mcp_gateway_aggregated"
         assert result.get("degraded_servers") == []
 
     def test_tools_call_invalid_tool_returns_error(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-            "params": {"name": "nonexistent.tool"},
-            "_session_id": "test01",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "nonexistent.tool"},
+                "_session_id": "test01",
+            }
+        )
         error = resp.get("error", {})
         assert error.get("code") == ERR_TOOL_NOT_FOUND
 
     def test_route_task_manager_tool(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-            "params": {"name": "task_manager.get_task", "arguments": {"task_id": "T-2-16"}},
-            "_session_id": "test01",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "task_manager.get_task", "arguments": {"task_id": "T-2-16"}},
+                "_session_id": "test01",
+            }
+        )
         assert resp.get("jsonrpc") == "2.0"
 
     def test_route_knowledge_base_tool(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-            "params": {"name": "knowledge_base.health_check", "arguments": {}},
-            "_session_id": "test01",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "knowledge_base.health_check", "arguments": {}},
+                "_session_id": "test01",
+            }
+        )
         result = resp.get("result", {})
         assert result.get("content")
 
@@ -91,11 +114,15 @@ class TestMCPGateway:
         assert "mcp_gateway.audit_stats" in names
 
     def test_health_status_returns_all_cbs(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-            "params": {"name": "mcp_gateway.health_status", "arguments": {}},
-            "_session_id": "test01",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "mcp_gateway.health_status", "arguments": {}},
+                "_session_id": "test01",
+            }
+        )
         result = resp.get("result", {})
         text = result.get("content", [{}])[0].get("text", "{}")
         data = json.loads(text)
@@ -103,11 +130,15 @@ class TestMCPGateway:
         assert len(data.get("circuit_breakers", {})) > 0
 
     def test_list_servers_returns_all_registered(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-            "params": {"name": "mcp_gateway.list_servers", "arguments": {}},
-            "_session_id": "test01",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "mcp_gateway.list_servers", "arguments": {}},
+                "_session_id": "test01",
+            }
+        )
         result = resp.get("result", {})
         text = result.get("content", [{}])[0].get("text", "{}")
         data = json.loads(text)
@@ -118,11 +149,15 @@ class TestMCPGateway:
         assert "intent_router" in sids
 
     def test_audit_stats_returns_metrics(self, gw: MCPGateway) -> None:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-            "params": {"name": "mcp_gateway.audit_stats", "arguments": {"client_session_id": "test01"}},
-            "_session_id": "test01",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "mcp_gateway.audit_stats", "arguments": {"client_session_id": "test01"}},
+                "_session_id": "test01",
+            }
+        )
         result = resp.get("result", {})
         text = result.get("content", [{}])[0].get("text", "{}")
         data = json.loads(text)
@@ -194,10 +229,14 @@ class TestAuditIntegration:
     """审计日志集成测试。"""
 
     def test_audit_logs_call(self, gw: MCPGateway) -> None:
-        gw.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-            "params": {"name": "mcp_gateway.health_status", "arguments": {}},
-            "_session_id": "test_audit",
-        })
+        gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "mcp_gateway.health_status", "arguments": {}},
+                "_session_id": "test_audit",
+            }
+        )
         stats = gw._audit.stats("test_audit")
         assert stats["total_calls"] >= 1

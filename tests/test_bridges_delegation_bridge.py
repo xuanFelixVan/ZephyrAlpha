@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.audit_trail.delegation_bridge import AuditDelegationBridge, _MAX_DELEGATION_DEPTH
+from zephyr.governance.audit_trail.delegation_bridge import _MAX_DELEGATION_DEPTH, AuditDelegationBridge
 
 
 @pytest.fixture
@@ -52,7 +52,9 @@ class TestAuditDelegationBridge:
         with patch("zephyr.governance.audit_trail.writer.AuditWriter") as mock_cls:
             mock_cls.side_effect = Exception("write failed")
             result = bridge.record_delegation(
-                from_agent="a", to_agent="b", task_id="t1",
+                from_agent="a",
+                to_agent="b",
+                task_id="t1",
             )
             assert result["event_type"] == "delegation_create"
             assert "chain_hash" not in result
@@ -79,15 +81,33 @@ class TestAuditDelegationBridge:
 
     def test_audit_delegation_chain_clean(self, bridge):
         chain = [
-            {"from_agent": "a", "to_agent": "b", "depth": 0, "from_capabilities": ["read"], "to_capabilities": ["read"]},
-            {"from_agent": "b", "to_agent": "c", "depth": 1, "from_capabilities": ["read"], "to_capabilities": ["read"]},
+            {
+                "from_agent": "a",
+                "to_agent": "b",
+                "depth": 0,
+                "from_capabilities": ["read"],
+                "to_capabilities": ["read"],
+            },
+            {
+                "from_agent": "b",
+                "to_agent": "c",
+                "depth": 1,
+                "from_capabilities": ["read"],
+                "to_capabilities": ["read"],
+            },
         ]
         anomalies = bridge.audit_delegation_chain(chain)
         assert len(anomalies) == 0
 
     def test_audit_delegation_chain_depth_exceeded(self, bridge):
         chain = [
-            {"from_agent": "a", "to_agent": "b", "depth": 5, "from_capabilities": ["read"], "to_capabilities": ["read"]},
+            {
+                "from_agent": "a",
+                "to_agent": "b",
+                "depth": 5,
+                "from_capabilities": ["read"],
+                "to_capabilities": ["read"],
+            },
         ]
         anomalies = bridge.audit_delegation_chain(chain)
         assert len(anomalies) >= 1
@@ -95,7 +115,13 @@ class TestAuditDelegationBridge:
 
     def test_audit_delegation_chain_privilege_escalation(self, bridge):
         chain = [
-            {"from_agent": "a", "to_agent": "b", "depth": 0, "from_capabilities": ["read"], "to_capabilities": ["read", "write", "delete"]},
+            {
+                "from_agent": "a",
+                "to_agent": "b",
+                "depth": 0,
+                "from_capabilities": ["read"],
+                "to_capabilities": ["read", "write", "delete"],
+            },
         ]
         anomalies = bridge.audit_delegation_chain(chain)
         assert len(anomalies) >= 1

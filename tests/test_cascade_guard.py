@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_cascade_guard.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.cascade_guard import CascadeGuard
 
 

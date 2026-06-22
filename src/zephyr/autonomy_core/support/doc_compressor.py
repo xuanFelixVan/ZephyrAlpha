@@ -25,7 +25,7 @@ DocCompressor — 文档压缩服务（CL-018 RI 扩展模式）
 任务编号 : T-V2-006（experimental）
 权限层级 : Immutable Core（CompressionPolicy 不变量字段）
            AI-Modifiable（压缩算法实现）
-真源声明 : ai-autonomy-authority-registry.md §2.11 (CL-018)
+真源声明 : ai_autonomy_authority_registry.yaml §2.11 (CL-018)
 关联决策 : rationale-log R83（CL-018 升级为 RI 扩展模式）
            config/compression/policy.yaml（CBAC allow）
 创建日期 : 2026-04-27
@@ -62,11 +62,10 @@ compress() 在写文件时调用 capability_check("write", target_path)，
 
 from __future__ import annotations
 
-
 import re
 from pathlib import Path
 from threading import RLock
-from typing import Self, Any
+from typing import Any, Self
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -74,12 +73,12 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from zephyr.integration.shared_08.security.capability import capability_check
 
 __all__ = [
+    "DEFAULT_POLICY",
+    "CompressionInvariantError",
     "CompressionOutcome",
     "CompressionPolicy",
-    "CompressionInvariantError",
     "DocCompressor",
     "load_policy_from_yaml",
-    "DEFAULT_POLICY",
 ]
 
 # ---------------------------------------------------------------------------
@@ -165,9 +164,7 @@ class CompressionInvariantError(Exception):
         self.field = field
         self.original = original
         self.compressed = compressed
-        super().__init__(
-            f"CompressionInvariantError: field='{field}'\n" f"  原始：{original}\n" f"  压缩：{compressed}"
-        )
+        super().__init__(f"CompressionInvariantError: field='{field}'\n  原始：{original}\n  压缩：{compressed}")
 
 
 class CompressionOutcome(BaseModel):

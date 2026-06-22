@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 def test_audit_write_basic():
     from zephyr.governance.audit_trail.contracts import AuditWriter
+
     record = AuditWriter.write(
         agent_id="agent-001",
         permission="read",
@@ -31,6 +32,7 @@ def test_audit_write_basic():
 
 def test_rbac_to_audit_bridge():
     from zephyr.security.access_control.contracts import RBACAuditBridge
+
     bridge = RBACAuditBridge()
     result = bridge.check_and_log(
         agent_id="agent-001",
@@ -45,6 +47,7 @@ def test_rbac_to_audit_bridge():
 
 def test_denied_permission_logged():
     from zephyr.security.access_control.contracts import RBACAuditBridge
+
     bridge = RBACAuditBridge()
     result = bridge.check_and_log(
         agent_id="agent-002",

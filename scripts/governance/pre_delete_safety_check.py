@@ -39,7 +39,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import subprocess
 import sys
@@ -105,9 +104,22 @@ def _check_py_references(rel: str, resolved: Path) -> tuple[bool, str, list[str]
     for term in search_terms:
         try:
             result = subprocess.run(
-                ["rg", "-l", "--type", "py", term, str(_PROJECT_ROOT / "src"), str(_PROJECT_ROOT / "scripts"), str(_PROJECT_ROOT / "tests")],
-                capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=30, cwd=str(_PROJECT_ROOT),
+                [
+                    "rg",
+                    "-l",
+                    "--type",
+                    "py",
+                    term,
+                    str(_PROJECT_ROOT / "src"),
+                    str(_PROJECT_ROOT / "scripts"),
+                    str(_PROJECT_ROOT / "tests"),
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=30,
+                cwd=str(_PROJECT_ROOT),
             )
             if result.returncode == 0 and result.stdout.strip():
                 for line in result.stdout.strip().splitlines():
@@ -137,8 +149,12 @@ def _check_yaml_references(rel: str, resolved: Path) -> tuple[bool, str, list[st
         try:
             result = subprocess.run(
                 ["rg", "-l", "--type", "yaml", term, str(_PROJECT_ROOT)],
-                capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=30, cwd=str(_PROJECT_ROOT),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=30,
+                cwd=str(_PROJECT_ROOT),
             )
             if result.returncode == 0 and result.stdout.strip():
                 for line in result.stdout.strip().splitlines():
@@ -178,7 +194,9 @@ def _check_registry(rel: str, resolved: Path) -> tuple[bool, str, list[str]]:
             try:
                 init_content = init_file.read_text(encoding="utf-8")
                 if stem in init_content:
-                    registrations.append(str(init_file.relative_to(_PROJECT_ROOT)).replace("\\", "/") + " (__init__.py)")
+                    registrations.append(
+                        str(init_file.relative_to(_PROJECT_ROOT)).replace("\\", "/") + " (__init__.py)"
+                    )
             except OSError:
                 pass
 
@@ -199,8 +217,12 @@ def _check_git_duplicates(rel: str, resolved: Path) -> tuple[bool, str, list[str
     try:
         result = subprocess.run(
             ["git", "ls-tree", "-r", "HEAD"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_PROJECT_ROOT),
         )
         if result.returncode != 0:
             return True, "WARN: git ls-tree 失败，跳过重复检查", []
@@ -322,7 +344,7 @@ def main() -> int:
             print(f"  SAFE ({result['total_checks']}/{result['total_checks']}) — 允许删除 {result['file']}")
         else:
             print(f"  BLOCKED ({result['blocked_count']}/{result['total_checks']} checks failed)")
-            print(f"  Action required: 修复以上 BLOCK 项后重试（RULE-THREE）")
+            print("  Action required: 修复以上 BLOCK 项后重试（RULE-THREE）")
 
     if args.warn_only:
         return 0

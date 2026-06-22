@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """context_pipeline 组合根单测（对齐 build→compress→validate→inject 顺序）。"""
 
 

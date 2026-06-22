@@ -11,12 +11,19 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.dependency_auditor import DependencyAuditor, DependencyAuditResult, RESTRICTED_LICENSES, RESTRICTED_PACKAGES
+    from zephyr.security.access_control.dependency_auditor import (
+        RESTRICTED_LICENSES,
+        RESTRICTED_PACKAGES,
+        DependencyAuditor,
+        DependencyAuditResult,
+    )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -26,7 +33,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestDependencyAuditResult:
-
     def test_defaults(self):
         r = DependencyAuditResult(package="pkg", version="1.0")
         assert r.known_cves == []
@@ -41,7 +47,6 @@ class TestDependencyAuditResult:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestDependencyAuditor:
-
     def test_audit_clean_package(self):
         da = DependencyAuditor()
         result = da.audit("numpy", "1.24.0", license_type="MIT")

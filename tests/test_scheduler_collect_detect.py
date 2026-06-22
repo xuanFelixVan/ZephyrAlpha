@@ -11,17 +11,17 @@
 # [TESTS] tests/test_scheduler_collect_detect.py
 
 import time
-import pytest
 from unittest.mock import MagicMock
-from zephyr.ops.scheduler_collect_detect import CollectDetectHandler
-from zephyr.ops.diagnosers.numerical_stability_guard import NumericalStabilityGuard
+
+from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
 from zephyr.ops.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
+from zephyr.ops.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
+from zephyr.ops.diagnosers.numerical_stability_guard import NumericalStabilityGuard
 from zephyr.ops.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
 from zephyr.ops.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
-from zephyr.ops.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
-from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.ops.metrics_collector import MetricsCollector
 from zephyr.ops.feedback_collector import FeedbackCollector
+from zephyr.ops.metrics_collector import MetricsCollector
+from zephyr.ops.scheduler_collect_detect import CollectDetectHandler
 
 
 def make_handler():

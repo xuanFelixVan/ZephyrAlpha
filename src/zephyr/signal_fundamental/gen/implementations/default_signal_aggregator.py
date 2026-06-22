@@ -42,8 +42,7 @@ from __future__ import annotations
 import logging
 import time
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from zephyr.signal_fundamental.gen.aggregator_base import SignalAggregatorBase
 from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
@@ -101,7 +100,7 @@ class DefaultSignalAggregator(SignalAggregatorBase):
         return SynthesizedSignal(
             signal_id=f"syn-{symbol}-{uuid.uuid4().hex[:8]}",
             symbol=symbol,
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             signal_value=signal_value,
             signal_direction=direction,
             confidence=confidence,
@@ -115,10 +114,7 @@ class DefaultSignalAggregator(SignalAggregatorBase):
     def _equal_weight(self, signals: list[FactorSignal]) -> tuple[float, list[dict], float]:
         n = len(signals)
         raw = sum(s.normalized_value or s.raw_value for s in signals) / n
-        contributions = [
-            {"factor_id": s.factor_id, "weight": 1.0 / n, "raw_value": s.raw_value}
-            for s in signals
-        ]
+        contributions = [{"factor_id": s.factor_id, "weight": 1.0 / n, "raw_value": s.raw_value} for s in signals]
         confidence = sum(s.confidence or 1.0 for s in signals) / n
         return raw, contributions, confidence
 
@@ -128,12 +124,10 @@ class DefaultSignalAggregator(SignalAggregatorBase):
         if total_conf == 0:
             return 0.0, [], 0.0
         weights = [c / total_conf for c in confidences]
-        raw = sum(
-            (s.normalized_value or s.raw_value) * w for s, w in zip(signals, weights)
-        )
+        raw = sum((s.normalized_value or s.raw_value) * w for s, w in zip(signals, weights, strict=False))
         contributions = [
             {"factor_id": s.factor_id, "weight": w, "raw_value": s.raw_value}
-            for s, w in zip(signals, weights)
+            for s, w in zip(signals, weights, strict=False)
         ]
         avg_conf = total_conf / len(signals)
         return raw, contributions, avg_conf
@@ -145,7 +139,7 @@ class DefaultSignalAggregator(SignalAggregatorBase):
         return SynthesizedSignal(
             signal_id=f"syn-empty-{symbol}-{uuid.uuid4().hex[:8]}",
             symbol=symbol,
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             signal_value=0.0,
             signal_direction="NEUTRAL",
             confidence=0.0,

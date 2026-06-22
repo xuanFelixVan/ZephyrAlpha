@@ -11,6 +11,7 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
@@ -49,8 +50,10 @@ class TestPermissionHooks:
 
     def test_hook_exception_captured(self):
         ph = PermissionHooks()
+
         def bad_hook(**kw):
             raise RuntimeError("boom")
+
         ph.register("pre_check", "bad", bad_hook)
         results = ph.run("pre_check")
         assert len(results) == 1

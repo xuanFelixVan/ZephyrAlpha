@@ -17,7 +17,6 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
@@ -26,6 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 def check_engine_instantiation() -> dict:
     try:
         from zephyr.governance.budget_enforcement import BudgetEngine
+
         engine = BudgetEngine()
         return {"check": "engine_instantiation", "status": "PASS", "detail": str(type(engine))}
     except Exception as e:
@@ -34,8 +34,10 @@ def check_engine_instantiation() -> dict:
 
 def check_pre_flight() -> dict:
     try:
-        from zephyr.governance.budget_enforcement import BudgetEngine
         from zephyr.governance.budget_enforcement.budget_models import GateDecision
+
+        from zephyr.governance.budget_enforcement import BudgetEngine
+
         engine = BudgetEngine()
         result = engine.pre_flight_check("health-check", 100, 0.001)
         if result.decision == GateDecision.DENY:
@@ -48,12 +50,13 @@ def check_pre_flight() -> dict:
 def check_dimensions() -> dict:
     try:
         from zephyr.governance.budget_enforcement.budget_models import BudgetDimension
+
         dims = set(d.value.lower() for d in BudgetDimension)
         required = {"token", "cost", "time"}
         missing = required - dims
         if missing:
             return {"check": "dimensions", "status": "WARN", "detail": f"missing: {missing}"}
-        return {"check": "dimensions", "status": "PASS", "detail": f"all 3 dimensions present"}
+        return {"check": "dimensions", "status": "PASS", "detail": "all 3 dimensions present"}
     except Exception as e:
         return {"check": "dimensions", "status": "CRITICAL", "detail": str(e)}
 
@@ -64,7 +67,8 @@ def check_policy_file() -> dict:
         return {"check": "policy_file", "status": "CRITICAL", "detail": f"not found: {policy_path}"}
     try:
         import yaml
-        with open(policy_path, "r", encoding="utf-8") as f:
+
+        with open(policy_path, encoding="utf-8") as f:
             yaml.safe_load(f)
         return {"check": "policy_file", "status": "PASS", "detail": "exists and parseable"}
     except Exception as e:
@@ -73,8 +77,9 @@ def check_policy_file() -> dict:
 
 def check_escalation_bridge() -> dict:
     try:
-        from zephyr.governance.escalation.budget_handler import on_budget_alert
         from zephyr.governance.budget_enforcement.alerts import BudgetAlert
+        from zephyr.governance.escalation.budget_handler import on_budget_alert
+
         alert = BudgetAlert(alert_id="health-check")
         result = on_budget_alert(alert)
         if result is not None:
@@ -89,10 +94,15 @@ def check_escalation_bridge() -> dict:
 def check_degradation_manager() -> dict:
     try:
         from zephyr.governance.budget_enforcement.degradation_manager import DegradationManager
+
         dm = DegradationManager()
         level = dm.state.current_level
         cb_open = dm.circuit_breaker_open
-        return {"check": "degradation_manager", "status": "PASS", "detail": f"level={level.name}, circuit_breaker={cb_open}"}
+        return {
+            "check": "degradation_manager",
+            "status": "PASS",
+            "detail": f"level={level.name}, circuit_breaker={cb_open}",
+        }
     except Exception as e:
         return {"check": "degradation_manager", "status": "CRITICAL", "detail": str(e)}
 
@@ -100,6 +110,7 @@ def check_degradation_manager() -> dict:
 def check_tamper_log() -> dict:
     try:
         from zephyr.governance.budget_enforcement.tamper_evident_log import TamperEvidentLog
+
         log = TamperEvidentLog()
         log.append("health-check", "test-data")
         valid, pos = log.verify()
@@ -113,6 +124,7 @@ def check_tamper_log() -> dict:
 def check_burn_rate_monitor() -> dict:
     try:
         from zephyr.governance.budget_enforcement.burn_rate_monitor import BurnRateMonitor
+
         monitor = BurnRateMonitor()
         summary = monitor.get_burn_summary()
         return {"check": "burn_rate_monitor", "status": "PASS", "detail": f"windows={len(summary)}"}

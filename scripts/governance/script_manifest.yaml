@@ -1,24 +1,33 @@
-# 自动生成于 2026-06-21T14:17:12Z
+# 自动生成于 2026-06-22T05:53:28Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-06-21T14:17:12Z'
+generated_at: '2026-06-22T05:53:28Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 346
-with_manifest: 230
-missing_manifest: 116
+with_manifest: 231
+missing_manifest: 115
+categories:
+  governance: 99
+  governance:_sync: 4
+  governance:d10_performance: 1
+  governance:d11_compliance: 13
+  governance:d12_ai_hallucination: 4
+  governance:d1_structure: 22
+  governance:d2_links: 3
+  governance:d3_metadata: 30
+  governance:d4_paths: 4
+  governance:d5_architecture: 72
+  governance:d6_security: 14
+  governance:d7_code: 21
+  governance:d8_doc_sync: 4
+  governance:d9_knowledge: 2
+  governance:generators: 8
+  governance:meta: 38
+  governance:observability: 1
+  governance:repair: 6
 scripts:
-- name: _check_verified.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: _concurrency.py
   owner: governance
   dimensions: []
@@ -370,16 +379,7 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: compare_ba_copies.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
+
 - name: construction_gate.py
   owner: governance
   dimensions: []
@@ -400,16 +400,7 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: create_depgraph_task_cards.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
+
 - name: crosscheck_sys_master_deps.py
   owner: governance
   dimensions: []
@@ -442,6 +433,7 @@ scripts:
     '
   tags:
   - Periodic
+
 - name: d11_compliance/fix_shared_bypass.py
   owner: governance:d11_compliance
   dimensions:
@@ -977,38 +969,8 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: d3_metadata/assign_module_id.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P1
-  timeout_seconds: 15
-  args:
-  - flag: --check
-    type: str
-    description: 检查指定 module_id 的唯一性
-  - flag: --assign
-    type: str
-    description: '为新文件建议下一个可用 module_id（格式: DOMAIN-TYPE）'
-  warn_only: false
-  description: '模块 ID 唯一性校验（INJ-001）——检查 module_id 全局唯一性。 对标 GOV-MOD-001 module-injection-rules-policy.md。
 
-    '
-  tags:
-  - Quick
-- name: d3_metadata/check_frontmatter_metadata.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P0
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: Frontmatter metadata compliance scan (doc_type valid values / status
-    / required fields)
-  tags:
-  - Critical
-  - Quick
+
 - name: d3_metadata/check_naming_convention.py
   owner: governance:d3_metadata
   dimensions: []
@@ -1034,22 +996,7 @@ scripts:
   - Critical
   - Quick
   - Security
-- name: d3_metadata/check_template_compliance.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P1
-  timeout_seconds: 60
-  args:
-  - 文档路径
-  - --template
-  - --auto
-  - --all
-  - --warn-only
-  warn_only: false
-  description: 通用模板合规检查——读取 COMPLIANCE_CHECKLIST 验证文档（D3元数据合规）
-  tags:
-  - Quick
+
 - name: d3_metadata/deep_content_scanner.py
   owner: governance:d3_metadata
   dimensions:
@@ -1061,89 +1008,14 @@ scripts:
   description: 深度内容扫描器（PS-STD-012 §7.3 — doc_type与内容启发式匹配）
   tags:
   - Quick
-- name: d3_metadata/detect_deprecated_overdue.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 废弃超期检测（PS-STD-009 §7 — deprecated>=180天应归档）
-  tags:
-  - Quick
-- name: d3_metadata/detect_skip_active_status.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 跨级降格检测（ABS-22 / COND-15 — draft→deprecated跳过active）
-  tags:
-  - Quick
-- name: d3_metadata/detect_stale_version.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 版本号未更新检测（PS-STD-009 §9 — 内容变更但version/date未同步）
-  tags:
-  - Quick
-- name: d3_metadata/fix_dm411_bare_relative_imports.py
-  owner: governance:d3_metadata
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: d3_metadata/fix_dm413_duplicate_test_names.py
-  owner: governance:d3_metadata
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: d3_metadata/fix_n06_module_id_prefix.py
-  owner: governance:d3_metadata
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: d3_metadata/fix_n12_ke_naming.py
-  owner: governance:d3_metadata
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: d3_metadata/fix_n15_blueprint_path.py
-  owner: governance:d3_metadata
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
+
+
+
+
+
+
+
+
 - name: d3_metadata/generate_derived_files.py
   owner: governance:d3_metadata
   dimensions:
@@ -1157,32 +1029,8 @@ scripts:
   tags:
   - Disruptive
   - Quick
-- name: d3_metadata/generate_rule_catalog.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'Scan policy tree; aggregate frontmatter into rule-catalog-registry.yaml.
-    Aligns with static-manifest SSOT for governance scripts (section 6.16-style workflow).
 
-    '
-  tags:
-  - Disruptive
-  - Quick
-- name: d3_metadata/scan_deep_content.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 深度内容扫描器（PS-STD-012 §7.3 — doc_type与内容启发式匹配）
-  tags:
-  - Quick
+
 - name: d3_metadata/validate_architecture.py
   owner: governance:d3_metadata
   dimensions:
@@ -1212,72 +1060,11 @@ scripts:
   tags:
   - Critical
   - Quick
-- name: d3_metadata/validate_blueprint_registry.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  - D11
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: Blueprint registry self-check (declared rows vs files on disk)
-  tags:
-  - Quick
-  - Security
-- name: d3_metadata/validate_cross_module_dependencies.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 跨模块依赖登记表与 module-registry 的 module_id 对账
-  tags:
-  - Critical
-  - Quick
-- name: d3_metadata/validate_derived_from.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  - D5
-  priority: P1
-  timeout_seconds: 15
-  args: []
-  warn_only: false
-  description: GATE-DERIVED — derived_from 标注完整性闸门（§6.14 Level 2 门禁 4/4 — 派生文件 derived_from
-    标注检测，5维检查）
-  tags:
-  - Critical
-  - Quick
-- name: d3_metadata/validate_enum_consistency.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  - D5
-  priority: P0
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: GATE-ENUM — 枚举自动派生一致性闸门（§6.14 Level 2 门禁 1/4 — vocabulary YAML ↔ 派生文件枚举列表交叉比对，5维检查）
-  tags:
-  - Critical
-  - Quick
-- name: d3_metadata/validate_frontmatter_values.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  - D5
-  priority: P0
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: GATE-FRONTMATTER — frontmatter 枚举值 vs vocabulary YAML 校验（防止非法值如 layer=L1）
-  tags:
-  - Critical
-  - Quick
+
+
+
+
+
 - name: d3_metadata/validate_module_id.py
   owner: governance:d3_metadata
   dimensions:
@@ -1298,18 +1085,7 @@ scripts:
     '
   tags:
   - Quick
-- name: d3_metadata/validate_no_duplicate_files.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  - D4
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: true
-  description: GATE-DUP — 迁移后重复文件检测（防止迁移后原文件未删除）
-  tags:
-  - Quick
+
 - name: d3_metadata/validate_registry_master_index.py
   owner: governance:d3_metadata
   dimensions:
@@ -1324,29 +1100,21 @@ scripts:
   - Critical
   - Quick
   - Security
-- name: d3_metadata/validate_ssot_status.py
+- name: d3_metadata/validate_rule_frontmatter.py
   owner: governance:d3_metadata
   dimensions:
   - D3
+  - D5
   priority: P0
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: SSoT frontmatter status 字段枚举白名单——阻止 draft/active/review 等非法拼写
+  description: GATE-RULE-FM — trae_XXX.yaml frontmatter 7标准字段+顺序+枚举值校验
   tags:
   - Critical
   - Quick
-- name: d3_metadata/validate_superseded_by.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 废弃文件 superseded_by 检测（LFC-002 / PS-STD-009 §2.2）
-  tags:
-  - Quick
+
+
 - name: d4_paths/detect_deprecated_path_writes.py
   owner: governance:d4_paths
   dimensions:
@@ -2844,16 +2612,7 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: dm101_blueprint_domain_mapping.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
+
 - name: dm105_depgraph_triage.py
   owner: governance
   dimensions: []
@@ -3177,17 +2936,7 @@ scripts:
   tags:
   - Critical
   - Quick
-- name: list_no_consumer_orphans.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 从 orphan_analysis.json 提取无消费者孤儿模块清单
-  tags:
-  - Quick
+
 - name: list_phase0_tasks.py
   owner: governance
   dimensions: []
@@ -3198,16 +2947,7 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: merge_domain_nodes.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
+
 - name: meta/arbitrate_findings.py
   owner: governance:meta
   dimensions:
@@ -3821,26 +3561,8 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: repair/ensure_dep_cycles_view.py
-  owner: governance:repair
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: repair/list_source_md_files.py
-  owner: governance:repair
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
+
+
 - name: repair/red_blue_test.py
   owner: governance:repair
   dimensions: []
@@ -3994,8 +3716,7 @@ scripts:
   args: []
   warn_only: false
   description: 'TRAE 规则登记同步校验 —— 扫描 .trae/rules/project_rules.md 中所有 RULE-* 条目， 检查是否已在
-    rule-registry.md 的 TRAE 域中登记。RULE-FOUR（创建即注册协议）的执行验证。 Exit 0 = CLEAN, Exit 1 =
-    DRIFT（缺失/孤儿登记）。
+    _index.yaml 的 TRAE 域中登记。RULE-FOUR（创建即注册协议）的执行验证。 Exit 0 = CLEAN, Exit 1 = DRIFT（缺失/孤儿登记）。
 
     '
   tags:
@@ -4029,16 +3750,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
 - name: test_lock_scenarios.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: test_orphan_imports.py
   owner: governance
   dimensions: []
   priority: P2

@@ -32,7 +32,6 @@ OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理
     structured = chat.ask_json("分类: {text}", fields=["category", "confidence"])
 """
 
-
 from __future__ import annotations
 
 import json
@@ -58,28 +57,28 @@ SYSTEM_PROMPTS: dict[str, str] = {
     "tag_completion": (
         "You are a tag generator. Given a task description, "
         "infer appropriate tag labels. Tags should be single English words."
-        "\nOutput JSON: {\"tags\": [\"tag1\", \"tag2\"]}"
+        '\nOutput JSON: {"tags": ["tag1", "tag2"]}'
     ),
     "summary_extraction": (
         "You are a summary extractor. Compress the input text into 3 key points, "
         "each point under 50 characters."
-        "\nOutput JSON: {\"points\": [\"point1\", \"point2\", \"point3\"]}"
+        '\nOutput JSON: {"points": ["point1", "point2", "point3"]}'
     ),
     "anomaly_triage": (
         "You are an anomaly triager. Determine whether the input audit/log result is suspicious, "
         "and whether human intervention is needed."
-        "\nOutput JSON: {\"needs_human\": true/false, \"reason\": \"one-line reason\"}"
+        '\nOutput JSON: {"needs_human": true/false, "reason": "one-line reason"}'
     ),
     "query_rewrite": (
         "You are a search optimizer. Rewrite the user's natural language search query "
         "into more precise technical search terms, removing filler words and "
         "retaining core technical concepts."
-        "\nOutput JSON: {\"rewritten\": \"optimized query\"}"
+        '\nOutput JSON: {"rewritten": "optimized query"}'
     ),
     "naming_suggest": (
         "You are a naming suggester. Given code context, "
         "suggest suitable variable/function/class names."
-        "\nOutput JSON: {\"names\": [\"candidate1\", \"candidate2\"]}"
+        '\nOutput JSON: {"names": ["candidate1", "candidate2"]}'
     ),
 }
 
@@ -182,7 +181,9 @@ class OllamaChat:
             if raw and len(raw.strip()) > 0:
                 return raw
             if attempt < max_retries - 1:
-                _log.warning("OllamaChat: %s empty response attempt %d/%d, retrying...", work_type, attempt + 1, max_retries)
+                _log.warning(
+                    "OllamaChat: %s empty response attempt %d/%d, retrying...", work_type, attempt + 1, max_retries
+                )
         _log.warning("OllamaChat: %s all %d attempts returned empty", work_type, max_retries)
         return "{}"
 
@@ -234,6 +235,7 @@ class OllamaChat:
     def _budget_preflight(self, msg_count: int) -> None:
         try:
             from zephyr.governance.budget_engine import BudgetEngine
+
             engine = BudgetEngine()
             est_tokens = msg_count * 500
             result = engine.pre_flight_check(
@@ -279,8 +281,8 @@ class OllamaChat:
                 return {}
             except json.JSONDecodeError:
                 if attempt == 0:
-                    text = text[text.index("{") if "{" in text else 0:]
-                    text = text[:text.rindex("}") + 1] if "}" in text else text
+                    text = text[text.index("{") if "{" in text else 0 :]
+                    text = text[: text.rindex("}") + 1] if "}" in text else text
                 else:
                     break
         _log.warning("OllamaChat JSON parse failed; raw=%s", raw[:200])
@@ -290,6 +292,7 @@ class OllamaChat:
     def quick_alive(url: str = DEFAULT_OLLAMA_URL, timeout_s: float = 2.0) -> bool:
         try:
             import requests
+
             resp = requests.get(f"{url.rstrip('/')}/api/tags", timeout=timeout_s)
             return resp.status_code == 200
         except Exception:

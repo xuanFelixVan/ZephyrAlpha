@@ -28,6 +28,7 @@ class FeedbackBridge:
         self._available = False
         try:
             from zephyr.trading.feedback_loop import FeedbackLoop
+
             self._loop = FeedbackLoop(Path(mkdtemp(prefix="ao_feedback_")))
             self._available = True
         except ImportError:
@@ -39,19 +40,25 @@ class FeedbackBridge:
         if not self._available or self._loop is None:
             return []
         try:
-            entries = [{
-                "id": f.get("issue_id", str(i)),
-                "module": "audit-orchestrator",
-                "context": f.get("detail", f.get("type", "unknown finding")),
-            } for i, f in enumerate(findings)]
+            entries = [
+                {
+                    "id": f.get("issue_id", str(i)),
+                    "module": "audit-orchestrator",
+                    "context": f.get("detail", f.get("type", "unknown finding")),
+                }
+                for i, f in enumerate(findings)
+            ]
             proposals = self._loop.analyze_pending(entries)
-            return [{
-                "proposal_id": p.proposal_id,
-                "source": p.source,
-                "pattern": p.pattern,
-                "change": p.suggested_rule_change,
-                "confidence": p.confidence,
-            } for p in proposals]
+            return [
+                {
+                    "proposal_id": p.proposal_id,
+                    "source": p.source,
+                    "pattern": p.pattern,
+                    "change": p.suggested_rule_change,
+                    "confidence": p.confidence,
+                }
+                for p in proposals
+            ]
         except Exception as exc:
             logger.error("FeedbackBridge.analyze_audit_findings failed: %s", exc)
             return []
@@ -61,14 +68,17 @@ class FeedbackBridge:
             return []
         try:
             proposals = self._loop.generate_proposals(pending)
-            return [{
-                "proposal_id": p.proposal_id,
-                "source": p.source,
-                "pattern": p.pattern,
-                "change": p.suggested_rule_change,
-                "confidence": p.confidence,
-                "status": p.status,
-            } for p in proposals]
+            return [
+                {
+                    "proposal_id": p.proposal_id,
+                    "source": p.source,
+                    "pattern": p.pattern,
+                    "change": p.suggested_rule_change,
+                    "confidence": p.confidence,
+                    "status": p.status,
+                }
+                for p in proposals
+            ]
         except Exception as exc:
             logger.error("FeedbackBridge.generate_rules failed: %s", exc)
             return []
@@ -78,6 +88,7 @@ class FeedbackBridge:
             return False
         try:
             from zephyr.trading.feedback_loop import EvolutionProposal
+
             p = EvolutionProposal(
                 source=proposal.get("source", "unknown"),
                 pattern=proposal.get("pattern", ""),
@@ -92,6 +103,7 @@ class FeedbackBridge:
     def is_available(self) -> bool:
         return self._available
 
+
 class AuditFeedbackBridge:
     def __init__(self, config=None):
         self.config = config or {}
@@ -99,5 +111,5 @@ class AuditFeedbackBridge:
     def send_feedback(self, feedback):
         return BridgeResult()
 
-    def receive_feedback(self, source=''):
+    def receive_feedback(self, source=""):
         return []

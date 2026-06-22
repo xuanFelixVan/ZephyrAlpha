@@ -2,26 +2,16 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.risk.risk_limit_violation_error
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] risk; pf_core
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
 
-from typing import Optional
 
 class RiskLimitViolationError(Exception):
     __slots__ = (
@@ -31,10 +21,10 @@ class RiskLimitViolationError(Exception):
         "limit_value",
         "portfolio_id",
         "recovery_hint",
-        "violated_constraint",
-        "violation_detail",
         "schema_version",
         "trace_context",
+        "violated_constraint",
+        "violation_detail",
     )
 
     def __init__(
@@ -49,7 +39,7 @@ class RiskLimitViolationError(Exception):
         recovery_hint: str,
         idempotency_key: str,
         schema_version: str = "1.0",
-        trace_context: Optional[TraceContext] = None,
+        trace_context: TraceContext | None = None,
     ) -> None:
         super().__init__(violation_detail)
         self.actual_value = actual_value

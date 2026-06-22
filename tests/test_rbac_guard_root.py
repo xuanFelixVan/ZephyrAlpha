@@ -11,22 +11,21 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
-import pytest
-from zephyr.security.access_control.rbac_guard import (
-    RBACGuard,
-    PermissionDecision,
-    PermissionResult,
-    ALWAYS_ALLOW_OPERATIONS,
-    AUTO_GUARD_OPERATIONS,
-    ALWAYS_BLOCKED_OPERATIONS,
-)
 from zephyr.integration.shared_08.contracts.identity.agent_identity import (
     AgentIdentity,
     AgentRole,
-    MaturityLevel,
     IDESource,
+    MaturityLevel,
+)
+from zephyr.security.access_control.rbac_guard import (
+    ALWAYS_ALLOW_OPERATIONS,
+    ALWAYS_BLOCKED_OPERATIONS,
+    PermissionDecision,
+    PermissionResult,
+    RBACGuard,
 )
 
 

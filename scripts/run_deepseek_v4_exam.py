@@ -30,7 +30,6 @@ import logging
 import os
 import sys
 import time
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -104,10 +103,13 @@ def run_exam(model: str, thinking: bool) -> dict[str, Any]:
         },
     }
 
-    _log.info("Result: grade=%s score=%.3f cost=%.6f元 tokens=%d",
-              passport.overall_grade, passport.overall_score,
-              chat.cumulative_cost_rmb,
-              chat.cumulative_input_tokens + chat.cumulative_output_tokens)
+    _log.info(
+        "Result: grade=%s score=%.3f cost=%.6f元 tokens=%d",
+        passport.overall_grade,
+        passport.overall_score,
+        chat.cumulative_cost_rmb,
+        chat.cumulative_input_tokens + chat.cumulative_output_tokens,
+    )
     return result
 
 
@@ -143,10 +145,14 @@ def print_summary(results: list[dict[str, Any]]) -> None:
     for r in results:
         c = r["cost"]
         print(f"  {r['variant']}:")
-        print(f"    输入: {c['input_tokens']:,} tokens × ¥{c['pricing_input_per_1M_rmb']}/M"
-              f" = ¥{c['input_tokens'] / 1_000_000 * c['pricing_input_per_1M_rmb']:.6f}")
-        print(f"    输出: {c['output_tokens']:,} tokens × ¥{c['pricing_output_per_1M_rmb']}/M"
-              f" = ¥{c['output_tokens'] / 1_000_000 * c['pricing_output_per_1M_rmb']:.6f}")
+        print(
+            f"    输入: {c['input_tokens']:,} tokens × ¥{c['pricing_input_per_1M_rmb']}/M"
+            f" = ¥{c['input_tokens'] / 1_000_000 * c['pricing_input_per_1M_rmb']:.6f}"
+        )
+        print(
+            f"    输出: {c['output_tokens']:,} tokens × ¥{c['pricing_output_per_1M_rmb']}/M"
+            f" = ¥{c['output_tokens'] / 1_000_000 * c['pricing_output_per_1M_rmb']:.6f}"
+        )
         print(f"    合计: ¥{c['total_cost_rmb']:.6f}  ({c['api_calls']} 次 API 调用)")
     print(f"\n  总计费用: ¥{total_cost:.6f}  (约 ${total_cost * 0.14:.4f} USD)")
 
@@ -180,12 +186,11 @@ def print_summary(results: list[dict[str, Any]]) -> None:
 
 def main():
     parser = argparse.ArgumentParser(description="DeepSeek V4 入职考试")
-    parser.add_argument("--model", choices=["deepseek-v4-flash", "deepseek-v4-pro"],
-                        help="仅测试指定模型（默认测试全部）")
-    parser.add_argument("--no-thinking", action="store_true",
-                        help="仅测试非思考模式")
-    parser.add_argument("--thinking-only", action="store_true",
-                        help="仅测试思考模式")
+    parser.add_argument(
+        "--model", choices=["deepseek-v4-flash", "deepseek-v4-pro"], help="仅测试指定模型（默认测试全部）"
+    )
+    parser.add_argument("--no-thinking", action="store_true", help="仅测试非思考模式")
+    parser.add_argument("--thinking-only", action="store_true", help="仅测试思考模式")
     args = parser.parse_args()
 
     if not DEEPSEEK_API_KEY or DEEPSEEK_API_KEY == "sk-e88e8757b0974da9bed7def543c2bb2a":
@@ -218,14 +223,16 @@ def main():
         except Exception as exc:
             variant = f"{model}{'-thinking' if thinking else '-non-thinking'}"
             _log.error("Exam failed for %s: %s", variant, exc)
-            results.append({
-                "variant": variant,
-                "model": model,
-                "thinking": thinking,
-                "error": str(exc),
-                "overall_grade": "F",
-                "overall_score": 0.0,
-            })
+            results.append(
+                {
+                    "variant": variant,
+                    "model": model,
+                    "thinking": thinking,
+                    "error": str(exc),
+                    "overall_grade": "F",
+                    "overall_score": 0.0,
+                }
+            )
 
     if results:
         print_summary(results)

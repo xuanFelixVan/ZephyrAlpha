@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_conflict_arbitration.py
 
-import pytest
 from zephyr.ops.gates.conflict_arbitration import ConflictArbitration
 
 

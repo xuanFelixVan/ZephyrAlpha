@@ -23,7 +23,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 import yaml
 
 from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
@@ -140,9 +139,7 @@ class TestLoadRiskParamsSsotEdgeCases:
     def test_callable_multiple_times_same_root(self, tmp_path: Path):
         config_dir = tmp_path / "config"
         config_dir.mkdir()
-        (config_dir / "risk_params.yaml").write_text(
-            "schema_version: '1.0'\n", encoding="utf-8"
-        )
+        (config_dir / "risk_params.yaml").write_text("schema_version: '1.0'\n", encoding="utf-8")
         result1 = load_risk_params_ssot(tmp_path)
         result2 = load_risk_params_ssot(tmp_path)
         assert result1 == result2

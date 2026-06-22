@@ -38,7 +38,6 @@ backward compatibility map.
 from __future__ import annotations
 
 import hashlib
-import json
 import pickle
 import time
 from dataclasses import dataclass, field
@@ -99,34 +98,40 @@ class SerializationFormatTracker:
 
         if entry["format"] != current_fmt.value:
             msg = f"format_changed:{entry['format']}->{current_fmt.value}"
-            self.version_changes.append({
-                "ts": time.time(),
-                "artifact": artifact_id,
-                "change": msg,
-                "severity": "BREAKING",
-            })
+            self.version_changes.append(
+                {
+                    "ts": time.time(),
+                    "artifact": artifact_id,
+                    "change": msg,
+                    "severity": "BREAKING",
+                }
+            )
             return {"compatibility": Compatibility.BREAKING.value, "reason": msg}
 
         if current_fmt == SerdeFormat.PICKLE:
             if entry.get("pickle_protocol") != pickle.HIGHEST_PROTOCOL:
-                self.version_changes.append({
-                    "ts": time.time(),
-                    "artifact": artifact_id,
-                    "change": f"pickle_protocol:{entry.get('pickle_protocol')}->{pickle.HIGHEST_PROTOCOL}",
-                    "severity": "MINOR",
-                })
+                self.version_changes.append(
+                    {
+                        "ts": time.time(),
+                        "artifact": artifact_id,
+                        "change": f"pickle_protocol:{entry.get('pickle_protocol')}->{pickle.HIGHEST_PROTOCOL}",
+                        "severity": "MINOR",
+                    }
+                )
                 return {"compatibility": Compatibility.MINOR_CHANGE.value, "reason": "pickle_protocol_changed"}
 
         return {"compatibility": Compatibility.COMPATIBLE.value, "reason": "format_consistent"}
 
     def validate_state_load(self, artifact_id: str, loaded_obj: object, expected_type: type) -> dict:
         if not isinstance(loaded_obj, expected_type):
-            self.version_changes.append({
-                "ts": time.time(),
-                "artifact": artifact_id,
-                "change": f"type_mismatch:{type(loaded_obj).__name__}!={expected_type.__name__}",
-                "severity": "BREAKING",
-            })
+            self.version_changes.append(
+                {
+                    "ts": time.time(),
+                    "artifact": artifact_id,
+                    "change": f"type_mismatch:{type(loaded_obj).__name__}!={expected_type.__name__}",
+                    "severity": "BREAKING",
+                }
+            )
             return {
                 "valid": False,
                 "expected_type": expected_type.__name__,

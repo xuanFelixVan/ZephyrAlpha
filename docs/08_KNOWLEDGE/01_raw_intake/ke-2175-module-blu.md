@@ -93,4 +93,3 @@ Stage 2: AST 级精确比对（分钟级）
       - ABC 抽象方法（`raise NotImplementedError`）→ 豁免
       - `@overload` 类型重载 → 豁免
     · **设计模式自动豁免**（v0.6.0 新增）：
-   

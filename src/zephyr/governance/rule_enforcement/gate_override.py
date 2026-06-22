@@ -26,11 +26,12 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from zephyr.governance.audit_trail.bridge import write_to_core
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class OverrideRecord:
@@ -39,11 +40,12 @@ class OverrideRecord:
     reason: str
     granted_by: str
     expires_at: datetime
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     @property
     def is_expired(self) -> bool:
-        return datetime.now(timezone.utc) >= self.expires_at
+        return datetime.now(UTC) >= self.expires_at
+
 
 class GateOverride:
     DEFAULT_TTL_MINUTES = 30
@@ -65,17 +67,20 @@ class GateOverride:
             session_id=session_id,
             reason=reason,
             granted_by=granted_by,
-            expires_at=datetime.now(timezone.utc) + timedelta(minutes=ttl_minutes),
+            expires_at=datetime.now(UTC) + timedelta(minutes=ttl_minutes),
         )
         self._active.setdefault(gate_id, []).append(record)
         self._audit_log.append(record)
-        write_to_core("gate_override", {
-            "gate_id": gate_id,
-            "session_id": session_id,
-            "reason": reason,
-            "granted_by": granted_by,
-            "expires_at": record.expires_at.isoformat(),
-        })
+        write_to_core(
+            "gate_override",
+            {
+                "gate_id": gate_id,
+                "session_id": session_id,
+                "reason": reason,
+                "granted_by": granted_by,
+                "expires_at": record.expires_at.isoformat(),
+            },
+        )
         logger.warning("GATE OVERRIDE: %s by %s — expires %s", gate_id, granted_by, record.expires_at.isoformat())
         return record
 
@@ -104,10 +109,13 @@ class GateOverride:
     def audit_trail(self) -> list[OverrideRecord]:
         return list(self._audit_log)
 
+
 __all__ = ["GateOverride", "OverrideRecord"]
+
 
 def main() -> None:
     pass
+
 
 if __name__ == "__main__":
     main()

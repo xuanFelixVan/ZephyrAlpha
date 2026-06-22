@@ -10,9 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_flapping_detector.py
 
-import time
-
-import pytest
 
 from zephyr.ops.detectors.flapping_detector import (
     AlertState,

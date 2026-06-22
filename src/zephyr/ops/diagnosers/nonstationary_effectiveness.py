@@ -57,7 +57,7 @@ class NonstationaryEffectiveness:
     def record_outcome(self, success: bool) -> EffectivenessState:
         self.rolling_window.append(1.0 if success else 0.0)
         if len(self.rolling_window) > self.window_size:
-            self.rolling_window = self.rolling_window[-self.window_size:]
+            self.rolling_window = self.rolling_window[-self.window_size :]
 
         if len(self.rolling_window) >= 10:
             self.current_score = sum(self.rolling_window) / len(self.rolling_window)
@@ -68,6 +68,7 @@ class NonstationaryEffectiveness:
             if drop > self.degradation_threshold:
                 if self.state != EffectivenessState.INEFFECTIVE:
                     import time
+
                     self.degradation_started_at = time.time()
                 self.state = EffectivenessState.INEFFECTIVE
             elif drop > self.degradation_threshold * 0.5:

@@ -21,64 +21,23 @@
 
 from __future__ import annotations
 
-
-
-
-
 import logging
 
-
-
-
-
 logger = logging.getLogger(__name__)
-
-
-
 
 
 __all__: list[str] = ["AttackRegistry"]
 
 
-
-
-
-
-
-
 class AttackRegistry:
-
-
     def __init__(self) -> None:
-
-
         pass
-
-
-
-
 
     def register(self, attack_id: str, tier: int, scenario: str) -> None:
-
-
         pass
-
-
-
-
 
     def query_by_tier(self, tier: int) -> list[str]:
-
-
         pass
-
-
-
-
 
     def count(self) -> int:
-
-
         pass
-
-

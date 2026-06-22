@@ -29,11 +29,11 @@ Event Reactor — 事件反应器（自动响应事件）。
     任务卡 TASK-INF-0125
 """
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any
+from dataclasses import dataclass
+from datetime import UTC, datetime
 
 from zephyr.shared.shared_services.events.event_bus import DomainEvent, EventBus, EventType
+
 
 @dataclass
 class Reaction:
@@ -43,8 +43,8 @@ class Reaction:
     executed: bool = False
     timestamp_utc: str = ""
 
-class EventReactor:
 
+class EventReactor:
     def __init__(self, event_bus: EventBus | None = None) -> None:
         self._bus = event_bus or EventBus.get_instance()
         self._reactions: list[Reaction] = []
@@ -65,23 +65,19 @@ class EventReactor:
     def _on_scope_drift(self, event: DomainEvent) -> None:
         extras = event.payload.get("extra_touch", [])
         self._log_reaction(
-            EventType.SCOPE_DRIFT,
-            f"Alert: scope drift detected for {event.task_id} — extra files: {extras}"
+            EventType.SCOPE_DRIFT, f"Alert: scope drift detected for {event.task_id} — extra files: {extras}"
         )
 
     def _on_dependency_resolved(self, event: DomainEvent) -> None:
-        self._log_reaction(
-            EventType.DEPENDENCY_RESOLVED,
-            f"Unblock dependent tasks for {event.task_id}"
-        )
+        self._log_reaction(EventType.DEPENDENCY_RESOLVED, f"Unblock dependent tasks for {event.task_id}")
 
     def _log_reaction(self, trigger: EventType, action: str) -> None:
         reaction = Reaction(
-            reaction_id=f"REACT-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            reaction_id=f"REACT-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             trigger_event=trigger,
             action=action,
             executed=True,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
         self._reactions.append(reaction)
 

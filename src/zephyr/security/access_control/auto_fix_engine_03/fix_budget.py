@@ -26,8 +26,7 @@ import os
 import sqlite3
 import threading
 import time
-from collections import defaultdict
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -110,14 +109,34 @@ class FixBudget:
             daily_remaining = self._daily_limit - self._daily_consumed
             monthly_remaining = self._monthly_limit - self._monthly_consumed
             if daily_remaining < cost:
-                return BudgetDecision(allowed=False, reason=f"Daily budget exhausted: {daily_remaining} remaining, need {cost}", remaining_daily=daily_remaining, remaining_monthly=monthly_remaining)
+                return BudgetDecision(
+                    allowed=False,
+                    reason=f"Daily budget exhausted: {daily_remaining} remaining, need {cost}",
+                    remaining_daily=daily_remaining,
+                    remaining_monthly=monthly_remaining,
+                )
             if monthly_remaining < cost:
-                return BudgetDecision(allowed=False, reason=f"Monthly budget exhausted: {monthly_remaining} remaining, need {cost}", remaining_daily=daily_remaining, remaining_monthly=monthly_remaining)
+                return BudgetDecision(
+                    allowed=False,
+                    reason=f"Monthly budget exhausted: {monthly_remaining} remaining, need {cost}",
+                    remaining_daily=daily_remaining,
+                    remaining_monthly=monthly_remaining,
+                )
             if tokens > 0 and level in (FixLevel.L2_LLM, FixLevel.L3_AGENT):
                 llm_remaining = self._llm_token_limit - self._llm_tokens_consumed
                 if llm_remaining < tokens:
-                    return BudgetDecision(allowed=False, reason=f"LLM token budget exhausted: {llm_remaining} remaining, need {tokens}", remaining_daily=daily_remaining, remaining_monthly=monthly_remaining)
-            return BudgetDecision(allowed=True, reason="Budget check passed", remaining_daily=daily_remaining, remaining_monthly=monthly_remaining)
+                    return BudgetDecision(
+                        allowed=False,
+                        reason=f"LLM token budget exhausted: {llm_remaining} remaining, need {tokens}",
+                        remaining_daily=daily_remaining,
+                        remaining_monthly=monthly_remaining,
+                    )
+            return BudgetDecision(
+                allowed=True,
+                reason="Budget check passed",
+                remaining_daily=daily_remaining,
+                remaining_monthly=monthly_remaining,
+            )
 
     def consume(self, level: FixLevel = FixLevel.L1_RULE, tokens: int = 0, operation_id: str = "") -> None:
         with self._lock:
@@ -148,7 +167,9 @@ class FixBudget:
             )
 
     def _cost_for_level(self, level: FixLevel) -> int:
-        return {FixLevel.L1_RULE: self._l1_cost, FixLevel.L2_LLM: self._l2_cost, FixLevel.L3_AGENT: self._l3_cost}.get(level, self._l1_cost)
+        return {FixLevel.L1_RULE: self._l1_cost, FixLevel.L2_LLM: self._l2_cost, FixLevel.L3_AGENT: self._l3_cost}.get(
+            level, self._l1_cost
+        )
 
 
 class DriftBudgetLink:
@@ -159,11 +180,18 @@ class DriftBudgetLink:
 
     def check_drift_budget(self) -> BudgetDecision:
         if self._drift_fix_count >= self._drift_fix_limit:
-            return BudgetDecision(allowed=False, reason=f"Drift fix budget exhausted: {self._drift_fix_count}/{self._drift_fix_limit}")
+            return BudgetDecision(
+                allowed=False, reason=f"Drift fix budget exhausted: {self._drift_fix_count}/{self._drift_fix_limit}"
+            )
         base = self._fix_budget.check(FixLevel.L1_RULE)
         if not base.allowed:
             return base
-        return BudgetDecision(allowed=True, reason="Drift budget OK", remaining_daily=base.remaining_daily, remaining_monthly=base.remaining_monthly)
+        return BudgetDecision(
+            allowed=True,
+            reason="Drift budget OK",
+            remaining_daily=base.remaining_daily,
+            remaining_monthly=base.remaining_monthly,
+        )
 
     def record_drift_fix(self) -> None:
         self._drift_fix_count += 1
@@ -190,7 +218,10 @@ class FixStormGuard:
         with self._lock:
             now = time.time()
             if now < self._frozen_until:
-                return False, f"Fix storm guard active until {datetime.fromtimestamp(self._frozen_until, tz=UTC).isoformat()}"
+                return (
+                    False,
+                    f"Fix storm guard active until {datetime.fromtimestamp(self._frozen_until, tz=UTC).isoformat()}",
+                )
             self._events = [t for t in self._events if now - t < self._long_window]
             short_count = len([t for t in self._events if now - t < self._short_window])
             if short_count >= self._short_threshold:
@@ -215,7 +246,11 @@ class LLMCostEstimator:
     def estimate(self, input_tokens: int, output_tokens: int = 0) -> dict[str, float]:
         input_cost = (input_tokens / 1000) * self._cost_per_1k_input
         output_cost = (output_tokens / 1000) * self._cost_per_1k_output
-        return {"input_tokens": input_tokens, "output_tokens": output_tokens, "estimated_cost": input_cost + output_cost}
+        return {
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "estimated_cost": input_cost + output_cost,
+        }
 
     def estimate_for_fix(self, target_lines: int, complexity: str = "medium") -> dict[str, int]:
         multipliers = {"simple": 1.0, "medium": 2.0, "complex": 4.0}

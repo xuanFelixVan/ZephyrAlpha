@@ -12,7 +12,6 @@
 
 """Fault type registry and preset templates for chaos engineering."""
 
-
 from __future__ import annotations
 
 import logging
@@ -24,13 +23,13 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = [
-    "FaultTypeRegistry",
-    "FaultTypeNotFoundError",
-    "LatencyFault",
-    "ExceptionFault",
-    "ResourceExhaustionFault",
-    "NetworkPartitionFault",
     "DataCorruptionFault",
+    "ExceptionFault",
+    "FaultTypeNotFoundError",
+    "FaultTypeRegistry",
+    "LatencyFault",
+    "NetworkPartitionFault",
+    "ResourceExhaustionFault",
 ]
 
 
@@ -40,12 +39,10 @@ class FaultTypeNotFoundError(KeyError):
 
 class FaultHandler(ABC):
     @abstractmethod
-    def inject(self, target: str, params: dict[str, Any]) -> dict[str, Any]:
-        ...
+    def inject(self, target: str, params: dict[str, Any]) -> dict[str, Any]: ...
 
     @abstractmethod
-    def recover(self, target: str, params: dict[str, Any]) -> dict[str, Any]:
-        ...
+    def recover(self, target: str, params: dict[str, Any]) -> dict[str, Any]: ...
 
 
 class FaultTypeRegistry:

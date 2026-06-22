@@ -12,23 +12,23 @@
 
 from __future__ import annotations
 
-import time
 import threading
+import time
 
 import pytest
 
 from zephyr.trading.admission_controller import (
     AdmissionController,
     AdmissionDecision,
-    AdmissionResult,
     AdmissionMetrics,
-    TokenBucketConfig,
-    PerTypeBucketConfig,
+    AdmissionResult,
     EventTypeBudget,
-    _TokenBucket,
+    PerTypeBucketConfig,
+    TokenBucketConfig,
     _CircuitBreaker,
+    _TokenBucket,
 )
-from zephyr.trading.verdict_engine import VerdictEngine, VerdictLevel, AuditEvent
+from zephyr.trading.verdict_engine import AuditEvent, VerdictEngine, VerdictLevel
 
 
 class TestAdmissionDecision:
@@ -455,6 +455,7 @@ class TestAdmissionControllerWithVerdictEngine:
         assert adm.decision == AdmissionDecision.ADMIT
 
         import asyncio
+
         verdict = asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
         assert verdict.verdict_level == VerdictLevel.PASS
 
@@ -472,6 +473,7 @@ class TestAdmissionControllerWithVerdictEngine:
         assert adm.decision == AdmissionDecision.ADMIT
 
         import asyncio
+
         verdict = asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
         assert verdict.verdict_level == VerdictLevel.RED
 
@@ -486,6 +488,7 @@ class TestAdmissionControllerWithVerdictEngine:
             trust_score=10.0,
         )
         import asyncio
+
         verdict = asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
         assert verdict.verdict_level == VerdictLevel.YELLOW
 
@@ -500,6 +503,7 @@ class TestAdmissionControllerWithVerdictEngine:
             is_human=True,
         )
         import asyncio
+
         verdict = asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
         assert verdict.verdict_level == VerdictLevel.PASS
         assert verdict.reason == "human_actor_auto_pass"
@@ -511,6 +515,7 @@ class TestAdmissionControllerWithVerdictEngine:
             AuditEvent(event_type="file_write", agent_id="a2", protection_level="anchor"),
         ]
         import asyncio
+
         verdicts = asyncio.get_event_loop().run_until_complete(engine.evaluate_batch(events))
         assert len(verdicts) == 2
         assert verdicts[0].verdict_level == VerdictLevel.PASS
@@ -519,6 +524,7 @@ class TestAdmissionControllerWithVerdictEngine:
     def test_verdict_batch_empty(self):
         engine = VerdictEngine()
         import asyncio
+
         verdicts = asyncio.get_event_loop().run_until_complete(engine.evaluate_batch([]))
         assert verdicts == []
 
@@ -536,6 +542,7 @@ class TestVerdictEngineHealthCheck:
         engine = VerdictEngine()
         event = AuditEvent(event_type="file_write", agent_id="a1", protection_level="normal", trust_score=80.0)
         import asyncio
+
         asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
         h = engine.health_check()
         assert h["total_evaluations"] == 1

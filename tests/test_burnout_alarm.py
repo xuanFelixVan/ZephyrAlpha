@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_burnout_alarm.py
 
-import pytest
 from zephyr.ops.diagnosers.burnout_alarm import BurnoutAlarm
 
 

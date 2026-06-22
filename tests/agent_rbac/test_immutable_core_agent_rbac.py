@@ -19,15 +19,14 @@
   - cold_start_lock 判断
 """
 
-import os
-import pytest
 from pathlib import Path
 
+import pytest
+
 from zephyr.security.access_control.immutable_core import (
-    ImmutableCore,
-    PROTECTED_PATHS,
     ALWAYS_BLOCKED_OPERATIONS,
-    IntegrityResult,
+    PROTECTED_PATHS,
+    ImmutableCore,
     get_immutable_core,
 )
 
@@ -57,10 +56,14 @@ class TestProtectedPathsIntegrity:
 
 class TestAlwaysBlockedIntegrity:
     def test_always_blocked_count_at_least_14(self):
-        assert len(ALWAYS_BLOCKED_OPERATIONS) >= 14, f"Expected >= 14 blocked operations, got {len(ALWAYS_BLOCKED_OPERATIONS)}"
+        assert len(ALWAYS_BLOCKED_OPERATIONS) >= 14, (
+            f"Expected >= 14 blocked operations, got {len(ALWAYS_BLOCKED_OPERATIONS)}"
+        )
 
     def test_always_blocked_are_unique(self):
-        assert len(ALWAYS_BLOCKED_OPERATIONS) == len(set(ALWAYS_BLOCKED_OPERATIONS)), "Blocked operations contain duplicates"
+        assert len(ALWAYS_BLOCKED_OPERATIONS) == len(set(ALWAYS_BLOCKED_OPERATIONS)), (
+            "Blocked operations contain duplicates"
+        )
 
     def test_critical_operations_present(self):
         blocked_set = set(ALWAYS_BLOCKED_OPERATIONS)

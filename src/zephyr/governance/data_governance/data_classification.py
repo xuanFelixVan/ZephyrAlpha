@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -91,7 +90,7 @@ LEVEL_ORDER: dict[DataLevel, int] = {
 }
 
 
-def get_level(level: DataLevel) -> Optional[LevelAttributes]:
+def get_level(level: DataLevel) -> LevelAttributes | None:
     return DATA_CLASSIFICATION.get(level)
 
 

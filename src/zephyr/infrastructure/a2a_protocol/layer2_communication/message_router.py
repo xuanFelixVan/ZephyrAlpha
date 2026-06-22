@@ -21,26 +21,27 @@
 
 """Message Router — A2A 消息路由"""
 
+from collections.abc import Callable
 
-from typing import Dict, List, Callable
 from .a2a_schemas import A2AMessage, PartType
 
 
 class MessageRouter:
     def __init__(self):
-        self._handlers: Dict[PartType, List[Callable]] = {}
+        self._handlers: dict[PartType, list[Callable]] = {}
 
     def register_handler(self, part_type: PartType, handler: Callable):
         self._handlers.setdefault(part_type, []).append(handler)
 
-    def route(self, message: A2AMessage) -> Dict[str, List]:
-        results: Dict[str, List] = {}
+    def route(self, message: A2AMessage) -> dict[str, list]:
+        results: dict[str, list] = {}
         for part in message.parts:
             handlers = self._handlers.get(part.part_type, [])
             results[part.part_type.value] = []
             for handler in handlers:
                 try:
                     import inspect
+
                     sig = inspect.signature(handler)
                     params = list(sig.parameters.values())
                     if len(params) >= 1:

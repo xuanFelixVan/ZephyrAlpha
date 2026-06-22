@@ -33,12 +33,9 @@ import argparse
 import ast
 import hashlib
 import logging
-import os
-import re
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -54,7 +51,7 @@ def load_migration_registry() -> list[dict]:
     if not MIGRATION_REGISTRY.exists():
         print(f"[FAIL] Migration registry not found: {MIGRATION_REGISTRY}")
         sys.exit(1)
-    with open(MIGRATION_REGISTRY, "r", encoding="utf-8") as f:
+    with open(MIGRATION_REGISTRY, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     if not data or "entries" not in data:
         print("[FAIL] Migration registry has no 'entries' section")
@@ -75,10 +72,10 @@ def file_hash(path: Path) -> str:
 
 def extract_python_symbols(path: Path) -> set[str]:
     """Extract top-level symbol names (classes, functions, constants) from a Python file."""
-    if not path.exists() or not path.suffix == ".py":
+    if not path.exists() or path.suffix != ".py":
         return set()
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             source = f.read()
         tree = ast.parse(source)
         symbols = set()
@@ -177,9 +174,9 @@ def verify_entry(old_path: Path, new_path: Path, entry: dict) -> dict:
 
         # Fallback: strip imports and compare
         try:
-            with open(old_path, "r", encoding="utf-8") as f:
+            with open(old_path, encoding="utf-8") as f:
                 old_content = f.read()
-            with open(new_path, "r", encoding="utf-8") as f:
+            with open(new_path, encoding="utf-8") as f:
                 new_content = f.read()
             old_stripped = strip_import_lines(old_content)
             new_stripped = strip_import_lines(new_content)
@@ -241,20 +238,16 @@ def verify_split(old_path: str, new_paths: list[str]) -> dict:
         "status": "aligned" if coverage >= 1.0 else "partial",
         "symbol_coverage": round(coverage, 3),
         "details": f"Split: {len(new_paths)} new files, coverage {coverage:.0%}"
-                   + (f", missing: {', '.join(sorted(missing)[:5])}" if missing else ""),
+        + (f", missing: {', '.join(sorted(missing)[:5])}" if missing else ""),
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description="Verify migration alignment")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Only output report, do not modify any file")
-    parser.add_argument("--batch", type=int, default=0,
-                        help="Only verify entries in batch N")
-    parser.add_argument("--domain", type=str, default="",
-                        help="Only verify entries for specified domain_id")
-    parser.add_argument("--verbose", action="store_true",
-                        help="Show detailed output for each entry")
+    parser.add_argument("--dry-run", action="store_true", help="Only output report, do not modify any file")
+    parser.add_argument("--batch", type=int, default=0, help="Only verify entries in batch N")
+    parser.add_argument("--domain", type=str, default="", help="Only verify entries for specified domain_id")
+    parser.add_argument("--verbose", action="store_true", help="Show detailed output for each entry")
     args = parser.parse_args()
 
     print("[VERIFY] Loading migration registry...")
@@ -280,8 +273,16 @@ def main():
     print(f"[VERIFY] Splits: {len(split_merge['splits'])}, Merges: {len(split_merge['merges'])}")
 
     # Verify each entry
-    results = {"aligned": 0, "partial": 0, "mismatch": 0, "new_missing": 0,
-               "old_missing": 0, "both_missing": 0, "content_differs": 0, "unknown": 0}
+    results = {
+        "aligned": 0,
+        "partial": 0,
+        "mismatch": 0,
+        "new_missing": 0,
+        "old_missing": 0,
+        "both_missing": 0,
+        "content_differs": 0,
+        "unknown": 0,
+    }
     details_list = []
 
     for entry in pending:
@@ -309,9 +310,9 @@ def main():
     # Summary
     total = len(pending)
     aligned = results.get("aligned", 0)
-    print(f"\n{'='*60}")
-    print(f"[VERIFY] Alignment Report")
-    print(f"{'='*60}")
+    print(f"\n{'=' * 60}")
+    print("[VERIFY] Alignment Report")
+    print(f"{'=' * 60}")
     print(f"Total pending entries: {total}")
     print(f"  Aligned:            {aligned}")
     print(f"  Partial:            {results.get('partial', 0)}")

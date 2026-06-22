@@ -55,6 +55,7 @@ def _get_lsg():
         return _lsg_gateway
     try:
         from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+
         _lsg_gateway = LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
@@ -70,9 +71,8 @@ def _lsg_scan_content_sync(content: str) -> str | None:
         return None
     try:
         from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
-        result = asyncio.run(
-            gw.scan_input(content, source="l10_implementations_gateway", metadata={})
-        )
+
+        result = asyncio.run(gw.scan_input(content, source="l10_implementations_gateway", metadata={}))
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_input_scan"
     except RuntimeError:
@@ -80,10 +80,9 @@ def _lsg_scan_content_sync(content: str) -> str | None:
             loop = asyncio.get_event_loop()
             if loop.is_running():
                 return None
-            result = loop.run_until_complete(
-                gw.scan_input(content, source="l10_implementations_gateway", metadata={})
-            )
+            result = loop.run_until_complete(gw.scan_input(content, source="l10_implementations_gateway", metadata={}))
             from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_input_scan"
         except Exception:

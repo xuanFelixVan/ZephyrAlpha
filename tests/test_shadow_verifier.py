@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.shadow_verifier import (
-    ShadowVerifier, ShadowVerifyResult,
+    ShadowVerifier,
+    ShadowVerifyResult,
 )
+
 
 class TestShadowVerifier:
     def test_instantiation(self):
@@ -35,9 +36,7 @@ class TestShadowVerifier:
 
     def test_generate_dashboard_card(self, tmp_path):
         verifier = ShadowVerifier()
-        result = verifier.generate_dashboard_card(
-            str(tmp_path), str(tmp_path), {"func_a"}, {"func_a"}
-        )
+        result = verifier.generate_dashboard_card(str(tmp_path), str(tmp_path), {"func_a"}, {"func_a"})
         assert isinstance(result, ShadowVerifyResult)
 
     def test_verify_size_nonexistent(self):

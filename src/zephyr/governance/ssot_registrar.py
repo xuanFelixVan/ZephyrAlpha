@@ -23,9 +23,11 @@ from __future__ import annotations
 
 """SSoT注册器 — 提取函数自动注册到 shared API清单."""
 
-import yaml
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
+import yaml
+
 
 class SSOTRegistrar:
     """共享函数 SSoT 注册器."""
@@ -48,7 +50,7 @@ class SSOTRegistrar:
             "module": module,
             "signature": signature,
             "caller_count": caller_count,
-            "registered_at": datetime.now(timezone.utc).isoformat(),
+            "registered_at": datetime.now(UTC).isoformat(),
         }
         self._append_manifest(entry)
         return entry
@@ -62,7 +64,7 @@ class SSOTRegistrar:
             except yaml.YAMLError:
                 pass
         existing.setdefault("functions", []).append(entry)
-        existing["updated_at"] = datetime.now(timezone.utc).isoformat()
+        existing["updated_at"] = datetime.now(UTC).isoformat()
         self._manifest_path.write_text(
             yaml.dump(existing, allow_unicode=True, default_flow_style=False),
             encoding="utf-8",

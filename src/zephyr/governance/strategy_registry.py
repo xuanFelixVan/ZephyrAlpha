@@ -32,7 +32,6 @@ StrategyRegistry 卫星模块（OCP-002）
 仅从 ``strategy_base`` re-export，使 ``registry_path`` 与包内 import 习惯一致。
 """
 
-
 from __future__ import annotations
 
 from .strategy_base import StrategyBase, StrategyMeta, StrategyRegistry

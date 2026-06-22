@@ -1,9 +1,9 @@
 # [A_module] module_id=MOD-SHR_vibe_experiment_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import time
 import uuid
+from dataclasses import dataclass, field
 
 
 @dataclass

@@ -12,9 +12,6 @@
 
 from __future__ import annotations
 
-import os
-
-import pytest
 import yaml
 
 from zephyr.behavioral_audit.drift_result_types import (

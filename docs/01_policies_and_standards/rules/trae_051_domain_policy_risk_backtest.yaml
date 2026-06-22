@@ -1,9 +1,21 @@
 rule_id: TRAE-051
 title: 域策略-风控与盘后层
+version: 1.0.0
+layer: L2
+module_id: TRAE-051
+depends_on:
+- TRAE-049
+- TRAE-050
+tags:
+- TRAE
+- domain_risk_analytics
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - DOM-L04-001
 - DOM-L07-001
-layer: L2
 severity: warning
 scope: domain_risk_analytics
 domain: TRAE
@@ -21,8 +33,7 @@ sections:
     - DOM-L04-001-COND-001
     conditions:
     - type: constraint
-      check: 止损限额：单策略最大亏损≤5%(减仓50%) / 止损线≤8%(清仓) / 组合最大亏损≤3%(减仓70%) / 组合止损线≤5%(清仓)
-        / 全局最大亏损≤2%(kill switch)
+      check: 止损限额：单策略最大亏损≤5%(减仓50%) / 止损线≤8%(清仓) / 组合最大亏损≤3%(减仓70%) / 组合止损线≤5%(清仓) / 全局最大亏损≤2%(kill switch)
       pass: 止损限额合规
       fail: 禁止无止损运行
     - type: constraint
@@ -435,8 +446,7 @@ sections:
     - DOM-L07-001-COND-002
     conditions:
     - type: constraint
-      check: 报告产出时限：交易执行日报T+0 18:00前 / 策略绩效日报T+0 19:00前 / 风控合规日报T+0 19:30前 / 数据质量日报T+0
-        17:30前 / 周度综合周五20:00前 / 月度审计T+3月初
+      check: 报告产出时限：交易执行日报T+0 18:00前 / 策略绩效日报T+0 19:00前 / 风控合规日报T+0 19:30前 / 数据质量日报T+0 17:30前 / 周度综合周五20:00前 / 月度审计T+3月初
       pass: 报告按时产出
       fail: 违反ABS-001时限SLA
     - type: constraint
@@ -877,7 +887,10 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
+provenance:
+  extracted_at: '2026-06-19T00:00:00'
+  extracted_by: session-20260619-001
 change_history:
 - version: 0.1.0
   date: '2026-06-13'
@@ -885,6 +898,3 @@ change_history:
 - version: 0.2.0
   date: '2026-06-19'
   change: RQ审查修复——从trae_050合并L04(风控)+L07(盘后)完整sections（852行）；references补充TRAE-049/050；provenance重建只保留L04+L07源文件并标记deprecated(D56裁定SSoT)；新增change_history
-provenance:
-  extracted_at: '2026-06-19T00:00:00'
-  extracted_by: session-20260619-001

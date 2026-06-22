@@ -10,6 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
+
 sys.path.insert(0, "src")
 
 import time

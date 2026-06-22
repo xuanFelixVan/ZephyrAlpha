@@ -33,6 +33,7 @@ try:
         RemediationPriority,
         generate_finding_id,
     )
+
     _FINDING_AVAILABLE = True
 except ImportError:
     _FINDING_AVAILABLE = False
@@ -72,7 +73,6 @@ class GateEvaluationError(RuntimeError):
 
 
 class DefenseRunner:
-
     def __init__(self, gate_engine: GateEngine | None = None, jsonl_output: bool = False) -> None:
         if gate_engine is None and GateEngine is not None:
             gate_engine = GateEngine()
@@ -102,7 +102,11 @@ class DefenseRunner:
                 evidence=f"scenario_id={scenario.scenario_id} gate_id={result.gate_id}",
                 remediation=FindingRemediation(
                     action=RemediationAction.FIX if not result.passed else RemediationAction.INVESTIGATE,
-                    priority=RemediationPriority.P0 if severity == FindingSeverity.CRITICAL else RemediationPriority.P1 if severity == FindingSeverity.HIGH else RemediationPriority.P2,
+                    priority=RemediationPriority.P0
+                    if severity == FindingSeverity.CRITICAL
+                    else RemediationPriority.P1
+                    if severity == FindingSeverity.HIGH
+                    else RemediationPriority.P2,
                 ),
             )
             sys.stdout.write(finding.to_jsonl())
@@ -121,7 +125,13 @@ class DefenseRunner:
 
         result = DefenseResult(passed=blocked, gate_id=gate_id, detail=detail)
         self._results.append(result)
-        logger.info("defense_evaluated scenario_id=%s passed=%s gate_id=%s source=%s", scenario.scenario_id, result.passed, gate_id, source)
+        logger.info(
+            "defense_evaluated scenario_id=%s passed=%s gate_id=%s source=%s",
+            scenario.scenario_id,
+            result.passed,
+            gate_id,
+            source,
+        )
         if self.jsonl_output and _FINDING_AVAILABLE:
             self._output_findings_as_jsonl([(scenario, result)])
         return result
@@ -140,10 +150,11 @@ class DefenseRunner:
         if self._gate_engine is None:
             return None
         try:
-            from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
-            from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-            from zephyr.integration.shared.schema.execution_model import ExecutionModel
             from datetime import UTC, datetime
+
+            from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
+            from zephyr.integration.shared.schema.execution_model import ExecutionModel
+            from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 
             task = Task(
                 task_id=f"OPS-{abs(hash(scenario.scenario_id)) % 100000:05d}",
@@ -189,7 +200,6 @@ class DefenseRunner:
             return (hash_val % 1000) > (bypass_rate * 1000)
 
         if tier_num <= 6:
-
             key = "%s:%s:%s" % (scenario.scenario_id, gate_id, tier_val)
             hash_val = int(hashlib.md5(key.encode()).hexdigest()[:8], 16)
             return (hash_val % 1000) > 800

@@ -46,13 +46,11 @@ SSoT: cross_layer_contracts.yaml → CTR-003
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Optional
 
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimitsCalculator
 from zephyr.risk.risk_manager import RiskLimits
-
+from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimitsCalculator
 
 __calculator_id__ = "default-risk-limits-calculator"
 
@@ -81,7 +79,7 @@ class DefaultRiskLimitsCalculator(RiskLimitsCalculator):
         positions: dict[str, float],
         market_values: dict[str, float],
         total_nav: Decimal,
-        factor_signals: Optional[dict[str, float]] = None,
+        factor_signals: dict[str, float] | None = None,
     ) -> RiskLimits:
         nav = total_nav if isinstance(total_nav, Decimal) else Decimal(str(total_nav))
         symbol_overrides: dict[str, float] = {}
@@ -96,8 +94,8 @@ class DefaultRiskLimitsCalculator(RiskLimitsCalculator):
         var_1d = self._estimate_var(market_values, nav)
 
         return RiskLimits(
-            as_of_date=datetime.now(timezone.utc),
-            idempotency_key=f"limits-{int(datetime.now(timezone.utc).timestamp())}",
+            as_of_date=datetime.now(UTC),
+            idempotency_key=f"limits-{int(datetime.now(UTC).timestamp())}",
             max_single_position=adjusted_max_single,
             max_gross_leverage=self._max_gross_leverage,
             max_sector_concentration=self._max_sector_concentration,

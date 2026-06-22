@@ -10,7 +10,8 @@
 Delegates to test_adversarial_ml.py for actual test logic.
 This file exists to match the session manifest path convention.
 """
-from .test_adversarial_ml import *  # noqa: F401,F403
-from .test_adversarial_ml import run_all_attacks  # noqa: F401
+
+from .test_adversarial_ml import *  # noqa: F403
+from .test_adversarial_ml import run_all_attacks
 
 __all__ = ["run_all_attacks"]

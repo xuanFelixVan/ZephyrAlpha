@@ -20,13 +20,14 @@
 # [TESTS] pytest tests/test_observability_tracing.py -q
 
 import pytest
+
+from zephyr.shared.shared_services.observability_02.logging import trace_id_var
 from zephyr.shared.shared_services.observability_02.tracing import (
+    _check_otel,
+    _NoopSpan,
     start_span,
     traced,
-    _NoopSpan,
-    _check_otel,
 )
-from zephyr.shared.shared_services.observability_02.logging import trace_id_var
 
 
 @pytest.fixture(autouse=True)
@@ -72,9 +73,8 @@ class TestStartSpan:
 
     def test_exception_in_span(self):
         trace_id_var.set("trace-123")
-        with pytest.raises(ValueError):
-            with start_span("fail_span") as span:
-                raise ValueError("test error")
+        with pytest.raises(ValueError), start_span("fail_span") as span:
+            raise ValueError("test error")
 
 
 class TestTracedDecorator:
@@ -82,18 +82,21 @@ class TestTracedDecorator:
         @traced("my_op")
         def my_function():
             return 42
+
         assert my_function.__name__ == "my_function"
 
     def test_function_still_works(self):
         @traced("my_op")
         def add(a, b):
             return a + b
+
         assert add(3, 4) == 7
 
     def test_default_span_name(self):
         @traced()
         def my_func():
             return 1
+
         assert my_func() == 1
 
 

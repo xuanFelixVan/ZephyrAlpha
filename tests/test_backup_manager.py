@@ -10,12 +10,11 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_backup_manager.py
 
-import pytest
 
 from zephyr.trading.orchestrator.backup_manager import (
+    RETENTION_POLICY,
     BackupManager,
     BackupRecord,
-    RETENTION_POLICY,
 )
 
 

@@ -36,7 +36,7 @@ warn_only: false
 import json as json_mod
 import sqlite3
 import sys
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -52,8 +52,8 @@ PHASES = {
     "C5_DEPOSIT": {"order": 5, "label": "知识沉淀"},
 }
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _get_conn() -> sqlite3.Connection:
@@ -153,12 +153,14 @@ def bottleneck_analysis() -> dict:
             "SELECT AVG(duration_ms) as avg_dur, COUNT(*) as cnt FROM traces WHERE phase=?",
             (phase,),
         ).fetchone()
-        bottlenecks.append({
-            "phase": phase,
-            "label": PHASES[phase]["label"],
-            "avg_duration_ms": round(row["avg_dur"] or 0, 2),
-            "count": row["cnt"],
-        })
+        bottlenecks.append(
+            {
+                "phase": phase,
+                "label": PHASES[phase]["label"],
+                "avg_duration_ms": round(row["avg_dur"] or 0, 2),
+                "count": row["cnt"],
+            }
+        )
 
     bottlenecks.sort(key=lambda x: x["avg_duration_ms"], reverse=True)
 
@@ -182,20 +184,26 @@ def main() -> None:
             print(json_mod.dumps(result, ensure_ascii=False, indent=2))
         else:
             status = "✅" if result["complete"] else "⚠️"
-            print(f"\n[TRACE] {status} {result['finding_id']}: {len(result['phases_completed'])}/{len(PHASES)} 阶段完成", file=sys.stderr)
+            print(
+                f"\n[TRACE] {status} {result['finding_id']}: {len(result['phases_completed'])}/{len(PHASES)} 阶段完成",
+                file=sys.stderr,
+            )
             for phase, info in result.get("phases", {}).items():
                 print(f"  ✅ {info['label']} ({info['duration_ms']:.0f}ms)", file=sys.stderr)
             for phase in result["phases_missing"]:
                 print(f"  ❌ {PHASES[phase]['label']} — 缺失", file=sys.stderr)
     elif "--overview" in sys.argv:
         result = overview()
-        print(f"\n[TRACE] C1→C5 链路健康总览", file=sys.stderr)
+        print("\n[TRACE] C1→C5 链路健康总览", file=sys.stderr)
         print(f"  总计: {result['total_traces']} traces, {result['completion_rate']}% 完成", file=sys.stderr)
         for phase, stats in result["phase_stats"].items():
-            print(f"  [{phase}] {PHASES[phase]['label']}: {stats['count']} traces, avg {stats['avg_duration_ms']}ms", file=sys.stderr)
+            print(
+                f"  [{phase}] {PHASES[phase]['label']}: {stats['count']} traces, avg {stats['avg_duration_ms']}ms",
+                file=sys.stderr,
+            )
     elif "--bottleneck" in sys.argv:
         result = bottleneck_analysis()
-        print(f"\n[TRACE] 链路瓶颈分析", file=sys.stderr)
+        print("\n[TRACE] 链路瓶颈分析", file=sys.stderr)
         print(f"  最大瓶颈: {result['worst_label']} ({result['worst_duration_ms']}ms)", file=sys.stderr)
         for b in result["all_phases"]:
             bar = "█" * min(int(b["avg_duration_ms"] / 10), 50)

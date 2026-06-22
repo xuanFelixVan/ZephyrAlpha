@@ -23,8 +23,8 @@ from __future__ import annotations
 
 """session_learner.py — 在线学习 (DD114, TASK-020)"""
 
-from dataclasses import dataclass, field
-from collections import Counter
+from dataclasses import dataclass
+
 
 @dataclass
 class LearningEvent:
@@ -33,8 +33,10 @@ class LearningEvent:
     success: bool
     timestamp: str
 
+
 class SessionLearner:
     """Per-session Reinforcement Learning: citation + outcome (DD114)."""
+
     def __init__(self) -> None:
         self._events: list[LearningEvent] = []
         self._ke_weights: dict[str, float] = {}

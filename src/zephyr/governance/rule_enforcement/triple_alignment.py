@@ -24,12 +24,10 @@ SSoT: MOD-INF-007 gate-engine
 Version: 0.1.0
 """
 
-
 from __future__ import annotations
 
-import re
-import ast
 import logging
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -87,7 +85,7 @@ class TripleAlignmentResult:
 def _load_yaml(path: Path) -> dict | list | None:
     if not path.exists():
         return None
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
@@ -149,11 +147,16 @@ def check_triple_alignment(
 
     bp_registry_data = _load_yaml(BLUEPRINT_REGISTRY)
     if not bp_registry_data or "blueprints" not in bp_registry_data:
-        result.add_violation(AlignmentViolation(
-            check="registry_load", severity=Severity.ERROR,
-            module_id="*", source="blueprint-registry.yaml",
-            expected="valid YAML", actual="load failed",
-        ))
+        result.add_violation(
+            AlignmentViolation(
+                check="registry_load",
+                severity=Severity.ERROR,
+                module_id="*",
+                source="blueprint-registry.yaml",
+                expected="valid YAML",
+                actual="load failed",
+            )
+        )
         return result
 
     dep_map_content = ""
@@ -199,18 +202,28 @@ def check_triple_alignment(
         dep_map_mid = mid in dep_map_modules
 
         if code_path and code_path.exists() and code_mid and code_mid != mid:
-            result.add_violation(AlignmentViolation(
-                check="module_id_code_vs_blueprint", severity=Severity.ERROR,
-                module_id=mid, source="code [BLUEPRINT] header",
-                expected=mid, actual=code_mid,
-            ))
+            result.add_violation(
+                AlignmentViolation(
+                    check="module_id_code_vs_blueprint",
+                    severity=Severity.ERROR,
+                    module_id=mid,
+                    source="code [BLUEPRINT] header",
+                    expected=mid,
+                    actual=code_mid,
+                )
+            )
 
         if not dep_map_mid:
-            result.add_violation(AlignmentViolation(
-                check="module_id_dep_map_missing", severity=Severity.WARN,
-                module_id=mid, source="system-dependency-map.md §5",
-                expected=mid, actual="NOT FOUND",
-            ))
+            result.add_violation(
+                AlignmentViolation(
+                    check="module_id_dep_map_missing",
+                    severity=Severity.WARN,
+                    module_id=mid,
+                    source="system-dependency-map.md §5",
+                    expected=mid,
+                    actual="NOT FOUND",
+                )
+            )
 
         # Check 2: 属性三方一致 (stability/safety/ai_autonomy)
         for attr in ("stability", "safety_level", "ai_autonomy"):
@@ -222,31 +235,45 @@ def check_triple_alignment(
 
             if bp_val and code_val and bp_val != code_val:
                 sev = Severity.ERROR if attr == "stability" else Severity.WARN
-                result.add_violation(AlignmentViolation(
-                    check=f"attr_{attr}_blueprint_vs_code", severity=sev,
-                    module_id=mid, source=f"blueprint frontmatter vs code [{header_key}]",
-                    expected=bp_val, actual=code_val,
-                ))
+                result.add_violation(
+                    AlignmentViolation(
+                        check=f"attr_{attr}_blueprint_vs_code",
+                        severity=sev,
+                        module_id=mid,
+                        source=f"blueprint frontmatter vs code [{header_key}]",
+                        expected=bp_val,
+                        actual=code_val,
+                    )
+                )
 
         # Check 3: construction_progress 与代码实际状态
         progress = bp.get("construction_progress", "")
         if progress in ("not_started", "") and code_path and code_path.exists():
             code_size = code_path.stat().st_size
             if code_size > 500:
-                result.add_violation(AlignmentViolation(
-                    check="construction_progress_stale", severity=Severity.ERROR,
-                    module_id=mid, source="blueprint-registry.yaml",
-                    expected="partially_implemented or implemented",
-                    actual=f"not_started (but code exists: {code_size} bytes)",
-                ))
+                result.add_violation(
+                    AlignmentViolation(
+                        check="construction_progress_stale",
+                        severity=Severity.ERROR,
+                        module_id=mid,
+                        source="blueprint-registry.yaml",
+                        expected="partially_implemented or implemented",
+                        actual=f"not_started (but code exists: {code_size} bytes)",
+                    )
+                )
 
         # Check 4: 蓝图文件路径存在性
         if bp_path_str and (not bp_path or not bp_path.exists()):
-            result.add_violation(AlignmentViolation(
-                check="blueprint_file_missing", severity=Severity.ERROR,
-                module_id=mid, source="blueprint-registry.yaml file_path",
-                expected=bp_path_str, actual="FILE NOT FOUND",
-            ))
+            result.add_violation(
+                AlignmentViolation(
+                    check="blueprint_file_missing",
+                    severity=Severity.ERROR,
+                    module_id=mid,
+                    source="blueprint-registry.yaml file_path",
+                    expected=bp_path_str,
+                    actual="FILE NOT FOUND",
+                )
+            )
 
         # Check 5: 代码文件/目录存在性（如果蓝图声明了 actual_disk_path）
         progress_val = bp.get("construction_progress", "")
@@ -257,22 +284,32 @@ def check_triple_alignment(
                 resolved = PROJECT_ROOT / p
                 if not resolved.exists():
                     sev = Severity.WARN if early_stage else Severity.ERROR
-                    result.add_violation(AlignmentViolation(
-                        check="code_path_missing", severity=sev,
-                        module_id=mid, source="blueprint actual_disk_path",
-                        expected=p, actual="PATH NOT FOUND",
-                    ))
+                    result.add_violation(
+                        AlignmentViolation(
+                            check="code_path_missing",
+                            severity=sev,
+                            module_id=mid,
+                            source="blueprint actual_disk_path",
+                            expected=p,
+                            actual="PATH NOT FOUND",
+                        )
+                    )
 
         # Check 6: 依赖图有模块但蓝图没有（孤儿节点）
     for dep_mid in dep_map_modules:
         if dep_mid.startswith("MOD-INF-") and dep_mid not in bp_entries:
             if specific_module and dep_mid != specific_module:
                 continue
-            result.add_violation(AlignmentViolation(
-                check="dep_map_orphan_module", severity=Severity.WARN,
-                module_id=dep_mid, source="system-dependency-map.md §5",
-                expected="in blueprint-registry.yaml", actual="NOT FOUND",
-            ))
+            result.add_violation(
+                AlignmentViolation(
+                    check="dep_map_orphan_module",
+                    severity=Severity.WARN,
+                    module_id=dep_mid,
+                    source="system-dependency-map.md §5",
+                    expected="in blueprint-registry.yaml",
+                    actual="NOT FOUND",
+                )
+            )
 
     if warn_only:
         result.passed = True
@@ -282,6 +319,7 @@ def check_triple_alignment(
 
 def main() -> None:
     import sys
+
     warn_only = "--warn-only" in sys.argv
     specific = None
     for arg in sys.argv[1:]:
@@ -292,7 +330,9 @@ def main() -> None:
     print(result.summary())
     for v in result.violations:
         icon = "🔴" if v.severity == Severity.ERROR else "🟡"
-        print(f"  {icon} [{v.check}] {v.module_id}: {v.detail or f'{v.source}: expected={v.expected}, actual={v.actual}'}")
+        print(
+            f"  {icon} [{v.check}] {v.module_id}: {v.detail or f'{v.source}: expected={v.expected}, actual={v.actual}'}"
+        )
 
     if not result.passed:
         sys.exit(1)

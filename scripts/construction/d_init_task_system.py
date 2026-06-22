@@ -9,19 +9,20 @@
 from __future__ import annotations
 
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
+
+from zephyr.integration.schema.schemas import TaskNamespace, TaskStatus
 
 from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.shared.shared_services.models import TaskCard
-from zephyr.integration.schema.schemas import TaskNamespace, TaskStatus
 
 init_db()
 repo = TaskRepository()
 
-now_dt = datetime.now(timezone.utc)
+now_dt = datetime.now(UTC)
 
 
 def make(cfg: dict) -> TaskCard:
@@ -77,10 +78,15 @@ def make(cfg: dict) -> TaskCard:
 specs = [
     # ====== P0: 任务聚合与视图（直接服务于 all-construction 工作流）====== #
     {
-        "task_id": "OPS-001", "namespace": TaskNamespace.OPS, "seq": 1,
+        "task_id": "OPS-001",
+        "namespace": TaskNamespace.OPS,
+        "seq": 1,
         "title": "[任务系统-聚合] 实现 task_repo.list_by_phase() 方法",
-        "status": TaskStatus.PENDING, "priority": "P0",
-        "phase": 2, "execution_model": "deepseek", "safety_level": "L",
+        "status": TaskStatus.PENDING,
+        "priority": "P0",
+        "phase": 2,
+        "execution_model": "deepseek",
+        "safety_level": "L",
         "source_blueprint": "MOD-INF-006",
         "source_section": "盲点#28 / §13.3",
         "description": (
@@ -96,17 +102,21 @@ specs = [
             "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-             "description": "新增 list_by_phase() 方法"},
+            {"path": "d:/ZephyrAlpha/src/zephyr/db/task_repo.py", "description": "新增 list_by_phase() 方法"},
         ],
         "directive": "TaskRepository.list_by_phase(phase: int) -> list[TaskCard]: SELECT FROM tasks WHERE phase=?",
         "tags": ["task-system", "aggregation", "dashboard"],
     },
     {
-        "task_id": "OPS-002", "namespace": TaskNamespace.OPS, "seq": 2,
+        "task_id": "OPS-002",
+        "namespace": TaskNamespace.OPS,
+        "seq": 2,
         "title": "[任务系统-聚合] 实现父子任务状态自动聚合逻辑",
-        "status": TaskStatus.PENDING, "priority": "P0",
-        "phase": 2, "execution_model": "deepseek", "safety_level": "L",
+        "status": TaskStatus.PENDING,
+        "priority": "P0",
+        "phase": 2,
+        "execution_model": "deepseek",
+        "safety_level": "L",
         "source_blueprint": "MOD-INF-006",
         "source_section": "盲点#1 / §3.2.3",
         "description": (
@@ -122,17 +132,24 @@ specs = [
             "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-             "description": "transition() 中添加 _derive_parent_status()"},
+            {
+                "path": "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
+                "description": "transition() 中添加 _derive_parent_status()",
+            },
         ],
         "directive": "transition() 末尾加 _derive_parent_status(new_status, child_task_id)，查询子任务聚合父任务",
         "tags": ["task-system", "aggregation", "parent-task"],
     },
     {
-        "task_id": "OPS-003", "namespace": TaskNamespace.OPS, "seq": 3,
+        "task_id": "OPS-003",
+        "namespace": TaskNamespace.OPS,
+        "seq": 3,
         "title": "[任务系统-聚合] 构建 CLI 全局任务摘要 zalpha task summary",
-        "status": TaskStatus.PENDING, "priority": "P0",
-        "phase": 2, "execution_model": "deepseek", "safety_level": "L",
+        "status": TaskStatus.PENDING,
+        "priority": "P0",
+        "phase": 2,
+        "execution_model": "deepseek",
+        "safety_level": "L",
         "source_blueprint": "MOD-INF-006",
         "source_section": "盲点#28 / §13.3",
         "description": (
@@ -154,17 +171,21 @@ specs = [
             "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/scripts/governance/task_summary.py",
-             "description": "zalpha task summary CLI"},
+            {"path": "d:/ZephyrAlpha/scripts/governance/task_summary.py", "description": "zalpha task summary CLI"},
         ],
         "directive": "创建 task_summary.py——读取SQLite tasks表，格式化输出全局摘要（epic/phase/status透视）",
         "tags": ["task-system", "aggregation", "CLI", "epic"],
     },
     {
-        "task_id": "OPS-004", "namespace": TaskNamespace.OPS, "seq": 4,
+        "task_id": "OPS-004",
+        "namespace": TaskNamespace.OPS,
+        "seq": 4,
         "title": "[任务系统-仪表盘] Dashboard task_progress 接入 SQLite 真数据",
-        "status": TaskStatus.PENDING, "priority": "P0",
-        "phase": 2, "execution_model": "deepseek", "safety_level": "L",
+        "status": TaskStatus.PENDING,
+        "priority": "P0",
+        "phase": 2,
+        "execution_model": "deepseek",
+        "safety_level": "L",
         "source_blueprint": "MOD-INF-006",
         "source_section": "盲点#28 / L08融合",
         "description": (
@@ -172,8 +193,7 @@ specs = [
             "OPS-001 补齐 repo 后，本任务接入真数据："
             "1. 确认 list_by_phase() 可用 2. 填充真数据 3. 输出 Phase 进度条"
         ),
-        "files_in_scope": [
-            "src/zephyr/frontend/dashboard/components/task_progress.py"],
+        "files_in_scope": ["src/zephyr/frontend/dashboard/components/task_progress.py"],
         "depends_on": ["OPS-001"],
         "estimate_hours": 1.0,
         "allowed_touch": [
@@ -185,18 +205,25 @@ specs = [
             "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/src/zephyr/frontend/dashboard/components/task_progress.py",
-             "description": "task_progress 接入真数据"},
+            {
+                "path": "d:/ZephyrAlpha/src/zephyr/frontend/dashboard/components/task_progress.py",
+                "description": "task_progress 接入真数据",
+            },
         ],
         "directive": "fetch_task_progress() 从桩→真：调用 task_repo.list_by_phase()，输出 Phase 进度条",
         "tags": ["task-system", "dashboard", "progress"],
     },
     # ====== P1: 基础设施补齐 ====== #
     {
-        "task_id": "OPS-005", "namespace": TaskNamespace.OPS, "seq": 5,
+        "task_id": "OPS-005",
+        "namespace": TaskNamespace.OPS,
+        "seq": 5,
         "title": "[任务系统-钩子] 实现 EventHook 声明式注册系统",
-        "status": TaskStatus.PENDING, "priority": "P1",
-        "phase": 2, "execution_model": "deepseek", "safety_level": "L",
+        "status": TaskStatus.PENDING,
+        "priority": "P1",
+        "phase": 2,
+        "execution_model": "deepseek",
+        "safety_level": "L",
         "source_blueprint": "MOD-INF-006",
         "source_section": "盲点#4 / §13.3",
         "description": (
@@ -219,10 +246,15 @@ specs = [
         "tags": ["task-system", "hooks", "event"],
     },
     {
-        "task_id": "OPS-006", "namespace": TaskNamespace.OPS, "seq": 6,
+        "task_id": "OPS-006",
+        "namespace": TaskNamespace.OPS,
+        "seq": 6,
         "title": "[任务系统-队列] 实现 ActiveTaskQueue 后台轮询器",
-        "status": TaskStatus.PENDING, "priority": "P1",
-        "phase": 2, "execution_model": "deepseek", "safety_level": "M",
+        "status": TaskStatus.PENDING,
+        "priority": "P1",
+        "phase": 2,
+        "execution_model": "deepseek",
+        "safety_level": "M",
         "source_blueprint": "MOD-INF-006",
         "source_section": "盲点#9 / §13.3",
         "description": (
@@ -239,18 +271,22 @@ specs = [
             "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/src/zephyr/orchestrator/task_queue.py",
-             "description": "ActiveTaskQueue"},
+            {"path": "d:/ZephyrAlpha/src/zephyr/orchestrator/task_queue.py", "description": "ActiveTaskQueue"},
         ],
         "directive": "ActiveTaskQueue — threading.Thread 定期 scan + dispatch，zalpha task queue start",
         "tags": ["task-system", "queue", "dispatch"],
         "idempotent": False,
     },
     {
-        "task_id": "OPS-007", "namespace": TaskNamespace.OPS, "seq": 7,
+        "task_id": "OPS-007",
+        "namespace": TaskNamespace.OPS,
+        "seq": 7,
         "title": "[任务系统-拆卡] 补齐 BlueprintDecomposer 通用格式支持",
-        "status": TaskStatus.PENDING, "priority": "P1",
-        "phase": 2, "execution_model": "deepseek", "safety_level": "L",
+        "status": TaskStatus.PENDING,
+        "priority": "P1",
+        "phase": 2,
+        "execution_model": "deepseek",
+        "safety_level": "L",
         "source_blueprint": "MOD-INF-006",
         "source_section": "对全蓝图的自动拆卡流水线",
         "description": (
@@ -265,18 +301,25 @@ specs = [
             "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/src/zephyr/core/blueprint_decomposer.py",
-             "description": "BlueprintDecomposer 通用格式"},
+            {
+                "path": "d:/ZephyrAlpha/src/zephyr/core/blueprint_decomposer.py",
+                "description": "BlueprintDecomposer 通用格式",
+            },
         ],
         "directive": "补齐后备模式+topology_sort+depends_on，写入 task_repo+.md",
         "tags": ["task-system", "decomposer", "CLI"],
     },
     # ====== P2: 系统健壮性 ====== #
     {
-        "task_id": "OPS-008", "namespace": TaskNamespace.OPS, "seq": 8,
+        "task_id": "OPS-008",
+        "namespace": TaskNamespace.OPS,
+        "seq": 8,
         "title": "[任务系统-治理] 补齐 FailurePatternMatcher 失败模式匹配引擎",
-        "status": TaskStatus.PENDING, "priority": "P2",
-        "phase": 3, "execution_model": "deepseek", "safety_level": "L",
+        "status": TaskStatus.PENDING,
+        "priority": "P2",
+        "phase": 3,
+        "execution_model": "deepseek",
+        "safety_level": "L",
         "source_blueprint": "MOD-INF-006",
         "source_section": "盲点#22 / §13.3",
         "description": (
@@ -293,23 +336,27 @@ specs = [
             "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/src/zephyr/orchestrator/failure_matcher.py",
-             "description": "FailurePatternMatcher"},
+            {
+                "path": "d:/ZephyrAlpha/src/zephyr/orchestrator/failure_matcher.py",
+                "description": "FailurePatternMatcher",
+            },
         ],
         "directive": "FailurePatternMatcher——模式匹配+纠正建议，通过 EventHook 订阅 FAILED",
         "tags": ["task-system", "failure-matcher", "governance"],
     },
     {
-        "task_id": "OPS-009", "namespace": TaskNamespace.OPS, "seq": 9,
+        "task_id": "OPS-009",
+        "namespace": TaskNamespace.OPS,
+        "seq": 9,
         "title": "[任务系统-诊断] 实现任务系统自身健康检查",
-        "status": TaskStatus.PENDING, "priority": "P2",
-        "phase": 3, "execution_model": "deepseek", "safety_level": "L",
+        "status": TaskStatus.PENDING,
+        "priority": "P2",
+        "phase": 3,
+        "execution_model": "deepseek",
+        "safety_level": "L",
         "source_blueprint": "MOD-INF-006",
         "source_section": "盲点#31 / §13.3",
-        "description": (
-            "盲点#31：SQLite完整性+Hook链+Schema版本自检。"
-            "zalpha task self-check [--repair]"
-        ),
+        "description": ("盲点#31：SQLite完整性+Hook链+Schema版本自检。zalpha task self-check [--repair]"),
         "files_in_scope": ["scripts/governance/"],
         "depends_on": ["OPS-005"],
         "estimate_hours": 1.0,
@@ -321,8 +368,7 @@ specs = [
             "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/scripts/governance/task_self_check.py",
-             "description": "任务系统健康检查"},
+            {"path": "d:/ZephyrAlpha/scripts/governance/task_self_check.py", "description": "任务系统健康检查"},
         ],
         "directive": "zalpha task self-check [--repair] — SQLite完整性+Hook链+Schema版本自检",
         "tags": ["task-system", "self-diagnosis", "governance"],

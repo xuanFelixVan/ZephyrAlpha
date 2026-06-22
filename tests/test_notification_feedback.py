@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_notification_feedback.py
 
-import pytest
 
 from zephyr.ops.collectors.notification_feedback import NotificationFeedback
 

@@ -13,7 +13,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -43,7 +43,6 @@ def _write_log_entries(log_path: Path, entries: list[dict]) -> None:
 
 
 class TestRollbackLoopDetectorInstantiation:
-
     def test_creates_with_defaults(self):
         d = RollbackLoopDetector()
         assert d._project_root is not None
@@ -62,7 +61,6 @@ class TestRollbackLoopDetectorInstantiation:
 
 
 class TestRecord:
-
     def test_record_creates_log(self, detector: RollbackLoopDetector, log_path: Path):
         detector.record("task-1", "gate-1", success=False)
         assert log_path.exists()
@@ -80,10 +78,17 @@ class TestRecord:
         assert len(lines) == 5
 
     def test_record_appends_to_existing(self, detector: RollbackLoopDetector, log_path: Path):
-        _write_log_entries(log_path, [
-            {"timestamp_utc": datetime.now(timezone.utc).isoformat(),
-             "task_id": "old-task", "gate_id": "old-gate", "success": True}
-        ])
+        _write_log_entries(
+            log_path,
+            [
+                {
+                    "timestamp_utc": datetime.now(UTC).isoformat(),
+                    "task_id": "old-task",
+                    "gate_id": "old-gate",
+                    "success": True,
+                }
+            ],
+        )
         detector.record("new-task", "new-gate")
         lines = log_path.read_text(encoding="utf-8").strip().split("\n")
         assert len(lines) == 2
@@ -96,7 +101,6 @@ class TestRecord:
 
 
 class TestCheck:
-
     def test_check_no_log(self, detector: RollbackLoopDetector):
         result = detector.check()
         assert isinstance(result, LoopDetectorResult)
@@ -131,21 +135,27 @@ class TestCheck:
         assert len(result.alerts) == 2
 
     def test_check_old_entries_ignored(self, detector: RollbackLoopDetector, log_path: Path):
-        old_ts = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
-        _write_log_entries(log_path, [
-            {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
-            {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
-            {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
-            {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
-        ])
+        old_ts = (datetime.now(UTC) - timedelta(hours=2)).isoformat()
+        _write_log_entries(
+            log_path,
+            [
+                {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
+                {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
+                {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
+                {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
+            ],
+        )
         result = detector.check()
         assert result.loop_detected is False
 
     def test_check_mixed_old_and_new(self, detector: RollbackLoopDetector, log_path: Path):
-        old_ts = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
-        _write_log_entries(log_path, [
-            {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
-        ])
+        old_ts = (datetime.now(UTC) - timedelta(hours=2)).isoformat()
+        _write_log_entries(
+            log_path,
+            [
+                {"timestamp_utc": old_ts, "task_id": "task-1", "gate_id": "gate-1", "success": False},
+            ],
+        )
         for _ in range(4):
             detector.record("task-1", "gate-1", success=False)
         result = detector.check()
@@ -163,7 +173,6 @@ class TestCheck:
 
 
 class TestIsBlocked:
-
     def test_not_blocked(self, detector: RollbackLoopDetector):
         assert detector.is_blocked("task-1", "gate-1") is False
 
@@ -182,7 +191,6 @@ class TestIsBlocked:
 
 
 class TestGetBlockedCombinations:
-
     def test_no_blocked(self, detector: RollbackLoopDetector):
         result = detector.get_blocked_combinations()
         assert result == {}

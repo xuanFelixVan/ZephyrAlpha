@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -108,13 +108,13 @@ class RawFileEntry(BaseModel):
 class ScanResult(BaseModel):
     scan_id: str = Field(description="扫描唯一标识 SCAN-YYYYMMDD-NNN")
     scanned_at: datetime = Field(default_factory=datetime.utcnow, description="扫描开始时间")
-    completed_at: Optional[datetime] = Field(default=None, description="扫描完成时间")
+    completed_at: datetime | None = Field(default=None, description="扫描完成时间")
     total_files: int = Field(description="扫描文件总数")
     total_size_bytes: int = Field(description="扫描总大小")
     scan_mode: str = Field(default="full", description="full / incremental")
     entries: list[RawFileEntry] = Field(default_factory=list, description="扫描条目")
     errors: list[str] = Field(default_factory=list, description="扫描错误列表")
-    duration_seconds: Optional[float] = Field(default=None, description="扫描耗时")
+    duration_seconds: float | None = Field(default=None, description="扫描耗时")
 
 
 class ClassifiedAsset(BaseModel):
@@ -130,7 +130,7 @@ class ClassifiedAsset(BaseModel):
     classification_confidence: float = Field(default=1.0, ge=0.0, le=1.0, description="分类置信度")
     tags: list[str] = Field(default_factory=list, description="语义标签")
     custom_metadata: dict[str, str] = Field(default_factory=dict, description="自定义键值对")
-    tags_last_updated: Optional[datetime] = Field(default=None, description="标签最近更新时间")
+    tags_last_updated: datetime | None = Field(default=None, description="标签最近更新时间")
 
 
 class ClassificationResult(BaseModel):
@@ -157,7 +157,7 @@ class RegistryEntry(BaseModel):
 class UnifiedAssetIndex(BaseModel):
     schema_version: str = Field(default="1.0.0", description="索引 Schema 版本")
     generated_at: datetime = Field(default_factory=datetime.utcnow, description="生成时间")
-    last_reconciliation_at: Optional[datetime] = Field(default=None, description="最近对账时间")
+    last_reconciliation_at: datetime | None = Field(default=None, description="最近对账时间")
     total_assets: int = Field(description="资产总数")
     health_score: str = Field(default="N/A", description="健康评分 A/B/C/D/F")
     health_score_numeric: float = Field(default=0.0, ge=0.0, le=100.0, description="健康评分 0-100")
@@ -176,8 +176,8 @@ class GhostEntry(BaseModel):
     registry_id: str = Field(description="注册表 ID")
     registry_path: str = Field(description="注册表中记录的路径")
     registered_type: AssetType = Field(description="注册表中声明的类型")
-    cached_sha256: Optional[str] = Field(default=None, description="上次索引中缓存的 SHA-256")
-    last_known_mtime: Optional[datetime] = Field(default=None, description="最近已知的修改时间")
+    cached_sha256: str | None = Field(default=None, description="上次索引中缓存的 SHA-256")
+    last_known_mtime: datetime | None = Field(default=None, description="最近已知的修改时间")
     ghost_since: datetime = Field(default_factory=datetime.utcnow, description="首次检测为幽灵的时间")
     days_ghost: float = Field(default=0.0, description="幽灵天数")
     candidates_for_cleanup: bool = Field(default=False, description="是否建议清理（>30d）")
@@ -188,10 +188,10 @@ class DriftEntry(BaseModel):
     registered_sha256: str = Field(description="索引中记录的 SHA-256")
     disk_sha256: str = Field(description="磁盘上的实际 SHA-256")
     drift_types: list[DriftType] = Field(default_factory=list, description="漂移类型列表")
-    registered_size: Optional[int] = Field(default=None)
-    disk_size: Optional[int] = Field(default=None)
-    registered_mtime: Optional[datetime] = Field(default=None)
-    disk_mtime: Optional[datetime] = Field(default=None)
+    registered_size: int | None = Field(default=None)
+    disk_size: int | None = Field(default=None)
+    registered_mtime: datetime | None = Field(default=None)
+    disk_mtime: datetime | None = Field(default=None)
     detected_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -236,7 +236,7 @@ class DashboardData(BaseModel):
     alerts: list[str] = Field(default_factory=list, description="告警信息")
     trend_orphan: list[float] = Field(default_factory=list, description="孤儿率趋势")
     trend_health: list[float] = Field(default_factory=list, description="健康评分趋势")
-    last_reconciliation: Optional[str] = Field(default=None, description="最近对账 ISO 时间戳")
+    last_reconciliation: str | None = Field(default=None, description="最近对账 ISO 时间戳")
 
 
 class HealthScore(BaseModel):
@@ -264,24 +264,24 @@ class AssetLifecycleEvent(BaseModel):
 
 
 __all__ = [
-    "RawFileEntry",
-    "ScanResult",
-    "ClassifiedAsset",
-    "ClassificationResult",
-    "RegistryEntry",
-    "UnifiedAssetIndex",
-    "GhostEntry",
-    "DriftEntry",
-    "RenameEvent",
-    "ReconciliationReport",
-    "DashboardData",
-    "HealthScore",
-    "AssetLifecycleEvent",
-    "AssetType",
     "AssetLayer",
+    "AssetLifecycleEvent",
     "AssetStatus",
-    "Priority",
+    "AssetType",
+    "ClassificationResult",
+    "ClassifiedAsset",
+    "DashboardData",
+    "DriftEntry",
     "DriftType",
-    "ReconStatus",
+    "GhostEntry",
     "HealthGrade",
+    "HealthScore",
+    "Priority",
+    "RawFileEntry",
+    "ReconStatus",
+    "ReconciliationReport",
+    "RegistryEntry",
+    "RenameEvent",
+    "ScanResult",
+    "UnifiedAssetIndex",
 ]

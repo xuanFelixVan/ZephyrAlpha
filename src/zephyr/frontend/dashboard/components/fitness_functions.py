@@ -25,11 +25,10 @@ FitnessFunctionsComponent · Fitness Functions（5 类度量仪表盘）
 ===============================================================
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from zephyr.ops.fitness_functions import (
     FitnessFunctionFramework,

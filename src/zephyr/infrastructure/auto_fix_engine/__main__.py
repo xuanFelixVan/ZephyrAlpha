@@ -29,6 +29,7 @@ from typing import Any
 
 def _get_engine() -> Any:
     from zephyr.infrastructure.auto_fix_engine.engine import AutoFixEngine
+
     return AutoFixEngine()
 
 

@@ -72,12 +72,14 @@ class ConfigHotReloadGuard:
         now = time.time()
 
         if self.cycle_active and new_hash != self.current_config_hash:
-            self.change_events.append({
-                "ts": now,
-                "type": ConfigConsistency.MID_CYCLE_CHANGE.value,
-                "old_hash": self.current_config_hash[:12],
-                "new_hash": new_hash[:12],
-            })
+            self.change_events.append(
+                {
+                    "ts": now,
+                    "type": ConfigConsistency.MID_CYCLE_CHANGE.value,
+                    "old_hash": self.current_config_hash[:12],
+                    "new_hash": new_hash[:12],
+                }
+            )
             return {
                 "consistency": ConfigConsistency.MID_CYCLE_CHANGE.value,
                 "action": "defer_to_cycle_boundary",
@@ -106,24 +108,20 @@ class ConfigHotReloadGuard:
             "acked_at": now,
         }
 
-        consistent = all(
-            ack["hash"] == self.current_config_hash
-            for ack in self.consumer_acks.values()
-        )
+        consistent = all(ack["hash"] == self.current_config_hash for ack in self.consumer_acks.values())
 
-        missing = [
-            name for name in self.mandatory_consumers
-            if name not in self.consumer_acks
-        ]
+        missing = [name for name in self.mandatory_consumers if name not in self.consumer_acks]
 
         if not consistent:
-            self.change_events.append({
-                "ts": now,
-                "type": ConfigConsistency.CONFLICT.value,
-                "consumer": consumer_name,
-                "expected": self.current_config_hash[:12],
-                "received": config_hash[:12],
-            })
+            self.change_events.append(
+                {
+                    "ts": now,
+                    "type": ConfigConsistency.CONFLICT.value,
+                    "consumer": consumer_name,
+                    "expected": self.current_config_hash[:12],
+                    "received": config_hash[:12],
+                }
+            )
             return {
                 "consistency": ConfigConsistency.CONFLICT.value,
                 "consumer": consumer_name,
@@ -166,8 +164,8 @@ class ConfigHotReloadGuard:
         if mandatory == 0:
             return 1.0
         acked = sum(
-            1 for name in self.mandatory_consumers
-            if name in self.consumer_acks
-            and self.consumer_acks[name]["hash"] == self.current_config_hash
+            1
+            for name in self.mandatory_consumers
+            if name in self.consumer_acks and self.consumer_acks[name]["hash"] == self.current_config_hash
         )
         return round(acked / mandatory, 3)

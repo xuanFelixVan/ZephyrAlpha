@@ -14,8 +14,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.intelligence.model_profiling.provider_data import DEFAULT_PROVIDERS, _RAW_TIER_MAP
-
+from zephyr.intelligence.model_profiling.provider_data import _RAW_TIER_MAP, DEFAULT_PROVIDERS
 
 EXPECTED_PROVIDERS = {"zhipu", "deepseek", "openai_azure", "anthropic"}
 REQUIRED_PROVIDER_KEYS = {"cc", "price_per_1k_input", "price_per_1k_output"}
@@ -23,7 +22,6 @@ EXPECTED_TIERS = {"ECONOMY", "STANDARD", "PREMIUM"}
 
 
 class TestDefaultProviders:
-
     def test_has_four_providers(self):
         assert set(DEFAULT_PROVIDERS.keys()) == EXPECTED_PROVIDERS
 
@@ -59,7 +57,6 @@ class TestDefaultProviders:
 
 
 class TestRawTierMap:
-
     def test_has_three_tiers(self):
         assert set(_RAW_TIER_MAP.keys()) == EXPECTED_TIERS
 
@@ -82,7 +79,6 @@ class TestRawTierMap:
 
 
 class TestTierModelMapLazyImport:
-
     def test_tier_model_map_accessible(self):
         budget_models = pytest.importorskip("zephyr.infrastructure.budget_enforcement.budget_models")
         from zephyr.intelligence.model_profiling.provider_data import TIER_MODEL_MAP
@@ -94,7 +90,6 @@ class TestTierModelMapLazyImport:
 
 
 class TestBoundaryConditions:
-
     def test_empty_provider_dict_handling(self):
         empty: dict[str, dict[str, str | float | list[str]]] = {}
         assert len(empty) == 0

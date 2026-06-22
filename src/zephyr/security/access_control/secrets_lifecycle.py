@@ -5,13 +5,17 @@ REVOKE_TIMEOUT_SECONDS = None  # stub constant
 ROTATION_DAYS = None  # stub constant
 SECRET_MIN_BITS = None  # stub constant
 
+
 class SecretStage:
     """Stub class — implementation pending."""
+
     pass
+
 
 def auto_clean_build(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'auto_clean_build not implemented')
+    raise NotImplementedError("auto_clean_build not implemented")
+
 
 __all__ = [
     "REVOKE_TIMEOUT_SECONDS",

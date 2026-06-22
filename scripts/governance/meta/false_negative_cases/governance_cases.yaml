@@ -8,7 +8,7 @@
 module_id: MOD-INF-005
 cases:
   - case_id: "FN-GOV-001"
-    description: "RULE-* 条目未在 rule-registry.md 登记"
+    description: "RULE-* 条目未在 _index.yaml 登记"
     expected_detection: "governance"
     severity: "high"
     input_file: "test_fixtures/fn_gov_001.py"

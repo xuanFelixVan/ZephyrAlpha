@@ -10,9 +10,7 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_event_store.py -q
 
-import json
 
-import pytest
 from zephyr.infrastructure.event_store import (
     EVENT_STORE_SCHEMA,
     EventLevel,
@@ -114,10 +112,7 @@ class TestEventStore:
     def test_record_batch(self, tmp_path):
         db = tmp_path / "test_events.db"
         store = EventStore(db_path=str(db))
-        events = [
-            StoredEvent(event_id=f"EVT-B{i}", component="batch", event_type="test")
-            for i in range(5)
-        ]
+        events = [StoredEvent(event_id=f"EVT-B{i}", component="batch", event_type="test") for i in range(5)]
         count = store.record_batch(events)
         assert count == 5
         results = store.query(component="batch")

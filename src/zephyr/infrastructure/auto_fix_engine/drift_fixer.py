@@ -64,11 +64,13 @@ class DriftFixer(BaseFixer):
                     continue
                 for v in version_matches:
                     if v.startswith("0."):
-                        findings.append({
-                            "file": str(config_file),
-                            "version": v,
-                            "type": "pre_release_version",
-                        })
+                        findings.append(
+                            {
+                                "file": str(config_file),
+                                "version": v,
+                                "type": "pre_release_version",
+                            }
+                        )
             except Exception:
                 continue
         return findings
@@ -119,6 +121,7 @@ class DriftFixer(BaseFixer):
 
     def _fix_stale_timestamps(self, content: str, fixes: list[str]) -> str:
         from datetime import UTC, datetime
+
         now_str = datetime.now(UTC).strftime("%Y-%m-%d")
         pattern = r'last_updated:\s*["\']?\d{4}-\d{2}-\d{2}["\']?'
         matches = list(re.finditer(pattern, content))
@@ -154,6 +157,7 @@ class DriftFixer(BaseFixer):
         try:
             content = target_path.read_text(encoding="utf-8")
             import yaml
+
             yaml.safe_load(content)
             return ValidationResult(valid=True, check_name="drift_fix", evidence="YAML parseable")
         except yaml.YAMLError as exc:

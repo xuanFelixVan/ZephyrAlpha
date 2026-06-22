@@ -5,17 +5,14 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-import pytest
 
 from zephyr.security.llm_defense.llm_security.patterns.injection_patterns import (
     PRECOMPILED_DIRECT,
+    PRECOMPILED_ENCODING,
     PRECOMPILED_JAILBREAK,
-    PRECOMPILED_NESTED,
     PRECOMPILED_SEMANTIC,
     PRECOMPILED_SHELL,
     PRECOMPILED_SQL,
-    PRECOMPILED_PATH,
-    PRECOMPILED_ENCODING,
     check_file_type,
     scan_direct,
     scan_encoding_escape,

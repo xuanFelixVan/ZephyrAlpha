@@ -12,11 +12,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-
-import pytest
+from unittest.mock import MagicMock, patch
 
 from zephyr.governance.rollback_target_staleness import (
     RollbackTargetStaleness,
@@ -42,7 +40,7 @@ class TestInstantiation:
 class TestCheckFreshCommit:
     def test_fresh_commit_not_stale(self):
         checker = RollbackTargetStaleness(project_root=Path.cwd())
-        recent_date = datetime.now(timezone.utc) - timedelta(days=5)
+        recent_date = datetime.now(UTC) - timedelta(days=5)
         with patch.object(checker, "_get_commit_date", return_value=recent_date):
             result = checker.check("abc1234")
         assert result.is_stale is False
@@ -52,7 +50,7 @@ class TestCheckFreshCommit:
 
     def test_just_under_30_days_not_stale(self):
         checker = RollbackTargetStaleness(project_root=Path.cwd())
-        just_under = datetime.now(timezone.utc) - timedelta(days=29, hours=23)
+        just_under = datetime.now(UTC) - timedelta(days=29, hours=23)
         with patch.object(checker, "_get_commit_date", return_value=just_under):
             result = checker.check("abc1234")
         assert result.is_stale is False
@@ -62,7 +60,7 @@ class TestCheckFreshCommit:
 class TestCheckStaleCommit:
     def test_stale_commit_triggers_exit_42(self):
         checker = RollbackTargetStaleness(project_root=Path.cwd())
-        old_date = datetime.now(timezone.utc) - timedelta(days=60)
+        old_date = datetime.now(UTC) - timedelta(days=60)
         with patch.object(checker, "_get_commit_date", return_value=old_date):
             result = checker.check("deadbeef")
         assert result.is_stale is True
@@ -105,7 +103,9 @@ class TestGetCommitDate:
 
     def test_git_exception_returns_none(self):
         checker = RollbackTargetStaleness(project_root=Path.cwd())
-        with patch("zephyr.infrastructure.rollback.rollback_target_staleness.subprocess.run", side_effect=Exception("no git")):
+        with patch(
+            "zephyr.infrastructure.rollback.rollback_target_staleness.subprocess.run", side_effect=Exception("no git")
+        ):
             dt = checker._get_commit_date("abc")
         assert dt is None
 

@@ -40,15 +40,14 @@ Phase B 骨架——定义风控层的公共接口。
 SSoT: cross_layer_contracts.yaml v3.0
 """
 
-
 from __future__ import annotations
 
 import abc
 from decimal import Decimal
-from typing import ClassVar, Dict, List, Optional
+from typing import ClassVar
 
-from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
 from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
 
@@ -69,7 +68,8 @@ class RiskManagerBase(abc.ABC):
       - generate_limits(): 产出当期 RiskLimits
       - idempotency_key（INV-007）：所有的风控检查操作必须关联幂等键
     """
-    _registry: ClassVar[dict[str, type["RiskManagerBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[RiskManagerBase]]] = {}
 
     @abc.abstractmethod
     def validate_position(
@@ -84,10 +84,10 @@ class RiskManagerBase(abc.ABC):
     @abc.abstractmethod
     def check_portfolio(
         self,
-        holdings: Dict[str, Decimal],
-        market_values: Dict[str, Decimal],
+        holdings: dict[str, Decimal],
+        market_values: dict[str, Decimal],
         limits: RiskLimits,
-    ) -> List[str]:
+    ) -> list[str]:
         """全组合范围风控检查。返回违规项列表，空列表 = 全合规。"""
         ...
 
@@ -96,17 +96,15 @@ class RiskManagerBase(abc.ABC):
         """产出当期 RiskLimits。"""
         ...
 
-    def snapshot(self, portfolio_id: str) -> Optional[RiskDashboardSnapshot]:
+    def snapshot(self, portfolio_id: str) -> RiskDashboardSnapshot | None:
         """（可覆盖）产出风险仪表板快照。"""
-        raise NotImplementedError(
-            "snapshot() 需要子类实现——风控度量基础设施就绪后方可激活"
-        )
+        raise NotImplementedError("snapshot() 需要子类实现——风控度量基础设施就绪后方可激活")
 
 
 __all__ = [
-    "RiskLimits",
-    "RiskLimitViolationError",
     "RiskDashboardSnapshot",
-    "RiskMetricsReport",
+    "RiskLimitViolationError",
+    "RiskLimits",
     "RiskManagerBase",
+    "RiskMetricsReport",
 ]

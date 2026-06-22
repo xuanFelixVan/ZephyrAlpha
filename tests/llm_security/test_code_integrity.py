@@ -6,17 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 import os
-import tempfile
 from pathlib import Path
-
-import pytest
 
 from zephyr.security.llm_defense.llm_security.self_protection.code_integrity import (
     CodeIntegrityGuard,
-    FileIntegrityRecord,
     IntegrityStatus,
 )
-
 
 PROJECT_ROOT = str(Path(__file__).resolve().parents[2])
 

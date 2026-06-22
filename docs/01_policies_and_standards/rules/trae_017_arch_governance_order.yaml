@@ -1,10 +1,21 @@
 rule_id: TRAE-017
 title: 架构约束-治理顺序
+version: 1.1.0
+layer: L1
+module_id: TRAE-017
+depends_on:
+- TRAE-016
+tags:
+- TRAE
+- architecture_governance_order
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - ARCH-025
 - ARCH-026
 - ARCH-027
-layer: L1
 severity: error
 scope: architecture_governance_order
 domain: TRAE
@@ -81,7 +92,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: "1.1.0"
     date: "2026-06-19"

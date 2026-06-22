@@ -14,12 +14,10 @@ Fixture 清单:
   - rbac_roles_path: 测试用 rbac_roles.yaml 路径
 """
 
-import pytest
-import tempfile
 from pathlib import Path
 
+import pytest
 import yaml
-
 
 TEST_SESSION_ID = "session-test-20260507-001"
 

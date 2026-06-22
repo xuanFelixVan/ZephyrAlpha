@@ -28,7 +28,7 @@ operations:
     input: "task_id: str"
     output: "TaskCard | None"
     filter: "is_deleted = 0（自动过滤软删除行）"
-    
+
   transition:
     input: "task_id + to_status: TaskStatus + session_id?"
     output: "TaskCard"

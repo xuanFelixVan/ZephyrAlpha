@@ -11,6 +11,7 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import time
@@ -18,7 +19,8 @@ import time
 import pytest
 
 try:
-    from zephyr.security.access_control.observability import ObservabilityReporter, MetricEntry, AnomalyResult
+    from zephyr.security.access_control.observability import AnomalyResult, MetricEntry, ObservabilityReporter
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as e:
@@ -28,7 +30,6 @@ except Exception as e:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestMetricEntry:
-
     def test_default_values(self):
         m = MetricEntry(metric="test", value=1.0)
         assert m.metric == "test"
@@ -39,7 +40,6 @@ class TestMetricEntry:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestAnomalyResult:
-
     def test_default_no_anomaly(self):
         r = AnomalyResult()
         assert r.anomaly is False
@@ -49,7 +49,6 @@ class TestAnomalyResult:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestObservabilityReporterDecisionTracking:
-
     def test_record_decision(self):
         rep = ObservabilityReporter()
         rep.record_decision(agent_id="a1", level="L1", decision="ALLOWED")
@@ -99,7 +98,6 @@ class TestObservabilityReporterDecisionTracking:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestObservabilityReporterAnomalyDetection:
-
     def test_detect_density_anomaly_triggered(self):
         rep = ObservabilityReporter()
         result = rep.detect_density_anomaly(agent_id="a1", operations_in_window=100, threshold_per_minute=60)
@@ -157,7 +155,6 @@ class TestObservabilityReporterAnomalyDetection:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestObservabilityReporterIntegrity:
-
     def test_verify_metric_integrity_initial(self):
         rep = ObservabilityReporter()
         assert rep.verify_metric_integrity() is True

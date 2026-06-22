@@ -13,9 +13,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +79,7 @@ TCO_MODEL: dict[str, BudgetColumn] = {
 }
 
 
-def get_column(name: str) -> Optional[BudgetColumn]:
+def get_column(name: str) -> BudgetColumn | None:
     return TCO_MODEL.get(name)
 
 

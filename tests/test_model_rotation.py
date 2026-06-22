@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_model_rotation.py
 
-import pytest
 
 from zephyr.ops.diagnosers.model_rotation import ModelRotation
 

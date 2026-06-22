@@ -24,6 +24,7 @@ from pathlib import Path
 
 DB_PATH = Path(__file__).resolve().parents[3] / "data" / "databases" / "governance.db"
 
+
 def main() -> int:
     if not DB_PATH.exists():
         print(f"[ERROR] DB 不存在: {DB_PATH}")
@@ -66,16 +67,17 @@ def main() -> int:
         "WHERE tags LIKE '%auto-bridged%' "
         "AND status = 'PENDING' "
         "AND is_deleted = 0",
-        (now,)
+        (now,),
     ).rowcount
 
     conn.commit()
     conn.close()
 
-    print(f"\n已完成:")
+    print("\n已完成:")
     print(f"  P0→P1 降级: {downgraded}")
     print(f"  PENDING→COMPLETED: {closed}")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

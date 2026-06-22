@@ -39,7 +39,6 @@ v0.2.0: EventBus + ContractBus 桥接
   - 严重水位 (> 2× threshold) → 丢弃低优先级事件
 """
 
-
 import logging
 import threading
 import time

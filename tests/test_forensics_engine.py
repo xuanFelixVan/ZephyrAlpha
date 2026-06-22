@@ -14,9 +14,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime, timezone
-
-import pytest
+from datetime import UTC, datetime
 
 from zephyr.behavioral_audit.forensics_engine import (
     FORENSICS_CONFIG,
@@ -32,7 +30,7 @@ from zephyr.behavioral_audit.forensics_engine import (
 
 class TestForensicsTimelineEntryInstantiation:
     def test_all_fields(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         entry = ForensicsTimelineEntry(
             timestamp=now,
             action="modify",
@@ -51,7 +49,7 @@ class TestForensicsTimelineEntryInstantiation:
         assert entry.diff_summary == "+1 -0"
 
     def test_different_action_types(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         for action in ("create", "modify", "delete", "rename"):
             entry = ForensicsTimelineEntry(
                 timestamp=now,
@@ -107,7 +105,7 @@ class TestForensicsReportInstantiation:
         assert report.generated_at.tzinfo is not None
 
     def test_with_timeline_entries(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         entry = ForensicsTimelineEntry(
             timestamp=now,
             action="modify",
@@ -314,14 +312,14 @@ class TestSerializeReport:
         output_dir = str(tmp_path / "forensics_output")
         path = serialize_report(report, output_dir)
         assert os.path.exists(path)
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["report_id"] == "fr-001"
         assert data["severity"] == "MAJOR"
 
     def test_serialize_with_timeline(self, tmp_path):
         entry = ForensicsTimelineEntry(
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             action="modify",
             actor="system",
             state_before="CLEAN",
@@ -343,7 +341,7 @@ class TestSerializeReport:
         )
         output_dir = str(tmp_path / "forensics_output2")
         path = serialize_report(report, output_dir)
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert len(data["timeline"]) == 1
         assert data["timeline"][0]["action"] == "modify"
@@ -397,7 +395,7 @@ class TestSerializeReport:
         )
         output_dir = str(tmp_path / "forensics_output5")
         path = serialize_report(report, output_dir)
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["report_id"] == "fr-005"
         assert data["drift_event_id"] == "de-005"

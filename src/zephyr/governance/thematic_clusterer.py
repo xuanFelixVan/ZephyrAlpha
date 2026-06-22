@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 
+
 class ThematicClusterer:
     """重复组主题聚类——将50组重复归约到3-5个主题."""
 

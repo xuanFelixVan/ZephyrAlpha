@@ -9,16 +9,16 @@ meta:
   module_id: MOD-INF-016
   version: 0.14.0
   subsystems:
-    shared: 跨层共享基础设施——数据契�?Task基座+事件总线+韧�?工具�?生产基础设施
+    shared: 跨层共享基础设施——数据契?Task基座+事件总线+韧?工具?生产基础设施
     core: 核心运行时——BlueprintDecomposer+TaskCard数据模型
-    agent_rbac: 七层纵深防御权限系统——AgentIdentity+Maturity+七层PermissionGuard（施工中�?
-    audit_trail: 不可变审计追踪链——JSONL SSoT + 哈希�?+ HMAC + Ed25519 Agent签名 + CoT推理�?+ 漂移检�?
-      + 三角闭环（施工中�?
+    agent_rbac: 七层纵深防御权限系统——AgentIdentity+Maturity+七层PermissionGuard（施工中
+    audit_trail: 不可变审计追踪链——JSONL SSoT + 哈希?+ HMAC + Ed25519 Agent签名 + CoT推理?+ 漂移检
+      + 三角闭环（施工中
   file_count: 74
   consumer_count: 98
 foundation:
   data_contracts:
-    description: 跨层数据契约 CTR-001~006——承重墙，禁止在模块内自造等价类�?
+    description: 跨层数据契约 CTR-001~006——承重墙，禁止在模块内自造等价类
     files:
     - module: shared.schema.schemas
       path: src/zephyr/shared/schema/schemas.py
@@ -26,7 +26,7 @@ foundation:
       - symbol: Task
         kind: '[contract]'
         usage: from zephyr.shared.schema.schemas import Task
-        note: '31字段 Pydantic V2: 28业务 + 3 DB追踪。TaskCard 基座。禁止绕�?Task 直接操作 DB�?
+        note: '31字段 Pydantic V2: 28业务 + 3 DB追踪。TaskCard 基座。禁止绕?Task 直接操作 DB'
       - symbol: TaskStatus
         kind: '[contract]'
         usage: from zephyr.shared.schema.schemas import TaskStatus
@@ -36,10 +36,10 @@ foundation:
         note: 任务命名空间枚举
       - symbol: Priority
         kind: '[contract]'
-        note: P0(紧�?/P1(�?/P2(�?/P3(�?/P4(锦上添花)
+        note: P0(紧?/P1(?/P2(?/P3(?/P4(锦上添花)
       - symbol: SafetyLevel
         kind: '[contract]'
-        note: L(�?/M(�?/H(�?
+        note: L(?/M(?/H(
       - symbol: ExecutionModel
         kind: '[contract]'
         note: 执行模型配置
@@ -56,22 +56,22 @@ foundation:
         kind: '[contract]'
         note: 门禁级别
       anti_patterns:
-      - 在模块内自定�?Task 等价类——必须导�?schemas.Task
+      - 在模块内自定?Task 等价类——必须导?schemas.Task
       - 直接操作 SQLite 而不通过 TaskCard/BaseModel——打破抽象层
       - 修改 Task 字段而不更新 consumers + 契约测试 + 蓝图
   error_hierarchy:
-    description: 统一异常层次——ZephyrBaseError + 12 子类。所有模�?catch/throw 的唯一�?
+    description: 统一异常层次——ZephyrBaseError + 12 子类。所有模?catch/throw 的唯一
     file: src/zephyr/shared/errors.py
     entry_point: from zephyr.shared.errors import ZephyrBaseError, TaskError, ...
     error_classes:
     - name: ZephyrBaseError
       parents:
       - Exception
-      note: 所有业务异常的根。携�?message + details(dict)
+      note: 所有业务异常的根。携?message + details(dict)
     - name: ConfigError
       note: '配置系统: YAML解析失败/Schema校验失败'
     - name: ContractError
-      note: '数据契约: 跨层不匹�?版本冲突'
+      note: '数据契约: 跨层不匹?版本冲突'
     - name: SecurityError
       note: '安全: 权限拒绝/Token无效'
     - name: ValidationError
@@ -81,25 +81,25 @@ foundation:
     - name: PipelineError
       note: '管线: 装配失败/步骤异常'
     - name: GateError
-      note: '门禁: 判决异常/熔断器触�?
+      note: '门禁: 判决异常/熔断器触'
     - name: EscalationError
-      note: '升级协议: 升级判定异常/委托死锁/循环委托/SLA超时/置信度异�?(MOD-INF-022)'
+      note: '升级协议: 升级判定异常/委托死锁/循环委托/SLA超时/置信度异?(MOD-INF-022)'
     - name: ContextError
-      note: '上下文引�? build(Hybrid Dense+Sparse+RRF)/compress(Qwen2.5-3B+Externalize+Evict+Queue)/validate(LSG+Hash+PrivacyScrub+ThreatModel)/inject(XML分层+双锚+Deterministic)/ops(lifecycle
-        disaster-recovery chaos-test config-hot-reload) 全链路异常—�?8项盲点九轮审计全覆盖'
+      note: '上下文引? build(Hybrid Dense+Sparse+RRF)/compress(Qwen2.5-3B+Externalize+Evict+Queue)/validate(LSG+Hash+PrivacyScrub+ThreatModel)/inject(XML分层+双锚+Deterministic)/ops(lifecycle
+        disaster-recovery chaos-test config-hot-reload) 全链路异常—?8项盲点九轮审计全覆盖'
     - name: FeedbackError
-      note: '反馈循环: 自进化异�?metrics失败'
+      note: '反馈循环: 自进化异?metrics失败'
     - name: DataError
-      note: '数据�? DB连接失败/迁移失败'
+      note: '数据? DB连接失败/迁移失败'
     - name: IOError
-      note: 'I/O: 文件读写失败/路径不存�?
+      note: 'I/O: 文件读写失败/路径不存'
     - name: UnimplementedError
       note: '施工占位: 标记已规划未实现功能'
     anti_patterns:
-    - 在模块内自定�?Exception 基类——必须从 ZephyrBaseError 继承
-    - catch 时从抽象到具体——应�?catch TaskError �?catch ZephyrBaseError 反了
+    - 在模块内自定?Exception 基类——必须从 ZephyrBaseError 继承
+    - catch 时从抽象到具体——应?catch TaskError ?catch ZephyrBaseError 反了
   type_aliases:
-    description: 13 语义类型别名（NewType）——增强类型安�?+ AI 消费语义
+    description: 13 语义类型别名（NewType）——增强类型安?+ AI 消费语义
     file: src/zephyr/shared/types.py
     entry_point: from zephyr.shared.types import TaskId, ModuleId, SessionId, ...
     aliases:
@@ -130,11 +130,11 @@ foundation:
     - symbol: SSoT_Key
       base: str
     anti_patterns:
-    - 函数签名用裸 str 而非 TaskId——丢失语义信�?
+    - 函数签名用裸 str 而非 TaskId——丢失语义信
   constants:
     description: 22 共享枚举集中 re-export——从 schemas/observer/contracts 聚合
     file: src/zephyr/shared/constants.py
-    note: 新模块需要的枚举应先查此文件是否已有——避免重复定�?
+    note: 新模块需要的枚举应先查此文件是否已有——避免重复定
 utilities:
   paths:
     description: 项目路径常量 SSoT——REPO_ROOT/DB_PATH 等的唯一真源
@@ -142,19 +142,19 @@ utilities:
     key_exports:
     - symbol: REPO_ROOT
       type: Path
-      note: 项目根目录绝对路�?
+      note: 项目根目录绝对路
     - symbol: DB_PATH
       type: Path
-      note: data/databases/governance.db
+      note: data/zalpha_metadata.db
     - symbol: find_repo_root
       type: () -> Path
       note: 健壮的根目录定位函数
     anti_patterns:
-    - �?Path(__file__).parents[N] 自己算——必须从 paths.py 导入
+    - ?Path(__file__).parents[N] 自己算——必须从 paths.py 导入
   time_utils:
     file: src/zephyr/shared/time_utils.py
     entry_point: from zephyr.shared.time_utils import now_iso, utc_now
-    note: 时间函数 SSoT——禁止用 datetime.utcnow()（已废弃�?
+    note: 时间函数 SSoT——禁止用 datetime.utcnow()（已废弃
   token_utils:
     file: src/zephyr/shared/token_utils.py
     entry_point: from zephyr.shared.token_utils import estimate_tokens
@@ -171,9 +171,9 @@ utilities:
     - symbol: apply_patch
       note: 应用 patch
     - symbol: try_apply_patch
-      note: 尝试应用，失败回�?
+      note: 尝试应用，失败回
     - symbol: similarity_ratio
-      note: 文本相似�?0-1
+      note: 文本相似?0-1
     - symbol: PatchConflictError
       note: patch 冲突异常
   file_utils:
@@ -183,7 +183,7 @@ utilities:
     - symbol: atomic_write
       note: POSIX 原子写——mkstemp→flush→fsync→os.replace
     - symbol: safe_read
-      note: �?+ SHA-256 校验
+      note: ?+ SHA-256 校验
     - symbol: backup_and_rollback
       note: '上下文管理器: 备份后修改，失败自动回滚'
     - symbol: backup_file
@@ -212,7 +212,7 @@ resilience:
     - OPEN(熔断)
     - HALF_OPEN(探测)
     anti_patterns:
-    - �?gates/ 之外使用独立的断路器——gates.circuit_breaker �?SQLite 持久化版，shared 是内存版
+    - ?gates/ 之外使用独立的断路器——gates.circuit_breaker ?SQLite 持久化版，shared 是内存版
   fallback:
     file: src/zephyr/shared/resilience/fallback.py
     entry_point: from zephyr.shared.resilience import FallbackChain, fallback
@@ -223,7 +223,7 @@ resilience:
       ModuleHealth
     protocol: '实现 LifecycleAware: on_init/on_startup/on_shutdown/health_check'
     anti_patterns:
-    - 跳过生命周期注册——所有模�?MUST 注册�?LifecycleManager
+    - 跳过生命周期注册——所有模?MUST 注册?LifecycleManager
   feature_flags:
     file: src/zephyr/shared/flags.py
     entry_point: from zephyr.shared.flags import global_flag_registry, FeatureFlag,
@@ -233,7 +233,7 @@ resilience:
     - CONDITIONAL
     - ALWAYS_OFF
     anti_patterns:
-    - 在模块内硬编码条件判断取�?FeatureFlag——必须用 FlagRegistry
+    - 在模块内硬编码条件判断取?FeatureFlag——必须用 FlagRegistry
 events:
   observer:
     file: src/zephyr/shared/observer.py
@@ -245,11 +245,11 @@ events:
     schemas:
     - 'FileEventPayload: 文件变更事件'
     - 'TimeEventPayload: 定时触发事件'
-    - 'TaskEventPayload: 任务状态变更事�?
+    - 'TaskEventPayload: 任务状态变更事'
     - 'ManualEventPayload: 人工触发事件'
     - 'MetricEventPayload: 度量事件'
     anti_patterns:
-    - �?dict 传事件数据——必须用 Pydantic Schema
+    - ?dict 传事件数据——必须用 Pydantic Schema
 logging:
   file: src/zephyr/shared/logging.py
   entry_point: from zephyr.shared.logging import get_logger, TraceContext, configure_root_logger
@@ -257,38 +257,38 @@ logging:
     \ module_id=\"MOD-XXX-001\")\nwith TraceContext() as trace_id:\n    log.info(\"\
     operation started\", extra={\"param\": value})\n"
   anti_patterns:
-  - �?print() 或裸 logging.getLogger()——必须用 get_logger()
-  - 不传 module_id——结构化日志的必填字�?
+  - ?print() 或裸 logging.getLogger()——必须用 get_logger()
+  - 不传 module_id——结构化日志的必填字
 core:
   models:
     file: src/zephyr/core/models.py
     entry_point: from zephyr.core.models import TaskCard, TaskStatus, GateLevel, DecompositionResult,
       GateCheckResult, TaskAuditFinding, TaskNamespace
-    note: TaskCard 继承 schemas.Task�?1字段全链路贯通）——所有模块的 Task 数据载体
+    note: TaskCard 继承 schemas.Task?1字段全链路贯通）——所有模块的 Task 数据载体
     anti_patterns:
     - 直接操作 dict 而非 TaskCard——丢失字段校验和类型安全
   blueprint_decomposer:
     file: src/zephyr/core/blueprint_decomposer.py
     entry_point: from zephyr.core.blueprint_decomposer import BlueprintDecomposer
-    note: 蓝图分解引擎——YAML blueprint.md �?TaskCard[]
+    note: 蓝图分解引擎——YAML blueprint.md ?TaskCard[]
 testing:
   file: src/zephyr/shared/testing.py
   entry_point: from zephyr.shared.testing import make_valid_task, make_p0_task, ...
   key_exports:
   - symbol: make_valid_task
-    note: 构�?valid-by-construction Task�?1字段全有效）
+    note: 构?valid-by-construction Task?1字段全有效）
   - symbol: make_p0_task
-    note: 构�?P0+H 安全等级紧急任�?
+    note: 构?P0+H 安全等级紧急任
   - symbol: make_completed_task
-    note: 构�?COMPLETED 状态任�?
+    note: 构?COMPLETED 状态任
   - symbol: make_valid_audit_report
-    note: 构�?AuditReport + 默认 AuditFinding
+    note: 构?AuditReport + 默认 AuditFinding
   - symbol: make_valid_knowledge_entry
-    note: 构�?KnowledgeEntry（KE-NNN�?
+    note: 构?KnowledgeEntry（KE-NNN
   - symbol: make_valid_failure_pattern
-    note: 构�?FailurePattern（F-NNN�?
+    note: 构?FailurePattern（F-NNN
   - symbol: make_valid_handoff_package
-    note: 构�?HandoffPackage 交接�?
+    note: 构?HandoffPackage 交接
   anti_patterns:
   - 手写 Task(...) 40字段构造——用 make_valid_task(**overrides)
 migration:
@@ -302,7 +302,7 @@ migration:
   - symbol: latest_schema_version()
     note: 返回当前最新版本号
   - symbol: MIGRATIONS
-    note: 迁移注册�?dict
+    note: 迁移注册?dict
   - symbol: MigrationError
     note: 迁移失败异常
   anti_patterns:
@@ -312,17 +312,17 @@ deprecation:
   entry_point: from zephyr.shared.deprecation import deprecated, set_deprecation_mode
   key_exports:
   - symbol: '@deprecated(since=, remove_in=, replacement=)'
-    note: 标记废弃函数/�?方法
+    note: 标记废弃函数/?方法
   - symbol: set_deprecation_mode(mode)
     note: warn/strict/silent 全局切换
   - symbol: get_deprecation_mode()
     note: 查询当前模式
   - symbol: DeprecationMode
-    note: WARN / STRICT / SILENT 三模�?
+    note: WARN / STRICT / SILENT 三模
   - symbol: DeprecatedAPIError
-    note: strict 模式下抛�?
+    note: strict 模式下抛
   anti_patterns:
-  - 直接删除旧API而不�?@deprecated——破坏消费者编�?
+  - 直接删除旧API而不?@deprecated——破坏消费者编
 dlq:
   file: src/zephyr/shared/events/dlq.py
   entry_point: from zephyr.shared.events.dlq import DeadLetterQueue, attach_dlq_to_observer
@@ -330,11 +330,11 @@ dlq:
   - symbol: DeadLetterQueue
     note: 死信队列——capture/pop_retryable/mark_resolved/stats/purge_expired
   - symbol: DeadLetter
-    note: 死信条目 dataclass（event_type + handler_name + exception + timestamp�?
+    note: 死信条目 dataclass（event_type + handler_name + exception + timestamp
   - symbol: attach_dlq_to_observer(observer)
     note: 零侵入挂载DLQ到Observer——monkey-patch emit()
   anti_patterns:
-  - �?handler �?catch Exception �?pass——事件丢失无痕，应用 DLQ 捕获
+  - ?handler ?catch Exception ?pass——事件丢失无痕，应用 DLQ 捕获
 version: 0.22.0
 health:
   file: src/zephyr/shared/health.py
@@ -347,22 +347,22 @@ health:
   - symbol: HealthStatus
     note: ALL_HEALTHY / DEGRADED / UNHEALTHY / UNKNOWN
   - symbol: collect_health()
-    note: 一次性收集所有LifecycleAware模块健康状�?
+    note: 一次性收集所有LifecycleAware模块健康状
   anti_patterns:
-  - 直接遍历 LifecycleManager.health_check_all()——应�?AggregateHealth 获得整体视图
+  - 直接遍历 LifecycleManager.health_check_all()——应?AggregateHealth 获得整体视图
 serialization:
   file: src/zephyr/shared/serialization.py
   entry_point: from zephyr.shared.serialization import to_dict, from_dict, to_json,
     from_json, ENCODING_RULES
   key_exports:
   - symbol: to_dict(obj)
-    note: Pydantic/dataclass �?dict (Decimal→str, datetime→ISO 8601 UTC)
+    note: Pydantic/dataclass ?dict (Decimal→str, datetime→ISO 8601 UTC)
   - symbol: from_dict(data, cls)
     note: 逆序列化——含 auto-coerce int→str
   - symbol: to_json(obj)
-    note: 对象 �?JSON 字节
+    note: 对象 ?JSON 字节
   - symbol: from_json(data, cls)
-    note: JSON 字节 �?对象
+    note: JSON 字节 ?对象
   - symbol: ENCODING_RULES
     note: 编码规则常量 dict
   - symbol: SerializationContract
@@ -374,7 +374,7 @@ api_client:
   entry_point: from zephyr.shared.api.api_client import ApiClient, ApiResponse, ApiCallMetrics
   key_exports:
   - symbol: ApiClient
-    note: 可组�?HttpClient——timeout/retry/circuit_breaker ThrottleMiddleware 可插�?
+    note: 可组?HttpClient——timeout/retry/circuit_breaker ThrottleMiddleware 可插
   - symbol: AioHttpProvider
     note: aiohttp 后端实现
   - symbol: ApiResponse
@@ -382,13 +382,13 @@ api_client:
   - symbol: ApiCallMetrics
     note: 调用统计——count + total_ms + errors
   anti_patterns:
-  - �?aiohttp.ClientSession——用 ApiClient 获得重试/熔断/超时/指标一体化
+  - ?aiohttp.ClientSession——用 ApiClient 获得重试/熔断/超时/指标一体化
 secrets:
   file: src/zephyr/shared/secrets.py
   entry_point: from zephyr.shared.secrets import get_secret, sanitize_secret
   key_exports:
   - symbol: SecretProvider
-    note: 密钥提供�?Protocol——get_secret/load_all
+    note: 密钥提供?Protocol——get_secret/load_all
   - symbol: EnvSecretProvider
     note: os.environ 实现
   - symbol: DotEnvSecretProvider
@@ -416,7 +416,7 @@ limiter:
   entry_point: from zephyr.shared.limiter import TokenBucketLimiter, async_limited
   key_exports:
   - symbol: TokenBucketLimiter
-    note: 令牌桶——支�?warmup + burst + smooth 三种模式
+    note: 令牌桶——支?warmup + burst + smooth 三种模式
   - symbol: '@async_limited'
     note: 装饰器——await 获取令牌后才执行
   anti_patterns:
@@ -432,7 +432,7 @@ idempotency:
   - symbol: idempotency_key(*parts)
     note: 基于输入参数生成确定性幂等键
   anti_patterns:
-  - 无幂等保护的 API 接收重复请求——外发支�?写入必须�?idempotency_key
+  - 无幂等保护的 API 接收重复请求——外发支?写入必须?idempotency_key
 context:
   file: src/zephyr/shared/context.py
   entry_point: from zephyr.shared.context import RequestContext, set_request_context,
@@ -445,7 +445,7 @@ context:
   - symbol: get_request_context()
     note: 获取当前上下文——未设置时抛 ContextNotSetError
   - symbol: ContextNotSetError
-    note: 上下文未初始化异�?
+    note: 上下文未初始化异
   anti_patterns:
   - 全局变量 ThreadLocal 传上下文——用 contextvars 保证 asyncio 正确传播
 metrics:
@@ -454,19 +454,19 @@ metrics:
     Histogram
   key_exports:
   - symbol: MetricsRegistry
-    note: 线程安全指标注册——get_or_create + auto_sum 计数�?
+    note: 线程安全指标注册——get_or_create + auto_sum 计数
   - symbol: Counter
-    note: 只增计数�?
+    note: 只增计数
   - symbol: Gauge
     note: 可升降计量器
   - symbol: Histogram
-    note: 分布直方�?
+    note: 分布直方
   - symbol: prometheus_text(registry)
     note: 导出 Prometheus text format
   - symbol: get_default_registry()
     note: 获取默认 MetricsRegistry 单例
   anti_patterns:
-  - �?handler �?hardcode 指标名称——用 MetricsRegistry 统一管理+Prometheus 导出
+  - ?handler ?hardcode 指标名称——用 MetricsRegistry 统一管理+Prometheus 导出
 pagination:
   file: src/zephyr/shared/pagination.py
   entry_point: from zephyr.shared.pagination import Page, CursorPage, paginate, paginate_cursor
@@ -476,11 +476,11 @@ pagination:
   - symbol: CursorPage[T]
     note: 游标分页——items + next_cursor + size + has_more
   - symbol: paginate(items, offset, limit)
-    note: 列表 �?Page 工具函数
+    note: 列表 ?Page 工具函数
   - symbol: paginate_cursor(items, cursor, size, key_fn)
-    note: 列表 �?CursorPage 工具函数
+    note: 列表 ?CursorPage 工具函数
   anti_patterns:
-  - API 直接返回 list——应�?Page/CursorPage 支持大数据分�?has_more 指示
+  - API 直接返回 list——应?Page/CursorPage 支持大数据分?has_more 指示
 time_utils_enhanced:
   file: src/zephyr/shared/time_utils.py
   entry_point: from zephyr.shared.time_utils import now_utc, freeze_time, now_iso,
@@ -489,19 +489,19 @@ time_utils_enhanced:
   - symbol: now_utc()
     note: UTC datetime.now(timezone.utc)——SSoT 替代 datetime.utcnow()
   - symbol: freeze_time()
-    note: 上下文管理器——冻结时间便于测�?
+    note: 上下文管理器——冻结时间便于测
   - symbol: now_iso(with_tz=True)
-    note: 当前时间 ISO 8601 UTC 字符串（Z后缀�?
+    note: 当前时间 ISO 8601 UTC 字符串（Z后缀
   - symbol: parse_iso(iso_str)
-    note: ISO 8601 字符�?�?datetime
+    note: ISO 8601 字符??datetime
   - symbol: format_iso(dt, with_tz=True)
-    note: datetime �?ISO 8601 字符�?
+    note: datetime ?ISO 8601 字符
   - symbol: seconds_since(dt)
-    note: �?dt 以来的秒�?
+    note: ?dt 以来的秒
   - symbol: seconds_until(dt)
-    note: 距离 dt 还剩的秒�?
+    note: 距离 dt 还剩的秒
   anti_patterns:
-  - datetime.utcnow()/datetime.now() 裸用——用 now_utc() 标准UTC+可测�?
+  - datetime.utcnow()/datetime.now() 裸用——用 now_utc() 标准UTC+可测
 env:
   file: src/zephyr/shared/env.py
   entry_point: from zephyr.shared.env import Env, current_env, is_dev, is_prod, is_test
@@ -509,15 +509,15 @@ env:
   - symbol: Env
     note: DEV/STAGING/PROD/TEST 枚举
   - symbol: current_env()
-    note: ZEPHYR_ENV �?Env 解析
+    note: ZEPHYR_ENV ?Env 解析
   - symbol: is_dev()
-    note: DEV 环境快捷检�?
+    note: DEV 环境快捷检
   - symbol: is_prod()
-    note: PROD 环境快捷检�?
+    note: PROD 环境快捷检
   - symbol: is_test()
-    note: TEST 环境快捷检�?
+    note: TEST 环境快捷检
   - symbol: is_debug()
-    note: DEBUG 标志检�?
+    note: DEBUG 标志检
   anti_patterns:
   - os.getenv('ENVIRONMENT') == 'production' 硬编码——用 current_env()/is_prod()
 lock:
@@ -529,9 +529,9 @@ lock:
   - symbol: MemoryLock
     note: 内存分布式锁——asyncio.Lock + owner_id + 租约过期
   - symbol: LockHandle
-    note: 锁句�?dataclass + async context manager
+    note: 锁句?dataclass + async context manager
   anti_patterns:
-  - asyncio.Lock() 裸用——用 DistributedLock 获得 owner 追踪+过期+可观�?
+  - asyncio.Lock() 裸用——用 DistributedLock 获得 owner 追踪+过期+可观
 outbox:
   file: src/zephyr/shared/outbox.py
   entry_point: from zephyr.shared.outbox import OutboxStore, MemoryOutboxStore, OutboxPublisher
@@ -545,13 +545,13 @@ outbox:
   - symbol: OutboxStatus
     note: PENDING/PROCESSING/COMPLETED/FAILED
   anti_patterns:
-  - DB 写入+事件发布分离(无事�?——用 Outbox 模式保证恰好一次语�?
+  - DB 写入+事件发布分离(无事?——用 Outbox 模式保证恰好一次语
 schema_registry:
   file: src/zephyr/shared/schema_registry.py
   entry_point: from zephyr.shared.schema_registry import SchemaRegistry, get_schema_registry
   key_exports:
   - symbol: SchemaRegistry
-    note: 集中�?Schema 版本编目——register/get/latest/versions/check_register_compatible
+    note: 集中?Schema 版本编目——register/get/latest/versions/check_register_compatible
   - symbol: get_schema_registry()
     note: 全局 SchemaRegistry 单例
   - symbol: SchemaVersion
@@ -563,70 +563,70 @@ blueprint_scorer:
   entry_point: from zephyr.shared.blueprint_scorer import score_blueprint_route, score_and_rank_routes
   key_exports:
   - symbol: score_blueprint_route(route)
-    note: 单路由评分——返�?relevance + 维度分解 + 分数理由
+    note: 单路由评分——返?relevance + 维度分解 + 分数理由
   - symbol: score_and_rank_routes(routes, max_results)
-    note: 批路由评�?排序——truncate top-N
+    note: 批路由评?排序——truncate top-N
   anti_patterns:
-  - 裸路由查表不评分——用 score_and_rank_routes 避免短链路截�?最长匹配陷�?
+  - 裸路由查表不评分——用 score_and_rank_routes 避免短链路截?最长匹配陷
 agent_rbac:
-  description: Agent 身份与权限系统——静态权限注册表升级为七层运行时强制执行�?
-  blueprint: docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md
-  code_root: src/zephyr/agent-rbac/
+  description: Agent 身份与权限系统——静态权限注册表升级为七层运行时强制执行
+  blueprint: docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md
+  code_root: src/zephyr/agent_rbac/
   status: draft (0% 施工)
-  architecture: L0 Immutable Core �?L1 RBAC �?L2 ABAC �?L3 Input Guard �?L4 Sequence
-    Guard �?[执行] �?L5 Output Guard �?L6 Observability
+  architecture: L0 Immutable Core ?L1 RBAC ?L2 ABAC ?L3 Input Guard ?L4 Sequence
+    Guard ?[执行] ?L5 Output Guard ?L6 Observability
   layers:
     l0_immutable_core:
-      file: agent-rbac/immutable_core.py
-      description: 硬编码不可变保护路径 + Kill Switch 全局熔断 + Engine 降级策略（崩=blocked�?
+      file: agent_rbac/immutable_core.py
+      description: 硬编码不可变保护路径 + Kill Switch 全局熔断 + Engine 降级策略（崩=blocked
       key_exports:
       - symbol: PROTECTED_PATHS
-        note: 硬编码保护路径列表—�?git, agent-rbac/, AGENTS.md, .pre-commit-config.yaml
+        note: 硬编码保护路径列表—?git, agent_rbac/, AGENTS.md, .pre-commit-config.yaml
       - symbol: ALWAYS_BLOCKED
         note: 硬编码禁止操作——modify_self_permissions, delete_audit_logs, shell_true_execution
       - symbol: KillSwitch
-        note: 全局熔断器—�? 种自动触发器 + 手动熔断
+        note: 全局熔断器—? 种自动触发器 + 手动熔断
       - symbol: EngineDegradation
-        note: Engine 故障降级——崩=blocked，绝不放�?
+        note: Engine 故障降级——崩=blocked，绝不放
       anti_patterns:
-      - AI 修改 immutable_core.py �?rbac_roles.yaml 给自己提权——L0 必须硬阻�?
+      - AI 修改 immutable_core.py ?rbac_roles.yaml 给自己提权——L0 必须硬阻
     l1_rbac:
-      file: agent-rbac/rbac_guard.py
-      description: RBAC 角色权限——三�?always_allow 95% / auto_guard 4% / blocked 1%
+      file: agent_rbac/rbac_guard.py
+      description: RBAC 角色权限——三?always_allow 95% / auto_guard 4% / blocked 1%
       key_exports:
       - symbol: PermissionGuard.check()
-        note: 七层权限检查入口——每 Tool 调用前必�?
+        note: 七层权限检查入口——每 Tool 调用前必
       - symbol: PermissionDecision
         note: ALLOW / AUTO_GUARD / BLOCKED / SKIPPED
       - symbol: PermissionResult
         note: 判定结果 + layered_decisions 逐层明细
       config: rbac_roles.yaml——从 GOV-AI-001 自动派生
     l2_abac:
-      file: agent-rbac/abac_guard.py
-      description: ABAC 属性权限——意图感�?+ 时间窗口 + Agent 成熟度四�?+ 资源敏感�?
+      file: agent_rbac/abac_guard.py
+      description: ABAC 属性权限——意图感?+ 时间窗口 + Agent 成熟度四?+ 资源敏感
       key_exports:
       - symbol: AgentMaturityLevel
         note: INTERN / JUNIOR / SENIOR / PRINCIPAL 四级信任
       - symbol: AbacContext
         note: 四维属性上下文——intent + temporal + maturity + sensitivity
     l3_input_guard:
-      file: agent-rbac/input_guard.py
-      description: 参数护栏——schema 白名�?+ 范围限制 + 危险模式检测（DROP TABLE/shell injection�?
+      file: agent_rbac/input_guard.py
+      description: 参数护栏——schema 白名?+ 范围限制 + 危险模式检测（DROP TABLE/shell injection
     l4_sequence_guard:
-      file: agent-rbac/sequence_guard.py
-      description: 序列护栏——会话级操作序列追踪 + 禁止序列阻断（read_sensitive→external_output�?
+      file: agent_rbac/sequence_guard.py
+      description: 序列护栏——会话级操作序列追踪 + 禁止序列阻断（read_sensitive→external_output
       note: 最关键盲点补丁——防止多步合法操作组成攻击链
     l5_output_guard:
-      file: agent-rbac/output_guard.py
-      description: 输出护栏——PII 脱敏 + 凭证检�?+ 大小截断
+      file: agent_rbac/output_guard.py
+      description: 输出护栏——PII 脱敏 + 凭证检?+ 大小截断
     l6_observability:
-      file: agent-rbac/observability.py
-      description: 可观测性——OpenTelemetry 指标 + 行为异常检�?+ 权限变更审计
+      file: agent_rbac/observability.py
+      description: 可观测性——OpenTelemetry 指标 + 行为异常检?+ 权限变更审计
     l7_testing:
-      file: agent-rbac/dry_run.py
-      description: 测试与模拟——权限影响分�?+ Dry-Run 模式 + 自动化测试框�?
+      file: agent_rbac/dry_run.py
+      description: 测试与模拟——权限影响分?+ Dry-Run 模式 + 自动化测试框
   identity:
-    file: agent-rbac/identity.py
+    file: agent_rbac/identity.py
     key_exports:
     - symbol: AgentIdentity
       note: agent_id + agent_type + ide_source + role_bindings + maturity_level +
@@ -637,12 +637,12 @@ agent_rbac:
       note: TRAE / CURSOR / ROOCODE / CLI——多 IDE 统一身份
   integration_points:
   - target: gates.gate_engine
-    at: G0 前置检�?
-    why: 每个 Tool 调用�?PermissionGuard.check()
+    at: G0 前置检
+    why: 每个 Tool 调用?PermissionGuard.check()
   - target: mcp._base_server
     at: tool_call 拦截
-    why: MCP Tool 执行前七层权限检�?
-  - target: audit-trail
+    why: MCP Tool 执行前七层权限检
+  - target: audit_trail
     at: MOD-INF-020
     why: 权限判定 + 序列违规 + Kill Switch 事件
   - target: rollback_system
@@ -653,7 +653,7 @@ agent_rbac:
     why: L0 Kill Switch 复用熔断器基础设施
   decisions:
   - id: D-018-01
-    summary: 三层权限 95/4/1 分布，取�?needs_approval
+    summary: 三层权限 95/4/1 分布，取?needs_approval
   - id: D-018-02
     summary: 先干后验 + 自动护栏，非事前审批
   - id: D-018-03
@@ -665,17 +665,17 @@ agent_rbac:
   - id: D-018-06
     summary: L0 Engine 降级策略——崩=blocked
   - id: D-018-07
-    summary: L2 ABAC——四维属性权�?
+    summary: L2 ABAC——四维属性权
   - id: D-018-08
     summary: L3 Input Guard——参数级护栏
   - id: D-018-09
-    summary: L4 Sequence Guard——操作序列追踪与阻断（最关键�?
+    summary: L4 Sequence Guard——操作序列追踪与阻断（最关键
   - id: D-018-10
-    summary: L5 Output Guard——输出护�?
+    summary: L5 Output Guard——输出护
   - id: D-018-11
-    summary: L6 Observability——可观测�?
+    summary: L6 Observability——可观测
   - id: D-018-12
-    summary: L7 Testing & Dry-Run——权限可测试�?
+    summary: L7 Testing & Dry-Run——权限可测试
 consumers:
 - module: gates.gate_engine
   depends_on:
@@ -709,27 +709,27 @@ consumers:
   - logging.get_logger
   - time_utils.now_iso
   - token_utils.estimate_tokens
-  note: MOD-INF-022——三级升级判�?四级委托安全约束
-- module: agent-rbac.immutable_core
+  note: MOD-INF-022——三级升级判?四级委托安全约束
+- module: agent_rbac.immutable_core
   depends_on:
   - resilience.circuit_breaker
 - module: mcp._base_server
   depends_on:
-  - agent-rbac.permission_guard
+  - agent_rbac.permission_guard
 - module: mcp.knowledge_base_server
   depends_on:
   - logging.get_logger
   - errors.ZephyrBaseError
   - paths.REPO_ROOT
   - schemas.SafetyLevel
-  note: skeleton——KE语义检索MCP服务�?
+  note: skeleton——KE语义检索MCP服务
 - module: mcp.gate_engine_server
   depends_on:
   - logging.get_logger
   - errors.GateError
   - schemas.GateLevel
   - resilience.circuit_breaker
-  note: skeleton——G1-G5门禁MCP服务�?
+  note: skeleton——G1-G5门禁MCP服务
 - module: mcp.doc_guard_server
   depends_on:
   - logging.get_logger
@@ -748,8 +748,8 @@ consumers:
   - logging.get_logger
   - errors.SecurityError
   - resilience.circuit_breaker
-  note: Phase 6 规划中——代码执行沙箱MCP服务�?
-- module: audit-trail.writer
+  note: Phase 6 规划中——代码执行沙箱MCP服务
+- module: audit_trail.writer
   depends_on:
   - file_utils.atomic_write
   - file_utils.safe_read
@@ -757,55 +757,55 @@ consumers:
   - resilience.retry
   - logging.get_logger
   - time_utils.now_iso
-  note: 'MOD-INF-020 v1.1.0——不可变审计写入�? JSONL append + 哈希�?+ HMAC + Ed25519 Agent签名
+  note: 'MOD-INF-020 v1.1.0——不可变审计写入? JSONL append + 哈希?+ HMAC + Ed25519 Agent签名
     + Lamport时钟'
-- module: audit-trail.query
+- module: audit_trail.query
   depends_on:
   - paths.DB_PATH
   - file_utils.safe_read
   - logging.get_logger
-  note: 'MOD-INF-020 v1.1.0——审计查�? SQLite优先 + JSONL回退 + trail_for_ai_context(P0) +
-    证据包导�?
-- module: audit-trail.agent_signer
+  note: 'MOD-INF-020 v1.1.0——审计查? SQLite优先 + JSONL回退 + trail_for_ai_context(P0) +
+    证据包导'
+- module: audit_trail.agent_signer
   depends_on:
-  - audit-trail.models
+  - audit_trail.models
   - logging.get_logger
-  note: MOD-INF-020——Agent级Ed25519签名�?+ DID注册�?
-- module: audit-trail.external_verifier
+  note: MOD-INF-020——Agent级Ed25519签名?+ DID注册
+- module: audit_trail.external_verifier
   depends_on: []
-  note: MOD-INF-020——外部独立验证脚本——CI门禁�?
-- module: audit-trail.supply_chain
+  note: MOD-INF-020——外部独立验证脚本——CI门禁
+- module: audit_trail.supply_chain
   depends_on:
-  - audit-trail.writer.AuditTrailWriter
+  - audit_trail.writer.AuditTrailWriter
   - logging.get_logger
-  note: 'MOD-INF-020——供应链审计: 包安装检�?+ SHA-256验证'
-- module: audit-trail.delegation
+  note: 'MOD-INF-020——供应链审计: 包安装检?+ SHA-256验证'
+- module: audit_trail.delegation
   depends_on:
-  - audit-trail.models
-  - audit-trail.agent_signer
-  note: 'MOD-INF-020——委托链审计�? 深度控制 + 权限缩小校验'
-- module: audit-trail.trust_score
+  - audit_trail.models
+  - audit_trail.agent_signer
+  note: 'MOD-INF-020——委托链审计? 深度控制 + 权限缩小校验'
+- module: audit_trail.trust_score
   depends_on:
-  - audit-trail.models
-  note: 'MOD-INF-020——渐进信任引�? 连续分数 + 时间衰减 + 自动降级'
-- module: audit-trail.cross_ide
+  - audit_trail.models
+  note: 'MOD-INF-020——渐进信任引? 连续分数 + 时间衰减 + 自动降级'
+- module: audit_trail.cross_ide
   depends_on:
-  - audit-trail.query.AuditQuery
-  note: 'MOD-INF-020——跨IDE一致�? 冲突检�?+ 共识合并'
-- module: audit-trail.evidence_pack
+  - audit_trail.query.AuditQuery
+  note: 'MOD-INF-020——跨IDE一致? 冲突检?+ 共识合并'
+- module: audit_trail.evidence_pack
   depends_on:
-  - audit-trail.query.AuditQuery
-  - audit-trail.integrity
+  - audit_trail.query.AuditQuery
+  - audit_trail.integrity
   note: 'MOD-INF-020——监管证据包导出: JSON+PDF + FCA五维格式'
 - module: gate_engine.gate_runner
   depends_on:
-  - audit-trail.writer.AuditTrailWriter
+  - audit_trail.writer.AuditTrailWriter
   note: 门禁决策结果写入审计追踪
-- module: feedback-loop.aggregator
+- module: feedback_loop.aggregator
   depends_on:
-  - audit-trail.query.AuditQuery
-  note: 审计聚合数据消费——生成反�?PR
-- module: feedback-loop.engine
+  - audit_trail.query.AuditQuery
+  note: 审计聚合数据消费——生成反?PR
+- module: feedback_loop.engine
   depends_on:
   - schemas.Task
   - schemas.TaskStatus
@@ -815,180 +815,180 @@ consumers:
   - lifecycle.LifecycleManager
   - flags.FeatureFlag
   - resilience.circuit_breaker.CircuitState
-  note: 'MOD-INF-010 v0.3.1——FLE主引�? LifecycleManager注册+FeatureFlag渐进控制+agent_rbac联动'
-- module: feedback-loop.detection_model_health
+  note: 'MOD-INF-010 v0.3.1——FLE主引? LifecycleManager注册+FeatureFlag渐进控制+agent_rbac联动'
+- module: feedback_loop.detection_model_health
   depends_on:
   - time_utils.now_iso
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.3.1——FLE自身概念漂移检�?Isolation Forest自动重训�?
-- module: feedback-loop.behavioral_drift
+  note: MOD-INF-010 v0.3.1——FLE自身概念漂移检?Isolation Forest自动重训
+- module: feedback_loop.behavioral_drift
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.3.1——Agent行为漂移(CoT/Tool call/Output结构)
-- module: feedback-loop.llm_vote_cost
+- module: feedback_loop.llm_vote_cost
   depends_on:
   - errors.FeedbackError
   - time_utils.now_iso
-  note: MOD-INF-010 v0.4.0——LLM投票成本计量+频率控制+$5/月预�?per-model分解
-- module: feedback-loop.regime_detector
+  note: MOD-INF-010 v0.4.0——LLM投票成本计量+频率控制+$5/月预?per-model分解
+- module: feedback_loop.regime_detector
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   note: MOD-INF-010 v0.4.0——MarketRegimeDetector+MarketCalendarAware+Per-Regime基线切换
-- module: feedback-loop.model_profiles
+- module: feedback_loop.model_profiles
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.4.0——Per-Model Failure Profiles(DeepSeek/GLM/GPT-5.2)独立特征空间
-- module: feedback-loop.cross_model_consensus
+- module: feedback_loop.cross_model_consensus
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
-  note: MOD-INF-010 v0.4.0——Cross-Model Consensus Monitor跨模型分歧检�?
-- module: feedback-loop.fle_observability
+  note: MOD-INF-010 v0.4.0——Cross-Model Consensus Monitor跨模型分歧检
+- module: feedback_loop.fle_observability
   depends_on:
   - logging.get_logger
   - time_utils.now_iso
   - flags.FeatureFlag
   - lifecycle.LifecycleManager
-  note: 'MOD-INF-010 v0.4.0——FLE可观测�? FP/FN+Latency Decomp+Longitudinal KPIs+Self-Test
+  note: 'MOD-INF-010 v0.4.0——FLE可观测? FP/FN+Latency Decomp+Longitudinal KPIs+Self-Test
     Coverage+Dep Version Tracker'
-- module: feedback-loop.causal_engine
+- module: feedback_loop.causal_engine
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   - schemas.Task
-  note: MOD-INF-010 v0.5.0——CausalRCA反事实验�?DoWhy)+Bayesian ActionEffectiveness因果归因(BSTS)
-- module: feedback-loop.config_manager
+  note: MOD-INF-010 v0.5.0——CausalRCA反事实验?DoWhy)+Bayesian ActionEffectiveness因果归因(BSTS)
+- module: feedback_loop.config_manager
   depends_on:
   - flags.FeatureFlag
   - logging.get_logger
   - time_utils.now_iso
   - errors.FeedbackError
   note: MOD-INF-010 v0.5.0——Config-as-Code Git对账+Flag交互矩阵验证+配置回滚+部署安全模式
-- module: feedback-loop.db_integrity
+- module: feedback_loop.db_integrity
   depends_on:
   - logging.get_logger
   - errors.FeedbackError
   note: MOD-INF-010 v0.5.0——FLE SQLite PRAGMA完整性自检+腐败告警
-- module: feedback-loop.checkpoint_manager
+- module: feedback_loop.checkpoint_manager
   depends_on:
   - time_utils.now_iso
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
-  note: MOD-INF-010 v0.5.0——Checkpoint序列�?Resume热恢�?冷启�?2h�?-30min)
-- module: feedback-loop.code_provenance
+  note: MOD-INF-010 v0.5.0——Checkpoint序列?Resume热恢?冷启?2h?-30min)
+- module: feedback_loop.code_provenance
   depends_on:
   - lifecycle.LifecycleManager
   - flags.FeatureFlag
   - logging.get_logger
   note: MOD-INF-010 v0.5.0——AI/human/AI+human三级代码信任追踪+Detection灵敏度自适应
-- module: feedback-loop.saga_coordinator
+- module: feedback_loop.saga_coordinator
   depends_on:
   - errors.FeedbackError
   - logging.get_logger
   - flags.FeatureFlag
   - schemas.Task
   note: MOD-INF-010 v0.5.0——多步骤REPAIR Saga/Compensation事务协调+RejectedAction日志
-- module: feedback-loop.action_selection_model
+- module: feedback_loop.action_selection_model
   depends_on:
   - flags.FeatureFlag
   - logging.get_logger
   - errors.FeedbackError
-  note: MOD-INF-010 v0.5.0——基于历�?Action→Effect)学习的Action推荐模型
-- module: feedback-loop.session_awareness
+  note: MOD-INF-010 v0.5.0——基于历?Action→Effect)学习的Action推荐模型
+- module: feedback_loop.session_awareness
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.5.0——Vibe Coding Session感知+Onboarding模式新人友好
-- module: feedback-loop.fle_value_tracker
+- module: feedback_loop.fle_value_tracker
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
   note: MOD-INF-010 v0.7.0——ROI量化+时间节省+Daily Value Report
-- module: feedback-loop.skill_retention
+- module: feedback_loop.skill_retention
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——反自动化悖�?手动演习提醒+系统健康摘要
-- module: feedback-loop.fle_tco_auditor
+  note: MOD-INF-010 v0.7.0——反自动化悖?手动演习提醒+系统健康摘要
+- module: feedback_loop.fle_tco_auditor
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.7.0——自审计维护成本+精简建议
-- module: feedback-loop.fle_federation
+- module: feedback_loop.fle_federation
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   - time_utils.now_iso
   note: 'MOD-INF-010 v0.7.0——FLE联邦协议: InterFLEDiscovery+Cross-FLE Consensus+Escalation'
-- module: feedback-loop.action_mediator
+- module: feedback_loop.action_mediator
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0——FLE联邦冲突仲裁+domain优先�?
-- module: feedback-loop.federation_policy
-  depends_on:
-  - logging.get_logger
-  - flags.FeatureFlag
-  - errors.SecurityError
-  note: MOD-INF-010 v0.7.0——跨域权�?mTLS验证
-- module: feedback-loop.adversarial_defense
-  depends_on:
-  - logging.get_logger
-  - flags.FeatureFlag
-  - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——对抗注入检�?缓慢投毒+来源验证
-- module: feedback-loop.prompt_sanitizer
+  note: MOD-INF-010 v0.7.0——FLE联邦冲突仲裁+domain优先
+- module: feedback_loop.federation_policy
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.SecurityError
-  note: MOD-INF-010 v0.7.0——LLM输入净�?Prompt注入防御
-- module: feedback-loop.amplification_guard
+  note: MOD-INF-010 v0.7.0——跨域权?mTLS验证
+- module: feedback_loop.adversarial_defense
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——攻击放大防�?同root_cause暂停LLM
-- module: feedback-loop.kb_provenance
+  note: MOD-INF-010 v0.7.0——对抗注入检?缓慢投毒+来源验证
+- module: feedback_loop.prompt_sanitizer
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0——KB来源可靠性评�?UNTRUSTED标记
-- module: feedback-loop.unknown_handler
-  depends_on:
-  - logging.get_logger
-  - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0—�?我不知道'显式输出→HUMAN_REQUIRED
-- module: feedback-loop.longitudinal_meta
+  - errors.SecurityError
+  note: MOD-INF-010 v0.7.0——LLM输入净?Prompt注入防御
+- module: feedback_loop.amplification_guard
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——月度纵向自评报�?Top3优化方向
-- module: feedback-loop.value_added_baseline
+  note: MOD-INF-010 v0.7.0——攻击放大防?同root_cause暂停LLM
+- module: feedback_loop.kb_provenance
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0——FLE vs EMA对照→真正的价值增�?
-- module: feedback-loop.deprecation_advisor
+  note: MOD-INF-010 v0.7.0——KB来源可靠性评?UNTRUSTED标记
+- module: feedback_loop.unknown_handler
+  depends_on:
+  - logging.get_logger
+  - flags.FeatureFlag
+  note: MOD-INF-010 v0.7.0—?我不知道'显式输出→HUMAN_REQUIRED'
+- module: feedback_loop.longitudinal_meta
+  depends_on:
+  - logging.get_logger
+  - flags.FeatureFlag
+  - time_utils.now_iso
+  note: MOD-INF-010 v0.7.0——月度纵向自评报?Top3优化方向
+- module: feedback_loop.value_added_baseline
+  depends_on:
+  - logging.get_logger
+  - flags.FeatureFlag
+  note: MOD-INF-010 v0.7.0——FLE vs EMA对照→真正的价值增
+- module: feedback_loop.deprecation_advisor
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - lifecycle.LifecycleManager
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——子系统废弃建议+30天自动清�?
-- module: feedback-loop.daily_report_composer
+  note: MOD-INF-010 v0.7.0——子系统废弃建议+30天自动清
+- module: feedback_loop.daily_report_composer
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
@@ -999,82 +999,82 @@ contract_tests:
   - file: test_import_chain.py
     description: 17 消费者导入链路验证——shared/ 变更第一道安全网
   - file: test_schema_stability.py
-    description: Task 31字段快照 + TaskCard继承完整�?+ 错误层次 + 类型别名 + AuditEntryV1 23字段快照
+    description: Task 31字段快照 + TaskCard继承完整?+ 错误层次 + 类型别名 + AuditEntryV1 23字段快照
   - file: test_rbac_permissions.py
-    description: 角色一致�?+ 覆盖�?+ 序列阻断 + 不可变核�?+ 成熟度边界（MOD-INF-018 L7�?
+    description: 角色一致?+ 覆盖?+ 序列阻断 + 不可变核?+ 成熟度边界（MOD-INF-018 L7
   - file: test_audit_integrity.py
-    description: 审计哈希链连续�?+ HMAC 批量验证 + Merkle 树重建（MOD-INF-020 §4�?
+    description: 审计哈希链连续?+ HMAC 批量验证 + Merkle 树重建（MOD-INF-020 §4
   run: python -m pytest tests/contract/ -v
 common_traps:
-- trap: 在模块内自定�?Task/Order/Fill 等价�?
-  consequence: 跨层数据契约断裂——消费者收到的数据类型不兼�?
+- trap: 在模块内自定?Task/Order/Fill 等价
+  consequence: 跨层数据契约断裂——消费者收到的数据类型不兼
   correct: from zephyr.shared.schema.schemas import Task
-- trap: �?Path(__file__).parents[N] 自己�?REPO_ROOT
+- trap: ?Path(__file__).parents[N] 自己?REPO_ROOT
   consequence: 目录重组后所有消费者一起坏
   correct: from zephyr.shared.io.paths import REPO_ROOT
-- trap: catch Exception 后不处理也不重新包装�?ZephyrBaseError
+- trap: catch Exception 后不处理也不重新包装?ZephyrBaseError
   consequence: 错误上下文丢失——module_id/session_id/trace_id 全无
   correct: 'except Exception as e: raise TaskError(''...'', details={''original'':
     str(e)})'
-- trap: 修改 schemas.py Task 字段后不更新契约测试和蓝�?
-  consequence: 蓝图漂移 + 消费者在下次 AI session 被误�?
-  correct: �?Task �?更新 tests/contract/test_schema_stability.py 快照 �?更新蓝图 §2.2/§5 �?
-    跑全量测�?
-- trap: �?shared/ 中添加外部依赖（�?requests, httpx 等）
+- trap: 修改 schemas.py Task 字段后不更新契约测试和蓝
+  consequence: 蓝图漂移 + 消费者在下次 AI session 被误
+  correct: ?Task ?更新 tests/contract/test_schema_stability.py 快照 ?更新蓝图 §2.2/§5
+    跑全量测
+- trap: ?shared/ 中添加外部依赖（?requests, httpx 等）
   consequence: shared/ 作为原子基座不应引入网络/IO/框架依赖
-  correct: shared/ 仅依�?Python 标准�?+ pydantic + pyyaml
-- trap: VMS Collection 写入时不�?WriteTrace provenance
-  consequence: 向量不可溯源——AI 自己都不知道这条向量是谁写的、为什么写的。审计链断裂�?
+  correct: shared/ 仅依?Python 标准?+ pydantic + pyyaml
+- trap: VMS Collection 写入时不?WriteTrace provenance
+  consequence: 向量不可溯源——AI 自己都不知道这条向量是谁写的、为什么写的。审计链断裂
   correct: 每次写入调用 ProvenanceEnforcer.attach()——origin(agent_id/task_id) + audit_chain
     + arbitration(optional/bypass)
 - trap: VMS 8 Collection 中混用嵌入维度——attempt to search across 1024d and 512d collections
     in same query
   consequence: 向量维度不匹配——ChromaDB 直接报错或返回全零相似度
-  correct: EmbeddingRouter �?collection_name 自动路由；CrossCollectionRetriever 分别编码后合并结�?
+  correct: EmbeddingRouter ?collection_name 自动路由；CrossCollectionRetriever 分别编码后合并结
 - trap: 绕开 kb/chromadb_init.py 直接操作 ChromaDB——在 VMS 中重复初始化 ChromaDB client
-  consequence: 多进程持有多 ChromaDB client �?SQLite 文件锁冲�?�?写入被阻�?�?数据不一�?
+  consequence: 多进程持有多 ChromaDB client ?SQLite 文件锁冲??写入被阻??数据不一
   correct: 通过 BridgeLayer 共享同一 ChromaDB client 单例；InProcessVectorMemory 是唯一 ChromaDB
     入口
-- trap: 修改 rbac_roles.yaml �?immutable_core.py �?Agent 提权
-  consequence: 护栏�?AI 自己拆掉——权限系统形同虚�?
-  correct: L0 Immutable Core 硬编码保护——修�?agent_rbac/ 下任何文�?= BLOCKED + P0 告警
+- trap: 修改 rbac_roles.yaml ?immutable_core.py ?Agent 提权
+  consequence: 护栏?AI 自己拆掉——权限系统形同虚
+  correct: L0 Immutable Core 硬编码保护——修?agent_rbac/ 下任何文?= BLOCKED + P0 告警
 - trap: 绕过 PermissionGuard 直接操作文件/MCP Tool/DB
   consequence: 权限系统白建——操作不经过检查等于门没锁
-  correct: 所有写操作必须经过 Gate Engine �?PermissionGuard.check()；MCP Tool �?_base_server
+  correct: 所有写操作必须经过 Gate Engine ?PermissionGuard.check()；MCP Tool ?_base_server
     拦截
 - trap: Agent 成熟度一成不变——新 Agent 和跑100个任务的 Agent 同等信任
-  consequence: 不信任梯�?= 要么全放要么全堵——安�?效率双失
-  correct: Agent 自动�?L1 Intern 开始，通过任务�?后验通过�?零事故自动升级；安全事故自动降级
-- trap: 绕过 AuditTrailWriter 直接 append JSONL �?UPDATE SQLite 审计索引
-  consequence: 哈希链断�?+ HMAC 签名空洞 + 审计日志不可信——篡改检测盲�?
-  correct: 所有审计写入必须通过 writer.py AuditTrailWriter.append()——自动生�?prev_hash + entry_hash
+  consequence: 不信任梯?= 要么全放要么全堵——安?效率双失
+  correct: Agent 自动?L1 Intern 开始，通过任务?后验通过?零事故自动升级；安全事故自动降级
+- trap: 绕过 AuditTrailWriter 直接 append JSONL ?UPDATE SQLite 审计索引
+  consequence: 哈希链断?+ HMAC 签名空洞 + 审计日志不可信——篡改检测盲
+  correct: 所有审计写入必须通过 writer.py AuditTrailWriter.append()——自动生?prev_hash + entry_hash
     + HMAC + Lamport tick
-- trap: 在模块内自定义审计事件模型——绕�?AuditEntryV1
-  consequence: 跨系统审计查询断裂——event_type/lamport_clock/drift_detected 等字段缺�?
+- trap: 在模块内自定义审计事件模型——绕?AuditEntryV1
+  consequence: 跨系统审计查询断裂——event_type/lamport_clock/drift_detected 等字段缺
   correct: from zephyr.audit_trail.models import AuditEntryV1, AuditEventType
-- trap: 审计查询时不记录元审计——MetaAuditLogger 被绕�?
-  consequence: 无人知道谁查了审计日志——内部威胁盲区（对标 GOV-CMP-002 AUD-001�?
+- trap: 审计查询时不记录元审计——MetaAuditLogger 被绕
+  consequence: 无人知道谁查了审计日志——内部威胁盲区（对标 GOV-CMP-002 AUD-001
   correct: 每次 AuditQuery 调用自动触发 MetaAuditLogger.log_audit_query()
-- trap: HMAC secret 硬编码或提交�?git
-  consequence: 攻击者拿�?secret 后可伪造审计条目——哈希链+HMAC 双保险瓦�?
-  correct: HMAC secret 仅存于环境变�?ZEPHYR_AUDIT_HMAC_SECRET�?56-bit），永远不进 git
+- trap: HMAC secret 硬编码或提交?git
+  consequence: 攻击者拿?secret 后可伪造审计条目——哈希链+HMAC 双保险瓦
+  correct: HMAC secret 仅存于环境变?ZEPHYR_AUDIT_HMAC_SECRET?56-bit），永远不进 git
 audit_trail:
-  description: 不可变、密码学完整性保证的审计追踪链——记录每�?AI 动作�?who/when/what/why。JSONL SSoT + 哈希链防篡改
-    + HMAC 签名 + Lamport 逻辑时钟 + 异常检�?+ 漂移对账 + 三角闭环反馈�?
-  blueprint: docs/03_modules/_domain-governance/audit-trail/blueprint.md
-  code_root: src/zephyr/audit-trail/
+  description: 不可变、密码学完整性保证的审计追踪链——记录每?AI 动作?who/when/what/why。JSONL SSoT + 哈希链防篡改
+    + HMAC 签名 + Lamport 逻辑时钟 + 异常检?+ 漂移对账 + 三角闭环反馈
+  blueprint: docs/03_modules/l01_infrastructure/audit-trail/blueprint.md
+  code_root: src/zephyr/audit_trail/
   status: draft (0% 施工)
-  architecture: JSONL SSoT (append-only + tamper-evident) �?SQLite 派生索引 (查询加�? �?异常检测引�?
-    �?漂移对账�?�?三角闭环反馈 (�?Policy PR)
+  architecture: JSONL SSoT (append-only + tamper-evident) ?SQLite 派生索引 (查询加? ?异常检测引
+    ?漂移对账??三角闭环反馈 (?Policy PR)
   files: 12
   models:
-    file: audit-trail/models.py
-    description: Pydantic V2 不可变审计事件模型——frozen=True + extra='forbid'。全�?23 字段�?
+    file: audit_trail/models.py
+    description: Pydantic V2 不可变审计事件模型——frozen=True + extra='forbid'。全?23 字段
     key_exports:
     - symbol: AuditEntryV1
       kind: '[contract]'
       usage: from zephyr.audit_trail.models import AuditEntryV1
-      note: '审计条目 v1.0.0—�?3字段: entry_id + schema_version + prev_entry_hash + entry_hash
+      note: '审计条目 v1.0.0—?3字段: entry_id + schema_version + prev_entry_hash + entry_hash
         + hmac_signature + merkle_batch_id + lamport_clock + utc_timestamp + agent_id
         + ide_source + session_id + task_id + action_type + file_path + sha256_before/after
         + decision_basis + guard_checks_passed/failed + blueprint_expected_action
@@ -1082,19 +1082,19 @@ audit_trail:
         + cost_estimate_usd + duration_ms + contains_pii + redaction_policy + retention_tier'
     - symbol: AuditEventType
       kind: '[contract]'
-      note: '17 种事件类�? TASK_SUMMARY / FILE_DETAIL / ANOMALY_DETECTED / PERMISSION_VIOLATION
+      note: '17 种事件类? TASK_SUMMARY / FILE_DETAIL / ANOMALY_DETECTED / PERMISSION_VIOLATION
         / BULK_OPERATION / GATE_BYPASS / OFF_HOURS_ACTIVITY / DRIFT_DETECTED / INDEX_REBUILD
         / LOG_ROTATION / TIER_MIGRATION / INTEGRITY_CHECK / INTEGRITY_FAILURE / AUDIT_QUERY
         / AUDIT_SYSTEM_HEALTH / POLICY_FEEDBACK_SENT / DRY_RUN_AUDIT / COLD_START_BOOTSTRAP'
     - symbol: TaskAuditSummary
       kind: '[contract]'
-      note: '任务级审计摘要——快速浏�? event_id + timestamp + agent_id + ide_source + lamport_counter
+      note: '任务级审计摘要——快速浏? event_id + timestamp + agent_id + ide_source + lamport_counter
         + session_id + task_id + task_type + action_summary + files_affected + result
         + permission_level + provenance_depth + tokens_used + cost_estimate_usd +
         duration_ms'
     - symbol: FileAuditDetail
       kind: '[contract]'
-      note: '文件级审计明细——问题定�? event_id + task_audit_id + timestamp + lamport_counter
+      note: '文件级审计明细——问题定? event_id + task_audit_id + timestamp + lamport_counter
         + file_path + action_type(READ/WRITE/CREATE/DELETE) + sha256_before/after
         + diff_size_bytes'
     - symbol: FileActionType
@@ -1111,81 +1111,81 @@ audit_trail:
       note: '全量溯源: blocked_reason + attempted_action + rule_violated + escalation_triggered
         + escalation_target'
     anti_patterns:
-    - 在模块内自定义审计事件类而不继承 AuditEntryV1——跨系统查询不可�?
-    - 修改 AuditEntryV1 字段不更�?schema_version——历史记录回读失�?
-    - 跳过 frozen=True 可变审计条目——破�?append-only 原则
+    - 在模块内自定义审计事件类而不继承 AuditEntryV1——跨系统查询不可
+    - 修改 AuditEntryV1 字段不更?schema_version——历史记录回读失
+    - 跳过 frozen=True 可变审计条目——破?append-only 原则
   writer:
-    file: audit-trail/writer.py
-    description: 不可变审计写入器——JSONL append + 哈希�?+ HMAC + Lamport tick。唯一写入入口�?
+    file: audit_trail/writer.py
+    description: 不可变审计写入器——JSONL append + 哈希?+ HMAC + Lamport tick。唯一写入入口
     key_exports:
     - symbol: AuditTrailWriter.append()
-      note: 追加 1 条审计记录——自动计�?prev_entry_hash + entry_hash + HMAC + Lamport.tick()
-        �?JSONL append �?异步触发 SQLite 索引重建 (5s)
+      note: 追加 1 条审计记录——自动计?prev_entry_hash + entry_hash + HMAC + Lamport.tick()
+        ?JSONL append ?异步触发 SQLite 索引重建 (5s)
     - symbol: AuditTrailWriter.append_batch()
-      note: 批量追加——单次文件锁内完�?N 条写�?
+      note: 批量追加——单次文件锁内完?N 条写
     - symbol: AuditTrailWriter.flush()
-      note: 强制刷新——立即触�?SQLite 索引重建
+      note: 强制刷新——立即触?SQLite 索引重建
     anti_patterns:
-    - 直接 open(data/audit/audit-trail.jsonl, 'a')——绕过哈希链�?HMAC 生成
-    - append 后不调用异步索引重建——查询延迟超�?5s
+    - 直接 open(data/audit/audit-trail.jsonl, 'a')——绕过哈希链?HMAC 生成
+    - append 后不调用异步索引重建——查询延迟超?5s
   query:
-    file: audit-trail/query.py
-    description: 审计查询接口——SQLite 优先 + JSONL 回退 + 查询前完整性快速校验。每次查询自动写元审计�?
+    file: audit_trail/query.py
+    description: 审计查询接口——SQLite 优先 + JSONL 回退 + 查询前完整性快速校验。每次查询自动写元审计
     key_exports:
     - symbol: AuditQuery.by_task()
-      note: �?task_id 查询任务级摘�?
+      note: ?task_id 查询任务级摘
     - symbol: AuditQuery.by_task_details()
-      note: �?task_id 查询关联的文件级明细列表
+      note: ?task_id 查询关联的文件级明细列表
     - symbol: AuditQuery.by_agent()
-      note: �?agent_id + time_range 查询
+      note: ?agent_id + time_range 查询
     - symbol: AuditQuery.by_target()
-      note: �?file_path 查询完整 lineage——谁操作过这个文�?
+      note: ?file_path 查询完整 lineage——谁操作过这个文
     - symbol: AuditQuery.by_permission_level()
-      note: �?always_allow/auto_guard/blocked 过滤
+      note: ?always_allow/auto_guard/blocked 过滤
     - symbol: AuditQuery.by_anomaly()
-      note: �?anomaly_type + min_score 过滤异常事件
+      note: ?anomaly_type + min_score 过滤异常事件
     - symbol: AuditQuery.by_drift()
-      note: �?drift_severity 过滤蓝图漂移事件
+      note: ?drift_severity 过滤蓝图漂移事件
     - symbol: AuditQuery.by_cost()
-      note: �?min_cost_usd 查询——FinOps 审计
+      note: ?min_cost_usd 查询——FinOps 审计
     - symbol: AuditQuery.trail_for_ai_context()
-      note: �?AI agent 生成 Markdown 审计摘要——AI 零推理可消费
+      note: ?AI agent 生成 Markdown 审计摘要——AI 零推理可消费
     - symbol: AuditQuery.verify_integrity()
       note: fast_mode=True 仅验 Merkle root / fast_mode=False 逐条验哈希链+HMAC
     - symbol: IntegrityReport
-      note: '完整性报�? is_valid + total_entries + hash_chain_breaks[] + hmac_failures[]
+      note: '完整性报? is_valid + total_entries + hash_chain_breaks[] + hmac_failures[]
         + merkle_mismatches[]'
     anti_patterns:
-    - 绕过 AuditQuery 直接 SQL SELECT——缺少元审计 + 完整性校�?
-    - 查询异常事件不传 min_score——返回全量噪声（建议默认 0.7�?
+    - 绕过 AuditQuery 直接 SQL SELECT——缺少元审计 + 完整性校
+    - 查询异常事件不传 min_score——返回全量噪声（建议默认 0.7
   integrity:
-    file: audit-trail/integrity.py
-    description: 密码学完整性验证器——哈希链连续�?/ HMAC 批量验证 / Merkle 树重建校�?
+    file: audit_trail/integrity.py
+    description: 密码学完整性验证器——哈希链连续?/ HMAC 批量验证 / Merkle 树重建校
     key_exports:
     - symbol: verify_hash_chain()
-      note: 逐条验证 prev_entry_hash �?SHA-256(prev_entry) 匹配
+      note: 逐条验证 prev_entry_hash ?SHA-256(prev_entry) 匹配
     - symbol: verify_hmac_batch()
       note: HMAC-SHA256(canonical_json, ZEPHYR_AUDIT_HMAC_SECRET) 批量验证
     - symbol: rebuild_merkle_tree()
-      note: �?JSONL 重建 Merkle �?�?写入 data/audit/merkle/audit-merkle-{YYYY-MM-DDTHH}.json
+      note: ?JSONL 重建 Merkle ??写入 data/audit/merkle/audit-merkle-{YYYY-MM-DDTHH}.json
   lamport_clock:
-    file: audit-trail/writer.py
-    description: Lamport 逻辑时钟——多 IDE 并发下的因果顺序保证。不对操作系统时钟做任何假设�?
+    file: audit_trail/writer.py
+    description: Lamport 逻辑时钟——多 IDE 并发下的因果顺序保证。不对操作系统时钟做任何假设
     key_exports:
     - symbol: LamportClock.tick()
-      note: 操作前递增 counter �?返回 (ide_source, counter)
+      note: 操作前递增 counter ?返回 (ide_source, counter)
     - symbol: LamportClock.merge(received)
-      note: '接收外部事件时合�? counter = max(local, received[1]) + 1'
+      note: '接收外部事件时合? counter = max(local, received[1]) + 1'
     - symbol: audit_entry_sort_key()
-      note: '全序排序�? (counter, ide_source) 字典序——对�?Dynamo Vector Clock 简化版'
+      note: '全序排序? (counter, ide_source) 字典序——对?Dynamo Vector Clock 简化版'
   anomaly:
-    file: audit-trail/anomaly.py
-    description: AI 行为异常检测引擎—�? 种异常签�?+ 行为基线模型 + 自动告警。Experimental 阶段落位�?
+    file: audit_trail/anomaly.py
+    description: AI 行为异常检测引擎—? 种异常签?+ 行为基线模型 + 自动告警。Experimental 阶段落位
     key_exports:
     - symbol: AnomalyDetector.detect()
       note: 单条目异常检测→返回 anomaly_score (0~1)
     - symbol: AnomalyDetector.detect_batch()
-      note: 批量异常检测→窗口内统�?
+      note: 批量异常检测→窗口内统
     signatures:
     - id: ANM-001
       pattern: 越权操作
@@ -1200,7 +1200,7 @@ audit_trail:
       severity: P0
       logic: 文件修改但无对应 guard_checks_passed
     - id: ANM-004
-      pattern: 非工作时�?
+      pattern: 非工作时
       severity: P1
       logic: UTC 22:00-06:00 > 20 操作/小时
     - id: ANM-005
@@ -1208,147 +1208,147 @@ audit_trail:
       severity: P1
       logic: '> 100 文件操作/分钟'
     - id: ANM-006
-      pattern: �?Agent 冲突
+      pattern: ?Agent 冲突
       severity: P1
       logic: 同一文件 5 分钟内被 3+ Agent 修改
     - id: ANM-007
       pattern: 审计日志异常
       severity: P0
-      logic: 哈希链断�?/ HMAC 失败 / 外部篡改
+      logic: 哈希链断?/ HMAC 失败 / 外部篡改
     alert_thresholds:
-      score_gt_0_7: P1 告警——写�?anomaly_detected 事件 + 通知 Owner
-      score_gt_0_9: P0 阻断——触�?Gate Engine block + 通知 Owner + escalation
+      score_gt_0_7: P1 告警——写?anomaly_detected 事件 + 通知 Owner
+      score_gt_0_9: P0 阻断——触?Gate Engine block + 通知 Owner + escalation
   drift:
-    file: audit-trail/drift.py
-    description: 蓝图 vs 实际操作漂移检测器——对�?AI 实际做了什�?vs 蓝图规定该做什么。Experimental 阶段落位�?
+    file: audit_trail/drift.py
+    description: 蓝图 vs 实际操作漂移检测器——对?AI 实际做了什?vs 蓝图规定该做什么。Experimental 阶段落位
     key_exports:
     - symbol: DriftDetector.compare()
       note: 单条目漂移检测→DriftResult
     - symbol: DriftDetector.batch_compare()
       note: 批量漂移检测→DriftReport
     drift_types:
-    - unauthorized_op——AI 执行了蓝图未授权的操�?
+    - unauthorized_op——AI 执行了蓝图未授权的操
     - skipped_check——AI 跳过了蓝图规定的检查项
     - immutable_violation——AI 修改了不可变文件
   feedback:
-    file: audit-trail/writer.py (aggregator)
-    description: 审计聚合数据回写 Policy——对�?ADR-0010 §4.4 Runtime→Policy 接口。Beta 阶段落位�?
-    schedule: '每日 00:30 UTC 聚合: Top 10 异常 + 漂移摘要 + 权限违规趋势 + 高成本事�?
-    consumer: feedback_to_policy.py �?GitHub PR (Owner 审批)
+    file: audit_trail/writer.py (aggregator)
+    description: 审计聚合数据回写 Policy——对?ADR-0010 §4.4 Runtime→Policy 接口。Beta 阶段落位
+    schedule: '每日 00:30 UTC 聚合: Top 10 异常 + 漂移摘要 + 权限违规趋势 + 高成本事'
+    consumer: feedback_to_policy.py ?GitHub PR (Owner 审批)
   lifecycle:
-    file: audit-trail/lifecycle.py
-    description: 三层存储迁移 + 隐私脱敏 + 保留期自动执行。Beta 阶段落位�?
+    file: audit_trail/lifecycle.py
+    description: 三层存储迁移 + 隐私脱敏 + 保留期自动执行。Beta 阶段落位
     key_exports:
     - symbol: TierMigrator.migrate_hot_to_warm()
-      note: 每日 00:00 UTC 扫描 hot/ �?>7d 条目 gzip 迁移�?warm/
+      note: 每日 00:00 UTC 扫描 hot/ ?>7d 条目 gzip 迁移?warm/
     - symbol: TierMigrator.migrate_warm_to_cold()
-      note: 每周�?02:00 扫描 warm/ �?>90d 条目 Parquet 归档�?cold/
+      note: 每周?02:00 扫描 warm/ ?>90d 条目 Parquet 归档?cold/
     - symbol: PiiDetector.scan()
-      note: '写入时自动检�?PII: .env/secrets/key/token �?hash, 邮箱/手机 �?mask'
+      note: '写入时自动检?PII: .env/secrets/key/token ?hash, 邮箱/手机 ?mask'
     - symbol: RetentionEnforcer.dry_run()
       note: 扫描过期条目——生成报告（不删除）
     - symbol: RetentionEnforcer.enforce()
       note: 保留期清理——需 Owner 审批 token
   cold_start:
-    file: audit-trail/lifecycle.py
-    description: 审计系统首次启动——扫�?git log + session-logs/ �?生成历史审计基线。Beta 阶段落位�?
+    file: audit_trail/lifecycle.py
+    description: 审计系统首次启动——扫?git log + session-logs/ ?生成历史审计基线。Beta 阶段落位
     key_exports:
     - symbol: ColdStartBootstrapper.scan_git_log()
-      note: 扫描 git log �?生成历史审计基线 (confidence=low)
+      note: 扫描 git log ?生成历史审计基线 (confidence=low)
     - symbol: ColdStartBootstrapper.scan_session_logs()
-      note: 扫描 session-logs/ 目录 �?标准化为审计条目
+      note: 扫描 session-logs/ 目录 ?标准化为审计条目
     - symbol: ColdStartBootstrapper.merge_to_baseline()
-      note: 合并 �?bootstrap_audit_baseline.jsonl
+      note: 合并 ?bootstrap_audit_baseline.jsonl
   self_monitor:
-    file: audit-trail/self_monitor.py
-    description: 审计系统自监控——heartbeat + 健康指标 + 自动修复�?�?AI 维护刚需�?
+    file: audit_trail/self_monitor.py
+    description: 审计系统自监控——heartbeat + 健康指标 + 自动修复??AI 维护刚需
     key_exports:
     - symbol: SelfMonitor.heartbeat()
-      note: 60s 间隔写入 healthcheck 条目 �?读回验哈希链 �?延迟 < 5ms
+      note: 60s 间隔写入 healthcheck 条目 ?读回验哈希链 ?延迟 < 5ms
     - symbol: SelfMonitor.collect()
-      note: '采集 6 维健康指�? write_latency_p99 / disk_usage_pct / jsonl_file_count / hash_chain_integrity
+      note: '采集 6 维健康指? write_latency_p99 / disk_usage_pct / jsonl_file_count / hash_chain_integrity
         / hmac_validity_rate / sqlite_index_health'
     - symbol: SelfMonitor.auto_heal()
-      note: 索引损坏 �?自动�?JSONL 重建（零人工干预�?
+      note: 索引损坏 ?自动?JSONL 重建（零人工干预
   cli:
-    file: audit-trail/cli.py
+    file: audit_trail/cli.py
     description: CLI 审计面板——Owner 日常交互的唯一入口
     commands:
-    - zephyr audit query <task_id>——查询任务审�?
-    - zephyr audit trail <agent_id>——查�?Agent 操作轨迹
-    - zephyr audit integrity——校验密码学完整�?
+    - zephyr audit query <task_id>——查询任务审
+    - zephyr audit trail <agent_id>——查?Agent 操作轨迹
+    - zephyr audit integrity——校验密码学完整
     - zephyr audit health——自监控健康报告
   construction:
     scaffold:
       name: 法医账本
-      deliverables: AuditEntryV1 完整模型 + JSONL append + 哈希�?+ Lamport 时钟 + 基础查询 + 元审�?
+      deliverables: AuditEntryV1 完整模型 + JSONL append + 哈希?+ Lamport 时钟 + 基础查询 + 元审
         + 完整性自检 + heartbeat
       status: 📋 Backlog
     experimental:
       name: 免疫系统
-      deliverables: 分级 Provenance 全量 + HMAC 签名 + Merkle �?+ 6 异常签名 + 蓝图漂移 + Gate/RBAC
-        全集�?+ Dry-Run
+      deliverables: 分级 Provenance 全量 + HMAC 签名 + Merkle ?+ 6 异常签名 + 蓝图漂移 + Gate/RBAC
+        全集?+ Dry-Run
       status: 📋 Backlog
     beta:
       name: 闭环进化
-      deliverables: 三角闭环反馈 + 仪表�?+ Cold Start + 三层存储迁移 + 保留期自动执�?+ CI 一致�?+ PII 检�?
+      deliverables: 三角闭环反馈 + 仪表?+ Cold Start + 三层存储迁移 + 保留期自动执?+ CI 一致?+ PII 检
       status: 📋 Backlog
   integration_points:
-  - target: agent-rbac
+  - target: agent_rbac
     at: MOD-INF-018 §2.2
-    why: 审计记录�?subject �?AgentIdentity + permission_level 决定 provenance_depth
+    why: 审计记录?subject ?AgentIdentity + permission_level 决定 provenance_depth
   - target: gate_engine
     at: MOD-INF-007 §2
-    why: 门禁决策的审计记�?+ 实时阻断联动
-  - target: feedback-loop
+    why: 门禁决策的审计记?+ 实时阻断联动
+  - target: feedback_loop
     at: MOD-INF-010 §2
-    why: 三角闭环反馈——审计聚合数据推�?feedback_to_policy.py
+    why: 三角闭环反馈——审计聚合数据推?feedback_to_policy.py
   - target: runtime_integration
     at: MOD-INF-002 §2
     why: RI-13 EventStore + RI-14 DryRunSimulator + RI-15 CostTracker 联动
-  - target: drift-detector
+  - target: drift_detector
     at: MOD-INF-023 §2
     why: 蓝图 vs 实际漂移检测的审计信号输入
   - target: database
     at: MOD-INF-012 §3
-    why: SQLite 派生查询索引的存�?
-  - target: system-telemetry
+    why: SQLite 派生查询索引的存
+  - target: system_telemetry
     at: MOD-INF-015 §2
-    why: 审计事件的遥测发�?
+    why: 审计事件的遥测发
   - target: shared_core
     at: MOD-INF-016 §2.6
-    why: AuditEventType 枚举 + Task Schema + 韧性基�?
+    why: AuditEventType 枚举 + Task Schema + 韧性基
   - target: escalation_protocol
     at: MOD-INF-022
-    why: anomaly_score > 0.9 �?自动升级/委托 Owner
+    why: anomaly_score > 0.9 ?自动升级/委托 Owner
   - target: rollback_system
     at: MOD-INF-021
-    why: drift_detected + severity=high �?Checkpoint �?Rollback
+    why: drift_detected + severity=high ?Checkpoint ?Rollback
   decisions:
   - id: D-020-01
-    summary: 两层审计粒度——任务级摘要 + 文件级明�?
+    summary: 两层审计粒度——任务级摘要 + 文件级明
   - id: D-020-02
-    summary: JSONL 为唯一真源（SSoT），SQLite 为派生查询索�?
+    summary: JSONL 为唯一真源（SSoT），SQLite 为派生查询索
   - id: D-020-03
     summary: Provenance 按权限级别分级——Light/Standard/Full
   - id: D-020-04
-    summary: 密码学完整性——SHA-256 哈希�?+ HMAC-SHA256 + Merkle 树聚�?
+    summary: 密码学完整性——SHA-256 哈希?+ HMAC-SHA256 + Merkle 树聚
   - id: D-020-05
-    summary: 元审计——审计系统自身操作留�?
+    summary: 元审计——审计系统自身操作留
   - id: D-020-06
     summary: 蓝图漂移检测——AI 实际操作 vs 蓝图规定
   - id: D-020-07
-    summary: AI 行为异常签名—�? 种自动检测模�?
+    summary: AI 行为异常签名—? 种自动检测模
   - id: D-020-08
-    summary: 三角闭环反馈——审计聚合数据回�?Policy 驱动规则演进
+    summary: 三角闭环反馈——审计聚合数据回?Policy 驱动规则演进
   - id: D-020-09
-    summary: Lamport 逻辑时钟——多 IDE 时序一致性（不信�?OS 时钟�?
+    summary: Lamport 逻辑时钟——多 IDE 时序一致性（不信?OS 时钟
   - id: D-020-10
-    summary: 三层存储（热/�?冷）+ 自动分层迁移
+    summary: 三层存储（热/?冷）+ 自动分层迁移
   - id: D-020-11
-    summary: 隐私脱敏——写入时自动检�?PII 并掩�?哈希
+    summary: 隐私脱敏——写入时自动检?PII 并掩?哈希
   - id: D-020-12
-    summary: 保留期自动执行——dry-run 先行 + Owner 审批 + 元审计记�?
+    summary: 保留期自动执行——dry-run 先行 + Owner 审批 + 元审计记
   - id: D-020-13
     summary: Cold Start——git log + session-logs 回溯生成历史基线
 consumer_count: 130

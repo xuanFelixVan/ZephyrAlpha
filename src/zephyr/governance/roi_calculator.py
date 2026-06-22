@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.roi_calculator
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+from dataclasses import dataclass
 
-from dataclasses import dataclass, field
 
 @dataclass
 class ROIResult:
@@ -31,6 +22,7 @@ class ROIResult:
     cost_saved: float
     net_roi: float
     verdict: str
+
 
 class ROICalculator:
     def __init__(self):

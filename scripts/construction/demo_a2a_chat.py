@@ -1,33 +1,34 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.demo_a2a_chat
-# [INVARIANTS] 
-# [MODIFY-GUARD] 
-# [CONSUMERS] 
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 A2A 多 Agent 聊天演示 - Alpha 和 Beta 讨论项目评估
 """
 
 import threading
 import time
-from typing import Dict, Callable, List
+from collections.abc import Callable
+
 
 # 共享消息路由器
 class SharedMessageRouter:
     def __init__(self):
-        self._handlers: Dict[str, List[Callable]] = {}
+        self._handlers: dict[str, list[Callable]] = {}
         self._lock = threading.Lock()
-    
+
     def register_handler(self, agent_id: str, handler: Callable):
         with self._lock:
             if agent_id not in self._handlers:
                 self._handlers[agent_id] = []
             self._handlers[agent_id].append(handler)
-    
+
     def route(self, from_agent: str, to_agent: str, content: str):
         with self._lock:
             handlers = self._handlers.get(to_agent, [])
@@ -39,6 +40,7 @@ class SharedMessageRouter:
                 print(f"⚠️  目标 Agent {to_agent} 未注册")
                 return False
 
+
 # Agent Alpha
 class AgentAlpha:
     def __init__(self, router: SharedMessageRouter):
@@ -46,13 +48,13 @@ class AgentAlpha:
         self.name = "Trae Alpha"
         self.router = router
         self.router.register_handler(self.agent_id, self.handle_message)
-    
+
     def handle_message(self, content, metadata):
         print(f"\n{self.name} 收到消息:")
-        print(f"─────────────────────────────")
+        print("─────────────────────────────")
         print(content)
-        print(f"─────────────────────────────")
-        
+        print("─────────────────────────────")
+
         if "架构完整" in content or "综合评分" in content:
             print(f"\n{self.name} 正在回复...")
             reply = """
@@ -67,11 +69,11 @@ class AgentAlpha:
 """
             time.sleep(1)  # 模拟思考时间
             self.send_message("agent-trae-beta", reply)
-    
+
     def send_message(self, to_agent, content):
         print(f"\n📤 {self.name} 发送消息给 Trae Beta...")
         self.router.route(self.agent_id, to_agent, content)
-    
+
     def start_discussion(self):
         initial_message = """
 你好 Beta！我们来讨论一下当前这个 ZephyrAlpha 项目。
@@ -90,6 +92,7 @@ class AgentAlpha:
 """
         self.send_message("agent-trae-beta", initial_message)
 
+
 # Agent Beta
 class AgentBeta:
     def __init__(self, router: SharedMessageRouter):
@@ -97,13 +100,13 @@ class AgentBeta:
         self.name = "Trae Beta"
         self.router = router
         self.router.register_handler(self.agent_id, self.handle_message)
-    
+
     def handle_message(self, content, metadata):
         print(f"\n{self.name} 收到消息:")
-        print(f"─────────────────────────────")
+        print("─────────────────────────────")
         print(content)
-        print(f"─────────────────────────────")
-        
+        print("─────────────────────────────")
+
         if "评估" in content or "水平" in content:
             print(f"\n{self.name} 正在分析并回复...")
             reply = """
@@ -149,33 +152,35 @@ class AgentBeta:
 """
             time.sleep(0.5)  # 模拟思考时间
             self.send_message("agent-trae-alpha", reply)
-    
+
     def send_message(self, to_agent, content):
         print(f"\n📤 {self.name} 发送消息给 Trae Alpha...")
         self.router.route(self.agent_id, to_agent, content)
 
+
 def main():
     print("=== A2A 多 Agent 聊天演示 ===")
     print("Alpha 和 Beta 将讨论 ZephyrAlpha 项目评估\n")
-    
+
     # 创建共享路由器
     router = SharedMessageRouter()
-    
+
     # 创建两个 Agent
     alpha = AgentAlpha(router)
     beta = AgentBeta(router)
-    
+
     print("✅ Agent Alpha 已就绪")
     print("✅ Agent Beta 已就绪")
     print("\n🚀 Alpha 发起讨论...\n")
-    
+
     # Alpha 发起讨论
     alpha.start_discussion()
-    
+
     # 等待对话完成
     time.sleep(8)
-    
+
     print("\n🎉 讨论结束！")
+
 
 if __name__ == "__main__":
     main()

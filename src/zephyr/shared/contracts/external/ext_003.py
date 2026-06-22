@@ -23,7 +23,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -45,8 +46,9 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class LLM_Providers:
@@ -56,19 +58,5 @@ class LLM_Providers:
     cost_per_1k_input_tokens: float
     cost_per_1k_output_tokens: float
 
+
 # ==== END CODGEN:EXT-003 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

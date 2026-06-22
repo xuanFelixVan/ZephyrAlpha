@@ -2,32 +2,23 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.detectors.anomaly_detector
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
-from zephyr.ops.collectors.metrics_collector import MetricsCollector, MetricSnapshot
 from zephyr.ops.collectors.feedback_collector import FeedbackCollector
+from zephyr.ops.collectors.metrics_collector import MetricsCollector, MetricSnapshot
 from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
+
 
 @dataclass
 class AnomalyEvent:
@@ -35,6 +26,7 @@ class AnomalyEvent:
     severity: int
     evidence: dict[str, Any]
     timestamp: float
+
 
 @dataclass
 class AnomalyDetector:
@@ -48,9 +40,7 @@ class AnomalyDetector:
         result = self.metrics_collector.collect(snapshot)
         if not result["anomaly_triggered"]:
             return None
-        triggered_metrics = {
-            k: v for k, v in result["z_scores"].items() if abs(v) > self.z_threshold
-        }
+        triggered_metrics = {k: v for k, v in result["z_scores"].items() if abs(v) > self.z_threshold}
         max_z_metric = max(triggered_metrics, key=lambda k: abs(triggered_metrics[k]))
         severity = min(int(abs(triggered_metrics[max_z_metric]) * 2), 10)
         anomaly_id = str(uuid.uuid4())[:8]

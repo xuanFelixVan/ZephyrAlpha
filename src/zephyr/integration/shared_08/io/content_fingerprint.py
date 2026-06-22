@@ -29,7 +29,6 @@ Task: T-1-10 | experimental | Composer 2
 
 from __future__ import annotations
 
-
 import hashlib
 from pathlib import Path
 

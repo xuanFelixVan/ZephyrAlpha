@@ -13,12 +13,10 @@
 from __future__ import annotations
 
 import json
-import pytest
-from datetime import datetime, timezone, timedelta
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from datetime import UTC, datetime, timedelta
+from unittest.mock import patch
 
-from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel, _HISTORY
+from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
 
 
 class TestFreshnessDecayModelInstantiation:
@@ -46,17 +44,17 @@ class TestFreshnessDecayModelInstantiation:
 
 class TestCompute:
     def test_recent_timestamp_high_score(self):
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         score = FreshnessDecayModel.compute(now)
         assert score > 90.0
 
     def test_old_timestamp_low_score(self):
-        old = (datetime.now(timezone.utc) - timedelta(hours=600)).isoformat()
+        old = (datetime.now(UTC) - timedelta(hours=600)).isoformat()
         score = FreshnessDecayModel.compute(old)
         assert score < 30.0
 
     def test_very_old_timestamp_zero(self):
-        very_old = (datetime.now(timezone.utc) - timedelta(hours=800)).isoformat()
+        very_old = (datetime.now(UTC) - timedelta(hours=800)).isoformat()
         score = FreshnessDecayModel.compute(very_old)
         assert score == 0.0
 
@@ -73,12 +71,12 @@ class TestCompute:
         assert score == 0.0
 
     def test_exactly_zero_hours(self):
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         score = FreshnessDecayModel.compute(now)
         assert score <= 100.0
 
     def test_half_life_approximate(self):
-        half = (datetime.now(timezone.utc) - timedelta(hours=360)).isoformat()
+        half = (datetime.now(UTC) - timedelta(hours=360)).isoformat()
         score = FreshnessDecayModel.compute(half)
         assert 40.0 <= score <= 60.0
 
@@ -86,7 +84,7 @@ class TestCompute:
 class TestCurrentState:
     def test_registered_skill(self):
         fdm = FreshnessDecayModel()
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         data = {"SKILL-REG": {"last_validated": now, "boost": 10.0}}
         with patch.object(fdm, "_load", return_value=data):
             state = fdm.current_state("SKILL-REG")
@@ -103,7 +101,7 @@ class TestCurrentState:
 
     def test_old_registered_skill(self):
         fdm = FreshnessDecayModel()
-        old = (datetime.now(timezone.utc) - timedelta(hours=700)).isoformat()
+        old = (datetime.now(UTC) - timedelta(hours=700)).isoformat()
         data = {"SKILL-OLD": {"last_validated": old, "boost": 0.0}}
         with patch.object(fdm, "_load", return_value=data):
             state = fdm.current_state("SKILL-OLD")
@@ -114,9 +112,8 @@ class TestCurrentState:
 class TestBoost:
     def test_boost_writes_to_history(self):
         fdm = FreshnessDecayModel()
-        with patch.object(fdm, "_load", return_value={}):
-            with patch.object(fdm, "_save") as mock_save:
-                fdm.boost("SKILL-BOOST", 25.0)
+        with patch.object(fdm, "_load", return_value={}), patch.object(fdm, "_save") as mock_save:
+            fdm.boost("SKILL-BOOST", 25.0)
         mock_save.assert_called_once()
         saved_data = mock_save.call_args[0][0]
         assert "SKILL-BOOST" in saved_data
@@ -124,17 +121,15 @@ class TestBoost:
 
     def test_boost_default_amount(self):
         fdm = FreshnessDecayModel()
-        with patch.object(fdm, "_load", return_value={}):
-            with patch.object(fdm, "_save") as mock_save:
-                fdm.boost("SKILL-DEF-BOOST")
+        with patch.object(fdm, "_load", return_value={}), patch.object(fdm, "_save") as mock_save:
+            fdm.boost("SKILL-DEF-BOOST")
         saved_data = mock_save.call_args[0][0]
         assert saved_data["SKILL-DEF-BOOST"]["boost"] == 50.0
 
     def test_boost_sets_last_validated(self):
         fdm = FreshnessDecayModel()
-        with patch.object(fdm, "_load", return_value={}):
-            with patch.object(fdm, "_save") as mock_save:
-                fdm.boost("SKILL-LV")
+        with patch.object(fdm, "_load", return_value={}), patch.object(fdm, "_save") as mock_save:
+            fdm.boost("SKILL-LV")
         saved_data = mock_save.call_args[0][0]
         assert "last_validated" in saved_data["SKILL-LV"]
 
@@ -142,15 +137,17 @@ class TestBoost:
 class TestLoadSave:
     def test_load_nonexistent_returns_empty(self, tmp_path):
         fdm = FreshnessDecayModel()
-        with patch("zephyr.orchestration.agent_lifecycle.skill_freshness._HISTORY", tmp_path / "nonexistent.json"):
+        with patch("zephyr.autonomy_core.skill_freshness._HISTORY", tmp_path / "nonexistent.json"):
             result = fdm._load()
         assert result == {}
 
     def test_load_valid_json(self, tmp_path):
         hist = tmp_path / "freshness.json"
-        hist.write_text(json.dumps({"SKILL-X": {"last_validated": "2025-01-01T00:00:00+00:00", "boost": 10}}), encoding="utf-8")
+        hist.write_text(
+            json.dumps({"SKILL-X": {"last_validated": "2025-01-01T00:00:00+00:00", "boost": 10}}), encoding="utf-8"
+        )
         fdm = FreshnessDecayModel()
-        with patch("zephyr.orchestration.agent_lifecycle.skill_freshness._HISTORY", hist):
+        with patch("zephyr.autonomy_core.skill_freshness._HISTORY", hist):
             result = fdm._load()
         assert "SKILL-X" in result
 
@@ -158,7 +155,7 @@ class TestLoadSave:
         hist = tmp_path / "bad.json"
         hist.write_text("not valid json{{{", encoding="utf-8")
         fdm = FreshnessDecayModel()
-        with patch("zephyr.orchestration.agent_lifecycle.skill_freshness._HISTORY", hist):
+        with patch("zephyr.autonomy_core.skill_freshness._HISTORY", hist):
             result = fdm._load()
         assert result == {}
 
@@ -166,7 +163,7 @@ class TestLoadSave:
         hist = tmp_path / "roundtrip.json"
         fdm = FreshnessDecayModel()
         data = {"SKILL-RT": {"last_validated": "2025-06-01T00:00:00+00:00", "boost": 30}}
-        with patch("zephyr.orchestration.agent_lifecycle.skill_freshness._HISTORY", hist):
+        with patch("zephyr.autonomy_core.skill_freshness._HISTORY", hist):
             fdm._save(data)
             loaded = fdm._load()
         assert loaded == data

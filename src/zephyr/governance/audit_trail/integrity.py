@@ -96,9 +96,7 @@ class MerkleAggregator:
             True 如果重建的 root 与 claimed_root 一致
         """
         actual_root = MerkleAggregator.build(leaves)
-        return hmac.compare_digest(
-            actual_root.encode(), claimed_root.encode()
-        )
+        return hmac.compare_digest(actual_root.encode(), claimed_root.encode())
 
 
 class IntegrityVerifier:
@@ -118,7 +116,7 @@ class IntegrityVerifier:
         prev_hash = ""
         event_count = 0
 
-        with open(self._event_log_path, "r", encoding="utf-8") as f:
+        with open(self._event_log_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
@@ -148,9 +146,7 @@ class IntegrityVerifier:
                             hashlib.sha256,
                         ).hexdigest()
                         if not hmac.compare_digest(expected_hmac, stored_hmac):
-                            issues.append(
-                                f"event #{event_count}: HMAC signature mismatch"
-                            )
+                            issues.append(f"event #{event_count}: HMAC signature mismatch")
 
                 stored_agent_sig = event.get("agent_signature", "")
                 if stored_agent_sig:
@@ -158,9 +154,7 @@ class IntegrityVerifier:
                     if entry_hash:
                         v = self._verify_agent_signature_inline(event, stored_agent_sig)
                         if v is False:
-                            issues.append(
-                                f"event #{event_count}: Agent signature invalid"
-                            )
+                            issues.append(f"event #{event_count}: Agent signature invalid")
 
         status = "valid" if not issues else "compromised"
         return {"status": status, "events_checked": event_count, "issues": issues}
@@ -169,14 +163,12 @@ class IntegrityVerifier:
         if not self._event_log_path.exists():
             return {"status": "no_data", "valid": False}
 
-        with open(self._event_log_path, "r", encoding="utf-8") as f:
+        with open(self._event_log_path, encoding="utf-8") as f:
             for i, line in enumerate(f):
                 if i == event_index - 1:
                     event = json.loads(line.strip())
                     calc_hash = hashlib.sha256(
-                        json.dumps(
-                            event, ensure_ascii=False, sort_keys=True, default=str
-                        ).encode("utf-8")
+                        json.dumps(event, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
                     ).hexdigest()
                     result: dict[str, Any] = {
                         "status": "found",
@@ -187,23 +179,17 @@ class IntegrityVerifier:
                     if self._hmac_key:
                         stored_hmac = event.get("hmac_signature", "")
                         if stored_hmac:
-                            event_str = json.dumps(
-                                event, ensure_ascii=False, sort_keys=True, default=str
-                            )
+                            event_str = json.dumps(event, ensure_ascii=False, sort_keys=True, default=str)
                             expected_hmac = hmac.new(
                                 self._hmac_key,
                                 event_str.encode("utf-8"),
                                 hashlib.sha256,
                             ).hexdigest()
-                            result["hmac_valid"] = hmac.compare_digest(
-                                expected_hmac, stored_hmac
-                            )
+                            result["hmac_valid"] = hmac.compare_digest(expected_hmac, stored_hmac)
                     return result
         return {"status": "not_found", "valid": False}
 
-    def _verify_agent_signature_inline(
-        self, event: dict[str, Any], signature_hex: str
-    ) -> bool | None:
+    def _verify_agent_signature_inline(self, event: dict[str, Any], signature_hex: str) -> bool | None:
         try:
             from zephyr.governance.audit_trail.agent_signer import AgentSigner
 

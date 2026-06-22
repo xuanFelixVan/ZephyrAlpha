@@ -51,8 +51,8 @@ import abc
 from typing import ClassVar
 
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.trading.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
 from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
 from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 
@@ -68,11 +68,11 @@ class SignalAggregatorBase(abc.ABC):
       - 返回的 SynthesizedSignal.signal_value 必须在 [-3.0, 3.0] 范围内
       - contributing_factors 必须记录每个因子的权重，用于下游归因分析
     """
-    _registry: ClassVar[dict[str, type["SignalAggregatorBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[SignalAggregatorBase]]] = {}
 
     @abc.abstractmethod
-    def aggregate(self, factor_signals: list[FactorSignal], symbol: str,
-                  idempotency_key: str) -> SynthesizedSignal:
+    def aggregate(self, factor_signals: list[FactorSignal], symbol: str, idempotency_key: str) -> SynthesizedSignal:
         """聚合多个 FactorSignal 为单个标的的 SynthesizedSignal"""
         ...
 
@@ -92,11 +92,11 @@ class CapitalAllocatorBase(abc.ABC):
       - allocation_method 枚举：equal_weight | sharpe_weight | risk_parity
       - total_allocated_weight 通常 = 1.0
     """
-    _registry: ClassVar[dict[str, type["CapitalAllocatorBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[CapitalAllocatorBase]]] = {}
 
     @abc.abstractmethod
-    def allocate(self, signals: list[SynthesizedSignal],
-                 idempotency_key: str) -> CapitalAllocationResult:
+    def allocate(self, signals: list[SynthesizedSignal], idempotency_key: str) -> CapitalAllocationResult:
         """多策略信号 → 资本配置权重"""
         ...
 
@@ -109,7 +109,8 @@ class DegradationMonitorBase(abc.ABC):
 
     当检测到信号质量下降时发布警告——不阻断流水线，但下游应据此降级处理。
     """
-    _registry: ClassVar[dict[str, type["DegradationMonitorBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[DegradationMonitorBase]]] = {}
 
     @abc.abstractmethod
     def evaluate(self, signals: list[SynthesizedSignal]) -> list[SignalDegradationWarning]:
@@ -118,7 +119,7 @@ class DegradationMonitorBase(abc.ABC):
 
 
 __all__ = [
-    "SignalAggregatorBase",
     "CapitalAllocatorBase",
     "DegradationMonitorBase",
+    "SignalAggregatorBase",
 ]

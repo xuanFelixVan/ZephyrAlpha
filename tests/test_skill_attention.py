@@ -21,12 +21,10 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.skill_attention import (
-    SkillAttention,
-    AttentionSlot,
     AttentionPlan,
+    AttentionSlot,
+    SkillAttention,
 )
 
 
@@ -79,10 +77,7 @@ class TestSkillAttentionAllocate:
         assert plan.slots[0].skill_id == "high"
 
     def test_overflow_skills(self):
-        candidates = [
-            {"skill_id": f"s{i}", "priority": 1.0 - i * 0.1, "freshness_score": 100.0}
-            for i in range(8)
-        ]
+        candidates = [{"skill_id": f"s{i}", "priority": 1.0 - i * 0.1, "freshness_score": 100.0} for i in range(8)]
         plan = SkillAttention.allocate(candidates, max_skills=4)
         assert len(plan.slots) == 4
         assert len(plan.overflow_skills) == 4
@@ -93,10 +88,7 @@ class TestSkillAttentionAllocate:
         assert plan.total_budget == 2000
 
     def test_minimum_allocation(self):
-        candidates = [
-            {"skill_id": f"s{i}", "priority": 0.01, "freshness_score": 1.0}
-            for i in range(10)
-        ]
+        candidates = [{"skill_id": f"s{i}", "priority": 0.01, "freshness_score": 1.0} for i in range(10)]
         plan = SkillAttention.allocate(candidates, window_size=100, max_skills=10)
         for slot in plan.slots:
             assert slot.allocated_tokens >= 50

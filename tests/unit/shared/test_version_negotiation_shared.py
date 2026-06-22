@@ -34,7 +34,6 @@
 Safety: HIGH（版本协商是 Schema 演进安全的根基）
 """
 
-import pytest
 from zephyr.integration.shared_08.version_negotiation import (
     ChangeType,
     DeprecationRecord,
@@ -174,26 +173,36 @@ class TestVersionNegotiator:
     def test_is_deprecated_before_removal(self):
         negotiator = VersionNegotiator()
         negotiator.register_deprecation(
-            SchemaName.TASKCARD, "old_field", "v1.0.0",
+            SchemaName.TASKCARD,
+            "old_field",
+            "v1.0.0",
         )
         assert not negotiator.is_deprecated(
-            SchemaName.TASKCARD, "old_field", "v2.9.9",
+            SchemaName.TASKCARD,
+            "old_field",
+            "v2.9.9",
         )
 
     def test_is_deprecated_at_removal(self):
         negotiator = VersionNegotiator()
         negotiator.register_deprecation(
-            SchemaName.TASKCARD, "old_field", "v1.0.0",
+            SchemaName.TASKCARD,
+            "old_field",
+            "v1.0.0",
         )
         removal = VersionSegment(major=3, minor=0, patch=0)
         assert negotiator.is_deprecated(
-            SchemaName.TASKCARD, "old_field", str(removal),
+            SchemaName.TASKCARD,
+            "old_field",
+            str(removal),
         )
 
     def test_is_deprecated_unknown_field(self):
         negotiator = VersionNegotiator()
         assert not negotiator.is_deprecated(
-            SchemaName.TASKCARD, "nonexistent", "v5.0.0",
+            SchemaName.TASKCARD,
+            "nonexistent",
+            "v5.0.0",
         )
 
     def test_negotiate_consumer_supports(self):
@@ -239,21 +248,33 @@ class TestVersionNegotiator:
 
     def test_check_breaking_remove_field(self):
         negotiator = VersionNegotiator()
-        assert negotiator.check_breaking_change(
-            ChangeType.REMOVE_FIELD, "v1.0.0",
-        ) is True
+        assert (
+            negotiator.check_breaking_change(
+                ChangeType.REMOVE_FIELD,
+                "v1.0.0",
+            )
+            is True
+        )
 
     def test_check_breaking_add_required(self):
         negotiator = VersionNegotiator()
-        assert negotiator.check_breaking_change(
-            ChangeType.ADD_REQUIRED, "v1.0.0",
-        ) is True
+        assert (
+            negotiator.check_breaking_change(
+                ChangeType.ADD_REQUIRED,
+                "v1.0.0",
+            )
+            is True
+        )
 
     def test_check_not_breaking_add_optional(self):
         negotiator = VersionNegotiator()
-        assert negotiator.check_breaking_change(
-            ChangeType.ADD_OPTIONAL, "v1.0.0",
-        ) is False
+        assert (
+            negotiator.check_breaking_change(
+                ChangeType.ADD_OPTIONAL,
+                "v1.0.0",
+            )
+            is False
+        )
 
     def test_required_transition_remove_field(self):
         negotiator = VersionNegotiator()

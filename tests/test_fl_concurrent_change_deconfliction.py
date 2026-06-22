@@ -10,11 +10,9 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_concurrent_change_deconfliction.py
 
-import pytest
 from zephyr.ops.gates.concurrent_change_deconfliction import (
-    ConcurrentChangeDeconfliction,
     ChangeSource,
-    ChangeAttempt,
+    ConcurrentChangeDeconfliction,
 )
 
 

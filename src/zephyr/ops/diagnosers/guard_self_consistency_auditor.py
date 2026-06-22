@@ -28,6 +28,7 @@ R512: GuardSelfConsistencyAuditor
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class GuardHealthRecord:
     guard_id: str
@@ -35,6 +36,7 @@ class GuardHealthRecord:
     fail_count: int = 0
     total_count: int = 0
     baseline_pass_rate: float | None = None
+
 
 @dataclass
 class GuardSelfConsistencyAuditor:
@@ -92,5 +94,7 @@ class GuardSelfConsistencyAuditor:
             "unhealthy_guards": list(unhealthy.keys()),
             "findings": findings,
             "total_guards_audited": len(findings),
-            "silent_failures_detected": sum(1 for v in findings.values() if v["status"] in ("always_pass", "always_fail")),
+            "silent_failures_detected": sum(
+                1 for v in findings.values() if v["status"] in ("always_pass", "always_fail")
+            ),
         }

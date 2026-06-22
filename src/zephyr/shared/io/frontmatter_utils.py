@@ -119,8 +119,8 @@ def extract_body(content: str) -> str:
 
 
 __all__ = [
+    "extract_body",
     "parse_frontmatter",
     "parse_frontmatter_from_file",
     "parse_yaml_header",
-    "extract_body",
 ]

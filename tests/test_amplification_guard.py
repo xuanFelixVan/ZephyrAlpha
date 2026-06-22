@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_amplification_guard.py
 
-import pytest
 from zephyr.ops.diagnosers.amplification_guard import AmplificationGuard
 
 

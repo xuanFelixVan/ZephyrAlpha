@@ -60,7 +60,6 @@ def _map_blast_radius(raw: str | None) -> BlastRadiusLevel:
 
 
 class ScenarioLoader:
-
     def __init__(self, registry_path: Path | None = None) -> None:
         self._registry_path: Path = registry_path or _REGISTRY_PATH
         self._scenarios: list[AttackScenario] = []

@@ -1,6 +1,27 @@
 # [A_module] module_id=MOD-SEC__scanners | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+from zephyr.behavioral_audit.file_attr_checker import (
+    FileAttrIssue,
+    capture_baseline,
+    check_encoding,
+    check_size_anomaly,
+)
+from zephyr.behavioral_audit.gitignore_auditor import (
+    GitignoreAudit,
+    audit_gitignore,
+    find_over_ignored_critical,
+    find_uncovered_types,
+    find_untracked_generated,
+    parse_gitignore,
+)
+from zephyr.behavioral_audit.headless_scanner import (
+    HeadlessDiffEntry,
+    InterruptLog,
+    headless_scan_light,
+    parse_interrupt_log,
+)
+
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._scanners
 # [INVARIANTS] __all__列表不变; 公开API不变
@@ -11,56 +32,35 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
-
 from zephyr.behavioral_audit.incremental_scanner import (
-    FileChange,
     ChangeSet,
     DetectorFileMapping,
+    FileChange,
     IncrementalScanner,
 )
-from zephyr.behavioral_audit.headless_scanner import (
-    HeadlessDiffEntry,
-    InterruptLog,
-    headless_scan_light,
-    parse_interrupt_log,
-)
-from zephyr.behavioral_audit.file_attr_checker import (
-    FileAttrIssue,
-    capture_baseline,
-    check_size_anomaly,
-    check_encoding,
-)
-from zephyr.behavioral_audit.gitignore_auditor import (
-    GitignoreAudit,
-    parse_gitignore,
-    find_untracked_generated,
-    find_over_ignored_critical,
-    find_uncovered_types,
-    audit_gitignore,
-)
-from zephyr.behavioral_audit.symlink_checker import SymlinkIssue, check_broken_symlinks
 from zephyr.behavioral_audit.naming_magic_checker import NamingMagicAlert, scan_naming_magic
-from zephyr.behavioral_audit.test_fixture_checker import (
-    FixtureDriftEvent,
-    scan_fixture_schema_drift,
-    scan_mock_target_drift,
-    scan_expected_output_drift,
-    run_fixture_check,
+from zephyr.behavioral_audit.orphan_scanner import (
+    OrphanResource,
+    find_orphan_data,
+    find_orphan_docs,
+    find_orphan_scripts,
+    scan_orphan_resources,
 )
 from zephyr.behavioral_audit.python_compat import (
     PythonCompatIssue,
-    scan_python_compat,
     auto_fix_compat,
     generate_compat_report,
+    scan_python_compat,
 )
-from zephyr.behavioral_audit.orphan_scanner import (
-    OrphanResource,
-    find_orphan_scripts,
-    find_orphan_data,
-    find_orphan_docs,
-    scan_orphan_resources,
+from zephyr.behavioral_audit.scan_mutex import QueuedScan, ScanLockRecord, ScanMutex
+from zephyr.behavioral_audit.symlink_checker import SymlinkIssue, check_broken_symlinks
+from zephyr.behavioral_audit.test_fixture_checker import (
+    FixtureDriftEvent,
+    run_fixture_check,
+    scan_expected_output_drift,
+    scan_fixture_schema_drift,
+    scan_mock_target_drift,
 )
-from zephyr.behavioral_audit.scan_mutex import ScanLockRecord, QueuedScan, ScanMutex
 
 _SUBMODULES = [
     "benchmark_integrity",
@@ -75,43 +75,43 @@ _SUBMODULES = [
 ]
 
 __all__ = [
-    "FileChange",
     "ChangeSet",
     "DetectorFileMapping",
-    "IncrementalScanner",
-    "HeadlessDiffEntry",
-    "InterruptLog",
-    "headless_scan_light",
-    "parse_interrupt_log",
     "FileAttrIssue",
-    "capture_baseline",
-    "check_size_anomaly",
-    "check_encoding",
-    "GitignoreAudit",
-    "parse_gitignore",
-    "find_untracked_generated",
-    "find_over_ignored_critical",
-    "find_uncovered_types",
-    "audit_gitignore",
-    "SymlinkIssue",
-    "check_broken_symlinks",
-    "NamingMagicAlert",
-    "scan_naming_magic",
+    "FileChange",
     "FixtureDriftEvent",
-    "scan_fixture_schema_drift",
-    "scan_mock_target_drift",
-    "scan_expected_output_drift",
-    "run_fixture_check",
-    "PythonCompatIssue",
-    "scan_python_compat",
-    "auto_fix_compat",
-    "generate_compat_report",
+    "GitignoreAudit",
+    "HeadlessDiffEntry",
+    "IncrementalScanner",
+    "InterruptLog",
+    "NamingMagicAlert",
     "OrphanResource",
-    "find_orphan_scripts",
+    "PythonCompatIssue",
+    "QueuedScan",
+    "ScanLockRecord",
+    "ScanMutex",
+    "SymlinkIssue",
+    "audit_gitignore",
+    "auto_fix_compat",
+    "capture_baseline",
+    "check_broken_symlinks",
+    "check_encoding",
+    "check_size_anomaly",
     "find_orphan_data",
     "find_orphan_docs",
+    "find_orphan_scripts",
+    "find_over_ignored_critical",
+    "find_uncovered_types",
+    "find_untracked_generated",
+    "generate_compat_report",
+    "headless_scan_light",
+    "parse_gitignore",
+    "parse_interrupt_log",
+    "run_fixture_check",
+    "scan_expected_output_drift",
+    "scan_fixture_schema_drift",
+    "scan_mock_target_drift",
+    "scan_naming_magic",
     "scan_orphan_resources",
-    "ScanLockRecord",
-    "QueuedScan",
-    "ScanMutex",
+    "scan_python_compat",
 ]

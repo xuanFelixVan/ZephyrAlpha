@@ -9,9 +9,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 import hashlib
+
 from zephyr.governance.pre_apply_integrity_gate import PreApplyIntegrityGate
+
 
 class TestPreApplyIntegrityGate:
     def test_instantiation(self):

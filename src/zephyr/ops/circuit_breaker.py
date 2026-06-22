@@ -27,7 +27,6 @@ Half-open/closed/open state machine with error budget gating, cooldown, and auto
 Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §2.3
 """
 
-
 from __future__ import annotations
 
 import threading
@@ -134,8 +133,9 @@ def __getattr__(name):
     """延迟导入 CircuitBreakerOpenError 避免循环依赖."""
     if name == "CircuitBreakerOpenError":
         from zephyr.infrastructure.reliability.circuit_breaker import CircuitBreakerOpenError
+
         return CircuitBreakerOpenError
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-__all__ = ["CircuitState", "CircuitBreakerConfig", "CircuitBreaker", "CircuitBreakerOpenError"]
+__all__ = ["CircuitBreaker", "CircuitBreakerConfig", "CircuitBreakerOpenError", "CircuitState"]

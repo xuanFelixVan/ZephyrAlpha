@@ -42,14 +42,16 @@ class ScanResult:
 
 @dataclass
 class MetricPromptScanner:
-    patterns: list[str] = field(default_factory=lambda: [
-        "ignore previous",
-        "ignore all",
-        "system prompt:",
-        "you are now",
-        "new instructions:",
-        "your new task is",
-    ])
+    patterns: list[str] = field(
+        default_factory=lambda: [
+            "ignore previous",
+            "ignore all",
+            "system prompt:",
+            "you are now",
+            "new instructions:",
+            "your new task is",
+        ]
+    )
 
     def scan(self, metric_name: str, value: str) -> ScanResult:
         value_lower = value.lower()

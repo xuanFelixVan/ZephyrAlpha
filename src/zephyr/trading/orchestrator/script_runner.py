@@ -14,9 +14,9 @@
 CT-ORC-SCRIPT-001: Orchestrator 接到审计任务后批量执行审计脚本, 按 RULE-SEVEN 并行。
 """
 
-
 from __future__ import annotations
 
+import logging
 import subprocess
 import sys
 import time
@@ -25,14 +25,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-import logging
-
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "ScriptRunner",
     "RunResult",
     "ScriptResult",
+    "ScriptRunner",
     "run_audit",
 ]
 
@@ -67,8 +65,7 @@ class RunResult:
             "total_duration_ms": self.total_duration_ms,
             "error": self.error,
             "results": [
-                {"script": r.script, "exit_code": r.exit_code, "duration_ms": r.duration_ms}
-                for r in self.results
+                {"script": r.script, "exit_code": r.exit_code, "duration_ms": r.duration_ms} for r in self.results
             ],
         }
 
@@ -92,8 +89,7 @@ class ScriptRunner:
 
         with ThreadPoolExecutor(max_workers=min(max_workers, len(resolved))) as executor:
             futures = {
-                executor.submit(self._run_one, script_path, timeout_per_script): script_path
-                for script_path in resolved
+                executor.submit(self._run_one, script_path, timeout_per_script): script_path for script_path in resolved
             }
             for future in as_completed(futures):
                 script_result = future.result()
@@ -108,7 +104,12 @@ class ScriptRunner:
         result.total_duration_ms = round((time.perf_counter() - t0) * 1000)
         logger.info(
             "[ORC-SCRIPT] audit: task=%s total=%d passed=%d failed=%d warn=%d elapsed=%dms",
-            task_id, len(resolved), result.passed, result.failed, result.warnings, result.total_duration_ms,
+            task_id,
+            len(resolved),
+            result.passed,
+            result.failed,
+            result.warnings,
+            result.total_duration_ms,
         )
 
         self._submit_to_gate(result, task_id)
@@ -167,6 +168,7 @@ class ScriptRunner:
     def _submit_to_gate(self, result: RunResult, task_id: str) -> None:
         try:
             from zephyr.infrastructure.script_system.gate_bridge import submit_to_gate
+
             findings: list[dict[str, Any]] = []
             for r in result.results:
                 dim_map = {"passed": "D1", "failed": "D5", "warnings": "D9"}
@@ -176,13 +178,15 @@ class ScriptRunner:
                     dim = "D9"
                 else:
                     dim = "D5"
-                findings.append({
-                    "dimension": dim,
-                    "script": r.script,
-                    "exit_code": r.exit_code,
-                    "duration_ms": r.duration_ms,
-                    "message": r.error or r.output[:200],
-                })
+                findings.append(
+                    {
+                        "dimension": dim,
+                        "script": r.script,
+                        "exit_code": r.exit_code,
+                        "duration_ms": r.duration_ms,
+                        "message": r.error or r.output[:200],
+                    }
+                )
             if findings:
                 submit_to_gate(findings, task_id=task_id)
         except Exception:
@@ -191,6 +195,7 @@ class ScriptRunner:
     def _publish_to_kb(self, result: RunResult, task_id: str) -> None:
         try:
             from zephyr.infrastructure.script_system.kb_bridge import publish_to_kb
+
             findings: list[dict[str, Any]] = [
                 {
                     "dimension": "audit",

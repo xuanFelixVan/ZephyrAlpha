@@ -30,6 +30,7 @@ def kb_gate() -> IngestGate:
     gate = IngestGate(kb_root=kb_root)
     yield gate
     import shutil
+
     shutil.rmtree(kb_root, ignore_errors=True)
 
 
@@ -38,7 +39,9 @@ class TestMaliciousContent:
 
     def test_xss_injection_detected(self, kb_gate: IngestGate):
         """注入含 <script> 标签的 .md 文件 → 应触发注入检查."""
-        import tempfile, os
+        import os
+        import tempfile
+
         fd, tmp_path = tempfile.mkstemp(suffix=".md", prefix="xss_")
         os.close(fd)
         try:
@@ -53,7 +56,9 @@ class TestMaliciousContent:
 
     def test_sql_injection_detected(self, kb_gate: IngestGate):
         """注入含 SQL 注入模式的内容 → 应触发注入检查."""
-        import tempfile, os
+        import os
+        import tempfile
+
         fd, tmp_path = tempfile.mkstemp(suffix=".md", prefix="sqli_")
         os.close(fd)
         try:
@@ -72,15 +77,15 @@ class TestEmptyDocument:
 
     def test_empty_file_rejected(self, kb_gate: IngestGate):
         """空文件 → 应被拒绝."""
-        import tempfile, os
+        import os
+        import tempfile
+
         fd, tmp_path = tempfile.mkstemp(suffix=".md", prefix="empty_")
         os.close(fd)
         try:
             Path(tmp_path).write_text("", encoding="utf-8")
             result = kb_gate.ingest(Path(tmp_path))
-            assert not result.passed or result.violations, (
-                f"Empty file should not pass cleanly: {result}"
-            )
+            assert not result.passed or result.violations, f"Empty file should not pass cleanly: {result}"
         finally:
             Path(tmp_path).unlink(missing_ok=True)
 
@@ -90,21 +95,23 @@ class TestExtensionBypass:
 
     def test_bad_extension_rejected(self, kb_gate: IngestGate):
         """不允许的扩展名 → 应被拒绝."""
-        import tempfile, os
+        import os
+        import tempfile
+
         fd, tmp_path = tempfile.mkstemp(suffix=".exe", prefix="bad_")
         os.close(fd)
         try:
             Path(tmp_path).write_text("malicious content", encoding="utf-8")
             result = kb_gate.ingest(Path(tmp_path))
-            assert not result.passed, (
-                f"Bad extension should be rejected: {result}"
-            )
+            assert not result.passed, f"Bad extension should be rejected: {result}"
         finally:
             Path(tmp_path).unlink(missing_ok=True)
 
     def test_good_extension_accepted(self, kb_gate: IngestGate):
         """.md 扩展名 → 文件应被接受."""
-        import tempfile, os
+        import os
+        import tempfile
+
         fd, tmp_path = tempfile.mkstemp(suffix=".md", prefix="good_")
         os.close(fd)
         try:

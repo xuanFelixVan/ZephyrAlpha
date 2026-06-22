@@ -1,5 +1,19 @@
 rule_id: TRAE-021
 title: 行为边界-其余绝对禁止
+version: 1.0.0
+layer: L0
+module_id: TRAE-021
+depends_on:
+- TRAE-018
+- TRAE-019
+- TRAE-020
+tags:
+- TRAE
+- other_prohibition
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - ABS-25
 - ABS-26
@@ -29,7 +43,6 @@ aliases:
 - ABS-50
 - ABS-51
 - ABS-52
-layer: L0
 severity: critical
 scope: other_prohibition
 domain: TRAE
@@ -469,6 +482,756 @@ sections:
     - version: "1.0.0"
       date: "2026-05-01"
       change: "初始创建——从GOV-DOC-009迁出ABS-003，独立成本文件"
+  ps_std_003_purpose_scope:
+    title: 目的与范围
+    section_type: metadata
+    original_rules:
+    - PS-STD-003 §1
+    summary: 建立统一行为边界体系，定义术语（绝对禁止/条件禁止/推荐做法/阻断/上报）
+    actions:
+    - type: mandatory
+      step: AI 员工在任意 session 中对"什么不能做"有唯一明确答案
+    - type: mandatory
+      step: 人类 Owner 可快速确认某行为是否被禁止，无需逐个翻阅领域规则
+    - type: mandatory
+      step: 工具链（pre-commit/CI/运行时断言）基于本标准实现自动化阻断
+    - type: mandatory
+      step: 规则体系不因分散定义而产生矛盾，本标准是禁止行为的宪法
+    - type: mandatory
+      step: 'PS-STD-003 §1.2 适用范围——所有 AI 员工（Cursor、Trae、Kimi、Claude 等）的所有 session'
+    - type: mandatory
+      step: 'PS-STD-003 §1.2 适用范围——人类 Owner 的所有操作'
+    - type: mandatory
+      step: 'PS-STD-003 §1.2 适用范围——所有工具链的自动化检查'
+    - type: mandatory
+      step: 'PS-STD-003 §1.3 术语——绝对禁止：任何情况下均不可违反。违反将触发即时阻断，无论后果如何'
+    - type: mandatory
+      step: 'PS-STD-003 §1.3 术语——条件禁止：在特定条件下不可违反。条件由领域规则定义'
+    - type: mandatory
+      step: 'PS-STD-003 §1.3 术语——推荐做法：建议遵守但不强制。违反不触发阻断，但应记录原因'
+    - type: mandatory
+      step: 'PS-STD-003 §1.3 术语——阻断：操作被自动或手动阻止，必须停止当前行为'
+    - type: mandatory
+      step: 'PS-STD-003 §1.3 术语——上报：操作被暂停，等待 Owner 裁决后方可继续'
+  ps_std_003_classification:
+    title: 行为边界分类体系
+    section_type: metadata
+    original_rules:
+    - PS-STD-003 §2
+    summary: 三级分类（ABS/COND/REC）+ 三条分类原则
+    actions:
+    - type: mandatory
+      step: 最小化绝对禁止——只有跨域、跨 session、影响系统完整性的禁止才列为绝对禁止
+    - type: mandatory
+      step: 领域禁止下沉——仅适用于特定领域的禁止行为由领域规则定义，本标准不重复
+    - type: mandatory
+      step: 单一真源——同一行为只在一个地方定义为禁止，其他地方引用而非重复定义
+  ps_std_003_code_level_rules:
+    title: 代码级强制规则
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §3.16
+    summary: 代码级强制规则（违反抛异常/CI拦截）不需要在本标准中列 ABS 条目，比 ABS 更强约束
+    actions:
+    - type: recommended
+      step: 查阅 rule-registry.md §3 CODE 域获取代码级强制规则清单（当前已登记 10 条）
+  ps_std_003_conditional_irreversible_note:
+    title: 条件性不可逆禁止说明
+    section_type: metadata
+    original_rules:
+    - PS-STD-003 §3.13
+    summary: ABS-45~ABS-48 原为 COND 条目，因触发后后果不可逆而升格为 ABS，归入宪法层
+    actions:
+    - type: mandatory
+      step: 'PS-STD-003 §3.13 说明——以下规则在特定触发条件下后果不可逆，按 PS-STD-000（元标准宪法）后果不可逆性标准归入宪法层'
+    - type: mandatory
+      step: 'PS-STD-003 §3.13 说明——ABS-45~ABS-48 原为 COND 条目，因触发后后果不可逆而升格'
+    - type: mandatory
+      step: 'PS-STD-003 §3.13 说明——ABS-45 不可逆后果：关键操作无审计记录，事后无法追溯'
+    - type: mandatory
+      step: 'PS-STD-003 §3.13 说明——ABS-46 不可逆后果：生产事故已发生，资金损失/数据损坏不可逆'
+    - type: mandatory
+      step: 'PS-STD-003 §3.13 说明——ABS-47 不可逆后果：交易系统失控，真金白银损失不可逆'
+    - type: mandatory
+      step: 'PS-STD-003 §3.13 说明——ABS-48 不可逆后果：敏感数据已泄露到外部，不可逆'
+  ps_std_003_cond_file_naming:
+    title: 文件命名条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.1
+    - COND-01
+    - COND-02
+    - COND-03
+    - COND-04
+    summary: 文件名大小写/版本号后缀/日期后缀/空格特殊字符的条件禁止
+    conditions:
+    - type: trigger
+      check: 新建文件时
+      pass: 使用 kebab-case（历史遗留大写文件白名单除外）
+      fail: 文件名使用大写字母
+    - type: trigger
+      check: 所有文件
+      pass: 版本历史由 git log 查询
+      fail: 文件名使用版本号后缀
+    - type: trigger
+      check: 非 LATEST 文件
+      pass: 仅 LATEST 文件允许日期后缀
+      fail: 文件名使用日期后缀
+    - type: trigger
+      check: 所有文件
+      pass: 使用连字符 - 分隔
+      fail: 文件名使用空格和特殊字符
+    prohibitions:
+    - 文件名使用大写字母（新建文件时）
+    - 文件名使用版本号后缀
+    - 文件名使用日期后缀（非 LATEST 文件）
+    - 文件名使用空格和特殊字符
+  ps_std_003_cond_rule_hierarchy:
+    title: 规则层级条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.2
+    - COND-05
+    - COND-06
+    - COND-07
+    - COND-08
+    summary: L3/L2 文档措辞限制 + B/C 轨依赖方向限制
+    conditions:
+    - type: trigger
+      check: doc_type 属于 L3 基础模板时
+      pass: 使用信息性措辞
+      fail: L3 文档使用 MUST/SHOULD
+    - type: trigger
+      check: doc_type 属于 L2 设计模板时
+      pass: 使用 SHOULD/MAY
+      fail: L2 文档使用 MUST
+    - type: trigger
+      check: 平台能力模块依赖业务模块时
+      pass: 重新设计依赖方向
+      fail: B 轨反向依赖 C 轨
+    - type: trigger
+      check: 低层依赖高层时
+      pass: 逐层向下依赖
+      fail: C 轨内部反向依赖
+    prohibitions:
+    - L3 文档使用 MUST/SHOULD
+    - L2 文档使用 MUST
+    - B 轨反向依赖 C 轨
+    - C 轨内部反向依赖
+  ps_std_003_cond_vibe_coding:
+    title: Vibe Coding 条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.3
+    - COND-09
+    - COND-10
+    - COND-11
+    - COND-12
+    - COND-13
+    summary: 状态转换/上下文加载/自检填写/路径存放/问题隐藏的条件禁止
+    conditions:
+    - type: trigger
+      check: 会话状态机运行时
+      pass: 状态转换表硬编码，运行时断言
+      fail: COMPLETED→ACTIVE 状态转换
+    - type: trigger
+      check: 任务涉及多个架构层时
+      pass: 只加载相关层的上下文
+      fail: 同时加载所有层上下文
+    - type: trigger
+      check: 施工完成后自检时
+      pass: 由审计者（非施工者）填写
+      fail: '施工者自行设 verification_status: passed'
+    - type: trigger
+      check: 施工阶段
+      pass: 严格按蓝图 §7 规划的路径存放
+      fail: 自行创建新路径存放产出物
+    - type: trigger
+      check: 交接或 session 结束时
+      pass: 必须记录，不得隐藏
+      fail: 隐藏未解问题
+    prohibitions:
+    - COMPLETED→ACTIVE 状态转换
+    - 同时加载所有层上下文
+    - 施工者自行设 verification_status: passed
+    - 自行创建新路径存放产出物
+    - 隐藏未解问题
+  ps_std_003_cond_rule_change:
+    title: 规则变更条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.4
+    - COND-14
+    - COND-15
+    - COND-16
+    - COND-17
+    summary: 永久豁免/跳过废弃流程/不更新Session Log/不更新版本号的条件禁止
+    conditions:
+    - type: trigger
+      check: 标准豁免机制
+      pass: 应修改标准而非永久豁免
+      fail: 永久豁免
+    - type: trigger
+      check: 废弃流程执行时
+      pass: 按五步废弃流程完整执行
+      fail: 跳过 Step 2-4 直接删除 Active 标准
+    - type: trigger
+      check: 任何规则变更时
+      pass: 必须在 Session Log 中记录变更详情
+      fail: 修改规则后不更新 Session Log
+    - type: trigger
+      check: 任何规则变更时
+      pass: 必须更新版本号和 date 字段
+      fail: 修改规则后不更新文件版本号
+    prohibitions:
+    - 永久豁免
+    - 跳过 Step 2-4 直接删除 Active 标准
+    - 修改规则后不更新 Session Log
+    - 修改规则后不更新文件版本号
+  ps_std_003_cond_secret_credential:
+    title: 密钥与凭证条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.5
+    - COND-18
+    - COND-19
+    summary: 密钥传输方式/凭证共享复用的条件禁止
+    conditions:
+    - type: trigger
+      check: 任何密钥传输场景
+      pass: 使用 TLS/SSH 等加密通道
+      fail: 使用未加密方式传输密钥
+    - type: trigger
+      check: 多人/多服务场景
+      pass: 每人/每服务独立凭证，定期轮换
+      fail: 共享或复用凭证
+    prohibitions:
+    - 使用未加密方式传输密钥
+    - 共享或复用凭证
+  ps_std_003_cond_audit_traceability:
+    title: 审计与可追溯性条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.6
+    - COND-50
+    - COND-21
+    summary: 审计日志间断/未记录配置变更的条件禁止
+    conditions:
+    - type: trigger
+      check: 任何时间点
+      pass: 系统必须保证审计日志连续性，间断视为异常
+      fail: 审计日志出现间断（gap）
+    - type: trigger
+      check: 运行时配置修改时
+      pass: 所有配置变更必须在变更管理系统中记录
+      fail: 未记录的配置变更
+    prohibitions:
+    - 审计日志出现间断（gap）
+    - 未记录的配置变更
+  ps_std_003_cond_ai_transparency:
+    title: AI 透明度条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.7
+    - COND-23
+    - COND-24
+    - COND-25
+    summary: AI 高风险决策理由/不确定性声明/外部工具声明的条件禁止
+    conditions:
+    - type: trigger
+      check: AI 产出蓝图/施工图/裁定时
+      pass: 必须在产出物中包含决策依据和推理过程
+      fail: AI 在高风险决策中不提供决策理由
+    - type: trigger
+      check: AI 对结论不确定时
+      pass: 必须显式声明置信度和不确定性范围
+      fail: AI 隐藏其行为的不确定性/置信度
+    - type: trigger
+      check: AI 调用外部服务时
+      pass: 必须在 Session Log 中记录外部工具/API 调用
+      fail: AI 在未声明的情况下使用外部工具/API
+    prohibitions:
+    - AI 在高风险决策中不提供决策理由
+    - AI 隐藏其行为的不确定性/置信度
+    - AI 在未声明的情况下使用外部工具/API
+  ps_std_003_cond_deployment_runtime:
+    title: 部署与运行时条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.8
+    - COND-52
+    summary: 无回滚方案部署的条件禁止
+    conditions:
+    - type: trigger
+      check: 任何部署时
+      pass: 部署前必须准备回滚方案并验证
+      fail: 在无回滚方案的情况下部署
+    prohibitions:
+    - 在无回滚方案的情况下部署
+  ps_std_003_cond_architecture_layering:
+    title: 架构分层条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.9
+    - COND-30
+    - COND-31
+    - COND-32
+    summary: L02-L07直接调用LLM/业务数据写入治理SQLite/contracts目录放业务逻辑的条件禁止
+    conditions:
+    - type: trigger
+      check: L08 层代码调用 LLM API 时
+      pass: 必须通过 L08 LSG 代理
+      fail: L02-L07 直接调用 LLM Providers
+    - type: trigger
+      check: 向治理 SQLite 写入数据时
+      pass: 治理 SQLite 只存治理数据，OHLCV/因子等业务数据走专用存储
+      fail: 业务数据写入治理 SQLite
+    - type: trigger
+      check: 在 shared/contracts/ 添加代码时
+      pass: 只放数据结构定义（dataclass/Protocol/Enum/Literal/TypedDict）
+      fail: 在 contracts 目录放业务逻辑
+    prohibitions:
+    - L02-L07 直接调用 LLM Providers
+    - 业务数据写入治理 SQLite
+    - 在 contracts 目录放业务逻辑
+  ps_std_003_cond_gate_validation:
+    title: 门禁与校验条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.10
+    - COND-33
+    - COND-34
+    - COND-35
+    - COND-36
+    - COND-37
+    summary: 门禁级别动态升降级/跳级/生产关闭门禁/AI自签豁免/Pydantic静默吞错的条件禁止
+    conditions:
+    - type: trigger
+      check: 运行时修改门禁级别时
+      pass: 级别调整仅能通过修改 YAML + 二次 review 完成
+      fail: 门禁级别运行时动态升降级
+    - type: trigger
+      check: 调用门禁引擎时
+      pass: task 的 gate_status 字段必须按顺序推进
+      fail: 门禁跳级（跳过 G1/G2 直接到 G3）
+    - type: trigger
+      check: 生产环境启动时
+      pass: 'TaskRepository(enable_gate=False) 仅限单元测试/scaffold 补录'
+      fail: 生产环境关闭门禁 disable 开关
+    - type: trigger
+      check: 自动化流程遇到需豁免场景时
+      pass: 必须 emit manual_event(priority=HIGH) 等待 Owner 批复
+      fail: AI 自行签发门禁豁免
+    - type: trigger
+      check: AI 输出校验失败时
+      pass: 三级失败后禁止静默继续，必须由 Owner 或降级模型明确接收
+      fail: Pydantic 校验失败静默吞掉
+    prohibitions:
+    - 门禁级别运行时动态升降级
+    - 门禁跳级（跳过 G1/G2 直接到 G3）
+    - 生产环境关闭门禁 disable 开关
+    - AI 自行签发门禁豁免
+    - Pydantic 校验失败静默吞掉
+  ps_std_003_cond_ssot_schema:
+    title: SSoT 与 Schema 一致性条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.11
+    - COND-38
+    - COND-39
+    - COND-40
+    - COND-41
+    summary: 引用Deprecated ADR/module_id重复/Schema三处不同步/注册表与文件不同步的条件禁止
+    conditions:
+    - type: trigger
+      check: 引用 ADR 时
+      pass: 必须确认 ADR status 为 Active，Deprecated ADR 仅作历史参考
+      fail: 引用 Deprecated ADR 作为当前决策依据
+    - type: trigger
+      check: 注册/更新 module_id 时
+      pass: module_id 必须全局唯一，禁止权限漂移
+      fail: 同一 module_id 在两个 Active 文件中出现
+    - type: trigger
+      check: 修改 schema 字段时
+      pass: 新增字段必须同时更新 ADR + SQLite DDL + Pydantic Model
+      fail: Schema 三处（ADR/DDL/Pydantic Model）不同步更新
+    - type: trigger
+      check: git commit 涉及治理敏感文件时
+      pass: 新增/删除治理文件时注册表必须同步暂存
+      fail: SSoT 注册表与实际文件不同步
+    prohibitions:
+    - 引用 Deprecated ADR 作为当前决策依据
+    - 同一 module_id 在两个 Active 文件中出现
+    - Schema 三处（ADR/DDL/Pydantic Model）不同步更新
+    - SSoT 注册表与实际文件不同步
+  ps_std_003_cond_ai_engineering:
+    title: AI 工程条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.12
+    - COND-42
+    - COND-43
+    - COND-44
+    - COND-45
+    - COND-46
+    summary: CoVe同模型/FLE直接import/FLE Action不记录/服务降级不写日志/KB写入无provenance的条件禁止
+    conditions:
+    - type: trigger
+      check: 执行 CoVe Step 2 时
+      pass: 必须异构 cross-check（Sonnet ↔ GLM，反之亦然）
+      fail: CoVe Step 2 使用与 Step 1 相同的模型
+    - type: trigger
+      check: FLE 模块引用外部服务时
+      pass: 必须定义本地 Protocol，调用方在 wiring 层注入
+      fail: FLE 直接 import 实现类
+    - type: trigger
+      check: FLE 产出 Action 时
+      pass: 每个 Action 必须记录生效时间与 TTL，超 TTL 自动回滚
+      fail: FLE Action 不记录 effective_from + ttl
+    - type: trigger
+      check: 服务降级时
+      pass: 必须写入结构化 JSON（触发原因/时间戳/task_id/降级码）
+      fail: 服务降级不写入日志
+    - type: trigger
+      check: 向知识库写入条目时
+      pass: 'kb.write(topic, content, provenance) 的 provenance 缺失则 WriteTraceMissing'
+      fail: 知识库写入不带 provenance
+    prohibitions:
+    - CoVe Step 2 使用与 Step 1 相同的模型
+    - FLE 直接 import 实现类
+    - FLE Action 不记录 effective_from + ttl
+    - 服务降级不写入日志
+    - 知识库写入不带 provenance
+  ps_std_003_cond_handover_governance:
+    title: 交接与架构治理条件禁止
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §4.13
+    - COND-47
+    - COND-48
+    - COND-49
+    summary: HandoffPackage字段缺失/未经KB审批创建视图/beta未升级容器隔离的条件禁止
+    conditions:
+    - type: trigger
+      check: 创建/修改交接包时
+      pass: 8 必填字段（v1.0 锚定），缺任一为半启动模式
+      fail: HandoffPackage 8 必填字段缺失
+    - type: trigger
+      check: 创建架构视图时
+      pass: 必须至少对标 2 家业界先行机构公开实践；自创概念禁止入库
+      fail: 未经 KB 决策记录审批创建新正交视图
+    - type: trigger
+      check: beta 接入真实资金时
+      pass: 必须将 Windows ACL 升级到完整容器隔离
+      fail: beta 接入真实资金前未升级容器隔离
+    prohibitions:
+    - HandoffPackage 8 必填字段缺失
+    - 未经 KB 决策记录审批创建新正交视图
+    - beta 接入真实资金前未升级容器隔离
+  ps_std_003_recommendations:
+    title: 推荐做法（REC）
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §5
+    - REC-01
+    - REC-02
+    - REC-03
+    - REC-04
+    - REC-05
+    - REC-06
+    - REC-07
+    - REC-08
+    - REC-09
+    - REC-10
+    - REC-11
+    summary: 11 条推荐做法，违反不触发阻断但应记录原因
+    actions:
+    - type: recommended
+      step: 每次修改规则后更新 document-metadata-index.yaml
+    - type: recommended
+      step: 新增文件后更新 document-metadata-index.yaml
+    - type: recommended
+      step: session 结束前写 Session Log
+    - type: recommended
+      step: '移动文件时 commit message 包含 moved: old/path -> new/path | reason: ...'
+    - type: recommended
+      step: '引用尚不存在的文件时使用 <!-- PLANNED: path --> 格式'
+    - type: recommended
+      step: pre-commit 集成密钥检测工具（git-secrets/detect-secrets）
+    - type: recommended
+      step: AI 输出前自检是否包含密钥模式
+    - type: recommended
+      step: 外部内容进入 AI 上下文前标记来源（trusted/untrusted）
+    - type: recommended
+      step: 'AI 禁止奉承 Owner，必须以客观架构师视角参与讨论，"你说的对"必须跟具体理由'
+    - type: recommended
+      step: 每次执行流水线必须重新扫描项目状态，不得复用上次扫描结果
+    - type: recommended
+      step: Pydantic 模型禁止 Any 类型字段（边界透传场景除外且需注释）
+  ps_std_003_violation_handling:
+    title: 违反处理
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §6
+    summary: 违反检测/处置/记录格式三段式处理流程
+    actions:
+    - type: mandatory
+      step: ABS 违反由 pre-commit hooks/CI/运行时断言/AI 自检在操作前+操作后检测
+    - type: mandatory
+      step: COND 违反由领域规则校验脚本/AI 自检在操作后检测
+    - type: mandatory
+      step: REC 违反由代码审查/Session Log 审计事后检测
+    - type: mandatory
+      step: ABS 违反即时阻断操作 + 记录事件 + Session Log + 通知 Owner
+    - type: mandatory
+      step: COND 违反条件触发时阻断 + 记录原因 + 按领域规则处理
+    - type: mandatory
+      step: REC 违反记录但不阻断 + 下次审查时评估是否升级为 COND
+    - type: mandatory
+      step: 违反记录格式包含 id/boundary_id/timestamp/actor/action/detection/disposition/owner_notified
+    - type: mandatory
+      step: 'PS-STD-003 §6.3 违反记录格式 YAML 示例——id: VIO-YYYYMMDD-NNN / boundary_id: ABS-XX / timestamp: ISO8601 / actor: ai:模型标识 / action: 违规行为描述 / detection: 检测方 / disposition: blocked|recorded / owner_notified: bool'
+  ps_std_003_ssot_declaration:
+    title: SSoT 声明
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §7
+    summary: 本标准是 ZephyrAlpha 项目所有禁止行为的权威定义唯一真源
+    actions:
+    - type: mandatory
+      step: 本标准与领域规则冲突时，以本标准为准
+    - type: mandatory
+      step: 领域规则中定义的更细粒度禁止行为不得与本标准冲突
+  ps_std_003_consumer_registry:
+    title: 消费者注册表
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §8
+    summary: Tier 1（硬编码本标准编号）和 Tier 2（消费内容不硬编码编号）消费者清单
+    actions:
+    - type: mandatory
+      step: Tier 1 消费者变更必须同步更新（ai-onboarding-guide/rule-lifecycle/rule-classification/file-operation-safety 等）
+    - type: recommended
+      step: Tier 2 消费者变更建议同步更新（pre-commit hooks/CI 流水线）
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——ai-onboarding-guide.md 引用 ABS-11~13'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——rule_lifecycle_and_change_standard.yaml 引用 ABS-05~10, COND-16~17'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——rule_classification_and_arbitration_standard.yaml 引用 ABS-03~04, ABS-21（冲突裁决推导链）'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——file-operation-safety-policy.md 引用 ABS-14~18'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——file-naming-standard.md 引用 COND-01~04'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——file-path-standard.md 引用 ABS-18'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——vibe-coding-session-state-runbook.md 引用 COND-09~10'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——vibe-coding-gate-checklist.md 引用 COND-09'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——blueprint-construction-template.md 引用 COND-11~12'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——handoff-protocol.md 引用 COND-13'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——PS-STD-002 引用 ABS-19~20, COND-05~06, COND-14~15'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——directory-structure-standard.md 引用 COND-07~08'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——AGENTS.md 引用 ABS-23~25'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——llm-security-gateway-interface.md 引用 ABS-35~37'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——behavior_audit_logger.py 引用 ABS-33~34'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 2 消费者清单——pre-commit hooks 校验 ABS-14~18, ABS-26~28, ABS-29'
+    - type: mandatory
+      step: 'PS-STD-003 §8 Tier 2 消费者清单——CI 流水线 校验 ABS-19~20, ABS-32'
+  ps_std_003_cross_standard_reference:
+    title: 标准间引用规则
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §9
+    summary: Normative 引用（必须遵守）和 Informative 引用（参考性质）
+    actions:
+    - type: mandatory
+      step: Normative 引用 PS-STD-001（immutable_core/ai_autonomy 字段定义）
+    - type: mandatory
+      step: Normative 引用 PS-STD-002（L1/L2/L3 模板层级）
+    - type: mandatory
+      step: Normative 引用 rule_classification_and_arbitration_standard.yaml（五维分类+冲突裁决推导链）
+    - type: mandatory
+      step: Normative 引用 rule_lifecycle_and_change_standard.yaml（P0-P3 变更分级）
+    - type: mandatory
+      step: 'PS-STD-003 §9.2 Informative 引用——ai-onboarding-guide.md（快速禁止操作清单）'
+    - type: mandatory
+      step: 'PS-STD-003 §9.2 Informative 引用——file-operation-safety-policy.md（锚点文件列表）'
+    - type: mandatory
+      step: 'PS-STD-003 §9.2 Informative 引用——file-naming-standard.md（命名规则细节）'
+  ps_std_003_deprecation_process:
+    title: 废弃流程
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §10
+    summary: 本标准为 immutable_core，废弃流程需四步
+    actions:
+    - type: mandatory
+      step: Owner 明确批准
+    - type: mandatory
+      step: 创建 KB 决策记录记录废弃原因和替代方案
+    - type: mandatory
+      step: 所有 Tier 1 消费者更新引用
+    - type: mandatory
+      step: 本标准状态改为 deprecated，保留 90 天后可删除
+  ps_std_003_review_cycle:
+    title: 审查周期
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §11
+    summary: 三类审查周期（ABS清单完整性/COND与领域规则一致性/违反记录分析）
+    actions:
+    - type: mandatory
+      step: 绝对禁止行为清单完整性每 90 天审查，由 Owner 负责
+    - type: mandatory
+      step: 条件禁止行为与领域规则一致性每 90 天审查，由 Owner 负责
+    - type: mandatory
+      step: 违反记录分析每 30 天审查，由 Owner 负责
+  ps_std_003_modification_conditions:
+    title: 修改条件
+    section_type: governance
+    original_rules:
+    - PS-STD-003 §12
+    summary: 五类修改类型的审批要求和同步要求
+    actions:
+    - type: mandatory
+      step: 新增绝对禁止需 Owner 批准 + ADR，同步所有 Tier 1 消费者
+    - type: mandatory
+      step: 修改绝对禁止需 Owner 批准 + ADR，同步所有 Tier 1 消费者
+    - type: mandatory
+      step: 删除绝对禁止需 Owner 批准 + ADR + 90 天过渡期，同步所有 Tier 1 消费者
+    - type: mandatory
+      step: 新增/修改条件禁止需领域规则负责人批准，同步相关 Tier 1 消费者
+    - type: recommended
+      step: 新增/修改推荐做法由任何规则负责人负责，无强制同步
+  ps_std_003_field_no_duplicate:
+    title: 与 PS-STD-001 字段不重复声明
+    section_type: metadata
+    original_rules:
+    - PS-STD-003 §13
+    summary: frontmatter 字段均由 PS-STD-001 定义，本标准不重复声明
+    actions:
+    - type: mandatory
+      step: ABS-19/ABS-20 作为跨域通用原则覆盖字段违规行为，与 PS-STD-001 互补
+    - type: mandatory
+      step: 行为边界编号体系（ABS-XX/COND-XX/REC-XX）由本标准定义
+  ps_std_003_verifiability:
+    title: 可验证性标准
+    section_type: verification
+    original_rules:
+    - PS-STD-003 §14
+    summary: 每条 ABS 条目的可验证性（A 自动化/M 人工/S 自声明）和验证方式
+    actions:
+    - type: mandatory
+      step: ABS-01 由 file_operation_safety_gate.py 检查 immutable_core 标记
+    - type: mandatory
+      step: ABS-02 由 file_operation_safety_gate.py 拦截 AI 删除操作
+    - type: mandatory
+      step: ABS-03~04 由 AI 自检 + Session Log 审计
+    - type: mandatory
+      step: ABS-05~10 由 rule-lifecycle-and-change-protocol.py 检查变更级别
+    - type: mandatory
+      step: ABS-11~13 由 AI 自检（onboarding 流程）
+    - type: mandatory
+      step: ABS-14~18 由 pre-commit hooks 自动检测
+    - type: mandatory
+      step: ABS-19~20 由 CI 流水线字段重复检测
+    - type: mandatory
+      step: ABS-21~22 由代码审查
+    - type: mandatory
+      step: ABS-23~25 由 pre-commit hooks 编码检测
+    - type: mandatory
+      step: ABS-26~28 由 git hooks 拦截危险命令
+    - type: mandatory
+      step: ABS-29 由 pre-commit 集成 git-secrets/detect-secrets
+    - type: mandatory
+      step: ABS-30 由 AI 自检 + 日志审计
+    - type: mandatory
+      step: ABS-31 由日志写入前密钥模式过滤
+    - type: mandatory
+      step: ABS-32 由 pre-commit 硬编码密钥检测
+    - type: mandatory
+      step: ABS-33~34 由审计日志 append-only + checksum 校验
+    - type: mandatory
+      step: ABS-35~37 由 AI 自检 + LSG 运行时检测
+    - type: mandatory
+      step: ABS-38 由沙箱环境强制执行
+    - type: mandatory
+      step: ABS-39 由破坏性命令白名单 + Owner 确认机制
+    - type: mandatory
+      step: ABS-40 由 pre-commit hooks/CI 检查 threading.Lock 导入
+    - type: mandatory
+      step: ABS-41 由 LSG 运行时 fail-closed 策略强制执行
+    - type: mandatory
+      step: ABS-42 由沙箱创建失败则任务 FAILED 不降级
+    - type: mandatory
+      step: ABS-43 由 pre-commit hooks 检查 shell=True 调用
+    - type: mandatory
+      step: ABS-44 由 pre-commit hooks 检查废墟路径引用
+    - type: mandatory
+      step: ABS-45 由审计日志系统健康检查 + 关键操作前置校验
+    - type: mandatory
+      step: ABS-46 由 CI 测试套件通过后方可部署
+    - type: mandatory
+      step: ABS-47 由 kill switch 运行时断言，绕过即阻断
+    - type: mandatory
+      step: ABS-48 由最小权限策略运行时强制执行
+    - type: mandatory
+      step: ABS-49 由 AI 输出校验——实盘数值模糊化检测
+    - type: mandatory
+      step: ABS-50 由 AI 输出校验 + 网络出口白名单拦截外部 API 调用
+    - type: mandatory
+      step: ABS-51 由 confirm-action gate——交易决策需 Owner 确认
+    - type: mandatory
+      step: ABS-52 由 pre-commit hooks——修改前强制重新读取文件全文验证当前版本
+  ps_std_003_completeness_checklist:
+    title: 完整性自检清单
+    section_type: verification
+    original_rules:
+    - PS-STD-003 §15
+    summary: 15 章节完整性自检清单（§1-§15 全部勾选）
+    actions:
+    - type: mandatory
+      step: §1 目的与范围含目的+适用范围+术语
+    - type: mandatory
+      step: §2 行为边界分类体系含三级分类+分类原则
+    - type: mandatory
+      step: §3 绝对禁止行为 52 条，每条含原因+替代方案+来源
+    - type: mandatory
+      step: §3.16 代码级强制规则引用 PS-REG-001 rule-registry.md
+    - type: mandatory
+      step: §4 条件禁止行为 35 条，每条含触发条件+替代方案+来源
+    - type: mandatory
+      step: §5 推荐做法 11 条
+    - type: mandatory
+      step: §6 违反处理含检测+处置+记录格式
+    - type: mandatory
+      step: §7 SSoT 声明
+    - type: mandatory
+      step: §8 消费者注册表
+    - type: mandatory
+      step: §9 标准间引用规则
+    - type: mandatory
+      step: §10 废弃流程
+    - type: mandatory
+      step: §11 审查周期
+    - type: mandatory
+      step: §12 修改条件
+    - type: mandatory
+      step: §13 字段不重复声明
+    - type: mandatory
+      step: §14 可验证性标准
+    - type: mandatory
+      step: §15 完整性自检清单
 references:
   rule_ids:
   - TRAE-018
@@ -485,7 +1248,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

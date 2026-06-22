@@ -19,6 +19,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -29,9 +30,9 @@ warn_only: false
 """
 
 
-import os
 import ast
 import json as json_mod
+import os
 import sys
 from pathlib import Path
 
@@ -41,46 +42,217 @@ _PYPI_CACHE = _SCRIPTS_DIR / "meta" / "pypi_verified_cache.json"
 
 # 标准库模块白名单（Python 3.11+）
 _STDLIB_WHITELIST: set[str] = {
-    "abc", "aifc", "argparse", "array", "ast", "asynchat", "asyncio",
-    "asyncore", "atexit", "audioop", "base64", "bdb", "binascii", "binhex",
-    "bisect", "builtins", "bz2", "calendar", "cgi", "cgitb", "chunk",
-    "cmath", "cmd", "code", "codecs", "codeop", "collections", "colorsys",
-    "compileall", "concurrent", "configparser", "contextlib", "contextvars",
-    "copy", "copyreg", "cProfile", "crypt", "csv", "ctypes", "curses",
-    "dataclasses", "datetime", "dbm", "decimal", "difflib", "dis",
-    "distutils", "doctest", "email", "encodings", "enum", "errno",
-    "faulthandler", "fcntl", "filecmp", "fileinput", "fnmatch", "formatter",
-    "fractions", "ftplib", "functools", "gc", "getopt", "getpass",
-    "gettext", "glob", "graphlib", "grp", "gzip", "hashlib", "heapq",
-    "hmac", "html", "http", "idlelib", "imaplib", "imghdr", "imp",
-    "importlib", "inspect", "io", "ipaddress", "itertools", "json",
-    "keyword", "lib2to3", "linecache", "locale", "logging", "lzma",
-    "mailbox", "mailcap", "marshal", "math", "mimetypes", "mmap",
-    "modulefinder", "multiprocessing", "netrc", "nis", "nntplib",
-    "numbers", "operator", "optparse", "os", "ossaudiodev", "pathlib",
-    "pdb", "pickle", "pickletools", "pipes", "pkgutil", "platform",
-    "plistlib", "poplib", "posix", "posixpath", "pprint", "profile",
-    "pstats", "pty", "pwd", "py_compile", "pyclbr", "pydoc", "queue",
-    "quopri", "random", "re", "readline", "reprlib", "resource",
-    "rlcompleter", "runpy", "sched", "secrets", "select", "selectors",
-    "shelve", "shlex", "shutil", "signal", "site", "smtpd", "smtplib",
-    "sndhdr", "socket", "socketserver", "spwd", "sqlite3", "ssl",
-    "stat", "statistics", "string", "stringprep", "struct", "subprocess",
-    "sunau", "symtable", "sys", "sysconfig", "syslog", "tabnanny",
-    "tarfile", "telnetlib", "tempfile", "termios", "textwrap",
-    "threading", "time", "timeit", "tkinter", "token", "tokenize",
-    "trace", "traceback", "tracemalloc", "tty", "turtle", "turtledemo",
-    "types", "typing", "unicodedata", "unittest", "urllib", "uu",
-    "uuid", "venv", "warnings", "wave", "weakref", "webbrowser",
-    "winreg", "winsound", "wsgiref", "xdrlib", "xml", "xmlrpc",
-    "zipapp", "zipfile", "zipimport", "zlib", "_thread", "__future__",
+    "abc",
+    "aifc",
+    "argparse",
+    "array",
+    "ast",
+    "asynchat",
+    "asyncio",
+    "asyncore",
+    "atexit",
+    "audioop",
+    "base64",
+    "bdb",
+    "binascii",
+    "binhex",
+    "bisect",
+    "builtins",
+    "bz2",
+    "calendar",
+    "cgi",
+    "cgitb",
+    "chunk",
+    "cmath",
+    "cmd",
+    "code",
+    "codecs",
+    "codeop",
+    "collections",
+    "colorsys",
+    "compileall",
+    "concurrent",
+    "configparser",
+    "contextlib",
+    "contextvars",
+    "copy",
+    "copyreg",
+    "cProfile",
+    "crypt",
+    "csv",
+    "ctypes",
+    "curses",
+    "dataclasses",
+    "datetime",
+    "dbm",
+    "decimal",
+    "difflib",
+    "dis",
+    "distutils",
+    "doctest",
+    "email",
+    "encodings",
+    "enum",
+    "errno",
+    "faulthandler",
+    "fcntl",
+    "filecmp",
+    "fileinput",
+    "fnmatch",
+    "formatter",
+    "fractions",
+    "ftplib",
+    "functools",
+    "gc",
+    "getopt",
+    "getpass",
+    "gettext",
+    "glob",
+    "graphlib",
+    "grp",
+    "gzip",
+    "hashlib",
+    "heapq",
+    "hmac",
+    "html",
+    "http",
+    "idlelib",
+    "imaplib",
+    "imghdr",
+    "imp",
+    "importlib",
+    "inspect",
+    "io",
+    "ipaddress",
+    "itertools",
+    "json",
+    "keyword",
+    "lib2to3",
+    "linecache",
+    "locale",
+    "logging",
+    "lzma",
+    "mailbox",
+    "mailcap",
+    "marshal",
+    "math",
+    "mimetypes",
+    "mmap",
+    "modulefinder",
+    "multiprocessing",
+    "netrc",
+    "nis",
+    "nntplib",
+    "numbers",
+    "operator",
+    "optparse",
+    "os",
+    "ossaudiodev",
+    "pathlib",
+    "pdb",
+    "pickle",
+    "pickletools",
+    "pipes",
+    "pkgutil",
+    "platform",
+    "plistlib",
+    "poplib",
+    "posix",
+    "posixpath",
+    "pprint",
+    "profile",
+    "pstats",
+    "pty",
+    "pwd",
+    "py_compile",
+    "pyclbr",
+    "pydoc",
+    "queue",
+    "quopri",
+    "random",
+    "re",
+    "readline",
+    "reprlib",
+    "resource",
+    "rlcompleter",
+    "runpy",
+    "sched",
+    "secrets",
+    "select",
+    "selectors",
+    "shelve",
+    "shlex",
+    "shutil",
+    "signal",
+    "site",
+    "smtpd",
+    "smtplib",
+    "sndhdr",
+    "socket",
+    "socketserver",
+    "spwd",
+    "sqlite3",
+    "ssl",
+    "stat",
+    "statistics",
+    "string",
+    "stringprep",
+    "struct",
+    "subprocess",
+    "sunau",
+    "symtable",
+    "sys",
+    "sysconfig",
+    "syslog",
+    "tabnanny",
+    "tarfile",
+    "telnetlib",
+    "tempfile",
+    "termios",
+    "textwrap",
+    "threading",
+    "time",
+    "timeit",
+    "tkinter",
+    "token",
+    "tokenize",
+    "trace",
+    "traceback",
+    "tracemalloc",
+    "tty",
+    "turtle",
+    "turtledemo",
+    "types",
+    "typing",
+    "unicodedata",
+    "unittest",
+    "urllib",
+    "uu",
+    "uuid",
+    "venv",
+    "warnings",
+    "wave",
+    "weakref",
+    "webbrowser",
+    "winreg",
+    "winsound",
+    "wsgiref",
+    "xdrlib",
+    "xml",
+    "xmlrpc",
+    "zipapp",
+    "zipfile",
+    "zipimport",
+    "zlib",
+    "_thread",
+    "__future__",
 }
 
 # 已知本地/已安装的包缓存
 _KNOWN_LOCAL: set[str] = set()
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load_cache() -> dict:
@@ -98,14 +270,15 @@ def _save_cache(data: dict) -> None:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             json_mod.dump(data, f, ensure_ascii=False, indent=2)
-    
-    
+
         os.replace(tmp_path, _PYPI_CACHE)
     except PermissionError:
         try:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def _extract_imports(file_path: Path) -> list[str]:
     """_extract_imports implementation."""
     try:
@@ -135,6 +308,7 @@ def _is_real_package(pkg_name: str, cache: dict) -> bool:
 
     try:
         import urllib.request
+
         url = f"https://pypi.org/pypi/{pkg_name}/json"
         req = urllib.request.Request(url, headers={"User-Agent": "ZephyrAlpha/slopsquatting-defender"})
         with urllib.request.urlopen(req, timeout=10) as resp:
@@ -146,6 +320,7 @@ def _is_real_package(pkg_name: str, cache: dict) -> bool:
 
     try:
         import importlib
+
         importlib.import_module(pkg_name)
         cache.setdefault("verified", {})[pkg_name] = True
         return True
@@ -170,11 +345,13 @@ def check_file(file_path: str | Path) -> dict:
         if pkg.startswith("_"):
             continue
         if not _is_real_package(pkg, cache):
-            hallucinated.append({
-                "package": pkg,
-                "severity": "CRITICAL",
-                "detail": f"包 '{pkg}' 在 PyPI 上不存在——可能是 AI 幻觉包（Slopsquatting 候选）",
-            })
+            hallucinated.append(
+                {
+                    "package": pkg,
+                    "severity": "CRITICAL",
+                    "detail": f"包 '{pkg}' 在 PyPI 上不存在——可能是 AI 幻觉包（Slopsquatting 候选）",
+                }
+            )
 
     _save_cache(cache)
 
@@ -226,7 +403,10 @@ def main() -> None:
             print(json_mod.dumps(result, ensure_ascii=False, indent=2))
         else:
             if result.get("clean", True):
-                print(f"[SLOPSQUATTING] ✅ {result['file']}: 全部 {result['total_imports']} 个 import 为真实包", file=sys.stderr)
+                print(
+                    f"[SLOPSQUATTING] ✅ {result['file']}: 全部 {result['total_imports']} 个 import 为真实包",
+                    file=sys.stderr,
+                )
             else:
                 print(f"[SLOPSQUATTING] 🔴 {result['file']}: {result['hallucinated_count']} 个幻觉包", file=sys.stderr)
         sys.exit(0 if result.get("clean", True) else 2)

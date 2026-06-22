@@ -12,7 +12,7 @@ category: module_blueprint
 ```python
 class PipelineLock(BaseModel):
     backend: LockBackend
-    
+
     def acquire(self, resource_id: str, owner: str, ttl_s: int=300) -> bool
     def release(self, resource_id: str, owner: str) -> bool
     def is_locked(self, resource_id: str) -> bool

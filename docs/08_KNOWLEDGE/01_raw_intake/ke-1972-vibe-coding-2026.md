@@ -78,4 +78,4 @@ vibe_coding_deep_optimizations:
     stage_3_orchestrated:
       mantra: "Coordinator + Builder + Scout + Reviewer agents"
       enabler: "BridgeMCP: agents pull shared context from a central source"
-      zephyr: "Phase beta → 
+      zephyr: "Phase beta →

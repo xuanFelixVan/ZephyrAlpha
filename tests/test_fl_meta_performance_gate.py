@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_meta_performance_gate.py
 
-import pytest
 from zephyr.ops.gates.meta_performance_gate import MetaPerformanceGate
 
 

@@ -21,6 +21,7 @@ depgraph_reader.py — 依赖图数据库查询工具模块
     nodes = reader.get_nodes_by_domain('D-FACTOR')
     edges = reader.get_edges_from_node('some_node_id')
 """
+
 from __future__ import annotations
 
 import json
@@ -60,34 +61,26 @@ class DepgraphReader:
     def get_nodes_by_domain(self, domain_id: str) -> list[dict[str, Any]]:
         """按 domain_id 查询节点"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM nodes WHERE domain_id = ?", (domain_id,)
-        )
+        cursor = conn.execute("SELECT * FROM nodes WHERE domain_id = ?", (domain_id,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_nodes_by_type(self, node_type: str) -> list[dict[str, Any]]:
         """按 node_type 查询节点"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM nodes WHERE node_type = ?", (node_type,)
-        )
+        cursor = conn.execute("SELECT * FROM nodes WHERE node_type = ?", (node_type,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_node_by_path(self, path: str) -> dict[str, Any] | None:
         """按 path 精确查询节点"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM nodes WHERE path = ?", (path,)
-        )
+        cursor = conn.execute("SELECT * FROM nodes WHERE path = ?", (path,))
         row = cursor.fetchone()
         return dict(row) if row else None
 
     def get_node_by_id(self, node_id: str) -> dict[str, Any] | None:
         """按 node_id 精确查询节点"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM nodes WHERE node_id = ?", (node_id,)
-        )
+        cursor = conn.execute("SELECT * FROM nodes WHERE node_id = ?", (node_id,))
         row = cursor.fetchone()
         return dict(row) if row else None
 
@@ -102,25 +95,19 @@ class DepgraphReader:
     def get_edges_from_node(self, from_node: str) -> list[dict[str, Any]]:
         """查询从指定节点出发的所有边"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM edges WHERE from_node = ?", (from_node,)
-        )
+        cursor = conn.execute("SELECT * FROM edges WHERE from_node = ?", (from_node,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_edges_to_node(self, to_node: str) -> list[dict[str, Any]]:
         """查询指向指定节点的所有边"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM edges WHERE to_node = ?", (to_node,)
-        )
+        cursor = conn.execute("SELECT * FROM edges WHERE to_node = ?", (to_node,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_edges_by_type(self, edge_type: str) -> list[dict[str, Any]]:
         """按 edge_type 查询边"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM edges WHERE edge_type = ?", (edge_type,)
-        )
+        cursor = conn.execute("SELECT * FROM edges WHERE edge_type = ?", (edge_type,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_all_edges(self) -> list[dict[str, Any]]:
@@ -134,18 +121,13 @@ class DepgraphReader:
     def get_rules_by_function(self, function_name: str) -> list[dict[str, Any]]:
         """按 function_name 查询规则"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM rule_bindings WHERE function_name = ?",
-            (function_name,)
-        )
+        cursor = conn.execute("SELECT * FROM rule_bindings WHERE function_name = ?", (function_name,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_rules_by_rule_id(self, rule_id: str) -> list[dict[str, Any]]:
         """按 rule_id 查询规则绑定"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM rule_bindings WHERE rule_id = ?", (rule_id,)
-        )
+        cursor = conn.execute("SELECT * FROM rule_bindings WHERE rule_id = ?", (rule_id,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_all_rule_bindings(self) -> list[dict[str, Any]]:
@@ -163,10 +145,7 @@ class DepgraphReader:
     def get_template_by_id(self, template_id: str) -> dict[str, Any] | None:
         """按 template_id 查询模板"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM nodes WHERE node_id = ? AND node_type = 'template'",
-            (template_id,)
-        )
+        cursor = conn.execute("SELECT * FROM nodes WHERE node_id = ? AND node_type = 'template'", (template_id,))
         row = cursor.fetchone()
         return dict(row) if row else None
 
@@ -182,7 +161,7 @@ class DepgraphReader:
             JOIN nodes n ON rb.node_id = n.node_id
             WHERE n.path = ?
             """,
-            (module_path,)
+            (module_path,),
         )
         return [dict(row) for row in cursor.fetchall()]
 
@@ -194,14 +173,11 @@ class DepgraphReader:
         cursor = conn.execute("SELECT * FROM domain_dependencies")
         return [dict(row) for row in cursor.fetchall()]
 
-    def get_domain_dependency(
-        self, from_domain: str, to_domain: str
-    ) -> dict[str, Any] | None:
+    def get_domain_dependency(self, from_domain: str, to_domain: str) -> dict[str, Any] | None:
         """查询指定域间的依赖关系"""
         conn = self._get_conn()
         cursor = conn.execute(
-            "SELECT * FROM domain_dependencies WHERE from_domain = ? AND to_domain = ?",
-            (from_domain, to_domain)
+            "SELECT * FROM domain_dependencies WHERE from_domain = ? AND to_domain = ?", (from_domain, to_domain)
         )
         row = cursor.fetchone()
         return dict(row) if row else None
@@ -226,10 +202,7 @@ class DepgraphReader:
         if parent_path is None:
             cursor = conn.execute("SELECT * FROM arch_directory_tree")
         else:
-            cursor = conn.execute(
-                "SELECT * FROM arch_directory_tree WHERE parent_path = ?",
-                (parent_path,)
-            )
+            cursor = conn.execute("SELECT * FROM arch_directory_tree WHERE parent_path = ?", (parent_path,))
         return [dict(row) for row in cursor.fetchall()]
 
     # ── 统计查询 ──────────────────────────────────────────────
@@ -255,10 +228,7 @@ class DepgraphReader:
     def get_type_specific_data(self, node_id: str) -> dict[str, Any] | None:
         """获取节点的 type_specific_data（JSON 字段）"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT type_specific_data FROM nodes WHERE node_id = ?",
-            (node_id,)
-        )
+        cursor = conn.execute("SELECT type_specific_data FROM nodes WHERE node_id = ?", (node_id,))
         row = cursor.fetchone()
         if row and row[0]:
             return json.loads(row[0])

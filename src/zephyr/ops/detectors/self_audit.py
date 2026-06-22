@@ -27,6 +27,7 @@ Risk: R183 — Policy-violating repairs executed without detection.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class SelfAudit:
     policy_violations: list[dict] = field(default_factory=list)

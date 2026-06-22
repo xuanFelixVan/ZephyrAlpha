@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_vigil_runtime.py -q
 
 import time
-import pytest
+
 from zephyr.governance.vigil_runtime import VigilRuntime
 
 

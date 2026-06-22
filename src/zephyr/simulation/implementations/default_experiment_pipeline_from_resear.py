@@ -33,10 +33,7 @@ SSoT: cross_layer_contracts.yaml → CTR-P1-014
 from __future__ import annotations
 
 import logging
-import statistics
-import uuid
-from datetime import datetime, timezone
-from typing import Any, Optional
+from datetime import UTC, datetime
 
 from zephyr.simulation.pipeline_base import (
     ExperimentConfig,
@@ -64,7 +61,8 @@ class DefaultExperimentPipeline(ExperimentPipelineBase):
     ) -> list[ExperimentMetric]:
         _logger.info(
             "Experiment started: experiment_id=%s hypothesis=%s",
-            config.experiment_id, config.hypothesis,
+            config.experiment_id,
+            config.hypothesis,
         )
 
         metrics: list[ExperimentMetric] = []
@@ -73,7 +71,9 @@ class DefaultExperimentPipeline(ExperimentPipelineBase):
             treatment_val = float(config.treatment_params.get(metric_name, 0))
 
             effect_size = self.compute_effect_size(
-                control_val, treatment_val, pooled_std=abs(control_val - treatment_val) / 2 or 0.01,
+                control_val,
+                treatment_val,
+                pooled_std=abs(control_val - treatment_val) / 2 or 0.01,
             )
 
             p_value = self._estimate_p_value(effect_size)
@@ -86,18 +86,19 @@ class DefaultExperimentPipeline(ExperimentPipelineBase):
                 effect_size=effect_size,
                 p_value=p_value,
                 is_significant=p_value < 0.05,
-                timestamp=datetime.now(timezone.utc),
+                timestamp=datetime.now(UTC),
             )
             metrics.append(metric)
 
         self._results_cache[config.experiment_id] = metrics
         _logger.info(
             "Experiment completed: experiment_id=%s metrics=%d",
-            config.experiment_id, len(metrics),
+            config.experiment_id,
+            len(metrics),
         )
         return metrics
 
-    def get_results(self, experiment_id: str) -> Optional[list[ExperimentMetric]]:
+    def get_results(self, experiment_id: str) -> list[ExperimentMetric] | None:
         return self._results_cache.get(experiment_id)
 
     def _estimate_p_value(self, effect_size: float) -> float:
@@ -112,8 +113,7 @@ class DefaultExperimentPipeline(ExperimentPipelineBase):
         return 0.001
 
     @staticmethod
-    def compute_effect_size(control: float, treatment: float,
-                            pooled_std: float) -> float:
+    def compute_effect_size(control: float, treatment: float, pooled_std: float) -> float:
         if pooled_std == 0:
             return 0.0
         return (treatment - control) / pooled_std

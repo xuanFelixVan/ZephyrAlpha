@@ -12,14 +12,9 @@
 
 from __future__ import annotations
 
-import json
-import textwrap
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from zephyr.trading.action_dispatcher import ActionDispatcher, ActionReport
 
@@ -39,8 +34,12 @@ class TestActionDispatcherInit:
         d = ActionDispatcher()
         assert d.dry_run is False
         assert d.stats == {
-            "dispatched": 0, "modified": 0, "skipped": 0,
-            "created": 0, "deleted": 0, "search_replaced": 0,
+            "dispatched": 0,
+            "modified": 0,
+            "skipped": 0,
+            "created": 0,
+            "deleted": 0,
+            "search_replaced": 0,
             "backups": 0,
         }
 

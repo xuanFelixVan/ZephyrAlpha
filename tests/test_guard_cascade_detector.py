@@ -10,9 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_guard_cascade_detector.py
 
-import time
-
-import pytest
 
 from zephyr.ops.detectors.guard_cascade_detector import (
     GuardCascadeDetector,

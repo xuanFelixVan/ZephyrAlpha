@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-083
 title: 1.2 与 04-TA §6 的边界
 category: documentation

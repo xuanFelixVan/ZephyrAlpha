@@ -11,13 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 策略评估失败返回保守策略
 # [TESTS] tests/audit-orchestrator/test_feedback_policy.py
-
 import logging
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["FeedbackPolicy", "PolicyDecision"]
+
 
 class PolicyDecision:
     def __init__(
@@ -37,6 +37,7 @@ class PolicyDecision:
             "detail": self.detail,
         }
 
+
 class FeedbackPolicy:
     SEVERITY_WEIGHTS: dict[str, float] = {
         "RED": 1.0,
@@ -51,6 +52,7 @@ class FeedbackPolicy:
         self._available = False
         try:
             from zephyr.governance.audit_trail.feedback_bridge import FeedbackBridge
+
             self._bridge = FeedbackBridge()
             self._available = self._bridge.is_available()
         except ImportError:
@@ -66,10 +68,9 @@ class FeedbackPolicy:
         yellow_count = sum(1 for f in findings if f.get("severity") == "YELLOW")
         total_count = len(findings)
 
-        weighted_score = sum(
-            self.SEVERITY_WEIGHTS.get(f.get("severity", "GREEN"), 0.0)
-            for f in findings
-        ) / max(1, total_count)
+        weighted_score = sum(self.SEVERITY_WEIGHTS.get(f.get("severity", "GREEN"), 0.0) for f in findings) / max(
+            1, total_count
+        )
 
         if not self._available or self._bridge is None:
             if weighted_score > 0.5:
@@ -121,43 +122,51 @@ class FeedbackPolicy:
     def is_available(self) -> bool:
         return self._available
 
+
 class AnomalyPattern:
-    def __init__(self, pattern_id='', name='', description='', threshold=0.0, enabled=True):
+    def __init__(self, pattern_id="", name="", description="", threshold=0.0, enabled=True):
         self.pattern_id = pattern_id
         self.name = name
         self.description = description
         self.threshold = threshold
         self.enabled = enabled
 
+
 class FeedbackSummary:
-    def __init__(self, total_feedback=0, by_channel=None, by_severity=None, period=''):
+    def __init__(self, total_feedback=0, by_channel=None, by_severity=None, period=""):
         self.total_feedback = total_feedback
         self.by_channel = by_channel or {}
         self.by_severity = by_severity or {}
         self.period = period
 
+
 class PolicyAction:
-    def __init__(self, action='', target='', reason='', priority='medium'):
+    def __init__(self, action="", target="", reason="", priority="medium"):
         self.action = action
         self.target = target
         self.reason = reason
         self.priority = priority
 
+
 class PolicyFeedbackBridge:
     def __init__(self, config=None):
         self.config = config or {}
+
     def apply_policy(self, feedback):
         return PolicyAction()
+
     def get_policy(self, policy_id):
         return None
 
+
 class PolicyRecommendation:
-    def __init__(self, policy_id='', action='', target='', reason='', confidence=0.0):
+    def __init__(self, policy_id="", action="", target="", reason="", confidence=0.0):
         self.policy_id = policy_id
         self.action = action
         self.target = target
         self.reason = reason
         self.confidence = confidence
+
 
 def feedback_to_policy(feedback, policies=None):
     return PolicyRecommendation()

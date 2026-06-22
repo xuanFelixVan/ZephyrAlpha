@@ -11,12 +11,9 @@
 # [TESTS] self
 
 import os
-import tempfile
 from unittest.mock import patch
 
-import pytest
-
-from zephyr.ops.generator import generate, BASE, main
+from zephyr.ops.generator import BASE, generate, main
 
 
 class TestGeneratorInstantiation:

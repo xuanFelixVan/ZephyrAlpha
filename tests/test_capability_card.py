@@ -21,9 +21,17 @@ from zephyr.trading.capability_card import CapabilityCard, CapabilityCategory
 class TestCapabilityCategory:
     def test_all_categories_exist(self):
         expected = [
-            "embedding", "inference", "search", "rerank",
-            "governance", "infra", "orchestration", "data",
-            "security", "observability", "coordination",
+            "embedding",
+            "inference",
+            "search",
+            "rerank",
+            "governance",
+            "infra",
+            "orchestration",
+            "data",
+            "security",
+            "observability",
+            "coordination",
         ]
         actual = [c.value for c in CapabilityCategory]
         for e in expected:

@@ -47,13 +47,12 @@ L07 — Post-Trade Analytics Layer
 from __future__ import annotations
 
 import abc
-from decimal import Decimal
 from typing import ClassVar
 
+from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
 from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.order import Order
-from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
 
 
 class TCAEngineBase(abc.ABC):
@@ -67,15 +66,15 @@ class TCAEngineBase(abc.ABC):
       - slippage_bps = (vwap_price - intended_price) / intended_price × 10000
       - 所有价格字段使用 Decimal 类型
     """
-    _registry: ClassVar[dict[str, type["TCAEngineBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[TCAEngineBase]]] = {}
 
     @abc.abstractmethod
     def analyze(self, fill: Fill, order: Order, idempotency_key: str) -> ExecutionReport:
         """单笔成交的 TCA 分析，返回执行报告"""
         ...
 
-    def analyze_batch(self, fills: list[Fill], orders: dict[str, Order],
-                      idempotency_key: str) -> list[ExecutionReport]:
+    def analyze_batch(self, fills: list[Fill], orders: dict[str, Order], idempotency_key: str) -> list[ExecutionReport]:
         """批量成交分析（可选覆盖）"""
         raise NotImplementedError
 
@@ -90,16 +89,18 @@ class AttributionEngineBase(abc.ABC):
       - attribute(): 给定持仓和因子暴露，按 Brinson 模型拆解收益
       - total_return = allocation_effect + selection_effect + interaction_effect
     """
-    _registry: ClassVar[dict[str, type["AttributionEngineBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[AttributionEngineBase]]] = {}
 
     @abc.abstractmethod
-    def attribute(self, portfolio_id: str, period_start: str, period_end: str,
-                  idempotency_key: str) -> PerformanceAttributionReport:
+    def attribute(
+        self, portfolio_id: str, period_start: str, period_end: str, idempotency_key: str
+    ) -> PerformanceAttributionReport:
         """按期间归因分析，返回绩效归因报告"""
         ...
 
 
 __all__ = [
-    "TCAEngineBase",
     "AttributionEngineBase",
+    "TCAEngineBase",
 ]

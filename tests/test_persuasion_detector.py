@@ -9,8 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_persuasion_detector.py -q
-import pytest
-from zephyr.governance.persuasion_detector import PersuasionDetector, SUSPICIOUS_PATTERNS
+from zephyr.governance.persuasion_detector import SUSPICIOUS_PATTERNS, PersuasionDetector
 
 
 class TestPersuasionDetectorInstantiation:

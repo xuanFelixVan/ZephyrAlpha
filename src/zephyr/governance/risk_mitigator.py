@@ -27,13 +27,13 @@
   - 生成 mitigation_tracker.yaml
 """
 
-
 from __future__ import annotations
 
-import yaml
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
+
+import yaml
 
 
 @dataclass
@@ -118,13 +118,15 @@ class RiskMitigator:
             else:
                 status = "verified" if (pkg / module_name).exists() else "pending"
 
-            results.append(RiskMitigation(
-                risk_id=risk_id,
-                title=info["title"],
-                module=module_name,
-                status=status,
-                evidence=f"Module {module_name} {'exists' if status == 'verified' else 'not found'}",
-            ))
+            results.append(
+                RiskMitigation(
+                    risk_id=risk_id,
+                    title=info["title"],
+                    module=module_name,
+                    status=status,
+                    evidence=f"Module {module_name} {'exists' if status == 'verified' else 'not found'}",
+                )
+            )
 
         return results
 
@@ -141,8 +143,8 @@ class RiskMitigator:
 
         data = {
             "version": "1.0.0",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-            "summary": f"{verified}/{total} risks mitigated ({verified/total*100:.0f}%)",
+            "generated_at": datetime.now(UTC).isoformat(),
+            "summary": f"{verified}/{total} risks mitigated ({verified / total * 100:.0f}%)",
             "risks": [
                 {
                     "risk_id": r.risk_id,

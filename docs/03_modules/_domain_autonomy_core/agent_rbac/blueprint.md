@@ -1,15 +1,11 @@
 ---
-title: agent-rbac Blueprint
-module_id: MOD-INF-018
----
-
-﻿﻿﻿﻿﻿﻿---
 module_id: "MOD-INF-018"
-submodule_path: src/zephyr/agent-rbac
+submodule_path: src/zephyr/autonomy_perm/agent_rbac
 title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 version: "1.1.0"
+layer: L01
 domain: infra_ops
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -19,7 +15,7 @@ date: "2026-05-06"
 valid_from: "2026-05-06"
 ttl: permanent
 construction_progress: completed
-actual_disk_path: src/zephyr/agent-rbac/
+actual_disk_path: src/zephyr/autonomy_perm/agent_rbac/
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 3
@@ -1244,7 +1240,7 @@ execution_flow:
 
 ```yaml
 derivation_flow:
-  source: "GOV-AI-001（ai-autonomy-authority-registry.md）"
+  source: "GOV-AI-001（ai_autonomy_authority_registry.yaml）"
   derivation_script: "scripts/governance/d3_metadata/derive_rbac_roles.py"
   target: "src/zephyr/agent-rbac/rbac_roles.yaml"
   ci_check: "CI 门禁校验 rbac_roles.yaml 与 GOV-AI-001 一致性"
@@ -1329,7 +1325,7 @@ class PermissionGuard:
     ) -> PermissionResult:
         """
         完整权限判定——横切面A→L0→L5→横切面A
-        
+
         横切面A pre_hooks → L0 ColdStartLock → L0 EmergencyOverride → L0→L5七层检查 → 横切面A post_hooks
 
         输入：Agent 身份 + 请求的动作 + 任务上下文
@@ -1439,13 +1435,13 @@ class SessionToken(BaseModel):
 
 class AgentIdentityVerifier:
     """Agent身份验证器——横向越权防护"""
-    
+
     SECRET_KEY: str = "from-secure-key-store"
     MAX_DELEGATION_DEPTH: int = 3
-    
+
     async def verify_session_token(self, token: SessionToken) -> bool:
         """验证Session Token的签名有效性"""
-    
+
     async def detect_identity_mismatch(
         self,
         claimed_agent: AgentIdentity,
@@ -1457,7 +1453,7 @@ class AgentIdentityVerifier:
         - 跨 session 操作中 agent_id 不一致
         - 委托链深度超过 MAX_DELEGATION_DEPTH
         """
-    
+
     async def prevent_cross_session_forgery(
         self,
         current_session: SessionContext,
@@ -1495,18 +1491,18 @@ roles:
 class ColdStartLock:
     """
     冷启动锁——系统启动时全局拒绝所有Agent操作，直到权限配置加载校验通过。
-    
+
     生命周期：
     1. 系统启动 → startup_lock = BLOCKED_ALL（所有Agent操作被拒绝）
     2. rbac_roles.yaml 加载 → hash校验通过 → startup_lock = RELEASED（正常检查链路）
     3. 30秒内未加载成功 → startup_lock = MAINTENANCE_MODE（仅Owner可操作）
     """
-    
+
     _state: str = "BLOCKED_ALL"           # BLOCKED_ALL | RELEASED | MAINTENANCE_MODE
     _loaded_at: Optional[datetime] = None
     _release_conditions_met: bool = False
     MAX_LOAD_TIME_SECONDS: int = 30
-    
+
     async def check(self) -> StartupLockResult:
         if self._state == "BLOCKED_ALL":
             elapsed = (datetime.utcnow() - self._started_at).total_seconds()
@@ -1519,14 +1515,14 @@ class ColdStartLock:
             return StartupLockResult.MAINTENANCE_MODE
         elif self._state == "RELEASED":
             return StartupLockResult.ALLOWED
-    
+
     async def release_after_validation(self) -> bool:
         """校验通过后释放锁"""
         # 1. rbac_roles.yaml hash校验
         # 2. L0 protected_paths 所有路径存在性验证
         # 3. Gate Engine (MOD-INF-007) 就绪确认
         # 全部通过 → _state = RELEASED
-    
+
     def status_indicator(self) -> str:
         return f"Agent RBAC Cold Start: awaiting permission config load ({self.elapsed}s)"
 ```
@@ -1544,26 +1540,26 @@ class ColdStartLock:
 class PermissionHookRegistry:
     """
     权限钩子注册表——四类钩子，按顺序执行。
-    
+
     钩子失败策略：
     - pre_check_hook FAIL → 操作被BLOCKED（"未能通过前置校验"）
     - post_check_hook FAIL → 触发auto_guard后验失败 → auto_rollback
     - on_blocked_hook FAIL → 仅记录日志（不能因为钩子失败而使阻断"变成放行"）
     - on_kill_switch_hook FAIL → 紧急通知Owner + 强制进入MAINTENANCE_MODE
     """
-    
+
     _pre_check_hooks: list[PreCheckHook] = []
     _post_check_hooks: list[PostCheckHook] = []
     _on_blocked_hooks: list[OnBlockedHook] = []
     _on_kill_switch_hooks: list[OnKillSwitchHook] = []
-    
+
     async def execute_pre_checks(
         self,
         agent: AgentIdentity,
         action: Action,
     ) -> list[HookResult]:
         """Tool调用前——运行所有注册的pre_check钩子"""
-    
+
     async def execute_post_checks(
         self,
         agent: AgentIdentity,
@@ -1572,7 +1568,7 @@ class PermissionHookRegistry:
     ) -> list[HookResult]:
         """Tool执行后——运行所有注册的post_check钩子。
         这是 auto_guard 后验失败检测的核心注入点"""
-    
+
     async def execute_on_blocked(
         self,
         agent: AgentIdentity,
@@ -1581,7 +1577,7 @@ class PermissionHookRegistry:
         blocking_layer: str,
     ) -> list[HookResult]:
         """越权被拦截时——自定义响应（如：通知Owner、记录安全事件、触发备用路径）"""
-    
+
     async def execute_on_kill_switch(
         self,
         trigger: KillSwitchTrigger,
@@ -1617,14 +1613,14 @@ hooks:
       description: "写文件前记录修改前checksum——用于rollback还原"
       priority: 10
       timeout_ms: 5
-    
+
     - id: "H02"
       name: "git_status_consistency"
       applies_to: ["file_delete", "file_modify"]
       description: "操作前确认git status无未跟踪变更——防止AI操作与git状态撕裂"
       priority: 20
       timeout_ms: 20
-    
+
     - id: "H03"
       name: "dependency_version_lock"
       applies_to: ["file_write"]
@@ -1641,7 +1637,7 @@ hooks:
       description: "权限配置变更后通知所有依赖模块——§4 depends_on各模块的Gate Engine"
       priority: 50
       timeout_ms: 100
-    
+
     - id: "H05"
       name: "sensitive_data_scan"
       applies_to: ["file_write", "file_create"]
@@ -1657,7 +1653,7 @@ hooks:
       description: "越权被拦截时自动备份受影响文件——防止后续毁坏操作丢失恢复路径"
       priority: 100
       timeout_ms: 200
-    
+
     - id: "H07"
       name: "owner_notification"
       applies_to: ["any_permission_blocked"]
@@ -1673,7 +1669,7 @@ hooks:
       description: "熔断时自动备份系统当前完整快照——git bundle + SQLite dump"
       priority: 200
       timeout_ms: 5000
-    
+
     - id: "H09"
       name: "emergency_owner_alert"
       applies_to: ["any_kill_switch"]
@@ -1718,7 +1714,7 @@ agent_creation_policy:
     attenuation:
       L4_PRINCIPAL_parent: 0.7          # Principal创建的Agent获得70%权限
       L3_SENIOR_parent: 0.5             # Senior创建的Agent获得50%权限
-      
+
     never_inherited_permissions:        # 这些权限绝对不传递
       - "modify_immutable_core"         # 不可变核心修改权
       - "delete_audit_logs"             # 审计日志删除权
@@ -1735,7 +1731,7 @@ agent_creation_policy:
       session_expired: "Session结束 → 临时子Agent自动终止"
       kill_switch: "熔断触发 → 相关Agent终止"
       idle_timeout: "Agent 30分钟无操作 → L1_INTERN自动休眠"
-    
+
     audit: "每个创建/复制/终止事件 → 不可变审计日志"
 ```
 
@@ -1752,19 +1748,19 @@ agent_creation_policy:
 class PermissionCacheInvalidator:
     """
     缓存失效器——权限变更时主动推送invalidation，而非被动等TTL。
-    
+
     变更事件类型：
     1. rbac_roles.yaml 内容变化 → 全局失效所有Agent的L1缓存
     2. GOV-AI-001 authority变更 → 标记受影响权限为"待重算"
     3. maturity_upgrade → 该Agent的权限缓存立即失效（可能更宽松）
     4. emergency_permission_narrow → 立即失效所有指定操作的缓存
     """
-    
+
     async def on_rbac_config_change(self, diff: ConfigDiff) -> InvalidationReport:
         """rbac_roles.yaml 变更 → 分析diff → 精准失效受影响缓存"""
         affected_agents = self._resolve_affected_agents(diff)
         affected_operations = self._resolve_affected_operations(diff)
-        
+
         # 精准失效——只失效真正受影响的缓存条目
         invalidated_count = await self.cache.invalidate(
             agents=affected_agents,
@@ -1776,11 +1772,11 @@ class PermissionCacheInvalidator:
             invalidated_cache_entries=invalidated_count,
             invalidation_time_ms=self._elapsed_ms,
         )
-    
+
     async def on_emergency_narrow(self, operation: str) -> InvalidationReport:
         """紧急收紧特定操作的权限 → 立即失效所有Agent对该操作的缓存"""
         await self.cache.invalidate(operations=[operation])
-    
+
     def cache_window_guarantee(self) -> float:
         """最大缓存窗口——变更事件发出后，缓存中的旧值最长存活时间"""
         return 0.1  # 100ms——推送延迟上限
@@ -1791,14 +1787,14 @@ class PermissionCacheInvalidator:
 cache_policy:
   # v0.3.0 被动TTL模式（旧）
   passive_ttl: "DEPRECATED——不再使用TTL=5min被动过期"
-  
+
   # v0.4.0 推送驱动模式（新）
   push_driven:
     mechanism: "权限变更事件 → 分析diff → 精准失效受影响缓存 → 所有Guard立即拉取最新判定"
     max_invalidation_latency_ms: 100     # 推送延迟上限
     fallback_ttl: 300                     # 如果推送失败（网络问题等），兜底TTL=5min
     health_check: "每10秒检查推送通道健康——连续3次失败 → 降级为被动TTL + 告警"
-  
+
   # ─── 降级攻击防护（与2.3联动）───
   degradation_attack_detection:
     description: "同一Agent触发的权限降级事件如果有规律性→标记为'疑似攻击'"
@@ -1824,7 +1820,7 @@ cache_policy:
 class EmergencyOverrideToken(BaseModel):
     """
     Owner签发的JIT临时越权令牌。
-    
+
     安全约束：
     - 最大有效期：5分钟
     - 最大签发数：每小时3个
@@ -1847,7 +1843,7 @@ class EmergencyOverrideToken(BaseModel):
 class EmergencyOverrideManager:
     MAX_TOKENS_PER_HOUR: int = 3
     MAX_TOKEN_LIFETIME_MINUTES: int = 5
-    
+
     async def issue_token(
         self,
         owner: OwnerIdentity,
@@ -1862,7 +1858,7 @@ class EmergencyOverrideManager:
         # 3. 签发JWT格式token（含layers和operations声明）
         # 4. 写入不可变审计日志：{who, what, when, why}
         # 5. 通知其他活跃Agent：有紧急覆盖在执行
-    
+
     async def validate_and_consume(
         self,
         token: EmergencyOverrideToken,
@@ -1876,7 +1872,7 @@ class EmergencyOverrideManager:
         # 4. allowed_operations匹配检查
         # 5. used_count++——一次性消耗
         # 6. 审计日志：{token_id, agent_id, action, layers_bypassed, result}
-    
+
     async def revoke_token(self, token_id: str) -> bool:
         """Owner手动吊销——即使token未过期也立即失效"""
 
@@ -1904,13 +1900,13 @@ auto_maintenance:
       active: "score > 0.01（每天至少触发0.01次 = 每100天至少1次）"
       dormant: "0 < score <= 0.01（存在且配置但极少触发）"
       zombie: "score == 0（90天内从未触发——候选删除）"
-    
+
     auto_deprecation:
       zombie_threshold_days: 90
       action: "自动标记 [DEPRECATED_CANDIDATE] + 在Owner健康仪表盘中高亮"
       owner_review: "Owner确认删除 → 规则归档（非物理删除——保留历史）"
       auto_cleanup: "Owner 14天内未审阅 → 规则自动禁用（非删除）+ 告警升级"
-    
+
     protected_rules:  # 以下规则永不被自动deprecate，即使score=0
       - "L0 不可变核心规则"
       - "Kill Switch 触发器规则"
@@ -1929,7 +1925,7 @@ auto_maintenance:
       - at: 30
         level: "error"
         message: "规则数达到上限——禁止新增规则直到删除达到28条以下"
-    
+
     cost_per_rule:
       avg_execution_time_us: 8.5        # 每条规则的平均检查耗时（微秒）
       complexity_budget_us: 255         # 30条 × 8.5us = 总耗时预算
@@ -1957,27 +1953,27 @@ auto_maintenance:
         display: "今日 ALLOW 次数"
         healthy_range: "无上限——越多越正常"
         alarm: "无（这是常态）"
-        
+
       - metric: "today_auto_guard_count"
         display: "今日 AUTO_GUARD 次数（及后验通过率%）"
         healthy_range: "< 20次 AND 后验通过率 > 90%"
         alarm: "auto_guard > 50次 → 规则太严或Agent行为异常。后验通过率 < 80% → Agent信任度下降"
-        
+
       - metric: "today_blocked_count"
         display: "今日 BLOCKED 次数"
         healthy_range: "< 5次"
         alarm: "> 10次 → Agent频繁触碰权限边界——可能被投毒或理解偏差"
-        
+
       - metric: "kill_switch_status"
         display: "Kill Switch 状态 [NORMAL / WARNING / TRIGGERED / MAINTENANCE] + 最近触发时间"
         healthy_range: "NORMAL"
         alarm: "非NORMAL = 立即关注"
-        
+
       - metric: "agent_maturity_distribution"
         display: "Agent成熟度分布 [L1:3, L2:2, L3:1, L4:0]"
         healthy_range: "L1+L2 > 50% 且 无异常跳跃"
         alarm: "L3+占比 > 30% → 高风险Agent过多"
-    
+
     auto_generation: "每次 PermissionGuard.check() 执行后异步更新"
     visual_indicator: |
       ┌─────────────────────────────────────────────┐
@@ -2019,14 +2015,14 @@ class IntentBindingContext(BaseModel):
 class IntentBoundPermissionGuard:
     """
     IBAC 权限执行器——横切面D核心。
-    
+
     工作原理：
     1. 任务启动 → 绑定原始意图 + 创建临时权限信封
     2. 每个Tool调用 → 验证当前操作是否仍在意图信封内
     3. 操作链进行中 → 持续检测意图漂移
     4. 意图信封过期 → 需Owner重新确认或自动降级
     """
-    
+
     async def bind_intent(
         self,
         agent: AgentIdentity,
@@ -2043,7 +2039,7 @@ class IntentBoundPermissionGuard:
         )
         # 写入不可变审计日志：{when, who, task, intent, envelope}
         return envelope
-    
+
     async def check_within_intent(
         self,
         binding: IntentBindingContext,
@@ -2053,7 +2049,7 @@ class IntentBoundPermissionGuard:
     ) -> IntentCheckResult:
         """
         每一步检查：当前操作是否仍在意图信封内？
-        
+
         检查维度：
         1. tool_category 是否在 allowed 中（硬边界）
         2. 意图漂移度（soft边界——语义相似度检测）
@@ -2062,7 +2058,7 @@ class IntentBoundPermissionGuard:
         # 硬边界检查
         if action.tool_type not in binding.allowed_tool_categories:
             return IntentCheckResult.VIOLATION
-        
+
         # 软边界——意图漂移
         drift_score = await self._compute_drift(
             binding.original_intent,
@@ -2073,7 +2069,7 @@ class IntentBoundPermissionGuard:
             return IntentCheckResult.DRIFT_DETECTED
         elif drift_score > binding.drift_tolerance * 0.7:
             return IntentCheckResult.DRIFT_WARNING
-        
+
         return IntentCheckResult.WITHIN_INTENT
 
 class IntentCheckResult(str, Enum):
@@ -2096,15 +2092,15 @@ class IntentCheckResult(str, Enum):
 class ContextDriftDetector:
     """
     Context Drift 检测器——实时追踪Agent操作链中的意图漂移。
-    
+
     核心原理：
     - 对比"当前操作模式"与"任务启动时的原始意图"
     - 当语义距离超过阈值 → 标记为漂移
     """
-    
+
     def __init__(self, drift_window: int = 10):
         self.drift_window = drift_window  # 检测最近N步操作链
-    
+
     async def detect_drift(
         self,
         original_intent: str,
@@ -2113,7 +2109,7 @@ class ContextDriftDetector:
     ) -> DriftReport:
         """
         检测操作链中的意图漂移。
-        
+
         三个检测维度：
         1. 操作类型漂移——初始为read→逐步转为write/delete（类型熵增）
         2. 路径漂移——操作目标从src/逐步扩展到config/、data/（路径熵增）
@@ -2122,16 +2118,16 @@ class ContextDriftDetector:
         # 维度1: 操作类型熵
         type_entropy = self._compute_type_entropy(operation_chain)
         type_drift = type_entropy > 1.5  # 从单一操作类型变为多类型混合
-        
+
         # 维度2: 路径熵
         path_entropy = self._compute_path_entropy(operation_chain)
         path_drift = path_entropy > 2.0  # 操作路径明显扩展
-        
+
         # 维度3: 语义距离
         semantic_drift = await self._compute_semantic_drift(
             original_intent, operation_chain
         )
-        
+
         return DriftReport(
             type_drift=type_drift,
             path_drift=path_drift,
@@ -2166,13 +2162,13 @@ class DriftReport(BaseModel):
 class ContinuousVerifier:
     """
     连续验证器——横切面D，每步重验证Agent身份+权限一致性。
-    
+
     执行节奏：
     - L0→L3 一次性大检查（不变）
     - 横切面D 每步连续性检查（新增）
     - L4 Micro-Verified 每子步骤微验证（新增）
     """
-    
+
     async def verify_step(
         self,
         agent: AgentIdentity,
@@ -2193,7 +2189,7 @@ class ContinuousVerifier:
             "intent_envelope": await self._check_intent_envelope(action, intent_binding),
             "delegation_chain": agent.delegation_depth <= self.MAX_DELEGATION_DEPTH,
         }
-        
+
         all_passed = all(checks.values())
         return StepVerificationResult(
             passed=all_passed,
@@ -2221,19 +2217,19 @@ permission_modes:
       l1_behavior: "always_allow(读) + auto_guard(写) + blocked(删)"
       mid_session_toggle: "Shift+Tab 切换"
       ide_indicator: "DEFAULT"
-    
+
     accept_edits:
       description: "接受编辑——文件修改自动放行，Shell/Bash命令仍需确认"
       l1_behavior: "always_allow(读+写文件) + auto_guard(Shell) + blocked(删)"
       mid_session_toggle: "Shift+Tab 切换"
       ide_indicator: "ACCEPT-EDITS"
-    
+
     plan:
       description: "规划模式——仅只读操作。禁止一切写/删/Shell。用于代码审查和架构探索"
       l1_behavior: "always_allow(只读) + blocked(写/删/Shell)"
       mid_session_toggle: "Shift+Tab 切换"
       ide_indicator: "PLAN"
-    
+
     auto:
       description: "自动模式——AI分类器实时判断：这个操作安全吗？安全就放行，不安全就拦"
       l1_behavior: "AI分类器动态判定（对标 Claude Code auto模式）"
@@ -2241,7 +2237,7 @@ permission_modes:
       mid_session_toggle: "Shift+Tab 切换"
       ide_indicator: "AUTO"
       # ⚠️ 注意：bypassPermissions 模式在本地开发中不可用——必须沙箱+无网络
-    
+
     emergency:
       description: "紧急模式——使用D-018-18紧急覆盖令牌临时越权。不是Shift+Tab可选的模式"
       trigger: "Owner签发紧急覆盖令牌 + 确认"
@@ -2257,19 +2253,19 @@ permission_modes:
         sandbox: "workspace_write"
         network: "blocked"
         model: "deepseek"
-      
+
       ci_automation:
         mode: "accept_edits"
         sandbox: "workspace_write"
         network: "github.com,pypi.org"
         model: "deepseek"
-      
+
       exploration:
         mode: "plan"
         sandbox: "read_only"
         network: "blocked"
         model: "claude"  # 用Claude做架构分析
-    
+
     profile_switching:
       cli: "zephyr profile set <name>"
       mid_session: "/profile <name>"
@@ -2289,16 +2285,16 @@ permission_modes:
 # permission_mode_manager.py — 新增文件（横切面D 组件）
 class PermissionModeManager:
     """权限模式管理器——横切面D核心组件"""
-    
+
     async def set_mode(self, mode: str, session_id: str) -> ModeChangeResult:
         """切换权限模式——更新L1 RBAC行为 + 通知Gate Engine"""
-    
+
     async def get_current_mode(self) -> PermissionMode:
         """获取当前活动的权限模式"""
-    
+
     async def activate_profile(self, profile_name: str) -> ProfileActivationResult:
         """激活配置profile——mode+sandbox+network+model 一体化切换"""
-    
+
     def allowed_in_current_mode(self, action: Action) -> bool:
         """快速查询——当前模式下这个操作是否允许"""
 ```
@@ -2316,13 +2312,13 @@ class PermissionModeManager:
 class CascadingFailureIsolator:
     """
     级联故障隔离器——防止一个Agent的错误级联感染下游。
-    
+
     检测模式：
     1. 输出异常——Agent A的输出在语义/模式上与预期明显不同
     2. 置信度下降——Agent A的auto_guard后验成功率骤降（最近10次 < 80%）
     3. 权限边界扩展——下游Agent因上游Agent的错误输出而请求更高权限
     """
-    
+
     async def monitor_agent_chain(
         self,
         chain: list[AgentIdentity],  # 从Orchestrator到Worker的完整链
@@ -2332,7 +2328,7 @@ class CascadingFailureIsolator:
         - 上游Agent刚发生过auto_guard后验失败 → 下游Agent自动切换为保守模式
         - 下游Agent请求的权限超过上游的intent_envelope → 阻断
         """
-    
+
     async def isolate_agent(self, agent_id: str, reason: str) -> IsolationResult:
         """
         隔离一个疑似故障的Agent：
@@ -2340,7 +2336,7 @@ class CascadingFailureIsolator:
         - 该Agent的操作链中已执行步骤回滚
         - 通知Orchestrator重新调度
         """
-    
+
     async def get_cascade_health(self) -> CascadeHealth:
         """获取Agent链的整体健康状态——包括每个Agent的最近后验成功率"""
 ```
@@ -2358,11 +2354,11 @@ class CascadingFailureIsolator:
 class MicroVerifier:
     """
     微验证器——将先干后验升级为每子步骤微验证。
-    
+
     传统先干后验：全干完 → 全验 → 不合格 → 全回滚（🌪️ 灾难）
     Micro-Verified：子步1执行 → 微验证1 → ✅ → 子步2执行 → 微验证2 → ❌ → 回滚子步2 → 子步3替代...
     """
-    
+
     async def execute_with_micro_verification(
         self,
         agent: AgentIdentity,
@@ -2371,7 +2367,7 @@ class MicroVerifier:
     ) -> MicroVerifiedResult:
         """
         微验证执行——将Action分解为子步骤，每步微验证。
-        
+
         子步骤分解示例：
         Action: "重构auth模块"
         ├── 子步1: read auth.py (微验证: 是否正确读取了当前版本)
@@ -2379,7 +2375,7 @@ class MicroVerifier:
         ├── 子步3: update imports in downstream files (微验证: 所有导入是否正确)
         └── 子步4: run tests (微验证: 全部通过)
         """
-    
+
     async def micro_verify_substep(
         self,
         substep: SubStep,
@@ -2392,7 +2388,7 @@ class MicroVerifier:
         3. 输出符合Intent信封约束
         4. 文件变更量在预期范围内
         """
-    
+
     class MicroVerificationVerdict(str, Enum):
         PASS = "pass"                 # 通过——继续下一步
         PASS_WITH_WARNING = "warn"    # 通过但有警告——降速执行
@@ -2417,7 +2413,7 @@ class DecisionExplainer:
     """
     权限决策自解释器——为每个被阻断的操作生成结构化解释。
     """
-    
+
     async def explain_blocked(
         self,
         agent: AgentIdentity,
@@ -2444,7 +2440,7 @@ class DecisionExplainer:
             severity="P0" if result.decision == PermissionDecision.BLOCKED else "P1",
             timestamp=datetime.utcnow(),
         )
-    
+
     async def _generate_suggestion(
         self,
         agent: AgentIdentity,
@@ -2506,7 +2502,7 @@ genesis_bootstrap_protection:
       - "施工完成后执行 bootstrap_integrity_check——对比预期哈希 vs 实际哈希"
       - "bootstrap期间所有文件变更写入独立Bootstrap Audit Log（与RBAC自身审计分离）"
       - "immutable_core.py作为第一个文件写入→立即hash→后续文件变更需验证core未变"
-    
+
     bootstrap_integrity_check:
       description: "RBAC上线前的最终完整性验证"
       steps:
@@ -2515,7 +2511,7 @@ genesis_bootstrap_protection:
         - "3. 测试 rbac_roles.yaml 从 GOV-AI-001 的正确派生率 = 100%"
         - "4. 验证 OS ACL 在关键文件上生效"
       outputs: "BOOTSTRAP_SIGNED（通过）或 BOOTSTRAP_FAILED（未通过→禁止启动）"
-  
+
   phase_2_runtime:
     description: "RBAC上线后——每次启动都验证bootstrap签名未变"
     startup_check: "immutable_core.py hash == bootstrap_fingerprint → 通过才启动"
@@ -2544,16 +2540,16 @@ genesis_bootstrap_protection:
 ```yaml
 asymmetric_security_review:
   principle: "安全审查必须由不同于实施者的独立系统执行"
-  
+
   implementation:
     # ─── 双通道审查 ───
     dual_channel:
       primary: "Agent RBAC（ZephyrAlpha内置）——日常权限执行"
       secondary: "Independent Security Auditor（独立安全审查器）——定期审查Agent RBAC自身"
-    
+
     independent_auditor:
       description: "一个独立于ZephyrAlpha代码库的轻量级安全审查Agent"
-      isolation: 
+      isolation:
         - "代码不在ZephyrAlpha仓库中（独立仓库）"
         - "使用不同的AI模型（不是DeepSeek/GLM/Claude，例如Qwen或自训练模型）"
         - "无权直接修改ZephyrAlpha代码——仅输出审计报告"
@@ -2592,10 +2588,10 @@ class NonRepudiationBinder:
     """
     密码学不可抵赖绑定器——每个Agent操作都生成密码学证明，
     证明"这个Agent在此时执行了这个操作，事实不可否认"。
-    
+
     对标 TLS 1.3 CertificateVerify + Bitcoin transaction signing。
     """
-    
+
     async def bind_action_to_agent(
         self,
         agent: AgentIdentity,
@@ -2608,14 +2604,14 @@ class NonRepudiationBinder:
         1. Agent 使用其私钥对 (agent_id, action_hash, timestamp, nonce) 签名
         2. SessionToken 也纳入签名（证明操作在合法session中）
         3. 生成可验证的密码学承诺
-        
+
         法律/取证级安全保障：
         - 任何人（包括第三方）都可以验证签名而无需信任系统
         - 签名生成过程对Agent透明（Agent无法不签名而执行操作）
         """
         action_hash = sha256(f"{agent.agent_id}|{action.tool}|{action.params}|{timestamp.isoformat()}|{nonce}")
         signature = agent.private_key.sign(action_hash)
-        
+
         return NonRepudiationProof(
             agent_id=agent.agent_id,
             action_hash=action_hash,
@@ -2630,7 +2626,7 @@ class AgentKeyPair:
     每个Agent拥有基于 Ed25519 的密钥对。
     - 私钥：Agent绑定（从HSM/KMS派生，不在磁盘明文存储）
     - 公钥：注册在 Agent Identity Registry 中，公开可查
-    
+
     Key Derivation（基于 Agent Identity + Session Secret）:
     - seed = HMAC-SHA512(master_secret, agent_id + session_id)
     - Ed25519 keypair from seed
@@ -2670,11 +2666,11 @@ non_repudiation_config:
 class PathParsingGuard:
     """
     路径解析安全卫士——防止AI生成的Shell命令因路径解析错误导致的灾难性误操作。
-    
+
     对标 Google Antigravity P0 事故（空格字符导致 rm -rf /s /q 全盘删除）。
     对标 Grantex 93% AI框架使用无作用域API密钥导致的全权限灾难。
     """
-    
+
     # ─── 危险命令列表（这些命令在执行前需要路径解析验证）───
     DESTRUCTIVE_COMMANDS = [
         "rm", "rmdir", "del", "deltree", "rd", "erase",
@@ -2683,7 +2679,7 @@ class PathParsingGuard:
         "drop", "truncate",
         ">", ">>",  # 重定向覆盖
     ]
-    
+
     # ─── 路径解析危险特征 ───
     PATH_DANGER_SIGNALS = [
         "whitespace_in_path",        # 路径含空格（如 "Obsidian Vault"）
@@ -2696,7 +2692,7 @@ class PathParsingGuard:
         "windows_drive_letter_escape",  # E:\ → 指向非预期驱动器
         "concatenation_without_quotes",  # my project2/node_modules → 空格未引号保护
     ]
-    
+
     async def pre_execute_path_scan(
         self,
         command: str,
@@ -2705,40 +2701,40 @@ class PathParsingGuard:
     ) -> PathSafetyResult:
         """
         执行前路径安全扫描——在Shell命令执行前验证路径解析安全性。
-        
+
         检测流程：
         1. 解析命令中的路径（所有参数字符串）
         2. 对每个路径检查危险信号
         3. 路径解析后验证最终目标是否在允许范围内
         4. 沙箱预演——在临时环境解析命令看实际效果
         """
-        
+
         parsed_paths = self._extract_all_paths(command)
         dangers = []
-        
+
         for path in parsed_paths:
             signals = self._detect_danger_signals(path)
             if signals:
                 dangers.append(PathDanger(path=path, signals=signals))
-        
+
         if dangers:
             # 有危险信号 → 沙箱预演
             dry_run_result = await self._dry_run_in_sandbox(command)
             if dry_run_result.would_affect_protected_paths:
                 return PathSafetyResult.BLOCKED
             return PathSafetyResult.SAFE_AFTER_DRY_RUN
-        
+
         return PathSafetyResult.SAFE
-    
+
     async def _dry_run_in_sandbox(self, command: str) -> DryRunResult:
         """
         在临时沙箱中预演命令——使用 tmpfs + 符号映射 模拟实际执行环境。
         不实际执行破坏性操作——仅追踪哪些文件/目录会被影响。
         """
-    
+
     def _extract_all_paths(self, command: str) -> list[str]:
         """从命令中提取所有路径引用（Quoted字符串 + 未引号字符串）"""
-    
+
     def _detect_danger_signals(self, path: str) -> list[str]:
         """检测路径中的危险信号——返回匹配的信号列表"""
 ```
@@ -2755,10 +2751,10 @@ path_parsing_rules:
         - "~/"                       # 禁止操作用户家目录
         - "/home/" "/Users/"        # 禁止操作系统用户目录
       requires_owner_physical_confirmation: true  # rm -rf 需物理人确认
-    
+
     del_force:
       same_restrictions_as: "rm_rf"
-    
+
     format_diskpart:
       always_blocked: true          # 永远禁止
 
@@ -2769,7 +2765,7 @@ path_parsing_rules:
       - "check: 路径是否使用了操作系统原生的转义API（Python shlex.quote / shutil.escape）"
       - "check: 嵌套引号是否被正确处理"
       - "check: 命令模板是否杜绝了字符串拼接式生成"
-    
+
     safe_patterns:
       python: "subprocess.run(['rm', path], shell=False)  ← 列表形式，不经过shell解析"
       powershell: "Remove-Item -LiteralPath 'path'  ← -LiteralPath 不解析通配符"
@@ -2791,11 +2787,11 @@ path_parsing_rules:
 class CrossPlatformShellGuard:
     """
     跨平台Shell方言检测器——防止AI因"Linux偏见"生成Windows上不安全的命令。
-    
+
     对标 Google Antigravity P0——Gemini不理解Windows cmd引号规则导致灾难。
     对标 SUSVIBES——61%功能正确但仅10.5%安全，其中跨平台不兼容是主要贡献因素。
     """
-    
+
     # ─── 平台危险指令映射 ───
     PLATFORM_DANGER_MAP = {
         "linux_on_windows": [
@@ -2809,7 +2805,7 @@ class CrossPlatformShellGuard:
             ("del /f /s /q", "在Linux上不存在但可能在Wine/交叉编译中出现"),
         ],
     }
-    
+
     # ─── Shell 方言检测 ───
     SHELL_DIALECTS = {
         "cmd.exe": {
@@ -2828,7 +2824,7 @@ class CrossPlatformShellGuard:
             "danger": "空格未引号 → word splitting",
         },
     }
-    
+
     async def validate_command_for_platform(
         self,
         command: str,
@@ -2841,7 +2837,7 @@ class CrossPlatformShellGuard:
         2. 是否存在语义等价但在目标平台上危险的操作？
         3. 路径分隔符是否正确（/ vs \）？
         """
-        
+
         # 检测1: 命令中混入了不匹配平台的语法
         if target_os == "windows" and self._looks_like_bash(command):
             # AI生成了bash命令但在Windows上
@@ -2850,7 +2846,7 @@ class CrossPlatformShellGuard:
                 reason="COMMAND_LOOKS_LIKE_BASH_ON_WINDOWS",
                 recommendation=f"请改写为 {target_shell} 语法",
             )
-        
+
         # 检测2: 危险命令在目标平台上的等价危险
         for pattern, description in self.PLATFORM_DANGER_MAP.get(
             f"{self._detect_source_platform(command)}_on_{target_os}", []
@@ -2860,7 +2856,7 @@ class CrossPlatformShellGuard:
                     safe=False,
                     reason=f"DANGER_PATTERN: {description}",
                 )
-        
+
         return PlatformSafetyResult(safe=True)
 ```
 
@@ -2877,7 +2873,7 @@ class CrossPlatformShellGuard:
 ```yaml
 rule_language_injection_protection:
   principle: "权限规则是数据（Data），不是指令（Instruction）"
-  
+
   enforcement:
     # ─── 规则与指令的格式隔离 ───
     format_separation:
@@ -2885,20 +2881,20 @@ rule_language_injection_protection:
       forbidden_formats:
         - "规则中不得出现 'you must' / 'you should' / 'please' 等指令性语言"
         - "规则中不得出现对话式表述 ('if you think...')"
-      
+
       safe_format: |
         权限矩阵（当前Agent：{agent_id}, Maturity: {level}）：
-        | 操作 | 判定 | 
+        | 操作 | 判定 |
         | file_read | ALLOW |
         | file_write | AUTO_GUARD |
         | file_delete | BLOCKED |
-    
+
     # ─── 规则解析与指令解析的Engine隔离 ───
     engine_isolation:
       rule_parser: "独立Parser（非LLM——确定性代码）将YAML规则转换为内部Representation"
       instruction_parser: "LLM处理自然语言指令"
       boundary: "Rule Parser的输出是数据格式（dict/JSON），不是自然语言——Agent获得的是结构化数据"
-    
+
     # ─── 规则文本沙箱 ───
     rule_text_sandbox:
       description: "规则自然语言部分需通过注入检测"
@@ -2922,19 +2918,19 @@ rule_language_injection_protection:
 ```yaml
 artifact_hygiene:
   description: "防止AI生成的构建产物泄露源码/密钥/架构信息"
-  
+
   # ─── 产物扫描清单 ───
   scan_targets:
     source_maps:
       pattern: "**/*.map"
       check: "sourcesContent 字段是否包含原始源码"
       action: "发现 source map 包含源码 → 在发布前剥离或转为不包含sourcesContent的模式"
-    
+
     build_artifacts:
       pattern: "dist/**, build/**, out/**, .next/**"
       check: "是否包含 .env / config / private key / internal URL"
       action: "自动扫描所有构建产物 → 发现敏感信息 → 阻断发布"
-    
+
     docker_images:
       check: "镜像层是否包含 .git/ / build secrets / SSH keys"
       action: "使用 multi-stage build + .dockerignore 强制执行"
@@ -2963,19 +2959,19 @@ artifact_hygiene:
 ```yaml
 transitive_dependency_audit:
   description: "递归验证所有依赖（直接+间接）的供应链安全"
-  
+
   audit_scope:
     direct_deps: "pip install / npm install 的显式依赖"
     transitive_deps: "所有间接依赖（递归至叶子节点）"
     build_deps: "构建时依赖（devDependencies / build-system.requires）"
-  
+
   checks_per_dep:
     - "known_vulnerabilities: 是否有已知CVE（通过OSV/GitHub Advisory DB）"
     - "supply_chain_risk: 包的维护者是否可信（2FA启用/发布频率/社区活跃度）"
     - "install_scripts: 是否有 postinstall / preinstall 脚本（= 任意代码执行）"
     - "typosquatting: 包名是否与知名包相似（如 reqeusts vs requests）"
     - "provenance: SLSA provenance level >= 1（可追溯到源码仓库）"
-  
+
   policy:
     allow:
       - "direct_deps: 需在白名单中"
@@ -2986,7 +2982,7 @@ transitive_dependency_audit:
       - "transitive_dep 有 CVE >= 9.0 → BLOCKED"
       - "transitive_dep 有 install 脚本 → 需 Owner 确认"
       - "transitive_dep 未知仓库来源 → BLOCKED"
-  
+
   # ─── Lockfile Integrity（锁定文件完整性）───
   lockfile_integrity:
     description: "Agent 不能修改 pip.lock / package-lock.json 的哈希绑定"
@@ -3011,11 +3007,11 @@ class AuditIntegrityVerifier:
     审计日志实时完整性验证器——在任何时间点都能在 < 100ms 内
     密码学证明特定审计日志条目是否被篡改。
     """
-    
+
     def __init__(self):
         self.chunk_size = 100  # 每100条日志一个Merkle块
         self.current_root = None
-    
+
     async def verify_log_entry(
         self,
         entry_id: int,
@@ -3029,10 +3025,10 @@ class AuditIntegrityVerifier:
         """
         merkle_path = await self._compute_merkle_path(entry_id)
         computed_root = self._recompute_root(entry_id, merkle_path)
-        
+
         verified = computed_root == self.current_root
         verification_time_ms = self._elapsed_ms()
-        
+
         return IntegrityProof(
             entry_id=entry_id,
             verified=verified,
@@ -3040,7 +3036,7 @@ class AuditIntegrityVerifier:
             merkle_root=self.current_root,
             merkle_path=merkle_path,  # 第三方可独立验证
         )
-    
+
     async def publish_root(self):
         """
         每小时发布一次当前Merkle Root到外部安全锚点：
@@ -3048,7 +3044,7 @@ class AuditIntegrityVerifier:
         - 或写入GitHub Gist / 独立签名文件
         - 或写入飞书群消息（时间戳不可篡改）
         """
-    
+
     async def full_chain_verification(self) -> FullChainReport:
         """
         完整链验证——验证从第一条日志到最新日志的完整Merkle链。
@@ -3073,10 +3069,10 @@ class ReplayProtector:
     防重放保护器——每个权限判定请求都绑定一次性的nonce + 时间戳，
     防止Agent重放之前的成功请求。
     """
-    
+
     SEEN_NONCES: set[str] = set()  # Redis/Bloom Filter backed
     MAX_NONCE_AGE_SECONDS: int = 300  # 5分钟后的nonce可回收
-    
+
     async def bind_nonce(
         self,
         agent: AgentIdentity,
@@ -3090,7 +3086,7 @@ class ReplayProtector:
         nonce = self._generate_nonce(agent, action, session_token)
         await self._store_nonce(nonce, ttl=300)
         return nonce
-    
+
     async def check_replay(
         self,
         nonce: str,
@@ -3103,10 +3099,10 @@ class ReplayProtector:
         """
         if nonce in self.SEEN_NONCES:
             return ReplayCheckResult.REPLAY_DETECTED
-        
+
         self.SEEN_NONCES.add(nonce)
         return ReplayCheckResult.FRESH_REQUEST
-    
+
     async def cleanup_expired_nonces(self):
         """定期清理过期的nonce——防止内存爆炸"""
 ```
@@ -3127,7 +3123,7 @@ class ReplayProtector:
 ```yaml
 legal_verifiability:
   description: "确保审计输出可以被非技术决策者（律师/监管/合规）独立验证"
-  
+
   # ─── 人类可读的审计摘要 ───
   human_readable_audit:
     format: "每次生成审计报告时同时生成：1) 技术版（JSON+Merkle proofs）2) 人类版（自然语言摘要+时间线）"
@@ -3143,7 +3139,7 @@ legal_verifiability:
         **密码学验证**: ✅ 已验证（Merkle Root: {merkle_root[:8]}...）
         **法规影响**: {gdpr_impact} / {pipl_impact}
         **建议措施**: {recommendation}
-  
+
   # ─── GDPR/个保法合规映射 ───
   compliance_mapping:
     gdpr:
@@ -3169,7 +3165,7 @@ legal_verifiability:
 ```yaml
 rollback_isolation:
   description: "回滚操作的安全隔离——回滚不是普通的写操作，它有自己的风险模型"
-  
+
   # ─── 回滚前快照验证 ───
   rollback_snapshot_verification:
     description: "回滚快照在创建时签名，恢复时验签——防止快照被篡改"
@@ -3180,7 +3176,7 @@ rollback_isolation:
     snapshot_restore:
       - "恢复快照时 → 先验证签名 → 签名有效才恢复"
       - "签名无效 → 回滚拒绝 + P0告警 + 快照标记为'已损坏'"
-  
+
   # ─── 回滚影响分析 ───
   rollback_impact_analysis:
     description: "每次回滚前自动分析影响范围"
@@ -3188,7 +3184,7 @@ rollback_isolation:
       - "回滚会影响多少文件？（>10个文件→需Owner确认）"
       - "回滚会修改RBAC相关文件吗？→ 如果是，BLOCKED（RBAC变更需走Phase流程）"
       - "回滚会影响其他Agent正在操作的文件吗？→ 如果有，等待锁释放或通知该Agent"
-  
+
   # ─── Rollback as Change Audit ───
   rollback_change_audit:
     description: "回滚本身产生审计事件——这些事件也需被监督"
@@ -3215,24 +3211,24 @@ rollback_isolation:
 class MonotonicClockGuard:
     """
     单调时钟守卫——确保所有安全时间检查使用不可回退的时间源。
-    
+
     核心原则：安全决策使用单调时钟（不可回退），业务展示使用系统时钟。
     对标 Google Spanner TrueTime + TLS 1.3 防重放的 timestamp 检查。
     """
-    
+
     def __init__(self):
         self._boot_time = time.monotonic()
         self._last_ntp_sync: float = 0.0
         self._clock_drift_threshold_ms: int = 5000
         self._clock_jump_threshold_ms: int = 1000
         self._last_sample: tuple[float, float] = (0.0, 0.0)
-    
+
     def security_now(self) -> float:
         return time.monotonic()
-    
+
     def wall_clock_now(self) -> datetime:
         return datetime.utcnow()
-    
+
     async def detect_clock_manipulation(self) -> "ClockIntegrityReport":
         m1, w1 = self._last_sample
         m2, w2 = time.monotonic(), datetime.utcnow().timestamp()
@@ -3254,7 +3250,7 @@ monotonic_clock_policy:
     tier_1_security: "time.monotonic() —— Token过期/off-hours/TTL/RateLimiting/Envelope超时"
     tier_2_display: "datetime.utcnow() —— 审计日志时间戳/仪表盘/人类可读报告"
     tier_3_external: "NTP同步 + 外部时间戳锚定 —— 时钟篡改交叉验证"
-  
+
   on_clock_manipulation_detected:
     immediate:
       - "所有时间窗口检查降级为保守模式（off-hours规则24小时生效）"
@@ -3262,12 +3258,12 @@ monotonic_clock_policy:
       - "Kill Switch 'clock_tampering' 触发器激活 + P0告警"
     recovery: "Owner物理确认时钟正确 → 手动解除保守模式"
     false_positive_protection: "DST/时区切换不受影响（monotonic()不随系统时钟变化）"
-  
+
   ntp_verification:
     servers: ["time.cloudflare.com", "ntp.aliyun.com", "time.windows.com"]
     check_interval: "每5分钟"
     offline_mode: "上次已知偏差 + 本机RTC漂移模型"
-  
+
   windows_specific:
     protections:
       - "移除Agent进程的 SeSystemtimePrivilege 权限"
@@ -3290,7 +3286,7 @@ monotonic_clock_policy:
 ```yaml
 bootstrap_verification_recursion_resolution:
   principle: "Bootstrap验证必须包含一个'非AI生成的、确定性的、最小化的'锚点——无法被施工AI污染"
-  
+
   verification_anchors:
     anchor_1_minimal_deterministic_verifier:
       description: "极简确定性验证脚本（<200行Python），零外部依赖，仅标准库"
@@ -3300,20 +3296,20 @@ bootstrap_verification_recursion_resolution:
         - "由Owner手动审查确认后 → Git仓库 + OS ACL只读"
         - "修改此脚本 = 需Owner物理确认（不通过AI）"
       role: "Bootstrap验证的'不可变验证根'——所有其他验证链回溯到此锚点"
-    
+
     anchor_2_reproducible_build:
       description: "核心RBAC代码必须满足可复现构建"
       requirements:
         - "相同GOV-AI-001输入 + 相同Python版本 → 字节级一致的 rbac_roles.yaml"
         - "可复现性由 anchor_1 验证脚本独立确认"
-    
+
     anchor_3_cross_model_verification:
       description: "施工完成后，使用不同于施工模型的AI模型独立验证"
       implementation:
         - "施工模型A（如DeepSeek）写代码 → 验证模型B（如Qwen/GLM/Claude）读代码"
         - "模型B任务：'你是安全审计员，审查代码是否有后门/绕过/故意缺陷'"
       limitation: "仍是LLM验证LLM，只是降低了合谋概率——非完美方案"
-  
+
   bootstrap_cryptographic_anchoring:
     anchors:
       - "Git commit with Owner GPG签名——时间戳+内容不可伪造"
@@ -3387,19 +3383,19 @@ if __name__ == "__main__":
 class HierarchicalKeyManager:
     """
     层次化密钥管理器——三层密钥层次替代单点master_secret。
-    
+
     L0: Root Key — 从不直接使用，分片存储
     L1: Per-Agent Derivation Keys — 每个Agent独立的派生密钥
     L2: Per-Session Operational Keys — 每个会话独立的操作密钥（前向安全）
-    
+
     对标 AWS KMS 信封加密 + TLS 1.3 前向安全性。
     """
-    
+
     def __init__(self):
         self._root_key: Optional[bytes] = None
         self._agent_keys: dict[str, bytes] = {}
         self._session_keys: dict[str, bytes] = {}
-    
+
     async def initialize_root_key(self) -> None:
         """从多个分片组装Root Key。任一单独分片泄露不影响Root Key安全。"""
         shards = await self._collect_shards()
@@ -3411,7 +3407,7 @@ class HierarchicalKeyManager:
             salt=b"ZephyrAlpha-AgentRBAC-RootKey-v1",
             info=b"root_key_derivation",
         ).derive(ikm)
-    
+
     async def _collect_shards(self) -> list[bytes]:
         shards = []
         env_shard = os.environ.get("ZEPHYR_ROOT_KEY_SHARD")
@@ -3424,7 +3420,7 @@ class HierarchicalKeyManager:
         except Exception:
             pass
         return shards
-    
+
     async def derive_agent_key(self, agent_id: str) -> Ed25519PrivateKey:
         """每个Agent独立密钥——泄露一个不影响其他Agent。每次使用时动态派生。"""
         if self._root_key is None:
@@ -3435,7 +3431,7 @@ class HierarchicalKeyManager:
             info=f"agent_key:{agent_id}".encode(),
         ).derive(b"agent_derivation_v1")
         return Ed25519PrivateKey.from_private_bytes(agent_seed)
-    
+
     async def derive_session_key(
         self, agent_key: Ed25519PrivateKey, session_id: str, nonce: bytes
     ) -> Ed25519PrivateKey:
@@ -3446,7 +3442,7 @@ class HierarchicalKeyManager:
             info=f"session_key:{session_id}:{nonce.hex()}".encode(),
         ).derive(b"session_derivation_v1")
         return Ed25519PrivateKey.from_private_bytes(session_seed)
-    
+
     async def wipe_root_key(self) -> None:
         if self._root_key:
             self._root_key = b'\x00' * len(self._root_key)
@@ -3461,12 +3457,12 @@ key_hierarchy_policy:
     lifetime: "使用后 < 1秒内存存活"
     compromise_impact: "全部分片同时泄露 → 所有Agent密钥可被重建"
     rotation: "90天 + 安全事故立即轮换"
-  
+
   l1_agent_keys:
     storage: "每次从Root Key动态派生，不持久化"
     compromise_impact: "仅影响该Agent——爆炸半径=1"
     forward_secrecy: "✅ Agent密钥轮换后，历史操作签名仍安全（由Merkle Root锚定证明时间点）"
-  
+
   l2_session_keys:
     storage: "从Agent Key + Session ID + nonce派生，Session结束=销毁"
     compromise_impact: "仅影响当前Session——爆炸半径最小"
@@ -3490,14 +3486,14 @@ key_hierarchy_policy:
 class StatisticalAnomalyDetector:
     """
     统计异常检测器——学习"正常操作链长什么样"，标记统计上显著偏离的操作链。
-    
+
     对标 Forrest/Warrender 1999 系统调用序列异常检测经典论文。
     """
-    
+
     def __init__(self, baseline_window_days: int = 90):
         self.baseline = OperationBaseline(window_days=baseline_window_days)
         self.anomaly_threshold: float = 3.0
-    
+
     async def score_operation_chain(
         self, chain: list[Action], agent: AgentIdentity
     ) -> AnomalyScore:
@@ -3539,17 +3535,17 @@ statistical_anomaly_policy:
     source: "MOD-INF-020 审计日志（最近90天）"
     minimum_samples: 1000
     cold_start: "基线不足 → 不启用异常检测 → 告警'基线学习中'"
-  
+
   sensitivity:
     default: 3.0σ
     high_security: 2.0σ  # 安全事故后自动切换
     learning: 5.0σ       # 新系统上线前30天
-  
+
   on_anomaly_detected:
     score_3_to_4: "auto_guard + P1告警"
     score_4_to_5: "BLOCKED + P0安全事件"
     score_above_5: "BLOCKED + Agent降级L1_INTERN + 全局警告"
-  
+
   cooperation_with_l4_rules:
     rule_based: "已知攻击序列——精确匹配，零假阴性"
     statistics_based: "未知攻击模式——概率匹配，可能有假阳性"
@@ -3569,7 +3565,7 @@ statistical_anomaly_policy:
 ```yaml
 audit_log_injection_protection:
   principle: "日志条目必须具有可验证的来源身份——每个条目自带密码学证明"
-  
+
   entry_structure:
     required_fields:
       - "entry_id: 自增序号（不可跳过）"
@@ -3581,13 +3577,13 @@ audit_log_injection_protection:
       - "action_params_hash: 参数SHA-256（非明文——防止参数中注入文本）"
       - "decision: 权限判定枚举值"
       - "monotonic_time: 单调时钟时间戳（用于排序和真实性验证）"
-    
+
     forbidden_patterns:
       - "条目中不得出现 'SYS_.*' / 'SYSTEM' / 'INTERNAL' / 'AUTO' / 'ADMIN' 等伪装字样"
       - "条目中不得出现 'PASS' / 'OK' / 'CLEAN' / 'VERIFIED' 等伪装检查结果字样"
       - "条目中不得包含SQL/命令行注入特征文本"
       - "reason字段由Engine生成枚举值，Agent不可自定义"
-  
+
   entry_linking:
     description: "每条日志条目包含前一条条目的哈希——形成不可篡改链"
     structure: "entry_N = {data_N, hash(entry_N-1)}"
@@ -3602,7 +3598,7 @@ class AuditEntryValidator:
         r"(?i)\b(PASS|OK|CLEAN|VERIFIED|ALLOWED)\b",
         r"\[LOG_LEVEL\]",
     ]
-    
+
     async def validate_entry(
         self, entry: AuditEntry, agent: AgentIdentity, prev_hash: str
     ) -> ValidationResult:
@@ -3630,7 +3626,7 @@ class AuditEntryValidator:
 ```yaml
 blueprint_implementation_fidelity:
   principle: "每条决策必须有机器的可验证断言——计算机能判断代码是否真的实现了这条决策"
-  
+
   decision_assertions:
     examples:
       d_018_01: ["assert: PermissionLevel不包含'needs_approval'", "assert: 95%分布区间校验"]
@@ -3640,12 +3636,12 @@ blueprint_implementation_fidelity:
       d_018_09: ["assert: forbidden_sequences >= 6", "assert: sequence_timeout == 300"]
       d_018_36: ["assert: 使用Ed25519", "assert: 签名包含(agent_id, action_hash, timestamp, nonce)"]
       d_018_46: ["assert: security_now()使用time.monotonic()", "assert: clock_jump_threshold == 1000ms"]
-  
+
   fidelity_test_suite:
     structural: ["决策ID数量校验", "层级数量 >= 7", "横切面组件数量 >= 6", "盲点覆盖 >= 168"]
     semantic: ["核心文件哈希 vs Bootstrap锚定", "执行顺序匹配 §2.0", "延迟 < 1.8ms", "令牌 <= 300秒"]
     regression: ["无法通过任何路径修改自身权限", "审计日志写入后不可变", "冷启动锁正常运作"]
-  
+
   blueprint_code_drift_detection:
     description: "代码变更但蓝图未同步 → 标记为'蓝图-实现漂移' → P1告警"
     workflow: "PR中标注修改的决策 → CI对比新旧断言差异性 → 报告建议的断言变更 → Owner审核"
@@ -3664,22 +3660,22 @@ blueprint_implementation_fidelity:
 ```yaml
 native_api_bypass_protection:
   principle: "不仅要守卫Python层操作路径，还要阻止Agent直接跳到底层绕过Python层"
-  
+
   blocked_modules:
     ctypes: "always_blocked (L1/L2) / auto_guard (L3+) —— 可直接调用任意Win32 API"
     cffi: "same_as_ctypes"
     pywin32: "always_blocked (全级别) —— 直接调用Windows API"
     winreg: "always_blocked (全级别) —— 直接操作注册表"
-  
+
   blocked_functions:
     - "os.system / os.popen → BLOCKED，替代为 subprocess.run(shell=False)"
     - "ctypes.CDLL / WinDLL → always_blocked"
-  
+
   import_hook:
     description: "sys.meta_path hook拦截危险模块导入"
     implementation: "L0 immutable_core实现——自身不可被卸载"
     verification: "每次权限检查前确认hook仍安装且未被篡改"
-  
+
   subprocess_safety:
     - "shell=True → BLOCKED (L0 always_blocked)"
     - "子进程环境变量继承白名单"
@@ -3695,11 +3691,11 @@ class NativeAPIGuard:
         "os.spawnlp", "os.spawnlpe", "os.spawnv", "os.spawnve",
         "os.spawnvp", "os.spawnvpe",
     }
-    
+
     def install_import_hook(self):
         self._hook = ImportBlocker(self.BLOCKED_MODULES)
         sys.meta_path.insert(0, self._hook)
-    
+
     def verify_hook_integrity(self) -> bool:
         if not sys.meta_path:
             return False
@@ -3719,17 +3715,17 @@ class NativeAPIGuard:
 ```yaml
 process_memory_protection:
   principle: "安全密钥/Token在内存中的存在必须是短暂的、加密的、且有进程隔离保护"
-  
+
   key_memory_policy:
     short_lived:
       - "Root Key: 使用后 < 1秒 wipe"
       - "Session Token签名密钥: < 10ms 存活"
       - "Agent 私钥: 每次签名时动态派生 → 签名后立即wipe"
-    
+
     encrypted_at_rest:
       mechanism: "Windows DPAPI (CryptProtectMemory) 加密内存中密钥"
       limitation: "DPAPI保护同用户进程 —— 有限度保护"
-  
+
   process_isolation:
     rbac_engine_process:
       description: "独立低权限进程——持有所有密钥 + 执行权限检查"
@@ -3738,16 +3734,16 @@ process_memory_protection:
         - "受限Job Object（禁止创建子进程/访问其他进程）"
         - "IPC仅通过加密Named Pipe（AES-256-GCM + ECDH密钥交换）"
         - "Agent无法OpenProcess访问更低完整性级别的RBAC Engine进程"
-    
+
     agent_process:
       description: "Agent运行进程——不能直接访问RBAC Engine内存"
       constraint: "所有权限检查通过IPC发送到RBAC Engine——收到纯判定结果，不含密钥"
-  
+
   memory_dump_protection:
     - "MiniDumpWriteDump回调——dump时自动排除密钥内存区域"
     - "密钥使用 VirtualAlloc(MEM_PHYSICAL) —— 不出现在分页文件/休眠文件中"
     - "检测 ProcDump / TaskMgr dump 等内存dump工具运行"
-  
+
   pragmatic_local_minimum:
     - "密钥仅在使用时解密，使用后立即wipe"
     - "DPAPI CryptProtectMemory 加密内存持久密钥"
@@ -3761,10 +3757,10 @@ process_memory_protection:
 class ProcessMemoryGuard:
     def __init__(self):
         self._protected_memory_regions: list[MemoryRegion] = []
-    
+
     async def protect_key_in_memory(self, key_data: bytes, label: str) -> ProtectedMemoryHandle:
         """使用DPAPI加密内存中的密钥"""
-    
+
     async def wipe_sensitive_data(self, data: bytearray) -> None:
         """安全擦除：0x00 → 0xFF → random → 释放"""
         if data:
@@ -3773,10 +3769,10 @@ class ProcessMemoryGuard:
                 data[:] = b'\xFF' * len(data)
                 data[:] = os.urandom(len(data))
             data.release()
-    
+
     async def detect_memory_access_attempts(self) -> list[MemoryAccessAttempt]:
         """通过NtQuerySystemInformation检测其他进程是否尝试读取RBAC进程内存"""
-    
+
     async def set_process_security_descriptor(self) -> None:
         """设置进程DACL——阻止普通进程打开PROCESS_VM_READ权限的句柄"""
 ```
@@ -3811,12 +3807,12 @@ components:
         method: "在受限命名空间中执行无害代码→验证受限效果"
         expected: "受限操作被阻止（确认沙箱生效）"
         on_fail: "标记 PYTHON_SANDBOX_OFFLINE → 所有Agent代码执行即时 DENY"
-    
+
     degradation_path:
       DEFAULT: "ALLOW（安全检查通过）"
       FALLBACK: "READ_ONLY_DEGRADATION（安全依赖失效）"
       CRITICAL: "EMERGENCY_SHUTDOWN（PassiveActivityMonitor 与 Sandbox 同时失效）"
-    
+
     notification:
       sandbox_status_change:
         channel: "Owner dashboard + OS notification toast"
@@ -3899,13 +3895,13 @@ components:
         path: "var/log/rbac_bootstrap/phase0_audit.jsonl"
         format: "每行JSONL: {timestamp, ide_source, agent_label, operation_type, target_path, changes_summary}"
         mechanism: "最小依赖：仅用Python标准库 logging + json → 无需任何pip包"
-      
+
       ide_construction_token:
         description: "Phase0 启动时所有者手动为每个IDE分配临时身份标签"
         example: "TRAE_PRIMARY_BUILDER / CURSOR_SECONDARY / ROOCODE_AUXILIARY"
         mechanism: "写入临时文件 var/rbac_bootstrap/ide_tokens.json（Phase0结束时销毁）"
         scope: "仅用于Phase0审计日志的身份标注——无实时阻断能力"
-    
+
     post_construction_audit:
       bootstrap_audit_diff:
         trigger: "RBAC Phase1 完成后的第一个手动触发步骤"
@@ -3914,9 +3910,9 @@ components:
           - "运行 RBAC 模拟器——'如果RBAC当时已活跃，哪些操作会被阻断？'"
           - "生成 RED_FLAGS 报告（Phase0中实际执行但RBAC会阻止的操作列表）"
           - "Owner 手动审查 RED_FLAGS → 确认无害/回滚可疑变更"
-      
+
       red_flag_categories:
-        - "写入 immutable_core 路径" 
+        - "写入 immutable_core 路径"
         - "修改 .git/config"
         - "写入 .cursor/rules 或 .trae/rules"
         - "pip install 含已知CVE的包"
@@ -3945,27 +3941,27 @@ components:
         risk: "LOW（只读）"
         policy: "仅允许项目目录内路径→禁止向上遍历（..）"
         confirm: "No"
-      
+
       mcp_GitHub_push_files:
         risk: "CRITICAL（远程写入+认证凭证使用）"
         policy: "仅允许 feature/** 分支→禁止 main/master 分支→每次push前显示diff给Owner"
         confirm: "Yes（必须Owner确认）"
-      
+
       mcp_GitHub_create_or_update_file:
         risk: "CRITICAL（远程写入）"
         policy: "仅允许 docs/ 路径→禁止 src/ 路径→每次commit message必须含 [AUTO] 标记"
         confirm: "Yes"
-      
+
       mcp_Excel_excel_write_to_sheet:
         risk: "HIGH（数据修改）"
         policy: "仅允许 var/output/ 路径→禁止覆盖 docs/ 下已有文件"
         confirm: "Yes（需预览变更）"
-      
+
       mcp_Fetch_fetch:
         risk: "MEDIUM（网络外连）"
         policy: "检查URL→仅允许已知白名单域名→记录所有fetch日志"
         confirm: "No（但记录日志）"
-      
+
       mcp_GitHub_create_pull_request:
         risk: "HIGH（仓库变更）"
         policy: "PR必须含详细description→目标分支仅限develop→标记 [AI-GENERATED]"
@@ -4003,21 +3999,21 @@ components:
       - "sys._getframe（防止向上遍历调用栈）"
       - "gc.get_objects（防止遍历所有Python对象）"
       - "__reduce__ / __reduce_ex__（防止pickle序列化敏感对象）"
-    
+
     restricted_proxy:
       description: "受限命名空间中的对象被包装为RestrictedProxy"
       behavior:
         - "__getattr__ → 检查访问的属性名→ 若为白名单属性→透传；否则→抛出RestrictedAccessError"
         - "__call__ → 检查调用目标→若在allowed_callables中→透传；否则→DENY"
         - "不允许通过任何方式获取原始未包装对象"
-    
+
     allowed_introspection:
       whitelist:
         - "inspect.getsource/getfile/getdoc（静态源码检查——安全）"
         - "dataclasses.fields（结构信息——安全）"
         - "类型注解获取（__annotations__）"
         - "dir()——但返回结果过滤掉__subclasses__等危险属性"
-    
+
     namespace_isolation:
       per_agent_namespace:
         description: "每个Agent获得独立受限命名空间——Agent A的内省不能影响Agent B的执行环境"
@@ -4043,15 +4039,15 @@ components:
       ACTIVE:
         duration: "前25m/55m → 正常权限"
         behavior: "所有操作正常执行"
-      
+
       GRACE_PERIOD:
         duration: "25m→30m / 55m→60m"
         behavior: "仍在途操作→完成；新操作→需续期Token；续期成功→延长时间窗口"
-      
+
       EXPIRED:
         duration: "30m+ / 60m+"
         behavior: "在途操作→完成并保存中间状态→强制身份重新验证→旧Token作废"
-    
+
     renewal_policy:
       auto_renewal:
         conditions: "低风险操作(只读/代码分析)+Agent成熟度≥Experimental→自动续期30m"
@@ -4059,7 +4055,7 @@ components:
       owner_approval_renewal:
         conditions: "中高风险操作+Agent成熟度≤Scaffold→弹窗通知Owner确认"
         approval_timeout: "60s无响应→默认DENY→操作链完成后终止"
-    
+
     in_flight_operation_protection:
       detection: "通过SequenceGuard的操作链状态判断是否在途"
       completion_guarantee: "在途操作链完成后→强制状态检查点→写入审计日志→触发Token清除"
@@ -4087,21 +4083,21 @@ components:
       mechanism: "hash(agent_id) % N_SHARDS → 每个分片独立读写锁"
       N_SHARDS: "max(16, cpu_count * 4)"
       advantage: "不同Agent访问不同分片→零锁竞争"
-      
+
     optimistic_sequence_buffer:
       mechanism: "append操作使用CAS(Compare-And-Swap) → 冲突时重试"
       write_amortized: "批量刷新（100条或100ms）→减少写竞争"
-      
+
     rust_decision_hot_path:
       scope: "L0+L1+L2 的确定性规则(占调用量85%)"
       implementation: "pyo3 .pyd → Rust内零GIL竞争"
       fallback: "Rust扩展不可用时→Python实现→Dashboard告警"
-    
+
     concurrency_benchmark_ci:
       description: "CI pipeline 中自动运行并发负载测试"
       scenarios:
         - "10 Agent 并发→P99<3.5ms"
-        - "25 Agent 并发→P99<8ms" 
+        - "25 Agent 并发→P99<8ms"
         - "50 Agent 并发→P99<15ms"
       on_regression: "阻塞 PR merge"
 ```
@@ -4127,7 +4123,7 @@ components:
       aggregator: "独立进程——从raw_events计算聚合指标→生成 metrics_snapshot + SHA-256 摘要"
       dashboard: "展示聚合指标 + 同时展示 SHA-256 摘要 → Owner 可手动验证摘要一致性"
       verification_script: "独立 Python 脚本 verify_dashboard.py ——从 raw_events 重新计算摘要→与 dashboard 展示摘要对比"
-    
+
     sentinel_probes:
       description: "定期注入已知异常事件→验证Dashboard如实报告"
       schedule: "每小时注入1次已知异常(标记为SENTINEL_PROBE)→30s后撤回"
@@ -4136,7 +4132,7 @@ components:
         - "伪造的L0违规事件（写入immutable_core路径）"
         - "伪造的L4序列违规事件（危险操作序列）"
         - "伪造的L5凭证泄露事件"
-    
+
     raw_log_backup_path:
       description: "人工可读的原始日志——不经过任何AI处理"
       format: "JSONL + 纯文本摘要（前100字符）"
@@ -4162,7 +4158,7 @@ components:
       DEFAULT: "ALLOW（仅当 Layer 活跃且检查通过）"
       MISSING_LAYER: "DENY_WITH_AUDIT（记录完整操作上下文+Owner可事后放行）"
       MISSING_IMMUTABLE_CORE: "SHUTDOWN（L0不可缺失——系统不可在此状态下运行）"
-    
+
     deployment_state_machine:
       states:
         - PHASE_0_BOOTSTRAP: "仅 BootstrapCoordinator 活跃"
@@ -4171,12 +4167,12 @@ components:
         - PHASE_3_L4L5: "+ SequenceGuard + OutputGuard 活跃"
         - PHASE_4_L6L7: "+ Observability + DryRun 活跃"
         - PHASE_5_FULL: "所有Layer + 所有横切面活跃"
-      
+
       state_transitions:
         trigger: "手动执行 skyviva rbac-promote --to=PHASE_N"
         pre_check: "所有前置Layer通过集成测试→否则拒绝升级"
         rollback: "降级到之前状态→上一个迁移点自动创建"
-    
+
     intermediate_state_audit:
       description: "中间态执行的所有操作100%留痕"
       mechanism: "每个操作记录活跃Layer列表+缺失Layer列表+决策依据(ALLOW/默认DENY/主动DENY)"
@@ -4201,23 +4197,23 @@ components:
     default_rule:
       logic: "ANY_MODEL_BLOCKED → OVERALL_BLOCKED"
       rationale: "宁可误拒，不可误放"
-    
+
     conflict_categories:
       SECURITY_CONFLICT:
         description: "模型A：此操作不触及安全策略→ALLOW / 模型B：此操作可能泄露凭证→BLOCKED"
         resolution: "ALWAYS_BLOCKED"
         owner_notification: "Yes（显示两模型的推理链差异）"
-      
+
       BUSINESS_CONFLICT:
         description: "模型A：此操作为正常业务逻辑→ALLOW / 模型B：此操作超越Agent角色边界→BLOCKED"
         resolution: "OWNER_DECIDES（暂停→弹窗→Owner二选一）"
         timeout: "120s无响应→默认BLOCKED"
-      
+
       AMBIGUITY_CONFLICT:
         description: "两模型均不确定(置信度均<70%)"
         resolution: "OWNER_DECIDES+模型详情展示"
         timeout: "60s无响应→默认BLOCKED"
-    
+
     conflict_learning:
       description: "Owner的每次手动决策自动纳入规则集"
       mechanism: "Owner的决策+操作上下文→生成新ABAC规则→写入rbac_roles.yaml→下次同类操作用新规则"
@@ -4243,16 +4239,16 @@ components:
       set_search_path: "SetDllDirectory('')——清空默认搜索路径→仅使用显式路径"
       load_flags: "LOAD_LIBRARY_SEARCH_SYSTEM32 | LOAD_LIBRARY_SEARCH_DLL_DIR"
       known_dlls_registry: "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\KnownDLLs——系统DLL优先从此加载"
-    
+
     dll_signature_verification:
       on_startup: "枚举进程中所有已加载DLL→验证数字签名→记录未签名DLL列表"
       on_load: "通过Windows ETW(Event Tracing)监听DLL加载事件→实时对比签名"
-    
+
     working_directory_monitoring:
       description: "监控工作目录中 .dll 文件的创建"
       mechanism: "ReadDirectoryChangesW（Windows API）→监控项目目录树"
       alert: "检测到.dll文件创建→立即通知Owner+自动隔离文件(.quarantine扩展名)"
-    
+
     python_extension_safety:
       description: "Python的.pyd文件本质是DLL——同样受DLL搜索顺序影响"
       mechanism: "启动时验证所有加载的.pyd文件的路径来源→确认仅从site-packages加载"
@@ -4281,12 +4277,12 @@ components:
         - "session_random（每次会话生成的32字节随机数）"
       output: "HMAC-SHA256(identity || machine_guid || pid || boot_ts || session_random)"
       property: "不可跨进程+不可跨重启+不可跨机器→三重绑定"
-    
+
     token_non_persistability:
       mechanism: "Token 仅存在于 DPAPI 加密的内存区域→__getstate__ 抛出 RuntimeError"
       pickle_protection: "Agent Identity 类重写 __reduce__ 使其不可序列化"
       disk_scan: "定期扫描项目目录检测 Token 模式(-SENTINEL- 前缀)→自动删除"
-    
+
     cross_session_detection:
       anomaly_signals:
         - "同一agent_label在两次会话间的identity_hash完全相同→ANOMALY"
@@ -4314,7 +4310,7 @@ components:
       step_2: "Build Hash = SHA-256(Source Hash || 构建配置 || 构建时间戳)"
       step_3: "Artifact Hash = SHA-256(Build Hash || 所有构建输出)"
       verification: "部署前: Artifact Hash == 重新计算Hash → 不匹配→拒绝部署"
-    
+
     binary_diff_audit:
       baseline_storage: "var/rbac_build/baselines/（每版本存储完整基线）"
       diff_on_build: "新构建产物 vs 上一版本基线→逐字节对比→报告差异"
@@ -4322,7 +4318,7 @@ components:
         - ".pyc中嵌入了新的import→未在.py源码中声明的依赖"
         - ".pyd文件大小变化>5%→可能被替换"
         - "setup.py/wheel中新增了未知依赖"
-    
+
     minimal_trusted_base:
       description: "仅Owner手工审核的文件构成'可信构建基'"
       trusted_base_files:
@@ -4351,15 +4347,15 @@ components:
     embedding_anomaly_detection:
       mechanism: "对输入文本进行嵌入→与正常权限请求的嵌入分布比较→Mahalanobis距离>3σ→标记异常"
       normal_distribution: "从过去90天所有ALLOW决策的嵌入建立基线"
-    
+
     input_perturbation_stability:
       mechanism: "对输入进行 N 次微扰动(换词/重排/增减空格)→分类器N次判定→结果不一致→标记不稳定"
       threshold: "N=5次扰动中≥2次结果变化→CLASSIFIER_UNSTABLE→退回完整策略评估"
-    
+
     uncertainty_quantification:
       mechanism: "LLM输出的logits熵→高熵(>2.0 nats)→分类器不确定→退回完整策略评估"
       confidence_threshold: "<85% → AUTO_UPGRADE_TO_OWNER → 暂停+通知Owner"
-    
+
     adversarial_training_pipeline:
       description: "定期用生成的对抗样本微调分类器"
       frequency: "每周自动运行→生成的对抗样本经Owner审查后加入训练集"
@@ -4383,7 +4379,7 @@ components:
     response_intercept_point:
       description: "MCP JSON-RPC 响应返回给 IDE Agent 前插入 Redaction 中间层"
       mechanism: "解析 response.content[].text → 运行 Redaction Pipeline → 返回脱敏后内容"
-    
+
     redaction_pipeline:
       step_1_token_detect:
         patterns:
@@ -4392,14 +4388,14 @@ components:
           - "Bearer [A-Za-z0-9_\\-\\.]+=*（通用Bearer Token）"
           - "Authorization: .+（HTTP头）"
         replacement: "[REDACTED_GITHUB_TOKEN] / [REDACTED_AUTH_HEADER]"
-      
+
       step_2_pii_detect:
         patterns:
           - "邮箱地址——[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}"
           - "API Key 模式（sk-/key-/api_key=）"
           - "手机号码（年中国际格式）"
         replacement: "[REDACTED_PII]"
-      
+
       step_3_size_guard:
         max_response_size: "10KB（超出部分截断+标记[TRUNCATED]）"
         total_context_budget: "响应内容不超过Agent上下文窗口的20%"
@@ -4424,12 +4420,12 @@ components:
       TARGET_LATENCY_MS: "2.0ms（满足 SLA 1.8ms±0.2ms 的预算内）"
       JITTER_RANGE_MS: "0.5ms（随机化抖动→掩盖真实决策时间）"
       implementation: "asyncio.sleep(max(0, target - elapsed))"
-    
+
     precomputed_permission_matrix:
       description: "预先计算 Agent × Resource 权限矩阵→查询时仅查表→消除决策计算差异"
       scope: "低风险常规操作（占调用量80%）→预计算矩阵；高风险操作→走完整决策链(但pad至等时)"
       refresh: "权限变更时增量更新矩阵→写时复制(Copy-on-Write)"
-    
+
     timing_leakage_monitoring:
       description: "检测Agent是否在进行时间侧信道攻击"
       signals:
@@ -4461,13 +4457,13 @@ components:
         - "删除一个forbidden_sequences条目"
         - "将immutable_core路径从/var/lock改为/var/tmp"
       expected: "至少1个现有安全测试必须失败→否则标记为DEAD_TEST（死测试——变异后仍然通过=测试未真正验证安全）"
-    
+
     adversarial_test_generator:
       description: "独立Agent（AdversaryAgent，仅活跃于test环境）"
       task: "生成绕过RBAC的Payload→交由主测试套件执行→验证被捕获"
       reward_function: "成功绕过=高奖励→驱动Agent持续发现测试盲区"
       output: "捕获的绕过Payload→自动转换为新测试用例→加固测试套件"
-    
+
     property_based_testing:
       description: "自动生成边界值组合→验证策略一致性"
       properties:
@@ -4476,7 +4472,7 @@ components:
         - "∀ immutable_path: 任何write操作→BLOCKED（无例外）"
         - "∀ 已执行操作: 操作序列中的相邻操作间无敏感模式组合"
       generator: "hypothesis库（Python property-based testing）→自动生成测试输入"
-    
+
     dead_test_detector:
       description: "检测并报告无效测试"
       patterns:
@@ -4485,7 +4481,7 @@ components:
         - "try-except-pass（吃掉所有异常）"
         - "mock过度→被测函数的核心逻辑被mock替代"
       report: "Dead Test Report → PR中展示 → Owner审查后决定修复或删除"
-    
+
     cov_blind_spot_scanner:
       description: "自动扫描覆盖率盲区"
       mechanism:
@@ -4517,7 +4513,7 @@ components:
         - "**/.git/hooks/**（所有仓库的所有hooks）"
       operation: "WRITE → BLOCKED（仅Owner可写入）"
       READ → ALLOW（Agent 可以查看 hooks 列表——透明度）
-    
+
     pre_git_operation_scan:
       trigger: "git clone / git init / git checkout（每次切换工作树）"
       scan_target: ".git/hooks/ 目录下所有可执行文件"
@@ -4527,12 +4523,12 @@ components:
         - "curl/wget/nc/powershell 网络外连检测"
         - "文件修改时间异常——hook 文件在仓库历史之外被修改"
       on_malicious_detected: "操作 BLOCKED → 生成 audit event → Dashboard 弹窗"
-    
+
     hook_execution_audit:
       description: "Agent 执行 git 操作后 → 检查是否有 hook 被触发执行"
       mechanism: "监控 git 子进程的执行链 → 如果子进程 tree 中出现 .git/hooks/ 路径 → 审计记录"
       alert: "Agent X 的 git checkout 触发了 pre-commit hook Y, 内容哈希 Z → 非预期执行"
-    
+
     known_malicious_hook_patterns:
       - pattern: "exec /bin/bash .* > /dev/tcp/"
         type: "reverse_shell"
@@ -4576,12 +4572,12 @@ components:
         - "文件读写(open / pathlib.Path.write)"
         - "任何网络/进程/加密相关操作"
       on_blocked: ".pth 文件重命名为 .pth.quarantine + 通知 Owner"
-    
+
     runtime_origin_verification:
       description: "Python 进程启动时验证已执行的 .pth 文件"
       mechanism: "site.ENABLE_USER_SITE hook → 记录每个 .pth 的执行→对比已知安全列表"
       anomaly_detection: "新 .pth 文件出现→对比上次启动快照→未在安全列表→告警"
-    
+
     pth_whitelist:
       description: "已知安全的 .pth 文件哈希列表"
       sources:
@@ -4612,7 +4608,7 @@ components:
       - "**/.cursor/tasks.json"
       - "**/launch.json"
       - "**/.vscode/settings.json（中的 terminal.integrated.* 相关项）"
-    
+
     pre_open_scan:
       trigger: "Agent clone / IDE open project / cursor . open"
       checks:
@@ -4623,7 +4619,7 @@ components:
         SAFE: "仅含编译/测试/格式化等常规任务→自动放行"
         SUSPICIOUS: "含网络请求/外部脚本/加密操作→弹窗让Owner确认"
         DANGEROUS: "含已知恶意模式(HexagonalRodent signature)→BLOCKED"
-    
+
     auto_execution_policy:
       default: "DISABLED——项目配置不得自动执行命令"
       owner_approved: "Owner 主动点击 Run Task → 仅当次有效→后续仍需审核"
@@ -4648,7 +4644,7 @@ components:
       primary: "Immutable Audit Log (MOD-INF-020) → 不可篡改的权限决策历史"
       forbidden: "Agent 实时交互流——可能被持续注入投毒"
       extraction_window: "过去 90 天（与统计基线一致）"
-    
+
     distribution_anomaly_detection:
       features_monitored:
         - "ALLOW/BLOCKED/AUTO_GUARD 比例分布"
@@ -4658,19 +4654,19 @@ components:
         - "路径分布(项目内 vs 外部路径)"
       threshold: "任一特征偏离基线 > 2σ → FLAG_POTENTIAL_POISONING"
       on_flag: "暂停本次重训练→通知 Owner 审查→Owner 确认安全后继续"
-    
+
     regression_safety_check:
       description: "新训练的分类器 vs 当前生产分类器→完整对抗测试集对比"
-      test_set: 
+      test_set:
         - "已知安全操作(应 ALLOW)"
         - "已知攻击操作(应 BLOCKED)"
         - "边界操作(应 AUTO_GUARD)"
         - "D-018-66 的对抗样本集"
-      regression_threshold: 
+      regression_threshold:
         - "ALLOW 误判为 BLOCKED 增加 >5% → 回归(MINOR)"
         - "BLOCKED 误判为 ALLOW 增加 >1% → 回归(CRITICAL→自动回滚)"
         - "安全相关误判增加任何百分比 → 立即回滚"
-    
+
     auto_rollback:
       mechanism: "保留最后 3 个版本的分类器模型权重→回归时自动回滚"
       notification: "回滚事件写入 audit log + Dashboard ALERT"
@@ -4698,23 +4694,23 @@ components:
         - "WEB_CONTENT: 从网页获取——低信任"
         - "AGENT_COMMUNICATION: 其他 Agent 传递——需验证"
         - "SELF_GENERATED: Agent 自身推理——中信任"
-    
+
     decision_provenance:
       description: "Agent 做关键决策时→追溯其依赖的记忆片段来源"
       mechanism: "关键决策前→扫描当前上下文窗口中所有 WEB_CONTENT/AGENT_COMMUNICATION 类 Segment→这些低信任 Segments 涉及的决策→Flag for review"
-    
+
     memory_pattern_matching:
       known_poisoning_patterns:
         - "反复出现的异常 URL/域名→可能为 C2 地址植入"
         - "对特定文件/路径的异常关注→可能为目标侦察"
         - "执行特定命令组合的'隐性训练指令'"
       on_match: "标记来源 Segment → 通知 Owner → 必要时 Memory Flush"
-    
+
     memory_snapshot_diff:
       frequency: "每 6 小时"
       mechanism: "对比当前 vs 上次快照→变更分析"
       alert_threshold: "24h 内 NEW_WEB_CONTENT 占比 >30% → Web Content Flood Attack"
-    
+
     memory_flush_policy:
       triggers:
         - "Owner 手动触发（命令: /memory-flush {agent_id})"
@@ -4739,11 +4735,11 @@ components:
     data_signing:
       mechanism: "每个 Agent 输出的数据附带 Ed25519 签名+Agent Identity 哈希"
       chain_format: "{origin_agent}:{signature} → {intermediate_agent}:{signature} → ... → {payload}"
-    
+
     trust_chain_validation:
       on_receive: "接收方验证链上每个签名→检查每个中间 Agent 的 Permission Envelope 未过期→检查每个中间 Agent 的 Maturity >= 当前操作的 Maturity Required"
       on_chain_break: "任一中间节点的签名/Maturity/Permission Envelope 验证失败→数据标记为 UNTRUSTED→以最严格的安全策略处理"
-    
+
     untrusted_data_policy:
       marked: "UNTRUSTED 标签附加到数据上→跨 Agent 传递时保留"
       downgrade:
@@ -4778,14 +4774,14 @@ components:
       UNTRUSTED:
         sources: "新域名(<30天注册)/已知恶意域/URL缩短服务"
         policy: "限制注入 ≤ 30% 上下文窗口 + 内容经过脱毒滤波器"
-    
+
     dangerous_domain_detection:
       automatic_flags:
         - "域名注册 < 30 天（WHOIS 查询）"
         - "已知恶意域列表匹配（Google Safe Browsing API）"
         - "URL 含 Redirect/Open-Redirect 模式"
         - "TLS 证书异常（自签名/过期/域名不匹配）"
-    
+
     content_detox_filter:
       description: "UNTRUSTED 网页内容在注入 Agent 上下文前预处理"
       filters:
@@ -4816,7 +4812,7 @@ components:
         - "pypi.org（已验证发布者）"
         - "pytorch.org / tensorflow.org（官方域）"
       unknown_registry: "弹窗让 Owner 手动审核→批准一次/永久拒绝"
-    
+
     hash_verification:
       description: "下载后自动计算 SHA-256 → 对比官方发布的哈希"
       sources:
@@ -4824,7 +4820,7 @@ components:
         - "PyPI 包的 SHA-256（pip install --require-hashes）"
         - "手动提供的 .sha256 文件"
       on_mismatch: "模型文件已损坏或已被篡改→删除文件→生成 AUDIT event"
-    
+
     pre_load_sandbox_scan:
       targets:
         - ".safetensors → 解析 header→验证无非标准 key"
@@ -4856,14 +4852,14 @@ components:
         - "*.safetensors/*.pt → metadata 字段"
         - "var/log/*.log → 日志轮转文件尾部异常追加"
       frequency: "每 30 分钟扫描一次"
-    
+
     write_pattern_anomaly:
       description: "检测规律性小数据写入到非标准位置"
       signals:
         - "同一路径被规律性写入（interval 标准差 < 1s）→定时外泄"
         - "写入大小 <200B 且高熵（压缩/加密数据特征）→隐蔽数据"
         - "写入目标为 metadata/comment/header 字段而非主数据区"
-    
+
     entropy_anomaly:
       description: "信息熵突变的文件→可能嵌入了加密/压缩的窃取数据"
       baseline: "每种文件类型的正常熵分布（.pyc ≈ 5-7 bits/byte, .jpg ≈ 7-8）"
@@ -4888,7 +4884,7 @@ components:
       TIER_1_CI_WORKER: "仅在 CI Worker 进程中可用——Agent 进程不可见"
       TIER_2_OWNER_PHYSICAL: "硬件密钥(YubiKey/Solo)——物理持有才可用"
       policy: "任何 TIER_2 → 仅归 Owner 物理持有；TIER_1 → 严格禁止在 Agent 会话的 env/file/process tree 中出现"
-    
+
     release_authorization:
       auto_release: "DISABLED——禁止 CI 自动发布到 PyPI/GitHub Releases"
       required_approvals:
@@ -4896,7 +4892,7 @@ components:
         - "完整对抗测试集通过(ALLOW/BLOCKED/AUTO_GUARD 精确率 100%)"
         - "Owner 多因素确认(物理 YubiKey + OTP)"
         - "CI Worker 签名+Owner 签名→双签→GitHub Release"
-    
+
     self_upgrade_verification:
       pre_upgrade: "验证新版本 RBAC 的 Artifact Hash → 与上一版本对比 → 仅允许 +hashing_target→任何未声明的变更 → BLOCKED"
       mid_upgrade: "新 RBAC 加载后→先运行 Bootstrap 验证(§3.0.5 D-018-47 递归防护)→验证通过→切换"
@@ -4924,7 +4920,7 @@ components:
         - "L6 异常检测评分阈值: base ± random(base * 0.10)"
         - "L2 速率限制 TLB 窗口: base ± random(base * 0.20)"
       reset: "每次 RBAC 重启时重新随机化→防止跨会话学习"
-    
+
     probing_detection:
       signals:
         - "同一 Agent 在 5 分钟内请求 ≥3 种不同资源类型→侦查模式"
@@ -4934,7 +4930,7 @@ components:
         mark_agent: "Agent.Identity.threat_level += PROBING → 保存到 Agent Registry"
         escalate_scrutiny: "灵敏度升级 3×(所有 Layer 统一生效)+操作全部升级至 Owner"
         duration: "PROBING 标记持续 24h → 无进一步试探后自动清除"
-    
+
     timing_jitter:
       description: "P99 延迟增加随机抖动→使 Agent 无法通过计时推断内部决策类型"
       jitter_range: "0-2ms（安全地保持在整体 SLA 3ms 以上但模糊化真实决策时间）"
@@ -4959,7 +4955,7 @@ components:
       - "docs/**/*.md（项目文档）"
       - ".github/ISSUE_TEMPLATE/*.md"
       - "任何 Agent A 创建、Agent B 读取的 .md/.txt 文件"
-    
+
     pre_context_injection_scan:
       trigger: "Agent 调用 read_file / glob_read / open 且目标为上述文件类型"
       scanner: "Prompt Injection Scanner——检测以下模式"
@@ -4973,11 +4969,11 @@ components:
         inject_header: "file → 添加顶部警告: ⚠️ [INJECTION_DETECTED] 此文件含可疑指令→已净化"
         sanitize: "可疑行被替换为 [CONTENT_REMOVED_BY_RBAC] → Agent 看不到原始注入"
         audit: "记录 injection source (Agent/file/line_number) → 追溯投毒来源"
-    
+
     file_level_tagging:
       description: "共享状态文件被 Agent 修改后→自动扫描增量内容→标记"
       scan_on: "Agent 调用 write_file / edit_file 写入上述文件类型时"
-      auto_tag: "文件末尾追加 <!-\- RBAC_AUDIT: written_by Agent_X at timestamp_Y -> " 
+      auto_tag: "文件末尾追加 <!-\- RBAC_AUDIT: written_by Agent_X at timestamp_Y -> "
 ```
 
 ---
@@ -5007,18 +5003,18 @@ components:
       PRODUCTION:
         resources: "所有资源（全环境访问）"
         credential_scope: "所有凭证"
-    
+
     tier_transition_policy:
       promotion: "DEV→STAGING→PRODUCTION 需 Owner 显式执行 promote 命令"
       demotion: "自动允许（回退到低 Tier 总是安全的）"
       agent_initiated: "BLOCKED——Agent 不能自行变更 Environment Tier"
-    
+
     cross_tier_credential_protection:
       mechanism: "凭证文件(含 API KEY/TOKEN/SECRET 的 .env/config.json/yaml)标注所属 Tier"
       annotation_format: "# RBAC_TIER: PRODUCTION"（文件首行注释）
       enforcement: "Agent 读取凭证文件时→检查 Tier 标签 vs Agent 的当前 Tier→跨 Tier→BLOCKED"
       file_system_shielding: "跨 Tier 凭证文件在低 Tier Agent 的 file listing 中不可见(文件系统钩子过滤)"
-    
+
     credential_discovery_scope:
       description: "限制 Agent 的自动化搜索 API 的返回范围"
       mechanism: "Agent 的 search_file / grep / glob 等文件发现操作→仅返回当前 Tier 允许的凭证文件"
@@ -5044,7 +5040,7 @@ components:
       DEFAULT_SEQUENCE: "编辑器加载 → 执行配置文件 → 显示权限对话框"
       HARDENED_SEQUENCE: "编辑器加载 → 暂停 → 扫描配置文件 → 显示配置摘要给Owner → Owner确认 → 执行配置"
       timing: "配置文件在 Owner 点击'Allow'之前不得执行任何命令或建立网络连接"
-    
+
     protected_config_files:
       - ".claude/settings.json（API endpoint URL + allowed tools）"
       - ".mcp.json（MCP 服务器列表 + command 字段）"
@@ -5052,7 +5048,7 @@ components:
       - ".trae/rules（同上）"
       - ".vscode/settings.json（terminal.integrated.*）"
       - "pyproject.toml / setup.cfg（构建系统配置→可能的命令执行点）"
-    
+
     config_diff_on_open:
       trigger: "项目首次打开 / git pull 后项目重新打开"
       mechanism: "对比当前配置文件 vs 上次已知安全版本→高亮变更部分"
@@ -5061,7 +5057,7 @@ components:
         - "新增的 command 字段→警告色🔴"
         - "删除的安全限制→危险色⛔"
       on_dangerous_change: "配置加载被阻止→Owner 需逐项审批每个变更"
-    
+
     api_endpoint_redirect_detection:
       trigger: "配置文件中的 API endpoint URL 变更"
       verification: "对比已知官方 endpoint 列表→非官方 endpoint→FORCE_BLOCK"
@@ -5100,12 +5096,12 @@ components:
         CLEAN: "Sampling Prompt 通过→注入 Agent 上下文"
         SUSPICIOUS: "Sampling Prompt 含可疑模式→暂停 Agent→弹窗给 Owner→Owner 决定注入或丢弃"
         DANGEROUS: "Sampling Prompt 含已知攻击模式→自动丢弃+记录 AUDIT+MCP 服务器标记为 UNTRUSTED"
-    
+
     sampling_context_quota:
       description: "限制 Sampling 内容对 Agent 决策的影响力"
       max_ratio: "Sampling Prompt 占 Agent 上下文窗口 ≤ 10%"
       enforcement: "Agent 上下文窗口管理器在注入 Sampling 内容前检查配额→超配额→拒绝注入"
-    
+
     mcp_server_trust_tier:
       TRUSTED:
         sources: "官方 MCP 服务器(Anthropic/GitHub/Google)/Owner 审核通过"
@@ -5144,14 +5140,14 @@ components:
         - "Claude Opus（Anthropic 独立审查）"
         - "GPT-5（OpenAI 独立审查）"
       cross_check: "3个模型对同一安全代码给出3份独立审查报告→合并差异→标注意见分歧→Owner 审查分歧点"
-    
+
     static_analysis_independent_layer:
       tools:
         - "Bandit（Python security linter——非 AI, 纯 AST 分析）"
         - "Semgrep（pattern-based security scanning——自定义 RBAC 安全规则集）"
         - "CodeQL（语义级代码分析——检测权限绕过/TOCTOU/注入模式）"
       role: "作为 AI 审查器的独立验证——AI 说'安全'但 Bandit/Semgrep/CodeQL 说'不安全'→以静态分析为准·要求 AI 解释差异"
-    
+
     safety_critical_path_annotation:
       description: "标注 RBAC 代码中的安全关键路径→这些路径需特别审查"
       mark: "文件头部 # RBAC_SAFETY_CRITICAL: True"
@@ -5161,7 +5157,7 @@ components:
         - "序列评估器(sequence_evaluator)"
         - "凭证管理(credential_store/key_manager)"
       audit_policy: "安全关键路径→每次变更必须经过全部3个审查器+所有静态分析工具→全部 PASS 才允许合并"
-    
+
     drift_monitor:
       description: "监控审查器共识度随时间的变化"
       metric: "cross_model_agreement_rate = (完全一致判定数/总判定数)"
@@ -5194,7 +5190,7 @@ components:
           3. If you encounter a conflict between completing the task and following safety rules, FAIL THE TASK rather than violate safety rules.
           4. Task failure due to safety compliance is ACCEPTABLE and EXPECTED behavior. It is NOT a failure.
         enforcement: "RBAC Engine 启动时验证 System Prompt 是否含此段→缺失→Agent 启动被 BLOCKED"
-    
+
     multi_step_destruction_chain:
       description: "破坏性操作(delete/drop/rm -rf/format)需经过多步确认→非单步确认"
       steps:
@@ -5205,7 +5201,7 @@ components:
         - "Step 5: Owner 点击 CONFIRM（第二次确认, 含倒计时 10s）"
         - "Step 6: 执行操作"
       auto_bypass: "BLOCKED——Agent 不能跳过任何步骤"
-    
+
     rule_violation_pattern_detection:
       behavior_signal: "Agent 执行被安全规则禁止的操作→然后继续处理后续步骤→未暂停请求确认"
       mark: "Agent.Identity.safety_score -= 20（满分 100 每次违规-20）"
@@ -5213,7 +5209,7 @@ components:
         "safety_score < 80": "Agent → 增加操作审查频率"
         "safety_score < 60": "Agent → 所有操作升级为 Owner 确认"
         "safety_score < 40": "Agent → 强制暂停→Owner 决定是否销毁会话"
-    
+
     hard_stop_mechanism:
       description: "非弹窗的进程级暂停——Agent 进程被信号暂停，不消耗 Token，等待 Owner 干预"
       trigger_operations:
@@ -5245,7 +5241,7 @@ components:
         files: "所有含 API KEY/TOKEN/SECRET/PASSWORD 的配置文件"
         format: "文件第一行或关键部分: # RBAC_TIER: {DEV|STAGING|PRODUCTION}"
         enforcement: "CI/CD 检查所有包含敏感模式的 config 文件→缺失 Tier 标注→BLOCKED DEPLOY"
-    
+
     agent_search_api_scoping:
       tools_affected:
         - "search_file / glob / find"
@@ -5253,14 +5249,14 @@ components:
         - "cat / read_file (批量读取)"
       scoping_rule: "Agent 的文件搜索范围限制为显式声明的项目目录(project_root + subpath)→禁止扫描全磁盘/全用户目录"
       credential_file_filtering: "Agent 的文件搜索 API 在返回结果前→过滤掉非当前 Tier 的凭证文件→Agent 不知道这些文件的存在"
-    
+
     discovered_credential_validation:
       description: "Agent 通过搜索发现的任何凭证→在可使用前必须验证其 Tier 合规性"
       flow:
         - "Agent 发现潜在凭证→提交至 RBAC Engine"
         - "RBAC Engine 验证: 凭证 Tier ≤ Agent Tier → ALLOW; 否则 → BLOCKED"
         - "Agent 不能使用未经 RBAC Engine 验证的任何凭证"
-    
+
     human_mental_model_alignment:
       description: "让 Agent 的凭证搜索行为更接近人类开发者的预期"
       mechanism:
@@ -5299,18 +5295,18 @@ components:
         - "Invoke-Expression / iex / Start-Process"
         - "& (调用操作符)"
         - "` (转义——可能被滥用)"
-    
+
     sanitization_policy:
       DEFAULT: "REJECT——含任何Shell元字符的参数→拒绝执行+审计"
       ALLOW_LIST: "已知安全的参数模式→如纯字母数字/Path/URL→允许"
       ESCAPE: "特定上下文下→转义元字符（如将 ; 转为 \\;）→仅用于非关键操作"
-    
+
     parameterized_command_construction:
       description: "MCP 工具调用不使用字符串拼接构造命令"
       BAD: f'run_command("git checkout {user_branch}")  # 字符串拼接'"
       GOOD: 'run_command("git", "checkout", sanitize(user_branch))  # 参数化'
       enforcement: "MCPPermissionProxy 中检查所有工具调用→检测字符串拼接命令→标记POTENTIAL_INJECTION"
-    
+
     stdio_audit_log:
       description: "MCP STDIO 传输层的命令执行审计"
       log_entry:
@@ -5348,13 +5344,13 @@ components:
         aws: "STS AssumeRole with Session Policy (scoped down permissions)"
         azure: "Entra ID Service Principal with just-enough RBAC roles"
         gcp: "IAM Service Account with custom role (least privilege)"
-    
+
     credential_tier_mapping:
       DEV: "AWS Sandbox Account / Azure Dev Subscription / GCP Dev Project"
       STAGING: "AWS Staging Account / Azure Staging Subscription"
       PRODUCTION: "AWS Production Account→仅 Owner 可授权 Agent 在此 Tier 操作"
       policy: "Agent 的云凭证 Tier ≤ Agent 的 Environment Tier"
-    
+
     admin_credential_prohibition:
       description: "Agent 严禁使用云平台的 Administrator/Owner 级凭证"
       forbidden:
@@ -5362,7 +5358,7 @@ components:
         - "Azure: Owner / Contributor / User Access Administrator 角色"
         - "GCP: Owner / Editor 角色 (Project/Organization 级)"
       enforcement: "RBAC Engine 在 Agent 初始化时扫描所有可用云凭证→含 Admin 策略→BLOCKED"
-    
+
     unified_audit_correlation:
       description: "将 RBAC 审计事件与云平台 CloudTrail/Azure Monitor/GCP Logging 关联"
       mechanism: "RBAC 审计事件中写入 cloud_trace_id→与云审计日志的 request_id 一一对应"
@@ -5397,7 +5393,7 @@ components:
       - "eval / exec / compile"
       - "importlib.import_module（动态导入）"
       - "ast.literal_eval 的滥用（虽然安全但仅限于字面量）"
-    
+
     pre_parse_dangerous_tag_detection:
       scan_before_parse: "在文件内容送入解析器前→正则扫描危险标签"
       dangerous_patterns:
@@ -5412,12 +5408,12 @@ components:
           - "c__builtin__\\n（import语句模式）"
           - "(S'.*'\\np[0-9]+（任何含 import 或 exec 的字符串）"
       on_detect: "文件解析 BLOCKED→文件隔离→Owner 通知"
-    
+
     file_source_tier:
       TRUSTED: "Owner 创建的定义文件→Safe 解析器→ALLOW"
       KNOWN: "官方仓库下载→Safe 解析器→ALLOW"
       UNKNOWN: "第三方来源→Safe 解析器+Pre-Parse Tag 检测→SUSPICIOUS→Owner 审查"
-      
+
     l3_input_guard_integration:
       hook_point: "Agent 调用 open/read/parse/load 操作→L3 在文件内容读取后、解析器调用前介入"
       inspection: "检查目标文件类型→若为 YAML/Pickle/Marshal→进行解析器安全策略检查"
@@ -5444,7 +5440,7 @@ on_parsing_policy: "任何 Agent 添加/修改项目依赖声明文件时→L3 I
                     包名誉评分（下载量/星标/维护者历史/发布时间）→
                     沙箱预安装行为验证→
                     三道关卡全部通过→允许写入。"
-                    
+
 slopsquatting_defense:
   trigger_files:
     - "pyproject.toml"
@@ -5456,17 +5452,17 @@ slopsquatting_defense:
     - "Pipfile.lock"
     - "poetry.lock"
     - "yarn.lock"
-    
+
   write_interception:
     hook: "L3 Input Guard 拦截所有对触发文件的写操作"
     extract_new_dependencies: "diff 分析→提取所有新增包名+版本约束"
-    
+
   dependency_existence_verification:
     primary_registry: "PyPI / npm 官方 API 实时查询"
     fallback_check: "若主注册表不可达→查询镜像源（清华源/淘宝源）→任一可用即通过"
     on_not_found: "BLOCKED——包不存在→可能为幻构包→告警 Owner"
     on_found: "进入名誉评分阶段"
-    
+
   registry_reputation_scoring:
     metrics:
       download_count: "过去30天下载量（阈值: >1000 或按生态中位数）"
@@ -5475,7 +5471,7 @@ slopsquatting_defense:
       creation_date: "包创建时间距今 >90 天（防仓促注册的恶意包）"
       recent_activity: "最近一次发布距今 <365 天（需维护活跃）"
     composite_score: "加权综合评分→低于阈值→标记 SUSPICIOUS→Owner 审查"
-    
+
   sandboxed_pre_install_behavior_verification:
     isolation: "Docker/ephemeral venv 中 pip install→静态分析安装脚本+依赖树"
     behavior_check:
@@ -5483,7 +5479,7 @@ slopsquatting_defense:
       - "无文件系统越界访问（不得写 /etc /root ~/.ssh）"
       - "setup.py 中无 eval/exec/os.system/subprocess 等危险调用"
     on_suspicious_behavior: "BLOCKED→行为报告→Owner 审查→列入组织级黑名单"
-    
+
   pyproject_toml_auto_validation:
     mode: "Agent 写入 pyproject.toml 后→自动触发全量依赖验证流水线"
     on_any_new_dep: "逐一验证每个新增依赖（仅验证新增部分，避免全量重复扫描）"
@@ -5511,7 +5507,7 @@ THREAT DEEP-DIVE（2026年4-5月新发现）:
 on_parsing_policy: "RBAC Engine 与 IDE 进程间的通信信道必须是端到端密码学绑定的——
                     Token 不仅要签名，还要绑定到通信信道本身的完整性认证上。
                     任何无法证明信道来源的请求均降权为 UNTRUSTED。"
-                    
+
 communication_channel_integrity_guard:
   channel_binding:
     mechanism: "Token Binding——Session Token 在签发时嵌入信道指纹"
@@ -5522,7 +5518,7 @@ communication_channel_integrity_guard:
       - "原始请求来源 IP/Origin（localhost vs 外部→按风险加权）"
     binding: "Session Token = HMAC-SHA256(channel_fingerprint || agent_identity || nonce, channel_binding_key)"
     verification: "每次请求→RBAC Engine 从请求中提取信道指纹→重新计算 Token→比对一致性→不一致则REJECT"
-    
+
   origin_validation:
     mode: "IDE WebSocket/HTTP 端点强制 Origin 白名单"
     allowed_origins:
@@ -5533,13 +5529,13 @@ communication_channel_integrity_guard:
       - "任意 http:// 或 https:// 外部域名"
       - "null origin（浏览器对 file:// 的默认 origin→需二次验证）"
     on_external_origin: "REJECT——可能为 CSWSH 攻击→记录攻击者的 Origin+User-Agent→告警 Owner"
-    
+
   process_integrity_heartbeat:
     frequency: "IDE 进程每 5 秒向 RBAC Engine 发送密码学心跳"
     heartbeat_payload: "HMAC(nonce + process_pid + process_hash + timestamp, shared_secret)"
     on_missing_heartbeat: "3 次丢失→标记信道不可信→相关 Session Token 立即失效→所有未完成操作SUSPEND"
     on_recovery: "IDE 进程重新认证→需要 Owner 重新确认→新 Session Token 签发"
-    
+
   anomalous_connection_detection:
     monitors:
       - "IDE 端口上来自 localhost 以外的连接（可能为 CSWSH 劫持通道）"
@@ -5547,7 +5543,7 @@ communication_channel_integrity_guard:
       - "同一 IDE 进程同时存在多个 TCP 连接（正常为 1）"
       - "WebSocket Frame 时间间隔模式异常（人为 vs 脚本自动化）"
     on_anomaly: "L4 SequenceGuard 标记异常→RBAC 降权→Owner 告警"
-    
+
   transport_layer_authentication:
     local_mtls: "本地进程间 mTLS（自签 CA 限定 localhost）→IDE 和 RBAC 各持证书→双向认证"
     certificate_rotation: "每次会话重建时重新生成证书对→旧证书即时吊销"
@@ -5575,14 +5571,14 @@ on_parsing_policy: "每个 Agent 拥有一个动态信任预算账户——高�
                     高风险操作消耗大量预算。预算消耗速度随 Agent 的决策风险追踪记录实时调整。
                     预算低于阈值时→自动权限降级（不触发 Kill Switch/不中断正常低风险工作），
                     预算恢复后→权限自动回升。"
-                    
+
 adaptive_trust_budget_allocator:
   trust_budget_account:
     initial_budget: "按 Agent Maturity 设置初始信任预算（L1=100, L2=300, L3=600, L4=1000）"
     min_budget: "50（低于此值→权限降至最低安全级别）"
     max_budget: "1000"
     replenishment_rate: "每秒 +0.5～2.0 单位（成功完成安全验证的操作后加速补充）"
-    
+
   operation_cost_assessment:
     cost_categories:
       SAFE_READ: "读取内部文件/数据库→成本 1-3"
@@ -5592,23 +5588,23 @@ adaptive_trust_budget_allocator:
       NETWORK_OUTBOUND: "网络外连→成本 40-80"
       FILE_SYSTEM_DEEP: "操作系统级文件访问（/etc ~/.ssh C:\\Windows）→成本 80-150"
       CRITICAL_INFRA: "操作数据库/CI/Cloud API→成本 100-200"
-    
+
     context_weighting:
       "操作发生在 STAGING（非 PRODUCTION）→成本 x0.3"
       "操作发生在业务低峰时段（02:00-06:00）→成本 x1.5（异常时段风险溢价）"
       "操作对象在 L0 protected_paths 中→成本 x2.0"
       "连续相同类型操作（第 1 次正常→第 5 次重复→成本 x1.0→x3.0 递增）"
       "Agent 最近 T 分钟内触发过告警→所有操作成本 x1.5（风险溢价）"
-      
+
   budget_consumption:
     on_each_operation: "操作发出前→计算 operation_cost × context_weight→从预算中扣除"
     insufficient_budget: "操作 BLOCKED→Agent 通知:"预算不足——请等待信任补充或降低操作风险等级""
-    
+
   replenishment:
     passive: "每秒自动恢复 → 如 1.0/s → 100 秒可恢复 100 单位"
     active: "成功完成一个经过 Owner 确认的安全操作→奖励 +30～50 单位"
     verified_output: "操作的输出通过 L5 OutputGuard 验证→额外 +5～15 单位"
-    
+
   dynamic_permission_modulation:
     budget_tiers:
       BUDGET >= 800: "全权——Agent 享有 Maturity Level 的完整权限"
@@ -5616,14 +5612,14 @@ adaptive_trust_budget_allocator:
       BUDGET 200-499: "受限——仅读操作自动通过，所有写操作需 Owner 确认"
       BUDGET 50-199: "最低——仅安全白名单读操作，所有修改 BLOCKED"
       BUDGET < 50: "冻结——所有新操作 BLOCKED（Agent 可继续完成已签发的操作链）"
-    
+
     transition: "平滑——不是二进制开关，而是斜率递减的权限漏斗"
-    
+
   behavioral_drift_detection:
     recent_operation_profile: "过去 T 分钟的操作类别分布→与 Agent 历史基线对比"
     drift_score: "KL 散度（当前分布 vs 基线分布）"
     on_drift_above_threshold: "Trust Budget 补充速率临时降低 50%→Owner 告警"
-    
+
   audit_and_explainability:
     budget_log: "每一次预算增减→记录操作 ID + 决策理由 + 时间戳→不可变"
     budget_dashboard: "Owner 仪表盘→每个 Agent 的实时预算+消耗趋势+降级历史可视化"
@@ -5660,7 +5656,7 @@ on_parsing_policy: "MCP工具定义必须被视为可执行代码——其完整
                     每次listTools响应→验证工具的加密签名与已批准的manifest一致。
                     签名不匹配（变异/回滚/升级未授权版）→工具降权至UNTRUSTED→
                     触发Owner重新审批。"
-                    
+
 tool_definition_integrity_guard:
   cryptographic_tool_attestation:
     signing: "每个批准的工具定义→生成规范化的JSON Canonicalization Scheme (RFC 8785) manifest→
@@ -5680,7 +5676,7 @@ tool_definition_integrity_guard:
       step2: "manifest上传至组织级透明日志服务器+Rekor"
       step3: "Sigstore进行keyless签名(通过OIDC绑定开发者身份)"
       step4: "JWS签名+manifest hash存入RBAC系统的TrustStore"
-      
+
   runtime_integrity_verification:
     hook_point: "Agent发起listTools请求→MCP服务器返回工具列表→
                  L3 Input Guard在工具注册到Agent上下文之前拦截→
@@ -5696,9 +5692,9 @@ tool_definition_integrity_guard:
         HASH_MISMATCH: "FAIL——工具定义已被修改(变异/回滚/升级)→触发变异检测"
         INVALID_SIG: "FAIL——签名无效(伪造/过期/密钥泄露)→拒绝工具"
         NO_SIGNATURE: "NEW_TOOL——首次遇到→标记待审查→Owner通知"
-        
+
   mutation_detection:
-    diff_analysis: "对Hash不匹配的工具→执行语义diff(不是逐字符diff): 
+    diff_analysis: "对Hash不匹配的工具→执行语义diff(不是逐字符diff):
                    描述变更/参数schema变更/权限声明变更"
     classification:
       description_change: "描述文本被修改→可能为新的注入攻击→P0告警"
@@ -5708,22 +5704,22 @@ tool_definition_integrity_guard:
       minor_fix: "仅修正拼写错误/bug修复描述→P2通知(仍需Owner确认)"
     on_mutation_detected: "工具降权→标记为SUSPICIOUS→进入隔离模式→
                            Owner仪表盘展示diff→等待Owner决定:
-                           APPROVE→更新manifest+版本号+重新签名 / 
+                           APPROVE→更新manifest+版本号+重新签名 /
                            REJECT→工具永久移出Agent上下文"
-                           
+
   immutable_versioned_definitions:
     rule: "任何对已批准工具定义的改变→必须产生新版本号→通过完整的审批流水线→
            新版本manifest被签名→旧版本manifest保留在审计日志中→永不删除"
     version_chain: "每个版本的manifest包含prev_version_hash→形成不可篡改的
                     密码学版本链→服务器回滚攻击可被自动检测(Hash链断裂)"
-                    
+
   policy_based_access_control:
     integration: "Cedar策略引擎集成(Amazon Verified Permissions兼容)→
                   运行时策略: '仅当工具manifest的sha256等于TrustStore记录时才允许注册'→
                   策略评估是确定性的→不受LLM幻觉影响"
     effect: "即使Agent主观认为工具可信→策略引擎的确定性检查独立裁决→
             不依赖LLM判断→符合MCPSHIELD的'能力级访问控制'层要求"
-    
+
   audit_and_transparency:
     log: "每次工具定义完整性验证→记录VerificationDecision(tool, hash_before, hash_after, sig_valid, decision, timestamp)"
     dashboard: "Owner仪表盘→每个已注册MCP工具→版本历史链→最近验证结果→变异告警历史"
@@ -6143,7 +6139,7 @@ class PermissionHooks:
 |---|------|---------|
 | 1 | `src/zephyr/agent-rbac/rbac_roles.yaml` | 角色定义变更 |
 | 2 | `src/zephyr/agent-rbac/permission_hooks.yaml` | 钩子配置变更 |
-| 3 | `docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md` | GOV-AI-001 权限声明变更 |
+| 3 | `docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml` | GOV-AI-001 权限声明变更 |
 | 4 | `src/zephyr/gates/` | Gate Engine 集成点变更 |
 | 5 | `tests/agent-rbac/test_permissions.py` | 测试用例变更 |
 
@@ -7413,14 +7409,14 @@ class PermissionHooks:
 
 | # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表 |
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
-| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 + MTH-013 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 + MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
 | 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
-| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限真源 |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限真源 |
 | 9 | Gate Engine 蓝图 | MOD-INF-007 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` | 权限检查集成点 |
 | 10 | 审计追踪蓝图 | MOD-INF-020 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` | 审计日志写入 |
 | 11 | MCP Servers 蓝图 | MOD-INF-013 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\mcp-servers\blueprint.md` | MCP Tool 权限约束 |
@@ -7434,7 +7430,7 @@ class PermissionHooks:
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
 | 1 | Gate Engine | `D:\ZephyrAlpha\src\zephyr\gates\` | 门禁检查 | Gate Engine 是通用门禁框架，RBAC 是权限特化——RBAC 依赖 Gate Engine 但不能替代 |
-| 2 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | 权限声明 | GOV-AI-001 是静态声明式注册表，无运行时强制执行能力——本蓝图将其派生为可执行规则 |
+| 2 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | 权限声明 | GOV-AI-001 是静态声明式注册表，无运行时强制执行能力——本蓝图将其派生为可执行规则 |
 
 ---
 
@@ -7446,7 +7442,7 @@ class PermissionHooks:
 | 2 | 测试代码 | `D:\ZephyrAlpha\tests\agent-rbac\` | 测试用例 | 新建 |
 | 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` | 本文件 | 修改 |
 | 4 | RBAC 角色配置 | `D:\ZephyrAlpha\src\zephyr\agent-rbac\rbac_roles.yaml` | 自动派生 | 新建 |
-| 5 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | 真源 | 读取 |
+| 5 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | 真源 | 读取 |
 
 ---
 

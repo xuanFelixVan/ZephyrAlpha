@@ -36,6 +36,7 @@ import yaml
 
 from zephyr.trading.capability_card import CapabilityCard
 
+
 class CapabilityRegistry:
     """能力注册中心——解决'AI 不知道有这个功能'的问题。
 

@@ -1,11 +1,23 @@
 rule_id: TRAE-043
 title: 元规则-元数据与度量
+version: '1.0.0'
+layer: L2
+module_id: TRAE-043
+depends_on:
+- TRAE-041
+- TRAE-042
+tags:
+- TRAE
+- meta_metadata_metrics
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - PS-STD-001
 - STD-004
 - STD-005
 - GOV-024
-layer: L2
 severity: warning
 scope: meta_metadata_metrics
 domain: TRAE
@@ -141,7 +153,7 @@ sections:
       fail: 绕过术语表直接定义新术语
     actions:
     - type: mandatory
-      step: 项目文档中使用的核心术语必须以术语表(glossary_glossary.md)为准；新增术语需更新术语表
+      step: 项目文档中使用的核心术语必须以术语表(glossary_glossary.yaml)为准；新增术语需更新术语表
     prohibitions:
     - 绕过术语表直接在非权威文件中定义新术语
   mr3_scope:
@@ -177,6 +189,904 @@ sections:
     - version: "4.0.0"
       date: "2026-04-28"
       change: "重命名为元数据注册表，扩展为全项目三域字段真源；明确A(文档frontmatter)/B(任务卡)/C(AI治理)三层架构"
+  ps_std_001_minimal_read_path:
+    title: 最小必读路径
+    section_type: context
+    original_rules:
+    - PS-STD-001 §1.0
+    summary: 新AI session按此路径最快上手——§1三域架构→§2.1必填字段→§4 status词表→§3.1 doc_type词表→§14违规检测规则
+  ps_std_001_purpose:
+    title: 元数据登记表目的
+    section_type: context
+    original_rules:
+    - PS-STD-001 §1.1
+    summary: 建立500+模块AI自治量化交易系统的统一元数据登记表确保AI员工无人类指导可正确理解/创建/分类/检索文档
+    key_purposes:
+    - AI自治——AI员工可无人类指导正确操作文档
+    - Owner定位——可定位文档归属与生命周期
+    - 工具自动——基于同一套规则自动执行无字段漂移
+    - 知识传承——编码在元数据中
+    - 审计合规——对标EU AI Act/SR 11-7/IETF AAT
+  ps_std_001_scope:
+    title: 范围与YAML子类型
+    section_type: context
+    original_rules:
+    - PS-STD-001 §1.3
+    summary: 覆盖所有目录下的.md/.yaml文件YAML分两类——document_yaml(人类+AI消费最小7项同.md)和registry_yaml(CI/pre-commit机器消费最小4项)
+    yaml_types:
+    - type: document_yaml
+      consumers: 人类+AI
+      min_fields: 7项同.md
+    - type: registry_yaml
+      consumers: CI/pre-commit机器
+      min_fields: schema_version/doc_type/title/status
+      note: 不要求module_id/rule_form/scope/stability/verifiability/layer
+    rules:
+    - .yaml统一走registry_yaml契约
+    - .md统一走document_yaml契约
+  ps_std_001_ssot_declaration:
+    title: SSoT声明与真源映射
+    section_type: context
+    original_rules:
+    - PS-STD-001 §1.4
+    summary: 各类元数据定义的权威真源映射表
+    ssot_mapping:
+    - content: doc_type词表
+      source: doc_type-vocabulary.yaml
+    - content: 域A字段定义
+      source: frontmatter-field-registry.yaml(PS-REG-012)
+    - content: 域B字段定义
+      source: 本文档§7
+    - content: 域C字段定义
+      source: 本文档§8
+    - content: 受控枚举
+      source: 本文档§9
+    - content: module_id命名规范
+      source: 本文档§5
+    - content: status语义
+      source: status-vocabulary.yaml
+    - content: ttl枚举
+      source: ttl-vocabulary.yaml
+    rules:
+    - 冲突时以本文件为准
+    - 发现冲突提决策记录并修正
+  ps_std_001_consumer_registry:
+    title: 消费者注册表与同步规则
+    section_type: context
+    original_rules:
+    - PS-STD-001 §1.5
+    summary: 修改注册表枚举值或字段时按Tier分级同步更新所有消费者
+    tier_1_consumers:
+    - check_frontmatter_metadata.py
+    - shared/schemas.py
+    - sqlite_schema.py
+    sync_requirement: 变更必须同commit更新
+    tier_2_consumers:
+    - pre-commit脚本
+    - validate脚本
+    sync_requirement: 无需操作
+    tier_3_consumers:
+    - task-card-standard.md
+    sync_requirement: 按需对齐
+    sync_rules:
+    - 新增枚举值→Tier1同commit
+    - 删除枚举值→Tier1同commit+迁移脚本
+    - 字段改名→Tier1/2/3全部同commit更新引用
+  ps_std_001_field_table:
+    title: 全局字段总表
+    section_type: context
+    original_rules:
+    - PS-STD-001 §2.1
+    summary: 域A共40个固定字段+1个custom_*扩展查PS-REG-012 canonical SSoT获取完整定义
+    field_stages:
+    - stage: Draft+
+      required_fields: module_id/title/doc_type/status/version/date/owner(7项)
+    - stage: Active+
+      new_required: layer/classification/language/created_by/ttl/summary/tags/rule_form/scope/stability/verifiability(11项)
+    - stage: Deprecated
+      new_required: superseded_by
+    note: 完整字段定义查PS-REG-012本文件仅速查
+  ps_std_001_field_ordering:
+    title: 字段排序约定
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §2.3
+    summary: frontmatter字段按固定顺序排列影响AI和人类快速定位
+    conditions:
+    - type: trigger
+      check: 编写frontmatter时
+      pass: 按约定顺序排列字段
+      fail: 字段顺序混乱
+    field_order:
+    - module_id
+    - title
+    - doc_type
+    - status
+    - version
+    - layer
+    - owner
+    - classification
+    - language
+    - created_by
+    - date
+    - valid_from
+    - ttl
+    - summary
+    - tags
+    - rule_form
+    - scope
+    - stability
+    - verifiability
+    - depends_on
+    - supersedes
+    - superseded_by
+    - derived_from
+    - related_adr
+    - safety_level
+    - evolution_policy
+    - ai_autonomy
+    - provenance
+    - author_agent
+    - governance_family
+    - ai_capability_slot
+    - ai_autonomy_level_planned
+    - ai_employee_count_planned
+    - blueprint_refs
+    - compliance_tags
+    - human_override
+    - last_reviewed_by
+    - review_status
+    - category
+    - domain
+    - custom_*
+  ps_std_001_yaml_special_rules:
+    title: YAML文件特殊规则
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §2.4
+    summary: YAML文件status使用小写且必须包含schema_version字段
+    conditions:
+    - type: trigger
+      check: 编写.yaml文件frontmatter时
+      pass: 遵循YAML特殊规则
+      fail: 使用大写status或缺少schema_version
+    rules:
+    - YAML文件status使用小写active/draft/deprecated(仅3值superseded已废弃)
+    - 必须包含schema_version字段
+    - 日期字段使用ISO 8601格式
+    prohibitions:
+    - YAML文件status使用大写或superseded值
+    - YAML文件省略schema_version字段
+    - 日期字段使用非ISO 8601格式
+  ps_std_001_doc_type_required_fields:
+    title: 按doc_type分类的必填字段清单
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §2.5
+    summary: 10种doc_type各有字段矩阵🔴必填/🟡条件必填/空白可选
+    conditions:
+    - type: trigger
+      check: 创建01_policies_and_standards/目录下文件时
+      pass: 按doc_type对应列补齐必填/条件必填字段
+      fail: 字段缺失导致门禁阻断
+    doc_types:
+    - policy
+    - standard
+    - operational_rule
+    - register
+    - protocol
+    - template
+    - adr
+    - blueprint
+    - construction_plan
+    - roadmap
+    conditional_required:
+    - tags在scope layer时必填
+    - layer/classification在register/ADR全局型填cross_layer/含敏感信息填confidential
+    - verifiability在operational_rule必填
+    - depends_on在依赖其他文件时必填
+    - valid_from在有生效日期时必填
+    - evolution_policy在有演进策略时必填
+    - ai_autonomy在涉及AI操作权限时必填
+  ps_std_001_consistency_constraints:
+    title: frontmatter一致性约束
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §2.6
+    summary: AI写frontmatter时逐项检查13条一致性约束
+    conditions:
+    - type: trigger
+      check: AI写frontmatter时
+      pass: 逐项检查13条一致性约束
+      fail: 字段间矛盾导致校验失败
+    constraints:
+    - '#1 frozen→immutable_core(单向逆面不成立stable+immutable_core合法)'
+    - '#2 volatile不能immutable_core'
+    - '#3-11 doc_type↔rule_form映射(policy/standard/adr=declarative operational_rule=procedural register=data template/blueprint/construction_plan=structural roadmap=declarative)'
+    - '#12 template的summary必填非空'
+    - '#13 template_for vs tags一致性'
+    architecture_citizen_principle: stability描述内容变更频率ai_autonomy描述谁有权改两者正交不耦合
+    prohibitions:
+    - stability frozen配ai_autonomy ai_modifiable
+    - stability volatile配ai_autonomy immutable_core
+    - doc_type与rule_form矛盾(如policy配procedural)
+    - template文件summary为空
+  ps_std_001_frontmatter_template:
+    title: frontmatter模板来源
+    section_type: context
+    original_rules:
+    - PS-STD-001 §2.7
+    summary: frontmatter模板的唯一真源是templates/目录下的骨架文件AI创建新文件时从templates/目录复制frontmatter填入具体值
+  ps_std_001_frontmatter_prohibitions:
+    title: frontmatter禁止行为
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §2.8
+    summary: 6条禁止规则覆盖doc_type↔rule_form矛盾/stability↔ai_autonomy矛盾/省略rule_form/使用未注册字段名等
+    conditions:
+    - type: trigger
+      check: 编写frontmatter时
+      pass: 不触发任何禁止行为
+      fail: 违反禁止规则导致校验阻断
+    prohibitions:
+    - doc_type与rule_form矛盾(如policy配procedural operational_rule配declarative)
+    - stability frozen配ai_autonomy ai_modifiable
+    - Active状态以上省略rule_form字段
+    - 使用未在§2.1注册的字段名
+    - scope layer配layer cross_layer
+    - verifiability inspection配doc_type operational_rule
+  ps_std_001_doc_type_vocabulary:
+    title: doc_type受控词表
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §3
+    summary: 全项目27种doc_type canonical SSoT=doc_type-vocabulary.yaml
+    conditions:
+    - type: trigger
+      check: 选择文档类型时
+      pass: 从27种合法doc_type中选择并匹配rule_form和目录
+      fail: 使用未注册或已废弃的doc_type
+    design_principles:
+    - 自下而上归纳
+    - 短名优先
+    - AI可记忆
+    - 可扩展
+    key_mapping: doc_type↔layer↔directory三向映射一一对应
+    new_doc_type_flow: 发现无法覆盖→提决策记录→仅更新vocabulary YAML→校验脚本动态加载→同步frontmatter-schema.json
+    prohibitions:
+    - 在governance/下使用operational_rule
+    - 在operational/下使用policy或standard
+    - 使用旧长名(governance_standard/governance_registry等)
+    - 使用未在§3.2注册的doc_type
+    - doc_type与rule_form矛盾
+  ps_std_001_status_vocabulary:
+    title: status受控词表三域分离
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §4
+    summary: 三域分离——域A DocStatus 3值/域B TaskStatus 10值/域C KeStatus 10值
+    conditions:
+    - type: trigger
+      check: 设置文档/任务/知识条目状态时
+      pass: 使用对应域的status枚举值
+      fail: 三域status混用导致状态机混乱
+    domain_a_doc_status:
+      values: draft/active/deprecated
+      case: 小写
+      rule: deprecated必填superseded_by
+    domain_b_task_status:
+      values: PENDING/IN_PROGRESS/COMPLETED/VERIFIED/FAILED/BLOCKED/WAITING/READY/RETRY/CANCELLED
+      case: 大写
+    domain_c_ke_status:
+      values: DRAFT/SUBMITTED/REVIEWED/ACCEPTED/INDEXED/VERIFIED/REJECTED/DEPRECATED/SUPERSEDED/ARCHIVED
+      case: 大写
+    case_convention: 枚举值小写+标识符大写
+    demotion_rules:
+    - active→deprecated需Owner审批+superseded_by
+    - 禁止跨级降格
+    lrc_constraints:
+    - LRC-001~005 draft文件不得被active文件depends_on引用
+    prohibitions:
+    - 三域status混用(如文档用PENDING任务用active)
+    - 枚举值使用大写(域A)或标识符使用小写
+    - draft文件被active文件通过depends_on引用
+    - 跨级降格(draft直接→deprecated)
+    - deprecated文件不填superseded_by
+  ps_std_001_module_id_naming:
+    title: module_id命名规范
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §5
+    summary: 格式DOMAIN-TYPE-NNN DOMAIN 23个已注册TYPE 8个
+    conditions:
+    - type: trigger
+      check: 创建新文件分配module_id时
+      pass: 按格式和DOMAIN注册表分配
+      fail: 格式不符或DOMAIN冲突
+    format: DOMAIN-TYPE-NNN(如PS-STD-001)
+    domains: 23个已注册(PS/EA/MOD/KE/AR/CM/AE/GOV-DOC/GOV-AI/GOV-TASK/GOV-SEC/GOV-CMP/GOV-ARCH/GOV-DATA/GOV-MOD/OPS-VC/OPS-DEV/OPS-MIG/DOM-LXX/LXX等)
+    types: 8个(STD/REG/ADR/DSG/PLAN/LOG/POL/RBK)
+    type_required: meta/下必填TYPE governance/operational/domains/下可省略
+    numbering_rules:
+    - 每DOMAIN独立编号
+    - 连续分配
+    - 跳号保留禁止回填
+    - append-only
+    - 迁移=重新编号
+    - 关联靠字段不靠编号
+    - 禁止嵌套编号
+    - 前缀长度≤2字符
+    prohibitions:
+    - 使用未在§5.2.1注册的DOMAIN
+    - 跳号回填(废弃编号标记skipped永不回收)
+    - 创建嵌套编号(如GOV-SEC-001-01)
+    - 前缀长度超过2字符
+    - 使用废弃格式(STD-NUM-001/STD-TASK-CARD-001/PSP-*等)
+  ps_std_001_ttl_vocabulary:
+    title: ttl受控词表
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §6
+    summary: 5种合法ttl canonical SSoT=ttl-vocabulary.yaml
+    conditions:
+    - type: trigger
+      check: 设置文件保留期限时
+      pass: 从5种合法ttl值中选择
+      fail: 使用未定义的ttl值
+    ttl_values:
+    - permanent(永久)
+    - 30d(保留30天)
+    - 7d(保留7天)
+    - session(仅当次会话有效)
+    - periodic_review_90d(定期审查90天周期)
+    default_rule: AI生成文件必须标注ttl未标注默认ttl 7d
+    prohibitions:
+    - AI生成文件不标注ttl字段
+    - 使用未在词表中定义的ttl值
+  ps_std_001_task_card_fields:
+    title: 域B任务卡字段
+    section_type: context
+    original_rules:
+    - PS-STD-001 §7
+    summary: 域B语义字段28个+追踪字段3个=Pydantic Task 31字段
+    field_groups:
+      core_identity:
+      - task_id/namespace/seq/title/status/priority/phase/directive
+      model_execution:
+      - execution_model/model_rationale/fallback_model
+      paths:
+      - files_in_scope/deliverables(必须绝对路径D:\ZephyrAlpha\开头)
+      dependencies:
+      - depends_on(必须全部VERIFIED才能开始)
+      safety:
+      - safety_level(H/M/L)/classification/evolution_policy/idempotent
+      time:
+      - estimate_hours/actual_hours/created_at/updated_at/completed_at
+      runtime:
+      - session_id/waiting_for/ready_at
+    task_id_format: NAMESPACE-SEQ
+    namespaces: 7个(MOD/KE/STD/SRC/OPS+已废弃DW)
+    prohibitions:
+    - files_in_scope或deliverables使用相对路径
+    - deliverables与files_in_scope完全重叠(除非原地修改)
+    - phase字段使用design/implement等字符串(必须0-9整数)
+    - 使用已废弃字段(predecessor/model_preference/est_hours/created等)
+  ps_std_001_ai_governance_fields:
+    title: 域C AI治理字段
+    section_type: context
+    original_rules:
+    - PS-STD-001 §8
+    summary: 域C字段分布三处——域A子集7个/AI决策日志28+2字段/AI员工档案30+字段
+    field_distribution:
+      domain_a_subset: 7个(ai_autonomy/author_agent/governance_family/ai_capability_slot/ai_autonomy_level_planned/ai_employee_count_planned/provenance)
+      ai_decision_log: 28+2字段(JSONL)
+      ai_employee_profile: 30+字段(YAML)
+    provenance_clarification: frontmatter provenance=文档溯源(复杂对象)代码WriteTrace=运行时写入溯源(简单对象writer_id/timestamp/operation/target)
+    domain_d_code_header: 10字段([BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS])3枚举与域A对齐
+    prohibitions:
+    - 混淆provenance(文档溯源)与WriteTrace(运行时写入溯源)
+    - 域D代码头部[STABILITY]/[SAFETY]/[AI_AUTONOMY]与域A frontmatter值不一致(META-V22违规)
+    - __init__.py不遵循豁免规则(仅需[BLUEPRINT]+[AI_AUTONOMY])
+  ps_std_001_controlled_enums:
+    title: 受控枚举定义
+    section_type: context
+    original_rules:
+    - PS-STD-001 §9
+    summary: 7个跨域枚举各有代码真源
+    enums:
+    - name: category
+      values: 10值(知识条目内容类型)
+      code_source: knowledge_base_server.py
+    - name: domain
+      values: 10值(D0-D9业务领域)
+      code_source: kms-entry-schema.md
+    - name: namespace
+      values: 7值(任务卡命名空间)
+      code_source: shared/schemas.py TaskNamespace
+    - name: AgentRole
+      values: 6值(architect/implementer/reviewer/governor/researcher/operator)
+      code_source: agent_orchestrator.py
+    - name: layer
+      values: 14值(l00-l11+shared+cross_layer)
+      code_source: triage.py VALID_LAYERS
+    - name: source_type
+      values: 7值(知识来源类型)
+      code_source: 无
+    - name: priority
+      values: 5值(P0-P4)
+      code_source: shared/schemas.py Priority
+    prohibitions:
+    - 使用未在代码真源中定义的枚举值
+    - category与domain混用(category=是什么类型domain=属于哪个领域)
+    - layer与domain混用(layer=架构分层domain=业务领域)
+  ps_std_001_ai_employee_fields:
+    title: AI员工与治理字段
+    section_type: context
+    original_rules:
+    - PS-STD-001 §10
+    summary: AI员工操作文档或任务时按ai_autonomy/safety_level/evolution_policy三级约束执行
+    ai_autonomy_values:
+    - immutable_core(禁止AI改)
+    - human_gated(Owner审批后改)
+    - ai_modifiable(AI自主改但写Provenance)
+    safety_level_values:
+    - H(高风险CoVe强制+Owner审批+Gate一票否决)
+    - M(中风险CoVe条件+human_gated)
+    - L(低风险AI可自主改)
+    evolution_policy_values:
+    - frozen(禁改)
+    - extendable(可追加)
+    - rewritable(可重写)
+    field_separation: author_agent vs execution_model不可合并(前者=谁写的编辑器产品名后者=谁干的底层模型名)
+    ai_document_constraints:
+    - 创建填7必填
+    - 改immutable_core先ADR
+    - 改human_gated走request_change
+    - 改ai_modifiable写commit含agent_id+session_id
+    - 删除禁自主
+    - 生成文件含created_by agent+ttl
+    prohibitions:
+    - AI自主修改immutable_core文档(需Owner+ADR)
+    - AI自主删除任何文档(无论权限等级)
+    - AI生成文件不填created_by agent和ttl
+    - 合并author_agent与execution_model字段
+    - safety_level H且review_status unreviewed(P1警告)
+  ps_std_001_body_structure:
+    title: 正文结构要求
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §11
+    summary: 按doc_type使用对应正文模板
+    conditions:
+    - type: trigger
+      check: 编写文档正文时
+      pass: 按doc_type对应模板组织正文
+      fail: 正文结构混乱影响AI理解
+    body_templates:
+      standard: 目的/定义/规范正文/违规检测/变更记录
+      adr: 上下文/决策/理由/后果/否决方案
+      blueprint: 设计背景/架构决策/模块边界/接口契约/约束/依赖/风险
+      construction_plan: 前置条件/模块分解/公共API/数据流/实施步骤/来源追溯/测试/TDR/风险/施工状态
+      design: 视图概述/架构元素/关系交互/视图映射/约束原则
+      plan: 任务目标/分解/依赖/验收/风险
+      roadmap: 当前目标/未来方向/里程碑/假设/对接
+      register: 说明/条目表/变更记录
+      log: 任务/变更文件/知识提取/决策/未完成
+      knowledge_entry: 核心结论/详细分析/关联条目
+    taskbook_symbols:
+      not_started: '[ ]'
+      in_progress: '[/]'
+      completed: '[x]'
+      skipped: '[~]'
+  ps_std_001_file_naming:
+    title: 文件命名规范
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §12
+    summary: 遵循file-naming-standard.md v2.0.1全小写kebab-case禁止大写/版本号/日期后缀
+    conditions:
+    - type: trigger
+      check: 创建新文件命名时
+      pass: 按doc_type命名格式+全小写kebab-case
+      fail: 命名不规范导致检索困难
+    naming_conventions:
+      standard: '{topic}-standard.md'
+      adr: 'adr-{NNNN}-{title}.md'
+      blueprint: '{module-name}-blueprint.md'
+      construction_plan: 'construction-plan-{layer}-{name}.md'
+      design: '{topic}-design.md'
+      plan: 'taskbook-{intent}.md'
+      roadmap: 'roadmap-{scope}-{YYYYMM}.md'
+      register: '{topic}-registry.yaml或{topic}-register.md'
+      log: 'session-{YYYYMMDD}-{NNN}.md'
+      knowledge_entry: 'KE-{NNN}-{topic}.md'
+      audit_report: '{scan-type}-report-{YYYYMMDD}.md'
+    prohibitions:
+    - 文件名使用大写字母
+    - 文件名包含版本号或日期后缀
+    - 不按doc_type对应格式命名
+  ps_std_001_promotion_rules:
+    title: 升格规则
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §13
+    summary: 文档从工作区升格到正式目录时按升格路径操作并补齐字段
+    conditions:
+    - type: trigger
+      check: 文档从工作区升格到正式目录时
+      pass: 按升格路径操作并补齐字段
+      fail: 跳过升格流程导致字段缺失
+    promotion_path: 外部工作区→Draft/in_discussion→内容稳定→review_ready→Owner审阅→active/accepted
+    promotion_steps:
+    - 只改status值不改schema不做字段迁移
+    - 只改文件位置(git mv)不改文件名
+    - 补齐目标阶段必填字段
+    - 'commit message格式: promote: old_path -> new_path | status: old -> new'
+    demotion_rules:
+    - active→deprecated需Owner审批+superseded_by
+    - deprecated→active需Owner审批
+    - 禁止跨级降格
+    prohibitions:
+    - 升格时修改schema或做字段迁移
+    - 升格时修改文件名(除非违反命名规范)
+    - 跨级降格(draft直接→deprecated)
+    - 降格时不填superseded_by
+  ps_std_001_violation_detection:
+    title: 违规检测规则
+    section_type: verification
+    original_rules:
+    - PS-STD-001 §14
+    summary: 自动检测22项META-V01~V22+人工审查3项META-R01~R03
+    conditions:
+    - type: trigger
+      check: pre-commit执行或人工审查时
+      pass: 通过META-V01~V22自动检测+META-R01~R03人工审查
+      fail: 检测到违规阻断提交
+    auto_detection:
+    - META-V01缺frontmatter(P0)
+    - META-V02缺必填字段(P0)
+    - META-V03 doc_type未定义(P0)
+    - META-V04 status未定义(P1)
+    - META-V05 ttl未定义(P1)
+    - META-V06 module_id格式不符(P1)
+    - META-V07 date格式不符(P2)
+    - META-V08 doc_type与路径不匹配(P2)
+    - META-V09 AI文件缺created_by(P1)
+    - META-V10 AI文件缺ttl(P1)
+    - META-V11 Deprecated缺superseded_by(P1)
+    - META-V12 layer非法(P2)
+    - META-V13 safety_level未定义(P1)
+    - META-V14 evolution_policy未定义(P1)
+    - META-V15 construction_plan缺blueprint_refs(P1)
+    - META-V16 blueprint_refs路径不存在(P0)
+    - META-V17蓝图status deprecated(P0)
+    - META-V18 governance_family未定义(P2)
+    - META-V19 ai_capability_slot未定义(P2)
+    - META-V20两个active standard声明同一SSoT(P0)
+    - META-V21 index.md清单与frontmatter status不一致(P0)
+    - META-V22代码头部枚举与域A不一致(P1)
+    manual_review:
+    - R01 doc_type语义
+    - R02 summary质量
+    - R03 tags覆盖
+  ps_std_001_schema_drift:
+    title: Schema漂移防护机制
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §15
+    summary: 核心原则一个项目一个schema没有例外
+    conditions:
+    - type: trigger
+      check: 发现frontmatter与注册表不一致时
+      pass: 按漂移修复流程修正
+      fail: 忽略漂移导致字段定义分裂
+    protection_mechanisms:
+    - 单一真源(本文件)
+    - 自动生成(frontmatter-schema.json禁止手写)
+    - pre-commit校验
+    - 新增值走ADR
+    - 定期扫描(每月)
+    - 版本化
+    drift_repair_flow:
+    - 发现漂移
+    - 判断类型(字段名漂移以本文件为准修正/新增值漂移判断是否需新增合法值/缺失字段漂移补齐)
+    - 修正后运行全项目合规扫描确认
+    prohibitions:
+    - 手写frontmatter-schema.json(必须自动生成)
+    - 新增doc_type不走ADR审批
+    - 忽略漂移不修复
+  ps_std_001_standards_mapping:
+    title: 与专业机构对照表
+    section_type: context
+    original_rules:
+    - PS-STD-001 §16
+    summary: 对照5家机构(IETF AAT/OpenLineage/MLflow/Databricks UC/ISO 11179)
+    key_findings:
+    - identity vs execution拆分(author_agent=agent_id/execution_model=model_id 5家100%拆分)
+    - status三域分离(文档/任务/知识各有独立状态机)
+    - audit字段独立(human_override/review_status/compliance_tags)
+    - provenance是行业术语(OpenLineage/W3C PROV用provenance运行时溯源用WriteTrace)
+  ps_std_001_related_standards:
+    title: 与其他标准的关系
+    section_type: context
+    original_rules:
+    - PS-STD-001 §17
+    summary: 7个相关标准按关系类型(互补/上下游/独立)定位
+    related_standards:
+    - standard: unified-numbering-standard.md
+      relation: 互补
+      detail: 本文件§5定义module_id DOMAIN格式该文件定义LXX层编号
+    - standard: document-lifecycle-standard.md
+      relation: 下游
+      detail: 本文件定义status语义该文件定义TTL管理和快照
+    - standard: file-naming-standard.md
+      relation: 下游
+      detail: 本文件§12定义doc_type命名约定
+    - standard: encoding-safety-standard.md
+      relation: 独立无冲突
+      detail: 无
+    - standard: ai-autonomy-authority-registry.md
+      relation: 上游
+      detail: §7 ai_autonomy字段值与该注册表对齐
+    - standard: task-card-standard.md
+      relation: 下游
+      detail: 任务卡ai_autonomy遵循本文件§7
+    - standard: ssot-authority-map.md
+      relation: 上游
+      detail: §1.3 SSoT声明与该文件对齐
+  glossary_core_terms:
+    title: 核心术语表24个
+    section_type: context
+    original_rules:
+    - META-GLS-001 核心术语
+    summary: 24个核心术语定义
+    terms:
+    - SSoT(唯一真源)
+    - Vibe Coding(AI辅助编程范式)
+    - 零记忆重启(每次session从零开始)
+    - Context Tax(上下文税meta/上限15)
+    - 原子事务(一步完成)
+    - 埋雷(技术债务)
+    - 受控词表(合法值集合)
+    - 规则画像(五维取值)
+    - 推导链(stability→layer→scope→Owner裁决)
+    - 三域架构(A文档/B任务/C AI治理)
+    - 分阶段闸门(Draft 7/Active 18/Deprecated 19)
+    - session
+    - doc_type(27种)
+    - layer
+    - stability
+    - ai_autonomy
+    - frontmatter
+    - module_id
+    - depends_on(三级分层链深T1≤1/T2≤2/T3≤3)
+    - Tier 1/2/3消费者
+    - ABS-COND-REC
+    - 安全升级
+    - 权限提升
+    - 委托链
+  glossary_consumer_registry:
+    title: 术语表消费者注册表
+    section_type: context
+    original_rules:
+    - META-GLS-001 消费者注册表
+    summary: 修改术语表时同步通知所有Tier 1消费者
+    tier_1_consumers:
+    - 全部meta/文件(术语定义以本表为准)
+    - 全部governance/文件(术语定义以本表为准)
+    - 新AI session(首读文件之一快速对齐术语理解)
+    sync_rule: 变更时需同步检查所有Tier 1消费者
+  glossary_new_term_flow:
+    title: 新增术语流程
+    section_type: rule
+    original_rules:
+    - META-GLS-001 新增术语流程
+    summary: 新概念出现需要加入术语表时按四步流程添加术语
+    conditions:
+    - type: trigger
+      check: 新概念出现需要加入术语表时
+      pass: 按四步流程添加术语
+      fail: 绕过流程直接在文件中定义新术语
+    flow_steps:
+    - 1.提议(AI或Owner在Session Log中提议格式新增术语中文/英文/定义)
+    - 2.审核(Owner审核定义是否准确是否与现有术语冲突)
+    - 3.添加(按字母序插入本表)
+    - 4.级联检查(搜索已存在规则文件若该术语已有局部定义需更新为引用本表或标注以术语表为准)
+    prohibitions:
+    - 绕过术语表直接在非权威文件中定义新术语
+    - 新增术语不按字母序插入
+    - 新增术语后不做级联检查
+  glossary_change_history:
+    title: 术语表变更记录
+    section_type: examples
+    original_rules:
+    - META-GLS-001 变更记录
+    items:
+    - version: '1.3.0'
+      date: '2026-05-02'
+      change: '#19 depends_on从1层死规则升级为三级分层链深体系(T1≤1/T2≤2/T3≤3)新增铁律仅指向meta/或AGENTS.md跨域引用进正文禁止循环引用'
+    - version: '1.2.0'
+      date: '2026-05-01'
+      change: 修复缺陷doc_type从glossary改为terminology(M-3修复)depends_on条目引用链阈值改为1层死规则
+    - version: '1.1.0'
+      date: '2026-05-01'
+      change: 新增2个术语#20 Tier 1/2/3消费者——消费者影响等级#21 ABS/COND/REC——行为边界三级编号体系术语总数19→21
+    - version: '1.0.0'
+      date: '2026-05-01'
+      change: 初始创建——meta/系统性复查补齐收录19个核心术语对标ISO 11179+ISO/IEC Directives Part 2 §5
+  ps_std_001_path_iron_law:
+    title: 路径铁律
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §7.4
+    summary: 任务卡files_in_scope和deliverables字段必须遵循4条路径铁律防漂移
+    conditions:
+    - type: trigger
+      check: 编写任务卡files_in_scope和deliverables时
+      pass: 遵循4条路径铁律
+      fail: 路径不规范导致AI找不到文件或操作错误
+    path_iron_laws:
+    - '#1 必须使用绝对路径(如 D:\\ZephyrAlpha\\src\\...)禁止相对路径'
+    - '#2 必须列出所有相关文件——AI不会猜漏一个就可能找不到'
+    - '#3 路径必须以 D:\\ZephyrAlpha\\ 开头'
+    - '#4 deliverables与files_in_scope不能完全重叠(除非原地修改)'
+    ai_files_in_scope_rules:
+    - file_type: 本任务需修改的文件
+      include: 是
+      basis: 直接读写
+    - file_type: 需理解接口/结构的只读文件
+      include: 是
+      basis: 如shared/schemas.py / contracts/
+    - file_type: 同目录相邻但不需要修改
+      include: 否
+      basis: 除非联动修改
+    - file_type: 下游消费者的文件
+      include: 否
+      basis: 不修改就不放
+    n_n_mapping: 任务与文件是多对多关系 files_in_scope和deliverables是任务卡层面的快捷引用 完整N:N映射存储在task_files表中
+    prohibitions:
+    - files_in_scope或deliverables使用相对路径
+    - 路径不以D:\\ZephyrAlpha\\开头
+    - deliverables与files_in_scope完全重叠(非原地修改场景)
+    - 漏列本任务需修改的文件
+  ps_std_001_dependency_verification:
+    title: 依赖验真规则
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §7.5
+    summary: depends_on字段的4种验真场景及对应行为对标Jira Blocks/Azure DevOps Dependencies
+    conditions:
+    - type: trigger
+      check: 创建或开始任务卡时
+      pass: depends_on通过验真
+      fail: depends_on验真失败阻止创建或开始
+    verification_scenarios:
+    - scenario: depends_on所有task_id均存在且终态
+      behavior: 允许开始
+    - scenario: depends_on中有task_id不存在
+      behavior: G0阻止创建
+    - scenario: depends_on中有task_id非终态
+      behavior: 可创建 状态自动=PENDING
+    - scenario: depends_on=[]或字段缺失
+      behavior: 允许无前置约束
+    prohibitions:
+    - depends_on中有task_id不存在时绕过G0阻止
+    - depends_on非终态时直接开始执行(应自动PENDING)
+    - 不验真depends_on即开始任务
+  ps_std_001_safety_level_criteria:
+    title: safety_level判定准则
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §7.6
+    summary: safety_level字段H/M/L三级的7条判定条件
+    conditions:
+    - type: trigger
+      check: 设置任务卡safety_level时
+      pass: 按7条判定条件确定H/M/L
+      fail: safety_level判定错误导致风险等级不符
+    judgment_criteria:
+    - condition: 涉及src/zephyr/db/ schema变更
+      level: H
+    - condition: 涉及docs/01_policies_and_standards/治理标准
+      level: H
+    - condition: 涉及数据库文件读写(含schema)
+      level: M
+    - condition: 涉及多个.py文件联动(非DB非治理)
+      level: M
+    - condition: 纯文档 README/ADR/探索笔记
+      level: L
+    - condition: 单文件修改 无跨文件副作用
+      level: L
+    - condition: 不确定时
+      level: M(默认保守)
+    relationship_with_ai_autonomy: ai_autonomy(域A)管AI能不能动文件 safety_level管动了之后有多危险 两者独立判断取更严
+    prohibitions:
+    - 不确定时不按M(默认保守)判定
+    - 忽略ai_autonomy与safety_level的正交关系
+    - 涉及db schema变更或治理标准变更不判为H
+  ps_std_001_provenance_vs_writetrace:
+    title: provenance双定义澄清
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §8.3
+    summary: provenance在文档溯源和运行时写入溯源两个上下文中语义不同禁止混淆
+    conditions:
+    - type: trigger
+      check: 使用provenance或WriteTrace时
+      pass: 区分文档溯源provenance与运行时WriteTrace
+      fail: 混淆两者导致溯源语义错误
+    comparison_table:
+    - context: 文档溯源
+      name: provenance
+      semantic: 文档的来源 审计链 裁决记录
+      location: frontmatter YAML
+      format: 复杂对象(origin_drafts / audit_chain / arbitration)
+    - context: 运行时写入溯源
+      name: WriteTrace
+      semantic: 代码运行时每次写入操作的溯源
+      location: Python代码WriteTrace(BaseModel)
+      format: 简单对象(writer_id / timestamp / operation / target)
+    separation_reasons:
+    - provenance是行业术语(OpenLineage W3C PROV都用这个词)指文档/数据的来源和演变历史
+    - WriteTrace是代码运行时的写入溯源关注的是谁在什么时候对什么做了什么操作
+    - 两者粒度不同 provenance是文档级(整个文件) WriteTrace是操作级(单次写入)
+    - 代码中Provenance类已改名为WriteTrace 避免与frontmatter provenance混淆
+    prohibitions:
+    - 混淆provenance(文档溯源)与WriteTrace(运行时写入溯源)
+    - 在frontmatter中使用WriteTrace格式
+    - 在代码中使用provenance类名指代运行时写入溯源
+  ps_std_001_ai_document_operation_constraints:
+    title: AI员工在文档操作中的约束
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §10.4
+    summary: AI员工操作文档时必须遵循的6条约束覆盖创建/修改/删除/生成
+    conditions:
+    - type: trigger
+      check: AI员工操作文档时
+      pass: 按6条约束执行
+      fail: 违反约束导致越权操作
+    constraints:
+    - '#1 创建文档 必须填写Draft阶段全部7个必填字段'
+    - '#2 修改immutable_core文档 必须先提ADR Owner审批后方可修改'
+    - '#3 修改human_gated文档 必须走request_change()→approve_change()流程'
+    - '#4 修改ai_modifiable文档 可自主修改但必须在commit message中包含agent_id和session_id'
+    - '#5 删除文档 无论何种权限等级AI员工禁止自主删除文档必须Owner审批'
+    - '#6 AI生成文件 frontmatter必须包含created_by: agent和ttl字段'
+    prohibitions:
+    - AI自主修改immutable_core文档(需Owner+ADR)
+    - AI自主删除任何文档(无论权限等级)
+    - AI生成文件不填created_by agent和ttl
+    - 修改human_gated文档不走request_change流程
+    - 修改ai_modifiable文档commit message不含agent_id和session_id
+    - 创建文档不填Draft阶段7个必填字段
+  ps_std_001_classification_layering:
+    title: classification域A域B分层
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §4.6
+    summary: classification字段在域A文档和域B任务中合法值不同分层真源禁止混读
+    conditions:
+    - type: trigger
+      check: 设置classification字段时
+      pass: 按域A/域B分层使用对应合法值
+      fail: 混用域A/域B合法值导致校验失败
+    layering_table:
+    - context: 域A文档frontmatter
+      legal_values: public / confidential(推荐) 历史文件可暂留internal
+      source: 本表 + frontmatter校验
+    - context: 域B Task.classification
+      legal_values: public / internal / confidential(三值)
+      source: src/zephyr/shared/schemas.py Classification + _registry/vocabularies/classification-vocabulary.yaml 字段表见§7.1
+    domain_a_rationale: 推荐二分 降低Vibe Coding中AI决策成本
+    domain_b_rationale: 使用三值 区分项目内默认可见(internal)与明确机密(confidential) 与代码枚举及SQLite对齐
+    orthogonality: 与ai_autonomy_level正交(不变) classification管外传边界 ai_autonomy_level管谁能改
+    historical_note: 2026-05-05裁定(闭环§4与§7冲突) 不再执行删除INTERNAL/强制枚举二分的迁移 文档与任务对敏感度粒度需求不同 分层真源禁止混读
+    prohibitions:
+    - 域A文档使用域B三值枚举(除历史internal暂留)
+    - 域B任务使用域A二分枚举
+    - 混淆classification(外传边界)与ai_autonomy_level(谁能改)
+    - 强制将域A historical internal迁移为confidential
 references:
   rule_ids:
   - TRAE-041

@@ -26,6 +26,7 @@ module_id: MOD-INF-023
 并行调度器：asyncio subprocess pool 执行检测器脚本，含结果缓存和并行度控制。
 对标 blueprint.md §2.4（增量扫描与性能 SLO）。
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -34,8 +35,6 @@ import json
 import os
 import time
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Optional
 
 from .drift_models import Detector, ScanLevel
 
@@ -54,7 +53,7 @@ class DetectorResult:
 class ResultCache:
     _entries: dict[str, DetectorResult] = field(default_factory=dict)
 
-    def get(self, key: str) -> Optional[DetectorResult]:
+    def get(self, key: str) -> DetectorResult | None:
         return self._entries.get(key)
 
     def put(self, key: str, result: DetectorResult) -> None:
@@ -76,14 +75,15 @@ class DetectorDispatcher:
         if not self._scripts_root:
             self._scripts_root = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-                "scripts", "governance",
+                "scripts",
+                "governance",
             )
         return self._scripts_root
 
     async def dispatch(
         self,
         detectors: list[Detector],
-        changed_files: Optional[list[str]] = None,
+        changed_files: list[str] | None = None,
     ) -> list[DetectorResult]:
         if changed_files is None:
             changed_files = []
@@ -96,7 +96,7 @@ class DetectorDispatcher:
         content = f"{detector_id}:{file_path}"
         return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
-    def build_cache_key(self, detector: Detector, changed_files: list[str]) -> Optional[str]:
+    def build_cache_key(self, detector: Detector, changed_files: list[str]) -> str | None:
         if not detector.script:
             return None
         script_path = os.path.join(self.scripts_root, detector.script)
@@ -158,7 +158,8 @@ class DetectorDispatcher:
 
             try:
                 proc = await asyncio.create_subprocess_exec(
-                    "python", script_path,
+                    "python",
+                    script_path,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                 )
@@ -195,7 +196,7 @@ class DetectorDispatcher:
                     self._cache.put(cache_key, result)
                 return result
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 elapsed = (time.perf_counter() - start) * 1000
                 return DetectorResult(
                     detector_id=detector.id,
@@ -214,9 +215,7 @@ class DetectorDispatcher:
 
 
 def get_max_parallel_for_level(level: ScanLevel) -> int:
-    if level == ScanLevel.LIGHT:
-        return 4
-    elif level == ScanLevel.STANDARD:
+    if level == ScanLevel.LIGHT or level == ScanLevel.STANDARD:
         return 4
     else:
         return 8

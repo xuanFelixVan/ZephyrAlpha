@@ -1,0 +1,113 @@
+module_id: GOV-001
+title: 前沿大模型综合能力排名登记表
+doc_type: catalog
+status: Active
+version: 1.0.0
+schema_version: 1.1.0
+layer: cross_layer
+owner: ZephyrAlpha-Owner
+classification: confidential
+language: zh
+created_by: human_plus_agent
+date: '2026-04-26'
+updated_date: '2026-05-02'
+ttl: periodic_review_90d
+summary: 2026年4月前沿大模型综合能力排名——综合 LMSYS Chatbot Arena、Artificial Analysis、SWE-bench、GPQA Diamond、AIME 2026、Vectara HEF、SuperCLUE-Faith、KICS 等 18+ 独立评测源的最新公开数据，对 14 款模型进行多维度横向排名。本登记表是任务卡 assigned_model 字段分配的客观依据。2026-05-02 从场外草稿正式纳入项目真源。
+tags:
+- model-benchmark
+- llm-ranking
+- model-evaluation
+- reference-data
+- infrastructure
+data_sources:
+- LMSYS Chatbot Arena — 2026年4月22日
+- Artificial Analysis Intelligence Index — 2026年4月
+- SWE-bench Verified / Pro — vals.ai — 2026年4月
+- GPQA Diamond — vals.ai / Artificial Analysis — 2026年4月
+- AIME 2026 — 各独立评测机构 — 2026年4月
+- Vectara HEF — 2026年4月
+- SuperCLUE-Faith 中文忠实性幻觉测评 — 2026年4月
+- KICS — GG3M — 2026年4月
+- DeepSeek V4 技术报告 — 2026年4月24日
+- TokenMix.ai Claude Opus 4.7 评测 — 2026年4月17日
+depends_on: []
+body: '
+
+  # 2026年4月前沿大模型综合能力排名
+
+
+  > module_id: REG-LLM-001 | version: 1.1.0 | status: active
+
+
+  **编制说明**：本报告综合 18+ 独立评测源的最新公开数据，对 14 款模型进行多维度横向排名。所有分数均标注来源，厂商自报数据单独标注。评分采用 10 分制（基于各基准的百分位排名归一化），便于跨维度对比。
+
+
+  ## 核心数据（精简版——完整版见场外草稿原件）
+
+
+  > ⚠️ 本文件仅保留与目前活跃模型（DeepSeek V4 Pro / GLM / Claude Opus 4.7）直接相关的核心评分。完整版（含全部 14 款模型详细基准数据）记录在场外草稿原件。
+
+
+  ### 活跃模型核心评分（10 分制）
+
+
+  | 维度 | DeepSeek V4 Pro | GLM-5.1 | Claude Opus 4.7 |
+
+  |------|:---:|:---:|:---:|
+
+  | **代码能力** | 9.0 | 8.2 | **10** |
+
+  | **数学推理** | 9.5 | 8.8 | 9.5 |
+
+  | **科学推理 (GPQA)** | 8.8 | 7.8 | **9.8** |
+
+  | **幻觉控制** | 4.5 | **8.5** | **10** |
+
+  | **项目架构能力** | 7.8 | 7.5 | **9.5** |
+
+  | **Agent/工具调用** | 8.5 | 8.0 | 9.0 |
+
+  | **中文能力** | 9.0 | **9.0** | 7.5 |
+
+  | **长上下文处理** | 9.0 | 6.5 | 8.5 |
+
+  | **性价比** | 8.5 | 8.5 | 3.0 |
+
+  | **综合得分** | 7.8 | 7.7 | **8.4** |
+
+
+  ### 关键风险提示
+
+
+  | 模型 | 关键风险 | 数据来源 |
+
+  |------|---------|---------|
+
+  | DeepSeek V4 Pro | **AA-Omniscience 幻觉率 94%**——不确定时几乎从不拒绝回答，而是编造内容。在幻觉敏感场景中绝对不应作为唯一决策源 | Artificial Analysis (2026.4) |
+
+  | GLM-5.1 | 综合能力中等偏上但无明显短板。SuperCLUE-Faith 中文幻觉率 ~4%——国产最优 | SuperCLUE-Faith (2026.4) |
+
+  | Claude Opus 4.7 | API 价格 $5/$25 per M tokens——综合最强但最贵。不确定时拒绝而非编造——安全性最高 | TokenMix.ai (2026.4.17) |
+
+
+  ### 数据来源说明
+
+
+  | 级别 | 标记 | 含义 |
+
+  |------|------|------|
+
+  | A | 无标记 | 第三方独立验证（TokenMix.ai / vals.ai / LMArena） |
+
+  | B | † | 厂商自报，未经独立验证 |
+
+  | C | * | 基于同系列模型推断 |
+
+
+  **免责声明**：本报告所有数据均来自公开评测，仅供技术选型参考。模型能力随版本更新可能显著变化，建议定期重新评估。
+
+
+  ---
+
+
+  *完整版（14 款模型全量基准数据）保存在场外草稿原件。本精简版仅保留活跃模型核心评分用于任务卡模型分配决策。*'

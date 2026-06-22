@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_zombie_fle_detector.py
 
-import pytest
 
 from zephyr.ops.diagnosers.zombie_fle_detector import (
     CognitionTest,

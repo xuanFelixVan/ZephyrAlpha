@@ -30,15 +30,15 @@ impact_analysis: 扫描调用方 BREAKING_CHANGE_REPORT
 INTENTIONAL_BREAK: 标记宽恕
 对标 blueprint.md §6.23。
 """
+
 from __future__ import annotations
 
 import json
 import os
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -50,21 +50,19 @@ class CompatBreakEvent:
     description: str = ""
     details: str = ""
     intentional_break: bool = False
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
 class FunctionSignature:
     name: str
     params: list[str]
-    return_type: Optional[str]
+    return_type: str | None
     file_path: str
     line_no: int
 
 
-_SIGNATURE_PATTERN: re.Pattern[str] = re.compile(
-    r"def\s+(\w[\w_]*)\s*\(([^)]*)\)\s*(?:->\s*(\S+))?\s*:"
-)
+_SIGNATURE_PATTERN: re.Pattern[str] = re.compile(r"def\s+(\w[\w_]*)\s*\(([^)]*)\)\s*(?:->\s*(\S+))?\s*:")
 
 _INTENTIONAL_BREAK_PATTERN: re.Pattern[str] = re.compile(
     r"#\s*INTENTIONAL_BREAK\s*:\s*(.+)",
@@ -84,7 +82,7 @@ def extract_signatures(file_path: str) -> list[FunctionSignature]:
             continue
         params_str = match.group(2)
         return_t = match.group(3)
-        line_no = content[:match.start()].count("\n") + 1
+        line_no = content[: match.start()].count("\n") + 1
         params = [p.strip() for p in params_str.split(",") if p.strip()]
         sigs.append(
             FunctionSignature(
@@ -132,12 +130,9 @@ def compare_signatures(
                 CompatBreakEvent(
                     event_id=f"compat-removed-param-{name}",
                     source_file=cs.file_path,
-                    description=(
-                        f"Parameter(s) removed from '{name}': "
-                        f"{removed_params}"
-                    ),
+                    description=(f"Parameter(s) removed from '{name}': {removed_params}"),
                     details=f"Baseline({bs.line_no}): ({', '.join(bs_param_names)})\n"
-                            f"Current({cs.line_no}): ({', '.join(cs_param_names)})",
+                    f"Current({cs.line_no}): ({', '.join(cs_param_names)})",
                 )
             )
 
@@ -147,10 +142,7 @@ def compare_signatures(
                     event_id=f"compat-return-type-{name}",
                     source_file=cs.file_path,
                     severity="MAJOR",
-                    description=(
-                        f"Return type changed for '{name}': "
-                        f"{bs.return_type} → {cs.return_type}"
-                    ),
+                    description=(f"Return type changed for '{name}': {bs.return_type} → {cs.return_type}"),
                     details=f"Baseline line {bs.line_no}, Current line {cs.line_no}",
                 )
             )
@@ -181,11 +173,7 @@ def find_renamed_functions(
                         event_id=f"compat-renamed-{rname}-to-{cs.name}",
                         source_file=cs.file_path,
                         severity="MAJOR",
-                        description=(
-                            f"Function possibly renamed: "
-                            f"'{rname}' → '{cs.name}' "
-                            f"(Jaccard={jaccard:.2f})"
-                        ),
+                        description=(f"Function possibly renamed: '{rname}' → '{cs.name}' (Jaccard={jaccard:.2f})"),
                     )
                 )
 
@@ -247,7 +235,7 @@ def run_backcompat_check(
         baseline_sigs: list[FunctionSignature] = []
         if os.path.exists(baseline_file):
             try:
-                with open(baseline_file, "r", encoding="utf-8") as f:
+                with open(baseline_file, encoding="utf-8") as f:
                     raw_data = json.loads(f.read())
                     for entry in raw_data.get("signatures", []):
                         baseline_sigs.append(

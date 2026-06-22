@@ -6,14 +6,16 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """权限自动化测试——120+攻击向量/跨模型一致性/对抗性测试/边缘用例."""
+
 from __future__ import annotations
 
-import yaml
 from pathlib import Path
 
 import pytest
-from zephyr.security.access_control.permission_guard import PermissionGuard, GuardDecision
-from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel, AgentRole
+import yaml
+
+from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel
+from zephyr.security.access_control.permission_guard import GuardDecision, PermissionGuard
 
 
 @pytest.fixture
@@ -21,11 +23,36 @@ def temp_rbac_config(tmp_path: Path) -> Path:
     config = {
         "version": "0.14.0",
         "agents": {
-            "bytebuddy": {"maturity": "L4_PRINCIPAL", "permissions": ["*"], "auto_guard_eligible": False, "owner_approved": True},
-            "newbie": {"maturity": "L0_INTERN", "permissions": ["read:docs"], "auto_guard_eligible": False, "owner_approved": False},
-            "admin": {"maturity": "L2_REGULAR", "permissions": ["read:docs", "read:src", "manage:rbac"], "auto_guard_eligible": False, "owner_approved": True},
-            "tester": {"maturity": "L3_SENIOR", "permissions": ["read:docs", "write:tests"], "auto_guard_eligible": False, "owner_approved": False},
-            "worker": {"maturity": "L1_JUNIOR", "permissions": ["read:docs"], "auto_guard_eligible": False, "owner_approved": False},
+            "bytebuddy": {
+                "maturity": "L4_PRINCIPAL",
+                "permissions": ["*"],
+                "auto_guard_eligible": False,
+                "owner_approved": True,
+            },
+            "newbie": {
+                "maturity": "L0_INTERN",
+                "permissions": ["read:docs"],
+                "auto_guard_eligible": False,
+                "owner_approved": False,
+            },
+            "admin": {
+                "maturity": "L2_REGULAR",
+                "permissions": ["read:docs", "read:src", "manage:rbac"],
+                "auto_guard_eligible": False,
+                "owner_approved": True,
+            },
+            "tester": {
+                "maturity": "L3_SENIOR",
+                "permissions": ["read:docs", "write:tests"],
+                "auto_guard_eligible": False,
+                "owner_approved": False,
+            },
+            "worker": {
+                "maturity": "L1_JUNIOR",
+                "permissions": ["read:docs"],
+                "auto_guard_eligible": False,
+                "owner_approved": False,
+            },
         },
     }
     config_dir = tmp_path / "config"
@@ -38,6 +65,7 @@ def temp_rbac_config(tmp_path: Path) -> Path:
 def _setup_guard(tmp_path, monkeypatch):
     monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
     from zephyr.security.access_control.immutable_core import ImmutableCore
+
     guard = PermissionGuard()
     guard._l0 = ImmutableCore(project_root=tmp_path)
     guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -46,7 +74,9 @@ def _setup_guard(tmp_path, monkeypatch):
 
 class TestPermissionAutomation:
     def test_superadmin_access(self, tmp_path, monkeypatch, temp_rbac_config):
-        agent = AgentIdentity(session_id="bytebuddy", maturity=MaturityLevel.L4_PRINCIPAL, role=AgentRole.ADMIN, owner_approved=True)
+        agent = AgentIdentity(
+            session_id="bytebuddy", maturity=MaturityLevel.L4_PRINCIPAL, role=AgentRole.ADMIN, owner_approved=True
+        )
         guard = _setup_guard(tmp_path, monkeypatch)
         result = guard.check(agent, "read:docs")
         assert result.decision == GuardDecision.ALLOW
@@ -59,6 +89,7 @@ class TestPermissionAutomation:
 
     def test_kill_switch_wired_and(self, tmp_path, monkeypatch, temp_rbac_config):
         from zephyr.security.access_control.kill_switch import get_kill_switch
+
         agent = AgentIdentity(session_id="admin", maturity=MaturityLevel.L2_REGULAR, role=AgentRole.ADMIN)
         ks = get_kill_switch()
         ks._status.global_tripped = True
@@ -71,13 +102,15 @@ class TestPermissionAutomation:
 
     def test_dry_run_no_side_effects(self):
         from zephyr.security.access_control.dry_run import DryRunSimulator
+
         agent = AgentIdentity(session_id="tester", maturity=MaturityLevel.L3_SENIOR, role=AgentRole.WRITER)
         sim = DryRunSimulator()
         result = sim.simulate(agent, "write", "test.txt")
         assert hasattr(result, "would_be_decision")
 
     def test_abac_intent_boundary(self):
-        from zephyr.security.access_control.abac_guard import ABACGuard, ABACContext
+        from zephyr.security.access_control.abac_guard import ABACContext, ABACGuard
+
         agent = AgentIdentity(session_id="worker", maturity=MaturityLevel.L1_JUNIOR, role=AgentRole.EXECUTOR)
         guard = ABACGuard()
         ctx = ABACContext(intent="maintenance", operation="delete")
@@ -86,34 +119,40 @@ class TestPermissionAutomation:
 
     def test_input_guard_sanitization(self):
         from zephyr.security.access_control.input_guard import InputGuard
+
         guard = InputGuard()
         result = guard.check_params("execute", {"command": "rm -rf /"})
         assert result is not None
 
     def test_output_guard_pii(self):
         from zephyr.security.access_control.output_guard import OutputGuard
+
         guard = OutputGuard()
         result = guard.check("身份证号110101199001011234")
         assert result is not None
 
     def test_sequence_guard(self):
         from zephyr.security.access_control.sequence_guard import SequenceGuard
+
         guard = SequenceGuard()
         assert guard is not None
 
     def test_escalation_handler(self):
         from zephyr.security.access_control.guard_layers import EscalationHandler
+
         handler = EscalationHandler()
         result = handler.escalate("test_agent", "test_violation", "MEDIUM")
         assert result is not None
 
     def test_cold_start_lock(self):
         from zephyr.security.access_control.guard_layers import ColdStartLock
+
         lock = ColdStartLock()
         assert lock._locked is True
 
     def test_toctou_guard(self):
         from zephyr.security.access_control.toctou_guard import TOCTOUGuard
+
         guard = TOCTOUGuard()
         guard.snapshot("tests/conftest.py")
         ok, msg = guard.verify("tests/conftest.py")
@@ -121,18 +160,21 @@ class TestPermissionAutomation:
 
     def test_false_completion(self):
         from zephyr.security.access_control.false_completion_detector import FalseCompletionDetector
+
         detector = FalseCompletionDetector()
         result = detector.record_claim("agent_x", "build_pass", "build_pass")
         assert result is True
 
     def test_collusion_detection(self):
         from zephyr.security.access_control.multi_agent_collusion_detector import MultiAgentCollusionDetector
+
         detector = MultiAgentCollusionDetector()
         result = detector.record_interaction("agent_a", "agent_b", "shared_access", "evidence_1")
         assert result is not None
 
     def test_memory_provenance(self):
         from zephyr.security.access_control.memory_provenance_guard import MemoryProvenanceGuard
+
         guard = MemoryProvenanceGuard()
         mp = guard.record_provenance("agent_x", "session_1", "abcdef1234567890")
         result = guard.verify(mp.provenance_id, "agent_y")
@@ -140,6 +182,7 @@ class TestPermissionAutomation:
 
     def test_canary_rollout(self):
         from zephyr.security.access_control.canary_rollout_manager import CanaryRolloutManager
+
         mgr = CanaryRolloutManager()
         mgr.register("perm_test", ["rule_1"])
         result = mgr.start_sampling("perm_test")

@@ -11,9 +11,7 @@
 # [TESTS] pytest tests/test_kill_switch_sim.py -q
 
 import json
-from pathlib import Path
 
-import pytest
 from zephyr.infrastructure.kill_switch_sim import (
     KillSwitchProbe,
     KillSwitchSimulator,

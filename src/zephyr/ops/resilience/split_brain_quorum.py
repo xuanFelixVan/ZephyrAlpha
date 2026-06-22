@@ -62,9 +62,7 @@ class SplitBrainQuorum:
 
     def _expire_stale(self) -> None:
         now = time.time()
-        self.known_instances = {
-            k: v for k, v in self.known_instances.items() if now - v < self.lease_ttl * 2
-        }
+        self.known_instances = {k: v for k, v in self.known_instances.items() if now - v < self.lease_ttl * 2}
 
     def acquire(self, action_id: str) -> bool:
         self._expire_stale()

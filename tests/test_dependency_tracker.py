@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_dependency_tracker.py -q
 from __future__ import annotations
-import pytest
+
 from zephyr.autonomy_core.dependency_tracker import (
     DependencyGraph,
     DependencyTracker,

@@ -25,11 +25,10 @@ L54: End-to-end validation pass before action authorization
 L55: Full 67-layer pipeline integration check — all prior gates must pass
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL54L55:
-
     def evaluate(self, ctx: ActionContext) -> list[GateResult]:
         return [self._l54(ctx), self._l55(ctx)]
 

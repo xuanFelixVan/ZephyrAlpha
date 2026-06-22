@@ -41,7 +41,6 @@ SSoT: MOD-INF-016 §2.19 shared-tracing
 
 from __future__ import annotations
 
-
 import functools
 import os
 from collections.abc import Callable, Generator

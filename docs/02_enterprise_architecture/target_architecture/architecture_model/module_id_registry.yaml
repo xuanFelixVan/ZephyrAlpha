@@ -77,47 +77,47 @@ registered_ids:
   # === PS 元标准层 ===
   - module_id: PS-STD-000
     title: "元标准宪法"
-    path: "docs/01_policies_and_standards/meta/meta-standard-constitution-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
     doc_type: standard
     status: active
   - module_id: PS-STD-001
     title: "元数据注册表"
-    path: "docs/01_policies_and_standards/meta/metadata-registry.md"
+    path: "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml"
     doc_type: standard
     status: active
   - module_id: PS-STD-002
     title: "标准文档模板"
-    path: "docs/01_policies_and_standards/meta/document-structure-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
     doc_type: standard
     status: active
   - module_id: PS-STD-003
     title: "行为边界标准"
-    path: "docs/01_policies_and_standards/meta/behavior-boundaries-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml"
     doc_type: standard
     status: active
   - module_id: PS-STD-004
     title: "规则分类与冲突裁决标准"
-    path: "docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml"
     doc_type: standard
     status: active
   - module_id: PS-STD-006
     title: "治理度量标准"
-    path: "docs/01_policies_and_standards/meta/governance-metrics-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_026_methodology_quality.yaml"
     doc_type: standard
     status: active
   - module_id: PS-STD-009
     title: "规则治理标准"
-    path: "docs/01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
     doc_type: standard
     status: active
   - module_id: PS-STD-010
     title: "规则生命周期标准（已合并至 PS-STD-009）"
-    path: "docs/01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
     doc_type: standard
     status: merged
   - module_id: PS-REG-001
     title: "规则登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/rule-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/_index.yaml"
     doc_type: register
     status: active
   - module_id: PS-REG-002
@@ -253,7 +253,7 @@ registered_ids:
   # === GOV AI 治理层 ===
   - module_id: GOV-AI-001
     title: "AI 自治权限注册表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml"
     doc_type: register
     status: active
   - module_id: GOV-AI-003

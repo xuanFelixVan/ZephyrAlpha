@@ -12,7 +12,7 @@ category: documentation
 
 | 文件 | 引用方式 |
 |------|---------|
-| `.pre-commit-config.yaml` | GATE-15 配置段注释声明"权威依据：metadata-registry.md" |
+| `.pre-commit-config.yaml` | GATE-15 配置段注释声明"权威依据：metadata_registry.yaml" |
 | `scripts/governance/validate_ssot.py` | 使用注册表定义的字段名做校验 |
 | `scripts/governance/validate_blueprint_provenance.py` | 校验 doc_type 和 provenance 字段 |
 | `scripts/governance/validate_truth_source_cascade.py` | 使用 doc_type 等字段做真源级联校验 |

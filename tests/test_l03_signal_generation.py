@@ -12,9 +12,9 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
-from decimal import Decimal
 
 aggregator_base = pytest.importorskip("zephyr.signal_fundamental.gen.aggregator_base")
 signal_synthesizer = pytest.importorskip("zephyr.signal_fundamental.synth.signal_synthesizer")
@@ -26,10 +26,10 @@ DegradationMonitorBase = aggregator_base.DegradationMonitorBase
 SignalSynthesizerBase = signal_synthesizer.SignalSynthesizerBase
 
 try:
+    from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
     from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
     from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
-    from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-    from zephyr.integration.shared.contracts.errors.signal_degradation_warning import SignalDegradationWarning
+
     HAS_CONTRACTS = True
 except Exception:
     HAS_CONTRACTS = False
@@ -73,21 +73,21 @@ class TestSignalAggregatorBase:
                     signal_direction="LONG" if norm > 0 else "SHORT",
                     confidence=0.8,
                     idempotency_key=idempotency_key,
-                    as_of_timestamp=datetime.now(timezone.utc),
+                    as_of_timestamp=datetime.now(UTC),
                     generation_latency_ms=10,
                 )
 
         agg = MockAggregator()
         signals = [
             FactorSignal(
-                as_of_date=datetime.now(timezone.utc),
+                as_of_date=datetime.now(UTC),
                 factor_id="f1",
                 idempotency_key="ik1",
                 raw_value=0.5,
                 symbol="AAPL",
             ),
             FactorSignal(
-                as_of_date=datetime.now(timezone.utc),
+                as_of_date=datetime.now(UTC),
                 factor_id="f2",
                 idempotency_key="ik2",
                 raw_value=0.3,
@@ -128,7 +128,7 @@ class TestCapitalAllocatorBase:
                 signal_direction="LONG",
                 confidence=0.9,
                 idempotency_key="ik1",
-                as_of_timestamp=datetime.now(timezone.utc),
+                as_of_timestamp=datetime.now(UTC),
                 generation_latency_ms=5,
             ),
             SynthesizedSignal(
@@ -138,7 +138,7 @@ class TestCapitalAllocatorBase:
                 signal_direction="SHORT",
                 confidence=0.8,
                 idempotency_key="ik2",
-                as_of_timestamp=datetime.now(timezone.utc),
+                as_of_timestamp=datetime.now(UTC),
                 generation_latency_ms=5,
             ),
         ]
@@ -192,7 +192,7 @@ class TestSignalSynthesizerBase:
         assert SignalSynthesizerBase.direction_from_value(-0.2) == "NEUTRAL"
 
     def test_default_idempotency_key(self):
-        ts = datetime(2026, 1, 15, 10, 0, 0, tzinfo=timezone.utc)
+        ts = datetime(2026, 1, 15, 10, 0, 0, tzinfo=UTC)
         key = SignalSynthesizerBase.default_idempotency_key("AAPL", ts)
         assert "AAPL" in key
         assert "syn-" in key
@@ -224,14 +224,14 @@ class TestSignalSynthesizerBase:
         synth = EqualWeightSynthesizer()
         signals = [
             FactorSignal(
-                as_of_date=datetime.now(timezone.utc),
+                as_of_date=datetime.now(UTC),
                 factor_id="f1",
                 idempotency_key="ik1",
                 raw_value=1.5,
                 symbol="AAPL",
             ),
         ]
-        ts = datetime(2026, 1, 15, 10, 0, 0, tzinfo=timezone.utc)
+        ts = datetime(2026, 1, 15, 10, 0, 0, tzinfo=UTC)
         result = synth.synthesize(signals, "AAPL", ts)
         assert result.symbol == "AAPL"
         assert result.signal_value == 1.5
@@ -258,7 +258,7 @@ class TestSignalSynthesizerBase:
                 )
 
         synth = EmptySynth()
-        ts = datetime(2026, 1, 15, 10, 0, 0, tzinfo=timezone.utc)
+        ts = datetime(2026, 1, 15, 10, 0, 0, tzinfo=UTC)
         result = synth.synthesize([], "AAPL", ts)
         assert result.signal_value == 0.0
         assert result.signal_direction == "NEUTRAL"

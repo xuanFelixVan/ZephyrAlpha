@@ -1,16 +1,16 @@
 # [A_test] module_id: SRC-TST-0004 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+import random
 import sys
 import tempfile
 import time
-import random
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from zephyr.trading.staging_area import StagingArea, CommitStatus
+from zephyr.trading.staging_area import CommitStatus, StagingArea
 
 
 def test_5sessions():
@@ -50,7 +50,7 @@ def test_5sessions():
         lines = final.splitlines()
         print(f"\n  Final file ({len(lines)} lines):")
         for line in lines:
-            print(f"    {repr(line)}")
+            print(f"    {line!r}")
 
         ok_count = sum(1 for v in results.values() if v["type"] == "OK")
         merged_count = sum(1 for v in results.values() if v["type"] == "MERGED")

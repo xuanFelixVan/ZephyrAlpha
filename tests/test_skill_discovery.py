@@ -13,9 +13,6 @@
 import os
 import tempfile
 
-import pytest
-import yaml
-
 from zephyr.autonomy_core.skill_discovery import DiscoveryGap, DiscoveryResult, SkillDiscovery
 
 
@@ -77,24 +74,29 @@ class TestDeriveSkillId:
 class TestExtractModuleName:
     def test_from_mod_heading(self):
         content = "# MOD-INF-019 Some Blueprint\n\nBody text"
-        result = SkillDiscovery._extract_module_name(content, type("P", (), {"parent": type("X", (), {"name": "test"}), "parts": ()}))
+        result = SkillDiscovery._extract_module_name(
+            content, type("P", (), {"parent": type("X", (), {"name": "test"}), "parts": ()})
+        )
         assert result == "MOD-INF-019"
 
     def test_from_blueprint_heading(self):
         content = "# 蓝图说明: My-Module\n\nBody"
         from pathlib import Path
+
         result = SkillDiscovery._extract_module_name(content, Path("dummy"))
         assert result == "蓝图说明"
 
     def test_from_parent_directory(self):
         content = "No module heading here"
         from pathlib import Path
+
         bp_file = Path("/some/path/my-module/blueprint.md")
         result = SkillDiscovery._extract_module_name(content, bp_file)
         assert result == "my-module"
 
     def test_empty_content(self):
         from pathlib import Path
+
         bp_file = Path("/some/path/my-mod/blueprint.md")
         result = SkillDiscovery._extract_module_name("", bp_file)
         assert result == "my-mod"
@@ -166,6 +168,7 @@ class TestParseFrontmatter:
 
     def test_valid_frontmatter(self):
         from pathlib import Path
+
         path, tmpdir = self._write_temp_md("---\nversion: 2.0.0\ndescription: A test\n---\nBody")
         try:
             result = SkillDiscovery._parse_frontmatter(Path(path))
@@ -173,36 +176,43 @@ class TestParseFrontmatter:
             assert result.get("description") == "A test"
         finally:
             import shutil
+
             shutil.rmtree(tmpdir, ignore_errors=True)
 
     def test_no_frontmatter(self):
         from pathlib import Path
+
         path, tmpdir = self._write_temp_md("Just some content without frontmatter")
         try:
             result = SkillDiscovery._parse_frontmatter(Path(path))
             assert result == {}
         finally:
             import shutil
+
             shutil.rmtree(tmpdir, ignore_errors=True)
 
     def test_invalid_yaml_frontmatter(self):
         from pathlib import Path
+
         path, tmpdir = self._write_temp_md("---\n: invalid: yaml: [broken\n---\nBody")
         try:
             result = SkillDiscovery._parse_frontmatter(Path(path))
             assert result == {}
         finally:
             import shutil
+
             shutil.rmtree(tmpdir, ignore_errors=True)
 
     def test_incomplete_frontmatter(self):
         from pathlib import Path
+
         path, tmpdir = self._write_temp_md("---\nversion: 1.0")
         try:
             result = SkillDiscovery._parse_frontmatter(Path(path))
             assert result == {}
         finally:
             import shutil
+
             shutil.rmtree(tmpdir, ignore_errors=True)
 
 

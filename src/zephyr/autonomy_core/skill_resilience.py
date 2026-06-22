@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_resilience | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_resilience
+# [MODULE] zephyr.autonomy_core.skill_resilience
 
 # [INVARIANTS] none
 
@@ -28,11 +28,11 @@ Version: 0.3.0
 Skill 韧性——重试/降级/熔断策略 with exponential backoff.
 """
 
-
 from __future__ import annotations
 
 import time
-from typing import Dict, Any, List, Optional, Callable, Tuple
+from collections.abc import Callable
+from typing import Any
 
 
 class SkillResilience:
@@ -42,10 +42,10 @@ class SkillResilience:
     BASE_DELAY_S = 1.0
     MAX_DELAY_S = 30.0
 
-    _failure_count: Dict[str, int] = {}
-    _last_failure_time: Dict[str, float] = {}
-    _circuit_open: Dict[str, bool] = {}
-    _circuit_open_until: Dict[str, float] = {}
+    _failure_count: dict[str, int] = {}
+    _last_failure_time: dict[str, float] = {}
+    _circuit_open: dict[str, bool] = {}
+    _circuit_open_until: dict[str, float] = {}
 
     @classmethod
     def should_retry(cls, skill_id: str) -> bool:
@@ -72,9 +72,11 @@ class SkillResilience:
 
     @classmethod
     def retry_with_backoff(
-        cls, skill_id: str, fn: Callable[[], Any],
-        max_retries: Optional[int] = None,
-    ) -> Tuple[Any, int]:
+        cls,
+        skill_id: str,
+        fn: Callable[[], Any],
+        max_retries: int | None = None,
+    ) -> tuple[Any, int]:
         max_r = max_retries or cls.MAX_RETRIES
         last_exc = None
         for attempt in range(max_r):
@@ -85,7 +87,7 @@ class SkillResilience:
             except Exception as exc:
                 last_exc = exc
                 cls.record_failure(skill_id)
-                delay = min(cls.BASE_DELAY_S * (2 ** attempt), cls.MAX_DELAY_S)
+                delay = min(cls.BASE_DELAY_S * (2**attempt), cls.MAX_DELAY_S)
                 if attempt < max_r - 1:
                     time.sleep(delay)
         raise last_exc or RuntimeError(f"Skill {skill_id}: all {max_r} retries exhausted")
@@ -106,7 +108,7 @@ class SkillResilience:
         cls._circuit_open_until[skill_id] = time.time() + 300.0
 
     @classmethod
-    def reset(cls, skill_id: Optional[str] = None):
+    def reset(cls, skill_id: str | None = None):
         if skill_id:
             cls._failure_count.pop(skill_id, None)
             cls._last_failure_time.pop(skill_id, None)

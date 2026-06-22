@@ -24,8 +24,9 @@ from __future__ import annotations
 """风险缓解追踪——捕获哪些克隆报告了但在N次扫描后仍未fix."""
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
+
 
 @dataclass
 class MitigationEntry:
@@ -36,13 +37,14 @@ class MitigationEntry:
     severity: str
     status: str = "UNFIXED"
 
+
 @dataclass
 class RiskMitigationTracker:
     entries: dict[str, MitigationEntry] = field(default_factory=dict)
     stale_threshold: int = 10
 
     def track(self, clone_id: str, severity: str) -> MitigationEntry:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         if clone_id in self.entries:
             entry = self.entries[clone_id]
             entry.last_seen = now
@@ -67,4 +69,10 @@ class RiskMitigationTracker:
         unfixed = sum(1 for e in self.entries.values() if e.status == "UNFIXED")
         stale = sum(1 for e in self.entries.values() if e.status == "STALE")
         fixed = sum(1 for e in self.entries.values() if e.status == "FIXED")
-        return {"total": total, "unfixed": unfixed, "stale": stale, "fixed": fixed, "stale_threshold": self.stale_threshold}
+        return {
+            "total": total,
+            "unfixed": unfixed,
+            "stale": stale,
+            "fixed": fixed,
+            "stale_threshold": self.stale_threshold,
+        }

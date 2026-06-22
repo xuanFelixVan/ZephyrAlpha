@@ -11,18 +11,18 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.prompt_registry import (
         PromptRegistry,
+        PromptRegistryError,
         PromptTemplate,
         PromptVariable,
         RenderedPrompt,
-        PromptRegistryError,
-        TokenBudgetExceededError,
         TemplateNotFoundError,
         VariableError,
     )

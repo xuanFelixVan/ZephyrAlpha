@@ -32,8 +32,8 @@ _extract_declared_paths  正常提取 / 空文件 / 无匹配
 _validate_path_format    合法路径 / 绝对路径 / 反斜杠
 _is_watched              覆盖所有 WATCHED_PREFIXES / 非监控路径 / 非监控扩展名
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import subprocess
 from pathlib import Path
@@ -41,6 +41,7 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
+
 from zephyr.integration.shared_08.security.ssot_guard import (
     REGISTRY_REL_PATH,
     CheckResult,
@@ -127,7 +128,7 @@ class TestExtractDeclaredPaths:
         assert "docs/01_GOVERNANCE" in result
 
     def test_deduplicates(self) -> None:
-        content = "  path: scripts/hooks/a.py\n" "  path: scripts/hooks/a.py\n"
+        content = "  path: scripts/hooks/a.py\n  path: scripts/hooks/a.py\n"
         result = _extract_declared_paths(content)
         assert result.count("scripts/hooks/a.py") == 1
 
@@ -306,7 +307,12 @@ class TestCheckC2:
     def test_fail_missing_declared_path(self, tmp_repo: Path) -> None:
         # 往注册表中写一个不存在的文件路径
         registry = (
-            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index-registry.yaml"
+            tmp_repo
+            / "docs"
+            / "01_policies_and_standards"
+            / "_registry"
+            / "catalogs"
+            / "document-metadata-index-registry.yaml"
         )
         registry.write_text(
             "  path: scripts/hooks/nonexistent_hook.py\n",
@@ -344,7 +350,12 @@ class TestCheckC4Format:
 
     def test_fail_absolute_path_in_registry(self, tmp_repo: Path) -> None:
         registry = (
-            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index-registry.yaml"
+            tmp_repo
+            / "docs"
+            / "01_policies_and_standards"
+            / "_registry"
+            / "catalogs"
+            / "document-metadata-index-registry.yaml"
         )
         registry.write_text(
             "  path: /absolute/path/to/file.py\n",
@@ -356,7 +367,12 @@ class TestCheckC4Format:
 
     def test_fail_backslash_path_in_registry(self, tmp_repo: Path) -> None:
         registry = (
-            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index-registry.yaml"
+            tmp_repo
+            / "docs"
+            / "01_policies_and_standards"
+            / "_registry"
+            / "catalogs"
+            / "document-metadata-index-registry.yaml"
         )
         registry.write_text(
             "  path: scripts\\hooks\\hook.py\n",

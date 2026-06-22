@@ -10,13 +10,13 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_supervisor.py
 
-import pytest
 from datetime import datetime, timedelta
-from zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor import Supervisor
+
 from zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_state import (
     A2ATask,
     A2ATaskStatus,
 )
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor import Supervisor
 
 
 def _make_task(task_id="a2a-task-sup-1", status=A2ATaskStatus.QUEUED, to_agent=None, deadline=None):

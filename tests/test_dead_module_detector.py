@@ -9,8 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.dead_module_detector import DeadModuleDetector
+
 
 class TestDeadModuleDetector:
     def test_instantiation(self):

@@ -63,11 +63,11 @@ from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 
 __all__ = [
-    "HealthState",
-    "SLOConfig",
-    "HealthStatus",
-    "SLOViolation",
     "AgentHealthMonitor",
+    "HealthState",
+    "HealthStatus",
+    "SLOConfig",
+    "SLOViolation",
 ]
 
 

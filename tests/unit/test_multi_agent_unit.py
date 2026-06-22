@@ -22,9 +22,7 @@ from zephyr.infrastructure.a2a_protocol.multi_agent import (
 
 class TestAgentCard:
     def test_create(self):
-        card = AgentCard(
-            agent_id="a1", role=AgentRole.BUILDER, capabilities=["python", "yaml"]
-        )
+        card = AgentCard(agent_id="a1", role=AgentRole.BUILDER, capabilities=["python", "yaml"])
         assert card.agent_id == "a1"
         assert card.role == AgentRole.BUILDER
         assert "python" in card.capabilities

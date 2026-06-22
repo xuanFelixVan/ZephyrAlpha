@@ -8,9 +8,8 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 
-__all__ = ['fitness_functions', 'gate_statistics', 'knowledge_overview', 'olap_trend', 'task_progress']
-
+__all__ = ["fitness_functions", "gate_statistics", "knowledge_overview", "olap_trend", "task_progress"]

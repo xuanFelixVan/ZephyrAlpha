@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/check_blueprint_compliance.py | §
 """
-[BLUEPRINT] DOM-GOV-001 | D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md | §3
+[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md | §3
 [MODULE] scripts.governance.check_blueprint_compliance
 [INVARIANTS] REQUIRED_SECTIONS 必须与蓝图+施工图模板 v4.0 COMPLIANCE_CHECKLIST 一致
 [MODIFY-GUARD] __init__.py;script_manifest.yaml;蓝图模板v4.0
@@ -11,6 +11,7 @@
 [ERROR_CONTRACT] sys.exit(1)
 [TESTS] tests/governance/test_governance.py
 """
+
 import argparse
 import re
 import sys
@@ -79,8 +80,14 @@ REQUIRED_SECTIONS = {
 }
 
 REQUIRED_FRONTMATTER = [
-    "module_id", "title", "version", "status", "layer",
-    "actual_disk_path", "construction_progress", "belongs_to",
+    "module_id",
+    "title",
+    "version",
+    "status",
+    "layer",
+    "actual_disk_path",
+    "construction_progress",
+    "belongs_to",
 ]
 
 
@@ -106,7 +113,7 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
         print(f"  ❌ Frontmatter 缺失字段: {', '.join(fm_missing)}")
         errors += len(fm_missing)
     else:
-        print(f"  ✅ Frontmatter: 全部必填字段存在")
+        print("  ✅ Frontmatter: 全部必填字段存在")
 
     missing_sections = []
     found_sections = []
@@ -140,7 +147,7 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
             print(f"    ❌ {sid}: {kw}")
         errors += len(main_missing)
     else:
-        print(f"  ✅ 主章节: 19/19")
+        print("  ✅ 主章节: 19/19")
 
     if sub_missing:
         print(f"  ⚠️ 子章节缺失 ({len(sub_missing)}/22):")
@@ -148,7 +155,7 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
             print(f"    ❌ {sid}: {kw}")
         warnings += len(sub_missing)
     else:
-        print(f"  ✅ 子章节: 22/22")
+        print("  ✅ 子章节: 22/22")
 
     total = len(REQUIRED_SECTIONS) + len(REQUIRED_FRONTMATTER)
     passed = total - errors - warnings
@@ -163,7 +170,7 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
         print(f"  结果: ⚠️ WARN ({warnings} 警告)")
         return 0
     else:
-        print(f"  结果: ✅ PASS")
+        print("  结果: ✅ PASS")
         return 0
 
 
@@ -175,9 +182,9 @@ def main():
 
     total_exit = 0
     for bp in args.blueprint:
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"检查: {bp}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         exit_code = check_blueprint(bp, args.warn_only)
         if exit_code != 0:
             total_exit = 1

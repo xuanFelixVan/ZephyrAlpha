@@ -2,30 +2,21 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.actors.action_selector
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
 from dataclasses import dataclass, field
 from typing import Any
 
 from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
+
 
 @dataclass
 class ActionRecord:
@@ -33,17 +24,20 @@ class ActionRecord:
     timestamp: float
     success: bool
 
+
 @dataclass
 class ActionSelector:
     protocol_adapter: FeedbackProtocolAdapter
-    action_priority: list[ActionType] = field(default_factory=lambda: [
-        ActionType.NOTIFY_OWNER,
-        ActionType.ADJUST_THRESHOLD,
-        ActionType.REPAIR,
-        ActionType.DEPLOY,
-        ActionType.SELF_UPGRADE,
-        ActionType.REBALANCE,
-    ])
+    action_priority: list[ActionType] = field(
+        default_factory=lambda: [
+            ActionType.NOTIFY_OWNER,
+            ActionType.ADJUST_THRESHOLD,
+            ActionType.REPAIR,
+            ActionType.DEPLOY,
+            ActionType.SELF_UPGRADE,
+            ActionType.REBALANCE,
+        ]
+    )
     history: list[ActionRecord] = field(default_factory=list)
     retired_actions: dict[str, float] = field(default_factory=dict)
     consecutive_failures: dict[str, int] = field(default_factory=dict)
@@ -69,9 +63,7 @@ class ActionSelector:
         if success:
             self.consecutive_failures[action_type.value] = 0
         else:
-            self.consecutive_failures[action_type.value] = (
-                self.consecutive_failures.get(action_type.value, 0) + 1
-            )
+            self.consecutive_failures[action_type.value] = self.consecutive_failures.get(action_type.value, 0) + 1
             if self.consecutive_failures[action_type.value] >= self.MAX_CONSECUTIVE_FAILURES:
                 self.retired_actions[action_type.value] = time.time()
                 self.consecutive_failures[action_type.value] = 0

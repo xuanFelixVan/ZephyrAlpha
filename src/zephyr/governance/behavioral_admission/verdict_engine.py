@@ -15,9 +15,8 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from concurrent.futures import ThreadPoolExecutor
 from enum import Enum, IntEnum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -25,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 try:
     from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType
+
     _HAS_AUDIT_ENTRY = True
 except ImportError:
     _HAS_AUDIT_ENTRY = False
@@ -245,13 +245,9 @@ class VerdictEngine:
             except Exception:
                 pass
 
-        verdict_level, reason = self._apply_decision_tree(
-            actor, operation, gate_passed, violation_count
-        )
+        verdict_level, reason = self._apply_decision_tree(actor, operation, gate_passed, violation_count)
 
-        graduated = self.resolve_graduated_level(
-            verdict_level, prot_level, gate_passed, violation_count
-        )
+        graduated = self.resolve_graduated_level(verdict_level, prot_level, gate_passed, violation_count)
         needs_consensus = self.should_trigger_consensus(verdict_level, prot_level)
 
         latency = (time.monotonic() - start) * 1000.0
@@ -334,7 +330,7 @@ class VerdictEngine:
                     self.evaluate(evt),
                     timeout=self._verdict_timeout_s,
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 self._red_count += 1
                 return Verdict(
                     verdict_level=VerdictLevel.RED,

@@ -4,10 +4,11 @@ generate_contracts.py -- SSoT to Codegen pipeline
 
 Auto-generate Python dataclass files from cross_layer_contracts.yaml.
 """
+
 from __future__ import annotations
 
-
 import os
+
 # Manifest metadata for governance scripts
 __manifest__ = {
     "args": [],
@@ -27,19 +28,18 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
 import argparse
+import re
 
 import yaml
 
-import re
-
 CONTRACTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross_layer_contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
 )
 
 _TYPE_IMPORTS: dict[str, str] = {
@@ -354,7 +354,7 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
     generated_block = "\n".join(imports[2:]) + "\n" + header + dataclass_code + "\n"
     begin_marker = CODGEN_BEGIN.format(contract_id=contract_id)
     end_marker = CODGEN_END.format(contract_id=contract_id)
-    wrapped_content = f"{begin_marker}\n" f"{generated_block}\n" f"{end_marker}\n"
+    wrapped_content = f"{begin_marker}\n{generated_block}\n{end_marker}\n"
 
     output_path = REPO_ROOT / physical
 
@@ -376,19 +376,15 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
         tmp_path = f"{output_path}.{os.getpid()}.tmp"
 
         try:
-
             Path(tmp_path).write_text(final_content, encoding="utf-8")
 
             os.replace(tmp_path, output_path)
 
         except PermissionError:
-
             try:
-
                 os.remove(tmp_path)
 
             except OSError:
-
                 pass
         print(f"  ✅ {physical}")
 
@@ -469,19 +465,15 @@ def generate_directory_init(directory: Path, module_names: list[str], dry_run: b
         tmp_path = f"{init_file}.{os.getpid()}.tmp"
 
         try:
-
             Path(tmp_path).write_text(content, encoding="utf-8")
 
             os.replace(tmp_path, init_file)
 
         except PermissionError:
-
             try:
-
                 os.remove(tmp_path)
 
             except OSError:
-
                 pass
 
 

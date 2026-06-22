@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.scheduler_act import ActPhaseHandler, ActResult
 
 
@@ -31,12 +29,12 @@ class TestActResult:
 
 class TestActPhaseHandlerInstantiation:
     def test_creates_with_dependencies(self):
-        from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
-        from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
-        from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
         from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
         from zephyr.ops.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
         from zephyr.ops.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
+        from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+        from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
+        from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
 
         handler = ActPhaseHandler(
             throttle_defense=SelfAPIThrottleDefense(),
@@ -52,12 +50,12 @@ class TestActPhaseHandlerInstantiation:
 
 class TestActPhaseHandlerRunAct:
     def test_skips_without_action_selector(self):
-        from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
-        from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
-        from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
         from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
         from zephyr.ops.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
         from zephyr.ops.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
+        from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+        from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
+        from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
 
         handler = ActPhaseHandler(
             throttle_defense=SelfAPIThrottleDefense(),
@@ -68,6 +66,7 @@ class TestActPhaseHandlerRunAct:
             bottleneck_detector=SelfBottleneckDetector(),
         )
         from unittest.mock import MagicMock
+
         anomaly = MagicMock()
         anomaly.anomaly_id = "a1"
         diagnosis = MagicMock()

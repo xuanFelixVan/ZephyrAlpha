@@ -26,6 +26,7 @@ class TestOnBudgetAlert:
         alert.__class__.__name__ = "BudgetAlert"
 
         from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
+
         alert.__class__ = BudgetAlert
 
         result = on_budget_alert(alert)
@@ -40,6 +41,7 @@ class TestOnBudgetAlert:
         alert.__class__.__name__ = "BudgetAlert"
 
         from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
+
         alert.__class__ = BudgetAlert
 
         result = on_budget_alert(alert)

@@ -35,14 +35,12 @@ from __future__ import annotations
 
 import logging
 import time
-import uuid
-from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any
 
 from zephyr.ml_train.inference_base import InferenceEngineBase
 from zephyr.ml_train.trainer_base import ModelMetadata
-from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
+from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
 
 _logger = logging.getLogger(__name__)
 
@@ -54,7 +52,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
 
     __inference_id__ = __inference_id__
 
-    def __init__(self, model_registry: Optional[dict[str, Any]] = None):
+    def __init__(self, model_registry: dict[str, Any] | None = None):
         self._models: dict[str, Any] = {}
         self._metadatas: dict[str, ModelMetadata] = {}
         self._model_registry = model_registry or {}
@@ -71,6 +69,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
 
         try:
             import joblib
+
             self._models[model_id] = joblib.load(model_path)
             self._metadatas[model_id] = metadata
             _logger.info("Model loaded: model_id=%s path=%s", model_id, model_path)
@@ -107,6 +106,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
         try:
             if hasattr(model, "predict"):
                 import numpy as np
+
                 feature_values = list(request.input_features.values())
                 feature_array = np.array([feature_values])
                 raw_pred = model.predict(feature_array)
@@ -138,7 +138,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
                 idempotency_key=request.idempotency_key,
             )
 
-    def get_model_metadata(self, model_id: str) -> Optional[ModelMetadata]:
+    def get_model_metadata(self, model_id: str) -> ModelMetadata | None:
         return self._metadatas.get(model_id)
 
     def list_models(self) -> list[str]:

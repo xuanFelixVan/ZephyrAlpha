@@ -21,15 +21,12 @@ E2E 全链路测试 — knowledge-base v0.10.1 闭环管线
 
 from __future__ import annotations
 
-import hashlib
 import os
-import tempfile
 from pathlib import Path
-
-import pytest
 
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
+from zephyr.governance.ingest import IngestGate
 from zephyr.governance.kb.bootstrap import (
     Bootstrap,
     BootstrapConfig,
@@ -40,8 +37,6 @@ from zephyr.governance.kb.bootstrap import (
     run_bootstrap,
     segment_document,
 )
-from zephyr.governance.ingest import IngestGate, IngestResult
-from zephyr.intelligence.model_evaluation.kb_repo import KbRepo
 from zephyr.intelligence.model_evaluation.reranker import RerankedHit, Reranker, rerank_batch
 from zephyr.intelligence.model_evaluation.unified_memory_api import (
     InMemoryMemoryBackend,
@@ -52,13 +47,20 @@ from zephyr.intelligence.model_evaluation.unified_memory_api import (
 
 class TestBootstrapColdStart:
     def test_discover_sources_finds_docs(self, tmp_path: Path):
-        (tmp_path / "AGENTS.md").write_text("# Agent Rules\n\n- Rule 1: Always search first\n- Rule 2: Never skip tests\n", encoding="utf-8")
+        (tmp_path / "AGENTS.md").write_text(
+            "# Agent Rules\n\n- Rule 1: Always search first\n- Rule 2: Never skip tests\n", encoding="utf-8"
+        )
         (tmp_path / "docs").mkdir(exist_ok=True)
         (tmp_path / "docs" / "ADR").mkdir(exist_ok=True)
-        (tmp_path / "docs" / "ADR" / "adr-0001.md").write_text("---\ntitle: test\n---\n\n# ADR-0001\n\nDecision: Use ChromaDB\n", encoding="utf-8")
+        (tmp_path / "docs" / "ADR" / "adr-0001.md").write_text(
+            "---\ntitle: test\n---\n\n# ADR-0001\n\nDecision: Use ChromaDB\n", encoding="utf-8"
+        )
         (tmp_path / "docs" / "03_modules").mkdir(parents=True, exist_ok=True)
         (tmp_path / "docs" / "03_modules" / "_sys-master").mkdir(exist_ok=True)
-        (tmp_path / "docs" / "03_modules" / "_sys-master" / "blueprint.md").write_text("---\ntitle: blueprint\n---\n\n## System Architecture\n\nThe system uses a 3-tier pyramid model.\n", encoding="utf-8")
+        (tmp_path / "docs" / "03_modules" / "_sys-master" / "blueprint.md").write_text(
+            "---\ntitle: blueprint\n---\n\n## System Architecture\n\nThe system uses a 3-tier pyramid model.\n",
+            encoding="utf-8",
+        )
 
         sources = discover_document_sources(tmp_path)
 
@@ -134,6 +136,7 @@ class TestPipelineE2E:
     def test_ingest_to_recall_loop(self, tmp_path: Path):
         import os
         import tempfile as tmp
+
         fd, tpath = tmp.mkstemp(suffix=".md", prefix="e2e_")
         os.close(fd)
         doc = Path(tpath)

@@ -30,6 +30,7 @@ R506: ContextWindowPressureManager
 import time
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ContextEntry:
     content: str
@@ -37,6 +38,7 @@ class ContextEntry:
     timestamp: float
     source: str
     token_estimate: int
+
 
 @dataclass
 class ContextWindowPressureManager:
@@ -47,13 +49,17 @@ class ContextWindowPressureManager:
     compress_ratio: float = 0.5
 
     def add_entry(self, content: str, priority: float, source: str, token_estimate: int) -> None:
-        self.entries.append(ContextEntry(
-            content=content, priority=priority,
-            timestamp=time.time(), source=source,
-            token_estimate=token_estimate,
-        ))
+        self.entries.append(
+            ContextEntry(
+                content=content,
+                priority=priority,
+                timestamp=time.time(),
+                source=source,
+                token_estimate=token_estimate,
+            )
+        )
         if len(self.entries) > self.max_entries:
-            self.entries = self.entries[-self.max_entries:]
+            self.entries = self.entries[-self.max_entries :]
 
     def check_pressure(self) -> dict:
         total_tokens = sum(e.token_estimate for e in self.entries)

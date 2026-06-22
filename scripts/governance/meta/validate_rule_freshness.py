@@ -28,7 +28,7 @@ warn_only: true
 import argparse
 import re
 import sys
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve().parents[1]

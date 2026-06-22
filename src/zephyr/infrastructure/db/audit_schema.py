@@ -65,6 +65,7 @@ __all__ = [
 AuditTrailRow = dict[str, Any]
 CompensationEvent = dict[str, Any]
 
+
 class AuditQuery:
     """
     审计视图查询器。
@@ -163,15 +164,11 @@ class AuditQuery:
 
         conn = self._get_conn()
         try:
-            cursor = conn.execute(
-                "SELECT MAX(version) as max_ver FROM _schema_version"
-            )
+            cursor = conn.execute("SELECT MAX(version) as max_ver FROM _schema_version")
             row = cursor.fetchone()
             registered_max = row["max_ver"] if row else 0
 
-            cursor = conn.execute(
-                "SELECT version, applied_at, description FROM _schema_version ORDER BY version ASC"
-            )
+            cursor = conn.execute("SELECT version, applied_at, description FROM _schema_version ORDER BY version ASC")
             migrations = [dict(r) for r in cursor.fetchall()]
         finally:
             conn.close()

@@ -32,10 +32,9 @@ TaskCard 状态变更 → 所有关联系统得到通知。
 - IN_PROGRESS → FAILED: 通知 FLE + db 持久化
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -83,7 +82,7 @@ class StatePropagationEvent(BaseModel):
     new_status: str
     transition_key: str = ""
     targets: list[str] = Field(default_factory=list)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     payload: dict[str, Any] = Field(default_factory=dict)
 
 

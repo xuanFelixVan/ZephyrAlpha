@@ -10,13 +10,16 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
+
+from unittest.mock import MagicMock, patch
 
 import pytest
-from unittest.mock import MagicMock, patch
 
 try:
     from zephyr.security.access_control.contracts import RBACAuditBridge
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -66,7 +69,11 @@ class TestRBACAuditBridgeCheckAndLog:
     @patch("zephyr.security.access_control.contracts.AuditWriter")
     def test_session_id_passed(self, mock_audit_writer_cls):
         mock_instance = MagicMock()
-        mock_instance.write.return_value = {"event_type": "rbac_decision", "session_id": "sess-001", "chain_hash": "hash789"}
+        mock_instance.write.return_value = {
+            "event_type": "rbac_decision",
+            "session_id": "sess-001",
+            "chain_hash": "hash789",
+        }
         mock_audit_writer_cls.return_value = mock_instance
         bridge = RBACAuditBridge()
         result = bridge.check_and_log("agent-1", "read", "res", session_id="sess-001")

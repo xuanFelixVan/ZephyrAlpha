@@ -27,6 +27,7 @@ Risk: R174 — Load spike; FLE diagnoses instead of autoscaling.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class AutoscaleRemediation:
     scale_up_threshold: float = 0.8

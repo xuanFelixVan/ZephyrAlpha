@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """设计决策注册表单元测试——验证 DD-1~DD-14 决策记录与过滤。"""
 
 
@@ -14,7 +15,6 @@ import pytest
 from zephyr.trading.orchestrator.design_decisions import (
     DECISIONS,
     DecisionRegistry,
-    DecisionStatus,
 )
 
 

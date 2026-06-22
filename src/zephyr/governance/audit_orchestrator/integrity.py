@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 校验失败返回pass=False
 # [TESTS] tests/audit-orchestrator/test_integrity.py
-
 import logging
 from typing import Any
 
@@ -21,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["IntegrityGuard"]
 
+
 class IntegrityGuard:
     def __init__(self) -> None:
         self._merkle_bridge = None
@@ -28,6 +28,7 @@ class IntegrityGuard:
         self._available = False
         try:
             from zephyr.governance.audit_orchestrator.merkle_hourly import MerkleHourlyBridge
+
             self._merkle_bridge = MerkleHourlyBridge()
             self._available = True
         except Exception as exc:
@@ -35,6 +36,7 @@ class IntegrityGuard:
 
         try:
             from zephyr.governance.audit_trail.trust_bridge import TrustBridge
+
             self._trust_bridge = TrustBridge()
         except Exception as exc:
             logger.warning("TrustBridge not available: %s", exc)
@@ -76,22 +78,25 @@ class IntegrityGuard:
             "trust": self._trust_bridge is not None and self._trust_bridge.is_available(),
         }
 
+
 class HashEntry:
-    def __init__(self, entry_id='', hash_value='', algorithm='sha256', timestamp=None):
+    def __init__(self, entry_id="", hash_value="", algorithm="sha256", timestamp=None):
         self.entry_id = entry_id
         self.hash_value = hash_value
         self.algorithm = algorithm
         self.timestamp = timestamp
 
+
 class Manifest:
-    def __init__(self, manifest_id='', entries=None, created=None, checksum=''):
+    def __init__(self, manifest_id="", entries=None, created=None, checksum=""):
         self.manifest_id = manifest_id
         self.entries = entries or []
         self.created = created
         self.checksum = checksum
 
+
 class DriftReport:
-    def __init__(self, report_id='', drifts=None, timestamp=None, summary=''):
+    def __init__(self, report_id="", drifts=None, timestamp=None, summary=""):
         self.report_id = report_id
         self.drifts = drifts or []
         self.timestamp = timestamp

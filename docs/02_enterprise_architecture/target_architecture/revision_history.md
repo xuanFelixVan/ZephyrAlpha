@@ -1,4 +1,4 @@
-﻿---
+---
 doc_type: archive
 title: "target-architecture/ 完整修订历史"
 version: "2.2.0"

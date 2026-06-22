@@ -4,10 +4,11 @@ CI Entry: Self-Check — Drift Detector 自身完整性验证
 =====================================================
 Tier 8 — 纯 stdlib 零依赖的完整性检查。
 """
+
 from __future__ import annotations
 
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -19,13 +20,13 @@ def main() -> int:
     print("  SELF-CHECK — DRIFT DETECTOR INTEGRITY")
     print("=" * 60)
 
-    self_check_path = str(
-        PROJECT_ROOT / "src" / "zephyr" / "drift-detector" / "self_check.py"
-    )
+    self_check_path = str(PROJECT_ROOT / "src" / "zephyr" / "drift-detector" / "self_check.py")
 
     result = subprocess.run(
         [sys.executable, self_check_path],
-        capture_output=False, text=True, timeout=30,
+        capture_output=False,
+        text=True,
+        timeout=30,
         cwd=str(PROJECT_ROOT),
     )
 

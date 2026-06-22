@@ -34,19 +34,17 @@ SLI 定义（蓝图 §1179）:
 
 from __future__ import annotations
 
-import os
 import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Protocol, Sequence
-
+from typing import Any, Protocol
 
 __all__ = [
-    "SLIResult",
-    "HealthReport",
     "CapacityMetric",
     "CapacityReport",
+    "HealthReport",
+    "SLIResult",
     "SelfHealthMonitor",
 ]
 
@@ -217,31 +215,45 @@ class SelfHealthMonitor:
     """
 
     SLI_THRESHOLDS: dict[str, dict[str, Any]] = {
-        "audit_latency_p95": {"threshold": 30.0, "unit": "s", "compare": "lt",
-                              "description": "P95 管道耗时"},
-        "trigger_recall_rate": {"threshold": 99.0, "unit": "%", "compare": "gt",
-                                "description": "黄金数据集检出率"},
-        "safety_false_block_rate": {"threshold": 0.5, "unit": "%", "compare": "lt",
-                                    "description": "该过被拦概率"},
-        "llm_availability_rate": {"threshold": 90.0, "unit": "%", "compare": "gt",
-                                  "description": "Stage 6 成功率"},
-        "token_per_audit": {"threshold": 500.0, "unit": "tokens", "compare": "lt",
-                            "description": "每次审计 Token 用量"},
-        "self_heal_success_rate": {"threshold": 80.0, "unit": "%", "compare": "gt",
-                                   "description": "Stage 7 修复成功率"},
+        "audit_latency_p95": {"threshold": 30.0, "unit": "s", "compare": "lt", "description": "P95 管道耗时"},
+        "trigger_recall_rate": {"threshold": 99.0, "unit": "%", "compare": "gt", "description": "黄金数据集检出率"},
+        "safety_false_block_rate": {"threshold": 0.5, "unit": "%", "compare": "lt", "description": "该过被拦概率"},
+        "llm_availability_rate": {"threshold": 90.0, "unit": "%", "compare": "gt", "description": "Stage 6 成功率"},
+        "token_per_audit": {
+            "threshold": 500.0,
+            "unit": "tokens",
+            "compare": "lt",
+            "description": "每次审计 Token 用量",
+        },
+        "self_heal_success_rate": {
+            "threshold": 80.0,
+            "unit": "%",
+            "compare": "gt",
+            "description": "Stage 7 修复成功率",
+        },
     }
 
     CAPACITY_THRESHOLDS: dict[str, dict[str, Any]] = {
-        "concurrent_audit_count": {"threshold": 4.0, "unit": "count", "compare": "lt",
-                                   "description": "并发审计数 <max_concurrent"},
-        "llm_fix_queue_depth": {"threshold": 50.0, "unit": "count", "compare": "lt",
-                                "description": "LLM Fix Queue 深度"},
-        "cache_hit_rate": {"threshold": 60.0, "unit": "%", "compare": "gt",
-                           "description": "审计缓存命中率"},
-        "ref_index_freshness": {"threshold": 300.0, "unit": "s", "compare": "lt",
-                                "description": "全局引用索引新鲜度"},
-        "healer_queue_length": {"threshold": 20.0, "unit": "count", "compare": "lt",
-                                "description": "SelfHealer 修复队列长度"},
+        "concurrent_audit_count": {
+            "threshold": 4.0,
+            "unit": "count",
+            "compare": "lt",
+            "description": "并发审计数 <max_concurrent",
+        },
+        "llm_fix_queue_depth": {
+            "threshold": 50.0,
+            "unit": "count",
+            "compare": "lt",
+            "description": "LLM Fix Queue 深度",
+        },
+        "cache_hit_rate": {"threshold": 60.0, "unit": "%", "compare": "gt", "description": "审计缓存命中率"},
+        "ref_index_freshness": {"threshold": 300.0, "unit": "s", "compare": "lt", "description": "全局引用索引新鲜度"},
+        "healer_queue_length": {
+            "threshold": 20.0,
+            "unit": "count",
+            "compare": "lt",
+            "description": "SelfHealer 修复队列长度",
+        },
     }
 
     DEGRADATION_WINDOW = 3
@@ -290,9 +302,7 @@ class SelfHealthMonitor:
             description=cfg["description"],
         )
 
-    def _check_capacity_metric(
-        self, name: str, value: float, cfg: dict[str, Any]
-    ) -> CapacityMetric:
+    def _check_capacity_metric(self, name: str, value: float, cfg: dict[str, Any]) -> CapacityMetric:
         threshold = cfg["threshold"]
         if cfg["compare"] == "lt":
             healthy = value < threshold
@@ -312,7 +322,7 @@ class SelfHealthMonitor:
         history = self._collector.get_latency_history()
         if len(history) < self.DEGRADATION_WINDOW:
             return False, ""
-        recent = history[-self.DEGRADATION_WINDOW:]
+        recent = history[-self.DEGRADATION_WINDOW :]
         for i in range(1, len(recent)):
             if recent[i] <= recent[i - 1]:
                 return False, ""
@@ -323,18 +333,22 @@ class SelfHealthMonitor:
         """执行 7 SLI 健康检查，返回 HealthReport。"""
         c = self._collector
         sli_results = [
-            self._check_sli("audit_latency_p95", c.get_scan_latency_p95(),
-                            self.SLI_THRESHOLDS["audit_latency_p95"]),
-            self._check_sli("trigger_recall_rate", c.get_trigger_recall_rate(),
-                            self.SLI_THRESHOLDS["trigger_recall_rate"]),
-            self._check_sli("safety_false_block_rate", c.get_safety_false_block_rate(),
-                            self.SLI_THRESHOLDS["safety_false_block_rate"]),
-            self._check_sli("llm_availability_rate", c.get_llm_availability_rate(),
-                            self.SLI_THRESHOLDS["llm_availability_rate"]),
-            self._check_sli("token_per_audit", c.get_token_per_audit(),
-                            self.SLI_THRESHOLDS["token_per_audit"]),
-            self._check_sli("self_heal_success_rate", c.get_self_heal_success_rate(),
-                            self.SLI_THRESHOLDS["self_heal_success_rate"]),
+            self._check_sli("audit_latency_p95", c.get_scan_latency_p95(), self.SLI_THRESHOLDS["audit_latency_p95"]),
+            self._check_sli(
+                "trigger_recall_rate", c.get_trigger_recall_rate(), self.SLI_THRESHOLDS["trigger_recall_rate"]
+            ),
+            self._check_sli(
+                "safety_false_block_rate",
+                c.get_safety_false_block_rate(),
+                self.SLI_THRESHOLDS["safety_false_block_rate"],
+            ),
+            self._check_sli(
+                "llm_availability_rate", c.get_llm_availability_rate(), self.SLI_THRESHOLDS["llm_availability_rate"]
+            ),
+            self._check_sli("token_per_audit", c.get_token_per_audit(), self.SLI_THRESHOLDS["token_per_audit"]),
+            self._check_sli(
+                "self_heal_success_rate", c.get_self_heal_success_rate(), self.SLI_THRESHOLDS["self_heal_success_rate"]
+            ),
         ]
 
         degradation_detected, degradation_detail = self._detect_degradation()
@@ -366,21 +380,25 @@ class SelfHealthMonitor:
         """执行 5 容量 SLI 检查，返回 CapacityReport。"""
         c = self._collector
         metrics = [
-            self._check_capacity_metric("concurrent_audit_count",
-                                        c.get_concurrent_audit_count(),
-                                        self.CAPACITY_THRESHOLDS["concurrent_audit_count"]),
-            self._check_capacity_metric("llm_fix_queue_depth",
-                                        c.get_llm_fix_queue_depth(),
-                                        self.CAPACITY_THRESHOLDS["llm_fix_queue_depth"]),
-            self._check_capacity_metric("cache_hit_rate",
-                                        c.get_cache_hit_rate(),
-                                        self.CAPACITY_THRESHOLDS["cache_hit_rate"]),
-            self._check_capacity_metric("ref_index_freshness",
-                                        c.get_ref_index_freshness_seconds(),
-                                        self.CAPACITY_THRESHOLDS["ref_index_freshness"]),
-            self._check_capacity_metric("healer_queue_length",
-                                        c.get_healer_queue_length(),
-                                        self.CAPACITY_THRESHOLDS["healer_queue_length"]),
+            self._check_capacity_metric(
+                "concurrent_audit_count",
+                c.get_concurrent_audit_count(),
+                self.CAPACITY_THRESHOLDS["concurrent_audit_count"],
+            ),
+            self._check_capacity_metric(
+                "llm_fix_queue_depth", c.get_llm_fix_queue_depth(), self.CAPACITY_THRESHOLDS["llm_fix_queue_depth"]
+            ),
+            self._check_capacity_metric(
+                "cache_hit_rate", c.get_cache_hit_rate(), self.CAPACITY_THRESHOLDS["cache_hit_rate"]
+            ),
+            self._check_capacity_metric(
+                "ref_index_freshness",
+                c.get_ref_index_freshness_seconds(),
+                self.CAPACITY_THRESHOLDS["ref_index_freshness"],
+            ),
+            self._check_capacity_metric(
+                "healer_queue_length", c.get_healer_queue_length(), self.CAPACITY_THRESHOLDS["healer_queue_length"]
+            ),
         ]
 
         overall_healthy = all(m.healthy for m in metrics)

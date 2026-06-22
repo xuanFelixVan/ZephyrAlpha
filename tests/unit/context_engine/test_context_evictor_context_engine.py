@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """Tests for context_evictor.py (TASK-014 beta a — migrated to ContextBlock model)."""
 
 
@@ -17,8 +18,13 @@ from zephyr.autonomy_core.context_evictor import (
 )
 
 
-def _block(block_id: str, tokens: int = 50, priority: PriorityLevel = PriorityLevel.NORMAL,
-           freshness: float = 0.5, relevance: float = 0.5) -> ContextBlock:
+def _block(
+    block_id: str,
+    tokens: int = 50,
+    priority: PriorityLevel = PriorityLevel.NORMAL,
+    freshness: float = 0.5,
+    relevance: float = 0.5,
+) -> ContextBlock:
     return ContextBlock(
         block_id=block_id,
         content=f"Content of {block_id}",

@@ -11,28 +11,28 @@
 # [TESTS] tests/test_agent_rbac.py
 
 from zephyr.integration.shared_08.contracts.identity.agent_identity import (
-    AgentIdentity,
-    AgentRole,
-    AgentMaturity,
-    IDESource,
-    MaturityLevel,
     MATURITY_AUTO_GUARD_TIMEOUT,
     MATURITY_TLB_LIMITS,
     ROLE_DEFAULT_PERMISSIONS,
+    AgentIdentity,
+    AgentMaturity,
+    AgentRole,
+    IDESource,
+    MaturityLevel,
 )
 from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision, GuardResult
 
 __all__ = [
+    "MATURITY_AUTO_GUARD_TIMEOUT",
+    "MATURITY_TLB_LIMITS",
+    "ROLE_DEFAULT_PERMISSIONS",
     "AgentIdentity",
     "AgentMaturity",
     "AgentRole",
     "GuardDecision",
     "GuardResult",
     "IDESource",
-    "MATURITY_AUTO_GUARD_TIMEOUT",
-    "MATURITY_TLB_LIMITS",
     "MaturityLevel",
-    "ROLE_DEFAULT_PERMISSIONS",
-    "permission",
     "agent_identity",
+    "permission",
 ]

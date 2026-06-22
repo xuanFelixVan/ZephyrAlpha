@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import importlib as _importlib
+
     ModelTier = _importlib.import_module("zephyr.infrastructure.budget_enforcement.budget_models").ModelTier
 
 DEFAULT_PROVIDERS: dict[str, dict[str, str | float | list[str]]] = {
@@ -61,11 +62,10 @@ _RAW_TIER_MAP: dict[str, list[str]] = {
 def __getattr__(name: str):
     if name == "TIER_MODEL_MAP":
         import importlib as _importlib
+
         ModelTier = _importlib.import_module("zephyr.infrastructure.budget_enforcement.budget_models").ModelTier
 
-        _map: dict[ModelTier, list[str]] = {
-            ModelTier[k]: v for k, v in _RAW_TIER_MAP.items()
-        }
+        _map: dict[ModelTier, list[str]] = {ModelTier[k]: v for k, v in _RAW_TIER_MAP.items()}
         globals()["TIER_MODEL_MAP"] = _map
         return _map
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

@@ -121,12 +121,16 @@ class TestContractRouter:
     def test_custom_registry(self):
         class FakeRegistry(ContractRegistry):
             def check_ai_read_only(self, contract_id):
-                return ContractRegistry.ContractCallResult(
-                    allowed=True,
-                    contract_id=contract_id,
-                    hint=AIReadOnlyHint.SAFE,
-                    message="fake ok",
-                ) if not hasattr(self, '_fake') else super().check_ai_read_only(contract_id)
+                return (
+                    ContractRegistry.ContractCallResult(
+                        allowed=True,
+                        contract_id=contract_id,
+                        hint=AIReadOnlyHint.SAFE,
+                        message="fake ok",
+                    )
+                    if not hasattr(self, "_fake")
+                    else super().check_ai_read_only(contract_id)
+                )
 
         router = ContractRouter(registry=ContractRegistry())
         result = router.route("CT-CE-VMS-001")

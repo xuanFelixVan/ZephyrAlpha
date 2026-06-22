@@ -40,19 +40,19 @@ Phase 5 新增（盲点 B4）——解决 schemas.py Task 模型变更后
 SSoT: MOD-INF-016 §2.12 shared-migration
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from collections.abc import Callable
 from typing import Any
 
 __all__ = [
-    "Migration",
     "MIGRATIONS",
-    "migrate_task",
+    "Migration",
+    "MigrationError",
     "downgrade_task",
     "latest_schema_version",
-    "MigrationError",
+    "migrate_task",
 ]
 
 

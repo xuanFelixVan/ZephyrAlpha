@@ -19,9 +19,7 @@
 
 # [TESTS] self
 
-from datetime import datetime, timezone
-
-import pytest
+from datetime import UTC, datetime
 
 from zephyr.governance.context_package import (
     ContextPackageBuilder,
@@ -43,7 +41,7 @@ class TestEscalationContext:
         assert ctx.suggested_action == ""
 
     def test_instantiation_all_fields(self):
-        now = datetime(2026, 5, 22, 12, 0, 0, tzinfo=timezone.utc)
+        now = datetime(2026, 5, 22, 12, 0, 0, tzinfo=UTC)
         ctx = EscalationContext(
             context_id="ctx-002",
             task_id="TASK-42",

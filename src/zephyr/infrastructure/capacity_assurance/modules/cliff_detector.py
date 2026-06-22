@@ -26,9 +26,6 @@ Cliff Detector — 模块数悬崖检测 (盲点 #36)
   - 800+ 模块 → WARNING, 1200+ → CRITICAL
 """
 
-import time
-from typing import Any, Optional
-
 
 class CliffDetector:
     """

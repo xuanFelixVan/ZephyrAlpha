@@ -6,8 +6,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试 L5 OutputGuard — 输出护栏"""
-import pytest
-from zephyr.security.access_control.output_guard import OutputGuard, OutputDecision, PII_PATTERNS, CREDENTIAL_PATTERNS
+
+from zephyr.security.access_control.output_guard import CREDENTIAL_PATTERNS, PII_PATTERNS, OutputDecision, OutputGuard
 
 
 class TestPIIDetection:
@@ -55,4 +55,7 @@ class TestSynthesisLeakage:
         guard.record_read("agent-synth", "file_b")
         guard.record_read("agent-synth", "file_c")
         result = guard.check("combined info", "agent-synth")
-        assert "synthesis" in str(result.findings).lower() or result.decision in (OutputDecision.SANITIZED, OutputDecision.CLEAN)
+        assert "synthesis" in str(result.findings).lower() or result.decision in (
+            OutputDecision.SANITIZED,
+            OutputDecision.CLEAN,
+        )

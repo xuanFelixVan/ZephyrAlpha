@@ -24,8 +24,6 @@ SSoT: MOD-INF-024 budget-enforcer. This module is retained for backward compatib
 """
 
 import time
-from dataclasses import dataclass
-from typing import Any, Optional
 
 
 class TokenValueAttribution:
@@ -39,16 +37,27 @@ class TokenValueAttribution:
     def __init__(self):
         self._records: list[dict] = []
 
-    def attribute(self, task_id: str, tokens_used: int, cost_usd: float,
-                  output_useful: bool = True, complexity_resolved: bool = True) -> dict:
+    def attribute(
+        self,
+        task_id: str,
+        tokens_used: int,
+        cost_usd: float,
+        output_useful: bool = True,
+        complexity_resolved: bool = True,
+    ) -> dict:
         if cost_usd <= 0:
             roi = 1.0 if output_useful else 0.0
         else:
             value_score = 1.0 if (output_useful and complexity_resolved) else 0.5 if output_useful else 0.0
             roi = value_score / cost_usd
 
-        tier = "HIGH_VALUE" if roi >= self.HIGH_ROI_THRESHOLD else \
-               "LOW_VALUE" if roi < self.LOW_ROI_THRESHOLD else "ACCEPTABLE"
+        tier = (
+            "HIGH_VALUE"
+            if roi >= self.HIGH_ROI_THRESHOLD
+            else "LOW_VALUE"
+            if roi < self.LOW_ROI_THRESHOLD
+            else "ACCEPTABLE"
+        )
 
         record = {
             "task_id": task_id,

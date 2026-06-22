@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class DomainDecay:
     domain: str
@@ -32,8 +33,10 @@ class DomainDecay:
     ttl_days: float
     decay_mode: str  # "exponential" | "linear"
 
+
 class DomainDecayConfig:
     """Per-domain halflife table + TTL (DD105)."""
+
     _HALFLIFE: dict[str, DomainDecay] = {
         "CODE_GEN": DomainDecay("CODE_GEN", halflife_days=60, ttl_days=180, decay_mode="exponential"),
         "OPS_FIX": DomainDecay("OPS_FIX", halflife_days=90, ttl_days=270, decay_mode="exponential"),

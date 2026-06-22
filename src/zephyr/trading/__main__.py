@@ -22,7 +22,7 @@ from __future__ import annotations
 # [TESTS]
 
 """
-python -m zephyr.orchestration.runtime_core — AutoRuntime Core 入口
+python -m zephyr.trading — AutoRuntime Core 入口
 ===================================================
 """
 
@@ -33,6 +33,7 @@ import time
 
 from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 from zephyr.trading.runtime_config import RuntimeConfig
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="ZephyrAlpha AutoRuntime Core")
@@ -73,13 +74,16 @@ def main() -> None:
             try:
                 time.sleep(config.poll_interval)
                 report = core.reconcile()
-                print(f"[{time.strftime('%H:%M:%S')}] active={report.active} degraded={report.degraded} orphan_rate={report.orphan_rate:.1%}")
+                print(
+                    f"[{time.strftime('%H:%M:%S')}] active={report.active} degraded={report.degraded} orphan_rate={report.orphan_rate:.1%}"
+                )
             except KeyboardInterrupt:
                 shutdown_requested = True
 
     shutdown_report = core.shutdown()
     print(f"Shutdown: {shutdown_report.steps_completed} steps completed")
     print("Goodbye.")
+
 
 if __name__ == "__main__":
     main()

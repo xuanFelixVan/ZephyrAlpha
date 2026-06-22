@@ -73,8 +73,7 @@ class TestSkillCalibrationCalibrate:
 
     def test_calibrate_returns_required_keys(self):
         result = SkillCalibration.calibrate("test_skill", 0.8, 0.75)
-        for key in ("skill_id", "confidence", "accuracy", "drift", "calibrated",
-                     "overconfident", "underconfident"):
+        for key in ("skill_id", "confidence", "accuracy", "drift", "calibrated", "overconfident", "underconfident"):
             assert key in result
 
     def test_calibrate_zero_confidence(self):

@@ -35,7 +35,6 @@ Usage:
 
 from __future__ import annotations
 
-
 import logging
 import re
 from dataclasses import dataclass, field
@@ -189,25 +188,29 @@ class FailurePatternMatcher:
                 diagnosis.suggestion,
             )
 
+
 class FailureCategory:
-    TRANSIENT = 'TRANSIENT'
-    PERMANENT = 'PERMANENT'
-    CASCADING = 'CASCADING'
-    TIMEOUT = 'TIMEOUT'
-    RESOURCE = 'RESOURCE'
-    DEPENDENCY = 'DEPENDENCY'
-    CONFIGURATION = 'CONFIGURATION'
-    UNKNOWN = 'UNKNOWN'
+    TRANSIENT = "TRANSIENT"
+    PERMANENT = "PERMANENT"
+    CASCADING = "CASCADING"
+    TIMEOUT = "TIMEOUT"
+    RESOURCE = "RESOURCE"
+    DEPENDENCY = "DEPENDENCY"
+    CONFIGURATION = "CONFIGURATION"
+    UNKNOWN = "UNKNOWN"
+
 
 class FailureMatch:
-    def __init__(self, error='', category=None, confidence=0.0, suggested_action=''):
+    def __init__(self, error="", category=None, confidence=0.0, suggested_action=""):
         self.error = error
         self.category = category
         self.confidence = confidence
         self.suggested_action = suggested_action
 
+
 class FailureMatcher:
     def __init__(self, config=None):
         self.config = config or {}
+
     def match(self, error):
         return FailureMatch(error=str(error))

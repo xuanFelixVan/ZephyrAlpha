@@ -12,10 +12,7 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.audit_trail.feedback_policy import (
-    AnomalyPattern,
     FeedbackSummary,
     PolicyAction,
     PolicyFeedbackBridge,
@@ -110,10 +107,12 @@ class TestGenerateRecommendations:
 class TestGetSummary:
     def test_summary_reflects_state(self):
         bridge = PolicyFeedbackBridge()
-        bridge.aggregate_patterns([
-            {"signature": "A", "severity": "critical", "agent_id": "a1"},
-            {"signature": "B", "severity": "low", "agent_id": "a2"},
-        ])
+        bridge.aggregate_patterns(
+            [
+                {"signature": "A", "severity": "critical", "agent_id": "a1"},
+                {"signature": "B", "severity": "low", "agent_id": "a2"},
+            ]
+        )
         bridge.generate_recommendations()
         summary = bridge.get_summary()
         assert isinstance(summary, FeedbackSummary)

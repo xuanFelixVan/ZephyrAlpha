@@ -27,6 +27,7 @@ Risk: R125 — Model degradation without rotation causes systemic diagnosis fail
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ModelRotation:
     models: list[str] = field(default_factory=list)

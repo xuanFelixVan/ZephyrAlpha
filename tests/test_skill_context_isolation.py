@@ -11,7 +11,6 @@
 # [TESTS] tests/test_skill_context_isolation.py
 
 import copy
-import pytest
 
 from zephyr.autonomy_core.skill_context_isolation import ContextIsolation
 

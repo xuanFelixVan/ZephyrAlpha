@@ -27,14 +27,14 @@ v0.2.0: 统一 GateResult + GatePipeline 可编排 GateEngine
   - run() 中自动通过 GateResult.from_engine_result() 桥接旧版 Engine 输出
 """
 
-
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any, Callable
+from typing import Any
 
 from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
 
@@ -118,11 +118,13 @@ class GatePipeline:
                     results.append(result)
                 except Exception as exc:
                     step = futures[future]
-                    results.append(GateResult(
-                        gate_id=step.gate_id,
-                        status=GateStatus.ERROR,
-                        reasons=[f"Step raised: {exc}"],
-                    ))
+                    results.append(
+                        GateResult(
+                            gate_id=step.gate_id,
+                            status=GateStatus.ERROR,
+                            reasons=[f"Step raised: {exc}"],
+                        )
+                    )
         return results
 
     def _run_sequential(self, steps: list[GateStep], ctx: GateContext) -> list[GateResult]:
@@ -134,11 +136,13 @@ class GatePipeline:
                     result = GateResult.from_engine_result(result)
                 results.append(result)
             except Exception as exc:
-                results.append(GateResult(
-                    gate_id=step.gate_id,
-                    status=GateStatus.ERROR,
-                    reasons=[f"Step raised: {exc}"],
-                ))
+                results.append(
+                    GateResult(
+                        gate_id=step.gate_id,
+                        status=GateStatus.ERROR,
+                        reasons=[f"Step raised: {exc}"],
+                    )
+                )
         return results
 
     def evaluate(self, results: list[GateResult]) -> GateStatus:
@@ -151,7 +155,7 @@ class GatePipeline:
         return len(self._steps)
 
 
-__all__ = ["GatePipeline", "GateStep", "Combinator"]
+__all__ = ["Combinator", "GatePipeline", "GateStep"]
 
 
 def main() -> None:

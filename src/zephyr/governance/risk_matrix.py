@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -119,7 +118,7 @@ RISK_LEVEL_ORDER: dict[RiskLevel, int] = {
 }
 
 
-def get_risk(category: RiskCategory) -> Optional[RiskItem]:
+def get_risk(category: RiskCategory) -> RiskItem | None:
     return RISK_MATRIX.get(category)
 
 

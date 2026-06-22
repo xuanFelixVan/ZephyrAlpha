@@ -21,8 +21,8 @@
 
 全程使用 mock ChromaDB（不依赖真实向量数据库）。
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import math
 from pathlib import Path
@@ -30,6 +30,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo
 
@@ -501,4 +502,3 @@ class TestRetrievalHitStructure:
         actual_where = call_kwargs["where"]
         assert "status" in actual_where
         assert "$and" not in actual_where
-

@@ -14,16 +14,14 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.intelligence.model_evaluation.reranker import (
-    Reranker,
+    DEFAULT_RERANK_MODEL,
+    DEFAULT_SCORE_THRESHOLD,
+    DEFAULT_TOP_K,
     RerankedHit,
+    Reranker,
     _fallback_rerank,
     rerank_batch,
-    DEFAULT_RERANK_MODEL,
-    DEFAULT_TOP_K,
-    DEFAULT_SCORE_THRESHOLD,
 )
 
 
@@ -135,7 +133,11 @@ class TestFallbackRerank:
 
 class TestRerankBatch:
     def test_basic(self):
-        with patch.object(Reranker, "_ensure_model", lambda self: setattr(self, "_load_attempted", True) or setattr(self, "_model", None)):
+        with patch.object(
+            Reranker,
+            "_ensure_model",
+            lambda self: setattr(self, "_load_attempted", True) or setattr(self, "_model", None),
+        ):
             result = rerank_batch("query", ["doc1", "doc2"], top_k=2)
             assert isinstance(result, list)
             assert len(result) <= 2

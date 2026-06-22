@@ -51,7 +51,6 @@
   14. 承重KE的provenance是否仍有效
 """
 
-
 from __future__ import annotations
 
 import hashlib
@@ -138,15 +137,17 @@ class LoadBearingWall:
                 if not is_lb:
                     continue
 
-                entries.append(LBEntry(
-                    ke_id=fm.get("module_id") or fm.get("ke_id") or ke_file.stem,
-                    file_path=str(ke_file.relative_to(self._root)),
-                    source_hash=source_hash,
-                    ttl=str(fm.get("ttl", "")),
-                    category=str(fm.get("category", "unknown")),
-                    depends_on=fm.get("depends_on", []) if isinstance(fm, dict) else [],
-                    version=int(fm.get("version", 1)) if isinstance(fm, dict) else 1,
-                ))
+                entries.append(
+                    LBEntry(
+                        ke_id=fm.get("module_id") or fm.get("ke_id") or ke_file.stem,
+                        file_path=str(ke_file.relative_to(self._root)),
+                        source_hash=source_hash,
+                        ttl=str(fm.get("ttl", "")),
+                        category=str(fm.get("category", "unknown")),
+                        depends_on=fm.get("depends_on", []) if isinstance(fm, dict) else [],
+                        version=int(fm.get("version", 1)) if isinstance(fm, dict) else 1,
+                    )
+                )
             except Exception as e:
                 logger.warning("Failed to scan load-bearing KE %s: %s", ke_file.name, e)
 
@@ -201,7 +202,7 @@ class LoadBearingWall:
         all_kes = list(self.know_dir.glob("KE-*.md")) if self.know_dir.exists() else []
         cat_count = self._count_categories()
         if cat_count > 0 and len(entries) / max(cat_count, 1) < self._COVERAGE_TARGET:
-            issues.append(f"Coverage ratio {len(entries)/max(cat_count,1):.0%} < {self._COVERAGE_TARGET:.0%} target")
+            issues.append(f"Coverage ratio {len(entries) / max(cat_count, 1):.0%} < {self._COVERAGE_TARGET:.0%} target")
 
         overall = LBStatus.HEALTHY
         if any(i.startswith("CORRUPT:") or i.startswith("MISSING:") for i in issues):
@@ -290,13 +291,14 @@ def _update_frontmatter(content: str, fm: dict) -> str:
         end = chunk.find("---")
         if end > 0:
             new_fm = yaml.dump(fm, allow_unicode=True, default_flow_style=False, sort_keys=False).rstrip()
-            return "---\n" + new_fm + "\n---" + content[3 + end + 3:]
+            return "---\n" + new_fm + "\n---" + content[3 + end + 3 :]
     new_fm = yaml.dump(fm, allow_unicode=True, default_flow_style=False, sort_keys=False).rstrip()
     return "---\n" + new_fm + "\n---\n" + content
 
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="KB Load-Bearing Wall Manager")
     sub = parser.add_subparsers(dest="cmd")
 
@@ -315,12 +317,25 @@ def main() -> None:
     if args.cmd == "scan":
         entries = wall.scan()
         if args.json:
-            print(json.dumps([{
-                "ke_id": e.ke_id, "file_path": e.file_path,
-                "source_hash": e.source_hash, "ttl": e.ttl,
-                "category": e.category, "depends_on": e.depends_on,
-                "version": e.version, "status": e.status.value,
-            } for e in entries], ensure_ascii=False, indent=2))
+            print(
+                json.dumps(
+                    [
+                        {
+                            "ke_id": e.ke_id,
+                            "file_path": e.file_path,
+                            "source_hash": e.source_hash,
+                            "ttl": e.ttl,
+                            "category": e.category,
+                            "depends_on": e.depends_on,
+                            "version": e.version,
+                            "status": e.status.value,
+                        }
+                        for e in entries
+                    ],
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
         else:
             for e in entries:
                 print(f"  {e.ke_id}: {e.category} (v{e.version}, TTL={e.ttl})")
@@ -330,13 +345,19 @@ def main() -> None:
     if args.cmd == "check":
         report = wall.check()
         if args.json:
-            print(json.dumps({
-                "timestamp": report.timestamp,
-                "coverage_ratio": report.coverage_ratio,
-                "overall": report.overall.value,
-                "issues": report.issues,
-                "entry_count": len(report.entries),
-            }, ensure_ascii=False, indent=2))
+            print(
+                json.dumps(
+                    {
+                        "timestamp": report.timestamp,
+                        "coverage_ratio": report.coverage_ratio,
+                        "overall": report.overall.value,
+                        "issues": report.issues,
+                        "entry_count": len(report.entries),
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
         else:
             print(f"Load-Bearing Wall Check: {report.overall.value.upper()}")
             print(f"  Entries:       {len(report.entries)}")

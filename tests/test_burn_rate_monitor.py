@@ -12,20 +12,19 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 
 import pytest
 
+from zephyr.governance.budget_models import (
+    BudgetAlert,
+    BudgetDimension,
+    BudgetPolicy,
+)
 from zephyr.governance.burn_rate_monitor import (
     BurnRateMonitor,
     BurnSeverity,
     BurnWindow,
-)
-from zephyr.governance.budget_models import (
-    BudgetAlert,
-    BudgetDimension,
-    BudgetLevel,
-    BudgetPolicy,
 )
 
 
@@ -74,7 +73,7 @@ class TestBurnRateMonitor:
 
     def test_record_consumption_with_timestamp(self):
         brm = BurnRateMonitor()
-        ts = datetime.now(timezone.utc)
+        ts = datetime.now(UTC)
         brm.record_consumption(50.0, timestamp=ts)
         summary = brm.get_burn_summary()
         total_samples = sum(v["samples"] for v in summary.values())

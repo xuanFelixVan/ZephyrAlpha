@@ -1,7 +1,8 @@
-import yaml
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
+
+import yaml
 
 REGISTRY = "data/asset_index/migration-registry.yaml"
 PROJECT_ROOT = "D:/ZephyrAlpha"
@@ -12,6 +13,7 @@ SCAN_DIRS = [
     ("tests/", ".py"),
     ("config/", ".yaml"),
 ]
+
 
 def scan_disk_files():
     disk_files = set()
@@ -37,8 +39,9 @@ def scan_disk_files():
         for future in futures:
             disk_files.update(future.result())
 
-    print(f"  Scanned disk: {len(disk_files)} files in {time.perf_counter()-t0:.2f}s")
+    print(f"  Scanned disk: {len(disk_files)} files in {time.perf_counter() - t0:.2f}s")
     return disk_files
+
 
 def check_coverage():
     print("=== STEP 2C Loop Check: Disk vs Registry ===")
@@ -46,9 +49,9 @@ def check_coverage():
 
     print("[1/3] Loading migration registry...")
     t0 = time.perf_counter()
-    with open(REGISTRY, "r", encoding="utf-8") as f:
+    with open(REGISTRY, encoding="utf-8") as f:
         data = yaml.safe_load(f)
-    print(f"  Loaded: {time.perf_counter()-t0:.2f}s")
+    print(f"  Loaded: {time.perf_counter() - t0:.2f}s")
 
     registry_paths = set()
     for entry in data.get("entries", []):
@@ -93,7 +96,7 @@ def check_coverage():
         for prefix, count in sorted(by_prefix.items(), key=lambda x: -x[1]):
             print(f"    {prefix}: {count}")
 
-    print(f"\n=== RESULT ===")
+    print("\n=== RESULT ===")
     print(f"  Disk files: {len(disk_files)}")
     print(f"  Registry paths: {len(registry_paths)}")
     print(f"  Missing from registry: {len(on_disk_not_in_registry)}")
@@ -101,6 +104,7 @@ def check_coverage():
     print(f"  Coverage: {(len(disk_files) - len(on_disk_not_in_registry)) / len(disk_files) * 100:.1f}%")
 
     return len(on_disk_not_in_registry)
+
 
 if __name__ == "__main__":
     check_coverage()

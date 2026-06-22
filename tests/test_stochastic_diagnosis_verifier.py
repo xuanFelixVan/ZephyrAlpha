@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_stochastic_diagnosis_verifier.py
 
-import pytest
 
 from zephyr.ops.verifiers.stochastic_diagnosis_verifier import (
     StochasticDiagnosisVerifier,

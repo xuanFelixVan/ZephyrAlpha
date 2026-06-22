@@ -9,8 +9,6 @@
 Unit tests for post_process.py
 """
 
-import pytest
-
 from zephyr.governance.behavioral_admission.post_process import (
     HookResult,
     HookStrategy,
@@ -37,15 +35,11 @@ class TestHookResult:
 
 class TestPipelineResult:
     def test_all_passed(self):
-        result = PipelineResult(
-            hook_results=[], total_hooks=2, passed=2, failed=0
-        )
+        result = PipelineResult(hook_results=[], total_hooks=2, passed=2, failed=0)
         assert result.all_passed is True
 
     def test_not_all_passed(self):
-        result = PipelineResult(
-            hook_results=[], total_hooks=3, passed=2, failed=1
-        )
+        result = PipelineResult(hook_results=[], total_hooks=3, passed=2, failed=1)
         assert result.all_passed is False
 
     def test_empty(self):
@@ -91,9 +85,7 @@ class TestPostProcessPipeline:
 
         pipeline = PostProcessPipeline()
         pipeline.register_hook("bad", failing, strategy=HookStrategy.ABORT)
-        pipeline.register_hook(
-            "never", lambda **kw: HookResult("never", True, ""), strategy=HookStrategy.WARN
-        )
+        pipeline.register_hook("never", lambda **kw: HookResult("never", True, ""), strategy=HookStrategy.WARN)
 
         result = pipeline.run()
         assert result.failed == 1

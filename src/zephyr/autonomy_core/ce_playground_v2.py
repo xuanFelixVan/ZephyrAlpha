@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class PlaygroundV2Result:
     task: str
@@ -32,8 +33,10 @@ class PlaygroundV2Result:
     decision_trace: list[str] = field(default_factory=list)
     excluded_ke_ids: list[str] = field(default_factory=list)
 
+
 class PlaygroundV2:
     """展示完整决策链 + per-KE rationale → 支持排除某 KE 后重建."""
+
     def dry_run(self, task: str) -> PlaygroundV2Result:
         return PlaygroundV2Result(task=task, selected_ke_ids=["KE-001", "KE-002"])
 

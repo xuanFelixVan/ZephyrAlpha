@@ -23,7 +23,6 @@ from __future__ import annotations
 
 """数据库 Schema 演化契约（CT-SCHEMA-MIGRATE）——向后兼容迁移+回滚脚本。"""
 
-from zephyr.shared.events.event_bus_upgrade import EventBusUpgrader as _EventBusUpgrader
 
 class SchemaMigration:
     def __init__(self):

@@ -43,7 +43,6 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 import functools
 import os
 import warnings
@@ -51,11 +50,11 @@ from collections.abc import Callable
 from typing import Any
 
 __all__ = [
-    "deprecated",
-    "DeprecationMode",
-    "set_deprecation_mode",
-    "get_deprecation_mode",
     "DeprecatedAPIError",
+    "DeprecationMode",
+    "deprecated",
+    "get_deprecation_mode",
+    "set_deprecation_mode",
 ]
 
 

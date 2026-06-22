@@ -230,9 +230,9 @@ v3.0: AI Agent ──→ DualDBRouter.read() ──→ SQLite优先 → PG fallb
 
 | # | 文件 | module_id | 版本 | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | latest | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | frontmatter模板 |
+| 1 | 元数据注册表 | PS-STD-001 | latest | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | frontmatter模板 |
 | 2 | 目录结构标准 | GOV-DOC-002 | latest | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
-| 3 | 蓝图体系架构标准 | PS-STD-005 | 1.0.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` | 三级金字塔 + belongs_to |
+| 3 | 蓝图体系架构标准 | PS-STD-005 | 1.0.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` | 三级金字塔 + belongs_to |
 | 4 | 模块ID注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 | 5 | DB YAML SSoT | — | 2.2.0 | `D:\ZephyrAlpha\architecture-model\layers\b_db.yaml` | DB YAML真源 |
 | 6 | 子蓝图 012A | MOD-INF-012A | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub-blueprints\MOD-INF-012A-blueprint.md` | Core 已实现细节 |

@@ -3,7 +3,7 @@
 # [MODULE] zephyr.infrastructure.shared_core.task_types
 # [INVARIANTS] TaskCard = Task (PURE ALIAS — SSoT: governance.rule_enforcement.task_types.Task); 本模块禁止添加字段
 # [MODIFY-GUARD] governance.rule_enforcement.task_types (SSoT)
-# [CONSUMERS] zephyr.data.persistence; zephyr.infrastructure; zephyr.orchestration (replaces shared_services.models imports)
+# [CONSUMERS] zephyr.data.persistence; zephyr.infrastructure; zephyr.trading (replaces shared_services.models imports)
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
@@ -23,13 +23,13 @@ D-DATA、D-INFRA、D-ORCH 均从此模块导入，消除跨域直接依赖。
 from __future__ import annotations
 
 __all__ = [
-    "Task",
-    "TaskCard",
-    "TaskStatus",
-    "TaskNamespace",
-    "GateLevel",
-    "TaskAuditFinding",
     "ExecutionModel",
+    "GateLevel",
+    "Task",
+    "TaskAuditFinding",
+    "TaskCard",
+    "TaskNamespace",
+    "TaskStatus",
     "normalize_execution_model",
 ]
 
@@ -50,12 +50,14 @@ _LAZY_IMPORTS = {
 def __getattr__(name: str):
     if name == "TaskCard":
         import importlib
+
         module = importlib.import_module(_SOURCE_MODULE)
         value = module.Task
         globals()["TaskCard"] = value
         return value
     if name in _LAZY_IMPORTS:
         import importlib
+
         module = importlib.import_module(_LAZY_IMPORTS[name])
         value = getattr(module, name)
         globals()[name] = value

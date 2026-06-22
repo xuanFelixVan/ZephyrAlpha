@@ -27,6 +27,7 @@ Risk: R133 — Prompt injection through diagnosis evidence compromises LLM outpu
 
 from dataclasses import dataclass
 
+
 @dataclass
 class PromptSanitizer:
     def sanitize(self, text: str) -> str:

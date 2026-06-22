@@ -29,14 +29,13 @@ time_budget_ratio: 租金值越高越容易休眠
 safe_operate: admin可设置severe级别限制
 对标 blueprint.md §6.32。
 """
+
 from __future__ import annotations
 
 import json
 import os
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
-from pathlib import Path
-from typing import Optional
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -45,14 +44,14 @@ class OwnerStatus:
     last_active: datetime
     is_present: bool = True
     absent_days: int = 0
-    escalated_to: Optional[str] = None
+    escalated_to: str | None = None
 
 
 @dataclass
 class EscalationEntry:
     owner_id: str
     escalated_to: str
-    escalated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    escalated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     reason: str = ""
 
 
@@ -75,7 +74,7 @@ def _load_absence_state() -> dict[str, object]:
     if not path or not os.path.exists(path):
         return {}
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.loads(f.read())
     except Exception:
         return {}
@@ -102,7 +101,7 @@ def record_activity(owner_id: str) -> None:
     state = _load_absence_state()
     state["owners"] = state.get("owners", {})
     state["owners"][owner_id] = {
-        "last_active": datetime.now(timezone.utc).isoformat(),
+        "last_active": datetime.now(UTC).isoformat(),
     }
     _save_absence_state(state)
 
@@ -116,7 +115,7 @@ def check_absence(owner_id: str) -> OwnerStatus:
     if not last_active_str:
         return OwnerStatus(
             owner_id=owner_id,
-            last_active=datetime.now(timezone.utc),
+            last_active=datetime.now(UTC),
         )
 
     try:
@@ -124,10 +123,10 @@ def check_absence(owner_id: str) -> OwnerStatus:
     except Exception:
         return OwnerStatus(
             owner_id=owner_id,
-            last_active=datetime.now(timezone.utc),
+            last_active=datetime.now(UTC),
         )
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     absent_days = (now - last_active).days
 
     status = OwnerStatus(
@@ -140,7 +139,7 @@ def check_absence(owner_id: str) -> OwnerStatus:
     return status
 
 
-def escalate_if_absent(status: OwnerStatus) -> Optional[EscalationEntry]:
+def escalate_if_absent(status: OwnerStatus) -> EscalationEntry | None:
     if status.is_present:
         return None
 
@@ -154,16 +153,12 @@ def escalate_if_absent(status: OwnerStatus) -> Optional[EscalationEntry]:
     return EscalationEntry(
         owner_id=status.owner_id,
         escalated_to=next_escalation,
-        reason=(
-            f"Owner {status.owner_id} absent "
-            f"{status.absent_days} days (>"
-            f"{CONFIG.threshold_days}d threshold)"
-        ),
+        reason=(f"Owner {status.owner_id} absent {status.absent_days} days (>{CONFIG.threshold_days}d threshold)"),
     )
 
 
 def detect_owner_return(owner_id: str, last_activity: datetime) -> bool:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return (now - last_activity).days < 1
 
 
@@ -179,7 +174,7 @@ def set_severity_limit(
     state.setdefault("severity_limits", {})[owner_id] = {
         "max_severity": max_severity,
         "set_by": "admin",
-        "set_at": datetime.now(timezone.utc).isoformat(),
+        "set_at": datetime.now(UTC).isoformat(),
     }
     _save_absence_state(state)
     return True

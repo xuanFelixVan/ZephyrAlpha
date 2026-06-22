@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.secret_rotation_aware import (
     ROTATION_URLS,
     SECRET_PATTERNS,

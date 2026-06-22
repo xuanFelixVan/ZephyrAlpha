@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 mod = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.layer3_coordination.semantic_diff",
     reason="semantic_diff module not available",

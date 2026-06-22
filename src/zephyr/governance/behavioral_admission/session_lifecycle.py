@@ -20,7 +20,7 @@ import threading
 import time
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -179,7 +179,7 @@ _DELETE_SQL = "DELETE FROM session_state WHERE session_id = ?"
 class SessionLifecycle:
     def __init__(
         self,
-        db_path: Optional[str] = None,
+        db_path: str | None = None,
         idle_timeout_s: int = IDLE_TIMEOUT_S,
         closed_expiry_s: int = CLOSED_EXPIRY_S,
         gc_interval_s: int = GC_INTERVAL_S,
@@ -213,13 +213,12 @@ class SessionLifecycle:
                 return self._sessions[session_id]
 
             active_count = sum(
-                1 for s in self._sessions.values()
+                1
+                for s in self._sessions.values()
                 if s.state in (SessionState.ACTIVE, SessionState.RESPONDING, SessionState.DEGRADED)
             )
             if active_count >= self._max_active_sessions:
-                raise RuntimeError(
-                    f"max_active_sessions({self._max_active_sessions}) reached"
-                )
+                raise RuntimeError(f"max_active_sessions({self._max_active_sessions}) reached")
 
             now = time.time()
             record = SessionStateRecord(
@@ -231,12 +230,14 @@ class SessionLifecycle:
                 created_at=now,
                 last_activity_at=now,
                 last_transition_at=now,
-                transition_history=[{
-                    "from": "NONE",
-                    "to": SessionState.ACTIVE.value,
-                    "trigger": SessionTransition.ACTIVATE.value,
-                    "timestamp": now,
-                }],
+                transition_history=[
+                    {
+                        "from": "NONE",
+                        "to": SessionState.ACTIVE.value,
+                        "trigger": SessionTransition.ACTIVATE.value,
+                        "timestamp": now,
+                    }
+                ],
             )
             self._sessions[session_id] = record
             self._persist_record(record)
@@ -251,9 +252,7 @@ class SessionLifecycle:
             current = record.state
             allowed = SESSION_TRANSITIONS.get(current, {})
             if trigger not in allowed:
-                raise ValueError(
-                    f"invalid transition: {current.value} + {trigger.value} not allowed"
-                )
+                raise ValueError(f"invalid transition: {current.value} + {trigger.value} not allowed")
 
             new_state = allowed[trigger]
             now = time.time()
@@ -279,7 +278,7 @@ class SessionLifecycle:
             self._persist_record(updated)
             return new_state
 
-    def get_state(self, session_id: str) -> Optional[SessionStateRecord]:
+    def get_state(self, session_id: str) -> SessionStateRecord | None:
         with self._lock:
             return self._sessions.get(session_id)
 
@@ -429,7 +428,8 @@ class SessionLifecycle:
     def get_active_sessions(self) -> list[SessionStateRecord]:
         with self._lock:
             return [
-                r for r in self._sessions.values()
+                r
+                for r in self._sessions.values()
                 if r.state in (SessionState.ACTIVE, SessionState.IDLE, SessionState.RESPONDING, SessionState.DEGRADED)
             ]
 
@@ -447,7 +447,7 @@ class SessionLifecycle:
             last_gc_duration_ms=round(self._last_gc_duration_ms, 2),
         )
 
-    def restore_from_db(self, session_id: str) -> Optional[SessionStateRecord]:
+    def restore_from_db(self, session_id: str) -> SessionStateRecord | None:
         with self._lock:
             if session_id in self._sessions:
                 return self._sessions[session_id]
@@ -460,13 +460,9 @@ class SessionLifecycle:
     def health_check(self) -> dict[str, Any]:
         with self._lock:
             active = sum(
-                1 for s in self._sessions.values()
-                if s.state in (SessionState.ACTIVE, SessionState.RESPONDING)
+                1 for s in self._sessions.values() if s.state in (SessionState.ACTIVE, SessionState.RESPONDING)
             )
-            idle = sum(
-                1 for s in self._sessions.values()
-                if s.state == SessionState.IDLE
-            )
+            idle = sum(1 for s in self._sessions.values() if s.state == SessionState.IDLE)
             total = len(self._sessions)
             return {
                 "status": "healthy" if active < self._max_active_sessions else "at_capacity",
@@ -508,7 +504,7 @@ class SessionLifecycle:
         except Exception as exc:
             logger.error("Failed to persist session %s: %s", record.session_id, exc)
 
-    def _load_from_db(self, session_id: str) -> Optional[SessionStateRecord]:
+    def _load_from_db(self, session_id: str) -> SessionStateRecord | None:
         try:
             cursor = self._db_conn.execute(_SELECT_SQL, (session_id,))
             row = cursor.fetchone()

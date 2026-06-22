@@ -9,22 +9,18 @@
 """Test suite: rollback_core (RollbackExecutor + KillSwitchManager)"""
 
 import json
-import os
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.ops.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
 from zephyr.governance.rollback_executor import (
     DiscardDecision,
-    DiscardResult,
     PreflightResult,
     RollbackExecutor,
     RollbackOp,
-    RollbackResult,
 )
-from zephyr.governance.rollback_lock import LockAcquireResult, LockPriority, RollbackLock
+from zephyr.governance.rollback_lock import LockAcquireResult, RollbackLock
+from zephyr.ops.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
 
 
 @pytest.fixture
@@ -47,12 +43,8 @@ def mock_dumper():
 @pytest.fixture
 def mock_lock():
     lock = MagicMock(spec=RollbackLock)
-    lock.acquire.return_value = LockAcquireResult(
-        acquired=True, lock_id="RBLK-TEST", wait_time_ms=0
-    )
-    lock.release.return_value = LockAcquireResult(
-        acquired=True, lock_id="RBLK-TEST", wait_time_ms=0
-    )
+    lock.acquire.return_value = LockAcquireResult(acquired=True, lock_id="RBLK-TEST", wait_time_ms=0)
+    lock.release.return_value = LockAcquireResult(acquired=True, lock_id="RBLK-TEST", wait_time_ms=0)
     return lock
 
 
@@ -68,8 +60,10 @@ def executor(tmp_project, mock_dumper, mock_lock):
 
 class TestRollbackExecutorInit:
     def test_default_instantiation(self, tmp_project):
-        with patch("zephyr.infrastructure.rollback.rollback_executor.SqliteDumper"), \
-             patch("zephyr.infrastructure.rollback.rollback_executor.RollbackLock"):
+        with (
+            patch("zephyr.infrastructure.rollback.rollback_executor.SqliteDumper"),
+            patch("zephyr.infrastructure.rollback.rollback_executor.RollbackLock"),
+        ):
             ex = RollbackExecutor(project_root=tmp_project)
             assert ex._project_root == tmp_project
             assert ex._owner_session_id is None
@@ -158,6 +152,7 @@ class TestPreflightCheck:
             if args == ["rev-parse", "--abbrev-ref", "HEAD"]:
                 return "main"
             return ""
+
         executor._run_git = MagicMock(side_effect=fake_git)
         result = executor.preflight_check()
         assert result.passed is False
@@ -169,6 +164,7 @@ class TestPreflightCheck:
             if args == ["rev-parse", "--abbrev-ref", "HEAD"]:
                 return "HEAD"
             return ""
+
         executor._run_git = MagicMock(side_effect=fake_git)
         result = executor.preflight_check()
         assert result.not_detached_head is False
@@ -185,6 +181,7 @@ class TestPreview:
             if args[:2] == ["log", "--oneline"]:
                 return ""
             return ""
+
         executor._run_git = MagicMock(side_effect=fake_git)
         result = executor.preview("abc123")
         assert len(result.changed_files) == 2
@@ -199,6 +196,7 @@ class TestPreview:
             if args[:2] == ["log", "--oneline"]:
                 return ""
             return ""
+
         executor._run_git = MagicMock(side_effect=fake_git)
         result = executor.preview("abc123")
         assert result.conflict_risk == "high"
@@ -212,6 +210,7 @@ class TestPreview:
             if args[:2] == ["log", "--oneline"]:
                 return ""
             return ""
+
         executor._run_git = MagicMock(side_effect=fake_git)
         result = executor.preview("abc123")
         assert result.conflict_risk == "medium"
@@ -238,9 +237,7 @@ class TestDiscardChanges:
         assert result.success is False
 
     def test_blocked_by_owner(self, executor):
-        executor._detect_owner_session_in_files = MagicMock(
-            return_value=["src/owned.py"]
-        )
+        executor._detect_owner_session_in_files = MagicMock(return_value=["src/owned.py"])
         result = executor.discard_changes(["src/owned.py"])
         assert result.decision == DiscardDecision.BLOCKED_BY_OWNER
         assert result.success is False
@@ -255,10 +252,9 @@ class TestDiscardChanges:
             if args[:2] == ["checkout", "--"]:
                 return ""
             return ""
+
         executor._run_git = MagicMock(side_effect=fake_git)
-        executor._detect_owner_session_in_files = MagicMock(
-            return_value=["src/a.py"]
-        )
+        executor._detect_owner_session_in_files = MagicMock(return_value=["src/a.py"])
         executor._write_audit_log = MagicMock()
         result = executor.discard_changes(["src/a.py"], force=True)
         assert result.success is True
@@ -273,21 +269,15 @@ class TestHardReset:
 
 class TestForwardFixEvaluate:
     def test_low_risk_few_files(self, executor):
-        executor.preview = MagicMock(
-            return_value=MagicMock(conflict_risk="low", changed_files=["a.py", "b.py"])
-        )
+        executor.preview = MagicMock(return_value=MagicMock(conflict_risk="low", changed_files=["a.py", "b.py"]))
         assert executor.forward_fix_evaluate("abc123") is True
 
     def test_high_risk(self, executor):
-        executor.preview = MagicMock(
-            return_value=MagicMock(conflict_risk="high", changed_files=["a.py"])
-        )
+        executor.preview = MagicMock(return_value=MagicMock(conflict_risk="high", changed_files=["a.py"]))
         assert executor.forward_fix_evaluate("abc123") is False
 
     def test_many_files(self, executor):
-        executor.preview = MagicMock(
-            return_value=MagicMock(conflict_risk="low", changed_files=["a", "b", "c", "d"])
-        )
+        executor.preview = MagicMock(return_value=MagicMock(conflict_risk="low", changed_files=["a", "b", "c", "d"]))
         assert executor.forward_fix_evaluate("abc123") is False
 
 
@@ -297,6 +287,7 @@ class TestDependencyImpactAnalysis:
             if args[:2] == ["diff", "--name-only"]:
                 return "src/zephyr/shared/utils.py\nsrc/zephyr/budget/main.py\nREADME.md\n"
             return ""
+
         executor._run_git = MagicMock(side_effect=fake_git)
         result = executor.dependency_impact_analysis("abc123")
         assert "shared" in result["impacted_modules"]
@@ -381,9 +372,7 @@ class TestKillSwitchActivate:
             kill_switch.activate(KillLevel.L3_GLOBAL, "all", "emergency")
 
     def test_l3_with_token(self, kill_switch):
-        entry = kill_switch.activate(
-            KillLevel.L3_GLOBAL, "all", "emergency", token="BREAK_GLASS"
-        )
+        entry = kill_switch.activate(KillLevel.L3_GLOBAL, "all", "emergency", token="BREAK_GLASS")
         assert entry.level == KillLevel.L3_GLOBAL
         assert entry.token_used == "BREAK_GLASS"
 

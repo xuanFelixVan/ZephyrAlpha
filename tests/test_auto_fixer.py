@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.auto_fixer import (
     AutoFixer,
     FixLevel,
@@ -102,7 +100,9 @@ class TestAutoFixer:
 
     def test_fix_success(self):
         af = AutoFixer()
-        result = af.fix(source="a.py", target="b.py", similarity=0.95, caller_count=5, blast_radius=30, is_grandfathered=False)
+        result = af.fix(
+            source="a.py", target="b.py", similarity=0.95, caller_count=5, blast_radius=30, is_grandfathered=False
+        )
         assert result["fixed"] is True
         assert result["source"] == "a.py"
         assert result["target"] == "b.py"
@@ -110,7 +110,9 @@ class TestAutoFixer:
 
     def test_fix_blocked(self):
         af = AutoFixer()
-        result = af.fix(source="a.py", target="b.py", similarity=0.95, caller_count=100, blast_radius=30, is_grandfathered=False)
+        result = af.fix(
+            source="a.py", target="b.py", similarity=0.95, caller_count=100, blast_radius=30, is_grandfathered=False
+        )
         assert result["fixed"] is False
         assert result["reason"] == "safety_constraint_blocked"
         assert af.fix_count == 0
@@ -123,5 +125,7 @@ class TestAutoFixer:
 
     def test_fix_returns_similarity(self):
         af = AutoFixer()
-        result = af.fix(source="a.py", target="b.py", similarity=0.88, caller_count=5, blast_radius=30, is_grandfathered=False)
+        result = af.fix(
+            source="a.py", target="b.py", similarity=0.88, caller_count=5, blast_radius=30, is_grandfathered=False
+        )
         assert result["similarity"] == 0.88

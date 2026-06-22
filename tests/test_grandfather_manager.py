@@ -9,11 +9,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
-from pathlib import Path
 from zephyr.governance.grandfather_manager import (
-    GrandfatherManager, GrandfatherEntry,
+    GrandfatherManager,
 )
+
 
 class TestGrandfatherManager:
     def test_instantiation_default(self):

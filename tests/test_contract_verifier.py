@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.contract_verifier import ContractVerifier, ContractStatus
+    from zephyr.security.access_control.contract_verifier import ContractStatus, ContractVerifier
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -26,7 +28,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestContractStatus:
-
     def test_defaults(self):
         cs = ContractStatus(contract_id="G-CT-001")
         assert cs.compliant is False
@@ -41,7 +42,6 @@ class TestContractStatus:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestContractVerifier:
-
     def test_verify_gct001_compliant(self):
         cv = ContractVerifier()
 

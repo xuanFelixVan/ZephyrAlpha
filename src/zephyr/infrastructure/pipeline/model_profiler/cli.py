@@ -35,14 +35,12 @@ model-profiler.cli — 模型性能检测命令行入口
 from __future__ import annotations
 
 import importlib
-import json
 import sys
-from pathlib import Path
 
 
 def cmd_discover() -> None:
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.model_discovery")
-    ModelDiscovery = getattr(_mod, "ModelDiscovery")
+    ModelDiscovery = _mod.ModelDiscovery
 
     d = ModelDiscovery()
     if not d.ollama_available():
@@ -56,14 +54,14 @@ def cmd_discover() -> None:
 
     print(f"\n共发现 {len(models)} 个 Ollama 模型:\n")
     print(f"  {'模型名':<30} {'大小':>8} {'参数量':>12} {'量化':>10}")
-    print(f"  {'-'*30} {'-'*8} {'-'*12} {'-'*10}")
+    print(f"  {'-' * 30} {'-' * 8} {'-' * 12} {'-' * 10}")
     for m in sorted(models, key=lambda x: x.size_bytes, reverse=True):
         print(f"  {m.name:<30} {m.size_gb:>7.1f}GB {m.parameter_size:>12} {m.quantization_level:>10}")
 
 
 def cmd_quick(model_name: str) -> None:
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.profiler")
-    ModelProfiler = getattr(_mod, "ModelProfiler")
+    ModelProfiler = _mod.ModelProfiler
 
     profiler = ModelProfiler()
     profile = profiler.quick_profile(model_name)
@@ -73,7 +71,7 @@ def cmd_quick(model_name: str) -> None:
         return
 
     print(f"\n  {model_name} — 快速评测")
-    print(f"  {'─'*50}")
+    print(f"  {'─' * 50}")
     print(f"  综合评分: {profile.average_score:.3f}")
     print(f"  通过率:   {profile.passed_tests}/{profile.total_tests}")
     print(f"  延迟 P50: {profile.latency_p50_ms:.0f}ms")
@@ -87,7 +85,7 @@ def cmd_quick(model_name: str) -> None:
 
 def cmd_benchmark() -> None:
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.profiler")
-    ModelProfiler = getattr(_mod, "ModelProfiler")
+    ModelProfiler = _mod.ModelProfiler
 
     profiler = ModelProfiler()
     print("\n正在运行全量 model benchmark...\n")
@@ -97,7 +95,7 @@ def cmd_benchmark() -> None:
 
 def cmd_best() -> None:
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.profiler")
-    ModelProfiler = getattr(_mod, "ModelProfiler")
+    ModelProfiler = _mod.ModelProfiler
 
     profiler = ModelProfiler()
     results = profiler.profile_ollama_only()
@@ -129,8 +127,8 @@ def cmd_best() -> None:
 
 def cmd_drift(model_name: str) -> None:
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.results_writer")
-    detect_drift = getattr(_mod, "detect_drift")
-    load_benchmark_history = getattr(_mod, "load_benchmark_history")
+    detect_drift = _mod.detect_drift
+    load_benchmark_history = _mod.load_benchmark_history
 
     history = load_benchmark_history(model_name)
     if len(history) < 2:
@@ -140,27 +138,27 @@ def cmd_drift(model_name: str) -> None:
 
     report = detect_drift(history)
     print(f"\n  {model_name} — 漂移检测")
-    print(f"  {'─'*50}")
+    print(f"  {'─' * 50}")
     print(f"  最新: {report.get('latest_date', '?')}")
     print(f"  上次: {report.get('previous_date', '?')}")
     print(f"  漂移: {'⚠  检测到漂移!' if report.get('drift_detected') else '✓ 无显著漂移'}")
     details = report.get("details", {})
     if details:
         print(f"  分数变化: {details.get('score_delta', 0):+.4f}")
-        print(f"  延迟变化: {details.get('latency_delta_ms', 0):+.1f}ms ({details.get('latency_increase_pct', 0):+.1f}%)")
+        print(
+            f"  延迟变化: {details.get('latency_delta_ms', 0):+.1f}ms ({details.get('latency_increase_pct', 0):+.1f}%)"
+        )
         print(f"  吞吐变化: {details.get('throughput_delta_tok_per_sec', 0):+.1f} tok/s")
         print(f"  幻觉变化: {details.get('hallucination_rate_delta', 0):+.4f}")
         cat_drift = details.get("category_drift", {})
         if cat_drift:
-            print(f"  分维度:")
+            print("  分维度:")
             for cat, delta in cat_drift.items():
                 print(f"    {cat}: {delta:+.4f}")
     print()
 
 
 def cmd_history() -> None:
-    from pathlib import Path
-
     base = Path("data/model_profiles")
     if not base.exists():
         print("暂无 benchmark 历史记录。")

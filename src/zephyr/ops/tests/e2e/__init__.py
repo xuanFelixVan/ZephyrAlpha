@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """feedback-loop.tests.e2e — auto-generated package init."""
+
 from . import integration_test_pipeline
 
-__all__ = ['integration_test_pipeline']
-
+__all__ = ["integration_test_pipeline"]

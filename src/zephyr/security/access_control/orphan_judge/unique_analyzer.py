@@ -15,7 +15,6 @@
 AST节点比对，检测文件中的独特代码元素(类/函数/常量定义等)。
 """
 
-
 from __future__ import annotations
 
 import ast
@@ -118,11 +117,11 @@ class UniqueValueAnalyzer:
     def _extract_defined_names(self, tree: ast.AST) -> set[str]:
         names: set[str] = set()
         for node in ast.walk(tree):
-            if isinstance(node, ast.FunctionDef):
-                names.add(node.name)
-            elif isinstance(node, ast.AsyncFunctionDef):
-                names.add(node.name)
-            elif isinstance(node, ast.ClassDef):
+            if (
+                isinstance(node, ast.FunctionDef)
+                or isinstance(node, ast.AsyncFunctionDef)
+                or isinstance(node, ast.ClassDef)
+            ):
                 names.add(node.name)
             elif isinstance(node, ast.Assign):
                 for target in node.targets:

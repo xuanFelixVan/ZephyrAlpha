@@ -12,14 +12,11 @@
 
 from __future__ import annotations
 
-import os
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
-from zephyr.security.access_control.auto_fix_engine_03.models import FixStatus, FixLevel, FixConfidence
+from zephyr.security.access_control.auto_fix_engine_03.models import FixLevel, FixStatus
 from zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner import ZombieCleaner
 
 
@@ -56,7 +53,9 @@ class TestZombieCleanerScan:
             yaml_file.write_text(yaml_content, encoding="utf-8")
             with patch.object(Path, "rglob") as mock_rglob:
                 mock_rglob.side_effect = lambda pattern: [yaml_file] if pattern == "*.yaml" else []
-                with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+                with patch(
+                    "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                ):
                     findings = cleaner.scan()
             assert any(f["type"] == "zombie_reference" for f in findings)
 
@@ -68,7 +67,9 @@ class TestZombieCleanerScan:
             py_file.write_text(py_content, encoding="utf-8")
             with patch.object(Path, "rglob") as mock_rglob:
                 mock_rglob.side_effect = lambda pattern: [py_file] if pattern == "*.py" else []
-                with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+                with patch(
+                    "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                ):
                     findings = cleaner.scan()
             assert any(f["type"] == "zombie_import" for f in findings)
 
@@ -80,7 +81,9 @@ class TestZombieCleanerScan:
             py_file.write_text(py_content, encoding="utf-8")
             with patch.object(Path, "rglob") as mock_rglob:
                 mock_rglob.side_effect = lambda pattern: [py_file] if pattern == "*.py" else []
-                with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+                with patch(
+                    "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                ):
                     findings = cleaner.scan()
             zombie_imports = [f for f in findings if f["type"] == "zombie_import"]
             assert len(zombie_imports) == 0
@@ -106,7 +109,9 @@ class TestZombieCleanerFix:
             yaml_content = 'name: test\npath: "nonexistent/module.py"\nother: value\n'
             yaml_file = Path(tmpdir) / "test.yaml"
             yaml_file.write_text(yaml_content, encoding="utf-8")
-            with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+            with patch(
+                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+            ):
                 action = cleaner.fix(str(yaml_file), dry_run=True)
             assert action.status == FixStatus.COMPLETED
             assert "nonexistent/module.py" not in action.after
@@ -118,17 +123,21 @@ class TestZombieCleanerFix:
             yaml_file = Path(tmpdir) / "test.yaml"
             yaml_file.write_text(yaml_content, encoding="utf-8")
             original = yaml_file.read_text(encoding="utf-8")
-            with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+            with patch(
+                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+            ):
                 cleaner.fix(str(yaml_file), dry_run=True)
             assert yaml_file.read_text(encoding="utf-8") == original
 
     def test_fix_completes_when_no_zombies_found(self):
         cleaner = ZombieCleaner()
         with tempfile.TemporaryDirectory() as tmpdir:
-            yaml_content = 'name: test\n'
+            yaml_content = "name: test\n"
             yaml_file = Path(tmpdir) / "test.yaml"
             yaml_file.write_text(yaml_content, encoding="utf-8")
-            with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+            with patch(
+                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+            ):
                 action = cleaner.fix(str(yaml_file))
             assert action.status == FixStatus.COMPLETED
 
@@ -138,7 +147,9 @@ class TestZombieCleanerFix:
             py_content = 'config_path = "nonexistent/config.yaml"\nprint("hello")\n'
             py_file = Path(tmpdir) / "test.py"
             py_file.write_text(py_content, encoding="utf-8")
-            with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+            with patch(
+                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+            ):
                 action = cleaner.fix(str(py_file), dry_run=True)
             assert action.status == FixStatus.COMPLETED
 
@@ -156,7 +167,9 @@ class TestZombieCleanerValidate:
             py_content = 'print("hello")\n'
             py_file = Path(tmpdir) / "test.py"
             py_file.write_text(py_content, encoding="utf-8")
-            with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+            with patch(
+                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+            ):
                 result = cleaner.validate(str(py_file))
             assert result.valid is True
 
@@ -166,7 +179,9 @@ class TestZombieCleanerValidate:
             py_content = 'ref = "nonexistent/module.py"\n'
             py_file = Path(tmpdir) / "test.py"
             py_file.write_text(py_content, encoding="utf-8")
-            with patch("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir):
+            with patch(
+                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+            ):
                 result = cleaner.validate(str(py_file))
             assert result.valid is False
 

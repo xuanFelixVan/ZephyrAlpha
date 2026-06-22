@@ -13,7 +13,7 @@ category: module_blueprint
 **对标**：seL4 Microkernel Formal Verification + Google Binary Transparency for Borg + AWS Nitro Enclave Immutable Measurement
 
 ```python
-@dataclass 
+@dataclass
 class ImmutableCoreModule:
     name: str          # "safety_gates"|"deterministic_replay"|"crypto_trust_root"
     files: list[str]   # ["self_modification_audit.py", "external_verifier.py", ...]
@@ -23,7 +23,7 @@ class ImmutableCoreModule:
 
 class ImmutableCoreGuard:
     IMMUTABLE_MODULES: list[ImmutableCoreModule] = [
-        ImmutableCoreModule("safety_gates", 
+        ImmutableCoreModule("safety_gates",
             ["external_verifier.py", "self_modification_audit.py",
              "sub_agent_collusion_detector.py", "toctou_guard.py"],
             verification_frequency="PRE_MODIFICATION"),
@@ -59,4 +59,3 @@ class ImmutableCoreGuard:
                 expected_hash = module.expected_hashes.get(file)
                 actual_hash = await self._compute_sha256(file)
                 if expected_hash and actual_hash != expected_hash:
-               

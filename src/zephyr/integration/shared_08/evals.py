@@ -1,6 +1,8 @@
 # [A_module] module_id=MOD-INT_evals | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+from collections.abc import Callable
+
 # [BLUEPRINT] SRC-188 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.integration.shared_08.evals
 # [INVARIANTS] none
@@ -11,20 +13,21 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/shared/test_evals.py
-
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable
+
 
 class EvalDimension(Enum):
     RELEVANCE = "relevance"
     ACCURACY = "accuracy"
     SAFETY = "safety"
 
+
 @dataclass
 class DimensionScore:
     dimension: EvalDimension
     score: float
+
 
 @dataclass
 class EvalCase:
@@ -35,9 +38,12 @@ class EvalCase:
     threshold: float = 0.7
     metadata: dict = field(default_factory=dict)
 
+
 @dataclass
 class EvalRubric:
-    dimensions: list[EvalDimension] = field(default_factory=lambda: [EvalDimension.RELEVANCE, EvalDimension.ACCURACY, EvalDimension.SAFETY])
+    dimensions: list[EvalDimension] = field(
+        default_factory=lambda: [EvalDimension.RELEVANCE, EvalDimension.ACCURACY, EvalDimension.SAFETY]
+    )
     weights: dict[str, float] = field(default_factory=dict)
     pass_threshold: float = 0.7
 
@@ -46,6 +52,7 @@ class EvalRubric:
             n = len(self.dimensions)
             w = 1.0 / n if n > 0 else 0.0
             self.weights = {d.value: w for d in self.dimensions}
+
 
 @dataclass
 class EvalResult:
@@ -60,6 +67,7 @@ class EvalResult:
     def summary(self) -> str:
         tag = "[PASS]" if self.passed else "[FAIL]"
         return f"{tag} case={self.case_id} score={self.overall_score:.2f}"
+
 
 @dataclass
 class EvalSuiteResult:
@@ -86,6 +94,7 @@ class EvalSuiteResult:
     def mean_score(self) -> float:
         return sum(r.overall_score for r in self.results) / self.total if self.total > 0 else 0.0
 
+
 class EvalRunner:
     def __init__(self, rubric: EvalRubric | None = None) -> None:
         self._rubric = rubric or EvalRubric()
@@ -98,14 +107,18 @@ class EvalRunner:
     def add_cases(self, cases: list[EvalCase]) -> None:
         self._cases.extend(cases)
 
-    def run_all(self, eval_fn: Callable[[str, str], tuple[float, list[DimensionScore]]], suite_name: str = "") -> EvalSuiteResult:
+    def run_all(
+        self, eval_fn: Callable[[str, str], tuple[float, list[DimensionScore]]], suite_name: str = ""
+    ) -> EvalSuiteResult:
         results: list[EvalResult] = []
         for case in self._cases:
             result = self.run_single(case, eval_fn)
             results.append(result)
         return EvalSuiteResult(results=results, suite_name=suite_name)
 
-    def run_single(self, case: EvalCase, eval_fn: Callable[[str, str], tuple[float, list[DimensionScore]]]) -> EvalResult:
+    def run_single(
+        self, case: EvalCase, eval_fn: Callable[[str, str], tuple[float, list[DimensionScore]]]
+    ) -> EvalResult:
         try:
             score, dims = eval_fn(case.input, case.expected_output)
             return EvalResult(
@@ -154,6 +167,7 @@ class EvalRunner:
             DimensionScore(EvalDimension.SAFETY, safety),
         ]
         return score, dims
+
 
 __all__ = [
     "DimensionScore",

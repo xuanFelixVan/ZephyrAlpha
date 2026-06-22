@@ -8,23 +8,24 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
-
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from .budget_models import ModelTier
 
 _log = logging.getLogger(__name__)
 
+
 class TaskComplexity(Enum):
     SIMPLE = "simple"
     MODERATE = "moderate"
     COMPLEX = "complex"
+
 
 TIER_COMPLEXITY_MAP: dict[ModelTier, set[TaskComplexity]] = {
     ModelTier.ECONOMY: {TaskComplexity.SIMPLE, TaskComplexity.MODERATE},
@@ -43,6 +44,7 @@ NORM_LATENCY_MAX_MS: float = 10_000.0
 NORM_THROUGHPUT_MIN: float = 1.0
 NORM_THROUGHPUT_MAX: float = 200.0
 
+
 @dataclass
 class RoutingDecision:
     model_key: str
@@ -53,6 +55,7 @@ class RoutingDecision:
     requires_owner: bool = False
     performance_score: float = 0.0
     benchmark_available: bool = False
+
 
 @dataclass
 class ModelRouter:
@@ -148,11 +151,7 @@ class ModelRouter:
         req_owner = effective_tier == ModelTier.PREMIUM
         perf = self._get_perf_score(key)
         has_bench = bool(self._benchmark_profiles)
-        reason = (
-            f"perf-aware:{effective_tier.value}"
-            if has_bench
-            else f"least-cost-tier:{effective_tier.value}"
-        )
+        reason = f"perf-aware:{effective_tier.value}" if has_bench else f"least-cost-tier:{effective_tier.value}"
         return RoutingDecision(
             model_key=key,
             provider=prov,

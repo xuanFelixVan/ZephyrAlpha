@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-04TER-CAPABILITY-HEATMAP
 title: Target Architecture — Capability Maturity Heatmap (Orthogonal View) / 目标架构：能力成熟度热力图正交视图
 doc_type: architecture_view

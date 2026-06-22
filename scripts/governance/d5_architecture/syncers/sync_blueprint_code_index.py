@@ -41,7 +41,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -573,28 +573,16 @@ def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, l
 
     tmp_path = f"{bp_path}.{os.getpid()}.tmp"
 
-
     try:
-
-
         Path(tmp_path).write_text(content, encoding="utf-8")
-
 
         os.replace(tmp_path, bp_path)
 
-
     except PermissionError:
-
-
         try:
-
-
             os.remove(tmp_path)
 
-
         except OSError:
-
-
             pass
     actions.append(f"✅ {rel_bp}: 已添加 §{next_section} 已实现代码完整路径索引")
     return True, actions

@@ -2,34 +2,25 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-052 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.observability_dashboard
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
+
 
 class DashboardPanel(str, Enum):
     SYSTEM_HEALTH = "system_health"
     COST = "cost"
     ORDER_FLOW = "order_flow"
     MODEL_DRIFT = "model_drift"
+
 
 class SLI(str, Enum):
     CPU = "cpu"
@@ -44,13 +35,14 @@ class SLI(str, Enum):
     FEEDBACK_ADOPTION = "feedback_adoption"
     DATA_FRESHNESS = "data_freshness"
 
+
 @dataclass
 class DashboardConfig:
     panels: dict[str, dict[str, object]] = field(default_factory=dict)
     refresh_interval_seconds: int = 10
 
     @staticmethod
-    def default() -> "DashboardConfig":
+    def default() -> DashboardConfig:
         return DashboardConfig(
             panels={
                 "system_health": {

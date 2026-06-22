@@ -11,12 +11,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.rule_enforcement.gate_engine import GateResult
-from zephyr.intelligence.model_evaluation.activate import ActivateGate
+from zephyr.governance.ingest import IngestGate
 from zephyr.governance.kb.analyze import AnalyzeGate
 from zephyr.governance.kb.extract import ExtractGate
-from zephyr.governance.ingest import IngestGate
+from zephyr.governance.rule_enforcement.gate_engine import GateResult
 from zephyr.governance.triage import TriageGate
+from zephyr.intelligence.model_evaluation.activate import ActivateGate
 
 
 class _RecordingGateBackend:

@@ -28,12 +28,11 @@
   - 降级标注（degradation_level）输出到报告头部
 """
 
-
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -141,7 +140,7 @@ class ReportGenerator:
         scope: str = "src/zephyr/",
     ) -> dict[str, Any]:
         """生成完整 dedup 报告数据结构."""
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         duplicate_groups = duplicate_groups or []
         engine_metrics = engine_metrics or EngineSelfMetrics()
         intake = intake or DuplicationIntakeRate()
@@ -151,8 +150,14 @@ class ReportGenerator:
 
         report: dict[str, Any] = {
             "scan_metadata": self._build_scan_metadata(
-                total_functions, scanned, cached, duration_ms,
-                scan_mode, trigger, scope, now,
+                total_functions,
+                scanned,
+                cached,
+                duration_ms,
+                scan_mode,
+                trigger,
+                scope,
+                now,
             ),
             "engine_self_metrics": self._build_engine_metrics(engine_metrics),
             "duplication_intake_rate": {
@@ -186,15 +191,12 @@ class ReportGenerator:
                 },
             },
             "hotspot_categories": [
-                {"category": h.category, "duplicate_count": h.duplicate_count, "trend": h.trend}
-                for h in hotspots[:5]
+                {"category": h.category, "duplicate_count": h.duplicate_count, "trend": h.trend} for h in hotspots[:5]
             ],
             "summary": {
                 "duplicate_groups_total": len(duplicate_groups),
                 "high_confidence": sum(1 for g in duplicate_groups if g.get("confidence", 0) >= 90),
-                "medium_confidence": sum(
-                    1 for g in duplicate_groups if 70 <= g.get("confidence", 0) < 90
-                ),
+                "medium_confidence": sum(1 for g in duplicate_groups if 70 <= g.get("confidence", 0) < 90),
                 "low_confidence": sum(1 for g in duplicate_groups if g.get("confidence", 0) < 70),
                 "affected_files": len({m[0] for g in duplicate_groups for m in g.get("members", [])}),
                 "auto_fixable": sum(1 for g in duplicate_groups if g.get("confidence", 0) >= 90),

@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Self
 
 __all__ = [
     "ExecutionModel",
@@ -27,9 +26,6 @@ class ExecutionModel(str, Enum):
     claude = "claude"
     kimi = "kimi"
     qwen = "qwen"
-
-
-
 
 
 def normalize_execution_model(value: str | ExecutionModel) -> ExecutionModel:

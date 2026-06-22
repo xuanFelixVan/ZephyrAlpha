@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """shared.schema — auto-generated package init."""
 
-__all__ = ['base_config', 'execution_model', 'schema_registry', 'schemas', 'severity_types']
+__all__ = ["base_config", "execution_model", "schema_registry", "schemas", "severity_types"]

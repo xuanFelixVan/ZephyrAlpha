@@ -80,12 +80,14 @@ class ContextWindowContaminationDetector:
 
         contaminated = len(flags) > 0
         if contaminated:
-            self.contamination_events.append({
-                "ts": time.time(),
-                "flags": flags,
-                "stale_ratio": round(stale_ratio, 3),
-                "total_tokens": self.total_tokens,
-            })
+            self.contamination_events.append(
+                {
+                    "ts": time.time(),
+                    "flags": flags,
+                    "stale_ratio": round(stale_ratio, 3),
+                    "total_tokens": self.total_tokens,
+                }
+            )
 
         return {
             "contaminated": contaminated,

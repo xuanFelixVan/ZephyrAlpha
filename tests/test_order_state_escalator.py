@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_order_state_escalator.py
 
-import pytest
 from zephyr.ex_core.order_state_escalator import OrderStateEscalator
 
 

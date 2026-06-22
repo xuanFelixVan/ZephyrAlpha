@@ -10,70 +10,93 @@
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure
 # [TESTS] tests/audit-orchestrator/
 
-from zephyr.governance.audit_trail.resource_aware_pool import ResourceAwarePool, PoolStats
+from zephyr.governance.audit_trail.anomaly import AnomalyDetector
+from zephyr.governance.audit_trail.bridge import OrchestratorBridge
+from zephyr.governance.audit_trail.cold_start import BootstrapCache
+from zephyr.governance.audit_trail.contracts import (
+    AuditDiscoverer,
+    ContractViolationError,
+    IntegrityChecker,
+)
+from zephyr.governance.audit_trail.contracts import (
+    AuditIndexer as AuditIndexerContract,
+)
+from zephyr.governance.audit_trail.contracts import (
+    AuditQuery as AuditQueryContract,
+)
+from zephyr.governance.audit_trail.contracts import (
+    AuditWriter as AuditWriterContract,
+)
+from zephyr.governance.audit_trail.delegation_auditor import DelegationAuditor
+from zephyr.governance.audit_trail.delegation_bridge import DelegationBridge
+from zephyr.governance.audit_trail.drift_bridge import DriftBridge
+from zephyr.governance.audit_trail.external_tool_audit import ExternalToolAuditor
+from zephyr.governance.audit_trail.feedback_bridge import FeedbackBridge
+from zephyr.governance.audit_trail.feedback_policy import FeedbackPolicy, PolicyDecision
+from zephyr.governance.audit_trail.genesis import GenesisBlock
+from zephyr.governance.audit_trail.indexer import AuditIndexer
+from zephyr.governance.audit_trail.log_rotation import LogRotation
+
 # STUB: from zephyr.governance.audit_trail.cli import main as cli_main
 # Reason: lazy import to break circular import with audit_trail.cli → audit_admission_controller → __init__
 # STUB: from zephyr.governance.audit_trail.audit_admission_controller import AuditAdmissionController, AdmissionResult
 # Reason: lazy import to break circular import with audit_admission_controller → finding_model → __init__
 from zephyr.governance.audit_trail.models import (
-    AuditType,
-    Severity,
-    Priority,
-    FixLevel,
-    DiscoveryReport,
-    ChangedFile,
+    AuditContext,
     AuditIssue,
+    AuditType,
+    ChangedFile,
+    DiscoveryReport,
+    FixLevel,
     GlobalAuditReport,
     OrchestratorStatus,
-    AuditContext,
+    Priority,
+    Severity,
 )
-from zephyr.governance.audit_trail.contracts import (
-    AuditDiscoverer,
-    AuditIndexer as AuditIndexerContract,
-    AuditWriter as AuditWriterContract,
-    AuditQuery as AuditQueryContract,
-    IntegrityChecker,
-    ContractViolationError,
-)
-from zephyr.governance.audit_trail.bridge import OrchestratorBridge
-from zephyr.governance.audit_trail.writer import AuditReportWriter
 from zephyr.governance.audit_trail.query import AuditQueryEngine
-from zephyr.governance.audit_trail.indexer import AuditIndexer
-from zephyr.governance.audit_trail.cold_start import BootstrapCache
-from zephyr.governance.integrity import IntegrityGuard
-from zephyr.governance.audit_trail.trust_engine import TrustEngine, TrustLevel
-from zephyr.governance.audit_trail.trust_bridge import TrustBridge
-from zephyr.governance.merkle_hourly import MerkleHourlyBridge
-from zephyr.governance.evidence_pack import EvidencePack
-from zephyr.governance.audit_trail.delegation_bridge import DelegationBridge
-from zephyr.governance.audit_trail.delegation_auditor import DelegationAuditor
-from zephyr.governance.audit_trail.drift_bridge import DriftBridge
-from zephyr.governance.audit_trail.feedback_bridge import FeedbackBridge
-from zephyr.governance.audit_trail.feedback_policy import FeedbackPolicy, PolicyDecision
-from zephyr.governance.audit_trail.tiered_storage import TieredStorage
-from zephyr.governance.audit_trail.tiered_storage_bridge import TieredStorageBridge
-from zephyr.governance.audit_trail.log_rotation import LogRotation
+from zephyr.governance.audit_trail.replay_engine import ReplayEngine
+from zephyr.governance.audit_trail.resource_aware_pool import PoolStats, ResourceAwarePool
 from zephyr.governance.audit_trail.retention import RetentionPolicy
 from zephyr.governance.audit_trail.self_monitor import SelfMonitor
-from zephyr.governance.audit_trail.anomaly import AnomalyDetector
-from zephyr.governance.audit_trail.external_tool_audit import ExternalToolAuditor
-from zephyr.governance.audit_trail.genesis import GenesisBlock
-from zephyr.governance.audit_trail.replay_engine import ReplayEngine
+from zephyr.governance.audit_trail.tiered_storage import TieredStorage
+from zephyr.governance.audit_trail.tiered_storage_bridge import TieredStorageBridge
+from zephyr.governance.audit_trail.trust_bridge import TrustBridge
+from zephyr.governance.audit_trail.trust_engine import TrustEngine, TrustLevel
+from zephyr.governance.audit_trail.writer import AuditReportWriter
+from zephyr.governance.evidence_pack import EvidencePack
+from zephyr.governance.integrity import IntegrityGuard
+from zephyr.governance.merkle_hourly import MerkleHourlyBridge
+
 
 def __getattr__(name):
     if name == "TextToFindingAdapter":
         from zephyr.governance.audit_orchestrator.text_to_finding_adapter import TextToFindingAdapter
+
         return TextToFindingAdapter
     if name in ("PipelineRunner", "PipelineResult", "DimensionResult", "ScriptResult"):
-        from zephyr.governance.audit_trail.pipeline_runner import PipelineRunner, PipelineResult, DimensionResult, ScriptResult
-        return {"PipelineRunner": PipelineRunner, "PipelineResult": PipelineResult, "DimensionResult": DimensionResult, "ScriptResult": ScriptResult}[name]
+        from zephyr.governance.audit_trail.pipeline_runner import (
+            DimensionResult,
+            PipelineResult,
+            PipelineRunner,
+            ScriptResult,
+        )
+
+        return {
+            "PipelineRunner": PipelineRunner,
+            "PipelineResult": PipelineResult,
+            "DimensionResult": DimensionResult,
+            "ScriptResult": ScriptResult,
+        }[name]
     if name in ("AuditAdmissionController", "AdmissionResult"):
-        from zephyr.governance.audit_trail.audit_admission_controller import AuditAdmissionController, AdmissionResult
+        from zephyr.governance.audit_trail.audit_admission_controller import AdmissionResult, AuditAdmissionController
+
         return {"AuditAdmissionController": AuditAdmissionController, "AdmissionResult": AdmissionResult}[name]
     if name == "cli_main":
         from zephyr.governance.audit_trail.cli import main as cli_main
+
         return cli_main
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     "AdmissionResult",

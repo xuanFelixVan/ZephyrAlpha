@@ -167,7 +167,7 @@ def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
             import warnings
 
             warnings.warn(
-                f"收到 naive pd.Timestamp: {ts!r}，已按 UTC 补全时区。" " 请在调用方显式附加时区，避免时区歧义。",
+                f"收到 naive pd.Timestamp: {ts!r}，已按 UTC 补全时区。 请在调用方显式附加时区，避免时区歧义。",
                 stacklevel=2,
             )
             return ts.tz_localize("UTC")

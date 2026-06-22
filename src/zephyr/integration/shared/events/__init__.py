@@ -6,11 +6,12 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 from zephyr.integration.shared.events.dlq import DeadLetter, DeadLetterQueue, attach_dlq_to_observer
-from zephyr.integration.shared.events.dlq_bridge import DLQEventBridge, attach_dlq_to_observer as dlq_bridge_attach, make_dlq_event_handler
+from zephyr.integration.shared.events.dlq_bridge import DLQEventBridge, make_dlq_event_handler
+from zephyr.integration.shared.events.dlq_bridge import attach_dlq_to_observer as dlq_bridge_attach
 from zephyr.integration.shared.events.event_bus_upgrade import EventBusUpgrader, EventSchema, EventVersionError
 from zephyr.integration.shared.events.event_schemas import (
     EVENT_PAYLOAD_MAP,
@@ -20,13 +21,13 @@ from zephyr.integration.shared.events.event_schemas import (
     TaskEventPayload,
     TimeEventPayload,
 )
-from zephyr.integration.shared.events.upgrade_strategy import EventBusUpgrade, UpgradePlan, UpgradeStep, UpgradeStatus
+from zephyr.integration.shared.events.upgrade_strategy import EventBusUpgrade, UpgradePlan, UpgradeStatus, UpgradeStep
 
 __all__ = [
+    "EVENT_PAYLOAD_MAP",
     "DLQEventBridge",
     "DeadLetter",
     "DeadLetterQueue",
-    "EVENT_PAYLOAD_MAP",
     "EventBusUpgrade",
     "EventBusUpgrader",
     "EventSchema",

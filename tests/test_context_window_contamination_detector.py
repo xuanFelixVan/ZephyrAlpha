@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.detectors.context_window_contamination_detector import (
     ContextWindowContaminationDetector,
     TokenSource,

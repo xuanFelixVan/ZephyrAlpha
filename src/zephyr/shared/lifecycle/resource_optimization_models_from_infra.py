@@ -7,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS] zephyr.orchestration.runtime_core; zephyr.orchestration.pipeline_routing; zephyr.orchestration.agent_lifecycle
+# [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
 
 # [STABILITY] evolving
 
@@ -21,12 +21,12 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+from enum import Enum
+from typing import Annotated
+
 from pydantic import BaseModel, Field
 from pydantic.functional_validators import BeforeValidator
-from typing import Annotated
-from enum import Enum
-from datetime import datetime, timezone
-from typing import Optional
 
 
 def _clamp_percent(v: float) -> float:
@@ -99,9 +99,9 @@ class OptimizationResult(BaseModel):
     success: bool
     actions_taken: list[str] = Field(default_factory=list)
     snapshot_before: ResourceSnapshot
-    snapshot_after: Optional[ResourceSnapshot] = None
+    snapshot_after: ResourceSnapshot | None = None
     quality_preserved: bool = Field(default=True)
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
 
 class CacheStats(BaseModel):
@@ -122,8 +122,8 @@ class ProcessPoolStats(BaseModel):
 
 class PressureState(BaseModel):
     current_level: PressureLevel = Field(default=PressureLevel.NORMAL)
-    previous_level: Optional[PressureLevel] = None
-    entered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    previous_level: PressureLevel | None = None
+    entered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     transition_count: int = Field(default=0, ge=0)
     cooldown_remaining_s: float = Field(default=0.0, ge=0.0)
 

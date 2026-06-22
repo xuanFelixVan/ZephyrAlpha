@@ -45,12 +45,14 @@ class MarketRegime(str, Enum):
 
 @dataclass
 class RegimeGainScheduling:
-    gain_map: dict[str, float] = field(default_factory=lambda: {
-        "CALM": 1.5,
-        "NORMAL": 1.0,
-        "VOLATILE": 0.6,
-        "CRISIS": 0.3,
-    })
+    gain_map: dict[str, float] = field(
+        default_factory=lambda: {
+            "CALM": 1.5,
+            "NORMAL": 1.0,
+            "VOLATILE": 0.6,
+            "CRISIS": 0.3,
+        }
+    )
 
     current_regime: MarketRegime = MarketRegime.NORMAL
     current_gain: float = 1.0

@@ -26,16 +26,16 @@ v2独立ID运行，不入drift_events，对比v1分类NEW_FINDING/LOST_FINDING/C
 auto_rollback: v2 FP率>2×v1自动回退
 对标 blueprint.md §6.11。
 """
+
 from __future__ import annotations
 
 import json
 import os
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from pathlib import Path
-from typing import Any, Optional, Callable
 
 
 class CanaryComparison(str, Enum):
@@ -67,7 +67,7 @@ class CanaryRun:
             "IDENTICAL": [],
         }
     )
-    run_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    run_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     result: CanaryResult = CanaryResult.PENDING
     review_required: bool = True
 
@@ -89,7 +89,7 @@ def _load_state() -> dict[str, object]:
     if not path or not os.path.exists(path):
         return {}
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.loads(f.read())
     except Exception:
         return {}
@@ -112,7 +112,13 @@ def _save_state(state: dict[str, object]) -> None:
             pass
 
 
-def classify_event_id(v1_id: str, v2_ids: set[str], v1_events: list[dict[str, object]], v2_events: list[dict[str, object]], classification: dict[str, list[str]]) -> None:
+def classify_event_id(
+    v1_id: str,
+    v2_ids: set[str],
+    v1_events: list[dict[str, object]],
+    v2_events: list[dict[str, object]],
+    classification: dict[str, list[str]],
+) -> None:
     """将单事件分类为NEW/LOST/CHANGED/IDENTICAL。"""
     v1_id_set: set[str] = {str(e.get("event_id", "")) for e in v1_events}
     v2_id_set: set[str] = {str(e.get("event_id", "")) for e in v2_events}
@@ -155,16 +161,10 @@ def run_canary(
     v1_id_set: set[str] = {str(e.get("event_id", "")) for e in cr.v1_events}
     v2_id_set: set[str] = {str(e.get("event_id", "")) for e in cr.v2_events}
 
-    for eid, _evt_data in (
-        (eid, {"v1": None, "v2": None})
-        for eid in v2_id_set - v1_id_set
-    ):
+    for eid, _evt_data in ((eid, {"v1": None, "v2": None}) for eid in v2_id_set - v1_id_set):
         cr.comparison["NEW_FINDING"].append(eid)
 
-    for eid, _evt_data in (
-        (eid, {"v1": None, "v2": None})
-        for eid in v1_id_set - v2_id_set
-    ):
+    for eid, _evt_data in ((eid, {"v1": None, "v2": None}) for eid in v1_id_set - v2_id_set):
         cr.comparison["LOST_FINDING"].append(eid)
 
     common = v1_id_set & v2_id_set
@@ -200,7 +200,7 @@ def promote_detector(canary_run: CanaryRun) -> bool:
         {
             "v1": canary_run.v1_detector_id,
             "v2": canary_run.v2_detector_id,
-            "promoted_at": datetime.now(timezone.utc).isoformat(),
+            "promoted_at": datetime.now(UTC).isoformat(),
         }
     )
     _save_state(state)
@@ -214,7 +214,7 @@ def rollback_detector(canary_run: CanaryRun, reason: str = "") -> bool:
     state.setdefault("rollbacks", []).append(
         {
             "v2": canary_run.v2_detector_id,
-            "rolled_back_at": datetime.now(timezone.utc).isoformat(),
+            "rolled_back_at": datetime.now(UTC).isoformat(),
             "reason": reason or "FP rate exceeded threshold",
         }
     )
@@ -222,7 +222,7 @@ def rollback_detector(canary_run: CanaryRun, reason: str = "") -> bool:
     return True
 
 
-def get_canary_history(detector_id: Optional[str] = None) -> list[dict[str, object]]:
+def get_canary_history(detector_id: str | None = None) -> list[dict[str, object]]:
     """获取指定检测器的金丝雀历史。"""
     state = _load_state()
     runs = state.get("runs", [])

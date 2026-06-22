@@ -27,6 +27,7 @@ Risk: R42 — EMA baseline drifts; normal behavior flagged as anomaly.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class ConceptDrift:
     drift_detected: bool = False

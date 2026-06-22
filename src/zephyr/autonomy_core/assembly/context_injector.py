@@ -37,19 +37,18 @@ Respects token budget limits from ContextBudgetTracker.
 
 from __future__ import annotations
 
-
 from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
+    "ContextInjector",
     "InjectedContext",
     "RetrievalMode",
-    "ContextInjector",
 ]
 
 
@@ -99,12 +98,9 @@ class ContextInjector:
         matching: list[Any] = []
         for rec in records:
             if (
-                hasattr(rec, "tags")
-                and task_id in rec.tags
-                or hasattr(rec, "summary")
-                and task_id in rec.summary
-                or hasattr(rec, "source_file")
-                and task_id in rec.source_file
+                (hasattr(rec, "tags") and task_id in rec.tags)
+                or (hasattr(rec, "summary") and task_id in rec.summary)
+                or (hasattr(rec, "source_file") and task_id in rec.source_file)
             ):
                 matching.append(rec)
 
@@ -115,12 +111,9 @@ class ContextInjector:
         matching: list[Any] = []
         for rec in records:
             if (
-                hasattr(rec, "category")
-                and rec.category == module_id
-                or hasattr(rec, "tags")
-                and module_id in rec.tags
-                or hasattr(rec, "ke_id")
-                and module_id in rec.ke_id
+                (hasattr(rec, "category") and rec.category == module_id)
+                or (hasattr(rec, "tags") and module_id in rec.tags)
+                or (hasattr(rec, "ke_id") and module_id in rec.ke_id)
             ):
                 matching.append(rec)
 

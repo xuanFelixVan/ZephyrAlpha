@@ -70,23 +70,27 @@ class KnowledgeBusFactorMonitor:
             bf = len(owners)
             if bf < self.min_bus_factor:
                 critical_subsystems.append(subsystem)
-                alerts.append({
-                    "subsystem": subsystem,
-                    "bus_factor": bf,
-                    "owners": list(owners),
-                    "severity": "CRITICAL" if bf == 0 else "HIGH" if bf == 1 else "MEDIUM",
-                    "recommendation": "assign_backup_owner" if bf < 2 else "monitor",
-                })
+                alerts.append(
+                    {
+                        "subsystem": subsystem,
+                        "bus_factor": bf,
+                        "owners": list(owners),
+                        "severity": "CRITICAL" if bf == 0 else "HIGH" if bf == 1 else "MEDIUM",
+                        "recommendation": "assign_backup_owner" if bf < 2 else "monitor",
+                    }
+                )
 
         for human, subsystems in self.human_assignments.items():
             if len(subsystems) > self.max_owner_assignments:
-                alerts.append({
-                    "human_owner": human,
-                    "assignment_count": len(subsystems),
-                    "max_recommended": self.max_owner_assignments,
-                    "severity": "HIGH",
-                    "recommendation": "redistribute_knowledge_ownership",
-                })
+                alerts.append(
+                    {
+                        "human_owner": human,
+                        "assignment_count": len(subsystems),
+                        "max_recommended": self.max_owner_assignments,
+                        "severity": "HIGH",
+                        "recommendation": "redistribute_knowledge_ownership",
+                    }
+                )
 
         if alerts:
             self.bus_factor_alerts.extend([{**a, "ts": time.time()} for a in alerts])
@@ -121,11 +125,13 @@ class KnowledgeBusFactorMonitor:
 
         for sub, owners in self.subsystem_owners.items():
             if len(owners) < self.min_bus_factor and underloaded:
-                suggestions.append({
-                    "subsystem": sub,
-                    "current_bus_factor": len(owners),
-                    "suggested_new_owner": underloaded[0][0],
-                })
+                suggestions.append(
+                    {
+                        "subsystem": sub,
+                        "current_bus_factor": len(owners),
+                        "suggested_new_owner": underloaded[0][0],
+                    }
+                )
 
         return suggestions
 

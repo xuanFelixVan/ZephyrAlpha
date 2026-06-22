@@ -1,6 +1,8 @@
 # [A_module] module_id=MOD-GOV_invariants | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+from zephyr.governance.rule_enforcement.invariants.post_doc_review_check import PostDocReviewScanner
+
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.invariants
 # [INVARIANTS] pending_review
@@ -8,9 +10,9 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 
 """ZephyrAlpha — Architectural Invariant Gates (EN-001 ~ EN-003)
 
@@ -20,4 +22,12 @@ P0 结构不变量门禁（非 task-based，与 G0-G7 互补）：
   - EN-003: 契约兼容性检查器（dataclass field ↔ contract spec diff）
 """
 
-__all__ = ['en_001_circular_dependency', 'en_002_enforcement_validator', 'en_003_contract_compatibility', 'en_process_lifecycle_gateway', 'zero_residue_check']
+__all__ = [
+    "en_001_circular_dependency",
+    "en_002_enforcement_validator",
+    "en_003_contract_compatibility",
+    "en_process_lifecycle_gateway",
+    "zero_residue_check",
+]
+
+__all__.append("PostDocReviewScanner")

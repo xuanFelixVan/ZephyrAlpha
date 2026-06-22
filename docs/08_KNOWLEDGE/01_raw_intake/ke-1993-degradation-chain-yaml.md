@@ -18,17 +18,17 @@ degradation:
     - level: 0 (PRIMARY)
       model: "GLM-5.1"
       provider: "zhipu"
-      
+
     - level: 1 (FALLBACK_A)
       model: "GLM-4-Flash"
       provider: "zhipu"
       trigger: "连续 2 个窗口异常 (OR)"
-      
+
     - level: 2 (FALLBACK_B)
       model: "DeepSeek-V4-Pro"
       provider: "deepseek"
       trigger: "L2 fallback 同样异常"
-      
+
     - level: 3 (LOCAL)
       model: "quantized-7B-gguf"
       provider: "local"
@@ -45,7 +45,7 @@ degradation:
   output_truncation:
     max_tokens: 2048
     truncation_strategy: "intelligent (段落边界)"
-    
+
   progressive_switch:
     enabled: true
     default_rate_pct_per_second: 5

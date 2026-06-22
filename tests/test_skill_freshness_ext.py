@@ -13,15 +13,12 @@
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
-from typing import Any, Dict
-
-import pytest
 
 from zephyr.autonomy_core.skill_freshness_ext import (
-    scan_all_freshness,
     auto_deprecate_skill,
-    should_load_onboarding,
     increment_round,
+    scan_all_freshness,
+    should_load_onboarding,
 )
 from zephyr.autonomy_core.skill_model import SkillStatus
 
@@ -64,7 +61,7 @@ class TestScanAllFreshness:
         assert result["criticals"] == 0
 
     def test_scan_none_model_creates_default(self):
-        with patch("zephyr.orchestration.agent_lifecycle.skill_freshness_ext.FreshnessDecayModel") as MockCls:
+        with patch("zephyr.autonomy_core.skill_freshness_ext.FreshnessDecayModel") as MockCls:
             instance = MagicMock()
             instance.WARNING_THRESHOLD = 30.0
             instance.CRITICAL_THRESHOLD = 10.0
@@ -80,8 +77,11 @@ class TestAutoDeprecateSkill:
         lifecycle = MagicMock()
         lifecycle.current_status.return_value = SkillStatus.ACTIVE.value
         lifecycle.transition.return_value = {
-            "skill_id": "sk-1", "from": "active",
-            "to": "deprecated", "allowed": True, "reason": "",
+            "skill_id": "sk-1",
+            "from": "active",
+            "to": "deprecated",
+            "allowed": True,
+            "reason": "",
         }
         result = auto_deprecate_skill(lifecycle, "sk-1", 5.0)
         assert result["allowed"] is True
@@ -111,8 +111,11 @@ class TestAutoDeprecateSkill:
         lifecycle = MagicMock()
         lifecycle.current_status.return_value = SkillStatus.ACTIVE.value
         lifecycle.transition.return_value = {
-            "skill_id": "sk-5", "from": "active",
-            "to": "deprecated", "allowed": True, "reason": "custom",
+            "skill_id": "sk-5",
+            "from": "active",
+            "to": "deprecated",
+            "allowed": True,
+            "reason": "custom",
         }
         result = auto_deprecate_skill(lifecycle, "sk-5", 3.0, reason="custom reason")
         assert result["allowed"] is True

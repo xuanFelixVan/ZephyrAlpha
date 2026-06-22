@@ -72,13 +72,32 @@ CROSS_REFS = {
 }
 
 EXCLUDED_DIRS = {
-    ".git", "__pycache__", ".ailocks", ".aidrafts", "node_modules",
-    ".trae", ".mypy_cache", ".pytest_cache", ".tox",
+    ".git",
+    "__pycache__",
+    ".ailocks",
+    ".aidrafts",
+    "node_modules",
+    ".trae",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".tox",
 }
 
 EXCLUDED_EXTENSIONS = {
-    ".pyc", ".pyo", ".so", ".dll", ".exe", ".png", ".jpg", ".gif",
-    ".ico", ".woff", ".woff2", ".ttf", ".eot", ".map",
+    ".pyc",
+    ".pyo",
+    ".so",
+    ".dll",
+    ".exe",
+    ".png",
+    ".jpg",
+    ".gif",
+    ".ico",
+    ".woff",
+    ".woff2",
+    ".ttf",
+    ".eot",
+    ".map",
 }
 
 
@@ -91,16 +110,17 @@ def load_registry() -> dict:
     if not REGISTRY_FILE.exists():
         print(f"[ERROR] Registry not found: {REGISTRY_FILE}", file=sys.stderr)
         sys.exit(1)
-    with open(REGISTRY_FILE, "r", encoding="utf-8") as f:
+    with open(REGISTRY_FILE, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     if not isinstance(data, dict):
-        print(f"[ERROR] Invalid YAML structure", file=sys.stderr)
+        print("[ERROR] Invalid YAML structure", file=sys.stderr)
         sys.exit(2)
     return data
 
 
 def save_registry(data: dict) -> None:
     import yaml
+
     content = yaml.dump(data, default_flow_style=False, allow_unicode=True, sort_keys=False)
     tmp_path = f"{REGISTRY_FILE}.{os.getpid()}.tmp"
     try:
@@ -131,7 +151,7 @@ def get_autonomy_core_entries(data: dict, subdir: str | None = None) -> list[dic
 
 
 def determine_subdir(old_path: str) -> str:
-    rel = old_path[len(OLD_PATH_PREFIX):]
+    rel = old_path[len(OLD_PATH_PREFIX) :]
     parts = rel.split("/")
     return parts[0] if parts else ""
 
@@ -155,13 +175,28 @@ def move_file(old_path: str, new_path: str, dry_run: bool = False, force: bool =
                     if source.resolve() != target.resolve():
                         if not dry_run:
                             source.unlink()
-                        return {"old": old_path, "new": new_path, "status": "skipped", "reason": "already_exists_same_content_source_removed"}
-                    return {"old": old_path, "new": new_path, "status": "skipped", "reason": "already_exists_same_content"}
+                        return {
+                            "old": old_path,
+                            "new": new_path,
+                            "status": "skipped",
+                            "reason": "already_exists_same_content_source_removed",
+                        }
+                    return {
+                        "old": old_path,
+                        "new": new_path,
+                        "status": "skipped",
+                        "reason": "already_exists_same_content",
+                    }
         except OSError:
             pass
         if force:
             if dry_run:
-                return {"old": old_path, "new": new_path, "status": "would_overwrite", "reason": "target_exists_different_content"}
+                return {
+                    "old": old_path,
+                    "new": new_path,
+                    "status": "would_overwrite",
+                    "reason": "target_exists_different_content",
+                }
             try:
                 shutil.move(str(source), str(target))
                 return {"old": old_path, "new": new_path, "status": "overwritten", "reason": ""}
@@ -201,7 +236,7 @@ def update_imports_in_file(new_path: str, subdir: str, dry_run: bool = False) ->
     if content == original:
         return {"file": new_path, "status": "no_change", "changes": 0}
 
-    diff_count = sum(1 for a, b in zip(original.split("\n"), content.split("\n")) if a != b)
+    diff_count = sum(1 for a, b in zip(original.split("\n"), content.split("\n"), strict=False) if a != b)
 
     if dry_run:
         return {"file": new_path, "status": "would_update", "changes": diff_count}
@@ -296,7 +331,7 @@ def fix_external_refs(subdir: str | None = None, dry_run: bool = False) -> tuple
 
     def _fix_file(filepath: str) -> dict:
         try:
-            with open(filepath, "r", encoding="utf-8") as fh:
+            with open(filepath, encoding="utf-8") as fh:
                 content = fh.read()
         except (OSError, UnicodeDecodeError):
             return {"file": filepath, "status": "read_error", "changes": 0}
@@ -308,7 +343,7 @@ def fix_external_refs(subdir: str | None = None, dry_run: bool = False) -> tuple
         if content == original:
             return {"file": filepath, "status": "no_change", "changes": 0}
 
-        diff_count = sum(1 for a, b in zip(original.split("\n"), content.split("\n")) if a != b)
+        diff_count = sum(1 for a, b in zip(original.split("\n"), content.split("\n"), strict=False) if a != b)
 
         if dry_run:
             return {"file": filepath, "status": "would_update", "changes": diff_count}
@@ -444,8 +479,12 @@ def main() -> None:
     parser.add_argument("--move", action="store_true", help="Execute file moves (shutil.move)")
     parser.add_argument("--update-imports", action="store_true", help="Update import paths in moved files")
     parser.add_argument("--update-headers", action="store_true", help="Update [MODULE] headers in moved files")
-    parser.add_argument("--fix-external-refs", action="store_true", help="Fix external references across the whole project")
-    parser.add_argument("--update-registry-status", action="store_true", help="Mark entries as done in migration registry")
+    parser.add_argument(
+        "--fix-external-refs", action="store_true", help="Fix external references across the whole project"
+    )
+    parser.add_argument(
+        "--update-registry-status", action="store_true", help="Mark entries as done in migration registry"
+    )
     parser.add_argument("--force", action="store_true", help="Force overwrite if target exists with different content")
     args = parser.parse_args()
 
@@ -466,7 +505,7 @@ def main() -> None:
         if sd:
             subdirs_found.add(sd)
 
-    print(f"=== DM-311: autonomy_core Split Migration ===")
+    print("=== DM-311: autonomy_core Split Migration ===")
     print(f"Entries: {len(entries)}")
     if subdirs_found:
         print(f"Subdirectories: {', '.join(sorted(subdirs_found))}")
@@ -474,28 +513,28 @@ def main() -> None:
         print("(dry-run mode)")
 
     if args.move:
-        print(f"\n--- Moving files (cut-paste) ---")
+        print("\n--- Moving files (cut-paste) ---")
         success, failed, skipped = execute_move_batch(entries, args.dry_run, args.force)
         print(f"  Moved: {success}, Failed: {failed}, Skipped: {skipped}")
         if failed > 0:
             sys.exit(1)
 
     if args.update_imports:
-        print(f"\n--- Updating imports in moved files ---")
+        print("\n--- Updating imports in moved files ---")
         updated, errors = execute_import_updates(entries, args.dry_run)
         print(f"  Updated: {updated}, Errors: {errors}")
         if errors > 0:
             sys.exit(1)
 
     if args.update_headers:
-        print(f"\n--- Updating headers ---")
+        print("\n--- Updating headers ---")
         updated, errors = execute_header_updates(entries, args.dry_run)
         print(f"  Updated: {updated}, Errors: {errors}")
         if errors > 0:
             sys.exit(1)
 
     if args.fix_external_refs:
-        print(f"\n--- Fixing external references ---")
+        print("\n--- Fixing external references ---")
         subdir_for_refs = args.subdir if args.subdir else None
         updated, errors = fix_external_refs(subdir_for_refs, args.dry_run)
         print(f"  Files updated: {updated}, Errors: {errors}")
@@ -503,11 +542,15 @@ def main() -> None:
             sys.exit(1)
 
     if args.update_registry_status:
-        print(f"\n--- Updating registry status ---")
+        print("\n--- Updating registry status ---")
         update_registry_status(entries, args.dry_run)
 
-    if not (args.move or args.update_imports or args.update_headers or args.fix_external_refs or args.update_registry_status):
-        print("\nNo action specified. Use --move, --update-imports, --update-headers, --fix-external-refs, or --update-registry-status")
+    if not (
+        args.move or args.update_imports or args.update_headers or args.fix_external_refs or args.update_registry_status
+    ):
+        print(
+            "\nNo action specified. Use --move, --update-imports, --update-headers, --fix-external-refs, or --update-registry-status"
+        )
 
     print("\nDone.")
 

@@ -13,15 +13,13 @@
 from __future__ import annotations
 
 import json
-import shutil
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from zephyr.autonomy_core.skill_efficacy_calibrator import (
-    SkillsBenchRunner,
     SkillEfficacyCalibrator,
+    SkillsBenchRunner,
 )
 
 
@@ -154,7 +152,7 @@ class TestSkillEfficacyCalibratorInit:
 
 class TestSkillEfficacyCalibratorRunBenchmark:
     def test_run_benchmark_import_error(self, calibrator):
-        with patch.dict("sys.modules", {"zephyr.orchestration.agent_lifecycle.skill_loader": None}):
+        with patch.dict("sys.modules", {"zephyr.autonomy_core.skill_loader": None}):
             result = calibrator.run_benchmark("nonexistent-skill")
             assert result["skill_id"] == "nonexistent-skill"
             assert result["passed"] is False
@@ -173,7 +171,7 @@ class TestSkillEfficacyCalibratorRunBenchmark:
             "l2": "A" * 100,
             "token_count_l2": 200,
         }
-        with patch("zephyr.orchestration.agent_lifecycle.skill_loader.SkillLoader", return_value=mock_loader):
+        with patch("zephyr.autonomy_core.skill_loader.SkillLoader", return_value=mock_loader):
             result = calibrator.run_benchmark("test-skill")
             assert result["skill_id"] == "test-skill"
             assert result["score"] > 0
@@ -186,7 +184,7 @@ class TestSkillEfficacyCalibratorRunBenchmark:
             "l2": "",
             "token_count_l2": 0,
         }
-        with patch("zephyr.orchestration.agent_lifecycle.skill_loader.SkillLoader", return_value=mock_loader):
+        with patch("zephyr.autonomy_core.skill_loader.SkillLoader", return_value=mock_loader):
             result = calibrator.run_benchmark("test-skill")
             assert result["skill_id"] == "test-skill"
 
@@ -204,7 +202,7 @@ class TestSkillEfficacyCalibratorCalibrate:
             "l2": "A" * 100,
             "token_count_l2": 200,
         }
-        with patch("zephyr.orchestration.agent_lifecycle.skill_loader.SkillLoader", return_value=mock_loader):
+        with patch("zephyr.autonomy_core.skill_loader.SkillLoader", return_value=mock_loader):
             result = calibrator.calibrate("test-skill", target_accuracy=80.0)
             assert result["skill_id"] == "test-skill"
             assert "current_accuracy" in result
@@ -214,7 +212,7 @@ class TestSkillEfficacyCalibratorCalibrate:
             assert "suggestions" in result
 
     def test_calibrate_import_error(self, calibrator):
-        with patch.dict("sys.modules", {"zephyr.orchestration.agent_lifecycle.skill_loader": None}):
+        with patch.dict("sys.modules", {"zephyr.autonomy_core.skill_loader": None}):
             result = calibrator.calibrate("no-skill", target_accuracy=90.0)
             assert result["skill_id"] == "no-skill"
             assert result["calibrated"] is False

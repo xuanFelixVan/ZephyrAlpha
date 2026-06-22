@@ -2,9 +2,11 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-INF-001
 title: Delivery
 module_id: MOD-029
+updated: "2026-06-22"
+---
 
 # Delivery — 目录索引
 
@@ -24,4 +26,4 @@ module_id: MOD-029
 
 ## 父级目录
 
-- 父级：[capacity-assurance](../index.md)
+- 父级：[capacity_assurance](../index.md)

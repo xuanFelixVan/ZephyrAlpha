@@ -12,22 +12,19 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 import yaml
 
 from zephyr.trading.orchestrator.trigger_router import (
-    DEFAULT_ROUTER_YAML_PATH,
     PHASE1D_TRIGGER_TYPES,
     RouterDispatchResult,
     TriggerHandlerSpec,
     TriggerRouter,
     TriggerRouterConfigError,
     TriggerSafety,
+    get_trigger_router,
     load_router_config,
     reset_trigger_router,
-    get_trigger_router,
 )
 
 

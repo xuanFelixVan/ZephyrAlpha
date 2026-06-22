@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_multi_instance_coord.py
 
-import pytest
 
 from zephyr.ops.resilience.multi_instance_coord import (
     InstanceInfo,

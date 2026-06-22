@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.decision_explainer import DecisionExplainer, Explanation
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as e:
@@ -26,7 +28,6 @@ except Exception as e:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestExplanation:
-
     def test_to_dict_returns_all_fields(self):
         exp = Explanation(
             blocked_layer="L1",
@@ -66,7 +67,6 @@ class TestExplanation:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestDecisionExplainer:
-
     def test_structured_rejection_with_suggestion(self):
         de = DecisionExplainer()
         exp = de.structured_rejection(
@@ -88,7 +88,11 @@ class TestDecisionExplainer:
             rule_id="R100",
             reason="immutable",
         )
-        assert "immutable" in exp.correction_suggestion.lower() or "hard" in exp.correction_suggestion.lower() or "No workaround" in exp.correction_suggestion
+        assert (
+            "immutable" in exp.correction_suggestion.lower()
+            or "hard" in exp.correction_suggestion.lower()
+            or "No workaround" in exp.correction_suggestion
+        )
 
     def test_structured_rejection_auto_suggestion_l1(self):
         de = DecisionExplainer()

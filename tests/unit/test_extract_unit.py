@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 测试套件：G5 Extract 门禁（T-2-13-E）
 ======================================
@@ -22,6 +23,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.kb.extract import BEST_PRACTICES_DIR_NAME, LESSONS_DIR_NAME, ExtractGate
 
 

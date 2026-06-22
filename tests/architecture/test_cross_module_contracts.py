@@ -80,7 +80,14 @@ class TestUpstreamDependencyReachability:
         with open(TOOL_CONTRACTS, encoding="utf-8") as fh:
             data = yaml.safe_load(fh)
         assert isinstance(data, dict), "tool-contracts.yaml must be a dict"
-        expected_servers = ["task_manager", "knowledge_base", "gate_engine", "session_handoff", "intent_router", "blueprint_search"]
+        expected_servers = [
+            "task_manager",
+            "knowledge_base",
+            "gate_engine",
+            "session_handoff",
+            "intent_router",
+            "blueprint_search",
+        ]
         for s in expected_servers:
             assert s in data, f"Missing server in tool-contracts.yaml: {s}"
 

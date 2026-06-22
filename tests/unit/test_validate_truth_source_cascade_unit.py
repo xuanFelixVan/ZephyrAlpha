@@ -164,7 +164,7 @@ class TestParseRationaleLog:
     def test_valid_entry_with_inline_affected_files(self, tmp_path: Path):
         log_file = tmp_path / "rationale-log.md"
         log_file.write_text(
-            "| R87 | **Wave 2** | **当前结论（2026-04-28）**：" " affected_files: [docs/a.md, src/b.py] |\n",
+            "| R87 | **Wave 2** | **当前结论（2026-04-28）**： affected_files: [docs/a.md, src/b.py] |\n",
             encoding="utf-8",
             newline="\n",
         )
@@ -196,7 +196,7 @@ class TestParseRationaleLog:
     def test_separator_line_is_ignored(self, tmp_path: Path):
         log_file = tmp_path / "rationale-log.md"
         log_file.write_text(
-            "|------|------|------|\n" "| R87 | A | **（2026-04-28）** affected_files: [docs/a.md] |\n",
+            "|------|------|------|\n| R87 | A | **（2026-04-28）** affected_files: [docs/a.md] |\n",
             encoding="utf-8",
             newline="\n",
         )
@@ -318,7 +318,7 @@ class TestDetectOutdatedTruthSources:
         d1 = _make_decision("R87", date(2026, 4, 25), ["docs/e.md"])
         d2 = _make_decision("R88", date(2026, 4, 29), ["docs/e.md"])
         cascade = build_cascade_map([d1, d2])
-        warnings, rows = detect_outdated_truth_sources(cascade, tmp_path)
+        warnings, _rows = detect_outdated_truth_sources(cascade, tmp_path)
         assert len(warnings) == 1
         assert "R88" in warnings[0]
 
@@ -431,7 +431,7 @@ class TestRunIntegration:
         _write_md_with_fm(f, "2026-04-20")
         log = self._make_log(
             tmp_path,
-            ["| R87 | A | **（2026-04-28）**：" " affected_files: [docs/x.md] |"],
+            ["| R87 | A | **（2026-04-28）**： affected_files: [docs/x.md] |"],
         )
         reports = tmp_path / "reports"
         result = run(log, reports, tmp_path, quiet=True)

@@ -14,12 +14,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.infrastructure.blueprint_code_sync import (
+    BlueprintCodeSyncService,
     SyncPair,
     SyncVerification,
-    BlueprintCodeSyncService,
 )
 
 
@@ -164,7 +162,9 @@ class TestBlueprintCodeSyncService:
         (tmp_path / "src" / "zephyr" / "core" / "models.py").write_text("x=1", encoding="utf-8")
         (tmp_path / "src" / "zephyr" / "core" / "blueprint_decomposer.py").write_text("x=2", encoding="utf-8")
         (tmp_path / "src" / "zephyr" / "mcp" / "task_manager_server.py").write_text("x=3", encoding="utf-8")
-        (tmp_path / "src" / "zephyr" / "core" / "lifecycle" / "task_lifecycle_manager.py").write_text("x=4", encoding="utf-8")
+        (tmp_path / "src" / "zephyr" / "core" / "lifecycle" / "task_lifecycle_manager.py").write_text(
+            "x=4", encoding="utf-8"
+        )
 
         result = svc.check_sync_consistency()
         assert result["synced"] is True

@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -88,11 +87,11 @@ ENVIRONMENTS: dict[Environment, EnvConfig] = {
 }
 
 
-def get_env(name: Environment) -> Optional[EnvConfig]:
+def get_env(name: Environment) -> EnvConfig | None:
     return ENVIRONMENTS.get(name)
 
 
-def switch_env(current: Environment, target: Environment) -> Optional[EnvConfig]:
+def switch_env(current: Environment, target: Environment) -> EnvConfig | None:
     if target == Environment.LIVE:
         return ENVIRONMENTS.get(Environment.LIVE)
     return ENVIRONMENTS.get(target)

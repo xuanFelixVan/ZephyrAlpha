@@ -11,14 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_merkle_hourly.py
-
 import logging
-from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["MerkleHourlyBridge"]
+
 
 class MerkleHourlyBridge:
     def __init__(self) -> None:
@@ -26,6 +25,7 @@ class MerkleHourlyBridge:
         self._available = False
         try:
             from zephyr.governance.merkle_hourly import HourlyMerkleAggregator
+
             self._aggregator = HourlyMerkleAggregator()
             self._available = True
         except ImportError:
@@ -60,22 +60,25 @@ class MerkleHourlyBridge:
     def is_available(self) -> bool:
         return self._available
 
+
 class AggregationResult:
-    def __init__(self, root_hash='', entry_count=0, timestamp=None, period=''):
+    def __init__(self, root_hash="", entry_count=0, timestamp=None, period=""):
         self.root_hash = root_hash
         self.entry_count = entry_count
         self.timestamp = timestamp
         self.period = period
 
+
 class HourlyMerkleAggregator:
     def __init__(self, config=None):
         self.config = config or {}
 
-    def aggregate(self, entries, period=''):
+    def aggregate(self, entries, period=""):
         return AggregationResult(period=period, entry_count=len(entries))
 
+
 class MerkleHourlyRoot:
-    def __init__(self, root_hash='', period='', entry_count=0, computed_at=None):
+    def __init__(self, root_hash="", period="", entry_count=0, computed_at=None):
         self.root_hash = root_hash
         self.period = period
         self.entry_count = entry_count

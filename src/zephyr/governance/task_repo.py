@@ -69,6 +69,7 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 from __future__ import annotations
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 import fnmatch
@@ -81,35 +82,32 @@ from datetime import UTC, datetime
 from pathlib import Path
 from threading import RLock
 
-from zephyr.shared.task_types import TaskCard
-from zephyr.governance.sqlite_schema import DB_PATH, get_db_connection, init_db
-from zephyr.governance.sqlite_schema import _find_repo_root
-from zephyr.governance.event_store import EventStore
 from zephyr.governance.projection_engine import ProjectionEngine
 from zephyr.governance.rule_enforcement.gate_engine import (
     GATES_DIR,
     GateEngine,
 )
-from zephyr.shared.task_types import Task, TaskNamespace, TaskStatus
-from zephyr.integration.shared_08.contracts.gate import GateResult, GateViolationError
+from zephyr.governance.sqlite_schema import DB_PATH, get_db_connection, init_db
 from zephyr.integration.shared.schema.severity_types import Priority
+from zephyr.integration.shared_08.contracts.gate import GateResult, GateViolationError
 from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.task_types import Task, TaskCard, TaskNamespace, TaskStatus
 
 __all__ = [
-    "TaskRepository",
-    "TaskNotFoundError",
+    "CIRCULAR_ACCEPTANCE_ROUNDS",
+    "CircularAcceptanceError",
+    "GateResult",
+    "GateViolationError",
     "InvalidTransitionError",
-    "TaskRepositoryError",
-    "RejectedUpgradeCoolingOffError",
     "P0InflationFrozenError",
     "P0InflationWarning",
-    "SyncVerificationError",
-    "CircularAcceptanceError",
-    "UnclaimedOperationError",
+    "RejectedUpgradeCoolingOffError",
     "RootCauseRequiredError",
-    "GateViolationError",
-    "GateResult",
-    "CIRCULAR_ACCEPTANCE_ROUNDS",
+    "SyncVerificationError",
+    "TaskNotFoundError",
+    "TaskRepository",
+    "TaskRepositoryError",
+    "UnclaimedOperationError",
     "allowed_transitions",
     "is_terminal",
     "search",
@@ -154,10 +152,7 @@ class SyncVerificationError(TaskRepositoryError):
         self.command = command
         self.exit_code = exit_code
         self.stderr = stderr
-        super().__init__(
-            f"任务 {task_id!r} 的 post_sync_standard 验证失败: "
-            f"命令 {command!r} 返回 exit={exit_code}"
-        )
+        super().__init__(f"任务 {task_id!r} 的 post_sync_standard 验证失败: 命令 {command!r} 返回 exit={exit_code}")
 
 
 class CircularAcceptanceError(TaskRepositoryError):
@@ -166,10 +161,7 @@ class CircularAcceptanceError(TaskRepositoryError):
     def __init__(self, task_id: str, round_num: int, failures: list[str]) -> None:
         self.round_num = round_num
         self.failures = failures
-        super().__init__(
-            f"任务 {task_id!r} 循环验收第 {round_num} 轮未通过: "
-            + "; ".join(failures)
-        )
+        super().__init__(f"任务 {task_id!r} 循环验收第 {round_num} 轮未通过: " + "; ".join(failures))
 
 
 class UnclaimedOperationError(TaskRepositoryError):
@@ -184,6 +176,23 @@ class RootCauseRequiredError(TaskRepositoryError):
             f"任务 {task_id!r} 转换为 FAILED 必须提供根因分析（note 参数不得为空，"
             f"且须包含根因→治根→修复的完整追溯，见 MTH-006）"
         )
+
+
+class GranularityViolationError(TaskRepositoryError):
+    """RULE-THIRTEEN 粒度门禁 R1-R6 违规（DM-200921 修复：原仅文档规则，现代码强制）。"""
+
+
+class BatchReviewRequiredError(TaskRepositoryError):
+    """task_001_batch_review_protocol 违规：未完成7维度循环审查即尝试 COMPLETED。"""
+
+    def __init__(self, task_id: str, detail: str = "") -> None:
+        msg = (
+            f"任务 {task_id!r} 未完成 task_001_batch_review_protocol 审查，禁止转为 COMPLETED。"
+            f"必须执行 batch_review() 直到连续2次0问题，并持久化审查记录。"
+        )
+        if detail:
+            msg += f" 详情: {detail}"
+        super().__init__(msg)
 
 
 # ---------------------------------------------------------------------------
@@ -313,14 +322,31 @@ def _safe_parse_json_array(raw: object, field_name: str = "") -> list:
     return [stripped.strip("'\"")]
 
 
-_JSON_ARRAY_COLUMNS = frozenset({
-    "files_in_scope", "deliverables", "acceptance", "depends_on", "tags",
-    "post_sync_standard", "post_sync_specific", "allowed_touch",
-    "forbidden_touch", "applicable_rules", "upstream_files",
-    "downstream_outputs", "context_assembly_manifest", "completed_gates",
-    "pipeline_modules", "blocked_by", "artifact_paths", "audit_findings",
-    "ke_entries", "autonomy_checklist", "depgraph_nodes",
-})
+_JSON_ARRAY_COLUMNS = frozenset(
+    {
+        "files_in_scope",
+        "deliverables",
+        "acceptance",
+        "depends_on",
+        "tags",
+        "post_sync_standard",
+        "post_sync_specific",
+        "allowed_touch",
+        "forbidden_touch",
+        "applicable_rules",
+        "upstream_files",
+        "downstream_outputs",
+        "context_assembly_manifest",
+        "completed_gates",
+        "pipeline_modules",
+        "blocked_by",
+        "artifact_paths",
+        "audit_findings",
+        "ke_entries",
+        "autonomy_checklist",
+        "depgraph_nodes",
+    }
+)
 
 _JSON_DICT_COLUMNS = frozenset({"blocked_gates"})
 
@@ -329,7 +355,7 @@ _DATETIME_NULLABLE_COLUMNS = frozenset({"ready_at", "completed_at", "deleted_at"
 _DATETIME_REQUIRED_COLUMNS = frozenset({"created_at", "updated_at"})
 
 
-def _serialize_for_db(task: "TaskCard") -> dict:
+def _serialize_for_db(task: TaskCard) -> dict:
     """将 TaskCard 序列化为 DB 写入参数，强制所有 JSON/datetime 字段为标准格式。
 
     这是写入的唯一入口——所有 INSERT/UPDATE 必须经过此函数，
@@ -380,7 +406,9 @@ def _serialize_for_db(task: "TaskCard") -> dict:
 
     for col in _JSON_ARRAY_COLUMNS:
         val = getattr(task, col, [])
-        params[col] = _json.dumps(val if isinstance(val, list) else list(val) if hasattr(val, '__iter__') else [val], ensure_ascii=False)
+        params[col] = _json.dumps(
+            val if isinstance(val, list) else list(val) if hasattr(val, "__iter__") else [val], ensure_ascii=False
+        )
 
     for col in _JSON_DICT_COLUMNS:
         val = getattr(task, col, {})
@@ -416,13 +444,13 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
     _datetime_required_fields = ("created_at", "updated_at")
     for field in _datetime_required_fields:
         raw = d.get(field)
-        if isinstance(raw, str) and (not raw.strip() or raw.strip() in ("None", "null")
-                                     or not raw[0:4].isdigit()):
+        if isinstance(raw, str) and (not raw.strip() or raw.strip() in ("None", "null") or not raw[0:4].isdigit()):
             d[field] = datetime.now(_UTC).isoformat()
 
     if d.get("updated_at") and d.get("created_at"):
         try:
             from datetime import datetime as _dt
+
             ca = _dt.fromisoformat(str(d["created_at"]))
             ua = _dt.fromisoformat(str(d["updated_at"]))
             if ua < ca:
@@ -467,15 +495,11 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         elif not isinstance(raw, dict):
             d[field] = {}
 
-    _list_of_dict_fields = ("applicable_rules", "audit_findings", "downstream_outputs",
-                            "context_assembly_manifest")
+    _list_of_dict_fields = ("applicable_rules", "audit_findings", "downstream_outputs", "context_assembly_manifest")
     for field in _list_of_dict_fields:
         val = d.get(field, [])
         if isinstance(val, list):
-            d[field] = [
-                item if isinstance(item, dict) else {"value": str(item)}
-                for item in val
-            ]
+            d[field] = [item if isinstance(item, dict) else {"value": str(item)} for item in val]
 
     d["idempotent"] = bool(d.get("idempotent", 0))
     if "name" in d and "title" not in d:
@@ -497,17 +521,19 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         import warnings
 
         warnings.warn(
-            f"TaskCard {d.get('task_id','?')} schema_version={schema_ver} 与当前 0.3.2 不匹配，"
+            f"TaskCard {d.get('task_id', '?')} schema_version={schema_ver} 与当前 0.3.2 不匹配，"
             f"可能缺少新增字段（autonomy_checklist 等），数据完整性未经验证。",
             UserWarning,
             stacklevel=2,
         )
 
     import re as _re
-    _TASK_ID_PATTERN = _re.compile(r'^(CP|DM|DW|KBG|KE|OPS|SRC|STD)-\d+$')
+
+    _TASK_ID_PATTERN = _re.compile(r"^(CP|DM|DW|KBG|KE|OPS|SRC|STD)-\d+$")
     tid = d.get("task_id", "")
     if not _TASK_ID_PATTERN.match(str(tid)):
         import warnings
+
         warnings.warn(
             f"TaskCard task_id={tid!r} 不符合格式 NAMESPACE-SEQ，跳过 Pydantic 校验",
             UserWarning,
@@ -516,7 +542,7 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         try:
             return TaskCard.model_validate(d)
         except Exception:
-            d["task_id"] = f"DM-999999"
+            d["task_id"] = "DM-999999"
             return TaskCard.model_validate(d)
 
     return TaskCard.model_validate(d)
@@ -660,37 +686,25 @@ class TaskRepository:
         violations: list[str] = []
 
         if len(task.deliverables) > 1:
-            violations.append(
-                f"R1: deliverables={len(task.deliverables)} > 1（一卡一产出物）"
-            )
+            violations.append(f"R1: deliverables={len(task.deliverables)} > 1（一卡一产出物）")
 
         if len(task.files_in_scope) > 3:
-            violations.append(
-                f"R2: files_in_scope={len(task.files_in_scope)} > 3（一卡最多3个文件）"
-            )
+            violations.append(f"R2: files_in_scope={len(task.files_in_scope)} > 3（一卡最多3个文件）")
 
         if len(task.acceptance) > 1:
-            violations.append(
-                f"R3: acceptance={len(task.acceptance)} > 1（一卡一验收点）"
-            )
+            violations.append(f"R3: acceptance={len(task.acceptance)} > 1（一卡一验收点）")
 
         construction_targets = self._count_construction_targets(task.description)
         if construction_targets > 1:
-            violations.append(
-                f"R4: construction_targets={construction_targets} > 1（一卡一施工目标）"
-            )
+            violations.append(f"R4: construction_targets={construction_targets} > 1（一卡一施工目标）")
 
         required_keywords = ("根因", "治根", "施工步骤", "验收标准")
         missing_kw = [kw for kw in required_keywords if kw not in task.description]
         if missing_kw and len(task.description) >= 100:
-            violations.append(
-                f"R5: description 缺少结构词 {missing_kw}"
-            )
+            violations.append(f"R5: description 缺少结构词 {missing_kw}")
 
         if len(task.description) < 100:
-            violations.append(
-                f"R6: description 长度={len(task.description)} < 100（描述过短）"
-            )
+            violations.append(f"R6: description 长度={len(task.description)} < 100（描述过短）")
 
         return violations
 
@@ -698,6 +712,7 @@ class TaskRepository:
     def _count_construction_targets(description: str) -> int:
         """从 description 中计算施工步骤数量。"""
         import re
+
         steps = re.findall(r"第[一二三四五六七八九十\d]+步", description)
         if steps:
             return len(steps)
@@ -758,8 +773,7 @@ class TaskRepository:
             return
 
         cursor = conn.execute(
-            "SELECT task_id, files_in_scope FROM tasks "
-            "WHERE status IN ('READY', 'IN_PROGRESS') AND is_deleted = 0"
+            "SELECT task_id, files_in_scope FROM tasks WHERE status IN ('READY', 'IN_PROGRESS') AND is_deleted = 0"
         )
         for row in cursor.fetchall():
             existing_task_id = row["task_id"]
@@ -777,7 +791,9 @@ class TaskRepository:
                     f"{existing_task_id!r} 共享文件 {sorted(overlap)}"
                 )
 
-    def create(self, task: Task, *, files: list[dict[str, str]] | None = None, allow_direct_create: bool = False) -> TaskCard:
+    def create(
+        self, task: Task, *, files: list[dict[str, str]] | None = None, allow_direct_create: bool = False
+    ) -> TaskCard:
         """
         插入新任务。task_id 已存在时抛 sqlite3.IntegrityError。
 
@@ -806,6 +822,13 @@ class TaskRepository:
                 f"RULE-ZERO-TASK v2.0+: 建卡触发=用户主动 OR 八指标阈值触发，蓝图拆解非唯一路径。"
             )
         self._validate_template_fields(task)
+        # RULE-THIRTEEN: 粒度门禁 R1-R6 强制校验（DM-200921 修复：原仅文档规则，现代码强制）
+        granularity_violations = self._validate_granularity(task)
+        if granularity_violations:
+            raise GranularityViolationError(
+                f"RULE-THIRTEEN 粒度门禁违规（task_id={task.task_id!r}）:\n"
+                + "\n".join(f"  - {v}" for v in granularity_violations)
+            )
         with self._write_tx() as conn:
             self._check_files_in_scope_conflict(conn, task)
             if task.priority == Priority.P0:
@@ -1023,8 +1046,20 @@ class TaskRepository:
             if current_p == proposed_p:
                 return _row_to_taskcard(row)
 
-            current_idx = {Priority.P0.value: 0, Priority.P1.value: 1, Priority.P2.value: 2, Priority.P3.value: 3, Priority.P4.value: 4}.get(current_p, 9)
-            proposed_idx = {Priority.P0.value: 0, Priority.P1.value: 1, Priority.P2.value: 2, Priority.P3.value: 3, Priority.P4.value: 4}.get(proposed_p, 9)
+            current_idx = {
+                Priority.P0.value: 0,
+                Priority.P1.value: 1,
+                Priority.P2.value: 2,
+                Priority.P3.value: 3,
+                Priority.P4.value: 4,
+            }.get(current_p, 9)
+            proposed_idx = {
+                Priority.P0.value: 0,
+                Priority.P1.value: 1,
+                Priority.P2.value: 2,
+                Priority.P3.value: 3,
+                Priority.P4.value: 4,
+            }.get(proposed_p, 9)
 
             if proposed_idx >= current_idx:
                 conn.execute(
@@ -1053,7 +1088,7 @@ class TaskRepository:
                     cooldown_dt = dt.fromisoformat(cooldown_until)
                     if cooldown_dt > dt.now(UTC):
                         raise RejectedUpgradeCoolingOffError(
-                            f"优先级升级被拒绝且仍在冷却期（至 {cooldown_until}），" f"请等待冷却期结束后重新提议"
+                            f"优先级升级被拒绝且仍在冷却期（至 {cooldown_until}），请等待冷却期结束后重新提议"
                         )
                 except (ValueError, TypeError):
                     pass
@@ -1124,7 +1159,14 @@ class TaskRepository:
                    VALUES (?, 'task_event', ?, ?, ?)""",
                 (
                     f"ev-{task_id}-approved-{approved_p}",
-                    json.dumps({"event_subtype": "priority_upgrade_approved", "approved": approved_p, "action": "owner_approved"}, ensure_ascii=False),
+                    json.dumps(
+                        {
+                            "event_subtype": "priority_upgrade_approved",
+                            "approved": approved_p,
+                            "action": "owner_approved",
+                        },
+                        ensure_ascii=False,
+                    ),
                     task_id,
                     now_iso(),
                 ),
@@ -1156,7 +1198,14 @@ class TaskRepository:
                    VALUES (?, 'task_event', ?, ?, ?)""",
                 (
                     f"ev-{task_id}-rejected",
-                    json.dumps({"event_subtype": "priority_upgrade_rejected", "cooldown_until": cooldown, "action": "owner_rejected"}, ensure_ascii=False),
+                    json.dumps(
+                        {
+                            "event_subtype": "priority_upgrade_rejected",
+                            "cooldown_until": cooldown,
+                            "action": "owner_rejected",
+                        },
+                        ensure_ascii=False,
+                    ),
                     task_id,
                     now_iso(),
                 ),
@@ -1232,6 +1281,21 @@ class TaskRepository:
                     if not gate_result.passed:
                         raise GateViolationError(gate_result)
 
+                # DM-200921 修复: task_001_batch_review_protocol 代码强制
+                # transition(COMPLETED) 前必须验证审查记录(连续2次0问题)
+                if to_status == TaskStatus.COMPLETED:
+                    review_status = self.get_review_status(task_id)
+                    if not review_status.get("reviewed", False):
+                        raise BatchReviewRequiredError(
+                            task_id,
+                            "未执行任何审查(batch_review从未调用)",
+                        )
+                    if not review_status.get("review_complete", False):
+                        raise BatchReviewRequiredError(
+                            task_id,
+                            f"审查未完成: consecutive_zero={review_status.get('consecutive_zero', 0)}/2",
+                        )
+
                 from_status = TaskStatus(row["status"])
                 if not _is_valid_transition(from_status, to_status):
                     raise InvalidTransitionError(
@@ -1305,14 +1369,17 @@ class TaskRepository:
 
         assert updated_row is not None
 
-        from zephyr.governance.ops_governance.event_hook import hook_registry, TransitionEvent
-        hook_registry.fire(TransitionEvent(
-            task_id=task_id,
-            from_status=from_status.value,
-            to_status=to_status.value,
-            note=note or "",
-            session_id=session_id,
-        ))
+        from zephyr.governance.ops_governance.event_hook import TransitionEvent, hook_registry
+
+        hook_registry.fire(
+            TransitionEvent(
+                task_id=task_id,
+                from_status=from_status.value,
+                to_status=to_status.value,
+                note=note or "",
+                session_id=session_id,
+            )
+        )
 
         # DM-400/DM-401: transition(COMPLETED)后提醒剩余IN_PROGRESS任务
         if to_status == TaskStatus.COMPLETED:
@@ -1325,13 +1392,17 @@ class TaskRepository:
                             "DM-401 提醒: 任务 %s 已关闭，仍有 %d 个 IN_PROGRESS 任务未关闭"
                             "（当前 session %s: %d 个）。"
                             " 请在 session 关门前执行 transition(COMPLETED) 或 recover_stale_claims()。",
-                            task_id, all_in_progress, session_id, same_session,
+                            task_id,
+                            all_in_progress,
+                            session_id,
+                            same_session,
                         )
                     else:
                         logger.warning(
                             "DM-401 提醒: 任务 %s 已关闭，仍有 %d 个 IN_PROGRESS 任务未关闭。"
                             " 请在 session 关门前执行 transition(COMPLETED) 或 recover_stale_claims()。",
-                            task_id, all_in_progress,
+                            task_id,
+                            all_in_progress,
                         )
             except Exception:
                 pass
@@ -1362,10 +1433,7 @@ class TaskRepository:
                         timeout=120,
                     )
                     if result.returncode != 0:
-                        failures.append(
-                            f"命令 {cmd!r} 返回 exit={result.returncode}: "
-                            f"{(result.stderr or '')[:200]}"
-                        )
+                        failures.append(f"命令 {cmd!r} 返回 exit={result.returncode}: {(result.stderr or '')[:200]}")
                 except subprocess.TimeoutExpired:
                     failures.append(f"命令 {cmd!r} 超时（120s）")
                 except Exception as exc:
@@ -1373,6 +1441,168 @@ class TaskRepository:
 
             if failures:
                 raise CircularAcceptanceError(task_id, round_num, failures)
+
+    # ------------------------------------------------------------------
+    # task_001_batch_review_protocol 代码强制实现（DM-200921 修复）
+    # ------------------------------------------------------------------
+
+    _BATCH_REVIEW_DIMENSIONS = (
+        "checklist_completeness",
+        "solution_completeness",
+        "code_correctness",
+        "causal_chain_validity",
+        "data_consistency",
+        "omission_risk",
+        "drift_risk",
+    )
+
+    def batch_review(self, task_id: str, *, reviewer: str = "ai_session", session_id: str | None = None) -> dict:
+        """task_001_batch_review_protocol: 7维度审查并持久化记录。"""
+        import json
+        import uuid
+
+        task_card = self.get(task_id)
+        if task_card is None:
+            raise TaskNotFoundError(task_id)
+        task = task_card.to_task() if hasattr(task_card, "to_task") else task_card
+
+        with self._write_tx() as conn:
+            rows = conn.execute(
+                "SELECT review_round, passed, dimension, issue_count FROM task_reviews WHERE task_id=? ORDER BY review_round DESC, dimension",
+                (task_id,),
+            ).fetchall()
+            max_round = max((r[0] for r in rows), default=0)
+            current_round = max_round + 1
+            consecutive_zero = 0
+            checked_rounds = set()
+            for r in rows:
+                rnd = r[0]
+                if rnd in checked_rounds:
+                    continue
+                checked_rounds.add(rnd)
+                round_rows = [x for x in rows if x[0] == rnd]
+                if round_rows and all(x[2] == 1 for x in round_rows):
+                    consecutive_zero += 1
+                else:
+                    break
+
+        dimensions_result = {}
+        total_issues = 0
+        now = now_iso()
+
+        for dim in self._BATCH_REVIEW_DIMENSIONS:
+            issues = self._evaluate_review_dimension(task, dim)
+            passed = len(issues) == 0
+            total_issues += len(issues)
+            dimensions_result[dim] = {"issues": issues, "passed": passed}
+
+            with self._write_tx() as conn:
+                conn.execute(
+                    "INSERT INTO task_reviews (review_id, task_id, review_round, dimension, issue_count, issues_json, passed, reviewer, session_id, reviewed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (str(uuid.uuid4()), task_id, current_round, dim, len(issues), json.dumps(issues, ensure_ascii=False), 1 if passed else 0, reviewer, session_id, now),
+                )
+
+        if total_issues == 0:
+            consecutive_zero += 1
+
+        return {"task_id": task_id, "round": current_round, "total_issues": total_issues, "passed": total_issues == 0, "consecutive_zero": consecutive_zero, "dimensions": dimensions_result}
+
+    def _evaluate_review_dimension(self, task: Task, dimension: str) -> list[str]:
+        """执行单个维度的审查，返回问题列表。"""
+        import json
+
+        issues: list[str] = []
+
+        if dimension == "checklist_completeness":
+            if not task.files_in_scope:
+                issues.append("files_in_scope为空")
+            if not task.deliverables:
+                issues.append("deliverables为空")
+            if not task.acceptance:
+                issues.append("acceptance为空")
+            if not task.rollback_instructions or len(task.rollback_instructions) < 20:
+                issues.append("rollback_instructions过短(<20字)")
+
+        elif dimension == "solution_completeness":
+            required_kw = ("根因", "治根", "施工步骤", "验收标准")
+            missing = [kw for kw in required_kw if kw not in task.description]
+            if missing:
+                issues.append(f"description缺少结构词: {missing}")
+            if len(task.description) < 100:
+                issues.append(f"description过短({len(task.description)}<100字)")
+
+        elif dimension == "code_correctness":
+            try:
+                json.loads(task.blocked_by) if task.blocked_by else []
+            except (json.JSONDecodeError, TypeError):
+                issues.append("blocked_by不是有效JSON")
+
+        elif dimension == "causal_chain_validity":
+            try:
+                bl = json.loads(task.blocked_by) if task.blocked_by else []
+            except (json.JSONDecodeError, TypeError):
+                bl = []
+            for dep_id in bl:
+                try:
+                    with self._write_tx() as conn:
+                        row = conn.execute("SELECT task_id FROM tasks WHERE task_id=?", (dep_id,)).fetchone()
+                    if row is None:
+                        issues.append(f"blocked_by引用不存在的任务: {dep_id}")
+                except Exception:
+                    issues.append(f"无法验证依赖任务: {dep_id}")
+
+        elif dimension == "data_consistency":
+            try:
+                bl = json.loads(task.blocked_by) if task.blocked_by else []
+            except (json.JSONDecodeError, TypeError):
+                bl = []
+            if bl and task.status != TaskStatus.BLOCKED:
+                issues.append(f"有blocked_by但status={task.status}(应BLOCKED)")
+            if not bl and task.status == TaskStatus.BLOCKED:
+                issues.append("无blocked_by但status=BLOCKED")
+
+        elif dimension == "omission_risk":
+            if len(task.files_in_scope) > 3:
+                issues.append(f"files_in_scope={len(task.files_in_scope)}>3(粒度风险)")
+            if not task.applicable_rules:
+                issues.append("applicable_rules为空(未声明适用规则)")
+
+        elif dimension == "drift_risk":
+            if not task.source_blueprint or task.source_blueprint == "unknown":
+                issues.append("source_blueprint为空或unknown(蓝图漂移风险)")
+            if not task.allowed_touch:
+                issues.append("allowed_touch为空(修改范围未限定)")
+
+        return issues
+
+    def get_review_status(self, task_id: str) -> dict:
+        """查询任务卡的审查状态。"""
+        with self._read_tx() as conn:
+            rows = conn.execute(
+                "SELECT review_round, dimension, issue_count, passed, reviewed_at FROM task_reviews WHERE task_id=? ORDER BY review_round, dimension",
+                (task_id,),
+            ).fetchall()
+
+        if not rows:
+            return {"task_id": task_id, "reviewed": False, "consecutive_zero": 0}
+
+        rounds = {}
+        for r in rows:
+            rnd = r[0]
+            if rnd not in rounds:
+                rounds[rnd] = {"all_passed": True, "dimensions": {}}
+            rounds[rnd]["dimensions"][r[1]] = {"issue_count": r[2], "passed": r[3]}
+            if r[3] == 0:
+                rounds[rnd]["all_passed"] = False
+
+        consecutive_zero = 0
+        for rnd in sorted(rounds.keys(), reverse=True):
+            if rounds[rnd]["all_passed"]:
+                consecutive_zero += 1
+            else:
+                break
+
+        return {"task_id": task_id, "reviewed": True, "total_rounds": len(rounds), "consecutive_zero": consecutive_zero, "review_complete": consecutive_zero >= 2, "rounds": rounds}
 
     def _recalculate_dependent_status(
         self,
@@ -1473,12 +1703,13 @@ class TaskRepository:
         返回被阻塞的任务数。
         """
         now = now_iso()
-        claimer_row = conn.execute(
-            "SELECT status FROM tasks WHERE task_id = ?", (task_id,)
-        ).fetchone()
+        claimer_row = conn.execute("SELECT status FROM tasks WHERE task_id = ?", (task_id,)).fetchone()
         if claimer_row is None or claimer_row["status"] != TaskStatus.IN_PROGRESS.value:
-            logger.warning("_block_downstream_dependents: task %s is not IN_PROGRESS (status=%s), skip",
-                           task_id, claimer_row["status"] if claimer_row else "NONE")
+            logger.warning(
+                "_block_downstream_dependents: task %s is not IN_PROGRESS (status=%s), skip",
+                task_id,
+                claimer_row["status"] if claimer_row else "NONE",
+            )
             return 0
 
         downstream_rows = conn.execute(
@@ -1518,7 +1749,8 @@ class TaskRepository:
         if blocked_count:
             logger.info(
                 "claim_next(%s): blocked %d downstream dependents",
-                task_id, blocked_count,
+                task_id,
+                blocked_count,
             )
         return blocked_count
 
@@ -1550,10 +1782,12 @@ class TaskRepository:
                  AND NOT json_valid(blocked_by)""",
         ).fetchall()
         for cr in corrupt_rows:
-            logger.warning("_unblock_downstream_dependents: task %s has corrupted blocked_by=%r, auto-repairing to []",
-                           cr["task_id"], cr["blocked_by"])
-            conn.execute("UPDATE tasks SET blocked_by = '[]', updated_at = ? WHERE task_id = ?",
-                         (now, cr["task_id"]))
+            logger.warning(
+                "_unblock_downstream_dependents: task %s has corrupted blocked_by=%r, auto-repairing to []",
+                cr["task_id"],
+                cr["blocked_by"],
+            )
+            conn.execute("UPDATE tasks SET blocked_by = '[]', updated_at = ? WHERE task_id = ?", (now, cr["task_id"]))
 
         unblocked_count = 0
         for ds_row in downstream_rows:
@@ -1573,13 +1807,16 @@ class TaskRepository:
                 if not isinstance(deps, list):
                     deps = [deps] if deps else []
 
-                all_deps_met = all(
-                    conn.execute(
-                        "SELECT status FROM tasks WHERE task_id = ?", (d,)
-                    ).fetchone()["status"] in ("COMPLETED", "VERIFIED")
-                    for d in deps
-                    if d
-                ) if deps else True
+                all_deps_met = (
+                    all(
+                        conn.execute("SELECT status FROM tasks WHERE task_id = ?", (d,)).fetchone()["status"]
+                        in ("COMPLETED", "VERIFIED")
+                        for d in deps
+                        if d
+                    )
+                    if deps
+                    else True
+                )
 
                 if all_deps_met and ds_row["status"] == "BLOCKED":
                     conn.execute(
@@ -1603,9 +1840,7 @@ class TaskRepository:
                     unmet_blockers = []
                     for d in deps:
                         if d:
-                            dep_row = conn.execute(
-                                "SELECT status FROM tasks WHERE task_id = ?", (d,)
-                            ).fetchone()
+                            dep_row = conn.execute("SELECT status FROM tasks WHERE task_id = ?", (d,)).fetchone()
                             if dep_row is None:
                                 # 依赖不存在于tasks表 → 也视为阻塞源
                                 unmet_blockers.append(d)
@@ -1633,7 +1868,8 @@ class TaskRepository:
         if unblocked_count:
             logger.info(
                 "unblock_downstream(%s): unblocked %d dependents",
-                task_id, unblocked_count,
+                task_id,
+                unblocked_count,
             )
         return unblocked_count
 
@@ -1771,8 +2007,7 @@ class TaskRepository:
         """
         with self._write_tx() as conn:
             cursor = conn.execute(
-                "UPDATE tasks SET is_deleted = 1, deleted_at = ?, updated_at = ? "
-                "WHERE task_id = ? AND is_deleted = 0",
+                "UPDATE tasks SET is_deleted = 1, deleted_at = ?, updated_at = ? WHERE task_id = ? AND is_deleted = 0",
                 (now_iso(), now_iso(), task_id),
             )
             deleted = cursor.rowcount > 0
@@ -2360,8 +2595,9 @@ class TaskRepository:
         results: list[Task] = []
         for i, deliverable in enumerate(parent.deliverables):
             sub = self._make_sub_task(
-                parent, seq_suffix=f"-d{i+1}",
-                title=f"{parent.title} [产出{i+1}]",
+                parent,
+                seq_suffix=f"-d{i + 1}",
+                title=f"{parent.title} [产出{i + 1}]",
                 deliverables=[deliverable],
                 session_id=session_id,
             )
@@ -2375,10 +2611,11 @@ class TaskRepository:
         results: list[Task] = []
         chunk_size = 3
         for i in range(0, len(parent.files_in_scope), chunk_size):
-            chunk = parent.files_in_scope[i:i + chunk_size]
+            chunk = parent.files_in_scope[i : i + chunk_size]
             sub = self._make_sub_task(
-                parent, seq_suffix=f"-f{i//chunk_size+1}",
-                title=f"{parent.title} [文件组{i//chunk_size+1}]",
+                parent,
+                seq_suffix=f"-f{i // chunk_size + 1}",
+                title=f"{parent.title} [文件组{i // chunk_size + 1}]",
                 files_in_scope=chunk,
                 session_id=session_id,
             )
@@ -2392,8 +2629,9 @@ class TaskRepository:
         results: list[Task] = []
         for i, criterion in enumerate(parent.acceptance):
             sub = self._make_sub_task(
-                parent, seq_suffix=f"-a{i+1}",
-                title=f"{parent.title} [验收{i+1}]",
+                parent,
+                seq_suffix=f"-a{i + 1}",
+                title=f"{parent.title} [验收{i + 1}]",
                 acceptance=[criterion],
                 session_id=session_id,
             )
@@ -2403,6 +2641,7 @@ class TaskRepository:
     def _split_by_target(self, parent: TaskCard, session_id: str | None) -> list[Task]:
         """按 construction_targets 拆分：每个施工步骤一张卡。"""
         import re
+
         steps = re.split(r"(?=第[一二三四五六七八九十\d]+步)", parent.description)
         steps = [s.strip() for s in steps if s.strip()]
         if not steps:
@@ -2413,8 +2652,9 @@ class TaskRepository:
         results: list[Task] = []
         for i, step_desc in enumerate(steps):
             sub = self._make_sub_task(
-                parent, seq_suffix=f"-t{i+1}",
-                title=f"{parent.title} [步骤{i+1}]",
+                parent,
+                seq_suffix=f"-t{i + 1}",
+                title=f"{parent.title} [步骤{i + 1}]",
                 description=step_desc,
                 session_id=session_id,
             )
@@ -2486,10 +2726,14 @@ class TaskRepository:
     def _should_evaluate_gate(self, gate_id: str) -> bool:
         """判断是否应评估指定门禁。
 
-        当 self._enable_gate 为 True 且 self._gate_engine 不为 None 时返回 True。
-        子类可覆写此方法添加更细粒度的条件（如按 gate_id 过滤）。
+        DM-200921 修复: G7(交付门禁)不可绕过。
+        当 self._gate_engine 不为 None 时，G7 始终评估（忽略 _enable_gate）。
         """
-        return self._enable_gate and self._gate_engine is not None
+        if self._gate_engine is None:
+            return False
+        if gate_id == "G7":
+            return True
+        return self._enable_gate
 
     # ------------------------------------------------------------------
     # 风险评估（幻觉/漂移）
@@ -2569,7 +2813,6 @@ class TaskRepository:
 
         条件：IN_PROGRESS 且 updated_at 距今超过 timeout_minutes。
         """
-        from datetime import timedelta as td
 
         now = datetime.now(UTC)
         candidates: list[TaskCard] = []
@@ -2597,8 +2840,7 @@ class TaskRepository:
     def delete_completed_tasks_in_phase(self, phase: int) -> int:
         """DISABLED: 任务卡永久保留，禁止删除。始终返回 0。"""
         logger.warning(
-            "delete_completed_tasks_in_phase(phase=%s) 已禁用（2026-06-10: 任务卡永久保留），"
-            "调用被忽略",
+            "delete_completed_tasks_in_phase(phase=%s) 已禁用（2026-06-10: 任务卡永久保留），调用被忽略",
             phase,
         )
         return 0
@@ -2609,9 +2851,7 @@ class TaskRepository:
 
     def cleanup_terminal_tasks(self) -> int:
         """DISABLED: 任务卡永久保留，禁止删除。始终返回 0。"""
-        logger.warning(
-            "cleanup_terminal_tasks() 已禁用（2026-06-10: 任务卡永久保留），调用被忽略"
-        )
+        logger.warning("cleanup_terminal_tasks() 已禁用（2026-06-10: 任务卡永久保留），调用被忽略")
         return 0
 
     # ------------------------------------------------------------------
@@ -2695,6 +2935,7 @@ def is_terminal(status: TaskStatus | str) -> bool:
 # FTS5 全文搜索（T-DB-010）
 # ---------------------------------------------------------------------------
 
+
 def search(
     db_path: Path | str,
     query: str,
@@ -2719,9 +2960,7 @@ def search(
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode = WAL")
     try:
-        cursor = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='tasks_fts'"
-        )
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='tasks_fts'")
         has_fts = cursor.fetchone() is not None
         if not has_fts:
             conn.execute(
@@ -2729,9 +2968,7 @@ def search(
                    USING fts5(task_id, title, description, directive, content='tasks',
                    content_rowid='rowid')"""
             )
-            conn.execute(
-                """INSERT INTO tasks_fts(tasks_fts) VALUES('rebuild')"""
-            )
+            conn.execute("""INSERT INTO tasks_fts(tasks_fts) VALUES('rebuild')""")
 
         cols = "task_id, title, status, priority, phase"
         params: list[object] = [query]

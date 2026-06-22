@@ -1,5 +1,19 @@
 rule_id: TRAE-020
 title: 行为边界-治理纪律绝对禁止
+version: 1.0.0
+layer: L0
+module_id: TRAE-020
+depends_on:
+- TRAE-018
+- TRAE-019
+- TRAE-021
+tags:
+- TRAE
+- governance_prohibition
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - ABS-17
 - ABS-18
@@ -9,7 +23,6 @@ aliases:
 - ABS-22
 - ABS-23
 - ABS-24
-layer: L0
 severity: critical
 scope: governance_prohibition
 domain: TRAE
@@ -165,7 +178,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

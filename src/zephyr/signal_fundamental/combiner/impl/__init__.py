@@ -10,13 +10,19 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """L03 — Signal Combiner Concrete Implementations"""
+
 from __future__ import annotations
 
 from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
 from zephyr.signal_fundamental.strategy.implementations.default_capital_allocator import (
-    DefaultCapitalAllocator,
     AllocationMethod,
+    DefaultCapitalAllocator,
 )
 
-__all__ = ['AllocationMethod', 'DefaultCapitalAllocator', 'DefaultSignalAggregator',
-           'default_capital_allocator', 'default_signal_aggregator']
+__all__ = [
+    "AllocationMethod",
+    "DefaultCapitalAllocator",
+    "DefaultSignalAggregator",
+    "default_capital_allocator",
+    "default_signal_aggregator",
+]

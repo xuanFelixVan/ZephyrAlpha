@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
@@ -36,7 +36,7 @@ class AnomalyEvent(BaseModel):
     resource_path: str
     severity: str = "WARN"
     event_type: str = "anomaly_detected"
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     session_id: str = ""
     detail: str = ""
 
@@ -45,7 +45,12 @@ class AnomalyDetector:
     """审计异常检测器."""
 
     _SUSPICIOUS_OPERATIONS: set[str] = {
-        "delete", "truncate", "drop", "revoke", "sudo", "root",
+        "delete",
+        "truncate",
+        "drop",
+        "revoke",
+        "sudo",
+        "root",
     }
 
     def detect(self, audit_record: dict) -> AnomalyEvent | None:

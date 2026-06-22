@@ -1,9 +1,8 @@
 # [A_module] module_id=MOD-INT_telemetry_emitter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-013 ====
 from dataclasses import dataclass, field
+from datetime import datetime
 
-from datetime import datetime, timezone
-from typing import Dict
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -25,8 +24,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class TelemetryEmitter:
@@ -41,7 +41,7 @@ class TelemetryEmitter:
     metric_value: float
     source_module: str
     timestamp: datetime
-    labels: Dict[str, str] = field(default_factory=dict)
+    labels: dict[str, str] = field(default_factory=dict)
     message: str = ""
     parent_span_id: str = ""
     schema_version: str = "1.0"
@@ -49,179 +49,5 @@ class TelemetryEmitter:
     span_id: str = ""
     trace_id: str = ""
 
+
 # ==== END CODGEN:CTR-P1-013 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

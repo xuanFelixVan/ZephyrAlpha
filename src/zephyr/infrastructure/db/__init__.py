@@ -17,9 +17,11 @@
 - ``audit_schema``                —  审计视图与查询入口（CLI 审计面板 / compliance 报告）
 - ``query_metrics``               —  SQL 查询性能监控（P50/P95/P99 百分位 + slow_queries 表）
 """
+
 from __future__ import annotations
 
 import importlib as _importlib
+
 
 def __getattr__(name):
     if name == "query":
@@ -28,18 +30,19 @@ def __getattr__(name):
         return _importlib.import_module(f"{__name__}.transition")
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-    'atomic_transaction_manager',
-    'audit_schema',
-    'base_repo',
-    'circuit_breaker_repo',
-    'circuit_breaker_types',
-    'database_manager',
-    'gate_repo',
-    'olap_engine',
-    'query',
-    'query_metrics',
-    'sqlite_schema',
-    'task_repo',
-    'transition',
+    "atomic_transaction_manager",
+    "audit_schema",
+    "base_repo",
+    "circuit_breaker_repo",
+    "circuit_breaker_types",
+    "database_manager",
+    "gate_repo",
+    "olap_engine",
+    "query",
+    "query_metrics",
+    "sqlite_schema",
+    "task_repo",
+    "transition",
 ]

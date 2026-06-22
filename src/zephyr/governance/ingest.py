@@ -41,7 +41,6 @@ Safety : M（治理层代码，门禁失败阻断入库）
 
 from __future__ import annotations
 
-
 import hashlib
 import importlib
 import re
@@ -52,9 +51,9 @@ from typing import Any
 
 import yaml
 
+from zephyr.governance.kb.kb_engine.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.integration.shared_08.contracts.gate import GateResult
-from zephyr.governance.kb.kb_engine.kb_gate_task import build_kb_gate_eval_task
 
 _KB_REPO_NAMES = {"KbRepo"}
 
@@ -67,14 +66,15 @@ def __getattr__(name):
         return _val
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-    "IngestResult",
-    "IngestGate",
-    "BLACKLIST_PATTERNS",
-    "REQUIRED_FRONTMATTER_FIELDS",
     "ALLOWED_EXTENSIONS",
-    "MIN_CONTENT_CHARS",
+    "BLACKLIST_PATTERNS",
     "COLLOQUIAL_PATTERNS",
+    "MIN_CONTENT_CHARS",
+    "REQUIRED_FRONTMATTER_FIELDS",
+    "IngestGate",
+    "IngestResult",
 ]
 
 REQUIRED_FRONTMATTER_FIELDS = ["module_id", "title", "category"]

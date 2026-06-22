@@ -44,7 +44,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # noqa: E402
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 # ---------------------------------------------------------------------------
 # 白名单与豁免配置
@@ -92,7 +92,17 @@ TECH_VERSION_TOKENS: list[str] = [
     "ubuntu-24",
 ]
 
-VALID_PREFIXES: list[str] = ["validate_", "detect_", "audit_", "check_", "register_", "sync_", "generate_", "scan_", "audit_session_"]
+VALID_PREFIXES: list[str] = [
+    "validate_",
+    "detect_",
+    "audit_",
+    "check_",
+    "register_",
+    "sync_",
+    "generate_",
+    "scan_",
+    "audit_session_",
+]
 
 PATH_EXEMPT_PREFIXES: list[str] = [
     "archive/",
@@ -219,9 +229,14 @@ def _check_n05_adr_missing_suffix(filepath: str) -> list[NamingViolation]:
 # N-06: module_id scope 前缀检测
 # ---------------------------------------------------------------------------
 
-_MODULE_ID_SCOPE_RE = re.compile(r"^\s*module_id:\s*(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN)(?:-[A-Z]+[0-9]*)*-\d+", re.MULTILINE)
+_MODULE_ID_SCOPE_RE = re.compile(
+    r"^\s*module_id:\s*(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN)(?:-[A-Z]+[0-9]*)*-\d+",
+    re.MULTILINE,
+)
 # Relaxed regex for inline module_id: inside .py comment headers (e.g. "# [A_test] module_id: SRC-TST-0212 | ...")
-_INLINE_MODULE_ID_SCOPE_RE = re.compile(r"module_id:\s*(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN)(?:-[A-Z]+[0-9]*)*-\d+\b")
+_INLINE_MODULE_ID_SCOPE_RE = re.compile(
+    r"module_id:\s*(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN)(?:-[A-Z]+[0-9]*)*-\d+\b"
+)
 
 
 def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
@@ -240,11 +255,11 @@ def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> li
         return []
     # For .py files, only check header area (not type annotations)
     if name.endswith(".py"):
-        bp_match = re.search(r'^\s*#\s*\[BLUEPRINT\]\s+\S+\s+\|\s*\S+\s*\|', content, re.MULTILINE)
+        bp_match = re.search(r"^\s*#\s*\[BLUEPRINT\]\s+\S+\s+\|\s*\S+\s*\|", content, re.MULTILINE)
         if not bp_match:
             return []
         # Check if the file has module_id in its header area (first 25 lines)
-        header = '\n'.join(content.split('\n')[:25])
+        header = "\n".join(content.split("\n")[:25])
         if "module_id:" in header:
             # module_id exists but no scope prefix matched above → violation
             return [NamingViolation(rule="N-06", message=f"module_id 缺少 scope 前缀: {name}", filepath=filepath)]
@@ -252,12 +267,12 @@ def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> li
     # For YAML/MD/JSON, use regex to find real module_id declarations
     # Skip code blocks (```...```), template placeholders, null values
     # Remove code blocks first for efficiency
-    clean = re.sub(r'```[\s\S]*?```', '', content)
+    clean = re.sub(r"```[\s\S]*?```", "", content)
     # Find module_id declarations that are real values (not null/placeholder)
-    _REAL_MID_RE = re.compile(r'^\s*module_id:\s*(.+)', re.MULTILINE)
+    _REAL_MID_RE = re.compile(r"^\s*module_id:\s*(.+)", re.MULTILINE)
     for m in _REAL_MID_RE.finditer(clean):
         value = m.group(1).strip().strip('"').strip("'")
-        if not value or value in ('null', '~', 'None') or value.startswith('{') or value.startswith('<'):
+        if not value or value in ("null", "~", "None") or value.startswith("{") or value.startswith("<"):
             continue
         # This is a real module_id that doesn't match scope pattern
         return [NamingViolation(rule="N-06", message=f"module_id 缺少 scope 前缀: {name}", filepath=filepath)]
@@ -293,11 +308,13 @@ def _check_n07_module_id_number_mismatch(filepath: str, abspath: Path | None = N
     mod_prefix = mod_match.group(1)
     mod_num = mod_match.group(2)
     if fn_num != mod_num:
-        return [NamingViolation(
-            rule="N-07",
-            message=f"{prefix} 模块编号与文件名编号不一致: module_id={mod_prefix}-{mod_num}, 文件名={stem}",
-            filepath=filepath,
-        )]
+        return [
+            NamingViolation(
+                rule="N-07",
+                message=f"{prefix} 模块编号与文件名编号不一致: module_id={mod_prefix}-{mod_num}, 文件名={stem}",
+                filepath=filepath,
+            )
+        ]
     return []
 
 
@@ -328,13 +345,18 @@ def _check_n08_python_snake_case(filepath: str) -> list[NamingViolation]:
             reasons.append("含连字符(kebab-case)")
         if not reasons:
             reasons.append("不符合 snake_case")
-        return [NamingViolation(rule="N-08", message=f"Python 文件名不符合 snake_case({', '.join(reasons)}): {name}", filepath=filepath)]
+        return [
+            NamingViolation(
+                rule="N-08", message=f"Python 文件名不符合 snake_case({', '.join(reasons)}): {name}", filepath=filepath
+            )
+        ]
     return []
 
 
 # ---------------------------------------------------------------------------
 # N-09: 目录名空格检测
 # ---------------------------------------------------------------------------
+
 
 def _check_n09_dir_spaces(dirpath: str) -> list[NamingViolation]:
     """目录名禁止包含空格、制表符、非 ASCII 字符。
@@ -361,13 +383,28 @@ _DIR_SNAKE_CASE_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 _DIR_SINGLE_WORD_RE = re.compile(r"^[a-z][a-z0-9]*$")
 _DIR_DOCS_NUM_PREFIX_RE = re.compile(r"^\d{2}_[a-z][a-z0-9_]*$")
 _DIR_EXEMPT_NAMES: set[str] = {
-    "__pycache__", ".git", ".ruff_cache", ".mypy_cache", ".pytest_cache",
-    "node_modules", ".venv", "venv", ".tox", ".eggs", ".idea", ".vscode",
-    ".trae", ".ailocks", ".aidrafts",
+    "__pycache__",
+    ".git",
+    ".ruff_cache",
+    ".mypy_cache",
+    ".pytest_cache",
+    "node_modules",
+    ".venv",
+    "venv",
+    ".tox",
+    ".eggs",
+    ".idea",
+    ".vscode",
+    ".trae",
+    ".ailocks",
+    ".aidrafts",
 }
 _DIR_MODULE_ID_RE = re.compile(r"^[A-Z]+-[A-Z]+[0-9]*-\d+(-[A-Z]+)?$|^[A-Z]+-\d+$|^[A-Z]+-[A-Z]+-\d+$")
 _DIR_ROOT_KEBAB_EXEMPT: set[str] = {
-    "architecture-model", "session-logs", "test_dir", "target-architecture",
+    "architecture-model",
+    "session-logs",
+    "test_dir",
+    "target-architecture",
     "cross-cutting",
 }
 _DIR_KEBAB_PATH_PREFIXES: list[str] = [
@@ -442,7 +479,13 @@ _DOC_TYPE_SUFFIX_MAP: dict[str, list[str]] = {
     "register": ["-registry.md", "-register.md", "-registry.yaml", "-registry.yml", "-register.yaml", "-register.yml"],
     "index": ["index.md"],
     "template": ["-template.md"],
-    "terminology": ["-glossary-glossary.md", "-terminology.md", "-mapping.md", "glossary-glossary.md", "terminology-mapping-reference.md"],
+    "terminology": [
+        "-_registry/vocabularies/glossary.yaml",
+        "-terminology.md",
+        "-mapping.md",
+        "_registry/vocabularies/glossary.yaml",
+        "_registry/vocabularies/terminology_mapping.yaml",
+    ],
     "blueprint": ["blueprint.md"],
     "catalog": ["-catalog.md", "-catalog.yaml", "-catalog.yml", "-ranking.md"],
     "guide": ["-guide.md"],
@@ -479,11 +522,13 @@ def _check_n11_doctype_suffix(filepath: str, abspath: Path | None = None) -> lis
     for suffix in allowed_suffixes:
         if name.endswith(suffix):
             return []
-    return [NamingViolation(
-        rule="N-11",
-        message=f"文件名后缀与 doc_type 不匹配: doc_type={doc_type}, 文件名={name} (期望后缀: {', '.join(allowed_suffixes)})",
-        filepath=filepath,
-    )]
+    return [
+        NamingViolation(
+            rule="N-11",
+            message=f"文件名后缀与 doc_type 不匹配: doc_type={doc_type}, 文件名={name} (期望后缀: {', '.join(allowed_suffixes)})",
+            filepath=filepath,
+        )
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -510,10 +555,22 @@ def _check_n12_ke_naming(filepath: str) -> list[NamingViolation]:
         return []
     violations: list[NamingViolation] = []
     if _KE_NUMERIC_TITLE_RE.match(name.lower()):
-        violations.append(NamingViolation(rule="N-12", message=f"KE 条目标题为纯数字(无语义): {name} (期望: ke-NNN-snake_case_title.md)", filepath=filepath))
+        violations.append(
+            NamingViolation(
+                rule="N-12",
+                message=f"KE 条目标题为纯数字(无语义): {name} (期望: ke-NNN-snake_case_title.md)",
+                filepath=filepath,
+            )
+        )
         return violations
     if not _KE_PATTERN.match(name.lower()):
-        violations.append(NamingViolation(rule="N-12", message=f"KE 条目文件名格式不合规: {name} (期望: ke-NNN-snake_case_title.md, NNN=三位数字)", filepath=filepath))
+        violations.append(
+            NamingViolation(
+                rule="N-12",
+                message=f"KE 条目文件名格式不合规: {name} (期望: ke-NNN-snake_case_title.md, NNN=三位数字)",
+                filepath=filepath,
+            )
+        )
     return violations
 
 
@@ -523,17 +580,31 @@ def _check_n12_ke_naming(filepath: str) -> list[NamingViolation]:
 
 _SNAKE_CASE_DATA_RE = re.compile(r"^[a-z][a-z0-9_]*\.(yaml|yml|json|md)$")
 _DATA_FILE_EXEMPT_NAMES: set[str] = {
-    "AGENTS.md", "Makefile",
-    "README.md", "CONTRIBUTING.md", "SECURITY.md",
-    "ARCHITECTURE_LOCK.yaml", "SCOPE.yaml", "LICENSE",
-    "AGENT.md", "SKILL.md",
-    "PKG-INFO", "SOURCES.txt", "SHARED-QUICKREF.yml",
+    "AGENTS.md",
+    "Makefile",
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "ARCHITECTURE_LOCK.yaml",
+    "SCOPE.yaml",
+    "LICENSE",
+    "AGENT.md",
+    "SKILL.md",
+    "PKG-INFO",
+    "SOURCES.txt",
+    "SHARED-QUICKREF.yml",
     ".pre_commit-config.yaml",
-    "docker-compose.yml", "docker-compose.yaml",
+    "docker-compose.yml",
+    "docker-compose.yaml",
     # HuggingFace model files (external convention, must not rename)
-    "tokenizer_config.json", "special_tokens_map.json", "config.json",
-    "sentence_bert_config.json", "config_sentence_transformers.json",
-    "tokenizer.json", "vocab.txt", "model.safetensors",
+    "tokenizer_config.json",
+    "special_tokens_map.json",
+    "config.json",
+    "sentence_bert_config.json",
+    "config_sentence_transformers.json",
+    "tokenizer.json",
+    "vocab.txt",
+    "model.safetensors",
 }
 
 # Auto-generated timestamp file pattern (e.g. secret_baseline_2026-01-15T12-00-00.json, sec_leak_20260611T212859Z.json)
@@ -576,7 +647,13 @@ def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
         reasons.append("含连字符(kebab_case)")
     if not reasons:
         reasons.append("不符合 snake_case")
-    return [NamingViolation(rule="N-13", message=f"YAML/JSON/MD 文件名不符合 snake_case({', '.join(reasons)}): {name}", filepath=filepath)]
+    return [
+        NamingViolation(
+            rule="N-13",
+            message=f"YAML/JSON/MD 文件名不符合 snake_case({', '.join(reasons)}): {name}",
+            filepath=filepath,
+        )
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -585,8 +662,15 @@ def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
 
 _ALL_RE = re.compile(r"^__all__\s*[:=]", re.MULTILINE)
 _INIT_EXEMPT_DIRS: set[str] = {
-    "tests", ".venv", "venv", "node_modules", "__pycache__",
-    ".ruff_cache", ".mypy_cache", ".pytest_cache", ".tox",
+    "tests",
+    ".venv",
+    "venv",
+    "node_modules",
+    "__pycache__",
+    ".ruff_cache",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".tox",
 }
 
 
@@ -621,7 +705,9 @@ def _check_n14_init_has_all(filepath: str, abspath: Path | None = None) -> list[
 _BLUEPRINT_HEADER_RE = re.compile(r"^\s*#?\s*\[BLUEPRINT\]\s+(\S+)\s*\|\s*(\S+)\s*\|", re.MULTILINE)
 
 
-def _check_n15_blueprint_path_exists(filepath: str, abspath: Path | None = None, project_root: Path | None = None) -> list[NamingViolation]:
+def _check_n15_blueprint_path_exists(
+    filepath: str, abspath: Path | None = None, project_root: Path | None = None
+) -> list[NamingViolation]:
     """Python 文件 [BLUEPRINT] 头部声明的蓝图路径必须存在。
     强化: 仅检查 .py 文件; 路径相对于项目根; 不存在则 P0 阻断
     """
@@ -643,7 +729,11 @@ def _check_n15_blueprint_path_exists(filepath: str, abspath: Path | None = None,
     full_path = project_root / blueprint_path
     if full_path.exists():
         return []
-    return [NamingViolation(rule="N-15", message=f"BLUEPRINT 头部路径不存在: {blueprint_path} (声明在 {name})", filepath=filepath)]
+    return [
+        NamingViolation(
+            rule="N-15", message=f"BLUEPRINT 头部路径不存在: {blueprint_path} (声明在 {name})", filepath=filepath
+        )
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -666,6 +756,7 @@ def check_test_name_uniqueness(project_root: Path | None = None) -> list[NamingV
         return []
 
     from collections import defaultdict
+
     name_to_paths: dict[str, list[str]] = defaultdict(list)
     for py_file in tests_dir.rglob("*.py"):
         basename = py_file.name
@@ -694,6 +785,7 @@ def check_test_name_uniqueness(project_root: Path | None = None) -> list[NamingV
 # 路径豁免判断
 # ---------------------------------------------------------------------------
 
+
 def _is_path_exempt(filepath: str) -> bool:
     """_is_path_exempt implementation."""
     normalized = filepath.replace("\\", "/").lower()
@@ -714,6 +806,7 @@ def _is_path_exempt(filepath: str) -> bool:
 # ---------------------------------------------------------------------------
 # 统一入口
 # ---------------------------------------------------------------------------
+
 
 def check_file(filepath: str, abspath: Path | None = None, project_root: Path | None = None) -> list[NamingViolation]:
     """Check compliance and report findings."""
@@ -750,6 +843,7 @@ def check_dir(dirpath: str) -> list[NamingViolation]:
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def check_naming(file_path: str) -> tuple[bool, str]:
     """Check compliance and report findings."""
     name = Path(file_path).stem
@@ -762,15 +856,36 @@ def check_naming(file_path: str) -> tuple[bool, str]:
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     import argparse
+
     parser = argparse.ArgumentParser(description="GATE-11 命名规范门禁")
     parser.add_argument("path", nargs="?", default=".", help="要检查的文件或目录路径")
     parser.add_argument("--scan", action="store_true", help="扫描整个项目目录")
+    parser.add_argument("--staged", action="store_true", help="只检查git暂存区文件")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")
     args = parser.parse_args()
 
     all_violations: list[NamingViolation] = []
 
-    if args.scan:
+    if args.staged:
+        import subprocess
+
+        try:
+            result = subprocess.run(
+                ["git", "diff", "--cached", "--name-only"],
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=Path(__file__).resolve().parents[3],
+            )
+            staged_files = [f for f in result.stdout.strip().split("\n") if f]
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            staged_files = []
+        project_root = Path(__file__).resolve().parents[3]
+        for rel_path in staged_files:
+            abspath = project_root / rel_path
+            if abspath.exists() and abspath.is_file():
+                all_violations.extend(check_file(rel_path.replace("\\", "/"), abspath, project_root))
+    elif args.scan:
         project_root = Path(args.path).resolve()
         for root, dirs, files in os.walk(project_root):
             dirs[:] = [d for d in dirs if not d.startswith(".") and d != "__pycache__" and d != "node_modules"]

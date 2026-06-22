@@ -21,7 +21,9 @@
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -45,7 +47,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 SCAN_ROOT = PROJECT_ROOT / "src" / "zephyr"
@@ -67,17 +69,17 @@ def _find_logger_calls(tree: ast.AST) -> list[tuple[int, str]]:
             continue
         match node.func:
             case ast.Attribute(value=ast.Name(), attr=method) if method in {
-                "debug", "info", "warning", "error", "exception",
+                "debug",
+                "info",
+                "warning",
+                "error",
+                "exception",
             }:
                 if _is_suspicious_call(node):
                     bad_kwargs = [
-                        kw.arg
-                        for kw in node.keywords
-                        if kw.arg is not None and kw.arg not in STDLIB_LOGGER_KWARGS
+                        kw.arg for kw in node.keywords if kw.arg is not None and kw.arg not in STDLIB_LOGGER_KWARGS
                     ]
-                    findings.append(
-                        (node.lineno, f"{method}(msg, ..., {', '.join(bad_kwargs)})")
-                    )
+                    findings.append((node.lineno, f"{method}(msg, ..., {', '.join(bad_kwargs)})"))
     return findings
 
 
@@ -115,13 +117,15 @@ def main() -> int:
         for lineno, detail in issues:
             print(f"    L{lineno}: {detail}")
 
-    print(f"\n  修复方法：将 logger.info(\"msg\", foo=bar) 改为")
-    print(f"            logger.info(\"msg: foo=%s\", bar)")
+    print('\n  修复方法：将 logger.info("msg", foo=bar) 改为')
+    print('            logger.info("msg: foo=%s", bar)')
 
     if args.ci:
         print("\n  GATE-SLOG HARD BLOCK: 拒绝提交。请修复上述违规后重试。")
         return EXIT_FINDINGS
     print("\n  [WARN] 在 --ci 模式下上述问题会导致提交被拒绝。")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

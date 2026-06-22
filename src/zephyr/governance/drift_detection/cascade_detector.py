@@ -27,15 +27,15 @@ action: 暂停自动修复锁定1h + P0通知Owner + cascade_forensics report
 prevention: dry-run影响面分析(临时目录模拟修复diff跑关联检测器)
 对标 blueprint.md §6.15。
 """
+
 from __future__ import annotations
 
 import json
 import os
 import tempfile
-from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -43,7 +43,7 @@ class CascadeEvent:
     event_id: str
     module: str
     detected_at: datetime
-    resolved_at: Optional[datetime] = None
+    resolved_at: datetime | None = None
     fix_diff: str = ""
 
 
@@ -56,7 +56,7 @@ class CascadeAlert:
     first_detected: datetime
     last_detected: datetime
     auto_fix_paused: bool = True
-    pause_until: Optional[datetime] = None
+    pause_until: datetime | None = None
     forensics_report: str = ""
 
 
@@ -77,7 +77,7 @@ def _load_cascade_state() -> dict[str, object]:
     if not path or not os.path.exists(path):
         return {"events": [], "alerts": []}
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.loads(f.read())
     except Exception:
         return {"events": [], "alerts": []}
@@ -116,7 +116,7 @@ def detect_cascade(
                 break
         module_events.setdefault(module, []).append(evt)
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     window = timedelta(minutes=CASCADE_CONFIG.window_minutes)
 
     for module, mod_events in module_events.items():
@@ -139,14 +139,12 @@ def detect_cascade(
 
         if len(window_events) >= CASCADE_CONFIG.threshold:
             cascade_events: list[CascadeEvent] = []
-            for we in window_events[:CASCADE_CONFIG.threshold]:
+            for we in window_events[: CASCADE_CONFIG.threshold]:
                 cascade_events.append(
                     CascadeEvent(
                         event_id=str(we.get("event_id", "")),
                         module=module,
-                        detected_at=datetime.fromisoformat(
-                            str(we.get("timestamp", "")).replace("Z", "+00:00")
-                        ),
+                        detected_at=datetime.fromisoformat(str(we.get("timestamp", "")).replace("Z", "+00:00")),
                     )
                 )
 
@@ -183,16 +181,14 @@ def _trigger_cascade_rollback(
     """CT-005: 级联修复循环 → MOD-INF-021 Rollback 回滚到 cascade 前状态。"""
     try:
         import importlib
+
         rollback_module = importlib.import_module("zephyr.infrastructure.rollback.engine")
         if hasattr(rollback_module, "execute_rollback"):
             for ce in cascade_events:
                 rollback_module.execute_rollback(
                     drift_event_id=ce.event_id,
                     source_module="MOD-INF-023",
-                    reason=(
-                        f"Cascade fallback ({module}): "
-                        f"revert to pre-cascade baseline"
-                    ),
+                    reason=(f"Cascade fallback ({module}): revert to pre-cascade baseline"),
                 )
     except ImportError:
         pass
@@ -210,8 +206,7 @@ def dry_run_impact_analysis(
         tmpdir = Path(tmpdir_str)
         test_file = tmpdir / "test_fix.py"
         test_file.write_text(
-            f"# Dry-run impact analysis for {detector_id}\n"
-            f"# Fix diff:\n{fix_diff}\n",
+            f"# Dry-run impact analysis for {detector_id}\n# Fix diff:\n{fix_diff}\n",
             encoding="utf-8",
         )
 
@@ -220,6 +215,7 @@ def dry_run_impact_analysis(
 
         try:
             import ast
+
             ast.parse(test_file.read_text(encoding="utf-8"))
         except SyntaxError as e:
             side_effects.append(f"Syntax error in fix: {e}")
@@ -235,7 +231,7 @@ def dry_run_impact_analysis(
 def is_auto_fix_paused(module: str) -> bool:
     state = _load_cascade_state()
     alerts = state.get("alerts", [])
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     for alert in alerts:
         if alert.get("module") == module and alert.get("auto_fix_paused", True):
             pause_until_str = alert.get("pause_until", "")

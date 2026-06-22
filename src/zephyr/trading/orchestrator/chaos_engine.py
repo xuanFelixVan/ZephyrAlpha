@@ -12,7 +12,6 @@
 
 """Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×月度执行。"""
 
-
 from __future__ import annotations
 
 import logging
@@ -27,15 +26,15 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = [
+    "INJECTION_POINTS",
     "ChaosEngine",
+    "ChaosInjectError",
+    "ChaosRecoverError",
+    "FaultRecord",
     "InjectType",
     "InjectionResult",
     "RecoveryResult",
     "VerificationResult",
-    "FaultRecord",
-    "ChaosInjectError",
-    "ChaosRecoverError",
-    "INJECTION_POINTS",
 ]
 
 
@@ -161,9 +160,7 @@ class ChaosEngine:
             else:
                 if point is not None:
                     return True
-                raise ChaosInjectError(
-                    "Unknown injection type: %s" % injection_type_or_point
-                )
+                raise ChaosInjectError("Unknown injection type: %s" % injection_type_or_point)
 
             result.duration_ms = (time.perf_counter() - start) * 1000
             self._last_result = result
@@ -357,8 +354,7 @@ class ChaosEngine:
             inject_type = InjectType(fault_type)
         except ValueError:
             raise ChaosInjectError(
-                "Unknown fault type: %s. Valid types: %s"
-                % (fault_type, [e.value for e in InjectType])
+                "Unknown fault type: %s. Valid types: %s" % (fault_type, [e.value for e in InjectType])
             )
 
         fault_id = "fault-%s" % uuid.uuid4().hex[:12]

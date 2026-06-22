@@ -6,7 +6,7 @@ title: "MOD-INF-014 — 任务卡目录索引"
 version: "2.0.0"
 created: "2026-05-06"
 updated: "2026-05-06"
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-INF-014
 ---
 
 
@@ -50,5 +50,5 @@ blueprint_id: DOM-GOV-001
 ## 导航
 
 - [上级目录](../index.md)
-- [蓝图](D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md)
+- [蓝图](../../blueprint.md)
 - [项目根](../../index.md)

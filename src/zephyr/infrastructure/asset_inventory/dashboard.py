@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 REPORTS_DIR = Path(__file__).resolve().parents[3] / "data" / "reports"
 DASHBOARD_PATH = REPORTS_DIR / "dashboard.json"
 
+
 class Dashboard:
     """资产健康仪表盘生成器——Phase 1 实现（蓝图 §5）。"""
 
@@ -92,9 +93,9 @@ class Dashboard:
         return Path(target)
 
     def print_summary(self, dashboard: DashboardData) -> None:
-        print(f"\n{'='*50}")
+        print(f"\n{'=' * 50}")
         print("  ZephyrAlpha 资产仪表盘")
-        print(f"{'='*50}")
+        print(f"{'=' * 50}")
         print(f"  健康评分: {dashboard.health_score}")
         print(f"  总资产:   {dashboard.total_assets}")
         print(f"  孤儿率:   {dashboard.orphan_rate_pct:.1f}%")
@@ -104,7 +105,7 @@ class Dashboard:
             print("  ⚠️  告警:")
             for a in dashboard.alerts:
                 print(f"    - {a}")
-        print(f"{'='*50}")
+        print(f"{'=' * 50}")
 
     def main(self) -> None:
         index_path = self.root / "data" / "asset_index" / "unified-asset-index.yaml"
@@ -122,13 +123,16 @@ class Dashboard:
         self.print_summary(dashboard)
         print(f"  OUTPUT {out}")
 
+
 def _generate_dashboard_id() -> str:
     now = datetime.now(UTC)
     seq = str(now.timestamp()).replace(".", "")[-3:]
     return f"DASH-{now.strftime('%Y%m%d')}-{seq}"
 
+
 def main() -> None:
     Dashboard().main()
+
 
 if __name__ == "__main__":
     main()
@@ -139,6 +143,7 @@ if __name__ == "__main__":
 
 from pydantic import BaseModel as _PydanticBaseModel
 
+
 class KnowledgeTransferRecord(_PydanticBaseModel):
     transferred_at: datetime
     health_score: str = "A"
@@ -148,6 +153,7 @@ class KnowledgeTransferRecord(_PydanticBaseModel):
     top_ghosts: list[str] = []
     top_depended_upon: list[str] = []
     recommendation: str = ""
+
 
 class KnowledgeTransferGate:
     """Session 手交时的资产摘要注入——下一个 AI session 从 unified-asset-index 快速定位。"""
@@ -185,9 +191,7 @@ class KnowledgeTransferGate:
 
             try:
                 conn = sqlite3.connect(str(dep_path), timeout=10.0)
-                cursor = conn.execute(
-                    "SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5"
-                )
+                cursor = conn.execute("SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5")
                 top = [row[0] for row in cursor.fetchall()]
                 conn.close()
                 if top:

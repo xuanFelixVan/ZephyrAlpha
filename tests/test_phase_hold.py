@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 ph = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.phase_hold",
     reason="phase_hold module not available",

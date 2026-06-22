@@ -1,5 +1,21 @@
 rule_id: TRAE-030
 title: 文档治理-编号与元数据
+version: 1.1.3
+layer: L1
+module_id: TRAE-030
+depends_on:
+- TRAE-010
+- TRAE-011
+- TRAE-012
+- TRAE-028
+- TRAE-048
+tags:
+- TRAE
+- doc_numbering_metadata
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - DOC-011
 - DOC-012
@@ -8,7 +24,6 @@ aliases:
 - DOC-015
 - DOC-016
 - DOC-017
-layer: L1
 severity: error
 scope: doc_numbering_metadata
 domain: TRAE
@@ -33,6 +48,14 @@ sections:
       check: 可删清单§1(11类)
       pass: 大白话解释/对标段落/AI意识植入散文/修订记录/ASCII流程图(条件:信息已在表格中完整表达)/已实现代码蓝图内重复/已执行完毕临时时态/配置文件完整示例/技术栈理由列/§7备选方案(正确方案已实现)/§15正面后果(与§1重复)
       fail: 删除不在清单中的内容
+    - type: constraint
+      check: 对标段替换协议§1.1
+      pass: 文化类比对标段(引用K8s/ITIL/Unix/航空业/法庭/OpenAI/Anthropic/Rails等外部框架)→MUST替换为可执行引用(规则文件file:///路径/门禁ID/验证命令/实现文件路径至少一项)→替换后MUST验证引用真实性(文件/门禁/命令存在)
+      fail: 简单删除对标段不替换/替换为另一段文化类比/引用悬空(指向不存在的文件或门禁)
+    - type: constraint
+      check: 执行后文档审查协议§1.2
+      pass: Session关门时MUST审查本次session修改的文档+蓝图/规则→按§0时态判定+§1可删清单+GOV-DOC-016纯陈述原则检查过程陈述/噪音/冲突→标记"待规格化"(不立即删除)→标记数≥3→触发规格化流程
+      fail: Session关门时未审查文档内容/未标记待规格化/立即删除(跳过规格化流程)
     - type: constraint
       check: 不可删清单§2(18类)
       pass: frontmatter字段/路径/module_id引用/命令和代码模板/表格/禁止必须约束/漂移防护语句/异常处理/状态不变量/depends_on声明/触发条件/完成标准/多步流程步骤/可解析引用/导航路径/蓝图特有内容/反向进化通用新增/蓝图概述段
@@ -609,10 +632,18 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
-  version: "1.1.1"
-  last_modified: "2026-06-21"
+  superseded_by:
+  version: "1.1.3"
+  last_modified: "2026-06-22"
   change_history:
+  - version: "1.1.3"
+    date: "2026-06-22"
+    author: "AI-Assistant"
+    change: "新增执行后文档审查协议§1.2——Session关门时MUST审查本次session修改的文档+蓝图/规则，按§0+§1+GOV-DOC-016检查过程陈述/噪音/冲突，标记'待规格化'(不立即删除)，标记数≥3触发规格化流程"
+  - version: "1.1.2"
+    date: "2026-06-22"
+    author: "AI-Assistant"
+    change: "新增对标段替换协议§1.1——文化类比对标段MUST替换为可执行引用(规则文件路径/门禁ID/验证命令/实现文件路径至少一项)，禁止简单删除不替换/引用悬空"
   - version: "1.1.1"
     date: "2026-06-21"
     author: "AI-Assistant"

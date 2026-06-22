@@ -14,9 +14,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
-from zephyr.governance.audit_trail.bridge import write_to_core, _get_writer, _AVAILABLE
+from zephyr.governance.audit_trail.bridge import _AVAILABLE, _get_writer, write_to_core
 
 
 class TestWriteToCoreUnavailable:
@@ -77,12 +75,15 @@ class TestWriteToCoreSuccess:
 class TestGetWriterCaching:
     def test_get_writer_caches_instance(self):
         import zephyr.governance.audit_trail.bridge as bridge_mod
+
         original_writer = bridge_mod._WRITER
         try:
             bridge_mod._WRITER = None
             mock_instance = MagicMock()
-            with patch("zephyr.governance.audit_trail.bridge._AVAILABLE", True), \
-                 patch("zephyr.governance.audit_trail.bridge._CoreWriter", return_value=mock_instance, create=True):
+            with (
+                patch("zephyr.governance.audit_trail.bridge._AVAILABLE", True),
+                patch("zephyr.governance.audit_trail.bridge._CoreWriter", return_value=mock_instance, create=True),
+            ):
                 w1 = _get_writer()
                 w2 = _get_writer()
                 assert w1 is w2

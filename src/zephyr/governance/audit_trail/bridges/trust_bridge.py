@@ -28,7 +28,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 _logger = logging.getLogger(__name__)
@@ -110,7 +110,7 @@ class AuditTrustBridge:
                 "signature_id": "TRUST_SCORE_CHANGE",
                 "severity": "CRITICAL" if delta >= 0.5 else "HIGH",
                 "agent_id": agent_id,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "details": {
                     "previous_score": previous_score,
                     "current_score": current,

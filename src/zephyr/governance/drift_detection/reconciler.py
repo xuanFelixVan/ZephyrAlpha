@@ -26,10 +26,10 @@ module_id: MOD-INF-023
 自动对账引擎：pre-fix 快照 → 自动修复 → 验证 → 回滚闭环。
 对标 blueprint.md §2.5（自动对账策略）。
 """
+
 from __future__ import annotations
 
 import hashlib
-import json
 import os
 import re
 import shutil
@@ -38,13 +38,10 @@ import sys
 import tempfile
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
-import yaml
-
-from .drift_models import DriftEvent, DriftState
+from .drift_models import DriftEvent
 
 
 @dataclass
@@ -70,7 +67,7 @@ class Suggestion:
 class AutoFixer:
     fix_snapshots_dir: str = ""
 
-    def __init__(self, project_root: Optional[str] = None) -> None:
+    def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -80,7 +77,7 @@ class AutoFixer:
     def pre_fix_snapshot(self, event: DriftEvent, affected_files: list[str]) -> FixSnapshot:
         snapshot = FixSnapshot(
             event_id=event.event_id,
-            captured_at=datetime.now(timezone.utc).isoformat(),
+            captured_at=datetime.now(UTC).isoformat(),
         )
         for fp in affected_files:
             if os.path.exists(fp):
@@ -161,7 +158,9 @@ class AutoFixer:
                 return False
             result = subprocess.run(
                 [sys.executable, script_path, "--auto-fix"],
-                capture_output=True, text=True, timeout=60,
+                capture_output=True,
+                text=True,
+                timeout=60,
                 cwd=self._project_root,
             )
             return result.returncode == 0
@@ -184,20 +183,25 @@ class AutoFixer:
                         yaml_path = str(candidates[0])
                     else:
                         return False
-                with open(yaml_path, "r", encoding="utf-8") as fh:
+                with open(yaml_path, encoding="utf-8") as fh:
                     content = fh.read()
                 updated = content.replace(str(actual), str(expected), 1)
                 with open(yaml_path, "w", encoding="utf-8") as fh:
                     fh.write(updated)
                 return True
             script_path = os.path.join(
-                self._project_root, "scripts", "governance",
-                "d5_architecture", "validate_three_way_consistency.py",
+                self._project_root,
+                "scripts",
+                "governance",
+                "d5_architecture",
+                "validate_three_way_consistency.py",
             )
             if os.path.exists(script_path):
                 result = subprocess.run(
                     [sys.executable, script_path, "--recount"],
-                    capture_output=True, text=True, timeout=60,
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
                     cwd=self._project_root,
                 )
                 return result.returncode == 0
@@ -217,7 +221,9 @@ class AutoFixer:
                     return False
             result = subprocess.run(
                 [sys.executable, "-m", "pip", "freeze"],
-                capture_output=True, text=True, timeout=30,
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
             if result.returncode != 0:
                 return False
@@ -227,9 +233,7 @@ class AutoFixer:
                 if "==" in line:
                     pkg, ver = line.split("==", 1)
                     installed[pkg.lower().replace("_", "-")] = ver.strip()
-            pkg_match = re.search(
-                r"(\S+):\s*expected\s+(\S+),\s*installed\s+(\S+)", detail
-            )
+            pkg_match = re.search(r"(\S+):\s*expected\s+(\S+),\s*installed\s+(\S+)", detail)
             if pkg_match:
                 pkg = pkg_match.group(1).lower().replace("_", "-")
                 installed_ver = pkg_match.group(3)
@@ -254,7 +258,10 @@ class AutoFixer:
 
     def verify_fix(self, event: DriftEvent) -> bool:
         script_path = os.path.join(
-            self._project_root, "scripts", "governance", "d5_architecture",
+            self._project_root,
+            "scripts",
+            "governance",
+            "d5_architecture",
         )
         for fname in os.listdir(script_path) if os.path.isdir(script_path) else []:
             if f"validate_{event.detector_id.replace('_', '')}.py" == fname:

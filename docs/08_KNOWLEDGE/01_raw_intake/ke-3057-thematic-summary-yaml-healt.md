@@ -12,7 +12,7 @@ thematic_summary:
   total_duplicate_groups: 47
   themes: 3
   themes_explain_pct: 68                    # 3 个主题解释了68%的重复
-  
+
   themes:
     - theme: "时间/日期工具类"
       explanation: "7个文件各自实现时间戳/格式化/ISO字符串转换"
@@ -21,14 +21,14 @@ thematic_summary:
       root_cause: "AI session 间无共享时间工具记忆"
       one_fix_solves_groups: 10             # 提取一个 shared time_utils 可消除 10 组
       # 重复了 10 个组的根本原因被提炼出来了
-      
+
     - theme: "import 块重复"
       explanation: "23个文件开头有几乎相同的 import datetime/json/os/pathlib/logging 组合"
       duplicate_groups: 9
       affected_files: 23
       root_cause: "没有 shared import 预置模板"
       one_fix_solves_groups: 9              # 一个公共导入块解决所有
-      
+
     - theme: "错误处理模板"
       explanation: "11 个模块各有自己的 try/log/raise 包装模式——结构相同但异常类型不同"
       duplicate_groups: 11

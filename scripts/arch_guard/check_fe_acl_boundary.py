@@ -7,6 +7,7 @@ check_fe_acl_boundary.py — INV-006 前端 ACL（仓库内有前端树则启用
 
 exit: 0=pass, 1=violation
 """
+
 from __future__ import annotations
 
 import re

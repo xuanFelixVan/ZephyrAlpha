@@ -26,15 +26,15 @@ replay: git checkout还原代码 + drift_events表活跃漂移 + baseline历史�
 forensics_report: timeline + state_diffs + actor_trace + dependency_impact
 对标 blueprint.md §6.17。
 """
+
 from __future__ import annotations
 
 import json
 import os
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -60,7 +60,7 @@ class ForensicsReport:
     state_diffs: list[dict[str, str]]
     actor_trace: list[str]
     dependency_impact: dict[str, list[str]]
-    generated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    generated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -80,18 +80,18 @@ def replay_baseline_history(
 ) -> ForensicsReport:
     """重放baseline历史，重构时间线。"""
     event_id = Path(file_path).stem
-    report_id = f"forensics-{event_id}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M')}"
+    report_id = f"forensics-{event_id}-{datetime.now(UTC).strftime('%Y%m%d%H%M')}"
 
     timeline: list[ForensicsTimelineEntry] = []
     states_seen: dict[int, str] = {}
     actors: list[str] = []
 
-    for i, entry in enumerate(baseline_history[:FORENSICS_CONFIG.max_timeline_entries]):
+    for i, entry in enumerate(baseline_history[: FORENSICS_CONFIG.max_timeline_entries]):
         ts_str = entry.get("timestamp", "")
         try:
             ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
         except Exception:
-            ts = datetime.now(timezone.utc)
+            ts = datetime.now(UTC)
 
         action = entry.get("action", "unknown")
         state_before_val = states_seen.get(i - 1, "UNKNOWN")
@@ -158,7 +158,7 @@ def git_checkout_snapshot(
     commit_hash: str,
     file_path: str,
     project_root: str,
-) -> Optional[str]:
+) -> str | None:
     """用git checkout还原代码到指定commit状态。"""
     try:
         result = subprocess.run(
@@ -179,8 +179,8 @@ def generate_forensics_report(
     drift_event_id: str,
     source_file: str,
     project_root: str,
-    baseline_history: Optional[list[dict[str, str]]] = None,
-    drift_events: Optional[list[dict[str, object]]] = None,
+    baseline_history: list[dict[str, str]] | None = None,
+    drift_events: list[dict[str, object]] | None = None,
 ) -> ForensicsReport:
     """生成完整的取证报告。"""
     history = baseline_history or []
@@ -202,9 +202,7 @@ def generate_forensics_report(
                 for cl in commit_lines:
                     parts = cl.split(" ", 1)
                     if len(parts) >= 2:
-                        report.dependency_impact.setdefault(
-                            "commits", []
-                        ).append(parts[0])
+                        report.dependency_impact.setdefault("commits", []).append(parts[0])
         except Exception:
             pass
 

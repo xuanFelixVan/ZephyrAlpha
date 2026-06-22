@@ -11,19 +11,19 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.adversarial_resilience import (
-        AdversarialResilience,
-        AdversarialResult,
-        IncentiveScore,
-        ASIRiskLevel,
-        OWASP_TOP10_MAP,
         MAESTRO_LAYERS,
+        OWASP_TOP10_MAP,
+        AdversarialResilience,
+        ASIRiskLevel,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

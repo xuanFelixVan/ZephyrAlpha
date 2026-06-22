@@ -33,8 +33,6 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any, ClassVar
 
-import numpy as np
-
 from zephyr.integration.vector_memory.collection_manager import COLLECTION_NAMES
 
 
@@ -72,23 +70,27 @@ class InMemoryFakeVMS:
         for doc_id, data in self._store.items():
             if data["collection"] == collection_name:
                 if query.lower() in data["content"].lower():
-                    hits.append({
-                        "id": doc_id,
-                        "content": data["content"],
-                        "distance": 0.1,
-                        "metadata": data.get("metadata", {}),
-                    })
+                    hits.append(
+                        {
+                            "id": doc_id,
+                            "content": data["content"],
+                            "distance": 0.1,
+                            "metadata": data.get("metadata", {}),
+                        }
+                    )
         return hits[:k]
 
     def recall(self, collection_name: str, k: int = 5) -> list[dict[str, Any]]:
         hits: list[dict[str, Any]] = []
         for doc_id, data in self._store.items():
             if data["collection"] == collection_name:
-                hits.append({
-                    "id": doc_id,
-                    "content": data["content"],
-                    "metadata": data.get("metadata", {}),
-                })
+                hits.append(
+                    {
+                        "id": doc_id,
+                        "content": data["content"],
+                        "metadata": data.get("metadata", {}),
+                    }
+                )
         return hits[-k:]
 
     def health_check(self) -> dict[str, Any]:

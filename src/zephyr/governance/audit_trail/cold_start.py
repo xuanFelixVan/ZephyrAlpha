@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 缓存未命中返回空字典
 # [TESTS] tests/audit-orchestrator/test_cold_start.py
-
 import json
 import logging
 from pathlib import Path
@@ -23,6 +22,7 @@ __all__ = ["BootstrapCache"]
 
 CACHE_DIR = Path("data/audit_cache")
 CACHE_FILE = "bootstrap_cache.json"
+
 
 class BootstrapCache:
     _instance: BootstrapCache | None = None
@@ -72,6 +72,7 @@ class BootstrapCache:
     def persist(self) -> bool:
         try:
             from datetime import datetime
+
             self._cache["loaded_at"] = datetime.now().isoformat()
             CACHE_DIR.mkdir(parents=True, exist_ok=True)
             self._cache_path.write_text(

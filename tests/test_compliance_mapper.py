@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.compliance_mapper import COMPLIANCE_MAP, ComplianceMapper
 
 

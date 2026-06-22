@@ -6,7 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Tests for context_rot_model.py (TASK-014 beta a — 18 tests)."""
+
 import pytest
+
 from zephyr.autonomy_core.context_rot_model import ContextDecayResult, ContextRotModel
 
 

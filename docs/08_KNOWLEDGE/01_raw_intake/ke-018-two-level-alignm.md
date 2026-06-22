@@ -58,4 +58,3 @@ category: agent_instruction
   4. **每次 session 结束时** → 在 Session Log 中注明"本次是否产出了代码↔YAML↔MD 任一层面的变更"，若有 → 注明已完成了对应层的对齐
 
 - **专业参考**：K8s Admission Controller → 硬阻断不合规的 Pod 创建 / Terraform `terraform plan` → 展示 drift before apply / GitLab CI `rules:changes` → 仅变更触发相关 job / ISO 42010 → Architecture Description 必须保持与系统实现的一致性
-

@@ -29,8 +29,8 @@ failure_count 归零、opened_at/reason 清空。
 """
 
 from __future__ import annotations
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 __manifest__ = """
 args: []
@@ -66,6 +66,7 @@ except ImportError as e:
     print(f"[SKIP] cbg_reset.py 无法加载 CBGManager（依赖缺失: {e}）", file=sys.stderr)
     print("       此脚本需要 zephyr.governance.gates.circuit_breaker 及相关依赖存在时才能运行", file=sys.stderr)
     sys.exit(0 if _warn_only else 2)
+
 
 def main() -> None:
     """入口函数."""
@@ -150,7 +151,7 @@ def main() -> None:
             sys.exit(EXIT_PASS)
         if record.state != CircuitBreakerState.OPEN:
             print(
-                f"[cbg_reset] {args.caller} → {args.target} " f"当前状态={record.state.value}，非 OPEN 无需重置",
+                f"[cbg_reset] {args.caller} → {args.target} 当前状态={record.state.value}，非 OPEN 无需重置",
                 file=sys.stderr,
             )
             sys.exit(EXIT_PASS)
@@ -162,6 +163,7 @@ def main() -> None:
     else:
         print(f"[cbg_reset] RESET FAIL: {args.caller} → {args.target}", file=sys.stderr)
         sys.exit(EXIT_FINDINGS)
+
 
 if __name__ == "__main__":
     main()

@@ -33,7 +33,6 @@
   - max_steal_per_cycle 限制单次窃取数量
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -88,7 +87,6 @@ class A2AWorkSteal:
         idle_agent_id: str,
         all_queues: dict[str, TaskQueue],
     ) -> list[dict]:
-
         stolen_tasks: list[dict] = []
 
         idle_queue = all_queues.get(idle_agent_id)

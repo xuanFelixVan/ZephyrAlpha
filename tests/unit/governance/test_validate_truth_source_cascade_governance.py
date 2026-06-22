@@ -18,8 +18,8 @@ T-V2-012 单元测试 — TruthSourceCascadeValidator
   - 报告文件输出（文件创建 + 内容校验）
   - affected_files 多种嵌入格式解析
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import textwrap
 from datetime import UTC, date, datetime
@@ -164,7 +164,7 @@ class TestParseRationaleLog:
     def test_valid_entry_with_inline_affected_files(self, tmp_path: Path):
         log_file = tmp_path / "rationale-log.md"
         log_file.write_text(
-            "| R87 | **Wave 2** | **当前结论（2026-04-28）**：" " affected_files: [docs/a.md, src/b.py] |\n",
+            "| R87 | **Wave 2** | **当前结论（2026-04-28）**： affected_files: [docs/a.md, src/b.py] |\n",
             encoding="utf-8",
             newline="\n",
         )
@@ -196,7 +196,7 @@ class TestParseRationaleLog:
     def test_separator_line_is_ignored(self, tmp_path: Path):
         log_file = tmp_path / "rationale-log.md"
         log_file.write_text(
-            "|------|------|------|\n" "| R87 | A | **（2026-04-28）** affected_files: [docs/a.md] |\n",
+            "|------|------|------|\n| R87 | A | **（2026-04-28）** affected_files: [docs/a.md] |\n",
             encoding="utf-8",
             newline="\n",
         )
@@ -431,7 +431,7 @@ class TestRunIntegration:
         _write_md_with_fm(f, "2026-04-20")
         log = self._make_log(
             tmp_path,
-            ["| R87 | A | **（2026-04-28）**：" " affected_files: [docs/x.md] |"],
+            ["| R87 | A | **（2026-04-28）**： affected_files: [docs/x.md] |"],
         )
         reports = tmp_path / "reports"
         result = run(log, reports, tmp_path, quiet=True)

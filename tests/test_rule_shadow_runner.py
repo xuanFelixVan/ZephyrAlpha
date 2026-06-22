@@ -11,7 +11,7 @@
 # [TESTS] tests/test_rule_shadow_runner.py
 
 import time
-import pytest
+
 from zephyr.governance.rule_shadow_runner import RuleShadowRunner
 
 

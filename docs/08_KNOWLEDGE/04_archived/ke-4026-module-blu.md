@@ -18,7 +18,7 @@ category: module_blueprint
 | 4 | `project_rules.md` 冷启动序列 | STEP 4.5: 读 unified-asset-index.yaml | ✅ 已实施 |
 | 5 | `phase_manager.py` Phase 1 | `gate_asset_inventory` 检查 | ✅ 已实施 |
 | 6 | `risk-register.yaml` | R17~R19：盘点系统运营风险 | ✅ 已登记 |
-| 7 | `rule-registry.md` TRAE 域 | TRAE-010：冷启动 STEP 4.5 规则登记 | ✅ 已登记 |
+| 7 | `_index.yaml` TRAE 域 | TRAE-010：冷启动 STEP 4.5 规则登记 | ✅ 已登记 |
 | 8 | `SessionContinuity.print_restore_summary()` | 资产摘要注入恢复上下文 | ⬜ 待 Phase 2 |
 | 9 | `AGENTS.md` | 新能力声明：资产盘点查询 | ⬜ 待 Phase 2 |
 | 10 | `scripts/script-manifest.yaml` | `generate_asset_index.py` 等盘点脚本 | ⬜ 待 Phase 1 |

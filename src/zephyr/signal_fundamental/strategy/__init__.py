@@ -5,12 +5,13 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 """Signal Strategy sub-package"""
+
 from __future__ import annotations
 
-from zephyr.signal_fundamental.strategy.capital_allocator import CapitalAllocatorBase, CapitalAllocationResult
+from zephyr.signal_fundamental.strategy.capital_allocator import CapitalAllocationResult, CapitalAllocatorBase
 
 __all__ = [
-    "CapitalAllocatorBase",
     "CapitalAllocationResult",
+    "CapitalAllocatorBase",
     "capital_allocator",
 ]

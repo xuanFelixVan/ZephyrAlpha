@@ -14,6 +14,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: FLE Action 元数据校验（COND-44 — effective_from+ttl必填）
@@ -44,6 +45,7 @@ import argparse
 
 REQUIRED_ACTION_FIELDS = {"effective_from", "ttl"}
 
+
 def check_fle_actions(filepath: Path) -> list[dict]:
     """检查 FLE action 元数据."""
     findings = []
@@ -62,11 +64,8 @@ def check_fle_actions(filepath: Path) -> list[dict]:
 
         is_action = False
         for base in node.bases:
-            if (
-                isinstance(base, ast.Name)
-                and "Action" in base.id
-                or isinstance(base, ast.Attribute)
-                and "Action" in base.attr
+            if (isinstance(base, ast.Name) and "Action" in base.id) or (
+                isinstance(base, ast.Attribute) and "Action" in base.attr
             ):
                 is_action = True
 
@@ -97,6 +96,7 @@ def check_fle_actions(filepath: Path) -> list[dict]:
     return findings
     """检查 FLE action 元数据."""
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="FLE Action 元数据校验（COND-44）")
@@ -124,6 +124,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
+
 
 if __name__ == "__main__":
     main()

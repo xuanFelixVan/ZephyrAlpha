@@ -31,11 +31,13 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 
+
 class PromptVariantStatus(str, Enum):
     CANDIDATE = "candidate"
     TESTING = "testing"
     ADOPTED = "adopted"
     REJECTED = "rejected"
+
 
 @dataclass
 class PromptVariant:
@@ -46,6 +48,7 @@ class PromptVariant:
     effectiveness_score: float = 0.0
     test_results: dict = field(default_factory=dict)
     created_at: float = 0.0
+
 
 @dataclass
 class PromptSelfOptimizationLoop:
@@ -67,7 +70,7 @@ class PromptSelfOptimizationLoop:
         metrics["timestamp"] = time.time()
         self.effectiveness_history.append(metrics)
         if len(self.effectiveness_history) > self.max_history:
-            self.effectiveness_history = self.effectiveness_history[-self.max_history:]
+            self.effectiveness_history = self.effectiveness_history[-self.max_history :]
         self.cycles_since_last_optimization += 1
 
     def propose_variant(self, variant_content: str) -> str | None:

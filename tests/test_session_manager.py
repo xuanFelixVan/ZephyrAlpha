@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import time
-from pathlib import Path
 
 import pytest
 import yaml
@@ -24,7 +23,6 @@ from zephyr.trading.orchestrator.session_manager import (
     SessionTransitionError,
     load_state_machine_config,
 )
-
 
 _MINIMAL_CONFIG = {
     "transitions": [

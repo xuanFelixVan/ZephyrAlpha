@@ -11,13 +11,11 @@
 # [TESTS] scripts/connect/kb_vms.py --trigger
 """KB→VMS 同步引擎 — sync_to_vms() 生产者"""
 
-
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
-from dataclasses import dataclass, field
-from typing import Any
+from dataclasses import dataclass
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -35,9 +33,9 @@ class SyncResult:
 class SyncEngine:
     def sync_to_vms(self, since: datetime | None = None) -> SyncResult:
         try:
+            from zephyr.autonomy_core.vector_bridge import VectorBridge
             from zephyr.governance.persistence.sqlite_schema import get_db_connection
             from zephyr.governance.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
-            from zephyr.autonomy_core.vector_bridge import VectorBridge
 
             conn = get_db_connection()
             since_str = since.isoformat() if since else "1970-01-01"

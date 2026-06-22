@@ -40,20 +40,20 @@ warn_only: false
 import hashlib
 import json
 import os
-import subprocess
 import sys
 import threading
 import time
-import yaml
 from collections import OrderedDict
+from collections.abc import Callable
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
+import yaml
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -100,6 +100,7 @@ POOL_CONFIGS: dict[str, dict[str, Any]] = {
 
 class TimeoutTier(str, Enum):
     """S0-S3 分级超时——对齐 K8s QoS Classes。"""
+
     S0 = "S0"
     S1 = "S1"
     S2 = "S2"
@@ -108,16 +109,16 @@ class TimeoutTier(str, Enum):
 
 # 维度 → 超时级别映射（蓝图 §5.8）
 _DIMENSION_TIMEOUT_TIER: dict[str, TimeoutTier] = {
-    "D1": TimeoutTier.S0,   # Quick
-    "D2": TimeoutTier.S0,   # Quick
-    "D3": TimeoutTier.S0,   # Quick
-    "D4": TimeoutTier.S0,   # Quick
-    "D8": TimeoutTier.S0,   # Quick
-    "D5": TimeoutTier.S1,   # Content Analysis
-    "D6": TimeoutTier.S1,   # Content Analysis
-    "D7": TimeoutTier.S1,   # Content Analysis
+    "D1": TimeoutTier.S0,  # Quick
+    "D2": TimeoutTier.S0,  # Quick
+    "D3": TimeoutTier.S0,  # Quick
+    "D4": TimeoutTier.S0,  # Quick
+    "D8": TimeoutTier.S0,  # Quick
+    "D5": TimeoutTier.S1,  # Content Analysis
+    "D6": TimeoutTier.S1,  # Content Analysis
+    "D7": TimeoutTier.S1,  # Content Analysis
     "D11": TimeoutTier.S1,  # Content Analysis
-    "D9": TimeoutTier.S2,   # AI-Generated
+    "D9": TimeoutTier.S2,  # AI-Generated
     "D10": TimeoutTier.S2,  # AI-Generated
     "D12": TimeoutTier.S2,  # AI-Generated
 }
@@ -152,6 +153,7 @@ GLOBAL_HARD_TIMEOUT_SECONDS = 900
 # ---------------------------------------------------------------------------
 # ProcessLock — L0 全局进程锁
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class LockAcquireResult:
@@ -254,11 +256,13 @@ class ProcessLock:
                 os.O_CREAT | os.O_EXCL | os.O_WRONLY,
                 0o644,
             )
-            data = json.dumps({
-                "pid": os.getpid(),
-                "agent_id": self._agent_id,
-                "acquired_at": datetime.now(UTC).isoformat(),
-            })
+            data = json.dumps(
+                {
+                    "pid": os.getpid(),
+                    "agent_id": self._agent_id,
+                    "acquired_at": datetime.now(UTC).isoformat(),
+                }
+            )
             os.write(fd, data.encode("utf-8"))
             os.close(fd)
             return True
@@ -295,7 +299,6 @@ def _is_pid_alive(pid: int) -> bool:
     try:
         if sys.platform == "win32":
             import ctypes
-            from ctypes import wintypes
 
             kernel32 = ctypes.windll.kernel32
             handle = kernel32.OpenProcess(0x0400, False, pid)
@@ -313,6 +316,7 @@ def _is_pid_alive(pid: int) -> bool:
 # ---------------------------------------------------------------------------
 # BulkheadExecutor — 四池隔离执行器
 # ---------------------------------------------------------------------------
+
 
 class CircuitState(str, Enum):
     CLOSED = "closed"
@@ -362,10 +366,7 @@ class BulkheadExecutor:
         优先级：tags > dimensions > 脚本名前缀
         """
         sn_lower = script_name.lower()
-        is_writable = any(
-            sn_lower.startswith(p) or f"/{p}" in sn_lower
-            for p in ("fix_", "generate_", "register_")
-        )
+        is_writable = any(sn_lower.startswith(p) or f"/{p}" in sn_lower for p in ("fix_", "generate_", "register_"))
 
         if is_writable:
             return "disruptive"
@@ -434,11 +435,13 @@ class BulkheadExecutor:
             pool_name = self._route_to_pool(script_name, dimensions, tags)
 
             if not self._check_circuit(pool_name):
-                skipped.append({
-                    "script_name": script_name,
-                    "pool": pool_name,
-                    "reason": "circuit_open",
-                })
+                skipped.append(
+                    {
+                        "script_name": script_name,
+                        "pool": pool_name,
+                        "reason": "circuit_open",
+                    }
+                )
                 continue
 
             pool = self._pools[pool_name]
@@ -460,13 +463,15 @@ class BulkheadExecutor:
             except Exception:
                 self._record_result(pool_name, False)
                 self._pools[pool_name].total_failed += 1
-                results.append({
-                    "script_name": script_name,
-                    "exit_code": 2,
-                    "findings": [],
-                    "is_failed": True,
-                    "pool": pool_name,
-                })
+                results.append(
+                    {
+                        "script_name": script_name,
+                        "exit_code": 2,
+                        "findings": [],
+                        "is_failed": True,
+                        "pool": pool_name,
+                    }
+                )
 
         pool_stats = {}
         for pn, ps in self._pools.items():
@@ -491,6 +496,7 @@ class BulkheadExecutor:
 # ---------------------------------------------------------------------------
 # ScanCache — 文件级 LRU 扫描缓存
 # ---------------------------------------------------------------------------
+
 
 class ScanCache:
     """文件内容解析的 LRU 缓存——减少重复 subprocess 调用和文件 I/O。
@@ -572,6 +578,7 @@ class ScanCache:
 # TieredTimeout — S0-S3 分级超时
 # ---------------------------------------------------------------------------
 
+
 class TieredTimeout:
     """S0-S3 分级超时计算器。
 
@@ -613,6 +620,7 @@ class TieredTimeout:
 # Checkpoint — 扫描断点续传
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class ScanCheckpoint:
     session_id: str
@@ -637,7 +645,7 @@ class ScanCheckpoint:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ScanCheckpoint":
+    def from_dict(cls, data: dict) -> ScanCheckpoint:
         return cls(
             session_id=data.get("session_id", ""),
             completed_dimensions=data.get("completed_dimensions", []),
@@ -684,6 +692,7 @@ def is_checkpoint_stale(checkpoint: ScanCheckpoint, max_age_days: int = 30) -> b
 # Phase 3b: L1 维度锁 + L2 文件锁 + LockManager
 # ===========================================================================
 
+
 @dataclass
 class LockResult:
     acquired: bool
@@ -720,8 +729,13 @@ class DimensionLock:
             elapsed = time.monotonic() - start
             if elapsed >= timeout:
                 holder = self._read_lock(lock_path)
-                return LockResult(False, level="L1", key=dimension, waited_s=round(elapsed, 1),
-                                  reason=f"timeout ({timeout}s), holder={holder}")
+                return LockResult(
+                    False,
+                    level="L1",
+                    key=dimension,
+                    waited_s=round(elapsed, 1),
+                    reason=f"timeout ({timeout}s), holder={holder}",
+                )
 
             if self._try_write_lock(lock_path, dimension, agent_id):
                 return LockResult(True, level="L1", key=dimension, waited_s=round(elapsed, 1))
@@ -740,8 +754,14 @@ class DimensionLock:
     def _try_write_lock(self, lock_path: Path, dimension: str, agent_id: str) -> bool:
         try:
             fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
-            data = json.dumps({"pid": os.getpid(), "agent_id": agent_id, "dimension": dimension,
-                               "acquired_at": datetime.now(UTC).isoformat()})
+            data = json.dumps(
+                {
+                    "pid": os.getpid(),
+                    "agent_id": agent_id,
+                    "dimension": dimension,
+                    "acquired_at": datetime.now(UTC).isoformat(),
+                }
+            )
             os.write(fd, data.encode("utf-8"))
             os.close(fd)
             return True
@@ -785,8 +805,13 @@ class FileLock:
             elapsed = time.monotonic() - start
             if elapsed >= timeout:
                 holder = self._read_lock(lock_path)
-                return LockResult(False, level="L2", key=key, waited_s=round(elapsed, 1),
-                                  reason=f"timeout ({timeout}s), holder={holder}")
+                return LockResult(
+                    False,
+                    level="L2",
+                    key=key,
+                    waited_s=round(elapsed, 1),
+                    reason=f"timeout ({timeout}s), holder={holder}",
+                )
 
             if self._try_write_lock(lock_path, str(file_path), agent_id):
                 return LockResult(True, level="L2", key=key, waited_s=round(elapsed, 1))
@@ -806,8 +831,14 @@ class FileLock:
     def _try_write_lock(self, lock_path: Path, file_path: str, agent_id: str) -> bool:
         try:
             fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
-            data = json.dumps({"pid": os.getpid(), "agent_id": agent_id, "file": file_path,
-                               "acquired_at": datetime.now(UTC).isoformat()})
+            data = json.dumps(
+                {
+                    "pid": os.getpid(),
+                    "agent_id": agent_id,
+                    "file": file_path,
+                    "acquired_at": datetime.now(UTC).isoformat(),
+                }
+            )
             os.write(fd, data.encode("utf-8"))
             os.close(fd)
             return True
@@ -850,8 +881,7 @@ class LockManager:
         result = self._L0.acquire(timeout_s)
         if result.acquired:
             self._acquired["L0"] = "global"
-        return LockResult(result.acquired, level="L0", key="global",
-                          waited_s=result.waited_s, reason=result.reason)
+        return LockResult(result.acquired, level="L0", key="global", waited_s=result.waited_s, reason=result.reason)
 
     def acquire_dim(self, dimension: str, timeout_s: float | None = None) -> LockResult:
         result = self._L1.acquire(dimension, self._agent_id, timeout_s)
@@ -862,7 +892,7 @@ class LockManager:
     def acquire_file(self, file_path: str | Path, timeout_s: float | None = None) -> LockResult:
         result = self._L2.acquire(file_path, self._agent_id, timeout_s)
         if result.acquired:
-            self._acquired[f"L2_{str(file_path)}"] = str(file_path)
+            self._acquired[f"L2_{file_path!s}"] = str(file_path)
         return result
 
     def release_dim(self, dimension: str) -> None:
@@ -871,7 +901,7 @@ class LockManager:
 
     def release_file(self, file_path: str | Path) -> None:
         self._L2.release(file_path)
-        self._acquired.pop(f"L2_{str(file_path)}", None)
+        self._acquired.pop(f"L2_{file_path!s}", None)
 
     def release_all(self) -> None:
         self._L0.release()
@@ -915,6 +945,7 @@ class _LockContext:
 # ===========================================================================
 # Phase 3c: TokenBucket + AdmissionController + ShardRouter + CircuitBreaker
 # ===========================================================================
+
 
 class TokenBucket:
     """令牌桶限流器——对标 K8s APF + Google SRE client-side throttling。
@@ -1000,8 +1031,12 @@ class AdmissionController:
     @property
     def stats(self) -> dict:
         with self._lock:
-            return {"active": self._active, "admitted": self._total_admitted,
-                    "rejected": self._total_rejected, "limit": self._concurrency_limit}
+            return {
+                "active": self._active,
+                "admitted": self._total_admitted,
+                "rejected": self._total_rejected,
+                "limit": self._concurrency_limit,
+            }
 
 
 class ShardRouter:
@@ -1083,10 +1118,9 @@ class CircuitBreaker:
     def on_failure(self) -> None:
         with self._lock:
             self._failure_count += 1
-            if self._state == CircuitState.CLOSED and self._failure_count >= self._failure_threshold:
-                self._state = CircuitState.OPEN
-                self._opened_at = time.monotonic()
-            elif self._state == CircuitState.HALF_OPEN:
+            if (
+                self._state == CircuitState.CLOSED and self._failure_count >= self._failure_threshold
+            ) or self._state == CircuitState.HALF_OPEN:
                 self._state = CircuitState.OPEN
                 self._opened_at = time.monotonic()
 
@@ -1098,13 +1132,18 @@ class CircuitBreaker:
     @property
     def stats(self) -> dict:
         with self._lock:
-            return {"name": self.name, "state": self._state.value, "failures": self._failure_count,
-                    "successes": self._success_count}
+            return {
+                "name": self.name,
+                "state": self._state.value,
+                "failures": self._failure_count,
+                "successes": self._success_count,
+            }
 
 
 # ===========================================================================
 # Phase 3b+3c: BulkheadExecutor 增强——集成 L1/L2 锁 + Circuit Breaker
 # ===========================================================================
+
 
 class BulkheadExecutorV2(BulkheadExecutor):
     """增强版 BulkheadExecutor——Phase 3b+3c 完整版。
@@ -1116,8 +1155,9 @@ class BulkheadExecutorV2(BulkheadExecutor):
     - 脚本级安全控制：维度锁 + 文件锁仅在 Disruptive/可写脚本时获取
     """
 
-    def __init__(self, pool_override: dict[str, dict] | None = None, lock_dir: Path | None = None,
-                 agent_id: str = "unknown"):
+    def __init__(
+        self, pool_override: dict[str, dict] | None = None, lock_dir: Path | None = None, agent_id: str = "unknown"
+    ):
         super().__init__(pool_override)
         self._lock_mgr = LockManager(agent_id, lock_dir)
         self._circuit_breakers: dict[str, CircuitBreaker] = {}
@@ -1164,11 +1204,11 @@ class BulkheadExecutorV2(BulkheadExecutor):
                 continue
 
             sn_lower = script_name.lower()
-            is_writable = any(sn_lower.startswith(p) or f"/{p}" in sn_lower
-                              for p in ("fix_", "generate_", "register_"))
+            is_writable = any(sn_lower.startswith(p) or f"/{p}" in sn_lower for p in ("fix_", "generate_", "register_"))
 
-            def _wrapped_execute(sn: str, m: dict, writable: bool = is_writable,
-                                 files: set[str] | None = affected_files) -> dict:
+            def _wrapped_execute(
+                sn: str, m: dict, writable: bool = is_writable, files: set[str] | None = affected_files
+            ) -> dict:
                 acquired_dims: list[str] = []
                 acquired_files: list[str] = []
 
@@ -1176,16 +1216,26 @@ class BulkheadExecutorV2(BulkheadExecutor):
                     for dim in {d.value for d in m.get("dimensions", [])}:
                         lock_res = self._lock_mgr.acquire_dim(dim)
                         if not lock_res:
-                            return {"script_name": sn, "exit_code": 2, "findings": [], "is_failed": True,
-                                    "error": f"L1 dimension lock failed: {dim}"}
+                            return {
+                                "script_name": sn,
+                                "exit_code": 2,
+                                "findings": [],
+                                "is_failed": True,
+                                "error": f"L1 dimension lock failed: {dim}",
+                            }
                         acquired_dims.append(dim)
 
                 if files:
                     for fp in files:
                         lock_res = self._lock_mgr.acquire_file(fp)
                         if not lock_res:
-                            return {"script_name": sn, "exit_code": 2, "findings": [], "is_failed": True,
-                                    "error": f"L2 file lock failed: {fp}"}
+                            return {
+                                "script_name": sn,
+                                "exit_code": 2,
+                                "findings": [],
+                                "is_failed": True,
+                                "error": f"L2 file lock failed: {fp}",
+                            }
                         acquired_files.append(str(fp))
 
                 try:
@@ -1218,9 +1268,16 @@ class BulkheadExecutorV2(BulkheadExecutor):
 
         pool_stats = {}
         for pn, ps in self._pools.items():
-            pool_stats[pn] = {"circuit_state": self._circuit_breakers[pn].state.value,
-                              "submitted": ps.total_submitted - ps.total_completed - ps.total_failed + ps.total_completed + ps.total_failed,
-                              "completed": ps.total_completed, "failed": ps.total_failed}
+            pool_stats[pn] = {
+                "circuit_state": self._circuit_breakers[pn].state.value,
+                "submitted": ps.total_submitted
+                - ps.total_completed
+                - ps.total_failed
+                + ps.total_completed
+                + ps.total_failed,
+                "completed": ps.total_completed,
+                "failed": ps.total_failed,
+            }
 
         return {"results": results, "pools": pool_stats, "skipped": skipped}
 
@@ -1452,6 +1509,7 @@ class GovernanceMemoryGuard:
     def current_rss_mb(self) -> float:
         try:
             import psutil
+
             return psutil.Process().memory_info().rss / (1024 * 1024)
         except ImportError:
             return 0.0
@@ -1471,10 +1529,12 @@ class GovernanceMemoryGuard:
 
     def compact(self) -> dict:
         import gc
+
         before = self.current_rss_mb()
         gc.collect(2)
         try:
             import ctypes
+
             libc = ctypes.CDLL("libc.so.6")
             libc.malloc_trim(0)
         except (OSError, AttributeError):

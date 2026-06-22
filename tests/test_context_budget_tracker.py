@@ -10,13 +10,12 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_context_budget_tracker.py
 
-import pytest
 from unittest.mock import MagicMock
 
 from zephyr.autonomy_core.context_budget_tracker import (
-    ContextBudgetTracker,
-    ContextBudgetLevel,
     DEFAULT_THRESHOLDS,
+    ContextBudgetLevel,
+    ContextBudgetTracker,
     handle_compression_needed,
     set_default_tracker,
 )

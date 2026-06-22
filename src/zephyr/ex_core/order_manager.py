@@ -44,10 +44,10 @@ from __future__ import annotations
 import logging
 import uuid
 from collections import defaultdict
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, Optional
 
 from zephyr.governance.broker_interface import BrokerInterface
 from zephyr.trading.trading_contracts.execution.fill import Fill
@@ -74,7 +74,7 @@ class OrderManager:
         OrderStatus.REJECTED: set(),
     }
 
-    def __init__(self, brokers: Optional[dict[str, BrokerInterface]] = None):
+    def __init__(self, brokers: dict[str, BrokerInterface] | None = None):
         self._brokers = brokers or {}
         self._orders: dict[str, Order] = {}
         self._fills: dict[str, list[Fill]] = defaultdict(list)
@@ -97,7 +97,7 @@ class OrderManager:
         side: OrderSide,
         order_type: OrderType,
         quantity: Decimal,
-        limit_price: Optional[Decimal] = None,
+        limit_price: Decimal | None = None,
         broker_id: str = "simulation",
     ) -> Order:
         order_id = str(uuid.uuid4())
@@ -110,7 +110,7 @@ class OrderManager:
             quantity=quantity,
             limit_price=limit_price,
             status=OrderStatus.PENDING,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
             broker_order_id=None,
             idempotency_key=str(uuid.uuid4()),
         )
@@ -133,7 +133,7 @@ class OrderManager:
 
         broker_order_id = broker.submit_order(order)
         order.broker_order_id = broker_order_id
-        order.updated_at = datetime.now(timezone.utc)
+        order.updated_at = datetime.now(UTC)
 
         return broker_order_id
 
@@ -144,18 +144,22 @@ class OrderManager:
         if order.status not in {OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL}:
             return False
         order.status = OrderStatus.CANCELLED
-        order.updated_at = datetime.now(timezone.utc)
+        order.updated_at = datetime.now(UTC)
         _logger.info("Order cancelled: order_id=%s", order_id)
         return True
 
-    def get_order(self, order_id: str) -> Optional[Order]:
+    def get_order(self, order_id: str) -> Order | None:
         return self._orders.get(order_id)
 
     def get_orders_by_status(self, status: OrderStatus) -> list[Order]:
         return [o for o in self._orders.values() if o.status == status]
 
     def get_open_orders(self) -> list[Order]:
-        return [o for o in self._orders.values() if o.status in {OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL}]
+        return [
+            o
+            for o in self._orders.values()
+            if o.status in {OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL}
+        ]
 
     def get_fills_for_order(self, order_id: str) -> list[Fill]:
         return self._fills.get(order_id, [])
@@ -170,10 +174,15 @@ class OrderManager:
         if order:
             order.filled_quantity = (order.filled_quantity or Decimal("0")) + fill.filled_quantity
             order.avg_fill_price = (
-                (order.avg_fill_price or Decimal("0")) * (order.filled_quantity - fill.filled_quantity)
-                + fill.fill_price * fill.filled_quantity
-            ) / order.filled_quantity if order.filled_quantity > 0 else fill.fill_price
-            order.updated_at = datetime.now(timezone.utc)
+                (
+                    (order.avg_fill_price or Decimal("0")) * (order.filled_quantity - fill.filled_quantity)
+                    + fill.fill_price * fill.filled_quantity
+                )
+                / order.filled_quantity
+                if order.filled_quantity > 0
+                else fill.fill_price
+            )
+            order.updated_at = datetime.now(UTC)
 
             if order.filled_quantity >= order.quantity:
                 order.status = OrderStatus.FILLED
@@ -195,4 +204,4 @@ class OrderManager:
         return sum(len(fills) for fills in self._fills.values())
 
 
-__all__ = ["OrderManager", "OrderAction"]
+__all__ = ["OrderAction", "OrderManager"]

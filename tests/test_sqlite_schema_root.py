@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import sqlite3
-from pathlib import Path
 
 import pytest
 
@@ -172,7 +171,7 @@ class TestMigrationsIntegrity:
     def test_migrations_have_increasing_versions(self):
         versions = [m[0] for m in _MIGRATIONS]
         for i in range(1, len(versions)):
-            assert versions[i] > versions[i - 1], f"Migration v{versions[i]} not after v{versions[i-1]}"
+            assert versions[i] > versions[i - 1], f"Migration v{versions[i]} not after v{versions[i - 1]}"
 
     def test_each_migration_has_description(self):
         for version, description, statements in _MIGRATIONS:

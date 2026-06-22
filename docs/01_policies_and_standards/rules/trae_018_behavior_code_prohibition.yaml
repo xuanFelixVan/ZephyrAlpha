@@ -1,6 +1,21 @@
 rule_id: TRAE-018
 title: 行为边界-代码操作绝对禁止
+version: 1.1.0
+layer: L0
+module_id: TRAE-018
+depends_on:
+- TRAE-019
+- TRAE-020
+- TRAE-021
+tags:
+- TRAE
+- code_operation_prohibition
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
+- PS-STD-003
 - ABS-01
 - ABS-02
 - ABS-03
@@ -9,7 +24,6 @@ aliases:
 - ABS-06
 - ABS-07
 - ABS-08
-layer: L0
 severity: critical
 scope: code_operation_prohibition
 domain: TRAE
@@ -189,14 +203,14 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: "1.1.0"
     date: "2026-06-19"
     change: "RQ审查修复——修复abs_01~abs_08全部乱码(RQ-08)；删除3个污染section(bp_scope/bp_normative_refs/bp_change_history，内容为蓝图架构标准不属于本文件)；补充references和enforcement.executors实际脚本(RQ-04/RQ-06)；修复provenance路径(RQ-04)；新增change_history(RQ-14)"
   - version: "1.0.0"
     date: "2026-06-13"
-    change: "初始提取——从behavior-boundaries-standard.md提取ABS-01~08代码操作绝对禁止规则"
+    change: "初始提取——从behavior_boundaries_standard.yaml提取ABS-01~08代码操作绝对禁止规则"
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

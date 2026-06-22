@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_teacher_transfer.py
 
-import pytest
 
 from zephyr.ops.evolution.teacher_transfer import TeacherTransfer
 

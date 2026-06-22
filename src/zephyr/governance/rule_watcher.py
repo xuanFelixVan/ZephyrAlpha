@@ -29,6 +29,7 @@ CLI:
     python -m zephyr.governance.rule_watcher --once    # 检查一次
     python -m zephyr.governance.rule_watcher --poll-interval 10
 """
+
 from __future__ import annotations
 
 import argparse
@@ -39,7 +40,6 @@ import sys
 import threading
 import time
 from pathlib import Path
-from typing import Any
 
 
 def _find_project_root() -> Path:
@@ -151,31 +151,37 @@ class RuleWatcher:
 
             old_mtime = self._baseline.get(path_str)
             if old_mtime is None:
-                changed.append({
-                    "path": path_str,
-                    "rule_id": path.stem,
-                    "old_mtime": None,
-                    "new_mtime": current_mtime,
-                    "change_type": "added",
-                })
+                changed.append(
+                    {
+                        "path": path_str,
+                        "rule_id": path.stem,
+                        "old_mtime": None,
+                        "new_mtime": current_mtime,
+                        "change_type": "added",
+                    }
+                )
             elif current_mtime != old_mtime:
-                changed.append({
-                    "path": path_str,
-                    "rule_id": path.stem,
-                    "old_mtime": old_mtime,
-                    "new_mtime": current_mtime,
-                    "change_type": "modified",
-                })
+                changed.append(
+                    {
+                        "path": path_str,
+                        "rule_id": path.stem,
+                        "old_mtime": old_mtime,
+                        "new_mtime": current_mtime,
+                        "change_type": "modified",
+                    }
+                )
 
         for path_str in list(self._baseline.keys()):
             if path_str not in current_files:
-                changed.append({
-                    "path": path_str,
-                    "rule_id": Path(path_str).stem,
-                    "old_mtime": self._baseline[path_str],
-                    "new_mtime": None,
-                    "change_type": "deleted",
-                })
+                changed.append(
+                    {
+                        "path": path_str,
+                        "rule_id": Path(path_str).stem,
+                        "old_mtime": self._baseline[path_str],
+                        "new_mtime": None,
+                        "change_type": "deleted",
+                    }
+                )
                 del self._baseline[path_str]
 
         return changed
@@ -191,9 +197,7 @@ class RuleWatcher:
         Returns:
             dict: exit_code, stdout, stderr
         """
-        active_files = [
-            f for f in changed_files if f["change_type"] in ("added", "modified")
-        ]
+        active_files = [f for f in changed_files if f["change_type"] in ("added", "modified")]
         if not active_files:
             print("[RuleWatcher] No active files to sync (only deletions)")
             return {"exit_code": 0, "stdout": "", "stderr": ""}
@@ -247,9 +251,7 @@ class RuleWatcher:
         Returns:
             dict: exit_code, stdout, stderr, passed (bool)
         """
-        active_files = [
-            f for f in changed_files if f["change_type"] in ("added", "modified")
-        ]
+        active_files = [f for f in changed_files if f["change_type"] in ("added", "modified")]
         if not active_files:
             print("[RuleWatcher] No active files to verify")
             return {"exit_code": 0, "stdout": "", "stderr": "", "passed": True}
@@ -287,17 +289,13 @@ class RuleWatcher:
             print(msg)
             return {"exit_code": -1, "stdout": "", "stderr": str(exc), "passed": False}
 
-    def _log_sync_event(
-        self, changed_files: list[dict], exit_code: int, output: str
-    ) -> None:
+    def _log_sync_event(self, changed_files: list[dict], exit_code: int, output: str) -> None:
         """写入同步事件到 governance.db rule_enforcement_log（如果表存在）。"""
         if not _GOVERNANCE_DB.exists():
             return
         try:
             conn = sqlite3.connect(str(_GOVERNANCE_DB), timeout=5.0)
-            cursor = conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='rule_enforcement_log'"
-            )
+            cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rule_enforcement_log'")
             if cursor.fetchone() is None:
                 conn.close()
                 return
@@ -324,9 +322,7 @@ class RuleWatcher:
 
 def main() -> int:
     """CLI 入口点。"""
-    parser = argparse.ArgumentParser(
-        description="RuleWatcher — YAML 规则文件变更检测与自动同步"
-    )
+    parser = argparse.ArgumentParser(description="RuleWatcher — YAML 规则文件变更检测与自动同步")
     parser.add_argument(
         "--once",
         action="store_true",

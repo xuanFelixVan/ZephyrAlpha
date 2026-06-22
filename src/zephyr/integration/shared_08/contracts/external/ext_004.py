@@ -2,28 +2,18 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-177 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.contracts.external.ext_004_004
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:EXT-004 ====
+from dataclasses import dataclass
 
-from dataclasses import dataclass, field
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -45,12 +35,13 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class Feishu:
     pass
 
-# ==== END CODGEN:EXT-004 ====
 
+# ==== END CODGEN:EXT-004 ====

@@ -20,9 +20,10 @@
 # [TESTS]
 
 """G-CT-007 — Audit.record_agent_spec() 记录 Agent Spec 注册与变更."""
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.governance.agent_spec.registry import AgentCapability
@@ -36,5 +37,5 @@ def record_agent_spec(capability: AgentCapability) -> dict[str, Any]:
         "claimed_capabilities": caps,
         "model_provider": getattr(capability, "model_provider", "unknown"),
         "version": getattr(capability, "version", "0.0.0"),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }

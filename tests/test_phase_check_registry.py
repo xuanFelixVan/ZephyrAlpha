@@ -14,12 +14,10 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.governance.phase_check_registry import (
+    _CHECK_MAP,
     GateResult,
     PhaseCheckRegistry,
-    _CHECK_MAP,
     run_check,
 )
 
@@ -68,7 +66,9 @@ class TestPhaseCheckRegistryRegisteredChecks:
     def test_all_checks_start_with_gate_prefix(self):
         checks = PhaseCheckRegistry.registered_checks()
         for check in checks:
-            assert check.startswith("gate_"), f"Check '{check}' missing gate_ prefix"
+            assert check.startswith("gate_") or check.startswith("g_trae_"), (
+                f"Check '{check}' missing gate_/g_trae_ prefix"
+            )
 
     def test_registered_checks_match_check_map(self):
         checks = PhaseCheckRegistry.registered_checks()
@@ -112,7 +112,7 @@ class TestCheckMapConsistency:
 
     def test_check_count_reasonable(self):
         count = PhaseCheckRegistry.check_count()
-        assert 40 <= count <= 60, f"Expected 40-60 checks, got {count}"
+        assert 40 <= count <= 120, f"Expected 40-120 checks, got {count}"
 
     def test_no_duplicate_check_names(self):
         checks = PhaseCheckRegistry.registered_checks()

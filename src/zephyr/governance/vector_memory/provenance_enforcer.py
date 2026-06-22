@@ -30,7 +30,6 @@ ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行
 - attach(metadata, WriteTrace): 给已写入向量绑定 provenance 元数据
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -39,7 +38,7 @@ from typing import Any
 _logger = logging.getLogger(__name__)
 
 
-from zephyr.governance.vector_memory.vms_schemas import WriteTrace, Provenance
+from zephyr.governance.vector_memory.vms_schemas import WriteTrace
 
 
 class ProvenanceEnforcer:

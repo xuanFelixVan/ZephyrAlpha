@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
 from zephyr.infrastructure.asset_inventory.models import ClassifiedAsset, RegistryEntry
@@ -119,8 +117,8 @@ class TestMarkdownTableAdapterInstantiation:
         assert a.registry_id == "REG-TEST"
 
     def test_can_handle(self):
-        a = MarkdownTableAdapter("REG-TEST", "rule-registry.md")
-        assert a.can_handle("docs/rule-registry.md") is True
+        a = MarkdownTableAdapter("REG-TEST", "_index.yaml")
+        assert a.can_handle("docs/_index.yaml") is True
         assert a.can_handle("docs/other.md") is False
 
 

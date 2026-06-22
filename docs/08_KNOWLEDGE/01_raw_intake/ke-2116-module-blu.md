@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-2116
 status: active
 title: 3. 九子系统

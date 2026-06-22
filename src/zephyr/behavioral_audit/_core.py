@@ -1,6 +1,13 @@
 # [A_module] module_id=MOD-SEC__core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+from zephyr.behavioral_audit.detector_dispatcher import (
+    DetectorDispatcher,
+    DetectorResult,
+    ResultCache,
+    get_max_parallel_for_level,
+)
+
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._core
 # [INVARIANTS] __all__列表不变; 公开API不变
@@ -11,47 +18,40 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
-
 from zephyr.behavioral_audit.drift_engine import (
+    build_report,
     load_detector_registry,
+    push_to_evolution_engine,
     scan,
     scan_on_commit,
-    scheduled_light,
-    scheduled_deep,
     scan_phase_gate,
-    build_report,
-    push_to_evolution_engine,
+    scheduled_deep,
+    scheduled_light,
 )
 from zephyr.behavioral_audit.drift_models import (
-    DriftState,
-    ScanLevel,
-    Severity,
-    OrphanClassification,
-    DriftEvent,
     BaselineSnapshot,
-    ScanResult,
-    DriftReport,
-    DriftBudget,
-    Runbook,
-    CascadeEvent,
-    BulkDriftEvent,
-    ForensicsReport,
-    ConfigConflict,
     BreakingChange,
-    OrphanFile,
+    BulkDriftEvent,
+    CascadeEvent,
+    ConfigConflict,
     Detector,
+    DriftBudget,
+    DriftEvent,
+    DriftReport,
+    DriftState,
+    ForensicsReport,
+    OrphanClassification,
+    OrphanFile,
+    Runbook,
+    ScanLevel,
+    ScanResult,
+    Severity,
 )
-from zephyr.behavioral_audit.events import DriftType, DriftState as EventsDriftState, DriftEvent as EventsDriftEvent
+from zephyr.behavioral_audit.events import DriftType
 from zephyr.behavioral_audit.state_machine import (
-    InvalidTransitionError,
-    DriftStateMachine,
     DriftEventRecord,
-)
-from zephyr.behavioral_audit.detector_dispatcher import (
-    DetectorResult,
-    ResultCache,
-    DetectorDispatcher,
-    get_max_parallel_for_level,
+    DriftStateMachine,
+    InvalidTransitionError,
 )
 
 _SUBMODULES = [
@@ -70,37 +70,37 @@ _SUBMODULES = [
 ]
 
 __all__ = [
+    "BaselineSnapshot",
+    "BreakingChange",
+    "BulkDriftEvent",
+    "CascadeEvent",
+    "ConfigConflict",
+    "Detector",
+    "DetectorDispatcher",
+    "DetectorResult",
+    "DriftBudget",
+    "DriftEvent",
+    "DriftEventRecord",
+    "DriftReport",
+    "DriftState",
+    "DriftStateMachine",
+    "DriftType",
+    "ForensicsReport",
+    "InvalidTransitionError",
+    "OrphanClassification",
+    "OrphanFile",
+    "ResultCache",
+    "Runbook",
+    "ScanLevel",
+    "ScanResult",
+    "Severity",
+    "build_report",
+    "get_max_parallel_for_level",
     "load_detector_registry",
+    "push_to_evolution_engine",
     "scan",
     "scan_on_commit",
-    "scheduled_light",
-    "scheduled_deep",
     "scan_phase_gate",
-    "build_report",
-    "push_to_evolution_engine",
-    "DriftState",
-    "ScanLevel",
-    "Severity",
-    "OrphanClassification",
-    "DriftEvent",
-    "BaselineSnapshot",
-    "ScanResult",
-    "DriftReport",
-    "DriftBudget",
-    "Runbook",
-    "CascadeEvent",
-    "BulkDriftEvent",
-    "ForensicsReport",
-    "ConfigConflict",
-    "BreakingChange",
-    "OrphanFile",
-    "Detector",
-    "DriftType",
-    "InvalidTransitionError",
-    "DriftStateMachine",
-    "DriftEventRecord",
-    "DetectorResult",
-    "ResultCache",
-    "DetectorDispatcher",
-    "get_max_parallel_for_level",
+    "scheduled_deep",
+    "scheduled_light",
 ]

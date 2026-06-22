@@ -49,7 +49,7 @@ from __future__ import annotations
 import abc
 import uuid
 from datetime import datetime
-from typing import ClassVar, Dict, List, Optional
+from typing import ClassVar
 
 from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
 from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
@@ -69,7 +69,8 @@ class SignalSynthesizerBase(abc.ABC):
       - 不得在合成过程中引入 look-ahead bias
       - 因子权重不得动态调整为负值（禁止做空因子——那在 L05 做组合层面处理）
     """
-    _registry: ClassVar[dict[str, type["SignalSynthesizerBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[SignalSynthesizerBase]]] = {}
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -79,10 +80,10 @@ class SignalSynthesizerBase(abc.ABC):
     @abc.abstractmethod
     def synthesize(
         self,
-        factor_signals: List[FactorSignal],
+        factor_signals: list[FactorSignal],
         symbol: str,
         as_of_timestamp: datetime,
-        weights: Optional[Dict[str, float]] = None,
+        weights: dict[str, float] | None = None,
     ) -> SynthesizedSignal:
         """将因子信号列表合成为统一交易信号"""
         ...

@@ -36,4 +36,3 @@ def record_multi_agent_vote(
 
 > **预留原则**：分类桩已在蓝图中注册（= "这个地方以后会有内容"），`KeCategory` 枚举先不加 D1-D3（避免 `schemas.py` 出现未实现的枚举值导致运行时 KeyError），待 beta 统一启用。蓝图 = 设计图，代码 = 施工成果——设计图可以先画，施工可以分批。
 > **对标**：Terraform provider contract —— 接口先定义、实现可分批 / K8s API versioning —— `planned` 状态的 API 不进 `v1` 但已在设计文档中注册
-

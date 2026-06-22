@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.financial_compliance import (
     FRAMEWORK_DIMENSIONS,
     PROTOCOL_DEFS,
@@ -40,9 +38,13 @@ class TestComplianceLayer:
 class TestSafeguard:
     def test_all_safeguards_exist(self):
         expected = [
-            "S1_ACCESS_CONTROL", "S2_DATA_PROTECTION", "S3_AUDIT_TRAIL",
-            "S4_INCIDENT_RESPONSE", "S5_BUSINESS_CONTINUITY",
-            "S6_MODEL_RISK", "S7_INSIDER_THREAT",
+            "S1_ACCESS_CONTROL",
+            "S2_DATA_PROTECTION",
+            "S3_AUDIT_TRAIL",
+            "S4_INCIDENT_RESPONSE",
+            "S5_BUSINESS_CONTINUITY",
+            "S6_MODEL_RISK",
+            "S7_INSIDER_THREAT",
         ]
         for name in expected:
             assert hasattr(Safeguard, name)

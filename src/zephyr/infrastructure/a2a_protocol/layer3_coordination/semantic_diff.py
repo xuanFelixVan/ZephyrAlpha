@@ -29,7 +29,6 @@
 输出: SemanticDiffReport — 冲突区域 + 类型 + 重合度评分
 """
 
-
 from __future__ import annotations
 
 import difflib
@@ -103,7 +102,6 @@ class SemanticDiffEngine:
         regions_b: list[SemanticRegion],
         file_path: str = "",
     ) -> SemanticDiffReport:
-
         report = SemanticDiffReport(agent_a_id=agent_a_id, agent_b_id=agent_b_id, file_path=file_path)
 
         names_a = {r.name: r for r in regions_a}
@@ -123,42 +121,46 @@ class SemanticDiffEngine:
             conflict_risk = min(1.0, max(0.0, conflict_risk))
 
             diff_type = SemanticDiffType.FUNCTION_MODIFIED
-            if content_similarity < 0.5:
-                diff_type = SemanticDiffType.FUNCTION_MODIFIED
-            elif overlap_ratio < 0.3:
+            if content_similarity < 0.5 or overlap_ratio < 0.3:
                 diff_type = SemanticDiffType.FUNCTION_MODIFIED
 
-            report.entries.append(SemanticDiffEntry(
-                region_name=name,
-                region_type=ra.region_type,
-                diff_type=diff_type,
-                agent_a_change=f"A: L{ra.start_line}-L{ra.end_line} ({len(ra.content)} chars)",
-                agent_b_change=f"B: L{rb.start_line}-L{rb.end_line} ({len(rb.content)} chars)",
-                overlap_ratio=overlap_ratio,
-                conflict_risk=conflict_risk,
-            ))
+            report.entries.append(
+                SemanticDiffEntry(
+                    region_name=name,
+                    region_type=ra.region_type,
+                    diff_type=diff_type,
+                    agent_a_change=f"A: L{ra.start_line}-L{ra.end_line} ({len(ra.content)} chars)",
+                    agent_b_change=f"B: L{rb.start_line}-L{rb.end_line} ({len(rb.content)} chars)",
+                    overlap_ratio=overlap_ratio,
+                    conflict_risk=conflict_risk,
+                )
+            )
 
         for name in a_only:
-            report.entries.append(SemanticDiffEntry(
-                region_name=name,
-                region_type=names_a[name].region_type,
-                diff_type=SemanticDiffType.PARAGRAPH_DELETED,
-                agent_a_change=f"A only: L{names_a[name].start_line}-L{names_a[name].end_line}",
-                agent_b_change="B: absent",
-                overlap_ratio=0.0,
-                conflict_risk=0.8,
-            ))
+            report.entries.append(
+                SemanticDiffEntry(
+                    region_name=name,
+                    region_type=names_a[name].region_type,
+                    diff_type=SemanticDiffType.PARAGRAPH_DELETED,
+                    agent_a_change=f"A only: L{names_a[name].start_line}-L{names_a[name].end_line}",
+                    agent_b_change="B: absent",
+                    overlap_ratio=0.0,
+                    conflict_risk=0.8,
+                )
+            )
 
         for name in b_only:
-            report.entries.append(SemanticDiffEntry(
-                region_name=name,
-                region_type=names_b[name].region_type,
-                diff_type=SemanticDiffType.PARAGRAPH_REWRITTEN,
-                agent_a_change="A: absent",
-                agent_b_change=f"B only: L{names_b[name].start_line}-L{names_b[name].end_line}",
-                overlap_ratio=0.0,
-                conflict_risk=0.6,
-            ))
+            report.entries.append(
+                SemanticDiffEntry(
+                    region_name=name,
+                    region_type=names_b[name].region_type,
+                    diff_type=SemanticDiffType.PARAGRAPH_REWRITTEN,
+                    agent_a_change="A: absent",
+                    agent_b_change=f"B only: L{names_b[name].start_line}-L{names_b[name].end_line}",
+                    overlap_ratio=0.0,
+                    conflict_risk=0.6,
+                )
+            )
 
         return report
 
@@ -175,21 +177,29 @@ class SemanticDiffEngine:
                     start = i + 1
 
                     end = self._find_region_end(lines, i)
-                    content = "\n".join(lines[i:end + 1])
+                    content = "\n".join(lines[i : end + 1])
 
-                    regions.append(SemanticRegion(
-                        name=name, start_line=start, end_line=end + 1,
-                        content=content, region_type=rtype,
-                    ))
+                    regions.append(
+                        SemanticRegion(
+                            name=name,
+                            start_line=start,
+                            end_line=end + 1,
+                            content=content,
+                            region_type=rtype,
+                        )
+                    )
                     break
 
             if stripped.startswith("# ") or stripped.startswith("## "):
                 name = stripped.lstrip("# ").strip()[:60]
-                regions.append(SemanticRegion(
-                    name=f"section:{name}",
-                    start_line=i + 1, end_line=i + 1,
-                    region_type="heading",
-                ))
+                regions.append(
+                    SemanticRegion(
+                        name=f"section:{name}",
+                        start_line=i + 1,
+                        end_line=i + 1,
+                        region_type="heading",
+                    )
+                )
 
         return regions
 
@@ -205,7 +215,7 @@ class SemanticDiffEngine:
         return overlap / union
 
     def _extract_name(self, line: str, prefix: str) -> str:
-        after = line[len(prefix):].strip()
+        after = line[len(prefix) :].strip()
         name = after.split("(")[0].split(":")[0].strip()
         return name
 

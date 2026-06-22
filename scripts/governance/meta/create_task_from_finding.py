@@ -29,7 +29,7 @@ import argparse
 import json
 import os
 import sys
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve().parents[1]
@@ -46,15 +46,23 @@ REPO_ROOT_DIR = str(REPO_ROOT)
 if REPO_ROOT_DIR not in sys.path:
     sys.path.insert(0, REPO_ROOT_DIR)
 
-from zephyr.governance.persistence.sqlite_schema import DB_PATH
-from zephyr.governance.rule_enforcement.task_types import TaskStatus, ExecutionModel, TaskNamespace
 from zephyr.integration.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.shared_services.models import TaskCard
+
+from zephyr.governance.persistence.sqlite_schema import DB_PATH, init_db
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.rule_enforcement.task_types import ExecutionModel, TaskNamespace, TaskStatus
+from zephyr.shared.shared_services.models import TaskCard
 
 DEFAULT_FINDINGS = SCRIPTS_DIR / "reports" / "findings.jsonl"
-TASK_CARDS_DIR = REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "script-system" / "changes" / "MOD-INF-005"
+TASK_CARDS_DIR = (
+    REPO_ROOT
+    / "docs"
+    / "03_modules"
+    / "infrastructure.runtime_integration"
+    / "script-system"
+    / "changes"
+    / "MOD-INF-005"
+)
 
 SEVERITY_TO_PRIORITY: dict[str, Priority] = {
     "CRITICAL": Priority.P0,
@@ -90,20 +98,29 @@ def load_findings(path: Path) -> list[dict]:
 
 def _taskcard_to_yaml_md(tc: TaskCard) -> str:
     """将 TaskCard 序列化为 YAML frontmatter + Markdown 正文。"""
-    created = tc.created_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.created_at, "strftime") else str(tc.created_at)[:16]
-    updated = tc.updated_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.updated_at, "strftime") else str(tc.updated_at)[:16]
+    created = (
+        tc.created_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.created_at, "strftime") else str(tc.created_at)[:16]
+    )
+    updated = (
+        tc.updated_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.updated_at, "strftime") else str(tc.updated_at)[:16]
+    )
 
     desc_safe = tc.description.replace('"', '\\"')[:800]
     title_safe = tc.title.replace('"', '\\"')
 
-    upstream_yaml = "\n".join(f"  - \"{f}\"" for f in tc.upstream_files) if tc.upstream_files else "  - []"
-    downstream_yaml = "\n".join(
-        f"  - path: \"{d.get('path', '')}\"" + (f"\n    description: \"{d.get('description', '')}\"" if d.get('description') else "")
-        for d in tc.downstream_outputs
-    ) if tc.downstream_outputs else "  - []"
+    upstream_yaml = "\n".join(f'  - "{f}"' for f in tc.upstream_files) if tc.upstream_files else "  - []"
+    downstream_yaml = (
+        "\n".join(
+            f'  - path: "{d.get("path", "")}"'
+            + (f'\n    description: "{d.get("description", "")}"' if d.get("description") else "")
+            for d in tc.downstream_outputs
+        )
+        if tc.downstream_outputs
+        else "  - []"
+    )
 
-    deps_yaml = "\n".join(f"  - \"{d}\"" for d in tc.depends_on) if tc.depends_on else "  - []"
-    acceptance_yaml = "\n".join(f"  - \"{a}\"" for a in tc.acceptance) if tc.acceptance else "  - []"
+    deps_yaml = "\n".join(f'  - "{d}"' for d in tc.depends_on) if tc.depends_on else "  - []"
+    acceptance_yaml = "\n".join(f'  - "{a}"' for a in tc.acceptance) if tc.acceptance else "  - []"
 
     return f"""---
 task_id: "{tc.task_id}"
@@ -120,7 +137,7 @@ allowed_touch:
   - []
 forbidden_touch:
   - []
-assigned_model: "{tc.execution_model.value if hasattr(tc.execution_model, 'value') else tc.execution_model}"
+assigned_model: "{tc.execution_model.value if hasattr(tc.execution_model, "value") else tc.execution_model}"
 assigned_pipeline: "{tc.assigned_pipeline}"
 estimated_tokens: {tc.estimated_tokens}
 timeout_minutes: {tc.timeout_minutes}
@@ -131,7 +148,7 @@ depends_on:
 {deps_yaml}
 blocked_by:
   - []
-status: "{tc.status.value if hasattr(tc.status, 'value') else tc.status}"
+status: "{tc.status.value if hasattr(tc.status, "value") else tc.status}"
 tags_fn:
   - finding-fix
 tags_ly: "infrastructure.runtime_integration"
@@ -157,24 +174,24 @@ ai_autonomy_level: "{tc.ai_autonomy_level}"
 ## 执行步骤
 
 ### 读
-{chr(10).join(f'- {f}' for f in tc.upstream_files) if tc.upstream_files else '-（见 upstream_files）'}
+{chr(10).join(f"- {f}" for f in tc.upstream_files) if tc.upstream_files else "-（见 upstream_files）"}
 
 ### 做
 - 按 applicable_rules 修复违规
 
 ### 产
-{chr(10).join(f'- {d.get("path", str(d))}' if isinstance(d, dict) else f'- {d}' for d in tc.downstream_outputs) if tc.downstream_outputs else '-（见 downstream_outputs）'}
+{chr(10).join(f"- {d.get('path', str(d))}" if isinstance(d, dict) else f"- {d}" for d in tc.downstream_outputs) if tc.downstream_outputs else "-（见 downstream_outputs）"}
 
 ### 检
 - 运行对应审计重新扫描
 
 ## 验收标准
-{chr(10).join(f'- {a}' for a in tc.acceptance) if tc.acceptance else '- 见 acceptance_criteria'}
+{chr(10).join(f"- {a}" for a in tc.acceptance) if tc.acceptance else "- 见 acceptance_criteria"}
 
 ## 风险与缓解
 | 风险 | 缓解 |
 |------|------|
-| 回滚 | {tc.rollback_instructions if tc.rollback_instructions else 'git revert'} |
+| 回滚 | {tc.rollback_instructions if tc.rollback_instructions else "git revert"} |
 
 ---
 *创建: {created} | 更新: {updated}*
@@ -239,13 +256,11 @@ def _build_taskcard_from_finding(finding: dict, task_id: str) -> TaskCard:
         {"module_id": "MOD-INF-005", "section": "§3.2.1", "reason": f"自动创建自 {severity} Finding {finding_id}"},
     ]
     if target_file:
-        applicable_rules.append(
-            {"module_id": "MOD-INF-005", "section": "§3.2.1", "reason": f"目标文件: {target_file}"}
-        )
+        applicable_rules.append({"module_id": "MOD-INF-005", "section": "§3.2.1", "reason": f"目标文件: {target_file}"})
 
     autonomy = "review_required" if severity in ("CRITICAL", "HIGH") else "supervised"
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     return TaskCard(
         task_id=task_id,

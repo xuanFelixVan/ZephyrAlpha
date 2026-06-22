@@ -19,7 +19,6 @@
 
 # [TESTS] pytest tests/test_infra_observer.py -q
 
-import pytest
 from zephyr.shared.shared_services.infra_06.observer import (
     EventType,
     Observer,
@@ -54,8 +53,10 @@ class TestObserver:
     def test_multiple_subscribers(self):
         bus = Observer()
         count = [0]
+
         def handler(et, p):
             count[0] += 1
+
         bus.subscribe(EventType.TASK_EVENT, handler)
         bus.subscribe(EventType.TASK_EVENT, handler)
         called = bus.emit(EventType.TASK_EVENT)
@@ -129,10 +130,13 @@ class TestObserver:
     def test_handler_exception_does_not_stop_others(self):
         bus = Observer()
         results = []
+
         def bad_handler(et, p):
             raise RuntimeError("boom")
+
         def good_handler(et, p):
             results.append("good")
+
         bus.subscribe(EventType.FILE_EVENT, bad_handler)
         bus.subscribe(EventType.FILE_EVENT, good_handler)
         called = bus.emit(EventType.FILE_EVENT)

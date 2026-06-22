@@ -41,7 +41,6 @@ DeadLetterQueue — 死信队列
 from __future__ import annotations
 
 from zephyr.infrastructure.pipeline.models import DeadLetterEntry, ModuleResult, ModuleStatus, PipelineStatus
-from zephyr.shared.events.dlq_bridge import DLQEventBridge as _DLQEventBridge
 
 
 class DeadLetterQueue:

@@ -55,14 +55,13 @@ composite_score = speed_norm * 0.40 + quality_norm * 0.35 + consistency_norm * 0
 - 样本数 =  0: 返回 static mapping (M_MODULE_SPECS)
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
 import statistics
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -100,7 +99,7 @@ class ModelTaskEntry:
         self.confidence_samples.append(confidence)
         if len(self.confidence_samples) > 200:
             self.confidence_samples = self.confidence_samples[-200:]
-        self.last_updated = datetime.now(timezone.utc).isoformat()
+        self.last_updated = datetime.now(UTC).isoformat()
 
         self.avg_duration_ms = self.total_duration_ms / self.sample_count
         tps = (self.total_tokens / (self.total_duration_ms / 1000)) if self.total_duration_ms > 0 else 0.0
@@ -112,9 +111,7 @@ class ModelTaskEntry:
         dur_std = statistics.stdev(self.duration_samples) if len(self.duration_samples) >= 2 else 0.0
         consistency_score = max(0.0, 1.0 - dur_std / max(self.avg_duration_ms, 1.0))
 
-        self.composite_score = round(
-            speed_score * 0.40 + quality_score * 0.35 + consistency_score * 0.25, 4
-        )
+        self.composite_score = round(speed_score * 0.40 + quality_score * 0.35 + consistency_score * 0.25, 4)
 
 
 @dataclass
@@ -159,17 +156,11 @@ class ModelTaskMatrix:
         entries = self._matrix.get(task_type, {})
 
         if entries:
-            learned = [
-                (model, e) for model, e in entries.items()
-                if e.sample_count >= MIN_SAMPLES_FOR_LEARNED
-            ]
+            learned = [(model, e) for model, e in entries.items() if e.sample_count >= MIN_SAMPLES_FOR_LEARNED]
             if learned:
                 learned.sort(key=lambda x: x[1].composite_score, reverse=True)
                 best_model, best_entry = learned[0]
-                alts = [
-                    {"model": m, "score": e.composite_score, "samples": e.sample_count}
-                    for m, e in learned[1:4]
-                ]
+                alts = [{"model": m, "score": e.composite_score, "samples": e.sample_count} for m, e in learned[1:4]]
                 return TaskRecommendation(
                     task_type=task_type,
                     best_model=best_model,
@@ -191,6 +182,7 @@ class ModelTaskMatrix:
             )
 
         from zephyr.integration.models import M_MODULE_SPECS
+
         spec = M_MODULE_SPECS.get(task_type, {})
         static_model = spec.get("model", "deepseek")
         return TaskRecommendation(
@@ -214,9 +206,11 @@ class ModelTaskMatrix:
         """从 ModelProfiler benchmark 结果中播种基准数据。"""
         count = 0
         from zephyr.integration.models import M_MODULE_SPECS
+
         module_to_role = {
             mid: M_MODULE_SPECS.get(mid, {}).get("role", "").split("——")[0].strip()
-            if "——" in M_MODULE_SPECS.get(mid, {}).get("role", "") else ""
+            if "——" in M_MODULE_SPECS.get(mid, {}).get("role", "")
+            else ""
             for mid in M_MODULE_SPECS
         }
         category_to_modules: dict[str, list[str]] = {
@@ -271,11 +265,9 @@ class ModelTaskMatrix:
             f"ModelTaskMatrix: {len(recs)} task types, {learned_count} learned, {len(recs) - learned_count} from baseline/spec",
         ]
         lines.append(f"  {'Task':<8} {'Best Model':<25} {'Score':>7} {'Samples':>8} {'Source':>12}")
-        lines.append(f"  {'-'*8} {'-'*25} {'-'*7} {'-'*8} {'-'*12}")
+        lines.append(f"  {'-' * 8} {'-' * 25} {'-' * 7} {'-' * 8} {'-' * 12}")
         for r in recs:
-            lines.append(
-                f"  {r.task_type:<8} {r.best_model:<25} {r.score:>6.3f} {r.sample_count:>8} {r.source:>12}"
-            )
+            lines.append(f"  {r.task_type:<8} {r.best_model:<25} {r.score:>6.3f} {r.sample_count:>8} {r.source:>12}")
         return "\n".join(lines)
 
     def persistence_path(self) -> str:
@@ -286,7 +278,7 @@ class ModelTaskMatrix:
             data: dict[str, Any] = {
                 "matrix": self.snapshot(),
                 "benchmark_baseline": self._benchmark_baseline,
-                "saved_at": datetime.now(timezone.utc).isoformat(),
+                "saved_at": datetime.now(UTC).isoformat(),
             }
             (self._dir / "task-model-matrix.json").write_text(
                 json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"

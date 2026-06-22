@@ -15,9 +15,9 @@ from __future__ import annotations
 import pytest
 
 from zephyr.behavioral_audit.model_drift_monitor import (
-    DriftType,
-    DriftConfig,
     DRIFT_MONITORS,
+    DriftConfig,
+    DriftType,
     get_drift_config,
 )
 

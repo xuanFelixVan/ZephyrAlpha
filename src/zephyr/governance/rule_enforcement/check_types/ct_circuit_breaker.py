@@ -27,105 +27,46 @@ CircuitBreakerHandler — CircuitBreakerHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class CircuitBreakerHandler(CheckTypeHandler):
-
-
     name = "circuit_breaker"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        caller = str(params.get("caller_module", ""))
 
-                violations = []
+        target = str(params.get("target_module", ""))
 
+        if not caller or not target:
+            violations.append(
+                {"message": "circuit_breaker check missing caller_module/target_module", "severity": "P2"}
+            )
 
-                caller = str(params.get("caller_module", ""))
+        else:
+            try:
+                from zephyr.governance.rule_enforcement.circuit_breaker import CircuitBreakerCheck
 
+                cb = CircuitBreakerCheck(caller_module=caller, target_module=target)
 
-                target = str(params.get("target_module", ""))
+                if cb.is_open():
+                    violations.append({"message": cb.violation_message(), "severity": check.severity})
 
+            except Exception as exc:
+                violations.append({"message": f"circuit_breaker init failed (degrade P2): {exc}", "severity": "P2"})
 
-                if not caller or not target:
-
-
-                    violations.append({"message": "circuit_breaker check missing caller_module/target_module", "severity": "P2"})
-
-
-                else:
-
-
-                    try:
-
-
-                        from zephyr.governance.rule_enforcement.circuit_breaker import CircuitBreakerCheck
-
-
-                        cb = CircuitBreakerCheck(caller_module=caller, target_module=target)
-
-
-                        if cb.is_open():
-
-
-                            violations.append({"message": cb.violation_message(), "severity": check.severity})
-
-
-                    except Exception as exc:
-
-
-                        violations.append({"message": f"circuit_breaker init failed (degrade P2): {exc}", "severity": "P2"})
-
-
-                return violations
-
-
+        return violations

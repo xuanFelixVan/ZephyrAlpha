@@ -6,11 +6,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """集成 + 契约验证测试."""
+
 from __future__ import annotations
 
-import pytest
-from zephyr.security.access_control.integration import IntegrationManager
 from zephyr.security.access_control.contract_verifier import ContractVerifier
+from zephyr.security.access_control.integration import IntegrationManager
 
 
 class TestIntegration:

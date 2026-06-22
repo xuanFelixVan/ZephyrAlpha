@@ -26,14 +26,14 @@ import importlib
 import logging
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Callable, Optional
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["FileWatcher", "FileChangeEvent", "FileChangeType"]
+__all__: list[str] = ["FileChangeEvent", "FileChangeType", "FileWatcher"]
 
 
 class FileChangeType(str, Enum):
@@ -62,9 +62,9 @@ class FileWatcher:
         self,
         watch_dir: Path,
         *,
-        patterns: Optional[list[str]] = None,
+        patterns: list[str] | None = None,
         poll_interval: float = 30.0,
-        on_change: Optional[Callable[[FileChangeEvent], None]] = None,
+        on_change: Callable[[FileChangeEvent], None] | None = None,
     ) -> None:
         if not watch_dir.is_dir():
             raise FileWatcherError(f"watch_dir does not exist: {watch_dir}")
@@ -76,7 +76,7 @@ class FileWatcher:
         self._poll_interval = poll_interval
         self._on_change = on_change
         self._snapshot: dict[Path, str] = {}
-        self._thread: Optional[threading.Thread] = None
+        self._thread: threading.Thread | None = None
         self._stop_event = threading.Event()
         self._lock = threading.Lock()
         self._started = False
@@ -91,7 +91,10 @@ class FileWatcher:
         self._started = True
         logger.info(
             "FileWatcher started: dir=%s patterns=%s interval=%.0fs tracked=%d",
-            self._watch_dir, self._patterns, self._poll_interval, len(self._snapshot),
+            self._watch_dir,
+            self._patterns,
+            self._poll_interval,
+            len(self._snapshot),
         )
 
     def stop(self) -> None:
@@ -138,9 +141,7 @@ class FileWatcher:
             logger.warning("Failed to scan directory: %s", self._watch_dir)
         return snapshot
 
-    def _diff(
-        self, old: dict[Path, str], new: dict[Path, str]
-    ) -> list[FileChangeEvent]:
+    def _diff(self, old: dict[Path, str], new: dict[Path, str]) -> list[FileChangeEvent]:
         events: list[FileChangeEvent] = []
         old_keys = set(old.keys())
         new_keys = set(new.keys())
@@ -162,9 +163,7 @@ class FileWatcher:
             try:
                 events = self.scan_once()
                 for event in events:
-                    logger.info(
-                        "File change detected: %s %s", event.event_type.value, event.path
-                    )
+                    logger.info("File change detected: %s %s", event.event_type.value, event.path)
                     if self._on_change:
                         try:
                             self._on_change(event)
@@ -177,7 +176,7 @@ class FileWatcher:
 class BlueprintWatcher:
     def __init__(
         self,
-        blueprints_dir: Optional[Path] = None,
+        blueprints_dir: Path | None = None,
         *,
         poll_interval: float = 60.0,
         auto_decompose: bool = True,
@@ -218,7 +217,7 @@ class BlueprintWatcher:
     @staticmethod
     def _is_blueprint(path: Path) -> bool:
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 head = f.read(500)
             return "module_id:" in head and "blueprint" in head.lower()
         except Exception:
@@ -227,8 +226,8 @@ class BlueprintWatcher:
     @staticmethod
     def _trigger_decompose(blueprint_path: Path) -> None:
         try:
-            from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
             from zephyr.shared.registry import ServiceRegistry
+            from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
 
             task_repo = ServiceRegistry.get("task_repo")
             decomposer = BlueprintDecomposer(task_repo=task_repo)
@@ -245,8 +244,9 @@ class BlueprintWatcher:
     def _trigger_triple_alignment(blueprint_path: Path) -> None:
         try:
             import re
+
             _mod = importlib.import_module("zephyr.governance.rule_enforcement.triple_alignment")
-            check_triple_alignment = getattr(_mod, "check_triple_alignment")
+            check_triple_alignment = _mod.check_triple_alignment
             content = blueprint_path.read_text(encoding="utf-8")
             mid_match = re.search(r"module_id:\s*(MOD-INF-\d+|MOD-MASTER-\d+|DOM-\w+-\d+|GOV-FSTR-\d+)", content)
             if not mid_match:

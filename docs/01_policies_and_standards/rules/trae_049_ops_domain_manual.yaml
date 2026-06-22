@@ -1,12 +1,24 @@
 rule_id: TRAE-049
 title: 操作-领域操作手册
+version: 1.0.2
+layer: L2
+module_id: TRAE-049
+depends_on:
+- TRAE-050
+- TRAE-051
+tags:
+- TRAE
+- operational_domain
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - OPS-001
 - OPS-002
 - OPS-003
 - OPS-004
 - OPS-DEV-002
-layer: L2
 severity: warning
 scope: operational_domain
 domain: TRAE
@@ -426,7 +438,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: "1.0.2"
     date: '2026-06-21'

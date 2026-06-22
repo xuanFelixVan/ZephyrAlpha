@@ -12,21 +12,15 @@
 
 from __future__ import annotations
 
-import json
-import os
-from pathlib import Path
-
-import pytest
-
 from zephyr.behavioral_audit.backcompat_checker import (
     CompatBreakEvent,
     FunctionSignature,
-    extract_signatures,
     compare_signatures,
-    find_renamed_functions,
-    scan_impact,
     detect_intentional_breaks,
+    extract_signatures,
+    find_renamed_functions,
     run_backcompat_check,
+    scan_impact,
 )
 
 
@@ -91,7 +85,9 @@ class TestCompareSignatures:
         assert any(b.event_id.startswith("compat-removed-func") for b in breaks)
 
     def test_detects_removed_parameter(self):
-        baseline = [FunctionSignature(name="func", params=["a", "b", "c"], return_type=None, file_path="f.py", line_no=1)]
+        baseline = [
+            FunctionSignature(name="func", params=["a", "b", "c"], return_type=None, file_path="f.py", line_no=1)
+        ]
         current = [FunctionSignature(name="func", params=["a", "b"], return_type=None, file_path="f.py", line_no=1)]
         breaks = compare_signatures(baseline, current)
         assert any("removed" in b.description.lower() and "parameter" in b.description.lower() for b in breaks)
@@ -111,7 +107,9 @@ class TestCompareSignatures:
         baseline = [FunctionSignature(name="func", params=["a"], return_type=None, file_path="f.py", line_no=1)]
         current = [FunctionSignature(name="func", params=["a", "b"], return_type=None, file_path="f.py", line_no=1)]
         breaks = compare_signatures(baseline, current)
-        removed_param_breaks = [b for b in breaks if "removed" in b.description.lower() and "parameter" in b.description.lower()]
+        removed_param_breaks = [
+            b for b in breaks if "removed" in b.description.lower() and "parameter" in b.description.lower()
+        ]
         assert len(removed_param_breaks) == 0
 
 

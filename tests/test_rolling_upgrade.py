@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_rolling_upgrade.py
 
-import pytest
 
 from zephyr.trading.orchestrator.rolling_upgrade import RollingUpgradeManager
 

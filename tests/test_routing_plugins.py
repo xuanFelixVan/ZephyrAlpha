@@ -15,19 +15,19 @@ from __future__ import annotations
 import pytest
 
 from zephyr.integration.ct_pipe_routing import CtPipeRoutingHints
+from zephyr.integration.models import M_MODULES
 from zephyr.integration.routing_plugins import (
+    DEFAULT_PLUGINS,
+    ComplexityFilter,
+    CostScorer,
+    NoEligibleNodeError,
+    PipelineAffinityScorer,
+    PipelineRouter,
+    PriorityScorer,
     RoutingContext,
     RoutingPlugin,
-    PipelineRouter,
-    NoEligibleNodeError,
     TaskTypeFilter,
-    ComplexityFilter,
-    PriorityScorer,
-    PipelineAffinityScorer,
-    CostScorer,
-    DEFAULT_PLUGINS,
 )
-from zephyr.integration.models import M_MODULES
 
 
 class TestRoutingContext:

@@ -10,7 +10,9 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_context_outcome_tracker.py -q
 from __future__ import annotations
+
 import pytest
+
 from zephyr.autonomy_core.context_outcome_tracker import (
     ContextOutcomeLink,
     ContextOutcomeTracker,

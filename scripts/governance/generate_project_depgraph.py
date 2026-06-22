@@ -17,33 +17,101 @@ import ast
 import hashlib
 import json
 import os
+import re
 import sqlite3
 import subprocess
-import re
 import sys
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
+# === 扫描排除配置（从 YAML 配置文件加载，真源: depgraph_scan_exclusions.yaml）===
+# 规则定义: docs/01_policies_and_standards/rules/trae_058_depgraph_scan_exclusions.yaml
+# 路径清单: docs/01_policies_and_standards/_registry/catalogs/depgraph_scan_exclusions.yaml
+_SCAN_EXCLUSIONS_CONFIG_PATH = (
+    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "depgraph_scan_exclusions.yaml"
+)
+
+
+def _load_scan_exclusions() -> dict:
+    """Load scan exclusion config from YAML. Falls back to empty dict if config missing."""
+    if not _SCAN_EXCLUSIONS_CONFIG_PATH.exists():
+        print(f"[WARN] 扫描排除配置文件不存在: {_SCAN_EXCLUSIONS_CONFIG_PATH}", file=sys.stderr)
+        return {}
+    with open(_SCAN_EXCLUSIONS_CONFIG_PATH, encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+_SCAN_CONFIG = _load_scan_exclusions()
+_DEPGRAPH_CONFIG = _SCAN_CONFIG.get("depgraph", {})
+
+# Fallback defaults (used only if config file is missing or incomplete)
+_FALLBACK_EXEMPT_DIRS = {
+    "__pycache__", ".git", ".ailocks", "node_modules",
+    ".mypy_cache", ".pytest_cache", ".ruff_cache",
+    "_backups", "_temp", ".audit_cache", "session-logs",
+}
+_FALLBACK_EXCLUDED_NODE_TYPES = {"doc", "policy", "standard", "template", "diagram", "data"}
+_FALLBACK_SCAN_DIRS = [
+    "src/zephyr", "scripts", "tests", "data/asset_index", "data/config",
+    "data/metrics", "config", "schemas", "docs/03_modules",
+    "docs/01_policies_and_standards", "docs/02_enterprise_architecture",
+    "frontend", "architecture_model", "infra", "tools", "specs",
+]
+_FALLBACK_KNOWLEDGE_DOC_PATHS = ["docs/08_knowledge/", "docs/09_audit/"]
+_FALLBACK_TYPE_PREFIXES = {
+    "policy": ["docs/01_policies_and_standards/governance/", "docs/01_policies_and_standards/domains/", "docs/01_policies_and_standards/operational/"],
+    "standard": ["docs/01_policies_and_standards/rules/"],
+    "template": ["docs/01_policies_and_standards/templates/"],
+    "registry": ["docs/01_policies_and_standards/_registry/catalogs/", "docs/01_policies_and_standards/_registry/vocabularies/"],
+    "contract": ["docs/01_policies_and_standards/_registry/contracts/"],
+    "schema": ["docs/01_policies_and_standards/_registry/schemas/", "schemas/"],
+}
+
 NODE_TYPES_FILE = [
-    "module", "script", "test", "config", "registry", "data",
-    "contract", "schema", "gate", "doc", "blueprint", "policy",
-    "standard", "template", "diagram",
+    "module",
+    "script",
+    "test",
+    "config",
+    "registry",
+    "data",
+    "contract",
+    "schema",
+    "gate",
+    "doc",
+    "blueprint",
+    "policy",
+    "standard",
+    "template",
+    "diagram",
 ]
 NODE_TYPES_DOMAIN = [
-    "application", "package", "domain", "aggregate", "service", "library",
+    "application",
+    "package",
+    "domain",
+    "aggregate",
+    "service",
+    "library",
 ]
 NODE_TYPES = NODE_TYPES_FILE + NODE_TYPES_DOMAIN
 EDGE_TYPES = [
-    "import_depends", "references", "test_depends", "owned_by",
-    "config_depends", "data_depends", "blueprint_depends", "event_depends",
-    "contract_depends", "shared_kernel", "script_depends", "runtime_depends",
+    "import_depends",
+    "references",
+    "test_depends",
+    "owned_by",
+    "config_depends",
+    "data_depends",
+    "blueprint_depends",
+    "event_depends",
+    "contract_depends",
+    "shared_kernel",
+    "script_depends",
+    "runtime_depends",
 ]
 
 CODE_TYPES = {"module", "script", "test"}
@@ -51,36 +119,19 @@ CONFIG_TYPES = {"config", "registry", "data", "contract", "schema", "gate"}
 DOC_TYPES = {"doc", "blueprint", "policy", "standard", "template", "diagram"}
 DOMAIN_TYPES = set(NODE_TYPES_DOMAIN)
 
-EXEMPT_DIRS = {
-    "__pycache__", ".git", ".ailocks", "node_modules",
-    ".mypy_cache", ".pytest_cache", ".ruff_cache",
-    "_backups", "_temp", ".audit_cache",
-    "session-logs",
-}
+EXEMPT_DIRS = set(_DEPGRAPH_CONFIG.get("exempt_dirs", list(_FALLBACK_EXEMPT_DIRS)))
 
-# Directories excluded from depgraph scanning entirely (no code dependencies)
-EXCLUDED_SCAN_DIRS = {
-    "docs/08_knowledge",         # Knowledge base entries — no import dependencies
-    "docs/09_audit",             # Audit logs — historical records, no code dependencies
-    "data/cache",                # Runtime cache — not code
-    "data/telemetry",            # Telemetry data — not code
-    "scripts/governance/_archive",   # Archived scripts — not active code
-    "scripts/governance/repair",     # Repair scripts — temporary, not production code
-    "scripts/governance/_shared",    # Shared internals — not depgraph-relevant
-}
+# EXCLUDED_SCAN_DIRS 已删除（死代码——定义但从未使用，实际排除靠白名单 SCAN_DIRS）
+# 如需查看排除路径清单，见 depgraph_scan_exclusions.yaml
 
 # Node types excluded from depgraph — zero import_depends edges, zero code dependency value.
 # These types only produce doc→blueprint references noise edges.
 # Rationale: depgraph answers "who depends on whom" for CODE. Non-code types belong in the
 # architecture panorama (which contains ALL files), not in the dependency graph.
-EXCLUDED_NODE_TYPES = {
-    "doc",       # 1183 nodes — documentation files, 0 import edges
-    "policy",    # 89 nodes — policy documents, 0 import edges
-    "standard",  # 5 nodes — standard documents, 0 import edges
-    "template",  # 11 nodes — template documents, 0 import edges
-    "diagram",   # 31 nodes — mermaid diagrams, 0 import edges
-    "data",      # 26 nodes — data files, 0 import edges
-}
+EXCLUDED_NODE_TYPES = set(_DEPGRAPH_CONFIG.get("excluded_node_types", list(_FALLBACK_EXCLUDED_NODE_TYPES)))
+
+# Knowledge doc paths — .md files under these paths are classified as knowledge_doc and skipped
+KNOWLEDGE_DOC_PATHS = _DEPGRAPH_CONFIG.get("knowledge_doc_paths", _FALLBACK_KNOWLEDGE_DOC_PATHS)
 
 # Old layer name normalization: strip l00_, l01_, ..., l13_ prefixes from path segments.
 # These legacy prefixes (e.g., l00-data-source, l01-infrastructure) persist in
@@ -90,21 +141,19 @@ _OLD_LAYER_PREFIX_RE = re.compile(r"(^|/|_)l\d{2}_")
 
 # H3 fix: Path validation patterns
 _ILLEGAL_PATH_PATTERNS = re.compile(
-    r'[:<>"|?*]'          # Windows 非法字符
-    r'|^\s*$'             # 空白路径
-    r'|^[A-Za-z]:[/\\]'   # Windows 绝对路径
-    r'|^/[^/]'            # Unix 绝对路径（非项目根）
-    r'|^#{1,6}\s'         # Markdown 标题 (### ...)
-    r'|^---'              # Markdown 水平线
+    r'[:<>"|?*]'  # Windows 非法字符
+    r"|^\s*$"  # 空白路径
+    r"|^[A-Za-z]:[/\\]"  # Windows 绝对路径
+    r"|^/[^/]"  # Unix 绝对路径（非项目根）
+    r"|^#{1,6}\s"  # Markdown 标题 (### ...)
+    r"|^---"  # Markdown 水平线
 )
-_EMOJI_RE = re.compile(
-    r'[\U00010000-\U0010ffff]'
-)
+_EMOJI_RE = re.compile(r"[\U00010000-\U0010ffff]")
 
 
 def normalize_path(path: str) -> str:
     """Replace old layer-name segments and validate path legality.
-    
+
     H3 fix: Added validation for illegal characters, absolute paths,
     empty paths, and emoji.
     """
@@ -122,31 +171,15 @@ def normalize_path(path: str) -> str:
         path = path.split("/", 1)[1]
     return path.strip()
 
-# Base scan directories — combination of top-level project directories and
-# dynamically-discovered src/zephyr/ subdirectories (avoids hard-coding coverage gaps).
-_BASE_SCAN_DIRS = [
-    "src/zephyr",
-    "scripts",
-    "tests",
-    "data/asset_index",
-    "data/config",
-    "data/metrics",
-    "config",
-    "schemas",
-    "docs/03_modules",
-    "docs/01_policies_and_standards",
-    "docs/02_enterprise_architecture",
-    "frontend",            # H9 fix
-    "architecture_model",  # H9 fix
-    "infra",               # H9 fix
-    "tools",               # H9 fix
-    "specs",               # H9 fix
-]
+
+# Base scan directories — loaded from depgraph_scan_exclusions.yaml (whitelist scan roots)
+# Only paths in this list are scanned by depgraph. Paths not listed = excluded (reverse exclusion).
+_BASE_SCAN_DIRS = _DEPGRAPH_CONFIG.get("scan_dirs", _FALLBACK_SCAN_DIRS)
 
 
 def _build_scan_dirs() -> list:
     """Build SCAN_DIRS from base list only.
-    
+
     Note: collect_all_files() uses os.walk() which recursively traverses
     all subdirectories, so expanding src/zephyr subdirs here causes
     double-scanning (H1 fix).
@@ -156,12 +189,14 @@ def _build_scan_dirs() -> list:
 
 SCAN_DIRS = _build_scan_dirs()
 
-DEPGRAPH_DB_PATH = (
-    PROJECT_ROOT / "data" / "databases" / "depgraph.db"
-)
+DEPGRAPH_DB_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 
 CROSS_MODULE_REGISTRY_PATH = (
-    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+    PROJECT_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
     / "cross-module-dependency-registry.yaml"
 )
 
@@ -188,8 +223,12 @@ VALID_SEMANTIC_TYPES = {"runtime", "data", "build", "contract"}
 VALID_SEMANTIC_DIRECTIONS = {"upstream", "downstream", "peer"}
 VALID_DECISIONS = {"NEW", "MODIFY", "KEEP", "DEPRECATE"}
 VALID_FAILURE_MODES = {
-    "service_down", "timeout", "data_corruption",
-    "version_mismatch", "circuit_break", "cascade_failure",
+    "service_down",
+    "timeout",
+    "data_corruption",
+    "version_mismatch",
+    "circuit_break",
+    "cascade_failure",
 }
 
 # ARCH-CAP-005: 域映射已迁移到 depgraph.db（抽屉式扩展）
@@ -205,7 +244,8 @@ TRUST_ZONE_MAP = [
 ]
 
 # H4 fix: Fake blueprint_id detection
-_FAKE_BLUEPRINT_RE = re.compile(r'^D-[A-Z_]+-blueprint$')
+_FAKE_BLUEPRINT_RE = re.compile(r"^D-[A-Z_]+-blueprint$")
+
 
 def is_valid_blueprint_id(bid: str) -> bool:
     """Check if a blueprint_id is a real reference, not a fake auto-generated one."""
@@ -215,24 +255,25 @@ def is_valid_blueprint_id(bid: str) -> bool:
         return False
     return True
 
+
 # Design-state fields that MUST be preserved when disk scan produces a node
 # with the same ID as an existing lifecycle=design node.
 # When a conflict occurs, operational fields (imports, exports, etc.) come from
 # the disk scan, but these design-state fields are merged from the old node.
 DESIGN_STATE_FIELDS = (
-    "lifecycle",                    # design | operational | deprecated
-    "build_status",                 # design_only | partial | implemented | production | deprecated
-    "deployment_lifecycle",         # design_only | stable | deprecated
-    "design_spec",                  # dict: source, planned_dependencies, contract_refs, invariants
-    "contract_refs",                # list[str]: contract references
-    "planned_interfaces",           # dict: input/output interface definitions
-    "planned_dependencies",         # list[str]: design-time dependency declarations
-    "invariants",                   # list[str]: design invariants
-    "change_policy",                # frozen/stable/evolving/volatile
-    "modification_permission",      # immutable_core/human_gated/ai_modifiable
-    "impact_level",                 # H/M/L
-    "blueprint_id",                 # blueprint reference
-    "module_id",                    # module reference
+    "lifecycle",  # design | operational | deprecated
+    "build_status",  # design_only | partial | implemented | production | deprecated
+    "deployment_lifecycle",  # design_only | stable | deprecated
+    "design_spec",  # dict: source, planned_dependencies, contract_refs, invariants
+    "contract_refs",  # list[str]: contract references
+    "planned_interfaces",  # dict: input/output interface definitions
+    "planned_dependencies",  # list[str]: design-time dependency declarations
+    "invariants",  # list[str]: design invariants
+    "change_policy",  # frozen/stable/evolving/volatile
+    "modification_permission",  # immutable_core/human_gated/ai_modifiable
+    "impact_level",  # H/M/L
+    "blueprint_id",  # blueprint reference
+    "module_id",  # module reference
 )
 
 
@@ -278,29 +319,134 @@ def merge_design_fields(new_node: dict, old_node: dict) -> dict:
 
     return new_node
 
+
 HARD_BOUNDARIES = [
-    {"id": "HB-HW-01", "category": "hardware", "constraint": "单台PC工作站，无集群/K8s", "parameters": "CPU i7-12700KF(12核20线程); GPU RTX 3090 24GB; RAM 64GB DDR4; 存储 D:731GB+E:931GB SSD", "impact": "所有并发/分布式/集群方案不可用"},
-    {"id": "HB-HW-02", "category": "hardware", "constraint": "GPU显存硬上限", "parameters": "<90%=21.6GB可用; 盘中~8-10GB(33%-42%), 盘前~10GB(42%)", "impact": "模型推理显存超限=OOM崩溃; 多模型并发必须做显存预算"},
-    {"id": "HB-NET-01", "category": "hardware", "constraint": "网络带宽上限", "parameters": "30Mbps", "impact": "大批量数据拉取/多源并发请求必须限速"},
-    {"id": "HB-FUND-01", "category": "capital", "constraint": "初始AUM", "parameters": "50万", "impact": "策略容量/仓位/做T底仓均受此约束; 融券受限"},
-    {"id": "HB-IFIND-01", "category": "external_interface", "constraint": "iFind数据源QPS限制", "parameters": "QPS=20（账号总上限）", "impact": "批量数据拉取必须分页限速; 并发请求不可超20"},
-    {"id": "HB-QMT-01", "category": "external_interface", "constraint": "miniQMT交易接口限制", "parameters": "下单10笔/秒; Tick=3秒; 模拟盘延迟~1分钟", "impact": "高频策略不可用; 信号触发到下单存在3秒Tick延迟"},
-    {"id": "HB-TRADE-01", "category": "regulation", "constraint": "T+1交割制度", "parameters": "当日买入不可卖出", "impact": "日内平仓策略不可用; 做T必须有底仓"},
-    {"id": "HB-TRADE-02", "category": "regulation", "constraint": "涨跌停限制", "parameters": "主板±10%; 科创创业板±20%; ST±5%; 北交所±30%", "impact": "涨跌停价位无法成交; 风控必须考虑涨跌停无法卖出场景"},
+    {
+        "id": "HB-HW-01",
+        "category": "hardware",
+        "constraint": "单台PC工作站，无集群/K8s",
+        "parameters": "CPU i7-12700KF(12核20线程); GPU RTX 3090 24GB; RAM 64GB DDR4; 存储 D:731GB+E:931GB SSD",
+        "impact": "所有并发/分布式/集群方案不可用",
+    },
+    {
+        "id": "HB-HW-02",
+        "category": "hardware",
+        "constraint": "GPU显存硬上限",
+        "parameters": "<90%=21.6GB可用; 盘中~8-10GB(33%-42%), 盘前~10GB(42%)",
+        "impact": "模型推理显存超限=OOM崩溃; 多模型并发必须做显存预算",
+    },
+    {
+        "id": "HB-NET-01",
+        "category": "hardware",
+        "constraint": "网络带宽上限",
+        "parameters": "30Mbps",
+        "impact": "大批量数据拉取/多源并发请求必须限速",
+    },
+    {
+        "id": "HB-FUND-01",
+        "category": "capital",
+        "constraint": "初始AUM",
+        "parameters": "50万",
+        "impact": "策略容量/仓位/做T底仓均受此约束; 融券受限",
+    },
+    {
+        "id": "HB-IFIND-01",
+        "category": "external_interface",
+        "constraint": "iFind数据源QPS限制",
+        "parameters": "QPS=20（账号总上限）",
+        "impact": "批量数据拉取必须分页限速; 并发请求不可超20",
+    },
+    {
+        "id": "HB-QMT-01",
+        "category": "external_interface",
+        "constraint": "miniQMT交易接口限制",
+        "parameters": "下单10笔/秒; Tick=3秒; 模拟盘延迟~1分钟",
+        "impact": "高频策略不可用; 信号触发到下单存在3秒Tick延迟",
+    },
+    {
+        "id": "HB-TRADE-01",
+        "category": "regulation",
+        "constraint": "T+1交割制度",
+        "parameters": "当日买入不可卖出",
+        "impact": "日内平仓策略不可用; 做T必须有底仓",
+    },
+    {
+        "id": "HB-TRADE-02",
+        "category": "regulation",
+        "constraint": "涨跌停限制",
+        "parameters": "主板±10%; 科创创业板±20%; ST±5%; 北交所±30%",
+        "impact": "涨跌停价位无法成交; 风控必须考虑涨跌停无法卖出场景",
+    },
 ]
 
 PATH_MAPPINGS = [
-    {"pattern": "src/zephyr/**", "code_root": "D:/ZephyrAlpha/src/zephyr", "blueprint_root": "D:/ZephyrAlpha/docs/03_modules", "test_root": "D:/ZephyrAlpha/tests", "script_root": "", "naming_rule": "snake_case, package/__init__.py", "examples": ["src/zephyr/shared/event_bus.py", "src/zephyr/gates/EN-001.yaml"]},
-    {"pattern": "scripts/**", "code_root": "D:/ZephyrAlpha/scripts", "blueprint_root": "", "test_root": "", "script_root": "D:/ZephyrAlpha/scripts", "naming_rule": "snake_case with underscores", "examples": ["scripts/governance/generate_project_depgraph.py"]},
-    {"pattern": "tests/**", "code_root": "D:/ZephyrAlpha/tests", "blueprint_root": "", "test_root": "D:/ZephyrAlpha/tests", "script_root": "", "naming_rule": "test_{module}.py", "examples": ["tests/test_generate_project_depgraph.py"]},
-    {"pattern": "docs/03_modules/**", "code_root": "", "blueprint_root": "D:/ZephyrAlpha/docs/03_modules", "test_root": "", "script_root": "", "naming_rule": "{package}/blueprint.md", "examples": ["docs/03_modules/_sys-master/blueprint.md"]},
-    {"pattern": "docs/01_policies_and_standards/**", "code_root": "", "blueprint_root": "D:/ZephyrAlpha/docs/01_policies_and_standards", "test_root": "", "script_root": "", "naming_rule": "rules/trae_XXX_{name}.yaml", "examples": ["docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml"]},
-    {"pattern": "data/**", "code_root": "", "blueprint_root": "", "test_root": "", "script_root": "", "naming_rule": "{category}/{name}.yaml or .json", "examples": ["data/databases/depgraph.db"]},
+    {
+        "pattern": "src/zephyr/**",
+        "code_root": "D:/ZephyrAlpha/src/zephyr",
+        "blueprint_root": "D:/ZephyrAlpha/docs/03_modules",
+        "test_root": "D:/ZephyrAlpha/tests",
+        "script_root": "",
+        "naming_rule": "snake_case, package/__init__.py",
+        "examples": ["src/zephyr/shared/event_bus.py", "src/zephyr/gates/EN-001.yaml"],
+    },
+    {
+        "pattern": "scripts/**",
+        "code_root": "D:/ZephyrAlpha/scripts",
+        "blueprint_root": "",
+        "test_root": "",
+        "script_root": "D:/ZephyrAlpha/scripts",
+        "naming_rule": "snake_case with underscores",
+        "examples": ["scripts/governance/generate_project_depgraph.py"],
+    },
+    {
+        "pattern": "tests/**",
+        "code_root": "D:/ZephyrAlpha/tests",
+        "blueprint_root": "",
+        "test_root": "D:/ZephyrAlpha/tests",
+        "script_root": "",
+        "naming_rule": "test_{module}.py",
+        "examples": ["tests/test_generate_project_depgraph.py"],
+    },
+    {
+        "pattern": "docs/03_modules/**",
+        "code_root": "",
+        "blueprint_root": "D:/ZephyrAlpha/docs/03_modules",
+        "test_root": "",
+        "script_root": "",
+        "naming_rule": "{package}/blueprint.md",
+        "examples": ["docs/03_modules/_sys-master/blueprint.md"],
+    },
+    {
+        "pattern": "docs/01_policies_and_standards/**",
+        "code_root": "",
+        "blueprint_root": "D:/ZephyrAlpha/docs/01_policies_and_standards",
+        "test_root": "",
+        "script_root": "",
+        "naming_rule": "rules/trae_XXX_{name}.yaml",
+        "examples": ["docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml"],
+    },
+    {
+        "pattern": "data/**",
+        "code_root": "",
+        "blueprint_root": "",
+        "test_root": "",
+        "script_root": "",
+        "naming_rule": "{category}/{name}.yaml or .json",
+        "examples": ["data/databases/depgraph.db"],
+    },
 ]
 
 HEADER_FIELDS = [
-    "BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD", "CONSUMERS",
-    "STABILITY", "SAFETY", "AI_AUTONOMY", "ERROR_CONTRACT", "TESTS",
+    "BLUEPRINT",
+    "MODULE",
+    "INVARIANTS",
+    "MODIFY-GUARD",
+    "CONSUMERS",
+    "STABILITY",
+    "SAFETY",
+    "AI_AUTONOMY",
+    "ERROR_CONTRACT",
+    "TESTS",
 ]
 
 
@@ -311,6 +457,7 @@ def _load_panorama_from_db(db_path):
     Returns dict with keys: domains, tree, and optional path sections.
     """
     import json as _json
+
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     data = {"domains": {}, "tree": {}, "meta": {}}
@@ -420,7 +567,9 @@ def _load_domain_mappings_from_db(db_path: Path):
         for prefix, did, sid in cur.fetchall():
             non_src_mappings.append((prefix, did, sid or ""))
 
-        cur.execute("SELECT path_prefix, domain_id, subdomain_id FROM domain_mapping WHERE mapping_type = 'unregistered_src'")
+        cur.execute(
+            "SELECT path_prefix, domain_id, subdomain_id FROM domain_mapping WHERE mapping_type = 'unregistered_src'"
+        )
         for prefix, did, sid in cur.fetchall():
             unregistered_src_mappings.append((prefix, did, sid or ""))
 
@@ -475,19 +624,22 @@ def load_panorama():
         arch_layer = domain_id_to_layer.get(domain_id, "")
         if ssot_path:
             domain_derivation.append((ssot_path, domain_id, subdomain_id, arch_layer))
-        functional_domains.append({
-            "domain": parent_domain,
-            "subdomain": func_domain_name,
-            "domain_id": domain_id,
-            "subdomain_id": subdomain_id,
-            "ssot_module": func_domain_val.get("ssot_module", ""),
-            "ssot_path": func_domain_val.get("ssot_path", ""),
-            "covers": func_domain_val.get("covers", []),
-            "aliases": func_domain_val.get("aliases", []),
-            "change_policy": func_domain_val.get("change_policy", "") or func_domain_val.get("stability", ""),
-            "impact_level": func_domain_val.get("impact_level", "") or func_domain_val.get("safety_level", "M"),
-            "modification_permission": func_domain_val.get("modification_permission", "") or func_domain_val.get("ai_autonomy", ""),
-        })
+        functional_domains.append(
+            {
+                "domain": parent_domain,
+                "subdomain": func_domain_name,
+                "domain_id": domain_id,
+                "subdomain_id": subdomain_id,
+                "ssot_module": func_domain_val.get("ssot_module", ""),
+                "ssot_path": func_domain_val.get("ssot_path", ""),
+                "covers": func_domain_val.get("covers", []),
+                "aliases": func_domain_val.get("aliases", []),
+                "change_policy": func_domain_val.get("change_policy", "") or func_domain_val.get("stability", ""),
+                "impact_level": func_domain_val.get("impact_level", "") or func_domain_val.get("safety_level", "M"),
+                "modification_permission": func_domain_val.get("modification_permission", "")
+                or func_domain_val.get("ai_autonomy", ""),
+            }
+        )
 
     # Add tree-section domain mappings (current operational paths)
     # Build set of unregistered prefixes to skip in tree extraction
@@ -510,7 +662,9 @@ def load_panorama():
     return data, domain_derivation, functional_domains
 
 
-def _extract_tree_domains(tree_node, current_path, derivation_list, domains_data=None, unreg_prefixes=None, domain_id_to_layer=None):
+def _extract_tree_domains(
+    tree_node, current_path, derivation_list, domains_data=None, unreg_prefixes=None, domain_id_to_layer=None
+):
     """Recursively extract domain_id from panorama tree section.
     Skips paths that have explicit mappings in domain_mapping table (unregistered_src).
     """
@@ -537,19 +691,19 @@ def _extract_tree_domains(tree_node, current_path, derivation_list, domains_data
         _extract_tree_domains(val, child_path, derivation_list, domains_data, unreg_prefixes, domain_id_to_layer)
 
 
-def _extract_domain_override(filepath: Path) -> Optional[str]:
+def _extract_domain_override(filepath: Path) -> str | None:
     """从文件头提取 [DOMAIN] 字段，返回 domain_id 或 None。
 
     覆盖路径派生的 domain_id，用于跨域模块的显式声明。
     只读前20行，支持 # [DOMAIN] D-XXX 格式。
     """
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             for _ in range(20):
                 line = f.readline()
                 if not line:
                     break
-                m = re.match(r'^#\s*\[DOMAIN\]\s*(D-[\w-]+)', line)
+                m = re.match(r"^#\s*\[DOMAIN\]\s*(D-[\w-]+)", line)
                 if m:
                     return m.group(1)
     except (OSError, UnicodeDecodeError):
@@ -647,7 +801,7 @@ def derive_tags(rel_path: str, node_type: str) -> list:
 def count_header_completeness(filepath) -> int:
     found = 0
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             for i, line in enumerate(f):
                 if i >= 20:
                     break
@@ -659,29 +813,15 @@ def count_header_completeness(filepath) -> int:
         pass
     return found
 
-POLICY_PREFIXES = [
-    "docs/01_policies_and_standards/governance/",
-    "docs/01_policies_and_standards/meta/",
-    "docs/01_policies_and_standards/domains/",
-    "docs/01_policies_and_standards/operational/",
-]
-STANDARD_PREFIXES = [
-    "docs/01_policies_and_standards/rules/",
-]
-TEMPLATE_PREFIXES = [
-    "docs/01_policies_and_standards/templates/",
-]
-REGISTRY_PREFIXES = [
-    "docs/01_policies_and_standards/_registry/catalogs/",
-    "docs/01_policies_and_standards/_registry/vocabularies/",
-]
-CONTRACT_PREFIXES = [
-    "docs/01_policies_and_standards/_registry/contracts/",
-]
-SCHEMA_PREFIXES = [
-    "docs/01_policies_and_standards/_registry/schemas/",
-    "schemas/",
-]
+
+# Type classification prefixes — loaded from depgraph_scan_exclusions.yaml
+_type_prefixes_cfg = _DEPGRAPH_CONFIG.get("type_prefixes", {})
+POLICY_PREFIXES = _type_prefixes_cfg.get("policy", _FALLBACK_TYPE_PREFIXES["policy"])
+STANDARD_PREFIXES = _type_prefixes_cfg.get("standard", _FALLBACK_TYPE_PREFIXES["standard"])
+TEMPLATE_PREFIXES = _type_prefixes_cfg.get("template", _FALLBACK_TYPE_PREFIXES["template"])
+REGISTRY_PREFIXES = _type_prefixes_cfg.get("registry", _FALLBACK_TYPE_PREFIXES["registry"])
+CONTRACT_PREFIXES = _type_prefixes_cfg.get("contract", _FALLBACK_TYPE_PREFIXES["contract"])
+SCHEMA_PREFIXES = _type_prefixes_cfg.get("schema", _FALLBACK_TYPE_PREFIXES["schema"])
 
 ID_PATTERN = re.compile(
     r"(MOD-INF-\d+|MOD-KB-\d+|MOD-L\d+-\d+|DOM-GOV-\d+|SYS-MASTER-\d+"
@@ -693,43 +833,52 @@ ID_PATTERN = re.compile(
 
 
 def parse_blueprint_header(filepath: Path) -> dict:
-    info = {"blueprint_id": "", "blueprint_path": "", "module_path": "", "change_policy": "", "impact_level": "", "modification_permission": ""}
+    info = {
+        "blueprint_id": "",
+        "blueprint_path": "",
+        "module_path": "",
+        "change_policy": "",
+        "impact_level": "",
+        "modification_permission": "",
+    }
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             for i, line in enumerate(f):
                 if i >= 15:
                     break
                 stripped = line.strip()
                 if stripped.startswith("# [BLUEPRINT]"):
-                    parts = stripped[len("# [BLUEPRINT]"):].strip().split("|")
+                    parts = stripped[len("# [BLUEPRINT]") :].strip().split("|")
                     if len(parts) >= 1:
                         info["blueprint_id"] = parts[0].strip()
                     if len(parts) >= 2:
                         info["blueprint_path"] = parts[1].strip()
                 elif stripped.startswith('"""[BLUEPRINT]') or stripped.startswith("'''[BLUEPRINT]"):
-                    content = stripped.lstrip('"\'').lstrip()
+                    content = stripped.lstrip("\"'").lstrip()
                     if content.startswith("[BLUEPRINT]"):
-                        content = content[len("[BLUEPRINT]"):].strip()
+                        content = content[len("[BLUEPRINT]") :].strip()
                     else:
-                        content = content[len("BLUEPRINT]"):].strip()
+                        content = content[len("BLUEPRINT]") :].strip()
                     parts = content.split("|")
                     if len(parts) >= 1:
                         info["blueprint_id"] = parts[0].strip()
                     if len(parts) >= 2:
                         info["blueprint_path"] = parts[1].strip()
                 elif stripped.startswith("# [MODULE]"):
-                    info["module_path"] = stripped[len("# [MODULE]"):].strip()
+                    info["module_path"] = stripped[len("# [MODULE]") :].strip()
                 elif stripped.startswith("# [STABILITY]"):
-                    val = stripped[len("# [STABILITY]"):].strip()
+                    val = stripped[len("# [STABILITY]") :].strip()
                     info["change_policy"] = val
                 elif stripped.startswith("# [SAFETY]"):
-                    val = stripped[len("# [SAFETY]"):].strip()
+                    val = stripped[len("# [SAFETY]") :].strip()
                     info["impact_level"] = val
                 elif stripped.startswith("# [AI_AUTONOMY]"):
-                    val = stripped[len("# [AI_AUTONOMY]"):].strip()
+                    val = stripped[len("# [AI_AUTONOMY]") :].strip()
                     info["modification_permission"] = val
                 if not info["blueprint_id"] and i < 10:
-                    bp_match = __import__("re").search(r'(?:蓝图|blueprint)[:\s]+([A-Z]{2,4}-[A-Z]*-?\d+)', stripped, __import__("re").IGNORECASE)
+                    bp_match = __import__("re").search(
+                        r"(?:蓝图|blueprint)[:\s]+([A-Z]{2,4}-[A-Z]*-?\d+)", stripped, __import__("re").IGNORECASE
+                    )
                     if bp_match:
                         info["blueprint_id"] = bp_match.group(1).upper()
     except Exception:
@@ -738,9 +887,15 @@ def parse_blueprint_header(filepath: Path) -> dict:
 
 
 def parse_yaml_header(filepath: Path) -> dict:
-    info = {"blueprint_id": "", "blueprint_path": "", "change_policy": "", "impact_level": "", "modification_permission": ""}
+    info = {
+        "blueprint_id": "",
+        "blueprint_path": "",
+        "change_policy": "",
+        "impact_level": "",
+        "modification_permission": "",
+    }
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             in_anchor = False
             for i, line in enumerate(f):
                 if i >= 30:
@@ -777,7 +932,7 @@ def parse_yaml_header(filepath: Path) -> dict:
 def parse_md_frontmatter(filepath: Path) -> dict:
     info = {"blueprint_id": "", "module_id": "", "change_policy": "", "impact_level": "", "modification_permission": ""}
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             in_fm = False
             for i, line in enumerate(f):
                 if i >= 40:
@@ -811,7 +966,7 @@ def parse_md_frontmatter(filepath: Path) -> dict:
 def extract_py_imports(filepath: Path) -> list:
     imports = []
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             source = f.read()
         tree = ast.parse(source, filename=str(filepath))
         for node in ast.walk(tree):
@@ -850,7 +1005,7 @@ def extract_py_imports(filepath: Path) -> list:
 def extract_md_references(filepath: Path) -> list:
     refs = []
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
@@ -862,7 +1017,7 @@ def extract_md_references(filepath: Path) -> list:
 def extract_json_references(filepath: Path) -> list:
     refs = []
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
@@ -920,13 +1075,8 @@ def classify_file(rel_path: str) -> str:
             return "policy"
         if any(rp.startswith(p) for p in SCHEMA_PREFIXES):
             return "schema"
-        if rp.startswith("docs/09_audit/"):
-            return "doc"
-        if rp.startswith("docs/08_knowledge/"):
-            return "doc"
-        if rp.startswith("docs/09_audit/"):
-            return "knowledge_doc"
-        if rp.startswith("docs/08_knowledge/"):
+        # Knowledge doc paths — loaded from depgraph_scan_exclusions.yaml
+        if any(rp.startswith(p) for p in KNOWLEDGE_DOC_PATHS):
             return "knowledge_doc"
         if rp.startswith("docs/02_enterprise_architecture/"):
             return "doc"
@@ -935,7 +1085,7 @@ def classify_file(rel_path: str) -> str:
     return ""
 
 
-def scan_py_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
+def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -958,7 +1108,7 @@ def scan_py_file(rel_path: str, domain_derivation: list = None) -> Optional[dict
     }
 
 
-def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
+def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> dict | None:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -968,7 +1118,7 @@ def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> Optional[di
         cat = "config"
     refs = []
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
@@ -988,10 +1138,7 @@ def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> Optional[di
     }
 
 
-
-
-
-def scan_md_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
+def scan_md_file(rel_path: str, domain_derivation: list = None) -> dict | None:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1022,14 +1169,14 @@ def scan_md_file(rel_path: str, domain_derivation: list = None) -> Optional[dict
     }
 
 
-def scan_blueprint_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
+def scan_blueprint_file(rel_path: str, domain_derivation: list = None) -> dict | None:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
     refs = []
     module_id = ""
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
         in_fm = False
         fm_lines = []
@@ -1063,7 +1210,7 @@ def scan_blueprint_file(rel_path: str, domain_derivation: list = None) -> Option
     }
 
 
-def scan_json_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
+def scan_json_file(rel_path: str, domain_derivation: list = None) -> dict | None:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1081,14 +1228,14 @@ def scan_json_file(rel_path: str, domain_derivation: list = None) -> Optional[di
     }
 
 
-def scan_infra_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
+def scan_infra_file(rel_path: str, domain_derivation: list = None) -> dict | None:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
     header = parse_blueprint_header(filepath)
     refs = []
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
@@ -1104,7 +1251,7 @@ def scan_infra_file(rel_path: str, domain_derivation: list = None) -> Optional[d
     }
 
 
-def scan_diagram_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
+def scan_diagram_file(rel_path: str, domain_derivation: list = None) -> dict | None:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1113,7 +1260,7 @@ def scan_diagram_file(rel_path: str, domain_derivation: list = None) -> Optional
         cat = "diagram"
     refs = []
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
@@ -1144,10 +1291,13 @@ def collect_all_files() -> list:
     return files
 
 
-def build_depgraph(files_data: list, functional_registry: list = None,
-                   domain_derivation: list = None,
-                   existing_design_nodes: dict = None,
-                   granularity: str = "file") -> dict:
+def build_depgraph(
+    files_data: list,
+    functional_registry: list = None,
+    domain_derivation: list = None,
+    existing_design_nodes: dict = None,
+    granularity: str = "file",
+) -> dict:
     if functional_registry is None:
         functional_registry = []
     if domain_derivation is None:
@@ -1164,10 +1314,23 @@ def build_depgraph(files_data: list, functional_registry: list = None,
     # into a single entry, preferring type=module over other types.
     if granularity == "file":
         merged_files: dict[str, dict] = {}
-        TYPE_PRIORITY = {"module": 1, "script": 2, "test": 3, "blueprint": 4,
-                         "config": 5, "registry": 6, "contract": 7, "schema": 8,
-                         "gate": 9, "policy": 10, "standard": 11, "template": 12,
-                         "diagram": 13, "data": 14, "doc": 15}
+        TYPE_PRIORITY = {
+            "module": 1,
+            "script": 2,
+            "test": 3,
+            "blueprint": 4,
+            "config": 5,
+            "registry": 6,
+            "contract": 7,
+            "schema": 8,
+            "gate": 9,
+            "policy": 10,
+            "standard": 11,
+            "template": 12,
+            "diagram": 13,
+            "data": 14,
+            "doc": 15,
+        }
         for fd in files_data:
             path = fd["path"]
             if path in merged_files:
@@ -1202,9 +1365,9 @@ def build_depgraph(files_data: list, functional_registry: list = None,
         def _clean(val):
             v = val.strip('"').strip("'")
             if "#" in v:
-                v = v[:v.index("#")].strip()
+                v = v[: v.index("#")].strip()
             if ";" in v:
-                v = v[:v.index(";")].strip()
+                v = v[: v.index(";")].strip()
             if v == "deprecated":
                 v = "frozen"
             return v
@@ -1237,7 +1400,8 @@ def build_depgraph(files_data: list, functional_registry: list = None,
             "belongs_to": belongs_to,
             "change_policy": _clean(fd.get("change_policy", "")) or derive_stability_fallback(ntype, norm_path),
             "impact_level": _clean(fd.get("impact_level", "")) or "M",
-            "modification_permission": _clean(fd.get("modification_permission", "")) or derive_autonomy_fallback(ntype, norm_path),
+            "modification_permission": _clean(fd.get("modification_permission", ""))
+            or derive_autonomy_fallback(ntype, norm_path),
             "file_header_score": fd.get("file_header_score", 0),
             "architecture_layer": architecture_layer,
             "design_maturity": derive_design_maturity(ntype, False),
@@ -1265,9 +1429,13 @@ def build_depgraph(files_data: list, functional_registry: list = None,
         if ntype in CODE_TYPES:
             node["imports"] = [normalize_path(imp) if isinstance(imp, str) else imp for imp in fd.get("imports", [])]
         elif ntype in CONFIG_TYPES:
-            node["yaml_references"] = [normalize_path(ref) if isinstance(ref, str) else ref for ref in fd.get("yaml_references", [])]
+            node["yaml_references"] = [
+                normalize_path(ref) if isinstance(ref, str) else ref for ref in fd.get("yaml_references", [])
+            ]
         elif ntype in DOC_TYPES:
-            node["doc_references"] = [normalize_path(ref) if isinstance(ref, str) else ref for ref in fd.get("doc_references", [])]
+            node["doc_references"] = [
+                normalize_path(ref) if isinstance(ref, str) else ref for ref in fd.get("doc_references", [])
+            ]
 
         if ntype == "blueprint":
             node["module_id"] = fd.get("module_id", bid_clean)
@@ -1321,8 +1489,18 @@ def build_depgraph(files_data: list, functional_registry: list = None,
                         else:
                             coupling = "required"
                         is_cross = bool(src_domain and dst_domain and src_domain != dst_domain)  # H5 fix
-                        edges.append({"from": src_id, "to": dst_id, "dep_type": "import_depends", "architecture_direction": "downstream", "coupling_strength": coupling,
-                                      "cross_domain": is_cross, "invocation_method": "import", "verified": False})  # H5 fix
+                        edges.append(
+                            {
+                                "from": src_id,
+                                "to": dst_id,
+                                "dep_type": "import_depends",
+                                "architecture_direction": "downstream",
+                                "coupling_strength": coupling,
+                                "cross_domain": is_cross,
+                                "invocation_method": "import",
+                                "verified": False,
+                            }
+                        )  # H5 fix
                         edge_set.add(edge_key)
                     break
                 candidate2 = prefix + "/" + "/".join(imp_parts[:i]) + "/__init__.py"
@@ -1341,8 +1519,18 @@ def build_depgraph(files_data: list, functional_registry: list = None,
                         else:
                             coupling = "required"
                         is_cross = bool(src_domain and dst_domain and src_domain != dst_domain)  # H5 fix
-                        edges.append({"from": src_id, "to": dst_id, "dep_type": "import_depends", "architecture_direction": "downstream", "coupling_strength": coupling,
-                                      "cross_domain": is_cross, "invocation_method": "import", "verified": False})  # H5 fix
+                        edges.append(
+                            {
+                                "from": src_id,
+                                "to": dst_id,
+                                "dep_type": "import_depends",
+                                "architecture_direction": "downstream",
+                                "coupling_strength": coupling,
+                                "cross_domain": is_cross,
+                                "invocation_method": "import",
+                                "verified": False,
+                            }
+                        )  # H5 fix
                         edge_set.add(edge_key)
                     break
 
@@ -1359,9 +1547,21 @@ def build_depgraph(files_data: list, functional_registry: list = None,
                         if edge_key not in edge_set:
                             src_domain_ref = nodes.get(src_id, {}).get("domain_id", "")
                             dst_domain_ref = nodes.get(dst_id, {}).get("domain_id", "")
-                            is_cross_ref = bool(src_domain_ref and dst_domain_ref and src_domain_ref != dst_domain_ref)  # H5 fix
-                            edges.append({"from": src_id, "to": dst_id, "dep_type": "references", "architecture_direction": "downstream", "coupling_strength": "degradable",
-                                          "cross_domain": is_cross_ref, "invocation_method": "reference", "verified": False})  # H5 fix
+                            is_cross_ref = bool(
+                                src_domain_ref and dst_domain_ref and src_domain_ref != dst_domain_ref
+                            )  # H5 fix
+                            edges.append(
+                                {
+                                    "from": src_id,
+                                    "to": dst_id,
+                                    "dep_type": "references",
+                                    "architecture_direction": "downstream",
+                                    "coupling_strength": "degradable",
+                                    "cross_domain": is_cross_ref,
+                                    "invocation_method": "reference",
+                                    "verified": False,
+                                }
+                            )  # H5 fix
                             edge_set.add(edge_key)
 
     # Update design_maturity for modules with tests
@@ -1428,9 +1628,18 @@ def build_depgraph(files_data: list, functional_registry: list = None,
                 src_dom_a = node.get("domain_id", "")
                 dst_dom_a = nodes.get(_dir_inits[ndir], {}).get("domain_id", "")
                 is_cross_a = bool(src_dom_a and dst_dom_a and src_dom_a != dst_dom_a)  # H5 fix
-                edges.append({"from": nid, "to": _dir_inits[ndir], "dep_type": "config_depends",
-                              "architecture_direction": "downstream", "coupling_strength": "degradable",
-                              "cross_domain": is_cross_a, "invocation_method": "config", "verified": False})  # H5 fix
+                edges.append(
+                    {
+                        "from": nid,
+                        "to": _dir_inits[ndir],
+                        "dep_type": "config_depends",
+                        "architecture_direction": "downstream",
+                        "coupling_strength": "degradable",
+                        "cross_domain": is_cross_a,
+                        "invocation_method": "config",
+                        "verified": False,
+                    }
+                )  # H5 fix
                 edge_set.add(ek)
                 has_edge.add(nid)
                 has_edge.add(_dir_inits[ndir])
@@ -1449,9 +1658,18 @@ def build_depgraph(files_data: list, functional_registry: list = None,
                         src_dom_b = node.get("domain_id", "")
                         dst_dom_b = snode.get("domain_id", "")
                         is_cross_b = bool(src_dom_b and dst_dom_b and src_dom_b != dst_dom_b)  # H5 fix
-                        edges.append({"from": nid, "to": sib, "dep_type": "config_depends",
-                                      "architecture_direction": "downstream", "coupling_strength": "degradable",
-                                      "cross_domain": is_cross_b, "invocation_method": "config", "verified": False})  # H5 fix
+                        edges.append(
+                            {
+                                "from": nid,
+                                "to": sib,
+                                "dep_type": "config_depends",
+                                "architecture_direction": "downstream",
+                                "coupling_strength": "degradable",
+                                "cross_domain": is_cross_b,
+                                "invocation_method": "config",
+                                "verified": False,
+                            }
+                        )  # H5 fix
                         edge_set.add(ek)
                         has_edge.add(nid)
                         has_edge.add(sib)
@@ -1470,9 +1688,18 @@ def build_depgraph(files_data: list, functional_registry: list = None,
                         src_dom_c = node.get("domain_id", "")
                         dst_dom_c = dnode.get("domain_id", "")
                         is_cross_c = bool(src_dom_c and dst_dom_c and src_dom_c != dst_dom_c)  # H5 fix
-                        edges.append({"from": nid, "to": dnid, "dep_type": "blueprint_depends",
-                                      "architecture_direction": "downstream", "coupling_strength": "degradable",
-                                      "cross_domain": is_cross_c, "invocation_method": "blueprint", "verified": False})  # H5 fix
+                        edges.append(
+                            {
+                                "from": nid,
+                                "to": dnid,
+                                "dep_type": "blueprint_depends",
+                                "architecture_direction": "downstream",
+                                "coupling_strength": "degradable",
+                                "cross_domain": is_cross_c,
+                                "invocation_method": "blueprint",
+                                "verified": False,
+                            }
+                        )  # H5 fix
                         edge_set.add(ek)
                         has_edge.add(nid)
                         has_edge.add(dnid)
@@ -1491,9 +1718,18 @@ def build_depgraph(files_data: list, functional_registry: list = None,
                         src_dom_d = node.get("domain_id", "")
                         dst_dom_d = snode.get("domain_id", "")
                         is_cross_d = bool(src_dom_d and dst_dom_d and src_dom_d != dst_dom_d)  # H5 fix
-                        edges.append({"from": nid, "to": sib, "dep_type": "test_depends",
-                                      "architecture_direction": "downstream", "coupling_strength": "optional",
-                                      "cross_domain": is_cross_d, "invocation_method": "import", "verified": False})  # H5 fix
+                        edges.append(
+                            {
+                                "from": nid,
+                                "to": sib,
+                                "dep_type": "test_depends",
+                                "architecture_direction": "downstream",
+                                "coupling_strength": "optional",
+                                "cross_domain": is_cross_d,
+                                "invocation_method": "import",
+                                "verified": False,
+                            }
+                        )  # H5 fix
                         edge_set.add(ek)
                         has_edge.add(nid)
                         has_edge.add(sib)
@@ -1532,19 +1768,21 @@ def build_depgraph(files_data: list, functional_registry: list = None,
     # Build functional_domains section (directly from panorama-derived registry)
     functional_domains_out = []
     for entry in functional_registry:
-        functional_domains_out.append({
-            "domain": entry.get("domain", ""),
-            "subdomain": entry.get("subdomain", ""),
-            "domain_id": entry.get("domain_id", ""),
-            "subdomain_id": entry.get("subdomain_id", ""),
-            "ssot_module": entry.get("ssot_module", ""),
-            "ssot_path": entry.get("ssot_path", ""),
-            "covers": entry.get("covers", []),
-            "aliases": entry.get("aliases", []),
-            "change_policy": entry.get("change_policy", ""),
-            "impact_level": entry.get("impact_level", "M"),
-            "modification_permission": entry.get("modification_permission", ""),
-        })
+        functional_domains_out.append(
+            {
+                "domain": entry.get("domain", ""),
+                "subdomain": entry.get("subdomain", ""),
+                "domain_id": entry.get("domain_id", ""),
+                "subdomain_id": entry.get("subdomain_id", ""),
+                "ssot_module": entry.get("ssot_module", ""),
+                "ssot_path": entry.get("ssot_path", ""),
+                "covers": entry.get("covers", []),
+                "aliases": entry.get("aliases", []),
+                "change_policy": entry.get("change_policy", ""),
+                "impact_level": entry.get("impact_level", "M"),
+                "modification_permission": entry.get("modification_permission", ""),
+            }
+        )
 
     # Build completeness_declaration
     coverage_dimensions = []
@@ -1575,8 +1813,8 @@ def build_depgraph(files_data: list, functional_registry: list = None,
     # Dual-state protection: merge design-state nodes from existing depgraph
     # Normalize old layer names in design-state node fields
     design_node_count = 0
-    skipped_empty_path = 0              # H2 fix
-    fake_bp_cleared = 0                 # H4 fix
+    skipped_empty_path = 0  # H2 fix
+    fake_bp_cleared = 0  # H4 fix
     for nid, design_node in existing_design_nodes.items():
         old_path = design_node.get("path", "")
         # H2 fix: skip design nodes with empty path
@@ -1600,7 +1838,9 @@ def build_depgraph(files_data: list, functional_registry: list = None,
         # Normalize list fields that may contain old layer paths
         for list_key in ("physical_files", "doc_references", "yaml_references", "imports"):
             if list_key in design_node and isinstance(design_node[list_key], list):
-                design_node[list_key] = [normalize_path(item) if isinstance(item, str) else item for item in design_node[list_key]]
+                design_node[list_key] = [
+                    normalize_path(item) if isinstance(item, str) else item for item in design_node[list_key]
+                ]
         # Remove physical_path if present (old layer names not wanted in output)
         design_node.pop("physical_path", None)
         # H4 fix: Clear fake blueprint_id before insert/merge
@@ -1696,14 +1936,14 @@ def generate_mermaid_by_blueprint(depgraph: dict) -> str:
         if bid == "UNMAPPED":
             continue
         safe_bid = bid.replace("-", "_").replace(".", "_")
-        lines.append(f"    subgraph {safe_bid}[\"{bid} ({len(nodes_in_group)})\"]")
+        lines.append(f'    subgraph {safe_bid}["{bid} ({len(nodes_in_group)})"]')
         for node in nodes_in_group[:10]:
             safe_nid = node["id"]
             short_path = "/".join(node["path"].split("/")[-2:])
             ntype = node["type"]
-            lines.append(f"        {safe_nid}[\"{short_path}<br/>({ntype})\"]")
+            lines.append(f'        {safe_nid}["{short_path}<br/>({ntype})"]')
         if len(nodes_in_group) > 10:
-            lines.append(f"        {safe_bid}_more[\"... +{len(nodes_in_group)-10} more\"]")
+            lines.append(f'        {safe_bid}_more["... +{len(nodes_in_group) - 10} more"]')
         lines.append("    end")
 
     edge_count = 0
@@ -1735,13 +1975,13 @@ def generate_mermaid_by_type(depgraph: dict) -> str:
     for ntype in sorted(type_groups.keys()):
         nodes_in_group = type_groups[ntype]
         safe_type = ntype.replace("-", "_")
-        lines.append(f"    subgraph {safe_type}[\"{ntype} ({len(nodes_in_group)})\"]")
+        lines.append(f'    subgraph {safe_type}["{ntype} ({len(nodes_in_group)})"]')
         for node in nodes_in_group[:15]:
             safe_nid = node["id"]
             short_path = "/".join(node["path"].split("/")[-2:])
-            lines.append(f"        {safe_nid}[\"{short_path}\"]")
+            lines.append(f'        {safe_nid}["{short_path}"]')
         if len(nodes_in_group) > 15:
-            lines.append(f"        {safe_type}_more[\"... +{len(nodes_in_group)-15} more\"]")
+            lines.append(f'        {safe_type}_more["... +{len(nodes_in_group) - 15} more"]')
         lines.append("    end")
 
     return "\n".join(lines)
@@ -1752,9 +1992,13 @@ def generate_markdown_section(depgraph: dict) -> str:
     lines = []
     lines.append("## §19 实体级依赖图（全项目文件级）")
     lines.append("")
-    lines.append(f"> **graph_id**: {meta['graph_id']} | **version**: {meta['version']} | **granularity**: {meta.get('granularity', 'system')}")
-    lines.append(f"> **total_nodes**: {meta['total_nodes']} | **total_edges**: {meta['total_edges']} | **functional_domains**: {meta.get('total_functional_domains', 0)}")
-    lines.append(f"> 生成脚本: `scripts/governance/generate_project_depgraph.py`")
+    lines.append(
+        f"> **graph_id**: {meta['graph_id']} | **version**: {meta['version']} | **granularity**: {meta.get('granularity', 'system')}"
+    )
+    lines.append(
+        f"> **total_nodes**: {meta['total_nodes']} | **total_edges**: {meta['total_edges']} | **functional_domains**: {meta.get('total_functional_domains', 0)}"
+    )
+    lines.append("> 生成脚本: `scripts/governance/generate_project_depgraph.py`")
     lines.append("")
 
     lines.append("### §19.1 节点统计")
@@ -1770,7 +2014,11 @@ def generate_markdown_section(depgraph: dict) -> str:
     lines.append("")
     lines.append("| 边类型 | 数量 | 含义 |")
     lines.append("|--------|:----:|------|")
-    edge_desc = {"import_depends": "Python import 依赖", "references": "YAML/MD/JSON 中引用 ID", "test_depends": "测试文件依赖被测模块"}
+    edge_desc = {
+        "import_depends": "Python import 依赖",
+        "references": "YAML/MD/JSON 中引用 ID",
+        "test_depends": "测试文件依赖被测模块",
+    }
     for etype, count in sorted(meta["edges_by_type"].items()):
         lines.append(f"| {etype} | {count} | {edge_desc.get(etype, '')} |")
     lines.append(f"| **合计** | **{meta['total_edges']}** | |")
@@ -2009,13 +2257,9 @@ def enrich_edges_semantic(edges: list, nodes: dict, registry_deps: list) -> list
             cross_domain = from_domain != to_domain if from_domain and to_domain else False
 
             if dep_type == "import_depends":
-                if to_type == "config":
+                if to_type == "config" or to_type == "registry":
                     edge["failure_mode"] = "version_mismatch"
-                elif to_type == "registry":
-                    edge["failure_mode"] = "version_mismatch"
-                elif coupling == "critical":
-                    edge["failure_mode"] = "service_down"
-                elif cross_domain:
+                elif coupling == "critical" or cross_domain:
                     edge["failure_mode"] = "service_down"
                 elif semantic_type == "contract":
                     edge["failure_mode"] = "version_mismatch"
@@ -2026,9 +2270,7 @@ def enrich_edges_semantic(edges: list, nodes: dict, registry_deps: list) -> list
             elif dep_type == "test_depends":
                 edge["failure_mode"] = "cascade_failure"
             elif dep_type == "references":
-                if to_type == "blueprint":
-                    edge["failure_mode"] = "version_mismatch"
-                elif to_type == "schema":
+                if to_type == "blueprint" or to_type == "schema":
                     edge["failure_mode"] = "version_mismatch"
                 else:
                     edge["failure_mode"] = "version_mismatch"
@@ -2050,15 +2292,11 @@ def enrich_edges_semantic(edges: list, nodes: dict, registry_deps: list) -> list
             cross_domain = from_domain != to_domain if from_domain and to_domain else False
 
             if dep_type == "import_depends":
-                if coupling == "critical":
-                    edge["fallback"] = "circuit_break"
-                elif cross_domain:
+                if coupling == "critical" or cross_domain:
                     edge["fallback"] = "circuit_break"
                 elif to_type == "config":
                     edge["fallback"] = "use_default_config"
-                elif to_type == "registry":
-                    edge["fallback"] = "cache_stale_data"
-                elif semantic_type == "data":
+                elif to_type == "registry" or semantic_type == "data":
                     edge["fallback"] = "cache_stale_data"
                 else:
                     edge["fallback"] = "graceful_degradation"
@@ -2109,7 +2347,7 @@ def enrich_nodes_decision(nodes: dict, dg_design_nodes: dict = None) -> dict:
                 code_to_decision[code_path] = clean
 
     for nid, node in nodes.items():
-        if "decision" in node and node["decision"]:
+        if node.get("decision"):
             continue
         # Check DEP-GRAPH match
         path = node.get("path", "")
@@ -2127,10 +2365,11 @@ def _yaml_load(path):
     """Load YAML with C loader if available (10-50x faster than pure Python)."""
     try:
         from yaml import CSafeLoader
+
         loader = CSafeLoader
     except ImportError:
         loader = yaml.SafeLoader
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.load(f, Loader=loader)
 
 
@@ -2184,14 +2423,23 @@ def merge_depgraph(new_data: dict, existing_path, old_data=None) -> dict:
 def acquire_lock(lock_file: str, session_id: str) -> bool:
     """DM-3003: 获取文件锁（通过lock_files.py跨进程互斥）"""
     import subprocess
+
     lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
     if not lock_script.exists():
         return False
     result = subprocess.run(
-        [sys.executable, str(lock_script), "acquire",
-         lock_file, session_id, "--task", "depgraph db write",
-         "--skip-naming-check"],
-        capture_output=True, text=True
+        [
+            sys.executable,
+            str(lock_script),
+            "acquire",
+            lock_file,
+            session_id,
+            "--task",
+            "depgraph db write",
+            "--skip-naming-check",
+        ],
+        capture_output=True,
+        text=True,
     )
     return result.returncode == 0
 
@@ -2199,14 +2447,11 @@ def acquire_lock(lock_file: str, session_id: str) -> bool:
 def release_lock(lock_file: str, session_id: str) -> None:
     """DM-3003: 释放文件锁"""
     import subprocess
+
     lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
     if not lock_script.exists():
         return
-    subprocess.run(
-        [sys.executable, str(lock_script), "release",
-         lock_file, session_id],
-        capture_output=True, text=True
-    )
+    subprocess.run([sys.executable, str(lock_script), "release", lock_file, session_id], capture_output=True, text=True)
 
 
 def resolve_conflicts(cur):
@@ -2258,8 +2503,10 @@ def restore_design_data(cur, design_nodes: dict, design_edges: list, design_arch
     if db_arch_count == 0 and design_arch:
         print(f"[DM-3013] WARNING: DB中无设计态arch，内存有{len(design_arch)}条")
 
-    print(f"[DM-3013] restore_design_data: 验证完成 "
-          f"(nodes={db_nodes_count}, edges={db_edges_count}, arch={db_arch_count})")
+    print(
+        f"[DM-3013] restore_design_data: 验证完成 "
+        f"(nodes={db_nodes_count}, edges={db_edges_count}, arch={db_arch_count})"
+    )
 
 
 def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None):
@@ -2271,13 +2518,13 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
     conn = None  # DM-3004: 预初始化None，防御性编程
 
     # DM-3003: 获取写锁，防止多进程并发写入depgraph.db
-    lock_file = db_path + '.lock'
+    lock_file = db_path + ".lock"
     session_id = os.environ.get("ZEPHYR_SESSION_ID", f"depgraph-{os.getpid()}")
     lock_acquired = acquire_lock(lock_file, session_id)
     if lock_acquired:
         print(f"[LOCK] Acquired write lock on depgraph.db (owner={session_id})")
     else:
-        print(f"[LOCK] Warning: Could not acquire lock, proceeding without lock")
+        print("[LOCK] Warning: Could not acquire lock, proceeding without lock")
 
     try:
         conn = sqlite3.connect(db_path)  # DM-3004: 移入try块
@@ -2288,7 +2535,7 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         ).fetchall()
         for (bt_name,) in backup_tables:
             # Validate table name format before using in DDL
-            if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', bt_name):
+            if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", bt_name):
                 continue
             cursor.execute(f'DROP TABLE IF EXISTS "{bt_name}"')
             print(f"[DEPGRAPH-DB] Cleaned up backup table: {bt_name}")
@@ -2302,10 +2549,7 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # DM-3013: 步骤6 - 显式恢复设计态数据（规格§22.6步骤6）
         if design_state is not None:
             restore_design_data(
-                cursor,
-                design_state.get("nodes", {}),
-                design_state.get("edges", []),
-                design_state.get("arch", [])
+                cursor, design_state.get("nodes", {}), design_state.get("edges", []), design_state.get("arch", [])
             )
 
         # Insert nodes
@@ -2325,10 +2569,24 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
 
             # Collect type-specific fields
             type_specific = {}
-            for key in ["imports", "vulnerability_refs", "yaml_references", "doc_references",
-                        "module_id", "business_stream", "stream_role", "build_status", "can_build",
-                        "gate_reason", "hard_boundary_ref", "module_lifecycle_state", "runtime_plane",
-                        "ddd_aggregate", "consumed_interfaces", "provided_interfaces"]:
+            for key in [
+                "imports",
+                "vulnerability_refs",
+                "yaml_references",
+                "doc_references",
+                "module_id",
+                "business_stream",
+                "stream_role",
+                "build_status",
+                "can_build",
+                "gate_reason",
+                "hard_boundary_ref",
+                "module_lifecycle_state",
+                "runtime_plane",
+                "ddd_aggregate",
+                "consumed_interfaces",
+                "provided_interfaces",
+            ]:
                 if key in node:
                     type_specific[key] = node[key]
             type_specific_json = json.dumps(type_specific, ensure_ascii=False) if type_specific else "{}"
@@ -2336,7 +2594,8 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
             # H6 fix: Compute can_build from design_maturity
             can_build = 1 if node.get("design_maturity") == "production" else 0
 
-            cursor.execute("""INSERT INTO nodes (
+            cursor.execute(
+                """INSERT INTO nodes (
                 node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
                 belongs_to, owner, change_policy, impact_level, modification_permission,
                 file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
@@ -2345,37 +2604,38 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                 can_build, gate_reason, hard_boundary_ref, consumed_interfaces
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                       ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                node.get("type", "module"),
-                node.get("path", ""),
-                node.get("granularity", "file"),
-                node.get("domain_id", ""),
-                node.get("subdomain_id", ""),
-                node.get("blueprint_id", ""),
-                node.get("belongs_to", ""),
-                node.get("owner", ""),
-                node.get("change_policy", "evolving"),
-                node.get("impact_level", "M"),
-                node.get("modification_permission", "ai_modifiable"),
-                node.get("file_header_score", 0),
-                tags_json,
-                node.get("architecture_layer", ""),
-                node.get("design_maturity", "production"),
-                node.get("deployment_lifecycle", "stable"),
-                node.get("trust_zone", "trusted_core"),
-                node.get("license", "Internal"),
-                node.get("drive_direction", "bottom_up"),
-                type_specific_json,
-                datetime.now().isoformat(),
-                node.get("node_name", ""),
-                node.get("file_path", node.get("path", "")),
-                node.get("build_status", "draft"),
-                node.get("module_lifecycle_state", "inactive"),
-                can_build,                                           # H6 fix
-                node.get("gate_reason", ""),                         # H6 fix
-                node.get("hard_boundary_ref", ""),                   # H6 fix
-                node.get("consumed_interfaces", ""),                 # H6 fix
-            ))
+                (
+                    node.get("type", "module"),
+                    node.get("path", ""),
+                    node.get("granularity", "file"),
+                    node.get("domain_id", ""),
+                    node.get("subdomain_id", ""),
+                    node.get("blueprint_id", ""),
+                    node.get("belongs_to", ""),
+                    node.get("owner", ""),
+                    node.get("change_policy", "evolving"),
+                    node.get("impact_level", "M"),
+                    node.get("modification_permission", "ai_modifiable"),
+                    node.get("file_header_score", 0),
+                    tags_json,
+                    node.get("architecture_layer", ""),
+                    node.get("design_maturity", "production"),
+                    node.get("deployment_lifecycle", "stable"),
+                    node.get("trust_zone", "trusted_core"),
+                    node.get("license", "Internal"),
+                    node.get("drive_direction", "bottom_up"),
+                    type_specific_json,
+                    datetime.now().isoformat(),
+                    node.get("node_name", ""),
+                    node.get("file_path", node.get("path", "")),
+                    node.get("build_status", "draft"),
+                    node.get("module_lifecycle_state", "inactive"),
+                    can_build,  # H6 fix
+                    node.get("gate_reason", ""),  # H6 fix
+                    node.get("hard_boundary_ref", ""),  # H6 fix
+                    node.get("consumed_interfaces", ""),  # H6 fix
+                ),
+            )
             node_count += 1
             # P0-1 schema fix: 记录生成器node_id→path映射
             gen_node_id_to_path[node_id] = node.get("path", "")
@@ -2426,7 +2686,9 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
 
         total_backfilled = tier1_count + tier2_count + tier3_count
         if total_backfilled > 0:
-            print(f"[DEPGRAPH-DB] Backfilled architecture_layer: T1={tier1_count} T2={tier2_count} T3={tier3_count} (total={total_backfilled})")
+            print(
+                f"[DEPGRAPH-DB] Backfilled architecture_layer: T1={tier1_count} T2={tier2_count} T3={tier3_count} (total={total_backfilled})"
+            )
 
         # Tier 4: Normalize non-standard architecture_layer values to standard 4-layer
         # This handles design-state nodes preserved from previous runs with old values,
@@ -2483,39 +2745,47 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                 continue
 
             api_contract_refs = edge.get("api_contract_refs", [])
-            api_json = json.dumps(api_contract_refs, ensure_ascii=False) if isinstance(api_contract_refs, list) else str(api_contract_refs)
+            api_json = (
+                json.dumps(api_contract_refs, ensure_ascii=False)
+                if isinstance(api_contract_refs, list)
+                else str(api_contract_refs)
+            )
 
-            cursor.execute("""INSERT INTO edges (
+            cursor.execute(
+                """INSERT INTO edges (
                 from_node_id, to_node_id, dep_type, architecture_direction, coupling_strength,
                 used_symbol, invocation_method, api_contract_refs, event_ref,
                 ddd_integration_pattern, failure_mode, fallback, activation_condition,
                 data_transfer_description, resource_impact, relationship_type,
                 cross_domain, verified
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                gen_to_db_node_id.get(from_node),
-                gen_to_db_node_id.get(to_node),
-                edge.get("dep_type", "import_depends"),
-                edge.get("architecture_direction", "downstream"),
-                edge.get("coupling_strength", "critical"),
-                edge.get("used_symbol", ""),
-                edge.get("invocation_method", "import"),
-                api_json,
-                edge.get("event_ref", ""),
-                edge.get("ddd_integration_pattern", ""),
-                edge.get("failure_mode", ""),
-                edge.get("fallback", ""),
-                edge.get("activation_condition", ""),
-                edge.get("data_transfer_description", ""),
-                edge.get("resource_impact", ""),
-                edge.get("relationship_type", "one_to_many"),
-                1 if edge.get("cross_domain") else 0,
-                1 if edge.get("verified") else 0
-            ))
+                (
+                    gen_to_db_node_id.get(from_node),
+                    gen_to_db_node_id.get(to_node),
+                    edge.get("dep_type", "import_depends"),
+                    edge.get("architecture_direction", "downstream"),
+                    edge.get("coupling_strength", "critical"),
+                    edge.get("used_symbol", ""),
+                    edge.get("invocation_method", "import"),
+                    api_json,
+                    edge.get("event_ref", ""),
+                    edge.get("ddd_integration_pattern", ""),
+                    edge.get("failure_mode", ""),
+                    edge.get("fallback", ""),
+                    edge.get("activation_condition", ""),
+                    edge.get("data_transfer_description", ""),
+                    edge.get("resource_impact", ""),
+                    edge.get("relationship_type", "one_to_many"),
+                    1 if edge.get("cross_domain") else 0,
+                    1 if edge.get("verified") else 0,
+                ),
+            )
             edge_count += 1
 
         conn.commit()
-        print(f"[DEPGRAPH-DB] Inserted {node_count} nodes, {edge_count} edges (skipped {broken_edge_count} broken edges)")
+        print(
+            f"[DEPGRAPH-DB] Inserted {node_count} nodes, {edge_count} edges (skipped {broken_edge_count} broken edges)"
+        )
 
         # H6 fix: Backfill gate_reason for design-state nodes that were preserved
         try:
@@ -2531,7 +2801,9 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # H2 fix: Delete design-state nodes with empty path
         try:
             cur = conn.cursor()
-            cur.execute("DELETE FROM nodes WHERE (path IS NULL OR path = '' OR TRIM(path) = '') AND design_maturity = 'design'")
+            cur.execute(
+                "DELETE FROM nodes WHERE (path IS NULL OR path = '' OR TRIM(path) = '') AND design_maturity = 'design'"
+            )
             deleted = cur.rowcount
             if deleted:
                 print(f"  [H2] Deleted {deleted} design nodes with empty path")
@@ -2542,7 +2814,9 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # H3 fix: Delete design-state nodes with Markdown paths
         try:
             cur = conn.cursor()
-            cur.execute("DELETE FROM nodes WHERE design_maturity = 'design' AND (path LIKE '###%' OR path LIKE '####%' OR path LIKE '---%')")
+            cur.execute(
+                "DELETE FROM nodes WHERE design_maturity = 'design' AND (path LIKE '###%' OR path LIKE '####%' OR path LIKE '---%')"
+            )
             deleted = cur.rowcount
             if deleted:
                 print(f"  [H3] Deleted {deleted} design nodes with Markdown paths")
@@ -2553,7 +2827,9 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # H4 fix: Clear fake blueprint_id from design-state nodes
         try:
             cur = conn.cursor()
-            cur.execute("UPDATE nodes SET blueprint_id = '' WHERE blueprint_id LIKE 'D-___%-blueprint' AND design_maturity = 'design'")
+            cur.execute(
+                "UPDATE nodes SET blueprint_id = '' WHERE blueprint_id LIKE 'D-___%-blueprint' AND design_maturity = 'design'"
+            )
             updated = cur.rowcount
             if updated:
                 print(f"  [H4] Cleared {updated} fake blueprint_id from design nodes")
@@ -2591,15 +2867,13 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # DM-3002: 步骤10 - 调用audit_domain_nodes.py --check
         try:
             import subprocess
+
             audit_script = str(PROJECT_ROOT / "scripts" / "governance" / "audit_domain_nodes.py")
-            result = subprocess.run(
-                [sys.executable, audit_script, "--check"],
-                capture_output=True, text=True
-            )
+            result = subprocess.run([sys.executable, audit_script, "--check"], capture_output=True, text=True)
             if result.returncode != 0:
                 print(f"[DEPGRAPH-DB] 警告: audit_domain_nodes.py失败(exit {result.returncode}): {result.stderr}")
             else:
-                print(f"[DEPGRAPH-DB] 步骤10: audit_domain_nodes.py --check 完成")
+                print("[DEPGRAPH-DB] 步骤10: audit_domain_nodes.py --check 完成")
         except Exception as e:
             print(f"[DEPGRAPH-DB] 警告: audit_domain_nodes.py调用失败: {e}")
 
@@ -2614,12 +2888,13 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # DM-3003: 释放写锁
         if lock_acquired:
             release_lock(lock_file, session_id)
-            print(f"[LOCK] Released write lock on depgraph.db")
+            print("[LOCK] Released write lock on depgraph.db")
 
 
 # ============================================================================
 # P0-3 升级：GenerationReport + Tarjan SCC + 12步流程支持
 # ============================================================================
+
 
 class GenerationReport:
     """生成器执行报告（§14.10 格式）— 7项统计"""
@@ -2724,7 +2999,7 @@ def validate_blueprint_ids(nodes: dict) -> int:
     无效定义：blueprint_id非空但不符合格式（XX-XXX-NNN）
     """
     invalid = 0
-    bp_pattern = re.compile(r'^[A-Z]{2,5}-[A-Z0-9_]+-\d{3,4}$')
+    bp_pattern = re.compile(r"^[A-Z]{2,5}-[A-Z0-9_]+-\d{3,4}$")
     for path, node in nodes.items():
         bp_id = node.get("blueprint_id", "")
         if bp_id and not bp_pattern.match(bp_id):
@@ -2775,17 +3050,13 @@ def load_design_state_from_db(db_path: str) -> dict:
                 }
         # DM-3012: 加载设计态边（dep_maturity='design'）
         try:
-            design_edges = cur.execute(
-                "SELECT * FROM edges WHERE dep_maturity = 'design'"
-            ).fetchall()
+            design_edges = cur.execute("SELECT * FROM edges WHERE dep_maturity = 'design'").fetchall()
         except Exception as e:
             print(f"[DM-3012] WARNING: 加载设计态edges失败: {e}")
             design_edges = []
         # DM-3012: 加载设计态架构目录树（design_maturity='design'）
         try:
-            design_arch = cur.execute(
-                "SELECT * FROM arch_directory_tree WHERE design_maturity = 'design'"
-            ).fetchall()
+            design_arch = cur.execute("SELECT * FROM arch_directory_tree WHERE design_maturity = 'design'").fetchall()
         except Exception as e:
             print(f"[DM-3012] WARNING: 加载设计态arch_directory_tree失败: {e}")
             design_arch = []
@@ -2829,8 +3100,7 @@ def load_production_state_from_db(db_path: str) -> dict:
             "modification_permission, belongs_to "
             "FROM nodes WHERE design_maturity = 'production'"
         ).fetchall()
-        cols = ("blueprint_id", "owner", "impact_level", "change_policy",
-                "modification_permission", "belongs_to")
+        cols = ("blueprint_id", "owner", "impact_level", "change_policy", "modification_permission", "belongs_to")
         for row in rows:
             path = row[0]
             if not path:
@@ -2924,12 +3194,19 @@ def derive_autonomy_fallback(node_type: str, path: str) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="Generate project entity-level dependency graph (full coverage)")
-    parser.add_argument("--output-yaml", type=str, default="", help="[DEPRECATED] Output YAML data file path (DB is now the SSoT)")
+    parser.add_argument(
+        "--output-yaml", type=str, default="", help="[DEPRECATED] Output YAML data file path (DB is now the SSoT)"
+    )
     parser.add_argument("--output-db", type=str, default="", help="Output SQLite database path (DM-100024)")
     parser.add_argument("--output-md-section", type=str, default="", help="Output markdown section file path")
     parser.add_argument("--max-workers", type=int, default=8, help="ThreadPoolExecutor workers")
-    parser.add_argument("--granularity", type=str, default="file", choices=["file", "class"],
-                        help="Node granularity: 'file' = 1 file = 1 node (default), 'class' = 1 class = 1 node")
+    parser.add_argument(
+        "--granularity",
+        type=str,
+        default="file",
+        choices=["file", "class"],
+        help="Node granularity: 'file' = 1 file = 1 node (default), 'class' = 1 class = 1 node",
+    )
     parser.add_argument("--dry-run", action="store_true", help="P0-3: dry-run模式，不修改任何文件，只输出执行报告")
     args = parser.parse_args()
 
@@ -2951,9 +3228,11 @@ def main():
     if db_path_for_design and os.path.exists(db_path_for_design):
         design_state = load_design_state_from_db(db_path_for_design)
         existing_design_nodes = design_state["nodes"]
-        print(f"[DEPGRAPH] G1修复: 从DB加载 {len(existing_design_nodes)} 个设计态节点, "
-              f"{len(design_state['edges'])} 条设计态边, "
-              f"{len(design_state['arch'])} 条设计态arch记录")
+        print(
+            f"[DEPGRAPH] G1修复: 从DB加载 {len(existing_design_nodes)} 个设计态节点, "
+            f"{len(design_state['edges'])} 条设计态边, "
+            f"{len(design_state['arch'])} 条设计态arch记录"
+        )
     else:
         # 兼容旧YAML加载逻辑（已废弃）
         design_state = None
@@ -3053,8 +3332,10 @@ def main():
         production_meta = load_production_state_from_db(db_path_for_design)
         if production_meta:
             protected_cnt = apply_production_metadata_protection(depgraph.get("nodes", {}), production_meta)
-            print(f"[DEPGRAPH] P1修复: 加载 {len(production_meta)} 个运营态节点元数据, "
-                  f"恢复保护 {protected_cnt} 个重建节点")
+            print(
+                f"[DEPGRAPH] P1修复: 加载 {len(production_meta)} 个运营态节点元数据, "
+                f"恢复保护 {protected_cnt} 个重建节点"
+            )
 
     # Enrich edges with semantic fields from cross-module-dependency-registry
     print("[DEPGRAPH] Loading cross-module-dependency-registry...")
@@ -3071,15 +3352,24 @@ def main():
 
     # Count enrichment stats
     edges_with_contract = sum(1 for e in depgraph["edges"] if e.get("contract_anchor"))
-    edges_with_registry_type = sum(1 for e in depgraph["edges"] if e.get("semantic_type") and e["semantic_type"] != DEP_TYPE_TO_SEMANTIC_TYPE.get(e.get("dep_type", ""), "runtime"))
+    edges_with_registry_type = sum(
+        1
+        for e in depgraph["edges"]
+        if e.get("semantic_type")
+        and e["semantic_type"] != DEP_TYPE_TO_SEMANTIC_TYPE.get(e.get("dep_type", ""), "runtime")
+    )
     nodes_with_decision = {n.get("decision", "KEEP") for n in depgraph["nodes"].values()}
     print(f"[DEPGRAPH] Edges with contract_anchor: {edges_with_contract}")
     print(f"[DEPGRAPH] Edges enriched by registry: {edges_with_registry_type}")
-    print(f"[DEPGRAPH] Node decisions: {dict((d, sum(1 for n in depgraph['nodes'].values() if n.get('decision') == d)) for d in nodes_with_decision)}")
+    print(
+        f"[DEPGRAPH] Node decisions: {dict((d, sum(1 for n in depgraph['nodes'].values() if n.get('decision') == d)) for d in nodes_with_decision)}"
+    )
 
     meta = depgraph["metadata"]
     print(f"[DEPGRAPH] Nodes: {meta['total_nodes']} | Edges: {meta['total_edges']}")
-    print(f"[DEPGRAPH] Design-state: {meta.get('design_state_nodes', 0)} | Operational: {meta.get('operational_state_nodes', 0)}")
+    print(
+        f"[DEPGRAPH] Design-state: {meta.get('design_state_nodes', 0)} | Operational: {meta.get('operational_state_nodes', 0)}"
+    )
     print(f"[DEPGRAPH] Nodes by type: {meta['nodes_by_type']}")
     print(f"[DEPGRAPH] Edges by type: {meta['edges_by_type']}")
     print(f"[DEPGRAPH] Functional domains: {meta['total_functional_domains']}")
@@ -3097,9 +3387,9 @@ def main():
             print(f"  循环{i}: {' -> '.join(cycle[:5])}{'...' if len(cycle) > 5 else ''}")
 
     # 填充报告统计
-    report.node_count = meta['total_nodes']
-    report.edge_count = meta['total_edges']
-    report.arch_count = meta.get('total_functional_domains', 0)
+    report.node_count = meta["total_nodes"]
+    report.edge_count = meta["total_edges"]
+    report.arch_count = meta.get("total_functional_domains", 0)
 
     # 步骤11: 输出执行报告
     report.end_time = datetime.now().timestamp()
@@ -3111,7 +3401,9 @@ def main():
         sys.exit(0)
 
     if args.output_yaml:
-        print("[DEPRECATED] --output-yaml is deprecated. DB is now the SSoT. YAML output will be removed in a future version.")
+        print(
+            "[DEPRECATED] --output-yaml is deprecated. DB is now the SSoT. YAML output will be removed in a future version."
+        )
         out_path = PROJECT_ROOT / args.output_yaml
 
         # --- Concurrent write protection: lock only for merge+write ---
@@ -3127,22 +3419,33 @@ def main():
             if not lock_script.exists():
                 break
             result = subprocess.run(
-                [sys.executable, str(lock_script), "acquire",
-                 str(out_path), session_id, "--task", "depgraph generation",
-                 "--skip-naming-check"],
-                capture_output=True, text=True
+                [
+                    sys.executable,
+                    str(lock_script),
+                    "acquire",
+                    str(out_path),
+                    session_id,
+                    "--task",
+                    "depgraph generation",
+                    "--skip-naming-check",
+                ],
+                capture_output=True,
+                text=True,
             )
             if result.returncode == 0:
                 lock_acquired = True
                 print(f"[LOCK] Acquired write lock on depgraph (owner={session_id})")
                 break
             if attempt < max_retries:
-                print(f"[LOCK] Depgraph locked by another session (attempt {attempt}/{max_retries}), waiting {retry_delay}s...")
+                print(
+                    f"[LOCK] Depgraph locked by another session (attempt {attempt}/{max_retries}), waiting {retry_delay}s..."
+                )
                 import time
+
                 time.sleep(retry_delay)
             else:
                 print(f"[LOCKED] Cannot acquire lock after {max_retries} attempts: {result.stdout.strip()}")
-                print(f"         Another AI session is writing. Retry later.")
+                print("         Another AI session is writing. Retry later.")
                 sys.exit(1)
 
         try:
@@ -3156,11 +3459,11 @@ def main():
         finally:
             if lock_acquired and lock_script.exists():
                 subprocess.run(
-                    [sys.executable, str(lock_script), "release",
-                     str(out_path), session_id],
-                    capture_output=True, text=True
+                    [sys.executable, str(lock_script), "release", str(out_path), session_id],
+                    capture_output=True,
+                    text=True,
                 )
-                print(f"[LOCK] Released write lock on depgraph")
+                print("[LOCK] Released write lock on depgraph")
 
     md_section = generate_markdown_section(depgraph)
 

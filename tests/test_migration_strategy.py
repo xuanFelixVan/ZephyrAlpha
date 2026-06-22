@@ -12,20 +12,26 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.infrastructure.a2a_protocol.migration_strategy import (
+    MIGRATION_PIPELINE,
     MigrationPhase,
     PhaseDef,
-    MIGRATION_PIPELINE,
-    get_phase_def,
     get_next_phase,
+    get_phase_def,
 )
 
 
 class TestMigrationPhase:
     def test_all_phases(self):
-        expected = {"ISSUE_TRACKING", "RISK_ASSESSMENT", "ROLLBACK_PLAN", "STAGING", "PILOT", "FULL_ROLLOUT", "POSTMORTEM"}
+        expected = {
+            "ISSUE_TRACKING",
+            "RISK_ASSESSMENT",
+            "ROLLBACK_PLAN",
+            "STAGING",
+            "PILOT",
+            "FULL_ROLLOUT",
+            "POSTMORTEM",
+        }
         actual = {p.value for p in MigrationPhase}
         assert actual == expected
 

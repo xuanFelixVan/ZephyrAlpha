@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3406
 title: 4. 当前已形成的关键结论
 category: documentation

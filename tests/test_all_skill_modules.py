@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] pytest tests/test_all_skill_modules.py
 
-import pytest
 from zephyr.autonomy_core.all_skill_modules import AllSkillModules
 
 

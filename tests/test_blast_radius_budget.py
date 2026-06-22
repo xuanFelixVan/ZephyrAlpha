@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.detectors.blast_radius_budget import BlastRadiusBudget
 
 

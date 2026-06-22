@@ -12,9 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
 from datetime import datetime
 
+import pytest
 
 mod = pytest.importorskip("zephyr.simulation.pipeline_base")
 
@@ -171,6 +171,7 @@ class TestScoutAgentBase:
         class DummyScout(ScoutAgentBase):
             def scout(self, context, idempotency_key):
                 return None
+
             def archive_to_kms(self, result):
                 return True
 

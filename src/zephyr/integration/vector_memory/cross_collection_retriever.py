@@ -53,13 +53,15 @@ class CrossCollectionRetriever:
             try:
                 trace = self._hybrid_retriever.search(query, col_name, k=max(k, 3))
                 for hit in trace.hits:
-                    all_hits.append({
-                        "id": hit.id,
-                        "content": hit.content,
-                        "score": hit.score,
-                        "collection": col_name,
-                        "metadata": hit.metadata,
-                    })
+                    all_hits.append(
+                        {
+                            "id": hit.id,
+                            "content": hit.content,
+                            "score": hit.score,
+                            "collection": col_name,
+                            "metadata": hit.metadata,
+                        }
+                    )
             except Exception as e:
                 _logger.debug("CrossCollectionRetriever: %s 检索失败: %s", col_name, e)
 

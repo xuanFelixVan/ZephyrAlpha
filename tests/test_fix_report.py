@@ -14,15 +14,12 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from zephyr.security.access_control.auto_fix_engine_03.fix_report import FixReportGenerator
 from zephyr.security.access_control.auto_fix_engine_03.models import (
     BudgetInfo,
     FixAction,
     FixConfidence,
     FixLevel,
-    FixReport,
     FixStatus,
 )
 

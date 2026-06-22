@@ -11,9 +11,9 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
-import time
 
 import pytest
 

@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · L01 Infrastructure.
 
@@ -55,12 +55,12 @@ def __getattr__(name: str):
 
 
 __all__ = [
+    "contracts",
+    "cross_module_integration",
+    "module_id",
+    "risk_mitigation",
     "schema",
     "sli_instrumentation",
     "tech_stack",
-    "risk_mitigation",
-    "cross_module_integration",
-    "contracts",
     "version",
-    "module_id",
 ]

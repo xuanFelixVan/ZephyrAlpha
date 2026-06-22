@@ -31,6 +31,7 @@ db_utils.py — SQLite 连接公共 API（SSoT: zephyr.data.persistence.sqlite_s
 from __future__ import annotations
 
 import importlib as _il
+
 _mod = _il.import_module("zephyr.data.persistence.sqlite_schema")
 DB_PATH = _mod.DB_PATH
 get_db_connection = _mod.get_db_connection
@@ -38,9 +39,9 @@ init_db = _mod.init_db
 
 __all__ = [
     "DB_PATH",
+    "ensure_schema",
     "get_db_connection",
     "init_db",
-    "ensure_schema",
 ]
 
 

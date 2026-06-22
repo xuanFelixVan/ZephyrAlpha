@@ -25,12 +25,14 @@ from __future__ import annotations
 
 from enum import Enum
 
+
 class ChangeType(str, Enum):
     FIELD_REMOVED = "field_removed"
     TYPE_CHANGED = "type_changed"
     FIELD_ADDED_OPTIONAL = "field_added_optional"
     FIELD_ADDED_REQUIRED = "field_added_required"
     FIELD_RENAMED = "field_renamed"
+
 
 class BreakingChangeDetector:
     BREAKING_CHANGES: set[ChangeType] = {

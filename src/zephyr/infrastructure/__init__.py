@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """[A_module] module_id=MOD-INFRA_RUNTIME | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable"""
 
 # D-INFRA_RUNTIME Domain Package
@@ -43,6 +42,7 @@ __all__ = [
 # Bridge from old infrastructure package for backward compatibility
 try:
     from zephyr.infrastructure import __all__ as _infra_all
+
     __all__.extend(_infra_all)
 except ImportError:
     pass

@@ -18,6 +18,7 @@ validate_ssot_construction_progress.py — G8 SSoT 一致性门禁强制执行�
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -27,9 +28,9 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
 
 __manifest__ = """
 args: []
@@ -126,8 +127,7 @@ def _check_vocabulary(progress_map: dict[str, str], source_label: str) -> list[s
     for mid, prog in progress_map.items():
         if prog not in VALID_PROGRESS:
             errors.append(
-                f"G8-C04 [{source_label}] {mid}: construction_progress={prog!r} "
-                f"不在受控词表 {sorted(VALID_PROGRESS)}"
+                f"G8-C04 [{source_label}] {mid}: construction_progress={prog!r} 不在受控词表 {sorted(VALID_PROGRESS)}"
             )
     return errors
 
@@ -163,21 +163,15 @@ def main() -> int:
 
         # G8-C01: frontmatter vs blueprint-registry
         if fm_val is not None and bp_val is not None and fm_val != bp_val:
-            errors.append(
-                f"G8-C01 {mid}: frontmatter={fm_val!r} != blueprint-registry={bp_val!r}"
-            )
+            errors.append(f"G8-C01 {mid}: frontmatter={fm_val!r} != blueprint-registry={bp_val!r}")
 
         # G8-C02: frontmatter vs module-registry
         if fm_val is not None and mod_val is not None and fm_val != mod_val:
-            errors.append(
-                f"G8-C02 {mid}: frontmatter={fm_val!r} != module-registry={mod_val!r}"
-            )
+            errors.append(f"G8-C02 {mid}: frontmatter={fm_val!r} != module-registry={mod_val!r}")
 
         # G8-C03: blueprint-registry vs module-registry
         if bp_val is not None and mod_val is not None and bp_val != mod_val:
-            errors.append(
-                f"G8-C03 {mid}: blueprint-registry={bp_val!r} != module-registry={mod_val!r}"
-            )
+            errors.append(f"G8-C03 {mid}: blueprint-registry={bp_val!r} != module-registry={mod_val!r}")
 
         # Warn about missing entries
         if fm_val is not None and bp_val is None:

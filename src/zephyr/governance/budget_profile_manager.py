@@ -2,29 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.budget_profile_manager
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
+
 
 @dataclass
 class BudgetProfile:
@@ -35,20 +26,32 @@ class BudgetProfile:
     model_tier: str
     description: str = ""
 
-class BudgetProfileManager:
 
+class BudgetProfileManager:
     DEFAULT_PROFILES: dict[str, BudgetProfile] = {
         "minimal": BudgetProfile(
-            name="minimal", token_limit=2000, cost_limit=0.05, time_limit=60.0,
-            model_tier="minimal", description="极简模式：最小消耗"
+            name="minimal",
+            token_limit=2000,
+            cost_limit=0.05,
+            time_limit=60.0,
+            model_tier="minimal",
+            description="极简模式：最小消耗",
         ),
         "standard": BudgetProfile(
-            name="standard", token_limit=8000, cost_limit=0.30, time_limit=300.0,
-            model_tier="economy", description="标准模式：常规任务"
+            name="standard",
+            token_limit=8000,
+            cost_limit=0.30,
+            time_limit=300.0,
+            model_tier="economy",
+            description="标准模式：常规任务",
         ),
         "premium": BudgetProfile(
-            name="premium", token_limit=16000, cost_limit=0.80, time_limit=600.0,
-            model_tier="standard", description="高级模式：复杂任务（需审批）"
+            name="premium",
+            token_limit=16000,
+            cost_limit=0.80,
+            time_limit=600.0,
+            model_tier="standard",
+            description="高级模式：复杂任务（需审批）",
         ),
     }
 
@@ -59,7 +62,7 @@ class BudgetProfileManager:
 
     def _load(self) -> None:
         if self._profile_path.exists():
-            with open(self._profile_path, "r", encoding="utf-8") as f:
+            with open(self._profile_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
                 if data:
                     for name, cfg in data.items():
@@ -108,10 +111,7 @@ class BudgetProfileManager:
     def match_for_task(self, estimated_tokens: int, estimated_cost: float) -> BudgetProfile:
         best = self._profiles["minimal"]
         for p in self._profiles.values():
-            if (
-                p.token_limit >= estimated_tokens
-                and p.cost_limit >= estimated_cost
-            ):
+            if p.token_limit >= estimated_tokens and p.cost_limit >= estimated_cost:
                 if p.token_limit < best.token_limit:
                     best = p
         return best

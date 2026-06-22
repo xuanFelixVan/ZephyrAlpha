@@ -20,8 +20,8 @@
 # [TESTS]
 
 from __future__ import annotations
-# ==== BEGIN CODGEN:CTR-P1-009 ====
 
+# ==== BEGIN CODGEN:CTR-P1-009 ====
 from dataclasses import dataclass, field
 
 # ---

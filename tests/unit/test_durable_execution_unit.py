@@ -9,11 +9,7 @@
 Unit tests for durable_execution.py
 """
 
-import json
 import tempfile
-from pathlib import Path
-
-import pytest
 
 from zephyr.integration.shared_08.durable_execution import (
     ActivityResult,
@@ -26,16 +22,12 @@ from zephyr.integration.shared_08.durable_execution import (
 
 class TestActivityResult:
     def test_completed(self):
-        result = ActivityResult(
-            activity_name="parse", status=ActivityStatus.COMPLETED, output={"ok": True}
-        )
+        result = ActivityResult(activity_name="parse", status=ActivityStatus.COMPLETED, output={"ok": True})
         assert result.status == ActivityStatus.COMPLETED
         assert result.output == {"ok": True}
 
     def test_failed(self):
-        result = ActivityResult(
-            activity_name="broken", status=ActivityStatus.FAILED, error="boom"
-        )
+        result = ActivityResult(activity_name="broken", status=ActivityStatus.FAILED, error="boom")
         assert result.status == ActivityStatus.FAILED
         assert result.error == "boom"
 

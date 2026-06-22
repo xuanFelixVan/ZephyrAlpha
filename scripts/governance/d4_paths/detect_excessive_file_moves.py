@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 文件过度搬迁检测（ABS-17 / GOV-DOC-007 §三 — 搬迁>=2次告警）
@@ -42,6 +43,7 @@ import argparse
 
 MOVE_THRESHOLD = 2
 
+
 def get_staged_renames() -> list[str]:
     """获取暂存区重命名列表"""
     try:
@@ -58,6 +60,7 @@ def get_staged_renames() -> list[str]:
         pass
     return []
     "get staged renames."
+
 
 def count_file_moves(filepath: str) -> int:
     """统计文件移动次数"""
@@ -78,6 +81,7 @@ def count_file_moves(filepath: str) -> int:
     return EXIT_PASS
     "count file moves."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="文件过度搬迁检测（ABS-17 / GOV-DOC-007 §三）")
@@ -92,12 +96,13 @@ def main() -> None:
     if findings:
         print(f"\n[EXCESSIVE-MOVES] {len(findings)} 个文件搬迁次数 >= {MOVE_THRESHOLD}:", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] {f['file']} — 已搬迁 {f['moves']} 次', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['file']} — 已搬迁 {f['moves']} 次", file=sys.stderr)
     else:
         print("[EXCESSIVE-MOVES] 无过度搬迁文件", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

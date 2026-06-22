@@ -37,8 +37,8 @@ RollbackManager — 实现状态回滚：记录操作日志、支持 undo（T-2-
 - 回滚时：恢复 tasks 表状态到检查点时刻
 - 不碰磁盘文件（只恢复数据库状态）
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import json
 from dataclasses import dataclass
@@ -48,8 +48,8 @@ from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
-    "RollbackManager",
     "Checkpoint",
+    "RollbackManager",
 ]
 
 

@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] human_gated
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 ZephyrAlpha 门禁子包
 ====================
@@ -30,23 +30,26 @@ ZephyrAlpha 门禁子包
 的 Gate 操作均通过本子包接口调用，禁止跨层直接操作门禁逻辑。
 统一决策入口：任何涉及风险控制的 AI 决策在此汇总评估。
 """
-from __future__ import annotations
 
-from . import adaptive_threshold
-from . import ai_capability_guard
-from . import breaking_change_detector
-from . import end_to_end_walkthrough
-from . import gate_health
-from . import gate_integrity_guard
-from . import gate_override
-from . import gate_simulator
-from . import integration_test_runner
-from . import kiss_enforcer
-from . import secrets_guard
+from __future__ import annotations
 
 import importlib
 import logging
 from typing import Any
+
+from . import (
+    adaptive_threshold,
+    ai_capability_guard,
+    breaking_change_detector,
+    end_to_end_walkthrough,
+    gate_health,
+    gate_integrity_guard,
+    gate_override,
+    gate_simulator,
+    integration_test_runner,
+    kiss_enforcer,
+    secrets_guard,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -54,12 +57,24 @@ _LAZY_IMPORTS: dict[str, dict[str, str]] = {
     "GateContext": {"module": "zephyr.governance.rule_enforcement.gate_context", "attr": "GateContext"},
     "GatePipeline": {"module": "zephyr.governance.rule_enforcement.gate_pipeline", "attr": "GatePipeline"},
     "GateSimulator": {"module": "zephyr.governance.rule_enforcement.gate_simulator", "attr": "GateSimulator"},
-    "GateIntegrityGuard": {"module": "zephyr.governance.rule_enforcement.gate_integrity_guard", "attr": "GateIntegrityGuard"},
-    "AdaptiveThreshold": {"module": "zephyr.governance.rule_enforcement.adaptive_threshold", "attr": "AdaptiveThreshold"},
-    "AuditChainVerifier": {"module": "zephyr.governance.rule_enforcement.audit_chain_verifier", "attr": "AuditChainVerifier"},
+    "GateIntegrityGuard": {
+        "module": "zephyr.governance.rule_enforcement.gate_integrity_guard",
+        "attr": "GateIntegrityGuard",
+    },
+    "AdaptiveThreshold": {
+        "module": "zephyr.governance.rule_enforcement.adaptive_threshold",
+        "attr": "AdaptiveThreshold",
+    },
+    "AuditChainVerifier": {
+        "module": "zephyr.governance.rule_enforcement.audit_chain_verifier",
+        "attr": "AuditChainVerifier",
+    },
     "GateHealth": {"module": "zephyr.governance.rule_enforcement.gate_health", "attr": "GateHealth"},
     "GateOverride": {"module": "zephyr.governance.rule_enforcement.gate_override", "attr": "GateOverride"},
-    "SysMasterCompliance": {"module": "zephyr.integration.shared_08.contracts.sys_master_compliance", "attr": "SysMasterCompliance"},
+    "SysMasterCompliance": {
+        "module": "zephyr.integration.shared_08.contracts.sys_master_compliance",
+        "attr": "SysMasterCompliance",
+    },
     "trigger_recovery": {"module": "zephyr.governance.rule_enforcement.drift_detector", "attr": "trigger_recovery"},
     "GateViolation": {"module": "zephyr.governance.rule_enforcement.gate_types", "attr": "GateViolation"},
     "GateResult": {"module": "zephyr.governance.rule_enforcement.gate_types", "attr": "GateResult"},
@@ -68,53 +83,60 @@ _LAZY_IMPORTS: dict[str, dict[str, str]] = {
 }
 
 __all__ = [
-    'AdaptiveThreshold',
-    'AuditChainVerifier',
-    'GateContext',
-    'GateHealth',
-    'GateIntegrityGuard',
-    'GateOverride',
-    'GatePipeline',
-    'GateSimulator',
-    'SysMasterCompliance',
-    'adaptive_threshold',
-    'adversarial_strategies',
-    'adversarial_validation',
-    'ai_capability_guard',
-    'anti_pattern_guard',
-    'audit_chain_verifier',
-    'breaking_change_detector',
-    'can_i_deploy',
-    'capability_checker',
-    'cbac_matrix',
-    'cdc_broker',
-    'circuit_breaker',
-    'contract_template_manager',
-    'drift_detector',
-    'end_to_end_walkthrough',
-    'gate_context',
-    'gate_engine',
-    'gate_types',
-    'gate_health',
-    'gate_integrity_guard',
-    'gate_override',
-    'gate_pipeline',
-    'gate_simulator',
-    'integration_test_runner',
-    'kiss_enforcer',
-    'risk_ssot',
-    'secrets_guard',
-    'sys_master_compliance',
-    'task_completion_gate',
-    'task_types',
+    "AdaptiveThreshold",
+    "AuditChainVerifier",
+    "GateContext",
+    "GateHealth",
+    "GateIntegrityGuard",
+    "GateOverride",
+    "GatePipeline",
+    "GateSimulator",
+    "SysMasterCompliance",
+    "TripleAlignmentResult",
+    "adaptive_threshold",
+    "adversarial_strategies",
+    "adversarial_validation",
+    "ai_capability_guard",
+    "anti_pattern_guard",
+    "audit_chain_verifier",
+    "breaking_change_detector",
+    "can_i_deploy",
+    "capability_checker",
+    "cbac_matrix",
+    "cdc_broker",
+    "circuit_breaker",
+    "contract_template_manager",
+    "drift_detector",
+    "end_to_end_walkthrough",
+    "gate_context",
+    "gate_engine",
+    "gate_health",
+    "gate_integrity_guard",
+    "gate_override",
+    "gate_pipeline",
+    "gate_simulator",
+    "gate_types",
+    "integration_test_runner",
+    "kiss_enforcer",
+    "risk_ssot",
+    "secrets_guard",
+    "sys_master_compliance",
+    "task_completion_gate",
+    "task_types",
     "trigger_recovery",
     "triple_alignment",
-    "TripleAlignmentResult",
     "truth_source_validator",
 ]
 
-_LAZY_IMPORTS["TripleAlignmentResult"] = {"module": "zephyr.governance.rule_enforcement.triple_alignment", "attr": "TripleAlignmentResult"}
-_LAZY_IMPORTS["AlignmentViolation"] = {"module": "zephyr.governance.rule_enforcement.triple_alignment", "attr": "AlignmentViolation"}
+_LAZY_IMPORTS["TripleAlignmentResult"] = {
+    "module": "zephyr.governance.rule_enforcement.triple_alignment",
+    "attr": "TripleAlignmentResult",
+}
+_LAZY_IMPORTS["AlignmentViolation"] = {
+    "module": "zephyr.governance.rule_enforcement.triple_alignment",
+    "attr": "AlignmentViolation",
+}
+
 
 def __getattr__(name: str) -> Any:
     if name in _LAZY_IMPORTS:

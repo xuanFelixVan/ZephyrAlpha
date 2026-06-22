@@ -27,127 +27,49 @@ CheckTypeHandler — CheckTypeHandler
 
 """
 
-
-
-
-
-
-
 from __future__ import annotations
 
-
-
-
-
 from abc import ABC, abstractmethod
-
-
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
-
-
-
-
 
 _REGISTRY: dict[str, type[CheckTypeHandler]] = {}
 
 
-
-
-
-
-
-
 class CheckTypeHandler(ABC):
-
-
     name: str = ""
 
-
-
-
-
     @abstractmethod
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
-    ) -> list[dict[str, Any]]:
-
-
-        ...
-
-
-
-
-
-
+    ) -> list[dict[str, Any]]: ...
 
 
 def register_check_type(cls: type[CheckTypeHandler]) -> type[CheckTypeHandler]:
-
-
     _REGISTRY[cls.name] = cls
-
 
     return cls
 
 
-
-
-
-
-
-
 def get_check_type(name: str) -> type[CheckTypeHandler] | None:
-
-
     return _REGISTRY.get(name)
 
 
-
-
-
-
-
-
 def list_check_types() -> list[str]:
-
-
     return sorted(_REGISTRY.keys())
-
-
-
-
-
-
 
 
 def _auto_import():
     import importlib
     import pkgutil
+
     from zephyr.governance.rule_enforcement import check_types as pkg
+
     for _importer, modname, _ispkg in pkgutil.iter_modules(pkg.__path__):
         if modname.startswith("_"):
             continue
@@ -157,16 +79,24 @@ def _auto_import():
 _auto_import()
 
 _STABILITY_FROZEN = True
-_FROZEN_PUBLIC_API = frozenset({
-    "CheckTypeHandler", "register_check_type", "get_check_type", "list_check_types",
-})
+_FROZEN_PUBLIC_API = frozenset(
+    {
+        "CheckTypeHandler",
+        "register_check_type",
+        "get_check_type",
+        "list_check_types",
+    }
+)
+
 
 def __getattr__(name: str):
     if name in _FROZEN_PUBLIC_API:
         import logging
+
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.governance.rule_enforcement.check_types.check_type_registry", name
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.governance.rule_enforcement.check_types.check_type_registry",
+            name,
         )
-    raise AttributeError(f"module 'zephyr.governance.rule_enforcement.check_types.check_type_registry' has no attribute {name!r}")
-
-
+    raise AttributeError(
+        f"module 'zephyr.governance.rule_enforcement.check_types.check_type_registry' has no attribute {name!r}"
+    )

@@ -11,11 +11,10 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import time
-
-import pytest
 
 from zephyr.governance.escalation_fatigue_manager import EscalationFatigueManager
 

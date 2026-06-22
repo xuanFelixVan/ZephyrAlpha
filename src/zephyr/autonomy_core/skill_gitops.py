@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_gitops | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_gitops
+# [MODULE] zephyr.autonomy_core.skill_gitops
 
 # [INVARIANTS] none
 
@@ -34,11 +34,10 @@ Skill 版本管理与自动化发布:
   4. ReleasesNotes: 生成变更日志
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 
 class SkillGitOps:
@@ -63,8 +62,8 @@ class SkillGitOps:
         return f"{prefix}/{skill_abbr.lower()}-{slug}"
 
     @classmethod
-    def generate_pr_description(cls, skill_id: str, changes: Dict[str, Any]) -> str:
-        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    def generate_pr_description(cls, skill_id: str, changes: dict[str, Any]) -> str:
+        now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
         kind = changes.get("kind", "update")
         summary = changes.get("summary", f"Update to {skill_id}")
 
@@ -74,7 +73,7 @@ class SkillGitOps:
             f"**Type**: {kind}",
             f"**Date**: {now}",
             "",
-            f"### Summary",
+            "### Summary",
             summary,
             "",
         ]
@@ -100,19 +99,21 @@ class SkillGitOps:
                 lines.append(f"- {f_item}")
             lines.append("")
 
-        lines.extend([
-            "### Pre-merge Checklist",
-            "- [ ] SkillsBench benchmark passes (score >= 70)",
-            "- [ ] SelfEvolutionFidelityGate passes (fidelity >= 80)",
-            "- [ ] Token budget compliance verified",
-            "- [ ] Registry updated",
-        ])
+        lines.extend(
+            [
+                "### Pre-merge Checklist",
+                "- [ ] SkillsBench benchmark passes (score >= 70)",
+                "- [ ] SelfEvolutionFidelityGate passes (fidelity >= 80)",
+                "- [ ] Token budget compliance verified",
+                "- [ ] Registry updated",
+            ]
+        )
 
         return "\n".join(lines)
 
     @classmethod
-    def generate_release_notes(cls, version: str, skills_changed: List[Dict[str, Any]]) -> str:
-        now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    def generate_release_notes(cls, version: str, skills_changed: list[dict[str, Any]]) -> str:
+        now = datetime.now(UTC).strftime("%Y-%m-%d")
         lines = [
             f"# Agent Spec Release {version}",
             f"**Date**: {now}",
@@ -134,7 +135,11 @@ class SkillGitOps:
         parts = current_version.lstrip("v").split(".")
 
         try:
-            major, minor, patch = int(parts[0]), int(parts[1]) if len(parts) > 1 else 0, int(parts[2]) if len(parts) > 2 else 0
+            major, minor, patch = (
+                int(parts[0]),
+                int(parts[1]) if len(parts) > 1 else 0,
+                int(parts[2]) if len(parts) > 2 else 0,
+            )
         except (ValueError, IndexError):
             major, minor, patch = 0, 0, 0
 
@@ -156,18 +161,26 @@ class SkillGitOps:
         return f"{major}.{minor}.{patch}"
 
     @classmethod
-    def init_skill_repo(cls, skill_id: str, version: str = "0.1.0") -> Dict[str, Any]:
+    def init_skill_repo(cls, skill_id: str, version: str = "0.1.0") -> dict[str, Any]:
         branch = cls.generate_branch_name(skill_id, "feature", "initial-skill-setup")
-        pr_desc = cls.generate_pr_description(skill_id, {
-            "kind": "feature",
-            "summary": f"Initial skill setup for {skill_id}",
-            "added": [f"Skill {skill_id} registered"],
-        })
-        notes = cls.generate_release_notes(version, [{
-            "skill_id": skill_id,
-            "kind": "feature",
-            "summary": f"Initial skill: {skill_id}",
-        }])
+        pr_desc = cls.generate_pr_description(
+            skill_id,
+            {
+                "kind": "feature",
+                "summary": f"Initial skill setup for {skill_id}",
+                "added": [f"Skill {skill_id} registered"],
+            },
+        )
+        notes = cls.generate_release_notes(
+            version,
+            [
+                {
+                    "skill_id": skill_id,
+                    "kind": "feature",
+                    "summary": f"Initial skill: {skill_id}",
+                }
+            ],
+        )
 
         return {
             "skill_id": skill_id,

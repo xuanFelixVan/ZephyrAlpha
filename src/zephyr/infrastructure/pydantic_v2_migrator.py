@@ -38,9 +38,9 @@ from pathlib import Path
 from typing import Any
 
 __all__ = [
-    "PydanticV2Migrator",
-    "MigrationReport",
     "MigrationFinding",
+    "MigrationReport",
+    "PydanticV2Migrator",
 ]
 
 
@@ -173,14 +173,16 @@ class PydanticV2Migrator:
                 if pat.get("skip"):
                     continue
                 if pat["pattern"] in line:
-                    findings.append(MigrationFinding(
-                        file_path=str(filepath),
-                        line=i,
-                        pattern=pat["pattern"],
-                        severity=pat.get("severity", "medium"),
-                        v1_code=pat.get("v1", ""),
-                        v2_suggestion=pat.get("v2", ""),
-                    ))
+                    findings.append(
+                        MigrationFinding(
+                            file_path=str(filepath),
+                            line=i,
+                            pattern=pat["pattern"],
+                            severity=pat.get("severity", "medium"),
+                            v1_code=pat.get("v1", ""),
+                            v2_suggestion=pat.get("v2", ""),
+                        )
+                    )
         return findings
 
     def apply_migrations(
@@ -205,12 +207,14 @@ class PydanticV2Migrator:
             try:
                 if dry_run:
                     for f_item in findings:
-                        result["changes"].append({
-                            "file": filepath,
-                            "line": f_item.line,
-                            "from": f_item.v1_code,
-                            "to": f_item.v2_suggestion,
-                        })
+                        result["changes"].append(
+                            {
+                                "file": filepath,
+                                "line": f_item.line,
+                                "from": f_item.v1_code,
+                                "to": f_item.v2_suggestion,
+                            }
+                        )
                     result["files_modified"] += 1
                 else:
                     self._apply_to_file(filepath, findings)
@@ -260,10 +264,10 @@ class PydanticV2Migrator:
             if count > 0:
                 checklist.append(f"  - [{sev.upper()}] {count} 处")
 
-        checklist.append(f"\n建议迁移步骤:")
-        checklist.append(f"  1. 运行 migrator.apply_migrations(report, dry_run=True) 预览")
-        checklist.append(f"  2. 确认无误后 dry_run=False 执行迁移")
-        checklist.append(f"  3. 运行全量测试验证: pytest -x --tb=short")
+        checklist.append("\n建议迁移步骤:")
+        checklist.append("  1. 运行 migrator.apply_migrations(report, dry_run=True) 预览")
+        checklist.append("  2. 确认无误后 dry_run=False 执行迁移")
+        checklist.append("  3. 运行全量测试验证: pytest -x --tb=short")
         return checklist
 
 

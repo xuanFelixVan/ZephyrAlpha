@@ -52,7 +52,7 @@ class TestAnomalyDetectorInstantiation:
     def test_suspicious_operations_contents(self):
         detector = AnomalyDetector()
         expected = {"delete", "truncate", "drop", "revoke", "sudo", "root"}
-        assert detector._SUSPICIOUS_OPERATIONS == expected
+        assert expected == detector._SUSPICIOUS_OPERATIONS
 
 
 class TestAnomalyDetectorDetect:

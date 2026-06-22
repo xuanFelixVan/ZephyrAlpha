@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
 from zephyr.infrastructure.asset_inventory.metadata import (
     GitAssetMetadata,
     GitCommitInfo,
@@ -27,6 +23,7 @@ from zephyr.infrastructure.asset_inventory.metadata import (
 class TestGitCommitInfo:
     def test_create(self):
         from datetime import UTC, datetime
+
         c = GitCommitInfo(
             sha="abc123",
             author="test",
@@ -60,8 +57,11 @@ class TestGitMetadataExtractorExtract:
 
     def test_extract_from_git_repo(self, tmp_path):
         import subprocess
+
         subprocess.run(["git", "init"], cwd=str(tmp_path), capture_output=True, timeout=10)
-        subprocess.run(["git", "config", "user.email", "test@test.com"], cwd=str(tmp_path), capture_output=True, timeout=10)
+        subprocess.run(
+            ["git", "config", "user.email", "test@test.com"], cwd=str(tmp_path), capture_output=True, timeout=10
+        )
         subprocess.run(["git", "config", "user.name", "Test"], cwd=str(tmp_path), capture_output=True, timeout=10)
         (tmp_path / "test.py").write_text("x = 1", encoding="utf-8")
         subprocess.run(["git", "add", "."], cwd=str(tmp_path), capture_output=True, timeout=10)
@@ -84,13 +84,11 @@ class TestGitMetadataExtractorIsAiCommit:
 
 class TestGitMetadataExtractorParseDate:
     def test_valid_date(self):
-        from datetime import UTC
         dt = GitMetadataExtractor._parse_date("2026-05-22 10:30:00")
         assert dt.year == 2026
         assert dt.month == 5
 
     def test_invalid_date(self):
-        from datetime import UTC
         dt = GitMetadataExtractor._parse_date("invalid")
         assert dt == dt
 

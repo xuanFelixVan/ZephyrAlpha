@@ -29,12 +29,11 @@ CT-4: capacity-assurance → iguana-rebalancer（资本容量告警 → 禁止�
 所有跨模块集成调用含 OTel Span 传播 + W3C TraceContext.
 """
 
-
-import time
 import threading
-from dataclasses import dataclass, field
+import time
+from collections.abc import Callable
+from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, Dict, List, Optional
 
 
 class IntegrationStatus(Enum):
@@ -74,8 +73,8 @@ class PredictRouterIntegration:
     """
 
     def __init__(self):
-        self._switch_callbacks: List[Callable] = []
-        self._last_alert: Optional[dict] = None
+        self._switch_callbacks: list[Callable] = []
+        self._last_alert: dict | None = None
 
     def send_capacity_alert(self, alert_level: str, slo_id: str) -> SpanContext:
         ctx = SpanContext(
@@ -105,7 +104,7 @@ class PredictRouterIntegration:
         self._switch_callbacks.append(callback)
 
     @property
-    def last_alert(self) -> Optional[dict]:
+    def last_alert(self) -> dict | None:
         return self._last_alert
 
 
@@ -119,10 +118,10 @@ class MarketDataIngestorIntegration:
     LOW_RISK_CHANNELS = {"treasury", "money_market", "sofr", "libor"}
 
     def __init__(self):
-        self._dangerous_channels: List[str] = []
-        self._paused_channels: List[str] = []
+        self._dangerous_channels: list[str] = []
+        self._paused_channels: list[str] = []
 
-    def broadcast_kill_switch(self, status: bool, dangerous_channels: Optional[List[str]] = None) -> SpanContext:
+    def broadcast_kill_switch(self, status: bool, dangerous_channels: list[str] | None = None) -> SpanContext:
         ctx = SpanContext(
             integration_name="CT-2",
             span_id=f"capacity.kill_switch.{int(time.time() * 1000)}",
@@ -130,10 +129,7 @@ class MarketDataIngestorIntegration:
 
         if status and dangerous_channels:
             self._dangerous_channels = dangerous_channels
-            self._paused_channels = [
-                ch for ch in dangerous_channels
-                if ch not in self.LOW_RISK_CHANNELS
-            ]
+            self._paused_channels = [ch for ch in dangerous_channels if ch not in self.LOW_RISK_CHANNELS]
             ctx.status = IntegrationStatus.OK
         else:
             self._paused_channels = []
@@ -142,7 +138,7 @@ class MarketDataIngestorIntegration:
         return ctx
 
     @property
-    def paused_channels(self) -> List[str]:
+    def paused_channels(self) -> list[str]:
         return list(self._paused_channels)
 
     def is_channel_paused(self, channel: str) -> bool:
@@ -194,7 +190,7 @@ class IguanaRebalancerIntegration:
 
     def __init__(self, capacity_threshold: float = 0.9):
         self.capacity_threshold = capacity_threshold
-        self._account_capacities: Dict[str, float] = {}
+        self._account_capacities: dict[str, float] = {}
 
     def check_capital_capacity(self, account_id: str) -> CapacityCheck:
         remaining = self._account_capacities.get(account_id, 1.0)
@@ -222,7 +218,7 @@ class CrossModuleIntegrator:
         self.market_data = MarketDataIngestorIntegration()
         self.task_system = TaskSystemIntegration()
         self.iguana = IguanaRebalancerIntegration()
-        self._isolated: Dict[str, bool] = {
+        self._isolated: dict[str, bool] = {
             "CT-1": False,
             "CT-2": False,
             "CT-3": False,
@@ -239,7 +235,7 @@ class CrossModuleIntegrator:
     def is_isolated(self, contract_id: str) -> bool:
         return self._isolated.get(contract_id, False)
 
-    def validate_cross_module_state(self) -> Dict[str, bool]:
+    def validate_cross_module_state(self) -> dict[str, bool]:
         """DR 恢复流程中的跨模块状态一致性校验."""
         states = {
             "CT-1": not self._isolated["CT-1"] and self.predict_router.last_alert is not None,
@@ -257,7 +253,7 @@ class CrossModuleIntegrator:
             self.predict_router.send_capacity_alert(alert_level, slo_id)
 
 
-_integrator: Optional[CrossModuleIntegrator] = None
+_integrator: CrossModuleIntegrator | None = None
 _lock = threading.Lock()
 
 

@@ -39,8 +39,8 @@ AI 频繁写错字段名/漏必填字段/搞错枚举值的问题。
 SSoT: MOD-INF-016 §2.11 shared-testing
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from datetime import UTC, datetime
 from typing import Any
@@ -67,13 +67,13 @@ from zephyr.shared.schema.schemas import (
 )
 
 __all__ = [
-    "make_valid_task",
-    "make_p0_task",
     "make_completed_task",
+    "make_p0_task",
     "make_valid_audit_report",
-    "make_valid_knowledge_entry",
     "make_valid_failure_pattern",
     "make_valid_handoff_package",
+    "make_valid_knowledge_entry",
+    "make_valid_task",
 ]
 
 

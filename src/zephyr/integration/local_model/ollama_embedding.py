@@ -33,7 +33,6 @@ OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入
     dim = embedder.dim                              # → 1024
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -125,6 +124,7 @@ class OllamaEmbedder:
     def quick_alive(url: str = DEFAULT_OLLAMA_URL, timeout_s: float = 2.0) -> bool:
         try:
             import requests
+
             resp = requests.get(f"{url.rstrip('/')}/api/tags", timeout=timeout_s)
             return resp.status_code == 200
         except Exception:

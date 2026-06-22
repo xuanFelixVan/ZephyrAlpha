@@ -46,7 +46,6 @@ ZephyrAlpha — gates/ai_capability_guard.py
 SSoT: config/ai_capability_matrix.yaml
 """
 
-
 from __future__ import annotations
 
 import functools
@@ -112,7 +111,7 @@ def require_capability(
             enforce = os.environ.get("ZEPHYR_ENFORCE_CAPABILITY", "").lower() == "true"
 
             _logger.debug(
-                "[CapabilityGuard] %s 调用 '%s' — " "需要等级=%s, 调用位置=%s",
+                "[CapabilityGuard] %s 调用 '%s' — 需要等级=%s, 调用位置=%s",
                 operation,
                 func.__qualname__,
                 min_level.value,

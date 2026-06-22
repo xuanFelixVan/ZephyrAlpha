@@ -51,16 +51,16 @@ from zephyr.governance.kb.storage.unified_memory_api import (
 )
 
 __all__ = [
-    "WriteTrace",
-    "MemoryRecord",
-    "MemoryBackend",
+    "DEFAULT_EMBEDDING_MODELS",
+    "UNIFIED_COLLECTION",
     "ChromaMemoryBackend",
     "InMemoryMemoryBackend",
-    "UnifiedMemoryAPI",
-    "WriteTraceMissing",
+    "MemoryBackend",
     "MemoryBackendError",
-    "UNIFIED_COLLECTION",
-    "DEFAULT_EMBEDDING_MODELS",
-    "get_unified_memory_api",
+    "MemoryRecord",
+    "UnifiedMemoryAPI",
+    "WriteTrace",
+    "WriteTraceMissing",
     "build_provenance",
+    "get_unified_memory_api",
 ]

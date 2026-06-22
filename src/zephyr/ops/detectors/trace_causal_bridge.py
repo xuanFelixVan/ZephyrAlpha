@@ -27,6 +27,7 @@ Risk: R62 — Root cause spans multiple services; single-service view misses cau
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class TraceCausalBridge:
     spans: list[dict] = field(default_factory=list)

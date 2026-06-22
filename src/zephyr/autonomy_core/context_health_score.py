@@ -24,7 +24,7 @@ from __future__ import annotations
 """ContextHealthScore.py — 统一健康分 (B6, DD80, TASK-015 beta v)"""
 
 from dataclasses import dataclass
-import math
+
 
 @dataclass
 class HealthScoreReport:
@@ -32,8 +32,10 @@ class HealthScoreReport:
     status: str  # healthy / degraded / critical
     sub_metrics: dict[str, float]
 
+
 class ContextHealthScore:
     """PCA of 30 sub-metrics → Unified Health Score(0-100) (DD80)."""
+
     def compute(self, metrics: dict[str, float]) -> HealthScoreReport:
         if not metrics:
             return HealthScoreReport(score=100.0, status="healthy", sub_metrics={})

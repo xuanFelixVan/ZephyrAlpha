@@ -39,7 +39,6 @@ safety_level: M
 零外部依赖：仅 pydantic + 标准库。
 """
 
-
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -53,12 +52,12 @@ from zephyr.governance.kb.chromadb_init import COLLECTION_NAMES
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
-    "MigrationStatus",
+    "EmbeddingMigrator",
     "EmbeddingVersion",
+    "MigrationCheckpoint",
     "MigrationPlan",
     "MigrationResult",
-    "MigrationCheckpoint",
-    "EmbeddingMigrator",
+    "MigrationStatus",
 ]
 
 

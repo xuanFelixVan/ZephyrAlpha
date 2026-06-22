@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """L07 analytics_base — OCP 扩展点抽象方法形状。"""
 
 

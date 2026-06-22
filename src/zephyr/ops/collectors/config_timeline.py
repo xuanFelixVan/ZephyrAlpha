@@ -27,6 +27,7 @@ Risk: R99 — Post-config-change anomaly misdiagnosed as system failure.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ConfigTimeline:
     changes: list[dict] = field(default_factory=list)

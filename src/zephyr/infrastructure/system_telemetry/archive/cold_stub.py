@@ -24,10 +24,8 @@
 蓝图 §8: 分级 TTL + gzip 压缩 + SQLite backup + 成本感知降级 + 灾备 RTO/RPO。
 """
 
-
 from __future__ import annotations
 
-import gzip
 import logging
 import os
 import shutil
@@ -200,4 +198,4 @@ def _measure_disk_gb(path: Path) -> float:
                 total += entry.stat().st_size
             except OSError:
                 continue
-    return total / (1024 ** 3)
+    return total / (1024**3)

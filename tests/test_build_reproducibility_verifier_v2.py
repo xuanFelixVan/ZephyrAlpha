@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import os
-
 import pytest
 
 from zephyr.ops.verifiers.build_reproducibility_verifier import (

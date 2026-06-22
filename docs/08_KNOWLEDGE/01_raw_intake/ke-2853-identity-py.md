@@ -21,13 +21,13 @@ class SessionToken(BaseModel):
 
 class AgentIdentityVerifier:
     """Agent身份验证器——横向越权防护"""
-    
+
     SECRET_KEY: str = "from-secure-key-store"
     MAX_DELEGATION_DEPTH: int = 3
-    
+
     async def verify_session_token(self, token: SessionToken) -> bool:
         """验证Session Token的签名有效性"""
-    
+
     async def detect_identity_mismatch(
         self,
         claimed_agent: AgentIdentity,
@@ -39,7 +39,7 @@ class AgentIdentityVerifier:
         - 跨 session 操作中 agent_id 不一致
         - 委托链深度超过 MAX_DELEGATION_DEPTH
         """
-    
+
     async def prevent_cross_session_forgery(
         self,
         current_session: SessionContext,

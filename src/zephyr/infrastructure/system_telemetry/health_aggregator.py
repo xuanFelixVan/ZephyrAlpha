@@ -26,7 +26,6 @@
 每15s轮询12系统三态探针→生成健康面板快照→年度审计。
 """
 
-
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -34,8 +33,6 @@ from datetime import UTC, datetime
 from pydantic import BaseModel, Field
 
 from zephyr.infrastructure.system_telemetry.health_probes import SYSTEMS, HealthProbeManager
-from zephyr.ops.observability.health_discovery import HealthDiscovery as _HealthDiscovery
-from zephyr.shared.contracts.core.timestamp import utcnow as _utcnow
 
 
 class SystemHealthSnapshot(BaseModel):
@@ -75,7 +72,7 @@ class HealthAggregator:
             results.append(snapshot)
         self._snapshots.extend(results)
         if len(self._snapshots) > self._MAX_SNAPSHOTS:
-            self._snapshots = self._snapshots[-self._MAX_SNAPSHOTS:]
+            self._snapshots = self._snapshots[-self._MAX_SNAPSHOTS :]
         return results
 
     def latest_snapshots(self) -> list[SystemHealthSnapshot]:

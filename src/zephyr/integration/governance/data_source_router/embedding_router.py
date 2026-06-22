@@ -7,9 +7,9 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 
-from zephyr.integration.local_model.embedding_router import EmbeddingRouter, EmbeddingRouter as _EmbeddingRouter  # noqa: F401
+from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
 __all__ = ["EmbeddingRouter"]

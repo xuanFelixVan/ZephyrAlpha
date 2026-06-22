@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_silent_failure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_silent_failure
+# [MODULE] zephyr.autonomy_core.skill_silent_failure
 
 # [INVARIANTS] none
 
@@ -34,13 +34,12 @@ Version: 0.2.0
   4. DeterministicNonIdempotency: 同一输入两次执行结果不一致
 """
 
-
 from __future__ import annotations
 
 import hashlib
 import re
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import UTC, datetime
+from typing import Any
 
 
 class SilentFailureDetector:
@@ -74,10 +73,10 @@ class SilentFailureDetector:
     ]
 
     def __init__(self):
-        self._execution_history: Dict[str, List[Dict[str, Any]]] = {}
-        self._anomalies: List[Dict[str, Any]] = []
+        self._execution_history: dict[str, list[dict[str, Any]]] = {}
+        self._anomalies: list[dict[str, Any]] = []
 
-    def _check_truncation(self, output: str) -> Tuple[bool, Dict[str, Any]]:
+    def _check_truncation(self, output: str) -> tuple[bool, dict[str, Any]]:
         for pattern in self._TRUNCATION_INDICATORS:
             found = re.findall(pattern, output[-500:], re.IGNORECASE)
             if found:
@@ -98,7 +97,7 @@ class SilentFailureDetector:
 
         return False, {}
 
-    def _check_partial_success(self, output: str) -> Tuple[bool, Dict[str, Any]]:
+    def _check_partial_success(self, output: str) -> tuple[bool, dict[str, Any]]:
         for pattern in self._PARTIAL_SUCCESS_INDICATORS:
             if re.search(pattern, output, re.IGNORECASE):
                 ratio_match = re.search(r"(\d+)/(\d+)", output)
@@ -120,8 +119,8 @@ class SilentFailureDetector:
 
         return False, {}
 
-    def _check_assumptions(self, output: str) -> Tuple[bool, Dict[str, Any]]:
-        violations: List[str] = []
+    def _check_assumptions(self, output: str) -> tuple[bool, dict[str, Any]]:
+        violations: list[str] = []
         for pattern in self._ASSUMPTION_INDICATORS:
             matches = re.findall(pattern, output, re.IGNORECASE)
             if matches:
@@ -140,7 +139,7 @@ class SilentFailureDetector:
         skill_id: str,
         operation: str,
         output: str,
-    ) -> Tuple[bool, Dict[str, Any]]:
+    ) -> tuple[bool, dict[str, Any]]:
         op_hash = hashlib.md5((operation + output[:200]).encode()).hexdigest()[:12]
         key = f"{skill_id}:{op_hash}"
 
@@ -154,10 +153,12 @@ class SilentFailureDetector:
                     "current_output_hash": hashlib.md5(output.encode()).hexdigest()[:12],
                 }
 
-        self._execution_history.setdefault(key, []).append({
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "output_hash": hashlib.md5(output.encode()).hexdigest()[:12],
-        })
+        self._execution_history.setdefault(key, []).append(
+            {
+                "timestamp": datetime.now(UTC).isoformat(),
+                "output_hash": hashlib.md5(output.encode()).hexdigest()[:12],
+            }
+        )
 
         return False, {}
 
@@ -166,47 +167,55 @@ class SilentFailureDetector:
         skill_id: str,
         output: str,
         operation: str = "",
-    ) -> Dict[str, Any]:
-        anomalies: List[Dict[str, Any]] = []
+    ) -> dict[str, Any]:
+        anomalies: list[dict[str, Any]] = []
         checks_run = 0
 
         truncated, trunc_detail = self._check_truncation(output)
         checks_run += 1
         if truncated:
-            anomalies.append({
-                "type": self.ANOMALY_TRUNCATION,
-                **trunc_detail,
-            })
+            anomalies.append(
+                {
+                    "type": self.ANOMALY_TRUNCATION,
+                    **trunc_detail,
+                }
+            )
 
         partial, partial_detail = self._check_partial_success(output)
         checks_run += 1
         if partial:
-            anomalies.append({
-                "type": self.ANOMALY_PARTIAL_SUCCESS,
-                **partial_detail,
-            })
+            anomalies.append(
+                {
+                    "type": self.ANOMALY_PARTIAL_SUCCESS,
+                    **partial_detail,
+                }
+            )
 
         assumptions, assum_detail = self._check_assumptions(output)
         checks_run += 1
         if assumptions:
-            anomalies.append({
-                "type": self.ANOMALY_ASSUMPTION,
-                **assum_detail,
-            })
+            anomalies.append(
+                {
+                    "type": self.ANOMALY_ASSUMPTION,
+                    **assum_detail,
+                }
+            )
 
         non_idem, idem_detail = self._check_idempotency(skill_id, operation, output)
         checks_run += 1
         if non_idem:
-            anomalies.append({
-                "type": self.ANOMALY_NON_IDEMPOTENT,
-                **idem_detail,
-            })
+            anomalies.append(
+                {
+                    "type": self.ANOMALY_NON_IDEMPOTENT,
+                    **idem_detail,
+                }
+            )
 
         detected = len(anomalies) > 0
 
         if detected:
             for a in anomalies:
-                a.setdefault("timestamp", datetime.now(timezone.utc).isoformat())
+                a.setdefault("timestamp", datetime.now(UTC).isoformat())
                 a.setdefault("skill_id", skill_id)
             self._anomalies.extend(anomalies)
 
@@ -220,7 +229,7 @@ class SilentFailureDetector:
             "output_length": len(output),
         }
 
-    def get_session_anomalies(self, skill_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    def get_session_anomalies(self, skill_id: str | None = None) -> list[dict[str, Any]]:
         if skill_id:
             return [a for a in self._anomalies if a.get("skill_id") == skill_id]
         return list(self._anomalies)

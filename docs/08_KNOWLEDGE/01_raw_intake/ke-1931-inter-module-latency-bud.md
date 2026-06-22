@@ -43,7 +43,7 @@ class InterModuleLatencyBudgetManager:
             compliance = p95 / sla if p95 < sla else 1.0
             trend = await self._compute_latency_trend(caller, callee)
             degradation = (p95 - sla) / sla if p95 > sla else 0.0
-            
+
             profile = InterModuleLatencyProfile(
                 caller=caller, callee=callee,
                 p50_ms=p50, p95_ms=p95, p99_ms=p99,
@@ -51,7 +51,7 @@ class InterModuleLatencyBudgetManager:
                 call_rate_per_sec=await self._get_call_rate(caller, callee))
             profiles.append(profile)
             total_p95 += p95
-            
+
             if degradation > self.DEGRADATION_ALERT_PCT:
                 self.FLE.notify_owner("INTER_MODULE_LATENCY_DEGRADED",
                     f"{caller}→{callee}: P95={p95:.0f}ms (SLA={sla:.0f}ms, "

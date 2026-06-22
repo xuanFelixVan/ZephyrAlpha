@@ -27,137 +27,70 @@ SecurityArtifactScanHandler — SecurityArtifactScanHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class SecurityArtifactScanHandler(CheckTypeHandler):
-
-
     name = "security_artifact_scan"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        try:
+            import importlib
 
-                violations = []
+            _mod = importlib.import_module("zephyr.governance.artifact_scanner")
+            ArtifactScanner = _mod.ArtifactScanner
 
+            scanner = ArtifactScanner()
 
-                try:
+            scanner._RULES = []
 
+            scan_paths = list(params.get("scan_paths", []))
 
-                    import importlib
-                    _mod = importlib.import_module("zephyr.governance.artifact_scanner")
-                    ArtifactScanner = _mod.ArtifactScanner
+            for sp in scan_paths:
+                path = (
+                    project_root / sp if not str(sp).startswith(str(project_root)) else __import__("pathlib").Path(sp)
+                )
 
+                if not path.exists():
+                    continue
 
-                    scanner = ArtifactScanner()
+                if path.is_file():
+                    report = scanner.scan_file(path)
 
+                    if not report.is_clean:
+                        for f in report.findings:
+                            violations.append(
+                                {"message": f"{report.target}:L{f.line_number}: {f.message}", "severity": f.severity}
+                            )
 
-                    scanner._RULES = []
+                else:
+                    py_files = list(path.rglob("*.py"))
 
+                    for report in scanner.scan_files(py_files):
+                        if not report.is_clean:
+                            for f in report.findings:
+                                violations.append(
+                                    {
+                                        "message": f"{report.target}:L{f.line_number}: {f.message}",
+                                        "severity": f.severity,
+                                    }
+                                )
 
-                    scan_paths = list(params.get("scan_paths", []))
+        except Exception as exc:
+            violations.append({"message": f"Security artifact scan failed: {exc}", "severity": "P2"})
 
-
-                    for sp in scan_paths:
-
-
-                        path = project_root / sp if not str(sp).startswith(str(project_root)) else __import__("pathlib").Path(sp)
-
-
-                        if not path.exists():
-
-
-                            continue
-
-
-                        if path.is_file():
-
-
-                            report = scanner.scan_file(path)
-
-
-                            if not report.is_clean:
-
-
-                                for f in report.findings:
-
-
-                                    violations.append({"message": f"{report.target}:L{f.line_number}: {f.message}", "severity": f.severity})
-
-
-                        else:
-
-
-                            py_files = list(path.rglob("*.py"))
-
-
-                            for report in scanner.scan_files(py_files):
-
-
-                                if not report.is_clean:
-
-
-                                    for f in report.findings:
-
-
-                                        violations.append({"message": f"{report.target}:L{f.line_number}: {f.message}", "severity": f.severity})
-
-
-                except Exception as exc:
-
-
-                    violations.append({"message": f"Security artifact scan failed: {exc}", "severity": "P2"})
-
-
-                return violations
-
-
+        return violations

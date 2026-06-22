@@ -28,7 +28,7 @@ escalation_protocol_self_validation_and_quant_specifics:
           5. 差异率<1% + 无P0级差异 + Owner确认 → 切换Active Path
       duration: "至少48h或1000次判定（取较大值）"
       rollback: "切换后保留旧版本7天→出问题一键回退（对标 §2.26 协议版本回滚）"
-    
+
     minimal_deterministic_checker:
       principle: "存在一个非AI实现的、最小确定性验证器——只验证核心不变量，不依赖LLM"
       implementation: "Rust实现，<300行代码，只检查以下4条:"
@@ -38,7 +38,7 @@ escalation_protocol_self_validation_and_quant_specifics:
         - check: "fail_safe_default = deny_by_default（引擎不能fail-open）"
         - check: "escalation_rules.yaml parse成功 + rules_count ≥ 10"
       action_on_failure: "拒绝新版本激活 + P0-FATAL通知Owner + 保持旧版本Active"
-    
+
     self_update_audit:
       rule: "升级协议自身的任何变更→自动写入独立审计日志(区别于通用审计)"
       contents: ["变更时间", "变更文件列表", "变更前版本SHA256", "变更后版本SHA256",
@@ -57,7 +57,7 @@ escalation_protocol_self_validation_and_quant_specifics:
         - "shadow_false_positive_estimate: Owner标记的'不该升级却被升级'事件"
       graduation: "false_positive_rate < 10% + Owner确认 → 退出Shadow Mode进入Active"
       abortion: "false_positive_rate > 30% → 自动中止 + 通知Owner + 规则回滚"
-    
+
     canary_deployment:
       principle: "关键规则变更→先部署到Canary子集（如仅staging环境/仅1个Agent）"
       canary_scope:

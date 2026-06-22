@@ -1,17 +1,3 @@
-# [A_config] module_id=CFG-gate-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
-# --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
-# stability: evolving
-# safety_level: L
-# ai_autonomy: ai_modifiable
-# --- 治理锚定结束 ---
-# module_id: PS-REG-014
-# doc_type: register
-# 自动生成?2026-05-07T06:52:14Z
-# 来源: D:\ZephyrAlpha\.pre-commit-config.yaml
-# 手工编辑无效——修改请通过 .pre-commit-config.yaml
-
 module_id: PS-REG-014
 doc_type: register
 title: GATE 门禁登记?
@@ -19,7 +5,7 @@ status: active
 generated_at: '2026-05-07T06:52:14Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 source: .pre-commit-config.yaml
-total_gates: 25
+total_gates: 73
 gates:
 - gate_id: GATE-01
   name: 'GATE-01: _index.yaml 可达性检?'
@@ -65,9 +51,8 @@ gates:
   name: 'GATE-11: 命名规范门禁'
   entry: python scripts/governance/d3_metadata/check_naming_convention.py
   description: '全库命名规范门禁（N-01~N-15: kebab-case / snake_case / module_id namespace
-    / KBG 铁律 / Python snake_case+CamelCase检测 / 目录名合规+数字前缀豁免+非ASCII检测
-    / doc_type后缀+terminology/blueprint/catalog扩展 / KE严格三位序号+纯数字标题拦截
-    / YAML/JSON/MD kebab-case / __init__.py必须有__all__ / BLUEPRINT头部路径存在），违规即
+    / KBG 铁律 / Python snake_case+CamelCase检测 / 目录名合规+数字前缀豁免+非ASCII检测 / doc_type后缀+terminology/blueprint/catalog扩展
+    / KE严格三位序号+纯数字标题拦截 / YAML/JSON/MD kebab-case / __init__.py必须有__all__ / BLUEPRINT头部路径存在），违规即
     block commit'
   files_trigger: ^.*
   always_run: false
@@ -101,8 +86,8 @@ gates:
 - gate_id: GATE-15
   name: 'GATE-15: Frontmatter 元数据校验（v3.0.0 SSoT?'
   entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
-  description: Frontmatter 元数据校验（doc_type 17种合法?/ status 7?/ 必填字段 / module_id 格式
-    / AI 生成标记），骨架阶段 warn-only
+  description: Frontmatter 元数据校验（doc_type 17种合法?/ status 7?/ 必填字段 / module_id 格式 /
+    AI 生成标记），骨架阶段 warn-only
   files_trigger: ^docs/.*\.(md|yaml|yml)$
   always_run: false
   category: frontmatter_metadata
@@ -233,4 +218,388 @@ gates:
   files_trigger: \.(yaml|md|py)$
   always_run: true
   category: unknown
+  status: active
+- gate_id: G_TRAE_003
+  name: G_TRAE_003 Gate — 任务粒度与完成门槛协议
+  entry: gate_engine.evaluate(task, 'G_TRAE_003')
+  description: 自动化门禁：强制执行 TRAE-003（任务粒度与完成门槛协议）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_004
+  name: G_TRAE_004 Gate — 并行执行与原子事务协议
+  entry: gate_engine.evaluate(task, 'G_TRAE_004')
+  description: 自动化门禁：强制执行 TRAE-004（并行执行与原子事务协议）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_006
+  name: G_TRAE_006 Gate — 防幻觉-结构追溯层
+  entry: gate_engine.evaluate(task, 'G_TRAE_006')
+  description: 自动化门禁：强制执行 TRAE-006（防幻觉-结构追溯层）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_007
+  name: G_TRAE_007 Gate — 防幻觉-行为约束层
+  entry: gate_engine.evaluate(task, 'G_TRAE_007')
+  description: 自动化门禁：强制执行 TRAE-007（防幻觉-行为约束层）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_008
+  name: G_TRAE_008 Gate — 防幻觉-输出验证层
+  entry: gate_engine.evaluate(task, 'G_TRAE_008')
+  description: 自动化门禁：强制执行 TRAE-008（防幻觉-输出验证层）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_009
+  name: G_TRAE_009 Gate — 防幻觉-安全防护层
+  entry: gate_engine.evaluate(task, 'G_TRAE_009')
+  description: 自动化门禁：强制执行 TRAE-009（防幻觉-安全防护层）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_018
+  name: G_TRAE_018 Gate — 行为边界-代码操作绝对禁止
+  entry: gate_engine.evaluate(task, 'G_TRAE_018')
+  description: 自动化门禁：强制执行 TRAE-018（行为边界-代码操作绝对禁止）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_020
+  name: G_TRAE_020 Gate — 行为边界-治理纪律绝对禁止
+  entry: gate_engine.evaluate(task, 'G_TRAE_020')
+  description: 自动化门禁：强制执行 TRAE-020（行为边界-治理纪律绝对禁止）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_021
+  name: G_TRAE_021 Gate — 行为边界-其余绝对禁止
+  entry: gate_engine.evaluate(task, 'G_TRAE_021')
+  description: 自动化门禁：强制执行 TRAE-021（行为边界-其余绝对禁止）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_052
+  name: G_TRAE_052 Gate — 铁律补充-跨蓝图变更与项目瘦身
+  entry: gate_engine.evaluate(task, 'G_TRAE_052')
+  description: 自动化门禁：强制执行 TRAE-052（铁律补充-跨蓝图变更与项目瘦身）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_053
+  name: G_TRAE_053 Gate — 铁律补充-自动化双轨判定
+  entry: gate_engine.evaluate(task, 'G_TRAE_053')
+  description: 自动化门禁：强制执行 TRAE-053（铁律补充-自动化双轨判定）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_054
+  name: G_TRAE_054 Gate — depgraph 程序化访问协议
+  entry: gate_engine.evaluate(task, 'G_TRAE_054')
+  description: 自动化门禁：强制执行 TRAE-054（depgraph 程序化访问协议）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_055
+  name: G_TRAE_055 Gate — 架构容量与域治理规则
+  entry: gate_engine.evaluate(task, 'G_TRAE_055')
+  description: 自动化门禁：强制执行 TRAE-055（架构容量与域治理规则）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_010
+  name: G_TRAE_010 Gate — 代码构建-命名与组织
+  entry: gate_engine.evaluate(task, 'G_TRAE_010')
+  description: 自动化门禁：强制执行 TRAE-010（代码构建-命名与组织）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_011
+  name: G_TRAE_011 Gate — 代码构建-类型与导入
+  entry: gate_engine.evaluate(task, 'G_TRAE_011')
+  description: 自动化门禁：强制执行 TRAE-011（代码构建-类型与导入）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_012
+  name: G_TRAE_012 Gate — 代码构建-测试与安全
+  entry: gate_engine.evaluate(task, 'G_TRAE_012')
+  description: 自动化门禁：强制执行 TRAE-012（代码构建-测试与安全）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_016
+  name: G_TRAE_016 Gate — 架构约束-漂移检测
+  entry: gate_engine.evaluate(task, 'G_TRAE_016')
+  description: 自动化门禁：强制执行 TRAE-016（架构约束-漂移检测）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_017
+  name: G_TRAE_017 Gate — 架构约束-治理顺序
+  entry: gate_engine.evaluate(task, 'G_TRAE_017')
+  description: 自动化门禁：强制执行 TRAE-017（架构约束-治理顺序）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_022
+  name: G_TRAE_022 Gate — 行为边界-条件禁止(代码与安全)
+  entry: gate_engine.evaluate(task, 'G_TRAE_022')
+  description: 自动化门禁：强制执行 TRAE-022（行为边界-条件禁止(代码与安全)）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_023
+  name: G_TRAE_023 Gate — 行为边界-条件禁止(治理与文档)
+  entry: gate_engine.evaluate(task, 'G_TRAE_023')
+  description: 自动化门禁：强制执行 TRAE-023（行为边界-条件禁止(治理与文档)）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_028
+  name: G_TRAE_028 Gate — 文档治理-结构与命名
+  entry: gate_engine.evaluate(task, 'G_TRAE_028')
+  description: 自动化门禁：强制执行 TRAE-028（文档治理-结构与命名）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_029
+  name: G_TRAE_029 Gate — 文档治理-操作安全
+  entry: gate_engine.evaluate(task, 'G_TRAE_029')
+  description: 自动化门禁：强制执行 TRAE-029（文档治理-操作安全）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_030
+  name: G_TRAE_030 Gate — 文档治理-编号与元数据
+  entry: gate_engine.evaluate(task, 'G_TRAE_030')
+  description: 自动化门禁：强制执行 TRAE-030（文档治理-编号与元数据）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_031
+  name: G_TRAE_031 Gate — 安全治理-密钥与访问控制
+  entry: gate_engine.evaluate(task, 'G_TRAE_031')
+  description: 自动化门禁：强制执行 TRAE-031（安全治理-密钥与访问控制）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_032
+  name: G_TRAE_032 Gate — 模块治理-准入与生命周期
+  entry: gate_engine.evaluate(task, 'G_TRAE_032')
+  description: 自动化门禁：强制执行 TRAE-032（模块治理-准入与生命周期）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_033
+  name: G_TRAE_033 Gate — 模块治理-注册与同步
+  entry: gate_engine.evaluate(task, 'G_TRAE_033')
+  description: 自动化门禁：强制执行 TRAE-033（模块治理-注册与同步）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_034
+  name: G_TRAE_034 Gate — 任务系统-卡片标准与生命周期
+  entry: gate_engine.evaluate(task, 'G_TRAE_034')
+  description: 自动化门禁：强制执行 TRAE-034（任务系统-卡片标准与生命周期）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_035
+  name: G_TRAE_035 Gate — 任务系统-施工与验证
+  entry: gate_engine.evaluate(task, 'G_TRAE_035')
+  description: 自动化门禁：强制执行 TRAE-035（任务系统-施工与验证）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_036
+  name: G_TRAE_036 Gate — 架构治理-门禁与过渡
+  entry: gate_engine.evaluate(task, 'G_TRAE_036')
+  description: 自动化门禁：强制执行 TRAE-036（架构治理-门禁与过渡）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_037
+  name: G_TRAE_037 Gate — 架构治理-合格与版本化
+  entry: gate_engine.evaluate(task, 'G_TRAE_037')
+  description: 自动化门禁：强制执行 TRAE-037（架构治理-合格与版本化）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_038
+  name: G_TRAE_038 Gate — 架构治理-CTR注入规则
+  entry: gate_engine.evaluate(task, 'G_TRAE_038')
+  description: 自动化门禁：强制执行 TRAE-038（架构治理-CTR注入规则）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_039
+  name: G_TRAE_039 Gate — AI治理-幻觉检测与自检
+  entry: gate_engine.evaluate(task, 'G_TRAE_039')
+  description: 自动化门禁：强制执行 TRAE-039（AI治理-幻觉检测与自检）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_040
+  name: G_TRAE_040 Gate — AI治理-模型路由与协作
+  entry: gate_engine.evaluate(task, 'G_TRAE_040')
+  description: 自动化门禁：强制执行 TRAE-040（AI治理-模型路由与协作）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_044
+  name: G_TRAE_044 Gate — 合规治理-审计与监管
+  entry: gate_engine.evaluate(task, 'G_TRAE_044')
+  description: 自动化门禁：强制执行 TRAE-044（合规治理-审计与监管）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_045
+  name: G_TRAE_045 Gate — 数据治理-质量与血缘
+  entry: gate_engine.evaluate(task, 'G_TRAE_045')
+  description: 自动化门禁：强制执行 TRAE-045（数据治理-质量与血缘）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_046
+  name: G_TRAE_046 Gate — 工程治理-代码重组安全
+  entry: gate_engine.evaluate(task, 'G_TRAE_046')
+  description: 自动化门禁：强制执行 TRAE-046（工程治理-代码重组安全）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_047
+  name: G_TRAE_047 Gate — 工程治理-文件头部与扩展
+  entry: gate_engine.evaluate(task, 'G_TRAE_047')
+  description: 自动化门禁：强制执行 TRAE-047（工程治理-文件头部与扩展）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_024
+  name: G_TRAE_024 Gate — 方法论-诊断与根因分析
+  entry: gate_engine.evaluate(task, 'G_TRAE_024')
+  description: 自动化门禁：强制执行 TRAE-024（方法论-诊断与根因分析）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_025
+  name: G_TRAE_025 Gate — 方法论-决策与执行
+  entry: gate_engine.evaluate(task, 'G_TRAE_025')
+  description: 自动化门禁：强制执行 TRAE-025（方法论-决策与执行）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_026
+  name: G_TRAE_026 Gate — 方法论-质量与度量
+  entry: gate_engine.evaluate(task, 'G_TRAE_026')
+  description: 自动化门禁：强制执行 TRAE-026（方法论-质量与度量）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_027
+  name: G_TRAE_027 Gate — 方法论-协作与演进
+  entry: gate_engine.evaluate(task, 'G_TRAE_027')
+  description: 自动化门禁：强制执行 TRAE-027（方法论-协作与演进）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_041
+  name: G_TRAE_041 Gate — 元规则-规则分类与裁决
+  entry: gate_engine.evaluate(task, 'G_TRAE_041')
+  description: 自动化门禁：强制执行 TRAE-041（元规则-规则分类与裁决）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_042
+  name: G_TRAE_042 Gate — 元规则-标准体系与模板
+  entry: gate_engine.evaluate(task, 'G_TRAE_042')
+  description: 自动化门禁：强制执行 TRAE-042（元规则-标准体系与模板）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_043
+  name: G_TRAE_043 Gate — 元规则-元数据与度量
+  entry: gate_engine.evaluate(task, 'G_TRAE_043')
+  description: 自动化门禁：强制执行 TRAE-043（元规则-元数据与度量）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_048
+  name: G_TRAE_048 Gate — 操作-Vibe Coding会话管理
+  entry: gate_engine.evaluate(task, 'G_TRAE_048')
+  description: 自动化门禁：强制执行 TRAE-048（操作-Vibe Coding会话管理）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_049
+  name: G_TRAE_049 Gate — 操作-领域操作手册
+  entry: gate_engine.evaluate(task, 'G_TRAE_049')
+  description: 自动化门禁：强制执行 TRAE-049（操作-领域操作手册）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_050
+  name: G_TRAE_050 Gate — 域策略-数据源与因子层
+  entry: gate_engine.evaluate(task, 'G_TRAE_050')
+  description: 自动化门禁：强制执行 TRAE-050（域策略-数据源与因子层）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
+  status: active
+- gate_id: G_TRAE_051
+  name: G_TRAE_051 Gate — 域策略-风控与盘后层
+  entry: gate_engine.evaluate(task, 'G_TRAE_051')
+  description: 自动化门禁：强制执行 TRAE-051（域策略-风控与盘后层）规则。将规则从文档约束升级为phase_gate自动阻断。
+  files_trigger: ''
+  always_run: false
+  category: trae_rule
   status: active

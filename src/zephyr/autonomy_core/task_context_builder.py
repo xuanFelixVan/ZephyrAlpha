@@ -14,14 +14,11 @@
 CT-ORC-CE-001: 接收 Orc 的上下文请求, 四阶段构建可注入的执行上下文。
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
-import os
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -117,7 +114,11 @@ class TaskContextBuilder:
 
         logger.info(
             "[ORC-CE] context built: task=%s status=%s tokens=%d blocks=%d stages=%s",
-            task_id, status, total_tokens, len(blocks), stages,
+            task_id,
+            status,
+            total_tokens,
+            len(blocks),
+            stages,
         )
 
         return TaskContextResponse(
@@ -141,13 +142,15 @@ def _build_context_blocks(
     status = "complete"
 
     for ref in blueprint_refs:
-        blocks.append({
-            "type": "blueprint",
-            "content": f"[BLUEPRINT] {ref} — 蓝图引用 (task={task_type})",
-            "tokens": 50,
-            "source": ref,
-            "priority": "required",
-        })
+        blocks.append(
+            {
+                "type": "blueprint",
+                "content": f"[BLUEPRINT] {ref} — 蓝图引用 (task={task_type})",
+                "tokens": 50,
+                "source": ref,
+                "priority": "required",
+            }
+        )
         total_tokens += 50
 
     for fpath in file_context:
@@ -156,43 +159,51 @@ def _build_context_blocks(
             try:
                 content = resolved.read_text(encoding="utf-8")
                 tokens = len(content) // 3
-                blocks.append({
-                    "type": "code",
-                    "content": content[:5000],
-                    "tokens": min(tokens, 2000),
-                    "source": str(resolved),
-                    "priority": "recommended",
-                })
+                blocks.append(
+                    {
+                        "type": "code",
+                        "content": content[:5000],
+                        "tokens": min(tokens, 2000),
+                        "source": str(resolved),
+                        "priority": "recommended",
+                    }
+                )
                 total_tokens += min(tokens, 2000)
             except Exception:
                 status = "partial"
-                blocks.append({
+                blocks.append(
+                    {
+                        "type": "code",
+                        "content": "",
+                        "tokens": 0,
+                        "source": str(resolved),
+                        "priority": "optional",
+                    }
+                )
+        else:
+            status = "partial" if status == "complete" else status
+            blocks.append(
+                {
                     "type": "code",
                     "content": "",
                     "tokens": 0,
                     "source": str(resolved),
                     "priority": "optional",
-                })
-        else:
-            status = "partial" if status == "complete" else status
-            blocks.append({
-                "type": "code",
-                "content": "",
-                "tokens": 0,
-                "source": str(resolved),
-                "priority": "optional",
-            })
+                }
+            )
 
     try:
         conventions = _load_conventions(task_type)
         if conventions:
-            blocks.append({
-                "type": "convention",
-                "content": json.dumps(conventions, ensure_ascii=False),
-                "tokens": 100,
-                "source": "zephyr/shared/schema/conventions",
-                "priority": "required",
-            })
+            blocks.append(
+                {
+                    "type": "convention",
+                    "content": json.dumps(conventions, ensure_ascii=False),
+                    "tokens": 100,
+                    "source": "zephyr/shared/schema/conventions",
+                    "priority": "required",
+                }
+            )
             total_tokens += 100
     except Exception:
         pass
@@ -238,13 +249,18 @@ def _inject_log(task_id: str, blocks: list[dict[str, Any]], total_tokens: int, s
     sources = [b.get("source", "?") for b in blocks[:5]]
     logger.info(
         "[ORC-CE] inject: task=%s session=%s blocks=%d tokens=%d sources=%s",
-        task_id, session_id, len(blocks), total_tokens, sources,
+        task_id,
+        session_id,
+        len(blocks),
+        total_tokens,
+        sources,
     )
 
 
 def _load_conventions(task_type: str) -> dict[str, Any] | None:
     try:
         from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+
         return {"task_type": task_type, "config": str(BASE_CONFIG)[:200]}
     except Exception:
         return None

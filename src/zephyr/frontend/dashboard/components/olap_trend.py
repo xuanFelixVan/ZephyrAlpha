@@ -30,11 +30,13 @@ OLAPTrendComponent · OLAP 趋势（DuckDB 趋势图）
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class OLAPTrendData:
     task_progress: list[dict[str, Any]] = field(default_factory=list)
     compliance_rate: list[dict[str, Any]] = field(default_factory=list)
     knowledge_activation: list[dict[str, Any]] = field(default_factory=list)
+
 
 def fetch_olap_trends(olap_engine: Any = None, period: str = "day", limit: int = 30) -> OLAPTrendData:
     data = OLAPTrendData()
@@ -53,6 +55,7 @@ def fetch_olap_trends(olap_engine: Any = None, period: str = "day", limit: int =
     except Exception:
         pass
     return data
+
 
 def render_olap_trends(data: OLAPTrendData) -> dict[str, Any]:
     return {

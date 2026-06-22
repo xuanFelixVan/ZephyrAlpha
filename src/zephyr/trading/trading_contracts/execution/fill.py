@@ -2,29 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.execution.fill
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] ex_core; pf_core
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-005 ====
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
+
 
 @dataclass(frozen=True)
 class Fill:
@@ -41,5 +32,6 @@ class Fill:
     schema_version: str = "1.0"
     slippage: Decimal | None = None
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-005 ====

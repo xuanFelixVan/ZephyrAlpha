@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """金丝雀发布管理器（CT-CANARY）——权重分流+指标对比+自动回滚。"""
 
+
 class CanaryManager:
     def __init__(self):
         self._canary_weight: float = 0.1

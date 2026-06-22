@@ -12,9 +12,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -33,18 +32,18 @@ class ConsequenceDeclaration(BaseModel):
     t_min_to_recover: int
     escalation_chain: list[str] = Field(default_factory=list)
     recovery_procedure: str = ""
-    declared_at: Optional[str] = None
-    resolved_at: Optional[str] = None
+    declared_at: str | None = None
+    resolved_at: str | None = None
 
     @property
     def is_active(self) -> bool:
         return self.declared_at is not None and self.resolved_at is None
 
     def declare(self) -> None:
-        self.declared_at = datetime.now(timezone.utc).isoformat()
+        self.declared_at = datetime.now(UTC).isoformat()
 
     def resolve(self) -> None:
-        self.resolved_at = datetime.now(timezone.utc).isoformat()
+        self.resolved_at = datetime.now(UTC).isoformat()
 
 
 CONSEQUENCE_REGISTRY: dict[str, ConsequenceDeclaration] = {
@@ -87,11 +86,11 @@ CONSEQUENCE_REGISTRY: dict[str, ConsequenceDeclaration] = {
 }
 
 
-def get_consequence(con_id: str) -> Optional[ConsequenceDeclaration]:
+def get_consequence(con_id: str) -> ConsequenceDeclaration | None:
     return CONSEQUENCE_REGISTRY.get(con_id)
 
 
-def activate_consequence(con_id: str) -> Optional[ConsequenceDeclaration]:
+def activate_consequence(con_id: str) -> ConsequenceDeclaration | None:
     cd = CONSEQUENCE_REGISTRY.get(con_id)
     if cd is not None:
         cd.declare()

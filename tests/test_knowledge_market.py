@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_market.py
 
-import pytest
 
 from zephyr.ops.diagnosers.knowledge_market import KnowledgeMarket
 

@@ -26,7 +26,6 @@ Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检�
     drift_report = detect_drift(history)
 """
 
-
 from __future__ import annotations
 
 import json
@@ -35,7 +34,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.intelligence.model_profiling.profiler import ModelProfile, CaseResult
+from zephyr.intelligence.model_profiling.profiler import ModelProfile
 
 _log = logging.getLogger(__name__)
 
@@ -105,10 +104,7 @@ def detect_drift(
     prev_latency = prev.get("latency_p50_ms", 1.0)
     latency_pct = (latency_delta / prev_latency) if prev_latency > 0 else 0.0
 
-    drift_detected = (
-        abs(score_delta) > threshold_score_decline
-        or latency_pct > threshold_latency_increase_pct
-    )
+    drift_detected = abs(score_delta) > threshold_score_decline or latency_pct > threshold_latency_increase_pct
 
     category_drift: dict[str, float] = {}
     for cat in set(list(latest.get("category_scores", {}).keys())):
@@ -127,13 +123,11 @@ def detect_drift(
             "latency_delta_ms": round(latency_delta, 1),
             "latency_increase_pct": round(latency_pct * 100, 1),
             "throughput_delta_tok_per_sec": round(
-                latest.get("throughput_tokens_per_sec", 0.0)
-                - prev.get("throughput_tokens_per_sec", 0.0), 1
+                latest.get("throughput_tokens_per_sec", 0.0) - prev.get("throughput_tokens_per_sec", 0.0), 1
             ),
             "category_drift": category_drift,
             "hallucination_rate_delta": round(
-                latest.get("hallucination_rate", 0.0)
-                - prev.get("hallucination_rate", 0.0), 4
+                latest.get("hallucination_rate", 0.0) - prev.get("hallucination_rate", 0.0), 4
             ),
         },
     }
@@ -158,10 +152,7 @@ def to_model_benchmark_result(profile: ModelProfile) -> dict[str, Any]:
         "vs_previous_version": None,
         "recommendation": profile.recommendation,
         "regression_detected": profile.average_score < 0.3,
-        "regression_tasks": [
-            r.case_id for r in profile.case_results
-            if r.passed is False and r.error == ""
-        ],
+        "regression_tasks": [r.case_id for r in profile.case_results if r.passed is False and r.error == ""],
     }
 
 

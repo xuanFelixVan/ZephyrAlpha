@@ -47,14 +47,14 @@ class ActionInteractionDetector:
     min_co_occurrence: int = 3
 
     active_actions: dict[str, float] = field(default_factory=dict)
-    interaction_matrix: dict[str, dict[str, list[float]]] = field(default_factory=lambda: defaultdict(lambda: defaultdict(list)))
+    interaction_matrix: dict[str, dict[str, list[float]]] = field(
+        default_factory=lambda: defaultdict(lambda: defaultdict(list))
+    )
     interaction_alerts: list[dict] = field(default_factory=list)
 
     def record_action(self, action_id: str, action_type: str, outcome_score: float) -> None:
         now = time.time()
-        self.active_actions = {
-            k: v for k, v in self.active_actions.items() if now - v < self.interaction_window
-        }
+        self.active_actions = {k: v for k, v in self.active_actions.items() if now - v < self.interaction_window}
         self.active_actions[action_type] = now
 
         co_occurring = [a for a in self.active_actions if a != action_type]
@@ -76,14 +76,16 @@ class ActionInteractionDetector:
                     continue
                 mean_score = sum(scores) / len(scores)
                 if mean_score < -0.3:
-                    alerts.append({
-                        "action_a": action_a,
-                        "action_b": action_b,
-                        "co_occurrence_count": len(scores),
-                        "mean_outcome": round(mean_score, 3),
-                        "severity": "HIGH" if mean_score < -0.6 else "MEDIUM",
-                        "recommendation": "sequentialize_actions" if mean_score < -0.6 else "increase_cooldown",
-                    })
+                    alerts.append(
+                        {
+                            "action_a": action_a,
+                            "action_b": action_b,
+                            "co_occurrence_count": len(scores),
+                            "mean_outcome": round(mean_score, 3),
+                            "severity": "HIGH" if mean_score < -0.6 else "MEDIUM",
+                            "recommendation": "sequentialize_actions" if mean_score < -0.6 else "increase_cooldown",
+                        }
+                    )
 
         if alerts:
             self.interaction_alerts.extend(alerts)

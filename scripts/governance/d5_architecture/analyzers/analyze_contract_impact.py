@@ -35,7 +35,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -147,13 +147,13 @@ def main() -> None:
                 targets_str = ", ".join(info["targets"][:3])
                 if len(info["targets"]) > 3:
                     targets_str += "..."
-                print(f'| {cid} | {info['priority']} | {info['source']} | {targets_str} | {info['field_count']} |')
+                print(f"| {cid} | {info['priority']} | {info['source']} | {targets_str} | {info['field_count']} |")
         else:
             for cid, info in sorted(matrix.items()):
-                print(f'\n{cid} [{info['priority']}] {info['name']}')
-                print(f'  来源层: {info['source']}')
-                print(f'  目标层: {info['targets']}')
-                print(f'  字段数: {info['field_count']}')
+                print(f"\n{cid} [{info['priority']}] {info['name']}")
+                print(f"  来源层: {info['source']}")
+                print(f"  目标层: {info['targets']}")
+                print(f"  字段数: {info['field_count']}")
         return
     if not args.contract_id:
         parser.print_help()
@@ -162,10 +162,10 @@ def main() -> None:
     if contract is None:
         print(f"[Impact] 契约 {args.contract_id} 未找到")
         sys.exit(EXIT_FINDINGS)
-    print(f'\n契约: {args.contract_id} — {contract.get('name', '')}')
-    print(f'优先级: {contract.get('priority', '?')}')
-    print(f'来源层: {contract.get('source_layer', '?')}')
-    print(f'目标层: {contract.get('target_layers', [])}')
+    print(f"\n契约: {args.contract_id} — {contract.get('name', '')}")
+    print(f"优先级: {contract.get('priority', '?')}")
+    print(f"来源层: {contract.get('source_layer', '?')}")
+    print(f"目标层: {contract.get('target_layers', [])}")
     if args.field:
         print(f"\n分析字段 '{args.field}' 的影响范围:")
         consumers = find_field_consumers(data, args.contract_id, args.field)
@@ -175,7 +175,7 @@ def main() -> None:
         else:
             print("  (未找到直接引用该字段的代码——可能尚未实现)")
     else:
-        print(f'\n所有可能受影响的消费者 ({len(contract.get('target_layers', []))} 层):')
+        print(f"\n所有可能受影响的消费者 ({len(contract.get('target_layers', []))} 层):")
         for layer in contract.get("target_layers", []):
             print(f"  - {layer}")
         consumers = find_consumers_in_source(data, args.contract_id)

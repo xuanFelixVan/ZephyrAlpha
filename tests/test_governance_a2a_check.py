@@ -10,15 +10,17 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.a2a_check import (
-        verify_a2a_pair,
         ALLOWED_TALK_PAIRS,
+        verify_a2a_pair,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

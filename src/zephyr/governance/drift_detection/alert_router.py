@@ -26,11 +26,11 @@ module_id: MOD-INF-023
 告警路由与疲劳管理：四级路由 + 去重(6h) + 聚合(batch/causal) + 静默策略。
 对标 blueprint.md §5.4 / TASK-INF-0028 / D-023-13。
 """
+
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 
 
 @dataclass
@@ -45,7 +45,7 @@ class Alert:
     timestamp: str = ""
     ack_required: bool = False
     acked: bool = False
-    acked_at: Optional[str] = None
+    acked_at: str | None = None
 
 
 class AlertRouter:
@@ -57,7 +57,7 @@ class AlertRouter:
 
     def __init__(self) -> None:
         self._sent_alerts: dict[str, list[datetime]] = {}
-        self._focus_start: Optional[datetime] = None
+        self._focus_start: datetime | None = None
 
     def classify(self, module_id: str, drift_dimension: str, severity: str) -> str:
         if severity == "HIGH":
@@ -71,7 +71,7 @@ class AlertRouter:
             return "P2"
 
     def should_silence(self) -> bool:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         hour = now.hour
         weekday = now.weekday()
 
@@ -90,10 +90,10 @@ class AlertRouter:
         return True
 
     def start_focus_time(self) -> None:
-        self._focus_start = datetime.now(timezone.utc)
+        self._focus_start = datetime.now(UTC)
 
     def should_deduplicate(self, alert_key: str) -> bool:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         cutoff = now - timedelta(hours=self.DEDUP_WINDOW_HOURS)
         history = self._sent_alerts.get(alert_key, [])
         recent = [t for t in history if t > cutoff]
@@ -105,7 +105,7 @@ class AlertRouter:
         return False
 
     def record_alert(self, alert_key: str) -> None:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         self._sent_alerts.setdefault(alert_key, []).append(now)
 
     def route(self, alerts: list[Alert]) -> list[dict[str, object]]:

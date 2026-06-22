@@ -1,5 +1,16 @@
 rule_id: TRAE-006
 title: 防幻觉-结构追溯层
+version: 1.0.0
+layer: L0
+module_id: TRAE-006
+depends_on: []
+tags:
+- TRAE
+- code_structure
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - ANTI-HALL-01
 - ANTI-HALL-02
@@ -7,7 +18,6 @@ aliases:
 - ANTI-HALL-04
 - ANTI-HALL-05
 - ANTI-HALL-06
-layer: L0
 severity: critical
 scope: code_structure
 domain: TRAE
@@ -259,7 +269,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

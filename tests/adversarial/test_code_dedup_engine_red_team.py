@@ -11,70 +11,79 @@
 对标：test_task_system_red_team.py 模式
 """
 
-import sys
 import os
+import sys
 import tempfile
 import textwrap
-
-import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
 
 class TestStage00_ImportChain:
     def test_l01_import(self):
-        from zephyr.testing import code_dedup
         assert code_dedup_engine.__version__ == "0.15.0"
         assert code_dedup_engine.__module_id__ == "MOD-INF-017"
 
     def test_root_proxy_import(self):
-        from zephyr.governance import __version__ as v, __module_id__ as m
+        from zephyr.governance import __module_id__ as m
+        from zephyr.governance import __version__ as v
+
         assert v == "0.15.0"
         assert m == "MOD-INF-017"
 
     def test_scanner_via_proxy(self):
         from zephyr.governance import scanner
+
         assert hasattr(scanner, "Scanner")
 
     def test_scanner_direct(self):
-        from zephyr.governance.scanner import Scanner, ScanResult, DuplicateGroup
+        from zephyr.governance.scanner import Scanner
+
         s = Scanner()
         assert s is not None
 
     def test_monoculture_guard(self):
-        from zephyr.governance.monoculture_guard import MonocultureGuard, BlastRadiusScore
+        from zephyr.governance.monoculture_guard import MonocultureGuard
+
         g = MonocultureGuard()
         assert g is not None
 
     def test_self_scanner(self):
         from zephyr.governance.self_scanner import SelfScanner
+
         ss = SelfScanner()
         assert ss is not None
 
     def test_decision_auditor(self):
         from zephyr.governance.decision_auditor import DecisionAuditor
+
         da = DecisionAuditor()
         assert da is not None
 
     def test_cli_module(self):
-        from zephyr.governance import cli
         import inspect
+
+        from zephyr.governance import cli
+
         sig = inspect.signature(cli.main)
         assert len(sig.parameters) == 0, f"main() should take no args, got: {sig}"
 
     def test_integration_hub(self):
         from zephyr.governance.integration_hub import IntegrationHub
+
         hub = IntegrationHub()
         assert hub is not None
 
     def test_exit_codes(self):
         from zephyr.governance.exit_codes import ExitCode
+
         assert ExitCode.PASS is not None
 
 
 class TestStage01_ScannerAdversarial:
     def test_scan_file_detects_self(self):
         from zephyr.governance.scanner import Scanner
+
         scanner = Scanner()
         result = scanner.scan_file(__file__)
         assert result is not None
@@ -96,6 +105,7 @@ class TestStage01_ScannerAdversarial:
             f.write(code)
 
         from zephyr.governance.scanner import Scanner
+
         scanner = Scanner()
         scanner.scan_file(a)
         scanner.scan_file(b)
@@ -112,6 +122,7 @@ class TestStage01_ScannerAdversarial:
             f.write("class HttpServer:\n    def start(self): pass\n")
 
         from zephyr.governance.scanner import Scanner
+
         scanner = Scanner()
         scanner.scan_file(a)
         scanner.scan_file(b)
@@ -121,7 +132,8 @@ class TestStage01_ScannerAdversarial:
 
 class TestStage02_MonocultureAdversarial:
     def test_brs_computation(self):
-        from zephyr.governance.monoculture_guard import MonocultureGuard, BlastRadiusScore
+        from zephyr.governance.monoculture_guard import BlastRadiusScore, MonocultureGuard
+
         guard = MonocultureGuard()
         brs = guard.compute_brs(
             caller_count=12,
@@ -134,10 +146,13 @@ class TestStage02_MonocultureAdversarial:
 
     def test_should_not_block_trivial(self):
         from zephyr.governance.monoculture_guard import MonocultureGuard
+
         guard = MonocultureGuard()
         brs = guard.compute_brs(
-            caller_count=0, cross_layer_count=0,
-            on_critical_path=False, has_independent_unit_test=True,
+            caller_count=0,
+            cross_layer_count=0,
+            on_critical_path=False,
+            has_independent_unit_test=True,
         )
         should_block = guard.should_block_dedup(brs)
         assert not should_block, f"Should not block trivial function, but got block={should_block}"
@@ -146,6 +161,7 @@ class TestStage02_MonocultureAdversarial:
 class TestStage03_SelfScanIntegrity:
     def test_self_scan_no_crash(self):
         from zephyr.governance.self_scanner import SelfScanner
+
         scanner = SelfScanner()
         report = scanner.scan_self()
         assert report is not None
@@ -156,6 +172,7 @@ class TestStage03_SelfScanIntegrity:
 class TestStage04_DecisionAuditChain:
     def test_log_decision_chain(self):
         from zephyr.governance.decision_auditor import DecisionAuditor
+
         auditor = DecisionAuditor()
         auditor.log_decision(
             decision_id="RED-001",
@@ -172,9 +189,16 @@ class TestStage04_DecisionAuditChain:
 class TestStage05_TriageIntegration:
     def test_all_engine_modules_importable(self):
         modules = [
-            "scanner", "monoculture_guard", "self_scanner",
-            "decision_auditor", "exit_codes", "integration_hub",
-            "cli", "config", "function_discovery", "auto_test_generator",
+            "scanner",
+            "monoculture_guard",
+            "self_scanner",
+            "decision_auditor",
+            "exit_codes",
+            "integration_hub",
+            "cli",
+            "config",
+            "function_discovery",
+            "auto_test_generator",
         ]
         for name in modules:
             mod = __import__(f"zephyr.testing.code_dedup.{name}", fromlist=[name])

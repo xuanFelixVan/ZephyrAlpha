@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.fitness_functions
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
@@ -31,10 +21,12 @@ METRIC_KNOWLEDGE_ACTIVATION = "METRIC_KNOWLEDGE_ACTIVATION"
 METRIC_MODULE_COUPLING = "METRIC_MODULE_COUPLING"
 METRIC_TEST_COVERAGE = "METRIC_TEST_COVERAGE"
 
+
 class MetricStatus(Enum):
     PASS = "PASS"
     WARN = "WARN"
     FAIL = "FAIL"
+
 
 @dataclass
 class FitnessThresholds:
@@ -44,6 +36,7 @@ class FitnessThresholds:
     knowledge_activation_min: float = 0.30
     hallucination_interception_min: float = 0.70
     warn_margin: float = 0.05
+
 
 @dataclass
 class FitnessInputs:
@@ -57,6 +50,7 @@ class FitnessInputs:
     hallucination_total: int = 0
     hallucination_intercepted: int = 0
 
+
 @dataclass
 class MetricResult:
     metric_name: str
@@ -64,6 +58,7 @@ class MetricResult:
     threshold: float
     status: MetricStatus = MetricStatus.PASS
     message: str = ""
+
 
 @dataclass
 class FitnessReport:
@@ -78,12 +73,14 @@ class FitnessReport:
                 return m
         return None
 
+
 @dataclass
 class FitnessScores:
     anomaly_detection_precision: float = 0.0
     false_positive_rate: float = 0.0
     mtti_seconds: float = 0.0
     owner_override_rate: float = 0.0
+
 
 @dataclass
 class FitnessFunctionFramework:
@@ -212,11 +209,7 @@ class FitnessFunctionFramework:
         hallucination_total: int = 0,
         hallucination_intercepted: int = 0,
     ) -> MetricResult:
-        rate = (
-            hallucination_intercepted / hallucination_total
-            if hallucination_total > 0
-            else 0.0
-        )
+        rate = hallucination_intercepted / hallucination_total if hallucination_total > 0 else 0.0
         t = self.thresholds.hallucination_interception_min
         if hallucination_total == 0:
             return MetricResult(
@@ -252,14 +245,17 @@ class FitnessFunctionFramework:
 
         metrics = [
             self.measure_module_coupling(
-                edges_dummy, module_count=inputs.module_count,
+                edges_dummy,
+                module_count=inputs.module_count,
             ),
             self.measure_test_coverage(inputs.coverage_pct),
             self.measure_compliance_rate(
-                gate_total=inputs.gate_total, gate_passed=inputs.gate_passed,
+                gate_total=inputs.gate_total,
+                gate_passed=inputs.gate_passed,
             ),
             self.measure_knowledge_activation_rate(
-                ke_total=inputs.ke_total, ke_activated=inputs.ke_activated,
+                ke_total=inputs.ke_total,
+                ke_activated=inputs.ke_activated,
             ),
             self.measure_hallucination_interception_rate(
                 hallucination_total=inputs.hallucination_total,
@@ -318,6 +314,7 @@ class FitnessFunctionFramework:
             result.append(row)
         return result
 
+
 def from_gate_results(
     rows: list[dict[str, Any]] | None = None,
     *,
@@ -334,9 +331,7 @@ def from_gate_results(
 ) -> FitnessInputs:
     _rows = rows or []
     gt = gate_total if gate_total is not None else len(_rows)
-    gp = gate_passed if gate_passed is not None else sum(
-        1 for r in _rows if r.get("passed", False)
-    )
+    gp = gate_passed if gate_passed is not None else sum(1 for r in _rows if r.get("passed", False))
     return FitnessInputs(
         gate_total=gt,
         gate_passed=gp,
@@ -349,22 +344,29 @@ def from_gate_results(
         module_count=module_count or 1,
     )
 
+
 # --- legacy exports for backward compatibility ---
 
+
 def fitness_anomaly_detection_precision(
-    true_positives: int, false_positives: int,
+    true_positives: int,
+    false_positives: int,
 ) -> float:
     total = true_positives + false_positives
     return true_positives / total if total > 0 else 0.0
 
+
 def fitness_false_positive_rate(
-    false_positives: int, total_negatives: int,
+    false_positives: int,
+    total_negatives: int,
 ) -> float:
     total = false_positives + total_negatives
     return false_positives / total if total > 0 else 0.0
 
+
 def fitness_mtti_seconds(
-    detection_timestamps: list[float], anomaly_timestamps: list[float],
+    detection_timestamps: list[float],
+    anomaly_timestamps: list[float],
 ) -> float:
     if not detection_timestamps or not anomaly_timestamps:
         return float("inf")
@@ -375,7 +377,9 @@ def fitness_mtti_seconds(
             delays.append(min(later) - at)
     return sum(delays) / len(delays) if delays else float("inf")
 
+
 def fitness_owner_override_rate(
-    overrides: int, total_owner_notifications: int,
+    overrides: int,
+    total_owner_notifications: int,
 ) -> float:
     return overrides / total_owner_notifications if total_owner_notifications > 0 else 0.0

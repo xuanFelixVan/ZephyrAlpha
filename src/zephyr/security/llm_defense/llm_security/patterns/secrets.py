@@ -20,9 +20,10 @@
 # [TESTS]
 
 import re
-from typing import Any, Dict, List, Pattern, Tuple
+from re import Pattern
+from typing import Any
 
-_SECRET_PATTERNS: List[Dict[str, Any]] = [
+_SECRET_PATTERNS: list[dict[str, Any]] = [
     {
         "name": "openai_api_key",
         "pattern": r"sk-(proj-)?[a-zA-Z0-9]{20,}",
@@ -221,40 +222,44 @@ _SECRET_PATTERNS: List[Dict[str, Any]] = [
     },
 ]
 
-PRECOMPILED_SECRET_PATTERNS: List[Tuple[str, Pattern, str, str]] = []
+PRECOMPILED_SECRET_PATTERNS: list[tuple[str, Pattern, str, str]] = []
 for entry in _SECRET_PATTERNS:
     try:
-        PRECOMPILED_SECRET_PATTERNS.append((
-            entry["name"],
-            re.compile(entry["pattern"]),
-            entry.get("action", "flag"),
-            entry.get("severity", "low"),
-        ))
+        PRECOMPILED_SECRET_PATTERNS.append(
+            (
+                entry["name"],
+                re.compile(entry["pattern"]),
+                entry.get("action", "flag"),
+                entry.get("severity", "low"),
+            )
+        )
     except re.error:
         continue
 
 
-def scan_secrets(content: str) -> List[Dict[str, Any]]:
+def scan_secrets(content: str) -> list[dict[str, Any]]:
     hits = []
     for name, pattern, action, severity in PRECOMPILED_SECRET_PATTERNS:
         for match in pattern.finditer(content):
-            hits.append({
-                "name": name,
-                "match": match.group()[:120],
-                "action": action,
-                "severity": severity,
-                "start": match.start(),
-                "end": match.end(),
-            })
+            hits.append(
+                {
+                    "name": name,
+                    "match": match.group()[:120],
+                    "action": action,
+                    "severity": severity,
+                    "start": match.start(),
+                    "end": match.end(),
+                }
+            )
     return hits
 
 
 # Re-export from canonical location (zephyr.shared.security.secrets)
-from zephyr.shared.security.secrets import (  # noqa: F401,E402
-    SecretsError,
-    SecretProvider,
-    EnvSecretProvider,
-    DotEnvSecretProvider,
-    sanitize_secret,
+from zephyr.shared.security.secrets import (  # noqa: F401
     SECRET_INDICATOR_PATTERNS,
+    DotEnvSecretProvider,
+    EnvSecretProvider,
+    SecretProvider,
+    SecretsError,
+    sanitize_secret,
 )

@@ -6,11 +6,20 @@ from pathlib import Path
 
 SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 
-FIELD_NAMES = set([
-    "BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD",
-    "CONSUMERS", "STABILITY", "SAFETY", "AI_AUTONOMY",
-    "ERROR_CONTRACT", "TESTS",
-])
+FIELD_NAMES = set(
+    [
+        "BLUEPRINT",
+        "MODULE",
+        "INVARIANTS",
+        "MODIFY-GUARD",
+        "CONSUMERS",
+        "STABILITY",
+        "SAFETY",
+        "AI_AUTONOMY",
+        "ERROR_CONTRACT",
+        "TESTS",
+    ]
+)
 
 COMMENT_FIELD_RE = re.compile(r"^#\s*\[(\w[\w-]*)\]\s*(.*)")
 DOCSTRING_FIELD_RE = re.compile(r"^\[(\w[\w-]*)\]\s*(.*)")
@@ -24,7 +33,7 @@ files_fixed = 0
 def process_file(filepath: Path):
     global files_fixed, blueprints_fixed, docstrings_cleaned
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     original = content
@@ -51,15 +60,15 @@ def process_file(filepath: Path):
     if docstring_end < 0:
         return
 
-    ds_content = lines[docstring_start:docstring_end + 1]
+    ds_content = lines[docstring_start : docstring_end + 1]
     ds_fields = {}
 
     for dl in ds_content:
         stripped = dl.strip()
         if stripped.startswith(quote_char):
-            after_quote = stripped[len(quote_char):]
+            after_quote = stripped[len(quote_char) :]
             if after_quote.endswith(quote_char) and len(after_quote) > len(quote_char):
-                after_quote = after_quote[:-len(quote_char)]
+                after_quote = after_quote[: -len(quote_char)]
             m = DOCSTRING_FIELD_RE.match(after_quote.strip())
             if m and m.group(1) in FIELD_NAMES:
                 ds_fields[m.group(1)] = m.group(2).strip()
@@ -90,9 +99,9 @@ def process_file(filepath: Path):
             continue
         after_quote = stripped
         if after_quote.startswith(quote_char):
-            after_quote = after_quote[len(quote_char):]
+            after_quote = after_quote[len(quote_char) :]
         if after_quote.endswith(quote_char):
-            after_quote = after_quote[:-len(quote_char)]
+            after_quote = after_quote[: -len(quote_char)]
         after_quote = after_quote.strip()
         m = DOCSTRING_FIELD_RE.match(after_quote)
         if m and m.group(1) in FIELD_NAMES:
@@ -103,7 +112,7 @@ def process_file(filepath: Path):
 
     if not non_field_lines:
         before = lines[:docstring_start]
-        after = lines[docstring_end + 1:]
+        after = lines[docstring_end + 1 :]
         while before and before[-1].strip() == "":
             before.pop()
         while after and after[0].strip() == "":

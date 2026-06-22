@@ -1,12 +1,11 @@
 # [A_module] module_id=MOD-INT_fill | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-005 ====
-from dataclasses import dataclass, field
-
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -31,6 +30,7 @@ AI Prompt
     当你需要在 L06 中记录成交或在 L07 中分析成交时，MUST 使用 Fill 类型。 Fill 是不可变对象（frozen=true），一旦创建不得修改。 fill_id 是全局唯一 ID，order_id 关联 CTR-004 Order。 fill_price 和 filled_quantity 使用 Decimal 类型，禁止 float。 slippage 为可选项，计算方式为 (fill_price - decision_price) / decision_price，用于 TCA 分析。 佣金 commission 从券商回报中提取，保留券商原始精度。 每个 Order 可能对应多个 Fill（部分成交场景）。
 """
 
+
 @dataclass(frozen=True)
 class Fill:
     fill_id: str
@@ -43,185 +43,11 @@ class Fill:
     order_id: str
     strategy_id: str
     symbol: str
-    broker_fill_id: Optional[str] = None
+    broker_fill_id: str | None = None
     commission: Decimal = Decimal("0")
     schema_version: str = "1.0"
-    slippage: Optional[Decimal] = None
-    trace_context: Optional[TraceContext] = None
+    slippage: Decimal | None = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-005 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

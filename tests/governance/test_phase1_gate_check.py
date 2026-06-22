@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Phase 1 Gate 检查测试 — DOM-GOV-001 §7.2 门禁检查."""
+
 from __future__ import annotations
 
-import pytest
 from pathlib import Path
 
 GOVERNANCE_DIR = Path(__file__).resolve().parents[2] / "src" / "zephyr" / "governance"
@@ -26,8 +26,14 @@ PHASE1_REQUIRED_FILES = [
 ]
 
 EIGHT_MODULES = [
-    "agent-rbac", "agent-spec", "audit-trail", "rollback",
-    "escalation", "drift-detector", "budget-enforcer", "a2a",
+    "agent-rbac",
+    "agent-spec",
+    "audit-trail",
+    "rollback",
+    "escalation",
+    "drift-detector",
+    "budget-enforcer",
+    "a2a",
 ]
 
 
@@ -52,6 +58,10 @@ class TestPhase1Gate:
             assert f"G-CT-00{i}" in content, f"G-CT-00{i} not referenced in governance/__init__.py"
 
     def test_no_orphan_directories(self):
-        children = [d.name for d in GOVERNANCE_DIR.iterdir() if d.is_dir() and not d.name.startswith("_") and not d.name.startswith(".")]
+        children = [
+            d.name
+            for d in GOVERNANCE_DIR.iterdir()
+            if d.is_dir() and not d.name.startswith("_") and not d.name.startswith(".")
+        ]
         for child in children:
             assert child in EIGHT_MODULES or child == "__pycache__", f"Orphan directory: governance/{child}/"

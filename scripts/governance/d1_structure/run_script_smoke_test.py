@@ -23,9 +23,9 @@ __manifest__ = {
 # - 输出失败和异常脚本清单
 # exit codes: 0=pass, 1=findings, 2=error
 
+import py_compile
 import subprocess
 import sys
-import py_compile
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
@@ -40,11 +40,13 @@ ensure_utf8_stdout()
 _SELF_NAME = "d1_structure/run_script_smoke_test.py"
 import argparse
 
+
 def load_manifest() -> list[dict]:
     """读取 script_manifest.yaml 脚本列表。"""
     with open(MANIFEST_PATH, encoding="utf-8") as f:
         manifest = yaml.safe_load(f)
     return manifest.get("scripts", [])
+
 
 def run_script(script_name: str, timeout: int = 60) -> tuple[int, str, str]:
     """以 --warn-only 子进程执行注册脚本。"""
@@ -67,6 +69,7 @@ def run_script(script_name: str, timeout: int = 60) -> tuple[int, str, str]:
     except OSError as e:
         return (-2, "", f"OS 错误: {e}")
 
+
 def check_script_syntax(script_name: str) -> tuple[bool, str]:
     """py_compile 语法检查——治理脚本防损坏的第一道防线"""
     script_path = SCRIPTS_DIR / script_name
@@ -77,6 +80,7 @@ def check_script_syntax(script_name: str) -> tuple[bool, str]:
         return (True, "")
     except py_compile.PyCompileError as e:
         return (False, str(e))
+
 
 def main() -> None:
     """入口函数."""
@@ -126,6 +130,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings or errors or compile_errors else 0)
+
 
 if __name__ == "__main__":
     main()

@@ -31,10 +31,10 @@ RollbackLoopDetector — 回滚循环检测器。
 
 import json
 from collections import defaultdict
-from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class LoopAlert:
@@ -44,13 +44,14 @@ class LoopAlert:
     blocked_until: str
     escalated: bool
 
+
 @dataclass
 class LoopDetectorResult:
     loop_detected: bool
     alerts: list[LoopAlert]
 
-class RollbackLoopDetector:
 
+class RollbackLoopDetector:
     MAX_ROLLBACKS_PER_HOUR: int = 3
     MAX_ROLLBACKS_PER_DAY: int = 10
     BLOCK_DURATION_MINUTES: int = 60
@@ -62,7 +63,7 @@ class RollbackLoopDetector:
 
     def record(self, task_id: str, gate_id: str, success: bool = False) -> None:
         entry = {
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "task_id": task_id,
             "gate_id": gate_id,
             "success": success,
@@ -73,7 +74,7 @@ class RollbackLoopDetector:
 
     def check(self) -> LoopDetectorResult:
         alerts: list[LoopAlert] = []
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         counts_1h: dict[tuple[str, str], int] = defaultdict(int)
         counts_24h: dict[tuple[str, str], int] = defaultdict(int)
@@ -82,7 +83,7 @@ class RollbackLoopDetector:
             return LoopDetectorResult(loop_detected=False, alerts=[])
 
         try:
-            with open(self._log_path, "r", encoding="utf-8") as f:
+            with open(self._log_path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -106,13 +107,15 @@ class RollbackLoopDetector:
         for (tid, gid), count in counts_1h.items():
             if count > self.MAX_ROLLBACKS_PER_HOUR:
                 block_until = now + timedelta(minutes=self.BLOCK_DURATION_MINUTES)
-                alerts.append(LoopAlert(
-                    task_id=tid,
-                    gate_id=gid,
-                    count_in_hour=count,
-                    blocked_until=block_until.isoformat(),
-                    escalated=count > self.MAX_ROLLBACKS_PER_DAY,
-                ))
+                alerts.append(
+                    LoopAlert(
+                        task_id=tid,
+                        gate_id=gid,
+                        count_in_hour=count,
+                        blocked_until=block_until.isoformat(),
+                        escalated=count > self.MAX_ROLLBACKS_PER_DAY,
+                    )
+                )
 
         loop_detected = len(alerts) > 0
         return LoopDetectorResult(

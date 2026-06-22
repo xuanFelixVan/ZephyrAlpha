@@ -89,14 +89,16 @@ class TestRollbackResult:
 
     def test_needs_escalation_on_fail_validation(self):
         r = RollbackResult(
-            rollback_id="rb-004", target="f.py",
+            rollback_id="rb-004",
+            target="f.py",
             validation_result=ValidationResult.FAIL,
         )
         assert r.needs_escalation is True
 
     def test_needs_escalation_false_on_success(self):
         r = RollbackResult(
-            rollback_id="rb-005", target="f.py",
+            rollback_id="rb-005",
+            target="f.py",
             status=RollbackStatus.SUCCESS,
             validation_result=ValidationResult.PASS,
         )
@@ -104,7 +106,8 @@ class TestRollbackResult:
 
     def test_needs_escalation_partial_no_fail(self):
         r = RollbackResult(
-            rollback_id="rb-006", target="f.py",
+            rollback_id="rb-006",
+            target="f.py",
             status=RollbackStatus.PARTIAL,
             validation_result=ValidationResult.PENDING,
         )

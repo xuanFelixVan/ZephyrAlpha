@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 契约纯度校验（COND-32 — contracts/仅允许数据结构定义）
@@ -66,6 +67,7 @@ ALLOWED_DECORATORS = {
     "field_validator",
     "computed_field",
 }
+
 
 def check_contract_purity(filepath: Path) -> list[dict]:
     """检查合约纯度."""
@@ -127,6 +129,7 @@ def check_contract_purity(filepath: Path) -> list[dict]:
     return findings
     """检查合约纯度."""
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="契约纯度校验（COND-32）")
@@ -154,6 +157,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
+
 
 if __name__ == "__main__":
     main()

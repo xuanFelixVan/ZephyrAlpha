@@ -26,6 +26,7 @@ class DriftBridge:
         self._available = False
         try:
             from zephyr.governance.drift_detector import DriftDetector
+
             self._detector = DriftDetector()
             self._available = True
         except ImportError:
@@ -60,8 +61,9 @@ class DriftBridge:
     def is_available(self) -> bool:
         return self._available
 
+
 class BridgeResult:
-    def __init__(self, success=True, message='', data=None):
+    def __init__(self, success=True, message="", data=None):
         self.success = success
         self.message = message
         self.data = data or {}

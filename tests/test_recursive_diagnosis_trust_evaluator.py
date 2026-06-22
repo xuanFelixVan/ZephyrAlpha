@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_recursive_diagnosis_trust_evaluator.py
 
-import pytest
 
 from zephyr.ops.detectors.recursive_diagnosis_trust_evaluator import (
     ExternalSignal,

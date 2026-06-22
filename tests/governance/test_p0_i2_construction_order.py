@@ -6,11 +6,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """P0-I2 施工顺序验证 — DOM-GOV-001 §8.4."""
+
 from __future__ import annotations
 
 from pathlib import Path
-
-import pytest
 
 
 class TestP0I2ConstructionOrder:
@@ -19,13 +18,13 @@ class TestP0I2ConstructionOrder:
     def test_phase1_must_complete_before_phase2(self):
         phases = range(1, 5)
         for i in range(1, len(phases)):
-            assert phases[i] > phases[i - 1], f"Phase {phases[i]} should come after Phase {phases[i-1]}"
+            assert phases[i] > phases[i - 1], f"Phase {phases[i]} should come after Phase {phases[i - 1]}"
 
     def test_all_modules_have_contracts_interface(self):
-        from zephyr.security.access_control.contracts import RBACAuditBridge
         from zephyr.governance.audit_trail.contracts import AuditWriter
-        from zephyr.governance.contracts import RollbackHandler
-        from zephyr.governance.contracts import EscalationContracts
+        from zephyr.governance.contracts import EscalationContracts, RollbackHandler
+        from zephyr.security.access_control.contracts import RBACAuditBridge
+
         assert hasattr(RBACAuditBridge(), "check_and_log")
         assert hasattr(AuditWriter(), "write")
         assert hasattr(RollbackHandler(), "on_audit_anomaly")

@@ -30,9 +30,9 @@ CBAC 能力矩阵（Capability-Based Access Control Matrix — CT-CBAC-001）
 
 import hashlib
 import json
-from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class Capability(BaseModel):
     capability_id: str
@@ -41,6 +41,7 @@ class Capability(BaseModel):
     actions: list[str]
     auth_token: str = ""
     description: str = ""
+
 
 class CbacMatrix:
     def __init__(self):
@@ -98,7 +99,7 @@ class CbacMatrix:
             ).encode()
         ).hexdigest()
         if current != self._checksum:
-            return False, f"CBAC_CHECKSUM_MISMATCH: 矩阵已被篡改"
+            return False, "CBAC_CHECKSUM_MISMATCH: 矩阵已被篡改"
 
         for cap in self._capabilities.values():
             if cap.caller == caller and cap.target == target and action in cap.actions:
@@ -107,5 +108,6 @@ class CbacMatrix:
 
     def list_capabilities(self) -> list[Capability]:
         return list(self._capabilities.values())
+
 
 _classes_export = {"Capability": Capability, "CbacMatrix": CbacMatrix}

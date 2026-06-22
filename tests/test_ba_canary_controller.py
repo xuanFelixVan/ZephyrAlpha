@@ -12,19 +12,16 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.canary_controller import (
     CanaryComparison,
+    CanaryConfig,
     CanaryResult,
     CanaryRun,
-    CanaryConfig,
-    CONFIG,
     classify_event_id,
-    run_canary,
+    get_canary_history,
     promote_detector,
     rollback_detector,
-    get_canary_history,
+    run_canary,
 )
 
 

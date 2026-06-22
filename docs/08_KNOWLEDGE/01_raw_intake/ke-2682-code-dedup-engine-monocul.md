@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-MODULE-BLU-CODE-DEDUP-ENGINE-MONOCUL-002
 status: active
 title: 代码去重引擎（Code Dedup Engine）蓝图 — Monoculture免疫 · 原子修复 · 决策审计链 · 主动发现 · 漏报可视 · 微克隆感知
@@ -13,7 +13,7 @@ category: module_blueprint
 
 > **v0.10.0 关键升级**：解决1人+AI维护场景的终极信任问题——"我没看的时候引擎做了什么？" + "AI如何主动找到已有函数而不是等着被拦截？"
 > 补入 2 个第九次审计发现的运维级盲点：
-> ①**去重决策审计链**（Decision Audit Trail——DecisionFingerprint不可变追加日志 + 证据包 + 可回滚——"休假2周回来，知道引擎做了什么、为什么做、怎么撤销"——对标Google Tricorder/Meta Sapienz/Netflix Staged Rollout Decision Log）+ 
+> ①**去重决策审计链**（Decision Audit Trail——DecisionFingerprint不可变追加日志 + 证据包 + 可回滚——"休假2周回来，知道引擎做了什么、为什么做、怎么撤销"——对标Google Tricorder/Meta Sapienz/Netflix Staged Rollout Decision Log）+
 > ②**共享函数主动发现**（Active Function Discovery——签名驱动+语义驱动双通道——不等AI犯错，主动告知已有实现——从"被动拦截→主动赋能"——对标Sourcegraph Cody/Google Code Search）。
 
 > **v0.9.0 关键升级**：与专业机构（Google/Meta/JetBrains）及学术界（MSR 2024/ICPC 2023/Google Testing Culture）最后差距弥合。
@@ -36,9 +36,9 @@ category: module_blueprint
 
 > **v0.9.0 关键升级**：与专业机构（Google/Meta/JetBrains）+ 学术界（MSR 2024/ICPC 2023/Google Testing Culture）最后差距弥合。
 > 补入 4 个前七次审计全部遗漏的行业级盲点：
-> ①**微型克隆检测**（Micro-Clone Detection——1-2行高频模式n-gram频率计数——Vibe Coding场景下微克隆密度是传统项目的3.8倍——MSR 2024）+ 
-> ②**提取后自动测试生成**（Auto-Test-Gen Pipeline——类型驱动边界测试+执行轨迹金丝雀录制+调用方契约测试——对标Google Mozart/Test Certified——BRS缓解的落地机制）+ 
-> ③**API契约一致性验证**（Contract Consistency——存在性·行为正确性·契约一致性三维信任模型——对标Google Tricorder/Meta Pyre——防止docstring/类型注解/影子清单描述腐烂）+ 
+> ①**微型克隆检测**（Micro-Clone Detection——1-2行高频模式n-gram频率计数——Vibe Coding场景下微克隆密度是传统项目的3.8倍——MSR 2024）+
+> ②**提取后自动测试生成**（Auto-Test-Gen Pipeline——类型驱动边界测试+执行轨迹金丝雀录制+调用方契约测试——对标Google Mozart/Test Certified——BRS缓解的落地机制）+
+> ③**API契约一致性验证**（Contract Consistency——存在性·行为正确性·契约一致性三维信任模型——对标Google Tricorder/Meta Pyre——防止docstring/类型注解/影子清单描述腐烂）+
 > ④**跨边界克隆感知**（Cross-Boundary Clone Awareness——SRC_TEST_BRIDGE/SRC_SCRIPTS_DIVERGENCE/CROSS_LAYER_REDUNDANCY/VENDORED_REIMPLEMENTATION 四大边界差异化策略——对标Google Blaze/JetBrains IntelliJ 2025.1）。
 
 > **v0.6.0 核心升级**：从"安全提取+规模自适应+债务规划"升级为"自保护+防退化+全生命周期治理"。

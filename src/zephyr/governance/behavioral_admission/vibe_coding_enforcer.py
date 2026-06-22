@@ -1,36 +1,30 @@
 # [A_module] module_id=MOD-GOV_vibe_coding_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+from collections.abc import Callable
+
 # [BLUEPRINT] SRC-024 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.vibe_coding_enforcer
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from enum import Enum
 from functools import wraps
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
+
 
 class VibeRuleLevel(str, Enum):
     MUST = "MUST"
     SHOULD = "SHOULD"
     MAY = "MAY"
+
 
 VIBE_CODING_RULES: dict[str, tuple[VibeRuleLevel, str]] = {
     "lock_before_write": (VibeRuleLevel.MUST, "写入前必须 lock_files.py check → acquire"),
@@ -46,6 +40,7 @@ VIBE_CODING_RULES: dict[str, tuple[VibeRuleLevel, str]] = {
     "prompt_ab_test": (VibeRuleLevel.MAY, "不同 prompt 效果 A/B 测试"),
 }
 
+
 def enforce(rule_name: str, *, level: VibeRuleLevel | None = None) -> bool:
     entry = VIBE_CODING_RULES.get(rule_name)
     if entry is None:
@@ -56,18 +51,21 @@ def enforce(rule_name: str, *, level: VibeRuleLevel | None = None) -> bool:
     level_order = {VibeRuleLevel.MAY: 0, VibeRuleLevel.SHOULD: 1, VibeRuleLevel.MUST: 2}
     return level_order.get(level, 0) <= level_order.get(actual_level, 0)
 
+
 def enforce_all(checks: dict[str, VibeRuleLevel | None]) -> dict[str, bool]:
     return {name: enforce(name, level=level) for name, level in checks.items()}
 
+
 def must(rule_name: str) -> Callable[[F], F]:
     def decorator(func: F) -> F:
-        setattr(func, "_vibe_rule", rule_name)
-        setattr(func, "_vibe_level", VibeRuleLevel.MUST)
+        func._vibe_rule = rule_name
+        func._vibe_level = VibeRuleLevel.MUST
 
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             if not enforce(rule_name, level=VibeRuleLevel.MUST):
                 import logging
+
                 logging.getLogger(__name__).warning("Vibe Coding MUST violation: %s in %s", rule_name, func.__name__)
             return func(*args, **kwargs)
 
@@ -75,10 +73,11 @@ def must(rule_name: str) -> Callable[[F], F]:
 
     return decorator
 
+
 def should(rule_name: str) -> Callable[[F], F]:
     def decorator(func: F) -> F:
-        setattr(func, "_vibe_rule", rule_name)
-        setattr(func, "_vibe_level", VibeRuleLevel.SHOULD)
+        func._vibe_rule = rule_name
+        func._vibe_level = VibeRuleLevel.SHOULD
 
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -88,6 +87,7 @@ def should(rule_name: str) -> Callable[[F], F]:
         return wrapper  # type: ignore[return-value]
 
     return decorator
+
 
 def list_rules_by_level(level: VibeRuleLevel) -> dict[str, str]:
     return {name: desc for name, (lvl, desc) in VIBE_CODING_RULES.items() if lvl == level}

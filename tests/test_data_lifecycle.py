@@ -12,13 +12,11 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.data_lifecycle import (
-    DataStage,
     ARCHIVE_AFTER_YEARS,
-    PURGE_AFTER_YEARS,
     GDPR_PII_FIELDS,
+    PURGE_AFTER_YEARS,
+    DataStage,
     forget_pii,
 )
 

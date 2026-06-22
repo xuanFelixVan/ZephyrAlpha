@@ -49,6 +49,7 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
+
 from zephyr.governance.instrument import (
     ETF,
     FX,

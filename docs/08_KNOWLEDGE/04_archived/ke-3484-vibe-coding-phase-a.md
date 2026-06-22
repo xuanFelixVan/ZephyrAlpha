@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3484
 title: 5A.3 详细架构
 category: documentation

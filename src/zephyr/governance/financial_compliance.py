@@ -2,34 +2,25 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-034 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.financial_compliance
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class ComplianceLayer(str, Enum):
     L1_PREVENTATIVE = "L1_PREVENTATIVE"
     L2_DETECTIVE = "L2_DETECTIVE"
     L3_CORRECTIVE = "L3_CORRECTIVE"
+
 
 class Safeguard(str, Enum):
     S1_ACCESS_CONTROL = "S1_ACCESS_CONTROL"
@@ -40,17 +31,20 @@ class Safeguard(str, Enum):
     S6_MODEL_RISK = "S6_MODEL_RISK"
     S7_INSIDER_THREAT = "S7_INSIDER_THREAT"
 
+
 class Protocol(str, Enum):
     CLIENT_STATEMENT = "CLIENT_STATEMENT"
     MRM = "MRM"
     RECORD_KEEPING = "RECORD_KEEPING"
     INCIDENT_NOTIFICATION = "INCIDENT_NOTIFICATION"
 
+
 class ProtocolDef(BaseModel):
     name: Protocol
     description: str
     owner: str = "Owner"
-    review_date: Optional[str] = None
+    review_date: str | None = None
+
 
 SAFEGUARD_LABELS: dict[Safeguard, str] = {
     Safeguard.S1_ACCESS_CONTROL: "访问控制 — GateController + Role-Based Access",
@@ -89,11 +83,14 @@ PROTOCOL_DEFS: dict[Protocol, ProtocolDef] = {
     ),
 }
 
-def get_protocol(protocol: Protocol) -> Optional[ProtocolDef]:
+
+def get_protocol(protocol: Protocol) -> ProtocolDef | None:
     return PROTOCOL_DEFS.get(protocol)
+
 
 def get_safeguard(safeguard: Safeguard) -> str:
     return SAFEGUARD_LABELS.get(safeguard, str(safeguard))
+
 
 FRAMEWORK_DIMENSIONS: dict[str, int] = {
     "compliance_layers": 3,

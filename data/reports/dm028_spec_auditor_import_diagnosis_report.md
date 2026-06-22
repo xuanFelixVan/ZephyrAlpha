@@ -1,8 +1,8 @@
 # DM-028 诊断报告：spec_auditor.py 导入不存在的 zephyr.autonomy_core.agent_lifecycle.registry
 
-**任务卡**: DM-028  
-**诊断日期**: 2026-06-15  
-**诊断模型**: deepseek  
+**任务卡**: DM-028
+**诊断日期**: 2026-06-15
+**诊断模型**: deepseek
 **状态**: COMPLETED
 
 ---
@@ -22,7 +22,7 @@ from zephyr.autonomy_core.agent_lifecycle.registry import AgentCapability
 
 ### 1. 错误导入路径
 
-**文件**: `d:\ZephyrAlpha\src\zephyr\governance\audit_trail\spec_auditor.py`  
+**文件**: `d:\ZephyrAlpha\src\zephyr\governance\audit_trail\spec_auditor.py`
 **第37行**:
 ```python
 from zephyr.autonomy_core.agent_lifecycle.registry import AgentCapability
@@ -32,7 +32,7 @@ from zephyr.autonomy_core.agent_lifecycle.registry import AgentCapability
 
 ### 2. 正确替代路径
 
-**文件**: `d:\ZephyrAlpha\src\zephyr\orchestration\agent_lifecycle\registry.py`  
+**文件**: `d:\ZephyrAlpha\src\zephyr\orchestration\agent_lifecycle\registry.py`
 **第46行**:
 ```python
 class AgentCapability(BaseModel):
@@ -49,7 +49,7 @@ from zephyr.orchestration.agent_lifecycle.registry import AgentCapability
 
 ### 3. AgentCapability 兼容性分析
 
-**定义位置**: `zephyr.orchestration.agent_lifecycle.registry`  
+**定义位置**: `zephyr.orchestration.agent_lifecycle.registry`
 **类结构**:
 - `agent_id: str`
 - `capabilities: list[str] = []`

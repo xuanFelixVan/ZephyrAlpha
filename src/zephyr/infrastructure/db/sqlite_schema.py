@@ -26,14 +26,15 @@ Authoritative implementation: zephyr.data.persistence.sqlite_schema
 This module re-exports all public names for legacy import paths.
 New code should import from zephyr.governance.persistence.sqlite_schema directly.
 """
-from zephyr.governance.persistence.sqlite_schema import *  # noqa: F401,F403
+
+from zephyr.governance.persistence.sqlite_schema import *  # noqa: F403
 from zephyr.governance.persistence.sqlite_schema import (  # noqa: F401 — explicit re-exports for type checkers
     DB_PATH,
-    init_db,
+    SchemaManager,
     get_db_connection,
+    init_db,
+    migration_dry_run,
+    schema_version,
     table_names,
     view_names,
-    schema_version,
-    migration_dry_run,
-    SchemaManager,
 )

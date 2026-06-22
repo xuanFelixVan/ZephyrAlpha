@@ -30,6 +30,7 @@ R508: PlaceboActionDetector
 import math
 from dataclasses import dataclass, field
 
+
 @dataclass
 class PlaceboActionDetector:
     action_outcomes: dict[str, list[float]] = field(default_factory=dict)
@@ -103,9 +104,11 @@ class PlaceboActionDetector:
         u_a = rank_sum_a - a_count * (a_count + 1) / 2.0
         expected_u = a_count * b_count / 2.0
 
-        z = (u_a - expected_u) / math.sqrt(
-            a_count * b_count * (a_count + b_count + 1) / 12.0
-        ) if a_count * b_count > 0 else 0.0
+        z = (
+            (u_a - expected_u) / math.sqrt(a_count * b_count * (a_count + b_count + 1) / 12.0)
+            if a_count * b_count > 0
+            else 0.0
+        )
 
         p_value = 2.0 * (1.0 - 0.5 * (1.0 + math.erf(abs(z) / math.sqrt(2.0))))
 

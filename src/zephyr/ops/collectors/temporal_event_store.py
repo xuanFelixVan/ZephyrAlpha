@@ -27,6 +27,7 @@ Risk: R9 — Causal ordering lost; diagnosis uses wrong temporal context.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class TemporalEventStore:
     events: list[dict] = field(default_factory=list)

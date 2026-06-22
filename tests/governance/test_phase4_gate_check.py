@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 def test_gct_007_spec_to_rbac():
     from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+
     registry = SpecRegistry()
     cap = AgentCapability(
         agent_id="agent-spec-001",
@@ -30,6 +31,7 @@ def test_gct_007_spec_to_rbac():
 
 def test_gct_008_a2a_to_audit():
     from zephyr.infrastructure.a2a_protocol import A2AAuditor
+
     auditor = A2AAuditor()
     record = auditor.log_message(
         from_agent="agent-a",
@@ -43,8 +45,9 @@ def test_gct_008_a2a_to_audit():
 
 def test_phase4_gate_all_contracts_exist():
     import importlib
+
     modules = [
-        "zephyr.orchestration.agent_lifecycle.registry",
+        "zephyr.autonomy_core.registry",
         "zephyr.infrastructure.a2a_protocol.legacy_auditor",
         "zephyr.infrastructure.rollback.auditor",
         "zephyr.infrastructure.rollback.budget_tracker",

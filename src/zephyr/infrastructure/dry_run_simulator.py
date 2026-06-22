@@ -33,7 +33,6 @@ from __future__ import annotations
 
 import json
 import os
-import tempfile
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -49,7 +48,11 @@ __all__ = [
 
 
 _RISK_ORDER: dict[str, int] = {
-    "none": 0, "low": 1, "medium": 2, "high": 3, "critical": 4,
+    "none": 0,
+    "low": 1,
+    "medium": 2,
+    "high": 3,
+    "critical": 4,
 }
 
 
@@ -97,14 +100,27 @@ class DryRunSimulator:
     """
 
     _DANGEROUS_PATTERNS: list[str] = [
-        "rm -rf", "del /f", "DROP TABLE", "DROP DATABASE",
-        "format", "FORMAT C:", "shutdown", "restart",
-        "chmod 777", "icacls /grant Everyone:F",
+        "rm -rf",
+        "del /f",
+        "DROP TABLE",
+        "DROP DATABASE",
+        "format",
+        "FORMAT C:",
+        "shutdown",
+        "restart",
+        "chmod 777",
+        "icacls /grant Everyone:F",
     ]
 
     _SENSITIVE_PATHS: list[str] = [
-        "C:\\Windows\\", "C:\\Program Files\\", "/etc/", "/usr/",
-        ".git\\", ".git/", "node_modules\\", "node_modules/",
+        "C:\\Windows\\",
+        "C:\\Program Files\\",
+        "/etc/",
+        "/usr/",
+        ".git\\",
+        ".git/",
+        "node_modules\\",
+        "node_modules/",
     ]
 
     def __init__(self, sandbox_root: str | Path = "data/dry_runs/"):

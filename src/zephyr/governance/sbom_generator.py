@@ -11,12 +11,11 @@ from __future__ import annotations
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
-
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
+
 
 class LicenseType(str, Enum):
     MIT = "MIT"
@@ -25,12 +24,14 @@ class LicenseType(str, Enum):
     PSF = "PSF"
     UNKNOWN = "UNKNOWN"
 
+
 ALLOWED_LICENSES: set[LicenseType] = {
     LicenseType.MIT,
     LicenseType.APACHE2,
     LicenseType.BSD,
     LicenseType.PSF,
 }
+
 
 class DepInfo(BaseModel):
     name: str
@@ -39,6 +40,7 @@ class DepInfo(BaseModel):
     depth: int = 0
     cvss_score: float = 0.0
     cve_ids: list[str] = Field(default_factory=list)
+
 
 class SBOMReport(BaseModel):
     format: str = "CycloneDX 1.4"
@@ -60,9 +62,10 @@ class SBOMReport(BaseModel):
     def critical_cves(self) -> list[DepInfo]:
         return [d for d in self.dependencies if d.cvss_score >= 7.0]
 
+
 def generate_sbom(deps: list[DepInfo]) -> SBOMReport:
     report = SBOMReport(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         dependencies=deps,
     )
     for d in deps:

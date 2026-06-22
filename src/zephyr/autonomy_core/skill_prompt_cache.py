@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_prompt_cache | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_prompt_cache
+# [MODULE] zephyr.autonomy_core.skill_prompt_cache
 
 # [INVARIANTS] none
 
@@ -28,18 +28,17 @@ Version: 0.3.0
 Skill Prompt 缓存——减少重复 LLM 调用，带 TTL 过期.
 """
 
-
 from __future__ import annotations
 
 import hashlib
 import time
-from typing import Dict, Any, Optional, Tuple
+from typing import Any
 
 
 class SkillPromptCache:
     """Skill Prompt 缓存——减少重复 LLM 调用."""
 
-    _cache: Dict[str, Tuple[str, float]] = {}
+    _cache: dict[str, tuple[str, float]] = {}
     _DEFAULT_TTL_S = 3600.0
     _MAX_SIZE = 200
 
@@ -49,7 +48,7 @@ class SkillPromptCache:
         return f"{skill_id}:{digest}"
 
     @classmethod
-    def get(cls, skill_id: str, input_hash: str) -> Optional[str]:
+    def get(cls, skill_id: str, input_hash: str) -> str | None:
         key = f"{skill_id}:{input_hash}"
         entry = cls._cache.get(key)
         if entry is None:
@@ -61,8 +60,7 @@ class SkillPromptCache:
         return response
 
     @classmethod
-    def set(cls, skill_id: str, input_hash: str, response: str,
-            ttl_s: Optional[float] = None) -> None:
+    def set(cls, skill_id: str, input_hash: str, response: str, ttl_s: float | None = None) -> None:
         key = f"{skill_id}:{input_hash}"
         expiry = time.time() + (ttl_s or cls._DEFAULT_TTL_S)
         cls._cache[key] = (response, expiry)
@@ -84,7 +82,7 @@ class SkillPromptCache:
         return len(expired)
 
     @classmethod
-    def stats(cls) -> Dict[str, Any]:
+    def stats(cls) -> dict[str, Any]:
         cls.purge_expired()
         return {"total_entries": len(cls._cache), "max_size": cls._MAX_SIZE}
 

@@ -2,31 +2,22 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.policy_sandbox
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import copy
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
+
 
 @dataclass
 class SandboxTrial:
@@ -37,6 +28,7 @@ class SandboxTrial:
     trial_id: str
     timestamp: float = field(default_factory=time.time)
 
+
 class PolicySandbox:
     def __init__(self, policy_path: str = "config/budget_policy.yaml"):
         self._policy_path = Path(policy_path)
@@ -46,7 +38,7 @@ class PolicySandbox:
         self._trial_counter: int = 0
 
     def load_current(self) -> dict:
-        with open(self._policy_path, "r", encoding="utf-8") as f:
+        with open(self._policy_path, encoding="utf-8") as f:
             return yaml.safe_load(f)
 
     def start_sandbox(self) -> None:

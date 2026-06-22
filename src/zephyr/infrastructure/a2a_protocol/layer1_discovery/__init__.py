@@ -6,21 +6,25 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """Layer 1: 发现+身份 — Agent Card 模型, AGENTS.md 注册, JWT 身份验证"""
 
-from zephyr.shared.protocols.a2a.a2a_registry import AgentCard, AgentCapability  # noqa: F401
-from .a2a_registry import A2ARegistry  # noqa: F401
-from .identity_verifier import IdentityVerifier  # noqa: F401
-from . import a2a_registry, agent_card, identity_verifier  # noqa: F401
+from zephyr.shared.protocols.a2a.a2a_registry import AgentCapability, AgentCard
+
+from . import a2a_registry, agent_card, identity_verifier
+from .a2a_registry import A2ARegistry
+from .identity_verifier import IdentityVerifier
 
 __all__ = [
-    'AgentCard', 'AgentCapability',
-    'A2ARegistry',
-    'IdentityVerifier',
-    'a2a_registry', 'agent_card', 'identity_verifier',
+    "A2ARegistry",
+    "AgentCapability",
+    "AgentCard",
+    "IdentityVerifier",
+    "a2a_registry",
+    "agent_card",
+    "identity_verifier",
 ]
 
 __version__ = "0.10.0"

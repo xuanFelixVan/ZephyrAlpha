@@ -16,8 +16,6 @@ import json
 import os
 import uuid
 
-import pytest
-
 from zephyr.governance.rule_enforcement.integration_test_runner import (
     IntegrationTestRunner,
     SelfTestResult,
@@ -97,7 +95,7 @@ class TestIntegrationTestRunner:
         result = runner.pip_check()
         result_file = os.path.join(runner._result_dir, f"{result.test_id}_test.json")
         assert os.path.exists(result_file)
-        with open(result_file, "r", encoding="utf-8") as fh:
+        with open(result_file, encoding="utf-8") as fh:
             data = json.load(fh)
         assert "test_id" in data
         assert "passed" in data

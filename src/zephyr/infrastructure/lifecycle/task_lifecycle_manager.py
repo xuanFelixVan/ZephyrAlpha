@@ -33,14 +33,13 @@ Task Lifecycle Manager — G0-G7 任务生命周期门禁。
     - 与 task_completion_gate.py 互补（委托层）
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 class TaskStatus(str, Enum):
@@ -69,7 +68,7 @@ class GateResult:
     gate_id: GateID
     passed: bool
     details: str
-    timestamp_utc: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp_utc: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -83,7 +82,6 @@ class LifecycleState:
 
 
 class TaskLifecycleManager:
-
     VALID_TRANSITIONS: dict[TaskStatus, list[TaskStatus]] = {
         TaskStatus.CREATED: [TaskStatus.LOCKED, TaskStatus.FAILED],
         TaskStatus.LOCKED: [TaskStatus.ASSIGNED, TaskStatus.CREATED, TaskStatus.FAILED],
@@ -106,8 +104,8 @@ class TaskLifecycleManager:
                 status=TaskStatus.CREATED,
                 completed_gates=[],
                 blocked_gates={},
-                transition_history=[f"{datetime.now(timezone.utc).isoformat()}: INITIALIZED → CREATED"],
-                last_updated=datetime.now(timezone.utc).isoformat(),
+                transition_history=[f"{datetime.now(UTC).isoformat()}: INITIALIZED → CREATED"],
+                last_updated=datetime.now(UTC).isoformat(),
             )
             self._states[task_id] = state
         return state
@@ -123,10 +121,8 @@ class TaskLifecycleManager:
 
         old_status = state.status
         state.status = to_status
-        state.last_updated = datetime.now(timezone.utc).isoformat()
-        state.transition_history.append(
-            f"{state.last_updated}: {old_status.value} → {to_status.value}"
-        )
+        state.last_updated = datetime.now(UTC).isoformat()
+        state.transition_history.append(f"{state.last_updated}: {old_status.value} → {to_status.value}")
 
         return True, f"Transition succeeded: {old_status.value} → {to_status.value}"
 
@@ -138,7 +134,7 @@ class TaskLifecycleManager:
             state.completed_gates.append(gate_id)
         if gate_id in state.blocked_gates:
             del state.blocked_gates[gate_id]
-        state.last_updated = datetime.now(timezone.utc).isoformat()
+        state.last_updated = datetime.now(UTC).isoformat()
 
         return result
 
@@ -146,7 +142,7 @@ class TaskLifecycleManager:
         state = self.initialize(task_id)
 
         state.blocked_gates[gate_id] = reason
-        state.last_updated = datetime.now(timezone.utc).isoformat()
+        state.last_updated = datetime.now(UTC).isoformat()
 
         return GateResult(gate_id=gate_id, passed=False, details=reason)
 

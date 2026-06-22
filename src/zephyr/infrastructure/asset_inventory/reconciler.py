@@ -27,16 +27,14 @@ from __future__ import annotations
 （孤儿/幽灵/漂移），产出 reconciliation-report.md。
 """
 
-import json
 import logging
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Optional
 
 from zephyr.infrastructure.asset_inventory.models import (
-    ClassifiedAsset,
     ClassificationResult,
+    ClassifiedAsset,
     DriftEntry,
     DriftType,
     GhostEntry,
@@ -49,6 +47,7 @@ from zephyr.infrastructure.asset_inventory.models import (
 
 logger = logging.getLogger(__name__)
 
+
 class Reconciler:
     """对账引擎——对比磁盘实际 vs 注册表记录（蓝图 §3.4）。"""
 
@@ -56,7 +55,7 @@ class Reconciler:
         self,
         orphan_tolerance_hours: int = 24,
         ghost_max_age_days: int = 30,
-        root: Optional[Path] = None,
+        root: Path | None = None,
     ) -> None:
         self.orphan_tolerance_hours = orphan_tolerance_hours
         self.ghost_max_age_days = ghost_max_age_days
@@ -66,12 +65,12 @@ class Reconciler:
         self,
         scan_result: ScanResult,
         classified: ClassificationResult,
-        existing_index: Optional[UnifiedAssetIndex] = None,
+        existing_index: UnifiedAssetIndex | None = None,
         *,
         dry_run: bool = True,
     ) -> ReconciliationReport:
         report_id = _generate_report_id()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         logger.info("开始对账: %s (dry_run=%s)", report_id, dry_run)
 
         scan_sha: dict[str, RawFileEntry] = {e.relative_path: e for e in scan_result.entries}
@@ -93,22 +92,25 @@ class Reconciler:
 
         for path, entry in scan_sha.items():
             cls = class_by_path.get(path)
-            mtime_dt = entry.mtime_utc.replace(tzinfo=timezone.utc)
+            mtime_dt = entry.mtime_utc.replace(tzinfo=UTC)
 
             if path not in index_assets:
                 if mtime_dt.tzinfo is None:
-                    mtime_dt = mtime_dt.replace(tzinfo=timezone.utc)
+                    mtime_dt = mtime_dt.replace(tzinfo=UTC)
                 delta = now - mtime_dt
                 if delta < timedelta(hours=self.orphan_tolerance_hours):
                     matched += 1
                     continue
-                orphans.append(cls or ClassifiedAsset(
-                    relative_path=path,
-                    asset_type=cls.asset_type if cls else AssetType.UNKNOWN,
-                    size_bytes=entry.size_bytes,
-                    mtime_utc=entry.mtime_utc,
-                    sha256=entry.sha256,
-                ))
+                orphans.append(
+                    cls
+                    or ClassifiedAsset(
+                        relative_path=path,
+                        asset_type=cls.asset_type if cls else AssetType.UNKNOWN,
+                        size_bytes=entry.size_bytes,
+                        mtime_utc=entry.mtime_utc,
+                        sha256=entry.sha256,
+                    )
+                )
                 continue
 
             idx = index_assets[path]
@@ -119,16 +121,18 @@ class Reconciler:
                 drift_types.append(DriftType.SIZE)
 
             if drift_types:
-                drifts.append(DriftEntry(
-                    relative_path=path,
-                    registered_sha256=idx.sha256,
-                    disk_sha256=entry.sha256,
-                    drift_types=drift_types,
-                    registered_size=idx.size_bytes,
-                    disk_size=entry.size_bytes,
-                    registered_mtime=idx.mtime_utc,
-                    disk_mtime=entry.mtime_utc,
-                ))
+                drifts.append(
+                    DriftEntry(
+                        relative_path=path,
+                        registered_sha256=idx.sha256,
+                        disk_sha256=entry.sha256,
+                        drift_types=drift_types,
+                        registered_size=idx.size_bytes,
+                        disk_size=entry.size_bytes,
+                        registered_mtime=idx.mtime_utc,
+                        disk_mtime=entry.mtime_utc,
+                    )
+                )
             else:
                 matched += 1
 
@@ -138,16 +142,18 @@ class Reconciler:
                 ghost_days = 0.0
                 if existing_index and existing_index.last_reconciliation_at:
                     ghost_days = (now - existing_index.last_reconciliation_at).total_seconds() / 86400.0
-                ghosts.append(GhostEntry(
-                    registry_id="unified-asset-index",
-                    registry_path=path,
-                    registered_type=idx.asset_type if hasattr(idx, 'asset_type') else AssetType.UNKNOWN,
-                    cached_sha256=idx.sha256 if hasattr(idx, 'sha256') else None,
-                    last_known_mtime=idx.mtime_utc if hasattr(idx, 'mtime_utc') else None,
-                    ghost_since=now,
-                    days_ghost=round(ghost_days, 1),
-                    candidates_for_cleanup=ghost_days > self.ghost_max_age_days,
-                ))
+                ghosts.append(
+                    GhostEntry(
+                        registry_id="unified-asset-index",
+                        registry_path=path,
+                        registered_type=idx.asset_type if hasattr(idx, "asset_type") else AssetType.UNKNOWN,
+                        cached_sha256=idx.sha256 if hasattr(idx, "sha256") else None,
+                        last_known_mtime=idx.mtime_utc if hasattr(idx, "mtime_utc") else None,
+                        ghost_since=now,
+                        days_ghost=round(ghost_days, 1),
+                        candidates_for_cleanup=ghost_days > self.ghost_max_age_days,
+                    )
+                )
 
         total = matched + len(orphans) + len(ghosts) + len(drifts)
         orphan_before = (len(orphans) / total * 100) if total else 0.0
@@ -160,12 +166,14 @@ class Reconciler:
         for o in orphans[:]:
             if o.sha256 in ghost_by_sha:
                 gh = ghost_by_sha[o.sha256]
-                renames.append(RenameEvent(
-                    old_path=gh.registry_path,
-                    new_path=o.relative_path,
-                    sha256=o.sha256,
-                    confidence=0.95,
-                ))
+                renames.append(
+                    RenameEvent(
+                        old_path=gh.registry_path,
+                        new_path=o.relative_path,
+                        sha256=o.sha256,
+                        confidence=0.95,
+                    )
+                )
                 orphans.remove(o)
                 ghosts.remove(gh)
 
@@ -195,7 +203,7 @@ class Reconciler:
             summary_text=summary,
         )
 
-    def save(self, report: ReconciliationReport, output_path: Optional[Path] = None) -> Path:
+    def save(self, report: ReconciliationReport, output_path: Path | None = None) -> Path:
         reports_dir = self.root / "data" / "reports"
         reports_dir.mkdir(parents=True, exist_ok=True)
         target = output_path or (reports_dir / "reconciliation-report.md")
@@ -218,10 +226,12 @@ class Reconciler:
         logger.info("对账报告已写入: %s", target)
         return Path(target)
 
+
 def _generate_report_id() -> str:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     seq = str(now.timestamp()).replace(".", "")[-3:]
     return f"RECON-{now.strftime('%Y%m%d')}-{seq}"
+
 
 def _format_report_md(report: ReconciliationReport) -> list[str]:
     lines: list[str] = []
@@ -232,8 +242,8 @@ def _format_report_md(report: ReconciliationReport) -> list[str]:
     lines.append("")
 
     lines.append("## 总览")
-    lines.append(f"| 项目 | 数量 |")
-    lines.append(f"|------|------|")
+    lines.append("| 项目 | 数量 |")
+    lines.append("|------|------|")
     lines.append(f"| 一致 (MATCHED) | {report.matched} |")
     lines.append(f"| 孤儿 (ORPHAN) | {len(report.orphans)} |")
     lines.append(f"| 幽灵 (GHOST) | {len(report.ghosts)} |")
@@ -275,8 +285,10 @@ def _format_report_md(report: ReconciliationReport) -> list[str]:
 
     return lines
 
+
 def main() -> None:
     Reconciler().main()
+
 
 if __name__ == "__main__":
     main()

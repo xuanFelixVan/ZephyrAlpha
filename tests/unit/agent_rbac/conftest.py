@@ -42,8 +42,14 @@ _ensure_stub("zephyr.integration.shared_08.contracts", _ZEPHYR / "shared" / "con
 _ensure_stub("zephyr.integration.shared_08.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
 _ensure_stub("zephyr.security.access_control", _ZEPHYR / "agent-rbac")
 
-_load("zephyr.integration.shared_08.contracts.identity.agent_identity", _ZEPHYR / "shared" / "contracts" / "identity" / "agent_identity.py")
-_load("zephyr.integration.shared_08.contracts.identity.permission", _ZEPHYR / "shared" / "contracts" / "identity" / "permission.py")
+_load(
+    "zephyr.integration.shared_08.contracts.identity.agent_identity",
+    _ZEPHYR / "shared" / "contracts" / "identity" / "agent_identity.py",
+)
+_load(
+    "zephyr.integration.shared_08.contracts.identity.permission",
+    _ZEPHYR / "shared" / "contracts" / "identity" / "permission.py",
+)
 _load("zephyr.security.access_control.immutable_core", _ZEPHYR / "agent-rbac" / "immutable_core.py")
 _load("zephyr.security.access_control.exceptions", _ZEPHYR / "agent-rbac" / "exceptions.py")
 _load("zephyr.security.access_control.kill_switch", _ZEPHYR / "agent-rbac" / "kill_switch.py")

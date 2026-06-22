@@ -37,7 +37,6 @@ Data contract ( section 4.3):
   IntentResult with primary_domain, confidence, source_stage, etc.
 """
 
-
 from __future__ import annotations
 
 import re
@@ -50,11 +49,11 @@ from pydantic import BaseModel, Field
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
-    "IntentDomain",
-    "IntentResult",
-    "IntentKeywordMapper",
-    "StageLiteral",
     "MAP",
+    "IntentDomain",
+    "IntentKeywordMapper",
+    "IntentResult",
+    "StageLiteral",
     "map_intent_to_keywords",
 ]
 
@@ -302,7 +301,7 @@ _WORD_BOUNDARY_CACHE: dict[str, re.Pattern[str]] = {}
 
 
 class IntentDomain(str, Enum):
-    """意图识别域（D0-D9 + UNKNOWN，与 metadata-registry.md §9.2 domain 枚举对齐）。"""
+    """意图识别域（D0-D9 + UNKNOWN，与 metadata_registry.yaml §9.2 domain 枚举对齐）。"""
 
     D0 = "D0"
     D1 = "D1"
@@ -638,8 +637,5 @@ def map_intent_to_keywords(intent: str) -> list[str]:
     """
     keywords = MAP.get(intent)
     if not keywords:
-        raise ValueError(
-            f"BUILD-C01: 未知意图类型 '{intent}'，"
-            f"请补充 intent→keyword 映射到 intent_keyword_mapper.py"
-        )
+        raise ValueError(f"BUILD-C01: 未知意图类型 '{intent}'，请补充 intent→keyword 映射到 intent_keyword_mapper.py")
     return keywords

@@ -17,10 +17,9 @@ FAISS + SQLite WAL 端到端性能基准测试
   6. 健康检查延迟
   7. 大规模写入 + 搜索压测
 """
+
 from __future__ import annotations
 
-import json
-import os
 import shutil
 import sys
 import time
@@ -98,10 +97,12 @@ def measure(name: str, func, iterations: int = 1) -> float:
         min_t = min(times)
         max_t = max(times)
         p50 = sorted(times)[len(times) // 2]
-        print(f"  {name:<40s}: avg={format_latency(avg):>10s}  "
-              f"min={format_latency(min_t):>10s}  "
-              f"p50={format_latency(p50):>10s}  "
-              f"max={format_latency(max_t):>10s}")
+        print(
+            f"  {name:<40s}: avg={format_latency(avg):>10s}  "
+            f"min={format_latency(min_t):>10s}  "
+            f"p50={format_latency(p50):>10s}  "
+            f"max={format_latency(max_t):>10s}"
+        )
     else:
         print(f"  {name:<40s}: {format_latency(avg):>10s}")
     return avg
@@ -116,12 +117,13 @@ def main():
         shutil.rmtree(TEST_DB_DIR)
     TEST_DB_DIR.mkdir(parents=True, exist_ok=True)
 
+    import faiss
+
     from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
     from zephyr.governance.vector_memory.sqlite_metadata_store import SQLiteMetadataStore
 
-    import faiss
     print(f"\n  FAISS GPU: {faiss.get_num_gpus()}")
-    print(f"  FAISS AVX2: OK\n")
+    print("  FAISS AVX2: OK\n")
 
     faiss_cm = FAISSCollectionManager(persist_dir=str(TEST_DB_DIR))
     meta_store = SQLiteMetadataStore(TEST_DB_DIR / "bench_meta.db")
@@ -130,15 +132,15 @@ def main():
     # 1. Collection 初始化
     # =========================================================================
     print("[1] Collection 初始化 (8 collections)...")
-    measure("init 8 collections (first)", lambda: [
-        faiss_cm.create_collection(name, dim=d, strict=False)
-        for name, d in COLLECTION_DIMS.items()
-    ])
+    measure(
+        "init 8 collections (first)",
+        lambda: [faiss_cm.create_collection(name, dim=d, strict=False) for name, d in COLLECTION_DIMS.items()],
+    )
 
-    measure("re-init 8 collections (cached)", lambda: [
-        faiss_cm.create_collection(name, dim=d, strict=False)
-        for name, d in COLLECTION_DIMS.items()
-    ])
+    measure(
+        "re-init 8 collections (cached)",
+        lambda: [faiss_cm.create_collection(name, dim=d, strict=False) for name, d in COLLECTION_DIMS.items()],
+    )
 
     # =========================================================================
     # 2. 单条写入
@@ -154,8 +156,10 @@ def main():
             faiss_cm.add_vector(name, vec)
             faiss_id = meta_store.get_faiss_id(name)
             meta_store.add_document(
-                vector_id=vid, collection=name,
-                content=content, metadata=metadata,
+                vector_id=vid,
+                collection=name,
+                content=content,
+                metadata=metadata,
                 provenance={"origin": "benchmark"},
             )
             meta_store.map_id(vid, faiss_id, name)
@@ -180,8 +184,10 @@ def main():
         faiss_cm.add_vector("knowledge", vec)
         faiss_id = meta_store.get_faiss_id("knowledge")
         meta_store.add_document(
-            vector_id=vid, collection="knowledge",
-            content=content, metadata=metadata,
+            vector_id=vid,
+            collection="knowledge",
+            content=content,
+            metadata=metadata,
             provenance={"origin": "benchmark_batch"},
         )
         meta_store.map_id(vid, faiss_id, "knowledge")
@@ -189,9 +195,11 @@ def main():
     total_docs = 200
     throughput = total_docs / total_time
     avg_lat = total_time / total_docs * 1000
-    print(f"  {'batch write 200 knowledge':<40s}: "
-          f"{format_latency(total_time):>10s} total, "
-          f"{throughput:.1f} docs/s, {avg_lat:.1f} ms/doc")
+    print(
+        f"  {'batch write 200 knowledge':<40s}: "
+        f"{format_latency(total_time):>10s} total, "
+        f"{throughput:.1f} docs/s, {avg_lat:.1f} ms/doc"
+    )
 
     # =========================================================================
     # 4. 大规模写入 1000 条
@@ -214,8 +222,10 @@ def main():
             faiss_cm.add_vector("knowledge", vec)
             faiss_id = meta_store.get_faiss_id("knowledge")
             meta_store.add_document(
-                vector_id=vid, collection="knowledge",
-                content=content, metadata=metadata,
+                vector_id=vid,
+                collection="knowledge",
+                content=content,
+                metadata=metadata,
                 provenance={"origin": "benchmark_scale"},
             )
             meta_store.map_id(vid, faiss_id, "knowledge")
@@ -226,12 +236,14 @@ def main():
     total_docs_scale = 1000
     throughput_scale = total_docs_scale / total_scale_time
     avg_lat_scale = total_scale_time / total_docs_scale * 1000
-    print(f"  {'1000 docs write':<40s}: "
-          f"{format_latency(total_scale_time):>10s} total, "
-          f"{throughput_scale:.1f} docs/s, {avg_lat_scale:.1f} ms/doc")
-    print(f"  {'  batch breakdown':<40s}: "
-          f"min={format_latency(min(batch_times))}  "
-          f"max={format_latency(max(batch_times))}")
+    print(
+        f"  {'1000 docs write':<40s}: "
+        f"{format_latency(total_scale_time):>10s} total, "
+        f"{throughput_scale:.1f} docs/s, {avg_lat_scale:.1f} ms/doc"
+    )
+    print(
+        f"  {'  batch breakdown':<40s}: min={format_latency(min(batch_times))}  max={format_latency(max(batch_times))}"
+    )
 
     # =========================================================================
     # 5. 向量搜索
@@ -252,17 +264,27 @@ def main():
 
     measure("FTS5 'deploy'", lambda: meta_store.search_fts("deploy", "knowledge", k=10), iterations=50)
     measure("FTS5 'Python logging'", lambda: meta_store.search_fts("Python logging", "knowledge", k=10), iterations=50)
-    measure("FTS5 'circuit breaker threshold'", lambda: meta_store.search_fts("circuit breaker threshold", "knowledge", k=10), iterations=50)
-    measure("FTS5 'kubernetes pod' (empty)", lambda: meta_store.search_fts("kubernetes pod", "knowledge", k=10), iterations=50)
+    measure(
+        "FTS5 'circuit breaker threshold'",
+        lambda: meta_store.search_fts("circuit breaker threshold", "knowledge", k=10),
+        iterations=50,
+    )
+    measure(
+        "FTS5 'kubernetes pod' (empty)",
+        lambda: meta_store.search_fts("kubernetes pod", "knowledge", k=10),
+        iterations=50,
+    )
 
     # =========================================================================
     # 7. 元数据回调
     # =========================================================================
     print("\n[7] 元数据回调 (recall — SQLite)...")
 
-    measure("recall(k=10)", lambda: meta_store.get_documents_by_ids(
-        ["knowledge::batch::" + str(i) for i in range(10)]
-    ), iterations=50)
+    measure(
+        "recall(k=10)",
+        lambda: meta_store.get_documents_by_ids(["knowledge::batch::" + str(i) for i in range(10)]),
+        iterations=50,
+    )
 
     def _recall_sql():
         meta_store._conn.execute(
@@ -271,10 +293,14 @@ def main():
         ).fetchall()
 
     measure("recall latest 100 (SQL)", _recall_sql, iterations=50)
-    measure("recall latest 500 (SQL)", lambda: meta_store._conn.execute(
-        "SELECT * FROM vms_documents WHERE collection=? ORDER BY written_at DESC LIMIT 500",
-        ("knowledge",),
-    ).fetchall(), iterations=50)
+    measure(
+        "recall latest 500 (SQL)",
+        lambda: meta_store._conn.execute(
+            "SELECT * FROM vms_documents WHERE collection=? ORDER BY written_at DESC LIMIT 500",
+            ("knowledge",),
+        ).fetchall(),
+        iterations=50,
+    )
 
     # =========================================================================
     # 8. 健康检查
@@ -307,8 +333,10 @@ def main():
                 faiss_cm.add_vector("knowledge", vec)
                 faiss_id = meta_store.get_faiss_id("knowledge")
                 meta_store.add_document(
-                    vector_id=vid, collection="knowledge",
-                    content=content, metadata=metadata,
+                    vector_id=vid,
+                    collection="knowledge",
+                    content=content,
+                    metadata=metadata,
                     provenance={"origin": f"agent_{agent_id}"},
                 )
                 meta_store.map_id(vid, faiss_id, "knowledge")
@@ -333,9 +361,11 @@ def main():
     agent_latencies = [r[2] for r in agent_results]
     print(f"  Agents: {success} success, {fail} fail")
     print(f"  Total time: {format_latency(agent_total_time)}")
-    print(f"  Per-write:   avg={format_latency(sum(agent_latencies)/len(agent_latencies))}  "
-          f"min={format_latency(min(agent_latencies))}  "
-          f"max={format_latency(max(agent_latencies))}")
+    print(
+        f"  Per-write:   avg={format_latency(sum(agent_latencies) / len(agent_latencies))}  "
+        f"min={format_latency(min(agent_latencies))}  "
+        f"max={format_latency(max(agent_latencies))}"
+    )
 
     # =========================================================================
     # 10. 数据完整性验证
@@ -344,17 +374,13 @@ def main():
 
     total_faiss = faiss_cm.count("knowledge")
     total_sqlite = meta_store.count_by_collection("knowledge")
-    total_fts = meta_store._conn.execute(
-        "SELECT COUNT(*) FROM vms_documents_fts"
-    ).fetchone()[0]
+    total_fts = meta_store._conn.execute("SELECT COUNT(*) FROM vms_documents_fts").fetchone()[0]
     total_fts_knowledge = meta_store._conn.execute(
         "SELECT COUNT(*) FROM vms_documents WHERE collection='knowledge'"
     ).fetchone()[0]
-    total_map = meta_store._conn.execute(
-        "SELECT COUNT(*) FROM vms_id_map WHERE collection='knowledge'"
-    ).fetchone()[0]
+    total_map = meta_store._conn.execute("SELECT COUNT(*) FROM vms_id_map WHERE collection='knowledge'").fetchone()[0]
 
-    print(f"  knowledge collection:")
+    print("  knowledge collection:")
     print(f"    FAISS vectors:    {total_faiss}")
     print(f"    SQLite documents: {total_sqlite}")
     print(f"    ID map entries:   {total_map}")

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.contract_drift_detector import (
     DriftAlert,
     detect_contract_drift,

@@ -26,10 +26,6 @@ Cold Start Estimator — 冷启动预算估算 (盲点 #27)
   - 渐进学习：实时反馈摄入校准
 """
 
-import time
-from dataclasses import dataclass
-from typing import Any, Optional
-
 
 class ColdStartEstimator:
     """
@@ -54,7 +50,7 @@ class ColdStartEstimator:
             self._observed_costs[module] = []
         self._observed_costs[module].append(cost)
 
-    def calibrate(self, module: str) -> Optional[float]:
+    def calibrate(self, module: str) -> float | None:
         costs = self._observed_costs.get(module, [])
         if not costs:
             return None

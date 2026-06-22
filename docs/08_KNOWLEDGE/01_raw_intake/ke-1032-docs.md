@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-1032
 status: active
 title: 5.2 docs 蓝图目录

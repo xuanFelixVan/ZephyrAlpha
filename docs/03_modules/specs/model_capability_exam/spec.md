@@ -222,19 +222,19 @@ depth_score = Σ(加权 F1/EM/normalized_ED) / 总测试数
 ```python
 class HallucinationCheck:
     """三棱镜检测法"""
-    
+
     @staticmethod
     def fabrication_check(output: dict, source_text: str) -> bool:
         """模型是否编造了输入中不存在的内容"""
         # 检查 output 中的 old_str 是否真的存在于 source_text
         ...
-    
+
     @staticmethod
     def consistency_check(outputs: list[dict]) -> float:
         """多次跑同一 prompt，输出的一致性"""
         # 计算输出之间的 Jaccard 相似度
         ...
-    
+
     @staticmethod
     def refusal_check(output: dict) -> bool:
         """模型是否拒绝了任务（输出空/错误/拒绝语）"""

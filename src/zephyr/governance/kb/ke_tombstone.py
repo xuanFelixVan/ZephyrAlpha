@@ -48,7 +48,6 @@
     python -m zephyr.knowledge.kb.ke_tombstone purge           # 清理过期墓碑
 """
 
-
 from __future__ import annotations
 
 import json
@@ -59,7 +58,6 @@ import sys
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -159,9 +157,13 @@ class TombstoneManager:
             )
             conn.commit()
             return TombstoneEntry(
-                tombstone_id=tombstone_id, ke_id=ke_id,
-                deletion_time=now_str, deletion_reason=reason,
-                source_hash=source_hash, chroma_id=chroma_id, vector_hash=vector_hash,
+                tombstone_id=tombstone_id,
+                ke_id=ke_id,
+                deletion_time=now_str,
+                deletion_reason=reason,
+                source_hash=source_hash,
+                chroma_id=chroma_id,
+                vector_hash=vector_hash,
             )
         except Exception as e:
             logger.error("Failed to bury KE %s: %s", ke_id, e)
@@ -212,11 +214,15 @@ class TombstoneManager:
                 ).fetchall()
             return [
                 TombstoneEntry(
-                    tombstone_id=r["tombstone_id"], ke_id=r["ke_id"],
-                    deletion_time=r["deletion_time"], deletion_reason=r["deletion_reason"],
-                    source_hash=r["source_hash"], chroma_id=r["chroma_id"],
+                    tombstone_id=r["tombstone_id"],
+                    ke_id=r["ke_id"],
+                    deletion_time=r["deletion_time"],
+                    deletion_reason=r["deletion_reason"],
+                    source_hash=r["source_hash"],
+                    chroma_id=r["chroma_id"],
                     vector_hash=r["vector_hash"],
-                    purged=bool(r["purged"]), purged_at=r["purged_at"],
+                    purged=bool(r["purged"]),
+                    purged_at=r["purged_at"],
                 )
                 for r in rows
             ]
@@ -229,9 +235,7 @@ class TombstoneManager:
     def count(self) -> int:
         conn = self._get_conn()
         try:
-            row = conn.execute(
-                "SELECT COUNT(*) FROM ke_tombstones WHERE purged = 0"
-            ).fetchone()
+            row = conn.execute("SELECT COUNT(*) FROM ke_tombstones WHERE purged = 0").fetchone()
             return row[0] if row else 0
         except Exception:
             return 0
@@ -247,8 +251,7 @@ class TombstoneManager:
         conn = self._get_conn()
         try:
             result = conn.execute(
-                "UPDATE ke_tombstones SET purged = 1, purged_at = ? "
-                "WHERE deletion_time < ? AND purged = 0",
+                "UPDATE ke_tombstones SET purged = 1, purged_at = ? WHERE deletion_time < ? AND purged = 0",
                 (now_str, cutoff_str),
             )
             conn.commit()
@@ -265,6 +268,7 @@ class TombstoneManager:
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="KB Tombstone Manager")
     sub = parser.add_subparsers(dest="cmd")
 
@@ -290,11 +294,22 @@ def main() -> None:
     if args.cmd == "list":
         entries = tm.list()
         if args.json:
-            print(json.dumps([{
-                "tombstone_id": e.tombstone_id, "ke_id": e.ke_id,
-                "deletion_time": e.deletion_time, "deletion_reason": e.deletion_reason,
-                "purged": e.purged,
-            } for e in entries], ensure_ascii=False, indent=2))
+            print(
+                json.dumps(
+                    [
+                        {
+                            "tombstone_id": e.tombstone_id,
+                            "ke_id": e.ke_id,
+                            "deletion_time": e.deletion_time,
+                            "deletion_reason": e.deletion_reason,
+                            "purged": e.purged,
+                        }
+                        for e in entries
+                    ],
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
         else:
             print(f"Tombstones ({len(entries)}):")
             for e in entries:

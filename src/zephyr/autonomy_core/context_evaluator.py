@@ -28,7 +28,7 @@ context_evaluator.py — AI 引用率评估 (TASK-014 beta b)
 """
 
 from dataclasses import dataclass, field
-from typing import Any
+
 
 @dataclass
 class EvaluationReport:
@@ -37,6 +37,7 @@ class EvaluationReport:
     citation_rate: float = 0.0  # 0.0~1.0
     unused_ke_ids: list[str] = field(default_factory=list)
     efficiency_score: float = 0.0  # 0-100
+
 
 class ContextEvaluator:
     """AI 引用率 = 上下文效率评估器。

@@ -33,23 +33,18 @@
 4. 阻止 AI agent 自行修改权威源
 """
 
-
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.bridge import write_to_core
-
 import hashlib
-import json
 import logging
-import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import IntEnum
 from pathlib import Path
 from typing import Any
 
-import yaml
 from pydantic import BaseModel, Field, model_validator
 
+from zephyr.governance.audit_trail.bridge import write_to_core
 from zephyr.integration.shared_08.schemas import AuditFinding, AuditSeverity
 
 logger = logging.getLogger(__name__)
@@ -113,11 +108,11 @@ class TruthConflict(BaseModel):
     claims: list[TruthClaim]
     winner: TruthClaim
     loser: TruthClaim
-    resolved_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    resolved_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class AuditLogEntry(BaseModel):
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     action: str
     target_path: str
     agent_id: str
@@ -221,11 +216,14 @@ class TruthSourceValidator:
                     reason=f"禁止修改 Tier {tier.value} 权威源 ({TIER_LABELS[tier]})",
                 )
             )
-            write_to_core("truth_source_blocked", {
-                "target_path": target_path,
-                "agent_id": agent_id,
-                "tier": tier.value,
-            })
+            write_to_core(
+                "truth_source_blocked",
+                {
+                    "target_path": target_path,
+                    "agent_id": agent_id,
+                    "tier": tier.value,
+                },
+            )
             logger.warning(
                 "BLOCKED: agent=%s 尝试修改 Tier %d 权威源 %s",
                 agent_id,

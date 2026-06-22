@@ -30,10 +30,10 @@ Prompt Version Manager — 版本化 Prompt 治理。
 """
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class PromptVersion:
@@ -47,38 +47,40 @@ class PromptVersion:
     last_used: str = ""
     deprecated: bool = False
 
+
 @dataclass
 class PromptRegistry:
     prompts: dict[str, list[PromptVersion]]
     current_versions: dict[str, str]
     last_updated: str
 
-class PromptVersionManager:
 
+class PromptVersionManager:
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/adaptation/prompts")
         self._registry = PromptRegistry(
             prompts={},
             current_versions={},
-            last_updated=datetime.now(timezone.utc).isoformat(),
+            last_updated=datetime.now(UTC).isoformat(),
         )
 
-    def register(self, prompt_id: str, version: str, content: str,
-                  model: str = "deepseek", pipeline_module: str = "") -> PromptVersion:
+    def register(
+        self, prompt_id: str, version: str, content: str, model: str = "deepseek", pipeline_module: str = ""
+    ) -> PromptVersion:
         prompt = PromptVersion(
             prompt_id=prompt_id,
             version=version,
             content=content,
             model=model,
             pipeline_module=pipeline_module,
-            last_used=datetime.now(timezone.utc).isoformat(),
+            last_used=datetime.now(UTC).isoformat(),
         )
 
         if prompt_id not in self._registry.prompts:
             self._registry.prompts[prompt_id] = []
         self._registry.prompts[prompt_id].append(prompt)
         self._registry.current_versions[prompt_id] = version
-        self._registry.last_updated = datetime.now(timezone.utc).isoformat()
+        self._registry.last_updated = datetime.now(UTC).isoformat()
 
         self._persist()
 
@@ -94,7 +96,7 @@ class PromptVersionManager:
         for pv in versions:
             if pv.version == current_ver and not pv.deprecated:
                 pv.usage_count += 1
-                pv.last_used = datetime.now(timezone.utc).isoformat()
+                pv.last_used = datetime.now(UTC).isoformat()
                 return pv
 
         return None

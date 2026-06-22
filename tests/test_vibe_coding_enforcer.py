@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.behavioral_admission.vibe_coding_enforcer import (
     VIBE_CODING_RULES,
     VibeRuleLevel,
@@ -137,6 +135,7 @@ class TestMustDecorator:
         @must("lock_before_write")
         def my_func():
             return 42
+
         result = my_func()
         assert result == 42
 
@@ -144,6 +143,7 @@ class TestMustDecorator:
         @must("lock_before_write")
         def my_func():
             return 42
+
         assert hasattr(my_func, "_vibe_rule")
         assert my_func._vibe_rule == "lock_before_write"
         assert my_func._vibe_level == VibeRuleLevel.MUST
@@ -154,6 +154,7 @@ class TestShouldDecorator:
         @should("dual_ai_review")
         def my_func():
             return "ok"
+
         result = my_func()
         assert result == "ok"
 
@@ -161,5 +162,6 @@ class TestShouldDecorator:
         @should("dual_ai_review")
         def my_func():
             return "ok"
+
         assert hasattr(my_func, "_vibe_rule")
         assert my_func._vibe_level == VibeRuleLevel.SHOULD

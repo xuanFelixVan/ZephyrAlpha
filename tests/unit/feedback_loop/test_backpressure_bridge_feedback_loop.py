@@ -11,7 +11,6 @@ backpressure_bridge 模块单元测试 — AUDIT-08 M6
 覆盖: sync_evolution_proposals_to_backpressure 的三种场景
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 from zephyr.ops.evolution_engine import Severity as EvolutionSeverity
@@ -43,11 +42,9 @@ class TestSyncEvolutionProposalsToBackpressure:
         critical = _FakeProposal(EvolutionSeverity.CRITICAL)
         high = _FakeProposal(EvolutionSeverity.HIGH)
 
-        with patch("zephyr.orchestration.pipeline_routing.backpressure_manager.emit_throttle") as mock_emit:
+        with patch("zephyr.integration.backpressure_manager.emit_throttle") as mock_emit:
             mock_emit.return_value = MagicMock()
-            result = sync_evolution_proposals_to_backpressure(
-                [critical, high], mock_mgr
-            )
+            result = sync_evolution_proposals_to_backpressure([critical, high], mock_mgr)
             assert result["throttled"] is True
             assert result["critical_count"] == 1
             mock_emit.assert_called_once()
@@ -68,7 +65,7 @@ class TestSyncEvolutionProposalsToBackpressure:
         mock_mgr = MagicMock()
         proposals = [_FakeProposal(EvolutionSeverity.CRITICAL) for _ in range(5)]
 
-        with patch("zephyr.orchestration.pipeline_routing.backpressure_manager.emit_throttle") as mock_emit:
+        with patch("zephyr.integration.backpressure_manager.emit_throttle") as mock_emit:
             mock_emit.return_value = MagicMock()
             result = sync_evolution_proposals_to_backpressure(proposals, mock_mgr)
             assert result["critical_count"] == 5

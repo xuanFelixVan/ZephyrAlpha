@@ -16,7 +16,6 @@ Bridges feedback-loop gate engine with MOD-INF-030 Red-Blue Validator:
 红方注入 → 蓝方 Gate 判定 → 绕过检测 → 收敛验证 → 宪法自进化。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -48,18 +47,11 @@ class AdversarialValidation:
         try:
             adversarial_result = self.run_adversarial_check(claim)
             if adversarial_result.bypass_count > 0:
-                challenges.append(
-                    f"Claim '{claim}' bypassed {adversarial_result.bypass_count} defense(s)"
-                )
+                challenges.append(f"Claim '{claim}' bypassed {adversarial_result.bypass_count} defense(s)")
             if adversarial_result.constitution_violations:
-                challenges.append(
-                    "Constitution violations: %s"
-                    % ", ".join(adversarial_result.constitution_violations)
-                )
+                challenges.append("Constitution violations: %s" % ", ".join(adversarial_result.constitution_violations))
             if not adversarial_result.passed:
-                challenges.append(
-                    f"Adversarial validation FAILED for claim: '{claim}'"
-                )
+                challenges.append(f"Adversarial validation FAILED for claim: '{claim}'")
             if adversarial_result.error:
                 challenges.append(f"Validation error: {adversarial_result.error}")
         except RedBlueImportError:
@@ -69,9 +61,7 @@ class AdversarialValidation:
 
         return challenges
 
-    def run_adversarial_check(
-        self, claim: str, **kwargs: Any
-    ) -> AdversarialResult:
+    def run_adversarial_check(self, claim: str, **kwargs: Any) -> AdversarialResult:
         try:
             return self._run_with_red_blue_validator(claim, **kwargs)
         except RedBlueImportError:
@@ -88,22 +78,18 @@ class AdversarialValidation:
                 error=str(exc),
             )
 
-    def _run_with_red_blue_validator(
-        self, claim: str, **kwargs: Any
-    ) -> AdversarialResult:
+    def _run_with_red_blue_validator(self, claim: str, **kwargs: Any) -> AdversarialResult:
         try:
             from zephyr.security.adversarial_validation import (
-                RedBlueValidator,
-                ScenarioLoader,
-                DefenseRunner,
-                ConstitutionGuard,
                 BypassRecorder,
+                ConstitutionGuard,
+                DefenseRunner,
+                RedBlueValidator,
                 ResultClass,
+                ScenarioLoader,
             )
         except ImportError as exc:
-            raise RedBlueImportError(
-                "Cannot import zephyr.security.adversarial_validation: %s" % exc
-            ) from exc
+            raise RedBlueImportError("Cannot import zephyr.security.adversarial_validation: %s" % exc) from exc
 
         tier = kwargs.get("tier", 1)
         attempts = kwargs.get("attempts", 3)

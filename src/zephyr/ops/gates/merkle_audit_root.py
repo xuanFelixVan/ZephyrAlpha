@@ -25,8 +25,9 @@ Blindspot: FLE action log tamperable without cryptographic proof.
 Risk: R104 — Audit trail cannot prove non-repudiation.
 """
 
-from dataclasses import dataclass
 import hashlib
+from dataclasses import dataclass
+
 
 @dataclass
 class MerkleAuditRoot:

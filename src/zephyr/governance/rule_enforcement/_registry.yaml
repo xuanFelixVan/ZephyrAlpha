@@ -1,21 +1,14 @@
-# --- 治理锚定 ---
-# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
-# module_id: MOD-INF-007
-# stability: evolving
-# safety_level: L
-# ai_autonomy: ai_modifiable
-# --- 治理锚定结束 ---
 module_id: MOD-INF-007
 schema_version: '1.0'
 doc_type: registry
 ttl: permanent
-last_updated: '2026-05-17'
+last_updated: '2026-06-22'
 gates:
 - gate_id: G1
   gate_name: ingest
   title: G1 Ingest Gate
   category: kms
-  file: g1-ingest.yaml
+  file: g1_ingest.yaml
   status: active
   scope: global
   execution_plane: warm
@@ -23,7 +16,7 @@ gates:
   gate_name: triage
   title: G2 Triage Gate
   category: kms
-  file: g2-triage.yaml
+  file: g2_triage.yaml
   status: active
   scope: global
   execution_plane: warm
@@ -31,7 +24,7 @@ gates:
   gate_name: evaluate
   title: G3 Evaluate Gate
   category: kms
-  file: g3-evaluate.yaml
+  file: g3_evaluate.yaml
   status: active
   scope: global
   execution_plane: warm
@@ -39,7 +32,7 @@ gates:
   gate_name: activate
   title: G4 Activate Gate
   category: kms
-  file: g4-activate.yaml
+  file: g4_activate.yaml
   status: active
   scope: global
   execution_plane: warm
@@ -47,7 +40,7 @@ gates:
   gate_name: extract
   title: G5 Extract Gate
   category: kms
-  file: g5-extract.yaml
+  file: g5_extract.yaml
   status: active
   scope: global
   execution_plane: warm
@@ -55,7 +48,7 @@ gates:
   gate_name: ctr_compliance
   title: G6 CTR Compliance Gate
   category: compliance
-  file: g6-ctr-compliance.yaml
+  file: g6_ctr_compliance.yaml
   status: implemented
   scope: global
   execution_plane: warm
@@ -64,12 +57,12 @@ gates:
   gate_name: blueprint_compliance
   title: G6 Blueprint Compliance Gate
   category: compliance
-  file: g6-blueprint-compliance.yaml
+  file: g6_blueprint_compliance.yaml
   status: active
   scope: global
   execution_plane: warm
   note: beta hard compliance — AI MUST read blueprint BEFORE any code change
-- gate_id: GATE-18
+- gate_id: GATE_18
   gate_name: precommit
   title: GATE-18 Pre-Commit Gate
   category: lifecycle
@@ -82,7 +75,7 @@ gates:
   gate_name: position_limits
   title: G10 Position Limits Gate
   category: trading
-  file: g7-position-limits.yaml
+  file: g7_position_limits.yaml
   status: active
   scope: trading
   execution_plane: warm
@@ -91,7 +84,7 @@ gates:
   gate_name: leverage_limits
   title: G11 Leverage Limits Gate
   category: trading
-  file: g8-leverage.yaml
+  file: g8_leverage.yaml
   status: active
   scope: trading
   execution_plane: warm
@@ -100,16 +93,16 @@ gates:
   gate_name: strategy_correlation
   title: G12 Strategy Correlation Gate
   category: trading
-  file: g9-strategy-correlation.yaml
+  file: g9_strategy_correlation.yaml
   status: active
   scope: trading
   execution_plane: warm
   note: 2026-05-05 落地 — 3 条相关性/因子重叠/股票池集中度。activation_stage=shadow
-- gate_id: ZERO-RESIDUE
+- gate_id: ZERO_RESIDUE
   gate_name: zero_residue
   title: ZERO-RESIDUE Zero Residue Principle
   category: residue
-  file: zero-residue.yaml
+  file: zero_residue.yaml
   status: active
   scope: global
   execution_plane: warm
@@ -122,26 +115,26 @@ gates:
   status: active
   scope: global
   execution_plane: warm
-- gate_id: SYS-MASTER-CMP
+- gate_id: SYS_MASTER_CMP
   gate_name: sys_master_compliance
   title: SYS-MASTER-CMP SYS-MASTER-001 Compliance Gate
   category: infrastructure
-  file: sys-master-compliance.yaml
+  file: sys_master_compliance.yaml
   status: active
   scope: global
   execution_plane: warm
   note: 2026-05-07 落地 — 7 条检查：蓝图存在/冷启动引用/依赖完整性/进度一致性/AI规则数量/注册表登记/crosscheck健康
-- gate_id: GATE-DEDUP
+- gate_id: GATE_DEDUP
   gate_name: code_dedup
   title: GATE-DEDUP Code Deduplication Gate
   category: infrastructure
-  file: gate-dedup.yaml
+  file: gate_dedup.yaml
   status: active
   scope: global
   execution_plane: warm
   note: 'MOD-INF-017 代码去重引擎 pre-commit 门禁。实现位于 infra_ops/code_dedup_engine/integration_hub.py。pre-commit/verify_dedup.py
     自动触发。覆盖 MinHash+LSH 扫描/BRS 单体文化评分/决策审计链/自我扫描。exit code: PASS/WARN/ERROR/TOOL-ERROR/DEGRADED'
-- gate_id: VMS-HEALTH
+- gate_id: VMS_HEALTH
   gate_name: vms_health
   title: VMS-HEALTH Vector Memory Service Health Gate
   category: infrastructure
@@ -159,7 +152,7 @@ gates:
   status: active
   scope: global
   execution_plane: warm
-- gate_id: GCT-016-SHARED-CORE
+- gate_id: GCT_016_SHARED_CORE
   gate_name: shared_core_integration
   title: GCT-016-Shared-Core Integration Gate — MOD-INF-016 · v0.14.0 · 跨层共享基础设施 (Shared
     59+Core 2=61已跟踪+~43orphan待分类)
@@ -171,7 +164,7 @@ gates:
   note: 61 tracked files in src/zephyr/{shared,core}/ — schemas (Task 31字段)/errors(14异常)/serialization/cache(TTL+LRU)/logging(结构化+trace_id)/metrics/capability/content_fingerprint/contracts
     + 10 early-bird(Phase 11-14)。201 tests pass。34 divergent copy pairs部分已修复(6 re-exports)。TD-SHARED-001进行中。冷启动
     FIRST-READ依赖。
-- gate_id: GCT-018-RBAC
+- gate_id: GCT_018_RBAC
   gate_name: rbac_integrity
   title: GCT-018-RBAC RBAC Integrity Gate — MOD-INF-018 · v0.14.0 · 七层纵深防御+六横切面权限完整性
   category: governance
@@ -181,7 +174,7 @@ gates:
   execution_plane: warm
   note: 67 files in src/zephyr/agent-rbac/ — PermissionGuard(七层编排)/ImmutableCore(L0)/KillSwitch(L0)/RBACGuard(L1)/ABACGuard(L2)/InputGuard(L3)/SequenceGuard(L4)/OutputGuard(L5)/Observability(L6)/DryRun(L7)+横切面A-F。276
     tests pass。冷启动锁+身份注册+自动后验。对标 K8s RBAC + OPA Gatekeeper + Claude Code hooks。
-- gate_id: GCT-021
+- gate_id: GCT_021
   gate_name: rollback_system_integration
   title: GCT-021 Rollback System — MOD-INF-021 · v0.10.0 · Git-native+SQLite Checkpoint
   category: governance
@@ -191,7 +184,7 @@ gates:
   execution_plane: warm
   note: 52 files in src/zephyr/rollback/ — rollback_executor, state_machine, forensic_snapshot,
     WAL, abuse_detector
-- gate_id: GCT-022
+- gate_id: GCT_022
   gate_name: escalation_protocol_integration
   title: GCT-022 Escalation Protocol — MOD-INF-022 · v0.14.0 · Rule-driven+Auto-delegate+Economic
     Guard+Deadlock Protection
@@ -201,7 +194,7 @@ gates:
   scope: global
   execution_plane: warm
   note: 4 core files — escalation-engine, delegation_engine, circuit_breaker, escalation_models
-- gate_id: GCT-024
+- gate_id: GCT_024
   gate_name: budget_enforcer_integration
   title: GCT-024 Budget Enforcer — MOD-INF-024 · v0.7.0 · Token/Cost/Time 3D Seven-Level
     Budget
@@ -212,17 +205,17 @@ gates:
   execution_plane: warm
   note: 3 core files — budget_engine (pre_flight gate), burn_rate_monitor (4-window
     Wasserstein), budget_models
-- gate_id: GATE-OBSERVABILITY
+- gate_id: GATE_OBSERVABILITY
   gate_name: observability_baseline
   title: GATE-OBSERVABILITY Observability Baseline Gate — System Telemetry MOD-INF-015
     v0.9.0
   category: infrastructure
-  file: observability-baseline.yaml
+  file: observability_baseline.yaml
   status: active
   scope: global
   execution_plane: warm
   note: '10检查项: Telemetry facade导入/9子系统可访问/metrics gauge可写/health注册/traces span创建/三闭环文档化/shutdown优雅/fail-closed韧性/alerts发布/schema校验'
-- gate_id: GCT-025
+- gate_id: GCT_025
   gate_name: a2a_protocol_integration
   title: GCT-025 A2A Protocol — MOD-INF-025 · v0.10.0 · HOLD (R81-C04)
   category: governance
@@ -230,9 +223,9 @@ gates:
   status: draft
   scope: global
   execution_plane: cold
-  note: 49 files in infra_ops/a2a_protocol/ — ON HOLD pending Agent>=3 +
-    conflict>=5/day trigger
-- gate_id: GCT-026
+  note: 49 files in infra_ops/a2a_protocol/ — ON HOLD pending Agent>=3 + conflict>=5/day
+    trigger
+- gate_id: GCT_026
   gate_name: lsg_security_integration
   title: GCT-026 LSG Security Gateway — MOD-INF-014 · v1.0.0 · L0-L8 Nine-Layer Defense-in-Depth
   category: governance
@@ -249,21 +242,21 @@ gates:
   gate_name: gct_024_budget_enforcer
   title: GCT-024 Budget Enforcer MOD-INF-024
   category: governance
-  file: gct-024-budget-enforcer.yaml
+  file: gct_024_budget_enforcer.yaml
   status: active
   scope: global
   execution_plane: warm
 - gate_id: G_ASSET_INVENTORY
-  gate_name: asset-inventory
+  gate_name: asset_inventory
   title: G_asset_inventory Asset Inventory Health Gate
   category: infrastructure
-  file: g-asset-inventory.yaml
+  file: g_asset_inventory.yaml
   status: active
   scope: global
   execution_plane: warm
   note: MOD-INF-026 asset inventory health gate - verifies unified-asset-index.yaml
     exists and health score meets threshold
-- gate_id: G-RES-001
+- gate_id: G_RES_001
   gate_name: resource_memory_check
   title: G-RES-001 Resource Memory Check Gate
   category: infrastructure
@@ -272,7 +265,7 @@ gates:
   scope: global
   execution_plane: warm
   note: MOD-INF-032 资源优化引擎门禁——memory_percent > 90% 时阻断非必要操作，提示"系统资源不足"。实现于 ResourceOptimizationEngine.get_pressure_state()。
-- gate_id: G-RES-002
+- gate_id: G_RES_002
   gate_name: resource_process_check
   title: G-RES-002 Resource Process Count Check Gate
   category: infrastructure
@@ -281,7 +274,7 @@ gates:
   scope: global
   execution_plane: warm
   note: MOD-INF-032 资源优化引擎门禁——process_count > 100 时阻断新进程创建。实现于 ResourceOptimizationEngine.snapshot()。
-- gate_id: G-RES-003
+- gate_id: G_RES_003
   gate_name: resource_optimization_verify
   title: G-RES-003 Resource Optimization Verification Gate
   category: infrastructure
@@ -295,16 +288,16 @@ gates:
   gate_name: task_entry
   title: G0 Task Entry Gate
   category: task
-  file: task/g0-entry.yaml
+  file: task/g0_entry.yaml
   status: active
   scope: global
   execution_plane: warm
   note: 人读 rules 入口；GateEngine 可执行配置见 task/g0-orc-gate-engine.yaml
-- gate_id: G0-ORC
+- gate_id: G0_ORC
   gate_name: task_entry_orc
   title: G0 Task Entry Gate（Orc 最小硬校验）
   category: task
-  file: task/g0-orc-gate-engine.yaml
+  file: task/g0_orc_gate_engine.yaml
   status: active
   scope: global
   execution_plane: warm
@@ -313,75 +306,75 @@ gates:
   gate_name: task_delivery_orc
   title: G7 Task Delivery Gate（Orc 最小硬校验）
   category: task
-  file: task/g7-orc-gate-engine.yaml
+  file: task/g7_orc_gate_engine.yaml
   status: active
   scope: global
   execution_plane: warm
   note: GateEngine 入口（verification + audit_findings）；残余目录扫描见 task_completion_gate.py
-- gate_id: EN-001
+- gate_id: EN_001
   gate_name: circular_dependency
   title: EN-001 Circular Dependency Scanner
   category: invariants
-  file: invariants/en-001-circular-dependency.yaml
+  file: invariants/en_001_circular_dependency.yaml
   status: implemented
   scope: global
   execution_plane: warm
   note: Phase D — Kahn algorithm topological sort over 15-node layer import DAG
-- gate_id: EN-002
+- gate_id: EN_002
   gate_name: enforcement_validator
   title: EN-002 Enforcement Mode Validator
   category: invariants
-  file: invariants/en-002-enforcement-validator.yaml
+  file: invariants/en_002_enforcement_validator.yaml
   status: implemented
   scope: global
   execution_plane: warm
   note: Phase D — validates enforcement_mode declared for all P0 contracts
-- gate_id: EN-003
+- gate_id: EN_003
   gate_name: contract_compatibility
   title: EN-003 Contract Compatibility Checker
   category: invariants
-  file: invariants/en-003-contract-compatibility.yaml
+  file: invariants/en_003_contract_compatibility.yaml
   status: implemented
   scope: global
   execution_plane: warm
   note: Phase D — diffs dataclass fields against cross_layer_contracts.yaml spec
-- gate_id: MAD-001
+- gate_id: MAD_001
   gate_name: architecture_necessity
   title: MAD-001 Architecture Necessity
   category: admission
-  file: admission/mad-001-architecture-necessity.yaml
+  file: admission/mad_001_architecture_necessity.yaml
   status: active
   scope: global
   execution_plane: warm
   note: 2026-05-04 落地 — 4 条准入规则（problem_statement/existing_capability/layer_assignment/phase_relevance）
-- gate_id: MAD-002
+- gate_id: MAD_002
   gate_name: phase_relevance
   title: MAD-002 Phase Relevance
   category: admission
-  file: admission/mad-002-phase-relevance.yaml
+  file: admission/mad_002_phase_relevance.yaml
   status: active
   scope: global
   execution_plane: warm
   note: 2026-05-04 落地 — 4 条准入规则（phase_match/load_bearing/deferred_not_rejected/context）
-- gate_id: MAD-003
+- gate_id: MAD_003
   gate_name: dependency_compliance
   title: MAD-003 Dependency Compliance
   category: admission
-  file: admission/mad-003-dependency-compliance.yaml
+  file: admission/mad_003_dependency_compliance.yaml
   status: active
   scope: global
   execution_plane: warm
   note: 2026-05-04 落地 — 5 条准入规则（downward/contracts/versioned/no_circular/version_check）
-- gate_id: MAD-004
+- gate_id: MAD_004
   gate_name: interface_definability
   title: MAD-004 Interface Definability
   category: admission
-  file: admission/mad-004-interface-definability.yaml
+  file: admission/mad_004_interface_definability.yaml
   status: active
   scope: global
   execution_plane: warm
   note: 2026-05-04 落地 — 6 条准入规则（public_api/input/output/error/config/extension_points）
-- gate_id: MAD-005
+- gate_id: MAD_005
   gate_name: dependency_graph_template
   title: MAD-005 Dependency Graph Template Compliance
   category: admission
@@ -394,12 +387,13 @@ gates:
   gate_name: path_tree_freshness
   title: G6 Path Tree Freshness Gate
   category: compliance
-  file: g6-path-tree-freshness.yaml
+  file: g6_path_tree_freshness.yaml
   status: active
   scope: global
   execution_plane: warm
-  note: MOD-INF-037 GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移动后必须刷新路径树+归属图，Session关门前必须 --check 通过
-- gate_id: G-TRIPLE-ALIGN
+  note: MOD-INF-037 GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移动后必须刷新路径树+归属图，Session关门前必须 --check
+    通过
+- gate_id: G_TRIPLE_ALIGN
   gate_name: triple_alignment
   title: G-TRIPLE-ALIGN Blueprint-Code-DependencyMap Triple Alignment
   category: compliance
@@ -408,20 +402,470 @@ gates:
   scope: global
   execution_plane: warm
   note: 2026-05-16 落地 — 7 条三方对齐规则（module_id/dep_map/属性/stale_progress/blueprint_missing/code_missing/orphan），蓝图↔代码↔依赖图三方必须同步
+- gate_id: G_TRAE_003
+  gate_name: g_trae_003
+  title: G_TRAE_003 Gate — 任务粒度与完成门槛协议
+  category: compliance
+  file: g_trae_003.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-003 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_004
+  gate_name: g_trae_004
+  title: G_TRAE_004 Gate — 并行执行与原子事务协议
+  category: compliance
+  file: g_trae_004.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-004 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_006
+  gate_name: g_trae_006
+  title: G_TRAE_006 Gate — 防幻觉-结构追溯层
+  category: compliance
+  file: g_trae_006.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-006 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_007
+  gate_name: g_trae_007
+  title: G_TRAE_007 Gate — 防幻觉-行为约束层
+  category: compliance
+  file: g_trae_007.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-007 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_008
+  gate_name: g_trae_008
+  title: G_TRAE_008 Gate — 防幻觉-输出验证层
+  category: compliance
+  file: g_trae_008.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-008 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_020
+  gate_name: g_trae_020
+  title: G_TRAE_020 Gate — 行为边界-治理纪律绝对禁止
+  category: compliance
+  file: g_trae_020.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-020 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_052
+  gate_name: g_trae_052
+  title: G_TRAE_052 Gate — 铁律补充-跨蓝图变更与项目瘦身
+  category: compliance
+  file: g_trae_052.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-052 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_009
+  gate_name: g_trae_009
+  title: G_TRAE_009 Gate — 防幻觉-安全防护层
+  category: compliance
+  file: g_trae_009.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-009 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_018
+  gate_name: g_trae_018
+  title: G_TRAE_018 Gate — 行为边界-代码操作绝对禁止
+  category: compliance
+  file: g_trae_018.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-018 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_021
+  gate_name: g_trae_021
+  title: G_TRAE_021 Gate — 行为边界-其余绝对禁止
+  category: compliance
+  file: g_trae_021.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-021 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_053
+  gate_name: g_trae_053
+  title: G_TRAE_053 Gate — 铁律补充-自动化双轨判定
+  category: compliance
+  file: g_trae_053.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-053 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_054
+  gate_name: g_trae_054
+  title: G_TRAE_054 Gate — depgraph 程序化访问协议
+  category: compliance
+  file: g_trae_054.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-054 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_016
+  gate_name: g_trae_016
+  title: G_TRAE_016 Gate — 架构约束-漂移检测
+  category: compliance
+  file: g_trae_016.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-016 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_010
+  gate_name: g_trae_010
+  title: G_TRAE_010 Gate — 代码构建-命名与组织
+  category: compliance
+  file: g_trae_010.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-010 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_055
+  gate_name: g_trae_055
+  title: G_TRAE_055 Gate — 架构容量与域治理规则
+  category: compliance
+  file: g_trae_055.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-055 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_012
+  gate_name: g_trae_012
+  title: G_TRAE_012 Gate — 代码构建-测试与安全
+  category: compliance
+  file: g_trae_012.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-012 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_011
+  gate_name: g_trae_011
+  title: G_TRAE_011 Gate — 代码构建-类型与导入
+  category: compliance
+  file: g_trae_011.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-011 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_017
+  gate_name: g_trae_017
+  title: G_TRAE_017 Gate — 架构约束-治理顺序
+  category: compliance
+  file: g_trae_017.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-017 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_022
+  gate_name: g_trae_022
+  title: G_TRAE_022 Gate — 行为边界-条件禁止(代码与安全)
+  category: compliance
+  file: g_trae_022.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-022 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_023
+  gate_name: g_trae_023
+  title: G_TRAE_023 Gate — 行为边界-条件禁止(治理与文档)
+  category: compliance
+  file: g_trae_023.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-023 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_031
+  gate_name: g_trae_031
+  title: G_TRAE_031 Gate — 安全治理-密钥与访问控制
+  category: compliance
+  file: g_trae_031.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-031 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_032
+  gate_name: g_trae_032
+  title: G_TRAE_032 Gate — 模块治理-准入与生命周期
+  category: compliance
+  file: g_trae_032.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-032 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_029
+  gate_name: g_trae_029
+  title: G_TRAE_029 Gate — 文档治理-操作安全
+  category: compliance
+  file: g_trae_029.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-029 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_030
+  gate_name: g_trae_030
+  title: G_TRAE_030 Gate — 文档治理-编号与元数据
+  category: compliance
+  file: g_trae_030.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-030 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_033
+  gate_name: g_trae_033
+  title: G_TRAE_033 Gate — 模块治理-注册与同步
+  category: compliance
+  file: g_trae_033.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-033 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_035
+  gate_name: g_trae_035
+  title: G_TRAE_035 Gate — 任务系统-施工与验证
+  category: compliance
+  file: g_trae_035.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-035 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_028
+  gate_name: g_trae_028
+  title: G_TRAE_028 Gate — 文档治理-结构与命名
+  category: compliance
+  file: g_trae_028.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-028 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_034
+  gate_name: g_trae_034
+  title: G_TRAE_034 Gate — 任务系统-卡片标准与生命周期
+  category: compliance
+  file: g_trae_034.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-034 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_038
+  gate_name: g_trae_038
+  title: G_TRAE_038 Gate — 架构治理-CTR注入规则
+  category: compliance
+  file: g_trae_038.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-038 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_039
+  gate_name: g_trae_039
+  title: G_TRAE_039 Gate — AI治理-幻觉检测与自检
+  category: compliance
+  file: g_trae_039.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-039 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_036
+  gate_name: g_trae_036
+  title: G_TRAE_036 Gate — 架构治理-门禁与过渡
+  category: compliance
+  file: g_trae_036.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-036 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_037
+  gate_name: g_trae_037
+  title: G_TRAE_037 Gate — 架构治理-合格与版本化
+  category: compliance
+  file: g_trae_037.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-037 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_044
+  gate_name: g_trae_044
+  title: G_TRAE_044 Gate — 合规治理-审计与监管
+  category: compliance
+  file: g_trae_044.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-044 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_045
+  gate_name: g_trae_045
+  title: G_TRAE_045 Gate — 数据治理-质量与血缘
+  category: compliance
+  file: g_trae_045.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-045 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_040
+  gate_name: g_trae_040
+  title: G_TRAE_040 Gate — AI治理-模型路由与协作
+  category: compliance
+  file: g_trae_040.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-040 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_046
+  gate_name: g_trae_046
+  title: G_TRAE_046 Gate — 工程治理-代码重组安全
+  category: compliance
+  file: g_trae_046.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-046 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_024
+  gate_name: g_trae_024
+  title: G_TRAE_024 Gate — 方法论-诊断与根因分析
+  category: compliance
+  file: g_trae_024.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-024 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_025
+  gate_name: g_trae_025
+  title: G_TRAE_025 Gate — 方法论-决策与执行
+  category: compliance
+  file: g_trae_025.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-025 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_047
+  gate_name: g_trae_047
+  title: G_TRAE_047 Gate — 工程治理-文件头部与扩展
+  category: compliance
+  file: g_trae_047.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-047 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_026
+  gate_name: g_trae_026
+  title: G_TRAE_026 Gate — 方法论-质量与度量
+  category: compliance
+  file: g_trae_026.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-026 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_042
+  gate_name: g_trae_042
+  title: G_TRAE_042 Gate — 元规则-标准体系与模板
+  category: compliance
+  file: g_trae_042.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-042 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_027
+  gate_name: g_trae_027
+  title: G_TRAE_027 Gate — 方法论-协作与演进
+  category: compliance
+  file: g_trae_027.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-027 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_043
+  gate_name: g_trae_043
+  title: G_TRAE_043 Gate — 元规则-元数据与度量
+  category: compliance
+  file: g_trae_043.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-043 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_049
+  gate_name: g_trae_049
+  title: G_TRAE_049 Gate — 操作-领域操作手册
+  category: compliance
+  file: g_trae_049.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-049 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_041
+  gate_name: g_trae_041
+  title: G_TRAE_041 Gate — 元规则-规则分类与裁决
+  category: compliance
+  file: g_trae_041.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-041 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_048
+  gate_name: g_trae_048
+  title: G_TRAE_048 Gate — 操作-Vibe Coding会话管理
+  category: compliance
+  file: g_trae_048.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-048 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_050
+  gate_name: g_trae_050
+  title: G_TRAE_050 Gate — 域策略-数据源与因子层
+  category: compliance
+  file: g_trae_050.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-050 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_051
+  gate_name: g_trae_051
+  title: G_TRAE_051 Gate — 域策略-风控与盘后层
+  category: compliance
+  file: g_trae_051.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — 自动生成自 TRAE-051 规则YAML（DM门禁批量创建）
+- gate_id: POST_DOC_REVIEW
+  gate_name: post_doc_review
+  title: POST_DOC_REVIEW Post-Execution Document Content Review Gate
+  category: compliance
+  file: post_doc_review.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — Session关门时文档内容审查（trae_030 §1.2 执行后文档审查协议）
+- gate_id: GATE_RULE_FM
+  gate_name: validate_rule_frontmatter
+  title: GATE-RULE-FM Rule YAML Frontmatter Standard Fields Gate
+  category: compliance
+  file: scripts/governance/d3_metadata/validate_rule_frontmatter.py
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-22 落地 — trae_XXX.yaml frontmatter 7标准字段+顺序+枚举值校验（配合 scaffold.py rule 模式双重保险）
 summary:
-  total: 44
+  total: 93
   by_category:
     kms: 5
-    compliance: 4
+    compliance: 54
     lifecycle: 1
     trading: 3
     residue: 1
     infrastructure: 9
     governance: 9
     task: 3
-    invariants: 4
+    invariants: 3
     admission: 5
   by_status:
-    active: 38
+    active: 87
     implemented: 4
     draft: 1

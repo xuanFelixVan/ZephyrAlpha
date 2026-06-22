@@ -37,14 +37,13 @@ T-V2-006 扩展（experimental）
 
 from __future__ import annotations
 
-
 import time
 from enum import Enum, unique
 from threading import RLock
 from typing import TYPE_CHECKING, Any
 
-from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
 
 if TYPE_CHECKING:
     from zephyr.autonomy_core.support.doc_compressor import DocCompressor
@@ -129,7 +128,11 @@ class ContextBudgetTracker:
             ratio = usage / limit if limit > 0 else 0.0
 
             triggered = ContextBudgetLevel.L1_WARNING
-            for level in [ContextBudgetLevel.L3_HARD_STOP, ContextBudgetLevel.L2_THROTTLE, ContextBudgetLevel.L1_WARNING]:
+            for level in [
+                ContextBudgetLevel.L3_HARD_STOP,
+                ContextBudgetLevel.L2_THROTTLE,
+                ContextBudgetLevel.L1_WARNING,
+            ]:
                 threshold = self._thresholds.get(level, 0.0)
                 if ratio >= threshold:
                     triggered = level

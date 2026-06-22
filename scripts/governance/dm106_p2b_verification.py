@@ -25,8 +25,8 @@ import os
 import sqlite3
 import sys
 import time
-from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from collections import Counter
+from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path("D:/ZephyrAlpha")
@@ -128,7 +128,7 @@ def _update_db_metadata(db_path, metadata_updates):
         desc = "; ".join(f"{k}={v}" for k, v in metadata_updates.items())
         conn.execute(
             "INSERT OR REPLACE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
-            (metadata_updates.get("version_num", 4), datetime.now(timezone.utc).isoformat(), desc)
+            (metadata_updates.get("version_num", 4), datetime.now(UTC).isoformat(), desc),
         )
         conn.commit()
     except Exception as e:
@@ -139,6 +139,7 @@ def _update_db_metadata(db_path, metadata_updates):
 
 def load_yaml(path):
     from ruamel.yaml import YAML
+
     yaml = YAML()
     yaml.preserve_quotes = True
     with open(path, encoding="utf-8") as f:
@@ -147,6 +148,7 @@ def load_yaml(path):
 
 def save_yaml(data, path):
     from ruamel.yaml import YAML
+
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.default_flow_style = False
@@ -209,13 +211,15 @@ class VerificationResult:
         self.stats = {}
 
     def add_check(self, check_id, name, passed, detail="", severity="info"):
-        self.checks.append({
-            "check_id": check_id,
-            "name": name,
-            "passed": passed,
-            "detail": detail,
-            "severity": severity,
-        })
+        self.checks.append(
+            {
+                "check_id": check_id,
+                "name": name,
+                "passed": passed,
+                "detail": detail,
+                "severity": severity,
+            }
+        )
 
     def add_warning(self, msg):
         self.warnings.append(msg)
@@ -230,11 +234,13 @@ class VerificationResult:
         warn_fails = [c for c in self.checks if not c["passed"] and c["severity"] == "warning"]
         return {
             "meta": {
-                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "generated_at": datetime.now(UTC).isoformat(),
                 "version": "1.0.0",
                 "description": "DM-106 P2-B 迁移全量验证报告",
             },
-            "overall_status": "PASS" if not critical_fails else ("WARN" if not warn_fails or critical_fails else "FAIL"),
+            "overall_status": "PASS"
+            if not critical_fails
+            else ("WARN" if not warn_fails or critical_fails else "FAIL"),
             "summary": {
                 "total_checks": len(self.checks),
                 "passed": passed_count,
@@ -306,10 +312,12 @@ def run_verification():
     print(f"  总节点: {total_nodes}, 运营态: {op_count}, 设计态: {design_count}, 边: {len(edges)}")
 
     # 活跃节点(非废弃)
-    active_op = {nid: n for nid, n in operational_nodes.items()
-                 if isinstance(n, dict) and n.get("decision") != "DEPRECATE"}
-    active_design = {nid: n for nid, n in design_nodes.items()
-                     if isinstance(n, dict) and n.get("build_status") != "deprecated"}
+    active_op = {
+        nid: n for nid, n in operational_nodes.items() if isinstance(n, dict) and n.get("decision") != "DEPRECATE"
+    }
+    active_design = {
+        nid: n for nid, n in design_nodes.items() if isinstance(n, dict) and n.get("build_status") != "deprecated"
+    }
     active_count = len(active_op) + len(active_design)
 
     # ========== CHECK 1: 节点字段完整性 ==========
@@ -336,8 +344,7 @@ def run_verification():
     # ========== CHECK 2: blueprint_id 覆盖率(运营态) ==========
     print("\n[CHECK 2] blueprint_id 覆盖率(运营态)...")
     active_op_count = len(active_op)
-    active_op_with_bp = sum(1 for n in active_op.values()
-                            if isinstance(n, dict) and n.get("blueprint_id"))
+    active_op_with_bp = sum(1 for n in active_op.values() if isinstance(n, dict) and n.get("blueprint_id"))
     bp_rate = active_op_with_bp / active_op_count * 100 if active_op_count else 0
     passed = bp_rate >= 95.0
     detail = f"活跃运营态节点: {active_op_count}, 有blueprint_id: {active_op_with_bp}, 覆盖率: {bp_rate:.2f}%"
@@ -346,20 +353,20 @@ def run_verification():
 
     # ========== CHECK 3: physical_files 覆盖率(设计态) ==========
     print("\n[CHECK 3] physical_files 覆盖率(设计态)...")
-    active_design_file = {nid: n for nid, n in active_design.items()
-                          if isinstance(n, dict) and n.get("type") in FILE_TYPES}
+    active_design_file = {
+        nid: n for nid, n in active_design.items() if isinstance(n, dict) and n.get("type") in FILE_TYPES
+    }
     design_file_count = len(active_design_file)
-    design_with_pf = sum(1 for n in active_design_file.values()
-                         if isinstance(n, dict) and n.get("physical_files"))
+    design_with_pf = sum(1 for n in active_design_file.values() if isinstance(n, dict) and n.get("physical_files"))
     pf_rate = design_with_pf / design_file_count * 100 if design_file_count else 0
     # 设计态文件节点可能没有physical_files(如blueprint类型), 只检查有physical_files字段的
-    design_has_pf_field = sum(1 for n in active_design.values()
-                              if isinstance(n, dict) and "physical_files" in n)
-    design_total_with_pf = sum(1 for n in active_design.values()
-                               if isinstance(n, dict) and n.get("physical_files"))
+    design_has_pf_field = sum(1 for n in active_design.values() if isinstance(n, dict) and "physical_files" in n)
+    design_total_with_pf = sum(1 for n in active_design.values() if isinstance(n, dict) and n.get("physical_files"))
     pf_field_rate = design_total_with_pf / design_has_pf_field * 100 if design_has_pf_field else 0
     passed = pf_field_rate >= 95.0
-    detail = f"设计态有physical_files字段: {design_has_pf_field}, 非空: {design_total_with_pf}, 非空率: {pf_field_rate:.2f}%"
+    detail = (
+        f"设计态有physical_files字段: {design_has_pf_field}, 非空: {design_total_with_pf}, 非空率: {pf_field_rate:.2f}%"
+    )
     result.add_check("CHK-03", "physical_files非空率(设计态>95%)", passed, detail, "warning" if not passed else "info")
     print(f"  {'PASS' if passed else 'WARN'}: {detail}")
 
@@ -432,8 +439,9 @@ def run_verification():
 
     # ========== CHECK 7: 脚本节点数 ==========
     print("\n[CHECK 7] 脚本节点数...")
-    script_nodes_op = {nid: n for nid, n in operational_nodes.items()
-                       if isinstance(n, dict) and n.get("type") == "script"}
+    script_nodes_op = {
+        nid: n for nid, n in operational_nodes.items() if isinstance(n, dict) and n.get("type") == "script"
+    }
     depgraph_script_count = len(script_nodes_op)
     disk_counts = count_py_files_on_disk()
     disk_script_count = disk_counts["scripts"]
@@ -478,15 +486,17 @@ def run_verification():
             detail += f"; 总数不匹配(差{design_count - summary_total})"
         if status_mismatches:
             detail += "; " + ", ".join(f"{s}:实际={a},报告={r}" for s, a, r in status_mismatches[:10])
-    result.add_check("CHK-08", "build_status_summary一致性(设计态)", passed, detail, "warning" if not passed else "info")
+    result.add_check(
+        "CHK-08", "build_status_summary一致性(设计态)", passed, detail, "warning" if not passed else "info"
+    )
     print(f"  {'PASS' if passed else 'WARN'}: {detail}")
 
     # ========== CHECK 9: 废弃节点一致性 ==========
     print("\n[CHECK 9] 废弃节点一致性...")
-    deprecated_nodes = {nid: n for nid, n in nodes.items()
-                        if isinstance(n, dict) and n.get("decision") == "DEPRECATE"}
-    deprecated_with_status = sum(1 for n in deprecated_nodes.values()
-                                 if isinstance(n, dict) and n.get("build_status") == "deprecated")
+    deprecated_nodes = {nid: n for nid, n in nodes.items() if isinstance(n, dict) and n.get("decision") == "DEPRECATE"}
+    deprecated_with_status = sum(
+        1 for n in deprecated_nodes.values() if isinstance(n, dict) and n.get("build_status") == "deprecated"
+    )
     deprecated_count = len(deprecated_nodes)
 
     inconsistent_deprecated = []
@@ -551,7 +561,9 @@ def run_verification():
     else:
         passed = False
         detail = "无法加载 blueprint-domain-mapping.yaml"
-    result.add_check("CHK-11", "DM-101 blueprint_domain_mapping(>=60)", passed, detail, "critical" if not passed else "info")
+    result.add_check(
+        "CHK-11", "DM-101 blueprint_domain_mapping(>=60)", passed, detail, "critical" if not passed else "info"
+    )
     print(f"  {'PASS' if passed else 'FAIL'}: {detail}")
 
     # ========== DM-101: CSV 匹配率 ==========
@@ -570,33 +582,32 @@ def run_verification():
 
     # ========== DM-102: blueprint_id 回填率(运营态模块) ==========
     print("\n[CHECK 13] DM-102: blueprint_id 回填率(运营态模块)...")
-    active_op_modules = {nid: n for nid, n in active_op.items()
-                         if isinstance(n, dict) and n.get("type") == "module"}
+    active_op_modules = {nid: n for nid, n in active_op.items() if isinstance(n, dict) and n.get("type") == "module"}
     module_count = len(active_op_modules)
-    module_with_bp = sum(1 for n in active_op_modules.values()
-                         if isinstance(n, dict) and n.get("blueprint_id"))
+    module_with_bp = sum(1 for n in active_op_modules.values() if isinstance(n, dict) and n.get("blueprint_id"))
     bp_backfill_rate = module_with_bp / module_count * 100 if module_count else 0
     passed = bp_backfill_rate >= 90.0
-    detail = f"活跃模块节点: {module_count}, 有blueprint_id: {module_with_bp}, 回填率: {bp_backfill_rate:.2f}%, 目标: >=90%"
+    detail = (
+        f"活跃模块节点: {module_count}, 有blueprint_id: {module_with_bp}, 回填率: {bp_backfill_rate:.2f}%, 目标: >=90%"
+    )
     result.add_check("CHK-13", "DM-102 blueprint_id回填率(>90%)", passed, detail, "critical" if not passed else "info")
     print(f"  {'PASS' if passed else 'FAIL'}: {detail}")
 
     # ========== DM-102: physical_files 非空率(设计态) ==========
     print("\n[CHECK 14] DM-102: physical_files 非空率(设计态)...")
-    design_with_pf_field = sum(1 for n in active_design.values()
-                               if isinstance(n, dict) and "physical_files" in n)
-    design_with_pf_nonempty = sum(1 for n in active_design.values()
-                                  if isinstance(n, dict) and n.get("physical_files"))
+    design_with_pf_field = sum(1 for n in active_design.values() if isinstance(n, dict) and "physical_files" in n)
+    design_with_pf_nonempty = sum(1 for n in active_design.values() if isinstance(n, dict) and n.get("physical_files"))
     pf_nonempty_rate = design_with_pf_nonempty / design_with_pf_field * 100 if design_with_pf_field else 0
     passed = pf_nonempty_rate >= 95.0
     detail = f"设计态有physical_files字段: {design_with_pf_field}, 非空: {design_with_pf_nonempty}, 非空率: {pf_nonempty_rate:.2f}%, 目标: >=95%"
-    result.add_check("CHK-14", "DM-102 physical_files非空率(设计态>95%)", passed, detail, "warning" if not passed else "info")
+    result.add_check(
+        "CHK-14", "DM-102 physical_files非空率(设计态>95%)", passed, detail, "warning" if not passed else "info"
+    )
     print(f"  {'PASS' if passed else 'WARN'}: {detail}")
 
     # ========== DM-103: 脚本节点 blueprint_id ==========
     print("\n[CHECK 15] DM-103: 脚本节点 blueprint_id 覆盖...")
-    script_with_bp = sum(1 for n in script_nodes_op.values()
-                         if isinstance(n, dict) and n.get("blueprint_id"))
+    script_with_bp = sum(1 for n in script_nodes_op.values() if isinstance(n, dict) and n.get("blueprint_id"))
     script_bp_rate = script_with_bp / depgraph_script_count * 100 if depgraph_script_count else 0
     passed = script_bp_rate >= 90.0
     detail = f"运营态脚本节点: {depgraph_script_count}, 有blueprint_id: {script_with_bp}({script_bp_rate:.1f}%)"
@@ -640,7 +651,9 @@ def run_verification():
     detail = f"活跃文件节点无blueprint_id: {len(active_no_bp)}(其中__init__.py: {len(init_no_bp)}, 非init: {len(non_init_no_bp)})"
     if not passed:
         detail += "; 非init示例: " + ", ".join(non_init_no_bp[:10])
-    result.add_check("CHK-17", "DM-105 活跃文件节点无空blueprint_id(非init)", passed, detail, "warning" if not passed else "info")
+    result.add_check(
+        "CHK-17", "DM-105 活跃文件节点无空blueprint_id(非init)", passed, detail, "warning" if not passed else "info"
+    )
     print(f"  {'PASS' if passed else 'WARN'}: {detail}")
 
     # ========== DM-105: 未分配文件 ==========
@@ -658,7 +671,9 @@ def run_verification():
     non_init_unassigned = [(n, p) for n, p in unassigned_files if not p.endswith("__init__.py")]
 
     passed = len(non_init_unassigned) == 0
-    detail = f"未分配域的文件节点: {len(unassigned_files)}(init: {len(init_unassigned)}, 非init: {len(non_init_unassigned)})"
+    detail = (
+        f"未分配域的文件节点: {len(unassigned_files)}(init: {len(init_unassigned)}, 非init: {len(non_init_unassigned)})"
+    )
     if not passed:
         detail += "; 非init示例: " + ", ".join(f"{p}" for _, p in non_init_unassigned[:10])
     result.add_check("CHK-18", "DM-105 无未分配文件(非init)", passed, detail, "warning" if not passed else "info")
@@ -692,7 +707,7 @@ def run_verification():
     }
 
     # ========== 生成报告 ==========
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("验证报告生成中...")
     report_data = result.to_dict()
     save_yaml(report_data, REPORT_PATH)
@@ -700,17 +715,20 @@ def run_verification():
 
     # ========== 更新 depgraph 元数据 ==========
     print("\n更新 depgraph 元数据...")
-    _update_db_metadata(DEPGRAPH_DB_PATH, {
-        "version_num": 4,
-        "version": "3.2.0",
-        "p2b_completion_status": "completed",
-        "dm106_verified_at": datetime.now(timezone.utc).isoformat(),
-        "dm106_result": report_data["overall_status"],
-    })
+    _update_db_metadata(
+        DEPGRAPH_DB_PATH,
+        {
+            "version_num": 4,
+            "version": "3.2.0",
+            "p2b_completion_status": "completed",
+            "dm106_verified_at": datetime.now(UTC).isoformat(),
+            "dm106_result": report_data["overall_status"],
+        },
+    )
     print("depgraph 元数据已更新: version=3.2.0, p2b_completion_status=completed")
 
     # ========== 最终输出 ==========
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("DM-106 P2-B 验证完成")
     print(f"总体状态: {report_data['overall_status']}")
     print(f"检查项: {report_data['summary']['passed']}/{report_data['summary']['total_checks']} 通过")

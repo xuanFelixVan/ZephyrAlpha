@@ -39,6 +39,7 @@ MASTER_INDEX_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
 )
 
+
 def read_yaml(path: Path) -> tuple[dict[str, Any] | None, str]:
     """读取 YAML 文件"""
     if not path.exists():
@@ -54,6 +55,7 @@ def read_yaml(path: Path) -> tuple[dict[str, Any] | None, str]:
     if not isinstance(data, dict):
         return (None, f"{path} 不是 YAML mapping")
     return (data, "")
+
 
 def validate_master_index(data: dict[str, Any], verbose: bool = False) -> tuple[list[str], list[dict[str, Any]]]:
     """校验主索引。"""
@@ -171,6 +173,7 @@ def validate_master_index(data: dict[str, Any], verbose: bool = False) -> tuple[
                     )
     return (errors, findings)
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="V-18 登记表总索引自校验门禁")
@@ -214,6 +217,7 @@ def main() -> None:
     if errs > 0:
         sys.exit(EXIT_ERROR)
     sys.exit(EXIT_PASS)
+
 
 if __name__ == "__main__":
     main()

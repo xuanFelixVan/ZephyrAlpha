@@ -48,7 +48,6 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 import logging
 import time
 import uuid
@@ -57,19 +56,19 @@ from enum import Enum, unique
 from typing import Any, Protocol, Self
 
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
+from zephyr.integration.shared_08.io.serialization import to_dict
 from zephyr.integration.shared_08.resilience.circuit_breaker import CircuitBreaker
 from zephyr.integration.shared_08.resilience.retry import RetryConfig, async_retry
-from zephyr.integration.shared_08.io.serialization import to_dict
 
 __all__ = [
-    "HttpMethod",
+    "AioHttpProvider",
     "ApiCallError",
     "ApiCallMetrics",
-    "ApiResponse",
-    "ApiClientConfig",
-    "HttpProvider",
     "ApiClient",
-    "AioHttpProvider",
+    "ApiClientConfig",
+    "ApiResponse",
+    "HttpMethod",
+    "HttpProvider",
 ]
 
 logger = logging.getLogger(__name__)
@@ -368,29 +367,31 @@ class AioHttpProvider:
 
         timeout = aiohttp.ClientTimeout(total=timeout_seconds)
 
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.request(
+        async with (
+            aiohttp.ClientSession(timeout=timeout) as session,
+            session.request(
                 method=method.value,
                 url=url,
                 headers=headers or {},
                 json=body,
-            ) as resp:
-                response_headers = dict(resp.headers)
-                try:
-                    response_body: object = await resp.json()
-                except Exception:
-                    response_body = await resp.text()
+            ) as resp,
+        ):
+            response_headers = dict(resp.headers)
+            try:
+                response_body: object = await resp.json()
+            except Exception:
+                response_body = await resp.text()
 
-                return ApiResponse(
+            return ApiResponse(
+                status_code=resp.status,
+                headers=response_headers,
+                body=response_body,
+                metrics=ApiCallMetrics(
+                    url=url,
+                    method=method,
                     status_code=resp.status,
-                    headers=response_headers,
-                    body=response_body,
-                    metrics=ApiCallMetrics(
-                        url=url,
-                        method=method,
-                        status_code=resp.status,
-                        duration_ms=0,
-                        attempt=1,
-                        success=200 <= resp.status < 300,
-                    ),
-                )
+                    duration_ms=0,
+                    attempt=1,
+                    success=200 <= resp.status < 300,
+                ),
+            )

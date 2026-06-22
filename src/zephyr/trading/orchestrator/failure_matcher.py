@@ -33,7 +33,6 @@ Usage:
     matcher.activate()
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -120,6 +119,7 @@ class FailurePatternMatcher:
             return
         try:
             from zephyr.governance.ops_governance.event_hook import hook_registry
+
             hook_registry.register(
                 self._on_transition,
                 priority=10,
@@ -135,6 +135,7 @@ class FailurePatternMatcher:
             return
         try:
             from zephyr.governance.ops_governance.event_hook import hook_registry
+
             hook_registry.unregister(self._on_transition)
         except ImportError:
             pass
@@ -148,9 +149,7 @@ class FailurePatternMatcher:
 
         for pat in _FAILURE_PATTERNS:
             if re.search(pat["regex"], error_text, re.IGNORECASE):
-                sev_weight = {"low": 3, "medium": 2, "high": 1, "critical": 0}.get(
-                    pat["severity"], 3
-                )
+                sev_weight = {"low": 3, "medium": 2, "high": 1, "critical": 0}.get(pat["severity"], 3)
                 if sev_weight < best_severity:
                     best = FailureDiagnosis(
                         task_id=task_id,
@@ -180,9 +179,7 @@ class FailurePatternMatcher:
             return
         diagnosis = self.analyze(event.task_id, event.note or "")
         if diagnosis is not None:
-            sev_icon = {"low": "🟡", "medium": "🟠", "high": "🔴", "critical": "🚨"}.get(
-                diagnosis.severity, "❓"
-            )
+            sev_icon = {"low": "🟡", "medium": "🟠", "high": "🔴", "critical": "🚨"}.get(diagnosis.severity, "❓")
             logger.warning(
                 "%s [%s] %s — %s",
                 sev_icon,

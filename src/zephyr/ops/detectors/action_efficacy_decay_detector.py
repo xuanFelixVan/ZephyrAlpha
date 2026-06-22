@@ -30,7 +30,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 
-
 @dataclass
 class ActionEfficacyRecord:
     action_type: str
@@ -50,7 +49,7 @@ class ActionEfficacyDecayDetector:
         rec = self.records[action_type]
         rec.outcomes.append(1.0 if success else 0.0)
         if len(rec.outcomes) > rec.max_outcomes:
-            rec.outcomes = rec.outcomes[-rec.max_outcomes:]
+            rec.outcomes = rec.outcomes[-rec.max_outcomes :]
 
     def detect_decay(self) -> dict:
         findings = {}

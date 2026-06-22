@@ -1,11 +1,9 @@
 # [A_module] module_id=MOD-INT_system_configuration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-010 ====
 from dataclasses import dataclass, field
-
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
-from typing import Dict
-from typing import List
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -27,8 +25,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class SystemConfiguration:
@@ -42,185 +41,12 @@ class SystemConfiguration:
     is_active: bool
     updated_at: datetime
     version: str
-    config_data: Dict[str, Any] = field(default_factory=dict)
-    exceptions: List[str] = field(default_factory=list)
+    config_data: dict[str, Any] = field(default_factory=dict)
+    exceptions: list[str] = field(default_factory=list)
     max_retries: int = 3
     retry_policy: str = "linear"
     schema_version: str = "1.0"
     timeout_ms: int = 1000
 
+
 # ==== END CODGEN:CTR-P1-010 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

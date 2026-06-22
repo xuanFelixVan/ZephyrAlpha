@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_context_playground.py -q
 from __future__ import annotations
-import pytest
+
 from zephyr.autonomy_core.context_playground import (
     ContextPlayground,
     DryRunResult,

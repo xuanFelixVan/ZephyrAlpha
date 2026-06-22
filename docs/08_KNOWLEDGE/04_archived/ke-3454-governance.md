@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3454
 title: 4ter. 决策追溯档案 — `governance_architecture.md` 从 deferred-closure 到 active 的历史路径
 category: documentation

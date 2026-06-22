@@ -9,10 +9,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.integration_hub import (
-    IntegrationHub, IntegrationPoint,
+    IntegrationHub,
 )
+
 
 class TestIntegrationHub:
     def test_instantiation(self):

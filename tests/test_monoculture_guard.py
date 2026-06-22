@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.monoculture_guard import (
-    MonocultureGuard, BlastRadiusScore,
+    BlastRadiusScore,
+    MonocultureGuard,
 )
+
 
 class TestMonocultureGuard:
     def test_instantiation(self):
@@ -46,7 +47,9 @@ class TestMonocultureGuard:
     def test_compute_brs_dangerous(self):
         guard = MonocultureGuard()
         result = guard.compute_brs(
-            caller_count=20, cross_layer_count=5, on_critical_path=True,
+            caller_count=20,
+            cross_layer_count=5,
+            on_critical_path=True,
             has_independent_unit_test=False,
         )
         assert result.level == "DANGEROUS"

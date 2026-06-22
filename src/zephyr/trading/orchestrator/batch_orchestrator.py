@@ -54,12 +54,10 @@ Usage（每个 TRAE AI 对话侧）::
                             #    'COMPLETED': 943, 'FAILED': 2, 'TOTAL': 945}
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

@@ -7,16 +7,12 @@
 # [TESTS] —
 """Tests for MOD-INF-026 asset inventory models."""
 
-import json
-from datetime import datetime, timezone
-
-import pytest
+from datetime import UTC, datetime
 
 from zephyr.infrastructure.asset_inventory.models import (
     AssetLayer,
     AssetStatus,
     AssetType,
-    ClassificationResult,
     ClassifiedAsset,
     DashboardData,
     DriftEntry,
@@ -27,7 +23,6 @@ from zephyr.infrastructure.asset_inventory.models import (
     Priority,
     RawFileEntry,
     ReconciliationReport,
-    RegistryEntry,
     RenameEvent,
     ScanResult,
     UnifiedAssetIndex,
@@ -42,7 +37,7 @@ class TestRawFileEntry:
             file_name="test.py",
             extension=".py",
             size_bytes=1024,
-            mtime_utc=datetime(2026, 5, 7, tzinfo=timezone.utc),
+            mtime_utc=datetime(2026, 5, 7, tzinfo=UTC),
             sha256="a" * 64,
         )
         assert e.relative_path == "src/zephyr/test.py"
@@ -70,7 +65,7 @@ class TestClassifiedAsset:
             relative_path="a/b.py",
             asset_type=AssetType.MODULE,
             size_bytes=100,
-            mtime_utc=datetime.now(timezone.utc),
+            mtime_utc=datetime.now(UTC),
             sha256="b" * 64,
         )
         assert a.layer == AssetLayer.CROSS_LAYER
@@ -84,7 +79,7 @@ class TestClassifiedAsset:
             relative_path="a/b.py",
             asset_type=AssetType.MODULE,
             size_bytes=100,
-            mtime_utc=datetime.now(timezone.utc),
+            mtime_utc=datetime.now(UTC),
             sha256="b" * 64,
             tags=["v2-refactor", "high-risk"],
             custom_metadata={"owner": "ai", "review_date": "2026Q3"},

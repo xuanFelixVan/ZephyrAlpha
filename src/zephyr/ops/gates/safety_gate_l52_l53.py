@@ -25,11 +25,10 @@ L52: boot_integrity attestation — runtime measurement validation
 L53: OSS license compliance — SPDX audit pass before action
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL52L53:
-
     def __init__(self):
         self.boot_measurement_ok: bool = True
         self.spdx_compliant: bool = True

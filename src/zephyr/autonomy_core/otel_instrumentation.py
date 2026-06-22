@@ -23,9 +23,10 @@ from __future__ import annotations
 
 """otel_instrumentation.py — 全链路 OTel (B12, DD86, TASK-015 beta v)"""
 
-from dataclasses import dataclass, field
 import time
+from dataclasses import dataclass, field
 from typing import Any
+
 
 @dataclass
 class PipelineTraceSpan:
@@ -35,8 +36,10 @@ class PipelineTraceSpan:
     attributes: dict[str, Any] = field(default_factory=dict)
     status: str = "OK"
 
+
 class OTelInstrumentation:
     """OTEL trace Orc→CE.build→compress→validate→inject→Agent Action (DD86)."""
+
     def __init__(self) -> None:
         self._spans: list[PipelineTraceSpan] = []
 

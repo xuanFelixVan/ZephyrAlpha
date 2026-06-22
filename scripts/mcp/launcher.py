@@ -7,7 +7,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import signal
 import sys
@@ -110,13 +109,13 @@ def launch_all() -> dict[str, bool]:
     signal.signal(signal.SIGTERM, _shutdown)
 
     for layer_idx, layer in enumerate(order):
-        print(f"\n--- Layer {layer_idx+1}: {layer} ---")
+        print(f"\n--- Layer {layer_idx + 1}: {layer} ---")
 
         for sid in layer:
             ok = start_server(sid, gateway)
             results[sid] = ok
             if not ok:
-                print(f"[FATAL] Layer {layer_idx+1} server {sid!r} failed to start — aborting")
+                print(f"[FATAL] Layer {layer_idx + 1} server {sid!r} failed to start — aborting")
                 gateway.terminate_all()
                 gateway.shutdown()
                 return results
@@ -132,12 +131,12 @@ def launch_all() -> dict[str, bool]:
                 idle_timeout_s=600.0,
             )
             if entry is None or not entry.is_alive:
-                print(f"[FATAL] Layer {layer_idx+1} server {sid!r} died after start — aborting")
+                print(f"[FATAL] Layer {layer_idx + 1} server {sid!r} died after start — aborting")
                 gateway.terminate_all()
                 gateway.shutdown()
                 return results
 
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     ok = sum(1 for v in results.values() if v)
     print(f"All {ok}/{len(results)} servers running")
     print("Press Ctrl+C to stop")

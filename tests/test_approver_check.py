@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_approver_check.py
-from zephyr.security.access_control.approver_check import verify_approver, SUPERADMIN_AGENTS, RESTRICTED_ACTIONS
+from zephyr.security.access_control.approver_check import RESTRICTED_ACTIONS, SUPERADMIN_AGENTS, verify_approver
 
 
 class TestConstants:

@@ -20,6 +20,7 @@
 # [TESTS] pytest tests/test_resilience_retry.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.resilience.retry import (
     RetryConfig,
     RetryExhaustedError,
@@ -72,12 +73,14 @@ class TestAsyncRetry:
         @async_retry(RetryConfig(max_attempts=3, base_delay_seconds=0.01, jitter=False))
         async def ok():
             return "success"
+
         result = await ok()
         assert result == "success"
 
     @pytest.mark.asyncio
     async def test_retries_and_succeeds(self):
         call_count = 0
+
         @async_retry(RetryConfig(max_attempts=3, base_delay_seconds=0.01, jitter=False))
         async def flaky():
             nonlocal call_count
@@ -85,6 +88,7 @@ class TestAsyncRetry:
             if call_count < 3:
                 raise ValueError("not yet")
             return "finally"
+
         result = await flaky()
         assert result == "finally"
         assert call_count == 3
@@ -94,6 +98,7 @@ class TestAsyncRetry:
         @async_retry(RetryConfig(max_attempts=2, base_delay_seconds=0.01, jitter=False))
         async def always_fail():
             raise ValueError("nope")
+
         with pytest.raises(RetryExhaustedError) as exc_info:
             await always_fail()
         assert exc_info.value.__cause__ is not None
@@ -101,17 +106,21 @@ class TestAsyncRetry:
     @pytest.mark.asyncio
     async def test_non_retryable_raises_immediately(self):
         call_count = 0
-        @async_retry(RetryConfig(
-            max_attempts=3,
-            base_delay_seconds=0.01,
-            retryable_exceptions=(ValueError,),
-            non_retryable_exceptions=(TypeError,),
-            jitter=False,
-        ))
+
+        @async_retry(
+            RetryConfig(
+                max_attempts=3,
+                base_delay_seconds=0.01,
+                retryable_exceptions=(ValueError,),
+                non_retryable_exceptions=(TypeError,),
+                jitter=False,
+            )
+        )
         async def type_error_func():
             nonlocal call_count
             call_count += 1
             raise TypeError("immediate")
+
         with pytest.raises(TypeError):
             await type_error_func()
         assert call_count == 1
@@ -121,6 +130,7 @@ class TestAsyncRetry:
         @async_retry(max_attempts=2, base_delay_seconds=0.01)
         async def simple():
             return "ok"
+
         result = await simple()
         assert result == "ok"
 
@@ -128,5 +138,6 @@ class TestAsyncRetry:
 class TestRetryExhaustedError:
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         err = RetryExhaustedError("exhausted", details={"max_attempts": 3})
         assert isinstance(err, ZephyrBaseError)

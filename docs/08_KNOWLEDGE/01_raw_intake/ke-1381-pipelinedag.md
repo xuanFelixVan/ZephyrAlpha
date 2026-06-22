@@ -13,7 +13,7 @@ category: module_blueprint
 class PipelineDAG(BaseModel):
     nodes: list[str]              # ["M1","M2",...,"M11"]
     edges: list[tuple[str,str]]   # [("M1","M2"), ("M2","M3"), ...]
-    
+
     def topological_sort(self) -> list[str]:
         """Kahn's BFS algorithm"""
     def detect_cycle(self) -> bool:

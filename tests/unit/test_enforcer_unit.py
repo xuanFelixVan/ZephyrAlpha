@@ -36,6 +36,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 import pytest
+
 from zephyr.integration.shared_08.contracts.core.enforcer import (
     ContractViolationError,
     EnforcementMode,

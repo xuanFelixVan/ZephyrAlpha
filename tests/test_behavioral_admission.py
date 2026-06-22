@@ -13,10 +13,8 @@
 from __future__ import annotations
 
 import asyncio
-import time
 
 import pytest
-
 
 ve_mod = pytest.importorskip("zephyr.trading.verdict_engine")
 ac_mod = pytest.importorskip("zephyr.trading.admission_controller")
@@ -186,23 +184,17 @@ class TestVerdictEngine:
 
     def test_resolve_graduated_level_pass_public(self):
         engine = VerdictEngine()
-        level = engine.resolve_graduated_level(
-            VerdictLevel.PASS, ProtectionLevel.public, True, 0
-        )
+        level = engine.resolve_graduated_level(VerdictLevel.PASS, ProtectionLevel.public, True, 0)
         assert level == GraduatedLevel.L0
 
     def test_resolve_graduated_level_pass_normal(self):
         engine = VerdictEngine()
-        level = engine.resolve_graduated_level(
-            VerdictLevel.PASS, ProtectionLevel.normal, True, 0
-        )
+        level = engine.resolve_graduated_level(VerdictLevel.PASS, ProtectionLevel.normal, True, 0)
         assert level == GraduatedLevel.L1
 
     def test_resolve_graduated_level_red_anchor(self):
         engine = VerdictEngine()
-        level = engine.resolve_graduated_level(
-            VerdictLevel.RED, ProtectionLevel.anchor, False, 0
-        )
+        level = engine.resolve_graduated_level(VerdictLevel.RED, ProtectionLevel.anchor, False, 0)
         assert level == GraduatedLevel.L6
 
     def test_should_trigger_consensus_red_anchor(self):

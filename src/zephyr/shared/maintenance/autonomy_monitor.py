@@ -29,12 +29,12 @@ Autonomy Monitor — AI 自主等级监控与降级。
     任务卡 TASK-INF-0110 (Part 3/4)
 """
 
-import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
 
 class AutonomyLevel(str, Enum):
     FULL = "full_autonomy"
@@ -42,13 +42,15 @@ class AutonomyLevel(str, Enum):
     RESTRICTED = "restricted"
     READ_ONLY = "read_only"
 
+
 @dataclass
 class AutonomyState:
     current_level: AutonomyLevel
     previous_level: AutonomyLevel | None = None
     downgrade_count: int = 0
     upgrade_count: int = 0
-    last_changed: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    last_changed: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+
 
 @dataclass
 class AutonomyReport:
@@ -57,8 +59,8 @@ class AutonomyReport:
     downgrade_history: list[dict[str, Any]]
     recommendation: str
 
-class AutonomyMonitor:
 
+class AutonomyMonitor:
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/maintenance/autonomy")
         self._state = AutonomyState(current_level=AutonomyLevel.SUPERVISED)
@@ -72,15 +74,17 @@ class AutonomyMonitor:
         self._state.previous_level = self._state.current_level
         self._state.current_level = new_level
         self._state.downgrade_count += 1
-        self._state.last_changed = datetime.now(timezone.utc).isoformat()
+        self._state.last_changed = datetime.now(UTC).isoformat()
 
-        self._event_log.append({
-            "type": "DOWNGRADE",
-            "from": self._state.previous_level.value,
-            "to": new_level.value,
-            "reason": reason,
-            "timestamp": self._state.last_changed,
-        })
+        self._event_log.append(
+            {
+                "type": "DOWNGRADE",
+                "from": self._state.previous_level.value,
+                "to": new_level.value,
+                "reason": reason,
+                "timestamp": self._state.last_changed,
+            }
+        )
 
         return new_level
 
@@ -89,15 +93,17 @@ class AutonomyMonitor:
         self._state.previous_level = self._state.current_level
         self._state.current_level = new_level
         self._state.upgrade_count += 1
-        self._state.last_changed = datetime.now(timezone.utc).isoformat()
+        self._state.last_changed = datetime.now(UTC).isoformat()
 
-        self._event_log.append({
-            "type": "UPGRADE",
-            "from": self._state.previous_level.value,
-            "to": new_level.value,
-            "reason": reason,
-            "timestamp": self._state.last_changed,
-        })
+        self._event_log.append(
+            {
+                "type": "UPGRADE",
+                "from": self._state.previous_level.value,
+                "to": new_level.value,
+                "reason": reason,
+                "timestamp": self._state.last_changed,
+            }
+        )
 
         return new_level
 
@@ -115,7 +121,8 @@ class AutonomyMonitor:
             uptime_downgrade_free_hours=0.0,
             downgrade_history=downgrades[-10:],
             recommendation=(
-                "Full autonomy recommended" if self._state.current_level == AutonomyLevel.FULL
+                "Full autonomy recommended"
+                if self._state.current_level == AutonomyLevel.FULL
                 else "Human supervision recommended"
             ),
         )

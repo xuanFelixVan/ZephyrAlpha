@@ -3,13 +3,18 @@
 
 CYBERSEC_2026_VECTORS = None  # stub constant
 
+
 class CyberSecVerdict:
     """Stub class — implementation pending."""
+
     pass
+
 
 class Cybersec2026Guard:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "CYBERSEC_2026_VECTORS",

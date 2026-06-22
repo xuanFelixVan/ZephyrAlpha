@@ -10,11 +10,12 @@ exit codes（本编排器语义，独立约定）：
   0=all pass，1=存在失败的 fitness function，2=编排/执行层面的错误。
 与 `scripts/governance/run_all.py` 的 CT-SCRIPT-GATE-001 **四档语义（含 3=基础设施异常）并非同一标尺**——CI 中应分别解读，勿混用 exit code 数字含义。
 """
+
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
-import os
 from pathlib import Path
 
 import yaml
@@ -80,9 +81,7 @@ def main() -> int:
 
     print(f"\n{'=' * 60}")
     skipped_n = len(manifest["fitness_functions"]) - len(active_ffs)
-    print(
-        f"结果：{len(passed)} PASS / {len(failed)} FAIL / {skipped_n} 未激活"
-    )
+    print(f"结果：{len(passed)} PASS / {len(failed)} FAIL / {skipped_n} 未激活")
     print(f"{'=' * 60}")
 
     if failed:

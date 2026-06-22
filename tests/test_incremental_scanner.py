@@ -13,14 +13,11 @@
 from __future__ import annotations
 
 import hashlib
-import os
-
-import pytest
 
 from zephyr.behavioral_audit.incremental_scanner import (
-    FileChange,
     ChangeSet,
     DetectorFileMapping,
+    FileChange,
     IncrementalScanner,
 )
 

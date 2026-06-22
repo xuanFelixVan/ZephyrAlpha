@@ -14,9 +14,9 @@ from __future__ import annotations
 
 from zephyr.behavioral_audit.data_classification import (
     DATA_CLASSIFICATION,
+    LEVEL_ORDER,
     DataLevel,
     LevelAttributes,
-    LEVEL_ORDER,
     classify,
     get_level,
     max_level_from_list,

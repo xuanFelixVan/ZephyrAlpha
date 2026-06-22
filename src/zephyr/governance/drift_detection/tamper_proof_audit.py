@@ -28,6 +28,7 @@ anomaly_detection: 总行数减少/批量清洗/回溯修改 → P0 CRITICAL从G
 对标 blueprint.md §6.26。
 同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -36,9 +37,8 @@ import os
 import sqlite3
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from zephyr.governance.audit_trail.bridge import write_to_core
 
@@ -49,7 +49,7 @@ class AuditRecord:
     state_counts: dict[str, int]
     events_hash: str
     file_hashes: dict[str, str]
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     committed_to_git: bool = False
     verified: bool = False
 
@@ -60,7 +60,7 @@ class AnomalyAlert:
     anomaly_type: str
     severity: str = "CRITICAL"
     description: str = ""
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     recovery_suggestion: str = ""
 
 
@@ -100,10 +100,7 @@ def snapshot_event_hash(db_path: str) -> str:
     try:
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
-        cursor.execute(
-            "SELECT event_id, detector_id, severity, state FROM drift_events "
-            "ORDER BY timestamp DESC"
-        )
+        cursor.execute("SELECT event_id, detector_id, severity, state FROM drift_events ORDER BY timestamp DESC")
         rows = cursor.fetchall()
         conn.close()
 
@@ -183,7 +180,9 @@ def generate_audit_log(
         )
         subprocess.run(
             [
-                "git", "commit", "-m",
+                "git",
+                "commit",
+                "-m",
                 f"audit_log: {scan_id} sha256={events_hash[:12]}",
             ],
             capture_output=True,
@@ -194,19 +193,22 @@ def generate_audit_log(
     except Exception:
         pass
 
-    write_to_core("drift_tamper_proof_audit", {
-        "scan_id": scan_id,
-        "events_hash": events_hash[:16],
-        "committed_to_git": record.committed_to_git,
-        "state_counts": state_counts,
-    })
+    write_to_core(
+        "drift_tamper_proof_audit",
+        {
+            "scan_id": scan_id,
+            "events_hash": events_hash[:16],
+            "committed_to_git": record.committed_to_git,
+            "state_counts": state_counts,
+        },
+    )
 
     return record
 
 
 def detect_anomalies(
     current: AuditRecord,
-    previous: Optional[AuditRecord] = None,
+    previous: AuditRecord | None = None,
 ) -> list[AnomalyAlert]:
     alerts: list[AnomalyAlert] = []
 
@@ -219,10 +221,7 @@ def detect_anomalies(
                 AnomalyAlert(
                     alert_id=f"anomaly-total-drop-{current.scan_id}",
                     anomaly_type="TOTAL_ROW_DROP",
-                    description=(
-                        f"Event count dropped from {total_before} "
-                        f"to {total_after} — possible batch purge"
-                    ),
+                    description=(f"Event count dropped from {total_before} to {total_after} — possible batch purge"),
                     severity="CRITICAL",
                     recovery_suggestion="Restore from git and re-import events",
                 )
@@ -235,10 +234,7 @@ def detect_anomalies(
                 AnomalyAlert(
                     alert_id=f"anomaly-resolved-rewind-{current.scan_id}",
                     anomaly_type="RESOLVED_REWIND",
-                    description=(
-                        f"RESOLVED count dropped: "
-                        f"{resolved_before} → {resolved_after}"
-                    ),
+                    description=(f"RESOLVED count dropped: {resolved_before} → {resolved_after}"),
                     recovery_suggestion="Check for retroactive state modification",
                 )
             )

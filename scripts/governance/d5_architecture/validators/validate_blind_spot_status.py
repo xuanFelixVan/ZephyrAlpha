@@ -3,8 +3,11 @@
 GATE-BS: Blind Spot Reality Check
 =================================
 """
+
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 
@@ -16,7 +19,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 # 每次跑门禁时,对 session-logs/index.yaml 中所有 status=open 的盲点
 # 执行自动对账--检查代码现实是否已经解决.
 # 发现"已解决但忘改状态"的盲点时,输出警告并要求手动确认.

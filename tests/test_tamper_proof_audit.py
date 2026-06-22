@@ -13,20 +13,18 @@
 import os
 import sqlite3
 import tempfile
-from datetime import datetime, timezone
-from unittest.mock import patch, MagicMock
+from datetime import datetime
 
 import pytest
 
 from zephyr.behavioral_audit.tamper_proof_audit import (
-    AuditRecord,
     AnomalyAlert,
-    APPEND_ONLY_TRIGGERS,
+    AuditRecord,
     _sha256,
-    setup_append_only,
-    snapshot_event_hash,
     count_states,
     detect_anomalies,
+    setup_append_only,
+    snapshot_event_hash,
 )
 
 
@@ -178,14 +176,22 @@ class TestDetectAnomalies:
         assert alerts[0].anomaly_type == "TOTAL_ROW_DROP"
 
     def test_resolved_rewind_triggers_alert(self):
-        previous = AuditRecord(scan_id="s0", state_counts={"DETECTED": 20, "RESOLVED": 50}, events_hash="h", file_hashes={})
-        current = AuditRecord(scan_id="s1", state_counts={"DETECTED": 20, "RESOLVED": 10}, events_hash="h", file_hashes={})
+        previous = AuditRecord(
+            scan_id="s0", state_counts={"DETECTED": 20, "RESOLVED": 50}, events_hash="h", file_hashes={}
+        )
+        current = AuditRecord(
+            scan_id="s1", state_counts={"DETECTED": 20, "RESOLVED": 10}, events_hash="h", file_hashes={}
+        )
         alerts = detect_anomalies(current, previous)
         assert any(a.anomaly_type == "RESOLVED_REWIND" for a in alerts)
 
     def test_no_anomaly_when_stable(self):
-        previous = AuditRecord(scan_id="s0", state_counts={"DETECTED": 10, "RESOLVED": 5}, events_hash="h", file_hashes={})
-        current = AuditRecord(scan_id="s1", state_counts={"DETECTED": 12, "RESOLVED": 6}, events_hash="h", file_hashes={})
+        previous = AuditRecord(
+            scan_id="s0", state_counts={"DETECTED": 10, "RESOLVED": 5}, events_hash="h", file_hashes={}
+        )
+        current = AuditRecord(
+            scan_id="s1", state_counts={"DETECTED": 12, "RESOLVED": 6}, events_hash="h", file_hashes={}
+        )
         alerts = detect_anomalies(current, previous)
         assert alerts == []
 

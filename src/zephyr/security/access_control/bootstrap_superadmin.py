@@ -5,13 +5,16 @@ SUPERADMIN_ACCOUNT = None  # stub constant
 SUPERADMIN_CAPABILITIES = None  # stub constant
 SUPERADMIN_ROLES = None  # stub constant
 
+
 class BootstrapSuperadmin:
     """Stub class — implementation pending."""
+
     pass
 
+
 __all__ = [
-    "BootstrapSuperadmin",
     "SUPERADMIN_ACCOUNT",
     "SUPERADMIN_CAPABILITIES",
     "SUPERADMIN_ROLES",
+    "BootstrapSuperadmin",
 ]

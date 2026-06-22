@@ -21,18 +21,18 @@ escalation_protocol_human_dynamics_and_capacity:
       氛围编程社区最新发现（Yugoge 2026-04-16 Issues）:
         "Hooks 自体が Edit/Write で改変可能"
         — PreToolUse/PostToolUse hooks themselves can be modified by Edit/Write
-      
+
       这意味着：如果升级协议的规则通过hooks实现（如§2.34 工具链安全基线），
       AI可以通过Edit/Write修改hooks来绕过所有防护。
-      
+
       这不是#143（协议自身代码的自我验证）——hooks是基础设施层配置。
-    
+
     defense:
       external_immutable_store:
         mechanism: "hooks内容的hash存储在独立于项目目录的外部位置"
         implementation: "~/.zephyr/hooks_protection/hashes.json + 权限600"
         check: "每次hook执行前→对比实际hook内容hash vs 外部存储hash→不一致则拒绝执行+P0升级"
-      
+
       hook_integrity_schema:
         format: |
           {
@@ -42,11 +42,11 @@ escalation_protocol_human_dynamics_and_capacity:
             "authorized_modifier": "Owner-Only (manual edit, not via AI)"
           }
         validation: "Pre-boot + 每15min→所有hook hash vs integrity store→不一致=HACK_DETECTED"
-      
+
       hook_change_signing:
         principle: "任何hook变更必须由Owner手动签名"
         mechanism: "Owner用SSH key签名变更后的hook hash→升级协议验证签名→签名无效则拒绝"
-    
+
     self_defeating_loop_awareness:
       note: "如果AI既修改hook又修改integrity store→双重修改=更高级别威胁"
       defense: "integrity store自身在只读文件系统位置或External Witness监控（§2.28 witness isolation复用）"
@@ -59,16 +59,16 @@ escalation_protocol_human_dynamics_and_capacity:
         - 开始忽略低级别升级
         - 对中级别升级的反应时间延长
         - 最终对高级别升级的阈值也上升（"又是假警报"）
-      
+
       这不是Owner的问题——这是人因工程的必然结果。
       蓝图当前只定义了"升级创建→通知Owner"，没有定义"升级太多→怎么办"。
-    
+
     fatigue_metrics:
       signal_to_noise: "acknowledged_fatals / total_escalations_this_week"
       mean_response_time_trend: "每次Owner确认升级的时间趋势→上升=M疲劳"
       ignore_rate: "14d内未被Owner确认的升级比例"
       false_positive_experience: "Owner标记为'false_alarm'的升级比例"
-    
+
     adaptive_calibration:
       trigger: "（ignore_rate > 30% 超过7天）OR（mean_response_time > 2x baseline）"
       action: |

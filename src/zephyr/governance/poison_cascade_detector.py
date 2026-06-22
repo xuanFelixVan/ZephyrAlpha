@@ -2,28 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.poison_cascade_detector
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
-from dataclasses import dataclass, field
 from collections import defaultdict
+from dataclasses import dataclass, field
+
 
 @dataclass
 class PoisonEvent:
@@ -34,6 +25,7 @@ class PoisonEvent:
     suspicion_score: float
     timestamp: float = field(default_factory=time.time)
 
+
 @dataclass
 class PoisonReport:
     total_events: int
@@ -42,8 +34,8 @@ class PoisonReport:
     root_causes: list[str]
     advice: str
 
-class PoisonCascadeDetector:
 
+class PoisonCascadeDetector:
     POISON_SIGNATURES: list[str] = [
         "ignore_previous_instructions",
         "system_role_new",

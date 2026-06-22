@@ -19,30 +19,29 @@ zephyr.governance.drift_detector.trigger_recovery 完成恢复闭环。
   5. 修复失败兜底回滚 MANUAL_REQUIRED
   6. handle_drift_stub 真实调用链（非 fallback stub）
 """
+
 from __future__ import annotations
 
-import importlib
-import tempfile
 import uuid
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 
 def test_trigger_recovery_importable():
     from zephyr.governance.drift_detector import trigger_recovery
+
     assert callable(trigger_recovery)
 
 
 def test_trigger_recovery_via_gates_init():
     from zephyr.governance.rule_enforcement import trigger_recovery
+
     assert callable(trigger_recovery)
 
 
 def test_handle_drift_stub_uses_trigger_recovery():
     from zephyr.trading.orchestrator.trigger_router import handle_drift_stub
+
     assert callable(handle_drift_stub)
 
     payload = {"module_id": "MOD-INF-023", "changed_files": [], "commit_message": ""}
@@ -63,16 +62,18 @@ def test_handle_drift_stub_fallback_on_import_error():
 
     payload = {"module_id": "MOD-INF-023"}
 
-    with patch(
-        "zephyr.governance.drift_detector.trigger_recovery",
-        side_effect=ImportError("test import error"),
-    ):
-        with patch(
+    with (
+        patch(
+            "zephyr.governance.drift_detector.trigger_recovery",
+            side_effect=ImportError("test import error"),
+        ),
+        patch(
             "zephyr.trading.orchestrator.trigger_router._stub_response",
             return_value={"stub": True},
-        ):
-            result = handle_drift_stub(payload)
-            assert result.get("stub") is True or "drift_detected" in str(result)
+        ),
+    ):
+        result = handle_drift_stub(payload)
+        assert result.get("stub") is True or "drift_detected" in str(result)
 
 
 def test_trigger_recovery_hotfix_bypass():
@@ -105,14 +106,16 @@ def test_trigger_recovery_no_drift():
 
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
-    with patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result):
-        with patch(
+    with (
+        patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result),
+        patch(
             "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
-        ):
-            result = trigger_recovery(payload)
-            assert result["recovery_status"] == "NO_DRIFT_FOUND"
-            assert result["scan_result"]["total_drift_events"] == 0
+        ),
+    ):
+        result = trigger_recovery(payload)
+        assert result["recovery_status"] == "NO_DRIFT_FOUND"
+        assert result["scan_result"]["total_drift_events"] == 0
 
 
 def test_trigger_recovery_cascade_lockout():
@@ -121,7 +124,7 @@ def test_trigger_recovery_cascade_lockout():
     mock_event = MagicMock()
     mock_event.event_id = uuid.uuid4()
     mock_event.drift_dimension = "D5_blueprint_code_sync"
-    mock_event.created_at = datetime.now(timezone.utc)
+    mock_event.created_at = datetime.now(UTC)
 
     mock_scan_result = MagicMock()
     mock_scan_result.scan_id = uuid.uuid4()
@@ -132,21 +135,23 @@ def test_trigger_recovery_cascade_lockout():
 
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
-    with patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result):
-        with patch(
+    with (
+        patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result),
+        patch(
             "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
-        ):
-            with patch(
-                "zephyr.behavioral_audit.cascade_detector.detect_cascade",
-                return_value=[],
-            ):
-                with patch(
-                    "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
-                    return_value=True,
-                ):
-                    result = trigger_recovery(payload)
-                    assert result["recovery_status"] == "CASCADE_LOCKOUT"
+        ),
+        patch(
+            "zephyr.behavioral_audit.cascade_detector.detect_cascade",
+            return_value=[],
+        ),
+        patch(
+            "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
+            return_value=True,
+        ),
+    ):
+        result = trigger_recovery(payload)
+        assert result["recovery_status"] == "CASCADE_LOCKOUT"
 
 
 def test_trigger_recovery_auto_fix_success():
@@ -155,7 +160,7 @@ def test_trigger_recovery_auto_fix_success():
     mock_event = MagicMock()
     mock_event.event_id = uuid.uuid4()
     mock_event.drift_dimension = "D5_blueprint_code_sync"
-    mock_event.created_at = datetime.now(timezone.utc)
+    mock_event.created_at = datetime.now(UTC)
 
     mock_scan_result = MagicMock()
     mock_scan_result.scan_id = uuid.uuid4()
@@ -166,28 +171,30 @@ def test_trigger_recovery_auto_fix_success():
 
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
-    with patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result):
-        with patch(
+    with (
+        patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result),
+        patch(
             "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
-        ):
-            with patch(
-                "zephyr.behavioral_audit.cascade_detector.detect_cascade",
-                return_value=[],
-            ):
-                with patch(
-                    "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
-                    return_value=False,
-                ):
-                    with patch(
-                        "zephyr.behavioral_audit.reconciler.AutoFixer",
-                    ) as MockAutoFixer:
-                        mock_fixer = MockAutoFixer.return_value
-                        mock_fixer.auto_fix.return_value = True
-                        result = trigger_recovery(payload)
-                        assert result["recovery_status"] == "FULLY_RECOVERED"
-                        assert len(result["fix_results"]) == 1
-                        assert result["fix_results"][0]["status"] == "AUTO_FIXED"
+        ),
+        patch(
+            "zephyr.behavioral_audit.cascade_detector.detect_cascade",
+            return_value=[],
+        ),
+        patch(
+            "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
+            return_value=False,
+        ),
+        patch(
+            "zephyr.behavioral_audit.reconciler.AutoFixer",
+        ) as MockAutoFixer,
+    ):
+        mock_fixer = MockAutoFixer.return_value
+        mock_fixer.auto_fix.return_value = True
+        result = trigger_recovery(payload)
+        assert result["recovery_status"] == "FULLY_RECOVERED"
+        assert len(result["fix_results"]) == 1
+        assert result["fix_results"][0]["status"] == "AUTO_FIXED"
 
 
 def test_trigger_recovery_auto_fix_failure_fallback():
@@ -196,7 +203,7 @@ def test_trigger_recovery_auto_fix_failure_fallback():
     mock_event = MagicMock()
     mock_event.event_id = uuid.uuid4()
     mock_event.drift_dimension = "D5_unknown_dimension"
-    mock_event.created_at = datetime.now(timezone.utc)
+    mock_event.created_at = datetime.now(UTC)
     mock_event.auto_fixable = False
 
     mock_scan_result = MagicMock()
@@ -208,28 +215,30 @@ def test_trigger_recovery_auto_fix_failure_fallback():
 
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
-    with patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result):
-        with patch(
+    with (
+        patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result),
+        patch(
             "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
-        ):
-            with patch(
-                "zephyr.behavioral_audit.cascade_detector.detect_cascade",
-                return_value=[],
-            ):
-                with patch(
-                    "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
-                    return_value=False,
-                ):
-                    with patch(
-                        "zephyr.behavioral_audit.reconciler.AutoFixer",
-                    ) as MockAutoFixer:
-                        mock_fixer = MockAutoFixer.return_value
-                        mock_fixer.auto_fix.return_value = False
-                        result = trigger_recovery(payload)
-                        assert result["recovery_status"] == "RECOVERY_FAILED"
-                        assert len(result["fix_results"]) == 1
-                        assert result["fix_results"][0]["status"] in (
-                            "MANUAL_REQUIRED",
-                            "FALLBACK_ERROR",
-                        )
+        ),
+        patch(
+            "zephyr.behavioral_audit.cascade_detector.detect_cascade",
+            return_value=[],
+        ),
+        patch(
+            "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
+            return_value=False,
+        ),
+        patch(
+            "zephyr.behavioral_audit.reconciler.AutoFixer",
+        ) as MockAutoFixer,
+    ):
+        mock_fixer = MockAutoFixer.return_value
+        mock_fixer.auto_fix.return_value = False
+        result = trigger_recovery(payload)
+        assert result["recovery_status"] == "RECOVERY_FAILED"
+        assert len(result["fix_results"]) == 1
+        assert result["fix_results"][0]["status"] in (
+            "MANUAL_REQUIRED",
+            "FALLBACK_ERROR",
+        )

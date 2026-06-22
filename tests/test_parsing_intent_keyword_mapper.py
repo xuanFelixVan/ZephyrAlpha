@@ -11,15 +11,16 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.intent_keyword_mapper import (
+        IntentDomain,
         IntentKeywordMapper,
         IntentResult,
-        IntentDomain,
     )
 except Exception as _exc:
     pytest.skip(f"无法导入 intent_keyword_mapper: {_exc}", allow_module_level=True)

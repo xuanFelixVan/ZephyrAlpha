@@ -27,6 +27,7 @@ Risk: R119 — Shared root cause causes N redundant repairs.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class AnomalyClustering:
     clusters: dict[str, list[str]] = field(default_factory=dict)

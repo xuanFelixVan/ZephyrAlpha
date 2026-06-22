@@ -1,9 +1,22 @@
 rule_id: TRAE-027
 title: 方法论-协作与演进
+version: 1.0.0
+layer: L2
+module_id: TRAE-027
+depends_on:
+- TRAE-024
+- TRAE-025
+- TRAE-026
+tags:
+- TRAE
+- methodology_collaboration
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - MTH-012
 - MTH-013
-layer: L2
 severity: warning
 scope: methodology_collaboration
 domain: TRAE
@@ -81,7 +94,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
   version: "1.0.3"
   last_modified: "2026-06-19"
   change_history:

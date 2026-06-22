@@ -8,6 +8,7 @@ check_position_limit.py — 单一持仓限制 ≤ 5% NAV (INV-002)
 
 exit: 0=pass, 1=fail, 2=config error
 """
+
 from __future__ import annotations
 
 import sys
@@ -45,10 +46,7 @@ def main() -> int:
         limits_dir = REPO_ROOT / "src" / "zephyr" / "risk"
 
     position_check_files = list(limits_dir.rglob("*.py")) if limits_dir.is_dir() else []
-    has_position_check = any(
-        "position" in f.stem.lower() or "limit" in f.stem.lower()
-        for f in position_check_files
-    )
+    has_position_check = any("position" in f.stem.lower() or "limit" in f.stem.lower() for f in position_check_files)
 
     if not has_position_check:
         print("WARN: risk 目录未发现持仓限额检查模块（Phase B 补齐）")

@@ -25,11 +25,10 @@ L38: HARD_BLOCK violated → BLOCK; SOFT_BLOCK → NEED_OVERRIDE
 L39: degradation > 5%/month → BLOCK SELF_UPGRADE; cyclical_deps > 5 → BLOCK
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL38L39:
-
     def __init__(self):
         self.hard_block_triggered: bool = False
         self.soft_block_triggered: bool = False
@@ -52,7 +51,11 @@ class SafetyGateL38L39:
 
     def _l39_architectural_integrity(self, ctx: ActionContext) -> GateResult:
         if self.monthly_degradation_pct > 5.0 and ctx.action_type == "SELF_UPGRADE":
-            return GateResult("L39", GateVerdict.REJECT, GateType.HARD, f"Degradation {self.monthly_degradation_pct:.1f}%/month > 5%")
+            return GateResult(
+                "L39", GateVerdict.REJECT, GateType.HARD, f"Degradation {self.monthly_degradation_pct:.1f}%/month > 5%"
+            )
         if self.cyclical_deps > 5:
-            return GateResult("L39", GateVerdict.REJECT, GateType.HARD, f"Cyclical dependencies {self.cyclical_deps} > 5")
+            return GateResult(
+                "L39", GateVerdict.REJECT, GateType.HARD, f"Cyclical dependencies {self.cyclical_deps} > 5"
+            )
         return GateResult("L39", GateVerdict.PASS, GateType.HARD)

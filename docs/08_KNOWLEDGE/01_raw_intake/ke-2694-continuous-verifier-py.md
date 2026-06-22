@@ -11,13 +11,13 @@ continuous_verifier.py — 新增文件（横切面D组件）
 class ContinuousVerifier:
     """
     连续验证器——横切面D，每步重验证Agent身份+权限一致性。
-    
+
     执行节奏：
     - L0→L3 一次性大检查（不变）
     - 横切面D 每步连续性检查（新增）
     - L4 Micro-Verified 每子步骤微验证（新增）
     """
-    
+
     async def verify_step(
         self,
         agent: AgentIdentity,
@@ -38,7 +38,7 @@ class ContinuousVerifier:
             "intent_envelope": await self._check_intent_envelope(action, intent_binding),
             "delegation_chain": agent.delegation_depth <= self.MAX_DELEGATION_DEPTH,
         }
-        
+
         all_passed = all(checks.values())
         return StepVerificationResult(
             passed=all_passed,

@@ -10,10 +10,9 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_a2a_work_steal.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_work_steal import (
-    TaskQueue,
     A2AWorkSteal,
+    TaskQueue,
 )
 
 

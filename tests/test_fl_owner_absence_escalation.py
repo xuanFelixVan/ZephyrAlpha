@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from zephyr.ops.actors.owner_absence_escalation import (
     AbsenceState,
     OwnerAbsenceEscalation,

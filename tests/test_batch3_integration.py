@@ -22,6 +22,7 @@ class TestBatch3ContractCount:
 
     def test_all_values_are_pydantic_models(self):
         from pydantic import BaseModel
+
         for contract_id, model in BATCH3_CONTRACTS.items():
             assert issubclass(model, BaseModel), f"{contract_id} is not a BaseModel subclass"
 

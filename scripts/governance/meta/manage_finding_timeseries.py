@@ -21,6 +21,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -40,8 +41,8 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "findings_timeseries.db"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _get_conn() -> sqlite3.Connection:
@@ -142,15 +143,22 @@ def trend(days: int = 30) -> dict:
 
     total = conn.execute("SELECT COUNT(*) FROM findings WHERE timestamp >= ?", (cutoff,)).fetchone()[0]
     by_severity = {}
-    for row in conn.execute("SELECT severity, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY severity", (cutoff,)):
+    for row in conn.execute(
+        "SELECT severity, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY severity", (cutoff,)
+    ):
         by_severity[row[0]] = row[1]
     by_dimension = {}
-    for row in conn.execute("SELECT dimension, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY dimension ORDER BY cnt DESC", (cutoff,)):
+    for row in conn.execute(
+        "SELECT dimension, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY dimension ORDER BY cnt DESC",
+        (cutoff,),
+    ):
         by_dimension[row[0]] = row[1]
 
     prev_cutoff = (datetime.now(UTC) - timedelta(days=days * 2)).isoformat()
     prev_cutoff_end = cutoff
-    prev_total = conn.execute("SELECT COUNT(*) FROM findings WHERE timestamp >= ? AND timestamp < ?", (prev_cutoff, prev_cutoff_end)).fetchone()[0]
+    prev_total = conn.execute(
+        "SELECT COUNT(*) FROM findings WHERE timestamp >= ? AND timestamp < ?", (prev_cutoff, prev_cutoff_end)
+    ).fetchone()[0]
 
     if prev_total == 0:
         direction = "stable"
@@ -224,7 +232,9 @@ def main() -> None:
                 break
         result = trend(days)
         icon = {"improving": "📉", "stable": "➡️", "degrading": "📈"}.get(result["direction"], "❓")
-        print(f"\n[TIMESERIES] {days}d 趋势: {icon} {result['direction']} — {result['change_pct']:+.1f}%", file=sys.stderr)
+        print(
+            f"\n[TIMESERIES] {days}d 趋势: {icon} {result['direction']} — {result['change_pct']:+.1f}%", file=sys.stderr
+        )
         print(f"  当前: {result['current_total']}, 上期: {result['previous_total']}", file=sys.stderr)
         print(f"  按严重度: {result['by_severity']}", file=sys.stderr)
         print(f"  按维度: {dict(list(result['by_dimension'].items())[:5])}", file=sys.stderr)
@@ -250,7 +260,10 @@ def main() -> None:
         for r in rows:
             print(json_mod.dumps(r, ensure_ascii=False))
     else:
-        print("Usage: manage_finding_timeseries.py --import | --trend 30d | --top-files 10 | --severity-distribution | --query \"...\"", file=sys.stderr)
+        print(
+            'Usage: manage_finding_timeseries.py --import | --trend 30d | --top-files 10 | --severity-distribution | --query "..."',
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":

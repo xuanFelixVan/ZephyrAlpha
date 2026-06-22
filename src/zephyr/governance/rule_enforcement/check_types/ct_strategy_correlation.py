@@ -27,111 +27,54 @@ StrategyCorrelationHandler — StrategyCorrelationHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class StrategyCorrelationHandler(CheckTypeHandler):
-
-
     name = "strategy_correlation"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
 
-                violations = []
+        ssot = load_risk_params_ssot(project_root)
 
+        ct_thr = params.get("correlation_threshold")
 
-                from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
+        ss_thr = ssot.get("max_strategy_correlation_threshold")
 
+        if ct_thr is not None and ss_thr is not None and float(ct_thr) > float(ss_thr) + 1e-12:
+            violations.append(
+                {"message": f"G12 correlation threshold too loose: {ct_thr} > {ss_thr}", "severity": check.severity}
+            )
 
-                ssot = load_risk_params_ssot(project_root)
+        mo = params.get("max_factor_overlap")
 
+        ss_mo = ssot.get("max_factor_overlap_threshold")
 
-                ct_thr = params.get("correlation_threshold")
+        if mo is not None and ss_mo is not None and float(mo) > float(ss_mo) + 1e-12:
+            violations.append({"message": f"G12 factor overlap too loose: {mo} > {ss_mo}", "severity": check.severity})
 
+        uo = params.get("max_universe_overlap")
 
-                ss_thr = ssot.get("max_strategy_correlation_threshold")
+        ss_uo = ssot.get("max_universe_overlap_threshold")
 
+        if uo is not None and ss_uo is not None and float(uo) > float(ss_uo) + 1e-12:
+            violations.append(
+                {"message": f"G12 universe overlap too loose: {uo} > {ss_uo}", "severity": check.severity}
+            )
 
-                if ct_thr is not None and ss_thr is not None and float(ct_thr) > float(ss_thr) + 1e-12:
-
-
-                    violations.append({"message": f"G12 correlation threshold too loose: {ct_thr} > {ss_thr}", "severity": check.severity})
-
-
-                mo = params.get("max_factor_overlap")
-
-
-                ss_mo = ssot.get("max_factor_overlap_threshold")
-
-
-                if mo is not None and ss_mo is not None and float(mo) > float(ss_mo) + 1e-12:
-
-
-                    violations.append({"message": f"G12 factor overlap too loose: {mo} > {ss_mo}", "severity": check.severity})
-
-
-                uo = params.get("max_universe_overlap")
-
-
-                ss_uo = ssot.get("max_universe_overlap_threshold")
-
-
-                if uo is not None and ss_uo is not None and float(uo) > float(ss_uo) + 1e-12:
-
-
-                    violations.append({"message": f"G12 universe overlap too loose: {uo} > {ss_uo}", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

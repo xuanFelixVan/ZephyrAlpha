@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_graceful_degradation_planner.py
 
-import pytest
 
 from zephyr.ops.resilience.graceful_degradation_planner import (
     DegradationLevel,

@@ -10,7 +10,7 @@ category: documentation
 
 | 属性 | 值 |
 |------|-----|
-| 存储位置 | `_registry/catalogs/rule-registry.md`（PS-REG-001）+ 各领域规则文件 |
+| 存储位置 | `_registry/catalogs/_index.yaml`（PS-REG-001）+ 各领域规则文件 |
 | 内容 | 所有 COND 条目（后果可逆的）+ REC 条目 + CODE 条目 |
 | 判定标准 | 违反后后果可逆（可通过后续操作完全消除） |
 | 修改门槛 | 领域规则负责人批准 |

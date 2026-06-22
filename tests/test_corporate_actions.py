@@ -12,16 +12,14 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.audit_trail.corporate_actions import (
     CAPIPELINE_SOURCES,
     CORPORATE_ACTION_PRIORITY,
+    DAILY_PRE_CHECK_ITEMS,
     AdjFactor,
     CorporateActionEvent,
     CorporateActionPipeline,
     CorporateActionType,
-    DAILY_PRE_CHECK_ITEMS,
 )
 
 
@@ -115,7 +113,9 @@ class TestCorporateActionPipeline:
         pipeline = CorporateActionPipeline()
         events = [
             CorporateActionEvent(action_type=CorporateActionType.CASH_DIV, symbol="AAPL", effective_date="2026-05-22"),
-            CorporateActionEvent(action_type=CorporateActionType.STOCK_SPLIT, symbol="TSLA", effective_date="2026-06-01"),
+            CorporateActionEvent(
+                action_type=CorporateActionType.STOCK_SPLIT, symbol="TSLA", effective_date="2026-06-01"
+            ),
         ]
         factors = pipeline.transform(events)
         assert len(factors) == 2

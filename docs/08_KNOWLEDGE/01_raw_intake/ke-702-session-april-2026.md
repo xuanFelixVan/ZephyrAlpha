@@ -67,7 +67,7 @@ Stage 14：骨架对齐机构终局（2026-04-17 下半段，Opus 4.7 收口）
 9. **需要通俗解释 ↔ 行业术语的术语映射表**
    - 背景：用户记不住所有行业黑话，需要翻译帮助
    - 机构做法：主流机构都有 "Enterprise Business Glossary"（JPMorgan、高盛、BCG、McKinsey 等）
-   - 决策：新建 `terminology-mapping-reference.md`，双向映射表（通俗解释 ↔ 行业术语），覆盖架构/治理/决策/记忆/任务/流程/元数据/AI 协作/投资业务 9 类
+   - 决策：新建 `_registry/vocabularies/terminology_mapping.yaml`，双向映射表（通俗解释 ↔ 行业术语），覆盖架构/治理/决策/记忆/任务/流程/元数据/AI 协作/投资业务 9 类
 
 10. **文档分类从 4 类扩展到机构标准 8 类**
     - 背景：v1 triage-guide 只覆盖 taskbook / rationale-log / open-questions / design-draft 四类

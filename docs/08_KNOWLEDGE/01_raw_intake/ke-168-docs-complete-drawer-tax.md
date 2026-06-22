@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-168
 status: active
 title: 2. `docs/` complete drawer taxonomy / `docs/` 完整抽屉体系

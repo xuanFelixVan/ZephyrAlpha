@@ -26,7 +26,9 @@ class TestComponentStatus:
         assert cs.suggestion == ""
 
     def test_with_details_and_suggestion(self):
-        cs = ComponentStatus(dd_id="DD-2", component="test2", available=False, details="missing", suggestion="install it")
+        cs = ComponentStatus(
+            dd_id="DD-2", component="test2", available=False, details="missing", suggestion="install it"
+        )
         assert cs.available is False
         assert cs.details == "missing"
         assert cs.suggestion == "install it"

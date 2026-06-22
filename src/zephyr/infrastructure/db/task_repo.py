@@ -26,22 +26,23 @@ Authoritative implementation: zephyr.data.persistence.task_repo
 This module re-exports all public names for legacy import paths.
 New code should import from zephyr.governance.persistence.task_repo directly.
 """
-from zephyr.governance.persistence.task_repo import *  # noqa: F401,F403
+
+from zephyr.governance.persistence.task_repo import *  # noqa: F403
 from zephyr.governance.persistence.task_repo import (  # noqa: F401 — explicit re-exports for type checkers
-    TaskRepository,
-    TaskNotFoundError,
+    CIRCULAR_ACCEPTANCE_ROUNDS,
+    CircularAcceptanceError,
+    GateResult,
+    GateViolationError,
     InvalidTransitionError,
-    TaskRepositoryError,
-    RejectedUpgradeCoolingOffError,
     P0InflationFrozenError,
     P0InflationWarning,
-    SyncVerificationError,
-    CircularAcceptanceError,
-    UnclaimedOperationError,
+    RejectedUpgradeCoolingOffError,
     RootCauseRequiredError,
-    GateViolationError,
-    GateResult,
-    CIRCULAR_ACCEPTANCE_ROUNDS,
+    SyncVerificationError,
+    TaskNotFoundError,
+    TaskRepository,
+    TaskRepositoryError,
+    UnclaimedOperationError,
     allowed_transitions,
     is_terminal,
     search,

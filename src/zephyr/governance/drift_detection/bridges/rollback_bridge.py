@@ -27,9 +27,7 @@ from __future__ import annotations
 class DriftRollbackBridge:
     """行为漂移→回滚触发."""
 
-    def on_drift_detected(
-        self, agent_id: str, drift_type: str, severity: str
-    ) -> dict:
+    def on_drift_detected(self, agent_id: str, drift_type: str, severity: str) -> dict:
         return {
             "triggered": severity in {"HIGH", "CRITICAL"},
             "agent_id": agent_id,

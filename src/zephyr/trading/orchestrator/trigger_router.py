@@ -24,7 +24,7 @@ TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）
 =====================================================
 任务编号 : T-V2-007（experimental RI-03）
 权限层级 : Human-Gated（M3 路由表修改 = 关键架构变更，R84 修正）
-真源声明 : ai-autonomy-authority-registry.md §2.9（RI-03）+ §2.10（三件套）
+真源声明 : ai_autonomy_authority_registry.yaml §2.9（RI-03）+ §2.10（三件套）
 关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
            B6 §2.4（RI-03 设计）+ §3.4（experimental 部署）
 创建日期 : 2026-04-27
@@ -55,7 +55,6 @@ experimental 起始集（5 种 trigger_type）
 - **可注入测试**：``handlers`` 参数允许直接注入 callable 字典，绕过 YAML/import
 """
 
-
 from __future__ import annotations
 
 import importlib
@@ -71,21 +70,21 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 __all__ = [
-    "TriggerSafety",
-    "TriggerHandlerSpec",
-    "RouterDispatchResult",
-    "TriggerRouter",
-    "TriggerRouterConfigError",
     "DEFAULT_ROUTER_YAML_PATH",
     "PHASE1D_TRIGGER_TYPES",
-    "load_router_config",
+    "RouterDispatchResult",
+    "TriggerHandlerSpec",
+    "TriggerRouter",
+    "TriggerRouterConfigError",
+    "TriggerSafety",
     "get_trigger_router",
-    "reset_trigger_router",
-    "handle_onboarding_stub",
-    "handle_drift_stub",
-    "handle_cleanup_stub",
-    "handle_blueprint_stub",
     "handle_blueprint_lookup_stub",
+    "handle_blueprint_stub",
+    "handle_cleanup_stub",
+    "handle_drift_stub",
+    "handle_onboarding_stub",
+    "load_router_config",
+    "reset_trigger_router",
 ]
 
 _logger = logging.getLogger(__name__)
@@ -626,9 +625,10 @@ def handle_onboarding_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """
     try:
         import importlib
-        _mod = importlib.import_module("zephyr.orchestration.pipeline_routing.layer_router")
-        get_layer_order = _mod.get_layer_order
-        layers = get_layer_order()
+
+        _mod = importlib.import_module("zephyr.infrastructure.pipeline.layer_router")
+        _router = _mod.get_layer_router()
+        layers = _router.topology_order()
         return {
             "handler": "onboarding",
             "phase": "operational",
@@ -648,6 +648,7 @@ def handle_drift_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """
     try:
         from zephyr.governance.rule_enforcement.drift_detector import trigger_recovery
+
         result = trigger_recovery(payload)
         return {
             "handler": "drift_detected",
@@ -667,9 +668,12 @@ def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """
     try:
         import subprocess
+
         result = subprocess.run(
             ["python", "scripts/governance/archive_drafts_zone.py", "--auto"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
             cwd=str(REPO_ROOT),
         )
         return {
@@ -691,6 +695,7 @@ def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """
     try:
         from zephyr.ops.decision_engine import reflect_on_blueprint
+
         result = reflect_on_blueprint(payload)
         return {
             "handler": "blueprint_published",

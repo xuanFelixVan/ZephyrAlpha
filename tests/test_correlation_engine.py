@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-import os
 import sqlite3
-import tempfile
 
 import pytest
 
@@ -28,9 +26,7 @@ from zephyr.behavioral_audit.correlation_engine import (
 def tmp_db(tmp_path):
     db_path = str(tmp_path / "drift_events.db")
     conn = sqlite3.connect(db_path)
-    conn.execute(
-        "CREATE TABLE drift_events (scan_id TEXT, module_id TEXT, drift_dimension TEXT, state TEXT)"
-    )
+    conn.execute("CREATE TABLE drift_events (scan_id TEXT, module_id TEXT, drift_dimension TEXT, state TEXT)")
     conn.executemany(
         "INSERT INTO drift_events VALUES (?,?,?,?)",
         [
@@ -50,9 +46,7 @@ def tmp_db(tmp_path):
 def empty_db(tmp_path):
     db_path = str(tmp_path / "empty.db")
     conn = sqlite3.connect(db_path)
-    conn.execute(
-        "CREATE TABLE drift_events (scan_id TEXT, module_id TEXT, drift_dimension TEXT, state TEXT)"
-    )
+    conn.execute("CREATE TABLE drift_events (scan_id TEXT, module_id TEXT, drift_dimension TEXT, state TEXT)")
     conn.commit()
     conn.close()
     return db_path

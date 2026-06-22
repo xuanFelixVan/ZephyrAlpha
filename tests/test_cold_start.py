@@ -15,18 +15,15 @@ from __future__ import annotations
 import os
 import sqlite3
 import tempfile
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import UTC, datetime
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.governance.audit_orchestrator.cold_start import (
-    ColdStartResult,
     DEFAULT_DB_PATH,
     DRIFT_EVENTS_SCHEMA,
     REQUIRED_DIRS,
     REQUIRED_ENV_VARS,
+    ColdStartResult,
     detect_missing_env,
     init_database,
     init_directories,
@@ -44,7 +41,7 @@ class TestColdStartResult:
         assert isinstance(r.timestamp, datetime)
 
     def test_instantiation_custom(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         r = ColdStartResult(
             dirs_created=["data/drift"],
             db_initialized=True,
@@ -120,7 +117,11 @@ class TestInitDatabase:
             db_path = os.path.join(tmpdir, "test.db")
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
-            statements = [s.strip() for s in DRIFT_EVENTS_SCHEMA.strip().split(";") if s.strip() and s.strip().startswith("CREATE")]
+            statements = [
+                s.strip()
+                for s in DRIFT_EVENTS_SCHEMA.strip().split(";")
+                if s.strip() and s.strip().startswith("CREATE")
+            ]
             for stmt in statements:
                 cursor.execute(stmt)
             conn.commit()
@@ -133,7 +134,11 @@ class TestInitDatabase:
             db_path = os.path.join(tmpdir, "test.db")
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
-            statements = [s.strip() for s in DRIFT_EVENTS_SCHEMA.strip().split(";") if s.strip() and s.strip().startswith("CREATE")]
+            statements = [
+                s.strip()
+                for s in DRIFT_EVENTS_SCHEMA.strip().split(";")
+                if s.strip() and s.strip().startswith("CREATE")
+            ]
             for stmt in statements:
                 cursor.execute(stmt)
             conn.commit()

@@ -27,93 +27,39 @@ ContractCompatibilityCheckHandler — ContractCompatibilityCheckHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class ContractCompatibilityCheckHandler(CheckTypeHandler):
-
-
     name = "contract_compatibility_check"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        try:
+            from zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility import (
+                run_check as en3_check,
+            )
 
-                violations = []
+            result = en3_check()
 
+            if not result.passed:
+                for m in result.mismatches:
+                    violations.append({"message": m, "severity": check.severity})
 
-                try:
+        except Exception as exc:
+            violations.append({"message": f"EN-003 check failed: {exc}", "severity": "P2"})
 
-
-                    from zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility import run_check as en3_check
-
-
-                    result = en3_check()
-
-
-                    if not result.passed:
-
-
-                        for m in result.mismatches:
-
-
-                            violations.append({"message": m, "severity": check.severity})
-
-
-                except Exception as exc:
-
-
-                    violations.append({"message": f"EN-003 check failed: {exc}", "severity": "P2"})
-
-
-                return violations
-
-
+        return violations

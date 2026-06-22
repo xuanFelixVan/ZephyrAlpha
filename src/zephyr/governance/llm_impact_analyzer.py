@@ -29,14 +29,12 @@ commit diff → LLM API → 语义级风险评估:
     离线模式: 基于关键词规则回退（不含 LLM API 调用）
 """
 
-
 from __future__ import annotations
 
 import subprocess
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 
 class RiskLevel(str, Enum):
@@ -59,25 +57,45 @@ class ImpactAnalysis:
 
 
 HIGH_RISK_KEYWORDS: set[str] = {
-    "drop table", "delete from", "truncate", "rm -rf", "force push",
-    "DROP TABLE", "DELETE FROM", "TRUNCATE",
-    "os.remove", "os.unlink", "shutil.rmtree",
-    "eval(", "exec(", "subprocess.Popen",
-    "password", "secret", "token", "api_key",
-    "__import__", "importlib",
+    "drop table",
+    "delete from",
+    "truncate",
+    "rm -rf",
+    "force push",
+    "DROP TABLE",
+    "DELETE FROM",
+    "TRUNCATE",
+    "os.remove",
+    "os.unlink",
+    "shutil.rmtree",
+    "eval(",
+    "exec(",
+    "subprocess.Popen",
+    "password",
+    "secret",
+    "token",
+    "api_key",
+    "__import__",
+    "importlib",
 }
 
 MEDIUM_RISK_KEYWORDS: set[str] = {
-    "ALTER TABLE", "ALTER COLUMN", "modify",
-    "git reset", "git checkout --",
-    "pickle.loads", "pickle.dumps",
-    "executemany", "execute(",
-    "@dataclass", "class ", "def ",
+    "ALTER TABLE",
+    "ALTER COLUMN",
+    "modify",
+    "git reset",
+    "git checkout --",
+    "pickle.loads",
+    "pickle.dumps",
+    "executemany",
+    "execute(",
+    "@dataclass",
+    "class ",
+    "def ",
 }
 
 
 class LLMImpactAnalyzer:
-
     def __init__(self, project_root: Path | None = None, use_llm: bool = False) -> None:
         self._project_root = project_root or Path.cwd()
         self._use_llm = use_llm
@@ -144,8 +162,9 @@ class LLMImpactAnalyzer:
 
     def _lsg_scan_analysis(self, analysis: ImpactAnalysis) -> None:
         try:
-            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
             import asyncio
+
+            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
             gateway = LSGSecurityGateway()
             content = f"{analysis.recommendation} {' '.join(analysis.key_changes)}"
@@ -163,7 +182,9 @@ class LLMImpactAnalyzer:
             result = subprocess.run(
                 ["git", "show", "--format=%B", "-p", commit_sha],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=15,
+                capture_output=True,
+                text=True,
+                timeout=15,
             )
             return result.stdout or ""
         except Exception:

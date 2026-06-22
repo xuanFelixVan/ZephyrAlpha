@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Test Economic Guard — SSoT validation via escalation_models."""
+
 from zephyr.governance.escalation_models import EconomicGuard
 
 

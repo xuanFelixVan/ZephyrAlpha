@@ -12,8 +12,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 
 @dataclass
@@ -29,8 +28,13 @@ class WQAScore:
     @property
     def composite(self) -> float:
         weights = {
-            "w1": 0.20, "w2": 0.15, "w3": 0.10, "w4": 0.20,
-            "w5": 0.15, "w6": 0.10, "w7": 0.10,
+            "w1": 0.20,
+            "w2": 0.15,
+            "w3": 0.10,
+            "w4": 0.20,
+            "w5": 0.15,
+            "w6": 0.10,
+            "w7": 0.10,
         }
         total = (
             self.w1_test_coverage * weights["w1"]
@@ -46,11 +50,16 @@ class WQAScore:
     @property
     def rating(self) -> str:
         c = self.composite
-        if c >= 0.90: return "A+"
-        if c >= 0.80: return "A"
-        if c >= 0.70: return "B"
-        if c >= 0.60: return "C"
-        if c >= 0.50: return "D"
+        if c >= 0.90:
+            return "A+"
+        if c >= 0.80:
+            return "A"
+        if c >= 0.70:
+            return "B"
+        if c >= 0.60:
+            return "C"
+        if c >= 0.50:
+            return "D"
         return "F"
 
 

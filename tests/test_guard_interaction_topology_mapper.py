@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_guard_interaction_topology_mapper.py
 
-import pytest
 
 from zephyr.ops.diagnosers.guard_interaction_topology_mapper import (
     GuardEdge,

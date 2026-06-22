@@ -11,16 +11,18 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.anti_pattern_guard import (
+        benchmark_before_optimize,
         check_lock_before_write,
         scan_silent_ignore,
-        benchmark_before_optimize,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

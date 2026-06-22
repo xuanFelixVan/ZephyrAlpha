@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-4212
 title: 3.1 Collection 概念（4 个预定义）
 category: module_blueprint

@@ -23,6 +23,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -33,7 +34,6 @@ warn_only: false
 """
 
 
-import os
 import argparse
 import json as json_mod
 import os
@@ -41,7 +41,6 @@ import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
@@ -50,8 +49,8 @@ _KAYENTA_THRESHOLD_PASS = 0.95
 _KAYENTA_THRESHOLD_MARGINAL = 0.75
 _DEGRADATION_SENSITIVITY = 0.15
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _run_script(script_path: str, target_scope: str | None = None) -> dict:
@@ -61,8 +60,13 @@ def _run_script(script_path: str, target_scope: str | None = None) -> dict:
         cmd.extend(["--target-scope", target_scope])
 
     proc = subprocess.run(
-        cmd, capture_output=True, text=True, timeout=120,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        cmd,
+        capture_output=True,
+        text=True,
+        timeout=120,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
         env={**os.environ, "PYTHONPATH": str(_SCRIPTS_DIR)},
     )
 
@@ -95,8 +99,7 @@ def _classify_by_severity(findings: list[dict]) -> dict[str, int]:
     return counts
 
 
-def _compute_judgement(baseline_count: int, canary_count: int,
-                       baseline_sev: dict, canary_sev: dict) -> dict:
+def _compute_judgement(baseline_count: int, canary_count: int, baseline_sev: dict, canary_sev: dict) -> dict:
     """_compute_judgement implementation."""
     if baseline_count == 0 and canary_count == 0:
         score = 1.0
@@ -128,9 +131,13 @@ def _compute_judgement(baseline_count: int, canary_count: int,
     if canary_count > baseline_count * 1.5:
         reasons.append(f"Canary found {canary_count - baseline_count} more findings ({ratio:.1%} increase)")
     if canary_count < baseline_count * 0.5:
-        reasons.append(f"Canary missed {baseline_count - canary_count} findings ({(1-ratio):.1%} decrease) — possible regression")
+        reasons.append(
+            f"Canary missed {baseline_count - canary_count} findings ({(1 - ratio):.1%} decrease) — possible regression"
+        )
     if critical_drift > 0:
-        reasons.append(f"CRITICAL mismatch: baseline={baseline_sev.get('CRITICAL',0)} vs canary={canary_sev.get('CRITICAL',0)}")
+        reasons.append(
+            f"CRITICAL mismatch: baseline={baseline_sev.get('CRITICAL', 0)} vs canary={canary_sev.get('CRITICAL', 0)}"
+        )
 
     return {
         "score": round(score, 4),
@@ -158,8 +165,10 @@ def run_ab_test(baseline: str, canary: str, target_scope: str | None = None) -> 
     baseline_sev = _classify_by_severity(baseline_result["findings"])
     canary_sev = _classify_by_severity(canary_result["findings"])
     judgement = _compute_judgement(
-        baseline_result["finding_count"], canary_result["finding_count"],
-        baseline_sev, canary_sev,
+        baseline_result["finding_count"],
+        canary_result["finding_count"],
+        baseline_sev,
+        canary_sev,
     )
 
     report = {
@@ -185,7 +194,7 @@ def run_ab_test(baseline: str, canary: str, target_scope: str | None = None) -> 
     try:
         with open(tmp_path, encoding="utf-8") as f:
             json_mod.dump(report, f, ensure_ascii=False, indent=2)
-    
+
         os.replace(tmp_path, report_path)
     except PermissionError:
         try:

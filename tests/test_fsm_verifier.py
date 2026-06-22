@@ -12,17 +12,15 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.fsm_verifier import (
-    FSMState,
-    FSMTransition,
-    FSMInstance,
-    FSMSpec,
     FSM_INITIAL,
+    FSM_INVARIANTS,
     FSM_TERMINAL,
     FSM_TRANSITIONS,
-    FSM_INVARIANTS,
+    FSMInstance,
+    FSMSpec,
+    FSMState,
+    FSMTransition,
     generate_test_cases,
     reconcile_state,
 )

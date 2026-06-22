@@ -36,7 +36,8 @@ class FixDiff:
         before_lines = action.before.splitlines(keepends=True)
         after_lines = action.after.splitlines(keepends=True)
         diff = difflib.unified_diff(
-            before_lines, after_lines,
+            before_lines,
+            after_lines,
             fromfile=f"{action.target} (before)",
             tofile=f"{action.target} (after)",
             lineterm="",
@@ -61,7 +62,8 @@ class FixDiff:
         before_lines = before.splitlines(keepends=True)
         after_lines = after.splitlines(keepends=True)
         diff = difflib.unified_diff(
-            before_lines, after_lines,
+            before_lines,
+            after_lines,
             fromfile=f"{label} (before)",
             tofile=f"{label} (after)",
             lineterm="",
@@ -78,8 +80,10 @@ class FixDiff:
 
     @staticmethod
     def reverse(action: FixAction) -> FixAction:
-        reversed_action = action.model_copy(update={
-            "before": action.after,
-            "after": action.before,
-        })
+        reversed_action = action.model_copy(
+            update={
+                "before": action.after,
+                "after": action.before,
+            }
+        )
         return reversed_action

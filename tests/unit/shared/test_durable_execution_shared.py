@@ -35,10 +35,8 @@ Safety: HIGH（Durable Execution 是长流程可靠性根基）
 """
 
 import os
-import json
 from pathlib import Path
 
-import pytest
 from zephyr.integration.shared_08.durable_execution import (
     Activity,
     ActivityResult,
@@ -127,10 +125,12 @@ class TestWorkflowActivities:
 
     def test_add_activities(self):
         manager = WorkflowManager(workflow_id="wf")
-        manager.add_activities([
-            SimpleActivity("a1", lambda ctx: {}),
-            SimpleActivity("a2", lambda ctx: {}),
-        ])
+        manager.add_activities(
+            [
+                SimpleActivity("a1", lambda ctx: {}),
+                SimpleActivity("a2", lambda ctx: {}),
+            ]
+        )
         assert len(manager.activities) == 2
 
 

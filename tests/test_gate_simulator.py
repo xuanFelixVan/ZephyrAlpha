@@ -21,7 +21,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import MagicMock
 
 import pytest
@@ -63,7 +63,7 @@ def _make_ctx(session_id: str = "sess-001") -> GateContext:
 class TestSimulationReport:
     def test_fields_assigned(self):
         results = [GateResult(gate_id="G1", status=GateStatus.PASS)]
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         report = SimulationReport(
             pipeline_name="pipe",
             results=results,
@@ -78,16 +78,16 @@ class TestSimulationReport:
         assert report.timestamp == now
 
     def test_default_timestamp_is_utc_now(self):
-        before = datetime.now(timezone.utc)
+        before = datetime.now(UTC)
         report = SimulationReport(
             pipeline_name="p",
             results=[],
             overall=GateStatus.PASS,
             duration_ms=0.0,
         )
-        after = datetime.now(timezone.utc)
+        after = datetime.now(UTC)
         assert before <= report.timestamp <= after
-        assert report.timestamp.tzinfo == timezone.utc
+        assert report.timestamp.tzinfo == UTC
 
     def test_summary_all_pass(self):
         results = [
@@ -212,7 +212,7 @@ class TestGateSimulatorSimulate:
         ctx = _make_ctx()
         report = sim.simulate(pipe, ctx)
         assert isinstance(report.timestamp, datetime)
-        assert report.timestamp.tzinfo == timezone.utc
+        assert report.timestamp.tzinfo == UTC
 
     def test_simulate_duration_positive(self):
         sim = GateSimulator()
@@ -254,10 +254,12 @@ class TestGateSimulatorSimulate:
 
     def test_simulate_with_skip_status(self):
         pipe = GatePipeline(name="skip")
-        pipe.add(GateStep(
-            gate_id="G_SKIP",
-            checker=lambda ctx: GateResult(gate_id="G_SKIP", status=GateStatus.SKIP),
-        ))
+        pipe.add(
+            GateStep(
+                gate_id="G_SKIP",
+                checker=lambda ctx: GateResult(gate_id="G_SKIP", status=GateStatus.SKIP),
+            )
+        )
         sim = GateSimulator()
         ctx = _make_ctx()
         report = sim.simulate(pipe, ctx)
@@ -266,10 +268,12 @@ class TestGateSimulatorSimulate:
 
     def test_simulate_with_waived_status(self):
         pipe = GatePipeline(name="waived")
-        pipe.add(GateStep(
-            gate_id="G_WAIVED",
-            checker=lambda ctx: GateResult(gate_id="G_WAIVED", status=GateStatus.WAIVED),
-        ))
+        pipe.add(
+            GateStep(
+                gate_id="G_WAIVED",
+                checker=lambda ctx: GateResult(gate_id="G_WAIVED", status=GateStatus.WAIVED),
+            )
+        )
         sim = GateSimulator()
         ctx = _make_ctx()
         report = sim.simulate(pipe, ctx)
@@ -350,10 +354,12 @@ class TestGateSimulatorBoundary:
     def test_simulate_none_context_produces_error_result(self):
         sim = GateSimulator()
         pipe = GatePipeline(name="none_ctx")
-        pipe.add(GateStep(
-            gate_id="G_CTX",
-            checker=lambda ctx: GateResult(gate_id="G_CTX", status=GateStatus.PASS, task_id=ctx.task_id),
-        ))
+        pipe.add(
+            GateStep(
+                gate_id="G_CTX",
+                checker=lambda ctx: GateResult(gate_id="G_CTX", status=GateStatus.PASS, task_id=ctx.task_id),
+            )
+        )
         report = sim.simulate(pipe, None)
         assert report.results[0].status == GateStatus.ERROR
 
@@ -374,10 +380,12 @@ class TestGateSimulatorBoundary:
 
     def test_simulate_checker_returns_non_gate_result(self):
         pipe = GatePipeline(name="bad_return")
-        pipe.add(GateStep(
-            gate_id="G_BAD",
-            checker=lambda ctx: "not_a_gate_result",
-        ))
+        pipe.add(
+            GateStep(
+                gate_id="G_BAD",
+                checker=lambda ctx: "not_a_gate_result",
+            )
+        )
         sim = GateSimulator()
         ctx = _make_ctx()
         report = sim.simulate(pipe, ctx)

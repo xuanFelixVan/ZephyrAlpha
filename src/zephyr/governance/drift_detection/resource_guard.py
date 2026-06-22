@@ -27,16 +27,17 @@ graceful_degradation四级: >75%并行减半 / >87.5%暂停非HIGH / >97.6% GC+c
 scalability: 10→100→500→1500模块渐进路线
 对标 blueprint.md §6.16。
 """
+
 from __future__ import annotations
 
 import gc
 import os
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from enum import Enum, auto
-from typing import Optional, Callable
+from datetime import UTC, datetime
+from enum import Enum
 
 
 class DegradationLevel(str, Enum):
@@ -73,19 +74,20 @@ class ResourceSnapshot:
     file_handles_open: int = 0
     degradation_level: DegradationLevel = DegradationLevel.NORMAL
     status: ResourceStatus = ResourceStatus.OK
-    snapshot_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    snapshot_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 LIMITS = ResourceLimits()
 _current_pool_size: int = 4
 _original_pool_size: int = 4
 _guard_lock = threading.Lock()
-_on_critical: Optional[Callable[[], None]] = None
+_on_critical: Callable[[], None] | None = None
 
 
 def _get_memory_usage_mb() -> float:
     try:
         import psutil
+
         return psutil.Process(os.getpid()).memory_info().rss / (1024 * 1024)
     except ImportError:
         return 0.0
@@ -94,6 +96,7 @@ def _get_memory_usage_mb() -> float:
 def _get_disk_usage_mb(directory: str) -> float:
     try:
         import shutil
+
         usage = shutil.disk_usage(directory)
         return (usage.total - usage.free) / (1024 * 1024)
     except Exception:
@@ -161,7 +164,7 @@ _guard_stop_event: threading.Event = threading.Event()
 def guard_loop(
     check_interval_sec: float = 5.0,
     directory: str = ".",
-    on_degraded: Optional[Callable[[DegradationLevel], None]] = None,
+    on_degraded: Callable[[DegradationLevel], None] | None = None,
 ) -> None:
     global _guard_running
     import atexit
@@ -210,7 +213,7 @@ def is_guard_running() -> bool:
 
 def _apply_guard(
     snap: ResourceSnapshot,
-    on_degraded: Optional[Callable[[DegradationLevel], None]],
+    on_degraded: Callable[[DegradationLevel], None] | None,
 ) -> None:
     global _current_pool_size
     with _guard_lock:

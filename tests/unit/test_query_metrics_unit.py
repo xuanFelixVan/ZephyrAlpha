@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """T-DB-003: test_query_metrics.py — QueryMetrics 单元测试
 Phase experimental, P3, 1.0h
 """
@@ -14,13 +15,12 @@ Phase experimental, P3, 1.0h
 import os
 import sqlite3
 import tempfile
-import time
 from pathlib import Path
 
 import pytest
 
 from zephyr.governance.persistence.sqlite_schema import init_db
-from zephyr.governance.query_metrics import QueryMetrics, PercentileTracker
+from zephyr.governance.query_metrics import PercentileTracker, QueryMetrics
 
 
 @pytest.fixture

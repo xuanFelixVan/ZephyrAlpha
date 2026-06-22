@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] analyze returns dict; _infer_symptom_category returns str; _generate_actions returns dict
 # [TESTS] pytest tests/test_skill_postmortem.py -q
 
-import pytest
 
 from zephyr.autonomy_core.skill_postmortem import SkillPostmortem
 
@@ -51,10 +50,17 @@ class TestSkillPostmortemAnalyze:
     def test_analyze_returns_required_keys(self):
         result = SkillPostmortem.analyze("SKILL-TEST-001", "KeyError: skill not found")
         required_keys = [
-            "incident_id", "skill_id", "symptom_category",
-            "failed_operation", "original_error", "root_cause",
-            "root_cause_chain", "corrective_actions", "preventive_actions",
-            "timestamp", "closed",
+            "incident_id",
+            "skill_id",
+            "symptom_category",
+            "failed_operation",
+            "original_error",
+            "root_cause",
+            "root_cause_chain",
+            "corrective_actions",
+            "preventive_actions",
+            "timestamp",
+            "closed",
         ]
         for key in required_keys:
             assert key in result, f"Missing key: {key}"
@@ -81,9 +87,7 @@ class TestSkillPostmortemAnalyze:
         assert any("gate configuration" in a["action"].lower() for a in corrective_actions)
 
     def test_analyze_with_failed_operation(self):
-        result = SkillPostmortem.analyze(
-            "SKILL-TEST-005", "KeyError: skill not found", failed_operation="load_skill"
-        )
+        result = SkillPostmortem.analyze("SKILL-TEST-005", "KeyError: skill not found", failed_operation="load_skill")
         assert result["failed_operation"] == "load_skill"
 
     def test_analyze_incident_id_format(self):

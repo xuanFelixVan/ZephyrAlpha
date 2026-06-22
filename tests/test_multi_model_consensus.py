@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.infrastructure.a2a_protocol.multi_model_consensus import (
     ConsensusProtocol,
     DebateRound,

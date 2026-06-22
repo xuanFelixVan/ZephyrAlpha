@@ -6,10 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """context-engine.parsing — auto-generated package init."""
 
-__all__ = ['intent_keyword_mapper', 'intent_parser']
-
+__all__ = ["intent_keyword_mapper", "intent_parser"]

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.verifiers.no_llm_degradation import NoLLMDegradation
 
 

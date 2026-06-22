@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from zephyr.security.access_control.auto_fix_engine_03.event_hooks import EventHooks, FixEvent
 from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixLevel, FixStatus
 

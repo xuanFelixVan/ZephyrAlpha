@@ -38,11 +38,9 @@ AI 施工约定：
 SSoT: MOD-INF-016 §12 盲点 B32 + GOV-AI-007 Session Log Schema
 """
 
-
 from __future__ import annotations
 
 import json
-import os
 import threading
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -166,7 +164,9 @@ class SessionRecord:
         self.prompts.append(record)
         return record
 
-    def add_decision(self, decision_id: str, summary: str, rationale: str, alternatives: list[str] | None = None) -> DecisionRecord:
+    def add_decision(
+        self, decision_id: str, summary: str, rationale: str, alternatives: list[str] | None = None
+    ) -> DecisionRecord:
         record = DecisionRecord(
             timestamp=datetime.now(UTC).isoformat(),
             decision_id=decision_id,
@@ -177,7 +177,9 @@ class SessionRecord:
         self.decisions.append(record)
         return record
 
-    def add_tool_call(self, tool_name: str, params: str, result: str, duration_ms: float = 0.0, success: bool = True) -> ToolCallRecord:
+    def add_tool_call(
+        self, tool_name: str, params: str, result: str, duration_ms: float = 0.0, success: bool = True
+    ) -> ToolCallRecord:
         record = ToolCallRecord(
             timestamp=datetime.now(UTC).isoformat(),
             tool_name=tool_name,
@@ -189,7 +191,9 @@ class SessionRecord:
         self.tool_calls.append(record)
         return record
 
-    def add_cost(self, provider: str, model: str, input_tokens: int = 0, output_tokens: int = 0, cost_usd: float = 0.0) -> CostRecord:
+    def add_cost(
+        self, provider: str, model: str, input_tokens: int = 0, output_tokens: int = 0, cost_usd: float = 0.0
+    ) -> CostRecord:
         record = CostRecord(
             timestamp=datetime.now(UTC).isoformat(),
             provider=provider,
@@ -201,7 +205,9 @@ class SessionRecord:
         self.costs.append(record)
         return record
 
-    def add_error(self, error_type: str, message: str, recovery_action: str = "", recovered: bool = False) -> ErrorRecord:
+    def add_error(
+        self, error_type: str, message: str, recovery_action: str = "", recovered: bool = False
+    ) -> ErrorRecord:
         record = ErrorRecord(
             timestamp=datetime.now(UTC).isoformat(),
             error_type=error_type,
@@ -234,11 +240,46 @@ class SessionRecord:
             "total_tokens": self.total_tokens,
             "error_count": self.error_count,
             "recovered_count": self.recovered_count,
-            "prompts": [{"ts": p.timestamp, "role": p.role, "preview": p.content_preview, "tokens": p.token_count} for p in self.prompts],
-            "decisions": [{"ts": d.timestamp, "id": d.decision_id, "summary": d.summary, "rationale": d.rationale} for d in self.decisions],
-            "tool_calls": [{"ts": t.timestamp, "tool": t.tool_name, "params": t.parameters_preview, "result": t.result_summary, "duration_ms": t.duration_ms, "success": t.success} for t in self.tool_calls],
-            "costs": [{"ts": c.timestamp, "provider": c.provider, "model": c.model, "input": c.input_tokens, "output": c.output_tokens, "cost_usd": c.cost_usd} for c in self.costs],
-            "errors": [{"ts": e.timestamp, "type": e.error_type, "message": e.message, "recovery": e.recovery_action, "recovered": e.recovered} for e in self.errors],
+            "prompts": [
+                {"ts": p.timestamp, "role": p.role, "preview": p.content_preview, "tokens": p.token_count}
+                for p in self.prompts
+            ],
+            "decisions": [
+                {"ts": d.timestamp, "id": d.decision_id, "summary": d.summary, "rationale": d.rationale}
+                for d in self.decisions
+            ],
+            "tool_calls": [
+                {
+                    "ts": t.timestamp,
+                    "tool": t.tool_name,
+                    "params": t.parameters_preview,
+                    "result": t.result_summary,
+                    "duration_ms": t.duration_ms,
+                    "success": t.success,
+                }
+                for t in self.tool_calls
+            ],
+            "costs": [
+                {
+                    "ts": c.timestamp,
+                    "provider": c.provider,
+                    "model": c.model,
+                    "input": c.input_tokens,
+                    "output": c.output_tokens,
+                    "cost_usd": c.cost_usd,
+                }
+                for c in self.costs
+            ],
+            "errors": [
+                {
+                    "ts": e.timestamp,
+                    "type": e.error_type,
+                    "message": e.message,
+                    "recovery": e.recovery_action,
+                    "recovered": e.recovered,
+                }
+                for e in self.errors
+            ],
         }
         if self.outcomes:
             result["outcomes"] = {
@@ -285,21 +326,23 @@ class SessionAuditTrail:
     def append_record(self, record: SessionRecord) -> Path:
         filepath = self._session_path(record.session_id)
         record_dict = record.to_dict()
-        with self._lock:
-            with open(filepath, "a", encoding="utf-8") as f:
-                f.write(json.dumps(record_dict, ensure_ascii=False) + "\n")
+        with self._lock, open(filepath, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record_dict, ensure_ascii=False) + "\n")
         try:
             import importlib as _il
+
             _mod = _il.import_module("zephyr.governance.audit_trail.writer")
             get_audit_writer = _mod.get_audit_writer
-            get_audit_writer().write({
-                "event_type": "session_record",
-                "action_type": "session_record",
-                "agent_id": record_dict.get("session_id", "unknown"),
-                "session_id": record_dict.get("session_id", ""),
-                "target_path": str(filepath),
-                "operation": "append_record",
-            })
+            get_audit_writer().write(
+                {
+                    "event_type": "session_record",
+                    "action_type": "session_record",
+                    "agent_id": record_dict.get("session_id", "unknown"),
+                    "session_id": record_dict.get("session_id", ""),
+                    "target_path": str(filepath),
+                    "operation": "append_record",
+                }
+            )
         except Exception:
             pass
         return filepath
@@ -348,12 +391,12 @@ class SessionAuditTrail:
 
 
 __all__ = [
-    "PromptRecord",
-    "DecisionRecord",
-    "ToolCallRecord",
     "CostRecord",
+    "DecisionRecord",
     "ErrorRecord",
     "OutcomeRecord",
-    "SessionRecord",
+    "PromptRecord",
     "SessionAuditTrail",
+    "SessionRecord",
+    "ToolCallRecord",
 ]

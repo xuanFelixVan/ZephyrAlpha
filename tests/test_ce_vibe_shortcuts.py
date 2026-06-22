@@ -13,9 +13,9 @@
 import pytest
 
 from zephyr.autonomy_core.ce_vibe_shortcuts import (
+    _MODE_CONFIGS,
     CEMode,
     ModeConfig,
-    _MODE_CONFIGS,
     ce_strict,
     ce_vibe,
 )

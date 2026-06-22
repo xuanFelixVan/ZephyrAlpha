@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_impact_predictor.py
 
-import pytest
 
 from zephyr.ops.diagnosers.impact_predictor import ImpactPredictor
 

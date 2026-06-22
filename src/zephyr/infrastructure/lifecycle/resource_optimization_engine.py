@@ -7,7 +7,7 @@
 
 # [MODIFY-GUARD] resource_optimization_engine.py; resource_optimization_models.py; daemon_registry.py
 
-# [CONSUMERS] zephyr.orchestration.runtime_core; zephyr.orchestration.pipeline_routing; zephyr.orchestration.agent_lifecycle
+# [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
 
 # [STABILITY] evolving
 
@@ -26,11 +26,16 @@ import os
 import threading
 import time
 from collections.abc import Callable
-from datetime import datetime, timezone
-from enum import Enum
-from typing import Any, Optional
+from datetime import UTC, datetime
+from typing import Any
 
-from .daemon_registry import DaemonRegistry, PressureLevel as LegacyPressureLevel
+from pydantic import BaseModel
+
+from zephyr.integration.shared_08.io.io_cache import FileCache
+from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool
+
+from .daemon_registry import DaemonRegistry
+from .lazy_loader import LazyModuleRegistry
 from .resource_optimization_models import (
     CacheStats,
     CircuitBreakerState,
@@ -45,13 +50,9 @@ from .resource_optimization_models import (
     ProcessPoolStats,
     ResourceSnapshot,
 )
-from pydantic import BaseModel, Field
-from zephyr.integration.shared_08.io.io_cache import FileCache
-from zephyr.integration.shared_08.io.streaming_reader import tail_jsonl, stream_jsonl
-from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool
-from .lazy_loader import LazyModuleRegistry
 
 __all__ = [
+    "CacheStats",
     "CircuitBreaker",
     "CircuitBreakerState",
     "DefensiveStrategy",
@@ -65,7 +66,6 @@ __all__ = [
     "ProcessPoolStats",
     "ResourceOptimizationEngine",
     "ResourceSnapshot",
-    "CacheStats",
 ]
 
 
@@ -142,9 +142,7 @@ class CircuitBreaker:
         with self._lock:
             self._failure_count += 1
             self._last_failure_time = time.monotonic()
-            if self._state == CircuitBreakerState.HALF_OPEN:
-                self._state = CircuitBreakerState.OPEN
-            elif self._failure_count >= self._failure_threshold:
+            if self._state == CircuitBreakerState.HALF_OPEN or self._failure_count >= self._failure_threshold:
                 self._state = CircuitBreakerState.OPEN
 
     def reset(self) -> None:
@@ -159,7 +157,7 @@ class _PressureStateMachine:
         self._config = config or _HysteresisConfig()
         self._current = PressureLevel.NORMAL
         self._previous: PressureLevel | None = None
-        self._entered_at = datetime.now(timezone.utc)
+        self._entered_at = datetime.now(UTC)
         self._transition_count = 0
         self._pending_level: PressureLevel | None = None
         self._pending_confirmations = 0
@@ -193,9 +191,7 @@ class _PressureStateMachine:
                 return self._current
 
             now = time.monotonic()
-            self._hourly_transitions = [
-                t for t in self._hourly_transitions if now - t < 3600
-            ]
+            self._hourly_transitions = [t for t in self._hourly_transitions if now - t < 3600]
 
             level_order = [
                 PressureLevel.NORMAL,
@@ -209,10 +205,7 @@ class _PressureStateMachine:
 
             if is_escalation:
                 effective_confirm = self._config.confirmation_count
-                if (
-                    len(self._hourly_transitions)
-                    >= self._config.oscillation_threshold_per_hour
-                ):
+                if len(self._hourly_transitions) >= self._config.oscillation_threshold_per_hour:
                     effective_confirm = min(effective_confirm + 1, 5)
 
                 if self._pending_level == classified:
@@ -234,7 +227,7 @@ class _PressureStateMachine:
     def _apply_transition(self, new_level: PressureLevel, now: float) -> None:
         self._previous = self._current
         self._current = new_level
-        self._entered_at = datetime.now(timezone.utc)
+        self._entered_at = datetime.now(UTC)
         self._transition_count += 1
         self._last_transition_time = now
         self._hourly_transitions.append(now)
@@ -243,10 +236,10 @@ class _PressureStateMachine:
 
 
 class ResourceOptimizationEngine:
-    _instance: Optional["ResourceOptimizationEngine"] = None
+    _instance: ResourceOptimizationEngine | None = None
     _init_lock = threading.Lock()
 
-    def __new__(cls) -> "ResourceOptimizationEngine":
+    def __new__(cls) -> ResourceOptimizationEngine:
         if cls._instance is None:
             with cls._init_lock:
                 if cls._instance is None:
@@ -297,6 +290,7 @@ class ResourceOptimizationEngine:
         snap = ResourceSnapshot(timestamp=time.time())
         try:
             import psutil
+
             mem = psutil.virtual_memory()
             snap.memory_percent = mem.percent
             snap.memory_used_gb = mem.used / (1024**3)
@@ -311,6 +305,7 @@ class ResourceOptimizationEngine:
             except Exception:
                 pass
             import shutil
+
             try:
                 usage = shutil.disk_usage(".")
                 snap.disk_free_gb = usage.free / (1024**3)
@@ -320,8 +315,10 @@ class ResourceOptimizationEngine:
             try:
                 import ctypes
                 import os
+
                 if os.name == "nt":
                     kernel32 = ctypes.windll.kernel32
+
                     class MEMORYSTATUSEX(ctypes.Structure):
                         _fields_ = [
                             ("dwLength", ctypes.c_ulong),
@@ -333,6 +330,7 @@ class ResourceOptimizationEngine:
                             ("ullTotalVirtual", ctypes.c_ulonglong),
                             ("ullAvailVirtual", ctypes.c_ulonglong),
                         ]
+
                     mem_status = MEMORYSTATUSEX()
                     mem_status.dwLength = ctypes.sizeof(MEMORYSTATUSEX)
                     kernel32.GlobalMemoryStatusEx(ctypes.byref(mem_status))
@@ -437,7 +435,7 @@ class ResourceOptimizationEngine:
         )
         self._optimization_history.append(record)
         if len(self._optimization_history) > self._max_history:
-            self._optimization_history = self._optimization_history[-self._max_history:]
+            self._optimization_history = self._optimization_history[-self._max_history :]
 
         self._audit_optimization(record)
 
@@ -467,6 +465,7 @@ class ResourceOptimizationEngine:
 
     def _execute_memory_compact(self) -> list[str]:
         import gc
+
         before = len(gc.get_objects())
         collected = gc.collect()
         after = len(gc.get_objects())
@@ -528,6 +527,7 @@ class ResourceOptimizationEngine:
             if stopped:
                 actions.append(f"stop_low_priority(5): stopped {stopped}")
             import gc
+
             gc.collect()
             actions.append("emergency_gc: forced garbage collection")
         elif pressure == PressureLevel.CRITICAL:
@@ -570,16 +570,12 @@ class ResourceOptimizationEngine:
     def get_optimization_history(self, limit: int = 100) -> list[OptimizationRecord]:
         return self._optimization_history[-limit:]
 
-    def on_pressure(
-        self, callback: Callable[[PressureLevel, ResourceSnapshot], None]
-    ) -> None:
+    def on_pressure(self, callback: Callable[[PressureLevel, ResourceSnapshot], None]) -> None:
         self._pressure_callbacks.append(callback)
 
     def health_check(self) -> HealthCheckResult:
         running = self._monitor_running
-        loop_alive = (
-            self._monitor_thread is not None and self._monitor_thread.is_alive()
-        )
+        loop_alive = self._monitor_thread is not None and self._monitor_thread.is_alive()
         age = 0.0
         if self._last_snapshot is not None:
             age = time.time() - self._last_snapshot.timestamp
@@ -604,7 +600,7 @@ class ResourceOptimizationEngine:
             reason,
         )
         self._pressure_sm._current = level
-        self._pressure_sm._entered_at = datetime.now(timezone.utc)
+        self._pressure_sm._entered_at = datetime.now(UTC)
         self._pressure_sm._transition_count += 1
 
     def get_degradation_matrix(self) -> DegradationMatrix:
@@ -625,9 +621,7 @@ class ResourceOptimizationEngine:
             name="resource-optimization-monitor",
         )
         self._monitor_thread.start()
-        logger.info(
-            "ResourceOptimizationEngine: monitor started (interval=%.0fs)", interval
-        )
+        logger.info("ResourceOptimizationEngine: monitor started (interval=%.0fs)", interval)
 
     def stop_monitor(self) -> None:
         self._monitor_running = False
@@ -641,8 +635,7 @@ class ResourceOptimizationEngine:
 
                 if snap.pressure != PressureLevel.NORMAL:
                     logger.warning(
-                        "ResourceOptimizationEngine: pressure %s "
-                        "(mem=%.1f%%, cpu=%.1f%%, procs=%d)",
+                        "ResourceOptimizationEngine: pressure %s (mem=%.1f%%, cpu=%.1f%%, procs=%d)",
                         snap.pressure.value,
                         snap.memory_percent,
                         snap.cpu_percent,
@@ -689,7 +682,8 @@ class ResourceOptimizationEngine:
     def _apply_config(self, path: str) -> None:
         try:
             import yaml
-            with open(path, "r", encoding="utf-8") as f:
+
+            with open(path, encoding="utf-8") as f:
                 raw = f.read()
             cfg = yaml.safe_load(raw)
             if not isinstance(cfg, dict):
@@ -770,26 +764,31 @@ class ResourceOptimizationEngine:
             if result.success:
                 time.sleep(self._self_healing_verification_delay_s)
                 verify_snap = self.snapshot()
-                level_order = [PressureLevel.NORMAL, PressureLevel.WARNING, PressureLevel.CRITICAL, PressureLevel.EMERGENCY]
+                level_order = [
+                    PressureLevel.NORMAL,
+                    PressureLevel.WARNING,
+                    PressureLevel.CRITICAL,
+                    PressureLevel.EMERGENCY,
+                ]
                 if level_order.index(verify_snap.pressure) < level_order.index(snap.pressure):
                     logger.info(
                         "ResourceOptimizationEngine: self-heal succeeded — %s → %s",
-                        snap.pressure.value, verify_snap.pressure.value,
+                        snap.pressure.value,
+                        verify_snap.pressure.value,
                     )
                     return result
             retries += 1
             logger.warning(
                 "ResourceOptimizationEngine: self-heal retry %d/%d",
-                retries, self._self_healing_max_retries,
+                retries,
+                self._self_healing_max_retries,
             )
 
         logger.warning("ResourceOptimizationEngine: self-heal failed after %d retries", retries)
         return None
 
     def _select_healing_strategy(self, pressure: PressureLevel) -> OptimizationStrategy:
-        if pressure == PressureLevel.EMERGENCY:
-            return OptimizationStrategy.MEMORY_COMPACT
-        elif pressure == PressureLevel.CRITICAL:
+        if pressure == PressureLevel.EMERGENCY or pressure == PressureLevel.CRITICAL:
             return OptimizationStrategy.MEMORY_COMPACT
         else:
             return OptimizationStrategy.SCHEDULE_ADAPT
@@ -802,6 +801,7 @@ class ResourceOptimizationEngine:
         self._last_pressure_level = snap.pressure
         try:
             from zephyr.integration.shared_08.event_bus import get_bus
+
             bus = get_bus()
             bus.emit(
                 self._eventbus_topic,
@@ -821,15 +821,19 @@ class ResourceOptimizationEngine:
             return
         try:
             from zephyr.governance.audit_orchestrator.bridge import write_to_core
-            write_to_core("resource_optimization", {
-                "strategy": record.strategy.value,
-                "trigger": record.trigger.value,
-                "actions_taken": record.actions_taken,
-                "memory_before_gb": record.memory_before_gb,
-                "memory_after_gb": record.memory_after_gb,
-                "quality_preserved": record.quality_preserved,
-                "success": record.success,
-                "duration_ms": record.duration_ms,
-            })
+
+            write_to_core(
+                "resource_optimization",
+                {
+                    "strategy": record.strategy.value,
+                    "trigger": record.trigger.value,
+                    "actions_taken": record.actions_taken,
+                    "memory_before_gb": record.memory_before_gb,
+                    "memory_after_gb": record.memory_after_gb,
+                    "quality_preserved": record.quality_preserved,
+                    "success": record.success,
+                    "duration_ms": record.duration_ms,
+                },
+            )
         except Exception:
             pass

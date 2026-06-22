@@ -6,19 +6,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.shared.shared_services.models import TaskCard, TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.execution_model import ExecutionModel
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.integration.shared.schema.execution_model import ExecutionModel
+from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.shared_services.models import TaskCard, TaskNamespace, TaskStatus
 
 DB_PATH = Path(__file__).resolve().parents[1] / "data" / "databases" / "governance.db"
 
 
 def _make_task(task_id: str, title: str, depends_on: list[str] | None = None) -> TaskCard:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     ns, seq_str = task_id.split("-", 1)
     return TaskCard(
         task_id=task_id,
@@ -49,9 +48,10 @@ def _make_task(task_id: str, title: str, depends_on: list[str] | None = None) ->
 
 def test_downstream_unlock():
     repo = TaskRepository(str(DB_PATH), enable_gate=False)
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     import time
+
     uid = str(int(time.time()))[-5:]
     task_a = _make_task(f"CP-{uid}1", "Task A (no deps)")
     task_b = _make_task(f"CP-{uid}2", "Task B (depends on A)", depends_on=[f"CP-{uid}1"])
@@ -84,11 +84,7 @@ def test_downstream_unlock():
     for ds in downstream_after:
         if ds.task_id == f"CP-{uid}2":
             deps = ds.depends_on or []
-            all_done = all(
-                repo.get(d).status.value == "COMPLETED"
-                for d in deps
-                if d
-            )
+            all_done = all(repo.get(d).status.value == "COMPLETED" for d in deps if d)
             if all_done and ds.status.value in ("BLOCKED", "PENDING", "WAITING"):
                 repo.transition(ds.task_id, "READY", note=f"unblocked by CP-{uid}1")
                 print(f"  UNLOCKED: {ds.task_id} → READY")

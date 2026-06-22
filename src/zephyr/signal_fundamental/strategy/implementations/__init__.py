@@ -5,11 +5,12 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 """Signal Strategy Concrete Implementations"""
+
 from __future__ import annotations
 
 from zephyr.signal_fundamental.strategy.implementations.default_capital_allocator import (
-    DefaultCapitalAllocator,
     AllocationMethod,
+    DefaultCapitalAllocator,
 )
 
-__all__ = ['DefaultCapitalAllocator', 'AllocationMethod', 'default_capital_allocator']
+__all__ = ["AllocationMethod", "DefaultCapitalAllocator", "default_capital_allocator"]

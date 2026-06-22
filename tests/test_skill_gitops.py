@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.skill_gitops import SkillGitOps
 
 
@@ -70,15 +68,17 @@ class TestGeneratePRDescription:
         assert "Added new skill" in result
 
     def test_pr_with_breaking_changes(self):
-        changes = {"kind": "breaking", "summary": "Major refactor",
-                   "breaking_changes": ["API changed", "Config format updated"]}
+        changes = {
+            "kind": "breaking",
+            "summary": "Major refactor",
+            "breaking_changes": ["API changed", "Config format updated"],
+        }
         result = SkillGitOps.generate_pr_description("skill-y", changes)
         assert "Breaking Changes" in result
         assert "API changed" in result
 
     def test_pr_with_added_and_fixed(self):
-        changes = {"kind": "update", "summary": "Mixed changes",
-                   "added": ["New endpoint"], "fixed": ["Null check"]}
+        changes = {"kind": "update", "summary": "Mixed changes", "added": ["New endpoint"], "fixed": ["Null check"]}
         result = SkillGitOps.generate_pr_description("skill-z", changes)
         assert "Added" in result
         assert "Fixed" in result

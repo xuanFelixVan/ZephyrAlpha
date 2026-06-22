@@ -2,9 +2,12 @@
 class PromptProtectionLayer:
     def __init__(self, config=None):
         self.config = config or {}
+
     def validate(self, prompt):
         return True
+
     def sanitize(self, prompt):
         return prompt
+
     def detect_injection(self, text):
         return False

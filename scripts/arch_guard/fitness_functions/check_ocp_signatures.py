@@ -7,6 +7,7 @@ check_ocp_signatures.py — OCP 冻结契约指纹校验 (INV-009)
 
 exit: 0=pass, 1=drift, 2=missing manifest
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -23,10 +24,7 @@ from _arch_ssot import CONTRACTS_PATH, OCP_MANIFEST_PATH, REPO_ROOT, load_yaml  
 
 def main() -> int:
     if not OCP_MANIFEST_PATH.is_file():
-        print(
-            "FAIL: 缺少 ocp-manifest.json — 运行: "
-            "python scripts/arch_guard/_tools/build_ocp_manifest.py"
-        )
+        print("FAIL: 缺少 ocp-manifest.json — 运行: python scripts/arch_guard/_tools/build_ocp_manifest.py")
         return 2
 
     manifest = json.loads(OCP_MANIFEST_PATH.read_text(encoding="utf-8"))

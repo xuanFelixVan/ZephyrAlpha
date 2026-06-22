@@ -27,6 +27,7 @@ Risk: R139 — Obsolete diagnostic rules cause false positives on evolved system
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class RetirementPlanner:
     rules: dict[str, float] = field(default_factory=dict)

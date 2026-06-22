@@ -22,7 +22,6 @@ Tests:
 
 from __future__ import annotations
 
-import json
 import tempfile
 import time
 from contextlib import contextmanager
@@ -32,12 +31,10 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from zephyr.governance.rollback_executor import (
-    DiscardDecision,
     RollbackExecutor,
     RollbackOp,
-    RollbackResult,
 )
-from zephyr.governance.rollback_lock import RollbackLock, LockAcquireResult
+from zephyr.governance.rollback_lock import LockAcquireResult, RollbackLock
 
 
 @contextmanager
@@ -48,6 +45,7 @@ def _temp_dir():
         yield root
     finally:
         import gc
+
         gc.collect()
         for _ in range(100):
             try:
@@ -146,8 +144,7 @@ class TestPartialRevertE2E:
 
             with patch.object(exec, "_run_git") as mock_git:
                 mock_git.side_effect = _build_partial_revert_git_responses()
-                result = exec.partial_revert("abc123", file_globs=["src/**/*.py"],
-                                             audit_session="test-session")
+                result = exec.partial_revert("abc123", file_globs=["src/**/*.py"], audit_session="test-session")
 
                 assert result.success
                 assert result.operation == RollbackOp.PARTIAL_REVERT
@@ -167,9 +164,11 @@ class TestDiscardE2E:
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
 
-            with patch.object(exec, "_run_git") as mock_git, \
-                 patch.object(exec, "get_uncommitted_files", return_value=["file.py"]), \
-                 patch.object(exec, "get_staged_uncommitted_files", return_value=[]):
+            with (
+                patch.object(exec, "_run_git") as mock_git,
+                patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
+                patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
+            ):
                 mock_git.return_value = ""
                 result = exec.discard(["file.py"], audit_session="test-session")
 
@@ -203,13 +202,15 @@ class TestKillSwitchIntegrationE2E:
     """kill_switch 集成：KillSwitchManager"""
 
     def test_kill_switch_manager_l3_requires_token(self):
-        from zephyr.ops.kill_switch import KillSwitchManager, KillLevel
+        from zephyr.ops.kill_switch import KillLevel, KillSwitchManager
+
         mgr = KillSwitchManager(project_root=Path(tempfile.mkdtemp()))
         with pytest.raises(ValueError, match="BREAK_GLASS"):
             mgr.activate(KillLevel.L3_GLOBAL, "*", "test", token="")
 
     def test_kill_switch_activate_deactivate(self):
-        from zephyr.ops.kill_switch import KillSwitchManager, KillLevel
+        from zephyr.ops.kill_switch import KillLevel, KillSwitchManager
+
         mgr = KillSwitchManager(project_root=Path(tempfile.mkdtemp()))
         entry = mgr.activate(KillLevel.L1_SESSION, "session-X", "test")
         assert entry.level == KillLevel.L1_SESSION
@@ -234,9 +235,11 @@ class TestVerifierIntegrationE2E:
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
 
             g0_results = []
+
             def _track_g0(**kwargs):
                 g0_results.append(True)
                 return True
+
             exec._g0_verify = MagicMock(side_effect=_track_g0)
 
             with patch.object(exec, "_run_git") as mock_git:

@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.resilience.dr_automation import (
     DRAutomation,
     DRDrillResult,
@@ -85,16 +83,26 @@ class TestSummary:
 
     def test_summary_with_drills(self):
         dr = DRAutomation()
-        dr.record_drill(DRDrillResult(
-            drill_id="d1", timestamp=time.time(),
-            rpo_seconds=200.0, rto_seconds=800.0,
-            rpo_pass=True, rto_pass=True,
-        ))
-        dr.record_drill(DRDrillResult(
-            drill_id="d2", timestamp=time.time(),
-            rpo_seconds=600.0, rto_seconds=1200.0,
-            rpo_pass=False, rto_pass=False,
-        ))
+        dr.record_drill(
+            DRDrillResult(
+                drill_id="d1",
+                timestamp=time.time(),
+                rpo_seconds=200.0,
+                rto_seconds=800.0,
+                rpo_pass=True,
+                rto_pass=True,
+            )
+        )
+        dr.record_drill(
+            DRDrillResult(
+                drill_id="d2",
+                timestamp=time.time(),
+                rpo_seconds=600.0,
+                rto_seconds=1200.0,
+                rpo_pass=False,
+                rto_pass=False,
+            )
+        )
         s = dr.summary()
         assert s["rpo_pass_rate"] == 0.5
         assert s["rto_pass_rate"] == 0.5

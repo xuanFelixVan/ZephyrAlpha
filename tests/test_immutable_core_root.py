@@ -11,9 +11,9 @@
 # [TESTS] pytest tests/test_immutable_core.py -q
 
 import sys
+
 sys.path.insert(0, "src")
 
-import pytest
 from pathlib import Path
 
 from zephyr.security.access_control.immutable_core import (

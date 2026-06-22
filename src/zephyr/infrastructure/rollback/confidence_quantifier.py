@@ -31,8 +31,7 @@ ConfidenceQuantifier — AI 置信度量化。
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any
+from dataclasses import dataclass
 
 
 @dataclass
@@ -53,7 +52,6 @@ class ConfidenceResult:
 
 
 class ConfidenceQuantifier:
-
     EXIT_CODE_LOW_CONFIDENCE: int = 37
     LOW_THRESHOLD: float = 0.30
     MAX_CONSECUTIVE_LOW: int = 5
@@ -66,12 +64,14 @@ class ConfidenceQuantifier:
     def record(self, operation_id: str, confidence: float) -> ConfidenceResult:
         tier = self._determine_tier(confidence)
 
-        self._history.append(ConfidenceRecord(
-            operation_id=operation_id,
-            confidence=confidence,
-            tier=tier,
-            timestamp="",
-        ))
+        self._history.append(
+            ConfidenceRecord(
+                operation_id=operation_id,
+                confidence=confidence,
+                tier=tier,
+                timestamp="",
+            )
+        )
 
         if confidence < self.LOW_THRESHOLD:
             self._consecutive_low += 1

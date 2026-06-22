@@ -31,7 +31,6 @@ SSoT 唯一入口: from zephyr.governance.rule_enforcement.task_types import Tas
 若需修改任务卡字段 → 改 gates/task_types.py Task 模型 → 同步 migration + INSERT + TEMPLATE_REQUIRED_FIELDS
 """
 
-
 from __future__ import annotations
 
 from datetime import datetime
@@ -39,14 +38,14 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 __all__ = [
-    "TaskStatus",
-    "TaskNamespace",
-    "GateLevel",
-    "TaskAuditFinding",
-    "Task",
-    "TaskCard",
     "DecompositionResult",
     "GateCheckResult",
+    "GateLevel",
+    "Task",
+    "TaskAuditFinding",
+    "TaskCard",
+    "TaskNamespace",
+    "TaskStatus",
 ]
 
 _LAZY_GOVERNANCE_ATTRS: dict[str, str] = {
@@ -72,7 +71,7 @@ class DecompositionResult(BaseModel):
     model_config = BaseModel.model_config
 
     total_tasks: int = Field(ge=0)
-    tasks: list["TaskCard"]
+    tasks: list[TaskCard]
     dependency_graph: dict[str, list[str]] = Field(default_factory=dict)
     unassigned_items: list[str] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
@@ -83,7 +82,7 @@ class GateCheckResult(BaseModel):
 
     model_config = BaseModel.model_config
 
-    gate_id: "GateLevel"
+    gate_id: GateLevel
     task_id: str
     passed: bool
     violations: list[str] = Field(default_factory=list)
@@ -101,7 +100,9 @@ def __getattr__(name: str):
         return _lazy_import_governance("Task")
     if name in _FROZEN_PUBLIC_API:
         import logging
+
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.infrastructure.shared_services.models", name
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.infrastructure.shared_services.models",
+            name,
         )
     raise AttributeError(f"module 'zephyr.infrastructure.shared_services.models' has no attribute {name!r}")

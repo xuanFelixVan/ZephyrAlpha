@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.module_onboarding_scanner import (
     ModuleDiscovery,
@@ -77,7 +75,7 @@ class TestScanFilesystem:
         src = tmp_path / "src"
         _create_python_module(
             src / "mypackage" / "mymodule.py",
-            'class MyClass:\n    def method(self):\n        return 1\n',
+            "class MyClass:\n    def method(self):\n        return 1\n",
         )
         registry = CapabilityRegistry()
         scanner = ModuleOnboardingScanner(src_root=src, blueprint_root=tmp_path / "bp", registry=registry)
@@ -91,7 +89,7 @@ class TestScanFilesystem:
         src = tmp_path / "src"
         _create_python_module(
             src / "pkg" / "utils.py",
-            'def public_func():\n    return 42\n\ndef _private_func():\n    return 0\n',
+            "def public_func():\n    return 42\n\ndef _private_func():\n    return 0\n",
         )
         registry = CapabilityRegistry()
         scanner = ModuleOnboardingScanner(src_root=src, blueprint_root=tmp_path / "bp", registry=registry)
@@ -105,7 +103,7 @@ class TestScanFilesystem:
         src = tmp_path / "src"
         _create_python_module(
             src / "pkg" / "__init__.py",
-            'class InInit:\n    pass\n',
+            "class InInit:\n    pass\n",
         )
         registry = CapabilityRegistry()
         scanner = ModuleOnboardingScanner(src_root=src, blueprint_root=tmp_path / "bp", registry=registry)
@@ -116,7 +114,7 @@ class TestScanFilesystem:
         src = tmp_path / "src"
         _create_python_module(
             src / "zephyr" / "runtime" / "some_module.py",
-            'class SomeClass:\n    pass\n',
+            "class SomeClass:\n    pass\n",
         )
         registry = CapabilityRegistry()
         scanner = ModuleOnboardingScanner(src_root=src, blueprint_root=tmp_path / "bp", registry=registry)
@@ -127,7 +125,7 @@ class TestScanFilesystem:
         src = tmp_path / "src"
         _create_python_module(
             src / "pkg" / "constants.py",
-            'X = 1\nY = 2\n',
+            "X = 1\nY = 2\n",
         )
         registry = CapabilityRegistry()
         scanner = ModuleOnboardingScanner(src_root=src, blueprint_root=tmp_path / "bp", registry=registry)
@@ -150,7 +148,7 @@ class TestScanFilesystem:
         src = tmp_path / "src"
         _create_python_module(
             src / "pkg" / "importer.py",
-            'import os\nfrom pathlib import Path\n\nclass Importer:\n    pass\n',
+            "import os\nfrom pathlib import Path\n\nclass Importer:\n    pass\n",
         )
         registry = CapabilityRegistry()
         scanner = ModuleOnboardingScanner(src_root=src, blueprint_root=tmp_path / "bp", registry=registry)
@@ -163,7 +161,7 @@ class TestScanFilesystem:
         src = tmp_path / "src"
         _create_python_module(
             src / "pkg" / "bad.py",
-            'def broken(:\n',
+            "def broken(:\n",
         )
         registry = CapabilityRegistry()
         scanner = ModuleOnboardingScanner(src_root=src, blueprint_root=tmp_path / "bp", registry=registry)
@@ -207,7 +205,7 @@ class TestDiffRegistered:
         src = tmp_path / "src"
         _create_python_module(
             src / "mypackage" / "mymod.py",
-            'class MyMod:\n    pass\n',
+            "class MyMod:\n    pass\n",
         )
         registry = CapabilityRegistry()
         scanner = ModuleOnboardingScanner(src_root=src, blueprint_root=tmp_path / "bp", registry=registry)
@@ -220,10 +218,11 @@ class TestDiffRegistered:
         src = tmp_path / "src"
         _create_python_module(
             src / "mypackage" / "mymod.py",
-            'class MyMod:\n    pass\n',
+            "class MyMod:\n    pass\n",
         )
         registry = CapabilityRegistry()
         from zephyr.trading.capability_card import CapabilityCard, CapabilityCategory
+
         card = CapabilityCard(
             capability_id="mypackage-mymod",
             name="MyMod",
@@ -239,7 +238,7 @@ class TestDiffRegistered:
         src = tmp_path / "src"
         _create_python_module(
             src / "mypackage" / "important.py",
-            'class Important:\n    pass\n',
+            "class Important:\n    pass\n",
         )
         bp_root = tmp_path / "blueprints"
         bp_root.mkdir(parents=True)

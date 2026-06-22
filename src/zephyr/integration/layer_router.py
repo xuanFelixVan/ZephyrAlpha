@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_layer_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.layer_router
+# [MODULE] zephyr.integration.layer_router
 
 # [INVARIANTS] none
 
@@ -39,12 +39,12 @@ LayerDataRouter — 跨层数据路由引擎（Phase C: 模型冻结与路由串
 
 from __future__ import annotations
 
-import importlib
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable, ClassVar
+from typing import Any
 
 import yaml
 
@@ -53,8 +53,13 @@ _logger = logging.getLogger(__name__)
 _FILE = Path(__file__).resolve()
 REPO_ROOT: Path = _FILE.parents[3]
 DEFAULT_CONTRACTS_PATH: Path = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture"
-    / "architecture-model" / "contracts" / "cross_layer_contracts.yaml"
+    REPO_ROOT
+    / "docs"
+    / "02_enterprise_architecture"
+    / "target-architecture"
+    / "architecture-model"
+    / "contracts"
+    / "cross_layer_contracts.yaml"
 )
 
 # ---------------------------------------------------------------------------
@@ -65,6 +70,7 @@ DEFAULT_CONTRACTS_PATH: Path = (
 @dataclass(frozen=True)
 class RouteEntry:
     """单条层间路由条目——冻结不可变。"""
+
     contract_id: str
     contract_name: str
     priority: str
@@ -92,6 +98,7 @@ class RouteEntry:
 @dataclass(frozen=True)
 class LayerRouteMap:
     """全量跨层路由表——加载后冻结不可变。"""
+
     routes: tuple[RouteEntry, ...]
     by_source: dict[str, tuple[RouteEntry, ...]] = field(default_factory=dict)
     by_target: dict[str, tuple[RouteEntry, ...]] = field(default_factory=dict)
@@ -113,6 +120,7 @@ class LayerRouteMap:
 @dataclass(frozen=True)
 class LayerRouteResult:
     """路由执行结果。"""
+
     contract_id: str
     source_layer: str
     target_layers: tuple[str, ...]
@@ -120,7 +128,7 @@ class LayerRouteResult:
     skipped: bool = False
     skip_reason: str = ""
     latency_us: float = 0.0
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 # ---------------------------------------------------------------------------
@@ -150,7 +158,7 @@ def load_route_map(yaml_path: Path | None = None) -> LayerRouteMap:
         _logger.warning("LayerDataRouter: contracts file not found at %s, loading empty map", resolved)
         return LayerRouteMap(
             routes=(),
-            loaded_at=datetime.now(timezone.utc).isoformat(),
+            loaded_at=datetime.now(UTC).isoformat(),
             source_path="",
         )
 
@@ -177,17 +185,19 @@ def load_route_map(yaml_path: Path | None = None) -> LayerRouteMap:
             tgt_raw = []
         tgts = tuple(sorted(set(_normalize_layer(str(t)) for t in tgt_raw if t)))
 
-        route_list.append(RouteEntry(
-            contract_id=cid,
-            contract_name=str(entry.get("name", cid)),
-            priority=str(entry.get("priority", "P1")),
-            source_layer=src,
-            target_layers=tgts,
-            flow=str(entry.get("flow", "")),
-            physical_path=str(entry.get("physical_path", "")),
-            schema_version=str(entry.get("schema_version", "1.0")),
-            stability=str(entry.get("stability", "upgradable")),
-        ))
+        route_list.append(
+            RouteEntry(
+                contract_id=cid,
+                contract_name=str(entry.get("name", cid)),
+                priority=str(entry.get("priority", "P1")),
+                source_layer=src,
+                target_layers=tgts,
+                flow=str(entry.get("flow", "")),
+                physical_path=str(entry.get("physical_path", "")),
+                schema_version=str(entry.get("schema_version", "1.0")),
+                stability=str(entry.get("stability", "upgradable")),
+            )
+        )
 
     routes = tuple(route_list)
 
@@ -210,7 +220,7 @@ def load_route_map(yaml_path: Path | None = None) -> LayerRouteMap:
         by_target={k: tuple(v) for k, v in sorted(by_target.items())},
         by_contract=by_contract,
         layers=tuple(sorted(all_layers)),
-        loaded_at=datetime.now(timezone.utc).isoformat(),
+        loaded_at=datetime.now(UTC).isoformat(),
         source_path=str(resolved),
     )
 
@@ -245,9 +255,7 @@ class LayerDataRouter:
     def route_map(self) -> LayerRouteMap:
         return self._route_map
 
-    def register_consumer(
-        self, contract_id: str, callback: ConsumerCallback
-    ) -> None:
+    def register_consumer(self, contract_id: str, callback: ConsumerCallback) -> None:
         """注册契约数据消费者回调。
 
         Parameters
@@ -317,7 +325,8 @@ class LayerDataRouter:
             except Exception as exc:
                 _logger.warning(
                     "LayerDataRouter: consumer callback failed for %s: %s",
-                    contract_id, exc,
+                    contract_id,
+                    exc,
                 )
                 delivered = False
 
@@ -443,8 +452,8 @@ def handle_layer_data_route(payload: dict[str, Any], **_: Any) -> dict[str, Any]
     替换 trigger_router.yaml 中的 layer-specific stubs。
     """
     contract_id = payload.get("contract_id", "")
-    data = payload.get("data", None)
-    source_layer = payload.get("source_layer", None)
+    data = payload.get("data")
+    source_layer = payload.get("source_layer")
 
     if not contract_id:
         return {
@@ -506,14 +515,14 @@ def handle_layer_query(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
 
 
 __all__ = [
-    "RouteEntry",
+    "LayerDataRouter",
     "LayerRouteMap",
     "LayerRouteResult",
-    "LayerDataRouter",
-    "load_route_map",
+    "RouteEntry",
     "get_layer_router",
-    "reset_layer_router",
-    "handle_layer_onboarding",
     "handle_layer_data_route",
+    "handle_layer_onboarding",
     "handle_layer_query",
+    "load_route_map",
+    "reset_layer_router",
 ]

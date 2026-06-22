@@ -12,12 +12,6 @@
 
 from __future__ import annotations
 
-import os
-import tempfile
-import time
-
-import pytest
-
 from zephyr.security.access_control.auto_fix_engine_03.fix_safety import (
     CascadeBreaker,
     FixValidator,
@@ -32,7 +26,6 @@ from zephyr.security.access_control.auto_fix_engine_03.models import (
     FixConfidence,
     FixLevel,
     FixStatus,
-    SafetyDecision,
     ValidationResult,
 )
 
@@ -58,8 +51,10 @@ class TestSafetyGate:
     def test_check_l2_low_confidence_denied(self):
         sg = SafetyGate()
         action = FixAction(
-            action_type="test", target="f.py",
-            level=FixLevel.L2_LLM, confidence=FixConfidence.LOW,
+            action_type="test",
+            target="f.py",
+            level=FixLevel.L2_LLM,
+            confidence=FixConfidence.LOW,
         )
         decision = sg.check(action)
         assert decision.approved is False
@@ -68,8 +63,10 @@ class TestSafetyGate:
     def test_check_l2_high_confidence_approved(self):
         sg = SafetyGate()
         action = FixAction(
-            action_type="test", target="f.py",
-            level=FixLevel.L2_LLM, confidence=FixConfidence.HIGH,
+            action_type="test",
+            target="f.py",
+            level=FixLevel.L2_LLM,
+            confidence=FixConfidence.HIGH,
         )
         decision = sg.check(action)
         assert decision.approved is True
@@ -124,14 +121,14 @@ class TestWriteSafety:
         filepath = str(tmp_path / "test_write.txt")
         result = WriteSafety.atomic_write(filepath, "hello world")
         assert result is True
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             assert f.read() == "hello world"
 
     def test_atomic_write_overwrite(self, tmp_path):
         filepath = str(tmp_path / "test_overwrite.txt")
         WriteSafety.atomic_write(filepath, "first")
         WriteSafety.atomic_write(filepath, "second")
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             assert f.read() == "second"
 
     def test_verify_write_correct(self, tmp_path):

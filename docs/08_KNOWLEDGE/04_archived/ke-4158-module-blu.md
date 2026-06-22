@@ -11,7 +11,7 @@ category: module_blueprint
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
 | 1 | SQLite CRUD + 10状态机 + N:N映射 | `task_repo.py`（`src/zephyr/db/`）— 已有生产级代码 |
-| 2 | Task 模型基座（Pydantic V2 31字段） | `shared/schemas.py`（`src/zephyr/shared/`）— metadata-registry.md §7 真源 |
+| 2 | Task 模型基座（Pydantic V2 31字段） | `shared/schemas.py`（`src/zephyr/shared/`）— metadata_registry.yaml §7 真源 |
 | 3 | MCP Server Web 层 | `task_manager_server.py`（`src/zephyr/mcp/`）— 本蓝图更新后重写 |
 | 4 | 审计脚本 | MOD-INF-005 — 已有 9+ 脚本 |
 | 5 | context-engine | `context_engine/` — 已有 7 模块 + experimental 补齐 |

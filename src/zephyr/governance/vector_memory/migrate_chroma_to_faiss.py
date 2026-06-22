@@ -33,13 +33,10 @@ VMS Blueprint §12 Step 5
 
 from __future__ import annotations
 
-import json
 import logging
 import sys
-import uuid
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
@@ -56,8 +53,14 @@ KB_COLLECTION_TO_VMS: dict[str, str] = {
 }
 
 COLLECTION_NAMES: tuple[str, ...] = (
-    "decisions", "code_context", "lessons", "knowledge",
-    "rules", "blueprints", "session_snapshots", "execution_traces",
+    "decisions",
+    "code_context",
+    "lessons",
+    "knowledge",
+    "rules",
+    "blueprints",
+    "session_snapshots",
+    "execution_traces",
 )
 
 
@@ -73,6 +76,7 @@ def _init_faiss_backend():
 
 def _init_chroma_client(path: Path):
     import chromadb
+
     return chromadb.PersistentClient(path=str(path))
 
 
@@ -134,12 +138,16 @@ def migrate_vms_collection(
 
             try:
                 import numpy as np
+
                 vec = np.asarray(emb, dtype=np.float32)
 
                 if vec.shape[0] != target_dim:
                     _logger.warning(
                         "维度不匹配: %s/%s 期望 %dd 实际 %dd → 仅存储元数据",
-                        collection_name, doc_id, target_dim, vec.shape[0],
+                        collection_name,
+                        doc_id,
+                        target_dim,
+                        vec.shape[0],
                     )
                     meta_copy = dict(meta)
                     meta_copy["migrated_from_chromadb"] = True
@@ -185,7 +193,11 @@ def migrate_vms_collection(
 
         _logger.info(
             "  %s: offset=%d/%d, migrated=%d, skipped=%d",
-            collection_name, offset + limit, total, migrated, skipped,
+            collection_name,
+            offset + limit,
+            total,
+            migrated,
+            skipped,
         )
 
     return {"total": total, "migrated": migrated, "skipped": skipped}
@@ -241,12 +253,16 @@ def migrate_kb_collection(
 
         try:
             import numpy as np
+
             vec = np.asarray(emb, dtype=np.float32)
 
             if vec.shape[0] != target_dim:
                 _logger.warning(
                     "维度不匹配: KB %s/%s 期望 %dd 实际 %dd → 仅存储元数据",
-                    kb_collection, doc_id, target_dim, vec.shape[0],
+                    kb_collection,
+                    doc_id,
+                    target_dim,
+                    vec.shape[0],
                 )
                 meta_copy = dict(meta)
                 meta_copy["migrated_from_chromadb"] = True
@@ -307,6 +323,7 @@ def main():
 
     _logger.info("确保 8 个 FAISS Collection 已创建...")
     from zephyr.governance.vector_memory.collection_manager import COLLECTION_SCHEMAS
+
     for name in COLLECTION_NAMES:
         schema = COLLECTION_SCHEMAS[name]
         faiss_cm.create_collection(
@@ -330,6 +347,7 @@ def main():
     _logger.info("\n[Phase 2] KB ChromaDB → VMS Knowledge...")
     try:
         from zephyr.integration.shared_08.io.paths import VECTOR_INDEX_DIR
+
         kb_client = _init_chroma_client(VECTOR_INDEX_DIR)
         for kb_col, vms_col in KB_COLLECTION_TO_VMS.items():
             stat = migrate_kb_collection(faiss_cm, meta_store, kb_client, kb_col, vms_col, dry_run=dry_run)
@@ -345,7 +363,10 @@ def main():
         if stat["total"] > 0:
             _logger.info(
                 "  %-30s total=%4d  migrated=%4d  skipped=%d",
-                name, stat["total"], stat["migrated"], stat["skipped"],
+                name,
+                stat["total"],
+                stat["migrated"],
+                stat["skipped"],
             )
             total_all += stat["total"]
             migrated_all += stat["migrated"]

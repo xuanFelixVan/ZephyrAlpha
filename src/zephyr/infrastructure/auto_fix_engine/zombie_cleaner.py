@@ -21,7 +21,6 @@
 
 from __future__ import annotations
 
-import ast
 import logging
 import os
 import re
@@ -58,7 +57,9 @@ class ZombieCleaner(BaseFixer):
         for yaml_file in repo_root.rglob("*.yaml"):
             try:
                 content = yaml_file.read_text(encoding="utf-8")
-                path_refs = re.findall(r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content)
+                path_refs = re.findall(
+                    r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content
+                )
                 for ref in path_refs:
                     if not (repo_root / ref).exists() and not Path(ref).is_absolute():
                         findings.append({"file": str(yaml_file), "reference": ref, "type": "zombie_reference"})
@@ -94,7 +95,9 @@ class ZombieCleaner(BaseFixer):
             original = content
             repo_root = Path(os.getcwd())
             if target.endswith(".yaml"):
-                path_refs = re.findall(r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content)
+                path_refs = re.findall(
+                    r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content
+                )
                 for ref in path_refs:
                     if not (repo_root / ref).exists() and not Path(ref).is_absolute():
                         lines = content.split("\n")
@@ -149,7 +152,12 @@ class ZombieCleaner(BaseFixer):
                     if "site-packages" not in clean_ref and "lib/python" not in clean_ref:
                         remaining_zombies.append(ref)
             if remaining_zombies:
-                return ValidationResult(valid=False, check_name="zombie_clean", evidence=f"Remaining zombies: {remaining_zombies}", error="Zombie references still present")
+                return ValidationResult(
+                    valid=False,
+                    check_name="zombie_clean",
+                    evidence=f"Remaining zombies: {remaining_zombies}",
+                    error="Zombie references still present",
+                )
             return ValidationResult(valid=True, check_name="zombie_clean", evidence="No zombie references found")
         except Exception as exc:
             return ValidationResult(valid=False, check_name="zombie_clean", evidence="", error=str(exc))

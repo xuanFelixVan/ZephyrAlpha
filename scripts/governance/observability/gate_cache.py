@@ -19,7 +19,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 _BUF_SIZE = 65536
 
 
@@ -28,13 +27,10 @@ class CacheCorruptionError(RuntimeError):
 
 
 class GateCache:
-
     def __init__(self, cache_dir: Path | None = None) -> None:
         if cache_dir is None:
             project_root = Path(
-                os.path.dirname(
-                    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-                )
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
             )
             cache_dir = project_root / "data" / "gate_cache"
         self._cache_dir = Path(cache_dir)
@@ -71,12 +67,10 @@ class GateCache:
             self._stats["misses"] += 1
             return None
         try:
-            with open(entry_path, "r", encoding="utf-8") as f:
+            with open(entry_path, encoding="utf-8") as f:
                 data = json.load(f)
         except (json.JSONDecodeError, OSError) as exc:
-            raise CacheCorruptionError(
-                f"Cache entry corrupted: {entry_path} — {exc}"
-            ) from exc
+            raise CacheCorruptionError(f"Cache entry corrupted: {entry_path} — {exc}") from exc
         stored_path = data.get("file_path", "")
         if stored_path != file_path:
             self._stats["misses"] += 1
@@ -157,7 +151,7 @@ def main() -> None:
 
     cache = GateCache()
     st = cache.stats()
-    print(f"Gate Cache Stats:")
+    print("Gate Cache Stats:")
     print(f"  cache_dir:     {st['cache_dir']}")
     print(f"  hits:          {st['hits']}")
     print(f"  misses:        {st['misses']}")

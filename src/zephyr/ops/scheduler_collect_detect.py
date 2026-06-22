@@ -11,20 +11,20 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-
 import logging
 import time
 from dataclasses import dataclass, field
 from typing import Any
 
 from zephyr.ops.collectors.feedback_collector import FeedbackCollector
-from zephyr.ops.collectors.metrics_collector import MetricSnapshot, MetricsCollector
+from zephyr.ops.collectors.metrics_collector import MetricsCollector, MetricSnapshot
 from zephyr.ops.detectors.agent_trajectory_anomaly_detector import (
     AgentTrajectoryAnomalyDetector,
     TrajectoryEvent,
 )
 from zephyr.ops.detectors.anomaly_detector import AnomalyDetector
 from zephyr.ops.detectors.flapping_detector import AlertState, FlappingDetector
+from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
 from zephyr.ops.detectors.heisenbug_detector import HeisenbugDetector
 from zephyr.ops.detectors.intermittent_failure_pattern import IntermittentFailurePattern
 from zephyr.ops.detectors.metric_cardinality_guard import MetricCardinalityGuard
@@ -35,9 +35,9 @@ from zephyr.ops.diagnosers.guard_self_consistency_auditor import GuardSelfConsis
 from zephyr.ops.diagnosers.numerical_stability_guard import NumericalStabilityGuard
 from zephyr.ops.diagnosers.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
 from zephyr.ops.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
-from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class CollectDetectHandler:
@@ -69,10 +69,15 @@ class CollectDetectHandler:
         phase_start = time.time()
         self.cold_start.tick()
 
-        self.trajectory_detector.record_step(TrajectoryEvent(
-            phase="collect", component="metrics_collector",
-            timestamp=now, input_hash="", output_hash=run_id,
-        ))
+        self.trajectory_detector.record_step(
+            TrajectoryEvent(
+                phase="collect",
+                component="metrics_collector",
+                timestamp=now,
+                input_hash="",
+                output_hash=run_id,
+            )
+        )
         snapshot = MetricSnapshot(
             timestamp=now,
             system_cpu=0.0,
@@ -82,11 +87,22 @@ class CollectDetectHandler:
             detection_latency_ms=0.0,
         )
 
-        for attr_name in ("system_cpu", "memory_usage_pct", "disk_io_wait", "network_errors_count", "detection_latency_ms"):
+        for attr_name in (
+            "system_cpu",
+            "memory_usage_pct",
+            "disk_io_wait",
+            "network_errors_count",
+            "detection_latency_ms",
+        ):
             raw = getattr(snapshot, attr_name, 0.0)
             result = self.numerical_guard.validate(attr_name, raw)
             if result["classification"] != "CLEAN":
-                logger.warning("FLE numerical anomaly: %s=%s -> sanitized=%s", attr_name, result["classification"], result["sanitized"])
+                logger.warning(
+                    "FLE numerical anomaly: %s=%s -> sanitized=%s",
+                    attr_name,
+                    result["classification"],
+                    result["sanitized"],
+                )
 
         metrics_collector.collect(snapshot)
         event.snapshot = snapshot
@@ -96,10 +112,15 @@ class CollectDetectHandler:
     def run_detect(self, event: Any, snapshot: Any, run_id: str) -> bool:
         phase_start = time.time()
 
-        self.trajectory_detector.record_step(TrajectoryEvent(
-            phase="detect", component="anomaly_detector",
-            timestamp=time.time(), input_hash=run_id, output_hash="",
-        ))
+        self.trajectory_detector.record_step(
+            TrajectoryEvent(
+                phase="detect",
+                component="anomaly_detector",
+                timestamp=time.time(),
+                input_hash=run_id,
+                output_hash="",
+            )
+        )
 
         anomaly = self.anomaly_detector.detect(snapshot)
 
@@ -129,7 +150,8 @@ class CollectDetectHandler:
         anomaly = event.anomaly
 
         hygiene_check = self.stats_hygiene.check_sample_size(
-            metrics_collector.baseline.total_samples, anomaly.anomaly_id,
+            metrics_collector.baseline.total_samples,
+            anomaly.anomaly_id,
         )
         if hygiene_check.get("violation"):
             logger.info("FLE stats hygiene: %s suppressed", anomaly.anomaly_id)
@@ -139,16 +161,25 @@ class CollectDetectHandler:
         metric_name = anomaly.evidence.get("metric_name", "")
         delay_check = self.delay_compensator.should_suppress(metric_name)
         if delay_check.get("suppress"):
-            logger.info("FLE delay compensation: %s suppressed (%ss remaining)", anomaly.anomaly_id, delay_check["remaining_seconds"])
+            logger.info(
+                "FLE delay compensation: %s suppressed (%ss remaining)",
+                anomaly.anomaly_id,
+                delay_check["remaining_seconds"],
+            )
             self.bottleneck_detector.record_stage_latency(PipelineStage.DIAGNOSE, (time.time() - phase_start) * 1000)
             return True
 
         diagnosis = self.diagnosis_engine.diagnose(anomaly.anomaly_id, anomaly.evidence)
 
-        self.trajectory_detector.record_step(TrajectoryEvent(
-            phase="diagnose", component="diagnosis_engine",
-            timestamp=time.time(), input_hash=anomaly.anomaly_id, output_hash="",
-        ))
+        self.trajectory_detector.record_step(
+            TrajectoryEvent(
+                phase="diagnose",
+                component="diagnosis_engine",
+                timestamp=time.time(),
+                input_hash=anomaly.anomaly_id,
+                output_hash="",
+            )
+        )
 
         self.guard_consistency.record_outcome("stats_hygiene", not hygiene_check.get("violation"))
         self.guard_consistency.record_outcome("delay_compensator", not delay_check.get("suppress"))

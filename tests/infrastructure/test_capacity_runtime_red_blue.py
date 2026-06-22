@@ -61,9 +61,9 @@ class TestCapacityAssuranceAdversarial:
         ]
         for msg, expected_sev in test_messages:
             report = engine.diagnose(msg, component="test")
-            assert (
-                report.severity.value == expected_sev
-            ), f"Expected {expected_sev} for '{msg[:30]}...', got {report.severity.value}"
+            assert report.severity.value == expected_sev, (
+                f"Expected {expected_sev} for '{msg[:30]}...', got {report.severity.value}"
+            )
 
     def test_contract_tester_non_existent(self):
         """对抗：不存在的文件"""
@@ -97,6 +97,7 @@ class TestCapacityAssuranceAdversarial:
         import tempfile
 
         import yaml
+
         from zephyr.infrastructure.config_validator import ConfigValidator
 
         tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8")
@@ -116,6 +117,7 @@ class TestCapacityAssuranceAdversarial:
         import tempfile
 
         import yaml
+
         from zephyr.infrastructure.config_validator import ConfigValidator
 
         tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8")

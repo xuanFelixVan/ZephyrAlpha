@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import logging
 
-from zephyr.security.adversarial_validation.models import AttackTier, ConvergenceResult, RedBlueReport
+from zephyr.security.adversarial_validation.models import ConvergenceResult, RedBlueReport
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,6 @@ class ConvergenceFailureError(RuntimeError):
 
 
 class ConvergenceChecker:
-
     def __init__(self) -> None:
         self._previous_bypass_count: int = 0
         self._previous_blocked_rate: float = 0.0
@@ -55,9 +54,9 @@ class ConvergenceChecker:
         total = report.total
 
         improved = False
-        if bypass_count < self._previous_bypass_count and self._previous_bypass_count > 0:
-            improved = True
-        elif blocked_rate > self._previous_blocked_rate and self._previous_blocked_rate > 0:
+        if (bypass_count < self._previous_bypass_count and self._previous_bypass_count > 0) or (
+            blocked_rate > self._previous_blocked_rate and self._previous_blocked_rate > 0
+        ):
             improved = True
 
         if improved:
@@ -75,8 +74,12 @@ class ConvergenceChecker:
             status = "CONVERGED"
         elif self._rounds_since_improvement >= MAX_ROUNDS_WITHOUT_IMPROVEMENT:
             status = "FAILED"
-            logger.error("convergence_failed rounds=%d bypasses=%d blocked_rate=%.2f",
-                         self._rounds_since_improvement, bypass_count, blocked_rate)
+            logger.error(
+                "convergence_failed rounds=%d bypasses=%d blocked_rate=%.2f",
+                self._rounds_since_improvement,
+                bypass_count,
+                blocked_rate,
+            )
 
         result = ConvergenceResult(
             status=status,

@@ -29,6 +29,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+
 @dataclass
 class VerifyResult:
     file: str = ""
@@ -37,6 +38,7 @@ class VerifyResult:
     checks_passed: int = 0
     checks_failed: int = 0
     issues: list[str] = field(default_factory=list)
+
 
 class Verifier:
     """修复后验证器."""
@@ -57,6 +59,7 @@ class Verifier:
 
         try:
             import ast
+
             source = path.read_text(encoding="utf-8")
             ast.parse(source)
             result.syntax_ok = True

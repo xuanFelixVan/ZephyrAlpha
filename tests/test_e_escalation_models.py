@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-import pytest
-
 from zephyr.governance.escalation_models import (
     DEFAULT_ESCALATION_RULES,
     DelegationRecord,

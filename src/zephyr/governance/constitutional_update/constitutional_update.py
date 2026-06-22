@@ -39,14 +39,12 @@ AI 施工约定：
 SSoT: DOM-GOV-001 §12 盲点 B27
 """
 
-
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 from zephyr.integration.shared_08.file_utils import atomic_write, backup_and_rollback
 from zephyr.shared.shared_services.observability_02.session_audit import SessionAuditTrail
@@ -193,9 +191,7 @@ class ConstitutionalAutoUpdate:
 
         original_content = self.agents_path.read_text(encoding="utf-8")
 
-        backup_path = self.agents_path.with_suffix(
-            f".md.backup-{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}"
-        )
+        backup_path = self.agents_path.with_suffix(f".md.backup-{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}")
         backup_and_rollback(str(self.agents_path))
         backup_path.write_text(original_content, encoding="utf-8")
 
@@ -241,7 +237,7 @@ class ConstitutionalAutoUpdate:
 
 
 __all__ = [
+    "ConstitutionalAutoUpdate",
     "Learning",
     "ProposedUpdate",
-    "ConstitutionalAutoUpdate",
 ]

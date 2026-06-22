@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_cross_system_correlator.py
 
-import pytest
 
 from zephyr.ops.detectors.cross_system_correlator import CrossSystemCorrelator
 

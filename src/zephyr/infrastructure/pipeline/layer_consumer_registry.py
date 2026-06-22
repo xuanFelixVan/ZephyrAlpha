@@ -38,6 +38,7 @@ P1 扩展流： CTR-P1-001~015  跨插各层
   - handler 做最小验证后交给层内部逻辑
   - 未连接的层返回 skipped（Phase E 实现）
 """
+
 from __future__ import annotations
 
 import logging
@@ -46,8 +47,6 @@ from typing import Any
 from zephyr.infrastructure.pipeline.layer_router import (
     LayerDataRouter,
     get_layer_router,
-    handle_layer_data_route,
-    handle_layer_query,
 )
 
 _logger = logging.getLogger(__name__)
@@ -63,7 +62,8 @@ def _make_pass_callback(layer_id: str, contract_id: str):
     def _callback(data: Any, _contract_id: str) -> None:
         _logger.debug(
             "LayerConsumerRegistry: %s received %s (len=%s)",
-            layer_id, contract_id,
+            layer_id,
+            contract_id,
             len(str(data)) if data is not None else 0,
         )
 
@@ -277,7 +277,8 @@ def register_all_consumers(router: LayerDataRouter | None = None) -> dict[str, i
 
     _logger.info(
         "LayerConsumerRegistry: registered %d consumer callbacks across %d layers",
-        registered_total, len(results),
+        registered_total,
+        len(results),
     )
     return results
 
@@ -312,7 +313,14 @@ def get_registry_summary() -> dict[str, Any]:
         "layers": {},
     }
     for layer_id, entries in _REGISTRY_DEFINITION.items():
-        p0_count = sum(1 for cid, _ in entries if cid.startswith("CTR-") and not cid.startswith("CTR-P1-") and not cid.startswith("CTR-BP-") and not cid.startswith("CTR-ERR-"))
+        p0_count = sum(
+            1
+            for cid, _ in entries
+            if cid.startswith("CTR-")
+            and not cid.startswith("CTR-P1-")
+            and not cid.startswith("CTR-BP-")
+            and not cid.startswith("CTR-ERR-")
+        )
         err_count = sum(1 for cid, _ in entries if cid.startswith("CTR-ERR-"))
         bp_count = sum(1 for cid, _ in entries if cid.startswith("CTR-BP-"))
         p1_count = sum(1 for cid, _ in entries if cid.startswith("CTR-P1-"))
@@ -327,8 +335,8 @@ def get_registry_summary() -> dict[str, Any]:
 
 
 __all__ = [
+    "_REGISTRY_DEFINITION",
+    "get_registry_summary",
     "register_all_consumers",
     "register_for_layer",
-    "get_registry_summary",
-    "_REGISTRY_DEFINITION",
 ]

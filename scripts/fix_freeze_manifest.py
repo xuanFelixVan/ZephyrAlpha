@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/fix_freeze_manifest.py | §
 """Fix freezemanifest.yaml - comprehensive repair of all corrupted desc fields."""
+
 from pathlib import Path
-import re
 
 p = Path("src/zephyr/shared/contracts/freezemanifest.yaml")
 text = p.read_text(encoding="utf-8")
@@ -29,13 +29,14 @@ for line in lines:
 text = "\n".join(fixed)
 
 # Also fix any remaining broken patterns
-text = text.replace('补参⇒', '补参⇒完成')
-text = text.replace('所⇒consumer ⇒owner', '所有 consumer 的 owner')
-text = text.replace('更新⇒freezemanifest.yaml', '更新 freezemanifest.yaml')
+text = text.replace("补参⇒", "补参⇒完成")
+text = text.replace("所⇒consumer ⇒owner", "所有 consumer 的 owner")
+text = text.replace("更新⇒freezemanifest.yaml", "更新 freezemanifest.yaml")
 
 p.write_text(text, encoding="utf-8")
 
 import yaml
+
 try:
     d = yaml.safe_load(text)
     print(f"YAML OK, top keys: {list(d.keys())[:5]}")
@@ -47,4 +48,4 @@ except yaml.parser.ParserError as e:
     end = min(len(bad_lines), e.problem_mark.line + 3)
     for i in range(start, end):
         marker = ">>>" if i == e.problem_mark.line - 1 else "   "
-        print(f"{marker} {i+1}: {bad_lines[i]}")
+        print(f"{marker} {i + 1}: {bad_lines[i]}")

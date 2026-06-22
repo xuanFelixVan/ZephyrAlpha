@@ -15,12 +15,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from zephyr.shared.knowledge.kms_interface import (
+    TASK_KE_LIFECYCLE,
     KERecord,
     KMSInterface,
-    TASK_KE_LIFECYCLE,
     TaskStateAssociation,
 )
 

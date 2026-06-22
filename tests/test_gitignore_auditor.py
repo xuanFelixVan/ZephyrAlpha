@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import os
-
-import pytest
-
 from zephyr.behavioral_audit.gitignore_auditor import (
     CRITICAL_FILE_EXTENSIONS,
     CRITICAL_FILE_PATTERNS,

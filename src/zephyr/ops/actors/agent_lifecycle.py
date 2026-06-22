@@ -26,6 +26,7 @@ Blindspot: FLE sub-agents created but never retired.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class AgentLifecycle:
     agents: dict[str, str] = field(default_factory=dict)

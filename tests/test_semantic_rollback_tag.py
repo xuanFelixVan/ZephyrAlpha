@@ -16,8 +16,6 @@ import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.governance.semantic_rollback_tag import (
     RollbackTag,
     SemanticRollbackTag,
@@ -219,9 +217,7 @@ class TestFindTaskTags:
 
     @patch("zephyr.infrastructure.rollback.semantic_rollback_tag.subprocess.run")
     def test_find_no_matching_tags(self, mock_run, tmp_path):
-        mock_run.return_value = MagicMock(
-            stdout="rollback/task-001:before\n", returncode=0
-        )
+        mock_run.return_value = MagicMock(stdout="rollback/task-001:before\n", returncode=0)
         mgr = SemanticRollbackTag(project_root=tmp_path)
         tags = mgr.find_task_tags("999")
         assert tags == []

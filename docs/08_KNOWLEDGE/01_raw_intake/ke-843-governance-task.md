@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-843
 status: active
 title: §2 本目录的责任（governance/task/）
@@ -17,7 +17,7 @@ category: governance
 3. 任务关闭的验证标准和残留清扫
 
 **负向责任**（本目录不管的事，去对应位置找）：
-- 任务卡字段的权威定义 → `meta/metadata-registry.md` §7
+- 任务卡字段的权威定义 → `meta/metadata_registry.yaml` §7
 - 状态机实现、门禁检查逻辑、超时检测代码 → `03_modules/infra_ops/task-system/blueprint.md` §5.2-§5.5
 - Session 交接协议 → `governance/ai/handoff-protocol.md`
 

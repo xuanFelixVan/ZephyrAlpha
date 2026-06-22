@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.auto_evolution
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -28,24 +18,20 @@ from datetime import datetime
 from enum import Enum
 
 from zephyr.ops.evolution_engine import (
+    ApplyFn,
     EvolutionEngine,
     EvolutionProposal,
-    EvolutionReport,
     EvolutionSignal,
     FeedbackLayer,
     Severity,
-    ApplyFn,
 )
-from zephyr.ops.feedback_collector import FeedbackCollector
-from zephyr.shared.alert_manager import Alert, AlertManager, AlertSeverity
-from zephyr.shared.alert_precision_tracker import AlertPrecisionTracker, PrecisionMetrics
-from zephyr.shared.dual_channel_alert import DualChannelAlert
-from zephyr.shared.error_budget_tracker import BudgetStatus, ErrorBudgetTracker
+
 
 class AutoTriggerType(Enum):
     KNOWLEDGE_EXPANSION = "KNOWLEDGE_EXPANSION"
     GATE_TIGHTENING = "GATE_TIGHTENING"
     HALLUCINATION_UPGRADE = "HALLUCINATION_UPGRADE"
+
 
 @dataclass(frozen=True)
 class AutoTrigger:
@@ -53,6 +39,7 @@ class AutoTrigger:
     severity: Severity
     rationale: str
     evidence: list[str] = field(default_factory=list)
+
 
 @dataclass
 class AutoEvolutionConfig:
@@ -63,7 +50,9 @@ class AutoEvolutionConfig:
     compliance_consecutive_days: int = 2
     history_max_days: int = 90
 
+
 DEFAULT_AUTO_CONFIG = AutoEvolutionConfig()
+
 
 @dataclass
 class FitnessSnapshot:
@@ -71,6 +60,7 @@ class FitnessSnapshot:
     compliance_rate: float
     hallucination_interception: float
     taken_at: datetime
+
 
 @dataclass
 class AutoEvolutionOutcome:
@@ -80,6 +70,7 @@ class AutoEvolutionOutcome:
     blocked_by_safety_gate: int = 0
     history_length: int = 0
     windows_processed: int = 0
+
 
 @dataclass
 class AutoEvolution:
@@ -105,9 +96,13 @@ class AutoEvolution:
         self._thread = threading.Thread(target=self._run, daemon=True, name="AutoEvolution")
         self._thread.start()
         from zephyr.integration.shared_08.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+
         try:
             ResourceOptimizationEngine().register_daemon(
-                "auto-evolution", self.start, self.stop, priority=3,
+                "auto-evolution",
+                self.start,
+                self.stop,
+                priority=3,
             )
         except Exception:
             pass
@@ -117,6 +112,7 @@ class AutoEvolution:
         if self._thread is not None:
             self._thread.join(timeout=timeout)
             self._thread = None
+
 
 @dataclass
 class AutoEvolutionEngine:
@@ -136,7 +132,7 @@ class AutoEvolutionEngine:
         ka_val = _extract_metric(report, "METRIC_KNOWLEDGE_ACTIVATION", "knowledge_activation")
         cr_val = _extract_metric(report, "METRIC_COMPLIANCE_RATE", "compliance_rate")
         hi_val = _extract_metric(report, "METRIC_HALLUCINATION_INTERCEPTION", "hallucination_interception")
-        now_fn = getattr(self, '_now', None)
+        now_fn = getattr(self, "_now", None)
         now_dt = now_fn() if now_fn is not None else self.now()
 
         if self.history:
@@ -183,36 +179,26 @@ class AutoEvolutionEngine:
             )
 
         # --- knowledge expansion (consecutive days) ---
-        ka_streak = _count_consecutive_below(
-            rh, lambda s: s.knowledge_activation, c.knowledge_activation_floor
-        )
+        ka_streak = _count_consecutive_below(rh, lambda s: s.knowledge_activation, c.knowledge_activation_floor)
         if ka_streak >= c.knowledge_consecutive_days:
             triggers.append(
                 AutoTrigger(
                     trigger_type=AutoTriggerType.KNOWLEDGE_EXPANSION,
                     severity=Severity.HIGH,
                     rationale=f"Knowledge activation < {c.knowledge_activation_floor} for {ka_streak} consecutive days",
-                    evidence=[
-                        f"day_{i}: ka={rh[-(ka_streak - i)].knowledge_activation:.2f}"
-                        for i in range(ka_streak)
-                    ],
+                    evidence=[f"day_{i}: ka={rh[-(ka_streak - i)].knowledge_activation:.2f}" for i in range(ka_streak)],
                 )
             )
 
         # --- gate tightening (consecutive days) ---
-        cr_streak = _count_consecutive_below(
-            rh, lambda s: s.compliance_rate, c.compliance_floor
-        )
+        cr_streak = _count_consecutive_below(rh, lambda s: s.compliance_rate, c.compliance_floor)
         if cr_streak >= c.compliance_consecutive_days:
             triggers.append(
                 AutoTrigger(
                     trigger_type=AutoTriggerType.GATE_TIGHTENING,
                     severity=Severity.HIGH,
                     rationale=f"Compliance rate < {c.compliance_floor} for {cr_streak} consecutive days",
-                    evidence=[
-                        f"day_{i}: cr={rh[-(cr_streak - i)].compliance_rate:.2f}"
-                        for i in range(cr_streak)
-                    ],
+                    evidence=[f"day_{i}: cr={rh[-(cr_streak - i)].compliance_rate:.2f}" for i in range(cr_streak)],
                 )
             )
 
@@ -292,6 +278,7 @@ class AutoEvolutionEngine:
             for s in self.history
         ]
 
+
 def _extract_metric(report: Any, metric_name: str, fallback_attr: str) -> float:
     if hasattr(report, "get_metric"):
         m = report.get_metric(metric_name)
@@ -302,6 +289,7 @@ def _extract_metric(report: Any, metric_name: str, fallback_attr: str) -> float:
     if isinstance(report, dict):
         return float(report.get(fallback_attr, 0.0))
     return 0.0
+
 
 def _count_consecutive_below(
     history: list[FitnessSnapshot],

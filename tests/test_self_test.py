@@ -10,13 +10,12 @@
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_self_test.py
 
-import pytest
 from zephyr.governance.self_test import (
-    HealthLevel,
     CheckResult,
+    HealthLevel,
     SelfTestReport,
-    run_self_test,
     main,
+    run_self_test,
 )
 
 
@@ -110,12 +109,14 @@ class TestMain:
 
     def test_main_json_output(self, capsys):
         import sys
+
         old_argv = sys.argv
         sys.argv = ["self_test", "--json"]
         try:
             main()
             captured = capsys.readouterr()
             import json
+
             data = json.loads(captured.out)
             assert "overall" in data
             assert "checks" in data

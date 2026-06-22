@@ -1,31 +1,23 @@
 # [A_module] module_id=MOD-RES_timeout_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
-# [MODULE] zephyr.infrastructure.budget_enforcement.timeout_guard
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
-# [STABILITY] evolving
-
-# [SAFETY] M
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
-
-import time
 import threading
+
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
+# [MODULE] zephyr.infrastructure.budget_enforcement.timeout_guard
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from collections.abc import Callable
+
 
 class TimeoutLevel(Enum):
     REQUEST = "request"
@@ -33,12 +25,14 @@ class TimeoutLevel(Enum):
     TASK = "task"
     SESSION = "session"
 
+
 DEFAULT_TIMEOUTS: dict[TimeoutLevel, float] = {
     TimeoutLevel.REQUEST: 120.0,
     TimeoutLevel.TURN: 300.0,
     TimeoutLevel.TASK: 3600.0,
     TimeoutLevel.SESSION: 28800.0,
 }
+
 
 @dataclass
 class TimeoutEvent:
@@ -49,8 +43,8 @@ class TimeoutEvent:
     aborted: bool = False
     timestamp: float = field(default_factory=time.time)
 
-class TimeoutGuard:
 
+class TimeoutGuard:
     def __init__(self, custom_timeouts: dict[TimeoutLevel, float] | None = None):
         self._timeouts: dict[TimeoutLevel, float] = {**DEFAULT_TIMEOUTS}
         if custom_timeouts:

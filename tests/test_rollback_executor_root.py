@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import json
-import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -21,7 +19,6 @@ import pytest
 
 from zephyr.governance.rollback_executor import (
     DiscardDecision,
-    DiscardResult,
     PreflightResult,
     PreviewResult,
     RollbackExecutor,
@@ -67,7 +64,6 @@ def executor(tmp_project: Path, mock_dumper: MagicMock, mock_lock: MagicMock) ->
 
 
 class TestRollbackExecutorInstantiation:
-
     def test_creates_with_defaults(self, tmp_project: Path):
         with patch("zephyr.infrastructure.rollback.rollback_executor.SqliteDumper"):
             with patch("zephyr.infrastructure.rollback.rollback_executor.RollbackLock"):
@@ -90,7 +86,6 @@ class TestRollbackExecutorInstantiation:
 
 
 class TestPreflightCheck:
-
     def test_preflight_clean_tree(self, executor: RollbackExecutor):
         with patch.object(executor, "_run_git") as mock_git:
             mock_git.side_effect = [
@@ -151,7 +146,6 @@ class TestPreflightCheck:
 
 
 class TestPreview:
-
     def test_preview_few_files(self, executor: RollbackExecutor):
         with patch.object(executor, "_run_git") as mock_git:
             mock_git.side_effect = [
@@ -199,7 +193,6 @@ class TestPreview:
 
 
 class TestIsCommitted:
-
     def test_committed_files(self, executor: RollbackExecutor):
         with patch.object(executor, "_run_git") as mock_git:
             mock_git.return_value = "file1.py"
@@ -218,7 +211,6 @@ class TestIsCommitted:
 
 
 class TestDiscardChanges:
-
     def test_discard_no_uncommitted(self, executor: RollbackExecutor):
         with patch.object(executor, "get_uncommitted_files", return_value=[]):
             with patch.object(executor, "get_staged_uncommitted_files", return_value=[]):
@@ -243,7 +235,6 @@ class TestDiscardChanges:
 
 
 class TestHardReset:
-
     def test_hard_reset_requires_token(self, executor: RollbackExecutor):
         with pytest.raises(ValueError, match="BREAK_GLASS token"):
             executor.hard_reset("abc1234")
@@ -252,16 +243,18 @@ class TestHardReset:
         with patch.object(executor, "_lsg_verify_critical_operation"):
             with patch.object(executor, "_execute") as mock_exec:
                 mock_exec.return_value = RollbackResult(
-                    success=True, operation=RollbackOp.HARD_RESET,
-                    commit_sha="abc1234", files_reverted=0,
-                    db_tables_restored=0, db_rows_restored=0,
+                    success=True,
+                    operation=RollbackOp.HARD_RESET,
+                    commit_sha="abc1234",
+                    files_reverted=0,
+                    db_tables_restored=0,
+                    db_rows_restored=0,
                 )
                 result = executor.hard_reset("abc1234", token="BREAK_GLASS")
                 assert result.success is True
 
 
 class TestForwardFixEvaluate:
-
     def test_evaluate_low_risk_few_files(self, executor: RollbackExecutor):
         with patch.object(executor, "preview") as mock_preview:
             mock_preview.return_value = PreviewResult(
@@ -288,7 +281,6 @@ class TestForwardFixEvaluate:
 
 
 class TestDependencyImpactAnalysis:
-
     def test_impact_with_zephyr_files(self, executor: RollbackExecutor):
         with patch.object(executor, "_run_git") as mock_git:
             mock_git.return_value = "src/zephyr/rollback/executor.py\nsrc/zephyr/budget/main.py\nREADME.md"
@@ -312,7 +304,6 @@ class TestDependencyImpactAnalysis:
 
 
 class TestInFlightManagement:
-
     def test_write_and_read_in_flight(self, executor: RollbackExecutor):
         eid = executor._generate_execution_id()
         executor._write_in_flight(eid, "test_step", "PENDING", {"key": "value"})
@@ -336,7 +327,6 @@ class TestInFlightManagement:
 
 
 class TestCancelPendingRollback:
-
     def test_cancel_requires_token(self, executor: RollbackExecutor):
         result = executor.cancel_pending_rollback("task-001", "test reason")
         assert result["canceled"] is False
@@ -353,7 +343,6 @@ class TestCancelPendingRollback:
 
 
 class TestGenerateExecutionId:
-
     def test_format(self, executor: RollbackExecutor):
         eid = executor._generate_execution_id()
         assert eid.startswith("RBEXEC-")

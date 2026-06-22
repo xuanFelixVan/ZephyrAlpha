@@ -27,9 +27,9 @@ Risk: R13 — Critical alert buried in low-priority notifications.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class AlertRouter:
-
     def route(self, severity: int) -> str:
         if severity >= 8:
             return "PAGERDUTY"
@@ -37,8 +37,9 @@ class AlertRouter:
             return "SLACK"
         return "EMAIL"
 
+
 class Alert:
-    def __init__(self, alert_id='', severity='medium', message='', source='', timestamp=None):
+    def __init__(self, alert_id="", severity="medium", message="", source="", timestamp=None):
         self.alert_id = alert_id
         self.severity = severity
         self.message = message

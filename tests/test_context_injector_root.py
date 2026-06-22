@@ -11,7 +11,8 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
@@ -19,14 +20,15 @@ try:
     from zephyr.autonomy_core.context_injector import (
         ContextInjector,
         InjectedContext,
-        RetrievalMode,
         InjectionLayer,
-        ValidatedContext,
         InjectionResult,
-        inject,
+        RetrievalMode,
+        ValidatedContext,
         format_context,
+        inject,
         with_authority_review,
     )
+
     _IMPORT_OK = True
     _IMPORT_ERR = None
 except Exception as exc:
@@ -37,8 +39,17 @@ pytestmark = pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT
 
 
 class FakeRecord:
-    def __init__(self, summary="", content="", source_file="", ke_id="KE-001",
-                 category="", tags=None, blueprint_id="", section=""):
+    def __init__(
+        self,
+        summary="",
+        content="",
+        source_file="",
+        ke_id="KE-001",
+        category="",
+        tags=None,
+        blueprint_id="",
+        section="",
+    ):
         self.summary = summary
         self.content = content
         self.source_file = source_file

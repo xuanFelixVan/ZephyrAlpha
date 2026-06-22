@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance._manifest import MANIFEST
 
 
@@ -22,7 +20,15 @@ class TestManifestStructure:
         assert isinstance(MANIFEST, dict)
 
     def test_manifest_has_required_top_level_keys(self):
-        required_keys = {"module_id", "version", "code_directory", "files", "directories", "total_py_files", "total_dirs"}
+        required_keys = {
+            "module_id",
+            "version",
+            "code_directory",
+            "files",
+            "directories",
+            "total_py_files",
+            "total_dirs",
+        }
         assert required_keys.issubset(set(MANIFEST.keys()))
 
     def test_manifest_module_id(self):
@@ -85,7 +91,7 @@ class TestManifestDirectories:
 class TestManifestBoundaryCases:
     def test_manifest_no_empty_file_names(self):
         for entry in MANIFEST["files"]:
-            assert len(entry["file"].strip()) > 0, f"Empty file name found"
+            assert len(entry["file"].strip()) > 0, "Empty file name found"
 
     def test_manifest_no_empty_responsibility(self):
         for entry in MANIFEST["files"]:
@@ -93,8 +99,8 @@ class TestManifestBoundaryCases:
 
     def test_manifest_no_duplicate_file_entries(self):
         file_names = [entry["file"] for entry in MANIFEST["files"]]
-        assert len(file_names) == len(set(file_names)), f"Duplicate file entries found"
+        assert len(file_names) == len(set(file_names)), "Duplicate file entries found"
 
     def test_manifest_no_duplicate_directory_entries(self):
         dir_paths = [entry["path"] for entry in MANIFEST["directories"]]
-        assert len(dir_paths) == len(set(dir_paths)), f"Duplicate directory entries found"
+        assert len(dir_paths) == len(set(dir_paths)), "Duplicate directory entries found"

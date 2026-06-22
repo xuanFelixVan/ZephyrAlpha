@@ -11,19 +11,20 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError on missing pandas
 # [TESTS]
-
-import warnings
 from datetime import datetime
 
 import pandas as pd
 
 Timestamp = pd.Timestamp
 
+
 class NaiveDatetimeError(ValueError):
     pass
 
+
 def utcnow() -> Timestamp:
     return pd.Timestamp.now(tz="UTC")
+
 
 def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
     if isinstance(ts, datetime) and not isinstance(ts, pd.Timestamp):
@@ -49,6 +50,7 @@ def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
     if isinstance(ts, pd.Timestamp):
         if ts.tz is None:
             import warnings
+
             warnings.warn(
                 f"收到 naive pd.Timestamp: {ts!r}，已按 UTC 补全时区。请在调用方显式附加时区，避免时区歧义。",
                 stacklevel=2,
@@ -61,12 +63,15 @@ def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
         " 支持的类型：pd.Timestamp / datetime / str(ISO 8601) / int(Unix 秒) / float。"
     )
 
+
 def to_local(ts: Timestamp, tz: str) -> Timestamp:
     if ts.tz is None:
         raise NaiveDatetimeError(f"to_local 的输入必须 tz-aware，收到 naive Timestamp: {ts!r}")
     return ts.tz_convert(tz)
 
+
 def from_unix_ns(ns: int) -> Timestamp:
     return pd.Timestamp(ns, unit="ns", tz="UTC")
 
-__all__ = ["Timestamp", "NaiveDatetimeError", "utcnow", "ensure_utc", "to_local", "from_unix_ns"]
+
+__all__ = ["NaiveDatetimeError", "Timestamp", "ensure_utc", "from_unix_ns", "to_local", "utcnow"]

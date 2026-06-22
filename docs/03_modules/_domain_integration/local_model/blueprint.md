@@ -1,12 +1,12 @@
 ---
 module_id: MOD-INF-042
-submodule_path: src/zephyr/local-model
+submodule_path: src/zephyr/integration/local_model
 title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
 version: 0.1.0
 status: Active
 layer: L01
 construction_progress: scaffold
-actual_disk_path: src/zephyr/integration/local-model/
+actual_disk_path: src/zephyr/integration/local_model/
 functional_domain: infra
 stability: stable
 safety_level: M

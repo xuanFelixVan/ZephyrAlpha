@@ -12,14 +12,12 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.security.access_control.microstructure_defense import (
-    DefenseType,
-    DefenseStrategy,
-    DEFENSE_STRATEGIES,
-    FidelityFactor,
     DEFAULT_FIDELITY,
+    DEFENSE_STRATEGIES,
+    DefenseStrategy,
+    DefenseType,
+    FidelityFactor,
 )
 
 

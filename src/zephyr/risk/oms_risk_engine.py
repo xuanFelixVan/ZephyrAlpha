@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import logging
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -80,11 +79,15 @@ class OMSRiskEngine:
 
     def at_trade_check(self, check: AtTradeCheck) -> RiskCheckResult:
         if not check.all_pass():
-            return RiskCheckResult(passed=False, reason="At-trade check failed — cancel order", layer=RiskLayer.AT_TRADE)
+            return RiskCheckResult(
+                passed=False, reason="At-trade check failed — cancel order", layer=RiskLayer.AT_TRADE
+            )
         return RiskCheckResult(passed=True, layer=RiskLayer.AT_TRADE)
 
     def post_trade_evaluate(self, metrics: PostTradeMetrics) -> None:
-        logger.info("Post-trade: slippage=%.2fbps cumulative=%.2fbps", metrics.tca_slippage_bps, metrics.cumulative_slippage_bps)
+        logger.info(
+            "Post-trade: slippage=%.2fbps cumulative=%.2fbps", metrics.tca_slippage_bps, metrics.cumulative_slippage_bps
+        )
 
 
 def is_terminal(state: OrderState) -> bool:

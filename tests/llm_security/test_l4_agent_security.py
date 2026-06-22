@@ -7,21 +7,18 @@
 # [TESTS] —
 import pytest
 
+from zephyr.infrastructure.a2a_protocol.governance.protocol import (
+    SecurityContext,
+    SecurityDecision,
+)
 from zephyr.security.llm_defense.llm_security.layers.l4_agent import (
     AgentImpersonationDefender,
     AgentPermission,
     AgentSecurityLayer,
     ApprovalOutcome,
-    ApprovalRequest,
     FinancialComplianceGate,
-    FJThreat,
     LongHorizonAgentDefender,
     RiskLevel,
-    ToolCallAuthorization,
-)
-from zephyr.infrastructure.a2a_protocol.governance.protocol import (
-    SecurityContext,
-    SecurityDecision,
 )
 
 
@@ -50,9 +47,7 @@ def make_ctx(
 class TestToolCallAuthorization:
     def test_authorize_known_tool_read(self):
         layer = AgentSecurityLayer()
-        auth = layer.authorize_tool_call(
-            "read_file", {"session_id": "s1", "tool_params": {}}
-        )
+        auth = layer.authorize_tool_call("read_file", {"session_id": "s1", "tool_params": {}})
         assert auth.granted is True
         assert auth.permission_required == AgentPermission.READ_ONLY
         assert auth.risk == RiskLevel.LOW
@@ -81,25 +76,19 @@ class TestValidateToolParams:
 
     def test_validate_params_code_injection(self):
         layer = AgentSecurityLayer()
-        ok, err = layer.validate_tool_params(
-            "run_command", {"command": "eval(dangerous())"}
-        )
+        ok, err = layer.validate_tool_params("run_command", {"command": "eval(dangerous())"})
         assert ok is False
         assert "code_injection" in err
 
     def test_validate_params_path_traversal(self):
         layer = AgentSecurityLayer()
-        ok, err = layer.validate_tool_params(
-            "read_file", {"path": "../../etc/passwd"}
-        )
+        ok, err = layer.validate_tool_params("read_file", {"path": "../../etc/passwd"})
         assert ok is False
         assert "path_traversal" in err
 
     def test_validate_params_system_command(self):
         layer = AgentSecurityLayer()
-        ok, err = layer.validate_tool_params(
-            "run_command", {"command": "rm -rf /"}
-        )
+        ok, err = layer.validate_tool_params("run_command", {"command": "rm -rf /"})
         assert ok is False
         assert "system_command" in err
 
@@ -107,34 +96,26 @@ class TestValidateToolParams:
 class TestRequestHumanApproval:
     def test_low_risk_auto_approved(self):
         layer = AgentSecurityLayer()
-        req = layer.request_human_approval(
-            "read_file", {}, RiskLevel.LOW, ""
-        )
+        req = layer.request_human_approval("read_file", {}, RiskLevel.LOW, "")
         assert req.outcome == ApprovalOutcome.APPROVED
         assert req.risk == RiskLevel.LOW
 
     def test_high_risk_stays_pending(self):
         layer = AgentSecurityLayer()
-        req = layer.request_human_approval(
-            "delete_file", {}, RiskLevel.HIGH, "needs review"
-        )
+        req = layer.request_human_approval("delete_file", {}, RiskLevel.HIGH, "needs review")
         assert req.outcome == ApprovalOutcome.PENDING
         assert req.risk == RiskLevel.HIGH
 
     def test_explicit_approve_changes_outcome(self):
         layer = AgentSecurityLayer()
-        req = layer.request_human_approval(
-            "delete_file", {}, RiskLevel.HIGH, ""
-        )
+        req = layer.request_human_approval("delete_file", {}, RiskLevel.HIGH, "")
         result = layer.approve_request(req.request_id)
         assert result is not None
         assert result.outcome == ApprovalOutcome.APPROVED
 
     def test_explicit_deny_changes_outcome(self):
         layer = AgentSecurityLayer()
-        req = layer.request_human_approval(
-            "delete_file", {}, RiskLevel.HIGH, ""
-        )
+        req = layer.request_human_approval("delete_file", {}, RiskLevel.HIGH, "")
         result = layer.deny_request(req.request_id)
         assert result is not None
         assert result.outcome == ApprovalOutcome.DENIED

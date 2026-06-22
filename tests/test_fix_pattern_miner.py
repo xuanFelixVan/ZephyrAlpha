@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import os
-import tempfile
 
 import pytest
 
@@ -112,10 +111,12 @@ class TestGetPatterns:
         assert result[0]["action_type"] == "drift_fix"
 
     def test_get_patterns_filter_by_dimension(self, miner):
-        miner.mine([
-            _make_action("drift_fix", FixStatus.COMPLETED, dimension="DIM-A"),
-            _make_action("dep_version_fix", FixStatus.COMPLETED, dimension="DIM-B"),
-        ])
+        miner.mine(
+            [
+                _make_action("drift_fix", FixStatus.COMPLETED, dimension="DIM-A"),
+                _make_action("dep_version_fix", FixStatus.COMPLETED, dimension="DIM-B"),
+            ]
+        )
         result = miner.get_patterns(dimension="DIM-A")
         assert len(result) == 1
         assert result[0]["dimension"] == "DIM-A"

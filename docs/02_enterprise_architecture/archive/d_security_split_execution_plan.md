@@ -607,4 +607,3 @@ python scripts/governance/extract_depgraph.py --summary
 2. 审查通过后再执行（STEP 1-6）：以执行者视角按计划操作
 3. 禁止合并两个角色——不能边审查边执行
 4. 禁止跳过审查——即使你认为计划没问题，也必须完成28项审查并输出报告
-

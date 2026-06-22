@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import logging
-import os
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +31,6 @@ from zephyr.security.access_control.auto_fix_engine_03.batch_fixer import BatchF
 from zephyr.security.access_control.auto_fix_engine_03.compliance_auditor import ComplianceAuditor
 from zephyr.security.access_control.auto_fix_engine_03.escalation_bridge import EscalationBridge
 from zephyr.security.access_control.auto_fix_engine_03.fix_budget import FixBudget, FixStormGuard
-from zephyr.security.access_control.auto_fix_engine_03.fix_diff import FixDiff
 from zephyr.security.access_control.auto_fix_engine_03.fix_health_check import FixHealthCheck
 from zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner import FixPatternMiner
 from zephyr.security.access_control.auto_fix_engine_03.fix_reliability import (
@@ -53,35 +51,32 @@ from zephyr.security.access_control.auto_fix_engine_03.fix_safety import (
     WriteSafety,
 )
 from zephyr.security.access_control.auto_fix_engine_03.models import (
-    BudgetInfo,
     FixAction,
-    FixConfidence,
     FixHealthReport,
     FixLevel,
     FixReport,
     FixStatus,
-    ValidationResult,
 )
 from zephyr.security.access_control.auto_fix_engine_03.shadow_workspace import ShadowWorkspace
-from zephyr.security.access_control.auto_fix_engine_03.state_machine import FixState, FixStateMachine
 
 try:
     from zephyr.governance.audit_trail.finding_model import (
         AuditFinding,
+        BlastRadius,
         FindingDimension,
         FindingImpact,
         FindingLifecycle,
         FindingRemediation,
         FindingSeverity,
+        FindingStatus,
         FindingTarget,
         FindingTraceability,
         RecommendationBlock,
-        BlastRadius,
         RemediationAction,
         RemediationPriority,
-        FindingStatus,
         generate_finding_id,
     )
+
     _FINDING_MODEL_AVAILABLE = True
 except ImportError:
     _FINDING_MODEL_AVAILABLE = False
@@ -98,7 +93,9 @@ class AutoFixEngine:
         self._cascade_breaker = CascadeBreaker(self._config.get("cascade_breaker", {}))
         self._fix_budget = FixBudget(self._config.get("budget", {}))
         self._storm_guard = FixStormGuard(self._config.get("storm_guard", {}))
-        self._idempotency = IdempotencyGuard(ttl_hours=self._config.get("reliability", {}).get("idempotency_ttl_hours", 24))
+        self._idempotency = IdempotencyGuard(
+            ttl_hours=self._config.get("reliability", {}).get("idempotency_ttl_hours", 24)
+        )
         self._conflict_resolver = ConflictResolver()
         self._order_resolver = FixOrderResolver()
         self._blast_radius = BlastRadiusEstimator()
@@ -130,7 +127,7 @@ class AutoFixEngine:
         default_path = Path(__file__).parent / "auto-fix-config.yaml"
         path = config_path or str(default_path)
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 return yaml.safe_load(f) or {}
         except Exception:
             return {}
@@ -140,10 +137,19 @@ class AutoFixEngine:
             "zombie_cleaner": ("zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner", "ZombieCleaner"),
             "all_completer": ("zephyr.security.access_control.auto_fix_engine_03.all_completer", "AllCompleter"),
             "dedup_extractor": ("zephyr.security.access_control.auto_fix_engine_03.dedup_extractor", "DedupExtractor"),
-            "scaffold_registrar": ("zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar", "ScaffoldRegistrar"),
-            "alignment_syncer": ("zephyr.security.access_control.auto_fix_engine_03.alignment_syncer", "AlignmentSyncer"),
+            "scaffold_registrar": (
+                "zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar",
+                "ScaffoldRegistrar",
+            ),
+            "alignment_syncer": (
+                "zephyr.security.access_control.auto_fix_engine_03.alignment_syncer",
+                "AlignmentSyncer",
+            ),
             "drift_fixer": ("zephyr.security.access_control.auto_fix_engine_03.drift_fixer", "DriftFixer"),
-            "dep_version_fixer": ("zephyr.security.access_control.auto_fix_engine_03.dep_version_fixer", "DepVersionFixer"),
+            "dep_version_fixer": (
+                "zephyr.security.access_control.auto_fix_engine_03.dep_version_fixer",
+                "DepVersionFixer",
+            ),
             "import_fixer": ("zephyr.security.access_control.auto_fix_engine_03.import_fixer", "ImportFixer"),
             "config_fixer": ("zephyr.security.access_control.auto_fix_engine_03.config_fixer", "ConfigFixer"),
             "llm_fix_adapter": ("zephyr.security.access_control.auto_fix_engine_03.llm_fix_adapter", "LLMFixAdapter"),
@@ -152,6 +158,7 @@ class AutoFixEngine:
         for name, (module_path, class_name) in fixer_map.items():
             try:
                 import importlib
+
                 mod = importlib.import_module(module_path)
                 cls = getattr(mod, class_name)
                 self._fixers[name] = cls()
@@ -289,6 +296,7 @@ class AutoFixEngine:
     def _close_related_finding(self, fix_type: str, target_path: str) -> None:
         import json
         from pathlib import Path
+
         db_path = Path("scripts/governance/meta/finding-state-db.json")
         if not db_path.exists():
             return
@@ -308,7 +316,11 @@ class AutoFixEngine:
                     json.dump(data, f, indent=2, ensure_ascii=False)
                 try:
                     from zephyr.integration.shared_08.event_bus import bus
-                    bus.emit("audit.finding_resolved", {"finding_count": closed, "fix_type": fix_type, "target_path": target_path})
+
+                    bus.emit(
+                        "audit.finding_resolved",
+                        {"finding_count": closed, "fix_type": fix_type, "target_path": target_path},
+                    )
                 except Exception:
                     pass
                 if _FINDING_MODEL_AVAILABLE:
@@ -322,12 +334,15 @@ class AutoFixEngine:
                             description=f"Fix verified: {fix_type} on {target_path}",
                             evidence=f"{closed} finding(s) closed by auto-fix",
                             impact=FindingImpact(blast_radius=BlastRadius.file),
-                            remediation=FindingRemediation(action=RemediationAction.FIX, priority=RemediationPriority.P2),
+                            remediation=FindingRemediation(
+                                action=RemediationAction.FIX, priority=RemediationPriority.P2
+                            ),
                             lifecycle=FindingLifecycle(status=FindingStatus.VERIFIED),
                             traceability=FindingTraceability(),
                             recommendation_block=RecommendationBlock(),
                         )
                         from zephyr.governance.audit_trail.finding_ingest import FindingIngest
+
                         ingest = FindingIngest()
                         ingest.ingest_findings([verified_finding])
                     except Exception:
@@ -376,7 +391,9 @@ class AutoFixEngine:
                 evidence=str(action.metadata) if action.metadata else "",
                 impact=FindingImpact(blast_radius=BlastRadius.file),
                 remediation=FindingRemediation(action=RemediationAction.FIX, priority=RemediationPriority.P2),
-                lifecycle=FindingLifecycle(status=FindingStatus.FIXED if action.status == FixStatus.COMPLETED else FindingStatus.OPEN),
+                lifecycle=FindingLifecycle(
+                    status=FindingStatus.FIXED if action.status == FixStatus.COMPLETED else FindingStatus.OPEN
+                ),
                 traceability=FindingTraceability(),
                 recommendation_block=RecommendationBlock(),
             )
@@ -387,6 +404,7 @@ class AutoFixEngine:
         if jsonl_lines:
             try:
                 from zephyr.governance.audit_trail.finding_ingest import FindingIngest
+
                 ingest = FindingIngest()
                 ingest.ingest_findings(findings)
             except Exception:

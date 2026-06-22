@@ -27,6 +27,7 @@ Risk: R127 — Wrong tone causes owner to ignore critical alerts.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class ToneAdapter:
     severity: int = 0

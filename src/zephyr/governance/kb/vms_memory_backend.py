@@ -41,7 +41,6 @@ MOD-INF-011 (vector-memory) ↔ MOD-INF-008 (kb) 统一桥接
 VMSMemoryBackend → ChromaMemoryBackend → InMemoryMemoryBackend
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -51,12 +50,11 @@ from typing import Any
 from zephyr.governance.kb._backend_protocol import (
     InMemoryMemoryBackend,
     MemoryBackend,
-    MemoryBackendError,
     MemoryRecord,
 )
 from zephyr.governance.vector_memory.bridge_layer import TOPIC_TO_COLLECTION
 
-__all__ = ["VMSMemoryBackend", "TOPIC_TO_COLLECTION"]
+__all__ = ["TOPIC_TO_COLLECTION", "VMSMemoryBackend"]
 
 _logger = logging.getLogger(__name__)
 
@@ -132,15 +130,17 @@ class VMSMemoryBackend:
                 records: list[MemoryRecord] = []
                 for item in raw_results:
                     meta = item.get("metadata", {}) or {}
-                    records.append(MemoryRecord(
-                        chunk_id=item.get("id", ""),
-                        topic=meta.get("topic", topic),
-                        content=item.get("content", item.get("document", "")),
-                        score=1.0,
-                        written_at=meta.get("written_at", ""),
-                        metadata={kk: vv for kk, vv in meta.items() if kk not in {"topic", "written_at"}},
-                    ))
-                return records[:max(0, k)]
+                    records.append(
+                        MemoryRecord(
+                            chunk_id=item.get("id", ""),
+                            topic=meta.get("topic", topic),
+                            content=item.get("content", item.get("document", "")),
+                            score=1.0,
+                            written_at=meta.get("written_at", ""),
+                            metadata={kk: vv for kk, vv in meta.items() if kk not in {"topic", "written_at"}},
+                        )
+                    )
+                return records[: max(0, k)]
             except Exception as exc:
                 _logger.warning("VMSMemoryBackend.list_by_topic fallback: %s", exc)
                 return self._fallback.list_by_topic(topic, k)
@@ -162,15 +162,17 @@ class VMSMemoryBackend:
                     rec_topic = meta.get("topic", topic or "")
                     if topic is not None and rec_topic != topic:
                         continue
-                    records.append(MemoryRecord(
-                        chunk_id=item.get("id", ""),
-                        topic=rec_topic,
-                        content=item.get("content", item.get("document", "")),
-                        score=float(item.get("score", 0.0)),
-                        written_at=meta.get("written_at", ""),
-                        metadata={kk: vv for kk, vv in meta.items() if kk not in {"topic", "written_at"}},
-                    ))
-                return records[:max(0, k)]
+                    records.append(
+                        MemoryRecord(
+                            chunk_id=item.get("id", ""),
+                            topic=rec_topic,
+                            content=item.get("content", item.get("document", "")),
+                            score=float(item.get("score", 0.0)),
+                            written_at=meta.get("written_at", ""),
+                            metadata={kk: vv for kk, vv in meta.items() if kk not in {"topic", "written_at"}},
+                        )
+                    )
+                return records[: max(0, k)]
             except Exception as exc:
                 _logger.warning("VMSMemoryBackend.query fallback: %s", exc)
                 return self._fallback.query(query_text, k, topic)
@@ -211,6 +213,7 @@ def create_vms_backend(
     """
     try:
         from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+
         vms = InProcessVectorMemory(persist_dir=vms_persist_dir)
         vms.start()
         _logger.info("VMSMemoryBackend: VMS initialized successfully")

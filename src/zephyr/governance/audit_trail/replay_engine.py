@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 重放失败返回mismatch
 # [TESTS] tests/audit-orchestrator/test_replay_engine.py
-
 import hashlib
 import json
 import logging
@@ -19,11 +18,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.io.streaming_reader import tail_jsonl, stream_jsonl
+from zephyr.shared.io.streaming_reader import stream_jsonl, tail_jsonl
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["ReplayEngine"]
+
 
 class ReplayEngine:
     def __init__(self, evidence_dir: Path | None = None) -> None:
@@ -63,11 +63,13 @@ class ReplayEngine:
                 findings = data.get("findings", [])
                 recomputed = self._recompute_findings(findings)
                 match = recomputed["hash"] == data.get("evidence_hash", "")
-                results.append({
-                    "audit_id": data.get("audit_id", ""),
-                    "evidence_id": data.get("evidence_hash", "")[:16],
-                    "match": match,
-                })
+                results.append(
+                    {
+                        "audit_id": data.get("audit_id", ""),
+                        "evidence_id": data.get("evidence_hash", "")[:16],
+                        "match": match,
+                    }
+                )
             except Exception:
                 continue
 
@@ -136,15 +138,17 @@ class ReplayEngine:
             "all_ok": total > 0 and matched == total,
         }
 
+
 class ReplayResult:
-    def __init__(self, replay_id='', success=True, entries_replayed=0, errors=None):
+    def __init__(self, replay_id="", success=True, entries_replayed=0, errors=None):
         self.replay_id = replay_id
         self.success = success
         self.entries_replayed = entries_replayed
         self.errors = errors or []
 
+
 class ReplaySnapshot:
-    def __init__(self, snapshot_id='', timestamp=None, entries=None, hash_value=''):
+    def __init__(self, snapshot_id="", timestamp=None, entries=None, hash_value=""):
         self.snapshot_id = snapshot_id
         self.timestamp = timestamp
         self.entries = entries or []

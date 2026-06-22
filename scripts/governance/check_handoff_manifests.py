@@ -13,7 +13,9 @@ check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
 
 exit: 0=CLEAN, 1=WARNINGS, 2=ERRORS
 """
+
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -22,13 +24,12 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
-
-
 import json
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SESSION_STATE_DIR = PROJECT_ROOT / ".trae" / "session_state"
@@ -94,7 +95,11 @@ def check_manifest_staleness(data: dict, manifest_path: Path) -> dict:
     age_days = (now - last_date).days
 
     if age_days > STALE_DAYS_CRITICAL:
-        return {"status": "FAIL", "reason": f"stale {age_days}d (> {STALE_DAYS_CRITICAL}d critical)", "age_days": age_days}
+        return {
+            "status": "FAIL",
+            "reason": f"stale {age_days}d (> {STALE_DAYS_CRITICAL}d critical)",
+            "age_days": age_days,
+        }
     if age_days > STALE_DAYS_WARN:
         return {"status": "WARN", "reason": f"stale {age_days}d (> {STALE_DAYS_WARN}d warning)", "age_days": age_days}
     return {"status": "OK", "reason": f"fresh ({age_days}d)", "age_days": age_days}
@@ -102,7 +107,11 @@ def check_manifest_staleness(data: dict, manifest_path: Path) -> dict:
 
 def check_manifest(manifest_path: Path) -> dict:
     """Check compliance and report findings."""
-    rel_path = str(manifest_path.relative_to(PROJECT_ROOT)) if manifest_path.is_relative_to(PROJECT_ROOT) else str(manifest_path)
+    rel_path = (
+        str(manifest_path.relative_to(PROJECT_ROOT))
+        if manifest_path.is_relative_to(PROJECT_ROOT)
+        else str(manifest_path)
+    )
 
     result: dict = {
         "manifest": rel_path,
@@ -113,7 +122,9 @@ def check_manifest(manifest_path: Path) -> dict:
     }
 
     if not manifest_path.exists():
-        result.update({"status": "FAIL", "field_check": "FAIL", "staleness_check": "FAIL", "details": ["file not found"]})
+        result.update(
+            {"status": "FAIL", "field_check": "FAIL", "staleness_check": "FAIL", "details": ["file not found"]}
+        )
         return result
 
     data = parse_manifest(manifest_path)
@@ -146,7 +157,8 @@ def check_manifest(manifest_path: Path) -> dict:
 def get_expected_contracts() -> list[str]:
     """get_expected_contracts implementation."""
     try:
-        from zephyr.orchestration.runtime_core.orchestrator.contract_registry import ContractRegistry
+        from zephyr.trading.orchestrator.contract_registry import ContractRegistry
+
         cr = ContractRegistry()
         return [c.contract_id for c in cr.list_all()]
     except Exception:
@@ -167,7 +179,8 @@ def check_missing_manifests() -> list[dict]:
     for ct_id in expected:
         if ct_id not in existing_ct_ids:
             try:
-                from zephyr.orchestration.runtime_core.orchestrator.contract_registry import ContractRegistry, AIReadOnlyHint
+                from zephyr.trading.orchestrator.contract_registry import AIReadOnlyHint, ContractRegistry
+
                 cr = ContractRegistry()
                 contract = cr.get(ct_id)
                 hint = contract.ai_read_only_hint if contract else None
@@ -177,11 +190,13 @@ def check_missing_manifests() -> list[dict]:
             except Exception:
                 pass
 
-            results.append({
-                "ct_id": ct_id,
-                "status": "WARN",
-                "reason": "no handoff manifest — AI session 上下文不可恢复",
-            })
+            results.append(
+                {
+                    "ct_id": ct_id,
+                    "status": "WARN",
+                    "reason": "no handoff manifest — AI session 上下文不可恢复",
+                }
+            )
 
     return results
 
@@ -195,7 +210,11 @@ def main() -> int:
 
     if not SESSION_STATE_DIR.is_dir():
         if use_json:
-            print(json.dumps({"status": "FAIL", "reason": "session_state directory missing"}, indent=2, ensure_ascii=False))
+            print(
+                json.dumps(
+                    {"status": "FAIL", "reason": "session_state directory missing"}, indent=2, ensure_ascii=False
+                )
+            )
         else:
             print("FAIL: .trae/session_state/ 目录不存在")
         return EXIT_ERROR
@@ -206,7 +225,13 @@ def main() -> int:
         if missing:
             results.extend(missing)
         if use_json:
-            print(json.dumps({"status": "OK", "manifests": 0, "message": "暂无 handoff manifest — 所有 CT-* 均未开始施工"}, indent=2, ensure_ascii=False))
+            print(
+                json.dumps(
+                    {"status": "OK", "manifests": 0, "message": "暂无 handoff manifest — 所有 CT-* 均未开始施工"},
+                    indent=2,
+                    ensure_ascii=False,
+                )
+            )
         else:
             print("OK: 暂无 handoff manifest（所有 CT-* 均未开始施工或处于 DO_NOT_CALL）")
         return EXIT_PASS

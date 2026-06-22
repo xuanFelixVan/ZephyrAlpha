@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 mod = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_anomaly_detector",
     reason="a2a_anomaly_detector module not available",

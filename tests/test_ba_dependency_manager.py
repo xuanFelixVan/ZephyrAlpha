@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.dependency_manager import (
     DEPENDENCIES,
     DependencyTier,

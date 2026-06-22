@@ -26,6 +26,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class IntegrationConfig:
     precommit_enabled: bool = True
@@ -36,6 +37,7 @@ class IntegrationConfig:
     precommit_strategy: str = "MINHASH"
     ci_strategy: str = "AST_FUZZY"
     auto_register_precommit: bool = True
+
 
 @dataclass
 class IntegrationManager:

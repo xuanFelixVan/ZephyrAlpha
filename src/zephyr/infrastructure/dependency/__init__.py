@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.dependency — auto-generated package init."""
+
 from . import dependency_graph
 
-__all__ = ['dependency_graph']
-
+__all__ = ["dependency_graph"]

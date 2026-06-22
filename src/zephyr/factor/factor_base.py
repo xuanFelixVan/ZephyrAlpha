@@ -37,7 +37,6 @@ OCP Extension Point: FactorBase + FactorRegistry
   - 禁止方式：直接修改本文件中已有的抽象接口
 """
 
-
 from __future__ import annotations
 
 import abc
@@ -45,8 +44,6 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 import pandas as pd
-
-from zephyr.shared.contracts.errors.factor_computation_error import FactorComputationError as _CTRFactorComputationError
 
 # ---------------------------------------------------------------------------
 # FactorMeta — 因子元数据
@@ -175,7 +172,7 @@ class FactorRegistry:
     def get(cls, factor_id: str) -> type[FactorBase]:
         """按 ID 获取因子类，未找到时抛 KeyError。"""
         if factor_id not in cls._registry:
-            raise KeyError(f"因子 '{factor_id}' 未在注册表中找到。" f" 已注册因子：{list(cls._registry.keys())}")
+            raise KeyError(f"因子 '{factor_id}' 未在注册表中找到。 已注册因子：{list(cls._registry.keys())}")
         return cls._registry[factor_id]
 
     @classmethod

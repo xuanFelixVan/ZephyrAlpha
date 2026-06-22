@@ -23,7 +23,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from zephyr.governance.rollback.rollback_executor import RollbackExecutor, RollbackOp
+from zephyr.governance.rollback.rollback_executor import RollbackExecutor
+
 from zephyr.infrastructure.rollback.rollback_verifier import RollbackVerifier
 
 
@@ -44,7 +45,9 @@ def cmd_full_revert(args: argparse.Namespace) -> int:
 
 def cmd_partial_revert(args: argparse.Namespace) -> int:
     executor = _executor()
-    result = executor.partial_revert(args.commit_sha, file_globs=args.file_globs, dry_run=args.dry_run, audit_session="rollback_cli")
+    result = executor.partial_revert(
+        args.commit_sha, file_globs=args.file_globs, dry_run=args.dry_run, audit_session="rollback_cli"
+    )
     _print_result(result)
     return 0 if result.success else 1
 
@@ -52,12 +55,18 @@ def cmd_partial_revert(args: argparse.Namespace) -> int:
 def cmd_discard(args: argparse.Namespace) -> int:
     executor = _executor()
     discard_result = executor.discard_changes(args.files, force=args.force, audit_session="rollback_cli")
-    print(json.dumps({
-        "success": discard_result.success,
-        "files_discarded": discard_result.files_discarded,
-        "files_blocked": discard_result.files_blocked,
-        "decision": discard_result.decision.value,
-    }, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "success": discard_result.success,
+                "files_discarded": discard_result.files_discarded,
+                "files_blocked": discard_result.files_blocked,
+                "decision": discard_result.decision.value,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     return 0 if discard_result.success else 1
 
 
@@ -71,26 +80,38 @@ def cmd_hard_reset(args: argparse.Namespace) -> int:
 def cmd_preview(args: argparse.Namespace) -> int:
     executor = _executor()
     preview = executor.preview(args.commit_sha)
-    print(json.dumps({
-        "changed_files": preview.changed_files,
-        "conflict_risk": preview.conflict_risk,
-        "estimated_change_bytes": preview.estimated_change_bytes,
-    }, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "changed_files": preview.changed_files,
+                "conflict_risk": preview.conflict_risk,
+                "estimated_change_bytes": preview.estimated_change_bytes,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     return 0
 
 
 def cmd_preflight(args: argparse.Namespace) -> int:
     executor = _executor()
     pf = executor.preflight_check()
-    print(json.dumps({
-        "passed": pf.passed,
-        "working_tree_clean": pf.working_tree_clean,
-        "not_detached_head": pf.not_detached_head,
-        "remote_not_ahead": pf.remote_not_ahead,
-        "not_in_rebase": pf.not_in_rebase,
-        "not_in_merge": pf.not_in_merge,
-        "errors": pf.errors,
-    }, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "passed": pf.passed,
+                "working_tree_clean": pf.working_tree_clean,
+                "not_detached_head": pf.not_detached_head,
+                "remote_not_ahead": pf.remote_not_ahead,
+                "not_in_rebase": pf.not_in_rebase,
+                "not_in_merge": pf.not_in_merge,
+                "errors": pf.errors,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     return 0 if pf.passed else 1
 
 
@@ -145,16 +166,22 @@ def _safe_serialize(obj) -> dict:
 
 
 def _print_result(result) -> None:
-    print(json.dumps({
-        "success": result.success,
-        "operation": result.operation.value if hasattr(result.operation, "value") else str(result.operation),
-        "commit_sha": result.commit_sha,
-        "files_reverted": result.files_reverted,
-        "db_tables_restored": result.db_tables_restored,
-        "db_rows_restored": result.db_rows_restored,
-        "execution_id": getattr(result, "execution_id", ""),
-        "errors": result.errors,
-    }, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "success": result.success,
+                "operation": result.operation.value if hasattr(result.operation, "value") else str(result.operation),
+                "commit_sha": result.commit_sha,
+                "files_reverted": result.files_reverted,
+                "db_tables_restored": result.db_tables_restored,
+                "db_rows_restored": result.db_rows_restored,
+                "execution_id": getattr(result, "execution_id", ""),
+                "errors": result.errors,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 def main() -> None:

@@ -6,19 +6,20 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """MOD-INF-018 test_post_action.py — L5 Post-Action Hook 测试."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 
 class TestPostActionHooks:
     def test_permission_hooks_post_action(self):
         from zephyr.security.access_control.permission_hooks import PermissionHooks
+
         hooks = PermissionHooks()
         assert hasattr(hooks, "register")
 
     def test_hook_registration(self):
         from zephyr.security.access_control.permission_hooks import PermissionHooks
+
         hooks = PermissionHooks()
         called = []
 

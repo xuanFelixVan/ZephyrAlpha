@@ -28,7 +28,6 @@ Moved from shared.schema.severity_types.
 Canonical location is now zephyr.data.persistence.circuit_breaker_types.
 """
 
-
 from __future__ import annotations
 
 from enum import Enum

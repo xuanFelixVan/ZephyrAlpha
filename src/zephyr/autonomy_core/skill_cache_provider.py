@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_cache_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_cache_provider
+# [MODULE] zephyr.autonomy_core.skill_cache_provider
 
 # [INVARIANTS] none
 
@@ -30,7 +30,6 @@ Skill 缓存供应商——多后端缓存切换
 Memory + Disk 双后端，自动 fallback
 """
 
-
 from __future__ import annotations
 
 import json
@@ -38,7 +37,7 @@ import threading
 import time
 from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class _MemoryCache:
@@ -72,7 +71,7 @@ class _MemoryCache:
 
 
 class _DiskCache:
-    def __init__(self, cache_dir: Optional[Path] = None):
+    def __init__(self, cache_dir: Path | None = None):
         self._dir = cache_dir or (Path(__file__).resolve().parent / "_skill_cache")
         self._dir.mkdir(parents=True, exist_ok=True)
 
@@ -87,7 +86,7 @@ class _DiskCache:
                 data = json.loads(path.read_text(encoding="utf-8"))
                 if data.get("expires_at", 0) > time.time():
                     return data.get("value")
-            except (json.JSONDecodeError, IOError):
+            except (OSError, json.JSONDecodeError):
                 pass
         return None
 
@@ -95,7 +94,7 @@ class _DiskCache:
         data = {"value": value, "expires_at": time.time() + ttl_seconds}
         try:
             self._path(key).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-        except IOError:
+        except OSError:
             pass
 
     def invalidate(self, key: str):
@@ -113,7 +112,7 @@ class SkillCacheProvider:
         self.__backend = None
         self.configure(backend)
 
-    def configure(self, backend: str) -> Dict[str, Any]:
+    def configure(self, backend: str) -> dict[str, Any]:
         avail = backend.lower().strip() in self._BACKENDS
         if backend.lower().strip() == "disk" and avail:
             self.__backend = _DiskCache()

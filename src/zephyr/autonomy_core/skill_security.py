@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_security
+# [MODULE] zephyr.autonomy_core.skill_security
 
 # [INVARIANTS] none
 
@@ -26,10 +26,8 @@ Author: factory-agent
 Version: 0.3.0
 """
 
-
 import re
-from typing import Dict, Any, List
-
+from typing import Any
 
 _PROMPT_INJECTION_PATTERNS = [
     r"ignore\s+(?:all\s+)?(?:previous|above|prior)\s+instructions",
@@ -76,47 +74,72 @@ class SkillSecurity:
     _VETTING_CHECKS = ["prompt_injection", "command_injection", "ssrf", "path_traversal", "yaml_deserialization"]
 
     @classmethod
-    def vet(cls, skill_id: str, content: str) -> Dict[str, Any]:
+    def vet(cls, skill_id: str, content: str) -> dict[str, Any]:
         if not content:
-            return {"skill_id": skill_id, "passed": False, "checks": cls._VETTING_CHECKS, "findings": [{"check": "content_empty", "severity": "error", "detail": "Skill content is empty"}]}
+            return {
+                "skill_id": skill_id,
+                "passed": False,
+                "checks": cls._VETTING_CHECKS,
+                "findings": [{"check": "content_empty", "severity": "error", "detail": "Skill content is empty"}],
+            }
 
-        findings: List[Dict[str, Any]] = []
+        findings: list[dict[str, Any]] = []
         checks_passed = True
 
         for pattern in _PROMPT_INJECTION_PATTERNS:
             match = re.search(pattern, content, re.IGNORECASE)
             if match:
-                findings.append({"check": "prompt_injection", "severity": "critical", "detail": f"Match: {match.group()[:80]}"})
+                findings.append(
+                    {"check": "prompt_injection", "severity": "critical", "detail": f"Match: {match.group()[:80]}"}
+                )
                 checks_passed = False
 
         for pattern in _COMMAND_INJECTION_PATTERNS:
             match = re.search(pattern, content, re.IGNORECASE)
             if match:
-                findings.append({"check": "command_injection", "severity": "critical", "detail": f"Match: {match.group()[:80]}"})
+                findings.append(
+                    {"check": "command_injection", "severity": "critical", "detail": f"Match: {match.group()[:80]}"}
+                )
                 checks_passed = False
 
         for pattern in _SSRF_PATTERNS:
             match = re.search(pattern, content)
             if match:
-                findings.append({"check": "ssrf", "severity": "high", "detail": f"Internal URL detected: {match.group()[:80]}"})
+                findings.append(
+                    {"check": "ssrf", "severity": "high", "detail": f"Internal URL detected: {match.group()[:80]}"}
+                )
                 checks_passed = False
 
         for pattern in _PATH_TRAVERSAL_PATTERNS:
             match = re.search(pattern, content)
             if match:
-                findings.append({"check": "path_traversal", "severity": "high", "detail": f"Path traversal pattern: {match.group()[:80]}"})
+                findings.append(
+                    {
+                        "check": "path_traversal",
+                        "severity": "high",
+                        "detail": f"Path traversal pattern: {match.group()[:80]}",
+                    }
+                )
                 checks_passed = False
 
         for pattern in _YAML_DESERIALIZATION_PATTERNS:
             match = re.search(pattern, content, re.IGNORECASE)
             if match:
-                findings.append({"check": "yaml_deserialization", "severity": "critical", "detail": f"Dangerous YAML tag: {match.group()[:80]}"})
+                findings.append(
+                    {
+                        "check": "yaml_deserialization",
+                        "severity": "critical",
+                        "detail": f"Dangerous YAML tag: {match.group()[:80]}",
+                    }
+                )
                 checks_passed = False
 
         blocked_keywords = ["import os", "import subprocess", "from subprocess", "import socket"]
         for kw in blocked_keywords:
             if kw in content:
-                findings.append({"check": "dangerous_import", "severity": "warning", "detail": f"Blocked import keyword: {kw}"})
+                findings.append(
+                    {"check": "dangerous_import", "severity": "warning", "detail": f"Blocked import keyword: {kw}"}
+                )
                 checks_passed = False
 
         return {
@@ -127,5 +150,5 @@ class SkillSecurity:
         }
 
     @classmethod
-    def scan_vulnerabilities(cls, skill_id: str) -> List[Dict[str, Any]]:
+    def scan_vulnerabilities(cls, skill_id: str) -> list[dict[str, Any]]:
         return []

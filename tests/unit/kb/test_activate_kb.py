@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 测试套件：G4 Activate 门禁（T-2-13-D）
 ======================================
@@ -22,6 +23,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from zephyr.intelligence.model_evaluation.activate import ActivateGate
 
 

@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-SHR_capacity_runbook_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass

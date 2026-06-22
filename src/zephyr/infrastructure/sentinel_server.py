@@ -43,7 +43,6 @@ sentinel_server.py 对应 tool-contracts.yaml 中的 intent_router server。
 - intent_router.evaluate_golden_set — 黄金集评测
 """
 
-
 from __future__ import annotations
 
 import importlib
@@ -55,7 +54,7 @@ from zephyr.infrastructure._base_server import BaseMCPServer, MCPError
 __all__ = ["SentinelServer", "create_server"]
 
 _mod = importlib.import_module("zephyr.autonomy_core.intent_keyword_mapper")
-IntentDomain = getattr(_mod, "IntentDomain")
+IntentDomain = _mod.IntentDomain
 
 _VALID_DOMAINS = frozenset({d.value for d in IntentDomain})
 

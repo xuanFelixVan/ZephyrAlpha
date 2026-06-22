@@ -33,23 +33,22 @@ pytest.importorskip("zephyr.security.access_control.orphan_judge.cascade_analyze
 pytest.importorskip("zephyr.security.access_control.orphan_judge.judge")
 
 from zephyr.security.access_control.orphan_judge.cascade_analyzer import CascadeAnalyzer, CascadeResult, CascadeRisk
-from zephyr.security.access_control.orphan_judge.decision_table import DecisionTable, LayerResult as DTLayerResult, Verdict as DTVerdict
-from zephyr.security.access_control.orphan_judge.deprecation_tracker import DeprecationRecord, DeprecationTracker
+from zephyr.security.access_control.orphan_judge.decision_table import DecisionTable
+from zephyr.security.access_control.orphan_judge.decision_table import LayerResult as DTLayerResult
+from zephyr.security.access_control.orphan_judge.decision_table import Verdict as DTVerdict
+from zephyr.security.access_control.orphan_judge.deprecation_tracker import DeprecationTracker
 from zephyr.security.access_control.orphan_judge.judge import (
     Confidence,
-    Judgment,
     LayerResult,
     OrphanJudge,
-    OrphanJudgeError,
     OrphanJudgeReport,
     Verdict,
 )
-from zephyr.security.access_control.orphan_judge.safety_fence import SafetyCheckResult, SafetyFence
+from zephyr.security.access_control.orphan_judge.safety_fence import SafetyFence
 
 
 @pytest.mark.e2e
 class TestDecisionTableE2E:
-
     def test_registered_file_kept(self):
         """L0已注册→KEEP"""
         table = DecisionTable()
@@ -89,7 +88,6 @@ class TestDecisionTableE2E:
 
 @pytest.mark.e2e
 class TestSafetyFenceE2E:
-
     def test_frozen_file_blocked(self, tmp_path):
         """frozen文件拒绝删除"""
         frozen_file = tmp_path / "frozen_module.py"
@@ -132,7 +130,6 @@ class TestSafetyFenceE2E:
 
 @pytest.mark.e2e
 class TestDeprecationTrackerE2E:
-
     def test_deprecate_and_check(self, tmp_path):
         """标记废弃→查询废弃→确认已废弃"""
         tracker = DeprecationTracker(project_root=tmp_path)
@@ -171,7 +168,6 @@ class TestDeprecationTrackerE2E:
 
 @pytest.mark.e2e
 class TestCascadeAnalyzerE2E:
-
     @staticmethod
     def _setup_project(tmp_path: Path) -> dict[str, Path]:
         src_dir = tmp_path / "src" / "zephyr"
@@ -277,7 +273,6 @@ def _make_orphan_judge() -> OrphanJudge:
 
 @pytest.mark.e2e
 class TestOrphanJudgeE2E:
-
     def test_judge_registered_file(self, tmp_path):
         """已注册文件→KEEP"""
         test_file = tmp_path / "registered_mod.py"

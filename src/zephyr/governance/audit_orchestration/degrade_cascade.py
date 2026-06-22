@@ -23,9 +23,8 @@
 
 from __future__ import annotations
 
-DEGRADE_PROPAGATION_CHAIN: list[str] = [
-    "script_system", "feedback-loop", "orchestrator"
-]
+DEGRADE_PROPAGATION_CHAIN: list[str] = ["script_system", "feedback-loop", "orchestrator"]
+
 
 class DegradeCascadeGuard:
     def detect_cascade(self, degraded_systems: list[str]) -> bool:

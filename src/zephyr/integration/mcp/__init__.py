@@ -20,10 +20,6 @@
 两条路径均 speak MCP over stdio——属**有意的渐进迁移**，而非实现漏做；新 server 如无强
 约束可优先 FastMCP，旧 server 保持稳定即可。
 """
-from . import handoff_auto_loader
-from . import prompt_provider
-from . import resource_provider
-from . import sandbox_server
 
 from zephyr.integration.mcp._base_server import (
     ERR_GATE_FAILED,
@@ -42,59 +38,62 @@ from zephyr.integration.mcp._base_server import (
 from zephyr.integration.mcp.blueprint_search_server import BlueprintSearchServer
 from zephyr.integration.mcp.doc_guard_server import DocGuardServer
 from zephyr.integration.mcp.gate_engine_server import GateEngineServer
+from zephyr.integration.mcp.governance_server import GovernanceServer
 from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
 from zephyr.integration.mcp.sentinel_server import SentinelServer
 from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
 from zephyr.integration.mcp.telemetry_server import TelemetryMCP
-from zephyr.integration.mcp.governance_server import GovernanceServer
 from zephyr.integration.mcp.vector_memory_server import VectorMemoryServer
 
+from . import handoff_auto_loader, prompt_provider, resource_provider, sandbox_server
+
 __all__ = [
-    'BaseMCPServer',
-    'BlueprintSearchServer',
-    'DocGuardServer',
-    'ERR_GATE_FAILED',
-    'ERR_INTERNAL_ERROR',
-    'ERR_INVALID_PARAMS',
-    'ERR_INVALID_REQUEST',
-    'ERR_METHOD_NOT_FOUND',
-    'ERR_PARSE_ERROR',
-    'ERR_RBAC_DENIED',
-    'ERR_TOOL_EXECUTION',
-    'ERR_TOOL_NOT_FOUND',
-    'GateEngineServer',
-    'GovernanceServer',
-    'KnowledgeBaseServer',
-    'MCPError',
-    'SentinelServer',
-    'TaskManagerMCP',
-    'TelemetryMCP',
-    'ToolDefinition',
-    'VectorMemoryServer',
-    '_base_server',
-    'audit_logger',
-    'blueprint_search_server',
-    'doc_guard_server',
-    'error_codes',
-    'gate_engine_server',
-    'gateway_server',
-    'governance_server',
-    'handoff_auto_loader',
-    'knowledge_base_server',
-    'prompt_provider',
-    'rate_limiter',
-    'resource_provider',
-    'sandbox_server',
-    'search_blueprints',
-    'sentinel_server',
-    'task_manager_server',
-    'telemetry_server',
-    'vector_memory_server',
+    "ERR_GATE_FAILED",
+    "ERR_INTERNAL_ERROR",
+    "ERR_INVALID_PARAMS",
+    "ERR_INVALID_REQUEST",
+    "ERR_METHOD_NOT_FOUND",
+    "ERR_PARSE_ERROR",
+    "ERR_RBAC_DENIED",
+    "ERR_TOOL_EXECUTION",
+    "ERR_TOOL_NOT_FOUND",
+    "BaseMCPServer",
+    "BlueprintSearchServer",
+    "DocGuardServer",
+    "GateEngineServer",
+    "GovernanceServer",
+    "KnowledgeBaseServer",
+    "MCPError",
+    "SentinelServer",
+    "TaskManagerMCP",
+    "TelemetryMCP",
+    "ToolDefinition",
+    "VectorMemoryServer",
+    "_base_server",
+    "audit_logger",
+    "blueprint_search_server",
+    "doc_guard_server",
+    "error_codes",
+    "gate_engine_server",
+    "gateway_server",
+    "governance_server",
+    "handoff_auto_loader",
+    "knowledge_base_server",
+    "prompt_provider",
+    "rate_limiter",
+    "resource_provider",
+    "sandbox_server",
+    "search_blueprints",
+    "sentinel_server",
+    "task_manager_server",
+    "telemetry_server",
+    "vector_memory_server",
 ]
 
 # ------------------------------------------------------------------
 # Runtime convenience — search_blueprints()
 # ------------------------------------------------------------------
+
 
 def search_blueprints(task_description: str, num_results: int = 3) -> list[dict[str, object]]:
     """BlueprintSearchServer 捷径——无需 MCP stdio RPC 可直接调用。

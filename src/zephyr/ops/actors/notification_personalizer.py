@@ -27,6 +27,7 @@ Risk: R67 — Alert fatigue causes owner to miss critical notification.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class NotificationPersonalizer:
     owner_preferences: dict = field(default_factory=dict)

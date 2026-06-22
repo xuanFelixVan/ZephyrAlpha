@@ -8,7 +8,7 @@
 """Tests for MOD-INF-026 Dashboard module — 蓝图 §5 + §27 附录 H 要求 >85% 覆盖."""
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
 from zephyr.infrastructure.asset_inventory.models import (
@@ -23,14 +23,16 @@ from zephyr.infrastructure.asset_inventory.models import (
 def _healthy_index(total: int = 10, orphan: float = 0.0, ghost: float = 0.0, drift: float = 0.0) -> UnifiedAssetIndex:
     assets = []
     for i in range(total):
-        assets.append(ClassifiedAsset(
-            relative_path=f"src/module_{i}.py",
-            asset_type=AssetType.MODULE,
-            status=AssetStatus.ACTIVE,
-            size_bytes=100,
-            mtime_utc=datetime.now(timezone.utc),
-            sha256="a" * 64,
-        ))
+        assets.append(
+            ClassifiedAsset(
+                relative_path=f"src/module_{i}.py",
+                asset_type=AssetType.MODULE,
+                status=AssetStatus.ACTIVE,
+                size_bytes=100,
+                mtime_utc=datetime.now(UTC),
+                sha256="a" * 64,
+            )
+        )
     return UnifiedAssetIndex(
         total_assets=total,
         health_score="A",
@@ -42,7 +44,7 @@ def _healthy_index(total: int = 10, orphan: float = 0.0, ghost: float = 0.0, dri
         by_layer={"cross_layer": total},
         by_status={"active": total},
         assets=assets,
-        last_reconciliation_at=datetime.now(timezone.utc),
+        last_reconciliation_at=datetime.now(UTC),
     )
 
 

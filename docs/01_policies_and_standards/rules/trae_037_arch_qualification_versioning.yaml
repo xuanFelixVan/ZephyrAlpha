@@ -1,10 +1,20 @@
 rule_id: TRAE-037
 title: 架构治理-合格与版本化
+version: 0.4.2
+layer: L1
+module_id: TRAE-037
+depends_on: []
+tags:
+- TRAE
+- architecture_qualification
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - GOV-ARCH-003
 - GOV-ARCH-004
 - GOV-ARCH-010
-layer: L1
 severity: error
 scope: architecture_qualification
 domain: TRAE
@@ -283,16 +293,16 @@ sections:
     items:
     - condition: 模块多+结构清晰
       if_true: 有机构级雏形
-      if_false: null
+      if_false:
     - condition: 模块多+调用混乱
       if_true: 复杂但不高级
-      if_false: null
+      if_false:
     - condition: 模块少+抽象复用强
       if_true: 高水平设计
-      if_false: null
+      if_false:
     - condition: 模块少+功能单薄
       if_true: 玩具项目
-      if_false: null
+      if_false:
   gov_arch_004_change_history:
     title: 系统合格判定标准修订记录
     section_type: examples
@@ -508,7 +518,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 0.4.2
     date: '2026-06-21'

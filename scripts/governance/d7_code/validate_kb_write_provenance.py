@@ -14,6 +14,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 知识库写入 provenance 校验（COND-46 — kb.write()必须传provenance）
@@ -41,6 +42,7 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 
 import argparse
+
 
 def check_kb_write_provenance(filepath: Path) -> list[dict]:
     """检查 KB 写入溯源."""
@@ -93,6 +95,7 @@ def check_kb_write_provenance(filepath: Path) -> list[dict]:
     return findings
     """检查 KB 写入溯源."""
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="知识库写入 provenance 校验（COND-46）")
@@ -119,6 +122,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
+
 
 if __name__ == "__main__":
     main()

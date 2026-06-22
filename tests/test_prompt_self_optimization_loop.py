@@ -14,7 +14,6 @@ import pytest
 
 from zephyr.ops.evolution.prompt_self_optimization_loop import (
     PromptSelfOptimizationLoop,
-    PromptVariantStatus,
 )
 
 
@@ -26,9 +25,7 @@ class TestPromptSelfOptimizationLoopInstantiation:
         assert obj.improvement_threshold == pytest.approx(0.05)
 
     def test_custom_params(self):
-        obj = PromptSelfOptimizationLoop(
-            improvement_threshold=0.1, cooldown_cycles=10
-        )
+        obj = PromptSelfOptimizationLoop(improvement_threshold=0.1, cooldown_cycles=10)
         assert obj.improvement_threshold == pytest.approx(0.1)
         assert obj.cooldown_cycles == 10
 
@@ -138,9 +135,7 @@ class TestPromptSelfOptimizationLoopBoundaries:
         assert baseline == pytest.approx(0.5)
 
     def test_zero_improvement_threshold(self):
-        psol = PromptSelfOptimizationLoop(
-            cooldown_cycles=0, improvement_threshold=0.0
-        )
+        psol = PromptSelfOptimizationLoop(cooldown_cycles=0, improvement_threshold=0.0)
         psol.register_current_prompt(content="base")
         psol.record_effectiveness(metrics={"overall_score": 0.5})
         vid = psol.propose_variant(variant_content="any improvement")

@@ -14,17 +14,17 @@ from __future__ import annotations
 
 import hashlib
 
-import pytest
-
 from zephyr.security.access_control.auto_fix_engine_03.fix_diff import FixDiff
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixStatus
+from zephyr.security.access_control.auto_fix_engine_03.models import FixAction
 
 
 class TestFixDiffCompute:
     def test_compute_with_changes(self):
         action = FixAction(
-            action_type="test", target="file.py",
-            before="line1\nline2\n", after="line1\nline3\n",
+            action_type="test",
+            target="file.py",
+            before="line1\nline2\n",
+            after="line1\nline3\n",
         )
         result = FixDiff.compute(action)
         assert result["has_changes"] is True
@@ -33,8 +33,10 @@ class TestFixDiffCompute:
 
     def test_compute_no_changes(self):
         action = FixAction(
-            action_type="test", target="file.py",
-            before="same\n", after="same\n",
+            action_type="test",
+            target="file.py",
+            before="same\n",
+            after="same\n",
         )
         result = FixDiff.compute(action)
         assert result["has_changes"] is False
@@ -49,8 +51,10 @@ class TestFixDiffCompute:
 
     def test_compute_addition_only(self):
         action = FixAction(
-            action_type="test", target="file.py",
-            before="", after="new_line\n",
+            action_type="test",
+            target="file.py",
+            before="",
+            after="new_line\n",
         )
         result = FixDiff.compute(action)
         assert result["has_changes"] is True
@@ -58,8 +62,10 @@ class TestFixDiffCompute:
 
     def test_compute_deletion_only(self):
         action = FixAction(
-            action_type="test", target="file.py",
-            before="old_line\n", after="",
+            action_type="test",
+            target="file.py",
+            before="old_line\n",
+            after="",
         )
         result = FixDiff.compute(action)
         assert result["has_changes"] is True
@@ -67,12 +73,14 @@ class TestFixDiffCompute:
 
     def test_compute_stats_hashes(self):
         action = FixAction(
-            action_type="test", target="file.py",
-            before="abc", after="def",
+            action_type="test",
+            target="file.py",
+            before="abc",
+            after="def",
         )
         result = FixDiff.compute(action)
-        expected_before = hashlib.sha256("abc".encode()).hexdigest()[:16]
-        expected_after = hashlib.sha256("def".encode()).hexdigest()[:16]
+        expected_before = hashlib.sha256(b"abc").hexdigest()[:16]
+        expected_after = hashlib.sha256(b"def").hexdigest()[:16]
         assert result["stats"]["before_hash"] == expected_before
         assert result["stats"]["after_hash"] == expected_after
 
@@ -112,8 +120,10 @@ class TestFixDiffComputeText:
 class TestFixDiffReverse:
     def test_reverse_swaps_before_after(self):
         action = FixAction(
-            action_type="test", target="file.py",
-            before="old_content", after="new_content",
+            action_type="test",
+            target="file.py",
+            before="old_content",
+            after="new_content",
         )
         reversed_action = FixDiff.reverse(action)
         assert reversed_action.before == "new_content"

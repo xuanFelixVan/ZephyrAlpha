@@ -7,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS] zephyr.orchestration.runtime_core; zephyr.orchestration.pipeline_routing; zephyr.orchestration.agent_lifecycle
+# [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
 
 # [STABILITY] evolving
 
@@ -26,8 +26,8 @@ import logging
 import threading
 import time
 import types
-from dataclasses import dataclass, field
-from typing import Any, Optional
+from dataclasses import dataclass
+from typing import Any
 
 __all__ = ["LazyModuleRegistry", "ModuleEntry"]
 
@@ -88,7 +88,9 @@ class LazyModuleRegistry:
 
         logger.info(
             "LazyModuleRegistry: loaded '%s' from '%s' in %.3fs",
-            name, entry.import_path, elapsed,
+            name,
+            entry.import_path,
+            elapsed,
         )
         return module
 

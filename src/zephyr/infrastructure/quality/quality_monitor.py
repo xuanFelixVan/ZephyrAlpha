@@ -31,9 +31,9 @@ Quality Monitor — 生成代码质量门禁。
 
 import ast
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class QualityMetric:
@@ -41,6 +41,7 @@ class QualityMetric:
     value: float
     threshold: float
     passed: bool
+
 
 @dataclass
 class CodeQualityReport:
@@ -50,8 +51,8 @@ class CodeQualityReport:
     issues: list[str]
     passed: bool
 
-class QualityMonitor:
 
+class QualityMonitor:
     MAX_LINE_LENGTH = 150
     MAX_FUNCTION_LENGTH = 200
     MIN_DOCSTRING_COVERAGE = 0.5

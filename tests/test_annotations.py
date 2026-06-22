@@ -10,10 +10,16 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 import pytest
-from zephyr.governance.annotations import (
-    shared, known_dup, intentional, get_shared_registry, get_known_duplicates,
-)
+
 from zephyr.governance import annotations as ann_mod
+from zephyr.governance.annotations import (
+    get_known_duplicates,
+    get_shared_registry,
+    intentional,
+    known_dup,
+    shared,
+)
+
 
 @pytest.fixture
 def clean_registry():
@@ -25,17 +31,20 @@ def clean_registry():
     ann_mod.KNOWN_DUPLICATES.clear()
     ann_mod.INTENTIONAL_DUPLICATES.clear()
 
+
 class TestAnnotations:
     def test_shared_decorator_registers_function(self, clean_registry):
         @shared(module="test_mod")
         def my_func():
             return 42
+
         assert "test_mod::my_func" in get_shared_registry()
 
     def test_known_dup_decorator_registers(self, clean_registry):
         @known_dup(group_id="grp-1", confidence=0.9)
         def dup_func():
             return 1
+
         assert "grp-1" in get_known_duplicates()
         assert "dup_func" in get_known_duplicates()["grp-1"]
 
@@ -43,6 +52,7 @@ class TestAnnotations:
         @intentional(reason="design pattern")
         def int_func():
             return 2
+
         assert "int_func" in ann_mod.INTENTIONAL_DUPLICATES
 
     def test_get_shared_registry_returns_dict(self, clean_registry):

@@ -27,9 +27,7 @@ Config Reload Semantic — 配置热重载语义 (盲点 #32)
 """
 
 import os
-import time
-from dataclasses import dataclass
-from typing import Any, Callable, Optional
+from collections.abc import Callable
 
 
 class ConfigReloadSemantic:
@@ -41,7 +39,7 @@ class ConfigReloadSemantic:
         self._watched: dict[str, float] = {}
         self._callbacks: dict[str, list[Callable]] = {}
 
-    def watch(self, filepath: str, callback: Optional[Callable] = None):
+    def watch(self, filepath: str, callback: Callable | None = None):
         if os.path.exists(filepath):
             self._watched[filepath] = os.path.getmtime(filepath)
             if callback:

@@ -2,31 +2,41 @@
 class InputDefense:
     def __init__(self, config=None):
         self.config = config or {}
+
     def validate(self, input_data):
         return True
+
     def sanitize(self, input_data):
         return input_data
+
     def check_injection(self, text):
         return False
+
 
 class InputDefenseLayer:
     def __init__(self, config=None):
         self.config = config or {}
+
     def validate(self, input_data):
         return True
+
     def sanitize(self, input_data):
         return input_data
+
     def check_injection(self, text):
         return False
 
-from dataclasses import dataclass
+
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class DefenseResult:
     """Result of an input defense check."""
-    def __init__(self, passed: bool = True, threat_type: str = "", confidence: float = 0.0, details: Optional[Dict[str, Any]] = None):
+
+    def __init__(
+        self, passed: bool = True, threat_type: str = "", confidence: float = 0.0, details: dict[str, Any] | None = None
+    ):
         self.passed = passed
         self.threat_type = threat_type
         self.confidence = confidence
@@ -35,6 +45,7 @@ class DefenseResult:
 
 class SourceType(Enum):
     """Types of input sources."""
+
     USER = "user"
     API = "api"
     FILE = "file"
@@ -45,19 +56,25 @@ class SourceType(Enum):
 
 class EncodingBypassDefender:
     """Defends against encoding-based bypass attacks."""
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
+
     def detect_encoding_attack(self, text: str) -> DefenseResult:
         return DefenseResult()
+
     def normalize_encoding(self, text: str) -> str:
         return text
 
 
 class ToolResultTransformGuard:
     """Guards against malicious tool result transformations."""
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
+
     def validate_tool_result(self, result: Any) -> DefenseResult:
         return DefenseResult()
+
     def sanitize_tool_output(self, output: str) -> str:
         return output

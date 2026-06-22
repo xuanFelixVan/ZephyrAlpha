@@ -22,7 +22,7 @@ from zephyr.security.adversarial_validation.models import BypassEntry
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["ConstitutionEngine", "RegistryWriteError", "DuplicateArticleError"]
+__all__: list[str] = ["ConstitutionEngine", "DuplicateArticleError", "RegistryWriteError"]
 
 _REGISTRY_PATH: Path = Path(__file__).parent / "_constitution-registry.yaml"
 
@@ -78,7 +78,6 @@ class DuplicateArticleError(RuntimeError):
 
 
 class ConstitutionEngine:
-
     def __init__(self, registry_path: Path | None = None) -> None:
         self._registry_path: Path = registry_path or _REGISTRY_PATH
 
@@ -178,6 +177,7 @@ class ConstitutionEngine:
         raw["articles"] = articles
         raw["total_articles"] = len(articles)
         from datetime import UTC, datetime
+
         raw["last_updated"] = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
         tmp = self._registry_path.with_suffix(f".{os.getpid()}.tmp")

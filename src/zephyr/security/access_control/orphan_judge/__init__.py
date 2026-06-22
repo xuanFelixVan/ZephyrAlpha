@@ -59,49 +59,28 @@ actual_disk_path: src/zephyr/orphan-judge/
 
 """
 
-from zephyr.security.access_control.orphan_judge.orphan_detector import OrphanDetector, OrphanReport
-
-from zephyr.security.access_control.orphan_judge.orphan_detector import OrphanReport, OrphanDetector
-from zephyr.security.access_control.orphan_judge.duplicate_detector import DuplicateDetector
-from zephyr.security.access_control.orphan_judge.decision_table import DecisionTable, Verdict, LayerResult
-from zephyr.security.access_control.orphan_judge.safety_fence import SafetyFence, SafetyCheckResult
-from zephyr.security.access_control.orphan_judge.deprecation_tracker import DeprecationTracker, DeprecationRecord
-from zephyr.security.access_control.orphan_judge.cascade_analyzer import CascadeAnalyzer, CascadeResult, CascadeRisk
-from zephyr.security.access_control.orphan_judge.orphan_collector import OrphanCollector, CollectionResult, Judgment
-from zephyr.security.access_control.orphan_judge.registration_checker import RegistrationChecker
-from zephyr.security.access_control.orphan_judge.reference_graph_engine import ReferenceGraphEngine
-from zephyr.security.access_control.orphan_judge.unique_analyzer import UniqueValueAnalyzer
-from zephyr.security.access_control.orphan_judge.standalone_evaluator import StandaloneEvaluator
 from zephyr.security.access_control.orphan_judge.__main__ import main as Main
-from zephyr.security.access_control.orphan_judge.models import JudgmentRecord
-from zephyr.security.access_control.orphan_judge.db import JudgmentDB as Db
-from zephyr.security.access_control.orphan_judge.report_generator import ReportGenerator
+from zephyr.security.access_control.orphan_judge.cascade_analyzer import CascadeAnalyzer, CascadeResult, CascadeRisk
 from zephyr.security.access_control.orphan_judge.config_loader import ConfigLoader
-from zephyr.security.access_control.orphan_judge.swid_tag import SwidTag
+from zephyr.security.access_control.orphan_judge.db import JudgmentDB as Db
+from zephyr.security.access_control.orphan_judge.decision_table import DecisionTable, LayerResult, Verdict
+from zephyr.security.access_control.orphan_judge.deprecation_tracker import DeprecationRecord, DeprecationTracker
+from zephyr.security.access_control.orphan_judge.duplicate_detector import DuplicateDetector
 from zephyr.security.access_control.orphan_judge.mcp_integration import ORPHAN_JUDGE_TOOLS, register_tools
+from zephyr.security.access_control.orphan_judge.models import JudgmentRecord
+from zephyr.security.access_control.orphan_judge.orphan_collector import CollectionResult, Judgment, OrphanCollector
+from zephyr.security.access_control.orphan_judge.orphan_detector import OrphanDetector, OrphanReport
+from zephyr.security.access_control.orphan_judge.reference_graph_engine import ReferenceGraphEngine
+from zephyr.security.access_control.orphan_judge.registration_checker import RegistrationChecker
+from zephyr.security.access_control.orphan_judge.report_generator import ReportGenerator
+from zephyr.security.access_control.orphan_judge.safety_fence import SafetyCheckResult, SafetyFence
+from zephyr.security.access_control.orphan_judge.standalone_evaluator import StandaloneEvaluator
+from zephyr.security.access_control.orphan_judge.swid_tag import SwidTag
+from zephyr.security.access_control.orphan_judge.unique_analyzer import UniqueValueAnalyzer
 
 __all__ = [
-
-    "orphan_detector",
-
-    "five_layer_judge",
-
-    "reference_graph",
-
-    "judgment_cache",
-
-    "safety_fence",
-
-    "incremental_scanner",
-
-    "script_scheduler",
-
-    "mcp_handler",
-
     "OrphanDetector",
-
     "OrphanReport",
-
     "__main__",
     "cascade_analyzer",
     "config_loader",
@@ -112,29 +91,47 @@ __all__ = [
     "duplicate_detector",
     "escalation_bridge",
     "feedback_bridge",
+    "five_layer_judge",
+    "incremental_scanner",
     "judge",
+    "judgment_cache",
     "kb_bridge",
+    "mcp_handler",
     "mcp_integration",
     "models",
     "orphan_collector",
+    "orphan_detector",
     "rbac_bridge",
+    "reference_graph",
     "reference_graph_engine",
     "registration_checker",
     "report_generator",
+    "safety_fence",
+    "script_scheduler",
     "standalone_evaluator",
     "swid_tag",
     "unique_analyzer",
 ]
 
 __all__.append("DuplicateDetector")
-__all__.extend([
-    "DecisionTable", "Verdict", "LayerResult",
-    "SafetyFence", "SafetyCheckResult",
-    "DeprecationTracker", "DeprecationRecord",
-    "CascadeAnalyzer", "CascadeResult", "CascadeRisk",
-    "OrphanCollector", "CollectionResult", "Judgment",
-    "Judge",
-])
+__all__.extend(
+    [
+        "CascadeAnalyzer",
+        "CascadeResult",
+        "CascadeRisk",
+        "CollectionResult",
+        "DecisionTable",
+        "DeprecationRecord",
+        "DeprecationTracker",
+        "Judge",
+        "Judgment",
+        "LayerResult",
+        "OrphanCollector",
+        "SafetyCheckResult",
+        "SafetyFence",
+        "Verdict",
+    ]
+)
 
 __all__.append("RegistrationChecker")
 
@@ -155,4 +152,17 @@ __all__.append("ReportGenerator")
 __all__.append("ConfigLoader")
 
 __all__.append("SwidTag")
-__all__.extend(["DriftBridge", "EscalationBridge", "RbacBridge", "KbBridge", "FeedbackBridge", "ORPHAN_JUDGE_TOOLS", "register_tools", "mcp_integration", "models", "unique_analyzer"])
+__all__.extend(
+    [
+        "ORPHAN_JUDGE_TOOLS",
+        "DriftBridge",
+        "EscalationBridge",
+        "FeedbackBridge",
+        "KbBridge",
+        "RbacBridge",
+        "mcp_integration",
+        "models",
+        "register_tools",
+        "unique_analyzer",
+    ]
+)

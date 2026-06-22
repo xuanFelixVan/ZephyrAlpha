@@ -24,8 +24,9 @@ from __future__ import annotations
 """checkpoint_manager.py — Inject 前快照 (DD100, TASK-019)"""
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
+
 
 @dataclass
 class Checkpoint:
@@ -34,8 +35,10 @@ class Checkpoint:
     ke_ids: list[str]
     token_count: int
 
+
 class CheckpointManager:
     """Inject 前 snapshot; 回滚到注入前 (DD100)."""
+
     def __init__(self, store_dir: str | Path = ".ce_checkpoints") -> None:
         self._store = Path(store_dir)
         self._store.mkdir(parents=True, exist_ok=True)

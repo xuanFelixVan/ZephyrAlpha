@@ -16,6 +16,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
+
 from zephyr.ops.feedback_collector import (
     FeedbackCollector,
     FeedbackEntry,

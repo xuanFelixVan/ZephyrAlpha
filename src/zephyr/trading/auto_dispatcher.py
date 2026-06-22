@@ -22,7 +22,6 @@ AutoDispatcher — 守护进程内的轻量 PipelineDispatcher
         └── transition(IN_PROGRESS→COMPLETED)   → Orc→VMS + KB→VMS hook 自动触发
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -44,6 +43,7 @@ class AutoDispatcher:
         files_in_scope = getattr(task_card, "files_in_scope", []) or []
         if isinstance(files_in_scope, str):
             import json
+
             try:
                 files_in_scope = json.loads(files_in_scope)
             except (json.JSONDecodeError, TypeError):
@@ -61,6 +61,7 @@ class AutoDispatcher:
 
         try:
             from zephyr.trading.orchestrator.context_bridge import ContextBridge
+
             bridge = ContextBridge()
             bridge.request_context(task_id=task_id, session_id=session_id)
             result["step_context"] = "ok"
@@ -72,6 +73,7 @@ class AutoDispatcher:
         if files_in_scope:
             try:
                 from zephyr.trading.orchestrator.script_runner import ScriptRunner
+
                 runner = ScriptRunner()
                 audit_result = runner.run_audit(task_id, files_in_scope)
                 result["step_scripts"] = f"ok (passed={audit_result.passed} failed={audit_result.failed})"
@@ -79,7 +81,9 @@ class AutoDispatcher:
                 result["step_kb"] = "embedded"
                 logger.info(
                     "[AUTO-DISPATCH] audit done for %s: passed=%d failed=%d",
-                    task_id, audit_result.passed, audit_result.failed,
+                    task_id,
+                    audit_result.passed,
+                    audit_result.failed,
                 )
             except Exception as exc:
                 logger.warning("[AUTO-DISPATCH] audit failed for %s: %s", task_id, exc)
@@ -88,8 +92,8 @@ class AutoDispatcher:
             logger.info("[AUTO-DISPATCH] no files_in_scope for %s, skipping audit", task_id)
 
         try:
-            from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
             from zephyr.governance.persistence.task_repo import TaskRepository
+
             repo = TaskRepository()
             repo.transition(task_id, "COMPLETED", note="auto-dispatched by daemon")
             result["step_transition"] = "ok (→COMPLETED)"

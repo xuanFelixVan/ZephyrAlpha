@@ -24,8 +24,6 @@ SSoT: MOD-INF-024 budget-enforcer. This module is retained for backward compatib
 """
 
 import time
-from collections import defaultdict
-from typing import Any, Optional
 
 
 class SunkCostIntervention:
@@ -45,9 +43,7 @@ class SunkCostIntervention:
         self._module_costs[module].append((time.time(), tokens_used))
 
     def analyze(self) -> dict:
-        total_tokens = sum(
-            sum(r[1] for r in recs) for recs in self._module_costs.values()
-        )
+        total_tokens = sum(sum(r[1] for r in recs) for recs in self._module_costs.values())
         if total_tokens == 0:
             return {"interventions": []}
 
@@ -56,10 +52,12 @@ class SunkCostIntervention:
             module_tokens = sum(r[1] for r in records)
             share = module_tokens / max(total_tokens, 1)
             if share > self.TOKEN_SHARE_THRESHOLD:
-                interventions.append({
-                    "module": module,
-                    "token_share": round(share, 2),
-                    "suggestion": f"Module {module} consumes {share:.1%} of tokens — consider replacing or simplifying.",
-                })
+                interventions.append(
+                    {
+                        "module": module,
+                        "token_share": round(share, 2),
+                        "suggestion": f"Module {module} consumes {share:.1%} of tokens — consider replacing or simplifying.",
+                    }
+                )
 
         return {"interventions": interventions, "total_tokens": total_tokens}

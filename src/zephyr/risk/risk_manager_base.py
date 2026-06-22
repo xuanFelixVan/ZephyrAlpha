@@ -57,6 +57,7 @@ from typing import Any, ClassVar
 @dataclass(frozen=True)
 class RiskCheckResult:
     """单次风控检查结果"""
+
     check_id: str
     rule_name: str
     passed: bool
@@ -70,6 +71,7 @@ class RiskCheckResult:
 @dataclass(frozen=True)
 class RiskReport:
     """风控综合报告"""
+
     as_of_timestamp: datetime
     portfolio_id: str
     checks: list[RiskCheckResult] = field(default_factory=list)
@@ -93,7 +95,8 @@ class RiskManagerOrchestratorBase(abc.ABC):
 
     调用顺序：pre_trade → (emit order) → post_trade → daily_pnl → aggregate
     """
-    _registry: ClassVar[dict[str, type["RiskManagerOrchestratorBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[RiskManagerOrchestratorBase]]] = {}
 
     @abc.abstractmethod
     def pre_trade_check(self, order: Any, limits: Any, positions: Any) -> RiskCheckResult:
@@ -123,11 +126,13 @@ class StopLossEngineBase(abc.ABC):
       - evaluate(position, current_price, rules): 判断是否触发止损
       - 支持多种止损策略：固定比例 / 移动止损 / 时间止损 / 波动率止损
     """
-    _registry: ClassVar[dict[str, type["StopLossEngineBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[StopLossEngineBase]]] = {}
 
     @abc.abstractmethod
-    def evaluate(self, symbol: str, entry_price: Decimal, current_price: Decimal,
-                 position_qty: Decimal, rules: dict[str, Any]) -> RiskCheckResult:
+    def evaluate(
+        self, symbol: str, entry_price: Decimal, current_price: Decimal, position_qty: Decimal, rules: dict[str, Any]
+    ) -> RiskCheckResult:
         """评估持仓是否触发止损条件"""
         ...
 
@@ -145,7 +150,8 @@ class PositionLimitCheckerBase(abc.ABC):
       - check_sector_concentration(sector, weight, limit): 行业集中度
       - check_gross_leverage(current, limit): 总杠杆
     """
-    _registry: ClassVar[dict[str, type["PositionLimitCheckerBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[PositionLimitCheckerBase]]] = {}
 
     @abc.abstractmethod
     def check_single_position(self, symbol: str, weight: float, limit: float) -> RiskCheckResult:
@@ -164,9 +170,9 @@ class PositionLimitCheckerBase(abc.ABC):
 
 
 __all__ = [
-    "RiskCheckResult",
-    "RiskReport",
-    "RiskManagerOrchestratorBase",
-    "StopLossEngineBase",
     "PositionLimitCheckerBase",
+    "RiskCheckResult",
+    "RiskManagerOrchestratorBase",
+    "RiskReport",
+    "StopLossEngineBase",
 ]

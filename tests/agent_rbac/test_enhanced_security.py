@@ -6,16 +6,15 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """七项增强安全机制整合测试."""
+
 from __future__ import annotations
 
-import pytest
-from zephyr.security.access_control.cross_session_detector import CrossSessionDetector
-from zephyr.security.access_control.permission_hooks import PermissionHooks
 from zephyr.security.access_control.agent_creation_policy import AgentCreationPolicy, CreationPolicy
-from zephyr.security.access_control.cache_invalidation import CacheInvalidation
-from zephyr.security.access_control.emergency_override import EmergencyOverride
 from zephyr.security.access_control.auto_maintenance import AutoMaintenance
-from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel
+from zephyr.security.access_control.cache_invalidation import CacheInvalidation
+from zephyr.security.access_control.cross_session_detector import CrossSessionDetector
+from zephyr.security.access_control.emergency_override import EmergencyOverride
+from zephyr.security.access_control.permission_hooks import PermissionHooks
 
 
 class TestEnhancedSecurity:

@@ -11,17 +11,19 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
+    from zephyr.autonomy_core.context_assembler import AssemblyError
     from zephyr.autonomy_core.context_pipeline import (
+        ContextFourStageResult,
         run_context_four_stage,
         run_context_four_stage_or_raise,
-        ContextFourStageResult,
     )
-    from zephyr.autonomy_core.context_assembler import AssemblyError
+
     _IMPORT_OK = True
     _IMPORT_ERR = None
 except Exception as exc:
@@ -131,6 +133,7 @@ class TestRunContextFourStageOrRaise:
 class TestContextFourStageResult:
     def test_default_values(self):
         from zephyr.autonomy_core.context_assembler import AssembledContext
+
         assembled = AssembledContext()
         result = ContextFourStageResult(assembled=assembled, g3_passed=False)
         assert result.injected is None

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] scan returns structured dict; get_session_anomalies filters by skill_id
 # [TESTS] tests/test_skill_silent_failure.py
 
-import pytest
 from zephyr.autonomy_core.skill_silent_failure import SilentFailureDetector
 
 

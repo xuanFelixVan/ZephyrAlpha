@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-07-INTEGRATION-ARCH
 title: Target Architecture — Integration Architecture / 目标架构：集成架构
 doc_type: architecture_view

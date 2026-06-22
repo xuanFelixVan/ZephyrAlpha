@@ -27,6 +27,7 @@ Risk: R17 — Corrupted metrics produce phantom anomalies.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class DBIntegrity:
     checksum: str = ""

@@ -78,6 +78,7 @@ DEFAULT_EXCLUDES = {
     "_archive",
 }
 
+
 class Scanner:
     """全量文件系统扫描器——Phase 1 实现（蓝图 §3.1）。"""
 
@@ -235,10 +236,12 @@ class Scanner:
         print(f"  TIME   {result.duration_seconds:.1f}s")
         print(f"  OUTPUT {output}")
 
+
 def _generate_scan_id() -> str:
     now = datetime.now(UTC)
     seq = str(now.timestamp()).replace(".", "")[-3:]
     return f"SCAN-{now.strftime('%Y%m%d')}-{seq}"
+
 
 def _process_one(file_path: Path, root: Path) -> RawFileEntry:
     stat = file_path.stat()
@@ -258,6 +261,7 @@ def _process_one(file_path: Path, root: Path) -> RawFileEntry:
         is_binary=False,
     )
 
+
 def _sha256(file_path: Path) -> str:
     h = hashlib.sha256()
     with open(file_path, "rb") as f:
@@ -265,8 +269,10 @@ def _sha256(file_path: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+
 def main() -> None:
     Scanner().main()
+
 
 if __name__ == "__main__":
     main()
@@ -274,6 +280,7 @@ if __name__ == "__main__":
 # ============================================================================
 # SRC-0040: 从 concurrent.py 合并 — ConcurrentScanner + merge_scans
 # ============================================================================
+
 
 class ConcurrentScanner:
     """跨会话并发扫描器——Glide Window + SHA256 重试 + 锁感知跳过。"""
@@ -360,6 +367,7 @@ class ConcurrentScanner:
                     pass
         return results
 
+
 def merge_scans(scan_a: ScanResult, scan_b: ScanResult) -> ScanResult:
     """多 Scanner 产出合并策略——保留最新 mtime 的版本。"""
     merged: dict[str, RawFileEntry] = {}
@@ -388,6 +396,7 @@ def merge_scans(scan_a: ScanResult, scan_b: ScanResult) -> ScanResult:
         entries=entries,
     )
 
+
 # ============================================================================
 # SRC-0040: 从 security_enforcer.py 合并 — SecurityFilter + SecurityAccessLogger
 # ============================================================================
@@ -406,10 +415,12 @@ MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024
 
 EXCLUDED_DIR_PARTS: set[str] = {".ailocks", "session-logs", ".git", "__pycache__", "node_modules"}
 
+
 def _match_pattern(name: str, pattern: str) -> bool:
     import fnmatch
 
     return fnmatch.fnmatch(name, pattern)
+
 
 class SecurityAccessRecord(BaseModel):
     """安全访问审计记录。"""
@@ -420,6 +431,7 @@ class SecurityAccessRecord(BaseModel):
     reason: str | None = None
     sha256: str | None = None
     size: int | None = None
+
 
 class SecurityFilter:
     """安全隐私边界过滤器——六不得铁律的机械化执行。"""
@@ -458,6 +470,7 @@ class SecurityFilter:
             return False, "stat_error"
 
         return True, None
+
 
 class SecurityAccessLogger:
     """审计追踪——盘点器每次扫描的文件级访问记录。"""

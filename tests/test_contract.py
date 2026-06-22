@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.contract import (
     EXIT_CODE_TO_GATE_ACTION,
     PIPELINE_ACTIONS,
@@ -50,6 +48,7 @@ class TestRollbackExitCode:
 
     def test_exit_code_alias(self):
         from zephyr.governance.contract import ExitCode
+
         assert ExitCode is RollbackExitCode
 
 

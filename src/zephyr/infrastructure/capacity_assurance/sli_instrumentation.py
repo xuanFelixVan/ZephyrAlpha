@@ -21,12 +21,9 @@
 
 """SLI instrumentation — SLI采集插桩点（对标蓝图 §13 SLI Registry CAP-001~CAP-014）."""
 
-
-import time
 import threading
 from collections import defaultdict
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from dataclasses import dataclass
 
 
 @dataclass
@@ -65,8 +62,8 @@ class SLIInstrumentation:
 
     def __init__(self):
         self._lock = threading.Lock()
-        self._stats: Dict[str, SLIStats] = {}
-        self._durations: Dict[str, List[float]] = defaultdict(list)
+        self._stats: dict[str, SLIStats] = {}
+        self._durations: dict[str, list[float]] = defaultdict(list)
 
     def _get_or_create(self, sli_id: str) -> SLIStats:
         if sli_id not in self._stats:
@@ -97,16 +94,16 @@ class SLIInstrumentation:
             stats.validation_total_ms += duration_ms
             stats.validation_count += 1
 
-    def get_sli_stats(self, sli_id: str) -> Optional[SLIStats]:
+    def get_sli_stats(self, sli_id: str) -> SLIStats | None:
         """获取指定 SLI 的统计信息."""
         return self._stats.get(sli_id)
 
-    def get_all_stats(self) -> Dict[str, SLIStats]:
+    def get_all_stats(self) -> dict[str, SLIStats]:
         """获取全部 SLI 统计信息."""
         with self._lock:
             return dict(self._stats)
 
-    def reset(self, sli_id: Optional[str] = None) -> None:
+    def reset(self, sli_id: str | None = None) -> None:
         """重置统计数据."""
         with self._lock:
             if sli_id:
@@ -117,7 +114,7 @@ class SLIInstrumentation:
                 self._durations.clear()
 
 
-_instrumentation: Optional[SLIInstrumentation] = None
+_instrumentation: SLIInstrumentation | None = None
 _lock = threading.Lock()
 
 

@@ -13,11 +13,12 @@ from pathlib import Path
 
 import pytest
 import yaml
+
+from zephyr.governance.rule_enforcement.task_types import TaskNamespace
 from zephyr.trading.orchestrator.file_task_mapper import (
     FileTaskMapper,
     classify_file_to_namespace,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace
 
 
 @pytest.fixture

@@ -8,11 +8,11 @@
 """
 FAISS v2 benchmark: batch write + IVF+PQ comparison
 """
+
 from __future__ import annotations
 
 import shutil
 import time
-import uuid
 from pathlib import Path
 
 import numpy as np
@@ -40,8 +40,9 @@ def main():
         shutil.rmtree(TEST_DIR)
     TEST_DIR.mkdir(parents=True)
 
-    from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
     import faiss
+
+    from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
 
     print("=" * 60)
     print("  FAISS v2 Benchmark: Batch Write + IVF+PQ")
@@ -102,10 +103,12 @@ def main():
     hnsw_search_t = (time.perf_counter() - t0) / 1000
 
     print(f"  HNSW:    search={fmt(hnsw_search_t)}  index_size={hnsw_size:.1f}MB")
-    print(f"  IVF+PQ:  search={fmt(ivf_search_t)}  index_size={ivf_size:.1f}MB  compression={hnsw_size / ivf_size:.1f}x")
+    print(
+        f"  IVF+PQ:  search={fmt(ivf_search_t)}  index_size={ivf_size:.1f}MB  compression={hnsw_size / ivf_size:.1f}x"
+    )
 
     # ============ 3. Batch write at scale ============
-    print(f"\n[3] Batch write at scale...")
+    print("\n[3] Batch write at scale...")
     for scale in [100, 1000, 10000]:
         if TEST_DIR / "scale":
             shutil.rmtree(str(TEST_DIR / "scale"), ignore_errors=True)
@@ -115,7 +118,7 @@ def main():
         t0 = time.perf_counter()
         cm_s.add_vectors_batch("knowledge", vecs)
         t = time.perf_counter() - t0
-        print(f"  {scale:>5} docs:  {fmt(t)} ({scale / t:.0f} docs/s, {t/scale*1e6:.0f}us/doc)")
+        print(f"  {scale:>5} docs:  {fmt(t)} ({scale / t:.0f} docs/s, {t / scale * 1e6:.0f}us/doc)")
 
     # ============ Cleanup ============
     shutil.rmtree(TEST_DIR, ignore_errors=True)

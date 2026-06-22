@@ -50,7 +50,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
 
@@ -271,5 +271,7 @@ def main() -> None:
         print("   修复方法：根据实际数据条目逐项更新对应 YAML 的 summary 字段")
         print("   或运行：python scripts/governance/d5_architecture/validate_yaml_summaries.py --warn-only")
         return EXIT_FINDINGS
+
+
 if __name__ == "__main__":
     sys.exit(main())

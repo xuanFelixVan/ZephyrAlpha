@@ -14,16 +14,14 @@ from __future__ import annotations
 
 from datetime import date
 
-import pytest
-
 from zephyr.market_data.market_data_pipeline import (
-    Interval,
-    ValidationStatus,
-    ValidationReport,
-    FeatureStoreSchema,
     AkshareProvider,
     DataValidator,
+    FeatureStoreSchema,
+    Interval,
     MarketDataPipeline,
+    ValidationReport,
+    ValidationStatus,
 )
 
 

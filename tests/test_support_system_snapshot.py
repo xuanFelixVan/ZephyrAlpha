@@ -11,17 +11,18 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import tempfile
-import pytest
 from pathlib import Path
+
+import pytest
 
 try:
     from zephyr.autonomy_core.system_snapshot import (
-        SystemSnapshotter,
         SystemSnapshot,
-        SnapshotBuildError,
+        SystemSnapshotter,
     )
 except Exception as _exc:
     pytest.skip(f"无法导入 system_snapshot: {_exc}", allow_module_level=True)

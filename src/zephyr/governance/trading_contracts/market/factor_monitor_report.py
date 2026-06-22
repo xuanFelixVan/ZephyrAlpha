@@ -23,6 +23,7 @@
 
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class FactorMonitorReport:
     factor_id: str

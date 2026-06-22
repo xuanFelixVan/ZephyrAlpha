@@ -6,26 +6,17 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 import hashlib
-import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
-from zephyr.security.llm_defense.llm_security.layers.l0_supply_chain import (
-    AuditResult,
-    MCPDeepSupplyChainScanner,
-    MCPSTDIORCEResult,
-    MCPVerifyResult,
-    RulesFileIntegrityResult,
-    RulesFileSecurityGuard,
-    ScanResult,
-    SlopsquattingDetector,
-    SlopsquattingResult,
-    SupplyChainGuard,
-    VerifyResult,
-)
 from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+from zephyr.security.llm_defense.llm_security.layers.l0_supply_chain import (
+    MCPDeepSupplyChainScanner,
+    RulesFileSecurityGuard,
+    SlopsquattingDetector,
+    SupplyChainGuard,
+)
 
 
 class TestSupplyChainGuard:
@@ -61,9 +52,7 @@ class TestSupplyChainGuard:
 
     @patch("subprocess.check_output")
     def test_scan_dependencies_returns_results(self, mock_check_output, guard):
-        mock_check_output.return_value = (
-            '{"dependencies": [{"name": "flask", "version": "2.0.0", "vulns": []}]}'
-        )
+        mock_check_output.return_value = '{"dependencies": [{"name": "flask", "version": "2.0.0", "vulns": []}]}'
         results = guard.scan_dependencies()
         assert len(results) > 0
         assert results[0].is_safe is True
@@ -128,9 +117,7 @@ class TestSupplyChainGuard:
         assert result.passed is False
 
     def test_record_model_provenance(self, guard):
-        provenance = guard.record_model_provenance(
-            "gpt-4", "https://openai.com/gpt-4", "sha256:abc123"
-        )
+        provenance = guard.record_model_provenance("gpt-4", "https://openai.com/gpt-4", "sha256:abc123")
         assert provenance["model_name"] == "gpt-4"
         assert provenance["source_url"] == "https://openai.com/gpt-4"
         assert "recorded_at" in provenance
@@ -174,19 +161,19 @@ class TestRulesFileSecurityGuard:
 class TestSlopsquattingDetector:
     def test_detect_known_package_exists(self):
         detector = SlopsquattingDetector()
-        with patch.object(detector, '_check_pypi_existence', return_value=True):
+        with patch.object(detector, "_check_pypi_existence", return_value=True):
             result = detector.detect("numpy")
             assert result.hallucination_risk != "critical"
 
     def test_detect_hallucinated_package(self):
         detector = SlopsquattingDetector()
-        with patch.object(detector, '_check_pypi_existence', return_value=False):
+        with patch.object(detector, "_check_pypi_existence", return_value=False):
             result = detector.detect("totally_fake_ai_lib_xyz123")
             assert result.hallucination_risk == "critical"
 
     def test_detect_typosquatting(self):
         detector = SlopsquattingDetector()
-        with patch.object(detector, '_check_pypi_existence', return_value=True):
+        with patch.object(detector, "_check_pypi_existence", return_value=True):
             result = detector.detect("turch")
             assert result.hallucination_risk in ("high", "critical", "low")
 

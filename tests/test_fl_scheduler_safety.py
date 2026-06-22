@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import MagicMock
 
 from zephyr.ops.scheduler_safety import SafetyGateManager
 
@@ -55,7 +53,13 @@ class TestRunSafetyGates:
         anomaly.evidence = {"metric_name": "cpu", "value": 0.5}
         diagnosis = MagicMock()
         result = manager.run_safety_gates(anomaly, diagnosis)
-        expected = ["numerical_stability", "temporal_integrity", "wireheading", "deployment_suppression", "config_consistency"]
+        expected = [
+            "numerical_stability",
+            "temporal_integrity",
+            "wireheading",
+            "deployment_suppression",
+            "config_consistency",
+        ]
         for gate in expected:
             assert gate in result, f"Missing gate: {gate}"
 

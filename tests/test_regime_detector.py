@@ -10,14 +10,13 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_regime_detector.py
 
-import pytest
 from zephyr.behavioral_audit.regime_detector import (
-    MacroFactor,
-    MacroRegime,
-    FactorSignal,
     MACRO_INDICATORS,
     REGIME_ALLOCATIONS,
     REGIME_SWITCH_SIGNALS,
+    FactorSignal,
+    MacroFactor,
+    MacroRegime,
 )
 
 

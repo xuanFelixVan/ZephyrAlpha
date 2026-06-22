@@ -11,13 +11,13 @@ from pathlib import Path
 from unittest.mock import patch
 
 from scripts.governance._shared.frontmatter import parse_frontmatter_from_file
-
 from scripts.governance.d1_structure.archive_drafts_zone import (
     STATUS_ARBITRATED,
     compute_archive_target,
     execute_archive,
     scan_drafts,
 )
+
 
 class TestParseFrontmatter:
     def test_valid_frontmatter(self, tmp_path: Path):
@@ -48,6 +48,7 @@ class TestParseFrontmatter:
         md.write_text("---\n: invalid\n---\n", encoding="utf-8")
         fm = parse_frontmatter_from_file(md)
         assert fm is None
+
 
 class TestScanDrafts:
     def test_scan_with_arbitrated_old(self, tmp_path: Path):
@@ -108,6 +109,7 @@ class TestScanDrafts:
         results = scan_drafts(tmp_path / "nonexistent")
         assert results == []
 
+
 class TestComputeArchiveTarget:
     def test_target_path(self, tmp_path: Path):
         draft = tmp_path / "drafts" / "my-subdir" / "draft.md"
@@ -119,6 +121,7 @@ class TestComputeArchiveTarget:
         draft = tmp_path / "drafts" / "my-subdir" / "draft.md"
         target = compute_archive_target(draft, "invalid-date")
         assert "undated" in str(target)
+
 
 class TestExecuteArchive:
     def test_warn_action(self, tmp_path: Path):

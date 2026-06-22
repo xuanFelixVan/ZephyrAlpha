@@ -42,10 +42,8 @@ Exit Codes:
     10 = BOOTSTRAP_ESCALATED (主回滚器失败→bootstrap接管)
 """
 
-
 from __future__ import annotations
 
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -55,7 +53,9 @@ def _git(args: list[str], cwd: Path | None = None, timeout: int = 15) -> subproc
     return subprocess.run(
         ["git"] + args,
         cwd=str(cwd or Path.cwd()),
-        capture_output=True, text=True, timeout=timeout,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
     )
 
 
@@ -122,6 +122,7 @@ def bootstrap_from_failure_log(failure_log_path: Path) -> int:
         return bootstrap_rollback()
 
     import json
+
     try:
         failures = json.loads(failure_log_path.read_text(encoding="utf-8"))
         count = failures.get("consecutive_failures", 0)
@@ -139,13 +140,11 @@ def bootstrap_from_failure_log(failure_log_path: Path) -> int:
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description="Rollback Bootstrap - zero-dependency rollback")
-    parser.add_argument("--project-root", type=Path, default=Path.cwd(),
-                        help="Project root directory")
-    parser.add_argument("--commit", type=str, default="",
-                        help="Target commit SHA to rollback to")
-    parser.add_argument("--from-failure-log", type=Path, default=None,
-                        help="Read failure log for escalated bootstrap")
+    parser.add_argument("--project-root", type=Path, default=Path.cwd(), help="Project root directory")
+    parser.add_argument("--commit", type=str, default="", help="Target commit SHA to rollback to")
+    parser.add_argument("--from-failure-log", type=Path, default=None, help="Read failure log for escalated bootstrap")
     args = parser.parse_args()
 
     if args.from_failure_log:

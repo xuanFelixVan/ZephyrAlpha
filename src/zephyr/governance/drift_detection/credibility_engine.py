@@ -26,12 +26,11 @@ module_id: MOD-INF-023
 告警可信度评分：credibility = base_score × (1-fp_rate) × precision × recency_factor。
 对标 blueprint.md §2.21 / TASK-INF-0022 / D-023-35。
 """
+
 from __future__ import annotations
 
-import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from dataclasses import dataclass
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -72,7 +71,7 @@ class CredibilityEngine:
         fp_count: int = 0,
         total_detections: int = 0,
         precision: float = 1.0,
-        last_detected_at: Optional[datetime] = None,
+        last_detected_at: datetime | None = None,
     ) -> CredibilityScore:
         base = self.PROVEN_DETECTOR_BASE if is_proven else self.NEW_DETECTOR_BASE
 
@@ -89,7 +88,7 @@ class CredibilityEngine:
 
         recency = 1.0
         if last_detected_at is not None:
-            age = datetime.now(timezone.utc).replace(tzinfo=None) - last_detected_at.replace(tzinfo=None)
+            age = datetime.now(UTC).replace(tzinfo=None) - last_detected_at.replace(tzinfo=None)
             if age.days > self.RECENCY_STALE_DAYS:
                 recency = self.RECENCY_FACTOR_STALE
 
@@ -117,10 +116,10 @@ class CredibilityEngine:
             credibility=credibility,
             modulation=modulation,
             configured_weight=owner_w,
-            computed_at=datetime.now(timezone.utc).isoformat(),
+            computed_at=datetime.now(UTC).isoformat(),
         )
         self._scores[detector_id] = score
         return score
 
-    def get_score(self, detector_id: str) -> Optional[CredibilityScore]:
+    def get_score(self, detector_id: str) -> CredibilityScore | None:
         return self._scores.get(detector_id)

@@ -96,16 +96,16 @@ from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 
 __all__ = [
-    "TriggerLevel",
-    "RiskLevel",
-    "FallbackMode",
-    "CoVeStepError",
-    "ModelCaller",
-    "ModelCallResult",
-    "HallucinationResult",
-    "BudgetState",
-    "HallucinationDetector",
     "KEYWORD_HALLU_RULES",
+    "BudgetState",
+    "CoVeStepError",
+    "FallbackMode",
+    "HallucinationDetector",
+    "HallucinationResult",
+    "ModelCallResult",
+    "ModelCaller",
+    "RiskLevel",
+    "TriggerLevel",
     "build_detector_with_defaults",
 ]
 

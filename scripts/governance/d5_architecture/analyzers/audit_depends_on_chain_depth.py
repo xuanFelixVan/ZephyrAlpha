@@ -30,7 +30,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXCLUDE_DIRS, REPO_ROOT, SCAN_EXTENSIONS_MD, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXCLUDE_DIRS, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
@@ -217,11 +217,11 @@ def main() -> None:
     if args.verbose:
         for vl in violations:
             print(
-                f'\n  [{vl['severity']}] 链路#{vl['chain_id']} — {vl['depth']}层 (上限{vl['max_allowed']})',
+                f"\n  [{vl['severity']}] 链路#{vl['chain_id']} — {vl['depth']}层 (上限{vl['max_allowed']})",
                 file=sys.stderr,
             )
-            print(f'    根文件: {vl['root_file']}', file=sys.stderr)
-            print(f'    链路: {vl['chain']}', file=sys.stderr)
+            print(f"    根文件: {vl['root_file']}", file=sys.stderr)
+            print(f"    链路: {vl['chain']}", file=sys.stderr)
     if violations:
         print(f"\n[DEP-CHAIN] FAIL {len(violations)} 条超标", file=sys.stderr)
     else:

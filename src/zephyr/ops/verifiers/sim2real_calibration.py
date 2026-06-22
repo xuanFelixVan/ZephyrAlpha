@@ -27,6 +27,7 @@ Risk: R56 — Simulated repair success rate diverges from real success rate.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class Sim2RealCalibration:
     sim_accuracy: float = 0.0

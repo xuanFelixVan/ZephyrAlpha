@@ -14,7 +14,6 @@
 CT-SCRIPT-GATE-001: 审计脚本执行完成后将 findings 按12维度聚合提交给 Gate Engine。
 """
 
-
 from __future__ import annotations
 
 import importlib

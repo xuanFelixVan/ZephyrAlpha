@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_external_health.py
 
-import pytest
 
 from zephyr.ops.detectors.external_health import (
     DependencyHealth,

@@ -54,4 +54,4 @@ class RiskValidatorProtocol(Protocol):
     ) -> list[ViolationDetail]: ...
 
 
-__all__ = ["ViolationDetail", "RiskValidatorProtocol"]
+__all__ = ["RiskValidatorProtocol", "ViolationDetail"]

@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-import asyncio
 import pytest
-
 
 sgw_mod = pytest.importorskip("zephyr.governance.default_security_gateway")
 scanner_mod = pytest.importorskip("zephyr.governance.artifact_scanner")

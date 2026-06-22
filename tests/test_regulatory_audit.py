@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_regulatory_audit.py
 
-import pytest
 
 from zephyr.ops.detectors.regulatory_audit import RegulatoryAudit
 

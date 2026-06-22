@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/verify_final_delivery.py | §11最终交付验证
 [MODULE] 无（独立脚本）
@@ -15,12 +14,13 @@
 - 设计态节点数 >= 1128
 - 规则表数据：gates/field_vocabularies/registries/hard_boundaries/business_streams/blueprint_links 各表 > 0
 """
-import sqlite3
+
 import os
-import sys
+import sqlite3
 
 DB = r"D:\ZephyrAlpha\data\databases\depgraph.db"
 GOV_DB = r"D:\ZephyrAlpha\data\databases\governance.db"
+
 
 def main():
     if not os.path.exists(DB):
@@ -43,8 +43,8 @@ def main():
         print(f"  ✅ PASS: 设计态节点数 {design_count} >= 1128")
     else:
         print(f"  ❌ FAIL: 设计态节点数 {design_count} < 1128")
-        print(f"     原因：MIG-5补缺步骤未执行，1012个缺失项未补入")
-        print(f"     修复：执行MIG-5 M5-2补缺步骤（--add-design-node）")
+        print("     原因：MIG-5补缺步骤未执行，1012个缺失项未补入")
+        print("     修复：执行MIG-5 M5-2补缺步骤（--add-design-node）")
         all_pass = False
     conn.close()
 
@@ -102,7 +102,7 @@ def main():
         print(f"  ❌ FAIL: 存在{r[0]}条悬空边")
         all_pass = False
     else:
-        print(f"  ✅ PASS: 无悬空边")
+        print("  ✅ PASS: 无悬空边")
 
     conn.close()
 

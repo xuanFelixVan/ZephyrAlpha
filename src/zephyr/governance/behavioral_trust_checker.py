@@ -23,7 +23,8 @@ from __future__ import annotations
 
 """行为信任检查器 — 行为漂移DIVERGED检测."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 
 @dataclass
 class TrustCheck:
@@ -33,6 +34,7 @@ class TrustCheck:
     original_hash: str = ""
     trusted: bool = False
     status: str = "TRUSTED"
+
 
 class BehavioralTrustChecker:
     """行为正确性检查."""

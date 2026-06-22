@@ -27,93 +27,39 @@ EnforcementModeCheckHandler — EnforcementModeCheckHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class EnforcementModeCheckHandler(CheckTypeHandler):
-
-
     name = "enforcement_mode_check"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        try:
+            from zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator import (
+                run_check as en2_check,
+            )
 
-                violations = []
+            result = en2_check()
 
+            if not result.passed:
+                for v in result.violations:
+                    violations.append({"message": v, "severity": check.severity})
 
-                try:
+        except Exception as exc:
+            violations.append({"message": f"EN-002 check failed: {exc}", "severity": "P2"})
 
-
-                    from zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator import run_check as en2_check
-
-
-                    result = en2_check()
-
-
-                    if not result.passed:
-
-
-                        for v in result.violations:
-
-
-                            violations.append({"message": v, "severity": check.severity})
-
-
-                except Exception as exc:
-
-
-                    violations.append({"message": f"EN-002 check failed: {exc}", "severity": "P2"})
-
-
-                return violations
-
-
+        return violations

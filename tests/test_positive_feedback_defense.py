@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_positive_feedback_defense.py
 
-import pytest
 
 from zephyr.ops.detectors.positive_feedback_defense import PositiveFeedbackDefense
 

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.last_resort_watchdog import LastResortWatchdog
 
 

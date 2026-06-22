@@ -2,7 +2,7 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: Scripts
 module_id: GOV-047
 
@@ -26,4 +26,4 @@ module_id: GOV-047
 
 ## 父级目录
 
-- 父级：[architecture-model](../index.md)
+- 父级：[architecture_model](../index.md)

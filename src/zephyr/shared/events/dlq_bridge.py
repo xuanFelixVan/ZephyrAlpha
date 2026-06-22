@@ -29,7 +29,8 @@ events are automatically persisted to DLQ.
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from zephyr.shared.events.dlq import DeadLetterQueue
 
@@ -53,6 +54,7 @@ def make_dlq_event_handler(dlq: DeadLetterQueue) -> Callable[[str, Any, Exceptio
             )
         except Exception as exc:
             _logger.error("DLQ event handler failed: event=%s error=%s", event_name, exc)
+
     return _handler
 
 

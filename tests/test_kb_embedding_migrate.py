@@ -12,15 +12,11 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from unittest.mock import MagicMock
-
 import pytest
 
 from zephyr.governance.kb.embedding_migrate import (
     EmbeddingMigrator,
     EmbeddingVersion,
-    MigrationCheckpoint,
     MigrationPlan,
     MigrationResult,
     MigrationStatus,

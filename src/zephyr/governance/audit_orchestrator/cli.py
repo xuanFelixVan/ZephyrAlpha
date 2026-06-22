@@ -88,6 +88,7 @@ def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any
     if module_name == "audit-trail":
         try:
             from zephyr.governance.integrity import IntegrityVerifier
+
             verifier = IntegrityVerifier()
             chain = verifier.verify_chain()
             result["status"] = "ok" if chain["status"] == "valid" else "fail"
@@ -102,6 +103,7 @@ def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any
     elif module_name == "semantic-auditor":
         try:
             from zephyr.governance.audit_trail.kb_gate import KBAuditGate
+
             gate = KBAuditGate()
             result["status"] = "ok"
             result["detail"] = {"kb_gate": "loaded"}
@@ -115,6 +117,7 @@ def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any
     elif module_name == "orphan-judge":
         try:
             from zephyr.security.access_control.orphan_judge.judge import OrphanJudge
+
             judge = OrphanJudge()
             if scope == "all":
                 sample_file = "src/zephyr/integration/zephyr/__init__.py"
@@ -144,6 +147,7 @@ def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any
     elif module_name == "red-blue-validator":
         try:
             from zephyr.security.adversarial_validation.validator import RedBlueValidator
+
             validator = RedBlueValidator()
             report = validator.run_adversarial_session(session_name="cli-orchestrator")
             result["status"] = "ok"
@@ -163,8 +167,10 @@ def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any
 
     elif module_name == "behavioral-auditor":
         try:
-            from zephyr.behavioral_audit.drift_engine import ScanLevel, scan
             import asyncio
+
+            from zephyr.behavioral_audit.drift_engine import ScanLevel, scan
+
             level_enum = ScanLevel[level.upper()]
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)

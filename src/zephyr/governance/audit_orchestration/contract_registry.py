@@ -35,7 +35,6 @@ ai_read_only_hint 四级：
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -1036,9 +1035,14 @@ class ContractRegistry:
             "unique_consumers": len(consumers),
             "by_hint": by_hint,
             "readiness_pct": round(
-                sum(1 for c in CONTRACTS.values()
+                sum(
+                    1
+                    for c in CONTRACTS.values()
                     if hasattr(c.ai_read_only_hint, "name")
-                    and c.ai_read_only_hint.name not in ("DO_NOT_CALL", "IMPL_REQUIRED"))
-                / max(total, 1) * 100, 1,
+                    and c.ai_read_only_hint.name not in ("DO_NOT_CALL", "IMPL_REQUIRED")
+                )
+                / max(total, 1)
+                * 100,
+                1,
             ),
         }

@@ -10,11 +10,8 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_db_query.py
 
-import pytest
 
-from zephyr.governance.persistence.base_repo import TaskNotFoundError
 from zephyr.governance.query import QueryMixin
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
 
 
 class TestQueryMixinImport:
@@ -61,16 +58,20 @@ class TestQueryMixinImport:
 class TestQueryMixinViaTaskRepo:
     def test_get_nonexistent_returns_none(self):
         import sys
+
         sys.path.insert(0, "src")
         from zephyr.governance.persistence.task_repo import TaskRepository
+
         repo = TaskRepository(enable_gate=False)
         result = repo.get("NONEXISTENT-99999")
         assert result is None
 
     def test_count_by_status(self):
         import sys
+
         sys.path.insert(0, "src")
         from zephyr.governance.persistence.task_repo import TaskRepository
+
         repo = TaskRepository(enable_gate=False)
         counts = repo.count_by_status()
         assert isinstance(counts, dict)

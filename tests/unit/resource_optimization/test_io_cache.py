@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 test_io_cache.py - FileCache unit tests
 ========================================
@@ -15,11 +16,8 @@ TASK-INF-0140 Phase 2 verification.
 
 
 import json
-import os
-import tempfile
 import time
 
-import yaml
 import pytest
 
 from zephyr.integration.shared_08.io.io_cache import FileCache

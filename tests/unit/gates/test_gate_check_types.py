@@ -7,6 +7,7 @@
 # [TESTS] —
 
 from __future__ import annotations
+
 """Test suite: gate check type system"""
 
 
@@ -240,7 +241,10 @@ class TestFieldPresenceHandler:
         task.directive = ""
         task.source_blueprint = ""
         violations = handler.run(
-            task, {"required_fields": ["directive", "source_blueprint"]}, check, Path("."),
+            task,
+            {"required_fields": ["directive", "source_blueprint"]},
+            check,
+            Path("."),
         )
         assert len(violations) == 2
 
@@ -252,11 +256,20 @@ class TestClassificationHandler:
         handler = handler_cls()
         check = _make_check_config(
             check_type="classification",
-            params={"field": "priority", "allowed_values": ["Priority.P0", "Priority.P1", "Priority.P2", "Priority.P3", "Priority.P4"]},
+            params={
+                "field": "priority",
+                "allowed_values": ["Priority.P0", "Priority.P1", "Priority.P2", "Priority.P3", "Priority.P4"],
+            },
         )
         task = _make_task(priority="P2")
         violations = handler.run(
-            task, {"field": "priority", "allowed_values": ["Priority.P0", "Priority.P1", "Priority.P2", "Priority.P3", "Priority.P4"]}, check, Path("."),
+            task,
+            {
+                "field": "priority",
+                "allowed_values": ["Priority.P0", "Priority.P1", "Priority.P2", "Priority.P3", "Priority.P4"],
+            },
+            check,
+            Path("."),
         )
         assert len(violations) == 0
 
@@ -270,7 +283,10 @@ class TestClassificationHandler:
         )
         task = _make_task(priority="P2")
         violations = handler.run(
-            task, {"field": "priority", "allowed_values": ["Priority.P0", "Priority.P1"]}, check, Path("."),
+            task,
+            {"field": "priority", "allowed_values": ["Priority.P0", "Priority.P1"]},
+            check,
+            Path("."),
         )
         assert len(violations) > 0
         assert any("priority" in v["message"] for v in violations)
@@ -291,7 +307,7 @@ class TestEncodingHandler:
         assert handler_cls is not None
         handler = handler_cls()
         good_file = tmp_path / "good.md"
-        good_file.write_bytes("Normal UTF-8 content\n".encode("utf-8"))
+        good_file.write_bytes(b"Normal UTF-8 content\n")
         check = _make_check_config(check_type="encoding")
         task = _make_task(deliverables=["good.md"])
         violations = handler.run(task, {}, check, tmp_path)

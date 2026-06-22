@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_external_validation_checkpoint.py
 
-import pytest
 
 from zephyr.ops.detectors.external_validation_checkpoint import (
     EscalationReason,

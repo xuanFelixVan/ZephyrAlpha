@@ -5,19 +5,17 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-import pytest
 
 from zephyr.governance.budget_enforcement import (
+    BudgetDimension,
     BudgetEngine,
-    BurnRateMonitor,
     BudgetTracker,
-    TrackerScope,
+    BurnRateMonitor,
     DegradationManager,
     ModelRouter,
-    TaskComplexity,
     TimeoutGuard,
     TimeoutLevel,
-    BudgetDimension,
+    TrackerScope,
 )
 
 
@@ -100,6 +98,7 @@ class TestDegradationManagerSmoke:
 class TestModelRouterSmoke:
     def test_route_free_for_simple(self):
         from zephyr.governance.model_router import TaskComplexity
+
         mr = ModelRouter()
         d = mr.route(complexity=TaskComplexity.SIMPLE)
         assert d.tier is not None

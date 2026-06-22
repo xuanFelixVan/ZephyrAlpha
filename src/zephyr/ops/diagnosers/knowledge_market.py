@@ -27,6 +27,7 @@ Risk: R126 — Knowledge silos cause repeated diagnosis failures.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class KnowledgeMarket:
     entries: dict[str, float] = field(default_factory=dict)

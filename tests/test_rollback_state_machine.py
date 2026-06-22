@@ -12,12 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.rollback_state_machine import (
-    RollbackStep,
     RollbackStateMachine,
-    StateMachineResult,
+    RollbackStep,
     StepStatus,
     StepType,
 )

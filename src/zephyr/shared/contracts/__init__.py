@@ -21,15 +21,13 @@ from zephyr.shared.contracts.core.enforcer import (
     enforce_input,
     enforce_output,
 )
-from zephyr.shared.contracts.errors import (
-    ContractViolationError as ContractErrViolationError,
-    DataQualityError,
-    FactorComputationError,
-)
-from zephyr.shared.contracts.portfolio.money import (
-    Money,
-    MoneyCurrencyMismatchError,
-    MoneyPrecisionError,
+from zephyr.shared.contracts.core.factories import (
+    make_factor_signal,
+    make_order,
+    make_risk_dashboard_snapshot,
+    make_risk_limits,
+    make_risk_metrics_report,
+    make_synthesized_signal,
 )
 from zephyr.shared.contracts.core.registry import (
     ContractMeta,
@@ -47,6 +45,8 @@ from zephyr.shared.contracts.core.runtime_plane_tag import (
     WARM_PATH_LATENCY_BUDGET_MS,
     RuntimePlane,
 )
+from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
+from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
 from zephyr.shared.contracts.core.timestamp import (
     NaiveDatetimeError,
     Timestamp,
@@ -54,41 +54,16 @@ from zephyr.shared.contracts.core.timestamp import (
     utcnow,
 )
 from zephyr.shared.contracts.core.trace_context import TraceContext
-from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
-from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
-from zephyr.shared.contracts.experiment.experiment_result import ExperimentResult
-from zephyr.shared.contracts.portfolio.strategy_lifecycle_event import StrategyLifecycleEvent
-from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
-from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
-from zephyr.shared.contracts.core.factories import (
-    make_factor_signal,
-    make_order,
-    make_risk_dashboard_snapshot,
-    make_risk_limits,
-    make_risk_metrics_report,
-    make_synthesized_signal,
+from zephyr.shared.contracts.errors import (
+    ContractViolationError as ContractErrViolationError,
 )
-from zephyr.shared.contracts.llm_gateway_protocol import (
-    LLMGatewayProtocol,
-    LLMResponse,
-    ProviderConfig,
+from zephyr.shared.contracts.errors import (
+    DataQualityError,
+    FactorComputationError,
 )
-from zephyr.shared.contracts.skill_protocol import (
-    SkillLoaderProtocol,
-    SkillRouterProtocol,
-)
-from zephyr.shared.contracts.task_repository_protocol import (
-    TaskRepositoryProtocol,
-)
-from zephyr.shared.contracts.orchestration_protocol import (
-    BatchOrchestratorProtocol,
-    ChaosEngineProtocol,
-    ShadowCanaryProtocol,
-)
-
-# DM-367: re-export module names for audit registration
-from . import llm_gateway_protocol, orchestration_protocol, skill_protocol  # noqa: F401
 from zephyr.shared.contracts.escalation import BudgetAlert, BudgetSeverity, BudgetType
+from zephyr.shared.contracts.experiment.experiment_result import ExperimentResult
+from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
 from zephyr.shared.contracts.identity import (
     AgentIdentity,
     AgentMaturity,
@@ -98,6 +73,33 @@ from zephyr.shared.contracts.identity import (
     IDESource,
     MaturityLevel,
 )
+from zephyr.shared.contracts.llm_gateway_protocol import (
+    LLMGatewayProtocol,
+    LLMResponse,
+    ProviderConfig,
+)
+from zephyr.shared.contracts.orchestration_protocol import (
+    BatchOrchestratorProtocol,
+    ChaosEngineProtocol,
+    ShadowCanaryProtocol,
+)
+from zephyr.shared.contracts.portfolio.money import (
+    Money,
+    MoneyCurrencyMismatchError,
+    MoneyPrecisionError,
+)
+from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.portfolio.strategy_lifecycle_event import StrategyLifecycleEvent
+from zephyr.shared.contracts.skill_protocol import (
+    SkillLoaderProtocol,
+    SkillRouterProtocol,
+)
+from zephyr.shared.contracts.task_repository_protocol import (
+    TaskRepositoryProtocol,
+)
+
+# DM-367: re-export module names for audit registration
+from . import llm_gateway_protocol, orchestration_protocol, skill_protocol
 
 # Lazy imports for trading-domain symbols (upward dependency from L0 shared → L3 trading)
 _TRADING_SYMBOLS = {
@@ -152,11 +154,13 @@ def __getattr__(name):
     if name in _BACKPRESSURE_SYMBOLS:
         from zephyr.shared.contracts.backpressure import (
             BackpressurePause,
-            BackpressureThrottle,
             BackpressureResume,
+            BackpressureThrottle,
         )
+
         return locals()[name]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     "NormalizedMarketData",

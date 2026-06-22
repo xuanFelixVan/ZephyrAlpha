@@ -19,7 +19,7 @@ drift_entries:
         fingerprint: "sha256:d4e5f6..."
         params: "(str, Optional[Dict[str, Any]])"
         return_type: "Optional[Config]"             # ← 类型漂移！
-      - at: "2026-05-01"  
+      - at: "2026-05-01"
         fingerprint: "sha256:g7h8i9..."
         params: "(str, dict[str, Any] | None)"
         return_type: "Config | None"                # ← 再次漂移！

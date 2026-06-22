@@ -15,9 +15,6 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
-import tempfile
-
-import pytest
 
 from zephyr.behavioral_audit.dashboard import Dashboard, DashboardData
 
@@ -61,9 +58,7 @@ class TestDashboard:
         os.makedirs(audit_dir, exist_ok=True)
         db_path = os.path.join(audit_dir, "drift_events.db")
         conn = sqlite3.connect(db_path)
-        conn.execute(
-            "CREATE TABLE drift_events (module_id TEXT, state TEXT, created_at TEXT)"
-        )
+        conn.execute("CREATE TABLE drift_events (module_id TEXT, state TEXT, created_at TEXT)")
         conn.execute("INSERT INTO drift_events VALUES ('MOD-A', 'VERIFIED', '2025-01-01')")
         conn.execute("INSERT INTO drift_events VALUES ('MOD-A', 'OPEN', '2025-01-02')")
         conn.execute("INSERT INTO drift_events VALUES ('MOD-B', 'VERIFIED', '2025-01-01')")
@@ -86,9 +81,7 @@ class TestDashboard:
         os.makedirs(audit_dir, exist_ok=True)
         db_path = os.path.join(audit_dir, "drift_events.db")
         conn = sqlite3.connect(db_path)
-        conn.execute(
-            "CREATE TABLE drift_events (module_id TEXT, state TEXT, created_at TEXT)"
-        )
+        conn.execute("CREATE TABLE drift_events (module_id TEXT, state TEXT, created_at TEXT)")
         conn.execute("INSERT INTO drift_events VALUES ('MOD-A', 'OPEN', '2025-01-01')")
         conn.execute("INSERT INTO drift_events VALUES ('MOD-A', 'OPEN', '2025-01-01')")
         conn.execute("INSERT INTO drift_events VALUES ('MOD-B', 'OPEN', '2025-01-02')")

@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_evaluator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_evaluator
+# [MODULE] zephyr.autonomy_core.skill_evaluator
 
 # [INVARIANTS] none
 
@@ -35,11 +35,10 @@ Skill 质量评估器 — 多维度输出质量评分
   5. TokenEfficiency: 信息量/Token 比率
 """
 
-
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class SkillEvaluator:
@@ -60,9 +59,9 @@ class SkillEvaluator:
     ]
 
     @classmethod
-    def _evaluate_structure(cls, body: str, l1_data: Dict[str, Any]) -> Tuple[float, List[str]]:
+    def _evaluate_structure(cls, body: str, l1_data: dict[str, Any]) -> Tuple[float, list[str]]:
         score = 0.0
-        issues: List[str] = []
+        issues: list[str] = []
 
         if l1_data.get("skill_id") and l1_data.get("name"):
             score += 20
@@ -96,7 +95,7 @@ class SkillEvaluator:
         return score, issues
 
     @classmethod
-    def _evaluate_density(cls, body: str) -> Tuple[float, Dict[str, Any]]:
+    def _evaluate_density(cls, body: str) -> Tuple[float, dict[str, Any]]:
         lines = [l for l in body.split("\n") if l.strip()]
         if len(lines) < 5:
             return 0.0, {"line_count": len(lines), "detail": "too_short"}
@@ -120,7 +119,7 @@ class SkillEvaluator:
         }
 
     @classmethod
-    def _evaluate_constraints(cls, body: str) -> Tuple[float, List[str]]:
+    def _evaluate_constraints(cls, body: str) -> Tuple[float, list[str]]:
         constraint_categories = {
             "security": ["安全", "security", "injection", "注入", "sandbox"],
             "performance": ["性能", "performance", "latency", "延迟", "budget"],
@@ -130,7 +129,7 @@ class SkillEvaluator:
         }
 
         covered = 0
-        missing: List[str] = []
+        missing: list[str] = []
         body_lower = body.lower()
 
         for cat, keywords in constraint_categories.items():
@@ -143,16 +142,15 @@ class SkillEvaluator:
         return score, missing
 
     @classmethod
-    def _evaluate_freshness(cls, freshness_data: Optional[Dict[str, Any]] = None) -> Tuple[float, Dict[str, Any]]:
+    def _evaluate_freshness(cls, freshness_data: dict[str, Any] | None = None) -> Tuple[float, dict[str, Any]]:
         if freshness_data is None:
-            from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
             return 50.0, {"detail": "no_freshness_data"}
 
         score = freshness_data.get("freshness_score", 50.0)
         return score, freshness_data
 
     @classmethod
-    def _evaluate_token_efficiency(cls, body: str, token_count: int) -> Tuple[float, Dict[str, Any]]:
+    def _evaluate_token_efficiency(cls, body: str, token_count: int) -> Tuple[float, dict[str, Any]]:
         if token_count == 0:
             return 0.0, {"detail": "zero_tokens"}
 
@@ -170,10 +168,10 @@ class SkillEvaluator:
         }
 
     @classmethod
-    def evaluate(cls, skill_id: str) -> Dict[str, Any]:
+    def evaluate(cls, skill_id: str) -> dict[str, Any]:
         try:
-            from zephyr.autonomy_core.skill_loader import SkillLoader
             from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
+            from zephyr.autonomy_core.skill_loader import SkillLoader
 
             loader = SkillLoader()
             loaded = loader.progressive_load(skill_id)
@@ -204,7 +202,11 @@ class SkillEvaluator:
                 + token_score * cls.TOKEN_EFF_WEIGHT
             )
 
-            grade = "A" if overall >= 90 else ("B" if overall >= 75 else ("C" if overall >= 60 else ("D" if overall >= 40 else "F")))
+            grade = (
+                "A"
+                if overall >= 90
+                else ("B" if overall >= 75 else ("C" if overall >= 60 else ("D" if overall >= 40 else "F")))
+            )
 
             return {
                 "skill_id": skill_id,
@@ -217,9 +219,7 @@ class SkillEvaluator:
                     "freshness": {"score": round(fresh_score, 1), **fresh_detail},
                     "token_efficiency": {"score": round(token_score, 1), **token_detail},
                 },
-                "issues": struct_issues + [
-                    f"missing_constraint_category:{c}" for c in constraint_missing
-                ],
+                "issues": struct_issues + [f"missing_constraint_category:{c}" for c in constraint_missing],
             }
 
         except ImportError:

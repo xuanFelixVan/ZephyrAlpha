@@ -24,7 +24,6 @@ import sqlite3
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
-
 from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol  # noqa: F401 — re-export
 
 
@@ -33,44 +32,36 @@ class DbConnectionProvider(Protocol):
     """数据库连接提供者 Protocol — D-INFRA 通过此接口获取 DB 连接和路径。"""
 
     @property
-    def db_path(self) -> Path:
-        ...
+    def db_path(self) -> Path: ...
 
-    def get_connection(self) -> sqlite3.Connection:
-        ...
+    def get_connection(self) -> sqlite3.Connection: ...
 
 
 @runtime_checkable
 class VectorMemoryProtocol(Protocol):
     """向量内存服务 Protocol — D-INFRA MCP 服务器通过此接口访问 VMS。"""
 
-    def search(self, collection: str, query_text: str, k: int = 5) -> list[dict[str, Any]]:
-        ...
+    def search(self, collection: str, query_text: str, k: int = 5) -> list[dict[str, Any]]: ...
 
-    def add(self, collection: str, content: str, metadata: dict[str, Any] | None = None) -> str:
-        ...
+    def add(self, collection: str, content: str, metadata: dict[str, Any] | None = None) -> str: ...
 
-    def init_all_collections(self) -> None:
-        ...
+    def init_all_collections(self) -> None: ...
 
-    def start(self) -> None:
-        ...
+    def start(self) -> None: ...
 
 
 @runtime_checkable
 class ChromaDbProvider(Protocol):
     """ChromaDB 客户端提供者 Protocol。"""
 
-    def get_client(self) -> Any:
-        ...
+    def get_client(self) -> Any: ...
 
 
 @runtime_checkable
 class RerankerProtocol(Protocol):
     """重排序器 Protocol。"""
 
-    def rerank(self, query: str, documents: list[str]) -> list[Any]:
-        ...
+    def rerank(self, query: str, documents: list[str]) -> list[Any]: ...
 
 
 @runtime_checkable
@@ -78,5 +69,4 @@ class CollectionSchemaProvider(Protocol):
     """向量集合 Schema 提供者 Protocol。"""
 
     @property
-    def schemas(self) -> dict[str, dict[str, Any]]:
-        ...
+    def schemas(self) -> dict[str, dict[str, Any]]: ...

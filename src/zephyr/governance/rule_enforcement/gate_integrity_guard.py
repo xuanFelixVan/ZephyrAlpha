@@ -27,11 +27,12 @@ import hashlib
 import logging
 import os
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 logger = logging.getLogger(__name__)
 
 _TRUST_ROOT = os.environ.get("ZEPHYR_TRUST_ROOT", "")
+
 
 @dataclass
 class IntegrityReport:
@@ -39,7 +40,8 @@ class IntegrityReport:
     sha256: str
     expected_sha256: str | None
     valid: bool
-    checked_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    checked_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+
 
 class GateIntegrityGuard:
     def __init__(self, manifest_path: str | None = None) -> None:
@@ -97,10 +99,13 @@ class GateIntegrityGuard:
     def all_valid(self) -> bool:
         return all(r.valid for r in self._reports)
 
+
 __all__ = ["GateIntegrityGuard", "IntegrityReport"]
+
 
 def main() -> None:
     pass
+
 
 if __name__ == "__main__":
     main()

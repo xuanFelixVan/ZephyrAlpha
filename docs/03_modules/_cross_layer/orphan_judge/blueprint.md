@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-029
-submodule_path: src/zephyr/orphan-judge
+submodule_path: src/zephyr/security/access_control/orphan_judge
 title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"
 doc_type: blueprint
 status: Active
@@ -27,7 +27,7 @@ scope: global
 stability: evolving
 verifiability: hybrid
 construction_progress: scaffold
-actual_disk_path: "src/zephyr/orphan-judge/"
+actual_disk_path: "src/zephyr/security/access_control/orphan_judge/"
 summary: "孤儿判定子系统——五层分级价值判定引擎，对孤儿文件执行注册检查→引用图→功能重复→独特价值→独立价值判定，输出六种处置建议。"
 tags: [orphan-judgment, asset-lifecycle, dedup, value-assessment, extract-merge, decision-tree, confidence-scoring, reference-graph, swid-tag, auto-governance, MOD-INF-029]
 priority: P1
@@ -1338,14 +1338,14 @@ STEP 3: 拆分后验证
 |---|------|-----------|------------|----------|
 | 1 | 中央注册表 | — | `D:\ZephyrAlpha\docs\registry_of_registries.yaml` | 知道项目有什么 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 知道文件该放哪 |
-| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | 知道怎么治理 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | 知道怎么治理 |
 | 4 | 项目规则 | — | `D:\ZephyrAlpha\.trae\rules\project_rules.md` | RULE-ZERO~NINE |
 | 5 | 模块注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 知道有哪些模块 |
 | 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 知道有哪些蓝图 |
 | 7 | 脚本清单 | — | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | 知道有哪些脚本 |
 | 8 | 跨模块依赖 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 知道依赖关系 |
-| 9 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则 |
-| 10 | AI自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI操作权限 |
+| 9 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
+| 10 | AI自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI操作权限 |
 
 ---
 

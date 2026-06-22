@@ -26,6 +26,7 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+
 class SymbolIndex:
     """全局符号索引."""
 
@@ -37,7 +38,7 @@ class SymbolIndex:
     def index_file(self, file_path: str | Path) -> None:
         """索引单个文件."""
         path = Path(file_path)
-        if not path.suffix == ".py":
+        if path.suffix != ".py":
             return
         try:
             source = path.read_text(encoding="utf-8")

@@ -26,15 +26,13 @@ module_id: MOD-INF-023
 git diff 驱动的增量扫描器，变更影响范围计算与检测器匹配。
 对标 blueprint.md §2.4（增量扫描与性能 SLO）。
 """
+
 from __future__ import annotations
 
 import hashlib
-import json
 import os
 import subprocess
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -70,8 +68,7 @@ class DetectorFileMapping:
 
 
 class IncrementalScanner:
-
-    def __init__(self, project_root: Optional[str] = None) -> None:
+    def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -82,7 +79,8 @@ class IncrementalScanner:
         try:
             result = subprocess.run(
                 ["git", "diff", base_ref, "--name-status"],
-                capture_output=True, text=True,
+                capture_output=True,
+                text=True,
                 cwd=self._project_root,
                 timeout=10,
             )
@@ -101,7 +99,7 @@ class IncrementalScanner:
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return []
 
-    def compute_impact(self, changed_files: Optional[list[str]] = None) -> ChangeSet:
+    def compute_impact(self, changed_files: list[str] | None = None) -> ChangeSet:
         changes = self.get_changed_files()
         if changed_files:
             changes = [c for c in changes if c.path in changed_files]
@@ -114,18 +112,12 @@ class IncrementalScanner:
 
         file_paths = [c.path for c in changes]
         change_set.affected_detectors = self._mapping.find_detectors(file_paths)
-        change_set.affected_modules = list(set(
-            self._extract_module(c.path) for c in changes
-        ))
+        change_set.affected_modules = list(set(self._extract_module(c.path) for c in changes))
 
         return change_set
 
     def _extract_module(self, filepath: str) -> str:
-        if filepath.startswith("src/zephyr/"):
-            parts = filepath.split("/")
-            if len(parts) >= 3:
-                return parts[2]
-        elif filepath.startswith("docs/03_modules/"):
+        if filepath.startswith("src/zephyr/") or filepath.startswith("docs/03_modules/"):
             parts = filepath.split("/")
             if len(parts) >= 3:
                 return parts[2]

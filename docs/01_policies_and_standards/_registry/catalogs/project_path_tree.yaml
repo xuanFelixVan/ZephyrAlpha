@@ -14340,14 +14340,14 @@ tree:
         - index.md
         catalogs/:
           __files__:
-          - ai-autonomy-authority-registry.md
+          - ai_autonomy_authority_registry.yaml
           - ai-risk-registry.md
           - ai-session-registry.md
           - cross-module-dependency-registry.yaml
           - declarative-contract-tracker-registry.md
           - directory-registry.md
           - document-metadataindex.yaml
-          - frontier-llm-benchmark-ranking.md
+          - frontier_llm_benchmark_ranking.yaml
           - frontmatter-field-registry.md
           - functional-domain-registry.yaml
           - gate-registry.md
@@ -14359,7 +14359,7 @@ tree:
           - registry-masterindex.yaml
           - registry_of_registries.yaml
           - rule-catalog-registry.yaml
-          - rule-registry.md
+          - _index.yaml
           - script-health-registry.md
           - task-card-meta-registry.md
           __state__: operational
@@ -14524,7 +14524,7 @@ tree:
         - index.md
         ai/:
           __files__:
-          - ai-autonomy-authority-registry.md
+          - ai_autonomy_authority_registry.yaml
           - ai-hallucination-detection-rules.md
           - ai-hallucination-self-check-policy.md
           - dual-editor-collaboration-policy.md
@@ -14626,19 +14626,19 @@ tree:
         __target_path__: null
       meta/:
         __files__:
-        - behavior-boundaries-standard.md
-        - blueprint-architecture-standard.md
-        - document-structure-standard.md
-        - glossary-glossary.md
-        - governance-methodology-standard.md
-        - governance-metrics-standard.md
+        - behavior_boundaries_standard.yaml
+        - blueprint_architecture_standard.yaml
+        - document_structure_standard.yaml
+        - _registry/vocabularies/glossary.yaml
+        - governance_methodology_standard.yaml
+        - governance_metrics_standard.yaml
         - index.md
         - meta-standard-constitution-standard.md
-        - metadata-registry.md
-        - rule-classification-and-arbitration-standard.md
-        - rule-lifecycle-and-change-standard.md
-        - rule-verification-standard.md
-        - terminology-mapping-reference.md
+        - metadata_registry.yaml
+        - rule_classification_and_arbitration_standard.yaml
+        - rule_lifecycle_and_change_standard.yaml
+        - rule_verification_standard.yaml
+        - _registry/vocabularies/terminology_mapping.yaml
         __state__: operational
         __domain_id__: ''
         __subdomain_id__: ''

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-04BIS-RUNTIME-PLANES
 title: Target Architecture — Runtime Planes (Orthogonal View) / 目标架构：运行平面正交视图
 doc_type: architecture_view

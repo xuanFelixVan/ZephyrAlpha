@@ -98,6 +98,7 @@ class TestValidationLayer:
     def test_trigger_security_regression(self):
         layer = ValidationLayer()
         from unittest.mock import MagicMock
+
         gateway = MagicMock()
         result = layer.trigger_security_regression(RegressionType.WEEKLY, gateway=gateway)
         assert result.total_scenarios == 10
@@ -108,6 +109,7 @@ class TestValidationLayer:
     def test_auto_trigger_initial(self):
         layer = ValidationLayer()
         from unittest.mock import MagicMock
+
         gateway = MagicMock()
         results = layer.auto_trigger_if_due(gateway=gateway)
         assert len(results) >= 2
@@ -118,4 +120,5 @@ class TestValidationLayer:
         ctx = type("ctx", (), {"metadata": {"coverage_pct": 50.0}})()
         result = await layer.evaluate(ctx)
         from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityDecision
+
         assert result.decision == SecurityDecision.DENY

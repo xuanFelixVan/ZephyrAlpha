@@ -27,8 +27,8 @@ Risk: R113 — Gradual trend growth triggers anomaly on otherwise healthy metric
 
 from dataclasses import dataclass
 
+
 @dataclass
 class TrendCycleSeparator:
-
     def separate(self, time_series: list[float]) -> tuple[list[float], list[float]]:
         return ([], [])

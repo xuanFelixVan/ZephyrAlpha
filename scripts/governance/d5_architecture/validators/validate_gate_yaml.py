@@ -1,7 +1,10 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_gate_yaml.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 # Gate Configuration Drift Detection — YAML ↔ Code 交叉校验
 # ==========================================================
@@ -16,7 +19,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 __manifest__ = """
 args: []
 description: 门禁 YAML 配置漂移检测——YAML 与 gate_engine.py 代码交叉校验

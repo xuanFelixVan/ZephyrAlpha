@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-077
 title: 1.1 维度清单
 category: documentation

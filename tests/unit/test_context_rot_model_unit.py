@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for context_rot_model.py — beta a
 ==============================================
@@ -14,6 +15,7 @@ Minimum: 12 tests
 
 
 import pytest
+
 from zephyr.autonomy_core.context_rot_model import (
     ContextRotModel,
 )

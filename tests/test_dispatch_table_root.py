@@ -11,22 +11,22 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.dispatch_table import (
-        DISPATCH_TABLE,
         SystemDispatch,
-        lookup_ct,
-        get_dispatch,
+        cold_start_reading,
         get_ct_contracts,
+        get_dispatch,
+        get_reading_depth,
         get_schemas,
         get_token_budget,
-        cold_start_reading,
         list_all_systems,
-        get_reading_depth,
+        lookup_ct,
     )
 except Exception as exc:
     pytest.skip(f"无法导入 dispatch_table: {exc}", allow_module_level=True)

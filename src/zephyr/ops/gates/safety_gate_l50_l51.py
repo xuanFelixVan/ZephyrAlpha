@@ -26,11 +26,10 @@ L52-L53: run-time integrity, boot-time attestation
 L54-L55: end-to-end validation, final integrity gate
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL50L55:
-
     def __init__(self):
         self.coherence_score: float = 1.0
         self.runtime_integrity: bool = True

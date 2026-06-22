@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.shared.compensation.saga_compensator import (
     SagaCompensator,
     SagaContext,
@@ -84,8 +82,12 @@ class TestSagaCompensator:
         comp = SagaCompensator()
         action_log = []
         steps = [
-            SagaStep(step_id="s1", action=lambda: action_log.append("s1"), compensation=lambda: action_log.append("c1")),
-            SagaStep(step_id="s2", action=lambda: action_log.append("s2"), compensation=lambda: action_log.append("c2")),
+            SagaStep(
+                step_id="s1", action=lambda: action_log.append("s1"), compensation=lambda: action_log.append("c1")
+            ),
+            SagaStep(
+                step_id="s2", action=lambda: action_log.append("s2"), compensation=lambda: action_log.append("c2")
+            ),
         ]
         comp.create_saga("saga-1", steps)
         success, ctx = comp.execute("saga-1")
@@ -102,7 +104,9 @@ class TestSagaCompensator:
             raise RuntimeError("boom")
 
         steps = [
-            SagaStep(step_id="s1", action=lambda: action_log.append("s1"), compensation=lambda: action_log.append("c1")),
+            SagaStep(
+                step_id="s1", action=lambda: action_log.append("s1"), compensation=lambda: action_log.append("c1")
+            ),
             SagaStep(step_id="s2", action=failing_action, compensation=lambda: action_log.append("c2")),
         ]
         comp.create_saga("saga-1", steps)
@@ -123,8 +127,12 @@ class TestSagaCompensator:
         comp = SagaCompensator()
         action_log = []
         steps = [
-            SagaStep(step_id="s1", action=lambda: action_log.append("s1"), compensation=lambda: action_log.append("c1")),
-            SagaStep(step_id="s2", action=lambda: action_log.append("s2"), compensation=lambda: action_log.append("c2")),
+            SagaStep(
+                step_id="s1", action=lambda: action_log.append("s1"), compensation=lambda: action_log.append("c1")
+            ),
+            SagaStep(
+                step_id="s2", action=lambda: action_log.append("s2"), compensation=lambda: action_log.append("c2")
+            ),
         ]
         comp.create_saga("saga-1", steps)
         comp.execute("saga-1")

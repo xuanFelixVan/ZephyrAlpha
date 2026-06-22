@@ -26,5 +26,4 @@ logging.py —— Re-export wrapper → canonical: zephyr.infrastructure.shared_
 修改日志逻辑请编辑 observability/logging.py，不要编辑本文件。
 """
 
-
-from zephyr.shared.shared_services.observability_02.logging import *  # noqa: F401, F403
+from zephyr.shared.shared_services.observability_02.logging import *  # noqa: F403

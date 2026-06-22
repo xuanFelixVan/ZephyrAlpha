@@ -20,11 +20,12 @@
 # [TESTS] pytest tests/test_utils_pagination.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.pagination import (
-    OffsetPagination,
-    CursorPagination,
-    Page,
     CursorPage,
+    CursorPagination,
+    OffsetPagination,
+    Page,
     paginate,
     paginate_cursor,
 )
@@ -179,7 +180,9 @@ class TestPaginateCursor:
     def test_with_next_cursor(self):
         items = [1, 2]
         p = paginate_cursor(
-            items, total=10, pagination=CursorPagination(cursor="abc", limit=10),
+            items,
+            total=10,
+            pagination=CursorPagination(cursor="abc", limit=10),
             next_cursor="def",
         )
         assert p.next_cursor == "def"

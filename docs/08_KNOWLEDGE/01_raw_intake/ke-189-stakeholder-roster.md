@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-189
 title: 2.1 Stakeholder Roster / 利益相关者清单
 category: documentation

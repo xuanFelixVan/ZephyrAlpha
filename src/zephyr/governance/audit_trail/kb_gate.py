@@ -41,12 +41,13 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.governance.audit_trail.models import AuditEventType
-
 _logger = logging.getLogger(__name__)
 
 _POISONING_INDICATORS: list[re.Pattern[str]] = [
-    re.compile(r"(ignore|disregard|override|bypass)\s+(all|previous|above|prior)\s*(instructions|rules|guidelines)", re.IGNORECASE),
+    re.compile(
+        r"(ignore|disregard|override|bypass)\s+(all|previous|above|prior)\s*(instructions|rules|guidelines)",
+        re.IGNORECASE,
+    ),
     re.compile(r"(you\s+are\s+now|act\s+as|pretend\s+to\s+be)\s+a?\s*(system|admin|root|superuser)", re.IGNORECASE),
     re.compile(r"(delete|remove|drop|truncate)\s+(all|every|entire)\s*(file|record|entry|knowledge)", re.IGNORECASE),
     re.compile(r"(inject|insert|plant)\s*(malicious|harmful|backdoor|payload)", re.IGNORECASE),
@@ -95,7 +96,7 @@ class KBAuditGate:
         reasons: list[str] = []
         risk_score = 0.0
 
-        if trust-score < self._min_trust_score:
+        if trust - score < self._min_trust_score:
             reasons.append(f"Trust score {trust_score:.2f} below minimum {self._min_trust_score:.2f}")
             risk_score += 0.4
 
@@ -122,7 +123,7 @@ class KBAuditGate:
         result = KBWriteCheckResult(
             allowed=allowed,
             agent_id=agent_id,
-            trust_score=trust-score,
+            trust_score=trust - score,
             reasons=reasons,
             risk_score=round(min(1.0, risk_score), 4),
             checked_at=now,

@@ -85,16 +85,18 @@ class TestDetectConflicts:
         assert reports == []
 
     def test_single_agent_no_conflict(self, detector: CrossAgentConflictDetector):
-        with patch.object(detector, "_get_all_uncommitted_files", return_value=["file1.py"]), \
-             patch.object(detector, "_get_most_recent_author", return_value="agent-a"):
+        with (
+            patch.object(detector, "_get_all_uncommitted_files", return_value=["file1.py"]),
+            patch.object(detector, "_get_most_recent_author", return_value="agent-a"),
+        ):
             reports = detector.detect_conflicts()
         assert reports == []
 
     def test_two_agents_same_file_conflict(self, detector: CrossAgentConflictDetector):
-        with patch.object(detector, "_get_all_uncommitted_files",
-                          return_value=["file1.py", "file1.py"]), \
-             patch.object(detector, "_get_most_recent_author",
-                          side_effect=["agent-a", "agent-b"]):
+        with (
+            patch.object(detector, "_get_all_uncommitted_files", return_value=["file1.py", "file1.py"]),
+            patch.object(detector, "_get_most_recent_author", side_effect=["agent-a", "agent-b"]),
+        ):
             reports = detector.detect_conflicts()
         assert len(reports) >= 1
         assert reports[0].has_conflict is True
@@ -109,9 +111,10 @@ class TestDetectConflicts:
         def mock_author(f):
             return "agent-a" if f == "file1.py" else "agent-b"
 
-        with patch.object(detector, "_get_all_uncommitted_files",
-                          return_value=["file1.py", "file2.py"]), \
-             patch.object(detector, "_get_most_recent_author", side_effect=mock_author):
+        with (
+            patch.object(detector, "_get_all_uncommitted_files", return_value=["file1.py", "file2.py"]),
+            patch.object(detector, "_get_most_recent_author", side_effect=mock_author),
+        ):
             reports = detector.detect_conflicts()
         assert reports == []
 
@@ -119,9 +122,10 @@ class TestDetectConflicts:
         def mock_author(f):
             return "agent-a" if f == "shared.py" else "agent-b"
 
-        with patch.object(detector, "_get_all_uncommitted_files",
-                          return_value=["shared.py", "shared.py"]), \
-             patch.object(detector, "_get_most_recent_author", side_effect=mock_author):
+        with (
+            patch.object(detector, "_get_all_uncommitted_files", return_value=["shared.py", "shared.py"]),
+            patch.object(detector, "_get_most_recent_author", side_effect=mock_author),
+        ):
             reports = detector.detect_conflicts()
         if reports:
             assert len(reports[0].timestamp_utc) > 0

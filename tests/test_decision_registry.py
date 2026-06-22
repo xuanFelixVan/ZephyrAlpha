@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.decision_registry import DecisionRegistry, DecisionRecord
+    from zephyr.security.access_control.decision_registry import DecisionRecord, DecisionRegistry
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as e:
@@ -26,7 +28,6 @@ except Exception as e:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestDecisionRecord:
-
     def test_record_fields(self):
         r = DecisionRecord(
             decision_id="DEC-001",
@@ -58,7 +59,6 @@ class TestDecisionRecord:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestDecisionRegistry:
-
     def test_log_creates_record(self):
         reg = DecisionRegistry()
         rec = reg.log(agent_id="a1", action="write", resource="f1", result="ALLOWED")

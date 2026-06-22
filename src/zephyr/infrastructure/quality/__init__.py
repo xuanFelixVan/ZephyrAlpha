@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.quality — auto-generated package init."""
+
 from . import quality_monitor
 
-__all__ = ['quality_monitor']
-
+__all__ = ["quality_monitor"]

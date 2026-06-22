@@ -9,8 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.temporal_drift_tracker import TemporalDriftTracker
+
 
 class TestTemporalDriftTracker:
     def test_instantiation(self):

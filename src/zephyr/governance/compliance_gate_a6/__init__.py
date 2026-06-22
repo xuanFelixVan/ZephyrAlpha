@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """L10 — Compliance Concrete Implementations
 
 Phase C 具体实现包。
@@ -18,11 +18,11 @@ Phase C 具体实现包。
 """
 
 # MIGRATED: from zephyr.governance.implementations.default_security_gateway import (  # removed by TC-7-2
-    # DefaultSecurityGateway,  # removed by TC-7-2
+# DefaultSecurityGateway,  # removed by TC-7-2
 # )  # removed by TC-7-2
-# 
+#
 # __all__ = ['DefaultSecurityGateway', 'default_security_gateway']
-# 
+#
 
 __all__ = [
     "default_security_gateway",

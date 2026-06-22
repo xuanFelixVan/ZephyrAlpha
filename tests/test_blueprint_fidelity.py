@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.blueprint_fidelity import BlueprintFidelity, FidelityCheck
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

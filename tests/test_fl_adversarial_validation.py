@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_adversarial_validation.py
 
-import pytest
 from zephyr.governance.rule_enforcement.adversarial_validation import AdversarialValidation
 
 

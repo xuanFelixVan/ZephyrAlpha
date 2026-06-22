@@ -29,11 +29,11 @@ Blueprint-Code Sync — 蓝图-代码索引同步验证。
     任务卡 TASK-INF-0111 (Part 2/2)
 """
 
-import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class SyncEntry:
@@ -41,6 +41,7 @@ class SyncEntry:
     code_path: str
     status: str
     last_synced: str = ""
+
 
 @dataclass
 class SyncReport:
@@ -51,8 +52,8 @@ class SyncReport:
     entries: list[SyncEntry]
     timestamp_utc: str
 
-class BlueprintCodeSync:
 
+class BlueprintCodeSync:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
         self._registry_path = self._project_root / "docs" / "03_modules" / "blueprint-registry.yaml"
@@ -84,7 +85,7 @@ class BlueprintCodeSync:
             missing=missing,
             stale=stale,
             entries=entries,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
     def validate_task_card(self, task_card: dict[str, Any]) -> tuple[bool, str]:
@@ -107,21 +108,25 @@ class BlueprintCodeSync:
 
         for card_file in sorted(changes_dir.glob("TASK-INF-*.md")):
             task_id = card_file.stem
-            entries.append(SyncEntry(
-                blueprint_path=str(card_file.relative_to(self._project_root)),
-                code_path=f"src/zephyr/core/",
-                status="PENDING",
-                last_synced="",
-            ))
+            entries.append(
+                SyncEntry(
+                    blueprint_path=str(card_file.relative_to(self._project_root)),
+                    code_path="src/zephyr/core/",
+                    status="PENDING",
+                    last_synced="",
+                )
+            )
 
         return entries
 
+
 class SyncPair:
-    def __init__(self, blueprint_path='', code_path='', sync_status='unknown', last_sync=None):
+    def __init__(self, blueprint_path="", code_path="", sync_status="unknown", last_sync=None):
         self.blueprint_path = blueprint_path
         self.code_path = code_path
         self.sync_status = sync_status
         self.last_sync = last_sync
+
 
 class BlueprintCodeSyncService:
     def __init__(self, config=None):
@@ -133,8 +138,9 @@ class BlueprintCodeSyncService:
     def check_drift(self, pair):
         return False
 
+
 class SyncVerification:
-    def __init__(self, pair_id='', status='unknown', mismatches=None, timestamp=None):
+    def __init__(self, pair_id="", status="unknown", mismatches=None, timestamp=None):
         self.pair_id = pair_id
         self.status = status
         self.mismatches = mismatches or []

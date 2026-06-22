@@ -67,11 +67,13 @@ class OwnerAbsenceEscalation:
         return self.state
 
     def submit_decision(self, decision_id: str, urgency: str) -> dict:
-        self.pending_decisions.append({
-            "id": decision_id,
-            "urgency": urgency,
-            "submitted_at": time.time(),
-        })
+        self.pending_decisions.append(
+            {
+                "id": decision_id,
+                "urgency": urgency,
+                "submitted_at": time.time(),
+            }
+        )
         self._prune_stale()
 
         if self.check_absence() == AbsenceState.ABSENT and urgency == "critical":

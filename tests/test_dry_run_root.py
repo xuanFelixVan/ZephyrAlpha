@@ -11,12 +11,13 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.dry_run import DryRunSimulator, DryRunResult, ImpactAnalysis
+    from zephyr.security.access_control.dry_run import DryRunResult, DryRunSimulator, ImpactAnalysis
 except Exception as exc:
     pytest.skip(f"Cannot import dry_run: {exc}", allow_module_level=True)
 
@@ -84,12 +85,15 @@ class TestDryRunSimulator:
     def test_simulate_with_guard(self):
         class FakeDecision:
             value = "BLOCKED"
+
         class FakeResult:
             decision = FakeDecision()
             reason = "permission denied for this operation"
+
         class FakeGuard:
             def check(self, agent, operation, target_path=""):
                 return FakeResult()
+
             def is_blocked(self, result):
                 return True
 
@@ -105,6 +109,7 @@ class TestDryRunSimulator:
             def __init__(self, sid, perms):
                 self.session_id = sid
                 self._perms = perms
+
             def has_permission(self, op):
                 return op in self._perms
 

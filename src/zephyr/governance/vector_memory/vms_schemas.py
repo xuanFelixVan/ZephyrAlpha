@@ -35,10 +35,8 @@ VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约
   Provenance         — CBAC 三字段溯源
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, Field

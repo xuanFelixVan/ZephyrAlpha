@@ -32,12 +32,11 @@ PhaseManager ↔ GateEngine 桥梁:
     冷启动序列：AGENTS.md → SYS-MASTER-001 §0 → project_rules.md → SessionContinuity → PhaseManager
 """
 
-
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable, Optional
 
 from pydantic import BaseModel, Field
 
@@ -71,6 +70,7 @@ class PhaseGate(BaseModel):
     def run_checks(self, check_fn: Callable[[str], GateResult] | None = None) -> GateResult:
         if check_fn is None:
             from zephyr.governance.phase_check_registry import run_check as _run_check
+
             check_fn = _run_check
         worst = GateResult.GREEN
         for check_name in self.gate_checks:
@@ -107,6 +107,54 @@ PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
             "gate_registry_consistency",
             "gate_precommit_config",
             "gate_sys_master_compliance",
+            "g_trae_003",
+            "g_trae_004",
+            "g_trae_006",
+            "g_trae_007",
+            "g_trae_008",
+            "g_trae_009",
+            "g_trae_018",
+            "g_trae_020",
+            "g_trae_021",
+            "g_trae_052",
+            "g_trae_053",
+            "g_trae_054",
+            "g_trae_055",
+            "g_trae_010",
+            "g_trae_011",
+            "g_trae_012",
+            "g_trae_016",
+            "g_trae_017",
+            "g_trae_022",
+            "g_trae_023",
+            "g_trae_028",
+            "g_trae_029",
+            "g_trae_030",
+            "g_trae_031",
+            "g_trae_032",
+            "g_trae_033",
+            "g_trae_034",
+            "g_trae_035",
+            "g_trae_036",
+            "g_trae_037",
+            "g_trae_038",
+            "g_trae_039",
+            "g_trae_040",
+            "g_trae_044",
+            "g_trae_045",
+            "g_trae_046",
+            "g_trae_047",
+            "g_trae_024",
+            "g_trae_025",
+            "g_trae_026",
+            "g_trae_027",
+            "g_trae_041",
+            "g_trae_042",
+            "g_trae_043",
+            "g_trae_048",
+            "g_trae_049",
+            "g_trae_050",
+            "g_trae_051",
         ],
     ),
     ConstructionPhase.PHASE_1_FUNCTIONAL: PhaseGate(
@@ -168,11 +216,11 @@ PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
 }
 
 
-def get_phase(phase: ConstructionPhase) -> Optional[PhaseGate]:
+def get_phase(phase: ConstructionPhase) -> PhaseGate | None:
     return PHASE_SEQUENCE.get(phase)
 
 
-def get_next_phase(current: ConstructionPhase) -> Optional[ConstructionPhase]:
+def get_next_phase(current: ConstructionPhase) -> ConstructionPhase | None:
     phases = list(ConstructionPhase)
     try:
         idx = phases.index(current)
@@ -199,14 +247,21 @@ def phase_resolver(completed_gates: set[str]) -> ConstructionPhase:
 
 def session_startup(quick: bool = True) -> dict:
     from zephyr.governance.phase_check_registry import (
-        check_session_manager, check_session_continuity,
-        check_lock_protocol, check_blueprint_mandatory,
-        check_path_resolver, check_script_manifest,
-        check_env_vars, check_precommit_config,
-        check_orphan_detection, check_temp_file_scan,
-        check_registry_consistency, check_encoding_safety,
-        check_secret_leak_scan, check_shell_dangerous,
         check_audit_trail_context,
+        check_blueprint_mandatory,
+        check_encoding_safety,
+        check_env_vars,
+        check_lock_protocol,
+        check_orphan_detection,
+        check_path_resolver,
+        check_precommit_config,
+        check_registry_consistency,
+        check_script_manifest,
+        check_secret_leak_scan,
+        check_session_continuity,
+        check_session_manager,
+        check_shell_dangerous,
+        check_temp_file_scan,
     )
 
     _FAST_CHECKS = [
@@ -245,11 +300,13 @@ def session_startup(quick: bool = True) -> dict:
                 status = future.result()
             except Exception:
                 status = GateResult.RED
-            results.append({
-                "name": name,
-                "status": status.value if hasattr(status, "value") else str(status),
-                "message": f"{name}: {status.value}" if hasattr(status, "value") else str(status),
-            })
+            results.append(
+                {
+                    "name": name,
+                    "status": status.value if hasattr(status, "value") else str(status),
+                    "message": f"{name}: {status.value}" if hasattr(status, "value") else str(status),
+                }
+            )
 
     green = sum(1 for r in results if r["status"] == "GREEN")
     yellow = sum(1 for r in results if r["status"] == "YELLOW")
@@ -258,11 +315,13 @@ def session_startup(quick: bool = True) -> dict:
     ready = red == 0
 
     if not ready:
-        next_action = f"🔴 {red} 项阻断。先修复 RED 项再开工: " + \
-                      ", ".join(r["name"] for r in results if r["status"] == "RED")
+        next_action = f"🔴 {red} 项阻断。先修复 RED 项再开工: " + ", ".join(
+            r["name"] for r in results if r["status"] == "RED"
+        )
     elif yellow > 0:
-        next_action = f"⚠ {yellow} 项警告。可以开工, 但建议先检查: " + \
-                      ", ".join(r["name"] for r in results if r["status"] == "YELLOW")
+        next_action = f"⚠ {yellow} 项警告。可以开工, 但建议先检查: " + ", ".join(
+            r["name"] for r in results if r["status"] == "YELLOW"
+        )
     else:
         next_action = "✅ 全部 GREEN。可以开工。"
 

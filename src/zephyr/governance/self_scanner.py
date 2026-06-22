@@ -26,12 +26,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+
 @dataclass
 class SelfScanResult:
     files_scanned: int = 0
     functions_scanned: int = 0
     internal_duplicates: int = 0
     engine_health: str = "CLEAN"
+
 
 class SelfScanner:
     """引擎 Dogfooding 自扫描."""
@@ -50,7 +52,8 @@ class SelfScanner:
                 source = pf.read_text(encoding="utf-8")
                 tree = __import__("ast").parse(source)
                 funcs = [
-                    n for n in __import__("ast").walk(tree)
+                    n
+                    for n in __import__("ast").walk(tree)
                     if isinstance(n, (__import__("ast").FunctionDef, __import__("ast").AsyncFunctionDef))
                 ]
                 total += len(funcs)

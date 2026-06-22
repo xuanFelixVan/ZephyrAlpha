@@ -22,6 +22,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -32,10 +33,10 @@ warn_only: false
 """
 
 
-import os
 import argparse
 import hashlib
 import json as json_mod
+import os
 import subprocess
 import sys
 from datetime import UTC, datetime
@@ -54,12 +55,20 @@ RULES_MANIFEST: list[dict] = [
     {"path": "scripts/governance/meta/error_budget_state.yaml", "critical": True, "desc": "Error Budget 状态"},
     {"path": "scripts/governance/quality_standard.md", "critical": True, "desc": "脚本质量标准"},
     {"path": "scripts/governance/script_manifest.yaml", "critical": True, "desc": "脚本注册表"},
-    {"path": "docs/03_modules/infrastructure.runtime_integration/script-system/blueprint.md", "critical": True, "desc": "脚本系统蓝图"},
-    {"path": "docs/03_modules/infrastructure.runtime_integration/script-system/index.md", "critical": False, "desc": "模块索引"},
+    {
+        "path": "docs/03_modules/infrastructure.runtime_integration/script-system/blueprint.md",
+        "critical": True,
+        "desc": "脚本系统蓝图",
+    },
+    {
+        "path": "docs/03_modules/infrastructure.runtime_integration/script-system/index.md",
+        "critical": False,
+        "desc": "模块索引",
+    },
 ]
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _hash_file(file_path: Path) -> str:
@@ -82,14 +91,15 @@ def _save_db(data: dict) -> None:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             json_mod.dump(data, f, ensure_ascii=False, indent=2)
-    
-    
+
         os.replace(tmp_path, _INTEGRITY_DB)
     except PermissionError:
         try:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def register() -> dict:
     """register implementation."""
     now = datetime.now(UTC).isoformat()
@@ -117,10 +127,14 @@ def check() -> dict:
         fp = _REPO_ROOT / entry["path"]
         rel = entry["path"]
         if not fp.exists():
-            results.append({
-                "file": rel, "status": "MISSING", "detail": "文件不存在——可能被删除",
-                "critical": entry["critical"],
-            })
+            results.append(
+                {
+                    "file": rel,
+                    "status": "MISSING",
+                    "detail": "文件不存在——可能被删除",
+                    "critical": entry["critical"],
+                }
+            )
             if entry["critical"]:
                 tampered += 1
             continue
@@ -130,22 +144,32 @@ def check() -> dict:
         known_hash = known.get("hash", "")
 
         if not known_hash:
-            results.append({
-                "file": rel, "status": "UNTRACKED", "detail": "未被注册——首次发现",
-                "critical": entry["critical"],
-            })
+            results.append(
+                {
+                    "file": rel,
+                    "status": "UNTRACKED",
+                    "detail": "未被注册——首次发现",
+                    "critical": entry["critical"],
+                }
+            )
         elif current_hash != known_hash:
-            results.append({
-                "file": rel, "status": "TAMPERED",
-                "detail": f"哈希不匹配 (known: {known_hash} → current: {current_hash})",
-                "critical": entry["critical"],
-            })
+            results.append(
+                {
+                    "file": rel,
+                    "status": "TAMPERED",
+                    "detail": f"哈希不匹配 (known: {known_hash} → current: {current_hash})",
+                    "critical": entry["critical"],
+                }
+            )
             tampered += 1
         else:
-            results.append({
-                "file": rel, "status": "OK",
-                "critical": entry["critical"],
-            })
+            results.append(
+                {
+                    "file": rel,
+                    "status": "OK",
+                    "critical": entry["critical"],
+                }
+            )
 
     db["last_check_at"] = now.isoformat()
     _save_db(data)
@@ -163,9 +187,20 @@ def check() -> dict:
 def show_diff() -> str:
     """show_diff implementation."""
     result = subprocess.run(
-        ["git", "diff", "--", "AGENTS.md", "scripts/governance/", "docs/03_modules/infrastructure.runtime_integration/script-system/"],
-        capture_output=True, text=True, timeout=10,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        [
+            "git",
+            "diff",
+            "--",
+            "AGENTS.md",
+            "scripts/governance/",
+            "docs/03_modules/infrastructure.runtime_integration/script-system/",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=10,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     return result.stdout.strip()
 

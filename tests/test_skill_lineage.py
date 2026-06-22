@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] diff returns found=False for missing versions
 # [TESTS] tests/test_skill_lineage.py
 
-import pytest
 from zephyr.autonomy_core.skill_lineage import SkillLineage
 
 

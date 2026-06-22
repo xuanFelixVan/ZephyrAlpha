@@ -36,10 +36,10 @@ import re
 import sys
 from pathlib import Path
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
-if sys.stderr.encoding != 'utf-8':
-    sys.stderr.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
+if sys.stderr.encoding != "utf-8":
+    sys.stderr.reconfigure(encoding="utf-8")
 
 import yaml
 
@@ -73,19 +73,27 @@ def check_blueprint_existence() -> list[dict]:
     results = []
     for label, path in [("SYS-MASTER-001", SYS_MASTER_PATH), ("MOD-MASTER-001", MOD_MASTER_PATH)]:
         ok = path.exists() and path.is_file()
-        results.append({
-            "check_id": "SYS-C00",
-            "label": f"{label} blueprint_exists",
-            "status": "PASS" if ok else "FAIL",
-            "detail": str(path.relative_to(PROJECT_ROOT)) if ok else f"{label} MISSING",
-        })
+        results.append(
+            {
+                "check_id": "SYS-C00",
+                "label": f"{label} blueprint_exists",
+                "status": "PASS" if ok else "FAIL",
+                "detail": str(path.relative_to(PROJECT_ROOT)) if ok else f"{label} MISSING",
+            }
+        )
     return results
 
 
 def check_cold_start_integration() -> list[dict]:
     if not PROJECT_RULES.exists():
-        return [{"check_id": "SYS-C01", "label": "cold_start_integration", "status": "FAIL",
-                  "detail": "project_rules.md MISSING"}]
+        return [
+            {
+                "check_id": "SYS-C01",
+                "label": "cold_start_integration",
+                "status": "FAIL",
+                "detail": "project_rules.md MISSING",
+            }
+        ]
     content = PROJECT_RULES.read_text(encoding="utf-8")
     has_sys_master = "SYS-MASTER-001" in content or "_sys-master" in content
     in_cold_start = False
@@ -94,39 +102,67 @@ def check_cold_start_integration() -> list[dict]:
         section_text = cold_start_section.group(0)
         in_cold_start = "SYS-MASTER" in section_text or "_sys-master" in section_text
     status = "PASS" if in_cold_start else ("WARN" if has_sys_master else "FAIL")
-    return [{"check_id": "SYS-C01", "label": "cold_start_integration",
-             "status": status,
-             "detail": "SYS-MASTER-001 referenced in cold start sequence" if in_cold_start
-             else "SYS-MASTER-001 referenced in rules but NOT in cold start sequence" if has_sys_master
-             else "SYS-MASTER-001 not referenced anywhere in project_rules.md"}]
+    return [
+        {
+            "check_id": "SYS-C01",
+            "label": "cold_start_integration",
+            "status": status,
+            "detail": "SYS-MASTER-001 referenced in cold start sequence"
+            if in_cold_start
+            else "SYS-MASTER-001 referenced in rules but NOT in cold start sequence"
+            if has_sys_master
+            else "SYS-MASTER-001 not referenced anywhere in project_rules.md",
+        }
+    ]
 
 
 def check_depends_on_integrity() -> list[dict]:
     fm = extract_frontmatter(SYS_MASTER_PATH)
     if not fm:
-        return [{"check_id": "SYS-C02", "label": "depends_on_integrity", "status": "FAIL",
-                  "detail": "Cannot parse SYS-MASTER-001 frontmatter"}]
+        return [
+            {
+                "check_id": "SYS-C02",
+                "label": "depends_on_integrity",
+                "status": "FAIL",
+                "detail": "Cannot parse SYS-MASTER-001 frontmatter",
+            }
+        ]
     deps = fm.get("depends_on", [])
-    has_mod_master = any(
-        d.get("target", "") == "MOD-MASTER-001" for d in deps
-    ) if isinstance(deps, list) else False
-    return [{"check_id": "SYS-C02", "label": "depends_on_integrity",
-             "status": "PASS" if has_mod_master else "FAIL",
-             "detail": "MOD-MASTER-001 found in depends_on" if has_mod_master else "MOD-MASTER-001 NOT in depends_on"}]
+    has_mod_master = any(d.get("target", "") == "MOD-MASTER-001" for d in deps) if isinstance(deps, list) else False
+    return [
+        {
+            "check_id": "SYS-C02",
+            "label": "depends_on_integrity",
+            "status": "PASS" if has_mod_master else "FAIL",
+            "detail": "MOD-MASTER-001 found in depends_on" if has_mod_master else "MOD-MASTER-001 NOT in depends_on",
+        }
+    ]
 
 
 def check_construction_progress_consistency() -> list[dict]:
     VALID_PROGRESS_VALUES = {
-        "not_started", "in_progress", "planning", "design",
-        "phase_0_complete", "phase_0_completed",
-        "phase_1_complete", "phase_1_partial", "phase_1_scaffold_partial",
+        "not_started",
+        "in_progress",
+        "planning",
+        "design",
+        "phase_0_complete",
+        "phase_0_completed",
+        "phase_1_complete",
+        "phase_1_partial",
+        "phase_1_scaffold_partial",
         "phase_2_complete",
         "phase_3_complete",
         "phase_4_complete",
-        "phase_9_complete", "phase_14_early_bird",
-        "completed", "active", "operational",
-        "deprecated", "backlog", "blocked_by_infrastructure",
-        "blueprint_complete", "design_complete",
+        "phase_9_complete",
+        "phase_14_early_bird",
+        "completed",
+        "active",
+        "operational",
+        "deprecated",
+        "backlog",
+        "blocked_by_infrastructure",
+        "blueprint_complete",
+        "design_complete",
     }
     results = []
     for target_id, target_path, fm_key in [
@@ -134,12 +170,14 @@ def check_construction_progress_consistency() -> list[dict]:
         ("MOD-MASTER-001", MOD_MASTER_PATH, "construction_progress"),
     ]:
         if not target_path.exists():
-            results.append({
-                "check_id": "SYS-C03",
-                "label": f"{target_id} construction_progress_consistency",
-                "status": "FAIL",
-                "detail": f"{target_id} blueprint MISSING, cannot verify consistency",
-            })
+            results.append(
+                {
+                    "check_id": "SYS-C03",
+                    "label": f"{target_id} construction_progress_consistency",
+                    "status": "FAIL",
+                    "detail": f"{target_id} blueprint MISSING, cannot verify consistency",
+                }
+            )
             continue
         fm = extract_frontmatter(target_path)
         fm_progress = fm.get(fm_key, "unknown")
@@ -166,26 +204,32 @@ def check_construction_progress_consistency() -> list[dict]:
         all_match = fm_progress == bp_progress == mod_progress
         fm_valid = fm_progress in VALID_PROGRESS_VALUES
         if not fm_valid:
-            results.append({
-                "check_id": "SYS-C03",
-                "label": f"{target_id} construction_progress_consistency",
-                "status": "FAIL",
-                "detail": f"frontmatter={fm_progress} (INVALID), blueprint-registry={bp_progress}, module-registry={mod_progress}",
-            })
+            results.append(
+                {
+                    "check_id": "SYS-C03",
+                    "label": f"{target_id} construction_progress_consistency",
+                    "status": "FAIL",
+                    "detail": f"frontmatter={fm_progress} (INVALID), blueprint-registry={bp_progress}, module-registry={mod_progress}",
+                }
+            )
         elif not all_match:
-            results.append({
-                "check_id": "SYS-C03",
-                "label": f"{target_id} construction_progress_consistency",
-                "status": "FAIL",
-                "detail": f"frontmatter={fm_progress}, blueprint-registry={bp_progress}, module-registry={mod_progress}",
-            })
+            results.append(
+                {
+                    "check_id": "SYS-C03",
+                    "label": f"{target_id} construction_progress_consistency",
+                    "status": "FAIL",
+                    "detail": f"frontmatter={fm_progress}, blueprint-registry={bp_progress}, module-registry={mod_progress}",
+                }
+            )
         else:
-            results.append({
-                "check_id": "SYS-C03",
-                "label": f"{target_id} construction_progress_consistency",
-                "status": "PASS",
-                "detail": f"frontmatter={fm_progress}, blueprint-registry={bp_progress}, module-registry={mod_progress}",
-            })
+            results.append(
+                {
+                    "check_id": "SYS-C03",
+                    "label": f"{target_id} construction_progress_consistency",
+                    "status": "PASS",
+                    "detail": f"frontmatter={fm_progress}, blueprint-registry={bp_progress}, module-registry={mod_progress}",
+                }
+            )
     return results
 
 
@@ -197,20 +241,36 @@ def check_ai_rules_count() -> list[dict]:
             content = rf.read_text(encoding="utf-8")
             count += len(re.findall(r"#\d+", content))
     status = "PASS" if count >= 32 else "FAIL"
-    return [{"check_id": "SYS-C04", "label": "ai_rules_count",
-             "status": status,
-             "detail": f"{count} numbered rules found (minimum required: 32)"}]
+    return [
+        {
+            "check_id": "SYS-C04",
+            "label": "ai_rules_count",
+            "status": status,
+            "detail": f"{count} numbered rules found (minimum required: 32)",
+        }
+    ]
 
 
 def check_gate_registry_entry() -> list[dict]:
     if not GATE_REGISTRY.exists():
-        return [{"check_id": "SYS-C05", "label": "gate_registry_entry", "status": "FAIL",
-                  "detail": "gate _registry.yaml MISSING"}]
+        return [
+            {
+                "check_id": "SYS-C05",
+                "label": "gate_registry_entry",
+                "status": "FAIL",
+                "detail": "gate _registry.yaml MISSING",
+            }
+        ]
     content = GATE_REGISTRY.read_text(encoding="utf-8")
     has_entry = "SYS-MASTER-CMP" in content
-    return [{"check_id": "SYS-C05", "label": "gate_registry_entry",
-             "status": "PASS" if has_entry else "FAIL",
-             "detail": "SYS-MASTER-CMP found in gate registry" if has_entry else "SYS-MASTER-CMP NOT in gate registry"}]
+    return [
+        {
+            "check_id": "SYS-C05",
+            "label": "gate_registry_entry",
+            "status": "PASS" if has_entry else "FAIL",
+            "detail": "SYS-MASTER-CMP found in gate registry" if has_entry else "SYS-MASTER-CMP NOT in gate registry",
+        }
+    ]
 
 
 def check_version_consistency() -> list[dict]:
@@ -220,12 +280,14 @@ def check_version_consistency() -> list[dict]:
         ("MOD-MASTER-001", MOD_MASTER_PATH),
     ]:
         if not target_path.exists():
-            results.append({
-                "check_id": "SYS-C07",
-                "label": f"{target_id} version_consistency",
-                "status": "FAIL",
-                "detail": f"{target_id} blueprint MISSING, cannot verify version",
-            })
+            results.append(
+                {
+                    "check_id": "SYS-C07",
+                    "label": f"{target_id} version_consistency",
+                    "status": "FAIL",
+                    "detail": f"{target_id} blueprint MISSING, cannot verify version",
+                }
+            )
             continue
         fm = extract_frontmatter(target_path)
         fm_version = fm.get("version", "unknown")
@@ -250,12 +312,14 @@ def check_version_consistency() -> list[dict]:
                 break
 
         all_match = fm_version == bp_version == mod_version
-        results.append({
-            "check_id": "SYS-C07",
-            "label": f"{target_id} version_consistency",
-            "status": "PASS" if all_match else "FAIL",
-            "detail": f"frontmatter={fm_version}, blueprint-registry={bp_version}, module-registry={mod_version}",
-        })
+        results.append(
+            {
+                "check_id": "SYS-C07",
+                "label": f"{target_id} version_consistency",
+                "status": "PASS" if all_match else "FAIL",
+                "detail": f"frontmatter={fm_version}, blueprint-registry={bp_version}, module-registry={mod_version}",
+            }
+        )
     return results
 
 
@@ -265,58 +329,78 @@ def check_sli_data_sources() -> list[dict]:
         ("SLI-01", "E2E AI 请求延迟", "zephyr.observability.feedback_loop.slo_manager", "SLOManager"),
         ("SLI-02", "蓝图读取耗时", "zephyr.autonomy_core.dispatch_table", "SystemDispatch"),
         ("SLI-03", "门禁执行总延迟", "zephyr.governance.rule_enforcement.gate_engine", "GateEngine"),
-        ("SLI-04", "AI Session 启动数", "zephyr.infrastructure.shared_services.session.session_continuity", "SessionContinuity"),
+        (
+            "SLI-04",
+            "AI Session 启动数",
+            "zephyr.infrastructure.shared_services.session.session_continuity",
+            "SessionContinuity",
+        ),
         ("SLI-05", "Script 执行吞吐量", "zephyr.infrastructure.rollback.phase_check_registry", "PhaseCheckRegistry"),
         ("SLI-06", "Gate 失败率", "zephyr.governance.rule_enforcement.gate_engine", "GateEngine"),
         ("SLI-07", "Script 执行错误率", "zephyr.infrastructure.rollback.phase_check_registry", "PhaseCheckRegistry"),
         ("SLI-08", "契约漂移检出率", "zephyr.governance.drift_detection.drift_engine", "AIConstructionDetectors"),
         ("SLI-09", "Token 预算利用率", "zephyr.infrastructure.budget_enforcement", "BudgetEngine"),
         ("SLI-10", "SQLite WAL 深度", "zephyr.data.persistence.database_manager", "DatabaseManager"),
-        ("SLI-11", "Session 锁争用率", "zephyr.infrastructure.shared_services.session.session_continuity", "SessionContinuity"),
+        (
+            "SLI-11",
+            "Session 锁争用率",
+            "zephyr.infrastructure.shared_services.session.session_continuity",
+            "SessionContinuity",
+        ),
     ]
     for sli_id, sli_name, module_path, symbol_name in sli_sources:
         try:
             mod = __import__(module_path, fromlist=["__all__"])
             has_symbol = hasattr(mod, symbol_name)
             if has_symbol:
-                results.append({
-                    "check_id": "SYS-C08",
-                    "label": f"{sli_id} {sli_name}",
-                    "status": "PASS",
-                    "detail": f"{module_path}.{symbol_name} importable",
-                })
+                results.append(
+                    {
+                        "check_id": "SYS-C08",
+                        "label": f"{sli_id} {sli_name}",
+                        "status": "PASS",
+                        "detail": f"{module_path}.{symbol_name} importable",
+                    }
+                )
             else:
                 available = [n for n in dir(mod) if not n.startswith("_")][:10]
-                results.append({
+                results.append(
+                    {
+                        "check_id": "SYS-C08",
+                        "label": f"{sli_id} {sli_name}",
+                        "status": "WARN",
+                        "detail": f"{module_path} importable but {symbol_name} not found; available: {available}",
+                    }
+                )
+        except Exception as e:
+            results.append(
+                {
                     "check_id": "SYS-C08",
                     "label": f"{sli_id} {sli_name}",
                     "status": "WARN",
-                    "detail": f"{module_path} importable but {symbol_name} not found; available: {available}",
-                })
-        except Exception as e:
-            results.append({
-                "check_id": "SYS-C08",
-                "label": f"{sli_id} {sli_name}",
-                "status": "WARN",
-                "detail": f"{module_path} not importable: {type(e).__name__}: {e}",
-            })
+                    "detail": f"{module_path} not importable: {type(e).__name__}: {e}",
+                }
+            )
     return results
 
 
 def check_crosscheck_script() -> list[dict]:
     import subprocess
+
     try:
         result = subprocess.run(
-            [sys.executable, str(CROSSCHECK_SCRIPT)],
-            capture_output=True, text=True, timeout=30, cwd=str(PROJECT_ROOT)
+            [sys.executable, str(CROSSCHECK_SCRIPT)], capture_output=True, text=True, timeout=30, cwd=str(PROJECT_ROOT)
         )
         ok = result.returncode == 0
-        return [{"check_id": "SYS-C06", "label": "crosscheck_script_pass",
-                 "status": "PASS" if ok else "FAIL",
-                 "detail": f"exit={result.returncode}" + (f" | {result.stdout.strip()[:200]}" if not ok else "")}]
+        return [
+            {
+                "check_id": "SYS-C06",
+                "label": "crosscheck_script_pass",
+                "status": "PASS" if ok else "FAIL",
+                "detail": f"exit={result.returncode}" + (f" | {result.stdout.strip()[:200]}" if not ok else ""),
+            }
+        ]
     except Exception as e:
-        return [{"check_id": "SYS-C06", "label": "crosscheck_script_pass", "status": "FAIL",
-                  "detail": str(e)}]
+        return [{"check_id": "SYS-C06", "label": "crosscheck_script_pass", "status": "FAIL", "detail": str(e)}]
 
 
 def main() -> int:
@@ -349,7 +433,6 @@ def main() -> int:
 
 
 class SysMasterCompliance:
-
     def __init__(self) -> None:
         self._last_results: list[dict] | None = None
 
@@ -386,4 +469,4 @@ class SysMasterCompliance:
 if __name__ == "__main__":
     sys.exit(main())
 
-__all__ = ["extract_frontmatter", "SysMasterCompliance"]
+__all__ = ["SysMasterCompliance", "extract_frontmatter"]

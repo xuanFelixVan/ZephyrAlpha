@@ -13,16 +13,16 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
 from zephyr.behavioral_audit.drift_models import DriftState
 from zephyr.security.access_control.auto_fix_engine_03.state_machine import (
+    TERMINAL_STATES,
     DriftEventRecord,
     DriftStateMachine,
     InvalidTransitionError,
-    TERMINAL_STATES,
 )
 
 
@@ -38,7 +38,7 @@ class TestDriftEventRecord:
         assert rec.suppressed_until is None
 
     def test_instantiation_with_times(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         eid = uuid.uuid4()
         rec = DriftEventRecord(
             event_id=eid,
@@ -220,7 +220,7 @@ class TestCheckTtl:
         rec = DriftEventRecord(
             event_id=eid3,
             state=DriftState.DETECTED,
-            created_at=datetime.now(timezone.utc) - timedelta(hours=48),
+            created_at=datetime.now(UTC) - timedelta(hours=48),
         )
         sm._events[eid3] = rec
         expired = sm.check_ttl()
@@ -278,7 +278,7 @@ class TestCheckTtl:
         sm.transition(eid6, DriftState.RESOLVED, DriftState.VERIFIED)
         eid7 = uuid.uuid4()
         rec7 = DriftEventRecord(event_id=eid7, state=DriftState.SUPPRESSED)
-        rec7.suppressed_until = datetime.now(timezone.utc) - timedelta(hours=1)
+        rec7.suppressed_until = datetime.now(UTC) - timedelta(hours=1)
         sm._events[eid7] = rec7
         expired = sm.check_ttl()
         assert eid7 in expired
@@ -290,14 +290,14 @@ class TestSuppress:
         sm = DriftStateMachine()
         eid = uuid.uuid4()
         sm.transition(eid, DriftState.DETECTED, DriftState.TRIAGED)
-        expires = datetime.now(timezone.utc) + timedelta(days=7)
+        expires = datetime.now(UTC) + timedelta(days=7)
         with pytest.raises(InvalidTransitionError):
             sm.suppress(eid, expires)
 
     def test_suppress_unknown_event_raises(self):
         sm = DriftStateMachine()
         with pytest.raises(InvalidTransitionError):
-            sm.suppress(uuid.uuid4(), datetime.now(timezone.utc) + timedelta(days=1))
+            sm.suppress(uuid.uuid4(), datetime.now(UTC) + timedelta(days=1))
 
 
 class TestGetState:

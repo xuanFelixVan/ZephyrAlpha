@@ -29,7 +29,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from zephyr.infrastructure.auto_fix_engine.models import FixAction, ShadowResult, ValidationResult
+from zephyr.infrastructure.auto_fix_engine.models import FixAction, ShadowResult
 
 logger = logging.getLogger(__name__)
 
@@ -90,8 +90,11 @@ class ShadowWorkspace:
         try:
             cmd = ["python", "-m", "pytest", "-x", "-q", "--tb=short", shadow_dir]
             result = subprocess.run(
-                cmd, capture_output=True, text=True,
-                timeout=self._pytest_timeout, cwd=project_root or os.getcwd(),
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=self._pytest_timeout,
+                cwd=project_root or os.getcwd(),
             )
             return {
                 "passed": result.returncode == 0,
@@ -107,8 +110,11 @@ class ShadowWorkspace:
         try:
             cmd = ["python", "-m", "mypy", shadow_file, "--no-error-summary"]
             result = subprocess.run(
-                cmd, capture_output=True, text=True,
-                timeout=60, cwd=project_root or os.getcwd(),
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=project_root or os.getcwd(),
             )
             return {
                 "passed": result.returncode == 0,
@@ -121,8 +127,11 @@ class ShadowWorkspace:
         try:
             cmd = ["python", "-m", "ruff", "check", shadow_file]
             result = subprocess.run(
-                cmd, capture_output=True, text=True,
-                timeout=30, cwd=project_root or os.getcwd(),
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=project_root or os.getcwd(),
             )
             return {
                 "passed": result.returncode == 0,

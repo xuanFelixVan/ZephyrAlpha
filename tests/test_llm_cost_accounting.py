@@ -11,6 +11,7 @@
 # [TESTS] tests/test_llm_cost_accounting.py
 
 import pytest
+
 from zephyr.ops.collectors.llm_cost_accounting import LLMCostAccounting
 
 

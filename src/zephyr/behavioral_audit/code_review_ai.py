@@ -11,7 +11,9 @@
 # [TESTS] tests/test_behavioral_auditor/
 
 from __future__ import annotations
+
 from enum import Enum
+
 
 class ReviewLevel(str, Enum):
     L0_RUFF = "L0_ruff"
@@ -20,6 +22,7 @@ class ReviewLevel(str, Enum):
     L3_ARCH = "L3_arch"
     L4_STRATEGY = "L4_strategy"
     L5_DUAL_AI = "L5_dual_ai"
+
 
 REVIEW_TIMEOUTS: dict[ReviewLevel, int] = {
     ReviewLevel.L0_RUFF: 1,

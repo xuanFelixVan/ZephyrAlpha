@@ -61,28 +61,15 @@ actual_disk_path: src/zephyr/orphan-judge/
 
 from zephyr.governance.orphan_judgment.orphan_detector import OrphanDetector, OrphanReport
 
-from zephyr.governance.orphan_judgment.orphan_detector import OrphanReport, OrphanDetector
-
 __all__ = [
-
-    "orphan_detector",
-
-    "five_layer_judge",
-
-    "reference_graph",
-
-    "judgment_cache",
-
-    "safety_fence",
-
-    "incremental_scanner",
-
-    "script_scheduler",
-
-    "mcp_handler",
-
     "OrphanDetector",
-
     "OrphanReport",
-
+    "five_layer_judge",
+    "incremental_scanner",
+    "judgment_cache",
+    "mcp_handler",
+    "orphan_detector",
+    "reference_graph",
+    "safety_fence",
+    "script_scheduler",
 ]

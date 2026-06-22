@@ -72,14 +72,16 @@ class IntermittentFailurePattern:
         self.failure_contexts[failure_type].append(entry)
 
         cutoff = time.time() - self.context_window_days * 86400
-        self.failure_contexts[failure_type] = [
-            e for e in self.failure_contexts[failure_type] if e["ts"] > cutoff
-        ]
+        self.failure_contexts[failure_type] = [e for e in self.failure_contexts[failure_type] if e["ts"] > cutoff]
 
     def analyze_pattern(self, failure_type: str) -> dict:
         contexts = self.failure_contexts.get(failure_type, [])
         if len(contexts) < self.min_occurrences:
-            return {"pattern_found": False, "confidence": PatternConfidence.NONE.value, "reason": "insufficient_occurrences"}
+            return {
+                "pattern_found": False,
+                "confidence": PatternConfidence.NONE.value,
+                "reason": "insufficient_occurrences",
+            }
 
         condition_frequencies: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
         total = len(contexts)
@@ -95,15 +97,21 @@ class IntermittentFailurePattern:
             for val, count in freq_map.items():
                 ratio = count / total
                 if ratio >= self.condition_correlation_threshold and ratio < 1.0:
-                    strong_conditions.append({
-                        "condition": key,
-                        "value": val,
-                        "ratio": round(ratio, 3),
-                        "occurrences": count,
-                    })
+                    strong_conditions.append(
+                        {
+                            "condition": key,
+                            "value": val,
+                            "ratio": round(ratio, 3),
+                            "occurrences": count,
+                        }
+                    )
 
         if not strong_conditions:
-            return {"pattern_found": False, "confidence": PatternConfidence.NONE.value, "reason": "no_strong_correlations"}
+            return {
+                "pattern_found": False,
+                "confidence": PatternConfidence.NONE.value,
+                "reason": "no_strong_correlations",
+            }
 
         max_ratio = max(c["ratio"] for c in strong_conditions)
         if max_ratio >= 0.90:
@@ -127,13 +135,12 @@ class IntermittentFailurePattern:
             "failure_type": failure_type,
             "confidence": confidence.value,
             "occurrences": total,
-            "triggers": [
-                f"{c['condition']}={c['value']} ({c['ratio']:.0%})"
-                for c in strong_conditions
-            ],
+            "triggers": [f"{c['condition']}={c['value']} ({c['ratio']:.0%})" for c in strong_conditions],
             "recommendation": (
-                "reproduce_with_exact_conditions" if confidence == PatternConfidence.HIGH
-                else "increase_context_capture_depth" if confidence == PatternConfidence.LOW
+                "reproduce_with_exact_conditions"
+                if confidence == PatternConfidence.HIGH
+                else "increase_context_capture_depth"
+                if confidence == PatternConfidence.LOW
                 else "investigate_conditional_root_cause"
             ),
         }

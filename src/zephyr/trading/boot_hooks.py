@@ -53,8 +53,8 @@ def register_boot_hooks() -> None:
 
         def _on_task_completed(event: object) -> None:
             try:
-                from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
                 from zephyr.governance.persistence.task_repo import TaskRepository
+
                 tr = TaskRepository()
                 completed_id = getattr(event, "task_id", "")
                 if not completed_id:
@@ -66,11 +66,7 @@ def register_boot_hooks() -> None:
                     deps = ds.depends_on or []
                     if not deps:
                         continue
-                    all_done = all(
-                        tr.get(d).status == "COMPLETED"
-                        for d in deps
-                        if d
-                    )
+                    all_done = all(tr.get(d).status == "COMPLETED" for d in deps if d)
                     if all_done:
                         tr.transition(ds.task_id, "READY", note=f"unblocked by {completed_id}")
             except Exception as exc:
@@ -78,8 +74,8 @@ def register_boot_hooks() -> None:
 
         def _on_task_failed(event: object) -> None:
             try:
-                from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
                 from zephyr.governance.persistence.task_repo import TaskRepository
+
                 tr = TaskRepository()
                 task_id = getattr(event, "task_id", "")
                 task = tr.get(task_id)
@@ -98,11 +94,12 @@ def register_boot_hooks() -> None:
         def _on_task_verified_triple_align(event: object) -> None:
             try:
                 from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
+
                 task_id = getattr(event, "task_id", "")
                 source_bp = ""
                 try:
-                    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
                     from zephyr.governance.persistence.task_repo import TaskRepository
+
                     tr = TaskRepository()
                     task = tr.get(task_id)
                     source_bp = getattr(task, "source_blueprint", "") if task else ""
@@ -114,7 +111,8 @@ def register_boot_hooks() -> None:
                 if not result.passed:
                     logger.error(
                         "G-TRIPLE-ALIGN FAILED after task %s verified: module %s has %d violations",
-                        task_id, source_bp,
+                        task_id,
+                        source_bp,
                         len([v for v in result.violations if v.severity.value == "ERROR"]),
                     )
             except Exception as exc:
@@ -128,6 +126,7 @@ def register_boot_hooks() -> None:
                     return
                 if to_status.upper() in ("COMPLETED", "FAILED", "CANCELLED"):
                     from zephyr.trading.ide_health_daemon import kill_task_processes
+
                     killed = kill_task_processes(task_id)
                     if killed:
                         logger.info("hook cleanup_task_processes: killed %d PIDs for %s", len(killed), task_id)
@@ -140,9 +139,9 @@ def register_boot_hooks() -> None:
                 to_status = getattr(event, "to_status", "")
                 if to_status.upper() != "COMPLETED":
                     return
-                from zephyr.trading.orchestrator.memory_writer import archive_to_vms
-                from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
                 from zephyr.governance.persistence.task_repo import TaskRepository
+                from zephyr.trading.orchestrator.memory_writer import archive_to_vms
+
                 tr = TaskRepository()
                 task = tr.get(task_id)
                 if task:
@@ -157,6 +156,7 @@ def register_boot_hooks() -> None:
                 if to_status.upper() != "COMPLETED":
                     return
                 from zephyr.intelligence.model_evaluation.sync_engine import sync_to_vms
+
                 sync_to_vms()
             except Exception as exc:
                 logger.error("hook kb_vms_sync FAILED: %s", exc)
@@ -167,6 +167,7 @@ def register_boot_hooks() -> None:
                 if to_status.upper() != "ROLLBACK":
                     return
                 from zephyr.governance.gate_coordinator import freeze_all_gates
+
                 result = freeze_all_gates()
                 logger.info("hook rbk_gate_freeze: frozen=%s gates=%d", result.frozen, result.gates_count)
             except Exception as exc:
@@ -179,7 +180,9 @@ def register_boot_hooks() -> None:
         hook_registry.register(_on_task_completed_archive_vms, priority=48, name="orc_vms_archive")
         hook_registry.register(_on_task_completed_sync_kb_vms, priority=47, name="kb_vms_sync")
         hook_registry.register(_on_task_rollback_freeze_gates, priority=55, name="rbk_gate_freeze")
-        logger.info("Task system hooks registered: auto_unblock_dependents / auto_retry_on_failure / triple_alignment_on_verified / cleanup_task_processes / orc_vms_archive / kb_vms_sync / rbk_gate_freeze")
+        logger.info(
+            "Task system hooks registered: auto_unblock_dependents / auto_retry_on_failure / triple_alignment_on_verified / cleanup_task_processes / orc_vms_archive / kb_vms_sync / rbk_gate_freeze"
+        )
 
         # ── ⚡ Event-driven hooks (替代定时扫描的部分校验) ───────────
 
@@ -188,8 +191,8 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "BLOCKED":
                 return
             try:
-                from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
                 from zephyr.governance.persistence.task_repo import TaskRepository
+
                 TaskRepository().check_escalation(getattr(event, "task_id", ""))
             except Exception as exc:
                 logger.debug("hook escalation_check: %s", exc)
@@ -199,8 +202,8 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "IN_PROGRESS":
                 return
             try:
-                from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
                 from zephyr.governance.persistence.task_repo import TaskRepository
+
                 TaskRepository().check_task_timeout(getattr(event, "task_id", ""))
             except Exception as exc:
                 logger.debug("hook timeout_check: %s", exc)
@@ -211,6 +214,7 @@ def register_boot_hooks() -> None:
                 return
             try:
                 from zephyr.governance.budget_engine import BudgetEngine
+
                 engine = BudgetEngine()
                 snapshot = engine.get_snapshot()
                 if snapshot and getattr(snapshot, "health", "") not in ("HEALTHY", ""):
@@ -221,6 +225,7 @@ def register_boot_hooks() -> None:
         def _on_blueprint_changed_triple_align(event: object) -> None:
             try:
                 from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
+
                 source_bp = getattr(event, "blueprint_path", "") or getattr(event, "path", "")
                 result = check_triple_alignment(specific_module=source_bp or None, warn_only=True)
                 if not result.passed:
@@ -228,7 +233,8 @@ def register_boot_hooks() -> None:
                     if violations:
                         logger.warning(
                             "Event triple-align: %s has %d violations after blueprint change",
-                            source_bp or "all", violations,
+                            source_bp or "all",
+                            violations,
                         )
             except Exception as exc:
                 logger.debug("hook triple_align_event: %s", exc)
@@ -240,6 +246,7 @@ def register_boot_hooks() -> None:
 
         try:
             from zephyr.integration.shared_08.event_bus import EventBusBackpressure
+
             _bus = EventBusBackpressure()
             _bus.subscribe("blueprint.changed", _on_blueprint_changed_triple_align)
             _bus.subscribe("blueprint.decomposed", _on_blueprint_changed_triple_align)
@@ -252,6 +259,7 @@ def register_boot_hooks() -> None:
 
     try:
         from zephyr.trading.ide_health_daemon import register_daemon
+
         register_daemon()
         logger.info("IdeHealthDaemon registered and auto-started via boot hooks")
     except Exception as e:

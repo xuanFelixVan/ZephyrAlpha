@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from zephyr.intelligence.model_profiling.capability_passport import (
     CapabilityPassport,
@@ -36,7 +36,9 @@ def _make_passport(
     caps = depth_caps or {
         "task_classification": DepthCapabilityResult(pass_=True, grade="B", precision=0.8, recall=0.7, f1=0.75),
         "tag_completion": DepthCapabilityResult(pass_=True, grade="B", precision=0.7, recall=0.7, f1=0.7),
-        "code_fix": DepthCapabilityResult(pass_=False, grade="F", precision=0.3, recall=0.2, f1=0.25, failure_reason="low_precision_below_threshold"),
+        "code_fix": DepthCapabilityResult(
+            pass_=False, grade="F", precision=0.3, recall=0.2, f1=0.25, failure_reason="low_precision_below_threshold"
+        ),
     }
     return CapabilityPassport(
         model_id=model_id,
@@ -76,8 +78,10 @@ class TestLoadPassports:
         p1 = _make_passport("model-a")
         p2 = _make_passport("model-b")
         gate = TaskGate()
-        with patch.object(CapabilityPassport, "list_all", return_value=["model-a", "model-b"]), \
-             patch.object(CapabilityPassport, "load", side_effect=[p1, p2]):
+        with (
+            patch.object(CapabilityPassport, "list_all", return_value=["model-a", "model-b"]),
+            patch.object(CapabilityPassport, "load", side_effect=[p1, p2]),
+        ):
             count = gate.load_passports()
         assert count == 2
         assert gate.has_passport("model-a") is True

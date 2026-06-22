@@ -18,15 +18,14 @@
 """
 
 import time
-import pytest
 
 from zephyr.security.access_control.kill_switch import (
+    DEFAULT_TRIGGERS,
     KillSwitch,
     KillSwitchState,
-    TriggerResult,
-    TriggerEvent,
     TriggerDefinition,
-    DEFAULT_TRIGGERS,
+    TriggerEvent,
+    TriggerResult,
     get_kill_switch,
 )
 
@@ -64,11 +63,13 @@ class TestSingleAgentTrigger:
         ks = KillSwitch()
         threshold = DEFAULT_TRIGGERS[0].default_threshold
         for i in range(threshold - 1):
-            result = ks.record_event(TriggerEvent(
-                trigger="rapid_file_deletion",
-                agent_id="agent-test-001",
-                context={"iteration": i},
-            ))
+            result = ks.record_event(
+                TriggerEvent(
+                    trigger="rapid_file_deletion",
+                    agent_id="agent-test-001",
+                    context={"iteration": i},
+                )
+            )
             if i == threshold - 2:
                 pass
         assert not ks.is_global_tripped()
@@ -78,11 +79,13 @@ class TestSingleAgentTrigger:
         threshold = DEFAULT_TRIGGERS[0].default_threshold
         result = TriggerResult.NO_ACTION
         for i in range(threshold):
-            result = ks.record_event(TriggerEvent(
-                trigger="rapid_file_deletion",
-                agent_id="agent-test-002",
-                context={"iteration": i},
-            ))
+            result = ks.record_event(
+                TriggerEvent(
+                    trigger="rapid_file_deletion",
+                    agent_id="agent-test-002",
+                    context={"iteration": i},
+                )
+            )
             time.sleep(0.001)
         assert result == TriggerResult.BLOCK_AGENT
         assert ks.is_agent_blocked("agent-test-002")
@@ -90,25 +93,31 @@ class TestSingleAgentTrigger:
     def test_blocked_agent_only(self):
         ks = KillSwitch()
         threshold = DEFAULT_TRIGGERS[0].default_threshold
-        ks.record_event(TriggerEvent(
-            trigger="rapid_file_deletion",
-            agent_id="agent-test-003",
-        ))
-        for i in range(threshold):
-            ks.record_event(TriggerEvent(
+        ks.record_event(
+            TriggerEvent(
                 trigger="rapid_file_deletion",
-                agent_id="agent-test-004",
-                context={"iteration": i},
-            ))
+                agent_id="agent-test-003",
+            )
+        )
+        for i in range(threshold):
+            ks.record_event(
+                TriggerEvent(
+                    trigger="rapid_file_deletion",
+                    agent_id="agent-test-004",
+                    context={"iteration": i},
+                )
+            )
         assert ks.is_agent_blocked("agent-test-004")
         assert not ks.is_agent_blocked("agent-test-003")
 
     def test_unknown_trigger_no_action(self):
         ks = KillSwitch()
-        result = ks.record_event(TriggerEvent(
-            trigger="nonexistent_trigger",
-            agent_id="agent-test-005",
-        ))
+        result = ks.record_event(
+            TriggerEvent(
+                trigger="nonexistent_trigger",
+                agent_id="agent-test-005",
+            )
+        )
         assert result == TriggerResult.NO_ACTION
 
 
@@ -118,27 +127,33 @@ class TestMultiAgentGlobalTrip:
         threshold = DEFAULT_TRIGGERS[0].default_threshold
         result = TriggerResult.NO_ACTION
         for i in range(threshold):
-            result = ks.record_event(TriggerEvent(
-                trigger="rapid_file_deletion",
-                agent_id="agent-a",
-                context={"iteration": i},
-            ))
+            result = ks.record_event(
+                TriggerEvent(
+                    trigger="rapid_file_deletion",
+                    agent_id="agent-a",
+                    context={"iteration": i},
+                )
+            )
         assert result == TriggerResult.BLOCK_AGENT
 
         for i in range(threshold):
-            result = ks.record_event(TriggerEvent(
-                trigger="rapid_file_deletion",
-                agent_id="agent-b",
-                context={"iteration": i},
-            ))
+            result = ks.record_event(
+                TriggerEvent(
+                    trigger="rapid_file_deletion",
+                    agent_id="agent-b",
+                    context={"iteration": i},
+                )
+            )
         assert result == TriggerResult.BLOCK_AGENT
 
         for i in range(threshold):
-            result = ks.record_event(TriggerEvent(
-                trigger="rapid_file_deletion",
-                agent_id="agent-c",
-                context={"iteration": i},
-            ))
+            result = ks.record_event(
+                TriggerEvent(
+                    trigger="rapid_file_deletion",
+                    agent_id="agent-c",
+                    context={"iteration": i},
+                )
+            )
         assert ks.is_global_tripped() or result == TriggerResult.GLOBAL_BLOCK
 
 
@@ -197,14 +212,16 @@ class TestTriggerProperty:
     def test_triggers_property_returns_copy(self):
         ks = KillSwitch()
         triggers = ks.triggers
-        triggers.append(TriggerDefinition(
-            trigger="test_should_not_persist",
-            description="",
-            default_threshold=1,
-            window_seconds=1.0,
-            cooldown_seconds=1.0,
-            auto_release=True,
-        ))
+        triggers.append(
+            TriggerDefinition(
+                trigger="test_should_not_persist",
+                description="",
+                default_threshold=1,
+                window_seconds=1.0,
+                cooldown_seconds=1.0,
+                auto_release=True,
+            )
+        )
         assert len(ks.triggers) == len(DEFAULT_TRIGGERS)
 
 

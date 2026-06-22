@@ -20,7 +20,9 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from typing import Self
+
 """
 DOSLauncher: load and execute DOS directive files
 ==================================================
@@ -53,9 +55,9 @@ from pydantic import BaseModel, Field
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
+    "DOSLauncher",
     "DOSResult",
     "DirectiveInfo",
-    "DOSLauncher",
 ]
 
 

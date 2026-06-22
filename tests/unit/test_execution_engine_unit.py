@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """ExecutionEngine — 风控拒绝与 TWAP 主路径单元测试。"""
 
 
@@ -13,10 +14,10 @@ from decimal import Decimal
 
 import pytest
 
-from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
 from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
 from zephyr.ex_core.execution_engine import AlgoType, ExecutionEngine
 from zephyr.ex_core.order_manager import OrderManager
+from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
 from zephyr.trading.trading_contracts.execution.order import OrderSide, OrderType
 
 

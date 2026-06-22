@@ -29,11 +29,13 @@ Guard交互有向图+环路检测 — A→B→C→A 循环
 from collections import deque
 from dataclasses import dataclass, field
 
+
 @dataclass
 class GuardEdge:
     from_guard: str
     to_guard: str
     interaction_count: int = 0
+
 
 @dataclass
 class GuardInteractionTopologyMapper:

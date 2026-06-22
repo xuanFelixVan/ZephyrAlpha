@@ -29,13 +29,12 @@ TechStackValidator — 技术栈可用性校验器
   - 可观测：report() 输出结构化状态报告
 """
 
-import importlib
 import os
 import sqlite3
 import sys
+from dataclasses import dataclass
+
 import yaml
-from dataclasses import dataclass, field
-from typing import Optional
 
 
 @dataclass
@@ -53,11 +52,13 @@ class TechStackValidator:
     支持从 YAML manifest 加载决策清单，然后逐项检查。
     """
 
-    def __init__(self, manifest_path: Optional[str] = None):
+    def __init__(self, manifest_path: str | None = None):
         if manifest_path is None:
             manifest_path = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-                "config", "capacity", "tech_stackmanifest.yaml"
+                "config",
+                "capacity",
+                "tech_stackmanifest.yaml",
             )
         self.manifest_path = manifest_path
         self.decisions: list[dict] = []
@@ -66,7 +67,7 @@ class TechStackValidator:
 
     def _load_manifest(self):
         if os.path.exists(self.manifest_path):
-            with open(self.manifest_path, "r", encoding="utf-8") as f:
+            with open(self.manifest_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
                 self.decisions = data.get("decisions", [])
         else:
@@ -119,77 +120,115 @@ class TechStackValidator:
     def check_pydantic_v2(self) -> ComponentStatus:
         try:
             import pydantic
+
             version = pydantic.__version__
             if version.startswith("2."):
-                return ComponentStatus(dd_id="DD-1", component="Pydantic v2", available=True,
-                                       details=f"pydantic=={version}")
-            return ComponentStatus(dd_id="DD-1", component="Pydantic v2", available=False,
-                                   details=f"检测到 pydantic=={version}，需要 v2.x",
-                                   suggestion="pip install 'pydantic>=2.0'")
+                return ComponentStatus(
+                    dd_id="DD-1", component="Pydantic v2", available=True, details=f"pydantic=={version}"
+                )
+            return ComponentStatus(
+                dd_id="DD-1",
+                component="Pydantic v2",
+                available=False,
+                details=f"检测到 pydantic=={version}，需要 v2.x",
+                suggestion="pip install 'pydantic>=2.0'",
+            )
         except ImportError:
-            return ComponentStatus(dd_id="DD-1", component="Pydantic v2", available=False,
-                                   details="未安装 pydantic",
-                                   suggestion="pip install 'pydantic>=2.0'")
+            return ComponentStatus(
+                dd_id="DD-1",
+                component="Pydantic v2",
+                available=False,
+                details="未安装 pydantic",
+                suggestion="pip install 'pydantic>=2.0'",
+            )
 
     def check_sqlite(self) -> ComponentStatus:
         try:
             conn = sqlite3.connect(":memory:")
             conn.execute("SELECT 1")
             conn.close()
-            return ComponentStatus(dd_id="DD-2", component="SQLite", available=True,
-                                   details=f"sqlite3={sqlite3.sqlite_version}")
+            return ComponentStatus(
+                dd_id="DD-2", component="SQLite", available=True, details=f"sqlite3={sqlite3.sqlite_version}"
+            )
         except Exception as e:
-            return ComponentStatus(dd_id="DD-2", component="SQLite", available=False,
-                                   details=str(e),
-                                   suggestion="检查 Python sqlite3 模块是否编译进你的 Python")
+            return ComponentStatus(
+                dd_id="DD-2",
+                component="SQLite",
+                available=False,
+                details=str(e),
+                suggestion="检查 Python sqlite3 模块是否编译进你的 Python",
+            )
 
     def check_otel_sdk(self) -> ComponentStatus:
         try:
             import opentelemetry
+
             version = getattr(opentelemetry, "__version__", None)
             if version is None:
                 from importlib.metadata import version as pkg_version
+
                 try:
                     version = pkg_version("opentelemetry-api")
                 except Exception:
                     version = "unknown"
-            return ComponentStatus(dd_id="DD-3", component="OpenTelemetry SDK", available=True,
-                                   details=f"opentelemetry-api=={version}")
+            return ComponentStatus(
+                dd_id="DD-3", component="OpenTelemetry SDK", available=True, details=f"opentelemetry-api=={version}"
+            )
         except ImportError:
-            return ComponentStatus(dd_id="DD-3", component="OpenTelemetry SDK", available=False,
-                                   details="未安装 opentelemetry-api",
-                                   suggestion="pip install opentelemetry-api opentelemetry-sdk")
+            return ComponentStatus(
+                dd_id="DD-3",
+                component="OpenTelemetry SDK",
+                available=False,
+                details="未安装 opentelemetry-api",
+                suggestion="pip install opentelemetry-api opentelemetry-sdk",
+            )
 
     def check_pytest(self) -> ComponentStatus:
         try:
             import pytest
-            return ComponentStatus(dd_id="DD-7", component="pytest", available=True,
-                                   details=f"pytest=={pytest.__version__}")
+
+            return ComponentStatus(
+                dd_id="DD-7", component="pytest", available=True, details=f"pytest=={pytest.__version__}"
+            )
         except ImportError:
-            return ComponentStatus(dd_id="DD-7", component="pytest", available=False,
-                                   details="未安装 pytest",
-                                   suggestion="pip install pytest pytest-cov")
+            return ComponentStatus(
+                dd_id="DD-7",
+                component="pytest",
+                available=False,
+                details="未安装 pytest",
+                suggestion="pip install pytest pytest-cov",
+            )
 
     def check_chromadb(self) -> ComponentStatus:
         try:
             import chromadb
+
             version = getattr(chromadb, "__version__", "unknown")
-            return ComponentStatus(dd_id="DD-16", component="ChromaDB", available=True,
-                                   details=f"chromadb=={version}")
+            return ComponentStatus(dd_id="DD-16", component="ChromaDB", available=True, details=f"chromadb=={version}")
         except ImportError:
-            return ComponentStatus(dd_id="DD-16", component="ChromaDB", available=False,
-                                   details="未安装 chromadb",
-                                   suggestion="pip install chromadb")
+            return ComponentStatus(
+                dd_id="DD-16",
+                component="ChromaDB",
+                available=False,
+                details="未安装 chromadb",
+                suggestion="pip install chromadb",
+            )
 
     def check_psutil(self) -> ComponentStatus:
         try:
             import psutil
-            return ComponentStatus(dd_id="DD-5", component="psutil", available=True,
-                                   details=f"psutil=={psutil.__version__}")
+
+            return ComponentStatus(
+                dd_id="DD-5", component="psutil", available=True, details=f"psutil=={psutil.__version__}"
+            )
         except ImportError:
-            return ComponentStatus(dd_id="DD-5", component="psutil", available=False,
-                                   details="未安装 psutil",
-                                   suggestion="pip install psutil")
+            return ComponentStatus(
+                dd_id="DD-5",
+                component="psutil",
+                available=False,
+                details="未安装 psutil",
+                suggestion="pip install psutil",
+            )
 
     def _check_dd_1(self) -> ComponentStatus:
         return self.check_pydantic_v2()
@@ -236,7 +275,7 @@ class TechStackValidator:
         return "\n".join(lines)
 
 
-def validate_on_startup(manifest_path: Optional[str] = None) -> bool:
+def validate_on_startup(manifest_path: str | None = None) -> bool:
     validator = TechStackValidator(manifest_path=manifest_path)
     validator.validate()
     report = validator.report()

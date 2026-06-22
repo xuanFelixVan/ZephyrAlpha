@@ -20,9 +20,7 @@ from __future__ import annotations
 
 import argparse
 import os
-import re
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from _migration_shared import (
@@ -30,7 +28,6 @@ from _migration_shared import (
     PROJECT_ROOT,
     filter_by_batch,
     load_mapping,
-    atomic_write,
 )
 
 
@@ -95,7 +92,7 @@ def _scan_blueprint_headers(replacements: list[tuple[str, str]], dry_run: bool =
             continue
         try:
             first_lines = ""
-            with open(py_file, "r", encoding="utf-8") as f:
+            with open(py_file, encoding="utf-8") as f:
                 for i, line in enumerate(f):
                     if i >= 5:
                         break
@@ -200,7 +197,7 @@ def update_batch(batch: int, dry_run: bool = False) -> int:
     total_updated += r4["updated"]
     total_changes += r4["changes"]
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Files updated: {total_updated}")
     print(f"  Total changes: {total_changes}")
 

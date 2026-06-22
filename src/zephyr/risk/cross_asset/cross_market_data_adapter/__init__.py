@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """_cross_layer: Cross-layer integration pipelines for domain blueprints."""
 
 __all__ = [
@@ -19,10 +19,14 @@ __all__ = [
 
 _LAZY_IMPORTS = {
     "AlphaSignalPipeline": ("zephyr.shared._cross_layer.alpha_signal_pipeline", "AlphaSignalPipeline"),
-    "MLExperimentPipeline": ("zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline", "MLExperimentPipeline"),
+    "MLExperimentPipeline": (
+        "zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline",
+        "MLExperimentPipeline",
+    ),
 }
 
 _SUBMODULES = ["ml_experiment_pipeline"]
+
 
 def __getattr__(name):
     if name in _LAZY_IMPORTS:

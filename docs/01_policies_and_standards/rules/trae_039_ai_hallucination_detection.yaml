@@ -1,9 +1,19 @@
 rule_id: TRAE-039
 title: AI治理-幻觉检测与自检
+version: 1.2.2
+layer: L1
+module_id: TRAE-039
+depends_on: []
+tags:
+- TRAE
+- ai_hallucination
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - GOV-AI-003
 - GOV-AI-009
-layer: L1
 severity: error
 scope: ai_hallucination
 domain: TRAE
@@ -28,27 +38,21 @@ sections:
     - type: mandatory
       step: 检查项1-文件路径验证：引用任何文件路径前，必须通过 Glob/LS/Read 确认文件实际存在
     - type: mandatory
-      step: 检查项2-模块ID验证：使用的所有模块ID必须在 docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
-        或 docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml
-        中确认存在
+      step: 检查项2-模块ID验证：使用的所有模块ID必须在 docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml 或 docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml 中确认存在
     - type: mandatory
       step: 检查项3-接口定义验证：引用的接口必须在 src/zephyr/shared/contracts/ 中确认存在，禁止幻觉补全参数类型/超时值/异常类型
     - type: mandatory
       step: 检查项4-依赖关系验证：依赖方向必须符合项目分层架构，禁止创建循环依赖
     - type: mandatory
-      step: 检查项5-SSoT验证：修改字段前确认权威来源在 docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
-        §2.5，只在权威来源文件中修改
+      step: 检查项5-SSoT验证：修改字段前确认权威来源在 docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml §2.5，只在权威来源文件中修改
     - type: mandatory
-      step: 检查项6-编号规范验证：模块ID使用 GOV-XXX/PS-XXX/OPS-XXX/META-XXX 格式，编号引用使用 module_id
-        精确引用
+      step: 检查项6-编号规范验证：模块ID使用 GOV-XXX/PS-XXX/OPS-XXX/META-XXX 格式，编号引用使用 module_id 精确引用
     - type: mandatory
-      step: 检查项7-操作权限验证：操作路径在 docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
-        允许列表中，新建文件≤5个
+      step: 检查项7-操作权限验证：操作路径在 docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml 允许列表中，新建文件≤5个
     - type: mandatory
       step: 检查项8-编码安全验证：编辑器编码设置为UTF-8，files.autoGuessEncoding=false，无两个编辑器同时打开同一文件
     - type: mandatory
-      step: 检查项9-任务范围验证：任务在 docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml
-        中有对应，前置条件已满足
+      step: 检查项9-任务范围验证：任务在 docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml 中有对应，前置条件已满足
     - type: mandatory
       step: 检查项10-引用出处验证：能指出信息的具体来源文件和行号，禁止从"记忆"中引用
     - type: mandatory
@@ -84,8 +88,7 @@ sections:
     - type: mandatory
       step: HC-1：新增类/接口必须在 module_id_registry.yaml 中登记（AST解析+注册表比对，ERROR级阻断提交）
     - type: mandatory
-      step: HC-2：代码引入的依赖必须在 technology_landscape.yaml 的 Adopt/Assess 象限（import解析+Tech
-        Radar比对，WARNING级标注）
+      step: HC-2：代码引入的依赖必须在 technology_landscape.yaml 的 Adopt/Assess 象限（import解析+Tech Radar比对，WARNING级标注）
     - type: mandatory
       step: HC-3：禁止跨层直接调用（绕过 shared/contracts/），依赖图分析，ERROR级阻断提交，资金执行安全红线
     - type: mandatory
@@ -144,8 +147,7 @@ sections:
     - type: mandatory
       step: SLA：max_delay_hours=24，escalation=block_further_work，reminder_after_hours=12
     - type: mandatory
-      step: 'Owner在Session Log的confirmation_section签字，Git commit message包含Confirmed-By:
-        Owner'
+      step: 'Owner在Session Log的confirmation_section签字，Git commit message包含Confirmed-By: Owner'
     - type: mandatory
       step: 每次commit前必须展示WARNING清单，强制AI阅读并确认
     - type: mandatory
@@ -162,10 +164,9 @@ sections:
     - description: v1.0.0 2026-05-01
       details: 初始版本。定义GOV-AI-003自检清单10项+二次自检5项、GOV-AI-009自动检测HC-1~HC-10+HC-6b+HC-7b、人工确认机制。
     - description: v1.1.0 2026-06-19
-      details: RQ审查修复——修复内部矛盾(10条→12条HC规则)、HC-1 module_id_registry.json→.yaml、HC-6
-        invariant_check.py→arch_guard/run_all.py、references.modules使用完整路径+移除不存在的system-configuration.yaml、provenance迁移状态标记(RQ-04/RQ-09)、补充change_history(RQ-14)。
+      details: RQ审查修复——修复内部矛盾(10条→12条HC规则)、HC-1 module_id_registry.json→.yaml、HC-6 invariant_check.py→arch_guard/run_all.py、references.modules使用完整路径+移除不存在的system-configuration.yaml、provenance迁移状态标记(RQ-04/RQ-09)、补充change_history(RQ-14)。
     - description: v1.2.0 2026-06-19
-      details: RQ全量审查修复——kebab-case文件名引用改为snake_case+完整路径(metadata-registry.md→frontmatter_field_registry.yaml、document-metadata-index-registry.yaml→document_metadata_index_registry.yaml、model-capability-contract.yaml→model_capability_contract.yaml)，落地§2.2命名裁定(RQ-05)。
+      details: RQ全量审查修复——kebab-case文件名引用改为snake_case+完整路径(metadata_registry.yaml→frontmatter_field_registry.yaml、document-metadata-index-registry.yaml→document_metadata_index_registry.yaml、model-capability-contract.yaml→model_capability_contract.yaml)，落地§2.2命名裁定(RQ-05)。
 references:
   rule_ids:
   - TRAE-039
@@ -185,7 +186,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.2.2
     date: '2026-06-21'

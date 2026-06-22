@@ -26,7 +26,6 @@
     2. 独立进程: python -m zephyr.infrastructure.system_telemetry.watchdog --id wd-1 [--interval 10]
 """
 
-
 from __future__ import annotations
 
 import time
@@ -64,6 +63,7 @@ class Watchdog:
 
     def write_external_heartbeat(self) -> None:
         import json
+
         hb_file = Path(self._external_file)
         try:
             hb_file.parent.mkdir(parents=True, exist_ok=True)
@@ -88,7 +88,6 @@ class Watchdog:
         """
         import logging
         import signal
-        import sys
 
         _wd_logger = logging.getLogger(f"watchdog.{self._id}")
         _stop = False

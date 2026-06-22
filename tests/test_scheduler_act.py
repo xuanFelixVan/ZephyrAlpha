@@ -10,15 +10,15 @@
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_scheduler_act.py
 
-import pytest
-from unittest.mock import MagicMock, patch
-from zephyr.ops.scheduler_act import ActResult, ActPhaseHandler
-from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
-from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
-from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+from unittest.mock import MagicMock
+
 from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
 from zephyr.ops.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
 from zephyr.ops.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
+from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
+from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
+from zephyr.ops.scheduler_act import ActPhaseHandler, ActResult
 
 
 class TestActResult:

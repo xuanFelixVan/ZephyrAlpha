@@ -1,27 +1,28 @@
 ---
-blueprint_id: DOM-GOV-001
-created: '2026-05-03'
 doc_type: index
-module_id: MOD-INF-050
-status: Draft
-title: mcp-servers — 目录索引
-updated: '2026-05-03'
-version: 1.0.0
+status: active
+title: "mcp_servers — 目录索引"
+module_id: "MOD-INF-013"
+blueprint_id: "MOD-INF-013"
+version: "0.3.39"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-
-# mcp-servers
+# mcp_servers
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-03
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blueprint.md](blueprint.md) | Markdown | MCP Servers 蓝图 — stdio 协议向外部 IDE/Agent 暴露系统能力 |
+| [blueprint.md](blueprint.md) | Markdown | MCP Servers 蓝图 — MCP 服务器管理与调度 |
+| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| [index.md](index.md) | Markdown | mcp-servers — 目录索引 |
+| [runbook.md](runbook.md) | Markdown | Runbook |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

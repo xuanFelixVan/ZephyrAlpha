@@ -36,7 +36,6 @@ Backend  : knowledge_indexer.py ( ChromaDB) + SQLite knowledge 表
 - knowledge_base.rebuild_index — 重建 collection 向量索引
 """
 
-
 from __future__ import annotations
 
 import hashlib
@@ -47,7 +46,7 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from zephyr.shared.ports import VectorMemoryProtocol
+    pass
 
 from zephyr.infrastructure._base_server import BaseMCPServer, MCPError
 
@@ -55,16 +54,34 @@ __all__ = ["KnowledgeBaseServer", "create_server"]
 
 _KE_ID_RE = re.compile(r"^KE-[0-9]{3}(-.+)?$")
 
-_VALID_COLLECTIONS = frozenset({
-    "ke_entries", "vibe_rules", "blueprints", "failure_patterns",
-    "decisions", "code_context", "lessons", "knowledge",
-    "rules", "session_snapshots", "execution_traces",
-})
+_VALID_COLLECTIONS = frozenset(
+    {
+        "ke_entries",
+        "vibe_rules",
+        "blueprints",
+        "failure_patterns",
+        "decisions",
+        "code_context",
+        "lessons",
+        "knowledge",
+        "rules",
+        "session_snapshots",
+        "execution_traces",
+    }
+)
 
-_VMS_COLLECTIONS = frozenset({
-    "decisions", "code_context", "lessons", "knowledge",
-    "rules", "blueprints", "session_snapshots", "execution_traces",
-})
+_VMS_COLLECTIONS = frozenset(
+    {
+        "decisions",
+        "code_context",
+        "lessons",
+        "knowledge",
+        "rules",
+        "blueprints",
+        "session_snapshots",
+        "execution_traces",
+    }
+)
 _LEGACY_COLLECTIONS = _VALID_COLLECTIONS - _VMS_COLLECTIONS
 _VALID_CATEGORIES = frozenset(
     {
@@ -208,7 +225,7 @@ class KnowledgeBaseServer(BaseMCPServer):
     def _init_backends(self) -> None:
         try:
             _mod = importlib.import_module("zephyr.intelligence.model_evaluation.kb_repo")
-            KbRepo = getattr(_mod, "KbRepo")
+            KbRepo = _mod.KbRepo
             self._kb_repo = KbRepo()
             self._backend_mode = "kb_repo"
         except Exception as exc:
@@ -216,7 +233,7 @@ class KnowledgeBaseServer(BaseMCPServer):
 
         try:
             _mod = importlib.import_module("zephyr.intelligence.model_evaluation.unified_memory_api")
-            get_unified_memory_api = getattr(_mod, "get_unified_memory_api")
+            get_unified_memory_api = _mod.get_unified_memory_api
             self._kb_api = get_unified_memory_api(enforce_capability=False)
         except Exception:
             pass
@@ -255,13 +272,15 @@ class KnowledgeBaseServer(BaseMCPServer):
                 for result in hits_raw:
                     score = result.get("score", 0.0)
                     if score >= score_threshold:
-                        hits.append({
-                            "chunk_id": result.get("id", ""),
-                            "score": score,
-                            "content": result.get("content", "")[:500],
-                            "metadata": result.get("metadata", {}),
-                            "ke_id": result.get("ke_id", ""),
-                        })
+                        hits.append(
+                            {
+                                "chunk_id": result.get("id", ""),
+                                "score": score,
+                                "content": result.get("content", "")[:500],
+                                "metadata": result.get("metadata", {}),
+                                "ke_id": result.get("ke_id", ""),
+                            }
+                        )
                 elapsed = int((datetime.now(tz=UTC) - start).total_seconds() * 1000)
                 return {
                     "hits": hits[:n_results],
@@ -339,7 +358,7 @@ class KnowledgeBaseServer(BaseMCPServer):
                     )
                 else:
                     _mod = importlib.import_module("zephyr.intelligence.model_evaluation.kb_repo")
-                    KeStatus = getattr(_mod, "KeStatus")
+                    KeStatus = _mod.KeStatus
                     if existing.status in (KeStatus.DRAFT, KeStatus.REJECTED):
                         self._kb_repo.create(
                             ke_id=ke_id,
@@ -355,7 +374,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         if self._kb_api is not None:
             try:
                 _mod = importlib.import_module("zephyr.intelligence.model_evaluation.unified_memory_api")
-                build_provenance = getattr(_mod, "build_provenance")
+                build_provenance = _mod.build_provenance
                 prov = build_provenance(
                     origin=f"mcp:knowledge_base:upsert_ke:{ke_id}",
                     audit_chain=["MOD-KB-001", "MCP-KBG-0033"],
@@ -368,7 +387,12 @@ class KnowledgeBaseServer(BaseMCPServer):
             except Exception:
                 pass
 
-        return {"ke_id": ke_id, "chunks_indexed": chunks_count, "fingerprint_sha256": fingerprint, "backend": self._backend_mode}
+        return {
+            "ke_id": ke_id,
+            "chunks_indexed": chunks_count,
+            "fingerprint_sha256": fingerprint,
+            "backend": self._backend_mode,
+        }
 
     def _get_ke(self, ke_id: str) -> dict[str, Any]:
         """按 ke_id 返回条目（ZA-KB-0005 on not found）。"""
@@ -423,7 +447,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         if self._kb_repo is not None:
             try:
                 _mod = importlib.import_module("zephyr.intelligence.model_evaluation.kb_repo")
-                KeStatus = getattr(_mod, "KeStatus")
+                KeStatus = _mod.KeStatus
                 records = self._kb_repo.list_by_status()
                 if category:
                     records = [r for r in records if r.category == category]
@@ -476,6 +500,7 @@ class KnowledgeBaseServer(BaseMCPServer):
 
         try:
             from zephyr.shared.registry import ServiceRegistry
+
             if ServiceRegistry.is_registered("chromadb_client"):
                 client = ServiceRegistry.get("chromadb_client")
                 client.list_collections()
@@ -485,6 +510,7 @@ class KnowledgeBaseServer(BaseMCPServer):
 
         try:
             from zephyr.shared.registry import ServiceRegistry
+
             if ServiceRegistry.is_registered("vector-memory"):
                 vms_status = "available"
         except Exception:

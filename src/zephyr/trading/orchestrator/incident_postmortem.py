@@ -23,8 +23,10 @@ from __future__ import annotations
 
 """事件复盘管理器（CT-INCIDENT）——incident记录+timeline+action_items+postmortem。"""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from pydantic import BaseModel, Field
+
 
 class Incident(BaseModel):
     incident_id: str
@@ -33,7 +35,8 @@ class Incident(BaseModel):
     timeline: list[dict] = Field(default_factory=list)
     root_cause: str = ""
     action_items: list[str] = Field(default_factory=list)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
 
 class IncidentManager:
     def __init__(self):

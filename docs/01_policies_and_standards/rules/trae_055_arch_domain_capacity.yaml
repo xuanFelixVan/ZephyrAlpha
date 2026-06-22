@@ -1,5 +1,16 @@
 rule_id: TRAE-055
 title: 架构容量与域治理规则
+version: 1.0.7
+layer: L0
+module_id: TRAE-055
+depends_on: []
+tags:
+- TRAE
+- arch_domain_capacity_governance
+- L0
+stability: stable
+safety_level: H
+ai_autonomy: human_gated
 aliases:
 - ARCH-CAP-000
 - ARCH-CAP-001
@@ -19,7 +30,6 @@ aliases:
 - 拆分审批
 - 第一性原理
 - 架构命名第一性原理
-layer: L0
 severity: critical
 scope: arch_domain_capacity_governance
 domain: TRAE
@@ -384,7 +394,7 @@ metadata:
   change_policy: stable
   impact_level: H
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.0.7
     date: '2026-06-21'

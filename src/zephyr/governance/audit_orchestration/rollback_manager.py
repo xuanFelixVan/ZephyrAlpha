@@ -55,8 +55,8 @@ from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
-    "RollbackManager",
     "Checkpoint",
+    "RollbackManager",
 ]
 
 

@@ -1,0 +1,205 @@
+rule_id: TRAE-058
+title: 全景图扫描排除规则
+version: '1.0.0'
+layer: L1
+module_id: TRAE-058
+depends_on:
+- TRAE-054
+tags:
+- TRAE
+- depgraph_scan_exclusions
+- L1
+- scan_rules
+- exclusion
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
+aliases:
+- 扫描排除规则
+- depgraph排除
+- 全景图排除
+- SCAN-EXCLUDE
+severity: error
+scope: depgraph_scan_exclusions
+domain: TRAE
+triggers:
+- operation: depgraph_generate
+- operation: path_tree_generate
+- operation: query_why_not_in_panorama
+- operation: add_new_scan_exclusion
+sections:
+  scan_exclusion_principle:
+    section_type: rule
+    title: 全景图扫描排除原则
+    original_rules: []
+    conditions:
+    - type: trigger
+      check: AI session 查询"为什么某路径不在全景图中"或"某路径是否应该纳入全景图"
+      pass: 查本规则 §排除路径清单 + 配置文件 depgraph_scan_exclusions.yaml
+      fail: 凭模式猜测 → 幻觉
+    - type: constraint
+      check: depgraph 回答"谁依赖谁"（CODE 依赖关系），非代码文件不进入依赖图
+      pass: 非代码文件(文档/知识/审计/数据)排除出 depgraph nodes
+      fail: 非代码文件进入 depgraph → 噪音边泛滥 → 依赖图不可用
+    - type: constraint
+      check: path_tree 回答"磁盘上有什么文件"（物理路径树），覆盖所有项目文件
+      pass: path_tree 仅排除二进制/缓存/编译产物，保留文档/知识/审计
+      fail: path_tree 排除文档 → AI 看不到磁盘文件结构 → 幻觉
+    actions:
+    - type: mandatory
+      step: '查询排除规则: 查 depgraph_scan_exclusions.yaml(路径清单真源) → 查本规则(原则定义)'
+    - type: mandatory
+      step: '修改排除规则: 修改 depgraph_scan_exclusions.yaml → 运行 generate_project_depgraph.py --warn-only 验证 → 运行 generate_project_path_tree.py --check 验证'
+    - type: mandatory
+      step: '新增排除路径: 在 depgraph_scan_exclusions.yaml 对应段落添加路径 + 注明排除原因 + 更新本规则 §排除路径清单'
+  exclusion_mechanism:
+    section_type: reference
+    title: 排除机制详解
+    rationale:
+      whitelist: 'depgraph 用白名单扫描根(SCAN_DIRS)——不在白名单的路径根本不扫描。这是最主要的排除机制。'
+      exempt_dir: 'os.walk 时按目录名跳过(如 __pycache__/.git)——通用缓存/锁/临时目录。'
+      node_type: '节点类型过滤(EXCLUDED_NODE_TYPES)——doc/policy/standard/template/diagram/data 类型不进入依赖图，因为它们零 import_depends 边，只有噪音引用。'
+      knowledge_doc: '知识文档类型跳过——docs/08_knowledge 和 docs/09_audit 的 .md 文件被分类为 knowledge_doc 并跳过，因为它们是经验积累/历史记录，无代码依赖。'
+      skip_ext: 'path_tree 跳过二进制/编译产物扩展名(.pyc/.dll/.exe 等)。'
+      max_depth: 'path_tree 最大扫描深度 8 层，防止无限递归。'
+  excluded_paths:
+    section_type: reference
+    title: 不纳入全景图的路径清单
+    description: |
+      以下路径不纳入 depgraph nodes 表(不可见)。
+      path_tree 中 docs/08_knowledge、docs/09_audit、docs/decomposition 仍可见(物理路径树保留)。
+    items:
+    - path: docs/08_knowledge/
+      reason: 知识库条目(4647+ 文件)，经验积累非代码，无导入依赖
+      exclusion_mechanism: whitelist + knowledge_doc
+      in_path_tree: true
+    - path: docs/09_audit/
+      reason: 审计报告(36 文件)，事后评估非代码，历史记录
+      exclusion_mechanism: whitelist + knowledge_doc
+      in_path_tree: true
+    - path: docs/decomposition/
+      reason: 任务卡(7 文件)，拆解产物非代码，临时性
+      exclusion_mechanism: whitelist
+      in_path_tree: true
+    - path: docs/decomposition/tasks/
+      reason: 任务卡文件(DM-*.md)，拆解产物非代码
+      exclusion_mechanism: whitelist
+      in_path_tree: true
+    - path: data/cache/
+      reason: 运行时缓存，非代码
+      exclusion_mechanism: whitelist + exempt_dir(cache)
+      in_path_tree: false
+    - path: data/telemetry/
+      reason: 遥测数据，非代码
+      exclusion_mechanism: whitelist + exempt_dir(telemetry)
+      in_path_tree: false
+    - path: scripts/governance/_archive/
+      reason: 归档脚本，非活跃代码
+      exclusion_mechanism: whitelist
+      in_path_tree: true
+    - path: scripts/governance/repair/
+      reason: 修复脚本，临时性
+      exclusion_mechanism: whitelist
+      in_path_tree: true
+    - path: scripts/governance/_shared/
+      reason: 共享内部工具，非 depgraph 相关
+      exclusion_mechanism: whitelist
+      in_path_tree: true
+  excluded_node_types:
+    section_type: reference
+    title: 不纳入依赖图的节点类型
+    description: |
+      以下类型的节点不进入 depgraph nodes 表。
+      这些类型零 import_depends 边，只有噪音引用边。
+      它们属于架构全景(含所有文件)，不属于依赖图(只含代码依赖)。
+    items:
+    - type: doc
+      reason: 文档文件，0 import edges
+      typical_paths: docs/02_enterprise_architecture/, docs/09_audit/, docs/08_knowledge/
+    - type: policy
+      reason: 政策文档，0 import edges
+      typical_paths: docs/01_policies_and_standards/governance/
+    - type: standard
+      reason: 标准文档，0 import edges
+      typical_paths: docs/01_policies_and_standards/rules/
+    - type: template
+      reason: 模板文档，0 import edges
+      typical_paths: docs/01_policies_and_standards/templates/
+    - type: diagram
+      reason: mermaid 图表，0 import edges
+      typical_paths: *.mmd 文件
+    - type: data
+      reason: 数据文件，0 import edges
+      typical_paths: data/ 下的 .json/.yaml 文件
+  config_file_reference:
+    section_type: reference
+    title: 配置文件真源
+    description: |
+      排除路径/类型的具体清单存储在 YAML 配置文件中(非硬编码在 Python 代码中)。
+      修改排除规则 = 修改配置文件，不需要改代码。
+    config_file: docs/01_policies_and_standards/_registry/catalogs/depgraph_scan_exclusions.yaml
+    config_structure:
+      depgraph.scan_dirs: depgraph 白名单扫描根
+      depgraph.exempt_dirs: depgraph os.walk 跳过的目录名
+      depgraph.excluded_node_types: depgraph 不纳入的节点类型
+      depgraph.knowledge_doc_paths: depgraph 知识文档跳过路径
+      depgraph.type_prefixes: depgraph 类型分类前缀
+      path_tree.scan_roots: path_tree 扫描根
+      path_tree.skip_dirs: path_tree 跳过的目录名
+      path_tree.skip_extensions: path_tree 跳过的扩展名
+      path_tree.max_depth: path_tree 最大扫描深度
+  code_implementation:
+    section_type: reference
+    title: 代码实现
+    description: |
+      两个生成器从 depgraph_scan_exclusions.yaml 读取配置，不硬编码排除规则。
+    generators:
+    - script: scripts/governance/generate_project_depgraph.py
+      reads_config: depgraph 段(scan_dirs + exempt_dirs + excluded_node_types + knowledge_doc_paths + type_prefixes)
+      cleaned_dead_code: EXCLUDED_SCAN_DIRS(定义但从未使用，已删除)
+    - script: scripts/governance/generate_project_path_tree.py
+      reads_config: path_tree 段(scan_roots + skip_dirs + skip_extensions + max_depth)
+      note: path_tree 不排除 docs/08_knowledge、docs/09_audit(物理路径树保留所有文档)
+  change_history:
+    section_type: examples
+    title: 修订记录
+    items:
+    - version: '1.0.0'
+      date: '2026-06-22'
+      by: session-20260622-001
+      changes: '初始创建——从 generate_project_depgraph.py 和 generate_project_path_tree.py 代码中提取扫描排除规则，建立独立规则文件 + YAML 配置文件真源。清理 EXCLUDED_SCAN_DIRS 死代码。解决 AI session 无法通过规则文件发现排除策略的问题。'
+references:
+  rule_ids:
+  - TRAE-054
+  - TRAE-058
+  scripts:
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/extract_depgraph.py
+  configs:
+  - docs/01_policies_and_standards/_registry/catalogs/depgraph_scan_exclusions.yaml
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors:
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+  change_history:
+  - version: 1.0.0
+    date: '2026-06-22'
+    by: session-20260622-001
+    changes:
+    - 初始创建——从代码中提取扫描排除规则，建立独立规则文件 + YAML 配置文件真源
+provenance:
+  extracted_at: '2026-06-22T00:00:00'
+  extracted_by: scaffold-generated
+  source_files:
+  - scripts/governance/generate_project_depgraph.py (lines 79-175, 1041-1102, 1392-1399)
+  - scripts/governance/generate_project_path_tree.py (lines 201-222)

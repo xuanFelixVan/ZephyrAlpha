@@ -1,28 +1,29 @@
 ---
 doc_type: index
-status: Active
-generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
-title: Vibe Coding Pipelines
-module_id: MOD-028
+status: active
+title: "vibe_coding_pipelines — 目录索引"
+module_id: MOD-023
+blueprint_id: MOD-023
+version: "0.13.0"
+created: "2026-05-02"
+updated: "2026-06-22"
 ---
 
-# Vibe Coding Pipelines — 目录索引
+# vibe_coding_pipelines
+
+> 本文件由 `generate_missing_index_md.py` 自动生成（后经手动校正）
+> 生成日期：2026-06-22
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**infra_ops 层模块 — vibe coding pipelines**。
+本目录存放：**_domain_governance 域下 — vibe coding pipelines 相关文档**。
 
-## 文件清单
+## 目录内容
 
-| 文件 | 说明 |
-|------|------|
-| blueprint.md | 模块蓝图 |
+| 文件/目录 | 类型 | 说明 |
+|-----------|------|------|
+| `delivery/` | 目录 | 交付物索引 |
 
-## 排除规则（不应放入本目录的内容）
+## 导航
 
-- ❌ 其他模块文档 → `../`
-
-## 父级目录
-
-- 父级：[infra_ops](../index.md)
+- [上级目录](../index.md)

@@ -40,7 +40,6 @@ import hashlib
 import logging
 import re
 from enum import Enum
-from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -121,22 +120,23 @@ class PrivacyGuard:
             for category, pattern_strs in custom_patterns.items():
                 if category not in self._patterns:
                     self._patterns[category] = []
-                self._patterns[category].extend(
-                    re.compile(p) for p in pattern_strs
-                )
+                self._patterns[category].extend(re.compile(p) for p in pattern_strs)
 
     def detect_pii(self, text: str) -> PIIScanResult:
         detections: list[PIIDetection] = []
         for category, patterns in self._patterns.items():
             for pattern in patterns:
                 for match in pattern.finditer(text):
-                    detections.append(PIIDetection(
-                        category=category,
-                        value=match.group(),
-                        start=match.start(),
-                        end=match.end(),
-                    ))
+                    detections.append(
+                        PIIDetection(
+                            category=category,
+                            value=match.group(),
+                            start=match.start(),
+                            end=match.end(),
+                        )
+                    )
         from datetime import UTC, datetime
+
         return PIIScanResult(
             has_pii=len(detections) > 0,
             detections=detections,
@@ -158,7 +158,11 @@ class PrivacyGuard:
         for detection in sorted_detections:
             original = detection.value
             if effective_policy == RedactionPolicy.MASK:
-                replacement_text = original[:2] + _MASK_CHAR * (len(original) - 4) + original[-2:] if len(original) > 4 else _MASK_CHAR * len(original)
+                replacement_text = (
+                    original[:2] + _MASK_CHAR * (len(original) - 4) + original[-2:]
+                    if len(original) > 4
+                    else _MASK_CHAR * len(original)
+                )
             elif effective_policy == RedactionPolicy.HASH:
                 replacement_text = f"[HASH:{hash_path(original)}]"
             elif effective_policy == RedactionPolicy.REMOVE:
@@ -166,7 +170,7 @@ class PrivacyGuard:
             else:
                 replacement_text = replacement
 
-            result = result[:detection.start] + replacement_text + result[detection.end:]
+            result = result[: detection.start] + replacement_text + result[detection.end :]
 
         return result
 
@@ -176,5 +180,5 @@ class PrivacyGuard:
 
 
 def hash_path(path: str) -> str:
-    digest = hashlib.sha256(f"{_HASH_SALT}:{path}".encode("utf-8")).hexdigest()
+    digest = hashlib.sha256(f"{_HASH_SALT}:{path}".encode()).hexdigest()
     return digest[:16]

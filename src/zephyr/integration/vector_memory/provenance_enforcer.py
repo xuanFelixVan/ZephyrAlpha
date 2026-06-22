@@ -38,7 +38,7 @@ from typing import Any
 _logger = logging.getLogger(__name__)
 
 
-from zephyr.integration.vector_memory.vms_schemas import WriteTrace, Provenance
+from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
 
 class ProvenanceEnforcer:

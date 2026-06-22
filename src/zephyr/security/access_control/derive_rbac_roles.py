@@ -3,9 +3,12 @@
 
 DEFAULT_DERIVATIONS = None  # stub constant
 
+
 class RBACRoleDeriver:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "DEFAULT_DERIVATIONS",

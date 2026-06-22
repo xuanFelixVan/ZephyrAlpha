@@ -12,14 +12,12 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.cross_env_consistency import (
-    PYTHON_VERSION,
     MODEL_FLOAT_TOLERANCE,
-    WIN_MIN_RAM_GB,
-    WIN_MAX_CPU_LOAD,
+    PYTHON_VERSION,
     WIN11_RISKS,
+    WIN_MAX_CPU_LOAD,
+    WIN_MIN_RAM_GB,
     ConsistencyDim,
 )
 

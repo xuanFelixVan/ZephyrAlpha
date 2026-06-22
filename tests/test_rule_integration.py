@@ -92,9 +92,7 @@ class TestDepgraphIntegration:
         try:
             conn = sqlite3.connect(str(_DB_PATH), timeout=10.0)
             conn.row_factory = sqlite3.Row
-            cursor = conn.execute(
-                "SELECT COUNT(DISTINCT node_id) FROM nodes WHERE node_type = 'rule'"
-            )
+            cursor = conn.execute("SELECT COUNT(DISTINCT node_id) FROM nodes WHERE node_type = 'rule'")
             db_count = cursor.fetchone()[0]
             conn.close()
         except sqlite3.Error as exc:

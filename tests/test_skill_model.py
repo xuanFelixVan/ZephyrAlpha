@@ -10,18 +10,18 @@
 # [ERROR_CONTRACT] ValidationError on invalid skill_id or out-of-range freshness_score
 # [TESTS] pytest tests/test_skill_model.py -q
 
-import pytest
-from pydantic import ValidationError
 from datetime import datetime
 
+import pytest
+from pydantic import ValidationError
+
 from zephyr.autonomy_core.skill_model import (
+    ProgressiveLevel,
     SkillModel,
+    SkillStatus,
     SkillTier,
     SkillType,
-    SkillStatus,
-    ProgressiveLevel,
 )
-
 
 _VALID_KWARGS = {
     "skill_id": "SKILL-DOM-TS-001",

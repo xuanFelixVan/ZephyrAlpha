@@ -29,13 +29,11 @@ Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md §
 
 from __future__ import annotations
 
-import math
 import threading
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Optional
 
 from .budget_models import (
     BudgetAlert,
@@ -86,7 +84,7 @@ class BurnRateMonitor:
         self.dimension = dimension
         self._windows: dict[str, BurnWindow] = {}
         self._alerts: list[BudgetAlert] = []
-        self._distribution_baseline: Optional[list[float]] = None
+        self._distribution_baseline: list[float] | None = None
         self._lock = threading.Lock()
         self._init_windows()
 
@@ -94,8 +92,8 @@ class BurnRateMonitor:
         for name, duration, _max_samples in self.WINDOWS:
             self._windows[name] = BurnWindow(name=name, duration_seconds=duration)
 
-    def record_consumption(self, amount: float, timestamp: Optional[datetime] = None) -> None:
-        ts = timestamp or datetime.now(timezone.utc)
+    def record_consumption(self, amount: float, timestamp: datetime | None = None) -> None:
+        ts = timestamp or datetime.now(UTC)
         with self._lock:
             for win in self._windows.values():
                 win.sample_buffer.append((ts, amount))
@@ -117,27 +115,21 @@ class BurnRateMonitor:
                     worst = win.severity
             return worst
 
-    def detect_distribution_shift(self, recent_samples: Optional[list[float]] = None) -> float:
+    def detect_distribution_shift(self, recent_samples: list[float] | None = None) -> float:
         with self._lock:
             if self._distribution_baseline is None:
-                self._distribution_baseline = [
-                    win.last_burn_rate for win in self._windows.values()
-                ]
+                self._distribution_baseline = [win.last_burn_rate for win in self._windows.values()]
                 return 0.0
 
-            current = recent_samples or [
-                win.last_burn_rate for win in self._windows.values()
-            ]
+            current = recent_samples or [win.last_burn_rate for win in self._windows.values()]
             shift = self._wasserstein_1d(self._distribution_baseline, current)
             return shift
 
     def update_baseline(self) -> None:
         with self._lock:
-            self._distribution_baseline = [
-                win.last_burn_rate for win in self._windows.values()
-            ]
+            self._distribution_baseline = [win.last_burn_rate for win in self._windows.values()]
 
-    def generate_alert(self, policy: BudgetPolicy) -> Optional[BudgetAlert]:
+    def generate_alert(self, policy: BudgetPolicy) -> BudgetAlert | None:
         sev = self.get_severity()
         if sev == BurnSeverity.NORMAL:
             return None
@@ -148,10 +140,7 @@ class BurnRateMonitor:
             BurnSeverity.CRITICAL: BudgetLevel.L4_EMERGENCY,
         }
 
-        worst_window = max(
-            self._windows.values(),
-            key=lambda w: w.last_burn_rate
-        )
+        worst_window = max(self._windows.values(), key=lambda w: w.last_burn_rate)
 
         message = (
             f"Burn rate {worst_window.last_burn_rate:.2%} "
@@ -193,7 +182,7 @@ class BurnRateMonitor:
             self._distribution_baseline = None
 
     def _prune_window(self, win: BurnWindow) -> None:
-        cutoff = datetime.now(timezone.utc) - timedelta(seconds=win.duration_seconds)
+        cutoff = datetime.now(UTC) - timedelta(seconds=win.duration_seconds)
         pruned = deque(
             ((ts, amt) for ts, amt in win.sample_buffer if ts > cutoff),
             maxlen=win.sample_buffer.maxlen,
@@ -218,5 +207,5 @@ class BurnRateMonitor:
             return 0.0
         p_sorted = sorted(p)
         q_sorted = sorted(q)
-        total = sum(abs(a - b) for a, b in zip(p_sorted, q_sorted))
+        total = sum(abs(a - b) for a, b in zip(p_sorted, q_sorted, strict=False))
         return total / len(p_sorted)

@@ -63,10 +63,10 @@ OrchestrationResult = _mod.OrchestrationResult
 RoutingStrategy = _mod.RoutingStrategy
 
 __all__ = [
-    "PipelineAgentBridge",
     "M_TO_ROLE",
-    "role_for_module",
+    "PipelineAgentBridge",
     "domain_for_pipeline",
+    "role_for_module",
 ]
 
 _logger = logging.getLogger(__name__)
@@ -200,7 +200,7 @@ class PipelineAgentBridge:
             directive_chain = _build_directive_chain(mr.module_id)
 
             _mod = importlib.import_module("zephyr.governance.audit_orchestration.agent_orchestrator")
-            AgentRole = getattr(_mod, "AgentRole")
+            AgentRole = _mod.AgentRole
 
             required = AgentRole(role_name.upper()) if role_name.upper() in AgentRole.__members__ else None
 
@@ -253,7 +253,7 @@ class PipelineAgentBridge:
         directive_chain = _build_directive_chain(module_result.module_id)
 
         _mod = importlib.import_module("zephyr.governance.audit_orchestration.agent_orchestrator")
-        AgentRole = getattr(_mod, "AgentRole")
+        AgentRole = _mod.AgentRole
 
         required = AgentRole(role_name.upper()) if role_name.upper() in AgentRole.__members__ else None
 

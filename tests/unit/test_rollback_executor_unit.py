@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for RollbackExecutor — rollback core executor (MOD-INF-021 §7).
 
@@ -15,17 +16,15 @@ dependency_impact_analysis, in_flight lifecycle.
 """
 
 
-import json
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 from zephyr.governance.rollback_executor import (
     DiscardDecision,
     DiscardResult,
-    PreflightResult,
     PreviewResult,
     RollbackExecutor,
     RollbackOp,
@@ -132,11 +131,13 @@ class TestDiscardChanges:
 
     def test_discard_uncommitted_files(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git, \
-             patch.object(exec, "_detect_owner_session_in_files", return_value=[]), \
-             patch.object(exec, "get_uncommitted_files", return_value=["file.py"]), \
-             patch.object(exec, "get_staged_uncommitted_files", return_value=[]), \
-             patch.object(exec, "_write_audit_log"):
+        with (
+            patch.object(exec, "_run_git") as mock_git,
+            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
+            patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
+            patch.object(exec, "_write_audit_log"),
+        ):
             mock_git.return_value = ""
             result = exec.discard_changes(["file.py"])
             assert result.success
@@ -153,20 +154,24 @@ class TestDiscardChanges:
 
     def test_discard_force_bypasses_owner(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_detect_owner_session_in_files", return_value=[]), \
-             patch.object(exec, "get_uncommitted_files", return_value=["file.py"]), \
-             patch.object(exec, "get_staged_uncommitted_files", return_value=[]), \
-             patch.object(exec, "_run_git") as mock_git, \
-             patch.object(exec, "_write_audit_log"):
+        with (
+            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
+            patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
+            patch.object(exec, "_run_git") as mock_git,
+            patch.object(exec, "_write_audit_log"),
+        ):
             mock_git.return_value = ""
             result = exec.discard_changes(["file.py"], force=True)
             assert result.success
 
     def test_discard_no_changes(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_detect_owner_session_in_files", return_value=[]), \
-             patch.object(exec, "get_uncommitted_files", return_value=[]), \
-             patch.object(exec, "get_staged_uncommitted_files", return_value=[]):
+        with (
+            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch.object(exec, "get_uncommitted_files", return_value=[]),
+            patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
+        ):
             result = exec.discard_changes(["file.py"])
             assert not result.success
             assert result.decision == DiscardDecision.NO_CHANGES
@@ -177,11 +182,16 @@ class TestRollbackOrDiscard:
 
     def test_all_uncommitted_routes_to_discard(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "is_committed", return_value={"file.py": False}), \
-             patch.object(exec, "discard_changes") as mock_discard:
+        with (
+            patch.object(exec, "is_committed", return_value={"file.py": False}),
+            patch.object(exec, "discard_changes") as mock_discard,
+        ):
             mock_discard.return_value = DiscardResult(
-                success=True, files_discarded=["file.py"], files_blocked=[],
-                decision=DiscardDecision.DISCARD, audit_record={},
+                success=True,
+                files_discarded=["file.py"],
+                files_blocked=[],
+                decision=DiscardDecision.DISCARD,
+                audit_record={},
             )
             result = exec.rollback_or_discard(["file.py"])
             assert result.decision == DiscardDecision.DISCARD
@@ -189,13 +199,19 @@ class TestRollbackOrDiscard:
 
     def test_all_committed_routes_to_revert(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "is_committed", return_value={"file.py": True}), \
-             patch.object(exec, "_run_git", return_value="abc1234"), \
-             patch.object(exec, "full_revert") as mock_revert, \
-             patch.object(exec, "_write_audit_log"):
+        with (
+            patch.object(exec, "is_committed", return_value={"file.py": True}),
+            patch.object(exec, "_run_git", return_value="abc1234"),
+            patch.object(exec, "full_revert") as mock_revert,
+            patch.object(exec, "_write_audit_log"),
+        ):
             mock_revert.return_value = RollbackResult(
-                success=True, operation=RollbackOp.FULL_REVERT, commit_sha="abc123",
-                files_reverted=1, db_tables_restored=0, db_rows_restored=0,
+                success=True,
+                operation=RollbackOp.FULL_REVERT,
+                commit_sha="abc123",
+                files_reverted=1,
+                db_tables_restored=0,
+                db_rows_restored=0,
             )
             result = exec.rollback_or_discard(["file.py"], commit_sha="abc123")
             assert result.decision == DiscardDecision.REVERT
@@ -211,11 +227,14 @@ class TestHardReset:
 
     def test_hard_reset_with_token(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_lsg_verify_critical_operation"), \
-             patch.object(exec, "_execute") as mock_exec:
+        with patch.object(exec, "_lsg_verify_critical_operation"), patch.object(exec, "_execute") as mock_exec:
             mock_exec.return_value = RollbackResult(
-                success=True, operation=RollbackOp.HARD_RESET, commit_sha="abc123",
-                files_reverted=0, db_tables_restored=0, db_rows_restored=0,
+                success=True,
+                operation=RollbackOp.HARD_RESET,
+                commit_sha="abc123",
+                files_reverted=0,
+                db_tables_restored=0,
+                db_rows_restored=0,
             )
             result = exec.hard_reset("abc123", token="BREAK_GLASS_TOKEN")
             assert result.success
@@ -229,7 +248,8 @@ class TestForwardFixEvaluate:
         exec = RollbackExecutor()
         with patch.object(exec, "preview") as mock_preview:
             mock_preview.return_value = PreviewResult(
-                changed_files=["src/a.py"], conflict_risk="low",
+                changed_files=["src/a.py"],
+                conflict_risk="low",
             )
             assert exec.forward_fix_evaluate("abc123")
 
@@ -237,7 +257,8 @@ class TestForwardFixEvaluate:
         exec = RollbackExecutor()
         with patch.object(exec, "preview") as mock_preview:
             mock_preview.return_value = PreviewResult(
-                changed_files=["src/a.py"], conflict_risk="high",
+                changed_files=["src/a.py"],
+                conflict_risk="high",
             )
             assert not exec.forward_fix_evaluate("abc123")
 

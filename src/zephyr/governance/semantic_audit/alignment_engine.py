@@ -15,7 +15,6 @@
 三元对齐检测：蓝图声明清单 vs 磁盘实际文件 vs import 引用链。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -45,9 +44,14 @@ class AlignmentEngine:
         if not blueprint_dir:
             logger.warning("Cannot resolve blueprint directory for %s", module_id)
             return AlignmentReport(
-                aligned_count=0, zombie_count=0, orphan_count=0,
-                alignment_score=0.0, staleness_severity=Severity.INFO,
-                missing_files=[], extra_files=[], misregistered=[],
+                aligned_count=0,
+                zombie_count=0,
+                orphan_count=0,
+                alignment_score=0.0,
+                staleness_severity=Severity.INFO,
+                missing_files=[],
+                extra_files=[],
+                misregistered=[],
             )
 
         declared = self._load_blueprint_files(blueprint_dir)

@@ -23,8 +23,8 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable, Optional
 
 from pydantic import BaseModel, Field
 
@@ -58,8 +58,7 @@ class StartupPhaseDef(BaseModel):
     @property
     def is_ready(self) -> bool:
         return all(
-            STARTUP_DAG.get(dep) is not None and STARTUP_DAG[dep].state == PhaseState.HEALTHY
-            for dep in self.depends_on
+            STARTUP_DAG.get(dep) is not None and STARTUP_DAG[dep].state == PhaseState.HEALTHY for dep in self.depends_on
         )
 
 
@@ -153,7 +152,7 @@ class ShutdownOrchestrator:
         return True
 
 
-def get_phase_def(phase: StartupPhase) -> Optional[StartupPhaseDef]:
+def get_phase_def(phase: StartupPhase) -> StartupPhaseDef | None:
     return STARTUP_DAG.get(phase)
 
 

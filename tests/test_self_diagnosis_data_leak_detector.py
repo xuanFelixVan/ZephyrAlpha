@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_self_diagnosis_data_leak_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.self_diagnosis_data_leak_detector import (
     SelfDiagnosisDataLeakDetector,

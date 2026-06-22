@@ -26,5 +26,4 @@ metrics.py —— Re-export wrapper → canonical: zephyr.infrastructure.shared_
 修改指标收集逻辑请编辑 observability/metrics.py，不要编辑本文件。
 """
 
-
-from zephyr.shared.shared_services.observability_02.metrics import *  # noqa: F401, F403
+from zephyr.shared.shared_services.observability_02.metrics import *  # noqa: F403

@@ -42970,7 +42970,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "docs/01_policies_and_standards/meta/terminology-mapping-reference.md",
+      "relative_path": "docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml",
       "asset_type": "doc",
       "layer": "L01",
       "status": "active",

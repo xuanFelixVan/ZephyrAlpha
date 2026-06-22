@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -247,11 +246,11 @@ LAYER_GRAPH: dict[CTrackLayer, LayerTopology] = {
 }
 
 
-def get_layer(layer: CTrackLayer) -> Optional[LayerTopology]:
+def get_layer(layer: CTrackLayer) -> LayerTopology | None:
     return LAYER_GRAPH.get(layer)
 
 
-def get_layer_by_index(index: int) -> Optional[LayerTopology]:
+def get_layer_by_index(index: int) -> LayerTopology | None:
     for lt in LAYER_GRAPH.values():
         if lt.index == index:
             return lt

@@ -6,9 +6,9 @@
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [SAFETY] L
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 # Re-export shim — canonical location is now zephyr.trading.resource_optimization
 
 import importlib as _importlib

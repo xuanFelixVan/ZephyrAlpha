@@ -33,16 +33,13 @@ Submodule Sync — Submodule/Monorepo 多仓库同步回滚。
     - 多仓库版本视为单一单元回滚
 """
 
-
 from __future__ import annotations
 
-import json
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 EXIT_SUBMODULE_OUT_OF_SYNC = 16
 
@@ -74,7 +71,6 @@ class SyncResult:
 
 
 class SubmoduleSync:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -112,11 +108,13 @@ class SubmoduleSync:
                 if len(parts) >= 2:
                     current_sha = parts[0].lstrip(" +-")
                     path = parts[1]
-                    submodules.append(SubmoduleInfo(
-                        path=path,
-                        url=self._get_submodule_url(path),
-                        current_sha=current_sha,
-                    ))
+                    submodules.append(
+                        SubmoduleInfo(
+                            path=path,
+                            url=self._get_submodule_url(path),
+                            current_sha=current_sha,
+                        )
+                    )
         except (subprocess.TimeoutExpired, Exception):
             pass
 
@@ -235,10 +233,12 @@ class SubmoduleSync:
                 setup_py = d / "setup.py"
                 pyproject = d / "pyproject.toml"
                 if setup_py.exists() or pyproject.exists():
-                    modules.append(MonorepoModule(
-                        path=str(d.relative_to(self._project_root)),
-                        package_name=d.name,
-                    ))
+                    modules.append(
+                        MonorepoModule(
+                            path=str(d.relative_to(self._project_root)),
+                            package_name=d.name,
+                        )
+                    )
 
         return modules
 
@@ -263,14 +263,13 @@ class SubmoduleSync:
         for sm in submodules:
             if not sm.synced:
                 errors.append(
-                    f"SUBMODULE_OUT_OF_SYNC: {sm.path} "
-                    f"(current={sm.current_sha[:8]}, target={sm.target_sha[:8]})"
+                    f"SUBMODULE_OUT_OF_SYNC: {sm.path} (current={sm.current_sha[:8]}, target={sm.target_sha[:8]})"
                 )
 
     def generate_sync_report(self, result: SyncResult) -> dict[str, Any]:
         return {
-            "report_id": f"SUBMODULE-SYNC-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "report_id": f"SUBMODULE-SYNC-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "success": result.success,
             "submodules_processed": result.submodules_processed,
             "submodules_synced": result.submodules_synced,

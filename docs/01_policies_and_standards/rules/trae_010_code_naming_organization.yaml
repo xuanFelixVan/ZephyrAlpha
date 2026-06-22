@@ -1,11 +1,22 @@
 rule_id: TRAE-010
 title: 代码构建-命名与组织
+version: 1.0.0
+layer: L1
+module_id: TRAE-010
+depends_on:
+- TRAE-028
+tags:
+- TRAE
+- code_naming
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - CODE-001
 - CODE-002
 - CODE-003
 - CODE-004
-layer: L1
 severity: error
 scope: code_naming
 domain: TRAE
@@ -114,8 +125,7 @@ sections:
     - CODE-001
     items:
     - description: 命名格式规则真源
-      details: 文件命名/目录命名/Python源文件命名/代码标识符命名/YAML字段命名的完整规则与示例见trae_028_doc_structure_naming.yaml
-        gov_doc_003_naming_ssot（本文件不再重复定义）
+      details: 文件命名/目录命名/Python源文件命名/代码标识符命名/YAML字段命名的完整规则与示例见trae_028_doc_structure_naming.yaml gov_doc_003_naming_ssot（本文件不再重复定义）
     - description: 代码命名语义质量约束（本文件独有，非trae_028覆盖范围）
       details: 禁止单字母变量名(x、i除外);禁止拼音命名;禁止在变量名中嵌入类型(str_name、list_items);禁止data/info/result等无意义命名
   gov_eng_010_split_strategy:
@@ -147,8 +157,7 @@ sections:
     - CODE-002
     items:
     - description: 总览索引文件模板(00-总览与索引.md)
-      details: '文件清单表: #/文件/一句话/tokens/状态; 拆分策略: by_domain/by_layer/by_depth/custom;
-        触发原因: 单文件>60K tokens; 拆分依据: 按功能域自然拆分'
+      details: '文件清单表: #/文件/一句话/tokens/状态; 拆分策略: by_domain/by_layer/by_depth/custom; 触发原因: 单文件>60K tokens; 拆分依据: 按功能域自然拆分'
     - description: 子文件头部模板
       details: 'parent_file: 00-总览与索引.md | sibling_count: {N}'
   gov_eng_010_split_requirements:
@@ -204,8 +213,7 @@ sections:
       change: 'std_009/std_011审查修复：references.rule_ids移除4个TRAE-010自引用重复（RQ-04）；references.modules的GOV-ENG-001迁移到blueprints（引用类型错位）'
     - version: 1.1.0
       date: '2026-06-19'
-      change: RQ审查修复：code_001命名格式规则改为引用trae_028 gov_doc_003_naming_ssot（RQ-02/RQ-03散布修复）；gov_eng_010_naming_examples同步改为引用；修复code_003/code_004
-        prohibitions格式（RQ-08）；provenance标注源文件已superseded（RQ-04/RQ-09）；补充change_history（RQ-14）
+      change: RQ审查修复：code_001命名格式规则改为引用trae_028 gov_doc_003_naming_ssot（RQ-02/RQ-03散布修复）；gov_eng_010_naming_examples同步改为引用；修复code_003/code_004 prohibitions格式（RQ-08）；provenance标注源文件已superseded（RQ-04/RQ-09）；补充change_history（RQ-14）
     - version: 1.0.0
       date: '2026-06-13'
       change: 初始提取自GOV-ENG-001§1-§2
@@ -231,7 +239,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

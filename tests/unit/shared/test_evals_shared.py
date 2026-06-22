@@ -38,6 +38,7 @@ Safety: MEDIUM（评估框架不影响代码执行安全）
 """
 
 import pytest
+
 from zephyr.integration.shared_08.evals import (
     DimensionScore,
     EvalCase,
@@ -160,10 +161,12 @@ class TestEvalRunner:
 
     def test_run_all_standard(self):
         runner = EvalRunner(rubric=EvalRubric())
-        runner.add_cases([
-            EvalCase(case_id="c1", input="?", expected_output="ans", threshold=0.7),
-            EvalCase(case_id="c2", input="?", expected_output="ans", threshold=0.7),
-        ])
+        runner.add_cases(
+            [
+                EvalCase(case_id="c1", input="?", expected_output="ans", threshold=0.7),
+                EvalCase(case_id="c2", input="?", expected_output="ans", threshold=0.7),
+            ]
+        )
         suite = runner.run_all(self._passing_eval_fn, suite_name="test")
         assert suite.pass_count == 2
         assert suite.total == 2

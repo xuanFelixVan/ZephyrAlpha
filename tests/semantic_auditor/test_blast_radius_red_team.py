@@ -16,13 +16,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 import yaml
 
 from zephyr.governance.blast_radius import (
     BlastRadiusAnalyzer,
     BlastRadiusReport,
-    DepgraphLoadError,
 )
 from zephyr.governance.semantic_audit.models import SemanticAuditFinding, Severity
 
@@ -124,7 +122,7 @@ class TestSuperDeepChain:
         for i in range(20):
             path = f"src/zephyr/layer{i}.py"
             mod = f"zephyr.layer{i}"
-            imports = [f"zephyr.layer{i+1}"] if i < 19 else []
+            imports = [f"zephyr.layer{i + 1}"] if i < 19 else []
             nodes[f"node_{i}"] = {
                 "id": f"node_{i}",
                 "path": path,

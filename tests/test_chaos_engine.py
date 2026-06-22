@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.trading.orchestrator.chaos_engine import INJECTION_POINTS, ChaosEngine
 
 

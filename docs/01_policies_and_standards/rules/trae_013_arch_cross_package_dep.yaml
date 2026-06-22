@@ -1,5 +1,16 @@
 rule_id: TRAE-013
 title: 架构约束-跨包依赖
+version: 1.0.0
+layer: L1
+module_id: TRAE-013
+depends_on: []
+tags:
+- TRAE
+- architecture_dependency
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - ARCH-001
 - ARCH-002
@@ -7,7 +18,6 @@ aliases:
 - ARCH-004
 - ARCH-005
 - ARCH-006
-layer: L1
 severity: error
 scope: architecture_dependency
 domain: TRAE
@@ -156,7 +166,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

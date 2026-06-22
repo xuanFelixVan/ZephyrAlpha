@@ -24,7 +24,7 @@ L2a ProcessSandbox — subprocess 路径白名单沙箱
 ===============================================
 任务编号 : T-V2-005（experimental）
 权限层级 : Immutable Core（沙箱核心逻辑）
-真源声明 : ai-autonomy-authority-registry.md §2.10
+真源声明 : ai_autonomy_authority_registry.yaml §2.10
 关联决策 : rationale-log R81 C-03（L2a 归 ADR-0018，RI 层协调 L2a）
            ADR-0018（沙箱设计已确权）
 创建日期 : 2026-04-27
@@ -78,12 +78,12 @@ from dataclasses import dataclass
 from pathlib import Path
 
 __all__ = [
-    "L2aSandbox",
-    "SandboxResult",
-    "SandboxViolation",
-    "SandboxTimeout",
     "CWD_WHITELIST_SUFFIXES",
     "ENV_WHITELIST",
+    "L2aSandbox",
+    "SandboxResult",
+    "SandboxTimeout",
+    "SandboxViolation",
 ]
 
 # ---------------------------------------------------------------------------
@@ -310,7 +310,7 @@ class L2aSandbox:
                 return
 
         raise SandboxViolation(
-            f"L2a SandboxViolation: cwd '{resolved_cwd}' 超出 CWD 白名单。\n" f"允许前缀：{self._cwd_whitelist}"
+            f"L2a SandboxViolation: cwd '{resolved_cwd}' 超出 CWD 白名单。\n允许前缀：{self._cwd_whitelist}"
         )
 
     def _build_env(

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_context_health_score.py
 
-import pytest
 from zephyr.autonomy_core.context_health_score import ContextHealthScore, HealthScoreReport
 
 

@@ -27,6 +27,7 @@ Risk: R138 — FLE costs more than it saves; negative ROI undetected.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class ValueAddedBaseline:
     cost_baseline: float = 0.0

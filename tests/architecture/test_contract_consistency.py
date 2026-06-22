@@ -34,7 +34,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 YAML_PATH = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross_layer_contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
 )
 
 TYPE_MAP = {
@@ -125,7 +125,7 @@ class TestContractYamlPythonConsistency:
                 py_fields = {f.name for f in dataclasses.fields(cls)}
                 for yaml_field in ctr.get("fields", []):
                     if yaml_field["name"] not in py_fields:
-                        violations.append(f"{ctr['id']}.{yaml_field['name']}: " f"YAML 中有但 Python 中无此字段")
+                        violations.append(f"{ctr['id']}.{yaml_field['name']}: YAML 中有但 Python 中无此字段")
             except Exception as e:
                 violations.append(f"{ctr['id']}: 加载 Python 失败 — {e}")
 
@@ -164,7 +164,7 @@ class TestContractYamlPythonConsistency:
                                 if py_field.default_factory is not dataclasses.MISSING:
                                     continue
                                 violations.append(
-                                    f"{ctr['id']}.{yaml_field['name']}: " f"YAML 标记 required=true 但 Python 有默认值"
+                                    f"{ctr['id']}.{yaml_field['name']}: YAML 标记 required=true 但 Python 有默认值"
                                 )
             except Exception:
                 pass
@@ -269,8 +269,7 @@ class TestContractYamlPythonConsistencyP1:
                                 if py_field.default_factory is not dataclasses.MISSING:
                                     continue
                                 violations.append(
-                                    f"{ctr['id']}.{yaml_field['name']}: "
-                                    f"YAML 标记 required=true 但 Python 有默认值"
+                                    f"{ctr['id']}.{yaml_field['name']}: YAML 标记 required=true 但 Python 有默认值"
                                 )
             except Exception:
                 pass

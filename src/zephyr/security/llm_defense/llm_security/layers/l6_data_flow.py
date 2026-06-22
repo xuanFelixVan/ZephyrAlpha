@@ -2,9 +2,12 @@
 class DataFlowLayer:
     def __init__(self, config=None):
         self.config = config or {}
+
     def validate(self, data_flow):
         return True
+
     def check_pii(self, data):
         return False
-    def enforce_encryption(self, data, algorithm='aes256'):
+
+    def enforce_encryption(self, data, algorithm="aes256"):
         return data

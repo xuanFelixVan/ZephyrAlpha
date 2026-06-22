@@ -47,7 +47,6 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 import asyncio
 import logging
 import time
@@ -60,12 +59,12 @@ from typing import Any, Protocol
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "OutboxStatus",
-    "OutboxError",
-    "OutboxEntry",
-    "OutboxStore",
     "MemoryOutboxStore",
+    "OutboxEntry",
+    "OutboxError",
     "OutboxPublisher",
+    "OutboxStatus",
+    "OutboxStore",
 ]
 
 logger = logging.getLogger(__name__)

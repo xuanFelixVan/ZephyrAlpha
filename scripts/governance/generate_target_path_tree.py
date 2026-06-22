@@ -58,13 +58,14 @@ def load_yaml(path: Path) -> dict:
     if not path.exists():
         print(f"[FAIL] File not found: {path}")
         sys.exit(1)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.load(f, Loader=SafeLoader) or {}
 
 
 def load_depgraph_from_db(db_path: Path) -> dict:
     """Load depgraph from SQLite DB, returning YAML-compatible dict."""
     import sqlite3
+
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     data = {"nodes": {}, "edges": [], "metadata": {}}
@@ -85,7 +86,7 @@ def load_depgraph_from_db(db_path: Path) -> dict:
 def load_panorama_from_db(db_path: Path) -> dict:
     """Load panorama from SQLite DB arch_ tables, returning YAML-compatible dict."""
     import sqlite3
-    import json
+
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     data = {"domains": {}}
@@ -221,8 +222,7 @@ def build_depgraph_domain_to_subdomain(migration_map: dict, depgraph_nodes: dict
     return result
 
 
-def derive_subdomain_from_path(current_path: str, path_prefix_map: dict,
-                                old_prefix_map: dict) -> str:
+def derive_subdomain_from_path(current_path: str, path_prefix_map: dict, old_prefix_map: dict) -> str:
     """Derive subdomain_id from current path by matching prefixes."""
     norm_path = current_path.replace("\\", "/") + "/"
 
@@ -237,10 +237,16 @@ def derive_subdomain_from_path(current_path: str, path_prefix_map: dict,
     return ""
 
 
-def derive_target_path(current_path: str, subdomain_id: str, domain_ssot_map: dict,
-                       migration_map: dict, path_prefix_map: dict,
-                       old_prefix_map: dict, depgraph_domain_id: str,
-                       domain_to_subdomain: dict) -> tuple[str, str, str]:
+def derive_target_path(
+    current_path: str,
+    subdomain_id: str,
+    domain_ssot_map: dict,
+    migration_map: dict,
+    path_prefix_map: dict,
+    old_prefix_map: dict,
+    depgraph_domain_id: str,
+    domain_to_subdomain: dict,
+) -> tuple[str, str, str]:
     """Derive target path for a module based on 35-domain naming rules.
 
     Priority:
@@ -315,8 +321,14 @@ def build_target_tree(depgraph: dict, domain_ssot_map: dict, migration_map: dict
         initial_subdomain = derive_subdomain_from_path(current_path, path_prefix_map, old_prefix_map)
 
         target_path, resolved_subdomain, resolved_parent = derive_target_path(
-            current_path, initial_subdomain, domain_ssot_map, migration_map,
-            path_prefix_map, old_prefix_map, depgraph_domain_id, domain_to_subdomain
+            current_path,
+            initial_subdomain,
+            domain_ssot_map,
+            migration_map,
+            path_prefix_map,
+            old_prefix_map,
+            depgraph_domain_id,
+            domain_to_subdomain,
         )
 
         module_entry = {
@@ -337,8 +349,9 @@ def build_target_tree(depgraph: dict, domain_ssot_map: dict, migration_map: dict
     return subdomain_modules, all_modules
 
 
-def generate_yaml_output(subdomain_modules: dict, all_modules: list, domain_ssot_map: dict,
-                         depgraph_meta: dict) -> dict:
+def generate_yaml_output(
+    subdomain_modules: dict, all_modules: list, domain_ssot_map: dict, depgraph_meta: dict
+) -> dict:
     """Generate the YAML structure for target-path-tree.yaml."""
     domains_output = {}
 
@@ -350,7 +363,9 @@ def generate_yaml_output(subdomain_modules: dict, all_modules: list, domain_ssot
             "parent_domain": domain_info.get("parent_domain", ""),
             "ssot_path": domain_info.get("ssot_path", ""),
             "change_policy": domain_info.get("change_policy", domain_info.get("stability", "evolving")),
-            "modification_permission": domain_info.get("modification_permission", domain_info.get("ai_autonomy", "ai_modifiable")),
+            "modification_permission": domain_info.get(
+                "modification_permission", domain_info.get("ai_autonomy", "ai_modifiable")
+            ),
             "module_count": len(modules),
             "needs_migration_count": sum(1 for m in modules if m.get("needs_migration")),
             "modules": [
@@ -436,7 +451,9 @@ def generate_yaml_output(subdomain_modules: dict, all_modules: list, domain_ssot
             "empty_subdomain_count": empty_subdomain,
             "needs_migration_count": needs_migration,
             "aligned_count": total_modules - needs_migration,
-            "alignment_rate": f"{(total_modules - needs_migration) / total_modules * 100:.1f}%" if total_modules else "0%",
+            "alignment_rate": f"{(total_modules - needs_migration) / total_modules * 100:.1f}%"
+            if total_modules
+            else "0%",
         },
         "domains": domains_output,
         "tree": tree,
@@ -548,7 +565,7 @@ def cmd_check() -> None:
         print("[FAIL] target-path-tree.yaml not found")
         sys.exit(1)
 
-    with open(OUTPUT_PATH, "r", encoding="utf-8") as f:
+    with open(OUTPUT_PATH, encoding="utf-8") as f:
         target_tree = yaml.safe_load(f)
 
     meta = target_tree.get("meta", {})
@@ -580,7 +597,9 @@ def cmd_check() -> None:
             print(f"  - {e}")
         sys.exit(1)
     else:
-        print(f"[OK] Target path tree aligned: {total_modules} modules, {total_subdomains} subdomains, {needs_migration} need migration")
+        print(
+            f"[OK] Target path tree aligned: {total_modules} modules, {total_subdomains} subdomains, {needs_migration} need migration"
+        )
 
 
 def main() -> None:

@@ -2,16 +2,17 @@
 doc_type: index
 status: Active
 generated: '2026-05-03'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-INF-001
 title: Capacity Assurance
 module_id: MOD-INF-024
+updated: "2026-06-22"
 ---
 
 # Capacity Assurance — 目录索引
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**infra_ops 层模块 — capacity assurance**。
+本目录只存放：**_domain_infra_ops 域模块 — capacity assurance**。
 
 ## 文件清单
 
@@ -41,4 +42,4 @@ module_id: MOD-INF-024
 
 ## 父级目录
 
-- 父级：[infra_ops](../index.md)
+- 父级：[_domain_infra_ops](../index.md)

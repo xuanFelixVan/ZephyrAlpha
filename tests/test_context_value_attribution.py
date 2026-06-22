@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_context_value_attribution.py -q
 from __future__ import annotations
-import pytest
+
 from zephyr.autonomy_core.context_value_attribution import (
     KEAttribution,
     ValueAttributor,
@@ -46,6 +46,7 @@ class TestValueAttributorAttribute:
         va = ValueAttributor()
         attr = va.attribute("KE-101", 1.0, 100)
         import math
+
         expected_roi = round(1.0 / math.log(100), 4)
         assert attr.roi == expected_roi
 
@@ -60,6 +61,7 @@ class TestValueAttributorAttribute:
         va = ValueAttributor()
         attr = va.attribute("KE-103", 0.5, 1)
         import math
+
         expected_roi = round(0.5 / math.log(2), 4)
         assert attr.roi == expected_roi
 
@@ -78,6 +80,7 @@ class TestValueAttributorAttribute:
         va = ValueAttributor()
         attr = va.attribute("KE-105", 1.0, 2)
         import math
+
         expected_roi = round(1.0 / math.log(2), 4)
         assert attr.roi == expected_roi
 

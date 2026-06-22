@@ -15,8 +15,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from zephyr.shared.session_continuity import (
     ContinuityContext,
     SessionContinuity,
@@ -25,7 +23,6 @@ from zephyr.shared.session_continuity import (
 
 
 class TestSessionStateDataclass:
-
     def test_default_metadata(self):
         state = SessionState(
             session_id="s-001",
@@ -56,7 +53,6 @@ class TestSessionStateDataclass:
 
 
 class TestContinuityContextDataclass:
-
     def test_fields(self):
         ctx = ContinuityContext(
             task_id="SESSION-s-001",
@@ -70,7 +66,6 @@ class TestContinuityContextDataclass:
 
 
 class TestSessionContinuity:
-
     def test_instantiation_with_path(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
         assert sc._project_root == tmp_path

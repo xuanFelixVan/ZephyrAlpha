@@ -13,12 +13,13 @@
 from __future__ import annotations
 
 import asyncio
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
-import pytest_asyncio
 
 from zephyr.trading.verdict_engine import (
+    _YELLOW_TRUST_THRESHOLD,
+    _YELLOW_VIOLATION_THRESHOLD,
     ActorInfo,
     AuditEvent,
     AuthCheckResult,
@@ -31,8 +32,6 @@ from zephyr.trading.verdict_engine import (
     Verdict,
     VerdictEngine,
     VerdictLevel,
-    _YELLOW_TRUST_THRESHOLD,
-    _YELLOW_VIOLATION_THRESHOLD,
 )
 
 
@@ -521,74 +520,85 @@ class TestResolveGraduatedLevel:
         self.engine = VerdictEngine()
 
     def test_pass_public_l0(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.PASS, ProtectionLevel.public, False, 0
-        ) == GraduatedLevel.L0
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.PASS, ProtectionLevel.public, False, 0)
+            == GraduatedLevel.L0
+        )
 
     def test_pass_normal_l1(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.PASS, ProtectionLevel.normal, False, 0
-        ) == GraduatedLevel.L1
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.PASS, ProtectionLevel.normal, False, 0)
+            == GraduatedLevel.L1
+        )
 
     def test_pass_protected_gate_l2(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.PASS, ProtectionLevel.protected, True, 0
-        ) == GraduatedLevel.L2
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.PASS, ProtectionLevel.protected, True, 0)
+            == GraduatedLevel.L2
+        )
 
     def test_pass_protected_no_gate_l3(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.PASS, ProtectionLevel.protected, False, 0
-        ) == GraduatedLevel.L3
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.PASS, ProtectionLevel.protected, False, 0)
+            == GraduatedLevel.L3
+        )
 
     def test_pass_anchor_l3(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.PASS, ProtectionLevel.anchor, False, 0
-        ) == GraduatedLevel.L3
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.PASS, ProtectionLevel.anchor, False, 0)
+            == GraduatedLevel.L3
+        )
 
     def test_yellow_violations_5_l5(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.YELLOW, ProtectionLevel.normal, False, 5
-        ) == GraduatedLevel.L5
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.YELLOW, ProtectionLevel.normal, False, 5)
+            == GraduatedLevel.L5
+        )
 
     def test_yellow_violations_3_l4(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.YELLOW, ProtectionLevel.normal, False, 3
-        ) == GraduatedLevel.L4
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.YELLOW, ProtectionLevel.normal, False, 3)
+            == GraduatedLevel.L4
+        )
 
     def test_yellow_violations_4_l4(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.YELLOW, ProtectionLevel.normal, False, 4
-        ) == GraduatedLevel.L4
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.YELLOW, ProtectionLevel.normal, False, 4)
+            == GraduatedLevel.L4
+        )
 
     def test_yellow_violations_2_l3(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.YELLOW, ProtectionLevel.normal, False, 2
-        ) == GraduatedLevel.L3
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.YELLOW, ProtectionLevel.normal, False, 2)
+            == GraduatedLevel.L3
+        )
 
     def test_yellow_zero_violations_l3(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.YELLOW, ProtectionLevel.normal, False, 0
-        ) == GraduatedLevel.L3
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.YELLOW, ProtectionLevel.normal, False, 0)
+            == GraduatedLevel.L3
+        )
 
     def test_red_anchor_l6(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.RED, ProtectionLevel.anchor, False, 0
-        ) == GraduatedLevel.L6
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.RED, ProtectionLevel.anchor, False, 0) == GraduatedLevel.L6
+        )
 
     def test_red_protected_l5(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.RED, ProtectionLevel.protected, False, 0
-        ) == GraduatedLevel.L5
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.RED, ProtectionLevel.protected, False, 0)
+            == GraduatedLevel.L5
+        )
 
     def test_red_normal_l4(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.RED, ProtectionLevel.normal, False, 0
-        ) == GraduatedLevel.L4
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.RED, ProtectionLevel.normal, False, 0) == GraduatedLevel.L4
+        )
 
     def test_red_public_l4(self):
-        assert self.engine.resolve_graduated_level(
-            VerdictLevel.RED, ProtectionLevel.public, False, 0
-        ) == GraduatedLevel.L4
+        assert (
+            self.engine.resolve_graduated_level(VerdictLevel.RED, ProtectionLevel.public, False, 0) == GraduatedLevel.L4
+        )
 
 
 class TestShouldTriggerConsensus:

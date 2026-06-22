@@ -13,9 +13,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -34,7 +33,7 @@ class ModuleOwnership(BaseModel):
     onboarding_readme: bool = False
     onboarding_diagram: bool = False
     onboarding_key_funcs: bool = False
-    last_adr_update: Optional[str] = None
+    last_adr_update: str | None = None
 
     @property
     def onboarding_complete(self) -> bool:
@@ -53,7 +52,7 @@ class DecisionLog(BaseModel):
     options: list[str] = Field(default_factory=list)
     decision: str = ""
     rationale: str = ""
-    review_date: Optional[str] = None
+    review_date: str | None = None
 
 
 class OpsRunbook(BaseModel):
@@ -61,7 +60,7 @@ class OpsRunbook(BaseModel):
     auto_generated: bool = True
     content: str = ""
     generated_at: str = ""
-    last_update: Optional[str] = None
+    last_update: str | None = None
 
 
 def check_bus_factor(ownership: ModuleOwnership) -> ModuleOwnership:
@@ -85,7 +84,7 @@ def create_decision_log(
 ) -> DecisionLog:
     from datetime import timedelta
 
-    review_date = (datetime.now(timezone.utc) + timedelta(days=review_days)).isoformat()
+    review_date = (datetime.now(UTC) + timedelta(days=review_days)).isoformat()
     return DecisionLog(
         decision_id=decision_id,
         problem=problem,
@@ -101,5 +100,5 @@ def generate_runbook(module_id: str, content: str = "") -> OpsRunbook:
         module_id=module_id,
         auto_generated=True,
         content=content or f"# Runbook: {module_id}\n\n## TBD",
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
     )

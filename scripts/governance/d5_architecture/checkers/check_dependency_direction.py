@@ -34,10 +34,9 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
-from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 
@@ -141,19 +140,31 @@ def check_cross_layer_direction(module_id: str) -> list[str]:
         dep_order = LAYER_ORDER.get(dep_layer, ALLOWED_CROSS_LAYER.get(dep_layer, 999))
         if source_order < 999 and dep_order < 999 and source_order < dep_order:
             if dep_layer not in ("cross_layer", "L1", "L2", "L3"):
-                findings.append(f"INJ-008 FAIL: module '{module_id}' (layer={source_layer}) depends_on '{dep}' (layer={dep_layer}) — violates L00→L02→L03 data flow direction")
+                findings.append(
+                    f"INJ-008 FAIL: module '{module_id}' (layer={source_layer}) depends_on '{dep}' (layer={dep_layer}) — violates L00→L02→L03 data flow direction"
+                )
     return findings
 
 
 def check_tech_radar(module_id: str = None) -> list[str]:
     """Check compliance and report findings."""
     import ast as ast_mod
+
     import yaml
+
     findings = []
-    tech_landscape = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model" / "technology" / "technology_landscape.yaml"
+    tech_landscape = (
+        REPO_ROOT
+        / "docs"
+        / "02_enterprise_architecture"
+        / "target-architecture"
+        / "architecture-model"
+        / "technology"
+        / "technology_landscape.yaml"
+    )
     if not tech_landscape.exists():
         return findings
-    with open(tech_landscape, "r", encoding="utf-8") as f:
+    with open(tech_landscape, encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     allowed_quadrants = {"adopt", "trial", "assess"}
     allowed_techs = set()

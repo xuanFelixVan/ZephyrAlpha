@@ -3,10 +3,6 @@
 __all__ = [
     "COLLECTION_NAMES",
     "CollectionInfo",
-    "collection_status",
-    "get_chroma_client",
-    "init_chromadb",
-    "reset_chromadb",
     "EmbeddingMigrator",
     "EmbeddingVersion",
     "MigrationCheckpoint",
@@ -15,6 +11,10 @@ __all__ = [
     "MigrationStatus",
     "build_kb_gate_eval_task",
     "chromadb_init",
+    "collection_status",
     "embedding_migrate",
+    "get_chroma_client",
+    "init_chromadb",
     "kb_gate_task",
+    "reset_chromadb",
 ]

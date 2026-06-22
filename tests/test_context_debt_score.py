@@ -20,6 +20,7 @@
 # [TESTS] tests/test_context_debt_score.py
 
 """Tests for zephyr.autonomy_core.context_debt_score."""
+
 from __future__ import annotations
 
 import pytest

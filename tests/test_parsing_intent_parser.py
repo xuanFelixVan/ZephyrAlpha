@@ -11,21 +11,21 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
+    from zephyr.autonomy_core.intent_keyword_mapper import IntentDomain, IntentResult
     from zephyr.autonomy_core.intent_parser import (
+        EmbeddingHit,
         IntentParser,
         IntentParseTrace,
-        EmbeddingHit,
         LLMIntentVerdict,
-        plan_directive_chain,
         inject_context_for,
-        DEFAULT_STAGE_THRESHOLDS,
+        plan_directive_chain,
     )
-    from zephyr.autonomy_core.intent_keyword_mapper import IntentResult, IntentDomain
 except Exception as _exc:
     pytest.skip(f"无法导入 intent_parser: {_exc}", allow_module_level=True)
 
@@ -45,6 +45,7 @@ class TestIntentParser:
     def test_parse_with_stage2(self):
         def mock_searcher(query, *, top_k=5):
             return [EmbeddingHit(domain="D6", score=0.9, text="governance")]
+
         parser = IntentParser(embedding_searcher=mock_searcher)
         result = parser.parse("governance check")
         assert isinstance(result, IntentResult)
@@ -52,6 +53,7 @@ class TestIntentParser:
     def test_parse_with_stage3(self):
         def mock_llm(query, *, context=None):
             return LLMIntentVerdict(primary_domain="D6", confidence=0.8, rationale="test")
+
         parser = IntentParser(llm_caller=mock_llm)
         result = parser.parse("obscure query xyz")
         assert isinstance(result, IntentResult)
@@ -113,6 +115,7 @@ class TestInjectContextFor:
         class MockInjector:
             def inject_by_module_id(self, module_id):
                 return f"injected:{module_id}"
+
         result = IntentResult(
             query="test",
             primary_domain=IntentDomain.D6,
@@ -127,6 +130,7 @@ class TestInjectContextFor:
         class MockInjector:
             def inject_by_keyword(self, keyword):
                 return f"keyword:{keyword}"
+
         result = IntentResult(
             query="test query",
             primary_domain=IntentDomain.UNKNOWN,

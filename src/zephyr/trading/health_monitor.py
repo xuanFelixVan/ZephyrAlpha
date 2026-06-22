@@ -31,21 +31,24 @@ HealthMonitor — 健康监控 + 自愈
 import json
 import threading
 import time
+from collections.abc import Callable
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
 
+
 class PressureLevel(str, Enum):
     NORMAL = "NORMAL"
     ELEVATED = "ELEVATED"
     HIGH = "HIGH"
     CRITICAL = "CRITICAL"
+
 
 class ProbeResult(BaseModel):
     model_config = BASE_CONFIG
@@ -56,6 +59,7 @@ class ProbeResult(BaseModel):
     error: str = ""
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
 
+
 class ReconciliationReport(BaseModel):
     model_config = BASE_CONFIG
     total_probed: int = 0
@@ -65,6 +69,7 @@ class ReconciliationReport(BaseModel):
     actions_taken: list[str] = Field(default_factory=list)
     orphan_rate: float = 0.0
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+
 
 class HealthMonitor:
     """健康监控 + 自愈——水平触发调和循环。
@@ -89,7 +94,9 @@ class HealthMonitor:
         self._running = False
         self._telemetry_emitter_type = TelemetryEmitter
 
-    def register_probe(self, capability_id: str, probe_fn: Callable[[], ProbeResult], restart_fn: Callable[[], bool] | None = None) -> None:
+    def register_probe(
+        self, capability_id: str, probe_fn: Callable[[], ProbeResult], restart_fn: Callable[[], bool] | None = None
+    ) -> None:
         with self._lock:
             self._probe_fns[capability_id] = probe_fn
             if restart_fn:
@@ -152,8 +159,9 @@ class HealthMonitor:
 
     def pressure_level(self) -> PressureLevel:
         try:
-            from zephyr.trading.resource_optimization import ResourceOptimizationEngine
             from zephyr.trading.resource_optimization import PressureLevel as ROELevel
+            from zephyr.trading.resource_optimization import ResourceOptimizationEngine
+
             engine = ResourceOptimizationEngine()
             roe_level = engine.get_pressure_state().current_level
             mapping = {
@@ -167,6 +175,7 @@ class HealthMonitor:
             pass
         try:
             import psutil
+
             mem = psutil.virtual_memory().percent
         except ImportError:
             return PressureLevel.NORMAL

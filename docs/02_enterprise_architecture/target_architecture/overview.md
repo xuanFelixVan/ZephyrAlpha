@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-00-OVERVIEW
 title: Target Architecture — Overview / 目标架构总览
 doc_type: architecture_view

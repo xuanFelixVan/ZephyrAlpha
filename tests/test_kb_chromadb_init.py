@@ -13,15 +13,11 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 from zephyr.governance.kb.chromadb_init import (
+    _COLLECTION_METADATA,
     COLLECTION_NAMES,
     CollectionInfo,
-    _COLLECTION_METADATA,
-    _chroma_client,
 )
 
 

@@ -29,8 +29,9 @@ Execution Tuner — 执行调谐器（token/timeout 自适应）。
     任务卡 TASK-INF-0127
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
+
 
 @dataclass
 class TuningParams:
@@ -38,6 +39,7 @@ class TuningParams:
     timeout_minutes: int = 60
     model: str = "deepseek"
     pipeline: str = "A"
+
 
 @dataclass
 class ExecutionProfile:
@@ -49,8 +51,8 @@ class ExecutionProfile:
     adjusted_timeout: int
     model: str
 
-class ExecutionTuner:
 
+class ExecutionTuner:
     PRIORITY_MULTIPLIER: dict[str, float] = {
         "P0": 1.5,
         "P1": 1.2,
@@ -85,12 +87,14 @@ class ExecutionTuner:
             model=task_card.get("assigned_model", self._default_params.model),
         )
 
-        self._history.append({
-            "task_id": task_id,
-            "priority": priority,
-            "original_tokens": estimated,
-            "adjusted_tokens": adjusted_tokens,
-        })
+        self._history.append(
+            {
+                "task_id": task_id,
+                "priority": priority,
+                "original_tokens": estimated,
+                "adjusted_tokens": adjusted_tokens,
+            }
+        )
 
         return profile
 
@@ -108,8 +112,5 @@ class ExecutionTuner:
     def get_average_adjustment(self) -> float:
         if not self._history:
             return 1.0
-        ratios = [
-            h["adjusted_tokens"] / max(h["original_tokens"], 1)
-            for h in self._history
-        ]
+        ratios = [h["adjusted_tokens"] / max(h["original_tokens"], 1) for h in self._history]
         return sum(ratios) / len(ratios)

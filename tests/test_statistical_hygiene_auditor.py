@@ -10,11 +10,10 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_statistical_hygiene_auditor.py
 
-import pytest
 
 from zephyr.ops.diagnosers.statistical_hygiene_auditor import (
-    StatViolation,
     StatisticalHygieneAuditor,
+    StatViolation,
 )
 
 

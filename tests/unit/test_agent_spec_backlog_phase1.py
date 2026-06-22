@@ -19,28 +19,23 @@ Covers:
 
 from __future__ import annotations
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-import pytest
-
+from zephyr.autonomy_core.skill_compliance import SkillCompliance
 from zephyr.autonomy_core.skill_executor import (
-    KBIntegration,
-    SkillExecutor,
     BudgetEnforcer,
-    PermissionLevel,
     EscalationHandler,
-    SkillFeedbackLoop,
     GateResult,
+    KBIntegration,
+    PermissionLevel,
+    SkillExecutor,
 )
 from zephyr.autonomy_core.skill_postmortem import SkillPostmortem
-from zephyr.autonomy_core.skill_compliance import SkillCompliance
 from zephyr.autonomy_core.skill_sandbox import SkillSandbox
-from zephyr.autonomy_core.skill_contract import SkillContract
 from zephyr.autonomy_core.skill_silent_failure import SilentFailureDetector
 
 
 class TestKBIntegration:
-
     def test_skill_to_kb_low_citations(self):
         result = KBIntegration.kb_to_skill("SKILL-001", citations=2)
         assert result["action"] == "keep_as_reference"
@@ -64,9 +59,7 @@ class TestKBIntegration:
         assert result_above["action"] == "upgrade_to_instruction"
 
     def test_sync_freshness_returns_float(self):
-        with patch(
-            "zephyr.orchestration.agent_lifecycle.skill_freshness.FreshnessDecayModel"
-        ) as MockModel:
+        with patch("zephyr.autonomy_core.skill_freshness.FreshnessDecayModel") as MockModel:
             instance = MockModel.return_value
             instance.current_state.return_value = {
                 "skill_id": "SKILL-004",
@@ -80,12 +73,9 @@ class TestKBIntegration:
 
 
 class TestSkillExecutor:
-
     def test_execute_nonexistent_skill(self):
         executor = SkillExecutor(loader=MagicMock())
-        executor.loader._load_l1_frontmatter.side_effect = FileNotFoundError(
-            "not found"
-        )
+        executor.loader._load_l1_frontmatter.side_effect = FileNotFoundError("not found")
         result = executor.execute("NONEXISTENT-SKILL")
         assert isinstance(result, dict)
         assert result.get("status") == "load_failed"
@@ -136,7 +126,6 @@ class TestSkillExecutor:
 
 
 class TestSkillPostmortem:
-
     def test_analyze_registration_error(self):
         result = SkillPostmortem.analyze(
             "SKILL-REG-001",
@@ -164,14 +153,11 @@ class TestSkillPostmortem:
         assert result["symptom_category"] == "security"
 
     def test_infer_symptom_category_unknown(self):
-        result = SkillPostmortem._infer_symptom_category(
-            "something completely unexpected happened"
-        )
+        result = SkillPostmortem._infer_symptom_category("something completely unexpected happened")
         assert result == "unknown"
 
 
 class TestSkillCompliance:
-
     def test_check_clean_content(self):
         result = SkillCompliance.check("SKILL-CLEAN", content="Normal content without PII")
         assert result["compliant"] is True
@@ -205,7 +191,6 @@ class TestSkillCompliance:
 
 
 class TestSkillSandbox:
-
     def test_activate_and_check_tool(self):
         sandbox = SkillSandbox("SKILL-SB-001")
         sandbox.activate(allowed_tools=["read_file", "grep", "glob"])
@@ -253,7 +238,6 @@ class TestSkillSandbox:
 
 
 class TestSilentFailureDetector:
-
     def test_scan_clean_output(self):
         detector = SilentFailureDetector()
         result = detector.scan("SKILL-SF-001", "All operations completed successfully.")
@@ -264,10 +248,7 @@ class TestSilentFailureDetector:
         detector = SilentFailureDetector()
         result = detector.scan("SKILL-SF-002", "Processing data... output truncated")
         assert result["silent_failure_detected"] is True
-        assert any(
-            a["type"] == SilentFailureDetector.ANOMALY_TRUNCATION
-            for a in result["anomalies"]
-        )
+        assert any(a["type"] == SilentFailureDetector.ANOMALY_TRUNCATION for a in result["anomalies"])
 
     def test_scan_partial_success(self):
         detector = SilentFailureDetector()
@@ -276,10 +257,7 @@ class TestSilentFailureDetector:
             "Validation results: 3/5 passed, some checks failed",
         )
         assert result["silent_failure_detected"] is True
-        assert any(
-            a["type"] == SilentFailureDetector.ANOMALY_PARTIAL_SUCCESS
-            for a in result["anomalies"]
-        )
+        assert any(a["type"] == SilentFailureDetector.ANOMALY_PARTIAL_SUCCESS for a in result["anomalies"])
 
     def test_scan_assumption_violation(self):
         detector = SilentFailureDetector()
@@ -288,10 +266,7 @@ class TestSilentFailureDetector:
             "Assuming that the database is available but connection refused",
         )
         assert result["silent_failure_detected"] is True
-        assert any(
-            a["type"] == SilentFailureDetector.ANOMALY_ASSUMPTION
-            for a in result["anomalies"]
-        )
+        assert any(a["type"] == SilentFailureDetector.ANOMALY_ASSUMPTION for a in result["anomalies"])
 
     def test_get_session_anomalies_empty(self):
         detector = SilentFailureDetector()

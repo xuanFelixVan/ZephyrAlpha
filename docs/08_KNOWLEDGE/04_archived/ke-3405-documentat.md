@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3405
 title: 4. 与其他文档的关系
 category: documentation

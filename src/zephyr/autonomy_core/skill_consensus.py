@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_consensus | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_consensus
+# [MODULE] zephyr.autonomy_core.skill_consensus
 
 # [INVARIANTS] none
 
@@ -30,22 +30,21 @@ Skill 共识 —— Multi-Agent 投票/协商/冲突裁决.
 支持: majority_vote / weighted_vote / tiebreaker_by_freshness.
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Dict, Any, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
 class VoteResult:
     winner: str
-    vote_counts: Dict[str, int]
+    vote_counts: dict[str, int]
     total_voters: int
     tie_broken: bool = False
     tiebreaker_reason: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "winner": self.winner,
             "vote_counts": self.vote_counts,
@@ -59,8 +58,7 @@ class SkillConsensus:
     """Skill 共识 —— Multi-Agent 分歧收敛."""
 
     @staticmethod
-    def reach_consensus(skill_ids: List[str],
-                        votes: Dict[str, int]) -> Dict[str, Any]:
+    def reach_consensus(skill_ids: list[str], votes: dict[str, int]) -> dict[str, Any]:
         unique = set(votes.values())
         return {
             "participants": skill_ids,
@@ -70,11 +68,12 @@ class SkillConsensus:
         }
 
     @staticmethod
-    def majority_vote(options: List[str],
-                      votes: Dict[str, str],
-                      weights: Optional[Dict[str, float]] = None,
-                      ) -> Tuple[Optional[str], VoteResult]:
-        tally: Dict[str, float] = {}
+    def majority_vote(
+        options: list[str],
+        votes: dict[str, str],
+        weights: dict[str, float] | None = None,
+    ) -> tuple[str | None, VoteResult]:
+        tally: dict[str, float] = {}
         for voter, choice in votes.items():
             if choice not in options:
                 continue
@@ -82,8 +81,7 @@ class SkillConsensus:
             tally[choice] = tally.get(choice, 0.0) + w
 
         if not tally:
-            return None, VoteResult(
-                winner="", vote_counts={}, total_voters=len(votes))
+            return None, VoteResult(winner="", vote_counts={}, total_voters=len(votes))
 
         max_votes = max(tally.values())
         winners = [k for k, v in tally.items() if v == max_votes]
@@ -99,9 +97,10 @@ class SkillConsensus:
         return result.winner, result
 
     @staticmethod
-    def weighted_consensus(agents: List[Dict[str, Any]],
-                           question: str,
-                           ) -> Dict[str, Any]:
+    def weighted_consensus(
+        agents: list[dict[str, Any]],
+        question: str,
+    ) -> dict[str, Any]:
         agent_ids = [a.get("agent_id", f"agent_{i}") for i, a in enumerate(agents)]
         agent_votes = {}
         agent_weights = {}
@@ -125,9 +124,9 @@ class SkillConsensus:
         }
 
     @staticmethod
-    def _tiebreak(winners: List[str],
-                  tally: Dict[str, float]) -> VoteResult:
+    def _tiebreak(winners: list[str], tally: dict[str, float]) -> VoteResult:
         from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
+
         fdm = FreshnessDecayModel()
         best_skill = winners[0]
         best_score = -1.0

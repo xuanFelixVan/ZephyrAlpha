@@ -31,7 +31,6 @@ audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计
   - 异常放大检测: 检测反馈导致的行为偏差放大
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -108,17 +107,19 @@ class FeedbackSelfAuditor:
             if avg_first > 0:
                 amplification = avg_last / avg_first
                 if amplification >= self._amplification_threshold:
-                    results.append(SelfReinforcementResult(
-                        is_self_reinforcing=True,
-                        loop_nodes=[agent_id, action],
-                        loop_length=2,
-                        amplification_factor=round(amplification, 4),
-                        description=(
-                            f"Agent {agent_id} action '{action}' shows self-reinforcing feedback: "
-                            f"score amplified {amplification:.2f}x (early={avg_first:.3f}, recent={avg_last:.3f})"
-                        ),
-                        detected_at=datetime.now(UTC).isoformat(),
-                    ))
+                    results.append(
+                        SelfReinforcementResult(
+                            is_self_reinforcing=True,
+                            loop_nodes=[agent_id, action],
+                            loop_length=2,
+                            amplification_factor=round(amplification, 4),
+                            description=(
+                                f"Agent {agent_id} action '{action}' shows self-reinforcing feedback: "
+                                f"score amplified {amplification:.2f}x (early={avg_first:.3f}, recent={avg_last:.3f})"
+                            ),
+                            detected_at=datetime.now(UTC).isoformat(),
+                        )
+                    )
 
         self_actions = set()
         for event in events:
@@ -128,19 +129,22 @@ class FeedbackSelfAuditor:
                 self_actions.add(action)
 
         for action in self_actions:
-            results.append(SelfReinforcementResult(
-                is_self_reinforcing=True,
-                loop_nodes=[agent_id, action, agent_id],
-                loop_length=3,
-                amplification_factor=1.5,
-                description=f"Agent {agent_id} provides feedback on its own action '{action}'",
-                detected_at=datetime.now(UTC).isoformat(),
-            ))
+            results.append(
+                SelfReinforcementResult(
+                    is_self_reinforcing=True,
+                    loop_nodes=[agent_id, action, agent_id],
+                    loop_length=3,
+                    amplification_factor=1.5,
+                    description=f"Agent {agent_id} provides feedback on its own action '{action}'",
+                    detected_at=datetime.now(UTC).isoformat(),
+                )
+            )
 
         if results:
             _logger.warning(
                 "FeedbackSelfAuditor: detected %d self-reinforcing loops for %s",
-                len(results), agent_id,
+                len(results),
+                agent_id,
             )
         return results
 
@@ -164,7 +168,8 @@ class FeedbackSelfAuditor:
         if result.has_circular:
             _logger.warning(
                 "FeedbackSelfAuditor: detected %d circular dependencies: %s",
-                len(cycles), cycles,
+                len(cycles),
+                cycles,
             )
         return result
 

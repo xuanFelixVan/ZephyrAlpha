@@ -10,15 +10,16 @@
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_delegation_engine.py
 
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from zephyr.governance.delegation_engine import DelegationEngine
 from zephyr.governance.escalation_models import (
     DelegationStrategy,
     EscalationEvent,
-    RuleCategory,
     EscalationLevel,
-    EscalationState,
+    RuleCategory,
 )
 
 

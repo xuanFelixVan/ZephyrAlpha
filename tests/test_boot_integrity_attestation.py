@@ -16,8 +16,6 @@ import hashlib
 import os
 import tempfile
 
-import pytest
-
 from zephyr.ops.forensic.boot_integrity_attestation import (
     BootIntegrityAttestation,
     BootIntegrityResult,

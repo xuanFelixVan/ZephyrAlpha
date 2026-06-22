@@ -17,7 +17,7 @@
 # 新增/删除 ttl 值只需修改本文件，校验器自动同步。
 #
 # 对标标准：
-#   - metadata-registry.md §2.1 + §4.7（TTL 定义真源）
+#   - metadata_registry.yaml §2.1 + §4.7（TTL 定义真源）
 #   - K8s well-known labels：label + value + meaning 三元组
 
 schema_version: "1.0.0"

@@ -11,6 +11,7 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
@@ -66,6 +67,7 @@ class TestGenesisBootstrap:
         s1 = gb.bootstrap()
         h1 = s1.genesis_hash
         import time
+
         time.sleep(0.01)
         s2 = gb.bootstrap()
         assert s2.genesis_hash != h1

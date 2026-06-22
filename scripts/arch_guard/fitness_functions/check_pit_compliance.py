@@ -17,6 +17,7 @@ INV-004: 回测数据禁止未来信息泄露（Look-ahead Bias 零容忍）。
 
 exit: 0=pass, 1=warning patterns found
 """
+
 from __future__ import annotations
 
 import re
@@ -31,8 +32,16 @@ PIT_SUSPECT_PATTERNS = [
     (re.compile(r"\.shift\(\s*1\s*\)"), "shift(1) 引用未来数据——PIT 要求只能使用已知数据"),
     (re.compile(r"pandas.*\.shift\(1\)|df\.shift\(1\)"), "pandas shift(1) 引用下一条记录——典型 look-ahead"),
     (re.compile(r"forward.?fill|bfill|\.fillna\(method=.ffill"), "forward-fill 可能引入未来信息——确认填充方向"),
-    (re.compile(r"StandardScaler.*fit_transform.*full|normalize.*full.*dataset|standardize.*all.*data", re.IGNORECASE), "全样本标准化后再切分——data leakage 风险"),
-    (re.compile(r"close.*price.*decision|decision_price.*close(?!.*shift\(-1\)|.*lag)", re.IGNORECASE), "使用当天收盘价做决策——应使用 lag(1) 的前一天收盘价"),
+    (
+        re.compile(
+            r"StandardScaler.*fit_transform.*full|normalize.*full.*dataset|standardize.*all.*data", re.IGNORECASE
+        ),
+        "全样本标准化后再切分——data leakage 风险",
+    ),
+    (
+        re.compile(r"close.*price.*decision|decision_price.*close(?!.*shift\(-1\)|.*lag)", re.IGNORECASE),
+        "使用当天收盘价做决策——应使用 lag(1) 的前一天收盘价",
+    ),
 ]
 
 EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "docs"}
@@ -52,9 +61,7 @@ def check_file(file_path: Path) -> list[str]:
             continue
         for pattern, explanation in PIT_SUSPECT_PATTERNS:
             if pattern.search(stripped):
-                warnings_found.append(
-                    f"  {file_path.relative_to(REPO_ROOT)}:{i}: {explanation} — \"{stripped[:120]}\""
-                )
+                warnings_found.append(f'  {file_path.relative_to(REPO_ROOT)}:{i}: {explanation} — "{stripped[:120]}"')
                 break
     return warnings_found
 

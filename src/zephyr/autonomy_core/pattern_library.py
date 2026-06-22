@@ -38,7 +38,6 @@ safety_level: M
 零外部依赖：仅 pydantic + 标准库。
 """
 
-
 from __future__ import annotations
 
 import hashlib
@@ -54,14 +53,14 @@ from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.integration.shared_08.utils.time_utils import now_iso
 
 __all__ = [
-    "PatternType",
-    "PatternEntry",
-    "PatternQuery",
-    "PatternLibrary",
-    "DangerousPatternType",
     "DangerousPattern",
-    "DangerousPatternMatch",
     "DangerousPatternLibrary",
+    "DangerousPatternMatch",
+    "DangerousPatternType",
+    "PatternEntry",
+    "PatternLibrary",
+    "PatternQuery",
+    "PatternType",
     "validate_context",
 ]
 

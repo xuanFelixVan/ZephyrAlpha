@@ -27,6 +27,7 @@ Risk: R71 — Threshold too tight in high vol; too loose in low vol.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class DynamicThreshold:
     base: float = 2.5

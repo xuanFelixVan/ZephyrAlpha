@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_canary
+# [MODULE] zephyr.autonomy_core.skill_canary
 
 # [INVARIANTS] none
 
@@ -29,23 +29,29 @@ Version: 0.3.0
 Canary deployment & gradual rollout
 """
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List
+from datetime import UTC, datetime
+from typing import Any
+
 
 class SkillCanary:
     STEPS = [5, 10, 25, 50, 100]
 
     def __init__(self):
-        self._canary: Dict[str, Dict[str, Any]] = {}
+        self._canary: dict[str, dict[str, Any]] = {}
 
-    def deploy_canary(self, skill_id: str, version: str) -> Dict[str, Any]:
-        e = {"skill_id": skill_id, "version": version, "mode": "canary",
-             "traffic_percent": self.STEPS[0], "stage": 0,
-             "deployed_at": datetime.now(timezone.utc).isoformat()}
+    def deploy_canary(self, skill_id: str, version: str) -> dict[str, Any]:
+        e = {
+            "skill_id": skill_id,
+            "version": version,
+            "mode": "canary",
+            "traffic_percent": self.STEPS[0],
+            "stage": 0,
+            "deployed_at": datetime.now(UTC).isoformat(),
+        }
         self._canary[skill_id] = e
         return e
 
-    def promote(self, skill_id: str) -> Dict[str, Any]:
+    def promote(self, skill_id: str) -> dict[str, Any]:
         e = self._canary.get(skill_id)
         if e:
             e["mode"] = "stable"
@@ -53,7 +59,7 @@ class SkillCanary:
             e["stage"] = len(self.STEPS) - 1
         return {"skill_id": skill_id, "status": "promoted", "traffic_percent": 100}
 
-    def rollback_canary(self, skill_id: str) -> Dict[str, Any]:
+    def rollback_canary(self, skill_id: str) -> dict[str, Any]:
         e = self._canary.get(skill_id)
         if e:
             e["mode"] = "rolled_back"

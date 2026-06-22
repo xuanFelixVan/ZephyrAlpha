@@ -27,8 +27,8 @@ Risk: R22 — Multi-subsystem cascading failure treated as N independent minor i
 
 from dataclasses import dataclass
 
+
 @dataclass
 class MultiSignalCorrelator:
-
     def correlate(self, signals: list[dict]) -> float:
         return 0.5

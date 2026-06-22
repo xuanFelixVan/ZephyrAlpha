@@ -10,16 +10,18 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.capability_check import (
-        verify_capability_scope,
         MAX_CAPABILITIES,
         RESTRICTED_CAPABILITIES,
+        verify_capability_scope,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -28,6 +30,7 @@ except Exception as exc:
 
 try:
     from zephyr.autonomy_core.registry import AgentCapability
+
     _CAPABILITY_OK = True
     _CAPABILITY_REASON = ""
 except Exception as exc:

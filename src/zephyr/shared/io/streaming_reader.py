@@ -36,11 +36,10 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 from collections.abc import Generator
 from pathlib import Path
 
-__all__ = ["tail_jsonl", "stream_jsonl"]
+__all__ = ["stream_jsonl", "tail_jsonl"]
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +105,7 @@ def stream_jsonl(path: str | Path) -> Generator[dict, None, None]:
         return
 
     try:
-        with open(p, "r", encoding="utf-8") as f:
+        with open(p, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:

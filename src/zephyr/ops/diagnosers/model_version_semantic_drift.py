@@ -60,9 +60,7 @@ class ModelVersionSemanticDrift:
     benchmark_baselines: dict[str, dict] = field(default_factory=dict)
     drift_events: list[dict] = field(default_factory=list)
 
-    def register_model(
-        self, model_id: str, version: str, provider: str, deprecation_date: float | None = None
-    ) -> None:
+    def register_model(self, model_id: str, version: str, provider: str, deprecation_date: float | None = None) -> None:
         self.model_fingerprints[model_id] = {
             "version": version,
             "provider": provider,
@@ -71,9 +69,7 @@ class ModelVersionSemanticDrift:
             "fingerprint": self._compute_fingerprint(model_id, version),
         }
 
-    def record_benchmark(
-        self, model_id: str, benchmark_name: str, scores: list[float]
-    ) -> dict:
+    def record_benchmark(self, model_id: str, benchmark_name: str, scores: list[float]) -> dict:
         if model_id not in self.model_fingerprints:
             return {"error": "unknown_model"}
 
@@ -97,9 +93,7 @@ class ModelVersionSemanticDrift:
             "sample_count": len(scores),
         }
 
-    def check_semantic_drift(
-        self, model_id: str, benchmark_name: str, new_scores: list[float]
-    ) -> dict:
+    def check_semantic_drift(self, model_id: str, benchmark_name: str, new_scores: list[float]) -> dict:
         if model_id not in self.benchmark_baselines:
             return {"severity": DriftSeverity.NONE.value, "reason": "no_baseline"}
 
@@ -123,14 +117,16 @@ class ModelVersionSemanticDrift:
             severity = DriftSeverity.NONE
 
         if severity != DriftSeverity.NONE:
-            self.drift_events.append({
-                "ts": time.time(),
-                "model_id": model_id,
-                "benchmark": benchmark_name,
-                "severity": severity.value,
-                "mean_shift": round(mean_shift, 4),
-                "variance_shift": round(variance_shift, 4),
-            })
+            self.drift_events.append(
+                {
+                    "ts": time.time(),
+                    "model_id": model_id,
+                    "benchmark": benchmark_name,
+                    "severity": severity.value,
+                    "mean_shift": round(mean_shift, 4),
+                    "variance_shift": round(variance_shift, 4),
+                }
+            )
 
         return {
             "model_id": model_id,
@@ -141,8 +137,10 @@ class ModelVersionSemanticDrift:
             "baseline_mean": round(baseline["mean"], 4),
             "current_mean": round(new_mean, 4),
             "recommendation": (
-                "rollback_model_version" if severity == DriftSeverity.BREAKING
-                else "increase_benchmark_frequency" if severity == DriftSeverity.SIGNIFICANT
+                "rollback_model_version"
+                if severity == DriftSeverity.BREAKING
+                else "increase_benchmark_frequency"
+                if severity == DriftSeverity.SIGNIFICANT
                 else "continue_monitoring"
             ),
         }
@@ -156,21 +154,25 @@ class ModelVersionSemanticDrift:
                 continue
             days_left = (dep_date - now) / 86400.0
             if days_left < 7:
-                alerts.append({
-                    "model_id": model_id,
-                    "provider": info["provider"],
-                    "version": info["version"],
-                    "days_until_deprecation": round(days_left, 1),
-                    "severity": "CRITICAL" if days_left < 1 else "HIGH" if days_left < 7 else "MEDIUM",
-                    "recommendation": "migrate_to_successor_model",
-                })
+                alerts.append(
+                    {
+                        "model_id": model_id,
+                        "provider": info["provider"],
+                        "version": info["version"],
+                        "days_until_deprecation": round(days_left, 1),
+                        "severity": "CRITICAL" if days_left < 1 else "HIGH" if days_left < 7 else "MEDIUM",
+                        "recommendation": "migrate_to_successor_model",
+                    }
+                )
             elif days_left < 30:
-                alerts.append({
-                    "model_id": model_id,
-                    "days_until_deprecation": round(days_left, 1),
-                    "severity": "MEDIUM",
-                    "recommendation": "plan_migration",
-                })
+                alerts.append(
+                    {
+                        "model_id": model_id,
+                        "days_until_deprecation": round(days_left, 1),
+                        "severity": "MEDIUM",
+                        "recommendation": "plan_migration",
+                    }
+                )
         return alerts
 
     def _compute_fingerprint(self, model_id: str, version: str) -> str:

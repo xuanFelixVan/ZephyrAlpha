@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.audit_trail.external_tool_audit import (
     ChainValidationResult,
     ExternalToolCallAuditor,

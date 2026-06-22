@@ -11,10 +11,8 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 轮转失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_log_rotation.py
-
 import gzip
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -26,6 +24,7 @@ __all__ = ["LogRotation"]
 DEFAULT_MAX_SIZE_MB = 100
 DEFAULT_MAX_AGE_DAYS = 90
 DEFAULT_MAX_FILES = 1000
+
 
 class LogRotation:
     def __init__(
@@ -96,6 +95,7 @@ class LogRotation:
             "total_size_mb": round(total_size / (1024 * 1024), 2),
         }
 
+
 class LogRotationManager:
     def __init__(self, config=None):
         self.config = config or {}
@@ -106,15 +106,17 @@ class LogRotationManager:
     def cleanup(self, max_age_days=30):
         return 0
 
+
 class RotatedLogInfo:
-    def __init__(self, original_path='', rotated_path='', size_bytes=0, rotated_at=None):
+    def __init__(self, original_path="", rotated_path="", size_bytes=0, rotated_at=None):
         self.original_path = original_path
         self.rotated_path = rotated_path
         self.size_bytes = size_bytes
         self.rotated_at = rotated_at
 
+
 class RotationRecord:
-    def __init__(self, record_id='', original_path='', rotated_path='', size_bytes=0, rotated_at=None):
+    def __init__(self, record_id="", original_path="", rotated_path="", size_bytes=0, rotated_at=None):
         self.record_id = record_id
         self.original_path = original_path
         self.rotated_path = rotated_path

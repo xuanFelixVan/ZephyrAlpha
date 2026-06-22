@@ -50,6 +50,7 @@ from typing import Any, ClassVar
 @dataclass(frozen=True)
 class SystemHealth:
     """系统健康状态快照"""
+
     is_healthy: bool
     checks: dict[str, bool] = field(default_factory=dict)
     message: str = ""
@@ -89,7 +90,8 @@ class ConfigManagerBase(abc.ABC):
       - validate(config): 校验配置合法性
       - reload(): 热重载（不重启进程）
     """
-    _registry: ClassVar[dict[str, type["ConfigManagerBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[ConfigManagerBase]]] = {}
 
     @abc.abstractmethod
     def load(self, source: str | None = None) -> dict[str, Any]:
@@ -119,7 +121,8 @@ class KillSwitchManagerBase(abc.ABC):
 
     INV-001: 熔断延迟 < 1ms（硬件级 T0/T1 实现）
     """
-    _registry: ClassVar[dict[str, type["KillSwitchManagerBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[KillSwitchManagerBase]]] = {}
 
     @abc.abstractmethod
     def trigger(self, reason: str, scope: str = "all") -> bool:
@@ -143,8 +146,8 @@ class KillSwitchManagerBase(abc.ABC):
 
 
 __all__ = [
-    "SystemHealth",
-    "InfrastructureManagerBase",
     "ConfigManagerBase",
+    "InfrastructureManagerBase",
     "KillSwitchManagerBase",
+    "SystemHealth",
 ]

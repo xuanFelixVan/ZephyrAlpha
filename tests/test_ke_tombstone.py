@@ -15,13 +15,9 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.kb.ke_tombstone import (
-    TombstoneManager,
     TombstoneEntry,
-    CREATE_TABLE_SQL,
-    CREATE_INDEX_SQL,
+    TombstoneManager,
 )
 
 
@@ -33,9 +29,7 @@ class TestTombstoneManager:
         tm = self._make_manager(tmp_path)
         assert tm.init() is True
         conn = sqlite3.connect(str(tm.db_path))
-        row = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='ke_tombstones'"
-        ).fetchone()
+        row = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='ke_tombstones'").fetchone()
         conn.close()
         assert row is not None
 

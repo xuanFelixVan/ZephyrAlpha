@@ -15,14 +15,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sqlite3
 import subprocess
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
-
-import sqlite3
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
@@ -77,7 +76,7 @@ class ImpactResult:
 
 
 class ChangeImpactAnalyzer:
-    def __init__(self, repo_root: Optional[str] = None):
+    def __init__(self, repo_root: str | None = None):
         self._repo_root = Path(repo_root) if repo_root else PROJECT_ROOT
         self._depgraph: dict[str, Any] = {}
         self._adjacency_forward: dict[str, list[str]] = defaultdict(list)
@@ -213,6 +212,7 @@ class ChangeImpactAnalyzer:
         result["source"] = "commit_analysis"
         try:
             from zephyr.infrastructure.rollback.llm_impact_analyzer import LLMImpactAnalyzer
+
             analyzer = LLMImpactAnalyzer(project_root=self._repo_root)
             llm_result = analyzer.analyze(commit_hash)
             result["llm_risk_score"] = llm_result.risk_score
@@ -233,7 +233,9 @@ class ChangeImpactAnalyzer:
             completed = subprocess.run(
                 ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", commit_hash],
                 cwd=str(self._repo_root),
-                capture_output=True, text=True, timeout=15,
+                capture_output=True,
+                text=True,
+                timeout=15,
             )
             if completed.returncode == 0 and completed.stdout.strip():
                 return [line.strip() for line in completed.stdout.strip().splitlines() if line.strip()]
@@ -265,8 +267,8 @@ class ChangeImpactAnalyzer:
         if len(parts) >= 2:
             if parts[0] == "src" and len(parts) >= 3:
                 pkg = parts[2] if parts[1] == "zephyr" else parts[1]
-                scripts.append(f"governance/d1_structure/check_module_registration.py")
-                scripts.append(f"governance/d5_architecture/audit_depends_on_chain_depth.py")
+                scripts.append("governance/d1_structure/check_module_registration.py")
+                scripts.append("governance/d5_architecture/audit_depends_on_chain_depth.py")
             elif parts[0] == "scripts":
                 scripts.append("governance/d1_structure/check_script_manifest.py")
             elif parts[0] == "docs":
@@ -280,71 +282,86 @@ def _run_warn_only() -> dict[str, Any]:
         analyzer = ChangeImpactAnalyzer()
         analyzer._load_depgraph()
         node_count = len(analyzer._path_to_node)
-        results["checks"].append({
-            "name": "depgraph_load",
-            "status": "PASS" if node_count > 0 else "WARN",
-            "detail": {"nodes_loaded": node_count},
-        })
+        results["checks"].append(
+            {
+                "name": "depgraph_load",
+                "status": "PASS" if node_count > 0 else "WARN",
+                "detail": {"nodes_loaded": node_count},
+            }
+        )
     except DependencyGraphError as exc:
-        results["checks"].append({
-            "name": "depgraph_load",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "depgraph_load",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
     test_files = ["src/zephyr/__init__.py"]
     try:
         impact = analyzer.analyze_file_change(test_files)
         has_impact = bool(impact.get("impact", {}).get("direct") or impact.get("impact", {}).get("transitive"))
-        results["checks"].append({
-            "name": "analyze_file_change",
-            "status": "PASS",
-            "detail": {"test_input": test_files, "has_impact": has_impact},
-        })
+        results["checks"].append(
+            {
+                "name": "analyze_file_change",
+                "status": "PASS",
+                "detail": {"test_input": test_files, "has_impact": has_impact},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "analyze_file_change",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "analyze_file_change",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
     try:
         scan_list = analyzer.generate_incremental_scan_list(
             {"impact": {"direct": test_files, "transitive": [], "speculative": []}}
         )
-        results["checks"].append({
-            "name": "generate_incremental_scan_list",
-            "status": "PASS",
-            "detail": {"scan_list_count": len(scan_list)},
-        })
+        results["checks"].append(
+            {
+                "name": "generate_incremental_scan_list",
+                "status": "PASS",
+                "detail": {"scan_list_count": len(scan_list)},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "generate_incremental_scan_list",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
-    results["overall"] = "PASS" if all(
-        c["status"] == "PASS" for c in results["checks"]
-    ) else "WARN"
+        results["checks"].append(
+            {
+                "name": "generate_incremental_scan_list",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
+    results["overall"] = "PASS" if all(c["status"] == "PASS" for c in results["checks"]) else "WARN"
     return results
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Change Impact Analyzer — transitive dependency impact analysis"
-    )
+    parser = argparse.ArgumentParser(description="Change Impact Analyzer — transitive dependency impact analysis")
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="Run checks in warn-only mode",
     )
     parser.add_argument(
-        "--files", nargs="*", default=[],
+        "--files",
+        nargs="*",
+        default=[],
         help="List of changed files to analyze",
     )
     parser.add_argument(
-        "--commit", type=str, default="",
+        "--commit",
+        type=str,
+        default="",
         help="Commit hash to analyze",
     )
     parser.add_argument(
-        "--repo-root", type=str, default="",
+        "--repo-root",
+        type=str,
+        default="",
         help="Repository root path",
     )
     args = parser.parse_args()

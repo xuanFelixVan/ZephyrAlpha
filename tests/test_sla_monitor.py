@@ -16,8 +16,6 @@ import json
 import time
 from pathlib import Path
 
-import pytest
-
 from zephyr.shared.sla.sla_monitor import (
     RPO_TARGET_TASKS,
     RTO_TARGET_S,
@@ -28,7 +26,6 @@ from zephyr.shared.sla.sla_monitor import (
 
 
 class TestSLABreachDataclass:
-
     def test_default_details(self):
         b = SLABreach(
             metric="RTO",
@@ -50,7 +47,6 @@ class TestSLABreachDataclass:
 
 
 class TestSLAReportDataclass:
-
     def test_fields(self):
         report = SLAReport(
             report_id="SLA-20260522",
@@ -68,7 +64,6 @@ class TestSLAReportDataclass:
 
 
 class TestSLAMonitor:
-
     def test_instantiation_with_tmp_path(self, tmp_path):
         mon = SLAMonitor(data_dir=tmp_path / "sla")
         assert mon._data_dir == tmp_path / "sla"

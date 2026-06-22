@@ -1,5 +1,6 @@
 # [A_test] module_id: SRC-TST-1875 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 import pytest
+
 from zephyr.ops.exceptions import (
     AutonomyViolationError,
     DiagnosisError,

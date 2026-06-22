@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-026
-submodule_path: src/zephyr/asset-inventory
+submodule_path: src/zephyr/infrastructure/asset_inventory
 title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理"
 doc_type: blueprint
 template_for: blueprint
@@ -14,7 +14,7 @@ created_by: human_plus_agent
 date: "2026-05-12"
 ttl: permanent
 construction_progress: completed
-actual_disk_path: "src/zephyr/asset-inventory/"
+actual_disk_path: "src/zephyr/infrastructure/asset_inventory/"
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 3
@@ -567,7 +567,7 @@ D-AI-012: 新增 DebounceManager + ScanCoalescer
   after:
     per_module_debounce_window: 500ms（capacity_params 的 debounce_ms）
     coalesce_window: 1000ms（合并窗口——在此窗口内的多次触发合并为一次）
-    
+
     去抖逻辑:
       模块 M 在 500ms 内收到第 2 次触发 → 取消第 1 次 → 重置计时器 → 500ms 后只跑 1 次
     合并逻辑:
@@ -609,7 +609,7 @@ D-AI-013: 资产存储按模块归属 Hash 分片
 
     分片策略: consistent_hashing (capacity_params)
     shard_id = hash(module_id) % 16
-    
+
     每 shard: 独立 SQLite WAL → 独立 writer → 16x 并发写
     跨 shard 查询: global_index 用于汇总查询 → union shard results
 ```
@@ -707,9 +707,9 @@ D-AI-016: 进程内事件总线 + SQLite 变更日志双通道
   after:
     Channel 1: 进程内 EventBus（Python asyncio.Queue —— 零延迟，同进程）
     Channel 2: SQLite change_log 表（跨进程持久化，WAL 模式可并发读）
-    
+
     事件保留策略: capacity_params.audit_log_retention_days=90
-    
+
     新增表:
     CREATE TABLE change_log (
       id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2016,7 +2016,7 @@ scaffold.py → asset.created
 | 4 | `project_rules.md` 冷启动序列 | STEP 4.5: 读 unified-asset-index.yaml | ✅ 已实施 |
 | 5 | `phase_manager.py` Phase 1 | `gate_asset_inventory` 检查 | ✅ 已实施 |
 | 6 | `risk-register.yaml` | R17~R19：盘点系统运营风险 | ✅ 已登记 |
-| 7 | `rule-registry.md` TRAE 域 | TRAE-010：冷启动 STEP 4.5 规则登记 | ✅ 已登记 |
+| 7 | `_index.yaml` TRAE 域 | TRAE-010：冷启动 STEP 4.5 规则登记 | ✅ 已登记 |
 | 8 | `SessionContinuity.print_restore_summary()` | 资产摘要注入恢复上下文 | ⬜ 待 Phase 2 |
 | 9 | `AGENTS.md` | 新能力声明：资产盘点查询 | ⬜ 待 Phase 2 |
 | 10 | `scripts/script-manifest.yaml` | `generate_asset_index.py` 等盘点脚本 | ⬜ 待 Phase 1 |
@@ -2367,7 +2367,7 @@ Scanner 2 产出 → raw_scan_2.json (timestamp T2, T2 > T1)
 |------|:--:|------|--------|
 | YAML list of dicts | 8 | `module-registry.yaml` | `YamlListAdapter` |
 | YAML dict (keyed) | 5 | `script-manifest.yaml` | `YamlDictAdapter` |
-| Markdown table | 4 | `rule-registry.md` | `MarkdownTableAdapter` |
+| Markdown table | 4 | `_index.yaml` | `MarkdownTableAdapter` |
 | Frontmatter + body | 3 | AGENTS.md | `FrontmatterAdapter` |
 | CSV | 1 | 未来可能的导出格式 | `CsvAdapter` |
 | TOML | 0 | 保留 | `TomlAdapter` |
@@ -2597,7 +2597,7 @@ archived (终态)
 |---|------|---------|----------------|
 | 1 | **为什么有这个盘点系统？** | §1.4 六个痛点 | `blueprint.md` |
 | 2 | **谁调用它？** | Pipeline cron + scaffold.py hook + Phase Manager gate + 冷启动 STEP 4.5 | `phase_manager.py` + `project_rules.md` |
-| 3 | **下一个 AI session 怎么知道它存在？** | 冷启动 STEP 4.5 + REG-INV-001 + TRAE-010 | `registry_of_registries.yaml` + `rule-registry.md` |
+| 3 | **下一个 AI session 怎么知道它存在？** | 冷启动 STEP 4.5 + REG-INV-001 + TRAE-010 | `registry_of_registries.yaml` + `_index.yaml` |
 | 4 | **改一个文件会触发什么盘点动作？** | scaffold.py → `asset.created` → 实时更新 index | 事件契约 §7 |
 | 5 | **一个文件如果是 orphan，盘点会做什么？** | 24h 容错窗口 → auto scaffold register（.py） / 告警（.md） | §2.7 L4 自愈策略 |
 | 6 | **盘点数据在哪？** | `data/asset_index/unified-asset-index.yaml` + `data/scans/raw-asset-scan.json` | §8 文件落位标准 |
@@ -2708,7 +2708,7 @@ hooks:
 | `MOD-INF-021 rollback` | ← | 对账异常触发回滚条件 | G-CT-002 | 事件触发 | ⬜ Phase 2 |
 | `MOD-INF-019 spec-executor` | → | 资产 Spec 执行结果登记 | G-CT-007 | 按需 | ⬜ Phase 2 |
 | `GOV-CMP-003 audit-protocol` | → | 盘点维度纳入 12 维审计清单 | DIM-INV | 每次审计 | ⬜ Phase 2 |
-| `01_policies/governance/` | ← | 规则发现引用 | `rule-registry.md` TRAE-010 | 每次入项目 | ✅ 已登记 |
+| `01_policies/governance/` | ← | 规则发现引用 | `_index.yaml` TRAE-010 | 每次入项目 | ✅ 已登记 |
 | `.trae/rules/project_rules.md` | ← | 冷启动 STEP 4.5 | "读 unified-asset-index.yaml" | 每次入项目 | ✅ 已更新 |
 | `config/capacity/risk-register.yaml` | → | 盘点相关运营风险 | R17~R20 | 每次 risk review | ✅ 已登记 |
 | `registry_of_registries.yaml` | → | 注册表总纲 | REG-INV-001 | 每次入项目 | ✅ 已登记 |
@@ -3768,14 +3768,14 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 
 | # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表 |
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
-| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 + MTH-013 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 + MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
 | 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
-| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 
 ---
 

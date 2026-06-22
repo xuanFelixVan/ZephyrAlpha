@@ -51,7 +51,7 @@ class GoldenTestExternal:
     def evaluate(self, test_id: str, actual_diagnosis: str, actual_action: str) -> bool:
         for t in self.tests:
             if t.test_id == test_id:
-                passed = (actual_diagnosis == t.expected_diagnosis and actual_action == t.expected_action)
+                passed = actual_diagnosis == t.expected_diagnosis and actual_action == t.expected_action
                 self.results[test_id] = passed
                 return passed
         return False

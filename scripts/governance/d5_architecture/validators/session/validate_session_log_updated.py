@@ -42,7 +42,7 @@ import argparse
 from datetime import UTC, datetime
 from typing import Any
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 SESSION_LOG_DIR = REPO_ROOT / ".runtime" / "session-logs"
 REQUIRED_SECTIONS = [
@@ -101,7 +101,7 @@ def main() -> None:
     mtime = datetime.fromtimestamp(latest_log.stat().st_mtime, tz=UTC)
     age_hours = (datetime.now(UTC) - mtime).total_seconds() / 3600
     print(f"\n[SESSION-LOG] 最新 Session Log: {latest_log.relative_to(REPO_ROOT)}", file=sys.stderr)
-    print(f'  修改时间: {mtime.strftime('%Y-%m-%d %H:%M:%S UTC')} （{age_hours:.1f} 小时前）', file=sys.stderr)
+    print(f"  修改时间: {mtime.strftime('%Y-%m-%d %H:%M:%S UTC')} （{age_hours:.1f} 小时前）", file=sys.stderr)
     if age_hours > WARN_HOURS_NO_LOG:
         print(f"  WARNING: 超过 {WARN_HOURS_NO_LOG} 小时无 Session Log 更新，项目可能处于停滞状态", file=sys.stderr)
         findings.append(
@@ -126,17 +126,17 @@ def main() -> None:
         print(f"  OK: Session Log 在 {args.warn_hours}h 阈值内", file=sys.stderr)
     structure = check_three_section_structure(latest_log)
     if not structure["has_structure"]:
-        print(f'  WARNING: Session Log 缺少三段论结构 — 缺失: {', '.join(structure['missing'])}', file=sys.stderr)
+        print(f"  WARNING: Session Log 缺少三段论结构 — 缺失: {', '.join(structure['missing'])}", file=sys.stderr)
         findings.append(
             {
                 "file": str(latest_log.relative_to(REPO_ROOT)),
                 "line": 0,
                 "pattern": "Session Log 缺少三段论结构",
-                "matched": f'missing={structure['missing']}',
+                "matched": f"missing={structure['missing']}",
             }
         )
     else:
-        print(f'  OK: 三段论结构完整 — {', '.join(structure['found'])}', file=sys.stderr)
+        print(f"  OK: 三段论结构完整 — {', '.join(structure['found'])}", file=sys.stderr)
     total = len(findings)
     if total:
         print(f"\n  共 {total} 个问题\n", file=sys.stderr)

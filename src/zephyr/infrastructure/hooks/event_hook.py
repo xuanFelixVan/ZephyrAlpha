@@ -40,12 +40,14 @@ Usage:
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 logger = logging.getLogger("zephyr.infrastructure.hooks")
 
 # ── Event ────────────────────────────────────────────────────────────
+
 
 @dataclass
 class TransitionEvent:
@@ -59,6 +61,7 @@ class TransitionEvent:
 
 # ── Callback descriptor ──────────────────────────────────────────────
 
+
 @dataclass(order=True)
 class _HookEntry:
     priority: int
@@ -68,6 +71,7 @@ class _HookEntry:
 
 
 # ── Registry ─────────────────────────────────────────────────────────
+
 
 class HookRegistry:
     """声明式事件钩子注册表（内部事件总线）。
@@ -141,8 +145,11 @@ class HookRegistry:
             except Exception:
                 logger.exception(
                     "Hook '%s' (prio=%d) crashed on task=%s (%s→%s)",
-                    h.name, h.priority, event.task_id,
-                    event.from_status, event.to_status,
+                    h.name,
+                    h.priority,
+                    event.task_id,
+                    event.from_status,
+                    event.to_status,
                 )
 
     def suspend(self) -> None:

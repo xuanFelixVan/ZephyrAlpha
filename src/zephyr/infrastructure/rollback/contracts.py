@@ -25,80 +25,31 @@ G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口.
 
 """
 
-
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from zephyr.governance.audit_trail.anomaly import AnomalyResult as AnomalyEvent
 
 
-
-
-
-
-
-
 class RollbackHandler:
-
-
     """回滚处理器 — G-CT-002 消费端."""
 
-
-
-
-
     def on_audit_anomaly(self, event: AnomalyEvent) -> dict:
-
-
         """接收 Audit 异常事件 → 触发回滚流程."""
-
 
         action = self._determine_action(event)
 
-
-
-
-
         return {
-
             "triggered": True,
-
-            "event_type": event.signature.value if hasattr(event, 'signature') else "unknown",
-
+            "event_type": event.signature.value if hasattr(event, "signature") else "unknown",
             "action": action,
-
-            "agent_id": event.evidence.get("agent_id", "unknown") if hasattr(event, 'evidence') else "unknown",
-
-            "resource_path": event.evidence.get("resource", "unknown") if hasattr(event, 'evidence') else "unknown",
-
-
+            "agent_id": event.evidence.get("agent_id", "unknown") if hasattr(event, "evidence") else "unknown",
+            "resource_path": event.evidence.get("resource", "unknown") if hasattr(event, "evidence") else "unknown",
             "rollback_target": f"rollback:{event.signature.value}@{event.evidence.get('resource', 'unknown') if hasattr(event, 'evidence') else 'unknown'}",
-
-
         }
 
-
-
-
-
     @staticmethod
-
-
     def _determine_action(event: AnomalyEvent) -> str:
-
-
         if event.severity == "HIGH":
-
-
             return "IMMEDIATE_ROLLBACK"
 
-
         return "FLAGGED_FOR_REVIEW"
-
-

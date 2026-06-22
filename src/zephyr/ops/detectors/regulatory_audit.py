@@ -27,6 +27,7 @@ Risk: R184 — Automated repair violates regulation (e.g., MiFID II best executi
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class RegulatoryAudit:
     regulations: list[str] = field(default_factory=lambda: ["MiFID II", "SEC Rule 606"])

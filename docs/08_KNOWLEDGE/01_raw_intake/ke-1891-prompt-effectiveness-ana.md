@@ -13,7 +13,7 @@ category: module_blueprint
 **对标**：Anthropic Prompt Caching Research + LangSmith Prompt Tracing + Datadog LLM Observability
 
 ```python
-@dataclass 
+@dataclass
 class PromptEffectivenessReport:
     prompt_id: str
     version: str

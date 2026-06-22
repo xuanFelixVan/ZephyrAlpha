@@ -1,18 +1,17 @@
 # [A_test] module_id: SRC-TST-0003 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-import os
+import random
 import sys
 import tempfile
 import time
-import random
-import traceback
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from zephyr.trading.staging_area import StagingArea, CommitStatus
+from zephyr.trading.staging_area import CommitStatus, StagingArea
+
 
 def test_append_3sessions():
     """Minimal reproduce: 3 sessions append unique lines."""

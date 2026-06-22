@@ -41,6 +41,7 @@ class DeduplicationHandler(CheckTypeHandler):
         violations: list[dict[str, Any]] = []
         try:
             import importlib
+
             _scanner_mod = importlib.import_module("zephyr.testing.code_dedup.scanner")
             _exit_mod = importlib.import_module("zephyr.testing.code_dedup.exit_codes")
             Scanner = _scanner_mod.Scanner
@@ -58,8 +59,8 @@ class DeduplicationHandler(CheckTypeHandler):
                 if changed_files:
                     scanner.scan_files(changed_files)
             else:
-                import glob
                 from pathlib import Path
+
                 root = Path(str(project_root)) if project_root else Path(".")
                 py_files = [str(f) for f in root.glob("src/zephyr/**/*.py")]
                 if py_files:
@@ -73,18 +74,22 @@ class DeduplicationHandler(CheckTypeHandler):
             for group in duplicates:
                 sev = _classify_severity(group)
                 if fail_level.get(sev, 3) <= fail_level.get(fail_on_severity, 1):
-                    violations.append(dict(
-                        message=f"Dedup: {group.group_id} similarity={group.similarity:.2f} severity={sev} members={len(group.members)}",
-                        severity=severity_map.get(sev, "P2"),
-                        check_id=getattr(check, "id", "DD-CHK-INCREMENTAL"),
-                    ))
+                    violations.append(
+                        dict(
+                            message=f"Dedup: {group.group_id} similarity={group.similarity:.2f} severity={sev} members={len(group.members)}",
+                            severity=severity_map.get(sev, "P2"),
+                            check_id=getattr(check, "id", "DD-CHK-INCREMENTAL"),
+                        )
+                    )
 
         except Exception as exc:
-            violations.append(dict(
-                message=f"Deduplication scan failed: {exc}",
-                severity="P2",
-                check_id=getattr(check, "id", "DD-CHK-INCREMENTAL"),
-            ))
+            violations.append(
+                dict(
+                    message=f"Deduplication scan failed: {exc}",
+                    severity="P2",
+                    check_id=getattr(check, "id", "DD-CHK-INCREMENTAL"),
+                )
+            )
         return violations
 
 

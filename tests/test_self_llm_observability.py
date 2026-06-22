@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_self_llm_observability.py
 
-import pytest
 
 from zephyr.ops.diagnosers.self_llm_observability import SelfLLMObservability
 

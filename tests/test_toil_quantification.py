@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_toil_quantification.py
 
-import pytest
 
 from zephyr.ops.diagnosers.toil_quantification import (
     ActionClass,
@@ -131,8 +130,12 @@ class TestGetTopToilSources:
     def test_top_n_limit(self):
         tq = ToilQuantification()
         for i in range(10):
-            tq.action_history.append({
-                "ts": float(i), "class": ActionClass.MANUAL_REQUIRED.value, "source": f"src-{i}",
-            })
+            tq.action_history.append(
+                {
+                    "ts": float(i),
+                    "class": ActionClass.MANUAL_REQUIRED.value,
+                    "source": f"src-{i}",
+                }
+            )
         sources = tq.get_top_toil_sources(top_n=3)
         assert len(sources) <= 3

@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 写入失败抛IOError
 # [TESTS] tests/audit-orchestrator/test_writer.py
-
 import json
 import logging
 import os
@@ -26,6 +25,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["AuditReportWriter"]
 
 DEFAULT_REPORT_DIR = Path("data/audit_history")
+
 
 class AuditReportWriter:
     def __init__(self, report_dir: Path | None = None) -> None:

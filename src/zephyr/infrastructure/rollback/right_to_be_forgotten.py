@@ -37,13 +37,11 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import re
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 EXIT_GDPR_BLOCKED = 19
 
@@ -81,7 +79,6 @@ class SensitiveMatch:
 
 
 class RightToBeForgotten:
-
     def __init__(self, registry_dir: Path | None = None) -> None:
         self._registry_dir = registry_dir or Path("data/rollback/gdpr")
         self._registry_path = self._registry_dir / "right_to_be_forgotten_registry.json"
@@ -97,8 +94,8 @@ class RightToBeForgotten:
         user_hash = self._hash_identifier(identifier)
         forgotten = ForgottenUser(
             user_hash=user_hash,
-            registered_at=datetime.now(timezone.utc).isoformat(),
-            request_id=request_id or f"GDPR-REQ-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+            registered_at=datetime.now(UTC).isoformat(),
+            request_id=request_id or f"GDPR-REQ-{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}",
             reason=reason,
         )
         self._forgotten_hashes.add(user_hash)
@@ -134,22 +131,26 @@ class RightToBeForgotten:
                 email_hash = self._hash_identifier(email)
                 if email_hash in self._forgotten_hashes:
                     email_hashes.add(email_hash)
-                    matches.append(SensitiveMatch(
-                        pattern="email",
-                        matched_content=self._mask_identifier(email),
-                        file_path=file_path,
-                    ))
+                    matches.append(
+                        SensitiveMatch(
+                            pattern="email",
+                            matched_content=self._mask_identifier(email),
+                            file_path=file_path,
+                        )
+                    )
 
             ssns = SENSITIVE_PATTERNS[3].findall(content)
             for ssn in ssns:
                 ssn_hash = self._hash_identifier(ssn)
                 if ssn_hash in self._forgotten_hashes:
                     ssn_hashes.add(ssn_hash)
-                    matches.append(SensitiveMatch(
-                        pattern="ssn",
-                        matched_content=self._mask_identifier(ssn),
-                        file_path=file_path,
-                    ))
+                    matches.append(
+                        SensitiveMatch(
+                            pattern="ssn",
+                            matched_content=self._mask_identifier(ssn),
+                            file_path=file_path,
+                        )
+                    )
 
         return matches
 
@@ -209,11 +210,13 @@ class RightToBeForgotten:
         matches: list[SensitiveMatch] = []
         for identifier_hash in self._forgotten_hashes:
             if identifier_hash in snapshot_data:
-                matches.append(SensitiveMatch(
-                    pattern="gdpr_registry_hash",
-                    matched_content=identifier_hash,
-                    file_path="snapshot",
-                ))
+                matches.append(
+                    SensitiveMatch(
+                        pattern="gdpr_registry_hash",
+                        matched_content=identifier_hash,
+                        file_path="snapshot",
+                    )
+                )
 
         if matches:
             return PurgeResult(
@@ -228,9 +231,7 @@ class RightToBeForgotten:
 
     def _hash_identifier(self, identifier: str) -> str:
         normalized = identifier.strip().lower()
-        return hashlib.sha256(
-            f"gdpr:forgotten:{normalized}:salt-v1".encode("utf-8")
-        ).hexdigest()
+        return hashlib.sha256(f"gdpr:forgotten:{normalized}:salt-v1".encode()).hexdigest()
 
     def _mask_identifier(self, identifier: str) -> str:
         if len(identifier) <= 4:
@@ -265,19 +266,25 @@ class RightToBeForgotten:
             except (json.JSONDecodeError, KeyError):
                 pass
 
-        existing.append({
-            "user_hash": forgotten.user_hash,
-            "registered_at": forgotten.registered_at,
-            "request_id": forgotten.request_id,
-            "reason": forgotten.reason,
-        })
+        existing.append(
+            {
+                "user_hash": forgotten.user_hash,
+                "registered_at": forgotten.registered_at,
+                "request_id": forgotten.request_id,
+                "reason": forgotten.reason,
+            }
+        )
 
         self._registry_path.write_text(
-            json.dumps({
-                "version": "1.0.0",
-                "compliance": "GDPR Article 17",
-                "last_updated": datetime.now(timezone.utc).isoformat(),
-                "forgotten_users": existing,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "version": "1.0.0",
+                    "compliance": "GDPR Article 17",
+                    "last_updated": datetime.now(UTC).isoformat(),
+                    "forgotten_users": existing,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )

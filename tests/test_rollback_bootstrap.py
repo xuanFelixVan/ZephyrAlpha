@@ -17,8 +17,6 @@ import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.governance.rollback_bootstrap import (
     _check_git_available,
     _get_recent_commits,
@@ -72,9 +70,7 @@ class TestGetRecentCommits:
 
     @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
     def test_parses_oneline_output(self, mock_git):
-        mock_git.return_value = MagicMock(
-            returncode=0, stdout="abc1234 msg1\ndef5678 msg2\n"
-        )
+        mock_git.return_value = MagicMock(returncode=0, stdout="abc1234 msg1\ndef5678 msg2\n")
         result = _get_recent_commits(Path("/tmp"), count=5)
         assert result == ["abc1234", "def5678"]
 

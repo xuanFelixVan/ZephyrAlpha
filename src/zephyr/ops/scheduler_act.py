@@ -23,22 +23,21 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from zephyr.ops.actors.action_selector import ActionSelector
 from zephyr.ops.detectors.action_efficacy_decay_detector import ActionEfficacyDecayDetector
 from zephyr.ops.detectors.action_interaction_detector import ActionInteractionDetector
-from zephyr.ops.detectors.diminishing_returns_detector import DiminishingReturnsDetector
 from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
 from zephyr.ops.detectors.placebo_action_detector import PlaceboActionDetector
 from zephyr.ops.diagnosers.action_composition_health_monitor import ActionCompositionHealthMonitor
 from zephyr.ops.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
 from zephyr.ops.diagnosers.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
+from zephyr.ops.diagnosers.toil_quantification import ToilQuantification
 from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
 from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
 from zephyr.ops.resilience.oscillation_damping import OscillationDamping
 from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
-from zephyr.ops.diagnosers.toil_quantification import ToilQuantification
 from zephyr.ops.verifiers.cascading_rollback_analyzer import CascadingRollbackAnalyzer
 from zephyr.ops.verifiers.stochastic_diagnosis_verifier import StochasticDiagnosisVerifier
 from zephyr.ops.verifiers.verification_engine import VerificationEngine
@@ -80,14 +79,16 @@ class ActPhaseHandler:
 
         if self.action_selector is not None:
             throttle = self.throttle_defense.request_action(
-                anomaly.anomaly_id, "system",
+                anomaly.anomaly_id,
+                "system",
                 priority=diagnosis.severity_level if hasattr(diagnosis, "severity_level") else 3,
             )
             if not throttle["allowed"] and not throttle.get("queued"):
                 return ActResult(skipped=True)
 
             resource_check = self.degradation_planner.evaluate_degradation(
-                snapshot.system_cpu * 100, snapshot.memory_usage_pct * 100,
+                snapshot.system_cpu * 100,
+                snapshot.memory_usage_pct * 100,
             )
             if resource_check["level"] != "FULL" and (
                 diagnosis.severity_level > 1 if hasattr(diagnosis, "severity_level") else True
@@ -110,24 +111,31 @@ class ActPhaseHandler:
 
                 if action_record is not None:
                     self.action_interaction_detector.record_action(
-                        anomaly.anomaly_id, str(action_type),
+                        anomaly.anomaly_id,
+                        str(action_type),
                         1.0 if action_record.success else -1.0,
                     )
                     self.toil_tracker.record_action(
-                        str(action_type), success=action_record.success, human_intervention_required=False,
+                        str(action_type),
+                        success=action_record.success,
+                        human_intervention_required=False,
                     )
                     self.action_decay.record_outcome(str(action_type), action_record.success)
                     self.placebo_detector.record_action_outcome(
-                        str(action_type), 1.0 if action_record.success else 0.0,
+                        str(action_type),
+                        1.0 if action_record.success else 0.0,
                     )
                     self.composition_health.record_composition_outcome(
-                        f"{run_id}_{action_type}", (str(action_type),), action_record.success,
+                        f"{run_id}_{action_type}",
+                        (str(action_type),),
+                        action_record.success,
                     )
                     self.composition_health.record_independent_outcome(str(action_type), action_record.success)
 
                 if action_record and not action_record.success:
                     self.cascading_rollback.record_action_dependency(
-                        anomaly.anomaly_id, [str(action_type)],
+                        anomaly.anomaly_id,
+                        [str(action_type)],
                     )
                     self._escalate_on_failure(anomaly, action_type)
 
@@ -138,13 +146,16 @@ class ActPhaseHandler:
     def _escalate_on_failure(self, anomaly: Any, action_type: Any) -> None:
         try:
             from zephyr.governance.escalation_engine import EscalationEngine
-from zephyr.governance.escalation_models import RuleCategory
+            from zephyr.governance.escalation_models import RuleCategory
+
             engine = EscalationEngine()
             desc = f"FLE act failed: anomaly={getattr(anomaly, 'anomaly_id', '?')}, action={action_type}"
             escalation = engine.evaluate(RuleCategory.AUTO_GUARD_FAILURE, description=desc)
             level = getattr(escalation, "level", None)
             level_value = getattr(level, "value", "") if level else ""
-            if level_value in ("L2_SELF_HEAL", "L3_HUMAN", "L4_EMERGENCY") or (isinstance(level, str) and level.startswith("L2")):
+            if level_value in ("L2_SELF_HEAL", "L3_HUMAN", "L4_EMERGENCY") or (
+                isinstance(level, str) and level.startswith("L2")
+            ):
                 self._auto_rollback_on_escalation(anomaly, level_value)
         except Exception:
             pass
@@ -152,10 +163,13 @@ from zephyr.governance.escalation_models import RuleCategory
     def _auto_rollback_on_escalation(self, anomaly: Any, escalation_level: str) -> None:
         try:
             from zephyr.governance.rollback_executor import RollbackExecutor
+
             executor = RollbackExecutor()
             preflight = executor.preflight_check()
             if getattr(preflight, "passed", False):
-                logger.warning("FLE auto-rollback: preflight passed, executing rollback (escalation=%s)", escalation_level)
+                logger.warning(
+                    "FLE auto-rollback: preflight passed, executing rollback (escalation=%s)", escalation_level
+                )
                 result = executor.discard_changes(
                     file_list=[],
                     force=True,
@@ -167,11 +181,17 @@ from zephyr.governance.escalation_models import RuleCategory
                     logger.error("FLE auto-rollback: failed — %s", getattr(result, "errors", []))
                     try:
                         from zephyr.integration.shared_08.event_bus import bus
-                        bus.emit(topic="rollback.failed", payload={"escalation_level": escalation_level, "errors": getattr(result, "errors", [])})
+
+                        bus.emit(
+                            topic="rollback.failed",
+                            payload={"escalation_level": escalation_level, "errors": getattr(result, "errors", [])},
+                        )
                     except Exception:
                         pass
             else:
-                logger.warning("FLE auto-rollback: preflight failed, skipping rollback (escalation=%s)", escalation_level)
+                logger.warning(
+                    "FLE auto-rollback: preflight failed, skipping rollback (escalation=%s)", escalation_level
+                )
         except Exception:
             logger.debug("FLE auto-rollback failed", exc_info=True)
 
@@ -190,7 +210,8 @@ from zephyr.governance.escalation_models import RuleCategory
         )
 
         self.stochastic_verifier.record_diagnosis_run(
-            anomaly.anomaly_id, 0,
+            anomaly.anomaly_id,
+            0,
             diagnosis.root_cause if hasattr(diagnosis, "root_cause") else "unknown",
             diagnosis.confidence if hasattr(diagnosis, "confidence") else 0.5,
         )

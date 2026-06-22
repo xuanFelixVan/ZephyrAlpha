@@ -6,12 +6,14 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """能力检查器单元测试——capability_check + checksum校验 + 离线更新 T。"""
 
 
 import pytest
-from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
+
 from zephyr.governance.rule_enforcement.capability_checker import CapabilityChecker
+from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
 
 
 @pytest.fixture

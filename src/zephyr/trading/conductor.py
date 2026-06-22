@@ -22,7 +22,6 @@ Conductor — AI session 全自动指挥官。
 Conductor 只负责"找活 + 认领 + 分组"，AI 拿到分组后并行派发。
 """
 
-
 from __future__ import annotations
 
 import json
@@ -64,7 +63,6 @@ class Conductor:
     @property
     def repo(self):
         if self._repo is None:
-            from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
             from zephyr.governance.persistence.task_repo import TaskRepository
 
             self._repo = TaskRepository(self._db_path, enable_gate=False)
@@ -113,16 +111,12 @@ class Conductor:
 
     def mark_completed(self, task_id: str, note: str | None = None) -> None:
         """标记任务 COMPLETED + 触发依赖级联解锁。"""
-        self.repo.transition(
-            task_id, "COMPLETED", session_id=self.session_id, note=note
-        )
+        self.repo.transition(task_id, "COMPLETED", session_id=self.session_id, note=note)
         logger.info("Conductor: %s → COMPLETED", task_id)
 
     def mark_failed(self, task_id: str, note: str) -> None:
         """标记任务 FAILED。note 必须包含根因分析。"""
-        self.repo.transition(
-            task_id, "FAILED", session_id=self.session_id, note=note
-        )
+        self.repo.transition(task_id, "FAILED", session_id=self.session_id, note=note)
         logger.info("Conductor: %s → FAILED", task_id)
 
     def is_done(self) -> bool:
@@ -179,9 +173,7 @@ class Conductor:
 
         return files
 
-    def _detect_file_conflicts(
-        self, tasks: list[TaskCard]
-    ) -> dict[str, set[str]]:
+    def _detect_file_conflicts(self, tasks: list[TaskCard]) -> dict[str, set[str]]:
         """检测任务间的文件冲突。
 
         Returns:
@@ -201,7 +193,9 @@ class Conductor:
                     conflict_map[t2.task_id].add(t1.task_id)
                     logger.debug(
                         "Conductor: 冲突 %s ↔ %s (文件: %s)",
-                        t1.task_id, t2.task_id, overlap,
+                        t1.task_id,
+                        t2.task_id,
+                        overlap,
                     )
 
         return conflict_map

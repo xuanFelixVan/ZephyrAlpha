@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_trigger_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.trigger_router
+# [MODULE] zephyr.autonomy_core.trigger_router
 
 # [INVARIANTS] none
 
@@ -20,8 +20,8 @@
 # [TESTS]
 
 import re
-from typing import Optional, Tuple, List
 from enum import Enum
+from typing import Optional
 
 
 class ConstructionStage(str, Enum):
@@ -35,12 +35,18 @@ class ConstructionStage(str, Enum):
     @classmethod
     def from_label(cls, label: str) -> Optional["ConstructionStage"]:
         mapping = {
-            "想法": cls.IDEA, "草稿": cls.IDEA,
-            "审计（施工前）": cls.PRE_AUDIT, "审计(施工前)": cls.PRE_AUDIT,
-            "蓝图": cls.BLUEPRINT, "设计": cls.BLUEPRINT,
-            "施工": cls.CONSTRUCTION, "实现": cls.CONSTRUCTION,
-            "验收": cls.VERIFICATION, "验证": cls.VERIFICATION,
-            "审计（施工后）": cls.POST_AUDIT, "审计(施工后)": cls.POST_AUDIT,
+            "想法": cls.IDEA,
+            "草稿": cls.IDEA,
+            "审计（施工前）": cls.PRE_AUDIT,
+            "审计(施工前)": cls.PRE_AUDIT,
+            "蓝图": cls.BLUEPRINT,
+            "设计": cls.BLUEPRINT,
+            "施工": cls.CONSTRUCTION,
+            "实现": cls.CONSTRUCTION,
+            "验收": cls.VERIFICATION,
+            "验证": cls.VERIFICATION,
+            "审计（施工后）": cls.POST_AUDIT,
+            "审计(施工后)": cls.POST_AUDIT,
         }
         return mapping.get(label)
 
@@ -73,7 +79,7 @@ class TriggerRouter:
         },
     }
 
-    TASK_ROUTING: List[Tuple[str, str, str]] = [
+    TASK_ROUTING: list[tuple[str, str, str]] = [
         (r"database|migration|sql|atm", "database-specialist", "implementer"),
         (r"mcp\s*(?:server|tool|protocol)?", "mcp-specialist", "implementer"),
         (r"context|pipeline", "context-specialist", "implementer"),
@@ -89,11 +95,11 @@ class TriggerRouter:
 
     def route(
         self,
-        stage: Optional[ConstructionStage],
+        stage: ConstructionStage | None,
         task_description: str,
-    ) -> Tuple[str, Optional[str]]:
-        role: Optional[str] = None
-        domain: Optional[str] = None
+    ) -> tuple[str, str | None]:
+        role: str | None = None
+        domain: str | None = None
 
         domain_override = self._match_task_routing(task_description)
         if domain_override:
@@ -115,13 +121,13 @@ class TriggerRouter:
 
         return (role, domain)
 
-    def _match_task_routing(self, task_description: str) -> Optional[Tuple[str, str]]:
+    def _match_task_routing(self, task_description: str) -> tuple[str, str] | None:
         description_lower = task_description.lower()
         for pattern, domain, role in self.TASK_ROUTING:
             if re.search(pattern, description_lower):
                 return (domain, role)
         return None
 
-    def _match_domain(self, task_description: str) -> Optional[str]:
+    def _match_domain(self, task_description: str) -> str | None:
         match = self._match_task_routing(task_description)
         return match[0] if match else None

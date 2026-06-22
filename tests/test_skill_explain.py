@@ -12,8 +12,7 @@
 
 from __future__ import annotations
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from zephyr.autonomy_core.skill_explain import SkillExplain
 
@@ -163,10 +162,13 @@ class TestIsolateFactors:
         mock_eval.evaluate.return_value = {"overall_score": 80.0}
         mock_evo = MagicMock()
         mock_evo.assess_impact.return_value = {"overall_score": 90.0}
-        with patch.dict("sys.modules", {
-            "zephyr.orchestration.agent_lifecycle.skill_evaluator": MagicMock(SkillEvaluator=mock_eval),
-            "zephyr.orchestration.agent_lifecycle.skill_model_evolution": MagicMock(SkillModelEvolution=mock_evo),
-        }):
+        with patch.dict(
+            "sys.modules",
+            {
+                "zephyr.autonomy_core.skill_evaluator": MagicMock(SkillEvaluator=mock_eval),
+                "zephyr.autonomy_core.skill_model_evolution": MagicMock(SkillModelEvolution=mock_evo),
+            },
+        ):
             result = SkillExplain.isolate_factors(
                 skill_id="SKILL-DOM-DB-001",
                 output_quality=0.85,
@@ -180,13 +182,21 @@ class TestIsolateFactors:
         assert "bottleneck_diagnosis" in result
 
     def test_isolation_with_import_failure(self):
-        with patch("zephyr.orchestration.agent_lifecycle.skill_evaluator.SkillEvaluator.evaluate", side_effect=RuntimeError("test error")):
-            with patch("zephyr.orchestration.agent_lifecycle.skill_model_evolution.SkillModelEvolution.assess_impact", side_effect=RuntimeError("test error")):
-                result = SkillExplain.isolate_factors(
-                    skill_id="SKILL-DOM-FAKE",
-                    output_quality=0.5,
-                    llm_model="fake-model",
-                )
+        with (
+            patch(
+                "zephyr.autonomy_core.skill_evaluator.SkillEvaluator.evaluate",
+                side_effect=RuntimeError("test error"),
+            ),
+            patch(
+                "zephyr.autonomy_core.skill_model_evolution.SkillModelEvolution.assess_impact",
+                side_effect=RuntimeError("test error"),
+            ),
+        ):
+            result = SkillExplain.isolate_factors(
+                skill_id="SKILL-DOM-FAKE",
+                output_quality=0.5,
+                llm_model="fake-model",
+            )
         assert result["skill_factor"] == 0.5
         assert result["llm_factor"] == 0.7
         assert result["skill_contribution_60pct"] == round(0.5 * 0.60, 2)

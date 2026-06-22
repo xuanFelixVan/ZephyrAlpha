@@ -33,7 +33,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
@@ -51,6 +51,7 @@ def build_adr_status_map() -> dict[str, str]:
     if db_path.exists():
         try:
             import sqlite3
+
             conn = sqlite3.connect(str(db_path))
             cur = conn.execute("SELECT ke_id, status FROM knowledge WHERE category = 'architecture_decision'")
             for row in cur:
@@ -117,8 +118,8 @@ def main() -> None:
     if findings:
         print(f"\n[DEPR-ADR] {len(findings)} 个废弃 ADR 引用:", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] {f['file']}:{f['line']}', file=sys.stderr)
-            print(f'    引用 {f['ref']}（status=deprecated）', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['file']}:{f['line']}", file=sys.stderr)
+            print(f"    引用 {f['ref']}（status=deprecated）", file=sys.stderr)
     else:
         print("[DEPR-ADR] 无废弃 ADR 引用", file=sys.stderr)
     if args.warn_only:

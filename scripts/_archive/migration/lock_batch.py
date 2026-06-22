@@ -71,7 +71,9 @@ def lock_batch(batch: int, dry_run: bool = False) -> int:
 
     stats = batch_entry.get("stats", {})
     print(f"Moves verified: {len(moves)}")
-    print(f"Stats: {stats.get('success', 0)} success, {stats.get('failed', 0)} failed, {stats.get('skipped', 0)} skipped")
+    print(
+        f"Stats: {stats.get('success', 0)} success, {stats.get('failed', 0)} failed, {stats.get('skipped', 0)} skipped"
+    )
 
     if not dry_run:
         save_migration_log(log)

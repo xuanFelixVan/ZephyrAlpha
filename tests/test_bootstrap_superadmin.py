@@ -11,17 +11,19 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.bootstrap_superadmin import (
-        BootstrapSuperadmin,
         SUPERADMIN_ACCOUNT,
-        SUPERADMIN_ROLES,
         SUPERADMIN_CAPABILITIES,
+        SUPERADMIN_ROLES,
+        BootstrapSuperadmin,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

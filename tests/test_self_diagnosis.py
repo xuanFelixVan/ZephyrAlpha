@@ -11,8 +11,6 @@
 # [TESTS] python -m pytest tests/test_self_diagnosis.py -q
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.self_diagnosis import (
     DiagnosisNode,
     DiagnosisReport,

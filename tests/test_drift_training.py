@@ -15,15 +15,13 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime, timedelta
 
-import pytest
-
 from zephyr.behavioral_audit.drift_training import (
     CROSS_LANG_CONFIG,
+    LANGUAGE_AGNOSTIC_DIMENSIONS,
+    LANGUAGE_SPECIFIC_INTERFACES,
     AITrainingLoopResult,
     CrossLanguageConfig,
     DriftTrainingPattern,
-    LANGUAGE_AGNOSTIC_DIMENSIONS,
-    LANGUAGE_SPECIFIC_INTERFACES,
     detect_ai_training_loop,
     detect_cross_language_drift,
     detect_python_dead_code,
@@ -161,6 +159,7 @@ class TestExtractTrainingPatterns:
         data_file = drift_dir / "old_events.json"
         data_file.write_text(json.dumps(events), encoding="utf-8")
         import os
+
         old_mtime = (datetime.now(UTC) - timedelta(days=60)).timestamp()
         os.utime(str(data_file), (old_mtime, old_mtime))
         patterns = extract_training_patterns(str(tmp_path), days=30)
@@ -244,48 +243,72 @@ class TestInjectPatternsToPrompt:
 class TestTrackTrainingEffectiveness:
     def test_full_suppression(self):
         pattern = DriftTrainingPattern(
-            pattern_id="p1", detector_id="d1", frequency=10,
-            dimension="D5", commit_diff_pattern="", root_cause_summary="",
+            pattern_id="p1",
+            detector_id="d1",
+            frequency=10,
+            dimension="D5",
+            commit_diff_pattern="",
+            root_cause_summary="",
         )
         effectiveness = track_training_effectiveness(pattern, 0)
         assert effectiveness == 1.0
 
     def test_partial_suppression(self):
         pattern = DriftTrainingPattern(
-            pattern_id="p1", detector_id="d1", frequency=10,
-            dimension="D5", commit_diff_pattern="", root_cause_summary="",
+            pattern_id="p1",
+            detector_id="d1",
+            frequency=10,
+            dimension="D5",
+            commit_diff_pattern="",
+            root_cause_summary="",
         )
         effectiveness = track_training_effectiveness(pattern, 5)
         assert effectiveness == 0.5
 
     def test_no_suppression(self):
         pattern = DriftTrainingPattern(
-            pattern_id="p1", detector_id="d1", frequency=10,
-            dimension="D5", commit_diff_pattern="", root_cause_summary="",
+            pattern_id="p1",
+            detector_id="d1",
+            frequency=10,
+            dimension="D5",
+            commit_diff_pattern="",
+            root_cause_summary="",
         )
         effectiveness = track_training_effectiveness(pattern, 10)
         assert effectiveness == 0.0
 
     def test_zero_frequency_boundary(self):
         pattern = DriftTrainingPattern(
-            pattern_id="p1", detector_id="d1", frequency=0,
-            dimension="D5", commit_diff_pattern="", root_cause_summary="",
+            pattern_id="p1",
+            detector_id="d1",
+            frequency=0,
+            dimension="D5",
+            commit_diff_pattern="",
+            root_cause_summary="",
         )
         effectiveness = track_training_effectiveness(pattern, 5)
         assert effectiveness == 0.0
 
     def test_negative_effectiveness_clamped(self):
         pattern = DriftTrainingPattern(
-            pattern_id="p1", detector_id="d1", frequency=5,
-            dimension="D5", commit_diff_pattern="", root_cause_summary="",
+            pattern_id="p1",
+            detector_id="d1",
+            frequency=5,
+            dimension="D5",
+            commit_diff_pattern="",
+            root_cause_summary="",
         )
         effectiveness = track_training_effectiveness(pattern, 10)
         assert effectiveness == 0.0
 
     def test_single_frequency(self):
         pattern = DriftTrainingPattern(
-            pattern_id="p1", detector_id="d1", frequency=1,
-            dimension="D5", commit_diff_pattern="", root_cause_summary="",
+            pattern_id="p1",
+            detector_id="d1",
+            frequency=1,
+            dimension="D5",
+            commit_diff_pattern="",
+            root_cause_summary="",
         )
         effectiveness = track_training_effectiveness(pattern, 0)
         assert effectiveness == 1.0

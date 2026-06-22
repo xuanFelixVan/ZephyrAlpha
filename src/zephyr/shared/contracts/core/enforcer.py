@@ -54,8 +54,8 @@ CTR-ERR-006: ContractEnforcer / 运行时契约强制执行
 
 SSoT: cross_layer_contracts.yaml → CTR-ERR-006
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import dataclasses
 import functools
@@ -399,7 +399,7 @@ def _check_field_type(
     if isinstance(origin_type, type) and origin_type is not type(None):
         if origin_type is not types.UnionType and not isinstance(value, origin_type):
             violations.append(
-                f"字段 '{field_name}' 类型不匹配: " f"期望 {origin_type.__name__}, 实际 {type(value).__name__}"
+                f"字段 '{field_name}' 类型不匹配: 期望 {origin_type.__name__}, 实际 {type(value).__name__}"
             )
             return
 

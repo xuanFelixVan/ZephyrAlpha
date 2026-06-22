@@ -10,9 +10,10 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_finding_task_bridge.py -q
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
+
 from zephyr.infrastructure.finding_task_bridge import (
     DIMENSION_TO_MODULE_INFO,
     SEVERITY_TO_PRIORITY,

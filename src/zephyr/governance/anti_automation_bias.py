@@ -31,7 +31,6 @@ Reference: Georgetown CSET automation bias report, EU AI Act Art.14,
 Anthropic Sycophancy 58.19%, UPenn Cialdini six principles.
 """
 
-
 from __future__ import annotations
 
 import hashlib
@@ -168,7 +167,7 @@ class AntiAutomationBias:
         if self._should_force_review():
             return OversightResult(
                 OversightAction.FORCE_REVIEW,
-                f"Random sampling hit (1/{int(1/self._forced_review_ratio)} autonomous ops)",
+                f"Random sampling hit (1/{int(1 / self._forced_review_ratio)} autonomous ops)",
                 forced_review=True,
                 timeout_s=self._review_timeout_s,
             )

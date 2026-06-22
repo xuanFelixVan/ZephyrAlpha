@@ -20,6 +20,7 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
@@ -27,9 +28,9 @@ from typing import Any
 from zephyr.integration.shared.schema.schemas import Priority
 
 __all__ = [
-    "GateViolation",
-    "GateResult",
     "GateEngineError",
+    "GateResult",
+    "GateViolation",
     "GateViolationError",
 ]
 
@@ -67,7 +68,7 @@ class GateResult:
             return f"[PASS] Gate {self.gate_id} task={self.task_id}"
         p0 = len(self.p0_violations)
         total = len(self.violations)
-        return f"[FAIL] Gate {self.gate_id} task={self.task_id} " f"violations={total} (P0={p0})"
+        return f"[FAIL] Gate {self.gate_id} task={self.task_id} violations={total} (P0={p0})"
 
 
 class GateEngineError(RuntimeError):

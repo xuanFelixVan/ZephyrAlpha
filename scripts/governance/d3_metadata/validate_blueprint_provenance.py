@@ -3,11 +3,21 @@
 Blueprint Provenance Gate - V-12: validate provenance triples in blueprint frontmatter
 Task: T-V2-001 (Wave 0 final review R73)
 """
+
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
 
 __manifest__ = """
 args: []
@@ -30,7 +40,6 @@ if str(_PROJ) not in sys.path:
 
 def main() -> int:
     """Validate provenance fields in blueprint frontmatter files."""
-    import yaml
 
     errors = 0
     scan_dirs = [

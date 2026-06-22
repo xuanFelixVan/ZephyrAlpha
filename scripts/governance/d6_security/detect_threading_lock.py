@@ -13,6 +13,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: threading.Lock 导入检测（ABS-40 — 全局异步架构违规）
@@ -47,6 +48,7 @@ THREADING_LOCK_PATTERNS = [
 ]
 WHITELIST_FILES = {"detect_threading_lock.py"}
 
+
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
     findings = []
@@ -72,6 +74,7 @@ def scan_file(filepath: Path) -> list[dict]:
     return findings
     "扫描单个文件并返回发现列表."
 
+
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     """扫描仓库并返回发现列表."""
     if scan_dir is None:
@@ -93,6 +96,7 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     return (all_findings, files_scanned, 0)
     "扫描仓库并返回发现列表."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="threading.Lock 导入检测")
@@ -107,13 +111,14 @@ def main() -> None:
             file=sys.stderr,
         )
         for f in findings:
-            print(f'  VIOLATION [{f['label']}] {f['file']}:{f['line']}', file=sys.stderr)
-            print(f'    {f['line_content']}', file=sys.stderr)
+            print(f"  VIOLATION [{f['label']}] {f['file']}:{f['line']}", file=sys.stderr)
+            print(f"    {f['line_content']}", file=sys.stderr)
         print(file=sys.stderr)
     print(f"Scanned {files_scanned} Python files, {len(findings)} findings, {errors} errors", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

@@ -6,10 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """context-engine.assembly — auto-generated package init."""
 
-__all__ = ['context_assembler', 'context_injector', 'context_pipeline']
-
+__all__ = ["context_assembler", "context_injector", "context_pipeline"]

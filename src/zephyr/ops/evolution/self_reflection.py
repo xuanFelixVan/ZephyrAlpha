@@ -27,8 +27,8 @@ Risk: R75 — Overconfidence grows unchecked; self-correction never triggered.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class SelfReflection:
-
     def reflect(self, recent_diagnoses: list[dict]) -> list[str]:
         return ["Consider alternative root causes"]

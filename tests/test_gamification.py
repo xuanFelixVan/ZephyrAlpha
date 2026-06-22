@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_gamification.py
 
-import pytest
 
 from zephyr.ops.diagnosers.gamification import Gamification
 

@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/lifecycle/validate_phase_transition.py | §
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/lifecycle/validate_phase_transition.py | §
 """
 对标 dimension_audit_matrix.md §4.12：
   校验 Phase 过渡是否满足双门协议（技术门禁 + 治理门禁）。
@@ -37,7 +37,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -153,7 +153,7 @@ def main() -> int:
         validator = TRANSITION_VALIDATORS.get((from_phase, to_phase))
         if not validator:
             print(f"[ERROR] 不支持的过渡: {from_phase} → {to_phase}")
-            print(f"  支持的过渡: {', '.join(f'{a}→{b}' for a, b in TRANSITION_VALIDATORS.keys())}")
+            print(f"  支持的过渡: {', '.join(f'{a}→{b}' for a, b in TRANSITION_VALIDATORS)}")
             return EXIT_ERROR
         print(f"校验 {from_phase} → {to_phase} 过渡门禁...\n")
         ok, msg = validator()
@@ -183,5 +183,7 @@ def main() -> int:
     if passed < total:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

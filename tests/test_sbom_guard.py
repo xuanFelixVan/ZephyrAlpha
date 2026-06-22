@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_sbom_guard.py
 
-import pytest
 from zephyr.governance.sbom_guard import SBOMGuard
 
 

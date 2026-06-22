@@ -129,7 +129,7 @@ locked_items:
 modification_protocol:
   description: |
     任何 AI agent 想要修改上述锁定项时，MUST 遵循以下流程：
-    
+
     1. 识别：AI 检测到自己的操作涉及 ARCH-LOCK-* 锁定项
     2. 暂停：AI 立即停止该操作
     3. 通知：AI 向用户报告：
@@ -139,7 +139,7 @@ modification_protocol:
        - 替代方案（如果不修改的话）
     4. 等待：AI 等待用户明确回复"批准"或"拒绝"
     5. 执行/放弃：批准→执行修改+更新本注册表；拒绝→放弃修改
-  
+
   emergency_override: |
     紧急情况（生产系统崩溃、数据丢失风险）下，AI 可以先修复再补审批。
     但 MUST 在修复后 5 分钟内向用户报告，并在本注册表中记录 override 原因。
@@ -155,14 +155,14 @@ industry_practices: |
   - ADR (Architecture Decision Record) 作为知识条目融入 KB——可变、可推翻、可迭代
   - .cursorrules / CLAUDE.md / .trae/rules/ 作为 AI 行为约束文件——锁定关键设计
   - 社区共识：核心架构决策应由人类 Owner 控制，AI 只在授权范围内操作
-  
+
   ## 专业机构做法
   - Change Advisory Board (CAB)：任何架构变更需委员会审批
   - K8s ValidatingAdmissionWebhook：准入控制器拦截不合规的变更请求
   - Terraform State Lock：DynamoDB/S3 锁防止并发修改基础设施状态
   - Git branch protection：main 分支保护 + required review + status checks
   - SOC 2 Change Management：CC8.1 要求所有变更经授权审批
-  
+
   ## 本项目的做法
   - ARCHITECTURE_LOCK.yaml = 轻量级 CAB（1人版）
   - RULE-TEN = AI 行为层面的准入控制器

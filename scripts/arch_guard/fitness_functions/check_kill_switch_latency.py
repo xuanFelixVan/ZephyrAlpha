@@ -8,6 +8,7 @@ check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)
 
 exit: 0=pass, 1=fail, 2=config error
 """
+
 from __future__ import annotations
 
 import os
@@ -33,7 +34,8 @@ def main() -> int:
         return 1
 
     cap9 = next(
-        r for r in (slo.get("slo_registry") or [])
+        r
+        for r in (slo.get("slo_registry") or [])
         if isinstance(r, dict) and r.get("id") == "CAP-009-kill-switch-trigger-latency"
     )
     target = cap9.get("target_ms")

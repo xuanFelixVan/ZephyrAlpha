@@ -16,7 +16,6 @@
 + 文档注释(10%) + 测试存在(10%) + 导入复杂度(25%)
 """
 
-
 from __future__ import annotations
 
 import ast

@@ -12,9 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
 from unittest.mock import patch
 
+import pytest
 
 mod = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_governance_adapter",

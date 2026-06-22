@@ -33,11 +33,9 @@ SandboxEnforcer — Agent 沙盒隔离。
 from __future__ import annotations
 
 import os
-import sys
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 
 class SandboxMode(str, Enum):
@@ -63,7 +61,6 @@ class SandboxBreachResult:
 
 
 class SandboxEnforcer:
-
     EXIT_CODE_SANDBOX_BREACH: int = 39
     SANDBOX_MARKER: str = ".zephyr/sandbox_active"
 

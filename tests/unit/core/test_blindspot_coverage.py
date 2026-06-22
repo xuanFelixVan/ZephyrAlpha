@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 48盲点覆盖审计 — 盲点 vs 代码实现覆盖检查。
 TASK-INF-0130 产出物
@@ -13,7 +14,6 @@ TASK-INF-0130 产出物
 
 
 import importlib
-import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent

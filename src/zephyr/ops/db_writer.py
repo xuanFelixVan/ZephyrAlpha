@@ -14,25 +14,23 @@
 CT-FLE-DB-001: Feedback Loop 采集的指标和告警 → Database 持久化落地。
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
-from typing import Any
+from datetime import UTC, datetime
 
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
-from zephyr.ops.alert_dispatcher import AlertEvent
 from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricPoint
+from zephyr.ops.alert_dispatcher import AlertEvent
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
     "FLEWriter",
-    "write_metrics_batch",
     "write_alert",
     "write_dispatch_log",
+    "write_metrics_batch",
 ]
 
 
@@ -51,17 +49,19 @@ class FLEWriter:
         for m in batch:
             tags_json = json.dumps(m.tags or {}, ensure_ascii=False)
             source = m.source_system.value if hasattr(m.source_system, "value") else str(m.source_system)
-            rows.append((
-                m.timestamp,
-                source,
-                m.metric_name,
-                m.value,
-                getattr(m, "unit", "count"),
-                tags_json,
-                getattr(m, "window_avg", None),
-                getattr(m, "window_p99", None),
-                getattr(m, "window_count", None),
-            ))
+            rows.append(
+                (
+                    m.timestamp,
+                    source,
+                    m.metric_name,
+                    m.value,
+                    getattr(m, "unit", "count"),
+                    tags_json,
+                    getattr(m, "window_avg", None),
+                    getattr(m, "window_p99", None),
+                    getattr(m, "window_count", None),
+                )
+            )
 
         conn = get_db_connection()
         try:
@@ -145,7 +145,7 @@ class FLEWriter:
 
     def update_alert_status(self, event_id: str, status: str) -> bool:
         """更新告警状态 (DISPATCHED/RESOLVED/DISMISSED)。"""
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         conn = get_db_connection()
         try:
             if status == "DISPATCHED":

@@ -20,7 +20,6 @@ import pytest
 
 from zephyr.governance.submodule_sync import (
     EXIT_SUBMODULE_OUT_OF_SYNC,
-    MonorepoModule,
     SubmoduleInfo,
     SubmoduleSync,
     SyncResult,
@@ -49,7 +48,9 @@ class TestSubmoduleSyncInstantiation:
 
 class TestDetectLayout:
     def test_submodule_layout(self, project_root: Path, sync: SubmoduleSync) -> None:
-        (project_root / ".gitmodules").write_text("[submodule \"lib\"]\n\tpath = lib\n\turl = https://example.com/lib.git\n", encoding="utf-8")
+        (project_root / ".gitmodules").write_text(
+            '[submodule "lib"]\n\tpath = lib\n\turl = https://example.com/lib.git\n', encoding="utf-8"
+        )
         assert sync.detect_layout() == "submodule"
 
     def test_monorepo_layout(self, project_root: Path, sync: SubmoduleSync) -> None:
@@ -78,13 +79,15 @@ class TestListSubmodules:
         assert result == []
 
     def test_gitmodules_exists_no_git(self, project_root: Path, sync: SubmoduleSync) -> None:
-        (project_root / ".gitmodules").write_text("[submodule \"lib\"]\n\tpath = lib\n\turl = https://example.com/lib.git\n", encoding="utf-8")
+        (project_root / ".gitmodules").write_text(
+            '[submodule "lib"]\n\tpath = lib\n\turl = https://example.com/lib.git\n', encoding="utf-8"
+        )
         with patch("subprocess.run", side_effect=Exception("no git")):
             result = sync.list_submodules()
         assert result == []
 
     def test_gitmodules_with_submodule_output(self, project_root: Path, sync: SubmoduleSync) -> None:
-        (project_root / ".gitmodules").write_text("[submodule \"lib\"]\n", encoding="utf-8")
+        (project_root / ".gitmodules").write_text('[submodule "lib"]\n', encoding="utf-8")
         mock_output = MagicMock()
         mock_output.stdout = " abc1234 lib\n def5678 core\n"
         with patch("subprocess.run", return_value=mock_output):

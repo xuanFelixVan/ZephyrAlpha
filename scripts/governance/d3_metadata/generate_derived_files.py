@@ -40,8 +40,8 @@ warn_only: true
 """
 
 
-import os
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -79,9 +79,11 @@ VOCAB_FIELD_MAP = {
 
 _drifts: list[str] = []
 
+
 def _drift(msg: str) -> None:
     """_drift implementation."""
     _drifts.append(msg)
+
 
 def _load_vocab_values(vocab_name: str) -> tuple[list[str], list[str]]:
     """加载 vocabulary YAML 的有效值和废弃值列表"""
@@ -114,6 +116,7 @@ def _load_vocab_values(vocab_name: str) -> tuple[list[str], list[str]]:
         elif isinstance(entry, str):
             deprecated.append(entry)
     return valid, deprecated
+
 
 def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:
     """同步 frontmatter-field-registry.md 中的 allowed_values
@@ -165,7 +168,7 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
         try:
             with open(tmp_path, encoding="utf-8") as f:
                 yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
+
             os.replace(tmp_path, FIELD_REGISTRY_PATH)
         except PermissionError:
             try:
@@ -173,6 +176,7 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
             except OSError:
                 pass
     return changed
+
 
 def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -> bool:
     """同步 architecture-contract.yaml 中的 allowed_values（仅同步 vocabulary 的子集）"""
@@ -198,7 +202,7 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
         vocab_set = set(vocab_values)
         extra = current_set - vocab_set
         if extra:
-            _drift(f"arch_contract.{field_name}: " f"有 {len(extra)} 个值不在 vocabulary 中: {sorted(extra)[:5]}")
+            _drift(f"arch_contract.{field_name}: 有 {len(extra)} 个值不在 vocabulary 中: {sorted(extra)[:5]}")
             if apply:
                 valid_only = [v for v in current if str(v) in vocab_set]
                 field["allowed_values"] = valid_only
@@ -209,7 +213,7 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
         try:
             with open(tmp_path, encoding="utf-8") as f:
                 yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
+
             os.replace(tmp_path, ARCH_CONTRACT_PATH)
         except PermissionError:
             try:
@@ -217,6 +221,7 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
             except OSError:
                 pass
     return changed
+
 
 def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> bool:
     """同步 frontmatter-schema.json 中的 enum 数组
@@ -268,7 +273,7 @@ def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> 
             with open(tmp_path, encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
                 f.write("\n")
-    
+
             os.replace(tmp_path, SCHEMA_JSON_PATH)
         except PermissionError:
             try:
@@ -276,6 +281,7 @@ def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> 
             except OSError:
                 pass
     return changed
+
 
 def main() -> None:
     """入口函数."""
@@ -360,6 +366,7 @@ def main() -> None:
 
     print("✅ 所有派生文件与 vocabulary YAML 一致")
     return EXIT_PASS
+
 
 if __name__ == "__main__":
     sys.exit(main())

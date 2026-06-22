@@ -36,6 +36,7 @@ from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
+
 class CapabilityCategory(str, Enum):
     EMBEDDING = "embedding"
     INFERENCE = "inference"
@@ -48,6 +49,7 @@ class CapabilityCategory(str, Enum):
     SECURITY = "security"
     OBSERVABILITY = "observability"
     COORDINATION = "coordination"
+
 
 class CapabilityCard(BaseModel):
     """能力卡片——自描述的能力契约。

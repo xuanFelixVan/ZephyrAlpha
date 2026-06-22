@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.verifiers.action_explainability import ActionExplainability
 
 

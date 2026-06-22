@@ -2,16 +2,17 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-017
 title: Task Card Kms
 module_id: MOD-017
+updated: "2026-06-22"
 ---
 
 # Task Card Kms — 目录索引
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**infra_ops 层模块 — task card kms**。
+本目录只存放：**_domain_autonomy_core 域模块 — task card kms**。
 
 ## 文件清单
 
@@ -25,4 +26,4 @@ module_id: MOD-017
 
 ## 父级目录
 
-- 父级：[infra_ops](../index.md)
+- 父级：[_domain_autonomy_core](../index.md)

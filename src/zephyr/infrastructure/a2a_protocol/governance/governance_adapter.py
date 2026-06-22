@@ -28,16 +28,16 @@ G-CT-008: A2A → RBAC + Escalation
 """
 
 import asyncio
-import json
 import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-__all__ = ["GovernanceAdapter", "A2AGovernanceRecord"]
+__all__ = ["A2AGovernanceRecord", "GovernanceAdapter"]
 
 _log = logging.getLogger(__name__)
 
 _lsg_gateway = None
+
 
 def _get_lsg():
     global _lsg_gateway
@@ -45,11 +45,13 @@ def _get_lsg():
         return _lsg_gateway
     try:
         import importlib
+
         _lsg_gateway = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway").LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
         _log.debug("LSG not available for A2A governance")
         return None
+
 
 def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | None:
     gw = _get_lsg()
@@ -57,6 +59,7 @@ def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | No
         return None
     try:
         from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+
         result = asyncio.run(
             gw.scan_agent_action(
                 text=content,
@@ -81,6 +84,7 @@ def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | No
                 )
             )
             from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
         except Exception:
@@ -88,6 +92,7 @@ def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | No
     except Exception:
         pass
     return None
+
 
 @dataclass
 class A2AGovernanceRecord:
@@ -97,6 +102,7 @@ class A2AGovernanceRecord:
     escalation_level: str = ""
     audit_id: str = ""
     metadata: dict[str, Any] = field(default_factory=dict)
+
 
 class GovernanceAdapter:
     """A2A GovernanceAdapter — G-CT-008 消费端.
@@ -133,18 +139,15 @@ class GovernanceAdapter:
             },
         )
 
-    def escalate_if_needed(
-        self, record: A2AGovernanceRecord, severity: str = "WARN"
-    ) -> A2AGovernanceRecord:
+    def escalate_if_needed(self, record: A2AGovernanceRecord, severity: str = "WARN") -> A2AGovernanceRecord:
         if not record.granted:
             record.escalation_level = severity
         return record
 
-    def audit_communication(
-        self, record: A2AGovernanceRecord, session_id: str = ""
-    ) -> A2AGovernanceRecord:
+    def audit_communication(self, record: A2AGovernanceRecord, session_id: str = "") -> A2AGovernanceRecord:
         record.audit_id = f"a2a-{hash(record.agent_pair)}-{session_id}"
         return record
+
 
 class MCPAdapter:
     def __init__(self, config=None):
@@ -156,8 +159,9 @@ class MCPAdapter:
     def validate(self, request):
         return True
 
+
 class MCPSource:
-    def __init__(self, source_id='', source_type='', endpoint='', metadata=None):
+    def __init__(self, source_id="", source_type="", endpoint="", metadata=None):
         self.source_id = source_id
         self.source_type = source_type
         self.endpoint = endpoint

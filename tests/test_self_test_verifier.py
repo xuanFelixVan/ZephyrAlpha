@@ -14,8 +14,6 @@ import os
 import tempfile
 import uuid
 
-import pytest
-
 from zephyr.behavioral_audit.self_test_verifier import (
     SelfTestVerifier,
     VerifierResult,

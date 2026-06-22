@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest exit 0 = all pass; exit != 0 = regression
 # [TESTS] tests/test_skill_contract.py
 
-import pytest
 
 from zephyr.autonomy_core.skill_contract import SkillContract
 

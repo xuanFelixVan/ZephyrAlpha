@@ -11,12 +11,13 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.autonomy_core.list_ce_files import collect_files, generate_manifest, CE_ROOT, CATEGORIES
+    from zephyr.autonomy_core.list_ce_files import CATEGORIES, collect_files, generate_manifest
 except Exception as _exc:
     pytest.skip(f"cannot import list_ce_files: {_exc}", allow_module_level=True)
 
@@ -47,12 +48,14 @@ class TestCollectFiles:
 class TestGenerateManifest:
     def test_generate_manifest_returns_valid_json(self):
         import json
+
         raw = generate_manifest()
         data = json.loads(raw)
         assert isinstance(data, dict)
 
     def test_generate_manifest_has_required_fields(self):
         import json
+
         data = json.loads(generate_manifest())
         assert "module_id" in data
         assert "root" in data
@@ -62,5 +65,6 @@ class TestGenerateManifest:
 
     def test_generate_manifest_total_py_files_non_negative(self):
         import json
+
         data = json.loads(generate_manifest())
         assert data["total_py_files"] >= 0

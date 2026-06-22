@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_temporal_pattern.py
 
-import pytest
 
 from zephyr.ops.detectors.temporal_pattern import TemporalPattern
 

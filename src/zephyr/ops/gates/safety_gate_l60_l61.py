@@ -25,11 +25,10 @@ L60: Exchange Halt + Corporate Events + Model Retirement → environmental check
 L61: Cross-Blueprint Contract Drift + Owner Burnout + Cascading Rollback
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL60L61:
-
     def __init__(self):
         self.exchange_halted: bool = False
         self.corporate_event_active: bool = False
@@ -42,7 +41,9 @@ class SafetyGateL60L61:
         if self.exchange_halted:
             return GateResult("L60", GateVerdict.REJECT, GateType.HARD, "Exchange halted — block trading actions")
         if self.corporate_event_active:
-            return GateResult("L60", GateVerdict.OBSERVE_ONLY, GateType.HARD, "Corporate event active — suppress non-critical")
+            return GateResult(
+                "L60", GateVerdict.OBSERVE_ONLY, GateType.HARD, "Corporate event active — suppress non-critical"
+            )
         return GateResult("L60", GateVerdict.PASS, GateType.HARD)
 
     def _l61(self, ctx: ActionContext) -> GateResult:

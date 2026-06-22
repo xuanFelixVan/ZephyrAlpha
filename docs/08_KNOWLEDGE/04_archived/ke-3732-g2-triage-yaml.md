@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3732
 title: 4.2.2 检查项（对应 `g2-triage.yaml`）
 category: governance

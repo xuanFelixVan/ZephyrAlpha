@@ -13,11 +13,9 @@
 from __future__ import annotations
 
 import textwrap
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
-import yaml
 
 from zephyr.autonomy_core.skill_constructor import SkillConstructor
 
@@ -162,8 +160,11 @@ class TestGenerateSkillContent:
     def test_generate_with_all_fields(self):
         sc = SkillConstructor()
         content = sc._generate_skill_content(
-            "test-skill", "SKILL-DOM-TES-001",
-            "op1\nop2", "constraint1", "error1",
+            "test-skill",
+            "SKILL-DOM-TES-001",
+            "op1\nop2",
+            "constraint1",
+            "error1",
         )
         assert "test-skill" in content
         assert "SKILL-DOM-TES-001" in content
@@ -174,7 +175,11 @@ class TestGenerateSkillContent:
     def test_generate_without_optional_fields(self):
         sc = SkillConstructor()
         content = sc._generate_skill_content(
-            "minimal-skill", "SKILL-DOM-MIN-001", "", "", "",
+            "minimal-skill",
+            "SKILL-DOM-MIN-001",
+            "",
+            "",
+            "",
         )
         assert "minimal-skill" in content
         assert "独特约束" not in content
@@ -223,7 +228,7 @@ class TestValidateConstruction:
     def test_validate_missing_skill(self):
         sc = SkillConstructor()
         with patch(
-            "zephyr.orchestration.agent_lifecycle.skill_loader.SkillLoader",
+            "zephyr.autonomy_core.skill_loader.SkillLoader",
             side_effect=KeyError("not found"),
         ):
             result = sc.validate_construction("SKILL-NONEXISTENT")
@@ -233,7 +238,7 @@ class TestValidateConstruction:
     def test_validate_file_not_found(self):
         sc = SkillConstructor()
         with patch(
-            "zephyr.orchestration.agent_lifecycle.skill_loader.SkillLoader",
+            "zephyr.autonomy_core.skill_loader.SkillLoader",
             side_effect=FileNotFoundError("missing"),
         ):
             result = sc.validate_construction("SKILL-MISSING-FILE")
@@ -249,7 +254,7 @@ class TestValidateConstruction:
         }
         sc = SkillConstructor()
         with patch(
-            "zephyr.orchestration.agent_lifecycle.skill_loader.SkillLoader",
+            "zephyr.autonomy_core.skill_loader.SkillLoader",
             return_value=mock_loader,
         ):
             result = sc.validate_construction("SKILL-DOM-TES-001")
@@ -265,7 +270,7 @@ class TestValidateConstruction:
         }
         sc = SkillConstructor()
         with patch(
-            "zephyr.orchestration.agent_lifecycle.skill_loader.SkillLoader",
+            "zephyr.autonomy_core.skill_loader.SkillLoader",
             return_value=mock_loader,
         ):
             result = sc.validate_construction("SKILL-DOM-TES-002")

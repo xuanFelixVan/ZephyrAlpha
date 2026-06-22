@@ -21,7 +21,6 @@ import argparse
 import shutil
 import subprocess
 import sys
-from pathlib import Path
 
 from _migration_shared import (
     BATCH_TO_GROUP,
@@ -72,9 +71,11 @@ def check_source_exists(mappings: list[dict]) -> list[str]:
             continue
         source = PROJECT_ROOT / op
         if not source.exists():
-            is_abbreviated = (
-                m.get("type") == "sub_module"
-                or (m.get("type") == "module" and not op.endswith(".py") and not op.endswith("/") and len(op.split("/")) <= 4)
+            is_abbreviated = m.get("type") == "sub_module" or (
+                m.get("type") == "module"
+                and not op.endswith(".py")
+                and not op.endswith("/")
+                and len(op.split("/")) <= 4
             )
             if is_abbreviated:
                 warnings.append(f"SKIP_ABBREVIATED: {op} (abbreviated path, no physical file)")
@@ -107,10 +108,7 @@ def check_disk_space(mappings: list[dict]) -> list[str]:
     disk_usage = shutil.disk_usage(PROJECT_ROOT)
     required = total_size * 2
     if disk_usage.free < required:
-        errors.append(
-            f"SPACE: need {required / 1024 / 1024:.0f} MB, "
-            f"available {disk_usage.free / 1024 / 1024:.0f} MB"
-        )
+        errors.append(f"SPACE: need {required / 1024 / 1024:.0f} MB, available {disk_usage.free / 1024 / 1024:.0f} MB")
     return errors
 
 
@@ -122,7 +120,9 @@ def check_no_active_locks() -> list[str]:
     try:
         result = subprocess.run(
             [sys.executable, str(lock_script), "status"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         output = result.stdout + result.stderr
         if "LOCKED" in output or "locked" in output.lower():

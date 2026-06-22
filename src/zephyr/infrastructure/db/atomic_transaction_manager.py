@@ -85,8 +85,8 @@ if str(_SCRIPTS_DIR) not in sys.path:
 __all__ = [
     "AtomicTransactionManager",
     "TransactionError",
-    "TransactionTimeoutError",
     "TransactionScope",
+    "TransactionTimeoutError",
 ]
 
 logger = logging.getLogger(__name__)
@@ -96,6 +96,7 @@ DEFAULT_TIMEOUT_SECONDS: float = 30.0
 
 def _get_input_sanitizer():
     import importlib
+
     mod = importlib.import_module("zephyr.security.llm_defense.llm_security.input_sanitizer")
     return mod.InputSanitizer, mod.PathTraversalError, mod.SanitizationError
 
@@ -147,12 +148,12 @@ class TransactionScope:
 
     __slots__ = (
         "_atm",
-        "tx_id",
-        "_staged_files",
         "_committed",
         "_rolled_back",
+        "_staged_files",
         "_started_at",
         "_timeout",
+        "tx_id",
     )
 
     def __init__(
@@ -375,8 +376,7 @@ class AtomicTransactionManager:
 
             # 登记到幂等去重表
             self._conn.execute(
-                "INSERT OR IGNORE INTO tx_idempotency (tx_id, status, started_at, note) "
-                "VALUES (?, 'PREPARED', ?, '')",
+                "INSERT OR IGNORE INTO tx_idempotency (tx_id, status, started_at, note) VALUES (?, 'PREPARED', ?, '')",
                 (tx.tx_id, _now_iso()),
             )
             # 检查是否重复（tx_id 已存在 → 重复提交）

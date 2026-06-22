@@ -28,8 +28,6 @@ Startup Guard — 启动序列保护窗口 (盲点 #26, M-31)
 """
 
 import time
-from dataclasses import dataclass
-from typing import Any, Optional
 
 
 class StartupGuard:

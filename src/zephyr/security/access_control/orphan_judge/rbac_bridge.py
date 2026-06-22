@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败默认DENY
 # [TESTS] tests/orphan-judge/test_rbac_bridge.py
-
 import logging
 from typing import Any
 
@@ -19,12 +18,14 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["RbacBridge"]
 
+
 class RbacBridge:
     def __init__(self) -> None:
         self._guard = None
         self._available = False
         try:
             from zephyr.security.access_control.permission_guard import PermissionGuard
+
             self._guard = PermissionGuard()
             self._available = True
         except ImportError:

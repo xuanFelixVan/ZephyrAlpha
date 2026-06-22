@@ -19,8 +19,8 @@ GateViolation = _mod.GateViolation
 GateViolationError = _mod.GateViolationError
 
 __all__ = [
-    "GateViolation",
-    "GateResult",
     "GateEngineError",
+    "GateResult",
+    "GateViolation",
     "GateViolationError",
 ]

@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """L09 Research & Innovation
 =====================================
 
@@ -42,4 +42,4 @@ from __future__ import annotations
 
 from zephyr.simulation.backtest_base import BacktestEngineBase, BacktestResult, FactorDiscovery
 
-__all__ = ['BacktestEngineBase', 'BacktestResult', 'FactorDiscovery', 'backtest_base']
+__all__ = ["BacktestEngineBase", "BacktestResult", "FactorDiscovery", "backtest_base"]

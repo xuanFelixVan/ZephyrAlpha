@@ -12,11 +12,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class APIState(str, Enum):
@@ -38,7 +37,7 @@ class DeprecationNotice(BaseModel):
         try:
             dep_dt = datetime.fromisoformat(self.deprecated_at.replace("Z", "+00:00"))
             removal_dt = dep_dt + timedelta(days=self.grace_period_days)
-            remaining = (removal_dt - datetime.now(timezone.utc)).days
+            remaining = (removal_dt - datetime.now(UTC)).days
             return max(0, remaining)
         except (ValueError, TypeError):
             return 0
@@ -52,8 +51,8 @@ class APIEndpoint(BaseModel):
     name: str
     version: str
     state: APIState = APIState.ACTIVE
-    deprecation: Optional[DeprecationNotice] = None
-    sunset_date: Optional[str] = None
+    deprecation: DeprecationNotice | None = None
+    sunset_date: str | None = None
 
 
 def deprecate_api(
@@ -63,8 +62,8 @@ def deprecate_api(
 ) -> DeprecationNotice:
     notice = DeprecationNotice(
         api_name=endpoint.name,
-        deprecated_at=datetime.now(timezone.utc).isoformat(),
-        removal_at=(datetime.now(timezone.utc) + timedelta(days=grace_period_days)).isoformat(),
+        deprecated_at=datetime.now(UTC).isoformat(),
+        removal_at=(datetime.now(UTC) + timedelta(days=grace_period_days)).isoformat(),
         migration_guide=migration_guide,
         grace_period_days=grace_period_days,
     )
@@ -75,4 +74,4 @@ def deprecate_api(
 
 def remove_api(endpoint: APIEndpoint) -> None:
     endpoint.state = APIState.REMOVED
-    endpoint.sunset_date = datetime.now(timezone.utc).isoformat()
+    endpoint.sunset_date = datetime.now(UTC).isoformat()

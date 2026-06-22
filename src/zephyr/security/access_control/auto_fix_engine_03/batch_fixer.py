@@ -22,13 +22,12 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Any, Callable
 
 from zephyr.security.access_control.auto_fix_engine_03.fix_budget import FixBudget, FixStormGuard
 from zephyr.security.access_control.auto_fix_engine_03.fix_reliability import ConflictResolver, IdempotencyGuard
 from zephyr.security.access_control.auto_fix_engine_03.models import (
-    BudgetInfo,
     FixAction,
     FixReport,
     FixStatus,
@@ -111,9 +110,7 @@ class BatchFixer:
                     return action
 
         with ThreadPoolExecutor(max_workers=self._max_workers) as executor:
-            future_to_action = {
-                executor.submit(_process_one, action): action for action in ordered
-            }
+            future_to_action = {executor.submit(_process_one, action): action for action in ordered}
             for future in as_completed(future_to_action):
                 try:
                     result = future.result()

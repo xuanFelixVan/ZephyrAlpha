@@ -50,7 +50,6 @@ from pydantic import BaseModel, Field
 from zephyr.governance.audit_orchestration.contract_registry import (
     AIReadOnlyHint,
     ContractRegistry,
-    ContractCallResult,
 )
 
 ROUTE_MAP: dict[str, str] = {

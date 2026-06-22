@@ -20,15 +20,14 @@
 # [TESTS] pytest tests/test_observability_health.py -q
 
 import asyncio
-import pytest
+
 from zephyr.infrastructure.system_telemetry.health import (
+    AggregateHealth,
     HealthStatus,
     HealthSummary,
-    AggregateHealth,
     collect_health,
 )
 from zephyr.shared.lifecycle.hooks import (
-    LifecycleAware,
     LifecycleManager,
     LifecycleState,
     ModuleHealth,
@@ -161,14 +160,10 @@ class TestAggregateHealth:
 
 class TestCollectHealth:
     def test_returns_health_summary(self):
-        result = asyncio.get_event_loop().run_until_complete(
-            collect_health([FakeModule("mod1", healthy=True)])
-        )
+        result = asyncio.get_event_loop().run_until_complete(collect_health([FakeModule("mod1", healthy=True)]))
         assert isinstance(result, HealthSummary)
         assert result.status == HealthStatus.ALL_HEALTHY
 
     def test_empty_list(self):
-        result = asyncio.get_event_loop().run_until_complete(
-            collect_health([])
-        )
+        result = asyncio.get_event_loop().run_until_complete(collect_health([]))
         assert result.status == HealthStatus.UNKNOWN

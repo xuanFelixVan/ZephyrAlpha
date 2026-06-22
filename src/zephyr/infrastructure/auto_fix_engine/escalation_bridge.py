@@ -45,6 +45,7 @@ class EscalationBridge:
             return action
         try:
             from zephyr.governance.adapter import escalate_if_needed
+
             result = escalate_if_needed(
                 operation_type=action.action_type,
                 description=f"Auto-fix escalation: {reason or action.metadata.get('error', 'unknown')}",
@@ -57,12 +58,14 @@ class EscalationBridge:
                 "should_escalate": result.should_escalate,
                 "reason": result.reason,
             }
-            self._escalation_history.append({
-                "action_id": action.action_id,
-                "timestamp": datetime.now(UTC).isoformat(),
-                "reason": reason,
-                "result": {"should_block": result.should_block},
-            })
+            self._escalation_history.append(
+                {
+                    "action_id": action.action_id,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "reason": reason,
+                    "result": {"should_block": result.should_block},
+                }
+            )
             return action
         except ImportError:
             logger.warning("Escalation engine not available, using fallback")
@@ -70,12 +73,14 @@ class EscalationBridge:
             action.status = FixStatus.APPROVAL_PENDING
             action.metadata["escalation_fallback"] = True
             action.metadata["escalation_reason"] = reason
-            self._escalation_history.append({
-                "action_id": action.action_id,
-                "timestamp": datetime.now(UTC).isoformat(),
-                "reason": reason,
-                "result": {"fallback": True},
-            })
+            self._escalation_history.append(
+                {
+                    "action_id": action.action_id,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "reason": reason,
+                    "result": {"fallback": True},
+                }
+            )
             return action
         except Exception as exc:
             logger.error("Escalation failed: %s", exc)

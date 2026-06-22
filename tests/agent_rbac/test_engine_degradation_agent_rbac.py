@@ -16,15 +16,10 @@
   - Owner手动恢复
 """
 
-import time
-import pytest
-
 from zephyr.security.access_control.engine_degradation import (
-    EngineDegradationManager,
     DegradationLevel,
     DegradationReason,
-    DegradationState,
-    AgentDegradationRecord,
+    EngineDegradationManager,
     get_engine_degradation_manager,
 )
 

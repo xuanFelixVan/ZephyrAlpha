@@ -26,4 +26,4 @@ schemas.py —— Re-export wrapper → canonical: zephyr.shared.schema.schemas
 修改数据模型/枚举请编辑 schema/schemas.py，不要编辑本文件。
 """
 
-from zephyr.shared.schema.schemas import *  # noqa: F401, F403
+from zephyr.shared.schema.schemas import *  # noqa: F403

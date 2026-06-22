@@ -40,7 +40,6 @@ FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）
 5. resolve_reverse — 正向查询 task_id → file_path 列表（N:N，可能多个）
 """
 
-
 from __future__ import annotations
 
 import re
@@ -49,16 +48,16 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.integration.shared_08.io.paths import REPO_ROOT
-from zephyr.shared.task_types import TaskNamespace
+from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.task_types import TaskNamespace
 
 __all__ = [
     "FileTaskMapper",
     "RegisterReport",
-    "SyncReport",
     "SyncInconsistency",
+    "SyncReport",
     "classify_file_to_namespace",
 ]
 

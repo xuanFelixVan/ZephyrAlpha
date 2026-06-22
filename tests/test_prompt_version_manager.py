@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.shared.adaptation.prompt_version_manager import (
     PromptRegistry,
     PromptVersion,

@@ -11,9 +11,6 @@
 # [TESTS] pytest tests/test_check_type_registry.py
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
-
 import pytest
 
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import (
@@ -22,6 +19,7 @@ from zephyr.governance.rule_enforcement.check_types.check_type_registry import (
     list_check_types,
     register_check_type,
 )
+
 
 class TestCheckTypeHandlerABC:
     def test_cannot_instantiate_directly(self):
@@ -34,13 +32,16 @@ class TestCheckTypeHandlerABC:
     def test_name_attribute_exists(self):
         assert hasattr(CheckTypeHandler, "name")
 
+
 class TestRegisterCheckType:
     def test_decorator_registers_handler(self):
         @register_check_type
         class _TestRegHandler(CheckTypeHandler):
             name = "test_reg_handler_gen"
+
             def run(self, task, params, check, project_root):
                 return []
+
         retrieved = get_check_type("test_reg_handler_gen")
         assert retrieved is _TestRegHandler
 
@@ -48,9 +49,12 @@ class TestRegisterCheckType:
         @register_check_type
         class _TestRetHandler(CheckTypeHandler):
             name = "test_ret_handler_gen"
+
             def run(self, task, params, check, project_root):
                 return []
+
         assert isinstance(_TestRetHandler, type)
+
 
 class TestGetCheckType:
     def test_known_type_returns_handler(self):
@@ -60,6 +64,7 @@ class TestGetCheckType:
 
     def test_unknown_type_returns_none(self):
         assert get_check_type("nonexistent_xyz_abc") is None
+
 
 class TestListCheckTypes:
     def test_returns_sorted_list(self):
@@ -77,9 +82,11 @@ class TestListCheckTypes:
         types = list_check_types()
         assert len(types) >= 20
 
+
 class TestAutoImport:
     def test_auto_import_populates_registry(self):
         from zephyr.governance.rule_enforcement.check_types.check_type_registry import _auto_import
+
         _auto_import()
         types = list_check_types()
         assert len(types) >= 20

@@ -15,7 +15,6 @@ import json
 import pytest
 
 from zephyr.ops.eval_harness import (
-    CATEGORIES,
     CATEGORY_EVOLUTION,
     CATEGORY_HALLUCINATION,
     CATEGORY_INTENT,

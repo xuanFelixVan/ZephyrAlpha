@@ -12,18 +12,11 @@
 
 from __future__ import annotations
 
-import pytest
-
-from zephyr.governance.budget_engine import BudgetEngine, DEFAULT_DEGRADATION_STEPS
+from zephyr.governance.budget_engine import BudgetEngine
 from zephyr.governance.budget_models import (
-    BudgetAlert,
-    BudgetConsumption,
     BudgetDimension,
-    BudgetLevel,
     BudgetPolicy,
-    DegradationStep,
     GateDecision,
-    GateResult,
     ModelTier,
 )
 

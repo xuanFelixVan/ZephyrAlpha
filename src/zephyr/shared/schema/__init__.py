@@ -2,4 +2,4 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 """shared.schema — auto-generated package init."""
 
-__all__ = ['base_config', 'schema_registry', 'schemas', 'severity_types']
+__all__ = ["base_config", "schema_registry", "schemas", "severity_types"]

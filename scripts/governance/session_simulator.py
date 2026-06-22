@@ -20,7 +20,9 @@ beta 硬合规（2026-05-04 激活）:
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -36,8 +38,8 @@ warn_only: false
 """
 
 
-import os
 import json
+import os
 import random
 import sys
 from datetime import UTC, datetime, timedelta
@@ -54,8 +56,7 @@ _SRC = REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from zephyr.ops.telemetry.blueprint_metrics import record_blueprint_read  # noqa: E402
-
+from zephyr.ops.telemetry.blueprint_metrics import record_blueprint_read
 
 # ── 30 个模拟 Session 场景 ──────────────────────────────────────────
 # 格式: (task_description, [expected_blueprint_ids], compliance_level)
@@ -197,6 +198,7 @@ AGENT_MODELS = [
     "claude-sonnet-4-20250514",
 ]
 
+
 def simulate() -> dict:
     """运行 30 个 session 的模拟，返回摘要 JSON。"""
 
@@ -252,7 +254,9 @@ def simulate() -> dict:
 
     return summary
 
+
 # ── G6 beta 硬合规检查 ──
+
 
 def check_compliance(metrics_path: Path) -> dict:
     """读取 JSONL 并对每个 scenario 做 beta 硬合规检查。
@@ -304,7 +308,9 @@ def check_compliance(metrics_path: Path) -> dict:
 
     return report
 
+
 # ── 入口 ──
+
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""

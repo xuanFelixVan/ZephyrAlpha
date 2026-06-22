@@ -26,10 +26,8 @@ import logging
 import os
 import sqlite3
 from datetime import UTC, datetime
-from pathlib import Path
-from typing import Any
 
-from zephyr.security.access_control.auto_fix_engine_03.models import ComplianceEvidence, FixAction, FixStatus
+from zephyr.security.access_control.auto_fix_engine_03.models import ComplianceEvidence, FixAction
 
 logger = logging.getLogger(__name__)
 
@@ -92,10 +90,17 @@ class ComplianceAuditor:
             conn.close()
             if row:
                 return ComplianceEvidence(
-                    fix_id=row[0], action_type=row[1], target=row[2],
-                    before_hash=row[3], after_hash=row[4], timestamp=row[5],
-                    actor=row[6], confidence=row[7], rbac_decision=row[8],
-                    validation_result=row[9], audit_trail_id=row[10],
+                    fix_id=row[0],
+                    action_type=row[1],
+                    target=row[2],
+                    before_hash=row[3],
+                    after_hash=row[4],
+                    timestamp=row[5],
+                    actor=row[6],
+                    confidence=row[7],
+                    rbac_decision=row[8],
+                    validation_result=row[9],
+                    audit_trail_id=row[10],
                     tamper_proof_hash=row[11],
                 )
         except Exception:
@@ -121,10 +126,20 @@ class ComplianceAuditor:
                 "INSERT INTO fix_compliance (fix_id, action_type, target, before_hash, after_hash, "
                 "timestamp, actor, confidence, rbac_decision, validation_result, "
                 "audit_trail_id, tamper_proof_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (evidence.fix_id, evidence.action_type, evidence.target, evidence.before_hash,
-                 evidence.after_hash, evidence.timestamp, evidence.actor, evidence.confidence,
-                 evidence.rbac_decision, evidence.validation_result, evidence.audit_trail_id,
-                 evidence.tamper_proof_hash),
+                (
+                    evidence.fix_id,
+                    evidence.action_type,
+                    evidence.target,
+                    evidence.before_hash,
+                    evidence.after_hash,
+                    evidence.timestamp,
+                    evidence.actor,
+                    evidence.confidence,
+                    evidence.rbac_decision,
+                    evidence.validation_result,
+                    evidence.audit_trail_id,
+                    evidence.tamper_proof_hash,
+                ),
             )
             conn.commit()
             conn.close()

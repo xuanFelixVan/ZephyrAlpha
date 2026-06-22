@@ -2,28 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.risk.risk_limits
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] risk; pf_core
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-003 ====
 from dataclasses import dataclass, field
 from datetime import datetime
+
 
 @dataclass(frozen=True)
 class RiskLimits:
@@ -39,7 +30,9 @@ class RiskLimits:
     symbol_overrides: dict[str, float] = field(default_factory=dict)
     trace_context: TraceContext | None = None
 
+
 # ==== END CODGEN:CTR-003 ====
+
 
 class RiskLimitsCalculator:
     def __init__(self, limits: RiskLimits | None = None) -> None:

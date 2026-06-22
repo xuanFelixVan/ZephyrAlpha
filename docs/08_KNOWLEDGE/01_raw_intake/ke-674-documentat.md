@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-674
 status: active
 title: 任务卡 .md 文件存放规范

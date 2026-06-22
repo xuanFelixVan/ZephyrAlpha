@@ -12,7 +12,9 @@
 
 import pytest
 
-pipeline_mod = pytest.importorskip("zephyr.governance.audit_trail.pipeline_runner", reason="pipeline_runner not available")
+pipeline_mod = pytest.importorskip(
+    "zephyr.governance.audit_trail.pipeline_runner", reason="pipeline_runner not available"
+)
 PipelineRunner = pipeline_mod.PipelineRunner
 PipelineResult = pipeline_mod.PipelineResult
 DimensionResult = pipeline_mod.DimensionResult
@@ -81,10 +83,12 @@ class TestDimD9D12E2E:
 
     def test_chain_b_contains_d9_d11_d12(self):
         from zephyr.governance.audit_trail.pipeline_runner import DEPENDENCY_CHAINS
+
         assert "D9" in DEPENDENCY_CHAINS["chain_b"]
         assert "D11" in DEPENDENCY_CHAINS["chain_b"]
         assert "D12" in DEPENDENCY_CHAINS["chain_b"]
 
     def test_chain_c_contains_d10(self):
         from zephyr.governance.audit_trail.pipeline_runner import DEPENDENCY_CHAINS
+
         assert "D10" in DEPENDENCY_CHAINS["chain_c"]

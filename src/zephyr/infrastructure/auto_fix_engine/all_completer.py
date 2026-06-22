@@ -77,10 +77,7 @@ class AllCompleter(BaseFixer):
         try:
             tree = ast.parse(content)
             for node in ast.walk(tree):
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    if not node.name.startswith("_"):
-                        symbols.append(node.name)
-                elif isinstance(node, ast.ClassDef):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) or isinstance(node, ast.ClassDef):
                     if not node.name.startswith("_"):
                         symbols.append(node.name)
                 elif isinstance(node, ast.Assign):
@@ -139,7 +136,7 @@ class AllCompleter(BaseFixer):
                     replacement = f"__all__ = [{existing}, {new_entries}]" if existing else f"__all__ = [{new_entries}]"
                     content = content.replace(all_match.group(0), replacement)
             else:
-                all_line = f"__all__ = [{', '.join(f'\"{s}\"' for s in public_symbols)}]"
+                all_line = f"__all__ = [{', '.join(f'"{s}"' for s in public_symbols)}]"
                 lines = content.split("\n")
                 insert_idx = 0
                 for i, line in enumerate(lines):
@@ -178,13 +175,19 @@ class AllCompleter(BaseFixer):
         try:
             content = target_path.read_text(encoding="utf-8")
             if "__all__" not in content:
-                return ValidationResult(valid=False, check_name="all_completion", evidence="No __all__ found", error="__all__ missing")
+                return ValidationResult(
+                    valid=False, check_name="all_completion", evidence="No __all__ found", error="__all__ missing"
+                )
             declared = self._parse_all(content)
             actual = self._extract_public_symbols(content)
             missing = [s for s in actual if s not in declared]
             if missing:
-                return ValidationResult(valid=False, check_name="all_completion", evidence=f"Missing: {missing}", error="Incomplete __all__")
-            return ValidationResult(valid=True, check_name="all_completion", evidence=f"__all__ has {len(declared)} entries")
+                return ValidationResult(
+                    valid=False, check_name="all_completion", evidence=f"Missing: {missing}", error="Incomplete __all__"
+                )
+            return ValidationResult(
+                valid=True, check_name="all_completion", evidence=f"__all__ has {len(declared)} entries"
+            )
         except Exception as exc:
             return ValidationResult(valid=False, check_name="all_completion", evidence="", error=str(exc))
 

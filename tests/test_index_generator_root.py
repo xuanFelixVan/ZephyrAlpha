@@ -13,15 +13,12 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from pathlib import Path
-
-import pytest
 
 from zephyr.infrastructure.asset_inventory.index_generator import (
     IndexGenerator,
-    SchemaEvolutionManager,
     MigrationPlan,
     MigrationStep,
+    SchemaEvolutionManager,
     _calc_grade,
     _calc_numeric,
     _count_by_status,
@@ -30,8 +27,8 @@ from zephyr.infrastructure.asset_inventory.index_generator import (
 from zephyr.infrastructure.asset_inventory.models import (
     AssetStatus,
     AssetType,
-    ClassifiedAsset,
     ClassificationResult,
+    ClassifiedAsset,
     UnifiedAssetIndex,
 )
 

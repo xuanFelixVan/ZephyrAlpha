@@ -9,8 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.auto_test_generator import AutoTestGenerator
+
 
 class TestAutoTestGenerator:
     def test_instantiation(self):

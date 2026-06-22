@@ -40,7 +40,6 @@ REPO_ROOT，导致：
   - Terraform: provider 配置集中定义，模块引用而非重定义
 """
 
-
 from pathlib import Path
 
 
@@ -60,7 +59,9 @@ def find_repo_root() -> Path:
     for parent in current.parents:
         if (parent / "src" / "zephyr" / "__init__.py").exists():
             return parent
-    raise FileNotFoundError(f"Cannot find project root (no src/zephyr/integration/zephyr/__init__.py found) from {current}")
+    raise FileNotFoundError(
+        f"Cannot find project root (no src/zephyr/integration/zephyr/__init__.py found) from {current}"
+    )
 
 
 REPO_ROOT: Path = find_repo_root()
@@ -68,26 +69,25 @@ REPO_ROOT: Path = find_repo_root()
 DB_DIR: Path = REPO_ROOT / "data"
 
 import importlib as _il
+
 _mod = _il.import_module("zephyr.data.persistence.sqlite_schema")
 DB_PATH = _mod.DB_PATH
 
 GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "gates"
 SNAPSHOTS_DIR: Path = REPO_ROOT / ".runtime" / "snapshots"
-RATIONALE_LOG_PATH: Path = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
-)
+RATIONALE_LOG_PATH: Path = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
 
 VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"
 MODELS_CACHE_DIR: Path = REPO_ROOT / ".audit_cache" / "models"
 
 __all__ = [
-    "find_repo_root",
-    "REPO_ROOT",
     "DB_DIR",
     "DB_PATH",
     "GATES_DIR",
-    "SNAPSHOTS_DIR",
-    "RATIONALE_LOG_PATH",
-    "VECTOR_INDEX_DIR",
     "MODELS_CACHE_DIR",
+    "RATIONALE_LOG_PATH",
+    "REPO_ROOT",
+    "SNAPSHOTS_DIR",
+    "VECTOR_INDEX_DIR",
+    "find_repo_root",
 ]

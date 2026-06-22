@@ -29,7 +29,8 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -43,7 +44,7 @@ class AgentCapability(BaseModel):
 class SpecRegistry:
     """Agent Spec 注册表 — 通过 SkillRouter API 查询."""
 
-    def __init__(self, registry_path: Optional[Path] = None) -> None:
+    def __init__(self, registry_path: Path | None = None) -> None:
         self._entries: dict[str, AgentCapability] = {}
         self._registry_path = registry_path
         self._load_via_skill_router()
@@ -51,11 +52,16 @@ class SpecRegistry:
     def _load_via_skill_router(self) -> None:
         try:
             from zephyr.shared.contracts.skill_protocol import create_skill_router
+
             router = create_skill_router(registry_path=self._registry_path)
             for skill_id, info in router.list_registered_skills().items():
                 self._entries[skill_id] = AgentCapability(
                     agent_id=skill_id,
-                    capabilities=[info.get("name", skill_id), info.get("category", "unknown"), info.get("description", "")[:80]],
+                    capabilities=[
+                        info.get("name", skill_id),
+                        info.get("category", "unknown"),
+                        info.get("description", "")[:80],
+                    ],
                     version=info.get("version", "0.1.0"),
                     spec_hash=info.get("spec_hash", ""),
                 )
@@ -64,6 +70,7 @@ class SpecRegistry:
 
     def _fallback_load(self) -> None:
         import yaml
+
         if self._registry_path and self._registry_path.exists():
             with self._registry_path.open(encoding="utf-8") as f:
                 raw = yaml.safe_load(f)
@@ -90,15 +97,20 @@ class SpecRegistry:
     def get(self, agent_id: str) -> AgentCapability | None:
         return self._entries.get(agent_id)
 
-    def list_all(self) -> List[Dict[str, Any]]:
-        result: List[Dict[str, Any]] = []
+    def list_all(self) -> list[dict[str, Any]]:
+        result: list[dict[str, Any]] = []
         for sid, cap in self._entries.items():
-            result.append({"skill_id": sid, "name": cap.capabilities[0] if cap.capabilities else sid,
-                           "category": cap.capabilities[1] if len(cap.capabilities) > 1 else "unknown",
-                           "version": cap.version})
+            result.append(
+                {
+                    "skill_id": sid,
+                    "name": cap.capabilities[0] if cap.capabilities else sid,
+                    "category": cap.capabilities[1] if len(cap.capabilities) > 1 else "unknown",
+                    "version": cap.version,
+                }
+            )
         return result
 
-    def list_by_category(self, category: str) -> List[Dict[str, Any]]:
+    def list_by_category(self, category: str) -> list[dict[str, Any]]:
         return [e for e in self.list_all() if e["category"] == category]
 
     def reload(self) -> None:

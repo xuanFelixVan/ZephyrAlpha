@@ -12,9 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+import pytest
 
 legacy_auditor = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.legacy_auditor",

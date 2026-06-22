@@ -10,9 +10,8 @@
 # [ERROR_CONTRACT] returns error dict for unknown models; never raises
 # [TESTS] pytest tests/test_skill_model_evolution.py -q
 
-import pytest
 
-from zephyr.autonomy_core.skill_model_evolution import SkillModelEvolution, _MODEL_PROFILES
+from zephyr.autonomy_core.skill_model_evolution import _MODEL_PROFILES, SkillModelEvolution
 
 
 class TestSkillModelEvolutionInstantiation:
@@ -199,9 +198,7 @@ class TestGenerateActions:
 
 class TestAssessImpact:
     def test_known_models(self):
-        result = SkillModelEvolution.assess_impact(
-            "SKILL-DOM-TS-001", "deepseek-v3", "claude-sonnet-4"
-        )
+        result = SkillModelEvolution.assess_impact("SKILL-DOM-TS-001", "deepseek-v3", "claude-sonnet-4")
         assert result["skill_id"] == "SKILL-DOM-TS-001"
         assert result["old_model"] == "deepseek-v3"
         assert result["new_model"] == "claude-sonnet-4"
@@ -210,40 +207,30 @@ class TestAssessImpact:
         assert "actions" in result
 
     def test_unknown_old_model(self):
-        result = SkillModelEvolution.assess_impact(
-            "SKILL-DOM-TS-001", "nonexistent-old", "deepseek-v3"
-        )
+        result = SkillModelEvolution.assess_impact("SKILL-DOM-TS-001", "nonexistent-old", "deepseek-v3")
         assert result["risk"] == "unknown"
         assert "error" in result
         assert result["actions"] == []
 
     def test_unknown_new_model(self):
-        result = SkillModelEvolution.assess_impact(
-            "SKILL-DOM-TS-001", "deepseek-v3", "nonexistent-new"
-        )
+        result = SkillModelEvolution.assess_impact("SKILL-DOM-TS-001", "deepseek-v3", "nonexistent-new")
         assert result["risk"] == "unknown"
         assert "error" in result
 
     def test_same_model(self):
-        result = SkillModelEvolution.assess_impact(
-            "SKILL-DOM-TS-001", "deepseek-v3", "deepseek-v3"
-        )
+        result = SkillModelEvolution.assess_impact("SKILL-DOM-TS-001", "deepseek-v3", "deepseek-v3")
         assert result["risk"] == "minimal"
         assert result["overall_score"] == 100.0
 
     def test_result_has_profiles(self):
-        result = SkillModelEvolution.assess_impact(
-            "SKILL-DOM-TS-001", "deepseek-v3", "claude-sonnet-4"
-        )
+        result = SkillModelEvolution.assess_impact("SKILL-DOM-TS-001", "deepseek-v3", "claude-sonnet-4")
         assert "old_profile" in result
         assert "new_profile" in result
         assert "family" in result["old_profile"]
         assert "max_context" in result["old_profile"]
 
     def test_overall_score_is_average(self):
-        result = SkillModelEvolution.assess_impact(
-            "SKILL-DOM-TS-001", "deepseek-v3", "claude-sonnet-4"
-        )
+        result = SkillModelEvolution.assess_impact("SKILL-DOM-TS-001", "deepseek-v3", "claude-sonnet-4")
         scores = result["scores"]
         expected_avg = round(
             (

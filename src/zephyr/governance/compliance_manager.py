@@ -39,11 +39,10 @@ ComplianceRule（CTR-P1-012）SSoT：``zephyr.integration.shared_08.contracts.co
 SSoT: cross_layer_contracts.yaml v3.0
 """
 
-
 from __future__ import annotations
 
 import abc
-from typing import ClassVar, Dict, List, Optional
+from typing import ClassVar
 
 from zephyr.governance.compliance_rule import ComplianceRule
 
@@ -63,7 +62,8 @@ class ComplianceManagerBase(abc.ABC):
       - list_applicable(): 按 jurisdiction 和 rule_type 过滤规则
       - 幂等键（INV-007）：所有评估操作必须关联 idempotency_key
     """
-    _registry: ClassVar[dict[str, type["ComplianceManagerBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[ComplianceManagerBase]]] = {}
 
     @abc.abstractmethod
     def register_rule(self, rule: ComplianceRule) -> None:
@@ -75,17 +75,17 @@ class ComplianceManagerBase(abc.ABC):
         self,
         symbol: str,
         strategy_id: str,
-        order_context: Optional[Dict] = None,
-    ) -> List[str]:
+        order_context: dict | None = None,
+    ) -> list[str]:
         """评估当前操作上下文是否触发合规违规。返回违规 rule_id 列表。"""
         ...
 
     @abc.abstractmethod
     def list_applicable(
         self,
-        jurisdiction: Optional[str] = None,
-        rule_type: Optional[str] = None,
-    ) -> List[ComplianceRule]:
+        jurisdiction: str | None = None,
+        rule_type: str | None = None,
+    ) -> list[ComplianceRule]:
         """列出适用的合规规则。可按 jurisdiction 和 rule_type 过滤。"""
         ...
 
@@ -96,6 +96,6 @@ class ComplianceManagerBase(abc.ABC):
 
 
 __all__ = [
-    "ComplianceRule",
     "ComplianceManagerBase",
+    "ComplianceRule",
 ]

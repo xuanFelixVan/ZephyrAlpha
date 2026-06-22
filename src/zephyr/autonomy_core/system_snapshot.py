@@ -24,7 +24,7 @@ SystemSnapshotter — M1 系统状态镜像（CL-017 RI 扩展模式）
 ==========================================================
 任务编号 : T-V2-006（experimental）
 权限层级 : AI-Modifiable（快照输出）/ Human-Gated（门禁通过率阈值）
-真源声明 : ai-autonomy-authority-registry.md §2.11 (CL-017)
+真源声明 : ai_autonomy_authority_registry.yaml §2.11 (CL-017)
 关联决策 : rationale-log R83（CL-017 升级为 RI 扩展模式）
 创建日期 : 2026-04-27
 版本     : v1.0.0
@@ -47,7 +47,6 @@ SystemSnapshot 是 M1 build() pipeline 末尾生成的系统状态镜像，记�
 - 快照写入失败时仅 warn，不抛出异常（不阻断 M1 主流程）
 - TTL 30 天归档由 T-V2-013（V-16 归档脚本）负责
 """
-
 
 from __future__ import annotations
 
@@ -234,12 +233,7 @@ class SystemSnapshotter:
 
         文件不存在时返回 "unavailable"。
         """
-        log_path = (
-            self._repo_root
-            / "docs"
-            / "02_enterprise_architecture"
-            / "architecture-rationale-log.md"
-        )
+        log_path = self._repo_root / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
         if not log_path.exists():
             return "unavailable"
         try:
@@ -400,12 +394,13 @@ def take_snapshot() -> CESnapshot:
 def _get_memory_usage_mb() -> float:
     try:
         import psutil
+
         return round(psutil.Process().memory_info().rss / (1024 * 1024), 2)
     except ImportError:
         pass
     try:
         import os
-        import struct
+
         if hasattr(os, "sysconf") and hasattr(os, "confstr"):
             return 0.0
     except Exception:
@@ -416,6 +411,7 @@ def _get_memory_usage_mb() -> float:
 def _count_active_sessions() -> int:
     try:
         from pathlib import Path
+
         runtime_dir = Path(".runtime/sessions")
         if runtime_dir.exists():
             return len(list(runtime_dir.glob("*.json")))
@@ -427,6 +423,7 @@ def _count_active_sessions() -> int:
 def _check_vms_connection() -> bool:
     try:
         from pathlib import Path
+
         vms_dir = Path(".runtime/vms")
         return vms_dir.exists()
     except Exception:
@@ -437,9 +434,11 @@ def _check_vms_connection() -> bool:
 def _get_pipeline_stats() -> dict[str, float]:
     try:
         from pathlib import Path
+
         stats_file = Path(".runtime/ce_pipeline_stats.json")
         if stats_file.exists():
             import json
+
             data = json.loads(stats_file.read_text(encoding="utf-8"))
             if isinstance(data, dict):
                 return {k: float(v) for k, v in data.items()}

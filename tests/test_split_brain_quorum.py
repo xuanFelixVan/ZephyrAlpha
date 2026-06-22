@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.resilience.split_brain_quorum import (
     QuorumState,
     SplitBrainQuorum,

@@ -14,12 +14,11 @@
 CT-FLE-ORC-001: 接收 FLE 分派的 AlertEvent, 创建修复任务或阻断关联。
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -31,7 +30,6 @@ __all__ = [
 
 
 class AlertHandler:
-
     def handle_alert(self, event: Any) -> Any | None:
         try:
             severity_val = _get_severity(event)
@@ -82,19 +80,22 @@ def _get_detail(event: Any) -> str:
 def _record_event(event_id: str, severity: str, category: str, event: Any) -> None:
     try:
         from zephyr.governance.persistence.sqlite_schema import get_db_connection
+
         conn = get_db_connection()
         conn.execute(
             "INSERT INTO events (event_type, event_data, created_at) VALUES (?, ?, ?)",
             (
                 "fle_alert",
-                json.dumps({
-                    "event_id": event_id,
-                    "severity": severity,
-                    "category": category,
-                    "title": _get_title(event),
-                    "detail": _get_detail(event)[:2000],
-                }),
-                datetime.now(timezone.utc).isoformat(),
+                json.dumps(
+                    {
+                        "event_id": event_id,
+                        "severity": severity,
+                        "category": category,
+                        "title": _get_title(event),
+                        "detail": _get_detail(event)[:2000],
+                    }
+                ),
+                datetime.now(UTC).isoformat(),
             ),
         )
         conn.commit()
@@ -110,21 +111,20 @@ def _create_repair_task(
     title: str,
     detail: str,
 ) -> Any:
-    from zephyr.shared.shared_services.models import TaskCard
-    from zephyr.shared.task_types import TaskStatus
-    from zephyr.integration.shared.schema.severity_types import Priority
+    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
     from zephyr.integration.shared.schema.execution_model import ExecutionModel
-    from zephyr.shared.task_types import TaskNamespace
-    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
-    from zephyr.governance.persistence.task_repo import TaskRepository
+    from zephyr.integration.shared.schema.severity_types import Priority
+    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.task_types import TaskNamespace, TaskStatus
 
     priority = Priority.P0 if severity == "CRITICAL" else Priority.P1
 
     import hashlib
+
     task_num = int(hashlib.md5(event_id.encode()).hexdigest()[:8], 16) % 100000 + 100000
 
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = datetime.now(UTC).isoformat()
     task = TaskCard(
         task_id=f"OPS-{task_num}",
         namespace=TaskNamespace.OPS,

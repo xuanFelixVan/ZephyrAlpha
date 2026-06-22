@@ -15,8 +15,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from zephyr.shared.draft.draft_assistant import BlueprintDraft, DraftAssistant, DraftInput
 
 

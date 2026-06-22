@@ -10,8 +10,8 @@
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_budget_handler.py
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+
 from zephyr.governance.budget_handler import on_budget_alert
 from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
 
@@ -46,6 +46,8 @@ class TestOnBudgetAlert:
 
     def test_adapter_exception_handled(self):
         alert = _make_alert()
-        with patch("zephyr.governance.budget_handler.escalate_if_needed", side_effect=RuntimeError("fail"), create=True):
+        with patch(
+            "zephyr.governance.budget_handler.escalate_if_needed", side_effect=RuntimeError("fail"), create=True
+        ):
             result = on_budget_alert(alert)
             assert isinstance(result, dict)

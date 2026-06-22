@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_adaptive_param_tuning.py
 
-import pytest
 from zephyr.ops.diagnosers.adaptive_param_tuning import (
     AdaptiveParamTuning,
     TuningMode,

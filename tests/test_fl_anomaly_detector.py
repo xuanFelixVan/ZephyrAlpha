@@ -12,19 +12,16 @@
 
 from unittest.mock import MagicMock
 
-import pytest
-
+from zephyr.ops.detectors.anomaly_detector import (
+    AnomalyDetector,
+    AnomalyEvent,
+)
 from zephyr.ops.feedback_collector import (
     FeedbackCollector,
 )
 from zephyr.ops.metrics_collector import (
-    EMABaseline,
-    MetricSnapshot,
     MetricsCollector,
-)
-from zephyr.ops.detectors.anomaly_detector import (
-    AnomalyDetector,
-    AnomalyEvent,
+    MetricSnapshot,
 )
 from zephyr.ops.protocols import ActionType
 
@@ -44,13 +41,15 @@ def _make_snapshot(**overrides):
 
 def _warm_up_collector(mc, n=100):
     for i in range(n):
-        mc.collect(_make_snapshot(
-            system_cpu=50.0 + (i % 5) * 0.5,
-            memory_usage_pct=60.0 + (i % 3) * 0.5,
-            disk_io_wait=5.0 + (i % 7) * 0.1,
-            network_errors_count=0,
-            detection_latency_ms=100.0 + (i % 4) * 0.5,
-        ))
+        mc.collect(
+            _make_snapshot(
+                system_cpu=50.0 + (i % 5) * 0.5,
+                memory_usage_pct=60.0 + (i % 3) * 0.5,
+                disk_io_wait=5.0 + (i % 7) * 0.1,
+                network_errors_count=0,
+                detection_latency_ms=100.0 + (i % 4) * 0.5,
+            )
+        )
 
 
 class TestAnomalyEvent:

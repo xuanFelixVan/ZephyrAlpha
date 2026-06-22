@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 resilience/__init__.py — 韧性工具包入口（Phase 2 新增）
 
@@ -23,31 +23,30 @@ SSoT: MOD-INF-016 §2.6 shared-resilience
 Version: 0.1.0
 """
 
-from .retry import (
-    RetryConfig,
-    RetryExhaustedError,
-    async_retry,
-)
 from .circuit_breaker import (
-    CircuitState,
     CircuitBreaker,
     CircuitOpenError,
+    CircuitState,
 )
 from .fallback import (
     FallbackChain,
     fallback,
 )
+from .retry import (
+    RetryConfig,
+    RetryExhaustedError,
+    async_retry,
+)
 
 __all__ = [
+    "CircuitBreaker",
+    "CircuitOpenError",
+    "CircuitState",
+    "FallbackChain",
     "RetryConfig",
     "RetryExhaustedError",
     "async_retry",
-    "CircuitState",
-    "CircuitBreaker",
-    "CircuitOpenError",
-    "FallbackChain",
+    "circuit_breaker",
     "fallback",
     "retry",
-    "circuit_breaker",
 ]
-

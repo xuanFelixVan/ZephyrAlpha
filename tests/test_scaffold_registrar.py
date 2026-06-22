@@ -17,8 +17,6 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.security.access_control.auto_fix_engine_03.models import FixLevel, FixStatus
 from zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar import ScaffoldRegistrar
 
@@ -58,12 +56,17 @@ class TestScaffoldRegistrarScan:
             manifest_path = scripts_dir / "script-manifest.yaml"
             manifest_path.write_text("scripts: []\n", encoding="utf-8")
             with patch.object(Path, "rglob") as mock_rglob:
+
                 def rglob_side_effect(pattern):
                     if pattern == "*.py":
                         return [script_file]
                     return []
+
                 mock_rglob.side_effect = rglob_side_effect
-                with patch("zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd", return_value=tmpdir):
+                with patch(
+                    "zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd",
+                    return_value=tmpdir,
+                ):
                     findings = reg.scan()
             assert any(f["type"] == "unregistered_script" for f in findings)
 
@@ -74,17 +77,27 @@ class TestScaffoldRegistrarScan:
             scripts_dir.mkdir()
             underscore_script = scripts_dir / "_helper.py"
             underscore_script.write_text("pass\n", encoding="utf-8")
-            with patch.object(Path, "rglob", return_value=[underscore_script]):
-                with patch("zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd", return_value=tmpdir):
-                    findings = reg.scan()
+            with (
+                patch.object(Path, "rglob", return_value=[underscore_script]),
+                patch(
+                    "zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd",
+                    return_value=tmpdir,
+                ),
+            ):
+                findings = reg.scan()
             assert not any(f.get("relative_path", "").endswith("_helper.py") for f in findings)
 
     def test_scan_handles_missing_manifest_gracefully(self):
         reg = ScaffoldRegistrar()
         with tempfile.TemporaryDirectory() as tmpdir:
-            with patch.object(Path, "rglob", return_value=[]):
-                with patch("zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd", return_value=tmpdir):
-                    findings = reg.scan()
+            with (
+                patch.object(Path, "rglob", return_value=[]),
+                patch(
+                    "zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd",
+                    return_value=tmpdir,
+                ),
+            ):
+                findings = reg.scan()
             assert isinstance(findings, list)
 
 

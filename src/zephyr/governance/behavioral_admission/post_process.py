@@ -50,14 +50,14 @@ AI 施工约定：
 SSoT: DOM-GOV-001 §12 盲点 B31
 """
 
-
 from __future__ import annotations
 
 import subprocess
 import threading
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, unique
-from typing import Any, Callable
+from typing import Any
 
 
 @unique
@@ -131,12 +131,14 @@ class PostProcessPipeline:
         auto_fix_fn: Callable[..., HookResult] | None = None,
     ) -> None:
         with self._lock:
-            self._hooks.append(PostProcessHook(
-                name=name,
-                fn=fn,
-                strategy=strategy,
-                auto_fix_fn=auto_fix_fn,
-            ))
+            self._hooks.append(
+                PostProcessHook(
+                    name=name,
+                    fn=fn,
+                    strategy=strategy,
+                    auto_fix_fn=auto_fix_fn,
+                )
+            )
 
     def run(self, **kwargs: Any) -> PipelineResult:
         hook_results: list[HookResult] = []
@@ -214,7 +216,7 @@ class PostProcessPipeline:
         )
 
     @staticmethod
-    def create_default() -> "PostProcessPipeline":
+    def create_default() -> PostProcessPipeline:
         pipeline = PostProcessPipeline()
         pipeline.register_hook("lint", lint_hook, HookStrategy.WARN)
         pipeline.register_hook("format", format_hook, HookStrategy.SKIP)
@@ -225,6 +227,7 @@ class PostProcessPipeline:
 def lint_hook(files: list[str] | None = None) -> HookResult:
     """内置 lint hook——调用 ruff check。"""
     import time
+
     start = time.monotonic()
 
     if not files:
@@ -253,6 +256,7 @@ def lint_hook(files: list[str] | None = None) -> HookResult:
 def format_hook(files: list[str] | None = None) -> HookResult:
     """内置 format hook——调用 ruff format --check。"""
     import time
+
     start = time.monotonic()
 
     if not files:
@@ -281,6 +285,7 @@ def format_hook(files: list[str] | None = None) -> HookResult:
 def typecheck_hook(files: list[str] | None = None) -> HookResult:
     """内置 typecheck hook——调用 pyright / mypy。"""
     import time
+
     start = time.monotonic()
 
     if not files:
@@ -307,12 +312,12 @@ def typecheck_hook(files: list[str] | None = None) -> HookResult:
 
 
 __all__ = [
-    "HookStrategy",
     "HookResult",
+    "HookStrategy",
     "PipelineResult",
     "PostProcessHook",
     "PostProcessPipeline",
-    "lint_hook",
     "format_hook",
+    "lint_hook",
     "typecheck_hook",
 ]

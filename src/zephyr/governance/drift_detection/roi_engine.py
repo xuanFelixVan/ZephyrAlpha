@@ -26,12 +26,12 @@ module_id: MOD-INF-023
 修复ROI优先级：ROI = impact_weight × frequency / effort + 4级effort + 持续校准。
 对标 blueprint.md §5.5 / TASK-INF-0029 / D-023-14。
 """
+
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Optional
+from dataclasses import dataclass
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -91,7 +91,7 @@ class ROIEngine:
             roi=round(roi, 4),
             rank=0,
             effort_tier=effort_tier,
-            computed_at=datetime.now(timezone.utc).isoformat(),
+            computed_at=datetime.now(UTC).isoformat(),
         )
 
     def rank(self, scores: list[ROIScore]) -> list[ROIScore]:

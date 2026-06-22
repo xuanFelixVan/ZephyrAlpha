@@ -15,20 +15,18 @@ from __future__ import annotations
 import sqlite3
 from datetime import datetime
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
 from zephyr.intelligence.model_evaluation.kb_repo import (
-    KeStatus,
-    KeRecord,
     KbRepo,
+    KeRecord,
+    KeStatus,
     RetrievalHit,
     TransitionResult,
-    _VALID_TRANSITIONS,
     _compute_fingerprint,
 )
-
 
 _KNOWLEDGE_DDL = """
 CREATE TABLE IF NOT EXISTS knowledge (
@@ -70,9 +68,16 @@ def _init_test_db(db_path: Path) -> sqlite3.Connection:
 class TestKeStatus:
     def test_all_statuses_exist(self):
         expected = [
-            "DRAFT", "SUBMITTED", "REVIEWED", "ACCEPTED",
-            "INDEXED", "VERIFIED", "REJECTED", "DEPRECATED",
-            "ARCHIVED", "SUPERSEDED",
+            "DRAFT",
+            "SUBMITTED",
+            "REVIEWED",
+            "ACCEPTED",
+            "INDEXED",
+            "VERIFIED",
+            "REJECTED",
+            "DEPRECATED",
+            "ARCHIVED",
+            "SUPERSEDED",
         ]
         for name in expected:
             assert hasattr(KeStatus, name)
@@ -97,8 +102,12 @@ class TestKeRecord:
     def test_valid_record(self):
         now = datetime.now()
         rec = KeRecord(
-            ke_id="KE-001", title="Test", category="general",
-            source_file="docs/a.md", created_at=now, updated_at=now,
+            ke_id="KE-001",
+            title="Test",
+            category="general",
+            source_file="docs/a.md",
+            created_at=now,
+            updated_at=now,
         )
         assert rec.status == KeStatus.DRAFT
 
@@ -106,17 +115,25 @@ class TestKeRecord:
         now = datetime.now()
         with pytest.raises(Exception):
             KeRecord(
-                ke_id="BAD-ID", title="T", category="c",
-                source_file="f", created_at=now, updated_at=now,
+                ke_id="BAD-ID",
+                title="T",
+                category="c",
+                source_file="f",
+                created_at=now,
+                updated_at=now,
             )
 
     def test_invalid_fingerprint_length(self):
         now = datetime.now()
         with pytest.raises(Exception):
             KeRecord(
-                ke_id="KE-001", title="T", category="c",
-                source_file="f", fingerprint_sha256="abc",
-                created_at=now, updated_at=now,
+                ke_id="KE-001",
+                title="T",
+                category="c",
+                source_file="f",
+                fingerprint_sha256="abc",
+                created_at=now,
+                updated_at=now,
             )
 
 
@@ -152,8 +169,11 @@ class TestKbRepoWithDb:
     def test_create_and_get(self, tmp_path: Path):
         repo = self._make_repo(tmp_path)
         rec = repo.create(
-            ke_id="KE-001", title="Test KE", category="general",
-            source_file="docs/a.md", content="hello world",
+            ke_id="KE-001",
+            title="Test KE",
+            category="general",
+            source_file="docs/a.md",
+            content="hello world",
         )
         assert rec.ke_id == "KE-001"
         assert rec.status == KeStatus.DRAFT
@@ -168,8 +188,11 @@ class TestKbRepoWithDb:
     def test_transition_valid(self, tmp_path: Path):
         repo = self._make_repo(tmp_path)
         repo.create(
-            ke_id="KE-002", title="T", category="c",
-            source_file="f", content="c",
+            ke_id="KE-002",
+            title="T",
+            category="c",
+            source_file="f",
+            content="c",
         )
         result = repo.transition("KE-002", KeStatus.SUBMITTED)
         assert isinstance(result, TransitionResult)
@@ -179,8 +202,11 @@ class TestKbRepoWithDb:
     def test_transition_invalid_raises(self, tmp_path: Path):
         repo = self._make_repo(tmp_path)
         repo.create(
-            ke_id="KE-003", title="T", category="c",
-            source_file="f", content="c",
+            ke_id="KE-003",
+            title="T",
+            category="c",
+            source_file="f",
+            content="c",
         )
         with pytest.raises(ValueError, match="Invalid transition"):
             repo.transition("KE-003", KeStatus.VERIFIED)

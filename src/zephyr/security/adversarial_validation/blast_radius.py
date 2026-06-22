@@ -18,7 +18,7 @@ from zephyr.security.adversarial_validation.models import AttackScenario, BlastR
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["BlastRadius", "AbortThresholdError"]
+__all__: list[str] = ["AbortThresholdError", "BlastRadius"]
 
 LEVEL_THRESHOLD: dict[BlastRadiusLevel, int] = {
     BlastRadiusLevel.FILE: 3,
@@ -40,7 +40,6 @@ class AbortThresholdError(RuntimeError):
 
 
 class BlastRadius:
-
     def __init__(self, initial_level: BlastRadiusLevel = BlastRadiusLevel.FILE) -> None:
         self._current_level: BlastRadiusLevel = initial_level
         self._bypass_counts: dict[BlastRadiusLevel, int] = {lvl: 0 for lvl in LEVEL_ORDER}

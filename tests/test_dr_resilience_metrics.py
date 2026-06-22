@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.diagnosers.dr_resilience_metrics import (
     DRDrillRecord,
     DRResilienceMetrics,
@@ -46,9 +44,7 @@ class TestDRDrillRecord:
         assert r.rto_target == 1800.0
 
     def test_passed_flag(self):
-        r = DRDrillRecord(
-            drill_id="d3", timestamp=0.0, rpo_seconds=0.0, rto_seconds=0.0, passed=False
-        )
+        r = DRDrillRecord(drill_id="d3", timestamp=0.0, rpo_seconds=0.0, rto_seconds=0.0, passed=False)
         assert r.passed is False
 
 
@@ -101,7 +97,9 @@ class TestRecord:
     def test_multiple_records_accumulate_violations(self):
         m = DRResilienceMetrics()
         for _ in range(3):
-            m.record(DRDrillRecord(drill_id="d", timestamp=time.time(), rpo_seconds=400.0, rto_seconds=1000.0, passed=False))
+            m.record(
+                DRDrillRecord(drill_id="d", timestamp=time.time(), rpo_seconds=400.0, rto_seconds=1000.0, passed=False)
+            )
         assert m.rpo_violations == 3
         assert m.rto_violations == 3
 
@@ -114,19 +112,29 @@ class TestPassRate:
     def test_all_passed(self):
         m = DRResilienceMetrics()
         for i in range(5):
-            m.record(DRDrillRecord(drill_id=f"d{i}", timestamp=time.time(), rpo_seconds=100.0, rto_seconds=500.0, passed=True))
+            m.record(
+                DRDrillRecord(
+                    drill_id=f"d{i}", timestamp=time.time(), rpo_seconds=100.0, rto_seconds=500.0, passed=True
+                )
+            )
         assert m.pass_rate() == 1.0
 
     def test_none_passed(self):
         m = DRResilienceMetrics()
         for i in range(5):
-            m.record(DRDrillRecord(drill_id=f"d{i}", timestamp=time.time(), rpo_seconds=400.0, rto_seconds=1000.0, passed=False))
+            m.record(
+                DRDrillRecord(
+                    drill_id=f"d{i}", timestamp=time.time(), rpo_seconds=400.0, rto_seconds=1000.0, passed=False
+                )
+            )
         assert m.pass_rate() == 0.0
 
     def test_partial_pass_rate(self):
         m = DRResilienceMetrics()
         m.record(DRDrillRecord(drill_id="d1", timestamp=time.time(), rpo_seconds=100.0, rto_seconds=500.0, passed=True))
-        m.record(DRDrillRecord(drill_id="d2", timestamp=time.time(), rpo_seconds=400.0, rto_seconds=1000.0, passed=False))
+        m.record(
+            DRDrillRecord(drill_id="d2", timestamp=time.time(), rpo_seconds=400.0, rto_seconds=1000.0, passed=False)
+        )
         assert m.pass_rate() == 0.5
 
 
@@ -159,5 +167,9 @@ class TestDrillOverdue:
 
     def test_old_drill_is_overdue(self):
         m = DRResilienceMetrics(target_drill_interval_days=90)
-        m.record(DRDrillRecord(drill_id="d1", timestamp=time.time() - 100 * 86400, rpo_seconds=100.0, rto_seconds=500.0, passed=True))
+        m.record(
+            DRDrillRecord(
+                drill_id="d1", timestamp=time.time() - 100 * 86400, rpo_seconds=100.0, rto_seconds=500.0, passed=True
+            )
+        )
         assert m.drill_overdue() is True

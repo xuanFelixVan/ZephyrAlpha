@@ -29,14 +29,13 @@ hidden_cycle: 生产代码 imports 测试夹具/配置
 manual_inspection: 标注需要人工确认
 对标 blueprint.md §6.27。
 """
+
 from __future__ import annotations
 
-import os
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -48,7 +47,7 @@ class NamingMagicAlert:
     current_code: str
     description: str
     severity: str = "MAJOR"
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 _IMPLICIT_FILE_PATTERNS: list[tuple[str, str, str]] = [
@@ -57,13 +56,9 @@ _IMPLICIT_FILE_PATTERNS: list[tuple[str, str, str]] = [
     ("open\\(.*\\.txt", "text file path hardcoded", "hardcoded_txt_path"),
 ]
 
-_VERSION_HARDCODE_PATTERN: re.Pattern[str] = re.compile(
-    r"(?:import|from)\s+(\w+)\s*==\s*[\d.]+"
-)
+_VERSION_HARDCODE_PATTERN: re.Pattern[str] = re.compile(r"(?:import|from)\s+(\w+)\s*==\s*[\d.]+")
 
-_CYCLE_PATTERN: re.Pattern[str] = re.compile(
-    r"(?:from|import)\s+tests\.|(?:from|import)\s+test_"
-)
+_CYCLE_PATTERN: re.Pattern[str] = re.compile(r"(?:from|import)\s+tests\.|(?:from|import)\s+test_")
 
 
 def scan_naming_magic(project_root: str) -> list[NamingMagicAlert]:
@@ -72,10 +67,7 @@ def scan_naming_magic(project_root: str) -> list[NamingMagicAlert]:
     py_files = [
         p
         for p in Path(project_root).rglob("*.py")
-        if all(
-            s not in str(p).lower()
-            for s in (".git", "__pycache__", ".venv", "venv")
-        )
+        if all(s not in str(p).lower() for s in (".git", "__pycache__", ".venv", "venv"))
     ]
 
     for pf in py_files:
@@ -87,14 +79,10 @@ def scan_naming_magic(project_root: str) -> list[NamingMagicAlert]:
         for pattern, desc, magic_type in _IMPLICIT_FILE_PATTERNS:
             rx = re.compile(pattern)
             for match in rx.finditer(content):
-                line_no = content[:match.start()].count("\n") + 1
+                line_no = content[: match.start()].count("\n") + 1
                 alerts.append(
                     NamingMagicAlert(
-                        alert_id=(
-                            f"naming-magic-"
-                            f"{magic_type}-"
-                            f"{pf.stem}-L{line_no}"
-                        ),
+                        alert_id=(f"naming-magic-{magic_type}-{pf.stem}-L{line_no}"),
                         file_path=str(pf),
                         line_no=line_no,
                         magic_type=magic_type,
@@ -104,41 +92,29 @@ def scan_naming_magic(project_root: str) -> list[NamingMagicAlert]:
                 )
 
         for match in _VERSION_HARDCODE_PATTERN.finditer(content):
-            line_no = content[:match.start()].count("\n") + 1
+            line_no = content[: match.start()].count("\n") + 1
             alerts.append(
                 NamingMagicAlert(
-                    alert_id=(
-                        f"naming-magic-version-"
-                        f"{pf.stem}-L{line_no}"
-                    ),
+                    alert_id=(f"naming-magic-version-{pf.stem}-L{line_no}"),
                     file_path=str(pf),
                     line_no=line_no,
                     magic_type="version_hardcode",
                     current_code=match.group(0),
-                    description=(
-                        f"Library version hardcoded in import: "
-                        f"{match.group(0)}"
-                    ),
+                    description=(f"Library version hardcoded in import: {match.group(0)}"),
                     severity="MINOR",
                 )
             )
 
         for match in _CYCLE_PATTERN.finditer(content):
-            line_no = content[:match.start()].count("\n") + 1
+            line_no = content[: match.start()].count("\n") + 1
             alerts.append(
                 NamingMagicAlert(
-                    alert_id=(
-                        f"naming-magic-cycle-"
-                        f"{pf.stem}-L{line_no}"
-                    ),
+                    alert_id=(f"naming-magic-cycle-{pf.stem}-L{line_no}"),
                     file_path=str(pf),
                     line_no=line_no,
                     magic_type="hidden_cycle",
                     current_code=match.group(0),
-                    description=(
-                        f"Production code imports test module: "
-                        f"{match.group(0)}"
-                    ),
+                    description=(f"Production code imports test module: {match.group(0)}"),
                     severity="CRITICAL",
                 )
             )

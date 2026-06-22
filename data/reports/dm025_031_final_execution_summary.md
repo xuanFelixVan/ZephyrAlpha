@@ -1,7 +1,7 @@
 # DM-025~DM-031 遗留问题修复 — 最终执行总结
 
-**执行日期**: 2026-06-15  
-**执行模型**: qwen (诊断/复查) + deepseek (修复)  
+**执行日期**: 2026-06-15
+**执行模型**: qwen (诊断/复查) + deepseek (修复)
 **状态**: COMPLETED
 
 ---
@@ -10,14 +10,14 @@
 
 ### 问题1: generate_project_path_tree.py --write 崩溃
 
-**症状**: `AttributeError: 'NoneType' object has no attribute 'replace'`  
-**根因**: SQLite 字段为 NULL 时，`.get("key", "")` 返回 None（键存在但值为 None），后续 `.replace()` 崩溃  
+**症状**: `AttributeError: 'NoneType' object has no attribute 'replace'`
+**根因**: SQLite 字段为 NULL 时，`.get("key", "")` 返回 None（键存在但值为 None），后续 `.replace()` 崩溃
 **修复**: 9处 `.get("key", "")` 改为 `.get("key") or ""`，9处 `var.replace(...)` 改为 `(var or "").replace(...)`
 
 ### 问题2: spec_auditor.py 导入不存在的模块
 
-**症状**: `ModuleNotFoundError: No module named 'zephyr.autonomy_core.agent_lifecycle'`  
-**根因**: 导入路径错误，`zephyr.autonomy_core.agent_lifecycle.registry` 不存在  
+**症状**: `ModuleNotFoundError: No module named 'zephyr.autonomy_core.agent_lifecycle'`
+**根因**: 导入路径错误，`zephyr.autonomy_core.agent_lifecycle.registry` 不存在
 **修复**: 2个文件导入路径改为 `from zephyr.governance.agent_spec.registry import AgentCapability`
 
 ---

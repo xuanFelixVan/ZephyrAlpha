@@ -12,14 +12,12 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.incident_response import (
+    INCIDENT_PROTOCOLS,
     IncidentLevel,
     IncidentProtocol,
-    INCIDENT_PROTOCOLS,
-    get_protocol,
     escalate,
+    get_protocol,
 )
 
 

@@ -38,8 +38,8 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.19 shared-tracing
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import functools
 import os
@@ -157,6 +157,6 @@ class _NoopSpan:
 
 
 # 代理导出：TraceCollector 和 TraceSpan 实际定义在 infrastructure.observability.trace_decorator
-from zephyr.infrastructure.observability.trace_decorator import TraceCollector, TraceSpan  # noqa: E402
+from zephyr.infrastructure.observability.trace_decorator import TraceCollector, TraceSpan
 
-__all__ = ["start_span", "traced", "TraceCollector", "TraceSpan"]
+__all__ = ["TraceCollector", "TraceSpan", "start_span", "traced"]

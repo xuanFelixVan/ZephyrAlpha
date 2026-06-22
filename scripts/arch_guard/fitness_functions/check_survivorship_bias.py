@@ -7,6 +7,7 @@ check_survivorship_bias.py — Survivorship 策略门禁 (INV-014)
 
 exit: 0=pass, 1=fail
 """
+
 from __future__ import annotations
 
 import sys

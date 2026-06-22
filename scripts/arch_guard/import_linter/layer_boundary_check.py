@@ -15,6 +15,7 @@ INV-008: 跨层依赖方向——低层不得 import 高层（L00 不得 import 
 
 exit: 0=pass, 1=violation found
 """
+
 from __future__ import annotations
 
 import re
@@ -34,9 +35,18 @@ LAYER_IMPORT_RE = re.compile(
 LAYER_NUM_RE = re.compile(r"l(\d{2})")
 
 SHARED_MODULES = {
-    "shared", "gates", "core", "db", "kb",
-    "orchestrator", "pipeline", "mcp", "feedback-loop",
-    "vector-memory", "llm-security", "context-engine",
+    "shared",
+    "gates",
+    "core",
+    "db",
+    "kb",
+    "orchestrator",
+    "pipeline",
+    "mcp",
+    "feedback-loop",
+    "vector-memory",
+    "llm-security",
+    "context-engine",
 }
 
 EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "docs", "shared", "gates"}
@@ -67,7 +77,7 @@ def check_file(file_path: Path, source_layer: int) -> list[str]:
                 violations.append(
                     f"  {file_path.relative_to(REPO_ROOT)}:{i}: "
                     f"L{source_layer:02d} → L{target_layer:02d}（低层引用高层） "
-                    f"— \"{stripped[:100]}\""
+                    f'— "{stripped[:100]}"'
                 )
                 break
     return violations

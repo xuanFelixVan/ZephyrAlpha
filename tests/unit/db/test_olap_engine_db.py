@@ -29,6 +29,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.persistence.olap_engine import OLAPEngine, OLAPEngineError
 from zephyr.governance.persistence.sqlite_schema import init_db
 
@@ -102,7 +103,7 @@ def _insert_gate(db_path: Path, gate_run_id: str, passed: int) -> None:
     try:
         conn.execute("BEGIN")
         conn.execute(
-            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) " "VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?, ?, ?, ?, ?)",
             (gate_run_id, "G1:T-0-001", passed, "{}", now),
         )
         conn.execute("COMMIT")

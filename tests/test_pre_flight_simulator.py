@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.verifiers.pre_flight_simulator import PreFlightSimulator
 
 

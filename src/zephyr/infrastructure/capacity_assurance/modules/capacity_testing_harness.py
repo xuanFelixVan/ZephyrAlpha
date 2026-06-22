@@ -28,7 +28,6 @@ Capacity Testing Harness — 容量装置可测试性 (盲点 #33)
 """
 
 import time
-from typing import Any, Optional
 
 
 class CapacityTestingHarness:

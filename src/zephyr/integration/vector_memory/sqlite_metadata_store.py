@@ -55,7 +55,6 @@ from typing import Any
 
 from zephyr.integration.vector_memory.collection_manager import (
     COLLECTION_NAMES,
-    COLLECTION_SCHEMAS,
     VMS_PERSIST_DIR,
 )
 
@@ -63,7 +62,7 @@ _logger = logging.getLogger(__name__)
 
 
 class ScoredHit:
-    __slots__ = ("id", "content", "score", "score_breakdown", "metadata", "provenance", "collection")
+    __slots__ = ("collection", "content", "id", "metadata", "provenance", "score", "score_breakdown")
 
     def __init__(
         self,
@@ -96,7 +95,7 @@ class ScoredHit:
 
 
 class SearchTrace:
-    __slots__ = ("query", "collection", "hits", "latency_ms", "method")
+    __slots__ = ("collection", "hits", "latency_ms", "method", "query")
 
     def __init__(self, query: str, collection: str, hits: list[ScoredHit], latency_ms: float, method: str):
         self.query = query
@@ -163,7 +162,7 @@ class SQLiteMetadataStore:
                 VALUES ('delete', old.rowid, old.content, old.collection);
             END
         """)
-        
+
         conn.execute("""
             CREATE TABLE IF NOT EXISTS vms_id_map (
                 vector_id TEXT NOT NULL UNIQUE,
@@ -264,15 +263,17 @@ class SQLiteMetadataStore:
         for row in rows:
             rank = row["rank"] or 1.0
             normalized = min(rank / max_rank, 1.0) if max_rank > 0 else 0.0
-            hits.append(ScoredHit(
-                id=row["vector_id"],
-                content=row["content"],
-                score=normalized,
-                score_breakdown={"bm25_raw": rank, "bm25_norm": normalized},
-                metadata=json.loads(row["metadata_json"] or "{}"),
-                provenance=json.loads(row["provenance_json"] or "{}"),
-                collection=row["collection"],
-            ))
+            hits.append(
+                ScoredHit(
+                    id=row["vector_id"],
+                    content=row["content"],
+                    score=normalized,
+                    score_breakdown={"bm25_raw": rank, "bm25_norm": normalized},
+                    metadata=json.loads(row["metadata_json"] or "{}"),
+                    provenance=json.loads(row["provenance_json"] or "{}"),
+                    collection=row["collection"],
+                )
+            )
         return hits
 
     def get_documents_by_ids(self, vector_ids: list[str]) -> dict[str, ScoredHit]:
@@ -308,9 +309,7 @@ class SQLiteMetadataStore:
 
     def count_by_collection(self, collection: str) -> int:
         self._ensure_tables()
-        cursor = self._conn.execute(
-            "SELECT COUNT(*) AS cnt FROM vms_documents WHERE collection = ?", (collection,)
-        )
+        cursor = self._conn.execute("SELECT COUNT(*) AS cnt FROM vms_documents WHERE collection = ?", (collection,))
         row = cursor.fetchone()
         return row["cnt"] if row else 0
 

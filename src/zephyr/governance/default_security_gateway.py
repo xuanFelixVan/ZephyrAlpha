@@ -38,18 +38,17 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, ClassVar, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any, ClassVar
 from uuid import uuid4
 
+from zephyr.governance.aisg_sandbox import AISGSandbox
 from zephyr.governance.security_gateway_base import (
     AuditAction,
     AuditDecision,
-    ComplianceEngine,
     SecurityGateway,
 )
 from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
-from zephyr.governance.aisg_sandbox import AISGSandbox
 
 _lsg_gateway = None
 
@@ -60,6 +59,7 @@ def _get_lsg():
         return _lsg_gateway
     try:
         from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+
         _lsg_gateway = LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
@@ -133,9 +133,7 @@ class DefaultSecurityGateway(SecurityGateway):
         (
             "CODE-DANGER-001",
             re.compile(
-                r"(rm\s+-rf\s+/|del\s+/[fs]/q"
-                r"|Format-\w+\s+-Force"
-                r"|DROP\s+(TABLE|DATABASE)\s+\w+)",
+                r"(rm\s+-rf\s+/|del\s+/[fs]/q" r"|Format-\w+\s+-Force" r"|DROP\s+(TABLE|DATABASE)\s+\w+)",
                 re.IGNORECASE,
             ),
             "Destructive system command detected",
@@ -245,9 +243,7 @@ class DefaultSecurityGateway(SecurityGateway):
 
         if errors or lsg_blocked_by:
             action = AuditAction.BLOCK
-        elif warnings_list:
-            action = AuditAction.FLAG
-        elif not self._l1_clean:
+        elif warnings_list or not self._l1_clean:
             action = AuditAction.FLAG
         else:
             action = AuditAction.ALLOW
@@ -258,11 +254,10 @@ class DefaultSecurityGateway(SecurityGateway):
             action=action,
             rule_id="L10-SGW-001",
             reason=f"L1+L2+LSG scan: {len(errors)} errors, {len(warnings_list)} warnings, l1_clean={self._l1_clean}, lsg_blocked={bool(lsg_blocked_by)}",
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             metadata={
                 "findings": [
-                    {"rule_id": f.rule_id, "severity": f.severity, "message": f.message}
-                    for f in self._findings
+                    {"rule_id": f.rule_id, "severity": f.severity, "message": f.message} for f in self._findings
                 ],
                 "content_safe": action != AuditAction.BLOCK,
                 "sanction_enabled": len(errors) > 0 or bool(lsg_blocked_by),
@@ -276,10 +271,10 @@ class DefaultSecurityGateway(SecurityGateway):
             return None
         try:
             import asyncio
+
             from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
-            result = asyncio.run(
-                gw.scan_input(content, source="l10-compliance", metadata=metadata or {})
-            )
+
+            result = asyncio.run(gw.scan_input(content, source="l10-compliance", metadata=metadata or {}))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_input_scan"
         except RuntimeError:
@@ -291,6 +286,7 @@ class DefaultSecurityGateway(SecurityGateway):
                     gw.scan_input(content, source="l10-compliance", metadata=metadata or {})
                 )
                 from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+
                 if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                     return result.blocked_by or "lsg_input_scan"
             except Exception:

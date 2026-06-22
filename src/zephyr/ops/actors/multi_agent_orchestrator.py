@@ -26,6 +26,7 @@ Blindspot: Single FLE agent bottleneck; multi-agent coordination missing.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class MultiAgentOrchestrator:
     agents: dict[str, str] = field(default_factory=dict)

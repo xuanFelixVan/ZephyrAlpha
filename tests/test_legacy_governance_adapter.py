@@ -12,9 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
 from unittest.mock import patch
 
+import pytest
 
 legacy_ga = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.legacy_governance_adapter",
@@ -45,25 +45,19 @@ class TestGovernanceAdapter:
 
     def test_escalate_if_needed_granted(self):
         obj = legacy_ga.GovernanceAdapter()
-        record = legacy_ga.A2AGovernanceRecord(
-            agent_pair=("a", "b"), action="test", granted=True
-        )
+        record = legacy_ga.A2AGovernanceRecord(agent_pair=("a", "b"), action="test", granted=True)
         result = obj.escalate_if_needed(record, "WARN")
         assert result.escalation_level == ""
 
     def test_escalate_if_needed_not_granted(self):
         obj = legacy_ga.GovernanceAdapter()
-        record = legacy_ga.A2AGovernanceRecord(
-            agent_pair=("a", "b"), action="test", granted=False
-        )
+        record = legacy_ga.A2AGovernanceRecord(agent_pair=("a", "b"), action="test", granted=False)
         result = obj.escalate_if_needed(record, "CRITICAL")
         assert result.escalation_level == "CRITICAL"
 
     def test_audit_communication_sets_audit_id(self):
         obj = legacy_ga.GovernanceAdapter()
-        record = legacy_ga.A2AGovernanceRecord(
-            agent_pair=("a", "b"), action="test", granted=True
-        )
+        record = legacy_ga.A2AGovernanceRecord(agent_pair=("a", "b"), action="test", granted=True)
         result = obj.audit_communication(record, "session_1")
         assert result.audit_id != ""
         assert "session_1" in result.audit_id

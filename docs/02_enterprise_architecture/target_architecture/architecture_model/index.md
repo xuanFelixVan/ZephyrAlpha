@@ -7,7 +7,7 @@ generated: '2026-05-02'
 depends_on:
 - target: EA-INDEX
   at: §子目录
-  why: 顶层 EA 索引——architecture-model 为 EA 抽屉子目录，引用顶层抽屉一览
+  why: 顶层 EA 索引——architecture_model 为 EA 抽屉子目录，引用顶层抽屉一览
 title: Architecture Model
 ---
 
@@ -15,7 +15,7 @@ title: Architecture Model
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**架构模型 YAML**——`layers/`（14 层层定义）、`contracts/`（跨层契约）、`events/`（领域事件）、`cross-cutting/`（横切）、`domain/`（DDD）、`frontend/`（前端）、`scripts/`（脚本）、`technology/`（技术栈）、`infra/`（基础设施骨架，planned）。
+本目录只存放：**架构模型 YAML**——`layers/`（14 层层定义）、`contracts/`（跨层契约）、`events/`（领域事件）、`cross_cutting/`（横切）、`domain/`（DDD）、`frontend/`（前端）、`scripts/`（脚本）、`technology/`（技术栈）、`infra/`（基础设施骨架，planned）。
 
 ## 分区管理约定
 
@@ -34,19 +34,19 @@ title: Architecture Model
 | `layers/` | L00-L13 + shared，14 层业务模块定义 |
 | `contracts/` | 跨层数据契约 CTR-001~006（P0）+ CTR-P1-001~013（P1）+ OCP-001~003 + EXT-001~004 + AI-GOV-001~003 |
 | `events/` | 22 条领域事件 |
-| `cross-cutting/` | 运行平面 + 不变量 + 能力热力图（10 域：C1~C7 业务 + CC1~CC3 横切） |
+| `cross_cutting/` | 运行平面 + 不变量 + 能力热力图（10 域：C1~C7 业务 + CC1~CC3 横切） |
 | `domain/` | DDD 战术模式 |
 | `frontend/` | 前端模型 FE-L1~L4 |
 | `scripts/` | 治理/审计脚本模型 |
 | `technology/` | 技术雷达 43 条 + Vibe Coding 基础设施 17 项 |
 | `infra/` | **2026-05-02 新增**——core-services（6 模块）+ shared-infra（5 模块），均为 status: planned |
 | `scripts/check_architecture_gates.py` | CI 门禁脚本（GATE-01~08；**Note:已迁移至 `scripts/governance/d5_architecture/`**，此处仅保留索引引用）|
-| ~~`architecture_endgame_locked.md`~~ | **已移出**（2026-05-03）：.md 治理文档不属于 YAML-only 目录，已迁至 `target-architecture/architecture_endgame_locked.md` |
+| ~~`architecture_endgame_locked.md`~~ | **已移出**（2026-05-03）：.md 治理文档不属于 YAML-only 目录，已迁至 `target_architecture/architecture_endgame_locked.md` |
 
 ## 排除规则（不应放入本目录的内容）
 
-- ❌ .md 架构视图文档 → `02_enterprise_architecture/target-architecture/（上层）`
+- ❌ .md 架构视图文档 → `02_enterprise_architecture/target_architecture/（上层）`
 
 ## 父级目录
 
-- 父级：[target-architecture](../index.md)
+- 父级：[target_architecture](../index.md)

@@ -11,17 +11,16 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.engine_degradation import (
-        EngineDegradationManager,
         DegradationLevel,
         DegradationReason,
-        DegradationState,
-        AgentDegradationRecord,
+        EngineDegradationManager,
         get_engine_degradation_manager,
     )
 except Exception as _exc:
@@ -149,6 +148,7 @@ class TestEngineDegradationManager:
 
     def test_get_engine_degradation_manager_singleton(self):
         from zephyr.security.access_control import engine_degradation as mod
+
         mod._engine_degradation_manager = None
         m1 = get_engine_degradation_manager()
         m2 = get_engine_degradation_manager()

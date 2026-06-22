@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.extraction_safety import (
-    ExtractionSafety, SuitabilityScore,
+    ExtractionSafety,
+    SuitabilityScore,
 )
+
 
 class TestExtractionSafety:
     def test_instantiation(self):

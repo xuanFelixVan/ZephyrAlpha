@@ -31,10 +31,11 @@ Blueprint-Code Sync — §5 蓝图-代码同步验证。
 """
 
 import hashlib
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class SyncPair:
@@ -43,6 +44,7 @@ class SyncPair:
     synced: bool
     checksum: str
     last_verified: str
+
 
 @dataclass
 class SyncVerification:
@@ -53,8 +55,8 @@ class SyncVerification:
     passed: bool
     timestamp_utc: str
 
-class BlueprintCodeSyncService:
 
+class BlueprintCodeSyncService:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -72,17 +74,17 @@ class BlueprintCodeSyncService:
 
             checksum = ""
             if synced_flag:
-                checksum = hashlib.sha256(
-                    code_full.read_bytes()
-                ).hexdigest()[:16]
+                checksum = hashlib.sha256(code_full.read_bytes()).hexdigest()[:16]
 
-            results.append(SyncPair(
-                blueprint_section=bp_section,
-                code_path=code_path_str,
-                synced=synced_flag,
-                checksum=checksum,
-                last_verified=datetime.now(timezone.utc).isoformat(),
-            ))
+            results.append(
+                SyncPair(
+                    blueprint_section=bp_section,
+                    code_path=code_path_str,
+                    synced=synced_flag,
+                    checksum=checksum,
+                    last_verified=datetime.now(UTC).isoformat(),
+                )
+            )
 
             if synced_flag:
                 synced += 1
@@ -95,7 +97,7 @@ class BlueprintCodeSyncService:
             stale_count=stale,
             pairs=results,
             passed=stale == 0,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
     def check_sync_consistency(self) -> dict[str, Any]:

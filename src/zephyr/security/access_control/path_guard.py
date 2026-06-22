@@ -4,9 +4,12 @@
 ALLOWED_ROOTS = None  # stub constant
 FORBIDDEN_PATHS = None  # stub constant
 
+
 class PathGuard:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "ALLOWED_ROOTS",

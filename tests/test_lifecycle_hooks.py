@@ -20,12 +20,14 @@
 # [TESTS] pytest tests/test_lifecycle_hooks.py -q
 
 import asyncio
+
 import pytest
+
 from zephyr.shared.lifecycle.hooks import (
-    LifecycleState,
-    ModuleHealth,
     LifecycleAware,
     LifecycleManager,
+    LifecycleState,
+    ModuleHealth,
 )
 
 
@@ -96,6 +98,7 @@ class TestLifecycleAware:
     def test_non_compliant_fails_protocol(self):
         class NotCompliant:
             pass
+
         assert not isinstance(NotCompliant(), LifecycleAware)
 
 
@@ -168,6 +171,7 @@ class TestLifecycleManager:
         class BadHealth(FakeModule):
             async def health_check(self):
                 raise RuntimeError("health check boom")
+
         mgr = LifecycleManager()
         mgr.register(BadHealth("bad"))
         results = asyncio.get_event_loop().run_until_complete(mgr.health_check_all())

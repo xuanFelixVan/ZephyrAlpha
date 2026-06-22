@@ -11,8 +11,6 @@
 # [TESTS] python -m pytest tests/test_sensitivity_classifier.py -q
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.sensitivity_classifier import (
     ClassificationResult,
     SensitivityClassifier,

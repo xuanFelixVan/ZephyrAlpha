@@ -52,14 +52,24 @@ class CryptoBootstrap:
     def genesis(self, initial_state: dict) -> str:
         state_json = json.dumps(initial_state, sort_keys=True)
         self.genesis_hash = hashlib.sha256(f"GENESIS:{state_json}".encode()).hexdigest()
-        self.chain.append(HashLink(index=0, timestamp=time.time(), action_hash="GENESIS", prev_hash="0" * 64, state_hash=self.genesis_hash))
+        self.chain.append(
+            HashLink(
+                index=0, timestamp=time.time(), action_hash="GENESIS", prev_hash="0" * 64, state_hash=self.genesis_hash
+            )
+        )
         return self.genesis_hash
 
     def append(self, action: str, state: dict) -> HashLink:
         action_hash = hashlib.sha256(action.encode()).hexdigest()
         state_hash = hashlib.sha256(json.dumps(state, sort_keys=True).encode()).hexdigest()
         prev_hash = self.chain[-1].state_hash if self.chain else self.genesis_hash
-        link = HashLink(index=len(self.chain), timestamp=time.time(), action_hash=action_hash, prev_hash=prev_hash, state_hash=state_hash)
+        link = HashLink(
+            index=len(self.chain),
+            timestamp=time.time(),
+            action_hash=action_hash,
+            prev_hash=prev_hash,
+            state_hash=state_hash,
+        )
         self.chain.append(link)
         return link
 

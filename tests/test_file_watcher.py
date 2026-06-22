@@ -13,6 +13,7 @@
 import time
 
 import pytest
+
 from zephyr.infrastructure.file_watcher import (
     FileChangeEvent,
     FileChangeType,
@@ -31,6 +32,7 @@ class TestFileChangeType:
 class TestFileChangeEvent:
     def test_construction(self, tmp_path):
         from pathlib import Path
+
         event = FileChangeEvent(
             path=Path("/tmp/test.py"),
             event_type=FileChangeType.CREATED,
@@ -41,6 +43,7 @@ class TestFileChangeEvent:
 
     def test_suffix_property(self, tmp_path):
         from pathlib import Path
+
         event = FileChangeEvent(
             path=Path("/tmp/test.PY"),
             event_type=FileChangeType.MODIFIED,
@@ -56,6 +59,7 @@ class TestFileWatcher:
 
     def test_invalid_watch_dir(self):
         from pathlib import Path
+
         with pytest.raises(FileWatcherError):
             FileWatcher(watch_dir=Path("/nonexistent/dir/xyz"), poll_interval=10.0)
 

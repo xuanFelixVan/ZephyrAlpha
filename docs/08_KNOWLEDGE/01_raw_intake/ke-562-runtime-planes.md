@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-562
 title: 7.5.4 与 `runtime_planes.md` 的同步规则
 category: documentation

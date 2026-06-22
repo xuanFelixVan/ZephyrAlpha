@@ -9,8 +9,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.trading.orchestrator.contract_registry import ContractRegistry
 
 

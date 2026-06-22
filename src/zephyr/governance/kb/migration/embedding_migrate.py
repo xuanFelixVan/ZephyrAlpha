@@ -20,6 +20,7 @@
 # [TESTS]
 
 from __future__ import annotations
+
 # AI-generated: T-4-06 Embedding Upgrade BGE-M3
 """
 EmbeddingMigrate · Embedding 版本管理 + 迁移管线
@@ -51,12 +52,12 @@ from zephyr.governance.kb.storage.chromadb_init import COLLECTION_NAMES
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
-    "MigrationStatus",
+    "EmbeddingMigrator",
     "EmbeddingVersion",
+    "MigrationCheckpoint",
     "MigrationPlan",
     "MigrationResult",
-    "MigrationCheckpoint",
-    "EmbeddingMigrator",
+    "MigrationStatus",
 ]
 
 

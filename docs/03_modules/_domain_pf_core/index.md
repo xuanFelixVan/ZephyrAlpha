@@ -1,18 +1,27 @@
 ---
-module_id: MOD-035
-title: L05 Portfolio Construction 层索引
+module_id: MOD-L05-001
+title: D-PF-CORE 域索引
 doc_type: index
 status: Active
-layer: L05
-date: '2026-05-05'
+layer: domain
+date: "2026-06-22"
+version: "2.0.0"
 ---
 
-# L05 Portfolio Construction
+# D-PF-CORE — 组合核心域索引
+
+> **架构裁定**：D19/D21 — 14层降级为域属性，D-PF-CORE 为唯一分类。
+> **命名规范**：统一下划线（snake_case）。
 
 ## 模块清单
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L05-001 | Portfolio Core | [blueprint](portfolio-core/blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L05-001 | Portfolio Core | [blueprint](portfolio_core/blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/03_modules/_domain-pf_core/portfolio-core/blueprint.md`
+**架构模型真源**：`docs/03_modules/_domain_pf_core/portfolio_core/blueprint.md`
+
+## 导航
+
+- [上级目录](../index.md)
+- [架构真源](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md)

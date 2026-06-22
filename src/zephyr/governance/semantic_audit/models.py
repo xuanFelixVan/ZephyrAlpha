@@ -24,16 +24,16 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 __all__ = [
-    "Severity",
-    "SafetyDecision",
-    "TriggerResult",
-    "TriggerDecision",
-    "ExtractedReferences",
-    "LLMFixResult",
     "AlignmentReport",
+    "ExtractedReferences",
     "HealResult",
-    "SemanticAuditReport",
+    "LLMFixResult",
+    "SafetyDecision",
     "SemanticAuditFinding",
+    "SemanticAuditReport",
+    "Severity",
+    "TriggerDecision",
+    "TriggerResult",
 ]
 
 
@@ -120,7 +120,6 @@ class SemanticAuditReport(BaseModel):
     fresh_until: datetime | None = None
 
 
-
 class SemanticAuditFinding(BaseModel):
     """语义审计发现 - 单个审计问题的结构化描述.
 
@@ -132,6 +131,7 @@ class SemanticAuditFinding(BaseModel):
     - description: 问题描述
     - source_location: 源文件位置
     """
+
     finding_id: str = ""
     module: str = ""
     severity: Severity = Severity.INFO

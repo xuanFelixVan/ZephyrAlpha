@@ -26,6 +26,7 @@ class DriftBridge:
         self._available = False
         try:
             from zephyr.governance.drift_detector import DriftDetector
+
             self._detector = DriftDetector()
             self._available = True
         except ImportError:

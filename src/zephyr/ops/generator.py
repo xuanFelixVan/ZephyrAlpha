@@ -7,7 +7,7 @@
 
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 
-# [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.orchestration.runtime_core
+# [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.trading
 
 # [STABILITY] evolving
 
@@ -28,32 +28,17 @@ Generator
 """
 
 
-
 # SRC-0068a: 从 _gen_inherited.py 拆分 - 代码生成执行器
-
-
-
-
-
 
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from zephyr.ops.template import SKELETONS
 
-__all__ = ["generate", "BASE", "main"]
-
-
-
+__all__ = ["BASE", "generate", "main"]
 
 
 BASE = os.path.join(os.path.dirname(__file__), "")
-
-
-
-
-
-
 
 
 def generate(skeletons: dict[str, str] | None = None) -> tuple[int, int, int]:
@@ -112,33 +97,13 @@ def generate(skeletons: dict[str, str] | None = None) -> tuple[int, int, int]:
     return created, skipped, errors
 
 
-
-
-
-
-
-
 def main() -> None:
-
-
     """CLI 入口 - 与 _gen_inherited.py 的 __main__ 块行为一致."""
 
-
     created, skipped, errors = generate()
-
 
     print(f"TASK-0003: Created {created}, skipped {skipped}, errors {errors} (total {len(SKELETONS)})")
 
 
-
-
-
-
-
-
 if __name__ == "__main__":
-
-
     main()
-
-

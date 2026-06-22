@@ -64,11 +64,11 @@ PRAGMA 基线（KBG-0030 §4.3）
     conn = get_db_connection()   # 返回配置好 PRAGMA 的连接
 """
 
-
 from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
+
 
 def _find_repo_root() -> Path:
     current = Path(__file__).resolve()
@@ -336,6 +336,26 @@ CREATE TABLE IF NOT EXISTS fle_dispatch_log (
 """
 
 # ---------------------------------------------------------------------------
+# DDL — 任务卡审查记录表（task_001_batch_review_protocol 代码强制）
+# ---------------------------------------------------------------------------
+
+_DDL_TASK_REVIEWS = """
+CREATE TABLE IF NOT EXISTS task_reviews (
+    review_id       TEXT    PRIMARY KEY,
+    task_id         TEXT    NOT NULL,
+    review_round    INTEGER NOT NULL,
+    dimension       TEXT    NOT NULL,
+    issue_count     INTEGER NOT NULL DEFAULT 0,
+    issues_json     TEXT    NOT NULL DEFAULT '[]',
+    passed          INTEGER NOT NULL DEFAULT 0 CHECK(passed IN (0,1)),
+    reviewer        TEXT    NOT NULL DEFAULT 'ai_session',
+    session_id      TEXT,
+    reviewed_at     TEXT    NOT NULL,
+    FOREIGN KEY (task_id) REFERENCES tasks(task_id)
+)
+"""
+
+# ---------------------------------------------------------------------------
 # DDL — 索引（KBG-0030 §4.2）
 # ---------------------------------------------------------------------------
 
@@ -519,8 +539,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "v2 fields: priority + model_rationale + actual_hours + files_in_scope + tags + completed_at + name→title (#12)",
         [
             "ALTER TABLE tasks RENAME COLUMN name TO title",
-            "ALTER TABLE tasks ADD COLUMN priority TEXT NOT NULL DEFAULT 'P2' "
-            "CHECK(priority IN ('P0','P1','P2','P3'))",
+            "ALTER TABLE tasks ADD COLUMN priority TEXT NOT NULL DEFAULT 'P2' CHECK(priority IN ('P0','P1','P2','P3'))",
             "ALTER TABLE tasks ADD COLUMN model_rationale TEXT",
             "ALTER TABLE tasks ADD COLUMN actual_hours REAL CHECK(actual_hours IS NULL OR actual_hours >= 0)",
             "ALTER TABLE tasks ADD COLUMN files_in_scope TEXT NOT NULL DEFAULT '[]'",
@@ -920,6 +939,15 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "ALTER TABLE tasks ADD COLUMN ready_at TEXT",
         ],
     ),
+    (
+        29,
+        "DM-200921: task_reviews table for task_001_batch_review_protocol enforcement",
+        [
+            _DDL_TASK_REVIEWS,
+            "CREATE INDEX IF NOT EXISTS idx_task_reviews_task_id ON task_reviews(task_id)",
+            "CREATE INDEX IF NOT EXISTS idx_task_reviews_passed ON task_reviews(passed)",
+        ],
+    ),
 ]
 
 
@@ -967,9 +995,9 @@ def _run_migration(
             )
             if any(p in msg for p in benign):
                 continue
-            raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n" f"  SQL: {stmt[:200]}") from exc
+            raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n  SQL: {stmt[:200]}") from exc
     conn.execute(
-        "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) " "VALUES (?, ?, ?)",
+        "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
         (version, now, description),
     )
 
@@ -1031,7 +1059,7 @@ def init_db(
             for v, desc, _ in _MIGRATIONS:
                 if v <= bootstrapped:
                     conn.execute(
-                        "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) " "VALUES (?, ?, ?)",
+                        "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
                         (v, now, desc + " [bootstrap: legacy DB]"),
                     )
             current = bootstrapped
@@ -1123,13 +1151,15 @@ def migration_dry_run(
         else:
             status = "pending"
         ddl_preview = [s[:120] + ("..." if len(s) > 120 else "") for s in statements[:3]]
-        pending.append({
-            "version": version,
-            "description": description,
-            "status": status,
-            "statement_count": len(statements),
-            "ddl_preview": ddl_preview,
-        })
+        pending.append(
+            {
+                "version": version,
+                "description": description,
+                "status": status,
+                "statement_count": len(statements),
+                "ddl_preview": ddl_preview,
+            }
+        )
     result = {
         "current_version": current_ver,
         "registered_max_version": max((m[0] for m in _MIGRATIONS), default=0),
@@ -1164,16 +1194,27 @@ class SchemaManager:
 # ---------------------------------------------------------------------------
 
 _STABILITY_FROZEN = True
-_FROZEN_PUBLIC_API = frozenset({
-    "DB_PATH", "init_db", "get_db_connection", "table_names",
-    "view_names", "schema_version", "migration_dry_run", "SchemaManager",
-})
+_FROZEN_PUBLIC_API = frozenset(
+    {
+        "DB_PATH",
+        "init_db",
+        "get_db_connection",
+        "table_names",
+        "view_names",
+        "schema_version",
+        "migration_dry_run",
+        "SchemaManager",
+    }
+)
+
 
 def __getattr__(name: str):
     if name in _FROZEN_PUBLIC_API:
         import logging
+
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.data.persistence.sqlite_schema", name
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.data.persistence.sqlite_schema",
+            name,
         )
     raise AttributeError(f"module 'zephyr.data.persistence.sqlite_schema' has no attribute {name!r}")
 

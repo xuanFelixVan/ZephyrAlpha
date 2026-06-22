@@ -24,9 +24,10 @@ from __future__ import annotations
 import logging
 import threading
 import time
+from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixReport
 
@@ -124,5 +125,7 @@ class FixScheduler:
             "running": self._running,
             "batch_count": self._batch_count,
             "pending_events": len(self._event_queue),
-            "last_batch": datetime.fromtimestamp(self._last_batch_time, tz=UTC).isoformat() if self._last_batch_time else None,
+            "last_batch": datetime.fromtimestamp(self._last_batch_time, tz=UTC).isoformat()
+            if self._last_batch_time
+            else None,
         }

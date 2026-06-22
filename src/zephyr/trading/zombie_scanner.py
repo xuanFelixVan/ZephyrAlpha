@@ -20,7 +20,6 @@ zombie_scanner.py — 僵尸 Python 进程检测与自动处置
 模式计数 >3次/24h → repeated_offender 标记到 status
 """
 
-
 from __future__ import annotations
 
 import json
@@ -57,9 +56,9 @@ __all__ = [
     "ZombieCategory",
     "ZombieEntry",
     "ZombieScanResult",
-    "scan_zombie_processes",
-    "handle_zombies",
     "get_repeated_offenders",
+    "handle_zombies",
+    "scan_zombie_processes",
 ]
 
 
@@ -158,11 +157,13 @@ def get_repeated_offenders() -> list[dict[str, Any]]:
     for sig, timestamps in patterns.items():
         recent = [t for t in timestamps if now - t < _REPEATED_WINDOW_S]
         if len(recent) >= _REPEATED_THRESHOLD:
-            offenders.append({
-                "signature": sig,
-                "count": len(recent),
-                "last_seen": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(max(recent))),
-            })
+            offenders.append(
+                {
+                    "signature": sig,
+                    "count": len(recent),
+                    "last_seen": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(max(recent))),
+                }
+            )
     return sorted(offenders, key=lambda x: x["count"], reverse=True)
 
 
@@ -224,13 +225,13 @@ def scan_zombie_processes() -> ZombieScanResult:
             if children > _DANGEROUS_CHILDREN:
                 reason.append(f"children={children}")
             if runtime > _DANGEROUS_RUNTIME_S:
-                reason.append(f"runtime={runtime/3600:.1f}h")
+                reason.append(f"runtime={runtime / 3600:.1f}h")
         elif runtime > _ABNORMAL_RUNTIME_S:
             cat = ZombieCategory.ABNORMAL
-            reason = [f"runtime={runtime/3600:.1f}h"]
+            reason = [f"runtime={runtime / 3600:.1f}h"]
         elif runtime > _SUSPICIOUS_RUNTIME_S and cpu < _SUSPICIOUS_CPU_MAX:
             cat = ZombieCategory.SUSPICIOUS
-            reason = [f"runtime={runtime/3600:.1f}h cpu={cpu:.1f}%"]
+            reason = [f"runtime={runtime / 3600:.1f}h cpu={cpu:.1f}%"]
         else:
             continue
 
@@ -261,6 +262,7 @@ def _kill_process(pid: int) -> bool:
         time.sleep(1.0)
         try:
             import psutil
+
             if psutil.pid_exists(pid):
                 psutil.Process(pid).terminate()
                 time.sleep(2.0)
@@ -283,13 +285,15 @@ def handle_zombies(scan_result: ZombieScanResult | None = None) -> ZombieScanRes
         if _kill_process(entry.pid):
             entry.killed = True
             _log_kill(entry.pid, f"{entry.category.value}: {entry.reason}")
-            scan_result.killed.append({
-                "pid": entry.pid,
-                "category": entry.category.value,
-                "reason": entry.reason,
-                "signature": sig,
-                "pattern_count": count,
-            })
+            scan_result.killed.append(
+                {
+                    "pid": entry.pid,
+                    "category": entry.category.value,
+                    "reason": entry.reason,
+                    "signature": sig,
+                    "pattern_count": count,
+                }
+            )
 
     scan_result.repeated_offenders = get_repeated_offenders()
     return scan_result

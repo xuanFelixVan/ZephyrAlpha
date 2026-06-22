@@ -10,8 +10,7 @@
 # [ERROR_CONTRACT] guard rejection returns allowed=False
 # [TESTS] tests/test_skill_lifecycle.py
 
-import pytest
-from zephyr.autonomy_core.skill_lifecycle import SkillLifecycle, Transition, VALID_TRANSITIONS
+from zephyr.autonomy_core.skill_lifecycle import SkillLifecycle, Transition
 from zephyr.autonomy_core.skill_model import SkillStatus
 
 

@@ -11,8 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 清理失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_retention.py
-
-import json
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -21,6 +19,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__ = ["RetentionPolicy"]
+
 
 class RetentionPolicy:
     HOT_RETENTION_DAYS = 7
@@ -53,12 +52,14 @@ class RetentionPolicy:
                 try:
                     mtime = datetime.fromtimestamp(f.stat().st_mtime)
                     if mtime < cutoff:
-                        result["details"].append({
-                            "file": f.name,
-                            "tier": tier_dir.name,
-                            "age_days": (datetime.now() - mtime).days,
-                            "retention_days": max_days,
-                        })
+                        result["details"].append(
+                            {
+                                "file": f.name,
+                                "tier": tier_dir.name,
+                                "age_days": (datetime.now() - mtime).days,
+                                "retention_days": max_days,
+                            }
+                        )
                         if not dry_run:
                             f.unlink()
                             result["purged"] += 1
@@ -83,12 +84,14 @@ class RetentionPolicy:
             for f in tier_dir.glob("*"):
                 mtime = datetime.fromtimestamp(f.stat().st_mtime)
                 if mtime < cutoff:
-                    violations.append({
-                        "file": f.name,
-                        "tier": tier_name,
-                        "age_days": (datetime.now() - mtime).days,
-                        "retention_days": max_days,
-                    })
+                    violations.append(
+                        {
+                            "file": f.name,
+                            "tier": tier_name,
+                            "age_days": (datetime.now() - mtime).days,
+                            "retention_days": max_days,
+                        }
+                    )
 
         return {
             "compliant": len(violations) == 0,
@@ -96,11 +99,13 @@ class RetentionPolicy:
             "details": violations,
         }
 
+
 class ExpiredEntry:
-    def __init__(self, entry_id='', expired_at=None, reason=''):
+    def __init__(self, entry_id="", expired_at=None, reason=""):
         self.entry_id = entry_id
         self.expired_at = expired_at
         self.reason = reason
+
 
 class RetentionEnforcer:
     def __init__(self, config=None):
@@ -112,6 +117,7 @@ class RetentionEnforcer:
 
     def get_expired(self, max_age_days=30):
         return []
+
 
 class RetentionResult:
     def __init__(self, total_entries=0, expired_count=0, retained_count=0, errors=None):

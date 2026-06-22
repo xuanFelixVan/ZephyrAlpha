@@ -49,6 +49,7 @@ Safety: HIGH（成本熔断是经济安全边界）
 import threading
 
 import pytest
+
 from zephyr.governance.cost_budget import (
     CostBudget,
     CostBudgetExceededError,
@@ -129,8 +130,11 @@ class TestGetCost:
     def test_with_cached_input(self):
         b = CostBudget()
         b.set_pricing(
-            "openai", "gpt-4o",
-            input_1k=0.0025, output_1k=0.0100, cached_input_1k=0.00125,
+            "openai",
+            "gpt-4o",
+            input_1k=0.0025,
+            output_1k=0.0100,
+            cached_input_1k=0.00125,
         )
         cost = b.get_cost("openai", "gpt-4o", input_tokens=0, output_tokens=0, cached_input_tokens=2000)
         assert cost == pytest.approx(0.0025)
@@ -257,7 +261,10 @@ class TestReset:
 class TestCostBudgetExceededError:
     def test_attributes(self):
         err = CostBudgetExceededError(
-            current=15.00, limit=10.00, provider="openai", model="gpt-4o",
+            current=15.00,
+            limit=10.00,
+            provider="openai",
+            model="gpt-4o",
         )
         assert err.current == 15.00
         assert err.limit == 10.00
@@ -266,7 +273,10 @@ class TestCostBudgetExceededError:
 
     def test_message_format(self):
         err = CostBudgetExceededError(
-            current=12.3456, limit=10.00, provider="openai", model="gpt-4o",
+            current=12.3456,
+            limit=10.00,
+            provider="openai",
+            model="gpt-4o",
         )
         msg = str(err)
         assert "$12.3456" in msg

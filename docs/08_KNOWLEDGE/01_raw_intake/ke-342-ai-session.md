@@ -12,6 +12,6 @@ category: documentation
 ```
 1. 本文件（index.md）                     ← 3 分钟了解全貌
 2. meta/index.md                          ← 元规则全貌
-3. meta/glossary-glossary.md                       ← 术语对齐
-4. meta/rule-classification-and-arbitration-standard.md ← 规则怎么分类
+3. _registry/vocabularies/glossary.yaml                       ← 术语对齐
+4. meta/rule_classification_and_arbitration_standard.yaml ← 规则怎么分类
 ```

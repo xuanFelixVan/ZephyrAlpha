@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class SchemaMigration:
     def __init__(self):
         self._version: int = 1

@@ -20,10 +20,10 @@
 # [TESTS] pytest tests/test_observability_metrics.py -q
 
 import pytest
+
 from zephyr.infrastructure.system_telemetry.metrics import (
-    MetricType,
-    MetricSnapshot,
     MetricsRegistry,
+    MetricType,
     get_registry,
 )
 

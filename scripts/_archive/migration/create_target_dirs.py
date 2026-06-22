@@ -22,12 +22,11 @@ import sys
 
 from _migration_shared import (
     BATCH_TO_GROUP,
+    PATH_TREE_FILE,
     PROJECT_ROOT,
     filter_by_batch,
-    filter_by_all_batches,
     load_mapping,
     load_yaml,
-    PATH_TREE_FILE,
 )
 
 

@@ -33,23 +33,19 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 注意：phase_check_registry 和 phase_manager 由调用方直接导入，不从 __init__ 重导出（避免循环依赖）。
 """
 
-import zephyr.governance.escalation_engine as escalation_protocol
 import zephyr.governance.drift_detector as drift_detector_mod
-
-from zephyr.governance.architecture_governance.path_resolver import PathResolver, PathResolution
-
-from zephyr.governance.constitutional_update.constitutional_update import (
-    Learning,
-    ProposedUpdate,
-    ConstitutionalAutoUpdate,
-)
-
-from zephyr.governance.behavioral_admission.mcp_result_push import ResultPushManager, PushStatus
-
+import zephyr.governance.escalation_engine as escalation_protocol
+from zephyr.governance.architecture_governance.path_resolver import PathResolution, PathResolver
 from zephyr.governance.behavioral_admission.admission_response import (
     AdmissionResponse,
-    AdmissionResponseStatus,
     AdmissionResponseBuilder,
+    AdmissionResponseStatus,
+)
+from zephyr.governance.behavioral_admission.mcp_result_push import PushStatus, ResultPushManager
+from zephyr.governance.constitutional_update.constitutional_update import (
+    ConstitutionalAutoUpdate,
+    Learning,
+    ProposedUpdate,
 )
 
 
@@ -57,14 +53,18 @@ def __getattr__(name):
     """延迟导入避免缺失模块阻塞整个包初始化."""
     if name == "budget_enforcer_mod":
         import zephyr.governance.budget_enforcement as _mod
+
         return _mod
     if name == "rollback_mod":
         import zephyr.governance.rollback as _mod
+
         return _mod
     if name == "a2a_protocol":
         import zephyr.l01_infrastructure.a2a_protocol.governance as _mod
+
         return _mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 from zephyr.governance.agent_signer import AgentSigner
 from zephyr.governance.akshare_provider import AkshareProvider
@@ -109,87 +109,138 @@ from zephyr.governance.supply_chain import PackageRecord
 from zephyr.governance.token_budget import PoolLevel
 from zephyr.governance.trust_anchor import TrustLevel
 from zephyr.governance.wqa_scorer import WQAScore
+
 __all__ = [
-    'agent_debate', 'agent_dispatch', 'ai_code_standards',
-    'ai_self_diagnosis', 'api_lifecycle',
-    'architecture_contracts', 'architecture_principles',
-    'bandwidth_optimizer', 'benchmark_integrity', 'broker_resilience',
-    'bus_factor_defense', 'code_review_ai',
-    'consequence_manager',
-    'constitutional_update',
-    'mcp_result_push', 'ResultPushManager', 'PushStatus',
-    'admission_response', 'AdmissionResponse', 'AdmissionResponseStatus', 'AdmissionResponseBuilder',
-    'context_manager', 'context_recycling', 'cross_env_consistency',
-    'data_classification',
-    'data_lifecycle', 'data_quality', 'data_source_reliability',
-    'decision_fatigue', 'decision_fatigue_cli',
-    'dependency_manager', 'environment_manager',
-    'fault_tolerance', 'financial_compliance', 'fsm_verifier',
-    'incident_response', 'incremental_review',
-    'knowledge_engine', 'local_first_arch', 'market_data_pipeline',
-    'microstructure_defense', 'migration_strategy',
-    'model_drift_monitor', 'multi_model_consensus', 'observability_dashboard',
-    'offline_autonomy', 'offline_resilience', 'oms_risk_engine',
-    'ops_foundation', 'paper_live_transition', 'path_resolver', 'performance_baseline',
-    'phase_manager', 'PathResolution', 'PathResolver', 'ConstitutionalAutoUpdate', 'Learning', 'ProposedUpdate',
-    'HookResult', 'HookStrategy', 'PipelineResult', 'PostProcessHook', 'PostProcessPipeline',
-    'format_hook', 'lint_hook', 'typecheck_hook',
-    'post_live_verification', 'prompt_lifecycle',
-    'provenance_tracker', 'realtime_streaming', 'regime_detector',
-    'session_concurrency', 'spof_checker',
-    'startup_shutdown', 'startup_shutdown_cli', 'strategy_portfolio',
-    'supply_chain_security', 'system_topology', 'vibe_coding_enforcer',
-    'escalation_protocol',
-    'budget_enforcer_mod',
-    'drift_detector_mod',
-    'rollback_mod',
-    'a2a_protocol',
-    'phase_check_registry',
-    'post_process',
+    "AdmissionResponse",
+    "AdmissionResponseBuilder",
+    "AdmissionResponseStatus",
     "AgentSigner",
     "AkshareProvider",
-    "FactorMeta",
+    "AssetType",
+    "BlameRecord",
     "BlindSpotStatus",
     "CanaryFile",
     "ChangeImpact",
     "Classifier",
-    "main",
-    "BlameRecord",
     "ComplexityReport",
     "ComplianceFramework",
+    "ConstitutionalAutoUpdate",
     "ConstructionVerifier",
     "CorporateActionType",
+    "DORATargets",
     "Dashboard",
     "DatabaseService",
     "DependencyNode",
-    "RetryResult",
-    "DORATargets",
-    "FeedbackNode",
-    "IngestResult",
-    "PrioritizedFixResult",
-    "GateEventAdapter",
-    "GlossaryEntry",
-    "IndexGenerator",
-    "KBWriteCheckResult",
-    "Lifecycle",
-    "RiskLevel",
-    "GitCommitInfo",
-    "AssetType",
-    "Momentum20d",
-    "PhaseStatus",
     "ExperimentConfig",
+    "FactorMeta",
+    "FeedbackNode",
+    "GateEventAdapter",
+    "GitCommitInfo",
+    "GlossaryEntry",
+    "HookResult",
+    "HookStrategy",
+    "IndexGenerator",
+    "IngestResult",
+    "KBWriteCheckResult",
+    "Learning",
+    "LicenseType",
+    "Lifecycle",
+    "Momentum20d",
     "PIICategory",
+    "PackageRecord",
+    "PathResolution",
+    "PathResolver",
+    "PhaseStatus",
+    "PipelineResult",
+    "PoolLevel",
+    "PostProcessHook",
+    "PostProcessPipeline",
+    "PrioritizedFixResult",
+    "ProposedUpdate",
+    "PushStatus",
     "Reconciler",
     "RegistryParseError",
-    "LicenseType",
-    "SelfHealError",
+    "ResultPushManager",
+    "RetryResult",
+    "RiskLevel",
     "SLIResult",
+    "SelfHealError",
     "SnapshotError",
-    "record_agent_spec",
-    "PackageRecord",
-    "PoolLevel",
     "TrustLevel",
     "WQAScore",
+    "a2a_protocol",
+    "admission_response",
+    "agent_debate",
+    "agent_dispatch",
+    "ai_code_standards",
+    "ai_self_diagnosis",
+    "api_lifecycle",
+    "architecture_contracts",
+    "architecture_principles",
+    "bandwidth_optimizer",
+    "benchmark_integrity",
+    "broker_resilience",
+    "budget_enforcer_mod",
+    "bus_factor_defense",
+    "code_review_ai",
+    "consequence_manager",
+    "constitutional_update",
+    "context_manager",
+    "context_recycling",
+    "cross_env_consistency",
+    "data_classification",
+    "data_lifecycle",
+    "data_quality",
+    "data_source_reliability",
+    "decision_fatigue",
+    "decision_fatigue_cli",
+    "dependency_manager",
+    "drift_detector_mod",
+    "environment_manager",
+    "escalation_protocol",
+    "fault_tolerance",
+    "financial_compliance",
+    "format_hook",
+    "fsm_verifier",
+    "incident_response",
+    "incremental_review",
+    "knowledge_engine",
+    "lint_hook",
+    "local_first_arch",
+    "main",
+    "market_data_pipeline",
+    "mcp_result_push",
+    "microstructure_defense",
+    "migration_strategy",
+    "model_drift_monitor",
+    "multi_model_consensus",
+    "observability_dashboard",
+    "offline_autonomy",
+    "offline_resilience",
+    "oms_risk_engine",
+    "ops_foundation",
+    "paper_live_transition",
+    "path_resolver",
+    "performance_baseline",
+    "phase_check_registry",
+    "phase_manager",
+    "post_live_verification",
+    "post_process",
+    "prompt_lifecycle",
+    "provenance_tracker",
+    "realtime_streaming",
+    "record_agent_spec",
+    "regime_detector",
+    "rollback_mod",
+    "session_concurrency",
+    "spof_checker",
+    "startup_shutdown",
+    "startup_shutdown_cli",
+    "strategy_portfolio",
+    "supply_chain_security",
+    "system_topology",
+    "typecheck_hook",
+    "vibe_coding_enforcer",
 ]
 
 __version__ = "0.2.0"

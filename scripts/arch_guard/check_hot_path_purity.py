@@ -6,6 +6,7 @@ check_hot_path_purity.py — INV-012 Hot 路径 Python 禁 asyncio（配置驱�
 
 exit: 0=pass, 1=fail
 """
+
 from __future__ import annotations
 
 import sys

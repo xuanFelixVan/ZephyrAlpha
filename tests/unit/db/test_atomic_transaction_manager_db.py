@@ -223,12 +223,11 @@ class TestTransactionRollback:
     def test_rollback_on_exception(self, atm, tmp_path):
         docs_dir = tmp_path / "docs"
         docs_dir.mkdir()
-        with pytest.raises(RuntimeError):
-            with atm.transaction() as tx:
-                tx.execute("CREATE TABLE rb_test (id INTEGER)")
-                tx.execute("INSERT INTO rb_test VALUES (1)")
-                tx.write_file("docs/rb_test.md", "should not persist")
-                raise RuntimeError("force rollback")
+        with pytest.raises(RuntimeError), atm.transaction() as tx:
+            tx.execute("CREATE TABLE rb_test (id INTEGER)")
+            tx.execute("INSERT INTO rb_test VALUES (1)")
+            tx.write_file("docs/rb_test.md", "should not persist")
+            raise RuntimeError("force rollback")
         conn = sqlite3.connect(str(atm.db_path))
         tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rb_test'").fetchall()
         conn.close()
@@ -237,10 +236,9 @@ class TestTransactionRollback:
     def test_rollback_cleans_tmp_files(self, atm, tmp_path):
         docs_dir = tmp_path / "docs"
         docs_dir.mkdir()
-        with pytest.raises(RuntimeError):
-            with atm.transaction() as tx:
-                tx.write_file("docs/tmp_clean.md", "temp")
-                raise RuntimeError("force rollback")
+        with pytest.raises(RuntimeError), atm.transaction() as tx:
+            tx.write_file("docs/tmp_clean.md", "temp")
+            raise RuntimeError("force rollback")
         tmp_files = list(docs_dir.glob("*.atm-*.tmp"))
         assert tmp_files == []
 
@@ -249,19 +247,17 @@ class TestTransactionRollback:
         docs_dir.mkdir()
         target = docs_dir / "restore.md"
         target.write_text("original", encoding="utf-8")
-        with pytest.raises(RuntimeError):
-            with atm.transaction() as tx:
-                tx.write_file("docs/restore.md", "overwritten")
-                raise RuntimeError("force rollback")
+        with pytest.raises(RuntimeError), atm.transaction() as tx:
+            tx.write_file("docs/restore.md", "overwritten")
+            raise RuntimeError("force rollback")
         assert target.read_text(encoding="utf-8") == "original"
 
 
 class TestNestedTransactionForbidden:
     def test_nested_raises_error(self, atm):
-        with atm.transaction() as tx1:
-            with pytest.raises(TransactionError, match="nested"):
-                with atm.transaction() as tx2:
-                    pass
+        with atm.transaction() as tx1, pytest.raises(TransactionError, match="nested"):
+            with atm.transaction() as tx2:
+                pass
 
 
 class TestPostCommitOperationsForbidden:

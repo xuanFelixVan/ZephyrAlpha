@@ -25,9 +25,7 @@ class TestSelfModificationRateLimiterInstantiation:
         assert obj.refill_rate_per_hour == 10
 
     def test_custom_params(self):
-        obj = SelfModificationRateLimiter(
-            max_burst=3, refill_rate_per_hour=20, blocked_count=0, total_requests=0
-        )
+        obj = SelfModificationRateLimiter(max_burst=3, refill_rate_per_hour=20, blocked_count=0, total_requests=0)
         assert obj.max_burst == 3
         assert obj.refill_rate_per_hour == 20
 

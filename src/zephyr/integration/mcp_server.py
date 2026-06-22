@@ -31,7 +31,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -42,12 +42,13 @@ SCAN_PATH = ROOT / "data" / "scans" / "raw-asset-scan.json"
 
 try:
     import yaml
+
     _HAS_YAML = True
 except ImportError:
     _HAS_YAML = False
 
 
-def _load_index() -> Optional[dict[str, Any]]:
+def _load_index() -> dict[str, Any] | None:
     if not INDEX_PATH.exists():
         return None
     if _HAS_YAML:
@@ -55,7 +56,7 @@ def _load_index() -> Optional[dict[str, Any]]:
     return None
 
 
-def _load_dashboard() -> Optional[dict[str, Any]]:
+def _load_dashboard() -> dict[str, Any] | None:
     if not DASHBOARD_PATH.exists():
         return None
     return json.loads(DASHBOARD_PATH.read_text(encoding="utf-8"))
@@ -66,16 +67,20 @@ def get_asset_summary() -> str:
     if not index:
         return json.dumps({"error": "unified-asset-index.yaml not found — run index_generator first"})
 
-    return json.dumps({
-        "total_assets": index.get("total_assets"),
-        "health_score": index.get("health_score"),
-        "orphan_rate_pct": index.get("orphan_rate_pct"),
-        "ghost_rate_pct": index.get("ghost_rate_pct"),
-        "drift_rate_pct": index.get("drift_rate_pct"),
-        "by_type": index.get("by_type"),
-        "by_layer": index.get("by_layer"),
-        "by_status": index.get("by_status"),
-    }, ensure_ascii=False, indent=2)
+    return json.dumps(
+        {
+            "total_assets": index.get("total_assets"),
+            "health_score": index.get("health_score"),
+            "orphan_rate_pct": index.get("orphan_rate_pct"),
+            "ghost_rate_pct": index.get("ghost_rate_pct"),
+            "drift_rate_pct": index.get("drift_rate_pct"),
+            "by_type": index.get("by_type"),
+            "by_layer": index.get("by_layer"),
+            "by_status": index.get("by_status"),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
 
 
 def get_asset_detail(path: str) -> str:
@@ -94,10 +99,7 @@ def search_asset_by_type(asset_type: str, limit: int = 50) -> str:
     if not index:
         return json.dumps({"error": "index not found"})
 
-    matches = [
-        a for a in index.get("assets", [])
-        if isinstance(a, dict) and a.get("asset_type") == asset_type
-    ][:limit]
+    matches = [a for a in index.get("assets", []) if isinstance(a, dict) and a.get("asset_type") == asset_type][:limit]
     return json.dumps(matches, ensure_ascii=False, indent=2)
 
 
@@ -106,10 +108,7 @@ def search_asset_by_tag(tag: str, limit: int = 50) -> str:
     if not index:
         return json.dumps({"error": "index not found"})
 
-    matches = [
-        a for a in index.get("assets", [])
-        if isinstance(a, dict) and tag in a.get("tags", [])
-    ][:limit]
+    matches = [a for a in index.get("assets", []) if isinstance(a, dict) and tag in a.get("tags", [])][:limit]
     return json.dumps(matches, ensure_ascii=False, indent=2)
 
 
@@ -118,10 +117,7 @@ def search_asset_by_layer(layer: str, limit: int = 50) -> str:
     if not index:
         return json.dumps({"error": "index not found"})
 
-    matches = [
-        a for a in index.get("assets", [])
-        if isinstance(a, dict) and a.get("layer") == layer
-    ][:limit]
+    matches = [a for a in index.get("assets", []) if isinstance(a, dict) and a.get("layer") == layer][:limit]
     return json.dumps(matches, ensure_ascii=False, indent=2)
 
 
@@ -235,14 +231,8 @@ def dispatch_tool(name: str, **kwargs: str) -> str:
 
 
 def list_tools() -> list[dict[str, str]]:
-    return [
-        {"name": k, "description": v["description"]}
-        for k, v in MCP_TOOLS.items()
-    ]
+    return [{"name": k, "description": v["description"]} for k, v in MCP_TOOLS.items()]
 
 
 def list_resources() -> list[dict[str, str]]:
-    return [
-        {"name": k, "description": v["description"], "path": v["path"]}
-        for k, v in MCP_RESOURCES.items()
-    ]
+    return [{"name": k, "description": v["description"], "path": v["path"]} for k, v in MCP_RESOURCES.items()]

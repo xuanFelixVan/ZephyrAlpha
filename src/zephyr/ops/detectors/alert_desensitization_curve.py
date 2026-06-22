@@ -33,7 +33,6 @@ auto-escalate to alternate channel or increase severity.
 
 from __future__ import annotations
 
-import time
 from dataclasses import dataclass, field
 
 
@@ -58,7 +57,7 @@ class AlertDesensitizationCurve:
 
     def get_desensitization(self, alert_type: str) -> float:
         n = self.alert_exposures.get(alert_type, 0)
-        p = 1.0 * (self.decay_lambda ** n)
+        p = 1.0 * (self.decay_lambda**n)
         return max(0.0, min(1.0, p))
 
     def get_response_rate(self, alert_type: str) -> float:

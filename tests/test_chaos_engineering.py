@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_chaos_engineering.py
 
-import pytest
 from zephyr.ops.detectors.chaos_engineering import ChaosEngineering
 
 

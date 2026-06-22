@@ -12,11 +12,10 @@
 
 from __future__ import annotations
 
-import pytest
-from unittest.mock import patch, MagicMock
 from dataclasses import dataclass
+from unittest.mock import patch
 
-from zephyr.autonomy_core.skill_feedback import SkillFeedback, FeedbackSignal
+from zephyr.autonomy_core.skill_feedback import FeedbackSignal, SkillFeedback
 
 
 @dataclass
@@ -66,9 +65,14 @@ class TestFeedbackSignalInstantiation:
 
     def test_default_timestamp(self):
         sig = FeedbackSignal(
-            skill_id="S", module_id="M", task_id="T",
-            success=True, error_count=0, latency_ms=0,
-            tokens_used=0, cost_usd=0.0,
+            skill_id="S",
+            module_id="M",
+            task_id="T",
+            success=True,
+            error_count=0,
+            latency_ms=0,
+            tokens_used=0,
+            cost_usd=0.0,
         )
         assert sig.timestamp > 0
 
@@ -206,12 +210,16 @@ class TestStats:
                     with patch.object(sf, "_append_signal_to_log"):
                         sf.record_module_result(
                             "SKILL-STAT",
-                            FakeModuleResult(status="SUCCESS", raw_output={"latency_ms": 100, "cost_usd": 0.01, "tokens_used": 50}),
+                            FakeModuleResult(
+                                status="SUCCESS", raw_output={"latency_ms": 100, "cost_usd": 0.01, "tokens_used": 50}
+                            ),
                             "T1",
                         )
                         sf.record_module_result(
                             "SKILL-STAT",
-                            FakeModuleResult(status="FAILURE", raw_output={"latency_ms": 200, "cost_usd": 0.02, "tokens_used": 100}),
+                            FakeModuleResult(
+                                status="FAILURE", raw_output={"latency_ms": 200, "cost_usd": 0.02, "tokens_used": 100}
+                            ),
                             "T2",
                         )
         stats = sf.stats("SKILL-STAT")

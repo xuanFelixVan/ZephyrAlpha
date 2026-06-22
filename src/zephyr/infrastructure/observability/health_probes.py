@@ -1,10 +1,9 @@
 # [A_module] module_id=MOD-INF_health_probes | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CT-TEL-004 ====
 from dataclasses import dataclass, field
-
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
-from typing import Dict
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -26,8 +25,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass
 class TelemetryHealth:
@@ -36,182 +36,8 @@ class TelemetryHealth:
     module_id: str
     probe_type: str
     status: str
-    details: Dict[str, Any] = field(default_factory=dict)
+    details: dict[str, Any] = field(default_factory=dict)
     schema_version: str = "1.0"
 
+
 # ==== END CODGEN:CT-TEL-004 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.native_api_guard import NativeApiGuard, BLOCKED_NATIVE_APIS
+    from zephyr.security.access_control.native_api_guard import BLOCKED_NATIVE_APIS, NativeApiGuard
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -26,7 +28,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestNativeApiGuard:
-
     def setup_method(self):
         self.guard = NativeApiGuard()
 

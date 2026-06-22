@@ -19,14 +19,16 @@
 
 # [TESTS] pytest tests/test_utils_time_utils.py -q
 
-import pytest
 from datetime import UTC, datetime, timedelta
+
+import pytest
+
 from zephyr.integration.shared_08.time_utils import (
-    now_utc,
-    now_iso,
-    freeze_time,
-    parse_iso,
     format_iso,
+    freeze_time,
+    now_iso,
+    now_utc,
+    parse_iso,
     seconds_since,
     seconds_until,
 )

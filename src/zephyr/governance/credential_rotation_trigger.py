@@ -29,12 +29,11 @@ CredentialRotationTrigger — 凭据自动轮替。
 若检测到凭据泄露 → exit 43 (CREDENTIAL_LEAK_DETECTED)。
 """
 
-
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -52,14 +51,13 @@ class CredentialScanResult:
 CREDENTIAL_PATTERNS: list[tuple[str, str]] = [
     ("API_KEY", r'(?:api[_-]?key|apikey)\s*[=:]\s*[\'"][^\'"]{8,}[\'"]'),
     ("TOKEN", r'(?:token|secret|password)\s*[=:]\s*[\'"][^\'"]{8,}[\'"]'),
-    ("AWS_KEY", r'AKIA[0-9A-Z]{16}'),
+    ("AWS_KEY", r"AKIA[0-9A-Z]{16}"),
     ("GITHUB_TOKEN", r'(?:gh[pousr]_[a-zA-Z0-9]{36}|github[_-]?token\s*[=:]\s*[\'"][^\'"]+[\'"])'),
-    ("PRIVATE_KEY_HEADER", r'-----BEGIN (?:RSA|EC|DSA|OPENSSH) PRIVATE KEY-----'),
+    ("PRIVATE_KEY_HEADER", r"-----BEGIN (?:RSA|EC|DSA|OPENSSH) PRIVATE KEY-----"),
 ]
 
 
 class CredentialRotationTrigger:
-
     EXIT_CODE_CREDENTIAL_LEAK: int = 43
     SENSITIVE_FILES: list[str] = [".env", ".env.local", "config.yaml", "config.yml", "settings.py", "secrets.yaml"]
 
@@ -104,6 +102,6 @@ class CredentialRotationTrigger:
         return {
             "action": "CREDENTIAL_ROTATION_REQUIRED",
             "reason": reason,
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "instructions": "Manually rotate all detected credentials. Do NOT commit old values.",
         }

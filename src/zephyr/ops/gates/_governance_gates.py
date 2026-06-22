@@ -11,13 +11,13 @@
 # [TESTS] python -c "import zephyr.ops.gates"
 
 SUBMODULES = [
-    'autonomy_credit',
-    'autonomy_maturity',
-    'blueprint_code_reconciler',
-    'blueprint_validator',
-    'checkpoint_manager',
-    'config_complexity_budget',
-    'config_governance',
-    'conflict_arbitration',
-    'scope_creep_monitor',
+    "autonomy_credit",
+    "autonomy_maturity",
+    "blueprint_code_reconciler",
+    "blueprint_validator",
+    "checkpoint_manager",
+    "config_complexity_budget",
+    "config_governance",
+    "conflict_arbitration",
+    "scope_creep_monitor",
 ]

@@ -29,7 +29,7 @@ slis:
       enabled: true
       insert_timing: true
       correction_latency: true
-      
+
   - id: CAP-002
     name: "容量 SLO 达标率"
     metric: "capacity_slo_attainment_ratio"

@@ -43,7 +43,6 @@ class AutoPilot:
     @property
     def repo(self):
         if self._repo is None:
-            from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
             from zephyr.governance.persistence.task_repo import TaskRepository
 
             self._repo = TaskRepository(self._db_path, enable_gate=False)
@@ -68,7 +67,12 @@ class AutoPilot:
             bid = task_batch_map.get(t.task_id, "__no_batch__")
             grouped.setdefault(bid, []).append(t)
         for batch_tasks in grouped.values():
-            batch_tasks.sort(key=lambda t: (t.priority.value if hasattr(t.priority, "value") else str(t.priority), t.created_at.isoformat() if t.created_at else ""))
+            batch_tasks.sort(
+                key=lambda t: (
+                    t.priority.value if hasattr(t.priority, "value") else str(t.priority),
+                    t.created_at.isoformat() if t.created_at else "",
+                )
+            )
         return grouped
 
     def status_report(self) -> str:

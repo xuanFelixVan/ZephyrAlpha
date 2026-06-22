@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_health_check
-
 # [INVARIANTS] MUST检测所有关键组件;unhealthy MUST阻止新修复
-
 # [MODIFY-GUARD] blueprint.md §3
-
 # [CONSUMERS] engine.py;__main__.py
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] HealthCheckError
-
 # [TESTS] tests/auto-fix-engine/test_fix_health_check.py
-
 import logging
 import sqlite3
 from pathlib import Path
@@ -29,6 +19,7 @@ from typing import Any
 from zephyr.security.access_control.auto_fix_engine_03.models import FixHealthReport
 
 logger = logging.getLogger(__name__)
+
 
 class FixHealthCheck:
     def __init__(self, db_path: str = "data/databases/governance.db") -> None:

@@ -11,12 +11,13 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.path_guard import PathGuard, FORBIDDEN_PATHS, ALLOWED_ROOTS
+    from zephyr.security.access_control.path_guard import ALLOWED_ROOTS, FORBIDDEN_PATHS, PathGuard
 except Exception as _exc:
     pytest.skip(f"无法导入 path_guard: {_exc}", allow_module_level=True)
 

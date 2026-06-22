@@ -6,10 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """shared.foundation — auto-generated package init."""
 
-__all__ = ['constants', 'deprecation', 'env', 'errors', 'flags', 'types']
-
+__all__ = ["constants", "deprecation", "env", "errors", "flags", "types"]

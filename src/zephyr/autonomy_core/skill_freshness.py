@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_freshness
+# [MODULE] zephyr.autonomy_core.skill_freshness
 
 # [INVARIANTS] none
 
@@ -30,11 +30,12 @@ Version: 0.3.0
 """
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 _HISTORY = Path(__file__).resolve().parent / "_freshness.json"
+
 
 class FreshnessDecayModel:
     HOURS_TO_ZERO = 720
@@ -45,35 +46,39 @@ class FreshnessDecayModel:
     def compute(cls, validated_at: str) -> float:
         try:
             t = datetime.fromisoformat(validated_at)
-            elapsed = (datetime.now(timezone.utc) - t).total_seconds() / 3600
+            elapsed = (datetime.now(UTC) - t).total_seconds() / 3600
             return max(0.0, 100.0 - (elapsed / cls.HOURS_TO_ZERO) * 100.0)
         except (ValueError, TypeError):
             return 0.0
 
-    def current_state(self, skill_id: str) -> Dict[str, Any]:
+    def current_state(self, skill_id: str) -> dict[str, Any]:
         data = self._load()
         entry = data.get(skill_id)
         if entry:
             score = self.compute(entry.get("last_validated", ""))
-            return {"skill_id": skill_id, "freshness_score": round(score, 1),
-                    "last_validated": entry["last_validated"], "registered": True}
+            return {
+                "skill_id": skill_id,
+                "freshness_score": round(score, 1),
+                "last_validated": entry["last_validated"],
+                "registered": True,
+            }
         return {"skill_id": skill_id, "freshness_score": 50.0, "registered": False}
 
     def boost(self, skill_id: str, amount: float = 50.0):
         data = self._load()
-        data[skill_id] = {"last_validated": datetime.now(timezone.utc).isoformat(), "boost": amount}
+        data[skill_id] = {"last_validated": datetime.now(UTC).isoformat(), "boost": amount}
         self._save(data)
 
-    def _load(self) -> Dict:
+    def _load(self) -> dict:
         if _HISTORY.exists():
             try:
                 return json.loads(_HISTORY.read_text(encoding="utf-8"))
-            except (json.JSONDecodeError, IOError):
+            except (OSError, json.JSONDecodeError):
                 pass
         return {}
 
-    def _save(self, data: Dict):
+    def _save(self, data: dict):
         try:
             _HISTORY.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        except IOError:
+        except OSError:
             pass

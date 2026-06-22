@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.verifiers.cross_session_knowledge_integrity import (
     CrossSessionKnowledgeIntegrity,
     SessionAnchor,

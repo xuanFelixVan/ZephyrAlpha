@@ -31,7 +31,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -120,5 +120,7 @@ def main() -> int:
         return EXIT_FINDINGS
     print(f"OK: BvB 五维评分合规 — {checked} 个技术条目全部通过")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

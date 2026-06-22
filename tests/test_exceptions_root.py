@@ -11,6 +11,7 @@
 # [TESTS] pytest tests/test_exceptions.py -q
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest

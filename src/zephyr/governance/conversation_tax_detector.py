@@ -2,28 +2,18 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.conversation_tax_detector
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
 from dataclasses import dataclass, field
-from collections import defaultdict
+
 
 @dataclass
 class TaxAssessment:
@@ -35,6 +25,7 @@ class TaxAssessment:
     should_terminate: bool
     recommendation: str
     timestamp: float = field(default_factory=time.time)
+
 
 class ConversationTaxDetector:
     def __init__(self, drift_window: int = 10, decay_threshold: float = 0.6):
@@ -94,9 +85,9 @@ class ConversationTaxDetector:
         older = self._topic_embeddings[: self._drift_window // 2]
         if not recent or not older:
             return 0.0
-        recent_avg = tuple(sum(c) / len(c) for c in zip(*recent))
-        older_avg = tuple(sum(c) / len(c) for c in zip(*older))
-        diff = sum((a - b) ** 2 for a, b in zip(recent_avg, older_avg)) ** 0.5
+        recent_avg = tuple(sum(c) / len(c) for c in zip(*recent, strict=False))
+        older_avg = tuple(sum(c) / len(c) for c in zip(*older, strict=False))
+        diff = sum((a - b) ** 2 for a, b in zip(recent_avg, older_avg, strict=False)) ** 0.5
         return min(diff, 1.0)
 
     def _compute_efficiency_decay(self) -> float:

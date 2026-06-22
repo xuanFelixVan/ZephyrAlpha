@@ -22,9 +22,10 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixStatus
 

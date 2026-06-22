@@ -1,0 +1,740 @@
+rule_id: TRAE-056
+title: 操作-模块/蓝图/代码创建完整工作流程
+version: 2.0.0
+layer: L1
+module_id: TRAE-056
+depends_on:
+  - target: TRAE-048
+    at: "ops_vc_005"
+    why: "Session冷启动门禁"
+  - target: TRAE-002
+    at: "RULE-EIGHT"
+    why: "创建前搜索先行"
+  - target: TRAE-035
+    at: "task_003_panorama_alignment"
+    why: "全景图设计态对齐"
+  - target: TRAE-005
+    at: "governance_construction STEP5"
+    why: "架构升级期depgraph保护"
+  - target: TRAE-032
+    at: "GOV-MOD-001"
+    why: "模块准入门控"
+  - target: TRAE-014
+    at: "ARCH-007~012"
+    why: "蓝图对齐"
+  - target: TRAE-001
+    at: "RULE-FOUR"
+    why: "文件创建入口"
+  - target: TRAE-015
+    at: "ARCH-013~018"
+    why: "路径注册"
+  - target: TRAE-028
+    at: "gov_doc_003_naming_ssot"
+    why: "命名唯一真源"
+  - target: TRAE-055
+    at: "arch_cap_001~007"
+    why: "容量架构对齐"
+  - target: TRAE-047
+    at: "GOV-ENG-002"
+    why: "文件头部锚定"
+  - target: TRAE-053
+    at: "rule_fifteen"
+    why: "自动化双轨判定"
+  - target: TRAE-037
+    at: "gov_arch_004"
+    why: "架构模式-事件驱动"
+  - target: TRAE-033
+    at: "MRS-001~003"
+    why: "多注册表同步"
+tags:
+- TRAE
+- module_creation_workflow
+- L1
+- operational
+- procedural
+- cold_start
+- design_state
+- event_driven
+- capacity_audit
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
+aliases:
+- OPS-WORKFLOW-001
+- CREATE-WORKFLOW-001
+severity: error
+scope: module_creation_workflow
+domain: TRAE
+rule_form: procedural
+triggers:
+- operation: create_module
+- operation: create_blueprint
+- operation: create_code_file
+- operation: create_gate
+- operation: session_cold_start
+
+sections:
+  workflow_overview:
+    section_type: context
+    title: 创建流程总览
+    description: |
+      本文档是模块/蓝图/代码创建的完整工作流程编排真源。
+      原规则文件是规则约束真源，本文档不重复规则约束，只编排流程步骤。
+      AI 读完本文档即可执行完整创建流程，关键命令内联，规则细节回溯原文件。
+    applies_to: 新建模块/蓝图/代码文件/门禁的完整创建流程 + Session冷启动
+    not_applies_to: 修改已有文件（走RULE-ZERO锁协议）、删除文件（走RULE-THREE三步审判）
+    ssot_boundary:
+      this_file: 工作流程编排（步骤序列+命令+通过条件+失败处置）
+      source_rules: 规则约束（禁止/必须/约束条件）
+      conflict_resolution: 规则约束以原文件为准，流程编排以本文档为准
+    phase_sequence:
+    - phase_0: Session冷启动（必看文件+守护进程）
+    - phase_1: 创建前搜索（证明没有才新建）
+    - phase_2: 设计态先行（全景图设计位置+依赖+启动方式）
+    - phase_3: 模块准入（四级筛选）
+    - phase_4: 蓝图创建（模板合规）
+    - phase_5: 文件创建（scaffold.py+锁协议）
+    - phase_6: 路径多维审查（名字+路径+上层文件夹+容量对齐）
+    - phase_7: 文件头部锚定（十一字段）
+    - phase_8: 启动方式设计（事件驱动+自动启动+自动结束）
+    - phase_9: 多注册表同步（MRS-001~003）
+    - phase_10: 三方对齐验证（蓝图↔代码↔路径树）
+
+  phase_0_cold_start:
+    section_type: procedure
+    title: 阶段0-Session冷启动
+    rule_ref:
+      rule_id: TRAE-048
+      section: ops_vc_005
+      alias: OPS-VC-005
+    purpose: AI进入项目第一件事——守护进程启动+必看文件加载
+    applies_when: 任何新Session开始时
+    non_negotiable: 非协商必做——守护进程未运行=禁止执行任何后续步骤
+    steps:
+    - order: 1
+      action: 守护进程启动
+      rule_ref: RULE-GUARDIAN
+      commands:
+      - "python scripts/lock_files.py cleanup"
+      - "python scripts/ide_health_service.py --status"
+      branch:
+        running_false: "python scripts/ide_health_service.py --start"
+        running_true: 继续
+      pass: 守护进程running=true
+      fail: 守护进程未运行 → 禁止执行任何后续步骤
+    - order: 2
+      action: 必看文件加载
+      mandatory_files:
+      - file: docs/registry_of_registries.yaml
+        purpose: 全项目48个注册表索引
+      - file: docs/03_modules/template_registry.yaml
+        purpose: 可用模板清单
+      - command: "python scripts/governance/extract_depgraph.py --summary"
+        purpose: 全景图架构全景+域+模块归属+capacity声明
+        note: 禁止直接Read depgraph.db——必须通过extract_depgraph.py查询
+      - command: "python scripts/governance/extract_depgraph.py --paths"
+        purpose: 文件级依赖关系（含设计态和运营态）
+      - file: docs/03_modules/_sys_master/blueprint.md
+        section: "§0"
+        purpose: 子系统任务域定位
+      - file: .trae/rules/project_rules.md
+        purpose: L0硬规则
+      pass: 所有必看文件已加载
+      fail: 任一未加载 → 补加载
+    - order: 3
+      action: Session Continuity恢复
+      check: 上一个session状态/未完成任务/锁状态
+      command: "python scripts/lock_files.py status"
+      pass: 状态恢复完成
+    - order: 4
+      action: Phase Manager检查
+      check: 当前施工阶段（46个门控检查）
+      pass: 当前阶段已确认
+    prohibitions:
+    - 禁止跳过STEP1守护进程启动直接执行写操作
+    - 禁止直接Read depgraph.db（必须通过extract_depgraph.py）
+    - 架构升级期间禁止运行generate_project_depgraph.py（会覆盖depgraph.db设计态）
+
+  phase_1_search:
+    section_type: procedure
+    title: 阶段1-创建前搜索
+    rule_ref:
+      rule_id: TRAE-002
+      section: rule_eight
+      alias: RULE-EIGHT
+    purpose: 证明"没有"才能新建，避免重复造轮子
+    steps:
+    - order: 1
+      action: 关键词全局搜索
+      command: "SearchCodebase + Grep（scripts/ + src/zephyr/ + tests/）"
+      pass: 确认无覆盖
+      fail: 找到覆盖 → 走步骤3复用决策
+    - order: 2
+      action: 注册表精确匹配
+      command: "读 docs/registry_of_registries.yaml → 对应 REG-* → 对照"
+      pass: 注册表无重复
+      fail: 注册表有重复 → 走步骤3复用决策
+    - order: 3
+      action: 复用决策
+      decision_table:
+      - coverage: 完全覆盖
+        action: 直接用
+        evidence: "[REUSE-DECISION] 放弃新建 <X>，因为已有 <Y> 完全覆盖"
+      - coverage: 80%覆盖
+        action: 扩展已有
+        evidence: "[REUSE-DECISION] 扩展 <Y>，覆盖新增 <Z>"
+      - coverage: 50%覆盖
+        action: 重构已有+扩展
+        evidence: "[REUSE-DECISION] 重构 <Y> + 扩展 <Z>"
+      - coverage: 完全不覆盖
+        action: 进阶段2
+        evidence: "[REUSE-DECISION] 新建 <X>，无已有覆盖"
+
+  phase_2_design_state:
+    section_type: procedure
+    title: 阶段2-设计态先行
+    rule_ref:
+      rule_id: TRAE-035
+      section: task_003_panorama_alignment
+      alias: TASK-003
+    purpose: 创建前先在全景图（depgraph.db）设计位置+依赖+启动方式
+    applies_when: 创建长期使用的代码/脚本/模块（非临时代码）
+    principle: 先设计后施工——设计态未完成禁止创建实体文件
+    steps:
+    - order: 1
+      action: 全景图设计态创建
+      rule_ref: TRAE-035 task_003_panorama_alignment
+      check: 在depgraph.db创建design_maturity=design的节点
+      required_fields:
+      - domain_id
+      - module_id
+      - path
+      - ssot_path
+      - layer_id
+      - max_modules
+      - build_status
+      - design_maturity
+      - can_build
+      - gate_reason
+      - hard_boundary_ref
+      pass: 设计态节点已创建
+      fail: 设计态未创建 → 禁止创建实体文件
+    - order: 2
+      action: 依赖关系设计
+      check: 设计所有依赖关系（上下游模块+被依赖方+依赖方）
+      pass: 依赖关系完整
+      fail: 依赖关系缺失 → 补设计
+    - order: 3
+      action: 启动方式设计
+      check: 设计启动方式（事件驱动/定时/双轨）
+      pass: 启动方式已设计
+      fail: 启动方式未设计 → 补设计（详见阶段8）
+    - order: 4
+      action: 路径预审查
+      check: 路径符合7区域设计+容量架构对齐
+      pass: 路径预审通过
+      fail: 路径预审失败 → 调整路径
+    - order: 5
+      action: 设计态升级运营态（文件创建后）
+      check: 实体文件创建后更新depgraph.db将design_maturity从design升级为production
+      pass: 设计态已升级为运营态
+      fail: 升级失败 → 修复
+    prohibitions:
+    - 禁止跳过设计态直接创建实体文件
+    - 架构升级期间禁止运行generate_project_depgraph.py（会覆盖depgraph.db设计态）
+    - 禁止直接SQL写入depgraph.db——使用apply_depgraph.py --add-design-node
+
+  phase_3_admission:
+    section_type: procedure
+    title: 阶段3-模块准入
+    rule_ref:
+      rule_id: TRAE-032
+      section: mod_001
+      alias: GOV-MOD-001
+    purpose: 四级筛选确保模块有明确归属和合规依赖
+    applies_when: 创建新模块（非脚本/非门禁）
+    steps:
+    - order: 1
+      action: MAD-001层归属检查
+      check: 模块有明确层归属
+      pass: 层归属明确无冲突
+      fail: 无层归属/模糊/冲突 → 拒绝注入
+    - order: 2
+      action: MAD-002 Phase相关性
+      check: 模块在当前Phase P0/P1优先级列表中
+      pass: 在当前Phase范围
+      fail: 不在范围 → 延迟注入
+    - order: 3
+      action: MAD-003依赖关系合规
+      check: 依赖链无循环/无引用不存在的依赖
+      pass: 依赖合规
+      fail: 循环/缺失依赖 → 拒绝注入
+    - order: 4
+      action: MAD-004接口来源
+      check: 接口来源于已有文档或Owner明确说明
+      pass: 接口来源明确
+      fail: AI推测 → 暂停等待Owner确认
+    - order: 5
+      action: MAD-005 P0额外条件
+      applies_when: 仅P0模块
+      check: 接口契约frozen + 已关联KB决策记录 + 已分配runtime_plane
+      pass: P0条件满足
+      fail: 任一未满足 → 拒绝注入
+    - order: 6
+      action: 准入记录写入
+      command: "写入 module-id-registry.json admission_records 数组"
+      pass: 记录写入成功
+
+  phase_4_blueprint:
+    section_type: procedure
+    title: 阶段4-蓝图创建
+    rule_ref:
+      rule_id: TRAE-014
+      section: arch_011
+      alias: ARCH-011
+    purpose: 蓝图是模块的设计真源，必须先于代码创建
+    applies_when: 创建新模块（脚本/门禁可跳过）
+    steps:
+    - order: 1
+      action: 遵循蓝图模板
+      template: docs/01_policies_and_standards/templates/blueprint_construction_template.md
+      pass: 蓝图结构合规
+      fail: 结构不合规 → 重新按模板创建
+    - order: 2
+      action: frontmatter必含belongs_to字段
+      rule_ref: ARCH-011
+      pass: belongs_to字段存在
+      fail: 缺失 → 补充
+    - order: 3
+      action: §4文件清单完整性
+      rule_ref: ARCH-008
+      check: §4列出覆盖范围内所有已实现代码的完整路径
+      pass: 文件清单完整
+      fail: 不完整 → 补全
+    - order: 4
+      action: 蓝图注册
+      command: "注册到 blueprint-registry.yaml"
+      pass: 注册成功
+
+  phase_5_file_creation:
+    section_type: procedure
+    title: 阶段5-文件创建
+    rule_ref:
+      rule_id: TRAE-001
+      section: rule_four
+      alias: RULE-FOUR
+    purpose: scaffold.py是唯一创建入口，绕过=孤儿
+    steps:
+    - order: 1
+      action: 锁协议-获取锁
+      rule_ref: RULE-ZERO
+      command: "python scripts/lock_files.py acquire <file> <session_id> --task '简述'"
+      pass: ACQUIRED
+      fail: LOCKED → 报告用户文件被 <owner> 锁定 → 等待或选择其他文件
+    - order: 2
+      action: scaffold.py创建文件
+      rule_ref: RULE-FOUR
+      commands:
+        module: "python scripts/scaffold.py module <pkg> <name>"
+        script: "python scripts/scaffold.py script <path>"
+        gate: "python scripts/scaffold.py gate <id>"
+      registration:
+        module: "自动注册到 <pkg>/__init__.py __all__"
+        script: "自动注册到 scripts/script-manifest.yaml"
+        gate: "自动注册到 governance/rule_enforcement/_registry.yaml"
+      pass: 文件创建+注册成功
+      fail: 创建失败 → 释放锁 → 修复 → 重试
+    - order: 3
+      action: 锁协议-释放锁
+      command: "python scripts/lock_files.py release <file> <session_id>"
+      pass: RELEASED
+      fail: 释放失败 → 运行 cleanup
+
+  phase_6_path_audit:
+    section_type: procedure
+    title: 阶段6-路径多维审查
+    rule_ref:
+      rule_id: TRAE-015
+      section: arch_013
+      alias: ARCH-013
+    purpose: 确保文件不乱放——名字+路径+上层文件夹+容量架构多维审查
+    principle: 反复审查——创建者自审+门禁校验双重保障
+    steps:
+    - order: 1
+      action: 路径合规审查
+      rule_ref: ARCH-013 + TRAE-028 doc_004
+      check: 路径符合21种文件类型唯一强制路径
+      path_mapping:
+        governance_doc: "docs/01_policies_and_standards/"
+        business_code: "src/zephyr/{layer_id}/"
+        governance_script: "scripts/governance/"
+        rule_file: "docs/01_policies_and_standards/rules/"
+      pass: 路径合规
+      fail: 路径违规 → 调整路径
+    - order: 2
+      action: 目录结构审查
+      rule_ref: ARCH-016
+      check: 目录结构符合项目规范
+      rules:
+        level_0_1: "用_前缀（_system_master/、_domain_{layer_range}/）"
+        level_2: "用层级编号（l{NN}_{name}/）"
+      pass: 目录结构合规
+      fail: 目录结构违规 → 调整
+    - order: 3
+      action: 平行域原则审查
+      rule_ref: ARCH-CAP-004
+      check: ssot_path平铺到src/zephyr/{domain_snake_case}/，禁止域根目录下再套同名子目录
+      pass: 平行域原则合规
+      fail: 违反FP-5最小嵌套 → 调整路径
+    - order: 4
+      action: 文件名审查
+      rule_ref: TRAE-028 gov_doc_003_naming_ssot
+      check: 文件名全小写snake_case
+      rules:
+        file_name: "全小写snake_case；禁止kebab-case/大写/版本号后缀/日期后缀"
+        exception: "AGENTS.md白名单除外"
+      pass: 文件名合规
+      fail: 文件名违规 → 重命名
+    - order: 5
+      action: 目录名审查
+      rule_ref: TRAE-028 gov_doc_003_naming_ssot
+      check: 目录名单词或snake_case
+      rules:
+        domain_dir: "域英文名snake_case"
+        prohibition: "禁止kebab-case/大写/驼峰/数字前缀（非层编号）"
+      pass: 目录名合规
+      fail: 目录名违规 → 重命名
+    - order: 6
+      action: 上层文件夹名字审查
+      rule_ref: TRAE-028 gov_doc_003_folder_decision_tree
+      check: 整个路径的文件夹名字合规
+      decision_tree:
+        step_1: "对应功能域 → 域英文名snake_case"
+        step_2: "一个词够 → 单词"
+        step_3: "不够 → snake_case"
+      pass: 上层文件夹名字合规
+      fail: 文件夹名字违规 → 重命名
+    - order: 7
+      action: 容量架构对齐审查
+      rule_ref: ARCH-CAP-001~007
+      check: 目标域容量未超上限
+      capacity_limits:
+        safe: "80-150（默认安全区间）"
+        caution: "150-200（高度耦合放宽，需KB决策记录）"
+        hard_limit: ">200（硬上限，必须拆分）"
+      command: "python scripts/governance/extract_depgraph.py --summary"
+      pass: 容量未超上限
+      fail: 容量超上限 → 必须拆分或换域
+    - order: 8
+      action: import路径一致性审查
+      rule_ref: ARCH-018
+      check: import路径与物理路径一致
+      pass: 路径一致
+      fail: 路径不一致 → 更新import
+    - order: 9
+      action: 刷新路径树+命名校验
+      commands:
+      - "python scripts/governance/generate_project_path_tree.py --write"
+      - "python scripts/governance/d3_metadata/check_naming_convention.py"
+      pass: 路径树更新+命名校验通过
+      fail: 校验失败 → 修复
+    prohibitions:
+    - 禁止乱放文件——必须按21种文件类型唯一强制路径
+    - 禁止跳过容量架构对齐审查
+    - 禁止只审查文件名不审查上层文件夹名字
+
+  phase_7_header_anchoring:
+    section_type: procedure
+    title: 阶段7-文件头部锚定
+    rule_ref:
+      rule_id: TRAE-047
+      section: gov_eng_002
+      alias: GOV-ENG-002
+    purpose: 防幻觉/防漂移的文件头部十一字段
+    applies_when: 创建.py文件（脚本/模块）
+    steps:
+    - order: 1
+      action: 添加A_full头部（十字段）
+      format: "A_full(.py十字段注释头部)"
+      fields:
+      - BLUEPRINT: "{module_id} | {path} | §{N}"
+      - MODULE: "{full.module.path}"
+      - INVARIANTS: "分号分隔"
+      - MODIFY-GUARD: "分号分隔"
+      - CONSUMERS: "分号分隔"
+      - STABILITY: "frozen/stable/evolving/volatile"
+      - SAFETY: "H/M/L"
+      - AI_AUTONOMY: "immutable_core/human_gated/ai_modifiable"
+      - ERROR_CONTRACT: "分号分隔"
+      - TESTS: "分号分隔"
+      - DOMAIN: "D-XXX（仅跨域模块需填）"
+      pass: 十字段完整
+      fail: 缺字段 → 补充
+    - order: 2
+      action: 更新蓝图§0.1文件清单
+      pass: 蓝图§0.1已更新
+    - order: 3
+      action: 更新蓝图§11
+      pass: 蓝图§11已更新
+    - order: 4
+      action: 更新蓝图§10
+      pass: 蓝图§10已更新
+    - order: 5
+      action: 更新注册表
+      pass: 注册表已更新
+    - order: 6
+      action: 验证双向对齐
+      rule_ref: ARCH-007
+      check: 蓝图§4文件清单 ↔ 代码[BLUEPRINT]字段互相验证一致
+      pass: 双向对齐通过
+      fail: 对齐失败 → 修复
+
+  phase_8_startup_design:
+    section_type: procedure
+    title: 阶段8-启动方式设计
+    rule_ref:
+      rule_id: TRAE-053
+      section: rule_fifteen
+      alias: RULE-FIFTEEN
+    purpose: 必须自动启动+事件驱动+自动运行+自动结束
+    applies_when: 创建自动化脚本/模块（非纯库模块）
+    principle: 事件驱动优先——禁止消息驱动，必须通过事件触发
+    steps:
+    - order: 1
+      action: 自动化双轨判定
+      rule_ref: RULE-FIFTEEN
+      check: 判定归属轨道
+      track_classification:
+        scheduled: "全项目扫描（去重/孤儿/临时文件/审计保留）"
+        event: "状态变更响应（BLOCKED→升级/IN_PROGRESS→超时计时器）"
+        dual: "关键校验（预算健康/三方对齐/升级路径）——事件做增量+定时做全量兜底"
+      pass: 轨道已判定
+      fail: 轨道未判定 → 禁止创建
+    - order: 2
+      action: 事件驱动设计
+      rule_ref: TRAE-037 gov_arch_004
+      check: 设计事件触发方式（非消息驱动）
+      trigger_types:
+      - onboarding
+      - drift_detected
+      - compression_needed
+      - cleanup_due
+      design_requirements:
+        trigger: "什么事件触发启动"
+        handler: "触发后执行什么"
+        safety: "L/M/H安全级别"
+        enabled: "是否启用"
+        priority: "优先级"
+        required: "是否必需"
+        retry: "重试策略"
+      pass: 事件驱动已设计
+      fail: 事件驱动未设计 → 禁止创建
+    - order: 3
+      action: 自动启动注册
+      check: 注册到对应启动入口
+      registration_entries:
+        scheduled: "boot_cron_jobs.py → circadian_scheduler.register_task"
+        event: "boot_hooks.py → hook_registry.register 或 event_bus.subscribe"
+        dual: "两条都要注册"
+      pass: 自动启动已注册
+      fail: 未注册 → 禁止声明完成
+    - order: 4
+      action: 自动运行验证
+      check: 脚本/模块能自动运行
+      command: "python scripts/ide_health_service.py --status"
+      pass: "circadian.running=true + tasks_registered计数正确"
+      fail: 自动运行失败 → 修复
+    - order: 5
+      action: 自动结束验证
+      check: 脚本/模块能自动结束（有明确的完成条件和退出机制）
+      design_requirements:
+        completion_condition: "明确的完成条件"
+        exit_mechanism: "退出机制（非无限循环）"
+        timeout: "超时熔断（防止卡死）"
+      pass: 自动结束已验证
+      fail: 无自动结束机制 → 补设计
+    prohibitions:
+    - 禁止消息驱动——必须事件驱动
+    - 禁止实现定时轨但不注册到circadian_scheduler
+    - 禁止实现事件轨但不注册到hook_registry
+    - 禁止无超时熔断的无限循环
+    - 禁止无明确完成条件的脚本
+
+  phase_9_registry_sync:
+    section_type: procedure
+    title: 阶段9-多注册表同步
+    rule_ref:
+      rule_id: TRAE-033
+      section: mod_006
+      alias: MRS-001
+    purpose: 新模块必须同步写入多个注册表
+    atomicity: MRS-002 所有注册表修改MUST同一操作完成——禁止先改A再改B
+    applies_when: 创建新模块
+    steps:
+    - order: 1
+      action: 分配module_id
+      pass: module_id唯一
+    - order: 2
+      action: 创建目录+文件
+      pass: 文件已创建
+    - order: 3
+      action: 注册MODULE
+      registry: 03_modules/module-registry.yaml
+    - order: 4
+      action: 注册BPR
+      registry: 03_modules/blueprint-registry.yaml
+    - order: 5
+      action: 注册DOC-INV
+      registry: _registry/catalogs/document-metadata-index-registry.yaml
+    - order: 6
+      action: 注册MOD-ID
+      registry: 02_enterprise_architecture/.../module_id_registry.yaml
+    - order: 7
+      action: 注册DIR
+      registry: _registry/catalogs/directory_registry.yaml
+    - order: 8
+      action: 注册AI-AUTH
+      registry: _registry/catalogs/ai_autonomy_authority_registry.yaml
+    - order: 9
+      action: 更新上层index.md
+      pass: index.md已更新
+    - order: 10
+      action: 运行校验
+      rule_ref: MRS-003
+      commands:
+      - "python scripts/governance/check_registry_consistency.py"
+      - "python scripts/governance/check_frontmatter_metadata.py"
+      - "python scripts/governance/check_architecture_gates.py"
+      - "python scripts/governance/validate_directory_registry.py"
+      pass: 全部exit 0
+      fail: 任一exit≠0 → 修复后重新校验
+
+  phase_10_alignment_verification:
+    section_type: procedure
+    title: 阶段10-三方对齐验证
+    rule_ref:
+      rule_id: TRAE-014
+      section: arch_012
+      alias: ARCH-012
+    purpose: 蓝图§4 ↔ 代码[BLUEPRINT] ↔ 路径树三方一致
+    steps:
+    - order: 1
+      action: 三方对齐校验
+      rule_ref: ARCH-012
+      check: 蓝图§4 ↔ 代码[BLUEPRINT] ↔ 路径树三方一致
+      pass: 三方对齐
+      fail: 任一方过时 → 同步更新
+    - order: 2
+      action: 蓝图版本同步
+      rule_ref: ARCH-009
+      check: 蓝图version与代码版本同步
+      pass: 版本同步
+      fail: 版本不同步 → 更新version和date
+    - order: 3
+      action: 孤儿审计
+      command: "python scripts/governance/audit_registration.py"
+      pass: exit 0 (CLEAN)
+      fail: exit 1 (有孤儿) → 必须修复
+    - order: 4
+      action: 关键模块导入测试
+      command: "python scripts/governance/verify_key_imports.py"
+      pass: 导入成功
+      fail: 导入失败 → 修复import
+    - order: 5
+      action: 契约漂移检查
+      command: "python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py"
+      pass: 契约无漂移
+      fail: 契约断裂 → 修复
+    - order: 6
+      action: 设计态升级运营态
+      rule_ref: TRAE-035
+      check: depgraph.db中design_maturity从design升级为production
+      pass: 设计态已升级为运营态
+      fail: 升级失败 → 修复
+
+  rollback:
+    section_type: procedure
+    title: 回滚方案
+    steps:
+    - order: 1
+      action: 任一阶段失败
+      action_detail: 回滚变更 → 释放所有锁 → 记录失败原因 → 修复后从失败阶段重试
+    - order: 2
+      action: 文件已创建但流程未完成
+      action_detail: 评估是否删除文件（走RULE-THREE三步审判）或保留并补全流程
+    - order: 3
+      action: depgraph.db已修改
+      action_detail: "git checkout data/databases/depgraph.db 回滚到备份版本"
+    - order: 4
+      action: 设计态已创建但实体文件未创建
+      action_detail: 保留设计态（标记can_build=false）或删除设计态节点
+
+  quick_reference:
+    section_type: examples
+    title: 快速参考-创建场景到阶段映射
+    scenarios:
+    - scenario: 创建新模块（src/zephyr/下）
+      phases: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      estimated_time: "完整流程"
+    - scenario: 创建新脚本（scripts/下）
+      phases: [0, 1, 2, 5, 6, 7, 8, 9, 10]
+      skip_reason: "脚本无需蓝图和模块准入"
+    - scenario: 创建新门禁（gates/下）
+      phases: [0, 1, 2, 5, 6, 7, 9, 10]
+      skip_reason: "门禁无需蓝图和模块准入，启动方式由phase_manager注册"
+    - scenario: 创建蓝图（docs/03_modules/下）
+      phases: [0, 1, 4, 9, 10]
+      skip_reason: "蓝图无需scaffold创建和文件头部"
+    - scenario: Session冷启动（无创建任务）
+      phases: [0]
+      skip_reason: "仅冷启动，无创建任务"
+
+  references:
+    section_type: context
+    title: 规则真源引用
+    refs:
+    - target: TRAE-048
+      file: trae_048_ops_vibe_coding_session.yaml
+      role: "OPS-VC-005 Session冷启动门禁"
+    - target: TRAE-002
+      file: trae_002_anti_orphan_search_first.yaml
+      role: "RULE-EIGHT 搜索先行"
+    - target: TRAE-035
+      file: trae_035_task_construction_verification.yaml
+      role: "TASK-003 全景图设计态对齐"
+    - target: TRAE-005
+      file: trae_005_modification_governance.yaml
+      role: "governance_construction STEP5 架构升级期depgraph保护"
+    - target: TRAE-032
+      file: trae_032_module_lifecycle.yaml
+      role: "GOV-MOD-001 模块准入门控"
+    - target: TRAE-014
+      file: trae_014_arch_blueprint_alignment.yaml
+      role: "ARCH-007~012 蓝图对齐"
+    - target: TRAE-001
+      file: trae_001_file_operation_security.yaml
+      role: "RULE-FOUR 文件创建入口 + RULE-ZERO 锁协议"
+    - target: TRAE-015
+      file: trae_015_arch_path_registration.yaml
+      role: "ARCH-013~018 路径注册"
+    - target: TRAE-028
+      file: trae_028_doc_structure_naming.yaml
+      role: "gov_doc_003_naming_ssot 命名唯一真源"
+    - target: TRAE-055
+      file: trae_055_arch_domain_capacity.yaml
+      role: "ARCH-CAP-001~007 容量架构对齐"
+    - target: TRAE-047
+      file: trae_047_engineering_file_header.yaml
+      role: "GOV-ENG-002 文件头部锚定"
+    - target: TRAE-053
+      file: trae_053_automation_dual_track.yaml
+      role: "RULE-FIFTEEN 自动化双轨判定"
+    - target: TRAE-037
+      file: trae_037_arch_qualification_versioning.yaml
+      role: "gov_arch_004 架构模式-事件驱动"
+    - target: TRAE-033
+      file: trae_033_module_registration_sync.yaml
+      role: "MRS-001~003 多注册表同步"
+provenance:
+  extracted_at: '2026-06-22T00:00:00'
+  extracted_by: session-20260622-235c

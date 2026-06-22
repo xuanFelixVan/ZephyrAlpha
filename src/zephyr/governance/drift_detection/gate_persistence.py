@@ -26,6 +26,7 @@ module_id: MOD-INF-023
 门禁结果持久化：scan_result.json + governance.db(SQLite) + manifest.json + 防篡改 SHA256。
 对标 blueprint.md §2.17门禁持久化 / D-023-31。
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -33,17 +34,13 @@ import json
 import os
 import sqlite3
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from datetime import UTC, datetime
 
 from zephyr.governance.persistence.sqlite_schema import DB_PATH
 
 
 class GatePersistence:
-
-    def __init__(self, project_root: Optional[str] = None) -> None:
+    def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -94,7 +91,7 @@ class GatePersistence:
         conn.close()
 
     def persist_scan_result(self, scan_id: uuid.UUID, body: dict[str, object]) -> str:
-        body["persisted_at"] = datetime.now(timezone.utc).isoformat()
+        body["persisted_at"] = datetime.now(UTC).isoformat()
         sha = hashlib.sha256(json.dumps(body, sort_keys=True, default=str).encode("utf-8")).hexdigest()
         body["sha256"] = sha
 
@@ -113,8 +110,14 @@ class GatePersistence:
         conn = sqlite3.connect(self._db_path)
         conn.execute(
             "INSERT OR REPLACE INTO scan_results(scan_id, detectors_run, total_drift_events, storm_mode_triggered, committed_at, sha256) VALUES(?,?,?,?,?,?)",
-            (str(scan_id), body.get("detectors_run", 0), body.get("total_drift_events", 0),
-             int(body.get("storm_mode_triggered", False)), body.get("persisted_at", ""), sha),
+            (
+                str(scan_id),
+                body.get("detectors_run", 0),
+                body.get("total_drift_events", 0),
+                int(body.get("storm_mode_triggered", False)),
+                body.get("persisted_at", ""),
+                sha,
+            ),
         )
         conn.commit()
         conn.close()
@@ -125,7 +128,7 @@ class GatePersistence:
         conn = sqlite3.connect(self._db_path)
         conn.execute(
             "INSERT INTO gate_decisions(module_id, gate, decision, detail, decided_at) VALUES(?,?,?,?,?)",
-            (module_id, gate, decision, detail, datetime.now(timezone.utc).isoformat()),
+            (module_id, gate, decision, detail, datetime.now(UTC).isoformat()),
         )
         conn.commit()
         conn.close()
@@ -135,7 +138,7 @@ class GatePersistence:
         if not os.path.exists(filepath):
             return False
         try:
-            with open(filepath, "r", encoding="utf-8") as fh:
+            with open(filepath, encoding="utf-8") as fh:
                 data = json.load(fh)
             sha_key = data.pop("sha256", None)
             if sha_key is None:
@@ -150,14 +153,14 @@ class GatePersistence:
         manifest: dict[str, object]
         if os.path.exists(manifest_path):
             try:
-                with open(manifest_path, "r", encoding="utf-8") as fh:
+                with open(manifest_path, encoding="utf-8") as fh:
                     manifest = json.load(fh)
             except (json.JSONDecodeError, UnicodeDecodeError):
                 manifest = {"entries": []}
         else:
             manifest = {"entries": []}
         entries: list[dict[str, str]] = manifest.get("entries", []) or []
-        entries.append({"scan_id": str(scan_id), "status": status, "timestamp": datetime.now(timezone.utc).isoformat()})
+        entries.append({"scan_id": str(scan_id), "status": status, "timestamp": datetime.now(UTC).isoformat()})
         manifest["entries"] = entries[-100:]
         tmp_path = f"{manifest_path}.{os.getpid()}.tmp"
         try:

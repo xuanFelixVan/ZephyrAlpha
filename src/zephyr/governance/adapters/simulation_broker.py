@@ -50,9 +50,9 @@ from __future__ import annotations
 import logging
 import uuid
 from collections import defaultdict
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Callable, Optional
 
 from zephyr.governance.broker_interface import BrokerInterface
 from zephyr.trading.trading_contracts.execution.fill import Fill
@@ -105,8 +105,14 @@ class SimulationBroker(BrokerInterface):
         broker_order_id = f"sim-{self._order_id_counter}"
         self._order_id_counter += 1
         self._orders[broker_order_id] = order
-        _logger.info("Order submitted: broker_order_id=%s order_id=%s symbol=%s side=%s qty=%s",
-                      broker_order_id, order.order_id, order.symbol, order.side, order.quantity)
+        _logger.info(
+            "Order submitted: broker_order_id=%s order_id=%s symbol=%s side=%s qty=%s",
+            broker_order_id,
+            order.order_id,
+            order.symbol,
+            order.side,
+            order.quantity,
+        )
 
         self._simulate_fill(order, broker_order_id)
 
@@ -120,7 +126,7 @@ class SimulationBroker(BrokerInterface):
         _logger.warning("Order not found for cancel: order_id=%s", order_id)
         return False
 
-    def query_order(self, order_id: str) -> Optional[Order]:
+    def query_order(self, order_id: str) -> Order | None:
         return self._orders.get(order_id)
 
     def get_positions(self) -> PositionSnapshot:
@@ -131,7 +137,7 @@ class SimulationBroker(BrokerInterface):
 
         total_mv = sum(market_values.values(), Decimal("0"))
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         return PositionSnapshot(
             as_of_timestamp=now,
             portfolio_id="simulation",
@@ -174,7 +180,7 @@ class SimulationBroker(BrokerInterface):
             strategy_id=order.strategy_id,
             filled_quantity=order.quantity,
             fill_price=fill_price,
-            fill_timestamp=datetime.now(timezone.utc),
+            fill_timestamp=datetime.now(UTC),
             commission=commission,
             slippage=slippage,
             broker_fill_id=broker_order_id,

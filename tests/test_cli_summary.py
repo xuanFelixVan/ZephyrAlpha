@@ -11,9 +11,7 @@
 # [TESTS] pytest tests/test_cli_summary.py -q
 
 import json
-from pathlib import Path
 
-import pytest
 from zephyr.ops.observability.cli_summary import BuildSummary, CLISummary
 
 

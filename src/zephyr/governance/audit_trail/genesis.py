@@ -11,12 +11,11 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 创世块损坏返回恢复失败
 # [TESTS] tests/audit-orchestrator/test_genesis.py
-
 import hashlib
 import json
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +25,7 @@ __all__ = ["GenesisBlock"]
 
 DEFAULT_GENESIS_DIR = Path("data/audit_genesis")
 GENESIS_FILE = "genesis_block.json"
+
 
 class GenesisBlock:
     def __init__(self, genesis_dir: Path | None = None) -> None:
@@ -40,7 +40,7 @@ class GenesisBlock:
 
         block = {
             "version": "1.0",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "block_hash": "",
             "audit_dimensions": [
                 "DIM-REGISTRATION-001",
@@ -103,6 +103,7 @@ class GenesisBlock:
                 pass
             raise
 
+
 class GenesisManager:
     def __init__(self, config=None):
         self.config = config or {}
@@ -113,15 +114,17 @@ class GenesisManager:
     def verify_genesis(self, entity):
         return True
 
+
 class GenesisVerificationResult:
-    def __init__(self, entity='', valid=True, genesis_hash='', verification_timestamp=None):
+    def __init__(self, entity="", valid=True, genesis_hash="", verification_timestamp=None):
         self.entity = entity
         self.valid = valid
         self.genesis_hash = genesis_hash
         self.verification_timestamp = verification_timestamp
 
+
 class WitnessSignature:
-    def __init__(self, witness_id='', signature='', timestamp=None):
+    def __init__(self, witness_id="", signature="", timestamp=None):
         self.witness_id = witness_id
         self.signature = signature
         self.timestamp = timestamp

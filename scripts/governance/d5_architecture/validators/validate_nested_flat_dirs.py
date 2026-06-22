@@ -1,6 +1,8 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
+
 #!/usr/bin/env python3
 """
 validate_nested_flat_dirs.py — 递归嵌套目录平铺检测器
@@ -37,8 +39,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from _shared.thresholds import get
 
 ensure_utf8_stdout()
@@ -66,23 +68,27 @@ def _scan_recursive(root: Path, max_depth: int, warn: int, error: int) -> list[d
         py_files = [f for f in d.iterdir() if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"]
         all_files = [f for f in d.iterdir() if f.is_file() and not f.name.startswith(".")]
         if len(py_files) >= error:
-            violations.append({
-                "severity": "ERROR",
-                "path": str(d.relative_to(REPO_ROOT)).replace("\\", "/"),
-                "py_count": len(py_files),
-                "total_count": len(all_files),
-                "threshold": error,
-                "message": f"{len(py_files)} .py files (error>{error}) — should use subdirectory isolation",
-            })
+            violations.append(
+                {
+                    "severity": "ERROR",
+                    "path": str(d.relative_to(REPO_ROOT)).replace("\\", "/"),
+                    "py_count": len(py_files),
+                    "total_count": len(all_files),
+                    "threshold": error,
+                    "message": f"{len(py_files)} .py files (error>{error}) — should use subdirectory isolation",
+                }
+            )
         elif len(py_files) >= warn:
-            violations.append({
-                "severity": "WARN",
-                "path": str(d.relative_to(REPO_ROOT)).replace("\\", "/"),
-                "py_count": len(py_files),
-                "total_count": len(all_files),
-                "threshold": warn,
-                "message": f"{len(py_files)} .py files (warn>{warn}) — consider subdirectory isolation",
-            })
+            violations.append(
+                {
+                    "severity": "WARN",
+                    "path": str(d.relative_to(REPO_ROOT)).replace("\\", "/"),
+                    "py_count": len(py_files),
+                    "total_count": len(all_files),
+                    "threshold": warn,
+                    "message": f"{len(py_files)} .py files (warn>{warn}) — consider subdirectory isolation",
+                }
+            )
     return violations
 
 
@@ -125,8 +131,12 @@ def main() -> int:
         print("\n\u26a0\ufe0f  --warn-only 模式: 仅报告，不阻断", file=sys.stderr)
         return EXIT_PASS
     if errors:
-        print("\n\u274c 阻断: 存在超过 error 阈值的平铺目录。参考 GOV-DOC-002 \u00a7\u4e09 C轨层内规范。", file=sys.stderr)
+        print(
+            "\n\u274c 阻断: 存在超过 error 阈值的平铺目录。参考 GOV-DOC-002 \u00a7\u4e09 C轨层内规范。", file=sys.stderr
+        )
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     raise SystemExit(main())

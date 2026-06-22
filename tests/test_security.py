@@ -11,13 +11,15 @@
 # [TESTS] tests/test_security.py
 
 import time
+
 import pytest
-from zephyr.ops.security.wireheading_prevention import WireheadState, WireheadingPrevention
+
+from zephyr.ops.security.agent_skill_guard import AgentSkillGuard, SkillSecurityStatus
+from zephyr.ops.security.dep_cve_correlator import CVEAlert, CVESeverity, DepCVECorrelator
+from zephyr.ops.security.metric_prompt_scanner import MetricPromptScanner
 from zephyr.ops.security.remote_attestation import AttestationReport, RemoteAttestation
-from zephyr.ops.security.dep_cve_correlator import CVESeverity, CVEAlert, DepCVECorrelator
-from zephyr.ops.security.agent_skill_guard import SkillSecurityStatus, AgentSkillGuard
-from zephyr.ops.security.secret_rotation import SecretEntry, SecretRotation
-from zephyr.ops.security.metric_prompt_scanner import ScanResult, MetricPromptScanner
+from zephyr.ops.security.secret_rotation import SecretRotation
+from zephyr.ops.security.wireheading_prevention import WireheadingPrevention, WireheadState
 
 
 class TestWireheadingPrevention:
@@ -142,7 +144,8 @@ class TestAgentSkillGuard:
         ag = AgentSkillGuard(trusted_sources={"github.com"})
         ag.register("skill_a", "https://github.com/zephyr/skill_a", "content")
         import hashlib
-        h = hashlib.sha256("content".encode()).hexdigest()
+
+        h = hashlib.sha256(b"content").hexdigest()
         assert ag.verify_existing("skill_a", h) == SkillSecurityStatus.VERIFIED
 
     def test_verify_existing_mismatch(self):

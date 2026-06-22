@@ -17,7 +17,7 @@
 #
 # 对标标准：
 #   - PS-STD-001 §10.7：规划的 AI 自治等级
-#   - ai-autonomy-authority-registry.md：全模块权限终表
+#   - ai_autonomy_authority_registry.yaml：全模块权限终表
 
 schema_version: "1.0.0"
 doc_type: vocabulary

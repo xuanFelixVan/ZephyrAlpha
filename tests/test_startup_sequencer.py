@@ -10,15 +10,14 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_startup_sequencer.py
 
-import pytest
 
 from zephyr.trading.orchestrator.startup_sequencer import (
-    StartupSequencer,
-    StartupLayer,
-    StartupState,
-    STARTUP_ORDER,
-    STARTUP_COMPONENTS,
     GLOBAL_TIMEOUT_S,
+    STARTUP_COMPONENTS,
+    STARTUP_ORDER,
+    StartupLayer,
+    StartupSequencer,
+    StartupState,
 )
 
 

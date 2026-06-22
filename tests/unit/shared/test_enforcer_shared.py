@@ -29,13 +29,14 @@
 
 Safety: HIGH（契约强制执行机制）
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
 
 import pytest
+
 from zephyr.integration.shared_08.contracts.core.enforcer import (
     ContractViolationError,
     EnforcementMode,

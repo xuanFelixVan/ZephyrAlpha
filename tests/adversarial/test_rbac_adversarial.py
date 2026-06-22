@@ -28,12 +28,8 @@ from zephyr.security.access_control.identity import (
     IDESource,
     MaturityLevel,
 )
-from zephyr.security.access_control.permission_guard import (
-    GuardDecision,
-    PermissionGuard,
-)
-from zephyr.security.access_control.rbac_guard import RBACGuard
 from zephyr.security.access_control.immutable_core import get_immutable_core
+from zephyr.security.access_control.rbac_guard import RBACGuard
 
 
 class TestIdentitySpoofing:
@@ -88,11 +84,15 @@ class TestPrivilegeEscalation:
             ide_source=IDESource.CLI,
         )
         identity.permissions = [
-            "read:docs", "read:src", "read:tests",
-            "read:config", "read:logs", "read:data",
+            "read:docs",
+            "read:src",
+            "read:tests",
+            "read:config",
+            "read:logs",
+            "read:data",
         ]
         result = guard.check(identity, "write:src", "src/zephyr/")
-        assert not result.decision == "ALLOW"
+        assert result.decision != "ALLOW"
 
     def test_writer_cannot_execute(self):
         """WRITER 尝试 execute:scripts → 应被拒绝."""
@@ -105,12 +105,17 @@ class TestPrivilegeEscalation:
             ide_source=IDESource.CLI,
         )
         identity.permissions = [
-            "read:docs", "read:src", "read:tests",
-            "write:src", "write:tests",
-            "read:config", "read:logs", "read:data",
+            "read:docs",
+            "read:src",
+            "read:tests",
+            "write:src",
+            "write:tests",
+            "read:config",
+            "read:logs",
+            "read:data",
         ]
         result = guard.check(identity, "execute:scripts", "scripts/")
-        assert not result.decision == "ALLOW"
+        assert result.decision != "ALLOW"
 
 
 class TestNullIdentityAttacks:

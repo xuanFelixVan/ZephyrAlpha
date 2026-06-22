@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_fle_regime_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.regime_detector import RegimeDetector
 

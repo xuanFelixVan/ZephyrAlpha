@@ -51,4 +51,3 @@ category: agent_instruction
   - Manifest 条目：dimensions [D5, D8], priority P0
 
 - **专业参考**：ITIL SACM → CI Registration（配置项创建后必须立即注册到 CMDB）/ Kubernetes Admission Controller（未注册资源拒绝进入集群）/ AWS Kiro Hooks（onFileSave/onCommit 事件触发 spec 文档更新）/ SDD Design-Sync Policy（实现偏差必须回写设计文档）/ GitHub compose-workflow Design-Sync（偏差三档：minor 标注 PR / major 更新设计文档 / architectural 必须更新设计文档）
-

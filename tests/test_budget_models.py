@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import uuid
-
-import pytest
-
 from zephyr.governance.budget_models import (
     BudgetAlert,
     BudgetConsumption,

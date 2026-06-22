@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_blueprint_bloat_monitor.py
 
-import pytest
 from zephyr.governance.blueprint_bloat_monitor import BlueprintBloatMonitor
 
 

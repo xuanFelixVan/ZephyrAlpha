@@ -12,19 +12,18 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 from unittest.mock import patch
-
-import pytest
 
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import (
     CheckTypeHandler,
     get_check_type,
 )
 
+
 def _make_task(deliverables=None, task_id="KBG-001"):
     from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+
     namespace = task_id.split("-")[0]
     seq = int(task_id.split("-")[-1])
     return Task(
@@ -42,31 +41,38 @@ def _make_task(deliverables=None, task_id="KBG-001"):
         updated_at="2026-01-01T00:00:00+00:00",
     )
 
+
 class _MockCheck:
     def __init__(self, severity="P0"):
         self.severity = severity
         self.id = "CHK-TEST"
 
+
 class TestLineEndingHandlerImport:
     def test_import_module(self):
         import importlib
+
         mod = importlib.import_module("zephyr.governance.rule_enforcement.check_types.ct_line_ending")
         assert hasattr(mod, "LineEndingHandler")
 
     def test_class_is_check_type_handler(self):
         import importlib
+
         mod = importlib.import_module("zephyr.governance.rule_enforcement.check_types.ct_line_ending")
         assert issubclass(mod.LineEndingHandler, CheckTypeHandler)
+
 
 class TestLineEndingHandlerInstantiation:
     def test_instantiate(self):
         import importlib
+
         mod = importlib.import_module("zephyr.governance.rule_enforcement.check_types.ct_line_ending")
         handler = mod.LineEndingHandler()
         assert handler is not None
 
     def test_name_attribute(self):
         import importlib
+
         mod = importlib.import_module("zephyr.governance.rule_enforcement.check_types.ct_line_ending")
         handler = mod.LineEndingHandler()
         assert handler.name == "line_ending"
@@ -74,6 +80,7 @@ class TestLineEndingHandlerInstantiation:
     def test_registered_in_registry(self):
         cls = get_check_type("line_ending")
         assert cls is not None
+
 
 class TestLineEndingHandlerRun:
     def test_run_returns_list(self):
@@ -97,6 +104,8 @@ class TestLineEndingHandlerRun:
         result = handler.run(task, {}, _MockCheck(), Path("."))
         for v in result:
             assert "message" in v
+
+
 class TestLineEndingHandlerFileBased:
     def test_nonexistent_deliverable_no_crash(self, tmp_path):
         cls = get_check_type("line_ending")
@@ -104,6 +113,8 @@ class TestLineEndingHandlerFileBased:
         task = _make_task(deliverables=["nonexistent_file.xyz"])
         result = handler.run(task, {}, _MockCheck(), tmp_path)
         assert isinstance(result, list)
+
+
 class TestLineEndingHandlerLineEnding:
     def test_lf_passes(self, tmp_path):
         lf_file = tmp_path / "lf.txt"
@@ -121,10 +132,12 @@ class TestLineEndingHandlerLineEnding:
         handler = cls()
         task = _make_task(deliverables=["crlf.txt"])
         original_read_text = Path.read_text
+
         def _mock_read_text(self, *args, **kwargs):
             if str(self).endswith("crlf.txt"):
                 return "line1\r\nline2\r\n"
             return original_read_text(self, *args, **kwargs)
+
         with patch.object(Path, "read_text", _mock_read_text):
             result = handler.run(task, {}, _MockCheck(), tmp_path)
         assert len(result) >= 1

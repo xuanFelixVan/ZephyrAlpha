@@ -12,15 +12,11 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta, timezone
-from pathlib import Path
+from datetime import UTC, datetime, timedelta
 
-import pytest
-
-from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle, _generate_event_id, DEFAULT_DECAY_DAYS
+from zephyr.infrastructure.asset_inventory.lifecycle import DEFAULT_DECAY_DAYS, Lifecycle, _generate_event_id
 from zephyr.infrastructure.asset_inventory.models import (
     AssetLayer,
-    AssetLifecycleEvent,
     AssetStatus,
     AssetType,
     ClassifiedAsset,

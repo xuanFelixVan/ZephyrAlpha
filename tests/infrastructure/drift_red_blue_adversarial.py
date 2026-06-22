@@ -230,9 +230,9 @@ def run_adversarial_test():
     print(f"  Detected:      {metrics.detected}")
     print(f"  Missed:        {metrics.missed}")
     print(
-        f"  Detection Rate: {metrics.detected}/{metrics.total_injections} = {metrics.detected/max(metrics.total_injections,1)*100:.1f}%"
+        f"  Detection Rate: {metrics.detected}/{metrics.total_injections} = {metrics.detected / max(metrics.total_injections, 1) * 100:.1f}%"
     )
-    print(f"  FN Rate:       {metrics.false_negative_rate*100:.1f}%")
+    print(f"  FN Rate:       {metrics.false_negative_rate * 100:.1f}%")
     print(f"  Self-Test:     {result.summary}")
 
     if metrics.missed > 0:

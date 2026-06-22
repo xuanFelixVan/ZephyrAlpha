@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_diff_injector.py -q
 from __future__ import annotations
-import pytest
+
 from zephyr.autonomy_core.diff_injector import DiffInjector, DiffResult
 
 

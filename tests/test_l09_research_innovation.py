@@ -12,10 +12,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 import pytest
-
 
 l09 = pytest.importorskip("zephyr.simulation", reason="l09-research-innovation not importable")
 
@@ -158,34 +157,54 @@ class TestFactorDiscovery:
 
     def test_status_candidate(self):
         f = FactorDiscovery(
-            factor_id="fac-001", name="test", ic_mean=0.05, ic_ir=1.8, t_stat=3.2,
+            factor_id="fac-001",
+            name="test",
+            ic_mean=0.05,
+            ic_ir=1.8,
+            t_stat=3.2,
         )
         assert f.status == "candidate"
 
     def test_status_validated(self):
         f = FactorDiscovery(
-            factor_id="fac-001", name="test", ic_mean=0.05, ic_ir=1.8, t_stat=3.2,
+            factor_id="fac-001",
+            name="test",
+            ic_mean=0.05,
+            ic_ir=1.8,
+            t_stat=3.2,
             status="validated",
         )
         assert f.status == "validated"
 
     def test_status_promoted(self):
         f = FactorDiscovery(
-            factor_id="fac-001", name="test", ic_mean=0.05, ic_ir=1.8, t_stat=3.2,
+            factor_id="fac-001",
+            name="test",
+            ic_mean=0.05,
+            ic_ir=1.8,
+            t_stat=3.2,
             status="promoted",
         )
         assert f.status == "promoted"
 
     def test_status_rejected(self):
         f = FactorDiscovery(
-            factor_id="fac-001", name="test", ic_mean=-0.01, ic_ir=0.3, t_stat=0.5,
+            factor_id="fac-001",
+            name="test",
+            ic_mean=-0.01,
+            ic_ir=0.3,
+            t_stat=0.5,
             status="rejected",
         )
         assert f.status == "rejected"
 
     def test_negative_ic(self):
         f = FactorDiscovery(
-            factor_id="fac-002", name="bad_factor", ic_mean=-0.03, ic_ir=-0.5, t_stat=-1.2,
+            factor_id="fac-002",
+            name="bad_factor",
+            ic_mean=-0.03,
+            ic_ir=-0.5,
+            t_stat=-1.2,
         )
         assert f.ic_mean < 0
         assert f.t_stat < 0

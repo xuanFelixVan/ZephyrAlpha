@@ -15,8 +15,6 @@ from __future__ import annotations
 import hashlib
 import json
 
-import pytest
-
 from zephyr.governance.forensic_package import ForensicPackage
 
 

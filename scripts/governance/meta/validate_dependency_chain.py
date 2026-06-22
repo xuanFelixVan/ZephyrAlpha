@@ -48,9 +48,22 @@ EXPECTED_CHAINS: dict[str, tuple[str, ...]] = {
     "chain_c": ("D6", "D7", "D10"),
 }
 
-ALL_DIMENSIONS: frozenset[str] = frozenset({
-    "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12",
-})
+ALL_DIMENSIONS: frozenset[str] = frozenset(
+    {
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "D7",
+        "D8",
+        "D9",
+        "D10",
+        "D11",
+        "D12",
+    }
+)
 
 
 def extract_chains_from_run_all() -> dict[str, tuple[str, ...]] | None:
@@ -77,7 +90,7 @@ def extract_chains_from_run_all() -> dict[str, tuple[str, ...]] | None:
                 if isinstance(target, ast.Name) and target.id == "DEPENDENCY_CHAINS":
                     chains: dict[str, tuple[str, ...]] = {}
                     if isinstance(node.value, ast.Dict):
-                        for key, value in zip(node.value.keys, node.value.values):
+                        for key, value in zip(node.value.keys, node.value.values, strict=False):
                             chain_name = key.s if isinstance(key, ast.Constant) else ""
                             dims: list[str] = []
                             if isinstance(value, ast.Tuple):
@@ -110,9 +123,7 @@ def validate_chains(warn_only: bool = False) -> int:
             if actual is None:
                 failures.append(f"缺少链 {chain_name}: 期望 {list(expected_dims)}")
             elif actual != expected_dims:
-                failures.append(
-                    f"链 {chain_name} 不一致: 期望 {list(expected_dims)}, 实际 {list(actual)}"
-                )
+                failures.append(f"链 {chain_name} 不一致: 期望 {list(expected_dims)}, 实际 {list(actual)}")
 
         all_dims_in_chains: set[str] = set()
         for dims in chains.values():

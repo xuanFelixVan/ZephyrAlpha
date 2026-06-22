@@ -21,8 +21,10 @@ MATURITY_TLB_LIMITS = {
 
 ROLE_DEFAULT_PERMISSIONS = None  # stub constant
 
+
 class AgentRole(str, Enum):
     """Stub enum — implementation pending."""
+
     EXECUTOR = "EXECUTOR"
     BUILDER = "BUILDER"
     REVIEWER = "REVIEWER"
@@ -30,16 +32,20 @@ class AgentRole(str, Enum):
     ADMIN = "ADMIN"
     OBSERVER = "OBSERVER"
 
+
 class MaturityLevel(str, Enum):
     """Stub enum — implementation pending."""
+
     L0_INTERN = "L0_INTERN"
     L1_JUNIOR = "L1_JUNIOR"
     L2_REGULAR = "L2_REGULAR"
     L3_SENIOR = "L3_SENIOR"
     L4_PRINCIPAL = "L4_PRINCIPAL"
 
+
 class IDESource(str, Enum):
     """Stub enum — implementation pending."""
+
     TRAE = "TRAE"
     CURSOR = "CURSOR"
     CLAUDE = "CLAUDE"
@@ -47,18 +53,21 @@ class IDESource(str, Enum):
     CLI = "CLI"
     API = "API"
 
+
 class AgentIdentity:
     """Stub class — implementation pending."""
+
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
+
 __all__ = [
+    "MATURITY_AUTO_GUARD_TIMEOUT",
+    "MATURITY_TLB_LIMITS",
+    "ROLE_DEFAULT_PERMISSIONS",
     "AgentIdentity",
     "AgentRole",
     "IDESource",
-    "MATURITY_AUTO_GUARD_TIMEOUT",
-    "MATURITY_TLB_LIMITS",
     "MaturityLevel",
-    "ROLE_DEFAULT_PERMISSIONS",
 ]

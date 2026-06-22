@@ -70,4 +70,4 @@ agent_forgetting:
       - "NER 实体识别: PERSON/ORG/GPE 等"
       - "上述匹配到的 → active_deletion"
     pass_2_anonymize_pattern:
-      - "user_X 的代码风格偏好 (如 brace_style=KR, indent=4) → 匿名化为 
+      - "user_X 的代码风格偏好 (如 brace_style=KR, indent=4) → 匿名化为

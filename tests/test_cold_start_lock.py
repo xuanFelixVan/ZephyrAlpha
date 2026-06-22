@@ -11,10 +11,9 @@
 # [TESTS] pytest tests/test_cold_start_lock.py -q
 
 import sys
+
 sys.path.insert(0, "src")
 
-import pytest
-from pathlib import Path
 from unittest.mock import MagicMock
 
 from zephyr.security.access_control.cold_start_lock import ColdStartLock, get_cold_start_lock
@@ -99,9 +98,7 @@ class TestVerifyIntegrity:
 
     def test_no_increment_on_failure(self):
         mock_core = MagicMock()
-        mock_core.verify_immutable_core_integrity.return_value = IntegrityResult(
-            intact=False, tampered_items=["test"]
-        )
+        mock_core.verify_immutable_core_integrity.return_value = IntegrityResult(intact=False, tampered_items=["test"])
         lock = ColdStartLock(immutable_core=mock_core)
         initial = lock._checks_passed
         lock.verify_integrity()

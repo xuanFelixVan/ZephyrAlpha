@@ -34,9 +34,8 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 
@@ -63,59 +62,35 @@ LOG_SECRET_PATTERNS = [
     (
         re.compile(
             r"(?:logger|logging|log)\s*(?:\.\s*(?:info|debug|warning|error|critical|exception))\s*\("
-            r"[^)]*"
-            + _SAFE_EXCLUSION
-            + r".*\b"
-            + _SECRET_KW
-            + r"\b",
+            r"[^)]*" + _SAFE_EXCLUSION + r".*\b" + _SECRET_KW + r"\b",
             re.IGNORECASE,
         ),
         "日志语句包含密钥变量名",
     ),
     (
         re.compile(
-            r"(?:print|pprint)\s*\("
-            r"[^)]*"
-            + _SAFE_EXCLUSION
-            + r".*\b"
-            + _SECRET_KW
-            + r"\b",
+            r"(?:print|pprint)\s*\(" r"[^)]*" + _SAFE_EXCLUSION + r".*\b" + _SECRET_KW + r"\b",
             re.IGNORECASE,
         ),
         "print 语句包含密钥变量名",
     ),
     (
         re.compile(
-            r'f["\x27][^"\x27]*\{[^}]*'
-            + _SAFE_EXCLUSION
-            + r".*\b"
-            + _SECRET_KW
-            + r"\b"
-            + r"[^}]*\}",
+            r'f["\x27][^"\x27]*\{[^}]*' + _SAFE_EXCLUSION + r".*\b" + _SECRET_KW + r"\b" + r"[^}]*\}",
             re.IGNORECASE,
         ),
         "f-string 包含密钥变量插值",
     ),
     (
         re.compile(
-            r"\.(?:format|format_map)\s*\("
-            r"[^)]*"
-            + _SAFE_EXCLUSION
-            + r".*\b"
-            + _SECRET_KW
-            + r"\b",
+            r"\.(?:format|format_map)\s*\(" r"[^)]*" + _SAFE_EXCLUSION + r".*\b" + _SECRET_KW + r"\b",
             re.IGNORECASE,
         ),
         "format() 调用包含密钥变量名",
     ),
     (
         re.compile(
-            r"log\.structlog\.bind\s*\("
-            r"[^)]*"
-            + _SAFE_EXCLUSION
-            + r".*\b"
-            + _SECRET_KW
-            + r"\b",
+            r"log\.structlog\.bind\s*\(" r"[^)]*" + _SAFE_EXCLUSION + r".*\b" + _SECRET_KW + r"\b",
             re.IGNORECASE,
         ),
         "structlog.bind() 绑定密钥变量",
@@ -141,9 +116,7 @@ def check_file(file_path: Path) -> list[str]:
             continue
         for pattern, description in LOG_SECRET_PATTERNS:
             if pattern.search(stripped):
-                violations.append(
-                    f"  {file_path.relative_to(REPO_ROOT)}:{i}: {description} — \"{stripped[:120]}\""
-                )
+                violations.append(f'  {file_path.relative_to(REPO_ROOT)}:{i}: {description} — "{stripped[:120]}"')
                 break
     return violations
 
@@ -180,7 +153,9 @@ def main() -> int:
             return EXIT_PASS
         return EXIT_FINDINGS
     print("[OK] R2 日志不写 secret — 无违规")
-    print(f"   已扫描 src/zephyr/ 下所有 .py 文件。")
+    print("   已扫描 src/zephyr/ 下所有 .py 文件。")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

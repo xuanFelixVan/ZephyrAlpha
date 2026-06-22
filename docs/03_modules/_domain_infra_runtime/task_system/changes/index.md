@@ -1,29 +1,28 @@
 ---
-blueprint_id: DOM-GOV-001
-created: '2026-05-03'
 doc_type: index
-module_id: MOD-INF-080
-status: Active
-title: changes — 目录索引
-updated: '2026-05-03'
-version: 1.0.0
+status: active
+title: "changes — 目录索引"
+module_id: ""
+blueprint_id: "MOD-INF-006"
+version: "1.0.0"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
-
 
 # changes
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-03
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [MOD-INF-006/](MOD-INF-006/index.md) | 目录 | 📁 MOD-INF-006/ |
-| [MOD-INF-006-MCP/](MOD-INF-006-MCP/index.md) | 目录 | 📁 MOD-INF-006-MCP/ |
-| [shadows/](shadows/index.md) | 目录 | 📁 shadows/ |
+| [index.md](index.md) | Markdown | changes — 目录索引 |
+| [MOD_INF_006/](MOD_INF_006/index.md) | 目录 | MOD-INF-006 — 目录索引 |
+| [MOD_INF_006_MCP/](MOD_INF_006_MCP/index.md) | 目录 | MOD-INF-006-MCP — 目录索引 |
+| [shadows/](shadows/index.md) | 目录 | shadows — 目录索引 |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

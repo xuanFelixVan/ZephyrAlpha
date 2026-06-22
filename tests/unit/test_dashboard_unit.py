@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for Streamlit Dashboard components (T-4-07)
 =======================================================
@@ -16,7 +17,7 @@ Unit tests for Streamlit Dashboard components (T-4-07)
 
 
 import pytest
-from zephyr.ops.fitness_functions import FitnessInputs
+
 from zephyr.frontend.dashboard.app import create_app
 from zephyr.frontend.dashboard.components.fitness_functions import (
     FitnessDashboardData,
@@ -45,6 +46,7 @@ from zephyr.frontend.dashboard.components.task_progress import (
     fetch_task_progress,
     render_task_progress,
 )
+from zephyr.ops.fitness_functions import FitnessInputs
 
 
 class TestTaskProgressComponent:

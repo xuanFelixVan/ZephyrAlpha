@@ -1,10 +1,20 @@
 rule_id: TRAE-036
 title: 架构治理-门禁与过渡
+version: 1.1.0
+layer: L1
+module_id: TRAE-036
+depends_on: []
+tags:
+- TRAE
+- architecture_gate_transition
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - GOV-ARCH-002
 - GOV-ARCH-005
 - GOV-ARCH-006
-layer: L1
 severity: error
 scope: architecture_gate_transition
 domain: TRAE
@@ -106,15 +116,13 @@ sections:
     - type: mandatory
       step: 每个stage都有rollback_snapshot_path，过渡失败可回退（PTP-004回滚协议配套）
     - type: mandatory
-      step: next_stage_entry_criteria必须是前一stage的exit_criteria子集，由validate_phase_transition.py
-        --check zero-backdoor校验（PTP-005零暗门原则）
+      step: next_stage_entry_criteria必须是前一stage的exit_criteria子集，由validate_phase_transition.py --check zero-backdoor校验（PTP-005零暗门原则）
     - type: mandatory
       step: exit_criteria中id格式EXIT-<stage>-<seq>，validator在machine_verifiable:true时必填
     - type: mandatory
       step: HiL审核产出docs/09_audit/phase-N-acceptance.md，包含退出门校验结果、准入门校验结果、用户签字、日期、已知风险清单
     - type: mandatory
-      step: 校验脚本：validate_phase_exit.py --phase N / validate_phase_entry.py --phase
-        N / validate_phase_transition.py --from N --to N+1（注：validate_phase_exit.py和validate_phase_entry.py为计划中脚本，当前由validate_phase_transition.py统一处理）
+      step: 校验脚本：validate_phase_exit.py --phase N / validate_phase_entry.py --phase N / validate_phase_transition.py --from N --to N+1（注：validate_phase_exit.py和validate_phase_entry.py为计划中脚本，当前由validate_phase_transition.py统一处理）
     prohibitions:
     - 禁止在next_stage_entry_criteria中出现前一stage的exit_criteria没有覆盖的新依赖（零暗门原则）
     - 禁止跳过HiL人工审核直接启动下一stage
@@ -225,23 +233,7 @@ sections:
       fail: P0失败→reject+task进FAILED+清理临时产物；后验失败→git checkout回滚
     actions:
     - type: mandatory
-      step: G1检查项——G1-C00 no_deprecated_path(P0 reject)/G1-C01 file_exists(P0 reject)/G1-C02
-        encoding_compliant(P0 reject)/G1-C03 line_ending_compliant(P1 auto_fix)/G1-C04
-        frontmatter_present(P0 reject)/G1-C05 frontmatter_required_fields(P0 reject)/G1-C06
-        file_size_within_limit(P1 flag)/G1-C07 no_binary_content(P0 reject)；G2检查项——G2-C00
-        content_not_empty_shell(P0 reject)/G2-C01 classification_label_valid(P0 reject)/G2-C02
-        doc_type_valid(P0 reject)/G2-C03 priority_score_assigned(P0 auto_assign)/G2-C04
-        layer_assignment_valid(P1 flag)/G2-C05 no_duplicate_ingest(P0 reject)/G2-C06
-        source_path_compliant(P1 flag)；G3检查项——G3-C01 knowledge_value_score_threshold(P0
-        reject,score≥0.4)/G3-C02 uniqueness_check(P1 flag,similarity<0.95)/G3-C03
-        content_integrity_verified(P0 reject)/G3-C04 metadata_complete(P1 auto_fill)/G3-C05
-        no_expired_ttl(P0 reject)；G4检查项——G4-C01 dependencies_ready(P0 defer)/G4-C02
-        no_conflict_with_existing(P0 flag)/G4-C03 target_path_compliant(P0 reject)/G4-C04
-        frontmatter_schema_valid(P0 reject)/G4-C05 module_id_registered(P1 auto_register)/G4-C06
-        no_orphan_references(P1 flag)；G5检查项——G5-C01 extraction_template_ready(P0 reject)/G5-C02
-        target_path_available(P0 flag)/G5-C03 target_path_compliant(P0 reject)/G5-C04
-        ke_number_assigned(P0 auto_assign)/G5-C05 source_document_complete(P0 reject)/G5-C06
-        extraction_scope_defined(P1 auto_scope)
+      step: G1检查项——G1-C00 no_deprecated_path(P0 reject)/G1-C01 file_exists(P0 reject)/G1-C02 encoding_compliant(P0 reject)/G1-C03 line_ending_compliant(P1 auto_fix)/G1-C04 frontmatter_present(P0 reject)/G1-C05 frontmatter_required_fields(P0 reject)/G1-C06 file_size_within_limit(P1 flag)/G1-C07 no_binary_content(P0 reject)；G2检查项——G2-C00 content_not_empty_shell(P0 reject)/G2-C01 classification_label_valid(P0 reject)/G2-C02 doc_type_valid(P0 reject)/G2-C03 priority_score_assigned(P0 auto_assign)/G2-C04 layer_assignment_valid(P1 flag)/G2-C05 no_duplicate_ingest(P0 reject)/G2-C06 source_path_compliant(P1 flag)；G3检查项——G3-C01 knowledge_value_score_threshold(P0 reject,score≥0.4)/G3-C02 uniqueness_check(P1 flag,similarity<0.95)/G3-C03 content_integrity_verified(P0 reject)/G3-C04 metadata_complete(P1 auto_fill)/G3-C05 no_expired_ttl(P0 reject)；G4检查项——G4-C01 dependencies_ready(P0 defer)/G4-C02 no_conflict_with_existing(P0 flag)/G4-C03 target_path_compliant(P0 reject)/G4-C04 frontmatter_schema_valid(P0 reject)/G4-C05 module_id_registered(P1 auto_register)/G4-C06 no_orphan_references(P1 flag)；G5检查项——G5-C01 extraction_template_ready(P0 reject)/G5-C02 target_path_available(P0 flag)/G5-C03 target_path_compliant(P0 reject)/G5-C04 ke_number_assigned(P0 auto_assign)/G5-C05 source_document_complete(P0 reject)/G5-C06 extraction_scope_defined(P1 auto_scope)
     prohibitions: []
   degradation_strategy:
     title: 门禁降级策略
@@ -251,8 +243,7 @@ sections:
     conditions:
     - type: constraint
       check: G1降级策略
-      pass: P0失败→GateViolationError+task保持PENDING；P1失败→记p1_count+1继续；auto_fix特例(G1-C03
-        CRLF→LF替换后重验)
+      pass: P0失败→GateViolationError+task保持PENDING；P1失败→记p1_count+1继续；auto_fix特例(G1-C03 CRLF→LF替换后重验)
       fail: P0未阻断导致不合格文档进入管道
     - type: constraint
       check: G2降级策略
@@ -268,14 +259,11 @@ sections:
       fail: 依赖未就绪或冲突的KE被激活
     - type: constraint
       check: G5降级策略
-      pass: auto_assign/auto_scope→记events.auto_filled继续；G5-C02路径冲突→flag等待Owner设gate-exempt
-        commit trailer；P0失败→reject+task进FAILED+清理临时产物；后验失败→git checkout回滚
+      pass: auto_assign/auto_scope→记events.auto_filled继续；G5-C02路径冲突→flag等待Owner设gate-exempt commit trailer；P0失败→reject+task进FAILED+清理临时产物；后验失败→git checkout回滚
       fail: 不合格KE落盘
     actions:
     - type: mandatory
-      step: '各级降级策略严格执行——G1: P0→reject+回滚,P1→记录继续,auto_fix→修复后重验；G2: P0→回滚IN_PROGRESS,auto_assign→自动填P2；G3:
-        P0→FAILED可RETRY,P1→记dedup_candidate；G4: 依赖缺失→defer(WAITING≤72h),冲突→flag(BLOCKED),其他P0→reject(FAILED)；G5:
-        auto→记录继续,路径冲突→flag等Owner,P0→reject+FAILED+清理,后验失败→git checkout回滚'
+      step: '各级降级策略严格执行——G1: P0→reject+回滚,P1→记录继续,auto_fix→修复后重验；G2: P0→回滚IN_PROGRESS,auto_assign→自动填P2；G3: P0→FAILED可RETRY,P1→记dedup_candidate；G4: 依赖缺失→defer(WAITING≤72h),冲突→flag(BLOCKED),其他P0→reject(FAILED)；G5: auto→记录继续,路径冲突→flag等Owner,P0→reject+FAILED+清理,后验失败→git checkout回滚'
     prohibitions: []
   lifecycle_guards_boundary:
     title: Lifecycle Guards 边界声明
@@ -289,10 +277,7 @@ sections:
       fail: 门禁与守卫职责混淆导致检查遗漏或重复
     actions:
     - type: mandatory
-      step: Lifecycle Guards边界——Write Guard(ATM原子写入时,属atomic-write-standard.md,G1之前)/Commit
-        Guard(git commit pre-commit hooks,属.pre-commit-config.yaml,G1-G5之外的版本控制层)/Phase
-        Guard(Phase切换,属phase-verification-procedure.md,聚合G1-G5指标作输入)/Contract Guard(Pydantic
-        v2校验,属src/zephyr/schemas.py,G4调用底层实现)/Runtime Guard(运行时观测,属runtime-observability-standard.md,不触发5级Gate)
+      step: Lifecycle Guards边界——Write Guard(ATM原子写入时,属atomic-write-standard.md,G1之前)/Commit Guard(git commit pre-commit hooks,属.pre-commit-config.yaml,G1-G5之外的版本控制层)/Phase Guard(Phase切换,属phase-verification-procedure.md,聚合G1-G5指标作输入)/Contract Guard(Pydantic v2校验,属src/zephyr/schemas.py,G4调用底层实现)/Runtime Guard(运行时观测,属runtime-observability-standard.md,不触发5级Gate)
     prohibitions: []
   gov_arch_002_exclusions:
     section_type: decision_tree
@@ -416,8 +401,7 @@ sections:
       expected_result: exit_criteria声明完整
       on_failure: 缺少必填字段则校验失败
     - order: 2
-      action: 定义next_stage_entry_criteria字段——每项包含id(ENTRY-<stage>-<seq>)/description/validator/machine_verifiable(bool)/manual(bool)/blocking(bool)/references_exit(指向stage
-        N-1的EXIT条目ID)
+      action: 定义next_stage_entry_criteria字段——每项包含id(ENTRY-<stage>-<seq>)/description/validator/machine_verifiable(bool)/manual(bool)/blocking(bool)/references_exit(指向stage N-1的EXIT条目ID)
       pre_condition: exit_criteria已定义
       expected_result: entry_criteria声明完整
       on_failure: 缺少必填字段则校验失败
@@ -433,32 +417,20 @@ sections:
     - GOV-ARCH-005
     - PTP-001~PTP-005
     checks:
-    - step: Stage 0 scaffold——EXIT(3条):EXIT-0-01文件创建且注册/EXIT-0-02 __init__.py导出正确/EXIT-0-03
-        scaffold.py --verify通过；ENTRY(2条):ENTRY-1-01 references_exit:EXIT-0-01/ENTRY-1-02
-        references_exit:EXIT-0-02
-      command: validate_phase_exit.py --phase 0 && validate_phase_entry.py --phase
-        1
+    - step: Stage 0 scaffold——EXIT(3条):EXIT-0-01文件创建且注册/EXIT-0-02 __init__.py导出正确/EXIT-0-03 scaffold.py --verify通过；ENTRY(2条):ENTRY-1-01 references_exit:EXIT-0-01/ENTRY-1-02 references_exit:EXIT-0-02
+      command: validate_phase_exit.py --phase 0 && validate_phase_entry.py --phase 1
       expected_exit: 全部通过
       on_fail: 当前stage未完成或准入条件不满足
-    - step: Stage 1 experimental——EXIT(3条):EXIT-1-01基础功能可运行/EXIT-1-02单元测试覆盖核心路径/EXIT-1-03无阻断级bug；ENTRY(3条):ENTRY-2-01
-        references_exit:EXIT-1-01/ENTRY-2-02 references_exit:EXIT-1-02/ENTRY-2-03
-        references_exit:EXIT-1-03
-      command: validate_phase_exit.py --phase 1 && validate_phase_entry.py --phase
-        2
+    - step: Stage 1 experimental——EXIT(3条):EXIT-1-01基础功能可运行/EXIT-1-02单元测试覆盖核心路径/EXIT-1-03无阻断级bug；ENTRY(3条):ENTRY-2-01 references_exit:EXIT-1-01/ENTRY-2-02 references_exit:EXIT-1-02/ENTRY-2-03 references_exit:EXIT-1-03
+      command: validate_phase_exit.py --phase 1 && validate_phase_entry.py --phase 2
       expected_exit: 全部通过
       on_fail: 当前stage未完成或准入条件不满足
-    - step: Stage 2 beta——EXIT(4条):EXIT-2-01集成测试通过/EXIT-2-02性能基线达标/EXIT-2-03文档完整/EXIT-2-04无P0/P1缺陷；ENTRY(3条):ENTRY-3-01
-        references_exit:EXIT-2-01/ENTRY-3-02 references_exit:EXIT-2-03/ENTRY-3-03
-        references_exit:EXIT-2-04
-      command: validate_phase_exit.py --phase 2 && validate_phase_entry.py --phase
-        3
+    - step: Stage 2 beta——EXIT(4条):EXIT-2-01集成测试通过/EXIT-2-02性能基线达标/EXIT-2-03文档完整/EXIT-2-04无P0/P1缺陷；ENTRY(3条):ENTRY-3-01 references_exit:EXIT-2-01/ENTRY-3-02 references_exit:EXIT-2-03/ENTRY-3-03 references_exit:EXIT-2-04
+      command: validate_phase_exit.py --phase 2 && validate_phase_entry.py --phase 3
       expected_exit: 全部通过
       on_fail: 当前stage未完成或准入条件不满足
-    - step: Stage 3 stable——EXIT(3条):EXIT-3-01生产环境验证通过/EXIT-3-02监控告警就绪/EXIT-3-03回滚方案验证；ENTRY(3条):ENTRY-4-01
-        references_exit:EXIT-3-01/ENTRY-4-02 references_exit:EXIT-3-02/ENTRY-4-03
-        references_exit:EXIT-3-03
-      command: validate_phase_exit.py --phase 3 && validate_phase_entry.py --phase
-        4
+    - step: Stage 3 stable——EXIT(3条):EXIT-3-01生产环境验证通过/EXIT-3-02监控告警就绪/EXIT-3-03回滚方案验证；ENTRY(3条):ENTRY-4-01 references_exit:EXIT-3-01/ENTRY-4-02 references_exit:EXIT-3-02/ENTRY-4-03 references_exit:EXIT-3-03
+      command: validate_phase_exit.py --phase 3 && validate_phase_entry.py --phase 4
       expected_exit: 全部通过
       on_fail: 当前stage未完成或准入条件不满足
     - step: Stage 4 stable(终态)——EXIT(2条):EXIT-4-01稳定态DoD满足/EXIT-4-02持续运行30天无回退；无需next_stage_entry_criteria
@@ -642,8 +614,7 @@ sections:
       expected_result: 0.0~1.0浮点分数
       on_failure: 无法计算则默认0.0
     - order: 5
-      action: 加权求和得到knowledge_value_score——score = 0.30*density + 0.25*specificity
-        + 0.25*reuse + 0.20*irreplaceability
+      action: 加权求和得到knowledge_value_score——score = 0.30*density + 0.25*specificity + 0.25*reuse + 0.20*irreplaceability
       pre_condition: 4个维度分数已计算
       expected_result: score ≥ 0.4 则通过
       on_failure: score < 0.4 → reject，task降档FAILED
@@ -799,9 +770,7 @@ sections:
     summary: 门禁评估结果的持久化存储格式
     impact_on_rules: 门禁结果必须写入gates表
     key_decisions:
-    - SQL表DDL——CREATE TABLE gates(gate_run_id TEXT PRIMARY KEY,task_id TEXT NOT NULL,gate_id
-      TEXT NOT NULL,severity TEXT NOT NULL,status TEXT NOT NULL,evaluated_at TEXT
-      NOT NULL,details TEXT,UNIQUE(task_id,gate_id,gate_run_id))
+    - SQL表DDL——CREATE TABLE gates(gate_run_id TEXT PRIMARY KEY,task_id TEXT NOT NULL,gate_id TEXT NOT NULL,severity TEXT NOT NULL,status TEXT NOT NULL,evaluated_at TEXT NOT NULL,details TEXT,UNIQUE(task_id,gate_id,gate_run_id))
     - details JSON schema——{"check_id":"","check_status":"","message":"","auto_action":"","exempted_by":null}
     - 保留策略——gate_run_id永久保留/details 30天TTL后归档/月度审计高亮豁免>3次的gate
   gov_arch_006_exemption:
@@ -912,7 +881,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.1.0
     date: '2026-06-19'

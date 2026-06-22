@@ -32,10 +32,9 @@ Context Guard — 上下文契约守卫。
     - forbidden_touch 强制执行
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -58,12 +57,10 @@ class ContextGuardResult:
 
 
 class ContextGuard:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
-    def validate_access(self, task_card: dict[str, Any],
-                        actual_touched: list[str]) -> ContextGuardResult:
+    def validate_access(self, task_card: dict[str, Any], actual_touched: list[str]) -> ContextGuardResult:
         allowed_touch = set(task_card.get("allowed_touch", []))
         forbidden_touch = set(task_card.get("forbidden_touch", []))
         upstream = {f.get("file_path", "") for f in task_card.get("upstream_files", []) if isinstance(f, dict)}
@@ -79,29 +76,35 @@ class ContextGuard:
             fp_norm = file_path.strip()
 
             if fp_norm in forbidden_touch:
-                checks.append(AccessCheck(
-                    file_path=file_path,
-                    allowed=False,
-                    reason=f"FORBIDDEN: {file_path} is in forbidden_touch",
-                    is_forbidden_touch=True,
-                ))
+                checks.append(
+                    AccessCheck(
+                        file_path=file_path,
+                        allowed=False,
+                        reason=f"FORBIDDEN: {file_path} is in forbidden_touch",
+                        is_forbidden_touch=True,
+                    )
+                )
                 blocked.append(file_path)
                 continue
 
             if fp_norm in all_allowed_set:
-                checks.append(AccessCheck(
-                    file_path=file_path,
-                    allowed=True,
-                    reason="Explicitly allowed (allowed_touch/upstream/downstream)",
-                    is_allowed_touch=fp_norm in allowed_touch,
-                ))
+                checks.append(
+                    AccessCheck(
+                        file_path=file_path,
+                        allowed=True,
+                        reason="Explicitly allowed (allowed_touch/upstream/downstream)",
+                        is_allowed_touch=fp_norm in allowed_touch,
+                    )
+                )
             else:
                 warnings.append(file_path)
-                checks.append(AccessCheck(
-                    file_path=file_path,
-                    allowed=False,
-                    reason=f"WARNING: {file_path} not in allowed_touch/upstream/downstream",
-                ))
+                checks.append(
+                    AccessCheck(
+                        file_path=file_path,
+                        allowed=False,
+                        reason=f"WARNING: {file_path} not in allowed_touch/upstream/downstream",
+                    )
+                )
 
         return ContextGuardResult(
             all_allowed=len(blocked) == 0,
@@ -110,18 +113,19 @@ class ContextGuard:
             warning_files=warnings,
         )
 
-    def check_forbidden(self, actual_touched: list[str],
-                        forbidden_touch: list[str]) -> list[AccessCheck]:
+    def check_forbidden(self, actual_touched: list[str], forbidden_touch: list[str]) -> list[AccessCheck]:
         forbidden_set = set(forbidden_touch)
         checks: list[AccessCheck] = []
 
         for fp in actual_touched:
             if fp in forbidden_set:
-                checks.append(AccessCheck(
-                    file_path=fp,
-                    allowed=False,
-                    reason=f"VIOLATION: {fp} is in forbidden_touch",
-                    is_forbidden_touch=True,
-                ))
+                checks.append(
+                    AccessCheck(
+                        file_path=fp,
+                        allowed=False,
+                        reason=f"VIOLATION: {fp} is in forbidden_touch",
+                        is_forbidden_touch=True,
+                    )
+                )
 
         return checks

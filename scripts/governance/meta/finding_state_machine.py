@@ -21,8 +21,8 @@ Usage:
 """
 
 from __future__ import annotations
-from _shared.constants import EXIT_PASS
 
+from _shared.constants import EXIT_PASS
 
 __manifest__ = """
 args: []
@@ -36,16 +36,13 @@ priority: P1
 timeout_seconds: 30
 warn_only: false
 """
-import os
 import argparse
 import hashlib
 import json as json_mod
+import os
 import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
-
-import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _STATE_DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "finding_state_db.json"
@@ -107,8 +104,8 @@ PERSISTENT_UPGRADE: dict[str, tuple[int, str]] = {
     "HIGH": (60, "CRITICAL"),
 }
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load_states() -> dict:
@@ -132,6 +129,8 @@ def _save_states(data: dict) -> None:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def _finding_id(finding: dict) -> str:
     """_finding_id implementation."""
     raw = f"{finding.get('dimension', '')}|{finding.get('check_id', '')}|"
@@ -226,8 +225,7 @@ def _check_persistent_upgrade(data: dict, finding_id: str) -> None:
             old_sev = finding["severity"]
             finding["severity"] = new_sev
             finding["sla_deadline_at"] = _calc_sla_deadline(new_sev)
-            _audit_log(data, finding_id, f"PERSISTENT_{old_sev}", f"UPGRADED_{new_sev}",
-                       f"连续存在 {days:.0f} 天")
+            _audit_log(data, finding_id, f"PERSISTENT_{old_sev}", f"UPGRADED_{new_sev}", f"连续存在 {days:.0f} 天")
 
 
 def transition(finding_id: str, to_status: str, reason: str = "") -> dict:
@@ -275,12 +273,14 @@ def check_sla() -> dict:
             finding["status"] = "OVERDUE"
             finding["updated_at"] = now.isoformat()
             _audit_log(data, fid, "OPEN", "OVERDUE", f"SLA 定时器触发 ({finding['severity']})")
-            overdue.append({
-                "finding_id": fid,
-                "severity": finding["severity"],
-                "description": finding.get("description", "")[:100],
-                "deadline_was": deadline,
-            })
+            overdue.append(
+                {
+                    "finding_id": fid,
+                    "severity": finding["severity"],
+                    "description": finding.get("description", "")[:100],
+                    "deadline_was": deadline,
+                }
+            )
 
     _save_states(data)
     return {

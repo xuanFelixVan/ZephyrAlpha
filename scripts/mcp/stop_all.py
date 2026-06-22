@@ -61,10 +61,10 @@ def _stop_by_window_title() -> int:
     for mod in mcp_modules:
         try:
             result = subprocess.run(
-                ["wmic", "process", "where",
-                 f"CommandLine like '%{mod}%' and Name='python.exe'",
-                 "call", "terminate"],
-                capture_output=True, text=True, timeout=10,
+                ["wmic", "process", "where", f"CommandLine like '%{mod}%' and Name='python.exe'", "call", "terminate"],
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             if "ReturnValue = 0" in result.stdout:
                 stopped += 1

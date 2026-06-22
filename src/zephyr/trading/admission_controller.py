@@ -16,7 +16,7 @@ import logging
 import threading
 import time
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -83,7 +83,7 @@ class AdmissionMetrics(BaseModel):
 
 
 class _TokenBucket:
-    __slots__ = ("_rate", "_burst", "_tokens", "_last_refill", "_lock")
+    __slots__ = ("_burst", "_last_refill", "_lock", "_rate", "_tokens")
 
     def __init__(self, rate: float, burst: float) -> None:
         self._rate = rate
@@ -112,7 +112,7 @@ class _TokenBucket:
             self._refill()
             return self._tokens
 
-    def update_rate(self, new_rate: float, new_burst: Optional[float] = None) -> None:
+    def update_rate(self, new_rate: float, new_burst: float | None = None) -> None:
         with self._lock:
             self._rate = new_rate
             if new_burst is not None:
@@ -190,8 +190,8 @@ _DEFAULT_PER_TYPE_CONFIG = PerTypeBucketConfig()
 class AdmissionController:
     def __init__(
         self,
-        global_config: Optional[TokenBucketConfig] = None,
-        per_type_config: Optional[PerTypeBucketConfig] = None,
+        global_config: TokenBucketConfig | None = None,
+        per_type_config: PerTypeBucketConfig | None = None,
         enable_circuit_breaker: bool = True,
         cb_failure_threshold: int = 50,
         cb_recovery_timeout_s: float = 30.0,
@@ -297,7 +297,7 @@ class AdmissionController:
     def reset_circuit_breaker(self) -> None:
         self._circuit_breaker.reset()
 
-    def update_rate(self, new_rate: float, new_burst: Optional[float] = None) -> None:
+    def update_rate(self, new_rate: float, new_burst: float | None = None) -> None:
         self._global_bucket.update_rate(new_rate, new_burst)
 
     def health_check(self) -> dict[str, Any]:
@@ -305,9 +305,7 @@ class AdmissionController:
         return {
             "status": "healthy" if metrics.circuit_breaker_state != "open" else "degraded",
             "metrics": metrics.model_dump(),
-            "type_bucket_tokens": {
-                k: round(v.tokens, 2) for k, v in self._type_buckets.items()
-            },
+            "type_bucket_tokens": {k: round(v.tokens, 2) for k, v in self._type_buckets.items()},
         }
 
     def _extract_event_type(self, event: Any) -> str:

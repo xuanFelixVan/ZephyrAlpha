@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.queue — auto-generated package init."""
+
 from . import task_scheduler
 
-__all__ = ['task_queue', 'task_scheduler']
-
+__all__ = ["task_queue", "task_scheduler"]

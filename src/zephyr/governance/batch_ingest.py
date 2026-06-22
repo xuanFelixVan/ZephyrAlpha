@@ -35,7 +35,6 @@
 Safety : M
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -48,8 +47,8 @@ import yaml
 from zephyr.governance.ingest import IngestGate
 
 __all__ = [
-    "BatchIngestReport",
     "BatchIngestEntry",
+    "BatchIngestReport",
     "BatchIngestor",
 ]
 

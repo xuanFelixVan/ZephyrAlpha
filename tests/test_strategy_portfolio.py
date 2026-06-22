@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.pf_core.strategy_portfolio import (
     RetirementTrigger,
     StrategyMethod,

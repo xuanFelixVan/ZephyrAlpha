@@ -91,14 +91,16 @@ class SilentCorruptionDetector:
             severity = CorruptionSeverity.NONE
 
         if not valid:
-            self.corruption_events.append({
-                "ts": time.time(),
-                "sink": sink_name,
-                "block_id": block_id,
-                "expected_checksum": expected_checksum[:16],
-                "actual_checksum": actual_checksum[:16],
-                "severity": severity.value,
-            })
+            self.corruption_events.append(
+                {
+                    "ts": time.time(),
+                    "sink": sink_name,
+                    "block_id": block_id,
+                    "expected_checksum": expected_checksum[:16],
+                    "actual_checksum": actual_checksum[:16],
+                    "severity": severity.value,
+                }
+            )
 
         return {
             "valid": valid,
@@ -107,9 +109,12 @@ class SilentCorruptionDetector:
             "severity": severity.value,
             "corruption_rate": round(corruption_rate, 6),
             "recommendation": (
-                "quarantine_sink_and_investigate_hardware" if severity == CorruptionSeverity.SYSTEMIC
-                else "trigger_integrity_scan" if severity == CorruptionSeverity.PATTERN
-                else "log_and_monitor" if not valid
+                "quarantine_sink_and_investigate_hardware"
+                if severity == CorruptionSeverity.SYSTEMIC
+                else "trigger_integrity_scan"
+                if severity == CorruptionSeverity.PATTERN
+                else "log_and_monitor"
+                if not valid
                 else "continue"
             ),
         }

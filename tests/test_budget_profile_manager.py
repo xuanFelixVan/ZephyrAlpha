@@ -12,9 +12,6 @@
 
 from __future__ import annotations
 
-import os
-import tempfile
-
 import pytest
 
 from zephyr.governance.budget_profile_manager import (
@@ -35,9 +32,7 @@ def manager(tmp_profile_path):
 
 class TestBudgetProfile:
     def test_creation(self):
-        p = BudgetProfile(
-            name="test", token_limit=1000, cost_limit=0.1, time_limit=60.0, model_tier="economy"
-        )
+        p = BudgetProfile(name="test", token_limit=1000, cost_limit=0.1, time_limit=60.0, model_tier="economy")
         assert p.name == "test"
         assert p.token_limit == 1000
 
@@ -64,17 +59,13 @@ class TestBudgetProfileManager:
         assert p is None
 
     def test_add_profile(self, manager):
-        custom = BudgetProfile(
-            name="custom", token_limit=5000, cost_limit=0.2, time_limit=120.0, model_tier="economy"
-        )
+        custom = BudgetProfile(name="custom", token_limit=5000, cost_limit=0.2, time_limit=120.0, model_tier="economy")
         manager.add(custom)
         assert manager.get("custom") is not None
         assert manager.get("custom").token_limit == 5000
 
     def test_remove_non_default_profile(self, manager):
-        custom = BudgetProfile(
-            name="custom", token_limit=5000, cost_limit=0.2, time_limit=120.0, model_tier="economy"
-        )
+        custom = BudgetProfile(name="custom", token_limit=5000, cost_limit=0.2, time_limit=120.0, model_tier="economy")
         manager.add(custom)
         manager.remove("custom")
         assert manager.get("custom") is None

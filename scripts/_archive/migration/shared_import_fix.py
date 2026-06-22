@@ -214,7 +214,7 @@ def main() -> None:
                 total_errors += 1
                 print(f"  ERROR: {result['file']}")
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Files updated: {total_updated}")
     print(f"  Import changes: {total_changes}")
     print(f"  Errors: {total_errors}")

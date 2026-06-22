@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_ebpf_monitor.py
 
-import pytest
 
 from zephyr.ops.detectors.ebpf_monitor import EBPFMonitor
 

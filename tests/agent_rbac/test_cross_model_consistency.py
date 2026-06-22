@@ -17,32 +17,39 @@ MOD-INF-018 跨模型一致性测试 — DeepSeek/GLM/Claude 对同权限规则�
   3. API兼容性——PermissionGuard 所有公开API对所有模型输入格式兼容
   4. 边界案例——极端输入（空字符串/超长路径/特殊字符/Unicode）跨模型行为一致
 """
-from __future__ import annotations
 
-import itertools
-from typing import Any
+from __future__ import annotations
 
 import pytest
 
-from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel, IDESource
-from zephyr.security.access_control.permission_guard import PermissionGuard, GuardDecision
-from zephyr.security.access_control.rbac_guard import RBACGuard, PermissionDecision
-from zephyr.security.access_control.immutable_core import ImmutableCore
 from zephyr.security.access_control.derive_rbac_roles import RBACRoleDeriver
+from zephyr.security.access_control.identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
+from zephyr.security.access_control.immutable_core import ImmutableCore
 from zephyr.security.access_control.integrity_self_check import IntegritySelfCheck
+from zephyr.security.access_control.permission_guard import GuardDecision, PermissionGuard
+from zephyr.security.access_control.rbac_guard import RBACGuard
 
 MODEL_AGENTS: dict[str, AgentIdentity] = {
     "DeepSeek": AgentIdentity(
-        session_id="deepseek-consistency", maturity=MaturityLevel.L2_REGULAR,
-        role=AgentRole.EXECUTOR, owner_approved=True, ide_source=IDESource.TRAE,
+        session_id="deepseek-consistency",
+        maturity=MaturityLevel.L2_REGULAR,
+        role=AgentRole.EXECUTOR,
+        owner_approved=True,
+        ide_source=IDESource.TRAE,
     ),
     "GLM": AgentIdentity(
-        session_id="glm-consistency", maturity=MaturityLevel.L2_REGULAR,
-        role=AgentRole.EXECUTOR, owner_approved=True, ide_source=IDESource.CLI,
+        session_id="glm-consistency",
+        maturity=MaturityLevel.L2_REGULAR,
+        role=AgentRole.EXECUTOR,
+        owner_approved=True,
+        ide_source=IDESource.CLI,
     ),
     "Claude": AgentIdentity(
-        session_id="claude-consistency", maturity=MaturityLevel.L2_REGULAR,
-        role=AgentRole.EXECUTOR, owner_approved=True, ide_source=IDESource.API,
+        session_id="claude-consistency",
+        maturity=MaturityLevel.L2_REGULAR,
+        role=AgentRole.EXECUTOR,
+        owner_approved=True,
+        ide_source=IDESource.API,
     ),
 }
 
@@ -107,9 +114,7 @@ class TestDeterministicConsistency:
 
         for op in ops_to_test:
             decisions = {m: results[m][op] for m in MODEL_AGENTS}
-            assert len(set(decisions.values())) == 1, (
-                f"CrossModel FAIL: RBACGuard '{op}' inconsistent: {decisions}"
-            )
+            assert len(set(decisions.values())) == 1, f"CrossModel FAIL: RBACGuard '{op}' inconsistent: {decisions}"
 
     def test_immutable_core_same_all_models(self):
         core = ImmutableCore()
@@ -128,8 +133,9 @@ class TestDeterministicConsistency:
             assert r1 == r2 == r3, f"ImmutableCore non-deterministic for '{p}': {r1}/{r2}/{r3}"
 
     def test_derive_rbac_deterministic(self):
-        from pathlib import Path
         import tempfile
+        from pathlib import Path
+
         deriver = RBACRoleDeriver()
         with tempfile.TemporaryDirectory() as tmp:
             p1 = Path(tmp) / "rbac1.yaml"
@@ -153,14 +159,20 @@ class TestSemanticConsistency:
         assert results[0] == results[1], f"Same input gave different results: {results}"
 
     def test_agent_identity_equivalence(self):
-        a1 = AgentIdentity(session_id="equiv-1", maturity=MaturityLevel.L2_REGULAR, role=AgentRole.EXECUTOR, owner_approved=True)
-        a2 = AgentIdentity(session_id="equiv-2", maturity=MaturityLevel.L2_REGULAR, role=AgentRole.EXECUTOR, owner_approved=True)
+        a1 = AgentIdentity(
+            session_id="equiv-1", maturity=MaturityLevel.L2_REGULAR, role=AgentRole.EXECUTOR, owner_approved=True
+        )
+        a2 = AgentIdentity(
+            session_id="equiv-2", maturity=MaturityLevel.L2_REGULAR, role=AgentRole.EXECUTOR, owner_approved=True
+        )
         guard = RBACGuard()
         ops = ["read:docs", "write:src", "execute:scripts", "delete:file"]
         for op in ops:
             r1 = guard.check(a1, op)
             r2 = guard.check(a2, op)
-            assert r1.decision == r2.decision, f"Semantic FAIL: '{op}' diff for equivalent agents: {r1.decision}/{r2.decision}"
+            assert r1.decision == r2.decision, (
+                f"Semantic FAIL: '{op}' diff for equivalent agents: {r1.decision}/{r2.decision}"
+            )
 
 
 class TestAPICompatibility:
@@ -176,16 +188,18 @@ class TestAPICompatibility:
         guard = PermissionGuard()
         for model, agent in MODEL_AGENTS.items():
             result = guard.check(agent, "read:docs")
-            assert result.decision in (GuardDecision.ALLOW, GuardDecision.AUTO_GUARD, GuardDecision.BLOCKED), (
-                f"API FAIL: {model} agent produced invalid decision: {result.decision}"
-            )
+            assert result.decision in (
+                GuardDecision.ALLOW,
+                GuardDecision.AUTO_GUARD,
+                GuardDecision.BLOCKED,
+            ), f"API FAIL: {model} agent produced invalid decision: {result.decision}"
 
     def test_guard_check_with_all_params(self):
         guard = PermissionGuard()
         agent = MODEL_AGENTS["DeepSeek"]
         result = guard.check(agent, "write:src", target_path="src/zephyr/test.py")
-        assert result.layer != "", f"API FAIL: guard.check() didn't produce layer info"
-        assert result.timing_ns >= 0, f"API FAIL: guard.check() didn't produce timing info"
+        assert result.layer != "", "API FAIL: guard.check() didn't produce layer info"
+        assert result.timing_ns >= 0, "API FAIL: guard.check() didn't produce timing info"
 
     def test_integrity_self_check_all_modules(self):
         checker = IntegritySelfCheck()
@@ -271,9 +285,16 @@ class TestConsistencyReport:
     def test_cross_model_summary(self):
         guard = PermissionGuard()
         core_ops = [
-            "read:docs", "read:src", "write:src", "execute:scripts",
-            "modify:blueprint", "delete:audit_logs", "modify_immutable_core",
-            "disable_kill_switch", "modify:rbac_roles", "circumvent_gate_engine",
+            "read:docs",
+            "read:src",
+            "write:src",
+            "execute:scripts",
+            "modify:blueprint",
+            "delete:audit_logs",
+            "modify_immutable_core",
+            "disable_kill_switch",
+            "modify:rbac_roles",
+            "circumvent_gate_engine",
         ]
 
         agreement = 0
@@ -288,11 +309,9 @@ class TestConsistencyReport:
                 agreement += 1
 
         consistency_rate = agreement / max(total, 1) * 100
-        print(f"\n=== Cross-Model Consistency Report ===")
+        print("\n=== Cross-Model Consistency Report ===")
         print(f"  Models tested: {list(MODEL_AGENTS.keys())}")
         print(f"  Operations: {total}")
         print(f"  Consistent: {agreement}/{total} ({consistency_rate:.0f}%)")
 
-        assert consistency_rate >= 90, (
-            f"CrossModel FAIL: consistency rate {consistency_rate:.0f}% below 90% threshold!"
-        )
+        assert consistency_rate >= 90, f"CrossModel FAIL: consistency rate {consistency_rate:.0f}% below 90% threshold!"

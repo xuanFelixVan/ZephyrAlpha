@@ -40,20 +40,17 @@ SSoT: cross_layer_contracts.yaml → CTR-ERR-004 + CTR-003
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any
 
 from zephyr.risk.risk_manager import (
     RiskLimits,
-    RiskLimitViolationError,
 )
 from zephyr.risk.risk_validator import (
     RiskValidator,
     ViolatedConstraint,
     ViolationDetail,
 )
-
 
 __validator_id__ = "default-risk-validator"
 
@@ -77,13 +74,15 @@ class DefaultRiskValidator(RiskValidator):
         violations: list[ViolationDetail] = []
 
         if self._kill_switch_active:
-            violations.append(ViolationDetail(
-                constraint=ViolatedConstraint.DRAWDOWN_TRIGGER,
-                description="Kill switch 已激活，拒绝所有新订单",
-                limit_value=0.0,
-                actual_value=target_weight,
-                severity="HALT",
-            ))
+            violations.append(
+                ViolationDetail(
+                    constraint=ViolatedConstraint.DRAWDOWN_TRIGGER,
+                    description="Kill switch 已激活，拒绝所有新订单",
+                    limit_value=0.0,
+                    actual_value=target_weight,
+                    severity="HALT",
+                )
+            )
             self._violation_history.extend(violations)
             return violations
 
@@ -94,23 +93,27 @@ class DefaultRiskValidator(RiskValidator):
             effective_single = float(limits.get("max_single_position", 0.10))
 
         if abs(target_weight) > effective_single:
-            violations.append(ViolationDetail(
-                constraint=ViolatedConstraint.POSITION_LIMIT,
-                description=f"单仓权重超限: {symbol} target={target_weight:.4f} limit={effective_single:.4f}",
-                limit_value=effective_single,
-                actual_value=abs(target_weight),
-                severity="HALT",
-            ))
+            violations.append(
+                ViolationDetail(
+                    constraint=ViolatedConstraint.POSITION_LIMIT,
+                    description=f"单仓权重超限: {symbol} target={target_weight:.4f} limit={effective_single:.4f}",
+                    limit_value=effective_single,
+                    actual_value=abs(target_weight),
+                    severity="HALT",
+                )
+            )
 
         post_trade_weight = Decimal(str(current_holdings.get(symbol, 0.0))) + Decimal(str(target_weight))
         if abs(post_trade_weight) > effective_single * 1.05:
-            violations.append(ViolationDetail(
-                constraint=ViolatedConstraint.POSITION_LIMIT,
-                description=f"下单后总权重超限: {symbol} post_trade={post_trade_weight:.4f}",
-                limit_value=effective_single,
-                actual_value=abs(post_trade_weight),
-                severity="HALT",
-            ))
+            violations.append(
+                ViolationDetail(
+                    constraint=ViolatedConstraint.POSITION_LIMIT,
+                    description=f"下单后总权重超限: {symbol} post_trade={post_trade_weight:.4f}",
+                    limit_value=effective_single,
+                    actual_value=abs(post_trade_weight),
+                    severity="HALT",
+                )
+            )
 
         self._violation_history.extend(violations)
         return violations
@@ -137,23 +140,27 @@ class DefaultRiskValidator(RiskValidator):
 
         for symbol, weight in holdings.items():
             if abs(weight) > max_single:
-                violations.append(ViolationDetail(
-                    constraint=ViolatedConstraint.POSITION_LIMIT,
-                    description=f"持仓超限: {symbol} weight={weight:.4f} limit={max_single:.4f}",
-                    limit_value=max_single,
-                    actual_value=abs(weight),
-                    severity="HALT",
-                ))
+                violations.append(
+                    ViolationDetail(
+                        constraint=ViolatedConstraint.POSITION_LIMIT,
+                        description=f"持仓超限: {symbol} weight={weight:.4f} limit={max_single:.4f}",
+                        limit_value=max_single,
+                        actual_value=abs(weight),
+                        severity="HALT",
+                    )
+                )
 
         gross_leverage = sum(abs(w) for w in holdings.values())
         if gross_leverage > max_leverage:
-            violations.append(ViolationDetail(
-                constraint=ViolatedConstraint.LEVERAGE_LIMIT,
-                description=f"总杠杆超限: {gross_leverage:.4f} > {max_leverage:.4f}",
-                limit_value=max_leverage,
-                actual_value=gross_leverage,
-                severity="HALT",
-            ))
+            violations.append(
+                ViolationDetail(
+                    constraint=ViolatedConstraint.LEVERAGE_LIMIT,
+                    description=f"总杠杆超限: {gross_leverage:.4f} > {max_leverage:.4f}",
+                    limit_value=max_leverage,
+                    actual_value=gross_leverage,
+                    severity="HALT",
+                )
+            )
 
         if drawdown_limit and drawdown_limit > 0:
             total_mv = sum(market_values.values())
@@ -162,13 +169,15 @@ class DefaultRiskValidator(RiskValidator):
                 nav_dec = Decimal(str(total_nav)) if isinstance(total_nav, float) else total_nav
                 dd_from_peak = Decimal("1") - total_mv_dec / nav_dec
                 if dd_from_peak > drawdown_limit:
-                    violations.append(ViolationDetail(
-                        constraint=ViolatedConstraint.DRAWDOWN_TRIGGER,
-                        description=f"回撤触发: {float(dd_from_peak):.4%} > {drawdown_limit:.4%}",
-                        limit_value=drawdown_limit,
-                        actual_value=float(dd_from_peak),
-                        severity="HALT",
-                    ))
+                    violations.append(
+                        ViolationDetail(
+                            constraint=ViolatedConstraint.DRAWDOWN_TRIGGER,
+                            description=f"回撤触发: {float(dd_from_peak):.4%} > {drawdown_limit:.4%}",
+                            limit_value=drawdown_limit,
+                            actual_value=float(dd_from_peak),
+                            severity="HALT",
+                        )
+                    )
 
         self._violation_history.extend(violations)
         return violations

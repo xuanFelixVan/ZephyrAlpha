@@ -11,6 +11,7 @@
 # [TESTS] tests/test_cognitive_load.py
 
 import pytest
+
 from zephyr.ops.diagnosers.cognitive_load import CognitiveLoad
 
 

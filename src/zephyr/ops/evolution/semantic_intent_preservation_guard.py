@@ -26,9 +26,9 @@ R505: SemanticIntentPreservationGuard
 自修改语义意图保真校验 — cosine similarity 检测意图漂移
 """
 
-import hashlib
 import math
 from dataclasses import dataclass, field
+
 
 @dataclass
 class SemanticIntentPreservationGuard:
@@ -66,7 +66,7 @@ class SemanticIntentPreservationGuard:
         }
         self.modifications_log.append(entry)
         if len(self.modifications_log) > self.max_log_size:
-            self.modifications_log = self.modifications_log[-self.max_log_size:]
+            self.modifications_log = self.modifications_log[-self.max_log_size :]
 
         self.pre_modification_embedding = None
         self.pre_modification_hash = ""
@@ -74,20 +74,21 @@ class SemanticIntentPreservationGuard:
         return {
             **entry,
             "drift_detected": drift > self.drift_threshold,
-            "recommendation": "BLOCK" if severity == "critical_drift" else "REVIEW" if severity == "semantic_drift" else "ALLOW",
+            "recommendation": "BLOCK"
+            if severity == "critical_drift"
+            else "REVIEW"
+            if severity == "semantic_drift"
+            else "ALLOW",
         }
 
     def get_drift_history(self) -> list[dict]:
-        return [
-            e for e in self.modifications_log
-            if e["drift"] > self.drift_threshold
-        ]
+        return [e for e in self.modifications_log if e["drift"] > self.drift_threshold]
 
     @staticmethod
     def _cosine_similarity(a: list[float], b: list[float]) -> float:
         if len(a) != len(b) or len(a) == 0:
             return 0.0
-        dot = sum(x * y for x, y in zip(a, b))
+        dot = sum(x * y for x, y in zip(a, b, strict=False))
         norm_a = math.sqrt(sum(x * x for x in a))
         norm_b = math.sqrt(sum(y * y for y in b))
         if norm_a < 1e-10 or norm_b < 1e-10:

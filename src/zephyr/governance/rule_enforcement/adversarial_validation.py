@@ -12,7 +12,6 @@
 
 """AdversarialValidationGate — validates outputs against adversarial attacks."""
 
-
 from __future__ import annotations
 
 import logging
@@ -23,10 +22,10 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = [
-    "AdversarialValidationGate",
-    "ValidationResult",
     "AdversarialTestResult",
     "AdversarialValidationError",
+    "AdversarialValidationGate",
+    "ValidationResult",
 ]
 
 
@@ -104,7 +103,9 @@ class AdversarialValidationGate:
         self._history.append(result)
         logger.info(
             "AdversarialValidationGate: validate passed=%s confidence=%.2f violations=%d",
-            passed, confidence, len(violations),
+            passed,
+            confidence,
+            len(violations),
         )
         return result
 
@@ -118,19 +119,23 @@ class AdversarialValidationGate:
             try:
                 score = self._run_strategy_test(output, test_type, params)
                 passed = score >= self._confidence_threshold
-                results.append(AdversarialTestResult(
-                    strategy_name=name,
-                    passed=passed,
-                    score=score,
-                    details={"test_type": test_type},
-                ))
+                results.append(
+                    AdversarialTestResult(
+                        strategy_name=name,
+                        passed=passed,
+                        score=score,
+                        details={"test_type": test_type},
+                    )
+                )
             except Exception as exc:
-                results.append(AdversarialTestResult(
-                    strategy_name=name,
-                    passed=False,
-                    score=0.0,
-                    details={"error": str(exc)},
-                ))
+                results.append(
+                    AdversarialTestResult(
+                        strategy_name=name,
+                        passed=False,
+                        score=0.0,
+                        details={"error": str(exc)},
+                    )
+                )
                 logger.error("AdversarialValidationGate: strategy %s failed: %s", name, exc)
 
         return results
@@ -158,10 +163,8 @@ class AdversarialValidationGate:
             for c in output:
                 char_counts[c] = char_counts.get(c, 0) + 1
             import math
-            entropy = -sum(
-                (count / len(output)) * math.log2(count / len(output))
-                for count in char_counts.values()
-            )
+
+            entropy = -sum((count / len(output)) * math.log2(count / len(output)) for count in char_counts.values())
             max_entropy = math.log2(len(char_counts)) if len(char_counts) > 1 else 1.0
             normalized = entropy / max_entropy if max_entropy > 0 else 0.0
             return 1.0 if normalized >= min_entropy else normalized / min_entropy
@@ -174,6 +177,7 @@ class AdversarialValidationGate:
 
     def get_history(self) -> list[ValidationResult]:
         return list(self._history)
+
 
 class AdversarialValidation:
     def __init__(self, config=None):

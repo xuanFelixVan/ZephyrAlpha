@@ -19,6 +19,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -29,8 +30,8 @@ warn_only: false
 """
 
 
-import os
 import argparse
+import os
 import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -40,8 +41,8 @@ import yaml
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _STATE_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "script_retirement_state.yaml"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load() -> dict:
@@ -60,14 +61,15 @@ def _save(data: dict) -> None:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
-    
+
         os.replace(tmp_path, _STATE_PATH)
     except PermissionError:
         try:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def get_retirement_status(script_name: str) -> str:
     """get_retirement_status implementation."""
     data = _load()

@@ -25,14 +25,17 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class MCPSource:
     track: str  # A(Bounded) or B(Indexed)
     connected: bool
     features: list[str]
 
+
 class MCPAdapter:
     """A/B 双轨适配 + 5 个 MCP 工具 (DD109)."""
+
     def probe_track(self, track: str) -> MCPSource:
         return MCPSource(track=track, connected=True, features=["search", "inject", "status"])
 

@@ -13,14 +13,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
-
-import pytest
 
 from zephyr.shared.queue.task_scheduler import (
-    ScheduleResult,
-    ScheduleStatus,
     ScheduledTask,
+    ScheduleStatus,
     TaskScheduler,
 )
 

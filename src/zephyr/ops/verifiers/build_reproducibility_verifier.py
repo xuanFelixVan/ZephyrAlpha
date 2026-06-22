@@ -89,17 +89,19 @@ class BuildReproducibilityVerifier:
         entry = {"ts": time.time(), "label": label, "hash": source_hash}
         self.build_hashes.append(entry)
         if len(self.build_hashes) > self.build_retention:
-            self.build_hashes = self.build_hashes[-self.build_retention:]
+            self.build_hashes = self.build_hashes[-self.build_retention :]
 
         if len(self.build_hashes) >= 2:
             prev = self.build_hashes[-2]["hash"]
             if prev != source_hash:
-                self.integrity_violations.append({
-                    "ts": time.time(),
-                    "type": BuildIntegrity.DRIFT_DETECTED.value,
-                    "previous": prev[:12],
-                    "current": source_hash[:12],
-                })
+                self.integrity_violations.append(
+                    {
+                        "ts": time.time(),
+                        "type": BuildIntegrity.DRIFT_DETECTED.value,
+                        "previous": prev[:12],
+                        "current": source_hash[:12],
+                    }
+                )
                 return {
                     "integrity": BuildIntegrity.DRIFT_DETECTED.value,
                     "previous_build": prev[:12],
@@ -121,11 +123,13 @@ class BuildReproducibilityVerifier:
                 missing.append(mod)
 
         if missing:
-            self.integrity_violations.append({
-                "ts": time.time(),
-                "type": BuildIntegrity.BROKEN.value,
-                "missing_modules": missing,
-            })
+            self.integrity_violations.append(
+                {
+                    "ts": time.time(),
+                    "type": BuildIntegrity.BROKEN.value,
+                    "missing_modules": missing,
+                }
+            )
 
         return {
             "integrity": BuildIntegrity.BROKEN.value if missing else BuildIntegrity.REPRODUCIBLE.value,
@@ -137,12 +141,14 @@ class BuildReproducibilityVerifier:
     def verify_ci_consistency(self, ci_hash: str, local_hash: str) -> dict:
         consistent = ci_hash == local_hash
         if not consistent:
-            self.integrity_violations.append({
-                "ts": time.time(),
-                "type": "CI_LOCAL_MISMATCH",
-                "ci_hash": ci_hash[:12],
-                "local_hash": local_hash[:12],
-            })
+            self.integrity_violations.append(
+                {
+                    "ts": time.time(),
+                    "type": "CI_LOCAL_MISMATCH",
+                    "ci_hash": ci_hash[:12],
+                    "local_hash": local_hash[:12],
+                }
+            )
         return {
             "consistent": consistent,
             "ci_hash": ci_hash[:12],

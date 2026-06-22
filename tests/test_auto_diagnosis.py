@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_auto_diagnosis.py
 
-import pytest
 from zephyr.ops.diagnosers.auto_diagnosis import AutoDiagnosis
 
 

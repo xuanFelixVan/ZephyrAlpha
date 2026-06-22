@@ -6,11 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """SignalSynthesizerBase — FactorSignal 入参 / SynthesizedSignal 出站对齐。"""
 
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
 from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
@@ -68,7 +69,7 @@ class _EqualWeightTestSynthesizer(SignalSynthesizerBase):
 
 
 def test_signal_synthesizer_accepts_factor_signal_list() -> None:
-    ts = datetime.now(timezone.utc)
+    ts = datetime.now(UTC)
     fs = [
         FactorSignal(
             factor_id="a",

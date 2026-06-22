@@ -8,10 +8,9 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
-
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 import hashlib
 import json
 import os
@@ -19,11 +18,13 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+
 class RingLevel:
     R0_OWNER = 0
     R1_ADMIN = 1
     R2_AGENT = 2
     R3_OBSERVER = 3
+
 
 RING_LABELS: dict[int, str] = {
     RingLevel.R0_OWNER: "owner",
@@ -31,6 +32,7 @@ RING_LABELS: dict[int, str] = {
     RingLevel.R2_AGENT: "agent",
     RingLevel.R3_OBSERVER: "observer",
 }
+
 
 @dataclass
 class TrustSignature:
@@ -40,15 +42,25 @@ class TrustSignature:
     payload_hash: str
     signed_at: float = field(default_factory=time.time)
 
+
 PREMISSION_MAP: dict[int, set[str]] = {
-    RingLevel.R0_OWNER: {"modify_budget", "add_model", "disable_gate", "grant_trust", "revoke_trust", "view_all", "audit_all", "execute"},
+    RingLevel.R0_OWNER: {
+        "modify_budget",
+        "add_model",
+        "disable_gate",
+        "grant_trust",
+        "revoke_trust",
+        "view_all",
+        "audit_all",
+        "execute",
+    },
     RingLevel.R1_ADMIN: {"modify_budget", "add_model", "view_all", "audit_all", "execute"},
     RingLevel.R2_AGENT: {"view_own", "use_model", "execute"},
     RingLevel.R3_OBSERVER: {"view_summary"},
 }
 
-class TrustRingManager:
 
+class TrustRingManager:
     _KEY_FILE = ".zephyr_secure/trust_keys.json"
 
     def __init__(self):
@@ -60,7 +72,7 @@ class TrustRingManager:
     def _load_keys(self) -> None:
         kf = Path(self._KEY_FILE)
         if kf.exists():
-            with open(kf, "r", encoding="utf-8") as f:
+            with open(kf, encoding="utf-8") as f:
                 self._keys = json.load(f)
 
     def _save_keys(self) -> None:

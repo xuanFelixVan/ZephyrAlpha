@@ -24,7 +24,9 @@
 Blindspot: Repair effectiveness unverified via controlled experiment.
 Risk: R117 — Cannot prove repair caused improvement vs. self-healing.
 """
+
 from dataclasses import dataclass
+
 
 @dataclass
 class ABTest:

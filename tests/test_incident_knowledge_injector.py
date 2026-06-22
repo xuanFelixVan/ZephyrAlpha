@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_incident_knowledge_injector.py
 
-import pytest
 
 from zephyr.ops.diagnosers.incident_knowledge_injector import (
     IncidentKnowledgeInjector,
@@ -33,17 +32,26 @@ class TestIncidentKnowledgeInjectorInstantiation:
 class TestInjectedRule:
     def test_default_values(self):
         rule = InjectedRule(
-            rule_id="R1", source_rca_id="INC1", rule_type="detection",
-            condition="test condition", threshold=0.5, created_at=1000.0,
+            rule_id="R1",
+            source_rca_id="INC1",
+            rule_type="detection",
+            condition="test condition",
+            threshold=0.5,
+            created_at=1000.0,
         )
         assert rule.validated is False
         assert rule.active is False
 
     def test_custom_values(self):
         rule = InjectedRule(
-            rule_id="R2", source_rca_id="INC2", rule_type="threshold",
-            condition="metric > 10", threshold=10.0, created_at=2000.0,
-            validated=True, active=True,
+            rule_id="R2",
+            source_rca_id="INC2",
+            rule_type="threshold",
+            condition="metric > 10",
+            threshold=10.0,
+            created_at=2000.0,
+            validated=True,
+            active=True,
         )
         assert rule.validated is True
         assert rule.active is True

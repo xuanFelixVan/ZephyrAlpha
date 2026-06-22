@@ -44,21 +44,21 @@ AI 施工约定：
 SSoT: MOD-INF-016 §2.15 shared-context
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import contextvars
 import logging
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Self, Any
+from typing import Any, Self
 
 __all__ = [
     "RequestContext",
     "current_context",
-    "set_context",
     "get_request_id",
+    "set_context",
     "set_request_id",
 ]
 

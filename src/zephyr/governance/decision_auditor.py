@@ -25,8 +25,9 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
 
 class DecisionAuditor:
     """去重决策审计链."""
@@ -42,7 +43,7 @@ class DecisionAuditor:
         evidence: dict | None = None,
     ) -> dict:
         """记录决策fingerprint到不可变追加日志."""
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         payload = {
             "decision_id": decision_id,
             "timestamp": now,

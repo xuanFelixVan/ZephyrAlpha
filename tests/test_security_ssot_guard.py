@@ -19,18 +19,17 @@
 
 # [TESTS] pytest tests/test_security_ssot_guard.py -q
 
-import pytest
 from zephyr.integration.shared_08.security.ssot_guard import (
-    SsotError,
-    SsotViolation,
-    RegistryParseError,
+    REGISTRY_REL_PATH,
+    WATCHED_EXTENSIONS,
+    WATCHED_PREFIXES,
     CheckResult,
     GuardReport,
+    RegistryParseError,
+    SsotError,
+    SsotViolation,
     _extract_declared_paths,
     _validate_path_format,
-    WATCHED_PREFIXES,
-    WATCHED_EXTENSIONS,
-    REGISTRY_REL_PATH,
 )
 
 
@@ -147,6 +146,7 @@ class TestSsotViolation:
 
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         assert issubclass(SsotViolation, ZephyrBaseError)
 
 

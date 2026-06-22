@@ -10,10 +10,8 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_baseline_manager.py -q
 
-import json
 import os
 
-import pytest
 from zephyr.behavioral_audit.baseline_manager import BaselineManager, DiffReport
 
 

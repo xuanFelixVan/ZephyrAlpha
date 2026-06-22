@@ -11,10 +11,12 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import os
 import tempfile
+
 import pytest
 
 try:

@@ -1,0 +1,23 @@
+task_id: DM-100001
+title: Mock task for TRAE-047
+description: Mock task to test TRAE-047 gate. This is a valid task with all required
+  fields.
+status: PENDING
+priority: P1
+phase: 0
+namespace: DM
+seq: 100001
+safety_level: L
+files_in_scope:
+- src/zephyr/test.py
+deliverables:
+- src/zephyr/test.py
+acceptance:
+- python -m pytest tests/test_mock.py
+applicable_rules:
+- TRAE-047
+rollback_instructions: git checkout HEAD~1
+blocked_by: []
+post_sync_standard: python scripts/governance/audit_registration.py
+created_at: '2026-06-22T01:38:26.846953'
+updated_at: '2026-06-22T01:38:26.846953'

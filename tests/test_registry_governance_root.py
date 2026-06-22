@@ -12,6 +12,7 @@
 
 import pytest
 import yaml
+
 from zephyr.infrastructure.registry_governance import (
     DomainEntry,
     FunctionalDomainRegistry,
@@ -96,22 +97,24 @@ class TestFunctionalDomainRegistry:
     def test_query_domain(self, tmp_path):
         reg_path = tmp_path / "reg.yaml"
         reg_path.write_text(
-            yaml.dump({
-                "entries": [
-                    {
-                        "domain": "security",
-                        "subdomain": "auth",
-                        "ssot_module": "mod.auth",
-                        "ssot_path": "/auth",
-                    },
-                    {
-                        "domain": "security",
-                        "subdomain": "crypto",
-                        "ssot_module": "mod.crypto",
-                        "ssot_path": "/crypto",
-                    },
-                ]
-            }),
+            yaml.dump(
+                {
+                    "entries": [
+                        {
+                            "domain": "security",
+                            "subdomain": "auth",
+                            "ssot_module": "mod.auth",
+                            "ssot_path": "/auth",
+                        },
+                        {
+                            "domain": "security",
+                            "subdomain": "crypto",
+                            "ssot_module": "mod.crypto",
+                            "ssot_path": "/crypto",
+                        },
+                    ]
+                }
+            ),
             encoding="utf-8",
         )
         reg = FunctionalDomainRegistry(registry_path=reg_path)
@@ -123,17 +126,19 @@ class TestFunctionalDomainRegistry:
     def test_check_overlap_with_covers(self, tmp_path):
         reg_path = tmp_path / "reg.yaml"
         reg_path.write_text(
-            yaml.dump({
-                "entries": [
-                    {
-                        "domain": "infra",
-                        "subdomain": "config",
-                        "ssot_module": "mod.config",
-                        "ssot_path": "/config",
-                        "covers": ["yaml_parsing", "env_vars"],
-                    },
-                ]
-            }),
+            yaml.dump(
+                {
+                    "entries": [
+                        {
+                            "domain": "infra",
+                            "subdomain": "config",
+                            "ssot_module": "mod.config",
+                            "ssot_path": "/config",
+                            "covers": ["yaml_parsing", "env_vars"],
+                        },
+                    ]
+                }
+            ),
             encoding="utf-8",
         )
         reg = FunctionalDomainRegistry(registry_path=reg_path)
@@ -143,17 +148,19 @@ class TestFunctionalDomainRegistry:
     def test_check_overlap_no_overlap(self, tmp_path):
         reg_path = tmp_path / "reg.yaml"
         reg_path.write_text(
-            yaml.dump({
-                "entries": [
-                    {
-                        "domain": "infra",
-                        "subdomain": "config",
-                        "ssot_module": "mod.config",
-                        "ssot_path": "/config",
-                        "covers": ["yaml_parsing"],
-                    },
-                ]
-            }),
+            yaml.dump(
+                {
+                    "entries": [
+                        {
+                            "domain": "infra",
+                            "subdomain": "config",
+                            "ssot_module": "mod.config",
+                            "ssot_path": "/config",
+                            "covers": ["yaml_parsing"],
+                        },
+                    ]
+                }
+            ),
             encoding="utf-8",
         )
         reg = FunctionalDomainRegistry(registry_path=reg_path)
@@ -163,12 +170,14 @@ class TestFunctionalDomainRegistry:
     def test_list_domains(self, tmp_path):
         reg_path = tmp_path / "reg.yaml"
         reg_path.write_text(
-            yaml.dump({
-                "entries": [
-                    {"domain": "b_domain", "subdomain": "s1", "ssot_module": "m1", "ssot_path": "/p1"},
-                    {"domain": "a_domain", "subdomain": "s2", "ssot_module": "m2", "ssot_path": "/p2"},
-                ]
-            }),
+            yaml.dump(
+                {
+                    "entries": [
+                        {"domain": "b_domain", "subdomain": "s1", "ssot_module": "m1", "ssot_path": "/p1"},
+                        {"domain": "a_domain", "subdomain": "s2", "ssot_module": "m2", "ssot_path": "/p2"},
+                    ]
+                }
+            ),
             encoding="utf-8",
         )
         reg = FunctionalDomainRegistry(registry_path=reg_path)
@@ -178,12 +187,14 @@ class TestFunctionalDomainRegistry:
     def test_list_subdomains(self, tmp_path):
         reg_path = tmp_path / "reg.yaml"
         reg_path.write_text(
-            yaml.dump({
-                "entries": [
-                    {"domain": "infra", "subdomain": "z_sub", "ssot_module": "m1", "ssot_path": "/p1"},
-                    {"domain": "infra", "subdomain": "a_sub", "ssot_module": "m2", "ssot_path": "/p2"},
-                ]
-            }),
+            yaml.dump(
+                {
+                    "entries": [
+                        {"domain": "infra", "subdomain": "z_sub", "ssot_module": "m1", "ssot_path": "/p1"},
+                        {"domain": "infra", "subdomain": "a_sub", "ssot_module": "m2", "ssot_path": "/p2"},
+                    ]
+                }
+            ),
             encoding="utf-8",
         )
         reg = FunctionalDomainRegistry(registry_path=reg_path)

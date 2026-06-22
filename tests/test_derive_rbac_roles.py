@@ -11,6 +11,7 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import tempfile
@@ -19,7 +20,8 @@ from pathlib import Path
 import pytest
 
 try:
-    from zephyr.security.access_control.derive_rbac_roles import RBACRoleDeriver, DEFAULT_DERIVATIONS
+    from zephyr.security.access_control.derive_rbac_roles import DEFAULT_DERIVATIONS, RBACRoleDeriver
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -29,7 +31,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestRBACRoleDeriver:
-
     def test_derive_creates_file(self):
         deriver = RBACRoleDeriver()
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -40,6 +41,7 @@ class TestRBACRoleDeriver:
 
     def test_derive_content_valid_yaml(self):
         import yaml
+
         deriver = RBACRoleDeriver()
         with tempfile.TemporaryDirectory() as tmpdir:
             out_path = Path(tmpdir) / "rbac_roles.yaml"
@@ -87,7 +89,6 @@ class TestRBACRoleDeriver:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestDefaultDerivations:
-
     def test_three_roles(self):
         assert len(DEFAULT_DERIVATIONS) == 3
         assert "agent_writer" in DEFAULT_DERIVATIONS

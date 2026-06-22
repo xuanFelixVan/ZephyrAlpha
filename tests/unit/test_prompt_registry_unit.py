@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for prompt_registry.py (T-2-28, B12)
 =================================================
@@ -24,6 +25,7 @@ from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
+
 from zephyr.autonomy_core.prompt_registry import (
     PromptRegistry,
     PromptTemplate,

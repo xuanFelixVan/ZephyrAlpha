@@ -27,96 +27,39 @@ LineEndingHandler — LineEndingHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class LineEndingHandler(CheckTypeHandler):
-
-
     name = "line_ending"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        deliverables = list(task.deliverables or [])
 
-                violations = []
+        dep_paths = [project_root / p for p in deliverables]
 
+        for fp in dep_paths:
+            try:
+                text = fp.read_text(encoding="utf-8")
 
-                deliverables = list(task.deliverables or [])
+            except (FileNotFoundError, UnicodeDecodeError):
+                continue
 
+            if "\r" in text:
+                violations.append({"message": f"CRLF detected: {fp}", "severity": check.severity})
 
-                dep_paths = [project_root / p for p in deliverables]
-
-
-                for fp in dep_paths:
-
-
-                    try:
-
-
-                        text = fp.read_text(encoding="utf-8")
-
-
-                    except (FileNotFoundError, UnicodeDecodeError):
-
-
-                        continue
-
-
-                    if "\r" in text:
-
-
-                        violations.append({"message": f"CRLF detected: {fp}", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

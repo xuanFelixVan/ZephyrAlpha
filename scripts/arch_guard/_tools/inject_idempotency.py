@@ -7,6 +7,7 @@
   - 如果契约有 trace_context → 在其前插入
   - 否则 → 在 schema_version 前插入
 """
+
 from __future__ import annotations
 
 import os

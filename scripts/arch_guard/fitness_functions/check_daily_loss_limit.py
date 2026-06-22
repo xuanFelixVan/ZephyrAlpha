@@ -8,6 +8,7 @@ check_daily_loss_limit.py — 日损失限额自动暂停 (INV-003)
 
 exit: 0=pass, 1=fail, 2=config error
 """
+
 from __future__ import annotations
 
 import sys
@@ -44,9 +45,7 @@ def main() -> int:
     stop_loss_path = REPO_ROOT / "src" / "zephyr" / "risk" / "stop_loss.py"
     has_stop_loss = stop_loss_path.is_file()
     if not has_stop_loss:
-        stop_loss_files = list(
-            (REPO_ROOT / "src" / "zephyr" / "risk").rglob("*.py")
-        )
+        stop_loss_files = list((REPO_ROOT / "src" / "zephyr" / "risk").rglob("*.py"))
         has_stop_loss = any("stop" in f.stem.lower() or "loss" in f.stem.lower() for f in stop_loss_files)
 
     if has_stop_loss:

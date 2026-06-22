@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.sensitivity_sweeper import (
-    SensitivitySweeper, SweepResult,
+    SensitivitySweeper,
+    SweepResult,
 )
+
 
 class TestSensitivitySweeper:
     def test_instantiation(self):

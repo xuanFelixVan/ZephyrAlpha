@@ -33,7 +33,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -173,7 +173,7 @@ def scan_float_in_money_fields() -> list[dict]:
                                     "field_name": field_name,
                                     "line": node.lineno,
                                     "violation": (
-                                        f"Money field '{field_name}' uses 'float' - " f"must use Decimal (CTR mandate)"
+                                        f"Money field '{field_name}' uses 'float' - must use Decimal (CTR mandate)"
                                     ),
                                     "severity": "HIGH",
                                 }
@@ -191,7 +191,7 @@ def scan_float_in_money_fields() -> list[dict]:
                                         "field_name": f"{node.name}.{arg_name}",
                                         "line": node.lineno,
                                         "violation": (
-                                            f"Fn '{node.name}' param '{arg_name}' uses 'float' - " f"must use Decimal"
+                                            f"Fn '{node.name}' param '{arg_name}' uses 'float' - must use Decimal"
                                         ),
                                         "severity": "HIGH",
                                     }
@@ -224,7 +224,7 @@ def scan_cross_layer_imports() -> list[dict]:
                                 "layer": layer_name,
                                 "import_path": import_path,
                                 "line": node.lineno,
-                                "violation": (f"Cross-layer import '{import_path}' - " f"MUST use shared/contracts/"),
+                                "violation": (f"Cross-layer import '{import_path}' - MUST use shared/contracts/"),
                                 "severity": "MEDIUM",
                             }
                         )

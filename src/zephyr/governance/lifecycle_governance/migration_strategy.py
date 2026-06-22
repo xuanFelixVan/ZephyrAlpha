@@ -22,9 +22,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class MigrationPhase(str, Enum):
@@ -40,8 +39,8 @@ class MigrationPhase(str, Enum):
 class PhaseDef(BaseModel):
     phase: MigrationPhase
     label: str
-    predecessor: Optional[MigrationPhase] = None
-    successor: Optional[MigrationPhase] = None
+    predecessor: MigrationPhase | None = None
+    successor: MigrationPhase | None = None
     confidence_threshold: float = 0.95
 
 
@@ -91,10 +90,10 @@ MIGRATION_PIPELINE: dict[MigrationPhase, PhaseDef] = {
 }
 
 
-def get_phase_def(phase: MigrationPhase) -> Optional[PhaseDef]:
+def get_phase_def(phase: MigrationPhase) -> PhaseDef | None:
     return MIGRATION_PIPELINE.get(phase)
 
 
-def get_next_phase(phase: MigrationPhase) -> Optional[MigrationPhase]:
+def get_next_phase(phase: MigrationPhase) -> MigrationPhase | None:
     d = MIGRATION_PIPELINE.get(phase)
     return d.successor if d else None

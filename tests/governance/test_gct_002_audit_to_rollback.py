@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 def test_anomaly_event_creation():
     from zephyr.governance.audit_trail.anomaly import AnomalyEvent, AnomalySignature
+
     event = AnomalyEvent(
         signature=AnomalySignature.UNAUTHORIZED_ACCESS,
         severity="high",
@@ -36,17 +37,25 @@ def test_anomaly_event_creation():
 
 
 def test_anomaly_detector_positive():
+    import json
+    import tempfile
+
     from zephyr.governance.audit_trail.anomaly import AnomalyDetector
-    import tempfile, json
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8") as f:
-        f.write(json.dumps({
-            "agent_id": "agent-003",
-            "permission": "delete",
-            "resource": "/data/secrets.yaml",
-            "granted": True,
-            "session_id": "session-xyz",
-            "timestamp": "2026-05-15T00:00:00Z",
-        }) + "\n")
+        f.write(
+            json.dumps(
+                {
+                    "agent_id": "agent-003",
+                    "permission": "delete",
+                    "resource": "/data/secrets.yaml",
+                    "granted": True,
+                    "session_id": "session-xyz",
+                    "timestamp": "2026-05-15T00:00:00Z",
+                }
+            )
+            + "\n"
+        )
         tmp_path = f.name
     detector = AnomalyDetector(event_log_path=tmp_path)
     results = detector.scan()
@@ -56,16 +65,24 @@ def test_anomaly_detector_positive():
 
 
 def test_anomaly_detector_negative():
+    import json
+    import tempfile
+
     from zephyr.governance.audit_trail.anomaly import AnomalyDetector
-    import tempfile, json
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8") as f:
-        f.write(json.dumps({
-            "agent_id": "agent-004",
-            "permission": "read",
-            "resource": "/data/public.yaml",
-            "granted": True,
-            "timestamp": "2026-05-15T00:00:00Z",
-        }) + "\n")
+        f.write(
+            json.dumps(
+                {
+                    "agent_id": "agent-004",
+                    "permission": "read",
+                    "resource": "/data/public.yaml",
+                    "granted": True,
+                    "timestamp": "2026-05-15T00:00:00Z",
+                }
+            )
+            + "\n"
+        )
         tmp_path = f.name
     detector = AnomalyDetector(event_log_path=tmp_path)
     results = detector.scan()
@@ -76,6 +93,7 @@ def test_anomaly_detector_negative():
 def test_rollback_on_anomaly():
     from zephyr.governance.audit_trail.anomaly import AnomalyEvent, AnomalySignature
     from zephyr.governance.contracts import RollbackHandler
+
     handler = RollbackHandler()
     event = AnomalyEvent(
         signature=AnomalySignature.UNAUTHORIZED_ACCESS,

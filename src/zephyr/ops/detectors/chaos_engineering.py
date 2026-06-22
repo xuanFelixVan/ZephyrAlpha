@@ -27,6 +27,7 @@ Risk: R172 — FLE untested under real failure conditions.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ChaosEngineering:
     experiments: list[dict] = field(default_factory=list)

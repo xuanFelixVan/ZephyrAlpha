@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.integration.cost_tracker import CostTracker
 from zephyr.integration.models import CostRecord
 

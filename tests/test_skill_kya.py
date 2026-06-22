@@ -10,8 +10,7 @@
 # [ERROR_CONTRACT] handles missing SkillLoader gracefully
 # [TESTS] tests/test_skill_kya.py
 
-import pytest
-from zephyr.autonomy_core.skill_kya import SkillKYA, RISKY
+from zephyr.autonomy_core.skill_kya import RISKY, SkillKYA
 
 
 class TestSkillKYAInstantiation:

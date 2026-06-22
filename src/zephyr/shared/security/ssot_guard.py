@@ -20,7 +20,9 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from typing import Self
+
 #!/usr/bin/env python3
 """
 SSoT 锁定卫兵 (SSoT Guard) - Pre-commit Hook

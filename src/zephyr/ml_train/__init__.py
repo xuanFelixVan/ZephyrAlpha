@@ -18,29 +18,31 @@ ML训练域统一包。包含模型训练、注册、推理的核心抽象和实
   inference_base.py — 推理引擎基类 (InferenceEngineBase)
   implementations/  — 具体实现 (DefaultInferenceEngine)
 """
+
 from __future__ import annotations
 
 __all__ = [
-    'ModelTrainerBase',
-    'ModelRegistry',
-    'ModelMetadata',
-    'InferenceEngineBase',
-    'DefaultInferenceEngine',
-    'trainer_base',
-    'inference_base',
+    "DefaultInferenceEngine",
+    "InferenceEngineBase",
+    "ModelMetadata",
+    "ModelRegistry",
+    "ModelTrainerBase",
+    "inference_base",
+    "trainer_base",
 ]
 
 
 def __getattr__(name):
     _lazy = {
-        'ModelTrainerBase': '.trainer_base',
-        'ModelRegistry': '.trainer_base',
-        'ModelMetadata': '.trainer_base',
-        'InferenceEngineBase': '.inference_base',
-        'DefaultInferenceEngine': '.implementations.default_inference_engine',
+        "ModelTrainerBase": ".trainer_base",
+        "ModelRegistry": ".trainer_base",
+        "ModelMetadata": ".trainer_base",
+        "InferenceEngineBase": ".inference_base",
+        "DefaultInferenceEngine": ".implementations.default_inference_engine",
     }
     if name in _lazy:
         import importlib
+
         mod = importlib.import_module(_lazy[name], __name__)
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

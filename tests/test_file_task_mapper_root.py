@@ -10,18 +10,17 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_file_task_mapper_root.py
 
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+from zephyr.governance.rule_enforcement.task_types import TaskNamespace
 from zephyr.trading.orchestrator.file_task_mapper import (
     FileTaskMapper,
     RegisterReport,
-    SyncReport,
     SyncInconsistency,
+    SyncReport,
     classify_file_to_namespace,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace
 
 
 class TestClassifyFileToNamespace:
@@ -125,8 +124,10 @@ class TestFileTaskMapperResolve:
         mock_conn.execute.return_value = mock_cursor
         mock_conn.__enter__ = MagicMock(return_value=mock_conn)
         mock_conn.__exit__ = MagicMock(return_value=False)
-        with patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn), \
-             patch("zephyr.trading.orchestrator.file_task_mapper.init_db"):
+        with (
+            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+        ):
             mapper = FileTaskMapper()
             result = mapper.resolve("nonexistent.md")
             assert result == []
@@ -136,8 +137,10 @@ class TestFileTaskMapperResolve:
         mock_cursor = MagicMock()
         mock_cursor.fetchall.return_value = [{"task_id": "SRC-1"}, {"task_id": "SRC-2"}]
         mock_conn.execute.return_value = mock_cursor
-        with patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn), \
-             patch("zephyr.trading.orchestrator.file_task_mapper.init_db"):
+        with (
+            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+        ):
             mapper = FileTaskMapper()
             result = mapper.resolve("src/zephyr/module.py")
             assert result == ["SRC-1", "SRC-2"]
@@ -149,8 +152,10 @@ class TestFileTaskMapperResolveReverse:
         mock_cursor = MagicMock()
         mock_cursor.fetchall.return_value = []
         mock_conn.execute.return_value = mock_cursor
-        with patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn), \
-             patch("zephyr.trading.orchestrator.file_task_mapper.init_db"):
+        with (
+            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+        ):
             mapper = FileTaskMapper()
             result = mapper.resolve_reverse("NONEXISTENT-1")
             assert result == []
@@ -163,8 +168,10 @@ class TestFileTaskMapperResolveReverse:
             {"file_path": "b.py", "role": "secondary"},
         ]
         mock_conn.execute.return_value = mock_cursor
-        with patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn), \
-             patch("zephyr.trading.orchestrator.file_task_mapper.init_db"):
+        with (
+            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+        ):
             mapper = FileTaskMapper()
             result = mapper.resolve_reverse("SRC-1")
             assert len(result) == 2
@@ -178,8 +185,10 @@ class TestFileTaskMapperGetTasksForFile:
         mock_cursor = MagicMock()
         mock_cursor.fetchall.return_value = [{"task_id": "SRC-1"}]
         mock_conn.execute.return_value = mock_cursor
-        with patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn), \
-             patch("zephyr.trading.orchestrator.file_task_mapper.init_db"):
+        with (
+            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+        ):
             mapper = FileTaskMapper()
             result = mapper.get_tasks_for_file("src/zephyr/mod.py")
             assert result == ["SRC-1"]
@@ -188,8 +197,10 @@ class TestFileTaskMapperGetTasksForFile:
 class TestFileTaskMapperRollback:
     def test_rollback_executes_deletes(self):
         mock_conn = MagicMock()
-        with patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn), \
-             patch("zephyr.trading.orchestrator.file_task_mapper.init_db"):
+        with (
+            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+        ):
             mapper = FileTaskMapper()
             mapper.rollback("SRC-1")
         assert mock_conn.execute.call_count >= 4

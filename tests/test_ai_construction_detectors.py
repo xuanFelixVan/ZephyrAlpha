@@ -162,7 +162,9 @@ class TestDetectAIDeadCode:
         with open(py_file, "w", encoding="utf-8") as f:
             f.write("def placeholder():\n    pass\n")
         result = detector.detect_ai_dead_code(tmp_module_dir)
-        matches = [e for e in result if e.detector_id == "ai_dead_code" and "placeholder" in (e.resolution_detail or "")]
+        matches = [
+            e for e in result if e.detector_id == "ai_dead_code" and "placeholder" in (e.resolution_detail or "")
+        ]
         assert len(matches) >= 1
 
     def test_detects_ellipsis_only_function(self, detector, tmp_module_dir):
@@ -170,7 +172,9 @@ class TestDetectAIDeadCode:
         with open(py_file, "w", encoding="utf-8") as f:
             f.write("def placeholder():\n    ...\n")
         result = detector.detect_ai_dead_code(tmp_module_dir)
-        matches = [e for e in result if e.detector_id == "ai_dead_code" and "placeholder" in (e.resolution_detail or "")]
+        matches = [
+            e for e in result if e.detector_id == "ai_dead_code" and "placeholder" in (e.resolution_detail or "")
+        ]
         assert len(matches) >= 1
 
     def test_detects_pass_only_class(self, detector, tmp_module_dir):
@@ -186,7 +190,9 @@ class TestDetectAIDeadCode:
         with open(py_file, "w", encoding="utf-8") as f:
             f.write("class EllipsisClass:\n    ...\n")
         result = detector.detect_ai_dead_code(tmp_module_dir)
-        matches = [e for e in result if e.detector_id == "ai_dead_code" and "EllipsisClass" in (e.resolution_detail or "")]
+        matches = [
+            e for e in result if e.detector_id == "ai_dead_code" and "EllipsisClass" in (e.resolution_detail or "")
+        ]
         assert len(matches) >= 1
 
     def test_no_event_for_real_implementation(self, detector, tmp_module_dir):
@@ -231,7 +237,9 @@ class TestDetectAIBrokenLogic:
         with open(py_file, "w", encoding="utf-8") as f:
             f.write("".join(lines))
         result = detector.detect_ai_broken_logic(tmp_module_dir)
-        todo_events = [e for e in result if e.detector_id == "ai_broken_logic" and "TODO" in (e.resolution_detail or "")]
+        todo_events = [
+            e for e in result if e.detector_id == "ai_broken_logic" and "TODO" in (e.resolution_detail or "")
+        ]
         assert len(todo_events) >= 1
 
     def test_detects_context_truncation(self, detector, tmp_module_dir):
@@ -239,7 +247,11 @@ class TestDetectAIBrokenLogic:
         with open(py_file, "w", encoding="utf-8") as f:
             f.write("def bloated(a, b, c, d, e, f):\n    return a\n")
         result = detector.detect_ai_broken_logic(tmp_module_dir)
-        trunc_events = [e for e in result if e.detector_id == "ai_broken_logic" and "truncation" in (e.resolution_detail or "").lower()]
+        trunc_events = [
+            e
+            for e in result
+            if e.detector_id == "ai_broken_logic" and "truncation" in (e.resolution_detail or "").lower()
+        ]
         assert len(trunc_events) >= 1
 
     def test_no_event_for_clean_code(self, detector, tmp_module_dir):
@@ -353,10 +365,7 @@ class TestDetectAISessionStyleDrift:
     def test_detects_async_sync_mix(self, detector, tmp_module_dir):
         py_file = os.path.join(tmp_module_dir, "async_sync.py")
         with open(py_file, "w", encoding="utf-8") as f:
-            f.write(
-                "async def a_func():\n    return 1\n"
-                "def b_func():\n    return 2\n"
-            )
+            f.write("async def a_func():\n    return 1\ndef b_func():\n    return 2\n")
         result = detector.detect_ai_session_style_drift(tmp_module_dir)
         assert any("async" in (e.resolution_detail or "") for e in result)
 

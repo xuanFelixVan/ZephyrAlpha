@@ -25,7 +25,6 @@ BenchmarkSuite — 多维度模型性能测试用例集
   - category: 测试分类
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -55,8 +54,8 @@ CODE_GEN_CASES: list[BenchmarkCase] = [
         category="code_generation",
         subcategory="function_impl",
         prompt="用 Python 写一个函数 is_prime(n: int) -> bool，判断一个整数是否为质数。"
-               "要求：正确处理 n<=1 的情况，使用优化的试除法（只需试到 sqrt(n)）。"
-               "只输出函数代码，不要解释。",
+        "要求：正确处理 n<=1 的情况，使用优化的试除法（只需试到 sqrt(n)）。"
+        "只输出函数代码，不要解释。",
         expected_patterns=["def is_prime", "sqrt", "range", "return"],
         forbidden_patterns=["try:", "import math"],
         max_tokens=256,
@@ -69,10 +68,9 @@ CODE_GEN_CASES: list[BenchmarkCase] = [
         category="code_generation",
         subcategory="data_structure",
         prompt="用 Python 实现一个 LRU Cache 类，使用 OrderedDict。"
-               "需要实现 __init__(capacity), get(key), put(key, value) 三个方法。"
-               "只输出类代码，不要解释。",
-        expected_patterns=["class LRUCache", "OrderedDict", "def get", "def put",
-                           "move_to_end", "popitem"],
+        "需要实现 __init__(capacity), get(key), put(key, value) 三个方法。"
+        "只输出类代码，不要解释。",
+        expected_patterns=["class LRUCache", "OrderedDict", "def get", "def put", "move_to_end", "popitem"],
         forbidden_patterns=[],
         max_tokens=512,
         expected_output_type="code",
@@ -84,8 +82,8 @@ CODE_GEN_CASES: list[BenchmarkCase] = [
         category="code_generation",
         subcategory="async_code",
         prompt="用 Python asyncio 写一个异步函数 fetch_all(urls: list[str]) -> list[dict]，"
-               "并发请求所有 URL，设置 10 秒超时，返回 JSON 结果列表。"
-               "使用 aiohttp 或 httpx。只输出代码。",
+        "并发请求所有 URL，设置 10 秒超时，返回 JSON 结果列表。"
+        "使用 aiohttp 或 httpx。只输出代码。",
         expected_patterns=["async def", "asyncio", "aiohttp|httpx", "timeout"],
         forbidden_patterns=["requests.get", "requests.post"],
         max_tokens=512,
@@ -97,10 +95,9 @@ CODE_GEN_CASES: list[BenchmarkCase] = [
         category="code_generation",
         subcategory="error_handling",
         prompt="写一个 Python 函数 safe_divide(a: float, b: float) -> float，"
-               "处理除零、类型错误、溢出三种异常情况，每种返回不同的错误值。"
-               "只输出函数代码。",
-        expected_patterns=["def safe_divide", "ZeroDivisionError|b == 0",
-                           "TypeError|isinstance", "OverflowError|abs"],
+        "处理除零、类型错误、溢出三种异常情况，每种返回不同的错误值。"
+        "只输出函数代码。",
+        expected_patterns=["def safe_divide", "ZeroDivisionError|b == 0", "TypeError|isinstance", "OverflowError|abs"],
         forbidden_patterns=[],
         max_tokens=256,
         expected_output_type="code",
@@ -111,7 +108,7 @@ CODE_GEN_CASES: list[BenchmarkCase] = [
         category="code_generation",
         subcategory="algorithm",
         prompt="用 Python 实现二分查找算法 binary_search(arr: list[int], target: int) -> int。"
-               "返回目标索引，未找到返回 -1。要求 O(log n) 时间复杂度。只输出代码。",
+        "返回目标索引，未找到返回 -1。要求 O(log n) 时间复杂度。只输出代码。",
         expected_patterns=["def binary_search", "while", "mid", "//"],
         forbidden_patterns=["for.*in.*arr", ".index("],
         max_tokens=256,
@@ -126,13 +123,13 @@ CODE_FIX_CASES: list[BenchmarkCase] = [
         category="code_fix",
         subcategory="bug_fix",
         prompt="下面的 Python 代码有 bug，找出并修复它：\n\n"
-               "```python\n"
-               "def get_user(id):\n"
-               "    users = {'1': 'Alice', '2': 'Bob'}\n"
-               "    return users[id]\n"
-               "print(get_user(3))\n"
-               "```\n\n"
-               "只输出修复后的代码，不要解释。",
+        "```python\n"
+        "def get_user(id):\n"
+        "    users = {'1': 'Alice', '2': 'Bob'}\n"
+        "    return users[id]\n"
+        "print(get_user(3))\n"
+        "```\n\n"
+        "只输出修复后的代码，不要解释。",
         expected_patterns=[".get(", "None", "default"],
         forbidden_patterns=["except", "try"],
         max_tokens=128,
@@ -144,18 +141,18 @@ CODE_FIX_CASES: list[BenchmarkCase] = [
         category="code_fix",
         subcategory="refactor",
         prompt="下面的 Python 函数太长了，把它重构得简洁一点，保持功能不变：\n\n"
-               "```python\n"
-               "def process(data):\n"
-               "    result = []\n"
-               "    for item in data:\n"
-               "        if item is not None:\n"
-               "            if item > 0:\n"
-               "                if item % 2 == 0:\n"
-               "                    result.append(item * 2)\n"
-               "                else:\n"
-               "                    result.append(item * 3)\n"
-               "    return result\n"
-               "```\n\n只输出重构后的代码。",
+        "```python\n"
+        "def process(data):\n"
+        "    result = []\n"
+        "    for item in data:\n"
+        "        if item is not None:\n"
+        "            if item > 0:\n"
+        "                if item % 2 == 0:\n"
+        "                    result.append(item * 2)\n"
+        "                else:\n"
+        "                    result.append(item * 3)\n"
+        "    return result\n"
+        "```\n\n只输出重构后的代码。",
         expected_patterns=["filter|generator|comprehension|list", "def process"],
         forbidden_patterns=[],
         max_tokens=256,
@@ -167,14 +164,14 @@ CODE_FIX_CASES: list[BenchmarkCase] = [
         category="code_fix",
         subcategory="add_feature",
         prompt="下面是一个简单的计数器类。请给它添加 reset() 方法和 max_count 上限功能：\n\n"
-               "```python\n"
-               "class Counter:\n"
-               "    def __init__(self):\n"
-               "        self.count = 0\n"
-               "    def increment(self):\n"
-               "        self.count += 1\n"
-               "        return self.count\n"
-               "```\n\n只输出修改后的完整类代码。",
+        "```python\n"
+        "class Counter:\n"
+        "    def __init__(self):\n"
+        "        self.count = 0\n"
+        "    def increment(self):\n"
+        "        self.count += 1\n"
+        "        return self.count\n"
+        "```\n\n只输出修改后的完整类代码。",
         expected_patterns=["def reset", "max_count", "self.count = 0", "if"],
         forbidden_patterns=[],
         max_tokens=256,
@@ -189,8 +186,8 @@ SEMANTIC_CASES: list[BenchmarkCase] = [
         category="semantic",
         subcategory="sentiment",
         prompt="判断以下句子的情感倾向（positive/negative/neutral）：\n"
-               "\u201c虽然过程充满挑战，但最终的成果超出了所有人的预期。\u201d\n"
-               "只输出一个词。",
+        "\u201c虽然过程充满挑战，但最终的成果超出了所有人的预期。\u201d\n"
+        "只输出一个词。",
         expected_patterns=["positive"],
         forbidden_patterns=["negative", "neutral"],
         max_tokens=16,
@@ -202,8 +199,8 @@ SEMANTIC_CASES: list[BenchmarkCase] = [
         category="semantic",
         subcategory="nli",
         prompt="前提：'小明每天早上 7 点起床跑步 5 公里。'\n"
-               "假设：'小明有运动的习惯。'\n"
-               "判断假设是否可以从前提推导出来。只回答 entailment / contradiction / neutral。",
+        "假设：'小明有运动的习惯。'\n"
+        "判断假设是否可以从前提推导出来。只回答 entailment / contradiction / neutral。",
         expected_patterns=["entailment"],
         forbidden_patterns=["contradiction"],
         max_tokens=16,
@@ -215,11 +212,11 @@ SEMANTIC_CASES: list[BenchmarkCase] = [
         category="semantic",
         subcategory="summarization",
         prompt="用不超过 50 字概括以下段落的核心要点：\n\n"
-               "分布式系统的 CAP 定理指出，在一个分布式数据存储系统中，"
-               "最多只能同时满足一致性（Consistency）、可用性（Availability）和"
-               "分区容错性（Partition Tolerance）这三项中的两项。"
-               "由于网络分区在分布式系统中不可避免，因此实际架构选择"
-               "通常是在 CP（一致性与分区容错）和 AP（可用性与分区容错）之间做权衡。",
+        "分布式系统的 CAP 定理指出，在一个分布式数据存储系统中，"
+        "最多只能同时满足一致性（Consistency）、可用性（Availability）和"
+        "分区容错性（Partition Tolerance）这三项中的两项。"
+        "由于网络分区在分布式系统中不可避免，因此实际架构选择"
+        "通常是在 CP（一致性与分区容错）和 AP（可用性与分区容错）之间做权衡。",
         expected_patterns=["CAP", "一致性|consistency", "可用性|availability"],
         forbidden_patterns=[],
         max_tokens=128,
@@ -231,8 +228,8 @@ SEMANTIC_CASES: list[BenchmarkCase] = [
         category="semantic",
         subcategory="classification",
         prompt="将以下技术问题分类为：bug_report / feature_request / question / other：\n"
-               "\u201c我在使用 pandas 读取 10GB CSV 文件时内存溢出，有什么优化方案吗？\u201d\n"
-               "只输出分类标签。",
+        "\u201c我在使用 pandas 读取 10GB CSV 文件时内存溢出，有什么优化方案吗？\u201d\n"
+        "只输出分类标签。",
         expected_patterns=["question"],
         forbidden_patterns=["bug_report", "feature_request"],
         max_tokens=16,
@@ -246,8 +243,7 @@ HALLUCINATION_CASES: list[BenchmarkCase] = [
         case_id="HA-001",
         category="hallucination",
         subcategory="api_fabrication",
-        prompt="Python 标准库中有一个叫 `datatools` 的模块吗？如果有，它的主要功能是什么？"
-               "如果不存在，就回答'不存在'。",
+        prompt="Python 标准库中有一个叫 `datatools` 的模块吗？如果有，它的主要功能是什么？如果不存在，就回答'不存在'。",
         expected_patterns=["不存在|没有|无此模块"],
         forbidden_patterns=["datatools.*提供|datatools.*功能|datatools.*用法"],
         max_tokens=128,
@@ -259,7 +255,7 @@ HALLUCINATION_CASES: list[BenchmarkCase] = [
         category="hallucination",
         subcategory="fact_check",
         prompt="Python 3.12 的 `itertools` 模块新增了一个叫 `batched()` 的函数吗？"
-               "如果确实存在，描述它的作用；如果不存在，回答'不存在'。",
+        "如果确实存在，描述它的作用；如果不存在，回答'不存在'。",
         expected_patterns=["batched|存在"],
         forbidden_patterns=["不存在"],
         max_tokens=128,
@@ -270,8 +266,7 @@ HALLUCINATION_CASES: list[BenchmarkCase] = [
         case_id="HA-003",
         category="hallucination",
         subcategory="parameter_fabrication",
-        prompt="`json.dumps()` 有一个叫 `strict_mode` 的参数吗？"
-               "如果有，说明它的作用；如果没有，回答'没有这个参数'。",
+        prompt="`json.dumps()` 有一个叫 `strict_mode` 的参数吗？如果有，说明它的作用；如果没有，回答'没有这个参数'。",
         expected_patterns=["没有|无此参数|不存在"],
         forbidden_patterns=["strict_mode.*控制|strict_mode.*设置|strict_mode.*True"],
         max_tokens=128,
@@ -283,12 +278,12 @@ HALLUCINATION_CASES: list[BenchmarkCase] = [
         category="hallucination",
         subcategory="known_error",
         prompt="以下 Python 代码输出什么？\n"
-               "```python\n"
-               "x = [1, 2, 3]\n"
-               "y = x\n"
-               "y.append(4)\n"
-               "print(x)\n"
-               "```\n只输出结果，不解释。",
+        "```python\n"
+        "x = [1, 2, 3]\n"
+        "y = x\n"
+        "y.append(4)\n"
+        "print(x)\n"
+        "```\n只输出结果，不解释。",
         expected_patterns=["[1, 2, 3, 4]"],
         forbidden_patterns=["[1, 2, 3]", "Error", "报错"],
         max_tokens=32,
@@ -300,7 +295,7 @@ HALLUCINATION_CASES: list[BenchmarkCase] = [
         category="hallucination",
         subcategory="refusal_honesty",
         prompt="请问 Windows 11 build 99999 的发布时间是什么？（注意：这个 build 号是我编造的）\n"
-               "如果不知道或者这个版本不存在，请诚实回答。",
+        "如果不知道或者这个版本不存在，请诚实回答。",
         expected_patterns=["不知道|不存在|编造|没有|无法"],
         forbidden_patterns=["发布.*日期|发布.*时间|2025|2026"],
         max_tokens=128,
@@ -325,7 +320,7 @@ LATENCY_CASES: list[BenchmarkCase] = [
         case_id="LT-002",
         category="latency",
         subcategory="json_output",
-        prompt="输出 JSON: {\"status\":\"ok\",\"version\":\"1.0\"} ，不要加任何额外文本。",
+        prompt='输出 JSON: {"status":"ok","version":"1.0"} ，不要加任何额外文本。',
         expected_patterns=["status", "ok", "version"],
         forbidden_patterns=[],
         max_tokens=64,
@@ -351,8 +346,8 @@ QUALITY_CASES: list[BenchmarkCase] = [
         category="quality",
         subcategory="json_format",
         prompt="生成一个 JSON 对象，包含以下字段：name(string), age(int), skills(list of strings)。"
-               "只输出合法的 JSON，不要代码块标记。",
-        expected_patterns=['"name"', '"age"', '"skills"', '[', ']'],
+        "只输出合法的 JSON，不要代码块标记。",
+        expected_patterns=['"name"', '"age"', '"skills"', "[", "]"],
         forbidden_patterns=["```", "python", "javascript"],
         max_tokens=128,
         expected_output_type="json",
@@ -362,8 +357,7 @@ QUALITY_CASES: list[BenchmarkCase] = [
         case_id="QL-002",
         category="quality",
         subcategory="markdown_format",
-        prompt="用 Markdown 格式写一段关于 Python 装饰器的简短介绍（100 字以内），"
-               "包含一个代码示例和一个特点列表。",
+        prompt="用 Markdown 格式写一段关于 Python 装饰器的简短介绍（100 字以内），包含一个代码示例和一个特点列表。",
         expected_patterns=["###|##|**", "```", "装饰|decorator"],
         forbidden_patterns=[],
         max_tokens=256,
@@ -374,8 +368,7 @@ QUALITY_CASES: list[BenchmarkCase] = [
         case_id="QL-003",
         category="quality",
         subcategory="instruction_following",
-        prompt="列出 3 种 Python 虚拟环境管理工具，用数字编号，每行不超过 20 个字符。"
-               "不要加任何开头语或结尾语。",
+        prompt="列出 3 种 Python 虚拟环境管理工具，用数字编号，每行不超过 20 个字符。不要加任何开头语或结尾语。",
         expected_patterns=["1\\.", "2\\.", "3\\."],
         forbidden_patterns=["以下是|下面是|Python 虚拟环境"],
         max_tokens=128,
@@ -400,8 +393,7 @@ REASONING_CASES: list[BenchmarkCase] = [
         case_id="LR-002",
         category="reasoning",
         subcategory="math",
-        prompt="计算：如果一个文件大小是 10MB，网速是 2MB/s，"
-               "下载需要多少秒？只输出数字。",
+        prompt="计算：如果一个文件大小是 10MB，网速是 2MB/s，下载需要多少秒？只输出数字。",
         expected_patterns=["5"],
         forbidden_patterns=[],
         max_tokens=16,
@@ -413,12 +405,12 @@ REASONING_CASES: list[BenchmarkCase] = [
         category="reasoning",
         subcategory="code_trace",
         prompt="以下 Python 代码输出什么？只输出数字。\n"
-               "```python\n"
-               "def f(n):\n"
-               "    if n <= 1: return 1\n"
-               "    return n * f(n-1)\n"
-               "print(f(5))\n"
-               "```",
+        "```python\n"
+        "def f(n):\n"
+        "    if n <= 1: return 1\n"
+        "    return n * f(n-1)\n"
+        "print(f(5))\n"
+        "```",
         expected_patterns=["120"],
         forbidden_patterns=[],
         max_tokens=16,
@@ -428,8 +420,12 @@ REASONING_CASES: list[BenchmarkCase] = [
 ]
 
 ALL_BENCHMARK_CASES: list[BenchmarkCase] = (
-    CODE_GEN_CASES + CODE_FIX_CASES + SEMANTIC_CASES
-    + HALLUCINATION_CASES + LATENCY_CASES + QUALITY_CASES
+    CODE_GEN_CASES
+    + CODE_FIX_CASES
+    + SEMANTIC_CASES
+    + HALLUCINATION_CASES
+    + LATENCY_CASES
+    + QUALITY_CASES
     + REASONING_CASES
 )
 

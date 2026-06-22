@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_interactive_diagnosis.py
 
-import pytest
 
 from zephyr.ops.diagnosers.interactive_diagnosis import InteractiveDiagnosis
 

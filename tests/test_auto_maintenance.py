@@ -11,12 +11,19 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.auto_maintenance import AutoMaintenance, RuleHealth, ComplexityBudget, OwnerDashboard
+    from zephyr.security.access_control.auto_maintenance import (
+        AutoMaintenance,
+        ComplexityBudget,
+        OwnerDashboard,
+        RuleHealth,
+    )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

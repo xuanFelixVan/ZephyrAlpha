@@ -38,10 +38,9 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
-from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 
@@ -69,6 +68,7 @@ def check_contracts(module_id: str) -> list[str]:
     has_contract = False
     if contracts_yaml.exists():
         import yaml
+
         data = yaml.safe_load(contracts_yaml.read_text(encoding="utf-8")) or {}
         for entry in data.get("contracts", []):
             if entry.get("provider") == module_id or entry.get("consumer") == module_id:
@@ -84,7 +84,9 @@ def check_contracts(module_id: str) -> list[str]:
                     has_contract = True
                     break
     if not has_contract:
-        findings.append(f"INJ-003 FAIL: module '{module_id}' has no interface contract defined in cross_layer_contracts.yaml or contracts/ directory")
+        findings.append(
+            f"INJ-003 FAIL: module '{module_id}' has no interface contract defined in cross_layer_contracts.yaml or contracts/ directory"
+        )
     return findings
 
 
@@ -104,7 +106,9 @@ def check_field(module_id: str, field: str, valid_values: list[str]) -> list[str
         findings.append(f"INJ-004/005 FAIL: module '{module_id}' missing required field '{field}'")
         return findings
     if valid_values and str(value) not in valid_values:
-        findings.append(f"INJ-004/005 FAIL: module '{module_id}' field '{field}' value '{value}' not in valid values {valid_values}")
+        findings.append(
+            f"INJ-004/005 FAIL: module '{module_id}' field '{field}' value '{value}' not in valid values {valid_values}"
+        )
     return findings
 
 
@@ -123,18 +127,28 @@ def check_adr(module_id: str) -> list[str]:
     if not adr_refs:
         content = fpath.read_text(encoding="utf-8", errors="replace").lower()
         if "adr-" not in content and "decision" not in content and "kb:decisions" not in content:
-            findings.append(f"INJ-006 WARNING: module '{module_id}' has no KB decision record association (frontmatter kb_refs/adr_refs/decisions or in-content ADR/KB reference)")
+            findings.append(
+                f"INJ-006 WARNING: module '{module_id}' has no KB decision record association (frontmatter kb_refs/adr_refs/decisions or in-content ADR/KB reference)"
+            )
     return findings
 
 
 def check_config_registry(module_id: str = None) -> list[str]:
     """Check compliance and report findings."""
     import yaml
+
     findings = []
-    config_yaml = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model" / "system-configuration.yaml"
+    config_yaml = (
+        REPO_ROOT
+        / "docs"
+        / "02_enterprise_architecture"
+        / "target-architecture"
+        / "architecture-model"
+        / "system-configuration.yaml"
+    )
     if not config_yaml.exists():
         return findings
-    with open(config_yaml, "r", encoding="utf-8") as f:
+    with open(config_yaml, encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     registered_keys = set()
     for section in data.get("configuration", []):
@@ -152,24 +166,34 @@ def check_config_registry(module_id: str = None) -> list[str]:
         except (UnicodeDecodeError, PermissionError):
             continue
         import re
+
         config_refs = re.findall(r'config\["([^"]+)"\]|os\.environ\.get\("([^"]+)"\)|os\.getenv\("([^"]+)"\)', source)
         for groups in config_refs:
             key = next((g for g in groups if g), None)
-            if key and registered_keys and key not in registered_keys and not key.startswith(("ZEPHYR_", "PYTHON", "PATH")):
+            if (
+                key
+                and registered_keys
+                and key not in registered_keys
+                and not key.startswith(("ZEPHYR_", "PYTHON", "PATH"))
+            ):
                 rel = py_file.relative_to(REPO_ROOT)
-                findings.append(f"HC-5 WARNING: {rel} references config key '{key}' not found in system-configuration.yaml")
+                findings.append(
+                    f"HC-5 WARNING: {rel} references config key '{key}' not found in system-configuration.yaml"
+                )
     return findings
 
 
 def check_invariants(module_id: str = None) -> list[str]:
     """Check compliance and report findings."""
     import re as re_mod
+
     findings = []
     contracts_yaml = CONTRACTS_DIR / "cross_layer_contracts.yaml"
     if not contracts_yaml.exists():
         return findings
     import yaml
-    with open(contracts_yaml, "r", encoding="utf-8") as f:
+
+    with open(contracts_yaml, encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     invariant_markers = []
     for contract in data.get("contracts", []):
@@ -184,7 +208,7 @@ def check_invariants(module_id: str = None) -> list[str]:
         except (UnicodeDecodeError, PermissionError):
             continue
         for marker in invariant_markers:
-            pattern = re_mod.compile(rf'{re_mod.escape(marker)}.*?(?:bypass|override|skip|ignore)', re_mod.IGNORECASE)
+            pattern = re_mod.compile(rf"{re_mod.escape(marker)}.*?(?:bypass|override|skip|ignore)", re_mod.IGNORECASE)
             matches = pattern.findall(source)
             if matches:
                 rel = py_file.relative_to(REPO_ROOT)
@@ -199,8 +223,14 @@ def main() -> None:
     parser.add_argument("--check-field", type=str, help="Field name to validate")
     parser.add_argument("--valid-values", type=str, help="Comma-separated valid values")
     parser.add_argument("--check-adr", type=str, help="Check KB decision record association for module_id")
-    parser.add_argument("--check-config-registry", action="store_true", help="Check config keys against system-configuration.yaml (HC-5)")
-    parser.add_argument("--check-invariants", action="store_true", help="Check for frozen contract bypass attempts (HC-6)")
+    parser.add_argument(
+        "--check-config-registry",
+        action="store_true",
+        help="Check config keys against system-configuration.yaml (HC-5)",
+    )
+    parser.add_argument(
+        "--check-invariants", action="store_true", help="Check for frozen contract bypass attempts (HC-6)"
+    )
     parser.add_argument("--warn-only", action="store_true", help="Only warn, do not fail")
     args = parser.parse_args()
 
@@ -223,7 +253,9 @@ def main() -> None:
     if args.check_invariants:
         all_findings.extend(check_invariants(args.check_contracts))
 
-    if not any([args.check_contracts, args.check_field, args.check_adr, args.check_config_registry, args.check_invariants]):
+    if not any(
+        [args.check_contracts, args.check_field, args.check_adr, args.check_config_registry, args.check_invariants]
+    ):
         for f in POLICIES_ROOT.rglob("*.md"):
             fm = parse_frontmatter_from_file(f)
             if fm and fm.get("module_id"):

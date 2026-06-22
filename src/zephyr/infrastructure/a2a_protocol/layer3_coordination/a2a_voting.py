@@ -29,7 +29,6 @@
 输出: VotingResult — 计票结果 + 是否通过
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -72,8 +71,11 @@ class A2AVoting:
         self._boxes[proposal_id]["_quorum"] = (VoteAction.APPROVE, quorum_ratio or self._default_quorum)
 
     def cast_vote(
-        self, proposal_id: str, agent_id: str,
-        action: VoteAction, weight: float = 1.0,
+        self,
+        proposal_id: str,
+        agent_id: str,
+        action: VoteAction,
+        weight: float = 1.0,
     ) -> bool:
         if proposal_id not in self._boxes:
             return False

@@ -17,11 +17,12 @@ Contracts: AS-CT-001~005
   A5: 信号降级抑制 — 压制 degradation warning 让劣质信号通过
   A6: 因子注册表投毒 — 注入恶意因子类
 """
+
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 from typing import Any
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -37,11 +38,13 @@ def attack(attack_id: str, description: str):
     def decorator(fn):
         _ATTACKS.append({"id": attack_id, "description": description, "fn": fn})
         return fn
+
     return decorator
 
 
 def _try_import(module_path: str) -> bool:
     import importlib
+
     try:
         importlib.import_module(module_path)
         return True
@@ -53,6 +56,7 @@ def _try_import(module_path: str) -> bool:
 def attack_01_factor_injection() -> dict[str, Any]:
     try:
         from zephyr.signal_fundamental.pipeline import AlphaSignalPipeline
+
         pipeline = AlphaSignalPipeline()
 
         class MaliciousFactor:
@@ -76,6 +80,7 @@ def attack_01_factor_injection() -> dict[str, Any]:
 def attack_02_weight_bypass() -> dict[str, Any]:
     try:
         from zephyr.signal_fundamental.pipeline import AlphaSignalPipeline
+
         pipeline = AlphaSignalPipeline()
 
         class NormalFactor:
@@ -119,20 +124,23 @@ def attack_03_lookahead_bias() -> dict[str, Any]:
 
             def compute(self):
                 import datetime
-                return [type("Signal", (), {
-                    "signal_value": 1.0,
-                    "confidence": 0.95,
-                    "timestamp": datetime.datetime(2099, 1, 1),
-                    "factor_id": "LOOKAHEAD_001",
-                })()]
+
+                return [
+                    type(
+                        "Signal",
+                        (),
+                        {
+                            "signal_value": 1.0,
+                            "confidence": 0.95,
+                            "timestamp": datetime.datetime(2099, 1, 1),
+                            "factor_id": "LOOKAHEAD_001",
+                        },
+                    )()
+                ]
 
         factor = LookAheadFactor()
         signals = factor.compute()
-        future_data_used = any(
-            getattr(s, "timestamp", None) and
-            getattr(s, "timestamp").year > 2026
-            for s in signals
-        )
+        future_data_used = any(getattr(s, "timestamp", None) and s.timestamp.year > 2026 for s in signals)
         return {
             "detected": future_data_used,
             "status": "FUTURE DATA DETECTED" if future_data_used else "future data not used (safe)",
@@ -146,6 +154,7 @@ def attack_03_lookahead_bias() -> dict[str, Any]:
 def attack_04_idempotency_replay() -> dict[str, Any]:
     try:
         from zephyr.signal_fundamental.pipeline import AlphaSignalPipeline
+
         replay_key = "REPLAY-ATTACK-KEY-001"
 
         pipeline1 = AlphaSignalPipeline()
@@ -161,7 +170,9 @@ def attack_04_idempotency_replay() -> dict[str, Any]:
             "detected": keys_match and keys_different,
             "key_reused": keys_match,
             "different_pipelines": keys_different,
-            "status": "REPLAY DETECTED: same key, different pipeline" if (keys_match and keys_different) else "replay not harmful",
+            "status": "REPLAY DETECTED: same key, different pipeline"
+            if (keys_match and keys_different)
+            else "replay not harmful",
         }
     except Exception as e:
         return {"detected": True, "status": f"exception: {type(e).__name__}"}
@@ -171,6 +182,7 @@ def attack_04_idempotency_replay() -> dict[str, Any]:
 def attack_05_degradation_suppression() -> dict[str, Any]:
     try:
         from zephyr.signal_fundamental.pipeline import AlphaSignalPipeline
+
         pipeline = AlphaSignalPipeline()
 
         class LowConfidenceFactor:
@@ -194,13 +206,20 @@ def attack_05_degradation_suppression() -> dict[str, Any]:
 def attack_06_registry_poisoning() -> dict[str, Any]:
     _has_factor_base = _try_import("zephyr.factor.base")
     if not _has_factor_base:
-        return {"detected": True, "attack_succeeded": False, "defense_prevented": True, "status": "blocked_by_infrastructure: L02 not available"}
+        return {
+            "detected": True,
+            "attack_succeeded": False,
+            "defense_prevented": True,
+            "status": "blocked_by_infrastructure: L02 not available",
+        }
 
     try:
         import builtins
+
         original_builtins_keys = set(builtins.__dict__.keys())
 
         from zephyr.signal_fundamental.pipeline import AlphaSignalPipeline
+
         pipeline = AlphaSignalPipeline()
         clean_snapshot = pipeline._snapshot_builtins()
 
@@ -217,6 +236,7 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
 
             def compute(self):
                 import builtins as _b
+
                 _b.__dict__["POISONED"] = True
                 return []
 
@@ -240,33 +260,39 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
             "status": "DEFENSE HELD: builtins restored" if defense_held else "DEFENSE FAILED: builtins still modified",
         }
     except Exception as e:
-        return {"detected": True, "attack_succeeded": False, "defense_prevented": True, "status": f"exception: {type(e).__name__}"}
+        return {
+            "detected": True,
+            "attack_succeeded": False,
+            "defense_prevented": True,
+            "status": f"exception: {type(e).__name__}",
+        }
 
 
 def run_all_attacks() -> dict[str, Any]:
     results: list[dict[str, Any]] = []
 
     with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
-        futures = {
-            executor.submit(attack_info["fn"]): attack_info
-            for attack_info in _ATTACKS
-        }
+        futures = {executor.submit(attack_info["fn"]): attack_info for attack_info in _ATTACKS}
         for future in as_completed(futures):
             attack_info = futures[future]
             try:
                 attack_result = future.result()
-                results.append({
-                    "attack_id": attack_info["id"],
-                    "description": attack_info["description"],
-                    **attack_result,
-                })
+                results.append(
+                    {
+                        "attack_id": attack_info["id"],
+                        "description": attack_info["description"],
+                        **attack_result,
+                    }
+                )
             except Exception as e:
-                results.append({
-                    "attack_id": attack_info["id"],
-                    "description": attack_info["description"],
-                    "detected": False,
-                    "error": str(e),
-                })
+                results.append(
+                    {
+                        "attack_id": attack_info["id"],
+                        "description": attack_info["description"],
+                        "detected": False,
+                        "error": str(e),
+                    }
+                )
 
     results.sort(key=lambda r: r["attack_id"])
     detected = [r for r in results if r.get("detected")]

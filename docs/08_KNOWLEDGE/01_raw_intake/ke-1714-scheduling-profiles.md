@@ -22,7 +22,7 @@ class SchedulingProfile(BaseModel):
     gate_profile: str
     skip_modules: list[str]       # doc_fast跳过 M7/M8/M9
     batch_window_s: int|None      # batch_low 30min batch window
-    
+
 PROFILES = {
     "audit_strict": SchedulingProfile("audit_strict", 600, "full_g0_g7", [], None),
     "doc_fast":     SchedulingProfile("doc_fast", 120, "pre_commit_only", ["M7","M8","M9"], None),

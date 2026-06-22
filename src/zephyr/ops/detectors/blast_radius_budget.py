@@ -27,6 +27,7 @@ Risk: R178 — Simultaneous repairs across all subsystems; if wrong, total colla
 
 from dataclasses import dataclass
 
+
 @dataclass
 class BlastRadiusBudget:
     max_concurrent_repairs: int = 3

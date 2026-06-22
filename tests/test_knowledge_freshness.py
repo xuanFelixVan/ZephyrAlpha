@@ -10,8 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_knowledge_freshness.py
 
-import pytest
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
 from zephyr.trading.orchestrator.knowledge_freshness import KnowledgeFreshnessManager
 
@@ -37,47 +36,47 @@ class TestKnowledgeFreshnessManagerInstantiation:
 class TestIsStale:
     def test_fresh_entry(self):
         mgr = KnowledgeFreshnessManager()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         assert mgr.is_stale(now) is False
 
     def test_entry_just_under_max_age(self):
         mgr = KnowledgeFreshnessManager()
-        created = datetime.now(timezone.utc) - timedelta(days=89)
+        created = datetime.now(UTC) - timedelta(days=89)
         assert mgr.is_stale(created) is False
 
     def test_entry_at_max_age(self):
         mgr = KnowledgeFreshnessManager()
-        created = datetime.now(timezone.utc) - timedelta(days=90)
+        created = datetime.now(UTC) - timedelta(days=90)
         assert mgr.is_stale(created) is False
 
     def test_stale_entry(self):
         mgr = KnowledgeFreshnessManager()
-        created = datetime.now(timezone.utc) - timedelta(days=91)
+        created = datetime.now(UTC) - timedelta(days=91)
         assert mgr.is_stale(created) is True
 
     def test_very_old_entry(self):
         mgr = KnowledgeFreshnessManager()
-        created = datetime.now(timezone.utc) - timedelta(days=365)
+        created = datetime.now(UTC) - timedelta(days=365)
         assert mgr.is_stale(created) is True
 
     def test_entry_one_day_old(self):
         mgr = KnowledgeFreshnessManager()
-        created = datetime.now(timezone.utc) - timedelta(days=1)
+        created = datetime.now(UTC) - timedelta(days=1)
         assert mgr.is_stale(created) is False
 
 
 class TestShouldDeprecate:
     def test_delegates_to_is_stale(self):
         mgr = KnowledgeFreshnessManager()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         assert mgr.should_deprecate(now) is False
 
     def test_stale_entry_should_deprecate(self):
         mgr = KnowledgeFreshnessManager()
-        created = datetime.now(timezone.utc) - timedelta(days=100)
+        created = datetime.now(UTC) - timedelta(days=100)
         assert mgr.should_deprecate(created) is True
 
     def test_fresh_entry_should_not_deprecate(self):
         mgr = KnowledgeFreshnessManager()
-        created = datetime.now(timezone.utc) - timedelta(days=10)
+        created = datetime.now(UTC) - timedelta(days=10)
         assert mgr.should_deprecate(created) is False

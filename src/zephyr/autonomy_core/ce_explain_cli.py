@@ -26,6 +26,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 
+
 @dataclass
 class InclusionRationale:
     ke_id: str
@@ -34,6 +35,7 @@ class InclusionRationale:
     authority_boost: float
     freshness_score: float
     final_weight: float
+
 
 def explain_ke(ke_id: str, *, query: str = "") -> str:
     """CLI /ce:explain KE-0127 → JSON rationale."""

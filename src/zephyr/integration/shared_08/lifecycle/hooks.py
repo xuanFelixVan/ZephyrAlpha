@@ -46,7 +46,6 @@ SSoT: MOD-INF-016 §2.7 shared-lifecycle
 Version: 0.1.0
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -55,10 +54,10 @@ from enum import Enum, unique
 from typing import Any, Protocol, runtime_checkable
 
 __all__ = [
-    "LifecycleState",
-    "ModuleHealth",
     "LifecycleAware",
     "LifecycleManager",
+    "LifecycleState",
+    "ModuleHealth",
 ]
 
 logger = logging.getLogger(__name__)

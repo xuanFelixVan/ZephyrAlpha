@@ -38,8 +38,8 @@ from typing import Any
 __all__ = [
     "EventBusUpgrade",
     "UpgradePlan",
-    "UpgradeStep",
     "UpgradeStatus",
+    "UpgradeStep",
 ]
 
 

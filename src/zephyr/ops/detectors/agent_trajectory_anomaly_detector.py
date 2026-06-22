@@ -31,7 +31,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 
-
 class TrajectoryAnomalyType(str, Enum):
     DRIFT = "drift"
     CYCLE = "cycle"
@@ -49,9 +48,7 @@ class TrajectoryEvent:
 
 @dataclass
 class AgentTrajectoryAnomalyDetector:
-    expected_phases: tuple[str, ...] = (
-        "collect", "detect", "diagnose", "act", "verify"
-    )
+    expected_phases: tuple[str, ...] = ("collect", "detect", "diagnose", "act", "verify")
     trajectory_history: list[TrajectoryEvent] = field(default_factory=list)
     max_history: int = 200
     cycle_threshold: int = 3
@@ -60,7 +57,7 @@ class AgentTrajectoryAnomalyDetector:
     def record_step(self, event: TrajectoryEvent) -> None:
         self.trajectory_history.append(event)
         if len(self.trajectory_history) > self.max_history:
-            self.trajectory_history = self.trajectory_history[-self.max_history:]
+            self.trajectory_history = self.trajectory_history[-self.max_history :]
 
     def detect_trajectory_anomalies(self) -> dict:
         if len(self.trajectory_history) < 4:
@@ -101,13 +98,15 @@ class AgentTrajectoryAnomalyDetector:
             if comp in seen:
                 distance = i - seen[comp]
                 if distance > 1:
-                    cycle_members = recent_components[seen[comp]:i + 1]
+                    cycle_members = recent_components[seen[comp] : i + 1]
                     if len(set(cycle_members)) <= self.cycle_threshold:
-                        return [{
-                            "type": TrajectoryAnomalyType.CYCLE.value,
-                            "components": list(set(cycle_members)),
-                            "span": distance,
-                        }]
+                        return [
+                            {
+                                "type": TrajectoryAnomalyType.CYCLE.value,
+                                "components": list(set(cycle_members)),
+                                "span": distance,
+                            }
+                        ]
             seen[comp] = i
         return []
 

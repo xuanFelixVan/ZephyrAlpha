@@ -1,12 +1,12 @@
 ---
 module_id: KE-3656
-title: 权限层级（按 ai-autonomy-authority-registry.md）
+title: 权限层级（按 ai_autonomy_authority_registry.yaml）
 category: governance
 ---
 
-# 权限层级（按 ai-autonomy-authority-registry.md）
+# 权限层级（按 ai_autonomy_authority_registry.yaml）
 
-权限层级（按 ai-autonomy-authority-registry.md）
+权限层级（按 ai_autonomy_authority_registry.yaml）
 
 | 文件 | 权限层级 | AI 可改？ |
 |------|---------|:---:|

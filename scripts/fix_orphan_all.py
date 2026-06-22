@@ -1,13 +1,13 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.fix_orphan_all
-# [INVARIANTS] 
-# [MODIFY-GUARD] 
-# [CONSUMERS] 
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 """fix_orphan_all.py — 自动修复 __init__.py __all__ 孤儿模块
 
 遍历 src/zephyr/ 下所有包，将不在 __all__ 中的 .py 模块添加进去。
@@ -29,14 +29,32 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 
-EXCLUDE_DIRS = frozenset({
-    "__pycache__", ".pytest_cache", ".mypy_cache", ".git",
-    ".venv", "venv", "env", "dist", "build", "egg-info",
-    ".ailocks", "_backup", "_archive",
-})
-EXCLUDE_FILES = frozenset({
-    "__init__.py", "conftest.py", "setup.py", "version.py", "py.typed",
-})
+EXCLUDE_DIRS = frozenset(
+    {
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".git",
+        ".venv",
+        "venv",
+        "env",
+        "dist",
+        "build",
+        "egg-info",
+        ".ailocks",
+        "_backup",
+        "_archive",
+    }
+)
+EXCLUDE_FILES = frozenset(
+    {
+        "__init__.py",
+        "conftest.py",
+        "setup.py",
+        "version.py",
+        "py.typed",
+    }
+)
 
 
 def strip_bom(source: str) -> str:
@@ -53,9 +71,9 @@ def extract_public_names(py_file: Path) -> list[str]:
         return []
     names = []
     for node in ast.iter_child_nodes(tree):
-        if isinstance(node, ast.ClassDef) and not node.name.startswith("_"):
-            names.append(node.name)
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and not node.name.startswith("_"):
+        if (isinstance(node, ast.ClassDef) and not node.name.startswith("_")) or (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and not node.name.startswith("_")
+        ):
             names.append(node.name)
     return names
 
@@ -142,10 +160,8 @@ def rebuild_init(source: str, new_imports: list[str], new_all_entries: set[str])
 
     lines = source.split("\n")
 
-    if all_start > 0 and is_literal:
-        new_lines = lines[:all_start - 1] + [new_all_block] + lines[all_end:]
-    elif all_start > 0 and not is_literal:
-        new_lines = lines[:all_start - 1] + [new_all_block] + lines[all_end:]
+    if (all_start > 0 and is_literal) or (all_start > 0 and not is_literal):
+        new_lines = lines[: all_start - 1] + [new_all_block] + lines[all_end:]
     else:
         new_lines = lines + ["", new_all_block]
 
@@ -164,6 +180,7 @@ def rebuild_init(source: str, new_imports: list[str], new_all_entries: set[str])
 
 def verify_package_import(pkg_dotted: str) -> tuple[bool, str]:
     import importlib
+
     src_path = str(PROJECT_ROOT / "src")
     if src_path not in sys.path:
         sys.path.insert(0, src_path)
@@ -239,6 +256,7 @@ def fix_package(pkg_dir: Path, no_imports: bool = False) -> tuple[int, list[str]
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--no-imports", action="store_true")
@@ -278,11 +296,13 @@ def main():
             total_orphans += fixed
             if used_imports:
                 total_with_imports += 1
-            print(f"  FIXED {pkg_dotted}: +{fixed} orphans {'(with imports)' if used_imports else '(module names only)'}")
+            print(
+                f"  FIXED {pkg_dotted}: +{fixed} orphans {'(with imports)' if used_imports else '(module names only)'}"
+            )
         for s in skipped:
             all_skipped.append(s)
 
-    print(f"\n=== SUMMARY ===")
+    print("\n=== SUMMARY ===")
     print(f"Packages fixed: {total_fixed}")
     print(f"Orphans fixed: {total_orphans}")
     print(f"With imports: {total_with_imports}")

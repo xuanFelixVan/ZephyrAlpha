@@ -28,6 +28,7 @@ R511: ActionCompositionHealthMonitor
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ActionComposition:
     composition_id: str
@@ -35,11 +36,13 @@ class ActionComposition:
     outcomes: list[bool] = field(default_factory=list)
     max_outcomes: int = 50
 
+
 @dataclass
 class IndependentActionStats:
     action_type: str
     outcomes: list[bool] = field(default_factory=list)
     max_outcomes: int = 50
+
 
 @dataclass
 class ActionCompositionHealthMonitor:
@@ -56,7 +59,7 @@ class ActionCompositionHealthMonitor:
         comp = self.compositions[composition_id]
         comp.outcomes.append(success)
         if len(comp.outcomes) > comp.max_outcomes:
-            comp.outcomes = comp.outcomes[-comp.max_outcomes:]
+            comp.outcomes = comp.outcomes[-comp.max_outcomes :]
 
     def record_independent_outcome(self, action_type: str, success: bool) -> None:
         if action_type not in self.independent_stats:
@@ -64,7 +67,7 @@ class ActionCompositionHealthMonitor:
         stats = self.independent_stats[action_type]
         stats.outcomes.append(success)
         if len(stats.outcomes) > stats.max_outcomes:
-            stats.outcomes = stats.outcomes[-stats.max_outcomes:]
+            stats.outcomes = stats.outcomes[-stats.max_outcomes :]
 
     def detect_negative_synergy(self) -> dict:
         findings = {}
@@ -91,7 +94,11 @@ class ActionCompositionHealthMonitor:
                 "min_independent_rate": round(expected_rate, 3),
                 "synergy_gap": round(synergy_gap, 3),
                 "negative_synergy": synergy_gap > self.negative_synergy_threshold,
-                "severity": "critical" if synergy_gap > 0.3 else "warning" if synergy_gap > self.negative_synergy_threshold else "healthy",
+                "severity": "critical"
+                if synergy_gap > 0.3
+                else "warning"
+                if synergy_gap > self.negative_synergy_threshold
+                else "healthy",
                 "sample_count": len(comp.outcomes),
             }
 

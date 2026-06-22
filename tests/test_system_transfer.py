@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_system_transfer.py
 
-import pytest
 
 from zephyr.trading.orchestrator.system_transfer import SystemTransferManager
 

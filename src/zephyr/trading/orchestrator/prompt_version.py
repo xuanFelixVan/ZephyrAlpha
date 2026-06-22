@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """AI Prompt 版本控制（CT-PROMPT-VERSION）——prompt template版本化+部署前diff。"""
 
+
 class PromptVersionManager:
     def __init__(self):
         self._versions: dict[str, str] = {}

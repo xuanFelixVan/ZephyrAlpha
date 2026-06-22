@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_db_integrity.py
 
-import pytest
 from zephyr.ops.gates.db_integrity import DBIntegrity
 
 

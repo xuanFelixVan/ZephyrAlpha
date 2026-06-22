@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_backpressure_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.backpressure_types
+# [MODULE] zephyr.integration.backpressure_types
 
 # [INVARIANTS] none
 
@@ -24,26 +24,25 @@ backpressure_types.py - Pipeline backpressure signal data types
 ===============================================================
 
 Moved from shared.contracts.backpressure (pause/throttle/resume).
-Canonical location is now zephyr.orchestration.pipeline_routing.backpressure_types.
+Canonical location is now zephyr.integration.backpressure_types.
 
 CTR-BP-001: BackpressurePause — downstream overload pause signal
 CTR-BP-002: BackpressureThrottle — downstream throttle signal
 CTR-BP-003: BackpressureResume — downstream recovery signal
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
 
 __all__ = [
     "BackpressurePause",
-    "BackpressureThrottle",
     "BackpressureResume",
+    "BackpressureThrottle",
 ]
 
 
@@ -56,7 +55,7 @@ class BackpressurePause:
     symbol: str
     action: str = "PAUSE"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 
 @dataclass(frozen=True)
@@ -68,7 +67,7 @@ class BackpressureThrottle:
     symbol: str
     action: str = "THROTTLE"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 
 @dataclass(frozen=True)
@@ -79,4 +78,4 @@ class BackpressureResume:
     symbol: str
     action: str = "RESUME"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None

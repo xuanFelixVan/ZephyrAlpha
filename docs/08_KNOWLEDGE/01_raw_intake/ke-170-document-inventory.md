@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-170
 title: 2. Document inventory / 文档清单
 category: documentation

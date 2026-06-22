@@ -12,13 +12,11 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.governance.data_quality import (
+    DQ_DIM_COUNT,
+    DQ_SPECS,
     DQDimension,
     DQSpec,
-    DQ_SPECS,
-    DQ_DIM_COUNT,
     get_dq_spec,
     score_dq,
 )
@@ -94,7 +92,7 @@ class TestScoreDq:
 
 class TestBoundary:
     def test_dq_dim_count_matches_enum(self):
-        assert DQ_DIM_COUNT == len(DQDimension)
+        assert len(DQDimension) == DQ_DIM_COUNT
 
     def test_score_dq_consistency(self):
         spec = get_dq_spec(DQDimension.CONSISTENCY)

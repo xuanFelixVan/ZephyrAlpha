@@ -30,8 +30,7 @@ from __future__ import annotations
 import gzip
 import logging
 import os
-import shutil
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -62,7 +61,7 @@ class AuditTieredStorageBridge:
         Returns:
             {"hot": [...], "warm": [...], "cold": [...]}
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         hot_cutoff = now - timedelta(days=_HOT_DAYS)
         warm_cutoff = now - timedelta(days=_WARM_DAYS)
 
@@ -97,7 +96,7 @@ class AuditTieredStorageBridge:
 
         import json
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         hot_cutoff = now - timedelta(days=_HOT_DAYS)
         warm_cutoff = now - timedelta(days=_WARM_DAYS)
 
@@ -105,7 +104,7 @@ class AuditTieredStorageBridge:
         warm_events: list[str] = []
         migrated = 0
 
-        with open(jsonl_path, "r", encoding="utf-8") as f:
+        with open(jsonl_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
@@ -167,19 +166,15 @@ class AuditTieredStorageBridge:
         hot_jsonl = self._hot_dir / "events.jsonl"
         if hot_jsonl.exists():
             stats["hot_size_mb"] = round(hot_jsonl.stat().st_size / (1024 * 1024), 2)
-            with open(hot_jsonl, "r", encoding="utf-8") as f:
+            with open(hot_jsonl, encoding="utf-8") as f:
                 stats["hot_events"] = sum(1 for line in f if line.strip())
 
         if self._warm_dir.exists():
-            warm_size = sum(
-                f.stat().st_size for f in self._warm_dir.rglob("*") if f.is_file()
-            )
+            warm_size = sum(f.stat().st_size for f in self._warm_dir.rglob("*") if f.is_file())
             stats["warm_size_mb"] = round(warm_size / (1024 * 1024), 2)
 
         if self._cold_dir.exists():
-            cold_size = sum(
-                f.stat().st_size for f in self._cold_dir.rglob("*") if f.is_file()
-            )
+            cold_size = sum(f.stat().st_size for f in self._cold_dir.rglob("*") if f.is_file())
             stats["cold_size_mb"] = round(cold_size / (1024 * 1024), 2)
 
         return stats

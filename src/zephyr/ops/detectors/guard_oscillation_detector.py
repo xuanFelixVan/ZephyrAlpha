@@ -30,12 +30,14 @@ R519: GuardOscillationDetector
 import time
 from dataclasses import dataclass, field
 
+
 @dataclass
 class GuardStateChange:
     guard_id: str
     from_state: str
     to_state: str
     timestamp: float
+
 
 @dataclass
 class GuardOscillationDetector:
@@ -45,14 +47,16 @@ class GuardOscillationDetector:
     analysis_window: float = 3600.0
 
     def record_state_change(self, guard_id: str, from_state: str, to_state: str) -> None:
-        self.state_changes.append(GuardStateChange(
-            guard_id=guard_id,
-            from_state=from_state,
-            to_state=to_state,
-            timestamp=time.time(),
-        ))
+        self.state_changes.append(
+            GuardStateChange(
+                guard_id=guard_id,
+                from_state=from_state,
+                to_state=to_state,
+                timestamp=time.time(),
+            )
+        )
         if len(self.state_changes) > self.max_changes:
-            self.state_changes = self.state_changes[-self.max_changes:]
+            self.state_changes = self.state_changes[-self.max_changes :]
 
     def detect_oscillations(self) -> dict:
         now = time.time()
@@ -76,9 +80,7 @@ class GuardOscillationDetector:
                 oscillations[guard_id] = {
                     "total_swings": total_swings,
                     "pattern": f"{from_state} <-> {to_state}",
-                    "frequency_per_hour": round(
-                        total_swings / (self.analysis_window / 3600.0), 1
-                    ),
+                    "frequency_per_hour": round(total_swings / (self.analysis_window / 3600.0), 1),
                     "severity": "critical" if total_swings >= 20 else "high" if total_swings >= 12 else "medium",
                 }
 

@@ -12,7 +12,7 @@ category: documentation
 
 | #      | 推荐做法                                                  | 原因                        | 来源                            | <br />                        |
 | ------ | ----------------------------------------------------- | ------------------------- | ----------------------------- | :---------------------------- |
-| REC-01 | 每次修改规则后更新 `document-metadata-index-registry.yaml`     | 保持注册表与实际文件同步              | rule-lifecycle-and-change-standard.md  | <br />                        |
+| REC-01 | 每次修改规则后更新 `document-metadata-index-registry.yaml`     | 保持注册表与实际文件同步              | rule_lifecycle_and_change_standard.yaml  | <br />                        |
 | REC-02 | 新增文件后更新 `document-metadata-index-registry.yaml`              | 保持文档清单完整                  | ai-onboarding-guide.md        | <br />                        |
 | REC-03 | session 结束前写 Session Log                              | 知识传承不依赖特定 AI 的记忆          | ai-onboarding-guide.md        | <br />                        |
 | REC-04 | 移动文件时 commit message 包含 \`moved: old/path -> new/path | reason: ...\`             | 便于搬迁历史追溯                      | trae_029_doc_operation_security.yaml |

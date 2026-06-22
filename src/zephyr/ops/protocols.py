@@ -33,16 +33,14 @@ class ActionType(str, Enum):
 
 
 class FeedbackProtocolAdapter(Protocol):
-    def dispatch_action(
-        self, action_type: ActionType, payload: dict[str, Any]
-    ) -> bool:
-        ...
+    def dispatch_action(self, action_type: ActionType, payload: dict[str, Any]) -> bool: ...
+
 
 class AgentCapability:
-    def __init__(self, name='', level=0, description=''):
+    def __init__(self, name="", level=0, description=""):
         self.name = name
         self.level = level
         self.description = description
 
     def __repr__(self):
-        return f'AgentCapability({self.name}, level={self.level})'
+        return f"AgentCapability({self.name}, level={self.level})"

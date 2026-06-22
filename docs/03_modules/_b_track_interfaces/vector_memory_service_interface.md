@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: GOV-AI-ENG-VMS-001
 title: Vector Memory Service Interface / 向量记忆服务接口规范
 doc_type: service_interface_spec

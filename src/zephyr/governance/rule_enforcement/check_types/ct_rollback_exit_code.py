@@ -27,105 +27,58 @@ RollbackExitCodeHandler — RollbackExitCodeHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class RollbackExitCodeHandler(CheckTypeHandler):
-
-
     name = "rollback_exit_code"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        exit_code_raw = params.get("exit_code", 0)
 
-                violations = []
+        try:
+            exit_code = int(exit_code_raw)
 
+        except (TypeError, ValueError):
+            exit_code = -1
 
-                exit_code_raw = params.get("exit_code", 0)
+        try:
+            from zephyr.governance.contract import get_gate_action
 
+            gate_action, description = get_gate_action(exit_code)
 
-                try:
+            if gate_action in (
+                "FAIL",
+                "BLOCK",
+                "BLOCK_AUTO",
+                "WARN",
+                "RETRY",
+                "PAUSE_AGENT",
+                "PAUSE_AUTO",
+                "REDUCE_TIER",
+            ):
+                violations.append(
+                    {
+                        "message": f"Rollback exit code {exit_code} -> {gate_action}: {description}",
+                        "severity": check.severity,
+                    }
+                )
 
+        except Exception as exc:
+            violations.append({"message": f"rollback_exit_code check failed (degrade P2): {exc}", "severity": "P2"})
 
-                    exit_code = int(exit_code_raw)
-
-
-                except (TypeError, ValueError):
-
-
-                    exit_code = -1
-
-
-                try:
-
-
-                    from zephyr.integration.shared_08.contracts.protocols import GateActionProtocol
-                    from zephyr.governance.contract import get_gate_action
-
-                    gate_action, description = get_gate_action(exit_code)
-
-
-                    if gate_action in ("FAIL", "BLOCK", "BLOCK_AUTO", "WARN", "RETRY", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
-
-
-                        violations.append({"message": f"Rollback exit code {exit_code} -> {gate_action}: {description}", "severity": check.severity})
-
-
-                except Exception as exc:
-
-
-                    violations.append({"message": f"rollback_exit_code check failed (degrade P2): {exc}", "severity": "P2"})
-
-
-                return violations
-
-
+        return violations

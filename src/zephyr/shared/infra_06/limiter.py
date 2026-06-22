@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.infra_06.limiter
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 """
 limiter.py —— 速率限制器（Phase 8 新增 | 盲点 B14 修复）
 
@@ -51,7 +42,6 @@ Version: 0.1.0
 import asyncio
 import logging
 import time
-
 from dataclasses import dataclass
 
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
@@ -65,8 +55,10 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
+
 class RateLimitError(ZephyrBaseError):
     """速率限制耗尽——等待时间过长或无法获取 token。"""
+
 
 @dataclass
 class RateLimiterStats:
@@ -75,6 +67,7 @@ class RateLimiterStats:
     total_acquired: int
     total_rejected: int
     total_waited: int
+
 
 class TokenBucketLimiter:
     """Token Bucket 速率限制器——平滑突发 + 精确控速。
@@ -162,6 +155,7 @@ class TokenBucketLimiter:
             total_rejected=self._total_rejected,
             total_waited=self._total_waited,
         )
+
 
 def async_limited(
     permits_per_second: float,

@@ -30,6 +30,5 @@ from dataclasses import dataclass
 
 @dataclass
 class ConfidenceDecomposer:
-
     def decompose(self, confidence: float, factors: dict) -> dict:
         return {k: confidence / max(len(factors), 1) for k in factors}

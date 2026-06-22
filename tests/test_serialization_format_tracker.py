@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import pickle
 
-import pytest
-
 from zephyr.ops.forensic.serialization_format_tracker import (
     Compatibility,
     SerdeFormat,

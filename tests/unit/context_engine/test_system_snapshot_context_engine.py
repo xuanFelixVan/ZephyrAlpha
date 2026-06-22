@@ -26,6 +26,7 @@ import warnings
 from pathlib import Path
 
 import pytest
+
 from zephyr.autonomy_core.system_snapshot import (
     SystemSnapshot,
     SystemSnapshotter,
@@ -220,11 +221,11 @@ class TestBlueprintPassRate:
         conn = sqlite3.connect(str(db))
         conn.execute("PRAGMA foreign_keys = ON")
         conn.execute(
-            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) " "VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?, ?, ?, ?, ?)",
             ("gr-001", "G4:task-001", 1, "{}", "2026-04-27T00:00:00"),
         )
         conn.execute(
-            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) " "VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?, ?, ?, ?, ?)",
             ("gr-002", "G4:task-002", 0, "{}", "2026-04-27T00:00:00"),
         )
         conn.commit()

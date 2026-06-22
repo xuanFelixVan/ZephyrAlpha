@@ -26,12 +26,12 @@ module_id: MOD-INF-023
 Drift detector 自身完整性验证（纯 stdlib，零 zephyr 依赖）。
 对标 blueprint.md §2.7（自漂移检测——Watcher 的 Watcher）。
 """
+
 from __future__ import annotations
 
 import hashlib
 import sys
 from pathlib import Path
-from typing import Optional
 
 
 def sha256_file(path: Path) -> str:
@@ -66,7 +66,8 @@ def check_registry_parsable(base: Path) -> bool:
         return False
     try:
         import yaml
-        with open(registry_path, "r", encoding="utf-8") as fh:
+
+        with open(registry_path, encoding="utf-8") as fh:
             data = yaml.safe_load(fh)
         if data is None:
             return False
@@ -78,7 +79,7 @@ def check_registry_parsable(base: Path) -> bool:
         return False
 
 
-def bootstrap_self_check(base: Optional[Path] = None) -> bool:
+def bootstrap_self_check(base: Path | None = None) -> bool:
     if base is None:
         base = Path(__file__).parent
     results = check_core_files(base)

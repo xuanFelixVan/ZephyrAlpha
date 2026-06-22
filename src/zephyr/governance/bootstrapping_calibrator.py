@@ -2,28 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.bootstrapping_calibrator
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
-from dataclasses import dataclass, field
 from collections import deque
+from dataclasses import dataclass, field
+
 
 @dataclass
 class CalibrationPoint:
@@ -36,8 +27,8 @@ class CalibrationPoint:
     error_ratio: float
     timestamp: float = field(default_factory=time.time)
 
-class BootstrappingCalibrator:
 
+class BootstrappingCalibrator:
     def __init__(self, min_data_points: int = 100, duration_days: int = 30):
         self._min_data_points = min_data_points
         self._duration_days = duration_days
@@ -46,7 +37,15 @@ class BootstrappingCalibrator:
         self._correction_factor: float = 1.0
         self._start_time: float = time.time()
 
-    def record(self, actual_tokens: int, estimated_tokens: int, actual_cost: float = 0.0, estimated_cost: float = 0.0, actual_time: float = 0.0, estimated_time: float = 1.0) -> CalibrationPoint:
+    def record(
+        self,
+        actual_tokens: int,
+        estimated_tokens: int,
+        actual_cost: float = 0.0,
+        estimated_cost: float = 0.0,
+        actual_time: float = 0.0,
+        estimated_time: float = 1.0,
+    ) -> CalibrationPoint:
         est_total = estimated_tokens + estimated_cost * 10000 + estimated_time * 100
         act_total = actual_tokens + actual_cost * 10000 + actual_time * 100
         error = act_total / est_total if est_total > 0 else 1.0

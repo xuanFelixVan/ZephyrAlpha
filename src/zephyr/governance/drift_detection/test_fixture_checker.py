@@ -28,15 +28,14 @@ expected_output_drift: assert expected_value来源
 auto_fixable=false: 测试漂移最隐蔽——测试通过不代表系统正确
 对标 blueprint.md §6.20。
 """
+
 from __future__ import annotations
 
-import json
 import os
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -45,7 +44,7 @@ class FixtureDriftEvent:
     fixture_file: str
     fixture_type: str
     target_module: str
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     description: str = ""
     severity: str = "MAJOR"
 
@@ -80,7 +79,7 @@ def scan_fixture_schema_drift(
                     mocked_path = match.group(1)
                     events.append(
                         FixtureDriftEvent(
-                            event_id=f"fixture-mock-{py_file.stem}-{mocked_path.replace('.','-')}",
+                            event_id=f"fixture-mock-{py_file.stem}-{mocked_path.replace('.', '-')}",
                             fixture_file=str(py_file),
                             fixture_type="mock_target",
                             target_module=mocked_path,
@@ -142,20 +141,15 @@ def scan_mock_target_drift(
         )
         for mocked in mock_matches:
             resolved = mocked.replace(".", os.sep)
-            found = any(
-                resolved in str(m) for m in src_modules
-            )
+            found = any(resolved in str(m) for m in src_modules)
             if not found and "." in mocked:
                 events.append(
                     FixtureDriftEvent(
-                        event_id=f"fixture-mock-orphan-{mocked.replace('.','-')}",
+                        event_id=f"fixture-mock-orphan-{mocked.replace('.', '-')}",
                         fixture_file=str(py_file),
                         fixture_type="mock_target",
                         target_module=mocked,
-                        description=(
-                            f"Mock target '{mocked}' not found "
-                            f"in src/ modules"
-                        ),
+                        description=(f"Mock target '{mocked}' not found in src/ modules"),
                         severity="MAJOR",
                     )
                 )
@@ -183,26 +177,16 @@ def scan_expected_output_drift(
 
         for match in assert_pattern.finditer(content):
             expected = match.group(1).strip()
-            if (
-                not re.search(r"#\s*(?:from|source|expected|baseline)",
-                content[match.start():match.start() + 200])
-            ):
+            if not re.search(r"#\s*(?:from|source|expected|baseline)", content[match.start() : match.start() + 200]):
                 if len(expected) < 50:
                     continue
                 events.append(
                     FixtureDriftEvent(
-                        event_id=(
-                            f"fixture-assert-"
-                            f"{py_file.stem}-L"
-                            f"{content[:match.start()].count(chr(10))+1}"
-                        ),
+                        event_id=(f"fixture-assert-{py_file.stem}-L{content[: match.start()].count(chr(10)) + 1}"),
                         fixture_file=str(py_file),
                         fixture_type="expected_output",
                         target_module=expected[:50],
-                        description=(
-                            f"Assert expected value lacks source "
-                            f"annotation in {py_file.name}"
-                        ),
+                        description=(f"Assert expected value lacks source annotation in {py_file.name}"),
                         severity="INFO",
                     )
                 )

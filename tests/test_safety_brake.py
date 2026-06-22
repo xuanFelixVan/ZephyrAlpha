@@ -15,13 +15,11 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.governance.kb.safety_brake import (
-    SafetyBrake,
+    OperationType,
     PreFlightResult,
     RiskLevel,
-    OperationType,
+    SafetyBrake,
 )
 
 
@@ -169,17 +167,24 @@ class TestCoolingPeriod:
 class TestPreFlightResult:
     def test_defaults(self):
         r = PreFlightResult(
-            operation="write", risk_level=RiskLevel.LOW,
-            affected_ke_count=1, cooling_period_seconds=0, passed=True,
+            operation="write",
+            risk_level=RiskLevel.LOW,
+            affected_ke_count=1,
+            cooling_period_seconds=0,
+            passed=True,
         )
         assert r.blocking_issues == []
         assert r.warnings == []
 
     def test_custom_issues(self):
         r = PreFlightResult(
-            operation="delete", risk_level=RiskLevel.HIGH,
-            affected_ke_count=10, cooling_period_seconds=30, passed=False,
-            blocking_issues=["issue1"], warnings=["warn1"],
+            operation="delete",
+            risk_level=RiskLevel.HIGH,
+            affected_ke_count=10,
+            cooling_period_seconds=30,
+            passed=False,
+            blocking_issues=["issue1"],
+            warnings=["warn1"],
         )
         assert len(r.blocking_issues) == 1
         assert len(r.warnings) == 1

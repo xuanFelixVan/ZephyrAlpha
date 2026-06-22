@@ -12,13 +12,9 @@
 
 from __future__ import annotations
 
-import threading
-
-import pytest
-
 from zephyr.behavioral_audit.drift_cron_scheduler import (
-    STANDARD_INTERVAL_S,
     DEEP_INTERVAL_S,
+    STANDARD_INTERVAL_S,
     DriftCronScheduler,
     ensure_scheduler_running,
     stop_scheduler,
@@ -96,6 +92,7 @@ class TestEnsureSchedulerRunning:
 
     def test_ensure_creates_scheduler(self):
         import zephyr.behavioral_audit.drift_cron_scheduler as mod
+
         mod._scheduler = None
         scheduler = ensure_scheduler_running()
         assert isinstance(scheduler, DriftCronScheduler)
@@ -103,6 +100,7 @@ class TestEnsureSchedulerRunning:
 
     def test_ensure_returns_same_instance(self):
         import zephyr.behavioral_audit.drift_cron_scheduler as mod
+
         mod._scheduler = None
         s1 = ensure_scheduler_running()
         s2 = ensure_scheduler_running()
@@ -113,6 +111,7 @@ class TestEnsureSchedulerRunning:
 class TestStopScheduler:
     def test_stop_resets_global(self):
         import zephyr.behavioral_audit.drift_cron_scheduler as mod
+
         mod._scheduler = None
         ensure_scheduler_running()
         stop_scheduler()
@@ -120,5 +119,6 @@ class TestStopScheduler:
 
     def test_stop_when_none_no_error(self):
         import zephyr.behavioral_audit.drift_cron_scheduler as mod
+
         mod._scheduler = None
         stop_scheduler()

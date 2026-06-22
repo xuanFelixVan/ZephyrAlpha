@@ -26,12 +26,12 @@ module_id: MOD-INF-023
 注入点：session_manager派发task时 + MCP discover_applicable_gates
 对标 blueprint.md §6.8。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from enum import Enum, auto
-from typing import Optional
+from datetime import UTC, datetime
+from enum import Enum
 
 
 class InjectionLevel(str, Enum):
@@ -46,7 +46,7 @@ class HealthSnapshot:
     active_drift_count: int
     budget_remaining: dict[str, int]
     state_distribution: dict[str, int]
-    snapshot_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    snapshot_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -63,7 +63,7 @@ class InjectedContext:
     level: InjectionLevel
     token_estimate: int
     content: str
-    injection_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    injection_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 def build_health_snapshot(module_id: str, active_events: list[dict[str, object]]) -> HealthSnapshot:
@@ -104,15 +104,15 @@ def inject_minimal(snapshot: HealthSnapshot) -> InjectedContext:
     lines: list[str] = []
     lines.append(f"[DRIFT] MOD-INF-023 active_drifts={snapshot.active_drift_count}")
     lines.append(
-        f"budget: P0={snapshot.budget_remaining.get('P0',3)}/"
-        f"P1={snapshot.budget_remaining.get('P1',8)}/"
-        f"P2={snapshot.budget_remaining.get('P2',15)}"
+        f"budget: P0={snapshot.budget_remaining.get('P0', 3)}/"
+        f"P1={snapshot.budget_remaining.get('P1', 8)}/"
+        f"P2={snapshot.budget_remaining.get('P2', 15)}"
     )
     states = snapshot.state_distribution
     lines.append(
-        f"states: DETECTED={states.get('DETECTED',0)} "
-        f"TRIAGED={states.get('TRIAGED',0)} "
-        f"RESOLVING={states.get('RESOLVING',0)}"
+        f"states: DETECTED={states.get('DETECTED', 0)} "
+        f"TRIAGED={states.get('TRIAGED', 0)} "
+        f"RESOLVING={states.get('RESOLVING', 0)}"
     )
     content = "\n".join(lines)
     return InjectedContext(
@@ -129,10 +129,7 @@ def inject_standard(
     lines: list[str] = [inject_minimal(snapshot).content, ""]
     lines.append("Top active drifts by ROI:")
     for i, td in enumerate(top_drifts, 1):
-        lines.append(
-            f"  {i}. [{td.severity}] {td.detector_id}: "
-            f"{td.description} (ROI={td.roi_score:.1f})"
-        )
+        lines.append(f"  {i}. [{td.severity}] {td.detector_id}: {td.description} (ROI={td.roi_score:.1f})")
     lines.append(f"\nTotal drifts awaiting attention: {snapshot.active_drift_count}")
     content = "\n".join(lines)
     return InjectedContext(
@@ -162,11 +159,10 @@ def inject_full(
 
     for evt in all_events_sorted:
         lines.append(
-            f"[{evt.get('severity','?')}] {evt.get('detector_id','?')}"
-            f" | {evt.get('description','?')[:100]}"
+            f"[{evt.get('severity', '?')}] {evt.get('detector_id', '?')} | {evt.get('description', '?')[:100]}"
         )
         if evt.get("auto_fixable"):
-            lines.append(f"  => auto_fixable: {evt.get('fix_description','N/A')[:80]}")
+            lines.append(f"  => auto_fixable: {evt.get('fix_description', 'N/A')[:80]}")
 
     lines.append("")
     lines.append(f"State breakdown: {snapshot.state_distribution}")

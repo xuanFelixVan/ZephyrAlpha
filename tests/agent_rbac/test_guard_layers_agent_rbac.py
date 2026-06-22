@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试防护层模块 — ColdStartLock, AutoGuard, EscalationHandler"""
-import pytest
+
+from zephyr.security.access_control.guard_layers import AutoGuard, ColdStartLock, EscalationHandler
 from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel
-from zephyr.security.access_control.guard_layers import ColdStartLock, AutoGuard, EscalationHandler, AutoGuardMode
 
 
 class TestColdStartLock:

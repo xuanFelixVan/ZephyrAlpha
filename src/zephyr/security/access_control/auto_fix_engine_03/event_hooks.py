@@ -2,33 +2,25 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.event_hooks
-
 # [INVARIANTS] 钩子MUST不阻塞主流程;异常MUST被捕获不传播
-
 # [MODIFY-GUARD] blueprint.md §3
-
 # [CONSUMERS] engine.py;fix_scheduler.py
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] EventHookError
-
 # [TESTS] tests/auto-fix-engine/test_event_hooks.py
-
 import logging
+from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixStatus
 
 logger = logging.getLogger(__name__)
+
 
 class FixEvent(str, Enum):
     FIX_STARTED = "fix_started"
@@ -46,6 +38,7 @@ class FixEvent(str, Enum):
     FIX_ROLLBACK = "fix_rollback"
     BATCH_STARTED = "batch_started"
     BATCH_COMPLETED = "batch_completed"
+
 
 class EventHooks:
     def __init__(self) -> None:

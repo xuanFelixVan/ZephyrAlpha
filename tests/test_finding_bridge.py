@@ -10,15 +10,14 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_finding_bridge.py
 
-import pytest
-from unittest.mock import MagicMock, patch, PropertyMock
 from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
 
 from zephyr.trading.orchestrator.finding_bridge import (
+    _SEVERITY_MAP,
     finding_to_audit_finding,
     report_finding,
     report_findings,
-    _SEVERITY_MAP,
 )
 
 
@@ -197,15 +196,16 @@ class TestReportFindings:
         mock_bridge_result.tasks_created = 0
         mock_bridge_result.tasks_failed = 0
 
-        with patch("zephyr.trading.orchestrator.finding_bridge.FindingTaskBridge") as mock_bridge_cls, \
-             patch("zephyr.trading.orchestrator.finding_bridge.TaskRepository") as mock_repo_cls:
+        with (
+            patch("zephyr.trading.orchestrator.finding_bridge.FindingTaskBridge") as mock_bridge_cls,
+            patch("zephyr.trading.orchestrator.finding_bridge.TaskRepository") as mock_repo_cls,
+        ):
             mock_repo = MagicMock()
             mock_repo_cls.return_value = mock_repo
             mock_bridge = MagicMock()
             mock_bridge.bridge.return_value = mock_bridge_result
             mock_bridge_cls.return_value = mock_bridge
 
-            from zephyr.trading.orchestrator.finding_bridge import AuditFinding
             result = report_findings([mock_audit_finding_instance], dry_run=True)
             assert result.findings_processed == 1
             mock_repo.close.assert_called_once()

@@ -59,13 +59,15 @@ class AutomatedRCAPostmortemGenerator:
     def start_incident(
         self, incident_id: str, severity: IncidentSeverity, title: str, affected_systems: list[str]
     ) -> None:
-        self.incident_timelines[incident_id] = [{
-            "ts": time.time(),
-            "event": "INCIDENT_START",
-            "severity": severity.value,
-            "title": title,
-            "affected": affected_systems,
-        }]
+        self.incident_timelines[incident_id] = [
+            {
+                "ts": time.time(),
+                "event": "INCIDENT_START",
+                "severity": severity.value,
+                "title": title,
+                "affected": affected_systems,
+            }
+        ]
 
     def record_event(self, incident_id: str, event_type: str, description: str) -> None:
         if incident_id not in self.incident_timelines:
@@ -73,11 +75,9 @@ class AutomatedRCAPostmortemGenerator:
         timeline = self.incident_timelines[incident_id]
         timeline.append({"ts": time.time(), "event": event_type, "description": description})
         if len(timeline) > self.max_timeline_events:
-            self.incident_timelines[incident_id] = timeline[-self.max_timeline_events:]
+            self.incident_timelines[incident_id] = timeline[-self.max_timeline_events :]
 
-    def close_incident(
-        self, incident_id: str, resolution: str, recovery_time_seconds: float
-    ) -> dict | None:
+    def close_incident(self, incident_id: str, resolution: str, recovery_time_seconds: float) -> dict | None:
         timeline = self.incident_timelines.get(incident_id)
         if not timeline:
             return None
@@ -98,12 +98,15 @@ class AutomatedRCAPostmortemGenerator:
             "severity": start_event.get("severity", "P3"),
             "affected_systems": start_event.get("affected", []),
             "timeline": [
-                {"ts": e["ts"], "event": e["event"], "description": e.get("description", "")}
-                for e in timeline
+                {"ts": e["ts"], "event": e["event"], "description": e.get("description", "")} for e in timeline
             ],
             "detection_latency_s": round((detection["ts"] - start_event["ts"]) if detection else 0, 1),
-            "diagnosis_latency_s": round((diagnosis["ts"] - (detection["ts"] if detection else start_event["ts"])) if diagnosis else 0, 1),
-            "mitigation_latency_s": round((mitigation["ts"] - (diagnosis["ts"] if diagnosis else start_event["ts"])) if mitigation else 0, 1),
+            "diagnosis_latency_s": round(
+                (diagnosis["ts"] - (detection["ts"] if detection else start_event["ts"])) if diagnosis else 0, 1
+            ),
+            "mitigation_latency_s": round(
+                (mitigation["ts"] - (diagnosis["ts"] if diagnosis else start_event["ts"])) if mitigation else 0, 1
+            ),
             "total_recovery_time_s": round(recovery_time_seconds, 1),
             "resolution": resolution,
             "root_cause_chain": root_cause_chain,
@@ -115,16 +118,22 @@ class AutomatedRCAPostmortemGenerator:
 
     def _generate_root_cause_chain(self, timeline: list[dict]) -> list[dict]:
         whys = []
-        root_events = [e for e in timeline if "root_cause" in e.get("event", "").lower() or "diagnosis" in e.get("event", "").lower()]
+        root_events = [
+            e
+            for e in timeline
+            if "root_cause" in e.get("event", "").lower() or "diagnosis" in e.get("event", "").lower()
+        ]
         symptoms = [e for e in timeline if e["event"] in ("ANOMALY_DETECTED", "ALERT_TRIGGERED", "METRIC_SPIKE")]
 
         cause_chain = symptoms[-1]["description"] if symptoms else "Unknown symptom"
         for i in range(min(self.root_cause_depth, len(root_events) + 1)):
-            whys.append({
-                "level": i + 1,
-                "question": f"Why did '{cause_chain}' occur?" if i == 0 else f"Why?",
-                "answer": root_events[i]["description"] if i < len(root_events) else "Further investigation needed",
-            })
+            whys.append(
+                {
+                    "level": i + 1,
+                    "question": f"Why did '{cause_chain}' occur?" if i == 0 else "Why?",
+                    "answer": root_events[i]["description"] if i < len(root_events) else "Further investigation needed",
+                }
+            )
             if i < len(root_events):
                 cause_chain = root_events[i]["description"]
         return whys
@@ -136,7 +145,9 @@ class AutomatedRCAPostmortemGenerator:
 
         detection_events = [e for e in timeline if e["event"] == "ANOMALY_DETECTED"]
         if not detection_events:
-            items.append({"priority": "P0", "action": "Improve anomaly detection to catch this earlier", "owner": "FLE"})
+            items.append(
+                {"priority": "P0", "action": "Improve anomaly detection to catch this earlier", "owner": "FLE"}
+            )
 
         items.append({"priority": "P2", "action": "Update runbook with resolution steps", "owner": "owner"})
         return items

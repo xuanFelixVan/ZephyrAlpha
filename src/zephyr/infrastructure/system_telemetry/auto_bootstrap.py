@@ -7,7 +7,7 @@
 
 # [MODIFY-GUARD] facade.py; __init__.py
 
-# [CONSUMERS] zephyr.orchestration.runtime_core; zephyr.orchestration.agent_lifecycle
+# [CONSUMERS] zephyr.trading; zephyr.autonomy_core
 
 # [STABILITY] evolving
 
@@ -32,15 +32,14 @@
     # 或更简单：任何模块 import zephyr 后自动获得全局单例
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
 import threading
 import time
-from datetime import datetime, timezone
-from typing import Any, TYPE_CHECKING
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from zephyr.infrastructure.system_telemetry.facade import Telemetry
@@ -63,12 +62,14 @@ def register_module(module_id: str, environment: str = "dev") -> Any:
         if module_id in _module_registry:
             return _module_registry[module_id]
         from zephyr.infrastructure.system_telemetry.facade import Telemetry
+
         t = Telemetry(module_id=module_id, environment=environment, test_mode=False)
         t.metrics.counter("module.registered", module_id=module_id)
         t.logs.info("module_auto_registered", module_id=module_id, environment=environment)
         t.health.register()
         try:
             from zephyr.infrastructure.system_telemetry.contract_metrics import get_contract_metrics
+
             get_contract_metrics().enable()
         except Exception:
             _logger.debug("auto_telemetry: contract_metrics enable skipped", exc_info=True)
@@ -88,6 +89,7 @@ def get_global_telemetry():
     global _global_telemetry
     if _global_telemetry is None:
         from zephyr.infrastructure.system_telemetry.facade import Telemetry
+
         _global_telemetry = Telemetry(
             module_id="zephyr_core",
             environment="auto",
@@ -102,6 +104,7 @@ def _patch_session_continuity() -> bool:
     """Monkey-patch SessionContinuity.print_restore_summary → 自动发送 session_start 遥测"""
     try:
         from zephyr.shared.session_continuity import SessionContinuity
+
         _orig_restore = SessionContinuity.print_restore_summary
 
         def _wrapped_restore(self, *args, **kwargs):
@@ -190,7 +193,7 @@ def bootstrap() -> dict:
     返回: bootstrap 状态摘要
     """
     global _bootstrap_time
-    _bootstrap_time = datetime.now(timezone.utc).isoformat()
+    _bootstrap_time = datetime.now(UTC).isoformat()
 
     results = {
         "ts": _bootstrap_time,
@@ -206,7 +209,7 @@ def bootstrap() -> dict:
     results["blueprint_metrics"] = _patch_blueprint_metrics()
 
     if not _bootstrap_time:
-        _bootstrap_time = datetime.now(timezone.utc).isoformat()
+        _bootstrap_time = datetime.now(UTC).isoformat()
 
     _logger.info(
         "auto_telemetry bootstrap complete: %s",
@@ -216,4 +219,5 @@ def bootstrap() -> dict:
 
 
 from zephyr.infrastructure.system_telemetry._budget_telemetry_bridge import set_telemetry_getter
+
 set_telemetry_getter(get_global_telemetry)

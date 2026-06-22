@@ -12,17 +12,11 @@
 
 from __future__ import annotations
 
-import time
-
-import pytest
-
 from zephyr.governance.stream_abort_guard import (
     AbortDecision,
-    AbortResult,
     ProviderProtocol,
     StreamAbortGuard,
     StreamCheckpoint,
-    StreamState,
 )
 
 

@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.diagnosers.mtti_tracker import MTTIEvent, MTTITracker
 
 

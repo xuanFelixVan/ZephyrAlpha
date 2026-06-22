@@ -46,79 +46,29 @@ auto_config: 需要config但.env/config.yaml不存在建议
 
 对标 blueprint.md §6.31。"""
 
-
-
-
 from __future__ import annotations
 
-
-
-
-
 import os
-
-
 import sqlite3
-
-
 from dataclasses import dataclass, field
-
-
-from datetime import datetime, timezone
-
-
+from datetime import UTC, datetime
 from pathlib import Path
 
-
-from typing import Optional
-
-
-
-
-
-
-
-
 REQUIRED_DIRS: list[str] = [
-
-
     "data/drift",
-
-
     "data/checkpoints",
-
-
     "temp",
-
-
     "logs",
-
-
     "cache",
-
-
 ]
-
-
-
 
 
 REQUIRED_ENV_VARS: list[str] = [
-
-
     "ZEPHYR_PROJECT_ROOT",
-
-
 ]
 
 
-
-
-
 DEFAULT_DB_PATH: str = "data/databases/governance.db"
-
-
-
 
 
 DRIFT_EVENTS_SCHEMA: str = """
@@ -196,282 +146,124 @@ CREATE INDEX IF NOT EXISTS idx_drift_timestamp ON drift_events(timestamp);
 """
 
 
-
-
-
-
-
-
 @dataclass
-
-
 class ColdStartResult:
-
-
     dirs_created: list[str] = field(default_factory=list)
-
 
     db_initialized: bool = False
 
-
     missing_env: list[str] = field(default_factory=list)
-
 
     first_scan_triggered: bool = False
 
-
     warnings: list[str] = field(default_factory=list)
 
-
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-
-
-
-
-
-
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 def init_directories(project_root: str) -> list[str]:
-
-
     created: list[str] = []
 
-
     for d in REQUIRED_DIRS:
-
-
         full = os.path.join(project_root, d)
 
-
         if not os.path.exists(full):
-
-
             try:
-
-
                 os.makedirs(full, exist_ok=True)
-
 
                 created.append(d)
 
-
             except Exception:
-
-
                 pass
-
 
     return created
 
 
-
-
-
-
-
-
 def init_database(project_root: str) -> bool:
-
-
     db_path = os.path.join(project_root, DEFAULT_DB_PATH)
 
-
     try:
-
-
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
-
 
         conn = sqlite3.connect(db_path)
 
-
         cursor = conn.cursor()
 
-
         for statement in DRIFT_EVENTS_SCHEMA.strip().split("\n\n"):
-
-
             cursor.execute(statement)
-
 
         conn.commit()
 
-
         conn.close()
-
 
         return True
 
-
     except Exception:
-
-
         return False
 
 
-
-
-
-
-
-
 def detect_missing_env() -> list[str]:
-
-
     missing: list[str] = []
 
-
     for var in REQUIRED_ENV_VARS:
-
-
         if var not in os.environ:
-
-
             missing.append(var)
-
 
     return missing
 
 
-
-
-
-
-
-
 def bootstrap(project_root: str) -> ColdStartResult:
-
-
     result = ColdStartResult()
-
-
-
-
 
     result.dirs_created = init_directories(project_root)
 
-
     result.db_initialized = init_database(project_root)
-
 
     result.missing_env = detect_missing_env()
 
-
-
-
-
     src_root = Path(project_root) / "src"
 
-
     if not src_root.exists() or not list(src_root.iterdir()):
-
-
         result.warnings.append("src/ directory appears empty — first scan seed recommended")
 
-
-
-
-
     if result.missing_env:
-
-
-        result.warnings.append(
-
-
-            f"Missing env vars: {result.missing_env} — "
-
-
-            f"create .env file with required values"
-
-
-        )
-
-
-
-
+        result.warnings.append(f"Missing env vars: {result.missing_env} — create .env file with required values")
 
     if result.db_initialized:
-
-
         try:
-
-
             result.first_scan_triggered = _trigger_light_scan(project_root)
 
-
             if not result.first_scan_triggered:
-
-
                 result.warnings.append("Cold-start LIGHT scan did not trigger — manual scan recommended")
 
-
         except Exception as exc:
-
-
             result.warnings.append(f"Cold-start scan exception: {exc}")
-
-
-
-
 
     return result
 
 
-
-
-
-
-
-
 def _trigger_light_scan(project_root: str) -> bool:
-
-
     import asyncio
 
-
-    from .drift_engine import scan, ScanLevel
-
-
-
-
+    from .drift_engine import ScanLevel, scan
 
     loop = asyncio.new_event_loop()
 
-
     try:
-
-
         asyncio.set_event_loop(loop)
-
 
         result = loop.run_until_complete(scan(level=ScanLevel.LIGHT))
 
-
         return result.detectors_run > 0
 
-
     except Exception:
-
-
         return False
 
-
     finally:
-
-
         loop.close()
 
 
-
-
-
-
-
-
 def session_entry_activate(project_root: str) -> ColdStartResult:
-
-
     """STEP 4.9: 每次 session 进入时触发的冷启动激活。
 
 
@@ -489,49 +281,19 @@ def session_entry_activate(project_root: str) -> ColdStartResult:
 
     """
 
-
     result = ColdStartResult()
-
-
-
-
 
     result.dirs_created = init_directories(project_root)
 
-
-
-
-
     if init_database(project_root):
-
-
         result.db_initialized = True
-
-
-
-
 
     result.missing_env = detect_missing_env()
 
-
-
-
-
     try:
-
-
         result.first_scan_triggered = _trigger_light_scan(project_root)
 
-
     except Exception:
-
-
         pass
 
-
-
-
-
     return result
-
-

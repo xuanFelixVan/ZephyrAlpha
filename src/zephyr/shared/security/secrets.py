@@ -46,8 +46,8 @@ AI 施工约定：
 SSoT: MOD-INF-016 §2.11 shared-secrets
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import logging
 import os
@@ -57,12 +57,12 @@ from typing import Protocol, runtime_checkable
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "SecretsError",
-    "SecretProvider",
-    "EnvSecretProvider",
-    "DotEnvSecretProvider",
-    "sanitize_secret",
     "SECRET_INDICATOR_PATTERNS",
+    "DotEnvSecretProvider",
+    "EnvSecretProvider",
+    "SecretProvider",
+    "SecretsError",
+    "sanitize_secret",
 ]
 
 logger = logging.getLogger(__name__)
@@ -197,7 +197,7 @@ class DotEnvSecretProvider:
                 key, _, value = line.partition("=")
                 key = key.strip()
                 value = value.strip()
-                if value.startswith('"') and value.endswith('"') or value.startswith("'") and value.endswith("'"):
+                if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
                     value = value[1:-1]
                 self._values[key] = value
 

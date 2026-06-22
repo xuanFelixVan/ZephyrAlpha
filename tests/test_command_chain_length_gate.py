@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_command_chain_length_gate.py
 
-import pytest
 
 from zephyr.governance.command_chain_length_gate import CommandChainGate
 

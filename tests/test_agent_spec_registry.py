@@ -12,8 +12,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from zephyr.autonomy_core.registry import (
     AgentCapability,

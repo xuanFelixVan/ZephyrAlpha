@@ -16,7 +16,7 @@ ttl: permanent
 last_updated: "2026-05-15"
 last_verified: "2026-05-14"
 construction_progress: partially_implemented
-actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-governance\\blueprint.md"
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\blueprint.md"
 template_for: blueprint
 generation: 2
 functional_domain: governance
@@ -1401,7 +1401,7 @@ P2-RESILIENCE（韧性保障）:
   不通过 → EXIT_FINDINGS → 禁止关闭任务
 
   解决问题：压缩 L0 时误删方法论触发器 → 新 AI 进项目不知道追问到底工作方式
-  SSoT：docs/01_policies_and_standards/meta/governance-methodology-standard.md MTH-006
+  SSoT：docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml MTH-006
 ```
 
 ### G-CT-022: AgentCard ↔ CapabilityRegistry 集成契约
@@ -1858,7 +1858,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 ### P0-I2: 域内施工顺序验证
 - §4 施工顺序的拓扑排序正确性
-- 前置模块 not_started 时后续模块禁止开工 
+- 前置模块 not_started 时后续模块禁止开工
 
 
 ## 9. 施工升级路线图
@@ -2006,13 +2006,13 @@ STEP 3: 拆分后验证
 
 | # | 文件 | module_id | 版本 | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则 |
+| 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
-| 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012/013 |
+| 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 | 5 | 系统总蓝图 | SYS-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 |
 | 6 | 基础设施域蓝图 | MOD-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 基础设施集成 |
-| 7 | 治理方法论标准 | REG-STD-001 / PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-001~013 治理决策方法论 |
+| 7 | 治理方法论标准 | REG-STD-001 / PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-001~013 治理决策方法论 |
 | 8 | 代码构建标准 | REG-STD-002 / GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 命名/文件组织/类型注解/SSoT守卫 |
 | 9 | AI产出物压缩工作流标准 | REG-STD-004 / GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 转化优先/15不可删/6砍错模式 |
 | 10 | Session状态机规则 | REG-STD-005 / OPS-VC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\operational\vibe_coding\vibe-coding-session-state-runbook.md` | 5状态/7转换/3禁止 |
@@ -2207,7 +2207,7 @@ STEP 3: 拆分后验证
 |----------|----------|---------|
 | 新增 G-CT-* 契约 | 蓝图 §3 + §A.1 审计表 + system-dependency-map.md | 本蓝图 + 依赖图 |
 | 新增治理脚本 | script-manifest.yaml + 蓝图 §11 产出物 | scripts/ + 本蓝图 |
-| 修改 RULE-* | rule-registry.md + sync_rule_registry.py MTH-006 检查 | .trae/rules/ + scripts/ |
+| 修改 RULE-* | _index.yaml + sync_rule_registry.py MTH-006 检查 | .trae/rules/ + scripts/ |
 | 修改 PS-REG-012 | MUST 同步检查 PS-STD-001 | docs/ |
 | 子模块施工进度变更 | 蓝图 §2 域内模块清单 + frontmatter construction_progress | 本蓝图 |
 

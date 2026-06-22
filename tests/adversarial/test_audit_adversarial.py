@@ -25,8 +25,8 @@ import hashlib
 import json
 import os
 import tempfile
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 import pytest
 
@@ -39,6 +39,7 @@ def temp_audit_dir() -> Path:
     td = Path(tempfile.mkdtemp(prefix="audit_adversarial_"))
     yield td
     import shutil
+
     shutil.rmtree(td, ignore_errors=True)
 
 
@@ -69,9 +70,7 @@ class TestChainIntegrity:
         os.replace(tmp, str(writer._event_log_path))
 
         tampered = verifier.verify_chain()
-        assert tampered["status"] == "compromised", (
-            f"Tampered chain should be compromised, got: {tampered}"
-        )
+        assert tampered["status"] == "compromised", f"Tampered chain should be compromised, got: {tampered}"
         assert len(tampered["issues"]) >= 1
 
     def test_missing_event_breaks_chain(self, temp_audit_dir: Path):
@@ -151,9 +150,7 @@ class TestChainStateTampering:
 
         verifier = IntegrityVerifier(writer._event_log_path)
         result = verifier.verify_chain()
-        assert result["status"] == "compromised", (
-            f"Chain should be compromised after state tamper, got: {result}"
-        )
+        assert result["status"] == "compromised", f"Chain should be compromised after state tamper, got: {result}"
 
 
 class TestConcurrentWrite:
@@ -175,9 +172,7 @@ class TestConcurrentWrite:
         verifier = IntegrityVerifier(writer._event_log_path)
         result = verifier.verify_chain()
         assert result["events_checked"] >= 1
-        assert result["status"] == "valid", (
-            f"Concurrent writes should produce valid chain: {result}"
-        )
+        assert result["status"] == "valid", f"Concurrent writes should produce valid chain: {result}"
 
 
 class TestMerkleForgery:
@@ -186,10 +181,7 @@ class TestMerkleForgery:
     def test_tampered_merkle_root_detected(self, temp_audit_dir: Path):
         from zephyr.governance.integrity import MerkleAggregator
 
-        leaves = [
-            hashlib.sha256(f"event-{i}".encode()).hexdigest()
-            for i in range(8)
-        ]
+        leaves = [hashlib.sha256(f"event-{i}".encode()).hexdigest() for i in range(8)]
         real_root = MerkleAggregator.build(leaves)
         assert real_root, "Merkle root should not be empty"
 
@@ -201,10 +193,7 @@ class TestMerkleForgery:
     def test_modified_leaf_detected(self, temp_audit_dir: Path):
         from zephyr.governance.integrity import MerkleAggregator
 
-        leaves = [
-            hashlib.sha256(f"event-{i}".encode()).hexdigest()
-            for i in range(8)
-        ]
+        leaves = [hashlib.sha256(f"event-{i}".encode()).hexdigest() for i in range(8)]
         real_root = MerkleAggregator.build(leaves)
 
         tampered_leaves = list(leaves)

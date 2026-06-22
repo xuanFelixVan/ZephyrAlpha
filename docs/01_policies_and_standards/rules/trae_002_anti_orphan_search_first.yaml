@@ -1,11 +1,21 @@
 rule_id: TRAE-002
 title: 反孤儿与搜索先行协议
+version: 1.0.0
+layer: L0
+module_id: TRAE-002
+depends_on: []
+tags:
+- TRAE
+- feature_creation
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - RULE-TWO
 - RULE-EIGHT
 - 反孤儿
 - 搜索先行
-layer: L0
 severity: critical
 scope: feature_creation
 domain: TRAE
@@ -85,7 +95,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

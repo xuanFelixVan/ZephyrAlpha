@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_e2e_integration_health.py
 
-import pytest
 
 from zephyr.ops.diagnosers.e2e_integration_health import (
     E2EIntegrationHealth,

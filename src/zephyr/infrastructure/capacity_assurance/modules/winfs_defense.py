@@ -29,7 +29,6 @@ WinFS Defense — Windows NTFS 编码鲁棒性 (盲点 #35)
 
 import os
 import sys
-from typing import Any, Optional
 
 
 class WinFSDefense:

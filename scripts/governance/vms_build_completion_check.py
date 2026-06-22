@@ -33,7 +33,11 @@ def main() -> None:
         ("cache_layer", "zephyr.integration.vector_memory.cache_layer", "CacheLayer"),
         ("bridge_layer", "zephyr.integration.vector_memory.bridge_layer", "BridgeLayer"),
         ("vector_bridge", "zephyr.integration.vector_memory.vector_bridge", "VectorBridge"),
-        ("cross_collection_retriever", "zephyr.integration.vector_memory.cross_collection_retriever", "CrossCollectionRetriever"),
+        (
+            "cross_collection_retriever",
+            "zephyr.integration.vector_memory.cross_collection_retriever",
+            "CrossCollectionRetriever",
+        ),
         ("in_memory_backend", "zephyr.integration.vector_memory.in_memory_memory_backend", "InMemoryMemoryBackend"),
         ("vms_schemas", "zephyr.integration.vector_memory.vms_schemas", "ScoredHit"),
     ]

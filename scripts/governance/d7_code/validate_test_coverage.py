@@ -20,6 +20,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 测试覆盖率校验——每个 src/zephyr/ 下 .py 文件必须有对应 test_*.py
@@ -56,7 +57,6 @@ SKIP_MODULES = {
     "risk",
     "pf_core",
     "ex_core",
-    "pf_core",
     "frontend",
     "research",
     "compliance",
@@ -64,6 +64,7 @@ SKIP_MODULES = {
     "observability",
     "integration",
 }
+
 
 def _is_skeleton_module(filepath: Path) -> bool:
     """_is_skeleton_module implementation."""
@@ -74,6 +75,7 @@ def _is_skeleton_module(filepath: Path) -> bool:
         if part in SKIP_MODULES:
             return True
     return False
+
 
 def _find_test_file(source_file: Path) -> Path | None:
     """_find_test_file implementation."""
@@ -95,6 +97,7 @@ def _find_test_file(source_file: Path) -> Path | None:
         if candidate.exists():
             return candidate
     return None
+
 
 def scan_coverage() -> tuple[list[dict], int, int]:
     """扫描测试覆盖率."""
@@ -131,6 +134,7 @@ def scan_coverage() -> tuple[list[dict], int, int]:
     return untested, total_sources, tested_count
     """扫描测试覆盖率."""
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="测试覆盖率治理校验器")
@@ -162,6 +166,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if untested else 0)
+
 
 if __name__ == "__main__":
     main()

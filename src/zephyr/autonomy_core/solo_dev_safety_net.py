@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class SafetyNetCheck:
     task_id: str
@@ -33,8 +34,10 @@ class SafetyNetCheck:
     context_summary: str
     timeout_auto_proceed: bool = False
 
+
 class SoloDevSafetyNet:
     """P0 task injection confirmation gate + 5min timeout auto-proceed (DD89)."""
+
     def check_injection(self, task_id: str, priority: str, context_preview: str) -> SafetyNetCheck:
         is_p0 = priority.upper() == "P0"
         return SafetyNetCheck(

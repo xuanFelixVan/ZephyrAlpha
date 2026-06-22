@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from zephyr.ops.detectors.action_interaction_detector import (
     ActionInteractionDetector,
 )

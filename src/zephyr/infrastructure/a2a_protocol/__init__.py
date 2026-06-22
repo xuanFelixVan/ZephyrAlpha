@@ -20,9 +20,6 @@ L01 Infrastructure — A2A Protocol 模块 (MOD-INF-025)
 Core types are imported from zephyr.shared.protocols.a2a.
 """
 
-from . import layer1_discovery
-from . import layer2_communication
-
 from zephyr.shared.protocols.a2a import (
     A2ACommunication,
     A2ACommunicationProtocol,
@@ -30,11 +27,11 @@ from zephyr.shared.protocols.a2a import (
     A2AMessage,
     A2AMessagePart,
     A2ARegistryProtocol,
+    A2AStateMachine,
     A2ATask,
     A2ATaskStatus,
-    A2AStateMachine,
-    AgentCard,
     AgentCapability,
+    AgentCard,
     AgentRole,
     ContextPackage,
     DispatchedTask,
@@ -56,63 +53,64 @@ from zephyr.shared.protocols.a2a import (
     TaskStatus,
 )
 
-from .governance.governance_adapter import GovernanceAdapter  # noqa: F401
+from . import layer1_discovery, layer2_communication
+from .governance.governance_adapter import GovernanceAdapter
 
 
 def __getattr__(name):
     """Lazy import for symbols that may cause circular dependency."""
-    raise AttributeError(f'module {__name__!r} has no attribute {name!r}')
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 __all__ = [
-    'A2ACommunication',
-    'A2ACommunicationProtocol',
-    'A2AGovernanceRecord',
-    'A2AMessage',
-    'A2AMessagePart',
-    'A2ARegistryProtocol',
-    'A2ATask',
-    'A2ATaskStatus',
-    'A2AStateMachine',
-    'AgentCard',
-    'AgentCapability',
-    'AgentRole',
-    'ContextPackage',
-    'DispatchedTask',
-    'GovernanceAdapterProtocol',
-    'HandoffManagerProtocol',
-    'HandoffRecord',
-    'IdentityVerifierProtocol',
-    'MergeStrategy',
-    'MessageRouterProtocol',
-    'MessageType',
-    'PartType',
-    'Phase4HoldProtocol',
-    'PushNotifierProtocol',
-    'ResultMerge',
-    'SecurityContext',
-    'SecurityDecision',
-    'SecurityResult',
-    'TaskDispatchProtocol',
-    'TaskStatus',
-    'a2a_card_registry',
-    'card_registry',
-    'layer1_discovery',
-    'layer2_communication',
-    'layer3_coordination',
-    'legacy_auditor',
-    'legacy_governance_adapter',
-    'legacy_protocol',
-    'local_first_arch',
-    'market_data_pipeline',
-    'migration_strategy',
-    'multi_agent',
-    'multi_model_consensus',
-    'offline_autonomy',
-    'offline_resilience',
-    'phase_hold',
-    'prompt_lifecycle',
-    'realtime_streaming',
+    "A2ACommunication",
+    "A2ACommunicationProtocol",
+    "A2AGovernanceRecord",
+    "A2AMessage",
+    "A2AMessagePart",
+    "A2ARegistryProtocol",
+    "A2AStateMachine",
+    "A2ATask",
+    "A2ATaskStatus",
+    "AgentCapability",
+    "AgentCard",
+    "AgentRole",
+    "ContextPackage",
+    "DispatchedTask",
+    "GovernanceAdapterProtocol",
+    "HandoffManagerProtocol",
+    "HandoffRecord",
+    "IdentityVerifierProtocol",
+    "MergeStrategy",
+    "MessageRouterProtocol",
+    "MessageType",
+    "PartType",
+    "Phase4HoldProtocol",
+    "PushNotifierProtocol",
+    "ResultMerge",
+    "SecurityContext",
+    "SecurityDecision",
+    "SecurityResult",
+    "TaskDispatchProtocol",
+    "TaskStatus",
+    "a2a_card_registry",
+    "card_registry",
+    "layer1_discovery",
+    "layer2_communication",
+    "layer3_coordination",
+    "legacy_auditor",
+    "legacy_governance_adapter",
+    "legacy_protocol",
+    "local_first_arch",
+    "market_data_pipeline",
+    "migration_strategy",
+    "multi_agent",
+    "multi_model_consensus",
+    "offline_autonomy",
+    "offline_resilience",
+    "phase_hold",
+    "prompt_lifecycle",
+    "realtime_streaming",
 ]
 
 __version__ = "0.10.0"
@@ -134,14 +132,17 @@ _SUBMODULES = [
     "realtime_streaming",
 ]
 
+
 def __getattr__(name: str):
     if name == "layer3_coordination":
         import importlib
+
         mod = importlib.import_module("zephyr.infrastructure.a2a_protocol.layer3_coordination")
         globals()[name] = mod
         return mod
     if name in _SUBMODULES:
         import importlib
+
         mod = importlib.import_module(f"zephyr.infrastructure.a2a_protocol.{name}")
         globals()[name] = mod
         return mod

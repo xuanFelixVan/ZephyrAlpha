@@ -12,8 +12,6 @@
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.ops.backpressure_bridge import (
     sync_evolution_proposals_to_backpressure,
 )
@@ -54,7 +52,7 @@ class TestSyncEvolutionProposalsWithCritical:
         mgr = MagicMock()
         proposal = MagicMock()
         proposal.severity = Severity.CRITICAL
-        with patch("zephyr.orchestration.pipeline_routing.backpressure_manager.emit_throttle") as mock_emit:
+        with patch("zephyr.integration.backpressure_manager.emit_throttle") as mock_emit:
             result = sync_evolution_proposals_to_backpressure([proposal], mgr)
             assert result["throttled"] is True
             assert result["critical_count"] == 1
@@ -66,7 +64,7 @@ class TestSyncEvolutionProposalsWithCritical:
         p1.severity = Severity.CRITICAL
         p2 = MagicMock()
         p2.severity = Severity.CRITICAL
-        with patch("zephyr.orchestration.pipeline_routing.backpressure_manager.emit_throttle"):
+        with patch("zephyr.integration.backpressure_manager.emit_throttle"):
             result = sync_evolution_proposals_to_backpressure([p1, p2], mgr)
             assert result["critical_count"] == 2
 
@@ -78,7 +76,7 @@ class TestSyncEvolutionProposalsBoundary:
         p_critical.severity = Severity.CRITICAL
         p_high = MagicMock()
         p_high.severity = Severity.HIGH
-        with patch("zephyr.orchestration.pipeline_routing.backpressure_manager.emit_throttle"):
+        with patch("zephyr.integration.backpressure_manager.emit_throttle"):
             result = sync_evolution_proposals_to_backpressure([p_critical, p_high], mgr)
             assert result["critical_count"] == 1
 
@@ -86,7 +84,7 @@ class TestSyncEvolutionProposalsBoundary:
         mgr = MagicMock()
         proposal = MagicMock()
         proposal.severity = Severity.CRITICAL
-        with patch("zephyr.orchestration.pipeline_routing.backpressure_manager.emit_throttle") as mock_emit:
+        with patch("zephyr.integration.backpressure_manager.emit_throttle") as mock_emit:
             sync_evolution_proposals_to_backpressure([proposal], mgr, symbol="custom_symbol")
             mock_emit.assert_called_once()
             call_args = mock_emit.call_args

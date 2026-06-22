@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """零停机滚动升级（CT-DEPLOY）——graceful shutdown+流量摘除+health check wait。"""
 
+
 class RollingUpgradeManager:
     def __init__(self):
         self._upgrading = False

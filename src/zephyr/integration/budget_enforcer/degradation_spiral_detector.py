@@ -27,8 +27,6 @@ Degradation Spiral Detector — 模型幻觉-容量正反馈螺旋检测 (盲点
 """
 
 import time
-from dataclasses import dataclass
-from typing import Any, Optional
 
 
 class DegradationSpiralDetector:

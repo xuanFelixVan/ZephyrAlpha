@@ -29,9 +29,9 @@ Mitigation: Market calendar + event-driven mode switching for FLE behavior.
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
 from enum import Enum
-import time
 
 
 class MarketMode(str, Enum):

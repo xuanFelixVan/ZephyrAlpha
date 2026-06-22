@@ -11,7 +11,7 @@ category: documentation
 
 本表未来可升格到：
 
-- `docs/00_governance/business-glossary-glossary.md`（规划中，尚未建立）
+- `docs/00_governance/business-_registry/vocabularies/glossary.yaml`（规划中，尚未建立）
 - 机器可读版本 `docs/00_governance/glossary.yaml`（规划中，尚未建立）
 
 ---

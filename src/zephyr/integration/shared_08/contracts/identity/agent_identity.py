@@ -11,23 +11,23 @@
 # [TESTS] python -c "from zephyr.integration.shared_08.contracts.identity.agent_identity import AgentIdentity, MaturityLevel, AgentRole, IDESource"
 
 from zephyr.integration.shared_08.agent_identity_impl import (
+    MATURITY_AUTO_GUARD_TIMEOUT,
+    MATURITY_TLB_LIMITS,
+    ROLE_DEFAULT_PERMISSIONS,
     AgentIdentity,
     AgentMaturity,
     AgentRole,
     IDESource,
-    MATURITY_AUTO_GUARD_TIMEOUT,
-    MATURITY_TLB_LIMITS,
     MaturityLevel,
-    ROLE_DEFAULT_PERMISSIONS,
 )
 
 __all__ = [
+    "MATURITY_AUTO_GUARD_TIMEOUT",
+    "MATURITY_TLB_LIMITS",
+    "ROLE_DEFAULT_PERMISSIONS",
     "AgentIdentity",
     "AgentMaturity",
     "AgentRole",
     "IDESource",
-    "MATURITY_AUTO_GUARD_TIMEOUT",
-    "MATURITY_TLB_LIMITS",
     "MaturityLevel",
-    "ROLE_DEFAULT_PERMISSIONS",
 ]

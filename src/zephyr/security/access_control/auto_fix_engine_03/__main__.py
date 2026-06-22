@@ -2,33 +2,26 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §4.5
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.__main__
-
 # [INVARIANTS] CLI MUST可用;子命令MUST返回正确退出码
-
 # [MODIFY-GUARD] blueprint.md §4.5
-
 # [CONSUMERS] CLI用户;CI/CD pipeline
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] CLIError
-
 # [TESTS] tests/auto-fix-engine/test_cli.py
-
 import argparse
 import json
 import sys
 from typing import Any
 
+
 def _get_engine() -> Any:
     from zephyr.security.access_control.auto_fix_engine_03.engine import AutoFixEngine
+
     return AutoFixEngine()
+
 
 def cmd_fix(args: argparse.Namespace) -> int:
     engine = _get_engine()
@@ -44,6 +37,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
     print(json.dumps(output, indent=2, ensure_ascii=False))
     return 0 if result.status.value in ("completed", "pending") else 1
 
+
 def cmd_scan(args: argparse.Namespace) -> int:
     engine = _get_engine()
     findings: list[dict[str, Any]] = []
@@ -55,6 +49,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
             findings.append({"fixer": name, "error": str(exc)})
     print(json.dumps({"total": len(findings), "findings": findings[:100]}, indent=2, ensure_ascii=False))
     return 0
+
 
 def cmd_health(args: argparse.Namespace) -> int:
     engine = _get_engine()
@@ -72,6 +67,7 @@ def cmd_health(args: argparse.Namespace) -> int:
     print(json.dumps(output, indent=2, ensure_ascii=False))
     return 0 if report.healthy else 1
 
+
 def cmd_report(args: argparse.Namespace) -> int:
     engine = _get_engine()
     report_gen = engine._report_generator
@@ -83,6 +79,7 @@ def cmd_report(args: argparse.Namespace) -> int:
     summary = report_gen.generate_summary(latest)
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     return 0
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(
@@ -116,6 +113,7 @@ def main() -> int:
     else:
         parser.print_help()
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

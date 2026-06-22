@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.adversarial_tester import (
     AdversarialResult,
     AdversarialTestCase,
@@ -50,12 +48,13 @@ class TestAdversarialTestCase:
 class TestAdversarialResult:
     def test_creation(self):
         tc = AdversarialTestCase(
-            test_id="X", category="c", description="d",
-            expected_detected=True, payload="p",
+            test_id="X",
+            category="c",
+            description="d",
+            expected_detected=True,
+            payload="p",
         )
-        ar = AdversarialResult(
-            test=tc, detected=True, confidence=0.9, passed=True, detail="ok"
-        )
+        ar = AdversarialResult(test=tc, detected=True, confidence=0.9, passed=True, detail="ok")
         assert ar.passed is True
         assert ar.confidence == 0.9
         assert ar.run_at > 0

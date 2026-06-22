@@ -16,14 +16,14 @@ Usage:
     python scripts/governance/phase_a_backup.py --verify-only
 """
 
-__manifest__ = '''
+__manifest__ = """
 args: [--tier0, --tier1, --tier2, --all, --verify-only, --output-dir]
 description: 阶段A安全网 Tier0/1/2 关键文件备份 + git bundle——原子写入+并行复制+SHA256校验
 dimensions: []
 priority: P1
 timeout_seconds: 600
 warn_only: false
-'''
+"""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ import sqlite3
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _MAX_WORKERS = 8
@@ -131,12 +131,14 @@ def _copy_dir_atomic(src_dir: Path, dst_dir: Path) -> list[dict]:
     """Recursively copy a directory using atomic per-file copies (ThreadPoolExecutor)."""
     results: list[dict] = []
     if not src_dir.exists():
-        results.append({
-            "src": str(src_dir.relative_to(REPO_ROOT)),
-            "dst": str(dst_dir),
-            "status": "MISSING",
-            "error": "Directory not found",
-        })
+        results.append(
+            {
+                "src": str(src_dir.relative_to(REPO_ROOT)),
+                "dst": str(dst_dir),
+                "status": "MISSING",
+                "error": "Directory not found",
+            }
+        )
         return results
 
     file_pairs: list[tuple[Path, Path]] = []
@@ -188,7 +190,8 @@ def _get_registry_paths() -> list[str]:
         return paths
     try:
         import yaml
-        with open(registry_yaml, "r", encoding="utf-8") as f:
+
+        with open(registry_yaml, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         tiers = data.get("tiers", []) if data else []
         for tier in tiers:
@@ -206,7 +209,7 @@ def _create_manifest(backup_dir: Path, entries: list[dict], tier: str) -> Path:
     ok_count = sum(1 for e in entries if e.get("status") == "OK")
     failed_count = sum(1 for e in entries if e.get("status") != "OK")
     manifest = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "tier": tier,
         "backup_dir": str(backup_dir),
         "total_files": len(entries),
@@ -233,7 +236,7 @@ def _verify_from_manifest(backup_dir: Path) -> tuple[int, int]:
         print(f"  [WARN] manifest.json 不存在: {manifest_path}", file=sys.stderr)
         return (0, 0)
 
-    with open(manifest_path, "r", encoding="utf-8") as f:
+    with open(manifest_path, encoding="utf-8") as f:
         manifest = json.load(f)
 
     entries = manifest.get("entries", [])
@@ -257,8 +260,7 @@ def _verify_from_manifest(backup_dir: Path) -> tuple[int, int]:
             ok += 1
         else:
             print(
-                f"  [SHA MISMATCH] {dst_path.name}: "
-                f"expected={expected_sha[:16]}... actual={actual_sha[:16]}...",
+                f"  [SHA MISMATCH] {dst_path.name}: expected={expected_sha[:16]}... actual={actual_sha[:16]}...",
                 file=sys.stderr,
             )
             fail += 1
@@ -296,10 +298,14 @@ def run_tier0(backup_dir: Path) -> bool:
         src = _resolve(rel_path)
         dst = t0_dir / rel_path
         if not src.exists():
-            entries.append({
-                "src": rel_path, "dst": str(dst), "status": "MISSING",
-                "error": "Source not found",
-            })
+            entries.append(
+                {
+                    "src": rel_path,
+                    "dst": str(dst),
+                    "status": "MISSING",
+                    "error": "Source not found",
+                }
+            )
             print(f"  [Tier0] MISSING: {rel_path}", file=sys.stderr)
             continue
 
@@ -320,7 +326,7 @@ def run_tier0(backup_dir: Path) -> bool:
     # Also verify immediately after backup
     print("[Tier0] 自校验 SHA256...", file=sys.stderr)
     v_ok, v_fail = _verify_from_manifest(t0_dir)
-    print(f"[Tier0] 自校验: {v_ok}/{v_ok+v_fail} SHA256 一致", file=sys.stderr)
+    print(f"[Tier0] 自校验: {v_ok}/{v_ok + v_fail} SHA256 一致", file=sys.stderr)
 
     # SQLite integrity check on the backup
     db_backup = t0_dir / "data/zalpha_metadata.db"
@@ -347,10 +353,14 @@ def run_tier1(backup_dir: Path) -> bool:
         if src.exists():
             registry_pairs.append((src, dst))
         else:
-            entries.append({
-                "src": rel_path, "dst": str(dst), "status": "MISSING",
-                "error": "Source not found",
-            })
+            entries.append(
+                {
+                    "src": rel_path,
+                    "dst": str(dst),
+                    "status": "MISSING",
+                    "error": "Source not found",
+                }
+            )
             print(f"  [Tier1] MISSING: {rel_path}", file=sys.stderr)
 
     # Parallel copy registries
@@ -369,10 +379,14 @@ def run_tier1(backup_dir: Path) -> bool:
         if src.exists():
             specific_pairs.append((src, dst))
         else:
-            entries.append({
-                "src": rel_path, "dst": str(dst), "status": "MISSING",
-                "error": "Source not found",
-            })
+            entries.append(
+                {
+                    "src": rel_path,
+                    "dst": str(dst),
+                    "status": "MISSING",
+                    "error": "Source not found",
+                }
+            )
     if specific_pairs:
         with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
             futures = {executor.submit(_copy_atomic, src, dst): (src, dst) for src, dst in specific_pairs}
@@ -397,7 +411,7 @@ def run_tier1(backup_dir: Path) -> bool:
     # Self-verify
     print("[Tier1] 自校验 SHA256...", file=sys.stderr)
     v_ok, v_fail = _verify_from_manifest(t1_dir)
-    print(f"[Tier1] 自校验: {v_ok}/{v_ok+v_fail} SHA256 一致", file=sys.stderr)
+    print(f"[Tier1] 自校验: {v_ok}/{v_ok + v_fail} SHA256 一致", file=sys.stderr)
 
     return failed == 0
 
@@ -413,10 +427,14 @@ def run_tier2(backup_dir: Path) -> bool:
         dst_dir = t2_dir / rel_dir
         if not src_dir.exists():
             print(f"  [Tier2] 目录不存在，跳过: {rel_dir}", file=sys.stderr)
-            entries.append({
-                "src": rel_dir, "dst": str(dst_dir), "status": "MISSING",
-                "error": "Directory not found",
-            })
+            entries.append(
+                {
+                    "src": rel_dir,
+                    "dst": str(dst_dir),
+                    "status": "MISSING",
+                    "error": "Directory not found",
+                }
+            )
             continue
         print(f"  [Tier2] 复制目录: {rel_dir}", file=sys.stderr)
         dir_entries = _copy_dir_atomic(src_dir, dst_dir)
@@ -453,10 +471,14 @@ def run_git_bundle(backup_dir: Path) -> bool:
     if result_create.returncode != 0:
         error_msg = result_create.stderr.strip()[:500]
         print(f"  [GitBundle] 创建失败: {error_msg}", file=sys.stderr)
-        entries = [{
-            "src": "git bundle --all", "dst": str(bundle_path),
-            "status": "FAILED", "error": error_msg,
-        }]
+        entries = [
+            {
+                "src": "git bundle --all",
+                "dst": str(bundle_path),
+                "status": "FAILED",
+                "error": error_msg,
+            }
+        ]
         _create_manifest(bundle_dir, entries, "git_bundle")
         return False
 
@@ -475,10 +497,14 @@ def run_git_bundle(backup_dir: Path) -> bool:
     if result_verify.returncode != 0:
         error_msg = result_verify.stderr.strip()[:500]
         print(f"  [GitBundle] 验证失败: {error_msg}", file=sys.stderr)
-        entries = [{
-            "src": "git bundle --all", "dst": str(bundle_path),
-            "status": "VERIFY_FAILED", "error": error_msg,
-        }]
+        entries = [
+            {
+                "src": "git bundle --all",
+                "dst": str(bundle_path),
+                "status": "VERIFY_FAILED",
+                "error": error_msg,
+            }
+        ]
         _create_manifest(bundle_dir, entries, "git_bundle")
         return False
 
@@ -487,10 +513,15 @@ def run_git_bundle(backup_dir: Path) -> bool:
     print(f"  [GitBundle] 验证通过: {refs_line[0] if refs_line else 'OK'}", file=sys.stderr)
 
     sha = _sha256_file(bundle_path)
-    entries = [{
-        "src": "git bundle --all", "dst": str(bundle_path),
-        "size": bundle_size, "sha256": sha, "status": "OK",
-    }]
+    entries = [
+        {
+            "src": "git bundle --all",
+            "dst": str(bundle_path),
+            "size": bundle_size,
+            "sha256": sha,
+            "status": "OK",
+        }
+    ]
     _create_manifest(bundle_dir, entries, "git_bundle")
     return True
 
@@ -518,9 +549,9 @@ def run_verify_only() -> bool:
         print("[ERROR] 未找到任何备份目录", file=sys.stderr)
         return False
 
-    print(f"\n{'='*60}", file=sys.stderr)
+    print(f"\n{'=' * 60}", file=sys.stderr)
     print(f"[VERIFY-ONLY] 验证备份: {latest}", file=sys.stderr)
-    print(f"{'='*60}", file=sys.stderr)
+    print(f"{'=' * 60}", file=sys.stderr)
 
     all_ok = True
     summary: dict[str, dict] = {}
@@ -567,17 +598,17 @@ def run_verify_only() -> bool:
                     all_ok = False
 
     # Final report
-    print(f"\n{'='*60}", file=sys.stderr)
+    print(f"\n{'=' * 60}", file=sys.stderr)
     print("[VERIFY-ONLY] 验证报告:", file=sys.stderr)
     for tier, stats in summary.items():
-        tier_summary = f"  {tier}: {stats['ok']}/{stats['ok']+stats['fail']} SHA256 一致"
+        tier_summary = f"  {tier}: {stats['ok']}/{stats['ok'] + stats['fail']} SHA256 一致"
         if "sqlite_integrity" in stats:
             tier_summary += f" | SQLite: {stats['sqlite_integrity']}"
         if "bundle_verify" in stats:
             tier_summary += f" | git bundle: {stats['bundle_verify']}"
         print(tier_summary, file=sys.stderr)
     print(f"\n[VERIFY-ONLY] 最终结果: {'PASS' if all_ok else 'FAIL'}", file=sys.stderr)
-    print(f"{'='*60}", file=sys.stderr)
+    print(f"{'=' * 60}", file=sys.stderr)
 
     return all_ok
 
@@ -588,9 +619,7 @@ def run_verify_only() -> bool:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="阶段A安全网 Tier0/1/2 关键文件备份 + git bundle"
-    )
+    parser = argparse.ArgumentParser(description="阶段A安全网 Tier0/1/2 关键文件备份 + git bundle")
     parser.add_argument("--tier0", action="store_true", help="备份 Tier0 核心资产（5项）")
     parser.add_argument("--tier1", action="store_true", help="备份 Tier1 注册表+契约+能力卡+回滚策略")
     parser.add_argument("--tier2", action="store_true", help="备份 Tier2 审计日志+安全基线+红蓝+工作DAG+健康快照")
@@ -610,7 +639,7 @@ def main() -> None:
         sys.exit(1)
 
     # Determine timestamp and backup directory
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     if args.output_dir:
         backup_dir = Path(args.output_dir)
     else:
@@ -638,10 +667,10 @@ def main() -> None:
             all_ok = False
 
     # Final summary
-    print(f"\n{'='*60}", file=sys.stderr)
+    print(f"\n{'=' * 60}", file=sys.stderr)
     print(f"[SUMMARY] 备份目录: {backup_dir}", file=sys.stderr)
     print(f"[SUMMARY] 状态: {'ALL OK' if all_ok else 'SOME FAILURES'}", file=sys.stderr)
-    print(f"{'='*60}", file=sys.stderr)
+    print(f"{'=' * 60}", file=sys.stderr)
 
     sys.exit(0 if all_ok else 1)
 

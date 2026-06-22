@@ -11,17 +11,17 @@ from __future__ import annotations
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
-
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from pydantic import BaseModel
+
 
 class ProvenanceRecord(BaseModel):
     module_id: str
     source_section: str
     agent_session_id: str
     generated_at: str
+
 
 def generate_provenance(
     module_id: str,
@@ -32,8 +32,9 @@ def generate_provenance(
         module_id=module_id,
         source_section=source_section,
         agent_session_id=agent_session_id,
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
     )
+
 
 def embed_provenance(target_dict: dict[str, object], record: ProvenanceRecord) -> dict[str, object]:
     target_dict["__provenance__"] = {
@@ -44,7 +45,8 @@ def embed_provenance(target_dict: dict[str, object], record: ProvenanceRecord) -
     }
     return target_dict
 
-def extract_provenance(obj: object) -> Optional[ProvenanceRecord]:
+
+def extract_provenance(obj: object) -> ProvenanceRecord | None:
     prov = getattr(obj, "_zephyr_provenance", None) or getattr(obj, "__provenance__", None)
     if isinstance(prov, dict):
         return ProvenanceRecord(
@@ -55,8 +57,10 @@ def extract_provenance(obj: object) -> Optional[ProvenanceRecord]:
         )
     return None
 
+
 def is_session_owned(prov: ProvenanceRecord, session_id: str) -> bool:
     return prov.agent_session_id == session_id
+
 
 def provenance_key(prov: ProvenanceRecord) -> str:
     return f"{prov.module_id}/{prov.source_section}"

@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 评分失败返回trust_level=UNKNOWN
 # [TESTS] tests/audit-orchestrator/test_trust_engine.py
-
 import logging
 from enum import Enum
 from typing import Any
@@ -20,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["TrustEngine", "TrustLevel"]
 
+
 class TrustLevel(str, Enum):
     UNKNOWN = "UNKNOWN"
     UNTRUSTED = "UNTRUSTED"
@@ -27,6 +27,7 @@ class TrustLevel(str, Enum):
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
     VERIFIED = "VERIFIED"
+
 
 class TrustEngine:
     def __init__(self) -> None:
@@ -42,10 +43,7 @@ class TrustEngine:
         pass_rate = passed / total if total > 0 else 0.0
 
         severity_scores = {"RED": -2, "YELLOW": -1, "GREEN": 1}
-        issue_score = sum(
-            severity_scores.get(r.get("severity", "GREEN"), 0)
-            for r in audit_results
-        ) / max(1, total)
+        issue_score = sum(severity_scores.get(r.get("severity", "GREEN"), 0) for r in audit_results) / max(1, total)
 
         raw_score = (pass_rate * 0.6) + ((issue_score + 2) / 4 * 0.4)
         clamped_score = max(0.0, min(1.0, raw_score))

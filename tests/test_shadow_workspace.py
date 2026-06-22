@@ -12,14 +12,13 @@
 
 from __future__ import annotations
 
-import os
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
-import pytest
-
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixLevel, FixConfidence, FixStatus, ShadowResult
+from zephyr.security.access_control.auto_fix_engine_03.models import (
+    FixAction,
+    ShadowResult,
+)
 from zephyr.security.access_control.auto_fix_engine_03.shadow_workspace import ShadowWorkspace
 
 

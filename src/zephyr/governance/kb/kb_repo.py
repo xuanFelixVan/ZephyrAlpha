@@ -251,7 +251,7 @@ class KbRepo:
             raise ValueError(f"KE not found: {ke_id}")
         from_status = rec.status
         if to_status not in _VALID_TRANSITIONS.get(from_status, set()):
-            raise ValueError(f"Invalid transition: {from_status.value} → {to_status.value} " f"for {ke_id}")
+            raise ValueError(f"Invalid transition: {from_status.value} → {to_status.value} for {ke_id}")
         now = now_iso()
         event_id = f"KE-{uuid.uuid4().hex[:12]}"
         vector_action = self._determine_vector_action(from_status, to_status)

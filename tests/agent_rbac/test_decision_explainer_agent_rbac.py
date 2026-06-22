@@ -6,7 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试 DecisionExplainer — 结构化拒绝原因"""
-import pytest
+
 from zephyr.security.access_control.decision_explainer import DecisionExplainer, Explanation
 
 

@@ -41,22 +41,22 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.gate import GateResult
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
+from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
+from zephyr.shared.contracts.gate import GateResult
 
 __all__ = [
-    "AnalyzeResult",
-    "AnalyzeGate",
-    "VALUE_SCORE_THRESHOLD",
     "SCORING_DIMENSIONS",
+    "VALUE_SCORE_THRESHOLD",
+    "AnalyzeGate",
+    "AnalyzeResult",
 ]
 
 VALUE_SCORE_THRESHOLD = 7.0

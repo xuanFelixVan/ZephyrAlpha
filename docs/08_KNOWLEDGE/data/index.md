@@ -1,21 +1,26 @@
 ---
 doc_type: index
 status: active
-generated: '2026-05-28'
+title: "data — 目录索引"
+module_id: ""
+blueprint_id: ""
+version: "1.0.0"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-# Data — 目录索引
+# data
 
-## 责任声明（Single Responsibility）
+> 本文件由 `generate_missing_index_md.py` 自动生成
+> 生成日期：2026-06-22
 
-本目录只存放：**data**。
+## 目录内容
 
-## 文件清单
+| 文件/目录 | 类型 | 说明 |
+|-----------|------|------|
+| [index.md](index.md) | Markdown | data — 目录索引 |
+| [zalpha_metadata.db](zalpha_metadata.db) | 文件 | |
 
-| 文件 | 说明 |
-|------|------|
-| data/databases/governance.db | 文档 |
+## 导航
 
-## 父级目录
-
-- 父级：[08_knowledge](../index.md)
+- [上级目录](../index.md)

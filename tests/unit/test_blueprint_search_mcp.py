@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """BlueprintSearchServer（BaseMCPServer）轻量单测。"""
 
 

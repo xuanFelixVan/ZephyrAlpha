@@ -28,6 +28,7 @@ R528: DiminishingReturnsDetector
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class GuardValueRecord:
     guard_id: str
@@ -35,6 +36,7 @@ class GuardValueRecord:
     reliability_improvement: float
     false_positive_rate: float
     added_at: float
+
 
 @dataclass
 class DiminishingReturnsDetector:
@@ -44,16 +46,22 @@ class DiminishingReturnsDetector:
     inflation_warning_guard_count: int = 100
 
     def register_guard_value(
-        self, guard_id: str, mttr_improvement: float,
-        reliability_improvement: float, false_positive_rate: float, added_at: float,
+        self,
+        guard_id: str,
+        mttr_improvement: float,
+        reliability_improvement: float,
+        false_positive_rate: float,
+        added_at: float,
     ) -> None:
-        self.guard_records.append(GuardValueRecord(
-            guard_id=guard_id,
-            mttr_improvement=mttr_improvement,
-            reliability_improvement=reliability_improvement,
-            false_positive_rate=false_positive_rate,
-            added_at=added_at,
-        ))
+        self.guard_records.append(
+            GuardValueRecord(
+                guard_id=guard_id,
+                mttr_improvement=mttr_improvement,
+                reliability_improvement=reliability_improvement,
+                false_positive_rate=false_positive_rate,
+                added_at=added_at,
+            )
+        )
 
     def analyze_diminishing_returns(self) -> dict:
         total_guards = len(self.guard_records)
@@ -65,8 +73,8 @@ class DiminishingReturnsDetector:
 
         sorted_records = sorted(self.guard_records, key=lambda r: r.added_at)
 
-        early_batch = sorted_records[:max(total_guards // 3, self.recent_window)]
-        recent_batch = sorted_records[-self.recent_window:]
+        early_batch = sorted_records[: max(total_guards // 3, self.recent_window)]
+        recent_batch = sorted_records[-self.recent_window :]
 
         early_avg_value = self._avg_value(early_batch)
         recent_avg_value = self._avg_value(recent_batch)
@@ -84,8 +92,10 @@ class DiminishingReturnsDetector:
             "is_diminishing": is_diminishing or value_ratio < 0.3,
             "inflation_risk": inflation_risk,
             "recommendation": (
-                "STOP_ADDING_GUARDS" if is_diminishing
-                else "CAUTION_diminishing" if value_ratio < 0.5
+                "STOP_ADDING_GUARDS"
+                if is_diminishing
+                else "CAUTION_diminishing"
+                if value_ratio < 0.5
                 else "CONTINUE_monitor"
             ),
         }

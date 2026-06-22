@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_circuit_breaker_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.circuit_breaker_manager
+# [MODULE] zephyr.integration.circuit_breaker_manager
 
 # [INVARIANTS] none
 
@@ -38,7 +38,6 @@ Usage:
         except Exception:
             cb.record_result("task:module:model", success=False)
 """
-
 
 from __future__ import annotations
 
@@ -186,8 +185,7 @@ class CircuitBreakerManager:
                 self._states[cb_key] = CircuitBreakerState.OPEN
                 self._log(
                     "WARN",
-                    f"CircuitBreaker[{model}] CLOSED→OPEN "
-                    f"({len(recent)} failures in {self._failure_window_s}s)",
+                    f"CircuitBreaker[{model}] CLOSED→OPEN ({len(recent)} failures in {self._failure_window_s}s)",
                 )
                 return CircuitBreakerState.OPEN
             return CircuitBreakerState.CLOSED

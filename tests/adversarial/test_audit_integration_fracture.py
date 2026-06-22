@@ -27,8 +27,6 @@ from __future__ import annotations
 
 import json
 import shutil
-from pathlib import Path
-from typing import Any
 
 import pytest
 
@@ -45,9 +43,9 @@ class TestGovernanceContractsIntegration:
     """I1: 治理层桩AuditWriter必须写入核心链."""
 
     def test_contracts_writes_to_core_chain(self, audit_env):
-        from zephyr.governance.audit_trail.writer import AuditWriter
-        from zephyr.governance.audit_trail.contracts import AuditWriter as GovAuditWriter
         import zephyr.governance.audit_trail.writer as writer_mod
+        from zephyr.governance.audit_trail.contracts import AuditWriter as GovAuditWriter
+        from zephyr.governance.audit_trail.writer import AuditWriter
 
         tmp_path, data_dir = audit_env
         writer = AuditWriter(data_dir=data_dir)
@@ -68,7 +66,7 @@ class TestGovernanceContractsIntegration:
         events_file = data_dir / "events.jsonl"
         assert events_file.exists(), "events.jsonl must exist after write"
 
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             lines = f.readlines()
         assert len(lines) >= 1, "at least one event must be written"
 
@@ -88,7 +86,7 @@ class TestRollbackExecutorIntegration:
     def test_rollback_executor_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
         from zephyr.governance.audit_trail.writer import AuditWriter
-        from zephyr.governance.rollback_executor import RollbackExecutor, DiscardDecision
+        from zephyr.governance.rollback_executor import DiscardDecision, RollbackExecutor
 
         writer = AuditWriter(data_dir=data_dir)
         executor = RollbackExecutor(project_root=tmp_path)
@@ -106,7 +104,7 @@ class TestRollbackExecutorIntegration:
         events_file = data_dir / "events.jsonl"
         assert events_file.exists(), "events.jsonl must exist after rollback audit write"
 
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             lines = f.readlines()
         assert len(lines) >= 1
 
@@ -120,7 +118,7 @@ class TestRollbackAuditNexusIntegration:
     def test_nexus_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
         from zephyr.governance.audit_trail.writer import AuditWriter
-        from zephyr.governance.rollback_audit_nexus import RollbackAuditNexus, AuditEvent
+        from zephyr.governance.rollback_audit_nexus import AuditEvent, RollbackAuditNexus
 
         writer = AuditWriter(data_dir=data_dir)
         nexus = RollbackAuditNexus(project_root=tmp_path)
@@ -141,7 +139,7 @@ class TestRollbackAuditNexusIntegration:
         events_file = data_dir / "events.jsonl"
         assert events_file.exists(), "events.jsonl must exist after nexus publish"
 
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             lines = f.readlines()
         assert len(lines) >= 1
 
@@ -155,8 +153,8 @@ class TestDriftHotfixBypassIntegration:
 
     def test_hotfix_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.governance.audit_trail.writer import AuditWriter
         from zephyr.behavioral_audit.drift_hotfix_bypass import HotfixBypass
+        from zephyr.governance.audit_trail.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)
         bypass = HotfixBypass(project_root=str(tmp_path))
@@ -173,7 +171,7 @@ class TestDriftHotfixBypassIntegration:
         events_file = data_dir / "events.jsonl"
         assert events_file.exists(), "events.jsonl must exist after hotfix audit"
 
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             lines = f.readlines()
         assert len(lines) >= 1
 
@@ -203,7 +201,7 @@ class TestMCPAuditLoggerIntegration:
         events_file = data_dir / "events.jsonl"
         assert events_file.exists(), "events.jsonl must exist after MCP audit"
 
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             lines = f.readlines()
         assert len(lines) >= 1
 
@@ -216,10 +214,11 @@ class TestGatesAuditChainVerifierIntegration:
 
     def test_gate_verifier_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
+        import datetime
+
         from zephyr.governance.audit_trail.writer import AuditWriter
         from zephyr.governance.rule_enforcement.audit_chain_verifier import AuditChainVerifier
         from zephyr.governance.rule_enforcement.gate_context import GateResult, GateStatus
-        import datetime
 
         writer = AuditWriter(data_dir=data_dir)
         verifier = AuditChainVerifier()
@@ -229,14 +228,14 @@ class TestGatesAuditChainVerifierIntegration:
             gate_id="G0",
             status=GateStatus.PASS,
             reasons=["test"],
-            timestamp=datetime.datetime.now(datetime.timezone.utc),
+            timestamp=datetime.datetime.now(datetime.UTC),
         )
         verifier.append("G0", result)
 
         events_file = data_dir / "events.jsonl"
         assert events_file.exists(), "events.jsonl must exist after gate audit"
 
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             lines = f.readlines()
         assert len(lines) >= 1
 
@@ -249,8 +248,8 @@ class TestSkillExecutorIntegration:
 
     def test_skill_executor_persists_audit(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.governance.audit_trail.writer import AuditWriter
         from zephyr.autonomy_core.skill_executor import SkillExecutor
+        from zephyr.governance.audit_trail.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)
         executor = SkillExecutor()
@@ -264,7 +263,7 @@ class TestSkillExecutorIntegration:
         events_file = data_dir / "events.jsonl"
         assert events_file.exists(), "events.jsonl must exist after skill audit"
 
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             lines = f.readlines()
         assert len(lines) >= 1, "audit must be persisted to core chain"
 
@@ -305,7 +304,7 @@ class TestCoreModelEnforcement:
         writer.write({"event_type": "file_write", "agent_id": "test"})
 
         events_file = data_dir / "events.jsonl"
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             event = json.loads(f.readline())
 
         assert event.get("event_type") == "file_write"
@@ -319,7 +318,7 @@ class TestCoreModelEnforcement:
         writer.write({"event_type": "completely_invalid_type", "agent_id": "test"})
 
         events_file = data_dir / "events.jsonl"
-        with open(events_file, "r", encoding="utf-8") as f:
+        with open(events_file, encoding="utf-8") as f:
             event = json.loads(f.readline())
 
         assert event.get("event_type") == "unknown", "invalid event_type must be normalized to 'unknown'"

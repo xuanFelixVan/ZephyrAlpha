@@ -44,29 +44,44 @@ from _shared.frontmatter import parse_frontmatter
 ensure_utf8_stdout()
 
 INDEX_TEMPLATE = (
-    '---\n'
-    'doc_type: index\n'
-    'status: active\n'
+    "---\n"
+    "doc_type: index\n"
+    "status: active\n"
     'title: "{dir_name} — 目录索引"\n'
-    'version: "1.0.0"\n'
+    'module_id: "{module_id}"\n'
+    'blueprint_id: "{blueprint_id}"\n'
+    'version: "{version}"\n'
     'created: "{today}"\n'
     'updated: "{today}"\n'
-    '---\n\n'
-    '# {dir_name}\n\n'
-    '> 本文件由 `generate_missing_index_md.py` 自动生成\n'
-    '> 生成日期：{today}\n\n'
-    '## 目录内容\n\n'
-    '| 文件/目录 | 类型 | 说明 |\n'
-    '|-----------|------|------|\n'
-    '{rows}\n\n'
-    '## 导航\n\n'
-    '- [上级目录](../index.md)\n'
-    '- [项目根](../../index.md)\n'
+    "---\n\n"
+    "# {dir_name}\n\n"
+    "> 本文件由 `generate_missing_index_md.py` 自动生成\n"
+    "> 生成日期：{today}\n\n"
+    "## 目录内容\n\n"
+    "| 文件/目录 | 类型 | 说明 |\n"
+    "|-----------|------|------|\n"
+    "{rows}\n\n"
+    "## 导航\n\n"
+    "- [上级目录](../index.md)\n"
 )
 
+AUTO_GEN_MARKER = "本文件由 `generate_missing_index_md.py` 自动生成"
+
 EXCLUDE_NAMES = frozenset(
-    {".git", "__pycache__", ".obsidian", "_DO_NOT_USE", "node_modules",
-     ".mypy_cache", "scripts", "_archive", ".trae", "_", "windi", "spikes"}
+    {
+        ".git",
+        "__pycache__",
+        ".obsidian",
+        "_DO_NOT_USE",
+        "node_modules",
+        ".mypy_cache",
+        "scripts",
+        "_archive",
+        ".trae",
+        "_",
+        "windi",
+        "spikes",
+    }
 )
 
 
@@ -86,14 +101,56 @@ def _try_read_title(md_path: Path) -> str | None:
         content = md_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return None
-    fm = parse_frontmatter(content)
-    if fm and isinstance(fm, dict):
+    fm, _body = parse_frontmatter(content)
+    if isinstance(fm, dict):
         return fm.get("title")
     for line in content.split("\n"):
         line = line.strip()
         if line.startswith("# "):
             return line[2:].strip()
     return None
+
+
+def _read_blueprint_info(parent: Path) -> tuple[str, str]:
+    """读取目录下的 blueprint.md，返回 (module_id, version)。
+
+    如果目录下没有 blueprint.md，返回 ("", "")。
+    """
+    bp_path = parent / "blueprint.md"
+    if not bp_path.exists():
+        return "", ""
+    try:
+        content = bp_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return "", ""
+    fm, _body = parse_frontmatter(content)
+    if not isinstance(fm, dict):
+        return "", ""
+    module_id = str(fm.get("module_id", ""))
+    version = str(fm.get("version", ""))
+    return module_id, version
+
+
+def _infer_blueprint_id(parent: Path) -> str:
+    """从父目录链向上查找最近的 blueprint.md，返回其 module_id。
+
+    用于为没有自己蓝图的子目录推断所属域的 blueprint_id。
+    """
+    current = parent.parent
+    while current != current.parent:
+        bp_path = current / "blueprint.md"
+        if bp_path.exists():
+            try:
+                content = bp_path.read_text(encoding="utf-8")
+                fm, _body = parse_frontmatter(content)
+                if isinstance(fm, dict):
+                    mid = str(fm.get("module_id", ""))
+                    if mid:
+                        return mid
+            except (OSError, UnicodeDecodeError):
+                pass
+        current = current.parent
+    return ""
 
 
 def _build_file_rows(parent: Path) -> str:
@@ -134,12 +191,34 @@ def _is_tty() -> bool:
 def generate_index(parent: Path, dry_run: bool = False, force_update: bool = False) -> bool:
     """Generate output from input data."""
     index_path = parent / "index.md"
-    if not force_update and index_path.exists():
-        return False
+    if index_path.exists():
+        if force_update:
+            try:
+                existing = index_path.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                existing = ""
+            if AUTO_GEN_MARKER not in existing:
+                return False
+        else:
+            return False
     dir_name = parent.name or parent.resolve().name
     today = date.today().isoformat()
     rows = _build_file_rows(parent)
-    content = INDEX_TEMPLATE.format(dir_name=dir_name, today=today, rows=rows)
+    module_id, version = _read_blueprint_info(parent)
+    if not module_id:
+        blueprint_id = _infer_blueprint_id(parent)
+    else:
+        blueprint_id = module_id
+    if not version:
+        version = "1.0.0"
+    content = INDEX_TEMPLATE.format(
+        dir_name=dir_name,
+        today=today,
+        rows=rows,
+        module_id=module_id,
+        blueprint_id=blueprint_id,
+        version=version,
+    )
     if dry_run:
         print(f"  [DRY-RUN] 将创建: {index_path}")
         return True
@@ -161,15 +240,21 @@ def generate_index(parent: Path, dry_run: bool = False, force_update: bool = Fal
 
 
 def scan_and_generate(
-    root_dir: Path, dry_run: bool = False, auto_yes: bool = False,
+    root_dir: Path,
+    dry_run: bool = False,
+    auto_yes: bool = False,
     force_update: bool = False,
 ) -> tuple[int, int]:
     """scan_and_generate implementation."""
     created = 0
     checked = 0
     missing_dirs: list[Path] = []
+    update_candidates: list[Path] = []
 
-    for dirpath in sorted(root_dir.rglob("*")):
+    all_dirs = [root_dir]
+    all_dirs.extend(sorted(root_dir.rglob("*")))
+
+    for dirpath in all_dirs:
         if not dirpath.is_dir():
             continue
         parts = set(dirpath.parts)
@@ -178,28 +263,48 @@ def scan_and_generate(
         if any(p.startswith(".") for p in dirpath.parts):
             continue
         checked += 1
-        if force_update or not (dirpath / "index.md").exists():
+        idx_path = dirpath / "index.md"
+        if not idx_path.exists():
             missing_dirs.append(dirpath)
+        elif force_update:
+            try:
+                existing = idx_path.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                existing = ""
+            if AUTO_GEN_MARKER in existing:
+                update_candidates.append(dirpath)
 
-    if not missing_dirs:
+    total_targets = len(missing_dirs) + len(update_candidates)
+
+    if not total_targets:
         print(f"OK: 扫描 {checked} 个目录，全部已含 index.md")
         return 0, checked
 
-    print(
-        f"扫描 {checked} 个目录，{len(missing_dirs)} 个缺失 index.md:",
-        file=sys.stderr if dry_run or auto_yes else sys.stdout,
-    )
+    if force_update:
+        print(
+            f"扫描 {checked} 个目录：{len(missing_dirs)} 个缺失，{len(update_candidates)} 个自动生成待更新",
+            file=sys.stderr if dry_run or auto_yes else sys.stdout,
+        )
+    else:
+        print(
+            f"扫描 {checked} 个目录，{len(missing_dirs)} 个缺失 index.md:",
+            file=sys.stderr if dry_run or auto_yes else sys.stdout,
+        )
+
     for d in missing_dirs:
         rel = str(d.relative_to(root_dir)).replace("\\", "/") or "."
         print(f"  缺失: {rel}/")
+    for d in update_candidates:
+        rel = str(d.relative_to(root_dir)).replace("\\", "/") or "."
+        print(f"  待更新: {rel}/")
 
     if dry_run:
-        print(f"\n[DRY-RUN] 将创建 {len(missing_dirs)} 个 index.md（未实际写入）")
-        return len(missing_dirs), checked
+        print(f"\n[DRY-RUN] 将处理 {total_targets} 个 index.md（未实际写入）")
+        return total_targets, checked
 
     if not auto_yes:
         if _is_tty():
-            ans = input(f"\n创建 {len(missing_dirs)} 个 index.md？[y/N] ")
+            ans = input(f"\n处理 {total_targets} 个 index.md？[y/N] ")
             if ans.lower() != "y":
                 print("已取消")
                 return 0, checked
@@ -213,27 +318,27 @@ def scan_and_generate(
     for d in missing_dirs:
         if generate_index(d, dry_run=False, force_update=force_update):
             created += 1
+    for d in update_candidates:
+        if generate_index(d, dry_run=False, force_update=force_update):
+            created += 1
 
     action = "更新" if force_update else "创建"
-    print(f"\n完成: {action} {created}/{len(missing_dirs)} 个 index.md")
+    print(f"\n完成: {action} {created}/{total_targets} 个 index.md")
     return created, checked
 
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
-    parser = ArgumentParser(
-        description="为缺失 index.md 的目录自动生成索引文件"
-    )
+    parser = ArgumentParser(description="为缺失 index.md 的目录自动生成索引文件")
     parser.add_argument(
-        "--root", default="docs/",
+        "--root",
+        default="docs/",
         help="扫描根目录（相对于项目根，默认 docs/）",
     )
     parser.add_argument("--dry-run", action="store_true", help="只预览，不写入")
     parser.add_argument("--yes", "-y", action="store_true", help="跳过确认，直接创建")
-    parser.add_argument("--warn-only", action="store_true",
-                        help="巡检模式：发现不阻塞（exit 0）")
-    parser.add_argument("--update", action="store_true",
-                        help="强制更新模式：重新生成所有 index.md（含已存在的）")
+    parser.add_argument("--warn-only", action="store_true", help="巡检模式：发现不阻塞（exit 0）")
+    parser.add_argument("--update", action="store_true", help="强制更新模式：重新生成所有 index.md（含已存在的）")
     args = parser.parse_args()
 
     root_dir = (REPO_ROOT / args.root).resolve()

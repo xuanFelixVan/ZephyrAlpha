@@ -27,75 +27,28 @@ ScoreThresholdHandler — ScoreThresholdHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class ScoreThresholdHandler(CheckTypeHandler):
-
-
     name = "score_threshold"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
-
-
-        return [dict(
-
-
-            message=f"Check type '{self.name}' not implemented on task gate path (depends on KMS / extra data), skipped",
-
-
-            severity="P2",
-
-
-        )]
-
-
+        return [
+            dict(
+                message=f"Check type '{self.name}' not implemented on task gate path (depends on KMS / extra data), skipped",
+                severity="P2",
+            )
+        ]

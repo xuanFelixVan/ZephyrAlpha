@@ -12,15 +12,13 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from dataclasses import dataclass, field
-from typing import Callable
 
-from zephyr.security.adversarial_validation.validator import RedBlueValidator
-from zephyr.security.adversarial_validation.scenario_loader import ScenarioLoader
-from zephyr.security.adversarial_validation.models import AttackTier, BlastRadiusLevel, RedBlueReport
 from zephyr.security.adversarial_validation.convergence_checker import ConvergenceChecker
+from zephyr.security.adversarial_validation.models import AttackTier, BlastRadiusLevel, RedBlueReport
+from zephyr.security.adversarial_validation.scenario_loader import ScenarioLoader
+from zephyr.security.adversarial_validation.validator import RedBlueValidator
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +37,6 @@ class McpTool:
 
 
 class MCPEndpoints:
-
     def __init__(self) -> None:
         self._convergence = ConvergenceChecker()
 
@@ -51,8 +48,8 @@ class MCPEndpoints:
                 input_schema={
                     "type": "object",
                     "properties": {
-                        "tier": {"type": "string", "enum": ["L1","L2","L3","L4","L5","L6","L7"]},
-                        "blast_radius": {"type": "string", "enum": ["FILE","MODULE","CROSS_MODULE","SYSTEM"]},
+                        "tier": {"type": "string", "enum": ["L1", "L2", "L3", "L4", "L5", "L6", "L7"]},
+                        "blast_radius": {"type": "string", "enum": ["FILE", "MODULE", "CROSS_MODULE", "SYSTEM"]},
                     },
                 },
             ),

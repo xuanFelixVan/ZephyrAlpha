@@ -32,10 +32,9 @@
 - GATE-IT-HEALTH: 12 系统三态探针全量扫描（每日定时+deploy前触发）
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -99,22 +98,25 @@ class GateResult(BaseModel):
     total_tests: int = 0
     passed_tests: int = 0
     results: list[TestResult] = Field(default_factory=list)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class IntegrationTestRunner:
     def __init__(self):
         self._results: list[TestResult] = []
 
-    def add_result(self, contract_id: str, passed: bool, assertions_ran: int = 1,
-                   assertions_passed: int = 0, error: str = "") -> None:
-        self._results.append(TestResult(
-            contract_id=contract_id,
-            passed=passed,
-            assertions_ran=assertions_ran,
-            assertions_passed=assertions_passed if passed else 0,
-            error_message=error,
-        ))
+    def add_result(
+        self, contract_id: str, passed: bool, assertions_ran: int = 1, assertions_passed: int = 0, error: str = ""
+    ) -> None:
+        self._results.append(
+            TestResult(
+                contract_id=contract_id,
+                passed=passed,
+                assertions_ran=assertions_ran,
+                assertions_passed=assertions_passed if passed else 0,
+                error_message=error,
+            )
+        )
 
     def evaluate_tier(self, tier: CITier) -> GateResult:
         if tier == CITier.SMOKE:
@@ -146,8 +148,9 @@ class IntegrationTestRunner:
     def should_run_on(self, tier: CITier, trigger: CITrigger) -> bool:
         return trigger in self.get_triggers(tier)
 
+
 class SelfTestResult:
-    def __init__(self, test_name='', passed=True, duration=0.0, error=None, details=None):
+    def __init__(self, test_name="", passed=True, duration=0.0, error=None, details=None):
         self.test_name = test_name
         self.passed = passed
         self.duration = duration

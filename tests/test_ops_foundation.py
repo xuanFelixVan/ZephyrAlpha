@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.ops_foundation import (
     OPS_BACKUPS,
     OPS_LOG_CATEGORIES,

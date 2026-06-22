@@ -28,7 +28,7 @@ curation_loop.py — Per-Turn Curation 策展 (DD10, TASK-014 beta b)
 """
 
 from dataclasses import dataclass, field
-from typing import Any
+
 
 @dataclass
 class CurationRecord:
@@ -36,6 +36,7 @@ class CurationRecord:
     injected_ke_ids: list[str] = field(default_factory=list)
     token_count: int = 0
     timestamp: str = ""
+
 
 class CurationLoop:
     """Per-Turn 渐进策展器 (DD10)。

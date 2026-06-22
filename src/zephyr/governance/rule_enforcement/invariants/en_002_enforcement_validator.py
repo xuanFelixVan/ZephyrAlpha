@@ -31,14 +31,14 @@ SSoT: cross_layer_contracts.yaml v3.0
 
 from __future__ import annotations
 
-from zephyr.integration.shared.schema.schemas import Priority
-
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import yaml
+
+from zephyr.integration.shared.schema.schemas import Priority
 
 PROJECT_ROOT = Path(__file__).parents[4]
 CONTRACTS_PATH = (
@@ -64,10 +64,7 @@ class EnforcementResult:
     def summary(self) -> str:
         if self.passed:
             return f"[PASS] EN-002: All {self.total_contracts} P0 contracts have enforcement declared"
-        return (
-            f"[FAIL] EN-002: {len(self.violations)} violation(s)\n"
-            + "\n".join(f"  - {v}" for v in self.violations)
-        )
+        return f"[FAIL] EN-002: {len(self.violations)} violation(s)\n" + "\n".join(f"  - {v}" for v in self.violations)
 
 
 def _load_contracts() -> dict[str, Any]:
@@ -94,18 +91,12 @@ def run_check() -> EnforcementResult:
 
         if enforcement_mode is None and enforcement_action is None:
             if priority == Priority.P0.value:
-                warnings.append(
-                    f"{cid}: P0 contract missing enforcement_mode "
-                    f"(defaulting to 'block')"
-                )
+                warnings.append(f"{cid}: P0 contract missing enforcement_mode (defaulting to 'block')")
             continue
 
         mode = enforcement_mode or enforcement_action
         if mode not in VALID_ENFORCEMENT_MODES:
-            violations.append(
-                f"{cid}: invalid enforcement_mode '{mode}' "
-                f"(valid: {sorted(VALID_ENFORCEMENT_MODES)})"
-            )
+            violations.append(f"{cid}: invalid enforcement_mode '{mode}' (valid: {sorted(VALID_ENFORCEMENT_MODES)})")
 
     return EnforcementResult(
         passed=len(violations) == 0,

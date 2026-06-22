@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 索引构建失败返回None
 # [TESTS] tests/audit-orchestrator/test_indexer.py
-
 import json
 import logging
 from pathlib import Path
@@ -23,6 +22,7 @@ __all__ = ["AuditIndexer"]
 
 DEFAULT_INDEX_DIR = Path("data/audit_cache")
 INDEX_FILE = "audit_index.json"
+
 
 class AuditIndexer:
     def __init__(self, index_dir: Path | None = None) -> None:
@@ -74,6 +74,7 @@ class AuditIndexer:
     def persist(self) -> bool:
         try:
             from datetime import datetime
+
             self._index["built_at"] = datetime.now().isoformat()
             self._index_path.write_text(
                 json.dumps(self._index, indent=2, ensure_ascii=False, default=str),
@@ -91,8 +92,9 @@ class AuditIndexer:
             "severity_distribution": self._index.get("by_severity", {}),
         }
 
+
 class IndexResult:
-    def __init__(self, index_id='', entries_indexed=0, timestamp=None, errors=None):
+    def __init__(self, index_id="", entries_indexed=0, timestamp=None, errors=None):
         self.index_id = index_id
         self.entries_indexed = entries_indexed
         self.timestamp = timestamp

@@ -26,6 +26,7 @@ Blindspot: Multi-FLE instances operate without coordination protocol.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class FederatedProtocol:
     instance_id: str = ""

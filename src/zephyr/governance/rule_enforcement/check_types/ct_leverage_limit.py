@@ -27,87 +27,38 @@ LeverageLimitHandler — LeverageLimitHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class LeverageLimitHandler(CheckTypeHandler):
-
-
     name = "leverage_limit"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
 
-                violations = []
+        ssot = load_risk_params_ssot(project_root)
 
+        lev = params.get("max_gross_leverage_default")
 
-                from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
+        cap = ssot.get("max_gross_leverage")
 
+        if lev is not None and cap is not None and float(lev) > float(cap) + 1e-12:
+            violations.append(
+                {"message": f"G11 SSoT conflict: max_gross_leverage_default={lev} > {cap}", "severity": check.severity}
+            )
 
-                ssot = load_risk_params_ssot(project_root)
-
-
-                lev = params.get("max_gross_leverage_default")
-
-
-                cap = ssot.get("max_gross_leverage")
-
-
-                if lev is not None and cap is not None and float(lev) > float(cap) + 1e-12:
-
-
-                    violations.append({"message": f"G11 SSoT conflict: max_gross_leverage_default={lev} > {cap}", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

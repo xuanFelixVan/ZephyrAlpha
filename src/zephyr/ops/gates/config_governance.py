@@ -27,6 +27,7 @@ Risk: R8 — Bad config deploy breaks FLE with no recovery path.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ConfigGovernance:
     versions: list[dict] = field(default_factory=list)

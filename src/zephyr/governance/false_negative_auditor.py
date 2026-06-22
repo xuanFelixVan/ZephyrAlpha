@@ -28,11 +28,10 @@
   - FNR（False Negative Rate）驱动下一期 Sensitivity Sweep
 """
 
-
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -119,8 +118,7 @@ class FalseNegativeAuditor:
                 {"layer": l3.layer, "fnr": l3.fnr, "summary": l3.summary},
             ],
             "recommended_action": (
-                "Sensitivity Sweep 加强——FNR>5%" if total_fnr > 0.05
-                else "Current sensitivity adequate"
+                "Sensitivity Sweep 加强——FNR>5%" if total_fnr > 0.05 else "Current sensitivity adequate"
             ),
         }
 

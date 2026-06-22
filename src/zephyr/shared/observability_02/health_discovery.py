@@ -25,15 +25,14 @@ Registers AggregateHealth for all 12 infrastructure systems and provides
 a unified healthz endpoint consumable by external monitoring.
 """
 
-
 from __future__ import annotations
 
 import logging
 from typing import Any
 
 __all__ = [
-    "HealthDiscovery",
     "ALL_SYSTEM_NAMES",
+    "HealthDiscovery",
     "register_system_health",
 ]
 
@@ -65,11 +64,13 @@ class HealthDiscovery:
         if system_name not in self._registered:
             _logger.warning("HealthDiscovery.register: unknown system '%s'", system_name)
             self._registered[system_name] = {}
-        self._registered[system_name].update({
-            "status": "registered",
-            "check_fn": check_fn,
-            "metadata": metadata,
-        })
+        self._registered[system_name].update(
+            {
+                "status": "registered",
+                "check_fn": check_fn,
+                "metadata": metadata,
+            }
+        )
 
     def get_status(self) -> dict[str, Any]:
         result: dict[str, Any] = {"systems": {}, "overall": "unknown"}
@@ -96,10 +97,7 @@ class HealthDiscovery:
 
     @property
     def all_registered(self) -> bool:
-        return all(
-            e.get("status") not in ("unknown",)
-            for e in self._registered.values()
-        )
+        return all(e.get("status") not in ("unknown",) for e in self._registered.values())
 
 
 _discovery = HealthDiscovery()
@@ -107,4 +105,8 @@ _discovery = HealthDiscovery()
 
 def register_system_health(system_name: str, check_fn: Any, **metadata: Any) -> None:
     _discovery.register(system_name, check_fn, **metadata)
-    _logger.info("CT-HEALTH-001 registered: %s status=%s", system_name, _discovery.get_status()["systems"].get(system_name, {}).get("status"))
+    _logger.info(
+        "CT-HEALTH-001 registered: %s status=%s",
+        system_name,
+        _discovery.get_status()["systems"].get(system_name, {}).get("status"),
+    )

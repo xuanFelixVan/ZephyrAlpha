@@ -33,18 +33,18 @@ class FLEOperationalOntologyModel:
         dynamic_edges = await self._extract_dynamic_relationships()
         # 3. 从KB的故障链中学习因果关系
         causal_edges = await self._extract_causal_relationships_from_kb()
-        
+
         for edge in static_edges + dynamic_edges + causal_edges:
             graph.add_edge(edge.source_entity, edge.target_entity,
                 relation=edge)
-        
+
         # 4. 运行传递闭包：发现间接依赖
         transitive_closure = nx.transitive_closure_dag(graph)
         # 5. 检测关键路径：如果root node故障，3跳后影响什么
         root_nodes = [n for n in graph.nodes() if graph.in_degree(n) == 0]
         blast_paths = {}
         for root in root_nodes:
-            paths = list(nx.all_simple_paths(transitive_closure, root, 
+            paths = list(nx.all_simple_paths(transitive_closure, root,
                 [n for n in graph.nodes() if n.startswith("trading_pnl")], cutoff=5))
             blast_paths[root] = paths
 

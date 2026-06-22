@@ -17,7 +17,7 @@ category: module_blueprint
 ```
 引擎生成影子清单
   → shadow_validator.py（新增——Wave 2）：
-      ① 对清单中的每个函数执行 `python -c "from zephyr.shared.xxx import func"` 
+      ① 对清单中的每个函数执行 `python -c "from zephyr.shared.xxx import func"`
       ② import 成功 → 标记 verified
       ③ import 失败 → 标记 HALLUCINATED → 自动从清单移除 → 写入 Session Log
   → 清单消费端（Context Engine）：

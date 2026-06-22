@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_placebo_action_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.placebo_action_detector import PlaceboActionDetector
 

@@ -6,12 +6,12 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """shared.contracts.experiment — auto-generated package init."""
 
-__all__ = ['experiment_result', 'model_serving_response']
+__all__ = ["experiment_result", "model_serving_response"]
 
 
 # Consumers: zephyr.integration.runtime_core.feedback_loop.evolution (internal)

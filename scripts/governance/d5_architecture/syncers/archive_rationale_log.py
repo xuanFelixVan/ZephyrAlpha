@@ -31,7 +31,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -82,7 +82,7 @@ def archive_old_stages(dry_run: bool = False) -> int:
 
         next_stage_idx = stages.index((stage_title, start, _)) + 1
         if next_stage_idx < len(stages):
-            stage_content = content[start:stages[next_stage_idx][1]]
+            stage_content = content[start : stages[next_stage_idx][1]]
         else:
             stage_content = content[start:]
 
@@ -93,45 +93,43 @@ def archive_old_stages(dry_run: bool = False) -> int:
             tmp_path = f"{archive_path}.{os.getpid()}.tmp"
 
             try:
-
                 Path(tmp_path).write_text(f"# {stage_title}\n\n{stage_content}", encoding="utf-8")
 
                 os.replace(tmp_path, archive_path)
 
             except PermissionError:
-
                 try:
-
                     os.remove(tmp_path)
 
                 except OSError:
-
                     pass
             print(f"  归档: {stage_title} → {archive_path.relative_to(REPO_ROOT)}")
 
     if not dry_run:
         last_keep_start = stages[-MAX_STAGES_IN_MAIN][1]
-        new_content = content[:frontmatter_end] + "\n> 历史归档：旧 Stage 已移至 archive/rationale-log/\n\n" + content[last_keep_start:]
+        new_content = (
+            content[:frontmatter_end]
+            + "\n> 历史归档：旧 Stage 已移至 archive/rationale-log/\n\n"
+            + content[last_keep_start:]
+        )
         tmp_path = f"{RATIONALE_LOG}.{os.getpid()}.tmp"
 
         try:
-
             Path(tmp_path).write_text(new_content, encoding="utf-8")
 
             os.replace(tmp_path, RATIONALE_LOG)
 
         except PermissionError:
-
             try:
-
                 os.remove(tmp_path)
 
             except OSError:
-
                 pass
         print(f"主文件已精简：{new_content.count(chr(10)) + 1} 行")
 
     return EXIT_PASS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     dry_run = "--dry-run" in sys.argv

@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 测试套件：批量入库（T-2-14）
 ==============================
@@ -24,6 +25,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+
 from zephyr.governance.batch_ingest import BatchIngestor
 from zephyr.governance.ingest import IngestGate
 

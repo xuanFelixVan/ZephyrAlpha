@@ -6,7 +6,7 @@ validate_immutable_core.py — immutable_core 文件修改检测
 
 对标：PS-STD-003 ABS-01（AI 不可改 immutable_core 层）
      AGENTS.md §4（编码安全——唯一始终生效的硬规则）
-     metadata-registry.md（immutable_core 标记字段）
+     metadata_registry.yaml（immutable_core 标记字段）
 
 检测内容：
 - 扫描 frontmatter 中标记了 immutable_core 或类似的保护标记的文件
@@ -17,6 +17,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: immutable_core 文件修改检测（ABS-01 — P1治理完整性）
@@ -49,6 +50,7 @@ IMMUTABLE_MARKERS = ["immutable_core", "immutable", "readonly_ai", "ai_cannot_mo
 AI_AUTONOMY_MARKERS = ["ai_autonomy", "autonomy_level"]
 _EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
 
+
 def is_immutable(frontmatter: dict) -> bool:
     """Return True if frontmatter marks this file as immutable (AI should not modify)."""
     for marker in IMMUTABLE_MARKERS:
@@ -58,6 +60,7 @@ def is_immutable(frontmatter: dict) -> bool:
     if isinstance(autonomy, str) and "immutable" in autonomy.lower():
         return True
     return False
+
 
 def get_recent_modifications(filepath: Path, max_commits: int = 10) -> list[dict]:
     """get recent modifications"""
@@ -92,6 +95,7 @@ def get_recent_modifications(filepath: Path, max_commits: int = 10) -> list[dict
         return []
     "get recent modifications."
 
+
 def scan_docs() -> tuple[list[dict], int]:
     """scan docs"""
     findings = []
@@ -116,6 +120,7 @@ def scan_docs() -> tuple[list[dict], int]:
     return (findings, files_scanned)
     "scan docs."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="immutable_core 文件修改检测")
@@ -128,19 +133,20 @@ def main() -> None:
     print(f"  不可变标记文件: {len(immutable_files)}", file=sys.stderr)
     print(f"  疑似 AI 修改: {len(violated)}", file=sys.stderr)
     for f in immutable_files:
-        print(f'\n  📄 {f['file']}', file=sys.stderr)
-        print(f'     标记: {', '.join(f['immutable_marks'])}', file=sys.stderr)
-        print(f'     AI自治: {f['modification_permission']}', file=sys.stderr)
+        print(f"\n  📄 {f['file']}", file=sys.stderr)
+        print(f"     标记: {', '.join(f['immutable_marks'])}", file=sys.stderr)
+        print(f"     AI自治: {f['modification_permission']}", file=sys.stderr)
         if f["recent_commits"]:
-            print(f'     最近修改: {len(f['recent_commits'])} 次', file=sys.stderr)
+            print(f"     最近修改: {len(f['recent_commits'])} 次", file=sys.stderr)
             for c in f["recent_commits"][:3]:
                 status = "✅ Owner" if "Owner" in c["author"] else "⚠ NOT Owner"
-                print(f'       [{status}] {c['hash']} {c['author']}: {c['message'][:80]}', file=sys.stderr)
+                print(f"       [{status}] {c['hash']} {c['author']}: {c['message'][:80]}", file=sys.stderr)
     if violated:
         print(f"\n⚠ {len(violated)} 个 immutable_core 文件被非 Owner 修改！", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if violated else 0)
+
 
 if __name__ == "__main__":
     main()

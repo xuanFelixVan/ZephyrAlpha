@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.thematic_clusterer import ThematicClusterer
 
 
@@ -60,9 +58,7 @@ class TestThematicClusterer:
             {"members": [("src/pipeline/step1.py", ""), ("src/workflow/step2.py", "")]},
         ]
         result = tc.cluster(groups)
-        assert "Pipeline" in result["themes"
-
-        ]
+        assert "Pipeline" in result["themes"]
 
     def test_cluster_general(self):
         tc = ThematicClusterer()

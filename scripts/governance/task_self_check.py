@@ -20,6 +20,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 __manifest__ = """
@@ -43,8 +44,8 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.persistence.sqlite_schema import DB_PATH
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 _CHECK_ICON = {"PASS": "✅", "WARN": "⚠️", "FAIL": "❌", "FIXED": "🔧"}
 
@@ -53,10 +54,12 @@ _CHECKS: list[dict] = []
 
 def check(name: str, desc: str):
     """装饰器风格注册检查项。"""
+
     def deco(fn):
         """deco implementation."""
         _CHECKS.append({"name": name, "desc": desc, "fn": fn})
         return fn
+
     return deco
 
 
@@ -91,6 +94,7 @@ class CheckResult:
 
 
 # ── Check definitions ────────────────────────────────────────────────
+
 
 @check("sqlite_integrity", "SQLite 数据库文件完整性")
 def check_sqlite_integrity(repo: TaskRepository) -> CheckResult:
@@ -178,6 +182,7 @@ def check_hook_registry(repo: TaskRepository) -> CheckResult:
     cr = CheckResult()
     try:
         from zephyr.integration.zephyr.event_hook import hook_registry
+
         hooks = hook_registry.get_all()
         if hooks:
             cr.ok(f"已注册 {len(hooks)} 个钩子: {', '.join(hooks[:5])}")
@@ -192,6 +197,7 @@ def check_hook_registry(repo: TaskRepository) -> CheckResult:
 
 # ── Main ─────────────────────────────────────────────────────────────
 
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="任务系统自身健康检查")
@@ -205,11 +211,12 @@ def main() -> int:
         return EXIT_FINDINGS
 
     from zephyr.governance.persistence.sqlite_schema import init_db
+
     init_db()
     repo = TaskRepository()
 
     print(f"\n{'=' * 60}")
-    print(f"  ZephyrAlpha 任务系统 — 健康检查")
+    print("  ZephyrAlpha 任务系统 — 健康检查")
     print(f"  DB: {DB_PATH}")
     print(f"{'=' * 60}\n")
 
@@ -228,8 +235,7 @@ def main() -> int:
 
     total = total_pass + total_warn + total_fail + total_fixed
     print(f"{'─' * 60}")
-    print(f"  总计 {total} 项: ✅ {total_pass} pass  ⚠️ {total_warn} warn  "
-          f"❌ {total_fail} fail  🔧 {total_fixed} fixed")
+    print(f"  总计 {total} 项: ✅ {total_pass} pass  ⚠️ {total_warn} warn  ❌ {total_fail} fail  🔧 {total_fixed} fixed")
     print(f"{'─' * 60}\n")
 
     if total_fail > 0:

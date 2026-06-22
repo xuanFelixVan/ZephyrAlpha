@@ -9,11 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
-from pathlib import Path
 from zephyr.governance.self_scanner import (
-    SelfScanner, SelfScanResult,
+    SelfScanner,
+    SelfScanResult,
 )
+
 
 class TestSelfScanner:
     def test_instantiation_default(self):
@@ -21,14 +21,10 @@ class TestSelfScanner:
         assert scanner is not None
 
     def test_instantiation_with_dir(self):
-        scanner = SelfScanner(
-            engine_dir="src/zephyr/l01-infrastructure/code_dedup_engine"
-        )
+        scanner = SelfScanner(engine_dir="src/zephyr/l01-infrastructure/code_dedup_engine")
         assert scanner is not None
 
     def test_scan_self(self):
-        scanner = SelfScanner(
-            engine_dir="src/zephyr/l01-infrastructure/code_dedup_engine"
-        )
+        scanner = SelfScanner(engine_dir="src/zephyr/l01-infrastructure/code_dedup_engine")
         result = scanner.scan_self()
         assert isinstance(result, (SelfScanResult, dict, list))

@@ -20,17 +20,19 @@
 # [TESTS] pytest tests/test_observability_logging.py -q
 
 import logging
+
 import pytest
+
 from zephyr.shared.shared_services.observability_02.logging import (
-    ZephyrLogger,
-    get_logger,
-    TraceContext,
-    trace_id_var,
-    session_id_var,
-    module_id_var,
     LogLevel,
-    _StructuredFormatter,
+    TraceContext,
+    ZephyrLogger,
     _logger_cache,
+    _StructuredFormatter,
+    get_logger,
+    module_id_var,
+    session_id_var,
+    trace_id_var,
 )
 
 
@@ -160,11 +162,17 @@ class TestStructuredFormatter:
     def test_format_produces_json(self):
         formatter = _StructuredFormatter()
         record = logging.LogRecord(
-            name="test", level=logging.INFO, pathname="", lineno=0,
-            msg="hello", args=(), exc_info=None,
+            name="test",
+            level=logging.INFO,
+            pathname="",
+            lineno=0,
+            msg="hello",
+            args=(),
+            exc_info=None,
         )
         output = formatter.format(record)
         import json
+
         parsed = json.loads(output)
         assert parsed["message"] == "hello"
         assert parsed["level"] == "INFO"

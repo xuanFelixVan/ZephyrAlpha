@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.hooks_integrity_guard import HooksIntegrityGuard
 
 

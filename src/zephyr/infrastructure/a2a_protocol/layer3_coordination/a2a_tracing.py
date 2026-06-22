@@ -27,10 +27,9 @@
 方法: 类似 OpenTelemetry Span 模型, Agent 级分布式追踪
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -54,16 +53,24 @@ class A2ATracing:
         self._traces: dict[str, list[Span]] = {}
 
     def start_span(
-        self, trace_id: str, span_id: str, agent_id: str,
-        action: str, resource: str,
+        self,
+        trace_id: str,
+        span_id: str,
+        agent_id: str,
+        action: str,
+        resource: str,
         parent_span_id: str | None = None,
         start_time: float = 0.0,
     ) -> Span:
         import time as _time
+
         span = Span(
-            span_id=span_id, trace_id=trace_id,
+            span_id=span_id,
+            trace_id=trace_id,
             parent_span_id=parent_span_id,
-            agent_id=agent_id, action=action, resource=resource,
+            agent_id=agent_id,
+            action=action,
+            resource=resource,
             start_time=start_time or _time.time(),
         )
         if trace_id not in self._traces:
@@ -73,6 +80,7 @@ class A2ATracing:
 
     def end_span(self, span: Span, end_time: float = 0.0):
         import time as _time
+
         span.end_time = end_time or _time.time()
 
     def get_trace(self, trace_id: str) -> list[Span]:

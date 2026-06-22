@@ -11,14 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
-
 import logging
 from enum import Enum
-from typing import Callable, Optional
 
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
+
 
 class CorporateActionType(str, Enum):
     CASH_DIV = "CASH_DIV"
@@ -28,6 +27,7 @@ class CorporateActionType(str, Enum):
     DELIST = "DELIST"
     SYMBOL_CHANGE = "SYMBOL_CHANGE"
     GICS_CHANGE = "GICS_CHANGE"
+
 
 CORPORATE_ACTION_PRIORITY: dict[CorporateActionType, str] = {
     CorporateActionType.CASH_DIV: "P0",
@@ -39,11 +39,13 @@ CORPORATE_ACTION_PRIORITY: dict[CorporateActionType, str] = {
     CorporateActionType.GICS_CHANGE: "P1",
 }
 
+
 class CorporateActionEvent(BaseModel):
     action_type: CorporateActionType
     symbol: str
     effective_date: str
     details: dict[str, object] = Field(default_factory=dict)
+
 
 class AdjFactor(BaseModel):
     symbol: str
@@ -51,7 +53,9 @@ class AdjFactor(BaseModel):
     bwd_adj_factor: float = 1.0
     fwd_adj_factor: float = 1.0
 
+
 CAPIPELINE_SOURCES: list[str] = ["akshare", "baostock"]
+
 
 class CorporateActionPipeline:
     def __init__(self) -> None:
@@ -80,6 +84,7 @@ class CorporateActionPipeline:
 
     def verify(self, sample_count: int = 10) -> bool:
         return True
+
 
 DAILY_PRE_CHECK_ITEMS: list[str] = [
     "预加载今日除权除息事件 adj_factor",

@@ -47,8 +47,8 @@ SSoT: cross_layer_contracts.yaml → CTR-ERR-004
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import UTC
 from decimal import Decimal
-from typing import Union
 
 
 @dataclass
@@ -60,7 +60,7 @@ class StopLossResult:
     kill_switch_activated: bool = False
 
 
-def evaluate_stop_loss(position: dict, current_price: Union[float, Decimal], rules: dict) -> bool:
+def evaluate_stop_loss(position: dict, current_price: float | Decimal, rules: dict) -> bool:
     """评估持仓是否触发止损条件。
 
     支持四种止损模式：
@@ -97,8 +97,9 @@ def evaluate_stop_loss(position: dict, current_price: Union[float, Decimal], rul
         max_days = rules.get("max_hold_days", 20)
         entry_date = position.get("entry_date")
         if entry_date:
-            from datetime import datetime, timezone
-            held_days = (datetime.now(timezone.utc) - entry_date).days
+            from datetime import datetime
+
+            held_days = (datetime.now(UTC) - entry_date).days
             return held_days > max_days
         return False
 
@@ -123,12 +124,15 @@ def trigger_kill_switch(reason: str, scope: str = "all") -> dict:
     """
     import logging
     import uuid
+
     _logger = logging.getLogger(__name__)
     event_id = str(uuid.uuid4())
 
     _logger.critical(
         "KILL_SWITCH_TRIGGERED event_id=%s reason=%s scope=%s",
-        event_id, reason, scope,
+        event_id,
+        reason,
+        scope,
     )
 
     return {
@@ -151,6 +155,7 @@ def reset_kill_switch(confirmation: dict) -> bool:
         True 表示重置成功
     """
     import logging
+
     _logger = logging.getLogger(__name__)
 
     confirmed_by = confirmation.get("confirmed_by", "unknown")
@@ -158,10 +163,11 @@ def reset_kill_switch(confirmation: dict) -> bool:
 
     _logger.warning(
         "KILL_SWITCH_RESET confirmed_by=%s reason=%s",
-        confirmed_by, override_reason,
+        confirmed_by,
+        override_reason,
     )
 
     return True
 
 
-__all__ = ["evaluate_stop_loss", "trigger_kill_switch", "reset_kill_switch", "StopLossResult"]
+__all__ = ["StopLossResult", "evaluate_stop_loss", "reset_kill_switch", "trigger_kill_switch"]

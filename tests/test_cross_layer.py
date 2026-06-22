@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 alpha_mod = pytest.importorskip("zephyr.cross_asset.cross_market_data_adapter.alpha_signal_pipeline")
 ml_mod = pytest.importorskip("zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline")
 
@@ -34,12 +33,14 @@ class TestAlphaSignalPipeline:
     def _clear_synth_registry(self):
         try:
             from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
+
             SignalSynthesizerBase._registry.clear()
         except Exception:
             pass
         yield
         try:
             from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
+
             SignalSynthesizerBase._registry.clear()
         except Exception:
             pass
@@ -52,17 +53,21 @@ class TestAlphaSignalPipeline:
 
     def test_register_factor(self):
         pipe = AlphaSignalPipeline()
+
         class DummyFactor:
             def compute(self):
                 return []
+
         pipe.register_factor(DummyFactor)
         assert len(pipe._factors) == 1
 
     def test_register_synthesizer(self):
         pipe = AlphaSignalPipeline()
+
         class DummySynth:
             def synthesize(self, signals):
                 return []
+
         pipe.register_synthesizer(DummySynth)
         assert len(pipe._synthesizers) == 1
 
@@ -74,9 +79,11 @@ class TestAlphaSignalPipeline:
 
     def test_run_with_factor(self):
         pipe = AlphaSignalPipeline()
+
         class GoodFactor:
             def compute(self):
                 return [{"confidence": 0.8, "signal_value": 1.5}]
+
         pipe.register_factor(GoodFactor)
         result = pipe.run()
         assert isinstance(result, AlphaPipelineResult)
@@ -123,6 +130,7 @@ class TestAlphaSignalPipeline:
         class FakeSignal:
             def __init__(self, c):
                 self.confidence = c
+
         signals = [FakeSignal(0.6), FakeSignal(0.8)]
         result = AlphaSignalPipeline._aggregate_confidence(signals)
         assert abs(result - 0.7) < 1e-9
@@ -143,6 +151,7 @@ class TestMLExperimentPipeline:
     def test_register_model(self):
         pipe = MLExperimentPipeline()
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
+
         meta = ModelMetadata(
             model_id="test-m",
             model_version="1.0",
@@ -156,14 +165,17 @@ class TestMLExperimentPipeline:
 
     def test_register_engine(self):
         pipe = MLExperimentPipeline()
+
         class DummyEngine:
             __name__ = "DummyEngine"
+
         pipe.register_engine(DummyEngine)
         assert len(pipe._engines) == 1
 
     def test_set_experiment_config(self):
         pipe = MLExperimentPipeline()
         from zephyr.simulation.pipeline_base import ExperimentConfig
+
         cfg = ExperimentConfig(
             experiment_id="exp-1",
             hypothesis="test",

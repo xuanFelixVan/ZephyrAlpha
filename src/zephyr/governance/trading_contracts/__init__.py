@@ -16,20 +16,22 @@ Moved from shared/contracts/ to eliminate cross-package violations.
 Infrastructure contracts (core/, backpressure/) remain in shared/contracts/.
 """
 
-from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.trading.trading_contracts.execution.fill import Fill
+from zephyr.governance.compliance_rule import ComplianceRule
+from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
+from zephyr.trading.trading_contracts import factories
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
 from zephyr.trading.trading_contracts.execution.execution_rejection_error import ExecutionRejectionError
+from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
+from zephyr.trading.trading_contracts.execution.fill import Fill
+from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.trading.trading_contracts.market.factor_monitor_report import FactorMonitorReport
 from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.market.instrument import (
-    AssetClass,
     ETF,
     FX,
+    AssetClass,
     Bond,
     Country,
     Crypto,
@@ -45,65 +47,63 @@ from zephyr.trading.trading_contracts.market.instrument import (
     TradingCalendarName,
 )
 from zephyr.trading.trading_contracts.market.macro_factor_signal import MacroFactorSignal
-from zephyr.trading.trading_contracts.market.factor_monitor_report import FactorMonitorReport
+from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
+from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading.trading_contracts.portfolio.contracts.money import Money, get_currency_precision
+from zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
+from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
-from zephyr.governance.compliance_rule import ComplianceRule
 from zephyr.trading.trading_contracts.risk.risk_validator_protocol import (
     RiskValidatorProtocol,
     ViolationDetail,
 )
-from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
-from zephyr.trading.trading_contracts.portfolio.contracts.money import Money, get_currency_precision
-from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
-from zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
-from zephyr.trading.trading_contracts import factories
 
 __all__ = [
-    "Order",
-    "OrderSide",
-    "OrderType",
-    "OrderStatus",
-    "Fill",
-    "CapitalAllocationResult",
-    "ExecutionReport",
-    "ModelServingRequest",
-    "PositionSnapshot",
-    "ExecutionRejectionError",
-    "FactorSignal",
-    "SynthesizedSignal",
-    "NormalizedMarketData",
-    "Instrument",
-    "Stock",
     "ETF",
-    "Future",
-    "Option",
-    "OptionType",
-    "Bond",
     "FX",
+    "AssetClass",
+    "Bond",
+    "CapitalAllocationResult",
+    "ComplianceRule",
+    "Country",
     "Crypto",
     "CryptoContractType",
-    "AssetClass",
-    "Exchange",
-    "Country",
     "CurrencyCode",
-    "Jurisdiction",
-    "TradingCalendarName",
-    "MacroFactorSignal",
+    "Exchange",
+    "ExecutionRejectionError",
+    "ExecutionReport",
     "FactorMonitorReport",
-    "SignalDegradationWarning",
-    "RiskLimits",
-    "RiskDashboardSnapshot",
-    "RiskMetricsReport",
-    "ComplianceRule",
-    "RiskValidatorProtocol",
-    "ViolationDetail",
-    "RiskLimitViolationError",
+    "FactorSignal",
+    "Fill",
+    "Future",
+    "Instrument",
+    "Jurisdiction",
+    "MacroFactorSignal",
+    "ModelServingRequest",
     "Money",
-    "get_currency_precision",
+    "NormalizedMarketData",
+    "Option",
+    "OptionType",
+    "Order",
+    "OrderSide",
+    "OrderStatus",
+    "OrderType",
     "PerformanceAttributionReport",
+    "PositionSnapshot",
+    "RiskDashboardSnapshot",
+    "RiskLimitViolationError",
+    "RiskLimits",
+    "RiskMetricsReport",
+    "RiskValidatorProtocol",
+    "SignalDegradationWarning",
+    "Stock",
     "StrategyLifecycleEvent",
+    "SynthesizedSignal",
+    "TradingCalendarName",
+    "ViolationDetail",
     "factories",
+    "get_currency_precision",
 ]

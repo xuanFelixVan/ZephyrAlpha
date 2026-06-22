@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_flag_lifecycle_manager.py
 
-import pytest
 from zephyr.ops.gates.flag_lifecycle_manager import FlagLifecycleManager
 
 

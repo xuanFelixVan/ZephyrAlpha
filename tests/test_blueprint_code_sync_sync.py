@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.infrastructure.blueprint_code_sync import (
     BlueprintCodeSyncService,
     SyncPair,
@@ -24,7 +22,6 @@ from zephyr.infrastructure.blueprint_code_sync import (
 
 
 class TestSyncPairDataclass:
-
     def test_fields(self):
         pair = SyncPair(
             blueprint_section="§2.2",
@@ -39,7 +36,6 @@ class TestSyncPairDataclass:
 
 
 class TestSyncVerificationDataclass:
-
     def test_fields(self):
         v = SyncVerification(
             total_pairs=2,
@@ -54,7 +50,6 @@ class TestSyncVerificationDataclass:
 
 
 class TestBlueprintCodeSyncService:
-
     def test_instantiation_with_path(self, tmp_path):
         svc = BlueprintCodeSyncService(project_root=tmp_path)
         assert svc._project_root == tmp_path

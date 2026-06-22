@@ -2,15 +2,21 @@
 import os
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 
 FIELD_NAMES = [
-    "BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD",
-    "CONSUMERS", "STABILITY", "SAFETY", "AI_AUTONOMY",
-    "ERROR_CONTRACT", "TESTS",
+    "BLUEPRINT",
+    "MODULE",
+    "INVARIANTS",
+    "MODIFY-GUARD",
+    "CONSUMERS",
+    "STABILITY",
+    "SAFETY",
+    "AI_AUTONOMY",
+    "ERROR_CONTRACT",
+    "TESTS",
 ]
 
 COMMENT_FIELD_RE = re.compile(r"^#\s*\[(\w[\w-]*)\]\s*(.*)")
@@ -40,8 +46,11 @@ def extract_git_fields(filepath: Path):
     try:
         result = subprocess.run(
             ["git", "show", f"HEAD:{rel}"],
-            capture_output=True, text=True, encoding="utf-8",
-            cwd=r"d:\ZephyrAlpha", timeout=10
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            cwd=r"d:\ZephyrAlpha",
+            timeout=10,
         )
         if result.returncode != 0:
             return {}
@@ -78,7 +87,7 @@ files_fixed = 0
 def process_file(filepath: Path):
     global files_fixed
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     lines = content.split("\n")

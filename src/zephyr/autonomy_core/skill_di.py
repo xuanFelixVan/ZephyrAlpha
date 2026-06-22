@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_di | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_di
+# [MODULE] zephyr.autonomy_core.skill_di
 
 # [INVARIANTS] none
 
@@ -28,31 +28,28 @@ Version: 0.3.0
 Skill DI——模块化 Skill 组装与依赖拓扑排序.
 """
 
-
 from __future__ import annotations
 
-from typing import Dict, Any, List, Set
-
 from collections import deque
+from typing import Any
 
 
 class SkillDI:
     """Skill DI——模块化 Skill 组装与依赖解析."""
 
-    _registry: Dict[str, Dict[str, Any]] = {}
+    _registry: dict[str, dict[str, Any]] = {}
 
     @classmethod
-    def register(cls, skill_id: str,
-                 deps: Dict[str, Any]) -> Dict[str, Any]:
+    def register(cls, skill_id: str, deps: dict[str, Any]) -> dict[str, Any]:
         cls._registry[skill_id] = deps
         return {"skill_id": skill_id, "dependencies_registered": True}
 
     @classmethod
-    def resolve(cls, skill_id: str) -> Dict[str, Any]:
+    def resolve(cls, skill_id: str) -> dict[str, Any]:
         return cls._registry.get(skill_id, {})
 
     @classmethod
-    def inject(cls, skill_id: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    def inject(cls, skill_id: str, context: dict[str, Any]) -> dict[str, Any]:
         deps = cls._registry.get(skill_id, {})
         injected = dict(context)
         for dep_skill_id, fallback in deps.items():
@@ -62,9 +59,9 @@ class SkillDI:
         return injected
 
     @classmethod
-    def topological_order(cls, skill_ids: List[str]) -> List[str]:
-        graph: Dict[str, List[str]] = {}
-        in_degree: Dict[str, int] = {}
+    def topological_order(cls, skill_ids: list[str]) -> list[str]:
+        graph: dict[str, list[str]] = {}
+        in_degree: dict[str, int] = {}
         for sid in skill_ids:
             graph.setdefault(sid, [])
             in_degree.setdefault(sid, 0)
@@ -76,8 +73,8 @@ class SkillDI:
                     in_degree[sid] = in_degree.get(sid, 0) + 1
 
         queue = deque([sid for sid in skill_ids if in_degree.get(sid, 0) == 0])
-        order: List[str] = []
-        visited: Set[str] = set()
+        order: list[str] = []
+        visited: set[str] = set()
         while queue:
             node = queue.popleft()
             if node in visited:

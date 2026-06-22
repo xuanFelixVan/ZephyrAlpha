@@ -14,13 +14,11 @@ from __future__ import annotations
 
 import os
 import stat
-from datetime import datetime, timezone
-
-import pytest
+from datetime import UTC, datetime
 
 from zephyr.behavioral_audit.file_attr_checker import (
-    FileAttrIssue,
     _FILE_ATTR_CACHE,
+    FileAttrIssue,
     _snapshot_file_attrs,
     capture_baseline,
     check_encoding,
@@ -76,7 +74,7 @@ class TestFileAttrIssueInstantiation:
         assert issue.detected_at.tzinfo is not None
 
     def test_custom_detected_at(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         issue = FileAttrIssue(
             issue_id="test-5",
             file_path="/tmp/test.py",

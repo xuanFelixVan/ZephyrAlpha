@@ -71,6 +71,7 @@ entries:
     note: >
       历史报告已声明 Superseded；其中 L13 目录命名、B 轨未纳入架构 YAML、shared 文件缺口等结论
       仍可作为技术债清单——若需正式闭环，应在 SSOT 扫描或专项 KB 决策记录中逐条落 issue id。
+      文件已于 2026-06-22 删除（Superseded + 超 TTL 30d），历史内容在 git log 中可查。
     fixed_in_scope: false
     fix_scope_note: "不自动等同于 validate_ssot 条目；合并追踪需人工映射"
 

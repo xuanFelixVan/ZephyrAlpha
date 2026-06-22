@@ -12,12 +12,10 @@
 
 from __future__ import annotations
 
-import time
-
 import pytest
 
-from zephyr.trading.orchestrator.deferred_queue import DeferredQueue, DeferredTaskStatus
 from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
+from zephyr.trading.orchestrator.deferred_queue import DeferredQueue, DeferredTaskStatus
 
 
 @pytest.fixture

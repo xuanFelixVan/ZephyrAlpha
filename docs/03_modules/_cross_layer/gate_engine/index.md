@@ -1,27 +1,28 @@
 ---
-blueprint_id: DOM-GOV-001
-created: '2026-05-03'
 doc_type: index
-module_id: MOD-INF-047
-status: Active
-title: gate-engine — 目录索引
-updated: '2026-05-03'
-version: 1.0.0
+status: active
+title: "gate_engine — 目录索引"
+module_id: "MOD-INF-007"
+blueprint_id: "MOD-INF-007"
+version: "0.8.2"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-
-# gate-engine
+# gate_engine
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-03
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blueprint.md](blueprint.md) | Markdown | Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 熔断器 |
+| [blueprint.md](blueprint.md) | Markdown | Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器 |
+| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| [index.md](index.md) | Markdown | gate-engine — 目录索引 |
+| [sub_blueprints/](sub_blueprints/index.md) | 目录 | sub-blueprints — 目录索引 |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

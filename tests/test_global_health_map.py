@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_global_health_map.py
 
-import pytest
 
 from zephyr.ops.diagnosers.global_health_map import GlobalHealthMap
 

@@ -1,9 +1,19 @@
 rule_id: TRAE-033
 title: 模块治理-注册与同步
+version: 1.0.0
+layer: L1
+module_id: TRAE-033
+depends_on: []
+tags:
+- TRAE
+- module_registry_sync
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: ai_modifiable
 aliases:
 - MOD-006
 - MOD-007
-layer: L1
 severity: error
 scope: module_registry_sync
 domain: TRAE
@@ -26,20 +36,15 @@ sections:
     - type: mandatory
       step: 'MRS-001: 创建/修改工件后MUST同步写入对应注册表——修改的字段值MUST与SSoT源一致'
     - type: mandatory
-      step: 通用操作5步：1.查MRS-001映射确认哪些注册表 2.创建工件文件+frontmatter 3.写入对应注册表(同一操作中完成) 4.更新工件目录index.md
-        5.运行MRS-003校验脚本
+      step: 通用操作5步：1.查MRS-001映射确认哪些注册表 2.创建工件文件+frontmatter 3.写入对应注册表(同一操作中完成) 4.更新工件目录index.md 5.运行MRS-003校验脚本
     - type: mandatory
-      step: 新模块10步：1.分配module_id 2.创建目录+文件 3.注册MODULE 4.注册BPR 5.注册DOC-INV 6.注册MOD-ID
-        7.注册DIR 8.注册AI-AUTH 9.更新上层index.md 10.运行校验
+      step: 新模块10步：1.分配module_id 2.创建目录+文件 3.注册MODULE 4.注册BPR 5.注册DOC-INV 6.注册MOD-ID 7.注册DIR 8.注册AI-AUTH 9.更新上层index.md 10.运行校验
     prohibitions: []
     gov_mod_006_scope:
       section_type: context
       applies_to: 创建/修改任何项目工件(模块/脚本/KB决策记录/文档/目录/门禁/知识/字段)时必须同步写入这些注册表
-      not_applies_to: 不在registry-master-index.yaml中登记的注册表; _DO_NOT_USE_old_tree/下的任何文件(AGENTS.md
-        §2禁止引用)
-      out_of_scope: 注册表字段的具体定义(→各注册表的_schema); 共享字段的SSoT归属(→registry_of_registries.yaml
-        cross_registry_rules); 注册表清单(→registry-master-index.yaml); AI工具链的具体使用方式(→AGENTS.md);
-        各工种标准(准入=GOV-MOD-001/命名=PS-STD-004/KB决策记录=KB决策记录流程); 注册表物理迁移(→migration_plan)
+      not_applies_to: 不在registry-master-index.yaml中登记的注册表; _DO_NOT_USE_old_tree/下的任何文件(AGENTS.md §2禁止引用)
+      out_of_scope: 注册表字段的具体定义(→各注册表的_schema); 共享字段的SSoT归属(→registry_of_registries.yaml cross_registry_rules); 注册表清单(→registry-master-index.yaml); AI工具链的具体使用方式(→AGENTS.md); 各工种标准(准入=GOV-MOD-001/命名=PS-STD-004/KB决策记录=KB决策记录流程); 注册表物理迁移(→migration_plan)
     gov_mod_006_registry_map:
       section_type: examples
       registries:
@@ -78,7 +83,7 @@ sections:
         path: _registry/catalogs/frontmatter-field-registry.md
       - code: AI-AUTH
         name: AI自治权限
-        path: governance/ai/ai-autonomy-authority-registry.md
+        path: governance/ai/ai_autonomy_authority_registry.yaml
       - code: INFRA
         name: 基础设施
         path: _registry/catalogs/infrastructure-registry.md
@@ -89,16 +94,13 @@ sections:
       - artifact: 创建治理规则
         must_write: GOV-RULES + DOC-INV + DIR
       - artifact: 创建新模块
-        must_write: MODULE + BPR + TASK-META + SCRIPT + KMS + DIR + GATE + FIELD +
-          AI-AUTH
+        must_write: MODULE + BPR + TASK-META + SCRIPT + KMS + DIR + GATE + FIELD + AI-AUTH
       - artifact: 创建新脚本
-        must_write: GOV-RULES + MOD-ID + MODULE + BPR + TASK-META + KMS + DIR + GATE
-          + FIELD + AI-AUTH
+        must_write: GOV-RULES + MOD-ID + MODULE + BPR + TASK-META + KMS + DIR + GATE + FIELD + AI-AUTH
       - artifact: 修改共享字段
         must_write: GOV-RULES + DOC-INV + MOD-ID + KMS + DIR + GATE + FIELD + AI-AUTH
       - artifact: 模块version/status/归档
-        must_write: GOV-RULES + DOC-INV + MOD-ID + MODULE + BPR + TASK-META + SCRIPT
-          + KMS + DIR + GATE + FIELD + AI-AUTH
+        must_write: GOV-RULES + DOC-INV + MOD-ID + MODULE + BPR + TASK-META + SCRIPT + KMS + DIR + GATE + FIELD + AI-AUTH
     gov_mod_006_normative_refs:
       section_type: principles
       refs:
@@ -243,12 +245,11 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.0.0
     date: '2026-06-13'
-    change: '初始提取——从module_registration_sync相关.md提取模块注册与同步规则；源文件已迁移为本规则文件（status:
-      migrated）'
+    change: '初始提取——从module_registration_sync相关.md提取模块注册与同步规则；源文件已迁移为本规则文件（status: migrated）'
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

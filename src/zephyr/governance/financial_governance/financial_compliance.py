@@ -22,9 +22,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class ComplianceLayer(str, Enum):
@@ -54,7 +53,7 @@ class ProtocolDef(BaseModel):
     name: Protocol
     description: str
     owner: str = "Owner"
-    review_date: Optional[str] = None
+    review_date: str | None = None
 
 
 SAFEGUARD_LABELS: dict[Safeguard, str] = {
@@ -95,7 +94,7 @@ PROTOCOL_DEFS: dict[Protocol, ProtocolDef] = {
 }
 
 
-def get_protocol(protocol: Protocol) -> Optional[ProtocolDef]:
+def get_protocol(protocol: Protocol) -> ProtocolDef | None:
     return PROTOCOL_DEFS.get(protocol)
 
 

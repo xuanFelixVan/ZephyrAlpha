@@ -27,6 +27,7 @@ Risk: R162 — One subsystem burns 80% of LLM budget undetected.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class TokenFinOps:
     usage: dict[str, int] = field(default_factory=dict)

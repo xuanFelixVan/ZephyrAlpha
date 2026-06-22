@@ -21,9 +21,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from enum import Enum
 from functools import wraps
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -85,7 +86,7 @@ def princpled_check(*principles: ArchPrinciple) -> Callable[[F], F]:
     """装饰器：为函数标记适用的架构原则。"""
 
     def decorator(func: F) -> F:
-        setattr(func, "_zephyr_principles", list(principles))
+        func._zephyr_principles = list(principles)
 
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:

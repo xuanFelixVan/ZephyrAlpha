@@ -435,7 +435,7 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 - **内容结构**: 主观术语量化转换(47项)+硬边界约束总表(B-001~020/HB-SEC-01~13/HB-INT-01~13/HB-GOV-01~10)+功能域模块(17域)+跨域交叉点(CP-01~09)+因果链(4条)+契约矩阵(CTR-001~006/CTR-TRACE-001/CTR-ERR-001~006/CTR-BP-001~003/CTR-P1-001~015/OCP-001~003/EXT-001~004/VER-R1~R5)+领域事件(22条)+事件因果链(4条)+频率分档(L1~L4)+Saga事务(4条)+容量升级依赖(12条)+建设受限门禁总表(4类)
 - **v3已有映射**: global_annotations中`architecture_cross_references`(40条XREF)+`architecture_domain_constraints`(10架构图约束)+`external_contracts`(EXT-001~004)+`ocp_extension_points`(OCP-001~003)+`v2_migration_delta`+`edge_migration_audit`
 - **审查深度**: v5.0(L1~L13+连续2轮新发现=0退出)
-- **审查重点**: 
+- **审查重点**:
   - L1~L5: 基础结构核对(硬边界/契约/事件/交叉点)
   - L6~L9: 7类易遗漏项(条件/阈值/跨域引用/编号/例外/对标/演变)
   - L10~L13: 深度检查(主观术语量化转换表→v3映射/因果链完整性/Saga补偿/容量升级依赖/建设门禁)

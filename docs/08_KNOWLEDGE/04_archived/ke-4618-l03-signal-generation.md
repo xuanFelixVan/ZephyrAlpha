@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-4618
 title: L03 Signal Generation（3 个新文件）
 category: session_log

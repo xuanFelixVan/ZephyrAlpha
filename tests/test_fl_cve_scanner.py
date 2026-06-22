@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_cve_scanner.py
 
-import pytest
 from zephyr.ops.gates.cve_scanner import CVEScanner
 
 

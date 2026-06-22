@@ -13,9 +13,7 @@
 import pytest
 
 from zephyr.ops.evolution.graduated_activation_protocol import (
-    ActivationStage,
     GraduatedActivationProtocol,
-    PromotionDecision,
 )
 
 

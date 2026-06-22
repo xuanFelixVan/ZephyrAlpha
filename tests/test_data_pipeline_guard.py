@@ -11,8 +11,9 @@
 # [TESTS] python -m pytest tests/test_data_pipeline_guard.py -q
 
 from __future__ import annotations
+
 import hashlib
-import pytest
+
 from zephyr.governance.data_pipeline_guard import DataPipelineGuard
 
 

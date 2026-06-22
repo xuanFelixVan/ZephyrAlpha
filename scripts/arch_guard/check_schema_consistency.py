@@ -6,6 +6,7 @@ check_schema_consistency.py — INV-010 契约物理路径存在性（Schema can
 
 exit: 0=pass, 1=fail
 """
+
 from __future__ import annotations
 
 import sys

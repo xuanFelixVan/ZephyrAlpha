@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_token_finops.py
 
-import pytest
 
 from zephyr.ops.collectors.token_finops import TokenFinOps
 

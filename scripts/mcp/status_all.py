@@ -10,7 +10,8 @@ if __name__ == "__main__":
     if sys.platform == "win32":
         result = subprocess.run(
             ["tasklist", "/FI", "IMAGENAME eq python.exe", "/FO", "CSV"],
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
         )
         lines = [l for l in result.stdout.splitlines() if "mcp" in l.lower()]
         print(f"MCP python processes: {len(lines)}")

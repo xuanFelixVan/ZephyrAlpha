@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_cross_signal_validator.py
 
-import pytest
 
 from zephyr.ops.detectors.cross_signal_validator import CrossSignalValidator
 

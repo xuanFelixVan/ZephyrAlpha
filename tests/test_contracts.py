@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.contracts import RBACAuditBridge
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as e:
@@ -26,7 +28,6 @@ except Exception as e:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestRBACAuditBridgeCheckPermission:
-
     def test_allowed_permission_read(self):
         result = RBACAuditBridge._check_permission("agent-1", "read", "file.txt")
         assert result is True
@@ -55,7 +56,6 @@ class TestRBACAuditBridgeCheckPermission:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestRBACAuditBridgeCheckAndLog:
-
     def test_check_and_log_granted(self):
         bridge = RBACAuditBridge()
         result = bridge.check_and_log(agent_id="agent-1", permission="read", resource="file.txt")

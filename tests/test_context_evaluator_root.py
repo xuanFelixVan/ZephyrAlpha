@@ -11,7 +11,8 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
@@ -20,6 +21,7 @@ try:
         ContextEvaluator,
         EvaluationReport,
     )
+
     _IMPORT_OK = True
     _IMPORT_ERR = None
 except Exception as exc:

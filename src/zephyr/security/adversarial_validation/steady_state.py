@@ -13,12 +13,11 @@
 from __future__ import annotations
 
 import logging
-import os
 import subprocess
 import time
 from pathlib import Path
 
-from zephyr.security.adversarial_validation.models import SteadyStateSpec, SteadyStateSummary
+from zephyr.security.adversarial_validation.models import SteadyStateSummary
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +75,6 @@ class SteadyStateDriftError(RuntimeError):
 
 
 class SteadyState:
-
     def __init__(self) -> None:
         self._snapshot_before: dict[str, dict[str, float]] = {}
         self._snapshot_after: dict[str, dict[str, float]] = {}
@@ -136,7 +134,9 @@ class SteadyState:
         try:
             result = subprocess.run(
                 ["grep", "-r", "-c", pattern, str(src)],
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             total = sum(int(line.split(":")[-1]) for line in result.stdout.strip().split("\n") if ":" in line)
             return float(total)
@@ -164,7 +164,9 @@ class SteadyState:
         try:
             result = subprocess.run(
                 ["python", str(full_path)],
-                capture_output=True, text=True, timeout=30,
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
             return float(result.returncode)
         except Exception:
@@ -185,7 +187,9 @@ class SteadyState:
             start = time.perf_counter()
             result = subprocess.run(
                 ["python", "scripts/lock_files.py", "check", file],
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             elapsed_ms = (time.perf_counter() - start) * 1000.0
             if result.returncode == 0:
@@ -203,8 +207,10 @@ class SteadyState:
     def _process_count(self, name: str) -> float:
         try:
             result = subprocess.run(
-                ["tasklist", "/FI", f"IMAGENAME eq python.exe", "/FO", "CSV"],
-                capture_output=True, text=True, timeout=5,
+                ["tasklist", "/FI", "IMAGENAME eq python.exe", "/FO", "CSV"],
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             return float(result.stdout.count(name))
         except Exception:

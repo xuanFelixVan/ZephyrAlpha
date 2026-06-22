@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for rollback_manager.py (T-2-05)
 """
@@ -14,6 +15,7 @@ Unit tests for rollback_manager.py (T-2-05)
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.trading.orchestrator.rollback_manager import RollbackManager
 

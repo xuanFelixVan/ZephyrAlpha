@@ -99,14 +99,16 @@ class CrossBlueprintContractDrift:
             return {"contract_id": contract_id, "status": ContractStatus.COMPLIANT.value, "match": True}
 
         contract["status"] = ContractStatus.DRIFTED
-        self.drift_events.append({
-            "ts": time.time(),
-            "contract_id": contract_id,
-            "source": contract["source"],
-            "target": contract["target"],
-            "declared": contract["declared_signature"],
-            "actual": actual_signature,
-        })
+        self.drift_events.append(
+            {
+                "ts": time.time(),
+                "contract_id": contract_id,
+                "source": contract["source"],
+                "target": contract["target"],
+                "declared": contract["declared_signature"],
+                "actual": actual_signature,
+            }
+        )
 
         return {
             "contract_id": contract_id,
@@ -123,13 +125,15 @@ class CrossBlueprintContractDrift:
         for cid, contract in self.contracts.items():
             days_since = (now - contract["last_validated"]) / 86400.0
             if days_since > self.max_staleness_days:
-                stale.append({
-                    "contract_id": cid,
-                    "source": contract["source"],
-                    "target": contract["target"],
-                    "days_since_validation": round(days_since, 1),
-                    "recommendation": "trigger_contract_revalidation",
-                })
+                stale.append(
+                    {
+                        "contract_id": cid,
+                        "source": contract["source"],
+                        "target": contract["target"],
+                        "days_since_validation": round(days_since, 1),
+                        "recommendation": "trigger_contract_revalidation",
+                    }
+                )
         return stale
 
     def get_drifted_contracts(self) -> list[dict]:

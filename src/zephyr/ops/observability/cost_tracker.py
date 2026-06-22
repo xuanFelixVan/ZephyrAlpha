@@ -30,10 +30,10 @@ Cost Tracker — Token 成本核算与会计。
 """
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class CostRecord:
@@ -45,6 +45,7 @@ class CostRecord:
     cost_usd: float
     timestamp_utc: str
 
+
 @dataclass
 class DailyBudget:
     max_tokens: int = 100000
@@ -52,26 +53,23 @@ class DailyBudget:
     used_tokens: int = 0
     used_cost_usd: float = 0.0
 
+
 MODEL_PRICING: dict[str, dict[str, float]] = {
     "deepseek": {"input_per_1k": 0.00014, "output_per_1k": 0.00028},
     "gpt-4": {"input_per_1k": 0.03, "output_per_1k": 0.06},
     "gpt-3.5-turbo": {"input_per_1k": 0.0005, "output_per_1k": 0.0015},
 }
 
-class CostTracker:
 
+class CostTracker:
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/observability")
         self._cost_path = self._data_dir / "cost_tracker.jsonl"
         self._budget_path = self._data_dir / "daily_budget.json"
 
-    def record(self, task_id: str, model: str, input_tokens: int,
-               output_tokens: int) -> CostRecord:
+    def record(self, task_id: str, model: str, input_tokens: int, output_tokens: int) -> CostRecord:
         pricing = MODEL_PRICING.get(model, MODEL_PRICING["deepseek"])
-        cost = (
-            input_tokens / 1000 * pricing["input_per_1k"]
-            + output_tokens / 1000 * pricing["output_per_1k"]
-        )
+        cost = input_tokens / 1000 * pricing["input_per_1k"] + output_tokens / 1000 * pricing["output_per_1k"]
 
         record = CostRecord(
             task_id=task_id,
@@ -80,21 +78,27 @@ class CostTracker:
             output_tokens=output_tokens,
             total_tokens=input_tokens + output_tokens,
             cost_usd=round(cost, 6),
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
         self._data_dir.mkdir(parents=True, exist_ok=True)
 
         with open(self._cost_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "task_id": record.task_id,
-                "model": record.model,
-                "input_tokens": record.input_tokens,
-                "output_tokens": record.output_tokens,
-                "total_tokens": record.total_tokens,
-                "cost_usd": record.cost_usd,
-                "timestamp_utc": record.timestamp_utc,
-            }, ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "task_id": record.task_id,
+                        "model": record.model,
+                        "input_tokens": record.input_tokens,
+                        "output_tokens": record.output_tokens,
+                        "total_tokens": record.total_tokens,
+                        "cost_usd": record.cost_usd,
+                        "timestamp_utc": record.timestamp_utc,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
 
         self._update_budget(record)
 
@@ -106,7 +110,7 @@ class CostTracker:
 
         try:
             data = json.loads(self._budget_path.read_text(encoding="utf-8"))
-            today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            today = datetime.now(UTC).strftime("%Y-%m-%d")
             if data.get("date") != today:
                 return DailyBudget()
             return DailyBudget(
@@ -132,12 +136,16 @@ class CostTracker:
         budget.used_cost_usd += record.cost_usd
 
         self._budget_path.write_text(
-            json.dumps({
-                "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                "max_tokens": budget.max_tokens,
-                "max_cost_usd": budget.max_cost_usd,
-                "used_tokens": budget.used_tokens,
-                "used_cost_usd": round(budget.used_cost_usd, 6),
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "date": datetime.now(UTC).strftime("%Y-%m-%d"),
+                    "max_tokens": budget.max_tokens,
+                    "max_cost_usd": budget.max_cost_usd,
+                    "used_tokens": budget.used_tokens,
+                    "used_cost_usd": round(budget.used_cost_usd, 6),
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )

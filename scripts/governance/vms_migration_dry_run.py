@@ -20,7 +20,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from zephyr.governance.knowledge_management.vector_memory.bridge_layer import BridgeLayer, MIGRATION_MAP
+from zephyr.governance.knowledge_management.vector_memory.bridge_layer import MIGRATION_MAP, BridgeLayer
 
 TOPIC_STATS: dict[str, int] = {}
 
@@ -31,10 +31,10 @@ def run_dry_run(persist_dir: str = ".audit_cache/vector_index") -> None:
     if not resolved.is_absolute():
         resolved = PROJECT_ROOT / resolved
 
-    print(f"VMS 迁移 Dry-Run")
-    print(f"=================")
+    print("VMS 迁移 Dry-Run")
+    print("=================")
     print(f"kb/ 持久化目录: {resolved}")
-    print(f"")
+    print("")
 
     mappings = BridgeLayer.dry_run_topic_split(resolved)
     if not mappings:
@@ -54,14 +54,14 @@ def run_dry_run(persist_dir: str = ".audit_cache/vector_index") -> None:
         print("-" * 60)
         print(f"总计: {len(mappings)} 条记录")
 
-    print(f"")
-    print(f"静态迁移映射（kb/ 4 Collection → VMS 8 Collection）:")
+    print("")
+    print("静态迁移映射（kb/ 4 Collection → VMS 8 Collection）:")
     print("-" * 70)
     print(f"{'source':<20} {'target':<20} {'dim_change':<14} {'re_embed':<10}")
     print("-" * 70)
     for source, mapping in MIGRATION_MAP.items():
         dim_change = f"{mapping['source_dim']}→{mapping['target_dim']}"
-        print(f"{source:<20} {mapping['target']:<20} {dim_change:<14} {str(mapping['re_embed']):<10}")
+        print(f"{source:<20} {mapping['target']:<20} {dim_change:<14} {mapping['re_embed']!s:<10}")
     print("-" * 70)
 
     result = {

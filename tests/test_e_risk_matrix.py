@@ -33,7 +33,12 @@ class TestRiskCategory:
     def test_four_members(self):
         assert len(RiskCategory) == 4
         members = {m for m in RiskCategory}
-        assert members == {RiskCategory.OPERATIONAL, RiskCategory.DATA, RiskCategory.LEGAL_COMPLIANCE, RiskCategory.ISOLATION}
+        assert members == {
+            RiskCategory.OPERATIONAL,
+            RiskCategory.DATA,
+            RiskCategory.LEGAL_COMPLIANCE,
+            RiskCategory.ISOLATION,
+        }
 
     def test_string_values(self):
         assert RiskCategory.OPERATIONAL.value == "OPERATIONAL"

@@ -29,9 +29,10 @@ Impact Propagator — 变更影响传播分析。
     任务卡 TASK-INF-0128
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class ImpactPath:
@@ -40,6 +41,7 @@ class ImpactPath:
     path_length: int
     intermediate_nodes: list[str]
     impact_type: str = "direct"
+
 
 @dataclass
 class PropagationReport:
@@ -50,8 +52,8 @@ class PropagationReport:
     paths: list[ImpactPath]
     critical_paths: list[ImpactPath]
 
-class ImpactPropagator:
 
+class ImpactPropagator:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -65,25 +67,29 @@ class ImpactPropagator:
 
         for src in source_files:
             for dep in depends_on:
-                paths.append(ImpactPath(
-                    source_file=src,
-                    target_file=dep,
-                    path_length=1,
-                    intermediate_nodes=[],
-                    impact_type="direct",
-                ))
+                paths.append(
+                    ImpactPath(
+                        source_file=src,
+                        target_file=dep,
+                        path_length=1,
+                        intermediate_nodes=[],
+                        impact_type="direct",
+                    )
+                )
                 affected_files.add(dep)
 
         for src in source_files:
             for tgt in source_files:
                 if src != tgt:
-                    paths.append(ImpactPath(
-                        source_file=src,
-                        target_file=tgt,
-                        path_length=1,
-                        intermediate_nodes=[],
-                        impact_type="inter_source",
-                    ))
+                    paths.append(
+                        ImpactPath(
+                            source_file=src,
+                            target_file=tgt,
+                            path_length=1,
+                            intermediate_nodes=[],
+                            impact_type="inter_source",
+                        )
+                    )
 
         critical = [p for p in paths if p.path_length <= 1]
 

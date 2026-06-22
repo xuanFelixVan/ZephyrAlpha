@@ -35,15 +35,13 @@ import argparse
 import logging
 import os
 import shutil
+import sqlite3
 import subprocess
 import sys
-from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
-
-import sqlite3
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MIGRATION_REGISTRY = PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml"
@@ -110,7 +108,7 @@ def save_panorama(data: dict) -> None:
 
 def load_migration_registry() -> dict:
     """Load migration registry."""
-    with open(MIGRATION_REGISTRY, "r", encoding="utf-8") as f:
+    with open(MIGRATION_REGISTRY, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
@@ -164,14 +162,12 @@ def find_design_node_for_path(tree: dict, target_path: str, current_path: str = 
 
 def main():
     parser = argparse.ArgumentParser(description="Safe delete operational nodes after migration verification")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Only output planned actions, do not modify/delete any file")
-    parser.add_argument("--domain", type=str, default="",
-                        help="Only process entries for specified domain_id")
-    parser.add_argument("--batch", type=int, default=0,
-                        help="Only process entries in batch N")
-    parser.add_argument("--force", action="store_true",
-                        help="Skip verify_migration_alignment prerequisite (DANGEROUS)")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Only output planned actions, do not modify/delete any file"
+    )
+    parser.add_argument("--domain", type=str, default="", help="Only process entries for specified domain_id")
+    parser.add_argument("--batch", type=int, default=0, help="Only process entries in batch N")
+    parser.add_argument("--force", action="store_true", help="Skip verify_migration_alignment prerequisite (DANGEROUS)")
     args = parser.parse_args()
 
     if args.dry_run:
@@ -257,9 +253,9 @@ def main():
         deleted_count += 1
 
     # Summary
-    print(f"\n{'='*60}")
-    print(f"[SAFE-DELETE] Summary")
-    print(f"{'='*60}")
+    print(f"\n{'=' * 60}")
+    print("[SAFE-DELETE] Summary")
+    print(f"{'=' * 60}")
     print(f"  Processed: {len(deletable)}")
     print(f"  Deleted:   {deleted_count}")
     print(f"  Failed:    {failed_count}")
@@ -268,7 +264,7 @@ def main():
         print(f"\n[FAIL] {failed_count} deletions failed — manual intervention required")
         sys.exit(1)
     else:
-        print(f"\n[OK] All deletions completed successfully")
+        print("\n[OK] All deletions completed successfully")
         sys.exit(0)
 
 

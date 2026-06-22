@@ -7,17 +7,12 @@
 # [TESTS] —
 import pytest
 
-from zephyr.security.llm_defense.llm_security.layers.l3_output import (
-    AIGeneratedCodeTrustBoundary,
-    AgentPublicInteractionGuard,
-    HallucinationResult,
-    OutputSecurityLayer,
-    RedactResult,
-    SandboxResult,
-    SafetyResult,
-    SchemaResult,
-)
 from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+from zephyr.security.llm_defense.llm_security.layers.l3_output import (
+    AgentPublicInteractionGuard,
+    AIGeneratedCodeTrustBoundary,
+    OutputSecurityLayer,
+)
 
 
 class TestOutputSecurityLayer:
@@ -94,9 +89,7 @@ class TestOutputSecurityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_clean(self, layer):
-        ctx = SecurityContext(
-            request_id="r1", layer_name="l3", raw_input="The capital of France is Paris."
-        )
+        ctx = SecurityContext(request_id="r1", layer_name="l3", raw_input="The capital of France is Paris.")
         result = await layer.evaluate(ctx)
         assert result.decision == SecurityDecision.ALLOW
 

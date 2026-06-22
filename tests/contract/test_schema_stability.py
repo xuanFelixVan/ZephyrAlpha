@@ -28,7 +28,6 @@ SSoT: MOD-INF-016 §5.1 29 文件清单 + §7.1 12 消费者
 from __future__ import annotations
 
 import re
-from typing import Any
 
 import pytest
 
@@ -132,7 +131,7 @@ class TestTaskSchemaStability:
                 f"  这改变了数据契约，影响所有 12 消费者。\n"
                 f"  如果有意新增字段，请：\n"
                 f"    1. 更新 TASK_EXPECTED_FIELDS 字典\n"
-                f"    2. 更新 schemas.py Task docstring（字段计数 31→{31+len(extra)}）\n"
+                f"    2. 更新 schemas.py Task docstring（字段计数 31→{31 + len(extra)}）\n"
                 f"    3. 更新 models.py TaskCard docstring\n"
                 f"    4. 更新 blueprint.md/registries\n"
                 f"    5. 检查所有消费者兼容性"
@@ -143,6 +142,7 @@ class TestTaskSchemaStability:
 # TaskCard 继承验证
 # =============================================================================
 
+
 class TestTaskCardInheritance:
     """TaskCard 继承 Task 的完整性验证。"""
 
@@ -152,7 +152,7 @@ class TestTaskCardInheritance:
 
         assert issubclass(TaskCard, Task), (
             f"TaskCard 必须继承 schemas.py Task。\n"
-            f"  这是 ADR-0040 + metadata-registry.md §7 的铁律。\n"
+            f"  这是 ADR-0040 + metadata_registry.yaml §7 的铁律。\n"
             f"  当前 TaskCard 的 MRO: {[c.__name__ for c in TaskCard.__mro__]}"
         )
 
@@ -164,31 +164,22 @@ class TestTaskCardInheritance:
         taskcard_fields = set(TaskCard.model_fields.keys())
 
         missing = task_fields - taskcard_fields
-        assert not missing, (
-            f"TaskCard 缺失 Task 基类的字段: {sorted(missing)}\n"
-            f"  TaskCard 只能新增字段，不能删减。"
-        )
+        assert not missing, f"TaskCard 缺失 Task 基类的字段: {sorted(missing)}\n  TaskCard 只能新增字段，不能删减。"
 
     def test_taskcard_no_field_shadow_conflict(self) -> None:
         from zephyr.governance.rule_enforcement.task_types import Task
         from zephyr.shared.shared_services.models import TaskCard
 
-        task_types = {
-            name: info.annotation for name, info in Task.model_fields.items()
-        }
-        taskcard_types = {
-            name: info.annotation for name, info in TaskCard.model_fields.items()
-        }
+        task_types = {name: info.annotation for name, info in Task.model_fields.items()}
+        taskcard_types = {name: info.annotation for name, info in TaskCard.model_fields.items()}
 
         conflicts = []
         for name in task_types.keys() & taskcard_types.keys():
             if task_types[name] != taskcard_types[name]:
-                conflicts.append(
-                    f"  {name}: Task={task_types[name]}, TaskCard={taskcard_types[name]}"
-                )
+                conflicts.append(f"  {name}: Task={task_types[name]}, TaskCard={taskcard_types[name]}")
 
         assert not conflicts, (
-            f"TaskCard 与 Task 字段类型冲突:\n"
+            "TaskCard 与 Task 字段类型冲突:\n"
             + "\n".join(conflicts)
             + "\n  继承字段不应改变类型——这违反 Liskov 替换原则。"
         )
@@ -281,9 +272,7 @@ class TestTypeAliases:
             found = {
                 name
                 for name in dir(t_module)
-                if not name.startswith("_")
-                and not name.islower()
-                and not callable(getattr(t_module, name, None))
+                if not name.startswith("_") and not name.islower() and not callable(getattr(t_module, name, None))
             }
 
         assert found == EXPECTED_TYPE_ALIASES, (

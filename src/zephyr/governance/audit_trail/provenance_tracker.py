@@ -12,8 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from pydantic import BaseModel
 
@@ -34,7 +33,7 @@ def generate_provenance(
         module_id=module_id,
         source_section=source_section,
         agent_session_id=agent_session_id,
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
     )
 
 
@@ -48,7 +47,7 @@ def embed_provenance(target_dict: dict[str, object], record: ProvenanceRecord) -
     return target_dict
 
 
-def extract_provenance(obj: object) -> Optional[ProvenanceRecord]:
+def extract_provenance(obj: object) -> ProvenanceRecord | None:
     prov = getattr(obj, "_zephyr_provenance", None) or getattr(obj, "__provenance__", None)
     if isinstance(prov, dict):
         return ProvenanceRecord(

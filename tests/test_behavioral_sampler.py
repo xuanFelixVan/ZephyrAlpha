@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.behavioral_sampler import (
-    BehavioralSampler, BehaviorSample,
+    BehavioralSampler,
+    BehaviorSample,
 )
+
 
 class TestBehavioralSampler:
     def test_instantiation(self):

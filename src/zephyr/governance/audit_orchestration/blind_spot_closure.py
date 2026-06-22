@@ -23,7 +23,8 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class BlindSpot(BaseModel):
     b_id: str
@@ -31,9 +32,11 @@ class BlindSpot(BaseModel):
     status: str = "open"
     resolution: str = ""
 
+
 BLIND_SPOTS: dict[str, BlindSpot] = {}
 for i in range(301, 336):
     BLIND_SPOTS[f"B-MOD-{i}"] = BlindSpot(b_id=f"B-MOD-{i}", description=f"盲点 B-MOD-{i}")
+
 
 class BlindSpotClosure:
     def list_all(self) -> list[BlindSpot]:

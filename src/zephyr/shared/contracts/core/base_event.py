@@ -33,10 +33,11 @@ INV-007 要求所有跨层事件必须携带幂等 Key。
   event_key = generate_idempotency_key()
   assert len(event_key) == 36  # UUID v4
 """
+
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 
 def generate_idempotency_key() -> str:
@@ -65,7 +66,7 @@ class BaseEvent:
         if not hasattr(self, "idempotency_key") or not self.idempotency_key:
             self.idempotency_key = generate_idempotency_key()
         if not hasattr(self, "created_at") or not self.created_at:
-            self.created_at = datetime.now(timezone.utc)
+            self.created_at = datetime.now(UTC)
 
         valid, error = validate_idempotency_key(self.idempotency_key)
         if not valid:

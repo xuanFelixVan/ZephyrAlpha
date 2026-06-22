@@ -7,12 +7,12 @@
 # [TESTS] —
 """Tests for MOD-INF-026 Reconciler module."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from zephyr.infrastructure.asset_inventory.models import (
     AssetType,
-    ClassifiedAsset,
     ClassificationResult,
+    ClassifiedAsset,
     RawFileEntry,
     ScanResult,
     UnifiedAssetIndex,
@@ -27,7 +27,7 @@ def _entry(path: str, sha: str = "a" * 64, mtime: datetime | None = None) -> Raw
         file_name=path.split("/")[-1],
         extension="." + path.rsplit(".", 1)[-1],
         size_bytes=100,
-        mtime_utc=mtime or datetime.now(timezone.utc),
+        mtime_utc=mtime or datetime.now(UTC),
         sha256=sha,
     )
 
@@ -37,7 +37,7 @@ def _asset(path: str, sha: str = "a" * 64) -> ClassifiedAsset:
         relative_path=path,
         asset_type=AssetType.MODULE,
         size_bytes=100,
-        mtime_utc=datetime.now(timezone.utc),
+        mtime_utc=datetime.now(UTC),
         sha256=sha,
     )
 

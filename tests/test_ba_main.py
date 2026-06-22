@@ -16,8 +16,6 @@ import argparse
 import sys
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.autonomy_core.__main__ import (
     _cmd_budget,
     _cmd_list,
@@ -48,9 +46,7 @@ class TestCmdSelfTest:
         mock_result = MagicMock()
         mock_result.summary = "8/8 checks passed"
         mock_result.checks = [{"check": "c1", "status": "PASS", "detail": ""}]
-        with patch(
-            "zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier"
-        ) as MockVerifier:
+        with patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier") as MockVerifier:
             MockVerifier.return_value.run_all.return_value = mock_result
             result = _cmd_self_test(args)
         assert result == 0
@@ -62,9 +58,7 @@ class TestCmdSelfTest:
         mock_result = MagicMock()
         mock_result.summary = "6/8 checks passed"
         mock_result.checks = [{"check": "c1", "status": "FAIL", "detail": ""}]
-        with patch(
-            "zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier"
-        ) as MockVerifier:
+        with patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier") as MockVerifier:
             MockVerifier.return_value.run_all.return_value = mock_result
             result = _cmd_self_test(args)
         assert result == 1
@@ -123,14 +117,16 @@ class TestCmdList:
 
 class TestCmdStatus:
     def test_returns_0_when_healthy(self, capsys):
-        with patch(
-            "zephyr.behavioral_audit.drift_engine.load_detector_registry",
-            return_value=[],
-        ), patch(
-            "zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier"
-        ) as MockSTV, patch(
-            "zephyr.behavioral_audit.self_check.bootstrap_self_check",
-            return_value=True,
+        with (
+            patch(
+                "zephyr.behavioral_audit.drift_engine.load_detector_registry",
+                return_value=[],
+            ),
+            patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier") as MockSTV,
+            patch(
+                "zephyr.behavioral_audit.self_check.bootstrap_self_check",
+                return_value=True,
+            ),
         ):
             mock_stv_result = MagicMock()
             mock_stv_result.summary = "8/8 checks passed"
@@ -149,37 +145,49 @@ class TestCmdStatus:
 
 class TestMainParser:
     def test_no_command_runs_status(self):
-        with patch.object(sys, "argv", ["__main__.py"]), \
-             patch("zephyr.orchestration.agent_lifecycle.__main__._cmd_status", return_value=0) as mock:
+        with (
+            patch.object(sys, "argv", ["__main__.py"]),
+            patch("zephyr.autonomy_core.__main__._cmd_status", return_value=0) as mock,
+        ):
             result = main()
             mock.assert_called_once()
 
     def test_scan_command(self):
-        with patch.object(sys, "argv", ["__main__.py", "scan"]), \
-             patch("zephyr.orchestration.agent_lifecycle.__main__._cmd_scan", return_value=0) as mock:
+        with (
+            patch.object(sys, "argv", ["__main__.py", "scan"]),
+            patch("zephyr.autonomy_core.__main__._cmd_scan", return_value=0) as mock,
+        ):
             result = main()
             mock.assert_called_once()
 
     def test_self_test_command(self):
-        with patch.object(sys, "argv", ["__main__.py", "self-test"]), \
-             patch("zephyr.orchestration.agent_lifecycle.__main__._cmd_self_test", return_value=0) as mock:
+        with (
+            patch.object(sys, "argv", ["__main__.py", "self-test"]),
+            patch("zephyr.autonomy_core.__main__._cmd_self_test", return_value=0) as mock,
+        ):
             result = main()
             mock.assert_called_once()
 
     def test_budget_command(self):
-        with patch.object(sys, "argv", ["__main__.py", "budget"]), \
-             patch("zephyr.orchestration.agent_lifecycle.__main__._cmd_budget", return_value=0) as mock:
+        with (
+            patch.object(sys, "argv", ["__main__.py", "budget"]),
+            patch("zephyr.autonomy_core.__main__._cmd_budget", return_value=0) as mock,
+        ):
             result = main()
             mock.assert_called_once()
 
     def test_list_command(self):
-        with patch.object(sys, "argv", ["__main__.py", "list"]), \
-             patch("zephyr.orchestration.agent_lifecycle.__main__._cmd_list", return_value=0) as mock:
+        with (
+            patch.object(sys, "argv", ["__main__.py", "list"]),
+            patch("zephyr.autonomy_core.__main__._cmd_list", return_value=0) as mock,
+        ):
             result = main()
             mock.assert_called_once()
 
     def test_status_command(self):
-        with patch.object(sys, "argv", ["__main__.py", "status"]), \
-             patch("zephyr.orchestration.agent_lifecycle.__main__._cmd_status", return_value=0) as mock:
+        with (
+            patch.object(sys, "argv", ["__main__.py", "status"]),
+            patch("zephyr.autonomy_core.__main__._cmd_status", return_value=0) as mock,
+        ):
             result = main()
             mock.assert_called_once()

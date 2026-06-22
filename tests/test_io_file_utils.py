@@ -20,15 +20,16 @@
 # [TESTS] pytest tests/test_io_file_utils.py -q
 
 import hashlib
+
 import pytest
-from pathlib import Path
+
 from zephyr.integration.shared_08.file_utils import (
+    AtomicWriteError,
     atomic_write,
-    safe_read,
+    backup_and_rollback,
     backup_file,
     restore_backup,
-    backup_and_rollback,
-    AtomicWriteError,
+    safe_read,
 )
 
 
@@ -78,7 +79,7 @@ class TestSafeRead:
     def test_sha256_verification_pass(self, tmp_path):
         target = tmp_path / "test.txt"
         target.write_text("verify", encoding="utf-8")
-        sha = hashlib.sha256("verify".encode("utf-8")).hexdigest()
+        sha = hashlib.sha256(b"verify").hexdigest()
         content = safe_read(target, verify_sha256=sha)
         assert content == "verify"
 
@@ -141,10 +142,9 @@ class TestBackupAndRollback:
     def test_exception_triggers_rollback(self, tmp_path):
         target = tmp_path / "test.txt"
         target.write_text("original", encoding="utf-8")
-        with pytest.raises(RuntimeError):
-            with backup_and_rollback(target) as path:
-                atomic_write(path, "modified")
-                raise RuntimeError("fail")
+        with pytest.raises(RuntimeError), backup_and_rollback(target) as path:
+            atomic_write(path, "modified")
+            raise RuntimeError("fail")
         assert target.read_text(encoding="utf-8") == "original"
 
 

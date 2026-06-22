@@ -9,8 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.import_surface_tracker import ImportSurfaceTracker
+
 
 class TestImportSurfaceTracker:
     def test_instantiation(self):

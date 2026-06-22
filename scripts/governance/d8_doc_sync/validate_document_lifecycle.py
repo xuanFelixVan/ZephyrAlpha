@@ -17,6 +17,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 文档生命周期校验（GOV-DOC-006 §二/§四/§五/§六 — superseded_by+双向链接+AI产物）
@@ -44,6 +45,7 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 
 import argparse
+
 
 def scan_lifecycle_violations() -> list[dict]:
     """扫描生命周期引用违规."""
@@ -117,6 +119,7 @@ def scan_lifecycle_violations() -> list[dict]:
     return findings
     """扫描生命周期引用违规."""
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="文档生命周期校验（GOV-DOC-006 §二/§四/§五/§六）")
@@ -136,6 +139,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

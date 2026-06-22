@@ -27,6 +27,7 @@ Risk: R134 — Prompt chain amplification causes diagnosis cascade failure.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class AmplificationGuard:
     max_amplification: float = 5.0

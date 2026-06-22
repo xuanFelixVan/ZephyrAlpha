@@ -20,7 +20,9 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from typing import Self
+
 """
 flags.py —— Feature Flag / 功能开关系统（Phase 2 新增 | 盲点 B7 修复）
 
@@ -58,10 +60,10 @@ from enum import Enum, unique
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "FlagState",
     "FeatureFlag",
-    "FlagRegistry",
     "FlagNotFoundError",
+    "FlagRegistry",
+    "FlagState",
     "global_flag_registry",
 ]
 

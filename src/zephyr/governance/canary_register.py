@@ -23,9 +23,11 @@ from __future__ import annotations
 
 """金丝雀注册表维护器 — 注册/过期/腐败检测."""
 
-import yaml
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
+import yaml
+
 
 class CanaryRegister:
     """金丝雀函数注册表."""
@@ -38,25 +40,27 @@ class CanaryRegister:
         self._load()
 
     def register(self, function_name: str, module: str, stage: str = "active") -> None:
-        self._canaries.append({
-            "function": function_name,
-            "module": module,
-            "stage": stage,
-            "registered_at": datetime.now(timezone.utc).isoformat(),
-            "last_verified": "",
-        })
+        self._canaries.append(
+            {
+                "function": function_name,
+                "module": module,
+                "stage": stage,
+                "registered_at": datetime.now(UTC).isoformat(),
+                "last_verified": "",
+            }
+        )
         self._save()
 
     def check_staleness(self, max_age_days: int = 90) -> list[dict]:
         stale = []
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         for c in self._canaries:
             if not c["last_verified"]:
                 stale.append(c)
                 continue
             try:
                 dt = datetime.fromisoformat(c["last_verified"].replace("Z", "+00:00"))
-                if (now - dt.replace(tzinfo=timezone.utc)).days > max_age_days:
+                if (now - dt.replace(tzinfo=UTC)).days > max_age_days:
                     c["stage"] = "stale"
                     stale.append(c)
             except ValueError:
@@ -74,6 +78,6 @@ class CanaryRegister:
     def _save(self) -> None:
         self._path.parent.mkdir(parents=True, exist_ok=True)
         self._path.write_text(
-            yaml.dump({"canaries": self._canaries, "updated_at": datetime.now(timezone.utc).isoformat()}, allow_unicode=True),
+            yaml.dump({"canaries": self._canaries, "updated_at": datetime.now(UTC).isoformat()}, allow_unicode=True),
             encoding="utf-8",
         )

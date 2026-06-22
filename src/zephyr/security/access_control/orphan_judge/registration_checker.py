@@ -15,13 +15,11 @@
 扫描项目注册表，判断文件是否已登记在册。
 """
 
-
 from __future__ import annotations
 
 import logging
 import re
 from pathlib import Path
-from typing import Any
 
 from zephyr.security.access_control.orphan_judge.judge import LayerResult
 
@@ -76,7 +74,7 @@ class RegistrationChecker:
         if not registered_in:
             init_registered = self._check_init_exports(file_path)
             if init_registered:
-                registered_in.append(f"__init__.py (__all__ export)")
+                registered_in.append("__init__.py (__all__ export)")
 
         is_registered = len(registered_in) > 0
         return LayerResult(

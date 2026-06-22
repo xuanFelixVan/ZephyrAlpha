@@ -46,10 +46,7 @@ SSoT: cross_layer_contracts.yaml → CTR-001
 from __future__ import annotations
 
 import logging
-import uuid
-from datetime import datetime, timedelta, timezone
-from decimal import Decimal
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 import numpy as np
 import pandas as pd
@@ -114,8 +111,16 @@ def _generate_candles(
 
 
 DEFAULT_SYMBOLS = [
-    "600519", "000858", "601318", "600036", "000333",
-    "601166", "600900", "601398", "600276", "000001",
+    "600519",
+    "000858",
+    "601318",
+    "600036",
+    "000333",
+    "601166",
+    "600900",
+    "601398",
+    "600276",
+    "000001",
 ]
 
 
@@ -126,13 +131,13 @@ class MemoryProvider(DataSourceBase):
 
     def __init__(
         self,
-        symbols: Optional[list[str]] = None,
-        start_date: Optional[datetime] = None,
-        base_prices: Optional[dict[str, float]] = None,
+        symbols: list[str] | None = None,
+        start_date: datetime | None = None,
+        base_prices: dict[str, float] | None = None,
         seed: int = 42,
     ):
         self._symbols = symbols or DEFAULT_SYMBOLS
-        self._start_date = start_date or datetime(2024, 1, 1, tzinfo=timezone.utc)
+        self._start_date = start_date or datetime(2024, 1, 1, tzinfo=UTC)
         self._base_prices = base_prices or {
             "600519": 1800.0,
             "000858": 160.0,
@@ -195,15 +200,17 @@ class MemoryProvider(DataSourceBase):
             seed=self._seed + seed_offset + 1000,
         )
 
-        df = pd.DataFrame({
-            "date": trading_dates,
-            "open": open_p,
-            "high": high,
-            "low": low,
-            "close": close_prices,
-            "volume": volume,
-            "amount": amount,
-        })
+        df = pd.DataFrame(
+            {
+                "date": trading_dates,
+                "open": open_p,
+                "high": high,
+                "low": low,
+                "close": close_prices,
+                "volume": volume,
+                "amount": amount,
+            }
+        )
 
         if "date" in df.columns:
             df["date"] = pd.to_datetime(df["date"], errors="coerce")
@@ -216,9 +223,7 @@ class MemoryProvider(DataSourceBase):
         _logger.debug("Generated %d candles for symbol=%s", len(df), clean_symbol)
         return df
 
-    def _fetch_intraday(
-        self, symbol: str, start: datetime, end: datetime, interval: str
-    ) -> pd.DataFrame:
+    def _fetch_intraday(self, symbol: str, start: datetime, end: datetime, interval: str) -> pd.DataFrame:
         daily = self.fetch_historical(symbol, start, end, "1d")
         if daily.empty:
             return pd.DataFrame(columns=["open", "high", "low", "close", "volume", "amount", "date"])
@@ -252,15 +257,17 @@ class MemoryProvider(DataSourceBase):
                 bar_high = max(bar_open, bar_close) * noise
                 bar_low = min(bar_open, bar_close) * (2 - noise)
                 vol_noise = rng.uniform(0.5, 1.5)
-                intraday_rows.append({
-                    "date": bar_time,
-                    "open": bar_open,
-                    "high": bar_high,
-                    "low": bar_low,
-                    "close": bar_close,
-                    "volume": day_vol * vol_noise,
-                    "amount": day_vol * vol_noise * bar_close / 100,
-                })
+                intraday_rows.append(
+                    {
+                        "date": bar_time,
+                        "open": bar_open,
+                        "high": bar_high,
+                        "low": bar_low,
+                        "close": bar_close,
+                        "volume": day_vol * vol_noise,
+                        "amount": day_vol * vol_noise * bar_close / 100,
+                    }
+                )
 
         result = pd.DataFrame(intraday_rows)
         for col in ["open", "high", "low", "close", "volume", "amount"]:
@@ -274,13 +281,15 @@ class MemoryProvider(DataSourceBase):
         _logger.info("MemoryProvider: realtime subscription simulated for %d symbols", len(symbols))
 
     def get_stock_list(self) -> pd.DataFrame:
-        return pd.DataFrame({
-            "symbol": self._symbols,
-            "name": [f"Test_{s}" for s in self._symbols],
-        })
+        return pd.DataFrame(
+            {
+                "symbol": self._symbols,
+                "name": [f"Test_{s}" for s in self._symbols],
+            }
+        )
 
     def clear_cache(self) -> None:
         self._cache.clear()
 
 
-__all__ = ["MemoryProvider", "DEFAULT_SYMBOLS"]
+__all__ = ["DEFAULT_SYMBOLS", "MemoryProvider"]

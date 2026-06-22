@@ -10,8 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_trigger_router_root.py
 
-import pytest
-from zephyr.autonomy_core.trigger_router import TriggerRouter, ConstructionStage
+from zephyr.autonomy_core.trigger_router import ConstructionStage, TriggerRouter
 
 
 class TestConstructionStage:

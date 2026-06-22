@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_integration_test_pipeline.py
 
-import pytest
 from zephyr.ops.tests.e2e.integration_test_pipeline import IntegrationTestPipeline
 
 

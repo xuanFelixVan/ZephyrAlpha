@@ -19,13 +19,12 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -44,11 +43,13 @@ def _check_rbac_integration() -> tuple[bool, str]:
     ok = _grep_file(r"(from zephyr\.agent_rbac|from zephyr\.governance\.escalation\.rbac_bridge)", target)
     return ok, f"Pipeline imports RBAC: {'YES' if ok else 'NO'}"
 
+
 def _check_audit_integration() -> tuple[bool, str]:
     """_check_audit_integration implementation."""
     target = _PROJECT_ROOT / "src" / "zephyr" / "pipeline" / "pipeline_orchestrator.py"
     ok = _grep_file(r"from zephyr\.audit_trail", target)
     return ok, f"Pipeline imports audit_trail: {'YES' if ok else 'NO'}"
+
 
 def _check_kb_external_access() -> tuple[bool, str]:
     """_check_kb_external_access implementation."""
@@ -56,19 +57,23 @@ def _check_kb_external_access() -> tuple[bool, str]:
     ok = _grep_file(r"from zephyr\.kb", target)
     return ok, f"Pipeline imports kb: {'YES' if ok else 'NO'} (WARNING only)"
 
+
 def _check_agent_spec_cli() -> tuple[bool, str]:
     """_check_agent_spec_cli implementation."""
     target = _PROJECT_ROOT / "src" / "zephyr" / "agent-spec" / "__main__.py"
     ok = target.exists()
     return ok, f"agent-spec __main__.py exists: {'YES' if ok else 'NO'}"
 
+
 def _check_agent_spec_importable() -> tuple[bool, str]:
     """_check_agent_spec_importable implementation."""
     try:
-        import zephyr.orchestration.agent_lifecycle  # noqa: F401
+        import zephyr.autonomy_core  # noqa: F401
+
         return True, "agent-spec importable: YES"
     except Exception as exc:
         return False, f"agent-spec importable: NO ({exc})"
+
 
 def _check_audit_writer_called() -> tuple[bool, str]:
     """_check_audit_writer_called implementation."""
@@ -76,12 +81,15 @@ def _check_audit_writer_called() -> tuple[bool, str]:
     ok = _grep_file(r"(AuditWriter|_write_audit|_audit_writer)", target)
     return ok, f"Pipeline calls AuditWriter: {'YES' if ok else 'NO'}"
 
+
 def _check_blueprint_status_sync() -> tuple[bool, str]:
     """_check_blueprint_status_sync implementation."""
     script = _PROJECT_ROOT / "scripts" / "governance" / "sync_blueprint_status.py"
     result = subprocess.run(
         [sys.executable, str(script)],
-        capture_output=True, text=True, cwd=str(_PROJECT_ROOT),
+        capture_output=True,
+        text=True,
+        cwd=str(_PROJECT_ROOT),
     )
     clean = "CLEAN" in (result.stdout + result.stderr) and result.returncode == 0
     return clean, f"sync_blueprint_status: {'CLEAN' if clean else 'DRIFT'} (exit={result.returncode})"
@@ -122,7 +130,7 @@ def main() -> int:
             if is_error:
                 errors.append(f"{check_id}: {msg}")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"PASS: {passed}  FAIL: {failed}  TOTAL: {passed + failed}")
 
     if errors:

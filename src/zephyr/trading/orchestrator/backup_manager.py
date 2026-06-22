@@ -23,7 +23,7 @@ from __future__ import annotations
 
 """备份管理器（CT-BACKUP-001）——SQLite VACUUM INTO + ChromaDB zip + integrity。"""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import BaseModel
 
@@ -32,6 +32,7 @@ RETENTION_POLICY: dict[str, int] = {
     "monthly": 12,
     "yearly": 5,
 }
+
 
 class BackupRecord(BaseModel):
     backup_id: str
@@ -43,19 +44,22 @@ class BackupRecord(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
         if self.timestamp is None:
-            object.__setattr__(self, 'timestamp', datetime.now(timezone.utc))
+            object.__setattr__(self, "timestamp", datetime.now(UTC))
+
 
 class BackupManager:
     def __init__(self):
         self._records: list[BackupRecord] = []
 
     def backup_sqlite(self, db_name: str) -> BackupRecord:
-        record = BackupRecord(backup_id=f"SQLITE-{db_name}-{datetime.now(timezone.utc).strftime('%Y%m%d')}", target=f"{db_name}.db")
+        record = BackupRecord(
+            backup_id=f"SQLITE-{db_name}-{datetime.now(UTC).strftime('%Y%m%d')}", target=f"{db_name}.db"
+        )
         self._records.append(record)
         return record
 
     def backup_chromadb(self) -> BackupRecord:
-        record = BackupRecord(backup_id=f"CHROMA-{datetime.now(timezone.utc).strftime('%Y%m%d')}", target="chromadb")
+        record = BackupRecord(backup_id=f"CHROMA-{datetime.now(UTC).strftime('%Y%m%d')}", target="chromadb")
         self._records.append(record)
         return record
 

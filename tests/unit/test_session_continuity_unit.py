@@ -21,11 +21,7 @@ test_session_continuity.py — SessionContinuity 单元测试
 from __future__ import annotations
 
 import json
-import tempfile
-from datetime import datetime, timezone
-from pathlib import Path
-
-import pytest
+from datetime import UTC, datetime
 
 from zephyr.shared.session_continuity import (
     ContinuityContext,
@@ -43,7 +39,7 @@ def _make_state(session_id: str = "test-001", **overrides) -> SessionState:
         cards_failed=[],
         last_checkpoint_json="{}",
         last_journal_line=42,
-        timestamp_utc=datetime.now(timezone.utc).isoformat(),
+        timestamp_utc=datetime.now(UTC).isoformat(),
         metadata={},
     )
     defaults.update(overrides)

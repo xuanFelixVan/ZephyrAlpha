@@ -1,11 +1,11 @@
 # Proxy package - zephyr.shared.shared_services
 # All submodules redirect to zephyr.shared.* or actual locations
 
-from zephyr.behavioral_audit.events import DriftEvent, DriftType, DriftState
+from zephyr.behavioral_audit.events import DriftEvent, DriftState, DriftType
 
 __all__ = [
-    "event_bus",
     "DriftEvent",
-    "DriftType",
     "DriftState",
+    "DriftType",
+    "event_bus",
 ]

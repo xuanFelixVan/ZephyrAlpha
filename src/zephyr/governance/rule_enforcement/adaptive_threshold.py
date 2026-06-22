@@ -29,6 +29,7 @@ from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class ThresholdState:
     gate_id: str
@@ -38,6 +39,7 @@ class ThresholdState:
     def __post_init__(self) -> None:
         if self.history is None:
             self.history = deque(maxlen=100)
+
 
 class AdaptiveThreshold:
     DEFAULT_WINDOW = 50
@@ -64,7 +66,9 @@ class AdaptiveThreshold:
         else:
             return state.current_threshold
 
-        state.current_threshold = max(0.1, min(0.99, state.current_threshold + direction * (1.0 - state.current_threshold)))
+        state.current_threshold = max(
+            0.1, min(0.99, state.current_threshold + direction * (1.0 - state.current_threshold))
+        )
         logger.debug("threshold %s adjusted: %.4f (outcome=%s)", gate_id, state.current_threshold, outcome)
         return state.current_threshold
 
@@ -78,10 +82,13 @@ class AdaptiveThreshold:
             ewma_val = alpha * v + (1 - alpha) * ewma_val
         return ewma_val
 
+
 __all__ = ["AdaptiveThreshold", "ThresholdState"]
+
 
 def main() -> None:
     pass
+
 
 if __name__ == "__main__":
     main()

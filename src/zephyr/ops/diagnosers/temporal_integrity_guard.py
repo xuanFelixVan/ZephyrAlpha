@@ -76,7 +76,9 @@ class TemporalIntegrityGuard:
             anomalies.append({"type": anomaly_type.value, "jump_seconds": round(jump, 1)})
 
         if self.last_wall_clock > 0 and ts > self.last_wall_clock + self.max_forward_gap:
-            anomalies.append({"type": TimeAnomaly.FORWARD_JUMP.value, "gap_seconds": round(ts - self.last_wall_clock, 1)})
+            anomalies.append(
+                {"type": TimeAnomaly.FORWARD_JUMP.value, "gap_seconds": round(ts - self.last_wall_clock, 1)}
+            )
 
         if now - ts > self.max_timestamp_age:
             anomalies.append({"type": TimeAnomaly.STALE_TIMESTAMP.value, "age_seconds": round(now - ts, 1)})
@@ -84,12 +86,14 @@ class TemporalIntegrityGuard:
         wall_delta = now - self.last_wall_clock if self.last_wall_clock > 0 else 0
         monotonic_delta = monotonic_now - self.last_monotonic if self.last_monotonic > 0 else 0
         if abs(wall_delta - monotonic_delta) > self.max_ntp_drift_seconds and wall_delta > 1:
-            anomalies.append({
-                "type": TimeAnomaly.NTP_DRIFT.value,
-                "wall_delta": round(wall_delta, 3),
-                "monotonic_delta": round(monotonic_delta, 3),
-                "drift": round(abs(wall_delta - monotonic_delta), 3),
-            })
+            anomalies.append(
+                {
+                    "type": TimeAnomaly.NTP_DRIFT.value,
+                    "wall_delta": round(wall_delta, 3),
+                    "monotonic_delta": round(monotonic_delta, 3),
+                    "drift": round(abs(wall_delta - monotonic_delta), 3),
+                }
+            )
 
         self.last_wall_clock = ts
         self.last_monotonic = monotonic_now
@@ -102,8 +106,10 @@ class TemporalIntegrityGuard:
             "valid": len(anomalies) == 0,
             "anomalies": anomalies,
             "recommendation": (
-                "discard_data_point" if any(a["type"] == TimeAnomaly.BACKWARD_JUMP.value for a in anomalies)
-                else "flag_for_review" if anomalies
+                "discard_data_point"
+                if any(a["type"] == TimeAnomaly.BACKWARD_JUMP.value for a in anomalies)
+                else "flag_for_review"
+                if anomalies
                 else "accept"
             ),
         }

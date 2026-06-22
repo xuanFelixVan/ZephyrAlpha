@@ -1,3 +1,3 @@
 # [A_module] module_id=MOD-SEC_behavior_audit_logger | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # Re-export from authoritative location
-from zephyr.security.llm_defense.llm_security.behavior_audit_logger import *  # noqa: F401,F403
+from zephyr.security.llm_defense.llm_security.behavior_audit_logger import *  # noqa: F403

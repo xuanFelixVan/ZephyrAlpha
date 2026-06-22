@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_cost_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.cost_tracker
+# [MODULE] zephyr.integration.cost_tracker
 
 # [INVARIANTS] none
 
@@ -33,7 +33,6 @@ CostTracker —— LLM 调用成本追踪器（SRC-0025）
 
 依据：重组蓝图 §3.3 + B161 成本追踪
 """
-
 
 from __future__ import annotations
 

@@ -12,10 +12,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
-
 
 l08 = pytest.importorskip("zephyr.l08_human_ai_interface", reason="l08-human-ai-interface not importable")
 
@@ -215,7 +214,7 @@ class TestApprovalRequest:
         assert r.expires_at is None
 
     def test_with_expiry(self):
-        future = datetime(2030, 1, 1, tzinfo=timezone.utc)
+        future = datetime(2030, 1, 1, tzinfo=UTC)
         r = ApprovalRequest(
             request_id="ar-001",
             action="override",
@@ -286,7 +285,10 @@ class TestApprovalGatewayBase:
     def test_submit(self):
         g = _ConcreteApprovalGateway()
         r = ApprovalRequest(
-            request_id="ar-1", action="override", reason="test", requester="agent",
+            request_id="ar-1",
+            action="override",
+            reason="test",
+            requester="agent",
         )
         request_id = g.submit(r)
         assert request_id == "ar-1"
@@ -294,7 +296,10 @@ class TestApprovalGatewayBase:
     def test_decide_approve(self):
         g = _ConcreteApprovalGateway()
         r = ApprovalRequest(
-            request_id="ar-1", action="override", reason="test", requester="agent",
+            request_id="ar-1",
+            action="override",
+            reason="test",
+            requester="agent",
         )
         g.submit(r)
         result = g.decide("ar-1", ApprovalAction.APPROVE, "looks good")
@@ -303,7 +308,10 @@ class TestApprovalGatewayBase:
     def test_decide_reject(self):
         g = _ConcreteApprovalGateway()
         r = ApprovalRequest(
-            request_id="ar-1", action="override", reason="test", requester="agent",
+            request_id="ar-1",
+            action="override",
+            reason="test",
+            requester="agent",
         )
         g.submit(r)
         result = g.decide("ar-1", ApprovalAction.REJECT, "too risky")
@@ -317,10 +325,16 @@ class TestApprovalGatewayBase:
     def test_pending(self):
         g = _ConcreteApprovalGateway()
         r1 = ApprovalRequest(
-            request_id="ar-1", action="override", reason="test", requester="agent",
+            request_id="ar-1",
+            action="override",
+            reason="test",
+            requester="agent",
         )
         r2 = ApprovalRequest(
-            request_id="ar-2", action="escalate", reason="test2", requester="agent",
+            request_id="ar-2",
+            action="escalate",
+            reason="test2",
+            requester="agent",
         )
         g.submit(r1)
         g.submit(r2)
@@ -334,7 +348,10 @@ class TestApprovalGatewayBase:
     def test_decide_removes_from_pending(self):
         g = _ConcreteApprovalGateway()
         r = ApprovalRequest(
-            request_id="ar-1", action="override", reason="test", requester="agent",
+            request_id="ar-1",
+            action="override",
+            reason="test",
+            requester="agent",
         )
         g.submit(r)
         g.decide("ar-1", ApprovalAction.APPROVE)

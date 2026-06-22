@@ -28,16 +28,14 @@ git_as_ultimate_truth: baseline_hash_chain=SHA256(prev+current)写入commit mess
 integrity_manifest: 每DEEP scan签名存Git
 对标 blueprint.md §6.25。
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
-import os
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -47,7 +45,7 @@ class BaselineSnapshot:
     content_hash: str
     git_commit: str
     scan_type: str
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     cross_validated: bool = False
 
 
@@ -114,10 +112,7 @@ def cross_validate_baseline(
                     b_line = baseline_lines[i] if i < len(baseline_lines) else ""
                     g_line = git_lines[i] if i < len(git_lines) else ""
                     if b_line != g_line:
-                        diff_lines.append(
-                            f"L{i+1}: baseline vs git: "
-                            f"{b_line[:40]} <> {g_line[:40]}"
-                        )
+                        diff_lines.append(f"L{i + 1}: baseline vs git: {b_line[:40]} <> {g_line[:40]}")
                 result["diff_lines"] = diff_lines[:20]
     except Exception:
         pass
@@ -194,11 +189,7 @@ def verify_hash_chain(entries: list[HashChainEntry]) -> list[str]:
             expected_input += f":{entry.git_commit}"
         expected_chain = _sha256(expected_input)
         if expected_chain != entry.chain_hash:
-            violations.append(
-                f"Chain break at index {i}: "
-                f"expected {expected_chain[:12]} "
-                f"got {entry.chain_hash[:12]}"
-            )
+            violations.append(f"Chain break at index {i}: expected {expected_chain[:12]} got {entry.chain_hash[:12]}")
     return violations
 
 
@@ -208,15 +199,10 @@ def generate_integrity_manifest(
 ) -> str:
     manifest_data: dict[str, object] = {
         "scan_id": scan_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "file_count": len(file_hashes),
-        "files": {
-            fpath: {"sha256": fhash}
-            for fpath, fhash in file_hashes.items()
-        },
-        "integrity_chain_head": (
-            HASH_CHAIN[-1].chain_hash if HASH_CHAIN else ""
-        ),
+        "files": {fpath: {"sha256": fhash} for fpath, fhash in file_hashes.items()},
+        "integrity_chain_head": (HASH_CHAIN[-1].chain_hash if HASH_CHAIN else ""),
     }
 
     manifest_content = json.dumps(manifest_data, indent=2, sort_keys=True)

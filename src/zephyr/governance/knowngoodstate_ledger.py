@@ -29,15 +29,13 @@ KnowngoodstateLedger — 已验证正确状态收据。
     下次回滚目标若存在 knowngoodstate 记录，优先选择。
 """
 
-
 from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -51,7 +49,6 @@ class KnownGoodRecord:
 
 
 class KnowngoodstateLedger:
-
     LEDGER_FILE: str = ".zephyr/knowngoodstate_ledger.jsonl"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -65,7 +62,7 @@ class KnowngoodstateLedger:
         file_count: int = 0,
         db_integrity_pass: bool = True,
     ) -> KnownGoodRecord:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         raw = f"{commit_sha}|{now}|{verification_method}|{file_count}|{db_integrity_pass}"
         signature = hashlib.sha256(raw.encode()).hexdigest()
 
@@ -98,21 +95,23 @@ class KnowngoodstateLedger:
         if not self._ledger_path.exists():
             return records
 
-        with open(self._ledger_path, "r", encoding="utf-8") as f:
+        with open(self._ledger_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
                     continue
                 try:
                     entry = json.loads(line)
-                    records.append(KnownGoodRecord(
-                        commit_sha=entry["commit_sha"],
-                        verified_at=entry["verified_at"],
-                        verification_method=entry["verification_method"],
-                        file_count=entry["file_count"],
-                        db_integrity_pass=entry["db_integrity_pass"],
-                        signature=entry["signature"],
-                    ))
+                    records.append(
+                        KnownGoodRecord(
+                            commit_sha=entry["commit_sha"],
+                            verified_at=entry["verified_at"],
+                            verification_method=entry["verification_method"],
+                            file_count=entry["file_count"],
+                            db_integrity_pass=entry["db_integrity_pass"],
+                            signature=entry["signature"],
+                        )
+                    )
                 except (json.JSONDecodeError, KeyError):
                     continue
 

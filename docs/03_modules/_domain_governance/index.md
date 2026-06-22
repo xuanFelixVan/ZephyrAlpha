@@ -1,27 +1,35 @@
 ---
-blueprint_id: DOM-GOV-001
-created: '2026-05-06'
 doc_type: index
-module_id: MOD-INF-061
-status: Draft
-title: _domain-governance — 目录索引
-updated: '2026-05-06'
-version: 1.0.0
+status: active
+title: "_domain_governance — 目录索引"
+module_id: "MOD-023"
+blueprint_id: "MOD-023"
+version: "0.13.0"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-
-# _domain-governance
+# _domain_governance
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-06
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blueprint.md](blueprint.md) | Markdown | 治理域集成蓝图 — Agent 治理八件套跨模块集成契约 |
+| [audit_trail/](audit_trail/index.md) | 目录 | audit_trail — 目录索引 |
+| [blueprint.md](blueprint.md) | Markdown | Governance Domain 蓝图 — Agent治理八件套跨模块集成契约 |
+| [capacity_upgrade/](capacity_upgrade/index.md) | 目录 | capacity_upgrade — 目录索引 |
+| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| [code_dedup_engine/](code_dedup_engine/index.md) | 目录 | 代码去重引擎 — 目录索引 |
+| [domain_progress.json](domain_progress.json) | JSON | |
+| [drift_detector/](drift_detector/index.md) | 目录 | drift_detector |
+| [governance_automation/](governance_automation/index.md) | 目录 | governance_automation |
+| [index.md](index.md) | Markdown | _domain_governance — 目录索引 |
+| [registry_governance/](registry_governance/index.md) | 目录 | registry_governance — 目录索引 |
+| [vibe_coding_pipelines/](vibe_coding_pipelines/index.md) | 目录 | Vibe Coding Pipelines |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

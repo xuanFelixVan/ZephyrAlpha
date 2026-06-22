@@ -47,16 +47,14 @@ KB 13项一键体检 + --self-test入口
 
 from __future__ import annotations
 
-import hashlib
 import json
 import logging
 import os
 import sys
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -103,11 +101,14 @@ def _check_sqlite_integrity(root: Path) -> CheckResult:
         db_path = root / "data" / "databases" / "governance.db"
         if not db_path.exists():
             return CheckResult(
-                1, "SQLite Integrity", CheckStatus.WARN,
+                1,
+                "SQLite Integrity",
+                CheckStatus.WARN,
                 f"Database not found: {db_path}",
-                "KB尚未初始化，运行 bootstrap 或等待首次KE创建后自动创建"
+                "KB尚未初始化，运行 bootstrap 或等待首次KE创建后自动创建",
             )
         import sqlite3
+
         conn = sqlite3.connect(str(db_path))
         cursor = conn.execute("PRAGMA integrity_check")
         result = cursor.fetchone()[0]
@@ -115,14 +116,15 @@ def _check_sqlite_integrity(root: Path) -> CheckResult:
         if result == "ok":
             return CheckResult(1, "SQLite Integrity", CheckStatus.PASS, "integrity_check: ok")
         return CheckResult(
-            1, "SQLite Integrity", CheckStatus.FAIL,
+            1,
+            "SQLite Integrity",
+            CheckStatus.FAIL,
             f"integrity_check: {result}",
-            "数据库损坏。运行 kb_repo 的 startup_integrity_check() 尝试自动恢复"
+            "数据库损坏。运行 kb_repo 的 startup_integrity_check() 尝试自动恢复",
         )
     except Exception as e:
         return CheckResult(
-            1, "SQLite Integrity", CheckStatus.FAIL,
-            str(e), "检查 data/databases/governance.db 是否存在且可读写"
+            1, "SQLite Integrity", CheckStatus.FAIL, str(e), "检查 data/databases/governance.db 是否存在且可读写"
         )
 
 
@@ -131,30 +133,25 @@ def _check_chromadb_health(root: Path) -> CheckResult:
         chroma_dir = root / "data" / "chroma"
         if not chroma_dir.exists():
             return CheckResult(
-                2, "ChromaDB Health", CheckStatus.WARN,
+                2,
+                "ChromaDB Health",
+                CheckStatus.WARN,
                 f"ChromaDB directory not found: {chroma_dir}",
-                "运行 bootstrap 自动创建 ChromaDB 持久化目录"
+                "运行 bootstrap 自动创建 ChromaDB 持久化目录",
             )
         try:
             from zephyr.governance.kb.chromadb_init import get_chroma_client
+
             client = get_chroma_client()
             collections = client.list_collections()
             count = len(collections)
-            return CheckResult(
-                2, "ChromaDB Health", CheckStatus.PASS,
-                f"{count} collection(s) alive"
-            )
+            return CheckResult(2, "ChromaDB Health", CheckStatus.PASS, f"{count} collection(s) alive")
         except ImportError:
             return CheckResult(
-                2, "ChromaDB Health", CheckStatus.WARN,
-                "chromadb 未安装或不可用",
-                "pip install chromadb"
+                2, "ChromaDB Health", CheckStatus.WARN, "chromadb 未安装或不可用", "pip install chromadb"
             )
     except Exception as e:
-        return CheckResult(
-            2, "ChromaDB Health", CheckStatus.FAIL,
-            str(e), "检查 ChromaDB 是否正确初始化"
-        )
+        return CheckResult(2, "ChromaDB Health", CheckStatus.FAIL, str(e), "检查 ChromaDB 是否正确初始化")
 
 
 def _check_ke_count(root: Path) -> CheckResult:
@@ -162,8 +159,7 @@ def _check_ke_count(root: Path) -> CheckResult:
         know_dir = root / "docs" / "08_knowledge" / "01_raw_intake"
         if not know_dir.exists():
             return CheckResult(
-                3, "KE Count (MVKB)", CheckStatus.WARN,
-                "docs/08_knowledge/ 目录不存在", "运行 bootstrap 自动创建"
+                3, "KE Count (MVKB)", CheckStatus.WARN, "docs/08_knowledge/ 目录不存在", "运行 bootstrap 自动创建"
             )
         ke_files = list(know_dir.glob("KE-*.md"))
         count = len(ke_files)
@@ -171,9 +167,11 @@ def _check_ke_count(root: Path) -> CheckResult:
             return CheckResult(3, "KE Count (MVKB)", CheckStatus.PASS, f"{count} KEs (>= 10)")
         else:
             return CheckResult(
-                3, "KE Count (MVKB)", CheckStatus.WARN,
+                3,
+                "KE Count (MVKB)",
+                CheckStatus.WARN,
                 f"{count} KEs (< 10 MVKB threshold)",
-                "运行 bootstrap 扫描全项目文档自动填充KE库"
+                "运行 bootstrap 扫描全项目文档自动填充KE库",
             )
     except Exception as e:
         return CheckResult(3, "KE Count (MVKB)", CheckStatus.FAIL, str(e))
@@ -199,15 +197,14 @@ def _check_category_coverage(root: Path) -> CheckResult:
                 pass
         count = len(categories)
         if count >= 5:
-            return CheckResult(
-                4, "Category Coverage", CheckStatus.PASS,
-                f"{count} categories: {sorted(categories)}"
-            )
+            return CheckResult(4, "Category Coverage", CheckStatus.PASS, f"{count} categories: {sorted(categories)}")
         else:
             return CheckResult(
-                4, "Category Coverage", CheckStatus.WARN,
+                4,
+                "Category Coverage",
+                CheckStatus.WARN,
                 f"{count} categories (< 5 MVKB threshold): {sorted(categories)}",
-                "运行 bootstrap 丰富KE来源"
+                "运行 bootstrap 丰富KE来源",
             )
     except Exception as e:
         return CheckResult(4, "Category Coverage", CheckStatus.FAIL, str(e))
@@ -244,22 +241,20 @@ def _check_load_bearing_kes(root: Path) -> CheckResult:
                 pass
         if not load_bearing:
             return CheckResult(
-                5, "Load-Bearing KEs", CheckStatus.PASS,
-                "No load-bearing KEs defined (OK for bootstrap phase)"
+                5, "Load-Bearing KEs", CheckStatus.PASS, "No load-bearing KEs defined (OK for bootstrap phase)"
             )
         warnings = []
         if expired_lb:
             warnings.append(f"KEs expiring < 14d: {expired_lb}")
         if warnings:
             return CheckResult(
-                5, "Load-Bearing KEs", CheckStatus.WARN,
+                5,
+                "Load-Bearing KEs",
+                CheckStatus.WARN,
                 f"{len(load_bearing)} load-bearing: " + "; ".join(warnings),
-                "检查即将过期的承重KE并决定是否续期或创建替代"
+                "检查即将过期的承重KE并决定是否续期或创建替代",
             )
-        return CheckResult(
-            5, "Load-Bearing KEs", CheckStatus.PASS,
-            f"{len(load_bearing)} load-bearing KEs healthy"
-        )
+        return CheckResult(5, "Load-Bearing KEs", CheckStatus.PASS, f"{len(load_bearing)} load-bearing KEs healthy")
     except Exception as e:
         return CheckResult(5, "Load-Bearing KEs", CheckStatus.FAIL, str(e))
 
@@ -276,6 +271,7 @@ def _check_ghost_scan(root: Path) -> CheckResult:
         chroma_count = 0
         try:
             from zephyr.governance.kb.chromadb_init import get_chroma_client
+
             client = get_chroma_client()
             coll = client.get_collection("ke_entries")
             chroma_count = coll.count()
@@ -283,24 +279,30 @@ def _check_ghost_scan(root: Path) -> CheckResult:
             pass
         if chroma_count == 0:
             return CheckResult(
-                6, "Ghost Scan", CheckStatus.WARN,
+                6,
+                "Ghost Scan",
+                CheckStatus.WARN,
                 f"MD: {md_count} KEs, ChromaDB: 0 (未索引)",
-                "运行 bootstrap 触发 ChromaDB 索引"
+                "运行 bootstrap 触发 ChromaDB 索引",
             )
         delta = md_count - chroma_count
         if delta == 0:
             return CheckResult(6, "Ghost Scan", CheckStatus.PASS, f"MD={md_count} == ChromaDB={chroma_count}")
         elif abs(delta) <= 5:
             return CheckResult(
-                6, "Ghost Scan", CheckStatus.WARN,
+                6,
+                "Ghost Scan",
+                CheckStatus.WARN,
                 f"MD={md_count}, ChromaDB={chroma_count} (delta={delta})",
-                "少量差异正常（G1-G5管道在途KE），若持续一周请检查管道健康"
+                "少量差异正常（G1-G5管道在途KE），若持续一周请检查管道健康",
             )
         else:
             return CheckResult(
-                6, "Ghost Scan", CheckStatus.FAIL,
+                6,
+                "Ghost Scan",
+                CheckStatus.FAIL,
                 f"MD={md_count}, ChromaDB={chroma_count} (delta={delta})",
-                "大幅差异——可能存在管道堵塞或ChromaDB孤向量，运行 reindex"
+                "大幅差异——可能存在管道堵塞或ChromaDB孤向量，运行 reindex",
             )
     except Exception as e:
         return CheckResult(6, "Ghost Scan", CheckStatus.FAIL, str(e))
@@ -319,14 +321,13 @@ def _check_wal_health(root: Path) -> CheckResult:
                 oversized.append(f"{wf.name}: {size_kb:.0f}KB")
         if oversized:
             return CheckResult(
-                7, "WAL Health", CheckStatus.WARN,
+                7,
+                "WAL Health",
+                CheckStatus.WARN,
                 f"Oversized WAL files: {oversized}",
-                "SQLite WAL过大可能意味着checkpoint未正常执行。关闭SQLite连接后自动合并"
+                "SQLite WAL过大可能意味着checkpoint未正常执行。关闭SQLite连接后自动合并",
             )
-        return CheckResult(
-            7, "WAL Health", CheckStatus.PASS,
-            f"{len(wal_files)} WAL file(s) within normal size range"
-        )
+        return CheckResult(7, "WAL Health", CheckStatus.PASS, f"{len(wal_files)} WAL file(s) within normal size range")
     except Exception as e:
         return CheckResult(7, "WAL Health", CheckStatus.FAIL, str(e))
 
@@ -343,6 +344,7 @@ def _check_hnsw_fragmentation(root: Path) -> CheckResult:
         size_mb = total_size / (1024 * 1024)
         try:
             from zephyr.governance.kb.chromadb_init import get_chroma_client
+
             client = get_chroma_client()
             coll = client.get_collection("ke_entries")
             entry_count = coll.count()
@@ -353,13 +355,14 @@ def _check_hnsw_fragmentation(root: Path) -> CheckResult:
         bytes_per_entry = total_size / entry_count if entry_count else 0
         if bytes_per_entry > 4096:
             return CheckResult(
-                8, "HNSW Fragmentation", CheckStatus.WARN,
+                8,
+                "HNSW Fragmentation",
+                CheckStatus.WARN,
                 f"{bytes_per_entry:.0f}B/entry (>{4096} threshold), {entry_count} entries, {size_mb:.1f}MB",
-                "建议运行 reindex 重建HNSW图: python -m zephyr.knowledge.kb.embedding_migrate reindex"
+                "建议运行 reindex 重建HNSW图: python -m zephyr.knowledge.kb.embedding_migrate reindex",
             )
         return CheckResult(
-            8, "HNSW Fragmentation", CheckStatus.PASS,
-            f"{bytes_per_entry:.0f}B/entry, {entry_count} entries"
+            8, "HNSW Fragmentation", CheckStatus.PASS, f"{bytes_per_entry:.0f}B/entry, {entry_count} entries"
         )
     except Exception as e:
         return CheckResult(8, "HNSW Fragmentation", CheckStatus.FAIL, str(e))
@@ -373,10 +376,11 @@ def _check_freeze_state(root: Path) -> CheckResult:
         data = json.loads(lock_path.read_text(encoding="utf-8"))
         mode = data.get("mode", "unknown")
         return CheckResult(
-            9, "Freeze State", CheckStatus.WARN,
-            f"KB is in {mode} mode since {data.get('since', 'unknown')}. "
-            f"Reason: {data.get('reason', 'unspecified')}",
-            "若冻结已解决问题，运行 python -m zephyr.knowledge.kb --unfreeze 恢复"
+            9,
+            "Freeze State",
+            CheckStatus.WARN,
+            f"KB is in {mode} mode since {data.get('since', 'unknown')}. Reason: {data.get('reason', 'unspecified')}",
+            "若冻结已解决问题，运行 python -m zephyr.knowledge.kb --unfreeze 恢复",
         )
     except Exception as e:
         return CheckResult(9, "Freeze State", CheckStatus.FAIL, str(e))
@@ -388,17 +392,18 @@ def _check_tombstone_integrity(root: Path) -> CheckResult:
         if not db_path.exists():
             return CheckResult(10, "Tombstone Integrity", CheckStatus.SKIP, "Database not found")
         import sqlite3
+
         conn = sqlite3.connect(str(db_path))
-        cursor = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='ke_tombstones'"
-        )
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='ke_tombstones'")
         exists = cursor.fetchone()
         conn.close()
         if not exists:
             return CheckResult(
-                10, "Tombstone Integrity", CheckStatus.WARN,
+                10,
+                "Tombstone Integrity",
+                CheckStatus.WARN,
                 "ke_tombstones table does not exist",
-                "运行 kb.ke_tombstone 初始化自动创建墓碑表"
+                "运行 kb.ke_tombstone 初始化自动创建墓碑表",
             )
         return CheckResult(10, "Tombstone Integrity", CheckStatus.PASS, "Table exists")
     except Exception as e:
@@ -417,14 +422,13 @@ def _check_silent_period(root: Path) -> CheckResult:
         recent = [f for f in ke_files if f.stat().st_mtime > recent_cutoff]
         if not recent:
             return CheckResult(
-                11, "Silent Period", CheckStatus.WARN,
+                11,
+                "Silent Period",
+                CheckStatus.WARN,
                 f"No KEs created/modified in last 7 days (total: {len(ke_files)})",
-                "管道可能已停止工作。检查 G1-G5 门禁是否正常运行"
+                "管道可能已停止工作。检查 G1-G5 门禁是否正常运行",
             )
-        return CheckResult(
-            11, "Silent Period", CheckStatus.PASS,
-            f"{len(recent)} KEs modified in last 7 days"
-        )
+        return CheckResult(11, "Silent Period", CheckStatus.PASS, f"{len(recent)} KEs modified in last 7 days")
     except Exception as e:
         return CheckResult(11, "Silent Period", CheckStatus.FAIL, str(e))
 
@@ -452,9 +456,11 @@ def _check_filesystem_permissions(root: Path) -> CheckResult:
                 failures.append(f"Cannot write: {p}")
         if failures:
             return CheckResult(
-                12, "Filesystem Permissions", CheckStatus.FAIL,
+                12,
+                "Filesystem Permissions",
+                CheckStatus.FAIL,
                 "; ".join(failures),
-                "检查文件系统权限和杀毒软件是否锁定相关目录"
+                "检查文件系统权限和杀毒软件是否锁定相关目录",
             )
         return CheckResult(12, "Filesystem Permissions", CheckStatus.PASS, "All critical paths writable")
     except Exception as e:
@@ -465,32 +471,37 @@ def _check_embedding_model(root: Path) -> CheckResult:
     try:
         try:
             from sentence_transformers import SentenceTransformer
+
             model = SentenceTransformer("BAAI/bge-small-zh-v1.5")
             emb = model.encode("测试")
-            return CheckResult(
-                13, "Embedding Model", CheckStatus.PASS,
-                f"bge-small-zh-v1.5 OK (dim={emb.shape[0]})"
-            )
+            return CheckResult(13, "Embedding Model", CheckStatus.PASS, f"bge-small-zh-v1.5 OK (dim={emb.shape[0]})")
         except ImportError:
             return CheckResult(
-                13, "Embedding Model", CheckStatus.WARN,
+                13,
+                "Embedding Model",
+                CheckStatus.WARN,
                 "sentence-transformers not installed",
-                "pip install sentence-transformers"
+                "pip install sentence-transformers",
             )
         except Exception:
             try:
                 from sentence_transformers import SentenceTransformer
+
                 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
                 emb = model.encode("test")
                 return CheckResult(
-                    13, "Embedding Model", CheckStatus.WARN,
-                    f"bge-small-zh-v1.5 unavailable, fell back to all-MiniLM-L6-v2 (dim={emb.shape[0]})"
+                    13,
+                    "Embedding Model",
+                    CheckStatus.WARN,
+                    f"bge-small-zh-v1.5 unavailable, fell back to all-MiniLM-L6-v2 (dim={emb.shape[0]})",
                 )
             except Exception as e2:
                 return CheckResult(
-                    13, "Embedding Model", CheckStatus.WARN,
+                    13,
+                    "Embedding Model",
+                    CheckStatus.WARN,
                     f"No embedding model available: {e2}",
-                    "向量检索将使用Mock模式（无向量索引），运行 pip install sentence-transformers"
+                    "向量检索将使用Mock模式（无向量索引），运行 pip install sentence-transformers",
                 )
     except Exception as e:
         return CheckResult(13, "Embedding Model", CheckStatus.FAIL, str(e))
@@ -563,8 +574,13 @@ class SelfTest:
                 "failed": report.failed,
                 "skipped": report.skipped,
                 "checks": [
-                    {"index": c.index, "name": c.name, "status": c.status.value,
-                     "detail": c.detail, "suggestion": c.suggestion}
+                    {
+                        "index": c.index,
+                        "name": c.name,
+                        "status": c.status.value,
+                        "detail": c.detail,
+                        "suggestion": c.suggestion,
+                    }
                     for c in report.checks
                 ],
                 "summary": report.summary,
@@ -599,6 +615,7 @@ class SelfTest:
 
     def cli(self) -> int:
         import argparse
+
         parser = argparse.ArgumentParser(description="KB System Self-Test")
         parser.add_argument("--json", action="store_true", help="JSON output")
         parser.add_argument("--project-root", type=Path, help="Project root path")

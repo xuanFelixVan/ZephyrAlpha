@@ -24,15 +24,16 @@
     - frozen dataclass × 1
 =============================================
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
 
-from zephyr.ops.circuit_breaker_repo import CircuitBreakerRecord, CircuitBreakerRepo
 from zephyr.integration.shared.schema.severity_types import CircuitBreakerState
 from zephyr.integration.shared_08.utils.db_utils import ensure_schema
+from zephyr.ops.circuit_breaker_repo import CircuitBreakerRecord, CircuitBreakerRepo
 
 
 @pytest.fixture()

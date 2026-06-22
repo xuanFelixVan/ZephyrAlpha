@@ -2,29 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.semantic_cache
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import hashlib
 import time
-from dataclasses import dataclass, field
 from collections import OrderedDict
+from dataclasses import dataclass
+
 
 @dataclass
 class CacheEntry:
@@ -33,6 +24,7 @@ class CacheEntry:
     cost_saved: float
     created_at: float
     hits: int = 1
+
 
 class SemanticCache:
     def __init__(self, max_entries: int = 100, ttl: float = 3600.0):
@@ -69,9 +61,7 @@ class SemanticCache:
         if key in self._cache:
             self._cache.move_to_end(key)
             return
-        self._cache[key] = CacheEntry(
-            key=key, response=response, cost_saved=cost, created_at=time.time()
-        )
+        self._cache[key] = CacheEntry(key=key, response=response, cost_saved=cost, created_at=time.time())
         self._cache.move_to_end(key)
         while len(self._cache) > self._max_entries:
             self._cache.popitem(last=False)

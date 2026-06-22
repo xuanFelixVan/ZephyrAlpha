@@ -12,23 +12,22 @@
 
 """ChaosHook — integrates ChaosEngine with the orchestrator execution loop."""
 
-
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
 from typing import Any
 
+from zephyr.shared.contracts.orchestration_protocol import ChaosEngineProtocol
 from zephyr.trading.orchestrator.chaos_engine import ChaosEngine, FaultRecord
 from zephyr.trading.orchestrator.fault_types import FaultTypeRegistry, get_default_registry
-from zephyr.shared.contracts.orchestration_protocol import ChaosEngineProtocol
 
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = [
     "ChaosHook",
-    "ChaosHookPolicy",
     "ChaosHookError",
+    "ChaosHookPolicy",
 ]
 
 
@@ -41,14 +40,18 @@ class ChaosHookPolicy:
     step_faults: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
     enabled: bool = True
 
-    def add_step_fault(self, step_name: str, fault_type: str, target: str, params: dict[str, Any] | None = None) -> None:
+    def add_step_fault(
+        self, step_name: str, fault_type: str, target: str, params: dict[str, Any] | None = None
+    ) -> None:
         if step_name not in self.step_faults:
             self.step_faults[step_name] = []
-        self.step_faults[step_name].append({
-            "fault_type": fault_type,
-            "target": target,
-            "params": params or {},
-        })
+        self.step_faults[step_name].append(
+            {
+                "fault_type": fault_type,
+                "target": target,
+                "params": params or {},
+            }
+        )
 
 
 @dataclass
@@ -92,12 +95,17 @@ class ChaosHook:
                 records.append(record)
                 logger.info(
                     "ChaosHook: pre_step step=%s fault=%s target=%s fault_id=%s",
-                    context.step_name, fault_type, target, record.fault_id,
+                    context.step_name,
+                    fault_type,
+                    target,
+                    record.fault_id,
                 )
             except Exception as exc:
                 logger.error(
                     "ChaosHook: pre_step inject failed step=%s fault=%s: %s",
-                    context.step_name, fault_type, exc,
+                    context.step_name,
+                    fault_type,
+                    exc,
                 )
 
         context.fault_records = records
@@ -117,12 +125,16 @@ class ChaosHook:
                 self._engine.recover(record.target)
                 logger.info(
                     "ChaosHook: post_step recovered step=%s fault_id=%s target=%s",
-                    context.step_name, record.fault_id, record.target,
+                    context.step_name,
+                    record.fault_id,
+                    record.target,
                 )
             except Exception as exc:
                 logger.error(
                     "ChaosHook: post_step recover failed step=%s fault_id=%s: %s",
-                    context.step_name, record.fault_id, exc,
+                    context.step_name,
+                    record.fault_id,
+                    exc,
                 )
 
         context.fault_records = []

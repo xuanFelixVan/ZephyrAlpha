@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-421
 status: active
 title: 4A.5 架构归属说明

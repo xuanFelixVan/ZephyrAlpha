@@ -2,29 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.execution.position
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] ex_core; pf_core; risk; l11-ml-platform
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-006 ====
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
+
 
 @dataclass(frozen=True)
 class PositionSnapshot:
@@ -38,6 +29,7 @@ class PositionSnapshot:
     schema_version: str = "1.0"
     total_market_value: Decimal = Decimal("0")
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-006 ====
 

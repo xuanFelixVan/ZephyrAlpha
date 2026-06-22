@@ -53,7 +53,7 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 
 **底层实现**: 锁通过 `os.makedirs(exist_ok=False)` 原子目录创建实现互斥。`.ailocks/{sanitized_path}.lock/owner.json` = 锁持有者信息，`.ailocks/registry.json` = 全局锁注册表。TTL = 30 分钟——对话结束前必须释放，TTL 只是防崩溃的最后防线。
 
-**对标**: K8s ResourceQuota + etcd 分布式锁 + Git pre-commit hooks。
+**规则真源**: [trae_001_file_operation_security.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-ZERO | 门禁: G0 | 实现: [lock_files.py](file:///d:/ZephyrAlpha/scripts/lock_files.py) + [staging_area.py](file:///d:/ZephyrAlpha/src/zephyr/trading/staging_area.py)
 
 ---
 
@@ -74,7 +74,7 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 
 **孤儿检测**: `python scripts/governance/audit_registration.py`（每次 session 结束或 Pipeline Gate 运行时扫描）。exit 0 = CLEAN，exit 1 = 有孤儿。
 
-**对标**: `kubectl create`（唯一 API 入口）+ Rails `rails generate`（脚手架自动注入路由）。
+**规则真源**: [trae_001_file_operation_security.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-FOUR + [trae_015_arch_path_registration.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_015_arch_path_registration.yaml) | 实现: [scaffold.py](file:///d:/ZephyrAlpha/scripts/scaffold.py) | 验证: `python scripts/governance/audit_registration.py`
 
 ---
 
@@ -101,7 +101,7 @@ STEP 3: 功能价值检查 — 零消费者≠无价值。判断标准：
 
 **临时文件也须过 STEP 3**: `_temp*` / `_check*` / `_phase_*` / `_audit*` 前缀文件删除前必须确认内容价值。
 
-**对标**: 法庭"排除合理怀疑"原则 + Git "never lose data" 哲学。
+**规则真源**: [trae_001_file_operation_security.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-THREE + [trae_052_cross_blueprint_change_cleanup.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_052_cross_blueprint_change_cleanup.yaml)（价值判定）
 
 ---
 
@@ -208,7 +208,7 @@ except PermissionError:
 
 **每日安检**: `python scripts/lock_files.py check-session <session_id>`
 
-**对标**: AGENTS.md §5.3.3 + §5.3.5，IRN-011 ZR-003/ZR-005/ZR-007/ZR-008。
+**规则真源**: [zero_residue.yaml](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/zero_residue.yaml)（gate_id: ZERO-RESIDUE, ZR-001~009）
 
 ---
 
@@ -349,8 +349,8 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | **新建/修改代码文件** | 添加防幻觉头部：`[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[CONSUMERS]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]` 十一字段 | 缺失 = 孤儿文件 → 禁止关闭任务 |
 | **规格化蓝图** | 先 Layer 1（蓝图+施工图模板 v4.0 合规）→ 后 Layer 2（规格化砍削） | Layer 1 不通过 → 禁止砍削 |
 | **规格化代码文件** | STEP 5.5：检查文件头部十一字段完整性 | 缺失 → 必须补充（规格化的"加"方向） |
-| **蓝图-代码双向对齐** | 蓝图 §4 文件清单 ↔ 代码 `[BLUEPRINT]` 字段互相验证 | 不对齐 → 漂移，禁止关闭任务 |
-| **蓝图-代码-路径树三方对齐** | 结构变更后 MUST 同步刷新：⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db 全景图）。仅 depgraph.db 为真源。正常期: `python scripts/governance/generate_project_depgraph.py --max-workers 8` + `python scripts/governance/generate_project_path_tree.py --write` + 蓝图 §4 | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
+| **蓝图-代码双向对齐** | 蓝图 frontmatter.file_manifest + dependency_graph ↔ 代码 `[BLUEPRINT]` 字段互相验证 | 不对齐 → 漂移，禁止关闭任务 |
+| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph.db↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db 全景图）。仅 depgraph.db 为真源。正常期: `python scripts/governance/generate_project_depgraph.py --max-workers 8` + `python scripts/governance/generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
 | **创建/删除/移动文件后** | `python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |
 | **写代码时** | 禁止占位符：无 `TODO`/`...`/`pass`/`NotImplementedError` | 半成品 = 未完成 → 禁止关闭任务 |
 | **修改文件** | 编辑优先 + 最小变更：surgical edit，禁止删+建，禁止顺手重构 | 丢失 history / 引入无关 bug → 禁止关闭任务 |
@@ -364,7 +364,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | **修改 PS-STD-001** | MUST 同步检查 PS-REG-012 对应字段 | 规则漂移 → 禁止关闭任务 |
 | **修改任何 trae_XXX 规则文件** | Read trae_030 全文（规则元文档，含 GOV-DOC-016 纯陈述原则 + GOV-DOC-017 规则抽象性原则） | 不读元规则 → 可能违反纯陈述/抽象性原则 → 禁止改规则 |
 
-对标：航空业 Pre-flight Checklist——飞行员不是"记住"检查项，是逐条念出来打勾。
+规则真源: [trae_001_file_operation_security.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) + [gate_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml)（门禁注册表）
 
 ---
 
@@ -492,11 +492,13 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 
 ## 十、极简产出标准
 
-> 对标：OpenAI system prompt 指令链风格 + Anthropic CLAUDE.md 一句一行 + Cursor rules <500 tokens/文件
+> 规则真源: [trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)（文档编号与元数据 + 产出物规格化）
 
 ### 10.1 核心原则
 
 **为 AI 消费优化，不是为人类阅读优化。** Token = 成本 = 注意力预算。每个字必须有信息增量。
+
+> 本节是 [TRAE-057 AI消费优先原则](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_057_ai_consumer_first.yaml) §1 的施工展开。TRAE-057 是顶层原则，本节是其具体施工指导。
 
 ### 10.2 格式优先级
 
@@ -644,7 +646,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 会话门禁检查清单（12项） | [`gate-runbook.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-runbook.md)（待创建） | ~600 |
 | AI 事故响应手册（P0/P1/P2） | [`incident-runbook.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-runbook.md)（待创建） | ~1500 |
 | Vibe Coding 操作入口 | [`vibe_coding/index.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/index.md) | ~300 |
-| 术语表 | `docs/01_policies_and_standards/meta/glossary.md`（待创建） | ~1000 |
+| 术语表 | `docs/01_policies_and_standards/_registry/vocabularies/glossary.yaml`（待创建） | ~1000 |
 | 规则体系总索引 | `docs/01_policies_and_standards/index.md` | ~500 |
 | **AI 压缩工作流标准** | [`trae_030_doc_numbering_metadata.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | ~800 |
 
@@ -838,17 +840,32 @@ STEP 3: 评估修改对每个消费者的影响 → 无影响 → 继续 / 有�
 > **触发条件**：对项目结构做任何非平凡变更——移动模块、拆分包、重构依赖、批量修改标签。
 > **核心原则**：先推演再动手。推演不过 = 禁止执行。
 
-### 13.1 五步强制流程
+### 13.1 14步统一流程（RULE-TEN）
 
-```
-STEP 1  依赖图推演 → 模拟变更后的依赖链，确认不会产生新循环/堵塞
-STEP 2  蓝图归属   → 确认目标包有蓝图，模块的 [BLUEPRINT] 指向正确
-STEP 3  导入路径映射 → 列出所有受影响的 import 语句（Grep 全项目）
-STEP 4  执行操作   → 按推演验证过的计划操作
-STEP 5  验证       → 重新生成 depgraph + path-tree + diagnose，确认无回退
-```
+**触发**：对项目做任何非平凡变更——恢复功能、新建功能、移动模块、拆分包、重构依赖、批量修改标签。
 
-**跳过任何一步 = 违规。** 特别是 STEP 1（推演）——不推演就动手，可能引入新循环依赖，导致系统堵塞，必须回滚重来。
+| 阶段 | STEP | 名称 | 做什么 |
+|------|:---:|------|--------|
+| 分析设计 | 1 | 读蓝图 | 读取功能对应蓝图，理解设计意图 |
+| 分析设计 | 2 | 全量定位 | 全项目搜索所有相关文件（本包+孤儿+重复+跨蓝图） |
+| 分析设计 | 3 | 归属裁定 | 孤儿纳入/重复去重/跨蓝图归属裁定 |
+| 分析设计 | 4 | 蓝图设计 | 在蓝图里设计依赖关系+启动方式+自动运行+自动结束 |
+| 施工 | 5 | 位置校验 | 按蓝图设计调整文件位置/命名/注册 |
+| 施工 | 6 | 修复断链 | 按蓝图设计的依赖关系修复import断链 |
+| 施工 | 7 | 补全头部 | 补全文件头部十字段 |
+| 施工 | 8 | 运行测试 | pytest运行功能测试 |
+| 施工 | 9 | 修复失败 | 修复失败测试直到通过 |
+| 安全验证 | 10 | 红蓝对抗 | 罗列极限测试清单+执行+修复漏洞 |
+| 收尾对齐 | 11 | 更新蓝图 | 将实际状态写回蓝图frontmatter |
+| 收尾对齐 | 12 | 三方对齐 | 全景图+蓝图+代码头部三方一致验证 |
+| 收尾对齐 | 13 | 更新索引 | 更新所有相关INDEX/注册表/manifest |
+| 收尾对齐 | 14 | 报告 | 向统筹AI报告状态 |
+
+**核心原则**：先分析再动手，先设计再施工。跳过任何步骤 = 违规。
+
+**轻量模式**：当变更仅涉及文件移动/重命名/依赖调整，不涉及功能恢复/新建时，可使用5步轻量模式：依赖图推演→蓝图归属→导入路径映射→执行操作→验证。
+
+**详细规格**：→ 参见 `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md §2.3`
 
 ### 13.2 推演方法（STEP 1 详解）
 

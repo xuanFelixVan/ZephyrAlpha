@@ -27,8 +27,8 @@ and beta migration verification.
 Task: T-1-10 | experimental | Composer 2
 ADR ref: ADR-0037 (pending Opus authoring)
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import hashlib
 from pathlib import Path

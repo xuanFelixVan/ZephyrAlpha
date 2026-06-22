@@ -20,10 +20,10 @@ __manifest__ = {
 }
 
 from __future__ import annotations
+
 import os
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -99,11 +99,7 @@ def remove_module_from_init(module_name: str) -> bool:
     # 模块名转驼峰: momentum_factor -> MomentumFactor
     class_name = "".join(p.capitalize() for p in module_name.split("_"))
     # 匹配 "ClassName" 或 'ClassName'（可能带逗号和换行）
-    new_content = re.sub(
-        rf'["\']{re.escape(class_name)}["\'],?\s*\n?',
-        '',
-        new_content
-    )
+    new_content = re.sub(rf'["\']{re.escape(class_name)}["\'],?\s*\n?', "", new_content)
 
     if new_content != content:
         # 原子写入
@@ -130,17 +126,17 @@ def main() -> None:
     for i in range(max_iterations):
         success, error = try_import()
         if success:
-            print(f"\n[OK] import zephyr.governance 成功！（迭代 {i+1} 次）")
+            print(f"\n[OK] import zephyr.governance 成功！（迭代 {i + 1} 次）")
             break
 
         # 提取失败的模块名
         module_name = extract_failed_module(error)
         if not module_name:
-            print(f"[ERROR] 无法从错误信息中提取模块名:")
+            print("[ERROR] 无法从错误信息中提取模块名:")
             print(f"  {error[:200]}")
             break
 
-        print(f"  迭代 {i+1}: 移除 {module_name}")
+        print(f"  迭代 {i + 1}: 移除 {module_name}")
         removed_modules.append(module_name)
 
         # 从 __init__.py 中移除
@@ -160,12 +156,13 @@ def main() -> None:
     if success:
         print("\n[FINAL] import zephyr.governance 成功！")
     else:
-        print(f"\n[FINAL] import zephyr.governance 仍然失败:")
+        print("\n[FINAL] import zephyr.governance 仍然失败:")
         print(f"  {error[:300]}")
 
     # 保存移除清单
     output_path = PROJECT_ROOT / "removed_modules.json"
     import json
+
     output_path.write_text(json.dumps(removed_modules, indent=2), encoding="utf-8")
     print(f"\n移除清单已写入: {output_path}")
 

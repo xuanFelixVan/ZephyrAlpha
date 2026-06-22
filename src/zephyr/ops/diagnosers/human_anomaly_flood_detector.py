@@ -58,21 +58,21 @@ class HumanAnomalyFloodDetector:
     flood_events: list[dict] = field(default_factory=list)
     auto_triage_active: bool = False
 
-    def record_anomaly_exposure(
-        self, human_id: str, anomaly_id: str, severity: str, dismissed: bool = False
-    ) -> dict:
+    def record_anomaly_exposure(self, human_id: str, anomaly_id: str, severity: str, dismissed: bool = False) -> dict:
         now = time.time()
 
         if human_id not in self.human_exposure:
             self.human_exposure[human_id] = []
 
         exposure = self.human_exposure[human_id]
-        exposure.append({
-            "ts": now,
-            "anomaly_id": anomaly_id,
-            "severity": severity,
-            "dismissed": dismissed,
-        })
+        exposure.append(
+            {
+                "ts": now,
+                "anomaly_id": anomaly_id,
+                "severity": severity,
+                "dismissed": dismissed,
+            }
+        )
 
         window_start = now - 3600
         exposure = [e for e in exposure if e["ts"] > window_start]
@@ -93,13 +93,15 @@ class HumanAnomalyFloodDetector:
             level = FloodLevel.NORMAL
 
         if level in (FloodLevel.FLOOD, FloodLevel.DROWNING):
-            self.flood_events.append({
-                "ts": now,
-                "human_id": human_id,
-                "level": level.value,
-                "hourly_rate": hourly_rate,
-                "dismissed_pct": round(100.0 * dismissed_count / max(hourly_rate, 1), 1),
-            })
+            self.flood_events.append(
+                {
+                    "ts": now,
+                    "human_id": human_id,
+                    "level": level.value,
+                    "hourly_rate": hourly_rate,
+                    "dismissed_pct": round(100.0 * dismissed_count / max(hourly_rate, 1), 1),
+                }
+            )
 
         critical_among_flood = sum(1 for e in exposure if e.get("severity", "").startswith("P0"))
 
@@ -111,9 +113,12 @@ class HumanAnomalyFloodDetector:
             "critical_buried": critical_among_flood > 0 and level != FloodLevel.NORMAL,
             "auto_triage_active": self.auto_triage_active,
             "recommendation": (
-                "auto_triage_p3_p4_immediately" if level == FloodLevel.DROWNING
-                else "aggregate_p2_into_digest" if level == FloodLevel.FLOOD
-                else "reduce_surface_frequency" if level == FloodLevel.ELEVATED
+                "auto_triage_p3_p4_immediately"
+                if level == FloodLevel.DROWNING
+                else "aggregate_p2_into_digest"
+                if level == FloodLevel.FLOOD
+                else "reduce_surface_frequency"
+                if level == FloodLevel.ELEVATED
                 else "continue"
             ),
         }
@@ -163,7 +168,8 @@ class HumanAnomalyFloodDetector:
 
     def overall_human_attention_health(self) -> float:
         flooded = sum(
-            1 for hid, exp in self.human_exposure.items()
+            1
+            for hid, exp in self.human_exposure.items()
             if len([e for e in exp if time.time() - e["ts"] < 3600]) > self.max_anomalies_per_human_per_hour
         )
         total = len(self.human_exposure)

@@ -24,15 +24,15 @@
 蓝图 §6: Span 数据结构 + W3C TraceContext 传播 + span/log 关联 + 采样。
 """
 
-
 from __future__ import annotations
 
+import threading
 import time
 import uuid
-import threading
+from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from typing import Any, Iterator
+from typing import Any
 
 _NS_PER_MS: int = 1_000_000
 
@@ -66,10 +66,7 @@ class TraceContext:
         )
 
     def to_w3c_header(self) -> str:
-        return (
-            f"00-{self.trace_id}-{self.span_id}"
-            f"-{self.trace_flags:02x}"
-        )
+        return f"00-{self.trace_id}-{self.span_id}-{self.trace_flags:02x}"
 
     def to_log_context(self) -> dict[str, str]:
         return {
@@ -146,6 +143,7 @@ class TraceSampler:
             return True
         import hashlib
         import struct
+
         h = hashlib.sha256(span.context.trace_id.encode()).digest()
         threshold = int(0xFFFFFFFF * self.base_rate) & 0xFFFFFFFF
         return struct.unpack(">I", h[:4])[0] <= threshold
@@ -168,11 +166,7 @@ def list_active_spans() -> list[dict[str, Any]]:
 
 def get_trace_tree(trace_id: str) -> list[dict[str, Any]]:
     with _SPAN_REGISTRY_LOCK:
-        return [
-            s.snapshot()
-            for s in _SPAN_REGISTRY.values()
-            if s.context.trace_id == trace_id
-        ]
+        return [s.snapshot() for s in _SPAN_REGISTRY.values() if s.context.trace_id == trace_id]
 
 
 _THREAD_LOCAL: threading.local = threading.local()
@@ -232,6 +226,7 @@ def noop_span(
 def _flush_span(span: Span) -> None:
     try:
         from zephyr.infrastructure.system_telemetry._trace_bridge import write_record
+
         write_record(span.snapshot(), labels={"__type": "trace_span"})
     except Exception:
         pass
@@ -242,4 +237,5 @@ def _gen_hex_id(hex_len: int) -> str:
 
 
 from zephyr.infrastructure.system_telemetry._trace_bridge import set_span_context_getter
+
 set_span_context_getter(lambda: _current_span())

@@ -12,15 +12,12 @@
 
 from __future__ import annotations
 
-import json
 import sqlite3
 from pathlib import Path
 
 import pytest
 
 from zephyr.governance.rollback_verifier import (
-    DifferentialReport,
-    DBHealReport,
     G0Report,
     RollbackVerifier,
 )
@@ -122,12 +119,8 @@ class TestHealDbConsistency:
         db_path = tmp_project / "data" / "databases" / "governance.db"
         db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(str(db_path))
-        conn.execute(
-            "CREATE TABLE tasks (task_id TEXT PRIMARY KEY, status TEXT)"
-        )
-        conn.execute(
-            "CREATE TABLE gates (gate_id TEXT PRIMARY KEY, result TEXT)"
-        )
+        conn.execute("CREATE TABLE tasks (task_id TEXT PRIMARY KEY, status TEXT)")
+        conn.execute("CREATE TABLE gates (gate_id TEXT PRIMARY KEY, result TEXT)")
         conn.execute("INSERT INTO tasks VALUES ('t1', 'INVALID_STATUS')")
         conn.execute("INSERT INTO gates VALUES ('g1', 'PASS')")
         conn.commit()
@@ -142,12 +135,8 @@ class TestHealDbConsistency:
         db_path = tmp_project / "data" / "databases" / "governance.db"
         db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(str(db_path))
-        conn.execute(
-            "CREATE TABLE tasks (task_id TEXT PRIMARY KEY, status TEXT)"
-        )
-        conn.execute(
-            "CREATE TABLE gates (gate_id TEXT PRIMARY KEY, result TEXT)"
-        )
+        conn.execute("CREATE TABLE tasks (task_id TEXT PRIMARY KEY, status TEXT)")
+        conn.execute("CREATE TABLE gates (gate_id TEXT PRIMARY KEY, result TEXT)")
         conn.execute("INSERT INTO tasks VALUES ('t1', 'PENDING')")
         conn.execute("INSERT INTO gates VALUES ('g1', 'BROKEN')")
         conn.commit()
@@ -161,12 +150,8 @@ class TestHealDbConsistency:
         db_path = tmp_project / "data" / "databases" / "governance.db"
         db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(str(db_path))
-        conn.execute(
-            "CREATE TABLE tasks (task_id TEXT PRIMARY KEY, status TEXT)"
-        )
-        conn.execute(
-            "CREATE TABLE gates (gate_id TEXT PRIMARY KEY, result TEXT)"
-        )
+        conn.execute("CREATE TABLE tasks (task_id TEXT PRIMARY KEY, status TEXT)")
+        conn.execute("CREATE TABLE gates (gate_id TEXT PRIMARY KEY, result TEXT)")
         conn.execute("INSERT INTO tasks VALUES ('t1', 'PENDING')")
         conn.execute("INSERT INTO gates VALUES ('g1', 'PASS')")
         conn.commit()
@@ -227,8 +212,6 @@ class TestDifferentialCheck:
 
     def test_nonexistent_db_returns_error(self, tmp_project):
         v = RollbackVerifier(project_root=tmp_project)
-        report = v.differential_check(
-            tmp_project / "no_before.db", tmp_project / "no_after.db"
-        )
+        report = v.differential_check(tmp_project / "no_before.db", tmp_project / "no_after.db")
         assert report.passed is False
         assert "error" in report.table_changes

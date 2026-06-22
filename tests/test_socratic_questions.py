@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_socratic_questions.py
 
-import pytest
 
 from zephyr.ops.diagnosers.socratic_questions import SocraticQuestions
 

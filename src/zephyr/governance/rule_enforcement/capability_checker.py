@@ -35,6 +35,7 @@ from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
 
 logger = logging.getLogger(__name__)
 
+
 class AuditLogEntry:
     def __init__(self, action: str, caller: str, target: str, result: str, detail: str = ""):
         self.action = action
@@ -42,6 +43,7 @@ class AuditLogEntry:
         self.target = target
         self.result = result
         self.detail = detail
+
 
 class CapabilityChecker:
     def __init__(self, matrix: CbacMatrix | None = None):
@@ -64,14 +66,18 @@ class CapabilityChecker:
             return True
 
         logger.critical("CBAC DENIED: %s → %s / %s — %s", caller, target, action, reason)
-        self._audit_log.append(AuditLogEntry(
-            action=action,
-            caller=caller,
-            target=target,
-            result="DENIED",
-            detail=reason,
-        ))
-        write_to_core("capability_check_denied", {"action": action, "caller": caller, "target": target, "detail": reason})
+        self._audit_log.append(
+            AuditLogEntry(
+                action=action,
+                caller=caller,
+                target=target,
+                result="DENIED",
+                detail=reason,
+            )
+        )
+        write_to_core(
+            "capability_check_denied", {"action": action, "caller": caller, "target": target, "detail": reason}
+        )
         return False
 
     def audit_log(self) -> list[AuditLogEntry]:

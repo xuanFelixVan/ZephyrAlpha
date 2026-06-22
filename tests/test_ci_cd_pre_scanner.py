@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] this file
 
-import pytest
 
 from zephyr.ops.gates.ci_cd_pre_scanner import CICDPreScanner
 

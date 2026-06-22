@@ -13,15 +13,14 @@
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from zephyr.governance.kb.chromadb_init import (
+    _COLLECTION_METADATA,
     COLLECTION_NAMES,
     CollectionInfo,
-    _COLLECTION_METADATA,
     collection_status,
     get_chroma_client,
     init_chromadb,
@@ -32,6 +31,7 @@ from zephyr.governance.kb.chromadb_init import (
 @pytest.fixture(autouse=True)
 def _reset_global_client():
     import zephyr.data.knowledge_management.kb.chromadb_init as _mod
+
     _mod._chroma_client = None
     yield
     _mod._chroma_client = None
@@ -72,6 +72,7 @@ class TestGetChromaClient:
         mock_chromadb.PersistentClient.return_value = mock_client
         with patch.dict(sys.modules, {"chromadb": mock_chromadb}):
             import zephyr.data.knowledge_management.kb.chromadb_init as _mod
+
             _mod._chroma_client = None
             client = get_chroma_client(persist_dir=str(tmp_path / "chroma"))
             assert client is mock_client
@@ -83,6 +84,7 @@ class TestGetChromaClient:
         mock_chromadb.PersistentClient.return_value = mock_client
         with patch.dict(sys.modules, {"chromadb": mock_chromadb}):
             import zephyr.data.knowledge_management.kb.chromadb_init as _mod
+
             _mod._chroma_client = None
             c1 = get_chroma_client(persist_dir=str(tmp_path / "chroma"))
             c2 = get_chroma_client(persist_dir=str(tmp_path / "chroma"))
@@ -94,17 +96,20 @@ class TestInitChromadb:
         mock_client = MagicMock()
         mock_client.list_collections.return_value = []
         created = {}
+
         def fake_create(name, metadata=None):
             col = MagicMock()
             col.name = name
             col.count.return_value = 0
             created[name] = col
             return col
+
         mock_client.create_collection.side_effect = fake_create
         mock_chromadb = MagicMock()
         mock_chromadb.PersistentClient.return_value = mock_client
         with patch.dict(sys.modules, {"chromadb": mock_chromadb}):
             import zephyr.data.knowledge_management.kb.chromadb_init as _mod
+
             _mod._chroma_client = None
             results = init_chromadb(persist_dir=str(tmp_path / "chroma"))
             assert len(results) == len(COLLECTION_NAMES)
@@ -126,6 +131,7 @@ class TestInitChromadb:
         mock_chromadb.PersistentClient.return_value = mock_client
         with patch.dict(sys.modules, {"chromadb": mock_chromadb}):
             import zephyr.data.knowledge_management.kb.chromadb_init as _mod
+
             _mod._chroma_client = None
             results = init_chromadb(persist_dir=str(tmp_path / "chroma"))
             for r in results:
@@ -150,6 +156,7 @@ class TestResetChromadb:
         mock_chromadb.PersistentClient.return_value = mock_client
         with patch.dict(sys.modules, {"chromadb": mock_chromadb}):
             import zephyr.data.knowledge_management.kb.chromadb_init as _mod
+
             _mod._chroma_client = mock_client
             results = reset_chromadb(persist_dir=str(tmp_path / "chroma"))
             assert len(results) == len(COLLECTION_NAMES)
@@ -170,6 +177,7 @@ class TestCollectionStatus:
         mock_chromadb.PersistentClient.return_value = mock_client
         with patch.dict(sys.modules, {"chromadb": mock_chromadb}):
             import zephyr.data.knowledge_management.kb.chromadb_init as _mod
+
             _mod._chroma_client = mock_client
             results = collection_status(persist_dir=str(tmp_path / "chroma"))
             for r in results:
@@ -182,6 +190,7 @@ class TestCollectionStatus:
         mock_chromadb.PersistentClient.return_value = mock_client
         with patch.dict(sys.modules, {"chromadb": mock_chromadb}):
             import zephyr.data.knowledge_management.kb.chromadb_init as _mod
+
             _mod._chroma_client = mock_client
             results = collection_status(persist_dir=str(tmp_path / "chroma"))
             for r in results:

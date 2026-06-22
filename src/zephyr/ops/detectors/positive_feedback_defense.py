@@ -27,6 +27,7 @@ Risk: R28 — Positive feedback loop between FLE action and metric causes runawa
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class PositiveFeedbackDefense:
     recent_actions: list[str] = field(default_factory=list)

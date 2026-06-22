@@ -20,7 +20,7 @@ from zephyr.security.adversarial_validation.models import RedBlueReport
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["CircuitBreaker", "CircuitState", "CircuitBreakerOpenError"]
+__all__: list[str] = ["CircuitBreaker", "CircuitBreakerOpenError", "CircuitState"]
 
 DEFAULT_COOL_DOWN_MS: int = 30000
 BYPASS_RATE_OPEN_THRESHOLD: float = 0.3
@@ -38,7 +38,6 @@ class CircuitBreakerOpenError(RuntimeError):
 
 
 class CircuitBreaker:
-
     def __init__(self, cool_down_ms: int = DEFAULT_COOL_DOWN_MS) -> None:
         self._state: CircuitState = CircuitState.CLOSED
         self._cool_down_ms: int = max(cool_down_ms, 10000)
@@ -58,9 +57,7 @@ class CircuitBreaker:
     def before_run(self) -> None:
         if self.state == CircuitState.OPEN:
             remaining = self._cool_down_ms - (time.time() * 1000 - self._opened_at)
-            raise CircuitBreakerOpenError(
-                f"Circuit breaker OPEN. Cool-down remaining: {max(0, remaining):.0f}ms"
-            )
+            raise CircuitBreakerOpenError(f"Circuit breaker OPEN. Cool-down remaining: {max(0, remaining):.0f}ms")
 
     def after_run(self, report: RedBlueReport) -> None:
         if report.total == 0:

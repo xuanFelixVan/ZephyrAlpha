@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.consequence_tracker import (
-    ConsequenceTracker, Consequence,
+    Consequence,
+    ConsequenceTracker,
 )
+
 
 class TestConsequenceTracker:
     def test_instantiation(self):

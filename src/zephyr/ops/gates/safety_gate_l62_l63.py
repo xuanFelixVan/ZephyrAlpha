@@ -25,11 +25,10 @@ L62: Strategy Isolation + Network Partition + Immutable Infra + LLM Cost + Kerne
 L63: Cross-Venue Arbitrage + E2E Health + Self-API Throttle + Schema Registry + Intraday Season + News Sentiment
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL62L63:
-
     def __init__(self):
         self.network_partition: bool = False
         self.immutable_infra_ok: bool = True

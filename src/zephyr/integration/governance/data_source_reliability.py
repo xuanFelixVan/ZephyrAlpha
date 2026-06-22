@@ -2,29 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-146 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.data_source_reliability
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
+
 
 class ReliabilityDimension(str, Enum):
     UPTIME = "Uptime"
@@ -33,6 +23,7 @@ class ReliabilityDimension(str, Enum):
     COMPLETENESS = "Completeness"
     CONSISTENCY = "Consistency"
 
+
 DIMENSION_WEIGHTS: dict[ReliabilityDimension, float] = {
     ReliabilityDimension.UPTIME: 0.25,
     ReliabilityDimension.ACCURACY: 0.30,
@@ -40,6 +31,7 @@ DIMENSION_WEIGHTS: dict[ReliabilityDimension, float] = {
     ReliabilityDimension.COMPLETENESS: 0.15,
     ReliabilityDimension.CONSISTENCY: 0.10,
 }
+
 
 class ReliabilityScore(BaseModel):
     source: str
@@ -66,10 +58,12 @@ class ReliabilityScore(BaseModel):
             return "D — Degraded"
         return "F — Unreliable"
 
+
 def score_source(source_name: str, dimension_scores: dict[ReliabilityDimension, float]) -> ReliabilityScore:
     rs = ReliabilityScore(source=source_name, scores=dimension_scores)
     rs.compute_composite()
     return rs
+
 
 def compare_sources(*scores: ReliabilityScore) -> list[tuple[str, float]]:
     return sorted([(s.source, s.composite) for s in scores], key=lambda x: -x[1])

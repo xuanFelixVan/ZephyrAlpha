@@ -12,18 +12,16 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.brain_integration import (
-    ProbeStatus,
+    ClosedLoopResult,
+    FullProbeResult,
     L0StartupResult,
     L1ReadinessResult,
     L2LivenessResult,
     L3ReconcileResult,
-    FullProbeResult,
-    execute_full_probe,
+    ProbeStatus,
     execute_closed_loop,
-    ClosedLoopResult,
+    execute_full_probe,
 )
 
 

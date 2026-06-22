@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """script_system.finding Finding Schema — MOD-INF-005 §6.5 recommendation 对齐。"""
 
 

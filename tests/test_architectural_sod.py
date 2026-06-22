@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.forensic.architectural_sod import (
     ArchitecturalSoD,
     SoDConflict,

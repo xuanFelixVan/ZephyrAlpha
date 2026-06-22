@@ -12,12 +12,7 @@
 
 from __future__ import annotations
 
-import json
-import time
-
-import pytest
-
-from zephyr.infrastructure._base_server import BaseMCPServer, MCPError, ERR_TOOL_NOT_FOUND, ERR_TOOL_EXECUTION
+from zephyr.infrastructure._base_server import ERR_TOOL_EXECUTION, ERR_TOOL_NOT_FOUND, BaseMCPServer
 
 
 class TestMCPChaos:
@@ -45,21 +40,27 @@ class TestMCPChaos:
     def test_experiment_unknown_tool(self):
         """Chaos Exp 1: 调用不存在的 tool → 应该返回 TOOL_NOT_FOUND 而非崩溃。"""
         srv = self._make_server()
-        resp = srv.handle_request({
-            "jsonrpc": "2.0", "id": 1,
-            "method": "tools/call",
-            "params": {"name": "chaos_test.nonexistent", "arguments": {}},
-        })
+        resp = srv.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "chaos_test.nonexistent", "arguments": {}},
+            }
+        )
         assert resp.get("error", {}).get("code") == ERR_TOOL_NOT_FOUND
 
     def test_experiment_simulated_crash(self):
         """Chaos Exp 2: 模拟 handler 内部崩溃 → 应该返回 INTERNAL_ERROR 而非进程退出。"""
         srv = self._make_server(fail_on_call=True)
-        resp = srv.handle_request({
-            "jsonrpc": "2.0", "id": 1,
-            "method": "tools/call",
-            "params": {"name": "chaos_test.stable", "arguments": {}},
-        })
+        resp = srv.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "chaos_test.stable", "arguments": {}},
+            }
+        )
         assert resp.get("error", {}).get("code") == ERR_TOOL_EXECUTION
 
     def test_experiment_empty_request(self):
@@ -73,18 +74,25 @@ class TestMCPChaos:
         """Chaos Exp 4: 100 次快速连续调用 → 所有响应正确。"""
         srv = self._make_server()
         for i in range(100):
-            resp = srv.handle_request({
-                "jsonrpc": "2.0", "id": i,
-                "method": "tools/call",
-                "params": {"name": "chaos_test.stable", "arguments": {}},
-            })
+            resp = srv.handle_request(
+                {
+                    "jsonrpc": "2.0",
+                    "id": i,
+                    "method": "tools/call",
+                    "params": {"name": "chaos_test.stable", "arguments": {}},
+                }
+            )
             assert resp.get("jsonrpc") == "2.0"
             assert "error" not in resp
 
     def test_experiment_ping_always_works(self):
         """Chaos Exp 5: 即使其他 tool 失败，ping 仍然可成功响应。"""
         srv = self._make_server(fail_on_call=True)
-        resp = srv.handle_request({
-            "jsonrpc": "2.0", "id": 1, "method": "ping",
-        })
+        resp = srv.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "ping",
+            }
+        )
         assert resp.get("result", {}).get("pong") is True

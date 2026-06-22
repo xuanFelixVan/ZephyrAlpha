@@ -24,7 +24,7 @@
 #   - vocabularies/rule_form-vocabulary.yaml  → rule_form 4 值
 #   - vocabularies/status-vocabulary.yaml    → status 3 值
 #   - PS-STD-001 §3.2                      → doc_type 全项目 27 值（完整词表）
-#   - PS-STD-001 metadata-registry.md        → 全量字段定义 + 约束真源
+#   - PS-STD-001 metadata_registry.yaml        → 全量字段定义 + 约束真源
 # ============================================================
 
 # ============================================================

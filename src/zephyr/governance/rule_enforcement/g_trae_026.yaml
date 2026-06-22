@@ -1,0 +1,133 @@
+module_id: MOD-INF-007
+schema_version: '1.0'
+doc_type: gate
+gate_id: G_TRAE_026
+gate_name: g_trae_026
+title: G_TRAE_026 Gate — 方法论-质量与度量
+description: 自动化门禁：强制执行 TRAE-026（方法论-质量与度量）规则。将规则从文档约束升级为phase_gate自动阻断。
+rule_ids:
+- TRAE-026
+status: active
+ttl: permanent
+scope: global
+category: compliance
+owner: MOD-INF-007
+consumer: gate_engine
+ai_autonomy: autonomous
+token_budget: 200
+latency_budget_ms: 500
+execution_plane: warm
+trigger:
+  event: phase_transition
+  precondition: task.status == 'IN_PROGRESS' or task.status == 'COMPLETED'
+  frequency: per_task
+depends_on_gates:
+- G0
+blocked_by_gates: []
+parallel_allowed_with: []
+entry_conditions:
+- id: G_TRAE_026-C00
+  name: mth_014_check
+  type: field_presence
+  description: '框架映射——任务元数据完整 (rule: TRAE-026)'
+  check: rule_yaml_valid and conditions_met["mth_014"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_026.py
+  rule_ids:
+  - TRAE-026
+  anti_pattern:
+    description: 项目节奏失控(过度审查或审查不足)
+    example: AI ignores TRAE-026 mth_014 requirement
+  params: &id001
+    required_fields:
+    - task_id
+    - title
+    - description
+- id: G_TRAE_026-C01
+  name: mth_010_check
+  type: field_presence
+  description: '框架映射——任务元数据完整 (rule: TRAE-026)'
+  check: rule_yaml_valid and conditions_met["mth_010"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_026.py
+  rule_ids:
+  - TRAE-026
+  anti_pattern:
+    description: 变动后体系结构不一致
+    example: AI ignores TRAE-026 mth_010 requirement
+  params: *id001
+- id: G_TRAE_026-C02
+  name: mth_010_checklist_check
+  type: field_presence
+  description: '框架映射——任务元数据完整 (rule: TRAE-026)'
+  check: rule_yaml_valid and conditions_met["mth_010_checklist"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_026.py
+  rule_ids:
+  - TRAE-026
+  anti_pattern:
+    description: 重命名/统一后缀/修正不一致一方
+    example: AI ignores TRAE-026 mth_010_checklist requirement
+  params: *id001
+- id: G_TRAE_026-C03
+  name: mth_010_checklist_check
+  type: field_presence
+  description: '框架映射——任务元数据完整 (rule: TRAE-026)'
+  check: rule_yaml_valid and conditions_met["mth_010_checklist"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_026.py
+  rule_ids:
+  - TRAE-026
+  anti_pattern:
+    description: 补写§1.2/补写§1.3/修正指向
+    example: AI ignores TRAE-026 mth_010_checklist requirement
+  params: *id001
+- id: G_TRAE_026-C04
+  name: mth_010_checklist_check
+  type: field_presence
+  description: '框架映射——任务元数据完整 (rule: TRAE-026)'
+  check: rule_yaml_valid and conditions_met["mth_010_checklist"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_026.py
+  rule_ids:
+  - TRAE-026
+  anti_pattern:
+    description: 写入index.md/迁移异类文件/重命名
+    example: AI ignores TRAE-026 mth_010_checklist requirement
+  params: *id001
+mutating_rules: []
+severity_levels:
+  error: 硬阻断——任务不得推进，raise GateViolationError
+  warning: 软警告——passed=True，写入events警告流
+  info: 仅记录——不告警不阻塞
+failure_actions:
+  reject: 拒绝——返回错误，对象停留在当前状态
+  flag: 标记——通过但附加warning flag
+simulation:
+  supported: true
+  mock_input: tests/fixtures/g_trae_026_mock.yaml
+  expected_output: passed=True when rule conditions met
+  rollback_on_failure: true
+upgrade_triggers:
+- condition: Rule TRAE-026 YAML updated with new sections
+  action: version bump + update entry_conditions
+  approval: MOD-INF-007 owner
+change_log:
+- version: 0.1.0
+  date: '2026-06-22'
+  author: session-20260622-gate-batch
+  change: 初始创建 — 自动生成自 TRAE-026 规则YAML
+phase: PHASE_0_SKELETON
+auto: true
+on_failure: reject
+on_pass: pass

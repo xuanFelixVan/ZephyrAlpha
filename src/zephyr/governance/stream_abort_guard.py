@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """StreamAbortGuard — 流式中断守卫
 =====================================
 蓝图 §2.13 · 流式输出中途预算二次确认
@@ -19,7 +19,6 @@
   quality_low      → ABORT_AND_RETRY（切更便宜模型）
   too_verbose      → ABORT_WITH_WARNING
 """
-
 
 from __future__ import annotations
 
@@ -124,7 +123,7 @@ class StreamAbortGuard:
             self._record_abort(result)
             return result
 
-        if (checkpoint.quality_score < self._quality_threshold and checkpoint.tokens_emitted > _QUALITY_MIN_TOKENS):
+        if checkpoint.quality_score < self._quality_threshold and checkpoint.tokens_emitted > _QUALITY_MIN_TOKENS:
             result = AbortResult(
                 decision=AbortDecision.ABORT_AND_RETRY,
                 reason=f"质量过低 — score={checkpoint.quality_score:.2f} < {self._quality_threshold}",
@@ -134,7 +133,10 @@ class StreamAbortGuard:
             self._record_abort(result)
             return result
 
-        if (checkpoint.expected_max_tokens > 0 and checkpoint.tokens_emitted > checkpoint.expected_max_tokens * self._verbosity_multiplier):
+        if (
+            checkpoint.expected_max_tokens > 0
+            and checkpoint.tokens_emitted > checkpoint.expected_max_tokens * self._verbosity_multiplier
+        ):
             result = AbortResult(
                 decision=AbortDecision.ABORT_WITH_WARNING,
                 reason=f"响应过于冗长 — {checkpoint.tokens_emitted} > {checkpoint.expected_max_tokens}×{self._verbosity_multiplier}",

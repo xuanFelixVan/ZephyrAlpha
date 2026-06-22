@@ -27,6 +27,7 @@ Risk: R166 — Why was this repair chosen?  Invisible after the fact.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class DecisionProvenance:
     decisions: list[dict] = field(default_factory=list)

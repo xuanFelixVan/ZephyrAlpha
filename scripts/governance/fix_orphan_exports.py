@@ -21,6 +21,7 @@
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -29,9 +30,6 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS
-
-
 import argparse
 import ast
 import os
@@ -39,6 +37,8 @@ import sys
 import textwrap
 from collections import defaultdict
 from pathlib import Path
+
+from _shared.constants import EXIT_PASS
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
@@ -62,6 +62,7 @@ def _extract_all_entries(source: str) -> set[str]:
                                     entries.add(elt.value)
     except SyntaxError:
         import re
+
         for match in re.finditer(r'"([^"]+)"', source):
             entries.add(match.group(1))
     return entries
@@ -116,9 +117,7 @@ def _safe_atomic_write(path: Path, content: str) -> None:
         raise
 
 
-def _generate_init_content(
-    pkg_rel: str, modules: list[str], existing_content: str = ""
-) -> str:
+def _generate_init_content(pkg_rel: str, modules: list[str], existing_content: str = "") -> str:
     """Generate __init__.py content with proper __all__ exports.
 
     For existing content with __all__: appends new module names to the END
@@ -129,10 +128,13 @@ def _generate_init_content(
 
     if not existing_content:
         all_line = f"__all__ = [{', '.join(repr(m) for m in sorted_modules)}]\n"
-        return textwrap.dedent(f'''\
+        return (
+            textwrap.dedent(f'''\
             """{pkg_display} — auto-generated package init."""
 
-            {all_line}''') + "\n"
+            {all_line}''')
+            + "\n"
+        )
 
     try:
         tree = ast.parse(existing_content)
@@ -143,11 +145,7 @@ def _generate_init_content(
     all_nodes = [
         node
         for node in ast.walk(tree)
-        if isinstance(node, ast.Assign)
-        and any(
-            isinstance(t, ast.Name) and t.id == "__all__"
-            for t in node.targets
-        )
+        if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "__all__" for t in node.targets)
     ]
 
     if not all_nodes:
@@ -169,11 +167,7 @@ def _generate_init_content(
         close_bracket = current_line.rfind("]")
         if close_bracket >= 0:
             insert_str = ", " + ", ".join(repr(m) for m in sorted_modules)
-            lines[line_idx] = (
-                current_line[:close_bracket]
-                + insert_str
-                + current_line[close_bracket:]
-            )
+            lines[line_idx] = current_line[:close_bracket] + insert_str + current_line[close_bracket:]
             bracket_found = True
             break
 
@@ -187,11 +181,10 @@ def _generate_init_content(
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="批量修复孤儿模块导出")
+    parser.add_argument("--dry-run", action="store_true", help="只看不修")
     parser.add_argument(
-        "--dry-run", action="store_true", help="只看不修"
-    )
-    parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="报告孤儿但不修复（同 --dry-run）",
     )
     args = parser.parse_args()

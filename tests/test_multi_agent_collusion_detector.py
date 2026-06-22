@@ -11,16 +11,18 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.multi_agent_collusion_detector import (
-        MultiAgentCollusionDetector,
-        CollusionSignal,
         CollusionResult,
+        CollusionSignal,
+        MultiAgentCollusionDetector,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -30,7 +32,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestMultiAgentCollusionDetector:
-
     def setup_method(self):
         self.detector = MultiAgentCollusionDetector()
 

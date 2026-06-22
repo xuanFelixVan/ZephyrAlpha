@@ -11,18 +11,18 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
-import pytest
 
+from zephyr.security.access_control.immutable_core import ImmutableCore
 from zephyr.security.access_control.input_guard import (
     DANGEROUS_PATTERNS,
-    InputDecision,
-    InputGuard,
     PROJECT_SAFE_DIRS,
     TRUSTED_PACKAGES,
+    InputDecision,
+    InputGuard,
 )
-from zephyr.security.access_control.immutable_core import ImmutableCore
 
 
 class TestInputDecision:

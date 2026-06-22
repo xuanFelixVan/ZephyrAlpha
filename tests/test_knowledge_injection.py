@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_injection.py
 
-import pytest
 
 from zephyr.ops.collectors.knowledge_injection import KnowledgeInjection
 

@@ -10,13 +10,10 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_safety_gate_L1_L27.py
 
-import pytest
 from zephyr.ops.gates.safety_gate_l1_l27 import (
-    SafetyGatePipeline,
     ActionContext,
-    GateResult,
     GateVerdict,
-    GateType,
+    SafetyGatePipeline,
 )
 
 

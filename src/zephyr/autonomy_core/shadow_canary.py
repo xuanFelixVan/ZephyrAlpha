@@ -23,7 +23,8 @@ from __future__ import annotations
 
 """shadow_canary.py — 金丝雀部署 (B4, DD78, TASK-015 beta w)"""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 
 @dataclass
 class CanaryResult:
@@ -32,8 +33,10 @@ class CanaryResult:
     performance_delta: float = 0.0
     promoted: bool = False
 
+
 class ShadowCanary:
     """新策略影子生成但不注入; 3-sigma superiority → promote (DD78)."""
+
     def shadow(self, strategy: str, context: str) -> CanaryResult:
         return CanaryResult(strategy_name=strategy, shadow_generated=True)
 

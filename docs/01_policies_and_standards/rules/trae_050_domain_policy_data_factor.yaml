@@ -1,9 +1,21 @@
 rule_id: TRAE-050
 title: 域策略-数据源与因子层
+version: 0.2.4
+layer: L2
+module_id: TRAE-050
+depends_on:
+- TRAE-031
+- TRAE-025
+tags:
+- TRAE
+- domain_data_factor
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - DOM-L00-001
 - DOM-L02-001
-layer: L2
 severity: warning
 scope: domain_data_factor
 domain: TRAE
@@ -574,8 +586,7 @@ sections:
       pass: 因子通过实盘可行性检查
       fail: 未通过实盘可行性检查，拒绝上线
     - type: constraint
-      check: 衰减监控：IC连续20日<0.01→decaying / 滚动60日夏普<0.3→underperforming / IC连续60日=0→deprecated
-        / 相关系数从<0.3升至>0.7→converging
+      check: 衰减监控：IC连续20日<0.01→decaying / 滚动60日夏普<0.3→underperforming / IC连续60日=0→deprecated / 相关系数从<0.3升至>0.7→converging
       pass: 因子无衰减信号
       fail: 触发衰减处置（降权/通知/退役）
     - type: constraint
@@ -975,7 +986,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 0.2.4
     date: '2026-06-21'

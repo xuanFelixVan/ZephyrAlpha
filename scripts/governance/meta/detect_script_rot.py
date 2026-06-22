@@ -24,6 +24,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -36,18 +37,16 @@ warn_only: false
 
 import json as json_mod
 import sqlite3
-import subprocess
 import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "findings_timeseries.db"
 _ROT_LOG = _REPO_ROOT / "scripts" / "governance" / "meta" / "script_rot_findings.jsonl"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _get_db_conn() -> sqlite3.Connection | None:
@@ -99,17 +98,19 @@ def detect_rot(days: int = 30, alert_threshold: int = 0) -> dict:
                 (check_id,),
             ).fetchone()
 
-            rotten.append({
-                "check_id": check_id,
-                "dimension": dimension,
-                "severity": "HIGH",
-                "recent_findings": recent_count,
-                "historical_findings": historical_count,
-                "total_scan_runs": total_runs,
-                "last_finding_at": last_finding["timestamp"] if last_finding else "never",
-                "detail": f"脚本 {check_id} 过去 {days} 天产出 0 个 Finding (历史有 {historical_count} 个)——可能已过时",
-                "recommendation": "检查脚本扫描的代码模式是否仍存于代码库，或标记为 DEPRECATED",
-            })
+            rotten.append(
+                {
+                    "check_id": check_id,
+                    "dimension": dimension,
+                    "severity": "HIGH",
+                    "recent_findings": recent_count,
+                    "historical_findings": historical_count,
+                    "total_scan_runs": total_runs,
+                    "last_finding_at": last_finding["timestamp"] if last_finding else "never",
+                    "detail": f"脚本 {check_id} 过去 {days} 天产出 0 个 Finding (历史有 {historical_count} 个)——可能已过时",
+                    "recommendation": "检查脚本扫描的代码模式是否仍存于代码库，或标记为 DEPRECATED",
+                }
+            )
 
     conn.close()
 
@@ -148,7 +149,10 @@ def main() -> None:
         elif result["clean"]:
             print(f"[SCRIPT-ROT] ✅ 全部 {result['total_scripts_analyzed']} 个脚本活跃——无静默失效", file=sys.stderr)
         else:
-            print(f"[SCRIPT-ROT] 🔴 {result['rotten_scripts']} 个脚本可能已过时 (过去 {days} 天无 Finding)", file=sys.stderr)
+            print(
+                f"[SCRIPT-ROT] 🔴 {result['rotten_scripts']} 个脚本可能已过时 (过去 {days} 天无 Finding)",
+                file=sys.stderr,
+            )
             for r in result["findings"]:
                 print(f"  [{r['dimension']}] {r['check_id']}: {r['detail']}", file=sys.stderr)
         sys.exit(0 if result.get("clean", True) else 1)

@@ -29,13 +29,11 @@ SemanticSimilarDetector — 语义变形攻击检测。
     >70% 相似度 → 语义变形 (malicious rewrite) → exit code 12 → L2 Skill Kill。
 """
 
-
 from __future__ import annotations
 
 import ast
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -52,16 +50,25 @@ class MorphingReport:
 
 
 SENSITIVE_APIS = {
-    "eval", "exec", "compile",
-    "os.system", "os.popen", "subprocess.call", "subprocess.Popen",
-    "os.remove", "os.unlink", "shutil.rmtree",
-    "open", "__import__", "importlib.import_module",
-    "pickle.loads", "pickle.dumps",
+    "eval",
+    "exec",
+    "compile",
+    "os.system",
+    "os.popen",
+    "subprocess.call",
+    "subprocess.Popen",
+    "os.remove",
+    "os.unlink",
+    "shutil.rmtree",
+    "open",
+    "__import__",
+    "importlib.import_module",
+    "pickle.loads",
+    "pickle.dumps",
 }
 
 
 class SemanticSimilarDetector:
-
     SIMILARITY_THRESHOLD: float = 0.70
     EXIT_CODE_MORPHING: int = 12
 
@@ -76,10 +83,7 @@ class SemanticSimilarDetector:
         call_sim = self._call_chain_similarity(old_source, new_source)
         sensitive_matches = self._count_sensitive_api_matches(new_source)
 
-        is_morphing = (
-            ast_sim > self.SIMILARITY_THRESHOLD
-            and old_source.strip() != new_source.strip()
-        )
+        is_morphing = ast_sim > self.SIMILARITY_THRESHOLD and old_source.strip() != new_source.strip()
 
         details: list[str] = []
         details.append(f"AST structural similarity: {ast_sim:.2%}")

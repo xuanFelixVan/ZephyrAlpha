@@ -66,22 +66,22 @@ import structlog
 import yaml
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.autonomy_core.token_budget import estimate_tokens
+from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 if TYPE_CHECKING:
     from zephyr.autonomy_core.assembly.context_injector import ContextInjector, InjectedContext
 
 __all__ = [
+    "PromptRegistry",
+    "PromptRegistryError",
+    "PromptTemplate",
     "PromptVariable",
     "PromptVersion",
-    "PromptTemplate",
     "RenderedPrompt",
-    "PromptRegistryError",
-    "TokenBudgetExceededError",
     "TemplateNotFoundError",
+    "TokenBudgetExceededError",
     "VariableError",
-    "PromptRegistry",
 ]
 
 _log = structlog.get_logger().bind(layer="infra", module="prompt_registry")
@@ -94,10 +94,12 @@ _PLACEHOLDER_RE = re.compile(r"\{(\w+)\}")
 # 工具函数
 # ---------------------------------------------------------------------------
 
+
 def _semver_tuple(version: str) -> tuple[int, int, int]:
     """将 semver 字符串转换为可比较的元组。"""
     parts = version.split(".")
     return (int(parts[0]), int(parts[1]), int(parts[2]))
+
 
 def _compare_semver(a: str, b: str) -> int:
     """比较两个 semver 字符串。返回 -1/0/1。"""
@@ -109,25 +111,32 @@ def _compare_semver(a: str, b: str) -> int:
         return 1
     return 0
 
+
 # ---------------------------------------------------------------------------
 # 异常层次
 # ---------------------------------------------------------------------------
 
+
 class PromptRegistryError(Exception):
     """PromptRegistry 基础异常。"""
+
 
 class TokenBudgetExceededError(PromptRegistryError):
     """渲染后的 Prompt 超出 token 预算时抛出。"""
 
+
 class TemplateNotFoundError(PromptRegistryError):
     """模板 ID 或版本未注册时抛出。"""
+
 
 class VariableError(PromptRegistryError):
     """必填变量缺失或未知占位符时抛出。"""
 
+
 # ---------------------------------------------------------------------------
 # Pydantic 数据模型
 # ---------------------------------------------------------------------------
+
 
 class PromptVariable(BaseModel):
     """Prompt 模板的变量声明。"""
@@ -142,6 +151,7 @@ class PromptVariable(BaseModel):
         default="string",
         description="期望类型：string | integer | float | boolean",
     )
+
 
 class PromptVersion(BaseModel):
     """单个版本的元信息（独立记录，供 changelog 追踪）。"""
@@ -169,6 +179,7 @@ class PromptVersion(BaseModel):
         if v not in _STABILITY_VALUES:
             raise ValueError(f"stability 必须是 {_STABILITY_VALUES} 之一，得到：{v!r}")
         return v
+
 
 class PromptTemplate(BaseModel):
     """Prompt 模板实体（含版本、变量、token 预算）。"""
@@ -244,7 +255,7 @@ class PromptTemplate(BaseModel):
 
         if token_count > self.token_budget:
             raise TokenBudgetExceededError(
-                f"模板 '{self.template_id}' 渲染后 {token_count} tokens，" f"超出预算 {self.token_budget}"
+                f"模板 '{self.template_id}' 渲染后 {token_count} tokens，超出预算 {self.token_budget}"
             )
 
         return RenderedPrompt(
@@ -255,6 +266,7 @@ class PromptTemplate(BaseModel):
             token_count=token_count,
             budget_remaining=self.token_budget - token_count,
         )
+
 
 class RenderedPrompt(BaseModel):
     """模板渲染结果。"""
@@ -270,9 +282,11 @@ class RenderedPrompt(BaseModel):
     context_injected: bool = Field(default=False, description="是否注入了 KB 上下文")
     context_sources: list[str] = Field(default_factory=list, description="KB 上下文来源路径")
 
+
 # ---------------------------------------------------------------------------
 # 注册表主体
 # ---------------------------------------------------------------------------
+
 
 class PromptRegistry:
     """YAML 驱动的 Prompt 模板注册表。
@@ -338,7 +352,7 @@ class PromptRegistry:
         key = (template.template_id, template.version)
         if key in self._templates and not allow_overwrite:
             raise PromptRegistryError(
-                f"模板 '{template.template_id}' v{template.version} 已注册，" "如需替换请使用 allow_overwrite=True"
+                f"模板 '{template.template_id}' v{template.version} 已注册，如需替换请使用 allow_overwrite=True"
             )
         self._templates[key] = template
 

@@ -45,7 +45,6 @@ RollbackManager — 仅调试用途的 DB-state 快照，不用于自动回滚�
     - 不碰磁盘文件（只恢复数据库状态）
 """
 
-
 from __future__ import annotations
 
 import json
@@ -56,8 +55,8 @@ from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connecti
 from zephyr.integration.shared_08.utils.time_utils import now_iso
 
 __all__ = [
-    "RollbackManager",
     "Checkpoint",
+    "RollbackManager",
 ]
 
 

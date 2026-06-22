@@ -3,13 +3,18 @@
 
 DANGEROUS_SHELL_PATTERNS = None  # stub constant
 
+
 class ShellDialectDetector:
     """Stub class — implementation pending."""
+
     pass
+
 
 class ShellDialectResult:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "DANGEROUS_SHELL_PATTERNS",

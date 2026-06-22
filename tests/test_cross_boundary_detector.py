@@ -9,10 +9,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.cross_boundary_detector import (
-    CrossBoundaryDetector, CrossBoundaryClone, Boundary,
+    Boundary,
+    CrossBoundaryClone,
+    CrossBoundaryDetector,
 )
+
 
 class TestCrossBoundaryDetector:
     def test_instantiation(self):
@@ -29,10 +31,15 @@ class TestCrossBoundaryDetector:
         result = det.detect("", "", "", "", 0.0, Boundary.SRC_TEST_BRIDGE)
         assert isinstance(result, CrossBoundaryClone)
 
+
 class TestCrossBoundaryClone:
     def test_can_auto_fix(self):
         clone = CrossBoundaryClone(
-            src_path="s", dst_path="d", src_func="f", dst_func="f",
-            similarity=0.96, boundary=Boundary.CROSS_LAYER_REDUNDANCY,
+            src_path="s",
+            dst_path="d",
+            src_func="f",
+            dst_func="f",
+            similarity=0.96,
+            boundary=Boundary.CROSS_LAYER_REDUNDANCY,
         )
         assert isinstance(clone.can_auto_fix, bool)

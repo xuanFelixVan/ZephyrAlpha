@@ -37,7 +37,6 @@
     fc.verify("file_exists", path="src/zephyr/data/knowledge_management/kb/__init__.py")
 """
 
-
 from __future__ import annotations
 
 import json
@@ -45,7 +44,6 @@ import logging
 import os
 import sys
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -89,8 +87,11 @@ class FactChecker:
         handler = handlers.get(fact_type)
         if handler is None:
             return FactResult(
-                fact_type=fact_type, target=str(kwargs), verified=False,
-                confidence=0.0, error=f"Unknown fact type: {fact_type}"
+                fact_type=fact_type,
+                target=str(kwargs),
+                verified=False,
+                confidence=0.0,
+                error=f"Unknown fact type: {fact_type}",
             )
         return handler(**kwargs)
 
@@ -98,8 +99,10 @@ class FactChecker:
         resolved = self._resolve_path(path)
         exists = resolved.exists()
         return FactResult(
-            fact_type="file_exists", target=path,
-            verified=exists, confidence=1.0 if exists else 0.0,
+            fact_type="file_exists",
+            target=path,
+            verified=exists,
+            confidence=1.0 if exists else 0.0,
             actual_value=str(resolved) if exists else None,
         )
 
@@ -107,27 +110,27 @@ class FactChecker:
         resolved = self._resolve_path(path)
         if not resolved.exists():
             return FactResult(
-                fact_type="file_contains", target=path,
-                verified=False, confidence=0.0, error=f"File not found: {path}"
+                fact_type="file_contains", target=path, verified=False, confidence=0.0, error=f"File not found: {path}"
             )
         try:
             content = resolved.read_text(encoding="utf-8", errors="replace")
             found = needle in content
             return FactResult(
-                fact_type="file_contains", target=f"{path}[:{needle[:30]}]",
-                verified=found, confidence=1.0 if found else 0.0,
+                fact_type="file_contains",
+                target=f"{path}[:{needle[:30]}]",
+                verified=found,
+                confidence=1.0 if found else 0.0,
             )
         except Exception as e:
-            return FactResult(
-                fact_type="file_contains", target=path,
-                verified=False, confidence=0.0, error=str(e)
-            )
+            return FactResult(fact_type="file_contains", target=path, verified=False, confidence=0.0, error=str(e))
 
     def _verify_path_absolute(self, path: str = "", **kwargs) -> FactResult:
         is_abs = Path(path).is_absolute()
         return FactResult(
-            fact_type="path_is_absolute", target=path,
-            verified=is_abs, confidence=1.0,
+            fact_type="path_is_absolute",
+            target=path,
+            verified=is_abs,
+            confidence=1.0,
             actual_value=is_abs,
         )
 
@@ -135,62 +138,78 @@ class FactChecker:
         resolved = self._resolve_path(path)
         exists = resolved.exists()
         return FactResult(
-            fact_type="path_exists_relative", target=path,
-            verified=exists, confidence=1.0 if exists else 0.0,
+            fact_type="path_exists_relative",
+            target=path,
+            verified=exists,
+            confidence=1.0 if exists else 0.0,
             actual_value=str(resolved) if exists else None,
         )
 
-    def _verify_count_in_range(
-        self, count: int = 0, min_val: int = 0, max_val: int = 999999, **kwargs
-    ) -> FactResult:
+    def _verify_count_in_range(self, count: int = 0, min_val: int = 0, max_val: int = 999999, **kwargs) -> FactResult:
         in_range = min_val <= count <= max_val
         confidence = 1.0 if in_range else (0.0 if count < min_val else 0.3)
         return FactResult(
-            fact_type="count_in_range", target=f"{count} in [{min_val}, {max_val}]",
-            verified=in_range, confidence=confidence,
-            actual_value=count, expected_value=f"[{min_val}, {max_val}]",
+            fact_type="count_in_range",
+            target=f"{count} in [{min_val}, {max_val}]",
+            verified=in_range,
+            confidence=confidence,
+            actual_value=count,
+            expected_value=f"[{min_val}, {max_val}]",
         )
 
     def _verify_module_attribute(self, module_name: str = "", attr: str = "", **kwargs) -> FactResult:
         try:
             import importlib
+
             mod = importlib.import_module(module_name)
             has_attr = hasattr(mod, attr)
             return FactResult(
-                fact_type="module_has_attribute", target=f"{module_name}.{attr}",
-                verified=has_attr, confidence=1.0,
+                fact_type="module_has_attribute",
+                target=f"{module_name}.{attr}",
+                verified=has_attr,
+                confidence=1.0,
             )
         except Exception as e:
             return FactResult(
-                fact_type="module_has_attribute", target=f"{module_name}.{attr}",
-                verified=False, confidence=0.0, error=str(e)
+                fact_type="module_has_attribute",
+                target=f"{module_name}.{attr}",
+                verified=False,
+                confidence=0.0,
+                error=str(e),
             )
 
     def _verify_version_match(self, value: str = "", expected: str = "", **kwargs) -> FactResult:
         matched = value == expected
         return FactResult(
-            fact_type="version_matches", target=f"{value} vs {expected}",
-            verified=matched, confidence=1.0 if matched else 0.0,
-            actual_value=value, expected_value=expected,
+            fact_type="version_matches",
+            target=f"{value} vs {expected}",
+            verified=matched,
+            confidence=1.0 if matched else 0.0,
+            actual_value=value,
+            expected_value=expected,
         )
 
     def _verify_git_commit(self, commit: str = "", **kwargs) -> FactResult:
         try:
             import subprocess
+
             result = subprocess.run(
                 ["git", "cat-file", "-t", commit],
-                capture_output=True, text=True, cwd=str(self._root),
+                capture_output=True,
+                text=True,
+                cwd=str(self._root),
                 timeout=5,
             )
             exists = result.returncode == 0 and "commit" in result.stdout
             return FactResult(
-                fact_type="git_commit_exists", target=commit,
-                verified=exists, confidence=1.0 if exists else 0.0,
+                fact_type="git_commit_exists",
+                target=commit,
+                verified=exists,
+                confidence=1.0 if exists else 0.0,
             )
         except Exception as e:
             return FactResult(
-                fact_type="git_commit_exists", target=commit,
-                verified=False, confidence=0.0, error=str(e)
+                fact_type="git_commit_exists", target=commit, verified=False, confidence=0.0, error=str(e)
             )
 
     def _resolve_path(self, path: str) -> Path:
@@ -209,6 +228,7 @@ class FactChecker:
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="KB Deterministic Fact Verifier")
     sub = parser.add_subparsers(dest="cmd")
 
@@ -247,15 +267,21 @@ def main() -> None:
 
     if result:
         if args.json:
-            print(json.dumps({
-                "fact_type": result.fact_type,
-                "target": result.target,
-                "verified": result.verified,
-                "confidence": result.confidence,
-                "actual": result.actual_value,
-                "expected": result.expected_value,
-                "error": result.error or None,
-            }, ensure_ascii=False, indent=2))
+            print(
+                json.dumps(
+                    {
+                        "fact_type": result.fact_type,
+                        "target": result.target,
+                        "verified": result.verified,
+                        "confidence": result.confidence,
+                        "actual": result.actual_value,
+                        "expected": result.expected_value,
+                        "error": result.error or None,
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
         else:
             verdict = "PASS" if result.verified else "FAIL"
             print(f"{verdict}  {result.fact_type}: {result.target}")

@@ -13,9 +13,6 @@
 from __future__ import annotations
 
 import time
-from unittest.mock import patch
-
-import pytest
 
 from zephyr.governance.silence_detector import SilenceDetector
 

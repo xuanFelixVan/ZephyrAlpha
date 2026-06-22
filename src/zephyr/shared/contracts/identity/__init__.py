@@ -13,14 +13,14 @@
 import importlib
 
 from zephyr.shared.contracts.identity.agent_identity import (
-    AgentIdentity,
-    AgentRole,
-    AgentMaturity,
-    IDESource,
-    MaturityLevel,
     MATURITY_AUTO_GUARD_TIMEOUT,
     MATURITY_TLB_LIMITS,
     ROLE_DEFAULT_PERMISSIONS,
+    AgentIdentity,
+    AgentMaturity,
+    AgentRole,
+    IDESource,
+    MaturityLevel,
 )
 from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
 
@@ -28,13 +28,16 @@ from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResu
 def __getattr__(name):
     if name == "AgentCapability":
         _mod = importlib.import_module("zephyr.governance.agent_spec.registry")
-        _AC = getattr(_mod, "AgentCapability")
+        _AC = _mod.AgentCapability
         globals()["AgentCapability"] = _AC
         return _AC
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 __all__ = [
+    "MATURITY_AUTO_GUARD_TIMEOUT",
+    "MATURITY_TLB_LIMITS",
+    "ROLE_DEFAULT_PERMISSIONS",
     "AgentCapability",
     "AgentIdentity",
     "AgentMaturity",
@@ -42,10 +45,7 @@ __all__ = [
     "GuardDecision",
     "GuardResult",
     "IDESource",
-    "MATURITY_AUTO_GUARD_TIMEOUT",
-    "MATURITY_TLB_LIMITS",
     "MaturityLevel",
-    "ROLE_DEFAULT_PERMISSIONS",
     "agent_identity",
     "permission",
 ]

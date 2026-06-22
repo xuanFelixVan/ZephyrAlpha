@@ -15,12 +15,12 @@ RULE-SEVEN: ThreadPoolExecutor(max_workers=8) for parallel I/O.
 RULE-ONE: temp-file + atomic rename for all writes.
 RULE-FIVE: zero residue after completion.
 """
+
 from __future__ import annotations
 
 import argparse
 import os
 import re
-import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -42,7 +42,7 @@ _SCOPE_PREFIX = "SRC-TST"
 
 def _build_a_test_header(seq_num: int) -> str:
     """Build a 6-field governance anchor header for [A_test].
-    
+
     Format:
       # [A_test] module_id: SRC-TST-NNNN | layer=test | stability=volatile |
       # safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
@@ -64,6 +64,7 @@ def _make_scope_mid(seq_num: int) -> str:
 # Analysis
 # ---------------------------------------------------------------------------
 
+
 def _analyze_file(filepath: Path) -> dict | None:
     """Analyze a single test .py file."""
     try:
@@ -84,9 +85,28 @@ def _analyze_file(filepath: Path) -> dict | None:
 
     # Check if existing mid already has a valid scope prefix
     valid_scopes = {
-        "ADR", "CP", "KE", "STD", "DW", "SRC", "OPS", "MOD",
-        "PSP", "GOV", "ARCH", "VIEW", "DOM", "PS", "SYS",
-        "KBG", "REG", "IDX", "CFG", "PHASE", "TPL", "IRN",
+        "ADR",
+        "CP",
+        "KE",
+        "STD",
+        "DW",
+        "SRC",
+        "OPS",
+        "MOD",
+        "PSP",
+        "GOV",
+        "ARCH",
+        "VIEW",
+        "DOM",
+        "PS",
+        "SYS",
+        "KBG",
+        "REG",
+        "IDX",
+        "CFG",
+        "PHASE",
+        "TPL",
+        "IRN",
     }
     mid_has_scope = False
     if existing_mid:
@@ -114,6 +134,7 @@ def _analyze_file(filepath: Path) -> dict | None:
 # Build mapping: rel_path → seq_num (deterministic, sorted order)
 # ---------------------------------------------------------------------------
 
+
 def _build_seq_map(results: list[dict]) -> dict[str, int]:
     """Assign sequential IDs in sorted rel_path order, stable across runs."""
     all_rel_paths = sorted(r["rel_path"] for r in results)
@@ -123,6 +144,7 @@ def _build_seq_map(results: list[dict]) -> dict[str, int]:
 # ---------------------------------------------------------------------------
 # Dry-run
 # ---------------------------------------------------------------------------
+
 
 def _print_dry_run(results: list[dict], seq_map: dict[str, int]) -> None:
     """Print dry-run preview."""
@@ -170,6 +192,7 @@ def _print_dry_run(results: list[dict], seq_map: dict[str, int]) -> None:
 # ---------------------------------------------------------------------------
 # Apply
 # ---------------------------------------------------------------------------
+
 
 def _apply_one_file(result: dict, seq_num: int) -> tuple[str, bool, str]:
     """Apply changes to one file. Returns (rel_path, success, message)."""
@@ -253,7 +276,7 @@ def _print_apply_report(stats: dict) -> None:
     print(f"  Success:          {stats['success']}")
     print(f"  Failed:           {stats['failed']}")
     if stats["errors"]:
-        print(f"  Errors:")
+        print("  Errors:")
         for e in stats["errors"][:30]:
             print(f"    {e}")
         if len(stats["errors"]) > 30:
@@ -267,9 +290,7 @@ def _print_apply_report(stats: dict) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="DM-90971: Add governance anchor headers to test files"
-    )
+    parser = argparse.ArgumentParser(description="DM-90971: Add governance anchor headers to test files")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--dry-run", action="store_true", help="Preview changes without applying")
     group.add_argument("--apply", action="store_true", help="Apply changes to test files")

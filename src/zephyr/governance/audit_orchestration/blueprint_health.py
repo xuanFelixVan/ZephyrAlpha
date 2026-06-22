@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class BlueprintHealthChecker:
     def check_consistency(self, blueprint_file: str) -> dict:
         return {"status": "healthy", "errors": []}

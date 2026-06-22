@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.audit_trail.sbom_generator import (
     ALLOWED_LICENSES,
     DepInfo,
@@ -48,7 +46,9 @@ class TestDepInfo:
         assert dep.cve_ids == []
 
     def test_custom_values(self):
-        dep = DepInfo(name="pkg", version="2.0", license=LicenseType.MIT, depth=3, cvss_score=8.5, cve_ids=["CVE-2024-0001"])
+        dep = DepInfo(
+            name="pkg", version="2.0", license=LicenseType.MIT, depth=3, cvss_score=8.5, cve_ids=["CVE-2024-0001"]
+        )
         assert dep.license == LicenseType.MIT
         assert dep.cvss_score == 8.5
 
@@ -81,8 +81,12 @@ class TestSBOMReport:
         assert len(violations) == 0
 
     def test_license_violations_with_mock(self):
-        raw_dep = DepInfo.model_construct(name="gpl-pkg", version="1.0", license="GPL-3.0", depth=0, cvss_score=0.0, cve_ids=[])
-        report = SBOMReport.model_construct(format="CycloneDX 1.4", generated_at="", max_depth=5, dependencies=[raw_dep], blocked=[], warnings=[])
+        raw_dep = DepInfo.model_construct(
+            name="gpl-pkg", version="1.0", license="GPL-3.0", depth=0, cvss_score=0.0, cve_ids=[]
+        )
+        report = SBOMReport.model_construct(
+            format="CycloneDX 1.4", generated_at="", max_depth=5, dependencies=[raw_dep], blocked=[], warnings=[]
+        )
         violations = report.license_violations
         assert len(violations) == 1
 
@@ -123,15 +127,24 @@ class TestGenerateSBOM:
 
     def test_license_warning(self):
         from zephyr.governance.audit_trail import sbom_generator as sg
+
         original_SBOMReport = sg.SBOMReport
-        raw_dep = DepInfo.model_construct(name="gpl", version="1.0", license="GPL-3.0", depth=0, cvss_score=0.0, cve_ids=[])
+        raw_dep = DepInfo.model_construct(
+            name="gpl", version="1.0", license="GPL-3.0", depth=0, cvss_score=0.0, cve_ids=[]
+        )
         report = original_SBOMReport.model_construct(
-            format="CycloneDX 1.4", generated_at="", max_depth=5,
-            dependencies=[raw_dep], blocked=[], warnings=[],
+            format="CycloneDX 1.4",
+            generated_at="",
+            max_depth=5,
+            dependencies=[raw_dep],
+            blocked=[],
+            warnings=[],
         )
         for d in report.dependencies:
             if d.license not in ALLOWED_LICENSES and d.license != LicenseType.UNKNOWN:
-                report.warnings.append(f"{d.name} license={d.license.value if hasattr(d.license, 'value') else d.license} not allowed")
+                report.warnings.append(
+                    f"{d.name} license={d.license.value if hasattr(d.license, 'value') else d.license} not allowed"
+                )
         assert any("license" in w.lower() for w in report.warnings)
 
     def test_critical_cve_blocked(self):

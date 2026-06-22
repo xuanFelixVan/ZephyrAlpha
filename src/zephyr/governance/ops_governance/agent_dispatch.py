@@ -2,30 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-055 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.agent_dispatch
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import logging
 from dataclasses import dataclass
-from typing import Optional
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass(frozen=True)
 class DomainDispatch:
@@ -34,6 +24,7 @@ class DomainDispatch:
     re_read: str
     token_budget: int
     blueprint_section: str = ""
+
 
 DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "gate-breaker": DomainDispatch(
@@ -717,16 +708,19 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     ),
 }
 
-def resolve_domain(domain_key: str) -> Optional[DomainDispatch]:
+
+def resolve_domain(domain_key: str) -> DomainDispatch | None:
     """根据 domain key 返回分派信息。找不到返回 None。"""
     entry = DISPATCH_TABLE.get(domain_key)
     if entry is None:
         logger.warning("Dispatch 未命中 domain_key=%s", domain_key)
     return entry
 
+
 def list_all_domains() -> list[str]:
     """列出所有已注册的任务域 key。"""
     return sorted(DISPATCH_TABLE.keys())
+
 
 def resolve_by_keyword(keyword: str) -> list[DomainDispatch]:
     """模糊匹配——关键词命中 domain 名或章节号的条目列表。"""
@@ -736,6 +730,7 @@ def resolve_by_keyword(keyword: str) -> list[DomainDispatch]:
         if kw in entry.domain.lower() or kw in entry.blueprint_section.lower() or kw in entry.pre_read.lower():
             results.append(entry)
     return results
+
 
 def get_dispatch_count() -> int:
     """返回已注册域数目。"""

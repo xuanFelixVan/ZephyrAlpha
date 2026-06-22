@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class PromptVersionManager:
     def __init__(self):
         self._versions: dict[str, str] = {}

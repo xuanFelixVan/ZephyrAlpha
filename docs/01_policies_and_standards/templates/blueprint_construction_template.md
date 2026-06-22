@@ -29,7 +29,29 @@ template_for: blueprint
 title: Blueprint Construction Template
 ttl: permanent
 verifiability: manual
-version: 0.8.0
+version: 0.9.0
+# === 结构化数据字段（v0.9.0 新增）===
+# 文件清单：从 §0.1 正文表格迁移到 frontmatter，支持机器校验和三方对齐
+file_manifest: []
+#  - path: "src/zephyr/{pkg}/{file}.py"    # 文件绝对路径
+#    section: "§3.N"                        # 对应蓝图章节
+#    responsibility: "一句话职责"            # 职责描述
+#    exists: true                           # true=已实现 / false=未实现
+#    ownership: "本模块"                     # 本模块 / ⚠️建议迁移至{模块} / ⚠️与{文件}重叠
+#    blueprint_ref: "MOD-XXX §N"            # 蓝图引用
+# 依赖图：从 §10 正文表格迁移到 frontmatter，文件级粒度 + symbols
+dependency_graph:
+  internal: []   # 蓝图范围内的文件间依赖
+  #  - from: "module_a.py"                  # 源文件
+  #    to: "module_b.py"                    # 目标文件
+  #    symbols: ["ClassName", "func_name"]  # 导入/调用的符号列表
+  #    dep_type: "calls"                    # calls / import / implements / emits_event
+  external: []   # 对其他蓝图/域的依赖
+  #  - from: "module_a.py"                  # 源文件
+  #    to: "zephyr.other_pkg.module_b"      # 目标模块全限定名
+  #    blueprint: "MOD-XXX"                 # 目标蓝图ID
+  #    symbols: ["ClassName"]               # 导入/调用的符号列表
+  #    dep_type: "import"                   # import / implements / provides_interface
 ---
 
 <!--
@@ -141,6 +163,7 @@ END_REQUIRED_SECTIONS
 
 > 存在性：未实现/已实现/已阻塞（MUST注明原因）/已废弃（MUST在§5.3说明）
 > 归属判定：本模块 / ⚠️建议迁移至{模块} / ⚠️与{文件}重叠。编写时 MUST 逐文件判断：此文件的职责是否属于本蓝图 §2.1 声明的职责边界？不属于→标注建议迁移。与同包内其他文件功能重叠→标注重叠。
+> **结构化数据**：详细文件清单 MUST 同时填写在 frontmatter.file_manifest 字段中（机器可校验+三方对齐）。本表格为摘要视图。
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 归属判定 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|---------|-------------------|
@@ -494,6 +517,9 @@ class {DataModel}(BaseModel):
 ---
 
 ## §10 依赖关系
+
+> **结构化数据**：文件级依赖图 MUST 同时填写在 frontmatter.dependency_graph 字段中（机器可校验+三方对齐）。本节表格为摘要视图。
+> 依赖图颗粒度：文件级持久化（frontmatter.dependency_graph）+ 函数级按需计算（AST实时解析，不持久化）。
 
 ### 10.1 依赖声明
 
@@ -975,10 +1001,10 @@ class {DataModel}(BaseModel):
 
 | # | 文件 | module_id | 完整路径（相对优先） | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | `docs/01_policies_and_standards/meta/metadata-registry.md` | 编号规则、doc_type词表 |
+| 1 | 元数据注册表 | PS-STD-001 | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml doc_002` | 路径映射 |
 | 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | 编号注册 |
-| 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md` | AI操作权限 |
+| 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml` | AI操作权限 |
 | 5 | {按项目实际补充} | {—} | `docs/...` | {用途} |
 
 ---

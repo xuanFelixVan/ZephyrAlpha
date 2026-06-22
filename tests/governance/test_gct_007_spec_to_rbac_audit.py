@@ -6,9 +6,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """G-CT-007 — Agent Spec → Audit 集成测试."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 
 class TestGCT007SpecToAudit:
@@ -16,19 +15,22 @@ class TestGCT007SpecToAudit:
 
     def test_capability_creatable(self):
         from zephyr.autonomy_core.registry import AgentCapability
+
         cap = AgentCapability(agent_id="test", capabilities=["read:docs", "write:tests"])
         assert cap.agent_id == "test"
 
     def test_spec_auditor_records_capability(self):
         from zephyr.autonomy_core.registry import AgentCapability
         from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
+
         cap = AgentCapability(agent_id="test", capabilities=["read:docs"])
         result = record_agent_spec(cap)
         assert "agent_id" in result
         assert result["event_type"] == "AGENT_SPEC_REGISTERED"
 
     def test_spec_registry_register(self):
-        from zephyr.autonomy_core.registry import SpecRegistry, AgentCapability
+        from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+
         registry = SpecRegistry()
         cap = AgentCapability(agent_id="test", capabilities=["cap"])
         registry.register(cap)

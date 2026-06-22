@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_blueprint_validator.py
 
-import pytest
 from zephyr.ops.gates.blueprint_validator import BlueprintValidator
 
 

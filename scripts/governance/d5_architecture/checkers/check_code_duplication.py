@@ -11,6 +11,7 @@
 [ERROR_CONTRACT] exit 0=CLEAN, exit 1=DUPLICATES, exit 2=ERROR
 [TESTS] tests/governance/test_check_code_duplication.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -22,12 +23,13 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import argparse
 from difflib import SequenceMatcher
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: [--warn-only, --threshold]

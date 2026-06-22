@@ -23,9 +23,9 @@ from __future__ import annotations
 
 """Error Budget 状态机——monthly budget + burn_rate + exhaust_policy。"""
 
-from datetime import datetime, timezone
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class ErrorBudget(BaseModel):
     contract_id: str
@@ -34,6 +34,7 @@ class ErrorBudget(BaseModel):
     burn_rate: float = 1.0
     exhausted: bool = False
     escalated: bool = False
+
 
 class ErrorBudgetManager:
     def __init__(self):

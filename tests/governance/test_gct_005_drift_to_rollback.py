@@ -6,9 +6,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """G-CT-005 — Drift → Rollback 集成测试."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 
 class TestGCT005DriftToRollback:
@@ -16,12 +15,14 @@ class TestGCT005DriftToRollback:
 
     def test_drift_event_creatable(self):
         from zephyr.shared.shared_services.events import DriftEvent
+
         e = DriftEvent(drift_id="D001", target="test_config")
         assert e.drift_id == "D001"
 
     def test_drift_fix_handler_accepts_event(self):
-        from zephyr.shared.shared_services.events import DriftEvent
         from zephyr.governance.drift_fix import DriftFixHandler
+        from zephyr.shared.shared_services.events import DriftEvent
+
         e = DriftEvent(drift_id="D001", target="test_config")
         handler = DriftFixHandler()
         result = handler.on_drift_fix(e)
@@ -29,5 +30,6 @@ class TestGCT005DriftToRollback:
 
     def test_drift_state_enum(self):
         from zephyr.shared.shared_services.events import DriftState, DriftType
+
         assert DriftState.DETECTED is not None
         assert DriftType.CONFIG_DRIFT is not None

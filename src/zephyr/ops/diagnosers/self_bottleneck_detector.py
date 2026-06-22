@@ -66,12 +66,12 @@ class SelfBottleneckDetector:
     def record_stage_latency(self, stage: PipelineStage, latency_ms: float) -> None:
         self.stage_latencies[stage.value].append(latency_ms)
         if len(self.stage_latencies[stage.value]) > self.window_size:
-            self.stage_latencies[stage.value] = self.stage_latencies[stage.value][-self.window_size:]
+            self.stage_latencies[stage.value] = self.stage_latencies[stage.value][-self.window_size :]
 
     def record_e2e_latency(self, latency_ms: float) -> None:
         self.e2e_latencies.append(latency_ms)
         if len(self.e2e_latencies) > self.window_size:
-            self.e2e_latencies = self.e2e_latencies[-self.window_size:]
+            self.e2e_latencies = self.e2e_latencies[-self.window_size :]
 
     def set_queue_depth(self, stage: PipelineStage, depth: int) -> None:
         self.stage_queue_depths[stage.value] = depth
@@ -94,15 +94,16 @@ class SelfBottleneckDetector:
                 "sample_count": len(lats),
             }
 
-        slowest_stage = max(
-            stage_stats.items(),
-            key=lambda x: x[1]["p95_ms"],
-        )[0] if stage_stats else ""
-
-        queue_saturated = any(
-            self.stage_queue_depths.get(s.value, 0) > self.max_queue_depth
-            for s in PipelineStage
+        slowest_stage = (
+            max(
+                stage_stats.items(),
+                key=lambda x: x[1]["p95_ms"],
+            )[0]
+            if stage_stats
+            else ""
         )
+
+        queue_saturated = any(self.stage_queue_depths.get(s.value, 0) > self.max_queue_depth for s in PipelineStage)
 
         bottleneck = ""
         if slowest_stage and stage_stats[slowest_stage]["p95_ms"] > self.max_stage_latency_ms:
@@ -115,12 +116,14 @@ class SelfBottleneckDetector:
 
         if bottleneck and bottleneck != self.current_bottleneck:
             self.current_bottleneck = bottleneck
-            self.bottleneck_events.append({
-                "ts": time.time(),
-                "stage": bottleneck,
-                "p95_ms": stage_stats.get(bottleneck, {}).get("p95_ms", 0),
-                "queue_depth": self.stage_queue_depths.get(bottleneck, 0),
-            })
+            self.bottleneck_events.append(
+                {
+                    "ts": time.time(),
+                    "stage": bottleneck,
+                    "p95_ms": stage_stats.get(bottleneck, {}).get("p95_ms", 0),
+                    "queue_depth": self.stage_queue_depths.get(bottleneck, 0),
+                }
+            )
 
         e2e_p95 = 0.0
         if self.e2e_latencies:
@@ -134,9 +137,7 @@ class SelfBottleneckDetector:
             "e2e_healthy": e2e_p95 < self.max_e2e_latency_ms,
             "queue_saturated": queue_saturated,
             "recommendation": (
-                f"scale_{bottleneck}" if bottleneck
-                else "increase_concurrency" if queue_saturated
-                else "continue"
+                f"scale_{bottleneck}" if bottleneck else "increase_concurrency" if queue_saturated else "continue"
             ),
         }
 

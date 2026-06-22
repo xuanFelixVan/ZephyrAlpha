@@ -29,14 +29,13 @@ Healthcheck Service — 运行时健康检查服务。
     任务卡 TASK-INF-0111 (Part 1/2)
 """
 
-import json
 import os
 import subprocess
 import time
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class HealthStatus:
@@ -46,6 +45,7 @@ class HealthStatus:
     message: str
     last_checked: str
 
+
 @dataclass
 class HealthReport:
     timestamp_utc: str
@@ -54,8 +54,8 @@ class HealthReport:
     uptime_seconds: float
     version: str = "0.6.0"
 
-class HealthcheckService:
 
+class HealthcheckService:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
         self._start_time = time.time()
@@ -72,7 +72,7 @@ class HealthcheckService:
         overall = all(c.healthy for c in components)
 
         return HealthReport(
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
             overall_healthy=overall,
             components=components,
             uptime_seconds=time.time() - self._start_time,
@@ -84,14 +84,15 @@ class HealthcheckService:
     def check_dependencies(self) -> HealthStatus:
         t0 = time.time()
         try:
-            import zephyr.infrastructure.shared_services.models
             import zephyr.infrastructure.shared_services.blueprint_decomposer
+            import zephyr.infrastructure.shared_services.models
+
             return HealthStatus(
                 component="dependencies",
                 healthy=True,
                 latency_ms=(time.time() - t0) * 1000,
                 message="All core modules importable",
-                last_checked=datetime.now(timezone.utc).isoformat(),
+                last_checked=datetime.now(UTC).isoformat(),
             )
         except ImportError as e:
             return HealthStatus(
@@ -99,7 +100,7 @@ class HealthcheckService:
                 healthy=False,
                 latency_ms=(time.time() - t0) * 1000,
                 message=f"Import failed: {e}",
-                last_checked=datetime.now(timezone.utc).isoformat(),
+                last_checked=datetime.now(UTC).isoformat(),
             )
 
     def _check_git(self) -> HealthStatus:
@@ -117,7 +118,7 @@ class HealthcheckService:
                 healthy=result.returncode == 0,
                 latency_ms=(time.time() - t0) * 1000,
                 message="Git operational" if result.returncode == 0 else f"Git error: {result.stderr[:100]}",
-                last_checked=datetime.now(timezone.utc).isoformat(),
+                last_checked=datetime.now(UTC).isoformat(),
             )
         except (subprocess.TimeoutExpired, FileNotFoundError) as e:
             return HealthStatus(
@@ -125,7 +126,7 @@ class HealthcheckService:
                 healthy=False,
                 latency_ms=(time.time() - t0) * 1000,
                 message=str(e),
-                last_checked=datetime.now(timezone.utc).isoformat(),
+                last_checked=datetime.now(UTC).isoformat(),
             )
 
     def _check_python(self) -> HealthStatus:
@@ -142,7 +143,7 @@ class HealthcheckService:
                 healthy=result.returncode == 0,
                 latency_ms=(time.time() - t0) * 1000,
                 message=result.stdout.strip(),
-                last_checked=datetime.now(timezone.utc).isoformat(),
+                last_checked=datetime.now(UTC).isoformat(),
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return HealthStatus(
@@ -150,7 +151,7 @@ class HealthcheckService:
                 healthy=False,
                 latency_ms=(time.time() - t0) * 1000,
                 message="Python not found",
-                last_checked=datetime.now(timezone.utc).isoformat(),
+                last_checked=datetime.now(UTC).isoformat(),
             )
 
     def _check_disk(self) -> HealthStatus:
@@ -162,7 +163,7 @@ class HealthcheckService:
                 healthy=True,
                 latency_ms=(time.time() - t0) * 1000,
                 message=f"Project accessible ({usage} bytes)",
-                last_checked=datetime.now(timezone.utc).isoformat(),
+                last_checked=datetime.now(UTC).isoformat(),
             )
         except OSError as e:
             return HealthStatus(
@@ -170,7 +171,7 @@ class HealthcheckService:
                 healthy=False,
                 latency_ms=(time.time() - t0) * 1000,
                 message=str(e),
-                last_checked=datetime.now(timezone.utc).isoformat(),
+                last_checked=datetime.now(UTC).isoformat(),
             )
 
     def _check_network(self) -> HealthStatus:
@@ -179,7 +180,7 @@ class HealthcheckService:
             healthy=True,
             latency_ms=0,
             message="Local-only mode — skip network check",
-            last_checked=datetime.now(timezone.utc).isoformat(),
+            last_checked=datetime.now(UTC).isoformat(),
         )
 
     def _check_file_system(self) -> HealthStatus:
@@ -200,5 +201,5 @@ class HealthcheckService:
             healthy=len(missing) == 0,
             latency_ms=(time.time() - t0) * 1000,
             message="All required files present" if not missing else f"Missing: {missing}",
-            last_checked=datetime.now(timezone.utc).isoformat(),
+            last_checked=datetime.now(UTC).isoformat(),
         )

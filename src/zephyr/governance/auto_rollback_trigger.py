@@ -35,7 +35,6 @@ AutoRollbackTrigger — 自动回滚触发器。
     Transient: timeout / network / rate_limit / temp_file_lock
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -71,31 +70,57 @@ class TriggerDecision:
 
 
 HARD_SOURCES: set[str] = {
-    "drift-detector", "CI", "G6_secrets", "db_integrity", "kill_switch",
+    "drift-detector",
+    "CI",
+    "G6_secrets",
+    "db_integrity",
+    "kill_switch",
 }
 SOFT_SOURCES: set[str] = {
-    "G0", "G1", "G2", "G3", "lint", "style", "syntax",
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "lint",
+    "style",
+    "syntax",
 }
 TRANSIENT_SOURCES: set[str] = {
-    "timeout", "network", "rate_limit", "temp_file_lock", "disk_quota",
+    "timeout",
+    "network",
+    "rate_limit",
+    "temp_file_lock",
+    "disk_quota",
 }
 
 HARD_PATTERNS: list[str] = [
-    "corruption", "integrity check failed", "data loss", "secrets leak",
-    "credentials exposed", "drift detected", "unauthorized access",
+    "corruption",
+    "integrity check failed",
+    "data loss",
+    "secrets leak",
+    "credentials exposed",
+    "drift detected",
+    "unauthorized access",
 ]
 SOFT_PATTERNS: list[str] = [
-    "indentation error", "syntax error", "missing docstring", "lint failed",
-    "type error", "import error",
+    "indentation error",
+    "syntax error",
+    "missing docstring",
+    "lint failed",
+    "type error",
+    "import error",
 ]
 TRANSIENT_PATTERNS: list[str] = [
-    "timeout", "connection refused", "rate limit", "too many requests",
-    "temporary failure", "retry later",
+    "timeout",
+    "connection refused",
+    "rate limit",
+    "too many requests",
+    "temporary failure",
+    "retry later",
 ]
 
 
 class AutoRollbackTrigger:
-
     def __init__(self, max_retries: int = 3) -> None:
         self._max_retries = max_retries
         self._retry_counts: dict[str, int] = {}

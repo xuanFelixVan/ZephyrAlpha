@@ -1,8 +1,9 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/check_statuses.py | §
 import sys
+
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
-from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 init_db()
 repo = TaskRepository()

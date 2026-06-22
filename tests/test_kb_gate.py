@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.audit_trail.kb_gate import KBAuditGate, KBWriteCheckResult, PoisoningScanResult
 
 
@@ -52,7 +50,9 @@ class TestCheckWrite:
     def test_untrusted_source_blocked(self):
         gate = KBAuditGate()
         result = gate.check_write(
-            "agent-1", "content", trust_score=0.8,
+            "agent-1",
+            "content",
+            trust_score=0.8,
             metadata={"source": "external_untrusted"},
         )
         assert result.allowed is False

@@ -18,6 +18,7 @@ Exit codes:
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -27,9 +28,9 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS
-
 
 __manifest__ = """
 args: [--check-write, --check-delete, --check-create, --check-all, --session-id, --json]
@@ -47,7 +48,6 @@ warn_only: false
 import argparse
 import json
 import logging
-import os
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -112,10 +112,9 @@ class AdmissionResult:
             "allowed": self.allowed,
             "exit_code": 0 if self.allowed else (2 if not self.red_checks else 1),
             "summary": f"{len(self.red_checks)} RED, {len(self.yellow_checks)} YELLOW, "
-                       f"{len(self.checks) - len(self.red_checks) - len(self.yellow_checks)} GREEN",
+            f"{len(self.checks) - len(self.red_checks) - len(self.yellow_checks)} GREEN",
             "checks": [
-                {"check_id": c.check_id, "name": c.name, "status": c.status,
-                 "message": c.message, "detail": c.detail}
+                {"check_id": c.check_id, "name": c.name, "status": c.status, "message": c.message, "detail": c.detail}
                 for c in self.checks
             ],
             "recommendation": self.recommendation,
@@ -126,8 +125,9 @@ def _run_lock_check(filepath: str, session_id: str | None) -> tuple[int, str]:
     """_run_lock_check implementation."""
     args = [sys.executable, str(_LOCK_SCRIPT), "check", filepath]
     try:
-        result = subprocess.run(args, capture_output=True, text=True, encoding="utf-8",
-                                errors="replace", timeout=15, cwd=str(_PROJECT_ROOT))
+        result = subprocess.run(
+            args, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15, cwd=str(_PROJECT_ROOT)
+        )
         combined = (result.stdout + result.stderr).strip()
         return result.returncode, combined
     except subprocess.TimeoutExpired:
@@ -145,7 +145,7 @@ def _file_is_registered(filepath: str) -> tuple[bool, str]:
         try:
             content = _SCRIPT_MANIFEST.read_text(encoding="utf-8")
             if rel in content:
-                checks.append((True, f"script_manifest.yaml"))
+                checks.append((True, "script_manifest.yaml"))
         except Exception:
             pass
 
@@ -153,7 +153,7 @@ def _file_is_registered(filepath: str) -> tuple[bool, str]:
         try:
             content = _REGISTRY_OF_REGISTRIES.read_text(encoding="utf-8")
             if rel in content:
-                checks.append((True, f"registry_of_registries.yaml"))
+                checks.append((True, "registry_of_registries.yaml"))
         except Exception:
             pass
 
@@ -164,7 +164,7 @@ def _file_is_registered(filepath: str) -> tuple[bool, str]:
             content = init_file.read_text(encoding="utf-8")
             basename = Path(filepath).stem
             if basename in content:
-                checks.append((True, f"__init__.py"))
+                checks.append((True, "__init__.py"))
         except Exception:
             pass
 
@@ -193,8 +193,12 @@ def _run_audit_scan() -> tuple[int, str]:
     try:
         result = subprocess.run(
             [sys.executable, str(_AUDIT_SCRIPT), "--json"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_PROJECT_ROOT),
         )
         return result.returncode, result.stdout.strip()[:3000]
     except subprocess.TimeoutExpired:
@@ -220,43 +224,48 @@ def check_write(filepath: str, session_id: str | None = None) -> AdmissionResult
         if file_exists:
             exit_code, output = _run_lock_check(filepath, session_id)
             if "FREE" in output:
-                return CheckItem("PRE-OP-001", "文件锁检查", "GREEN",
-                                 f"文件未被锁定: {filepath}")
+                return CheckItem("PRE-OP-001", "文件锁检查", "GREEN", f"文件未被锁定: {filepath}")
             elif "LOCKED" in output:
                 holder = output.split("持有者:")[-1].strip() if "持有者:" in output else "unknown"
-                return CheckItem("PRE-OP-001", "文件锁检查", "RED",
-                                 f"文件已被锁定: {filepath}", f"持有者: {holder}")
-            return CheckItem("PRE-OP-001", "文件锁检查", "YELLOW",
-                             f"锁检查异常: {output[:200]}")
-        return CheckItem("PRE-OP-001", "文件锁检查", "GREEN",
-                         f"新文件无需锁检查: {filepath}")
+                return CheckItem("PRE-OP-001", "文件锁检查", "RED", f"文件已被锁定: {filepath}", f"持有者: {holder}")
+            return CheckItem("PRE-OP-001", "文件锁检查", "YELLOW", f"锁检查异常: {output[:200]}")
+        return CheckItem("PRE-OP-001", "文件锁检查", "GREEN", f"新文件无需锁检查: {filepath}")
 
     def _new_file_check() -> CheckItem:
         """_new_file_check implementation."""
         if is_new_file:
             if not _check_legal_directory(filepath):
-                return CheckItem("PRE-OP-002", "新建文件目录合法性", "RED",
-                                 f"文件不在合法目录中: {filepath}",
-                                 f"合法目录: {[str(d.relative_to(_PROJECT_ROOT)) for d in _LEGAL_DIRS]}")
+                return CheckItem(
+                    "PRE-OP-002",
+                    "新建文件目录合法性",
+                    "RED",
+                    f"文件不在合法目录中: {filepath}",
+                    f"合法目录: {[str(d.relative_to(_PROJECT_ROOT)) for d in _LEGAL_DIRS]}",
+                )
             registered, locations = _file_is_registered(filepath)
             if registered:
-                return CheckItem("PRE-OP-003", "新建文件注册检查", "GREEN",
-                                 f"文件已在注册表中: {locations}")
+                return CheckItem("PRE-OP-003", "新建文件注册检查", "GREEN", f"文件已在注册表中: {locations}")
             else:
-                return CheckItem("PRE-OP-003", "新建文件注册检查", "RED",
-                                 f"新文件未注册! 必须通过 scaffold.py 创建",
-                                 f"运行: python scripts/scaffold.py script/module/gate ...")
-        return CheckItem("PRE-OP-002", "新建文件检查", "GREEN",
-                         f"文件已存在，无需 scaffold")
+                return CheckItem(
+                    "PRE-OP-003",
+                    "新建文件注册检查",
+                    "RED",
+                    "新文件未注册! 必须通过 scaffold.py 创建",
+                    "运行: python scripts/scaffold.py script/module/gate ...",
+                )
+        return CheckItem("PRE-OP-002", "新建文件检查", "GREEN", "文件已存在，无需 scaffold")
 
     def _func_duplicate_check() -> CheckItem:
         """_func_duplicate_check implementation."""
         if is_new_file:
-            return CheckItem("PRE-OP-004", "功能重复检查", "YELLOW",
-                             f"新文件应通过 scaffold.py 自动查重",
-                             "scaffold.py 内置 BlueprintSearchServer 功能重复检测")
-        return CheckItem("PRE-OP-004", "功能重复检查", "GREEN",
-                         f"修改已有文件，不查功能重复")
+            return CheckItem(
+                "PRE-OP-004",
+                "功能重复检查",
+                "YELLOW",
+                "新文件应通过 scaffold.py 自动查重",
+                "scaffold.py 内置 BlueprintSearchServer 功能重复检测",
+            )
+        return CheckItem("PRE-OP-004", "功能重复检查", "GREEN", "修改已有文件，不查功能重复")
 
     with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
         futures = {
@@ -277,8 +286,11 @@ def check_write(filepath: str, session_id: str | None = None) -> AdmissionResult
             recommendation += "\n→ 请用 scaffold.py 创建文件，不要用 Write 直接写入新文件。"
 
     return AdmissionResult(
-        filepath=filepath, operation="write", allowed=allowed,
-        checks=checks, recommendation=recommendation.strip(),
+        filepath=filepath,
+        operation="write",
+        allowed=allowed,
+        checks=checks,
+        recommendation=recommendation.strip(),
     )
 
 
@@ -290,63 +302,81 @@ def check_delete(filepath: str) -> AdmissionResult:
     def _exists_check() -> CheckItem:
         """_exists_check implementation."""
         if not resolved.exists():
-            return CheckItem("DEL-001", "文件存在性", "RED",
-                             f"文件不存在，无需删除: {filepath}")
-        return CheckItem("DEL-001", "文件存在性", "GREEN",
-                         f"文件存在")
+            return CheckItem("DEL-001", "文件存在性", "RED", f"文件不存在，无需删除: {filepath}")
+        return CheckItem("DEL-001", "文件存在性", "GREEN", "文件存在")
 
     def _registration_check() -> CheckItem:
         """_registration_check implementation."""
         registered, locations = _file_is_registered(filepath)
         if registered:
-            return CheckItem("DEL-002", "RULE-THREE STEP 1: 登记检查", "RED",
-                             f"文件已在注册表中登记 ({locations})! 不能删除，只能重构/重安置。",
-                             f"如确需删除，先从所有注册表中移除引用。")
-        return CheckItem("DEL-002", "RULE-THREE STEP 1: 登记检查", "GREEN",
-                         f"文件未在任何注册表中登记")
+            return CheckItem(
+                "DEL-002",
+                "RULE-THREE STEP 1: 登记检查",
+                "RED",
+                f"文件已在注册表中登记 ({locations})! 不能删除，只能重构/重安置。",
+                "如确需删除，先从所有注册表中移除引用。",
+            )
+        return CheckItem("DEL-002", "RULE-THREE STEP 1: 登记检查", "GREEN", "文件未在任何注册表中登记")
 
     def _git_check() -> CheckItem:
         """_git_check implementation."""
         try:
             result = subprocess.run(
                 ["git", "log", "--oneline", "-1", "--", filepath],
-                capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=10, cwd=str(_PROJECT_ROOT),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=10,
+                cwd=str(_PROJECT_ROOT),
             )
             if result.stdout.strip():
-                return CheckItem("DEL-003", "RULE-THREE STEP 1: git历史检查", "RED",
-                                 f"文件有 git 提交历史: {result.stdout.strip()[:100]}",
-                                 f"已提交的文件有持续价值。只能重构/重安置，不能删除。")
+                return CheckItem(
+                    "DEL-003",
+                    "RULE-THREE STEP 1: git历史检查",
+                    "RED",
+                    f"文件有 git 提交历史: {result.stdout.strip()[:100]}",
+                    "已提交的文件有持续价值。只能重构/重安置，不能删除。",
+                )
         except Exception:
             pass
-        return CheckItem("DEL-003", "RULE-THREE STEP 1: git历史检查", "GREEN",
-                         f"文件无 git 提交历史")
+        return CheckItem("DEL-003", "RULE-THREE STEP 1: git历史检查", "GREEN", "文件无 git 提交历史")
 
     def _content_value_check() -> CheckItem:
         """_content_value_check implementation."""
         if not resolved.exists() or not resolved.is_file():
-            return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "GREEN",
-                             f"文件不存在，跳过内容检查")
+            return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "GREEN", "文件不存在，跳过内容检查")
         try:
             content = resolved.read_text(encoding="utf-8", errors="replace")
             if len(content.strip()) == 0:
-                return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "GREEN",
-                                f"空文件——无内容价值")
+                return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "GREEN", "空文件——无内容价值")
             unique_indicators = [
-                "class ", "def ", "yaml", "registry", "contract", "check", "validate",
-                "manifest", "gate", "pipeline", "schema", "threshold",
+                "class ",
+                "def ",
+                "yaml",
+                "registry",
+                "contract",
+                "check",
+                "validate",
+                "manifest",
+                "gate",
+                "pipeline",
+                "schema",
+                "threshold",
             ]
             content_lower = content.lower()
             found = [ind for ind in unique_indicators if ind in content_lower]
             if found:
-                return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "YELLOW",
-                                 f"文件包含潜在有价值内容: {found[:5]}",
-                                 f"请在删除前逐行确认这些内容在其他文件中也有备份。")
-            return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "GREEN",
-                             f"未检测到明显的独特内容指标")
+                return CheckItem(
+                    "DEL-004",
+                    "RULE-THREE STEP 3: 内容价值检查",
+                    "YELLOW",
+                    f"文件包含潜在有价值内容: {found[:5]}",
+                    "请在删除前逐行确认这些内容在其他文件中也有备份。",
+                )
+            return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "GREEN", "未检测到明显的独特内容指标")
         except Exception as e:
-            return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "YELLOW",
-                             f"内容读取异常: {e}")
+            return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "YELLOW", f"内容读取异常: {e}")
 
     with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
         futures = {
@@ -370,8 +400,11 @@ def check_delete(filepath: str) -> AdmissionResult:
         recommendation = f"⚠ {len(yellows)} 个警告。请确认每行内容在别处有备份后再删。"
 
     return AdmissionResult(
-        filepath=filepath, operation="delete", allowed=allowed,
-        checks=checks, recommendation=recommendation.strip(),
+        filepath=filepath,
+        operation="delete",
+        allowed=allowed,
+        checks=checks,
+        recommendation=recommendation.strip(),
     )
 
 
@@ -403,20 +436,13 @@ def main() -> None:
     python scripts/governance/pre_op_check.py --check-all scripts/my_script.py --json
         """,
     )
-    parser.add_argument("--check-write", metavar="FILEPATH",
-                        help="写文件前准入检查")
-    parser.add_argument("--check-delete", metavar="FILEPATH",
-                        help="删除文件前准入检查")
-    parser.add_argument("--check-create", metavar="FILEPATH",
-                        help="创建新文件前准入检查")
-    parser.add_argument("--check-all", metavar="FILEPATH",
-                        help="全量检查（自动判断操作类型）")
-    parser.add_argument("--session-id", default=None,
-                        help="AI session ID（用于锁检查）")
-    parser.add_argument("--json", action="store_true",
-                        help="JSON 输出（AI 消费格式）")
-    parser.add_argument("--warn-only", action="store_true",
-                        help="警告模式——RED 也不阻断 exit code")
+    parser.add_argument("--check-write", metavar="FILEPATH", help="写文件前准入检查")
+    parser.add_argument("--check-delete", metavar="FILEPATH", help="删除文件前准入检查")
+    parser.add_argument("--check-create", metavar="FILEPATH", help="创建新文件前准入检查")
+    parser.add_argument("--check-all", metavar="FILEPATH", help="全量检查（自动判断操作类型）")
+    parser.add_argument("--session-id", default=None, help="AI session ID（用于锁检查）")
+    parser.add_argument("--json", action="store_true", help="JSON 输出（AI 消费格式）")
+    parser.add_argument("--warn-only", action="store_true", help="警告模式——RED 也不阻断 exit code")
 
     args = parser.parse_args()
 

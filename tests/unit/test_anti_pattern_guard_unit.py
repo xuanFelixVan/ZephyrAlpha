@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """Anti-Patterns 防护单元测试——逐条验证 AP1~AP8。"""
 
 

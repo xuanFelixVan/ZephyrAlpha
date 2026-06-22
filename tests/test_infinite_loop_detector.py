@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_infinite_loop_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.infinite_loop_detector import (
     InfiniteLoopDetector,

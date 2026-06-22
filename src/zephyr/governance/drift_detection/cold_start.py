@@ -29,15 +29,14 @@ first_scan_seed: 首次运行空目录时产生占位扫描
 auto_config: 需要config但.env/config.yaml不存在建议
 对标 blueprint.md §6.31。
 """
+
 from __future__ import annotations
 
 import os
 import sqlite3
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
-
 
 REQUIRED_DIRS: list[str] = [
     "data/drift",
@@ -87,7 +86,7 @@ class ColdStartResult:
     missing_env: list[str] = field(default_factory=list)
     first_scan_triggered: bool = False
     warnings: list[str] = field(default_factory=list)
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 def init_directories(project_root: str) -> list[str]:
@@ -138,10 +137,7 @@ def bootstrap(project_root: str) -> ColdStartResult:
         result.warnings.append("src/ directory appears empty — first scan seed recommended")
 
     if result.missing_env:
-        result.warnings.append(
-            f"Missing env vars: {result.missing_env} — "
-            f"create .env file with required values"
-        )
+        result.warnings.append(f"Missing env vars: {result.missing_env} — create .env file with required values")
 
     if result.db_initialized:
         try:
@@ -156,7 +152,8 @@ def bootstrap(project_root: str) -> ColdStartResult:
 
 def _trigger_light_scan(project_root: str) -> bool:
     import asyncio
-    from .drift_engine import scan, ScanLevel
+
+    from .drift_engine import ScanLevel, scan
 
     loop = asyncio.new_event_loop()
     try:

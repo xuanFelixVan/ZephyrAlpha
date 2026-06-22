@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_data_quality_gate.py
 
-import pytest
 from zephyr.ops.gates.data_quality_gate import DataQualityGate
 
 

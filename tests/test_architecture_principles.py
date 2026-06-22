@@ -14,13 +14,11 @@ from __future__ import annotations
 
 import logging
 
-import pytest
-
 from zephyr.behavioral_audit.architecture_principles import (
-    ArchPrinciple,
-    BlueprintIronLaw,
     IRON_LAW_DEFS,
     PRINCIPLE_DEFS,
+    ArchPrinciple,
+    BlueprintIronLaw,
     get_principle_by_kb_ref,
     princpled_check,
     validate_against_principles,
@@ -128,8 +126,10 @@ class TestIronLawDefs:
         assert "YAML" in IRON_LAW_DEFS[BlueprintIronLaw.IL5_SOURCE_OF_TRUTH]
 
     def test_il1_is_flat_top(self):
-        assert "单层" in IRON_LAW_DEFS[BlueprintIronLaw.IL1_FLAT_TOP] or \
-               "嵌套" in IRON_LAW_DEFS[BlueprintIronLaw.IL1_FLAT_TOP]
+        assert (
+            "单层" in IRON_LAW_DEFS[BlueprintIronLaw.IL1_FLAT_TOP]
+            or "嵌套" in IRON_LAW_DEFS[BlueprintIronLaw.IL1_FLAT_TOP]
+        )
 
 
 class TestPrincpledCheck:

@@ -25,46 +25,43 @@ P0 数据管道：
 
 Phase E | Safety: MEDIUM
 """
+
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
-import numpy as np
 import pandas as pd
 import pytest
 
+from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
+from zephyr.ex_core.order_manager import OrderManager
+from zephyr.factor.factor_base import FactorRegistry, autodiscover_factors
 from zephyr.governance.memory_provider import MemoryProvider
-from zephyr.governance.default_quality_gate import DefaultQualityGate
-from zephyr.factor.factor_base import FactorBase, FactorRegistry, FactorMeta, autodiscover_factors
-from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
-from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
-from zephyr.risk.risk_manager import RiskLimits
+from zephyr.integration.layer_consumer_registry import get_registry_summary, register_all_consumers
+from zephyr.integration.layer_router import (
+    get_layer_router,
+    handle_layer_onboarding,
+    reset_layer_router,
+)
+from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
 from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
-from zephyr.ex_core.order_manager import OrderManager
 from zephyr.pf_core.default_tca_engine import DefaultTCAEngine
-from zephyr.integration.layer_consumer_registry import register_all_consumers, get_registry_summary
-from zephyr.integration.layer_router import (
-    LayerDataRouter,
-    get_layer_router,
-    reset_layer_router,
-    handle_layer_onboarding,
-)
-from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
-from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+from zephyr.risk.risk_manager import RiskLimits
+from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
+from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
-
 
 TEST_SYMBOLS = ["600519", "000858", "601318", "600036", "000333"]
 
@@ -74,14 +71,14 @@ def _make_market_data(
     provider: MemoryProvider,
     trace_context: TraceContext | None = None,
 ) -> NormalizedMarketData:
-    end = datetime.now(timezone.utc)
+    end = datetime.now(UTC)
     start = end - timedelta(days=100)
     df = provider.fetch_historical(symbol, start, end)
     last = df.iloc[-1]
     return NormalizedMarketData(
         symbol=f"{symbol}.SH",
         data_source="memory",
-        timestamp=last["date"].to_pydatetime() if hasattr(last["date"], "to_pydatetime") else datetime.now(timezone.utc),
+        timestamp=last["date"].to_pydatetime() if hasattr(last["date"], "to_pydatetime") else datetime.now(UTC),
         open=Decimal(str(last["open"])),
         high=Decimal(str(last["high"])),
         low=Decimal(str(last["low"])),
@@ -101,7 +98,7 @@ def _make_factor_signal(
     return FactorSignal(
         factor_id=factor_id,
         symbol=symbol,
-        as_of_date=datetime.now(timezone.utc),
+        as_of_date=datetime.now(UTC),
         raw_value=raw_value,
         idempotency_key=str(uuid.uuid4()),
         trace_context=trace_context,
@@ -110,7 +107,7 @@ def _make_factor_signal(
 
 def _make_risk_limits(trace_context: TraceContext | None = None) -> RiskLimits:
     return RiskLimits(
-        as_of_date=datetime.now(timezone.utc),
+        as_of_date=datetime.now(UTC),
         idempotency_key=str(uuid.uuid4()),
         max_single_position=0.10,
         max_gross_leverage=1.0,
@@ -123,7 +120,7 @@ def _make_trace_context() -> TraceContext:
     return TraceContext(
         trace_id=f"trace-{uuid.uuid4().hex[:12]}",
         span_id=f"span-{uuid.uuid4().hex[:8]}",
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
         idempotency_key=str(uuid.uuid4()),
         service_name="test",
     )
@@ -147,8 +144,8 @@ class TestPhaseEL00ToL02:
         provider = MemoryProvider(seed=42)
         df = provider.fetch_historical(
             "600519",
-            datetime(2025, 1, 1, tzinfo=timezone.utc),
-            datetime(2025, 3, 31, tzinfo=timezone.utc),
+            datetime(2025, 1, 1, tzinfo=UTC),
+            datetime(2025, 3, 31, tzinfo=UTC),
         )
         assert len(df) > 0
         assert {"open", "high", "low", "close", "volume"}.issubset(set(df.columns))
@@ -158,15 +155,15 @@ class TestPhaseEL00ToL02:
         provider = MemoryProvider(seed=42)
         df_a = provider.fetch_historical(
             "600519",
-            datetime(2025, 1, 1, tzinfo=timezone.utc),
-            datetime(2025, 1, 31, tzinfo=timezone.utc),
+            datetime(2025, 1, 1, tzinfo=UTC),
+            datetime(2025, 1, 31, tzinfo=UTC),
         )
         df_b = provider.fetch_historical(
             "000858",
-            datetime(2025, 1, 1, tzinfo=timezone.utc),
-            datetime(2025, 1, 31, tzinfo=timezone.utc),
+            datetime(2025, 1, 1, tzinfo=UTC),
+            datetime(2025, 1, 31, tzinfo=UTC),
         )
-        assert not df_a["close"].iloc[-1] == df_b["close"].iloc[-1]
+        assert df_a["close"].iloc[-1] != df_b["close"].iloc[-1]
 
     def test_market_data_wraps_into_normalized_type(self):
         provider = MemoryProvider(seed=42)
@@ -195,8 +192,8 @@ class TestPhaseEL00ToL02:
         provider = MemoryProvider(seed=42)
         df = provider.fetch_historical(
             "600519",
-            datetime(2025, 1, 1, tzinfo=timezone.utc),
-            datetime(2025, 3, 31, tzinfo=timezone.utc),
+            datetime(2025, 1, 1, tzinfo=UTC),
+            datetime(2025, 3, 31, tzinfo=UTC),
         )
 
         factor_cls = FactorRegistry.get("momentum_20d")
@@ -218,8 +215,8 @@ class TestPhaseEL00ToL02:
         provider = MemoryProvider(seed=42)
         df = provider.fetch_historical(
             "600519",
-            datetime(2025, 1, 1, tzinfo=timezone.utc),
-            datetime(2025, 6, 30, tzinfo=timezone.utc),
+            datetime(2025, 1, 1, tzinfo=UTC),
+            datetime(2025, 6, 30, tzinfo=UTC),
         )
 
         factor_cls = FactorRegistry.get("value_factor")
@@ -259,7 +256,7 @@ class TestPhaseEL02ToL03:
         s3 = FactorSignal(
             factor_id="quality_factor",
             symbol="600519",
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             raw_value=0.03,
             idempotency_key=str(uuid.uuid4()),
             confidence=0.1,
@@ -275,7 +272,7 @@ class TestPhaseEL02ToL03:
         s3 = FactorSignal(
             factor_id="bad_factor",
             symbol="600519",
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             raw_value=-0.02,
             idempotency_key=str(uuid.uuid4()),
             is_valid=False,
@@ -307,13 +304,15 @@ class TestPhaseEL03L04ToL05:
             mode=RebalanceMode.SIGNAL_WEIGHT,
             nav=Decimal("1000000"),
         )
-        strategy.update_signals({
-            "600519": 0.8,
-            "000858": 0.3,
-            "601318": -0.2,
-            "600036": 0.1,
-            "000333": -0.5,
-        })
+        strategy.update_signals(
+            {
+                "600519": 0.8,
+                "000858": 0.3,
+                "601318": -0.2,
+                "600036": 0.1,
+                "000333": -0.5,
+            }
+        )
 
         orders = strategy.generate_target_weights()
         assert len(orders) > 0
@@ -439,7 +438,7 @@ class TestPhaseEL06ToL07:
             strategy_id="test-strategy",
             filled_quantity=Decimal("200"),
             fill_price=Decimal("101"),
-            fill_timestamp=datetime.now(timezone.utc),
+            fill_timestamp=datetime.now(UTC),
             commission=Decimal("6"),
             idempotency_key=str(uuid.uuid4()),
         )
@@ -473,7 +472,7 @@ class TestPhaseEL06ToL07:
                 strategy_id="test-strategy",
                 filled_quantity=order.quantity,
                 fill_price=Decimal(str(100 + i * 2)),
-                fill_timestamp=datetime.now(timezone.utc),
+                fill_timestamp=datetime.now(UTC),
                 commission=Decimal("3"),
                 idempotency_key=str(uuid.uuid4()),
             )
@@ -618,7 +617,7 @@ class TestPhaseETraceContextPropagation:
             strategy_id="test-strategy",
             filled_quantity=Decimal("100"),
             fill_price=Decimal("101"),
-            fill_timestamp=datetime.now(timezone.utc),
+            fill_timestamp=datetime.now(UTC),
             commission=Decimal("3"),
             idempotency_key=str(uuid.uuid4()),
             trace_context=trace,
@@ -674,7 +673,7 @@ class TestPhaseEFullPipelineE2E:
         total_fills = 0
 
         for symbol in TEST_SYMBOLS:
-            end = datetime.now(timezone.utc)
+            end = datetime.now(UTC)
             start = end - timedelta(days=100)
             df = provider.fetch_historical(symbol, start, end)
             assert len(df) > 0, f"No data for {symbol}"
@@ -814,7 +813,7 @@ class TestPhaseEFullPipelineE2E:
             strategy_id="test",
             filled_quantity=Decimal("100"),
             fill_price=Decimal("100"),
-            fill_timestamp=datetime.now(timezone.utc),
+            fill_timestamp=datetime.now(UTC),
             commission=Decimal("0"),
             idempotency_key=str(uuid.uuid4()),
             trace_context=trace,
@@ -822,7 +821,7 @@ class TestPhaseEFullPipelineE2E:
         assert isinstance(fill, Fill)  # CTR-005
 
         pos = PositionSnapshot(
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             idempotency_key=str(uuid.uuid4()),
             portfolio_id="test",
         )
@@ -831,7 +830,7 @@ class TestPhaseEFullPipelineE2E:
         syn = SynthesizedSignal(
             signal_id=f"syn-ctr-{uuid.uuid4().hex[:8]}",
             symbol="600519",
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             signal_value=0.5,
             signal_direction="LONG",
             confidence=0.8,
@@ -843,7 +842,7 @@ class TestPhaseEFullPipelineE2E:
     def test_pipeline_universe_has_no_data_gaps(self):
         """验证 universe 中所有标的都有数据"""
         provider = MemoryProvider(seed=42)
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=100)
 
         for symbol in TEST_SYMBOLS:

@@ -32,9 +32,9 @@ Usage:
 
 from __future__ import annotations
 
-import os
 import argparse
 import ast
+import os
 import re
 import sys
 from datetime import UTC, datetime
@@ -129,7 +129,7 @@ def _manifest_literal_from_ast(node: ast.expr) -> object:
         return tuple(_manifest_literal_from_ast(e) for e in node.elts)
     if isinstance(node, ast.Dict):
         out: dict[str, object] = {}
-        for k, v in zip(node.keys, node.values):
+        for k, v in zip(node.keys, node.values, strict=False):
             if k is None or not isinstance(k, ast.Constant) or not isinstance(k.value, str):
                 raise ValueError("manifest dict keys must be string literals")
             out[k.value] = _manifest_literal_from_ast(v)
@@ -242,6 +242,12 @@ def generate() -> dict:
     scripts = scan_scripts()
     missing = sum(1 for s in scripts if s.get("_manifest_missing"))
     total = len(scripts)
+
+    categories: dict[str, int] = {}
+    for s in scripts:
+        owner = s.get("owner", "governance")
+        categories[owner] = categories.get(owner, 0) + 1
+
     return {
         "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "generated_by": "scripts/governance/generators/generate_script_manifest.py",
@@ -249,6 +255,7 @@ def generate() -> dict:
         "total_scripts": total,
         "with_manifest": total - missing,
         "missing_manifest": missing,
+        "categories": categories,
         "scripts": scripts,
     }
 
@@ -282,7 +289,7 @@ def main() -> None:
             f.write("# 来源: scripts/governance/**/*.py __manifest__ 块\n")
             f.write("# 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块\n\n")
             yaml.dump(result, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
+
         os.replace(tmp_path, args.output)
     except PermissionError:
         try:

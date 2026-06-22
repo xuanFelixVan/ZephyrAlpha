@@ -12,9 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
 from datetime import datetime
 
+import pytest
 
 mod = pytest.importorskip("zephyr.ml_train.inference_base")
 
@@ -95,8 +95,10 @@ class TestModelTrainerBase:
     def test_concrete_subclass(self):
         class DummyTrainer(ModelTrainerBase):
             __model_id__ = "dummy-v1"
+
             def train(self, features, target, idempotency_key):
                 return {"loss": 0.1}
+
             def validate(self, features, target):
                 return {"accuracy": 0.9}
 
@@ -109,8 +111,10 @@ class TestModelTrainerBase:
     def test_save_model_raises(self):
         class DummyTrainer(ModelTrainerBase):
             __model_id__ = "dummy-v2"
+
             def train(self, features, target, idempotency_key):
                 return {}
+
             def validate(self, features, target):
                 return {}
 
@@ -126,8 +130,10 @@ class TestModelRegistry:
     def test_register_and_get(self):
         class MyTrainer(ModelTrainerBase):
             __model_id__ = "reg-test-001"
+
             def train(self, features, target, idempotency_key):
                 return {}
+
             def validate(self, features, target):
                 return {}
 
@@ -138,8 +144,10 @@ class TestModelRegistry:
     def test_register_duplicate_raises(self):
         class MyTrainer(ModelTrainerBase):
             __model_id__ = "reg-dup-001"
+
             def train(self, features, target, idempotency_key):
                 return {}
+
             def validate(self, features, target):
                 return {}
 
@@ -151,6 +159,7 @@ class TestModelRegistry:
         class NoIdTrainer(ModelTrainerBase):
             def train(self, features, target, idempotency_key):
                 return {}
+
             def validate(self, features, target):
                 return {}
 
@@ -164,8 +173,10 @@ class TestModelRegistry:
     def test_clear(self):
         class MyTrainer(ModelTrainerBase):
             __model_id__ = "reg-clear-001"
+
             def train(self, features, target, idempotency_key):
                 return {}
+
             def validate(self, features, target):
                 return {}
 

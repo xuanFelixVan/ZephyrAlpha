@@ -24,8 +24,8 @@ category: documentation
 | `directory-registry.md` | 登记表 | **83** 个目录——职责声明/轨道归属/index.md 存在性 | manual |
 | `gate-registry.md` | 登记表 | **25** 个门禁（以 `total_gates` 为准）——pre-commit / 架构 / 元数据 等 | manual |
 | `declarative-contract-tracker-registry.md` | 登记表 | **11** 条声明式契约跟踪（config 与蓝图承诺 vs 实现） | manual |
-| `frontier-llm-benchmark-ranking.md` | 登记表 | 前沿 LLM 基准排名——模型能力/价格/延迟对比 | manual |
-| `rule-registry.md` | 登记表 | 规则登记表——全部规则的集中发现入口（v1.4.0，从 meta/ 迁入） | manual |
+| `frontier_llm_benchmark_ranking.yaml` | 登记表 | 前沿 LLM 基准排名——模型能力/价格/延迟对比 | manual |
+| `_index.yaml` | 登记表 | 规则登记表——全部规则的集中发现入口（v1.4.0，从 meta/ 迁入） | manual |
 | `registry_of_registries.yaml` | 契约 | 登记表的登记表——跨登记表共享字段一致性契约（v1.1.0，从 meta/ 迁入） | manual |
-| `ai-autonomy-authority-registry.md` | 登记表 | AI 自治权限登记表——全模块权限终表（v1.3.0，从 governance/ai/ 迁入） | manual |
+| `ai_autonomy_authority_registry.yaml` | 登记表 | AI 自治权限登记表——全模块权限终表（v1.3.0，从 governance/ai/ 迁入） | manual |
 | `rule-catalog-registry.yaml` | 登记表 | 规则目录——全部规则的分类索引与交叉引用 | manual |

@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
-
 # [MODULE] zephyr.autonomy_core.assembly.context_assembler
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 """
 ContextAssembler — 上下文装配、校验、影子留档
 =============================================
@@ -40,8 +31,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "AssembledContext",
@@ -49,6 +40,7 @@ __all__ = [
     "ContextAssembler",
     "FileEntry",
 ]
+
 
 class FileEntry(BaseModel):
     """manifest 中的单条文件记录"""
@@ -61,6 +53,7 @@ class FileEntry(BaseModel):
     exists: bool = Field(default=False)
     readable: bool = Field(default=False)
     encoding: str = Field(default="utf-8")
+
 
 class AssembledContext(BaseModel):
     """装配后的上下文结构"""
@@ -98,8 +91,10 @@ class AssembledContext(BaseModel):
     def is_within_budget(self) -> bool:
         return self.token_estimate <= self.token_budget
 
+
 class AssemblyError(Exception):
     """上下文装配异常"""
+
 
 class ContextAssembler:
     """从 TaskCard 的 context_assembly_manifest 装配执行上下文
@@ -314,9 +309,7 @@ class ContextAssembler:
             est = estimate_tokens(content)
             entry.token_estimate = est
 
-            parts.append(
-                f"\n--- FILE: {path.name} ({entry.reason}) ---" f"\nPATH: {entry.file_path}\n\n" f"{content}\n"
-            )
+            parts.append(f"\n--- FILE: {path.name} ({entry.reason}) ---\nPATH: {entry.file_path}\n\n{content}\n")
 
         full_text = "\n".join(parts)
         total_chars = len(full_text)

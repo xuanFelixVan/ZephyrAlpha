@@ -10,6 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
+
 sys.path.insert(0, "src")
 
 import os
@@ -19,7 +20,7 @@ import time
 import pytest
 
 try:
-    from zephyr.security.access_control.toctou_guard import TOCTOUGuard, FileIntegrityCheck
+    from zephyr.security.access_control.toctou_guard import FileIntegrityCheck, TOCTOUGuard
 except Exception as _exc:
     pytest.skip(f"Cannot import toctou_guard: {_exc}", allow_module_level=True)
 

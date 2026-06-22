@@ -41,10 +41,10 @@ from typing import Any, Protocol, runtime_checkable
 from pydantic import BaseModel, ConfigDict, Field
 
 __all__ = [
-    "MemoryBackend",
-    "MemoryRecord",
-    "MemoryBackendError",
     "InMemoryMemoryBackend",
+    "MemoryBackend",
+    "MemoryBackendError",
+    "MemoryRecord",
 ]
 
 

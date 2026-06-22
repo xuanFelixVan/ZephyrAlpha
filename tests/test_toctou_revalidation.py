@@ -17,8 +17,8 @@ import time
 import pytest
 
 from zephyr.ops.verifiers.toctou_revalidation import (
-    TOCTOURevalidation,
     TOCTOUResult,
+    TOCTOURevalidation,
 )
 
 

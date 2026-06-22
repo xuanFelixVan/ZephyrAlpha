@@ -26,10 +26,12 @@ class TestReExports:
 
     def test_rollback_result_is_base_model(self):
         from pydantic import BaseModel
+
         assert issubclass(RollbackResult, BaseModel)
 
     def test_all_exported_names_in___all__(self):
         from zephyr.governance.governance import result_types as rt
+
         assert "RollbackResult" in rt.__all__
         assert "RollbackStatus" in rt.__all__
         assert "ValidationResult" in rt.__all__

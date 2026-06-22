@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.detectors.dependency_freshness_monitor import (
     DependencyFreshnessMonitor,
     FreshnessStatus,

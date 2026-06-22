@@ -54,7 +54,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
 
@@ -145,28 +145,19 @@ def check_p0_c_track_sync() -> list[str]:
         if not c_track_pattern.match(pid):
             continue
         if pid not in ea_ids:
-            errs.append(
-                f"P0: C 轨 partition `{pid}` 在施工树存在（{impl_fname}）"
-                f"但企业架构树缺失 — 违反 SCOPE.yaml R3"
-            )
+            errs.append(f"P0: C 轨 partition `{pid}` 在施工树存在（{impl_fname}）但企业架构树缺失 — 违反 SCOPE.yaml R3")
             continue
         ea_fname = ea_ids[pid]
         # 检查文件名映射
         expected_ea_fname = FILENAME_MAP.get(impl_fname, impl_fname)
         if ea_fname != expected_ea_fname and ea_fname != impl_fname:
-            errs.append(
-                f"P0: partition `{pid}` 两侧文件名不一致 — "
-                f"施工树: {impl_fname}，企业架构树: {ea_fname}"
-            )
+            errs.append(f"P0: partition `{pid}` 两侧文件名不一致 — 施工树: {impl_fname}，企业架构树: {ea_fname}")
 
     for pid, ea_fname in sorted(ea_ids.items()):
         if not c_track_pattern.match(pid):
             continue
         if pid not in impl_ids:
-            errs.append(
-                f"P0: C 轨 partition `{pid}` 在企业架构树存在（{ea_fname}）"
-                f"但施工树缺失 — 违反 SCOPE.yaml R3"
-            )
+            errs.append(f"P0: C 轨 partition `{pid}` 在企业架构树存在（{ea_fname}）但施工树缺失 — 违反 SCOPE.yaml R3")
 
     return errs
 
@@ -239,10 +230,7 @@ def check_p2_module_id_consistency() -> list[str]:
             continue
         diff = impl_modules.symmetric_difference(ea_modules)
         if diff:
-            errs.append(
-                f"P2: partition `{pid}` 两侧 module_id 不一致 — "
-                f"差异: {sorted(diff)}"
-            )
+            errs.append(f"P2: partition `{pid}` 两侧 module_id 不一致 — 差异: {sorted(diff)}")
 
     return errs
 
@@ -283,10 +271,7 @@ def check_scope_yaml_exists() -> list[str]:
     """P0: SCOPE.yaml 必须存在。"""
     errs: list[str] = []
     if not SCOPE_YAML.exists():
-        errs.append(
-            f"P0: {SCOPE_YAML.relative_to(REPO_ROOT)} 不存在 — "
-            f"双树边界真源缺失，违反 AGENTS.md §6.9"
-        )
+        errs.append(f"P0: {SCOPE_YAML.relative_to(REPO_ROOT)} 不存在 — 双树边界真源缺失，违反 AGENTS.md §6.9")
     return errs
 
 
@@ -354,5 +339,7 @@ def main() -> int:
     if args.ci and p0_count > 0:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

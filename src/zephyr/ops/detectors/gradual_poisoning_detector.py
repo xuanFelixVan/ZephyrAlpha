@@ -51,7 +51,9 @@ class GradualPoisoningDetector:
         self.long_window.append(value)
         st_mean = sum(self.short_window) / len(self.short_window) if self.short_window else value
         lt_mean = sum(self.long_window) / len(self.long_window) if self.long_window else value
-        return PoisoningSignal(short_term_mean=st_mean, long_term_mean=lt_mean, cumulative_deviation=abs(st_mean - lt_mean))
+        return PoisoningSignal(
+            short_term_mean=st_mean, long_term_mean=lt_mean, cumulative_deviation=abs(st_mean - lt_mean)
+        )
 
     def is_poisoned(self) -> bool:
         if len(self.long_window) < 100:

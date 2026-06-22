@@ -29,6 +29,7 @@ Task: T-1-23 | Safety: HIGH | experimental
 from __future__ import annotations
 
 import pytest
+
 from zephyr.security.llm_defense.llm_security.input_sanitizer import (
     CommandInjectionError,
     InputSanitizer,

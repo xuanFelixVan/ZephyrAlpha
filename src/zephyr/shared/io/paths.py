@@ -72,21 +72,19 @@ DB_PATH: Path = REPO_ROOT / "data" / "databases" / "governance.db"
 
 GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "gates"
 SNAPSHOTS_DIR: Path = REPO_ROOT / ".runtime" / "snapshots"
-RATIONALE_LOG_PATH: Path = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
-)
+RATIONALE_LOG_PATH: Path = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
 
 VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"
 MODELS_CACHE_DIR: Path = REPO_ROOT / ".audit_cache" / "models"
 
 __all__ = [
-    "find_repo_root",
-    "REPO_ROOT",
     "DB_DIR",
     "DB_PATH",
     "GATES_DIR",
-    "SNAPSHOTS_DIR",
-    "RATIONALE_LOG_PATH",
-    "VECTOR_INDEX_DIR",
     "MODELS_CACHE_DIR",
+    "RATIONALE_LOG_PATH",
+    "REPO_ROOT",
+    "SNAPSHOTS_DIR",
+    "VECTOR_INDEX_DIR",
+    "find_repo_root",
 ]

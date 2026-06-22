@@ -27,8 +27,6 @@
   批3 (14条): 集成层 — OTel/W3C/跨模块CT-1~4/DR/容量预测/语义缓存
 """
 
-
-from typing import Dict, List, Optional, Type
 from pydantic import BaseModel
 
 from zephyr.infrastructure.capacity_assurance.contracts.batch1_infra import BATCH1_CONTRACTS
@@ -40,7 +38,7 @@ class ContractBusLoader:
     """ContractBus 契约加载器——加载并校验全部 44 条 Pydantic v2 契约 Schema."""
 
     def __init__(self):
-        self._contracts: Dict[str, Type[BaseModel]] = {}
+        self._contracts: dict[str, type[BaseModel]] = {}
         self._load_all()
 
     def _load_all(self) -> None:
@@ -55,7 +53,7 @@ class ContractBusLoader:
         return len(self._contracts)
 
     @property
-    def batch_summary(self) -> Dict[str, int]:
+    def batch_summary(self) -> dict[str, int]:
         return {
             "batch1_infra": len(BATCH1_CONTRACTS),
             "batch2_governance": len(BATCH2_CONTRACTS),
@@ -63,10 +61,10 @@ class ContractBusLoader:
             "total": self.contract_count,
         }
 
-    def get_contract(self, contract_id: str) -> Optional[Type[BaseModel]]:
+    def get_contract(self, contract_id: str) -> type[BaseModel] | None:
         return self._contracts.get(contract_id)
 
-    def list_contracts(self) -> List[str]:
+    def list_contracts(self) -> list[str]:
         return sorted(self._contracts.keys())
 
     def validate_payload(self, contract_id: str, data: dict) -> BaseModel:
@@ -76,7 +74,7 @@ class ContractBusLoader:
         return model(**data)
 
 
-_loader: Optional[ContractBusLoader] = None
+_loader: ContractBusLoader | None = None
 
 
 def get_contract_bus_loader() -> ContractBusLoader:

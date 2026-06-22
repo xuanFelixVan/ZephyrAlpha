@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 def test_engine_self_import():
     from zephyr.governance import __version__
+
     assert __version__ == "0.10.0"
 
 
@@ -46,4 +47,5 @@ def test_all_modules_importable():
 
 def test_config_tier_count():
     from zephyr.governance.config import PROJECT_SCALE_TIERS
+
     assert len(PROJECT_SCALE_TIERS) == 4

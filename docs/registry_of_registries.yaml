@@ -155,7 +155,7 @@ tiers:
         maintenance: manual
         entry_count: 13
         status: active
-        description: MTH-001~013 治理决策方法论——标准先行/架构自检/根源分析/SSoT裁决等13条原则（原 governance-methodology-standard.md 已迁移为 YAML 规则）
+        description: MTH-001~013 治理决策方法论——标准先行/架构自检/根源分析/SSoT裁决等13条原则（原 governance_methodology_standard.yaml 已迁移为 YAML 规则）
 
       - registry_id: REG-STD-002
         name: 代码构建标准

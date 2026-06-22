@@ -15,7 +15,6 @@
 按 severity → certainty → blast_radius 三级排序,分组输出批次。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -27,8 +26,8 @@ from zephyr.governance.semantic_audit.models import Severity, TriggerResult
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "PrioritizedFix",
     "FixPrioritizer",
+    "PrioritizedFix",
 ]
 
 _SEVERITY_PRIORITY: dict[Severity, int] = {

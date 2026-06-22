@@ -32,15 +32,13 @@ TASK/refactor/migration 边界自动 git tag:
 Tag 作为语义化回滚目标: zephyr rollback --to rollback/refactor/auth:before
 """
 
-
 from __future__ import annotations
 
 import subprocess
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 
 class TagType(str, Enum):
@@ -60,7 +58,6 @@ class RollbackTag:
 
 
 class SemanticRollbackTag:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -74,7 +71,7 @@ class SemanticRollbackTag:
             target_id=task_id,
             phase=phase,
             commit_sha=sha,
-            created_at=datetime.now(timezone.utc).isoformat(),
+            created_at=datetime.now(UTC).isoformat(),
         )
         self._create_git_tag(tag.tag_name, sha)
         return tag
@@ -89,7 +86,7 @@ class SemanticRollbackTag:
             target_id=module,
             phase=phase,
             commit_sha=sha,
-            created_at=datetime.now(timezone.utc).isoformat(),
+            created_at=datetime.now(UTC).isoformat(),
         )
         self._create_git_tag(tag.tag_name, sha)
         return tag
@@ -104,7 +101,7 @@ class SemanticRollbackTag:
             target_id=migration_id,
             phase=phase,
             commit_sha=sha,
-            created_at=datetime.now(timezone.utc).isoformat(),
+            created_at=datetime.now(UTC).isoformat(),
         )
         self._create_git_tag(tag.tag_name, sha)
         return tag
@@ -114,7 +111,9 @@ class SemanticRollbackTag:
             result = subprocess.run(
                 ["git", "tag", "-l", "rollback/*"],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             tags = [t for t in result.stdout.strip().split("\n") if t]
             if tag_type:
@@ -129,7 +128,9 @@ class SemanticRollbackTag:
             result = subprocess.run(
                 ["git", "rev-list", "-1", tag_name],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             if result.returncode == 0:
                 return result.stdout.strip()
@@ -142,7 +143,10 @@ class SemanticRollbackTag:
             subprocess.run(
                 ["git", "tag", "-d", tag_name],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5, check=True,
+                capture_output=True,
+                text=True,
+                timeout=5,
+                check=True,
             )
             return True
         except Exception:
@@ -155,7 +159,9 @@ class SemanticRollbackTag:
         subprocess.run(
             ["git", "tag", "-f", tag_name, commit_sha],
             cwd=str(self._project_root),
-            capture_output=True, text=True, timeout=5,
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
 
     def _get_head_short(self) -> str:
@@ -163,7 +169,9 @@ class SemanticRollbackTag:
             result = subprocess.run(
                 ["git", "rev-parse", "--short", "HEAD"],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             return result.stdout.strip()
         except Exception:

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_ensemble_drift.py
 
-import pytest
 
 from zephyr.ops.detectors.ensemble_drift import EnsembleDrift
 

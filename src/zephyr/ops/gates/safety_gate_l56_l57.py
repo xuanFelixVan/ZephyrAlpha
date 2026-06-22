@@ -25,11 +25,10 @@ L56: evolution_debt + purpose_drift + loop_detection → block evolutionary degr
 L57: cross_temporal_consistency + self_mod_side_effects → protect across generations
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL56L57:
-
     def __init__(self):
         self.evolution_debt: float = 0.0
         self.purpose_drift: float = 0.0

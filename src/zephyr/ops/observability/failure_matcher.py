@@ -30,9 +30,10 @@ Failure Matcher — 失败模式分类与根因匹配。
 """
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any
+
 
 class FailureCategory(str, Enum):
     NETWORK = "network"
@@ -45,12 +46,14 @@ class FailureCategory(str, Enum):
     LOGIC = "logic"
     UNKNOWN = "unknown"
 
+
 @dataclass
 class FailureMatch:
     category: FailureCategory
     probability: float
     pattern: str
     suggestion: str
+
 
 FAILURE_PATTERNS: list[tuple[str, FailureCategory, str]] = [
     (r"connection\s+(refused|reset|timed\s*out)", FailureCategory.NETWORK, "Check network connectivity"),
@@ -63,8 +66,8 @@ FAILURE_PATTERNS: list[tuple[str, FailureCategory, str]] = [
     (r"AssertionError|assert\s+.*\s*failed", FailureCategory.LOGIC, "Check assertion condition"),
 ]
 
-class FailureMatcher:
 
+class FailureMatcher:
     def match(self, error_message: str) -> FailureMatch:
         error_lower = error_message.lower()
 
@@ -94,7 +97,7 @@ class FailureMatcher:
         return best_match
 
     def categorize(self, exception: Exception) -> FailureMatch:
-        error_msg = f"{type(exception).__name__}: {str(exception)}"
+        error_msg = f"{type(exception).__name__}: {exception!s}"
         return self.match(error_msg)
 
     def aggregate_failures(self, records: list[dict[str, Any]]) -> dict[FailureCategory, int]:

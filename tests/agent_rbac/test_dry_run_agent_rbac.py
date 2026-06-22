@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试 L7 DryRun — 权限模拟与影响分析"""
-import pytest
-from zephyr.security.access_control.dry_run import DryRunSimulator, DryRunResult, ImpactAnalysis
-from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel
+
+from zephyr.security.access_control.dry_run import DryRunResult, DryRunSimulator, ImpactAnalysis
+from zephyr.security.access_control.identity import AgentIdentity
 
 
 class TestDryRun:
@@ -21,6 +21,7 @@ class TestDryRun:
 
     def test_with_guard(self):
         from zephyr.security.access_control.rbac_guard import RBACGuard
+
         sim = DryRunSimulator()
         sim.set_guard(RBACGuard())
         agent = AgentIdentity(session_id="dr-test-2")

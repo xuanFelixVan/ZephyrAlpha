@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_meta_guard_latency_budget.py
 
-import pytest
 
 from zephyr.ops.diagnosers.meta_guard_latency_budget import MetaGuardLatencyBudget
 
@@ -96,9 +95,15 @@ class TestCheckBudget:
         mglb = MetaGuardLatencyBudget()
         mglb.record_latency("g1", 10.0)
         result = mglb.check_budget()
-        for key in ("over_budget", "total_avg_latency_ms", "budget_used_ratio",
-                     "max_total_latency_ms", "guard_count", "downgraded_guards",
-                     "per_guard_avg"):
+        for key in (
+            "over_budget",
+            "total_avg_latency_ms",
+            "budget_used_ratio",
+            "max_total_latency_ms",
+            "guard_count",
+            "downgraded_guards",
+            "per_guard_avg",
+        ):
             assert key in result
 
 

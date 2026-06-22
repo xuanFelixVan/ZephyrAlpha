@@ -15,8 +15,6 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.function_discovery import FunctionDiscovery
 
 

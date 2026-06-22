@@ -33,9 +33,6 @@ import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
-
-import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
@@ -70,8 +67,8 @@ DIM_PACKAGES: dict[str, list[str]] = {
 MIN_PYTHON = (3, 11)
 MIN_DISK_MB = 100
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _check_python_version() -> dict:
@@ -172,8 +169,12 @@ def install_dimension(dimension: str) -> dict:
 
     result = subprocess.run(
         [sys.executable, "-m", "pip", "install", "-r", str(req_file)],
-        capture_output=True, text=True, timeout=300,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=300,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     return {
         "installed": result.returncode == 0,

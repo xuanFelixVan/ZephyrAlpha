@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_feature_flags | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_feature_flags
+# [MODULE] zephyr.autonomy_core.skill_feature_flags
 
 # [INVARIANTS] none
 
@@ -30,11 +30,10 @@ Skill 特性开关 —— 运行时切换 Skill 行为。
 + 环境变量覆盖 (ZEPHYR_SKILL_FLAGS)。
 """
 
-
 from __future__ import annotations
 
 import os
-from typing import Dict, Any, Optional
+from typing import Any
 
 _PREDEFINED_FLAGS = {
     "use_l3_refs": False,
@@ -50,10 +49,10 @@ _PREDEFINED_FLAGS = {
 class SkillFeatureFlags:
     """Skill 特性开关 —— 运行时切换 Skill 行为."""
 
-    _flags: Dict[str, Dict[str, bool]] = {}
+    _flags: dict[str, dict[str, bool]] = {}
 
     @classmethod
-    def _resolve(cls, skill_id: str, flag: str) -> Optional[bool]:
+    def _resolve(cls, skill_id: str, flag: str) -> bool | None:
         env_key = f"ZEPHYR_SKILL_{skill_id.upper().replace('-', '_')}_{flag.upper()}"
         env_val = os.environ.get(env_key)
         if env_val is not None:
@@ -61,7 +60,7 @@ class SkillFeatureFlags:
         return None
 
     @classmethod
-    def set_flag(cls, skill_id: str, flag: str, value: bool) -> Dict[str, Any]:
+    def set_flag(cls, skill_id: str, flag: str, value: bool) -> dict[str, Any]:
         cls._flags.setdefault(skill_id, {})
         cls._flags[skill_id][flag] = value
         return {"skill_id": skill_id, "flag": flag, "value": value}
@@ -71,11 +70,10 @@ class SkillFeatureFlags:
         env_override = cls._resolve(skill_id, flag)
         if env_override is not None:
             return env_override
-        return cls._flags.get(skill_id, {}).get(
-            flag, _PREDEFINED_FLAGS.get(flag, False))
+        return cls._flags.get(skill_id, {}).get(flag, _PREDEFINED_FLAGS.get(flag, False))
 
     @classmethod
-    def get_all_flags(cls, skill_id: str) -> Dict[str, bool]:
+    def get_all_flags(cls, skill_id: str) -> dict[str, bool]:
         result = dict(_PREDEFINED_FLAGS)
         result.update(cls._flags.get(skill_id, {}))
         for flag in result:

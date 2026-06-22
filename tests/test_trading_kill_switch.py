@@ -37,8 +37,11 @@ def _reset_all_switches() -> None:
 class TestKillSwitchLevel:
     def test_all_levels_exist(self) -> None:
         expected = {
-            "POSITION_LIMIT", "DAILY_LOSS", "CIRCUIT_BREAKER",
-            "SECOND_LEVEL", "API_TIMEOUT",
+            "POSITION_LIMIT",
+            "DAILY_LOSS",
+            "CIRCUIT_BREAKER",
+            "SECOND_LEVEL",
+            "API_TIMEOUT",
         }
         actual = {level.value for level in KillSwitchLevel}
         assert actual == expected

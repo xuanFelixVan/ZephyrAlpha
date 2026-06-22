@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import ast
 
+
 class AutoTestGenerator:
     """对标 Google Mozart——提取后自动生成测试."""
 
@@ -42,10 +43,13 @@ class AutoTestGenerator:
         if not isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
             return {"parameters": [], "return_type": "Any"}
 
-        params = [{
-            "name": a.arg,
-            "type": ast.unparse(a.annotation) if a.annotation else "Any",
-        } for a in func.args.args]
+        params = [
+            {
+                "name": a.arg,
+                "type": ast.unparse(a.annotation) if a.annotation else "Any",
+            }
+            for a in func.args.args
+        ]
 
         return_type = ast.unparse(func.returns) if func.returns else "Any"
 
@@ -60,6 +64,6 @@ class AutoTestGenerator:
             "",
             f"def test_{func_name}_contract():",
             f"    result = {func_name}({','.join('None' for _ in params)})",
-            f"    assert result is not None",
+            "    assert result is not None",
         ]
         return "\n".join(lines)

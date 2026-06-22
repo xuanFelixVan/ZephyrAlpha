@@ -11,18 +11,18 @@
 # [TESTS]
 
 # MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and zephyr.ml_train.inference_base
-from zephyr.ml_train.trainer_base import (  # noqa: F401
-    ModelMetadata,
-    ModelTrainerBase,
-    ModelRegistry,
-)
-from zephyr.ml_train.inference_base import (  # noqa: F401
+from zephyr.ml_train.inference_base import (
     InferenceEngineBase,
+)
+from zephyr.ml_train.trainer_base import (
+    ModelMetadata,
+    ModelRegistry,
+    ModelTrainerBase,
 )
 
 __all__ = [
-    "ModelMetadata",
-    "ModelTrainerBase",
-    "ModelRegistry",
     "InferenceEngineBase",
+    "ModelMetadata",
+    "ModelRegistry",
+    "ModelTrainerBase",
 ]

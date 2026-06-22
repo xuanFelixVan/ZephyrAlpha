@@ -22,13 +22,13 @@
 from __future__ import annotations
 
 __all__: list[str] = [
-    "VMSError",
-    "DesignPrincipleError",
-    "ProvenanceMissingError",
-    "DimensionError",
     "ChunkStrategyError",
-    "TTLError",
+    "DesignPrincipleError",
+    "DimensionError",
     "HotColdSeparationError",
+    "ProvenanceMissingError",
+    "TTLError",
+    "VMSError",
 ]
 
 

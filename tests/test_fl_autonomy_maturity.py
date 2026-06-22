@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_autonomy_maturity.py
 
-import pytest
 from zephyr.ops.gates.autonomy_maturity import AutonomyMaturity
 
 

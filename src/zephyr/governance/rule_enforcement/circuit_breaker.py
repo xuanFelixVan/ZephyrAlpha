@@ -24,7 +24,7 @@ CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
 ===================================================
 任务编号 : T-V2-005（experimental）
 权限层级 : Immutable Core
-真源声明 : ai-autonomy-authority-registry.md §2.10
+真源声明 : ai_autonomy_authority_registry.yaml §2.10
 关联决策 : rationale-log R81 C-02（experimental 只实现 CLOSED→OPEN 单向）
            rationale-log R83（B6 §2.2 CBG 设计）
 创建日期 : 2026-04-27
@@ -57,12 +57,11 @@ CLOSED 状态：装饰器零运行时开销（仅在抛出异常时写 SQLite）
 OPEN 状态：调用立即抛出 CircuitOpenError，不执行被装饰函数。
 """
 
-
 from __future__ import annotations
 
 import functools
-import sqlite3
 import os
+import sqlite3
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -70,17 +69,17 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, TypeVar
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.integration.shared_08.security.capability import capability_check
+from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection, init_db
 
 __all__ = [
-    "CircuitBreakerState",
-    "CircuitBreakerRecord",
-    "CircuitOpenError",
-    "CircuitBreakerCheck",
-    "CBGManager",
-    "circuit_breaker",
     "DEFAULT_THRESHOLD",
+    "CBGManager",
+    "CircuitBreakerCheck",
+    "CircuitBreakerRecord",
+    "CircuitBreakerState",
+    "CircuitOpenError",
+    "circuit_breaker",
 ]
 
 _F = TypeVar("_F", bound=Callable[..., Any])
@@ -230,7 +229,7 @@ class CBGManager:
         不存在记录时返回 None（视为 CLOSED）。
         """
         row = self._conn.execute(
-            "SELECT * FROM circuit_breaker_state " "WHERE caller_module = ? AND target_module = ?",
+            "SELECT * FROM circuit_breaker_state WHERE caller_module = ? AND target_module = ?",
             (caller, target),
         ).fetchone()
         if row is None:
@@ -387,7 +386,7 @@ class CBGManager:
     def list_open_circuits(self) -> list[CircuitBreakerRecord]:
         """列出所有当前处于 OPEN 状态的熔断记录。"""
         rows = self._conn.execute(
-            "SELECT * FROM circuit_breaker_state WHERE state = 'OPEN' " "ORDER BY opened_at DESC"
+            "SELECT * FROM circuit_breaker_state WHERE state = 'OPEN' ORDER BY opened_at DESC"
         ).fetchall()
         return [
             CircuitBreakerRecord(

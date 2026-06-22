@@ -27,18 +27,17 @@ module_id: MOD-INF-023
 metrics: detection_rate / time_to_detect / false_negative_trend
 对标 blueprint.md §6.13。
 """
+
 from __future__ import annotations
 
 import json
 import os
 import re
-import shutil
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Optional
 
 
 class ChaosInjectionType(str, Enum):
@@ -70,13 +69,13 @@ class ChaosInjection:
     target_file: str = ""
     original_content: str = ""
     mutated_content: str = ""
-    baseline_snapshot: Optional[str] = None
+    baseline_snapshot: str | None = None
     detection_time_sec: float = 0.0
     detected_by: list[str] = field(default_factory=list)
     result: ChaosResult = ChaosResult.MISSED
     phase: ChaosPhase = ChaosPhase.BASELINE
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    rolled_back_at: Optional[datetime] = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    rolled_back_at: datetime | None = None
 
 
 @dataclass
@@ -165,7 +164,7 @@ def inject_fake_todo_bomb(target_file: Path) -> tuple[str, str]:
 def import_hallucination(target_file: Path) -> tuple[str, str]:
     """导入幻觉：添加一个不存在的import语句。"""
     original = target_file.read_text(encoding="utf-8")
-    hallucinated = 'from chaos_hallucination_xyzzy import this_never_exists_roflmao\n'
+    hallucinated = "from chaos_hallucination_xyzzy import this_never_exists_roflmao\n"
     mutated = hallucinated + original
     return original, mutated
 
@@ -267,7 +266,7 @@ def _inject_phase(
             target_file=str(target),
             original_content=_original,
             mutated_content=mutated,
-            baseline_snapshot=datetime.now(timezone.utc).isoformat(),
+            baseline_snapshot=datetime.now(UTC).isoformat(),
             phase=ChaosPhase.INJECT,
         )
         try:
@@ -285,7 +284,8 @@ def _detect_phase(
     project_root: str,
 ) -> list[ChaosInjection]:
     import asyncio
-    from .drift_engine import scan, ScanLevel
+
+    from .drift_engine import ScanLevel, scan
 
     for ci in results:
         if ci.phase != ChaosPhase.DETECT:
@@ -293,17 +293,13 @@ def _detect_phase(
         inject_time = ci.created_at
 
         try:
-            result = asyncio.run(scan(
-                level=ScanLevel.DEEP,
-            ))
-            post_inject_events = [
-                e
-                for e in result.events
-                if e.created_at >= inject_time
-            ]
-            ci.detection_time_sec = (
-                (datetime.now(timezone.utc) - inject_time).total_seconds()
+            result = asyncio.run(
+                scan(
+                    level=ScanLevel.DEEP,
+                )
             )
+            post_inject_events = [e for e in result.events if e.created_at >= inject_time]
+            ci.detection_time_sec = (datetime.now(UTC) - inject_time).total_seconds()
             ci.detected_by = [e.detector_id for e in post_inject_events]
 
             if post_inject_events:
@@ -327,7 +323,7 @@ def _rollback_phase(
             target_path = Path(ci.target_file)
             target_path.write_text(ci.original_content, encoding="utf-8")
             ci.phase = ChaosPhase.COMPLETE
-            ci.rolled_back_at = datetime.now(timezone.utc)
+            ci.rolled_back_at = datetime.now(UTC)
         except Exception:
             ci.result = ChaosResult.DEGRADED
     return results

@@ -12,11 +12,9 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import os
 import sys
-import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -32,7 +30,6 @@ os.makedirs("data/red_blue", exist_ok=True)
 
 
 class InjectionEngine:
-
     def __init__(self, blast_radius: BlastRadiusLevel = BlastRadiusLevel.FILE) -> None:
         self._blast_radius: BlastRadiusLevel = blast_radius
         self._injected: list[InjectionResult] = []
@@ -57,9 +54,7 @@ class InjectionEngine:
         try:
             itype = InjectionType(injection_type)
         except ValueError:
-            raise ValueError(
-                f"Unknown injection type: {injection_type}. Valid: {[t.value for t in InjectionType]}"
-            )
+            raise ValueError(f"Unknown injection type: {injection_type}. Valid: {[t.value for t in InjectionType]}")
 
         if itype in (InjectionType.CRASH, InjectionType.EXIT_CODE):
             if self._blast_radius not in (BlastRadiusLevel.CROSS_MODULE, BlastRadiusLevel.SYSTEM):
@@ -89,6 +84,7 @@ class InjectionEngine:
     def _inject_latency(self, target: str, delay_ms: int) -> InjectionResult:
         start = datetime.now(UTC)
         import time
+
         time.sleep(delay_ms / 1000.0)
         actual_ms = (datetime.now(UTC) - start).total_seconds() * 1000
         logger.info("latency_injected target=%s delay_ms=%d actual_ms=%d", target, delay_ms, round(actual_ms, 1))

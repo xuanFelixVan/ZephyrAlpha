@@ -31,7 +31,6 @@ BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接
 - dry_run_topic_split(): unified_memory → target Collection 映射预览
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -135,12 +134,14 @@ class BridgeLayer:
                 res = col.query(query_texts=[query], n_results=min(k, col.count()))
                 if res.get("ids") and res["ids"][0]:
                     for i, doc_id in enumerate(res["ids"][0]):
-                        vms_results.append({
-                            "id": doc_id,
-                            "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
-                            "source": "vms",
-                            "distance": res.get("distances", [[0.0]])[0][i] if res.get("distances") else 0.0,
-                        })
+                        vms_results.append(
+                            {
+                                "id": doc_id,
+                                "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
+                                "source": "vms",
+                                "distance": res.get("distances", [[0.0]])[0][i] if res.get("distances") else 0.0,
+                            }
+                        )
         except Exception as e:
             _logger.debug("BridgeLayer: VMS 检索失败: %s", e)
 
@@ -159,12 +160,16 @@ class BridgeLayer:
                         res = col.query(query_texts=[query], n_results=min(k, col.count()))
                         if res.get("ids") and res["ids"][0]:
                             for i, doc_id in enumerate(res["ids"][0]):
-                                kb_results.append({
-                                    "id": f"kb::{doc_id}",
-                                    "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
-                                    "source": "kb",
-                                    "distance": res.get("distances", [[0.0]])[0][i] if res.get("distances") else 0.0,
-                                })
+                                kb_results.append(
+                                    {
+                                        "id": f"kb::{doc_id}",
+                                        "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
+                                        "source": "kb",
+                                        "distance": res.get("distances", [[0.0]])[0][i]
+                                        if res.get("distances")
+                                        else 0.0,
+                                    }
+                                )
             except Exception as e:
                 _logger.debug("BridgeLayer: kb/ 检索失败: %s", e)
 
@@ -240,11 +245,13 @@ class BridgeLayer:
                     meta = data.get("metadatas", [{}])[i] if data.get("metadatas") else {}
                     topic = meta.get("topic", "")
                     target = TOPIC_TO_COLLECTION.get(topic, "unknown")
-                    results.append({
-                        "source_id": doc_id,
-                        "topic": topic,
-                        "target_collection": target,
-                    })
+                    results.append(
+                        {
+                            "source_id": doc_id,
+                            "topic": topic,
+                            "target_collection": target,
+                        }
+                    )
 
         return results
 

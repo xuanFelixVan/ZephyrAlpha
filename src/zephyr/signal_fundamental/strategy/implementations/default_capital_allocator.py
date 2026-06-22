@@ -40,10 +40,8 @@ SSoT: cross_layer_contracts.yaml → CTR-P1-003 + CTR-P1-015
 from __future__ import annotations
 
 import logging
-import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 from zephyr.signal_fundamental.gen.aggregator_base import CapitalAllocatorBase
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
@@ -98,13 +96,11 @@ class DefaultCapitalAllocator(CapitalAllocatorBase):
         else:
             weights = self._equal_alloc(valid, n)
 
-        strategy_allocations = {
-            s.signal_id: w for s, w in zip(valid, weights)
-        }
+        strategy_allocations = {s.signal_id: w for s, w in zip(valid, weights, strict=False)}
         total_allocated = sum(strategy_allocations.values())
 
         return CapitalAllocationResult(
-            allocation_date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            allocation_date=datetime.now(UTC).strftime("%Y-%m-%d"),
             total_allocated_weight=total_allocated,
             allocation_method=self._method,
             idempotency_key=idempotency_key,
@@ -139,7 +135,7 @@ class DefaultCapitalAllocator(CapitalAllocatorBase):
 
     def _empty_allocation(self, idempotency_key: str) -> CapitalAllocationResult:
         return CapitalAllocationResult(
-            allocation_date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            allocation_date=datetime.now(UTC).strftime("%Y-%m-%d"),
             total_allocated_weight=0.0,
             allocation_method=self._method,
             idempotency_key=idempotency_key,
@@ -147,4 +143,4 @@ class DefaultCapitalAllocator(CapitalAllocatorBase):
         )
 
 
-__all__ = ["DefaultCapitalAllocator", "AllocationMethod"]
+__all__ = ["AllocationMethod", "DefaultCapitalAllocator"]

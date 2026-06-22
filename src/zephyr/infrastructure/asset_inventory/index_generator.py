@@ -53,6 +53,7 @@ REGISTRY_DIRS = [
 
 HEALTH_WEIGHTS = {"orphan": 0.35, "ghost": 0.35, "drift": 0.20, "recency": 0.10}
 
+
 class IndexGenerator:
     """统一资产索引生成器——Phase 1 实现（蓝图 §3.3）。"""
 
@@ -129,6 +130,7 @@ class IndexGenerator:
         print(f"  HEALTH  {index.health_score}")
         print(f"  OUTPUT  {out}")
 
+
 def _calc_grade(orphan: float, ghost: float, drift: float) -> str:
     score = _calc_numeric(orphan, ghost, drift)
     if score >= 90:
@@ -140,6 +142,7 @@ def _calc_grade(orphan: float, ghost: float, drift: float) -> str:
     if score >= 35:
         return "D"
     return "F"
+
 
 def _calc_numeric(orphan: float, ghost: float, drift: float) -> float:
     orphan_n = max(0.0, 100 - orphan * 5)
@@ -153,10 +156,12 @@ def _calc_numeric(orphan: float, ghost: float, drift: float) -> float:
         1,
     )
 
+
 def _count_by_status(assets: list[ClassifiedAsset]) -> dict[str, int]:
     from collections import Counter
 
     return dict(Counter(a.status.value for a in assets))
+
 
 def _to_yaml(data: dict[str, Any], indent: int = 0) -> str:
     lines: list[str] = []
@@ -182,6 +187,7 @@ def _to_yaml(data: dict[str, Any], indent: int = 0) -> str:
             lines.append(f"{prefix}{key}: {_repr_value(value)}")
     return "\n".join(lines)
 
+
 def _to_yaml_list_item(item: dict[str, Any], indent: int) -> str:
     lines: list[str] = []
     prefix = "  " * indent
@@ -198,6 +204,7 @@ def _to_yaml_list_item(item: dict[str, Any], indent: int) -> str:
             lines.append(f"{prefix}  {key}: {_repr_value(value)}")
     return "\n".join(lines)
 
+
 def _repr_value(value: Any) -> str:
     if isinstance(value, str):
         if any(ch in value for ch in ('"', "\\", "\n", ":", "#")):
@@ -208,8 +215,10 @@ def _repr_value(value: Any) -> str:
         return "true" if value else "false"
     return str(value)
 
+
 def main() -> None:
     IndexGenerator().main()
+
 
 if __name__ == "__main__":
     main()
@@ -221,11 +230,13 @@ if __name__ == "__main__":
 from pydantic import BaseModel as _SchemaBaseModel
 from pydantic import Field as _SchemaField
 
+
 class MigrationStep(_SchemaBaseModel):
     version: str
     description: str
     applied_at: datetime | None = None
     reverted: bool = False
+
 
 class MigrationPlan(_SchemaBaseModel):
     asset_type: str = "unified-asset-index"
@@ -234,6 +245,7 @@ class MigrationPlan(_SchemaBaseModel):
     steps: list[MigrationStep] = _SchemaField(default_factory=list)
     requires_downtime: bool = False
     is_breaking: bool = False
+
 
 class SchemaEvolutionManager:
     """Schema Evolution 迁移引擎——自动完整性校验，纯 pydantic introspect。"""

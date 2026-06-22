@@ -27,7 +27,6 @@ import os
 import sqlite3
 from collections import defaultdict
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixStatus
@@ -100,15 +99,17 @@ class FixPatternMiner:
             conn.close()
             patterns = []
             for row in rows:
-                patterns.append({
-                    "pattern_id": row[0],
-                    "action_type": row[1],
-                    "dimension": row[2],
-                    "frequency": row[3],
-                    "success_rate": row[4],
-                    "last_seen": row[5],
-                    "pattern_data": json.loads(row[6]) if row[6] else {},
-                })
+                patterns.append(
+                    {
+                        "pattern_id": row[0],
+                        "action_type": row[1],
+                        "dimension": row[2],
+                        "frequency": row[3],
+                        "success_rate": row[4],
+                        "last_seen": row[5],
+                        "pattern_data": json.loads(row[6]) if row[6] else {},
+                    }
+                )
             return patterns
         except Exception:
             return []
@@ -135,15 +136,27 @@ class FixPatternMiner:
                 new_rate = (existing[1] * existing[0] + pattern["success_rate"] * pattern["frequency"]) / new_freq
                 conn.execute(
                     "UPDATE fix_patterns SET frequency=?, success_rate=?, last_seen=?, pattern_data=? WHERE pattern_id=?",
-                    (new_freq, new_rate, pattern["last_seen"], json.dumps(pattern["pattern_data"], ensure_ascii=False), pattern["pattern_id"]),
+                    (
+                        new_freq,
+                        new_rate,
+                        pattern["last_seen"],
+                        json.dumps(pattern["pattern_data"], ensure_ascii=False),
+                        pattern["pattern_id"],
+                    ),
                 )
             else:
                 conn.execute(
                     "INSERT INTO fix_patterns (pattern_id, action_type, dimension, frequency, success_rate, last_seen, pattern_data) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (pattern["pattern_id"], pattern["action_type"], pattern["dimension"],
-                     pattern["frequency"], pattern["success_rate"], pattern["last_seen"],
-                     json.dumps(pattern["pattern_data"], ensure_ascii=False)),
+                    (
+                        pattern["pattern_id"],
+                        pattern["action_type"],
+                        pattern["dimension"],
+                        pattern["frequency"],
+                        pattern["success_rate"],
+                        pattern["last_seen"],
+                        json.dumps(pattern["pattern_data"], ensure_ascii=False),
+                    ),
                 )
             conn.commit()
             conn.close()

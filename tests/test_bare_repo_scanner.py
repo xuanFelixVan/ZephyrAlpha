@@ -13,8 +13,6 @@
 import os
 import tempfile
 
-import pytest
-
 from zephyr.governance.bare_repo_scanner import BareRepoScanner
 
 

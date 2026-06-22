@@ -529,9 +529,7 @@ class SecurityAccessLogger:
         return records[-limit:]
 
 
-
 # 代理导出：DuplicateGroup 实际定义在 infrastructure.asset_inventory.models
-from zephyr.infrastructure.asset_inventory.models import ScanResult, RawFileEntry  # noqa: E402
 
 
 class DuplicateGroup:

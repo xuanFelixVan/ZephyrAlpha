@@ -6,21 +6,21 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """Configuration loader for Zephyr Alpha."""
 
+from zephyr.infrastructure.config.shared.config import loader
 from zephyr.infrastructure.config.shared.config.loader import (
     ConfigLoadError,
     load_yaml_config,
     load_yaml_config_validated,
 )
-from zephyr.infrastructure.config.shared.config import loader
 
 __all__ = [
+    "ConfigLoadError",
     "load_yaml_config",
     "load_yaml_config_validated",
-    "ConfigLoadError",
     "loader",
 ]

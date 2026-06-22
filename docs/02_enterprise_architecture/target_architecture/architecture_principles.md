@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ARCH-004
 title: Architecture Principles / 架构原则
 doc_type: architecture_view

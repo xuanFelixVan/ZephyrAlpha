@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_action_reversibility.py
 
-import pytest
 from zephyr.ops.gates.action_reversibility import ActionReversibility, Reversibility
 
 

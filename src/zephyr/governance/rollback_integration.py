@@ -36,7 +36,6 @@ Rollback Integration — executor 集成增强层。
     - 0261: 青野检查点密度控制
 """
 
-
 from __future__ import annotations
 
 import hashlib
@@ -46,13 +45,12 @@ import re
 import shutil
 import subprocess
 import time
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 from zephyr.governance.contract import ExitCode
-
 
 PROMPT_INJECTION_PATTERNS = [
     re.compile(r"ignore\s+(all\s+)?(previous|above)\s+(instructions?|prompts?)", re.IGNORECASE),
@@ -123,14 +121,12 @@ class CheckpointDensity:
 
 
 class RollbackIntegration:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
         self._notify_state = NotificationState()
         self._last_checkpoint_time: datetime | None = None
 
-    def acl_check_to_target(self, session_id: str, target: str,
-                            owner_session_id: str | None = None) -> AclCheckResult:
+    def acl_check_to_target(self, session_id: str, target: str, owner_session_id: str | None = None) -> AclCheckResult:
         env_owner = owner_session_id or os.environ.get("ZEPHYR_OWNER_SESSION_ID", "")
 
         if not env_owner:
@@ -149,7 +145,7 @@ class RollbackIntegration:
                 is_owner=False,
                 session_id=session_id,
                 reason=f"--to target override denied for non-owner session {session_id}. "
-                       f"Only {env_owner} can use --to.",
+                f"Only {env_owner} can use --to.",
             )
 
         if not re.match(r"^[a-f0-9]{7,40}$|^[\w./-]+$", target):
@@ -178,7 +174,9 @@ class RollbackIntegration:
                 findings.append(f"Prompt injection detected: pattern={pattern.pattern}, match={match_str[:100]}")
 
         safe = len(findings) == 0
-        exit_code = 0 if safe else ExitCode.PROMPT_INJECTION_FILTERED if hasattr(ExitCode, 'PROMPT_INJECTION_FILTERED') else 18
+        exit_code = (
+            0 if safe else ExitCode.PROMPT_INJECTION_FILTERED if hasattr(ExitCode, "PROMPT_INJECTION_FILTERED") else 18
+        )
 
         return InjectionScanResult(safe=safe, findings=findings, exit_code=exit_code)
 
@@ -201,7 +199,7 @@ class RollbackIntegration:
             timeout_adjustment = 30
         else:
             try:
-                with open("/proc/1/cgroup", "r") as f:
+                with open("/proc/1/cgroup") as f:
                     cgroup_content = f.read()
                     if "docker" in cgroup_content or "kubepods" in cgroup_content:
                         is_container = True
@@ -248,7 +246,7 @@ class RollbackIntegration:
         command_lower = command.lower()
         for op in IRREVERSIBLE_GIT_COMMANDS:
             if op in command_lower:
-                exit_code = ExitCode.MCP_IRREVERSIBLE if hasattr(ExitCode, 'MCP_IRREVERSIBLE') else 22
+                exit_code = ExitCode.MCP_IRREVERSIBLE if hasattr(ExitCode, "MCP_IRREVERSIBLE") else 22
                 return True, op, exit_code
         return False, "", 0
 
@@ -268,7 +266,7 @@ class RollbackIntegration:
 
         if self._notify_state.window_count > NOTIFICATION_THROTTLE_MAX:
             self._notify_state.throttled = True
-            exit_code = ExitCode.NOTIFICATION_THROTTLED if hasattr(ExitCode, 'NOTIFICATION_THROTTLED') else 23
+            exit_code = ExitCode.NOTIFICATION_THROTTLED if hasattr(ExitCode, "NOTIFICATION_THROTTLED") else 23
             return True, (
                 f"Notification throttled: {self._notify_state.window_count} "
                 f"notifications in {NOTIFICATION_THROTTLE_WINDOW_S}s window "
@@ -281,9 +279,9 @@ class RollbackIntegration:
         return {
             "throttled": self._notify_state.throttled,
             "window_count": self._notify_state.window_count,
-            "window_start": datetime.fromtimestamp(
-                self._notify_state.window_start, tz=timezone.utc
-            ).isoformat() if self._notify_state.window_start else "",
+            "window_start": datetime.fromtimestamp(self._notify_state.window_start, tz=UTC).isoformat()
+            if self._notify_state.window_start
+            else "",
             "window_s": NOTIFICATION_THROTTLE_WINDOW_S,
             "max_notifications": NOTIFICATION_THROTTLE_MAX,
         }
@@ -313,10 +311,10 @@ class RollbackIntegration:
                 tmp_path.unlink()
                 return True, f"Self-audit conflict resolved: merged {len(merged.get('findings', []))} entries"
             except (json.JSONDecodeError, FileNotFoundError):
-                exit_code = ExitCode.SELF_AUDIT_CONFLICT if hasattr(ExitCode, 'SELF_AUDIT_CONFLICT') else 24
+                exit_code = ExitCode.SELF_AUDIT_CONFLICT if hasattr(ExitCode, "SELF_AUDIT_CONFLICT") else 24
                 return False, "Self-audit conflict IRRESOLVABLE"
             except Exception as e:
-                exit_code = ExitCode.SELF_AUDIT_CONFLICT if hasattr(ExitCode, 'SELF_AUDIT_CONFLICT') else 24
+                exit_code = ExitCode.SELF_AUDIT_CONFLICT if hasattr(ExitCode, "SELF_AUDIT_CONFLICT") else 24
                 return False, f"Self-audit conflict merge failed: {e}"
 
         return True, "No self-audit conflict detected"
@@ -330,7 +328,7 @@ class RollbackIntegration:
                 timeout=5,
             )
             if result.returncode != 0:
-                exit_code = ExitCode.GIT_BINARY_MISMATCH if hasattr(ExitCode, 'GIT_BINARY_MISMATCH') else 25
+                exit_code = ExitCode.GIT_BINARY_MISMATCH if hasattr(ExitCode, "GIT_BINARY_MISMATCH") else 25
                 return False, "Git binary not functional", exit_code
 
             git_path = shutil.which("git") or shutil.which("git.exe")
@@ -342,17 +340,18 @@ class RollbackIntegration:
                     basename = os.path.basename(git_path).lower()
                     expected = known_hashes.get(basename, "")
                     if expected and actual_hash != expected:
-                        exit_code = ExitCode.GIT_BINARY_MISMATCH if hasattr(ExitCode, 'GIT_BINARY_MISMATCH') else 25
-                        return False, (
-                            f"Git binary hash mismatch: expected={expected[:12]}... "
-                            f"actual={actual_hash[:12]}..."
-                        ), exit_code
+                        exit_code = ExitCode.GIT_BINARY_MISMATCH if hasattr(ExitCode, "GIT_BINARY_MISMATCH") else 25
+                        return (
+                            False,
+                            (f"Git binary hash mismatch: expected={expected[:12]}... actual={actual_hash[:12]}..."),
+                            exit_code,
+                        )
 
                 return True, f"Git binary verified: hash={actual_hash[:12]}...", 0
 
             return True, "Git binary integrity check passed (no hash database)", 0
         except (subprocess.TimeoutExpired, Exception) as e:
-            exit_code = ExitCode.GIT_BINARY_MISMATCH if hasattr(ExitCode, 'GIT_BINARY_MISMATCH') else 25
+            exit_code = ExitCode.GIT_BINARY_MISMATCH if hasattr(ExitCode, "GIT_BINARY_MISMATCH") else 25
             return False, f"Git binary verification failed: {e}", exit_code
 
     def detect_reverse_prophecy(self, agent_output: str) -> tuple[bool, str]:
@@ -379,7 +378,7 @@ class RollbackIntegration:
         return False, "No reverse prophecy detected"
 
     def check_checkpoint_density(self, token_rate: float = 0.0) -> CheckpointDensity:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         adjusted_interval = CHECKPOINT_MIN_INTERVAL_S
         if token_rate > 5000:
@@ -407,7 +406,7 @@ class RollbackIntegration:
                 next_allowed_utc=next_allowed.isoformat(),
                 current_interval_s=elapsed,
                 reason=f"Checkpoint too frequent: {elapsed:.1f}s < {adjusted_interval}s minimum. "
-                       f"Falling back to git-native single-sha mode.",
+                f"Falling back to git-native single-sha mode.",
             )
 
         self._last_checkpoint_time = now
@@ -419,8 +418,7 @@ class RollbackIntegration:
             reason=f"Checkpoint allowed: {elapsed:.1f}s >= {adjusted_interval}s minimum",
         )
 
-    def connection_pool_health_check(self, db_url: str = "",
-                                      max_retries: int = 3) -> tuple[bool, str, int]:
+    def connection_pool_health_check(self, db_url: str = "", max_retries: int = 3) -> tuple[bool, str, int]:
         if not db_url:
             db_url = os.environ.get("DATABASE_URL", "")
 
@@ -432,6 +430,7 @@ class RollbackIntegration:
                 if "psycopg2" in db_url or "postgresql" in db_url:
                     try:
                         import psycopg2
+
                         conn = psycopg2.connect(db_url, connect_timeout=5)
                         conn.close()
                         return True, "PostgreSQL connection pool healthy", 0
@@ -440,6 +439,7 @@ class RollbackIntegration:
 
                 try:
                     import sqlite3
+
                     conn = sqlite3.connect(db_url.replace("sqlite:///", ""), timeout=5)
                     conn.execute("SELECT 1")
                     conn.close()
@@ -447,14 +447,14 @@ class RollbackIntegration:
                 except (sqlite3.Error, Exception):
                     pass
 
-                time.sleep(2 ** attempt)
+                time.sleep(2**attempt)
 
             except Exception as e:
                 if attempt == max_retries - 1:
-                    exit_code = ExitCode.CONNECTION_POOL_FAILED if hasattr(ExitCode, 'CONNECTION_POOL_FAILED') else 20
+                    exit_code = ExitCode.CONNECTION_POOL_FAILED if hasattr(ExitCode, "CONNECTION_POOL_FAILED") else 20
                     return False, f"Connection pool health check FAILED after {max_retries} retries: {e}", exit_code
 
-        exit_code = ExitCode.CONNECTION_POOL_FAILED if hasattr(ExitCode, 'CONNECTION_POOL_FAILED') else 20
+        exit_code = ExitCode.CONNECTION_POOL_FAILED if hasattr(ExitCode, "CONNECTION_POOL_FAILED") else 20
         return False, "Connection pool health check FAILED", exit_code
 
     @staticmethod

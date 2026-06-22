@@ -42,6 +42,7 @@ import yaml
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.work_dag import WorkDAG, WorkItem
 
+
 class WorkOrchestrator:
     """工作编排子系统——决定什么工作、什么时候、用什么模型、什么顺序。"""
 

@@ -30,7 +30,7 @@ five_layer_architecture:
     idempotency_key: "SHA-256(module_id+error_signature+task_id)——相同不重复创建"
     dead_letter_queue: "通知失败→DLQ+15min重试+积压>阈值自身触发升级"
     replay: "replay_escalation(id)→重建当时完整上下文(TaskCard+模型输出+DecisionTrace)"
-  
+
   L1_self_healing:
     principle: "升级是最后的选项，不是第一选项"
     strategies:
@@ -44,7 +44,7 @@ five_layer_architecture:
     token_budget: "升级Payload≤20K tokens超出→自动裁剪→[TRIMMED]"
     payload_freeze: "升级触发时冻结完整快照→不依赖session_continuity摘要"
     amnesia_defense: "新会话初始化→自动注入最近N条升级历史+解决模式"
-  
+
   L2_routing:
     ai_second_triage: "Claude Opus独立评估→可AI自处理?"
     environment_routing: {DEV: AI自处理, STAGING: AI+可选通知, PROD: 人主}
@@ -54,7 +54,7 @@ five_layer_architecture:
     storm_detection: "1s>10条→自动聚类+1条汇总通知"
     malicious_detection: "同一Agent 10min>3次→标记+降权/隔离"
     systemic_breaker: "≥10模块同时升级→合并为SYSTEMIC级"
-  
+
   L3_human_interaction:
     channels: {primary: Slack, fallback: Email, last_resort: SMS}
     plain_translation: "技术Payload→通俗化自然语言+技术细节折叠"
@@ -66,7 +66,7 @@ five_layer_architecture:
       L2_1month: {when: "月+假阳<30%", desc: P2自处理, budget: 30/day}
       L3_3month: {when: "3月+假阳<15%", desc: P1部分自处理, budget: 10/day}
       L4_audit: {when: "6月+假阳<5%", desc: 仅P0升级, budget: 3/day}
-  
+
   L4_governance:
     blameless_postmortem: "每次关闭后自动生成[trigger/root_cause/preventive/applied]"
     error_budget: "SLO=99.9%→budget=0.1%/月→耗尽了锁AI操作"

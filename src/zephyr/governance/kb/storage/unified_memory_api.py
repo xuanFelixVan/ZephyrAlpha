@@ -24,7 +24,7 @@ UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装）
 ====================================================
 任务编号 : T-V2-007（experimental RI-02）
 权限层级 : Human-Gated（M2 ChromaDB 操作 = 关键架构变更，R84 修正）
-真源声明 : ai-autonomy-authority-registry.md §2.9（RI-01~07）+ §2.10（三件套）
+真源声明 : ai_autonomy_authority_registry.yaml §2.9（RI-01~07）+ §2.10（三件套）
 关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
            B6 §2.4（RI-02 设计）
 创建日期 : 2026-04-27
@@ -78,18 +78,18 @@ from zephyr.governance.kb.storage._backend_protocol import (
 from zephyr.shared.security.capability import capability_check
 
 __all__ = [
-    "WriteTrace",
-    "MemoryRecord",
-    "MemoryBackend",
+    "DEFAULT_EMBEDDING_MODELS",
+    "UNIFIED_COLLECTION",
     "ChromaMemoryBackend",
     "InMemoryMemoryBackend",
-    "UnifiedMemoryAPI",
-    "WriteTraceMissing",
+    "MemoryBackend",
     "MemoryBackendError",
-    "UNIFIED_COLLECTION",
-    "DEFAULT_EMBEDDING_MODELS",
-    "get_unified_memory_api",
+    "MemoryRecord",
+    "UnifiedMemoryAPI",
+    "WriteTrace",
+    "WriteTraceMissing",
     "build_provenance",
+    "get_unified_memory_api",
 ]
 
 _logger = logging.getLogger(__name__)

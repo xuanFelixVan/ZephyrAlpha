@@ -35,14 +35,14 @@ import argparse
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_CODE, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_CODE
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -52,24 +52,40 @@ BASELINE_DIR = REPO_ROOT / "data" / "security_baselines"
 FINDINGS_DIR = REPO_ROOT / "docs" / "09_audit" / "findings"
 
 SECRET_PATTERNS_DEEP = [
-    (re.compile(r"(?:api[_-]?key|apikey|API_KEY)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE), "API Key 硬编码", "P0"),
+    (
+        re.compile(r"(?:api[_-]?key|apikey|API_KEY)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE),
+        "API Key 硬编码",
+        "P0",
+    ),
     (re.compile(r"(?:secret|SECRET)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE), "Secret 硬编码", "P0"),
     (re.compile(r"(?:token|TOKEN)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE), "Token 硬编码", "P0"),
     (re.compile(r"(?:password|PASSWORD|passwd)\s*[:=]\s*['\"][^'\"]{3,}['\"]", re.IGNORECASE), "Password 硬编码", "P0"),
     (re.compile(r"sk-[a-zA-Z0-9]{32,}", re.IGNORECASE), "OpenAI API Key", "P0"),
     (re.compile(r"AKIA[0-9A-Z]{16}", re.IGNORECASE), "AWS Access Key ID", "P0"),
     (re.compile(r"(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,}", re.IGNORECASE), "GitHub Token", "P0"),
-    (re.compile(r"(?:private[_-]?key|PRIVATE_KEY)['\"]?\s*[:=]\s*['\"][^'\"]{16,}['\"]", re.IGNORECASE), "Private Key", "P1"),
+    (
+        re.compile(r"(?:private[_-]?key|PRIVATE_KEY)['\"]?\s*[:=]\s*['\"][^'\"]{16,}['\"]", re.IGNORECASE),
+        "Private Key",
+        "P1",
+    ),
     (re.compile(r"(?:access[_-]?key|ACCESS_KEY)\s*[:=]\s*['\"][^'\"]{8,}['\"]", re.IGNORECASE), "Access Key", "P1"),
-    (re.compile(r"(?:database[_-]?url|DATABASE_URL|DB_URL)\s*[:=]\s*['\"][^'\"]*:[^'\"]*@[^'\"]*['\"]", re.IGNORECASE), "数据库连接串含密码", "P1"),
+    (
+        re.compile(
+            r"(?:database[_-]?url|DATABASE_URL|DB_URL)\s*[:=]\s*['\"][^'\"]*:[^'\"]*@[^'\"]*['\"]", re.IGNORECASE
+        ),
+        "数据库连接串含密码",
+        "P1",
+    ),
 ]
 
-EXCLUDE_FILES = frozenset({
-    "scan_secret_leak.py",
-    "detect_secrets.py",
-    "scan_runtime_log_secrets.py",
-    ".env.example",
-})
+EXCLUDE_FILES = frozenset(
+    {
+        "scan_secret_leak.py",
+        "detect_secrets.py",
+        "scan_runtime_log_secrets.py",
+        ".env.example",
+    }
+)
 
 
 def scan_file(filepath: Path) -> list[dict]:
@@ -82,13 +98,15 @@ def scan_file(filepath: Path) -> list[dict]:
     for pattern, label, severity in SECRET_PATTERNS_DEEP:
         for match in pattern.finditer(content):
             line_num = content[: match.start()].count("\n") + 1
-            findings.append({
-                "file": str(filepath.relative_to(REPO_ROOT)),
-                "line": line_num,
-                "pattern": label,
-                "severity": severity,
-                "matched": match.group(0)[:80],
-            })
+            findings.append(
+                {
+                    "file": str(filepath.relative_to(REPO_ROOT)),
+                    "line": line_num,
+                    "pattern": label,
+                    "severity": severity,
+                    "matched": match.group(0)[:80],
+                }
+            )
     return findings
 
 
@@ -111,12 +129,17 @@ def scan_full(scan_dir: Path | None = None) -> list[dict]:
 def save_baseline(findings: list[dict]) -> Path:
     """save_baseline implementation."""
     BASELINE_DIR.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     baseline_path = BASELINE_DIR / f"secret_baseline_{ts}.json"
     tmp_path = f"{baseline_path}.{os.getpid()}.tmp"
     try:
         with open(tmp_path, "w", encoding="utf-8") as f:
-            json.dump({"timestamp": datetime.now(timezone.utc).isoformat(), "findings": findings, "total": len(findings)}, f, ensure_ascii=False, indent=2)
+            json.dump(
+                {"timestamp": datetime.now(UTC).isoformat(), "findings": findings, "total": len(findings)},
+                f,
+                ensure_ascii=False,
+                indent=2,
+            )
         os.replace(tmp_path, baseline_path)
     except PermissionError:
         try:
@@ -148,11 +171,11 @@ def write_findings_report(findings: list[dict], new_findings: list[dict]) -> Pat
     if not findings:
         return None
     FINDINGS_DIR.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     report_path = FINDINGS_DIR / f"sec_leak_{ts}.json"
     report = {
         "id": f"sec_leak_{ts}",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "total_findings": len(findings),
         "new_findings": len(new_findings),
         "p0_count": sum(1 for f in findings if f.get("severity") == "P0"),
@@ -193,7 +216,7 @@ def main() -> int:
     p0 = [f for f in findings if f.get("severity") == "P0"]
     p1 = [f for f in findings if f.get("severity") == "P1"]
 
-    print(f"\n[SECRET-SCAN] 全库扫描完成")
+    print("\n[SECRET-SCAN] 全库扫描完成")
     print(f"  总发现: {len(findings)} (P0: {len(p0)}, P1: {len(p1)})")
     print(f"  新增发现: {len(new_findings)}")
     print(f"  基线已保存: {baseline_path.relative_to(REPO_ROOT)}")
@@ -218,5 +241,7 @@ def main() -> int:
     if p0:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

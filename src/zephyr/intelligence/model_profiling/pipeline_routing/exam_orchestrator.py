@@ -32,7 +32,6 @@ ExamOrchestrator --- 五轴入职考试主控
 输出: CapabilityPassport → data/brain/passports/{model_id}.json
 """
 
-
 from __future__ import annotations
 
 import json
@@ -187,16 +186,14 @@ class ExamOrchestrator:
             cap_result.grade = compute_grade(max(cap_result.f1, cap_result.exact_match_rate))
             capabilities[cap_name] = cap_result
 
-        scores = [
-            max(c.f1, c.exact_match_rate)
-            for c in capabilities.values()
-            if c.samples_tested > 0
-        ]
+        scores = [max(c.f1, c.exact_match_rate) for c in capabilities.values() if c.samples_tested > 0]
         overall = statistics.mean(scores) if scores else 0.0
         return DepthResult(overall_score=overall, capabilities=capabilities)
 
     def _score_capability(
-        self, cap_name: str, cases: list[ExamTestCase],
+        self,
+        cap_name: str,
+        cases: list[ExamTestCase],
     ) -> DepthCapabilityResult:
         precisions: list[float] = []
         recalls: list[float] = []
@@ -232,7 +229,9 @@ class ExamOrchestrator:
         )
 
     def _compute_metrics(
-        self, case: ExamTestCase, result: dict,
+        self,
+        case: ExamTestCase,
+        result: dict,
     ) -> tuple[float, float, float, int]:
         cap = case.capability
 
@@ -310,11 +309,17 @@ class ExamOrchestrator:
             latency_p95_ms=round(_percentile(sorted_lats, 95), 1),
             latency_p99_ms=round(_percentile(sorted_lats, 99), 1),
             tokens_per_second=round(
-                sum(self._all_tokens) / (sum(latencies) / 1000.0), 1,
-            ) if latencies and self._all_tokens else 0.0,
+                sum(self._all_tokens) / (sum(latencies) / 1000.0),
+                1,
+            )
+            if latencies and self._all_tokens
+            else 0.0,
             time_to_first_token_ms=round(
-                statistics.mean(self._all_ttft_ms), 1,
-            ) if self._all_ttft_ms else 0.0,
+                statistics.mean(self._all_ttft_ms),
+                1,
+            )
+            if self._all_ttft_ms
+            else 0.0,
         )
 
     # ── 幻轴 ────────────────────────────────────────────
@@ -441,8 +446,10 @@ class ExamOrchestrator:
         """检查模型是否编造了 prompt 中不存在的内容。"""
         if case.capability in ("code_fix", "refactor", "dead_code_removal"):
             field = (
-                "fixes" if case.capability == "code_fix"
-                else "changes" if case.capability == "refactor"
+                "fixes"
+                if case.capability == "code_fix"
+                else "changes"
+                if case.capability == "refactor"
                 else "dead_sections"
             )
             entries = result.get(field, [])
@@ -472,6 +479,7 @@ class ExamOrchestrator:
 
 
 # ── 辅助函数 ────────────────────────────────────────────
+
 
 def _normalized_edit_distance(a: str, b: str) -> float:
     if not a and not b:

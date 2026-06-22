@@ -31,37 +31,16 @@ AI 生成代码的质量/安全检测：幻觉导入、死代码、损坏逻辑�
 
 从 drift_engine.py 提取，对标 blueprint.md §5.1。"""
 
-
-
-
-
-
-
 from __future__ import annotations
 
-
-
-
-
 import ast
-
 import hashlib
-
 import importlib.util
-
 import os
-
 import sys
-
 import uuid
-
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
 from datetime import UTC, datetime
-
-
-
-
 
 from .drift_models import DriftEvent, DriftState
 
@@ -78,8 +57,9 @@ def _batch_read_module_sources(module_dir: str) -> dict[str, str]:
     sources: dict[str, str] = {}
     if not os.path.isdir(module_dir):
         return sources
-    file_paths = [os.path.join(module_dir, f) for f in os.listdir(module_dir)
-                  if f.endswith(".py") and f != "__init__.py"]
+    file_paths = [
+        os.path.join(module_dir, f) for f in os.listdir(module_dir) if f.endswith(".py") and f != "__init__.py"
+    ]
     with ThreadPoolExecutor(max_workers=8) as pool:
         futures = {pool.submit(_read_single_source, fp): fp for fp in file_paths}
         for future in as_completed(futures):
@@ -89,13 +69,8 @@ def _batch_read_module_sources(module_dir: str) -> dict[str, str]:
     return sources
 
 
-
 class AIConstructionDetectors:
-
-
     def detect_ai_hallucination_import(self, module_dir: str) -> list[DriftEvent]:
-
-
         """检测 AI 幻觉导入 — 导入不存在或无法解析的模块。
 
 
@@ -131,15 +106,10 @@ class AIConstructionDetectors:
 
         """
 
-
         events: list[DriftEvent] = []
 
-
         if not os.path.isdir(module_dir):
-
-
             return events
-
 
         stdlib = sys.stdlib_module_names if hasattr(sys, "stdlib_module_names") else set()
         safe_prefixes = ("__future__", "builtins")
@@ -153,137 +123,57 @@ class AIConstructionDetectors:
 
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
-
-
                     for alias in node.names:
-
-
                         top = alias.name.split(".")[0]
 
-
                         if top in stdlib or top.startswith(".") or top.startswith(safe_prefixes):
-
-
                             continue
 
-
                         if importlib.util.find_spec(top) is None:
-
-
                             events.append(
-
-
                                 DriftEvent(
-
-
                                     event_id=uuid.uuid4(),
-
-
                                     module_id="MOD-INF-023",
-
-
                                     detector_id="ai_hallucination_import",
-
-
                                     drift_dimension="AI_import_hallucination",
-
-
                                     baseline_version="0.1.0",
-
-
                                     state=DriftState.DETECTED,
-
-
                                     created_at=datetime.now(UTC),
-
-
                                     updated_at=datetime.now(UTC),
-
-
                                     resolution_detail=f"Hallucinated import: {alias.name} in {fname}",
-
-
                                 )
-
-
                             )
 
-
                 if isinstance(node, ast.ImportFrom):
-
-
                     if node.module is None:
-
-
                         continue
-
 
                     if node.level and node.level > 0:
-
-
                         continue
-
 
                     top = node.module.split(".")[0]
 
-
                     if top in stdlib or top in ("__future__",):
-
-
                         continue
 
-
                     if importlib.util.find_spec(top) is None:
-
-
                         events.append(
-
-
                             DriftEvent(
-
-
                                 event_id=uuid.uuid4(),
-
-
                                 module_id="MOD-INF-023",
-
-
                                 detector_id="ai_hallucination_import",
-
-
                                 drift_dimension="AI_import_hallucination",
-
-
                                 baseline_version="0.1.0",
-
-
                                 state=DriftState.DETECTED,
-
-
                                 created_at=datetime.now(UTC),
-
-
                                 updated_at=datetime.now(UTC),
-
-
                                 resolution_detail=f"Hallucinated from import: {node.module} in {fname}",
-
-
                             )
-
-
                         )
-
 
         return events
 
-
-
-
-
     def detect_ai_dead_code(self, module_dir: str) -> list[DriftEvent]:
-
-
         """检测 AI 死代码 — 函数体或类体仅含 ``pass``/``...``。
 
 
@@ -316,15 +206,10 @@ class AIConstructionDetectors:
 
         """
 
-
         events: list[DriftEvent] = []
 
-
         if not os.path.isdir(module_dir):
-
-
             return events
-
 
         defined_classes: set[str] = set()
 
@@ -337,142 +222,55 @@ class AIConstructionDetectors:
             except SyntaxError:
                 continue
 
-
             for node in ast.walk(tree):
-
-
                 if isinstance(node, ast.ClassDef):
-
-
                     defined_classes.add(node.name)
 
-
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-
-
                     if not node.name.startswith("_"):
-
-
                         defined_funcs.add(node.name)
 
-
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and all(
-
-
                     isinstance(s, ast.Pass)
-
-
                     or (isinstance(s, ast.Expr) and isinstance(s.value, ast.Constant) and s.value.value is Ellipsis)
-
-
                     for s in node.body
-
-
                 ):
-
-
                     events.append(
-
-
                         DriftEvent(
-
-
                             event_id=uuid.uuid4(),
-
-
                             module_id="MOD-INF-023",
-
-
                             detector_id="ai_dead_code",
-
-
                             drift_dimension="AI_dead_code",
-
-
                             baseline_version="0.1.0",
-
-
                             state=DriftState.DETECTED,
-
-
                             created_at=datetime.now(UTC),
-
-
                             updated_at=datetime.now(UTC),
-
-
                             resolution_detail=f"Dead code: {node.name}() body is only pass/... in {fname}",
-
-
                         )
-
-
                     )
-
 
                 if isinstance(node, ast.ClassDef) and all(
-
-
                     isinstance(s, ast.Pass)
-
-
                     or (isinstance(s, ast.Expr) and isinstance(s.value, ast.Constant) and s.value.value is Ellipsis)
-
-
                     for s in node.body
-
-
                 ):
-
-
                     events.append(
-
-
                         DriftEvent(
-
-
                             event_id=uuid.uuid4(),
-
-
                             module_id="MOD-INF-023",
-
-
                             detector_id="ai_dead_code",
-
-
                             drift_dimension="AI_dead_code",
-
-
                             baseline_version="0.1.0",
-
-
                             state=DriftState.DETECTED,
-
-
                             created_at=datetime.now(UTC),
-
-
                             updated_at=datetime.now(UTC),
-
-
                             resolution_detail=f"Dead code: class {node.name} body is only pass/... in {fname}",
-
-
                         )
-
-
                     )
-
 
         return events
 
-
-
-
-
     def detect_ai_broken_logic(self, module_dir: str) -> list[DriftEvent]:
-
-
         """检测 AI 损坏逻辑 — 高 TODO 密度或上下文截断信号。
 
 
@@ -508,12 +306,9 @@ class AIConstructionDetectors:
 
         """
 
-
         events: list[DriftEvent] = []
 
-
         if not os.path.isdir(module_dir):
-
             return events
 
         sources = _batch_read_module_sources(module_dir)
@@ -523,115 +318,51 @@ class AIConstructionDetectors:
             except SyntaxError:
                 continue
 
-
             lines = source.split("\n")
-
 
             total_lines = len(lines)
 
-
             todo_lines = sum(1 for line in lines if "TODO" in line.upper())
 
-
             if total_lines > 0 and todo_lines / total_lines > 0.05:
-
-
                 evt = DriftEvent(
-
-
                     event_id=uuid.uuid4(),
-
-
                     module_id="MOD-INF-023",
-
-
                     detector_id="ai_broken_logic",
-
-
                     drift_dimension="AI_broken_logic",
-
-
                     baseline_version="0.1.0",
-
-
                     state=DriftState.DETECTED,
-
-
                     created_at=datetime.now(UTC),
-
-
                     updated_at=datetime.now(UTC),
-
-
                     resolution_detail=f"High TODO ratio {todo_lines}/{total_lines} in {fname}",
-
-
                 )
-
 
                 events.append(evt)
 
-
             for node in ast.walk(tree):
-
-
                 if isinstance(node, ast.FunctionDef):
-
-
                     arg_count = len(node.args.args)
-
 
                     body_count = len(node.body)
 
-
                     if arg_count > 5 and body_count < 3:
-
-
                         evt = DriftEvent(
-
-
                             event_id=uuid.uuid4(),
-
-
                             module_id="MOD-INF-023",
-
-
                             detector_id="ai_broken_logic",
-
-
                             drift_dimension="AI_broken_logic",
-
-
                             baseline_version="0.1.0",
-
-
                             state=DriftState.DETECTED,
-
-
                             created_at=datetime.now(UTC),
-
-
                             updated_at=datetime.now(UTC),
-
-
                             resolution_detail=f"Context truncation: {node.name}({arg_count} args, {body_count} lines) in {fname}",
-
-
                         )
-
 
                         events.append(evt)
 
-
         return events
 
-
-
-
-
     def detect_ai_duplicate_functionality(self, module_dir: str) -> list[DriftEvent]:
-
-
         """检测 AI 重复功能 — 跨文件存在 AST 完全相同的函数体。
 
 
@@ -664,15 +395,10 @@ class AIConstructionDetectors:
 
         """
 
-
         events: list[DriftEvent] = []
 
-
         if not os.path.isdir(module_dir):
-
-
             return events
-
 
         file_funcs: dict[str, list[tuple[str, str, str]]] = {}
 
@@ -683,91 +409,39 @@ class AIConstructionDetectors:
             except SyntaxError:
                 continue
 
-
             file_funcs[fname] = []
 
-
             for node in ast.walk(tree):
-
-
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-
-
                     body_hash = hashlib.sha256(ast.dump(node, annotate_fields=False).encode()).hexdigest()[:12]
-
 
                     file_funcs[fname].append((node.name, body_hash, fname))
 
-
         for fname, funcs in file_funcs.items():
-
-
             for other_fname, other_funcs in file_funcs.items():
-
-
                 if fname >= other_fname:
-
-
                     continue
 
-
                 for fn, fh, _ in funcs:
-
-
                     for ofn, ofh, _ in other_funcs:
-
-
                         if fn == ofn and fh == ofh and fn not in ("__init__", "__repr__", "__str__", "__post_init__"):
-
-
                             events.append(
-
-
                                 DriftEvent(
-
-
                                     event_id=uuid.uuid4(),
-
-
                                     module_id="MOD-INF-023",
-
-
                                     detector_id="ai_duplicate_functionality",
-
-
                                     drift_dimension="AI_duplicate_functionality",
-
-
                                     baseline_version="0.1.0",
-
-
                                     state=DriftState.DETECTED,
-
-
                                     created_at=datetime.now(UTC),
-
-
                                     updated_at=datetime.now(UTC),
-
-
                                     resolution_detail=f"Duplicate: {fn}() identical AST in {fname} and {other_fname}",
-
-
                                 )
-
-
                             )
-
 
         return events
 
-
-
-
-
     def detect_ai_session_style_drift(self, module_dir: str) -> list[DriftEvent]:
-
-
         """检测 AI 会话间风格漂移 — 同一模块混用不兼容的编码风格。
 
 
@@ -803,21 +477,14 @@ class AIConstructionDetectors:
 
         """
 
-
         events: list[DriftEvent] = []
 
-
         if not os.path.isdir(module_dir):
-
-
             return events
-
 
         has_dataclass = False
 
-
         has_direct_init = False
-
 
         has_async = False
 
@@ -832,128 +499,52 @@ class AIConstructionDetectors:
 
             for node in ast.walk(tree):
                 if isinstance(node, ast.ClassDef):
-
-
                     for dec in node.decorator_list:
-
-
                         if isinstance(dec, ast.Name) and dec.id == "dataclass":
-
-
                             has_dataclass = True
 
-
                     if any(isinstance(n, ast.FunctionDef) and n.name == "__init__" for n in node.body):
-
-
                         has_direct_init = True
 
-
                 if isinstance(node, ast.AsyncFunctionDef):
-
-
                     has_async = True
 
-
                 if isinstance(node, ast.FunctionDef):
-
-
                     has_sync_equivalent = True
 
-
         if has_dataclass and has_direct_init:
-
-
             events.append(
-
-
                 DriftEvent(
-
-
                     event_id=uuid.uuid4(),
-
-
                     module_id="MOD-INF-023",
-
-
                     detector_id="ai_session_style_drift",
-
-
                     drift_dimension="AI_style_drift",
-
-
                     baseline_version="0.1.0",
-
-
                     state=DriftState.DETECTED,
-
-
                     created_at=datetime.now(UTC),
-
-
                     updated_at=datetime.now(UTC),
-
-
                     resolution_detail="Style drift: dataclass and __init__ mixed",
-
-
                 )
-
-
             )
-
 
         if has_async and has_sync_equivalent:
-
-
             events.append(
-
-
                 DriftEvent(
-
-
                     event_id=uuid.uuid4(),
-
-
                     module_id="MOD-INF-023",
-
-
                     detector_id="ai_session_style_drift",
-
-
                     drift_dimension="AI_style_drift",
-
-
                     baseline_version="0.1.0",
-
-
                     state=DriftState.DETECTED,
-
-
                     created_at=datetime.now(UTC),
-
-
                     updated_at=datetime.now(UTC),
-
-
                     resolution_detail="Style drift: async/sync mixed",
-
-
                 )
-
-
             )
-
 
         return events
 
-
-
-
-
     def detect_ai_knowledge_pollution(self, module_dir: str) -> list[DriftEvent]:
-
-
         """检测 AI 知识污染 — 命名冲突与命名约定不一致。
 
 
@@ -992,15 +583,10 @@ class AIConstructionDetectors:
 
         """
 
-
         events: list[DriftEvent] = []
 
-
         if not os.path.isdir(module_dir):
-
-
             return events
-
 
         sources = _batch_read_module_sources(module_dir)
         for fname, source in sources.items():
@@ -1011,151 +597,66 @@ class AIConstructionDetectors:
 
             func_names: set[str] = set()
 
-
             class_names: set[str] = set()
-
 
             snake_case = 0
 
-
             camel_case = 0
 
-
             for node in ast.walk(tree):
-
-
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-
-
                     func_names.add(node.name)
 
-
                     if "_" in node.name and node.name.lower() == node.name:
-
-
                         snake_case += 1
 
-
                     elif node.name[0].isupper():
-
-
                         camel_case += 1
 
-
                 if isinstance(node, ast.ClassDef):
-
-
                     class_names.add(node.name)
 
-
             if class_names & func_names:
-
-
                 common = class_names & func_names
-
 
                 detail = f"Name collision between class and function: {', '.join(common)} in {fname}"
 
-
                 events.append(
-
-
                     DriftEvent(
-
-
                         event_id=uuid.uuid4(),
-
-
                         module_id="MOD-INF-023",
-
-
                         detector_id="ai_knowledge_pollution",
-
-
                         drift_dimension="AI_knowledge_pollution",
-
-
                         baseline_version="0.1.0",
-
-
                         state=DriftState.DETECTED,
-
-
                         created_at=datetime.now(UTC),
-
-
                         updated_at=datetime.now(UTC),
-
-
                         resolution_detail=detail,
-
-
                     )
-
-
                 )
-
 
             if snake_case > 0 and camel_case > 0:
-
-
                 detail = (
-
-
                     f"Naming convention conflict: {snake_case} snake_case + {camel_case} CamelCase funcs in {fname}"
-
-
                 )
-
 
                 events.append(
-
-
                     DriftEvent(
-
-
                         event_id=uuid.uuid4(),
-
-
                         module_id="MOD-INF-023",
-
-
                         detector_id="ai_knowledge_pollution",
-
-
                         drift_dimension="AI_knowledge_pollution",
-
-
                         baseline_version="0.1.0",
-
-
                         state=DriftState.DETECTED,
-
-
                         created_at=datetime.now(UTC),
-
-
                         updated_at=datetime.now(UTC),
-
-
                         resolution_detail=detail,
-
-
                     )
-
-
                 )
-
 
         return events
 
-
-
-
-
     def detect_cross_session_repair_conflict(self, active_events: list[DriftEvent]) -> list[DriftEvent]:
-
-
         """检测跨会话修复冲突 — 多个会话对同一 DriftEvent 重复修复。
 
 
@@ -1188,64 +689,29 @@ class AIConstructionDetectors:
 
         """
 
-
         events: list[DriftEvent] = []
-
 
         seen: dict[str, int] = {}
 
-
         for evt in active_events:
-
-
             key = f"{evt.detector_id}:{evt.drift_dimension}:{evt.resolved_by or 'none'}"
-
 
             seen[key] = seen.get(key, 0) + 1
 
-
         for key, count in seen.items():
-
-
             if count > 1:
-
-
                 evt = DriftEvent(
-
-
                     event_id=uuid.uuid4(),
-
-
                     module_id="MOD-INF-023",
-
-
                     detector_id="cross_session_repair_conflict",
-
-
                     drift_dimension="D5_cross_session_conflict",
-
-
                     baseline_version="0.1.0",
-
-
                     state=DriftState.DETECTED,
-
-
                     created_at=datetime.now(UTC),
-
-
                     updated_at=datetime.now(UTC),
-
-
                     resolution_detail=f"Cross-session conflict: {key} repaired by {count} sessions",
-
-
                 )
-
 
                 events.append(evt)
 
-
         return events
-
-

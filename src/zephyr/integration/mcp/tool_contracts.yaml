@@ -1031,7 +1031,7 @@ definitions:
     type: object
     required: [task_id, namespace, seq, title, status, priority, phase, directive]
     properties:
-      task_id: { type: string, description: "{NAMESPACE}-{SEQ} 格式（#21 裁定，对齐 metadata-registry.md）" }
+      task_id: { type: string, description: "{NAMESPACE}-{SEQ} 格式（#21 裁定，对齐 metadata_registry.yaml）" }
       namespace: { type: string, enum: [ADR, CP, KE, STD, DW, SRC, OPS, DM] }
       seq: { type: integer }
       title: { type: string, description: "任务标题（对齐 Jira Summary / Linear Title）" }
@@ -1164,7 +1164,7 @@ changelog:
     date: "2026-04-28"
     author: "Trae GLM-5.1 (#21 裁定执行)"
     changes:
-      - "#21 裁定修订：task_id 格式从 T-{SEQ} 改为 {NAMESPACE}-{SEQ}（对齐真源文件 metadata-registry.md §7.2）"
+      - "#21 裁定修订：task_id 格式从 T-{SEQ} 改为 {NAMESPACE}-{SEQ}（对齐真源文件 metadata_registry.yaml §7.2）"
       - "新增 namespace 字段（ADR/CP/KE/STD/DW/SRC/OPS）和 seq 字段"
       - "create_task 接口：required 改为 [namespace, phase, name, directive]，新增 files 参数（N:N 映射）"
       - "definitions.Task：删 file_path，加 namespace/seq，修正 classification 枚举（restricted→confidential），修正 evolution_policy 枚举（experimental→rewritable）"

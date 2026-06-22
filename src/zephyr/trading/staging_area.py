@@ -42,28 +42,26 @@ Usage::
         print("conflict detected")
 """
 
-
 from __future__ import annotations
 
 __all__ = [
-    "CommitStatus",
-    "StagingError",
-    "ConflictInfo",
     "CommitResult",
+    "CommitStatus",
+    "ConflictInfo",
     "StagingArea",
+    "StagingError",
 ]
 
 import hashlib
 import os
 import random
-import shutil
-import time
 import threading
+import time
 import uuid
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Sequence
 
 _COMMIT_LOCK = threading.Lock()
 
@@ -77,7 +75,7 @@ def _atomic_replace(tmp: Path, target: Path, max_retries: int = 5) -> None:
         except PermissionError:
             if attempt == max_retries - 1:
                 raise
-            delay = base_delay * (2 ** attempt) + random.uniform(0, 0.01)
+            delay = base_delay * (2**attempt) + random.uniform(0, 0.01)
             time.sleep(delay)
 
 
@@ -120,7 +118,7 @@ def _read_file_robust(path: Path, mode: str = "r", max_retries: int = 5) -> str:
         except PermissionError:
             if attempt == max_retries - 1:
                 raise
-            delay = base_delay * (2 ** attempt) + random.uniform(0, 0.01)
+            delay = base_delay * (2**attempt) + random.uniform(0, 0.01)
             time.sleep(delay)
     raise PermissionError(f"Cannot read {path} after {max_retries} retries")
 
@@ -150,7 +148,7 @@ def _file_hash_retry(path: Path, max_retries: int = 5) -> str:
         except PermissionError:
             if attempt == max_retries - 1:
                 return ""
-            delay = base_delay * (2 ** attempt) + random.uniform(0, 0.01)
+            delay = base_delay * (2**attempt) + random.uniform(0, 0.01)
             time.sleep(delay)
     return ""
 
@@ -301,9 +299,7 @@ class StagingArea:
                 if curr_mtime != _orig_mtime or curr_hash != _orig_hash:
                     draft_lines = draft.read_text(encoding="utf-8").splitlines(keepends=True)
                     current_lines = (
-                        target.read_text(encoding="utf-8").splitlines(keepends=True)
-                        if target.exists()
-                        else []
+                        target.read_text(encoding="utf-8").splitlines(keepends=True) if target.exists() else []
                     )
                     diff_lines = _compute_diff_lines(current_lines, draft_lines)
                     return CommitResult(
@@ -529,11 +525,7 @@ class StagingArea:
         if curr_mtime == orig_mtime and curr_hash == orig_hash:
             return None
         draft_lines = draft.read_text(encoding="utf-8").splitlines(keepends=True)
-        current_lines = (
-            target.read_text(encoding="utf-8").splitlines(keepends=True)
-            if target.exists()
-            else []
-        )
+        current_lines = target.read_text(encoding="utf-8").splitlines(keepends=True) if target.exists() else []
         diff_lines = _compute_diff_lines(current_lines, draft_lines)
         return ConflictInfo(
             file_path=file_path,

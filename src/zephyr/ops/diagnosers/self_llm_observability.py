@@ -27,6 +27,7 @@ Risk: R160 — Silent LLM quality drop corrupts all downstream diagnosis.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class SelfLLMObservability:
     error_rate: float = 0.0

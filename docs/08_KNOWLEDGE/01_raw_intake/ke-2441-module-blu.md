@@ -32,4 +32,4 @@ category: module_blueprint
 | D-024-20 | 🆕 v0.6.0：Token Spiral EWS——上下文膨胀/工具链扩张/委托深度爆炸/时间递增四维检测 | 2026-05-05 | TechAhead 2026——1 task → 47 API calls spiral pattern |
 | D-024-21 | 🆕 v0.6.0：Context Poisoning Cascade——幻觉 upstream 输出指数污染 downstream agents | 2026-05-05 | SUPERVISORAGENT——单点 hallucination → pipeline 级成本放大 |
 | D-024-22 | 🆕 v0.6.0：Hierarchical Parent-Child Agent 成本归因——委托链树状成本 | 2026-05-05 | MAS coordinator 委托模式需要归因到 delegation pattern 级别 |
-| D-024-23 | 🆕 v0.6.0：Think-Time Cost 模型 + LLM-Free Guard 升级路径——推理 token 隐藏成本 + 渐进降本 | 2026-05-05 | Reasoning 
+| D-024-23 | 🆕 v0.6.0：Think-Time Cost 模型 + LLM-Free Guard 升级路径——推理 token 隐藏成本 + 渐进降本 | 2026-05-05 | Reasoning

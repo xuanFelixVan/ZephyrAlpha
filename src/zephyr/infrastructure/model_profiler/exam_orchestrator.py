@@ -23,7 +23,6 @@ ExamOrchestrator --- 五轴入职考试主控
 输出: CapabilityPassport → data/brain/passports/{model_id}.json
 """
 
-
 from __future__ import annotations
 
 import importlib
@@ -42,13 +41,23 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 def _lazy_capability_passport():
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-    return (getattr(_mod, "DEPTH_THRESHOLDS"), getattr(_mod, "BreadthResult"), getattr(_mod, "CapabilityPassport"), getattr(_mod, "DepthCapabilityResult"),
-            getattr(_mod, "DepthResult"), getattr(_mod, "DriftResult"), getattr(_mod, "HallucinationResult"), getattr(_mod, "Recommendations"), getattr(_mod, "SpeedResult"), getattr(_mod, "compute_grade"))
+    return (
+        _mod.DEPTH_THRESHOLDS,
+        _mod.BreadthResult,
+        _mod.CapabilityPassport,
+        _mod.DepthCapabilityResult,
+        _mod.DepthResult,
+        _mod.DriftResult,
+        _mod.HallucinationResult,
+        _mod.Recommendations,
+        _mod.SpeedResult,
+        _mod.compute_grade,
+    )
 
 
 def _lazy_exam_test_cases():
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.exam_test_cases")
-    return getattr(_mod, "CASES_BY_CAPABILITY"), getattr(_mod, "ExamTestCase")
+    return _mod.CASES_BY_CAPABILITY, _mod.ExamTestCase
 
 
 CAPABILITIES: list[str] = []
@@ -58,7 +67,8 @@ def _ensure_capabilities():
     global CAPABILITIES
     if not CAPABILITIES:
         _mod = importlib.import_module("zephyr.intelligence.model_profiling.exam_test_cases")
-        CAPABILITIES = list(getattr(_mod, "CASES_BY_CAPABILITY").keys())
+        CAPABILITIES = list(_mod.CASES_BY_CAPABILITY.keys())
+
 
 _EXAM_CAPABILITY_NAMES = {
     "task_classification",
@@ -91,10 +101,10 @@ class ExamOrchestrator:
         self._all_tokens: list[int] = []
         self._all_ttft_ms: list[float] = []
 
-    def run_full_exam(self, *, skip_drift: bool = True) -> 'CapabilityPassport':
+    def run_full_exam(self, *, skip_drift: bool = True) -> CapabilityPassport:
         _mod_cp = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-        CapabilityPassport = getattr(_mod_cp, "CapabilityPassport")
-        compute_grade = getattr(_mod_cp, "compute_grade")
+        CapabilityPassport = _mod_cp.CapabilityPassport
+        compute_grade = _mod_cp.compute_grade
         _ensure_capabilities()
         self._start_ts = time.time()
 
@@ -125,11 +135,11 @@ class ExamOrchestrator:
         )
         return passport
 
-    def _run_breadth(self) -> 'BreadthResult':
+    def _run_breadth(self) -> BreadthResult:
         _mod_cp = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-        BreadthResult = getattr(_mod_cp, "BreadthResult")
+        BreadthResult = _mod_cp.BreadthResult
         _mod_etc = importlib.import_module("zephyr.intelligence.model_profiling.exam_test_cases")
-        CASES_BY_CAPABILITY = getattr(_mod_etc, "CASES_BY_CAPABILITY")
+        CASES_BY_CAPABILITY = _mod_etc.CASES_BY_CAPABILITY
         _ensure_capabilities()
         passed = 0
         failed: list[str] = []
@@ -154,14 +164,14 @@ class ExamOrchestrator:
         score = passed / total if total > 0 else 0.0
         return BreadthResult(score=score, passed=passed, total=total, failed_capabilities=failed)
 
-    def _run_depth(self, breadth: 'BreadthResult') -> 'DepthResult':
+    def _run_depth(self, breadth: BreadthResult) -> DepthResult:
         _mod_cp = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-        DEPTH_THRESHOLDS = getattr(_mod_cp, "DEPTH_THRESHOLDS")
-        DepthCapabilityResult = getattr(_mod_cp, "DepthCapabilityResult")
-        DepthResult = getattr(_mod_cp, "DepthResult")
-        compute_grade = getattr(_mod_cp, "compute_grade")
+        DEPTH_THRESHOLDS = _mod_cp.DEPTH_THRESHOLDS
+        DepthCapabilityResult = _mod_cp.DepthCapabilityResult
+        DepthResult = _mod_cp.DepthResult
+        compute_grade = _mod_cp.compute_grade
         _mod_etc = importlib.import_module("zephyr.intelligence.model_profiling.exam_test_cases")
-        CASES_BY_CAPABILITY = getattr(_mod_etc, "CASES_BY_CAPABILITY")
+        CASES_BY_CAPABILITY = _mod_etc.CASES_BY_CAPABILITY
         _ensure_capabilities()
         capabilities: dict[str, DepthCapabilityResult] = {}
 
@@ -182,19 +192,17 @@ class ExamOrchestrator:
             cap_result.grade = compute_grade(max(cap_result.f1, cap_result.exact_match_rate))
             capabilities[cap_name] = cap_result
 
-        scores = [
-            max(c.f1, c.exact_match_rate)
-            for c in capabilities.values()
-            if c.samples_tested > 0
-        ]
+        scores = [max(c.f1, c.exact_match_rate) for c in capabilities.values() if c.samples_tested > 0]
         overall = statistics.mean(scores) if scores else 0.0
         return DepthResult(overall_score=overall, capabilities=capabilities)
 
     def _score_capability(
-        self, cap_name: str, cases: list['ExamTestCase'],
-    ) -> 'DepthCapabilityResult':
+        self,
+        cap_name: str,
+        cases: list[ExamTestCase],
+    ) -> DepthCapabilityResult:
         _mod_cp = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-        DepthCapabilityResult = getattr(_mod_cp, "DepthCapabilityResult")
+        DepthCapabilityResult = _mod_cp.DepthCapabilityResult
         precisions: list[float] = []
         recalls: list[float] = []
         edit_distances: list[float] = []
@@ -229,10 +237,12 @@ class ExamOrchestrator:
         )
 
     def _compute_metrics(
-        self, case: 'ExamTestCase', result: dict,
+        self,
+        case: ExamTestCase,
+        result: dict,
     ) -> tuple[float, float, float, int]:
         _mod_etc = importlib.import_module("zephyr.intelligence.model_profiling.exam_test_cases")
-        ExamTestCase = getattr(_mod_etc, "ExamTestCase")
+        ExamTestCase = _mod_etc.ExamTestCase
         cap = case.capability
 
         if cap in ("task_classification",):
@@ -293,9 +303,9 @@ class ExamOrchestrator:
 
         return (0.0, 0.0, 1.0, 0)
 
-    def _compute_speed(self) -> 'SpeedResult':
+    def _compute_speed(self) -> SpeedResult:
         _mod_cp = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-        SpeedResult = getattr(_mod_cp, "SpeedResult")
+        SpeedResult = _mod_cp.SpeedResult
         latencies = self._all_latencies_ms
         if not latencies:
             return SpeedResult()
@@ -308,18 +318,24 @@ class ExamOrchestrator:
             latency_p95_ms=round(_percentile(sorted_lats, 95), 1),
             latency_p99_ms=round(_percentile(sorted_lats, 99), 1),
             tokens_per_second=round(
-                sum(self._all_tokens) / (sum(latencies) / 1000.0), 1,
-            ) if latencies and self._all_tokens else 0.0,
+                sum(self._all_tokens) / (sum(latencies) / 1000.0),
+                1,
+            )
+            if latencies and self._all_tokens
+            else 0.0,
             time_to_first_token_ms=round(
-                statistics.mean(self._all_ttft_ms), 1,
-            ) if self._all_ttft_ms else 0.0,
+                statistics.mean(self._all_ttft_ms),
+                1,
+            )
+            if self._all_ttft_ms
+            else 0.0,
         )
 
-    def _run_hallucination(self, breadth: 'BreadthResult') -> 'HallucinationResult':
+    def _run_hallucination(self, breadth: BreadthResult) -> HallucinationResult:
         _mod_cp = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-        HallucinationResult = getattr(_mod_cp, "HallucinationResult")
+        HallucinationResult = _mod_cp.HallucinationResult
         _mod_etc = importlib.import_module("zephyr.intelligence.model_profiling.exam_test_cases")
-        CASES_BY_CAPABILITY = getattr(_mod_etc, "CASES_BY_CAPABILITY")
+        CASES_BY_CAPABILITY = _mod_etc.CASES_BY_CAPABILITY
         _ensure_capabilities()
         fab_count = 0
         inc_count = 0
@@ -358,9 +374,9 @@ class ExamOrchestrator:
             refusal_rate=round(ref_count / total, 3) if total else 0.0,
         )
 
-    def _run_drift(self, breadth: 'BreadthResult') -> 'DriftResult':
+    def _run_drift(self, breadth: BreadthResult) -> DriftResult:
         _mod_cp = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-        DriftResult = getattr(_mod_cp, "DriftResult")
+        DriftResult = _mod_cp.DriftResult
         try:
             return DriftResult(
                 tested=True,
@@ -372,15 +388,15 @@ class ExamOrchestrator:
         except Exception:
             return DriftResult(tested=False)
 
-    def _compute_overall(self, passport: 'CapabilityPassport') -> float:
+    def _compute_overall(self, passport: CapabilityPassport) -> float:
         b = passport.breadth.score
         d = passport.depth.overall_score
         h = 1.0 - passport.hallucination.overall_rate
         return round(0.30 * b + 0.50 * d + 0.20 * h, 3)
 
-    def _build_recommendations(self, passport: 'CapabilityPassport') -> 'Recommendations':
+    def _build_recommendations(self, passport: CapabilityPassport) -> Recommendations:
         _mod_cp = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
-        Recommendations = getattr(_mod_cp, "Recommendations")
+        Recommendations = _mod_cp.Recommendations
         safe: list[str] = []
         unsafe: list[str] = []
 
@@ -403,9 +419,9 @@ class ExamOrchestrator:
             note=note,
         )
 
-    def _infer(self, case: 'ExamTestCase') -> dict:
+    def _infer(self, case: ExamTestCase) -> dict:
         _mod_etc = importlib.import_module("zephyr.intelligence.model_profiling.exam_test_cases")
-        ExamTestCase = getattr(_mod_etc, "ExamTestCase")
+        ExamTestCase = _mod_etc.ExamTestCase
         t0 = time.time()
         raw = self._chat.inference(case.capability, case.prompt)
         elapsed_ms = (time.time() - t0) * 1000.0
@@ -436,13 +452,15 @@ class ExamOrchestrator:
         return True
 
     @staticmethod
-    def _check_fabrication(case: 'ExamTestCase', result: dict) -> bool:
+    def _check_fabrication(case: ExamTestCase, result: dict) -> bool:
         _mod_etc = importlib.import_module("zephyr.intelligence.model_profiling.exam_test_cases")
-        ExamTestCase = getattr(_mod_etc, "ExamTestCase")
+        ExamTestCase = _mod_etc.ExamTestCase
         if case.capability in ("code_fix", "refactor", "dead_code_removal"):
             field = (
-                "fixes" if case.capability == "code_fix"
-                else "changes" if case.capability == "refactor"
+                "fixes"
+                if case.capability == "code_fix"
+                else "changes"
+                if case.capability == "refactor"
                 else "dead_sections"
             )
             entries = result.get(field, [])

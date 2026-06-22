@@ -20,11 +20,12 @@
 # [TESTS] pytest tests/test_schema_schema_registry.py -q
 
 import pytest
+
 from zephyr.integration.shared.schema.schema_registry import (
-    SchemaVersion,
     SchemaEntry,
     SchemaRegistry,
     SchemaRegistryError,
+    SchemaVersion,
     get_schema_registry,
 )
 
@@ -158,5 +159,6 @@ class TestGetSchemaRegistry:
 class TestSchemaRegistryError:
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         err = SchemaRegistryError("fail", details={"schema": "X"})
         assert isinstance(err, ZephyrBaseError)

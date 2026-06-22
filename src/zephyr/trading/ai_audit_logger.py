@@ -38,12 +38,14 @@ from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
+
 class _LogEntry(BaseModel):
     model_config = BASE_CONFIG
     log_type: str
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
     session_id: str = ""
     detail: dict[str, Any] = {}
+
 
 class AiAuditLogger:
     """AI 行为审计日志——所有 AI 决策/执行的不可变记录。
@@ -80,18 +82,20 @@ class AiAuditLogger:
         latency_ms: float = 0.0,
         layer: str = "local",
     ) -> None:
-        self._write(_LogEntry(
-            log_type="inference",
-            session_id=self._session_id,
-            detail={
-                "model": model,
-                "work_type": work_type,
-                "input_text_snippet": input_snippet[:200],
-                "output_snippet": output_snippet[:200],
-                "latency_ms": latency_ms,
-                "layer": layer,
-            },
-        ))
+        self._write(
+            _LogEntry(
+                log_type="inference",
+                session_id=self._session_id,
+                detail={
+                    "model": model,
+                    "work_type": work_type,
+                    "input_text_snippet": input_snippet[:200],
+                    "output_snippet": output_snippet[:200],
+                    "latency_ms": latency_ms,
+                    "layer": layer,
+                },
+            )
+        )
 
     def log_embedding(
         self,
@@ -101,17 +105,19 @@ class AiAuditLogger:
         latency_ms: float = 0.0,
         layer: str = "local",
     ) -> None:
-        self._write(_LogEntry(
-            log_type="embedding",
-            session_id=self._session_id,
-            detail={
-                "model": model,
-                "text_length": text_length,
-                "dim": dim,
-                "latency_ms": latency_ms,
-                "layer": layer,
-            },
-        ))
+        self._write(
+            _LogEntry(
+                log_type="embedding",
+                session_id=self._session_id,
+                detail={
+                    "model": model,
+                    "text_length": text_length,
+                    "dim": dim,
+                    "latency_ms": latency_ms,
+                    "layer": layer,
+                },
+            )
+        )
 
     def log_routing(
         self,
@@ -120,16 +126,18 @@ class AiAuditLogger:
         to_layer: str,
         reason: str = "",
     ) -> None:
-        self._write(_LogEntry(
-            log_type="routing",
-            session_id=self._session_id,
-            detail={
-                "task_id": task_id,
-                "from_layer": from_layer,
-                "to_layer": to_layer,
-                "reason": reason,
-            },
-        ))
+        self._write(
+            _LogEntry(
+                log_type="routing",
+                session_id=self._session_id,
+                detail={
+                    "task_id": task_id,
+                    "from_layer": from_layer,
+                    "to_layer": to_layer,
+                    "reason": reason,
+                },
+            )
+        )
 
     def log_ambiguity(
         self,
@@ -138,16 +146,18 @@ class AiAuditLogger:
         context: str,
         options: list[dict[str, str]] | None = None,
     ) -> None:
-        self._write(_LogEntry(
-            log_type="ambiguity",
-            session_id=self._session_id,
-            detail={
-                "entry_id": entry_id,
-                "task_id": task_id,
-                "context": context,
-                "options": options or [],
-            },
-        ))
+        self._write(
+            _LogEntry(
+                log_type="ambiguity",
+                session_id=self._session_id,
+                detail={
+                    "entry_id": entry_id,
+                    "task_id": task_id,
+                    "context": context,
+                    "options": options or [],
+                },
+            )
+        )
 
     def log_health(
         self,
@@ -156,30 +166,34 @@ class AiAuditLogger:
         latency_ms: float = 0.0,
         error: str = "",
     ) -> None:
-        self._write(_LogEntry(
-            log_type="health",
-            session_id=self._session_id,
-            detail={
-                "capability_id": capability_id,
-                "status": status,
-                "latency_ms": latency_ms,
-                "error": error,
-            },
-        ))
+        self._write(
+            _LogEntry(
+                log_type="health",
+                session_id=self._session_id,
+                detail={
+                    "capability_id": capability_id,
+                    "status": status,
+                    "latency_ms": latency_ms,
+                    "error": error,
+                },
+            )
+        )
 
     def log_registration(
         self,
         capability_id: str,
         event: str,
     ) -> None:
-        self._write(_LogEntry(
-            log_type="registration",
-            session_id=self._session_id,
-            detail={
-                "capability_id": capability_id,
-                "event": event,
-            },
-        ))
+        self._write(
+            _LogEntry(
+                log_type="registration",
+                session_id=self._session_id,
+                detail={
+                    "capability_id": capability_id,
+                    "event": event,
+                },
+            )
+        )
 
     def has_pending_flush(self) -> bool:
         return self._pending_count > 0

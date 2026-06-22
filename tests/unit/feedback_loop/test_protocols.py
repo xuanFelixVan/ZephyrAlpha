@@ -1,5 +1,4 @@
 # [A_test] module_id: SRC-TST-1879 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-import pytest
 from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
 
 
@@ -25,7 +24,11 @@ class TestActionType:
 
 class TestFeedbackProtocolAdapter:
     def test_is_protocol(self):
-        assert hasattr(FeedbackProtocolAdapter, "__protocol_attrs__") or hasattr(FeedbackProtocolAdapter, "__abstractmethods__") or hasattr(FeedbackProtocolAdapter, "_is_protocol")
+        assert (
+            hasattr(FeedbackProtocolAdapter, "__protocol_attrs__")
+            or hasattr(FeedbackProtocolAdapter, "__abstractmethods__")
+            or hasattr(FeedbackProtocolAdapter, "_is_protocol")
+        )
 
     def test_concrete_implementation(self):
         class MockAdapter:
@@ -37,6 +40,7 @@ class TestFeedbackProtocolAdapter:
 
     def test_dispatch_action_signature(self):
         import inspect
+
         sig = inspect.signature(FeedbackProtocolAdapter.dispatch_action)
         params = list(sig.parameters.keys())
         assert "self" in params

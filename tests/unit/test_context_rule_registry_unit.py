@@ -2,9 +2,6 @@
 # [BLUEPRINT] MOD-XLR-003 | docs/03_modules/_cross_layer/context-engine/blueprint.md | §
 
 from __future__ import annotations
-import os
-import tempfile
-from pathlib import Path
 
 import pytest
 import yaml
@@ -196,15 +193,17 @@ class TestLoadYaml:
 
     def test_save_and_load_yaml_roundtrip(self, tmp_path):
         registry = ContextRuleRegistry()
-        registry.register(ContextRule(
-            rule_id="SAVE-001",
-            trigger_conditions={"keywords": ["save"]},
-            content="Save test",
-            priority=75,
-            injection_level="DOMAIN",
-            max_tokens=600,
-            source_module="MOD-TEST",
-        ))
+        registry.register(
+            ContextRule(
+                rule_id="SAVE-001",
+                trigger_conditions={"keywords": ["save"]},
+                content="Save test",
+                priority=75,
+                injection_level="DOMAIN",
+                max_tokens=600,
+                source_module="MOD-TEST",
+            )
+        )
 
         save_path = str(tmp_path / "saved_rules.yaml")
         registry.save_yaml(save_path)

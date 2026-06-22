@@ -15,7 +15,7 @@ import json
 import logging
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -45,7 +45,7 @@ def _load_entries() -> list[dict]:
 
 def _append_entry(entry: dict) -> None:
     """_append_entry implementation."""
-    entry["logged_at"] = datetime.now(timezone.utc).strftime(_TS_FORMAT)
+    entry["logged_at"] = datetime.now(UTC).strftime(_TS_FORMAT)
     tmp = f"{_LOG_PATH}.{os.getpid()}.tmp"
     try:
         with open(tmp, "w", encoding="utf-8") as f:
@@ -59,7 +59,9 @@ def _append_entry(entry: dict) -> None:
             pass
 
 
-def _add_entry(attack_id: str, subsystem: str, vector: str, result: str, root_cause: str, fix: str, verified: bool, notes: str) -> dict:
+def _add_entry(
+    attack_id: str, subsystem: str, vector: str, result: str, root_cause: str, fix: str, verified: bool, notes: str
+) -> dict:
     """_add_entry implementation."""
     entry = {
         "attack_id": attack_id,
@@ -120,15 +122,17 @@ def main() -> None:
 
     if args.summary:
         report = _summary_report(entries)
-        print(f"\n{'='*60}")
-        print(f"  红白对抗闭环摘要")
-        print(f"{'='*60}")
+        print(f"\n{'=' * 60}")
+        print("  红白对抗闭环摘要")
+        print(f"{'=' * 60}")
         print(f"  总攻击次数:  {report['total_attacks']}")
         print(f"  通过率:      {report['pass_rate']}")
         print(f"  修复率:      {report['fix_rate']}")
-        print(f"{'='*60}\n")
+        print(f"{'=' * 60}\n")
         for sub, stats in report["by_subsystem"].items():
-            print(f"  [{sub}] {stats['total']} attacks | {stats['pass']}P | {stats['fixed']}FIXED | {stats['critical']}CRIT")
+            print(
+                f"  [{sub}] {stats['total']} attacks | {stats['pass']}P | {stats['fixed']}FIXED | {stats['critical']}CRIT"
+            )
         print()
         return
 
@@ -153,13 +157,15 @@ def main() -> None:
         if not entries:
             print("暂无对抗记录。使用 --add 添加第一条。")
             return
-        print(f"\n{'='*80}")
+        print(f"\n{'=' * 80}")
         print(f"  红白对抗记录 ({len(entries)} 条)")
-        print(f"{'='*80}")
+        print(f"{'=' * 80}")
         for i, e in enumerate(entries[-20:], 1):
             status = "✅" if e.get("result") == "PASS" else ("❌" if e.get("result") == "FAIL" else "⚠️")
             fixed = " [FIXED]" if e.get("verified") else ""
-            print(f"  {status} {e.get('attack_id','?')} | {e.get('subsystem','?')} | {e.get('attack_vector','?')[:40]}{fixed}")
+            print(
+                f"  {status} {e.get('attack_id', '?')} | {e.get('subsystem', '?')} | {e.get('attack_vector', '?')[:40]}{fixed}"
+            )
         if len(entries) > 20:
             print(f"  ... showing last 20 of {len(entries)} entries")
         print()

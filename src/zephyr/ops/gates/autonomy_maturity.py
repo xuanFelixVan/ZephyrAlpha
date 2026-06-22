@@ -27,6 +27,7 @@ Risk: R86 — Premature autonomy causes irrecoverable automated damage.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class AutonomyMaturity:
     level: int = 0  # L0: OBSERVE, L1: NOTIFY, L2: SUGGEST, L3: AUTO_MINOR, L4: AUTO_FULL

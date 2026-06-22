@@ -70,8 +70,10 @@ _LAZY_SYMBOLS = {
     "TaskRecommendation": "zephyr.intelligence.model_profiling.task_model_learner",
 }
 
+
 def __getattr__(name: str):
     import importlib
+
     if name in _SUBMODULES:
         mod = importlib.import_module(f"zephyr.intelligence.model_profiling.{name}")
         globals()[name] = mod
@@ -82,20 +84,22 @@ def __getattr__(name: str):
         globals()[name] = value
         return value
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
 __all__ = [
     "ALL_BENCHMARK_CASES",
-    "BenchmarkCase",
-    "CaseResult",
     "CATEGORY_MAP",
     "DEFAULT_OLLAMA_URL",
-    "DiscoveredModel",
     "MAX_OLLAMA_MODELS",
+    "SKIP_MODEL_PATTERNS",
+    "BenchmarkCase",
+    "CaseResult",
+    "DiscoveredModel",
     "ModelDiscovery",
     "ModelProfile",
     "ModelProfiler",
     "ModelTaskEntry",
     "ModelTaskMatrix",
-    "SKIP_MODEL_PATTERNS",
     "TaskRecommendation",
     "benchmark_suite",
     "capability_passport",
@@ -103,9 +107,9 @@ __all__ = [
     "deepseek_v4_chat",
     "exam_orchestrator",
     "exam_test_cases",
+    "model_discovery",
     "profiler",
     "provider_data",
     "results_writer",
     "task_model_learner",
-    "model_discovery",
 ]

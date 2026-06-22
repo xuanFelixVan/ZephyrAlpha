@@ -15,7 +15,6 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
 import yaml
 
 from zephyr.governance.kb.extract import (
@@ -31,9 +30,7 @@ from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolat
 def _mock_gate_engine(passed: bool = True) -> MagicMock:
     engine = MagicMock()
     if passed:
-        engine.evaluate.return_value = GateResult(
-            gate_id="G5", task_id="T-1", passed=True, violations=[]
-        )
+        engine.evaluate.return_value = GateResult(gate_id="G5", task_id="T-1", passed=True, violations=[])
     else:
         engine.evaluate.return_value = GateResult(
             gate_id="G5",
@@ -54,10 +51,10 @@ def _make_source(category: str = "blueprint", extra_text: str = "", **fm_kwargs:
     fm.update(fm_kwargs)
     fm_yaml = yaml.dump(fm, allow_unicode=True, default_flow_style=False)
     body = (
-        f"## Design Decisions\n\nWe chose this approach for the architecture.\n\n"
-        f"## Interfaces\n\nThe interface definition is clear.\n\n"
-        f"## Constraints\n\nMust follow governance rules.\n\n"
-        f"## Dependencies\n\nDepends on MOD-INF-001.\n\n"
+        "## Design Decisions\n\nWe chose this approach for the architecture.\n\n"
+        "## Interfaces\n\nThe interface definition is clear.\n\n"
+        "## Constraints\n\nMust follow governance rules.\n\n"
+        "## Dependencies\n\nDepends on MOD-INF-001.\n\n"
     )
     if extra_text:
         body += extra_text

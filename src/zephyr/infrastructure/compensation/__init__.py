@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.compensation — auto-generated package init."""
+
 from . import saga_compensator
 
-__all__ = ['saga_compensator']
-
+__all__ = ["saga_compensator"]

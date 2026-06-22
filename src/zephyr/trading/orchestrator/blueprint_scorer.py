@@ -27,11 +27,10 @@ BlueprintScorer — 蓝图路由统一打分逻辑
 mcp.BlueprintSearchServer._find_relevant_blueprint 共用。
 
 SSoT: config/blueprint_routing.yaml routes
-KBG:  路由）+ 
+KBG:  路由）+
 """
 
 from __future__ import annotations
-
 
 import fnmatch
 from typing import Any

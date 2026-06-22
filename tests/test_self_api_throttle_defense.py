@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_self_api_throttle_defense.py
 
-import pytest
 
 from zephyr.ops.resilience.self_api_throttle_defense import (
     SelfAPIThrottleDefense,

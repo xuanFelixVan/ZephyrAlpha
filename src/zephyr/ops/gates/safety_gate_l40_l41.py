@@ -25,11 +25,10 @@ L40: immutable core violation → BLOCK; operational_window prohibited → BLOCK
 L41: container mutability → OBSERVE_ONLY alert; image drift → block deploy
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL40L41:
-
     def __init__(self):
         self.immutable_core_violation: bool = False
         self.operational_window_prohibited: bool = False

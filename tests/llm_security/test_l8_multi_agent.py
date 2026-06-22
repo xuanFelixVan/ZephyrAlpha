@@ -20,9 +20,7 @@ from zephyr.security.llm_defense.llm_security.layers.l8_multi_agent import (
 
 class TestCrossAgentPermission:
     def test_not_expired_initially(self):
-        perm = CrossAgentPermission(
-            from_agent_id="a1", to_agent_id="a2", scope=Scope.READ, granted=True
-        )
+        perm = CrossAgentPermission(from_agent_id="a1", to_agent_id="a2", scope=Scope.READ, granted=True)
         assert perm.is_expired() is False
 
     def test_granted_defaults_false(self):
@@ -33,25 +31,31 @@ class TestCrossAgentPermission:
 class TestTrustScoreCalculator:
     def test_calculates_score(self):
         calc = TrustScoreCalculator()
-        result = calc.calculate("agent-1", {
-            "history": 0.8,
-            "message_consistency": 0.7,
-            "behavior_consistency": 0.6,
-            "identity_strength": 0.9,
-            "scope_minimization": 0.5,
-        })
+        result = calc.calculate(
+            "agent-1",
+            {
+                "history": 0.8,
+                "message_consistency": 0.7,
+                "behavior_consistency": 0.6,
+                "identity_strength": 0.9,
+                "scope_minimization": 0.5,
+            },
+        )
         assert 0.0 <= result["total_score"] <= 1.0
         assert result["tier"] in [t.value for t in TrustTier]
 
     def test_untrusted_tier(self):
         calc = TrustScoreCalculator()
-        result = calc.calculate("evil-agent", {
-            "history": 0.1,
-            "message_consistency": 0.1,
-            "behavior_consistency": 0.1,
-            "identity_strength": 0.0,
-            "scope_minimization": 0.0,
-        })
+        result = calc.calculate(
+            "evil-agent",
+            {
+                "history": 0.1,
+                "message_consistency": 0.1,
+                "behavior_consistency": 0.1,
+                "identity_strength": 0.0,
+                "scope_minimization": 0.0,
+            },
+        )
         assert result["tier"] == TrustTier.UNTRUSTED.value
 
 
@@ -100,6 +104,7 @@ class TestMultiAgentSecurityLayer:
     @pytest.mark.asyncio
     async def test_evaluate_without_agents_allowed(self):
         from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+
         layer = MultiAgentSecurityLayer()
         ctx = SecurityContext(
             request_id="test-l8-eval-1",
@@ -114,6 +119,7 @@ class TestMultiAgentSecurityLayer:
     @pytest.mark.asyncio
     async def test_evaluate_with_authorized_agents(self):
         from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+
         layer = MultiAgentSecurityLayer()
         ctx = SecurityContext(
             request_id="test-l8-eval-2",
@@ -127,6 +133,7 @@ class TestMultiAgentSecurityLayer:
     @pytest.mark.asyncio
     async def test_evaluate_denies_unauthorized_cross_agent(self):
         from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+
         layer = MultiAgentSecurityLayer()
         layer.authenticate_cross_agent = lambda *a, **kw: (False, "unauthorized")
         ctx = SecurityContext(

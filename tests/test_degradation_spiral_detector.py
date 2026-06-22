@@ -12,7 +12,9 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.degradation_spiral_detector", reason="degradation_spiral_detector not available")
+mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.degradation_spiral_detector", reason="degradation_spiral_detector not available"
+)
 DegradationSpiralDetector = mod.DegradationSpiralDetector
 
 

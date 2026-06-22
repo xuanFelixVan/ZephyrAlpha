@@ -26,7 +26,6 @@ Defines escalation events, levels (L0-L4), rules, delegation decisions, and econ
 Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 """
 
-
 from __future__ import annotations
 
 import uuid

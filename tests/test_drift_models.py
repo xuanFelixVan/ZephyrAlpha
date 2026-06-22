@@ -15,33 +15,41 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-import pytest
-
 from zephyr.behavioral_audit.drift_models import (
-    DriftState,
-    ScanLevel,
-    Severity,
-    OrphanClassification,
-    DriftEvent,
     BaselineSnapshot,
-    ScanResult,
-    DriftReport,
-    DriftBudget,
-    Runbook,
-    CascadeEvent,
-    BulkDriftEvent,
-    ForensicsReport,
-    ConfigConflict,
     BreakingChange,
-    OrphanFile,
+    BulkDriftEvent,
+    CascadeEvent,
+    ConfigConflict,
     Detector,
+    DriftBudget,
+    DriftEvent,
+    DriftReport,
+    DriftState,
+    ForensicsReport,
+    OrphanClassification,
+    OrphanFile,
+    Runbook,
+    ScanLevel,
+    ScanResult,
+    Severity,
 )
 
 
 class TestDriftState:
     def test_all_states_exist(self):
-        expected = {"DETECTED", "TRIAGED", "ACKNOWLEDGED", "RESOLVING", "RESOLVED",
-                     "VERIFIED", "FIX_FAILED", "FALSE_POSITIVE", "DEAD_LETTER", "SUPPRESSED"}
+        expected = {
+            "DETECTED",
+            "TRIAGED",
+            "ACKNOWLEDGED",
+            "RESOLVING",
+            "RESOLVED",
+            "VERIFIED",
+            "FIX_FAILED",
+            "FALSE_POSITIVE",
+            "DEAD_LETTER",
+            "SUPPRESSED",
+        }
         actual = {s.value for s in DriftState}
         assert actual == expected
 
@@ -138,10 +146,14 @@ class TestScanResult:
 
     def test_with_events(self):
         event = DriftEvent(
-            event_id=uuid.uuid4(), module_id="m", detector_id="d",
-            drift_dimension="x", baseline_version="v1",
+            event_id=uuid.uuid4(),
+            module_id="m",
+            detector_id="d",
+            drift_dimension="x",
+            baseline_version="v1",
             state=DriftState.DETECTED,
-            created_at=datetime.utcnow(), updated_at=datetime.utcnow(),
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
         )
         sr = ScanResult(scan_id=uuid.uuid4(), detectors_run=1, total_drift_events=1, events=[event])
         assert len(sr.events) == 1
@@ -268,9 +280,15 @@ class TestDetector:
 
     def test_custom_values(self):
         det = Detector(
-            id="d2", drift_dimension="config", severity=Severity.LOW,
-            category="infra", script="check.py", method="run",
-            status="disabled", auto_fixable=True, check_dims=["a", "b"],
+            id="d2",
+            drift_dimension="config",
+            severity=Severity.LOW,
+            category="infra",
+            script="check.py",
+            method="run",
+            status="disabled",
+            auto_fixable=True,
+            check_dims=["a", "b"],
         )
         assert det.script == "check.py"
         assert det.auto_fixable is True

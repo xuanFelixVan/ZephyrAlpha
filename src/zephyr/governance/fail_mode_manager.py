@@ -2,34 +2,26 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.fail_mode_manager
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
 from dataclasses import dataclass, field
 from enum import Enum, auto
+
 
 class FailMode(Enum):
     OPEN = auto()
     CLOSED = auto()
     DEGRADED = auto()
     DEAD = auto()
+
 
 @dataclass
 class FailModeState:
@@ -39,6 +31,7 @@ class FailModeState:
     recoverable: bool = True
     auto_recovery_at: float | None = None
 
+
 @dataclass
 class HealthCheck:
     component: str
@@ -47,8 +40,8 @@ class HealthCheck:
     latency_ms: float = 0.0
     checked_at: float = field(default_factory=time.time)
 
-class FailModeManager:
 
+class FailModeManager:
     COMPONENTS: list[str] = [
         "budget_engine",
         "degradation_manager",

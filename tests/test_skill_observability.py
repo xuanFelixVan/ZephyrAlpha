@@ -10,14 +10,10 @@
 # [ERROR_CONTRACT] returns error dict for unknown trace_id; never raises
 # [TESTS] pytest tests/test_skill_observability.py -q
 
-import json
-import time
-from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
-from zephyr.autonomy_core.skill_observability import SkillObservability, Trace, Span
+from zephyr.autonomy_core.skill_observability import SkillObservability, Span, Trace
 
 
 @pytest.fixture(autouse=True)
@@ -206,9 +202,7 @@ class TestSkillObservabilityRecordMetric:
         assert result["value"] == 42.5
 
     def test_record_metric_with_tags(self):
-        result = SkillObservability.record_metric(
-            "SKILL-DOM-TS-001", "tokens", 100, tags={"tier": "L1"}
-        )
+        result = SkillObservability.record_metric("SKILL-DOM-TS-001", "tokens", 100, tags={"tier": "L1"})
         assert result["tags"]["tier"] == "L1"
 
     def test_record_metric_none_tags(self):
@@ -260,9 +254,7 @@ class TestSkillObservabilityLogEvent:
         assert "timestamp" in result
 
     def test_log_event_with_detail(self):
-        result = SkillObservability.log_event(
-            "SKILL-DOM-TS-001", "error", detail={"msg": "timeout"}
-        )
+        result = SkillObservability.log_event("SKILL-DOM-TS-001", "error", detail={"msg": "timeout"})
         assert result["detail"]["msg"] == "timeout"
 
     def test_log_event_none_detail(self):

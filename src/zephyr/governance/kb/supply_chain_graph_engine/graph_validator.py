@@ -46,7 +46,6 @@ Safety  : L（只读校验，不修改任何数据）
 
 from __future__ import annotations
 
-
 import json
 import re
 from datetime import UTC, datetime
@@ -212,9 +211,7 @@ class GraphValidator:
             ke_id = row["ke_id"]
             db_status = row["status"]
             event_cursor = self._conn.execute(
-                "SELECT payload FROM events "
-                "WHERE event_type = 'state_transition' "
-                "ORDER BY created_at DESC LIMIT 100"
+                "SELECT payload FROM events WHERE event_type = 'state_transition' ORDER BY created_at DESC LIMIT 100"
             )
             latest_event_status: str | None = None
             for erow in event_cursor.fetchall():

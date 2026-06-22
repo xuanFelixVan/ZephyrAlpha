@@ -15,9 +15,9 @@ INV-016: policy_decision_ledger.jsonl 仅允许 append-only 写入，禁止删�
 
 exit: 0=pass (文件不存在或不可篡改), 1=篡改风险发现
 """
+
 from __future__ import annotations
 
-import subprocess
 import sys
 from pathlib import Path
 

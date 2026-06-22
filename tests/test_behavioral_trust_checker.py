@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.behavioral_trust_checker import (
-    BehavioralTrustChecker, TrustCheck,
+    BehavioralTrustChecker,
+    TrustCheck,
 )
+
 
 class TestBehavioralTrustChecker:
     def test_instantiation(self):

@@ -33,9 +33,8 @@
 
 from __future__ import annotations
 
-from collections import deque
-from dataclasses import dataclass, field
 import time
+from dataclasses import dataclass, field
 
 
 @dataclass

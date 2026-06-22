@@ -10,20 +10,20 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_resource_guard.py
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from zephyr.behavioral_audit.resource_guard import (
+    LIMITS,
     DegradationLevel,
-    ResourceStatus,
     ResourceLimits,
     ResourceSnapshot,
-    LIMITS,
-    snapshot,
+    ResourceStatus,
     apply_degradation,
-    validate_scalability,
-    set_critical_handler,
-    stop_guard_loop,
     is_guard_running,
+    set_critical_handler,
+    snapshot,
+    stop_guard_loop,
+    validate_scalability,
 )
 
 

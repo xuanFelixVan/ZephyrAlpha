@@ -13,12 +13,7 @@ __all__ = [
     "synthesized_signal",
 ]
 
-from . import factor_monitor_report
-from . import factor_signal
-from . import instrument
-from . import macro_factor_signal
-from . import market_data
-from . import synthesized_signal
+from . import factor_monitor_report, factor_signal, instrument, macro_factor_signal, market_data, synthesized_signal
 
 _TRADING_SYMBOLS = {
     "FactorSignal": "zephyr.execution_core.trading.trading_contracts.market.factor_signal",

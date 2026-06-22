@@ -4,12 +4,22 @@
 import importlib
 
 _RO_LAZY_NAMES = {
-    "CacheStats", "CircuitBreaker", "CircuitBreakerState",
-    "DefensiveStrategy", "DegradationMatrix", "HealthCheckResult",
-    "OptimizationRecord", "OptimizationResult", "OptimizationStrategy",
-    "PressureLevel", "PressureState", "ProcessPoolStats",
-    "ResourceOptimizationEngine", "ResourceSnapshot",
+    "CacheStats",
+    "CircuitBreaker",
+    "CircuitBreakerState",
+    "DefensiveStrategy",
+    "DegradationMatrix",
+    "HealthCheckResult",
+    "OptimizationRecord",
+    "OptimizationResult",
+    "OptimizationStrategy",
+    "PressureLevel",
+    "PressureState",
+    "ProcessPoolStats",
+    "ResourceOptimizationEngine",
+    "ResourceSnapshot",
 }
+
 
 def __getattr__(name: str):
     if name in _RO_LAZY_NAMES:
@@ -17,6 +27,7 @@ def __getattr__(name: str):
         if name in _ro.__all__:
             return getattr(_ro, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     "daemon_registry",

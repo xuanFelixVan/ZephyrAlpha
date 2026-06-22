@@ -9,8 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
-from zephyr.governance.code_simulator import CodeSimulator, SimStep
+from zephyr.governance.code_simulator import CodeSimulator
+
 
 class TestCodeSimulator:
     def test_instantiation(self):

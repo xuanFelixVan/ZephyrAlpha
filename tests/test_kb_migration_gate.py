@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
 from zephyr.governance.kb.kb_gate_task import _GATE_SEQ, build_kb_gate_eval_task

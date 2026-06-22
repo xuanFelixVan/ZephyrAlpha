@@ -25,9 +25,7 @@ class TestPromptOptimizationRegressionDetectorInstantiation:
         assert obj.significance_level == pytest.approx(0.05)
 
     def test_custom_params(self):
-        obj = PromptOptimizationRegressionDetector(
-            min_test_samples=20, significance_level=0.01
-        )
+        obj = PromptOptimizationRegressionDetector(min_test_samples=20, significance_level=0.01)
         assert obj.min_test_samples == 20
         assert obj.significance_level == pytest.approx(0.01)
 

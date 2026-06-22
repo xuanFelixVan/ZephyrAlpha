@@ -27,6 +27,7 @@ Risk: R87 — Once-trusted subsystem never re-evaluated.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class AutonomyCredit:
     score: float = 100.0

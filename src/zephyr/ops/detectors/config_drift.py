@@ -27,6 +27,7 @@ Risk: R182 — Canary config differs from production; canary validation invalid.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ConfigDrift:
     snapshots: dict[str, dict] = field(default_factory=dict)

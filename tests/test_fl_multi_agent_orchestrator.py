@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.actors.multi_agent_orchestrator import MultiAgentOrchestrator
 
 

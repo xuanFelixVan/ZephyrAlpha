@@ -13,10 +13,8 @@
 from __future__ import annotations
 
 import hashlib
-import os
 from pathlib import Path
 
-import pytest
 from zephyr.governance.rule_enforcement.gate_integrity_guard import GateIntegrityGuard, IntegrityReport
 
 

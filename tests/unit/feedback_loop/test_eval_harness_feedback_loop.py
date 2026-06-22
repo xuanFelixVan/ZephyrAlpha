@@ -7,6 +7,7 @@
 # [TESTS] —
 # AI-generated: T-3-22 (A27) · EvalHarness 单元测试
 from __future__ import annotations
+
 """
 test_eval_harness · EvalHarness 单元测试
 ==========================================
@@ -36,6 +37,7 @@ import json
 from typing import Any
 
 import pytest
+
 from zephyr.ops.eval_harness import (
     CATEGORIES,
     CATEGORY_EVOLUTION,

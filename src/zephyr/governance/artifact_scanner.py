@@ -45,7 +45,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar, List, Optional
+from typing import ClassVar
 
 
 @dataclass(frozen=True)
@@ -114,8 +114,7 @@ class ArtifactScanner:
             "category": "ssrf",
             "severity": "error",
             "pattern": re.compile(
-                r"(?:169\.254\.169\.254|metadata\.google\.internal"
-                r"|instance-data\.ec2\.\w+?\.amazonaws\.com)",
+                r"(?:169\.254\.169\.254|metadata\.google\.internal" r"|instance-data\.ec2\.\w+?\.amazonaws\.com)",
                 re.IGNORECASE,
             ),
             "message": "SSRF risk: cloud metadata endpoint access",
@@ -191,8 +190,7 @@ class ArtifactScanner:
             "category": "sensitive_file",
             "severity": "warning",
             "pattern": re.compile(
-                r"(?:\.env(?:\.[a-z]+)?|credentials\.(?:json|yaml|yml|ini)"
-                r"|\.aws/credentials|\.ssh/id_|\.netrc)",
+                r"(?:\.env(?:\.[a-z]+)?|credentials\.(?:json|yaml|yml|ini)" r"|\.aws/credentials|\.ssh/id_|\.netrc)",
                 re.IGNORECASE,
             ),
             "message": "Reference to sensitive configuration file",
@@ -266,9 +264,7 @@ class ArtifactScanner:
         warn_count = sum(1 for f in findings if f.severity == "warning")
 
         summary = (
-            f"[CLEAN] {label}"
-            if not findings
-            else f"[FOUND] {label}: {error_count} errors, {warn_count} warnings"
+            f"[CLEAN] {label}" if not findings else f"[FOUND] {label}: {error_count} errors, {warn_count} warnings"
         )
 
         return ScanReport(target=label, findings=findings, summary=summary)
@@ -293,9 +289,7 @@ class ArtifactScanner:
         error_count = sum(1 for f in findings if f.severity == "error")
         warn_count = sum(1 for f in findings if f.severity == "warning")
         summary = (
-            f"[CLEAN] {label}"
-            if not findings
-            else f"[FOUND] {label}: {error_count} errors, {warn_count} warnings"
+            f"[CLEAN] {label}" if not findings else f"[FOUND] {label}: {error_count} errors, {warn_count} warnings"
         )
         return ScanReport(target=label, findings=findings, summary=summary)
 

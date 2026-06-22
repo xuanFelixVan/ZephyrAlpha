@@ -26,7 +26,6 @@ from __future__ import annotations
 import importlib
 import pathlib
 import re
-import sys
 from typing import NamedTuple
 
 import pytest
@@ -70,9 +69,7 @@ def _extract_shared_imports(file_path: pathlib.Path) -> list[str]:
         for py_file in pkg_dir.rglob("*.py"):
             if py_file.exists():
                 content = py_file.read_text(encoding="utf-8")
-                all_imports.extend(
-                    [m.group(1) or m.group(2) for m in pattern.finditer(content)]
-                )
+                all_imports.extend([m.group(1) or m.group(2) for m in pattern.finditer(content)])
         return list(dict.fromkeys(all_imports))
 
     if not file_path.exists():
@@ -103,10 +100,7 @@ class TestConsumerImports:
                 f"  检查最近对 shared/ 的修改。"
             )
         except Exception as e:
-            pytest.fail(
-                f"消费者 {consumer.module} 导入时抛出运行时异常:\n"
-                f"  {type(e).__name__}: {e}"
-            )
+            pytest.fail(f"消费者 {consumer.module} 导入时抛出运行时异常:\n  {type(e).__name__}: {e}")
 
     @pytest.mark.parametrize(
         "consumer",
@@ -143,10 +137,7 @@ class TestAllConsumerFilesExist:
 
 def test_consumer_list_not_empty() -> None:
     """消费者列表不能为空——否则契约测试失去意义。"""
-    assert len(CONSUMERS) >= 8, (
-        f"消费者列表只有 {len(CONSUMERS)} 个条目。\n"
-        f"  契约测试需要足够多的消费者覆盖才能有效。"
-    )
+    assert len(CONSUMERS) >= 8, f"消费者列表只有 {len(CONSUMERS)} 个条目。\n  契约测试需要足够多的消费者覆盖才能有效。"
 
 
 def test_no_duplicate_consumers() -> None:

@@ -6,16 +6,10 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 
-from .hooks import (
-    LifecycleAware,
-    LifecycleManager,
-    LifecycleState,
-    ModuleHealth,
-)
 from .daemon_registry import (
     DaemonEntry,
     DaemonRegistry,
@@ -24,30 +18,61 @@ from .daemon_registry import (
     ResourceSnapshot,
     registry,
 )
+from .hooks import (
+    LifecycleAware,
+    LifecycleManager,
+    LifecycleState,
+    ModuleHealth,
+)
 from .lazy_loader import (
     LazyModuleRegistry,
     ModuleEntry,
 )
 
 _RO_LAZY_NAMES = {
-    "CacheStats", "CircuitBreaker", "CircuitBreakerState",
-    "DefensiveStrategy", "DegradationMatrix", "HealthCheckResult",
-    "OptimizationRecord", "OptimizationResult", "OptimizationStrategy",
-    "PressureLevel", "PressureState", "ProcessPoolStats",
-    "ResourceOptimizationEngine", "ResourceSnapshot",
+    "CacheStats",
+    "CircuitBreaker",
+    "CircuitBreakerState",
+    "DefensiveStrategy",
+    "DegradationMatrix",
+    "HealthCheckResult",
+    "OptimizationRecord",
+    "OptimizationResult",
+    "OptimizationStrategy",
+    "PressureLevel",
+    "PressureState",
+    "ProcessPoolStats",
+    "ResourceOptimizationEngine",
+    "ResourceSnapshot",
 }
+
 
 def __getattr__(name: str):
     if name in _RO_LAZY_NAMES:
         import importlib
+
         _ro = importlib.import_module("zephyr.integration.runtime_core.resource_optimization")
         if name in _ro.__all__:
             return getattr(_ro, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-    'daemon_registry', 'hooks', 'lazy_loader', 'resource_optimization_engine', 'resource_optimization_models',
-    'LifecycleAware', 'LifecycleManager', 'LifecycleState', 'ModuleHealth',
-    'DaemonEntry', 'DaemonRegistry', 'DaemonState', 'PressureLevel', 'ResourceSnapshot', 'registry',
-    'LazyModuleRegistry', 'ModuleEntry',
+    "DaemonEntry",
+    "DaemonRegistry",
+    "DaemonState",
+    "LazyModuleRegistry",
+    "LifecycleAware",
+    "LifecycleManager",
+    "LifecycleState",
+    "ModuleEntry",
+    "ModuleHealth",
+    "PressureLevel",
+    "ResourceSnapshot",
+    "daemon_registry",
+    "hooks",
+    "lazy_loader",
+    "registry",
+    "resource_optimization_engine",
+    "resource_optimization_models",
 ]

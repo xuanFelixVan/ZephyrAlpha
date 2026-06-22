@@ -5,8 +5,9 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-import pytest
 from pathlib import Path
+
+import pytest
 
 from zephyr.security.llm_defense.llm_security.process_sandbox import (
     CWD_WHITELIST_SUFFIXES,

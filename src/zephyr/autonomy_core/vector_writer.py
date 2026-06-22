@@ -14,19 +14,18 @@
 CT-CE-VMS-001: Context Engine 构建完成后将上下文块向量化存储到 VMS。
 """
 
-
 from __future__ import annotations
 
 import logging
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "VectorWriter",
     "VMSWriteResult",
+    "VectorWriter",
     "vectorize_context",
 ]
 
@@ -73,7 +72,10 @@ class VectorWriter:
             elapsed = round((time.perf_counter() - t0) * 1000)
             logger.info(
                 "[CE-VMS] stored: task=%s collection=%s blocks=%d elapsed=%dms",
-                task_id, collection, count, elapsed,
+                task_id,
+                collection,
+                count,
+                elapsed,
             )
 
             return VMSWriteResult(
@@ -103,16 +105,18 @@ class VectorWriter:
     ) -> list[dict[str, Any]]:
         records = []
         for i, block in enumerate(blocks):
-            records.append({
-                "block_id": f"{task_id}-{i}",
-                "type": block.get("type", "unknown"),
-                "content": str(block.get("content", ""))[:2000],
-                "tokens": block.get("tokens", 0),
-                "source": block.get("source", ""),
-                "priority": block.get("priority", "optional"),
-                "task_id": task_id,
-                "session_id": session_id,
-            })
+            records.append(
+                {
+                    "block_id": f"{task_id}-{i}",
+                    "type": block.get("type", "unknown"),
+                    "content": str(block.get("content", ""))[:2000],
+                    "tokens": block.get("tokens", 0),
+                    "source": block.get("source", ""),
+                    "priority": block.get("priority", "optional"),
+                    "task_id": task_id,
+                    "session_id": session_id,
+                }
+            )
         return records
 
 

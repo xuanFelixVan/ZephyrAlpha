@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 重放失败返回mismatch
 # [TESTS] tests/audit-orchestrator/test_replay_engine.py
-
 import hashlib
 import json
 import logging
@@ -22,6 +21,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__ = ["ReplayEngine"]
+
 
 class ReplayEngine:
     def __init__(self, evidence_dir: Path | None = None) -> None:
@@ -61,11 +61,13 @@ class ReplayEngine:
                 findings = data.get("findings", [])
                 recomputed = self._recompute_findings(findings)
                 match = recomputed["hash"] == data.get("evidence_hash", "")
-                results.append({
-                    "audit_id": data.get("audit_id", ""),
-                    "evidence_id": data.get("evidence_hash", "")[:16],
-                    "match": match,
-                })
+                results.append(
+                    {
+                        "audit_id": data.get("audit_id", ""),
+                        "evidence_id": data.get("evidence_hash", "")[:16],
+                        "match": match,
+                    }
+                )
             except Exception:
                 continue
 

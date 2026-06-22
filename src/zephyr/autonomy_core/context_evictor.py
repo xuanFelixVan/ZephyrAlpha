@@ -26,14 +26,13 @@
 
 公式: score = w_p × (1 - priority_norm) + w_f × (1 - freshness) + w_r × (1 - relevance)
 分数越高意味着越倾向于被逐出。
-"""  # noqa: E501
-
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import IntEnum
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 
 class PriorityLevel(IntEnum):
@@ -65,11 +64,7 @@ class ContextBlock:
 
     def compute_eviction_score(self) -> float:
         _norm = self.priority.value / PriorityLevel.PINNED.value
-        return (
-            0.40 * (1.0 - _norm)
-            + 0.35 * (1.0 - self.freshness)
-            + 0.25 * (1.0 - self.relevance)
-        )
+        return 0.40 * (1.0 - _norm) + 0.35 * (1.0 - self.freshness) + 0.25 * (1.0 - self.relevance)
 
 
 @dataclass
@@ -95,7 +90,7 @@ class ContextEvictor:
     分数越高 → 越先被逐出。低分块优先保留。
     """
 
-    _instance: Optional[ContextEvictor] = None
+    _instance: ContextEvictor | None = None
 
     @classmethod
     def reset_instance(cls) -> None:
@@ -112,7 +107,7 @@ class ContextEvictor:
         w_p: float = 0.40,
         w_f: float = 0.35,
         w_r: float = 0.25,
-        weights: Dict[str, float] | None = None,
+        weights: dict[str, float] | None = None,
     ) -> None:
         if weights is not None:
             self._wp = weights.get("priority_weight", 0.40)
@@ -124,7 +119,7 @@ class ContextEvictor:
             self._wr = w_r
 
     @property
-    def weights(self) -> Tuple[float, float, float]:
+    def weights(self) -> tuple[float, float, float]:
         return (self._wp, self._wf, self._wr)
 
     def evict(
@@ -139,11 +134,7 @@ class ContextEvictor:
 
         for b in evictable:
             _norm = b.priority.value / PriorityLevel.PINNED.value
-            b._score = (
-                self._wp * (1.0 - _norm)
-                + self._wf * (1.0 - b.freshness)
-                + self._wr * (1.0 - b.relevance)
-            )
+            b._score = self._wp * (1.0 - _norm) + self._wf * (1.0 - b.freshness) + self._wr * (1.0 - b.relevance)
 
         evictable.sort(key=lambda b: b._score)
 

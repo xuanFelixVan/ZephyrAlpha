@@ -18,6 +18,6 @@ category: documentation
 | 事后复盘 | Post-Mortem / Retrospective | 事件/阶段结束后的回顾 | （未启用） |
 | 组织记忆 | Organizational Memory | 团队层面的经验、决策、知识的系统化沉淀 | ~~`organizational-memory-system-design.md`~~（待建立） |
 | 决策记忆 | Decision Memory | 组织记忆中专门记录"决策与理由"的子系统 | 同上 |
-| 升格 / 转正 | Promotion / Publish / Accept | 从草稿状态升为正式状态（active / accepted） | `metadata-registry.md` §11 |
-| 作废 / 被取代 | Superseded | 被新文档或新决策取代，原文保留作为历史 | `metadata-registry.md` §6.2 |
+| 升格 / 转正 | Promotion / Publish / Accept | 从草稿状态升为正式状态（active / accepted） | `metadata_registry.yaml` §11 |
+| 作废 / 被取代 | Superseded | 被新文档或新决策取代，原文保留作为历史 | `metadata_registry.yaml` §6.2 |
 | 只追加不删改 | Append-only | 只允许新增，不允许修改或删除已有记录 | 同上 |

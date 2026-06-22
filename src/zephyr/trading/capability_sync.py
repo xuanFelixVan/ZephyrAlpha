@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
-
 # [MODULE] zephyr.trading.capability_sync
-
 # [INVARIANTS] sync_a2a and sync_skills are idempotent; existing cap_ids are skipped
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] zephyr.trading.auto_runtime_core
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] returns int (count synced); never raises; logs on failure
-
 # [TESTS]
-
 import logging
 from pathlib import Path
 from typing import Any
@@ -53,6 +43,7 @@ _SKILL_CATEGORY_MAP: dict[str, CapabilityCategory] = {
     "a2a-protocol": CapabilityCategory.COORDINATION,
     "behavioral-auditor": CapabilityCategory.SECURITY,
 }
+
 
 class CapabilitySync:
     def __init__(self, registry: CapabilityRegistry) -> None:
@@ -90,7 +81,7 @@ class CapabilitySync:
         try:
             if not skill_registry_path.exists():
                 return 0
-            with open(skill_registry_path, "r", encoding="utf-8") as f:
+            with open(skill_registry_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f) or {}
             for category in ("domain", "role"):
                 for sid, sdata in data.get("skills", {}).get(category, {}).items():

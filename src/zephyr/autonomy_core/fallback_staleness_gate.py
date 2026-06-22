@@ -25,10 +25,11 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-UTC = timezone.utc
+UTC = UTC
+
 
 @dataclass
 class StalenessReport:
@@ -38,8 +39,10 @@ class StalenessReport:
     is_stale: bool
     alert_message: str
 
+
 class FallbackStalenessGate:
     """embedded_defaults SHA256 + age check; >90d alert (DD87)."""
+
     def __init__(self, defaults_file: str | Path = "AGENTS.md") -> None:
         self._file = Path(defaults_file)
 

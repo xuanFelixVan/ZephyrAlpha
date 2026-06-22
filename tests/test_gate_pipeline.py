@@ -24,8 +24,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-import pytest
-
 from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
 from zephyr.governance.rule_enforcement.gate_pipeline import Combinator, GatePipeline, GateStep
 
@@ -300,7 +298,18 @@ class TestGatePipelineFromEngineStep:
     def test_from_engine_step_with_combinator_and_depends(self):
         class FakeEngine:
             def evaluate(self, task: Any, gate_id: str) -> Any:
-                return type("R", (), {"passed": True, "gate_id": "G1", "task_id": "", "violations": [], "details": {}, "evaluated_at": ""})()
+                return type(
+                    "R",
+                    (),
+                    {
+                        "passed": True,
+                        "gate_id": "G1",
+                        "task_id": "",
+                        "violations": [],
+                        "details": {},
+                        "evaluated_at": "",
+                    },
+                )()
 
         step = GatePipeline.from_engine_step(
             "G1",
@@ -315,7 +324,18 @@ class TestGatePipelineFromEngineStep:
     def test_from_engine_step_depends_on_none_defaults_empty(self):
         class FakeEngine:
             def evaluate(self, task: Any, gate_id: str) -> Any:
-                return type("R", (), {"passed": True, "gate_id": "G1", "task_id": "", "violations": [], "details": {}, "evaluated_at": ""})()
+                return type(
+                    "R",
+                    (),
+                    {
+                        "passed": True,
+                        "gate_id": "G1",
+                        "task_id": "",
+                        "violations": [],
+                        "details": {},
+                        "evaluated_at": "",
+                    },
+                )()
 
         step = GatePipeline.from_engine_step("G1", FakeEngine(), task=None, depends_on=None)
         assert step.depends_on == []

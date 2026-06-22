@@ -24,7 +24,7 @@ class AdversarialTestScenario:
 class AdversarialSelfTestEngine:
     TEST_FREQUENCY_HOURS: int = 72          # 每3天
     RED_TEAM_LLM_TEMPERATURE: float = 0.95  # 高创造性用于生成攻击
-    
+
     async def run_adversarial_self_test(self) -> AdversarialTestReport:
         scenarios = await self._generate_attack_scenarios()
         results = []
@@ -33,7 +33,7 @@ class AdversarialSelfTestEngine:
             attack_result = await sandbox.execute_attack()
             defense_triggered = await sandbox.check_defense_activation()
             bypass_successful = not defense_triggered or attack_result.system_compromised
-            
+
             if bypass_successful:
                 self.FLE.notify_owner("ADVERSARIAL_SELF_TEST_FAILED",
                     f"Adversarial self-test FAILED: scenario '{scenario.scenario_id}' "
@@ -48,7 +48,7 @@ class AdversarialSelfTestEngine:
                 "scenario": scenario.scenario_id,
                 "bypassed": bypass_successful,
                 "defense_effectiveness": defense_triggered})
-        
+
         bypassed = [r for r in results if r["bypassed"]]
         return AdversarialTestReport(
             total_tests=len(results), bypassed_count=len(bypassed),

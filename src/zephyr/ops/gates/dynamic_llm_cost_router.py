@@ -26,6 +26,7 @@ Enhanced cost routing with real-time budget tracking.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class DynamicLLMCostRouter:
     budget_remaining: float = 1000.0

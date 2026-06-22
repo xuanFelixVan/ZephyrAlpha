@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
 """[A_module] module_id=MOD-OPS | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable"""
 
 from zephyr.ops.telemetry import MetricPoint
+
 __all__ = [
+    "MetricPoint",
     "alert_dispatcher",
     "analytics_base",
     "auto_bootstrap",
@@ -35,5 +36,4 @@ __all__ = [
     "template",
     "validator",
     "watchdog",
-    "MetricPoint",
 ]

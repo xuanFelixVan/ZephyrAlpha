@@ -11,15 +11,15 @@
 # [TESTS] python -c "import zephyr.infrastructure.rollback"
 
 SUBMODULES = [
-    'checkpoint_gc',
-    'cross_platform_shell',
-    'down_migration_generator',
-    'env_watcher',
-    'external_merkle_proof',
-    'git_infra_snapshot',
-    's3_snapshot_lifecycle',
-    'startup_shutdown',
-    'startup_shutdown_cli',
-    'submodule_sync',
-    'venv_sync',
+    "checkpoint_gc",
+    "cross_platform_shell",
+    "down_migration_generator",
+    "env_watcher",
+    "external_merkle_proof",
+    "git_infra_snapshot",
+    "s3_snapshot_lifecycle",
+    "startup_shutdown",
+    "startup_shutdown_cli",
+    "submodule_sync",
+    "venv_sync",
 ]

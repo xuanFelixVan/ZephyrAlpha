@@ -10,12 +10,9 @@
 # [ERROR_CONTRACT] record persists; query returns list; stats returns dict
 # [TESTS] tests/test_skill_telemetry.py
 
-import json
 import time
-from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 from zephyr.autonomy_core.skill_telemetry import SkillTelemetry
 
 

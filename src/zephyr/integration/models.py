@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.models
+# [MODULE] zephyr.integration.models
 
 # [INVARIANTS] none
 
@@ -36,14 +36,14 @@ from pydantic import BaseModel, Field, model_validator
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
-    "M_MODULES",
-    "M_MODULE_SPECS",
+    "AFFINITY_CONSTRAINTS",
     "A_DAG",
     "B_DAG",
+    "M_MODULES",
+    "M_MODULE_SPECS",
     "ABExperimentRoute",
-    "AFFINITY_CONSTRAINTS",
-    "AffinityWeight",
     "AIImpactAssessment",
+    "AffinityWeight",
     "ArtifactClassification",
     "ArtifactType",
     "CircuitBreakerState",
@@ -85,6 +85,7 @@ __all__ = [
     "validate_module_output",
 ]
 
+
 class PipelineStatus(str, Enum):
     PENDING = "pending"
     RUNNING = "running"
@@ -95,6 +96,7 @@ class PipelineStatus(str, Enum):
     LOCKED = "locked"
     G6_BLOCKED = "g6_blocked"
 
+
 class ModuleStatus(str, Enum):
     PENDING = "pending"
     RUNNING = "running"
@@ -102,11 +104,14 @@ class ModuleStatus(str, Enum):
     FAILURE = "failure"
     SKIPPED = "skipped"
 
+
 class ExecutionMode(str, Enum):
     """三层执行模式——L1(Trae)/L2(Local)/L3(API)"""
+
     TRAE = "trae"
     LOCAL = "local"
     API = "api"
+
 
 class ModuleResult(BaseModel):
     """单模块执行结果"""
@@ -136,6 +141,7 @@ class ModuleResult(BaseModel):
         description="模型输出置信度——B158",
     )
 
+
 class PipelineRouteDecision(BaseModel):
     """CT-PIPE-ORC-001 路由输出（PipelineNode 子集）。"""
 
@@ -146,6 +152,7 @@ class PipelineRouteDecision(BaseModel):
     sandbox_profile: str = Field(min_length=1)
     gate_profile: str = Field(min_length=1)
     rationale: str = Field(default="", description="路由依据摘要")
+
 
 class PipelineResult(BaseModel):
     """管线执行结果"""
@@ -200,13 +207,12 @@ class PipelineResult(BaseModel):
         description="Pipeline→AgentOrchestrator 桥接结果——B34+B36",
     )
     skill_injection: dict | None = Field(
-        default=None,
-        description="Agent Spec Skill 注入结果——domain/role skill 上下文"
+        default=None, description="Agent Spec Skill 注入结果——domain/role skill 上下文"
     )
     night_shift_log: list[NightShiftAmbiguityLogEntry] = Field(
-        default_factory=list,
-        description="夜班登记表——API 夜间不确定条目"
+        default_factory=list, description="夜班登记表——API 夜间不确定条目"
     )
+
 
 class ClaudeRescueTrigger(BaseModel):
     """Claude 特种救援触发记录——GOV-AI-002 §三"""
@@ -220,6 +226,7 @@ class ClaudeRescueTrigger(BaseModel):
     is_owner_critical: bool = False
     has_security_tag: bool = False
     is_experimental: bool = False
+
 
 class ModelCollapseAlert(BaseModel):
     """模型崩塌检测——三模同质化预警 + 少数派报告。
@@ -241,6 +248,7 @@ class ModelCollapseAlert(BaseModel):
         description="当两模一致(如M3+M7)但第三模不同时，此字段记录少数派模型的结论摘要",
     )
 
+
 class NightShiftAmbiguityLogEntry(BaseModel):
     """夜班登记表条目——API 夜间执行遇到第三种选择时登记
 
@@ -255,28 +263,30 @@ class NightShiftAmbiguityLogEntry(BaseModel):
     task_id: str = Field(..., description="关联任务ID")
     module: str = Field(..., description="触发模块节点 Mx")
     context: str = Field(..., description="不确定的上下文描述")
-    options: list[dict[str, str]] = Field(
-        default_factory=list,
-        description="可选方案列表 [{label, description}]"
-    )
+    options: list[dict[str, str]] = Field(default_factory=list, description="可选方案列表 [{label, description}]")
     auto_decision: str = Field(default="C", description="API 自动选择的最保守方案")
     requires_human: bool = Field(default=True, description="需要人类裁定")
     human_decision: str | None = Field(default=None, description="人类裁定结果")
     human_timestamp: str | None = Field(default=None, description="人类裁定时间")
     human_notes: str | None = Field(default=None, description="人类备注")
 
+
 # ============================================================================
 # v0.9.0 第九轮审计——运维韧性 & 可观测性 数据模型
 # ============================================================================
 
+
 class CircuitBreakerState(str, Enum):
     """断路器三态——对标 Netflix Hystrix。"""
+
     CLOSED = "closed"
     OPEN = "open"
     HALF_OPEN = "half_open"
 
+
 class ModelVersionInfo(BaseModel):
     """模型版本锁定信息——对标 Langfuse model registry。"""
+
     model_config = BASE_CONFIG
     model_name: str
     version: str
@@ -285,15 +295,19 @@ class ModelVersionInfo(BaseModel):
     cost_per_1k_input: float = 0.0
     cost_per_1k_output: float = 0.0
 
+
 class ModelConfidence(BaseModel):
     """模型输出置信度——B158。"""
+
     model_config = BASE_CONFIG
     score: float = Field(default=0.0, ge=0.0, le=1.0)
     source: str = Field(default="", description="logprob | self_eval | ensemble")
     calibration_note: str = Field(default="")
 
+
 class AIImpactAssessment(BaseModel):
     """AI 影响评估——NIST AI RMF MAP 函数。"""
+
     model_config = BASE_CONFIG
     risk_tier: str = Field(default="low", description="low | medium | high | critical")
     affected_stakeholders: list[str] = Field(default_factory=list)
@@ -301,8 +315,10 @@ class AIImpactAssessment(BaseModel):
     autonomy_level: str = Field(default="advisory", description="advisory | assistive | autonomous")
     human_review_required: bool = False
 
+
 class CostRecord(BaseModel):
     """LLM 调用成本记录——B161。"""
+
     model_config = BASE_CONFIG
     model: str
     tokens_input: int = 0
@@ -310,8 +326,10 @@ class CostRecord(BaseModel):
     cost_usd: float = 0.0
     estimated: bool = Field(default=True, description="模拟估算或实际API返回")
 
+
 class DeadLetterEntry(BaseModel):
     """死信队列条目——B169。"""
+
     model_config = BASE_CONFIG
     task_id: str
     failed_at: str = Field(default_factory=lambda: datetime.now().isoformat())
@@ -319,28 +337,37 @@ class DeadLetterEntry(BaseModel):
     retry_count: int = 0
     last_error: str = ""
 
+
 class EmergencyFallbackPlan(BaseModel):
     """三模全失败降级计划——B147。"""
+
     model_config = BASE_CONFIG
     activated: bool = False
     all_models_failed: list[str] = Field(default_factory=list)
-    recommended_action: str = Field(default="WAIT_AND_RETRY", description="WAIT_AND_RETRY | ESCALATE_TO_HUMAN | USE_CACHED | ABORT")
+    recommended_action: str = Field(
+        default="WAIT_AND_RETRY", description="WAIT_AND_RETRY | ESCALATE_TO_HUMAN | USE_CACHED | ABORT"
+    )
     wait_before_retry_s: int = 300
     fallback_routes: list[str] = Field(default_factory=list)
 
+
 class ExperimentVariant(str, Enum):
     """A/B 实验变体——B159。"""
+
     CONTROL = "control"
     TREATMENT = "treatment"
 
+
 class ABExperimentRoute(BaseModel):
     """A/B 实验路由决策——B159。"""
+
     model_config = BASE_CONFIG
     experiment_id: str
     variant: ExperimentVariant
     routing_hash: str = Field(default="", description="hash(task_id) %% 100")
     control_route: str = Field(default="")
     treatment_route: str = Field(default="")
+
 
 class PreemptionRecord(BaseModel):
     """优先级抢占记录——对标 K8s Priority Preemption。
@@ -357,6 +384,7 @@ class PreemptionRecord(BaseModel):
     preempted_at: str = Field(default_factory=lambda: datetime.now().isoformat())
     resumed_at: str | None = None
     state_snapshot: dict[str, object] = Field(default_factory=dict)
+
 
 class PipelineOrchestratorConfig(BaseModel):
     """管线编排器配置"""
@@ -383,25 +411,40 @@ class PipelineOrchestratorConfig(BaseModel):
     )
     model_versions: list[ModelVersionInfo] = Field(
         default_factory=lambda: [
-            ModelVersionInfo(model_name="deepseek", version="v4-pro", context_limit_tokens=128000, cost_per_1k_input=0.00174, cost_per_1k_output=0.00348),
-            ModelVersionInfo(model_name="glm", version="5.1", context_limit_tokens=128000, cost_per_1k_input=0.0, cost_per_1k_output=0.0),
-            ModelVersionInfo(model_name="claude", version="opus-4.7", context_limit_tokens=200000, cost_per_1k_input=0.005, cost_per_1k_output=0.025),
+            ModelVersionInfo(
+                model_name="deepseek",
+                version="v4-pro",
+                context_limit_tokens=128000,
+                cost_per_1k_input=0.00174,
+                cost_per_1k_output=0.00348,
+            ),
+            ModelVersionInfo(
+                model_name="glm",
+                version="5.1",
+                context_limit_tokens=128000,
+                cost_per_1k_input=0.0,
+                cost_per_1k_output=0.0,
+            ),
+            ModelVersionInfo(
+                model_name="claude",
+                version="opus-4.7",
+                context_limit_tokens=200000,
+                cost_per_1k_input=0.005,
+                cost_per_1k_output=0.025,
+            ),
         ],
         description="B150 模型版本锁定 + B170 上下文窗口限制",
     )
     log_buffer_max: int = Field(default=2000, description="B148 日志缓冲区上限")
     latency_samples_max: int = Field(default=100, description="B148 延迟样本上限")
     human_detection_method: str = Field(
-        default="heartbeat",
-        description="人类在场检测方式: heartbeat | manual_switch | time_window"
+        default="heartbeat", description="人类在场检测方式: heartbeat | manual_switch | time_window"
     )
     working_hours_start: int = Field(default=9, ge=0, le=23, description="工作时间开始（时）")
     working_hours_end: int = Field(default=21, ge=0, le=23, description="工作时间结束（时）")
-    local_model_always_on: bool = Field(
-        default=True,
-        description="本地模型 24/7 常驻运行"
-    )
+    local_model_always_on: bool = Field(default=True, description="本地模型 24/7 常驻运行")
     accuracy_tracking_enabled: bool = Field(default=False, description="B155 准确率追踪")
+
 
 # ============================================================================
 # M1-M11 模块静态规格——GOV-AI-002 决策树的具体化
@@ -427,6 +470,7 @@ M_MODULES: list[str] = sorted(M_MODULE_SPECS.keys(), key=lambda x: int(x[1:]))
 # Pipeline DAG 拓扑——对标 GitHub Actions jobs.<id>.needs + K8s DAG 工作流
 # ============================================================================
 
+
 class StageOnFailure(str, Enum):
     """Stage 失败的处置策略。"""
 
@@ -434,6 +478,7 @@ class StageOnFailure(str, Enum):
     SKIP = "skip"
     RETRY = "retry"
     CLAUDE_RESCUE = "claude_rescue"
+
 
 class PipelineStage(BaseModel):
     """Pipeline 中的一个可执行阶段——DAG 节点。
@@ -463,6 +508,7 @@ class PipelineStage(BaseModel):
 
     class Config:
         use_enum_values = True
+
 
 class PipelineDAG(BaseModel):
     """声明式 Pipeline DAG 拓扑——替代硬编码线性序列。
@@ -541,6 +587,7 @@ class PipelineDAG(BaseModel):
                 return s
         return None
 
+
 class StageContext(BaseModel):
     """Stage 执行上下文——在 Stage 间传递。
 
@@ -559,6 +606,7 @@ class StageContext(BaseModel):
             return bool(eval(condition, {"__builtins__": {}}, namespace))
         except Exception:
             return False
+
 
 A_DAG = PipelineDAG(
     dag_id="production-A",
@@ -631,9 +679,11 @@ B_DAG = PipelineDAG(
 # Affinity / Anti-Affinity 约束矩阵——对标 K8s podAffinity/podAntiAffinity
 # ============================================================================
 
+
 class AffinityWeight(str, Enum):
     HARD = "hard"
     SOFT = "soft"
+
 
 class PipelineAffinityConstraint(BaseModel):
     """管线亲和性/反亲和性约束。
@@ -654,29 +704,37 @@ class PipelineAffinityConstraint(BaseModel):
     weight: AffinityWeight
     description: str = Field(default="")
 
+
 AFFINITY_CONSTRAINTS: list[PipelineAffinityConstraint] = [
     PipelineAffinityConstraint(
-        constraint_type="model", node_a="M3", node_b="M7",
+        constraint_type="model",
+        node_a="M3",
+        node_b="M7",
         weight=AffinityWeight.HARD,
         description="双盲审查必须用不同模型——M3/M7 hard antiAffinity",
     ),
     PipelineAffinityConstraint(
-        constraint_type="model", node_a="M8", node_b="M9",
+        constraint_type="model",
+        node_a="M8",
+        node_b="M9",
         weight=AffinityWeight.SOFT,
         description="建议合规+风险用不同模型交叉审查",
     ),
     PipelineAffinityConstraint(
-        constraint_type="sandbox", node_a="M1",
+        constraint_type="sandbox",
+        node_a="M1",
         weight=AffinityWeight.HARD,
         description="M1-M4必须在full/standard沙箱执行",
     ),
     PipelineAffinityConstraint(
-        constraint_type="pipeline", node_a="A",
+        constraint_type="pipeline",
+        node_a="A",
         weight=AffinityWeight.HARD,
         description="A区产出必须经M5打包→M6边界标记",
     ),
     PipelineAffinityConstraint(
-        constraint_type="model", node_a="M8",
+        constraint_type="model",
+        node_a="M8",
         weight=AffinityWeight.SOFT,
         description="M8-M11优先DeepSeek降低成本",
     ),
@@ -690,6 +748,7 @@ AFFINITY_CONSTRAINTS: list[PipelineAffinityConstraint] = [
 # Artifact Passing——模块间结构化产出物传递（对标 CI/CD Artifacts）
 # ============================================================================
 
+
 class ArtifactType(str, Enum):
     CODE = "code"
     DOC = "doc"
@@ -699,12 +758,15 @@ class ArtifactType(str, Enum):
     CONTEXT_BUNDLE = "context_bundle"
     METADATA = "metadata"
 
+
 class ArtifactClassification(str, Enum):
     """artifact 数据分级——对标 SOC2 CC7.2 + DLP 策略。"""
+
     PUBLIC = "public"
     INTERNAL = "internal"
     CONFIDENTIAL = "confidential"
     RESTRICTED = "restricted"
+
 
 class PipelineArtifact(BaseModel):
     """模块执行后的产出物——对标 GitHub Actions upload-artifact。
@@ -732,6 +794,7 @@ class PipelineArtifact(BaseModel):
 
     def artifact_ref(self) -> str:
         return self.artifact_key
+
 
 class ModuleInput(BaseModel):
     """模块的输入——从上一个模块的产出物中选取。"""
@@ -762,6 +825,7 @@ class ModuleInput(BaseModel):
                 return False
         return True
 
+
 class PipelineArtifactManifest(BaseModel):
     """一次 Pipeline 执行的完整产出物清单——对标 CI/CD Artifacts Summary。
 
@@ -790,9 +854,11 @@ class PipelineArtifactManifest(BaseModel):
     def by_type(self, artifact_type: ArtifactType) -> list[PipelineArtifact]:
         return [a for a in self.artifacts if a.artifact_type == artifact_type]
 
+
 # ============================================================================
 # Data Lineage —— 数据血缘追踪（SOC2 CC7.2 审计证据链）
 # ============================================================================
+
 
 class PipelineLineageEntry(BaseModel):
     """单个模块的上下游血缘记录——对标 dbt model lineage + OpenLineage。
@@ -816,6 +882,7 @@ class PipelineLineageEntry(BaseModel):
         default_factory=dict,
         description="本次产出的分级统计——如 {'internal': 3, 'confidential': 1}",
     )
+
 
 class PipelineLineageChain(BaseModel):
     """一次 Pipeline 执行的完整血缘链路。
@@ -853,9 +920,11 @@ class PipelineLineageChain(BaseModel):
         self.entries.append(entry)
         return entry.lineage_hash
 
+
 # ============================================================================
 # ModuleOutput Schema——每个 M 节点的输出形状契约（B37 第四轮审计）
 # ============================================================================
+
 
 class M1ParseOutput(BaseModel):
     """M1 输出：任务卡解析→结构化执行计划"""
@@ -865,6 +934,7 @@ class M1ParseOutput(BaseModel):
     plan: dict[str, object] = Field(default_factory=dict)
     estimated_steps: int = Field(ge=1, le=50)
     summary: str = ""
+
 
 class M3GenerateOutput(BaseModel):
     """M3 输出：代码/文档生成——核心生产"""
@@ -877,6 +947,7 @@ class M3GenerateOutput(BaseModel):
     summary: str = ""
     tokens_used: int = 0
 
+
 class M7ReviewOutput(BaseModel):
     """M7 输出：深度审查——逐个文件逻辑/合规"""
 
@@ -886,6 +957,7 @@ class M7ReviewOutput(BaseModel):
     issues_found: int = Field(default=0, ge=0)
     verdict: str = Field(default="ok")
     summary: str = ""
+
 
 class M8ComplianceOutput(BaseModel):
     """M8 输出：标准合规——PS/GOV/KB决策记录"""
@@ -897,6 +969,7 @@ class M8ComplianceOutput(BaseModel):
     verdict: str = Field(default="ok")
     summary: str = ""
 
+
 class M9RiskOutput(BaseModel):
     """M9 输出：风险评估——OWASP LLM Top 10"""
 
@@ -906,6 +979,7 @@ class M9RiskOutput(BaseModel):
     owasp_items: list[str] = Field(default_factory=list)
     verdict: str = Field(default="ok")
     summary: str = ""
+
 
 class M10ReportOutput(BaseModel):
     """M10 输出：审计报告→Finding 格式"""
@@ -917,14 +991,17 @@ class M10ReportOutput(BaseModel):
     verdict: str = Field(default="ok")
     summary: str = ""
 
+
 class M6DiffOutput(BaseModel):
     """M6 差异检测输出——B区审计入口信号。"""
+
     has_changes: bool = False
     changed_files: list[str] = []
     diff_summary: str = ""
     added_lines: int = 0
     removed_lines: int = 0
     total_diff_files: int = 0
+
 
 class M11GatingOutput(BaseModel):
     """M11 输出：门禁裁决——G5/G6"""
@@ -936,6 +1013,7 @@ class M11GatingOutput(BaseModel):
     verdict: str = Field(default="blocked")
     summary: str = ""
 
+
 class GenericModuleOutput(BaseModel):
     """通用模块输出——未定义专用 schema 时的兜底"""
 
@@ -945,6 +1023,7 @@ class GenericModuleOutput(BaseModel):
     tokens_used: int = 0
     simulated: bool = False
     dry_run: bool = False
+
 
 _MODULE_OUTPUT_SCHEMAS: dict[str, type[BaseModel]] = {
     "M1": M1ParseOutput,
@@ -956,6 +1035,7 @@ _MODULE_OUTPUT_SCHEMAS: dict[str, type[BaseModel]] = {
     "M10": M10ReportOutput,
     "M11": M11GatingOutput,
 }
+
 
 def validate_module_output(module_id: str, output: dict[str, Any]) -> dict[str, Any]:
     """对模块输出做 Schema 校验。失败时附加 _validation_errors 不抛异常。"""

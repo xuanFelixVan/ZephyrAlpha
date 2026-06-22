@@ -13,9 +13,6 @@
 from __future__ import annotations
 
 import time
-from datetime import datetime, timezone
-
-import pytest
 
 from zephyr.governance.consequence_manager import (
     CONSEQUENCE_REGISTRY,

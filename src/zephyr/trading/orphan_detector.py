@@ -34,6 +34,7 @@ from dataclasses import dataclass, field
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.module_onboarding_scanner import ModuleOnboardingScanner, UnregisteredModule
 
+
 @dataclass
 class OrphanReport:
     total_modules: int = 0
@@ -44,6 +45,7 @@ class OrphanReport:
     orphans_by_package: dict[str, int] = field(default_factory=dict)
     top_priority_orphans: list[UnregisteredModule] = field(default_factory=list)
     goal_gap: float = 1.0
+
 
 class OrphanDetector:
     """孤儿检测器——持续监控孤儿率，驱动大脑向终极目标靠近。"""

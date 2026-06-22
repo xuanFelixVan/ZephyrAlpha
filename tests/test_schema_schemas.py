@@ -19,19 +19,21 @@
 
 # [TESTS] pytest tests/test_schema_schemas.py -q
 
-import pytest
 from datetime import UTC, datetime
+
+import pytest
+
 from zephyr.integration.shared.schema.schemas import (
-    KeCategory,
-    FailureType,
     AuditFinding,
     AuditReport,
-    KnowledgeEntry,
-    FailurePattern,
     BlockedItem,
     Decision,
-    NextAction,
+    FailurePattern,
+    FailureType,
     HandoffPackage,
+    KeCategory,
+    KnowledgeEntry,
+    NextAction,
 )
 from zephyr.integration.shared.schema.severity_types import AuditSeverity
 
@@ -155,6 +157,7 @@ class TestKnowledgeEntry:
     def test_updated_before_created_raises(self):
         now = _now()
         from datetime import timedelta
+
         with pytest.raises(Exception, match="updated_at"):
             KnowledgeEntry(
                 ke_id="KE-003",

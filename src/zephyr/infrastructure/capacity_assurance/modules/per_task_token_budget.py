@@ -23,9 +23,7 @@ DEPRECATED: Use zephyr.infrastructure.budget_enforcement.BudgetTracker (seven-le
 SSoT: MOD-INF-024 budget-enforcer. This module is retained for backward compatibility only.
 """
 
-import time
 from dataclasses import dataclass
-from typing import Any, Optional
 
 
 @dataclass
@@ -45,10 +43,8 @@ class PerTaskTokenBudget:
     def __init__(self):
         self._budgets: dict[str, TaskBudget] = {}
 
-    def create_budget(self, task_id: str, input_limit: int = 8192,
-                      output_limit: int = 4096) -> TaskBudget:
-        budget = TaskBudget(task_id=task_id, input_limit=input_limit,
-                            output_limit=output_limit)
+    def create_budget(self, task_id: str, input_limit: int = 8192, output_limit: int = 4096) -> TaskBudget:
+        budget = TaskBudget(task_id=task_id, input_limit=input_limit, output_limit=output_limit)
         self._budgets[task_id] = budget
         return budget
 

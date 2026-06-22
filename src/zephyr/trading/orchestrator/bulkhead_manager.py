@@ -23,7 +23,6 @@ from __future__ import annotations
 
 """Bulkhead 资源池隔舱管理器（CT-BULKHEAD-001）——12系统独立资源池。"""
 
-from pydantic import BaseModel, Field
 
 BULKHEAD_QUOTAS: dict[str, dict] = {
     "orchestrator": {"threads": 8, "sqlite_connections": 3, "memory_mb": 256},
@@ -44,6 +43,7 @@ SHARED_POOLS: dict[str, dict] = {
     "sqlite_wal": {"max_connections": 5, "timeout_s": 5.0},
     "chromadb_http": {"max_connections": 3, "timeout_s": 3.0},
 }
+
 
 class BulkheadManager:
     def get_quota(self, system: str) -> dict | None:

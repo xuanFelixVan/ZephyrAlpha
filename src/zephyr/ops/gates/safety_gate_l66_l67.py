@@ -28,11 +28,11 @@ L67: Full 67-layer pipeline audit — every gate must log independently; full tr
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import time
+from dataclasses import dataclass, field
 
 from zephyr.governance.audit_trail.bridge import write_to_core
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 @dataclass
@@ -66,11 +66,14 @@ class SafetyGateL66L67:
 
     def _log(self, audit: LayerAudit) -> None:
         self.audit_log.append(audit)
-        write_to_core("safety_gate_L66_L67", {
-            "layer": audit.layer,
-            "verdict": audit.verdict.value,
-            "evidence": audit.evidence,
-        })
+        write_to_core(
+            "safety_gate_L66_L67",
+            {
+                "layer": audit.layer,
+                "verdict": audit.verdict.value,
+                "evidence": audit.evidence,
+            },
+        )
 
     def full_audit_trace(self) -> str:
         return "\n".join(f"[{a.layer}] {a.verdict.value} — {a.evidence}" for a in self.audit_log)

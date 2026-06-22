@@ -1,9 +1,19 @@
 rule_id: TRAE-047
 title: 工程治理-文件头部与扩展
+version: 1.0.5
+layer: L1
+module_id: TRAE-047
+depends_on: []
+tags:
+- TRAE
+- engineering_header_expansion
+- L1
+stability: stable
+safety_level: H
+ai_autonomy: human_gated
 aliases:
 - GOV-ENG-002
 - GOV-ENG-003
-layer: L1
 severity: error
 scope: engineering_header_expansion
 domain: TRAE
@@ -68,8 +78,7 @@ sections:
       fail: 对齐率不足
     actions:
     - type: mandatory
-      step: 新模块扩展8步流程：1.创建蓝图模板 2.注册蓝图 3.scaffold.py创建包 4.添加[BLUEPRINT]头 5.注册module_registry.yaml
-        6.更新path-tree 7.更新depgraph 8.audit_registration.py验证
+      step: 新模块扩展8步流程：1.创建蓝图模板 2.注册蓝图 3.scaffold.py创建包 4.添加[BLUEPRINT]头 5.注册module_registry.yaml 6.更新path-tree 7.更新depgraph 8.audit_registration.py验证
     - type: mandatory
       step: 生成新模块时MUST通过scaffold.py查重
     - type: mandatory
@@ -293,11 +302,9 @@ sections:
     - GOV-ENG-003
     items:
     - description: 实测数据(包数/模块数以extract_depgraph.py --summary为准，运行时查询，不固化具体数字)
-      details: 'scan_ground_truth_deps.py: 阈值 <=60s（实测数据通过运行时查询获取）
-        | 内存占用: 阈值 <=2GB（实测数据通过运行时查询获取）| 超阈值→Gate硬阻断→必须优化'
+      details: 'scan_ground_truth_deps.py: 阈值 <=60s（实测数据通过运行时查询获取） | 内存占用: 阈值 <=2GB（实测数据通过运行时查询获取）| 超阈值→Gate硬阻断→必须优化'
     - description: 性能保障策略
-      details: Incremental scan(仅扫描变更包) / ThreadPoolExecutor(max_workers=8)(RULE-SEVEN强制)
-        / 缓存ground_truth_deps.cache(未变更模块跳过) / Gate硬阻断(全量扫描>60s→CI阻塞→必须优化)
+      details: Incremental scan(仅扫描变更包) / ThreadPoolExecutor(max_workers=8)(RULE-SEVEN强制) / 缓存ground_truth_deps.cache(未变更模块跳过) / Gate硬阻断(全量扫描>60s→CI阻塞→必须优化)
   gov_eng_003_alignment_baseline:
     title: 蓝图§4对齐基线
     section_type: examples
@@ -307,9 +314,7 @@ sections:
     - description: 当前对齐率
       details: '蓝图物理文件: 以blueprint_registry.yaml为准 | 子包数: 以extract_depgraph.py --summary为准 | 对齐率(蓝图/包): 通过audit_registration.py运行时查询 | 已注册模块: 以module_registry.yaml为准'
     - description: 新模块对齐标准
-      details: '蓝图§4文件清单: 新模块所有.py文件MUST列出 | [BLUEPRINT]头部: module_id|path|§N三字段必填
-        | cross-reference: 蓝图与代码互相引用 | 不变量: 蓝图§4文件数=代码文件数(audit_registration.py校验)
-        | 对齐率目标: 新模块MUST 100%对齐'
+      details: '蓝图§4文件清单: 新模块所有.py文件MUST列出 | [BLUEPRINT]头部: module_id|path|§N三字段必填 | cross-reference: 蓝图与代码互相引用 | 不变量: 蓝图§4文件数=代码文件数(audit_registration.py校验) | 对齐率目标: 新模块MUST 100%对齐'
   gov_eng_003_expansion_procedure:
     title: 新模块扩展8步流程
     section_type: procedure
@@ -363,13 +368,11 @@ sections:
     - GOV-ENG-003
     items:
     - description: 吞吐量
-      details: '单session新模块上限: 3(步骤1-8全流程约15min/模块) | 并行Agent上限: 4(基于文件锁协议——不同模块=无冲突)
-        | 冲突检测: scaffold.py查重+RULE-ZERO锁'
+      details: '单session新模块上限: 3(步骤1-8全流程约15min/模块) | 并行Agent上限: 4(基于文件锁协议——不同模块=无冲突) | 冲突检测: scaffold.py查重+RULE-ZERO锁'
     - description: 扩展时间线(1500包)
       details: '当前: 以extract_depgraph.py --summary为准 | 阶段1: 扩展至500包(约112会话) | 阶段2: 扩展至1000包(约167会话) | 阶段3: 扩展至1500包(约167会话)'
     - description: 并行安全约束
-      details: '同包互斥: 同一__init__.py一次只能一个Agent写入 | 注册表互斥: module_registry.yaml/blueprint_registry.yaml写入需串行
-        | 不同包并行: 无冲突，可并行创建'
+      details: '同包互斥: 同一__init__.py一次只能一个Agent写入 | 注册表互斥: module_registry.yaml/blueprint_registry.yaml写入需串行 | 不同包并行: 无冲突，可并行创建'
   gov_eng_047_scope:
     title: 适用范围
     section_type: context
@@ -389,8 +392,7 @@ sections:
     - GOV-ENG-002
     - GOV-ENG-003
     summary: 文件头部标准与代码构建标准(GOV-ENG-001)、元数据注册表(PS-REG-012)、元标准(PS-STD-001)、压缩工作流标准(GOV-DOC-011)有交叉依赖
-    impact_on_rules: 修改GOV-ENG-002的枚举值MUST同步PS-REG-012+PS-STD-001；GOV-DOC-011规格化时STEP
-      5检查表头完整性
+    impact_on_rules: 修改GOV-ENG-002的枚举值MUST同步PS-REG-012+PS-STD-001；GOV-DOC-011规格化时STEP 5检查表头完整性
     key_decisions:
     - GOV-ENG-001§7引用GOV-ENG-002完整规范
     - PS-REG-012是枚举值SSoT
@@ -408,13 +410,10 @@ sections:
       change: 初始提取：GOV-ENG-002 v1.0.0从GOV-ENG-001§7独立；GOV-ENG-003 v1.0.0基于2026-05-19基线数据
     - version: 1.0.1
       date: '2026-06-19'
-      change: RQ审查修复：修复references.scripts和enforcement.executors中不存在的validate_file_headers.py引用为实际脚本scripts/ops/verify_header_completeness.py(RQ-04)；同步更新verification
-        section命令路径；补充结构化change_history
+      change: RQ审查修复：修复references.scripts和enforcement.executors中不存在的validate_file_headers.py引用为实际脚本scripts/ops/verify_header_completeness.py(RQ-04)；同步更新verification section命令路径；补充结构化change_history
     - version: 1.0.2
       date: '2026-06-19'
-      change: RQ审查STEP13修复：修复6处kebab-case引用违规(template-registry.yaml→template_registry.yaml×1,
-        blueprint-registry.yaml→blueprint_registry.yaml×3, module-registry.yaml→module_registry.yaml×4)，符合§2.2
-        snake_case裁定(RQ-05)
+      change: RQ审查STEP13修复：修复6处kebab-case引用违规(template-registry.yaml→template_registry.yaml×1, blueprint-registry.yaml→blueprint_registry.yaml×3, module-registry.yaml→module_registry.yaml×4)，符合§2.2 snake_case裁定(RQ-05)
     context:
       summary: GOV-ENG-002 v1.0.0从GOV-ENG-001§7独立；GOV-ENG-003 v1.0.0基于2026-05-19基线数据
       impact_on_rules: GOV-ENG-002独立后GOV-ENG-001§7仅保留速查表
@@ -428,16 +427,9 @@ sections:
     - GOV-ENG-002
     items:
     - description: B_yaml格式定义
-      details: '# --- 治理锚定 --- / # blueprint: {module_id} | {blueprint_path} | §{N}
-        / # module_id: {module_id} / # stability: {frozen|stable|evolving|volatile}
-        / # safety_level: {H|M|L} / # ai_autonomy: {immutable_core|human_gated|ai_modifiable}
-        / # --- 治理锚定结束 ---'
+      details: '# --- 治理锚定 --- / # blueprint: {module_id} | {blueprint_path} | §{N} / # module_id: {module_id} / # stability: {frozen|stable|evolving|volatile} / # safety_level: {H|M|L} / # ai_autonomy: {immutable_core|human_gated|ai_modifiable} / # --- 治理锚定结束 ---'
     - description: B_yaml适用文件清单
-      details: 'gate: src/zephyr/gates/*.yaml(g1-ingest.yaml) | registry: *_registry.yaml,
-        *manifest.yaml(_registry.yaml, script-manifest.yaml) | contract(yaml): docs/.../contracts/*.yaml(architecture-contract.yaml)
-        | config: config/*.yaml(flags.yaml, budget_policy.yaml) | data: data/**/*.yaml(capability_cards/*.yaml,
-        work_dags/*.yaml) | architecture: architecture-model/**/*.yaml(_index.yaml,
-        l00_data_source.yaml)'
+      details: 'gate: src/zephyr/gates/*.yaml(g1-ingest.yaml) | registry: *_registry.yaml, *manifest.yaml(_registry.yaml, script-manifest.yaml) | contract(yaml): docs/.../contracts/*.yaml(architecture-contract.yaml) | config: config/*.yaml(flags.yaml, budget_policy.yaml) | data: data/**/*.yaml(capability_cards/*.yaml, work_dags/*.yaml) | architecture: architecture-model/**/*.yaml(_index.yaml, l00_data_source.yaml)'
   gov_eng_002_cjson_format:
     title: C_json格式定义与适用文件(GOV-ENG-002§6)
     section_type: examples
@@ -445,12 +437,9 @@ sections:
     - GOV-ENG-002
     items:
     - description: C_json格式定义
-      details: '{"_meta": {"blueprint": "{module_id} | {blueprint_path} | §{N}", "module_id":
-        "{module_id}", "stability": "{frozen|stable|evolving|volatile}", "safety_level":
-        "{H|M|L}", "ai_autonomy": "{immutable_core|human_gated|ai_modifiable}"}, ...}'
+      details: '{"_meta": {"blueprint": "{module_id} | {blueprint_path} | §{N}", "module_id": "{module_id}", "stability": "{frozen|stable|evolving|volatile}", "safety_level": "{H|M|L}", "ai_autonomy": "{immutable_core|human_gated|ai_modifiable}"}, ...}'
     - description: C_json适用文件清单
-      details: 'contract(json): *_manifest.json(ocp-manifest.json) | schema(json):
-        schemas/*.json(frontmatter-schema.json) | finding(json): findings/*.json(sec_leak_*.json)'
+      details: 'contract(json): *_manifest.json(ocp-manifest.json) | schema(json): schemas/*.json(frontmatter-schema.json) | finding(json): findings/*.json(sec_leak_*.json)'
   gov_eng_002_eshell_format:
     title: E_shell格式定义与适用文件(GOV-ENG-002§8)
     section_type: examples
@@ -458,11 +447,9 @@ sections:
     - GOV-ENG-002
     items:
     - description: E_shell格式定义
-      details: '# [BLUEPRINT] {module_id} | {blueprint_path} | §{N} / # [STABILITY]
-        {frozen|stable|evolving|volatile} / # [SAFETY] {H|M|L} / # [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable}'
+      details: '# [BLUEPRINT] {module_id} | {blueprint_path} | §{N} / # [STABILITY] {frozen|stable|evolving|volatile} / # [SAFETY] {H|M|L} / # [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable}'
     - description: E_shell适用文件清单
-      details: '.sh: scripts/hooks/*.sh(contract-fingerprint-hook.sh) | .ps1: scripts/**/*.ps1(test_concurrent_safety.ps1)
-        | .mmd: docs/**/diagrams/*.mmd(c4_l1_system_context.mmd)'
+      details: '.sh: scripts/hooks/*.sh(contract-fingerprint-hook.sh) | .ps1: scripts/**/*.ps1(test_concurrent_safety.ps1) | .mmd: docs/**/diagrams/*.mmd(c4_l1_system_context.mmd)'
   gov_eng_002_standard_relations:
     title: 与其他标准的关系(GOV-ENG-002§13)
     section_type: context
@@ -497,7 +484,7 @@ metadata:
   change_policy: stable
   impact_level: H
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.0.5
     date: '2026-06-21'

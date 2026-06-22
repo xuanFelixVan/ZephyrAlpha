@@ -1,7 +1,9 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/hooks/auto_handoff_log.py | §
 from __future__ import annotations
+
 #!/usr/bin/env python3
 import os
+
 """自动交接日志生成器 — Sprint 0 批次F (F-02)
 
 基于 ``git diff --name-only HEAD`` 和 ``git diff --stat HEAD`` 的输出，
@@ -232,19 +234,15 @@ def main() -> None:
     tmp_path = f"{output_path}.{os.getpid()}.tmp"
 
     try:
-
         Path(tmp_path).write_text(markdown, encoding="utf-8")
 
         os.replace(tmp_path, output_path)
 
     except PermissionError:
-
         try:
-
             os.remove(tmp_path)
 
         except OSError:
-
             pass
 
     # 5. 终端打印摘要

@@ -15,9 +15,9 @@ from __future__ import annotations
 import pytest
 
 from zephyr.governance.post_live_verification import (
-    PLVCheck,
-    PLV_CHECKS,
     PLV_CHECK_COUNT,
+    PLV_CHECKS,
+    PLVCheck,
     PLVSpec,
     get_plv_spec,
 )
@@ -84,8 +84,8 @@ class TestPLVChecks:
 
     def test_check_count_constant(self):
         assert PLV_CHECK_COUNT == 5
-        assert PLV_CHECK_COUNT == len(PLV_CHECKS)
-        assert PLV_CHECK_COUNT == len(PLVCheck)
+        assert len(PLV_CHECKS) == PLV_CHECK_COUNT
+        assert len(PLVCheck) == PLV_CHECK_COUNT
 
 
 class TestGetPlvSpec:

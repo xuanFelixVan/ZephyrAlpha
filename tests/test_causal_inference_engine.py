@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_causal_inference_engine.py
 
-import pytest
 from zephyr.ops.diagnosers.causal_inference_engine import (
     CausalGraph,
     CausalInferenceEngine,
@@ -42,10 +41,12 @@ class TestCausalGraph:
         assert result == []
 
     def test_find_root_cause_multiple_symptoms(self):
-        graph = CausalGraph(nodes={
-            "timeout": ["resource_contention"],
-            "error_spike": ["config_drift"],
-        })
+        graph = CausalGraph(
+            nodes={
+                "timeout": ["resource_contention"],
+                "error_spike": ["config_drift"],
+            }
+        )
         assert graph.find_root_cause("timeout") == ["resource_contention"]
         assert graph.find_root_cause("error_spike") == ["config_drift"]
 

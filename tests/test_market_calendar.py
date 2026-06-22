@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_market_calendar.py
 
-import pytest
 from zephyr.ops.collectors.market_calendar import MarketCalendar
 
 

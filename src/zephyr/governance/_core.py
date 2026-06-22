@@ -1,6 +1,14 @@
 # [A_module] module_id=MOD-RES__core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+from zephyr.governance.adapter import (
+    EscalationDecision,
+    OperationType,
+    check_operation,
+    escalate_if_needed,
+)
+from zephyr.governance.blueprint_code_consistency import check_blueprint_consistency
+
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.governance._core
 # [INVARIANTS] __all__列表不变; 公开API不变
@@ -11,7 +19,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_escalation_engine_imports.py
-
 from zephyr.governance.escalation_engine import EscalationEngine
 from zephyr.governance.escalation_models import (
     EscalationEvent,
@@ -21,13 +28,6 @@ from zephyr.governance.escalation_models import (
     EscalationState,
     RuleCategory,
 )
-from zephyr.governance.adapter import (
-    EscalationDecision,
-    OperationType,
-    check_operation,
-    escalate_if_needed,
-)
-from zephyr.governance.blueprint_code_consistency import check_blueprint_consistency
 
 _SUBMODULES = [
     "a2a_failure",
@@ -56,16 +56,16 @@ _SUBMODULES = [
 ]
 
 __all__ = [
+    "EscalationDecision",
     "EscalationEngine",
     "EscalationEvent",
     "EscalationLevel",
     "EscalationResult",
     "EscalationRule",
     "EscalationState",
-    "RuleCategory",
-    "EscalationDecision",
     "OperationType",
+    "RuleCategory",
+    "check_blueprint_consistency",
     "check_operation",
     "escalate_if_needed",
-    "check_blueprint_consistency",
 ]

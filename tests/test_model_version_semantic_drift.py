@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.diagnosers.model_version_semantic_drift import (
     DriftSeverity,
     ModelVersionSemanticDrift,

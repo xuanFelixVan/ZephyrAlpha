@@ -25,13 +25,22 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class DistillationResult:
     representative_ke_id: str
     superseded_ke_ids: list[str] = field(default_factory=list)
     cluster_size: int = 0
 
+
 class KnowledgeDistiller:
     """DBSCAN 同类 KE → 1 代表 KE + 标记 superseded (DD84)."""
+
     def distill(self, ke_entries: list[tuple[str, str]]) -> list[DistillationResult]:
-        return [DistillationResult(representative_ke_id="KE-REP-001", superseded_ke_ids=[k for k, _ in ke_entries[1:]], cluster_size=len(ke_entries))]
+        return [
+            DistillationResult(
+                representative_ke_id="KE-REP-001",
+                superseded_ke_ids=[k for k, _ in ke_entries[1:]],
+                cluster_size=len(ke_entries),
+            )
+        ]

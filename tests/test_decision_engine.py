@@ -14,16 +14,14 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from zephyr.ops.decision_engine import (
+    _ANOMALY_TO_ACTION,
+    _DEVIATION_THRESHOLDS,
     AnomalyReport,
     AnomalySeverity,
     DecisionEngine,
     ScheduleAdjustment,
     reflect_on_blueprint,
-    _ANOMALY_TO_ACTION,
-    _DEVIATION_THRESHOLDS,
 )
 from zephyr.ops.protocols import ActionType
 
@@ -42,8 +40,11 @@ class TestAnomalySeverity:
 class TestAnomalyReport:
     def test_construction(self):
         r = AnomalyReport(
-            anomaly_type="drift", severity=AnomalySeverity.HIGH,
-            metric_name="health", current_value=0.5, baseline_value=1.0,
+            anomaly_type="drift",
+            severity=AnomalySeverity.HIGH,
+            metric_name="health",
+            current_value=0.5,
+            baseline_value=1.0,
             deviation_pct=50.0,
         )
         assert r.anomaly_type == "drift"
@@ -52,9 +53,13 @@ class TestAnomalyReport:
 
     def test_custom_context(self):
         r = AnomalyReport(
-            anomaly_type="x", severity=AnomalySeverity.LOW,
-            metric_name="m", current_value=1.0, baseline_value=1.0,
-            deviation_pct=0.0, context={"key": "val"},
+            anomaly_type="x",
+            severity=AnomalySeverity.LOW,
+            metric_name="m",
+            current_value=1.0,
+            baseline_value=1.0,
+            deviation_pct=0.0,
+            context={"key": "val"},
         )
         assert r.context["key"] == "val"
 
@@ -73,8 +78,11 @@ class TestDecisionEngine:
 
     def _make_report(self, severity=AnomalySeverity.LOW, deviation=10.0):
         return AnomalyReport(
-            anomaly_type="test", severity=severity,
-            metric_name="m", current_value=1.0, baseline_value=1.0,
+            anomaly_type="test",
+            severity=severity,
+            metric_name="m",
+            current_value=1.0,
+            baseline_value=1.0,
             deviation_pct=deviation,
         )
 

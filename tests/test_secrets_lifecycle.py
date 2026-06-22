@@ -10,18 +10,20 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.secrets_lifecycle import (
-        SecretStage,
-        SECRET_MIN_BITS,
-        ROTATION_DAYS,
         REVOKE_TIMEOUT_SECONDS,
+        ROTATION_DAYS,
+        SECRET_MIN_BITS,
+        SecretStage,
         auto_clean_build,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

@@ -29,6 +29,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from zephyr.governance.rule_enforcement.task_types import TaskNamespace
+from zephyr.integration.shared.schema.execution_model import ExecutionModel
+from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.shared_services.blueprint_decomposer import (
     BlueprintDecomposer,
     _marker_to_blueprint_label,
@@ -36,9 +39,6 @@ from zephyr.shared.shared_services.blueprint_decomposer import (
     _split_desc_and_depends,
 )
 from zephyr.shared.shared_services.models import GateLevel, TaskAuditFinding, TaskCard, TaskStatus
-from zephyr.integration.shared.schema.execution_model import ExecutionModel
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 
 
 def _make_task_card(
@@ -134,7 +134,7 @@ class TestSplitDescAndDepends:
         assert deps == ["ADR-1", "CP-3"]
 
     def test_depends_with_quotes_and_spaces(self):
-        lines = ['depends_on: ["CP-1", \'CP-2\']']
+        lines = ["depends_on: [\"CP-1\", 'CP-2']"]
         narrative, deps = _split_desc_and_depends(lines)
         assert deps == ["CP-1", "CP-2"]
 
@@ -417,10 +417,7 @@ class TestExtractDependsFromContent:
         assert result == {}
 
     def test_universal_item_pattern(self):
-        content = (
-            "1. **Module X** — Some description\n"
-            "depends_on: [ADR-1]\n"
-        )
+        content = "1. **Module X** — Some description\ndepends_on: [ADR-1]\n"
         decomposer = BlueprintDecomposer()
         result = decomposer.extract_depends_from_content(content)
         assert "Module X" in result

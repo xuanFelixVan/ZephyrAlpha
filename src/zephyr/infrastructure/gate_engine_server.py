@@ -38,10 +38,7 @@ Gate策略 : docs/02_enterprise_architecture/gate-strategy-standard.md
 - gate_engine.submit_exemption — 提交 Owner 签发的豁免
 """
 
-
 from __future__ import annotations
-
-from zephyr.integration.shared.schema.schemas import Priority
 
 import re
 import uuid
@@ -49,6 +46,7 @@ from datetime import date
 from typing import Any
 
 from zephyr.infrastructure._base_server import BaseMCPServer, MCPError
+from zephyr.integration.shared.schema.schemas import Priority
 from zephyr.integration.shared_08.utils.time_utils import now_iso
 
 __all__ = ["GateEngineServer", "create_server"]
@@ -78,7 +76,11 @@ def _make_gate_run_report(
         "details": {
             "checks_run": checks_run,
             "checks_failed": failed_checks,
-            "level_distribution": {Priority.P0.value: p0_count, Priority.P1.value: len(failed_checks) - p0_count, Priority.P2.value: 0},
+            "level_distribution": {
+                Priority.P0.value: p0_count,
+                Priority.P1.value: len(failed_checks) - p0_count,
+                Priority.P2.value: 0,
+            },
         },
         "artifact_path": artifact_path,
         "created_at": now_iso(),

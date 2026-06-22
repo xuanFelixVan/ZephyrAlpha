@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_pipeline_models
 # [INVARIANTS] PipelineDAG.resolve_execution_order must detect cycles; ModuleInput.validate must return bool
-# [MODIFY-GUARD] only when zephyr.orchestration.pipeline_routing.models public API changes
+# [MODIFY-GUARD] only when zephyr.integration.models public API changes
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,7 +17,6 @@ import pytest
 from zephyr.integration.models import (
     A_DAG,
     B_DAG,
-    ArtifactClassification,
     ArtifactType,
     CircuitBreakerState,
     CostRecord,
@@ -498,7 +497,9 @@ class TestEmergencyFallbackPlan:
         assert p.wait_before_retry_s == 300
 
     def test_activated(self):
-        p = EmergencyFallbackPlan(activated=True, all_models_failed=["deepseek", "glm", "claude"], recommended_action="ESCALATE_TO_HUMAN")
+        p = EmergencyFallbackPlan(
+            activated=True, all_models_failed=["deepseek", "glm", "claude"], recommended_action="ESCALATE_TO_HUMAN"
+        )
         assert p.activated is True
         assert len(p.all_models_failed) == 3
 

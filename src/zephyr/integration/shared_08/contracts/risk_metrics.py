@@ -1,8 +1,8 @@
 # [A_module] module_id=MOD-INT_risk_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-011 ====
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from datetime import datetime
 
-from datetime import datetime, timezone
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -24,8 +24,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class RiskMetricsReport:
@@ -50,179 +51,5 @@ class RiskMetricsReport:
     volatility_1m: float
     schema_version: str = "1.0"
 
+
 # ==== END CODGEN:CTR-P1-011 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

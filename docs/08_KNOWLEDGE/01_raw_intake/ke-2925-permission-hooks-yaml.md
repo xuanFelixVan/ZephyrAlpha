@@ -17,14 +17,14 @@ hooks:
       description: "写文件前记录修改前checksum——用于rollback还原"
       priority: 10
       timeout_ms: 5
-    
+
     - id: "H02"
       name: "git_status_consistency"
       applies_to: ["file_delete", "file_modify"]
       description: "操作前确认git status无未跟踪变更——防止AI操作与git状态撕裂"
       priority: 20
       timeout_ms: 20
-    
+
     - id: "H03"
       name: "dependency_version_lock"
       applies_to: ["file_write"]
@@ -41,7 +41,7 @@ hooks:
       description: "权限配置变更后通知所有依赖模块——§4 depends_on各模块的Gate Engine"
       priority: 50
       timeout_ms: 100
-    
+
     - id: "H05"
       name: "sensitive_data_scan"
       applies_to: ["file_write", "file_create"]
@@ -57,7 +57,7 @@ hooks:
       description: "越权被拦截时自动备份受影响文件——防止后续毁坏操作丢失恢复路径"
       priority: 100
       timeout_ms: 200
-    
+
     - id: "H07"
       name: "owner_notification"
       applies_to: ["any_permission_blocked"]
@@ -73,7 +73,7 @@ hooks:
       description: "熔断时自动备份系统当前完整快照——git bundle + SQLite dump"
       priority: 200
       timeout_ms: 5000
-    
+
     - id: "H09"
       name: "emergency_owner_alert"
       applies_to: ["any_kill_switch"]

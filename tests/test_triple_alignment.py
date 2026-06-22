@@ -15,9 +15,6 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-import yaml
-
 from zephyr.governance.rule_enforcement.triple_alignment import (
     AlignmentViolation,
     Severity,
@@ -75,17 +72,24 @@ class TestAlignmentViolation:
 
     def test_empty_strings(self):
         v = AlignmentViolation(
-            check="", severity=Severity.ERROR, module_id="",
-            source="", expected="", actual="",
+            check="",
+            severity=Severity.ERROR,
+            module_id="",
+            source="",
+            expected="",
+            actual="",
         )
         assert v.check == ""
         assert v.module_id == ""
 
     def test_severity_warn(self):
         v = AlignmentViolation(
-            check="dep_map_orphan", severity=Severity.WARN,
-            module_id="MOD-INF-099", source="dep-map",
-            expected="in registry", actual="NOT FOUND",
+            check="dep_map_orphan",
+            severity=Severity.WARN,
+            module_id="MOD-INF-099",
+            source="dep-map",
+            expected="in registry",
+            actual="NOT FOUND",
         )
         assert v.severity == Severity.WARN
 
@@ -100,9 +104,12 @@ class TestTripleAlignmentResult:
     def test_add_violation_error_flips_passed(self):
         r = TripleAlignmentResult()
         v = AlignmentViolation(
-            check="test_check", severity=Severity.ERROR,
-            module_id="MOD-INF-007", source="src",
-            expected="A", actual="B",
+            check="test_check",
+            severity=Severity.ERROR,
+            module_id="MOD-INF-007",
+            source="src",
+            expected="A",
+            actual="B",
         )
         r.add_violation(v)
         assert len(r.violations) == 1
@@ -111,9 +118,12 @@ class TestTripleAlignmentResult:
     def test_add_violation_warn_keeps_passed(self):
         r = TripleAlignmentResult()
         v = AlignmentViolation(
-            check="test_check", severity=Severity.WARN,
-            module_id="MOD-INF-007", source="src",
-            expected="A", actual="B",
+            check="test_check",
+            severity=Severity.WARN,
+            module_id="MOD-INF-007",
+            source="src",
+            expected="A",
+            actual="B",
         )
         r.add_violation(v)
         assert len(r.violations) == 1
@@ -121,28 +131,52 @@ class TestTripleAlignmentResult:
 
     def test_add_multiple_violations_mixed(self):
         r = TripleAlignmentResult()
-        r.add_violation(AlignmentViolation(
-            check="c1", severity=Severity.WARN,
-            module_id="M1", source="s", expected="e", actual="a",
-        ))
-        r.add_violation(AlignmentViolation(
-            check="c2", severity=Severity.ERROR,
-            module_id="M2", source="s", expected="e", actual="a",
-        ))
+        r.add_violation(
+            AlignmentViolation(
+                check="c1",
+                severity=Severity.WARN,
+                module_id="M1",
+                source="s",
+                expected="e",
+                actual="a",
+            )
+        )
+        r.add_violation(
+            AlignmentViolation(
+                check="c2",
+                severity=Severity.ERROR,
+                module_id="M2",
+                source="s",
+                expected="e",
+                actual="a",
+            )
+        )
         assert len(r.violations) == 2
         assert r.passed is False
 
     def test_add_violation_warn_then_error(self):
         r = TripleAlignmentResult()
-        r.add_violation(AlignmentViolation(
-            check="c1", severity=Severity.WARN,
-            module_id="M1", source="s", expected="e", actual="a",
-        ))
+        r.add_violation(
+            AlignmentViolation(
+                check="c1",
+                severity=Severity.WARN,
+                module_id="M1",
+                source="s",
+                expected="e",
+                actual="a",
+            )
+        )
         assert r.passed is True
-        r.add_violation(AlignmentViolation(
-            check="c2", severity=Severity.ERROR,
-            module_id="M2", source="s", expected="e", actual="a",
-        ))
+        r.add_violation(
+            AlignmentViolation(
+                check="c2",
+                severity=Severity.ERROR,
+                module_id="M2",
+                source="s",
+                expected="e",
+                actual="a",
+            )
+        )
         assert r.passed is False
 
     def test_summary_no_violations(self):
@@ -155,18 +189,36 @@ class TestTripleAlignmentResult:
 
     def test_summary_with_errors_and_warns(self):
         r = TripleAlignmentResult(checked_modules=10)
-        r.add_violation(AlignmentViolation(
-            check="c1", severity=Severity.ERROR,
-            module_id="M1", source="s", expected="e", actual="a",
-        ))
-        r.add_violation(AlignmentViolation(
-            check="c2", severity=Severity.WARN,
-            module_id="M2", source="s", expected="e", actual="a",
-        ))
-        r.add_violation(AlignmentViolation(
-            check="c3", severity=Severity.ERROR,
-            module_id="M3", source="s", expected="e", actual="a",
-        ))
+        r.add_violation(
+            AlignmentViolation(
+                check="c1",
+                severity=Severity.ERROR,
+                module_id="M1",
+                source="s",
+                expected="e",
+                actual="a",
+            )
+        )
+        r.add_violation(
+            AlignmentViolation(
+                check="c2",
+                severity=Severity.WARN,
+                module_id="M2",
+                source="s",
+                expected="e",
+                actual="a",
+            )
+        )
+        r.add_violation(
+            AlignmentViolation(
+                check="c3",
+                severity=Severity.ERROR,
+                module_id="M3",
+                source="s",
+                expected="e",
+                actual="a",
+            )
+        )
         s = r.summary()
         assert "10 modules checked" in s
         assert "2 ERROR" in s
@@ -175,10 +227,16 @@ class TestTripleAlignmentResult:
 
     def test_summary_only_warns(self):
         r = TripleAlignmentResult(checked_modules=3)
-        r.add_violation(AlignmentViolation(
-            check="c1", severity=Severity.WARN,
-            module_id="M1", source="s", expected="e", actual="a",
-        ))
+        r.add_violation(
+            AlignmentViolation(
+                check="c1",
+                severity=Severity.WARN,
+                module_id="M1",
+                source="s",
+                expected="e",
+                actual="a",
+            )
+        )
         s = r.summary()
         assert "0 ERROR" in s
         assert "1 WARN" in s
@@ -299,18 +357,12 @@ class TestExtractDepMapModules:
         assert "MOD-INF-008" not in modules
 
     def test_english_header(self):
-        content = (
-            "## Module Ownership\n"
-            "| MOD-INF-007 | Gate | src/ | bp.md |\n"
-        )
+        content = "## Module Ownership\n| MOD-INF-007 | Gate | src/ | bp.md |\n"
         modules = _extract_dep_map_modules(content)
         assert "MOD-INF-007" in modules
 
     def test_row_with_few_columns(self):
-        content = (
-            "## 模块归属表\n"
-            "| MOD-INF-007 | Gate |\n"
-        )
+        content = "## 模块归属表\n| MOD-INF-007 | Gate |\n"
         modules = _extract_dep_map_modules(content)
         assert "MOD-INF-007" in modules
         assert modules["MOD-INF-007"]["source_path"] == ""
@@ -318,11 +370,7 @@ class TestExtractDepMapModules:
 
 class TestExtractDepMapDepths:
     def test_extracts_depths(self):
-        content = (
-            "| 1 | MOD-INF-007 |\n"
-            "| 2 | MOD-INF-020 |\n"
-            "| 3 | MOD-INF-025 |\n"
-        )
+        content = "| 1 | MOD-INF-007 |\n| 2 | MOD-INF-020 |\n| 3 | MOD-INF-025 |\n"
         depths = _extract_dep_map_depths(content)
         assert depths["MOD-INF-007"] == "1"
         assert depths["MOD-INF-020"] == "2"
@@ -416,10 +464,7 @@ class TestCheckTripleAlignment:
 
     def test_dep_map_orphan_module(self):
         registry_data = {"blueprints": []}
-        dep_content = (
-            "## 模块归属表\n"
-            "| MOD-INF-099 | Orphan | src/orphan/ | bp.md |\n"
-        )
+        dep_content = "## 模块归属表\n| MOD-INF-099 | Orphan | src/orphan/ | bp.md |\n"
         with patch("zephyr.governance.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
             with patch("zephyr.governance.rule_enforcement.triple_alignment.DEPENDENCY_MAP") as mock_dep:
                 mock_dep.exists.return_value = True

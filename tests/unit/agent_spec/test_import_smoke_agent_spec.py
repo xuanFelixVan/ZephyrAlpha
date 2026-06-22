@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """agent-spec MOD-INF-019 import 冒烟测试 — 验证核心模块可被导入."""
 
 import sys
@@ -30,18 +31,19 @@ class TestAgentSpecImportSmoke:
     def test_import_agent_spec_init(self) -> None:
         """测试导入 zephyr.governance.agent_spec 包自身."""
         _ensure_path()
-        import zephyr.orchestration.agent_lifecycle  # noqa: F401
+        import zephyr.autonomy_core
+
         assert hasattr(zephyr.governance.agent_spec, "__all__")
 
     def test_import_skill_model(self) -> None:
         """测试导入 SkillModel / SkillTier / SkillType."""
         _ensure_path()
         from zephyr.autonomy_core.skill_model import (
-            SkillModel,
             SkillStatus,
             SkillTier,
             SkillType,
         )
+
         assert SkillTier is not None
         assert SkillType is not None
         assert SkillStatus is not None
@@ -50,23 +52,27 @@ class TestAgentSpecImportSmoke:
         """测试导入 SkillLoader."""
         _ensure_path()
         from zephyr.autonomy_core.skill_loader import SkillLoader
+
         assert SkillLoader is not None
 
     def test_import_skill_factory(self) -> None:
         """测试导入 SkillFactory — 蓝图→Skill 升级引擎核心."""
         _ensure_path()
         from zephyr.autonomy_core.skill_factory import SkillFactory
+
         assert SkillFactory is not None
 
     def test_import_skill_router(self) -> None:
         _ensure_path()
         from zephyr.autonomy_core.skill_router import SkillRouter
+
         assert SkillRouter is not None
 
     def test_import_skill_constructor(self) -> None:
         """测试导入 SkillConstructor — 蓝图→Skill 构建器."""
         _ensure_path()
         from zephyr.autonomy_core.skill_constructor import SkillConstructor
+
         assert SkillConstructor is not None
 
 

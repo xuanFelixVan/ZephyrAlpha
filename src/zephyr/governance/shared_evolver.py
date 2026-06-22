@@ -30,13 +30,15 @@ from __future__ import annotations
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime
 from enum import Enum
+
 
 class EvolutionTier(str, Enum):
     A_AUTONOMOUS = "[*A]autonomous"
     S_STANDARD = "[*S]standard"
     R_RESTRICTED = "[*R]restricted"
+
 
 @dataclass
 class EvolutionEntry:
@@ -49,6 +51,7 @@ class EvolutionEntry:
     last_demoted: str = ""
     locked: bool = False
     lock_reason: str = ""
+
 
 class SharedEvolver:
     """共享函数自我进化引擎."""
@@ -89,11 +92,11 @@ class SharedEvolver:
             and not entry.locked
         ):
             entry.tier = EvolutionTier.A_AUTONOMOUS.value
-            entry.last_promoted = datetime.now(timezone.utc).isoformat()
+            entry.last_promoted = datetime.now(UTC).isoformat()
 
         if self._should_downgrade(entry):
             entry.tier = EvolutionTier.R_RESTRICTED.value
-            entry.last_demoted = datetime.now(timezone.utc).isoformat()
+            entry.last_demoted = datetime.now(UTC).isoformat()
 
         if self._should_lock(entry):
             entry.locked = True
@@ -113,7 +116,7 @@ class SharedEvolver:
     def _should_downgrade(self, entry: EvolutionEntry) -> bool:
         if len(entry.health_history) < self._DEGRADE_MONTHS:
             return False
-        recent = entry.health_history[-self._DEGRADE_MONTHS:]
+        recent = entry.health_history[-self._DEGRADE_MONTHS :]
         return all(s < 50 for s in recent)
 
     def _should_lock(self, entry: EvolutionEntry) -> bool:

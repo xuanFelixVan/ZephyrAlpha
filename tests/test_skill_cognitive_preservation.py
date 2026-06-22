@@ -13,10 +13,7 @@
 from __future__ import annotations
 
 import time
-from pathlib import Path
 from unittest.mock import patch
-
-import pytest
 
 from zephyr.autonomy_core.skill_cognitive_preservation import (
     CognitiveSnapshot,

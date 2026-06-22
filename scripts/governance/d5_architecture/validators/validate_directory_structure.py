@@ -1,6 +1,8 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_directory_structure.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
+
 #!/usr/bin/env python3
 """
 validate_directory_structure.py — LPC 双轨目录结构合规性扫描器
@@ -70,7 +72,6 @@ C_TRACK_DIRS: set[str] = {
     "risk",
     "pf_core",
     "ex_core",
-    "pf_core",
     "frontend",
     "research",
     "compliance",
@@ -139,13 +140,13 @@ def _scan_directory(path: Path, allowed_dirs: set[str], allowed_files: set[str],
             continue
         if item.is_dir():
             if name not in allowed_dirs:
-                violations.append(f"\u274c [{label}] 未授权的目录: {name}/ " f"\u2192 GOV-DOC-002 §三/§二 未定义此目录")
+                violations.append(f"\u274c [{label}] 未授权的目录: {name}/ \u2192 GOV-DOC-002 §三/§二 未定义此目录")
         elif item.is_file():
             if name.endswith(".pyc") or name == "__pycache__":
                 continue
             if name not in allowed_files:
                 violations.append(
-                    f"\u26a0\ufe0f [{label}] 孤儿文件: {name} " f"\u2192 一级 .py 文件应归入 shared/ 或对应模块目录"
+                    f"\u26a0\ufe0f [{label}] 孤儿文件: {name} \u2192 一级 .py 文件应归入 shared/ 或对应模块目录"
                 )
     return violations
 

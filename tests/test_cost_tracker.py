@@ -10,10 +10,7 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_cost_tracker.py -q
 
-import json
-from pathlib import Path
 
-import pytest
 from zephyr.infrastructure.cost_tracker import (
     COST_TRACKER_SCHEMA,
     CostReport,

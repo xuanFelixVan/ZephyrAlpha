@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.infrastructure.impact.impact_propagator import ImpactPath, ImpactPropagator, PropagationReport
 
 
@@ -25,7 +23,9 @@ class TestImpactPath:
         assert ip.impact_type == "direct"
 
     def test_custom_impact_type(self):
-        ip = ImpactPath(source_file="a.py", target_file="b.py", path_length=2, intermediate_nodes=["c.py"], impact_type="transitive")
+        ip = ImpactPath(
+            source_file="a.py", target_file="b.py", path_length=2, intermediate_nodes=["c.py"], impact_type="transitive"
+        )
         assert ip.impact_type == "transitive"
         assert ip.path_length == 2
         assert ip.intermediate_nodes == ["c.py"]

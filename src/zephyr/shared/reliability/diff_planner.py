@@ -32,11 +32,10 @@ Diff Planner — 最小增量变更规划器。
     - 与重写操作分离——避免全量无意义重写
 """
 
-
 from __future__ import annotations
 
 import difflib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -70,7 +69,6 @@ class ChangePlan:
 
 
 class DiffPlanner:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -82,20 +80,30 @@ class DiffPlanner:
             return FileDiff(
                 file_path=file_path,
                 exists=False,
-                hunks=[DiffHunk(
-                    old_start=0, old_count=0, new_start=1, new_count=len(new_lines),
-                    old_lines=[], new_lines=new_lines,
-                )],
+                hunks=[
+                    DiffHunk(
+                        old_start=0,
+                        old_count=0,
+                        new_start=1,
+                        new_count=len(new_lines),
+                        old_lines=[],
+                        new_lines=new_lines,
+                    )
+                ],
                 added_lines=len(new_lines),
             )
 
         old_lines = full_path.read_text(encoding="utf-8").splitlines(keepends=True)
         new_lines = new_content.splitlines(keepends=True)
 
-        diff = list(difflib.unified_diff(
-            old_lines, new_lines,
-            fromfile=file_path, tofile=file_path,
-        ))
+        diff = list(
+            difflib.unified_diff(
+                old_lines,
+                new_lines,
+                fromfile=file_path,
+                tofile=file_path,
+            )
+        )
 
         hunks = self._parse_diff_hunks(old_lines, new_lines)
 
@@ -122,17 +130,17 @@ class DiffPlanner:
             if not full_path.exists():
                 files_to_create.append(path_str)
             else:
-                files_to_modify.append(FileDiff(
-                    file_path=path_str,
-                    exists=True,
-                    hunks=[],
-                ))
+                files_to_modify.append(
+                    FileDiff(
+                        file_path=path_str,
+                        exists=True,
+                        hunks=[],
+                    )
+                )
 
         total = len(files_to_create) + len(files_to_modify)
 
-        recommendation = "ALL_CREATE" if not files_to_modify else (
-            "MIXED" if files_to_create else "ALL_MODIFY"
-        )
+        recommendation = "ALL_CREATE" if not files_to_modify else ("MIXED" if files_to_create else "ALL_MODIFY")
 
         return ChangePlan(
             files_to_create=files_to_create,
@@ -149,13 +157,15 @@ class DiffPlanner:
         for tag, i1, i2, j1, j2 in matcher.get_opcodes():
             if tag == "equal":
                 continue
-            hunks.append(DiffHunk(
-                old_start=i1 + 1 if i1 < len(old_lines) else 0,
-                old_count=i2 - i1,
-                new_start=j1 + 1 if j1 < len(new_lines) else 0,
-                new_count=j2 - j1,
-                old_lines=list(old_lines[i1:i2]),
-                new_lines=list(new_lines[j1:j2]),
-            ))
+            hunks.append(
+                DiffHunk(
+                    old_start=i1 + 1 if i1 < len(old_lines) else 0,
+                    old_count=i2 - i1,
+                    new_start=j1 + 1 if j1 < len(new_lines) else 0,
+                    new_count=j2 - j1,
+                    old_lines=list(old_lines[i1:i2]),
+                    new_lines=list(new_lines[j1:j2]),
+                )
+            )
 
         return hunks

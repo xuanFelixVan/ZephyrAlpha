@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_postmortem | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_postmortem
+# [MODULE] zephyr.autonomy_core.skill_postmortem
 
 # [INVARIANTS] none
 
@@ -34,12 +34,10 @@ Version: 0.2.0
   4. 输出根因 + 纠正措施 + 预防措施
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
-
+from datetime import UTC, datetime
+from typing import Any
 
 _WHY_PROBES = [
     {
@@ -106,12 +104,13 @@ class SkillPostmortem:
         skill_id: str,
         symptom_category: str,
         error_message: str,
-    ) -> List[Dict[str, Any]]:
-        responses: List[Dict[str, Any]] = []
+    ) -> list[dict[str, Any]]:
+        responses: list[dict[str, Any]] = []
 
         layer_registry_cache = None
         try:
             from zephyr.autonomy_core.skill_loader import SkillLoader
+
             loader = SkillLoader()
             layer_registry_cache = loader._load_registry()
         except Exception:
@@ -128,7 +127,7 @@ class SkillPostmortem:
         for probe in _WHY_PROBES:
             layer_num = probe["layer"]
             reason = ""
-            evidence: List[str] = []
+            evidence: list[str] = []
 
             if layer_num == 1:
                 if symptom_category == "registration":
@@ -166,12 +165,14 @@ class SkillPostmortem:
                 reason = "No feedback loop existed to capture this failure pattern and prevent recurrence"
                 evidence.append("Postmortem engine was not invoked on first occurrence")
 
-            responses.append({
-                "layer": layer_num,
-                "question": probe["question"],
-                "reason": reason,
-                "evidence": evidence,
-            })
+            responses.append(
+                {
+                    "layer": layer_num,
+                    "question": probe["question"],
+                    "reason": reason,
+                    "evidence": evidence,
+                }
+            )
 
         return responses
 
@@ -180,57 +181,73 @@ class SkillPostmortem:
         cls,
         skill_id: str,
         symptom_category: str,
-        root_causes: List[str],
-    ) -> Dict[str, List[Dict[str, str]]]:
-        corrective: List[Dict[str, str]] = []
-        preventive: List[Dict[str, str]] = []
+        root_causes: list[str],
+    ) -> dict[str, list[dict[str, str]]]:
+        corrective: list[dict[str, str]] = []
+        preventive: list[dict[str, str]] = []
 
         if symptom_category == "registration":
-            corrective.append({
-                "action": f"Register skill '{skill_id}' in skill-registry.yaml",
-                "assignee": "system-admin",
-                "priority": "P0",
-            })
-            preventive.append({
-                "action": "Add auto-registration check to G9 gate",
-                "assignee": "infrastructure-team",
-                "priority": "P1",
-            })
+            corrective.append(
+                {
+                    "action": f"Register skill '{skill_id}' in skill-registry.yaml",
+                    "assignee": "system-admin",
+                    "priority": "P0",
+                }
+            )
+            preventive.append(
+                {
+                    "action": "Add auto-registration check to G9 gate",
+                    "assignee": "infrastructure-team",
+                    "priority": "P1",
+                }
+            )
 
         if symptom_category in ("budget", "drift"):
-            corrective.append({
-                "action": f"Compact skill '{skill_id}' body to fit token budget",
-                "assignee": "skill-author",
-                "priority": "P0",
-            })
-            preventive.append({
-                "action": "Add token-budget pre-check to SkillLoader",
-                "assignee": "infrastructure-team",
-                "priority": "P1",
-            })
+            corrective.append(
+                {
+                    "action": f"Compact skill '{skill_id}' body to fit token budget",
+                    "assignee": "skill-author",
+                    "priority": "P0",
+                }
+            )
+            preventive.append(
+                {
+                    "action": "Add token-budget pre-check to SkillLoader",
+                    "assignee": "infrastructure-team",
+                    "priority": "P1",
+                }
+            )
 
         if symptom_category == "gate":
-            corrective.append({
-                "action": f"Review gate configuration for skill '{skill_id}'",
-                "assignee": "governance-team",
-                "priority": "P0",
-            })
-            preventive.append({
-                "action": "Create gate override/waiver process",
-                "assignee": "governance-team",
-                "priority": "P2",
-            })
+            corrective.append(
+                {
+                    "action": f"Review gate configuration for skill '{skill_id}'",
+                    "assignee": "governance-team",
+                    "priority": "P0",
+                }
+            )
+            preventive.append(
+                {
+                    "action": "Create gate override/waiver process",
+                    "assignee": "governance-team",
+                    "priority": "P2",
+                }
+            )
 
-        preventive.append({
-            "action": f"Add '{skill_id}' to regression test suite",
-            "assignee": "qa-team",
-            "priority": "P1",
-        })
-        preventive.append({
-            "action": "Enable SkillsBench baseline for this skill",
-            "assignee": "infrastructure-team",
-            "priority": "P2",
-        })
+        preventive.append(
+            {
+                "action": f"Add '{skill_id}' to regression test suite",
+                "assignee": "qa-team",
+                "priority": "P1",
+            }
+        )
+        preventive.append(
+            {
+                "action": "Enable SkillsBench baseline for this skill",
+                "assignee": "infrastructure-team",
+                "priority": "P2",
+            }
+        )
 
         return {
             "corrective": corrective,
@@ -243,7 +260,7 @@ class SkillPostmortem:
         skill_id: str,
         error_message: str,
         failed_operation: str = "",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         symptom = cls._infer_symptom_category(error_message)
         root_causes = cls._unwind_why(skill_id, symptom, error_message)
 
@@ -251,16 +268,18 @@ class SkillPostmortem:
         actions = cls._generate_actions(skill_id, symptom, [rc["reason"] for rc in root_causes])
 
         return {
-            "incident_id": f"PM-{skill_id}-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M')}",
+            "incident_id": f"PM-{skill_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M')}",
             "skill_id": skill_id,
             "symptom_category": symptom,
             "failed_operation": failed_operation,
             "original_error": error_message[:500],
             "root_cause": primary_root_cause,
             "root_cause_chain": root_causes,
-            "diagnosis_inversion_verified": root_causes[-1].get("answer", "") != error_message[:200] if root_causes else False,
+            "diagnosis_inversion_verified": root_causes[-1].get("answer", "") != error_message[:200]
+            if root_causes
+            else False,
             "corrective_actions": actions["corrective"],
             "preventive_actions": actions["preventive"],
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "closed": False,
         }

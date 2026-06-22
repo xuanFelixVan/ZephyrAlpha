@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-10-FRONTEND-ARCH
 title: Target Architecture — Frontend Architecture / 目标架构：前端架构
 doc_type: architecture_view

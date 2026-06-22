@@ -45,24 +45,24 @@ import hashlib
 import importlib
 import re
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.gate import GateResult
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.kb.kb_repo import KbRepo
+from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
+from zephyr.shared.contracts.gate import GateResult
 
 __all__ = [
-    "IngestResult",
-    "IngestGate",
-    "BLACKLIST_PATTERNS",
-    "REQUIRED_FRONTMATTER_FIELDS",
     "ALLOWED_EXTENSIONS",
+    "BLACKLIST_PATTERNS",
     "MIN_CONTENT_CHARS",
+    "REQUIRED_FRONTMATTER_FIELDS",
+    "IngestGate",
+    "IngestResult",
 ]
 
 REQUIRED_FRONTMATTER_FIELDS = ["module_id", "title", "category"]
@@ -228,7 +228,7 @@ class IngestGate:
     def _lsg_scan_content(self, text: str) -> str | None:
         try:
             _mod = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway")
-            _LSGSecurityGateway = getattr(_mod, "LSGSecurityGateway")
+            _LSGSecurityGateway = _mod.LSGSecurityGateway
             import asyncio
 
             gateway = _LSGSecurityGateway()

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_fle_performance_regression_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.fle_performance_regression_detector import (
     FLEPerformanceRegressionDetector,

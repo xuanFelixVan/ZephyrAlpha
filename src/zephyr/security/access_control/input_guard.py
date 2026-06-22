@@ -5,18 +5,23 @@ DANGEROUS_PATTERNS = None  # stub constant
 PROJECT_SAFE_DIRS = None  # stub constant
 TRUSTED_PACKAGES = None  # stub constant
 
+
 class InputDecision:
     """Stub class — implementation pending."""
+
     pass
+
 
 class InputGuard:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "DANGEROUS_PATTERNS",
-    "InputDecision",
-    "InputGuard",
     "PROJECT_SAFE_DIRS",
     "TRUSTED_PACKAGES",
+    "InputDecision",
+    "InputGuard",
 ]

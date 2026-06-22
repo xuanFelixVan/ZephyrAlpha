@@ -31,6 +31,7 @@ import json
 import time
 from dataclasses import dataclass, field
 
+
 @dataclass
 class EntropySnapshot:
     timestamp: float
@@ -38,6 +39,7 @@ class EntropySnapshot:
     behavior_entropy: float
     total_entropy: float
     state_hash: str
+
 
 @dataclass
 class SystemEntropyMonitor:
@@ -56,28 +58,34 @@ class SystemEntropyMonitor:
             json.dumps({"config": config, "behaviors": behavior_patterns}, sort_keys=True).encode()
         ).hexdigest()[:12]
 
-        self.snapshots.append(EntropySnapshot(
-            timestamp=time.time(),
-            config_entropy=config_entropy,
-            behavior_entropy=behavior_entropy,
-            total_entropy=total,
-            state_hash=state_hash,
-        ))
+        self.snapshots.append(
+            EntropySnapshot(
+                timestamp=time.time(),
+                config_entropy=config_entropy,
+                behavior_entropy=behavior_entropy,
+                total_entropy=total,
+                state_hash=state_hash,
+            )
+        )
         if len(self.snapshots) > self.max_snapshots:
-            self.snapshots = self.snapshots[-self.max_snapshots:]
+            self.snapshots = self.snapshots[-self.max_snapshots :]
 
-        return {"config_entropy": round(config_entropy, 3), "behavior_entropy": round(behavior_entropy, 3), "total_entropy": round(total, 3)}
+        return {
+            "config_entropy": round(config_entropy, 3),
+            "behavior_entropy": round(behavior_entropy, 3),
+            "total_entropy": round(total, 3),
+        }
 
     def analyze_trend(self) -> dict:
         if len(self.snapshots) < self.trend_window:
             return {"status": "insufficient_data", "entropy": 0}
 
-        recent = self.snapshots[-self.trend_window:]
+        recent = self.snapshots[-self.trend_window :]
         avg_entropy = sum(s.total_entropy for s in recent) / len(recent)
 
         if len(recent) >= 5:
-            half_ago = recent[:len(recent) // 2]
-            half_now = recent[len(recent) // 2:]
+            half_ago = recent[: len(recent) // 2]
+            half_now = recent[len(recent) // 2 :]
             avg_ago = sum(s.total_entropy for s in half_ago) / len(half_ago)
             avg_now = sum(s.total_entropy for s in half_now) / len(half_now)
             trend = "increasing" if avg_now > avg_ago + 0.05 else "decreasing" if avg_now < avg_ago - 0.05 else "stable"
@@ -117,6 +125,7 @@ class SystemEntropyMonitor:
             return 0.0
         probs = [abs(v) / total for v in values]
         import math
+
         entropy = -sum(p * math.log2(p + 1e-10) for p in probs)
         return min(entropy / math.log2(len(values) + 1e-10), 1.0)
 

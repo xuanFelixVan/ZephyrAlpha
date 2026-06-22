@@ -22,8 +22,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Any
+from datetime import UTC, datetime
 
 import pytest
 
@@ -75,7 +74,7 @@ class TestGateResult:
         assert isinstance(r.timestamp, datetime)
 
     def test_instantiation_full(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         v = GateViolation(check_id="C01", check_name="n", severity="P0", message="m")
         r = GateResult(
             gate_id="G2",
@@ -217,21 +216,40 @@ class TestGateResult:
 
     def test_from_engine_result_with_native_violations(self):
         v = GateViolation(check_id="C01", check_name="n", severity="P0", message="native")
-        fake = type("Fake", (), {"passed": False, "gate_id": "G1", "task_id": "", "violations": [v], "details": {}, "evaluated_at": ""})()
+        fake = type(
+            "Fake",
+            (),
+            {"passed": False, "gate_id": "G1", "task_id": "", "violations": [v], "details": {}, "evaluated_at": ""},
+        )()
         result = GateResult.from_engine_result(fake)
         assert result.violations[0] is v
         assert result.reasons == ["native"]
 
     def test_from_engine_result_with_evaluated_at(self):
         ts = "2026-01-15T10:30:00+00:00"
-        fake = type("Fake", (), {"passed": True, "gate_id": "G1", "task_id": "", "violations": [], "details": {}, "evaluated_at": ts})()
+        fake = type(
+            "Fake",
+            (),
+            {"passed": True, "gate_id": "G1", "task_id": "", "violations": [], "details": {}, "evaluated_at": ts},
+        )()
         result = GateResult.from_engine_result(fake)
         assert result.timestamp.year == 2026
         assert result.timestamp.month == 1
         assert result.timestamp.day == 15
 
     def test_from_engine_result_invalid_evaluated_at(self):
-        fake = type("Fake", (), {"passed": True, "gate_id": "G1", "task_id": "", "violations": [], "details": {}, "evaluated_at": "not-a-date"})()
+        fake = type(
+            "Fake",
+            (),
+            {
+                "passed": True,
+                "gate_id": "G1",
+                "task_id": "",
+                "violations": [],
+                "details": {},
+                "evaluated_at": "not-a-date",
+            },
+        )()
         result = GateResult.from_engine_result(fake)
         assert isinstance(result.timestamp, datetime)
 
@@ -244,7 +262,18 @@ class TestGateResult:
 
     def test_from_engine_result_violations_without_message_attr(self):
         fake_v = type("FakeV", (), {"check_id": "C1", "check_name": "n", "severity": "P2"})()
-        fake = type("Fake", (), {"passed": False, "gate_id": "G1", "task_id": "", "violations": [fake_v], "details": {}, "evaluated_at": ""})()
+        fake = type(
+            "Fake",
+            (),
+            {
+                "passed": False,
+                "gate_id": "G1",
+                "task_id": "",
+                "violations": [fake_v],
+                "details": {},
+                "evaluated_at": "",
+            },
+        )()
         result = GateResult.from_engine_result(fake)
         assert len(result.violations) == 0
 

@@ -10,9 +10,8 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_degrade_cascade.py
 
-import pytest
 
-from zephyr.trading.orchestrator.degrade_cascade import DegradeCascadeGuard, DEGRADE_PROPAGATION_CHAIN
+from zephyr.trading.orchestrator.degrade_cascade import DEGRADE_PROPAGATION_CHAIN, DegradeCascadeGuard
 
 
 class TestDegradeCascadeGuardInstantiation:

@@ -36,7 +36,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -53,7 +53,10 @@ LOOKAHEAD_PATTERNS = [
 ]
 
 LABEL_WITHOUT_SHIFT = re.compile(r"^(label|target|y_\w+)$", re.IGNORECASE)
-LABEL_WHITELIST = re.compile(r"^(target_weight|target_path|target_module|target_dir|target_symbol|target_id|target_name|target_type|target_port|target_host|target_url|target_file|target_config|target_key|target_code|target_value)$", re.IGNORECASE)
+LABEL_WHITELIST = re.compile(
+    r"^(target_weight|target_path|target_module|target_dir|target_symbol|target_id|target_name|target_type|target_port|target_host|target_url|target_file|target_config|target_key|target_code|target_value)$",
+    re.IGNORECASE,
+)
 
 
 def check_file_pit(filepath: Path) -> list[str]:
@@ -85,10 +88,16 @@ def check_file_pit(filepath: Path) -> list[str]:
         if not isinstance(node, ast.Assign):
             continue
         for target in node.targets:
-            if isinstance(target, ast.Name) and LABEL_WITHOUT_SHIFT.match(target.id) and not LABEL_WHITELIST.match(target.id):
+            if (
+                isinstance(target, ast.Name)
+                and LABEL_WITHOUT_SHIFT.match(target.id)
+                and not LABEL_WHITELIST.match(target.id)
+            ):
                 assign_str = ast.dump(node.value)
                 if "shift" not in assign_str and "diff" not in assign_str and "pct_change" not in assign_str:
-                    findings.append(f"HC-10 WARNING: {rel} — label variable '{target.id}' assigned without .shift(1) or equivalent lag")
+                    findings.append(
+                        f"HC-10 WARNING: {rel} — label variable '{target.id}' assigned without .shift(1) or equivalent lag"
+                    )
 
     return findings
 

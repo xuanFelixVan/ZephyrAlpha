@@ -35,12 +35,11 @@ IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
 - schedule_maintenance(): WAL checkpoint + VACUUM + ANALYZE
 """
 
-
 from __future__ import annotations
 
 import logging
 import shutil
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -156,7 +155,8 @@ class IndexHealthMonitor:
             )
 
             persist_size = sum(
-                f.stat().st_size for f in self._collection_manager.persist_dir.rglob("*")
+                f.stat().st_size
+                for f in self._collection_manager.persist_dir.rglob("*")
                 if f.is_file() and "_snapshots" not in str(f) and "vector_db_backups" not in str(f)
             )
             snap_size = sum(f.stat().st_size for f in snapshot_path.rglob("*") if f.is_file())
@@ -165,7 +165,9 @@ class IndexHealthMonitor:
                 shutil.rmtree(str(snapshot_path))
                 _logger.error(
                     "IndexHealthMonitor: 快照异常膨胀 — snapshot=%.1f MB, persist=%.1f MB (%.1fx) — 已拒绝并删除",
-                    snap_size / (1024 * 1024), persist_size / (1024 * 1024), snap_size / persist_size,
+                    snap_size / (1024 * 1024),
+                    persist_size / (1024 * 1024),
+                    snap_size / persist_size,
                 )
                 return None
 
@@ -246,12 +248,14 @@ class IndexHealthMonitor:
                                     expired += 1
                             except Exception:
                                 pass
-                reports.append(TTLExpiryReport(
-                    collection=col_name,
-                    expired_count=expired,
-                    total_count=total,
-                    ttl_days=ttl_days,
-                ))
+                reports.append(
+                    TTLExpiryReport(
+                        collection=col_name,
+                        expired_count=expired,
+                        total_count=total,
+                        ttl_days=ttl_days,
+                    )
+                )
             except Exception:
                 pass
         return reports

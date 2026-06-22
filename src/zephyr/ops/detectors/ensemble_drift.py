@@ -27,6 +27,7 @@ Risk: R43 — Unanimous agreement masks model monoculture.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class EnsembleDrift:
     agreement_rate: float = 0.0

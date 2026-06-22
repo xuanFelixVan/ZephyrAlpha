@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class NetworkPartitionGuard:
     def __init__(self):
         self._partitioned = False

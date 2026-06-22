@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_pipeline_agent_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.pipeline_agent_bridge
+# [MODULE] zephyr.integration.pipeline_agent_bridge
 
 # [INVARIANTS] none
 
@@ -48,7 +48,6 @@ M→Role 映射（B36）:
     orchestration_results = bridge.bridge(pipeline_result)
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -58,6 +57,7 @@ from zephyr.integration.models import M_MODULE_SPECS, ModuleResult, PipelineResu
 
 if TYPE_CHECKING:
     import importlib as _il_tc
+
     _oo_mod = _il_tc.import_module("zephyr.trading.orchestrator.agent_orchestrator")
     AgentOrchestrator = _oo_mod.AgentOrchestrator
     AgentRole = _oo_mod.AgentRole
@@ -65,10 +65,10 @@ if TYPE_CHECKING:
     RoutingStrategy = _oo_mod.RoutingStrategy
 
 __all__ = [
-    "PipelineAgentBridge",
     "M_TO_ROLE",
-    "role_for_module",
+    "PipelineAgentBridge",
     "domain_for_pipeline",
+    "role_for_module",
 ]
 
 _logger = logging.getLogger(__name__)
@@ -202,6 +202,7 @@ class PipelineAgentBridge:
             directive_chain = _build_directive_chain(mr.module_id)
 
             import importlib as _il_ar
+
             _ar_mod = _il_ar.import_module("zephyr.trading.orchestrator.agent_orchestrator")
             AgentRole = _ar_mod.AgentRole
 
@@ -256,6 +257,7 @@ class PipelineAgentBridge:
         directive_chain = _build_directive_chain(module_result.module_id)
 
         import importlib as _il_ar2
+
         _ar_mod2 = _il_ar2.import_module("zephyr.trading.orchestrator.agent_orchestrator")
         AgentRole = _ar_mod2.AgentRole
 

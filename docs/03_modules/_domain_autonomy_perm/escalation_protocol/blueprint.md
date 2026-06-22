@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-022
-submodule_path: src/zephyr/escalation-engine
+submodule_path: src/zephyr/governance/escalation_engine
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-14"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: D:\ZephyrAlpha\src\zephyr\escalation-engine\
+actual_disk_path: D:\ZephyrAlpha\src\zephyr\governance\escalation_engine\
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 3
@@ -1349,7 +1349,7 @@ STEP 3: 拆分后验证
 | AI 压缩工作流标准 | [trae_030_doc_numbering_metadata.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) |
 | 代码构建标准 | [code-construction-standards.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) |
 | 脚本质量标准 | [quality-standard.md](file:///D:/ZephyrAlpha/scripts/governance/quality-standard.md) |
-| 治理方法论 | [governance-methodology-standard.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/meta/governance-methodology-standard.md) |
+| 治理方法论 | [governance_methodology_standard.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml) |
 | Session 状态机 | [session-state-runbook.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md) |
 | RBAC 模块 | [MOD-INF-018](file:///D:/ZephyrAlpha/docs/03_modules/_domain-infra_ops/rbac/blueprint.md) |
 | Pipeline 模块 | [MOD-INF-021](file:///D:/ZephyrAlpha/docs/03_modules/_domain-infra_ops/pipeline/blueprint.md) |

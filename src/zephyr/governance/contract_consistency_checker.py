@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class ContractCheck:
     function_name: str = ""
@@ -32,6 +33,7 @@ class ContractCheck:
     behavior_matches: bool = False
     contract_consistent: bool = False
     score: int = 0
+
 
 class ContractConsistencyChecker:
     """三维API契约检查."""

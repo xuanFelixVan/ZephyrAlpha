@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_counterfactual.py
 
-import pytest
 
 from zephyr.ops.diagnosers.counterfactual import CounterfactualEngine
 

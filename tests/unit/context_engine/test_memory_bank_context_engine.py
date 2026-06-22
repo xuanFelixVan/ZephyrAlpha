@@ -6,9 +6,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Tests for memory_bank.py (TASK-014 beta c)."""
+
 import tempfile
-from pathlib import Path
-from zephyr.autonomy_core.memory_bank import MemoryBank, BANK_FILES
+
+from zephyr.autonomy_core.memory_bank import BANK_FILES, MemoryBank
 
 
 class TestMemoryBank:

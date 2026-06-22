@@ -25,11 +25,10 @@ import json
 import logging
 import os
 import signal
-import sqlite3
 import threading
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -105,13 +104,15 @@ class InterruptGuard:
                 phase = data.get("phase", "unknown")
                 target = data.get("target", "")
                 if phase in ("started", "fixing", "writing"):
-                    recovered.append({
-                        "action_id": action_id,
-                        "target": target,
-                        "phase": phase,
-                        "recovery_action": "rollback",
-                        "before_content": data.get("before_content", ""),
-                    })
+                    recovered.append(
+                        {
+                            "action_id": action_id,
+                            "target": target,
+                            "phase": phase,
+                            "recovery_action": "rollback",
+                            "before_content": data.get("before_content", ""),
+                        }
+                    )
                     self._rollback_fix(action_id, data)
                 wal_file.unlink(missing_ok=True)
             except Exception as exc:

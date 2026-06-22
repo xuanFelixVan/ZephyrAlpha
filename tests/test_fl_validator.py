@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.validator import missing_files, validate_all, validate_one
 
 
@@ -58,6 +56,7 @@ class TestMissingFiles:
 
     def test_missing_subset_of_skeletons(self):
         from zephyr.ops.template import SKELETONS
+
         result = missing_files()
         for item in result:
             assert item in SKELETONS, f"Missing file {item} not in SKELETONS"

@@ -14,11 +14,9 @@
 CT-ORC-CE-001: 任务启动时向 Context Engine 请求构建执行上下文。
 """
 
-
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -66,6 +64,7 @@ class ContextBridge:
         t_files = getattr(task, "files_in_scope", [])
         if isinstance(t_files, str):
             import json
+
             try:
                 t_files = json.loads(t_files)
             except Exception:
@@ -73,6 +72,7 @@ class ContextBridge:
 
         try:
             from zephyr.autonomy_core.task_context_builder import TaskContextBuilder
+
             builder = TaskContextBuilder()
             response = builder.build_from_task(
                 task_id=task_id,
@@ -98,18 +98,25 @@ class ContextBridge:
     def _filter_context(self, response: ContextResponse) -> None:
         try:
             from zephyr.security.llm_defense.llm_security_01.context_scanner import ContextScanner
+
             scanner = ContextScanner()
             for i, block in enumerate(response.blocks):
                 if isinstance(block, dict) and block.get("content"):
                     scan_result = scanner.scan(block["content"])
                     if scan_result and scan_result.get("flagged"):
-                        logger.info("[CE-LSG] flagged block#%d in task=%s: %s", i, response.task_id, scan_result.get("reason", ""))
+                        logger.info(
+                            "[CE-LSG] flagged block#%d in task=%s: %s",
+                            i,
+                            response.task_id,
+                            scan_result.get("reason", ""),
+                        )
         except Exception:
             logger.debug("[CE-LSG] context filter skipped")
 
     def _vectorize_context(self, response: ContextResponse) -> None:
         try:
             from zephyr.autonomy_core.vector_writer import vectorize_context
+
             vectorize_context(response.task_id, response.blocks)
         except Exception:
             logger.debug("[CE-VMS] context vectorize skipped")
@@ -119,6 +126,7 @@ def _infer_type(task: Any) -> str:
     tags = getattr(task, "tags", "")
     if isinstance(tags, str):
         import json
+
         try:
             tags_list = json.loads(tags)
         except Exception:

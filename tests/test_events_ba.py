@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
-import pytest
+from datetime import datetime
 
 from zephyr.shared.shared_services.events import (
     DriftEvent,

@@ -14,23 +14,22 @@
 CT-FLE-ORC-001: FLE 检测异常 → dispatch AlertEvent → Orc 创建修复任务。
 """
 
-
 from __future__ import annotations
 
 import logging
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum, unique
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "AlertSeverity",
     "AlertCategory",
-    "AlertEvent",
     "AlertDispatcher",
+    "AlertEvent",
+    "AlertSeverity",
     "DispatchResult",
     "dispatch",
 ]
@@ -62,7 +61,7 @@ class AlertEvent:
     category: AlertCategory | str = AlertCategory.METRIC_ANOMALY
     title: str = ""
     detail: str = ""
-    detected_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    detected_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     metric_ref: dict[str, Any] | None = None
     affected_systems: list[str] = field(default_factory=list)
 
@@ -90,10 +89,10 @@ class DispatchError(Exception):
 
 
 class AlertDispatcher:
-
     def dispatch(self, event: AlertEvent) -> DispatchResult:
         try:
             from zephyr.trading.orchestrator.alert_handler import AlertHandler
+
             handler = AlertHandler()
             task_card = handler.handle_alert(event)
 

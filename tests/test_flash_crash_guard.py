@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.flash_crash_guard import FlashCrashGuard
 
 

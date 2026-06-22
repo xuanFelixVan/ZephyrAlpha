@@ -33,63 +33,35 @@ Safety : H（状态机错误会影响整个任务流水线）
 
 """
 
-
-
-
 from __future__ import annotations
 
-
-
-import json
-
 import logging
-
-
 
 logger = logging.getLogger(__name__)
 
 
-
 from zephyr.governance.persistence.base_repo import (
-
-    _ALLOWED_TRANSITIONS,
-
     InvalidTransitionError,
-
     TaskNotFoundError,
-
     _is_valid_transition,
-
     _row_to_taskcard,
-
     now_iso,
-
 )
-
 from zephyr.governance.rule_enforcement.task_types import TaskStatus
 
-
-
-__all__ = ["TransitionMixin", "GateViolationError", "GateResult"]
-
+__all__ = ["GateResult", "GateViolationError", "TransitionMixin"]
 
 
 # Re-export GateViolationError / GateResult for backward compat
 
-from zephyr.integration.shared_08.contracts.gate import GateResult, GateViolationError  # noqa: E402
-
-
+from zephyr.integration.shared_08.contracts.gate import GateResult, GateViolationError
 
 # PENDING → IN_PROGRESS 转换时触发的门禁 ID
 
 _STARTUP_GATE_ID = "G1"
 
 
-
-
-
 class TransitionMixin:
-
     """状态机转换 mixin — 供 TaskRepository 继承。
 
 
@@ -112,34 +84,21 @@ class TransitionMixin:
 
     """
 
-
-
     # ------------------------------------------------------------------
 
     # TRANSITION（状态机）
 
     # ------------------------------------------------------------------
 
-
-
     def transition(
-
         self,
-
         task_id: str,
-
         to_status: TaskStatus | str,
-
         *,
-
         session_id: str | None = None,
-
         waiting_for: str | None = None,
-
         note: str | None = None,
-
     ):
-
         """
 
         执行状态机转换。
@@ -183,22 +142,14 @@ class TransitionMixin:
         """
 
         if isinstance(to_status, str):
-
             to_status = TaskStatus(to_status)
 
-
-
         try:
-
             with self._write_tx() as conn:
-
                 row = self._fetch_row(conn, task_id)
 
                 if row is None:
-
                     raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
-
-
 
                 # G1 门禁检查在写事务内执行，与状态转换原子落盘
 
@@ -207,40 +158,27 @@ class TransitionMixin:
                 gate_result: GateResult | None = None
 
                 if to_status == TaskStatus.IN_PROGRESS and self._enable_gate and self._gate_engine is not None:
-
                     task_obj = _row_to_taskcard(row)
 
                     gate_result = self._gate_engine.evaluate(task_obj, _STARTUP_GATE_ID, conn=conn)
 
                     if not gate_result.passed:
-
                         raise GateViolationError(gate_result)
 
-
-
                 if to_status == TaskStatus.COMPLETED and self._enable_gate and self._gate_engine is not None:
-
                     task_obj = _row_to_taskcard(row)
 
                     gate_result = self._gate_engine.evaluate(task_obj, "G7", conn=conn)
 
                     if not gate_result.passed:
-
                         raise GateViolationError(gate_result)
-
-
 
                 from_status = TaskStatus(row["status"])
 
                 if not _is_valid_transition(from_status, to_status):
-
                     raise InvalidTransitionError(
-
                         f"非法转换 {from_status.value} → {to_status.value}（task_id={task_id!r}）"
-
                     )
-
-
 
                 now = now_iso()
 
@@ -251,7 +189,6 @@ class TransitionMixin:
                 increment_block_count = to_status == TaskStatus.BLOCKED
 
                 conn.execute(
-
                     """
 
                     UPDATE tasks
@@ -271,113 +208,67 @@ class TransitionMixin:
                     WHERE task_id = ?
 
                     """,
-
                     (
-
                         to_status.value,
-
                         session_id,
-
                         waiting_for,
-
                         1 if set_ready_at else 0,
-
                         now if set_ready_at else None,
-
                         1 if set_completed_at else 0,
-
                         now if set_completed_at else None,
-
                         1 if increment_block_count else 0,
-
                         now,
-
                         task_id,
-
                     ),
-
                 )
 
                 self._record_event(
-
                     conn,
-
                     "state_transition",
-
                     {
-
                         "from": from_status.value,
-
                         "to": to_status.value,
-
                         "task_id": task_id,
-
                         "note": note or "",
-
                     },
-
                     task_id=task_id,
-
                     session_id=session_id,
-
                 )
 
                 self._recalculate_dependent_status(conn, task_id, to_status)
 
                 updated_row = self._fetch_row(conn, task_id)
 
-
-
         except GateViolationError as exc:
-
             # 写事务 ROLLBACK 会撤销同 conn 下的 gates INSERT；用独立连接再写一条，保证失败可审计。
 
             if self._gate_engine is not None:
-
                 self._gate_engine._persist_result(exc.result, conn=None)
 
             raise
 
-
-
         assert updated_row is not None
 
+        from zephyr.governance.ops_governance.event_hook import TransitionEvent, hook_registry
 
-
-        from zephyr.governance.ops_governance.event_hook import hook_registry, TransitionEvent
-
-        hook_registry.fire(TransitionEvent(
-
-            task_id=task_id,
-
-            from_status=from_status.value,
-
-            to_status=to_status.value,
-
-            note=note or "",
-
-            session_id=session_id,
-
-        ))
-
-
+        hook_registry.fire(
+            TransitionEvent(
+                task_id=task_id,
+                from_status=from_status.value,
+                to_status=to_status.value,
+                note=note or "",
+                session_id=session_id,
+            )
+        )
 
         return _row_to_taskcard(updated_row)
 
-
-
     def _recalculate_dependent_status(
-
         self,
-
         conn,
-
         changed_task_id: str,
-
         new_status: TaskStatus,
-
     ) -> None:
-
         """当子任务状态变更时，重算依赖它的父任务状态。
 
 
@@ -393,44 +284,27 @@ class TransitionMixin:
         """
 
         if new_status not in (
-
             TaskStatus.COMPLETED,
-
             TaskStatus.VERIFIED,
-
             TaskStatus.FAILED,
-
             TaskStatus.CANCELLED,
-
         ):
-
             return
 
-
-
         cursor = conn.execute(
-
             "SELECT task_id FROM tasks WHERE is_deleted = 0 AND depends_on LIKE ?",
-
             (f"%{changed_task_id}%",),
-
         )
 
         parent_rows = cursor.fetchall()
 
-
-
         for parent_row in parent_rows:
-
             parent_task_id = parent_row["task_id"]
 
             parent = _row_to_taskcard(self._fetch_row(conn, parent_task_id))
 
             if parent is None or not parent.depends_on:
-
                 continue
-
-
 
             child_statuses: list[TaskStatus] = []
 
@@ -439,11 +313,9 @@ class TransitionMixin:
             any_failed = False
 
             for dep_id in parent.depends_on:
-
                 child_row = self._fetch_row(conn, dep_id)
 
                 if child_row is None:
-
                     continue
 
                 child_status = TaskStatus(child_row["status"])
@@ -451,84 +323,48 @@ class TransitionMixin:
                 child_statuses.append(child_status)
 
                 if child_status not in (TaskStatus.COMPLETED, TaskStatus.VERIFIED):
-
                     all_resolved = False
 
                 if child_status in (TaskStatus.FAILED, TaskStatus.CANCELLED):
-
                     any_failed = True
 
-
-
             if not child_statuses:
-
                 continue
-
-
 
             parent_status = TaskStatus(parent.status.value)
 
             if all_resolved and parent_status in (TaskStatus.BLOCKED, TaskStatus.WAITING, TaskStatus.PENDING):
-
                 conn.execute(
-
                     "UPDATE tasks SET status = ?, updated_at = ? WHERE task_id = ?",
-
                     (TaskStatus.READY.value, now_iso(), parent_task_id),
-
                 )
 
                 self._record_event(
-
                     conn,
-
                     "state_transition",
-
                     {
-
                         "from": parent_status.value,
-
                         "to": TaskStatus.READY.value,
-
                         "task_id": parent_task_id,
-
                         "note": f"所有子任务已完成（触发者: {changed_task_id}）",
-
                     },
-
                     task_id=parent_task_id,
-
                 )
 
             elif any_failed and parent_status not in (TaskStatus.BLOCKED, TaskStatus.CANCELLED, TaskStatus.VERIFIED):
-
                 conn.execute(
-
                     "UPDATE tasks SET status = ?, updated_at = ?, block_sessions_count = block_sessions_count + 1 WHERE task_id = ?",
-
                     (TaskStatus.BLOCKED.value, now_iso(), parent_task_id),
-
                 )
 
                 self._record_event(
-
                     conn,
-
                     "state_transition",
-
                     {
-
                         "from": parent_status.value,
-
                         "to": TaskStatus.BLOCKED.value,
-
                         "task_id": parent_task_id,
-
                         "note": f"子任务失败触发阻塞（触发者: {changed_task_id}）",
-
                     },
-
                     task_id=parent_task_id,
-
                 )
-

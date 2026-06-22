@@ -5,14 +5,10 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-import os
-import tempfile
 
-import pytest
 
 from zephyr.security.llm_defense.llm_security.layers.l2a_process_sandbox import (
     BlindSpot5ProcessSandboxGuard,
-    ChangeValidationResult,
     FilesystemAuditEntry,
     ProcessSandboxLayer,
     SandboxContainerConfig,

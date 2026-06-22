@@ -34,7 +34,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -42,7 +42,7 @@ ensure_utf8_stdout()
 PROTECTED_PATTERNS = [
     (".git/", "只读——禁止任何操作"),
     ("AGENTS.md", "重大修改须 Owner 审批"),
-    ("docs/01_policies_and_standards/meta/", "重大修改须 Owner 审批（meta/ 下所有 .md）"),
+    ("docs/01_policies_and_standards/rules/", "重大修改须 Owner 审批（rules/ 下所有 .yaml）"),
     ("docs/02_enterprise_architecture/target-architecture/architecture-model/", "重大修改须 Owner 审批"),
 ]
 
@@ -71,7 +71,10 @@ def check_session_log(session_log_path: str) -> list[str]:
         return findings
     content = log_path.read_text(encoding="utf-8", errors="replace")
     import re
-    write_entries = re.findall(r"(?:Write|write|创建|修改|编辑).*?['\"]?([^'\"\s]+\.(?:py|md|yaml|yml|json))['\"]?", content)
+
+    write_entries = re.findall(
+        r"(?:Write|write|创建|修改|编辑).*?['\"]?([^'\"\s]+\.(?:py|md|yaml|yml|json))['\"]?", content
+    )
     for entry_path in write_entries:
         findings.extend(check_path(entry_path))
     return findings

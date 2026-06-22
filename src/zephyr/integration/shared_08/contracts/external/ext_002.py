@@ -2,28 +2,18 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-175 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.contracts.external.ext_004_002
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:EXT-002 ====
+from dataclasses import dataclass
 
-from dataclasses import dataclass, field
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -45,12 +35,13 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class Market_Data_Provider:
     pass
 
-# ==== END CODGEN:EXT-002 ====
 
+# ==== END CODGEN:EXT-002 ====

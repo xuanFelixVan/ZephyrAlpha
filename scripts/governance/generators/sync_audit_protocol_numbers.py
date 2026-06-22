@@ -28,9 +28,8 @@ SSoT 源:
 
 from __future__ import annotations
 
-import os
-
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
@@ -42,33 +41,21 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 SSOT_PATHS = {
     "total_scripts": REPO_ROOT / "scripts" / "governance" / "script_manifest.yaml",
-    "total_gates": REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "gate-registry.md",
+    "total_gates": REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "gate-registry.md",
     "total_registries": REPO_ROOT
     / "docs"
     / "01_policies_and_standards"
     / "_registry"
     / "catalogs"
     / "registry-master-index.yaml",
-    "precommit_hooks": REPO_ROOT / ".pre_commit-config.yaml",
+    "precommit_hooks": REPO_ROOT / ".pre-commit-config.yaml",
 }
 
-AUDIT_PROTOCOL = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "governance"
-    / "compliance"
-    / "audit-protocol.md"
-)
+AUDIT_PROTOCOL = REPO_ROOT / "docs" / "01_policies_and_standards" / "governance" / "compliance" / "audit-protocol.md"
 
 PLACEHOLDER_RE = re.compile(r"<!--\s*AUTO_SYNC:(\w+):(\d+)\s*-->")
 
@@ -101,9 +88,7 @@ def read_ssot_values() -> dict[str, int]:
     if p.exists():
         with open(p, encoding="utf-8") as f:
             pc = yaml.safe_load(f)
-        values["precommit_hooks"] = sum(
-            len(repo.get("hooks", [])) for repo in pc.get("repos", [])
-        )
+        values["precommit_hooks"] = sum(len(repo.get("hooks", [])) for repo in pc.get("repos", []))
 
     return values
 
@@ -145,25 +130,21 @@ def sync(check_only: bool = False) -> int:
     tmp_path = f"{AUDIT_PROTOCOL}.{os.getpid()}.tmp"
 
     try:
-
         Path(tmp_path).write_text(new_text, encoding="utf-8")
 
         os.replace(tmp_path, AUDIT_PROTOCOL)
 
     except PermissionError:
-
         try:
-
             os.remove(tmp_path)
 
         except OSError:
-
             pass
     print(f"SYNCED — {AUDIT_PROTOCOL.name} updated")
     return EXIT_PASS
-def _replace_bare_numbers(
-    text: str, key: str, old_val: int, new_val: int
-) -> str:
+
+
+def _replace_bare_numbers(text: str, key: str, old_val: int, new_val: int) -> str:
     """_replace_bare_numbers implementation."""
     changelog_idx = text.find(CHANGELOG_HEADER)
     body = text[:changelog_idx] if changelog_idx >= 0 else text
@@ -178,9 +159,7 @@ def _replace_bare_numbers(
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="Sync audit-protocol.md numbers from SSoT registries"
-    )
+    parser = argparse.ArgumentParser(description="Sync audit-protocol.md numbers from SSoT registries")
     parser.add_argument(
         "--check",
         action="store_true",

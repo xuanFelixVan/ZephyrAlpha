@@ -47,8 +47,8 @@ _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _MANIFEST_PATH = _SCRIPTS_DIR / "script_manifest.yaml"
 _KILL_SWITCH_PATH = _SCRIPTS_DIR / "meta" / "kill_switch_state.yaml"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _check_run_all() -> dict:
@@ -56,8 +56,12 @@ def _check_run_all() -> dict:
     start = datetime.now(UTC)
     result = subprocess.run(
         [sys.executable, str(_SCRIPTS_DIR / "run_all.py"), "--list"],
-        capture_output=True, text=True, timeout=60,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=60,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     elapsed = (datetime.now(UTC) - start).total_seconds()
     return {
@@ -65,7 +69,7 @@ def _check_run_all() -> dict:
         "passed": result.returncode == 0,
         "exit_code": result.returncode,
         "elapsed_seconds": elapsed,
-        "detail": result.stderr[-500:] if not result.returncode == 0 else "",
+        "detail": result.stderr[-500:] if result.returncode != 0 else "",
     }
 
 
@@ -96,8 +100,12 @@ def _check_manifest_consistency() -> dict:
         return {"check": "manifest_consistency", "passed": False, "detail": "check_registry_consistency.py 不存在"}
     result = subprocess.run(
         [sys.executable, str(checker)],
-        capture_output=True, text=True, timeout=30,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=30,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     return {
         "check": "manifest_consistency",
@@ -110,10 +118,18 @@ def _check_manifest_consistency() -> dict:
 def _check_import_integrity() -> dict:
     """_check_import_integrity implementation."""
     result = subprocess.run(
-        [sys.executable, "-c", "import sys; sys.path.insert(0, 'scripts/governance'); "
-         "from _shared.constants import REPO_ROOT; print('OK')"],
-        capture_output=True, text=True, timeout=30,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        [
+            sys.executable,
+            "-c",
+            "import sys; sys.path.insert(0, 'scripts/governance'); "
+            "from _shared.constants import REPO_ROOT; print('OK')",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     return {
         "check": "import_integrity",
@@ -134,10 +150,7 @@ def _load_kill_switches() -> dict[str, Any]:
 def _check_kill_switches() -> dict:
     """_check_kill_switches implementation."""
     ks = _load_kill_switches()
-    disabled_scripts = {
-        name: info for name, info in ks.get("scripts", {}).items()
-        if info.get("disabled", False)
-    }
+    disabled_scripts = {name: info for name, info in ks.get("scripts", {}).items() if info.get("disabled", False)}
     return {
         "check": "kill_switches",
         "passed": not ks.get("global_freeze", False),

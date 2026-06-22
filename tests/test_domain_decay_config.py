@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_domain_decay_config.py -q
 from __future__ import annotations
-import pytest
+
 from zephyr.autonomy_core.domain_decay_config import DomainDecay, DomainDecayConfig
 
 

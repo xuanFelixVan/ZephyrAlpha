@@ -13,8 +13,6 @@
 import time
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.ops.gates.deployment_suppression import (
     DeployGateState,
     DeploymentSuppression,

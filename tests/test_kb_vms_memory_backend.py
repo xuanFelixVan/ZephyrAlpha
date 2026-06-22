@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import MagicMock
 
 from zephyr.governance.kb._backend_protocol import (
     InMemoryMemoryBackend,
@@ -120,7 +118,12 @@ class TestVMSMemoryBackendQuery:
     def test_query_vms(self):
         mock_vms = MagicMock()
         mock_vms.search.return_value = [
-            {"id": "v1", "content": "python code", "score": 0.9, "metadata": {"topic": "knowledge", "written_at": "2026-01-01T00:00:00"}},
+            {
+                "id": "v1",
+                "content": "python code",
+                "score": 0.9,
+                "metadata": {"topic": "knowledge", "written_at": "2026-01-01T00:00:00"},
+            },
         ]
         backend = VMSMemoryBackend(vms=mock_vms)
         results = backend.query("python", k=5)
@@ -129,8 +132,18 @@ class TestVMSMemoryBackendQuery:
     def test_query_vms_with_topic_filter(self):
         mock_vms = MagicMock()
         mock_vms.search.return_value = [
-            {"id": "v1", "content": "python code", "score": 0.9, "metadata": {"topic": "knowledge", "written_at": "2026-01-01T00:00:00"}},
-            {"id": "v2", "content": "other", "score": 0.8, "metadata": {"topic": "rules", "written_at": "2026-01-01T00:00:00"}},
+            {
+                "id": "v1",
+                "content": "python code",
+                "score": 0.9,
+                "metadata": {"topic": "knowledge", "written_at": "2026-01-01T00:00:00"},
+            },
+            {
+                "id": "v2",
+                "content": "other",
+                "score": 0.8,
+                "metadata": {"topic": "rules", "written_at": "2026-01-01T00:00:00"},
+            },
         ]
         backend = VMSMemoryBackend(vms=mock_vms)
         results = backend.query("python", k=5, topic="knowledge")

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.subagent_hook_propagator import (
     SubagentHookPropagator,
 )

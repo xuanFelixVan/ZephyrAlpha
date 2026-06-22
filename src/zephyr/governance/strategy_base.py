@@ -43,7 +43,7 @@ import importlib
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar
 
 _logger = logging.getLogger(__name__)
 
@@ -51,6 +51,7 @@ _logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class StrategyMeta:
     """策略元数据（OCP-002 meta_fields）"""
+
     strategy_id: str
     name: str
     strategy_type: str
@@ -70,7 +71,8 @@ class StrategyBase(abc.ABC):
       - 定义 meta 属性返回 StrategyMeta
       - 通过 @StrategyRegistry.register 装饰器注册
     """
-    _registry: ClassVar[dict[str, type["StrategyBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[StrategyBase]]] = {}
 
     @abc.abstractmethod
     def generate_target_weights(
@@ -78,16 +80,15 @@ class StrategyBase(abc.ABC):
         universe: list[str],
         signals: dict[str, float],
         constraints: dict[str, Any],
-    ) -> dict[str, float]:
-        ...
+    ) -> dict[str, float]: ...
 
     def validate_constraints(self, weights: dict[str, float]) -> bool:
         """验证约束条件（默认通过，子类可覆写）"""
         return True
 
     @classmethod
-    def meta(cls) -> Optional[StrategyMeta]:
-        return getattr(cls, '_meta', None)
+    def meta(cls) -> StrategyMeta | None:
+        return getattr(cls, "_meta", None)
 
     def on_fill(self, fill) -> None:
         pass
@@ -105,6 +106,7 @@ class StrategyRegistry:
             meta = StrategyMeta(...)
             ...
     """
+
     _strategies: dict[str, type[StrategyBase]] = {}
 
     @classmethod
@@ -114,13 +116,9 @@ class StrategyRegistry:
             m = m()
         if m:
             if m.strategy_id in cls._strategies:
-                raise ValueError(
-                    f"Strategy with id '{m.strategy_id}' already registered"
-                )
+                raise ValueError(f"Strategy with id '{m.strategy_id}' already registered")
             cls._strategies[m.strategy_id] = strategy_class
-            _logger.info(
-                "StrategyRegistry: registered %s (%s)", m.strategy_id, m.name
-            )
+            _logger.info("StrategyRegistry: registered %s (%s)", m.strategy_id, m.name)
         return strategy_class
 
     @classmethod
@@ -155,9 +153,7 @@ def autodiscover_strategies(
                     importlib.import_module(f"{package_path}.{fp.stem}")
                     found += 1
                 except Exception as exc:
-                    _logger.warning(
-                        "Failed to auto-discover strategy %s: %s", fp.stem, exc
-                    )
+                    _logger.warning("Failed to auto-discover strategy %s: %s", fp.stem, exc)
     except Exception as exc:
         _logger.warning("Strategy autodiscover skipped: %s", exc)
     return found

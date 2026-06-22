@@ -26,6 +26,7 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+
 class FunctionDiscovery:
     """主动发现未注册的共享函数."""
 
@@ -53,12 +54,14 @@ class FunctionDiscovery:
         candidates = []
         for name, count in frequency.items():
             if count >= 2 and name not in known_shared:
-                candidates.append({
-                    "name": name,
-                    "occurrences": count,
-                    "files": definitions[name][:5],
-                    "recommendation": "SUGGEST_SHARED" if count >= 3 else "MONITOR",
-                })
+                candidates.append(
+                    {
+                        "name": name,
+                        "occurrences": count,
+                        "files": definitions[name][:5],
+                        "recommendation": "SUGGEST_SHARED" if count >= 3 else "MONITOR",
+                    }
+                )
 
         candidates.sort(key=lambda c: c["occurrences"], reverse=True)
         return candidates[:20]

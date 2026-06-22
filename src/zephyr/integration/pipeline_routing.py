@@ -3,4 +3,4 @@ from zephyr.integration.ct_pipe_routing import PipelineRouteDecision
 from zephyr.integration.models import M_MODULE_SPECS, M_MODULES, PipelineStatus
 from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
-__all__ = ["PipelineRouteDecision", "M_MODULE_SPECS", "M_MODULES", "PipelineOrchestrator", "PipelineStatus"]
+__all__ = ["M_MODULES", "M_MODULE_SPECS", "PipelineOrchestrator", "PipelineRouteDecision", "PipelineStatus"]

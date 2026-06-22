@@ -14,13 +14,10 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from zephyr.ops.decision_engine import (
     AnomalyReport,
     AnomalySeverity,
     DecisionEngine,
-    ScheduleAdjustment,
     reflect_on_blueprint,
 )
 from zephyr.ops.protocols import ActionType

@@ -7,8 +7,7 @@
 # [TESTS] —
 """Tests for MOD-INF-026 IndexGenerator module — 蓝图 §2.4 + §17 附录 H 要求 >80% 覆盖."""
 
-import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from zephyr.infrastructure.asset_inventory.index_generator import (
     IndexGenerator,
@@ -20,23 +19,24 @@ from zephyr.infrastructure.asset_inventory.index_generator import (
 from zephyr.infrastructure.asset_inventory.models import (
     AssetStatus,
     AssetType,
-    ClassifiedAsset,
     ClassificationResult,
-    UnifiedAssetIndex,
+    ClassifiedAsset,
 )
 
 
 def _classified(total: int = 5, unknown_pct: float = 0.0) -> ClassificationResult:
     assets = []
     for i in range(total):
-        assets.append(ClassifiedAsset(
-            relative_path=f"src/module_{i}.py",
-            asset_type=AssetType.MODULE,
-            status=AssetStatus.ACTIVE,
-            size_bytes=100,
-            mtime_utc=datetime.now(timezone.utc),
-            sha256="a" * 64,
-        ))
+        assets.append(
+            ClassifiedAsset(
+                relative_path=f"src/module_{i}.py",
+                asset_type=AssetType.MODULE,
+                status=AssetStatus.ACTIVE,
+                size_bytes=100,
+                mtime_utc=datetime.now(UTC),
+                sha256="a" * 64,
+            )
+        )
     return ClassificationResult(
         classification_id="C-TEST-001",
         source_scan_id="S-TEST-001",
@@ -102,27 +102,52 @@ class TestHealthCalculations:
 class TestCountByStatus:
     def test_all_active(self) -> None:
         assets = [
-            ClassifiedAsset(relative_path="a.py", asset_type=AssetType.MODULE,
-                            status=AssetStatus.ACTIVE, size_bytes=100,
-                            mtime_utc=datetime.now(timezone.utc), sha256="a" * 64),
-            ClassifiedAsset(relative_path="b.py", asset_type=AssetType.MODULE,
-                            status=AssetStatus.ACTIVE, size_bytes=100,
-                            mtime_utc=datetime.now(timezone.utc), sha256="b" * 64),
+            ClassifiedAsset(
+                relative_path="a.py",
+                asset_type=AssetType.MODULE,
+                status=AssetStatus.ACTIVE,
+                size_bytes=100,
+                mtime_utc=datetime.now(UTC),
+                sha256="a" * 64,
+            ),
+            ClassifiedAsset(
+                relative_path="b.py",
+                asset_type=AssetType.MODULE,
+                status=AssetStatus.ACTIVE,
+                size_bytes=100,
+                mtime_utc=datetime.now(UTC),
+                sha256="b" * 64,
+            ),
         ]
         result = _count_by_status(assets)
         assert result == {"active": 2}
 
     def test_mixed_statuses(self) -> None:
         assets = [
-            ClassifiedAsset(relative_path="a.py", asset_type=AssetType.MODULE,
-                            status=AssetStatus.ACTIVE, size_bytes=100,
-                            mtime_utc=datetime.now(timezone.utc), sha256="a" * 64),
-            ClassifiedAsset(relative_path="b.py", asset_type=AssetType.MODULE,
-                            status=AssetStatus.ACTIVE, size_bytes=100,
-                            mtime_utc=datetime.now(timezone.utc), sha256="b" * 64),
-            ClassifiedAsset(relative_path="c.py", asset_type=AssetType.MODULE,
-                            status=AssetStatus.DEPRECATED, size_bytes=100,
-                            mtime_utc=datetime.now(timezone.utc), sha256="c" * 64),
+            ClassifiedAsset(
+                relative_path="a.py",
+                asset_type=AssetType.MODULE,
+                status=AssetStatus.ACTIVE,
+                size_bytes=100,
+                mtime_utc=datetime.now(UTC),
+                sha256="a" * 64,
+            ),
+            ClassifiedAsset(
+                relative_path="b.py",
+                asset_type=AssetType.MODULE,
+                status=AssetStatus.ACTIVE,
+                size_bytes=100,
+                mtime_utc=datetime.now(UTC),
+                sha256="b" * 64,
+            ),
+            ClassifiedAsset(
+                relative_path="c.py",
+                asset_type=AssetType.MODULE,
+                status=AssetStatus.DEPRECATED,
+                size_bytes=100,
+                mtime_utc=datetime.now(UTC),
+                sha256="c" * 64,
+            ),
         ]
         result = _count_by_status(assets)
         assert result == {"active": 2, "deprecated": 1}
@@ -170,5 +195,5 @@ class TestToYaml:
         assert "true" in result
 
     def test_special_chars_escaped(self) -> None:
-        result = _to_yaml({"path": 'C:\\Users\\test'})
+        result = _to_yaml({"path": "C:\\Users\\test"})
         assert "C:" in result

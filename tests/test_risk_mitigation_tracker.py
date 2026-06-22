@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.risk_mitigation_tracker import (
-    RiskMitigationTracker, MitigationEntry,
+    MitigationEntry,
+    RiskMitigationTracker,
 )
+
 
 class TestRiskMitigationTracker:
     def test_instantiation(self):

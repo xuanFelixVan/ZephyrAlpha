@@ -14,14 +14,14 @@ AI 在创建任何文件或目录之前，必须执行"验架构 → 选位置 �
 - **规则**：
 
   **前置步 —— 架构上下文自检（先看结构对不对）**
-  - 执行 `../../meta/governance-methodology-standard.md`（PS-STD-011）MTH-002（架构上下文自检）的四步流程
+  - 执行 `../../meta/governance_methodology_standard.yaml`（PS-STD-011）MTH-002（架构上下文自检）的四步流程
   - 确认目标架构层完整——该层已有架构描述文件且已通过验证
   - 若该层架构不完整 → 优先补全架构文件，不得在不完整的架构层中创建孤立文件
 
   **Step 1 —— 精准定位（选对放的地方）**
   - 先查 `../../governance/document/trae_028_doc_structure_naming.yaml`（GOV-DOC-002）是否定义了该文件类型应放置的位置
   - 如果项目标准已定义 → 严格遵守
-  - 如果项目标准未定义 → 参考 `../../meta/governance-methodology-standard.md`（PS-STD-011）中的 MTH-001 标准先行原则，参考专业机构做法（ITIL SACM / ISO 9001 §7.5）确定位置
+  - 如果项目标准未定义 → 参考 `../../meta/governance_methodology_standard.yaml`（PS-STD-011）中的 MTH-001 标准先行原则，参考专业机构做法（ITIL SACM / ISO 9001 §7.5）确定位置
   - 禁止凭直觉或习惯随手放置文件
 
   **Step 2 —— 查重扫描（有没有类似的）**

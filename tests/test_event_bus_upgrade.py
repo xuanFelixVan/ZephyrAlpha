@@ -12,15 +12,15 @@
 
 import warnings
 
-import pytest
-
 
 class TestEventBusUpgradeDeprecation:
     def test_import_emits_deprecation_warning(self):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             import importlib
+
             import zephyr.infrastructure.event_bus_upgrade as mod
+
             importlib.reload(mod)
             deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
             assert len(deprecation_warnings) > 0
@@ -30,4 +30,5 @@ class TestEventBusUpgradeDeprecation:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
             from zephyr.infrastructure.runtime_integration import event_bus_upgrade
+
             assert hasattr(event_bus_upgrade, "__all__") or True

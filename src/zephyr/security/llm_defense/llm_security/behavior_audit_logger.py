@@ -75,13 +75,13 @@ class RotationPolicy(str, Enum):
 
 class AuditEvent:
     __slots__ = (
-        "timestamp",
-        "model",
         "action",
-        "target",
+        "extra",
+        "model",
         "result",
         "session_id",
-        "extra",
+        "target",
+        "timestamp",
     )
 
     def __init__(
@@ -122,9 +122,9 @@ class AuditEvent:
 
 class AuditQuery:
     __slots__ = (
-        "session_id",
-        "model",
         "action",
+        "model",
+        "session_id",
         "time_from",
         "time_to",
     )
@@ -262,13 +262,16 @@ class AuditLogger:
         with open(log_file, "a", encoding="utf-8") as fh:
             fh.write(line)
 
-        write_to_core("llm_behavior_audit", {
-            "action": action.value,
-            "target": target,
-            "result": result,
-            "session_id": sid,
-            "model": mdl,
-        })
+        write_to_core(
+            "llm_behavior_audit",
+            {
+                "action": action.value,
+                "target": target,
+                "result": result,
+                "session_id": sid,
+                "model": mdl,
+            },
+        )
 
     def log_model_call(
         self,

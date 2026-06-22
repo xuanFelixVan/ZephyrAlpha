@@ -20,8 +20,6 @@
 # [TESTS] test_escalation_incident_response
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.incident_response import (
     INCIDENT_PROTOCOLS,
     IncidentLevel,

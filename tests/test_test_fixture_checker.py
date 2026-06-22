@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import os
-
-import pytest
-
 from zephyr.behavioral_audit.test_fixture_checker import (
     FixtureDriftEvent,
     run_fixture_check,
@@ -103,9 +99,7 @@ class TestScanMockTargetDrift:
         (src_dir / "real.py").write_text("x = 1", encoding="utf-8")
         test_file = test_dir / "test_orphan.py"
         test_file.write_text(
-            "from unittest.mock import patch\n"
-            "@patch('nonexistent.module.Class')\n"
-            "def test_x(m):\n    pass\n",
+            "from unittest.mock import patch\n@patch('nonexistent.module.Class')\ndef test_x(m):\n    pass\n",
             encoding="utf-8",
         )
         events = scan_mock_target_drift(str(test_dir), str(src_dir))
@@ -119,9 +113,7 @@ class TestScanMockTargetDrift:
         (src_dir / "app.py").write_text("class Foo: pass", encoding="utf-8")
         test_file = test_dir / "test_app.py"
         test_file.write_text(
-            "from unittest.mock import patch\n"
-            "@patch('simplemodule')\n"
-            "def test_x(m):\n    pass\n",
+            "from unittest.mock import patch\n@patch('simplemodule')\ndef test_x(m):\n    pass\n",
             encoding="utf-8",
         )
         events = scan_mock_target_drift(str(test_dir), str(src_dir))
@@ -162,8 +154,7 @@ class TestScanExpectedOutputDrift:
     def test_short_assert_not_flagged(self, tmp_path):
         test_file = tmp_path / "test_short.py"
         test_file.write_text(
-            "def test_short():\n"
-            "    assert 1 + 1 == 2\n",
+            "def test_short():\n    assert 1 + 1 == 2\n",
             encoding="utf-8",
         )
         events = scan_expected_output_drift(str(tmp_path))

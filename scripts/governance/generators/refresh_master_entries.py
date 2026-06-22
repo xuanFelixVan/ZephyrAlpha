@@ -14,23 +14,22 @@ Usage:
     python scripts/governance/generators/refresh_master_entries.py
     python scripts/governance/generators/refresh_master_entries.py --check
 """
-from __future__ import annotations
-import os
 
+from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
 import yaml
-
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.registry_entry_count import count_primary_registry_entries
 

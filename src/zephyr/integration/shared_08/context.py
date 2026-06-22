@@ -44,7 +44,6 @@ SSoT: MOD-INF-016 §2.15 shared-context
 Version: 0.1.0
 """
 
-
 from __future__ import annotations
 
 import contextvars
@@ -57,8 +56,8 @@ from typing import Any
 __all__ = [
     "RequestContext",
     "current_context",
-    "set_context",
     "get_request_id",
+    "set_context",
     "set_request_id",
 ]
 

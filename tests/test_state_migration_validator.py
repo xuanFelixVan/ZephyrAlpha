@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import hashlib
-
-import pytest
-
 from zephyr.ops.forensic.state_migration_validator import (
     MigrationResult,
     StateMigrationValidator,
@@ -85,7 +81,11 @@ class TestStateMigrationValidator:
         old = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10}
         new = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 99, "j": 10}
         result = smv.validate_migration("0.39", "0.40", "state", old, new)
-        assert result["result"] in (MigrationResult.PARTIAL.value, MigrationResult.MIGRATED.value, MigrationResult.COMPATIBLE.value)
+        assert result["result"] in (
+            MigrationResult.PARTIAL.value,
+            MigrationResult.MIGRATED.value,
+            MigrationResult.COMPATIBLE.value,
+        )
 
     def test_validate_migration_migrated(self):
         smv = StateMigrationValidator(max_divergence_pct=50.0)
@@ -115,7 +115,13 @@ class TestStateMigrationValidator:
     def test_can_migrate_safely_with_incompatible(self):
         smv = StateMigrationValidator()
         smv.validate_migration("0.39", "0.40", "s1", {"a": 1}, {"a": 1})
-        smv.validate_migration("0.39", "0.40", "s2", {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10}, {"a": 99, "b": 99, "c": 99, "d": 99, "e": 99, "f": 99, "g": 99, "h": 99, "i": 99, "j": 99})
+        smv.validate_migration(
+            "0.39",
+            "0.40",
+            "s2",
+            {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10},
+            {"a": 99, "b": 99, "c": 99, "d": 99, "e": 99, "f": 99, "g": 99, "h": 99, "i": 99, "j": 99},
+        )
         result = smv.can_migrate_safely("0.39", "0.40")
         assert result["safe"] is False
         assert result["incompatible"] >= 1
@@ -145,6 +151,12 @@ class TestStateMigrationValidator:
     def test_overall_migration_health_mixed(self):
         smv = StateMigrationValidator()
         smv.validate_migration("0.39", "0.40", "s1", {"a": 1}, {"a": 1})
-        smv.validate_migration("0.39", "0.40", "s2", {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10}, {"a": 99, "b": 99, "c": 99, "d": 99, "e": 99, "f": 99, "g": 99, "h": 99, "i": 99, "j": 99})
+        smv.validate_migration(
+            "0.39",
+            "0.40",
+            "s2",
+            {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10},
+            {"a": 99, "b": 99, "c": 99, "d": 99, "e": 99, "f": 99, "g": 99, "h": 99, "i": 99, "j": 99},
+        )
         health = smv.overall_migration_health()
         assert 0.0 <= health <= 1.0

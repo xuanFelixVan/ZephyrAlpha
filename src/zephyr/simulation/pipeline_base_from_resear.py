@@ -51,6 +51,7 @@ from zephyr.integration.contracts.experiment_result import ExperimentResult
 @dataclass(frozen=True)
 class ExperimentConfig:
     """实验配置"""
+
     experiment_id: str
     hypothesis: str
     control_params: dict[str, Any]
@@ -64,6 +65,7 @@ class ExperimentConfig:
 @dataclass(frozen=True)
 class ExperimentMetric:
     """单指标实验结果统计（内部中间产物）"""
+
     experiment_id: str
     metric_name: str
     control_value: float
@@ -83,17 +85,16 @@ class ExperimentPipelineBase(abc.ABC):
       - 支持 A/B 分组与 p-value / effect_size 计算
       - 最终实验结论通过 ScoutAgent 汇总为 ExperimentResult
     """
-    _registry: ClassVar[dict[str, type["ExperimentPipelineBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[ExperimentPipelineBase]]] = {}
 
     @abc.abstractmethod
-    def run(self, config: ExperimentConfig,
-            idempotency_key: str) -> list[ExperimentMetric]:
+    def run(self, config: ExperimentConfig, idempotency_key: str) -> list[ExperimentMetric]:
         """执行实验，返回各指标的统计结果"""
         ...
 
     @staticmethod
-    def compute_effect_size(control: float, treatment: float,
-                            pooled_std: float) -> float:
+    def compute_effect_size(control: float, treatment: float, pooled_std: float) -> float:
         """Cohen's d 效应量计算"""
         if pooled_std == 0:
             return 0.0
@@ -113,11 +114,11 @@ class ScoutAgentBase(abc.ABC):
       - confidence < 0.7 的结论不应发布（L09/L11 消费端应忽略）
       - 已确认结论 archived_to_kms = True，写入 KMS 知识管道
     """
-    _registry: ClassVar[dict[str, type["ScoutAgentBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[ScoutAgentBase]]] = {}
 
     @abc.abstractmethod
-    def scout(self, context: dict[str, Any],
-              idempotency_key: str) -> ExperimentResult:
+    def scout(self, context: dict[str, Any], idempotency_key: str) -> ExperimentResult:
         """自动化实验编排：扫码外部信息 → 设计实验 → 执行 → 产出结论"""
         ...
 

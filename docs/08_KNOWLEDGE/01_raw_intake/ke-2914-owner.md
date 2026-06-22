@@ -110,4 +110,3 @@ class BlockchainAuditAnchor(BaseModel):
     decision_hashes: list[str]
     anchor_type: Literal["ethereum", "worm", "hsm", "immudb"]
     transaction_hash: Optional[str] = None
-

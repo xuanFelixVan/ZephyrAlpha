@@ -25,14 +25,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class ComplexityAdjustedBudget:
     base_budget: int
     complexity_factor: float
     adjusted_budget: int
 
+
 class ComplexityBudgetAdjuster:
     """tree-sitter 复杂度×TaskCard.priority → budget coefficient (DD103)."""
-    def adjust(self, base_budget: int = 8000, ast_complexity: int = 10, priority: str = "P2") -> ComplexityAdjustedBudget:
+
+    def adjust(
+        self, base_budget: int = 8000, ast_complexity: int = 10, priority: str = "P2"
+    ) -> ComplexityAdjustedBudget:
         factor = 1.0 + (ast_complexity / 100) * (1.0 if priority == "P0" else 0.5)
-        return ComplexityAdjustedBudget(base_budget=base_budget, complexity_factor=round(factor, 2), adjusted_budget=int(base_budget * factor))
+        return ComplexityAdjustedBudget(
+            base_budget=base_budget, complexity_factor=round(factor, 2), adjusted_budget=int(base_budget * factor)
+        )

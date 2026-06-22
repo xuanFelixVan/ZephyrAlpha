@@ -41,4 +41,4 @@ category: module_blueprint
 | **D-026-29** | 三层通知: Passive/Semi-Active/Blocking | PagerDuty 告警分级——P3/P2 下次 session 见，P1/P0 立即阻断 CI |
 | **D-026-30** | tags + custom_metadata 扩展四维分类 | AWS Tags + K8s Labels/Annotations——Owner 可自定义语义标签 |
 | **D-026-31** | Blueprint Self-Asset Registration: 蓝图自身登记到 index | RULE-TWO 自我指涉——盘点系统通过盘点自己来证明自己存在 |
-| **D-026-32** | 
+| **D-026-32** |

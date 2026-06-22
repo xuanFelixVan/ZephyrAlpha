@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_remote_attestation.py
 
-import pytest
 
 from zephyr.ops.security.remote_attestation import (
     AttestationReport,

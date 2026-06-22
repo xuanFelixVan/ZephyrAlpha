@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 test_session_continuity.py — SessionContinuity 单元测试 (core/ variant)
 ========================================================================
@@ -16,12 +17,9 @@ Tests the canonical session/ version imported through core/ shim.
 
 
 import json
-from datetime import datetime, timezone
-
-import pytest
+from datetime import UTC, datetime
 
 from zephyr.shared.session_continuity import (
-    ContinuityContext,
     SessionContinuity,
     SessionState,
 )
@@ -36,7 +34,7 @@ def _make_state(session_id: str = "core-test", **overrides) -> SessionState:
         cards_failed=[],
         last_checkpoint_json="{}",
         last_journal_line=0,
-        timestamp_utc=datetime.now(timezone.utc).isoformat(),
+        timestamp_utc=datetime.now(UTC).isoformat(),
         metadata={},
     )
     defaults.update(overrides)

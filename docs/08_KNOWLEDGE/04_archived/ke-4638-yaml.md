@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-SESSION-LO-YAML-001
 title: 架构模型 YAML
 category: session_log

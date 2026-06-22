@@ -6,10 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """分派表单元测试——验证 13 系统分派映射的正确性。"""
 
-
-import pytest
 
 from zephyr.autonomy_core.dispatch_table import (
     DISPATCH_TABLE,

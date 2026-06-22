@@ -18,28 +18,28 @@ This package re-exports for backward compatibility.
 from __future__ import annotations
 
 __all__ = [
-    'StrategyBase',
-    'StrategyMeta',
-    'StrategyRegistry',
-    'DefaultEquityStrategy',
-    'RebalanceMode',
-    'ComplianceRule',
-    'PerformanceAttributionReport',
-    'TCAEngineBase',
-    'AttributionEngineBase',
-    'DefaultAttributionEngine',
-    'DefaultTCAEngine',
-    'RiskLimits',
-    'autodiscover_strategies',
+    "AttributionEngineBase",
+    "ComplianceRule",
+    "DefaultAttributionEngine",
+    "DefaultEquityStrategy",
+    "DefaultTCAEngine",
+    "PerformanceAttributionReport",
+    "RebalanceMode",
+    "RiskLimits",
+    "StrategyBase",
+    "StrategyMeta",
+    "StrategyRegistry",
+    "TCAEngineBase",
     "analytics_base",
-    "default_attribution_engine",
-    "default_tca_engine",
-    "risk_limits",
-    "strategy_registry",
+    "autodiscover_strategies",
     "compliance_rule",
+    "default_attribution_engine",
     "default_equity_strategy",
+    "default_tca_engine",
     "performance_attribution_report",
+    "risk_limits",
     "strategy_base",
+    "strategy_registry",
 ]
 
 _LAZY_IMPORTS = {
@@ -59,14 +59,22 @@ _LAZY_IMPORTS = {
 }
 
 _SUBMODULES = [
-    "analytics_base", "default_attribution_engine", "default_tca_engine",
-    "risk_limits", "strategy_registry", "compliance_rule",
-    "default_equity_strategy", "performance_attribution_report", "strategy_base",
+    "analytics_base",
+    "default_attribution_engine",
+    "default_tca_engine",
+    "risk_limits",
+    "strategy_registry",
+    "compliance_rule",
+    "default_equity_strategy",
+    "performance_attribution_report",
+    "strategy_base",
 ]
+
 
 def __getattr__(name):
     if name in _LAZY_IMPORTS:
         import importlib
+
         mod_path, attr_name = _LAZY_IMPORTS[name]
         mod = importlib.import_module(mod_path)
         value = getattr(mod, attr_name)
@@ -74,6 +82,7 @@ def __getattr__(name):
         return value
     if name in _SUBMODULES:
         import importlib
+
         mod = importlib.import_module(f"zephyr.pf_core.{name}")
         globals()[name] = mod
         return mod

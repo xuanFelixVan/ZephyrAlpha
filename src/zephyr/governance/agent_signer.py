@@ -31,7 +31,6 @@ audit-trail.agent_signer — MOD-INF-020 · Agent Ed25519 签名器
   3. Notary 公钥可验证签名
 """
 
-
 from __future__ import annotations
 
 import hashlib

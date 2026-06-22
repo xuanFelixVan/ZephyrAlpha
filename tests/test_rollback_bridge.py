@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_rollback_bridge.py
 
-import pytest
 
 from zephyr.behavioral_audit.rollback_bridge import DriftRollbackBridge
 

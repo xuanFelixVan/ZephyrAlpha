@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_temporal_event_store.py
 
-import pytest
 
 from zephyr.ops.collectors.temporal_event_store import TemporalEventStore
 

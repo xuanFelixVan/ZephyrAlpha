@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-008
-submodule_path: src/zephyr/context-engine
+submodule_path: src/zephyr/intelligence/context_management
 title: Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引
 doc_type: blueprint
 template_for: blueprint
@@ -16,9 +16,9 @@ updated: 2026-05-19
 valid_from: 2026-05-07
 ttl: permanent
 construction_progress: completed
-actual_disk_path: src/zephyr/orchestration/context_management/
+actual_disk_path: src/zephyr/intelligence/context_management/
 belongs_to: MOD-MASTER-001
-parent_module: 
+parent_module:
 generation: 1
 functional_domain: intelligence
 last_verified: 2026-05-19
@@ -31,9 +31,9 @@ summary: Context Engine 集成索引蓝图——拆分为 Core Pipeline (MOD-INF
 tags: [context-engine, ce, context-injection, rag, token-budget, build-compress-validate-inject, infrastructure, capacity-planning, governance, operations]
 priority: P0
 runtime_plane: hot
-depends_on: 
+depends_on:
 - {target: architecture-model/layers/b_context_engine.yaml", at: "全篇", why: "CE YAML SSoT——本蓝图真源"}
-child_modules: 
+child_modules:
 ---
 
 # Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引

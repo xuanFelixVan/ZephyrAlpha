@@ -25,11 +25,10 @@
 职责归属：MOD-INF-023 (Drift Detector)。
 """
 
-
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 _logger = logging.getLogger(__name__)
 

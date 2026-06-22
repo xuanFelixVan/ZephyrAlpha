@@ -16,11 +16,12 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.kb.load_bearing import LoadBearingWall, LBEntry, LBStatus, WallReport
+from zephyr.governance.kb.load_bearing import LBEntry, LBStatus, LoadBearingWall, WallReport
 
 
 def _write_ke(directory: Path, name: str, frontmatter: dict, body: str = "content") -> Path:
     import yaml
+
     directory.mkdir(parents=True, exist_ok=True)
     fm_str = yaml.dump(frontmatter, allow_unicode=True, default_flow_style=False).rstrip()
     text = f"---\n{fm_str}\n---\n{body}"
@@ -50,12 +51,16 @@ class TestLoadBearingWall:
     def test_scan_finds_load_bearing(self, tmp_path: Path):
         wall = self._make_wall(tmp_path)
         ke_dir = self._ke_dir(tmp_path)
-        _write_ke(ke_dir, "KE-001", {
-            "module_id": "KE-001",
-            "is_load_bearing": True,
-            "category": "governance",
-            "version": 1,
-        })
+        _write_ke(
+            ke_dir,
+            "KE-001",
+            {
+                "module_id": "KE-001",
+                "is_load_bearing": True,
+                "category": "governance",
+                "version": 1,
+            },
+        )
         entries = wall.scan()
         assert len(entries) == 1
         assert entries[0].ke_id == "KE-001"
@@ -115,12 +120,16 @@ class TestLoadBearingWall:
     def test_check_healthy(self, tmp_path: Path):
         wall = self._make_wall(tmp_path)
         ke_dir = self._ke_dir(tmp_path)
-        _write_ke(ke_dir, "KE-030", {
-            "module_id": "KE-030",
-            "is_load_bearing": True,
-            "category": "governance",
-            "version": 1,
-        })
+        _write_ke(
+            ke_dir,
+            "KE-030",
+            {
+                "module_id": "KE-030",
+                "is_load_bearing": True,
+                "category": "governance",
+                "version": 1,
+            },
+        )
         report = wall.check()
         assert isinstance(report, WallReport)
         assert report.overall in (LBStatus.HEALTHY, LBStatus.EXPIRING)
@@ -128,6 +137,7 @@ class TestLoadBearingWall:
     def test_check_missing_file(self, tmp_path: Path):
         wall = self._make_wall(tmp_path)
         from datetime import UTC, datetime
+
         entry = LBEntry(
             ke_id="KE-040",
             file_path="docs/08_knowledge/01_raw_intake/KE-040.md",

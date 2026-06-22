@@ -8,8 +8,6 @@
 import pytest
 
 from zephyr.security.llm_defense.llm_security.input_sanitizer import (
-    ALLOWED_COMMANDS,
-    ALLOWED_WRITE_DIRS,
     CommandInjectionError,
     ContextInjectionError,
     InputSanitizer,

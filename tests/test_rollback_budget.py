@@ -13,10 +13,8 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-
-import pytest
 
 from zephyr.governance.rollback_budget import (
     BudgetConsumeResult,
@@ -28,9 +26,12 @@ from zephyr.governance.rollback_budget import (
 class TestBudgetStatus:
     def test_default_values(self):
         s = BudgetStatus(
-            daily_used=0, daily_limit=10,
-            total_used=0, total_limit=100,
-            current_concurrent=0, max_concurrent=3,
+            daily_used=0,
+            daily_limit=10,
+            total_used=0,
+            total_limit=100,
+            current_concurrent=0,
+            max_concurrent=3,
             available=True,
         )
         assert s.daily_used == 0
@@ -40,11 +41,15 @@ class TestBudgetStatus:
 
     def test_custom_values(self):
         s = BudgetStatus(
-            daily_used=5, daily_limit=10,
-            total_used=50, total_limit=100,
-            current_concurrent=2, max_concurrent=3,
+            daily_used=5,
+            daily_limit=10,
+            total_used=50,
+            total_limit=100,
+            current_concurrent=2,
+            max_concurrent=3,
             available=False,
-            daily_tokens_used=50000, max_daily_tokens=100000,
+            daily_tokens_used=50000,
+            max_daily_tokens=100000,
             total_tokens_used=200000,
         )
         assert s.daily_used == 5
@@ -95,7 +100,7 @@ class TestRollbackBudgetStatus:
         b = RollbackBudget(project_root=tmp_path)
         log_path = tmp_path / b.BUDGET_LOG
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        today = datetime.now(timezone.utc).isoformat()
+        today = datetime.now(UTC).isoformat()
         entries = [
             {"timestamp_utc": today, "reason": "test", "token_cost": 100},
             {"timestamp_utc": today, "reason": "test2", "token_cost": 200},
@@ -142,7 +147,7 @@ class TestRollbackBudgetConsume:
         b.consume(reason="test_rollback", token_cost=50)
         log_path = tmp_path / b.BUDGET_LOG
         assert log_path.exists()
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             entry = json.loads(f.readline())
         assert entry["reason"] == "test_rollback"
         assert entry["token_cost"] == 50
@@ -156,7 +161,7 @@ class TestRollbackBudgetConsume:
         b = RollbackBudget(project_root=tmp_path)
         log_path = tmp_path / b.BUDGET_LOG
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        today = datetime.now(timezone.utc).isoformat()
+        today = datetime.now(UTC).isoformat()
         for i in range(b.DAILY_LIMIT):
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps({"timestamp_utc": today, "reason": f"fill_{i}", "token_cost": 0}) + "\n")
@@ -168,7 +173,7 @@ class TestRollbackBudgetConsume:
         b = RollbackBudget(project_root=tmp_path)
         log_path = tmp_path / b.BUDGET_LOG
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        old_date = datetime(2000, 1, 1, tzinfo=timezone.utc).isoformat()
+        old_date = datetime(2000, 1, 1, tzinfo=UTC).isoformat()
         for i in range(b.TOTAL_LIMIT):
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps({"timestamp_utc": old_date, "reason": f"fill_{i}", "token_cost": 0}) + "\n")
@@ -188,7 +193,7 @@ class TestRollbackBudgetConsume:
         b = RollbackBudget(project_root=tmp_path)
         log_path = tmp_path / b.BUDGET_LOG
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        today = datetime.now(timezone.utc).isoformat()
+        today = datetime.now(UTC).isoformat()
         with open(log_path, "w", encoding="utf-8") as f:
             f.write(json.dumps({"timestamp_utc": today, "reason": "big", "token_cost": 99999}) + "\n")
         r = b.consume(reason="overflow", token_cost=2)

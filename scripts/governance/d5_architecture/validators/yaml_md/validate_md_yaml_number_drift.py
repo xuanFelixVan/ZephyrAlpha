@@ -42,7 +42,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
 
@@ -117,7 +117,7 @@ def main() -> None:
     print("=" * 72)
     truth = get_yaml_truth()
     print(
-        f'\n  YAML SSoT 真源: core_services={truth.get('core_services', '?')}, total_modules={truth.get('total_modules', '?')}, p0={truth.get('p0_modules', '?')}, layers={truth.get('layer_count', '?')}'
+        f"\n  YAML SSoT 真源: core_services={truth.get('core_services', '?')}, total_modules={truth.get('total_modules', '?')}, p0={truth.get('p0_modules', '?')}, layers={truth.get('layer_count', '?')}"
     )
     findings = scan_md_files(truth)
     if not findings:
@@ -125,7 +125,9 @@ def main() -> None:
         return EXIT_PASS
     print(f"\n🟡 发现 {len(findings)} 个数字漂移：\n")
     for f in findings:
-        print(f'  DIM-{f['dim']} {f['file']}: 发现 {f['found']}（期望 {f['expected']}）—— "{f['context']}"')
+        print(f'  DIM-{f["dim"]} {f["file"]}: 发现 {f["found"]}（期望 {f["expected"]}）—— "{f["context"]}"')
     return EXIT_FINDINGS
+
+
 if __name__ == "__main__":
     sys.exit(main())

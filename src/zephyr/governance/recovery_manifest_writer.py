@@ -25,8 +25,9 @@ from __future__ import annotations
 
 import base64
 import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
 
 class RecoveryManifestWriter:
     """R2 纯文本 Recovery Manifest."""
@@ -50,7 +51,7 @@ class RecoveryManifestWriter:
 
         manifest = "\n".join(records)
         manifest += f"\n=== MANIFEST_SHA256: {total_sha.hexdigest()} ==="
-        manifest += f"\n=== GENERATED_AT: {datetime.now(timezone.utc).isoformat()} ==="
+        manifest += f"\n=== GENERATED_AT: {datetime.now(UTC).isoformat()} ==="
 
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(manifest, encoding="utf-8")

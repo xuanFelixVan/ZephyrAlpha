@@ -40,9 +40,9 @@ from typing import Any
 import yaml
 
 __all__ = [
-    "ContractTester",
-    "ContractTestResult",
     "ContractStatus",
+    "ContractTestResult",
+    "ContractTester",
 ]
 
 
@@ -138,12 +138,14 @@ class ContractTester:
 
         if isinstance(contract, dict):
             for k, v in contract.items():
-                checks.append({
-                    "field": k,
-                    "type": type(v).__name__,
-                    "passed": bool(v is not None and v != ""),
-                    "message": f"{k}={v} ({type(v).__name__})",
-                })
+                checks.append(
+                    {
+                        "field": k,
+                        "type": type(v).__name__,
+                        "passed": bool(v is not None and v != ""),
+                        "message": f"{k}={v} ({type(v).__name__})",
+                    }
+                )
 
         return checks
 
@@ -166,13 +168,15 @@ class ContractTester:
             if k in contract:
                 val = contract[k]
                 passed = isinstance(val, expected)
-                checks.append({
-                    "field": k,
-                    "expected": str(expected),
-                    "actual": type(val).__name__,
-                    "passed": passed,
-                    "message": f"{k}: expected {expected}, got {type(val).__name__}",
-                })
+                checks.append(
+                    {
+                        "field": k,
+                        "expected": str(expected),
+                        "actual": type(val).__name__,
+                        "passed": passed,
+                        "message": f"{k}: expected {expected}, got {type(val).__name__}",
+                    }
+                )
 
         return checks
 

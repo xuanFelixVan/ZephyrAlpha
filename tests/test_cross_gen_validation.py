@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cross_gen_validation.py
 
-import pytest
 
 from zephyr.ops.evolution.cross_gen_validation import CrossGenValidation
 

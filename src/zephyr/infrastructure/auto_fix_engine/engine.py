@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import logging
-import os
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +31,6 @@ from zephyr.infrastructure.auto_fix_engine.batch_fixer import BatchFixer
 from zephyr.infrastructure.auto_fix_engine.compliance_auditor import ComplianceAuditor
 from zephyr.infrastructure.auto_fix_engine.escalation_bridge import EscalationBridge
 from zephyr.infrastructure.auto_fix_engine.fix_budget import FixBudget, FixStormGuard
-from zephyr.infrastructure.auto_fix_engine.fix_diff import FixDiff
 from zephyr.infrastructure.auto_fix_engine.fix_health_check import FixHealthCheck
 from zephyr.infrastructure.auto_fix_engine.fix_pattern_miner import FixPatternMiner
 from zephyr.infrastructure.auto_fix_engine.fix_reliability import (
@@ -53,17 +51,13 @@ from zephyr.infrastructure.auto_fix_engine.fix_safety import (
     WriteSafety,
 )
 from zephyr.infrastructure.auto_fix_engine.models import (
-    BudgetInfo,
     FixAction,
-    FixConfidence,
     FixHealthReport,
     FixLevel,
     FixReport,
     FixStatus,
-    ValidationResult,
 )
 from zephyr.infrastructure.auto_fix_engine.shadow_workspace import ShadowWorkspace
-from zephyr.infrastructure.auto_fix_engine.state_machine import FixState, FixStateMachine
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +71,9 @@ class AutoFixEngine:
         self._cascade_breaker = CascadeBreaker(self._config.get("cascade_breaker", {}))
         self._fix_budget = FixBudget(self._config.get("budget", {}))
         self._storm_guard = FixStormGuard(self._config.get("storm_guard", {}))
-        self._idempotency = IdempotencyGuard(ttl_hours=self._config.get("reliability", {}).get("idempotency_ttl_hours", 24))
+        self._idempotency = IdempotencyGuard(
+            ttl_hours=self._config.get("reliability", {}).get("idempotency_ttl_hours", 24)
+        )
         self._conflict_resolver = ConflictResolver()
         self._order_resolver = FixOrderResolver()
         self._blast_radius = BlastRadiusEstimator()
@@ -109,7 +105,7 @@ class AutoFixEngine:
         default_path = Path(__file__).parent / "auto-fix-config.yaml"
         path = config_path or str(default_path)
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 return yaml.safe_load(f) or {}
         except Exception:
             return {}
@@ -131,6 +127,7 @@ class AutoFixEngine:
         for name, (module_path, class_name) in fixer_map.items():
             try:
                 import importlib
+
                 mod = importlib.import_module(module_path)
                 cls = getattr(mod, class_name)
                 self._fixers[name] = cls()

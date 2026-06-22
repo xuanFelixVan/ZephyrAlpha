@@ -10,8 +10,9 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """L11 — ML Training Concrete Implementations"""
+
 from __future__ import annotations
 
 from zephyr.ml_train.implementations.default_inference_engine import DefaultInferenceEngine
 
-__all__ = ['DefaultInferenceEngine', 'default_inference_engine']
+__all__ = ["DefaultInferenceEngine", "default_inference_engine"]

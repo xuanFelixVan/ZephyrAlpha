@@ -25,6 +25,7 @@ from __future__ import annotations
 
 PATH_INDEX: dict[str, list[str]] = {}
 
+
 class PathIndex:
     def lookup(self, module: str) -> list[str]:
         return PATH_INDEX.get(module, [])

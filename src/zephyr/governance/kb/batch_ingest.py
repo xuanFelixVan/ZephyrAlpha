@@ -47,8 +47,8 @@ import yaml
 from zephyr.governance.kb.ingest import IngestGate
 
 __all__ = [
-    "BatchIngestReport",
     "BatchIngestEntry",
+    "BatchIngestReport",
     "BatchIngestor",
 ]
 

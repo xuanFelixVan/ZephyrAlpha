@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-461
 status: active
 title: 5.2 Trigger topology / 触发拓扑图

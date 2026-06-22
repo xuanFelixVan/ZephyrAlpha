@@ -69,7 +69,7 @@ try:
 except ImportError:
     print("ERROR: PyYAML 未安装，请运行 `pip install pyyaml`", file=sys.stderr)
     sys.exit(EXIT_ERROR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 DRAFTS_ROOT = REPO_ROOT / "docs" / "19_development_workspace" / "drafts-and-audits"
 ARCHIVE_ROOT = REPO_ROOT / "docs" / "99_archive"
@@ -79,6 +79,7 @@ WARN_DAYS = 30
 ARCHIVE_DAYS = 60
 STATUS_ARBITRATED = "arbitrated"
 from _shared.frontmatter import parse_frontmatter_from_file
+
 
 def scan_drafts(root: Path, warn_days: int = WARN_DAYS, archive_days: int = ARCHIVE_DAYS) -> list[dict[str, Any]]:
     """scan drafts"""
@@ -128,6 +129,7 @@ def scan_drafts(root: Path, warn_days: int = WARN_DAYS, archive_days: int = ARCH
         )
     return results
 
+
 def compute_archive_target(draft_path: Path, arbitrated_date_str: str) -> Path:
     """compute archive target"""
     try:
@@ -137,6 +139,7 @@ def compute_archive_target(draft_path: Path, arbitrated_date_str: str) -> Path:
         month_dir = "undated"
     draft_name = draft_path.parent.name if draft_path.parent != DRAFTS_ROOT else draft_path.stem
     return ARCHIVE_ROOT / month_dir / draft_name
+
 
 def write_audit_log(entry: dict[str, Any]) -> None:
     """write audit log"""
@@ -151,12 +154,13 @@ def write_audit_log(entry: dict[str, Any]) -> None:
     with open(AUDIT_LOG_PATH, "a", encoding="utf-8", newline="\n") as f:
         f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
 
+
 def execute_archive(drafts: list[dict[str, Any]], confirm: bool = False) -> list[str]:
     """execute archive"""
     actions_taken: list[str] = []
     for draft in drafts:
         if draft["action"] == "warn":
-            msg = f'WARN: {draft['relative']} — arbitrated {draft['age_days']} 天前（≥{WARN_DAYS} 天），建议归档'
+            msg = f"WARN: {draft['relative']} — arbitrated {draft['age_days']} 天前（≥{WARN_DAYS} 天），建议归档"
             actions_taken.append(msg)
             write_audit_log({**draft, "action": "warn"})
         elif draft["action"] == "archive":
@@ -165,13 +169,14 @@ def execute_archive(drafts: list[dict[str, Any]], confirm: bool = False) -> list
                 target.mkdir(parents=True, exist_ok=True)
                 dest = target / draft["path"].name
                 shutil.move(str(draft["path"]), str(dest))
-                msg = f'ARCHIVED: {draft['relative']} → {dest.relative_to(REPO_ROOT)}（arbitrated {draft['age_days']} 天前，≥{ARCHIVE_DAYS} 天）'
+                msg = f"ARCHIVED: {draft['relative']} → {dest.relative_to(REPO_ROOT)}（arbitrated {draft['age_days']} 天前，≥{ARCHIVE_DAYS} 天）"
             else:
                 target = compute_archive_target(draft["path"], draft["arbitrated_date"])
-                msg = f'PROPOSED: {draft['relative']} → {target.relative_to(REPO_ROOT)}/{draft['path'].name}（arbitrated {draft['age_days']} 天前，≥{ARCHIVE_DAYS} 天，需 --confirm）'
+                msg = f"PROPOSED: {draft['relative']} → {target.relative_to(REPO_ROOT)}/{draft['path'].name}（arbitrated {draft['age_days']} 天前，≥{ARCHIVE_DAYS} 天，需 --confirm）"
             actions_taken.append(msg)
             write_audit_log({**draft, "action": "archive" if confirm else "proposed"})
     return actions_taken
+
 
 def main() -> None:
     """入口函数"""
@@ -206,6 +211,7 @@ def main() -> None:
         print("[drafts_zone_archiver] WARN-ONLY 模式：发现归档提议但不阻塞", file=sys.stderr)
         sys.exit(EXIT_PASS)
     sys.exit(EXIT_FINDINGS)
+
 
 if __name__ == "__main__":
     main()

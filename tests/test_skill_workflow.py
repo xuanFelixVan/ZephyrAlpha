@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_skill_workflow.py
 
-import pytest
 from zephyr.autonomy_core.skill_workflow import SkillWorkflow
 
 

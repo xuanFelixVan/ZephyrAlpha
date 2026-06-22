@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 def test_scanner_tokenize():
     from zephyr.governance.scanner import Scanner
+
     s = Scanner()
     result = s.scan_file(Path(__file__))
     assert result.token_count > 0
@@ -23,6 +24,7 @@ def test_scanner_tokenize():
 
 def test_scanner_minhash():
     from zephyr.governance.scanner import Scanner
+
     s = Scanner()
     r1 = s.scan_file(Path(__file__))
     r2 = s.scan_file(Path(__file__))

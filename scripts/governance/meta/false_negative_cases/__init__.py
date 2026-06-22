@@ -24,6 +24,7 @@ False Negative Cases — Golden Test Case 库
       expected_finding_count: 1
       false_negative_if: "脚本未检出此问题"
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -44,8 +45,9 @@ class FalseNegativeCase:
 
 
 def load_cases(directory: str) -> list[FalseNegativeCase]:
-    import yaml
     from pathlib import Path
+
+    import yaml
 
     cases: list[FalseNegativeCase] = []
     dpath = Path(directory)

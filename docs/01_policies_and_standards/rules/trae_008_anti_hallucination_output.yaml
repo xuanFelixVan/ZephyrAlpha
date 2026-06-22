@@ -1,11 +1,21 @@
 rule_id: TRAE-008
 title: 防幻觉-输出验证层
+version: 1.0.0
+layer: L0
+module_id: TRAE-008
+depends_on: []
+tags:
+- TRAE
+- output_verification
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - ANTI-HALL-11
 - ANTI-HALL-12
 - ANTI-HALL-13
 - ANTI-HALL-14
-layer: L0
 severity: critical
 scope: output_verification
 domain: TRAE
@@ -213,10 +223,8 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001
-  note: '2026-06-19 RQ审查：移除已删除的 code_construction_standards.md 源文件引用（内容已迁移到
-    trae_006/007/008/009 + project_rules.md + onboarding_detail.md）；同步 project_rules.md
-    和 onboarding_detail.md 的哈希到当前值'
+  note: '2026-06-19 RQ审查：移除已删除的 code_construction_standards.md 源文件引用（内容已迁移到 trae_006/007/008/009 + project_rules.md + onboarding_detail.md）；同步 project_rules.md 和 onboarding_detail.md 的哈希到当前值'

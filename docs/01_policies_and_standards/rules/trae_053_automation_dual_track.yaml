@@ -1,8 +1,18 @@
 rule_id: TRAE-053
 title: 铁律补充-自动化双轨判定
+version: 1.0.0
+layer: L0
+module_id: TRAE-053
+depends_on: []
+tags:
+- TRAE
+- automation_dual_track
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - RULE-FIFTEEN
-layer: L0
 severity: critical
 scope: automation_dual_track
 domain: TRAE
@@ -62,7 +72,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-19T00:00:00'
   extracted_by: session-20260619-001

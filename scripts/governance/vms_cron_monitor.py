@@ -71,7 +71,11 @@ def run_cycle() -> dict[str, Any]:
         for issue in report.issues:
             _logger.warning("  - %s", issue)
     else:
-        _logger.info("VMS 健康: %d/%d collections OK", report.collections_healthy, report.collections_healthy + report.collections_unhealthy)
+        _logger.info(
+            "VMS 健康: %d/%d collections OK",
+            report.collections_healthy,
+            report.collections_healthy + report.collections_unhealthy,
+        )
 
     return result
 

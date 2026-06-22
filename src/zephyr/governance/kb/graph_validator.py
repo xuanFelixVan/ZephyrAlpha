@@ -140,7 +140,9 @@ class GraphValidator:
 
         jaccard = len(words_a & words_b) / len(words_a | words_b)
         len_ratio = min(len(content_a), len(content_b)) / max(len(content_a), len(content_b))
-        char_overlap = sum(1 for ca, cb in zip(content_a, content_b) if ca == cb) / max(len(content_a), len(content_b))
+        char_overlap = sum(1 for ca, cb in zip(content_a, content_b, strict=False) if ca == cb) / max(
+            len(content_a), len(content_b)
+        )
 
         similarity = 0.4 * jaccard + 0.3 * len_ratio + 0.3 * char_overlap
 
@@ -242,9 +244,7 @@ class GraphValidator:
             ke_id = row["ke_id"]
             db_status = row["status"]
             event_cursor = self._conn.execute(
-                "SELECT payload FROM events "
-                "WHERE event_type = 'state_transition' "
-                "ORDER BY created_at DESC LIMIT 100"
+                "SELECT payload FROM events WHERE event_type = 'state_transition' ORDER BY created_at DESC LIMIT 100"
             )
             latest_event_status: str | None = None
             for erow in event_cursor.fetchall():
@@ -328,6 +328,7 @@ class GraphValidator:
 
 def _normalize(text: str) -> str:
     import re
+
     text = text.lower()
     text = re.sub(r"[^\w\s]", " ", text)
     text = re.sub(r"\s+", " ", text)

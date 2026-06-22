@@ -2,8 +2,8 @@
 """generate_trigger_wiring_view.py — CT-005 → trigger_router.yaml 接线状态自动派生
 
 
-对标 AGENTS.md §6.12（AI受众优先——Canonical YAML → 自动生成 Markdown 视图）
-     AGENTS.md §6.9（架构数据 Canonical SSoT 铁律——YAML 为真源，MD 为派生）
+对标 TRAE-057 §2（AI消费优先原则——Hybrid Principle: Context=MD, Control=YAML）
+     D56裁定（架构数据 Canonical SSoT 铁律——YAML 为真源，MD 为派生）
      OpenAPI（spec.yaml → Swagger UI 自动渲染）
      Terraform（state → plan 自动派生）
 
@@ -34,7 +34,6 @@ from pathlib import Path
 
 import yaml
 
-
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
@@ -44,7 +43,9 @@ from _shared.constants import REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-CT_TRACKER_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.md"
+CT_TRACKER_PATH = (
+    REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.md"
+)
 TRIGGER_ROUTER_PATH = REPO_ROOT / "config/trigger_router.yaml"
 MARKER_START = "# --- AUTO-GENERATED WIRING STATUS START ---"
 MARKER_END = "# --- AUTO-GENERATED WIRING STATUS END ---"
@@ -64,7 +65,7 @@ def build_wiring_lines(wiring: list[dict]) -> list[str]:
     lines: list[str] = []
     for w in wiring:
         arrow = "✅→" if "✅" in w["current"] else "🔲→"
-        lines.append(f'# trigger: {w['trigger']} → {w['current']} {arrow} {w['goal']} [{w['phase']}]')
+        lines.append(f"# trigger: {w['trigger']} → {w['current']} {arrow} {w['goal']} [{w['phase']}]")
     lines.append("#")
     lines.append("# 真实 handler 实施后:")
     lines.append("#   (1) 更新 trigger_router.yaml triggers.<type>.handler 为真实路径")

@@ -12,21 +12,23 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.behavioral_audit.credibility_engine import (
-    CredibilityScore,
     CredibilityEngine,
+    CredibilityScore,
 )
 
 
 class TestCredibilityScore:
     def test_creates_with_fields(self):
         score = CredibilityScore(
-            detector_id="d1", base_score=1.0, fp_rate=0.0,
-            precision=1.0, recency_factor=1.0, credibility=1.0,
+            detector_id="d1",
+            base_score=1.0,
+            fp_rate=0.0,
+            precision=1.0,
+            recency_factor=1.0,
+            credibility=1.0,
             modulation="normal_push",
         )
         assert score.detector_id == "d1"
@@ -35,9 +37,14 @@ class TestCredibilityScore:
 
     def test_has_optional_fields(self):
         score = CredibilityScore(
-            detector_id="d2", base_score=0.5, fp_rate=0.1,
-            precision=0.9, recency_factor=1.0, credibility=0.45,
-            modulation="batched_aggregate", configured_weight=0.7,
+            detector_id="d2",
+            base_score=0.5,
+            fp_rate=0.1,
+            precision=0.9,
+            recency_factor=1.0,
+            credibility=0.45,
+            modulation="batched_aggregate",
+            configured_weight=0.7,
         )
         assert score.configured_weight == 0.7
         assert isinstance(score.computed_at, str)
@@ -90,14 +97,23 @@ class TestCompute:
     def test_stale_detector_reduces_credibility(self):
         engine = CredibilityEngine()
         recent = engine.compute(detector_id="recent", is_proven=True, fp_count=0, total_detections=10, precision=1.0)
-        stale_time = datetime.now(timezone.utc) - timedelta(days=120)
-        stale = engine.compute(detector_id="stale", is_proven=True, fp_count=0, total_detections=10, precision=1.0, last_detected_at=stale_time)
+        stale_time = datetime.now(UTC) - timedelta(days=120)
+        stale = engine.compute(
+            detector_id="stale",
+            is_proven=True,
+            fp_count=0,
+            total_detections=10,
+            precision=1.0,
+            last_detected_at=stale_time,
+        )
         assert recent.credibility >= stale.credibility
 
     def test_credibility_bounded_between_zero_and_one(self):
         engine = CredibilityEngine()
         for fp in range(11):
-            score = engine.compute(detector_id=f"fp_{fp}", is_proven=True, fp_count=fp, total_detections=10, precision=0.5)
+            score = engine.compute(
+                detector_id=f"fp_{fp}", is_proven=True, fp_count=fp, total_detections=10, precision=0.5
+            )
             assert 0.0 <= score.credibility <= 1.0
 
     def test_zero_total_detections_zero_fp_rate(self):

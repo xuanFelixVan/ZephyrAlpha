@@ -27,6 +27,7 @@ Risk: R88 — Autonomous repair loop cannot be stopped once triggered.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class EmergencyTakeover:
     active: bool = False

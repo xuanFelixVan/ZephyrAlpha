@@ -59,4 +59,3 @@ class FLEOwnerCommProtocol:
         if not acked:
             if notif.fallback_if_no_response == "FLE_WILL_AUTO_EXECUTE":
                 self.FLE.log_info("OWNER_NO_RESPONSE_AUTO_EXECUTING",
-           

@@ -15,14 +15,11 @@ CT-TELE-FLE-001: SystemTelemetry → FeedbackLoop 数据管道。
 Telemetry 暴露 metrics 聚合 API，FLE collector 定期拉取并缓存。
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
 import queue
-import time
-from datetime import datetime, timezone
 from enum import Enum, unique
 from typing import Any
 
@@ -32,8 +29,8 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     "MetricPoint",
-    "SourceSystem",
     "MetricsBridge",
+    "SourceSystem",
     "TelemetryWriteError",
     "emit_metrics",
     "get_metrics_queue",
@@ -59,13 +56,13 @@ class MetricPoint:
     """TELE→FLE 协议数据单元"""
 
     __slots__ = (
-        "timestamp",
-        "source_system",
         "metric_name",
-        "value",
-        "unit",
+        "source_system",
         "tags",
+        "timestamp",
         "ttl_seconds",
+        "unit",
+        "value",
     )
 
     def __init__(

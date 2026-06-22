@@ -35,7 +35,6 @@ T-V2-006 扩展（experimental）
 - get_doc_compressor()                 — M3 触发器调用入口
 """
 
-
 from __future__ import annotations
 
 import time
@@ -44,10 +43,8 @@ from pathlib import Path
 from threading import RLock
 from typing import TYPE_CHECKING, Any
 
-from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
-from zephyr.shared.events.event_schemas import EVENT_PAYLOAD_MAP as _EVENT_PAYLOAD_MAP
-from zephyr.shared.infra.cache import MemoryCache as _SharedMemoryCache
+from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
 
 if TYPE_CHECKING:
     from zephyr.autonomy_core.doc_compressor import DocCompressor
@@ -87,6 +84,7 @@ def _load_context_rules_yaml() -> dict:
         return _context_rules_cache
     try:
         import yaml as _yaml
+
         if _CONTEXT_RULES_PATH.exists():
             with _CONTEXT_RULES_PATH.open(encoding="utf-8") as fh:
                 data = _yaml.safe_load(fh) or {}
@@ -116,7 +114,6 @@ def get_thresholds_from_yaml() -> dict[ContextBudgetLevel, float] | None:
                 ContextBudgetLevel.L3_HARD_STOP: params.get("l3_hard_cutoff_ratio", 0.95),
             }
     return None
-
 
 
 class ContextBudgetTracker:
@@ -162,10 +159,7 @@ class ContextBudgetTracker:
 
     def _cleanup_expired_sessions(self, max_age_seconds: float = 86400.0) -> int:
         now = time.time()
-        expired = [
-            sid for sid, s in self._sessions.items()
-            if now - s.get("created_at", 0) > max_age_seconds
-        ]
+        expired = [sid for sid, s in self._sessions.items() if now - s.get("created_at", 0) > max_age_seconds]
         for sid in expired:
             del self._sessions[sid]
         return len(expired)
@@ -192,7 +186,11 @@ class ContextBudgetTracker:
             ratio = usage / limit if limit > 0 else 0.0
 
             triggered = ContextBudgetLevel.L1_WARNING
-            for level in [ContextBudgetLevel.L3_HARD_STOP, ContextBudgetLevel.L2_THROTTLE, ContextBudgetLevel.L1_WARNING]:
+            for level in [
+                ContextBudgetLevel.L3_HARD_STOP,
+                ContextBudgetLevel.L2_THROTTLE,
+                ContextBudgetLevel.L1_WARNING,
+            ]:
                 threshold = self._thresholds.get(level, 0.0)
                 if ratio >= threshold:
                     triggered = level

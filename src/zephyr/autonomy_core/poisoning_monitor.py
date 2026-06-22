@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class PoisoningRisk:
     ke_id: str
@@ -33,7 +34,11 @@ class PoisoningRisk:
     likely_poisoned: bool
     score_delta: float
 
+
 class PoisoningMonitor:
     """SVD dimReduce→k-NN outlier→per-KE poisoning_risk flag (DD97)."""
+
     def analyze(self, ke_id: str, embeddings: list[list[float]]) -> PoisoningRisk:
-        return PoisoningRisk(ke_id=ke_id, cosine_to_nearest=0.95, cosine_to_centroid=0.86, likely_poisoned=False, score_delta=0.0)
+        return PoisoningRisk(
+            ke_id=ke_id, cosine_to_nearest=0.95, cosine_to_centroid=0.86, likely_poisoned=False, score_delta=0.0
+        )

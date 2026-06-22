@@ -9,16 +9,12 @@
 测试 AgentIdentity — 身份模型
 """
 
-import pytest
-
 from zephyr.security.access_control.identity import (
-    AgentIdentity,
-    MaturityLevel,
-    IDESource,
-    AgentRole,
     ROLE_DEFAULT_PERMISSIONS,
-    MATURITY_TLB_LIMITS,
-    MATURITY_AUTO_GUARD_TIMEOUT,
+    AgentIdentity,
+    AgentRole,
+    IDESource,
+    MaturityLevel,
 )
 
 

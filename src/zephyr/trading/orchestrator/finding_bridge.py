@@ -28,30 +28,27 @@ Script System -> Orchestrator: Finding -> TaskCard 转换管道
     script_system.Finding -> AuditFinding -> FindingTaskBridge -> TaskRepository -> TaskCard
 """
 
-
 from __future__ import annotations
 
-import logging
-from pathlib import Path
-from typing import Sequence
-
 import importlib as _importlib
+import logging
+from collections.abc import Sequence
+from pathlib import Path
 
 _bridge_mod = _importlib.import_module("zephyr.infrastructure.finding_task_bridge")
 AuditFinding = _bridge_mod.AuditFinding
 BridgeResult = _bridge_mod.BridgeResult
 FindingTaskBridge = _bridge_mod.FindingTaskBridge
 SEVERITY_TO_PRIORITY = _bridge_mod.SEVERITY_TO_PRIORITY
-from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.shared.shared_services.models import TaskNamespace
 
 _logger = logging.getLogger(__name__)
 
 __all__ = [
+    "finding_to_audit_finding",
     "report_finding",
     "report_findings",
-    "finding_to_audit_finding",
 ]
 
 _SEVERITY_MAP: dict[str, str] = {

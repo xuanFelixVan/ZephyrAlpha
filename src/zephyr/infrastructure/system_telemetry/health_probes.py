@@ -26,7 +26,6 @@
 实现 12 系统 liveness/readiness/degraded 三态探针。
 """
 
-
 from __future__ import annotations
 
 import time

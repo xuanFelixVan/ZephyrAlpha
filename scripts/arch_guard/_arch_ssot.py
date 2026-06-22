@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_arch_ssot.py | §
 """arch_guard 共享：仓库根路径、capacity_slo / invariants / contracts 装载。"""
+
 from __future__ import annotations
 
 import re
@@ -11,18 +12,14 @@ REPO_ROOT = ARCH_GUARD_ROOT.parent.parent
 
 CAPACITY_SLO_PATH = REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
 INVARIANTS_PATH = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/"
-    "architecture-model/cross-cutting/invariants.yaml"
+    "docs/02_enterprise_architecture/target-architecture/architecture-model/cross-cutting/invariants.yaml"
 )
 CONTRACTS_PATH = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/"
-    "architecture-model/contracts/cross_layer_contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
 )
 RISK_PARAMS_PATH = REPO_ROOT / "config" / "risk_params.yaml"
 SURVIVORSHIP_POLICY_PATH = REPO_ROOT / "config" / "data" / "survivorship_policy.yaml"
-OCP_MANIFEST_PATH = REPO_ROOT / (
-    "src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json"
-)
+OCP_MANIFEST_PATH = REPO_ROOT / ("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")
 
 
 def load_yaml(path: Path) -> dict[str, Any]:

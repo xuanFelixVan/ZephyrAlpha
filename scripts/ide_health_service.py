@@ -62,6 +62,7 @@ def _check_registry_status() -> dict[str, str]:
     """通过 daemon_registry 查询状态（如果可用）。"""
     try:
         from zephyr.integration.shared_08.lifecycle.daemon_registry import registry
+
         is_running = registry.is_running("ide_health_daemon")
         return {
             "running": "true" if is_running else "false",

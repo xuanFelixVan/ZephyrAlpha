@@ -25,11 +25,10 @@ L58: quantum_sig_degradation + strategic_withhold + tz_semantic → horizon risk
 L59: explore_exploit_balance + third_party_model_dep + ontology_drift
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL58L59:
-
     def __init__(self):
         self.explore_exploit_ratio: float = 0.5
         self.third_party_model_risk: float = 0.0
@@ -45,7 +44,11 @@ class SafetyGateL58L59:
         if self.explore_exploit_ratio < 0.05:
             return GateResult("L59", GateVerdict.OBSERVE_ONLY, GateType.HARD, "Explore/exploit ratio too low")
         if self.third_party_model_risk > 0.7:
-            return GateResult("L59", GateVerdict.REJECT, GateType.HARD, f"Third-party model risk {self.third_party_model_risk:.2f}")
+            return GateResult(
+                "L59", GateVerdict.REJECT, GateType.HARD, f"Third-party model risk {self.third_party_model_risk:.2f}"
+            )
         if self.ontology_drift > 0.4:
-            return GateResult("L59", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Ontology drift {self.ontology_drift:.2f}")
+            return GateResult(
+                "L59", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Ontology drift {self.ontology_drift:.2f}"
+            )
         return GateResult("L59", GateVerdict.PASS, GateType.HARD)

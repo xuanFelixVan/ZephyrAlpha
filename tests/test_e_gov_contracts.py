@@ -69,6 +69,7 @@ class TestEscalationContractsOnBudgetAlert:
         ec = EscalationContracts()
         with MagicMock() as mock_budget:
             from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
+
             mock_budget.__class__ = BudgetAlert
             mock_budget.alert_id = "BA-001"
             mock_budget.session_id = "session-1"
@@ -85,6 +86,7 @@ class TestEscalationContractsOnBudgetAlert:
         ec = EscalationContracts()
         with MagicMock() as mock_budget:
             from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
+
             mock_budget.__class__ = BudgetAlert
             mock_budget.alert_id = "BA-002"
             mock_budget.session_id = "session-2"

@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_shadow | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_shadow
+# [MODULE] zephyr.autonomy_core.skill_shadow
 
 # [INVARIANTS] none
 
@@ -34,19 +34,18 @@ Skill 影子部署引擎
   4. TrafficSplitting: 渐进式切流
 """
 
-
 from __future__ import annotations
 
 import difflib
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import UTC, datetime
+from typing import Any
 
 
 class SkillShadowDeploy:
     """Skill 影子部署器"""
 
     def __init__(self):
-        self._shadow_runs: Dict[str, List[Dict[str, Any]]] = {}
+        self._shadow_runs: dict[str, list[dict[str, Any]]] = {}
         self._current_shadow_pct = 5.0
 
     def shadow_run(
@@ -55,24 +54,26 @@ class SkillShadowDeploy:
         old_output: str,
         new_output: str,
         input_context: str = "",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         seq = difflib.SequenceMatcher(None, old_output, new_output)
         similarity = seq.ratio()
 
-        differences: List[Dict[str, Any]] = []
+        differences: list[dict[str, Any]] = []
 
         if similarity < 1.0:
             opcodes = seq.get_opcodes()
             for tag, i1, i2, j1, j2 in opcodes:
                 if tag != "equal":
-                    differences.append({
-                        "type": tag,
-                        "old_snippet": old_output[i1:i2][:200],
-                        "new_snippet": new_output[j1:j2][:200],
-                    })
+                    differences.append(
+                        {
+                            "type": tag,
+                            "old_snippet": old_output[i1:i2][:200],
+                            "new_snippet": new_output[j1:j2][:200],
+                        }
+                    )
 
         entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "skill_id": skill_id,
             "similarity": round(similarity, 3),
             "differences": differences,
@@ -86,7 +87,7 @@ class SkillShadowDeploy:
 
         return entry
 
-    def analyze_results(self, skill_id: str) -> Dict[str, Any]:
+    def analyze_results(self, skill_id: str) -> dict[str, Any]:
         runs = self._shadow_runs.get(skill_id, [])
         if not runs:
             return {
@@ -100,7 +101,7 @@ class SkillShadowDeploy:
         avg_sim = sum(similarities) / len(similarities)
         all_identical = all(r["identical"] for r in runs)
 
-        all_diffs: List[Dict[str, Any]] = []
+        all_diffs: list[dict[str, Any]] = []
         for r in runs:
             all_diffs.extend(r.get("differences", []))
 
@@ -116,7 +117,7 @@ class SkillShadowDeploy:
             "can_promote": can_promote,
         }
 
-    def promote(self, skill_id: str) -> Dict[str, Any]:
+    def promote(self, skill_id: str) -> dict[str, Any]:
         analysis = self.analyze_results(skill_id)
         if not analysis["can_promote"]:
             return {
@@ -128,6 +129,7 @@ class SkillShadowDeploy:
 
         try:
             from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
+
             freshness = FreshnessDecayModel()
             freshness.boost(skill_id, 50.0)
         except Exception:
@@ -140,14 +142,14 @@ class SkillShadowDeploy:
             "analysis": analysis,
         }
 
-    def rollback_shadow(self, skill_id: str) -> Dict[str, Any]:
+    def rollback_shadow(self, skill_id: str) -> dict[str, Any]:
         return {
             "skill_id": skill_id,
             "rolled_back": True,
             "current_shadow_pct": 0.0,
         }
 
-    def adjust_traffic(self, skill_id: str, new_pct: float) -> Dict[str, Any]:
+    def adjust_traffic(self, skill_id: str, new_pct: float) -> dict[str, Any]:
         clamped = max(0.0, min(100.0, new_pct))
         self._current_shadow_pct = clamped
         return {

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import json
-
 import pytest
 
 from zephyr.intelligence.model_profiling.pipeline_routing.task_model_learner import (

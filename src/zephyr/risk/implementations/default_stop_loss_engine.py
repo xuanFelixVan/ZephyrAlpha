@@ -39,10 +39,10 @@ SSoT: cross_layer_contracts.yaml → CTR-ERR-004 + CTR-006
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any
 
 from zephyr.risk.risk_manager_base import (
     RiskCheckResult,
@@ -53,14 +53,15 @@ from zephyr.risk.risk_manager_base import (
 @dataclass
 class StopLossRules:
     """止损规则配置"""
+
     method: str = "fixed_pct"  # fixed_pct | trailing | time_based | volatility
     stop_loss_pct: float = 0.05  # 固定比例止损线（如 0.05 = 5%）
     trailing_pct: float = 0.03  # 移动止损回撤比例
     max_hold_days: int = 20  # 时间止损最大持仓天数
     vol_multiplier: float = 2.0  # 波动率止损的倍数（如 2x ATR）
     lookback_days: int = 14  # 波动率计算回溯窗口
-    entry_date: Optional[datetime] = None
-    highest_price_since_entry: Optional[Decimal] = None
+    entry_date: datetime | None = None
+    highest_price_since_entry: Decimal | None = None
 
 
 __checker_id__ = "default-stop-loss-engine"
@@ -71,7 +72,7 @@ class DefaultStopLossEngine(StopLossEngineBase):
 
     __checker_id__ = __checker_id__
 
-    def __init__(self, rules: Optional[StopLossRules] = None):
+    def __init__(self, rules: StopLossRules | None = None):
         self._rules = rules or StopLossRules()
         self._stop_prices: dict[str, Decimal] = {}
 
@@ -83,13 +84,17 @@ class DefaultStopLossEngine(StopLossEngineBase):
         position_qty: Decimal,
         rules: dict[str, Any],
     ) -> RiskCheckResult:
-        check_id = f"sl-{symbol}-{int(datetime.now(timezone.utc).timestamp())}"
+        check_id = f"sl-{symbol}-{int(datetime.now(UTC).timestamp())}"
         method = rules.get("method", self._rules.method)
         stop_price = self._compute_stop_price(symbol, entry_price, current_price, method, rules)
         triggered = current_price <= stop_price if position_qty > 0 else current_price >= stop_price
         self._stop_prices[symbol] = stop_price
 
-        pnl_pct = float((current_price - entry_price) / entry_price) if position_qty > 0 else float((entry_price - current_price) / entry_price)
+        pnl_pct = (
+            float((current_price - entry_price) / entry_price)
+            if position_qty > 0
+            else float((entry_price - current_price) / entry_price)
+        )
 
         return RiskCheckResult(
             check_id=check_id,
@@ -98,11 +103,11 @@ class DefaultStopLossEngine(StopLossEngineBase):
             limit_value=float(stop_price),
             actual_value=float(current_price),
             message=f"symbol={symbol} entry={entry_price} current={current_price} stop={stop_price} pnl={pnl_pct:.4%} method={method}",
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             severity="HALT" if triggered else "info",
         )
 
-    def get_stop_price(self, symbol: str) -> Optional[Decimal]:
+    def get_stop_price(self, symbol: str) -> Decimal | None:
         return self._stop_prices.get(symbol)
 
     def _compute_stop_price(
@@ -123,7 +128,7 @@ class DefaultStopLossEngine(StopLossEngineBase):
                 getattr(self, "_highest_since_entry", current_price),
                 current_price,
             )
-            setattr(self, "_highest_since_entry", highest)
+            self._highest_since_entry = highest
             return highest * (Decimal("1") - trail_pct)
 
         if method == "time_based":

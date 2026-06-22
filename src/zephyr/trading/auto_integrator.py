@@ -36,6 +36,7 @@ from zephyr.trading.capability_card import CapabilityCard, CapabilityCategory
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.module_onboarding_scanner import UnregisteredModule
 
+
 @dataclass
 class IntegrationAnalysis:
     module_path: str
@@ -47,6 +48,7 @@ class IntegrationAnalysis:
     suggested_capability_card: CapabilityCard | None = None
     confidence: float = 0.0
     model_used: str = ""
+
 
 class AutoIntegrator:
     """自动接入器——临时启动高级模型分析是否接入。

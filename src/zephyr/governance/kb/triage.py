@@ -40,25 +40,25 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.gate import GateResult
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
+from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
+from zephyr.shared.contracts.gate import GateResult
 
 __all__ = [
-    "TriageResult",
-    "TriageGate",
     "APPROVED_LABELS",
-    "VALID_DOC_TYPES",
-    "VALID_LAYERS",
     "HIGH_VALUE_THRESHOLD",
     "REJECT_THRESHOLD",
+    "VALID_DOC_TYPES",
+    "VALID_LAYERS",
+    "TriageGate",
+    "TriageResult",
 ]
 
 APPROVED_LABELS = [

@@ -36,8 +36,8 @@ G5 Extract 门禁 — 知识升格（T-2-13-E）
 
 Safety : M
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
@@ -47,17 +47,17 @@ from typing import Any
 
 import yaml
 
-from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.gate import GateResult
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.kb.storage.kb_repo import KbRepo, KeStatus
+from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
+from zephyr.shared.contracts.gate import GateResult
 
 __all__ = [
-    "ExtractResult",
-    "ExtractGate",
-    "LESSONS_DIR_NAME",
     "BEST_PRACTICES_DIR_NAME",
     "EXTRACTION_TEMPLATES",
+    "LESSONS_DIR_NAME",
+    "ExtractGate",
+    "ExtractResult",
 ]
 
 LESSONS_DIR_NAME = "06_lessons_learned"

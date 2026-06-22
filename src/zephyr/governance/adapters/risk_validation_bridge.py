@@ -26,7 +26,6 @@ RiskValidatorProtocol from trading-contracts.risk directly.
 Pattern: Adapter — wraps the Protocol-based risk validator behind a local interface.
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -117,4 +116,4 @@ class RiskValidationBridge:
         )
 
 
-__all__ = ["RiskViolation", "RiskValidationPort", "RiskValidationBridge"]
+__all__ = ["RiskValidationBridge", "RiskValidationPort", "RiskViolation"]

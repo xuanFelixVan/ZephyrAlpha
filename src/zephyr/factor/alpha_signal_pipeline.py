@@ -20,16 +20,16 @@
 # [TESTS]
 
 # Re-export from signal domain SSoT — zephyr.signal_fundamental.pipeline
-from zephyr.signal_fundamental.pipeline import (  # noqa: F401
+from zephyr.signal_fundamental.pipeline import (
     AlphaSignalPipeline,
-    PipelineStage,
-    PipelineResult,
     PipelineError,
+    PipelineResult,
+    PipelineStage,
 )
 
 __all__ = [
     "AlphaSignalPipeline",
-    "PipelineStage",
-    "PipelineResult",
     "PipelineError",
+    "PipelineResult",
+    "PipelineStage",
 ]

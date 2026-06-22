@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_trace_causal_bridge.py
 
-import pytest
 
 from zephyr.ops.detectors.trace_causal_bridge import TraceCausalBridge
 

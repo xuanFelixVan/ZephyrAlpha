@@ -29,8 +29,6 @@ from typing import Any
 from zephyr.infrastructure.auto_fix_engine.models import (
     BudgetInfo,
     FixAction,
-    FixConfidence,
-    FixLevel,
     FixReport,
     FixStatus,
 )
@@ -42,7 +40,9 @@ class FixReportGenerator:
     def __init__(self) -> None:
         self._history: list[FixReport] = []
 
-    def generate(self, actions: list[FixAction], budget_info: BudgetInfo | None = None, cascade_alerts: list[str] | None = None) -> FixReport:
+    def generate(
+        self, actions: list[FixAction], budget_info: BudgetInfo | None = None, cascade_alerts: list[str] | None = None
+    ) -> FixReport:
         succeeded = sum(1 for a in actions if a.status == FixStatus.COMPLETED)
         failed = sum(1 for a in actions if a.status == FixStatus.FAILED)
         escalated = sum(1 for a in actions if a.status == FixStatus.APPROVAL_PENDING or a.escalated)
@@ -102,16 +102,18 @@ class FixReportGenerator:
         summary = self.generate_summary(report)
         actions_data = []
         for a in report.actions:
-            actions_data.append({
-                "action_id": a.action_id,
-                "action_type": a.action_type,
-                "level": a.level.value,
-                "status": a.status.value,
-                "target": a.target,
-                "confidence": a.confidence.value,
-                "verified": a.verified,
-                "escalated": a.escalated,
-            })
+            actions_data.append(
+                {
+                    "action_id": a.action_id,
+                    "action_type": a.action_type,
+                    "level": a.level.value,
+                    "status": a.status.value,
+                    "target": a.target,
+                    "confidence": a.confidence.value,
+                    "verified": a.verified,
+                    "escalated": a.escalated,
+                }
+            )
         summary["actions"] = actions_data
         return json.dumps(summary, indent=2, ensure_ascii=False)
 

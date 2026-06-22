@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-MASTER-004
 title: "Agent Spec 蓝图 — CBAC能力矩阵·Skill路由"
 doc_type: blueprint

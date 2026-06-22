@@ -25,7 +25,7 @@ Core type (HandoffRecord) is imported from
 zephyr.shared.protocols.a2a.a2a_schemas.
 """
 
-from zephyr.shared.protocols.a2a.a2a_schemas import HandoffRecord  # noqa: F401
+from zephyr.shared.protocols.a2a.a2a_schemas import HandoffRecord
 
 
 class HandoffManager:

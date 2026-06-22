@@ -78,15 +78,15 @@ from zephyr.autonomy_core.parsing.intent_keyword_mapper import (
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
+    "DEFAULT_STAGE_THRESHOLDS",
     "EmbeddingHit",
-    "LLMIntentVerdict",
     "EmbeddingSearcher",
-    "LLMIntentCaller",
     "IntentParseTrace",
     "IntentParser",
-    "plan_directive_chain",
+    "LLMIntentCaller",
+    "LLMIntentVerdict",
     "inject_context_for",
-    "DEFAULT_STAGE_THRESHOLDS",
+    "plan_directive_chain",
 ]
 
 # ---------------------------------------------------------------------------
@@ -104,6 +104,7 @@ DEFAULT_STAGE_THRESHOLDS: dict[str, float] = {
 # Pydantic 契约（Stage 2/3 输入输出）
 # ---------------------------------------------------------------------------
 
+
 class EmbeddingHit(BaseModel):
     """ChromaDB 检索返回的单条结果（由 EmbeddingSearcher 封装）。"""
 
@@ -113,6 +114,7 @@ class EmbeddingHit(BaseModel):
     score: float = Field(ge=0.0, le=1.0, description="相似度分（0-1，1 最相似）")
     text: str = Field(default="", description="命中文本片段（用于 rationale）")
     source: str = Field(default="", description="来源（KE id / 文件路径等）")
+
 
 class LLMIntentVerdict(BaseModel):
     """LLM 深度理解的结构化返回值。"""
@@ -126,9 +128,11 @@ class LLMIntentVerdict(BaseModel):
     cost_usd: float = Field(default=0.0, ge=0.0)
     suggested_directives: list[str] = Field(default_factory=list)
 
+
 # ---------------------------------------------------------------------------
 # Protocol（依赖注入）
 # ---------------------------------------------------------------------------
+
 
 @runtime_checkable
 class EmbeddingSearcher(Protocol):
@@ -136,6 +140,7 @@ class EmbeddingSearcher(Protocol):
 
     def __call__(self, query: str, *, top_k: int = 5) -> list[EmbeddingHit]:  # pragma: no cover - Protocol 签名
         ...
+
 
 @runtime_checkable
 class LLMIntentCaller(Protocol):
@@ -146,9 +151,11 @@ class LLMIntentCaller(Protocol):
     ) -> Self:  # pragma: no cover - Protocol 签名
         ...
 
+
 # ---------------------------------------------------------------------------
 # Trace
 # ---------------------------------------------------------------------------
+
 
 class IntentParseTrace(BaseModel):
     """单次 parse 的阶段追踪信息。"""
@@ -163,9 +170,11 @@ class IntentParseTrace(BaseModel):
     total_latency_ms: int = Field(default=0, ge=0)
     total_cost_usd: float = Field(default=0.0, ge=0.0)
 
+
 # ---------------------------------------------------------------------------
 # IntentParser
 # ---------------------------------------------------------------------------
+
 
 class IntentParser:
     """三阶段级联意图解析器。
@@ -403,9 +412,11 @@ class IntentParser:
         )
         return final
 
+
 # ---------------------------------------------------------------------------
 # 集成辅助函数
 # ---------------------------------------------------------------------------
+
 
 def plan_directive_chain(result: IntentResult, separator: str = "+") -> str:
     """把 IntentResult.suggested_directives 转成 DOSLauncher 用的链字符串。
@@ -419,6 +430,7 @@ def plan_directive_chain(result: IntentResult, separator: str = "+") -> str:
     if not directives:
         return "999"
     return separator.join(directives)
+
 
 def inject_context_for(
     parser_result: IntentResult,

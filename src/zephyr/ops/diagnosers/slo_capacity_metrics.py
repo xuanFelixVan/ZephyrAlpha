@@ -54,11 +54,13 @@ class SLOWindow:
 @dataclass
 class SLOCapacityMetrics:
     slo_pct: float = 99.9
-    windows: dict[str, SLOWindow] = field(default_factory=lambda: {
-        "1h": SLOWindow(1.0, target_burn_rate=14.4),
-        "6h": SLOWindow(6.0, target_burn_rate=6.0),
-        "3d": SLOWindow(72.0, target_burn_rate=1.0),
-    })
+    windows: dict[str, SLOWindow] = field(
+        default_factory=lambda: {
+            "1h": SLOWindow(1.0, target_burn_rate=14.4),
+            "6h": SLOWindow(6.0, target_burn_rate=6.0),
+            "3d": SLOWindow(72.0, target_burn_rate=1.0),
+        }
+    )
     total_requests: int = 0
     total_errors: int = 0
 
@@ -78,4 +80,8 @@ class SLOCapacityMetrics:
         return remaining / budget_errors * 100.0 if budget_errors > 0 else 0.0
 
     def exhaustion_alerts(self) -> list[str]:
-        return [f"{name}: {w.burn_rate:.1f}x burn (target {w.target_burn_rate}x)" for name, w in self.windows.items() if w.alert]
+        return [
+            f"{name}: {w.burn_rate:.1f}x burn (target {w.target_burn_rate}x)"
+            for name, w in self.windows.items()
+            if w.alert
+        ]

@@ -11,10 +11,9 @@
 
 exit: 0=all gates pass, 1=gates not passed, 2=infrastructure error
 """
+
 from __future__ import annotations
 
-
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -69,7 +68,9 @@ def check_audit_db() -> tuple[bool, str]:
     return False, "audit.db 未物理创建或为空"
 
 
-SEC_VIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "06-security_architecture.md"
+SEC_VIEW_PATH = (
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "06-security_architecture.md"
+)
 OVERVIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "00-overview.md"
 
 

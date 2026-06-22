@@ -2,30 +2,22 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.execution.order
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] pf_core; ex_core; pf_core
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from enum import Enum
+
 
 class OrderSide(Enum):
     BUY = "BUY"
     SELL = "SELL"
+
 
 class OrderType(Enum):
     LIMIT = "LIMIT"
@@ -33,6 +25,7 @@ class OrderType(Enum):
     STOP = "STOP"
     STOP_LIMIT = "STOP_LIMIT"
     TRAILING_STOP = "TRAILING_STOP"
+
 
 class OrderStatus(Enum):
     PENDING = "PENDING"
@@ -43,12 +36,12 @@ class OrderStatus(Enum):
     REJECTED = "REJECTED"
     EXPIRED = "EXPIRED"
 
+
 # ==== BEGIN CODGEN:CTR-004 ====
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 
-from uuid import UUID, uuid4
 
 @dataclass
 class Order:
@@ -69,6 +62,7 @@ class Order:
     trace_context: TraceContext | None = None
     updated_at: datetime | None = None
 
+
 # ==== END CODGEN:CTR-004 ====
 
-__all__ = ["OrderSide", "OrderType", "OrderStatus", "Order"]
+__all__ = ["Order", "OrderSide", "OrderStatus", "OrderType"]

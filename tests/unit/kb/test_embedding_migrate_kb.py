@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for embedding_migrate.py (T-4-06)
 ==============================================
@@ -18,6 +19,7 @@ Unit tests for embedding_migrate.py (T-4-06)
 from typing import Any
 
 import pytest
+
 from zephyr.governance.kb.embedding_migrate import (
     EmbeddingMigrator,
     MigrationStatus,

@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """L10 — Compliance Concrete Implementations
 
 Phase C 具体实现包。
@@ -18,7 +18,7 @@ Phase C 具体实现包。
 """
 
 # STUB: from zephyr.governance.default_security_gateway import (  # auto-disabled: zephyr.governance.default_security_gateway missing
-    # DefaultSecurityGateway,
+# DefaultSecurityGateway,
 # )
 
 __all__ = [

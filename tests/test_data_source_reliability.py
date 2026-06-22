@@ -12,14 +12,12 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.data_source_reliability import (
-    ReliabilityDimension,
     DIMENSION_WEIGHTS,
+    ReliabilityDimension,
     ReliabilityScore,
-    score_source,
     compare_sources,
+    score_source,
 )
 
 

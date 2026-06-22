@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """cybersec 2026 独立测试."""
+
 from __future__ import annotations
 
-import pytest
 from zephyr.security.access_control.cybersec_2026_guard import Cybersec2026Guard
 
 

@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_learning | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_learning
+# [MODULE] zephyr.autonomy_core.skill_learning
 
 # [INVARIANTS] none
 
@@ -34,30 +34,29 @@ Skill 自学习引擎
   4. LearningCurve: 追踪学习进步曲线
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import UTC, datetime
+from typing import Any
 
 
 class SkillLearning:
     """Skill 自学习引擎"""
 
     def __init__(self):
-        self._learning_history: Dict[str, List[Dict[str, Any]]] = {}
-        self._learned_patterns: Dict[str, List[str]] = {}
-        self._session_deltas: Dict[str, List[float]] = {}
+        self._learning_history: dict[str, list[dict[str, Any]]] = {}
+        self._learned_patterns: dict[str, list[str]] = {}
+        self._session_deltas: dict[str, list[float]] = {}
 
     def add_execution(
         self,
         skill_id: str,
         output: str,
-        expected_output: Optional[str] = None,
+        expected_output: str | None = None,
         success: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "output_preview": output[:500],
             "success": success,
             "output_length": len(output),
@@ -65,6 +64,7 @@ class SkillLearning:
 
         if expected_output is not None:
             import difflib
+
             seq = difflib.SequenceMatcher(None, expected_output, output)
             delta = 1.0 - seq.ratio()
             entry["delta"] = delta
@@ -72,7 +72,7 @@ class SkillLearning:
 
         self._learning_history.setdefault(skill_id, []).append(entry)
 
-        patterns: List[str] = []
+        patterns: list[str] = []
 
         if success and expected_output is not None and entry.get("delta", 1.0) < 0.1:
             patterns.append("high_accuracy_achieved")
@@ -97,7 +97,7 @@ class SkillLearning:
             "delta": entry.get("delta", 0.0),
         }
 
-    def get_learning(self, skill_id: str) -> Dict[str, Any]:
+    def get_learning(self, skill_id: str) -> dict[str, Any]:
         history = self._learning_history.get(skill_id, [])
         deltas = self._session_deltas.get(skill_id, [])
         patterns = self._learned_patterns.get(skill_id, [])
@@ -133,12 +133,12 @@ class SkillLearning:
             "trend": trend,
         }
 
-    def suggest_improvement(self, skill_id: str) -> Dict[str, Any]:
+    def suggest_improvement(self, skill_id: str) -> dict[str, Any]:
         learning = self.get_learning(skill_id)
         patterns = learning.get("patterns", [])
         trend = learning.get("trend", "no_data")
 
-        suggestions: List[str] = []
+        suggestions: list[str] = []
 
         if "significant_divergence" in patterns:
             suggestions.append("add_examples_section")

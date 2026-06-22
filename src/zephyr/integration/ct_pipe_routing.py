@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_ct_pipe_routing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.ct_pipe_routing
+# [MODULE] zephyr.integration.ct_pipe_routing
 
 # [INVARIANTS] none
 
@@ -37,7 +37,6 @@ CT-PIPE-ORC-001 — TaskCard → 管线入口节点路由
   - `estimated_complexity` / `ct_pipe.complexity=`
 """
 
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
@@ -48,11 +47,10 @@ if TYPE_CHECKING:
     from zephyr.shared.shared_services.models import TaskCard
 
 from zephyr.integration.models import (
-    PipelineRouteDecision,
-    PipelineAffinityConstraint,
-    AffinityWeight,
     AFFINITY_CONSTRAINTS,
     M_MODULE_SPECS,
+    AffinityWeight,
+    PipelineRouteDecision,
 )
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG, Priority
 
@@ -60,9 +58,9 @@ __all__ = [
     "CtPipeRoutingHints",
     "PipelineRoutingInputsError",
     "ct_pipe_hints_from_task_card",
+    "enforce_affinity",
     "modules_slice_from_node",
     "resolve_ct_pipe_orc001",
-    "enforce_affinity",
 ]
 
 _CT_PIPE_TAG_PREFIX = "ct_pipe."
@@ -131,8 +129,8 @@ def ct_pipe_hints_from_task_card(task: TaskCard) -> CtPipeRoutingHints | None:
 
     task_type = raw_type.upper().replace("-", "_")
 
-    raw_layer = (getattr(task, "target_layer", None) or "").strip() or tag_kv.get("layer") or tag_kv.get(
-        "target_layer", ""
+    raw_layer = (
+        (getattr(task, "target_layer", None) or "").strip() or tag_kv.get("layer") or tag_kv.get("target_layer", "")
     )
     target_layer = raw_layer.strip().upper() or None
 
@@ -199,9 +197,7 @@ def resolve_ct_pipe_orc001(hints: CtPipeRoutingHints) -> PipelineRouteDecision:
 
     if tt in ("DOC_WRITE", "REFACTOR"):
         if not lyr:
-            raise PipelineRoutingInputsError(
-                f"CT-PIPE: task_type={tt} 需要 target_layer（字段或 ct_pipe.layer=）"
-            )
+            raise PipelineRoutingInputsError(f"CT-PIPE: task_type={tt} 需要 target_layer（字段或 ct_pipe.layer=）")
         node = "M5" if lyr in _FOUNDATION_LAYERS else "M6"
         return _make_decision(node, f"CT-PIPE: {tt} + target_layer={lyr} → {node}")
 

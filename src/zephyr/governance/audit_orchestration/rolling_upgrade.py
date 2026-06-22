@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class RollingUpgradeManager:
     def __init__(self):
         self._upgrading = False

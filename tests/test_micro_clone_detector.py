@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.micro_clone_detector import MicroCloneDetector
 
 

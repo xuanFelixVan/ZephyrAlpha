@@ -33,7 +33,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Any
 
 
 @dataclass
@@ -53,7 +52,6 @@ COMMIT_MSG_REQUIREMENTS = {
 
 
 class CommitQualityGate:
-
     def __init__(self) -> None:
         pass
 
@@ -61,7 +59,9 @@ class CommitQualityGate:
         issues: list[str] = []
 
         if len(message.strip()) < COMMIT_MSG_REQUIREMENTS["min_length"]:
-            issues.append(f"Message too short: {len(message.strip())} chars (min {COMMIT_MSG_REQUIREMENTS['min_length']})")
+            issues.append(
+                f"Message too short: {len(message.strip())} chars (min {COMMIT_MSG_REQUIREMENTS['min_length']})"
+            )
 
         if not message.strip().startswith(COMMIT_MSG_REQUIREMENTS["must_start_with"]):
             issues.append("Must start with 'Rollback'")
@@ -72,7 +72,7 @@ class CommitQualityGate:
                 issues.append("First letter must be uppercase")
 
         if COMMIT_MSG_REQUIREMENTS["must_contain_sha"]:
-            sha_pattern = re.compile(r'[0-9a-f]{7,40}', re.IGNORECASE)
+            sha_pattern = re.compile(r"[0-9a-f]{7,40}", re.IGNORECASE)
             if not sha_pattern.search(message):
                 issues.append("Must contain commit SHA")
 

@@ -70,12 +70,14 @@ class ImportFixer(BaseFixer):
                                 pkg_path = src_root / Path(*parts[:-1]) if len(parts) > 2 else src_root / parts[0]
                                 init_file = pkg_path / "__init__.py"
                                 if not init_file.exists() and not (src_root / Path(*parts)).exists():
-                                    findings.append({
-                                        "file": str(py_file),
-                                        "line": node.lineno,
-                                        "module": node.module,
-                                        "type": "broken_import",
-                                    })
+                                    findings.append(
+                                        {
+                                            "file": str(py_file),
+                                            "line": node.lineno,
+                                            "module": node.module,
+                                            "type": "broken_import",
+                                        }
+                                    )
                     elif isinstance(node, ast.Import):
                         for alias in node.names:
                             if alias.name.startswith("zephyr."):
@@ -84,12 +86,14 @@ class ImportFixer(BaseFixer):
                                 if not mod_path.exists():
                                     mod_path2 = src_root / Path(*parts[:-1]) / f"{parts[-1]}.py"
                                     if not mod_path2.exists():
-                                        findings.append({
-                                            "file": str(py_file),
-                                            "line": node.lineno,
-                                            "module": alias.name,
-                                            "type": "broken_import",
-                                        })
+                                        findings.append(
+                                            {
+                                                "file": str(py_file),
+                                                "line": node.lineno,
+                                                "module": alias.name,
+                                                "type": "broken_import",
+                                            }
+                                        )
             except Exception:
                 continue
         return findings
@@ -168,7 +172,9 @@ class ImportFixer(BaseFixer):
             prefix = ".".join(parts[:i])
             suffix = parts[i:] if i < len(parts) else []
             pkg_path = src_root / Path(*parts[:i])
-            if (pkg_path / "__init__.py").exists() or (src_root / Path(*parts[:i-1]) / f"{parts[i-1]}.py").exists():
+            if (pkg_path / "__init__.py").exists() or (
+                src_root / Path(*parts[: i - 1]) / f"{parts[i - 1]}.py"
+            ).exists():
                 if not suffix:
                     candidates.append(prefix)
                 else:

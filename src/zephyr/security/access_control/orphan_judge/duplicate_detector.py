@@ -26,7 +26,6 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 
-
 from __future__ import annotations
 
 import ast
@@ -34,7 +33,6 @@ import hashlib
 import logging
 import time
 from pathlib import Path
-from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -95,7 +93,7 @@ class DuplicateDetector:
 
     def _compute_ast_hash(self, file_path: str) -> str:
         path = Path(file_path)
-        if not path.exists() or not path.suffix == ".py":
+        if not path.exists() or path.suffix != ".py":
             return ""
         try:
             source = path.read_text(encoding="utf-8")
@@ -169,7 +167,5 @@ class DuplicateDetector:
                 bases.append(ast.unparse(base))
             except Exception:
                 bases.append("Any")
-        method_names = sorted(
-            n.name for n in node.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
-        )
+        method_names = sorted(n.name for n in node.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)))
         return f"class {node.name}({', '.join(bases)}): [{', '.join(method_names)}]"

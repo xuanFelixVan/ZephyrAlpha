@@ -29,10 +29,11 @@ Saga Compensator — 补偿事务：多步操作任一失败 → 反向补偿。
     任务卡 TASK-INF-0113
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable
+
 
 class SagaStatus(str, Enum):
     PENDING = "pending"
@@ -40,6 +41,7 @@ class SagaStatus(str, Enum):
     COMPLETED = "completed"
     COMPENSATING = "compensating"
     FAILED = "failed"
+
 
 @dataclass
 class SagaStep:
@@ -50,6 +52,7 @@ class SagaStep:
     compensated: bool = False
     error: str = ""
 
+
 @dataclass
 class SagaContext:
     saga_id: str
@@ -57,10 +60,10 @@ class SagaContext:
     status: SagaStatus = SagaStatus.PENDING
     current_step: int = 0
     errors: list[str] = field(default_factory=list)
-    timestamp_utc: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp_utc: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+
 
 class SagaCompensator:
-
     def __init__(self) -> None:
         self._sagas: dict[str, SagaContext] = {}
 
@@ -113,9 +116,7 @@ class SagaCompensator:
                     step.compensation()
                     step.compensated = True
                 except Exception as e:
-                    context.errors.append(
-                        f"Compensation for {step.step_id} failed: {e}"
-                    )
+                    context.errors.append(f"Compensation for {step.step_id} failed: {e}")
 
         if context.errors:
             context.status = SagaStatus.FAILED

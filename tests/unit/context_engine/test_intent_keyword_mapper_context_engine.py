@@ -13,6 +13,7 @@ Minimum: 10 tests
 """
 
 import pytest
+
 from zephyr.autonomy_core.intent_keyword_mapper import (
     IntentKeywordMapper,
     IntentResult,

@@ -6,18 +6,20 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.events — auto-generated package init."""
-from . import event_reactor
-from . import event_store
-from . import hook_dispatcher
 
-__all__ = ['event_bus', 'event_reactor', 'event_store', 'hook_dispatcher']
+from . import event_reactor, event_store, hook_dispatcher
+
+__all__ = ["event_bus", "event_reactor", "event_store", "hook_dispatcher"]
+
 
 class DriftEvent:
-    def __init__(self, event_id='', drift_type='', severity='medium', description='', timestamp=None, source='', target=''):
+    def __init__(
+        self, event_id="", drift_type="", severity="medium", description="", timestamp=None, source="", target=""
+    ):
         self.event_id = event_id
         self.drift_type = drift_type
         self.severity = severity
@@ -26,21 +28,23 @@ class DriftEvent:
         self.source = source
         self.target = target
 
+
 class DriftType:
-    SCHEMA = 'SCHEMA'
-    CONTRACT = 'CONTRACT'
-    BEHAVIORAL = 'BEHAVIORAL'
-    CONFIGURATION = 'CONFIGURATION'
-    DEPENDENCY = 'DEPENDENCY'
-    PERFORMANCE = 'PERFORMANCE'
-    SECURITY = 'SECURITY'
-    UNKNOWN = 'UNKNOWN'
+    SCHEMA = "SCHEMA"
+    CONTRACT = "CONTRACT"
+    BEHAVIORAL = "BEHAVIORAL"
+    CONFIGURATION = "CONFIGURATION"
+    DEPENDENCY = "DEPENDENCY"
+    PERFORMANCE = "PERFORMANCE"
+    SECURITY = "SECURITY"
+    UNKNOWN = "UNKNOWN"
+
 
 class DriftState:
-    DETECTED = 'DETECTED'
-    ANALYZING = 'ANALYZING'
-    FIXING = 'FIXING'
-    VERIFIED = 'VERIFIED'
-    ESCALATED = 'ESCALATED'
-    RESOLVED = 'RESOLVED'
-    IGNORED = 'IGNORED'
+    DETECTED = "DETECTED"
+    ANALYZING = "ANALYZING"
+    FIXING = "FIXING"
+    VERIFIED = "VERIFIED"
+    ESCALATED = "ESCALATED"
+    RESOLVED = "RESOLVED"
+    IGNORED = "IGNORED"

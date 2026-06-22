@@ -9,7 +9,7 @@
 # ============================================================
 # 任务编号 : T-V2-006（experimental CL-018）
 # 权限层级 : Immutable Core（不变量字段禁止 AI 自主修改）
-# 真源声明 : ai_autonomy_authority_registry.md §2.11 (CL-018)
+# 真源声明 : ai_autonomy_authority_registry.yaml §2.11 (CL-018)
 # 关联决策 : rationale-log R83（CL-018 升级为 RI 扩展模式）
 # CBAC 注册 : capabilities.yaml allow: config/compression/policy.yaml
 # 创建日期 : 2026-04-27

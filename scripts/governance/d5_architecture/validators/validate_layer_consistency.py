@@ -32,7 +32,6 @@ timeout_seconds: 30
 warn_only: false
 """
 
-import re
 import sys
 from pathlib import Path
 
@@ -41,7 +40,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 
@@ -97,13 +96,15 @@ def scan_layer_consistency() -> tuple[list[dict], int]:
         declared_layer = fm.get("layer", "")
         if not declared_layer:
             rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-            findings.append({
-                "file": rel,
-                "declared_layer": "",
-                "expected_layer": "?",
-                "detail": "缺少 layer 字段",
-                "severity": "HIGH",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "declared_layer": "",
+                    "expected_layer": "?",
+                    "detail": "缺少 layer 字段",
+                    "severity": "HIGH",
+                }
+            )
             continue
 
         expected = expected_layer_from_path(filepath)
@@ -112,13 +113,15 @@ def scan_layer_consistency() -> tuple[list[dict], int]:
 
         if declared_layer != expected:
             rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-            findings.append({
-                "file": rel,
-                "declared_layer": declared_layer,
-                "expected_layer": expected,
-                "detail": f"layer 不一致: 声明={declared_layer}，物理目录要求={expected}",
-                "severity": "HIGH",
-            })
+            findings.append(
+                {
+                    "file": rel,
+                    "declared_layer": declared_layer,
+                    "expected_layer": expected,
+                    "detail": f"layer 不一致: 声明={declared_layer}，物理目录要求={expected}",
+                    "severity": "HIGH",
+                }
+            )
 
     return findings, files_scanned
 

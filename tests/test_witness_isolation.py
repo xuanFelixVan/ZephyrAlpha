@@ -11,6 +11,7 @@
 # [TESTS] python -m pytest tests/test_witness_isolation.py -q
 
 import pytest
+
 from zephyr.governance.witness_isolation import WitnessIsolator
 
 

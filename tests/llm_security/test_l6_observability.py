@@ -5,15 +5,13 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
 from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
     AlertSender,
     AlertSeverity,
-    DashboardMetrics,
     FrequencyAnomalyDetector,
     ObservabilityLayer,
     PromptwareKillChainTracker,
@@ -65,7 +63,7 @@ class TestAlertSender:
 class TestReportGenerator:
     def test_generate_daily_report(self):
         gen = ReportGenerator()
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        today = datetime.now(UTC).strftime("%Y-%m-%d")
         ev = SecurityEvent(
             event_type=SecurityEventType.PROMPT_BLOCKED,
             severity=AlertSeverity.WARNING,
@@ -78,7 +76,7 @@ class TestReportGenerator:
 
     def test_generate_weekly_report(self):
         gen = ReportGenerator()
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        today = datetime.now(UTC).strftime("%Y-%m-%d")
         ev = SecurityEvent(
             event_type=SecurityEventType.LEAK_DETECTED,
             severity=AlertSeverity.CRITICAL,
@@ -162,7 +160,9 @@ class TestObservabilityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_pass_through(self):
-        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+        from zephyr.security.llm_defense.llm_security.protocol import SecurityContext
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
+
         layer = ObservabilityLayer()
         ctx = SecurityContext(
             request_id="test-l6-eval",
@@ -176,7 +176,8 @@ class TestObservabilityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_logs_event(self):
-        from zephyr.security.llm_defense.llm_security.layers.l6_observability import SecurityEventType, AlertSeverity
+        from zephyr.security.llm_defense.llm_security.layers.l6_observability import AlertSeverity, SecurityEventType
+
         layer = ObservabilityLayer()
         layer.log_security_event(
             SecurityEventType.PROMPT_BLOCKED,

@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.foundation.flags
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 """
 flags.py —— Feature Flag / 功能开关系统（Phase 2 新增 | 盲点 B7 修复）
 
@@ -58,14 +49,15 @@ from enum import Enum, unique
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "FlagState",
     "FeatureFlag",
-    "FlagRegistry",
     "FlagNotFoundError",
+    "FlagRegistry",
+    "FlagState",
     "global_flag_registry",
 ]
 
 logger = logging.getLogger(__name__)
+
 
 @unique
 class FlagState(str, Enum):
@@ -73,8 +65,10 @@ class FlagState(str, Enum):
     CONDITIONAL = "CONDITIONAL"
     ALWAYS_OFF = "ALWAYS_OFF"
 
+
 class FlagNotFoundError(ZephyrBaseError):
     """请求的 FeatureFlag 未在注册表中找到。"""
+
 
 @dataclass(frozen=True)
 class FeatureFlag:
@@ -111,6 +105,7 @@ class FeatureFlag:
             return bucket < self.rollout_pct
 
         return self.state == FlagState.CONDITIONAL
+
 
 class FlagRegistry:
     """全局 FeatureFlag 注册表（单例）。
@@ -161,5 +156,6 @@ class FlagRegistry:
 
     def reset(self) -> None:
         self._flags.clear()
+
 
 global_flag_registry = FlagRegistry()

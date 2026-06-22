@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-435
 title: 5. 修订记录
 category: documentation

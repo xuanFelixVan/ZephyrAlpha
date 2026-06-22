@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_market_event_integrator.py
 
-import pytest
 from zephyr.ops.collectors.market_event_integrator import (
     MarketEvent,
     MarketEventIntegrator,

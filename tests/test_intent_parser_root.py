@@ -11,24 +11,26 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
+    from zephyr.autonomy_core.intent_keyword_mapper import IntentDomain, IntentResult
     from zephyr.autonomy_core.intent_parser import (
-        IntentParser,
-        IntentType,
-        IntentClassifyFailure,
-        EmbeddingHit,
-        LLMIntentVerdict,
-        IntentParseTrace,
         DEFAULT_STAGE_THRESHOLDS,
-        plan_directive_chain,
-        inject_context_for,
+        EmbeddingHit,
+        IntentClassifyFailure,
+        IntentParser,
+        IntentParseTrace,
+        IntentType,
+        LLMIntentVerdict,
         classify,
+        inject_context_for,
+        plan_directive_chain,
     )
-    from zephyr.autonomy_core.intent_keyword_mapper import IntentResult, IntentDomain
+
     _IMPORT_OK = True
     _IMPORT_ERR = None
 except Exception as exc:
@@ -56,6 +58,7 @@ class TestIntentParser:
     def test_parse_with_embedding_searcher(self):
         def mock_searcher(query, *, top_k=5):
             return [EmbeddingHit(domain="D6", score=0.85, text="governance", source="ke-001")]
+
         parser = IntentParser(embedding_searcher=mock_searcher)
         result = parser.parse("something ambiguous xyz")
         assert result.source_stage in ("keyword", "semantic", "llm")
@@ -69,6 +72,7 @@ class TestIntentParser:
                 rationale="debug intent",
                 suggested_directives=["911"],
             )
+
         parser = IntentParser(llm_caller=mock_llm)
         result = parser.parse("something ambiguous xyz")
         assert result.source_stage in ("keyword", "semantic", "llm")
@@ -79,6 +83,7 @@ class TestIntentParser:
                 EmbeddingHit(domain="D3", score=0.3, text="alpha", source="ke-003"),
                 EmbeddingHit(domain="D9", score=0.3, text="debug", source="ke-009"),
             ]
+
         def mock_llm(query, *, context=None):
             return LLMIntentVerdict(
                 primary_domain="D4",
@@ -87,6 +92,7 @@ class TestIntentParser:
                 rationale="strategy intent",
                 suggested_directives=["433"],
             )
+
         parser = IntentParser(
             embedding_searcher=mock_searcher,
             llm_caller=mock_llm,
@@ -119,6 +125,7 @@ class TestIntentParser:
     def test_embedding_searcher_exception_fallback(self):
         def bad_searcher(query, *, top_k=5):
             raise RuntimeError("ChromaDB down")
+
         parser = IntentParser(embedding_searcher=bad_searcher)
         result = parser.parse("ambiguous xyz query")
         assert result.source_stage in ("keyword", "semantic", "llm")
@@ -126,6 +133,7 @@ class TestIntentParser:
     def test_llm_caller_exception_fallback(self):
         def bad_llm(query, *, context=None):
             raise RuntimeError("LLM API error")
+
         parser = IntentParser(llm_caller=bad_llm)
         result = parser.parse("ambiguous xyz query")
         assert result.source_stage in ("keyword", "semantic", "llm")
@@ -194,6 +202,7 @@ class TestInjectContextFor:
         class FakeInjector:
             def inject_by_module_id(self, module_id):
                 return f"injected:{module_id}"
+
         r = IntentResult(
             query="test",
             primary_domain="D6",
@@ -208,6 +217,7 @@ class TestInjectContextFor:
         class FakeInjector:
             def inject_by_keyword(self, keyword):
                 return f"kw:{keyword}"
+
         r = IntentResult(
             query="test query",
             primary_domain=IntentDomain.UNKNOWN,

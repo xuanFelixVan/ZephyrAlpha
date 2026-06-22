@@ -32,6 +32,7 @@ from __future__ import annotations
 import json
 
 import pytest
+
 from zephyr.ops.fitness_functions import (
     METRIC_COMPLIANCE_RATE,
     METRIC_HALLUCINATION_INTERCEPTION,

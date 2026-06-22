@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """ComplianceManagerBase — 抽象接口形状校验。"""
 
 

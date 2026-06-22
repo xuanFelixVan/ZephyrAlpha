@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_cross_session_correlator.py -q
 
 from __future__ import annotations
-import pytest
+
 from zephyr.governance.cross_session_correlator import CrossSessionCorrelator
 
 

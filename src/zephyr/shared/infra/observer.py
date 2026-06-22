@@ -28,8 +28,8 @@ DeferredQueue (T-1-09).
 Task: T-1-08 | experimental | GLM-5.1
 ADR ref: ADR-0037 (pending Opus authoring)
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from collections.abc import Callable
 from enum import Enum, unique

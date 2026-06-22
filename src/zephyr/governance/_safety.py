@@ -1,6 +1,9 @@
 # [A_module] module_id=MOD-RES__safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+from zephyr.governance.drift_detector import DriftDetector
+from zephyr.governance.merkle_audit import MerkleAudit
+
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.governance._safety
 # [INVARIANTS] __all__列表不变; 公开API不变
@@ -11,10 +14,7 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_escalation_engine_imports.py
-
 from zephyr.governance.self_test import HealthLevel, SelfTestReport, run_self_test
-from zephyr.governance.drift_detector import DriftDetector
-from zephyr.governance.merkle_audit import MerkleAudit
 
 _SUBMODULES = [
     "api_response_sanitizer",
@@ -39,9 +39,9 @@ _SUBMODULES = [
 ]
 
 __all__ = [
+    "DriftDetector",
     "HealthLevel",
+    "MerkleAudit",
     "SelfTestReport",
     "run_self_test",
-    "DriftDetector",
-    "MerkleAudit",
 ]

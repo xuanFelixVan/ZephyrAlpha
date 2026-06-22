@@ -7,10 +7,10 @@
 # [TESTS] —
 import pytest
 
+from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
 from zephyr.security.llm_defense.llm_security.layers.l2_prompt_protection import (
     PromptProtectionLayer,
 )
-from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
 
 
 class TestPromptProtectionLayer:
@@ -67,9 +67,7 @@ class TestPromptProtectionLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_clean(self, layer):
-        ctx = SecurityContext(
-            request_id="r1", layer_name="l2", raw_input="Help me analyze this report"
-        )
+        ctx = SecurityContext(request_id="r1", layer_name="l2", raw_input="Help me analyze this report")
         result = await layer.evaluate(ctx)
         assert result.decision == SecurityDecision.ALLOW
 

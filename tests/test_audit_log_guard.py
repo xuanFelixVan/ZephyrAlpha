@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.audit_log_guard import AuditLogGuard, LOG_INJECTION_PATTERNS
+    from zephyr.security.access_control.audit_log_guard import AuditLogGuard
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as e:
@@ -26,7 +28,6 @@ except Exception as e:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestAuditLogGuardSanitize:
-
     def test_clean_string_unchanged(self):
         guard = AuditLogGuard()
         assert guard.sanitize("hello world") == "hello world"
@@ -73,7 +74,6 @@ class TestAuditLogGuardSanitize:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestAuditLogGuardValidateEntry:
-
     def test_clean_entry(self):
         guard = AuditLogGuard()
         result = guard.validate_entry("agent_id", "agent-001")
@@ -96,7 +96,6 @@ class TestAuditLogGuardValidateEntry:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestAuditLogGuardValidateDict:
-
     def test_clean_dict(self):
         guard = AuditLogGuard()
         result = guard.validate_dict({"agent": "a1", "action": "read"})

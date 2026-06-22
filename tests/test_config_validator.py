@@ -13,8 +13,8 @@
 import json
 from pathlib import Path
 
-import pytest
 import yaml
+
 from zephyr.infrastructure.config_validator import (
     ConfigValidator,
     ValidationResult,
@@ -65,11 +65,13 @@ class TestConfigValidator:
     def test_validate_valid_yaml(self, tmp_path):
         cfg = tmp_path / "thresholds.yaml"
         cfg.write_text(
-            yaml.dump({
-                "version": "1.0",
-                "thresholds": {"latency": 100},
-                "error_budget": 0.1,
-            }),
+            yaml.dump(
+                {
+                    "version": "1.0",
+                    "thresholds": {"latency": 100},
+                    "error_budget": 0.1,
+                }
+            ),
             encoding="utf-8",
         )
         validator = ConfigValidator()

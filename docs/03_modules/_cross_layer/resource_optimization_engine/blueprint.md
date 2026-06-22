@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-032
 title: "资源优化引擎蓝图"
 doc_type: blueprint
@@ -1169,8 +1169,8 @@ STEP 3: 拆分后验证
 | 12 | Lifecycle hooks | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\hooks.py` |
 | 13 | MCP Gateway | `D:\ZephyrAlpha\src\zephyr\mcp\gateway_server.py` |
 | 14 | 蓝图模板 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` |
-| 15 | 蓝图架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` |
-| 16 | 元数据注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` |
+| 15 | 蓝图架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
+| 16 | 元数据注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` |
 | 17 | 目录结构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` |
 | 18 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` |
 | 19 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |

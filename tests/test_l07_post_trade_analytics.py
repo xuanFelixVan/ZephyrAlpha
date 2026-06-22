@@ -12,11 +12,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 
 import pytest
-
 
 l07 = pytest.importorskip("zephyr.l07_post_trade_analytics", reason="l07-post-trade-analytics not importable")
 
@@ -24,12 +23,12 @@ from zephyr.pf_core.analytics_base import (
     AttributionEngineBase,
     TCAEngineBase,
 )
-from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.trading.trading_contracts.execution.fill import Fill
-from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
 from zephyr.pf_core.performance_attribution_report import (
     PerformanceAttributionReport,
 )
+from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
+from zephyr.trading.trading_contracts.execution.fill import Fill
+from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
 
 
 def _make_fill(
@@ -42,7 +41,7 @@ def _make_fill(
     return Fill(
         fill_id=fill_id,
         fill_price=fill_price,
-        fill_timestamp=datetime.now(timezone.utc),
+        fill_timestamp=datetime.now(UTC),
         filled_quantity=filled_quantity,
         idempotency_key="ik-fill",
         order_id=order_id,
@@ -182,24 +181,37 @@ class TestAttributionEngineBase:
 class TestExecutionReport:
     def test_creation(self):
         r = ExecutionReport(
-            order_id="o1", symbol="AAPL", direction="BUY",
-            intended_quantity=100, actual_quantity=100,
-            intended_price=Decimal("100"), vwap_price=Decimal("100.5"),
-            slippage_bps=5.0, commission=Decimal("3"),
+            order_id="o1",
+            symbol="AAPL",
+            direction="BUY",
+            intended_quantity=100,
+            actual_quantity=100,
+            intended_price=Decimal("100"),
+            vwap_price=Decimal("100.5"),
+            slippage_bps=5.0,
+            commission=Decimal("3"),
             execution_start="2026-01-01T10:00:00",
             execution_end="2026-01-01T10:05:00",
-            broker_id="sim", idempotency_key="ik",
+            broker_id="sim",
+            idempotency_key="ik",
         )
         assert r.order_id == "o1"
 
     def test_frozen(self):
         r = ExecutionReport(
-            order_id="o1", symbol="AAPL", direction="BUY",
-            intended_quantity=100, actual_quantity=100,
-            intended_price=Decimal("100"), vwap_price=Decimal("100"),
-            slippage_bps=0.0, commission=Decimal("0"),
-            execution_start="", execution_end="",
-            broker_id="sim", idempotency_key="ik",
+            order_id="o1",
+            symbol="AAPL",
+            direction="BUY",
+            intended_quantity=100,
+            actual_quantity=100,
+            intended_price=Decimal("100"),
+            vwap_price=Decimal("100"),
+            slippage_bps=0.0,
+            commission=Decimal("0"),
+            execution_start="",
+            execution_end="",
+            broker_id="sim",
+            idempotency_key="ik",
         )
         with pytest.raises(AttributeError):
             r.order_id = "other"
@@ -208,10 +220,14 @@ class TestExecutionReport:
 class TestPerformanceAttributionReport:
     def test_creation(self):
         r = PerformanceAttributionReport(
-            portfolio_id="p1", period_start="2026-01-01",
-            period_end="2026-03-31", total_return=0.05,
-            allocation_effect=0.02, selection_effect=0.025,
-            interaction_effect=0.005, transaction_cost_drag=-0.001,
+            portfolio_id="p1",
+            period_start="2026-01-01",
+            period_end="2026-03-31",
+            total_return=0.05,
+            allocation_effect=0.02,
+            selection_effect=0.025,
+            interaction_effect=0.005,
+            transaction_cost_drag=-0.001,
             idempotency_key="ik",
         )
         assert r.portfolio_id == "p1"
@@ -219,10 +235,14 @@ class TestPerformanceAttributionReport:
 
     def test_frozen(self):
         r = PerformanceAttributionReport(
-            portfolio_id="p1", period_start="2026-01-01",
-            period_end="2026-03-31", total_return=0.05,
-            allocation_effect=0.02, selection_effect=0.025,
-            interaction_effect=0.005, transaction_cost_drag=-0.001,
+            portfolio_id="p1",
+            period_start="2026-01-01",
+            period_end="2026-03-31",
+            total_return=0.05,
+            allocation_effect=0.02,
+            selection_effect=0.025,
+            interaction_effect=0.005,
+            transaction_cost_drag=-0.001,
             idempotency_key="ik",
         )
         with pytest.raises(AttributeError):
@@ -230,10 +250,14 @@ class TestPerformanceAttributionReport:
 
     def test_with_factor_contributions(self):
         r = PerformanceAttributionReport(
-            portfolio_id="p1", period_start="2026-01-01",
-            period_end="2026-03-31", total_return=0.05,
-            allocation_effect=0.02, selection_effect=0.025,
-            interaction_effect=0.005, transaction_cost_drag=-0.001,
+            portfolio_id="p1",
+            period_start="2026-01-01",
+            period_end="2026-03-31",
+            total_return=0.05,
+            allocation_effect=0.02,
+            selection_effect=0.025,
+            interaction_effect=0.005,
+            transaction_cost_drag=-0.001,
             idempotency_key="ik",
             factor_contributions={"momentum": 0.03, "value": 0.02},
         )

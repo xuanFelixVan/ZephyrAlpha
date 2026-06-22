@@ -46,17 +46,16 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 import difflib
 from pathlib import Path
 
 __all__ = [
+    "PatchConflictError",
+    "apply_patch",
     "compute_diff",
     "compute_file_diff",
-    "apply_patch",
-    "try_apply_patch",
-    "PatchConflictError",
     "similarity_ratio",
+    "try_apply_patch",
 ]
 
 

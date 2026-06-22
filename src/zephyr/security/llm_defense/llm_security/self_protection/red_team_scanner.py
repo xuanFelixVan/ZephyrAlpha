@@ -23,13 +23,14 @@ import asyncio
 import threading
 import time
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway, ScanMode as GWScanMode
+from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+from zephyr.security.llm_defense.llm_security.gateway import ScanMode as GWScanMode
 from zephyr.security.llm_defense.llm_security.payloads import load_red_team_payloads
 from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
 
@@ -56,7 +57,7 @@ class PayloadResult(BaseModel):
     blocked: bool
     reason: str = ""
     latency_ms: float = 0.0
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class ScanReport(BaseModel):
@@ -70,9 +71,9 @@ class ScanReport(BaseModel):
     errors: int = 0
     block_rate_pct: float = 0.0
     avg_latency_ms: float = 0.0
-    by_category: Dict[str, Dict[str, int]] = Field(default_factory=dict)
-    by_severity: Dict[str, Dict[str, int]] = Field(default_factory=dict)
-    failures: List[PayloadResult] = Field(default_factory=list)
+    by_category: dict[str, dict[str, int]] = Field(default_factory=dict)
+    by_severity: dict[str, dict[str, int]] = Field(default_factory=dict)
+    failures: list[PayloadResult] = Field(default_factory=list)
     started_at: str = ""
     completed_at: str = ""
     duration_seconds: float = 0.0
@@ -91,19 +92,19 @@ class RedTeamScanner:
     - 生成结构化 ScanReport 供 CI/Gate 消费
     """
 
-    _PAYLOADS_CACHE: Optional[Dict[str, Any]] = None
+    _PAYLOADS_CACHE: dict[str, Any] | None = None
     _CACHE_LOCK = threading.Lock()
 
     def __init__(self, mode: ScanMode = ScanMode.FULL, target: ScanTarget = ScanTarget.INPUT):
         self._mode = mode
         self._target = target
-        self._results: List[PayloadResult] = []
+        self._results: list[PayloadResult] = []
         self._lock = threading.Lock()
         self._started_at: float = 0.0
         self._completed_at: float = 0.0
 
     @classmethod
-    def _load_payloads(cls) -> Dict[str, Any]:
+    def _load_payloads(cls) -> dict[str, Any]:
         with cls._CACHE_LOCK:
             if cls._PAYLOADS_CACHE is None:
                 cls._PAYLOADS_CACHE = load_red_team_payloads()
@@ -121,7 +122,7 @@ class RedTeamScanner:
         total_variants = 0
         gateway = LSGSecurityGateway()
 
-        variants_to_scan: List[tuple] = []
+        variants_to_scan: list[tuple] = []
         for entry in payloads:
             variant_list = entry.get("variants", [])
             if not variant_list:
@@ -152,6 +153,7 @@ class RedTeamScanner:
 
         if has_loop:
             import concurrent.futures
+
             with concurrent.futures.ThreadPoolExecutor() as pool:
                 future = pool.submit(lambda: asyncio.run(_run_all()))
                 input_results, output_results = future.result()
@@ -168,8 +170,8 @@ class RedTeamScanner:
         self._completed_at = time.time()
         return self._build_report(total_payloads, total_scanned)
 
-    async def _scan_input_batch(self, gateway: LSGSecurityGateway, variants: List[tuple]) -> List[PayloadResult]:
-        results: List[PayloadResult] = []
+    async def _scan_input_batch(self, gateway: LSGSecurityGateway, variants: list[tuple]) -> list[PayloadResult]:
+        results: list[PayloadResult] = []
         for entry, variant in variants:
             t0 = time.time()
             try:
@@ -206,8 +208,8 @@ class RedTeamScanner:
             results.append(pr)
         return results
 
-    async def _scan_output_batch(self, gateway: LSGSecurityGateway, variants: List[tuple]) -> List[PayloadResult]:
-        results: List[PayloadResult] = []
+    async def _scan_output_batch(self, gateway: LSGSecurityGateway, variants: list[tuple]) -> list[PayloadResult]:
+        results: list[PayloadResult] = []
         for entry, variant in variants:
             t0 = time.time()
             try:
@@ -251,9 +253,9 @@ class RedTeamScanner:
         block_rate = (blocked / max(total_variants, 1)) * 100
         avg_latency = sum(r.latency_ms for r in self._results) / max(len(self._results), 1)
 
-        by_category: Dict[str, Dict[str, int]] = defaultdict(lambda: {"blocked": 0, "allowed": 0, "total": 0})
-        by_severity: Dict[str, Dict[str, int]] = defaultdict(lambda: {"blocked": 0, "allowed": 0, "total": 0})
-        failures: List[PayloadResult] = []
+        by_category: dict[str, dict[str, int]] = defaultdict(lambda: {"blocked": 0, "allowed": 0, "total": 0})
+        by_severity: dict[str, dict[str, int]] = defaultdict(lambda: {"blocked": 0, "allowed": 0, "total": 0})
+        failures: list[PayloadResult] = []
 
         for r in self._results:
             cat = r.category
@@ -270,7 +272,7 @@ class RedTeamScanner:
                 failures.append(r)
 
         return ScanReport(
-            scan_id=f"rt_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
+            scan_id=f"rt_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}",
             mode=self._mode.value,
             target=self._target.value,
             total_payloads=total_payloads,
@@ -283,15 +285,15 @@ class RedTeamScanner:
             by_category=dict(by_category),
             by_severity=dict(by_severity),
             failures=failures,
-            started_at=datetime.fromtimestamp(self._started_at, tz=timezone.utc).isoformat(),
-            completed_at=datetime.fromtimestamp(self._completed_at, tz=timezone.utc).isoformat(),
+            started_at=datetime.fromtimestamp(self._started_at, tz=UTC).isoformat(),
+            completed_at=datetime.fromtimestamp(self._completed_at, tz=UTC).isoformat(),
             duration_seconds=round(self._completed_at - self._started_at, 3),
         )
 
     @staticmethod
-    def _sample_payloads(payloads: List[Dict], max_per_category: int) -> List[Dict]:
-        seen: Dict[str, int] = defaultdict(int)
-        sampled: List[Dict] = []
+    def _sample_payloads(payloads: list[dict], max_per_category: int) -> list[dict]:
+        seen: dict[str, int] = defaultdict(int)
+        sampled: list[dict] = []
         for p in payloads:
             cat = p.get("category", "unknown")
             if seen[cat] < max_per_category:
@@ -300,7 +302,7 @@ class RedTeamScanner:
         return sampled
 
     @property
-    def results(self) -> List[PayloadResult]:
+    def results(self) -> list[PayloadResult]:
         return list(self._results)
 
     @property

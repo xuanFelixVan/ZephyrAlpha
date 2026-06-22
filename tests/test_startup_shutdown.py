@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-from unittest.mock import patch
-
 import pytest
 
 from zephyr.governance.startup_shutdown import (
@@ -170,7 +168,7 @@ class TestDagStructure:
         assert StartupPhase.P5_OMS_RISK in STARTUP_DAG[StartupPhase.P6_DASHBOARD_TELEMETRY].depends_on
 
     def test_shutdown_sequence_is_reversed(self) -> None:
-        assert SHUTDOWN_SEQUENCE == list(reversed(list(StartupPhase)))
+        assert list(reversed(list(StartupPhase))) == SHUTDOWN_SEQUENCE
 
 
 class TestHelperFunctions:

@@ -38,8 +38,8 @@ import asyncio
 import logging
 import os
 import time
-from dataclasses import dataclass, field
-from typing import Any, Optional
+from dataclasses import dataclass
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +52,7 @@ def _get_lsg_gateway():
         return _lsg_gateway
     try:
         import importlib
+
         _lsg_gateway = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway").LSGSecurityGateway()
         return _lsg_gateway
     except ImportError:
@@ -68,10 +69,11 @@ def _lsg_scan_input_sync(text: str, metadata: dict[str, Any] | None = None) -> s
         return None
     try:
         import importlib
-        SecurityDecision = importlib.import_module("zephyr.shared.contracts.security.security_decision").SecurityDecision
-        result = asyncio.run(
-            gw.scan_input(text, source="llm_gateway", metadata=metadata or {})
-        )
+
+        SecurityDecision = importlib.import_module(
+            "zephyr.shared.contracts.security.security_decision"
+        ).SecurityDecision
+        result = asyncio.run(gw.scan_input(text, source="llm_gateway", metadata=metadata or {}))
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_input_scan"
     except RuntimeError:
@@ -79,10 +81,10 @@ def _lsg_scan_input_sync(text: str, metadata: dict[str, Any] | None = None) -> s
             loop = asyncio.get_event_loop()
             if loop.is_running():
                 return None
-            result = loop.run_until_complete(
-                gw.scan_input(text, source="llm_gateway", metadata=metadata or {})
-            )
-            SecurityDecision = importlib.import_module("zephyr.shared.contracts.security.security_decision").SecurityDecision
+            result = loop.run_until_complete(gw.scan_input(text, source="llm_gateway", metadata=metadata or {}))
+            SecurityDecision = importlib.import_module(
+                "zephyr.shared.contracts.security.security_decision"
+            ).SecurityDecision
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_input_scan"
         except Exception:
@@ -98,10 +100,11 @@ def _lsg_scan_output_sync(text: str, metadata: dict[str, Any] | None = None) -> 
         return text, None
     try:
         import importlib
-        SecurityDecision = importlib.import_module("zephyr.shared.contracts.security.security_decision").SecurityDecision
-        result = asyncio.run(
-            gw.scan_output(text, source="llm_gateway", metadata=metadata or {})
-        )
+
+        SecurityDecision = importlib.import_module(
+            "zephyr.shared.contracts.security.security_decision"
+        ).SecurityDecision
+        result = asyncio.run(gw.scan_output(text, source="llm_gateway", metadata=metadata or {}))
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return "[BLOCKED BY LSG]", result.blocked_by or "lsg_output_scan"
         if result.sanitized_output:
@@ -111,10 +114,10 @@ def _lsg_scan_output_sync(text: str, metadata: dict[str, Any] | None = None) -> 
             loop = asyncio.get_event_loop()
             if loop.is_running():
                 return text, None
-            result = loop.run_until_complete(
-                gw.scan_output(text, source="llm_gateway", metadata=metadata or {})
-            )
-            SecurityDecision = importlib.import_module("zephyr.shared.contracts.security.security_decision").SecurityDecision
+            result = loop.run_until_complete(gw.scan_output(text, source="llm_gateway", metadata=metadata or {}))
+            SecurityDecision = importlib.import_module(
+                "zephyr.shared.contracts.security.security_decision"
+            ).SecurityDecision
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return "[BLOCKED BY LSG]", result.blocked_by or "lsg_output_scan"
         except Exception:
@@ -234,8 +237,7 @@ def _call_openai_compatible(
         tokens_input = getattr(response.usage, "prompt_tokens", 0) or 0
         tokens_output = getattr(response.usage, "completion_tokens", 0) or 0
         cost_usd = round(
-            (tokens_input / 1000.0) * config.cost_per_1k_input
-            + (tokens_output / 1000.0) * config.cost_per_1k_output,
+            (tokens_input / 1000.0) * config.cost_per_1k_input + (tokens_output / 1000.0) * config.cost_per_1k_output,
             6,
         )
 
@@ -319,8 +321,7 @@ def _call_anthropic(
         tokens_input = getattr(response.usage, "input_tokens", 0) or 0
         tokens_output = getattr(response.usage, "output_tokens", 0) or 0
         cost_usd = round(
-            (tokens_input / 1000.0) * config.cost_per_1k_input
-            + (tokens_output / 1000.0) * config.cost_per_1k_output,
+            (tokens_input / 1000.0) * config.cost_per_1k_input + (tokens_output / 1000.0) * config.cost_per_1k_output,
             6,
         )
 
@@ -426,7 +427,7 @@ class LLMGateway:
         return chain
 
     @classmethod
-    def route(cls, skill_id: str, model_hint: Optional[str] = None) -> dict[str, Any]:
+    def route(cls, skill_id: str, model_hint: str | None = None) -> dict[str, Any]:
         provider = model_hint or "deepseek"
         config = _PROVIDERS.get(provider, _PROVIDERS["deepseek"])
         return {

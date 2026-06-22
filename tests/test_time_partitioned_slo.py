@@ -15,7 +15,9 @@ from unittest.mock import patch
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.time_partitioned_slo", reason="time_partitioned_slo not available")
+mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.time_partitioned_slo", reason="time_partitioned_slo not available"
+)
 TimePartitionedSLO = mod.TimePartitionedSLO
 
 

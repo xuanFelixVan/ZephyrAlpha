@@ -27,93 +27,42 @@ CircularDependencyScanHandler — CircularDependencyScanHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class CircularDependencyScanHandler(CheckTypeHandler):
-
-
     name = "circular_dependency_scan"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        try:
+            from zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency import run_scan
 
-                violations = []
+            result = run_scan()
 
+            if not result.passed:
+                for cycle in result.cycles:
+                    violations.append(
+                        {
+                            "message": f"Circular dependency: {' -> '.join(cycle)} -> {cycle[0]}",
+                            "severity": check.severity,
+                        }
+                    )
 
-                try:
+        except Exception as exc:
+            violations.append({"message": f"EN-001 scan failed: {exc}", "severity": "P2"})
 
-
-                    from zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency import run_scan
-
-
-                    result = run_scan()
-
-
-                    if not result.passed:
-
-
-                        for cycle in result.cycles:
-
-
-                            violations.append({"message": f"Circular dependency: {' -> '.join(cycle)} -> {cycle[0]}", "severity": check.severity})
-
-
-                except Exception as exc:
-
-
-                    violations.append({"message": f"EN-001 scan failed: {exc}", "severity": "P2"})
-
-
-                return violations
-
-
+        return violations

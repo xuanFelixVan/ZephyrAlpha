@@ -29,9 +29,9 @@ Mitigation: MTTI tracking with adaptive threshold based on historical detection 
 
 from __future__ import annotations
 
+import time
 from collections import deque
 from dataclasses import dataclass, field
-import time
 
 
 @dataclass

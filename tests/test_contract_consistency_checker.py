@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.contract_consistency_checker import (
-    ContractConsistencyChecker, ContractCheck,
+    ContractCheck,
+    ContractConsistencyChecker,
 )
+
 
 class TestContractConsistencyChecker:
     def test_instantiation(self):

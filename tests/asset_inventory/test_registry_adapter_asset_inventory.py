@@ -7,18 +7,17 @@
 # [TESTS] —
 """Tests for MOD-INF-026 §17 RegistryAdapter module."""
 
+from datetime import UTC
 from pathlib import Path
 
+from zephyr.infrastructure.asset_inventory.models import RegistryEntry
 from zephyr.infrastructure.asset_inventory.registry_adapter import (
     CsvAdapter,
     MarkdownTableAdapter,
     RegistryManager,
     RegistryParseError,
     YamlListAdapter,
-    YamlDictAdapter,
 )
-from zephyr.infrastructure.asset_inventory.models import RegistryEntry
-
 
 _YAML_LIST = """\
 - id: entry-1
@@ -137,15 +136,16 @@ class TestRegistryManager:
         assert isinstance(ad, CsvAdapter)
 
     def test_cross_match_asset(self) -> None:
-        from zephyr.infrastructure.asset_inventory.models import ClassifiedAsset, AssetType, AssetStatus
-        from datetime import datetime, timezone
+        from datetime import datetime
+
+        from zephyr.infrastructure.asset_inventory.models import AssetStatus, AssetType, ClassifiedAsset
 
         asset = ClassifiedAsset(
             relative_path="src/matched.py",
             asset_type=AssetType.MODULE,
             status=AssetStatus.ACTIVE,
             size_bytes=100,
-            mtime_utc=datetime.now(timezone.utc),
+            mtime_utc=datetime.now(UTC),
             sha256="a" * 64,
         )
         registry_entries = [

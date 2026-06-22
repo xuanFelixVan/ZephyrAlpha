@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """M1-M11 Pipeline Orchestrator 单元测试"""
 
 
@@ -14,13 +15,13 @@ import sys
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-from zephyr.shared.shared_services.models import TaskCard
 from zephyr.integration.pipeline_routing import (
     M_MODULE_SPECS,
     M_MODULES,
     PipelineOrchestrator,
     PipelineStatus,
 )
+from zephyr.shared.shared_services.models import TaskCard
 
 
 def _make_task(task_id: str, **overrides) -> TaskCard:
@@ -323,10 +324,12 @@ class TestModelCollapseIntegration:
 
     def test_text_similarity_on_identical(self) -> None:
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator as PO
+
         assert PO._text_similarity("hello world", "hello world") == 1.0
 
     def test_text_similarity_on_different(self) -> None:
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator as PO
+
         sim = PO._text_similarity("hello world", "foo bar baz")
         assert sim < 0.5
 

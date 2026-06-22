@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 校验失败返回pass=False
 # [TESTS] tests/audit-orchestrator/test_integrity.py
-
 import logging
 from typing import Any
 
@@ -21,12 +20,14 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["IntegrityGuard"]
 
+
 class MerkleAggregator:
     def __init__(self) -> None:
         self._roots: dict[str, str] = {}
 
     def aggregate(self, hour_key: str, entries: list) -> str:
         import hashlib
+
         payload = f"{hour_key}:{len(entries)}".encode()
         root = hashlib.sha256(payload).hexdigest()
         self._roots[hour_key] = root
@@ -35,6 +36,7 @@ class MerkleAggregator:
     def verify(self, hour_key: str, expected_root: str) -> bool:
         return self._roots.get(hour_key) == expected_root
 
+
 class IntegrityGuard:
     def __init__(self) -> None:
         self._merkle_bridge = None
@@ -42,6 +44,7 @@ class IntegrityGuard:
         self._available = False
         try:
             from zephyr.governance.merkle_hourly import MerkleHourlyBridge
+
             self._merkle_bridge = MerkleHourlyBridge()
             self._available = True
         except Exception as exc:
@@ -49,6 +52,7 @@ class IntegrityGuard:
 
         try:
             from zephyr.governance.audit_trail.trust_bridge import TrustBridge
+
             self._trust_bridge = TrustBridge()
         except Exception as exc:
             logger.warning("TrustBridge not available: %s", exc)
@@ -90,12 +94,13 @@ class IntegrityGuard:
             "trust": self._trust_bridge is not None and self._trust_bridge.is_available(),
         }
 
+
 class IntegrityVerifier:
-    def __init__(self, algorithm='sha256'):
+    def __init__(self, algorithm="sha256"):
         self.algorithm = algorithm
 
     def compute_hash(self, data):
-        return ''
+        return ""
 
     def verify(self, data, expected_hash):
         return True

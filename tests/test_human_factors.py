@@ -11,7 +11,7 @@
 # [TESTS] tests/test_human_factors.py
 
 import time
-import pytest
+
 from zephyr.governance.human_factors import HumanFactors
 
 

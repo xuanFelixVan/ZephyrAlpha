@@ -29,9 +29,8 @@ from __future__ import annotations
 
 import logging
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from zephyr.infrastructure.asset_inventory.models import (
     AssetLayer,
@@ -87,7 +86,7 @@ class Classifier:
 
     def __init__(
         self,
-        type_mapping: Optional[list[tuple[str, list[str], AssetType]]] = None,
+        type_mapping: list[tuple[str, list[str], AssetType]] | None = None,
         unknown_threshold_pct: float = 10.0,
     ) -> None:
         self.type_mapping = type_mapping or TYPE_MAPPING
@@ -111,12 +110,16 @@ class Classifier:
         if unknown_pct > self.unknown_threshold_pct:
             logger.warning(
                 "未知类型占比 %.1f%% 超过阈值 %.1f%% (%d 个文件)",
-                unknown_pct, self.unknown_threshold_pct, len(unknown),
+                unknown_pct,
+                self.unknown_threshold_pct,
+                len(unknown),
             )
 
         logger.info(
             "分类完成: %d 资产, %d 未知 (%.1f%%)",
-            len(assets), len(unknown), unknown_pct,
+            len(assets),
+            len(unknown),
+            unknown_pct,
         )
 
         return ClassificationResult(
@@ -157,7 +160,11 @@ class Classifier:
         candidate_dirs = [p for p, _, _ in self.type_mapping]
         for prefix in sorted(candidate_dirs, key=len, reverse=True):
             if entry.relative_path.startswith(prefix):
-                if any(True for _, exts, _ in self.type_mapping if prefix in entry.relative_path and entry.extension in exts):
+                if any(
+                    True
+                    for _, exts, _ in self.type_mapping
+                    if prefix in entry.relative_path and entry.extension in exts
+                ):
                     pass
                 break
         else:
@@ -190,11 +197,14 @@ class Classifier:
 
         if not scan_path.exists():
             print("警告: 扫描文件不存在，运行 scanner 先")
-            print(f"  python -c \"from zephyr.infrastructure.asset_inventory.scanner import Scanner; r = Scanner().scan(); Scanner().save(r)\"")
+            print(
+                '  python -c "from zephyr.infrastructure.asset_inventory.scanner import Scanner; r = Scanner().scan(); Scanner().save(r)"'
+            )
             return
 
         payload = json.loads(scan_path.read_text(encoding="utf-8"))
         from zephyr.infrastructure.asset_inventory.models import RawFileEntry
+
         entries = [RawFileEntry(**e) for e in payload["entries"]]
         scan_result = ScanResult(**{**payload, "entries": entries})
 
@@ -218,7 +228,7 @@ class Classifier:
 
 
 def _generate_classification_id() -> str:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     seq = str(now.timestamp()).replace(".", "")[-3:]
     return f"CLS-{now.strftime('%Y%m%d')}-{seq}"
 

@@ -27,6 +27,7 @@ Risk: R168 — Overlapping maintenance windows cause false anomaly spikes.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class MaintenanceCoordinator:
     windows: list[dict] = field(default_factory=list)

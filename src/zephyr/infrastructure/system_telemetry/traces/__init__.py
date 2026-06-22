@@ -10,25 +10,26 @@
 # [ERROR_CONTRACT] 采样决策由TraceSampler控制;span结束自动flush到logs
 # [TESTS] tests/unit/telemetry/
 """L12 · traces — 分布式链路追踪（W3C TraceContext）"""
+
 from zephyr.infrastructure.system_telemetry.traces.span_stub import (
-    noop_span,
-    TraceContext,
     Span,
     SpanEvent,
+    TraceContext,
     TraceSampler,
-    list_active_spans,
-    get_trace_tree,
     _current_span,
+    get_trace_tree,
+    list_active_spans,
+    noop_span,
 )
 
 __all__ = [
-    "noop_span",
-    "TraceContext",
     "Span",
     "SpanEvent",
+    "TraceContext",
     "TraceSampler",
-    "list_active_spans",
-    "get_trace_tree",
     "_current_span",
+    "get_trace_tree",
+    "list_active_spans",
+    "noop_span",
     "span_stub",
 ]

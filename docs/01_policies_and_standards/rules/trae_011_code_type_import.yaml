@@ -1,10 +1,20 @@
 rule_id: TRAE-011
 title: 代码构建-类型与导入
+version: 1.0.0
+layer: L1
+module_id: TRAE-011
+depends_on: []
+tags:
+- TRAE
+- code_type_import
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - CODE-005
 - CODE-006
 - CODE-007
-layer: L1
 severity: error
 scope: code_type_import
 domain: TRAE
@@ -45,7 +55,7 @@ sections:
     - type: mandatory
       step: 货币运算使用Money类型
     prohibitions:
-    - 禁止缺类型注解的函数签名——def process(data): null
+    - 禁止缺类型注解的函数签名——def process(data):
     - 禁止泛型字典作为参数——def process(data: dict)
     - 禁止Any绕过类型检查——def process(data: Any)（显式Any反序列化除外）
     - 禁止金额/价格/数量使用float
@@ -102,13 +112,11 @@ sections:
     - CODE-005
     items:
     - description: 禁止缺类型注解
-      details: '禁止: def process(data): ...; 正确: def process(tick: NormalizedMarketData)
-        -> FactorSignal: ...'
+      details: '禁止: def process(data): ...; 正确: def process(tick: NormalizedMarketData) -> FactorSignal: ...'
     - description: 禁止泛型字典
       details: '禁止: def process(data: dict): ...; 正确: 使用Pydantic/dataclass定义具体类型'
     - description: 禁止Any绕过类型检查
-      details: '禁止: def process(data: Any): ...; 豁免: def deserialize(raw: bytes) ->
-        Any: ... (至少表态''我知道这里是动态类型'')'
+      details: '禁止: def process(data: Any): ...; 豁免: def deserialize(raw: bytes) -> Any: ... (至少表态''我知道这里是动态类型'')'
     - description: Decimal/Timestamp/Money强制
       details: 金额/价格/数量→Decimal(禁止float); 时间戳→Timestamp(纳秒UTC，禁止裸datetime); 货币运算→Money类型
   gov_eng_011_ssot_procedure:
@@ -144,10 +152,7 @@ sections:
     - CODE-006
     items:
     - description: 导入分组与排序
-      details: '1.标准库: import asyncio / from pathlib import Path / from typing import
-        Optional; 2.第三方库: import numpy as np / from pydantic import BaseModel; 3.项目内模块(绝对导入):
-        from zephyr.shared.contracts.market_data import NormalizedMarketData; 4.同层模块(相对导入，仅限同package内):
-        from .models import FactorSignal'
+      details: '1.标准库: import asyncio / from pathlib import Path / from typing import Optional; 2.第三方库: import numpy as np / from pydantic import BaseModel; 3.项目内模块(绝对导入): from zephyr.shared.contracts.market_data import NormalizedMarketData; 4.同层模块(相对导入，仅限同package内): from .models import FactorSignal'
   gov_eng_011_scope:
     title: 适用范围
     section_type: context
@@ -205,8 +210,7 @@ sections:
     items:
     - version: 1.1.0
       date: '2026-06-19'
-      change: RQ审查修复：修复references.scripts路径（check_dependency_direction.py→d5_architecture/checkers/；validate_module_schema.py→d5_architecture/validators/）（RQ-04）；同步修复verification
-        section脚本路径（RQ-04）；provenance标注源文件已superseded（RQ-04/RQ-09）；补充change_history（RQ-14）
+      change: RQ审查修复：修复references.scripts路径（check_dependency_direction.py→d5_architecture/checkers/；validate_module_schema.py→d5_architecture/validators/）（RQ-04）；同步修复verification section脚本路径（RQ-04）；provenance标注源文件已superseded（RQ-04/RQ-09）；补充change_history（RQ-14）
     - version: 1.0.0
       date: '2026-06-13'
       change: 初始提取自GOV-ENG-001§3-§5
@@ -236,7 +240,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

@@ -19,8 +19,8 @@ from typing import Annotated, Self
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.integration.shared.schema.execution_model import ExecutionModel, normalize_execution_model
+from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 
 
 class TaskNamespace(str, Enum):
@@ -33,14 +33,15 @@ class TaskNamespace(str, Enum):
     OPS = "OPS"
     DM = "DM"
 
+
 __all__ = [
-    "Task",
-    "TaskStatus",
-    "TaskNamespace",
     "ExecutionModel",
-    "normalize_execution_model",
     "GateLevel",
+    "Task",
     "TaskAuditFinding",
+    "TaskNamespace",
+    "TaskStatus",
+    "normalize_execution_model",
 ]
 
 _NAMESPACE_NAMES = "|".join(sorted(ns.value for ns in TaskNamespace))
@@ -93,9 +94,7 @@ _DESCRIPTION_MIN_MEANINGFUL_LENGTH = 100
 class Task(BaseModel):
     model_config = BASE_CONFIG
 
-    task_id: Annotated[
-        str, Field(pattern=_TASK_ID_PATTERN, description="Task ID, format {NAMESPACE}-{SEQ}")
-    ]
+    task_id: Annotated[str, Field(pattern=_TASK_ID_PATTERN, description="Task ID, format {NAMESPACE}-{SEQ}")]
     namespace: TaskNamespace = Field(description="Task namespace")
     seq: int = Field(ge=1, description="Sequence number within namespace")
     title: str = Field(min_length=1, max_length=200, description="Task title")
@@ -133,14 +132,20 @@ class Task(BaseModel):
     source_section: str = Field(default="", description="Source blueprint section")
     description: str = Field(min_length=10, max_length=50000, description="任务详细描述（含完整施工规格）")
     allowed_touch: list[str] = Field(default_factory=list, description="可修改文件白名单——完整绝对路径")
-    applicable_rules: list[dict] = Field(default_factory=list, description="必须遵守的治理规则 [{module_id, section, reason}]")
+    applicable_rules: list[dict] = Field(
+        default_factory=list, description="必须遵守的治理规则 [{module_id, section, reason}]"
+    )
     rollback_instructions: str = Field(default="", description="失败时如何撤销已有修改")
     post_sync_standard: list[str] = Field(default_factory=list, description="完成后必须执行的标准同步验证命令")
     dependency_type: str = Field(default="hard", description="依赖类型：hard/soft/none")
     upstream_files: list[str] = Field(default_factory=list, description="执行前必须读取的文件完整绝对路径列表")
-    downstream_outputs: list[dict] = Field(default_factory=list, description="执行后必须产出的文件 [{path, description}]")
+    downstream_outputs: list[dict] = Field(
+        default_factory=list, description="执行后必须产出的文件 [{path, description}]"
+    )
     forbidden_touch: list[str] = Field(default_factory=list, description="禁止修改的文件黑名单")
-    context_assembly_manifest: list[dict] = Field(default_factory=list, description="上下文装配清单 [{file_path, reason}]")
+    context_assembly_manifest: list[dict] = Field(
+        default_factory=list, description="上下文装配清单 [{file_path, reason}]"
+    )
     estimated_tokens: int = Field(default=8000, ge=500, description="预估 Token")
     timeout_minutes: int = Field(default=30, ge=5, description="超时时间（分钟）")
     completed_gates: list[GateLevel] = Field(default_factory=list)
@@ -158,7 +163,9 @@ class Task(BaseModel):
     approval_required: bool = Field(default=False, description="GOV-TASK-004 §2.4: 优先级升级需 Owner 审批")
     requires_rb_check: bool = Field(default=False, description="完成后是否自动触发 Red-Blue 对抗验证")
     priority_proposed: str | None = Field(default=None, description="AI 提议的目标优先级")
-    rejection_cooldown_until: str | None = Field(default=None, description="升级被拒绝后的 48h 冷却期截止时间（ISO 8601）")
+    rejection_cooldown_until: str | None = Field(
+        default=None, description="升级被拒绝后的 48h 冷却期截止时间（ISO 8601）"
+    )
     block_sessions_count: int = Field(default=0, ge=0, description="任务累计被 BLOCKED 的次数")
     pipeline_task_type: str | None = Field(default=None, description="CT-PIPE-ORC-001 任务类型")
     target_layer: str | None = Field(default=None, description="CT-PIPE-ORC-001 目标层标识")
@@ -167,10 +174,14 @@ class Task(BaseModel):
     depgraph_nodes: list[str] = Field(default_factory=list, description="全景依赖图中对应的节点ID列表")
     depgraph_layer: str | None = Field(default=None, description="依赖图层")
     dependency_rationale: str = Field(default="", description="依赖关系说明")
-    root_cause_analysis: str | None = Field(default=None, description="MTH-006 根源分析——COMPLETED 时如有 error 则 MUST 填写，含根因→治根→修复的完整追溯")
+    root_cause_analysis: str | None = Field(
+        default=None, description="MTH-006 根源分析——COMPLETED 时如有 error 则 MUST 填写，含根因→治根→修复的完整追溯"
+    )
     hallucination_risk: float = Field(default=0.0, ge=0.0, le=1.0, description="幻觉风险评分（0=安全，1=极度危险）")
     drift_risk: float = Field(default=0.0, ge=0.0, le=1.0, description="漂移风险评分（0=安全，1=极度危险）")
-    granularity_level: str = Field(default="G5_ATOMIC", description="颗粒度级别: G5_ATOMIC/G4_FINE/G3_MEDIUM/G2_COARSE/G1_VAGUE")
+    granularity_level: str = Field(
+        default="G5_ATOMIC", description="颗粒度级别: G5_ATOMIC/G4_FINE/G3_MEDIUM/G2_COARSE/G1_VAGUE"
+    )
 
     @field_validator("ready_at", "completed_at", "deleted_at", mode="before")
     @classmethod
@@ -196,6 +207,7 @@ class Task(BaseModel):
         missing_keywords = [kw for kw in _DESCRIPTION_REQUIRED_KEYWORDS if kw not in self.description]
         if missing_keywords and len(self.description) >= _DESCRIPTION_MIN_MEANINGFUL_LENGTH:
             import warnings
+
             warnings.warn(
                 f"GOV-TASK-001 §2: description 缺少关键结构词 {missing_keywords}，"
                 f"可能导致幻觉/漂移风险升高（GOV-TASK-001 §6 颗粒度安全阈值）",
@@ -208,10 +220,13 @@ class Task(BaseModel):
 _STABILITY_FROZEN = True
 _FROZEN_PUBLIC_API = frozenset(__all__)
 
+
 def __getattr__(name: str):
     if name in _FROZEN_PUBLIC_API:
         import logging
+
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.governance.rule_enforcement.task_types", name
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.governance.rule_enforcement.task_types",
+            name,
         )
     raise AttributeError(f"module 'zephyr.governance.rule_enforcement.task_types' has no attribute {name!r}")

@@ -35,7 +35,6 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -73,50 +72,206 @@ class ComplianceMapping(BaseModel):
 
 _COMPLIANCE_TABLE: dict[str, list[ComplianceRequirement]] = {
     AuditEventType.PERMISSION_VIOLATION.value: [
-        ComplianceRequirement(framework=ComplianceFramework.GDPR, article="Art.25", title="Data Protection by Design", description="Access control violations must be logged", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="AC-2", title="Account Management", description="Unauthorized access attempts must be audited", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.SOC2, article="CC6.1", title="Logical Access", description="Access violations tracked", severity="high"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.GDPR,
+            article="Art.25",
+            title="Data Protection by Design",
+            description="Access control violations must be logged",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="AC-2",
+            title="Account Management",
+            description="Unauthorized access attempts must be audited",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.SOC2,
+            article="CC6.1",
+            title="Logical Access",
+            description="Access violations tracked",
+            severity="high",
+        ),
     ],
     AuditEventType.FILE_DELETE.value: [
-        ComplianceRequirement(framework=ComplianceFramework.GDPR, article="Art.17", title="Right to Erasure", description="Data deletion must be recorded", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.HIPAA, article="164.312(b)", title="Audit Controls", description="Record information system activity", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="AU-2", title="Audit Events", description="Delete operations must be auditable", severity="medium"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.GDPR,
+            article="Art.17",
+            title="Right to Erasure",
+            description="Data deletion must be recorded",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.HIPAA,
+            article="164.312(b)",
+            title="Audit Controls",
+            description="Record information system activity",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="AU-2",
+            title="Audit Events",
+            description="Delete operations must be auditable",
+            severity="medium",
+        ),
     ],
     AuditEventType.FILE_WRITE.value: [
-        ComplianceRequirement(framework=ComplianceFramework.GDPR, article="Art.30", title="Records of Processing", description="Data modification must be logged", severity="medium"),
-        ComplianceRequirement(framework=ComplianceFramework.HIPAA, article="164.312(b)", title="Audit Controls", description="Record system activity including writes", severity="medium"),
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="AU-2", title="Audit Events", description="Write operations must be auditable", severity="medium"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.GDPR,
+            article="Art.30",
+            title="Records of Processing",
+            description="Data modification must be logged",
+            severity="medium",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.HIPAA,
+            article="164.312(b)",
+            title="Audit Controls",
+            description="Record system activity including writes",
+            severity="medium",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="AU-2",
+            title="Audit Events",
+            description="Write operations must be auditable",
+            severity="medium",
+        ),
     ],
     AuditEventType.ANOMALY_DETECTED.value: [
-        ComplianceRequirement(framework=ComplianceFramework.GDPR, article="Art.33", title="Breach Notification", description="Anomalies may indicate data breaches", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.HIPAA, article="164.312(b)", title="Audit Controls", description="Anomaly detection supports audit review", severity="medium"),
-        ComplianceRequirement(framework=ComplianceFramework.EU_AI_ACT, article="Art.14", title="Human Oversight", description="Anomalies require human review", severity="high"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.GDPR,
+            article="Art.33",
+            title="Breach Notification",
+            description="Anomalies may indicate data breaches",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.HIPAA,
+            article="164.312(b)",
+            title="Audit Controls",
+            description="Anomaly detection supports audit review",
+            severity="medium",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.EU_AI_ACT,
+            article="Art.14",
+            title="Human Oversight",
+            description="Anomalies require human review",
+            severity="high",
+        ),
     ],
     AuditEventType.TRUST_SCORE_CHANGE.value: [
-        ComplianceRequirement(framework=ComplianceFramework.EU_AI_ACT, article="Art.9", title="Risk Management", description="Trust score changes indicate risk level changes", severity="medium"),
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="RA-3", title="Risk Assessment", description="Trust changes must be tracked for risk management", severity="medium"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.EU_AI_ACT,
+            article="Art.9",
+            title="Risk Management",
+            description="Trust score changes indicate risk level changes",
+            severity="medium",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="RA-3",
+            title="Risk Assessment",
+            description="Trust changes must be tracked for risk management",
+            severity="medium",
+        ),
     ],
     AuditEventType.KB_POISONING_ATTEMPT.value: [
-        ComplianceRequirement(framework=ComplianceFramework.EU_AI_ACT, article="Art.15", title="Accuracy and Robustness", description="KB poisoning threatens AI system integrity", severity="critical"),
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="SI-3", title="Malicious Code Protection", description="Poisoning is a form of malicious content injection", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.GDPR, article="Art.25", title="Data Protection by Design", description="Input validation required", severity="high"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.EU_AI_ACT,
+            article="Art.15",
+            title="Accuracy and Robustness",
+            description="KB poisoning threatens AI system integrity",
+            severity="critical",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="SI-3",
+            title="Malicious Code Protection",
+            description="Poisoning is a form of malicious content injection",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.GDPR,
+            article="Art.25",
+            title="Data Protection by Design",
+            description="Input validation required",
+            severity="high",
+        ),
     ],
     AuditEventType.SUPPLY_CHAIN_INSTALL.value: [
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="SR-3", title="Supply Chain Protection", description="Package integrity must be verified", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.EU_AI_ACT, article="Art.15", title="Accuracy and Robustness", description="Supply chain integrity affects AI robustness", severity="medium"),
-        ComplianceRequirement(framework=ComplianceFramework.ISO27001, article="A.15", title="Supplier Relationships", description="Supply chain security controls", severity="medium"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="SR-3",
+            title="Supply Chain Protection",
+            description="Package integrity must be verified",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.EU_AI_ACT,
+            article="Art.15",
+            title="Accuracy and Robustness",
+            description="Supply chain integrity affects AI robustness",
+            severity="medium",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.ISO27001,
+            article="A.15",
+            title="Supplier Relationships",
+            description="Supply chain security controls",
+            severity="medium",
+        ),
     ],
     AuditEventType.DELEGATION_CHAIN_ISSUE.value: [
-        ComplianceRequirement(framework=ComplianceFramework.GDPR, article="Art.25", title="Data Protection by Design", description="Delegation must enforce least privilege", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="AC-4", title="Information Flow Enforcement", description="Delegation chains must be controlled", severity="high"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.GDPR,
+            article="Art.25",
+            title="Data Protection by Design",
+            description="Delegation must enforce least privilege",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="AC-4",
+            title="Information Flow Enforcement",
+            description="Delegation chains must be controlled",
+            severity="high",
+        ),
     ],
     AuditEventType.FEEDBACK_LOOP_SELF_REINFORCING.value: [
-        ComplianceRequirement(framework=ComplianceFramework.EU_AI_ACT, article="Art.9", title="Risk Management", description="Self-reinforcing loops create systemic risk", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="SI-4", title="System Monitoring", description="Feedback loops must be monitored", severity="medium"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.EU_AI_ACT,
+            article="Art.9",
+            title="Risk Management",
+            description="Self-reinforcing loops create systemic risk",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="SI-4",
+            title="System Monitoring",
+            description="Feedback loops must be monitored",
+            severity="medium",
+        ),
     ],
     AuditEventType.DRIFT_DETECTED.value: [
-        ComplianceRequirement(framework=ComplianceFramework.EU_AI_ACT, article="Art.15", title="Accuracy and Robustness", description="Drift affects AI accuracy", severity="high"),
-        ComplianceRequirement(framework=ComplianceFramework.NIST, article="SI-4", title="System Monitoring", description="Drift indicates system changes", severity="medium"),
+        ComplianceRequirement(
+            framework=ComplianceFramework.EU_AI_ACT,
+            article="Art.15",
+            title="Accuracy and Robustness",
+            description="Drift affects AI accuracy",
+            severity="high",
+        ),
+        ComplianceRequirement(
+            framework=ComplianceFramework.NIST,
+            article="SI-4",
+            title="System Monitoring",
+            description="Drift indicates system changes",
+            severity="medium",
+        ),
     ],
 }
 
@@ -145,7 +300,9 @@ class ComplianceMapper:
         event_type: str | None = None,
     ) -> list[ComplianceRequirement]:
         requirements: list[ComplianceRequirement] = []
-        source = {event_type: self._mappings[event_type]} if event_type and event_type in self._mappings else self._mappings
+        source = (
+            {event_type: self._mappings[event_type]} if event_type and event_type in self._mappings else self._mappings
+        )
         for reqs in source.values():
             for req in reqs:
                 if framework and req.framework != framework:

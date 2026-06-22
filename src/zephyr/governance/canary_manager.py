@@ -27,6 +27,7 @@ import hashlib
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class CanaryFile:
     path: str
@@ -34,6 +35,7 @@ class CanaryFile:
     relation_group: str
     expected_clones: list[str] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
+
 
 @dataclass
 class CanaryManager:
@@ -58,7 +60,9 @@ class CanaryManager:
     return "<VALUE>"
 """
 
-    def register_canary(self, name: str, path: str, content: str, relation_group: str, expected_clones: list[str]) -> CanaryFile:
+    def register_canary(
+        self, name: str, path: str, content: str, relation_group: str, expected_clones: list[str]
+    ) -> CanaryFile:
         cf = CanaryFile(
             path=path,
             content_hash=hashlib.sha256(content.encode()).hexdigest()[:16],
@@ -70,9 +74,15 @@ class CanaryManager:
         return cf
 
     def setup_standard_canaries(self) -> None:
-        self.register_canary("identical1", "tests/canary/a.py", self.A_IDENTICAL, "identical", ["identical2", "identical3"])
-        self.register_canary("identical2", "tests/canary/b.py", self.B_IDENTICAL, "identical", ["identical1", "identical3"])
-        self.register_canary("identical3", "tests/canary/b2.py", self.B_IDENTICAL, "identical", ["identical1", "identical2"])
+        self.register_canary(
+            "identical1", "tests/canary/a.py", self.A_IDENTICAL, "identical", ["identical2", "identical3"]
+        )
+        self.register_canary(
+            "identical2", "tests/canary/b.py", self.B_IDENTICAL, "identical", ["identical1", "identical3"]
+        )
+        self.register_canary(
+            "identical3", "tests/canary/b2.py", self.B_IDENTICAL, "identical", ["identical1", "identical2"]
+        )
         self.register_canary("near_miss", "tests/canary/near.py", self.D_NEAR_MISS, "near_miss", [])
 
     def record_result(self, canary_name: str, detected: int, expected: int, passed: bool) -> None:
@@ -81,4 +91,9 @@ class CanaryManager:
     def score(self) -> dict[str, Any]:
         total = len(self.results)
         passed = sum(1 for r in self.results if r["passed"])
-        return {"total_canaries": total, "passed": passed, "failed": total - passed, "pass_rate": passed / max(total, 1)}
+        return {
+            "total_canaries": total,
+            "passed": passed,
+            "failed": total - passed,
+            "pass_rate": passed / max(total, 1),
+        }

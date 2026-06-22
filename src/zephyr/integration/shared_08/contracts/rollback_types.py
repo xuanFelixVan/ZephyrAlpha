@@ -25,10 +25,9 @@ G-CT-003 — RollbackResult Pydantic V2 BaseModel 回滚结果数据结构.
 Canonical home for rollback result types.
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -52,7 +51,7 @@ class RollbackResult(BaseModel):
     status: RollbackStatus = RollbackStatus.SUCCESS
     validation_result: ValidationResult = ValidationResult.PENDING
     error_detail: str = ""
-    detected_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    detected_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     agent_id: str = ""
     resource_path: str = ""
 

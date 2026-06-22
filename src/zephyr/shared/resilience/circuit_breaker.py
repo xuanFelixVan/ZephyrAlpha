@@ -57,9 +57,9 @@ from typing import Any
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "CircuitState",
     "CircuitBreaker",
     "CircuitOpenError",
+    "CircuitState",
 ]
 
 
@@ -154,10 +154,7 @@ class CircuitBreaker:
                 self._opened_at = time.monotonic()
                 return
 
-            if (
-                self._state == CircuitState.CLOSED
-                and self._failure_count >= self._failure_threshold
-            ):
+            if self._state == CircuitState.CLOSED and self._failure_count >= self._failure_threshold:
                 self._state = CircuitState.OPEN
                 self._opened_at = time.monotonic()
 

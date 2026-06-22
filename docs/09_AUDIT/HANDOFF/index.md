@@ -1,30 +1,25 @@
 ---
 doc_type: index
-status: Draft
-title: HANDOFF — 目录索引
-version: 1.0.0
-created: '2026-05-06'
-updated: '2026-05-06'
-blueprint_id: DOM-GOV-001
-module_id: GOV-053
+status: active
+title: "handoff — 目录索引"
+module_id: ""
+blueprint_id: ""
+version: "1.0.0"
+created: "2026-06-22"
+updated: "2026-06-22"
+---
 
-# HANDOFF
+# handoff
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-06
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [session-crash.yaml](session-crash.yaml) | YAML | |
-| [session-empty.yaml](session-empty.yaml) | YAML | |
-| [session-first.yaml](session-first.yaml) | YAML | |
-| [session-print-test.yaml](session-print-test.yaml) | YAML | |
-| [session-second.yaml](session-second.yaml) | YAML | |
-| [session-test-001.yaml](session-test-001.yaml) | YAML | |
+| (空目录) | | |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

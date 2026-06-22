@@ -411,9 +411,7 @@ class TestDispatchFleGates:
         gates_dir.mkdir(parents=True)
         registry_file = gates_dir / "_registry.yaml"
         registry_file.write_text(
-            "gates:\n"
-            "  - gate_id: FLE-NO-FILE\n"
-            "    category: fle_self_defense\n",
+            "gates:\n  - gate_id: FLE-NO-FILE\n    category: fle_self_defense\n",
             encoding="utf-8",
         )
 

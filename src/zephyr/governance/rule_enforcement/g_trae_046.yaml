@@ -1,0 +1,118 @@
+module_id: MOD-INF-007
+schema_version: '1.0'
+doc_type: gate
+gate_id: G_TRAE_046
+gate_name: g_trae_046
+title: G_TRAE_046 Gate — 工程治理-代码重组安全
+description: 自动化门禁：强制执行 TRAE-046（工程治理-代码重组安全）规则。将规则从文档约束升级为phase_gate自动阻断。
+rule_ids:
+- TRAE-046
+status: active
+ttl: permanent
+scope: global
+category: compliance
+owner: MOD-INF-007
+consumer: gate_engine
+ai_autonomy: autonomous
+token_budget: 200
+latency_budget_ms: 500
+execution_plane: warm
+trigger:
+  event: phase_transition
+  precondition: task.status == 'IN_PROGRESS' or task.status == 'COMPLETED'
+  frequency: per_task
+depends_on_gates:
+- G0
+blocked_by_gates: []
+parallel_allowed_with: []
+entry_conditions:
+- id: G_TRAE_046-C00
+  name: gov_eng_004_s1_check
+  type: field_presence
+  description: '知识激活——任务元数据完整 (rule: TRAE-046)'
+  check: rule_yaml_valid and conditions_met["gov_eng_004_s1"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_046.py
+  rule_ids:
+  - TRAE-046
+  anti_pattern:
+    description: 蓝图记录可能过时，必须现场确认
+    example: AI ignores TRAE-046 gov_eng_004_s1 requirement
+  params: &id001
+    required_fields:
+    - task_id
+    - title
+    - description
+- id: G_TRAE_046-C01
+  name: gov_eng_004_s1_check
+  type: field_presence
+  description: '知识激活——任务元数据完整 (rule: TRAE-046)'
+  check: rule_yaml_valid and conditions_met["gov_eng_004_s1"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_046.py
+  rule_ids:
+  - TRAE-046
+  anti_pattern:
+    description: 有未提交变更
+    example: AI ignores TRAE-046 gov_eng_004_s1 requirement
+  params: *id001
+- id: G_TRAE_046-C02
+  name: gov_eng_004_s2_check
+  type: field_presence
+  description: '知识激活——任务元数据完整 (rule: TRAE-046)'
+  check: rule_yaml_valid and conditions_met["gov_eng_004_s2"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_046.py
+  rule_ids:
+  - TRAE-046
+  anti_pattern:
+    description: 未做内容对比
+    example: AI ignores TRAE-046 gov_eng_004_s2 requirement
+  params: *id001
+- id: G_TRAE_046-C03
+  name: gov_eng_004_s3_check
+  type: field_presence
+  description: '知识激活——任务元数据完整 (rule: TRAE-046)'
+  check: rule_yaml_valid and conditions_met["gov_eng_004_s3"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_046.py
+  rule_ids:
+  - TRAE-046
+  anti_pattern:
+    description: 任一项未通过
+    example: AI ignores TRAE-046 gov_eng_004_s3 requirement
+  params: *id001
+mutating_rules: []
+severity_levels:
+  error: 硬阻断——任务不得推进，raise GateViolationError
+  warning: 软警告——passed=True，写入events警告流
+  info: 仅记录——不告警不阻塞
+failure_actions:
+  reject: 拒绝——返回错误，对象停留在当前状态
+  flag: 标记——通过但附加warning flag
+simulation:
+  supported: true
+  mock_input: tests/fixtures/g_trae_046_mock.yaml
+  expected_output: passed=True when rule conditions met
+  rollback_on_failure: true
+upgrade_triggers:
+- condition: Rule TRAE-046 YAML updated with new sections
+  action: version bump + update entry_conditions
+  approval: MOD-INF-007 owner
+change_log:
+- version: 0.1.0
+  date: '2026-06-22'
+  author: session-20260622-gate-batch
+  change: 初始创建 — 自动生成自 TRAE-046 规则YAML
+phase: PHASE_0_SKELETON
+auto: true
+on_failure: reject
+on_pass: pass

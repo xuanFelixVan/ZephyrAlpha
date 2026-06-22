@@ -1,6 +1,8 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_path_consistency.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
+
 #!/usr/bin/env python3
 """
 validate_blueprint_path_consistency.py — 蓝图路径一致性校验器
@@ -39,18 +41,35 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 ensure_utf8_stdout()
 
 DOCS_MODULES = REPO_ROOT / "docs" / "03_modules"
 C_TRACK_PATTERN = re.compile(r"^src/zephyr/l\d{2}_")
 B_TRACK_NAMES = {
-    "llm-security", "vector-memory", "context-engine", "orchestrator",
-    "feedback-loop", "gates", "pipeline", "core", "db", "kb", "mcp",
-    "shared", "hooks", "agent-rbac", "agent-spec", "audit-trail",
-    "rollback", "escalation", "drift-detector", "budget-enforcer", "a2a",
+    "llm-security",
+    "vector-memory",
+    "context-engine",
+    "orchestrator",
+    "feedback-loop",
+    "gates",
+    "pipeline",
+    "core",
+    "db",
+    "kb",
+    "mcp",
+    "shared",
+    "hooks",
+    "agent-rbac",
+    "agent-spec",
+    "audit-trail",
+    "rollback",
+    "escalation",
+    "drift-detector",
+    "budget-enforcer",
+    "a2a",
     "telemetry",
 }
 
@@ -120,14 +139,16 @@ def _scan_blueprints() -> list[dict]:
         if not fm_path:
             issues.append("frontmatter missing submodule_path")
 
-        results.append({
-            "module_id": module_id,
-            "blueprint": rel,
-            "submodule_path": fm_path,
-            "body_code_path": body_path,
-            "track": _classify_path(fm_path) if fm_path else "NONE",
-            "issues": issues,
-        })
+        results.append(
+            {
+                "module_id": module_id,
+                "blueprint": rel,
+                "submodule_path": fm_path,
+                "body_code_path": body_path,
+                "track": _classify_path(fm_path) if fm_path else "NONE",
+                "issues": issues,
+            }
+        )
     return results
 
 
@@ -144,7 +165,9 @@ def main() -> int:
     if not all_issues:
         print("\u2705 蓝图路径一致性校验通过: 所有蓝图 submodule_path 与正文代码落位一致", file=sys.stderr)
         if args.jsonl:
-            print(json.dumps({"severity": "INFO", "check_id": "BP-PATH-CONSISTENCY", "violations": 0}, ensure_ascii=False))
+            print(
+                json.dumps({"severity": "INFO", "check_id": "BP-PATH-CONSISTENCY", "violations": 0}, ensure_ascii=False)
+            )
         return EXIT_PASS
     print(f"\u274c 发现 {len(all_issues)} 份蓝图路径不一致:", file=sys.stderr)
     for r in all_issues:
@@ -154,17 +177,24 @@ def main() -> int:
 
     if args.jsonl:
         for r in all_issues:
-            print(json.dumps({
-                "severity": "HIGH",
-                "check_id": "BP-PATH-CONSISTENCY",
-                "module_id": r["module_id"],
-                "issues": r["issues"],
-            }, ensure_ascii=False))
+            print(
+                json.dumps(
+                    {
+                        "severity": "HIGH",
+                        "check_id": "BP-PATH-CONSISTENCY",
+                        "module_id": r["module_id"],
+                        "issues": r["issues"],
+                    },
+                    ensure_ascii=False,
+                )
+            )
 
     if args.warn_only:
         print("\n\u26a0\ufe0f  --warn-only 模式: 仅报告，不阻断", file=sys.stderr)
         return EXIT_PASS
     print("\n\u274c 阻断: 请修复蓝图路径不一致。参考 GOV-DOC-002 \u00a7\u4e00 LPC 双轨架构。", file=sys.stderr)
     return EXIT_FINDINGS
+
+
 if __name__ == "__main__":
     raise SystemExit(main())

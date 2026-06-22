@@ -11,13 +11,16 @@
 # [TESTS] tests/test_audit_trail/
 
 from __future__ import annotations
-from dataclasses import dataclass, field
+
+from dataclasses import dataclass
+
 
 @dataclass
 class ReviewChunk:
     level: str
     chunk_id: str
     time_budget_minutes: int = 30
+
 
 REVIEW_DIMENSIONS: dict[str, str] = {
     "consistency": "语义割裂检测",

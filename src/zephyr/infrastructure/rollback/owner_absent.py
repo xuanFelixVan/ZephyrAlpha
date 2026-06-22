@@ -35,12 +35,10 @@ Owner Absent — 人力缺席分级处置。
 from __future__ import annotations
 
 import json
-import time
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
-
 
 EXIT_OWNER_ABSENT_L3 = 31
 EXIT_OWNER_ABSENT_L1 = 32
@@ -64,7 +62,6 @@ class AbsentStatus:
 
 
 class OwnerAbsent:
-
     L3_TIMEOUT_SECONDS = 1800
     L1_TIMEOUT_DAYS = 7
 
@@ -76,9 +73,9 @@ class OwnerAbsent:
         try:
             last_ts = datetime.fromisoformat(last_owner_interaction)
         except (ValueError, TypeError):
-            last_ts = datetime.now(timezone.utc)
+            last_ts = datetime.now(UTC)
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         elapsed = now - last_ts
 
         state = self._load_state()
@@ -113,7 +110,7 @@ class OwnerAbsent:
         )
 
     def record_owner_interaction(self) -> str:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         self._data_dir.mkdir(parents=True, exist_ok=True)
 
@@ -132,7 +129,7 @@ class OwnerAbsent:
     def record_ping_attempt(self, success: bool = False) -> OwnerPing:
         state = self._load_state()
         attempts = state.get("ping_attempts", 0) + 1
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         if success:
             state["last_owner_interaction"] = now
@@ -173,16 +170,15 @@ class OwnerAbsent:
 
     def generate_escalation_message(self, status: AbsentStatus) -> dict[str, Any]:
         return {
-            "escalation_id": f"ESC-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "escalation_id": f"ESC-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "absent_level": status.level,
             "absent_since": status.absent_since,
             "ping_attempts": status.ping_attempts,
             "exit_code": status.exit_code,
             "action": status.action,
             "recommendation": (
-                "Autonomous operations suspended. "
-                "All critical rollbacks require human confirmation."
+                "Autonomous operations suspended. All critical rollbacks require human confirmation."
                 if status.level >= 3
                 else "Normal operations."
             ),
@@ -191,7 +187,7 @@ class OwnerAbsent:
     def _load_state(self) -> dict[str, Any]:
         if not self._state_path.exists():
             return {
-                "created_at": datetime.now(timezone.utc).isoformat(),
+                "created_at": datetime.now(UTC).isoformat(),
                 "ping_attempts": 0,
             }
 
@@ -199,6 +195,6 @@ class OwnerAbsent:
             return json.loads(self._state_path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, FileNotFoundError):
             return {
-                "created_at": datetime.now(timezone.utc).isoformat(),
+                "created_at": datetime.now(UTC).isoformat(),
                 "ping_attempts": 0,
             }

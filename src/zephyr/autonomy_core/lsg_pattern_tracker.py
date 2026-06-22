@@ -23,8 +23,9 @@ from __future__ import annotations
 
 """lsg_pattern_tracker.py — LSG 模式逃逸追踪 (B20, DD94, TASK-017)"""
 
-from dataclasses import dataclass, field
 from collections import Counter
+from dataclasses import dataclass
+
 
 @dataclass
 class LSGRejectionPattern:
@@ -34,8 +35,10 @@ class LSGRejectionPattern:
     cross_session_10x: bool
     action_needed: str
 
+
 class LSGPatternTracker:
     """LSG rejection_reason_code tracking; 3x→retry; 10x cross-session → escalate (DD94)."""
+
     def __init__(self) -> None:
         self._counters: Counter[str] = Counter()
         self._cross_session: Counter[str] = Counter()

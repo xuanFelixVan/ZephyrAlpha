@@ -11,19 +11,21 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.compliance_matrix import (
-        ComplianceStatus,
-        ComplianceItem,
         COMPLIANCE_MATRIX,
+        ComplianceItem,
+        ComplianceStatus,
+        compliant_items,
         get_by_reg_id,
         non_compliant_items,
-        compliant_items,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as e:
@@ -33,7 +35,6 @@ except Exception as e:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestComplianceStatus:
-
     def test_enum_values(self):
         assert ComplianceStatus.COMPLIANT.value == "compliant"
         assert ComplianceStatus.EXEMPT.value == "exempt"
@@ -45,7 +46,6 @@ class TestComplianceStatus:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestComplianceItem:
-
     def test_item_creation(self):
         item = ComplianceItem(
             reg_id="TEST",
@@ -75,7 +75,6 @@ class TestComplianceItem:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestComplianceMatrixData:
-
     def test_matrix_not_empty(self):
         assert len(COMPLIANCE_MATRIX) > 0
 

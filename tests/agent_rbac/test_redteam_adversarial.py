@@ -19,39 +19,38 @@ MOD-INF-018 对抗性红队测试 — 专用 Agent 尝试绕过七层+六横切�
   Phase 4: 横切面A-F bypass 尝试 — Hooks / Topology / Maintenance / IBAC / Adversarial / Forensic
   Phase 5: 复合攻击链 — 多步组合越权 + 跨Session合谋 + 虚假完成
 """
+
 from __future__ import annotations
 
 import time
 from pathlib import Path
 
-import pytest
-
-from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel, IDESource
-from zephyr.security.access_control.permission_guard import PermissionGuard, GuardDecision, GuardResult
-from zephyr.security.access_control.immutable_core import ImmutableCore, ALWAYS_BLOCKED_OPERATIONS
-from zephyr.security.access_control.kill_switch import KillSwitch, KillSwitchState
-from zephyr.security.access_control.engine_degradation import EngineDegradationManager, DegradationLevel
-from zephyr.security.access_control.rbac_guard import RBACGuard, PermissionDecision
-from zephyr.security.access_control.abac_guard import ABACGuard, ABACContext, TemporalCategory
-from zephyr.security.access_control.input_guard import InputGuard
-from zephyr.security.access_control.sequence_guard import SequenceGuard, SequenceEvent, FORBIDDEN_SEQUENCES
-from zephyr.security.access_control.output_guard import OutputGuard
-from zephyr.security.access_control.cold_start_lock import ColdStartLock
-from zephyr.security.access_control.intent_binder import IntentBinder
-from zephyr.security.access_control.context_drift_detector import ContextDriftDetector
+from zephyr.security.access_control.abac_guard import ABACContext, ABACGuard, TemporalCategory
 from zephyr.security.access_control.adversarial_resilience import AdversarialResilience
-from zephyr.security.access_control.multi_agent_collusion_detector import MultiAgentCollusionDetector
-from zephyr.security.access_control.false_completion_detector import FalseCompletionDetector
-from zephyr.security.access_control.cross_session_detector import CrossSessionDetector
-from zephyr.security.access_control.replay_attack_guard import ReplayAttackGuard
-from zephyr.security.access_control.non_repudiation import NonRepudiation
-from zephyr.security.access_control.path_guard import PathGuard
-from zephyr.security.access_control.monotonic_clock import MonotonicClock
-from zephyr.security.access_control.toctou_guard import TOCTOUGuard
 from zephyr.security.access_control.agent_creation_policy import AgentCreationPolicy
-from zephyr.security.access_control.emergency_override import EmergencyOverride
-from zephyr.security.access_control.permission_hooks import PermissionHooks
 from zephyr.security.access_control.auto_maintenance import AutoMaintenance
+from zephyr.security.access_control.cold_start_lock import ColdStartLock
+from zephyr.security.access_control.context_drift_detector import ContextDriftDetector
+from zephyr.security.access_control.cross_session_detector import CrossSessionDetector
+from zephyr.security.access_control.emergency_override import EmergencyOverride
+from zephyr.security.access_control.engine_degradation import DegradationLevel, EngineDegradationManager
+from zephyr.security.access_control.false_completion_detector import FalseCompletionDetector
+from zephyr.security.access_control.identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
+from zephyr.security.access_control.immutable_core import ALWAYS_BLOCKED_OPERATIONS, ImmutableCore
+from zephyr.security.access_control.input_guard import InputGuard
+from zephyr.security.access_control.intent_binder import IntentBinder
+from zephyr.security.access_control.kill_switch import KillSwitch, KillSwitchState
+from zephyr.security.access_control.monotonic_clock import MonotonicClock
+from zephyr.security.access_control.multi_agent_collusion_detector import MultiAgentCollusionDetector
+from zephyr.security.access_control.non_repudiation import NonRepudiation
+from zephyr.security.access_control.output_guard import OutputGuard
+from zephyr.security.access_control.path_guard import PathGuard
+from zephyr.security.access_control.permission_guard import GuardDecision, GuardResult, PermissionGuard
+from zephyr.security.access_control.permission_hooks import PermissionHooks
+from zephyr.security.access_control.rbac_guard import PermissionDecision, RBACGuard
+from zephyr.security.access_control.replay_attack_guard import ReplayAttackGuard
+from zephyr.security.access_control.sequence_guard import FORBIDDEN_SEQUENCES, SequenceEvent, SequenceGuard
+from zephyr.security.access_control.toctou_guard import TOCTOUGuard
 
 
 def _make_agent(
@@ -91,8 +90,18 @@ class TestPhase1_L0Bypass:
     def test_l0_always_blocked_operations_absolute(self):
         guard = PermissionGuard()
         bypass_agents = [
-            _make_agent(session_id="bypass-admin", role=AgentRole.ADMIN, owner_approved=True, maturity=MaturityLevel.L4_PRINCIPAL),
-            _make_agent(session_id="bypass-exec", role=AgentRole.EXECUTOR, owner_approved=True, maturity=MaturityLevel.L4_PRINCIPAL),
+            _make_agent(
+                session_id="bypass-admin",
+                role=AgentRole.ADMIN,
+                owner_approved=True,
+                maturity=MaturityLevel.L4_PRINCIPAL,
+            ),
+            _make_agent(
+                session_id="bypass-exec",
+                role=AgentRole.EXECUTOR,
+                owner_approved=True,
+                maturity=MaturityLevel.L4_PRINCIPAL,
+            ),
         ]
         for agent in bypass_agents:
             for op in ALWAYS_BLOCKED_OPERATIONS:
@@ -110,9 +119,10 @@ class TestPhase1_L0Bypass:
 
     def test_l0_kill_switch_initial_state(self):
         ks = KillSwitch()
-        assert ks.status.state in (KillSwitchState.NORMAL, KillSwitchState.COOLDOWN), (
-            f"L0 FAIL: KillSwitch in unexpected state: {ks.status.state}"
-        )
+        assert ks.status.state in (
+            KillSwitchState.NORMAL,
+            KillSwitchState.COOLDOWN,
+        ), f"L0 FAIL: KillSwitch in unexpected state: {ks.status.state}"
 
     def test_l0_engine_degradation_self_protection(self):
         deg = EngineDegradationManager()
@@ -126,21 +136,31 @@ class TestPhase2_L1L3Bypass:
 
     def test_l1_rbac_reader_cannot_write(self):
         guard = RBACGuard()
-        reader = _make_agent(session_id="reader-attack", role=AgentRole.READER, owner_approved=False, auto_guard_eligible=False)
+        reader = _make_agent(
+            session_id="reader-attack", role=AgentRole.READER, owner_approved=False, auto_guard_eligible=False
+        )
         result = guard.check(reader, "write:src")
         assert result.decision == PermissionDecision.BLOCKED, "L1 FAIL: READER allowed write:src"
 
     def test_l1_rbac_intern_cannot_modify_blueprint(self):
-        intern = _make_agent(session_id="intern-attack", maturity=MaturityLevel.L0_INTERN, owner_approved=False, auto_guard_eligible=False)
+        intern = _make_agent(
+            session_id="intern-attack",
+            maturity=MaturityLevel.L0_INTERN,
+            owner_approved=False,
+            auto_guard_eligible=False,
+        )
         guard = RBACGuard()
         result = guard.check(intern, "modify:blueprint")
         assert result.decision == PermissionDecision.BLOCKED, "L1 FAIL: INTERN allowed modify:blueprint"
 
     def test_l2_abac_off_hours_detected(self):
         category = ABACGuard.classify_temporal()
-        assert category in (TemporalCategory.NORMAL, TemporalCategory.OFF_HOURS, TemporalCategory.WEEKEND, TemporalCategory.LUNCH_PEAK), (
-            f"L2 FAIL: unexpected temporal category: {category}"
-        )
+        assert category in (
+            TemporalCategory.NORMAL,
+            TemporalCategory.OFF_HOURS,
+            TemporalCategory.WEEKEND,
+            TemporalCategory.LUNCH_PEAK,
+        ), f"L2 FAIL: unexpected temporal category: {category}"
 
     def test_l2_abac_maturity_check(self):
         guard = ABACGuard()
@@ -179,7 +199,9 @@ class TestPhase3_L4L7Bypass:
         results = [guard.record(ev) for ev in ops]
         has_violation = any(r is not None and "FORBIDDEN" in (r or "") for r in results)
         if not has_violation:
-            print(f"  L4 note: exfiltration sequence not in FORBIDDEN_SEQUENCES (current rules={[s['name'] for s in [dict(s) for s in FORBIDDEN_SEQUENCES]]})")
+            print(
+                f"  L4 note: exfiltration sequence not in FORBIDDEN_SEQUENCES (current rules={[s['name'] for s in [dict(s) for s in FORBIDDEN_SEQUENCES]]})"
+            )
 
     def test_l4_sequence_privilege_escalation_detected(self):
         guard = SequenceGuard()
@@ -192,7 +214,7 @@ class TestPhase3_L4L7Bypass:
         results = [guard.record(ev) for ev in ops]
         has_violation = any(r is not None and "FORBIDDEN" in (r or "") for r in results)
         if not has_violation:
-            print(f"  L4 note: privilege escalation sequence not in FORBIDDEN_SEQUENCES")
+            print("  L4 note: privilege escalation sequence not in FORBIDDEN_SEQUENCES")
 
     def test_l5_output_guard_detects_sensitive(self):
         guard = OutputGuard()
@@ -214,12 +236,15 @@ class TestPhase4_CrossCuttingBypass:
 
     def test_crosscut_b_permission_topology(self):
         from zephyr.security.access_control.cross_cutting import PermissionTopology
+
         topology = PermissionTopology()
         topology.add_node("read:docs")
         topology.add_node("read:src")
         topology.add_node("execute:scripts")
         cycles = topology.detect_cycles()
-        assert len(cycles) == 0, f"Cross-B FAIL: {len(cycles)} cycles should be 0 — even isolated node DFS should not produce false cycles"
+        assert len(cycles) == 0, (
+            f"Cross-B FAIL: {len(cycles)} cycles should be 0 — even isolated node DFS should not produce false cycles"
+        )
 
     def test_crosscut_c_auto_maintenance_dashboard(self):
         maintenance = AutoMaintenance()
@@ -255,8 +280,7 @@ class TestPhase4_CrossCuttingBypass:
     def test_crosscut_e_collusion_detection(self):
         detector = MultiAgentCollusionDetector()
         for i in range(5):
-            detector.record_interaction("agent_a", "agent_b", "covert_channel",
-                evidence=f"shared_state_{i}")
+            detector.record_interaction("agent_a", "agent_b", "covert_channel", evidence=f"shared_state_{i}")
         result = detector.check("agent_a", "agent_b")
         assert result is not None, "Cross-E FAIL: collusion detection returned None"
         assert result.risk_level is not None, "Cross-E FAIL: collusion risk_level is None"
@@ -301,8 +325,11 @@ class TestPhase5_CompositeAttacks:
         detector = CrossSessionDetector()
         token_a = detector.sign_token("agent_alpha", "session_alpha")
         forged_result = detector.verify_token(
-            "agent_beta", "session_alpha",
-            token_a.nonce, token_a.timestamp, token_a.signature,
+            "agent_beta",
+            "session_alpha",
+            token_a.nonce,
+            token_a.timestamp,
+            token_a.signature,
         )
         assert not forged_result["valid"], "Phase5 FAIL: cross-session identity theft not blocked"
         assert forged_result["reason"] == "cross_session_forgery"
@@ -347,17 +374,13 @@ class TestPhase6_SelfDefense:
         guard = PermissionGuard()
         agent = _make_agent(role=AgentRole.ADMIN, owner_approved=True)
         result = guard.check(agent, "circumvent_gate_engine")
-        assert result.decision == GuardDecision.BLOCKED, (
-            "SelfDefense FAIL: gate engine circumventable"
-        )
+        assert result.decision == GuardDecision.BLOCKED, "SelfDefense FAIL: gate engine circumventable"
 
     def test_self_modify_rbac_roles_blocked(self):
         guard = PermissionGuard()
         agent = _make_agent(role=AgentRole.WRITER, owner_approved=True)
         result = guard.check(agent, "modify:rbac_roles")
-        assert result.decision != GuardDecision.ALLOW, (
-            f"SelfDefense FAIL: rbac_roles modifiable by WRITER"
-        )
+        assert result.decision != GuardDecision.ALLOW, "SelfDefense FAIL: rbac_roles modifiable by WRITER"
 
     def test_cold_start_lock_active_before_config(self):
         lock = ColdStartLock()
@@ -398,7 +421,7 @@ class TestIntegrationReport:
         assert len(blocked_layers) > 0, "Integration: no layers blocked — all operations allowed!"
         assert len(allowed_layers) > 0, "Integration: no layers allowed — system too restrictive!"
 
-        print(f"\n=== RBAC Red Team Report ===")
+        print("\n=== RBAC Red Team Report ===")
         print(f"  Blocked layers: {blocked_layers}")
         print(f"  Allowed layers: {allowed_layers}")
         print(f"  Auto-guard layers: {auto_guard_layers}")

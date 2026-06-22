@@ -9,21 +9,17 @@
 Unit tests for session_audit.py
 """
 
-import json
 import tempfile
-from pathlib import Path
-
-import pytest
 
 from zephyr.shared.shared_services.observability_02.session_audit import (
-    SessionAuditTrail,
-    SessionRecord,
-    PromptRecord,
-    DecisionRecord,
-    ToolCallRecord,
     CostRecord,
+    DecisionRecord,
     ErrorRecord,
     OutcomeRecord,
+    PromptRecord,
+    SessionAuditTrail,
+    SessionRecord,
+    ToolCallRecord,
 )
 
 

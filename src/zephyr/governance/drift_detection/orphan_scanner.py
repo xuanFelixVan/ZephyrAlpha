@@ -28,14 +28,13 @@ orphan_doc: docs/下.md 无蓝图引用
 orphan_config: yaml/config 无代码读取
 对标 blueprint.md §6.28。
 """
+
 from __future__ import annotations
 
-import os
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -45,7 +44,7 @@ class OrphanResource:
     resource_type: str
     description: str
     severity: str = "MINOR"
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -68,6 +67,7 @@ def find_orphan_scripts(project_root: str) -> list[OrphanResource]:
     if manifest_path.exists():
         try:
             import yaml
+
             manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
             if isinstance(manifest, dict) and "scripts" in manifest:
                 for entry in manifest["scripts"]:

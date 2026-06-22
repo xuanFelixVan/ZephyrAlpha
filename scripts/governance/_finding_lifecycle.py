@@ -27,9 +27,8 @@ warn_only: true
 import argparse
 import json as json_mod
 import os
-import shutil
 import sys
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -40,7 +39,7 @@ if str(_src) not in sys.path:
     sys.path.insert(0, str(_src))
 
 try:
-    from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+    from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 except ImportError:
     EXIT_PASS = 0
     EXIT_FINDINGS = 1
@@ -140,35 +139,43 @@ class FindingLifecycleManager:
 
             if status in ARCHIVE_STATUSES:
                 if days is not None and days >= TTL_DAYS_ARCHIVE:
-                    archive_expired.append({
-                        "finding_id": fid,
-                        "status": status,
-                        "days_expired": round(days - TTL_DAYS_ARCHIVE, 1),
-                        "updated_at": finding.get("updated_at", ""),
-                    })
+                    archive_expired.append(
+                        {
+                            "finding_id": fid,
+                            "status": status,
+                            "days_expired": round(days - TTL_DAYS_ARCHIVE, 1),
+                            "updated_at": finding.get("updated_at", ""),
+                        }
+                    )
                 elif days is not None and days >= TTL_DAYS_ARCHIVE - TTL_WARN_DAYS:
-                    archive_warn.append({
-                        "finding_id": fid,
-                        "status": status,
-                        "days_remaining": round(TTL_DAYS_ARCHIVE - days, 1),
-                        "updated_at": finding.get("updated_at", ""),
-                    })
+                    archive_warn.append(
+                        {
+                            "finding_id": fid,
+                            "status": status,
+                            "days_remaining": round(TTL_DAYS_ARCHIVE - days, 1),
+                            "updated_at": finding.get("updated_at", ""),
+                        }
+                    )
 
             elif status in DEGRADE_STATUSES:
                 if days is not None and days >= TTL_DAYS_DEGRADE:
-                    degrade_expired.append({
-                        "finding_id": fid,
-                        "status": status,
-                        "days_expired": round(days - TTL_DAYS_DEGRADE, 1),
-                        "updated_at": finding.get("updated_at", ""),
-                    })
+                    degrade_expired.append(
+                        {
+                            "finding_id": fid,
+                            "status": status,
+                            "days_expired": round(days - TTL_DAYS_DEGRADE, 1),
+                            "updated_at": finding.get("updated_at", ""),
+                        }
+                    )
                 elif days is not None and days >= TTL_DAYS_DEGRADE - TTL_WARN_DAYS:
-                    degrade_warn.append({
-                        "finding_id": fid,
-                        "status": status,
-                        "days_remaining": round(TTL_DAYS_DEGRADE - days, 1),
-                        "updated_at": finding.get("updated_at", ""),
-                    })
+                    degrade_warn.append(
+                        {
+                            "finding_id": fid,
+                            "status": status,
+                            "days_remaining": round(TTL_DAYS_DEGRADE - days, 1),
+                            "updated_at": finding.get("updated_at", ""),
+                        }
+                    )
 
         return {
             "archive": archive_expired,

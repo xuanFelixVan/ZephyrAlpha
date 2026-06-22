@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fle_dogfood_monitor.py
 
-import pytest
 
 from zephyr.ops.diagnosers.fle_dogfood_monitor import (
     FLEDogfoodMonitor,

@@ -9,10 +9,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.risk_mitigator import (
-    RiskMitigator, RiskMitigation,
+    RiskMitigator,
 )
+
 
 class TestRiskMitigator:
     def test_instantiation(self):

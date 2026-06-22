@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.vibe_security_verify import (
     SECURITY_CHECKS,
     VibeSecurityVerify,
@@ -30,7 +28,7 @@ class TestSecurityChecksConstant:
             "no_pickle",
             "no_yaml_unsafe_load",
         ]
-        assert SECURITY_CHECKS == expected
+        assert expected == SECURITY_CHECKS
 
     def test_check_count(self):
         assert len(SECURITY_CHECKS) == 6
@@ -115,7 +113,7 @@ class TestScanCode:
 
     def test_eval_in_comment_still_detected(self):
         verifier = VibeSecurityVerify()
-        code = '# uses eval( for something'
+        code = "# uses eval( for something"
         violations = verifier.scan_code(code)
         assert "no_eval" in violations
 

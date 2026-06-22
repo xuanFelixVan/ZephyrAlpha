@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from collections import Counter
 
+
 class MicroCloneDetector:
     """1-2行微克隆检测."""
 
@@ -38,7 +39,7 @@ class MicroCloneDetector:
 
         ngrams: list[str] = []
         for i in range(len(source_lines) - self._NGRAM_SIZE + 1):
-            ngram = "\n".join(l.strip() for l in source_lines[i:i + self._NGRAM_SIZE])
+            ngram = "\n".join(l.strip() for l in source_lines[i : i + self._NGRAM_SIZE])
             ngrams.append(ngram)
 
         freq = Counter(ngrams)

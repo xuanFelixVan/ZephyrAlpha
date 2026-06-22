@@ -1,11 +1,22 @@
 rule_id: TRAE-004
 title: 并行执行与原子事务协议
+version: 1.0.0
+layer: L0
+module_id: TRAE-004
+depends_on:
+- TRAE-001
+tags:
+- TRAE
+- script_execution
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - RULE-SEVEN
 - 并行执行
 - ThreadPoolExecutor
 - 原子事务
-layer: L0
 severity: critical
 scope: script_execution
 domain: TRAE
@@ -78,7 +89,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

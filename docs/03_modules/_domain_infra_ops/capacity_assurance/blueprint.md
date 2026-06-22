@@ -1,11 +1,6 @@
 ---
-title: capacity-assurance Blueprint
-module_id: MOD-INF-024
----
-
-﻿﻿﻿---
 module_id: MOD-INF-001
-submodule_path: src/zephyr/capacity-assurance
+submodule_path: src/zephyr/infrastructure/capacity_assurance
 title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断"
 doc_type: blueprint
 status: Active
@@ -19,7 +14,7 @@ language: zh
 created_by: AI-GLM-5.1
 valid_from: 2026-05-01
 ttl: permanent
-actual_disk_path: "src/zephyr/capacity-assurance/"
+actual_disk_path: "src/zephyr/infrastructure/capacity_assurance/"
 construction_progress: partially_implemented
 belongs_to: "MOD-MASTER-001"
 parent_module: ""
@@ -202,7 +197,7 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 | 不包含 | 去向 |
 |--------|------|
 | L4-L8 交易业务层容量设计 | B5 任务系统 |
-| AI 自治权限全模块定义 | `_registry/catalogs/ai-autonomy-authority-registry.md` |
+| AI 自治权限全模块定义 | `_registry/catalogs/ai_autonomy_authority_registry.yaml` |
 | 安全审计具体规则 | M5 LLM Security Gateway |
 | Blameless Postmortem 流程 | `docs/01_policies_and_standards/governance/ai/` |
 
@@ -264,7 +259,7 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 ### 3.2 不覆盖 (§2.2 不包含的职责)
 
 - L4-L8 交易业务层容量设计 → B5 任务系统
-- AI 自治权限全模块定义 → `_registry/catalogs/ai-autonomy-authority-registry.md`
+- AI 自治权限全模块定义 → `_registry/catalogs/ai_autonomy_authority_registry.yaml`
 - 安全审计具体规则 → M5 LLM Security Gateway
 - Blameless Postmortem 流程 → `docs/01_policies_and_standards/governance/ai/`（beta 补充）
 - Toil 量化指标 → `capacity_slo.yaml` beta 补充
@@ -470,7 +465,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | `semantic_cache.py` | AI-Modifiable | 缓存命中率记录 |
 | `token_budget_usage` 表 | AI-Modifiable | 7 天 TTL |
 
-> 完整权限以 `_registry/catalogs/ai-autonomy-authority-registry.md` 为唯一真源。
+> 完整权限以 `_registry/catalogs/ai_autonomy_authority_registry.yaml` 为唯一真源。
 
 ---
 
@@ -923,7 +918,7 @@ slo_registry:
 | MOD-INF-015 | 必须 | 系统遥测消费容量指标 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
 | MOD-INF-032 | 必须 | 预算执行器消费预算策略 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-executor\blueprint.md` |
 | MOD-INF-021 | 可选 | Kill Switch re-export wrapper | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\kill-switch\blueprint.md` |
-| ai-autonomy-authority-registry.md | 必须 | 新组件权限的单一真源 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` |
+| ai_autonomy_authority_registry.yaml | 必须 | 新组件权限的单一真源 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` |
 | infrastructure-registry.md | 可选 | 基础设施组件 SLA 声明 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.md` |
 | ai-risk-registry.md | 可选 | AI 操作风险登记 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-risk-registry.md` |
 
@@ -1380,7 +1375,7 @@ STEP 3: 拆分后验证
 |---|---------|------|
 | 1 | 蓝图模板 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` |
 | 2 | 代码构建标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` |
-| 3 | 治理方法论 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` |
+| 3 | 治理方法论 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` |
 | 4 | 脚本质量标准 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` |
 | 5 | 文档压缩工作流标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` |
 | 6 | AI 压缩工作流标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` |
@@ -1415,7 +1410,7 @@ STEP 3: 拆分后验证
 
 | 领域 | 真源 |
 |------|------|
-| AI 自治权限全模块定义 | `ai-autonomy-authority-registry.md` |
+| AI 自治权限全模块定义 | `ai_autonomy_authority_registry.yaml` |
 | 安全审计具体规则 | MOD-INF-021 LLM Security Gateway |
 | Blameless Postmortem 流程 | `docs/01_policies_and_standards/governance/ai/` |
 | 任务卡字段定义 | GOV-TASK-001 |

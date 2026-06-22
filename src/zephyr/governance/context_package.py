@@ -25,21 +25,27 @@ Context Package — D-022-08 委托上下文包: 升级原因+证据链+历史tr
 """
 
 from __future__ import annotations
-from pydantic import BaseModel,Field
-from datetime import datetime,timezone
+
+from datetime import UTC, datetime
+
+from pydantic import BaseModel, Field
+
 
 class EscalationContext(BaseModel):
-    context_id:str
-    task_id:str=""
-    reason:str=""
-    evidence_chain:list[str]=Field(default_factory=list)
-    try_trace:list[dict]=Field(default_factory=list)
-    escalated_at:datetime=Field(default_factory=lambda:datetime.now(timezone.utc))
-    escalation_level:str=""
-    suggested_action:str=""
+    context_id: str
+    task_id: str = ""
+    reason: str = ""
+    evidence_chain: list[str] = Field(default_factory=list)
+    try_trace: list[dict] = Field(default_factory=list)
+    escalated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    escalation_level: str = ""
+    suggested_action: str = ""
+
 
 class ContextPackageBuilder:
-    def build(self, task_id:str, reason:str, level:str, evidence:list[str]=None,trace:list[dict]=None)->EscalationContext:
+    def build(
+        self, task_id: str, reason: str, level: str, evidence: list[str] = None, trace: list[dict] = None
+    ) -> EscalationContext:
         return EscalationContext(
             context_id=f"CTX-{task_id}",
             task_id=task_id,
@@ -49,8 +55,9 @@ class ContextPackageBuilder:
             try_trace=trace or [],
         )
 
+
 class ContextPackage:
-    def __init__(self, package_id='', source='', target='', context_type='', payload=None, timestamp=None):
+    def __init__(self, package_id="", source="", target="", context_type="", payload=None, timestamp=None):
         self.package_id = package_id
         self.source = source
         self.target = target

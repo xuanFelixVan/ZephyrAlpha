@@ -30,8 +30,8 @@ RollbackContextRestorer — 上下文恢复器。
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -46,7 +46,6 @@ class RestoreContext:
 
 
 class RollbackContextRestorer:
-
     PROMPT_FILE: str = ".zephyr/context_restore_prompt.md"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -55,30 +54,32 @@ class RollbackContextRestorer:
 
     def generate_restore_prompt(self, context: RestoreContext) -> str:
         lines: list[str] = []
-        lines.append(f"# AI Session Context Restore")
-        lines.append(f"")
-        lines.append(f"**IMPORTANT**: Your previous session has been partially rolled back. "
-                      f"The following context explains what happened and what you should do next.")
-        lines.append(f"")
-        lines.append(f"## What Happened")
+        lines.append("# AI Session Context Restore")
+        lines.append("")
+        lines.append(
+            "**IMPORTANT**: Your previous session has been partially rolled back. "
+            "The following context explains what happened and what you should do next."
+        )
+        lines.append("")
+        lines.append("## What Happened")
         lines.append(f"- **Rollback Reason**: {context.rollback_reason}")
         lines.append(f"- **Reverted Commit**: {context.reverted_commit}")
         lines.append(f"- **Affected Files**: {', '.join(context.files_affected[:10])}")
         lines.append(f"- **Session ID**: {context.session_id}")
-        lines.append(f"")
-        lines.append(f"## Current State")
+        lines.append("")
+        lines.append("## Current State")
         lines.append(f"The code repository has been reverted to the state before commit `{context.reverted_commit}`.")
-        lines.append(f"Do NOT assume that code you wrote in the rolled-back session still exists.")
-        lines.append(f"")
-        lines.append(f"## Recommended Action")
+        lines.append("Do NOT assume that code you wrote in the rolled-back session still exists.")
+        lines.append("")
+        lines.append("## Recommended Action")
         lines.append(f"{context.action_plan}")
-        lines.append(f"")
-        lines.append(f"## Verification Required")
-        lines.append(f"Before making any changes, verify the current state of all affected files.")
-        lines.append(f"Run `git log --oneline -5` to confirm the current HEAD.")
-        lines.append(f"")
-        lines.append(f"---")
-        lines.append(f"*Generated at {datetime.now(timezone.utc).isoformat()}*")
+        lines.append("")
+        lines.append("## Verification Required")
+        lines.append("Before making any changes, verify the current state of all affected files.")
+        lines.append("Run `git log --oneline -5` to confirm the current HEAD.")
+        lines.append("")
+        lines.append("---")
+        lines.append(f"*Generated at {datetime.now(UTC).isoformat()}*")
 
         content = "\n".join(lines)
         self._prompt_path.parent.mkdir(parents=True, exist_ok=True)
@@ -91,5 +92,5 @@ class RollbackContextRestorer:
             "session_id": context.session_id,
             "restore_prompt": prompt,
             "prompt_file": str(self._prompt_path),
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }

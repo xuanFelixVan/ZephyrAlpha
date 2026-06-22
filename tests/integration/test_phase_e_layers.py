@@ -11,10 +11,10 @@ L01/L02/L08/L12 四层集成测试——补齐 Phase D 未覆盖的层。
 
 Phase E | Safety: MEDIUM
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone, timedelta
-from decimal import Decimal
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -24,6 +24,7 @@ class TestL01Infrastructure:
 
     def test_appconfig_default_creation(self):
         from zephyr.governance.config import AppConfig
+
         cfg = AppConfig()
         assert cfg.env == "dev"
         assert cfg.log_level == "INFO"
@@ -31,22 +32,26 @@ class TestL01Infrastructure:
 
     def test_appconfig_frozen(self):
         from zephyr.governance.config import AppConfig
+
         cfg = AppConfig(env="prod", log_level="WARN")
         with pytest.raises(Exception):
             cfg.env = "dev"  # type: ignore[misc]
 
     def test_load_config_returns_appconfig(self):
         from zephyr.governance.config import AppConfig, load_config
+
         cfg = load_config()
         assert isinstance(cfg, AppConfig)
 
     def test_reload_config_returns_appconfig(self):
         from zephyr.governance.config import AppConfig, reload_config
+
         cfg = reload_config()
         assert isinstance(cfg, AppConfig)
 
     def test_kill_switch_simulator_trigger(self):
         from zephyr.infrastructure.kill_switch_sim import KillSwitchSimulator
+
         sim = KillSwitchSimulator(target_ms=1.0)
         probe = sim.trigger()
         assert probe is not None
@@ -55,12 +60,14 @@ class TestL01Infrastructure:
 
     def test_kill_switch_simulator_health_check(self):
         from zephyr.infrastructure.kill_switch_sim import KillSwitchSimulator
+
         sim = KillSwitchSimulator(target_ms=1000.0)
         ok = sim.health_check()
         assert ok is True
 
     def test_kill_switch_simulator_ack_callback(self):
         from zephyr.infrastructure.kill_switch_sim import KillSwitchSimulator
+
         sim = KillSwitchSimulator()
 
         called = []
@@ -74,6 +81,7 @@ class TestL02AlphaFactor:
 
     def test_factor_meta_creation(self):
         from zephyr.factor.factor_base import FactorMeta
+
         meta = FactorMeta(
             factor_id="test_momentum",
             name="Test Momentum",
@@ -90,6 +98,7 @@ class TestL02AlphaFactor:
             FactorMeta,
             FactorRegistry,
         )
+
         FactorRegistry.clear()
 
         @FactorRegistry.register
@@ -102,6 +111,7 @@ class TestL02AlphaFactor:
 
             def compute(self, data, **kwargs):
                 import pandas as pd
+
                 return pd.Series([1.0, 2.0], name=data.index[:2])
 
         assert len(FactorRegistry._registry) >= 1
@@ -115,20 +125,25 @@ class TestL02AlphaFactor:
             FactorMeta,
             FactorRegistry,
         )
+
         FactorRegistry.clear()
 
         @FactorRegistry.register
         class FactorA(FactorBase):
             meta = FactorMeta(factor_id="factor_a", name="A", domain="technical")
+
             def compute(self, data, **kwargs):
                 import pandas as pd
+
                 return pd.Series(name=data.index[:1])
 
         @FactorRegistry.register
         class FactorB(FactorBase):
             meta = FactorMeta(factor_id="factor_b", name="B", domain="fundamental")
+
             def compute(self, data, **kwargs):
                 import pandas as pd
+
                 return pd.Series(name=data.index[:1])
 
         all_meta = FactorRegistry.list_all()
@@ -146,40 +161,50 @@ class TestL02AlphaFactor:
             FactorMeta,
             FactorRegistry,
         )
+
         FactorRegistry.clear()
 
         @FactorRegistry.register
         class FactorX(FactorBase):
             meta = FactorMeta(factor_id="dup_factor", name="X", domain="technical")
+
             def compute(self, data, **kwargs):
                 import pandas as pd
+
                 return pd.Series(name=data.index[:1])
 
         with pytest.raises(ValueError):
+
             @FactorRegistry.register
             class FactorY(FactorBase):
                 meta = FactorMeta(factor_id="dup_factor", name="Y", domain="technical")
+
                 def compute(self, data, **kwargs):
                     import pandas as pd
+
                     return pd.Series(name=data.index[:1])
 
         FactorRegistry.clear()
 
     def test_factor_registry_missing_meta_raises(self):
         from zephyr.factor.factor_base import FactorBase, FactorRegistry
+
         FactorRegistry.clear()
 
         with pytest.raises(AttributeError):
+
             @FactorRegistry.register
             class BadFactor(FactorBase):
                 def compute(self, data, **kwargs):
                     import pandas as pd
+
                     return pd.Series(name=data.index[:1])
 
         FactorRegistry.clear()
 
     def test_autodiscover_factors_runs(self):
         from zephyr.factor.factor_base import autodiscover_factors
+
         autodiscover_factors()
 
 
@@ -188,6 +213,7 @@ class TestL08HumanAIInterface:
 
     def test_notification_level_enum(self):
         from zephyr.frontend.interface_base import NotificationLevel
+
         assert NotificationLevel.INFO.value == "info"
         assert NotificationLevel.WARNING.value == "warning"
         assert NotificationLevel.ERROR.value == "error"
@@ -195,6 +221,7 @@ class TestL08HumanAIInterface:
 
     def test_approval_action_enum(self):
         from zephyr.frontend.interface_base import ApprovalAction
+
         assert ApprovalAction.APPROVE.value == "approve"
         assert ApprovalAction.REJECT.value == "reject"
         assert ApprovalAction.DELEGATE.value == "delegate"
@@ -205,6 +232,7 @@ class TestL08HumanAIInterface:
             Notification,
             NotificationLevel,
         )
+
         notif = Notification(
             notification_id="notif-001",
             title="Risk Alert",
@@ -218,6 +246,7 @@ class TestL08HumanAIInterface:
 
     def test_approval_request_creation(self):
         from zephyr.frontend.interface_base import ApprovalRequest
+
         req = ApprovalRequest(
             request_id="req-001",
             action="override_position_limit",
@@ -232,7 +261,8 @@ class TestL08HumanAIInterface:
 
     def test_approval_request_expiry(self):
         from zephyr.frontend.interface_base import ApprovalRequest
-        expiry = datetime.now(timezone.utc) + timedelta(hours=1)
+
+        expiry = datetime.now(UTC) + timedelta(hours=1)
         req = ApprovalRequest(
             request_id="req-002",
             action="approve_large_order",
@@ -241,7 +271,7 @@ class TestL08HumanAIInterface:
             expires_at=expiry,
         )
         assert req.expires_at is not None
-        assert req.expires_at > datetime.now(timezone.utc)
+        assert req.expires_at > datetime.now(UTC)
         assert req.status == "pending"
 
 
@@ -250,6 +280,7 @@ class TestL12SystemTelemetry:
 
     def test_sla_record_creation(self):
         from zephyr.infrastructure.system_telemetry.contract_metrics import SlaRecord
+
         record = SlaRecord(
             contract_id="CTR-001",
             trace_id="trace-abc123",
@@ -265,6 +296,7 @@ class TestL12SystemTelemetry:
 
     def test_drift_alert_creation(self):
         from zephyr.infrastructure.system_telemetry.contract_metrics import DriftAlert
+
         alert = DriftAlert(
             contract_id="CTR-002",
             field_name="signal_value",
@@ -282,6 +314,7 @@ class TestL12SystemTelemetry:
         from zephyr.infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
+
         collector = ContractMetricsCollector()
         collector.enable()
         record = collector.measure_sla(
@@ -297,6 +330,7 @@ class TestL12SystemTelemetry:
         from zephyr.infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
+
         collector = ContractMetricsCollector()
         collector.enable()
         record = collector.measure_sla(
@@ -311,6 +345,7 @@ class TestL12SystemTelemetry:
         from zephyr.infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
+
         collector = ContractMetricsCollector()
         collector.record_violation("CTR-001")
         collector.record_violation("CTR-001")
@@ -321,6 +356,7 @@ class TestL12SystemTelemetry:
         from zephyr.infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
+
         collector = ContractMetricsCollector()
         collector.enable()
         alert = collector.detect_contract_drift(
@@ -336,6 +372,7 @@ class TestL12SystemTelemetry:
 
     def test_collector_get_stats_defaults(self):
         from zephyr.infrastructure.system_telemetry.contract_metrics import get_contract_metrics
+
         collector = get_contract_metrics()
         stats = collector.get_stats()
         assert "sla_p99_pass_rate_100" in stats
@@ -345,6 +382,7 @@ class TestL12SystemTelemetry:
 
     def test_get_contract_metrics_singleton(self):
         from zephyr.infrastructure.system_telemetry.contract_metrics import get_contract_metrics
+
         c1 = get_contract_metrics()
         c2 = get_contract_metrics()
         assert c1 is c2

@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import re
 
-import pytest
-
 from zephyr.behavioral_audit.architecture_contracts import (
     ARCH_BASE_CONTRACTS,
     CircuitBreaker,
@@ -72,8 +70,7 @@ class TestArchBaseContracts:
         assert len(ARCH_BASE_CONTRACTS) == 5
 
     def test_expected_keys(self):
-        expected = {"C1_COMMUNICATION", "C2_SYNC_ASYNC", "C3_IDEMPOTENCY",
-                    "C4_CIRCUIT_BREAKER", "C5_LAMPORT"}
+        expected = {"C1_COMMUNICATION", "C2_SYNC_ASYNC", "C3_IDEMPOTENCY", "C4_CIRCUIT_BREAKER", "C5_LAMPORT"}
         assert set(ARCH_BASE_CONTRACTS.keys()) == expected
 
     def test_all_values_are_contract_instances(self):

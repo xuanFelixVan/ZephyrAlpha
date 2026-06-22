@@ -10,10 +10,11 @@
 # [ERROR_CONTRACT] KeyError on unknown phase name; PhaseStatus enum validation
 # [TESTS] tests/test_phase_planner.py
 
-import pytest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from zephyr.autonomy_core.phase_planner import PhasePlanner, Phase, PhaseStatus
+import pytest
+
+from zephyr.autonomy_core.phase_planner import Phase, PhasePlanner, PhaseStatus
 
 
 class TestPhaseStatusEnum:
@@ -68,7 +69,7 @@ class TestPhaseToDict:
 
     def test_dict_with_timestamps(self):
         p = Phase("test", 1, "desc", [])
-        p.started_at = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        p.started_at = datetime(2026, 1, 1, tzinfo=UTC)
         d = p.to_dict()
         assert d["started_at"] == "2026-01-01T00:00:00+00:00"
 

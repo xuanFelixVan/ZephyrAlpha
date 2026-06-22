@@ -29,8 +29,8 @@ Mitigation: Multi-provider cross-validation of critical LLM responses.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import hashlib
+from dataclasses import dataclass, field
 
 
 @dataclass

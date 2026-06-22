@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-04-TECHNOLOGY-ARCH
 title: Target Architecture — Technology Architecture / 目标架构：技术架构
 doc_type: architecture_view

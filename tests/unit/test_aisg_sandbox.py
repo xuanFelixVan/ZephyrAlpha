@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """AISGSandbox — 危险模式拦截与安全样本放行。"""
 
 

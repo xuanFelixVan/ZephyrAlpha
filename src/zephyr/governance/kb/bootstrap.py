@@ -34,12 +34,11 @@
 5. MVKB 验证（≥10 VERIFIED KE / ≥5 categories）
 6. 冷启动报告生成（summary + gaps）
 
-True Source : 
+True Source :
                blueprint.md §4.5（冷启动盲点与解决路径）
-               
+
                KMS KE_ID_NAMING（KE ID 命名规范）
 """
-
 
 from __future__ import annotations
 
@@ -50,11 +49,8 @@ import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
-import yaml
-
-from zephyr.governance.ingest import IngestGate, IngestResult
+from zephyr.governance.ingest import IngestGate
 
 _INTELLIGENCE_KB_REPO_NAMES = {"KbRepo"}
 _INTELLIGENCE_UMA_NAMES = {
@@ -78,17 +74,18 @@ def __getattr__(name):
         return _val
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 _log = logging.getLogger(__name__)
 
 __all__ = [
-    "BootstrapConfig",
-    "BootstrapChunk",
-    "BootstrapResult",
     "Bootstrap",
-    "discover_document_sources",
-    "segment_document",
+    "BootstrapChunk",
+    "BootstrapConfig",
+    "BootstrapResult",
     "classify_chunk",
+    "discover_document_sources",
     "run_bootstrap",
+    "segment_document",
 ]
 
 _UTC = UTC
@@ -243,8 +240,9 @@ class Bootstrap:
 
             if ingest_gate is not None:
                 try:
-                    import tempfile
                     import os
+                    import tempfile
+
                     fd, tmp_path = tempfile.mkstemp(suffix=".md", prefix="bs_")
                     os.close(fd)
                     tmp = Path(tmp_path)
@@ -280,7 +278,13 @@ class Bootstrap:
             gap_msgs.append(f"category不足：{len(cat_set)} < {self._config.min_categories}（当前{list(cat_set)}）")
 
         elapsed = round((datetime.now(_UTC) - t0).total_seconds(), 2)
-        _log.info("Bootstrap: completed in %.2fs — %d activated, %d categories, %d gaps", elapsed, activated, len(cat_set), len(gap_msgs))
+        _log.info(
+            "Bootstrap: completed in %.2fs — %d activated, %d categories, %d gaps",
+            elapsed,
+            activated,
+            len(cat_set),
+            len(gap_msgs),
+        )
 
         return BootstrapResult(
             success=(verified >= self._config.min_ke_count and len(cat_set) >= self._config.min_categories),

@@ -11,7 +11,9 @@
 [ERROR_CONTRACT] sys.exit(1)
 [TESTS] tests/governance/test_d5_architecture.py
 """
-import json, sys, re
+
+import re
+import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -42,15 +44,34 @@ for sid in healthy_ids:
 
         # Check if content looks real
         body_words = len(re.findall(r"\b\w+\b", l2))
-        has_template = any(kw in l2 for kw in [
-            "待填写", "TODO", "TBD", "PLACEHOLDER",
-            "此技能仍在构建中", "Coming soon", "generated from blueprint"
-        ])
-        has_real_sections = any(kw in l2 for kw in [
-            "CRITICAL", "关键", "MUST", "Core Operations",
-            "Allowed Tools", "Unique Constraints", "Common Errors",
-            "Checklist", "References", "前置条件", "核心操作"
-        ])
+        has_template = any(
+            kw in l2
+            for kw in [
+                "待填写",
+                "TODO",
+                "TBD",
+                "PLACEHOLDER",
+                "此技能仍在构建中",
+                "Coming soon",
+                "generated from blueprint",
+            ]
+        )
+        has_real_sections = any(
+            kw in l2
+            for kw in [
+                "CRITICAL",
+                "关键",
+                "MUST",
+                "Core Operations",
+                "Allowed Tools",
+                "Unique Constraints",
+                "Common Errors",
+                "Checklist",
+                "References",
+                "前置条件",
+                "核心操作",
+            ]
+        )
 
         quality = "REAL" if (body_words > 200 and not has_template and has_real_sections) else "WEAK"
         if quality == "REAL":
@@ -63,9 +84,12 @@ for sid in healthy_ids:
         else:
             total_template += 1
             flags = []
-            if has_template: flags.append("TEMPLATE_KW")
-            if body_words < 200: flags.append(f"LOW_WORDS({body_words})")
-            if not has_real_sections: flags.append("NO_REAL_SECTIONS")
+            if has_template:
+                flags.append("TEMPLATE_KW")
+            if body_words < 200:
+                flags.append(f"LOW_WORDS({body_words})")
+            if not has_real_sections:
+                flags.append("NO_REAL_SECTIONS")
             print(f"[WEAK] {name} ({sid}) v{version} - {' '.join(flags)}")
     except Exception as exc:
         print(f"[ERR] {sid}: {exc}")

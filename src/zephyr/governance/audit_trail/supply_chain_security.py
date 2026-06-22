@@ -12,11 +12,9 @@
 
 from __future__ import annotations
 
-import json
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -34,13 +32,13 @@ class SupplyChainReport(BaseModel):
     total_deps: int = 0
     vulnerabilities: list[dict[str, object]] = Field(default_factory=list)
     blocked: bool = False
-    last_vendor_update: Optional[str] = None
+    last_vendor_update: str | None = None
     vendor_risk: VendorRisk = VendorRisk.OK
 
 
 def scan_dependencies(lock_file_path: str = "requirements.lock") -> SupplyChainReport:
     report = SupplyChainReport(
-        scanned_at=datetime.now(timezone.utc).isoformat(),
+        scanned_at=datetime.now(UTC).isoformat(),
     )
     report.total_deps = 0
     return report
@@ -49,7 +47,7 @@ def scan_dependencies(lock_file_path: str = "requirements.lock") -> SupplyChainR
 def check_vendor_lockin(last_update: str, months_threshold: int = 12) -> VendorRisk:
     try:
         last_dt = datetime.fromisoformat(last_update.replace("Z", "+00:00"))
-        age = datetime.now(timezone.utc) - last_dt
+        age = datetime.now(UTC) - last_dt
         if age > timedelta(days=months_threshold * 30):
             return VendorRisk.CRITICAL
         if age > timedelta(days=(months_threshold - 3) * 30):
@@ -67,7 +65,7 @@ def generate_spdx(project_name: str, packages: list[dict[str, str]]) -> dict[str
         "name": project_name,
         "packages": packages,
         "creationInfo": {
-            "created": datetime.now(timezone.utc).isoformat(),
+            "created": datetime.now(UTC).isoformat(),
             "creators": ["Tool: ZephyrAlpha supply_chain_security.py"],
         },
     }

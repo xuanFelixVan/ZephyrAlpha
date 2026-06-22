@@ -30,9 +30,9 @@ RollbackDashboard — 回滚仪表盘（零依赖 Markdown）。
     回滚次数 / MTTR / 成功率 / 活跃 Kill Switch / 预算剩余 / IM 推送格式
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class DashboardMetrics:
@@ -43,8 +43,8 @@ class DashboardMetrics:
     budget_remaining: int = 0
     drill_pass_rate: float = 0.0
 
-class RollbackDashboard:
 
+class RollbackDashboard:
     OUTPUT_PATH: str = ".zephyr/rollback_dashboard.md"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -57,8 +57,8 @@ class RollbackDashboard:
         lines.append("")
         lines.append("## Metrics")
         lines.append("")
-        lines.append(f"| Metric | Value |")
-        lines.append(f"|--------|-------|")
+        lines.append("| Metric | Value |")
+        lines.append("|--------|-------|")
         lines.append(f"| Total Rollbacks | {metrics.total_rollbacks} |")
         lines.append(f"| MTTR (seconds) | {metrics.mttr_seconds:.1f} |")
         lines.append(f"| Success Rate | {metrics.success_rate:.1%} |")

@@ -65,11 +65,13 @@ class AlignmentSyncer(BaseFixer):
                 for code_path in code_paths:
                     full_path = repo_root / code_path
                     if not full_path.exists():
-                        findings.append({
-                            "blueprint": str(blueprint),
-                            "declared_path": code_path,
-                            "type": "code_missing_from_blueprint",
-                        })
+                        findings.append(
+                            {
+                                "blueprint": str(blueprint),
+                                "declared_path": code_path,
+                                "type": "code_missing_from_blueprint",
+                            }
+                        )
             except Exception:
                 continue
         return findings
@@ -103,7 +105,9 @@ class AlignmentSyncer(BaseFixer):
                 full_bp = repo_root / blueprint_path
                 if full_bp.exists():
                     bp_content = full_bp.read_text(encoding="utf-8")
-                    module_match = re.search(rf"`{re.escape(str(target_path.relative_to(repo_root)).replace(chr(92), '/'))}`", bp_content)
+                    module_match = re.search(
+                        rf"`{re.escape(str(target_path.relative_to(repo_root)).replace(chr(92), '/'))}`", bp_content
+                    )
                     action.metadata["blueprint_exists"] = True
                     action.metadata["referenced_in_blueprint"] = module_match is not None
             action.status = FixStatus.COMPLETED
@@ -122,7 +126,12 @@ class AlignmentSyncer(BaseFixer):
         try:
             content = target_path.read_text(encoding="utf-8")
             if "[BLUEPRINT]" not in content:
-                return ValidationResult(valid=False, check_name="alignment_sync", evidence="No [BLUEPRINT] header", error="Missing blueprint reference")
+                return ValidationResult(
+                    valid=False,
+                    check_name="alignment_sync",
+                    evidence="No [BLUEPRINT] header",
+                    error="Missing blueprint reference",
+                )
             return ValidationResult(valid=True, check_name="alignment_sync", evidence="[BLUEPRINT] header present")
         except Exception as exc:
             return ValidationResult(valid=False, check_name="alignment_sync", evidence="", error=str(exc))

@@ -20,16 +20,16 @@
 # [TESTS]
 
 # Re-export from shared SSoT — zephyr.shared._cross_layer.ml_experiment_pipeline
-from zephyr.shared._cross_layer.ml_experiment_pipeline import (  # noqa: F401
-    MLExperimentPipeline,
-    PipelineStage,
+from zephyr.shared._cross_layer.ml_experiment_pipeline import (
     ExperimentResult,
+    MLExperimentPipeline,
     PipelineError,
+    PipelineStage,
 )
 
 __all__ = [
-    "MLExperimentPipeline",
-    "PipelineStage",
     "ExperimentResult",
+    "MLExperimentPipeline",
     "PipelineError",
+    "PipelineStage",
 ]

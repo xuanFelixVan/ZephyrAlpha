@@ -23,7 +23,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -45,8 +46,9 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class Broker_API:
@@ -55,19 +57,5 @@ class Broker_API:
     supported_order_types: tuple[str, ...]
     rate_limit_per_second: int
 
+
 # ==== END CODGEN:EXT-001 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

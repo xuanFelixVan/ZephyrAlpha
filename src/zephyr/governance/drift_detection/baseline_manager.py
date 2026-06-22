@@ -26,6 +26,7 @@ module_id: MOD-INF-023
 基线快照的拍摄、存储、对比、版本化管理。
 对标 blueprint.md §2.2（基线快照管理器）。
 """
+
 from __future__ import annotations
 
 import ast
@@ -34,9 +35,7 @@ import json
 import os
 import shutil
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from datetime import UTC, datetime
 
 import yaml
 
@@ -59,7 +58,7 @@ class BaselineManager:
     BASELINES_DIR_NAME: str = "drift_baselines"
     MAX_VERSIONS: int = 10
 
-    def __init__(self, project_root: Optional[str] = None):
+    def __init__(self, project_root: str | None = None):
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -98,7 +97,7 @@ class BaselineManager:
                     continue
                 full = os.path.join(root, fname)
                 try:
-                    with open(full, "r", encoding="utf-8") as fh:
+                    with open(full, encoding="utf-8") as fh:
                         tree = ast.parse(fh.read(), filename=fname)
                 except (SyntaxError, UnicodeDecodeError, OSError):
                     continue
@@ -124,7 +123,7 @@ class BaselineManager:
                     continue
                 full = os.path.join(root, fname)
                 try:
-                    with open(full, "r", encoding="utf-8") as fh:
+                    with open(full, encoding="utf-8") as fh:
                         tree = ast.parse(fh.read(), filename=fname)
                 except (SyntaxError, UnicodeDecodeError, OSError):
                     continue
@@ -151,10 +150,10 @@ class BaselineManager:
                 full = os.path.join(root, fname)
                 try:
                     if fname.endswith(".json"):
-                        with open(full, "r", encoding="utf-8") as fh:
+                        with open(full, encoding="utf-8") as fh:
                             configs[os.path.relpath(full, module_dir)] = json.load(fh)
                     else:
-                        with open(full, "r", encoding="utf-8") as fh:
+                        with open(full, encoding="utf-8") as fh:
                             configs[os.path.relpath(full, module_dir)] = yaml.safe_load(fh)
                 except (json.JSONDecodeError, yaml.YAMLError, UnicodeDecodeError, OSError):
                     configs[os.path.relpath(full, module_dir)] = "PARSE_ERROR"
@@ -168,7 +167,7 @@ class BaselineManager:
         snapshot = {
             "module_id": module_id,
             "version": self._next_version(module_id),
-            "captured_at": datetime.now(timezone.utc).isoformat(),
+            "captured_at": datetime.now(UTC).isoformat(),
             "tree_hash": tree,
             "interface_snapshot": interfaces,
             "import_graph": imports,
@@ -191,18 +190,18 @@ class BaselineManager:
     def manual_capture(self, module_id: str, module_dir: str) -> dict[str, object]:
         return self.capture(module_id, module_dir)
 
-    def load_baseline(self, module_id: str, version: str) -> Optional[dict[str, object]]:
+    def load_baseline(self, module_id: str, version: str) -> dict[str, object] | None:
         base_dir = self.module_baseline_dir(module_id)
         filepath = os.path.join(base_dir, f"{version}.json")
         if not os.path.exists(filepath):
             return None
         try:
-            with open(filepath, "r", encoding="utf-8") as fh:
+            with open(filepath, encoding="utf-8") as fh:
                 return json.load(fh)
         except (json.JSONDecodeError, UnicodeDecodeError):
             return None
 
-    def full_diff(self, module_id: str, module_dir: str, baseline_version: Optional[str] = None) -> DiffReport:
+    def full_diff(self, module_id: str, module_dir: str, baseline_version: str | None = None) -> DiffReport:
         baseline = self._resolve_baseline(module_id, baseline_version)
         current = self.capture(module_id, module_dir)
         return self._compute_diff(module_id, baseline, current, "full_diff")
@@ -222,7 +221,7 @@ class BaselineManager:
             report.cumulative_creep_score = len(report.contract_changes) / (total_sigs / 2)
         return report
 
-    def contract_diff(self, module_id: str, module_dir: str, baseline_version: Optional[str] = None) -> DiffReport:
+    def contract_diff(self, module_id: str, module_dir: str, baseline_version: str | None = None) -> DiffReport:
         baseline = self._resolve_baseline(module_id, baseline_version)
         current_iface = self.snapshot_interface(module_dir)
         return self._compute_contract_diff(module_id, baseline, current_iface)
@@ -254,7 +253,7 @@ class BaselineManager:
         manifest: dict[str, object]
         if os.path.exists(manifest_path):
             try:
-                with open(manifest_path, "r", encoding="utf-8") as fh:
+                with open(manifest_path, encoding="utf-8") as fh:
                     manifest = json.load(fh)
             except (json.JSONDecodeError, UnicodeDecodeError):
                 manifest = {"versions": []}
@@ -275,7 +274,7 @@ class BaselineManager:
             except OSError:
                 pass
 
-    def _resolve_baseline(self, module_id: str, version: Optional[str]) -> dict[str, object]:
+    def _resolve_baseline(self, module_id: str, version: str | None) -> dict[str, object]:
         if version:
             bl = self.load_baseline(module_id, version)
             if bl is not None:

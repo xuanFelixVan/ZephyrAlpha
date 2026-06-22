@@ -16,7 +16,9 @@ Exit 1 on any FAIL → pre_commit blocks the commit.
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -46,7 +48,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 CONTRACT_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
 DOC_TYPE_VOCAB_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/vocabularies/doc_type-vocabulary.yaml"
@@ -169,10 +171,10 @@ def check_dim5_field_stage_completeness(contract) -> list[dict]:
         if stage in stage_counts:
             stage_counts[stage] += 1
     if stage_counts["draft"] not in (6, 7):
-        return ("FAIL", f'draft stage has {stage_counts['draft']} fields (PS-STD-001 §2.2 specifies 7)')
+        return ("FAIL", f"draft stage has {stage_counts['draft']} fields (PS-STD-001 §2.2 specifies 7)")
     return (
         "PASS",
-        f'stage counts: draft={stage_counts['draft']}, active={stage_counts['active']}, deprecated_only={stage_counts['deprecated_only']}',
+        f"stage counts: draft={stage_counts['draft']}, active={stage_counts['active']}, deprecated_only={stage_counts['deprecated_only']}",
     )
 
 
@@ -189,7 +191,7 @@ def check_dim6_vocab_derived_from(contract) -> list[dict]:
         if derived:
             vocab_name = derived.replace("_registry/vocabularies/", "")
             if vocab_name not in existing_vocabs:
-                failures.append(f'{field['name']} derived_from={vocab_name} not found')
+                failures.append(f"{field['name']} derived_from={vocab_name} not found")
     if failures:
         return ("FAIL", "; ".join(failures))
     return ("PASS", "all derived_from vocabularies reachable")

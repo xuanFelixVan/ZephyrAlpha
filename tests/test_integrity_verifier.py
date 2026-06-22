@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import hashlib
 
-import pytest
-
 from zephyr.governance.integrity_verifier import IntegrityVerifier
 
 
@@ -41,7 +39,7 @@ class TestRegisterHash:
         verifier = IntegrityVerifier()
         verifier.register_hash("file.py", "v1")
         verifier.register_hash("file.py", "v2")
-        expected = hashlib.sha256("v2".encode()).hexdigest()
+        expected = hashlib.sha256(b"v2").hexdigest()
         assert verifier._hashes["file.py"] == expected
 
     def test_register_hash_multiple_files(self):

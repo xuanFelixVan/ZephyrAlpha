@@ -26,7 +26,8 @@ TD-SHARED-001: 发散副本统一为 re-export wrapper，消除代码漂移。
 """
 
 import importlib as _importlib
+
 _mod = _importlib.import_module("zephyr.infrastructure.contract_tester")
 ContractTester = _mod.ContractTester
 ContractTestResult = _mod.ContractTestResult
-__all__ = [name for name in dir(_mod) if not name.startswith('_')]
+__all__ = [name for name in dir(_mod) if not name.startswith("_")]

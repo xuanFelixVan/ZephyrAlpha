@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_context_isolation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_context_isolation
+# [MODULE] zephyr.autonomy_core.skill_context_isolation
 
 # [INVARIANTS] none
 
@@ -34,12 +34,11 @@ Skill 上下文隔离引擎
   4. SnapshotRestore: 多 Skill 切换时的上下文快照
 """
 
-
 from __future__ import annotations
 
 import copy
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 
 class ContextIsolation:
@@ -51,9 +50,9 @@ class ContextIsolation:
 
     def __init__(self, mode: str = ISOLATION_STRICT):
         self._mode = mode
-        self._namespaces: Dict[str, Dict[str, Any]] = {}
-        self._snapshots: Dict[str, Dict[str, Any]] = {}
-        self._contamination_log: List[Dict[str, Any]] = []
+        self._namespaces: dict[str, dict[str, Any]] = {}
+        self._snapshots: dict[str, dict[str, Any]] = {}
+        self._contamination_log: list[dict[str, Any]] = []
 
     @property
     def isolation_level(self) -> str:
@@ -64,7 +63,7 @@ class ContextIsolation:
         if ns_key not in self._namespaces:
             self._namespaces[ns_key] = {
                 "skill_id": skill_id,
-                "created_at": datetime.now(timezone.utc).isoformat(),
+                "created_at": datetime.now(UTC).isoformat(),
                 "data": {},
                 "tokens_used": 0,
                 "locked": False,
@@ -74,9 +73,9 @@ class ContextIsolation:
     def isolate_execution(
         self,
         skill_id: str,
-        context: Dict[str, Any],
-        previous_skill_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        context: dict[str, Any],
+        previous_skill_id: str | None = None,
+    ) -> dict[str, Any]:
         ns_key = self.create_namespace(skill_id)
 
         clean_context = copy.deepcopy(context)
@@ -95,13 +94,15 @@ class ContextIsolation:
                 del clean_context[key]
 
             if leaked_keys:
-                self._contamination_log.append({
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "action": "context_cleaned",
-                    "from_skill": previous_skill_id,
-                    "to_skill": skill_id,
-                    "leaked_keys": leaked_keys,
-                })
+                self._contamination_log.append(
+                    {
+                        "timestamp": datetime.now(UTC).isoformat(),
+                        "action": "context_cleaned",
+                        "from_skill": previous_skill_id,
+                        "to_skill": skill_id,
+                        "leaked_keys": leaked_keys,
+                    }
+                )
 
         self._namespaces[ns_key]["data"] = clean_context
 
@@ -114,13 +115,11 @@ class ContextIsolation:
 
     def snapshot(self, skill_id: str) -> str:
         ns_key = f"ns:{skill_id}"
-        snapshot_id = f"snap:{skill_id}:{datetime.now(timezone.utc).timestamp()}"
-        self._snapshots[snapshot_id] = copy.deepcopy(
-            self._namespaces.get(ns_key, {"skill_id": skill_id})
-        )
+        snapshot_id = f"snap:{skill_id}:{datetime.now(UTC).timestamp()}"
+        self._snapshots[snapshot_id] = copy.deepcopy(self._namespaces.get(ns_key, {"skill_id": skill_id}))
         return snapshot_id
 
-    def restore(self, snapshot_id: str) -> Optional[Dict[str, Any]]:
+    def restore(self, snapshot_id: str) -> dict[str, Any] | None:
         if snapshot_id in self._snapshots:
             data = self._snapshots[snapshot_id]
             skill_id = data.get("skill_id", "")
@@ -132,8 +131,8 @@ class ContextIsolation:
     def check_contamination(
         self,
         skill_id: str,
-        current_context: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        current_context: dict[str, Any],
+    ) -> dict[str, Any]:
         ns_key = f"ns:{skill_id}"
         namespace = self._namespaces.get(ns_key, {}).get("data", {})
 

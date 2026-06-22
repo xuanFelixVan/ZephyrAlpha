@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.forensic.automated_rca_postmortem_generator import (
     AutomatedRCAPostmortemGenerator,
     IncidentSeverity,

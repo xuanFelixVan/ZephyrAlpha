@@ -147,7 +147,7 @@ def main() -> int:
     if all_errors:
         print(f"\n[GATE-BLUEPRINT-CODE] 发现 {len(all_errors)} 个问题：")
         for err in all_errors:
-            print(f'  {"⚠️" if warn_only else "🔴"} {err}')
+            print(f"  {'⚠️' if warn_only else '🔴'} {err}")
         if warn_only:
             print("\n[GATE-BLUEPRINT-CODE] --warn-only 模式，不阻断。请尽快修复上述问题。")
             code = 0

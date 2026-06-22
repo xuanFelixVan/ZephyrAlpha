@@ -21,8 +21,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from zephyr.governance.knowledge_management.vector_memory.index_health_monitor import IndexHealthMonitor
 from zephyr.governance.knowledge_management.vector_memory.collection_manager import CollectionManager
+from zephyr.governance.knowledge_management.vector_memory.index_health_monitor import IndexHealthMonitor
 
 
 def run_backup(persist_dir: str = "data/vector_db", backup_dir: str = "data/vector_db/_snapshots") -> None:
@@ -34,8 +34,8 @@ def run_backup(persist_dir: str = "data/vector_db", backup_dir: str = "data/vect
     if not resolved_backup.is_absolute():
         resolved_backup = PROJECT_ROOT / resolved_backup
 
-    print(f"VMS Snapshot 备份 (mitigates R4)")
-    print(f"================================")
+    print("VMS Snapshot 备份 (mitigates R4)")
+    print("================================")
     print(f"持久化目录: {resolved_persist}")
     print(f"备份目录:   {resolved_backup}")
     print()

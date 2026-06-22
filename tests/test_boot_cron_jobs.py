@@ -12,10 +12,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from zephyr.trading.boot_cron_jobs import register_boot_cron_jobs
 
@@ -30,9 +27,7 @@ class TestRegisterBootCronJobs:
                 mock_gate_cls.return_value = MagicMock()
                 register_boot_cron_jobs(scheduler, orchestrator, tmp_path)
         assert scheduler.register_task.call_count >= 5
-        registered_names = [
-            call.kwargs.get("name", "") for call in scheduler.register_task.call_args_list
-        ]
+        registered_names = [call.kwargs.get("name", "") for call in scheduler.register_task.call_args_list]
         assert "task_escalation_check" in registered_names
         assert "task_timeout_check" in registered_names
         assert "orphan_task_scan" in registered_names
@@ -46,9 +41,7 @@ class TestRegisterBootCronJobs:
                 mock_repo_cls.return_value = MagicMock()
                 mock_gate_cls.return_value = MagicMock()
                 register_boot_cron_jobs(scheduler, orchestrator, tmp_path)
-        registered_names = [
-            call.kwargs.get("name", "") for call in scheduler.register_task.call_args_list
-        ]
+        registered_names = [call.kwargs.get("name", "") for call in scheduler.register_task.call_args_list]
         assert "budget_health_check" in registered_names
         assert "budget_blueprint_alignment" in registered_names
 
@@ -60,9 +53,7 @@ class TestRegisterBootCronJobs:
                 mock_repo_cls.return_value = MagicMock()
                 mock_gate_cls.return_value = MagicMock()
                 register_boot_cron_jobs(scheduler, orchestrator, tmp_path)
-        registered_names = [
-            call.kwargs.get("name", "") for call in scheduler.register_task.call_args_list
-        ]
+        registered_names = [call.kwargs.get("name", "") for call in scheduler.register_task.call_args_list]
         assert "temp_file_cleanup" in registered_names
 
     def test_registers_triple_alignment_check(self, tmp_path):
@@ -73,9 +64,7 @@ class TestRegisterBootCronJobs:
                 mock_repo_cls.return_value = MagicMock()
                 mock_gate_cls.return_value = MagicMock()
                 register_boot_cron_jobs(scheduler, orchestrator, tmp_path)
-        registered_names = [
-            call.kwargs.get("name", "") for call in scheduler.register_task.call_args_list
-        ]
+        registered_names = [call.kwargs.get("name", "") for call in scheduler.register_task.call_args_list]
         assert "triple_alignment_check" in registered_names
 
     def test_failure_does_not_raise(self, tmp_path):

@@ -16,6 +16,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 索引完整性校验（PS-STD-012 §7.3 — index.md清单vs磁盘双向差集）
@@ -42,6 +43,7 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 import argparse
 
+
 def find_index_files() -> list[Path]:
     """find index files"""
     docs_dir = REPO_ROOT / "" / "docs"
@@ -49,6 +51,7 @@ def find_index_files() -> list[Path]:
         docs_dir = REPO_ROOT / "docs"
     "查找目标."
     return [fp for fp in iter_files(docs_dir, extensions=SCAN_EXTENSIONS_MD) if fp.name == "index.md"]
+
 
 def extract_index_entries(filepath: Path) -> set[str]:
     """find index files."""
@@ -68,6 +71,7 @@ def extract_index_entries(filepath: Path) -> set[str]:
     return entries
     "extract index entries."
 
+
 def get_sibling_files(index_path: Path) -> set[str]:
     """get sibling files"""
     parent = index_path.parent
@@ -82,6 +86,7 @@ def get_sibling_files(index_path: Path) -> set[str]:
             pass
     return siblings
     "get sibling files."
+
 
 def check_index_integrity() -> list[dict]:
     """check index integrity"""
@@ -122,6 +127,7 @@ def check_index_integrity() -> list[dict]:
     return findings
     "check index integrity."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="索引完整性校验（PS-STD-012 §7.3）")
@@ -131,13 +137,14 @@ def main() -> None:
     if findings:
         print(f"\n[INDEX-INTEGRITY] {len(findings)} 个索引完整性问题:", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] {f['index_file']}', file=sys.stderr)
-            print(f'    {f['detail']}', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['index_file']}", file=sys.stderr)
+            print(f"    {f['detail']}", file=sys.stderr)
     else:
         print("[INDEX-INTEGRITY] 所有索引文件完整性合规", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

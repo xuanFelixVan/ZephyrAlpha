@@ -26,17 +26,14 @@
 import json
 import os
 import threading
-from pathlib import Path
 
 import pytest
-from zephyr.governance.cost_budget import CostBudget, CostBudgetExceededError
+
 from zephyr.autonomy_core.context_budget import ContextBudget, TruncationStrategy
-from zephyr.shared.shared_services.observability_02.session_audit import SessionAuditTrail, SessionRecord
-from zephyr.integration.shared_08.durable_execution import (
-    ActivityStatus,
-    ProgressSnapshot,
-    SimpleActivity,
-    WorkflowManager,
+from zephyr.autonomy_core.skill_registry import (
+    PromptTemplate,
+    PromptVariable,
+    SkillDefinition,
 )
 from zephyr.governance.behavioral_admission.post_process import (
     HookStrategy,
@@ -47,16 +44,15 @@ from zephyr.governance.constitutional_update.constitutional_update import (
     Learning,
     ProposedUpdate,
 )
-from zephyr.integration.shared_08.version_negotiation import (
-    SchemaName,
-    VersionNegotiator,
-    VersionSegment,
+from zephyr.governance.cost_budget import CostBudget, CostBudgetExceededError
+from zephyr.infrastructure.a2a_protocol.multi_agent import (
+    AgentCard,
+    AgentRole,
+    TaskDispatch,
 )
-from zephyr.autonomy_core.skill_registry import (
-    PromptTemplate,
-    PromptVariable,
-    SkillDefinition,
-    SkillParameter,
+from zephyr.integration.shared_08.durable_execution import (
+    SimpleActivity,
+    WorkflowManager,
 )
 from zephyr.integration.shared_08.evals import (
     EvalCase,
@@ -64,11 +60,12 @@ from zephyr.integration.shared_08.evals import (
     EvalRubric,
     EvalRunner,
 )
-from zephyr.infrastructure.a2a_protocol.multi_agent import (
-    AgentCard,
-    AgentRole,
-    TaskDispatch,
+from zephyr.integration.shared_08.version_negotiation import (
+    SchemaName,
+    VersionNegotiator,
+    VersionSegment,
 )
+from zephyr.shared.shared_services.observability_02.session_audit import SessionAuditTrail, SessionRecord
 
 
 class TestA1_EconomicAttacks:
@@ -185,7 +182,7 @@ class TestA3_AuditPoisoning:
         escaped_path = tmp_path / "audit" / f"{attack_id}.jsonl"
         try:
             trail.append_record(record)
-        except (OSError, IOError):
+        except OSError:
             pass
 
         assert not (tmp_path / ".." / ".." / "etc").exists()
@@ -215,7 +212,7 @@ class TestA3_AuditPoisoning:
             "\nrationale\nmulti\nline",
         )
         d = record.to_dict()
-        assert "summary\nwith\nnewlines" == d["decisions"][0]["summary"]
+        assert d["decisions"][0]["summary"] == "summary\nwith\nnewlines"
 
     def test_query_nonexistent_returns_empty(self):
         """查询不存在的 session 返回空"""
@@ -245,16 +242,19 @@ class TestA4_SnapshotHijacking:
         os.makedirs(snap_dir, exist_ok=True)
         snap_path = os.path.join(snap_dir, "wf-extra.snapshot.json")
         with open(snap_path, "w") as f:
-            json.dump({
-                "workflow_id": "wf-extra",
-                "completed_activities": ["unknown-activity"],
-                "current_activity": None,
-                "activity_results": {},
-                "global_state": {},
-                "snapshot_at": "2026-05-08T00:00:00Z",
-                "version": 1,
-                "injected_field": "malicious data here",
-            }, f)
+            json.dump(
+                {
+                    "workflow_id": "wf-extra",
+                    "completed_activities": ["unknown-activity"],
+                    "current_activity": None,
+                    "activity_results": {},
+                    "global_state": {},
+                    "snapshot_at": "2026-05-08T00:00:00Z",
+                    "version": 1,
+                    "injected_field": "malicious data here",
+                },
+                f,
+            )
 
         manager = WorkflowManager(workflow_id="wf-extra", snapshot_dir=snap_dir)
         loaded = manager.load_snapshot()
@@ -300,11 +300,15 @@ class TestA5_CommandInjection:
         def test_hook(**kwargs):
             hook_call_count["count"] += 1
             files = kwargs.get("files", [])
-            return type("HookResult", (), {
-                "hook_name": "test",
-                "success": True,
-                "error": None,
-            })()
+            return type(
+                "HookResult",
+                (),
+                {
+                    "hook_name": "test",
+                    "success": True,
+                    "error": None,
+                },
+            )()
 
         pipeline.register_hook("safe_hook", test_hook, HookStrategy.WARN)
         pipeline.run(files=[malicious_file])
@@ -373,7 +377,7 @@ class TestA6_ConstitutionPoisoning:
             original_lines=[],
             new_lines=[
                 "## Auto-Generated Learnings (from ConstitutionalAutoUpdate)",
-                "| L-META-001 | test | contains `backticks` & <html> & \"quotes\" & $dollar |",
+                '| L-META-001 | test | contains `backticks` & <html> & "quotes" & $dollar |',
                 "|---|---|",
             ],
             rationale="meta test",
@@ -439,17 +443,23 @@ class TestA7_VersionManipulation:
     def test_check_non_breaking(self):
         """ADD_OPTIONAL 不应被标记为 Breaking"""
         negotiator = VersionNegotiator()
-        assert not negotiator.check_breaking_change(
-            type("ChangeType", (), {"value": "add_optional"})(),
-            "v1.0.0",
-        ) or True
+        assert (
+            not negotiator.check_breaking_change(
+                type("ChangeType", (), {"value": "add_optional"})(),
+                "v1.0.0",
+            )
+            or True
+        )
 
     def test_required_transition_zero_for_non_breaking(self):
         """非 Breaking 变更需要 0 过渡版本"""
         negotiator = VersionNegotiator()
-        assert negotiator.required_transition_versions(
-            type("ChangeType", (), {"value": "add_optional"})(),
-        ) == 0
+        assert (
+            negotiator.required_transition_versions(
+                type("ChangeType", (), {"value": "add_optional"})(),
+            )
+            == 0
+        )
 
 
 class TestA8_TemplateInjection:
@@ -618,9 +628,7 @@ class TestA11_OrphanChainIntegrity:
 
     def test_orphan_count_matches_blueprint(self):
         """孤儿文件数量应与蓝图 §5.1b 一致"""
-        assert len(self.ORPHAN_FILES) == 35, (
-            f"Expected 35 orphan files, found {len(self.ORPHAN_FILES)}"
-        )
+        assert len(self.ORPHAN_FILES) == 35, f"Expected 35 orphan files, found {len(self.ORPHAN_FILES)}"
 
     def test_orphan_clusters_completeness(self, tmp_path):
         """验证 10 个集群均有代表文件可导入——防止集群退化"""

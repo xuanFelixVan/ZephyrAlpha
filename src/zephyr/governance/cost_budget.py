@@ -37,15 +37,13 @@ AI 施工约定：
 SSoT: MOD-INF-024 §12 盲点 B26
 """
 
-
 from __future__ import annotations
 
 import threading
 from dataclasses import dataclass, field
-from typing import Any
 
 from zephyr.integration.shared_08.errors import ZephyrBaseError
-from zephyr.shared.shared_services.observability_02.metrics import COUNT_LLM_CALLS, COUNT_API_ERRORS, get_registry
+from zephyr.shared.shared_services.observability_02.metrics import COUNT_LLM_CALLS, get_registry
 
 
 class CostBudgetExceededError(ZephyrBaseError):
@@ -56,10 +54,7 @@ class CostBudgetExceededError(ZephyrBaseError):
         self.limit = limit
         self.provider = provider
         self.model = model
-        super().__init__(
-            f"Cost budget exceeded: ${current:.4f} / ${limit:.4f} "
-            f"(provider={provider}, model={model})"
-        )
+        super().__init__(f"Cost budget exceeded: ${current:.4f} / ${limit:.4f} (provider={provider}, model={model})")
 
 
 @dataclass
@@ -224,7 +219,7 @@ class CostBudget:
 
 
 __all__ = [
+    "CostBudget",
     "CostBudgetExceededError",
     "PricingTier",
-    "CostBudget",
 ]

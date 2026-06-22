@@ -9,7 +9,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_process_isolator.py -q
-import pytest
 from zephyr.governance.process_isolator import ProcessIsolator
 
 

@@ -74,10 +74,7 @@ class CascadingRollbackAnalyzer:
                 continue
             visited.add(current)
 
-            dependents = [
-                aid for aid, deps in self.action_dependencies.items()
-                if current in deps and aid != action_id
-            ]
+            dependents = [aid for aid, deps in self.action_dependencies.items() if current in deps and aid != action_id]
             for dep in dependents:
                 if dep not in visited:
                     cascade.append(dep)
@@ -117,14 +114,18 @@ class CascadingRollbackAnalyzer:
                 dependency_counts[dep] = dependency_counts.get(dep, 0) + 1
 
         ranked = sorted(dependency_counts.items(), key=lambda x: -x[1])[:top_n]
-        return [{"action_id": aid, "dependent_count": count, "risk": "HIGH" if count > 3 else "MEDIUM"} for aid, count in ranked]
+        return [
+            {"action_id": aid, "dependent_count": count, "risk": "HIGH" if count > 3 else "MEDIUM"}
+            for aid, count in ranked
+        ]
 
     def verify_post_rollback_consistency(self, action_id: str) -> dict:
         cascade = self.analyze_rollback(action_id)
         all_targets = [action_id] + cascade.get("cascade_targets", [])
 
         orphaned = [
-            aid for aid, deps in self.action_dependencies.items()
+            aid
+            for aid, deps in self.action_dependencies.items()
             if any(dep in all_targets for dep in deps) and aid not in all_targets
         ]
 

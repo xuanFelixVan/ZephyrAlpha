@@ -23,11 +23,15 @@
 
 from __future__ import annotations
 
+
 class DependencyLock:
     def __init__(self):
         self._deps: dict[str, str] = {
-            "pydantic": ">=2.0", "pytest": ">=8.0", "yaml": ">=0.2",
-            "sqlite3": "builtin", "hashlib": "builtin",
+            "pydantic": ">=2.0",
+            "pytest": ">=8.0",
+            "yaml": ">=0.2",
+            "sqlite3": "builtin",
+            "hashlib": "builtin",
         }
 
     def get(self, pkg: str) -> str:

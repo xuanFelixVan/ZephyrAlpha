@@ -27,6 +27,7 @@ Risk: R106 — Known vulnerability exploited; FLE unaware.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class CVEScanner:
     known_cves: list[str] = field(default_factory=list)

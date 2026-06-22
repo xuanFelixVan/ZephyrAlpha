@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_backpressure_manager
 # [INVARIANTS] BackpressureManager state transitions must be PAUSED/THROTTLED→NORMAL via resume; is_blocked auto-resumes on timeout
-# [MODIFY-GUARD] zephyr.orchestration.pipeline_routing.backpressure_manager
+# [MODIFY-GUARD] zephyr.integration.backpressure_manager
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -11,8 +11,6 @@
 # [TESTS] —
 
 import time
-
-import pytest
 
 from zephyr.integration.backpressure_manager import (
     BackpressureManager,
@@ -341,14 +339,24 @@ class TestBackpressureManagerGetStats:
 
     def test_mixed_states_stats(self):
         mgr = BackpressureManager()
-        mgr.handle_pause(BackpressurePause(
-            signal_id="s1", symbol="A", duration_ms=5000,
-            reason="r", idempotency_key="k1",
-        ))
-        mgr.handle_throttle(BackpressureThrottle(
-            signal_id="s2", symbol="B", max_rate_per_sec=10,
-            reason="r", idempotency_key="k2",
-        ))
+        mgr.handle_pause(
+            BackpressurePause(
+                signal_id="s1",
+                symbol="A",
+                duration_ms=5000,
+                reason="r",
+                idempotency_key="k1",
+            )
+        )
+        mgr.handle_throttle(
+            BackpressureThrottle(
+                signal_id="s2",
+                symbol="B",
+                max_rate_per_sec=10,
+                reason="r",
+                idempotency_key="k2",
+            )
+        )
         stats = mgr.get_stats()
         assert stats["paused_count"] == 1
         assert stats["throttled_count"] == 1

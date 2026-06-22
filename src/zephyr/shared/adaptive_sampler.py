@@ -1,8 +1,8 @@
 # [A_module] module_id=MOD-SHR_adaptive_sampler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-from dataclasses import dataclass
 import random
+from dataclasses import dataclass
 
 
 @dataclass

@@ -23,6 +23,7 @@ RuleLoader — 规则加载核心 API
     rules = loader.load_for_operation("file_write")
     critical = loader.get_critical_rules()
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -86,9 +87,7 @@ class RuleLoader:
             conn.row_factory = sqlite3.Row
             for pragma in _PRAGMAS:
                 conn.execute(pragma)
-            cursor = conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='rule_bindings'"
-            )
+            cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rule_bindings'")
             if cursor.fetchone() is None:
                 conn.close()
                 self._db_available = False
@@ -202,9 +201,7 @@ class RuleLoader:
             all_rules = self._scan_rules_dir()
             return [r for r in all_rules if r.get("metadata", {}).get("impact_level") == "H"]
         try:
-            cursor = conn.execute(
-                "SELECT DISTINCT node_id FROM nodes WHERE node_type = 'rule' AND impact_level = 'H'"
-            )
+            cursor = conn.execute("SELECT DISTINCT node_id FROM nodes WHERE node_type = 'rule' AND impact_level = 'H'")
             rule_ids = [row["node_id"] for row in cursor.fetchall()]
             if not rule_ids:
                 all_rules = self._scan_rules_dir()
@@ -223,13 +220,15 @@ class RuleLoader:
         all_rules = self._scan_rules_dir()
         summaries: list[dict[str, Any]] = []
         for r in all_rules:
-            summaries.append({
-                "rule_id": r.get("rule_id", ""),
-                "title": r.get("title", ""),
-                "layer": r.get("layer", ""),
-                "severity": r.get("severity", ""),
-                "scope": r.get("scope", ""),
-            })
+            summaries.append(
+                {
+                    "rule_id": r.get("rule_id", ""),
+                    "title": r.get("title", ""),
+                    "layer": r.get("layer", ""),
+                    "severity": r.get("severity", ""),
+                    "scope": r.get("scope", ""),
+                }
+            )
         return summaries
 
     def clear_cache(self) -> None:

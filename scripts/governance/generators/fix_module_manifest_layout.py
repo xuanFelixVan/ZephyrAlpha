@@ -14,6 +14,7 @@ fix_module_manifest_layout.py — 校正治理脚本模块 docstring 与 ``__man
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -23,9 +24,9 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS
-
 
 __manifest__ = {
     "args": [],
@@ -62,9 +63,7 @@ def _consume_manifest_block(lines: list[str], idx: int) -> tuple[str, str, int] 
     return None
 
 
-def _is_external_manifest(
-    lines: list[str], manifest_idx: int, manifest_inner_close_idx: int
-) -> bool:
+def _is_external_manifest(lines: list[str], manifest_idx: int, manifest_inner_close_idx: int) -> bool:
     """True when the module docstring already ended before ``__manifest__`` (excluding YAML delim lines)."""
     j = manifest_idx - 1
     while j >= 0 and lines[j].strip() == "":
@@ -161,12 +160,7 @@ def fix_content(text: str) -> tuple[str, bool]:
         line0_rest = lines[0][3:] if lines[0].startswith('"""') else lines[0]
         pre = [line0_rest] + lines[1:manifest_idx]
         post = lines[past_manifest:outer_close]
-        doc_body = (
-            "".join(pre).rstrip("\r\n").rstrip("\n")
-            + "\n\n"
-            + "".join(post).rstrip("\r\n").rstrip("\n")
-            + "\n"
-        )
+        doc_body = "".join(pre).rstrip("\r\n").rstrip("\n") + "\n\n" + "".join(post).rstrip("\r\n").rstrip("\n") + "\n"
         anchor = _find_code_anchor(lines, outer_close + 1)
         if anchor is None:
             anchor = len(lines)

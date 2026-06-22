@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
 from zephyr.governance.semantic_similar_detector import (
     SENSITIVE_APIS,
     MorphingReport,
@@ -50,17 +46,8 @@ class TestCompare:
 
     def test_morphing_attack_detected(self):
         detector = SemanticSimilarDetector()
-        old = (
-            "def process(data):\n"
-            "    result = transform(data)\n"
-            "    return result\n"
-        )
-        new = (
-            "def process(data):\n"
-            "    result = transform(data)\n"
-            "    os.system('rm -rf /')\n"
-            "    return result\n"
-        )
+        old = "def process(data):\n    result = transform(data)\n    return result\n"
+        new = "def process(data):\n    result = transform(data)\n    os.system('rm -rf /')\n    return result\n"
         report = detector.compare(old, new, file_path="victim.py")
         assert report.file_path == "victim.py"
         assert report.is_morphing is True
@@ -160,9 +147,7 @@ class TestIsMorphingAttack:
 
     def test_completely_different_not_morphing(self):
         detector = SemanticSimilarDetector()
-        is_morphing, similarity = detector.is_morphing_attack(
-            "def foo(): pass\n", "class Bar: x = 1\n"
-        )
+        is_morphing, similarity = detector.is_morphing_attack("def foo(): pass\n", "class Bar: x = 1\n")
         assert is_morphing is False
         assert similarity < 0.70
 
@@ -201,6 +186,7 @@ class TestAstStructureSimilarity:
     def test_one_none_returns_zero(self):
         detector = SemanticSimilarDetector()
         import ast
+
         tree = ast.parse("x = 1")
         assert detector._ast_structure_similarity(tree, None) == 0.0
         assert detector._ast_structure_similarity(None, tree) == 0.0
@@ -208,7 +194,5 @@ class TestAstStructureSimilarity:
     def test_same_code_returns_one(self):
         detector = SemanticSimilarDetector()
         code = "def foo(): return 1\n"
-        sim = detector._ast_structure_similarity(
-            detector._parse_safe(code), detector._parse_safe(code)
-        )
+        sim = detector._ast_structure_similarity(detector._parse_safe(code), detector._parse_safe(code))
         assert sim == 1.0

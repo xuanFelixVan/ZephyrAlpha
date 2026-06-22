@@ -32,22 +32,52 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 # ── 豁免配置 ──
 
 EXCLUDE_DIRS = {
-    ".git", ".venv", "node_modules", "__pycache__", ".ruff_cache",
-    "models", ".trae", ".mypy_cache", ".pytest_cache",
+    ".git",
+    ".venv",
+    "node_modules",
+    "__pycache__",
+    ".ruff_cache",
+    "models",
+    ".trae",
+    ".mypy_cache",
+    ".pytest_cache",
 }
 
 # 技术栈版本号中的连字符保留
 TECH_VERSION_TOKENS = [
-    "pydantic-v2", "python-v3", "claude-3", "deepseek-v3", "deepseek-v4",
-    "gpt-4", "gpt-5", "glm-4", "glm-5", "qwen-2", "pytest-8", "react-18", "vue-3",
-    "node-v20", "node-v18", "django-5", "fastapi-0", "postgres-16", "redis-7",
-    "k8s-1", "terraform-1", "ubuntu-22", "ubuntu-24",
+    "pydantic-v2",
+    "python-v3",
+    "claude-3",
+    "deepseek-v3",
+    "deepseek-v4",
+    "gpt-4",
+    "gpt-5",
+    "glm-4",
+    "glm-5",
+    "qwen-2",
+    "pytest-8",
+    "react-18",
+    "vue-3",
+    "node-v20",
+    "node-v18",
+    "django-5",
+    "fastapi-0",
+    "postgres-16",
+    "redis-7",
+    "k8s-1",
+    "terraform-1",
+    "ubuntu-22",
+    "ubuntu-24",
 ]
 
 # 大写白名单文件名不改
 UPPERCASE_WHITELIST = {
-    "ARCHITECTURE_LOCK.yaml", "SHARED-QUICKREF.yml", "SCOPE.yaml",
-    "MAKEFILE", "Dockerfile", "LICENSE",
+    "ARCHITECTURE_LOCK.yaml",
+    "SHARED-QUICKREF.yml",
+    "SCOPE.yaml",
+    "MAKEFILE",
+    "Dockerfile",
+    "LICENSE",
 }
 
 # 整个目录跳过
@@ -56,12 +86,12 @@ SKIP_DIR_PREFIXES = [".github"]
 # 文件名模式豁免（正则）
 SKIP_PATTERNS = [
     re.compile(r"^session-\d{8}-\d{3}"),  # session logs
-    re.compile(r"^requirements-"),          # pip requirements
-    re.compile(r"^docker-compose"),         # docker
-    re.compile(r"^batch-\d+-\d+"),          # merkle batches
-    re.compile(r"^depmap-legacy-"),         # depmap archives
-    re.compile(r"^ai_audit_\d{4}-"),        # audit logs with dates
-    re.compile(r"^ke-\d+-"),                # knowledge entries
+    re.compile(r"^requirements-"),  # pip requirements
+    re.compile(r"^docker-compose"),  # docker
+    re.compile(r"^batch-\d+-\d+"),  # merkle batches
+    re.compile(r"^depmap-legacy-"),  # depmap archives
+    re.compile(r"^ai_audit_\d{4}-"),  # audit logs with dates
+    re.compile(r"^ke-\d+-"),  # knowledge entries
 ]
 
 
@@ -144,7 +174,9 @@ def replace_references(ref_map: dict[str, str], dry_run: bool = False) -> int:
         try:
             result = subprocess.run(
                 ["git", "grep", "-l", "--", old_ref],
-                capture_output=True, text=True, cwd=str(REPO_ROOT),
+                capture_output=True,
+                text=True,
+                cwd=str(REPO_ROOT),
             )
             if result.returncode == 0:
                 for line in result.stdout.strip().split("\n"):
@@ -156,7 +188,8 @@ def replace_references(ref_map: dict[str, str], dry_run: bool = False) -> int:
         try:
             result = subprocess.run(
                 ["rg", "-l", "--", old_ref, str(REPO_ROOT)],
-                capture_output=True, text=True,
+                capture_output=True,
+                text=True,
             )
             if result.returncode == 0:
                 for line in result.stdout.strip().split("\n"):
@@ -211,7 +244,9 @@ def execute_renames(renames: list[tuple[Path, Path]], dry_run: bool = False) -> 
     # 一次性获取所有 git 跟踪文件
     tracked_result = subprocess.run(
         ["git", "ls-files"],
-        capture_output=True, text=True, cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
     )
     tracked_files = set(tracked_result.stdout.strip().split("\n")) if tracked_result.returncode == 0 else set()
 
@@ -229,7 +264,9 @@ def execute_renames(renames: list[tuple[Path, Path]], dry_run: bool = False) -> 
                 if rel in tracked_files:
                     result = subprocess.run(
                         ["git", "mv", str(old_path), str(new_path)],
-                        capture_output=True, text=True, cwd=str(REPO_ROOT),
+                        capture_output=True,
+                        text=True,
+                        cwd=str(REPO_ROOT),
                     )
                     if result.returncode == 0:
                         success += 1
@@ -288,17 +325,17 @@ def main():
     # STEP 5: 替换引用
     all_renames = dir_renames + file_renames
     if all_renames:
-        print(f"\n[STEP 5] 替换文件内容中的路径引用...")
+        print("\n[STEP 5] 替换文件内容中的路径引用...")
         ref_map = build_reference_map(all_renames)
         print(f"  引用映射: {len(ref_map)} 条")
         total = replace_references(ref_map, dry_run)
         print(f"  替换总数: {total}")
 
     # STEP 6: 更新规则文件
-    print(f"\n[STEP 6] 需要手动更新的规则文件:")
-    print(f"  - trae_028_doc_structure_naming.yaml: N-13 规则改为 snake_case")
-    print(f"  - check_naming_convention.py: N-13 检测逻辑改为 snake_case")
-    print(f"  - trae_028_doc_structure_naming.yaml: 目录命名统一 snake_case")
+    print("\n[STEP 6] 需要手动更新的规则文件:")
+    print("  - trae_028_doc_structure_naming.yaml: N-13 规则改为 snake_case")
+    print("  - check_naming_convention.py: N-13 检测逻辑改为 snake_case")
+    print("  - trae_028_doc_structure_naming.yaml: 目录命名统一 snake_case")
 
     print("\n" + "=" * 60)
     if dry_run:

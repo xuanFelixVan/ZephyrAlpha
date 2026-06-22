@@ -2,39 +2,30 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-042 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.agent_debate
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import hashlib
 import logging
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
+
 
 class DebateVerdict(str, Enum):
     AGREE = "AGREE"
     A_SUPERIOR = "A_SUPERIOR"
     B_SUPERIOR = "B_SUPERIOR"
     OVERRIDE = "OVERRIDE"
+
 
 class ModelResponse(BaseModel):
     model: str
@@ -53,6 +44,7 @@ class ModelResponse(BaseModel):
             latency_ms=latency_ms,
         )
 
+
 class DebateRound(BaseModel):
     round_id: int
     model_a: ModelResponse
@@ -60,6 +52,7 @@ class DebateRound(BaseModel):
     consensus: bool = False
     verdict: DebateVerdict = DebateVerdict.OVERRIDE
     resolution: str = ""
+
 
 class AgentDebate:
     def __init__(self) -> None:
@@ -110,7 +103,10 @@ class AgentDebate:
         override_decision: str = "auto",
     ) -> tuple[DebateVerdict, str]:
         if override_decision == "auto":
-            equal = hashlib.sha256(model_a_content.encode()).hexdigest() == hashlib.sha256(model_b_content.encode()).hexdigest()
+            equal = (
+                hashlib.sha256(model_a_content.encode()).hexdigest()
+                == hashlib.sha256(model_b_content.encode()).hexdigest()
+            )
             if equal:
                 return DebateVerdict.AGREE, model_a_content
             return DebateVerdict.OVERRIDE, model_a_content

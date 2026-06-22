@@ -7,7 +7,6 @@
 # [TESTS] —
 """SLO 管理器单元测试。"""
 
-import pytest
 from zephyr.ops.slo_manager import SLOManager
 
 

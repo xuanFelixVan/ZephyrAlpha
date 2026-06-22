@@ -45,14 +45,13 @@ SSoT: MOD-INF-016 §2.14 shared-events-dlq
 Version: 0.1.0
 """
 
-
 from __future__ import annotations
 
 import json
 import sqlite3
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
@@ -113,7 +112,7 @@ class DeadLetter:
 
 
 def _utc_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class DeadLetterQueue:
@@ -158,9 +157,7 @@ class DeadLetterQueue:
         for event_type in EventType:
             observer.subscribe(event_type, self._failure_handler)
 
-    def _failure_handler(
-        self, event_type: EventType, payload: dict[str, Any]
-    ) -> None:
+    def _failure_handler(self, event_type: EventType, payload: dict[str, Any]) -> None:
         """DLQ 内部的 handler 不应抛异常——避免无限递归。"""
         try:
             raise RuntimeError("DLQ handler should not be called directly")
@@ -290,9 +287,7 @@ class DeadLetterQueue:
 
         next_retry_at = _utc_iso()
         retry_ts = time.time() + self._retry_interval
-        next_retry_at = datetime.fromtimestamp(
-            retry_ts, tz=timezone.utc
-        ).isoformat()
+        next_retry_at = datetime.fromtimestamp(retry_ts, tz=UTC).isoformat()
 
         conn = sqlite3.connect(self._db_path)
         try:
@@ -344,12 +339,8 @@ class DeadLetterQueue:
         conn = sqlite3.connect(self._db_path)
         try:
             _ensure_table(conn)
-            total = conn.execute(
-                "SELECT COUNT(*) FROM dead_letters"
-            ).fetchone()[0]
-            unresolved = conn.execute(
-                "SELECT COUNT(*) FROM dead_letters WHERE resolved = 0"
-            ).fetchone()[0]
+            total = conn.execute("SELECT COUNT(*) FROM dead_letters").fetchone()[0]
+            unresolved = conn.execute("SELECT COUNT(*) FROM dead_letters WHERE resolved = 0").fetchone()[0]
             retryable = conn.execute(
                 """SELECT COUNT(*) FROM dead_letters
                    WHERE resolved = 0 AND attempt_count < max_attempts"""
@@ -368,9 +359,7 @@ class DeadLetterQueue:
         finally:
             conn.close()
 
-    def purge_expired(
-        self, *, max_age_hours: float | None = None
-    ) -> int:
+    def purge_expired(self, *, max_age_hours: float | None = None) -> int:
         """清理过期的死信记录。
 
         Args:
@@ -379,12 +368,8 @@ class DeadLetterQueue:
         Returns:
             清理的记录数
         """
-        age_seconds = (
-            max_age_hours or (self._max_age_seconds / 3600.0)
-        ) * 3600.0
-        cutoff = datetime.fromtimestamp(
-            time.time() - age_seconds, tz=timezone.utc
-        ).isoformat()
+        age_seconds = (max_age_hours or (self._max_age_seconds / 3600.0)) * 3600.0
+        cutoff = datetime.fromtimestamp(time.time() - age_seconds, tz=UTC).isoformat()
 
         conn = sqlite3.connect(self._db_path)
         try:

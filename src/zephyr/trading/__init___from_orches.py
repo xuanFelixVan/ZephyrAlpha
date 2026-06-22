@@ -1,14 +1,14 @@
 # [A_module] module_id=MOD-ORC_runtime_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
-# [MODULE] zephyr.orchestration.runtime_core
+# [MODULE] zephyr.trading
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 AutoRuntime Core — 三层运行时运营中心（系统大脑）
 ==================================================
@@ -66,6 +66,7 @@ _SUBMODULES = [
     "verdict_engine",
 ]
 
+
 def __getattr__(name: str):
     if name in _SUBMODULES:
         import importlib
@@ -75,49 +76,50 @@ def __getattr__(name: str):
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-    'AutoRuntimeCore',
-    'action_dispatcher',
-    'ai_audit_logger',
-    'auto_dispatcher',
-    'auto_integrator',
-    'auto_runtime_core',
-    'auto_task_generator',
-    'boot_cron_jobs',
-    'boot_hooks',
-    'capability_card',
-    'capability_registry',
-    'capability_sync',
-    'circadian_scheduler',
-    'dream_cycle',
-    'feedback_loop',
-    'finalizer',
-    'gpu_monitor',
-    'health_monitor',
-    'ide_health_daemon',
-    'integration_registry',
-    'lifecycle_manager',
-    'module_onboarding_scanner',
-    'night_shift_queue',
-    'orphan_detector',
-    'ports',
-    'resource_optimization',
-    'runtime_config',
-    'speed_baseline_checker',
-    'status_dashboard',
-    'staging_area',
-    'stop_gate',
-    'task_gate',
-    'windows_service',
-    'work_dag',
-    'work_orchestrator',
-    'zombie_scanner',
+    "AutoRuntimeCore",
     "__main__",
+    "action_dispatcher",
     "admission_controller",
+    "ai_audit_logger",
+    "auto_dispatcher",
+    "auto_integrator",
+    "auto_runtime_core",
+    "auto_task_generator",
     "autopilot",
+    "boot_cron_jobs",
+    "boot_hooks",
+    "capability_card",
+    "capability_registry",
+    "capability_sync",
+    "circadian_scheduler",
     "conductor",
+    "dream_cycle",
+    "feedback_loop",
+    "finalizer",
     "gpu_consensus_scheduler",
+    "gpu_monitor",
+    "health_monitor",
+    "ide_health_daemon",
+    "integration_registry",
+    "lifecycle_manager",
+    "module_onboarding_scanner",
+    "night_shift_queue",
+    "orphan_detector",
+    "ports",
     "protection_index",
+    "resource_optimization",
+    "runtime_config",
     "session_lifecycle",
+    "speed_baseline_checker",
+    "staging_area",
+    "status_dashboard",
+    "stop_gate",
+    "task_gate",
     "verdict_engine",
+    "windows_service",
+    "work_dag",
+    "work_orchestrator",
+    "zombie_scanner",
 ]

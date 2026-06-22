@@ -96,9 +96,15 @@ class TestModuleHealth:
 class TestLifecycleState:
     def test_all_values(self):
         expected = [
-            "CREATED", "INITIALIZING", "INITIALIZED",
-            "STARTING", "RUNNING", "DEGRADED",
-            "STOPPING", "STOPPED", "FAILED",
+            "CREATED",
+            "INITIALIZING",
+            "INITIALIZED",
+            "STARTING",
+            "RUNNING",
+            "DEGRADED",
+            "STOPPING",
+            "STOPPED",
+            "FAILED",
         ]
         actual = [s.value for s in LifecycleState]
         assert actual == expected

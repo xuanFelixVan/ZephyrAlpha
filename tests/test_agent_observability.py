@@ -11,6 +11,7 @@
 # [TESTS] pytest tests/test_agent_observability.py
 
 import pytest
+
 from zephyr.autonomy_core.agent_observability import AgentObservability
 
 

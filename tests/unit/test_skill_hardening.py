@@ -6,26 +6,25 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """生产硬化测试 —— 并发安全 + 边界条件"""
-import pytest
+
 import threading
 import time
 
-from zephyr.autonomy_core.skill_locking import SkillLock, SkillFileLock
 from zephyr.autonomy_core.skill_calibration import SkillCalibration
-from zephyr.autonomy_core.skill_consensus import SkillConsensus, VoteResult
-from zephyr.autonomy_core.skill_idempotency import SkillIdempotency
+from zephyr.autonomy_core.skill_consensus import SkillConsensus
+from zephyr.autonomy_core.skill_di import SkillDI
 from zephyr.autonomy_core.skill_feature_flags import SkillFeatureFlags
+from zephyr.autonomy_core.skill_idempotency import SkillIdempotency
 from zephyr.autonomy_core.skill_kill_switch import SkillKillSwitch
+from zephyr.autonomy_core.skill_lineage import SkillLineage
+from zephyr.autonomy_core.skill_locking import SkillLock
+from zephyr.autonomy_core.skill_prompt_cache import SkillPromptCache
 from zephyr.autonomy_core.skill_resilience import SkillResilience
 from zephyr.autonomy_core.skill_schema_registry import SkillSchemaRegistry
-from zephyr.autonomy_core.skill_prompt_cache import SkillPromptCache
-from zephyr.autonomy_core.skill_lineage import SkillLineage
-from zephyr.autonomy_core.skill_di import SkillDI
 from zephyr.autonomy_core.skill_temperature import SkillTemperature
 
 
 class TestConcurrencySafety:
-
     def test_lock_acquire_release(self):
         with SkillLock.write_lock("TEST-LOCK-001"):
             assert "w:TEST-LOCK-001" in SkillLock._LOCKS
@@ -35,6 +34,7 @@ class TestConcurrencySafety:
 
     def test_read_lock_nonblocking(self):
         results = []
+
         def reader():
             with SkillLock.read_lock("TEST-READ-001"):
                 results.append("read_done")
@@ -49,6 +49,7 @@ class TestConcurrencySafety:
 
     def test_registry_lock_exclusive(self):
         acquired = []
+
         def worker():
             with SkillLock.registry_lock():
                 acquired.append("start")
@@ -62,7 +63,6 @@ class TestConcurrencySafety:
 
 
 class TestCalibrationEdgeCases:
-
     def test_drift_trend_insufficient_data(self):
         SkillCalibration.clear_history("TEST-CAL")
         trend = SkillCalibration.drift_trend("TEST-CAL")
@@ -84,30 +84,23 @@ class TestCalibrationEdgeCases:
 
 
 class TestConsensusEdgeCases:
-
     def test_unanimous_vote(self):
-        winner, result = SkillConsensus.majority_vote(
-            ["opt-a", "opt-b"], {"a1": "opt-a", "a2": "opt-a", "a3": "opt-a"}
-        )
+        winner, result = SkillConsensus.majority_vote(["opt-a", "opt-b"], {"a1": "opt-a", "a2": "opt-a", "a3": "opt-a"})
         assert winner == "opt-a"
         assert not result.tie_broken
 
     def test_weighted_tiebreak(self):
         winner, result = SkillConsensus.majority_vote(
-            ["a", "b"], {"v1": "a", "v2": "b"},
-            weights={"v1": 2.0, "v2": 1.0}
+            ["a", "b"], {"v1": "a", "v2": "b"}, weights={"v1": 2.0, "v2": 1.0}
         )
         assert winner == "a"
 
     def test_empty_vote_returns_none(self):
-        winner, result = SkillConsensus.majority_vote(
-            ["a", "b"], {}
-        )
+        winner, result = SkillConsensus.majority_vote(["a", "b"], {})
         assert winner is None
 
 
 class TestIdempotencyDuplicateDetection:
-
     def test_hash_consistency(self):
         h1 = SkillIdempotency.hash_input("test data")
         h2 = SkillIdempotency.hash_input("test data")
@@ -125,7 +118,6 @@ class TestIdempotencyDuplicateDetection:
 
 
 class TestFeatureFlagsEnvOverride:
-
     def test_get_predefined_flag(self):
         val = SkillFeatureFlags.get_flag("TEST-FF", "strict_mode")
         assert val is True
@@ -137,7 +129,6 @@ class TestFeatureFlagsEnvOverride:
 
 
 class TestKillSwitchAuto:
-
     def test_auto_kill_triggered(self):
         SkillKillSwitch.clear_all()
         result = SkillKillSwitch.auto_kill_on_errors("TEST-KILL", 5)
@@ -157,7 +148,6 @@ class TestKillSwitchAuto:
 
 
 class TestResilienceCircuitBreaker:
-
     def test_record_failure_increments(self):
         SkillResilience.reset("TEST-CB")
         count = SkillResilience.record_failure("TEST-CB")
@@ -174,35 +164,27 @@ class TestResilienceCircuitBreaker:
 
     def test_retry_success_on_first(self):
         SkillResilience.reset("TEST-RETRY")
-        result, attempts = SkillResilience.retry_with_backoff(
-            "TEST-RETRY", lambda: "ok", max_retries=3
-        )
+        result, attempts = SkillResilience.retry_with_backoff("TEST-RETRY", lambda: "ok", max_retries=3)
         assert result == "ok"
         assert attempts == 1
 
 
 class TestSchemaRegistry:
-
     def test_validate_missing_required(self):
-        SkillSchemaRegistry.register("TEST-SCHEMA",
-            input_schema={"name": {"required": True, "type": "str"}},
-            output_schema={}
+        SkillSchemaRegistry.register(
+            "TEST-SCHEMA", input_schema={"name": {"required": True, "type": "str"}}, output_schema={}
         )
         result = SkillSchemaRegistry.validate_input("TEST-SCHEMA", {})
         assert result["valid"] is False
         assert len(result["errors"]) == 1
 
     def test_validate_type_mismatch(self):
-        SkillSchemaRegistry.register("TEST-SCHEMA2",
-            input_schema={"count": {"type": "int"}},
-            output_schema={}
-        )
+        SkillSchemaRegistry.register("TEST-SCHEMA2", input_schema={"count": {"type": "int"}}, output_schema={})
         result = SkillSchemaRegistry.validate_input("TEST-SCHEMA2", {"count": "not_int"})
         assert result["valid"] is False
 
 
 class TestPromptCache:
-
     def test_set_and_get(self):
         SkillPromptCache.set("TEST-CACHE", "hash-1", "cached response")
         val = SkillPromptCache.get("TEST-CACHE", "hash-1")
@@ -216,7 +198,6 @@ class TestPromptCache:
 
 
 class TestLineage:
-
     def test_latest_returns_last(self):
         ln = SkillLineage()
         ln.record_version("TEST-LIN", "v1.0", None, "init")
@@ -233,7 +214,6 @@ class TestLineage:
 
 
 class TestDependencyInjection:
-
     def test_topological_order(self):
         SkillDI.clear()
         SkillDI.register("A", {"B": "defaultB"})
@@ -250,7 +230,6 @@ class TestDependencyInjection:
 
 
 class TestTemperature:
-
     def test_code_generation_low_temp(self):
         temp = SkillTemperature.get_temperature("TEST-TEMP", "code_generation")
         assert temp < 0.5

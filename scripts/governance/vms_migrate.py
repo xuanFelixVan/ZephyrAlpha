@@ -14,20 +14,19 @@ from __future__ import annotations
 
 import argparse
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from zephyr.governance.knowledge_management.vector_memory.bridge_layer import BridgeLayer, MIGRATION_MAP
+from zephyr.governance.knowledge_management.vector_memory.bridge_layer import MIGRATION_MAP, BridgeLayer
 from zephyr.governance.knowledge_management.vector_memory.collection_manager import CollectionManager
 
 
 def run_migration(dry_run: bool = False) -> None:
     """run_migration implementation."""
-    print(f"VMS Phase 2 迁移脚本")
-    print(f"=====================")
+    print("VMS Phase 2 迁移脚本")
+    print("=====================")
     print(f"模式: {'DRY-RUN' if dry_run else 'EXECUTE'}")
     print()
 
@@ -51,7 +50,7 @@ def run_migration(dry_run: bool = False) -> None:
     print("-" * 80)
     for source, mapping in MIGRATION_MAP.items():
         dim_change = f"{mapping['source_dim']}→{mapping['target_dim']}"
-        print(f"{source:<22} {mapping['target']:<22} {dim_change:<14} {str(mapping['re_embed']):<10}")
+        print(f"{source:<22} {mapping['target']:<22} {dim_change:<14} {mapping['re_embed']!s:<10}")
     print("-" * 80)
 
     if dry_run:

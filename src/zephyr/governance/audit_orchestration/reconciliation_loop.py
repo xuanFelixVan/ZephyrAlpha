@@ -28,7 +28,7 @@ K8s Controller Pattern——每30s调和5项 invariants。
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
@@ -50,7 +50,7 @@ RECONCILE_INVARIANTS: list[str] = [
 
 
 class ReconcileResult(BaseModel):
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     invariants: list[Invariant] = Field(default_factory=list)
     all_ok: bool = True
 

@@ -11,14 +11,15 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.context_evictor import (
-        ContextEvictor,
         ContextBlock,
+        ContextEvictor,
         EvictionResult,
         PriorityLevel,
     )
@@ -35,7 +36,13 @@ class TestPriorityLevel:
         assert PriorityLevel.PINNED == 255
 
     def test_ordering(self):
-        assert PriorityLevel.LOW < PriorityLevel.NORMAL < PriorityLevel.HIGH < PriorityLevel.CRITICAL < PriorityLevel.PINNED
+        assert (
+            PriorityLevel.LOW
+            < PriorityLevel.NORMAL
+            < PriorityLevel.HIGH
+            < PriorityLevel.CRITICAL
+            < PriorityLevel.PINNED
+        )
 
 
 class TestContextBlock:
@@ -113,8 +120,17 @@ class TestContextEvictor:
     def test_evict_some_removed(self):
         evictor = ContextEvictor()
         blocks = [
-            ContextBlock(block_id="b1", content="a", token_estimate=100, priority=PriorityLevel.LOW, freshness=0.1, relevance=0.1),
-            ContextBlock(block_id="b2", content="b", token_estimate=200, priority=PriorityLevel.HIGH, freshness=0.9, relevance=0.9),
+            ContextBlock(
+                block_id="b1", content="a", token_estimate=100, priority=PriorityLevel.LOW, freshness=0.1, relevance=0.1
+            ),
+            ContextBlock(
+                block_id="b2",
+                content="b",
+                token_estimate=200,
+                priority=PriorityLevel.HIGH,
+                freshness=0.9,
+                relevance=0.9,
+            ),
         ]
         result = evictor.evict(blocks, 250)
         assert result.kept_count == 1

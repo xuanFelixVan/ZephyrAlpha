@@ -12,11 +12,9 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.diagnosers.fle_self_slo_metrics import (
-    FLESLOMetric,
     FLESelfSLO,
+    FLESLOMetric,
 )
 
 

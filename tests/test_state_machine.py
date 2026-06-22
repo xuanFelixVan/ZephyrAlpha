@@ -13,16 +13,16 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
 from zephyr.behavioral_audit.drift_models import DriftState
 from zephyr.security.access_control.auto_fix_engine_03.state_machine import (
+    TERMINAL_STATES,
     DriftEventRecord,
     DriftStateMachine,
     InvalidTransitionError,
-    TERMINAL_STATES,
 )
 
 
@@ -43,7 +43,7 @@ class TestDriftEventRecord:
 
     def test_init_with_explicit_timestamps(self):
         eid = uuid.uuid4()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         rec = DriftEventRecord(
             event_id=eid,
             state=DriftState.TRIAGED,
@@ -274,7 +274,7 @@ class TestCheckTtl:
         rec = DriftEventRecord(
             event_id=eid,
             state=DriftState.DETECTED,
-            created_at=datetime.now(timezone.utc) - timedelta(hours=1),
+            created_at=datetime.now(UTC) - timedelta(hours=1),
         )
         sm._events[eid] = rec
         expired = sm.check_ttl()
@@ -291,11 +291,11 @@ class TestCheckTtl:
         sm.transition(eid, DriftState.ACKNOWLEDGED, DriftState.RESOLVING)
         sm.transition(eid, DriftState.RESOLVING, DriftState.RESOLVED)
         sm.transition(eid, DriftState.RESOLVED, DriftState.VERIFIED)
-        past = datetime.now(timezone.utc) - timedelta(hours=1)
+        past = datetime.now(UTC) - timedelta(hours=1)
         rec = DriftEventRecord(
             event_id=eid,
             state=DriftState.SUPPRESSED,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         rec.suppressed_until = past
         sm._events[eid] = rec
@@ -314,14 +314,14 @@ class TestSuppress:
         sm = DriftStateMachine()
         eid = uuid.uuid4()
         sm.transition(eid, DriftState.DETECTED, DriftState.TRIAGED)
-        future = datetime.now(timezone.utc) + timedelta(hours=24)
+        future = datetime.now(UTC) + timedelta(hours=24)
         with pytest.raises(InvalidTransitionError):
             sm.suppress(eid, future)
 
     def test_suppress_nonexistent_raises(self):
         sm = DriftStateMachine()
         with pytest.raises(InvalidTransitionError, match="not found"):
-            sm.suppress(uuid.uuid4(), datetime.now(timezone.utc) + timedelta(hours=1))
+            sm.suppress(uuid.uuid4(), datetime.now(UTC) + timedelta(hours=1))
 
 
 class TestGetState:

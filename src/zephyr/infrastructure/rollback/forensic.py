@@ -55,12 +55,10 @@ import os
 import re
 import shutil
 import subprocess
-import time
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
-
 
 EXIT_TIME_ATTEST_FAIL = 26
 EXIT_FORENSIC_CHAIN_BROKEN = 36
@@ -162,7 +160,6 @@ class ForensicReport:
 
 
 class ForensicEngine:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
         self._forensic_dir = self._project_root / "data" / "rollback" / "forensic"
@@ -181,11 +178,15 @@ class ForensicEngine:
                 matches = pattern.findall(field_value.encode("utf-8", errors="replace"))
                 for match in matches:
                     match_text = match.decode("utf-8", errors="replace") if isinstance(match, bytes) else match
-                    findings.append(ShellInjectionFinding(
-                        pattern=pattern.pattern.decode("utf-8") if isinstance(pattern.pattern, bytes) else str(pattern.pattern),
-                        matched_text=match_text[:200],
-                        source_field=field_name,
-                    ))
+                    findings.append(
+                        ShellInjectionFinding(
+                            pattern=pattern.pattern.decode("utf-8")
+                            if isinstance(pattern.pattern, bytes)
+                            else str(pattern.pattern),
+                            matched_text=match_text[:200],
+                            source_field=field_name,
+                        )
+                    )
 
         return findings
 
@@ -195,7 +196,7 @@ class ForensicEngine:
 
     def record_file_hashes(self, files: list[str]) -> list[FileHashRecord]:
         records: list[FileHashRecord] = []
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         commit_sha = self._get_current_commit()
 
@@ -208,19 +209,21 @@ class ForensicEngine:
             sha256_hash = hashlib.sha256(content).hexdigest()
             git_hash = self._git_hash_object(file_path)
 
-            records.append(FileHashRecord(
-                file_path=file_path,
-                git_hash=git_hash,
-                sha256=sha256_hash,
-                timestamp_utc=now,
-                commit_sha=commit_sha,
-            ))
+            records.append(
+                FileHashRecord(
+                    file_path=file_path,
+                    git_hash=git_hash,
+                    sha256=sha256_hash,
+                    timestamp_utc=now,
+                    commit_sha=commit_sha,
+                )
+            )
 
         return records
 
     def ntp_attest(self, ntp_servers: list[str] | None = None) -> NtpAttestation:
         servers = ntp_servers or ["pool.ntp.org", "time.google.com"]
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         for server in servers:
             try:
@@ -231,9 +234,7 @@ class ForensicEngine:
                     timeout=5,
                 )
                 if result.returncode == 0:
-                    signature = hashlib.sha256(
-                        f"{now.isoformat()}|{server}|attested-v1".encode("utf-8")
-                    ).hexdigest()
+                    signature = hashlib.sha256(f"{now.isoformat()}|{server}|attested-v1".encode()).hexdigest()
                     return NtpAttestation(
                         timestamp_utc=now.isoformat(),
                         ntp_server=server,
@@ -245,9 +246,7 @@ class ForensicEngine:
             except (subprocess.TimeoutExpired, Exception):
                 continue
 
-        signature = hashlib.sha256(
-            f"{now.isoformat()}|local|fallback-v1".encode("utf-8")
-        ).hexdigest()
+        signature = hashlib.sha256(f"{now.isoformat()}|local|fallback-v1".encode()).hexdigest()
         return NtpAttestation(
             timestamp_utc=now.isoformat(),
             ntp_server="local",
@@ -271,8 +270,8 @@ class ForensicEngine:
 
         actual_hash = hashlib.sha256(full_path.read_bytes()).hexdigest()
 
-        mtime = datetime.fromtimestamp(full_path.stat().st_mtime, tz=timezone.utc)
-        age_days = (datetime.now(timezone.utc) - mtime).days
+        mtime = datetime.fromtimestamp(full_path.stat().st_mtime, tz=UTC)
+        age_days = (datetime.now(UTC) - mtime).days
 
         intact = actual_hash == expected_hash
 
@@ -322,16 +321,19 @@ class ForensicEngine:
             locked=False,
             lock_type="fcntl",
             holder_pid=os.getpid(),
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
         try:
             lock_file.write_text(
-                json.dumps({
-                    "pid": os.getpid(),
-                    "timestamp": guard.timestamp_utc,
-                    "file": file_path,
-                }, ensure_ascii=False),
+                json.dumps(
+                    {
+                        "pid": os.getpid(),
+                        "timestamp": guard.timestamp_utc,
+                        "file": file_path,
+                    },
+                    ensure_ascii=False,
+                ),
                 encoding="utf-8",
             )
             guard.locked = True
@@ -385,11 +387,11 @@ class ForensicEngine:
         if not in_flight_dir.exists():
             return cleaned
 
-        cutoff = datetime.now(timezone.utc) - timedelta(hours=max_age_hours)
+        cutoff = datetime.now(UTC) - timedelta(hours=max_age_hours)
 
         for f in in_flight_dir.glob("*.json"):
             try:
-                mtime = datetime.fromtimestamp(f.stat().st_mtime, tz=timezone.utc)
+                mtime = datetime.fromtimestamp(f.stat().st_mtime, tz=UTC)
                 if mtime < cutoff:
                     record = json.loads(f.read_text(encoding="utf-8"))
                     status = record.get("status", "")
@@ -410,7 +412,7 @@ class ForensicEngine:
         backup_dir = self._forensic_dir / "reflog_backups"
         backup_dir.mkdir(parents=True, exist_ok=True)
 
-        ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+        ts = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
         backup_path = backup_dir / f"reflog-{ts}.txt"
 
         try:
@@ -422,13 +424,12 @@ class ForensicEngine:
                 timeout=10,
             )
             backup_path.write_text(
-                f"# Reflog backup: {datetime.now(timezone.utc).isoformat()}\n"
-                f"{result.stdout}",
+                f"# Reflog backup: {datetime.now(UTC).isoformat()}\n{result.stdout}",
                 encoding="utf-8",
             )
         except (subprocess.TimeoutExpired, Exception):
             backup_path.write_text(
-                f"# Failed reflog backup: {datetime.now(timezone.utc).isoformat()}\n",
+                f"# Failed reflog backup: {datetime.now(UTC).isoformat()}\n",
                 encoding="utf-8",
             )
 
@@ -437,16 +438,19 @@ class ForensicEngine:
         return backup_path
 
     def write_forensic_git_notes(self, findings: dict[str, Any]) -> bool:
-        note_content = json.dumps({
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "engine": "forensic.py",
-            "findings": findings,
-        }, ensure_ascii=False, indent=2)
+        note_content = json.dumps(
+            {
+                "timestamp": datetime.now(UTC).isoformat(),
+                "engine": "forensic.py",
+                "findings": findings,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
 
         try:
             subprocess.run(
-                ["git", "notes", "--ref", self._notes_ref, "add",
-                 "-m", note_content, "HEAD"],
+                ["git", "notes", "--ref", self._notes_ref, "add", "-m", note_content, "HEAD"],
                 cwd=str(self._project_root),
                 capture_output=True,
                 text=True,
@@ -502,19 +506,22 @@ class ForensicEngine:
             index=index,
             merkle_root=merkle_root,
             prev_root=prev_root,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
             operation=operation,
             commit_sha=commit_sha,
         )
 
-        chain_line = json.dumps({
-            "index": link.index,
-            "merkle_root": link.merkle_root,
-            "prev_root": link.prev_root,
-            "timestamp_utc": link.timestamp_utc,
-            "operation": link.operation,
-            "commit_sha": link.commit_sha,
-        }, ensure_ascii=False)
+        chain_line = json.dumps(
+            {
+                "index": link.index,
+                "merkle_root": link.merkle_root,
+                "prev_root": link.prev_root,
+                "timestamp_utc": link.timestamp_utc,
+                "operation": link.operation,
+                "commit_sha": link.commit_sha,
+            },
+            ensure_ascii=False,
+        )
 
         self._forensic_dir.mkdir(parents=True, exist_ok=True)
 
@@ -543,7 +550,7 @@ class ForensicEngine:
 
     def make_readonly_snapshot(self, source_dir: Path | None = None) -> Path:
         src = source_dir or self._forensic_dir
-        ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+        ts = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
         snapshot_dir = self._readonly_dir / f"snapshot-{ts}"
         snapshot_dir.mkdir(parents=True, exist_ok=True)
 
@@ -584,14 +591,12 @@ class ForensicEngine:
 
     def non_repudiation_sign(self, record: dict[str, Any], sign_key: str = "") -> dict[str, Any]:
         content = json.dumps(record, ensure_ascii=False, sort_keys=True)
-        signature = hashlib.sha256(
-            f"{content}|{sign_key}|non-repudiation-v1".encode("utf-8")
-        ).hexdigest()
+        signature = hashlib.sha256(f"{content}|{sign_key}|non-repudiation-v1".encode()).hexdigest()
 
         signed_record = dict(record)
         signed_record["__signature__"] = signature
         signed_record["__signature_algorithm__"] = "SHA256"
-        signed_record["__signature_timestamp__"] = datetime.now(timezone.utc).isoformat()
+        signed_record["__signature_timestamp__"] = datetime.now(UTC).isoformat()
 
         return signed_record
 
@@ -604,9 +609,7 @@ class ForensicEngine:
             return False
 
         content = json.dumps(signed_record, ensure_ascii=False, sort_keys=True)
-        expected = hashlib.sha256(
-            f"{content}||non-repudiation-v1".encode("utf-8")
-        ).hexdigest()
+        expected = hashlib.sha256(f"{content}||non-repudiation-v1".encode()).hexdigest()
 
         return signature == expected
 
@@ -617,8 +620,9 @@ class ForensicEngine:
                 return True, op
         return False, ""
 
-    def generate_forensic_report(self, rollback_operation: str, trigger: str = "",
-                                  message: str = "", files: list[str] | None = None) -> ForensicReport:
+    def generate_forensic_report(
+        self, rollback_operation: str, trigger: str = "", message: str = "", files: list[str] | None = None
+    ) -> ForensicReport:
         shell_findings = self.scan_shell_injection(trigger, message)
         file_hashes = self.record_file_hashes(files or [])
         ntp = self.ntp_attest()
@@ -629,8 +633,8 @@ class ForensicEngine:
         ff_detected = self.detect_feature_flag_rollback(f"{trigger} {message}")
 
         return ForensicReport(
-            report_id=f"FORENSIC-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            report_id=f"FORENSIC-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
+            timestamp_utc=datetime.now(UTC).isoformat(),
             shell_injection_findings=shell_findings,
             file_hashes=file_hashes,
             ntp_attestation=ntp,
@@ -677,14 +681,16 @@ class ForensicEngine:
                 if not line:
                     continue
                 data = json.loads(line)
-                chain.append(MerkleChainLink(
-                    index=data["index"],
-                    merkle_root=data["merkle_root"],
-                    prev_root=data.get("prev_root", ""),
-                    timestamp_utc=data["timestamp_utc"],
-                    operation=data.get("operation", ""),
-                    commit_sha=data.get("commit_sha", ""),
-                ))
+                chain.append(
+                    MerkleChainLink(
+                        index=data["index"],
+                        merkle_root=data["merkle_root"],
+                        prev_root=data.get("prev_root", ""),
+                        timestamp_utc=data["timestamp_utc"],
+                        operation=data.get("operation", ""),
+                        commit_sha=data.get("commit_sha", ""),
+                    )
+                )
         except (json.JSONDecodeError, KeyError):
             pass
 
@@ -693,7 +699,7 @@ class ForensicEngine:
     def _rotate_reflog_backups(self, backup_dir: Path, max_backups: int = 100) -> None:
         backups = sorted(backup_dir.glob("reflog-*.txt"))
         if len(backups) > max_backups:
-            for old in backups[:len(backups) - max_backups]:
+            for old in backups[: len(backups) - max_backups]:
                 try:
                     old.unlink()
                 except OSError:

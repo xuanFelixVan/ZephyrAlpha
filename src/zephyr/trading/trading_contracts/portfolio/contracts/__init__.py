@@ -11,22 +11,22 @@
 # [ERROR_CONTRACT] MoneyCurrencyMismatchError; MoneyPrecisionError
 # [TESTS] tests/unit/trading-contracts/
 
+from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
 from zephyr.trading.trading_contracts.portfolio.contracts.money import (
     Money,
     MoneyCurrencyMismatchError,
     MoneyPrecisionError,
     get_currency_precision,
 )
-from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
 from zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
 
 __all__ = [
     "Money",
     "MoneyCurrencyMismatchError",
     "MoneyPrecisionError",
-    "get_currency_precision",
     "PerformanceAttributionReport",
     "StrategyLifecycleEvent",
+    "get_currency_precision",
     "money",
     "performance_attribution_report",
     "strategy_lifecycle_event",

@@ -10,13 +10,11 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_arbitrator.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import (
-    AgentRole,
-    FileOwnership,
     AgentMeta,
-    ArbitrationResult,
+    AgentRole,
     Arbitrator,
+    FileOwnership,
 )
 
 

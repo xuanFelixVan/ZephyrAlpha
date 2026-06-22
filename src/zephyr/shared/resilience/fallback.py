@@ -43,19 +43,17 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-import asyncio
-import functools
 import logging
 from collections.abc import Callable
-from dataclasses import dataclass, field
-from typing import Any, Generic, ParamSpec, TypeVar
+from dataclasses import dataclass
+from typing import Generic, ParamSpec, TypeVar
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
     "FallbackChain",
-    "FallbackStep",
     "FallbackExhaustedError",
+    "FallbackStep",
     "fallback",
 ]
 

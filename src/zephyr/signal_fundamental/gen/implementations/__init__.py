@@ -10,8 +10,9 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """L03 — Signal Generation Concrete Implementations"""
+
 from __future__ import annotations
 
 from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
 
-__all__ = ['DefaultSignalAggregator', 'default_signal_aggregator']
+__all__ = ["DefaultSignalAggregator", "default_signal_aggregator"]

@@ -29,10 +29,11 @@ Scope Guard — 范围蔓延检测与阻断。
     任务卡 TASK-INF-0118
 """
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class ScopeDrift:
@@ -43,26 +44,25 @@ class ScopeDrift:
     severity: str
     timestamp_utc: str
 
+
 @dataclass
 class ScopeGuardConfig:
     max_extra_touch: int = 3
     auto_block_on_critical: bool = True
     warn_on_extra: bool = True
 
-class ScopeGuard:
 
+class ScopeGuard:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
         self._config = ScopeGuardConfig()
         self._drift_log: list[ScopeDrift] = []
         self._blocked_tasks: set[str] = set()
 
-    def validate_scope(self, task_card: dict[str, Any],
-                       actual_touched: list[str]) -> ScopeDrift | None:
+    def validate_scope(self, task_card: dict[str, Any], actual_touched: list[str]) -> ScopeDrift | None:
         task_id = task_card.get("task_id", "")
         expected = set(task_card.get("allowed_touch", []))
-        upstream = {f if isinstance(f, str) else f.get("file_path", "")
-                     for f in task_card.get("upstream_files", [])}
+        upstream = {f if isinstance(f, str) else f.get("file_path", "") for f in task_card.get("upstream_files", [])}
         downstream = {o.get("path", "") for o in task_card.get("downstream_outputs", [])}
 
         expected = expected | upstream | downstream | {""}
@@ -86,7 +86,7 @@ class ScopeGuard:
             actual_touch=actual_touched,
             extra_touch=sorted(extra),
             severity=severity,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
         self._drift_log.append(drift)

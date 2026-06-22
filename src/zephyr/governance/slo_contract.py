@@ -27,7 +27,6 @@ tightly coupled to escalation level selection.
 Reference: Google SRE (SLI/SLO/Error Budget/Burn Rate), Nasdaq Pre-Trade Risk.
 """
 
-
 from __future__ import annotations
 
 import time
@@ -252,8 +251,7 @@ class SLOContractEngine:
             if (
                 worst is None
                 or BudgetTier_ordering(snap.tier) > BudgetTier_ordering(worst.tier)
-                or snap.tier == worst.tier
-                and snap.error_budget_remaining_pct < worst.error_budget_remaining_pct
+                or (snap.tier == worst.tier and snap.error_budget_remaining_pct < worst.error_budget_remaining_pct)
             ):
                 worst = snap
         return worst or BudgetSnapshot(

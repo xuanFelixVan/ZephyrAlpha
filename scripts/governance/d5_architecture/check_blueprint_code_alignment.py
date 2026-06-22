@@ -21,7 +21,9 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-BLUEPRINT_PATH = REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "budget-enforcer" / "blueprint.md"
+BLUEPRINT_PATH = (
+    REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "budget-enforcer" / "blueprint.md"
+)
 CODE_DIR = REPO_ROOT / "src" / "zephyr" / "budget-enforcer"
 
 
@@ -130,7 +132,7 @@ def check_api_signature_alignment(content: str) -> dict:
     if "PreFlightVerdict" in content:
         drifts.append("S4 still references PreFlightVerdict (should be GateDecision)")
     try:
-        from zephyr.governance.budget_enforcement.budget_models import GateResult, GateDecision
+        from zephyr.governance.budget_enforcement.budget_models import GateDecision, GateResult
     except ImportError:
         drifts.append("GateResult/GateDecision not importable from code")
     if not drifts:
@@ -148,21 +150,36 @@ def check_dependency_registry_alignment(content: str) -> dict:
             declared_deps.add(match.group(1))
     if not declared_deps:
         return {"check": "dependency_registry_alignment", "status": "WARN", "detail": "S10.1 no deps found"}
-    registry_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "cross-module-dependency-registry.yaml"
+    registry_path = (
+        REPO_ROOT
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "catalogs"
+        / "cross-module-dependency-registry.yaml"
+    )
     if not registry_path.exists():
         return {"check": "dependency_registry_alignment", "status": "WARN", "detail": "registry file not found"}
     registry_text = registry_path.read_text(encoding="utf-8")
     registered_targets: set[str] = set()
     block_starts = [m.start() for m in re.finditer(r"source:\s*MOD-INF-024", registry_text)]
     for start in block_starts:
-        block = registry_text[start:start + 500]
+        block = registry_text[start : start + 500]
         target_match = re.search(r"target:\s*(MOD-INF-\d+)", block)
         if target_match:
             registered_targets.add(target_match.group(1))
     missing_in_registry = declared_deps - registered_targets
     if not missing_in_registry:
-        return {"check": "dependency_registry_alignment", "status": "PASS", "detail": f"{len(declared_deps)} deps all registered"}
-    return {"check": "dependency_registry_alignment", "status": "DRIFT", "detail": f"missing in registry: {sorted(missing_in_registry)}"}
+        return {
+            "check": "dependency_registry_alignment",
+            "status": "PASS",
+            "detail": f"{len(declared_deps)} deps all registered",
+        }
+    return {
+        "check": "dependency_registry_alignment",
+        "status": "DRIFT",
+        "detail": f"missing in registry: {sorted(missing_in_registry)}",
+    }
 
 
 def check_version_alignment(content: str) -> dict:
@@ -178,7 +195,11 @@ def check_version_alignment(content: str) -> dict:
     registry_version = match.group(1)
     if blueprint_version == registry_version:
         return {"check": "version_alignment", "status": "PASS", "detail": f"v{blueprint_version} aligned"}
-    return {"check": "version_alignment", "status": "DRIFT", "detail": f"blueprint={blueprint_version}, registry={registry_version}"}
+    return {
+        "check": "version_alignment",
+        "status": "DRIFT",
+        "detail": f"blueprint={blueprint_version}, registry={registry_version}",
+    }
 
 
 def check_ssot_claims(content: str) -> dict:
@@ -229,7 +250,11 @@ def main() -> None:
         print(json.dumps(results, indent=2, ensure_ascii=False))
     else:
         for r in results:
-            icon = "PASS" if r["status"] == "PASS" else ("DRIFT" if r["status"] == "DRIFT" else ("WARN" if r["status"] == "WARN" else "CRITICAL"))
+            icon = (
+                "PASS"
+                if r["status"] == "PASS"
+                else ("DRIFT" if r["status"] == "DRIFT" else ("WARN" if r["status"] == "WARN" else "CRITICAL"))
+            )
             print(f"  [{icon}] {r['check']}: {r['detail']}")
 
     has_critical = any(r["status"] == "CRITICAL" for r in results)

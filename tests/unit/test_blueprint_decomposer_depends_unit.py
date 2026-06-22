@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """BlueprintDecomposer — depends_on 与 extract_depends_from_content。"""
 
 

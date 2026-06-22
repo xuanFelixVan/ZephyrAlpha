@@ -12,16 +12,14 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from unittest.mock import MagicMock
 
 import pytest
 
-
 l06 = pytest.importorskip("zephyr.l06_trade_execution", reason="l06-trade-execution not importable")
 
-from zephyr.ex_core.adapters.broker_interface import BrokerInterface
 from zephyr.ex_core.src.zephyr.execution_engine import (
     AlgoType,
     ExecutionConfig,
@@ -29,9 +27,10 @@ from zephyr.ex_core.src.zephyr.execution_engine import (
     ExecutionEngineRunRecord,
 )
 from zephyr.ex_core.src.zephyr.order_manager import OrderAction, OrderManager
+
+from zephyr.ex_core.adapters.broker_interface import BrokerInterface
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.trading.trading_contracts.risk.risk_validator_protocol import (
-    RiskValidatorProtocol,
     ViolationDetail,
 )
 
@@ -53,7 +52,7 @@ def _make_order(
         quantity=quantity,
         limit_price=limit_price,
         status=OrderStatus.PENDING,
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
         broker_order_id=None,
         idempotency_key="ik-001",
     )
@@ -69,13 +68,15 @@ class _PermissiveRiskValidator:
 
 class _BlockingRiskValidator:
     def validate_order(self, symbol, target_weight, current_holdings, limits):
-        return [ViolationDetail(
-            constraint="position_limit",
-            description="exceeds limit",
-            limit_value=Decimal("0.1"),
-            actual_value=Decimal("0.2"),
-            severity="HALT",
-        )]
+        return [
+            ViolationDetail(
+                constraint="position_limit",
+                description="exceeds limit",
+                limit_value=Decimal("0.1"),
+                actual_value=Decimal("0.2"),
+                severity="HALT",
+            )
+        ]
 
     def validate_portfolio(self, holdings, market_values, total_nav, limits):
         return []
@@ -109,8 +110,9 @@ class TestBrokerInterface:
 
             def get_positions(self):
                 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+
                 return PositionSnapshot(
-                    as_of_timestamp=datetime.now(timezone.utc),
+                    as_of_timestamp=datetime.now(UTC),
                     portfolio_id="test",
                     idempotency_key="ik",
                 )
@@ -141,8 +143,9 @@ class TestBrokerInterface:
 
             def get_positions(self):
                 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+
                 return PositionSnapshot(
-                    as_of_timestamp=datetime.now(timezone.utc),
+                    as_of_timestamp=datetime.now(UTC),
                     portfolio_id="test",
                     idempotency_key="ik",
                 )
@@ -256,24 +259,36 @@ class TestAlgoType:
 class TestExecutionEngineRunRecord:
     def test_fill_rate_normal(self):
         r = ExecutionEngineRunRecord(
-            report_id="r1", order_id="o1", symbol="AAPL", algo_type="twap",
-            total_quantity=Decimal("100"), filled_quantity=Decimal("80"),
-            avg_fill_price=Decimal("100"), target_price=Decimal("99"),
-            slippage_bps=Decimal("10"), commission=Decimal("5"),
-            start_time=datetime.now(timezone.utc),
-            end_time=datetime.now(timezone.utc),
+            report_id="r1",
+            order_id="o1",
+            symbol="AAPL",
+            algo_type="twap",
+            total_quantity=Decimal("100"),
+            filled_quantity=Decimal("80"),
+            avg_fill_price=Decimal("100"),
+            target_price=Decimal("99"),
+            slippage_bps=Decimal("10"),
+            commission=Decimal("5"),
+            start_time=datetime.now(UTC),
+            end_time=datetime.now(UTC),
             status="partial",
         )
         assert abs(r.fill_rate - 0.8) < 1e-9
 
     def test_fill_rate_zero_total(self):
         r = ExecutionEngineRunRecord(
-            report_id="r1", order_id="o1", symbol="AAPL", algo_type="twap",
-            total_quantity=Decimal("0"), filled_quantity=Decimal("0"),
-            avg_fill_price=Decimal("100"), target_price=Decimal("99"),
-            slippage_bps=Decimal("0"), commission=Decimal("0"),
-            start_time=datetime.now(timezone.utc),
-            end_time=datetime.now(timezone.utc),
+            report_id="r1",
+            order_id="o1",
+            symbol="AAPL",
+            algo_type="twap",
+            total_quantity=Decimal("0"),
+            filled_quantity=Decimal("0"),
+            avg_fill_price=Decimal("100"),
+            target_price=Decimal("99"),
+            slippage_bps=Decimal("0"),
+            commission=Decimal("0"),
+            start_time=datetime.now(UTC),
+            end_time=datetime.now(UTC),
             status="filled",
         )
         assert r.fill_rate == 0.0

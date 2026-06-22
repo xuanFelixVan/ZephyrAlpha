@@ -30,6 +30,5 @@ from dataclasses import dataclass
 
 @dataclass
 class CounterfactualEngine:
-
     def evaluate(self, actual: dict, hypothetical: dict) -> float:
         return 0.5

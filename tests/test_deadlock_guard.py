@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_deadlock_guard.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.deadlock_guard import DeadlockGuard
 
 

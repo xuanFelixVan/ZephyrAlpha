@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.shared_evolver import (
-    SharedEvolver, EvolutionTier, EvolutionEntry,
+    EvolutionEntry,
+    SharedEvolver,
 )
+
 
 class TestSharedEvolver:
     def test_instantiation(self):

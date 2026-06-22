@@ -43,29 +43,30 @@ def __getattr__(name):
         return _val
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-    "TaskStatus",
-    "TaskNamespace",
-    "ExecutionModel",
-    "normalize_execution_model",
-    "SafetyLevel",
-    "Classification",
-    "EvolutionPolicy",
-    "AuditSeverity",
-    "Priority",
-    "CircuitBreakerState",
-    "KeCategory",
-    "Task",
+    "BASE_CONFIG",
     "AuditFinding",
     "AuditReport",
-    "KnowledgeEntry",
-    "FailurePattern",
+    "AuditSeverity",
     "BlockedItem",
+    "CircuitBreakerState",
+    "Classification",
     "Decision",
-    "NextAction",
-    "HandoffPackage",
-    "BASE_CONFIG",
+    "EvolutionPolicy",
+    "ExecutionModel",
+    "FailurePattern",
     "FailureType",
+    "HandoffPackage",
+    "KeCategory",
+    "KnowledgeEntry",
+    "NextAction",
+    "Priority",
+    "SafetyLevel",
+    "Task",
+    "TaskNamespace",
+    "TaskStatus",
+    "normalize_execution_model",
 ]
 
 
@@ -138,9 +139,7 @@ class KnowledgeEntry(BaseModel):
 
     ke_id: Annotated[str, Field(pattern=r"^KE-\d{3,}$", description="KE ID, format KE-NNN")]
     title: str = Field(min_length=1, max_length=300)
-    category: KeCategory = Field(
-        default=KeCategory.best_practice, description="Knowledge entry content type"
-    )
+    category: KeCategory = Field(default=KeCategory.best_practice, description="Knowledge entry content type")
     source_file: str = Field(min_length=1, description="Source file relative path")
     source_git_deleted: bool = Field(default=False, description="Whether source file is git-deleted")
     fingerprint_sha256: str | None = Field(

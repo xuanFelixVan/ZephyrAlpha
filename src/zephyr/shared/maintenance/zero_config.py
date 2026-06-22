@@ -29,12 +29,12 @@ Zero Config — 零配置自检扫描器。
     任务卡 TASK-INF-0110 (Part 1/4)
 """
 
-import json
 import os
 import subprocess
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class ConfigCheck:
@@ -43,6 +43,7 @@ class ConfigCheck:
     value: str
     message: str = ""
 
+
 @dataclass
 class ZeroConfigResult:
     all_passed: bool
@@ -50,8 +51,8 @@ class ZeroConfigResult:
     missing: list[str]
     recommendations: list[str]
 
-class ZeroConfig:
 
+class ZeroConfig:
     REQUIRED_CONFIGS: dict[str, dict[str, Any]] = {
         "PYTHON_VERSION": {"min": "3.10", "cmd": "python --version"},
         "GIT_CONFIG": {"required": ["user.name", "user.email"]},
@@ -71,20 +72,24 @@ class ZeroConfig:
         checks.append(self._check_git_config())
 
         encoding = os.environ.get("PYTHONIOENCODING", "utf-8")
-        checks.append(ConfigCheck(
-            name="ENCODING",
-            passed=encoding.lower() in ("utf-8", "utf8"),
-            value=encoding,
-            message="UTF-8 encoding required" if encoding.lower() not in ("utf-8", "utf8") else "OK",
-        ))
+        checks.append(
+            ConfigCheck(
+                name="ENCODING",
+                passed=encoding.lower() in ("utf-8", "utf8"),
+                value=encoding,
+                message="UTF-8 encoding required" if encoding.lower() not in ("utf-8", "utf8") else "OK",
+            )
+        )
 
         if not (self._project_root / ".git").exists():
-            checks.append(ConfigCheck(
-                name="GIT_REPO",
-                passed=False,
-                value=str(self._project_root),
-                message="Not a Git repository",
-            ))
+            checks.append(
+                ConfigCheck(
+                    name="GIT_REPO",
+                    passed=False,
+                    value=str(self._project_root),
+                    message="Not a Git repository",
+                )
+            )
             missing.append("git_repo")
 
         return ZeroConfigResult(

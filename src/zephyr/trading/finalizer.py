@@ -28,7 +28,8 @@ Finalizer — 优雅清理器
 借鉴: K8s Finalizer + OwnerReference
 """
 
-from typing import Callable
+from collections.abc import Callable
+
 
 class Finalizer:
     """优雅清理器——关闭前完成所有必要持久化。"""

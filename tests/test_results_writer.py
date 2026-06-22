@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from zephyr.intelligence.model_profiling.pipeline_routing.profiler import CaseResult, ModelProfile
 from zephyr.intelligence.model_profiling.pipeline_routing.results_writer import (
     DEFAULT_OUTPUT_DIR,
@@ -124,13 +122,18 @@ class TestLoadBenchmarkHistory:
 
     def test_history_sorted_by_date(self, tmp_path):
         import time
+
         p1 = ModelProfile(
-            model_name="m", source="ollama",
-            benchmark_date="2026-01-01", average_score=0.5,
+            model_name="m",
+            source="ollama",
+            benchmark_date="2026-01-01",
+            average_score=0.5,
         )
         p2 = ModelProfile(
-            model_name="m", source="ollama",
-            benchmark_date="2026-02-01", average_score=0.6,
+            model_name="m",
+            source="ollama",
+            benchmark_date="2026-02-01",
+            average_score=0.6,
         )
         write_benchmark_results([p1], output_dir=str(tmp_path))
         time.sleep(1.1)
@@ -153,24 +156,44 @@ class TestDetectDrift:
 
     def test_no_drift_when_stable(self):
         history = [
-            {"model_name": "m", "average_score": 0.8, "latency_p50_ms": 500.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
-            {"model_name": "m", "average_score": 0.79, "latency_p50_ms": 510.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 79.0},
+            {
+                "model_name": "m",
+                "average_score": 0.8,
+                "latency_p50_ms": 500.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
+            {
+                "model_name": "m",
+                "average_score": 0.79,
+                "latency_p50_ms": 510.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 79.0,
+            },
         ]
         result = detect_drift(history)
         assert result["drift_detected"] is False
 
     def test_drift_detected_on_score_decline(self):
         history = [
-            {"model_name": "m", "average_score": 0.8, "latency_p50_ms": 500.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
-            {"model_name": "m", "average_score": 0.5, "latency_p50_ms": 500.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
+            {
+                "model_name": "m",
+                "average_score": 0.8,
+                "latency_p50_ms": 500.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
+            {
+                "model_name": "m",
+                "average_score": 0.5,
+                "latency_p50_ms": 500.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
         ]
         result = detect_drift(history)
         assert result["drift_detected"] is True
@@ -178,12 +201,22 @@ class TestDetectDrift:
 
     def test_drift_detected_on_latency_increase(self):
         history = [
-            {"model_name": "m", "average_score": 0.8, "latency_p50_ms": 500.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
-            {"model_name": "m", "average_score": 0.8, "latency_p50_ms": 1000.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
+            {
+                "model_name": "m",
+                "average_score": 0.8,
+                "latency_p50_ms": 500.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
+            {
+                "model_name": "m",
+                "average_score": 0.8,
+                "latency_p50_ms": 1000.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
         ]
         result = detect_drift(history)
         assert result["drift_detected"] is True
@@ -191,24 +224,44 @@ class TestDetectDrift:
 
     def test_result_contains_model_name(self):
         history = [
-            {"model_name": "test-model", "average_score": 0.8, "latency_p50_ms": 500.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
-            {"model_name": "test-model", "average_score": 0.5, "latency_p50_ms": 500.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
+            {
+                "model_name": "test-model",
+                "average_score": 0.8,
+                "latency_p50_ms": 500.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
+            {
+                "model_name": "test-model",
+                "average_score": 0.5,
+                "latency_p50_ms": 500.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
         ]
         result = detect_drift(history)
         assert result["model_name"] == "test-model"
 
     def test_category_drift_computed(self):
         history = [
-            {"model_name": "m", "average_score": 0.8, "latency_p50_ms": 500.0,
-             "category_scores": {"code_generation": 0.9}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
-            {"model_name": "m", "average_score": 0.8, "latency_p50_ms": 500.0,
-             "category_scores": {"code_generation": 0.7}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
+            {
+                "model_name": "m",
+                "average_score": 0.8,
+                "latency_p50_ms": 500.0,
+                "category_scores": {"code_generation": 0.9},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
+            {
+                "model_name": "m",
+                "average_score": 0.8,
+                "latency_p50_ms": 500.0,
+                "category_scores": {"code_generation": 0.7},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
         ]
         result = detect_drift(history)
         assert "code_generation" in result["details"]["category_drift"]
@@ -216,12 +269,22 @@ class TestDetectDrift:
 
     def test_custom_thresholds(self):
         history = [
-            {"model_name": "m", "average_score": 0.8, "latency_p50_ms": 500.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
-            {"model_name": "m", "average_score": 0.76, "latency_p50_ms": 500.0,
-             "category_scores": {}, "hallucination_rate": 0.05,
-             "throughput_tokens_per_sec": 80.0},
+            {
+                "model_name": "m",
+                "average_score": 0.8,
+                "latency_p50_ms": 500.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
+            {
+                "model_name": "m",
+                "average_score": 0.76,
+                "latency_p50_ms": 500.0,
+                "category_scores": {},
+                "hallucination_rate": 0.05,
+                "throughput_tokens_per_sec": 80.0,
+            },
         ]
         result_strict = detect_drift(history, threshold_score_decline=0.01)
         result_relaxed = detect_drift(history, threshold_score_decline=0.10)
@@ -244,11 +307,19 @@ class TestToModelBenchmarkResult:
             category_scores={"code_generation": 0.8},
             case_results=[
                 CaseResult(
-                    case_id="CG-001", category="code_generation",
-                    subcategory="function_impl", passed=False, score=0.3,
-                    latency_ms=1000.0, tokens_generated=50,
-                    tokens_per_second=50.0, output_text="bad",
-                    expected_matches=1, total_expected=4, forbidden_hits=0, error="",
+                    case_id="CG-001",
+                    category="code_generation",
+                    subcategory="function_impl",
+                    passed=False,
+                    score=0.3,
+                    latency_ms=1000.0,
+                    tokens_generated=50,
+                    tokens_per_second=50.0,
+                    output_text="bad",
+                    expected_matches=1,
+                    total_expected=4,
+                    forbidden_hits=0,
+                    error="",
                 ),
             ],
         )
@@ -272,7 +343,9 @@ class TestToModelBenchmarkResult:
 
     def test_regression_detected_for_low_score(self):
         profile = ModelProfile(
-            model_name="m", source="s", average_score=0.2,
+            model_name="m",
+            source="s",
+            average_score=0.2,
         )
         result = to_model_benchmark_result(profile)
         assert result["regression_detected"] is True

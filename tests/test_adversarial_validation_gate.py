@@ -7,11 +7,8 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.rule_enforcement.adversarial_validation import (
     AdversarialTestResult,
-    AdversarialValidationError,
     AdversarialValidationGate,
     ValidationResult,
 )

@@ -25,6 +25,7 @@ from __future__ import annotations
 
 DISK_THRESHOLD_PCT: float = 5.0
 
+
 class DiskGuard:
     def check(self, free_gb: float, total_gb: float) -> tuple[bool, str]:
         pct = (free_gb / total_gb) * 100 if total_gb > 0 else 0

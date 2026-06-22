@@ -6,10 +6,10 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
-# Re-export shim — canonical location is now zephyr.orchestration.pipeline_routing.backpressure_types
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
+# Re-export shim — canonical location is now zephyr.integration.backpressure_types
 # P0-FIX: circular import broken (core.models ↔ pipeline), direct import is now safe
 
 from zephyr.integration.backpressure_types import BackpressurePause
@@ -17,11 +17,10 @@ from zephyr.integration.backpressure_types import BackpressurePause
 __all__ = ["BackpressurePause"]
 
 # ==== BEGIN CODGEN:CTR-BP-001 ====
-from dataclasses import dataclass, field
-
-from typing import Optional
+from dataclasses import dataclass
 
 from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -46,6 +45,7 @@ AI Prompt
     如果下游处理速度跟不上上游产生速度，你可以通过 emit PAUSE 背压信号来告诉上游暂停。 PAUSE 会暂停指定标的的数据下发 duration_ms 毫秒，到期后自动恢复。 不要静默丢弃数据——上游不知道下游爆了，只会继续发，最终内存溢出。
 """
 
+
 @dataclass(frozen=True)
 class BackpressurePause:
     duration_ms: int
@@ -57,180 +57,7 @@ class BackpressurePause:
     symbol: str
     action: str = "PAUSE"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-BP-001 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

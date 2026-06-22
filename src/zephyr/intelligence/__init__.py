@@ -13,6 +13,7 @@
 
 模型评估、推理、知识库统一域。
 """
+
 from __future__ import annotations
 
-__all__ = ['intelligence']
+__all__ = ["intelligence"]

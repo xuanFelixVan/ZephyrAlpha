@@ -18,7 +18,7 @@ human_factors_engineering:
       - decision_consistency: "同类型升级的决策与前N次偏离>2σ→决策疲劳信号"
       - override_pattern: "短时间内大量推翻AI决策→情绪/疲劳影响"
       - time_awareness: "深夜/凌晨的升级决策→可信度打折"
-    
+
     adaptive_behavior:
       fatigue_detected: "非P0升级自动暂缓→入batch→等Owner状态恢复"
       emotion_override_risk: "检测到决策偏离基线→升级消息附加'你看起来可能很累,这个决策可以等明天'"

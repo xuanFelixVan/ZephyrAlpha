@@ -32,10 +32,10 @@ RollbackBudget — 回滚预算管理器。
 """
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class BudgetStatus:
@@ -50,6 +50,7 @@ class BudgetStatus:
     max_daily_tokens: int = 100000
     total_tokens_used: int = 0
 
+
 @dataclass
 class BudgetConsumeResult:
     allowed: bool
@@ -57,8 +58,8 @@ class BudgetConsumeResult:
     remaining_daily: int
     remaining_total: int
 
-class RollbackBudget:
 
+class RollbackBudget:
     DAILY_LIMIT: int = 10
     TOTAL_LIMIT: int = 100
     MAX_CONCURRENT: int = 3
@@ -71,14 +72,14 @@ class RollbackBudget:
         self._concurrent_count = 0
 
     def status(self) -> BudgetStatus:
-        today = datetime.now(timezone.utc).date()
+        today = datetime.now(UTC).date()
         daily_used = 0
         total_used = 0
         daily_tokens = 0
         total_tokens = 0
 
         if self._budget_path.exists():
-            with open(self._budget_path, "r", encoding="utf-8") as f:
+            with open(self._budget_path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -119,29 +120,39 @@ class RollbackBudget:
         s = self.status()
 
         if s.daily_used >= s.daily_limit:
-            return BudgetConsumeResult(allowed=False,
+            return BudgetConsumeResult(
+                allowed=False,
                 reason=f"Daily limit reached ({s.daily_limit})",
-                remaining_daily=0, remaining_total=s.total_limit - s.total_used)
+                remaining_daily=0,
+                remaining_total=s.total_limit - s.total_used,
+            )
 
         if s.total_used >= s.total_limit:
-            return BudgetConsumeResult(allowed=False,
+            return BudgetConsumeResult(
+                allowed=False,
                 reason=f"Total limit reached ({s.total_limit})",
-                remaining_daily=s.daily_limit - s.daily_used, remaining_total=0)
+                remaining_daily=s.daily_limit - s.daily_used,
+                remaining_total=0,
+            )
 
         if s.current_concurrent >= s.max_concurrent:
-            return BudgetConsumeResult(allowed=False,
+            return BudgetConsumeResult(
+                allowed=False,
                 reason=f"Concurrent limit reached ({s.max_concurrent})",
                 remaining_daily=s.daily_limit - s.daily_used,
-                remaining_total=s.total_limit - s.total_used)
+                remaining_total=s.total_limit - s.total_used,
+            )
 
         if s.daily_tokens_used + token_cost > s.max_daily_tokens:
-            return BudgetConsumeResult(allowed=False,
+            return BudgetConsumeResult(
+                allowed=False,
                 reason=f"Daily token limit reached ({s.max_daily_tokens})",
                 remaining_daily=s.daily_limit - s.daily_used,
-                remaining_total=s.total_limit - s.total_used)
+                remaining_total=s.total_limit - s.total_used,
+            )
 
         entry = {
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "reason": reason,
             "token_cost": token_cost,
         }
@@ -152,7 +163,8 @@ class RollbackBudget:
         self._concurrent_count += 1
 
         return BudgetConsumeResult(
-            allowed=True, reason=reason,
+            allowed=True,
+            reason=reason,
             remaining_daily=s.daily_limit - s.daily_used - 1,
             remaining_total=s.total_limit - s.total_used - 1,
         )

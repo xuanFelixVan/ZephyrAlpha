@@ -25,8 +25,9 @@ Blindspot: Stale KB entries have same weight as fresh ones.
 Risk: R47 — Outdated knowledge misguides current diagnosis.
 """
 
-from dataclasses import dataclass, field
 import time
+from dataclasses import dataclass, field
+
 
 @dataclass
 class KnowledgeFreshness:

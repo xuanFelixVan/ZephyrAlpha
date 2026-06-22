@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.forward_fix_runner import ForwardFixRunner, FixResult
+from zephyr.governance.forward_fix_runner import FixResult, ForwardFixRunner
 
 
 @pytest.fixture

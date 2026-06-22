@@ -47,8 +47,9 @@ def on_a2a_failure(communication: CommunicationFailureEvent, error: str = "") ->
     result["error"] = error
     return result
 
+
 class _A2ACommunicationLike:
-    def __init__(self, protocol='', endpoint='', timeout=30):
+    def __init__(self, protocol="", endpoint="", timeout=30):
         self.protocol = protocol
         self.endpoint = endpoint
         self.timeout = timeout

@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-02"
 ttl: permanent
-summary: "templates/ 目录的导航入口。列出全部 12 个文档模板。"
+summary: "templates/ 目录的导航入口。列出全部 10 个文档模板。"
 tags: [index, templates, navigation]
 rule_form: declarative
 scope: global
@@ -26,20 +26,20 @@ ai_autonomy: human_gated
 
 本目录只存放：**文档模板 — policy/standard/runbook/playbook/KB 决策记录/blueprint/roadmap/risk-register 模板**。
 
-## 文件清单
+## 文件清单（本目录 **10** 个模板 + **本 index.md**）
 
 | 文件 | 说明 |
 |------|------|
-| blueprint-construction-template.md | 文档模板 |
-| dependency-graph-template.md | 依赖图数据结构模板 |
-| playbook-template.md | 文档模板 |
-| policy-policy.md | 文档模板 |
-| protocol-protocol.md | 文档模板 |
-| register-registry.md | 文档模板 |
-| risk-register-registry.md | 文档模板 |
-| roadmap-template.md | 文档模板 |
-| runbook-runbook.md | 文档模板 |
-| standard-standard.md | 文档模板 |
+| `blueprint_construction_template.md` | 蓝图+施工图模板 |
+| `dependency_graph_template.md` | 依赖图数据结构模板 |
+| `playbook_runbook.md` | Playbook 模板 |
+| `policy_template.md` | Policy 模板 |
+| `protocol_template.md` | Protocol 模板 |
+| `register_template.md` | Register/Registry 模板 |
+| `risk_register_template.md` | 风险登记表模板 |
+| `roadmap_template.md` | Roadmap 模板 |
+| `runbook_template.md` | Runbook 模板 |
+| `standard_template.md` | Standard 模板 |
 
 ## 排除规则（不应放入本目录的内容）
 

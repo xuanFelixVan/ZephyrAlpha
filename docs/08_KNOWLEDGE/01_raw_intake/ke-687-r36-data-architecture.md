@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-DOCUMENTAT-R36-DATA-ARCHITECTURE-V1-003
 status: active
 title: 决策 R36：Data Architecture 独立成视图（v1.0.0 新建，非从 IA 迁移）

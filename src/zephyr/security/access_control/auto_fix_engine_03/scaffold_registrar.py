@@ -21,7 +21,6 @@
 
 from __future__ import annotations
 
-import ast
 import logging
 import os
 import re
@@ -60,6 +59,7 @@ class ScaffoldRegistrar(BaseFixer):
         if manifest_path.exists():
             try:
                 import yaml
+
                 data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
                 if data and "scripts" in data:
                     for entry in data["scripts"]:
@@ -85,7 +85,9 @@ class ScaffoldRegistrar(BaseFixer):
                     content = init_file.read_text(encoding="utf-8")
                     module_name = py_file.stem
                     if module_name not in content:
-                        findings.append({"file": str(py_file), "init_file": str(init_file), "type": "unregistered_module"})
+                        findings.append(
+                            {"file": str(py_file), "init_file": str(init_file), "type": "unregistered_module"}
+                        )
                 except Exception:
                     pass
         return findings
@@ -125,6 +127,7 @@ class ScaffoldRegistrar(BaseFixer):
         manifest_path = repo_root / "scripts" / "script-manifest.yaml"
         try:
             import yaml
+
             data: dict[str, Any] = {"scripts": []}
             if manifest_path.exists():
                 content = manifest_path.read_text(encoding="utf-8")
@@ -132,11 +135,13 @@ class ScaffoldRegistrar(BaseFixer):
             rel = target.replace("\\", "/")
             existing_paths = [s.get("path", "") for s in data.get("scripts", []) if isinstance(s, dict)]
             if rel not in existing_paths:
-                data.setdefault("scripts", []).append({
-                    "path": rel,
-                    "name": Path(target).stem,
-                    "registered_by": "auto-fix-engine",
-                })
+                data.setdefault("scripts", []).append(
+                    {
+                        "path": rel,
+                        "name": Path(target).stem,
+                        "registered_by": "auto-fix-engine",
+                    }
+                )
                 tmp_path = f"{manifest_path}.{os.getpid()}.tmp"
                 with open(tmp_path, "w", encoding="utf-8") as f:
                     yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
@@ -180,23 +185,34 @@ class ScaffoldRegistrar(BaseFixer):
     def validate(self, target: str) -> ValidationResult:
         target_path = Path(target)
         if not target_path.exists():
-            return ValidationResult(valid=False, check_name="scaffold_registration", evidence="", error="Target not found")
+            return ValidationResult(
+                valid=False, check_name="scaffold_registration", evidence="", error="Target not found"
+            )
         if target.startswith("scripts"):
             repo_root = Path(os.getcwd())
             manifest_path = repo_root / "scripts" / "script-manifest.yaml"
             if not manifest_path.exists():
-                return ValidationResult(valid=False, check_name="scaffold_registration", evidence="", error="Manifest not found")
+                return ValidationResult(
+                    valid=False, check_name="scaffold_registration", evidence="", error="Manifest not found"
+                )
             try:
                 import yaml
+
                 data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
                 rel = target.replace("\\", "/")
                 paths = [s.get("path", "") for s in data.get("scripts", []) if isinstance(s, dict)]
                 if rel in paths:
-                    return ValidationResult(valid=True, check_name="scaffold_registration", evidence="Registered in manifest")
-                return ValidationResult(valid=False, check_name="scaffold_registration", evidence="", error="Not found in manifest")
+                    return ValidationResult(
+                        valid=True, check_name="scaffold_registration", evidence="Registered in manifest"
+                    )
+                return ValidationResult(
+                    valid=False, check_name="scaffold_registration", evidence="", error="Not found in manifest"
+                )
             except Exception as exc:
                 return ValidationResult(valid=False, check_name="scaffold_registration", evidence="", error=str(exc))
-        return ValidationResult(valid=True, check_name="scaffold_registration", evidence="Validation skipped for module type")
+        return ValidationResult(
+            valid=True, check_name="scaffold_registration", evidence="Validation skipped for module type"
+        )
 
     def rollback(self, target: str) -> bool:
         return False

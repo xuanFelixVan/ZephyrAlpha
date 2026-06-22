@@ -37,6 +37,7 @@ import json
 from typing import Any
 
 import pytest
+
 from zephyr.ops.eval_harness import (
     CATEGORIES,
     CATEGORY_EVOLUTION,

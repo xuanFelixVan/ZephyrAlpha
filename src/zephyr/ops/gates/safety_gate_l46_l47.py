@@ -25,11 +25,10 @@ L46: vicious_spiral dampened + model_diversity maintained + pipeline_backpressur
 L47: diagnostic_consistency + knowledge_freshness + version_correctness
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL46L47:
-
     def __init__(self):
         self.vicious_spiral_pct: float = 0.0
         self.model_diversity: float = 1.0
@@ -47,16 +46,24 @@ class SafetyGateL46L47:
 
     def _l46_systemic_emergence(self, ctx: ActionContext) -> GateResult:
         if self.vicious_spiral_pct > 30.0:
-            return GateResult("L46", GateVerdict.REJECT, GateType.HARD, f"Vicious spiral {self.vicious_spiral_pct:.1f}%")
+            return GateResult(
+                "L46", GateVerdict.REJECT, GateType.HARD, f"Vicious spiral {self.vicious_spiral_pct:.1f}%"
+            )
         if self.model_diversity < 0.3:
-            return GateResult("L46", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Model diversity {self.model_diversity:.2f} low")
+            return GateResult(
+                "L46", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Model diversity {self.model_diversity:.2f} low"
+            )
         if self.backpressure_ratio > 0.9:
-            return GateResult("L46", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Backpressure {self.backpressure_ratio:.2f} critical")
+            return GateResult(
+                "L46", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Backpressure {self.backpressure_ratio:.2f} critical"
+            )
         return GateResult("L46", GateVerdict.PASS, GateType.HARD)
 
     def _l47_ontological_consistency(self, ctx: ActionContext) -> GateResult:
         if self.diagnostic_consistency < 0.7:
-            return GateResult("L47", GateVerdict.REJECT, GateType.HARD, f"Diagnostic consistency {self.diagnostic_consistency:.2f}")
+            return GateResult(
+                "L47", GateVerdict.REJECT, GateType.HARD, f"Diagnostic consistency {self.diagnostic_consistency:.2f}"
+            )
         if self.knowledge_freshness < 0.5:
             return GateResult("L47", GateVerdict.REJECT, GateType.HARD, f"KB freshness {self.knowledge_freshness:.2f}")
         if not self.version_correct:

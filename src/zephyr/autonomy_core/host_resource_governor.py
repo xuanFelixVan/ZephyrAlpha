@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class ResourceStatus:
     total_ram_mb: float
@@ -33,8 +34,10 @@ class ResourceStatus:
     degraded: bool
     recommendation: str
 
+
 class HostResourceGovernor:
     """psutil RAM probe; model loading < 25% total RAM; 超限降级 (DD91)."""
+
     def probe(self) -> ResourceStatus:
         return ResourceStatus(total_ram_mb=16000, used_ram_mb=2000, usage_pct=12.5, degraded=False, recommendation="OK")
 

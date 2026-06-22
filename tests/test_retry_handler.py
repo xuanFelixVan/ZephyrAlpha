@@ -12,14 +12,12 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.shared.reliability.retry_handler import (
+    UNRECOVERABLE_EXCEPTIONS,
     RetryAttempt,
     RetryConfig,
     RetryHandler,
     RetryResult,
-    UNRECOVERABLE_EXCEPTIONS,
 )
 
 
@@ -155,8 +153,11 @@ class TestRetryAttemptDataclass:
 
     def test_failed_attempt(self):
         attempt = RetryAttempt(
-            attempt=2, success=False, delay_s=1.0,
-            exception=ConnectionError("fail"), total_time_s=1.5,
+            attempt=2,
+            success=False,
+            delay_s=1.0,
+            exception=ConnectionError("fail"),
+            total_time_s=1.5,
         )
         assert attempt.success is False
         assert isinstance(attempt.exception, ConnectionError)
@@ -165,7 +166,8 @@ class TestRetryAttemptDataclass:
 class TestRetryResultDataclass:
     def test_success_result(self):
         result = RetryResult(
-            success=True, attempts=[RetryAttempt(attempt=1, success=True, delay_s=0.1)],
+            success=True,
+            attempts=[RetryAttempt(attempt=1, success=True, delay_s=0.1)],
             total_time_s=0.1,
         )
         assert result.success is True

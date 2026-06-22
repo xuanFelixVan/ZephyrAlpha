@@ -27,7 +27,6 @@ MOD-INF-021 Rollback System — 模块文件清单 (_manifest_)。
 最后更新: 2026-05-06
 """
 
-
 MANIFEST = {
     "module_id": "MOD-INF-021",
     "version": "0.10.0",

@@ -11,13 +11,16 @@
 # [TESTS] tests/test_behavioral_auditor/
 
 from __future__ import annotations
+
 from enum import Enum
+
 
 class ConsistencyDim(str, Enum):
     PYTHON = "Python3.11.9"
     DEPENDENCIES = "freeze.md5 hash"
     DATA_STRUCTURE = "parquet/pickle schema"
     MODEL_OUTPUT = "float ε<1e-9"
+
 
 PYTHON_VERSION: str = "3.11.9"
 MODEL_FLOAT_TOLERANCE: float = 1e-9

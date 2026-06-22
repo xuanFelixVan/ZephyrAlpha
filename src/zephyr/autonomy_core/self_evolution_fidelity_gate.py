@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_self_evolution_fidelity_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.self_evolution_fidelity_gate
+# [MODULE] zephyr.autonomy_core.self_evolution_fidelity_gate
 
 # [INVARIANTS] none
 
@@ -35,26 +35,25 @@ EchoTrap 自进化保真度门控 —— RAGEN 保真度验证引擎
   5. FidelityScore: 加权综合评分 0-100，低于阈值拒绝进化
 """
 
-
 from __future__ import annotations
 
 import difflib
 import hashlib
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 
 @dataclass
 class SemanticSignature:
-    constraints: List[str] = field(default_factory=list)
-    critical_rules: List[str] = field(default_factory=list)
-    forbidden_behaviors: List[str] = field(default_factory=list)
-    module_references: List[str] = field(default_factory=list)
-    tool_allowlist: List[str] = field(default_factory=list)
+    constraints: list[str] = field(default_factory=list)
+    critical_rules: list[str] = field(default_factory=list)
+    forbidden_behaviors: list[str] = field(default_factory=list)
+    module_references: list[str] = field(default_factory=list)
+    tool_allowlist: list[str] = field(default_factory=list)
     content_hash: str = ""
 
-    def diff(self, other: "SemanticSignature") -> Dict[str, Any]:
+    def diff(self, other: SemanticSignature) -> dict[str, Any]:
         constraint_lost = [c for c in self.constraints if c not in other.constraints]
         constraint_added = [c for c in other.constraints if c not in self.constraints]
         rules_lost = [r for r in self.critical_rules if r not in other.critical_rules]
@@ -135,7 +134,9 @@ class SelfEvolutionFidelityGate:
             elif in_forbidden and line.strip():
                 forbidden_behaviors.append(line.strip())
 
-        for match in re.finditer(r"`?((?:read|write|grep|glob|search|edit|run|execute|bash|mcp)[a-z_]*)\b\)?", stripped):
+        for match in re.finditer(
+            r"`?((?:read|write|grep|glob|search|edit|run|execute|bash|mcp)[a-z_]*)\b\)?", stripped
+        ):
             tool_allowlist.append(match.group(1))
 
         for match in re.finditer(r"MOD-INF-(\d{3})", content):
@@ -153,8 +154,8 @@ class SelfEvolutionFidelityGate:
         )
 
     @classmethod
-    def check_toxicity(cls, content: str) -> Tuple[float, List[Dict[str, str]]]:
-        findings: List[Dict[str, str]] = []
+    def check_toxicity(cls, content: str) -> tuple[float, list[dict[str, str]]]:
+        findings: list[dict[str, str]] = []
         hit_count = 0
         for pattern, category in _DANGEROUS_PATTERNS:
             if re.search(pattern, content, re.IGNORECASE):
@@ -165,7 +166,7 @@ class SelfEvolutionFidelityGate:
         return score, findings
 
     @classmethod
-    def check_coherence(cls, original: str, evolved: str) -> Tuple[float, str]:
+    def check_coherence(cls, original: str, evolved: str) -> tuple[float, str]:
         orig_refs = set(re.findall(r"MOD-INF-(\d{3})", original))
         evo_refs = set(re.findall(r"MOD-INF-(\d{3})", evolved))
         if not orig_refs:
@@ -180,7 +181,7 @@ class SelfEvolutionFidelityGate:
         return seq.ratio() * 100.0
 
     @classmethod
-    def verify(cls, skill_id: str, evolved_content: str, original_content: str) -> Dict[str, Any]:
+    def verify(cls, skill_id: str, evolved_content: str, original_content: str) -> dict[str, Any]:
         orig_sig = cls.extract_signature(original_content)
         evo_sig = cls.extract_signature(evolved_content)
 
@@ -237,8 +238,6 @@ class SelfEvolutionFidelityGate:
             "toxicity_findings": toxicity_findings,
             "coherence_detail": coherence_detail,
             "rejection_reason": (
-                ""
-                if passed
-                else f"fidelity={fidelity_score:.1f} tox={toxicity_score:.1f} coh={coherence_score:.1f}"
+                "" if passed else f"fidelity={fidelity_score:.1f} tox={toxicity_score:.1f} coh={coherence_score:.1f}"
             ),
         }

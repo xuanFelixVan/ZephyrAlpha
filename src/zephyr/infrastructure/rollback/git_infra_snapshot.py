@@ -34,9 +34,8 @@ from __future__ import annotations
 import json
 import shutil
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -48,7 +47,6 @@ class InfraCheckResult:
 
 
 class GitInfraSnapshot:
-
     SNAPSHOT_DIR: str = ".zephyr/git_infra_snapshot"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -75,7 +73,7 @@ class GitInfraSnapshot:
             shutil.copytree(hooks_dir, dst_hooks)
 
         manifest = {
-            "snapshot_at": datetime.now(timezone.utc).isoformat(),
+            "snapshot_at": datetime.now(UTC).isoformat(),
             "files": [str(p.relative_to(self._snapshot_dir)) for p in self._snapshot_dir.glob("**/*") if p.is_file()],
         }
         (self._snapshot_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
@@ -84,8 +82,9 @@ class GitInfraSnapshot:
 
     def check_integrity(self) -> InfraCheckResult:
         if not self._snapshot_dir.exists():
-            return InfraCheckResult(intact=True, tampered_files=[], restored_files=[],
-                                    details=["No snapshot available"])
+            return InfraCheckResult(
+                intact=True, tampered_files=[], restored_files=[], details=["No snapshot available"]
+            )
 
         git_dir = self._project_root / ".git"
         tampered: list[str] = []

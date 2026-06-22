@@ -6,10 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """shared.security — auto-generated package init."""
 
-__all__ = ['capability', 'secrets', 'ssot_guard']
-
+__all__ = ["capability", "secrets", "ssot_guard"]

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -50,7 +48,7 @@ GLOSSARY: dict[str, GlossaryEntry] = {
 }
 
 
-def lookup(term: str) -> Optional[GlossaryEntry]:
+def lookup(term: str) -> GlossaryEntry | None:
     return GLOSSARY.get(term)
 
 

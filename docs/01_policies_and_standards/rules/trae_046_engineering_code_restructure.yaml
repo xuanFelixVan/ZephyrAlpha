@@ -1,8 +1,18 @@
 rule_id: TRAE-046
 title: 工程治理-代码重组安全
+version: 1.0.5
+layer: L1
+module_id: TRAE-046
+depends_on: []
+tags:
+- TRAE
+- engineering_code_restructure
+- L1
+stability: stable
+safety_level: H
+ai_autonomy: human_gated
 aliases:
 - GOV-ENG-004
-layer: L1
 severity: error
 scope: engineering_code_restructure
 domain: TRAE
@@ -34,7 +44,7 @@ sections:
     - type: mandatory
       step: 合并后必须验证内容完整性（对比合并前后的class/function列表）
     - type: mandatory
-      step: import更新必须全量验证（Grep工具: pattern='from zephyr.旧路径' path='src/' output_mode='files_with_matches' 返回零结果）
+      step: "import更新必须全量验证（Grep工具: pattern='from zephyr.旧路径' path='src/' output_mode='files_with_matches' 返回零结果）"
     - type: mandatory
       step: 一次只搬一个文件
     - type: mandatory
@@ -134,11 +144,9 @@ sections:
     - GOV-ENG-004
     items:
     - description: acceptance_criteria模板
-      details: '旧import路径零残留: Grep工具: pattern=''from zephyr.旧路径'' path=''src/'' output_mode=''files_with_matches'' 返回零结果; class/function列表完整性:
-        合并后对比无遗漏; 相关测试通过: pytest tests/相关目录/ 返回0 failed'
+      details: '旧import路径零残留: Grep工具: pattern=''from zephyr.旧路径'' path=''src/'' output_mode=''files_with_matches'' 返回零结果; class/function列表完整性: 合并后对比无遗漏; 相关测试通过: pytest tests/相关目录/ 返回0 failed'
     - description: applicable_rules模板
-      details: 'GOV-ENG-004 §1 安全搬家铁律 #1-#9; GOV-ENG-004 §2 价值分析方法论 步骤1-5; GOV-ENG-004
-        §3 强制安全协议 Pre-flight + 执行中 + Post-merge'
+      details: 'GOV-ENG-004 §1 安全搬家铁律 #1-#9; GOV-ENG-004 §2 价值分析方法论 步骤1-5; GOV-ENG-004 §3 强制安全协议 Pre-flight + 执行中 + Post-merge'
   gov_eng_004_classification_decision:
     title: 重复文件分类判定决策树
     section_type: decision_tree
@@ -180,8 +188,7 @@ sections:
     - description: KillSwitch
       details: '真源: shared/kill_switch.py | 废弃: 4个副本 | 状态: 已合并'
     - description: SafetyGate
-      details: '真源: feedback_loop/gates/parameterized_safety_gate.py | 废弃: 所有safety_gate_L*.py
-        | 状态: 已参数化'
+      details: '真源: feedback_loop/gates/parameterized_safety_gate.py | 废弃: 所有safety_gate_L*.py | 状态: 已参数化'
     - description: PipelineOrchestrator拆分
       details: '2541行→7组件: PipelineOrchestrator/ModelRouter/CircuitBreakerManager/CostTracker/DeadLetterQueue/PreemptionManager/PipelineLock'
     - description: DriftEngine拆分
@@ -237,8 +244,7 @@ sections:
     - description: EventBus
       details: '真源: shared/event_bus.py | 废弃: core/events/event_bus.py | 状态: 已合并'
     - description: EventBusUpgrade
-      details: '真源: shared/upgrade_strategy.py(升级策略)+shared/event_bus_upgrade.py(事件版本化)
-        | 废弃: 无 | 状态: 已独立命名'
+      details: '真源: shared/upgrade_strategy.py(升级策略)+shared/event_bus_upgrade.py(事件版本化) | 废弃: 无 | 状态: 已独立命名'
     - description: DriftDetector
       details: '真源: drift_detector/ | 废弃: gates/drift-detector.py等4个副本 | 状态: 已声明'
     - description: Telemetry
@@ -246,65 +252,47 @@ sections:
     - description: EscalationEngine
       details: '真源: escalation_engine/ | 废弃: escalation/ | 状态: 独立保留'
     - description: SafetyGate
-      details: '真源: feedback_loop/gates/parameterized_safety_gate.py | 废弃: 所有safety_gate_L*.py
-        | 状态: 已参数化'
+      details: '真源: feedback_loop/gates/parameterized_safety_gate.py | 废弃: 所有safety_gate_L*.py | 状态: 已参数化'
     - description: KillSwitch
       details: '真源: shared/kill_switch.py | 废弃: 4个副本 | 状态: 已合并'
     - description: UnifiedMemoryAPI
-      details: '真源: kb/storage/unified_memory_api.py | 废弃: kb/unified_memory_api.py(shim)
-        | 状态: shim已建立'
+      details: '真源: kb/storage/unified_memory_api.py | 废弃: kb/unified_memory_api.py(shim) | 状态: shim已建立'
     - description: PipelineOrchestrator
-      details: '真源: pipeline/pipeline_orchestrator.py | 废弃: context_engine/pipeline_orchestrator.py(shim)
-        | 状态: shim已建立'
+      details: '真源: pipeline/pipeline_orchestrator.py | 废弃: context_engine/pipeline_orchestrator.py(shim) | 状态: shim已建立'
     - description: TriggerRouter
-      details: '真源: orchestrator/core/trigger_router.py | 废弃: orchestrator/trigger_router.py(shim)
-        | 状态: shim已建立'
+      details: '真源: orchestrator/core/trigger_router.py | 废弃: orchestrator/trigger_router.py(shim) | 状态: shim已建立'
     - description: AgentOrchestrator
-      details: '真源: orchestrator/core/agent_orchestrator.py | 废弃: orchestrator/agent_orchestrator.py(shim)
-        | 状态: shim已建立'
+      details: '真源: orchestrator/core/agent_orchestrator.py | 废弃: orchestrator/agent_orchestrator.py(shim) | 状态: shim已建立'
     - description: AgentHealthMonitor
-      details: '真源: orchestrator/state/agent_health_monitor.py | 废弃: orchestrator/agent_health_monitor.py(shim)
-        | 状态: shim已建立'
+      details: '真源: orchestrator/state/agent_health_monitor.py | 废弃: orchestrator/agent_health_monitor.py(shim) | 状态: shim已建立'
     - description: RollbackManager
-      details: '真源: orchestrator/resilience/rollback_manager.py | 废弃: orchestrator/rollback_manager.py(shim)
-        | 状态: shim已建立'
+      details: '真源: orchestrator/resilience/rollback_manager.py | 废弃: orchestrator/rollback_manager.py(shim) | 状态: shim已建立'
     - description: FailureMatcher
-      details: '真源: orchestrator/resilience/failure_matcher.py | 废弃: orchestrator/failure_matcher.py(shim)
-        | 状态: shim已建立'
+      details: '真源: orchestrator/resilience/failure_matcher.py | 废弃: orchestrator/failure_matcher.py(shim) | 状态: shim已建立'
     - description: HallucinationDetector
-      details: '真源: orchestrator/resilience/hallucination_detector.py | 废弃: orchestrator/hallucination_detector.py(shim)
-        | 状态: shim已建立'
+      details: '真源: orchestrator/resilience/hallucination_detector.py | 废弃: orchestrator/hallucination_detector.py(shim) | 状态: shim已建立'
     - description: SessionManager
-      details: '真源: orchestrator/state/session_manager.py | 废弃: orchestrator/session_manager.py(shim)
-        | 状态: shim已建立'
+      details: '真源: orchestrator/state/session_manager.py | 废弃: orchestrator/session_manager.py(shim) | 状态: shim已建立'
     - description: StateSynchronizer
       details: '真源: orchestrator/state/state_synchronizer.py | 废弃: 无 | 状态: 已声明'
     - description: FileTaskMapper
-      details: '真源: orchestrator/state/file_task_mapper.py | 废弃: orchestrator/file_task_mapper.py(shim)
-        | 状态: shim已建立'
+      details: '真源: orchestrator/state/file_task_mapper.py | 废弃: orchestrator/file_task_mapper.py(shim) | 状态: shim已建立'
     - description: Context
       details: '真源: shared/utils/context.py | 废弃: shared/context.py(shim) | 状态: shim已建立'
     - description: BlueprintCodeSync
-      details: '真源: core/sync/blueprint_code_sync.py | 废弃: core/blueprint_code_sync.py(shim)
-        | 状态: shim已建立'
+      details: '真源: core/sync/blueprint_code_sync.py | 废弃: core/blueprint_code_sync.py(shim) | 状态: shim已建立'
     - description: SessionContinuity
-      details: '真源: core/session/session_continuity.py | 废弃: core/session_continuity.py(shim)
-        | 状态: shim已建立'
+      details: '真源: core/session/session_continuity.py | 废弃: core/session_continuity.py(shim) | 状态: shim已建立'
     - description: DocCompressor
-      details: '真源: context_engine/support/doc_compressor.py | 废弃: context_engine/doc_compressor.py(shim)
-        | 状态: shim已建立'
+      details: '真源: context_engine/support/doc_compressor.py | 废弃: context_engine/doc_compressor.py(shim) | 状态: shim已建立'
     - description: PromptRegistry
-      details: '真源: context_engine/support/prompt_registry.py | 废弃: context_engine/prompt_registry.py(shim)
-        | 状态: shim已建立'
+      details: '真源: context_engine/support/prompt_registry.py | 废弃: context_engine/prompt_registry.py(shim) | 状态: shim已建立'
     - description: IntentKeywordMapper
-      details: '真源: context_engine/parsing/intent_keyword_mapper.py | 废弃: context_engine/intent_keyword_mapper.py(shim)
-        | 状态: shim已建立'
+      details: '真源: context_engine/parsing/intent_keyword_mapper.py | 废弃: context_engine/intent_keyword_mapper.py(shim) | 状态: shim已建立'
     - description: IntentParser
-      details: '真源: context_engine/parsing/intent_parser.py | 废弃: context_engine/intent_parser.py(shim)
-        | 状态: shim已建立'
+      details: '真源: context_engine/parsing/intent_parser.py | 废弃: context_engine/intent_parser.py(shim) | 状态: shim已建立'
     - description: CheckType
-      details: '真源: gates/check_types/ct_*.py+check_type_registry.py | 废弃: gate_engine.py内if/elif链
-        | 状态: 已注册表化'
+      details: '真源: gates/check_types/ct_*.py+check_type_registry.py | 废弃: gate_engine.py内if/elif链 | 状态: 已注册表化'
     - description: AssetInventory
       details: '真源: asset_inventory/(15文件) | 废弃: 原22文件 | 状态: 已合并'
   gov_eng_004_split_mapping:
@@ -314,15 +302,9 @@ sections:
     - GOV-ENG-004
     items:
     - description: PipelineOrchestrator拆分(2541行→7组件)
-      details: 'PipelineOrchestrator: pipeline/pipeline_orchestrator.py | ModelRouter:
-        pipeline/model_router.py | CircuitBreakerManager: pipeline/circuit_breaker_manager.py
-        | CostTracker: pipeline/cost_tracker.py | DeadLetterQueue: pipeline/dead_letter_queue.py
-        | PreemptionManager: pipeline/preemption_manager.py | PipelineLock: pipeline/pipeline_lock.py'
+      details: 'PipelineOrchestrator: pipeline/pipeline_orchestrator.py | ModelRouter: pipeline/model_router.py | CircuitBreakerManager: pipeline/circuit_breaker_manager.py | CostTracker: pipeline/cost_tracker.py | DeadLetterQueue: pipeline/dead_letter_queue.py | PreemptionManager: pipeline/preemption_manager.py | PipelineLock: pipeline/pipeline_lock.py'
     - description: DriftEngine拆分(2134行→5组件)
-      details: 'DriftEngine: drift_detector/drift_engine.py | DriftInfrastructure:
-        drift_detector/drift_infrastructure.py | AIConstructionDetectors: drift_detector/ai_construction_detectors.py
-        | DriftResultTypes: drift_detector/drift_result_types.py | DriftTraining:
-        drift_detector/drift_training.py'
+      details: 'DriftEngine: drift_detector/drift_engine.py | DriftInfrastructure: drift_detector/drift_infrastructure.py | AIConstructionDetectors: drift_detector/ai_construction_detectors.py | DriftResultTypes: drift_detector/drift_result_types.py | DriftTraining: drift_detector/drift_training.py'
 references:
   rule_ids:
   - TRAE-046
@@ -340,7 +322,7 @@ metadata:
   change_policy: stable
   impact_level: H
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.0.5
     date: '2026-06-21'

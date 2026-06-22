@@ -25,4 +25,4 @@ Core types (A2ATaskStatus, A2ATask, A2AStateMachine) are imported from
 zephyr.shared.protocols.a2a.a2a_schemas.
 """
 
-from zephyr.shared.protocols.a2a.a2a_schemas import A2ATaskStatus, A2ATask, A2AStateMachine  # noqa: F401
+from zephyr.shared.protocols.a2a.a2a_schemas import A2AStateMachine, A2ATask, A2ATaskStatus  # noqa: F401

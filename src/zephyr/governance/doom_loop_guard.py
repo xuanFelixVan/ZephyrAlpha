@@ -28,12 +28,11 @@
   - Session Log ALERT 写入
 """
 
-
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from enum import IntEnum
 from pathlib import Path
 
@@ -86,13 +85,13 @@ class DoomLoopGuard:
             self._frozen[dup_group_id] = entry
 
         entry.failed_attempts += 1
-        entry.last_attempt_utc = datetime.now(timezone.utc).isoformat()
+        entry.last_attempt_utc = datetime.now(UTC).isoformat()
         entry.reason = reason
         entry.affected_files = affected_files or []
 
         if entry.failed_attempts >= self._MAX_ATTEMPTS:
             new_level = EscalationLevel.L4_STOP_ALERT
-            frozen_until = datetime.now(timezone.utc) + timedelta(hours=self._FREEZE_HOURS)
+            frozen_until = datetime.now(UTC) + timedelta(hours=self._FREEZE_HOURS)
             entry.frozen_until_utc = frozen_until.isoformat()
             entry.escalation_level = new_level
             self._save_freeze_list()
@@ -127,7 +126,7 @@ class DoomLoopGuard:
             return False
         if entry.frozen_until_utc:
             frozen_until = datetime.fromisoformat(entry.frozen_until_utc)
-            if datetime.now(timezone.utc) < frozen_until.replace(tzinfo=timezone.utc):
+            if datetime.now(UTC) < frozen_until.replace(tzinfo=UTC):
                 return True
             self._unfreeze(dup_group_id)
         return False
@@ -175,7 +174,7 @@ class DoomLoopGuard:
         self._freeze_path.parent.mkdir(parents=True, exist_ok=True)
         data = {
             "frozen_groups": [e.__dict__ for e in self._frozen.values()],
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
         self._freeze_path.write_text(
             json.dumps(data, ensure_ascii=False, indent=2),

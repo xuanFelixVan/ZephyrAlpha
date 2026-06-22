@@ -25,7 +25,6 @@ KnowledgeOverviewComponent · 知识库概览（条目数/状态分布/激活率
 ================================================================
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field

@@ -27,12 +27,15 @@ from __future__ import annotations
 # Reason: zephyr.infrastructure.rollback.contracts module does not exist yet
 try:
     import importlib as _il
+
     _mod = _il.import_module("zephyr.infrastructure.rollback.contracts")
     AuditWriter = _mod.AuditWriter
 except (ImportError, AttributeError):
+
     class AuditWriter:
         def write(self, **kwargs):
             return kwargs
+
 
 class RollbackAuditor:
     """回滚后自动记录审计."""

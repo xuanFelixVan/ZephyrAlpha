@@ -38,6 +38,7 @@ from zephyr.trading.night_shift_queue import NightShiftQueue
 from zephyr.trading.orphan_detector import OrphanDetector
 from zephyr.trading.work_orchestrator import WorkOrchestrator
 
+
 class StatusDashboard:
     """实时状态面板——TUI + JSON API 双模式。"""
 
@@ -52,7 +53,7 @@ class StatusDashboard:
         uptime_start: str = "",
     ) -> None:
         self._registry = registry
-        self._health = health-monitor
+        self._health = health - monitor
         self._nq = night_shift_queue
         self._wo = work_orchestrator
         self._cs = circadian_scheduler
@@ -74,17 +75,17 @@ class StatusDashboard:
             orphan_rate = self._orphan.compute_orphan_rate()
 
         lines = [
-            f"{'='*60}",
+            f"{'=' * 60}",
             "  ZephyrAlpha AutoRuntime Core",
             f"  Phase: {phase.value}  Pressure: {pressure.value}  OrphanRate: {orphan_rate:.1%}",
-            f"{'='*60}",
+            f"{'=' * 60}",
             f"  Capabilities: {len(caps)} registered",
             f"  Night Shift: {nq_stats['pending']} pending / {nq_stats['resolved']} resolved",
             f"  Work DAGs: {len(dags)} loaded",
-            f"  Pending: L1={pending.get('trae',0)} L2={pending.get('local',0)} L3={pending.get('api',0)}",
-            f"  Running: L1={running.get('trae',0)} L2={running.get('local',0)} L3={running.get('api',0)}",
+            f"  Pending: L1={pending.get('trae', 0)} L2={pending.get('local', 0)} L3={pending.get('api', 0)}",
+            f"  Running: L1={running.get('trae', 0)} L2={running.get('local', 0)} L3={running.get('api', 0)}",
             f"  Next circadian: {next_task.name if next_task else 'none'}",
-            f"{'='*60}",
+            f"{'=' * 60}",
         ]
         return "\n".join(lines)
 

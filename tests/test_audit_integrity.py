@@ -16,8 +16,6 @@ import hashlib
 import json
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.integrity import IntegrityVerifier, MerkleAggregator
 
 

@@ -10,10 +10,8 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_alert_router.py -q
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 from unittest.mock import patch
-
-import pytest
 
 from zephyr.ops.actors.alert_router import Alert, AlertRouter
 
@@ -53,7 +51,7 @@ class TestAlertInstantiation:
         assert alert.acked_at is None
 
     def test_explicit_optional_fields(self):
-        now_iso = datetime.now(timezone.utc).isoformat()
+        now_iso = datetime.now(UTC).isoformat()
         alert = Alert(
             alert_id="a3",
             module_id="MOD-Z",
@@ -139,7 +137,7 @@ class TestClassify:
 class TestShouldSilence:
     def test_daytime_weekday_not_silenced(self):
         router = AlertRouter()
-        fake_now = datetime(2026, 5, 20, 14, 0, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2026, 5, 20, 14, 0, 0, tzinfo=UTC)
         with patch("zephyr.observability.feedback_loop.actors.alert_router.datetime") as mock_dt:
             mock_dt.now.return_value = fake_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -148,7 +146,7 @@ class TestShouldSilence:
 
     def test_night_hours_silenced(self):
         router = AlertRouter()
-        fake_now = datetime(2026, 5, 20, 23, 0, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2026, 5, 20, 23, 0, 0, tzinfo=UTC)
         with patch("zephyr.observability.feedback_loop.actors.alert_router.datetime") as mock_dt:
             mock_dt.now.return_value = fake_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -157,7 +155,7 @@ class TestShouldSilence:
 
     def test_weekend_night_silenced(self):
         router = AlertRouter()
-        fake_now = datetime(2026, 5, 23, 23, 0, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2026, 5, 23, 23, 0, 0, tzinfo=UTC)
         with patch("zephyr.observability.feedback_loop.actors.alert_router.datetime") as mock_dt:
             mock_dt.now.return_value = fake_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -166,7 +164,7 @@ class TestShouldSilence:
 
     def test_weekend_daytime_not_silenced(self):
         router = AlertRouter()
-        fake_now = datetime(2026, 5, 23, 14, 0, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2026, 5, 23, 14, 0, 0, tzinfo=UTC)
         with patch("zephyr.observability.feedback_loop.actors.alert_router.datetime") as mock_dt:
             mock_dt.now.return_value = fake_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -175,8 +173,8 @@ class TestShouldSilence:
 
     def test_focus_time_active_night_silenced(self):
         router = AlertRouter()
-        fake_now = datetime(2026, 5, 20, 23, 30, 0, tzinfo=timezone.utc)
-        router._focus_start = datetime(2026, 5, 20, 23, 0, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2026, 5, 20, 23, 30, 0, tzinfo=UTC)
+        router._focus_start = datetime(2026, 5, 20, 23, 0, 0, tzinfo=UTC)
         with patch("zephyr.observability.feedback_loop.actors.alert_router.datetime") as mock_dt:
             mock_dt.now.return_value = fake_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -185,8 +183,8 @@ class TestShouldSilence:
 
     def test_focus_time_expired_not_silenced(self):
         router = AlertRouter()
-        fake_now = datetime(2026, 5, 20, 17, 0, 0, tzinfo=timezone.utc)
-        router._focus_start = datetime(2026, 5, 20, 14, 0, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2026, 5, 20, 17, 0, 0, tzinfo=UTC)
+        router._focus_start = datetime(2026, 5, 20, 14, 0, 0, tzinfo=UTC)
         with patch("zephyr.observability.feedback_loop.actors.alert_router.datetime") as mock_dt:
             mock_dt.now.return_value = fake_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -195,7 +193,7 @@ class TestShouldSilence:
 
     def test_boundary_hour_exactly_at_silence_start(self):
         router = AlertRouter()
-        fake_now = datetime(2026, 5, 20, 22, 0, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2026, 5, 20, 22, 0, 0, tzinfo=UTC)
         with patch("zephyr.observability.feedback_loop.actors.alert_router.datetime") as mock_dt:
             mock_dt.now.return_value = fake_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -204,7 +202,7 @@ class TestShouldSilence:
 
     def test_boundary_hour_exactly_at_silence_end(self):
         router = AlertRouter()
-        fake_now = datetime(2026, 5, 20, 8, 0, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2026, 5, 20, 8, 0, 0, tzinfo=UTC)
         with patch("zephyr.observability.feedback_loop.actors.alert_router.datetime") as mock_dt:
             mock_dt.now.return_value = fake_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -281,8 +279,9 @@ class TestRecordAlert:
 
 
 class TestRoute:
-    def _make_alert(self, alert_id="a1", tier="P0_CRITICAL", severity="HIGH",
-                    drift_dimension="contract_violation", message="test"):
+    def _make_alert(
+        self, alert_id="a1", tier="P0_CRITICAL", severity="HIGH", drift_dimension="contract_violation", message="test"
+    ):
         return Alert(
             alert_id=alert_id,
             module_id="MOD-X",

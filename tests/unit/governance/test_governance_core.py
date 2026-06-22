@@ -10,12 +10,6 @@
 
 import pytest
 
-from zephyr.governance.phase_check_registry import (
-    GateResult,
-    PhaseCheckRegistry,
-    _CHECK_MAP,
-    run_check,
-)
 from zephyr.behavioral_audit.architecture_contracts import (
     ARCH_BASE_CONTRACTS,
     CircuitBreaker,
@@ -23,7 +17,12 @@ from zephyr.behavioral_audit.architecture_contracts import (
     Contract,
     generate_client_order_id,
 )
-
+from zephyr.governance.phase_check_registry import (
+    _CHECK_MAP,
+    GateResult,
+    PhaseCheckRegistry,
+    run_check,
+)
 
 # ---------------------------------------------------------------------------
 # PhaseCheckRegistry

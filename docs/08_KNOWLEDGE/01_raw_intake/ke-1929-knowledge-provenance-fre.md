@@ -53,7 +53,7 @@ class KnowledgeProvenanceFreshnessScorer:
                 source_data_model_version=entry.provenance.data_model_version,
                 semantic_freshness=freshness,
                 recommendation=rec))
-        
+
         to_retire = [s for s in scores if s.recommendation == "RETIRE_IMMEDIATELY"]
         if to_retire:
             self.FLE.notify_owner("KB_P

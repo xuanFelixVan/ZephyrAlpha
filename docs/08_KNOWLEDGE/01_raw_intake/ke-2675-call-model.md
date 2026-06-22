@@ -14,9 +14,9 @@ async def _call_model(self, module_id, prompt, ...):
         l1_result = self._lsg.check_input(prompt)
         if not l1_result.safe:
             raise LSGInputBlocked(l1_result.reason)
-    
+
     response = await self._api_call(model, prompt)
-    
+
     # L3: 输出检测
     if self._lsg is not None:
         l3_result = self._lsg.check_output(response)

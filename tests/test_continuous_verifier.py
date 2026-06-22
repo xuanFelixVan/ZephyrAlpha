@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.continuous_verifier import ContinuousVerifier, VerificationRecord
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -26,7 +28,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestVerificationRecord:
-
     def test_creation_defaults(self):
         vr = VerificationRecord(session_id="s1", check_time="2026-01-01T00:00:00Z", status="ok")
         assert vr.session_id == "s1"
@@ -44,7 +45,6 @@ class TestVerificationRecord:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestContinuousVerifier:
-
     def test_record_no_drift(self):
         cv = ContinuousVerifier()
         vr = cv.record("sess-1", "ok")

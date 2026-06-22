@@ -23,14 +23,8 @@ import asyncio
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from zephyr.security.llm_defense.llm_security.protocol import (
-    LLMSecurityProtocol,
-    SecurityContext,
-    SecurityDecision,
-    SecurityResult,
-)
 from zephyr.security.llm_defense.llm_security.layers.l0_supply_chain import SupplyChainGuard
 from zephyr.security.llm_defense.llm_security.layers.l1_input import InputDefenseLayer
 from zephyr.security.llm_defense.llm_security.layers.l2_prompt_protection import PromptProtectionLayer
@@ -39,8 +33,14 @@ from zephyr.security.llm_defense.llm_security.layers.l3_output import OutputSecu
 from zephyr.security.llm_defense.llm_security.layers.l4_agent import AgentSecurityLayer
 from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import ResourceProtectionLayer
 from zephyr.security.llm_defense.llm_security.layers.l6_observability import ObservabilityLayer
-from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import ValidationLayer
 from zephyr.security.llm_defense.llm_security.layers.l8_multi_agent import MultiAgentSecurityLayer
+from zephyr.security.llm_defense.llm_security.protocol import (
+    LLMSecurityProtocol,
+    SecurityContext,
+    SecurityDecision,
+    SecurityResult,
+)
+from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import ValidationLayer
 
 
 class ScanMode(str, Enum):
@@ -60,7 +60,7 @@ class ScanResult:
     layers_flagged: int
     total_score: float
     elapsed_ms: float
-    layer_results: Dict[str, SecurityResult] = field(default_factory=dict)
+    layer_results: dict[str, SecurityResult] = field(default_factory=dict)
     blocked_by: str = ""
     sanitized_input: str = ""
     sanitized_output: str = ""
@@ -86,15 +86,15 @@ class LSGSecurityGateway:
 
     def __init__(
         self,
-        model_digest_registry: Optional[Dict[str, str]] = None,
-        rules_file_baselines: Optional[Dict[str, str]] = None,
-        project_root: Optional[str] = None,
+        model_digest_registry: dict[str, str] | None = None,
+        rules_file_baselines: dict[str, str] | None = None,
+        project_root: str | None = None,
         max_tokens: int = 100000,
         max_cost_cents: float = 500.0,
-        hmac_key: Optional[bytes] = None,
+        hmac_key: bytes | None = None,
         layer_timeout_seconds: float = 10.0,
     ):
-        self._layers: Dict[str, LLMSecurityProtocol] = {}
+        self._layers: dict[str, LLMSecurityProtocol] = {}
         self._layer_timeout_seconds = layer_timeout_seconds
         self._init_layers(
             model_digest_registry=model_digest_registry,
@@ -129,17 +129,17 @@ class LSGSecurityGateway:
         )
 
     @property
-    def layers(self) -> Dict[str, LLMSecurityProtocol]:
+    def layers(self) -> dict[str, LLMSecurityProtocol]:
         return dict(self._layers)
 
-    def get_layer(self, layer_name: str) -> Optional[LLMSecurityProtocol]:
+    def get_layer(self, layer_name: str) -> LLMSecurityProtocol | None:
         return self._layers.get(layer_name)
 
     async def scan_input(
         self,
         text: str,
         source: str = "direct_input",
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
         mode: ScanMode = ScanMode.INPUT_ONLY,
     ) -> ScanResult:
         """输入扫描：L0→L1→L2→L5 顺序执行.
@@ -149,7 +149,7 @@ class LSGSecurityGateway:
         meta = metadata or {}
         meta["source"] = source
         ctx = SecurityContext(
-            request_id=meta.get("request_id", f"lsg-{int(time.time()*1000)}"),
+            request_id=meta.get("request_id", f"lsg-{int(time.time() * 1000)}"),
             layer_name="gateway",
             raw_input=text,
             metadata=meta,
@@ -162,7 +162,7 @@ class LSGSecurityGateway:
         self,
         text: str,
         source: str = "model_output",
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
         mode: ScanMode = ScanMode.OUTPUT_ONLY,
     ) -> ScanResult:
         """输出扫描：L3→L6 顺序执行.
@@ -172,7 +172,7 @@ class LSGSecurityGateway:
         meta = metadata or {}
         meta["source"] = source
         ctx = SecurityContext(
-            request_id=meta.get("request_id", f"lsg-{int(time.time()*1000)}"),
+            request_id=meta.get("request_id", f"lsg-{int(time.time() * 1000)}"),
             layer_name="gateway",
             raw_input=text,
             metadata=meta,
@@ -185,8 +185,8 @@ class LSGSecurityGateway:
         self,
         text: str,
         tool_name: str = "",
-        tool_params: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        tool_params: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None,
         mode: ScanMode = ScanMode.AGENT_ONLY,
     ) -> ScanResult:
         """Agent 动作扫描：L4→L5→L8 顺序执行.
@@ -197,7 +197,7 @@ class LSGSecurityGateway:
         meta["tool_name"] = tool_name
         meta["tool_params"] = tool_params or {}
         ctx = SecurityContext(
-            request_id=meta.get("request_id", f"lsg-{int(time.time()*1000)}"),
+            request_id=meta.get("request_id", f"lsg-{int(time.time() * 1000)}"),
             layer_name="gateway",
             raw_input=text,
             metadata=meta,
@@ -209,7 +209,7 @@ class LSGSecurityGateway:
     async def full_scan(
         self,
         text: str,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> ScanResult:
         """全链路扫描：L0→L1→L2→L2a→L3→L4→L5→L6→L7→L8 顺序执行.
 
@@ -217,16 +217,22 @@ class LSGSecurityGateway:
         """
         meta = metadata or {}
         ctx = SecurityContext(
-            request_id=meta.get("request_id", f"lsg-{int(time.time()*1000)}"),
+            request_id=meta.get("request_id", f"lsg-{int(time.time() * 1000)}"),
             layer_name="gateway",
             raw_input=text,
             metadata=meta,
         )
 
         all_layer_names = [
-            "l0_supply_chain", "l1_input", "l2_prompt_protection",
-            "l2a_process_sandbox", "l3_output", "l4_agent",
-            "l5_resource_protection", "l6_observability", "l7_validation",
+            "l0_supply_chain",
+            "l1_input",
+            "l2_prompt_protection",
+            "l2a_process_sandbox",
+            "l3_output",
+            "l4_agent",
+            "l5_resource_protection",
+            "l6_observability",
+            "l7_validation",
             "l8_multi_agent",
         ]
         return await self._evaluate_chain(ctx, all_layer_names, ScanMode.FULL)
@@ -234,7 +240,7 @@ class LSGSecurityGateway:
     async def _evaluate_chain(
         self,
         ctx: SecurityContext,
-        layer_names: List[str],
+        layer_names: list[str],
         mode: ScanMode,
     ) -> ScanResult:
         """顺序链式评估——纵深防御核心语义：L0→L1→...→LN 严格顺序执行.
@@ -243,7 +249,7 @@ class LSGSecurityGateway:
         每层评估带超时保护，防止单层卡死导致整体阻塞.
         """
         t0 = time.perf_counter()
-        layer_results: Dict[str, SecurityResult] = {}
+        layer_results: dict[str, SecurityResult] = {}
         passed = 0
         denied = 0
         flagged = 0
@@ -293,7 +299,7 @@ class LSGSecurityGateway:
 
                 min_score = min(min_score, result.score)
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 if name in self.FAIL_OPEN_LAYERS:
                     layer_results[name] = SecurityResult(
                         decision=SecurityDecision.ALLOW,
@@ -350,7 +356,7 @@ class LSGSecurityGateway:
             blocked_by=blocked_by,
         )
 
-    async def validate_self_integrity(self) -> Dict[str, Any]:
+    async def validate_self_integrity(self) -> dict[str, Any]:
         """L7 自检：验证 LSG 自身代码完整性."""
         l7 = self._layers.get("l7_validation")
         if l7 is None:
@@ -366,13 +372,14 @@ class LSGSecurityGateway:
             "failed": sum(1 for c in checks if not c.passed),
         }
 
-    async def trigger_regression(self) -> Dict[str, Any]:
+    async def trigger_regression(self) -> dict[str, Any]:
         """L7 安全回归测试."""
         l7 = self._layers.get("l7_validation")
         if l7 is None:
             return {"regression": "unavailable"}
 
         from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import RegressionType
+
         weekly = l7.trigger_security_regression(RegressionType.WEEKLY, gateway=self)
         return {
             "regression": "completed",
@@ -382,7 +389,7 @@ class LSGSecurityGateway:
             "coverage_pct": weekly.coverage_pct,
         }
 
-    def get_observability_metrics(self) -> Dict[str, Any]:
+    def get_observability_metrics(self) -> dict[str, Any]:
         """L6 仪表板指标."""
         l6 = self._layers.get("l6_observability")
         if l6 is None:

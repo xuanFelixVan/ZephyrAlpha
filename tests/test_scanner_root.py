@@ -16,16 +16,14 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-import pytest
-
 from zephyr.infrastructure.asset_inventory.models import RawFileEntry, ScanResult
 from zephyr.infrastructure.asset_inventory.scanner import (
     ConcurrentScanner,
     Scanner,
     SecurityAccessLogger,
     SecurityFilter,
-    merge_scans,
     _generate_scan_id,
+    merge_scans,
 )
 
 

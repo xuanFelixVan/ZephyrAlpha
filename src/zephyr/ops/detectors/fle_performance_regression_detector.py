@@ -29,6 +29,7 @@ R532: FLEPerformanceRegressionDetector
 import time
 from dataclasses import dataclass, field
 
+
 @dataclass
 class PerformanceBaseline:
     latency_ms: float
@@ -36,6 +37,7 @@ class PerformanceBaseline:
     accuracy: float
     cycle_count: int
     timestamp: float
+
 
 @dataclass
 class FLEPerformanceRegressionDetector:
@@ -45,7 +47,9 @@ class FLEPerformanceRegressionDetector:
     regression_threshold_latency: float = 0.3
     regression_threshold_throughput: float = 0.2
 
-    def establish_baseline(self, latency_ms: float, throughput_per_sec: float, accuracy: float, cycle_count: int) -> None:
+    def establish_baseline(
+        self, latency_ms: float, throughput_per_sec: float, accuracy: float, cycle_count: int
+    ) -> None:
         self.baseline = PerformanceBaseline(
             latency_ms=latency_ms,
             throughput_per_sec=throughput_per_sec,
@@ -55,14 +59,16 @@ class FLEPerformanceRegressionDetector:
         )
 
     def record_metrics(self, latency_ms: float, throughput_per_sec: float, accuracy: float) -> None:
-        self.current_metrics.append({
-            "latency_ms": latency_ms,
-            "throughput_per_sec": throughput_per_sec,
-            "accuracy": accuracy,
-            "timestamp": time.time(),
-        })
+        self.current_metrics.append(
+            {
+                "latency_ms": latency_ms,
+                "throughput_per_sec": throughput_per_sec,
+                "accuracy": accuracy,
+                "timestamp": time.time(),
+            }
+        )
         if len(self.current_metrics) > self.max_history:
-            self.current_metrics = self.current_metrics[-self.max_history:]
+            self.current_metrics = self.current_metrics[-self.max_history :]
 
     def detect_regression(self) -> dict:
         if self.baseline is None or not self.current_metrics:
@@ -76,7 +82,9 @@ class FLEPerformanceRegressionDetector:
         avg_throughput = sum(m["throughput_per_sec"] for m in recent) / len(recent)
 
         latency_change = (avg_latency - self.baseline.latency_ms) / max(self.baseline.latency_ms, 1e-6)
-        throughput_change = (self.baseline.throughput_per_sec - avg_throughput) / max(self.baseline.throughput_per_sec, 1e-6)
+        throughput_change = (self.baseline.throughput_per_sec - avg_throughput) / max(
+            self.baseline.throughput_per_sec, 1e-6
+        )
 
         regressions = []
         if latency_change > self.regression_threshold_latency:
@@ -100,5 +108,9 @@ class FLEPerformanceRegressionDetector:
             "baseline_throughput": round(self.baseline.throughput_per_sec, 2),
             "current_avg_throughput": round(avg_throughput, 2),
             "throughput_change_pct": round(throughput_change * 100, 1),
-            "recommendation": "ROLLBACK" if severity == "critical" else "MONITOR" if severity == "warning" else "CONTINUE",
+            "recommendation": "ROLLBACK"
+            if severity == "critical"
+            else "MONITOR"
+            if severity == "warning"
+            else "CONTINUE",
         }

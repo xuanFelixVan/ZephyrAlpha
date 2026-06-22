@@ -12,13 +12,10 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.behavioral_admission.post_process import (
     HookResult,
     HookStrategy,
     PipelineResult,
-    PostProcessHook,
     PostProcessPipeline,
     format_hook,
     lint_hook,
@@ -104,19 +101,24 @@ class TestPostProcessPipeline:
 
     def test_run_with_exception_in_hook(self):
         pipeline = PostProcessPipeline()
+
         def bad_hook(**kw):
             raise RuntimeError("boom")
+
         pipeline.register_hook("bad", fn=bad_hook, strategy=HookStrategy.WARN)
         result = pipeline.run()
         assert result.failed == 1
 
     def test_run_with_auto_fix(self):
         call_count = {"n": 0}
+
         def failing_hook(**kw):
             call_count["n"] += 1
             return HookResult(hook_name="fixable", success=call_count["n"] > 1)
+
         def fix_fn(**kw):
             return HookResult(hook_name="fix", success=True)
+
         pipeline = PostProcessPipeline()
         pipeline.register_hook("fixable", fn=failing_hook, auto_fix_fn=fix_fn)
         result = pipeline.run_with_auto_fix()

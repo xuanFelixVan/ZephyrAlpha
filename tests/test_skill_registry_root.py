@@ -14,12 +14,12 @@ import pytest
 from pydantic import ValidationError
 
 from zephyr.autonomy_core.skill_registry import (
-    PromptVariable,
     PromptTemplate,
+    PromptVariable,
     SkillCategory,
-    SkillParameter,
-    SkillOutput,
     SkillDefinition,
+    SkillOutput,
+    SkillParameter,
 )
 
 

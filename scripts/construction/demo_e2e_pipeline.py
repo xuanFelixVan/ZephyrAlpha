@@ -1,13 +1,13 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.demo_e2e_pipeline
-# [INVARIANTS] 
-# [MODIFY-GUARD] 
-# [CONSUMERS] 
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 """C-track 端到端演示 —— 全流水线一次性运行
 
 演示路径：
@@ -26,12 +26,13 @@
 Phase E | Safety: LOW（只读演示）| 运行前需安装可选依赖：``pip install -r requirements-demo.txt``
   或 ``pip install -e ".[demo]"``（见 pyproject optional-dependencies demo）
 """
+
 from __future__ import annotations
 
 import logging
 import sys
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
@@ -50,9 +51,9 @@ _logger = logging.getLogger("e2e-demo")
 
 
 def banner(msg: str) -> None:
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"  {msg}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
 
 DEMO_VERDICT: dict[str, str] = {}
@@ -72,6 +73,7 @@ def verdict(step: str, ok: bool, note: str = "") -> str:
 #  L00: Data Source — 真实行情获取 + Quality Gate
 # ═══════════════════════════════════════════════════════════
 
+
 def run_data() -> dict[str, Any]:
     banner("L00: DataSource — 真实行情获取 + Quality Gate")
 
@@ -85,7 +87,7 @@ def run_data() -> dict[str, Any]:
     provider = AkshareProvider()
     gate = DefaultQualityGate(max_stale_seconds=86400 * 30)
 
-    end = datetime.now(timezone.utc)
+    end = datetime.now(UTC)
     start = end - timedelta(days=180)
 
     SYMBOLS = ["600519", "000858", "601318", "000333", "600036"]
@@ -125,12 +127,11 @@ def run_data() -> dict[str, Any]:
 #  L02: Alpha Factor — 动量因子计算
 # ═══════════════════════════════════════════════════════════
 
+
 def run_factor(market_data: dict[str, Any]) -> dict[str, Any]:
     banner("L02: Alpha Factor — 因子计算 + 注册")
 
     from zephyr.governance.factor.factor_base import (
-        FactorBase,
-        FactorMeta,
         FactorRegistry,
         autodiscover_factors,
     )
@@ -143,7 +144,9 @@ def run_factor(market_data: dict[str, Any]) -> dict[str, Any]:
         if len(df) < 30:
             continue
         mom_20 = float((df["close"].iloc[-1] - df["close"].iloc[-21]) / df["close"].iloc[-21])
-        mom_60 = float((df["close"].iloc[-1] - df["close"].iloc[-min(61, len(df))]) / df["close"].iloc[-min(61, len(df))])
+        mom_60 = float(
+            (df["close"].iloc[-1] - df["close"].iloc[-min(61, len(df))]) / df["close"].iloc[-min(61, len(df))]
+        )
 
         factor_scores[sym] = {
             "momentum_20d": mom_20,
@@ -160,17 +163,19 @@ def run_factor(market_data: dict[str, Any]) -> dict[str, Any]:
 #  L03: Signal Generation — 信号合成 + 资金分配
 # ═══════════════════════════════════════════════════════════
 
+
 def run_signal(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
     banner("L03: Signal Generation — 信号合成 + 资金分配")
 
-    from zephyr.signal_fundamental.default_signal_aggregator import (
-        DefaultSignalAggregator,
-    )
+    from datetime import datetime
+
+    from zephyr.integration.contracts.factor_signal import FactorSignal
     from zephyr.signal_fundamental.default_capital_allocator import (
         DefaultCapitalAllocator,
     )
-    from zephyr.integration.contracts.factor_signal import FactorSignal
-    from datetime import datetime, timezone
+    from zephyr.signal_fundamental.default_signal_aggregator import (
+        DefaultSignalAggregator,
+    )
 
     aggregator = DefaultSignalAggregator()
     allocator = DefaultCapitalAllocator(min_signal_threshold=0.0)
@@ -181,7 +186,7 @@ def run_signal(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
         factor_signal_list = []
         for factor_name, factor_value in factors.items():
             fs = FactorSignal(
-                as_of_date=datetime.now(timezone.utc),
+                as_of_date=datetime.now(UTC),
                 factor_id=factor_name,
                 idempotency_key=str(uuid.uuid4()),
                 raw_value=factor_value,
@@ -195,13 +200,17 @@ def run_signal(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
             idempotency_key=str(uuid.uuid4()),
         )
         all_signals.append(sig)
-        print(f"    {sym}: signal={sig.signal_value:.2f}  direction={sig.signal_direction}  confidence={sig.confidence:.2f}")
+        print(
+            f"    {sym}: signal={sig.signal_value:.2f}  direction={sig.signal_direction}  confidence={sig.confidence:.2f}"
+        )
 
     ok_sigs = len(all_signals) >= 3
     verdict("L03 signals", ok_sigs, f"{len(all_signals)} signals")
 
     alloc = allocator.allocate(all_signals, str(uuid.uuid4()))
-    print(f"    allocation_method={alloc.allocation_method}  total_weight={alloc.total_allocated_weight:.2%}  strategies={len(alloc.strategy_allocations)}")
+    print(
+        f"    allocation_method={alloc.allocation_method}  total_weight={alloc.total_allocated_weight:.2%}  strategies={len(alloc.strategy_allocations)}"
+    )
 
     ok_alloc = len(alloc.strategy_allocations) >= 3
     verdict("L03 allocation", ok_alloc, f"{len(alloc.strategy_allocations)} allocations")
@@ -212,17 +221,19 @@ def run_signal(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
 #  L04: Risk Management — 风控校验 + 止损
 # ═══════════════════════════════════════════════════════════
 
+
 def run_risk(symbols: list[str]) -> dict[str, Any]:
     banner("L04: Risk Management — 风控校验 + 止损")
 
     from zephyr.risk.default_risk_validator import (
         DefaultRiskValidator,
     )
+
     from zephyr.risk.risk_manager import RiskLimits
     from zephyr.risk.stop_loss import evaluate_stop_loss
 
     limits = RiskLimits(
-        as_of_date=datetime.now(timezone.utc),
+        as_of_date=datetime.now(UTC),
         idempotency_key="demo-limits",
         max_single_position=0.15,
         max_gross_leverage=1.0,
@@ -271,21 +282,22 @@ def run_risk(symbols: list[str]) -> dict[str, Any]:
 #  L05+L06: Portfolio → Execution — 策略→订单→执行
 # ═══════════════════════════════════════════════════════════
 
+
 def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
     banner("L05+L06: Strategy → Broker → ExecutionEngine")
 
-    from zephyr.governance.core.default_equity_strategy import (
-        DefaultEquityStrategy,
-        RebalanceMode,
+    from zephyr.ex_core.src.zephyr.execution_engine import (
+        AlgoType,
+        ExecutionConfig,
+        ExecutionEngine,
     )
+    from zephyr.ex_core.src.zephyr.order_manager import OrderManager
     from zephyr.governance.core.adapters.simulation_broker import (
         SimulationBroker,
     )
-    from zephyr.ex_core.src.zephyr.order_manager import OrderManager
-    from zephyr.ex_core.src.zephyr.execution_engine import (
-        ExecutionEngine,
-        AlgoType,
-        ExecutionConfig,
+    from zephyr.governance.core.default_equity_strategy import (
+        DefaultEquityStrategy,
+        RebalanceMode,
     )
 
     strategy = DefaultEquityStrategy(
@@ -333,8 +345,8 @@ def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
             boid = engine.execute_order(twap_order, algo=AlgoType.TWAP, broker_id="simulation")
             print(f"    TWAP order submitted: {boid}")
             verdict("L06 TWAP", bool(boid), f"broker_order_id={boid}")
-        except Exception as e:
-            verdict("L06 TWAP", True, f"NOTE: broker order_id returned (type issue in _simulate_fill)")
+        except Exception:
+            verdict("L06 TWAP", True, "NOTE: broker order_id returned (type issue in _simulate_fill)")
 
     return {
         "orders": len(orders),
@@ -346,6 +358,7 @@ def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
 # ═══════════════════════════════════════════════════════════
 #  L07: Post-Trade Analytics — TCA
 # ═══════════════════════════════════════════════════════════
+
 
 def run_pf_core(fills: int) -> None:
     banner("L07: Post-Trade Analytics — TCA")
@@ -366,7 +379,7 @@ def run_pf_core(fills: int) -> None:
         broker_fill_id="IB-123",
         filled_quantity=Decimal("100"),
         fill_price=Decimal("1680.00"),
-        fill_timestamp=datetime.now(timezone.utc),
+        fill_timestamp=datetime.now(UTC),
         commission=Decimal("1.68"),
         idempotency_key=str(uuid.uuid4()),
     )
@@ -378,7 +391,7 @@ def run_pf_core(fills: int) -> None:
         quantity=Decimal("100"),
         limit_price=Decimal("1675.00"),
         status="FILLED",
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
         strategy_id="demo-strategy",
         idempotency_key=str(uuid.uuid4()),
     )
@@ -390,6 +403,7 @@ def run_pf_core(fills: int) -> None:
 # ═══════════════════════════════════════════════════════════
 #  L09: Research & Innovation — Backtest
 # ═══════════════════════════════════════════════════════════
+
 
 def run_research(symbols: list[str]) -> None:
     banner("L09: Research & Innovation — Backtest")
@@ -409,20 +423,26 @@ def run_research(symbols: list[str]) -> None:
     index_tuples = [(sym, d) for sym in symbols for d in dates]
     multi_idx = pd.MultiIndex.from_tuples(index_tuples, names=["symbol", "date"])
     prices = np.random.lognormal(mean=0, sigma=0.02, size=(len(index_tuples),))
-    data = pd.DataFrame({"close": prices, "open": prices * 0.99, "high": prices * 1.01, "low": prices * 0.98, "volume": 1e6}, index=multi_idx)
+    data = pd.DataFrame(
+        {"close": prices, "open": prices * 0.99, "high": prices * 1.01, "low": prices * 0.98, "volume": 1e6},
+        index=multi_idx,
+    )
 
     signal_data = np.random.uniform(0, 1, (len(dates), len(symbols)))
     signals = pd.DataFrame(signal_data, index=dates, columns=symbols)
     signals = signals.div(signals.sum(axis=1), axis=0)
 
     result = engine.run(data=data, signals=signals, initial_capital=1000000.0, strategy_name="demo")
-    print(f"    total_return={result.total_return:+.2%}  sharpe={result.sharpe_ratio:.2f}  max_dd={result.max_drawdown:+.2%}  trades={result.trades_count}")
+    print(
+        f"    total_return={result.total_return:+.2%}  sharpe={result.sharpe_ratio:.2f}  max_dd={result.max_drawdown:+.2%}  trades={result.trades_count}"
+    )
     verdict("L09 backtest", result.trades_count >= 0, f"sharpe={result.sharpe_ratio:.2f}")
 
 
 # ═══════════════════════════════════════════════════════════
 #  L10: Compliance — 安全网关
 # ═══════════════════════════════════════════════════════════
+
 
 def run_compliance() -> None:
     banner("L10: Compliance — Security Gateway")
@@ -453,13 +473,15 @@ def run_compliance() -> None:
 #  L11: ML Platform — Inference
 # ═══════════════════════════════════════════════════════════
 
+
 def run_ml_inference() -> None:
     banner("L11: ML Platform — Inference")
+
+    from zephyr.integration.contracts.model_serving_request import ModelServingRequest
 
     from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import (
         DefaultInferenceEngine,
     )
-    from zephyr.integration.contracts.model_serving_request import ModelServingRequest
 
     engine = DefaultInferenceEngine()
     request = ModelServingRequest(
@@ -477,6 +499,7 @@ def run_ml_inference() -> None:
 # ═══════════════════════════════════════════════════════════
 #  L13: Experimentation — A/B Pipeline
 # ═══════════════════════════════════════════════════════════
+
 
 def run_experiment() -> None:
     banner("L13: Experimentation — A/B Pipeline")
@@ -499,18 +522,25 @@ def run_experiment() -> None:
     metrics = pipeline.run(config, idempotency_key=str(uuid.uuid4()))
     significant = sum(1 for m in metrics if m.is_significant)
     for m in metrics:
-        print(f"    {m.metric_name}: control={m.control_value:.2f}  treatment={m.treatment_value:.2f}  effect={m.effect_size:+.3f}  p={m.p_value:.3f}  sig={m.is_significant}")
-    verdict("L13 experiment", len(metrics) == len(config.metrics) and significant >= 1, f"{len(metrics)} metrics, {significant} significant")
+        print(
+            f"    {m.metric_name}: control={m.control_value:.2f}  treatment={m.treatment_value:.2f}  effect={m.effect_size:+.3f}  p={m.p_value:.3f}  sig={m.is_significant}"
+        )
+    verdict(
+        "L13 experiment",
+        len(metrics) == len(config.metrics) and significant >= 1,
+        f"{len(metrics)} metrics, {significant} significant",
+    )
 
 
 # ═══════════════════════════════════════════════════════════
 #  MAIN
 # ═══════════════════════════════════════════════════════════
 
+
 def main() -> int:
     print("=" * 60)
     print("  ZephyrAlpha C-track 全线端到端演示")
-    print(f"  {datetime.now(timezone.utc).isoformat()}")
+    print(f"  {datetime.now(UTC).isoformat()}")
     print("=" * 60)
 
     # L00
@@ -552,14 +582,14 @@ def main() -> int:
     passed = sum(1 for v in DEMO_VERDICT.values() if v == "PASS")
     failed = total - passed
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"  最终判定: {passed} PASS / {failed} FAIL / {total} TOTAL")
     if failed > 0:
-        print(f"  失败项:")
+        print("  失败项:")
         for step, status in DEMO_VERDICT.items():
             if status == "FAIL":
                 print(f"    - {step}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     return 0 if failed == 0 else 1
 

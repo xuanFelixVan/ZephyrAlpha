@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-014
-submodule_path: src/zephyr/llm-security
+submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"
 doc_type: blueprint
 status: Active
@@ -15,7 +15,7 @@ updated: "2026-05-15"
 valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: src/zephyr/llm-security/
+actual_disk_path: src/zephyr/security/llm_defense/llm_security/
 belongs_to: "MOD-MASTER-001"
 summary: "ZephyrAlpha LLM Security Gateway (LSG) 完整蓝图——九层纵深防御 + 自我防护体系 + 运维保障体系：L0 供应链安全（模型验证+依赖扫描+AI BOM+Code Signing+Slopsquatting防御）→ L1 输入防护（直接注入+间接注入+越狱检测+Spotlighting+RAG投毒防御+ToolResultTransform拦截）→ L2 Prompt保护（System Prompt隔离+防泄露+话题控制+长会话Drift检测+Promptware Kill Chain映射）→ L3 输出安全（Schema验证+沙箱执行+PII脱敏+幻觉检测+AI代码信任边界+Embedding Inversion防御）→ L4 Agent安全（权限最小化+HITL+操作审计+MCP Sampling防御+Tool Description Integrity+DeepSeek jailbreak已知漏洞补偿）→ L5 资源保护（速率限制+Token预算+成本熔断+并发限制+LSG性能预算+SLA）→ L6 可观测性（安全日志+异常告警+仪表板+审计报告+LSG自监控+延迟追踪）→ L7 持续验证（自动Red Team+安全回归测试+威胁情报+LSG自我回归测试）→ L8 多Agent安全（Agent间通信认证+跨Agent权限隔离+级联熔断+Rogue检测+Trust Anti-Abuse+Shadow Agent检测+NHI治理）+凭据全生命周期+数据层安全(RLS/默认安全)。fail-closed + 性能预算(SLO/SLA)贯穿全链路。"
 tags: [llm-security, lsg, security-gateway, fail-closed, defense-in-depth, supply-chain, prompt-injection, output-validation, agent-security, observability, red-team, infrastructure]
@@ -3134,7 +3134,7 @@ class ShadowAgentDetector:
 
     def scan_for_unregistered_llm_calls(self, api_key_usage: list[APICallLog]) -> list[Anomaly]:
         """扫描API Key使用记录——发现未注册Agent的LLM调用。
-        
+
         检测信号：
         - 使用了未注册的API Key（新Key被某进程/脚本使用）
         - 调用了未注册的Agent ID
@@ -3146,7 +3146,7 @@ class ShadowAgentDetector:
         network_flows: list[FlowRecord],
     ) -> list[DiscoveredAgent]:
         """通过网络流量分析发现潜在Agent。
-        
+
         Shadow Agent的典型网络模式：
         - 高频调用LLM API端点（api.deepseek.com等）
         - 非预期时间的LLM调用（凌晨3点持续请求）
@@ -3239,7 +3239,7 @@ class TestLSGSelfRegression:
 
     def test_secret_patterns_coverage(self):
         """验证Secret模式库覆盖所有已知key格式。
-        
+
         当DeepSeek/OpenAI等API key格式变化时，测试自动失败→提示更新。
         """
 
@@ -3290,7 +3290,7 @@ class SecurityCodeIntegrityGuard:
 
     def verify_integrity_on_startup(self) -> IntegrityReport:
         """LSG每次启动时验证所有安全关键文件的完整性。
-        
+
         检测：
         - 文件哈希是否与基线一致
         - 新增文件是否在预期白名单中
@@ -3777,7 +3777,7 @@ class LSGPerformanceGuard:
 
     def check_budget(self) -> BudgetStatus:
         """检查当前延迟是否超出预算。
-        
+
         WITHIN_BUDGET → 正常运行
         APPROACHING → 记录告警，准备降级
         EXCEEDED → 触发降级策略
@@ -3883,7 +3883,7 @@ class DataLayerSecurityAuditor:
 
     def generate_data_layer_security_report(self) -> DataLayerReport:
         """生成数据层安全报告，标记所有需要人工配置的安全项。
-        
+
         因为AI无法自动配置RLS/Firebase Rules（需要理解业务访问逻辑），
         本报告列出所有"AI已完成功能但安全配置空缺"的项，
         供Owner逐一配置或指示AI按明确的安全策略补全。
@@ -6010,14 +6010,14 @@ STEP 3: 拆分后验证
 
 | # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表 |
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
-| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 涌现式设计 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
 | 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
-| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 
 ---
 

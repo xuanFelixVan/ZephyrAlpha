@@ -29,13 +29,12 @@ ModelDriftDetector — LLM 模型行为漂移检测。
 建立基线输出 feature vector → 定期采样 → KL 散度/JS 距离 → 超过阈值 → exit 34。
 """
 
-
 from __future__ import annotations
 
 import hashlib
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -51,7 +50,6 @@ class DriftResult:
 
 
 class ModelDriftDetector:
-
     EXIT_CODE_DRIFT: int = 34
     DIVERGENCE_THRESHOLD: float = 0.15
     BASELINE_FILE: str = ".zephyr/model_baseline.json"
@@ -63,7 +61,7 @@ class ModelDriftDetector:
     def establish_baseline(self, sample_outputs: list[dict[str, Any]]) -> bool:
         feature_vector = self._compute_feature_vector(sample_outputs)
         baseline = {
-            "established_at": datetime.now(timezone.utc).isoformat(),
+            "established_at": datetime.now(UTC).isoformat(),
             "feature_vector": feature_vector,
             "sample_count": len(sample_outputs),
         }

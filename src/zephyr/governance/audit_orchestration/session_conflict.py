@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class SessionConflictGuard:
     def __init__(self):
         self._active_sessions: dict[str, set[str]] = {}

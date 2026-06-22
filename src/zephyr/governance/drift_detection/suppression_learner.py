@@ -26,14 +26,13 @@ module_id: MOD-INF-023
 自动学习假阳性模式：同一 pattern_hash 被标记 FALSE_POSITIVE >=3 次 → 自动创建 suppression_rule。
 对标 blueprint.md §2.14（自动学习假阳性模式识别与抑制）。
 """
+
 from __future__ import annotations
 
 import hashlib
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-from typing import Optional
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 
 
 @dataclass
@@ -48,7 +47,7 @@ class SuppressionRule:
     last_false_positive_at: datetime
     is_active: bool = True
     suppressed_count: int = 0
-    last_reviewed_at: Optional[datetime] = None
+    last_reviewed_at: datetime | None = None
 
 
 class SuppressionLearner:
@@ -74,14 +73,14 @@ class SuppressionLearner:
         module_id: str,
         drift_dimension: str,
         diff_signature: str,
-    ) -> Optional[SuppressionRule]:
+    ) -> SuppressionRule | None:
         pattern_hash = self.compute_pattern_hash(detector_id, drift_dimension, diff_signature)
         key = f"{detector_id}:{module_id}:{pattern_hash}"
 
         if key in self._patterns:
             rule = self._patterns[key]
             rule.false_positive_count += 1
-            rule.last_false_positive_at = datetime.now(timezone.utc)
+            rule.last_false_positive_at = datetime.now(UTC)
             if rule.false_positive_count >= self.SUPPRESSION_THRESHOLD and not rule.is_active:
                 rule.is_active = True
                 return rule
@@ -93,8 +92,8 @@ class SuppressionLearner:
                 pattern_hash=pattern_hash,
                 drift_dimension=drift_dimension,
                 false_positive_count=1,
-                created_at=datetime.now(timezone.utc),
-                last_false_positive_at=datetime.now(timezone.utc),
+                created_at=datetime.now(UTC),
+                last_false_positive_at=datetime.now(UTC),
             )
             self._patterns[key] = rule
 
@@ -140,7 +139,7 @@ class SuppressionLearner:
         return False
 
     def get_rules_needing_review(self) -> list[SuppressionRule]:
-        cutoff = datetime.now(timezone.utc) - timedelta(days=self.REVIEW_INTERVAL_DAYS)
+        cutoff = datetime.now(UTC) - timedelta(days=self.REVIEW_INTERVAL_DAYS)
         needs_review: list[SuppressionRule] = []
         for rule in self._patterns.values():
             if not rule.is_active:
@@ -153,5 +152,5 @@ class SuppressionLearner:
     def mark_reviewed(self, rule_id: uuid.UUID) -> None:
         for rule in self._patterns.values():
             if rule.rule_id == rule_id:
-                rule.last_reviewed_at = datetime.now(timezone.utc)
+                rule.last_reviewed_at = datetime.now(UTC)
                 return

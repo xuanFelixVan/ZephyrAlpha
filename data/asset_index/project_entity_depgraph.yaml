@@ -370044,7 +370044,7 @@ blueprint_file_map:
   MOD-027:
   - docs/03_modules/_domain_governance/vibe_coding_pipelines/delivery/index.md
   MOD-INF-059:
-  - docs/03_modules/_domain_governance/_domain_governance/index.md
+  - docs/03_modules/_domain_governance/index.md
   MOD-L12-001:
   - docs/03_modules/_domain_infra_ops/index.md
   MOD-INF-067:
@@ -370200,7 +370200,7 @@ blueprint_file_map:
   MOD-INF-066:
   - docs/03_modules/_sys_master/index.md
   MOD-INF-065:
-  - docs/03_modules/_sys_master/_sys_master/index.md
+  - docs/03_modules/_sys_master/index.md
   GOV-023:
   - docs/01_policies_and_standards/index.md
   GOV-020:
@@ -370232,7 +370232,7 @@ blueprint_file_map:
   GOV-IDX-001:
   - docs/01_policies_and_standards/governance/index.md
   GOV-021:
-  - docs/01_policies_and_standards/governance/ai/ai_autonomy_authority_registry.md
+  - docs/01_policies_and_standards/governance/ai/ai_autonomy_authority_registry.yaml
   GOV-ARCH-000:
   - docs/01_policies_and_standards/governance/architecture/index.md
   GOV-CMP-000:
@@ -370286,11 +370286,11 @@ blueprint_file_map:
   GOV-005:
   - docs/01_policies_and_standards/_registry/index.md
   GOV-001:
-  - docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.md
+  - docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
   GOV-002:
   - docs/01_policies_and_standards/_registry/catalogs/index.md
   GOV-AI-001:
-  - docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.md
+  - docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
   GOV-004:
   - docs/01_policies_and_standards/_registry/contracts/index.md
   GOV-003:

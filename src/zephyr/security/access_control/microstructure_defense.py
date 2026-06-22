@@ -4,17 +4,24 @@
 DEFAULT_FIDELITY = None  # stub constant
 DEFENSE_STRATEGIES = None  # stub constant
 
+
 class DefenseStrategy:
     """Stub class — implementation pending."""
+
     pass
+
 
 class DefenseType:
     """Stub class — implementation pending."""
+
     pass
+
 
 class FidelityFactor:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "DEFAULT_FIDELITY",

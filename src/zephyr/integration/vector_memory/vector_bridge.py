@@ -69,43 +69,63 @@ class VectorBridge:
         return self._vms.write("knowledge", content, metadata=meta)
 
     def sync_rules(self, rule_id: str, content: str) -> str:
-        return self._vms.write("rules", content, metadata={
-            "origin": f"governance/rule/{rule_id}",
-            "audit_chain": ["governance"],
-            "arbitration": "human-gated",
-        })
+        return self._vms.write(
+            "rules",
+            content,
+            metadata={
+                "origin": f"governance/rule/{rule_id}",
+                "audit_chain": ["governance"],
+                "arbitration": "human-gated",
+            },
+        )
 
     def write_decision(self, task_id: str, decision_text: str) -> str:
-        return self._vms.write("decisions", decision_text, metadata={
-            "origin": f"orchestrator/task/{task_id}",
-            "audit_chain": ["orchestrator"],
-            "arbitration": "supervised",
-            "task_id": task_id,
-        })
+        return self._vms.write(
+            "decisions",
+            decision_text,
+            metadata={
+                "origin": f"orchestrator/task/{task_id}",
+                "audit_chain": ["orchestrator"],
+                "arbitration": "supervised",
+                "task_id": task_id,
+            },
+        )
 
     def write_session_summary(self, session_id: str, summary: str) -> str:
-        return self._vms.write("session_snapshots", summary, metadata={
-            "origin": f"session_manager/{session_id}",
-            "audit_chain": ["session_manager"],
-            "arbitration": "autonomous",
-            "session_id": session_id,
-        })
+        return self._vms.write(
+            "session_snapshots",
+            summary,
+            metadata={
+                "origin": f"session_manager/{session_id}",
+                "audit_chain": ["session_manager"],
+                "arbitration": "autonomous",
+                "session_id": session_id,
+            },
+        )
 
     def audit_operation(self, operation: str, details: dict[str, Any]) -> str:
         import json
 
-        return self._vms.write("execution_traces", json.dumps(details, ensure_ascii=False, default=str), metadata={
-            "origin": f"audit-trail/{operation}",
-            "audit_chain": ["audit-trail"],
-            "arbitration": "supervised",
-            "operation": operation,
-            "details": details,
-            "audited_at": datetime.now(UTC).isoformat(),
-        })
+        return self._vms.write(
+            "execution_traces",
+            json.dumps(details, ensure_ascii=False, default=str),
+            metadata={
+                "origin": f"audit-trail/{operation}",
+                "audit_chain": ["audit-trail"],
+                "arbitration": "supervised",
+                "operation": operation,
+                "details": details,
+                "audited_at": datetime.now(UTC).isoformat(),
+            },
+        )
 
     def write_failure_pattern(self, pattern_text: str) -> str:
-        return self._vms.write("lessons", pattern_text, metadata={
-            "origin": "fle/failure_pattern",
-            "audit_chain": ["fle"],
-            "arbitration": "autonomous",
-        })
+        return self._vms.write(
+            "lessons",
+            pattern_text,
+            metadata={
+                "origin": "fle/failure_pattern",
+                "audit_chain": ["fle"],
+                "arbitration": "autonomous",
+            },
+        )

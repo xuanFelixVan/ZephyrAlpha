@@ -30,6 +30,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 
+
 @dataclass
 class CrossSessionConsistencyValidator:
     config_hashes: list[dict] = field(default_factory=list)
@@ -41,10 +42,14 @@ class CrossSessionConsistencyValidator:
         config_str = json.dumps(config, sort_keys=True)
         h = hashlib.sha256(config_str.encode()).hexdigest()[:16]
 
-        entry = {"hash": h, "session_id": session_id, "prev_hash": self.config_hashes[-1]["hash"] if self.config_hashes else None}
+        entry = {
+            "hash": h,
+            "session_id": session_id,
+            "prev_hash": self.config_hashes[-1]["hash"] if self.config_hashes else None,
+        }
         self.config_hashes.append(entry)
         if len(self.config_hashes) > self.max_hashes:
-            self.config_hashes = self.config_hashes[-self.max_hashes:]
+            self.config_hashes = self.config_hashes[-self.max_hashes :]
 
         for key, value in config.items():
             if isinstance(value, (int, float)):

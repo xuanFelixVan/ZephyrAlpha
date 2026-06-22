@@ -49,7 +49,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["PhaseCheckRegistry", "run_check", "GateResult"]
+__all__ = ["GateResult", "PhaseCheckRegistry", "run_check"]
 
 
 class GateResult(str, Enum):
@@ -338,8 +338,8 @@ def check_vms_health() -> GateResult:
 
 def check_vms_migration() -> GateResult:
     try:
-        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
         from zephyr.integration.vector_memory.bridge_layer import MIGRATION_MAP
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         vms = InProcessVectorMemory()
         vms.start()
@@ -425,14 +425,14 @@ def check_blueprint_compliance() -> GateResult:
 def check_agent_rbac() -> GateResult:
     try:
         _identity_mod = importlib.import_module("zephyr.security.access_control.identity")
-        AgentIdentity = getattr(_identity_mod, "AgentIdentity")
-        AgentRole = getattr(_identity_mod, "AgentRole")
-        IDESource = getattr(_identity_mod, "IDESource")
-        MaturityLevel = getattr(_identity_mod, "MaturityLevel")
+        AgentIdentity = _identity_mod.AgentIdentity
+        AgentRole = _identity_mod.AgentRole
+        IDESource = _identity_mod.IDESource
+        MaturityLevel = _identity_mod.MaturityLevel
         _immutable_core_mod = importlib.import_module("zephyr.security.access_control.immutable_core")
-        get_immutable_core = getattr(_immutable_core_mod, "get_immutable_core")
+        get_immutable_core = _immutable_core_mod.get_immutable_core
         _perm_guard_mod = importlib.import_module("zephyr.security.access_control.permission_guard")
-        PermissionGuard = getattr(_perm_guard_mod, "PermissionGuard")
+        PermissionGuard = _perm_guard_mod.PermissionGuard
 
         ic = get_immutable_core()
         if ic.should_cold_start_lock():
@@ -574,7 +574,7 @@ def check_escalation_protocol() -> GateResult:
 def check_budget_enforcer() -> GateResult:
     try:
         from zephyr.governance.budget_engine import BudgetEngine
-from zephyr.governance.budget_models import BudgetDimension
+        from zephyr.governance.budget_models import BudgetDimension
 
         engine = BudgetEngine()
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
@@ -648,8 +648,8 @@ def check_full_backtest() -> GateResult:
 
 def check_chaos_test() -> GateResult:
     try:
-        from zephyr.governance.drift_detection.chaos_injector import ChaosInjector
         from zephyr.governance.audit_orchestration.chaos_engine import ChaosEngine
+        from zephyr.governance.drift_detection.chaos_injector import ChaosInjector
 
         return GateResult.GREEN
     except ImportError:
@@ -679,7 +679,7 @@ def check_kill_switch() -> GateResult:
 def check_shadow_mode() -> GateResult:
     try:
         _mod = importlib.import_module("zephyr.autonomy_core.shadow_canary")
-        ShadowCanary = getattr(_mod, "ShadowCanary")
+        ShadowCanary = _mod.ShadowCanary
 
         return GateResult.GREEN
     except ImportError:
@@ -786,10 +786,10 @@ def check_pipeline_e2e() -> GateResult:
 
 def check_skill_canary() -> GateResult:
     try:
-        _skill_loader_mod = importlib.import_module("zephyr.orchestration.agent_lifecycle.skill_loader")
-        SkillLoader = getattr(_skill_loader_mod, "SkillLoader")
-        _skill_model_mod = importlib.import_module("zephyr.orchestration.agent_lifecycle.skill_model")
-        SkillSpec = getattr(_skill_model_mod, "SkillSpec")
+        _skill_loader_mod = importlib.import_module("zephyr.autonomy_core.skill_loader")
+        SkillLoader = _skill_loader_mod.SkillLoader
+        _skill_model_mod = importlib.import_module("zephyr.autonomy_core.skill_model")
+        SkillSpec = _skill_model_mod.SkillSpec
 
         loader = SkillLoader()
         skills = loader.list_skills()
@@ -805,7 +805,7 @@ def check_skill_canary() -> GateResult:
 def check_dependency_audit() -> GateResult:
     try:
         _mod = importlib.import_module("zephyr.security.access_control.dependency_auditor")
-        DependencyAuditor = getattr(_mod, "DependencyAuditor")
+        DependencyAuditor = _mod.DependencyAuditor
 
         auditor = DependencyAuditor()
         result = auditor.audit()
@@ -821,8 +821,8 @@ def check_dependency_audit() -> GateResult:
 
 def check_a2a_hold() -> GateResult:
     try:
-        _mod = importlib.import_module("zephyr.orchestration.agent_communication.governance")
-        A2AProtocol = getattr(_mod, "A2AProtocol")
+        _mod = importlib.import_module("zephyr.shared.protocols.a2a.a2a_governance")
+        A2AProtocol = _mod.A2AProtocol
 
         proto = A2AProtocol()
         if proto.is_hold_active():
@@ -855,8 +855,8 @@ def check_code_dedup() -> GateResult:
 
 def check_task_system() -> GateResult:
     try:
-        from zephyr.governance.persistence.task_repo import TaskRepository
         from zephyr.governance.audit_orchestration.batch_orchestrator import BatchOrchestrator
+        from zephyr.governance.persistence.task_repo import TaskRepository
 
         return GateResult.GREEN
     except ImportError:
@@ -870,10 +870,12 @@ def check_task_system() -> GateResult:
 def check_lsg_security() -> GateResult:
     try:
         _lsg_mod = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway")
-        LSGSecurityGateway = getattr(_lsg_mod, "LSGSecurityGateway")
-        _redteam_mod = importlib.import_module("zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner")
-        RedTeamScanner = getattr(_redteam_mod, "RedTeamScanner")
-        ScanMode = getattr(_redteam_mod, "ScanMode")
+        LSGSecurityGateway = _lsg_mod.LSGSecurityGateway
+        _redteam_mod = importlib.import_module(
+            "zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner"
+        )
+        RedTeamScanner = _redteam_mod.RedTeamScanner
+        ScanMode = _redteam_mod.ScanMode
 
         gw = LSGSecurityGateway()
         if gw is None:

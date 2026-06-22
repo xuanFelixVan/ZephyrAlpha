@@ -12,8 +12,6 @@
 
 import hashlib
 
-import pytest
-
 from zephyr.ops.gates.merkle_audit_root import MerkleAuditRoot
 
 
@@ -48,13 +46,13 @@ class TestCompute:
     def test_compute_empty_list(self):
         mar = MerkleAuditRoot()
         result = mar.compute([])
-        expected = hashlib.sha256("".encode()).hexdigest()
+        expected = hashlib.sha256(b"").hexdigest()
         assert result == expected
 
     def test_compute_single_entry(self):
         mar = MerkleAuditRoot()
         result = mar.compute(["only"])
-        expected = hashlib.sha256("only".encode()).hexdigest()
+        expected = hashlib.sha256(b"only").hexdigest()
         assert result == expected
 
     def test_compute_order_matters(self):

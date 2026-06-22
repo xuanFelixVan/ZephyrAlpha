@@ -30,6 +30,7 @@ RCA发现→规则/阈值自动注入闭环 — 不让知识腐烂
 import hashlib
 from dataclasses import dataclass, field
 
+
 @dataclass
 class InjectedRule:
     rule_id: str
@@ -41,6 +42,7 @@ class InjectedRule:
     validated: bool = False
     active: bool = False
 
+
 @dataclass
 class IncidentKnowledgeInjector:
     injected_rules: dict[str, InjectedRule] = field(default_factory=dict)
@@ -51,7 +53,7 @@ class IncidentKnowledgeInjector:
         new_rule_ids = []
 
         root_causes = rca_findings.get("root_causes", [])
-        for cause in root_causes[:self.max_rules_per_rca]:
+        for cause in root_causes[: self.max_rules_per_rca]:
             rule = self._cause_to_rule(cause, rca_findings.get("incident_id", "unknown"))
             if rule:
                 self.injected_rules[rule.rule_id] = rule
@@ -81,9 +83,15 @@ class IncidentKnowledgeInjector:
 
     def get_active_rules(self) -> list[dict]:
         return [
-            {"rule_id": r.rule_id, "type": r.rule_type, "condition": r.condition,
-             "threshold": r.threshold, "source": r.source_rca_id}
-            for r in self.injected_rules.values() if r.active
+            {
+                "rule_id": r.rule_id,
+                "type": r.rule_type,
+                "condition": r.condition,
+                "threshold": r.threshold,
+                "source": r.source_rca_id,
+            }
+            for r in self.injected_rules.values()
+            if r.active
         ]
 
     def _cause_to_rule(self, cause: str, incident_id: str) -> InjectedRule | None:

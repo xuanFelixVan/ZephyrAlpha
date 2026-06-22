@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_github_api_guard.py
 
-import pytest
 
 from zephyr.governance.github_api_guard import GitHubAPIGuard
 

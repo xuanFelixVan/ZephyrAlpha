@@ -10,6 +10,7 @@
     script: scripts/<path>/<name>.py       → 更新 script_manifest.yaml
     gate:   src/zephyr/gates/<name>.yaml   → 更新 _registry.yaml
     yaml:   <path>/<name>.yaml             → 通知资产盘点（kebab-case 强制）
+    rule:   docs/.../rules/trae_XXX.yaml   → 自动分配 rule_id + 标准 frontmatter
     json:   <path>/<name>.json             → 通知资产盘点（kebab-case 强制）
     md:     <path>/<name>.md               → 通知资产盘点（kebab-case 强制）
 
@@ -18,6 +19,7 @@
     python scripts/scaffold.py script governance/audit_registration --desc "孤儿注册检测"
     python scripts/scaffold.py gate g6_my_gate --title "My Gate" --category kms
     python scripts/scaffold.py yaml docs/01_policies/my-policy --desc "策略文档"
+    python scripts/scaffold.py rule arch-new-rule --title "架构新规则" --scope arch_new_rule --layer L1
     python scripts/scaffold.py json data/config/my-config --desc "配置文件"
     python scripts/scaffold.py md docs/guides/my-guide --desc "用户指南"
 
@@ -30,13 +32,11 @@
 from __future__ import annotations
 
 import argparse
-import importlib
 import os
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -45,7 +45,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from scripts.governance.d3_metadata.check_naming_convention import check_file, check_dir
+from scripts.governance.d3_metadata.check_naming_convention import check_dir, check_file
 
 # ---------------------------------------------------------------------------
 # 路径常量
@@ -56,6 +56,7 @@ SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 GATES_DIR = SRC_ZEPHYR / "gates"
 SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
+RULES_DIR = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
 
 # ---------------------------------------------------------------------------
 # 模块空壳模板
@@ -130,6 +131,44 @@ YAML_TEMPLATE = """# [BLUEPRINT] {blueprint_id} | {file_path} |
 # {description}
 """
 
+RULE_TEMPLATE = """rule_id: {rule_id}
+title: {title}
+version: '1.0.0'
+layer: {layer}
+module_id: {rule_id}
+depends_on: []
+tags:
+- TRAE
+- {scope}
+- {layer}
+stability: {stability}
+safety_level: {safety_level}
+ai_autonomy: {ai_autonomy}
+aliases: []
+severity: {severity}
+scope: {scope}
+domain: TRAE
+triggers: []
+sections: {{}}
+references:
+  rule_ids: []
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: {stability}
+  impact_level: {safety_level}
+  modification_permission: {ai_autonomy}
+  superseded_by: null
+provenance:
+  extracted_at: '{timestamp}'
+  extracted_by: {session_id}
+"""
+
 JSON_TEMPLATE = """{{
   "_meta": {{
     "blueprint": "",
@@ -155,6 +194,7 @@ MD_TEMPLATE = """# [BLUEPRINT] | {file_path} |
 # ===================================================================
 # 核心引擎
 # ===================================================================
+
 
 class ScaffoldError(Exception):
     """脚手架阻断——创建失败（重复/冲突）。"""
@@ -187,17 +227,11 @@ class ScaffoldEngine:
 
         # ── 检查 1: 目录存在 ──
         if not package_dir.is_dir():
-            raise ScaffoldError(
-                f"Package '{package}' 不存在: {package_dir}\n"
-                f"可用包: {_list_packages()}"
-            )
+            raise ScaffoldError(f"Package '{package}' 不存在: {package_dir}\n可用包: {_list_packages()}")
 
         # ── 检查 2: 文件冲突 ──
         if file_path.exists():
-            raise ScaffoldError(
-                f"文件已存在: {file_path}\n"
-                f"如果是功能重复，请复用已有文件而非新建。"
-            )
+            raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 3: 功能重复 ──
         _check_duplicate_functionality(name, description, domain, subdomain)
@@ -206,10 +240,7 @@ class ScaffoldEngine:
         if init_py.exists():
             existing_content = init_py.read_text(encoding="utf-8")
             if class_name in existing_content or name in existing_content:
-                raise ScaffoldError(
-                    f"'{class_name}' / '{name}' 已在 {init_py} 中被引用。\n"
-                    f"确认不是重复创建。"
-                )
+                raise ScaffoldError(f"'{class_name}' / '{name}' 已在 {init_py} 中被引用。\n确认不是重复创建。")
 
         # ── 检查 5: 命名规范 ──
         _check_naming(str(file_path), str(package_dir))
@@ -240,6 +271,7 @@ class ScaffoldEngine:
         description: str = "",
         domain: str = "",
         subdomain: str = "",
+        force_override: bool = False,
     ) -> Path:
         """在 scripts/<rel_path>.py 创建脚本并注册到 script_manifest.yaml。"""
         file_path = SCRIPTS_DIR / f"{rel_path}.py"
@@ -251,13 +283,10 @@ class ScaffoldEngine:
 
         # ── 检查 2: 文件冲突 ──
         if file_path.exists():
-            raise ScaffoldError(
-                f"文件已存在: {file_path}\n"
-                f"如果是功能重复，请复用已有文件而非新建。"
-            )
+            raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 3: 功能重复 ──
-        _check_duplicate_functionality(rel_path, description, domain, subdomain)
+        _check_duplicate_functionality(rel_path, description, domain, subdomain, force_override=force_override)
 
         # ── 检查 4: manifest 中无重复 ──
         _check_manifest_duplicate(rel_path)
@@ -294,9 +323,7 @@ class ScaffoldEngine:
 
         # ── 检查 1: 文件冲突 ──
         if file_path.exists():
-            raise ScaffoldError(
-                f"Gate 文件已存在: {file_path}"
-            )
+            raise ScaffoldError(f"Gate 文件已存在: {file_path}")
 
         # ── 检查 2: registry 中无重复 ──
         _check_gate_registry_duplicate(gate_id)
@@ -345,10 +372,7 @@ class ScaffoldEngine:
 
         # ── 检查 3: 文件冲突 ──
         if file_path.exists():
-            raise ScaffoldError(
-                f"文件已存在: {file_path}\n"
-                f"如果是功能重复，请复用已有文件而非新建。"
-            )
+            raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 4: 功能重复 ──
         _check_duplicate_functionality(name_part, description, domain, subdomain)
@@ -369,6 +393,80 @@ class ScaffoldEngine:
         _notify_asset_inventory(str(file_path), "yaml", self.dry_run)
 
         print(f"\n  CREATED  {file_path}")
+        _remind_path_tree_refresh()
+        return file_path
+
+    def create_rule(
+        self,
+        name: str,
+        title: str,
+        scope: str,
+        layer: str = "L1",
+        severity: str = "error",
+        stability: str = "evolving",
+        safety_level: str = "L",
+        ai_autonomy: str = "ai_modifiable",
+    ) -> Path:
+        """在 docs/01_policies_and_standards/rules/ 创建 trae_XXX.yaml 规则文件。
+
+        自动分配 rule_id（TRAE-XXX），生成完整标准 frontmatter。
+        """
+        # ── 检查 1: snake_case 命名 ──
+        if not re.match(r"^[a-z][a-z0-9_]*$", name):
+            raise ScaffoldError(
+                f"命名规范阻断: '{name}' 不符合 snake_case 规范。\n"
+                f"  规则文件名必须使用 snake_case（小写+下划线），e.g. 'arch_new_rule'"
+            )
+
+        # ── 检查 2: layer 合法性 ──
+        valid_layers = {"L0", "L1", "L2", "L3"}
+        if layer not in valid_layers:
+            raise ScaffoldError(f"layer 必须是 {valid_layers} 之一，得到: {layer}")
+
+        # ── 检查 3: stability/safety_level/ai_autonomy 合法性 ──
+        if stability not in {"frozen", "stable", "evolving", "volatile"}:
+            raise ScaffoldError(f"stability 非法: {stability}")
+        if safety_level not in {"H", "M", "L"}:
+            raise ScaffoldError(f"safety_level 非法: {safety_level}")
+        if ai_autonomy not in {"immutable_core", "human_gated", "ai_modifiable"}:
+            raise ScaffoldError(f"ai_autonomy 非法: {ai_autonomy}")
+
+        # ── 检查 4: 自动分配 rule_id ──
+        rule_id, rule_num = _next_rule_id()
+
+        # ── 检查 5: 文件冲突 ──
+        file_name = f"trae_{rule_num:03d}_{name}.yaml"
+        file_path = RULES_DIR / file_name
+        if file_path.exists():
+            raise ScaffoldError(f"规则文件已存在: {file_path}")
+
+        # ── 检查 6: 功能重复 ──
+        _check_duplicate_functionality(name, title, "trae", "rules")
+
+        # ── 检查 7: 命名规范 ──
+        _check_naming(str(file_path), str(RULES_DIR))
+
+        # ── 执行创建 ──
+        content = RULE_TEMPLATE.format(
+            rule_id=rule_id,
+            title=title,
+            layer=layer,
+            scope=scope,
+            severity=severity,
+            stability=stability,
+            safety_level=safety_level,
+            ai_autonomy=ai_autonomy,
+            timestamp=datetime.now().strftime("%Y-%m-%dT00:00:00"),
+            session_id="scaffold-generated",
+        )
+        _atomic_write(file_path, content, self.dry_run, self.actions)
+
+        # ── 通知资产盘点系统（MOD-INF-026）──
+        _notify_asset_inventory(str(file_path), "yaml", self.dry_run)
+
+        print(f"\n  CREATED  {file_path}")
+        print(f"  RULE_ID  {rule_id}")
+        print(f"  NEXT STEP: 编辑 {file_path} 补充 sections/triggers/references 内容")
         _remind_path_tree_refresh()
         return file_path
 
@@ -393,10 +491,7 @@ class ScaffoldEngine:
 
         # ── 检查 3: 文件冲突 ──
         if file_path.exists():
-            raise ScaffoldError(
-                f"文件已存在: {file_path}\n"
-                f"如果是功能重复，请复用已有文件而非新建。"
-            )
+            raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 4: 功能重复 ──
         _check_duplicate_functionality(name_part, description, domain, subdomain)
@@ -439,10 +534,7 @@ class ScaffoldEngine:
 
         # ── 检查 3: 文件冲突 ──
         if file_path.exists():
-            raise ScaffoldError(
-                f"文件已存在: {file_path}\n"
-                f"如果是功能重复，请复用已有文件而非新建。"
-            )
+            raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 4: 功能重复 ──
         _check_duplicate_functionality(name_part, description, domain, subdomain)
@@ -469,6 +561,7 @@ class ScaffoldEngine:
 # 注册辅助函数
 # ===================================================================
 
+
 def _register_to_init(
     init_py: Path,
     class_name: str,
@@ -480,8 +573,7 @@ def _register_to_init(
     """向 __init__.py 追加 import + __all__ 条目。"""
     if not init_py.exists():
         init_py.write_text(
-            f"from zephyr.{package}.{module_name} import {class_name}\n\n"
-            f"__all__ = [\n    \"{class_name}\",\n]\n",
+            f'from zephyr.{package}.{module_name} import {class_name}\n\n__all__ = [\n    "{class_name}",\n]\n',
             encoding="utf-8",
         )
         return
@@ -503,7 +595,7 @@ def _register_to_init(
         if all_line not in content:
             content = _insert_into_all_list(content, class_name)
     else:
-        content += f"\n__all__ = [\n    \"{class_name}\",\n]\n"
+        content += f'\n__all__ = [\n    "{class_name}",\n]\n'
 
     if dry_run:
         actions.append(f"[DRY-RUN] Would update {init_py}")
@@ -514,7 +606,7 @@ def _register_to_init(
 
 def _insert_into_all_list(text: str, name: str) -> str:
     """在 __all__ 列表中插入条目（字母序）。"""
-    pattern = r'(\[ __all__\s*=\s*\[)(.*?)(\])'
+    pattern = r"(\[ __all__\s*=\s*\[)(.*?)(\])"
     match = re.search(pattern, text, re.DOTALL)
     if not match:
         text += f'\n__all__.append("{name}")\n'
@@ -530,6 +622,21 @@ def _insert_into_all_list(text: str, name: str) -> str:
 
     new_middle = "\n    " + ",\n    ".join(f'"{e}"' for e in entries) + ",\n"
     return text[: match.start(2)] + new_middle + text[match.end(2) :]
+
+
+def _next_rule_id() -> tuple[str, int]:
+    """扫描 RULES_DIR 下所有 trae_XXX.yaml，返回下一个 (rule_id, number)。"""
+    if not RULES_DIR.exists():
+        return "TRAE-001", 1
+    max_num = 0
+    for f in RULES_DIR.glob("trae_*.yaml"):
+        m = re.match(r"trae_(\d+)_", f.name)
+        if m:
+            num = int(m.group(1))
+            if num > max_num:
+                max_num = num
+    next_num = max_num + 1
+    return f"TRAE-{next_num:03d}", next_num
 
 
 def _register_to_manifest(
@@ -608,67 +715,83 @@ def _register_to_gate_registry(
 # 重复检查
 # ===================================================================
 
-def _check_duplicate_functionality(name: str, description: str, domain: str = "", subdomain: str = "") -> None:
-    """SSoT门禁：检查功能域重叠。硬阻断——重叠时禁止创建。"""
-    try:
-        from zephyr.infrastructure.registry_governance import FunctionalDomainRegistry
-        registry = FunctionalDomainRegistry()
-        overlap = registry.check_overlap(
-            domain=domain,
-            subdomain=subdomain,
-            name=name,
-            description=description,
-        )
-        if overlap.has_overlap:
-            details = "; ".join(overlap.overlap_details)
-            raise ScaffoldError(
-                f"SSoT门禁阻断：功能域重叠检测到\n"
-                f"  {details}\n"
-                f"  复用决策（RULE-EIGHT）：\n"
-                f"    完全覆盖 → 直接用已有模块\n"
-                f"    80%覆盖 → 扩展已有模块\n"
-                f"    50%覆盖 → 重构已有+扩展\n"
-                f"    0%覆盖 → 确认domain/subdomain后重新创建\n"
-                f"  如确需新建，请指定 --domain 和 --subdomain 参数声明新功能域"
+
+def _check_duplicate_functionality(
+    name: str,
+    description: str,
+    domain: str = "",
+    subdomain: str = "",
+    force_override: bool = False,
+) -> None:
+    """SSoT门禁：检查功能域重叠。硬阻断——重叠时禁止创建。
+
+    force_override=True 时跳过蓝图关键词匹配检查（功能域注册表检查仍执行）。
+    用于确认 SSoT 误报后强制创建。
+    """
+    if force_override:
+        # 仅跳过蓝图关键词匹配；功能域注册表检查仍执行（防止真重复）
+        pass
+    else:
+        try:
+            from zephyr.infrastructure.registry_governance import FunctionalDomainRegistry
+
+            registry = FunctionalDomainRegistry()
+            overlap = registry.check_overlap(
+                domain=domain,
+                subdomain=subdomain,
+                name=name,
+                description=description,
             )
-    except ScaffoldError:
-        raise
-    except ImportError:
-        pass
-    except Exception as exc:
-        print(f"  WARNING: 功能域注册表检查失败: {exc}")
-
-    try:
-        from zephyr.integration.mcp import BlueprintSearchServer
-    except ImportError:
-        return
-
-    query = f"{name} {description}".strip()
-    if not query or len(query) < 3:
-        return
-
-    try:
-        server = BlueprintSearchServer()
-        result = server._find_relevant_blueprint(query, num_results=5)
-        matches = result.get("results", [])
-        for m in matches[:3]:
-            score = m.get("relevance_score", 0)
-            if score >= 20:
+            if overlap.has_overlap:
+                details = "; ".join(overlap.overlap_details)
                 raise ScaffoldError(
-                    f"SSoT门禁阻断：蓝图关键词匹配检测到类似功能\n"
-                    f"  已有蓝图: {m.get('blueprint_id', '?')} (score={score})\n"
-                    f"  description: {m.get('hint', 'N/A')}\n"
-                    f"  level={m.get('blueprint_level')} priority={m.get('priority')}\n"
+                    f"SSoT门禁阻断：功能域重叠检测到\n"
+                    f"  {details}\n"
                     f"  复用决策（RULE-EIGHT）：\n"
-                    f"    完全覆盖 → 直接用已有蓝图\n"
-                    f"    80%覆盖 → 扩展已有蓝图\n"
+                    f"    完全覆盖 → 直接用已有模块\n"
+                    f"    80%覆盖 → 扩展已有模块\n"
                     f"    50%覆盖 → 重构已有+扩展\n"
-                    f"    0%覆盖 → 确认后使用 --force-override 强制创建"
+                    f"    0%覆盖 → 确认domain/subdomain后重新创建\n"
+                    f"  如确需新建，请指定 --domain 和 --subdomain 参数声明新功能域"
                 )
-    except ScaffoldError:
-        raise
-    except Exception:
-        pass
+        except ScaffoldError:
+            raise
+        except ImportError:
+            pass
+        except Exception as exc:
+            print(f"  WARNING: 功能域注册表检查失败: {exc}")
+
+        try:
+            from zephyr.integration.mcp import BlueprintSearchServer
+        except ImportError:
+            return
+
+        query = f"{name} {description}".strip()
+        if not query or len(query) < 3:
+            return
+
+        try:
+            server = BlueprintSearchServer()
+            result = server._find_relevant_blueprint(query, num_results=5)
+            matches = result.get("results", [])
+            for m in matches[:3]:
+                score = m.get("relevance_score", 0)
+                if score >= 20:
+                    raise ScaffoldError(
+                        f"SSoT门禁阻断：蓝图关键词匹配检测到类似功能\n"
+                        f"  已有蓝图: {m.get('blueprint_id', '?')} (score={score})\n"
+                        f"  description: {m.get('hint', 'N/A')}\n"
+                        f"  level={m.get('blueprint_level')} priority={m.get('priority')}\n"
+                        f"  复用决策（RULE-EIGHT）：\n"
+                        f"    完全覆盖 → 直接用已有蓝图\n"
+                        f"    80%覆盖 → 扩展已有蓝图\n"
+                        f"    50%覆盖 → 重构已有+扩展\n"
+                        f"    0%覆盖 → 确认后使用 --force-override 强制创建"
+                    )
+        except ScaffoldError:
+            raise
+        except Exception:
+            pass
 
 
 def _check_manifest_duplicate(rel_path: str) -> None:
@@ -683,8 +806,7 @@ def _check_manifest_duplicate(rel_path: str) -> None:
     for entry in scripts:
         if entry.get("path") == target:
             raise ScaffoldError(
-                f"script_manifest.yaml 中已存在: {target}\n"
-                f"description: {entry.get('description', 'N/A')}"
+                f"script_manifest.yaml 中已存在: {target}\ndescription: {entry.get('description', 'N/A')}"
             )
 
 
@@ -708,6 +830,7 @@ def _check_gate_registry_duplicate(gate_id: str) -> None:
 # ===================================================================
 # 通用工具
 # ===================================================================
+
 
 def _check_naming(file_path: str, dir_path: str) -> None:
     """命名规范门禁：调用 check_naming_convention 检查文件名和目录名。
@@ -737,6 +860,7 @@ def _notify_asset_inventory(file_path: str, asset_type: str, dry_run: bool) -> N
 
     try:
         from zephyr.governance.asset_inventory.telemetry import get_telemetry
+
         telemetry = get_telemetry()
         telemetry.inc(f"scaffold_{asset_type}_created")
     except Exception:
@@ -768,7 +892,7 @@ def _remind_sys_master_dispatch(package: str, name: str, description: str) -> No
         search_key = name.replace("-", "_").replace("/", "_")
         if search_key not in text and name not in text:
             print(f"  ⚠️  REMINDER: '{name}' not found in SYS-MASTER-001 §0.2 dispatch table.")
-            print(f"  ⚠️  If this module serves a new task domain, add a row to §0.2:")
+            print("  ⚠️  If this module serves a new task domain, add a row to §0.2:")
             print(f"  ⚠️    | {description or name} | 本蓝图 §N | <module blueprint> | ~400 |")
     except Exception:
         pass
@@ -795,7 +919,10 @@ def _sync_blueprint_file_list(package: str, name: str, dry_run: bool) -> None:
     for bp in blueprint_candidates:
         try:
             text = bp.read_text(encoding="utf-8")
-            if f"actual_disk_path: \"src/zephyr/{package}/\"" in text or f"actual_disk_path: 'src/zephyr/{package}/'" in text:
+            if (
+                f'actual_disk_path: "src/zephyr/{package}/"' in text
+                or f"actual_disk_path: 'src/zephyr/{package}/'" in text
+            ):
                 target_blueprint = bp
                 break
         except Exception:
@@ -810,11 +937,12 @@ def _sync_blueprint_file_list(package: str, name: str, dry_run: bool) -> None:
         actual_count = len(actual_files)
 
         import re
-        section_match = re.search(r'###\s*§0\.1\s+代码文件清单', content)
+
+        section_match = re.search(r"###\s*§0\.1\s+代码文件清单", content)
         if not section_match:
             return
 
-        listed_match = re.findall(r'^\|\s*\d+\s*\|\s*`([^`]+)`', content[section_match.start():], re.MULTILINE)
+        listed_match = re.findall(r"^\|\s*\d+\s*\|\s*`([^`]+)`", content[section_match.start() :], re.MULTILINE)
         listed_files = set(listed_match)
         actual_set = set(actual_files)
         missing_in_blueprint = actual_set - listed_files
@@ -823,7 +951,11 @@ def _sync_blueprint_file_list(package: str, name: str, dry_run: bool) -> None:
             return
 
         last_row_match = None
-        for m in re.finditer(r'^\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|', content[section_match.start():], re.MULTILINE):
+        for m in re.finditer(
+            r"^\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|",
+            content[section_match.start() :],
+            re.MULTILINE,
+        ):
             last_row_match = m
         if last_row_match is None:
             return
@@ -852,7 +984,9 @@ def _sync_blueprint_file_list(package: str, name: str, dry_run: bool) -> None:
             f.write(content)
         os.replace(tmp_path, str(target_blueprint))
 
-        print(f"  📋 SYNCED: Added {len(missing_in_blueprint)} file(s) to blueprint §0.1: {sorted(missing_in_blueprint)}")
+        print(
+            f"  📋 SYNCED: Added {len(missing_in_blueprint)} file(s) to blueprint §0.1: {sorted(missing_in_blueprint)}"
+        )
     except Exception as e:
         print(f"  ⚠️  SYNC-FAILED: Could not update blueprint §0.1: {e}")
 
@@ -883,10 +1017,10 @@ def _to_class_name(name: str) -> str:
 def _to_kebab_case(name: str) -> str:
     """将任意命名转换为 kebab-case。支持 snake_case、PascalCase、camelCase。"""
     # 先处理 camelCase / PascalCase：在大写字母前插入连字符
-    result = re.sub(r'([a-z0-9])([A-Z])', r'\1-\2', name)
+    result = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", name)
     # 再将下划线和空格替换为连字符
-    result = re.sub(r'[_\s]+', '-', result).lower().strip('-')
-    result = re.sub(r'-+', '-', result)
+    result = re.sub(r"[_\s]+", "-", result).lower().strip("-")
+    result = re.sub(r"-+", "-", result)
     return result
 
 
@@ -907,8 +1041,7 @@ def _list_packages() -> str:
     pkgs = [
         d.name
         for d in sorted(SRC_ZEPHYR.iterdir())
-        if d.is_dir() and not d.name.startswith("_") and not d.name.startswith(".")
-        and (d / "__init__.py").exists()
+        if d.is_dir() and not d.name.startswith("_") and not d.name.startswith(".") and (d / "__init__.py").exists()
     ]
     return ", ".join(pkgs[:20])
 
@@ -916,6 +1049,7 @@ def _list_packages() -> str:
 # ===================================================================
 # CLI
 # ===================================================================
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -941,6 +1075,7 @@ def main() -> None:
     p_scr.add_argument("--domain", default="", help="功能域 (e.g. governance)")
     p_scr.add_argument("--subdomain", default="", help="子功能域 (e.g. gate_engine)")
     p_scr.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
+    p_scr.add_argument("--force-override", action="store_true", help="跳过蓝图关键词匹配检查（SSoT误报时使用）")
 
     # gate
     p_gate = sub.add_parser("gate", help="创建 src/zephyr/gates/<id>.yaml")
@@ -956,6 +1091,20 @@ def main() -> None:
     p_yaml.add_argument("--domain", default="", help="功能域 (e.g. governance)")
     p_yaml.add_argument("--subdomain", default="", help="子功能域")
     p_yaml.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
+
+    # rule
+    p_rule = sub.add_parser("rule", help="创建 trae_XXX.yaml 规则文件（自带标准 frontmatter）")
+    p_rule.add_argument("name", help="规则文件名标识（snake_case，e.g. arch_new_rule）")
+    p_rule.add_argument("--title", required=True, help="规则标题")
+    p_rule.add_argument("--scope", required=True, help="规则作用域 (e.g. arch_new_rule)")
+    p_rule.add_argument("--layer", default="L1", help="层级 L0/L1/L2/L3 (默认 L1)")
+    p_rule.add_argument("--severity", default="error", help="严重度 critical/error/warning (默认 error)")
+    p_rule.add_argument("--stability", default="evolving", help="frozen/stable/evolving/volatile (默认 evolving)")
+    p_rule.add_argument("--safety-level", default="L", help="H/M/L (默认 L)")
+    p_rule.add_argument(
+        "--ai-autonomy", default="ai_modifiable", help="immutable_core/human_gated/ai_modifiable (默认 ai_modifiable)"
+    )
+    p_rule.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
 
     # json
     p_json = sub.add_parser("json", help="创建 JSON 文件（kebab-case 强制）")
@@ -978,17 +1127,46 @@ def main() -> None:
 
     try:
         if args.mode == "module":
-            engine.create_module(args.package, args.name, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
+            engine.create_module(
+                args.package,
+                args.name,
+                args.desc,
+                domain=getattr(args, "domain", ""),
+                subdomain=getattr(args, "subdomain", ""),
+            )
         elif args.mode == "script":
-            engine.create_script(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
+            engine.create_script(
+                args.path,
+                args.desc,
+                domain=getattr(args, "domain", ""),
+                subdomain=getattr(args, "subdomain", ""),
+                force_override=getattr(args, "force_override", False),
+            )
         elif args.mode == "gate":
             engine.create_gate(args.gate_id, args.title, args.category)
         elif args.mode == "yaml":
-            engine.create_yaml(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
+            engine.create_yaml(
+                args.path, args.desc, domain=getattr(args, "domain", ""), subdomain=getattr(args, "subdomain", "")
+            )
+        elif args.mode == "rule":
+            engine.create_rule(
+                args.name,
+                args.title,
+                args.scope,
+                layer=args.layer,
+                severity=args.severity,
+                stability=args.stability,
+                safety_level=args.safety_level,
+                ai_autonomy=args.ai_autonomy,
+            )
         elif args.mode == "json":
-            engine.create_json(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
+            engine.create_json(
+                args.path, args.desc, domain=getattr(args, "domain", ""), subdomain=getattr(args, "subdomain", "")
+            )
         elif args.mode == "md":
-            engine.create_md(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
+            engine.create_md(
+                args.path, args.desc, domain=getattr(args, "domain", ""), subdomain=getattr(args, "subdomain", "")
+            )
         else:
             parser.print_help()
             sys.exit(1)

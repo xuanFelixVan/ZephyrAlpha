@@ -28,7 +28,6 @@
 对标: 微服务 Saga Orchestrator + 长期事务(Long Lived Transaction)
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -94,8 +93,10 @@ class A2ASaga:
         compensate_params: dict | None = None,
     ) -> SagaStep:
         step = SagaStep(
-            step_id=step_id, agent_id=agent_id,
-            action_name=action_name, params=params,
+            step_id=step_id,
+            agent_id=agent_id,
+            action_name=action_name,
+            params=params,
         )
         self._steps.append(step)
         self._compensations[step_id] = {
@@ -108,7 +109,6 @@ class A2ASaga:
         self,
         action_funcs: dict[str, callable],
     ) -> SagaResult:
-
         self._status = SagaStatus.RUNNING
         result = SagaResult(saga_id=self._saga_id, status=SagaStatus.RUNNING)
 

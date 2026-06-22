@@ -2,9 +2,11 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-017
 title: Delivery
 module_id: MOD-017
+updated: "2026-06-22"
+---
 
 # Delivery — 目录索引
 
@@ -22,4 +24,4 @@ module_id: MOD-017
 
 ## 父级目录
 
-- 父级：[task-card-kms](../index.md)
+- 父级：[task_card_kms](../index.md)

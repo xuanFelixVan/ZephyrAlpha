@@ -48,13 +48,16 @@ class TestContractBusLoader:
 
     def test_validate_payload_valid(self):
         loader = ContractBusLoader()
-        result = loader.validate_payload("CT-SLO-001", {
-            "slo_id": "sli_1",
-            "metric": "latency",
-            "target": 0.999,
-            "window": "5m",
-            "severity": "critical",
-        })
+        result = loader.validate_payload(
+            "CT-SLO-001",
+            {
+                "slo_id": "sli_1",
+                "metric": "latency",
+                "target": 0.999,
+                "window": "5m",
+                "severity": "critical",
+            },
+        )
         assert result.slo_id == "sli_1"
 
     def test_validate_payload_missing_field(self):

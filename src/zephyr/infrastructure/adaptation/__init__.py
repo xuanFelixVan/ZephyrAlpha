@@ -6,12 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.adaptation — auto-generated package init."""
-from . import execution_tuner
-from . import prompt_version_manager
 
-__all__ = ['execution_tuner', 'prompt_version_manager']
+from . import execution_tuner, prompt_version_manager
 
+__all__ = ["execution_tuner", "prompt_version_manager"]

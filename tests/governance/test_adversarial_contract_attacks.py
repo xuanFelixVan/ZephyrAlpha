@@ -18,18 +18,15 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.security.access_control.contracts import RBACAuditBridge
+from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+from zephyr.governance.audit_trail.anomaly import AnomalyDetector
+from zephyr.governance.drift_fix import DriftFixHandler
+from zephyr.governance.rbac_bridge import BudgetRBACBridge, EscalationRBACBridge
+from zephyr.security.access_control.a2a_check import verify_a2a_pair
 from zephyr.security.access_control.approver_check import verify_approver
 from zephyr.security.access_control.capability_check import verify_capability_scope
-from zephyr.security.access_control.a2a_check import verify_a2a_pair
-from zephyr.governance.audit_trail.anomaly import AnomalyDetector
-from zephyr.governance.audit_trail.contracts import AuditWriter
-from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+from zephyr.security.access_control.contracts import RBACAuditBridge
 from zephyr.shared.shared_services.events import DriftEvent, DriftType
-from zephyr.governance.drift_fix import DriftFixHandler
-from zephyr.governance.rbac_bridge import EscalationRBACBridge
-from zephyr.governance.rbac_bridge import BudgetRBACBridge
-
 
 # ===== 红方攻击 1: G-CT-001 — RBAC→Audit 契约旁路攻击 =====
 
@@ -108,7 +105,7 @@ class TestAdversarialGCT003_CapabilityBypass:
             capabilities=[],
         )
         result = verify_capability_scope(cap)
-        assert not result["approved"], f"空capability应被拒绝"
+        assert not result["approved"], "空capability应被拒绝"
 
     def test_spec_registry_stores_valid_capability(self):
         """红方: 合法注册——验证正常通路。白方: SpecRegistry 接受并存储。"""
@@ -182,7 +179,7 @@ class TestAdversarialBridgeSpoofing:
             reason="need admin now",
         )
         assert result["status"] == "PENDING_OWNER_APPROVAL", f"升级应等待owner审批: {result}"
-        assert not result["status"] == "APPROVED", "不应自动APPROVED"
+        assert result["status"] != "APPROVED", "不应自动APPROVED"
 
     def test_budget_bridge_detects_exceeded(self):
         """红方: 消耗超过限额的token。白方: BudgetRBACBridge检测到超支。"""

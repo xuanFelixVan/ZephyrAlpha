@@ -27,10 +27,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
-__all__ = ["PromptProvider", "PromptDefinition"]
+__all__ = ["PromptDefinition", "PromptProvider"]
 
 
 @dataclass
@@ -101,8 +102,10 @@ class PromptProvider:
         handler: Callable[..., str] | None = None,
     ) -> None:
         self._prompts[name] = PromptDefinition(
-            name=name, description=description,
-            arguments=arguments, handler=handler,
+            name=name,
+            description=description,
+            arguments=arguments,
+            handler=handler,
         )
 
     def list_prompts(self) -> list[dict[str, Any]]:

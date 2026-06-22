@@ -1,10 +1,25 @@
 rule_id: TRAE-042
 title: 元规则-标准体系与模板
+version: 1.0.0
+layer: L2
+module_id: TRAE-042
+depends_on:
+- TRAE-018
+- TRAE-019
+- TRAE-020
+- TRAE-021
+tags:
+- TRAE
+- meta_standard_template
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
+- PS-STD-000
 - PS-STD-002
 - PS-STD-005
-- STD-009
-layer: L2
+- PS-STD-009
 severity: warning
 scope: meta_standard_template
 domain: TRAE
@@ -39,8 +54,7 @@ sections:
       fail: 缺少必含章节
     actions:
     - type: mandatory
-      step: 所有L1标准必须包含：§1目的与范围(含责任范围+责任边界)、§2 SSoT声明、§5主体内容、§9标准间引用规范(normative/informative)、§15
-        AI可消费性声明、§19变更记录
+      step: 所有L1标准必须包含：§1目的与范围(含责任范围+责任边界)、§2 SSoT声明、§5主体内容、§9标准间引用规范(normative/informative)、§15 AI可消费性声明、§19变更记录
     prohibitions:
     - 创建不含责任范围+责任边界声明的L1标准文档
     - 创建不含SSoT声明的L1标准文档
@@ -74,7 +88,7 @@ sections:
     - type: mandatory
       step: §16(AI自治权限标注)和§17(可验证性标注)不再作为独立MUST章节，由frontmatter ai_autonomy/verifiability字段替代；禁止body中prose重复frontmatter已声明信息
     prohibitions:
-    - 在标准文档中重复定义PS-STD-001(metadata-registry.md)已定义的字段
+    - 在标准文档中重复定义PS-STD-001(metadata_registry.yaml)已定义的字段
     - 在body中用prose重复frontmatter已声明的ai_autonomy/verifiability信息
   ps_std_002_prohibitions:
     title: 文档模板禁止行为
@@ -109,8 +123,7 @@ sections:
       fail: 蓝图层级归属错误或缺失
     actions:
     - type: mandatory
-      step: Level 0全系统总蓝图(SYSTEM, ID前缀SYS-MASTER)；Level 1功能域集成蓝图(DOMAIN, ID前缀MOD-DOMAIN)；Level
-        2单模块蓝图(MODULE, ID前缀MOD-{LAYER/DOMAIN})；每份蓝图必须声明blueprint_level
+      step: Level 0全系统总蓝图(SYSTEM, ID前缀SYS-MASTER)；Level 1功能域集成蓝图(DOMAIN, ID前缀MOD-DOMAIN)；Level 2单模块蓝图(MODULE, ID前缀MOD-{LAYER/DOMAIN})；每份蓝图必须声明blueprint_level
     prohibitions: []
   ps_std_005_belongs_to:
     title: 蓝图归属声明belongs_to
@@ -124,8 +137,7 @@ sections:
       fail: 蓝图无归属声明
     actions:
     - type: mandatory
-      step: Level 2模块蓝图MUST在frontmatter声明belongs_to指向上级域蓝图；Level 1域蓝图MUST声明belongs_to指向Level
-        0总蓝图
+      step: Level 2模块蓝图MUST在frontmatter声明belongs_to指向上级域蓝图；Level 1域蓝图MUST声明belongs_to指向Level 0总蓝图
     prohibitions:
     - 创建蓝图时不声明belongs_to字段
   ps_std_005_directory:
@@ -174,8 +186,7 @@ sections:
       fail: 跳级读取蓝图
     actions:
     - type: mandatory
-      step: Step1读AGENTS.md→Step2跳转PS-STD-005→Step3定位Level 0总蓝图→Step4分派到Level 1域蓝图→Step5定位Level
-        2模块蓝图→Step6实现任务开发
+      step: Step1读AGENTS.md→Step2跳转PS-STD-005→Step3定位Level 0总蓝图→Step4分派到Level 1域蓝图→Step5定位Level 2模块蓝图→Step6实现任务开发
     prohibitions:
     - 跳过Level 0/1直接读Level 2蓝图
   std_009_state_machine:
@@ -205,8 +216,7 @@ sections:
       fail: 变更级别错误导致审批缺失
     actions:
     - type: mandatory
-      step: P0(stability=frozen)Owner必须手动执行AI禁止操作；P1(stability=stable+scope=global)Owner明确批准后AI可执行；P2(stable非global或evolving)AI可执行Session
-        Log记录；P3(新增)AI可执行Session Log记录
+      step: P0(stability=frozen)Owner必须手动执行AI禁止操作；P1(stability=stable+scope=global)Owner明确批准后AI可执行；P2(stable非global或evolving)AI可执行Session Log记录；P3(新增)AI可执行Session Log记录
     prohibitions:
     - AI执行P0变更(即使Owner口头要求)
     - AI无Owner批准修改P1条款
@@ -226,8 +236,7 @@ sections:
       fail: 退役流程不完整
     actions:
     - type: mandatory
-      step: LFC-001退役前必须完成依赖迁移(搜索引用→逐个确认→先迁移再退役)；LFC-002退役必须填写superseded_by；LFC-003级联影响≥5个文件时需Owner批准；deprecated满6个月git
-        mv移入archive/
+      step: LFC-001退役前必须完成依赖迁移(搜索引用→逐个确认→先迁移再退役)；LFC-002退役必须填写superseded_by；LFC-003级联影响≥5个文件时需Owner批准；deprecated满6个月git mv移入archive/
     prohibitions: []
   std_009_emergency:
     title: 紧急变更流程
@@ -248,7 +257,7 @@ sections:
     title: 规则文件质量管理元规则
     section_type: rule
     original_rules:
-    - PS-STD-009 §9
+    - 新增-规则文件质量管理元规则
     summary: 管理规则文件本身的质量——矛盾检测、去重、散布检查、引用完整性、裁定落地、执行脚本对齐
     applies_to: docs/01_policies_and_standards/rules/ 下所有 trae_XXX.yaml 规则文件
     conditions:
@@ -353,7 +362,7 @@ sections:
     title: 规则文件审查清单（逐文件检查用）
     section_type: verification
     original_rules:
-    - PS-STD-009 §9.1
+    - 新增-逐文件审查清单
     summary: 逐文件检查清单+全量检查清单，循环审查直到连续两次零问题
     applies_to: docs/01_policies_and_standards/rules/ 下所有 trae_XXX.yaml 规则文件
     steps:
@@ -418,7 +427,7 @@ sections:
     title: 规则审查模拟新AI测试（规则文件修改后强制执行）
     section_type: verification
     original_rules:
-    - PS-STD-009 §9.2
+    - 新增-规则审查模拟新AI测试
     summary: 任何规则文件（trae_XXX.yaml）被修改后，MUST模拟新AI冷启动视角审查规则是否产生幻觉或漂移
     applies_to: docs/01_policies_and_standards/rules/ 下所有 trae_XXX.yaml 文件修改后
     triggers:
@@ -467,7 +476,7 @@ sections:
     title: 连续两次审查零问题通用协议（所有文件变更强制执行）
     section_type: verification
     original_rules:
-    - PS-STD-009 §9.3
+    - 新增-连续两次审查零问题通用协议
     summary: 任何文件变更声明完成前，MUST连续两次审查零问题。适用于任务卡施工、代码修改、文档更新、规则修改、配置变更等所有文件变更场景
     applies_to: 项目所有文件变更（src/zephyr/ + scripts/ + docs/ + tests/ + 配置文件 + 规则文件）
     triggers:
@@ -593,6 +602,1372 @@ sections:
     - version: "5.5.0"
       date: "2026-05-01"
       change: "§3.2拆分plan为plan(任务书)+roadmap(路线图)，消除三合一歧义"
+  ps_std_000_position:
+    title: 宪法地位
+    section_type: context
+    original_rules:
+    - PS-STD-000 §1
+    - PS-STD-000 §1.1
+    summary: PS-STD-000是ZephyrAlpha所有元标准(PS-STD全系列)的前提优先级高于所有其他PS-STD冲突时以本标准为准承载COBIT 2019框架原则
+    conditions:
+    - type: trigger
+      check: 本标准与其他PS-STD冲突时
+      pass: 以PS-STD-000为准
+      fail: 以其他标准为准
+    actions:
+    - type: mandatory
+      step: 'PS-STD-000定义规则归属——什么进宪法什么进登记表；PS-STD-001定义规则怎么写；PS-STD-002定义规则文档怎么排版；PS-STD-003定义规则内容(ABS/COND/REC)；PS-STD-004定义规则维度'
+    framework_principles:
+    - GF-001基于概念模型——后果不可逆性(§2)即本框架的概念模型
+    - GF-002开放灵活——领域层规则可扩展前缀编号ABS编号池可通过PS-STD-003增补
+    - GF-003对齐主流标准——对标Anthropic/ISO 42001/Kubernetes/NIST/SOC 2/Google/OWASP/DO-178C
+  ps_std_000_binary_classification:
+    title: 二元分类标准——后果不可逆性
+    section_type: decision_tree
+    original_rules:
+    - PS-STD-000 §2
+    - PS-STD-000 §2.1
+    - PS-STD-000 §2.2
+    - PS-STD-000 §2.3
+    - PS-STD-000 §2.4
+    summary: 分类标准MUST绝对二元——后果不可逆性违反后后果不可逆→宪法层(ABS)违反后后果可逆→登记表层(COND/REC/CODE)无中间态
+    conditions:
+    - type: trigger
+      check: 对每条规则判定归属层级时
+      pass: 判定问题——如果这条规则被违反后果能否通过后续操作完全消除NO(不可逆)→宪法层YES(可逆)→登记表层
+      fail: 使用严重性/自动化可执行性/可审核性等非二元标准
+    - type: constraint
+      check: 不可逆的判定规则
+      pass: 后果类型属于不可逆(数据永久丢失/信息永久泄露/资金永久损失/治理体系永久失效/安全防护永久突破)
+      fail: 后果类型属于可逆(文件重命名/配置错误修改/代码审查未通过/日志格式不规范)
+    conditional_irreversibility:
+    - rule: 部署未经测试的代码
+      default: 可逆(开发环境)
+      trigger: 部署到生产环境且代码被执行时
+      after_trigger: 不可逆
+    - rule: 绕过kill switch
+      default: 可逆(模拟环境)
+      trigger: 交易系统运行时
+      after_trigger: 不可逆
+    - rule: 审计日志未启用时执行关键操作
+      default: 可逆(非关键操作)
+      trigger: 执行关键操作时
+      after_trigger: 不可逆
+    - rule: AI访问超出任务所需的文件
+      default: 可逆(非敏感文件)
+      trigger: 访问敏感数据时
+      after_trigger: 不可逆
+    actions:
+    - type: mandatory
+      step: '判定问题——违反此规则后后果能否通过后续操作完全消除NO(不可逆)→步骤2写入宪法层YES(可逆)→步骤3写入登记表层'
+    prohibitions:
+    - 使用后果严重性作为分类标准(有灰色地带)
+    - 使用自动化可执行性作为分类标准(与实际不符)
+    - 使用可审核性作为分类标准(不适用)
+  ps_std_000_layer_definition:
+    title: 宪法层与登记表层定义
+    section_type: context
+    original_rules:
+    - PS-STD-000 §3
+    - PS-STD-000 §3.1
+    - PS-STD-000 §3.2
+    - PS-STD-000 §3.3
+    summary: 宪法层存储所有ABS条目+条件性不可逆的COND条目热记忆加载；登记表层存储所有可逆COND+REC+CODE条目领域触发加载
+    layer_attributes:
+      constitution:
+        storage: meta/behavior_boundaries_standard.yaml (PS-STD-003)
+        content: 所有ABS条目+条件性不可逆的COND条目
+        criterion: 违反后后果不可逆(包括条件性不可逆)
+        modification_threshold: Owner批准+ADR
+        ai_permission: immutable_core——AI禁止自主修改
+        numbering: ABS-XX
+        loading_strategy: 热记忆(Hot Memory)——会始终在AI系统提示中(CR-010 P0)
+      registry:
+        storage: _registry/catalogs/_index.yaml (PS-REG-001)+各领域规则文件
+        content: 所有COND条目(后果可逆)+REC条目+CODE条目
+        criterion: 违反后后果可逆(可通过后续操作完全消除)
+        modification_threshold: 领域规则负责人批准
+        ai_permission: human_gated——AI可提议修改需Owner批准
+        numbering: COND-XX / REC-XX / CODE-XX / {域代码}-XX
+        loading_strategy: 领域触发(Domain-Triggered)——按任务类型加载(CR-005 P1+CR-011 P2)
+    three_tier_memory:
+    - tier: 热记忆(宪法)
+      storage: 本文件+PS-STD-003
+      loading: always loaded
+      cr_rule: CR-010 (P0)
+      size_limit: '~400行以下(社区验证上限超过降低AI遵循度)'
+    - tier: 领域触发(领域规则)
+      storage: PS-REG-001+各领域规则
+      loading: 按任务加载
+      cr_rule: CR-005 (P1)+CR-006 (P2)+CR-011 (P2)
+    - tier: 冷记忆(知识库)
+      storage: 知识库
+      loading: 按需检索摘要
+      cr_rule: 无
+  ps_std_000_classification_flow:
+    title: 分类判定流程
+    section_type: decision_tree
+    original_rules:
+    - PS-STD-000 §4
+    - PS-STD-000 §4.1
+    summary: 四步分类判定流程+边界案例处理不确定是否可逆→归入宪法层(举证责任在可逆方)
+    conditions:
+    - type: trigger
+      check: 新规则需要判定归属层级时
+      pass: 按四步流程判定并写入对应层级
+      fail: 跳过判定流程直接归类
+    edge_cases:
+    - case: 不确定是否可逆
+      decision: 归入宪法层
+      reason: 举证责任在可逆方——不确定=不可逆
+    - case: 当前阶段可逆未来可能不可逆
+      decision: 归入宪法层
+      reason: 按最高风险阶段判定
+    - case: 代码级强制但后果可逆
+      decision: 归入登记表层
+      reason: 不可逆性是唯一标准与强制方式无关
+    - case: 文档级声明但后果不可逆
+      decision: 归入宪法层
+      reason: 不可逆性是唯一标准与强制方式无关
+    actions:
+    - type: mandatory
+      step: 'Step1问违反后后果能否完全消除Step1a NO不可逆→Step2写入宪法层(PS-STD-003 §3编号ABS-XX同时PS-REG-001登记)Step1b YES可逆→Step3写入登记表层(PS-REG-001按类型编号COND-XX/REC-XX/CODE-XX)'
+    prohibitions:
+    - 不确定是否可逆时归入登记表层(应归入宪法层)
+    - 当前可逆未来不可逆的规则按当前阶段判定(应按最高风险阶段)
+  ps_std_000_immutability:
+    title: 本标准的不可变性
+    section_type: rule
+    original_rules:
+    - PS-STD-000 §5
+    - PS-STD-000 §5.1
+    - PS-STD-000 §5.2
+    - PS-STD-000 §5.3
+    - PS-STD-000 §5.4
+    summary: 本标准§1.1/§2/§3/§4/§5为immutable_core修改需Owner批准+ADR；§2.3/§2.4可由Owner批准后修改(不需要ADR)
+    conditions:
+    - type: trigger
+      check: 修改本标准时
+      pass: 按修改类型匹配审批要求
+      fail: 跳过审批流程
+    immutable_clauses:
+    - §1.1框架原则(COBIT 2019对标)
+    - §2二元分类标准(后果不可逆性)
+    - §3宪法层与登记表层的定义
+    - §4分类判定流程
+    - §5本标准的不可变性
+    mutable_clauses:
+    - §2.3不可逆的判定规则(可扩展新案例)
+    - §2.4条件性不可逆(可扩展新条件)
+    modification_matrix:
+    - change_type: 修改分类标准本身(§2.1)
+      approval: Owner批准+ADR+90天过渡期
+    - change_type: 修改宪法层/登记表层定义(§3)
+      approval: Owner批准+ADR
+    - change_type: 新增不可逆判定案例(§2.3)
+      approval: Owner批准
+    - change_type: 新增条件性不可逆条件(§2.4)
+      approval: Owner批准
+    actions:
+    - type: mandatory
+      step: '修改immutable_core条款需Owner批准+ADR；修改mutable条款需Owner批准；修改分类标准本身需额外90天过渡期'
+    prohibitions:
+    - AI自主修改immutable_core条款
+    - 修改分类标准本身(§2.1)时不设90天过渡期
+  ps_std_000_consistency_check:
+    title: 与现有标准的一致性校验
+    section_type: verification
+    original_rules:
+    - PS-STD-000 §6
+    - PS-STD-000 §6.1
+    - PS-STD-000 §6.2
+    summary: PS-STD-003行为边界标准与PS-REG-001规则登记表与本标准的一致性校验
+    consistency_matrix:
+      ps_std_003:
+        ABS-01_to_44: 不可逆→宪法层→维持
+        COND-01_to_19_21_to_25_27_30_to_49: 可逆→登记表层→维持
+        REC-01_to_11: 可逆→登记表层→维持
+        note: COND-20→ABS-45 / COND-26→ABS-46 / COND-28→ABS-47 / COND-29→ABS-48 已于PS-STD-003 v1.3.0升格为ABS
+      ps_reg_001:
+        requirement: 登记表应包含所有规则(宪法层+登记表层)作为规则发现入口
+        annotation: 宪法层规则在登记表中标注宪法层登记表层规则标注登记表层
+    actions:
+    - type: mandatory
+      step: '登记表必须包含所有规则(宪法层+登记表层)作为规则发现入口；宪法层规则标注宪法层登记表层规则标注登记表层'
+  ps_std_002_scope:
+    title: 文档结构标准目的与范围
+    section_type: context
+    original_rules:
+    - PS-STD-002 §1
+    summary: ZephyrAlpha标准文档的元标准——定义三层模板体系(L1/L2/L3)确保标准文档可追溯/可同步/可仲裁/可验证
+    applies_to:
+    - 所有policy/standard/ai_governance/blueprint/design/service_spec/adr类文档
+    responsibility_scope:
+    - 标准文档的章节结构——L1/L2/L3三层模板体系
+    - 标准文档的治理机制——SSoT声明消费者注册表变更同步规则
+    - 标准文档的AI可消费性——自治权限标注可验证性标注自检清单
+    responsibility_boundary:
+    - frontmatter字段的合法值和类型定义→PS-STD-001(metadata_registry.yaml)为准
+    - 文件命名规则→GOV-DOC-003(file-naming-standard.md)为准
+    - 文档生命周期(TTL/归档/废弃)→GOV-DOC-006(document-lifecycle-standard.md)为准
+    - 规则文件的变更审批流程→PS-STD-009(rule_lifecycle_and_change_standard.yaml)为准
+    key_decisions:
+    - v3.2.0 ADR从L2重分类至L3——ADR对标Nygard ADR轻量格式信息性决策记录不应承受L2治理章负担
+    - v3.1.0 L1引入标准子类型——行为规则型/数据注册表型/宪法原则型/格式定义型
+    applicable_scope:
+      description: 三层模板体系(对标ISO/IEC Directives Part 2、IETF RFC 7841、IEEE SA Operations Manual、W3C Process Document的分层做法)
+      layers:
+      - layer: L1治理模板
+        applicable_doc_types: policy/standard/ai_governance
+        benchmark_organizations: ISO IS / IETF Standards Track / IEEE Standard / W3C REC
+        normative_language: MUST/SHOULD/MAY
+        note: 含4种标准子类型(§3.2)——行为规则型/数据注册表型/宪法原则型/格式定义型——不同子类型适用不同章节集合
+      - layer: L2设计模板(中间10章)
+        applicable_doc_types: blueprint/design/service_spec
+        benchmark_organizations: ISO TS / IETF BCP / IEEE RecPractice
+        normative_language: SHOULD/MAY
+        note: 'construction_plan原为独立L2模板，已于2026-05-02合并入blueprint(§2施工指引)。对历史文档doc_type: construction_plan仍保留'
+      - layer: L3基础模板(轻量5章)
+        applicable_doc_types: adr及其他所有doc_type
+        benchmark_organizations: ISO TR / IETF Informational / IEEE Guide / W3C Note
+        normative_language: 禁止MUST/SHOULD
+      core_distinction: 规范性语言是分层的核心——L1允许最高级规范性语言(MUST)，L2降级为SHOULD，L3完全禁止规范性语言。信息性文档使用MUST会导致读者误以为有强制约束力
+      chapter_reference: 各层模板的章节清单见§3.1。L1标准的子类型与章节适用性见§3.2
+    terminology:
+    - term: SSoT
+      definition: Single Source of Truth，唯一真源
+    - term: 消费者
+      definition: 直接依赖本标准字段定义/枚举/校验规则的文件
+    - term: Tier 1消费者
+      definition: 硬编码了本标准枚举值的文件（变更必须同步）
+    - term: 受控枚举
+      definition: 值集合由本标准定义、不允许自由扩展的枚举字段
+    - term: 变更同步
+      definition: 标准内容变更后，必须同commit更新所有Tier 1消费者
+  ps_std_002_frontmatter:
+    title: Frontmatter必填字段
+    section_type: context
+    original_rules:
+    - PS-STD-002 §2
+    summary: SSoT——frontmatter模板的唯一真源是templates/目录下的骨架文件AI创建新文件时从templates/复制frontmatter字段定义以PS-STD-001为准
+    conditions:
+    - type: trigger
+      check: 创建policy/standard文档时
+      pass: frontmatter从templates/目录对应骨架文件复制
+      fail: 手写frontmatter导致字段缺失或格式错误
+    optional_fields:
+    - supersedes——取代了哪些旧文档(path/version/reason)
+    - superseded_by——被哪个新文档取代(Deprecated时必填)
+    - summary——一段话说清本文档的目的和核心内容
+    actions:
+    - type: mandatory
+      step: '所有frontmatter字段的类型合法值必填阶段以metadata_registry.yaml(PS-STD-001)为准；本模板不再重复定义；空骨架以templates/目录为准'
+    prohibitions:
+    - 在标准文档中重复定义PS-STD-001已定义的frontmatter字段
+    - 手写frontmatter而不从templates/骨架文件复制
+  ps_std_002_conditional_chapters:
+    title: L1标准条件性章节
+    section_type: context
+    original_rules:
+    - PS-STD-002 §3.2.2
+    summary: 条件性章节仅在标准满足特定条件时要求必含不满足条件时写一行声明即可或不写
+    conditions:
+    - type: trigger
+      check: 判定L1标准是否需要包含条件性章节时
+      pass: 按触发条件判定章节必含性
+      fail: 一刀切要求所有19章导致空壳章节
+    conditional_chapter_matrix:
+    - chapter: §3受控枚举定义
+      trigger: 标准定义了受控枚举值
+      not_applicable: 写本文档不定义受控枚举(1行)
+    - chapter: §4消费者注册表
+      trigger: 标准有明确的下游Tier 1/2/3消费者
+      not_applicable: 宪法级文档所有人都是消费者→不写
+    - chapter: §6禁止行为
+      trigger: 标准定义了行为规则和违规后果
+      not_applicable: 注册表的禁止内嵌在字段约束中→不写
+    - chapter: §7变更同步规则
+      trigger: stability≠frozen(标准会变化)
+      not_applicable: frozen标准→不写
+    - chapter: §8修改条件
+      trigger: stability≠frozen
+      not_applicable: frozen标准→不写
+    - chapter: §10废弃流程
+      trigger: stability≠frozen且可能被取代
+      not_applicable: frozen宪法文件→不写
+    - chapter: §11审查周期
+      trigger: 所有标准都应该有(SHOULD级)
+      not_applicable: 本已SHOULD——建议但非阻断
+    - chapter: §12异常豁免机制
+      trigger: 标准含COND级别规则(不是纯ABS)
+      not_applicable: ABS-only(如宪法)→不写
+    - chapter: §13字段不重复声明
+      trigger: 标准定义了PS-STD-001之外的字段
+      not_applicable: 不定义字段的标准→不写
+    - chapter: §14跨标准字段交叉引用
+      trigger: 标准定义的字段被其他标准引用
+      not_applicable: 无交叉引用→不写
+    - chapter: §18完整性自检清单
+      trigger: 人类创建的标准(需人工逐项检查)
+      not_applicable: AI生成标准→SHOULD(可选——AI自查是自指涉空洞)
+    actions:
+    - type: mandatory
+      step: 'pre-commit检测时按子类型对应的章节要求判定合规而非一刀切检测19章'
+    prohibitions:
+    - 一刀切要求所有L1标准包含全部19章
+    - 不满足触发条件时仍写空壳章节
+  ps_std_002_chapter_details:
+    title: 各章节详细要求
+    section_type: context
+    original_rules:
+    - PS-STD-002 §3.3
+    summary: L1模板19章的详细写作规范
+    chapter_specs:
+      section_1:
+        title: 目的与范围
+        must_include: 目的(一句话说明解决什么问题)+责任范围(§1.2管什么)+责任边界(§1.3不管什么)+范围(适用哪些文件/目录/场景)
+      section_2:
+        title: SSoT声明
+        must_include: 真源/非真源表格+底部声明任何与本文档冲突的定义以本文档为准
+      section_3:
+        title: 受控枚举定义
+        must_include: 完整枚举值清单(表格)+每个值含义+代码真源(哪个.py硬编码)+新增枚举值的流程
+      section_4:
+        title: 消费者注册表
+        must_include: Tier 1(硬编码枚举/校验规则同commit同步)+Tier 2(引用作为权威依据改字段名时检查)+Tier 3(字段对齐改语义时按需)
+      section_5:
+        title: 主体内容
+        must_include: 每条规则可执行+明确无歧义；P0用MUST/MUST NOT；P1用SHOULD/SHOULD NOT；P2用MAY
+      section_6:
+        title: 禁止行为
+        must_include: 禁止行为+原因+替代方案三列表格
+      section_7:
+        title: 变更同步规则
+        must_include: 变更类型×消费者Tier的同步要求矩阵；必须覆盖新增枚举和字段改名两种变更类型
+      section_8:
+        title: 修改条件
+        must_include: 哪些变更需Owner审批+哪些AI可自主执行+破坏性变更审批流程
+      section_9:
+        title: 标准间引用规范
+        must_include: Normative(必须遵守违反=违反本标准)+Informative(仅供参考违反≠违反本标准)两个引用列表
+      section_10:
+        title: 废弃流程
+        must_include: 五步流程(创建新标准→通知消费者→过渡期至少7天→确认无引用→删除或归档)
+      section_11:
+        title: 审查周期
+        must_include: 定期审查(≤90天)+事件驱动审查+Phase转换审查
+      section_12:
+        title: 异常豁免机制
+        must_include: 临时豁免(单次session)+短期豁免(7天内Owner口头)+长期豁免(超7天Owner书面+ADR)
+      section_13:
+        title: 字段不重复声明
+        must_include: 字段定义归属声明(本标准定义哪些字段+引用PS-STD-001哪些字段)
+      section_14:
+        title: 跨标准字段交叉引用
+        must_include: 本标准字段×引用此字段的其他标准×引用方式三列表格
+      section_15:
+        title: AI可消费性声明
+        must_include: AI可理解性(语义无歧义/上下文自足/示例充分)+AI上下文预算(Token估算/最小必读/按需加载)+AI工具兼容性
+      section_18:
+        title: 完整性自检清单
+        must_include: 按子类型过滤不适用章节的逐项勾选checklist
+    prohibitions:
+    - 跳过Step 2-4直接删除Active标准
+    - 永久豁免某条规则(应修改标准而非永久豁免)
+    - 标准文档使用模糊词汇(尽量/建议/最好)
+  ps_std_002_yaml_format:
+    title: YAML规则文档格式
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §4
+    summary: YAML规则文档的必填顶层字段和字段命名规范
+    required_top_level_fields:
+    - 'schema_version: 1.0.0'
+    - 'doc_type: register | contract | config'
+    - 'title: 文档标题'
+    - 'status: active | draft | deprecated'
+    - 'ttl: permanent | 30d | 7d | session'
+    naming_conventions:
+    - 使用snake_case(下划线分隔)
+    - 布尔值使用true/false(小写)
+    - 日期使用YYYY-MM-DD格式(带引号的字符串)
+    - 枚举值使用小写字母和下划线
+    conditions:
+    - type: trigger
+      check: 编写YAML规则文档时
+      pass: 字段命名和格式符合规范
+      fail: 字段命名或格式违规
+    actions:
+    - type: mandatory
+      step: 'YAML文档必须包含schema_version/doc_type/title/status/ttl五个顶层字段；字段使用snake_case；布尔值小写；日期带引号'
+    prohibitions:
+    - YAML字段使用camelCase或PascalCase
+    - 布尔值使用True/False大写
+    - 日期不带引号
+  ps_std_002_file_naming:
+    title: 文件命名规范
+    section_type: context
+    original_rules:
+    - PS-STD-002 §5
+    summary: 遵循file-naming-standard.md v2.0.1核心约束全小写kebab-case禁止大写字母版本号后缀日期后缀
+    conditions:
+    - type: trigger
+      check: 创建新文件时
+      pass: 文件名符合kebab-case规范
+      fail: 文件名包含大写字母/版本号后缀/日期后缀
+    actions:
+    - type: mandatory
+      step: '文件名遵循file-naming-standard.md v2.0.1——全小写kebab-case禁止大写字母版本号后缀日期后缀'
+    prohibitions:
+    - 文件名包含大写字母
+    - 文件名包含版本号后缀
+    - 文件名包含日期后缀
+  ps_std_002_version_control:
+    title: 版本控制规范
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §6
+    summary: 版本历史通过git log查询不在文件名中体现重大修订主版本+1；功能新增次版本+1；错误修复补丁+1
+    versioning_rules:
+    - 重大修订(破坏性变更)→主版本号+1(1.0.0→2.0.0)
+    - 功能新增→次版本号+1(1.0.0→1.1.0)
+    - 错误修复→补丁版本号+1(1.0.0→1.0.1)
+    - 每次修改必须更新frontmatter中的version和date字段
+    conditions:
+    - type: trigger
+      check: 修改标准文档时
+      pass: 版本号按变更类型正确递增
+      fail: 版本号递增错误
+    actions:
+    - type: mandatory
+      step: '版本历史通过git log查询不在文件名中体现；按变更类型递增版本号；每次修改更新frontmatter version和date字段'
+    prohibitions:
+    - 在文件名中体现版本号
+    - 修改后不更新version和date字段
+  ps_std_002_ssot:
+    title: 文档结构标准SSoT声明
+    section_type: context
+    original_rules:
+    - PS-STD-002 §7
+    summary: 本文档定义三层模板体系/L1子类型/消费者注册表格式/变更同步规则格式frontmatter字段定义以PS-STD-001为准
+    ssot_matrix:
+    - content: 标准文档的三层模板体系(L1/L2/L3)
+      source: 本文档§3.1
+      non_source: rule-document-format-standard.md v1.0.0(已取代)
+    - content: L1标准子类型与章节适用性规则
+      source: 本文档§3.2
+      non_source: 无
+    - content: Frontmatter必填字段
+      source: metadata_registry.yaml §2
+      non_source: 本文档§2仅引用不重复定义
+    - content: 文件命名规范
+      source: file-naming-standard.md v2.0.1
+      non_source: 本文档§5仅引用不重复定义
+    - content: 消费者注册表格式
+      source: 本文档§3.3 §4
+      non_source: 无
+    - content: 变更同步规则格式
+      source: 本文档§3.3 §7
+      non_source: 无
+    actions:
+    - type: mandatory
+      step: '任何与本文档冲突的定义以本文档为准；frontmatter字段定义以PS-STD-001为准'
+  ps_std_002_normative_refs:
+    title: 文档结构标准规范性引用
+    section_type: context
+    original_rules:
+    - PS-STD-002 §8
+    summary: 本文档的normative(规范性)和informative(资料性)引用清单
+    normative_references:
+    - document: metadata_registry.yaml (PS-STD-001)
+      content: frontmatter字段定义受控枚举
+      arbitration: PS-STD-001
+    - document: file-naming-standard.md
+      content: 文件命名规则
+      arbitration: file-naming-standard.md
+    - document: document-lifecycle-standard.md
+      content: 文档生命周期管理
+      arbitration: document-lifecycle-standard.md
+    - document: rule_lifecycle_and_change_standard.yaml (PS-STD-009)
+      content: 变更审批流程
+      arbitration: rule_lifecycle_and_change_standard.yaml
+    - document: ai_autonomy_authority_registry.yaml
+      content: AI自治权限三层模型
+      arbitration: ai_autonomy_authority_registry.yaml
+    - document: vibe-coding-gate-checklist.md
+      content: 可验证性A/M/S标注体系
+      arbitration: vibe-coding-gate-checklist.md
+    informative_references:
+    - ISO/IEC 42001:2023——AI管理体系标准(设计参考)
+    - ISO 11179 §6.2——元数据注册表Stewardship(消费者注册表设计参考)
+    - IETF BCP 14——MUST/SHOULD/MAY语义定义
+    - Anthropic CLAUDE.md最佳实践——AI可消费文档设计参考
+    - Google A2A Agent Card——AI Agent元数据标准参考
+    actions:
+    - type: mandatory
+      step: '标准间引用必须分normative(必须遵守违反=违反本标准)和informative(仅供参考违反≠违反本标准)两类'
+    prohibitions:
+    - 创建不含normative/informative引用分类的标准文档
+  ps_std_002_deprecation:
+    title: 文档结构标准废弃流程
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §9
+    summary: 遵循document-lifecycle-standard.md的标准流程本文档取代了rule-document-format-standard.md v1.0.0过渡期已于v2.0.0发布时完成
+    conditions:
+    - type: trigger
+      check: 废弃标准文档时
+      pass: 走完五步废弃流程
+      fail: 跳过流程直接删除Active标准
+    deprecation_steps:
+    - Step1创建新标准(新文件名不带版本号后缀)→新文件frontmatter添加supersedes
+    - Step2通知消费者→旧文件消费者注册表中列出的所有Tier 1文件必须确认已迁移
+    - Step3过渡期(至少7天)→旧文件status改为Superseded→旧文件frontmatter添加superseded_by→过渡期内新旧标准共存以新标准为准
+    - Step4确认无引用→运行断链检测rg旧文件名docs/--include=*.md-l→所有引用已更新为新文件路径
+    - Step5删除或归档→旧文件status改为Deprecated→按TTL规则处理
+    actions:
+    - type: mandatory
+      step: '废弃流程五步——创建新标准→通知消费者→过渡期至少7天→确认无引用→删除或归档'
+    prohibitions:
+    - 跳过Step 2-4直接删除Active标准
+  ps_std_002_review_cycle:
+    title: 文档结构标准审查周期
+    section_type: context
+    original_rules:
+    - PS-STD-002 §10
+    summary: 定期审查(≤90天)+事件驱动审查+Phase转换审查每次审查结果记录在变更记录中
+    review_types:
+    - type: 定期审查
+      cycle: ≤90天
+      trigger: 到期自动触发
+      content: 标准是否仍然适用/枚举值是否需要扩展/消费者是否有新增
+    - type: 事件驱动审查
+      cycle: 不定期
+      trigger: 枚举值变更/字段改名/消费者报告问题
+      content: 受影响章节是否需要更新
+    - type: Phase转换审查
+      cycle: 不定期
+      trigger: 项目Phase变更
+      content: 标准是否适配新Phase的要求
+    actions:
+    - type: mandatory
+      step: '每次审查结果记录在变更记录中；审查后无变更的记录审查通过无变更'
+  ps_std_002_exception:
+    title: 文档结构标准异常豁免机制
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §11
+    summary: 三级豁免机制——临时豁免(单次session)+短期豁免(7天内)+长期豁免(超7天)禁止永久豁免
+    exception_levels:
+    - level: 临时豁免
+      definition: 单次session内违反标准
+      approval: Session Log中记录原因
+      record: Session Log
+    - level: 短期豁免
+      definition: 7天内违反标准
+      approval: Owner口头批准+Session Log记录
+      record: Session Log+变更记录
+    - level: 长期豁免
+      definition: 超过7天的违反
+      approval: Owner书面批准+ADR记录
+      record: ADR+变更记录
+    required_fields:
+    - 豁免的规则——哪条规则被豁免
+    - 豁免原因——为什么必须违反
+    - 替代措施——违反后用什么方式保证安全
+    - 到期时间——什么时候恢复遵从
+    actions:
+    - type: mandatory
+      step: '豁免必须包含豁免规则+豁免原因+替代措施+到期时间四项'
+    prohibitions:
+    - 永久豁免某条规则(应修改标准而非永久豁免)
+  ps_std_002_field_dedup:
+    title: 文档结构标准字段不重复声明
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §12
+    summary: 本标准定义的字段以本标准为准；引用的字段以PS-STD-001为准不重复定义
+    defined_fields:
+    - 标准文档必须包含的19个章节(见§3.1)
+    - 标准间引用分类(normative/informative)(见§3.3 §9)
+    referenced_fields:
+    - frontmatter所有字段→metadata_registry.yaml §2
+    - doc_type受控词表→metadata_registry.yaml §3
+    - status受控词表→metadata_registry.yaml §4
+    - category枚举→metadata_registry.yaml §9.1
+    - domain枚举→metadata_registry.yaml §9.2
+    conditions:
+    - type: trigger
+      check: 编写标准文档定义字段时
+      pass: 本标准定义的字段声明归属+引用字段不重复定义
+      fail: 重复定义PS-STD-001已定义的字段导致漂移
+    actions:
+    - type: mandatory
+      step: '本标准定义字段时声明以本标准为准；引用PS-STD-001字段时声明以PS-STD-001为准本标准不重复定义'
+    prohibitions:
+    - 在标准文档中重复定义PS-STD-001已定义的字段
+    - 发现重复定义时不改为引用(应以PS-STD-001为准本标准改为引用)
+  ps_std_002_cross_ref:
+    title: 文档结构标准跨标准字段交叉引用
+    section_type: context
+    original_rules:
+    - PS-STD-002 §13
+    summary: 本标准定义的字段被其他标准引用的交叉引用表字段改名时必须同步更新所有交叉引用方
+    cross_reference_matrix:
+    - field: AI自治权限三层模型
+      referencing_standards: ai_autonomy_authority_registry.yaml
+      reference_method: 权限层级定义
+    - field: 可验证性A/M/S标注
+      referencing_standards: vibe-coding-gate-checklist.md
+      reference_method: 标注体系定义
+    - field: 变更审批四级流程
+      referencing_standards: rule_lifecycle_and_change_standard.yaml (PS-STD-009)
+      reference_method: 审批流程定义
+    - field: 文档生命周期状态机
+      referencing_standards: document-lifecycle-standard.md
+      reference_method: 状态转换规则
+    - field: frontmatter字段
+      referencing_standards: metadata_registry.yaml (PS-STD-001)
+      reference_method: 字段定义
+    actions:
+    - type: mandatory
+      step: '字段改名时必须同步更新所有交叉引用方(见§7变更同步规则)'
+  ps_std_002_ai_consumable:
+    title: 文档结构标准AI可消费性声明
+    section_type: context
+    original_rules:
+    - PS-STD-002 §14
+    summary: AI可理解性+AI上下文预算+AI工具兼容性语义无歧义通过；上下文自足需配合PS-STD-001；示例充分通过；Token估算~4000
+    consumability_status:
+      semantic_clarity: MUST/SHOULD/MAY精确定义
+      context_self_contained: 需配合PS-STD-001理解frontmatter字段
+      example_sufficiency: 每个新章节都有格式示例
+      token_estimate: '~4000 tokens'
+      minimum_required_reading: §3.1+§3.2+§18
+    actions:
+    - type: mandatory
+      step: '标准文档必须声明AI可理解性(语义无歧义/上下文自足/示例充分)+AI上下文预算(Token估算/最小必读/按需加载)+AI工具兼容性'
+  ps_std_002_ai_autonomy:
+    title: 文档结构标准AI自治权限标注
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §15
+    summary: 本标准中每条规则的自治权限分配immutable_core 7条/human_gated 3条/ai_modifiable 0条安全占比100%(≥30%达标)
+    autonomy_distribution:
+    - rule: 标准文档必须包含§3.1列出的所有MUST章节
+      permission: immutable_core
+      verifiability: A
+    - rule: 标准文档应该包含§3.1列出的所有SHOULD章节
+      permission: human_gated
+      verifiability: M
+    - rule: 每条规则必须标注AI自治权限
+      permission: immutable_core
+      verifiability: A
+    - rule: 每条规则必须标注可验证性A/M/S
+      permission: immutable_core
+      verifiability: A
+    - rule: frontmatter字段不重复定义
+      permission: immutable_core
+      verifiability: A
+    - rule: 废弃流程必须走完五步
+      permission: immutable_core
+      verifiability: M
+    - rule: 审查周期90天
+      permission: human_gated
+      verifiability: M
+    - rule: 异常豁免必须记录
+      permission: immutable_core
+      verifiability: A
+    - rule: AI创建标准前必须先输出自检清单
+      permission: immutable_core
+      verifiability: M
+    - rule: 标准间引用必须分normative/informative
+      permission: human_gated
+      verifiability: M
+    statistics: immutable_core 7条 / human_gated 3条 / ai_modifiable 0条安全占比100%(≥30%达标)
+    actions:
+    - type: mandatory
+      step: '每条规则必须标注AI自治权限和可验证性；本标准中规则的自治权限分配见autonomy_distribution'
+    prohibitions:
+    - 创建不含AI自治权限标注的标准文档
+    - 创建不含可验证性标注的标准文档
+  ps_std_002_consumer_registry:
+    title: 文档结构标准消费者注册表
+    section_type: context
+    original_rules:
+    - PS-STD-002 §16
+    summary: 本文档的Tier 1/2/3消费者清单Tier 1硬编码章节结构；Tier 2引用作为权威依据；Tier 3字段定义对齐
+    tier_1_consumers:
+    - file: scripts/governance/check_frontmatter_metadata.py
+      dependency: frontmatter必填字段校验(以metadata_registry.yaml为准间接依赖本模板的章节定义)
+      sync_requirement: 间接依赖
+    tier_2_consumers:
+    - file: 所有doc_type policy或doc_type standard文档
+      reference: 按§3章节清单编写
+    - file: docs/01_policies_and_standards/templates/blueprint-construction-template.md
+      reference: 参考本模板的治理章节设计
+    tier_3_consumers:
+    - file: metadata_registry.yaml (PS-STD-001)
+      alignment: frontmatter字段定义(本模板§2引用PS-STD-001不重复定义)
+    actions:
+    - type: mandatory
+      step: '标准文档必须按Tier 1/2/3分级列出所有依赖本文档的文件+依赖内容'
+    prohibitions:
+    - 创建不含消费者注册表的标准文档
+  ps_std_002_change_sync:
+    title: 文档结构标准变更同步规则
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §17
+    summary: 变更类型×消费者Tier的同步要求矩阵
+    sync_matrix:
+    - change_type: 新增必须章节
+      tier_1: 更新GATE-15校验逻辑
+      tier_2: 所有policy/standard文档补上新章节
+      tier_3: 无需操作
+    - change_type: 修改章节格式
+      tier_1: 无需操作
+      tier_2: 按需更新
+      tier_3: 无需操作
+    - change_type: 新增frontmatter字段
+      tier_1: 同commit更新校验脚本
+      tier_2: 所有policy/standard文档补上新字段
+      tier_3: 同commit更新PS-STD-001
+    actions:
+    - type: mandatory
+      step: '标准内容变更后必须同commit更新所有Tier 1消费者；变更类型×Tier同步要求矩阵必须覆盖新增枚举和字段改名两种变更类型'
+    prohibitions:
+    - 创建不含变更同步规则的标准文档
+    - 变更后不同步更新Tier 1消费者
+  ps_std_002_modify_condition:
+    title: 文档结构标准修改条件
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §18
+    summary: 修改本文档需要满足的条件和审批流程
+    modification_matrix:
+    - change_type: 新增必须章节
+      approval: Owner审批(影响所有标准文档)
+    - change_type: 修改章节格式
+      approval: AI可自主执行(不影响现有文档合规性)
+    - change_type: 新增frontmatter字段
+      approval: Owner审批(影响所有文档的frontmatter)
+    - change_type: 修改Tier分级规则
+      approval: Owner审批(影响变更同步流程)
+    actions:
+    - type: mandatory
+      step: '按修改类型匹配审批要求；影响所有标准文档的变更需Owner审批；不影响现有文档合规性的变更AI可自主执行'
+  ps_std_002_violation_detection:
+    title: 文档结构标准违规检测
+    section_type: verification
+    original_rules:
+    - PS-STD-002 §20
+    summary: pre-commit hook应报告的格式违规情况清单
+    violation_types:
+    - policy/standard文档缺少§3规定的必须章节
+    - frontmatter缺少§2规定的必填字段
+    - 文件名包含大写字母
+    - 文件名包含版本号后缀
+    - 文件编码非UTF-8
+    - 标准文档缺少AI自治权限标注
+    - 标准文档缺少可验证性标注
+    - 标准文档重复定义PS-STD-001已定义的字段
+    - 标准文档缺少§1.2责任范围+§1.3责任边界声明
+    actions:
+    - type: mandatory
+      step: 'pre-commit hook检测到上述违规情况时必须报告；检测不通过禁止提交'
+  ps_std_002_change_history:
+    title: 文档结构标准变更记录
+    section_type: examples
+    original_rules:
+    - PS-STD-002 §21
+    items:
+    - version: '3.2.0'
+      date: '2026-05-01'
+      change: ADR从L2重分类至L3——ADR对标Nygard ADR轻量格式(信息性决策记录)不应承受L2的10章治理负担L3只需4个MUST章节
+    - version: '3.1.0'
+      date: '2026-05-01'
+      change: L1模板架构升级——引入标准子类型体系新增§3.2定义Common Core 6章+条件性章节12章+4种子类型§16和§17不再作为独立MUST章节改为frontmatter字段§13和§18改为条件性
+    - version: '3.0.2'
+      date: '2026-05-01'
+      change: 编辑性变更——frontmatter字段排序对齐PS-STD-001 §2.3
+    - version: '3.0.1'
+      date: '2026-05-01'
+      change: 编辑性压缩与跨文件对齐——§5文件命名6行表压缩为引用链接；§14 AI可消费性合并3个子节为1表
+    - version: '3.0.0'
+      date: '2026-04-29'
+      change: 引入三层模板体系(L1治理19章/L2设计10章/L3基础5章)按doc_type分层适用规范性语言分层新增10个必要/应该章节
+    - version: '2.0.0'
+      date: '2026-04-29'
+      change: 升级为标准文档模板(元标准)新增SSoT声明/消费者注册表/变更同步规则/修改条件/禁止行为取代rule-document-format-standard.md v1.0.0
+    - version: '1.0.0'
+      date: '2026-04-22'
+      change: 初始版本——格式层面规范(frontmatter/章节/命名/版本控制)
+  ps_std_009_doc_lifecycle_diff:
+    title: 与GOV-DOC-006文档生命周期的区别
+    section_type: context
+    original_rules:
+    - PS-STD-009 §1.3
+    summary: GOV-DOC-006管辖所有文档(含非规则)用TTL分级+归档；本标准仅管辖规则文件用状态机+变更门控+退役级联冲突时以本标准为准
+    comparison_matrix:
+    - dimension: 管辖对象
+      gov_doc_006: 所有文档(含非规则)
+      ps_std_009: 仅规则文件
+    - dimension: 核心机制
+      gov_doc_006: TTL分级+归档
+      ps_std_009: 状态机+变更门控+退役级联
+    - dimension: 废弃触发
+      gov_doc_006: 新版本发布
+      ps_std_009: 新版本+合并+删除
+    - dimension: 级联效应
+      gov_doc_006: 无
+      ps_std_009: 废弃级联影响依赖方
+    actions:
+    - type: mandatory
+      step: '规则文件与文档生命周期分离管理——规则文件有状态机+变更门控+退役级联；冲突时以本标准为准(规则文件有特殊治理机制)'
+  ps_std_009_ssot:
+    title: 规则治理标准SSoT声明
+    section_type: context
+    original_rules:
+    - PS-STD-009 §10
+    summary: 本标准是规则文件的状态机+变更门控分级+退役级联的唯一真源LFC编号前缀为本标准的内部规则编号空间LFC-001~003
+    ssot_declarations:
+    - declaration: 本标准是什么的唯一真源
+      value: 规则文件的状态机+变更门控分级+退役级联
+    - declaration: LFC编号前缀
+      value: 本标准的内部规则编号空间LFC-001~003
+    - declaration: 属性来源
+      value: stability/scope定义于PS-STD-004
+    actions:
+    - type: mandatory
+      step: '规则文件状态机/变更门控分级/退役级联以本标准为准；stability/scope属性以PS-STD-004为准'
+  ps_std_009_consumer_registry:
+    title: 规则治理标准消费者注册表
+    section_type: context
+    original_rules:
+    - PS-STD-009 §11
+    summary: 本标准的消费者清单及消费方式
+    consumers:
+    - consumer: PS-STD-004
+      method: 画像表引用stability/scope维度
+      tier: 1
+    - consumer: PS-STD-012
+      method: 验证标准引用门控分级
+      tier: 1
+    - consumer: PS-STD-011
+      method: 方法论MTH-007引用P0阻断
+      tier: 1
+    - consumer: document-metadata-index.yaml
+      method: 注册表同步
+      tier: 1
+    - consumer: document-lifecycle-standard.md (GOV-DOC-006)
+      method: 规则vs文档生命周期区别引用
+      tier: 2
+    actions:
+    - type: mandatory
+      step: '本标准变更时必须同步更新所有Tier 1消费者'
+  ps_std_009_linkage:
+    title: 规则治理标准与相关文件联动
+    section_type: context
+    original_rules:
+    - PS-STD-009 §12
+    summary: 本标准与相关文件的联动关系
+    linkage_matrix:
+    - file: PS-STD-004
+      relation: 数据源——stability/scope/推导链定义
+    - file: PS-STD-003
+      relation: 禁止行为SSoT——P1级条款来自ABS条目
+    - file: PS-STD-011
+      relation: 决策方法论——MTH-002/MTH-007引用
+    - file: GOV-DOC-005
+      relation: P3前置检查——新建文件前走DOC-005
+    - file: document-metadata-index.yaml
+      relation: 注册表——变更后同步
+    actions:
+    - type: mandatory
+      step: '本标准变更时必须检查与相关文件的联动关系；stability/scope变更需同步PS-STD-004；P1条款变更需同步PS-STD-003'
+  ps_std_005_scope:
+    title: 蓝图架构标准目的与范围
+    section_type: context
+    original_rules:
+    - PS-STD-005 §1
+    summary: 确保ZephyrAlpha项目每一份蓝图都具备可追溯/可定位/可归属/可扩展——定义三级金字塔模型、目录存放位置、ID命名体系、归属声明、AI Agent蓝图定位规则、注册表联动规则
+    responsibility_scope:
+    - 蓝图的三级金字塔模型(System/Domain/Module)——级定义、级级关系
+    - 每级蓝图的目录存放位置——在docs/03_modules/目录树中的精确路径约定
+    - 蓝图ID命名体系——不同层级的蓝图前缀约定(MOD-MASTER/MOD-DOMAIN/MOD-{LAYER})
+    - 蓝图归属声明——每份蓝图的frontmatter字段belongs_to(上级蓝图引用)
+    - AI Agent蓝图定位规则——新session冷启动时按什么顺序读蓝图
+    - 注册表联动规则——blueprint-registry.yaml和module-registry.yaml需要增加的字段
+    responsibility_boundary:
+    - 单个蓝图的章节结构→以blueprint-construction-template.md为准
+    - 蓝图内的技术决策内容→各蓝图独立定义
+    - 蓝图审批流程→以MOD-INF-006任务系统蓝图和gate-engine门禁规则为准
+    - 模块生命周期→以GOV-MOD-003(module-lifecycle-policy.md)为准
+    - frontmatter字段定义→以PS-STD-001(metadata_registry.yaml)为准
+    conditions:
+    - type: trigger
+      check: 创建或修改蓝图架构标准时
+      pass: 理解标准的目的和责任边界
+      fail: 不清楚标准管什么不管什么
+    actions:
+    - type: mandatory
+      step: 确保每一份蓝图都具备可追溯(总→域→模块完整引用链)、可定位(AI冷启动逐级下钻)、可归属(每份模块蓝图声明belongs_to)、可扩展(新增领域有明确目录创建规则和ID命名空间)
+    prohibitions: []
+  ps_std_005_ssot:
+    title: 蓝图架构标准SSoT声明
+    section_type: context
+    original_rules:
+    - PS-STD-005 §2
+    summary: 蓝图体系6项真源声明——任何与本文档冲突的定义以本文档为准
+    ssot_matrix:
+    - content: 蓝图三级金字塔结构定义(System/Domain/Module)
+      source: 本标准§3
+      non_source: 无(本次新建)
+    - content: 蓝图目录存放位置约定
+      source: 本标准§4
+      non_source: 03_modules/index.md(目录说明)——仅作为补充参考不替代本标准的层级规则
+    - content: 蓝图ID命名命名体系
+      source: 本标准§5
+      non_source: 无
+    - content: 蓝图归属字段belongs_to合法值
+      source: 本标准§6
+      non_source: 无
+    - content: AI Agent蓝图定位顺序
+      source: 本标准§7
+      non_source: AGENTS.md(项目入口)——仅作为补充参考
+    - content: 蓝图注册表字段扩展blueprint_level
+      source: 本标准§8
+      non_source: 无
+    conditions:
+    - type: trigger
+      check: 蓝图体系定义出现冲突时
+      pass: 以本标准为真源
+      fail: 使用非真源导致定义漂移
+    actions:
+    - type: mandatory
+      step: 任何与本文档冲突的定义以本文档为准；蓝图三级金字塔/目录存放位置/ID命名/belongs_to合法值/AI定位顺序/blueprint_level字段扩展均以本标准为真源
+    prohibitions: []
+  ps_std_005_creation_gates:
+    title: 三级蓝图存在条件与创建闸门
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §3.3
+    summary: 不是任何时候都需要立即创建所有三级蓝图——以下条件触发对应级别的蓝图创建；Level 2创建前MUST通过GOV-MOD-001 §7 #5功能域重叠检查
+    creation_triggers:
+    - level: Level 0
+      trigger: 系统≥3个功能域且出现跨域数据契约需求
+      pre_gate: 无(Level 0有且仅有一份无重叠风险)
+      example: L02因子开始产出→L04风控消费需要CTR合同
+      current: 仅有MOD-MASTER-001(L01域级)缺真正的全系统总蓝图
+    - level: Level 1
+      trigger: 某一域内模块≥5且出现≥3组跨模块交互
+      pre_gate: 域蓝图声明的responsibility_domain必须不与任何已有域蓝图重叠
+      example: L02/L03域内模块超过5个后因子和信号的集成需要独立域蓝图
+      current: 仅有L01域级(MOD-MASTER-001)缺L02-L03/L04-L07/L11-L13域蓝图
+    - level: Level 2
+      trigger: 每创建一个新的功能模块
+      pre_gate: 'GOV-MOD-001 §7 #5功能域重叠检查通过——新模块责任不被任何已有蓝图覆盖'
+      example: 当前已满足——各模块蓝图均已创建
+      current: 已完成
+    conditions:
+    - type: trigger
+      check: 创建新蓝图时
+      pass: 按创建条件判定是否需要创建+前置闸门通过
+      fail: 跳过创建条件判定或前置闸门
+    actions:
+    - type: mandatory
+      step: '当前阶段只创建Level 0 MOD-MASTER-001+已有的19个Level 2模块蓝图；SYS-MASTER-001(真正的全系统总蓝图)留待beta创建——触发条件为任一L02+模块蓝图开始创建时；Level 2创建前MUST通过GOV-MOD-001 §7 #5功能域重叠检查'
+    prohibitions:
+    - 跳过功能域重叠检查创建平行蓝图
+    - 为已被覆盖的功能域创建同级新蓝图(应升级原蓝图而非创建新蓝图)
+  ps_std_005_id_naming:
+    title: 蓝图ID命名体系
+    section_type: context
+    original_rules:
+    - PS-STD-005 §5
+    summary: 14层蓝图ID前缀约定+既存蓝图ID兼容性规则——既存蓝图不强制改名新标准只要求新增蓝图遵循ID体系
+    id_prefix_matrix:
+    - level: Level 0总蓝图
+      prefix: SYS-MASTER
+      format: SYS-MASTER-NNN
+      example: SYS-MASTER-001(全系统14层总蓝图)
+    - level: Level 1域蓝图
+      prefix: MOD-DOMAIN
+      format: MOD-DOMAIN-{CODE}-NNN
+      example: MOD-DOMAIN-L01-001(基础设施域集成蓝图)
+    - level: Level 2模块蓝图
+      prefix: MOD-{LAYER/DOMAIN}
+      format: MOD-{LAYER}-NNN或MOD-{DOMAIN}-NNN
+      example: MOD-INF-006(任务系统模块蓝图)
+    - level: Level 2基础设施模块
+      prefix: MOD-INF
+      format: MOD-INF-NNN
+      example: MOD-INF-005(脚本系统)
+    - level: Level 2知识库模块
+      prefix: MOD-KB
+      format: MOD-KB-NNN
+      example: MOD-KB-001(知识库)
+    - level: Level 2数据源模块
+      prefix: MOD-DS
+      format: MOD-DS-NNN
+      example: MOD-DS-001(数据源接入)
+    - level: Level 2因子模块
+      prefix: MOD-AF
+      format: MOD-AF-NNN
+      example: MOD-AF-001(Alpha因子计算)
+    - level: Level 2信号模块
+      prefix: MOD-SIG
+      format: MOD-SIG-NNN
+      example: MOD-SIG-001(信号生成)
+    - level: Level 2风控模块
+      prefix: MOD-RISK
+      format: MOD-RISK-NNN
+      example: MOD-RISK-001(风控引擎)
+    - level: Level 2组合模块
+      prefix: MOD-PC
+      format: MOD-PC-NNN
+      example: MOD-PC-001(组合优化器)
+    - level: Level 2执行模块
+      prefix: MOD-EXE
+      format: MOD-EXE-NNN
+      example: MOD-EXE-001(订单管理系统)
+    - level: Level 2归因模块
+      prefix: MOD-PTA
+      format: MOD-PTA-NNN
+      example: MOD-PTA-001(绩效归因)
+    - level: Level 2人机模块
+      prefix: MOD-UI
+      format: MOD-UI-NNN
+      example: MOD-UI-001(Dashboard)
+    - level: Level 2研创模块
+      prefix: MOD-RES
+      format: MOD-RES-NNN
+      example: MOD-RES-001(回测引擎)
+    - level: Level 2合规模块
+      prefix: MOD-CMP
+      format: MOD-CMP-NNN
+      example: MOD-CMP-001(合规引擎)
+    - level: Level 2 ML模块
+      prefix: MOD-ML
+      format: MOD-ML-NNN
+      example: MOD-ML-001(ML Pipeline)
+    - level: Level 2实验模块
+      prefix: MOD-EXP
+      format: MOD-EXP-NNN
+      example: MOD-EXP-001(A/B实验平台)
+    existing_id_compatibility:
+    - id: MOD-MASTER-001
+      level: Level 1(当前)→Level 0(beta升级后)
+      note: 当前承担L01域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
+    - id: MOD-INF-001~017
+      level: Level 2 MODULE
+      note: 不涉及不兼容
+    - id: MOD-KB-001
+      level: Level 2 MODULE
+      note: 不涉及不兼容
+    - id: MOD-INF-003(deprecated)
+      level: Level 2 MODULE
+      note: 已废弃兼容性不适用
+    - id: MOD-INF-004(deprecated)
+      level: Level 2 MODULE
+      note: 已废弃兼容性不适用
+    conditions:
+    - type: trigger
+      check: 创建新蓝图分配ID时
+      pass: 按层级使用对应ID前缀
+      fail: ID前缀与层级不匹配
+    actions:
+    - type: mandatory
+      step: 既存蓝图不强制改名——新标准只要求新增蓝图遵循ID体系；既存蓝图在第一份该层的experimental升级蓝图时自然迁移
+    prohibitions: []
+  ps_std_005_registry_linkage:
+    title: 注册表联动规则
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §8
+    summary: blueprint-registry.yaml和module-registry.yaml需要增加的字段——blueprint_level字段(MUST)+parent_blueprint字段(SHOULD)
+    registry_extensions:
+    - registry: blueprint-registry.yaml
+      field: blueprint_level
+      requirement: MUST
+      values: system(SYSTEM级)/domain(DOMAIN级)/module(MODULE级)
+      example: 'blueprint_level: "domain"'
+    - registry: module-registry.yaml
+      field: parent_blueprint
+      requirement: SHOULD
+      values: 上级蓝图module_id
+      example: 'parent_blueprint: "MOD-MASTER-001"'
+    conditions:
+    - type: trigger
+      check: 维护蓝图注册表时
+      pass: 包含blueprint_level和parent_blueprint字段
+      fail: 缺少扩展字段导致层级信息丢失
+    actions:
+    - type: mandatory
+      step: blueprint-registry.yaml每条blueprints[]记录MUST新增blueprint_level字段(SYSTEM/DOMAIN/MODULE)；module-registry.yaml每条modules[]记录的blueprint下SHOULD新增parent_blueprint字段
+    prohibitions:
+    - blueprint-registry.yaml缺少blueprint_level字段
+  ps_std_005_existing_mapping:
+    title: 既存蓝图归属映射
+    section_type: context
+    original_rules:
+    - PS-STD-005 §9
+    summary: 1阶段既存的19份蓝图的归属映射——按§6.1规则声明belongs_to
+    existing_blueprint_mapping:
+    - module_id: MOD-MASTER-001
+      title: 集成闭环总蓝图
+      belongs_to: 无(域蓝图层)
+      blueprint_level: domain
+    - module_id: MOD-INF-001
+      title: 容量保障体系
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-002
+      title: 运行时集成
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-003
+      title: 任务卡+KMS(deprecated)
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-004
+      title: Vibe Coding双管线(deprecated)
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-005
+      title: 脚本系统
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-006
+      title: 任务系统
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-KB-001
+      title: 知识库
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-007
+      title: Gate Engine
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-008
+      title: Context Engine
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-009
+      title: Pipeline
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-010
+      title: Feedback Loop
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-011
+      title: Vector Memory
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-012
+      title: Database
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-013
+      title: MCP Servers
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-014
+      title: LLM Security
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-015
+      title: System Telemetry
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-016
+      title: Shared+Core
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-017
+      title: Code Dedup Engine
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    note: 1阶段所有Level 2模块蓝图的上级都是MOD-MASTER-001(即L01基础设施域集成蓝图)；beta+时L02+的模块蓝图将归属到新建的对应Level 1域蓝图
+    conditions:
+    - type: trigger
+      check: 维护既存蓝图归属时
+      pass: 按映射表声明belongs_to
+      fail: 既存蓝图缺少归属声明
+    actions:
+    - type: mandatory
+      step: 既存19份蓝图按映射表声明belongs_to；1阶段所有Level 2模块蓝图上级为MOD-MASTER-001
+    prohibitions: []
+  ps_std_005_relation_to_ps_std:
+    title: 与已有标准的关系
+    section_type: context
+    original_rules:
+    - PS-STD-005 §11
+    summary: 本标准与PS-STD系列其他标准的关系——互补不重复
+    ps_std_relations:
+    - standard: PS-STD-000宪法
+      responsibility: 规则怎么分类
+      relation: 本标准是登记表层标准——后果可逆(重组目录归属是可逆操作)
+    - standard: PS-STD-001字段
+      responsibility: frontmatter字段定义
+      relation: belongs_to字段的定义以本标准为准不与其他字段冲突
+    - standard: PS-STD-002模板
+      responsibility: 单个标准怎么写
+      relation: 本标准(格式定义型子类型)遵循PS-STD-002的Common Core(6章)+该子类型的条件章节；§12/§13/§14不适用(本标准不定义字段不定义行为约束行为约束在本§5禁止行为中表达)
+    - standard: PS-STD-003行为边界
+      responsibility: ABS/COND/REC
+      relation: 本标准的禁止行为在本§5；因果关系可逆——违反即重组目录归属不需要纳入宪法
+    conditions:
+    - type: trigger
+      check: 本标准与其他PS-STD标准冲突时
+      pass: 按关系表判定主从
+      fail: 不清楚主从关系导致冲突
+    actions:
+    - type: mandatory
+      step: 本标准与PS-STD系列互补不重复；belongs_to字段定义以本标准为准；frontmatter字段定义以PS-STD-001为准；章节模板以PS-STD-002为准
+    prohibitions: []
+  ps_std_005_normative_refs:
+    title: 蓝图架构标准规范性引用
+    section_type: context
+    original_rules:
+    - PS-STD-005 §12
+    summary: 本标准的normative(规范性6项)和informative(资料性4项)引用清单
+    normative_references:
+    - document: blueprint-construction-template.md
+      content: 蓝图模板——单份蓝图的章节结构
+      arbitration: 蓝图模板
+    - document: PS-STD-000(meta_standard_constitution.yaml)
+      content: 元标准宪法——规则分类(标准vs宪法)
+      arbitration: PS-STD-000
+    - document: PS-STD-001(metadata_registry.yaml)
+      content: frontmatter字段定义
+      arbitration: PS-STD-001
+    - document: PS-STD-002(document_structure_standard.yaml)
+      content: L1标准模板——格式定义型子类型适用的章节集
+      arbitration: PS-STD-002
+    - document: 03_modules/module-registry.yaml
+      content: 模块生命周期登记
+      arbitration: module-registry.yaml
+    - document: 03_modules/blueprint-registry.yaml
+      content: 蓝图深度评估
+      arbitration: 本标准+blueprint-registry.yaml(§8.1扩展字段以本标准为准)
+    informative_references:
+    - document: Codified Context(arXiv 2602.20478)
+      content: 三层记忆模型(设计参考)
+    - document: Microsoft Edge AI Blueprint Architecture
+      content: master-blueprint→domain-blueprint→component层级(设计参考)
+    - document: HP Inc AI-Blueprints specification.md
+      content: specification.md vs blueprint.md双层分离(设计参考)
+    - document: TOGAF Architecture Repository
+      content: COBIT对齐——架构仓库分级存放
+    conditions:
+    - type: trigger
+      check: 引用其他标准或文档时
+      pass: 按normative/informative分类引用
+      fail: 混淆normative和informative引用
+    actions:
+    - type: mandatory
+      step: 标准间引用必须分normative(必须遵守违反=违反本标准)和informative(仅供参考违反≠违反本标准)两类；冲突时按arbitration字段判定
+    prohibitions: []
+  ps_std_005_exception:
+    title: 蓝图架构标准异常豁免机制
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §13
+    summary: 适用于临时性违反——如1过渡期内暂时无法升级既存蓝图frontmatter的情况；瞬态豁免+建设豁免+失效条件
+    exception_levels:
+    - level: 瞬态豁免
+      definition: 1既有蓝图不强制立即声明belongs_to
+      trigger: 现有蓝图>20份且Owner判断立即声明成本过高
+      approval: 本声明即可——Owner已知
+    - level: 建设豁免
+      definition: 目录迁移中允许暂时存在双目录(旧目录+新目录)
+      trigger: 目录迁移过程中必须不能一次切换
+      approval: Owner口头批准
+    failure_conditions:
+    - condition: 本标准发布后experimental结束时(任务系统v0.3.0升级完成+GateEngine G7完整度门禁激活)
+      requirement: 所有既存蓝图MUST已声明belongs_to
+      effect: 瞬态豁免自动失效
+    conditions:
+    - type: trigger
+      check: 临时性违反本标准时
+      pass: 按豁免级别匹配审批要求
+      fail: 跳过豁免流程直接违反
+    actions:
+    - type: mandatory
+      step: 豁免必须匹配级别(瞬态/建设)+触发条件+审批要求；experimental结束时所有既存蓝图MUST已声明belongs_to届时瞬态豁免自动失效
+    prohibitions:
+    - 永久豁免(应修改标准而非永久豁免)
+    - 跳过审批流程直接违反
+  ps_std_005_ai_consumable:
+    title: 蓝图架构标准AI可消费性声明
+    section_type: context
+    original_rules:
+    - PS-STD-005 §14
+    summary: AI可理解性+AI上下文预算+AI工具兼容性——全文Markdown+YAML对照表AI可直接消费无需额外推理
+    consumability_status:
+      semantic_clarity: MUST/SHOULD/MAY精确使用所有约定有对照表
+      context_self_contained: 不需要读外部文档即可执行目录创建和ID生成
+      example_sufficiency: 每项规则覆盖目录创建和ID生成
+      token_estimate: 约3000 tokens
+      minimum_required_reading: §3+§4+§5(ID命名)+§7(定位)+§9(归属映射)——约1200 tokens
+      ai_tool_compatibility: 全文Markdown+YAML对照表——AI可直接消费无需额外推理
+    conditions:
+    - type: trigger
+      check: AI消费本标准时
+      pass: 语义无歧义+上下文自足+示例充分
+      fail: AI产生幻觉或偏离
+    actions:
+    - type: mandatory
+      step: 标准文档必须声明AI可理解性(语义无歧义/上下文自足/示例充分)+AI上下文预算(Token估算/最小必读/按需加载)+AI工具兼容性
+    prohibitions: []
+  ps_std_005_completeness_checklist:
+    title: 蓝图架构标准完整性自检清单
+    section_type: verification
+    original_rules:
+    - PS-STD-005 §15
+    summary: 13项完整性自检清单——SHOULD(可选)不具备独立验证力(对比PS-STD-002 §18)
+    checklist_items:
+    - item: §1目的与范围——目的+责任范围(管什么)+责任边界(不管什么)
+      status: pass
+    - item: §2 SSoT声明——真源/非真源表格+以本标准为准
+      status: pass
+    - item: §3主体内容——三级金字塔完整定义(Level 0/1/2属性+职责+条件)
+      status: pass
+    - item: §4目录结构约定——整体目录树+命名规则表
+      status: pass
+    - item: §5蓝图ID命名体系——ID前缀表+两层ID前缀完整覆盖14层
+      status: pass
+    - item: §6蓝图归属与引用链——belongs_to字段定义+references+引用链图
+      status: pass
+    - item: §7 AI Agent蓝图定位规则——冷启动路径+Token预算+Codified Context对照
+      status: pass
+    - item: §8注册表联动——blueprint-registry.yaml+module-registry.yaml新增字段
+      status: pass
+    - item: §9既存蓝图归属映射——19份既存蓝图→belongs_to映射
+      status: pass
+    - item: §10禁止行为——6条MUST NOT
+      status: pass
+    - item: §11 AI可消费性声明——可理解性+Token预算
+      status: pass
+    - item: §12标准间引用——normative/informative分离
+      status: pass
+    - item: §13既存蓝图相容性(ID不变)
+      status: pass
+    disclaimer: 本标准由AI Agent生成以下自检清单为SHOULD(可选)——不具备独立验证力(对比PS-STD-002 §18)
+    conditions:
+    - type: trigger
+      check: 声明标准完成前
+      pass: 13项自检清单全部pass
+      fail: 自检清单有未pass项
+    actions:
+    - type: mandatory
+      step: 声明标准完成前MUST执行13项自检清单；frontmatter完整(所有PS-STD-001定义的必填字段)
+    prohibitions:
+    - 自检清单未全部pass就声明完成
 references:
   rule_ids:
   - TRAE-018
@@ -610,7 +1985,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

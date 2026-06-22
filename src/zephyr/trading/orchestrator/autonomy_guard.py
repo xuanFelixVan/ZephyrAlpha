@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """Owner 缺位分级自治（CT-AUTONOMY）——Owner离线→自动降级→最小安全运行。"""
 
+
 class AutonomyGuard:
     AUTONOMY_LEVELS: dict[str, list[str]] = {
         "level1": ["health_check", "metrics_collect", "dlq_replay"],

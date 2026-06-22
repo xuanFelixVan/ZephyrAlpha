@@ -18,7 +18,6 @@ from zephyr.governance.audit_trail.feedback_self_audit import (
     CircularDependencyResult,
     FeedbackNode,
     FeedbackSelfAuditor,
-    SelfReinforcementResult,
 )
 
 

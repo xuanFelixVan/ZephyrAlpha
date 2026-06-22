@@ -38,7 +38,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-import os
 import ast
 import re
 import sys
@@ -58,6 +57,7 @@ import argparse
 EXCLUDE_NAMES = {"__init__.py"}
 _SELF_REL = "scripts/governance/d11_compliance/validate_script_quality.py"
 
+
 class ClauseCheck:
     def __init__(self, clause_id: str, description: str, severity: str = "MUST"):
         """__init__ implementation."""
@@ -72,10 +72,12 @@ class ClauseCheck:
             f"{filepath.relative_to(REPO_ROOT)}: {detail}" if detail else str(filepath.relative_to(REPO_ROOT))
         )
 
+
 def check_utf8(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check utf8"""
     if "ensure_utf8_stdout" not in content and "sys.stdout.reconfigure" not in content:
         result.add_failure(filepath, "缺少 UTF-8 输出强制声明")
+
 
 def check_bare_except(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check bare except"""
@@ -84,6 +86,7 @@ def check_bare_except(content: str, filepath: Path, result: ClauseCheck) -> None
         stripped = line.strip()
         if re.match("^except\\s*:", stripped):
             result.add_failure(filepath, f"L{i}: 裸 except")
+
 
 def _is_code_line(line: str, in_docstring: bool) -> bool:
     """_is_code_line implementation."""
@@ -97,6 +100,7 @@ def _is_code_line(line: str, in_docstring: bool) -> bool:
             return False
         return False
     return True
+
 
 def _strip_string_literals(line: str) -> str:
     """_strip_string_literals implementation."""
@@ -121,6 +125,7 @@ def _strip_string_literals(line: str) -> str:
         i += 1
     return "".join(result)
 
+
 def check_io_encoding(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check io encoding"""
     lines = content.split("\n")
@@ -138,6 +143,7 @@ def check_io_encoding(content: str, filepath: Path, result: ClauseCheck) -> None
                 if "encoding=" not in code_only and "encoding =" not in code_only:
                     result.add_failure(filepath, f"L{i}: I/O 操作缺少 encoding='utf-8' ({pattern})")
                     break
+
 
 def check_shell_true(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check shell true"""
@@ -159,6 +165,7 @@ def check_shell_true(content: str, filepath: Path, result: ClauseCheck) -> None:
             if "shell=True" in code_only:
                 result.add_failure(filepath, f"L{i}: shell=True")
 
+
 def check_main_return_type(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check main return type"""
     if "def main" not in content:
@@ -166,6 +173,7 @@ def check_main_return_type(content: str, filepath: Path, result: ClauseCheck) ->
     for m in re.finditer("def main\\([^)]*\\)(\\s*->\\s*\\S+)?\\s*:", content):
         if "->" not in m.group(0):
             result.add_failure(filepath, "main() 缺少返回类型标注")
+
 
 def check_docstring(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check docstring"""
@@ -180,6 +188,7 @@ def check_docstring(content: str, filepath: Path, result: ClauseCheck) -> None:
     except SyntaxError:
         result.add_failure(filepath, "语法错误，无法解析 docstring")
 
+
 def check_public_func_annotations(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check public func annotations"""
     try:
@@ -190,6 +199,7 @@ def check_public_func_annotations(content: str, filepath: Path, result: ClauseCh
         if isinstance(node, ast.FunctionDef) and (not node.name.startswith("_")):
             if node.returns is None:
                 result.add_failure(filepath, f"D-B-01: 公共函数 '{node.name}' 缺少返回类型注解（L{node.lineno}）")
+
 
 def check_public_func_docstring(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check public func docstring"""
@@ -202,20 +212,24 @@ def check_public_func_docstring(content: str, filepath: Path, result: ClauseChec
             if ast.get_docstring(node) is None:
                 result.add_failure(filepath, f"D-C-02: 公共函数 '{node.name}' 缺少 docstring（L{node.lineno}）")
 
+
 def check_main_guard(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check main guard"""
     if 'if __name__ == "__main__"' not in content and "if __name__ == '__main__'" not in content:
         result.add_failure(filepath, "缺少 if __name__ == '__main__' 守卫")
+
 
 def check_warn_only(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check warn only"""
     if "--warn-only" not in content and "--warn_only" not in content:
         result.add_failure(filepath, "不支持 --warn-only")
 
+
 def check_exit_codes(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check exit codes"""
     if "sys.exit(" not in content and "SystemExit" not in content:
         result.add_failure(filepath, "缺少 sys.exit() 显式退出码")
+
 
 _SHARED_API_NAMES: frozenset[str] = frozenset(
     {
@@ -243,6 +257,7 @@ _SHARED_API_NAMES: frozenset[str] = frozenset(
     }
 )
 
+
 def check_duplicate_imports(content: str, filepath: Path, result: ClauseCheck) -> None:
     """check duplicate imports"""
     try:
@@ -260,6 +275,7 @@ def check_duplicate_imports(content: str, filepath: Path, result: ClauseCheck) -
     for name, count in seen.items():
         if count > 1:
             result.add_failure(filepath, f"重复 import: '{name}' 被导入 {count} 次")
+
 
 def check_shared_bypass(content: str, filepath: Path, result: ClauseCheck) -> None:
     """D-D-07: 逐符号检测——仅豁免已从 _shared import 的符号。
@@ -294,8 +310,9 @@ def check_shared_bypass(content: str, filepath: Path, result: ClauseCheck) -> No
     overlaps = (local_defs & _SHARED_API_NAMES) - imported_from_shared
     if overlaps:
         result.add_failure(
-            filepath, f'本地重定义了 _shared 工具: {', '.join(sorted(overlaps))} — 请改为 from _shared.xxx import ...'
+            filepath, f"本地重定义了 _shared 工具: {', '.join(sorted(overlaps))} — 请改为 from _shared.xxx import ..."
         )
+
 
 def check_oswalk_bypass(content: str, filepath: Path, result: ClauseCheck) -> None:
     """D-D-08: 检测 os.walk() + 手动 EXCLUDE_DIRS 过滤模式。
@@ -311,6 +328,7 @@ def check_oswalk_bypass(content: str, filepath: Path, result: ClauseCheck) -> No
         result.add_failure(
             filepath, "使用 os.walk() + 手动 EXCLUDE_DIRS 过滤 — 请改为 from _shared.walk import iter_files"
         )
+
 
 def check_lossy_transform(content: str, filepath: Path, result: ClauseCheck) -> None:
     """D-G-06: 检测 ast.unparse() 重写文件——有损代码变换。
@@ -339,6 +357,7 @@ def check_lossy_transform(content: str, filepath: Path, result: ClauseCheck) -> 
             "使用 ast.unparse() + 文件写入——有损代码变换，丢失行内注释/格式。请改用 LibCST (libcst.parse_module → CSTTransformer → tree.code)",
         )
 
+
 CLAUSE_CHECKS: list[tuple[str, str, callable, bool]] = [
     ("D-A-01", "UTF-8 输出强制声明", check_utf8, False),
     ("D-A-02", "禁止裸 except", check_bare_except, False),
@@ -357,9 +376,11 @@ CLAUSE_CHECKS: list[tuple[str, str, callable, bool]] = [
     ("D-G-06", "禁止 ast.unparse 重写文件", check_lossy_transform, False),
 ]
 
+
 def _is_library_module(content: str) -> bool:
     """_is_library_module implementation."""
     return "def main" not in content and "if __name__" not in content
+
 
 def scan_scripts(scan_dir: Path, warn_only: bool = False) -> tuple[list[ClauseCheck], int]:
     """scan scripts"""
@@ -386,6 +407,7 @@ def scan_scripts(scan_dir: Path, warn_only: bool = False) -> tuple[list[ClauseCh
                     checker(content, filepath, result)
                     break
     return (results, total_scripts)
+
 
 def _fix_dc02(scan_dir: Path) -> int:
     """Auto-fix D-C-02 violations using LibCST (lossless)."""
@@ -421,6 +443,7 @@ def _fix_dc02(scan_dir: Path) -> int:
         total_fixed += f
     return total_fixed
 
+
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="治理脚本质量合规检查 — 对照 SCRIPT-QUALITY-001 38 项条款")
@@ -430,7 +453,7 @@ def main() -> None:
         "--scripts-dir", type=str, default=str(REPO_ROOT / "scripts" / "governance"), help="治理脚本目录路径"
     )
     args = parser.parse_args()
-    scan_dir = Path(args.scripts_dir)
+    scan_dir = Path(args.scripts_dir).resolve()
     if not scan_dir.exists():
         print(f"[ERROR] 脚本目录不存在: {scan_dir}", file=sys.stderr)
         sys.exit(EXIT_ERROR)
@@ -453,6 +476,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if total_failures > 0 else 0)
+
 
 if __name__ == "__main__":
     main()

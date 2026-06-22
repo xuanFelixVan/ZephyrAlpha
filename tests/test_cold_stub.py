@@ -54,7 +54,7 @@ class TestRetentionPolicy:
 class TestConfigure:
     def test_configure_archive_dir(self, tmp_path):
         cs.configure(archive_dir=tmp_path / "archive")
-        assert cs._DEFAULT_ARCHIVE_DIR == tmp_path / "archive"
+        assert tmp_path / "archive" == cs._DEFAULT_ARCHIVE_DIR
 
     def test_configure_cost_limit(self):
         cs.configure(cost_limit_gb=20.0)
@@ -103,6 +103,7 @@ class TestRotateByTtl:
         old_file.write_text("old data", encoding="utf-8")
         import os
         import time
+
         old_time = time.time() - 100 * 86400
         os.utime(old_file, (old_time, old_time))
         removed = cs.rotate_by_ttl(tmp_path, max_age_days=30)

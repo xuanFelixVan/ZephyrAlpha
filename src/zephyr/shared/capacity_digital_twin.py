@@ -1,8 +1,8 @@
 # [A_module] module_id=MOD-SHR_capacity_digital_twin | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -23,7 +23,7 @@ class CapacityDigitalTwin:
     def ingest(self, state: TwinState) -> None:
         self._states.append(state)
         if len(self._states) > self._max_states:
-            self._states = self._states[-self._max_states:]
+            self._states = self._states[-self._max_states :]
 
     def predict(self, horizon_steps: int = 10) -> TwinState:
         if not self._states:
@@ -34,7 +34,7 @@ class CapacityDigitalTwin:
             last.memory_utilization,
             last.io_throughput,
             last.active_connections,
-            datetime.now(timezone.utc).isoformat(),
+            datetime.now(UTC).isoformat(),
         )
 
     @property

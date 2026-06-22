@@ -3,7 +3,7 @@
 # [MODULE] zephyr.integration.shared_08.contracts.protocols
 # [INVARIANTS] Protocols define structural interfaces only; no concrete implementations
 # [MODIFY-GUARD] contracts_blueprint.md §Protocols; __init__.py __all__
-# [CONSUMERS] zephyr.governance.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.governance.audit_trail;zephyr.infrastructure.rollback;zephyr.orchestration.agent_lifecycle;zephyr.orchestration.pipeline_routing;zephyr.governance
+# [CONSUMERS] zephyr.governance.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.governance.audit_trail;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
@@ -17,7 +17,6 @@ defining shared structural interfaces that modules depend on instead of
 depending on each other's concrete implementations.
 """
 
-
 from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
@@ -25,7 +24,6 @@ from typing import Protocol, runtime_checkable
 from pydantic import BaseModel
 
 from zephyr.integration.shared_08.contracts.gate.gate_result import GateResult
-
 
 # ── 7 Protocol interfaces ────────────────────────────────────────────
 
@@ -35,6 +33,7 @@ class GateActionProtocol(Protocol):
     """Structural interface for rollback/gate action execution."""
 
     def execute(self) -> GateResult: ...
+
     name: str
 
 
@@ -94,22 +93,34 @@ class AgentCapability(BaseModel):
 
 class IntegrityVerifier(BaseModel):
     """Integrity verification contract — shared across audit-trail / governance."""
+
     spec_hash: str = ""
 
     def verify_chain(self) -> dict: ...
 
 
 _STABILITY_FROZEN = True
-_FROZEN_PUBLIC_API = frozenset({
-    "GateActionProtocol", "DriftBudgetCheckerProtocol", "RecoveryTriggerProtocol",
-    "AuditWriterProtocol", "DriftScannerProtocol", "SelfTestableProtocol",
-    "ModuleStatusProtocol", "AgentCapability", "IntegrityVerifier",
-})
+_FROZEN_PUBLIC_API = frozenset(
+    {
+        "GateActionProtocol",
+        "DriftBudgetCheckerProtocol",
+        "RecoveryTriggerProtocol",
+        "AuditWriterProtocol",
+        "DriftScannerProtocol",
+        "SelfTestableProtocol",
+        "ModuleStatusProtocol",
+        "AgentCapability",
+        "IntegrityVerifier",
+    }
+)
+
 
 def __getattr__(name: str):
     if name in _FROZEN_PUBLIC_API:
         import logging
+
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.integration.shared_08.contracts.protocols", name
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.integration.shared_08.contracts.protocols",
+            name,
         )
     raise AttributeError(f"module 'zephyr.integration.shared_08.contracts.protocols' has no attribute {name!r}")

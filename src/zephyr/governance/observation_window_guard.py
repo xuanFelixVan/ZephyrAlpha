@@ -23,7 +23,8 @@ from __future__ import annotations
 
 """提取后稳定观察期守护 — 对标SDP 14天观察."""
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime
+
 
 class ObservationWindowGuard:
     """14天稳定观察期."""
@@ -37,7 +38,7 @@ class ObservationWindowGuard:
         except ValueError:
             return False, 0, "invalid_date"
 
-        age = (datetime.now(timezone.utc) - dt.replace(tzinfo=timezone.utc)).days
+        age = (datetime.now(UTC) - dt.replace(tzinfo=UTC)).days
         if age >= self._WINDOW_DAYS:
             return True, age, f"观察期通过：{age}天/14天"
-        return False, age, f"观察期进行中：{age}天/14天，剩余{self._WINDOW_DAYS-age}天"
+        return False, age, f"观察期进行中：{age}天/14天，剩余{self._WINDOW_DAYS - age}天"

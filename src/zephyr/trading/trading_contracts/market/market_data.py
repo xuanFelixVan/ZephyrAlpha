@@ -2,29 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.market.market_data
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] factor; _cross_layer
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-001 ====
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
+
 
 @dataclass(frozen=True)
 class NormalizedMarketData:
@@ -50,5 +41,6 @@ class NormalizedMarketData:
     schema_version: str = "1.0"
     timeout_ms: int = 5000
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-001 ====

@@ -26,4 +26,4 @@ logging.py —— Re-export wrapper → canonical: zephyr.ops.observability.logg
 修改日志逻辑请编辑 observability/logging.py，不要编辑本文件。
 """
 
-from zephyr.ops.observability.logging import *  # noqa: F401, F403
+from zephyr.ops.observability.logging import *  # noqa: F403

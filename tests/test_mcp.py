@@ -178,12 +178,14 @@ class TestBaseMCPServer:
             {"type": "object", "properties": {"msg": {"type": "string"}}},
             echo,
         )
-        resp = server.handle_request({
-            "jsonrpc": "2.0",
-            "id": 4,
-            "method": "tools/call",
-            "params": {"name": "test_server.echo", "arguments": {"msg": "hello"}},
-        })
+        resp = server.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 4,
+                "method": "tools/call",
+                "params": {"name": "test_server.echo", "arguments": {"msg": "hello"}},
+            }
+        )
         assert "result" in resp
         content = resp["result"]["content"]
         parsed = json.loads(content[0]["text"])
@@ -191,12 +193,14 @@ class TestBaseMCPServer:
 
     def test_handle_tools_call_not_found(self):
         server = BaseMCPServer("test_server", "1.0.0", "Test", enable_rbac=False)
-        resp = server.handle_request({
-            "jsonrpc": "2.0",
-            "id": 5,
-            "method": "tools/call",
-            "params": {"name": "nonexistent"},
-        })
+        resp = server.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 5,
+                "method": "tools/call",
+                "params": {"name": "nonexistent"},
+            }
+        )
         assert "error" in resp
         assert resp["error"]["code"] == ERR_TOOL_NOT_FOUND
 
@@ -212,12 +216,14 @@ class TestBaseMCPServer:
             {"type": "object", "properties": {"required_arg": {"type": "string"}}},
             strict_handler,
         )
-        resp = server.handle_request({
-            "jsonrpc": "2.0",
-            "id": 6,
-            "method": "tools/call",
-            "params": {"name": "test_server.strict", "arguments": {"wrong_arg": "value"}},
-        })
+        resp = server.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 6,
+                "method": "tools/call",
+                "params": {"name": "test_server.strict", "arguments": {"wrong_arg": "value"}},
+            }
+        )
         assert "error" in resp
         assert resp["error"]["code"] == ERR_INVALID_PARAMS
 
@@ -230,12 +236,14 @@ class TestBaseMCPServer:
             lambda: {},
             safety_level="H",
         )
-        resp = server.handle_request({
-            "jsonrpc": "2.0",
-            "id": 7,
-            "method": "tools/call",
-            "params": {"name": "test_server.dangerous"},
-        })
+        resp = server.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 7,
+                "method": "tools/call",
+                "params": {"name": "test_server.dangerous"},
+            }
+        )
         assert "error" in resp
         assert resp["error"]["code"] == ERR_RBAC_DENIED
 
@@ -248,12 +256,14 @@ class TestBaseMCPServer:
             lambda: {},
             safety_level="M",
         )
-        resp = server.handle_request({
-            "jsonrpc": "2.0",
-            "id": 8,
-            "method": "tools/call",
-            "params": {"name": "test_server.confirm"},
-        })
+        resp = server.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 8,
+                "method": "tools/call",
+                "params": {"name": "test_server.confirm"},
+            }
+        )
         assert "result" in resp
         content = resp["result"]["content"]
         parsed = json.loads(content[0]["text"])
@@ -266,12 +276,14 @@ class TestBaseMCPServer:
             raise MCPError(code=ERR_GATE_FAILED, message="Gate check failed")
 
         server.register_tool("test_server.fail", "Fail", {"type": "object"}, failing_handler)
-        resp = server.handle_request({
-            "jsonrpc": "2.0",
-            "id": 9,
-            "method": "tools/call",
-            "params": {"name": "test_server.fail"},
-        })
+        resp = server.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 9,
+                "method": "tools/call",
+                "params": {"name": "test_server.fail"},
+            }
+        )
         assert "error" in resp
         assert resp["error"]["code"] == ERR_GATE_FAILED
 
@@ -282,12 +294,14 @@ class TestBaseMCPServer:
             raise RuntimeError("unexpected crash")
 
         server.register_tool("test_server.crash", "Crash", {"type": "object"}, crash_handler)
-        resp = server.handle_request({
-            "jsonrpc": "2.0",
-            "id": 10,
-            "method": "tools/call",
-            "params": {"name": "test_server.crash"},
-        })
+        resp = server.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 10,
+                "method": "tools/call",
+                "params": {"name": "test_server.crash"},
+            }
+        )
         assert "error" in resp
         assert resp["error"]["code"] == ERR_TOOL_EXECUTION
 
@@ -318,7 +332,7 @@ class TestBaseMCPServer:
 
     def test_run_with_non_object_json(self):
         server = BaseMCPServer("test_server", "1.0.0", "Test", enable_rbac=False)
-        inp = StringIO('[1,2,3]\n')
+        inp = StringIO("[1,2,3]\n")
         out = StringIO()
         server.run(input_stream=inp, output_stream=out)
         out.seek(0)

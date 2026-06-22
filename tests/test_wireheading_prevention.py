@@ -10,11 +10,10 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_wireheading_prevention.py
 
-import pytest
 
 from zephyr.ops.security.wireheading_prevention import (
-    WireheadState,
     WireheadingPrevention,
+    WireheadState,
 )
 
 

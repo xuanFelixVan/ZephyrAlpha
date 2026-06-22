@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-521
 status: active
 title: §6 D4 — Disaster Recovery & BCP / 灾难恢复与业务连续性域

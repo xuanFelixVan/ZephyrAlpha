@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] optimize returns structured dict; _team_score returns tuple of 3 floats
 # [TESTS] tests/test_skill_team_optimizer.py
 
-import pytest
 from zephyr.autonomy_core.skill_team_optimizer import SkillTeamOptimizer
 
 
@@ -83,9 +82,7 @@ class TestSkillTeamOptimizerTeamScore:
         assert coverage == 0.4
 
     def test_two_member_team(self):
-        total, compat, coverage = SkillTeamOptimizer._team_score(
-            ["database-specialist", "implementer"], ["database"]
-        )
+        total, compat, coverage = SkillTeamOptimizer._team_score(["database-specialist", "implementer"], ["database"])
         assert 0.0 <= total <= 1.0
         assert 0.0 <= compat <= 1.0
         assert 0.0 <= coverage <= 1.0

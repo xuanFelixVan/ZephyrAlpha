@@ -1,33 +1,32 @@
 # [A_module] module_id=MOD-RES_budget_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
-# [MODULE] zephyr.infrastructure.budget_enforcement.budget_tracker
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
-# [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
-
-import time
 import json
+
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
+# [MODULE] zephyr.infrastructure.budget_enforcement.budget_tracker
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
-from .budget_models import BudgetDimension, BudgetLevel
+from .budget_models import BudgetDimension
+
+
+def __getattr__(name):
+    if name == "RollbackBudgetTracker":
+        from zephyr.infrastructure.rollback.budget_tracker import RollbackBudgetTracker
+
+        return RollbackBudgetTracker
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 class TrackerScope(Enum):
     GLOBAL = "global"
@@ -35,6 +34,7 @@ class TrackerScope(Enum):
     TASK = "task"
     TURN = "turn"
     REQUEST = "request"
+
 
 @dataclass
 class BudgetSnapshot:
@@ -45,7 +45,7 @@ class BudgetSnapshot:
     cost_usd: float = 0.0
     wall_time_seconds: float = 0.0
     created_at: float = field(default_factory=time.time)
-    ttl: Optional[float] = None
+    ttl: float | None = None
 
     @property
     def total_tokens(self) -> int:
@@ -68,6 +68,7 @@ class BudgetSnapshot:
             "created_at": self.created_at,
         }
 
+
 @dataclass
 class TrackerSummary:
     total_tokens: int = 0
@@ -84,6 +85,7 @@ class TrackerSummary:
         if limit == 0:
             return 1.0
         return min(usage / limit, 1.0)
+
 
 class BudgetTracker:
     def __init__(self):
@@ -121,15 +123,17 @@ class BudgetTracker:
         snap.tokens_out += tokens_out
         snap.cost_usd += cost_usd
         snap.wall_time_seconds += wall_time
-        self._requests.append(BudgetSnapshot(
-            scope=TrackerScope.REQUEST,
-            scope_id=f"{scope_id}-req-{len(self._requests)}",
-            tokens_in=tokens_in,
-            tokens_out=tokens_out,
-            cost_usd=cost_usd,
-            wall_time_seconds=wall_time,
-            ttl=self._ttl_map.get(TrackerScope.REQUEST),
-        ))
+        self._requests.append(
+            BudgetSnapshot(
+                scope=TrackerScope.REQUEST,
+                scope_id=f"{scope_id}-req-{len(self._requests)}",
+                tokens_in=tokens_in,
+                tokens_out=tokens_out,
+                cost_usd=cost_usd,
+                wall_time_seconds=wall_time,
+                ttl=self._ttl_map.get(TrackerScope.REQUEST),
+            )
+        )
         return snap
 
     def record_turn(self, turn_id: str, snapshots: list[BudgetSnapshot]) -> BudgetSnapshot:
@@ -149,7 +153,7 @@ class BudgetTracker:
         self._turns.append(turn)
         return turn
 
-    def get_snapshot(self, scope: TrackerScope, scope_id: str) -> Optional[BudgetSnapshot]:
+    def get_snapshot(self, scope: TrackerScope, scope_id: str) -> BudgetSnapshot | None:
         return self._snapshots.get((scope, scope_id))
 
     def summarize(self) -> TrackerSummary:
@@ -180,9 +184,7 @@ class BudgetTracker:
         return time.time() - self._start_time
 
     def _cleanup_expired(self) -> None:
-        expired = [
-            k for k, s in self._snapshots.items() if s.is_expired()
-        ]
+        expired = [k for k, s in self._snapshots.items() if s.is_expired()]
         for k in expired:
             del self._snapshots[k]
 
@@ -190,10 +192,7 @@ class BudgetTracker:
         return json.dumps(
             {
                 "summary": self.summarize().__dict__,
-                "snapshots": {
-                    f"{k[0].value}:{k[1]}": v.to_dict()
-                    for k, v in self._snapshots.items()
-                },
+                "snapshots": {f"{k[0].value}:{k[1]}": v.to_dict() for k, v in self._snapshots.items()},
                 "elapsed": round(self.elapsed(), 2),
             },
             indent=2,
@@ -208,4 +207,3 @@ class BudgetTracker:
 
 
 # 代理导出：RollbackBudgetTracker 实际定义在 infrastructure.rollback.budget_tracker
-from zephyr.infrastructure.rollback.budget_tracker import RollbackBudgetTracker  # noqa: E402

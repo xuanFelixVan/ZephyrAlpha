@@ -6,12 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.reliability — auto-generated package init."""
-from . import circuit_breaker
-from . import context_guard
 
-__all__ = ['circuit_breaker', 'context_guard']
+from . import circuit_breaker, context_guard
 
+__all__ = ["circuit_breaker", "context_guard"]

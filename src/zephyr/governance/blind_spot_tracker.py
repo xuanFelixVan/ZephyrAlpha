@@ -23,10 +23,10 @@ from __future__ import annotations
 
 """盲点关闭追踪器 — 自动验证各轮盲点是否已覆盖."""
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Any
+
 
 @dataclass
 class BlindSpotStatus:
@@ -35,6 +35,7 @@ class BlindSpotStatus:
     round: int = 0
     covered_by: str = ""
     status: str = "uncovered"
+
 
 class BlindSpotTracker:
     """盲点关闭追踪器."""
@@ -120,19 +121,21 @@ class BlindSpotTracker:
                 status = "covered" if mod else "uncovered"
                 if status == "covered":
                     covered += 1
-                results.append({
-                    "id": f"#{bs_id}",
-                    "round": round_num,
-                    "description": desc,
-                    "covered_by": mod,
-                    "status": status,
-                })
+                results.append(
+                    {
+                        "id": f"#{bs_id}",
+                        "round": round_num,
+                        "description": desc,
+                        "covered_by": mod,
+                        "status": status,
+                    }
+                )
 
         return {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "total_blind_spots": total,
             "covered": covered,
-            "coverage_rate": f"{covered}/{total} ({covered/total*100:.0f}%)",
+            "coverage_rate": f"{covered}/{total} ({covered / total * 100:.0f}%)",
             "blinds": results,
         }
 

@@ -38,7 +38,6 @@
     python -m zephyr.knowledge.kb.quiet_period_monitor check
 """
 
-
 from __future__ import annotations
 
 import json
@@ -60,7 +59,7 @@ class QuietPeriodReport:
     days_silent: int
     recent_count_7d: int
     recent_count_14d: int
-    status: str                    # active | quiet | silent
+    status: str  # active | quiet | silent
     diagnostics: list[str]
 
 
@@ -89,9 +88,13 @@ class QuietPeriodMonitor:
         if not self.know_dir.exists():
             return QuietPeriodReport(
                 timestamp=now.isoformat(),
-                total_kes=0, last_activity="never",
-                days_silent=-1, recent_count_7d=0, recent_count_14d=0,
-                status="empty", diagnostics=["KE directory does not exist"],
+                total_kes=0,
+                last_activity="never",
+                days_silent=-1,
+                recent_count_7d=0,
+                recent_count_14d=0,
+                status="empty",
+                diagnostics=["KE directory does not exist"],
             )
 
         ke_files = list(self.know_dir.glob("KE-*.md"))
@@ -100,9 +103,13 @@ class QuietPeriodMonitor:
         if total == 0:
             return QuietPeriodReport(
                 timestamp=now.isoformat(),
-                total_kes=0, last_activity="never",
-                days_silent=-1, recent_count_7d=0, recent_count_14d=0,
-                status="empty", diagnostics=["No KEs found"],
+                total_kes=0,
+                last_activity="never",
+                days_silent=-1,
+                recent_count_7d=0,
+                recent_count_14d=0,
+                status="empty",
+                diagnostics=["No KEs found"],
             )
 
         cutoff_7d = now_ts - (self._WARN_DAYS * 24 * 3600)
@@ -146,6 +153,7 @@ class QuietPeriodMonitor:
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="KB Quiet Period Monitor")
     parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument("--warn-only", action="store_true", help="Exit 0 even when silent")
@@ -155,16 +163,22 @@ def main() -> None:
     report = monitor.check()
 
     if args.json:
-        print(json.dumps({
-            "timestamp": report.timestamp,
-            "total_kes": report.total_kes,
-            "last_activity": report.last_activity,
-            "days_silent": report.days_silent,
-            "recent_count_7d": report.recent_count_7d,
-            "recent_count_14d": report.recent_count_14d,
-            "status": report.status,
-            "diagnostics": report.diagnostics,
-        }, ensure_ascii=False, indent=2))
+        print(
+            json.dumps(
+                {
+                    "timestamp": report.timestamp,
+                    "total_kes": report.total_kes,
+                    "last_activity": report.last_activity,
+                    "days_silent": report.days_silent,
+                    "recent_count_7d": report.recent_count_7d,
+                    "recent_count_14d": report.recent_count_14d,
+                    "status": report.status,
+                    "diagnostics": report.diagnostics,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     else:
         print(f"Quiet Period Monitor: {report.status.upper()}")
         print(f"  Total KEs:    {report.total_kes}")

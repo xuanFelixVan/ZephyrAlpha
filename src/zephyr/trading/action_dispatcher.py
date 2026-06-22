@@ -45,7 +45,6 @@ Phase 2 新增:
     - 危险操作(删除)先移入回收站 .brain_trash/
 """
 
-
 from __future__ import annotations
 
 import json
@@ -98,8 +97,12 @@ class ActionDispatcher:
     def __init__(self, dry_run: bool = False) -> None:
         self._dry_run = dry_run
         self._stats: dict[str, int] = {
-            "dispatched": 0, "modified": 0, "skipped": 0,
-            "created": 0, "deleted": 0, "search_replaced": 0,
+            "dispatched": 0,
+            "modified": 0,
+            "skipped": 0,
+            "created": 0,
+            "deleted": 0,
+            "search_replaced": 0,
             "backups": 0,
         }
 
@@ -206,12 +209,15 @@ class ActionDispatcher:
             rel_path = str(filepath.relative_to(PROJECT_ROOT))
         except ValueError:
             rel_path = str(filepath)
-        manifest_entry = json.dumps({
-            "file": rel_path,
-            "backup": bak_name,
-            "timestamp": datetime.now(UTC).isoformat(),
-            "git_commit": git_commit,
-        }, ensure_ascii=False)
+        manifest_entry = json.dumps(
+            {
+                "file": rel_path,
+                "backup": bak_name,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "git_commit": git_commit,
+            },
+            ensure_ascii=False,
+        )
 
         manifest_path = BRAIN_BACKUPS_DIR / "manifest.jsonl"
         with open(manifest_path, "a", encoding="utf-8") as f:
@@ -221,8 +227,7 @@ class ActionDispatcher:
         pattern_prefix = f"{stem}."
         pattern_suffix = f"{suffix}.brain_bak"
         old_backups = sorted(
-            [p for p in BRAIN_BACKUPS_DIR.glob(f"{pattern_prefix}*{pattern_suffix}")
-             if p.name != bak_name],
+            [p for p in BRAIN_BACKUPS_DIR.glob(f"{pattern_prefix}*{pattern_suffix}") if p.name != bak_name],
             key=lambda p: p.stat().st_mtime,
         )
         while len(old_backups) >= _MAX_BACKUPS_PER_FILE:
@@ -257,8 +262,7 @@ class ActionDispatcher:
             # 尝试从 source_text 里直接解析路径
             py_file = self._parse_file_path(source_text)
         if py_file is None:
-            return ActionReport(module_name, "search_replace", "skipped",
-                                f"file not found for: {module_name}")
+            return ActionReport(module_name, "search_replace", "skipped", f"file not found for: {module_name}")
 
         entries = result.get(field, [])
         if not entries:
@@ -292,7 +296,7 @@ class ActionDispatcher:
                 old_stripped = old_str.strip()
                 if old_stripped and old_stripped in modified:
                     idx = modified.index(old_stripped)
-                    actual_old = modified[idx:idx + len(old_stripped)]
+                    actual_old = modified[idx : idx + len(old_stripped)]
                     modified = modified.replace(actual_old, new_str, 1)
                     applied += 1
                     if reason:
@@ -302,8 +306,7 @@ class ActionDispatcher:
                     _log.debug("SearchReplace: old_str not found in %s: %r", py_file.name, old_str[:60])
 
         if applied == 0:
-            return ActionReport(py_file.name, "search_replace", "skipped",
-                                f"{failed} match(es) failed")
+            return ActionReport(py_file.name, "search_replace", "skipped", f"{failed} match(es) failed")
 
         if modified == original:
             return ActionReport(py_file.name, "search_replace", "skipped", "unchanged")
@@ -351,12 +354,10 @@ class ActionDispatcher:
         # 安全: 限制在 PROJECT_ROOT 内
         target = (PROJECT_ROOT / file_path_str).resolve()
         if not str(target).startswith(str(PROJECT_ROOT.resolve())):
-            return ActionReport(file_path_str, "code_generate", "error",
-                                "path escapes PROJECT_ROOT")
+            return ActionReport(file_path_str, "code_generate", "error", "path escapes PROJECT_ROOT")
 
         if target.exists():
-            return ActionReport(file_path_str, "code_generate", "skipped",
-                                f"file already exists: {target.name}")
+            return ActionReport(file_path_str, "code_generate", "skipped", f"file already exists: {target.name}")
 
         # 添加 BRAIN 标记 header
         ts = datetime.now(UTC).isoformat()
@@ -413,12 +414,15 @@ class ActionDispatcher:
         trash_path = BRAIN_TRASH_DIR / trash_name
 
         # 记录 trash manifest
-        manifest_entry = json.dumps({
-            "original": str(target_file.relative_to(PROJECT_ROOT)),
-            "trashed_as": trash_name,
-            "timestamp": datetime.now(UTC).isoformat(),
-            "git_commit": _git_commit_hash(PROJECT_ROOT),
-        }, ensure_ascii=False)
+        manifest_entry = json.dumps(
+            {
+                "original": str(target_file.relative_to(PROJECT_ROOT)),
+                "trashed_as": trash_name,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "git_commit": _git_commit_hash(PROJECT_ROOT),
+            },
+            ensure_ascii=False,
+        )
 
         trash_manifest = BRAIN_TRASH_DIR / "trash_manifest.jsonl"
         with open(trash_manifest, "a", encoding="utf-8") as f:
@@ -446,8 +450,7 @@ class ActionDispatcher:
         module_name = self._extract_module_name(source_text)
         py_file = self._find_module_file(module_name)
         if py_file is None:
-            return ActionReport(module_name, "task_classification", "skipped",
-                                f"file not found for: {module_name}")
+            return ActionReport(module_name, "task_classification", "skipped", f"file not found for: {module_name}")
 
         original = _read_text(py_file)
         if original is None:
@@ -476,8 +479,7 @@ class ActionDispatcher:
             py_file.write_text(new_content, encoding="utf-8")
 
         _log.info("BrainHands: %s <- %s=%s", py_file.name, field, str(value)[:60])
-        return ActionReport(py_file.name, "task_classification", "modified",
-                            f"{field}={str(value)[:40]}")
+        return ActionReport(py_file.name, "task_classification", "modified", f"{field}={str(value)[:40]}")
 
     # ── Capability Card 标签追加 ────────────────────────
 
@@ -496,6 +498,7 @@ class ActionDispatcher:
             return ActionReport(module_name, "tag_completion", "error", "cannot read card")
 
         import yaml
+
         try:
             data = yaml.safe_load(content)
         except Exception:
@@ -522,8 +525,7 @@ class ActionDispatcher:
             card_file.write_text(new_yaml, encoding="utf-8")
 
         _log.info("BrainHands: %s +tags=%s", card_file.name, new_tags)
-        return ActionReport(card_file.name, "tag_completion", "modified",
-                            f"added {len(new_tags)} tags: {new_tags}")
+        return ActionReport(card_file.name, "tag_completion", "modified", f"added {len(new_tags)} tags: {new_tags}")
 
     # ── Blueprint 摘要注释 ──────────────────────────────
 
@@ -564,8 +566,7 @@ class ActionDispatcher:
             bp_file.write_text(new_content, encoding="utf-8")
 
         _log.info("BrainHands: %s <- summary (%d points)", bp_file.name, len(points))
-        return ActionReport(bp_file.name, "summary_extraction", "modified",
-                            f"added {len(points)} summary points")
+        return ActionReport(bp_file.name, "summary_extraction", "modified", f"added {len(points)} summary points")
 
     # ── 审计日志 ─────────────────────────────────────────
 
@@ -578,11 +579,14 @@ class ActionDispatcher:
         out_file = AUDIT_LOGS_DIR / f"brain_triage_{today}.jsonl"
         out_file.parent.mkdir(parents=True, exist_ok=True)
 
-        entry = json.dumps({
-            "timestamp": datetime.now(UTC).isoformat(),
-            "needs_human": needs_human,
-            "reason": reason,
-        }, ensure_ascii=False)
+        entry = json.dumps(
+            {
+                "timestamp": datetime.now(UTC).isoformat(),
+                "needs_human": needs_human,
+                "reason": reason,
+            },
+            ensure_ascii=False,
+        )
 
         with open(out_file, "a", encoding="utf-8") as f:
             f.write(entry + "\n")
@@ -596,15 +600,20 @@ class ActionDispatcher:
         if not text:
             return "unknown"
         for prefix in (
-            "classify this module: ", "classify this document: ",
-            "generate tags for: ", "generate tags for config: ",
+            "classify this module: ",
+            "classify this document: ",
+            "generate tags for: ",
+            "generate tags for config: ",
             "suggest alternative names for module: ",
-            "fix bug: ", "fix code in: ", "refactor: ",
-            "analyze file: ", "scan dead code in: ",
+            "fix bug: ",
+            "fix code in: ",
+            "refactor: ",
+            "analyze file: ",
+            "scan dead code in: ",
             "detect dead code: ",
         ):
             if text.startswith(prefix):
-                text = text[len(prefix):]
+                text = text[len(prefix) :]
         first_line = text.split("\n")[0].strip()
         if len(first_line) > 80:
             first_line = first_line[:80]
@@ -679,10 +688,7 @@ class ActionDispatcher:
     @staticmethod
     def _build_py_brain_block(data: dict) -> str:
         ts = datetime.now(UTC).isoformat()
-        lines = [
-            f"{_BRAIN_MARKER} {k}: {json.dumps(v, ensure_ascii=False, default=str)}"
-            for k, v in data.items()
-        ]
+        lines = [f"{_BRAIN_MARKER} {k}: {json.dumps(v, ensure_ascii=False, default=str)}" for k, v in data.items()]
         lines.append(f"{_BRAIN_MARKER} at: {ts}")
         return "\n".join(lines)
 
@@ -729,7 +735,7 @@ class ActionDispatcher:
             return ActionDispatcher._insert_brain_block(original, block)
 
         block_lines = block.split("\n")
-        new_lines = lines[:start] + block_lines + lines[end + 1:]
+        new_lines = lines[:start] + block_lines + lines[end + 1 :]
         return "\n".join(new_lines)
 
     @staticmethod
@@ -738,6 +744,7 @@ class ActionDispatcher:
 
 
 # ── ActionReport ────────────────────────────────────────
+
 
 class ActionReport:
     def __init__(self, target: str, capability: str, status: str, detail: str) -> None:

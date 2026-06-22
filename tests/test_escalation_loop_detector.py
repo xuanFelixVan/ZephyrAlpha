@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_escalation_loop_detector.py
 
-import pytest
 
 from zephyr.governance.escalation_loop_detector import EscalationLoopDetector
 

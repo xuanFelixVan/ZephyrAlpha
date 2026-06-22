@@ -9,7 +9,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_position_optimizer.py -q
-import pytest
 from zephyr.autonomy_core.position_optimizer import PositionOptimizer, PositionScore
 
 

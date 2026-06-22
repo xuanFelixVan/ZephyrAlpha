@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 审计失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_delegation_auditor.py
-
 import logging
 from typing import Any
 
@@ -21,12 +20,14 @@ __all__ = ["DelegationAuditor"]
 
 MAX_DELEGATION_DEPTH = 5
 
+
 class DelegationAuditor:
     def __init__(self) -> None:
         self._bridge = None
         self._available = False
         try:
             from zephyr.governance.audit_trail.delegation_bridge import DelegationBridge
+
             self._bridge = DelegationBridge()
             self._available = self._bridge.is_available()
         except ImportError:
@@ -47,32 +48,38 @@ class DelegationAuditor:
             target = event.get("target", "")
 
             if target in visited:
-                findings.append({
-                    "severity": "RED",
-                    "type": "circular_delegation",
-                    "target": target,
-                    "detail": f"Circular delegation detected: {' -> '.join(chain)}",
-                })
+                findings.append(
+                    {
+                        "severity": "RED",
+                        "type": "circular_delegation",
+                        "target": target,
+                        "detail": f"Circular delegation detected: {' -> '.join(chain)}",
+                    }
+                )
 
             visited.add(target)
 
             depth = event.get("depth", 0)
             if depth > MAX_DELEGATION_DEPTH:
-                findings.append({
-                    "severity": "YELLOW",
-                    "type": "depth_overflow",
-                    "target": target,
-                    "depth": depth,
-                    "detail": f"Delegation depth {depth} exceeds max {MAX_DELEGATION_DEPTH}",
-                })
+                findings.append(
+                    {
+                        "severity": "YELLOW",
+                        "type": "depth_overflow",
+                        "target": target,
+                        "depth": depth,
+                        "detail": f"Delegation depth {depth} exceeds max {MAX_DELEGATION_DEPTH}",
+                    }
+                )
 
             if event.get("deadlock", False):
-                findings.append({
-                    "severity": "RED",
-                    "type": "deadlock",
-                    "target": target,
-                    "detail": "Potential deadlock detected in delegation chain",
-                })
+                findings.append(
+                    {
+                        "severity": "RED",
+                        "type": "deadlock",
+                        "target": target,
+                        "detail": "Potential deadlock detected in delegation chain",
+                    }
+                )
                 if self._bridge:
                     self._bridge.report_delegation_failure(target, "deadlock detected")
 

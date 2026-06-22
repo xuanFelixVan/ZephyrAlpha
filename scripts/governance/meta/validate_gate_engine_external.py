@@ -32,10 +32,11 @@ exit codes: 0=验证通过, 1=发现问题, 2=执行错误
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS
-
 
 __manifest__ = """
 args: []
@@ -50,7 +51,6 @@ timeout_seconds: 30
 warn_only: false
 """
 
-import os
 import argparse
 import hashlib
 import json
@@ -104,9 +104,7 @@ def verify_core_file_hashes(verbose: bool = False) -> dict[str, Any]:
                 issues.append(f"核心文件 {path} 缺失")
             elif cur_hash != snap_hash:
                 if verbose:
-                    issues.append(
-                        f"文件哈希变更 {path}: {snap_hash[:8]} → {cur_hash[:8]}"
-                    )
+                    issues.append(f"文件哈希变更 {path}: {snap_hash[:8]} → {cur_hash[:8]}")
                 else:
                     issues.append(f"文件哈希变更: {path}")
 
@@ -136,9 +134,9 @@ def update_hash_snapshot() -> dict[str, str]:
     tmp_path = f"{_SNAPSHOT_PATH}.{os.getpid()}.tmp"
     try:
         Path(tmp_path).write_text(
-        json.dumps(snapshot, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+            json.dumps(snapshot, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
         os.replace(tmp_path, _SNAPSHOT_PATH)
     except PermissionError:
         try:
@@ -191,10 +189,8 @@ def verify_sqlite_external() -> dict[str, Any]:
 
         try:
             conn.execute(
-                "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) "
-                "VALUES (?,?,?,?,?)",
-                ("ext-verify-test", "GX-EXT:test", 1, "{}",
-                 datetime.now(UTC).isoformat()),
+                "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?,?,?,?,?)",
+                ("ext-verify-test", "GX-EXT:test", 1, "{}", datetime.now(UTC).isoformat()),
             )
             conn.execute("DELETE FROM gates WHERE gate_run_id='ext-verify-test'")
         except Exception as exc:
@@ -213,15 +209,15 @@ def verify_sqlite_external() -> dict[str, Any]:
 
 def run_canary_injection_test() -> dict[str, Any]:
     """run_canary_injection_test implementation."""
-    import yaml
 
     issues: list[str] = []
     gate_engine_ok = False
 
     sys.path.insert(0, str(_SRC))
     try:
+        from zephyr.integration.schema.schemas import SafetyLevel, Task, TaskNamespace
+
         from zephyr.governance.rule_enforcement.gate_engine import GateEngine
-        from zephyr.integration.schema.schemas import Task, TaskNamespace, SafetyLevel
     except Exception as exc:
         return {
             "label": "V4. Canary 注入测试",
@@ -255,14 +251,10 @@ def run_canary_injection_test() -> dict[str, Any]:
         if result is not None and hasattr(result, "passed"):
             gate_engine_ok = True
             if result.passed:
-                issues.append(
-                    f"Canary 测试: G1 门禁执行成功（功能正常——目标文件符合编码/换行规范）"
-                )
+                issues.append("Canary 测试: G1 门禁执行成功（功能正常——目标文件符合编码/换行规范）")
             issues = []  # 功能性正常视为通过
         else:
-            issues.append(
-                f"Canary 测试: G1 门禁未能正常完成 evaluate() 调用"
-            )
+            issues.append("Canary 测试: G1 门禁未能正常完成 evaluate() 调用")
 
         engine.close()
     except Exception as exc:
@@ -313,7 +305,11 @@ def verify_registry_filesystem_consistency() -> dict[str, Any]:
             registry_files[gid] = fpath
 
     yaml_gate_ids: set[str] = set()
-    for yf in sorted(_GATES_DIR.glob("*.yaml")) + sorted(_GATES_DIR.glob("task/*.yaml")) + sorted(_GATES_DIR.glob("admission/*.yaml")):
+    for yf in (
+        sorted(_GATES_DIR.glob("*.yaml"))
+        + sorted(_GATES_DIR.glob("task/*.yaml"))
+        + sorted(_GATES_DIR.glob("admission/*.yaml"))
+    ):
         if yf.name.startswith("_"):
             continue
         try:
@@ -356,8 +352,9 @@ def verify_import_integrity() -> dict[str, Any]:
 
     sys.path.insert(0, str(_SRC))
     try:
-        import zephyr.governance.rule_enforcement.gate_engine
         import zephyr.governance.rule_enforcement.circuit_breaker
+        import zephyr.governance.rule_enforcement.gate_engine
+
         importable = True
     except SyntaxError as exc:
         issues.append(f"SyntaxError: {exc}")
@@ -379,8 +376,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Gate Engine 外部完整性验证")
     parser.add_argument("--json", action="store_true", help="输出 JSON 格式")
     parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
-    parser.add_argument("--update-snapshot", action="store_true",
-                        help="更新哈希快照到当前状态")
+    parser.add_argument("--update-snapshot", action="store_true", help="更新哈希快照到当前状态")
     args = parser.parse_args()
 
     if args.update_snapshot:
@@ -390,7 +386,7 @@ def main() -> None:
             print(f"  {h}  {path}")
         sys.exit(EXIT_PASS)
 
-    print(f"=== Gate Engine 外部完整性验证 ===")
+    print("=== Gate Engine 外部完整性验证 ===")
     print(f"时间: {datetime.now(UTC).isoformat()}")
     print(f"项目: {_PROJECT_ROOT}")
     print()

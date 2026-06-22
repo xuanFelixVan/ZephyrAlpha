@@ -31,10 +31,10 @@
 方法: 链式 Pipeline 模式, 每一步返回 pass/fail
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+
 
 @dataclass
 class GatewayResult:
@@ -57,13 +57,18 @@ class A2AProtocolGateway:
         return self._registry.get(agent_id)
 
     def route(
-        self, from_agent: str, to_agent: str,
-        message_id: str, content: str,
+        self,
+        from_agent: str,
+        to_agent: str,
+        message_id: str,
+        content: str,
     ) -> GatewayResult:
         target = self.resolve(to_agent)
         if target is None:
             return GatewayResult(
-                allowed=False, message_id=message_id, route=f"{from_agent}->{to_agent}",
+                allowed=False,
+                message_id=message_id,
+                route=f"{from_agent}->{to_agent}",
                 error=f"Agent {to_agent} not registered",
             )
 
@@ -73,7 +78,8 @@ class A2AProtocolGateway:
         ]
 
         return GatewayResult(
-            allowed=True, message_id=message_id,
+            allowed=True,
+            message_id=message_id,
             route=f"{from_agent}->{to_agent}",
             checks=checks,
         )

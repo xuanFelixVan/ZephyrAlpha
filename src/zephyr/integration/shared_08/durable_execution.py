@@ -11,14 +11,15 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/shared/test_durable_execution.py
-
 import json
 import os
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
+
 
 class ActivityStatus(Enum):
     PENDING = "pending"
@@ -28,12 +29,14 @@ class ActivityStatus(Enum):
     SKIPPED = "skipped"
     CANCELLED = "cancelled"
 
+
 @dataclass
 class ActivityResult:
     activity_name: str
     status: ActivityStatus
     output: dict[str, Any] = field(default_factory=dict)
     error: str | None = None
+
 
 @dataclass
 class ProgressSnapshot:
@@ -42,6 +45,7 @@ class ProgressSnapshot:
     current_activity: str = ""
     version: int = 1
 
+
 @runtime_checkable
 class Activity(Protocol):
     name: str
@@ -49,6 +53,7 @@ class Activity(Protocol):
     def execute(self, ctx: dict[str, Any]) -> dict[str, Any]: ...
     def checkpoint_data(self) -> dict[str, Any]: ...
     def resume(self, data: dict[str, Any]) -> None: ...
+
 
 @dataclass
 class SimpleActivity:
@@ -63,6 +68,7 @@ class SimpleActivity:
 
     def resume(self, data: dict[str, Any]) -> None:
         pass
+
 
 class WorkflowManager:
     def __init__(self, workflow_id: str = "", snapshot_dir: str = "") -> None:
@@ -85,7 +91,12 @@ class WorkflowManager:
     @property
     def pending_activities(self) -> list[str]:
         completed = set(self._completed_order)
-        return [a.name for a in self._activities if a.name not in completed and a.name not in self._results or self._results[a.name].status != ActivityStatus.COMPLETED]
+        return [
+            a.name
+            for a in self._activities
+            if (a.name not in completed and a.name not in self._results)
+            or self._results[a.name].status != ActivityStatus.COMPLETED
+        ]
 
     @property
     def progress(self) -> float:
@@ -149,7 +160,7 @@ class WorkflowManager:
         if not path.exists():
             return None
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             return ProgressSnapshot(
                 workflow_id=data["workflow_id"],
@@ -204,6 +215,7 @@ class WorkflowManager:
                     path.unlink()
                 except OSError:
                     pass
+
 
 __all__ = [
     "Activity",

@@ -188,9 +188,14 @@ def run_mutations(
             missed_count += 1
 
     total = detected_count + missed_count + skipped_count
-    detection_rate = detected_count / (detected_count + missed_count) * 100 if (detected_count + missed_count) > 0 else 0
+    detection_rate = (
+        detected_count / (detected_count + missed_count) * 100 if (detected_count + missed_count) > 0 else 0
+    )
 
-    print(f"\n  检测率: {detected_count}/{detected_count + missed_count} ({detection_rate:.0f}%), 跳过: {skipped_count}", file=sys.stderr)
+    print(
+        f"\n  检测率: {detected_count}/{detected_count + missed_count} ({detection_rate:.0f}%), 跳过: {skipped_count}",
+        file=sys.stderr,
+    )
 
     if missed_count > 0:
         print(f"  ⚠ {missed_count} 个 FALSE NEGATIVE——脚本系统缺陷被绕过", file=sys.stderr)

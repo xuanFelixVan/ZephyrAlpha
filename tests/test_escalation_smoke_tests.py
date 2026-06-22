@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.escalation_smoke_tests import SMOKE_TESTS, run_smoke
 
 

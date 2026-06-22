@@ -22,9 +22,20 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 
 LAYER_MAP = {
-    "L00": 0, "L01": 1, "L02": 2, "L03": 3, "L04": 4,
-    "L05": 5, "L06": 6, "L07": 7, "L08": 8, "L09": 9,
-    "L10": 10, "L11": 11, "L12": 12, "L13": 13,
+    "L00": 0,
+    "L01": 1,
+    "L02": 2,
+    "L03": 3,
+    "L04": 4,
+    "L05": 5,
+    "L06": 6,
+    "L07": 7,
+    "L08": 8,
+    "L09": 9,
+    "L10": 10,
+    "L11": 11,
+    "L12": 12,
+    "L13": 13,
 }
 
 LAYER_KEYS_SORTED = sorted(LAYER_MAP.keys(), key=lambda x: -len(x))
@@ -34,6 +45,7 @@ ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "standard", "templat
 
 def load_depgraph():
     import sqlite3
+
     conn = sqlite3.connect(str(DEPGRAPH_PATH))
     conn.row_factory = sqlite3.Row
     data = {"nodes": {}, "edges": [], "adjacency_lists": {"forward": {}, "reverse": {}}, "metadata": {}}
@@ -118,12 +130,14 @@ def verify_cycles(cycles, edges, nodes):
 
     for cycle in cycles:
         if len(cycle) != 2:
-            verified.append({
-                "nodes": cycle,
-                "classification": "multi_node_cycle",
-                "needs_manual_review": True,
-                "reason": "Multi-node cycle; verify each edge type before acting",
-            })
+            verified.append(
+                {
+                    "nodes": cycle,
+                    "classification": "multi_node_cycle",
+                    "needs_manual_review": True,
+                    "reason": "Multi-node cycle; verify each edge type before acting",
+                }
+            )
             continue
 
         a, b = cycle[0], cycle[1]
@@ -139,24 +153,33 @@ def verify_cycles(cycles, edges, nodes):
         elif a_to_b_types & {"import_depends"} and b_to_a_types & {"produces", "consumes", "events", "data_flow"}:
             classification = "event_driven"
             reason = "One direction is import, other is event/data flow — NOT a circular dependency"
-        elif a_to_b_types & {"produces", "consumes", "events", "data_flow"} and b_to_a_types & {"produces", "consumes", "events", "data_flow"}:
+        elif a_to_b_types & {"produces", "consumes", "events", "data_flow"} and b_to_a_types & {
+            "produces",
+            "consumes",
+            "events",
+            "data_flow",
+        }:
             classification = "event_driven"
             reason = "Both directions are event/data flow — NOT a circular dependency"
         elif a_to_b_types & {"import_depends"} and not b_to_a_types & {"import_depends"}:
             classification = "false_positive"
-            reason = "Only one direction is import; reverse is %s — NOT a circular dependency" % (",".join(b_to_a_types) or "none")
+            reason = "Only one direction is import; reverse is %s — NOT a circular dependency" % (
+                ",".join(b_to_a_types) or "none"
+            )
         else:
             classification = "needs_review"
             reason = "Edge types: A→B=%s, B→A=%s" % (",".join(a_to_b_types), ",".join(b_to_a_types))
 
-        verified.append({
-            "nodes": cycle,
-            "classification": classification,
-            "needs_manual_review": classification not in ("true_cycle", "event_driven", "false_positive"),
-            "reason": reason,
-            "a_to_b_types": sorted(a_to_b_types),
-            "b_to_a_types": sorted(b_to_a_types),
-        })
+        verified.append(
+            {
+                "nodes": cycle,
+                "classification": classification,
+                "needs_manual_review": classification not in ("true_cycle", "event_driven", "false_positive"),
+                "reason": reason,
+                "a_to_b_types": sorted(a_to_b_types),
+                "b_to_a_types": sorted(b_to_a_types),
+            }
+        )
 
     return verified
 
@@ -174,13 +197,15 @@ def find_cross_layer_refs(nodes, edges, node_layers):
             if from_layer > to_layer + 1:
                 from_path = nodes.get(from_id, {}).get("path", from_id)
                 to_path = nodes.get(to_id, {}).get("path", to_id)
-                refs.append({
-                    "from": from_path,
-                    "to": to_path,
-                    "from_layer": from_layer,
-                    "to_layer": to_layer,
-                    "gap": from_layer - to_layer,
-                })
+                refs.append(
+                    {
+                        "from": from_path,
+                        "to": to_path,
+                        "from_layer": from_layer,
+                        "to_layer": to_layer,
+                        "gap": from_layer - to_layer,
+                    }
+                )
     return sorted(refs, key=lambda x: -x["gap"])
 
 
@@ -245,12 +270,14 @@ def find_boundary_violations(nodes, edges):
         from_pkg = from_path.replace("src/zephyr/", "").split("/")[0]
         to_pkg = to_path.replace("src/zephyr/", "").split("/")[0]
         if from_pkg != to_pkg:
-            violations.append({
-                "from": from_path,
-                "to": to_path,
-                "from_pkg": from_pkg,
-                "to_pkg": to_pkg,
-            })
+            violations.append(
+                {
+                    "from": from_path,
+                    "to": to_path,
+                    "from_pkg": from_pkg,
+                    "to_pkg": to_pkg,
+                }
+            )
     return violations
 
 
@@ -320,13 +347,15 @@ def find_stability_violations(nodes, edges):
             to_rank = STABILITY_ORDER.get(to_stability)
             if from_rank is not None and to_rank is not None:
                 if from_rank < to_rank:
-                    violations.append({
-                        "from": nodes.get(from_id, {}).get("path", from_id),
-                        "to": nodes.get(to_id, {}).get("path", to_id),
-                        "from_change_policy": from_stability,
-                        "to_change_policy": to_stability,
-                        "violation": "%s depends on %s" % (from_stability, to_stability),
-                    })
+                    violations.append(
+                        {
+                            "from": nodes.get(from_id, {}).get("path", from_id),
+                            "to": nodes.get(to_id, {}).get("path", to_id),
+                            "from_change_policy": from_stability,
+                            "to_change_policy": to_stability,
+                            "violation": "%s depends on %s" % (from_stability, to_stability),
+                        }
+                    )
     return violations
 
 
@@ -344,13 +373,15 @@ def find_autonomy_violations(nodes, edges):
             to_rank = AUTONOMY_ORDER.get(to_autonomy)
             if from_rank is not None and to_rank is not None:
                 if from_rank < to_rank:
-                    violations.append({
-                        "from": nodes.get(from_id, {}).get("path", from_id),
-                        "to": nodes.get(to_id, {}).get("path", to_id),
-                        "from_modification_permission": from_autonomy,
-                        "to_modification_permission": to_autonomy,
-                        "violation": "%s depends on %s" % (from_autonomy, to_autonomy),
-                    })
+                    violations.append(
+                        {
+                            "from": nodes.get(from_id, {}).get("path", from_id),
+                            "to": nodes.get(to_id, {}).get("path", to_id),
+                            "from_modification_permission": from_autonomy,
+                            "to_modification_permission": to_autonomy,
+                            "violation": "%s depends on %s" % (from_autonomy, to_autonomy),
+                        }
+                    )
     return violations
 
 
@@ -445,8 +476,10 @@ def main():
     false_positives = [v for v in verified_cycles if v["classification"] == "false_positive"]
     bidirectional = [v for v in verified_cycles if v["classification"] == "bidirectional_import"]
     needs_review = [v for v in verified_cycles if v["needs_manual_review"]]
-    print("[DIAG]   True cycles: %d | Event-driven (NOT cycle): %d | False positives: %d | Bidirectional: %d | Needs review: %d" % (
-        len(true_cycles), len(event_driven), len(false_positives), len(bidirectional), len(needs_review)))
+    print(
+        "[DIAG]   True cycles: %d | Event-driven (NOT cycle): %d | False positives: %d | Bidirectional: %d | Needs review: %d"
+        % (len(true_cycles), len(event_driven), len(false_positives), len(bidirectional), len(needs_review))
+    )
 
     print("[DIAG] 4/10 Finding cross-layer references (gap >= 2)...")
     cross_layer = find_cross_layer_refs(nodes, edges, node_layers)
@@ -467,7 +500,9 @@ def main():
     for v in boundary_violations:
         key = "%s -> %s" % (v["from_pkg"], v["to_pkg"])
         pkg_pairs[key] += 1
-    print("[DIAG]   Found %d cross-package imports across %d package pairs" % (len(boundary_violations), len(pkg_pairs)))
+    print(
+        "[DIAG]   Found %d cross-package imports across %d package pairs" % (len(boundary_violations), len(pkg_pairs))
+    )
 
     print("[DIAG] 8/10 Finding test coverage gaps...")
     test_gaps = find_test_coverage_gaps(nodes, edges)
@@ -483,8 +518,14 @@ def main():
 
     print("[DIAG] 11/11 Checking semantic field gaps (v3.1.0)...")
     semantic_gaps = find_semantic_field_gaps(nodes, edges)
-    print("[DIAG]   Edge field gaps: %d | Node field gaps: %d" % (semantic_gaps["edge_field_gaps"], semantic_gaps["node_field_gaps"]))
-    print("[DIAG]   Critical edges without contract_anchor: %d | without failure_mode: %d" % (semantic_gaps["critical_no_contract_anchor"], semantic_gaps["critical_no_failure_mode"]))
+    print(
+        "[DIAG]   Edge field gaps: %d | Node field gaps: %d"
+        % (semantic_gaps["edge_field_gaps"], semantic_gaps["node_field_gaps"])
+    )
+    print(
+        "[DIAG]   Critical edges without contract_anchor: %d | without failure_mode: %d"
+        % (semantic_gaps["critical_no_contract_anchor"], semantic_gaps["critical_no_failure_mode"])
+    )
 
     report = {
         "metadata": {
@@ -515,7 +556,15 @@ def main():
             },
             "cross_layer_references": {
                 "count": len(cross_layer),
-                "by_gap": dict(defaultdict(int, {gap: sum(1 for r in cross_layer if r["gap"] == gap) for gap in set(r["gap"] for r in cross_layer)})),
+                "by_gap": dict(
+                    defaultdict(
+                        int,
+                        {
+                            gap: sum(1 for r in cross_layer if r["gap"] == gap)
+                            for gap in set(r["gap"] for r in cross_layer)
+                        },
+                    )
+                ),
                 "sample": cross_layer[:30],
             },
             "deep_dependency_chains": {
@@ -537,13 +586,17 @@ def main():
         "quality_gates": {
             "test_coverage_gaps": {"count": len(test_gaps), "sample": test_gaps[:30]},
             "change_policy_violations": {"count": len(stability_violations), "sample": stability_violations[:30]},
-            "modification_permission_violations": {"count": len(autonomy_violations), "sample": autonomy_violations[:30]},
+            "modification_permission_violations": {
+                "count": len(autonomy_violations),
+                "sample": autonomy_violations[:30],
+            },
             "semantic_field_gaps": semantic_gaps,
         },
     }
 
     if args.output:
         import yaml
+
         out_path = PROJECT_ROOT / args.output
         tmp_path = str(out_path) + ".%d.tmp" % os.getpid()
         with open(tmp_path, "w", encoding="utf-8") as f:
@@ -557,8 +610,10 @@ def main():
     print("=" * 60)
     print("  Empty blueprint_id:     %d" % len(empty_bp))
     print("  Orphan nodes:           %d" % len(orphans))
-    print("  Circular dependencies:  %d (true: %d | event-driven: %d | false+: %d | bidir: %d)" % (
-        len(cycles), len(true_cycles), len(event_driven), len(false_positives), len(bidirectional)))
+    print(
+        "  Circular dependencies:  %d (true: %d | event-driven: %d | false+: %d | bidir: %d)"
+        % (len(cycles), len(true_cycles), len(event_driven), len(false_positives), len(bidirectional))
+    )
     print("  Cross-layer refs:       %d" % len(cross_layer))
     print("  Deep chains (>=4):      %d" % len(deep_chains))
     print("  God modules (out>=15):  %d" % len(god_out))
@@ -568,8 +623,14 @@ def main():
     print("  Test coverage gaps:     %d" % len(test_gaps))
     print("  Stability violations:   %d" % len(stability_violations))
     print("  Autonomy violations:    %d" % len(autonomy_violations))
-    print("  Semantic field gaps:    %d edges / %d nodes" % (semantic_gaps["edge_field_gaps"], semantic_gaps["node_field_gaps"]))
-    print("  Critical no contract:   %d | Critical no failure_mode: %d" % (semantic_gaps["critical_no_contract_anchor"], semantic_gaps["critical_no_failure_mode"]))
+    print(
+        "  Semantic field gaps:    %d edges / %d nodes"
+        % (semantic_gaps["edge_field_gaps"], semantic_gaps["node_field_gaps"])
+    )
+    print(
+        "  Critical no contract:   %d | Critical no failure_mode: %d"
+        % (semantic_gaps["critical_no_contract_anchor"], semantic_gaps["critical_no_failure_mode"])
+    )
     print()
     print("TOP 10 CROSS-PACKAGE PAIRS:")
     for pair, count in sorted(pkg_pairs.items(), key=lambda x: -x[1])[:10]:

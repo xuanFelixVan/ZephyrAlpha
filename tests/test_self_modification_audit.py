@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import hashlib
 
-import pytest
-
 from zephyr.ops.forensic.self_modification_audit import (
     FileIntegrity,
     SelfModificationAudit,

@@ -52,12 +52,12 @@ from typing import Any, TypeVar
 
 import yaml
 
-from zephyr.shared.foundation.errors import ConfigError, ValidationError
+from zephyr.shared.foundation.errors import ConfigError
 
 __all__ = [
+    "ConfigLoadError",
     "load_yaml_config",
     "load_yaml_config_validated",
-    "ConfigLoadError",
 ]
 
 logger = logging.getLogger(__name__)

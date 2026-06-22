@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from zephyr.governance.fail_mode_manager import (
     FailMode,
     FailModeManager,

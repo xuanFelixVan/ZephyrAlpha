@@ -24,14 +24,13 @@ from __future__ import annotations
 """
 G-CT-005 — DriftEvent Pydantic V2 BaseModel 漂移事件定义."""
 
-from datetime import datetime, timezone
-
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
 
-class DriftType(str, Enum):
 
+class DriftType(str, Enum):
     CODE_DIVERGENCE = "CODE_DIVERGENCE"
 
     CONFIG_DRIFT = "CONFIG_DRIFT"
@@ -42,8 +41,8 @@ class DriftType(str, Enum):
 
     INTERFACE_DRIFT = "INTERFACE_DRIFT"
 
-class DriftState(str, Enum):
 
+class DriftState(str, Enum):
     DETECTED = "DETECTED"
 
     FIXED = "FIXED"
@@ -52,11 +51,11 @@ class DriftState(str, Enum):
 
     IGNORED = "IGNORED"
 
-class DriftEvent(BaseModel):
 
+class DriftEvent(BaseModel):
     drift_id: str
 
-    detected_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    detected_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     target: str
 
@@ -73,10 +72,7 @@ class DriftEvent(BaseModel):
     severity: str = "MEDIUM"
 
     def mark_fixed(self) -> None:
-
         self.state = DriftState.FIXED
 
     def mark_manual_required(self) -> None:
-
         self.state = DriftState.MANUAL_REQUIRED
-

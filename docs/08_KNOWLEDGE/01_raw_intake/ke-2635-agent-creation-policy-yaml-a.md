@@ -34,7 +34,7 @@ agent_creation_policy:
     attenuation:
       L4_PRINCIPAL_parent: 0.7          # Principal创建的Agent获得70%权限
       L3_SENIOR_parent: 0.5             # Senior创建的Agent获得50%权限
-      
+
     never_inherited_permissions:        # 这些权限绝对不传递
       - "modify_immutable_core"         # 不可变核心修改权
       - "delete_audit_logs"             # 审计日志删除权
@@ -51,7 +51,7 @@ agent_creation_policy:
       session_expired: "Session结束 → 临时子Agent自动终止"
       kill_switch: "熔断触发 → 相关Agent终止"
       idle_timeout: "Agent 30分钟无操作 → L1_INTERN自动休眠"
-    
+
     audit: "每个创建/复制/终止事件 → 不可变审计日志"
 ```
 

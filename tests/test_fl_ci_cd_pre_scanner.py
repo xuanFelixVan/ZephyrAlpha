@@ -11,6 +11,7 @@
 # [TESTS] tests/test_fl_ci_cd_pre_scanner.py
 
 import pytest
+
 from zephyr.ops.gates.ci_cd_pre_scanner import CICDPreScanner
 
 

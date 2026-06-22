@@ -15,10 +15,8 @@
 AST解析+import链遍历，判断文件是否被其他文件引用。
 """
 
-
 from __future__ import annotations
 
-import ast
 import logging
 import re
 from pathlib import Path
@@ -85,9 +83,7 @@ class ReferenceGraphEngine:
             parts[-1] = parts[-1][:-3]
         return ".".join(parts)
 
-    def _file_imports_target(
-        self, source: Path, target: Path, target_module: str
-    ) -> bool:
+    def _file_imports_target(self, source: Path, target: Path, target_module: str) -> bool:
         target_name = target.stem
         target_parent = str(target.parent).replace("\\", "/")
         try:

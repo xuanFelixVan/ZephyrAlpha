@@ -1,27 +1,27 @@
 ---
-blueprint_id: DOM-GOV-001
-created: '2026-05-08'
 doc_type: index
-module_id: MOD-INF-056
-status: Active
-title: resource-optimization-engine — 目录索引
-updated: '2026-05-08'
-version: 1.0.0
+status: active
+title: "resource_optimization_engine — 目录索引"
+module_id: "MOD-INF-032"
+blueprint_id: "MOD-INF-032"
+version: "5.4.0"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-
-# resource-optimization-engine
+# resource_optimization_engine
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-08
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | 资源优化引擎蓝图 |
+| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| [index.md](index.md) | Markdown | resource-optimization-engine — 目录索引 |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

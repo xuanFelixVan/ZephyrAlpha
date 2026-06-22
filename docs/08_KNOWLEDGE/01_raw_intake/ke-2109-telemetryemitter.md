@@ -13,7 +13,7 @@ category: module_blueprint
 class TelemetryEmitter:
     metrics: MetricsRegistry
     tracer: TracerProvider
-    
+
     def record_dispatch(self, result: PipelineResult):
         """记录一次dispatch的所有metrics+traces"""
     def record_module_execution(self, module_result: ModuleResult):

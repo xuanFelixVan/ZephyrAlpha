@@ -15,6 +15,7 @@
 """
 
 from __future__ import annotations
+
 import argparse
 import ast
 import json
@@ -195,7 +196,6 @@ def update_init_py(pkg: str, modules: list[dict], dry_run: bool = False) -> dict
             # 匹配 __all__ = [...] 的最后一个 ]
             # 简单方法：在 ] 前添加
             pattern_end = r"(\]\s*)$"
-            import re
             # 找到 __all__ = [...] 的结束 ]
             lines = new_content.split("\n")
             in_all = False
@@ -223,11 +223,11 @@ def update_init_py(pkg: str, modules: list[dict], dry_run: bool = False) -> dict
                 break
         else:
             # 没找到 __all__ = [...]，追加
-            new_content += f'\n\n__all__.extend({added_all!r})\n'
+            new_content += f"\n\n__all__.extend({added_all!r})\n"
     else:
         # 没有 __all__，创建
         all_entries = ",\n    ".join(f'"{n}"' for n in added_all)
-        new_content += f'\n\n__all__ = [\n    {all_entries},\n]\n'
+        new_content += f"\n\n__all__ = [\n    {all_entries},\n]\n"
 
     if dry_run:
         print(f"\n[DRY-RUN] {init_py}:")
@@ -290,14 +290,14 @@ def main() -> None:
     total_added_all = sum(len(r.get("added_all", [])) for r in results)
     total_skipped = sum(len(r.get("skipped", [])) for r in results)
 
-    print(f"\n{'='*60}")
-    print(f"汇总:")
+    print(f"\n{'=' * 60}")
+    print("汇总:")
     print(f"  新增 import: {total_added_imports}")
     print(f"  新增 __all__: {total_added_all}")
     print(f"  跳过（已存在）: {total_skipped}")
 
     if not args.dry_run:
-        print(f"\n下一步: 运行 audit_registration.py 验证")
+        print("\n下一步: 运行 audit_registration.py 验证")
 
 
 if __name__ == "__main__":

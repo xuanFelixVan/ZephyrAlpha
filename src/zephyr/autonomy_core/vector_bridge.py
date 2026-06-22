@@ -38,7 +38,6 @@ Collection name → 返回 top-K results。
 - 降级策略：VMS 不可用时返回空结果集（由调用方 build_context 降级处理）
 """
 
-
 from __future__ import annotations
 
 import time

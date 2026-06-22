@@ -37,4 +37,3 @@ category: agent_instruction
   - "手动维护的数字"改为从 auto-generated registry 派生，消除二次漂移可能
 
 - **专业参考**：ITIL SACM → CMDB 与实际基础设施必须定期对账（reconciliation）/ AWS Config → 持续评估资源配置与期望状态的偏差 / Git `git ls-files` → 任何时刻都能精确回答"仓库里到底有什么文件"
-

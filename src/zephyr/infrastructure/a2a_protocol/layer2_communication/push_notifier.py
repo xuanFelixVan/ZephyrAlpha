@@ -21,13 +21,12 @@
 
 """Push Notifier — A2A 推送通知"""
 
-
-from typing import Dict, Callable, List
+from collections.abc import Callable
 
 
 class PushNotifier:
     def __init__(self):
-        self._subscribers: Dict[str, List[Callable]] = {}
+        self._subscribers: dict[str, list[Callable]] = {}
 
     def subscribe(self, agent_id: str, callback: Callable):
         self._subscribers.setdefault(agent_id, []).append(callback)

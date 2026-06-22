@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_workflow | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_workflow
+# [MODULE] zephyr.autonomy_core.skill_workflow
 
 # [INVARIANTS] none
 
@@ -34,32 +34,31 @@ Version: 0.2.0
   4. Aggregation: 合并多 Skill 输出
 """
 
-
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple
+from datetime import UTC, datetime
+from typing import Any
 
 
 class SkillWorkflow:
     """多 Skill 工作流编排器"""
 
     def __init__(self):
-        self._workflows: Dict[str, Dict[str, Any]] = {}
-        self._executions: Dict[str, Dict[str, Any]] = {}
+        self._workflows: dict[str, dict[str, Any]] = {}
+        self._executions: dict[str, dict[str, Any]] = {}
 
     def define(
         self,
         workflow_id: str,
-        skills: List[str],
-        dependencies: Optional[Dict[str, List[str]]] = None,
-        parallel_groups: Optional[List[List[str]]] = None,
-    ) -> Dict[str, Any]:
+        skills: list[str],
+        dependencies: dict[str, list[str]] | None = None,
+        parallel_groups: list[list[str]] | None = None,
+    ) -> dict[str, Any]:
         deps = dependencies or {}
 
-        adj: Dict[str, List[str]] = defaultdict(list)
-        indegree: Dict[str, int] = defaultdict(int)
+        adj: dict[str, list[str]] = defaultdict(list)
+        indegree: dict[str, int] = defaultdict(int)
 
         for sid in skills:
             indegree[sid] = indegree.get(sid, 0)
@@ -69,7 +68,7 @@ class SkillWorkflow:
                 adj[p].append(sid)
                 indegree[sid] = indegree.get(sid, 0) + 1
 
-        topo: List[str] = []
+        topo: list[str] = []
         queue = [s for s in skills if indegree.get(s, 0) == 0]
 
         while queue:
@@ -89,7 +88,7 @@ class SkillWorkflow:
                 "cycle_skills": cycle,
             }
 
-        levels: List[List[str]] = []
+        levels: list[list[str]] = []
         if parallel_groups:
             levels = parallel_groups
         else:
@@ -112,7 +111,7 @@ class SkillWorkflow:
             "dependencies": deps,
             "topological_order": topo,
             "parallel_levels": levels,
-            "defined_at": datetime.now(timezone.utc).isoformat(),
+            "defined_at": datetime.now(UTC).isoformat(),
         }
 
         return {
@@ -127,8 +126,8 @@ class SkillWorkflow:
     def execute(
         self,
         workflow_id: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         wf = self._workflows.get(workflow_id)
         if not wf:
             return {
@@ -136,12 +135,13 @@ class SkillWorkflow:
                 "status": "not_found",
             }
 
-        results: Dict[str, Dict[str, Any]] = {}
-        errors: Dict[str, str] = {}
+        results: dict[str, dict[str, Any]] = {}
+        errors: dict[str, str] = {}
 
         for skill_id in wf["topological_order"]:
             try:
                 from zephyr.autonomy_core.skill_loader import SkillLoader
+
                 loader = SkillLoader()
                 loaded = loader.progressive_load(skill_id)
 
@@ -154,12 +154,12 @@ class SkillWorkflow:
                 errors[skill_id] = str(e)
                 results[skill_id] = {"status": "failed", "error": str(e)}
 
-        execution_id = f"exec:{workflow_id}:{datetime.now(timezone.utc).timestamp()}"
+        execution_id = f"exec:{workflow_id}:{datetime.now(UTC).timestamp()}"
         self._executions[execution_id] = {
             "workflow_id": workflow_id,
             "results": results,
             "errors": errors,
-            "executed_at": datetime.now(timezone.utc).isoformat(),
+            "executed_at": datetime.now(UTC).isoformat(),
         }
 
         all_ok = len(errors) == 0

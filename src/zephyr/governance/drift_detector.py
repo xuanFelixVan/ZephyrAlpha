@@ -47,5 +47,6 @@ class DriftDetector:
     def is_drifting(self, current: dict[str, float], threshold: float = 0.3) -> bool:
         return self.detect(current) > threshold
 
+
 def trigger_recovery(drift_event, strategy=None):
     return True

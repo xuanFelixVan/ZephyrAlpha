@@ -14,7 +14,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-batch_mod = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.batch_fixer", reason="batch_fixer not available")
+batch_mod = pytest.importorskip(
+    "zephyr.security.access_control.auto_fix_engine_03.batch_fixer", reason="batch_fixer not available"
+)
 BatchFixer = batch_mod.BatchFixer
 
 models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
@@ -24,11 +26,15 @@ FixLevel = models.FixLevel
 FixConfidence = models.FixConfidence
 FixReport = models.FixReport
 
-budget_mod = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.fix_budget", reason="fix_budget not available")
+budget_mod = pytest.importorskip(
+    "zephyr.security.access_control.auto_fix_engine_03.fix_budget", reason="fix_budget not available"
+)
 FixBudget = budget_mod.FixBudget
 FixStormGuard = budget_mod.FixStormGuard
 
-reliability_mod = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.fix_reliability", reason="fix_reliability not available")
+reliability_mod = pytest.importorskip(
+    "zephyr.security.access_control.auto_fix_engine_03.fix_reliability", reason="fix_reliability not available"
+)
 ConflictResolver = reliability_mod.ConflictResolver
 IdempotencyGuard = reliability_mod.IdempotencyGuard
 
@@ -150,7 +156,13 @@ class TestBatchFixerExecuteBatch:
 class TestBatchFixerStormGuard:
     def test_storm_guard_blocks_execution(self, temp_db):
         budget = FixBudget(db_path=temp_db)
-        storm_config = {"short_window_sec": 60, "short_threshold": 1, "long_window_sec": 300, "long_threshold": 100, "cooldown_sec": 900}
+        storm_config = {
+            "short_window_sec": 60,
+            "short_threshold": 1,
+            "long_window_sec": 300,
+            "long_threshold": 100,
+            "cooldown_sec": 900,
+        }
         storm_guard = FixStormGuard(config=storm_config)
         storm_guard.record()
         idempotency = IdempotencyGuard(db_path=temp_db)

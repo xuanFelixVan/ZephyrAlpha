@@ -30,7 +30,6 @@
 Safety: HIGH（宪法自愈直接修改 AGENTS.md 工程宪法）
 """
 
-import pytest
 from zephyr.governance.constitutional_update.constitutional_update import (
     ConstitutionalAutoUpdate,
     Learning,
@@ -96,6 +95,7 @@ class TestConstitutionalAutoUpdate:
         agents_path_file.write_text("", encoding="utf-8")
 
         from zephyr.shared.shared_services.observability_02.session_audit import SessionAuditTrail
+
         trail = SessionAuditTrail(audit_dir=audit_dir)
         record = trail.start_session("sess-001")
         record.add_error("ImportError", "missing module", "pip install", True)
@@ -114,6 +114,7 @@ class TestConstitutionalAutoUpdate:
         (tmp_path / "AGENTS.md").write_text("", encoding="utf-8")
 
         from zephyr.shared.shared_services.observability_02.session_audit import SessionAuditTrail
+
         trail = SessionAuditTrail(audit_dir=audit_dir)
         record = trail.start_session("sess-002")
         record.add_decision("D-RISK-001", "risky choice", "because X")
@@ -130,6 +131,7 @@ class TestConstitutionalAutoUpdate:
         (tmp_path / "AGENTS.md").write_text("", encoding="utf-8")
 
         from zephyr.shared.shared_services.observability_02.session_audit import SessionAuditTrail
+
         trail = SessionAuditTrail(audit_dir=audit_dir)
 
         rec1 = trail.start_session("sess-a")

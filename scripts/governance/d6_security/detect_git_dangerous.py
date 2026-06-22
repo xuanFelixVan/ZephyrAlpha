@@ -20,6 +20,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 危险 Git 命令检测（ABS-26~28 — push --force / reset --hard / clean -fdx）
@@ -56,6 +57,7 @@ DANGEROUS_GIT_PATTERNS = [
 ]
 EXCLUDE_FILES = {"detect_git_dangerous.py"}
 
+
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
     findings = []
@@ -79,6 +81,7 @@ def scan_file(filepath: Path) -> list[dict]:
     return findings
     "扫描单个文件并返回发现列表."
 
+
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     """扫描仓库并返回发现列表."""
     if scan_dir is None:
@@ -100,6 +103,7 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     return (all_findings, files_scanned, 0)
     "扫描仓库并返回发现列表."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="危险 Git 命令检测")
@@ -111,13 +115,14 @@ def main() -> None:
     if findings:
         print(f"\n[GIT-DANGEROUS] {len(findings)} 危险 Git 命令发现（扫描 {files_scanned} 文件）:\n", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['pattern']}] {f['file']}:{f['line']}', file=sys.stderr)
-            print(f'    {f['matched']}', file=sys.stderr)
+            print(f"  [{f['pattern']}] {f['file']}:{f['line']}", file=sys.stderr)
+            print(f"    {f['matched']}", file=sys.stderr)
         print(file=sys.stderr)
     print(f"Scanned {files_scanned} files, {len(findings)} findings, {errors} errors", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

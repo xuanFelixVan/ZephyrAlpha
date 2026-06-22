@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.alternative_path_blocker import AlternativePathBlocker, BLOCKED_ALTERNATIVES
+from zephyr.governance.alternative_path_blocker import BLOCKED_ALTERNATIVES, AlternativePathBlocker
 
 
 class TestAlternativePathBlockerInit:

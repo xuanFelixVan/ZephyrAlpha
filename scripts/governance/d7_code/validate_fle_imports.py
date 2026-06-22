@@ -14,6 +14,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: FLE import 接口合规检测（COND-43 — import纪律）
@@ -47,6 +48,7 @@ IMPLEMENTATION_PATTERNS = {
     "import\\s+zephyr\\.\\w+\\.\\w+\\.\\w+": "深层 import 具体实现",
 }
 ALLOW_LIST = {"zephyr.shared.contracts", "zephyr.__init__", "zephyr.script_system"}
+
 
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
@@ -82,13 +84,14 @@ def scan_file(filepath: Path) -> list[dict]:
                     {
                         "file": rel,
                         "line": node.lineno,
-                        "import": f'from {node.module} import {', '.join(n.name for n in node.names)}',
+                        "import": f"from {node.module} import {', '.join(n.name for n in node.names)}",
                         "severity": "MEDIUM",
                         "reason": f"从 `{node.module}` 导入（可能引入实现类）",
                     }
                 )
     return findings
     "扫描单个文件并返回发现列表."
+
 
 def _is_impl_import(module: str) -> bool:
     """_is_impl_import implementation."""
@@ -101,6 +104,7 @@ def _is_impl_import(module: str) -> bool:
     if len(parts) <= 3:
         return False
     return True
+
 
 def scan_src() -> tuple[list[dict], int]:
     """扫描源码目录并返回发现列表."""
@@ -118,6 +122,7 @@ def scan_src() -> tuple[list[dict], int]:
     return (findings, files_scanned)
     "扫描源码目录并返回发现列表."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="FLE import 接口合规检测")
@@ -130,10 +135,11 @@ def main() -> None:
     print(f"  实现类 import: {len(impl_imports)}", file=sys.stderr)
     print(f"  非契约 import: {len(non_contract_imports)}", file=sys.stderr)
     for f in findings:
-        print(f'[P2] {f['file']}:{f['line']}  {f['import']} – {f['reason']}', file=sys.stderr)
+        print(f"[P2] {f['file']}:{f['line']}  {f['import']} – {f['reason']}", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

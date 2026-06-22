@@ -541,7 +541,7 @@ def init_db(
         if current < 0:
             bootstrapped = abs(current)
             if echo:
-                print(f"[depgraph_schema] bootstrapping legacy DB -> marking v1 as applied")
+                print("[depgraph_schema] bootstrapping legacy DB -> marking v1 as applied")
             from datetime import UTC, datetime
 
             now = datetime.now(UTC).isoformat()
@@ -619,10 +619,10 @@ def schema_version(db_path: Path | str | None = None) -> int:
 
 __all__ = [
     "DB_PATH",
-    "init_db",
     "get_db_connection",
-    "table_names",
+    "init_db",
     "schema_version",
+    "table_names",
 ]
 
 

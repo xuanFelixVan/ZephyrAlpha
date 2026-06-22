@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_checkpoint_manager.py
 
-import pytest
 from zephyr.ops.gates.checkpoint_manager import CheckpointManager
 
 

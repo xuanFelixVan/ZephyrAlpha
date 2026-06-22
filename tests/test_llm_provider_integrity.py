@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_llm_provider_integrity.py
 
-import pytest
 
 from zephyr.ops.diagnosers.llm_provider_integrity import (
     LLMProviderIntegrity,

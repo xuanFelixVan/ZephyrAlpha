@@ -10,9 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_numerical_stability_guard.py
 
-import math
-
-import pytest
 
 from zephyr.ops.diagnosers.numerical_stability_guard import (
     NumAnomaly,

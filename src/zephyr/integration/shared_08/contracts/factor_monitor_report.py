@@ -1,8 +1,7 @@
 # [A_module] module_id=MOD-INT_factor_monitor_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-001 ====
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from typing import Optional
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -24,8 +23,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class FactorMonitorReport:
@@ -41,182 +41,8 @@ class FactorMonitorReport:
     is_effective: bool
     rank_ic: float
     evaluation_window: int = 63
-    half_life_days: Optional[int] = None
+    half_life_days: int | None = None
     schema_version: str = "1.0"
 
+
 # ==== END CODGEN:CTR-P1-001 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

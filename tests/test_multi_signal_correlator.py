@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_multi_signal_correlator.py
 
-import pytest
 
 from zephyr.ops.detectors.multi_signal_correlator import MultiSignalCorrelator
 

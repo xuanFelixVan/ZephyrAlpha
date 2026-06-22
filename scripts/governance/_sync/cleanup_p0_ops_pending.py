@@ -17,24 +17,22 @@ warn_only: false
 运行一次后删除，属于止血操作。
 """
 import sqlite3
-import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 DB = "data/databases/governance.db"
-NOW = datetime.now(timezone.utc).isoformat()
+NOW = datetime.now(UTC).isoformat()
 
 conn = sqlite3.connect(DB)
 
 count = conn.execute(
-    "SELECT count(*) FROM tasks WHERE priority='P0' AND status='PENDING' "
-    "AND task_id LIKE 'OPS-%' AND is_deleted=0"
+    "SELECT count(*) FROM tasks WHERE priority='P0' AND status='PENDING' AND task_id LIKE 'OPS-%' AND is_deleted=0"
 ).fetchone()[0]
 print(f"Found {count} OPS-* P0+PENDING tasks to demote+complete")
 
 conn.execute(
     "UPDATE tasks SET priority='P1', status='COMPLETED', updated_at=? "
     "WHERE priority='P0' AND status='PENDING' AND task_id LIKE 'OPS-%' AND is_deleted=0",
-    (NOW,)
+    (NOW,),
 )
 conn.commit()
 

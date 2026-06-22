@@ -28,7 +28,6 @@ Run: python -m zephyr.governance.blueprint_code_consistency [--json]
 Returns: 0 if consistent, 1 if drift detected.
 """
 
-
 from __future__ import annotations
 
 import importlib

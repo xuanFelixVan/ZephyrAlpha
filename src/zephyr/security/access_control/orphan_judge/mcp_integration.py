@@ -11,8 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 注册失败返回空dict
 # [TESTS] tests/orphan-judge/test_mcp_integration.py
-
-import json
 import logging
 from pathlib import Path
 from typing import Any
@@ -21,8 +19,10 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["ORPHAN_JUDGE_TOOLS", "register_tools"]
 
+
 def _judge_file(file_path: str) -> dict[str, Any]:
     from zephyr.security.access_control.orphan_judge.judge import OrphanJudge
+
     j = OrphanJudge()
     result = j.judge(file_path, dry_run=True)
     return {
@@ -32,8 +32,10 @@ def _judge_file(file_path: str) -> dict[str, Any]:
         "reason": result.reason,
     }
 
+
 def _scan_directory(directory: str, limit: int = 100) -> dict[str, Any]:
     from zephyr.security.access_control.orphan_judge.judge import OrphanJudge
+
     root = Path(directory)
     if not root.is_dir():
         return {"error": f"Not a directory: {directory}"}
@@ -44,11 +46,13 @@ def _scan_directory(directory: str, limit: int = 100) -> dict[str, Any]:
         rel_path = str(fpath).replace("\\", "/")
         try:
             result = j.judge(rel_path, dry_run=True)
-            results.append({
-                "path": rel_path,
-                "verdict": result.verdict.value,
-                "confidence": result.confidence.value,
-            })
+            results.append(
+                {
+                    "path": rel_path,
+                    "verdict": result.verdict.value,
+                    "confidence": result.confidence.value,
+                }
+            )
         except Exception as exc:
             results.append({"path": rel_path, "error": str(exc)})
     summary = {}
@@ -56,6 +60,7 @@ def _scan_directory(directory: str, limit: int = 100) -> dict[str, Any]:
         v = r.get("verdict", "ERROR")
         summary[v] = summary.get(v, 0) + 1
     return {"total": len(results), "summary": summary, "results": results}
+
 
 ORPHAN_JUDGE_TOOLS: dict[str, dict[str, Any]] = {
     "judge_file": {
@@ -70,9 +75,11 @@ ORPHAN_JUDGE_TOOLS: dict[str, dict[str, Any]] = {
     },
 }
 
+
 def register_tools() -> bool:
     try:
         from zephyr.infrastructure.asset_inventory.mcp_server import MCP_TOOLS
+
         MCP_TOOLS.update(ORPHAN_JUDGE_TOOLS)
         logger.info("orphan-judge tools registered to MCP_TOOLS")
         return True

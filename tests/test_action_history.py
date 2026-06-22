@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import time
-
-import pytest
-
 from zephyr.governance.action_history import (
     ActionHistory,
     ActionSignature,

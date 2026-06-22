@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """l01 infrastructure config.load_config — YAML + 环境变量覆盖。"""
 
 

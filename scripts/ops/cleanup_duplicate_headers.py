@@ -3,14 +3,20 @@ import os
 import re
 import sys
 from pathlib import Path
-from collections import defaultdict
 
 SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 
 FIELD_NAMES = [
-    "BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD",
-    "CONSUMERS", "STABILITY", "SAFETY", "AI_AUTONOMY",
-    "ERROR_CONTRACT", "TESTS",
+    "BLUEPRINT",
+    "MODULE",
+    "INVARIANTS",
+    "MODIFY-GUARD",
+    "CONSUMERS",
+    "STABILITY",
+    "SAFETY",
+    "AI_AUTONOMY",
+    "ERROR_CONTRACT",
+    "TESTS",
 ]
 
 COMMENT_FIELD_RE = re.compile(r"^#\s*\[(\w[\w-]*)\]\s*(.*)")
@@ -25,7 +31,7 @@ files_fixed = 0
 def process_file(filepath: Path):
     global files_fixed
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     original = content
@@ -45,9 +51,7 @@ def process_file(filepath: Path):
                     if curr_val and not prev_val:
                         lines_to_remove.add(prev_idx)
                         seen_fields[field_name] = (i, curr_val)
-                    elif prev_val and not curr_val:
-                        lines_to_remove.add(i)
-                    elif prev_val and curr_val:
+                    elif (prev_val and not curr_val) or (prev_val and curr_val):
                         lines_to_remove.add(i)
                     else:
                         lines_to_remove.add(i)
@@ -75,7 +79,7 @@ def process_file(filepath: Path):
                 break
 
         if docstring_end >= 0:
-            docstring_content = lines[docstring_start:docstring_end + 1]
+            docstring_content = lines[docstring_start : docstring_end + 1]
 
             has_only_fields_or_empty = True
             non_field_content = []
@@ -113,7 +117,7 @@ def process_file(filepath: Path):
                                     break
 
                 before = lines[:docstring_start]
-                after = lines[docstring_end + 1:]
+                after = lines[docstring_end + 1 :]
                 while before and before[-1].strip() == "":
                     before.pop()
                 while after and after[0].strip() == "":

@@ -29,9 +29,9 @@ Mitigation: Production traffic shadow replay with behavior diffing before repair
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
 from enum import Enum
-import time
 
 
 class ReplayVerdict(str, Enum):

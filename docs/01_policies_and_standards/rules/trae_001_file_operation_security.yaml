@@ -1,5 +1,16 @@
 rule_id: TRAE-001
 title: 文件操作安全协议
+version: 1.0.0
+layer: L0
+module_id: TRAE-001
+depends_on: []
+tags:
+- TRAE
+- file_operation
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - RULE-ZERO
 - RULE-ONE
@@ -13,7 +24,6 @@ aliases:
 - 创建入口
 - 零残留
 - 根目录清爽
-layer: L0
 severity: critical
 scope: file_operation
 domain: TRAE
@@ -57,8 +67,7 @@ sections:
       fail: 不适用
     actions:
     - type: mandatory
-      step: tmp_path=f'{OUTPUT_PATH}.{os.getpid()}.tmp' → open(tmp_path,'w',encoding='utf-8')
-        → os.replace(tmp_path,OUTPUT_PATH)
+      step: tmp_path=f'{OUTPUT_PATH}.{os.getpid()}.tmp' → open(tmp_path,'w',encoding='utf-8') → os.replace(tmp_path,OUTPUT_PATH)
     prohibitions:
     - 脚本中 open(fixed_path, 'w') 直接写最终文件
     - Path.write_text(fixed_path) 直接写
@@ -213,7 +222,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

@@ -9,10 +9,11 @@ Usage:
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS
-
 
 __manifest__ = """
 args: []
@@ -54,10 +55,11 @@ if __name__ == "__main__":
 
     try:
         from analyze_change_impact import ChangeImpactAnalyzer
+
         analyzer = ChangeImpactAnalyzer()
         impact = analyzer.analyze(changed_files=list(changed))
         if impact.get("affected_modules"):
-            print(f"\n[变更影响分析]", file=sys.stderr)
+            print("\n[变更影响分析]", file=sys.stderr)
             for level in ("critical", "high", "medium"):
                 mods = impact["affected_modules"].get(level, [])
                 if mods:

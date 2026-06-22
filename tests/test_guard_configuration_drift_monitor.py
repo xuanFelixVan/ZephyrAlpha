@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.forensic.guard_configuration_drift_monitor import (
     GuardConfigSnapshot,
     GuardConfigurationDriftMonitor,

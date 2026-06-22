@@ -13,10 +13,7 @@
 from __future__ import annotations
 
 import json
-import os
 import uuid
-
-import pytest
 
 from zephyr.behavioral_audit.drift_models import ScanResult
 from zephyr.behavioral_audit.headless_scanner import (
@@ -155,8 +152,20 @@ class TestParseInterruptLog:
     def test_valid_jsonl(self, tmp_path):
         log_file = tmp_path / "_interrupt_log.jsonl"
         entries = [
-            {"session_id": "s1", "triggered_by": "drift", "context_at": "scan", "scan_outcome": "fail", "errors_found": 2},
-            {"session_id": "s2", "triggered_by": "timeout", "context_at": "idle", "scan_outcome": "ok", "errors_found": 0},
+            {
+                "session_id": "s1",
+                "triggered_by": "drift",
+                "context_at": "scan",
+                "scan_outcome": "fail",
+                "errors_found": 2,
+            },
+            {
+                "session_id": "s2",
+                "triggered_by": "timeout",
+                "context_at": "idle",
+                "scan_outcome": "ok",
+                "errors_found": 0,
+            },
         ]
         lines = [json.dumps(e) for e in entries]
         log_file.write_text("\n".join(lines), encoding="utf-8")
@@ -173,7 +182,9 @@ class TestParseInterruptLog:
 
     def test_mixed_valid_invalid_lines(self, tmp_path):
         log_file = tmp_path / "mixed.jsonl"
-        valid = json.dumps({"session_id": "s1", "triggered_by": "x", "context_at": "y", "scan_outcome": "z", "errors_found": 1})
+        valid = json.dumps(
+            {"session_id": "s1", "triggered_by": "x", "context_at": "y", "scan_outcome": "z", "errors_found": 1}
+        )
         log_file.write_text(f"{valid}\nnot json\n\n", encoding="utf-8")
         result = parse_interrupt_log(str(log_file))
         assert len(result) == 1

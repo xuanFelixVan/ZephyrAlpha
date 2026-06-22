@@ -27,90 +27,42 @@ RegexPatternHandler — RegexPatternHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class RegexPatternHandler(CheckTypeHandler):
-
-
     name = "regex_pattern"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        field_name = str(params.get("field", ""))
 
-                violations = []
+        pattern = str(params.get("pattern", ""))
 
+        if field_name and pattern:
+            import re as _re
 
-                field_name = str(params.get("field", ""))
+            val = str(getattr(task, field_name, ""))
 
+            if not _re.fullmatch(pattern, val):
+                violations.append(
+                    {
+                        "message": f"Field '{field_name}' value '{val}' does not match pattern '{pattern}'",
+                        "severity": check.severity,
+                    }
+                )
 
-                pattern = str(params.get("pattern", ""))
-
-
-                if field_name and pattern:
-
-
-                    import re as _re
-
-
-                    val = str(getattr(task, field_name, ""))
-
-
-                    if not _re.fullmatch(pattern, val):
-
-
-                        violations.append({"message": f"Field '{field_name}' value '{val}' does not match pattern '{pattern}'", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

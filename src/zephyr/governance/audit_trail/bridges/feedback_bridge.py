@@ -30,7 +30,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 _logger = logging.getLogger(__name__)
@@ -83,13 +83,16 @@ class AuditFeedbackBridge:
             "layer": layer,
             "severity": severity,
             "agent_id": anomaly.get("agent_id", "unknown"),
-            "timestamp": anomaly.get("timestamp", datetime.now(timezone.utc).isoformat()),
+            "timestamp": anomaly.get("timestamp", datetime.now(UTC).isoformat()),
             "details": anomaly.get("details", {}),
         }
 
         _logger.info(
             "Audit→FLE: %s → %s (layer=%s, severity=%s)",
-            sig_id, signal_name, layer, severity,
+            sig_id,
+            signal_name,
+            layer,
+            severity,
         )
         return fle_signal
 
@@ -109,15 +112,15 @@ class AuditFeedbackBridge:
             "layer": proposal.get("layer", ""),
             "severity": proposal.get("severity", ""),
             "recommended_action": proposal.get("recommended_action", ""),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "provenance": "feedback-loop",
         }
 
     def scan_and_bridge(self) -> list[dict[str, Any]]:
         """扫描审计异常 → 转化为 FLE 信号列表."""
         try:
-            from zephyr.governance.audit_trail.query import AuditQuery
             from zephyr.governance.audit_trail.anomaly import AnomalyDetector
+            from zephyr.governance.audit_trail.query import AuditQuery
 
             query = AuditQuery()
             events = query._load_events()
@@ -129,13 +132,15 @@ class AuditFeedbackBridge:
 
             signals: list[dict[str, Any]] = []
             for a in anomalies:
-                sig = self.anomaly_to_fle_signal({
-                    "signature_id": a.signature_id,
-                    "severity": a.severity.value if hasattr(a.severity, "value") else str(a.severity),
-                    "agent_id": a.agent_id,
-                    "timestamp": a.timestamp,
-                    "details": a.details if hasattr(a, "details") else {},
-                })
+                sig = self.anomaly_to_fle_signal(
+                    {
+                        "signature_id": a.signature_id,
+                        "severity": a.severity.value if hasattr(a.severity, "value") else str(a.severity),
+                        "agent_id": a.agent_id,
+                        "timestamp": a.timestamp,
+                        "details": a.details if hasattr(a, "details") else {},
+                    }
+                )
                 if sig:
                     signals.append(sig)
 

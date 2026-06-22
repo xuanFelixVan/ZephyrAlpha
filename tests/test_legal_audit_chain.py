@@ -11,12 +11,13 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.legal_audit_chain import LegalAuditChain, ChainEntry
+    from zephyr.security.access_control.legal_audit_chain import ChainEntry, LegalAuditChain
 except Exception as exc:
     pytest.skip(f"Cannot import legal_audit_chain: {exc}", allow_module_level=True)
 

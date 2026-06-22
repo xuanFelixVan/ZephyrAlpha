@@ -1,11 +1,24 @@
 rule_id: TRAE-041
 title: 元规则-规则分类与裁决
+version: 1.4.1
+layer: L2
+module_id: TRAE-041
+depends_on:
+- TRAE-018
+- TRAE-019
+- TRAE-020
+tags:
+- TRAE
+- meta_rule_classification
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - PS-STD-004
 - PS-STD-012
 - STD-007
 - STD-008
-layer: L2
 severity: warning
 scope: meta_rule_classification
 domain: TRAE
@@ -26,6 +39,174 @@ sections:
     - type: mandatory
       step: 每条规则必须按5个维度分类：Domain(9值)/Layer(L1/L2/L3/cross_layer)/Scope(global/domain/module/session)/Stability(frozen/stable/evolving)/Executor(immutable_core/human_gated/ai_modifiable)；每条规则必须且只能属于一个domain和scope
     prohibitions: []
+  ps_std_004_vibe_coding_retrieval:
+    title: Vibe Coding AI检索策略映射
+    section_type: context
+    original_rules:
+    - PS-STD-004 §2.2
+    summary: 五维分类定义了AI怎么理解规则，但Vibe Coding AI实际施工时需要怎么找到规则。以下是Vibe Coding AI从查询意图到分类维度的检索路径
+    items:
+    - query_intent: 文件操作的禁止行为有哪些
+      retrieval_path: domain=document → stability=frozen→stable→evolving → 优先读PS-STD-003(SSoT)
+      explanation: 先定位领域→按稳定性排序(冻结文件权威性最高)→先读SSoT
+    - query_intent: 某个模块的编码规则变更要走什么审批
+      retrieval_path: scope=module→domain → stability维度 → 查看PS-STD-009变更门控
+      explanation: 自底向上——模块→领域→全局
+    - query_intent: AI可以自主修改哪些文件
+      retrieval_path: executor=ai_modifiable → stability不为frozen → layer可写
+      explanation: AI自治权限=可修改范围→Executor维度直接筛选
+    - query_intent: 当前项目所有规则文件有哪些
+      retrieval_path: layer=cross_layer → L1 → L2 → L3 → domain分组
+      explanation: 层级影响范围大头优先——全局规则→领域规则→会话规则→模块规则
+    - query_intent: 这条规则和哪条有冲突
+      retrieval_path: scope相同 → stability是否矛盾 → §9冲突裁决推导链
+      explanation: 作用范围相同的规则最可能冲突，不同scope互不干扰
+    key_decisions:
+    - SSoT优先——如果有SSoT文件声明了该领域(如PS-STD-003声明行为边界)，先读SSoT再查领域规则
+    - 稳定性过滤——frozen文件优先于stable优先于evolving，冻结内容的权威性最高
+    - 层级收敛——cross_layer → L1 → L2 → L3，范围大的先读，在理解全局约束后再看局部
+    - 领域隔离——不同domain的规则互不冲突，冲突仅在同domain且scope重叠时发生
+  ps_std_004_domain_vocabulary:
+    title: 领域(Domain)受控词表
+    section_type: context
+    original_rules:
+    - PS-STD-004 §3.1
+    summary: 领域维度的9个受控词表条目——含义/对应目录/示例文件
+    items:
+    - value: meta
+      meaning: 元规则——定义规则怎么写、怎么分类、怎么变更
+      directory: meta/
+      examples: PS-STD-002, PS-STD-003, PS-STD-004
+    - value: document
+      meaning: 文档治理——命名、路径、编码、生命周期
+      directory: governance/document/
+      examples: file-naming-standard.md
+    - value: ai
+      meaning: AI治理——自治权限、入职、幻觉自检
+      directory: governance/ai/
+      examples: ai-onboarding-guide.md
+    - value: task
+      meaning: 任务治理——任务卡、交接、裁决
+      directory: governance/task/
+      examples: task-card-standard.md
+    - value: vibe_coding
+      meaning: Vibe Coding操作——上下文规则、状态机、可验证性
+      directory: operational/vibe_coding/
+      examples: vibe-coding-session-state-runbook.md
+    - value: architecture
+      meaning: 架构治理——模块注入、入职规则
+      directory: governance/module/
+      examples: module-injection-rules.yaml
+    - value: migration
+      meaning: 迁移——迁移审计(该文件从未创建，2026-05-02已标记deprecated)
+      directory: operational/migration/
+      examples: —
+    - value: devops
+      meaning: DevOps——pre-commit、CI、部署
+      directory: operational/devops/
+      examples: pre-commit-simplification-plan.md
+    - value: coding
+      meaning: 编码——代码风格、安全编码
+      directory: 待建立
+      examples: encoding-safety-standard.md
+  ps_std_004_layer_vocabulary:
+    title: 层级(Layer)受控词表
+    section_type: context
+    original_rules:
+    - PS-STD-004 §4.1
+    summary: 层级维度的4个受控词表条目——含义/规范性语言/对应doc_type/章节
+    items:
+    - value: L1
+      meaning: 治理层——最高权威，可使用MUST
+      normative_language: MUST/SHOULD/MAY
+      doc_types: policy, standard, ai_governance
+      chapters: 6~15章(按子类型，见PS-STD-002 §3.2)
+    - value: L2
+      meaning: 设计层——中等权威，禁止MUST
+      normative_language: SHOULD/MAY
+      doc_types: blueprint, construction_plan, adr, design, service_spec
+      chapters: 10章
+    - value: L3
+      meaning: 基础层——信息性，禁止规范性语言
+      normative_language: 禁止MUST/SHOULD
+      doc_types: 其他所有doc_type
+      chapters: 5章
+    - value: cross_layer
+      meaning: 跨层——适用于所有层级
+      normative_language: 按引用上下文决定
+      doc_types: meta类文件
+      chapters: 6~15章(按子类型，见PS-STD-002 §3.2)
+  ps_std_004_scope_vocabulary:
+    title: 作用范围(Scope)受控词表与变更通知范围矩阵
+    section_type: context
+    original_rules:
+    - PS-STD-004 §5.1, §5.2
+    summary: Scope维度的4个受控词表条目(含义/影响范围/示例)及Scope变更通知范围矩阵
+    items:
+    - value: global
+      meaning: 全局——影响项目中所有文件、所有session
+      impact_scope: 整个项目
+      examples: PS-STD-001, PS-STD-002, PS-STD-003
+      change_notification: 通知所有Tier 1消费者
+    - value: domain
+      meaning: 领域——影响某个领域下的所有文件
+      impact_scope: 一个领域
+      examples: file-naming-standard.md(影响所有文档的命名)
+      change_notification: 通知该领域内的Tier 1消费者
+    - value: module
+      meaning: 模块——影响特定模块
+      impact_scope: 一个或几个模块
+      examples: module-injection-rules.yaml
+      change_notification: 通知引用该模块的Tier 1消费者
+    - value: session
+      meaning: 会话——仅影响当前AI session
+      impact_scope: 单个session
+      examples: vibe-coding-session-state-runbook.md
+      change_notification: 无需通知，下个session自动生效
+  ps_std_004_stability_vocabulary:
+    title: 稳定性(Stability)受控词表与审批门槛矩阵
+    section_type: context
+    original_rules:
+    - PS-STD-004 §6.1, §6.2
+    summary: Stability维度的3个受控词表条目(含义/变更频率/修改条件/示例)及Stability审批门槛矩阵
+    items:
+    - value: frozen
+      meaning: 冻结——除非Owner批准+ADR方可解冻
+      change_frequency: 极低(年级别)
+      modification_condition: Owner批准+ADR+90天过渡期
+      approval_threshold: Owner批准+ADR
+      examples: PS-STD-001, PS-STD-003
+    - value: stable
+      meaning: 稳定——变更需充分理由和审批
+      change_frequency: 低(季度级别)
+      modification_condition: 领域负责人批准+消费者同意
+      approval_threshold: 领域负责人批准
+      examples: file-naming-standard.md
+    - value: evolving
+      meaning: 演进中——可能频繁变更
+      change_frequency: 中(月级别)
+      modification_condition: 正常变更流程即可
+      approval_threshold: 正常变更流程
+      examples: vibe-coding-session-state-runbook.md
+  ps_std_004_executor_vocabulary:
+    title: 执行者(Executor)受控词表
+    section_type: context
+    original_rules:
+    - PS-STD-004 §7.1
+    summary: Executor维度的3个受控词表条目——含义/AI权限/示例
+    items:
+    - value: immutable_core
+      meaning: 不可变核心
+      ai_permission: AI禁止修改，需Owner直接审批+ADR
+      examples: PS-STD-001, PS-STD-002
+    - value: human_gated
+      meaning: 人类门控
+      ai_permission: AI可提议修改，需Owner批准后执行
+      examples: rule_lifecycle_and_change_standard.yaml
+    - value: ai_modifiable
+      meaning: AI可编辑
+      ai_permission: AI可自主修改，需在Session Log记录
+      examples: vibe-coding-session-state-runbook.md
   ps_std_004_scope_stability:
     title: scope与stability字段
     section_type: context
@@ -233,13 +414,554 @@ sections:
     items:
     - version: "1.3.0"
       date: "2026-06-21"
-      change: "RQ-04修复——移除tmr_normative_refs.references中对已删除文件glossary_glossary.md和terminology_mapping_reference.md的引用（Glob验证不存在）；tmr_scope.key_decisions更新术语定义仲裁源描述为本YAML规则文件"
+      change: "RQ-04修复——移除tmr_normative_refs.references中对已删除文件glossary_glossary.yaml和terminology_mapping_reference.md的引用（Glob验证不存在）；tmr_scope.key_decisions更新术语定义仲裁源描述为本YAML规则文件"
     - version: "1.2.0"
       date: "2026-06-19"
       change: "RQ-03散布修复——从trae_025迁入ps_std_004_scope/normative_refs/change_history(PS-STD-004 scope/history)；从trae_027迁入ps_std_012_scope/normative_refs/change_history(PS-STD-012 scope/history)；aliases新增PS-STD-012(本文件已有ps_std_012_v1_v4/v5规则章节但alias缺失)；历史kebab-case文件名rule_priority_hierarchy.md snake_case化"
     - version: "1.1.0"
       date: "2026-06-19"
       change: "RQ审查修复——tmr_scope/tmr_normative_refs/tmr_change_history补充original_rules(违反RQ-08)；tmr_normative_refs引用标注archived状态；provenance源文件标注archived+补充TMR源文件；新增文件级change_history(违反RQ-14)；全量审查修复document-metadata-index-registry.yaml→document_metadata_index_registry.yaml snake_case化(违反RQ-05/§2.2裁定)"
+  ps_std_004_rule_profiles:
+    title: 规则画像示例
+    section_type: examples
+    original_rules:
+    - PS-STD-004 §8
+    summary: 现有规则文件的五维分类画像示例覆盖meta/governance/document/governance/ai/governance/task/operational等目录
+    items:
+    - directory: meta/
+      examples: PS-STD-001/002/003(frozen/immutable_core) PS-STD-004/009(stable/human_gated) PS-STD-012(evolving/human_gated)
+    - directory: governance/document/
+      examples: file-naming-standard.md(document/L1/domain/stable/human_gated) directory-structure-standard.md(document/L1/global/frozen/immutable_core)
+    - directory: governance/ai/
+      examples: ai_autonomy_authority_registry.yaml(ai/L1/global/frozen/immutable_core) ai-onboarding-guide.md(ai/L1/global/stable/human_gated)
+    - directory: governance/task/
+      examples: task-card-standard.md(task/L1/domain/stable/human_gated) handoff-protocol.md(ai/L0/domain/stable/immutable_core)
+    - directory: operational/
+      examples: vibe-coding-session-state-runbook.md(vibe_coding/L2/session/evolving/ai_modifiable) pre-commit-simplification-plan.md(devops/L3/domain/evolving/ai_modifiable)
+  ps_std_004_derivation_examples:
+    title: 推导示例
+    section_type: examples
+    original_rules:
+    - PS-STD-004 §10
+    summary: 冲突裁决推导链的具体应用示例
+    items:
+    - case: 不同stability
+      rule_a: PS-STD-003 §3 禁止删除审计日志 (stability=frozen)
+      rule_b: 某domain规则日志可压缩 (stability=evolving)
+      verdict: A优先 (frozen > evolving)
+    - case: 同stability不同layer
+      rule_a: GOV-DOC-009 引用必须用绝对路径 (cross_layer stable)
+      rule_b: 某模块规则模块内可用相对路径 (L3 stable)
+      verdict: A优先 (cross_layer > L3)
+    - case: 无法推导
+      rule_a: PS-STD-003 ABS-14 不知道文件位置就不操作 (cross_layer frozen)
+      rule_b: PS-STD-003 ABS-52 先读当前版本再改 (cross_layer frozen)
+      verdict: 无法推导 (同stability同layer) → 上报Owner
+  ps_std_004_ssot:
+    title: SSoT声明
+    section_type: context
+    original_rules:
+    - PS-STD-004 §12
+    summary: 本标准作为规则分类体系五维度受控词表+冲突裁决推导链的唯一真源
+    key_decisions:
+    - 本标准是ZephyrAlpha项目规则分类体系五个维度及其受控词表+规则冲突裁决推导链的唯一真源
+    - 下位规则可以定义领域内子分类但不得与本标准维度冲突
+    - 新增字段scope和stability两个frontmatter字段由本标准定义
+    - 冲突仲裁时本标准与PS-STD-001冲突以PS-STD-001为准(字段定义权属于PS-STD-001)
+  ps_std_004_consumers:
+    title: 消费者注册表
+    section_type: context
+    original_rules:
+    - PS-STD-004 §13
+    summary: 本标准的消费者清单及消费方式
+    items:
+    - consumer: PS-STD-001
+      tier: 1
+      consumption: 新增scope stability字段定义
+    - consumer: PS-STD-002
+      tier: 1
+      consumption: 引用Layer维度定义
+    - consumer: behavior_boundaries_standard.yaml
+      tier: 1
+      consumption: 引用Executor维度定义+冲突裁决推导链
+    - consumer: document-metadata-index.yaml
+      tier: 1
+      consumption: 新增domain scope stability字段
+    - consumer: frontmatter-schema.json
+      tier: 1
+      consumption: 新增scope stability字段Schema
+    - consumer: check_frontmatter_metadata.py
+      tier: 2
+      consumption: 新增scope stability校验规则
+    - consumer: PS-STD-009
+      tier: 1
+      consumption: 消费推导链决定P0-P3分级
+  ps_std_004_references:
+    title: 标准间引用规则
+    section_type: context
+    original_rules:
+    - PS-STD-004 §14
+    summary: 本标准的Normative和Informative引用规则
+    depends_on:
+    - target: PS-STD-001
+      at: normative
+      why: layer ai_autonomy字段定义——本标准引用其字段定义不重复定义
+    - target: PS-STD-002
+      at: normative
+      why: L1/L2/L3层级定义——Layer维度引用其层级定义
+    - target: PS-STD-011 MTH-003
+      at: normative
+      why: 目标优先裁决原则——推导链失效时的终极仲裁
+    - target: PS-STD-009
+      at: informative
+      why: 变更分级与本标准Stability维度及推导链的关系
+  ps_std_004_field_registration:
+    title: 新字段注册声明
+    section_type: context
+    original_rules:
+    - PS-STD-004 §15
+    summary: 本标准向PS-STD-001注册scope和stability两个新frontmatter字段
+    key_decisions:
+    - scope字段类型enum受控词表global/domain/module/session默认值domain归属PS-STD-004
+    - stability字段类型enum受控词表frozen/stable/evolving默认值stable归属PS-STD-004
+    - 一致性约束frozen必须对应immutable_core(单向强制)其余组合无硬性约束遵循PS-STD-001 §2.6架构公民原则
+  ps_std_004_deprecation:
+    title: 废弃流程
+    section_type: decision_tree
+    original_rules:
+    - PS-STD-004 §16
+    conditions:
+    - type: trigger
+      check: 本标准(stability=stable)需要废弃时
+      pass: 按五步废弃流程执行
+      fail: 跳过废弃流程
+    actions:
+    - type: mandatory
+      step: 'Step1 Owner明确批准 → Step2 创建KB决策记录记录废弃原因和替代方案 → Step3 从PS-STD-001中移除scope stability字段定义 → Step4 所有规则文档移除scope stability字段 → Step5 本标准状态改为deprecated保留90天后可删除'
+  ps_std_004_review_cycle:
+    title: 审查周期
+    section_type: context
+    original_rules:
+    - PS-STD-004 §17
+    summary: 本标准各维度的定期审查周期
+    items:
+    - item: 领域受控词表是否需要扩展
+      cycle: 每90天
+      owner: Owner
+    - item: Scope受控词表是否足够
+      cycle: 每180天
+      owner: Owner
+    - item: Stability与ai_autonomy一致性
+      cycle: 每90天
+      owner: Owner
+    - item: 规则画像是否与实际一致
+      cycle: 每30天
+      owner: 领域负责人
+    - item: 推导链是否覆盖所有实际冲突场景
+      cycle: 每90天
+      owner: Owner
+  ps_std_004_modification_conditions:
+    title: 修改条件
+    section_type: rule
+    original_rules:
+    - PS-STD-004 §18
+    conditions:
+    - type: trigger
+      check: 修改本标准内容时
+      pass: 按修改类型执行对应审批和同步
+      fail: 跳过审批或同步
+    actions:
+    - type: mandatory
+      step: 新增领域受控词表条目→Owner批准+同步PS-STD-001路径映射+创建目录；新增Scope/Stability值→Owner批准+ADR+同步PS-STD-001+frontmatter-schema.json；修改规则画像→领域负责人批准+同步document-metadata-index.yaml；修改维度定义→Owner批准+ADR+同步所有Tier1消费者；修改推导链步骤→Owner批准+ADR+同步PS-STD-009
+  ps_std_004_no_field_duplication:
+    title: 与PS-STD-001字段不重复声明
+    section_type: context
+    original_rules:
+    - PS-STD-004 §19
+    summary: 本标准新增scope和stability字段已向PS-STD-001注册字段定义权归属PS-STD-001
+    key_decisions:
+    - 字段定义权归属PS-STD-001本标准仅定义受控词表和分类规则
+    - layer和ai_autonomy字段完全由PS-STD-001定义本标准引用
+  ps_std_004_verifiability:
+    title: 可验证性标准
+    section_type: context
+    original_rules:
+    - PS-STD-004 §20
+    summary: 本标准各条目的可验证性和验证方式
+    items:
+    - item: 领域受控词表合规
+      verifiability: A
+      method: check_frontmatter_metadata.py校验
+    - item: Layer与doc_type一致性
+      verifiability: A
+      method: check_frontmatter_metadata.py校验
+    - item: Scope受控词表合规
+      verifiability: A
+      method: check_frontmatter_metadata.py校验
+    - item: Stability受控词表合规
+      verifiability: A
+      method: check_frontmatter_metadata.py校验
+    - item: Stability与ai_autonomy一致性
+      verifiability: A
+      method: check_frontmatter_metadata.py校验
+    - item: 规则画像与实际一致
+      verifiability: M
+      method: 人工审查
+    - item: 推导链一致性(stability→layer→scope→Owner)
+      verifiability: A
+      method: check_frontmatter_metadata.py校验
+  ps_std_004_completeness_checklist:
+    title: 完整性自检清单
+    section_type: context
+    original_rules:
+    - PS-STD-004 §21
+    summary: 本标准21个章节的完整性自检清单(全部已实现)
+    items:
+    - §1 目的与范围——目的+责任范围+责任边界+适用范围+术语
+    - §2 五维分类体系总览+Vibe Coding检索策略
+    - §3 领域维度——受控词表+分类规则+新增流程
+    - §4 层级维度——受控词表+分类规则
+    - §5 作用范围维度——受控词表+分类规则+新字段定义
+    - §6 稳定性维度——受控词表+分类规则+新字段定义
+    - §7 执行者维度——受控词表+分类规则
+    - §8 规则画像示例——所有现有文件的五维分类
+    - §9 冲突裁决推导链
+    - §10 推导示例
+    - §11 禁止行为
+    - §12 SSoT声明
+    - §13 消费者注册表
+    - §14 标准间引用规则
+    - §15 新字段注册声明
+    - §16 废弃流程
+    - §17 审查周期
+    - §18 修改条件
+    - §19 字段不重复声明
+    - §20 可验证性标准
+    - §21 完整性自检清单
+  ps_std_012_frequency_matrix:
+    title: 验证频率矩阵
+    section_type: context
+    original_rules:
+    - PS-STD-012 §3
+    summary: 不同规则类型和stability级别的验证频率矩阵
+    items:
+    - rule_type: stability frozen
+      v1: 每次修改
+      v2: 每次修改
+      v3: 每月
+      v4: 每年
+    - rule_type: stability stable
+      v1: 每次修改
+      v2: 每次修改
+      v3: 每季度
+      v4: 每年
+    - rule_type: stability evolving
+      v1: 每次修改
+      v2: 每次修改
+      v3: 每季度
+      v4: 可选
+    - rule_type: doc_type policy
+      v1: 每次修改
+      v2: 每次修改
+      v3: 每月
+      v4: 每年
+    - rule_type: doc_type standard
+      v1: 每次修改
+      v2: 每次修改
+      v3: 每季度
+      v4: 每年
+    - rule_type: doc_type operational_rule
+      v1: 每次执行
+      v2: 每次提交
+      v3: 每月
+      v4: 每年
+  ps_std_012_violation_response:
+    title: 违规响应流程
+    section_type: decision_tree
+    original_rules:
+    - PS-STD-012 §4
+    conditions:
+    - type: trigger
+      check: 发现违规时
+      pass: 按级别执行响应流程
+      fail: 跳过响应流程
+    actions:
+    - type: mandatory
+      step: V1阻断→阻止当前操作+AI记录违规到SessionLog+修复问题后重新提交；V2警告→允许继续操作+AI记录警告到SessionLog+同类型警告3次升格V1；V3审查发现→记录到审查报告+分类(立即修复/下次修复/记入Backlog)+Owner裁定优先修复顺序；V4抽样发现→产出审计报告+向Owner提出系统性改进建议
+  ps_std_012_v1_triggers:
+    title: V1自动化阻断触发条件详表
+    section_type: rule
+    original_rules:
+    - PS-STD-012 §2.1
+    summary: V1自动化阻断的触发条件详表——以下条件触发时操作被自动阻止且不可绕过
+    trigger_conditions:
+    - condition: frontmatter缺失或格式错误
+      block_rule: META-V01~V02
+      source: PS-STD-001 §14
+    - condition: doc_type使用未定义值
+      block_rule: META-V03
+      source: PS-STD-001 §14
+    - condition: "修改stability: frozen文件"
+      block_rule: P0变更
+      source: PS-STD-009 §2
+    - condition: "删除ttl: permanent文件"
+      block_rule: 禁止删除
+      source: —
+    - condition: blueprint_refs引用的蓝图不存在
+      block_rule: META-V16
+      source: PS-STD-001 §14
+    - condition: index.md文件状态与实际frontmatter status不一致
+      block_rule: META-V21
+      source: PS-STD-012 §2.1
+    prohibitions:
+    - 绕过V1阻断继续操作
+    - V1阻断未修复就继续操作
+  ps_std_012_v2_triggers:
+    title: V2自动化警告触发条件详表
+    section_type: rule
+    original_rules:
+    - PS-STD-012 §2.2
+    summary: V2自动化警告的触发条件详表——以下条件触发时生成警告但允许继续；同类型警告3次升格V1
+    trigger_conditions:
+    - condition: date格式非YYYY-MM-DD
+      warning_rule: META-V07
+      source: PS-STD-001 §14
+    - condition: doc_type与存放路径不匹配
+      warning_rule: META-V08
+      source: PS-STD-001 §14
+    - condition: layer字段值不在合法列表
+      warning_rule: META-V12
+      source: PS-STD-001 §14
+    - condition: "safety_level: H且review_status: unreviewed"
+      warning_rule: P1警告
+      source: PS-STD-001 §10.16
+    - condition: module_id前缀不在注册表中
+      warning_rule: —
+      source: —
+    escalation_rule: 同一类型警告在同一文件中出现3次以上升格为V1阻断
+  ps_std_012_v3_review:
+    title: V3人工审查内容详表
+    section_type: rule
+    original_rules:
+    - PS-STD-012 §2.3
+    summary: V3人工审查的内容详表——以下内容需人工定期审查
+    review_items:
+    - content: doc_type语义准确性
+      frequency: 每月
+      reviewer: Owner
+      check_point: 所有文件doc_type是否与实际内容匹配
+    - content: summary质量
+      frequency: 每月
+      reviewer: Owner
+      check_point: summary是否足够帮助AI理解文档
+    - content: tags覆盖率
+      frequency: 每季度
+      reviewer: Owner
+      check_point: tags是否覆盖AI检索关键词
+    - content: depends_on完整性
+      frequency: 每月
+      reviewer: Owner
+      check_point: 依赖关系是否最新
+  ps_std_012_v4_audit:
+    title: V4审计抽样详表
+    section_type: rule
+    original_rules:
+    - PS-STD-012 §2.4
+    summary: V4审计抽样——每年由外部视角进行一次抽样审计
+    audit_process:
+    - step: 随机抽取20%的规则文件
+      executor: 外部审计
+    - step: 按V1~V3标准重新验证
+      executor: 外部审计
+    - step: "产出审计报告(doc_type: audit_report)"
+      executor: 外部审计
+    frequency: 每年
+  ps_std_012_v5_four_step:
+    title: V5深度审计四步流程详表
+    section_type: rule
+    original_rules:
+    - PS-STD-012 §7.1
+    summary: V5深度内容审计的四步法详细流程——字段扫描→内容读取→交叉验证→判定与修复
+    four_step_process:
+    - step: Step1字段扫描(自动化对应V1~V2)
+      operations:
+      - 遍历所有文件frontmatter检查doc_type是否在受控词表中
+      - 检查doc_type是否匹配所在目录的合法值(如governance/下不能有operational_rule)
+      - 检查文件名后缀是否匹配doc_type(§一.0强制映射表)
+      output: 字段违规清单
+    - step: Step2内容读取(人工/AI深度审查对应V5)
+      operations:
+      - 对Step1通过的文件逐文件打开并阅读正文内容
+      - 声明式规则(policy/standard/protocol)正文应是"什么必须/禁止/推荐"不是"怎么做"
+      - 过程式规则(operational_rule)正文应是"Step 1→N操作步骤"不是声明式禁令
+      - 注册表(register)正文应是结构化数据清单不是叙事散文
+      - 索引入口(index)正文应只是目录导航不含规则文本
+      output: 内容-标签不一致清单
+    - step: Step3交叉验证
+      operations:
+      - 对照directory-structure-standard.md的反向映射表确认每种内容类型是否在正确的目录
+      - 对照module_id命名空间确认前缀是否匹配目录
+      - 对照depends_on引用链确认引用的文件是否存在且doc_type一致
+      output: 跨文件一致性清单
+    - step: Step4判定与修复
+      operations:
+      - 放错目录→搬迁到正确目录(见directory-structure-standard.md §5.1.2反向映射表)
+      - doc_type写错→修改frontmatter doc_type为正确值
+      - 文件名误导→按§一.0强制映射表改名
+      - 内容根本不是规则→搬出01_policies_and_standards/放到正确位置
+      output: 修复操作清单+修复后验证
+  ps_std_012_v5_decision_table:
+    title: V5审计判定速查表
+    section_type: rule
+    original_rules:
+    - PS-STD-012 §7.2
+    summary: V5深度审计的判定速查表——7种常见不一致类型的判定和操作
+    decision_table:
+    - content: 蓝图(模块架构设计)
+      doc_type_claimed: policy
+      actual_content: 蓝图
+      verdict: 标签+位置均错误
+      action: 搬到03_modules/l*/模块名/blueprint.md
+    - content: 施工图(实施步骤)
+      doc_type_claimed: operational_rule
+      actual_content: 模块施工图
+      verdict: 内容非操作规则
+      action: 搬到03_modules/l*/模块名/construction-plan.md
+    - content: ADR讨论稿
+      doc_type_claimed: protocol
+      actual_content: 讨论草稿
+      verdict: 内容类型错误
+      action: "迁入KB:decisions namespace(Git-backed)；若以Markdown草稿承载则在_development_workspace/或仓库批准的草稿路径撰写——禁止写入已删除的旧docs/02_enterprise_architecture/adr/树"
+    - content: 路线图
+      doc_type_claimed: standard
+      actual_content: 路线图
+      verdict: 内容类型错误
+      action: 搬到02_enterprise_architecture/或归档
+    - content: 会话日志
+      doc_type_claimed: policy
+      actual_content: 会话记录
+      verdict: 标签+位置均错误
+      action: 搬到session_logs/
+    - content: 声明式规则
+      doc_type_claimed: policy/standard/protocol
+      actual_content: 确实是规则
+      verdict: 正确
+      action: 原地不动
+    - content: 过程式步骤
+      doc_type_claimed: operational_rule
+      actual_content: 确实是操作流程
+      verdict: 正确
+      action: 原地不动
+  ps_std_012_v5_scriptable:
+    title: V5可脚本化部分评估表
+    section_type: rule
+    original_rules:
+    - PS-STD-012 §7.3
+    summary: V5深度审计中可脚本化的检查项及其实现难度评估
+    scriptable_items:
+    - check_item: doc_type是否在词表中
+      difficulty: 容易
+      suggested_location: GATE-11 pre-commit(已实现)
+    - check_item: doc_type是否匹配目录
+      difficulty: 容易
+      suggested_location: GATE-11 pre-commit(已实现)
+    - check_item: 文件名后缀是否匹配doc_type
+      difficulty: 容易
+      suggested_location: GATE-11 N-08新规则
+    - check_item: index.md文件清单vs磁盘实际文件
+      difficulty: 中等
+      suggested_location: scripts/governance/check_index_integrity.py
+    - check_item: 内容关键词vs doc_type(如content含Step但doc_type=policy)
+      difficulty: 较难
+      suggested_location: scripts/governance/scan_deep_content.py(启发式需人工复核)
+    - check_item: 全文内容vs doc_type匹配
+      difficulty: 困难
+      suggested_location: 人工审查+AI辅助(V5)
+    note: "前三个检查项是机器干的活脚本一秒扫完；最后两个才是需要打开文件看内容判断的过程无法完全自动化因为\"内容像不像规则\"需要理解上下文；前三个检查项做好后人工审查工作量从70+个文件缩减到3~5个可疑文件"
+  tmr_purpose:
+    title: 本文档存在的理由
+    section_type: context
+    original_rules:
+    - GOV-027 §0
+    summary: 术语映射表存在的理由——所有大型机构都有术语表AI驱动团队尤其需要双向映射表
+    key_decisions:
+    - 大型金融机构有Enterprise Business Glossary系统咨询机构有glossary card AI驱动团队有双向映射表
+    - 新成员入职第一个月主要消化术语跨部门沟通业务语言vs工程语言必须对齐
+    - 对ZephyrAlpha 2.0用户用大白话说需求→AI查表翻译成术语；AI用术语回复→用户快速对照理解
+  tmr_usage:
+    title: 使用方式
+    section_type: rule
+    original_rules:
+    - GOV-027 §1
+    conditions:
+    - type: trigger
+      check: AI或用户使用术语时
+      pass: 按使用方式执行
+      fail: 不遵守使用方式
+    actions:
+    - type: mandatory
+      step: 对人遇到AI使用陌生术语→第一查本表(Ctrl+F)→找不到的要求AI补进本表；对AI首次使用本表未收录的行业术语时用括号内附大白话解释→用户用大白话表述时AI可内部翻译为术语并执行但回复时应同时给出大白话→收到不清楚的术语查本表仍无解时加入本表并给出双向解释
+  tmr_main_table:
+    title: 主术语表
+    section_type: information
+    original_rules:
+    - GOV-027 §2
+    summary: 核心术语双向映射表按类别分组——架构与治理/决策与记忆/任务与流程/元数据与契约/AI协作/投资业务
+    items:
+    - category: 架构与治理类
+      examples: 唯一真源↔SSOT 正式文档区↔Canonical Domain 规矩↔Standard/Policy/Rule 薄治理↔Thin Governance
+    - category: 决策与记忆类
+      examples: 为什么这么定↔ADR 推导链↔Rationale Log 还没想清楚的事↔Open Question 可能出坏事的事↔Risk 升格↔Promotion 作废↔Superseded 只追加不删改↔Append-only
+    - category: 任务与流程类
+      examples: 任务清单↔Taskbook/Backlog 办事流程表↔Checklist/Runbook 大目标↔Roadmap 里程碑↔Milestone 交接↔Handoff 体检↔Health Check 闸门↔Quality Gate
+    - category: 元数据与契约类
+      examples: 文档头↔Frontmatter 字段清单↔Schema 受控词表↔Controlled Vocabulary 唯一编号↔Module ID 成熟度↔Status 密级↔Classification 留存期↔Retention 来源追溯↔Provenance
+    - category: AI协作类
+      examples: 多AI分工↔Multi-Agent Workflow 发散思维模型↔Divergent Model 收敛精准模型↔Convergent Model 批量操作模型↔Bulk Operation Model 头脑风暴↔Brainstorming 续接上下文↔Context Resume
+    - category: 投资业务类
+      examples: 核心投资价值链↔Core Investment Value Chain 因子↔Factor 回测↔Backtest 样本外测试↔Out-of-Sample Test 压力测试↔Stress Test 再平衡↔Rebalancing 模型漂移↔Model Drift 执行滑点↔Execution Slippage
+  tmr_reverse_index:
+    title: 反向索引
+    section_type: information
+    original_rules:
+    - GOV-027 §3
+    summary: AI输出的行业术语快速翻译回大白话的反向索引表
+    items:
+    - ai_term: SSOT
+      plain: 这个没做出双份
+    - ai_term: canonicalization
+      plain: 应该搬到正式区
+    - ai_term: ADR
+      plain: 记为什么这么定的凭证
+    - ai_term: frontmatter schema
+      plain: 文档头的字段格式要求
+    - ai_term: controlled vocabulary
+      plain: 只能从几个固定词里选
+    - ai_term: append-only
+      plain: 只能追加不能改删
+    - ai_term: superseded
+      plain: 取代/被取代
+    - ai_term: quality gate
+      plain: 卡点过不去就别往下走
+    - ai_term: handoff
+      plain: 交接
+    - ai_term: rationale log
+      plain: 推导过程的记录
+  tmr_maintenance:
+    title: 本表的维护规则
+    section_type: rule
+    original_rules:
+    - GOV-027 §4
+    conditions:
+    - type: trigger
+      check: 维护术语映射表时
+      pass: 按维护规则执行
+      fail: 不遵守维护规则
+    actions:
+    - type: mandatory
+      step: 新增时机AI第一次用的某术语用户不认识→加一行；讨论中自己发明的新概念→加一行；外部资料里频繁出现某术语→加一行。新增字段每个术语至少有大白话+行业术语(英文原名+常见中文译名)+解释(一句话说清)+关联文档。争议术语不同上下文有不同含义时不强行合并而是分两行列出并在解释栏标注使用上下文。升格路径未来可升格到business-glossary.yaml或机器可读版本glossary.yaml
+    prohibitions:
+    - 强行合并不同上下文有不同含义的争议术语
 references:
   rule_ids:
   - TRAE-041
@@ -257,7 +979,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.4.1
     date: '2026-06-21'

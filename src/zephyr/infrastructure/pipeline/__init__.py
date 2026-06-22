@@ -6,7 +6,6 @@ GOV-AI-002 v2.0.0 决策树 + 插件化路由 + Agent 桥接 + Schema 校验。
 v0.7.0: Phase C — LayerDataRouter 模型冻结与路由串联
 v0.8.0: Phase D — LayerConsumerRegistry 全层消费者回调注册
 """
-from . import llm_gateway
 
 from zephyr.infrastructure.pipeline.backpressure_manager import (
     BackpressureManager,
@@ -188,6 +187,8 @@ from zephyr.infrastructure.pipeline.routing_plugins import (
     RoutingPlugin,
 )
 
+from . import llm_gateway
+
 _INTELLIGENCE_LAZY_SYMBOLS = {
     "ALL_BENCHMARK_CASES": "zephyr.intelligence.model_profiling.pipeline",
     "CATEGORY_MAP": "zephyr.intelligence.model_profiling.pipeline",
@@ -206,8 +207,10 @@ _INTELLIGENCE_LAZY_SYMBOLS = {
     "write_benchmark_results": "zephyr.intelligence.model_profiling.results_writer",
 }
 
+
 def __getattr__(name: str):
     import importlib
+
     if name in _INTELLIGENCE_LAZY_SYMBOLS:
         mod = importlib.import_module(_INTELLIGENCE_LAZY_SYMBOLS[name])
         value = getattr(mod, name)
@@ -215,20 +218,29 @@ def __getattr__(name: str):
         return value
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-    "ABExperimentRoute",
     "AFFINITY_CONSTRAINTS",
-    "AIImpactAssessment",
+    "ALL_BENCHMARK_CASES",
     "A_DAG",
+    "B_DAG",
+    "CATEGORY_MAP",
+    "DEFAULT_PLUGINS",
+    "M_MODULES",
+    "M_MODULE_SPECS",
+    "M_TO_ROLE",
+    "ABExperimentRoute",
+    "AIImpactAssessment",
     "AffinityWeight",
     "ArtifactClassification",
     "ArtifactType",
-    "B_DAG",
     "BackpressureManager",
+    "BenchmarkCase",
     "BlueprintCodeDriftChecker",
     "BlueprintCodeDriftEntry",
     "BpState",
     "BpSymbolState",
+    "CaseResult",
     "ChaosExperimentResult",
     "CircuitBreakerManager",
     "CircuitBreakerState",
@@ -236,10 +248,10 @@ __all__ = [
     "CostRecord",
     "CostTracker",
     "CtPipeRoutingHints",
-    "DEFAULT_PLUGINS",
     "DeadLetterEntry",
     "DeadLetterQueue",
     "DegradationLevel",
+    "DiscoveredModel",
     "DriftReport",
     "EmergencyFallbackPlan",
     "ErrorBudget",
@@ -256,21 +268,23 @@ __all__ = [
     "LockBackend",
     "LockResult",
     "LockStatus",
-    "M10ReportOutput",
-    "M11GatingOutput",
     "M1ParseOutput",
     "M3GenerateOutput",
     "M6DiffOutput",
     "M7ReviewOutput",
     "M8ComplianceOutput",
     "M9RiskOutput",
-    "M_MODULES",
-    "M_MODULE_SPECS",
-    "M_TO_ROLE",
+    "M10ReportOutput",
+    "M11GatingOutput",
     "MemoryLockBackend",
     "ModelCollapseAlert",
     "ModelConfidence",
+    "ModelDiscovery",
+    "ModelProfile",
+    "ModelProfiler",
     "ModelRouter",
+    "ModelTaskEntry",
+    "ModelTaskMatrix",
     "ModelVersionInfo",
     "ModuleInput",
     "ModuleResult",
@@ -306,10 +320,15 @@ __all__ = [
     "SessionBrief",
     "StageContext",
     "StageOnFailure",
+    "TaskRecommendation",
     "backpressure_manager",
     "backpressure_types",
+    "circuit_breaker_manager",
+    "cost_tracker",
     "ct_pipe_hints_from_task_card",
     "ct_pipe_routing",
+    "dead_letter_queue",
+    "detect_drift",
     "domain_for_pipeline",
     "emit_pause",
     "emit_resume",
@@ -321,40 +340,25 @@ __all__ = [
     "handle_layer_onboarding",
     "handle_layer_query",
     "layer_consumer_registry",
+    "layer_router",
+    "llm_gateway",
+    "load_benchmark_history",
     "load_route_map",
+    "model_router",
     "models",
     "modules_slice_from_node",
     "pipeline_agent_bridge",
     "pipeline_lock",
     "pipeline_orchestrator",
     "pipeline_roadmap",
+    "preemption_manager",
     "register_all_consumers",
     "register_for_layer",
     "reset_layer_router",
     "resolve_ct_pipe_orc001",
     "role_for_module",
     "routing_plugins",
-    "validate_module_output",
-    "layer_router",
-    "llm_gateway",
-    "ALL_BENCHMARK_CASES",
-    "BenchmarkCase",
-    "CaseResult",
-    "CATEGORY_MAP",
-    "DiscoveredModel",
-    "ModelDiscovery",
-    "ModelProfile",
-    "ModelProfiler",
-    "detect_drift",
-    "load_benchmark_history",
     "to_model_benchmark_result",
+    "validate_module_output",
     "write_benchmark_results",
-    "ModelTaskEntry",
-    "ModelTaskMatrix",
-    "TaskRecommendation",
-    "circuit_breaker_manager",
-    "cost_tracker",
-    "dead_letter_queue",
-    "model_router",
-    "preemption_manager",
 ]

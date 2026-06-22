@@ -20,7 +20,7 @@ Concrete implementations live in zephyr.infrastructure.a2a_protocol.layer3_coord
 Consumers that need concrete implementations should import from infrastructure directly.
 """
 
-from zephyr.shared.protocols.a2a.a2a_coordination import (  # noqa: F401
+from zephyr.shared.protocols.a2a.a2a_coordination import (
     AgentRole,
     DispatchedTask,
     MergeStrategy,
@@ -28,7 +28,7 @@ from zephyr.shared.protocols.a2a.a2a_coordination import (  # noqa: F401
     TaskDispatchProtocol,
     TaskStatus,
 )
-from zephyr.shared.protocols.a2a.a2a_governance import (  # noqa: F401
+from zephyr.shared.protocols.a2a.a2a_governance import (
     A2AGovernanceRecord,
     GovernanceAdapterProtocol,
     Phase4HoldProtocol,

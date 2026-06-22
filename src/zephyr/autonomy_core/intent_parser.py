@@ -63,7 +63,6 @@ safety_level: M
 - 生产环境的 ChromaDB / Anthropic SDK 由调用方适配。
 """
 
-
 from __future__ import annotations
 
 import time
@@ -80,18 +79,18 @@ from zephyr.autonomy_core.intent_keyword_mapper import (
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
+    "DEFAULT_STAGE_THRESHOLDS",
     "EmbeddingHit",
-    "LLMIntentVerdict",
     "EmbeddingSearcher",
-    "LLMIntentCaller",
+    "IntentClassifyFailure",
     "IntentParseTrace",
     "IntentParser",
     "IntentType",
-    "IntentClassifyFailure",
+    "LLMIntentCaller",
+    "LLMIntentVerdict",
     "classify",
-    "plan_directive_chain",
     "inject_context_for",
-    "DEFAULT_STAGE_THRESHOLDS",
+    "plan_directive_chain",
 ]
 
 # ---------------------------------------------------------------------------

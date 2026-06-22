@@ -30,6 +30,7 @@ FitnessReport.get_metric : 命中 / 未命中返回 None
 import json
 
 import pytest
+
 from zephyr.ops.fitness_functions import (
     METRIC_COMPLIANCE_RATE,
     METRIC_HALLUCINATION_INTERCEPTION,

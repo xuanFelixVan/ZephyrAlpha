@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_openfeature.py
 
-import pytest
 
 from zephyr.ops.detectors.openfeature import OpenFeature
 

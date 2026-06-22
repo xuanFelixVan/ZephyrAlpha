@@ -26,7 +26,6 @@ cache.py —— Re-export wrapper → canonical: zephyr.infrastructure.shared_se
 修改缓存逻辑请编辑 infra/cache.py，不要编辑本文件。
 """
 
-
-# STUB: from .infra.cache import *  # noqa: F401, F403
+# STUB: from .infra.cache import *
 # Reason: shared_08/infra/ subpackage does not exist; canonical is infrastructure.shared_services.infra_06.cache
-from zephyr.shared.shared_services.infra_06.cache import *  # noqa: F401, F403
+from zephyr.shared.shared_services.infra_06.cache import *  # noqa: F403

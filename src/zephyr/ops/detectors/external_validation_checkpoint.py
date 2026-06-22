@@ -29,11 +29,13 @@ Godel边界人工升级触发条件 — 连续失败/共识低于阈值/未知�
 from dataclasses import dataclass, field
 from enum import Enum
 
+
 class EscalationReason(str, Enum):
     CONSECUTIVE_SELF_MOD_FAILURES = "consecutive_self_mod_failures"
     LOW_GUARD_CONSENSUS = "low_guard_consensus"
     UNKNOWN_STATE_SPACE = "unknown_state_space"
     CRITICAL_METRIC_DEVIATION = "critical_metric_deviation"
+
 
 @dataclass
 class ExternalValidationCheckpoint:
@@ -47,9 +49,12 @@ class ExternalValidationCheckpoint:
     def record_self_mod_failure(self) -> str | None:
         self.consecutive_self_mod_failures += 1
         if self.consecutive_self_mod_failures >= self.max_consecutive_failures:
-            return self._escalate(EscalationReason.CONSECUTIVE_SELF_MOD_FAILURES, {
-                "consecutive_failures": self.consecutive_self_mod_failures,
-            })
+            return self._escalate(
+                EscalationReason.CONSECUTIVE_SELF_MOD_FAILURES,
+                {
+                    "consecutive_failures": self.consecutive_self_mod_failures,
+                },
+            )
         return None
 
     def record_self_mod_success(self) -> None:
@@ -60,20 +65,26 @@ class ExternalValidationCheckpoint:
             return None
         ratio = agree_count / total_count
         if ratio < self.guard_consensus_threshold:
-            return self._escalate(EscalationReason.LOW_GUARD_CONSENSUS, {
-                "agree_count": agree_count,
-                "total_count": total_count,
-                "consensus_ratio": round(ratio, 3),
-            })
+            return self._escalate(
+                EscalationReason.LOW_GUARD_CONSENSUS,
+                {
+                    "agree_count": agree_count,
+                    "total_count": total_count,
+                    "consensus_ratio": round(ratio, 3),
+                },
+            )
         return None
 
     def check_state_space(self, current_state_hash: str) -> str | None:
         if self.known_state_space_hash and current_state_hash != self.known_state_space_hash:
             if not self._hash_in_known_variants(current_state_hash):
-                return self._escalate(EscalationReason.UNKNOWN_STATE_SPACE, {
-                    "current_hash": current_state_hash[:16],
-                    "known_hash": self.known_state_space_hash[:16],
-                })
+                return self._escalate(
+                    EscalationReason.UNKNOWN_STATE_SPACE,
+                    {
+                        "current_hash": current_state_hash[:16],
+                        "known_hash": self.known_state_space_hash[:16],
+                    },
+                )
         return None
 
     def register_known_state(self, state_hash: str) -> None:

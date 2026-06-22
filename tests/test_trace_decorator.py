@@ -13,11 +13,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 import pytest
 
-from zephyr.ops.observability.tracing import (
+from zephyr.infrastructure.observability.trace_decorator import (
     TraceCollector,
     TraceSpan,
     trace,
@@ -25,7 +24,6 @@ from zephyr.ops.observability.tracing import (
 
 
 class TestTraceSpanDataclass:
-
     def test_default_error(self):
         span = TraceSpan(
             span_id="op-123",
@@ -52,7 +50,6 @@ class TestTraceSpanDataclass:
 
 
 class TestTraceCollector:
-
     def setup_method(self):
         TraceCollector._instance = None
 
@@ -78,27 +75,31 @@ class TestTraceCollector:
     def test_add_multiple_spans(self):
         collector = TraceCollector()
         for i in range(3):
-            collector.add_span(TraceSpan(
-                span_id=f"span-{i}",
-                operation=f"op-{i}",
-                start_time="2026-01-01T00:00:00+00:00",
-                end_time="2026-01-01T00:00:01+00:00",
-                duration_ms=100.0,
-                success=True,
-            ))
+            collector.add_span(
+                TraceSpan(
+                    span_id=f"span-{i}",
+                    operation=f"op-{i}",
+                    start_time="2026-01-01T00:00:00+00:00",
+                    end_time="2026-01-01T00:00:01+00:00",
+                    duration_ms=100.0,
+                    success=True,
+                )
+            )
         assert len(collector._spans) == 3
 
     def test_flush_writes_file(self, tmp_path, monkeypatch):
         collector = TraceCollector()
         collector._output_dir = tmp_path / "traces"
-        collector.add_span(TraceSpan(
-            span_id="flush-1",
-            operation="flush_op",
-            start_time="2026-01-01T00:00:00+00:00",
-            end_time="2026-01-01T00:00:01+00:00",
-            duration_ms=500.0,
-            success=True,
-        ))
+        collector.add_span(
+            TraceSpan(
+                span_id="flush-1",
+                operation="flush_op",
+                start_time="2026-01-01T00:00:00+00:00",
+                end_time="2026-01-01T00:00:01+00:00",
+                duration_ms=500.0,
+                success=True,
+            )
+        )
         flushed = collector.flush()
         assert len(flushed) == 1
         assert len(collector._spans) == 0
@@ -119,20 +120,21 @@ class TestTraceCollector:
     def test_flush_clears_spans(self, tmp_path):
         collector = TraceCollector()
         collector._output_dir = tmp_path / "traces"
-        collector.add_span(TraceSpan(
-            span_id="clear-1",
-            operation="clear_op",
-            start_time="2026-01-01T00:00:00+00:00",
-            end_time="2026-01-01T00:00:01+00:00",
-            duration_ms=200.0,
-            success=True,
-        ))
+        collector.add_span(
+            TraceSpan(
+                span_id="clear-1",
+                operation="clear_op",
+                start_time="2026-01-01T00:00:00+00:00",
+                end_time="2026-01-01T00:00:01+00:00",
+                duration_ms=200.0,
+                success=True,
+            )
+        )
         collector.flush()
         assert len(collector._spans) == 0
 
 
 class TestTraceDecorator:
-
     def setup_method(self):
         TraceCollector._instance = None
 

@@ -26,15 +26,14 @@ module_id: MOD-INF-023
 覆盖率仪表板：detector_coverage_matrix / module_health_index / drift_heatmap + MCP JSON导出。
 对标 blueprint.md §5.3 / TASK-INF-0027。
 """
+
 from __future__ import annotations
 
 import json
-import sqlite3
 import os
+import sqlite3
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -46,8 +45,7 @@ class DashboardData:
 
 
 class Dashboard:
-
-    def __init__(self, project_root: Optional[str] = None) -> None:
+    def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -56,9 +54,10 @@ class Dashboard:
 
     def _load_coverage_matrix(self) -> dict[str, dict[str, object]]:
         import yaml
+
         if not os.path.exists(self._registry_path):
             return {}
-        with open(self._registry_path, "r", encoding="utf-8") as fh:
+        with open(self._registry_path, encoding="utf-8") as fh:
             raw = yaml.safe_load(fh) or {}
         return raw.get("coverage_matrix", {}) or {}
 
@@ -92,7 +91,7 @@ class Dashboard:
             coverage_matrix=self._load_coverage_matrix(),
             module_health_index=self.compute_module_health(),
             drift_heatmap=self.compute_drift_heatmap(),
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
         )
 
     def to_json_summary(self) -> str:

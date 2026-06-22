@@ -28,10 +28,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class StartupLayer(str, Enum):
@@ -54,9 +54,16 @@ STARTUP_COMPONENTS: dict[StartupLayer, list[str]] = {
     StartupLayer.L1_DATABASE: ["database"],
     StartupLayer.L2_VMS: ["vector-memory"],
     StartupLayer.L3_FLE: ["feedback-loop"],
-    StartupLayer.L4_CORE_SERVICES: ["orchestrator", "script_system", "knowledge_base",
-                                      "context-engine", "gate_engine", "pipeline",
-                                      "llm-security", "mcp_servers"],
+    StartupLayer.L4_CORE_SERVICES: [
+        "orchestrator",
+        "script_system",
+        "knowledge_base",
+        "context-engine",
+        "gate_engine",
+        "pipeline",
+        "llm-security",
+        "mcp_servers",
+    ],
     StartupLayer.L5_TELEMETRY: ["system-telemetry"],
 }
 
@@ -95,10 +102,10 @@ class StartupSequencer:
 
         state = self._states[layer]
         state.status = "running"
-        state.started_at = datetime.now(timezone.utc)
+        state.started_at = datetime.now(UTC)
         return True
 
     def complete_layer(self, layer: StartupLayer) -> None:
         state = self._states[layer]
         state.status = "completed"
-        state.completed_at = datetime.now(timezone.utc)
+        state.completed_at = datetime.now(UTC)

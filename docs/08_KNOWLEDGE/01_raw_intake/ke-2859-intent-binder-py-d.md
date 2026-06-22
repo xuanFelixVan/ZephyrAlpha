@@ -22,14 +22,14 @@ class IntentBindingContext(BaseModel):
 class IntentBoundPermissionGuard:
     """
     IBAC 权限执行器——横切面D核心。
-    
+
     工作原理：
     1. 任务启动 → 绑定原始意图 + 创建临时权限信封
     2. 每个Tool调用 → 验证当前操作是否仍在意图信封内
     3. 操作链进行中 → 持续检测意图漂移
     4. 意图信封过期 → 需Owner重新确认或自动降级
     """
-    
+
     async def bind_intent(
         self,
         agent: AgentIdentity,
@@ -46,7 +46,7 @@ class IntentBoundPermissionGuard:
         )
         # 写入不可变审计日志：{when, who, task, intent, envelope}
         return envelope
-    
+
     async def check_within_intent(
         self,
         binding: IntentBindingContext,
@@ -56,7 +56,7 @@ class IntentBoundPermissionGuard:
     ) -> IntentCheckResult:
         """
         每一步检查：当前操作是否仍在意图信封内？
-        
+
         检查维度：
         1. tool_category 是否在 allowed 中（硬边界）
         2. 意图漂移度（soft边界——语义相似度检测）
@@ -65,7 +65,7 @@ class IntentBoundPermissionGuard:
         # 硬边界检查
         if action.tool_type not in binding.allowed_tool_categories:
             return IntentCheckResult.VIOLATION
-        
+
         # 软边界——意图漂移
         drift_score = await self._compute_drift(
             binding.original_intent,
@@ -76,7 +76,7 @@ class IntentBoundPermissionGuard:
             return IntentCheckResult.DRIFT_DETECTED
         elif drift_score > binding.drift_tolerance * 0.7:
             return IntentCheckResult.DRIFT_WARNING
-        
+
         return IntentCheckResult.WITHIN_INTENT
 
 class IntentCheckResult(str, Enum):

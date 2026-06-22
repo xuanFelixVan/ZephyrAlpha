@@ -6,10 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """shared.api — auto-generated package init."""
 
-__all__ = ['api_client', 'api_index', 'dos_launcher']
-
+__all__ = ["api_client", "api_index", "dos_launcher"]

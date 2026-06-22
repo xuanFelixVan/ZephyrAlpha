@@ -44,7 +44,7 @@ EXPECTED_FILES: list[str] = [
     ".env.example",
     "docker-compose.yml",
     ".pre_commit-config.yaml",
-    "docs/01_policies_and_standards/governance/ai/ai-autonomy-authority-registry.md",
+    "docs/01_policies_and_standards/governance/ai/ai_autonomy_authority_registry.yaml",
     "architecture-model/layers/b_mcp.yaml",
     "docs/03_modules/_cross_layer/mcp-servers/blueprint.md",
 ]

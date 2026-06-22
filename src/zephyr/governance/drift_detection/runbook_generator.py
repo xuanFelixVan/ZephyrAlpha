@@ -26,10 +26,8 @@ module_id: MOD-INF-023
 五大板块：metadata / diagnosis / remediation / rollback / references
 对标 blueprint.md §6.9。
 """
-from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Optional
+from __future__ import annotations
 
 import yaml
 
@@ -183,9 +181,9 @@ def _build_rollback(event: DriftEvent) -> str:
             f"4. If drift was intentional, suppress with suppression_learner"
         )
     return (
-        f"1. No auto-fix applied — manual rollback unnecessary\n"
-        f"2. If drift was manually resolved, verify with detector re-run\n"
-        f"3. Baseline snapshot can be restored via baseline_manager.restore()"
+        "1. No auto-fix applied — manual rollback unnecessary\n"
+        "2. If drift was manually resolved, verify with detector re-run\n"
+        "3. Baseline snapshot can be restored via baseline_manager.restore()"
     )
 
 
@@ -228,8 +226,8 @@ def generate_runbook(event: DriftEvent) -> str:
         recommend_tag = " **(RECOMMENDED)**" if opt.get("recommended") == "true" else ""
         sections.append(f"### Option {idx}: {opt['name']}{recommend_tag}")
         sections.append("")
-        sections.append(f"**Effort**: {opt.get('effort','unknown')}  |  **Pros**: {opt.get('pros','N/A')}")
-        sections.append(f"**Cons**: {opt.get('cons','N/A')}")
+        sections.append(f"**Effort**: {opt.get('effort', 'unknown')}  |  **Pros**: {opt.get('pros', 'N/A')}")
+        sections.append(f"**Cons**: {opt.get('cons', 'N/A')}")
         sections.append("")
         sections.append("**Steps**:")
         sections.append("")
@@ -250,10 +248,10 @@ def generate_runbook(event: DriftEvent) -> str:
     sections.append("")
     sections.append("## References")
     sections.append("")
-    sections.append(f"- Blueprint: `docs/03_modules/infrastructure.runtime_integration/drift-detector/blueprint.md`")
-    sections.append(f"- Detector Registry: `src/zephyr/drift-detector/_detector-registry.yaml`")
-    sections.append(f"- State Machine: `src/zephyr/drift-detector/state_machine.py`")
-    sections.append(f"- Incident Postmortem: check `src/zephyr/drift-detector/incident_postmortem.py`")
+    sections.append("- Blueprint: `docs/03_modules/infrastructure.runtime_integration/drift-detector/blueprint.md`")
+    sections.append("- Detector Registry: `src/zephyr/drift-detector/_detector-registry.yaml`")
+    sections.append("- State Machine: `src/zephyr/drift-detector/state_machine.py`")
+    sections.append("- Incident Postmortem: check `src/zephyr/drift-detector/incident_postmortem.py`")
 
     return "\n".join(sections)
 
@@ -261,6 +259,7 @@ def generate_runbook(event: DriftEvent) -> str:
 def generate_bulk_runbook(events: list[DriftEvent], output_dir: str) -> list[str]:
     """批量生成手册，返回文件路径列表。"""
     import os
+
     os.makedirs(output_dir, exist_ok=True)
     generated: list[str] = []
 

@@ -27,87 +27,34 @@ PathBlacklistHandler — PathBlacklistHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class PathBlacklistHandler(CheckTypeHandler):
-
-
     name = "path_blacklist"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        deliverables = list(task.deliverables or [])
 
-                violations = []
+        blacklist = list(params.get("blacklist", []))
 
+        for p in deliverables:
+            for bl in blacklist:
+                if p.startswith(bl):
+                    violations.append({"message": f"Blacklisted path: {p}", "severity": check.severity})
 
-                deliverables = list(task.deliverables or [])
-
-
-                blacklist = list(params.get("blacklist", []))
-
-
-                for p in deliverables:
-
-
-                    for bl in blacklist:
-
-
-                        if p.startswith(bl):
-
-
-                            violations.append({"message": f"Blacklisted path: {p}", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

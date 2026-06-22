@@ -29,9 +29,7 @@ class TestVersionStatus:
 
 class TestAPIVersionContractInstantiation:
     def test_default_construction(self):
-        contract = APIVersionContract(
-            api_name="test_api", version="v1", sunset_date="2026-12-31"
-        )
+        contract = APIVersionContract(api_name="test_api", version="v1", sunset_date="2026-12-31")
         assert contract.api_name == "test_api"
         assert contract.version == "v1"
         assert contract.sunset_date == "2026-12-31"
@@ -55,55 +53,39 @@ class TestAPIVersionContractInstantiation:
 
 class TestCheckSunset:
     def test_before_sunset_returns_false(self):
-        contract = APIVersionContract(
-            api_name="api", version="v1", sunset_date="2099-01-01"
-        )
+        contract = APIVersionContract(api_name="api", version="v1", sunset_date="2099-01-01")
         assert contract.check_sunset(today="2026-01-01") is False
 
     def test_on_sunset_returns_true(self):
-        contract = APIVersionContract(
-            api_name="api", version="v1", sunset_date="2026-05-22"
-        )
+        contract = APIVersionContract(api_name="api", version="v1", sunset_date="2026-05-22")
         assert contract.check_sunset(today="2026-05-22") is True
 
     def test_after_sunset_returns_true(self):
-        contract = APIVersionContract(
-            api_name="api", version="v1", sunset_date="2020-01-01"
-        )
+        contract = APIVersionContract(api_name="api", version="v1", sunset_date="2020-01-01")
         assert contract.check_sunset(today="2026-01-01") is True
 
     def test_today_defaults_to_current_date(self):
-        contract = APIVersionContract(
-            api_name="api", version="v1", sunset_date="2020-01-01"
-        )
+        contract = APIVersionContract(api_name="api", version="v1", sunset_date="2020-01-01")
         assert contract.check_sunset() is True
 
 
 class TestDaysUntilSunset:
     def test_future_sunset_positive(self):
-        contract = APIVersionContract(
-            api_name="api", version="v1", sunset_date="2099-12-31"
-        )
+        contract = APIVersionContract(api_name="api", version="v1", sunset_date="2099-12-31")
         assert contract.days_until_sunset() > 0
 
     def test_past_sunset_negative(self):
-        contract = APIVersionContract(
-            api_name="api", version="v1", sunset_date="2020-01-01"
-        )
+        contract = APIVersionContract(api_name="api", version="v1", sunset_date="2020-01-01")
         assert contract.days_until_sunset() < 0
 
 
 class TestBoundaryCases:
     def test_invalid_sunset_date_raises(self):
-        contract = APIVersionContract(
-            api_name="api", version="v1", sunset_date="not-a-date"
-        )
+        contract = APIVersionContract(api_name="api", version="v1", sunset_date="not-a-date")
         with pytest.raises(ValueError):
             contract.check_sunset()
 
     def test_invalid_today_raises(self):
-        contract = APIVersionContract(
-            api_name="api", version="v1", sunset_date="2026-12-31"
-        )
+        contract = APIVersionContract(api_name="api", version="v1", sunset_date="2026-12-31")
         with pytest.raises(ValueError):
             contract.check_sunset(today="bad-date")

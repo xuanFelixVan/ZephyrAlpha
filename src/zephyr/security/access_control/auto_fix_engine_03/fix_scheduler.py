@@ -2,39 +2,32 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_scheduler
-
 # [INVARIANTS] 双模式调度;批量模式MUST遵守间隔;事件驱动MUST即时响应
-
 # [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml scheduler段
-
 # [CONSUMERS] engine.py;__main__.py
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] SchedulerError
-
 # [TESTS] tests/auto-fix-engine/test_fix_scheduler.py
-
 import logging
 import threading
 import time
+from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixReport
 
 logger = logging.getLogger(__name__)
 
+
 class SchedulerMode(str, Enum):
     CONTINUOUS = "continuous"
     EVENT_DRIVEN = "event_driven"
+
 
 class FixScheduler:
     def __init__(
@@ -122,5 +115,7 @@ class FixScheduler:
             "running": self._running,
             "batch_count": self._batch_count,
             "pending_events": len(self._event_queue),
-            "last_batch": datetime.fromtimestamp(self._last_batch_time, tz=UTC).isoformat() if self._last_batch_time else None,
+            "last_batch": datetime.fromtimestamp(self._last_batch_time, tz=UTC).isoformat()
+            if self._last_batch_time
+            else None,
         }

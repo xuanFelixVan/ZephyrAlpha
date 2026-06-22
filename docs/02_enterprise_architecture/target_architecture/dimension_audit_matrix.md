@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-12-AUDIT-MATRIX
 title: 12-Dimension Architecture Audit Matrix / 12 维架构评分矩阵
 doc_type: reference

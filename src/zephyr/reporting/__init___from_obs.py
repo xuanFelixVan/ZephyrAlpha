@@ -10,4 +10,5 @@
 # [ERROR_CONTRACT] ImportError_on_missing_module
 # [TESTS] tests/test_domain_structure.py
 """asset-inventory subdomain package — D-OBS-ASSET_INVENTORY."""
+
 __all__ = []

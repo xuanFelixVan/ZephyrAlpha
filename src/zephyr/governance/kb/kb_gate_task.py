@@ -26,9 +26,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.shared.task_types import TaskCard
-from zephyr.shared.task_types import TaskNamespace, TaskStatus, normalize_execution_model
-from zephyr.integration.shared.schema.severity_types import SafetyLevel, Priority
+from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.task_types import TaskCard, TaskNamespace, TaskStatus, normalize_execution_model
 
 # 与 KB 流水线文档任务链隔离的专用 seq，避免与真实 tasks 表主键碰撞概率
 _GATE_SEQ: dict[str, tuple[TaskNamespace, int]] = {
@@ -38,6 +37,7 @@ _GATE_SEQ: dict[str, tuple[TaskNamespace, int]] = {
     "G4": (TaskNamespace.KBG, 9104),
     "G5": (TaskNamespace.KBG, 9105),
 }
+
 
 def build_kb_gate_eval_task(*, gate_id: str, title: str, deliverable: Path) -> TaskCard:
     """构造 ``GateEngine.evaluate(task, gate_id)`` 所需的最小 TaskCard。"""

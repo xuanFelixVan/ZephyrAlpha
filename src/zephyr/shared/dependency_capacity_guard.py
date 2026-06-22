@@ -24,7 +24,7 @@ class DependencyCapacityGuard:
 
     def update_load(self, dependency: str, current_load: float) -> CapacityViolation | None:
         self._loads[dependency] = current_load
-        cap = self._capacities.get(dependency, float('inf'))
+        cap = self._capacities.get(dependency, float("inf"))
         util = (current_load / cap * 100) if cap > 0 else 0.0
         if util > 90.0:
             return CapacityViolation(dependency, current_load, cap, util)

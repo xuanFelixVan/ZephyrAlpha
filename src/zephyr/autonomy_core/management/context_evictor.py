@@ -56,23 +56,22 @@ relevance_weight : 与当前 intent 的相关性分数
 
 from __future__ import annotations
 
-
 import time
 from dataclasses import dataclass, field
 from enum import IntEnum
 from threading import RLock
-from typing import Self, ClassVar
+from typing import ClassVar, Self
 
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
-    "PriorityLevel",
-    "ContextBlock",
-    "EvictionResult",
-    "ContextEvictor",
     "DEFAULT_EVICTION_WEIGHTS",
+    "ContextBlock",
+    "ContextEvictor",
+    "EvictionResult",
+    "PriorityLevel",
 ]
 
 DEFAULT_EVICTION_WEIGHTS: dict[str, float] = {

@@ -15,8 +15,8 @@ from __future__ import annotations
 import pytest
 
 from zephyr.governance.tco_model import (
-    BudgetColumn,
     TCO_MODEL,
+    BudgetColumn,
     column_summary,
     get_column,
     token_budget_distribution,
@@ -29,36 +29,56 @@ from zephyr.governance.tco_model import (
 class TestBudgetColumn:
     def test_monthly_cost(self):
         col = BudgetColumn(
-            name="test", annual_cost=1200.0, precision_budget=100.0,
-            tolerance=50.0, token_share=0.5, description="test col",
+            name="test",
+            annual_cost=1200.0,
+            precision_budget=100.0,
+            tolerance=50.0,
+            token_share=0.5,
+            description="test col",
         )
         assert col.monthly_cost == 100.0
 
     def test_exceeds_budget_false(self):
         col = BudgetColumn(
-            name="test", annual_cost=1200.0, precision_budget=100.0,
-            tolerance=200.0, token_share=0.5, description="test col",
+            name="test",
+            annual_cost=1200.0,
+            precision_budget=100.0,
+            tolerance=200.0,
+            token_share=0.5,
+            description="test col",
         )
         assert col.exceeds_budget(1300.0) is False
 
     def test_exceeds_budget_true(self):
         col = BudgetColumn(
-            name="test", annual_cost=1200.0, precision_budget=100.0,
-            tolerance=200.0, token_share=0.5, description="test col",
+            name="test",
+            annual_cost=1200.0,
+            precision_budget=100.0,
+            tolerance=200.0,
+            token_share=0.5,
+            description="test col",
         )
         assert col.exceeds_budget(1500.0) is True
 
     def test_exceeds_budget_exactly_at_tolerance(self):
         col = BudgetColumn(
-            name="test", annual_cost=1200.0, precision_budget=100.0,
-            tolerance=200.0, token_share=0.5, description="test col",
+            name="test",
+            annual_cost=1200.0,
+            precision_budget=100.0,
+            tolerance=200.0,
+            token_share=0.5,
+            description="test col",
         )
         assert col.exceeds_budget(1400.0) is False
 
     def test_exceeds_budget_zero_spend(self):
         col = BudgetColumn(
-            name="test", annual_cost=1200.0, precision_budget=100.0,
-            tolerance=200.0, token_share=0.5, description="test col",
+            name="test",
+            annual_cost=1200.0,
+            precision_budget=100.0,
+            tolerance=200.0,
+            token_share=0.5,
+            description="test col",
         )
         assert col.exceeds_budget(0.0) is False
 

@@ -30,16 +30,14 @@ RTO: Recovery Time Objective ≤ 300s
 RPO: Recovery Point Objective ≤ 1 task
 """
 
-
 from __future__ import annotations
 
 import json
 import time
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 RTO_TARGET_S = 300
 RPO_TARGET_TASKS = 1
@@ -67,7 +65,6 @@ class SLAReport:
 
 
 class SLAMonitor:
-
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/sla")
         self._breach_log_path = self._data_dir / "sla_breaches.jsonl"
@@ -82,7 +79,7 @@ class SLAMonitor:
                 metric="RTO",
                 target=RTO_TARGET_S,
                 actual=recovery_time_s,
-                timestamp_utc=datetime.now(timezone.utc).isoformat(),
+                timestamp_utc=datetime.now(UTC).isoformat(),
                 details=f"Recovery time {recovery_time_s:.1f}s exceeds target {RTO_TARGET_S}s",
             )
             self._log_breach(breach)
@@ -98,7 +95,7 @@ class SLAMonitor:
                 metric="RPO",
                 target=RPO_TARGET_TASKS,
                 actual=lost_tasks,
-                timestamp_utc=datetime.now(timezone.utc).isoformat(),
+                timestamp_utc=datetime.now(UTC).isoformat(),
                 details=f"Lost {lost_tasks} tasks exceeds RPO target {RPO_TARGET_TASKS}",
             )
             self._log_breach(breach)
@@ -121,14 +118,14 @@ class SLAMonitor:
         overall = len(breaches) == 0
 
         report = SLAReport(
-            report_id=f"SLA-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            report_id=f"SLA-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             rto_ms=round(recovery_time_s * 1000, 1),
             rto_ok=rto_breach is None,
             rpo_tasks=lost_tasks,
             rpo_ok=rpo_breach is None,
             breaches=breaches,
             overall_ok=overall,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
         self._save_report(report)
@@ -153,30 +150,39 @@ class SLAMonitor:
     def _log_breach(self, breach: SLABreach) -> None:
         self._data_dir.mkdir(parents=True, exist_ok=True)
         with open(self._breach_log_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "metric": breach.metric,
-                "target": breach.target,
-                "actual": breach.actual,
-                "timestamp_utc": breach.timestamp_utc,
-                "details": breach.details,
-            }, ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "metric": breach.metric,
+                        "target": breach.target,
+                        "actual": breach.actual,
+                        "timestamp_utc": breach.timestamp_utc,
+                        "details": breach.details,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
 
     def _save_report(self, report: SLAReport) -> None:
         self._data_dir.mkdir(parents=True, exist_ok=True)
         report_path = self._data_dir / f"{report.report_id}.json"
         report_path.write_text(
-            json.dumps({
-                "report_id": report.report_id,
-                "rto_ms": report.rto_ms,
-                "rto_ok": report.rto_ok,
-                "rpo_tasks": report.rpo_tasks,
-                "rpo_ok": report.rpo_ok,
-                "breaches": [
-                    {"metric": b.metric, "actual": b.actual, "details": b.details}
-                    for b in report.breaches
-                ],
-                "overall_ok": report.overall_ok,
-                "timestamp_utc": report.timestamp_utc,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "report_id": report.report_id,
+                    "rto_ms": report.rto_ms,
+                    "rto_ok": report.rto_ok,
+                    "rpo_tasks": report.rpo_tasks,
+                    "rpo_ok": report.rpo_ok,
+                    "breaches": [
+                        {"metric": b.metric, "actual": b.actual, "details": b.details} for b in report.breaches
+                    ],
+                    "overall_ok": report.overall_ok,
+                    "timestamp_utc": report.timestamp_utc,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )

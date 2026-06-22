@@ -32,10 +32,12 @@ StopGate — 质量闸门
 from dataclasses import dataclass, field
 from datetime import datetime
 
+
 @dataclass
 class StopGateResult:
     can_stop: bool = True
     reasons: list[str] = field(default_factory=list)
+
 
 class StopGate:
     """质量闸门——AI 不能空手退出。

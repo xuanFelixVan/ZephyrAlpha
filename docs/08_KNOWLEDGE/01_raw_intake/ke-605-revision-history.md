@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-605
 title: 9. Revision history / 修订记录
 category: documentation

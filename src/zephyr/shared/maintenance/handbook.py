@@ -29,10 +29,9 @@ Onboarding Handbook — AI Agent 施工手册生成。
     任务卡 TASK-INF-0110 (Part 4/4)
 """
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class HandbookSection:
@@ -41,8 +40,8 @@ class HandbookSection:
     content: str
     source_file: str = ""
 
-class Handbook:
 
+class Handbook:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 

@@ -28,15 +28,14 @@
   - v0.40.0: 集成 32 个治理级组件 (R470-R501)
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from datetime import UTC
 from pathlib import Path
 from typing import Any, ClassVar
 
@@ -52,15 +51,15 @@ from zephyr.ops.detectors.recursive_diagnosis_trust_evaluator import RecursiveDi
 from zephyr.ops.detectors.self_diagnosis_data_leak_detector import SelfDiagnosisDataLeakDetector
 from zephyr.ops.detectors.silent_corruption_detector import SilentCorruptionDetector
 from zephyr.ops.detectors.temporal_coherence_of_self_model import TemporalCoherenceOfSelfModel
-from zephyr.ops.diagnosers.self_bottleneck_detector import PipelineStage
 from zephyr.ops.diagnosers.adaptive_param_tuning import AdaptiveParamTuning
 from zephyr.ops.diagnosers.human_anomaly_flood_detector import HumanAnomalyFloodDetector
 from zephyr.ops.diagnosers.model_version_semantic_drift import ModelVersionSemanticDrift
 from zephyr.ops.diagnosers.nonstationary_effectiveness import NonstationaryEffectiveness
 from zephyr.ops.diagnosers.recovery_time_stats import RecoveryTimeStats
 from zephyr.ops.diagnosers.regime_gain_scheduling import RegimeGainScheduling
+from zephyr.ops.diagnosers.self_bottleneck_detector import PipelineStage
 from zephyr.ops.diagnosers.timezone_semantic_reasoner import TimezoneSemanticReasoner
-from zephyr.ops.scheduler_act import ActPhaseHandler, ActResult
+from zephyr.ops.scheduler_act import ActPhaseHandler
 from zephyr.ops.scheduler_collect_detect import CollectDetectHandler
 from zephyr.ops.scheduler_health import HealthReporter
 from zephyr.ops.scheduler_safety import SafetyGateManager
@@ -172,12 +171,15 @@ class FeedbackLoopScheduler:
             try:
                 from zephyr.autonomy_core.vector_bridge import VectorBridge
                 from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+
                 _vms = InProcessVectorMemory()
                 _vms.start()
                 self.vector_bridge = VectorBridge(_vms)
                 logger.info("FLE-Scheduler: VectorBridge auto-initialized")
             except Exception:
-                logger.warning("FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS")
+                logger.warning(
+                    "FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS"
+                )
                 self.vector_bridge = None
 
     _instance: ClassVar[FeedbackLoopScheduler | None] = None
@@ -240,14 +242,20 @@ class FeedbackLoopScheduler:
                 self._consecutive_errors += 1
                 logger.exception("FLE-Scheduler tick failed (%d consecutive)", self._consecutive_errors)
                 if self._consecutive_errors >= self._max_consecutive_errors:
-                    logger.critical("FLE-Scheduler: %d consecutive errors, pausing for 5 minutes", self._consecutive_errors)
+                    logger.critical(
+                        "FLE-Scheduler: %d consecutive errors, pausing for 5 minutes", self._consecutive_errors
+                    )
                     self._consecutive_errors = 0
                     time.sleep(300)
                     continue
-            backoff = min(
-                self.poll_interval,
-                self._error_backoff_base * (2 ** min(self._consecutive_errors, 5)),
-            ) if self._consecutive_errors > 0 else self.poll_interval
+            backoff = (
+                min(
+                    self.poll_interval,
+                    self._error_backoff_base * (2 ** min(self._consecutive_errors, 5)),
+                )
+                if self._consecutive_errors > 0
+                else self.poll_interval
+            )
             time.sleep(backoff)
 
     def _periodic_checks(self) -> None:
@@ -263,6 +271,7 @@ class FeedbackLoopScheduler:
     def _audit_trail_check(self) -> None:
         try:
             from zephyr.governance.integrity import IntegrityVerifier
+
             verifier = IntegrityVerifier()
             result = verifier.verify_chain()
             status = result.get("status", "unknown")
@@ -271,6 +280,7 @@ class FeedbackLoopScheduler:
                 logger.warning("FLE audit trail: chain COMPROMISED — %d issues: %s", len(issues), issues[:3])
                 try:
                     from zephyr.integration.shared_08.event_bus import bus
+
                     bus.emit(topic="audit_chain.compromised", payload={"issues": issues})
                 except Exception:
                     pass
@@ -285,10 +295,15 @@ class FeedbackLoopScheduler:
     def _run_drift_scan(self) -> None:
         try:
             import asyncio
+
             from zephyr.behavioral_audit.drift_engine import scheduled_light
 
             result = asyncio.run(scheduled_light())
-            high_drifts = [d for d in result.drifts if getattr(d, "severity", "").value == "HIGH" or getattr(d, "severity", "") == "HIGH"]
+            high_drifts = [
+                d
+                for d in result.drifts
+                if getattr(d, "severity", "").value == "HIGH" or getattr(d, "severity", "") == "HIGH"
+            ]
             if high_drifts:
                 logger.warning("FLE drift scan: %d HIGH drifts detected", len(high_drifts))
                 self._auto_fix_drifts(high_drifts)
@@ -300,6 +315,7 @@ class FeedbackLoopScheduler:
     def _auto_fix_drifts(self, drifts: list) -> None:
         try:
             from zephyr.security.access_control.auto_fix_engine_03 import AutoFixEngine
+
             engine = AutoFixEngine()
             for d in drifts[:3]:
                 target = getattr(d, "target", "") or getattr(d, "file_path", "") or str(d)
@@ -313,6 +329,7 @@ class FeedbackLoopScheduler:
 
     def _run_once(self) -> FLEPipelineEvent | None:
         import uuid
+
         run_id = str(uuid.uuid4())[:8]
         now = time.time()
 
@@ -358,23 +375,32 @@ class FeedbackLoopScheduler:
 
         event.phase = "act"
         event.action = act_result.action_record
-        self.health_reporter.bottleneck_detector.record_stage_latency(PipelineStage.ACT, (time.time() - phase_start) * 1000)
+        self.health_reporter.bottleneck_detector.record_stage_latency(
+            PipelineStage.ACT, (time.time() - phase_start) * 1000
+        )
 
         self._dispatch_alert_if_anomaly(event, act_result)
 
         # --- Phase 5: Verify ---
         phase_start = time.time()
 
-        self.collect_detect_handler.trajectory_detector.record_step(TrajectoryEvent(
-            phase="verify", component="verification_engine",
-            timestamp=time.time(), input_hash=run_id, output_hash="",
-        ))
+        self.collect_detect_handler.trajectory_detector.record_step(
+            TrajectoryEvent(
+                phase="verify",
+                component="verification_engine",
+                timestamp=time.time(),
+                input_hash=run_id,
+                output_hash="",
+            )
+        )
 
         verification = self.act_handler.run_verify(event.anomaly, event.diagnosis, run_id, self._get_current_metric)
 
         event.phase = "verify"
         event.verification = verification
-        self.health_reporter.bottleneck_detector.record_stage_latency(PipelineStage.VERIFY, (time.time() - phase_start) * 1000)
+        self.health_reporter.bottleneck_detector.record_stage_latency(
+            PipelineStage.VERIFY, (time.time() - phase_start) * 1000
+        )
 
         self._append_event(event)
         self._post_pipeline_checks(event)
@@ -430,9 +456,7 @@ class FeedbackLoopScheduler:
                 logger.warning("FLE temporal coherence: %s", coherence)
 
         if event.diagnosis:
-            trust = self.diagnosis_trust.evaluate_trust(
-                {"status": "healthy" if event.verification else "degraded"}
-            )
+            trust = self.diagnosis_trust.evaluate_trust({"status": "healthy" if event.verification else "degraded"})
             if not trust.get("trustworthy", True):
                 logger.warning("FLE self-diagnosis trust: %s", trust)
 
@@ -464,10 +488,12 @@ class FeedbackLoopScheduler:
 
     def _persist_metrics(self, snapshot: Any) -> None:
         try:
-            from datetime import datetime, timezone
-            from zephyr.ops.db_writer import write_metrics_batch
+            from datetime import datetime
+
             from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricPoint, SourceSystem
-            ts = datetime.fromtimestamp(snapshot.timestamp, tz=timezone.utc).isoformat()
+            from zephyr.ops.db_writer import write_metrics_batch
+
+            ts = datetime.fromtimestamp(snapshot.timestamp, tz=UTC).isoformat()
             metric_fields = {
                 "system_cpu": "percent",
                 "memory_usage_pct": "percent",
@@ -478,13 +504,15 @@ class FeedbackLoopScheduler:
             points = []
             for field, unit in metric_fields.items():
                 val = getattr(snapshot, field, 0.0)
-                points.append(MetricPoint(
-                    timestamp=ts,
-                    source_system=SourceSystem.FEEDBACK_LOOP,
-                    metric_name=f"fle.{field}",
-                    value=float(val),
-                    unit=unit,
-                ))
+                points.append(
+                    MetricPoint(
+                        timestamp=ts,
+                        source_system=SourceSystem.FEEDBACK_LOOP,
+                        metric_name=f"fle.{field}",
+                        value=float(val),
+                        unit=unit,
+                    )
+                )
             if points:
                 written = write_metrics_batch(points)
                 if written:
@@ -496,7 +524,8 @@ class FeedbackLoopScheduler:
         if event.anomaly is None:
             return
         try:
-            from zephyr.ops.alert_dispatcher import AlertEvent, AlertDispatcher, AlertSeverity, AlertCategory
+            from zephyr.ops.alert_dispatcher import AlertCategory, AlertDispatcher, AlertEvent, AlertSeverity
+
             anomaly = event.anomaly
             raw_severity = getattr(anomaly, "severity", 5)
             if isinstance(raw_severity, (int, float)):
@@ -543,6 +572,7 @@ class FeedbackLoopScheduler:
     def _persist_alert_and_log(self, alert: Any, dispatch_result: Any) -> None:
         try:
             from zephyr.ops.db_writer import FLEWriter
+
             writer = FLEWriter()
             writer.write_alert(alert)
             writer.update_alert_status(alert.event_id, "DISPATCHED")
@@ -559,12 +589,13 @@ class FeedbackLoopScheduler:
     def _append_event(self, event: FLEPipelineEvent) -> None:
         self._events.append(event)
         if len(self._events) > self.max_events:
-            self._events = self._events[-self.max_events:]
+            self._events = self._events[-self.max_events :]
         self._publish_to_event_bus(event)
 
     def _publish_to_event_bus(self, event: FLEPipelineEvent) -> None:
         try:
             from zephyr.integration.shared_08.event_bus import EventPriority, bus
+
             priority = EventPriority.HIGH if event.anomaly_detected else EventPriority.NORMAL
             bus.emit(
                 topic=f"fle.{event.phase}",

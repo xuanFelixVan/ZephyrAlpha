@@ -1,5 +1,18 @@
 rule_id: TRAE-031
 title: 安全治理-密钥与访问控制
+version: 0.6.1
+layer: L1
+module_id: TRAE-031
+depends_on:
+- TRAE-019
+- TRAE-028
+tags:
+- TRAE
+- security_access
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - SEC-001
 - SEC-002
@@ -16,7 +29,6 @@ aliases:
 - SIR-002
 - SIR-003
 - SIR-004
-layer: L1
 severity: error
 scope: security_access
 domain: TRAE
@@ -512,8 +524,7 @@ sections:
     items:
     - date: '2026-05-04'
       version: 0.3.0
-      change: 审计修复。ACS-005审查记录路径更新：docs/19_development_workspace/ → docs/09_audit/（对齐directory-structure-standard.md
-        v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）
+      change: 审计修复。ACS-005审查记录路径更新：docs/19_development_workspace/ → docs/09_audit/（对齐directory-structure-standard.md v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）
     - date: '2026-04-30'
       version: 0.1.0
       change: 初始版本
@@ -756,8 +767,7 @@ sections:
       change: RQ审查修复：provenance源文件标记status=migrated（3个.md已迁移为本规则文件）；enforcement.executors补充scan_secret_leak.py（type=code不应为空）
     - date: '2026-05-04'
       version: 0.3.0
-      change: 审计修复。SIR-002日志路径更新：docs/19_development_workspace/ → docs/09_audit/（对齐directory-structure-standard.md
-        v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）
+      change: 审计修复。SIR-002日志路径更新：docs/19_development_workspace/ → docs/09_audit/（对齐directory-structure-standard.md v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）
     - date: '2026-04-30'
       version: 0.1.0
       change: 初始版本
@@ -778,7 +788,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   version: "0.6.1"
   last_modified: "2026-06-21"
   change_history:

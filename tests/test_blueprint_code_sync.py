@@ -228,7 +228,16 @@ class TestCollectEntries:
 
     def test_collect_entries_with_mocked_glob(self):
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
-        fake_card = PROJECT_ROOT / "docs" / "03_modules" / "l01-infrastructure" / "task-system" / "changes" / "MOD-INF-006" / "TASK-INF-0999.md"
+        fake_card = (
+            PROJECT_ROOT
+            / "docs"
+            / "03_modules"
+            / "l01-infrastructure"
+            / "task-system"
+            / "changes"
+            / "MOD-INF-006"
+            / "TASK-INF-0999.md"
+        )
         with patch.object(Path, "glob", return_value=[fake_card]):
             with patch.object(Path, "exists", return_value=True):
                 entries = sync._collect_entries()

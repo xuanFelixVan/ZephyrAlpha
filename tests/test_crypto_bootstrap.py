@@ -15,8 +15,6 @@ from __future__ import annotations
 import hashlib
 import json
 
-import pytest
-
 from zephyr.ops.forensic.crypto_bootstrap import CryptoBootstrap, HashLink
 
 
@@ -102,7 +100,7 @@ class TestCryptoBootstrap:
         cb = CryptoBootstrap()
         cb.genesis({"init": True})
         link = cb.append("same-action", {"same": "state"})
-        expected_hash = hashlib.sha256("same-action".encode()).hexdigest()
+        expected_hash = hashlib.sha256(b"same-action").hexdigest()
         assert link.action_hash == expected_hash
 
     def test_append_state_hash_deterministic(self):

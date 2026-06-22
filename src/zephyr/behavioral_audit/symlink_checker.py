@@ -43,158 +43,61 @@ dead_reference_pages: symlink引用已被清理的文档页面
 
 对标 blueprint.md §6.29。"""
 
-
-
-
 from __future__ import annotations
 
-
-
-
-
 import os
-
-
 from dataclasses import dataclass, field
-
-
-from datetime import datetime, timezone
-
-
-from pathlib import Path
-
-
-from typing import Optional
-
-
-
-
-
-
+from datetime import UTC, datetime
 
 
 @dataclass
-
-
 class SymlinkIssue:
-
-
     issue_id: str
-
 
     symlink_path: str
 
-
     target_path: str
-
 
     issue_type: str
     description: str = ""
     severity: str = "MAJOR"
 
-
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-
-
-
-
-
-
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 def check_broken_symlinks(project_root: str) -> list[SymlinkIssue]:
-
-
     issues: list[SymlinkIssue] = []
 
-
     if not os.path.exists(project_root):
-
-
         return issues
 
-
-
-
-
     for root, dirs, files in os.walk(project_root):
-
-
         for name in dirs + files:
-
-
             full_path = os.path.join(root, name)
 
-
             if os.path.islink(full_path):
-
-
                 target = os.readlink(full_path) if hasattr(os, "readlink") else ""
 
-
                 if not target:
-
-
                     issues.append(
-
-
                         SymlinkIssue(
-
-
                             issue_id=f"symlink-broken-{name}",
-
-
                             symlink_path=full_path,
-
-
                             target_path=target,
-
-
                             issue_type="broken_symlink",
-
-
                             description=f"Symlink {full_path} has no target",
-
-
                         )
-
-
                     )
-
 
                 elif not os.path.exists(target):
-
-
                     issues.append(
-
-
                         SymlinkIssue(
-
-
                             issue_id=f"symlink-broken-{name}",
-
-
                             symlink_path=full_path,
-
-
                             target_path=target,
-
-
                             issue_type="broken_symlink",
-
-
                             description=f"Symlink {name} → {target} (missing)",
-
-
                         )
-
-
                     )
 
-
-
-
-
     return issues
-
-

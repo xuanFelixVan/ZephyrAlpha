@@ -9,7 +9,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_mode_manager.py -q
-import pytest
 from zephyr.autonomy_core.mode_manager import CEMode, ModeManager
 
 

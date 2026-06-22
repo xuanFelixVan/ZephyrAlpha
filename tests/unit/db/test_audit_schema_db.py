@@ -20,9 +20,8 @@
 Task: MOD-INF-012 | Safety: M
 """
 
-import sqlite3
-
 import pytest
+
 from zephyr.governance.persistence.audit_schema import AuditQuery
 
 
@@ -33,7 +32,6 @@ def aq(tmp_path):
 
 
 class TestAuditQueryInit:
-
     def test_init_with_auto_init(self, tmp_path):
         db_path = tmp_path / "aq_init.db"
         aq = AuditQuery(db_path, auto_init=True)
@@ -48,7 +46,6 @@ class TestAuditQueryInit:
 
 
 class TestAuditQueryTrail:
-
     def test_query_audit_for_session_empty(self, aq):
         results = aq.query_audit_for_session("nonexistent")
         assert isinstance(results, list)
@@ -61,8 +58,19 @@ class TestAuditQueryTrail:
                 "INSERT INTO tasks (task_id, namespace, seq, title, status, phase, execution_model,"
                 " safety_level, created_at, updated_at, session_id)"
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                ("TA-001", "OPS", 1, "审计测试任务", "COMPLETED", 1, "deepseek",
-                 "M", "2026-05-06T12:00:00Z", "2026-05-06T12:00:00Z", "session-test"),
+                (
+                    "TA-001",
+                    "OPS",
+                    1,
+                    "审计测试任务",
+                    "COMPLETED",
+                    1,
+                    "deepseek",
+                    "M",
+                    "2026-05-06T12:00:00Z",
+                    "2026-05-06T12:00:00Z",
+                    "session-test",
+                ),
             )
             conn.execute(
                 "INSERT INTO events (event_id, event_type, payload, task_id, session_id, created_at)"
@@ -88,8 +96,19 @@ class TestAuditQueryTrail:
                 "INSERT INTO tasks (task_id, namespace, seq, title, status, phase, execution_model,"
                 " safety_level, created_at, updated_at, session_id)"
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                ("TH-001", "OPS", 1, "历史测试任务", "IN_PROGRESS", 1, "deepseek",
-                 "M", "2026-05-06T12:00:00Z", "2026-05-06T12:00:00Z", "sess-h"),
+                (
+                    "TH-001",
+                    "OPS",
+                    1,
+                    "历史测试任务",
+                    "IN_PROGRESS",
+                    1,
+                    "deepseek",
+                    "M",
+                    "2026-05-06T12:00:00Z",
+                    "2026-05-06T12:00:00Z",
+                    "sess-h",
+                ),
             )
             conn.execute(
                 "INSERT INTO events (event_id, event_type, payload, task_id, session_id, created_at)"
@@ -105,14 +124,12 @@ class TestAuditQueryTrail:
 
 
 class TestAuditQueryCompensation:
-
     def test_query_compensation_events_empty(self, aq):
         results = aq.query_compensation_events()
         assert isinstance(results, list)
 
 
 class TestAuditQuerySchema:
-
     def test_query_schema_drift(self, aq):
         drift = aq.query_schema_drift()
         assert "current_version" in drift
@@ -123,7 +140,6 @@ class TestAuditQuerySchema:
 
 
 class TestAuditQuerySessions:
-
     def test_query_recent_sessions_audit_empty(self, aq):
         results = aq.query_recent_sessions_audit(limit=5)
         assert isinstance(results, list)
@@ -135,15 +151,37 @@ class TestAuditQuerySessions:
                 "INSERT INTO tasks (task_id, namespace, seq, title, status, phase, execution_model,"
                 " safety_level, created_at, updated_at, session_id)"
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                ("TS-001", "OPS", 1, "审计会话任务1", "COMPLETED", 3, "deepseek",
-                 "M", "2026-05-06T12:00:00Z", "2026-05-06T12:00:00Z", "sess-audit"),
+                (
+                    "TS-001",
+                    "OPS",
+                    1,
+                    "审计会话任务1",
+                    "COMPLETED",
+                    3,
+                    "deepseek",
+                    "M",
+                    "2026-05-06T12:00:00Z",
+                    "2026-05-06T12:00:00Z",
+                    "sess-audit",
+                ),
             )
             conn.execute(
                 "INSERT INTO tasks (task_id, namespace, seq, title, status, phase, execution_model,"
                 " safety_level, created_at, updated_at, session_id)"
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                ("TS-002", "OPS", 2, "审计会话任务2", "VERIFIED", 3, "deepseek",
-                 "M", "2026-05-06T12:00:00Z", "2026-05-06T12:00:00Z", "sess-audit"),
+                (
+                    "TS-002",
+                    "OPS",
+                    2,
+                    "审计会话任务2",
+                    "VERIFIED",
+                    3,
+                    "deepseek",
+                    "M",
+                    "2026-05-06T12:00:00Z",
+                    "2026-05-06T12:00:00Z",
+                    "sess-audit",
+                ),
             )
             conn.commit()
         finally:

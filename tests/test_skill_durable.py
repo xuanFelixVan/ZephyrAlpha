@@ -14,9 +14,7 @@ from __future__ import annotations
 
 import json
 import shutil
-from datetime import datetime, timezone
-from pathlib import Path
-from unittest.mock import patch
+from datetime import UTC, datetime
 
 import pytest
 
@@ -165,7 +163,7 @@ class TestDurableExecutionResume:
             "skill_id": "skill-1",
             "execution_id": safe_eid,
             "progress": 50.0,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         cp_file.write_text(json.dumps(cp_data, ensure_ascii=False), encoding="utf-8")
         result = engine.resume(safe_eid)

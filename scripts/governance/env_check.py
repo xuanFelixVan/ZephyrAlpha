@@ -147,7 +147,7 @@ def _install_missing(missing: list[DependencyStatus]) -> bool:
     install_targets = [f"{d.pip_name}{d.version_spec}" if d.version_spec else d.pip_name for d in missing]
     if not install_targets:
         return True
-    print(f'\n[ENV-INSTALL] 安装缺失依赖: {', '.join(install_targets)}\n', file=sys.stderr)
+    print(f"\n[ENV-INSTALL] 安装缺失依赖: {', '.join(install_targets)}\n", file=sys.stderr)
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pip", "install", *install_targets], capture_output=False, cwd=str(REPO_ROOT)
@@ -163,7 +163,7 @@ def _install_missing(missing: list[DependencyStatus]) -> bool:
 
 def _print_report(report: EnvReport) -> None:
     """_print_report implementation."""
-    print(f'\nPython:  {report.python_version} {('✅' if report.python_ok else '❌（需要 >=3.10）')}', file=sys.stderr)
+    print(f"\nPython:  {report.python_version} {('✅' if report.python_ok else '❌（需要 >=3.10）')}", file=sys.stderr)
     print(f"依赖包:  {len(report.ok)}/{len(report.dependencies)} 就绪\n", file=sys.stderr)
     if report.missing:
         print("缺失依赖:", file=sys.stderr)

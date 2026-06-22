@@ -34,7 +34,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXCLUDE_DIRS, REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXCLUDE_DIRS, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -249,7 +249,7 @@ def main() -> None:
     if not has_issues:
         print(f"✅ 全部对齐 — {aligned}/{total} 模块通过 GATE-A\n")
 
-    print(f"  总计: {total} 模块, " f"{len(criticals)} CRITICAL, {len(highs)} HIGH, {len(mediums)} MEDIUM\n")
+    print(f"  总计: {total} 模块, {len(criticals)} CRITICAL, {len(highs)} HIGH, {len(mediums)} MEDIUM\n")
 
     if args.warn_only:
         sys.exit(EXIT_PASS)

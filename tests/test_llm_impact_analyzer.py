@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.infrastructure.impact.llm_impact_analyzer import (
     DependencyCluster,
     ImpactAssessment,
@@ -304,20 +302,14 @@ class TestClusterDependencies:
 
     def test_critical_cluster_risk(self):
         analyzer = LLMImpactAnalyzer()
-        tasks = [
-            {"task_id": f"T-{i}", "downstream_outputs": [{"path": "shared.py"}]}
-            for i in range(6)
-        ]
+        tasks = [{"task_id": f"T-{i}", "downstream_outputs": [{"path": "shared.py"}]} for i in range(6)]
         clusters = analyzer.cluster_dependencies(tasks)
         assert len(clusters) == 1
         assert clusters[0].cluster_risk == "CRITICAL"
 
     def test_high_cluster_risk(self):
         analyzer = LLMImpactAnalyzer()
-        tasks = [
-            {"task_id": f"T-{i}", "downstream_outputs": [{"path": "shared.py"}]}
-            for i in range(4)
-        ]
+        tasks = [{"task_id": f"T-{i}", "downstream_outputs": [{"path": "shared.py"}]} for i in range(4)]
         clusters = analyzer.cluster_dependencies(tasks)
         assert len(clusters) == 1
         assert clusters[0].cluster_risk == "HIGH"

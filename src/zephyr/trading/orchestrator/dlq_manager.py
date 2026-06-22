@@ -28,9 +28,10 @@ DLQ 管理器（Dead Letter Queue Manager — CT-DLQ-001）
 SQLite dlq_messages 表 + chronological replay + max 3 attempts。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
+
 
 class DLQMessage(BaseModel):
     message_id: str
@@ -39,15 +40,15 @@ class DLQMessage(BaseModel):
     attempt_count: int = 0
     max_attempts: int = 3
     status: str = "pending"
-    enqueued_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    enqueued_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     last_attempt_at: datetime | None = None
+
 
 class DLQManager:
     def __init__(self):
         self._messages: dict[str, DLQMessage] = {}
 
-    def enqueue(self, message_id: str, contract_id: str,
-                payload: dict | None = None) -> DLQMessage:
+    def enqueue(self, message_id: str, contract_id: str, payload: dict | None = None) -> DLQMessage:
         msg = DLQMessage(
             message_id=message_id,
             contract_id=contract_id,
@@ -69,7 +70,7 @@ class DLQManager:
             return False, "NOT_FOUND"
 
         msg.attempt_count += 1
-        msg.last_attempt_at = datetime.now(timezone.utc)
+        msg.last_attempt_at = datetime.now(UTC)
 
         if msg.attempt_count > msg.max_attempts:
             msg.status = "dead"

@@ -25,4 +25,4 @@ Core types (AgentCard, AgentCapability) are imported from
 zephyr.shared.protocols.a2a.a2a_registry.
 """
 
-from zephyr.shared.protocols.a2a.a2a_registry import AgentCard, AgentCapability  # noqa: F401
+from zephyr.shared.protocols.a2a.a2a_registry import AgentCapability, AgentCard  # noqa: F401

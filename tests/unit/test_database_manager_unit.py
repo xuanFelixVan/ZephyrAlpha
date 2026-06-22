@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """T-DB-001: test_database_manager.py — DatabaseManager 单元测试
 Phase experimental, P1, 1.5h
 """
@@ -19,9 +20,9 @@ from pathlib import Path
 import pytest
 
 from zephyr.governance.persistence.database_manager import (
+    DatabaseHealthStatus,
     DatabaseManager,
     DatabaseManagerError,
-    DatabaseHealthStatus,
 )
 
 

@@ -8,13 +8,11 @@
 
 """Test suite: pipeline_core"""
 
-import pytest
 import time
 
 from zephyr.integration.backpressure_manager import (
     BackpressureManager,
     BpState,
-    BpSymbolState,
     emit_pause,
     emit_resume,
     emit_throttle,
@@ -119,37 +117,62 @@ class TestBackpressureManager:
 
     def test_get_all_paused(self):
         mgr = BackpressureManager()
-        mgr.handle_pause(BackpressurePause(
-            signal_id="s1", symbol="A", duration_ms=60000,
-            reason="r", idempotency_key="k1",
-        ))
-        mgr.handle_pause(BackpressurePause(
-            signal_id="s2", symbol="B", duration_ms=60000,
-            reason="r", idempotency_key="k2",
-        ))
+        mgr.handle_pause(
+            BackpressurePause(
+                signal_id="s1",
+                symbol="A",
+                duration_ms=60000,
+                reason="r",
+                idempotency_key="k1",
+            )
+        )
+        mgr.handle_pause(
+            BackpressurePause(
+                signal_id="s2",
+                symbol="B",
+                duration_ms=60000,
+                reason="r",
+                idempotency_key="k2",
+            )
+        )
         paused = mgr.get_all_paused()
         assert len(paused) == 2
 
     def test_get_all_throttled(self):
         mgr = BackpressureManager()
-        mgr.handle_throttle(BackpressureThrottle(
-            signal_id="s3", symbol="C", max_rate_per_sec=5,
-            reason="r", idempotency_key="k3",
-        ))
+        mgr.handle_throttle(
+            BackpressureThrottle(
+                signal_id="s3",
+                symbol="C",
+                max_rate_per_sec=5,
+                reason="r",
+                idempotency_key="k3",
+            )
+        )
         throttled = mgr.get_all_throttled()
         assert len(throttled) == 1
         assert throttled[0].max_rate_per_sec == 5
 
     def test_stats_tracking(self):
         mgr = BackpressureManager()
-        mgr.handle_pause(BackpressurePause(
-            signal_id="s4", symbol="D", duration_ms=60000,
-            reason="r", idempotency_key="k4",
-        ))
-        mgr.handle_throttle(BackpressureThrottle(
-            signal_id="s5", symbol="E", max_rate_per_sec=5,
-            reason="r", idempotency_key="k5",
-        ))
+        mgr.handle_pause(
+            BackpressurePause(
+                signal_id="s4",
+                symbol="D",
+                duration_ms=60000,
+                reason="r",
+                idempotency_key="k4",
+            )
+        )
+        mgr.handle_throttle(
+            BackpressureThrottle(
+                signal_id="s5",
+                symbol="E",
+                max_rate_per_sec=5,
+                reason="r",
+                idempotency_key="k5",
+            )
+        )
         stats = mgr.get_stats()
         assert stats["total_tracked_symbols"] == 2
         assert stats["paused_count"] == 1
@@ -160,42 +183,66 @@ class TestBackpressureManager:
         mgr = BackpressureManager()
         received = []
         mgr.register_on_pause(lambda s: received.append(s.symbol))
-        mgr.handle_pause(BackpressurePause(
-            signal_id="s6", symbol="F", duration_ms=60000,
-            reason="r", idempotency_key="k6",
-        ))
+        mgr.handle_pause(
+            BackpressurePause(
+                signal_id="s6",
+                symbol="F",
+                duration_ms=60000,
+                reason="r",
+                idempotency_key="k6",
+            )
+        )
         assert received == ["F"]
 
     def test_callback_on_resume(self):
         mgr = BackpressureManager()
         received = []
         mgr.register_on_resume(lambda s: received.append(s.symbol))
-        mgr.handle_pause(BackpressurePause(
-            signal_id="s7", symbol="G", duration_ms=60000,
-            reason="r", idempotency_key="k7",
-        ))
-        mgr.handle_resume(BackpressureResume(
-            signal_id="s8", symbol="G",
-            reason="recovered", idempotency_key="k8",
-        ))
+        mgr.handle_pause(
+            BackpressurePause(
+                signal_id="s7",
+                symbol="G",
+                duration_ms=60000,
+                reason="r",
+                idempotency_key="k7",
+            )
+        )
+        mgr.handle_resume(
+            BackpressureResume(
+                signal_id="s8",
+                symbol="G",
+                reason="recovered",
+                idempotency_key="k8",
+            )
+        )
         assert "G" in received
 
     def test_callback_on_throttle(self):
         mgr = BackpressureManager()
         received = []
         mgr.register_on_throttle(lambda s: received.append(s.symbol))
-        mgr.handle_throttle(BackpressureThrottle(
-            signal_id="s9", symbol="H", max_rate_per_sec=5,
-            reason="r", idempotency_key="k9",
-        ))
+        mgr.handle_throttle(
+            BackpressureThrottle(
+                signal_id="s9",
+                symbol="H",
+                max_rate_per_sec=5,
+                reason="r",
+                idempotency_key="k9",
+            )
+        )
         assert received == ["H"]
 
     def test_clear_resets_all(self):
         mgr = BackpressureManager()
-        mgr.handle_pause(BackpressurePause(
-            signal_id="s10", symbol="I", duration_ms=60000,
-            reason="r", idempotency_key="k10",
-        ))
+        mgr.handle_pause(
+            BackpressurePause(
+                signal_id="s10",
+                symbol="I",
+                duration_ms=60000,
+                reason="r",
+                idempotency_key="k10",
+            )
+        )
         mgr.clear()
         stats = mgr.get_stats()
         assert stats["total_tracked_symbols"] == 0
@@ -234,6 +281,7 @@ class TestPipelineOrchestratorConfig:
 class TestPipelineOrchestratorInit:
     def test_init_with_defaults(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         orc = PipelineOrchestrator()
         assert orc._cfg is not None
         assert orc._failure_log == {}
@@ -241,12 +289,14 @@ class TestPipelineOrchestratorInit:
 
     def test_init_with_custom_config(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         cfg = PipelineOrchestratorConfig(max_retries=7)
         orc = PipelineOrchestrator(config=cfg)
         assert orc._cfg.max_retries == 7
 
     def test_health_check_returns_dict(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         orc = PipelineOrchestrator()
         hc = orc.health_check()
         assert isinstance(hc, dict)
@@ -255,6 +305,7 @@ class TestPipelineOrchestratorInit:
 
     def test_save_and_load_state(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         orc = PipelineOrchestrator()
         orc._failure_log["test"] = 3
         state = orc.save_state()
@@ -263,6 +314,7 @@ class TestPipelineOrchestratorInit:
 
     def test_get_telemetry_snapshot(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         orc = PipelineOrchestrator()
         snap = orc.get_telemetry_snapshot()
         assert "metrics" in snap
@@ -270,52 +322,73 @@ class TestPipelineOrchestratorInit:
 
     def test_get_cost_summary(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         orc = PipelineOrchestrator()
         summary = orc.get_cost_summary()
         assert isinstance(summary, dict)
 
     def test_set_token_budget(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         orc = PipelineOrchestrator()
         orc.set_token_budget(500_000)
         assert orc._token_budget_total == 500_000
 
     def test_text_similarity(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         sim = PipelineOrchestrator._text_similarity("hello world foo", "hello world bar")
         assert 0.0 < sim < 1.0
 
     def test_text_similarity_identical(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         sim = PipelineOrchestrator._text_similarity("hello world test", "hello world test")
         assert sim == 1.0
 
     def test_text_similarity_empty(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         assert PipelineOrchestrator._text_similarity("", "hello") == 0.0
         assert PipelineOrchestrator._text_similarity("hello", "") == 0.0
 
     def test_determine_status_all_success(self):
-        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineStatus
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         results = [
-            ModuleResult(module_id="M1", pipeline="A", model="deepseek",
-                         status=ModuleStatus.SUCCESS, output={},
-                         started_at="", finished_at=""),
+            ModuleResult(
+                module_id="M1",
+                pipeline="A",
+                model="deepseek",
+                status=ModuleStatus.SUCCESS,
+                output={},
+                started_at="",
+                finished_at="",
+            ),
         ]
         assert PipelineOrchestrator._determine_status(results) == PipelineStatus.SUCCESS
 
     def test_determine_status_all_failure(self):
-        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineStatus
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         results = [
-            ModuleResult(module_id="M1", pipeline="A", model="deepseek",
-                         status=ModuleStatus.FAILURE, output={},
-                         errors=["err"], started_at="", finished_at=""),
+            ModuleResult(
+                module_id="M1",
+                pipeline="A",
+                model="deepseek",
+                status=ModuleStatus.FAILURE,
+                output={},
+                errors=["err"],
+                started_at="",
+                finished_at="",
+            ),
         ]
         assert PipelineOrchestrator._determine_status(results) == PipelineStatus.FAILURE
 
     def test_determine_status_empty(self):
-        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         from zephyr.integration.models import PipelineStatus
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+
         assert PipelineOrchestrator._determine_status([]) == PipelineStatus.FAILURE

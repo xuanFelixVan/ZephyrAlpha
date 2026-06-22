@@ -1,10 +1,20 @@
 rule_id: TRAE-048
 title: 操作-Vibe Coding会话管理
+version: 0.2.4
+layer: L2
+module_id: TRAE-048
+depends_on: []
+tags:
+- TRAE
+- operational_vibe_coding
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - OPS-VC-002
 - OPS-VC-004
 - OPS-VC-005
-layer: L2
 severity: warning
 scope: operational_vibe_coding
 domain: TRAE
@@ -56,16 +66,16 @@ sections:
       at: §7.1~§7.2
       why: AI权限——环境确认与自治权限
     - ref_id: GOV-DOC-002
-      at: null
+      at:
       why: 文件位置规范
     - ref_id: GOV-DOC-003
-      at: null
+      at:
       why: 命名规范
     - ref_id: GOV-DOC-005
-      at: null
+      at:
       why: 编码安全
     - ref_id: GOV-DOC-007
-      at: null
+      at:
       why: 文件操作安全门禁
     - ref_id: PS-STD-011
       at: MTH-006 step 6
@@ -212,7 +222,7 @@ sections:
     - type: mandatory
       step: 修改本文档必须同时更新任何引用状态机的KB决策记录文档
     - type: mandatory
-      step: 修改通过rule-lifecycle-and-change-standard.md定义的变更门禁
+      step: 修改通过rule_lifecycle_and_change_standard.yaml定义的变更门禁
     prohibitions: []
   ops_vc_004_classification:
     title: 事故分级与隔离
@@ -234,8 +244,7 @@ sections:
       fail: 超时=违规
     actions:
     - type: mandatory
-      step: 隔离步骤(所有事故通用)：停止当前session所有文件操作→标记session为suspended→如涉及交易系统触发kill switch(PS-STD-003
-        ABS-47)→如涉及密钥确认未泄露(GOV-SEC-001 §3)→评估影响范围
+      step: 隔离步骤(所有事故通用)：停止当前session所有文件操作→标记session为suspended→如涉及交易系统触发kill switch(PS-STD-003 ABS-47)→如涉及密钥确认未泄露(GOV-SEC-001 §3)→评估影响范围
     prohibitions: []
   ops_vc_004_p0:
     title: P0事故响应
@@ -245,8 +254,7 @@ sections:
     conditions:
     - type: trigger
       check: 密钥泄露(GOV-SEC-001 §3)
-      pass: 立即停止session→触发kill switch→执行密钥泄露响应(撤销→生成新密钥→搜索残留→通知→记录→复盘)→通知Owner(GOV-SEC-003
-        COND-001)
+      pass: 立即停止session→触发kill switch→执行密钥泄露响应(撤销→生成新密钥→搜索残留→通知→记录→复盘)→通知Owner(GOV-SEC-003 COND-001)
       fail: 不处理
     - type: trigger
       check: 交易系统异常下单
@@ -457,11 +465,11 @@ sections:
       context_loading:
         A1:
           automated: false
-          gate: null
+          gate:
           note: 人工-按AGENTS.md §8执行
         A2:
           automated: false
-          gate: null
+          gate:
           note: 人工-读取施工图
         A3:
           automated: true
@@ -478,11 +486,11 @@ sections:
           note: 幻觉自检流程
         B3:
           automated: false
-          gate: null
+          gate:
           note: 人工-双编辑器规则
         B4:
           automated: false
-          gate: null
+          gate:
           note: 人工-诊断反转验证
       security_check:
         C1:
@@ -500,7 +508,7 @@ sections:
       environment_confirmation:
         D1:
           automated: false
-          gate: null
+          gate:
           note: 人工-环境确认
         D2:
           automated: true
@@ -509,9 +517,7 @@ sections:
     coverage_summary: 自动化覆盖：7/12项(A3/B1/B2/C1/C2/C3/D2)；人工：5/12项(A1/A2/B3/B4/D1)
     recording_template:
       format: yaml
-      template: "gate_check:\n  A1: pass  # 上下文加载\n  A2: pass\n  A3: pass\n  B1: pass\
-        \  # 规则确认\n  B2: pass\n  B3: pass\n  B4: pass\n  C1: pass  # 安全检查\n  C2: pass\n\
-        \  C3: pass\n  D1: pass  # 环境确认\n  D2: pass\n"
+      template: "gate_check:\n  A1: pass  # 上下文加载\n  A2: pass\n  A3: pass\n  B1: pass  # 规则确认\n  B2: pass\n  B3: pass\n  B4: pass\n  C1: pass  # 安全检查\n  C2: pass\n  C3: pass\n  D1: pass  # 环境确认\n  D2: pass\n"
   ops_vc_005_recording:
     title: 会话门禁-检查结果记录
     section_type: procedure
@@ -539,7 +545,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 0.2.4
     date: '2026-06-21'
@@ -555,7 +561,7 @@ metadata:
     date: '2026-06-21'
     by: session-20260621-fix4
     changes:
-    - RQ-02/RQ-04修复——references.rule_ids去重(3个TRAE-048→1个)；移除对不存在文件behavior-boundaries-standard.md/ai-hallucination-self-check-policy.md/dual-editor-collaboration-policy.md的引用，改为引用trae_018-021/trae_006-009/trae_040规则文件
+    - RQ-02/RQ-04修复——references.rule_ids去重(3个TRAE-048→1个)；移除对不存在文件behavior_boundaries_standard.yaml/ai-hallucination-self-check-policy.md/dual-editor-collaboration-policy.md的引用，改为引用trae_018-021/trae_006-009/trae_040规则文件
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

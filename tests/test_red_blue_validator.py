@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 ar_mod = pytest.importorskip("zephyr.security.adversarial_validation.attack_registry")
 br_mod = pytest.importorskip("zephyr.security.adversarial_validation.bypass_recorder")
 cg_mod = pytest.importorskip("zephyr.security.adversarial_validation.constitution_guard")

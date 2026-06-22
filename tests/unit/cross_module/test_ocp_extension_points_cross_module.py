@@ -1,11 +1,12 @@
 # [A_test] module_id: SRC-TST-1851 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-479 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-479 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.cross_module.test_ocp_extension_points
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """OCP-002 / OCP-003 / OCP-001 扩展点冒烟测试。
 
 病根：SSoT codegen 曾将 OCP 误判为 dataclass，导致 L05/L06 空壳抽象；本文件锁定
@@ -18,9 +19,10 @@ from decimal import Decimal
 
 import pandas as pd
 import pytest
+
+from zephyr.ex_core.adapters.broker_interface import BrokerInterface
 from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry
 from zephyr.pf_core.strategy_base import StrategyBase, StrategyMeta, StrategyRegistry
-from zephyr.ex_core.adapters.broker_interface import BrokerInterface
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
 
@@ -122,7 +124,9 @@ def test_broker_interface_instantiable() -> None:
 
 
 def test_vector_memory_reexports_kb_facade() -> None:
-    from zephyr import vector-memory
+    import zephyr
 
-    assert hasattr(vector-memory, "get_unified_memory_api")
-    assert hasattr(vector-memory, "UnifiedMemoryAPI")
+    vector_memory = getattr(zephyr, "vector-memory")
+
+    assert hasattr(vector_memory, "get_unified_memory_api")
+    assert hasattr(vector_memory, "UnifiedMemoryAPI")

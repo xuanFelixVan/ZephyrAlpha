@@ -102,6 +102,7 @@ class TestExtractProvenance:
                 "agent_session_id": "session-009",
                 "generated_at": "2026-01-01T00:00:00Z",
             }
+
         extracted = extract_provenance(FakeObj())
         assert extracted is not None
         assert extracted.module_id == "MOD-009"
@@ -109,12 +110,14 @@ class TestExtractProvenance:
     def test_extract_returns_none_for_missing(self):
         class EmptyObj:
             __dict__ = {}
+
         extracted = extract_provenance(EmptyObj())
         assert extracted is None
 
     def test_extract_returns_none_for_non_dict(self):
         class BadObj:
             _zephyr_provenance = "not a dict"
+
         extracted = extract_provenance(BadObj())
         assert extracted is None
 
@@ -122,15 +125,19 @@ class TestExtractProvenance:
 class TestIsSessionOwned:
     def test_matching_session(self):
         record = ProvenanceRecord(
-            module_id="M1", source_section="§1",
-            agent_session_id="session-123", generated_at="2026-01-01T00:00:00Z",
+            module_id="M1",
+            source_section="§1",
+            agent_session_id="session-123",
+            generated_at="2026-01-01T00:00:00Z",
         )
         assert is_session_owned(record, "session-123") is True
 
     def test_non_matching_session(self):
         record = ProvenanceRecord(
-            module_id="M1", source_section="§1",
-            agent_session_id="session-123", generated_at="2026-01-01T00:00:00Z",
+            module_id="M1",
+            source_section="§1",
+            agent_session_id="session-123",
+            generated_at="2026-01-01T00:00:00Z",
         )
         assert is_session_owned(record, "session-456") is False
 
@@ -138,19 +145,25 @@ class TestIsSessionOwned:
 class TestProvenanceKey:
     def test_key_format(self):
         record = ProvenanceRecord(
-            module_id="MOD-010", source_section="§5",
-            agent_session_id="session-010", generated_at="2026-01-01T00:00:00Z",
+            module_id="MOD-010",
+            source_section="§5",
+            agent_session_id="session-010",
+            generated_at="2026-01-01T00:00:00Z",
         )
         key = provenance_key(record)
         assert key == "MOD-010/§5"
 
     def test_different_records_different_keys(self):
         r1 = ProvenanceRecord(
-            module_id="M1", source_section="§1",
-            agent_session_id="s1", generated_at="2026-01-01T00:00:00Z",
+            module_id="M1",
+            source_section="§1",
+            agent_session_id="s1",
+            generated_at="2026-01-01T00:00:00Z",
         )
         r2 = ProvenanceRecord(
-            module_id="M2", source_section="§2",
-            agent_session_id="s2", generated_at="2026-01-01T00:00:00Z",
+            module_id="M2",
+            source_section="§2",
+            agent_session_id="s2",
+            generated_at="2026-01-01T00:00:00Z",
         )
         assert provenance_key(r1) != provenance_key(r2)

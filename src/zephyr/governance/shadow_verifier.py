@@ -27,6 +27,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+
 @dataclass
 class ShadowVerifyResult:
     manifest_size: int = 0
@@ -35,6 +36,7 @@ class ShadowVerifyResult:
     semantic_ok: bool = False
     coverage_ratio: float = 0.0
     issues: list[str] = field(default_factory=list)
+
 
 class ShadowVerifier:
     """影子清单验证器."""
@@ -74,7 +76,7 @@ class ShadowVerifier:
 
         issues: list[str] = []
         if not size_ok:
-            issues.append(f"影子清单大小超标: {m_size}/{o_size} = {m_size/o_size:.1%}")
+            issues.append(f"影子清单大小超标: {m_size}/{o_size} = {m_size / o_size:.1%}")
         if not semantic_ok:
             issues.append(f"函数覆盖率不足: {coverage:.1%} < {self._MIN_COVERAGE:.0%}")
 

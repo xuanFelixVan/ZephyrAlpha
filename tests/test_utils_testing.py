@@ -19,19 +19,18 @@
 
 # [TESTS] pytest tests/test_utils_testing.py -q
 
-import pytest
+from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.integration.shared.schema.schemas import AuditReport, FailurePattern, HandoffPackage, KnowledgeEntry, Task
+from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.integration.shared_08.testing import (
-    make_valid_task,
-    make_p0_task,
     make_completed_task,
+    make_p0_task,
     make_valid_audit_report,
-    make_valid_knowledge_entry,
     make_valid_failure_pattern,
     make_valid_handoff_package,
+    make_valid_knowledge_entry,
+    make_valid_task,
 )
-from zephyr.integration.shared.schema.schemas import Task, AuditReport, KnowledgeEntry, FailurePattern, HandoffPackage
-from zephyr.integration.shared.schema.severity_types import SafetyLevel, Priority
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
 
 
 class TestMakeValidTask:
@@ -111,6 +110,7 @@ class TestMakeValidFailurePattern:
 
     def test_custom_failure_type(self):
         from zephyr.integration.shared.schema.schemas import FailureType
+
         fp = make_valid_failure_pattern(failure_type=FailureType.TIMEOUT)
         assert fp.failure_type == FailureType.TIMEOUT
 

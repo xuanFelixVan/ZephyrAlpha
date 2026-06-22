@@ -30,10 +30,10 @@ Dogfooding — 自举测试：用 TaskCard 管理 TaskCard 建设。
 """
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class DogfoodTask:
@@ -42,6 +42,7 @@ class DogfoodTask:
     module: str
     priority: str
     self_test: bool = True
+
 
 @dataclass
 class DogfoodReport:
@@ -52,6 +53,7 @@ class DogfoodReport:
     findings: list[str]
     timestamp_utc: str
 
+
 DOGFOOD_TASKS: list[DogfoodTask] = [
     DogfoodTask("DOGFOOD-001", "TaskCard schema self-validation", "MOD-INF-006", "P0"),
     DogfoodTask("DOGFOOD-002", "Blueprint decomposer self-test", "MOD-INF-006", "P1"),
@@ -59,8 +61,8 @@ DOGFOOD_TASKS: list[DogfoodTask] = [
     DogfoodTask("DOGFOOD-004", "Lifecycle manager self-transition", "MOD-INF-006", "P2"),
 ]
 
-class Dogfooding:
 
+class Dogfooding:
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/maintenance/dogfooding")
         self._tasks = list(DOGFOOD_TASKS)
@@ -82,12 +84,12 @@ class Dogfooding:
         self_consistent = passed == len(self._tasks)
 
         report = DogfoodReport(
-            report_id=f"DOGFOOD-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            report_id=f"DOGFOOD-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             tasks_tested=len(self._tasks),
             tasks_passed=passed,
             self_consistent=self_consistent,
             findings=findings,
-            timestamp_utc=datetime.now(timezone.utc).isoformat(),
+            timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
         self._save_report(report)
@@ -96,9 +98,19 @@ class Dogfooding:
 
     def _test_task_card_schema(self) -> bool:
         required_fields = [
-            "task_id", "source_blueprint", "title", "description", "priority",
-            "upstream_files", "downstream_outputs", "allowed_touch", "forbidden_touch",
-            "depends_on", "blocked_by", "acceptance_criteria", "status",
+            "task_id",
+            "source_blueprint",
+            "title",
+            "description",
+            "priority",
+            "upstream_files",
+            "downstream_outputs",
+            "allowed_touch",
+            "forbidden_touch",
+            "depends_on",
+            "blocked_by",
+            "acceptance_criteria",
+            "status",
         ]
         return True
 
@@ -106,13 +118,17 @@ class Dogfooding:
         self._data_dir.mkdir(parents=True, exist_ok=True)
         report_path = self._data_dir / f"{report.report_id}.json"
         report_path.write_text(
-            json.dumps({
-                "report_id": report.report_id,
-                "tasks_tested": report.tasks_tested,
-                "tasks_passed": report.tasks_passed,
-                "self_consistent": report.self_consistent,
-                "findings": report.findings,
-                "timestamp_utc": report.timestamp_utc,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "report_id": report.report_id,
+                    "tasks_tested": report.tasks_tested,
+                    "tasks_passed": report.tasks_passed,
+                    "self_consistent": report.self_consistent,
+                    "findings": report.findings,
+                    "timestamp_utc": report.timestamp_utc,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )

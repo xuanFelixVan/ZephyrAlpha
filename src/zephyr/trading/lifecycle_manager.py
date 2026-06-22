@@ -23,8 +23,8 @@ from __future__ import annotations
 
 __all__ = [
     "BootReport",
-    "ShutdownReport",
     "LifecycleManager",
+    "ShutdownReport",
 ]
 
 """
@@ -49,6 +49,7 @@ from zephyr.trading.runtime_config import RuntimeConfig, ensure_runtime_dirs
 from zephyr.trading.stop_gate import StopGate
 from zephyr.trading.work_orchestrator import WorkOrchestrator
 
+
 @dataclass
 class BootReport:
     success: bool = True
@@ -56,11 +57,13 @@ class BootReport:
     errors: list[str] = field(default_factory=list)
     components_started: list[str] = field(default_factory=list)
 
+
 @dataclass
 class ShutdownReport:
     steps_completed: int = 0
     errors: list[str] = field(default_factory=list)
     finalizer_results: dict[str, bool] = field(default_factory=dict)
+
 
 class LifecycleManager:
     """生命周期管理器——Boot + Shutdown 序列。"""
@@ -90,7 +93,7 @@ class LifecycleManager:
             ("04_registry_load", lambda: registry.load_from_dir()),
             ("05_work_orch_load_dags", lambda: work_orchestrator.load_dags()),
             ("06_circadian_start", lambda: circadian_scheduler.start()),
-            ("07_health_monitor_start", lambda: health-monitor.start()),
+            ("07_health_monitor_start", lambda: health_monitor.start()),
             ("08_integration_validate", lambda: integration_registry.validate_all()),
             ("08a_audit_schedule_register", lambda: self._register_audit_tasks(circadian_scheduler)),
             ("08b_audit_event_hooks_register", lambda: self._register_audit_event_hooks(circadian_scheduler)),
@@ -109,16 +112,16 @@ class LifecycleManager:
 
         finalizer.register("night_shift_queue", night_shift_queue.flush_all)
         finalizer.register("capability_registry", lambda: registry.dump_snapshot())
-        finalizer.register("health-monitor", lambda: health-monitor.dump_last_snapshot())
+        finalizer.register("health-monitor", lambda: health_monitor.dump_last_snapshot())
         finalizer.register("circadian_scheduler", circadian_scheduler.save_state)
 
         return report
 
     def _register_audit_tasks(self, circadian_scheduler: CircadianScheduler) -> None:
-        from zephyr.governance.merkle_hourly import HourlyMerkleAggregator
         from zephyr.governance.audit_trail.log_rotation import LogRotationManager
         from zephyr.governance.audit_trail.retention import RetentionEnforcer
         from zephyr.governance.audit_trail.tiered_storage import TieredStorageManager
+        from zephyr.governance.merkle_hourly import HourlyMerkleAggregator
 
         merkle = HourlyMerkleAggregator()
         circadian_scheduler.register_task(hour=0, name="merkle_hourly_aggregate", layer="L1", callback=merkle.aggregate)
@@ -127,27 +130,40 @@ class LifecycleManager:
         circadian_scheduler.register_task(hour=1, name="audit_log_rotation", layer="L1", callback=log_rot.rotate)
 
         retention = RetentionEnforcer()
-        circadian_scheduler.register_task(hour=2, name="audit_retention_dry_run", layer="L1", callback=retention.dry_run)
+        circadian_scheduler.register_task(
+            hour=2, name="audit_retention_dry_run", layer="L1", callback=retention.dry_run
+        )
 
         tiered = TieredStorageManager()
-        circadian_scheduler.register_task(hour=3, name="audit_tiered_storage_migrate", layer="L1", callback=tiered.auto_migrate)
+        circadian_scheduler.register_task(
+            hour=3, name="audit_tiered_storage_migrate", layer="L1", callback=tiered.auto_migrate
+        )
 
         def _finding_lifecycle_cleanup() -> None:
             import importlib as _importlib
-            _FindingLifecycleManager = _importlib.import_module("scripts.governance._finding_lifecycle").FindingLifecycleManager
+
+            _FindingLifecycleManager = _importlib.import_module(
+                "scripts.governance._finding_lifecycle"
+            ).FindingLifecycleManager
             _FindingLifecycleManager().run_cleanup(dry_run=False)
 
-        circadian_scheduler.register_task(hour=4, name="finding_lifecycle_cleanup", layer="L1", callback=_finding_lifecycle_cleanup)
+        circadian_scheduler.register_task(
+            hour=4, name="finding_lifecycle_cleanup", layer="L1", callback=_finding_lifecycle_cleanup
+        )
 
         def _gate_cache_daily_invalidate() -> None:
             import importlib as _importlib
+
             _GateCache = _importlib.import_module("scripts.governance.observability.gate_cache").GateCache
             _GateCache().invalidate_all("*")
 
-        circadian_scheduler.register_task(hour=0, name="gate_cache_daily_invalidate", layer="L1", callback=_gate_cache_daily_invalidate)
+        circadian_scheduler.register_task(
+            hour=0, name="gate_cache_daily_invalidate", layer="L1", callback=_gate_cache_daily_invalidate
+        )
 
         def _audit_trail_integrity_verify() -> None:
             from zephyr.governance.integrity import IntegrityVerifier
+
             verifier = IntegrityVerifier()
             report = verifier.verify()
             corrupted = getattr(report, "corrupted_count", 0) or getattr(report, "failed", 0)
@@ -156,10 +172,13 @@ class LifecycleManager:
             else:
                 logger.info("Audit trail integrity verify: chain intact")
 
-        circadian_scheduler.register_task(hour=5, name="audit_trail_integrity_verify", layer="L1", callback=_audit_trail_integrity_verify)
+        circadian_scheduler.register_task(
+            hour=5, name="audit_trail_integrity_verify", layer="L1", callback=_audit_trail_integrity_verify
+        )
 
         def _auto_fix_engine_scan_and_fix() -> None:
             from zephyr.security.access_control.auto_fix_engine_03.engine import AutoFixEngine
+
             engine = AutoFixEngine()
             fixers = getattr(engine, "_fixers", {}) or getattr(engine, "fixers", {}) or {}
             if not fixers:
@@ -179,12 +198,15 @@ class LifecycleManager:
             else:
                 logger.info("Auto-fix engine scan+fix: no fixes needed (%d fixers checked)", len(fix_types))
 
-        circadian_scheduler.register_task(hour=6, name="auto_fix_engine_scan_and_fix", layer="L1", callback=_auto_fix_engine_scan_and_fix)
+        circadian_scheduler.register_task(
+            hour=6, name="auto_fix_engine_scan_and_fix", layer="L1", callback=_auto_fix_engine_scan_and_fix
+        )
 
     def _register_audit_event_hooks(self, circadian_scheduler: CircadianScheduler) -> None:
         def _on_file_change_audit() -> None:
             try:
                 from zephyr.governance.semantic_audit.self_healer import SelfHealer
+
                 healer = SelfHealer()
                 logger.info("Event hook: file change triggered semantic audit")
             except Exception:
@@ -192,7 +214,8 @@ class LifecycleManager:
 
         def _on_security_event_audit() -> None:
             try:
-                from zephyr.security.adversarial_validation.game_day_runner import GameDayRunner, GameDayFrequency
+                from zephyr.security.adversarial_validation.game_day_runner import GameDayFrequency, GameDayRunner
+
                 runner = GameDayRunner()
                 result = runner.run_game_day(GameDayFrequency.PER_COMMIT)
                 if result.bypasses > 0:
@@ -203,10 +226,13 @@ class LifecycleManager:
         def _on_orphan_detected_audit() -> None:
             try:
                 from zephyr.security.access_control.orphan_judge.judge import OrphanJudge
+
                 judge = OrphanJudge()
                 report = judge.batch_judge(scope="src/zephyr/", limit=20, dry_run=True)
                 if report.by_verdict.get("DELETE", 0) > 0:
-                    logger.warning("Event hook: orphan detected — %d DELETE verdicts", report.by_verdict.get("DELETE", 0))
+                    logger.warning(
+                        "Event hook: orphan detected — %d DELETE verdicts", report.by_verdict.get("DELETE", 0)
+                    )
             except Exception:
                 pass
 
@@ -216,11 +242,13 @@ class LifecycleManager:
 
     def _start_self_monitor(self) -> None:
         from zephyr.governance.audit_trail.self_monitor import SelfMonitor
+
         self._audit_self_monitor = SelfMonitor()
         self._audit_self_monitor.start_scheduler(daemon=True)
 
     def _start_governance_watchdog(self) -> None:
         import importlib as _importlib
+
         _GovernanceWatchdog = _importlib.import_module("scripts.governance.governance_watchdog").GovernanceWatchdog
         self._governance_watchdog = _GovernanceWatchdog()
         self._governance_watchdog.run(daemon=True)
@@ -241,7 +269,7 @@ class LifecycleManager:
         report.finalizer_results = finalizer.run()
         report.steps_completed += 1
 
-        health-monitor.stop()
+        health_monitor.stop()
         report.steps_completed += 1
 
         audit_logger.flush()

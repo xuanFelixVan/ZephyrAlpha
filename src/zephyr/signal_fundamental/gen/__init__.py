@@ -5,12 +5,13 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 """Signal Generation sub-package"""
+
 from __future__ import annotations
 
 __all__ = [
-    "SignalAggregatorBase",
     "CapitalAllocatorBase",
     "DegradationMonitorBase",
+    "SignalAggregatorBase",
     "aggregator_base",
 ]
 
@@ -23,6 +24,7 @@ def __getattr__(name):
     }
     if name in _lazy:
         import importlib
+
         mod = importlib.import_module(_lazy[name], __name__)
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

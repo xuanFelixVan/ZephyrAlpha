@@ -12,7 +12,7 @@ category: module_blueprint
 ```python
 class MemoryLockBackend(LockBackend):
     _locks: dict[str, LockEntry] = {}  # resource_id → LockEntry
-    
+
     def try_lock(self, resource_id, owner, ttl_s) -> bool:
         """dict.setdefault 原子操作"""
 ```

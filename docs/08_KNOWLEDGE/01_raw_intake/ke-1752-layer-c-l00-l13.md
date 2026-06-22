@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-1752
 status: active
 title: 2.1.2 layer（层级归属——C 轨 L00~L13 + cross_layer）

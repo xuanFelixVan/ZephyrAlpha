@@ -10,7 +10,8 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 
-from zephyr.integration.shared_08.contracts.runtime_types import RuntimeConfig, DATA_DIR
+from zephyr.integration.shared_08.contracts.runtime_types import DATA_DIR, RuntimeConfig
+
 
 def ensure_runtime_dirs(config: RuntimeConfig) -> None:
     for d in [
@@ -25,4 +26,5 @@ def ensure_runtime_dirs(config: RuntimeConfig) -> None:
     ]:
         d.mkdir(parents=True, exist_ok=True)
 
-__all__ = ["RuntimeConfig", "DATA_DIR", "ensure_runtime_dirs"]
+
+__all__ = ["DATA_DIR", "RuntimeConfig", "ensure_runtime_dirs"]

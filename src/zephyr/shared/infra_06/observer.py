@@ -30,7 +30,6 @@ Task: T-1-08 | experimental | GLM-5.1
 
 from __future__ import annotations
 
-
 from collections.abc import Callable
 from enum import Enum, unique
 from threading import RLock

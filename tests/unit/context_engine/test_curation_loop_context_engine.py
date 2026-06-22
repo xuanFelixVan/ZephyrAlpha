@@ -6,8 +6,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Tests for curation_loop.py (TASK-014 beta b)."""
-import pytest
-from zephyr.autonomy_core.curation_loop import CurationLoop, CurationRecord
+
+from zephyr.autonomy_core.curation_loop import CurationLoop
 
 
 class TestCurationLoop:

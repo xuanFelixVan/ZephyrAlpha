@@ -21,16 +21,16 @@ clock_integrity_defense:
         servers: ["0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org"]
         protocol: "NTS(NTPv4 with RFC 8915 authentication+encryption)"
         min_sources: 3  # chrony minsources=3
-      
+
       - id: "rtc_hardware"
         description: "硬件实时时钟(RTC)——不受OS重启影响"
         check: "定期对比RTC vs 系统时间→偏差>1s→告警"
-      
+
       - id: "monotonic_clock"
         description: "CLOCK_MONOTONIC——不受NTP调整影响,只增不减"
         purpose: "所有TTL超时基于单调时钟计算——完全免疫NTP操纵"
         implementation: "Python time.monotonic()——所有升级协议的内部超时使用此值"
-    
+
     cross_verification:
       algorithm: "Kalman滤波融合多源+异常源自动剔除"
       threshold: "任一源偏差>500ms→自动剔除+告警; >2源偏差→P1升级; 全源偏差→P0-FATAL+ALL_STOP"
@@ -40,16 +40,16 @@ clock_integrity_defense:
     time_skimming:
       threat: "攻击者逐步偏移时钟(每步<panic阈值)→最终累积巨大偏差"
       detection: "追踪24h累积偏移量→超过1s→P0升级(即使单步偏差很小)"
-    
+
     ntp_spoofing:
       threat: "ARP spoofing + 伪造NTP响应→操纵系统时间"
       mitigation: "NTS加密认证→中间人无法伪造签名时间戳"
       fallback: "NTS不可用时→启用chrony maxchange 100 0 0(时间跳变>100s→拒绝+服务终止)"
-    
+
     replay_attack:
       threat: "重放旧的NTP响应→使系统时间倒退"
       mitigation: "NTS内置freshness机制(nonce/timestamp)"
-    
+
     panic_threshold_hardening:
       config: "maxchange 100 0 0——100秒以上跳变=panic+停止同步"
       monitoring: "任何panic事件→P0升级+立即暂停所有有时限操作"
@@ -78,5 +78,5 @@ clock_integrity_defense:
       │  └──────────────┘  └────────────────────┘    │
       └──────────────────────────────────────────────┘
     enforcement: "容器化(Docker/podman with --user)+独立Linux user namespace+独立文件系统挂载"
-    
+
   c

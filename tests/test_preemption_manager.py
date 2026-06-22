@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_preemption_manager
 # [INVARIANTS] P0/P1 can preempt P2/P3; preempt with None task_repo returns []; save_state/load_state roundtrip must be lossless
-# [MODIFY-GUARD] zephyr.orchestration.pipeline_routing.preemption_manager
+# [MODIFY-GUARD] zephyr.integration.preemption_manager
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,15 +10,15 @@
 # [ERROR_CONTRACT] pytest.raises on invalid input
 # [TESTS] —
 
-import pytest
 
-from zephyr.integration.preemption_manager import PreemptionManager
 from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.integration.preemption_manager import PreemptionManager
 
 
 def _make_task(task_id, priority, status=TaskStatus.IN_PROGRESS):
     class FakeTask:
         pass
+
     t = FakeTask()
     t.task_id = task_id
     t.priority = priority

@@ -21,17 +21,16 @@
 
 """Risk mitigation — R1~R16 全量风险缓解实现（对标蓝图 §14 风险与缓解 + 多轮盲点审计）."""
 
-
-import os
-import time
-import sqlite3
-import threading
 import hashlib
 import logging
+import os
+import sqlite3
+import threading
+import time
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-from queue import Queue, Full
 from pathlib import Path
-from typing import Callable, List, Optional, Tuple
+from queue import Full, Queue
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +83,7 @@ class DeadlockDetector:
         self.base_delay = base_delay
         self._lock = threading.Lock()
 
-    def acquire_with_timeout(self, lock: threading.Lock, timeout: Optional[float] = None) -> bool:
+    def acquire_with_timeout(self, lock: threading.Lock, timeout: float | None = None) -> bool:
         timeout = timeout or self.timeout
         return lock.acquire(timeout=timeout)
 
@@ -95,16 +94,16 @@ class DeadlockDetector:
                 return func(*args, **kwargs)
             except Exception as e:
                 last_exc = e
-                delay = self.base_delay * (2 ** attempt)
+                delay = self.base_delay * (2**attempt)
                 logger.warning(f"Retry {attempt + 1}/{self.max_retries} after {delay}s: {e}")
                 time.sleep(delay)
         raise last_exc or RuntimeError("Max retries exceeded")
 
-    def ordered_lock_acquisition(self, locks: List[threading.Lock]) -> bool:
+    def ordered_lock_acquisition(self, locks: list[threading.Lock]) -> bool:
         """R2: 按模块 ID 排序获取锁——避免循环等待."""
         for lock in locks:
             if not lock.acquire(timeout=self.timeout):
-                for acquired in locks[:locks.index(lock)]:
+                for acquired in locks[: locks.index(lock)]:
                     acquired.release()
                 return False
         return True
@@ -155,7 +154,7 @@ class TokenCalibration:
     """R5: Token 预估校准——滚动窗口修正."""
 
     def __init__(self, window_size: int = 10):
-        self.window: List[Tuple[int, int]] = []
+        self.window: list[tuple[int, int]] = []
         self.window_size = window_size
 
     def record(self, estimated: int, actual: int) -> None:
@@ -182,7 +181,7 @@ class KillSwitchSafeguard:
 
     def __init__(self, sustain_duration: float = 30.0):
         self.sustain_duration = sustain_duration
-        self._trigger_start: Optional[float] = None
+        self._trigger_start: float | None = None
         self._conditions_met: int = 0
         self._required_conditions: int = 2
 
@@ -217,7 +216,7 @@ class SandboxHardener:
     }
 
     @classmethod
-    def enforce(cls, process_limits: dict) -> List[str]:
+    def enforce(cls, process_limits: dict) -> list[str]:
         violations = []
         for key, hard_limit in cls.HARD_LIMITS.items():
             actual = process_limits.get(key, 0)
@@ -232,7 +231,7 @@ class ProvenanceIntegrityChecker:
     def __init__(self, db_path: str):
         self.db_path = db_path
 
-    def verify_chain(self) -> Tuple[bool, List[str]]:
+    def verify_chain(self) -> tuple[bool, list[str]]:
         errors = []
         try:
             conn = sqlite3.connect(self.db_path)
@@ -267,7 +266,7 @@ def incremental_hash_verify(db_path: str, chunk_size: int = 100) -> bool:
     return ok
 
 
-def input_pattern_whitelist(input_text: str, allowed_patterns: Optional[List[str]] = None) -> bool:
+def input_pattern_whitelist(input_text: str, allowed_patterns: list[str] | None = None) -> bool:
     """R10: 输入模式白名单——盲点 #15 缓解."""
     if allowed_patterns is None:
         return True
@@ -313,13 +312,13 @@ class MigrationCrashRecovery:
 
     def __init__(self, checkpoint_file: str):
         self.checkpoint_file = Path(checkpoint_file)
-        self._completed_batches: List[str] = []
+        self._completed_batches: list[str] = []
 
     def mark_batch_complete(self, batch_id: str) -> None:
         self._completed_batches.append(batch_id)
         self.checkpoint_file.write_text("\n".join(self._completed_batches), encoding="utf-8")
 
-    def get_completed_batches(self) -> List[str]:
+    def get_completed_batches(self) -> list[str]:
         if self.checkpoint_file.exists():
             return self.checkpoint_file.read_text(encoding="utf-8").strip().split("\n")
         return []
@@ -328,6 +327,7 @@ class MigrationCrashRecovery:
 def unicode_path_normalizer(path: str) -> str:
     """R15: Unicode 路径规范化——盲点 #65 缓解."""
     import unicodedata
+
     normalized = unicodedata.normalize("NFC", path)
     return normalized.replace("\\", "/").casefold()
 
@@ -337,7 +337,7 @@ class ChromaDBThreadGuard:
 
     def __init__(self, max_workers: int = 8):
         self.max_workers = max_workers
-        self._executor: Optional[ThreadPoolExecutor] = None
+        self._executor: ThreadPoolExecutor | None = None
         self._task_count: int = 0
         self._recycle_threshold: int = 1000
 

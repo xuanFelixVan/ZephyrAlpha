@@ -26,6 +26,7 @@ Enhanced tone adaptation with multi-channel context awareness.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ToneAdapterV2:
     channels: list[str] = field(default_factory=lambda: ["email", "sms", "push"])

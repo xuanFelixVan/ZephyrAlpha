@@ -332019,7 +332019,7 @@ blueprint_file_map:
   DOM-L07-000:
   - docs/01_policies_and_standards/domains/L07_post_trade_analytics/index.md
   DEPRECATED-GOV-AI-001:
-  - docs/01_policies_and_standards/governance/ai/ai_autonomy_authority_registry.md
+  - docs/01_policies_and_standards/governance/ai/ai_autonomy_authority_registry.yaml
   PS-006:
   - docs/01_policies_and_standards/governance/ai/dual_editor_collaboration_policy.md
   GOV-AI-003:
@@ -332185,11 +332185,11 @@ blueprint_file_map:
   DW-ROADMAP-TEMPLATE:
   - docs/01_policies_and_standards/templates/roadmap_template.md
   GOV-AI-001:
-  - docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.md
+  - docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
   CAT-IDX-001:
   - docs/01_policies_and_standards/_registry/catalogs/index.md
   REG-LLM-001:
-  - docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.md
+  - docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
   REG-VOC-IDX:
   - docs/01_policies_and_standards/_registry/vocabularies/index.md
   PS-REG-001:

@@ -29,16 +29,14 @@ RTO 从 ~2s 降低到 <100ms（worktree 切换 + 指针替换）。
 后台异步完成回滚验证后更新温备 → exit code 14。
 """
 
-
 from __future__ import annotations
 
 import json
 import subprocess
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -61,7 +59,6 @@ class CutoverResult:
 
 
 class WarmStandby:
-
     STANDBY_DIR: str = ".zephyr/warm_standby"
     STANDBY_STATE_FILE: str = ".zephyr/warm_standby_state.json"
     EXIT_CODE_CUTOVER: int = 14
@@ -79,13 +76,16 @@ class WarmStandby:
             subprocess.run(
                 ["git", "worktree", "add", str(self._standby_dir), commit_sha],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=15, check=True,
+                capture_output=True,
+                text=True,
+                timeout=15,
+                check=True,
             )
 
             state = {
                 "standby_commit": commit_sha,
                 "standby_path": str(self._standby_dir),
-                "last_verified_at": datetime.now(timezone.utc).isoformat(),
+                "last_verified_at": datetime.now(UTC).isoformat(),
                 "is_active": True,
                 "is_stale": False,
             }
@@ -101,16 +101,22 @@ class WarmStandby:
 
         if not self._state_path.exists():
             return CutoverResult(
-                success=False, previous_commit="", target_commit=target_commit,
-                rto_ms=0, exit_code=self.EXIT_CODE_CUTOVER,
+                success=False,
+                previous_commit="",
+                target_commit=target_commit,
+                rto_ms=0,
+                exit_code=self.EXIT_CODE_CUTOVER,
                 details=["No warm standby initialized"],
             )
 
         state = self._read_state()
         if not state:
             return CutoverResult(
-                success=False, previous_commit="", target_commit=target_commit,
-                rto_ms=0, exit_code=self.EXIT_CODE_CUTOVER,
+                success=False,
+                previous_commit="",
+                target_commit=target_commit,
+                rto_ms=0,
+                exit_code=self.EXIT_CODE_CUTOVER,
                 details=["Failed to read standby state"],
             )
 
@@ -120,21 +126,27 @@ class WarmStandby:
             self._run_git(["checkout", target_commit], cwd=self._standby_dir)
         except Exception as e:
             return CutoverResult(
-                success=False, previous_commit=previous_commit,
-                target_commit=target_commit, rto_ms=0,
-                exit_code=self.EXIT_CODE_CUTOVER, details=[str(e)],
+                success=False,
+                previous_commit=previous_commit,
+                target_commit=target_commit,
+                rto_ms=0,
+                exit_code=self.EXIT_CODE_CUTOVER,
+                details=[str(e)],
             )
 
         state.standby_commit = target_commit
-        state.last_verified_at = datetime.now(timezone.utc).isoformat()
+        state.last_verified_at = datetime.now(UTC).isoformat()
         state.is_stale = False
         self._save_state(state)
 
         rto_ms = int((time.time() - start) * 1000)
 
         return CutoverResult(
-            success=True, previous_commit=previous_commit, target_commit=target_commit,
-            rto_ms=rto_ms, exit_code=0,
+            success=True,
+            previous_commit=previous_commit,
+            target_commit=target_commit,
+            rto_ms=rto_ms,
+            exit_code=0,
             details=[f"Cutover completed in {rto_ms}ms"],
         )
 
@@ -143,7 +155,9 @@ class WarmStandby:
             subprocess.run(
                 ["git", "worktree", "remove", "--force", str(self._standby_dir)],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
         except Exception:
             pass
@@ -157,7 +171,9 @@ class WarmStandby:
             result = subprocess.run(
                 ["git", "rev-parse", "HEAD"],
                 cwd=str(self._standby_dir),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             return result.returncode == 0
         except Exception:
@@ -189,6 +205,8 @@ class WarmStandby:
         result = subprocess.run(
             ["git"] + args,
             cwd=str(cwd or self._project_root),
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         return result.stdout

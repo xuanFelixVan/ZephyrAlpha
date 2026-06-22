@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_contract | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_contract
+# [MODULE] zephyr.autonomy_core.skill_contract
 
 # [INVARIANTS] none
 
@@ -28,18 +28,17 @@ Version: 0.3.0
 Skill 契约验证 —— I/O Schema + 副作用 + 依赖
 """
 
-
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class SkillContract:
     _CONTRACT_TYPES = ["input_schema", "output_schema", "side_effects", "dependencies"]
 
     @classmethod
-    def _parse_contracts(cls, body: str) -> Dict[str, Any]:
+    def _parse_contracts(cls, body: str) -> dict[str, Any]:
         contracts = {}
         for key, pattern in [
             ("input_schema", r"(?:输入|input|parameters|args?)[：:]\s*\n(.+?)(?:\n\n|\n#|\Z)"),
@@ -53,21 +52,32 @@ class SkillContract:
         return contracts
 
     @classmethod
-    def validate_contracts(cls, skill_id: str, body: Optional[str] = None) -> Dict[str, Any]:
+    def validate_contracts(cls, skill_id: str, body: str | None = None) -> dict[str, Any]:
         if body is None:
             try:
                 from zephyr.autonomy_core.skill_loader import SkillLoader
+
                 body = SkillLoader().progressive_load(skill_id).get("l2", "")
             except Exception:
-                return {"skill_id": skill_id, "contracts_valid": False, "error": "load_failed",
-                        "violations": ["skill_load_failed"], "contracts_found": []}
+                return {
+                    "skill_id": skill_id,
+                    "contracts_valid": False,
+                    "error": "load_failed",
+                    "violations": ["skill_load_failed"],
+                    "contracts_found": [],
+                }
 
         contracts = cls._parse_contracts(body)
         violations = []
         for ct in ("input_schema", "output_schema"):
             if ct not in contracts:
-                violations.append({"type": "missing_contract", "contract": ct,
-                                   "severity": "high" if ct == "output_schema" else "warning"})
+                violations.append(
+                    {
+                        "type": "missing_contract",
+                        "contract": ct,
+                        "severity": "high" if ct == "output_schema" else "warning",
+                    }
+                )
         for ct, content in contracts.items():
             if len(content) < 10:
                 violations.append({"type": "contract_too_short", "contract": ct, "severity": "warning"})

@@ -1,12 +1,12 @@
 # [A_config] module_id=CFG-index | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain_governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
-module_id: DOM-GOV-001
+module_id: MOD-023
 schema_version: '2.0.0'
 system:
   name: ZephyrAlpha
@@ -66,7 +66,7 @@ partitions:
   path: layers/l09_research_innovation.yaml
   description: 研究工作台、回测框架与策略实验室
 - id: l10
-  path: layers/l10-governance-compliance.yaml
+  path: layers/l10_compliance.yaml
   description: 合规治理、审计追踪与监管报告
 - id: l11
   path: layers/l11_ml_platform.yaml
@@ -75,7 +75,7 @@ partitions:
   path: layers/l12_system_telemetry.yaml
   description: 系统遥测、可观测性、健康检查与 SLA 监控
 - id: l13
-  path: layers/l13-experiment-pipeline.yaml
+  path: layers/l13_experimentation.yaml
   description: 实验管线与 A/B 测试框架
 - id: frontend
   path: frontend/frontend_model.yaml
@@ -83,8 +83,8 @@ partitions:
 - id: scripts
   path: scripts/scripts_model.yaml
   description: 治理/审计/部署脚本
-- id: cross-cutting
-  path: cross-cutting/
+- id: cross_cutting
+  path: cross_cutting/
   description: 运行平面、不变量、能力成熟度（含 runtime_planes.yaml / invariants.yaml / capability_heatmap.yaml）
 - id: contracts
   path: contracts/cross_layer_contracts.yaml
@@ -185,7 +185,7 @@ id_conventions:
     example: T-A01
     note: EA Technology Radar canonical；仓库根摘要使用 IMPL-T-*，不得与 T-* 混号等价
   - prefix: IMPL-T-{QUADRANT}{NN}
-    scope: architecture-model/technology_landscape.yaml（repository root）
+    scope: architecture_model/technology_landscape.yaml（repository root）
     example: IMPL-T-A01
     note: 施工树摘要专有 ID；可选用 mirrors_ea_id 指向 EA 同义项
   - prefix: DS{NN}

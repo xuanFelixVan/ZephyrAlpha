@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import os
-
-import pytest
-
 from zephyr.security.access_control.auto_fix_engine_03.drift_fixer import DriftFixer
 from zephyr.security.access_control.auto_fix_engine_03.models import FixStatus, ValidationResult
 

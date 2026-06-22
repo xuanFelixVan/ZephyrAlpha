@@ -13,10 +13,8 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 import yaml
-import pytest
 
 from zephyr.trading.capability_card import CapabilityCard, CapabilityCategory
 from zephyr.trading.capability_registry import CapabilityRegistry
@@ -64,7 +62,7 @@ class TestSyncA2A:
         assert result == 1
         cap = registry.get("a2a-agent-agent-1")
         assert cap is not None
-        assert "A2A Agent: TestAgent" == cap.name
+        assert cap.name == "A2A Agent: TestAgent"
 
     def test_sync_a2a_skips_existing(self) -> None:
         registry = CapabilityRegistry()
@@ -139,7 +137,7 @@ class TestSyncSkills:
         assert result == 1
         cap = registry.get("database-specialist")
         assert cap is not None
-        assert "Skill: database-specialist" == cap.name
+        assert cap.name == "Skill: database-specialist"
 
     def test_sync_skills_skips_existing(self, tmp_path: Path) -> None:
         registry = CapabilityRegistry()

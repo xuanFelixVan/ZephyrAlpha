@@ -14,12 +14,16 @@ import sqlite3
 
 import pytest
 
-schema_mod = pytest.importorskip("zephyr.ops.capacity_assurance.schema", reason="capacity-assurance.schema not available")
+schema_mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.schema", reason="capacity-assurance.schema not available"
+)
 SchemaManager = schema_mod.SchemaManager
 MetricsWriteBuffer = schema_mod.MetricsWriteBuffer
 compute_hash = SchemaManager.compute_hash
 
-sli_mod = pytest.importorskip("zephyr.ops.capacity_assurance.sli_instrumentation", reason="capacity-assurance.sli_instrumentation not available")
+sli_mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.sli_instrumentation", reason="capacity-assurance.sli_instrumentation not available"
+)
 SLIInstrumentation = sli_mod.SLIInstrumentation
 SLIStats = sli_mod.SLIStats
 
@@ -31,7 +35,13 @@ class TestSchemaManager:
         conn = mgr.init_db()
         tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
         conn.close()
-        required = {"ai_provenance", "capacity_metrics", "error_budget", "token_budget_usage", "capacity_metrics_hourly"}
+        required = {
+            "ai_provenance",
+            "capacity_metrics",
+            "error_budget",
+            "token_budget_usage",
+            "capacity_metrics_hourly",
+        }
         assert required.issubset(tables)
 
     def test_init_db_sets_pragma(self, tmp_path):
@@ -91,12 +101,8 @@ class TestSchemaManager:
         db_path = str(tmp_path / "test_capacity.db")
         mgr = SchemaManager(db_path=db_path)
         conn = mgr.init_db()
-        conn.execute(
-            "INSERT INTO capacity_metrics (ts, sli_id, value) VALUES ('2020-01-01T00:00:00', 'sli_1', 1.0)"
-        )
-        conn.execute(
-            "INSERT INTO capacity_metrics (ts, sli_id, value) VALUES (datetime('now'), 'sli_2', 2.0)"
-        )
+        conn.execute("INSERT INTO capacity_metrics (ts, sli_id, value) VALUES ('2020-01-01T00:00:00', 'sli_1', 1.0)")
+        conn.execute("INSERT INTO capacity_metrics (ts, sli_id, value) VALUES (datetime('now'), 'sli_2', 2.0)")
         conn.commit()
         conn.close()
         removed = mgr.ttl_cleanup()
@@ -106,9 +112,7 @@ class TestSchemaManager:
         db_path = str(tmp_path / "test_capacity.db")
         mgr = SchemaManager(db_path=db_path)
         conn = mgr.init_db()
-        conn.execute(
-            "INSERT INTO capacity_metrics (ts, sli_id, value) VALUES (datetime('now'), 'sli_1', 1.0)"
-        )
+        conn.execute("INSERT INTO capacity_metrics (ts, sli_id, value) VALUES (datetime('now'), 'sli_1', 1.0)")
         conn.commit()
         conn.close()
         removed = mgr.ttl_cleanup()

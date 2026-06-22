@@ -43,12 +43,11 @@ doc_guard_server.py 对应 tool-contracts.yaml 中的 session_handoff server。
 
 from __future__ import annotations
 
-from zephyr.shared.schema.schemas import Priority
-
 import uuid
 from typing import Any
 
 from zephyr.integration.mcp._base_server import BaseMCPServer, MCPError
+from zephyr.shared.schema.schemas import Priority
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = ["DocGuardServer", "create_server"]
@@ -308,6 +307,7 @@ class DocGuardServer(BaseMCPServer):
     ) -> dict[str, Any]:
         """校验文档版本号（骨架规则：格式校验 + session 匹配检查）。"""
         import re as _re
+
         if not _re.match(r"^\d+\.\d+", expected_version):
             raise MCPError(-32602, f"expected_version 格式无效: {expected_version!r}")
 

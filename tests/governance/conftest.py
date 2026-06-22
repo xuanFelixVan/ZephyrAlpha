@@ -41,7 +41,7 @@ def manifest(repo_root: Path) -> dict:
 @pytest.fixture(scope="session")
 def script_entries(manifest: dict) -> list[dict]:
     return [
-        e for e in manifest.get("scripts", [])
-        if e.get("path", "").startswith("governance/")
-        and e.get("path") != _SMOKE_TEST
+        e
+        for e in manifest.get("scripts", [])
+        if e.get("path", "").startswith("governance/") and e.get("path") != _SMOKE_TEST
     ]

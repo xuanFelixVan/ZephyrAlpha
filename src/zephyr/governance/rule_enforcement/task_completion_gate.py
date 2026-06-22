@@ -35,7 +35,6 @@ Detects residual files that should not exist in a target directory:
 Output: list of residual files with suggested disposition (delete/move/keep)
 """
 
-
 from __future__ import annotations
 
 import re
@@ -289,14 +288,21 @@ def g7_check_delegate(task_card: dict) -> G7CheckResult:
     """
     try:
         from zephyr.shared.lifecycle.task_lifecycle_manager import TaskLifecycleManager
+
         manager = TaskLifecycleManager()
         result = manager.gate_g7_output(task_card)
         return G7CheckResult(
             gate_id="G7",
             passed=result.passed,
             violations=[result.details] if not result.passed else [],
-            checked_fields=["upstream_files", "downstream_outputs", "rollback_instructions",
-                          "context_assembly_manifest", "allowed_touch", "forbidden_touch"],
+            checked_fields=[
+                "upstream_files",
+                "downstream_outputs",
+                "rollback_instructions",
+                "context_assembly_manifest",
+                "allowed_touch",
+                "forbidden_touch",
+            ],
         )
     except ImportError:
         gate = G7CompletenessGate()

@@ -5,6 +5,6 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-from zephyr.integration.local_model.cache_layer import CacheLayer, CacheLayer as _CacheLayer  # noqa: F401
+from zephyr.integration.local_model.cache_layer import CacheLayer
 
 __all__ = ["CacheLayer"]

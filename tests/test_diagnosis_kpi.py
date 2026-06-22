@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_diagnosis_kpi.py
 
-import pytest
 
 from zephyr.ops.diagnosers.diagnosis_kpi import DiagnosisKPI
 

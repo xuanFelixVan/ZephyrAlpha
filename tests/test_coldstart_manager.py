@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_coldstart_manager.py
 
-import pytest
 
 from zephyr.governance.coldstart_manager import ColdstartManager
 

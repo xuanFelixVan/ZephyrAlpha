@@ -18,8 +18,6 @@ Covers:
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.integration.pipeline_bridge import (
     PipelineSkillBridge,
     SkillContextInjector,
@@ -70,9 +68,7 @@ class TestPipelineSkillBridge:
         )
         assert result.loaded is True
         if result.domain_skill_id:
-            assert "DBS" in result.domain_skill_id or "database" in str(
-                result.l2_domain_body
-            ).lower()
+            assert "DBS" in result.domain_skill_id or "database" in str(result.l2_domain_body).lower()
 
     def test_inject_with_mcp_keyword(self):
         """mcp 关键词 → mcp-specialist."""
@@ -137,9 +133,7 @@ class TestSkillContextInjector:
 
     def test_inject_with_l3(self):
         injector = SkillContextInjector()
-        result = injector.inject(
-            "SKILL-DOM-DBS-001", "SKILL-ROL-IMP-001", load_l3=True
-        )
+        result = injector.inject("SKILL-DOM-DBS-001", "SKILL-ROL-IMP-001", load_l3=True)
         assert isinstance(result, SkillInjectionResult)
 
 
@@ -196,9 +190,7 @@ class TestPipelineSkillBridgeFallback:
 
     def test_unknown_stage_name(self):
         bridge = PipelineSkillBridge()
-        result = bridge.inject_for_task(
-            task_description="do something", stage="unknown_stage_xyz"
-        )
+        result = bridge.inject_for_task(task_description="do something", stage="unknown_stage_xyz")
         assert isinstance(result, SkillInjectionResult)
 
 

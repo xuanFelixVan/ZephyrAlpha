@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+
 class ShadowTrustValidator:
     """影子清单信任链验证."""
 

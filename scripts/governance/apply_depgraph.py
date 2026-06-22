@@ -33,10 +33,9 @@ import argparse
 import datetime
 import json
 import os
+import sqlite3
 import sys
 from pathlib import Path
-
-import sqlite3
 
 DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 
@@ -101,12 +100,12 @@ def _atomic_write(dep: dict, conn=None) -> None:
             clean = {k: v for k, v in node_data.items() if not k.startswith("_")}
             if "type" in clean:
                 clean["node_type"] = clean.pop("type")
-            set_clause = ", ".join(f"{k} = ?" for k in clean.keys())
+            set_clause = ", ".join(f"{k} = ?" for k in clean)
             values = list(clean.values()) + [node_id]
             conn.execute(f"UPDATE nodes SET {set_clause} WHERE node_id = ?", values)
         if own_conn:
             conn.commit()
-        print(f"OK: depgraph DB updated", file=sys.stderr)
+        print("OK: depgraph DB updated", file=sys.stderr)
     except Exception as e:
         if own_conn:
             conn.rollback()
@@ -127,8 +126,15 @@ def cmd_update_module(dep: dict, module_id: str, field: str, value: str) -> None
     old_value = module.get(field, "<not set>")
 
     # 类型转换
-    if field in ("safety_level", "ai_autonomy", "stability", "build_status",
-                 "blueprint_status", "module_lifecycle_state", "priority"):
+    if field in (
+        "safety_level",
+        "ai_autonomy",
+        "stability",
+        "build_status",
+        "blueprint_status",
+        "module_lifecycle_state",
+        "priority",
+    ):
         module[field] = value
     elif field in ("physical_files",):
         try:
@@ -204,23 +210,19 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     ssot_path=change.get("ssot_path", ""),
                     max_modules=change.get("max_modules", 200),
                     description=change.get("description", ""),
-                    dry_run=True
+                    dry_run=True,
                 )
                 if ok:
                     domain_op_count += 1
             elif op == "update_domain_id":
                 count = cmd_update_domain_id(
-                    module_id=change.get("module_id", ""),
-                    new_domain_id=change.get("new_domain_id", ""),
-                    dry_run=True
+                    module_id=change.get("module_id", ""), new_domain_id=change.get("new_domain_id", ""), dry_run=True
                 )
                 if count >= 0:
                     domain_op_count += 1
             elif op == "update_path":
                 count = cmd_update_path(
-                    module_id=change.get("module_id", ""),
-                    new_path=change.get("new_path", ""),
-                    dry_run=True
+                    module_id=change.get("module_id", ""), new_path=change.get("new_path", ""), dry_run=True
                 )
                 if count >= 0:
                     domain_op_count += 1
@@ -230,15 +232,13 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     to_domain=change.get("to_domain", ""),
                     new_from_domain=change.get("new_from_domain", ""),
                     new_to_domain=change.get("new_to_domain", ""),
-                    dry_run=True
+                    dry_run=True,
                 )
                 if count >= 0:
                     domain_op_count += 1
             elif op == "update_domain_layer":
                 ok = cmd_update_domain_layer(
-                    domain_id=change.get("domain_id", ""),
-                    layer_id=change.get("layer_id", ""),
-                    dry_run=True
+                    domain_id=change.get("domain_id", ""), layer_id=change.get("layer_id", ""), dry_run=True
                 )
                 if ok:
                     domain_op_count += 1
@@ -265,7 +265,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     max_modules=change.get("max_modules", 200),
                     description=change.get("description", ""),
                     dry_run=False,
-                    conn=conn
+                    conn=conn,
                 )
                 if not ok:
                     raise RuntimeError(f"change #{i}: insert_domain failed")
@@ -275,17 +275,14 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     module_id=change.get("module_id", ""),
                     new_domain_id=change.get("new_domain_id", ""),
                     dry_run=False,
-                    conn=conn
+                    conn=conn,
                 )
                 if count < 0:
                     raise RuntimeError(f"change #{i}: update_domain_id failed")
                 domain_op_count += 1
             elif op == "update_path":
                 count = cmd_update_path(
-                    module_id=change.get("module_id", ""),
-                    new_path=change.get("new_path", ""),
-                    dry_run=False,
-                    conn=conn
+                    module_id=change.get("module_id", ""), new_path=change.get("new_path", ""), dry_run=False, conn=conn
                 )
                 if count < 0:
                     raise RuntimeError(f"change #{i}: update_path failed")
@@ -297,17 +294,14 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     new_from_domain=change.get("new_from_domain", ""),
                     new_to_domain=change.get("new_to_domain", ""),
                     dry_run=False,
-                    conn=conn
+                    conn=conn,
                 )
                 if count < 0:
                     raise RuntimeError(f"change #{i}: migrate_dependencies failed")
                 domain_op_count += 1
             elif op == "update_domain_layer":
                 ok = cmd_update_domain_layer(
-                    domain_id=change.get("domain_id", ""),
-                    layer_id=change.get("layer_id", ""),
-                    dry_run=False,
-                    conn=conn
+                    domain_id=change.get("domain_id", ""), layer_id=change.get("layer_id", ""), dry_run=False, conn=conn
                 )
                 if not ok:
                     raise RuntimeError(f"change #{i}: update_domain_layer failed")
@@ -332,12 +326,9 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 
 # ===== P0-2 新增：设计态节点/边管理（§22.5）=====
 
+
 def add_design_node(
-    path: str,
-    blueprint_id: str,
-    domain_id: str,
-    build_status: str = "unbuilt",
-    db_path: str = str(DEPGRAPH_PATH)
+    path: str, blueprint_id: str, domain_id: str, build_status: str = "unbuilt", db_path: str = str(DEPGRAPH_PATH)
 ) -> int:
     """
     新增设计态节点（功能级，目录 path）。
@@ -385,7 +376,7 @@ def add_design_node(
             print(f"WARNING: path '{path}' 已有设计态节点 node_id={existing[0]}，执行UPDATE", file=sys.stderr)
             conn.execute(
                 "UPDATE nodes SET blueprint_id=?, domain_id=?, build_status=?, blueprint_path=? WHERE node_id=?",
-                (blueprint_id, domain_id, build_status, blueprint_path, existing[0])
+                (blueprint_id, domain_id, build_status, blueprint_path, existing[0]),
             )
             conn.commit()
             return existing[0]
@@ -395,7 +386,7 @@ def add_design_node(
             """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
                build_status, design_maturity, blueprint_path, module_lifecycle_state, can_build)
                VALUES (?, ?, 'directory', ?, ?, ?, 'design', ?, 'inactive', 1)""",
-            ("design_node", path, domain_id, blueprint_id, build_status, blueprint_path)
+            ("design_node", path, domain_id, blueprint_id, build_status, blueprint_path),
         )
         node_id = cur.lastrowid
         conn.commit()
@@ -425,7 +416,7 @@ def add_design_edge(
     data_transfer_description: str = "",
     relationship_type: str = "",
     resource_impact: str = "low",
-    db_path: str = str(DEPGRAPH_PATH)
+    db_path: str = str(DEPGRAPH_PATH),
 ) -> int:
     """
     新增设计态边（规划依赖）。
@@ -448,9 +439,7 @@ def add_design_edge(
             print(f"ERROR: from_node_id={from_node_id} design_maturity={from_node[1]}（应为design）", file=sys.stderr)
             return -1
 
-        to_node = conn.execute(
-            "SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (to_node_id,)
-        ).fetchone()
+        to_node = conn.execute("SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (to_node_id,)).fetchone()
         if not to_node:
             print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
             return -1
@@ -471,10 +460,23 @@ def add_design_edge(
                activation_condition, data_transfer_description, resource_impact,
                relationship_type, cross_domain, verified, dep_maturity)
                VALUES (?, ?, ?, 'downstream', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 'design')""",
-            (from_node_id, to_node_id, dep_type, coupling_strength, used_symbol,
-             invocation_method, api_contract_refs, event_ref, ddd_integration_pattern,
-             failure_mode, fallback, activation_condition, data_transfer_description,
-             resource_impact, relationship_type)
+            (
+                from_node_id,
+                to_node_id,
+                dep_type,
+                coupling_strength,
+                used_symbol,
+                invocation_method,
+                api_contract_refs,
+                event_ref,
+                ddd_integration_pattern,
+                failure_mode,
+                fallback,
+                activation_condition,
+                data_transfer_description,
+                resource_impact,
+                relationship_type,
+            ),
         )
         edge_id = cur.lastrowid
         conn.commit()
@@ -500,9 +502,7 @@ def _detect_cycle_dfs(conn, start: int, target: int) -> bool:
             continue
         visited.add(node)
         # 查询node的所有出边
-        edges = conn.execute(
-            "SELECT to_node_id FROM edges WHERE from_node_id=?", (node,)
-        ).fetchall()
+        edges = conn.execute("SELECT to_node_id FROM edges WHERE from_node_id=?", (node,)).fetchall()
         for (next_node,) in edges:
             if next_node == target:
                 return True
@@ -511,11 +511,7 @@ def _detect_cycle_dfs(conn, start: int, target: int) -> bool:
     return False
 
 
-def transition_build_status(
-    node_id: int,
-    to: str,
-    db_path: str = str(DEPGRAPH_PATH)
-) -> bool:
+def transition_build_status(node_id: int, to: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     """
     转换 build_status 状态。
     返回：True=成功，False=失败
@@ -555,10 +551,7 @@ def transition_build_status(
         conn.close()
 
 
-def remove_design_node(
-    node_id: int,
-    db_path: str = str(DEPGRAPH_PATH)
-) -> bool:
+def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     """
     删除设计态节点（软删除）。
     返回：True=成功，False=失败
@@ -608,6 +601,7 @@ def remove_design_node(
 
 # ===== F5 合规豁免：域/路径/依赖迁移命令（ARCH-CAP-005 抽屉式扩展）=====
 
+
 def cmd_insert_domain(
     domain_id: str,
     domain_name: str,
@@ -618,7 +612,7 @@ def cmd_insert_domain(
     description: str = "",
     dry_run: bool = False,
     db_path: str = str(DEPGRAPH_PATH),
-    conn=None
+    conn=None,
 ) -> bool:
     """INSERT 新域到 domains 表（ARCH-CAP-005 抽屉式扩展）。
 
@@ -637,14 +631,17 @@ def cmd_insert_domain(
 
         now = datetime.datetime.now().isoformat()
         if dry_run:
-            print(f"[DRY RUN] 将 INSERT 域 {domain_id} ({domain_name}) layer={layer_id} ssot_path={ssot_path} max_modules={max_modules}", file=sys.stderr)
+            print(
+                f"[DRY RUN] 将 INSERT 域 {domain_id} ({domain_name}) layer={layer_id} ssot_path={ssot_path} max_modules={max_modules}",
+                file=sys.stderr,
+            )
             return True
 
         conn.execute(
             """INSERT INTO domains (domain_id, domain_name, domain_group, description, ssot_path,
                current_modules, max_modules, lifecycle, created_at, updated_at, build_status, layer_id)
                VALUES (?, ?, ?, ?, ?, 0, ?, 'design_only', ?, ?, 'unbuilt', ?)""",
-            (domain_id, domain_name, domain_group, description, ssot_path, max_modules, now, now, layer_id)
+            (domain_id, domain_name, domain_group, description, ssot_path, max_modules, now, now, layer_id),
         )
         if own_conn:
             conn.commit()
@@ -661,11 +658,7 @@ def cmd_insert_domain(
 
 
 def cmd_update_domain_id(
-    module_id: str,
-    new_domain_id: str,
-    dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
-    conn=None
+    module_id: str, new_domain_id: str, dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH), conn=None
 ) -> int:
     """UPDATE 模块的 domain_id（域拆分时迁移模块归属）。
 
@@ -683,8 +676,7 @@ def cmd_update_domain_id(
             return -1
 
         rows = conn.execute(
-            "SELECT node_id, path, domain_id FROM nodes WHERE belongs_to=? OR blueprint_id=?",
-            (module_id, module_id)
+            "SELECT node_id, path, domain_id FROM nodes WHERE belongs_to=? OR blueprint_id=?", (module_id, module_id)
         ).fetchall()
         if not rows:
             print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
@@ -692,12 +684,14 @@ def cmd_update_domain_id(
 
         if dry_run:
             for r in rows:
-                print(f"[DRY RUN] 将 UPDATE node_id={r[0]} domain_id: {r[2]} -> {new_domain_id} (path={r[1]})", file=sys.stderr)
+                print(
+                    f"[DRY RUN] 将 UPDATE node_id={r[0]} domain_id: {r[2]} -> {new_domain_id} (path={r[1]})",
+                    file=sys.stderr,
+                )
             return len(rows)
 
         cur = conn.execute(
-            "UPDATE nodes SET domain_id=? WHERE belongs_to=? OR blueprint_id=?",
-            (new_domain_id, module_id, module_id)
+            "UPDATE nodes SET domain_id=? WHERE belongs_to=? OR blueprint_id=?", (new_domain_id, module_id, module_id)
         )
         if own_conn:
             conn.commit()
@@ -714,11 +708,7 @@ def cmd_update_domain_id(
 
 
 def cmd_update_path(
-    module_id: str,
-    new_path: str,
-    dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
-    conn=None
+    module_id: str, new_path: str, dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH), conn=None
 ) -> int:
     """UPDATE 模块的 path（物理路径迁移，ARCH-CAP-004 路径平铺）。
 
@@ -731,8 +721,7 @@ def cmd_update_path(
         conn = sqlite3.connect(db_path)
     try:
         rows = conn.execute(
-            "SELECT node_id, path FROM nodes WHERE belongs_to=? OR blueprint_id=?",
-            (module_id, module_id)
+            "SELECT node_id, path FROM nodes WHERE belongs_to=? OR blueprint_id=?", (module_id, module_id)
         ).fetchall()
         if not rows:
             print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
@@ -744,8 +733,7 @@ def cmd_update_path(
             return len(rows)
 
         cur = conn.execute(
-            "UPDATE nodes SET path=? WHERE belongs_to=? OR blueprint_id=?",
-            (new_path, module_id, module_id)
+            "UPDATE nodes SET path=? WHERE belongs_to=? OR blueprint_id=?", (new_path, module_id, module_id)
         )
         if own_conn:
             conn.commit()
@@ -768,7 +756,7 @@ def cmd_migrate_dependencies(
     new_to_domain: str = "",
     dry_run: bool = False,
     db_path: str = str(DEPGRAPH_PATH),
-    conn=None
+    conn=None,
 ) -> int:
     """UPDATE domain_dependencies 表迁移跨域依赖。
 
@@ -788,7 +776,7 @@ def cmd_migrate_dependencies(
     try:
         rows = conn.execute(
             "SELECT from_domain, to_domain, edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?",
-            (from_domain, to_domain)
+            (from_domain, to_domain),
         ).fetchall()
         if not rows:
             print(f"ERROR: domain_dependencies ({from_domain} -> {to_domain}) 不存在", file=sys.stderr)
@@ -810,25 +798,38 @@ def cmd_migrate_dependencies(
 
         if dry_run:
             for r in rows:
-                print(f"[DRY RUN] 将 UPDATE domain_dependencies: {r[0]} -> {r[1]} => {final_from} -> {final_to} (edge_count={r[2]})", file=sys.stderr)
+                print(
+                    f"[DRY RUN] 将 UPDATE domain_dependencies: {r[0]} -> {r[1]} => {final_from} -> {final_to} (edge_count={r[2]})",
+                    file=sys.stderr,
+                )
             return len(rows)
 
         existing = conn.execute(
-            "SELECT edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?",
-            (final_from, final_to)
+            "SELECT edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (final_from, final_to)
         ).fetchone()
 
         if existing and (final_from != from_domain or final_to != to_domain):
             total = existing[0] + rows[0][2]
-            conn.execute("DELETE FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (from_domain, to_domain))
-            conn.execute("UPDATE domain_dependencies SET edge_count=? WHERE from_domain=? AND to_domain=?", (total, final_from, final_to))
-            print(f"[OK] 合并 domain_dependencies: {from_domain}->{to_domain} 并入 {final_from}->{final_to} (edge_count={total})", file=sys.stderr)
+            conn.execute(
+                "DELETE FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (from_domain, to_domain)
+            )
+            conn.execute(
+                "UPDATE domain_dependencies SET edge_count=? WHERE from_domain=? AND to_domain=?",
+                (total, final_from, final_to),
+            )
+            print(
+                f"[OK] 合并 domain_dependencies: {from_domain}->{to_domain} 并入 {final_from}->{final_to} (edge_count={total})",
+                file=sys.stderr,
+            )
         else:
             conn.execute(
                 "UPDATE domain_dependencies SET from_domain=?, to_domain=? WHERE from_domain=? AND to_domain=?",
-                (final_from, final_to, from_domain, to_domain)
+                (final_from, final_to, from_domain, to_domain),
             )
-            print(f"[OK] UPDATE domain_dependencies: {from_domain}->{to_domain} => {final_from}->{final_to}", file=sys.stderr)
+            print(
+                f"[OK] UPDATE domain_dependencies: {from_domain}->{to_domain} => {final_from}->{final_to}",
+                file=sys.stderr,
+            )
 
         if own_conn:
             conn.commit()
@@ -844,12 +845,7 @@ def cmd_migrate_dependencies(
 
 
 def cmd_update_domain_capacity(
-    domain_id: str,
-    field: str,
-    value: int,
-    dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
-    conn=None
+    domain_id: str, field: str, value: int, dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH), conn=None
 ) -> bool:
     """UPDATE domains 表的容量字段（current_modules/max_modules）。
 
@@ -874,8 +870,7 @@ def cmd_update_domain_capacity(
         conn = sqlite3.connect(db_path)
     try:
         existing = conn.execute(
-            "SELECT domain_id, current_modules, max_modules FROM domains WHERE domain_id=?",
-            (domain_id,)
+            "SELECT domain_id, current_modules, max_modules FROM domains WHERE domain_id=?", (domain_id,)
         ).fetchone()
         if not existing:
             print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
@@ -887,10 +882,7 @@ def cmd_update_domain_capacity(
             return True
 
         now = datetime.datetime.now().isoformat()
-        conn.execute(
-            f"UPDATE domains SET {field}=?, updated_at=? WHERE domain_id=?",
-            (value, now, domain_id)
-        )
+        conn.execute(f"UPDATE domains SET {field}=?, updated_at=? WHERE domain_id=?", (value, now, domain_id))
         if own_conn:
             conn.commit()
         print(f"[OK] UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
@@ -906,11 +898,7 @@ def cmd_update_domain_capacity(
 
 
 def cmd_update_domain_layer(
-    domain_id: str,
-    layer_id: str,
-    dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
-    conn=None
+    domain_id: str, layer_id: str, dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH), conn=None
 ) -> bool:
     """UPDATE domains 表的 layer_id 字段（架构层级迁移）。
 
@@ -928,10 +916,7 @@ def cmd_update_domain_layer(
     if own_conn:
         conn = sqlite3.connect(db_path)
     try:
-        existing = conn.execute(
-            "SELECT domain_id, layer_id FROM domains WHERE domain_id=?",
-            (domain_id,)
-        ).fetchone()
+        existing = conn.execute("SELECT domain_id, layer_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
         if not existing:
             print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
             return False
@@ -946,10 +931,7 @@ def cmd_update_domain_layer(
             return True
 
         now = datetime.datetime.now().isoformat()
-        conn.execute(
-            "UPDATE domains SET layer_id=?, updated_at=? WHERE domain_id=?",
-            (layer_id, now, domain_id)
-        )
+        conn.execute("UPDATE domains SET layer_id=?, updated_at=? WHERE domain_id=?", (layer_id, now, domain_id))
         if own_conn:
             conn.commit()
         print(f"[OK] UPDATE domains layer_id: {domain_id} {old_layer} -> {layer_id}", file=sys.stderr)
@@ -969,49 +951,77 @@ def main() -> None:
         description="depgraph 变更写入工具（禁止AI直接Write 157MB文件）",
         epilog="See .trae/rules/project_rules.md RULE-SIXTEEN for the full protocol.",
     )
-    parser.add_argument("--update-module", type=str, nargs=2, metavar=("MODULE_ID", "FIELD=VALUE"),
-                        help="更新单个模块字段")
+    parser.add_argument(
+        "--update-module", type=str, nargs=2, metavar=("MODULE_ID", "FIELD=VALUE"), help="更新单个模块字段"
+    )
     parser.add_argument("--batch", type=str, help="批量变更 JSON 文件路径")
     parser.add_argument("--dry-run", action="store_true", help="仅验证，不写入")
     # P0-2 新增4命令
-    parser.add_argument("--add-design-node", type=str, nargs="+",
-                        metavar="ARG",
-                        help="新增设计态节点: PATH BLUEPRINT_ID DOMAIN_ID [BUILD_STATUS]")
-    parser.add_argument("--add-design-edge", type=int, nargs=2,
-                        metavar=("FROM_NODE_ID", "TO_NODE_ID"),
-                        help="新增设计态边: FROM_NODE_ID TO_NODE_ID")
-    parser.add_argument("--transition-build-status", type=str, nargs=2,
-                        metavar=("NODE_ID", "TO_STATUS"),
-                        help="转换build_status: NODE_ID TO_STATUS")
-    parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID",
-                        help="软删除设计态节点: NODE_ID")
+    parser.add_argument(
+        "--add-design-node",
+        type=str,
+        nargs="+",
+        metavar="ARG",
+        help="新增设计态节点: PATH BLUEPRINT_ID DOMAIN_ID [BUILD_STATUS]",
+    )
+    parser.add_argument(
+        "--add-design-edge",
+        type=int,
+        nargs=2,
+        metavar=("FROM_NODE_ID", "TO_NODE_ID"),
+        help="新增设计态边: FROM_NODE_ID TO_NODE_ID",
+    )
+    parser.add_argument(
+        "--transition-build-status",
+        type=str,
+        nargs=2,
+        metavar=("NODE_ID", "TO_STATUS"),
+        help="转换build_status: NODE_ID TO_STATUS",
+    )
+    parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID", help="软删除设计态节点: NODE_ID")
     # F5 合规豁免：域/路径/依赖迁移命令（ARCH-CAP-005）
-    parser.add_argument("--insert-domain", type=str, nargs="+",
-                        metavar="ARG",
-                        help="INSERT 新域: DOMAIN_ID DOMAIN_NAME DOMAIN_GROUP LAYER_ID SSOT_PATH [--max-modules N] [--description TEXT]")
-    parser.add_argument("--update-domain-id", type=str, nargs=2,
-                        metavar=("MODULE_ID", "NEW_DOMAIN_ID"),
-                        help="UPDATE 模块 domain_id（域拆分迁移模块归属）")
-    parser.add_argument("--update-path", type=str, nargs=2,
-                        metavar=("MODULE_ID", "NEW_PATH"),
-                        help="UPDATE 模块 path（物理路径迁移）")
-    parser.add_argument("--migrate-dependencies", type=str, nargs=2,
-                        metavar=("FROM_DOMAIN", "TO_DOMAIN"),
-                        help="UPDATE domain_dependencies 迁移跨域依赖")
-    parser.add_argument("--update-domain-capacity", type=str, nargs=2,
-                        metavar=("DOMAIN_ID", "FIELD=VALUE"),
-                        help="UPDATE domains 容量字段: DOMAIN_ID current_modules=N|max_modules=N")
-    parser.add_argument("--update-domain-layer", type=str, nargs=2,
-                        metavar=("DOMAIN_ID", "LAYER_ID"),
-                        help="UPDATE domains layer_id: DOMAIN_ID L0_infrastructure|L1_foundation|L1_platform|L2_domain")
-    parser.add_argument("--new-from-domain", type=str, default="",
-                        help="migrate-dependencies 的新 from_domain")
-    parser.add_argument("--new-to-domain", type=str, default="",
-                        help="migrate-dependencies 的新 to_domain")
-    parser.add_argument("--max-modules", type=int, default=200,
-                        help="insert-domain 的 max_modules（默认 200）")
-    parser.add_argument("--description", type=str, default="",
-                        help="insert-domain 的 description")
+    parser.add_argument(
+        "--insert-domain",
+        type=str,
+        nargs="+",
+        metavar="ARG",
+        help="INSERT 新域: DOMAIN_ID DOMAIN_NAME DOMAIN_GROUP LAYER_ID SSOT_PATH [--max-modules N] [--description TEXT]",
+    )
+    parser.add_argument(
+        "--update-domain-id",
+        type=str,
+        nargs=2,
+        metavar=("MODULE_ID", "NEW_DOMAIN_ID"),
+        help="UPDATE 模块 domain_id（域拆分迁移模块归属）",
+    )
+    parser.add_argument(
+        "--update-path", type=str, nargs=2, metavar=("MODULE_ID", "NEW_PATH"), help="UPDATE 模块 path（物理路径迁移）"
+    )
+    parser.add_argument(
+        "--migrate-dependencies",
+        type=str,
+        nargs=2,
+        metavar=("FROM_DOMAIN", "TO_DOMAIN"),
+        help="UPDATE domain_dependencies 迁移跨域依赖",
+    )
+    parser.add_argument(
+        "--update-domain-capacity",
+        type=str,
+        nargs=2,
+        metavar=("DOMAIN_ID", "FIELD=VALUE"),
+        help="UPDATE domains 容量字段: DOMAIN_ID current_modules=N|max_modules=N",
+    )
+    parser.add_argument(
+        "--update-domain-layer",
+        type=str,
+        nargs=2,
+        metavar=("DOMAIN_ID", "LAYER_ID"),
+        help="UPDATE domains layer_id: DOMAIN_ID L0_infrastructure|L1_foundation|L1_platform|L2_domain",
+    )
+    parser.add_argument("--new-from-domain", type=str, default="", help="migrate-dependencies 的新 from_domain")
+    parser.add_argument("--new-to-domain", type=str, default="", help="migrate-dependencies 的新 to_domain")
+    parser.add_argument("--max-modules", type=int, default=200, help="insert-domain 的 max_modules（默认 200）")
+    parser.add_argument("--description", type=str, default="", help="insert-domain 的 description")
     args = parser.parse_args()
 
     # P0-2 新增命令处理
@@ -1053,15 +1063,26 @@ def main() -> None:
     if args.insert_domain:
         parts = args.insert_domain
         if len(parts) < 5:
-            print("ERROR: --insert-domain 需要 5 个参数: DOMAIN_ID DOMAIN_NAME DOMAIN_GROUP LAYER_ID SSOT_PATH", file=sys.stderr)
+            print(
+                "ERROR: --insert-domain 需要 5 个参数: DOMAIN_ID DOMAIN_NAME DOMAIN_GROUP LAYER_ID SSOT_PATH",
+                file=sys.stderr,
+            )
             sys.exit(3)
         domain_id = parts[0]
         domain_name = parts[1]
         domain_group = parts[2]
         layer_id = parts[3]
         ssot_path = parts[4]
-        ok = cmd_insert_domain(domain_id, domain_name, domain_group, layer_id, ssot_path,
-                               max_modules=args.max_modules, description=args.description, dry_run=args.dry_run)
+        ok = cmd_insert_domain(
+            domain_id,
+            domain_name,
+            domain_group,
+            layer_id,
+            ssot_path,
+            max_modules=args.max_modules,
+            description=args.description,
+            dry_run=args.dry_run,
+        )
         if not ok:
             sys.exit(4)
         return
@@ -1084,10 +1105,13 @@ def main() -> None:
 
     if args.migrate_dependencies:
         from_domain, to_domain = args.migrate_dependencies
-        count = cmd_migrate_dependencies(from_domain, to_domain,
-                                         new_from_domain=args.new_from_domain,
-                                         new_to_domain=args.new_to_domain,
-                                         dry_run=args.dry_run)
+        count = cmd_migrate_dependencies(
+            from_domain,
+            to_domain,
+            new_from_domain=args.new_from_domain,
+            new_to_domain=args.new_to_domain,
+            dry_run=args.dry_run,
+        )
         if count < 0:
             sys.exit(4)
         print(f"affected={count}")
@@ -1137,7 +1161,7 @@ def main() -> None:
             _atomic_write(dep)
 
     if args.batch:
-        with open(args.batch, "r", encoding="utf-8") as f:
+        with open(args.batch, encoding="utf-8") as f:
             changes = json.load(f)
         cmd_batch(dep, changes, args.dry_run)
 

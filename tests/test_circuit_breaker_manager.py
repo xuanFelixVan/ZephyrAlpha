@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from zephyr.integration.circuit_breaker_manager import CircuitBreakerManager
 from zephyr.integration.models import CircuitBreakerState
 

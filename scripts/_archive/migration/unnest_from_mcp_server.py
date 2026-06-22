@@ -83,7 +83,12 @@ def _copy_single(src: Path, dst: Path) -> dict:
         try:
             if dst.stat().st_size == src.stat().st_size:
                 if dst.read_bytes() == src.read_bytes():
-                    return {"src": str(src), "dst": str(dst), "status": "skipped", "reason": "already_exists_same_content"}
+                    return {
+                        "src": str(src),
+                        "dst": str(dst),
+                        "status": "skipped",
+                        "reason": "already_exists_same_content",
+                    }
         except OSError:
             pass
 
@@ -165,7 +170,7 @@ def main() -> None:
     }
     _atomic_write_yaml(LOG_FILE, log)
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Copied:  {success}")
     print(f"  Failed:  {failed}")
     print(f"  Skipped: {skipped}")

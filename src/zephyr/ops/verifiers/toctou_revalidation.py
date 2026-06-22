@@ -34,7 +34,7 @@ and restart diagnosis from fresh state.
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
 
@@ -76,5 +76,6 @@ class TOCTOURevalidation:
     @staticmethod
     def _hash_state(state: dict) -> str:
         import hashlib
+
         raw = str(sorted(state.items())).encode("utf-8")
         return hashlib.sha256(raw).hexdigest()[:16]

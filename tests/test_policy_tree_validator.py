@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.policy_tree_validator import (
-    PolicyTreeValidator, ValidationViolation, PolicyTreeReport,
+    PolicyTreeReport,
+    PolicyTreeValidator,
 )
+
 
 class TestPolicyTreeValidator:
     def test_instantiation(self):

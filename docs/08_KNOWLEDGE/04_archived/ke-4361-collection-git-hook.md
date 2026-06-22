@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-4361
 title: 7.3 Collection 路由规则（git hook 默认）
 category: module_blueprint

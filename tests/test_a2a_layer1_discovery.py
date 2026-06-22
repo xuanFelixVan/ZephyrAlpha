@@ -11,13 +11,14 @@
 # [TESTS] pytest tests/test_a2a_layer1_discovery.py -q
 
 import pytest
+
+from zephyr.governance.identity_verifier import (
+    IdentityVerifier,
+)
 from zephyr.infrastructure.a2a_protocol.layer1_discovery.a2a_registry import A2ARegistry
 from zephyr.infrastructure.a2a_protocol.layer1_discovery.agent_card import (
     AgentCapability,
     AgentCard,
-)
-from zephyr.governance.identity_verifier import (
-    IdentityVerifier,
 )
 
 
@@ -106,18 +107,22 @@ class TestA2ARegistry:
 
     def test_discover_by_capability(self):
         registry = A2ARegistry()
-        registry.register(AgentCard(
-            agent_id="agent-cap-1",
-            name="Reader",
-            description="Can read",
-            capabilities=[AgentCapability.READ],
-        ))
-        registry.register(AgentCard(
-            agent_id="agent-cap-2",
-            name="Writer",
-            description="Can write",
-            capabilities=[AgentCapability.WRITE],
-        ))
+        registry.register(
+            AgentCard(
+                agent_id="agent-cap-1",
+                name="Reader",
+                description="Can read",
+                capabilities=[AgentCapability.READ],
+            )
+        )
+        registry.register(
+            AgentCard(
+                agent_id="agent-cap-2",
+                name="Writer",
+                description="Can write",
+                capabilities=[AgentCapability.WRITE],
+            )
+        )
         readers = registry.discover(capability="read")
         assert len(readers) == 1
         assert readers[0].agent_id == "agent-cap-1"

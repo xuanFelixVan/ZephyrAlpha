@@ -30,7 +30,6 @@ Depends: observer.py (T-1-08), task_repo.py (T-1-04)
 
 from __future__ import annotations
 
-
 import sqlite3
 import time
 from enum import Enum, unique

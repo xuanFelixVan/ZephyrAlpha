@@ -122,7 +122,7 @@ class TestAIConstructionDetectorsExtended:
 
     def test_ai_knowledge_pollution_name_collision(self):
         (Path(self.tmp) / "polluted.py").write_text(
-            "class Processor:\n    pass\n\n" "def Processor():\n    pass\n",
+            "class Processor:\n    pass\n\ndef Processor():\n    pass\n",
             encoding="utf-8",
         )
         ai = AIConstructionDetectors()
@@ -132,7 +132,7 @@ class TestAIConstructionDetectorsExtended:
 
     def test_ai_hallucination_import_nonexistent(self):
         (Path(self.tmp) / "bad_import.py").write_text(
-            "from nonexistent_module_xyz import Something\n" "import also_does_not_exist_abc\n",
+            "from nonexistent_module_xyz import Something\nimport also_does_not_exist_abc\n",
             encoding="utf-8",
         )
         ai = AIConstructionDetectors()
@@ -250,10 +250,14 @@ class TestNoDeprecationWarning:
             ) as mock_mod:
                 mock_mod.DriftFixHandler.side_effect = ImportError("test")
                 result = _fallback_to_rollback_handler(mock_event)
-                deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning) and "governance.drift_detector" not in str(x.message)]
-                assert (
-                    len(deprecation_warnings) == 0
-                ), f"DeprecationWarning triggered: {[str(x.message) for x in deprecation_warnings]}"
+                deprecation_warnings = [
+                    x
+                    for x in w
+                    if issubclass(x.category, DeprecationWarning) and "governance.drift_detector" not in str(x.message)
+                ]
+                assert len(deprecation_warnings) == 0, (
+                    f"DeprecationWarning triggered: {[str(x.message) for x in deprecation_warnings]}"
+                )
                 assert result["action"] == "MANUAL_REQUIRED"
 
 

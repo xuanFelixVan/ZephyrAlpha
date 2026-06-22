@@ -62,7 +62,7 @@ def main() -> None:
     if readme.exists():
         print(f"\n✅ README.md 存在: {readme}")
     else:
-        print(f"\n❌ README.md 不存在")
+        print("\n❌ README.md 不存在")
 
     print("\n✅ 边界验证通过")
 

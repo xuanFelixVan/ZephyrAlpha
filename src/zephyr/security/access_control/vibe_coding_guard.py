@@ -3,13 +3,18 @@
 
 VIBE_CODING_PATTERNS = None  # stub constant
 
+
 class VibeCodingAudit:
     """Stub class — implementation pending."""
+
     pass
+
 
 class VibeCodingGuard:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "VIBE_CODING_PATTERNS",

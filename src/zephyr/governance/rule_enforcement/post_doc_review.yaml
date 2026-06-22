@@ -1,0 +1,209 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# POST_DOC_REVIEW — Session 关门时文档内容审查门禁
+# 真源: trae_030_doc_numbering_metadata.yaml §1.2 执行后文档审查协议 + project_rules.md 关门步骤12
+
+# ═══════════════════════════════════════════════════════════
+# 1. 门禁身份（必填）
+# ═══════════════════════════════════════════════════════════
+module_id: MOD-INF-007
+schema_version: "1.0"
+doc_type: gate
+gate_id: "POST_DOC_REVIEW"
+gate_name: "post_doc_review"
+title: "Post-Execution Document Content Review Gate"
+description: >
+  Session 关门时审查本次 session 修改的文档+蓝图/规则，
+  按 trae_030 §0 时态判定 + §1 可删清单 + GOV-DOC-016 纯陈述原则
+  检查过程陈述/噪音/冲突，标记"待规格化"（不立即删除），
+  标记数≥3 时触发 trae_030 规格化流程。
+status: active
+ttl: permanent
+
+# ═══════════════════════════════════════════════════════════
+# 2. 门禁归属与所有权（必填）
+# ═══════════════════════════════════════════════════════════
+scope: global
+category: compliance
+owner: governance-team
+consumer: gate_engine
+ai_autonomy: autonomous
+
+# ═══════════════════════════════════════════════════════════
+# 3. 性能与资源预算（必填）
+# ═══════════════════════════════════════════════════════════
+token_budget: 2000
+latency_budget_ms: 5000
+execution_plane: warm
+
+# ═══════════════════════════════════════════════════════════
+# 4. 触发条件（必填）
+# ═══════════════════════════════════════════════════════════
+trigger:
+  event: "session_close"
+  precondition: "session_logs/<session_id>/modified_files.json 存在"
+  frequency: per_session
+
+# ═══════════════════════════════════════════════════════════
+# 5. 依赖关系（必填）
+# ═══════════════════════════════════════════════════════════
+depends_on_gates: []
+blocked_by_gates: []
+parallel_allowed_with:
+  - ZERO-RESIDUE
+rule_ids:
+  - TRAE-030
+
+# ═══════════════════════════════════════════════════════════
+# 6. 检查项（必填——至少1条）
+# ═══════════════════════════════════════════════════════════
+entry_conditions:
+  - id: "PDR-001"
+    name: "modified_files_list_exists"
+    type: "post_doc_review_check"
+    description: >
+      检查本次 session 修改的文档列表是否已生成。
+      如果没有修改任何文件，本门禁直接 PASS（无文档可审查）。
+    check: >
+      session_logs/<session_id>/modified_files.json 存在；
+      若不存在或为空 → PASS（本 session 无文档修改）。
+    severity: info
+    on_failure: flag
+    verifiable: true
+    verification_method: "assert os.path.exists(modified_files_json)"
+    fix_hint: ""
+    anti_pattern:
+      description: "未生成修改文件列表就尝试审查"
+      example: "session 关门步骤 12 跳过步骤 11（全量审计）直接执行"
+
+  - id: "PDR-002"
+    name: "doc_content_review_executed"
+    type: "post_doc_review_check"
+    description: >
+      检查文档内容审查是否已执行——按 trae_030 §0 时态判定 +
+      §1 可删清单 + GOV-DOC-016 纯陈述原则扫描修改的文档。
+    check: >
+      session_logs/<session_id>/doc_review_report.json 存在且
+      reviewed_files 字段覆盖 modified_files.json 中所有 .md/.yaml 文件。
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "assert doc_review_report.json exists and reviewed_files covers all modified docs"
+    fix_hint: "运行 PostDocReviewScanner 执行文档内容审查"
+    anti_pattern:
+      description: "Session 关门时跳过文档内容审查"
+      example: "只检查文件锁释放，不检查文档内容是否含过程陈述/噪音/冲突"
+
+  - id: "PDR-003"
+    name: "pending_regularization_marked"
+    type: "post_doc_review_check"
+    description: >
+      检查过程陈述/噪音/冲突是否已标记"待规格化"（不立即删除）。
+      标记标准：trae_030 §0 时态判定（过去时=过程陈述）+
+      §1 可删清单（5 类可删）+ GOV-DOC-016 纯陈述原则（否定陈述/冗余）。
+    check: >
+      doc_review_report.json 中 pending_regularization 字段存在，
+      每个标记项含 file_path + line_number + issue_type + issue_text。
+    severity: warning
+    on_failure: flag
+    verifiable: true
+    verification_method: "assert pending_regularization field exists with structured entries"
+    fix_hint: "扫描文档内容，按 trae_030 标准标记待规格化项"
+    anti_pattern:
+      description: "发现过程陈述/噪音/冲突但未标记，直接删除"
+      example: "看到'之前是X现在改为Y'直接删掉，不经过规格化流程"
+
+  - id: "PDR-004"
+    name: "regularization_triggered_when_threshold"
+    type: "post_doc_review_check"
+    description: >
+      检查标记数≥3 时是否已触发 trae_030 规格化流程。
+      阈值 3 的依据：trae_030 §1.2 "标记数≥3 → 触发规格化流程"。
+    check: >
+      若 len(pending_regularization) >= 3 →
+      assert regularization_triggered == true AND
+      regularization_task_id 非空（已创建规格化任务卡）。
+      若 len(pending_regularization) < 3 → PASS（未达阈值）。
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "if pending_count >= 3: assert regularization_triggered and regularization_task_id"
+    fix_hint: "创建规格化任务卡，触发 trae_030 规格化流程"
+    anti_pattern:
+      description: "标记数≥3 但未触发规格化流程"
+      example: "扫描出 5 个待规格化项但直接关闭 session，不创建规格化任务"
+
+  - id: "PDR-005"
+    name: "modified_files_integrity_check"
+    type: "post_doc_review_check"
+    description: >
+      R1 防御：篡改检测——对比 git 权威列表与 modified_files.json 自报告列表。
+      如果 git 可用但 modified_files.json 缺失或与 git 列表不一致 → 篡改告警。
+      git 不可用时 → RED 拒绝通过（不允许降级到自报告模式）。
+    check: >
+      git_available == false → RED (tampering_detected=true, is_clean=false)；
+      git_available == true AND start_commit 不存在 → RED；
+      git_available == true AND (
+        not modified_files_json_exists OR
+        git_modified_list != self_reported_list
+      ) → 篡改告警 (tampering_detected=true)。
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "assert report.git_authoritative == true and report.tampering_detected == false"
+    fix_hint: "确保 session 开始时记录 session_start_commit.txt；不要篡改 modified_files.json"
+    anti_pattern:
+      description: "删除 modified_files.json 或从中删除修改记录以绕过审查"
+      example: "攻击者修改了文档后删除 modified_files.json，门禁认为无修改而 PASS"
+
+# ═══════════════════════════════════════════════════════════
+# 7. Mutating规则（可选——自动修正）
+# ═══════════════════════════════════════════════════════════
+mutating_rules: []
+
+# ═══════════════════════════════════════════════════════════
+# 8. 严重级别与失败动作说明（必填——仅文档，非机读）
+# ═══════════════════════════════════════════════════════════
+severity_levels:
+  error: "硬阻断——session 不得关闭，raise GateViolationError"
+  warning: "软警告——passed=True，写入 events 警告流"
+  info: "仅记录——不告警不阻塞"
+
+failure_actions:
+  reject: "拒绝——session 停留在打开状态，必须修复后重新关门"
+  flag: "标记——通过但附加 warning flag，记录到 doc_review_report.json"
+  defer: "延迟——进入 deferred_queue 等待规格化流程完成"
+
+# ═══════════════════════════════════════════════════════════
+# 9. 模拟与测试（必填）
+# ═══════════════════════════════════════════════════════════
+simulation:
+  supported: true
+  mock_input: "tests/fixtures/post_doc_review/mock_session/"
+  expected_output: "doc_review_report.json with pending_regularization entries"
+  rollback_on_failure: true
+
+# ═══════════════════════════════════════════════════════════
+# 10. 升级触发条件（必填）
+# ═══════════════════════════════════════════════════════════
+upgrade_triggers:
+  - condition: "trae_030 §1.2 审查标准变更"
+    action: "version bump + 更新 entry_conditions 检查逻辑"
+    approval: "governance-team"
+  - condition: "project_rules.md 关门流程步骤数变更"
+    action: "version bump + 更新 trigger.event"
+    approval: "governance-team"
+
+# ═══════════════════════════════════════════════════════════
+# 11. 变更记录（必填）
+# ═══════════════════════════════════════════════════════════
+change_log:
+  - version: "1.0.0"
+    date: "2026-06-22"
+    author: "session-20260622-001"
+    change: "初始创建——实现 trae_030 §1.2 执行后文档审查协议"

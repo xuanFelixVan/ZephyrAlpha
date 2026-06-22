@@ -1,13 +1,10 @@
 # [A_module] module_id=MOD-INT_experiment_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-014 ====
 from dataclasses import dataclass, field
-
-from datetime import datetime, timezone
-from typing import Dict
-from typing import List
-from typing import Optional
+from datetime import datetime
 
 from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -32,6 +29,7 @@ AI Prompt
     当 L13 的 Scout Agent 完成一个实验周期后，MUST 产出 ExperimentResult。 每个 ExperimentResult 代表一次完整的对照实验结论——包含实验设计、执行过程、结果指标和可操作建议。 confidence 用于衡量结论的统计可靠性：>0.9 = 高度可信，0.7-0.9 = 中等，<0.7 = 不发布。 L09 研究创新层读取历史实验结论指导研究方向。L11 ML Platform 读取实验结论调整模型策略。
 """
 
+
 @dataclass(frozen=True)
 class ExperimentResult:
     conclusion: str
@@ -50,187 +48,13 @@ class ExperimentResult:
     variant_a_description: str
     variant_b_description: str
     variant_b_improvement: float
-    actionable_suggestions: List[str] = field(default_factory=list)
-    affected_factor_ids: List[str] = field(default_factory=list)
-    affected_strategy_ids: List[str] = field(default_factory=list)
+    actionable_suggestions: list[str] = field(default_factory=list)
+    affected_factor_ids: list[str] = field(default_factory=list)
+    affected_strategy_ids: list[str] = field(default_factory=list)
     archived_to_kms: bool = False
-    metrics: Dict[str, float] = field(default_factory=dict)
+    metrics: dict[str, float] = field(default_factory=dict)
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-P1-014 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

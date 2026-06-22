@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """T-DB-002: test_audit_schema.py — AuditQuery 单元测试
 Phase experimental, P1, 1.5h
 """

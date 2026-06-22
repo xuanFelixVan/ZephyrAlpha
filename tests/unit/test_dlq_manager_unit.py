@@ -6,10 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """DLQ 管理器单元测试——enqueue + replay + max_attempts。"""
 
 
 import pytest
+
 from zephyr.trading.orchestrator.dlq_manager import DLQManager
 
 

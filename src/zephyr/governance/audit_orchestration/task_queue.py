@@ -30,6 +30,7 @@ NOTE: 此模块已迁移至 zephyr.governance.audit_orchestration.core.task_queu
       本文件仅保留向后兼容的 re-export。
       修复: 消除双重 TaskQueue 实例导致的重复轮询问题。
 """
+
 from __future__ import annotations
 
 from zephyr.governance.audit_orchestration.core.task_queue import (  # noqa: F401

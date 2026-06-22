@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-SEC_llm_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-from zephyr.security.llm_defense.llm_security.behavior_audit_logger import (  # noqa: F401
+from zephyr.security.llm_defense.llm_security.behavior_audit_logger import (
     AuditAction,
     AuditEvent,
     AuditLogger,
@@ -8,12 +8,12 @@ from zephyr.security.llm_defense.llm_security.behavior_audit_logger import (  # 
     RotationPolicy,
     open_audit_log,
 )
-from zephyr.security.llm_defense.llm_security.gateway import (  # noqa: F401
+from zephyr.security.llm_defense.llm_security.gateway import (
     LSGSecurityGateway,
     ScanMode,
     ScanResult,
 )
-from zephyr.security.llm_defense.llm_security.input_sanitizer import (  # noqa: F401
+from zephyr.security.llm_defense.llm_security.input_sanitizer import (
     CommandInjectionError,
     ContextInjectionError,
     InputSanitizer,
@@ -21,13 +21,13 @@ from zephyr.security.llm_defense.llm_security.input_sanitizer import (  # noqa: 
     SanitizationError,
     TokenBudgetExceededError,
 )
-from zephyr.security.llm_defense.llm_security.process_sandbox import (  # noqa: F401
+from zephyr.security.llm_defense.llm_security.process_sandbox import (
     L2aSandbox,
     SandboxResult,
     SandboxTimeout,
     SandboxViolation,
 )
-from zephyr.security.llm_defense.llm_security.protocol import (  # noqa: F401
+from zephyr.security.llm_defense.llm_security.protocol import (
     LLMSecurityProtocol,
     SecurityContext,
     SecurityResult,
@@ -38,27 +38,27 @@ __all__ = [
     "AuditEvent",
     "AuditLogger",
     "AuditQuery",
-    "RotationPolicy",
-    "open_audit_log",
-    "LSGSecurityGateway",
-    "ScanMode",
-    "ScanResult",
     "CommandInjectionError",
     "ContextInjectionError",
     "InputSanitizer",
-    "PathTraversalError",
-    "SanitizationError",
-    "TokenBudgetExceededError",
     "L2aSandbox",
+    "LLMSecurityProtocol",
+    "LSGSecurityGateway",
+    "PathTraversalError",
+    "RotationPolicy",
     "SandboxResult",
     "SandboxTimeout",
     "SandboxViolation",
-    "LLMSecurityProtocol",
+    "SanitizationError",
+    "ScanMode",
+    "ScanResult",
     "SecurityContext",
     "SecurityResult",
+    "TokenBudgetExceededError",
     "behavior_audit_logger",
     "gateway",
     "input_sanitizer",
+    "open_audit_log",
     "process_sandbox",
     "protocol",
 ]

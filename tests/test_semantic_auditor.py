@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 cm_mod = pytest.importorskip("zephyr.governance.semantic_audit.compliance_map")
 fsa_mod = pytest.importorskip("zephyr.governance.semantic_audit.feedback_self_audit")
 kbg_mod = pytest.importorskip("zephyr.governance.semantic_audit.kb_gate")
@@ -54,6 +53,7 @@ class TestComplianceMapper:
     def test_map_event_known(self):
         mapper = ComplianceMapper()
         from zephyr.governance.audit_trail.models import AuditEventType
+
         mapping = mapper.map_event(AuditEventType.PERMISSION_VIOLATION.value)
         assert isinstance(mapping, ComplianceMapping)
         assert len(mapping.requirements) > 0
@@ -80,17 +80,22 @@ class TestComplianceMapper:
     def test_get_frameworks_for_event(self):
         mapper = ComplianceMapper()
         from zephyr.governance.audit_trail.models import AuditEventType
+
         frameworks = mapper.get_frameworks_for_event(AuditEventType.PERMISSION_VIOLATION.value)
         assert isinstance(frameworks, list)
         assert len(frameworks) > 0
 
     def test_custom_mappings(self):
-        custom = {"custom_event": [ComplianceRequirement(
-            framework=ComplianceFramework.GDPR,
-            article="Art.99",
-            title="Custom",
-            description="Test",
-        )]}
+        custom = {
+            "custom_event": [
+                ComplianceRequirement(
+                    framework=ComplianceFramework.GDPR,
+                    article="Art.99",
+                    title="Custom",
+                    description="Test",
+                )
+            ]
+        }
         mapper = ComplianceMapper(custom_mappings=custom)
         mapping = mapper.map_event("custom_event")
         assert len(mapping.requirements) >= 1
@@ -198,7 +203,9 @@ class TestKBAuditGate:
     def test_check_write_untrusted_source(self):
         gate = KBAuditGate()
         result = gate.check_write(
-            "agent-4", "content", trust_score=0.9,
+            "agent-4",
+            "content",
+            trust_score=0.9,
             metadata={"source": "external_untrusted"},
         )
         assert result.allowed is False

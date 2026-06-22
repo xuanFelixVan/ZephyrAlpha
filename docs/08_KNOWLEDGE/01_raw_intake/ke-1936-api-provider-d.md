@@ -21,22 +21,22 @@ multi_provider_resilience:
       role: "主力推理+升级判定"
       health_check: "每30s ping /status"
       failure_threshold: "连续3次超时/5xx→触发降级"
-    
+
     tier2_fallback:
       provider: "GLM (Zhipu)"
       role: "备用推理+升级判定(国内线路)"
       activation: "Tier1故障后<2s自动切换"
-    
+
     tier3_fallback:
       provider: "Claude Opus (Anthropic)"
       role: "高能力备用(升级Triage+复杂判定)"
       activation: "Tier1+2均故障后"
-    
+
     tier4_last_resort:
       provider: "本地备用(ollama/qwen-local)"
       role: "仅升级判定(基础能力,无代码生成)"
       constraint: "仅用于P0升级场景,非P0降级为自处理"
-    
+
     tier5_emergency_stop:
       trigger: "所有Provider不可用"
       action: "系统进入ALL_STOP模式——暂停所有AI操作+持久化所有待处理升级+每30s重试Tier1"

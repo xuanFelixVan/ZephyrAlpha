@@ -15,8 +15,6 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.governance.rule_enforcement.invariants.zero_residue_check import (
     ResidueFinding,
     ResidueReport,
@@ -156,6 +154,7 @@ class TestRunScript:
     @patch("zephyr.governance.rule_enforcement.invariants.zero_residue_check.subprocess.run")
     def test_script_timeout(self, mock_run, tmp_path):
         import subprocess
+
         mock_run.side_effect = subprocess.TimeoutExpired(cmd="script", timeout=120)
 
         scripts_dir = tmp_path / "scripts" / "governance" / "d1_structure"

@@ -12,8 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
@@ -21,10 +20,10 @@ from pydantic import BaseModel, Field
 class BlameRecord(BaseModel):
     file: str
     line: int
-    agent_id: Optional[str] = None
-    session_id: Optional[str] = None
-    task_id: Optional[str] = None
-    provenance: Optional[dict[str, object]] = None
+    agent_id: str | None = None
+    session_id: str | None = None
+    task_id: str | None = None
+    provenance: dict[str, object] | None = None
 
 
 class CommitNode(BaseModel):
@@ -55,7 +54,7 @@ def blame(file: str, line: int) -> BlameRecord:
 
 def auto_doc(module_id: str, functions: list[str]) -> str:
     header = f"# Module: {module_id}\n\n"
-    header += f"Auto-generated {datetime.now(timezone.utc).isoformat()[:19]}\n\n"
+    header += f"Auto-generated {datetime.now(UTC).isoformat()[:19]}\n\n"
     header += "## Key Functions\n\n"
     for fn in functions:
         header += f"* `{fn}()`\n"

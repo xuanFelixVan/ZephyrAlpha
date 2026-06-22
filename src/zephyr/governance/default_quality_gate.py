@@ -44,9 +44,8 @@ SSoT: cross_layer_contracts.yaml → CTR-ERR-001
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import Optional
 
 from zephyr.governance.quality_gate import (
     DataQualityGate,
@@ -54,7 +53,6 @@ from zephyr.governance.quality_gate import (
     QualityReport,
     RecoveryHint,
 )
-from zephyr.shared.contracts.errors.data_quality_error import DataQualityError as _CTRDataQualityError
 
 _logger = logging.getLogger(__name__)
 
@@ -85,7 +83,7 @@ class DefaultQualityGate(DataQualityGate):
         close: Decimal,
         volume: Decimal,
         timestamp: datetime,
-        prev_close: Optional[Decimal] = None,
+        prev_close: Decimal | None = None,
     ) -> QualityReport:
         score = 1.0
         failure_reason = None
@@ -103,9 +101,9 @@ class DefaultQualityGate(DataQualityGate):
                 recovery_hint=RecoveryHint.SKIP_SYMBOL,
             )
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if timestamp.tzinfo is None:
-            timestamp = timestamp.replace(tzinfo=timezone.utc)
+            timestamp = timestamp.replace(tzinfo=UTC)
         lateness = (now - timestamp).total_seconds()
         if lateness > self._max_stale_seconds:
             score -= 0.3
@@ -149,7 +147,10 @@ class DefaultQualityGate(DataQualityGate):
         if not passed:
             _logger.warning(
                 "Quality gate failed: symbol=%s score=%.2f reason=%s field=%s",
-                symbol, score, failure_reason, failed_field,
+                symbol,
+                score,
+                failure_reason,
+                failed_field,
             )
 
         return QualityReport(
@@ -159,7 +160,7 @@ class DefaultQualityGate(DataQualityGate):
             failure_reason=failure_reason if not passed else None,
             failed_field=failed_field if not passed else None,
             recovery_hint=recovery_hint if not passed else RecoveryHint.RETRY,
-            checked_at=datetime.now(timezone.utc),
+            checked_at=datetime.now(UTC),
         )
 
     def check_batch(self, data: list[dict]) -> list[QualityReport]:
@@ -173,7 +174,7 @@ class DefaultQualityGate(DataQualityGate):
                 low=Decimal(str(row.get("low", 0))),
                 close=Decimal(str(row.get("close", 0))),
                 volume=Decimal(str(row.get("volume", 0))),
-                timestamp=row.get("timestamp", datetime.now(timezone.utc)),
+                timestamp=row.get("timestamp", datetime.now(UTC)),
                 prev_close=Decimal(str(row["prev_close"])) if row.get("prev_close") is not None else None,
             )
             reports.append(report)

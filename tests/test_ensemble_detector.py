@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_ensemble_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.ensemble_detector import EnsembleDetector
 

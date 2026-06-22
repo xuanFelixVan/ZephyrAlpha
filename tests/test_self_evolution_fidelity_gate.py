@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.self_evolution_fidelity_gate import (
     SelfEvolutionFidelityGate,
     SemanticSignature,
@@ -134,9 +132,7 @@ class TestCheckToxicity:
 
 class TestCheckCoherence:
     def test_same_references(self):
-        score, detail = SelfEvolutionFidelityGate.check_coherence(
-            "MOD-INF-019 MOD-INF-020", "MOD-INF-019 MOD-INF-020"
-        )
+        score, detail = SelfEvolutionFidelityGate.check_coherence("MOD-INF-019 MOD-INF-020", "MOD-INF-019 MOD-INF-020")
         assert score == 100.0
 
     def test_no_original_references(self):
@@ -145,9 +141,7 @@ class TestCheckCoherence:
         assert detail == "no_references"
 
     def test_lost_references(self):
-        score, detail = SelfEvolutionFidelityGate.check_coherence(
-            "MOD-INF-019 MOD-INF-020", "MOD-INF-019"
-        )
+        score, detail = SelfEvolutionFidelityGate.check_coherence("MOD-INF-019 MOD-INF-020", "MOD-INF-019")
         assert score == 50.0
 
 

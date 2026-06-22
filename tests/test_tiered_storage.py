@@ -12,10 +12,8 @@
 
 from __future__ import annotations
 
-import gzip
 import json
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
 
 import pytest
 
@@ -86,7 +84,9 @@ class TestMigrationRecord:
         assert rec.entries_migrated == 0
 
     def test_custom_values(self):
-        rec = MigrationRecord(source_tier=StorageTier.WARM, target_tier=StorageTier.COLD, file_name="test.jsonl.gz", entries_migrated=10)
+        rec = MigrationRecord(
+            source_tier=StorageTier.WARM, target_tier=StorageTier.COLD, file_name="test.jsonl.gz", entries_migrated=10
+        )
         assert rec.source_tier == StorageTier.WARM
 
 
@@ -153,6 +153,7 @@ class TestTieredStorageManager:
         log_path = hot_dir / "old.jsonl"
         log_path.write_text('{"test": true}\n', encoding="utf-8")
         import os
+
         os.utime(log_path, (old_time, old_time))
         records = mgr.auto_migrate()
         assert len(records) >= 1

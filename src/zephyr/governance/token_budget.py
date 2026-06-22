@@ -13,11 +13,10 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +95,7 @@ class TokenManager:
         self._pools: dict[PoolLevel, PoolState] = {}
         self._total_allocated: int = 0
         self._degrated: bool = False
-        self._created_at: datetime = datetime.now(timezone.utc)
+        self._created_at: datetime = datetime.now(UTC)
 
         for level in PoolLevel:
             cap = POOL_CAPS.get(level, 0)
@@ -199,4 +198,4 @@ class TokenManager:
             self._pools[level] = PoolState(level=level, cap=cap)
         self._total_allocated = 0
         self._degrated = False
-        self._created_at = datetime.now(timezone.utc)
+        self._created_at = datetime.now(UTC)

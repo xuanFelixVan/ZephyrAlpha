@@ -12,12 +12,9 @@
 
 from __future__ import annotations
 
-import json
 import os
 import sqlite3
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.behavioral_audit.trend_analyzer import (
     TrendAlert,
@@ -40,12 +37,18 @@ def _seed_db(db_path: str, rows: list[dict]) -> None:
             "baseline_version, state, created_at, updated_at, resolved_by, resolution_detail, "
             "auto_fixed, rollback_verified) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
             (
-                r.get("event_id", "e1"), r.get("module_id", "MOD-X"),
-                r.get("detector_id", "det-1"), r.get("drift_dimension", "code"),
-                r.get("baseline_version", "v1"), r.get("state", "OPEN"),
-                r.get("created_at"), r.get("updated_at"),
-                r.get("resolved_by", ""), r.get("resolution_detail", ""),
-                r.get("auto_fixed", 0), r.get("rollback_verified", 0),
+                r.get("event_id", "e1"),
+                r.get("module_id", "MOD-X"),
+                r.get("detector_id", "det-1"),
+                r.get("drift_dimension", "code"),
+                r.get("baseline_version", "v1"),
+                r.get("state", "OPEN"),
+                r.get("created_at"),
+                r.get("updated_at"),
+                r.get("resolved_by", ""),
+                r.get("resolution_detail", ""),
+                r.get("auto_fixed", 0),
+                r.get("rollback_verified", 0),
             ),
         )
     conn.commit()
@@ -116,17 +119,38 @@ class TestTrendAnalyzer:
 
     def test_compute_metrics_with_data(self, tmp_path):
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         week_ago = (now - timedelta(days=3)).isoformat()
         month_ago = (now - timedelta(days=10)).isoformat()
-        _seed_db(analyzer._db_path, [
-            {"event_id": "e1", "module_id": "MOD-A", "state": "OPEN",
-             "created_at": week_ago, "updated_at": week_ago, "detector_id": "det-1"},
-            {"event_id": "e2", "module_id": "MOD-A", "state": "VERIFIED",
-             "created_at": month_ago, "updated_at": now.isoformat(), "detector_id": "det-1"},
-            {"event_id": "e3", "module_id": "MOD-A", "state": "FALSE_POSITIVE",
-             "created_at": month_ago, "updated_at": now.isoformat(), "detector_id": "det-2"},
-        ])
+        _seed_db(
+            analyzer._db_path,
+            [
+                {
+                    "event_id": "e1",
+                    "module_id": "MOD-A",
+                    "state": "OPEN",
+                    "created_at": week_ago,
+                    "updated_at": week_ago,
+                    "detector_id": "det-1",
+                },
+                {
+                    "event_id": "e2",
+                    "module_id": "MOD-A",
+                    "state": "VERIFIED",
+                    "created_at": month_ago,
+                    "updated_at": now.isoformat(),
+                    "detector_id": "det-1",
+                },
+                {
+                    "event_id": "e3",
+                    "module_id": "MOD-A",
+                    "state": "FALSE_POSITIVE",
+                    "created_at": month_ago,
+                    "updated_at": now.isoformat(),
+                    "detector_id": "det-2",
+                },
+            ],
+        )
         metrics = analyzer.compute_metrics("MOD-A")
         assert metrics.drift_velocity == 1.0
         assert 0.0 < metrics.resolution_rate <= 1.0
@@ -135,14 +159,20 @@ class TestTrendAnalyzer:
 
     def test_check_trend_alerts_spike(self, tmp_path):
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         rows = []
         for i in range(7):
             ts = (now - timedelta(days=i)).isoformat()
-            rows.append({
-                "event_id": f"spike-{i}", "module_id": "MOD-SPIKE", "state": "OPEN",
-                "created_at": ts, "updated_at": ts, "detector_id": "det-1",
-            })
+            rows.append(
+                {
+                    "event_id": f"spike-{i}",
+                    "module_id": "MOD-SPIKE",
+                    "state": "OPEN",
+                    "created_at": ts,
+                    "updated_at": ts,
+                    "detector_id": "det-1",
+                }
+            )
         _seed_db(analyzer._db_path, rows)
         alerts = analyzer.check_trend_alerts("MOD-SPIKE")
         spike_alerts = [a for a in alerts if a.alert_type == "spike"]
@@ -151,27 +181,50 @@ class TestTrendAnalyzer:
 
     def test_check_trend_alerts_no_alerts_when_healthy(self, tmp_path):
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
-        now = datetime.now(timezone.utc)
-        _seed_db(analyzer._db_path, [
-            {"event_id": "h1", "module_id": "MOD-HEALTHY", "state": "VERIFIED",
-             "created_at": (now - timedelta(days=10)).isoformat(),
-             "updated_at": (now - timedelta(days=9)).isoformat(), "detector_id": "det-1"},
-        ])
+        now = datetime.now(UTC)
+        _seed_db(
+            analyzer._db_path,
+            [
+                {
+                    "event_id": "h1",
+                    "module_id": "MOD-HEALTHY",
+                    "state": "VERIFIED",
+                    "created_at": (now - timedelta(days=10)).isoformat(),
+                    "updated_at": (now - timedelta(days=9)).isoformat(),
+                    "detector_id": "det-1",
+                },
+            ],
+        )
         alerts = analyzer.check_trend_alerts("MOD-HEALTHY")
         spike_alerts = [a for a in alerts if a.alert_type == "spike"]
         assert len(spike_alerts) == 0
 
     def test_archive_old_data_moves_records(self, tmp_path):
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         old_ts = (now - timedelta(days=120)).isoformat()
         recent_ts = (now - timedelta(days=10)).isoformat()
-        _seed_db(analyzer._db_path, [
-            {"event_id": "old-1", "module_id": "MOD-OLD", "state": "OPEN",
-             "created_at": old_ts, "updated_at": old_ts, "detector_id": "det-1"},
-            {"event_id": "recent-1", "module_id": "MOD-NEW", "state": "OPEN",
-             "created_at": recent_ts, "updated_at": recent_ts, "detector_id": "det-1"},
-        ])
+        _seed_db(
+            analyzer._db_path,
+            [
+                {
+                    "event_id": "old-1",
+                    "module_id": "MOD-OLD",
+                    "state": "OPEN",
+                    "created_at": old_ts,
+                    "updated_at": old_ts,
+                    "detector_id": "det-1",
+                },
+                {
+                    "event_id": "recent-1",
+                    "module_id": "MOD-NEW",
+                    "state": "OPEN",
+                    "created_at": recent_ts,
+                    "updated_at": recent_ts,
+                    "detector_id": "det-1",
+                },
+            ],
+        )
         analyzer.archive_old_data()
         conn = sqlite3.connect(analyzer._db_path)
         remaining = conn.execute("SELECT COUNT(*) FROM drift_events").fetchone()[0]
@@ -183,12 +236,21 @@ class TestTrendAnalyzer:
 
     def test_archive_old_data_no_old_records(self, tmp_path):
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         recent_ts = (now - timedelta(days=5)).isoformat()
-        _seed_db(analyzer._db_path, [
-            {"event_id": "r1", "module_id": "MOD-R", "state": "OPEN",
-             "created_at": recent_ts, "updated_at": recent_ts, "detector_id": "det-1"},
-        ])
+        _seed_db(
+            analyzer._db_path,
+            [
+                {
+                    "event_id": "r1",
+                    "module_id": "MOD-R",
+                    "state": "OPEN",
+                    "created_at": recent_ts,
+                    "updated_at": recent_ts,
+                    "detector_id": "det-1",
+                },
+            ],
+        )
         analyzer.archive_old_data()
         conn = sqlite3.connect(analyzer._db_path)
         remaining = conn.execute("SELECT COUNT(*) FROM drift_events").fetchone()[0]
@@ -197,14 +259,20 @@ class TestTrendAnalyzer:
 
     def test_fp_ratio_alert(self, tmp_path):
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         rows = []
         for i in range(5):
             ts = (now - timedelta(days=i)).isoformat()
-            rows.append({
-                "event_id": f"fp-{i}", "module_id": "MOD-FP", "state": "FALSE_POSITIVE",
-                "created_at": ts, "updated_at": ts, "detector_id": "det-bad",
-            })
+            rows.append(
+                {
+                    "event_id": f"fp-{i}",
+                    "module_id": "MOD-FP",
+                    "state": "FALSE_POSITIVE",
+                    "created_at": ts,
+                    "updated_at": ts,
+                    "detector_id": "det-bad",
+                }
+            )
         _seed_db(analyzer._db_path, rows)
         alerts = analyzer.check_trend_alerts("MOD-FP")
         fp_alerts = [a for a in alerts if a.alert_type == "fp_ratio"]

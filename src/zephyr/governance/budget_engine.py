@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Budget Enforcer core engine — MOD-INF-024
 
@@ -21,9 +21,8 @@ from __future__ import annotations
 
 import hashlib
 import threading
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from typing import Optional, Callable
+from collections.abc import Callable
+from datetime import UTC, datetime
 
 from .budget_models import (
     BudgetAlert,
@@ -37,13 +36,20 @@ from .budget_models import (
     ModelTier,
 )
 
-
 DEFAULT_DEGRADATION_STEPS: list[DegradationStep] = [
-    DegradationStep(0, "Normal operation — Premium models available", ModelTier.PREMIUM, BudgetLevel.L0_NORMAL, 32_000, 0),
+    DegradationStep(
+        0, "Normal operation — Premium models available", ModelTier.PREMIUM, BudgetLevel.L0_NORMAL, 32_000, 0
+    ),
     DegradationStep(1, "Warning — Standard models only", ModelTier.STANDARD, BudgetLevel.L1_WARNING, 16_000, 120),
-    DegradationStep(2, "Throttled — Economy models, reduced context", ModelTier.ECONOMY, BudgetLevel.L2_THROTTLED, 8_000, 300),
-    DegradationStep(3, "Degraded — Minimal models, essential only", ModelTier.MINIMAL, BudgetLevel.L3_DEGRADED, 4_000, 600),
-    DegradationStep(4, "Emergency — Read-only, no code generation", ModelTier.MINIMAL, BudgetLevel.L4_EMERGENCY, 2_000, 900),
+    DegradationStep(
+        2, "Throttled — Economy models, reduced context", ModelTier.ECONOMY, BudgetLevel.L2_THROTTLED, 8_000, 300
+    ),
+    DegradationStep(
+        3, "Degraded — Minimal models, essential only", ModelTier.MINIMAL, BudgetLevel.L3_DEGRADED, 4_000, 600
+    ),
+    DegradationStep(
+        4, "Emergency — Read-only, no code generation", ModelTier.MINIMAL, BudgetLevel.L4_EMERGENCY, 2_000, 900
+    ),
 ]
 
 
@@ -86,7 +92,7 @@ class BudgetEngine:
         self._lock = threading.Lock()
         self._consumption_version: dict[str, int] = {}
         self._provider_claims: dict[str, dict[str, float]] = {}
-        self._on_consumption_recorded: Optional[Callable[[str, int, float, float], None]] = None
+        self._on_consumption_recorded: Callable[[str, int, float, float], None] | None = None
         self._init_consumption()
 
     def _init_consumption(self) -> None:
@@ -104,7 +110,9 @@ class BudgetEngine:
             self._consumption[policy.policy_id] = cons
             self._consumption_version[policy.policy_id] = 0
 
-    def try_claim_budget(self, provider_id: str, dimension: BudgetDimension, amount: float, expected_version: int | None = None) -> tuple[bool, int, str]:
+    def try_claim_budget(
+        self, provider_id: str, dimension: BudgetDimension, amount: float, expected_version: int | None = None
+    ) -> tuple[bool, int, str]:
         with self._lock:
             policy = self._policies.get(dimension)
             if policy is None:
@@ -116,7 +124,11 @@ class BudgetEngine:
 
             current_version = self._consumption_version.get(policy.policy_id, 0)
             if expected_version is not None and current_version != expected_version:
-                return False, current_version, f"Version mismatch: expected={expected_version}, current={current_version}"
+                return (
+                    False,
+                    current_version,
+                    f"Version mismatch: expected={expected_version}, current={current_version}",
+                )
 
             provider_claims = self._provider_claims.get(provider_id, {})
             already_claimed = provider_claims.get(policy.policy_id, 0.0)
@@ -125,9 +137,17 @@ class BudgetEngine:
             remaining_hourly = policy.hourly_limit - cons.consumed_hourly - already_claimed
 
             if remaining_daily < amount:
-                return False, current_version, f"Insufficient daily budget: remaining={remaining_daily:.2f}, requested={amount:.2f}"
+                return (
+                    False,
+                    current_version,
+                    f"Insufficient daily budget: remaining={remaining_daily:.2f}, requested={amount:.2f}",
+                )
             if remaining_hourly < amount:
-                return False, current_version, f"Insufficient hourly budget: remaining={remaining_hourly:.2f}, requested={amount:.2f}"
+                return (
+                    False,
+                    current_version,
+                    f"Insufficient hourly budget: remaining={remaining_hourly:.2f}, requested={amount:.2f}",
+                )
 
             if provider_id not in self._provider_claims:
                 self._provider_claims[provider_id] = {}
@@ -151,7 +171,7 @@ class BudgetEngine:
             provider_claims = self._provider_claims.get(provider_id, {})
             claimed = provider_claims.pop(policy.policy_id, 0.0)
 
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             if (now - cons.last_reset_daily).days >= 1:
                 cons.consumed_daily = 0.0
                 cons.request_count_daily = 0
@@ -162,15 +182,11 @@ class BudgetEngine:
 
             committed = min(actual_amount, claimed) if claimed > 0 else actual_amount
 
-            if cons.dimension == BudgetDimension.TOKEN:
-                cons.consumed_daily += committed
-                cons.consumed_hourly += committed
-                cons.consumed_per_request = committed
-            elif cons.dimension == BudgetDimension.COST:
-                cons.consumed_daily += committed
-                cons.consumed_hourly += committed
-                cons.consumed_per_request = committed
-            elif cons.dimension == BudgetDimension.TIME:
+            if (
+                cons.dimension == BudgetDimension.TOKEN
+                or cons.dimension == BudgetDimension.COST
+                or cons.dimension == BudgetDimension.TIME
+            ):
                 cons.consumed_daily += committed
                 cons.consumed_hourly += committed
                 cons.consumed_per_request = committed
@@ -201,13 +217,14 @@ class BudgetEngine:
             cost_result = self._check_dimension(BudgetDimension.COST, request_id, estimated_tokens, estimated_cost)
 
             worst = token_result
-            if cost_result.decision == GateDecision.DENY:
-                worst = cost_result
-            elif cost_result.decision == GateDecision.DEGRADE and worst.decision != GateDecision.DENY:
+            if cost_result.decision == GateDecision.DENY or (
+                cost_result.decision == GateDecision.DEGRADE and worst.decision != GateDecision.DENY
+            ):
                 worst = cost_result
 
         try:
             from zephyr.behavioral_audit.drift_infrastructure import check_budget_for_gate
+
             drift_result = check_budget_for_gate("MOD-INF-024", tier="P1")
             if not drift_result.get("allowed", True):
                 with self._lock:
@@ -238,7 +255,7 @@ class BudgetEngine:
             cons = self._consumption.get(policy_id)
             if cons is None:
                 return
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             if (now - cons.last_reset_daily).days >= 1:
                 cons.consumed_daily = 0.0
                 cons.request_count_daily = 0
@@ -267,6 +284,7 @@ class BudgetEngine:
 
         try:
             import importlib
+
             _mod = importlib.import_module("zephyr.infrastructure.system_telemetry._budget_telemetry_bridge")
             gt = _mod.get_telemetry()
             if gt is not None:
@@ -320,7 +338,7 @@ class BudgetEngine:
                 for policy_id, cons in self._consumption.items()
             }
 
-    def get_active_policy(self, dimension: BudgetDimension) -> Optional[BudgetPolicy]:
+    def get_active_policy(self, dimension: BudgetDimension) -> BudgetPolicy | None:
         return self._policies.get(dimension)
 
     def compute_hash(self) -> str:
@@ -335,7 +353,9 @@ class BudgetEngine:
                 canonical += f"{self._current_degradation_level.value}:{self._active_step_idx}|"
             return hashlib.sha256(canonical.encode()).hexdigest()
 
-    def _check_dimension(self, dimension: BudgetDimension, request_id: str, estimated_tokens: int, estimated_cost: float) -> GateResult:
+    def _check_dimension(
+        self, dimension: BudgetDimension, request_id: str, estimated_tokens: int, estimated_cost: float
+    ) -> GateResult:
         policy = self._policies.get(dimension)
         if policy is None:
             return GateResult(request_id=request_id, decision=GateDecision.ALLOW, reason="No policy defined")
@@ -349,24 +369,76 @@ class BudgetEngine:
 
         daily_ratio = cons.consumed_daily / policy.daily_limit if policy.daily_limit > 0 else 0.0
 
-        consumption: float = float(estimated_tokens) if dimension == BudgetDimension.TOKEN else (estimated_cost if dimension == BudgetDimension.COST else 0.0)
+        consumption: float = (
+            float(estimated_tokens)
+            if dimension == BudgetDimension.TOKEN
+            else (estimated_cost if dimension == BudgetDimension.COST else 0.0)
+        )
 
         if consumption > policy.per_request_limit:
-            return GateResult(request_id=request_id, decision=GateDecision.NARROW, reason=f"Per-request limit exceeded: {policy.per_request_limit}", remaining_daily=remaining_daily, remaining_hourly=remaining_hourly, estimated_tokens=estimated_tokens, estimated_cost=estimated_cost)
+            return GateResult(
+                request_id=request_id,
+                decision=GateDecision.NARROW,
+                reason=f"Per-request limit exceeded: {policy.per_request_limit}",
+                remaining_daily=remaining_daily,
+                remaining_hourly=remaining_hourly,
+                estimated_tokens=estimated_tokens,
+                estimated_cost=estimated_cost,
+            )
 
         if daily_ratio >= policy.hard_stop_threshold:
-            return GateResult(request_id=request_id, decision=GateDecision.DENY, reason=f"{dimension.name} hard stop: daily {daily_ratio:.0%}", remaining_daily=remaining_daily, remaining_hourly=remaining_hourly, estimated_tokens=estimated_tokens, estimated_cost=estimated_cost)
+            return GateResult(
+                request_id=request_id,
+                decision=GateDecision.DENY,
+                reason=f"{dimension.name} hard stop: daily {daily_ratio:.0%}",
+                remaining_daily=remaining_daily,
+                remaining_hourly=remaining_hourly,
+                estimated_tokens=estimated_tokens,
+                estimated_cost=estimated_cost,
+            )
 
         if daily_ratio >= policy.emergency_threshold:
-            return GateResult(request_id=request_id, decision=GateDecision.DEGRADE, reason=f"{dimension.name} emergency: daily {daily_ratio:.0%}", remaining_daily=remaining_daily, remaining_hourly=remaining_hourly, estimated_tokens=estimated_tokens, estimated_cost=estimated_cost)
+            return GateResult(
+                request_id=request_id,
+                decision=GateDecision.DEGRADE,
+                reason=f"{dimension.name} emergency: daily {daily_ratio:.0%}",
+                remaining_daily=remaining_daily,
+                remaining_hourly=remaining_hourly,
+                estimated_tokens=estimated_tokens,
+                estimated_cost=estimated_cost,
+            )
 
         if daily_ratio >= policy.degrade_threshold:
-            return GateResult(request_id=request_id, decision=GateDecision.BORROW, reason=f"{dimension.name} degraded: daily {daily_ratio:.0%}", remaining_daily=remaining_daily, remaining_hourly=remaining_hourly, estimated_tokens=estimated_tokens, estimated_cost=estimated_cost)
+            return GateResult(
+                request_id=request_id,
+                decision=GateDecision.BORROW,
+                reason=f"{dimension.name} degraded: daily {daily_ratio:.0%}",
+                remaining_daily=remaining_daily,
+                remaining_hourly=remaining_hourly,
+                estimated_tokens=estimated_tokens,
+                estimated_cost=estimated_cost,
+            )
 
         if remaining_hourly <= consumption:
-            return GateResult(request_id=request_id, decision=GateDecision.BORROW, reason=f"{dimension.name} hourly exhausted", remaining_daily=remaining_daily, remaining_hourly=remaining_hourly, estimated_tokens=estimated_tokens, estimated_cost=estimated_cost)
+            return GateResult(
+                request_id=request_id,
+                decision=GateDecision.BORROW,
+                reason=f"{dimension.name} hourly exhausted",
+                remaining_daily=remaining_daily,
+                remaining_hourly=remaining_hourly,
+                estimated_tokens=estimated_tokens,
+                estimated_cost=estimated_cost,
+            )
 
-        return GateResult(request_id=request_id, decision=GateDecision.ALLOW, reason="OK", remaining_daily=remaining_daily, remaining_hourly=remaining_hourly, estimated_tokens=estimated_tokens, estimated_cost=estimated_cost)
+        return GateResult(
+            request_id=request_id,
+            decision=GateDecision.ALLOW,
+            reason="OK",
+            remaining_daily=remaining_daily,
+            remaining_hourly=remaining_hourly,
+            estimated_tokens=estimated_tokens,
+            estimated_cost=estimated_cost,
+        )
 
     def _compute_budget_level(self, result: GateResult) -> BudgetLevel:
         if result.decision == GateDecision.DENY:

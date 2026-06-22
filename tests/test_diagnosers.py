@@ -10,32 +10,33 @@
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_diagnosers.py
 
-import time
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
+
+from zephyr.ops.diagnosers.action_composition_health_monitor import ActionCompositionHealthMonitor
+from zephyr.ops.diagnosers.adaptive_param_tuning import AdaptiveParamTuning, TuningMode
+from zephyr.ops.diagnosers.amplification_guard import AmplificationGuard
+from zephyr.ops.diagnosers.api_dependency_metrics import APIDependencyMetrics, DependencyStatusRecord
 from zephyr.ops.diagnosers.auto_diagnosis import AutoDiagnosis
+from zephyr.ops.diagnosers.burn_rate_alerter import BurnRateAlerter
 from zephyr.ops.diagnosers.burnout_alarm import BurnoutAlarm
-from zephyr.ops.diagnosers.burn_rate_alerter import BurnWindow, BurnRateAlerter
+from zephyr.ops.diagnosers.capacity_aware_repair import CapacityAwareRepair
+from zephyr.ops.diagnosers.causal_inference_engine import CausalGraph, CausalInferenceEngine
 from zephyr.ops.diagnosers.cognitive_load import CognitiveLoad
 from zephyr.ops.diagnosers.cognitive_load_budget import CognitiveLoadBudget
+from zephyr.ops.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode, ColdStartPhase
+from zephyr.ops.diagnosers.collaborative_learning import CollaborativeLearning
 from zephyr.ops.diagnosers.confidence_decomposer import ConfidenceDecomposer
 from zephyr.ops.diagnosers.context_truncation import ContextTruncation
-from zephyr.ops.diagnosers.toil_quantification import ActionClass, ToilQuantification
-from zephyr.ops.diagnosers.causal_inference_engine import CausalGraph, CausalInferenceEngine
-from zephyr.ops.diagnosers.capacity_aware_repair import CapacityAwareRepair
-from zephyr.ops.diagnosers.api_dependency_metrics import DependencyStatusRecord, APIDependencyMetrics
-from zephyr.ops.diagnosers.cold_start_conservative_mode import ColdStartPhase, ColdStartConservativeMode
-from zephyr.ops.diagnosers.adaptive_param_tuning import TuningMode, AdaptiveParamTuning
-from zephyr.ops.diagnosers.action_composition_health_monitor import ActionCompositionHealthMonitor
-from zephyr.ops.diagnosers.timezone_semantic_reasoner import VenueTZ, TimezoneSemanticReasoner
 from zephyr.ops.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
-from zephyr.ops.diagnosers.amplification_guard import AmplificationGuard
+from zephyr.ops.diagnosers.timezone_semantic_reasoner import TimezoneSemanticReasoner
+from zephyr.ops.diagnosers.toil_quantification import ActionClass, ToilQuantification
+from zephyr.ops.diagnosers.tone_adapter import ToneAdapter
+from zephyr.ops.diagnosers.tone_adapter_v2 import ToneAdapterV2
 from zephyr.ops.diagnosers.value_added_baseline import ValueAddedBaseline
 from zephyr.ops.diagnosers.vertical_self_assessment import VerticalSelfAssessment
 from zephyr.ops.diagnosers.zombie_fle_detector import CognitiveState, ZombieFLEDetector
-from zephyr.ops.diagnosers.tone_adapter import ToneAdapter
-from zephyr.ops.diagnosers.tone_adapter_v2 import ToneAdapterV2
-from zephyr.ops.diagnosers.collaborative_learning import CollaborativeLearning
 
 
 class TestAutoDiagnosis:
@@ -348,17 +349,17 @@ class TestActionCompositionHealthMonitor:
 class TestTimezoneSemanticReasoner:
     def test_market_active_during_hours(self):
         tsr = TimezoneSemanticReasoner()
-        dt = datetime(2026, 1, 1, 15, 0, tzinfo=timezone.utc)
+        dt = datetime(2026, 1, 1, 15, 0, tzinfo=UTC)
         assert tsr.is_market_active("NYSE", dt) is True
 
     def test_market_inactive_outside_hours(self):
         tsr = TimezoneSemanticReasoner()
-        dt = datetime(2026, 1, 1, 10, 0, tzinfo=timezone.utc)
+        dt = datetime(2026, 1, 1, 10, 0, tzinfo=UTC)
         assert tsr.is_market_active("NYSE", dt) is False
 
     def test_unknown_venue(self):
         tsr = TimezoneSemanticReasoner()
-        dt = datetime(2026, 1, 1, 15, 0, tzinfo=timezone.utc)
+        dt = datetime(2026, 1, 1, 15, 0, tzinfo=UTC)
         assert tsr.is_market_active("UNKNOWN", dt) is False
 
     def test_active_venues(self):

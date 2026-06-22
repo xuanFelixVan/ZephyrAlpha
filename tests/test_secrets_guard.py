@@ -11,6 +11,7 @@
 # [TESTS] self
 
 import pytest
+
 from zephyr.governance.rule_enforcement.secrets_guard import SecretsGuard
 
 

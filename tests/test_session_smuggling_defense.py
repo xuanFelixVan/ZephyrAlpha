@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 mod = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.layer3_coordination.session_smuggling_defense",
     reason="session_smuggling_defense module not available",
@@ -54,8 +53,6 @@ class TestSessionSmugglingDefense:
 
 class TestSmugglingAttempt:
     def test_instantiation(self):
-        attempt = mod.SmugglingAttempt(
-            reported_agent="a1", actual_agent="a2", message_id="m1", timestamp=0.0
-        )
+        attempt = mod.SmugglingAttempt(reported_agent="a1", actual_agent="a2", message_id="m1", timestamp=0.0)
         assert attempt is not None
         assert attempt.reported_agent == "a1"

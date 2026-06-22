@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-165 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.contracts.core.telemetry_emitter
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-P1-013 ====
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -49,6 +39,7 @@ AI Prompt
 
 """
 
+
 @dataclass(frozen=True)
 class TelemetryEmitter:
     correlation_id: str
@@ -67,5 +58,6 @@ class TelemetryEmitter:
     severity: str = ""
     span_id: str = ""
     trace_id: str = ""
+
 
 # ==== END CODGEN:CTR-P1-013 ====

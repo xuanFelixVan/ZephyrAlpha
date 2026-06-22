@@ -33,7 +33,6 @@
 Safety: HIGH（审计记录是不可变安全证据）
 """
 
-import pytest
 from zephyr.shared.shared_services.observability_02.session_audit import (
     CostRecord,
     DecisionRecord,

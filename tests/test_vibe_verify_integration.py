@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_vibe_verify_integration.py -q
 
-import pytest
 from zephyr.governance.vibe_verify_integration import VibeVerifyIntegration
 
 

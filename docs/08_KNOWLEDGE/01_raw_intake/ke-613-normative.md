@@ -12,5 +12,5 @@ category: documentation
 | ---------------------------- | ------------------------------------ | ------------------------ |
 | PS-STD-001                   | `immutable_core` 定义、`ai_autonomy` 字段 | 本标准 ABS-01 引用其权限定义       |
 | PS-STD-002                   | L1/L2/L3 模板层级                        | 本标准 COND-05\~06 引用其层级定义  |
-| rule-classification-and-arbitration-standard.md | 五维分类 + 冲突裁决推导链 | 本标准 ABS-03\~04 引用其冲突裁决规则 |
-| rule-lifecycle-and-change-standard.md | P0-P3 变更分级                           | 本标准 ABS-05\~10 引用其审批流程   |
+| rule_classification_and_arbitration_standard.yaml | 五维分类 + 冲突裁决推导链 | 本标准 ABS-03\~04 引用其冲突裁决规则 |
+| rule_lifecycle_and_change_standard.yaml | P0-P3 变更分级                           | 本标准 ABS-05\~10 引用其审批流程   |

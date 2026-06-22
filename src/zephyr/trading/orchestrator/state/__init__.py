@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """orchestrator.state — auto-generated package init."""
+
 from . import session_manager
 
-__all__ = ['agent_health_monitor', 'file_task_mapper', 'session_manager', 'state_synchronizer']
-
+__all__ = ["agent_health_monitor", "file_task_mapper", "session_manager", "state_synchronizer"]

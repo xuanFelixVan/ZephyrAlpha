@@ -51,7 +51,7 @@ def _cmd_scan(args: argparse.Namespace) -> int:
 
     py_files = sorted(root.rglob("*.py"))
     if args.limit:
-        py_files = py_files[:args.limit]
+        py_files = py_files[: args.limit]
 
     j = OrphanJudge(jsonl_output=args.jsonl)
     results = []
@@ -59,12 +59,14 @@ def _cmd_scan(args: argparse.Namespace) -> int:
         rel_path = str(fpath).replace("\\", "/")
         try:
             result = j.judge(rel_path, dry_run=args.dry_run)
-            results.append({
-                "path": rel_path,
-                "verdict": result.verdict.value,
-                "confidence": result.confidence.value,
-                "reason": result.reason,
-            })
+            results.append(
+                {
+                    "path": rel_path,
+                    "verdict": result.verdict.value,
+                    "confidence": result.confidence.value,
+                    "reason": result.reason,
+                }
+            )
         except Exception as exc:
             results.append({"path": rel_path, "error": str(exc)})
 
@@ -92,12 +94,14 @@ def _cmd_report(args: argparse.Namespace) -> int:
         rel_path = str(fpath).replace("\\", "/")
         try:
             result = j.judge(rel_path, dry_run=args.dry_run)
-            results.append({
-                "path": rel_path,
-                "verdict": result.verdict.value,
-                "confidence": result.confidence.value,
-                "reason": result.reason,
-            })
+            results.append(
+                {
+                    "path": rel_path,
+                    "verdict": result.verdict.value,
+                    "confidence": result.confidence.value,
+                    "reason": result.reason,
+                }
+            )
         except Exception as exc:
             results.append({"path": rel_path, "error": str(exc)})
 
@@ -106,12 +110,16 @@ def _cmd_report(args: argparse.Namespace) -> int:
     elif args.format == "csv":
         print("path,verdict,confidence,reason")
         for r in results:
-            print(f"{r.get('path','')},{r.get('verdict','ERROR')},{r.get('confidence','unknown')},\"{r.get('reason', r.get('error',''))}\"")
+            print(
+                f'{r.get("path", "")},{r.get("verdict", "ERROR")},{r.get("confidence", "unknown")},"{r.get("reason", r.get("error", ""))}"'
+            )
     elif args.format == "markdown":
         print("| 文件 | 判决 | 置信度 | 原因 |")
         print("|------|------|--------|------|")
         for r in results:
-            print(f"| {r.get('path','')} | {r.get('verdict','ERROR')} | {r.get('confidence','unknown')} | {r.get('reason', r.get('error',''))} |")
+            print(
+                f"| {r.get('path', '')} | {r.get('verdict', 'ERROR')} | {r.get('confidence', 'unknown')} | {r.get('reason', r.get('error', ''))} |"
+            )
     return 0
 
 

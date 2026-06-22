@@ -11,14 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_tiered_storage_bridge.py
-
 import logging
-from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["TieredStorageBridge"]
+
 
 class TieredStorageBridge:
     def __init__(self) -> None:
@@ -26,6 +25,7 @@ class TieredStorageBridge:
         self._available = False
         try:
             from zephyr.governance.audit_trail.tiered_storage import TieredStorage
+
             self._storage = TieredStorage()
             self._available = True
         except ImportError:
@@ -41,6 +41,7 @@ class TieredStorageBridge:
             if report_path is None:
                 return None
             import json
+
             data = json.loads(report_path.read_text(encoding="utf-8"))
             data["_storage_tier"] = self._storage.classify(report_path)
             return data
@@ -72,6 +73,7 @@ class TieredStorageBridge:
 
     def is_available(self) -> bool:
         return self._available
+
 
 class AuditTieredStorageBridge:
     def __init__(self, config=None):

@@ -268,7 +268,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/governance/ai/ai-autonomy-authority-registry.md
+- path: docs/01_policies_and_standards/governance/ai/ai_autonomy_authority_registry.yaml
   module_id: DEPRECATED-GOV-AI-001
   title: （已迁移）AI 自治权限登记�?
   doc_type: register
@@ -278,7 +278,7 @@ files:
   scope: ''
   stability: ''
   layer: cross_layer
-  superseded_by: _registry/catalogs/ai-autonomy-authority-registry.md（v1.3.0�?
+  superseded_by: _registry/catalogs/ai_autonomy_authority_registry.yaml（v1.3.0�?
 - path: docs/01_policies_and_standards/governance/ai/ai-hallucination-detection-rules.md
   module_id: GOV-AI-009
   title: AI 幻觉自动检测规则集
@@ -807,7 +807,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/behavior-boundaries-standard.md
+- path: docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml
   module_id: PS-STD-003
   title: ZephyrAlpha 行为边界标准
   doc_type: standard
@@ -818,7 +818,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/document-structure-standard.md
+- path: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
   module_id: PS-STD-002
   title: ZephyrAlpha 标准文档模板
   doc_type: standard
@@ -829,7 +829,7 @@ files:
   stability: frozen
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/glossary-glossary.md
+- path: docs/01_policies_and_standards/_registry/vocabularies/glossary.yaml
   module_id: META-GLS-001
   title: ZephyrAlpha 规则体系术语�?
   doc_type: terminology
@@ -840,7 +840,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/governance-methodology-standard.md
+- path: docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml
   module_id: PS-STD-011
   title: 治理方法�?
   doc_type: standard
@@ -851,7 +851,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/governance-metrics-standard.md
+- path: docs/01_policies_and_standards/rules/trae_026_methodology_quality.yaml
   module_id: PS-STD-006
   title: ZephyrAlpha 治理度量标准
   doc_type: standard
@@ -862,7 +862,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/index.md
+- path: docs/01_policies_and_standards/rules/index.md
   module_id: META-IDX-001
   title: 元规则目录索�?
   doc_type: index
@@ -873,7 +873,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/meta-standard-constitution-standard.md
+- path: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
   module_id: PS-STD-000
   title: ZephyrAlpha 元标准宪�?
   doc_type: standard
@@ -884,7 +884,7 @@ files:
   stability: frozen
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/metadata-registry.md
+- path: docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml
   module_id: PS-STD-001
   title: ZephyrAlpha 元数据登记表
   doc_type: standard
@@ -895,7 +895,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md
+- path: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
   module_id: PS-STD-004
   title: ZephyrAlpha 规则分类与冲突裁决标�?
   doc_type: standard
@@ -906,7 +906,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/rule-lifecycle-and-change-standard.md
+- path: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
   module_id: PS-STD-009
   title: 规则治理标准
   doc_type: standard
@@ -917,7 +917,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/rule-verification-standard.md
+- path: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
   module_id: PS-STD-012
   title: 规则验证标准
   doc_type: standard
@@ -928,7 +928,7 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/meta/terminology-mapping-reference.md
+- path: docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml
   module_id: META-TERM-001
   title: 术语映射表（大白�?�?行业术语�?
   doc_type: reference
@@ -1148,7 +1148,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md
+- path: docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
   module_id: GOV-AI-001
   title: AI 自治权限登记表（全模块权限终表）
   doc_type: register
@@ -1225,7 +1225,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/frontier-llm-benchmark-ranking.md
+- path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
   module_id: REG-LLM-001
   title: 前沿大模型综合能力排名登记表
   doc_type: reference
@@ -1335,7 +1335,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/rule-registry.md
+- path: docs/01_policies_and_standards/_registry/catalogs/_index.yaml
   module_id: PS-REG-001
   title: ZephyrAlpha 规则登记�?
   doc_type: register

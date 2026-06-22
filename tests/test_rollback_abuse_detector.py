@@ -13,10 +13,8 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-
-import pytest
 
 from zephyr.governance.rollback_abuse_detector import (
     AbuseReport,
@@ -77,13 +75,15 @@ class TestRollbackAbuseDetector:
         audit_dir = tmp_path / ".zephyr" / "audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
         audit_path = audit_dir / "rollback_operations_audit.jsonl"
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         entries = []
         for i in range(3):
-            entries.append({
-                "timestamp_utc": (now - timedelta(minutes=10)).isoformat(),
-                "details": {"files": [f"file{i}.py"]},
-            })
+            entries.append(
+                {
+                    "timestamp_utc": (now - timedelta(minutes=10)).isoformat(),
+                    "details": {"files": [f"file{i}.py"]},
+                }
+            )
         audit_path.write_text(
             "\n".join(json.dumps(e) for e in entries) + "\n",
             encoding="utf-8",
@@ -98,13 +98,15 @@ class TestRollbackAbuseDetector:
         audit_dir = tmp_path / ".zephyr" / "audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
         audit_path = audit_dir / "rollback_operations_audit.jsonl"
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         entries = []
         for i in range(6):
-            entries.append({
-                "timestamp_utc": (now - timedelta(minutes=10)).isoformat(),
-                "details": {"files": [f"file{i}.py"]},
-            })
+            entries.append(
+                {
+                    "timestamp_utc": (now - timedelta(minutes=10)).isoformat(),
+                    "details": {"files": [f"file{i}.py"]},
+                }
+            )
         audit_path.write_text(
             "\n".join(json.dumps(e) for e in entries) + "\n",
             encoding="utf-8",
@@ -120,13 +122,15 @@ class TestRollbackAbuseDetector:
         audit_dir = tmp_path / ".zephyr" / "audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
         audit_path = audit_dir / "rollback_operations_audit.jsonl"
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         entries = []
         for _ in range(3):
-            entries.append({
-                "timestamp_utc": (now - timedelta(minutes=10)).isoformat(),
-                "details": {"files": ["problematic.py"]},
-            })
+            entries.append(
+                {
+                    "timestamp_utc": (now - timedelta(minutes=10)).isoformat(),
+                    "details": {"files": ["problematic.py"]},
+                }
+            )
         audit_path.write_text(
             "\n".join(json.dumps(e) for e in entries) + "\n",
             encoding="utf-8",
@@ -141,13 +145,15 @@ class TestRollbackAbuseDetector:
         audit_dir = tmp_path / ".zephyr" / "audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
         audit_path = audit_dir / "rollback_operations_audit.jsonl"
-        old_time = datetime.now(timezone.utc) - timedelta(hours=48)
+        old_time = datetime.now(UTC) - timedelta(hours=48)
         entries = []
         for i in range(10):
-            entries.append({
-                "timestamp_utc": old_time.isoformat(),
-                "details": {"files": [f"old_file{i}.py"]},
-            })
+            entries.append(
+                {
+                    "timestamp_utc": old_time.isoformat(),
+                    "details": {"files": [f"old_file{i}.py"]},
+                }
+            )
         audit_path.write_text(
             "\n".join(json.dumps(e) for e in entries) + "\n",
             encoding="utf-8",

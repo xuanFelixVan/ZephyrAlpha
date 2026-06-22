@@ -15,9 +15,7 @@ from __future__ import annotations
 import json
 import os
 import uuid
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.behavioral_audit.drift_hotfix_bypass import (
     HOTFIX_PREFIXES,
@@ -56,7 +54,7 @@ class TestHotfixAuditEntry:
         assert entry.suppressed_until is None
 
     def test_custom_values(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         until = now + timedelta(hours=72)
         entry = HotfixAuditEntry(
             entry_id=uuid.uuid4(),
@@ -178,7 +176,7 @@ class TestHotfixBypass:
             module_ids=["mod_a"],
             affected_dimensions=["dim_x"],
         )
-        entry.suppressed_until = datetime.now(timezone.utc) - timedelta(hours=1)
+        entry.suppressed_until = datetime.now(UTC) - timedelta(hours=1)
         expired = bypass.check_expired_hotfixes()
         assert "abc123" in expired
         assert not bypass.is_suppressed("abc123")

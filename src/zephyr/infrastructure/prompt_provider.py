@@ -27,10 +27,12 @@ from __future__ import annotations
 注册至少 5 个模板。
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
-__all__ = ["PromptProvider", "PromptDefinition"]
+__all__ = ["PromptDefinition", "PromptProvider"]
+
 
 @dataclass
 class PromptDefinition:
@@ -38,6 +40,7 @@ class PromptDefinition:
     description: str
     arguments: list[dict[str, Any]] | None = None
     handler: Callable[..., str] | None = None
+
 
 class PromptProvider:
     """MCP Prompt 模板注册与渲染统一接口。"""
@@ -99,8 +102,10 @@ class PromptProvider:
         handler: Callable[..., str] | None = None,
     ) -> None:
         self._prompts[name] = PromptDefinition(
-            name=name, description=description,
-            arguments=arguments, handler=handler,
+            name=name,
+            description=description,
+            arguments=arguments,
+            handler=handler,
         )
 
     def list_prompts(self) -> list[dict[str, Any]]:

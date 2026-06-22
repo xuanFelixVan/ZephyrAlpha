@@ -45,8 +45,8 @@ from pathlib import Path
 from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 
 __all__ = [
-    "WaveGenerator",
     "Wave",
+    "WaveGenerator",
     "WaveStatus",
 ]
 

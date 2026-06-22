@@ -17,9 +17,6 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
 import argparse
 import ast
 import logging
@@ -27,7 +24,8 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Optional
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +35,8 @@ REGISTRIES = {
     "module": PROJECT_ROOT / "docs/03_modules/module-registry.yaml",
     "blueprint": PROJECT_ROOT / "docs/03_modules/blueprint-registry.yaml",
     "gate": PROJECT_ROOT / "src/zephyr/gates/_registry.yaml",
-    "cross_dep": PROJECT_ROOT / "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml",
+    "cross_dep": PROJECT_ROOT
+    / "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml",
 }
 
 FLE_GATES_DIR = PROJECT_ROOT / "src/zephyr/feedback-loop/gates"
@@ -48,10 +47,11 @@ FLE_GATE_CATEGORY = "fle_self_defense"
 FLE_MODULE_ID = "MOD-INF-010"
 
 
-def _load_yaml(path: Path) -> Optional[dict]:
+def _load_yaml(path: Path) -> dict | None:
     """_load_yaml implementation."""
     try:
         import yaml
+
         with open(path, encoding="utf-8") as f:
             return yaml.safe_load(f)
     except Exception as e:
@@ -63,6 +63,7 @@ def _save_yaml(path: Path, data: dict, dry_run: bool = False) -> bool:
     """_save_yaml implementation."""
     try:
         import yaml
+
         tmp = str(path) + f".{os.getpid()}.tmp"
         content = yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False)
         if dry_run:
@@ -93,21 +94,23 @@ def _discover_fle_gates() -> list[dict]:
         stem = py_file.stem
         gate_id = f"FLE-{stem.upper().replace('_', '-')[:28]}"
         title = _read_class_docstring(py_file) or stem.replace("_", " ").title()
-        gates.append({
-            "gate_id": gate_id,
-            "gate_name": stem,
-            "title": f"{gate_id} {title}",
-            "category": FLE_GATE_CATEGORY,
-            "file": f"../feedback-loop/gates/{py_file.name}",
-            "status": "active",
-            "scope": "fle",
-            "execution_plane": "warm",
-            "note": f"Auto-registered by auto_sync_all_registries.py — FLE self-defense gate (physical: src/zephyr/feedback-loop/gates/{py_file.name})",
-        })
+        gates.append(
+            {
+                "gate_id": gate_id,
+                "gate_name": stem,
+                "title": f"{gate_id} {title}",
+                "category": FLE_GATE_CATEGORY,
+                "file": f"../feedback-loop/gates/{py_file.name}",
+                "status": "active",
+                "scope": "fle",
+                "execution_plane": "warm",
+                "note": f"Auto-registered by auto_sync_all_registries.py — FLE self-defense gate (physical: src/zephyr/feedback-loop/gates/{py_file.name})",
+            }
+        )
     return gates
 
 
-def _read_class_docstring(py_file: Path) -> Optional[str]:
+def _read_class_docstring(py_file: Path) -> str | None:
     """_read_class_docstring implementation."""
     try:
         with open(py_file, encoding="utf-8") as f:
@@ -125,7 +128,7 @@ def _read_class_docstring(py_file: Path) -> Optional[str]:
     return None
 
 
-def _extract_blueprint_version(blueprint_path: Path) -> Optional[str]:
+def _extract_blueprint_version(blueprint_path: Path) -> str | None:
     """_extract_blueprint_version implementation."""
     if not blueprint_path.exists():
         return None

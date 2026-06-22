@@ -32,7 +32,6 @@ Dependency Graph — 任务卡依赖关系管理。
     - 依赖浅深分析 + 硬杀伤链构建
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -64,12 +63,12 @@ class KillChain:
 
 
 class DependencyGraph:
-
     def __init__(self) -> None:
         self._nodes: dict[str, DependencyNode] = {}
 
-    def add_node(self, task_id: str, depends_on: list[str] | None = None,
-                  blocked_by: list[str] | None = None) -> DependencyNode:
+    def add_node(
+        self, task_id: str, depends_on: list[str] | None = None, blocked_by: list[str] | None = None
+    ) -> DependencyNode:
         if task_id not in self._nodes:
             self._nodes[task_id] = DependencyNode(task_id=task_id)
 
@@ -92,11 +91,13 @@ class DependencyGraph:
         def dfs(tid: str) -> None:
             if tid in in_stack:
                 cycle_start = path.index(tid)
-                cycles.append(CycleDetection(
-                    has_cycle=True,
-                    cycle_path=path[cycle_start:] + [tid],
-                    message=f"Dependency cycle detected: {' → '.join(path[cycle_start:] + [tid])}",
-                ))
+                cycles.append(
+                    CycleDetection(
+                        has_cycle=True,
+                        cycle_path=path[cycle_start:] + [tid],
+                        message=f"Dependency cycle detected: {' → '.join(path[cycle_start:] + [tid])}",
+                    )
+                )
                 return
 
             if tid in visited or tid not in self._nodes:

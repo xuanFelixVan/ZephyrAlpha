@@ -49,13 +49,9 @@ class ContextRule:
 
     def __post_init__(self) -> None:
         if self.injection_level not in _VALID_LEVELS:
-            raise ValueError(
-                f"injection_level must be one of {_VALID_LEVELS}, got {self.injection_level!r}"
-            )
+            raise ValueError(f"injection_level must be one of {_VALID_LEVELS}, got {self.injection_level!r}")
         if self.injection_level == "HOT" and self.max_tokens > _HOT_MAX_TOKENS:
-            raise ValueError(
-                f"HOT level max_tokens must be ≤{_HOT_MAX_TOKENS}, got {self.max_tokens}"
-            )
+            raise ValueError(f"HOT level max_tokens must be ≤{_HOT_MAX_TOKENS}, got {self.max_tokens}")
 
 
 class ContextRuleRegistry:
@@ -90,7 +86,7 @@ class ContextRuleRegistry:
         if not p.exists():
             raise FileNotFoundError(f"YAML rules file not found: {path}")
 
-        with open(p, "r", encoding="utf-8") as f:
+        with open(p, encoding="utf-8") as f:
             data = yaml.safe_load(f)
 
         if not data or "rules" not in data:
@@ -121,15 +117,17 @@ class ContextRuleRegistry:
 
         rules_data = []
         for rule in self.list_rules():
-            rules_data.append({
-                "rule_id": rule.rule_id,
-                "trigger_conditions": rule.trigger_conditions,
-                "content": rule.content,
-                "priority": rule.priority,
-                "injection_level": rule.injection_level,
-                "max_tokens": rule.max_tokens,
-                "source_module": rule.source_module,
-            })
+            rules_data.append(
+                {
+                    "rule_id": rule.rule_id,
+                    "trigger_conditions": rule.trigger_conditions,
+                    "content": rule.content,
+                    "priority": rule.priority,
+                    "injection_level": rule.injection_level,
+                    "max_tokens": rule.max_tokens,
+                    "source_module": rule.source_module,
+                }
+            )
 
         content = yaml.dump({"rules": rules_data}, allow_unicode=True, default_flow_style=False)
         tmp_path = f"{path}.{os.getpid()}.tmp"

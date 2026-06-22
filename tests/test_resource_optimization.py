@@ -13,18 +13,17 @@
 from __future__ import annotations
 
 import time
-from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.trading.resource_optimization import (
-    CircuitBreaker,
-    ResourceOptimizationEngine,
-)
 from zephyr.shared.lifecycle.resource_optimization_models import (
     CircuitBreakerState,
     OptimizationStrategy,
     PressureLevel,
+)
+from zephyr.trading.resource_optimization import (
+    CircuitBreaker,
+    ResourceOptimizationEngine,
 )
 
 

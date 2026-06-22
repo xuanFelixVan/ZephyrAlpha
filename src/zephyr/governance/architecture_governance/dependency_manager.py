@@ -22,9 +22,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class DependencyTier(str, Enum):
@@ -37,16 +36,32 @@ class ManagedDependency(BaseModel):
     name: str
     tier: DependencyTier
     redundancy: str = ""
-    fallback: Optional[str] = None
+    fallback: str | None = None
 
 
 DEPENDENCIES: list[ManagedDependency] = [
-    ManagedDependency(name="Market Data API", tier=DependencyTier.TIER1_CORE, redundancy="双源冗余", fallback="Vendor B"),
-    ManagedDependency(name="Broker API", tier=DependencyTier.TIER1_CORE, redundancy="多经纪商", fallback="Broker B / C"),
+    ManagedDependency(
+        name="Market Data API", tier=DependencyTier.TIER1_CORE, redundancy="双源冗余", fallback="Vendor B"
+    ),
+    ManagedDependency(
+        name="Broker API", tier=DependencyTier.TIER1_CORE, redundancy="多经纪商", fallback="Broker B / C"
+    ),
     ManagedDependency(name="Database", tier=DependencyTier.TIER1_CORE, redundancy="主备切换", fallback="Replica"),
-    ManagedDependency(name="LLM API (DeepSeek)", tier=DependencyTier.TIER2_ENHANCED, redundancy="多模型路由", fallback="GLM-4.7 / Kimi-K2"),
-    ManagedDependency(name="LLM API (GLM-4.7)", tier=DependencyTier.TIER2_ENHANCED, redundancy="多模型路由", fallback="DeepSeek / Kimi-K2"),
-    ManagedDependency(name="Backup Data Source", tier=DependencyTier.TIER3_OPTIONAL, redundancy="best-effort", fallback=None),
+    ManagedDependency(
+        name="LLM API (DeepSeek)",
+        tier=DependencyTier.TIER2_ENHANCED,
+        redundancy="多模型路由",
+        fallback="GLM-4.7 / Kimi-K2",
+    ),
+    ManagedDependency(
+        name="LLM API (GLM-4.7)",
+        tier=DependencyTier.TIER2_ENHANCED,
+        redundancy="多模型路由",
+        fallback="DeepSeek / Kimi-K2",
+    ),
+    ManagedDependency(
+        name="Backup Data Source", tier=DependencyTier.TIER3_OPTIONAL, redundancy="best-effort", fallback=None
+    ),
 ]
 
 

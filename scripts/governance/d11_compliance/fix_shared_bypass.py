@@ -4,11 +4,21 @@ fix_shared_bypass.py - D-D-07 auto-fix tool (validate_script_quality.py --fix co
 Aligns with AGENTS.md section 6.5 (script self-creation repository mandatory convention)
 and SCRIPT-QUALITY-001 D-D-07 (prohibits bypassing _shared utilities).
 """
+
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
 
 __manifest__ = """
 args:

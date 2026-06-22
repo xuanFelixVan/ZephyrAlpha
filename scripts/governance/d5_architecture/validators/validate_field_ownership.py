@@ -7,7 +7,7 @@
      AGENTS.md §5.1（SSoT 原则——同一概念只在一个文件中定义）
 
 检测内容：
-- 解析 metadata-registry.md 中定义的权威字段列表
+- 解析 metadata_registry.yaml 中定义的权威字段列表
 - 扫描所有 frontmatter，找出：
   1. 在非 SSoT 文件中定义了 SSoT 专属字段
   2. 同一字段在多个文件中被定义为不同含义
@@ -17,7 +17,9 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -39,16 +41,16 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXCLUDE_DIRS, REPO_ROOT, SCAN_EXTENSIONS_MD, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXCLUDE_DIRS, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
-METADATA_REGISTRY_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "meta" / "metadata-registry.md"
+METADATA_REGISTRY_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "meta" / "metadata_registry.yaml"
 SSOT_AUTHORITY_FILES = {
-    "metadata-registry.md": "PS-STD-001 — frontmatter schema 唯一真源",
-    "rule-classification-and-arbitration-standard.md": "PS-STD-011 — 规则分类唯一真源",
-    "glossary-glossary.md": "PS-STD-011 配套 — 术语定义唯一真源",
-    "document-structure-standard.md": "PS-STD-002 — 文档结构唯一真源",
+    "metadata_registry.yaml": "PS-STD-001 — frontmatter schema 唯一真源",
+    "rule_classification_and_arbitration_standard.yaml": "PS-STD-011 — 规则分类唯一真源",
+    "_registry/vocabularies/glossary.yaml": "PS-STD-011 配套 — 术语定义唯一真源",
+    "document_structure_standard.yaml": "PS-STD-002 — 文档结构唯一真源",
     "trae_028_doc_structure_naming.yaml": "GOV-DOC-002 — 目录结构唯一真源",
 }
 _EXTRA_EXCLUDE = EXCLUDE_DIRS | {"scripts"}
@@ -85,7 +87,7 @@ def scan_field_usage() -> tuple[list[dict], int]:
     ssot_fields = parse_ssot_field_definitions()
     "扫描并返回发现列表."
     if not ssot_fields:
-        return ([{"warning": "无法解析 metadata-registry.md 字段定义"}], 0)
+        return ([{"warning": "无法解析 metadata_registry.yaml 字段定义"}], 0)
     files_scanned = 0
     field_usages: dict[str, list[str]] = defaultdict(list)
     docs_dir = REPO_ROOT / "docs"
@@ -132,9 +134,9 @@ def main() -> None:
     print(f"  非权威定义: {len(violations)} 个字段", file=sys.stderr)
     if violations:
         for f in violations[:15]:
-            print(f'\n  字段 `{f['field']}`', file=sys.stderr)
-            print(f'     SSoT: {f['ssot_file']}', file=sys.stderr)
-            print(f'     非权威定义于: {', '.join(f['defined_in'][:5])}', file=sys.stderr)
+            print(f"\n  字段 `{f['field']}`", file=sys.stderr)
+            print(f"     SSoT: {f['ssot_file']}", file=sys.stderr)
+            print(f"     非权威定义于: {', '.join(f['defined_in'][:5])}", file=sys.stderr)
         if len(violations) > 15:
             print(f"\n  ... (共 {len(violations)} 个，仅显示前 15)", file=sys.stderr)
         print(f"\n⚠ {len(violations)} 个 SSOT 字段在非权威文件中被定义！", file=sys.stderr)

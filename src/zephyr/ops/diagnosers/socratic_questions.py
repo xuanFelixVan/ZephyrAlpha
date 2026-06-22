@@ -30,6 +30,9 @@ from dataclasses import dataclass
 
 @dataclass
 class SocraticQuestions:
-
     def generate(self, hypothesis: str) -> list[str]:
-        return [f"Is {hypothesis} really the root cause?", f"What evidence contradicts {hypothesis}?", "If deep findings differ from initial diagnosis, why was the initial diagnosis wrong?"]
+        return [
+            f"Is {hypothesis} really the root cause?",
+            f"What evidence contradicts {hypothesis}?",
+            "If deep findings differ from initial diagnosis, why was the initial diagnosis wrong?",
+        ]

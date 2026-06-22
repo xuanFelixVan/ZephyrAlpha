@@ -29,8 +29,8 @@ Mitigation: p50/p95/p99 latency tracking with SLO compliance dashboard.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import time
+from dataclasses import dataclass, field
 
 
 @dataclass

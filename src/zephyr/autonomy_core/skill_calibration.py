@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_calibration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_calibration
+# [MODULE] zephyr.autonomy_core.skill_calibration
 
 # [INVARIANTS] none
 
@@ -29,11 +29,10 @@ Skill 校准 —— 置信度 vs 真实准确率对齐 + drift 监控.
 当模型输出 confidence 与实际 accuracy 持续偏离时触发 recalibration 事件.
 """
 
-
 from __future__ import annotations
 
 import time
-from typing import Dict, Any, List
+from typing import Any
 
 
 class CalibrationEntry:
@@ -43,7 +42,7 @@ class CalibrationEntry:
         self.timestamp = timestamp
         self.drift = confidence - actual_accuracy
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "confidence": self.confidence,
             "accuracy": self.actual_accuracy,
@@ -55,21 +54,20 @@ class CalibrationEntry:
 class SkillCalibration:
     """Skill 校准 —— 置信度 vs 准确率对齐."""
 
-    _history: Dict[str, List[CalibrationEntry]] = {}
+    _history: dict[str, list[CalibrationEntry]] = {}
     _MAX_HISTORY = 50
     _OVERCONFIDENCE_THRESHOLD = 0.15
     _UNDERCONFIDENCE_THRESHOLD = -0.10
 
     @classmethod
-    def calibrate(cls, skill_id: str, confidence: float,
-                  actual_accuracy: float) -> Dict[str, Any]:
+    def calibrate(cls, skill_id: str, confidence: float, actual_accuracy: float) -> dict[str, Any]:
         drift = confidence - actual_accuracy
         calibrated = abs(drift) < 0.1
 
         entry = CalibrationEntry(confidence, actual_accuracy, time.time())
         cls._history.setdefault(skill_id, []).append(entry)
         if len(cls._history[skill_id]) > cls._MAX_HISTORY:
-            cls._history[skill_id] = cls._history[skill_id][-cls._MAX_HISTORY:]
+            cls._history[skill_id] = cls._history[skill_id][-cls._MAX_HISTORY :]
 
         overconfident = drift > cls._OVERCONFIDENCE_THRESHOLD
         underconfident = drift < cls._UNDERCONFIDENCE_THRESHOLD
@@ -85,8 +83,7 @@ class SkillCalibration:
         }
 
     @classmethod
-    def drift_trend(cls, skill_id: str,
-                    window: int = 10) -> Dict[str, Any]:
+    def drift_trend(cls, skill_id: str, window: int = 10) -> dict[str, Any]:
         entries = cls._history.get(skill_id, [])[-window:]
         if not entries:
             return {"skill_id": skill_id, "samples": 0, "avg_drift": 0.0}
@@ -100,13 +97,12 @@ class SkillCalibration:
             "samples": len(entries),
             "avg_drift": round(avg_drift, 4),
             "trend": recent_trend,
-            "overconfident_ratio": round(
-                sum(1 for d in drifts if d > cls._OVERCONFIDENCE_THRESHOLD) / len(drifts), 3),
+            "overconfident_ratio": round(sum(1 for d in drifts if d > cls._OVERCONFIDENCE_THRESHOLD) / len(drifts), 3),
             "last_calibration": entries[-1].to_dict() if entries else {},
         }
 
     @classmethod
-    def should_recalibrate(cls, skill_id: str) -> Dict[str, Any]:
+    def should_recalibrate(cls, skill_id: str) -> dict[str, Any]:
         trend = cls.drift_trend(skill_id, window=10)
         need = False
         reason = ""
@@ -127,7 +123,7 @@ class SkillCalibration:
         }
 
     @staticmethod
-    def _trend_direction(drifts: List[float]) -> str:
+    def _trend_direction(drifts: list[float]) -> str:
         if len(drifts) < 3:
             return "insufficient_data"
         recent = drifts[-3:]
@@ -149,4 +145,4 @@ class SkillCalibration:
             cls._history.clear()
 
 
-__all__ = ["SkillCalibration", "CalibrationEntry"]
+__all__ = ["CalibrationEntry", "SkillCalibration"]

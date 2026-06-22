@@ -59,4 +59,3 @@ class EmergentBehaviorDetector:
                     involved_subsystems=loop,
                     causal_chain=edges,
                     emergence_lag_hours=sum(e.lag_seconds for e in edges) / 3600,
-  

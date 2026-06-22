@@ -18,10 +18,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
-
-import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CHECK_SCRIPT = PROJECT_ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"
@@ -32,7 +29,9 @@ def _run_checker(path: str) -> subprocess.CompletedProcess:
     """Run check_naming_convention.py with a positional path argument."""
     return subprocess.run(
         [sys.executable, str(CHECK_SCRIPT), str(path)],
-        capture_output=True, text=True, cwd=str(PROJECT_ROOT),
+        capture_output=True,
+        text=True,
+        cwd=str(PROJECT_ROOT),
         env={**os.environ, "PYTHONPATH": str(PROJECT_ROOT / "src")},
     )
 
@@ -41,7 +40,9 @@ def _run_scaffold(mode: str, name: str, desc: str = "Test") -> subprocess.Comple
     """Run scaffold.py with PYTHONPATH set for scripts module import."""
     return subprocess.run(
         [sys.executable, str(SCAFFOLD_SCRIPT), mode, name, "--desc", desc, "--dry-run"],
-        capture_output=True, text=True, cwd=str(PROJECT_ROOT),
+        capture_output=True,
+        text=True,
+        cwd=str(PROJECT_ROOT),
         env={**os.environ, "PYTHONPATH": str(PROJECT_ROOT) + ";" + str(PROJECT_ROOT / "src")},
     )
 
@@ -155,12 +156,8 @@ class TestWhitelistProtection:
     def test_check_naming_convention_has_modify_guard(self) -> None:
         """check_naming_convention.py 头部应包含 MODIFY-GUARD 保护白名单。"""
         content = CHECK_SCRIPT.read_text(encoding="utf-8")
-        assert "MODIFY-GUARD" in content, (
-            "check_naming_convention.py 应包含 MODIFY-GUARD 标记"
-        )
-        assert "WHITELIST" in content or "EXEMPT" in content, (
-            "MODIFY-GUARD 应提及白名单保护"
-        )
+        assert "MODIFY-GUARD" in content, "check_naming_convention.py 应包含 MODIFY-GUARD 标记"
+        assert "WHITELIST" in content or "EXEMPT" in content, "MODIFY-GUARD 应提及白名单保护"
 
     def test_whitelist_minimal(self) -> None:
         """白名单应只包含 AGENTS.md（其他已迁移为小写）。"""
@@ -211,9 +208,5 @@ class TestCIEnforcement:
         """governance.yml 应包含 GATE-11 全量命名扫描步骤。"""
         ci_path = PROJECT_ROOT / ".github" / "workflows" / "governance.yml"
         content = ci_path.read_text(encoding="utf-8")
-        assert "check_naming_convention.py" in content, (
-            "governance.yml 应包含 check_naming_convention.py 全量扫描步骤"
-        )
-        assert "Naming Convention" in content, (
-            "governance.yml 应包含命名规范扫描步骤名称"
-        )
+        assert "check_naming_convention.py" in content, "governance.yml 应包含 check_naming_convention.py 全量扫描步骤"
+        assert "Naming Convention" in content, "governance.yml 应包含命名规范扫描步骤名称"

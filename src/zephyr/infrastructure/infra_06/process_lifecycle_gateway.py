@@ -25,12 +25,9 @@ Gateway 组合 MCPProcessPool + DaemonRegistry，提供:
 设计根因: 裸 Popen/Process 绕过 MCPProcessPool → 进程泄漏 → 统一入口 + Gate 防绕过。
 """
 
-
 from __future__ import annotations
 
 import logging
-import time
-from typing import Optional
 
 from zephyr.integration.shared_08.lifecycle.daemon_registry import DaemonRegistry
 from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool, PooledProcess
@@ -59,7 +56,7 @@ class ProcessLifecycleGateway:
         cmd: list[str],
         idle_timeout_s: float = 600.0,
         priority: int = 3,
-    ) -> Optional[PooledProcess]:
+    ) -> PooledProcess | None:
         """启动普通子进程（通过 ProcessPool + DaemonRegistry 注册）。
 
         Args:
@@ -86,12 +83,12 @@ class ProcessLifecycleGateway:
             )
             logger.info(
                 "ProcessLifecycleGateway: launched '%s' (pid=%d, idle_timeout=%ds)",
-                name, entry.pid, idle_timeout_s,
+                name,
+                entry.pid,
+                idle_timeout_s,
             )
         except Exception:
-            logger.exception(
-                "ProcessLifecycleGateway: DaemonRegistry.register failed for '%s'", name
-            )
+            logger.exception("ProcessLifecycleGateway: DaemonRegistry.register failed for '%s'", name)
 
         return entry
 
@@ -120,9 +117,7 @@ class ProcessLifecycleGateway:
         try:
             DaemonRegistry.start(f"gateway:{name}")
         except Exception:
-            logger.exception(
-                "ProcessLifecycleGateway: DaemonRegistry.start failed for 'gateway:%s'", name
-            )
+            logger.exception("ProcessLifecycleGateway: DaemonRegistry.start failed for 'gateway:%s'", name)
         return True
 
     def terminate(self, name: str) -> bool:

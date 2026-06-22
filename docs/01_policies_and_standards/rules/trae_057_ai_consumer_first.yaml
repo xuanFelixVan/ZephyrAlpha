@@ -1,0 +1,271 @@
+rule_id: TRAE-057
+title: AI消费优先原则
+version: 1.1.0
+layer: L0
+module_id: TRAE-057
+depends_on:
+  - target: TRAE-030
+    at: "doc_011"
+    why: "产出物规格化——本原则的施工展开"
+  - target: TRAE-042
+    at: "section_yaml_rule_format"
+    why: "YAML规则文档格式——格式分工铁律YAML侧"
+  - target: TRAE-043
+    at: "yaml_subtypes"
+    why: "元数据规则——双真源机制"
+  - target: TRAE-047
+    at: "GOV-ENG-002"
+    why: "代码头部十一字段——可解析性代码侧"
+  - target: TRAE-028
+    at: "doc_003"
+    why: "命名规范——可发现性路径侧"
+  - target: TRAE-006
+    at: "anti_hallucination_structure"
+    why: "结构追溯层——可解析性约束"
+tags:
+- TRAE
+- ai_consumer_first
+- L0
+- principle
+- format_policy
+- anti_hallucination
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- AICF-001
+- AI-FIRST-001
+- AI-CONSUMER-FIRST
+severity: error
+scope: global
+domain: TRAE
+rule_form: declarative
+triggers:
+- operation: create_document
+- operation: create_code_file
+- operation: create_rule
+- operation: create_template
+- operation: create_configuration
+- operation: modify_any_output
+
+sections:
+  principle_declaration:
+    section_type: rule
+    title: §1 原则声明
+    description: |
+      本原则是项目100%AI开发模式的顶层设计约束。
+      所有项目产出物MUST以AI可发现、可解析、可执行为第一优先级。
+      人类可读性是约束条件，不是优化目标。
+    original_rules:
+    - "所有项目产出物（文档/代码/配置/规则）MUST以AI可发现、可解析、可执行为第一优先级"
+    - "人类可读性是约束条件，不是优化目标"
+    - "本原则统辖既有AI友好相关条款（见§5）"
+    conditions:
+    - type: must
+      check: "产出物是否满足三性（§3）？"
+      pass: "通过"
+      fail: "按§3修复"
+
+  format_division:
+    section_type: rule
+    title: §2 格式分工铁律（Hybrid Principle）
+    description: |
+      依据Hybrid Prompting原则（Context=Markdown, Control=YAML）+ D56裁定（YAML为规则内容唯一真源）。
+      不同内容类型MUST使用对应格式。
+    original_rules:
+    - "规则内容/元数据/配置/注册表 MUST使用YAML格式"
+    - "叙事/蓝图/模板/运营文档/教程 MUST使用Markdown格式（含YAML frontmatter）"
+    - "代码文件 MUST使用十一字段头部注释格式（trae_047）"
+    - "数据交换/API响应 MUST使用JSON格式"
+    conditions:
+    - type: must
+      check: "内容类型属于规则/元数据/配置/注册表？"
+      pass: "使用YAML格式"
+      fail: "检查下一条件"
+    - type: must
+      check: "内容类型属于叙事/蓝图/模板/运营/教程？"
+      pass: "使用Markdown格式（含YAML frontmatter）"
+      fail: "检查下一条件"
+    - type: must
+      check: "内容类型属于代码文件？"
+      pass: "使用十一字段头部注释格式"
+      fail: "检查下一条件"
+    - type: must
+      check: "内容类型属于数据交换/API响应？"
+      pass: "使用JSON格式"
+      fail: "评估是否需要新格式类型"
+    prohibitions:
+    - "禁止全部YAML——叙事类内容YAML化导致token浪费55%+且降低AI原生理解力"
+    - "禁止全部Markdown——规则类内容MD化导致AI解析漂移"
+    - "禁止无frontmatter的文档——破坏可发现性"
+    - "禁止占位符TODO/pass/NotImplementedError——破坏可执行性"
+
+  three_properties:
+    section_type: rule
+    title: §3 三性要求
+    description: |
+      三性是AI消费优先原则的可验证判定标准。
+      每份产出物MUST同时满足三性。
+    original_rules:
+    - "可发现性：路径名即职责+注册表可索引+Grep可命中"
+    - "可解析性：结构化字段+受控词表+无自然语言歧义"
+    - "可执行性：命令/代码块可直接复制执行+无占位符"
+    conditions:
+    - type: must
+      check: "文件路径名是否反映职责？"
+      pass: "可发现性-路径 通过"
+      fail: "重命名或移动文件"
+    - type: must
+      check: "文件是否在对应注册表/manifest/__init__.py中登记？"
+      pass: "可发现性-注册 通过"
+      fail: "走scaffold.py注册流程"
+    - type: must
+      check: "frontmatter字段是否使用PS-REG-012受控词表？"
+      pass: "可解析性-词表 通过"
+      fail: "对齐PS-REG-012枚举值"
+    - type: must
+      check: "正文是否使用表格/命令/列表优先（onboarding_detail.md §10.2）？"
+      pass: "可解析性-结构 通过"
+      fail: "按格式优先级重构"
+    - type: must
+      check: "命令/代码块是否完整可执行（无TODO/pass/...）？"
+      pass: "可执行性 通过"
+      fail: "补全实现或标记[ASSUMPTION]"
+
+  token_budget:
+    section_type: rule
+    title: §4 Token预算约束
+    description: |
+      Token=成本=注意力预算。每个字必须有信息增量。
+      详细预算表见onboarding_detail.md §10.3。
+    original_rules:
+    - "IDE规则文件(L0) ≤500 token，表格+命令，零散文"
+    - "蓝图§0分派表 ≤400 token，表格，一页内"
+    - "蓝图正文 ≤3000 token/章，模板强约束"
+    - "施工指导 ≤2000 token，步骤式，禁止为什么段落"
+    - "AI对话输出 ≤500 token/条，结论先行，背景后置"
+    - "代码注释 0 token（禁止），blueprint是SSoT"
+    conditions:
+    - type: must
+      check: "产出物token数是否在对应预算内？"
+      pass: "通过"
+      fail: "按onboarding_detail.md §10.6规格化流程压缩"
+
+  governance_scope:
+    section_type: context
+    title: §5 统辖条款
+    description: |
+      本原则统辖以下既有条款，使其成为顶层原则的具体施工展开。
+      既有条款不重复本原则的声明，只引用本原则。
+    applies_to:
+    - "onboarding_detail.md §10.1 为AI消费优化 → 本原则§1的施工展开"
+    - "D56裁定 YAML为规则内容唯一真源 → 本原则§2格式分工的YAML侧依据"
+    - "trae_047 代码十一字段头部标准 → 本原则§3可解析性的代码侧施工"
+    - "PS-REG-012 frontmatter字段注册表 → 本原则§3可解析性的文档侧施工"
+    - "onboarding_detail.md §10.3 Token预算表 → 本原则§4的量化标准"
+    - "trae_028 doc_003 命名规范 → 本原则§3可发现性的路径侧施工"
+    not_applies_to:
+    - "人类专属文档（如README.md对外发布版）——以人类可读性优先"
+    - "法律/合规文档——以法律效力优先"
+
+  prohibition_list:
+    section_type: rule
+    title: §6 禁止清单
+    original_rules:
+    - "禁止无frontmatter的文档"
+    - "禁止占位符TODO/FIXME/pass/NotImplementedError"
+    - "禁止自然语言段落表达结构化约束"
+    - "禁止无注册表登记的孤儿文件"
+    - "禁止路径名不反映职责"
+    - "禁止散文段落超过对应token预算"
+    - "禁止为什么/对标/AI意识植入散文段（见trae_030 §1可删清单）"
+    - "禁止凭模式生成事实性数据（违反反幻觉#1）"
+    - "禁止用引用方式（详见XXX）消除跨文件关键信息（见§7）"
+    prohibitions:
+    - "禁止全部YAML——叙事类内容YAML化降低AI理解力"
+    - "禁止全部Markdown——规则类内容MD化导致解析漂移"
+    - "禁止无结构化字段的散文文档"
+
+  cross_file_redundancy:
+    section_type: rule
+    title: §7 跨文件关键信息冗余原则
+    description: |
+      AI冷启动时按STEP顺序读取文件。关键信息（路径、警告、唯一性声明）MUST在当前文件中完整给出，
+      禁止用"详见XXX"引用替代。引用方式会导致AI在需要信息时尚未读到目标文件→信息缺失→幻觉/漂移。
+      本原则于2026-06-22通过模拟新AI冷启动实验验证确立。
+    original_rules:
+    - "关键信息（绝对路径、禁止操作警告、唯一真源声明）MUST在当前文件中完整给出，禁止用引用替代"
+    - "非关键重复（详细参数、长篇示例、具体步骤描述）可以消除，但消除后MUST模拟新AI冷启动验证无幻觉"
+    - "每消除一条重复→模拟新AI冷启动→确认无幻觉才保留→否则回滚"
+    - "关键冗余不是需要消除的重复，而是AI冷启动的安全保障"
+    evidence:
+      experiment: "2026-06-22 模拟新AI冷启动实验"
+      test_case: "onboarding_detail.md STEP 1.2 depgraph.db描述改为引用project_rules.md §资产全景"
+      result:
+        missing_info_1: "depgraph.db绝对路径→AI不知道→可能幻觉出错误路径"
+        missing_info_2: "禁止直接Read警告→AI猜测理由（二进制而非OOM）→理解不完整"
+        missing_info_3: "唯一真源声明→AI不确定→可能引用旧版depgraph文件"
+      conclusion: "引用方式导致AI缺失3项关键信息，存在幻觉风险。关键信息必须保留在当前文件中。"
+    allowed:
+    - "关键信息（路径/警告/唯一性声明）在多个文件中重复保留——这是必要冗余"
+    - "非关键重复消除时，先引后删，每步模拟验证"
+    - "L0写什么和为什么，L1写怎么做的流程，两者重叠部分仅限关键信息"
+    prohibited:
+    - "用'详见XXX §Y'替代当前文件中的关键信息（路径/警告/唯一性声明）"
+    - "先删除后验证（必须先引后删，每步验证）"
+    - "批量删除重复内容后统一验证（必须逐条验证）"
+    conditions:
+    - type: must
+      check: "当前文件中的关键信息（路径/警告/唯一性声明）是否完整给出？"
+      pass: "通过"
+      fail: "补全关键信息，禁止用引用替代"
+    - type: must
+      check: "消除非关键重复后是否模拟新AI冷启动验证无幻觉？"
+      pass: "通过"
+      fail: "回滚，保留原始内容"
+
+references:
+  rule_ids:
+  - TRAE-030
+  - TRAE-042
+  - TRAE-043
+  - TRAE-047
+  - TRAE-028
+  - TRAE-006
+  scripts:
+  - scripts/scaffold.py
+  - scripts/governance/audit_registration.py
+  modules: []
+  blueprints: []
+  external:
+  - "AGENTS.md标准（Linux Foundation / Agentic AI Foundation，60万+仓库采用）"
+  - "CLAUDE.md（Anthropic官方，分层Markdown结构）"
+  - "Kiro Spec-Driven Development（AWS，三阶段Markdown spec）"
+  - "Hybrid Prompting原则（Context=Markdown, Control=YAML）"
+  - "Diátaxis框架（四象限文档分类）"
+  - "C4AIL五阶段演进（prompt engineering → agentic engineering）"
+
+enforcement:
+  type: doc
+  executors:
+  - scripts/governance/audit_registration.py
+  - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
+  bypass_allowed: false
+  gate_id: null
+
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  review_cycle: permanent
+  design_rationale: |
+    项目100%依靠AI开发，要求所有产出物以AI可消费为第一优先级。
+    本原则将分散在5+文件的AI友好条款统一为顶层原则。
+    格式分工采用Hybrid Principle（Context=MD, Control=YAML），
+    与业界主流（AGENTS.md/CLAUDE.md/Kiro）对齐，零重构兼容项目现状。
+
+provenance:
+  extracted_at: '2026-06-22'
+  extracted_by: session-20260622-ai-consumer-first
+  source: "Owner裁定+MTH-009分析（2026-06-22），依据AGENTS.md标准+Hybrid Prompting原则+D56裁定"

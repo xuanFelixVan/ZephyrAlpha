@@ -1,17 +1,24 @@
 """SRC-100200: Audit 13 over-capacity domains granularity distribution.
 P0-4升级：4类检测（跨域违规+容量超限+孤儿节点+层级违规）
 """
-import sqlite3, json, sys, os, glob, argparse
+
+import argparse
+import glob
+import json
+import os
+import sqlite3
+import sys
 
 import yaml
 
-DB_PATH = 'D:/ZephyrAlpha/data/databases/depgraph.db'
+DB_PATH = "D:/ZephyrAlpha/data/databases/depgraph.db"
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # ============================================================================
 # P0-4 升级：4类检测函数
 # ============================================================================
+
 
 def detect_cross_domain_violations(cur) -> list:
     """检测1: 跨域违规（import跨越域边界但未在domain_dependencies中声明）"""
@@ -30,8 +37,17 @@ def detect_cross_domain_violations(cur) -> list:
         AND dd.to_domain = n2.domain_id
     )
     """)
-    return [{"type": "cross_domain", "from_node": r[0], "to_node": r[1],
-             "from_domain": r[2], "to_domain": r[3], "dep_type": r[4]} for r in cur.fetchall()]
+    return [
+        {
+            "type": "cross_domain",
+            "from_node": r[0],
+            "to_node": r[1],
+            "from_domain": r[2],
+            "to_domain": r[3],
+            "dep_type": r[4],
+        }
+        for r in cur.fetchall()
+    ]
 
 
 def detect_capacity_violations(cur) -> list:
@@ -49,8 +65,9 @@ def detect_capacity_violations(cur) -> list:
     GROUP BY n.domain_id
     HAVING COUNT(*) > d.max_modules
     """)
-    return [{"type": "capacity_exceeded", "domain_id": r[0],
-             "production_nodes": r[1], "max": r[2]} for r in cur.fetchall()]
+    return [
+        {"type": "capacity_exceeded", "domain_id": r[0], "production_nodes": r[1], "max": r[2]} for r in cur.fetchall()
+    ]
 
 
 def detect_hard_limit_violations(cur) -> list:
@@ -67,8 +84,10 @@ def detect_hard_limit_violations(cur) -> list:
     GROUP BY n.domain_id
     HAVING COUNT(*) > 200
     """)
-    return [{"type": "hard_limit_exceeded", "domain_id": r[0],
-             "production_nodes": r[1], "hard_limit": 200, "max": r[2]} for r in cur.fetchall()]
+    return [
+        {"type": "hard_limit_exceeded", "domain_id": r[0], "production_nodes": r[1], "hard_limit": 200, "max": r[2]}
+        for r in cur.fetchall()
+    ]
 
 
 def detect_orphan_nodes(cur) -> list:
@@ -99,9 +118,18 @@ def detect_layer_violations(cur) -> list:
     AND e.dep_maturity = 'active'
     LIMIT 100
     """)
-    return [{"type": "layer_violation", "from": r[0], "to": r[1],
-             "from_domain": r[2], "to_domain": r[3],
-             "from_layer": r[4], "to_layer": r[5]} for r in cur.fetchall()]
+    return [
+        {
+            "type": "layer_violation",
+            "from": r[0],
+            "to": r[1],
+            "from_domain": r[2],
+            "to_domain": r[3],
+            "from_layer": r[4],
+            "to_layer": r[5],
+        }
+        for r in cur.fetchall()
+    ]
 
 
 def write_violations(cur, violations: list):
@@ -109,7 +137,7 @@ def write_violations(cur, violations: list):
     for v in violations:
         cur.execute(
             "INSERT INTO arch_constraints (constraint_type, violation_status, details, detected_at) VALUES (?, 'open', ?, datetime('now'))",
-            (v['type'], str(v))
+            (v["type"], str(v)),
         )
 
 
@@ -127,8 +155,9 @@ def check_all():
         orphan_violations = detect_orphan_nodes(cur)
         layer_violations = detect_layer_violations(cur)
         # 持久化结果
-        all_violations = (cross_domain_violations + capacity_violations
-                          + hard_limit_violations + orphan_violations + layer_violations)
+        all_violations = (
+            cross_domain_violations + capacity_violations + hard_limit_violations + orphan_violations + layer_violations
+        )
         write_violations(cur, all_violations)
         conn.commit()
         print(f"[check_all] 已清空旧检测结果并写入 {len(all_violations)} 条新违规")
@@ -168,7 +197,9 @@ def run_4class_check():
         hard_limit_violations = detect_hard_limit_violations(cur)
         print(f"硬上限违规域数: {len(hard_limit_violations)}")
         for v in hard_limit_violations:
-            print(f"  {v['domain_id']}: production_nodes={v['production_nodes']}, hard_limit={v['hard_limit']}, max={v['max']}")
+            print(
+                f"  {v['domain_id']}: production_nodes={v['production_nodes']}, hard_limit={v['hard_limit']}, max={v['max']}"
+            )
 
         # 检测3: 孤儿节点
         print("\n--- 检测3: 孤儿节点 ---")
@@ -188,8 +219,13 @@ def run_4class_check():
 
         # 汇总
         print("\n" + "=" * 60)
-        total = (len(cross_violations) + len(capacity_violations) + len(hard_limit_violations)
-                 + len(orphan_violations) + len(layer_violations))
+        total = (
+            len(cross_violations)
+            + len(capacity_violations)
+            + len(hard_limit_violations)
+            + len(orphan_violations)
+            + len(layer_violations)
+        )
         print(f"=== 检测汇总: 共{total}个违规 ===")
         print(f"  跨域违规: {len(cross_violations)}")
         print(f"  容量超限: {len(capacity_violations)}")
@@ -214,7 +250,7 @@ def load_arch_constraints(project_root: str) -> list[dict]:
 
     for yaml_path in sorted(glob.glob(os.path.join(yaml_dir, "**", "*.yaml"), recursive=True)):
         try:
-            with open(yaml_path, "r", encoding="utf-8") as f:
+            with open(yaml_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
             if not data or not isinstance(data, dict):
                 continue
@@ -236,7 +272,9 @@ def load_arch_constraints(project_root: str) -> list[dict]:
                         "constraint_type": entry.get("type", entry.get("constraint_type", "architectural")),
                         "from_domain": entry.get("from_domain", entry.get("source_domain", "")),
                         "to_domain": entry.get("to_domain", entry.get("target_domain", "")),
-                        "rule_definition": json.dumps(entry, ensure_ascii=False) if entry.get("rule") or entry.get("definition") else "",
+                        "rule_definition": json.dumps(entry, ensure_ascii=False)
+                        if entry.get("rule") or entry.get("definition")
+                        else "",
                         "severity": entry.get("severity", "medium"),
                         "enforcement": entry.get("enforcement", "advisory"),
                         "description": entry.get("description", ""),
@@ -249,13 +287,28 @@ def load_arch_constraints(project_root: str) -> list[dict]:
     return constraints
 
 
-domains_13 = ['D-PF_CORE','D-MKT_DATA','D-RISK','D-INTEGRATION','D-OPS','D-SECURITY',
-              'D-AUTONOMY_CORE','D-ML_TRAIN','D-GOVERNANCE','D-COMPLIANCE',
-              'D-FACTOR','D-SIGNAL','D-INFRA_RUNTIME']
+domains_13 = [
+    "D-PF_CORE",
+    "D-MKT_DATA",
+    "D-RISK",
+    "D-INTEGRATION",
+    "D-OPS",
+    "D-SECURITY",
+    "D-AUTONOMY_CORE",
+    "D-ML_TRAIN",
+    "D-GOVERNANCE",
+    "D-COMPLIANCE",
+    "D-FACTOR",
+    "D-SIGNAL",
+    "D-INFRA_RUNTIME",
+]
+
 
 def main():
     parser = argparse.ArgumentParser(description="Audit domain nodes - P0-4升级含4类检测")
-    parser.add_argument("--check", action="store_true", help="P0-4: 执行4类架构检测（跨域违规+容量超限+孤儿节点+层级违规）")
+    parser.add_argument(
+        "--check", action="store_true", help="P0-4: 执行4类架构检测（跨域违规+容量超限+孤儿节点+层级违规）"
+    )
     args = parser.parse_args()
 
     # P0-4: --check模式执行4类检测
@@ -271,7 +324,10 @@ def main():
         print("STEP 2: Node type distribution")
         step2 = {}
         for d in domains_13:
-            cur.execute("SELECT node_type, COUNT(*) FROM nodes WHERE domain_id=? AND design_maturity='design' GROUP BY node_type ORDER BY COUNT(*) DESC", (d,))
+            cur.execute(
+                "SELECT node_type, COUNT(*) FROM nodes WHERE domain_id=? AND design_maturity='design' GROUP BY node_type ORDER BY COUNT(*) DESC",
+                (d,),
+            )
             rows = cur.fetchall()
             step2[d] = {r[0]: r[1] for r in rows}
             total = sum(step2[d].values())
@@ -281,15 +337,21 @@ def main():
         print("STEP 3: belongs_to fill rate")
         step3 = {}
         for d in domains_13:
-            cur.execute("SELECT COUNT(*) as total, SUM(CASE WHEN belongs_to IS NOT NULL AND belongs_to != '' THEN 1 ELSE 0 END) as has_parent FROM nodes WHERE domain_id=? AND design_maturity='design' AND node_type IN ('feature','reference','implementation')", (d,))
+            cur.execute(
+                "SELECT COUNT(*) as total, SUM(CASE WHEN belongs_to IS NOT NULL AND belongs_to != '' THEN 1 ELSE 0 END) as has_parent FROM nodes WHERE domain_id=? AND design_maturity='design' AND node_type IN ('feature','reference','implementation')",
+                (d,),
+            )
             row = cur.fetchone()
-            step3[d] = {'total': row[0], 'has_parent': row[1]} if row[0] > 0 else {'total': 0, 'has_parent': 0}
+            step3[d] = {"total": row[0], "has_parent": row[1]} if row[0] > 0 else {"total": 0, "has_parent": 0}
             print(f"  {d}: total_fri={step3[d]['total']}, has_parent={step3[d]['has_parent']}")
 
         # STEP 4
         print("STEP 4: D-SIGNAL / D-SIMULATION details")
-        for dom in ['D-SIGNAL', 'D-SIMULATION']:
-            cur.execute("SELECT node_id, node_name, node_type FROM nodes WHERE domain_id=? AND design_maturity='design' ORDER BY node_id", (dom,))
+        for dom in ["D-SIGNAL", "D-SIMULATION"]:
+            cur.execute(
+                "SELECT node_id, node_name, node_type FROM nodes WHERE domain_id=? AND design_maturity='design' ORDER BY node_id",
+                (dom,),
+            )
             rows = cur.fetchall()
             print(f"  {dom}: {len(rows)} nodes")
             for r in rows:
@@ -297,19 +359,23 @@ def main():
 
         # STEP 5
         print("STEP 5: Duplicate names")
-        cur.execute("SELECT node_name, domain_id, COUNT(*) as cnt FROM nodes WHERE design_maturity='design' AND node_name IS NOT NULL AND node_name != '' GROUP BY node_name, domain_id HAVING COUNT(*) > 1 ORDER BY cnt DESC")
+        cur.execute(
+            "SELECT node_name, domain_id, COUNT(*) as cnt FROM nodes WHERE design_maturity='design' AND node_name IS NOT NULL AND node_name != '' GROUP BY node_name, domain_id HAVING COUNT(*) > 1 ORDER BY cnt DESC"
+        )
         dup_rows = cur.fetchall()
-        step5 = [{'node_name': r[0], 'domain_id': r[1], 'count': r[2]} for r in dup_rows]
+        step5 = [{"node_name": r[0], "domain_id": r[1], "count": r[2]} for r in dup_rows]
         print(f"  Duplicate groups: {len(step5)}")
         for r in step5:
-            print(f"    name=\"{r['node_name']}\" | domain={r['domain_id']} | count={r['count']}")
+            print(f'    name="{r["node_name"]}" | domain={r["domain_id"]} | count={r["count"]}')
 
         # STEP 6
         print("STEP 6: Empty names")
-        cur.execute("SELECT domain_id, node_type, COUNT(*) FROM nodes WHERE design_maturity='design' AND (node_name IS NULL OR node_name = '') GROUP BY domain_id, node_type ORDER BY COUNT(*) DESC")
+        cur.execute(
+            "SELECT domain_id, node_type, COUNT(*) FROM nodes WHERE design_maturity='design' AND (node_name IS NULL OR node_name = '') GROUP BY domain_id, node_type ORDER BY COUNT(*) DESC"
+        )
         empty_rows = cur.fetchall()
-        step6 = [{'domain_id': r[0], 'node_type': r[1], 'count': r[2]} for r in empty_rows]
-        total_empty = sum(r['count'] for r in step6)
+        step6 = [{"domain_id": r[0], "node_type": r[1], "count": r[2]} for r in empty_rows]
+        total_empty = sum(r["count"] for r in step6)
         print(f"  Empty name nodes: {total_empty} across {len(step6)} groups")
         for r in step6:
             print(f"    domain={r['domain_id']}, type={r['node_type']}, count={r['count']}")
@@ -346,13 +412,23 @@ def main():
                 skipped += 1
                 continue
             try:
-                cur.execute("""INSERT OR REPLACE INTO arch_constraints
+                cur.execute(
+                    """INSERT OR REPLACE INTO arch_constraints
                                (constraint_id, name, constraint_type, from_domain, to_domain,
                                 rule_definition, severity, enforcement, description)
                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                            (c["constraint_id"], c["name"], c["constraint_type"],
-                             from_d, to_d, c["rule_definition"], c["severity"],
-                             c["enforcement"], c["description"]))
+                    (
+                        c["constraint_id"],
+                        c["name"],
+                        c["constraint_type"],
+                        from_d,
+                        to_d,
+                        c["rule_definition"],
+                        c["severity"],
+                        c["enforcement"],
+                        c["description"],
+                    ),
+                )
                 inserted += 1
             except Exception as e:
                 print(f"  [H8] Warning: Failed to insert constraint {c.get('constraint_id', '?')}: {e}")
@@ -369,6 +445,7 @@ def main():
         print(f"RESULT: count={count}")
     finally:
         conn.close()
+
 
 if __name__ == "__main__":
     main()

@@ -31,10 +31,9 @@ git 行为序列 → 自动推导逆操作 → 生成可执行回退脚本。
 from __future__ import annotations
 
 import subprocess
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -47,7 +46,6 @@ class DownMigration:
 
 
 class DownMigrationGenerator:
-
     OUTPUT_DIR: str = "data/rollback/down"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -60,7 +58,7 @@ class DownMigrationGenerator:
             commit_sha = self._get_head_short()
 
         changed_files = self._get_changed_files(commit_sha)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         bash_script = self._generate_bash(commit_sha, changed_files)
         pwsh_script = self._generate_pwsh(commit_sha, changed_files)
@@ -83,11 +81,11 @@ class DownMigrationGenerator:
         lines: list[str] = []
         lines.append("#!/bin/bash")
         lines.append(f"# Down-migration: revert to {commit_sha}")
-        lines.append(f"# Generated: {datetime.now(timezone.utc).isoformat()}")
+        lines.append(f"# Generated: {datetime.now(UTC).isoformat()}")
         lines.append("#")
         lines.append("set -euo pipefail")
         lines.append("")
-        lines.append("echo 'Starting down-migration to {}'".format(commit_sha))
+        lines.append(f"echo 'Starting down-migration to {commit_sha}'")
         lines.append(f"git revert --no-edit {commit_sha}")
         lines.append("")
         lines.append("echo 'Down-migration complete'")
@@ -95,12 +93,12 @@ class DownMigrationGenerator:
 
     def _generate_pwsh(self, commit_sha: str, files: list[str]) -> str:
         lines: list[str] = []
-        lines.append("# Down-migration: revert to {}".format(commit_sha))
-        lines.append("# Generated: {}".format(datetime.now(timezone.utc).isoformat()))
+        lines.append(f"# Down-migration: revert to {commit_sha}")
+        lines.append(f"# Generated: {datetime.now(UTC).isoformat()}")
         lines.append("$ErrorActionPreference = 'Stop'")
         lines.append("")
-        lines.append("Write-Host 'Starting down-migration to {}'".format(commit_sha))
-        lines.append("git revert --no-edit {}".format(commit_sha))
+        lines.append(f"Write-Host 'Starting down-migration to {commit_sha}'")
+        lines.append(f"git revert --no-edit {commit_sha}")
         lines.append("")
         lines.append("Write-Host 'Down-migration complete'")
         return "\n".join(lines)
@@ -110,7 +108,9 @@ class DownMigrationGenerator:
             result = subprocess.run(
                 ["git", "rev-parse", "--short", "HEAD"],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             return result.stdout.strip()
         except Exception:
@@ -121,7 +121,9 @@ class DownMigrationGenerator:
             result = subprocess.run(
                 ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", commit_sha],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             return [f for f in result.stdout.strip().split("\n") if f]
         except Exception:

@@ -17,13 +17,13 @@ import time
 
 import pytest
 
+from zephyr.governance.budget_models import BudgetDimension
 from zephyr.governance.budget_tracker import (
     BudgetSnapshot,
     BudgetTracker,
     TrackerScope,
     TrackerSummary,
 )
-from zephyr.governance.budget_models import BudgetDimension
 
 
 class TestTrackerScope:
@@ -49,8 +49,10 @@ class TestBudgetSnapshot:
 
     def test_total_tokens(self):
         snap = BudgetSnapshot(
-            scope=TrackerScope.REQUEST, scope_id="r-1",
-            tokens_in=100, tokens_out=50,
+            scope=TrackerScope.REQUEST,
+            scope_id="r-1",
+            tokens_in=100,
+            tokens_out=50,
         )
         assert snap.total_tokens == 150
 
@@ -60,22 +62,29 @@ class TestBudgetSnapshot:
 
     def test_is_expired_with_ttl(self):
         snap = BudgetSnapshot(
-            scope=TrackerScope.REQUEST, scope_id="r-1",
-            created_at=time.time() - 600, ttl=300,
+            scope=TrackerScope.REQUEST,
+            scope_id="r-1",
+            created_at=time.time() - 600,
+            ttl=300,
         )
         assert snap.is_expired() is True
 
     def test_is_expired_not_yet(self):
         snap = BudgetSnapshot(
-            scope=TrackerScope.REQUEST, scope_id="r-1",
-            created_at=time.time(), ttl=300,
+            scope=TrackerScope.REQUEST,
+            scope_id="r-1",
+            created_at=time.time(),
+            ttl=300,
         )
         assert snap.is_expired() is False
 
     def test_to_dict(self):
         snap = BudgetSnapshot(
-            scope=TrackerScope.SESSION, scope_id="s-1",
-            tokens_in=100, tokens_out=50, cost_usd=0.05,
+            scope=TrackerScope.SESSION,
+            scope_id="s-1",
+            tokens_in=100,
+            tokens_out=50,
+            cost_usd=0.05,
         )
         d = snap.to_dict()
         assert d["scope"] == "session"
@@ -126,9 +135,12 @@ class TestBudgetTracker:
     def test_record_request(self):
         bt = BudgetTracker()
         snap = bt.record_request(
-            TrackerScope.SESSION, "sess-1",
-            tokens_in=100, tokens_out=50,
-            cost_usd=0.05, wall_time=1.5,
+            TrackerScope.SESSION,
+            "sess-1",
+            tokens_in=100,
+            tokens_out=50,
+            cost_usd=0.05,
+            wall_time=1.5,
         )
         assert snap.tokens_in == 100
         assert snap.tokens_out == 50
@@ -143,8 +155,22 @@ class TestBudgetTracker:
 
     def test_record_turn(self):
         bt = BudgetTracker()
-        s1 = BudgetSnapshot(scope=TrackerScope.REQUEST, scope_id="r-1", tokens_in=100, tokens_out=50, cost_usd=0.01, wall_time_seconds=1.0)
-        s2 = BudgetSnapshot(scope=TrackerScope.REQUEST, scope_id="r-2", tokens_in=200, tokens_out=100, cost_usd=0.02, wall_time_seconds=2.0)
+        s1 = BudgetSnapshot(
+            scope=TrackerScope.REQUEST,
+            scope_id="r-1",
+            tokens_in=100,
+            tokens_out=50,
+            cost_usd=0.01,
+            wall_time_seconds=1.0,
+        )
+        s2 = BudgetSnapshot(
+            scope=TrackerScope.REQUEST,
+            scope_id="r-2",
+            tokens_in=200,
+            tokens_out=100,
+            cost_usd=0.02,
+            wall_time_seconds=2.0,
+        )
         turn = bt.record_turn("turn-1", [s1, s2])
         assert turn.tokens_in == 300
         assert turn.tokens_out == 150

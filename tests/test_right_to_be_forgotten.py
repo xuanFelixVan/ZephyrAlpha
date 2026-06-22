@@ -12,11 +12,7 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from unittest.mock import patch
-
-import pytest
 
 from zephyr.governance.right_to_be_forgotten import (
     EXIT_GDPR_BLOCKED,

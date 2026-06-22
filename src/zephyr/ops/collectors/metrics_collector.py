@@ -21,7 +21,7 @@
 
 from collections import deque
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 
@@ -60,9 +60,12 @@ class EMABaseline:
         self.net_ema = self.alpha * snapshot.network_errors_count + (1 - self.alpha) * self.net_ema
         self.latency_ema = self.alpha * snapshot.detection_latency_ms + (1 - self.alpha) * self.latency_ema
         if len(self.history) > 1:
-            values = np.array([[s.system_cpu, s.memory_usage_pct, s.disk_io_wait,
-                                s.network_errors_count, s.detection_latency_ms]
-                               for s in self.history])
+            values = np.array(
+                [
+                    [s.system_cpu, s.memory_usage_pct, s.disk_io_wait, s.network_errors_count, s.detection_latency_ms]
+                    for s in self.history
+                ]
+            )
             self.cpu_var = max(float(np.var(values[:, 0])), 1e-6)
             self.mem_var = max(float(np.var(values[:, 1])), 1e-6)
             self.disk_var = max(float(np.var(values[:, 2])), 1e-6)
@@ -79,11 +82,15 @@ class MetricsCollector:
     def collect(self, snapshot: MetricSnapshot) -> dict[str, Any]:
         self.baseline.update(snapshot)
         z_scores = {
-            "system_cpu": abs(snapshot.system_cpu - self.baseline.cpu_ema) / max(self.baseline.cpu_var ** 0.5, 1e-6),
-            "memory_usage_pct": abs(snapshot.memory_usage_pct - self.baseline.mem_ema) / max(self.baseline.mem_var ** 0.5, 1e-6),
-            "disk_io_wait": abs(snapshot.disk_io_wait - self.baseline.disk_ema) / max(self.baseline.disk_var ** 0.5, 1e-6),
-            "network_errors_count": abs(snapshot.network_errors_count - self.baseline.net_ema) / max(self.baseline.net_var ** 0.5, 1e-6),
-            "detection_latency_ms": abs(snapshot.detection_latency_ms - self.baseline.latency_ema) / max(self.baseline.latency_var ** 0.5, 1e-6),
+            "system_cpu": abs(snapshot.system_cpu - self.baseline.cpu_ema) / max(self.baseline.cpu_var**0.5, 1e-6),
+            "memory_usage_pct": abs(snapshot.memory_usage_pct - self.baseline.mem_ema)
+            / max(self.baseline.mem_var**0.5, 1e-6),
+            "disk_io_wait": abs(snapshot.disk_io_wait - self.baseline.disk_ema)
+            / max(self.baseline.disk_var**0.5, 1e-6),
+            "network_errors_count": abs(snapshot.network_errors_count - self.baseline.net_ema)
+            / max(self.baseline.net_var**0.5, 1e-6),
+            "detection_latency_ms": abs(snapshot.detection_latency_ms - self.baseline.latency_ema)
+            / max(self.baseline.latency_var**0.5, 1e-6),
         }
         anomaly_triggered = any(abs(z) > self.Z_THRESHOLD for z in z_scores.values())
         return {

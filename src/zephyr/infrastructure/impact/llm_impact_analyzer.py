@@ -30,9 +30,10 @@ LLM Impact Analyzer — 语义影响分析器。
 """
 
 import hashlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class ImpactAssessment:
@@ -43,6 +44,7 @@ class ImpactAssessment:
     requires_rollback_sim: bool = False
     recommendation: str = ""
 
+
 @dataclass
 class DependencyCluster:
     cluster_id: str
@@ -50,8 +52,8 @@ class DependencyCluster:
     shared_files: list[str]
     cluster_risk: str
 
-class LLMImpactAnalyzer:
 
+class LLMImpactAnalyzer:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -137,12 +139,14 @@ class LLMImpactAnalyzer:
                     break
 
             if not merged:
-                clusters.append(DependencyCluster(
-                    cluster_id=f"CLUSTER-{len(clusters) + 1}",
-                    tasks=[task_id],
-                    shared_files=downstream,
-                    cluster_risk="LOW",
-                ))
+                clusters.append(
+                    DependencyCluster(
+                        cluster_id=f"CLUSTER-{len(clusters) + 1}",
+                        tasks=[task_id],
+                        shared_files=downstream,
+                        cluster_risk="LOW",
+                    )
+                )
 
         for cluster in clusters:
             if len(cluster.tasks) > 5:

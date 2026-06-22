@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_self_audit.py
 
-import pytest
 
 from zephyr.ops.detectors.self_audit import SelfAudit
 

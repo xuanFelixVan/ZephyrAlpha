@@ -1,28 +1,27 @@
 ---
-blueprint_id: DOM-GOV-001
-created: '2026-05-06'
 doc_type: index
-module_id: MOD-L00-003
-status: Draft
-title: datasource-core — 目录索引
-updated: '2026-05-06'
-version: 1.0.0
+status: active
+title: "datasource_core — 目录索引"
+module_id: "MOD-L00-001"
+blueprint_id: "MOD-L00-001"
+version: "3.0.0"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-
-# datasource-core
+# datasource_core
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-06
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blueprint.md](blueprint.md) | Markdown | 数据接入层蓝图（C 轨占位 — 禁止施工） |
-| [delivery/](delivery/index.md) | 目录 | delivery |
+| [blueprint.md](blueprint.md) | Markdown | Data Source Core 蓝图+施工图 — 数据接入层·C轨占位 |
+| [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
+| [index.md](index.md) | Markdown | datasource-core — 目录索引 |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

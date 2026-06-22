@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import hashlib
-import hmac
 import json
 import sqlite3
 from pathlib import Path
@@ -22,9 +21,9 @@ from unittest.mock import patch
 import pytest
 
 from zephyr.governance.sqlite_dumper import (
-    DumpResult,
     HMAC_KEY_DEFAULT,
     JSONL_HEADER_PREFIX,
+    DumpResult,
     RestoreResult,
     SqliteDumper,
     VerifyResult,
@@ -35,14 +34,10 @@ from zephyr.governance.sqlite_dumper import (
 def tmp_db(tmp_path: Path) -> Path:
     db_path = tmp_path / "test.db"
     conn = sqlite3.connect(str(db_path))
-    conn.execute(
-        "CREATE TABLE tasks (id INTEGER PRIMARY KEY, name TEXT NOT NULL, status TEXT DEFAULT 'pending')"
-    )
+    conn.execute("CREATE TABLE tasks (id INTEGER PRIMARY KEY, name TEXT NOT NULL, status TEXT DEFAULT 'pending')")
     conn.execute("INSERT INTO tasks (id, name, status) VALUES (1, 'alpha', 'done')")
     conn.execute("INSERT INTO tasks (id, name, status) VALUES (2, 'beta', 'pending')")
-    conn.execute(
-        "CREATE TABLE gates (id INTEGER PRIMARY KEY, gate_name TEXT, passed INTEGER DEFAULT 0)"
-    )
+    conn.execute("CREATE TABLE gates (id INTEGER PRIMARY KEY, gate_name TEXT, passed INTEGER DEFAULT 0)")
     conn.execute("INSERT INTO gates (id, gate_name, passed) VALUES (1, 'G1', 1)")
     conn.commit()
     conn.close()

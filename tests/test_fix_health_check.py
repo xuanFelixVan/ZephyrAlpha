@@ -106,7 +106,10 @@ class TestCheckDb:
         db_path = str(tmp_path / "readonly_dir" / "test.db")
         os.makedirs(tmp_path / "readonly_dir", exist_ok=True)
         hc = FixHealthCheck(db_path=db_path)
-        with patch("zephyr.security.access_control.auto_fix_engine_03.fix_health_check.sqlite3.connect", side_effect=OSError("permission denied")):
+        with patch(
+            "zephyr.security.access_control.auto_fix_engine_03.fix_health_check.sqlite3.connect",
+            side_effect=OSError("permission denied"),
+        ):
             result = hc._check_db()
         assert result is False
 

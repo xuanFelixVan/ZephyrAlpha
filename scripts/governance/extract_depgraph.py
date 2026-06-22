@@ -31,18 +31,19 @@ import argparse
 import datetime
 import json
 import os
+import sqlite3
 import sys
 from pathlib import Path
-
-import sqlite3
 
 
 class _CustomEncoder(json.JSONEncoder):
     """Handle non-JSON-serializable types found in depgraph."""
+
     def default(self, obj):
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
         return super().default(obj)
+
 
 DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 
@@ -137,14 +138,16 @@ def _build_modules_view(dep: dict) -> dict:
                 "items": [],
             }
         for n in sub_items:
-            modules[key]["items"].append({
-                "module_id": n.get("belongs_to", n.get("blueprint_id", "")),
-                "name": n.get("path", "").split("/")[-1] if n.get("path") else "",
-                "path": n.get("path", ""),
-                "physical_files": [n.get("path", "")] if n.get("path") else [],
-                "build_status": n.get("deployment_lifecycle", "unknown"),
-                "blueprint_status": n.get("blueprint_id", "unknown"),
-            })
+            modules[key]["items"].append(
+                {
+                    "module_id": n.get("belongs_to", n.get("blueprint_id", "")),
+                    "name": n.get("path", "").split("/")[-1] if n.get("path") else "",
+                    "path": n.get("path", ""),
+                    "physical_files": [n.get("path", "")] if n.get("path") else [],
+                    "build_status": n.get("deployment_lifecycle", "unknown"),
+                    "blueprint_status": n.get("blueprint_id", "unknown"),
+                }
+            )
     return modules
 
 
@@ -183,18 +186,16 @@ def cmd_summary(dep: dict, output: str | None) -> None:
         result["total_modules"] += count
         prod_count = production_counts.get(domain_name, 0)
         result["total_production_nodes"] += prod_count
-        paths = list(set(
-            item.get("path", "")
-            for item in items
-            if item.get("path")
-        ))
-        result["domains"].append({
-            "domain": domain_name,
-            "domain_name": domain_data.get("domain_name", ""),
-            "module_count": count,
-            "production_nodes": prod_count,
-            "paths": sorted(paths)[:10],
-        })
+        paths = list(set(item.get("path", "") for item in items if item.get("path")))
+        result["domains"].append(
+            {
+                "domain": domain_name,
+                "domain_name": domain_data.get("domain_name", ""),
+                "module_count": count,
+                "production_nodes": prod_count,
+                "paths": sorted(paths)[:10],
+            }
+        )
     _write_output(result, output)
 
 
@@ -237,9 +238,20 @@ def cmd_modules(dep: dict, module_ids: list[str], output: str | None) -> None:
 
 def cmd_top(dep: dict, output: str | None) -> None:
     """顶级元数据：不含 modules/nodes/edges 等重量级数据。"""
-    heavy_keys = {"modules", "nodes", "edges", "module_edges", "domain_edges",
-                  "adjacency_forward", "adjacency_reverse", "file_index",
-                  "module_index", "most_depended_upon", "orphan_nodes", "gated_modules"}
+    heavy_keys = {
+        "modules",
+        "nodes",
+        "edges",
+        "module_edges",
+        "domain_edges",
+        "adjacency_forward",
+        "adjacency_reverse",
+        "file_index",
+        "module_index",
+        "most_depended_upon",
+        "orphan_nodes",
+        "gated_modules",
+    }
     result = {k: v for k, v in dep.items() if k not in heavy_keys}
     _write_output(result, output)
 
@@ -255,13 +267,15 @@ def cmd_paths(dep: dict, output: str | None, domain_filter: list[str] | None = N
         domain_files = []
         for item in domain_data.get("items", []):
             for pf in item.get("physical_files", []):
-                domain_files.append({
-                    "module_id": item.get("module_id", ""),
-                    "module_name": item.get("name", ""),
-                    "path": pf,
-                    "build_status": item.get("build_status", "unknown"),
-                    "blueprint_status": item.get("blueprint_status", "unknown"),
-                })
+                domain_files.append(
+                    {
+                        "module_id": item.get("module_id", ""),
+                        "module_name": item.get("name", ""),
+                        "path": pf,
+                        "build_status": item.get("build_status", "unknown"),
+                        "blueprint_status": item.get("blueprint_status", "unknown"),
+                    }
+                )
         result[domain_name] = {
             "file_count": len(domain_files),
             "files": domain_files,

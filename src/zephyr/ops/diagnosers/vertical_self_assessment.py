@@ -27,6 +27,7 @@ Risk: R137 — Overestimating capability leads to dangerous autonomous actions.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class VerticalSelfAssessment:
     maturity_level: int = 0

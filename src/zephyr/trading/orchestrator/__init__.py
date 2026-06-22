@@ -2,6 +2,7 @@
 from zephyr.trading.orchestrator.alert_handler import AlertHandler
 from zephyr.trading.orchestrator.context_bridge import ContextBridge
 from zephyr.trading.orchestrator.script_runner import ScriptRunner
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.integration.runtime_core.orchestrator
 # [INVARIANTS] pending_review
@@ -9,9 +10,9 @@ from zephyr.trading.orchestrator.script_runner import ScriptRunner
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """Agent Orchestrator (Orc)
 =====================================
 
@@ -52,70 +53,70 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 """
 
 __all__ = [
-    'agent_health_monitor',
-    'agent_orchestrator',
-    'agent_quality',
-    'autonomy_guard',
-    'backup_manager',
-    'batch_orchestrator',
-    'benchmark_runner',
-    'blind_spot_closure',
-    'blueprint_scorer',
-    'blueprint_health',
-    'bulkhead_manager',
-    'canary_manager',
-    'capacity_budget',
-    'chaos_engine',
-    'chaos_hooks',
-    'config_manager',
-    'construction_guide',
-    'contract_registry',
-    'contract_router',
-    'data_lifecycle',
-    'deferred_queue',
-    'degrade_cascade',
-    'dependency_lock',
-    'design_decisions',
-    'disk_guard',
-    'dlq_manager',
-    'failure_matcher',
-    'fault_types',
-    'feature_flag',
-    'file_task_mapper',
-    'finding_bridge',
-    'hallucination_detector',
-    'housekeeping',
-    'incident_postmortem',
-    'ke_quality',
-    'knowledge_freshness',
-    'lean_scanner',
-    'model_registry',
-    'network_partition',
-    'path_index',
-    'phase_executor',
-    'prompt_version',
-    'reconciliation_loop',
-    'risk_registry',
-    'rollback_manager',
-    'rolling_upgrade',
-    'schema_migration',
-    'session_conflict',
-    'session_handoff',
-    'session_manager',
-    'stability_guard',
-    'startup_sequencer',
-    'state_propagation',
-    'state_synchronizer',
-    'system_transfer',
-    'task_queue',
-    'teardown_manager',
-    'trigger_router',
-    'version_manifest',
-    'wave_generator',
+    "agent_health_monitor",
+    "agent_orchestrator",
+    "agent_quality",
     "alert_handler",
+    "autonomy_guard",
+    "backup_manager",
+    "batch_orchestrator",
+    "benchmark_runner",
+    "blind_spot_closure",
+    "blueprint_health",
+    "blueprint_scorer",
+    "bulkhead_manager",
+    "canary_manager",
+    "capacity_budget",
+    "chaos_engine",
+    "chaos_hooks",
+    "config_manager",
+    "construction_guide",
     "context_bridge",
+    "contract_registry",
+    "contract_router",
+    "data_lifecycle",
+    "deferred_queue",
+    "degrade_cascade",
+    "dependency_lock",
+    "design_decisions",
+    "disk_guard",
+    "dlq_manager",
+    "failure_matcher",
+    "fault_types",
+    "feature_flag",
+    "file_task_mapper",
+    "finding_bridge",
+    "hallucination_detector",
+    "housekeeping",
+    "incident_postmortem",
+    "ke_quality",
+    "knowledge_freshness",
+    "lean_scanner",
     "memory_writer",
+    "model_registry",
+    "network_partition",
+    "path_index",
+    "phase_executor",
+    "prompt_version",
+    "reconciliation_loop",
+    "risk_registry",
+    "rollback_manager",
+    "rolling_upgrade",
+    "schema_migration",
     "script_runner",
+    "session_conflict",
+    "session_handoff",
+    "session_manager",
+    "stability_guard",
+    "startup_sequencer",
+    "state_propagation",
+    "state_synchronizer",
+    "system_transfer",
+    "task_queue",
+    "teardown_manager",
+    "trigger_router",
+    "version_manifest",
+    "wave_generator",
 ]
 
 _SUBMODULES = [
@@ -179,7 +180,7 @@ _SUBMODULES = [
     "trigger_router",
     "version_manifest",
     "wave_generator",
-    'MemoryWriter',
+    "MemoryWriter",
     "alert_handler",
     "context_bridge",
     "memory_writer",
@@ -190,10 +191,12 @@ _SUBMODULES = [
 def __getattr__(name: str):
     if name in _SUBMODULES:
         import importlib
+
         mod = importlib.import_module(f"zephyr.trading.orchestrator.{name}")
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__.append("AlertHandler")
 

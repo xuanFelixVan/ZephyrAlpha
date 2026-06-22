@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.output_quality_gate
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from dataclasses import dataclass
+
 
 @dataclass
 class QualityRule:
@@ -30,12 +21,14 @@ class QualityRule:
     threshold: float
     severity: str
 
+
 @dataclass
 class QualityVerdict:
     passed: bool
     score: float
     violations: list[str]
     should_block: bool
+
 
 DEFAULT_RULES: list[QualityRule] = [
     QualityRule("min_length", "len>20", 0.5, "soft"),
@@ -44,6 +37,7 @@ DEFAULT_RULES: list[QualityRule] = [
     QualityRule("cost_per_char", "cost/len<0.01", 0.7, "soft"),
     QualityRule("format_valid", "has_delimiters", 0.8, "soft"),
 ]
+
 
 class OutputQualityGate:
     def __init__(self, rules: list[QualityRule] | None = None):

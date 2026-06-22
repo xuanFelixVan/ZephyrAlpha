@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import threading
 
-import pytest
-
 from zephyr.governance.context_budget import (
     BudgetEntry,
     ContextBudget,

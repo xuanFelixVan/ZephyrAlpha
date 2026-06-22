@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.agent_cooldown import AgentCooldown, CooldownCheck, CooldownEntry
 
 
@@ -32,9 +30,7 @@ class TestCooldownEntry:
         assert entry.reason == "post_rollback_cooldown"
 
     def test_default_reason_field(self):
-        entry = CooldownEntry(
-            agent_session="s", file_path="f", cooldown_until="t", reason=""
-        )
+        entry = CooldownEntry(agent_session="s", file_path="f", cooldown_until="t", reason="")
         assert entry.reason == ""
 
 

@@ -46,4 +46,8 @@ class ResourceStarvationAware:
     disk_min_mb: float = 1024.0
 
     def can_proceed(self, budget: ResourceBudget) -> bool:
-        return (budget.cpu_available_pct >= self.cpu_min_pct and budget.mem_available_mb >= self.mem_min_mb and budget.disk_available_mb >= self.disk_min_mb)
+        return (
+            budget.cpu_available_pct >= self.cpu_min_pct
+            and budget.mem_available_mb >= self.mem_min_mb
+            and budget.disk_available_mb >= self.disk_min_mb
+        )

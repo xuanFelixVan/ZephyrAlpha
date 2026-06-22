@@ -62,18 +62,20 @@ class TestLogRollback:
 
     @patch("zephyr.infrastructure.rollback.auditor.AuditWriter")
     def test_log_rollback_passes_rollback_target_in_metadata(self, mock_audit_writer_cls):
-        mock_write = MagicMock(return_value={
-            "event_type": "rbac_decision",
-            "agent_id": "agent-2",
-            "permission": "rollback",
-            "resource": "src/main.py",
-            "decision_basis": "Rollback→Audit: sha_xyz",
-            "timestamp": "2026-01-01T00:00:00+00:00",
-            "session_id": "",
-            "granted": True,
-            "metadata": {"rollback_target": "sha_xyz"},
-            "chain_hash": "def456",
-        })
+        mock_write = MagicMock(
+            return_value={
+                "event_type": "rbac_decision",
+                "agent_id": "agent-2",
+                "permission": "rollback",
+                "resource": "src/main.py",
+                "decision_basis": "Rollback→Audit: sha_xyz",
+                "timestamp": "2026-01-01T00:00:00+00:00",
+                "session_id": "",
+                "granted": True,
+                "metadata": {"rollback_target": "sha_xyz"},
+                "chain_hash": "def456",
+            }
+        )
         mock_audit_writer_cls.write = mock_write
 
         auditor = RollbackAuditor()
@@ -90,18 +92,20 @@ class TestLogRollback:
 
     @patch("zephyr.infrastructure.rollback.auditor.AuditWriter")
     def test_log_rollback_with_empty_session_id(self, mock_audit_writer_cls):
-        mock_write = MagicMock(return_value={
-            "event_type": "rbac_decision",
-            "agent_id": "agent-3",
-            "permission": "rollback",
-            "resource": "mod.py",
-            "decision_basis": "Rollback→Audit: target1",
-            "timestamp": "2026-01-01T00:00:00+00:00",
-            "session_id": "",
-            "granted": True,
-            "metadata": {"rollback_target": "target1"},
-            "chain_hash": "ghi789",
-        })
+        mock_write = MagicMock(
+            return_value={
+                "event_type": "rbac_decision",
+                "agent_id": "agent-3",
+                "permission": "rollback",
+                "resource": "mod.py",
+                "decision_basis": "Rollback→Audit: target1",
+                "timestamp": "2026-01-01T00:00:00+00:00",
+                "session_id": "",
+                "granted": True,
+                "metadata": {"rollback_target": "target1"},
+                "chain_hash": "ghi789",
+            }
+        )
         mock_audit_writer_cls.write = mock_write
 
         auditor = RollbackAuditor()
@@ -119,18 +123,20 @@ class TestLogRollback:
 class TestLogRollbackBoundaryCases:
     @patch("zephyr.infrastructure.rollback.auditor.AuditWriter")
     def test_log_rollback_with_empty_agent_id(self, mock_audit_writer_cls):
-        mock_write = MagicMock(return_value={
-            "event_type": "rbac_decision",
-            "agent_id": "",
-            "permission": "rollback",
-            "resource": "file.py",
-            "decision_basis": "Rollback→Audit: t1",
-            "timestamp": "2026-01-01T00:00:00+00:00",
-            "session_id": "",
-            "granted": True,
-            "metadata": {"rollback_target": "t1"},
-            "chain_hash": "x",
-        })
+        mock_write = MagicMock(
+            return_value={
+                "event_type": "rbac_decision",
+                "agent_id": "",
+                "permission": "rollback",
+                "resource": "file.py",
+                "decision_basis": "Rollback→Audit: t1",
+                "timestamp": "2026-01-01T00:00:00+00:00",
+                "session_id": "",
+                "granted": True,
+                "metadata": {"rollback_target": "t1"},
+                "chain_hash": "x",
+            }
+        )
         mock_audit_writer_cls.write = mock_write
 
         auditor = RollbackAuditor()
@@ -144,18 +150,20 @@ class TestLogRollbackBoundaryCases:
 
     @patch("zephyr.infrastructure.rollback.auditor.AuditWriter")
     def test_log_rollback_with_empty_resource(self, mock_audit_writer_cls):
-        mock_write = MagicMock(return_value={
-            "event_type": "rbac_decision",
-            "agent_id": "a1",
-            "permission": "rollback",
-            "resource": "",
-            "decision_basis": "Rollback→Audit: t2",
-            "timestamp": "2026-01-01T00:00:00+00:00",
-            "session_id": "",
-            "granted": True,
-            "metadata": {"rollback_target": "t2"},
-            "chain_hash": "y",
-        })
+        mock_write = MagicMock(
+            return_value={
+                "event_type": "rbac_decision",
+                "agent_id": "a1",
+                "permission": "rollback",
+                "resource": "",
+                "decision_basis": "Rollback→Audit: t2",
+                "timestamp": "2026-01-01T00:00:00+00:00",
+                "session_id": "",
+                "granted": True,
+                "metadata": {"rollback_target": "t2"},
+                "chain_hash": "y",
+            }
+        )
         mock_audit_writer_cls.write = mock_write
 
         auditor = RollbackAuditor()

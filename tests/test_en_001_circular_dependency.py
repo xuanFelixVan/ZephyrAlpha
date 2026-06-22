@@ -15,8 +15,6 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency import (
     ALL_MODULES,
     LAYER_MODULE_NAMES,

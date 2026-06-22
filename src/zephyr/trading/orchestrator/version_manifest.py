@@ -40,6 +40,7 @@ VERSION_MANIFEST: dict[str, dict] = {
     "mod_master_001": {"version": "v0.1.0", "path": "docs/03_modules/_master-blueprint/"},
 }
 
+
 class VersionManifest:
     def get_version(self, system: str) -> str:
         return VERSION_MANIFEST.get(system, {}).get("version", "v0.0.0")

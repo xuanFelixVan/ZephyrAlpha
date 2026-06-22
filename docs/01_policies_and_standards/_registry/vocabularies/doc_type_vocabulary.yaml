@@ -58,7 +58,7 @@ values:
     forbidden_directories: ["operational/"]
     required_fields: ["valid_from", "verifiability"]
     ai_keywords: ["推荐", "方案", "做法", "best practice", "应该"]
-    examples: ["metadata-registry.md", "trae_028_doc_structure_naming.yaml doc_001"]
+    examples: ["metadata_registry.yaml", "trae_028_doc_structure_naming.yaml doc_001"]
 
   - value: operational_rule
     definition: "操作规程——定义'如何做'的步骤、检查清单、回滚方案"
@@ -76,7 +76,7 @@ values:
     forbidden_directories: ["operational/"]
     required_fields: ["summary"]
     ai_keywords: ["注册表", "登记表", "清单", "索引", "registry"]
-    examples: ["rule-registry.md", "document-metadata-index-registry.yaml"]
+    examples: ["_index.yaml", "document-metadata-index-registry.yaml"]
 
   - value: index
     definition: "索引入口——目录级导航文件，声明子域的职责边界、文件清单和依赖关系。索引文件本身不制定规则，而是告诉 AI '这个目录里有什么、管什么、怎么用'"
@@ -121,8 +121,8 @@ values:
     forbidden_directories: ["operational/", "governance/"]
     required_fields: []
     ai_keywords: ["术语", "定义", "glossary", "terminology", "仲裁", "语义"]
-    usage_note: "术语定义的唯一仲裁源（primary）——如 glossary-glossary.md。术语的大白话翻译/映射表使用 doc_type: reference（derived）——如 terminology-mapping-reference.md。两者的区别：terminology 是定义（字典），reference 是翻译（对照表）。"
-    examples: ["glossary-glossary.md"]
+    usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/glossary.yaml。术语的大白话翻译/映射表使用 doc_type: reference（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），reference 是翻译（对照表）。"
+    examples: ["_registry/vocabularies/glossary.yaml"]
 
   - value: reference
     definition: "参考文件——提供特定主题的结构化参考数据、映射表或排名，不定义规则本身"
@@ -132,7 +132,7 @@ values:
     required_fields: ["summary"]
     ai_keywords: ["参考", "映射", "排名", "reference", "速查", "对照表"]
     usage_note: "用于术语映射表、模型排名等参考数据文件——这些文件提供信息但本身不定义规则。与 terminology 的区别：terminology 是术语定义的仲裁源；reference 是信息对照的翻译器/排名表。"
-    examples: ["terminology-mapping-reference.md", "frontier-llm-benchmark-ranking.md"]
+    examples: ["_registry/vocabularies/terminology_mapping.yaml", "frontier_llm_benchmark_ranking.yaml"]
 
   - value: vocabulary
     definition: "受控词表——定义枚举值、合法值域的机器可读清单，供 AI 和 CI 消费"
@@ -329,7 +329,7 @@ values:
 #   index            → index.md（固定，不可变）
 #   template         → {subject}-template.md（templates/ 目录下模板文件）
 #                       注：模板文件的 doc_type 取目标文档类型（如 blueprint-construction-template.md 设 doc_type: blueprint）
-#   terminology      → 术语特定命名（如 glossary-glossary.md、terminology-mapping-reference.md）
+#   terminology      → 术语特定命名（如 _registry/vocabularies/glossary.yaml、_registry/vocabularies/terminology_mapping.yaml）
 #
 # 历史修正：v1.1.0 允许"文件名描述业务场景、doc_type 定义文档结构，两者不需要一致"，该条款已废除。
 # 原因：运行三个月后发现它导致文件名误导 AI 和人类，增加审计负担。

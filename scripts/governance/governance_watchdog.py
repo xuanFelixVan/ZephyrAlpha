@@ -15,15 +15,15 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import signal
 import sys
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from enum import Enum, auto
+from datetime import UTC, datetime
+from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -33,10 +33,7 @@ class ServiceUnrecoverableError(Exception):
         self.service_name = service_name
         self.restart_count = restart_count
         self.max_restart = max_restart
-        super().__init__(
-            f"Service '{service_name}' unrecoverable: "
-            f"{restart_count}/{max_restart} restarts exhausted"
-        )
+        super().__init__(f"Service '{service_name}' unrecoverable: {restart_count}/{max_restart} restarts exhausted")
 
 
 class ServiceStatus(str, Enum):
@@ -54,8 +51,8 @@ class ServiceRecord:
     restart_fn: Callable[[], bool] = field(default_factory=lambda: lambda: False)
     status: ServiceStatus = ServiceStatus.HEALTHY
     restart_count: int = 0
-    last_check: Optional[datetime] = None
-    last_restart: Optional[datetime] = None
+    last_check: datetime | None = None
+    last_restart: datetime | None = None
     consecutive_failures: int = 0
 
 
@@ -72,11 +69,9 @@ class GovernanceWatchdog:
         self._services: dict[str, ServiceRecord] = {}
         self._lock = threading.Lock()
         self._stop_event = threading.Event()
-        self._watchdog_thread: Optional[threading.Thread] = None
-        self._on_exhausted: Optional[Callable[[str], None]] = None
-        self._state_path = str(
-            PROJECT_ROOT / "data" / "governance" / "watchdog_state.json"
-        )
+        self._watchdog_thread: threading.Thread | None = None
+        self._on_exhausted: Callable[[str], None] | None = None
+        self._state_path = str(PROJECT_ROOT / "data" / "governance" / "watchdog_state.json")
 
     def register_service(
         self,
@@ -105,7 +100,7 @@ class GovernanceWatchdog:
             except Exception:
                 is_healthy = False
             with self._lock:
-                svc.last_check = datetime.now(timezone.utc)
+                svc.last_check = datetime.now(UTC)
                 if is_healthy:
                     svc.status = ServiceStatus.HEALTHY
                     svc.consecutive_failures = 0
@@ -158,7 +153,7 @@ class GovernanceWatchdog:
                             pass
                 else:
                     svc.status = ServiceStatus.FAILED
-            svc.last_restart = datetime.now(timezone.utc)
+            svc.last_restart = datetime.now(UTC)
         return success
 
     def run(self, daemon: bool = True) -> None:
@@ -223,23 +218,29 @@ def _run_warn_only() -> dict[str, Any]:
         restart_fn=lambda: True,
     )
     check_result = wd.check_all()
-    results["checks"].append({
-        "name": "check_all",
-        "status": "PASS" if "test_service" in check_result else "WARN",
-        "detail": check_result,
-    })
+    results["checks"].append(
+        {
+            "name": "check_all",
+            "status": "PASS" if "test_service" in check_result else "WARN",
+            "detail": check_result,
+        }
+    )
     restart_ok = wd.restart_service("test_service")
-    results["checks"].append({
-        "name": "restart_service",
-        "status": "PASS" if restart_ok else "WARN",
-        "detail": {"restarted": restart_ok},
-    })
+    results["checks"].append(
+        {
+            "name": "restart_service",
+            "status": "PASS" if restart_ok else "WARN",
+            "detail": {"restarted": restart_ok},
+        }
+    )
     restart_missing = wd.restart_service("nonexistent_service")
-    results["checks"].append({
-        "name": "restart_nonexistent",
-        "status": "PASS" if not restart_missing else "WARN",
-        "detail": {"restarted": restart_missing},
-    })
+    results["checks"].append(
+        {
+            "name": "restart_nonexistent",
+            "status": "PASS" if not restart_missing else "WARN",
+            "detail": {"restarted": restart_missing},
+        }
+    )
     exhausted_triggered = False
     wd.register_service(
         name="failing_service",
@@ -252,35 +253,40 @@ def _run_warn_only() -> dict[str, Any]:
         svc = wd._services.get("failing_service")
         if svc and svc.status == ServiceStatus.EXHAUSTED:
             exhausted_triggered = True
-    results["checks"].append({
-        "name": "exhausted_detection",
-        "status": "PASS" if exhausted_triggered else "WARN",
-        "detail": {"exhausted_triggered": exhausted_triggered},
-    })
-    results["overall"] = "PASS" if all(
-        c["status"] == "PASS" for c in results["checks"]
-    ) else "WARN"
+    results["checks"].append(
+        {
+            "name": "exhausted_detection",
+            "status": "PASS" if exhausted_triggered else "WARN",
+            "detail": {"exhausted_triggered": exhausted_triggered},
+        }
+    )
+    results["overall"] = "PASS" if all(c["status"] == "PASS" for c in results["checks"]) else "WARN"
     return results
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Governance Watchdog — service health monitoring and auto-recovery"
-    )
+    parser = argparse.ArgumentParser(description="Governance Watchdog — service health monitoring and auto-recovery")
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="Run checks in warn-only mode",
     )
     parser.add_argument(
-        "--check-interval", type=int, default=30,
+        "--check-interval",
+        type=int,
+        default=30,
         help="Health check interval in seconds (default: 30)",
     )
     parser.add_argument(
-        "--max-restart", type=int, default=3,
+        "--max-restart",
+        type=int,
+        default=3,
         help="Maximum restart attempts per service (default: 3)",
     )
     parser.add_argument(
-        "--restart-delay", type=int, default=10,
+        "--restart-delay",
+        type=int,
+        default=10,
         help="Delay before restart in seconds (default: 10)",
     )
     args = parser.parse_args()

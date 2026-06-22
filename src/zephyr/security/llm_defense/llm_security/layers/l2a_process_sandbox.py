@@ -2,39 +2,51 @@
 class ProcessSandbox:
     def __init__(self, config=None):
         self.config = config or {}
+
     def execute(self, command, timeout=30):
-        return {'exit_code': 0, 'stdout': '', 'stderr': ''}
+        return {"exit_code": 0, "stdout": "", "stderr": ""}
+
     def validate_command(self, command):
         return True
+
 
 class ProcessSandboxLayer:
     def __init__(self, config=None):
         self.config = config or {}
+
     def execute(self, command, timeout=30):
-        return {'exit_code': 0, 'stdout': '', 'stderr': ''}
+        return {"exit_code": 0, "stdout": "", "stderr": ""}
+
     def validate_command(self, command):
         return True
 
-from dataclasses import dataclass, field
+
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class BlindSpot5ProcessSandboxGuard:
     """Combined blind-spot detection and process sandboxing guard."""
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
+
     def check_blind_spot(self, process_id: str) -> bool:
         return False
-    def sandbox_execute(self, command: str, timeout: int = 30) -> Dict[str, Any]:
+
+    def sandbox_execute(self, command: str, timeout: int = 30) -> dict[str, Any]:
         return {"exit_code": 0, "stdout": "", "stderr": ""}
+
     def validate_process(self, process_id: str) -> bool:
         return True
 
 
 class ChangeValidationResult:
     """Result of a change validation check in sandbox."""
-    def __init__(self, change_id: str = "", valid: bool = True, risk_level: str = "low", details: Optional[Dict[str, Any]] = None):
+
+    def __init__(
+        self, change_id: str = "", valid: bool = True, risk_level: str = "low", details: dict[str, Any] | None = None
+    ):
         self.change_id = change_id
         self.valid = valid
         self.risk_level = risk_level
@@ -43,6 +55,7 @@ class ChangeValidationResult:
 
 class FilesystemAuditEntry:
     """Audit entry for filesystem operations in sandbox."""
+
     def __init__(self, path: str = "", operation: str = "", allowed: bool = True, timestamp: str = ""):
         self.path = path
         self.operation = operation
@@ -52,7 +65,15 @@ class FilesystemAuditEntry:
 
 class SandboxContainerConfig:
     """Configuration for sandbox container."""
-    def __init__(self, image: str = "", memory_limit: str = "512m", cpu_limit: float = 1.0, network_disabled: bool = True, read_only_paths: Optional[List[str]] = None):
+
+    def __init__(
+        self,
+        image: str = "",
+        memory_limit: str = "512m",
+        cpu_limit: float = 1.0,
+        network_disabled: bool = True,
+        read_only_paths: list[str] | None = None,
+    ):
         self.image = image
         self.memory_limit = memory_limit
         self.cpu_limit = cpu_limit
@@ -62,6 +83,7 @@ class SandboxContainerConfig:
 
 class SandboxStatus(Enum):
     """Status of a sandbox environment."""
+
     CREATED = "created"
     RUNNING = "running"
     STOPPED = "stopped"
@@ -70,7 +92,15 @@ class SandboxStatus(Enum):
 
 class WASIRuntimeConfig:
     """Configuration for WASI runtime sandbox."""
-    def __init__(self, module_path: str = "", max_memory: int = 16777216, max_threads: int = 1, timeout_ms: int = 30000, allowed_env: Optional[List[str]] = None):
+
+    def __init__(
+        self,
+        module_path: str = "",
+        max_memory: int = 16777216,
+        max_threads: int = 1,
+        timeout_ms: int = 30000,
+        allowed_env: list[str] | None = None,
+    ):
         self.module_path = module_path
         self.max_memory = max_memory
         self.max_threads = max_threads

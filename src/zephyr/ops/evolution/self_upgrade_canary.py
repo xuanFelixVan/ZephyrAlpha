@@ -31,7 +31,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-import time
 
 
 class CanaryPhase(str, Enum):
@@ -66,11 +65,13 @@ class SelfUpgradeCanary:
         next_idx = idx + 1
         if next_idx < len(phases):
             self.current_phase = phases[next_idx]
-            self.steps.append(CanaryStep(
-                pct=self.phases[next_idx][0],
-                health_check_pass=True,
-                duration_seconds=self.phases[next_idx][1],
-            ))
+            self.steps.append(
+                CanaryStep(
+                    pct=self.phases[next_idx][0],
+                    health_check_pass=True,
+                    duration_seconds=self.phases[next_idx][1],
+                )
+            )
         return self.current_phase
 
     def rollback(self) -> None:

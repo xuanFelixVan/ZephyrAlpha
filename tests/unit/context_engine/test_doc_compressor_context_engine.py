@@ -26,6 +26,7 @@ import textwrap
 from pathlib import Path
 
 import pytest
+
 from zephyr.autonomy_core.doc_compressor import (
     DEFAULT_POLICY,
     CompressionInvariantError,
@@ -302,7 +303,7 @@ class TestInvariantPreserveImmutableBlocks:
             preserve_immutable_blocks=["<!-- IMMUTABLE_START -->"],
         )
         c = DocCompressor(policy=policy)
-        text = "## 标题\n\n" "<!-- IMMUTABLE_START -->不可压缩内容<!-- IMMUTABLE_END -->\n\n" + "可压缩正文。" * 20
+        text = "## 标题\n\n<!-- IMMUTABLE_START -->不可压缩内容<!-- IMMUTABLE_END -->\n\n" + "可压缩正文。" * 20
         result = c.compress(text)
         assert "<!-- IMMUTABLE_START -->" in result
 

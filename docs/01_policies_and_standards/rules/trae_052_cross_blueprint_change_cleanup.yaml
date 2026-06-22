@@ -1,9 +1,20 @@
 rule_id: TRAE-052
 title: 铁律补充-跨蓝图变更与项目瘦身
+version: 1.0.0
+layer: L0
+module_id: TRAE-052
+depends_on:
+- TRAE-001
+tags:
+- TRAE
+- cross_blueprint_change_cleanup
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - RULE-ELEVEN
 - RULE-TWELVE
-layer: L0
 severity: critical
 scope: cross_blueprint_change_cleanup
 domain: TRAE
@@ -73,7 +84,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-19T00:00:00'
   extracted_by: session-20260619-001

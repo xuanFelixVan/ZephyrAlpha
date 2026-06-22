@@ -32,7 +32,6 @@ import io
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional
 
 from zephyr.infrastructure.asset_inventory.models import ClassifiedAsset, RegistryEntry
 
@@ -42,24 +41,21 @@ class RegistryParseError(Exception):
 
 
 class RegistryAdapter(ABC):
+    @abstractmethod
+    def parse(self, raw_content: str) -> list[RegistryEntry]: ...
 
     @abstractmethod
-    def parse(self, raw_content: str) -> list[RegistryEntry]:
-        ...
-
-    @abstractmethod
-    def can_handle(self, file_path: str) -> bool:
-        ...
+    def can_handle(self, file_path: str) -> bool: ...
 
     @property
     @abstractmethod
-    def registry_id(self) -> str:
-        ...
+    def registry_id(self) -> str: ...
 
 
 class YamlListAdapter(RegistryAdapter):
-
-    def __init__(self, registry_id: str, path_pattern: str, asset_key: str = "relative_path", id_key: str = "registry_id") -> None:
+    def __init__(
+        self, registry_id: str, path_pattern: str, asset_key: str = "relative_path", id_key: str = "registry_id"
+    ) -> None:
         self._registry_id = registry_id
         self._path_pattern = path_pattern
         self._asset_key = asset_key
@@ -77,6 +73,7 @@ class YamlListAdapter(RegistryAdapter):
 
     def parse(self, raw_content: str) -> list[RegistryEntry]:
         import yaml
+
         try:
             data = yaml.safe_load(raw_content)
         except yaml.YAMLError as e:
@@ -116,12 +113,14 @@ class YamlListAdapter(RegistryAdapter):
                 continue
 
             entry_id = item.get(self._id_key) or f"{self._registry_id}-{idx}"
-            entries.append(RegistryEntry(
-                registry_id=self._registry_id,
-                registry_path="",
-                entry_path=str(asset_path),
-                extra={k: v for k, v in item.items() if v is not None and k != asset_path},
-            ))
+            entries.append(
+                RegistryEntry(
+                    registry_id=self._registry_id,
+                    registry_path="",
+                    entry_path=str(asset_path),
+                    extra={k: v for k, v in item.items() if v is not None and k != asset_path},
+                )
+            )
         return entries
 
     def _parse_dict(self, data: dict) -> list[RegistryEntry]:
@@ -134,29 +133,29 @@ class YamlListAdapter(RegistryAdapter):
                 for reg in tier.get("registries", []):
                     phys = reg.get("physical_path", "")
                     if phys:
-                        entries.append(RegistryEntry(
-                            registry_id=reg.get("registry_id", self._registry_id),
-                            registry_path="",
-                            entry_path=phys,
-                            extra={k: v for k, v in reg.items() if v is not None and k != "physical_path"},
-                        ))
+                        entries.append(
+                            RegistryEntry(
+                                registry_id=reg.get("registry_id", self._registry_id),
+                                registry_path="",
+                                entry_path=phys,
+                                extra={k: v for k, v in reg.items() if v is not None and k != "physical_path"},
+                            )
+                        )
             return entries
 
         if isinstance(data, dict):
             for key, value in data.items():
                 if isinstance(value, str) and self._looks_like_path(value):
-                    entries.append(RegistryEntry(
-                        registry_id=self._registry_id,
-                        registry_path="",
-                        entry_path=value,
-                        extra={"key": key},
-                    ))
-                elif isinstance(value, dict):
-                    asset_path = (
-                        value.get(self._asset_key)
-                        or value.get("physical_path")
-                        or value.get("path")
+                    entries.append(
+                        RegistryEntry(
+                            registry_id=self._registry_id,
+                            registry_path="",
+                            entry_path=value,
+                            extra={"key": key},
+                        )
                     )
+                elif isinstance(value, dict):
+                    asset_path = value.get(self._asset_key) or value.get("physical_path") or value.get("path")
                     if not asset_path:
                         for vk, vv in value.items():
                             if isinstance(vv, str) and self._looks_like_path(vv):
@@ -168,20 +167,22 @@ class YamlListAdapter(RegistryAdapter):
                                 asset_path = vv
                                 break
                     if asset_path:
-                        entries.append(RegistryEntry(
-                            registry_id=self._registry_id,
-                            registry_path="",
-                            entry_path=str(asset_path),
-                            extra={k: v for k, v in value.items() if v is not None and k != asset_path and k != "physical_path"},
-                        ))
+                        entries.append(
+                            RegistryEntry(
+                                registry_id=self._registry_id,
+                                registry_path="",
+                                entry_path=str(asset_path),
+                                extra={
+                                    k: v
+                                    for k, v in value.items()
+                                    if v is not None and k != asset_path and k != "physical_path"
+                                },
+                            )
+                        )
                 elif isinstance(value, list):
                     for item in value:
                         if isinstance(item, dict):
-                            asset_path = (
-                                item.get(self._asset_key)
-                                or item.get("physical_path")
-                                or item.get("path")
-                            )
+                            asset_path = item.get(self._asset_key) or item.get("physical_path") or item.get("path")
                             if not asset_path:
                                 for vk, vv in item.items():
                                     if isinstance(vv, str) and self._looks_like_path(vv):
@@ -193,12 +194,18 @@ class YamlListAdapter(RegistryAdapter):
                                         asset_path = vv
                                         break
                             if asset_path:
-                                entries.append(RegistryEntry(
-                                    registry_id=self._registry_id,
-                                    registry_path="",
-                                    entry_path=str(asset_path),
-                                    extra={k: v for k, v in item.items() if v is not None and k != asset_path and k != "physical_path"},
-                                ))
+                                entries.append(
+                                    RegistryEntry(
+                                        registry_id=self._registry_id,
+                                        registry_path="",
+                                        entry_path=str(asset_path),
+                                        extra={
+                                            k: v
+                                            for k, v in item.items()
+                                            if v is not None and k != asset_path and k != "physical_path"
+                                        },
+                                    )
+                                )
         return entries
 
     @staticmethod
@@ -207,7 +214,6 @@ class YamlListAdapter(RegistryAdapter):
 
 
 class YamlDictAdapter(RegistryAdapter):
-
     def __init__(self, registry_id: str, path_pattern: str, asset_key: str = "physical_path") -> None:
         self._registry_id = registry_id
         self._path_pattern = path_pattern
@@ -223,6 +229,7 @@ class YamlDictAdapter(RegistryAdapter):
 
     def parse(self, raw_content: str) -> list[RegistryEntry]:
         import yaml
+
         try:
             data = yaml.safe_load(raw_content)
         except yaml.YAMLError as e:
@@ -237,29 +244,40 @@ class YamlDictAdapter(RegistryAdapter):
             for idx, item in enumerate(scripts):
                 if isinstance(item, dict):
                     path_val = item.get("path", "")
-                    entries.append(RegistryEntry(
-                        registry_id=self._registry_id,
-                        registry_path="",
-                        entry_path=str(path_val),
-                        extra={k: v for k, v in item.items() if v is not None and k not in (self._asset_key, "physical_path", "path", "id")},
-                    ))
+                    entries.append(
+                        RegistryEntry(
+                            registry_id=self._registry_id,
+                            registry_path="",
+                            entry_path=str(path_val),
+                            extra={
+                                k: v
+                                for k, v in item.items()
+                                if v is not None and k not in (self._asset_key, "physical_path", "path", "id")
+                            },
+                        )
+                    )
 
         if isinstance(data, dict):
             for key, value in data.items():
                 if isinstance(value, dict):
                     path_val = value.get(self._asset_key) or value.get("physical_path")
                     if path_val:
-                        entries.append(RegistryEntry(
-                        registry_id=self._registry_id,
-                        registry_path="",
-                        entry_path=str(path_val),
-                        extra={k: v for k, v in value.items() if v is not None and k not in (self._asset_key, "physical_path")},
-                    ))
+                        entries.append(
+                            RegistryEntry(
+                                registry_id=self._registry_id,
+                                registry_path="",
+                                entry_path=str(path_val),
+                                extra={
+                                    k: v
+                                    for k, v in value.items()
+                                    if v is not None and k not in (self._asset_key, "physical_path")
+                                },
+                            )
+                        )
         return entries
 
 
 class MarkdownTableAdapter(RegistryAdapter):
-
     TABLE_ROW_RE = re.compile(r"^\|(.+)\|$")
 
     def __init__(self, registry_id: str, filename: str, path_column: int = 0) -> None:
@@ -303,17 +321,18 @@ class MarkdownTableAdapter(RegistryAdapter):
                 if i < len(cells):
                     metadata[h.strip()] = cells[i]
 
-            entries.append(RegistryEntry(
-                registry_id=self._registry_id,
-                registry_path="",
-                entry_path=asset_path,
-                extra=metadata,
-            ))
+            entries.append(
+                RegistryEntry(
+                    registry_id=self._registry_id,
+                    registry_path="",
+                    entry_path=asset_path,
+                    extra=metadata,
+                )
+            )
         return entries
 
 
 class FrontmatterAdapter(RegistryAdapter):
-
     YAML_FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
 
     def __init__(self, registry_id: str, filename: str) -> None:
@@ -329,6 +348,7 @@ class FrontmatterAdapter(RegistryAdapter):
 
     def parse(self, raw_content: str) -> list[RegistryEntry]:
         import yaml
+
         m = self.YAML_FRONTMATTER_RE.match(raw_content)
         if not m:
             return []
@@ -345,17 +365,18 @@ class FrontmatterAdapter(RegistryAdapter):
         if isinstance(fm, dict):
             for key, value in fm.items():
                 if isinstance(value, str) and ("/" in value or "." in value):
-                    entries.append(RegistryEntry(
-                        registry_id=self._registry_id,
-                        registry_path="",
-                        entry_path=value,
-                        extra={"key": key},
-                    ))
+                    entries.append(
+                        RegistryEntry(
+                            registry_id=self._registry_id,
+                            registry_path="",
+                            entry_path=value,
+                            extra={"key": key},
+                        )
+                    )
         return entries
 
 
 class CsvAdapter(RegistryAdapter):
-
     def __init__(self, registry_id: str, path_column: str = "path") -> None:
         self._registry_id = registry_id
         self._path_column = path_column
@@ -377,17 +398,18 @@ class CsvAdapter(RegistryAdapter):
             asset_path = row.get(self._path_column, "")
             if not asset_path:
                 continue
-            entries.append(RegistryEntry(
-                registry_id=self._registry_id,
-                registry_path="",
-                entry_path=asset_path,
-                extra=dict(row),
-            ))
+            entries.append(
+                RegistryEntry(
+                    registry_id=self._registry_id,
+                    registry_path="",
+                    entry_path=asset_path,
+                    extra=dict(row),
+                )
+            )
         return entries
 
 
 class TomlAdapter(RegistryAdapter):
-
     def __init__(self, registry_id: str, key: str = "assets") -> None:
         self._registry_id = registry_id
         self._key = key
@@ -423,55 +445,52 @@ class TomlAdapter(RegistryAdapter):
             for idx, item in enumerate(target):
                 if not isinstance(item, dict):
                     continue
-                asset_path = (
-                    item.get("relative_path")
-                    or item.get("path")
-                    or item.get("physical_path")
-                )
+                asset_path = item.get("relative_path") or item.get("path") or item.get("physical_path")
                 if not asset_path:
                     for v in item.values():
                         if isinstance(v, str) and ("/" in v or "." in v):
                             asset_path = v
                             break
                 if asset_path:
-                    entries.append(RegistryEntry(
-                        registry_id=self._registry_id,
-                        registry_path="",
-                        entry_path=str(asset_path),
-                        extra={k: v for k, v in item.items() if v is not None and k != asset_path},
-                    ))
+                    entries.append(
+                        RegistryEntry(
+                            registry_id=self._registry_id,
+                            registry_path="",
+                            entry_path=str(asset_path),
+                            extra={k: v for k, v in item.items() if v is not None and k != asset_path},
+                        )
+                    )
         elif isinstance(target, dict):
             for key, value in target.items():
                 if isinstance(value, str) and ("/" in value or "." in value):
-                    entries.append(RegistryEntry(
-                        registry_id=self._registry_id,
-                        registry_path="",
-                        entry_path=value,
-                        extra={"key": key},
-                    ))
-                elif isinstance(value, dict):
-                    asset_path = (
-                        value.get("relative_path")
-                        or value.get("path")
-                        or value.get("physical_path")
+                    entries.append(
+                        RegistryEntry(
+                            registry_id=self._registry_id,
+                            registry_path="",
+                            entry_path=value,
+                            extra={"key": key},
+                        )
                     )
+                elif isinstance(value, dict):
+                    asset_path = value.get("relative_path") or value.get("path") or value.get("physical_path")
                     if not asset_path:
                         for v in value.values():
                             if isinstance(v, str) and ("/" in v or "." in v):
                                 asset_path = v
                                 break
                     if asset_path:
-                        entries.append(RegistryEntry(
-                            registry_id=self._registry_id,
-                            registry_path="",
-                            entry_path=str(asset_path),
-                            extra={k: v for k, v in value.items() if v is not None and k != asset_path},
-                        ))
+                        entries.append(
+                            RegistryEntry(
+                                registry_id=self._registry_id,
+                                registry_path="",
+                                entry_path=str(asset_path),
+                                extra={k: v for k, v in value.items() if v is not None and k != asset_path},
+                            )
+                        )
         return entries
 
 
 class SqliteAdapter(RegistryAdapter):
-
     def __init__(self, registry_id: str, db_path: str, table: str, path_column: str = "relative_path") -> None:
         self._registry_id = registry_id
         self._db_path = db_path
@@ -487,6 +506,7 @@ class SqliteAdapter(RegistryAdapter):
 
     def parse(self, raw_content: str) -> list[RegistryEntry]:
         import sqlite3
+
         entries: list[RegistryEntry] = []
         try:
             conn = sqlite3.connect(self._db_path)
@@ -495,12 +515,14 @@ class SqliteAdapter(RegistryAdapter):
             for idx, row in enumerate(cursor.fetchall()):
                 d = dict(row)
                 asset_path = d.get(self._path_column, "")
-                entries.append(RegistryEntry(
-                    registry_id=self._registry_id,
-                    registry_path=self._db_path,
-                    entry_path=str(asset_path),
-                    extra=d,
-                ))
+                entries.append(
+                    RegistryEntry(
+                        registry_id=self._registry_id,
+                        registry_path=self._db_path,
+                        entry_path=str(asset_path),
+                        extra=d,
+                    )
+                )
             conn.close()
         except Exception as e:
             raise RegistryParseError(f"SQLite parse error in {self._registry_id}: {e}") from e
@@ -517,33 +539,75 @@ class RegistryManager:
     def _init_defaults(self) -> None:
         self._known: dict[str, RegistryAdapter] = {}
 
-        self._known["docs/registry_of_registries.yaml"] = YamlListAdapter("REG-TIER-000", "registry_of_registries.yaml", asset_key="physical_path")
+        self._known["docs/registry_of_registries.yaml"] = YamlListAdapter(
+            "REG-TIER-000", "registry_of_registries.yaml", asset_key="physical_path"
+        )
 
-        self._known["docs/03_modules/module-registry.yaml"] = YamlListAdapter("REG-MOD-001", "module-registry.yaml", asset_key="module_id")
-        self._known["docs/03_modules/blueprint-registry.yaml"] = YamlListAdapter("REG-BP-001", "blueprint-registry.yaml", asset_key="blueprint_id")
-        self._known["src/zephyr/gates/_registry.yaml"] = YamlListAdapter("REG-GATE-001", "_registry.yaml", asset_key="gate_id")
+        self._known["docs/03_modules/module-registry.yaml"] = YamlListAdapter(
+            "REG-MOD-001", "module-registry.yaml", asset_key="module_id"
+        )
+        self._known["docs/03_modules/blueprint-registry.yaml"] = YamlListAdapter(
+            "REG-BP-001", "blueprint-registry.yaml", asset_key="blueprint_id"
+        )
+        self._known["src/zephyr/gates/_registry.yaml"] = YamlListAdapter(
+            "REG-GATE-001", "_registry.yaml", asset_key="gate_id"
+        )
         self._known["scripts/script-manifest.yaml"] = YamlDictAdapter("REG-SCRIPT-001", "script-manifest.yaml")
-        self._known["config/capacity/risk-register.yaml"] = YamlListAdapter("REG-RISK-001", "risk-register.yaml", asset_key="risk_id")
-        self._known["config/capacity/asset-inventory.yaml"] = YamlListAdapter("REG-ASSET-001", "asset-inventory.yaml", asset_key="relative_path")
-        self._known["config/embedding_model_registry.yaml"] = YamlListAdapter("REG-EMBED-001", "embedding_model_registry.yaml", asset_key="model_id")
-        self._known["src/zephyr/pipeline/routemanifest.yaml"] = YamlListAdapter("REG-PIPE-001", "routemanifest.yaml", asset_key="route_id")
-        self._known["config/capacity/tech_stackmanifest.yaml"] = YamlListAdapter("REG-CAP-001", "tech_stackmanifest.yaml", asset_key="tech_id")
+        self._known["config/capacity/risk-register.yaml"] = YamlListAdapter(
+            "REG-RISK-001", "risk-register.yaml", asset_key="risk_id"
+        )
+        self._known["config/capacity/asset-inventory.yaml"] = YamlListAdapter(
+            "REG-ASSET-001", "asset-inventory.yaml", asset_key="relative_path"
+        )
+        self._known["config/embedding_model_registry.yaml"] = YamlListAdapter(
+            "REG-EMBED-001", "embedding_model_registry.yaml", asset_key="model_id"
+        )
+        self._known["src/zephyr/pipeline/routemanifest.yaml"] = YamlListAdapter(
+            "REG-PIPE-001", "routemanifest.yaml", asset_key="route_id"
+        )
+        self._known["config/capacity/tech_stackmanifest.yaml"] = YamlListAdapter(
+            "REG-CAP-001", "tech_stackmanifest.yaml", asset_key="tech_id"
+        )
 
-        self._known["docs/01_policies_and_standards/_registry/catalogs/directory-registry.md"] = YamlListAdapter("REG-DIR-001", "directory-registry.md", asset_key="path")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"] = YamlListAdapter("REG-DOC-001", "document-metadata-index-registry.yaml", asset_key="path")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"] = YamlListAdapter("REG-CROSS-002", "cross-module-dependency-registry.yaml", asset_key="from_module")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"] = YamlListAdapter("REG-GATE-CAT-001", "gate-registry.md", asset_key="gate_id")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md"] = YamlListAdapter("REG-INFRA-001", "infrastructure-registry.md", asset_key="component_id")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md"] = YamlListAdapter("REG-TASK-META-001", "task-card-meta-registry.md", asset_key="subsystem_id")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md"] = YamlListAdapter("REG-FRONTMATTER-001", "frontmatter-field-registry.md", asset_key="field_name")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/script-health-registry.md"] = YamlListAdapter("REG-SCRIPT-HEALTH-001", "script-health-registry.md", asset_key="script_id")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml"] = YamlListAdapter("REG-CROSS-001", "registry_of_registries.yaml", asset_key="field_name")
-        self._known["docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.md"] = YamlListAdapter("REG-KB-001", "knowledge-article-registry.md", asset_key="article_id")
+        self._known["docs/01_policies_and_standards/_registry/catalogs/directory-registry.md"] = YamlListAdapter(
+            "REG-DIR-001", "directory-registry.md", asset_key="path"
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"] = (
+            YamlListAdapter("REG-DOC-001", "document-metadata-index-registry.yaml", asset_key="path")
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"] = (
+            YamlListAdapter("REG-CROSS-002", "cross-module-dependency-registry.yaml", asset_key="from_module")
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"] = YamlListAdapter(
+            "REG-GATE-CAT-001", "gate-registry.md", asset_key="gate_id"
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md"] = YamlListAdapter(
+            "REG-INFRA-001", "infrastructure-registry.md", asset_key="component_id"
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md"] = YamlListAdapter(
+            "REG-TASK-META-001", "task-card-meta-registry.md", asset_key="subsystem_id"
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md"] = (
+            YamlListAdapter("REG-FRONTMATTER-001", "frontmatter-field-registry.md", asset_key="field_name")
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/script-health-registry.md"] = YamlListAdapter(
+            "REG-SCRIPT-HEALTH-001", "script-health-registry.md", asset_key="script_id"
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml"] = YamlListAdapter(
+            "REG-CROSS-001", "registry_of_registries.yaml", asset_key="field_name"
+        )
+        self._known["docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.md"] = (
+            YamlListAdapter("REG-KB-001", "knowledge-article-registry.md", asset_key="article_id")
+        )
 
-        self._known["src/zephyr/drift-detector/_detector-registry.yaml"] = YamlListAdapter("REG-DRIFT-001", "_detector-registry.yaml", asset_key="detector_id")
-        self._known["src/zephyr/agent-spec/skill-registry.yaml"] = YamlListAdapter("REG-SKILL-001", "skill-registry.yaml", asset_key="skill_id")
+        self._known["src/zephyr/drift-detector/_detector-registry.yaml"] = YamlListAdapter(
+            "REG-DRIFT-001", "_detector-registry.yaml", asset_key="detector_id"
+        )
+        self._known["src/zephyr/agent-spec/skill-registry.yaml"] = YamlListAdapter(
+            "REG-SKILL-001", "skill-registry.yaml", asset_key="skill_id"
+        )
 
-    def _find_adapter(self, file_path: str) -> Optional[RegistryAdapter]:
+    def _find_adapter(self, file_path: str) -> RegistryAdapter | None:
         normalized = file_path.replace("\\", "/")
         for known_path, adapter in self._known.items():
             if normalized.endswith(known_path) or normalized == known_path:
@@ -553,8 +617,8 @@ class RegistryManager:
         name = Path(file_path).name.lower()
         fp_lower = file_path.lower()
 
-        if name == "rule-registry.md":
-            return MarkdownTableAdapter("REG-RULE-001", "rule-registry.md", path_column=0)
+        if name == "_index.yaml":
+            return MarkdownTableAdapter("REG-RULE-001", "_index.yaml", path_column=0)
         if ext == ".csv":
             return CsvAdapter("REG-AUTO-CSV")
 
@@ -572,6 +636,7 @@ class RegistryManager:
             paths.append(main_reg)
 
         import yaml
+
         try:
             data = yaml.safe_load(main_reg.read_text(encoding="utf-8"))
             if data and "tiers" in data:

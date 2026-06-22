@@ -56,7 +56,7 @@ values:
   - value: data
     definition: "数据类规则——结构化数据清单，用于发现和索引"
     ai_consumption: "AI 查询和引用，不执行"
-    examples: ["rule-registry.md", "document-metadata-index-registry.yaml"]
+    examples: ["_index.yaml", "document-metadata-index-registry.yaml"]
     doc_types: ["register", "vocabulary", "contract", "terminology", "reference", "schema", "log", "knowledge_entry", "audit_report", "config"]
 
   - value: structural

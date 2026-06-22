@@ -178,4 +178,3 @@ body: |
     3. contract 字段排序现在按 required+default → required+no-default → optional 三级排序
 
     4. order.py 中的 enum 定义已从 codegen 擦除中恢复——不要再手工删除
-

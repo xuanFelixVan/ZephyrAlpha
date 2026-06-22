@@ -60,12 +60,8 @@ class TestCostBudget:
 
     def test_get_cost_cached_tokens(self):
         budget = CostBudget()
-        budget.set_pricing(
-            "anthropic", "claude-3.5", input_1k=0.003, output_1k=0.015, cached_input_1k=0.0003
-        )
-        cost = budget.get_cost(
-            "anthropic", "claude-3.5", input_tokens=0, output_tokens=0, cached_input_tokens=1000
-        )
+        budget.set_pricing("anthropic", "claude-3.5", input_1k=0.003, output_1k=0.015, cached_input_1k=0.0003)
+        cost = budget.get_cost("anthropic", "claude-3.5", input_tokens=0, output_tokens=0, cached_input_tokens=1000)
         assert cost == pytest.approx(0.0003)
 
     def test_record_usage_updates_cumulative_cost(self):

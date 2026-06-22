@@ -11,20 +11,25 @@
 # [TESTS] test_llm_security.py
 
 import json
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
-protocol_mod = pytest.importorskip("zephyr.infrastructure.a2a_protocol.governance.protocol", reason="llm-security.protocol not available")
+protocol_mod = pytest.importorskip(
+    "zephyr.infrastructure.a2a_protocol.governance.protocol", reason="llm-security.protocol not available"
+)
 SecurityContext = protocol_mod.SecurityContext
 SecurityResult = protocol_mod.SecurityResult
 LLMSecurityProtocol = protocol_mod.LLMSecurityProtocol
 
-security_decision_mod = pytest.importorskip("zephyr.integration.shared_08.contracts.security.security_decision", reason="security_decision not available")
+security_decision_mod = pytest.importorskip(
+    "zephyr.integration.shared_08.contracts.security.security_decision", reason="security_decision not available"
+)
 SecurityDecision = security_decision_mod.SecurityDecision
 
-sanitizer_mod = pytest.importorskip("zephyr.security.llm_defense.llm_security.input_sanitizer", reason="llm-security.input_sanitizer not available")
+sanitizer_mod = pytest.importorskip(
+    "zephyr.security.llm_defense.llm_security.input_sanitizer", reason="llm-security.input_sanitizer not available"
+)
 InputSanitizer = sanitizer_mod.InputSanitizer
 PathTraversalError = sanitizer_mod.PathTraversalError
 CommandInjectionError = sanitizer_mod.CommandInjectionError
@@ -32,7 +37,10 @@ TokenBudgetExceededError = sanitizer_mod.TokenBudgetExceededError
 ContextInjectionError = sanitizer_mod.ContextInjectionError
 SanitizationError = sanitizer_mod.SanitizationError
 
-audit_mod = pytest.importorskip("zephyr.security.llm_defense.llm_security.behavior_audit_logger", reason="llm-security.behavior_audit_logger not available")
+audit_mod = pytest.importorskip(
+    "zephyr.security.llm_defense.llm_security.behavior_audit_logger",
+    reason="llm-security.behavior_audit_logger not available",
+)
 AuditLogger = audit_mod.AuditLogger
 AuditAction = audit_mod.AuditAction
 AuditEvent = audit_mod.AuditEvent

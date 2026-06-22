@@ -11,9 +11,7 @@
 # [TESTS] pytest tests/test_notifier.py -q
 
 import json
-from pathlib import Path
 
-import pytest
 from zephyr.ops.observability.notifier import (
     Notification,
     NotificationChannel,

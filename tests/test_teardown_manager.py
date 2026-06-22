@@ -10,12 +10,11 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_teardown_manager.py
 
-import pytest
 
 from zephyr.trading.orchestrator.teardown_manager import (
-    TeardownManager,
-    CleanupTarget,
     CLEANUP_SYSTEMS,
+    CleanupTarget,
+    TeardownManager,
 )
 
 

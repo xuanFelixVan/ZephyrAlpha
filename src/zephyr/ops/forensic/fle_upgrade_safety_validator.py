@@ -30,6 +30,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 
+
 @dataclass
 class UpgradeSafetyResult:
     version_from: str
@@ -37,6 +38,7 @@ class UpgradeSafetyResult:
     compatible: bool
     breaking_changes: list[str]
     state_compatibility: dict[str, bool]
+
 
 @dataclass
 class FLEUpgradeSafetyValidator:
@@ -46,15 +48,15 @@ class FLEUpgradeSafetyValidator:
     upgrade_log: list[UpgradeSafetyResult] = field(default_factory=list)
 
     def register_current_state_schema(self, schema: dict) -> str:
-        h = hashlib.sha256(
-            json.dumps(schema, sort_keys=True).encode()
-        ).hexdigest()[:16]
+        h = hashlib.sha256(json.dumps(schema, sort_keys=True).encode()).hexdigest()[:16]
         self.state_schema_hash = h
         self.known_compatible_versions.add(self.current_version)
         return h
 
     def validate_upgrade(
-        self, target_version: str, target_schema_hash: str,
+        self,
+        target_version: str,
+        target_schema_hash: str,
         persisted_state_keys: list[str],
     ) -> dict:
         breaking_changes = []
@@ -89,16 +91,18 @@ class FLEUpgradeSafetyValidator:
             "version_to": target_version,
             "breaking_changes": breaking_changes,
             "state_keys_verified": len(state_compatibility),
-            "recommendation": (
-                "SAFE_TO_UPGRADE" if compatible
-                else "BLOCKED_breaking_changes"
-            ),
+            "recommendation": ("SAFE_TO_UPGRADE" if compatible else "BLOCKED_breaking_changes"),
         }
 
     def _get_expected_persisted_keys(self) -> set[str]:
         return {
-            "thresholds", "rules", "baselines", "config_hashes",
-            "guard_states", "cycle_count", "self_model",
+            "thresholds",
+            "rules",
+            "baselines",
+            "config_hashes",
+            "guard_states",
+            "cycle_count",
+            "self_model",
         }
 
     def record_successful_upgrade(self, new_version: str) -> None:

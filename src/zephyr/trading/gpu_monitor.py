@@ -17,7 +17,6 @@ gpu_monitor.py — NVIDIA GPU 状态采集器
 nvidia-smi 不可用时优雅降级（available=False）。
 """
 
-
 from __future__ import annotations
 
 import logging

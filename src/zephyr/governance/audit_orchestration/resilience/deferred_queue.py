@@ -28,8 +28,8 @@ Task: T-1-09 | experimental | GLM-5.1
 ADR ref: ADR-0036 (pending Opus authoring)
 Depends: observer.py (T-1-08), task_repo.py (T-1-04)
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import sqlite3
 import time

@@ -8,7 +8,9 @@ test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证
 用法:
   python scripts/governance/test_lock_scenarios.py
 """
+
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -17,16 +19,12 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
-import os
 import subprocess
 import sys
-import tempfile
 import threading
-import time
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 LOCK_SCRIPT = str(REPO_ROOT / "scripts" / "lock_files.py")
@@ -175,7 +173,7 @@ def test_scenario_c_concurrent():
 
     all_ok = all(rc == 0 for _, rc in results)
     if all_ok:
-        _ok(f"3/3 concurrent runs PASSED while script was locked")
+        _ok("3/3 concurrent runs PASSED while script was locked")
     else:
         failed = [idx for idx, rc in results if rc != 0]
         _ng(f"Some runs failed: idx={failed}", str(errors))

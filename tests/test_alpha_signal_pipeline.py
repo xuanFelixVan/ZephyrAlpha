@@ -10,13 +10,15 @@
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_alpha_signal_pipeline.py
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
+
 from zephyr.signal_fundamental.pipeline import (
     AlphaSignalPipeline,
-    PipelineStage,
-    PipelineResult,
     PipelineError,
+    PipelineResult,
+    PipelineStage,
 )
 
 
@@ -137,8 +139,10 @@ class TestAlphaSignalPipeline:
     def test_register_factor_blacklisted(self):
         pipe = AlphaSignalPipeline()
         with patch("zephyr.signal_fundamental.pipeline._CONTRACTS_AVAILABLE", True):
+
             class MaliciousFactor:
                 pass
+
             MaliciousFactor.__name__ = "MaliciousPoison"
             pipe.register_factor(MaliciousFactor)
             assert len(pipe._factors) == 0
@@ -147,8 +151,10 @@ class TestAlphaSignalPipeline:
     def test_register_synthesizer_blacklisted(self):
         pipe = AlphaSignalPipeline()
         with patch("zephyr.signal_fundamental.pipeline._CONTRACTS_AVAILABLE", True):
+
             class HackSynth:
                 pass
+
             HackSynth.__name__ = "HackSynthesizer"
             pipe.register_synthesizer(HackSynth)
             assert len(pipe._synthesizers) == 0

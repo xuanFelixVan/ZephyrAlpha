@@ -91,12 +91,14 @@ class GracefulDegradationPlanner:
             self.last_degradation = now
             self.current_level = new_level
             self._apply_degradation()
-            self.degradation_history.append({
-                "ts": now,
-                "level": new_level.value,
-                "cpu_pct": round(cpu_pct, 1),
-                "memory_pct": round(memory_pct, 1),
-            })
+            self.degradation_history.append(
+                {
+                    "ts": now,
+                    "level": new_level.value,
+                    "cpu_pct": round(cpu_pct, 1),
+                    "memory_pct": round(memory_pct, 1),
+                }
+            )
 
         active_services = sum(1 for s in self.services.values() if s["active"])
         return {
@@ -106,8 +108,7 @@ class GracefulDegradationPlanner:
             "active_services": active_services,
             "total_services": len(self.services),
             "recommendation": (
-                "scale_up_or_increase_thresholds" if self.current_level != DegradationLevel.FULL
-                else "continue"
+                "scale_up_or_increase_thresholds" if self.current_level != DegradationLevel.FULL else "continue"
             ),
         }
 
@@ -167,8 +168,10 @@ class GracefulDegradationPlanner:
     def force_degradation(self, target: DegradationLevel) -> None:
         self.current_level = target
         self._apply_degradation()
-        self.degradation_history.append({
-            "ts": time.time(),
-            "level": target.value,
-            "reason": "manual_override",
-        })
+        self.degradation_history.append(
+            {
+                "ts": time.time(),
+                "level": target.value,
+                "reason": "manual_override",
+            }
+        )

@@ -27,6 +27,7 @@ Risk: R164 — Daily 3am backup spike misdiagnosed as anomaly.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class TemporalPattern:
     hourly_patterns: dict[int, float] = field(default_factory=dict)

@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.detectors.intermittent_failure_pattern import (
     IntermittentFailurePattern,
     PatternConfidence,
@@ -144,13 +142,9 @@ class TestIntermittentFailurePattern:
         det = IntermittentFailurePattern()
         now = time.time()
         for i in range(10):
-            det.failure_contexts.setdefault("timeout", []).append(
-                {"ts": now + i * 0.01, "load": "high"}
-            )
+            det.failure_contexts.setdefault("timeout", []).append({"ts": now + i * 0.01, "load": "high"})
         for i in range(10):
-            det.failure_contexts["timeout"].append(
-                {"ts": now + 1000 + i * 0.01, "load": "high"}
-            )
+            det.failure_contexts["timeout"].append({"ts": now + 1000 + i * 0.01, "load": "high"})
         result = det.get_temporal_clustering("timeout")
         assert "total_occurrences" in result
         assert result["total_occurrences"] == 20

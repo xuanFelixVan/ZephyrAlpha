@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_action_composition_health_monitor.py
 
-import pytest
 from zephyr.ops.diagnosers.action_composition_health_monitor import (
     ActionComposition,
     ActionCompositionHealthMonitor,
@@ -47,7 +46,7 @@ class TestIndependentActionStats:
         for i in range(10):
             stats.outcomes.append(True)
             if len(stats.outcomes) > stats.max_outcomes:
-                stats.outcomes = stats.outcomes[-stats.max_outcomes:]
+                stats.outcomes = stats.outcomes[-stats.max_outcomes :]
         assert len(stats.outcomes) == 5
 
 

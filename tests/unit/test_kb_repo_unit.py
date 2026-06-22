@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for kb_repo.py (T-2-11-A)
 """
@@ -14,8 +15,9 @@ Unit tests for kb_repo.py (T-2-11-A)
 from pathlib import Path
 
 import pytest
-from zephyr.governance.persistence.sqlite_schema import init_db
+
 from zephyr.governance.kb.chromadb_init import init_chromadb
+from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
 
 

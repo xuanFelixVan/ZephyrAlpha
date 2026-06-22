@@ -42,15 +42,16 @@ from __future__ import annotations
 
 import logging
 import threading
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Any, Sequence
+from typing import Any
 
 _log = logging.getLogger(__name__)
 
 __all__ = [
+    "DEFAULT_RERANK_MODEL",
     "RerankedHit",
     "Reranker",
-    "DEFAULT_RERANK_MODEL",
     "rerank_batch",
 ]
 
@@ -114,7 +115,7 @@ class Reranker:
 
         hits: list[RerankedHit] = []
         metas = metadatas or [{}] * len(documents)
-        for i, (doc, score, meta) in enumerate(zip(documents, scores, metas)):
+        for i, (doc, score, meta) in enumerate(zip(documents, scores, metas, strict=False)):
             if score < self._score_threshold:
                 continue
             hits.append(RerankedHit(text=doc, score=round(score, 4), index=i, metadata=dict(meta)))
@@ -131,6 +132,7 @@ class Reranker:
             self._load_attempted = True
             try:
                 from sentence_transformers import CrossEncoder  # type: ignore[import-not-found]
+
                 self._model = CrossEncoder(self._model_name, trust_remote_code=True)
                 _log.info("Reranker loaded: %s", self._model_name)
             except Exception as exc:
@@ -146,8 +148,8 @@ def _fallback_rerank(
 ) -> list[RerankedHit]:
     metas = metadatas or [{}] * len(documents)
     hits = []
-    for i, (doc, meta) in enumerate(zip(documents, metas)):
-        if 1.0 < threshold:
+    for i, (doc, meta) in enumerate(zip(documents, metas, strict=False)):
+        if threshold > 1.0:
             continue
         hits.append(RerankedHit(text=doc, score=1.0, index=i, metadata=dict(meta)))
     return hits[:top_k]

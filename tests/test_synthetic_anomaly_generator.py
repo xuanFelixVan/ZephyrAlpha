@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_synthetic_anomaly_generator.py
 
-import pytest
 
 from zephyr.ops.detectors.synthetic_anomaly_generator import (
     SyntheticAnomalyGenerator,

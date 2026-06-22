@@ -31,7 +31,13 @@ class TestAuditFeedbackBridge:
         assert "ANM-001" in b._anomaly_to_signal
 
     def test_anomaly_to_fle_signal_known(self, bridge):
-        anomaly = {"signature_id": "ANM-001", "severity": "HIGH", "agent_id": "a1", "timestamp": "2026-01-01T00:00:00Z", "details": {"target": "/tmp/f.py"}}
+        anomaly = {
+            "signature_id": "ANM-001",
+            "severity": "HIGH",
+            "agent_id": "a1",
+            "timestamp": "2026-01-01T00:00:00Z",
+            "details": {"target": "/tmp/f.py"},
+        }
         result = bridge.anomaly_to_fle_signal(anomaly)
         assert result is not None
         assert result["source"] == "audit-trail"
@@ -90,8 +96,10 @@ class TestAuditFeedbackBridge:
             assert result == []
 
     def test_scan_and_bridge_with_anomalies(self, bridge):
-        with patch("zephyr.governance.audit_trail.query.AuditQuery") as mock_q, \
-             patch("zephyr.governance.audit_trail.anomaly.AnomalyDetector") as mock_d:
+        with (
+            patch("zephyr.governance.audit_trail.query.AuditQuery") as mock_q,
+            patch("zephyr.governance.audit_trail.anomaly.AnomalyDetector") as mock_d,
+        ):
             mock_q_inst = MagicMock()
             mock_q_inst._load_events.return_value = [{"event_type": "test"}]
             mock_q.return_value = mock_q_inst

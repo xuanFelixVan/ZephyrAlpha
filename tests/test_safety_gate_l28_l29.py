@@ -12,9 +12,7 @@
 
 import time
 
-import pytest
-
-from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateVerdict, GateType
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
 from zephyr.ops.gates.safety_gate_l28_l29 import SafetyGateL28L29
 
 

@@ -52,16 +52,16 @@ CTR-VER-001: ContractRegistry / 契约版本注册与查询服务
 
 SSoT: cross_layer_contracts.yaml → CTR-VER-001
 """
+
 from __future__ import annotations
 
-
 import logging
-
-from zephyr.shared.schema.schemas import Priority
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.schema.schemas import Priority
 
 _logger = logging.getLogger("zephyr.shared.contracts.registry")
 
@@ -97,9 +97,7 @@ class VersionMismatchError(ValueError):
         self.contract_id = contract_id
         self.expected_major = expected_major
         self.actual_major = actual_major
-        super().__init__(
-            f"{contract_id}: MAJOR 版本不匹配 — " f"期望 MAJOR={expected_major}, 实际 MAJOR={actual_major}"
-        )
+        super().__init__(f"{contract_id}: MAJOR 版本不匹配 — 期望 MAJOR={expected_major}, 实际 MAJOR={actual_major}")
 
 
 class ContractRegistry:
@@ -116,7 +114,7 @@ class ContractRegistry:
     """
 
     _ssot_path: str = (
-        "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross_layer_contracts.yaml"
+        "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
     )
 
     def __init__(self, repo_root: Path | None = None) -> None:
@@ -262,7 +260,7 @@ class ContractRegistry:
 
         consumers = self._consumers.get(contract_id, [])
         _logger.warning(
-            "[ContractRegistry] VER-R3: %s MAJOR 升级 %s → %s — " "通知 %d 个消费者，过渡窗口=%d ms",
+            "[ContractRegistry] VER-R3: %s MAJOR 升级 %s → %s — 通知 %d 个消费者，过渡窗口=%d ms",
             contract_id,
             transition.old_version,
             new_version,
@@ -271,7 +269,7 @@ class ContractRegistry:
         )
 
         try:
-            from zephyr.shared.infra.observer import Observer, EventType
+            from zephyr.shared.infra.observer import EventType, Observer
 
             bus = Observer()
             bus.emit(

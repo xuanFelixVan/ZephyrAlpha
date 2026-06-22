@@ -27,13 +27,13 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any, Callable
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Any
 
 from zephyr.shared.io.paths import REPO_ROOT
 
-__all__ = ["ResourceProvider", "ResourceDefinition"]
+__all__ = ["ResourceDefinition", "ResourceProvider"]
 
 
 @dataclass
@@ -98,8 +98,11 @@ class ResourceProvider:
         handler: Callable[[], str] | None = None,
     ) -> None:
         self._resources[uri] = ResourceDefinition(
-            uri=uri, name=name, mime_type=mime_type,
-            description=description, handler=handler,
+            uri=uri,
+            name=name,
+            mime_type=mime_type,
+            description=description,
+            handler=handler,
         )
 
     def list_resources(self) -> list[dict[str, Any]]:

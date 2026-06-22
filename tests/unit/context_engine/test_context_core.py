@@ -8,24 +8,25 @@
 
 """Test suite: context_core"""
 
-import pytest
 import os
-import tempfile
 import shutil
+import tempfile
 
-from zephyr.autonomy_core.token_budget import (
-    DEFAULT_CONTEXT_TOKEN_BUDGET,
-    estimate_tokens,
+import pytest
+
+from zephyr.autonomy_core.context_assembler import (
+    AssembledContext,
+    AssemblyError,
+    ContextAssembler,
 )
 from zephyr.autonomy_core.context_pipeline import (
     ContextFourStageResult,
     run_context_four_stage,
     run_context_four_stage_or_raise,
 )
-from zephyr.autonomy_core.context_assembler import (
-    AssembledContext,
-    AssemblyError,
-    ContextAssembler,
+from zephyr.autonomy_core.token_budget import (
+    DEFAULT_CONTEXT_TOKEN_BUDGET,
+    estimate_tokens,
 )
 
 

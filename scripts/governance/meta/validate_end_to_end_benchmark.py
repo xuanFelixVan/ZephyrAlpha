@@ -37,7 +37,6 @@ warn_only: false
 """
 
 
-import os
 import json as json_mod
 import os
 import subprocess
@@ -60,8 +59,8 @@ DEFAULT_EXPECTED: dict = {
     "severity_tolerance": 0.15,
 }
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def setup_benchmark() -> dict:
@@ -71,10 +70,13 @@ def setup_benchmark() -> dict:
     bad_file = _TEST_FIXTURES_DIR / "bad_frontmatter.md"
     tmp_path = f"{bad_file}.{os.getpid()}.tmp"
     try:
-        Path(tmp_path).write_text("""# Test Document
+        Path(tmp_path).write_text(
+            """# Test Document
 Some body text without frontmatter.
 This should trigger D3 metadata validation.
-""", encoding="utf-8")
+""",
+            encoding="utf-8",
+        )
         os.replace(tmp_path, bad_file)
     except PermissionError:
         try:
@@ -85,13 +87,16 @@ This should trigger D3 metadata validation.
     bad_imports = _TEST_FIXTURES_DIR / "bad_imports.py"
     tmp_path = f"{bad_imports}.{os.getpid()}.tmp"
     try:
-        Path(tmp_path).write_text("""import os
+        Path(tmp_path).write_text(
+            """import os
 import nonexistent_package_xyz
 from typing import List, Dict, Any
 
 def test_function():
     pass
-""", encoding="utf-8")
+""",
+            encoding="utf-8",
+        )
         os.replace(tmp_path, bad_imports)
     except PermissionError:
         try:
@@ -102,7 +107,8 @@ def test_function():
     incomplete_doc = _TEST_FIXTURES_DIR / "incomplete_module.py"
     tmp_path = f"{incomplete_doc}.{os.getpid()}.tmp"
     try:
-        Path(tmp_path).write_text("""
+        Path(tmp_path).write_text(
+            """
 def calculate(x: int, y: int) -> int:
     return x + y
 
@@ -110,7 +116,9 @@ class DataProcessor:
 
     def process(self):
         pass
-""", encoding="utf-8")
+""",
+            encoding="utf-8",
+        )
         os.replace(tmp_path, incomplete_doc)
     except PermissionError:
         try:
@@ -119,16 +127,19 @@ class DataProcessor:
             pass
 
     bad_structure = _TEST_FIXTURES_DIR
-    (bad_structure / "orphan_file_without_module_registration.py").write_text("""
+    (bad_structure / "orphan_file_without_module_registration.py").write_text(
+        """
 def helper(x):
     return x * 2
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     tmp_path = f"{_EXPECTED_RESULTS}.{os.getpid()}.tmp"
     try:
         with open(tmp_path, encoding="utf-8") as f:
             json_mod.dump(DEFAULT_EXPECTED, f, ensure_ascii=False, indent=2)
-    
+
         os.replace(tmp_path, _EXPECTED_RESULTS)
     except PermissionError:
         try:
@@ -157,12 +168,21 @@ def run_benchmark(tolerance: float | None = None) -> dict:
     temp_output = _BENCHMARK_DIR / "bench_result.jsonl"
 
     proc = subprocess.run(
-        [sys.executable, str(_SCRIPTS_DIR / "run_all.py"),
-         "--target-scope", str(_TEST_FIXTURES_DIR),
-         "--warn-only",
-         "--output", str(temp_output)],
-        capture_output=True, text=True, timeout=300,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        [
+            sys.executable,
+            str(_SCRIPTS_DIR / "run_all.py"),
+            "--target-scope",
+            str(_TEST_FIXTURES_DIR),
+            "--warn-only",
+            "--output",
+            str(temp_output),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=300,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
 
     findings: list[dict] = []
@@ -191,13 +211,15 @@ def run_benchmark(tolerance: float | None = None) -> dict:
         drift = abs(actual - exp_cnt) / max(exp_cnt, 1)
         score -= drift * 0.25
         if drift > tol:
-            drift_details.append({
-                "severity": sev,
-                "expected": exp_cnt,
-                "actual": actual,
-                "drift_pct": round(drift * 100, 1),
-                "status": "DEGRADED" if actual < exp_cnt else "ELEVATED",
-            })
+            drift_details.append(
+                {
+                    "severity": sev,
+                    "expected": exp_cnt,
+                    "actual": actual,
+                    "drift_pct": round(drift * 100, 1),
+                    "status": "DEGRADED" if actual < exp_cnt else "ELEVATED",
+                }
+            )
 
     total = len(findings)
     exp_min = expected.get("total_findings_min", 0)
@@ -247,7 +269,7 @@ def main() -> None:
 
     if args.setup:
         result = setup_benchmark()
-        print(f"[BENCHMARK] ✅ 已创建4个测试fixture + 预期结果配置", file=sys.stderr)
+        print("[BENCHMARK] ✅ 已创建4个测试fixture + 预期结果配置", file=sys.stderr)
         return
 
     result = run_benchmark(tolerance)
@@ -272,10 +294,13 @@ def main() -> None:
         print(f"  Findings: {result['total_findings']} (期望 {result['expected_range']})", file=sys.stderr)
         print(f"  按严重度: {result['by_severity']}", file=sys.stderr)
         if result["drift_found"]:
-            print(f"  严重度漂移:", file=sys.stderr)
+            print("  严重度漂移:", file=sys.stderr)
             for d in result["drift_details"]:
                 arrow = "↓" if d["actual"] < d["expected"] else "↑"
-                print(f"    [{d['status']}] {d['severity']}: {d['expected']} → {d['actual']} {arrow}{d['drift_pct']:.0f}%", file=sys.stderr)
+                print(
+                    f"    [{d['status']}] {d['severity']}: {d['expected']} → {d['actual']} {arrow}{d['drift_pct']:.0f}%",
+                    file=sys.stderr,
+                )
     code = 0 if result["verdict"] == "PASS" else 1
     if args.warn_only:
         code = 0

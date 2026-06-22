@@ -18,7 +18,7 @@ import threading
 import time
 import uuid
 from enum import Enum, IntEnum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -64,7 +64,7 @@ class ConsensusRequest(BaseModel):
     context: dict[str, Any] = Field(default_factory=dict)
     priority: ConsensusPriority = ConsensusPriority.P3_BASELINE
     protection_level: ProtectionLevel = ProtectionLevel.normal
-    expected_verdict: Optional[VerdictLevel] = None
+    expected_verdict: VerdictLevel | None = None
     timeout_s: float = 30.0
 
 
@@ -74,7 +74,7 @@ class ConsensusResult(BaseModel):
     request_id: str = ""
     status: ConsensusStatus = ConsensusStatus.PENDING
     route: ConsensusRoute = ConsensusRoute.LOCAL_GPU
-    verdict: Optional[VerdictLevel] = None
+    verdict: VerdictLevel | None = None
     confidence: float = 0.0
     model_responses: list[dict[str, Any]] = Field(default_factory=list)
     latency_ms: float = 0.0
@@ -111,9 +111,7 @@ class SchedulerMetrics(BaseModel):
 
 class _PriorityQueue:
     def __init__(self, max_size: int = 50) -> None:
-        self._queues: dict[int, list[ConsensusRequest]] = {
-            p: [] for p in range(4)
-        }
+        self._queues: dict[int, list[ConsensusRequest]] = {p: [] for p in range(4)}
         self._lock = threading.Lock()
         self._max_size = max_size
         self._total: int = 0
@@ -126,7 +124,7 @@ class _PriorityQueue:
             self._total += 1
             return True
 
-    def pop(self) -> Optional[ConsensusRequest]:
+    def pop(self) -> ConsensusRequest | None:
         with self._lock:
             for priority in sorted(self._queues.keys()):
                 if self._queues[priority]:
@@ -163,7 +161,7 @@ class GPUConsensusScheduler:
         max_workers: int = 1,
     ) -> None:
         self._ollama_url = ollama_url.rstrip("/")
-        self._local_model = local-model
+        self._local_model = local - model
         self._api_primary = api_primary
         self._api_secondary = api_secondary
         self._gpu_timeout_s = gpu_timeout_s
@@ -173,7 +171,7 @@ class GPUConsensusScheduler:
         self._lock = threading.Lock()
         self._gpu_status = GPUStatus(
             available=False,
-            model_name=local-model,
+            model_name=local - model,
             last_check_time=0.0,
         )
         self._total_submitted: int = 0
@@ -234,9 +232,7 @@ class GPUConsensusScheduler:
 
     def get_metrics(self) -> SchedulerMetrics:
         with self._lock:
-            avg_latency = (
-                self._total_latency_ms / max(self._total_submitted, 1)
-            )
+            avg_latency = self._total_latency_ms / max(self._total_submitted, 1)
             return SchedulerMetrics(
                 total_submitted=self._total_submitted,
                 consensus_reached=self._consensus_reached,
@@ -403,7 +399,7 @@ class GPUConsensusScheduler:
             reason="local_gpu_consensus",
         )
 
-    async def _call_api(self, model_id: str, request: ConsensusRequest) -> Optional[dict[str, Any]]:
+    async def _call_api(self, model_id: str, request: ConsensusRequest) -> dict[str, Any] | None:
         if not _HAS_REQUESTS:
             return None
         loop = asyncio.get_running_loop()
@@ -419,7 +415,7 @@ class GPUConsensusScheduler:
             logger.debug("API call failed for model %s: %s", model_id, exc)
             return None
 
-    def _call_api_sync(self, model_id: str, request: ConsensusRequest) -> Optional[dict[str, Any]]:
+    def _call_api_sync(self, model_id: str, request: ConsensusRequest) -> dict[str, Any] | None:
         if not _HAS_REQUESTS:
             return None
         prompt = (
@@ -427,7 +423,7 @@ class GPUConsensusScheduler:
             f"Content: {request.content}\n"
             f"Context: {request.context}\n"
             f"Protection level: {request.protection_level.value}\n"
-            f"Respond with JSON: {{\"verdict\": \"PASS\"|\"YELLOW\"|\"RED\", \"confidence\": 0.0-1.0, \"reasoning\": \"...\"}}"
+            f'Respond with JSON: {{"verdict": "PASS"|"YELLOW"|"RED", "confidence": 0.0-1.0, "reasoning": "..."}}'
         )
         try:
             resp = _requests.post(
@@ -448,7 +444,7 @@ class GPUConsensusScheduler:
         except Exception:
             return None
 
-    async def _call_ollama(self, request: ConsensusRequest) -> Optional[dict[str, Any]]:
+    async def _call_ollama(self, request: ConsensusRequest) -> dict[str, Any] | None:
         if not _HAS_REQUESTS:
             return None
         loop = asyncio.get_running_loop()
@@ -462,14 +458,14 @@ class GPUConsensusScheduler:
         except Exception:
             return None
 
-    def _call_ollama_sync(self, request: ConsensusRequest) -> Optional[dict[str, Any]]:
+    def _call_ollama_sync(self, request: ConsensusRequest) -> dict[str, Any] | None:
         if not _HAS_REQUESTS:
             return None
         prompt = (
             f"Evaluate: {request.content}\n"
             f"Context: {request.context}\n"
             f"Protection: {request.protection_level.value}\n"
-            f"JSON: {{\"verdict\": \"PASS\"|\"YELLOW\"|\"RED\", \"confidence\": 0.0-1.0}}"
+            f'JSON: {{"verdict": "PASS"|"YELLOW"|"RED", "confidence": 0.0-1.0}}'
         )
         try:
             resp = _requests.post(

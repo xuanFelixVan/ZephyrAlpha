@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_feedback | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_feedback
+# [MODULE] zephyr.autonomy_core.skill_feedback
 
 # [INVARIANTS] none
 
@@ -30,14 +30,13 @@ Skill 反馈环 —— ModuleResult → SkillLifecycle → 自动优化闭.
 并在异常情况下自动触发 Kill Switch.
 """
 
-
 from __future__ import annotations
 
 import json
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Any
 
 
 @dataclass
@@ -52,12 +51,16 @@ class FeedbackSignal:
     cost_usd: float
     timestamp: float = field(default_factory=time.time)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
-            "skill_id": self.skill_id, "module_id": self.module_id,
-            "task_id": self.task_id, "success": self.success,
-            "error_count": self.error_count, "latency_ms": self.latency_ms,
-            "tokens_used": self.tokens_used, "cost_usd": self.cost_usd,
+            "skill_id": self.skill_id,
+            "module_id": self.module_id,
+            "task_id": self.task_id,
+            "success": self.success,
+            "error_count": self.error_count,
+            "latency_ms": self.latency_ms,
+            "tokens_used": self.tokens_used,
+            "cost_usd": self.cost_usd,
             "timestamp": self.timestamp,
         }
 
@@ -72,8 +75,8 @@ class SkillFeedback:
     _CONSECUTIVE_FAILURE_KILL = 3
 
     def __init__(self):
-        self._history: List[FeedbackSignal] = []
-        self._consecutive_failures: Dict[str, int] = {}
+        self._history: list[FeedbackSignal] = []
+        self._consecutive_failures: dict[str, int] = {}
         self._load_history()
 
     def record_module_result(
@@ -81,7 +84,7 @@ class SkillFeedback:
         skill_id: str,
         module_result: Any,
         task_id: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         error_count = 0
         success = True
         tokens_used = 0
@@ -113,7 +116,7 @@ class SkillFeedback:
 
         self._history.append(signal)
         if len(self._history) > self._MAX_HISTORY:
-            self._history = self._history[-self._MAX_HISTORY:]
+            self._history = self._history[-self._MAX_HISTORY :]
 
         actions = []
         if success:
@@ -133,42 +136,48 @@ class SkillFeedback:
             "success": success,
         }
 
-    def _boost_freshness(self, skill_id: str, signal: FeedbackSignal) -> Dict[str, Any]:
+    def _boost_freshness(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any]:
         from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
+
         fdm = FreshnessDecayModel()
         fdm.boost(skill_id, self._SUCCESS_BOOST)
-        return {"action": "freshness_boost", "skill_id": skill_id,
-                "amount": self._SUCCESS_BOOST, "reason": "module_success"}
+        return {
+            "action": "freshness_boost",
+            "skill_id": skill_id,
+            "amount": self._SUCCESS_BOOST,
+            "reason": "module_success",
+        }
 
-    def _decay_freshness(self, skill_id: str, signal: FeedbackSignal) -> Dict[str, Any]:
-        self._consecutive_failures[skill_id] = (
-            self._consecutive_failures.get(skill_id, 0) + 1
-        )
+    def _decay_freshness(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any]:
+        self._consecutive_failures[skill_id] = self._consecutive_failures.get(skill_id, 0) + 1
         from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
+
         fdm = FreshnessDecayModel()
         fdm.decay(skill_id, self._FAILURE_DECAY)
-        return {"action": "freshness_decay", "skill_id": skill_id,
-                "amount": self._FAILURE_DECAY,
-                "consecutive_failures": self._consecutive_failures[skill_id]}
+        return {
+            "action": "freshness_decay",
+            "skill_id": skill_id,
+            "amount": self._FAILURE_DECAY,
+            "consecutive_failures": self._consecutive_failures[skill_id],
+        }
 
-    def _check_auto_kill(self, skill_id: str, signal: FeedbackSignal) -> Optional[Dict[str, Any]]:
+    def _check_auto_kill(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any] | None:
         count = self._consecutive_failures.get(skill_id, 0)
         if count >= self._CONSECUTIVE_FAILURE_KILL:
             from zephyr.autonomy_core.skill_kill_switch import SkillKillSwitch
+
             return SkillKillSwitch.auto_kill_on_errors(skill_id, count)
         return None
 
     def on_success_reset(self, skill_id: str):
         self._consecutive_failures.pop(skill_id, None)
 
-    def get_history(self, skill_id: Optional[str] = None,
-                    limit: int = 20) -> List[Dict[str, Any]]:
+    def get_history(self, skill_id: str | None = None, limit: int = 20) -> list[dict[str, Any]]:
         if skill_id:
-            return [s.to_dict() for s in self._history
-                    if s.skill_id == skill_id][-limit:]
+            return [s.to_dict() for s in self._history if s.skill_id == skill_id][-limit:]
         return [s.to_dict() for s in self._history[-limit:]]
 
-    def stats(self, skill_id: Optional[str] = None) -> Dict[str, Any]:
+    def stats(self, skill_id: str | None = None) -> dict[str, Any]:
         subset = self._history
         if skill_id:
             subset = [s for s in subset if s.skill_id == skill_id]
@@ -186,7 +195,7 @@ class SkillFeedback:
     def _load_history(self):
         try:
             if self._FEEDBACK_LOG.exists():
-                with open(self._FEEDBACK_LOG, "r", encoding="utf-8") as f:
+                with open(self._FEEDBACK_LOG, encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if line:
@@ -196,7 +205,7 @@ class SkillFeedback:
                             except (json.JSONDecodeError, TypeError):
                                 pass
                 if len(self._history) > self._MAX_HISTORY:
-                    self._history = self._history[-self._MAX_HISTORY:]
+                    self._history = self._history[-self._MAX_HISTORY :]
         except OSError:
             pass
 
@@ -209,4 +218,4 @@ class SkillFeedback:
             pass
 
 
-__all__ = ["SkillFeedback", "FeedbackSignal"]
+__all__ = ["FeedbackSignal", "SkillFeedback"]

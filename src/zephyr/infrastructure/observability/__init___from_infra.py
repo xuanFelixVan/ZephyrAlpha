@@ -6,15 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.observability — auto-generated package init."""
-from . import cli_summary
-from . import cost_tracker
-from . import failure_matcher
-from . import notifier
-from . import trace_decorator
 
-__all__ = ['cli_summary', 'cost_tracker', 'failure_matcher', 'notifier', 'trace_decorator']
+from . import cli_summary, cost_tracker, failure_matcher, notifier, trace_decorator
 
+__all__ = ["cli_summary", "cost_tracker", "failure_matcher", "notifier", "trace_decorator"]

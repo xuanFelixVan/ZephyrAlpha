@@ -11,20 +11,20 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.token_budget import (
-        DEFAULT_CONTEXT_TOKEN_BUDGET,
-        estimate_tokens,
-        TokenBudgetTier,
         BUDGET_CAPS,
-        DEGRADED_THRESHOLD,
         BudgetState,
         TokenBudgetManager,
+        TokenBudgetTier,
+        estimate_tokens,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

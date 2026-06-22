@@ -32,9 +32,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -72,7 +70,6 @@ ROTATION_URLS: dict[str, str] = {
 
 
 class SecretRotationAware:
-
     EXIT_CODE_STALE: int = 15
     ENV_FILES: list[str] = [".env", ".env.local", ".env.production"]
 
@@ -94,13 +91,15 @@ class SecretRotationAware:
                 matches = re.findall(pattern, content)
                 total += len(matches)
                 for match in matches:
-                    stale.append(StaleSecret(
-                        file_path=env_file,
-                        secret_type=secret_type,
-                        age_days=0,
-                        rotatable=secret_type in ("ZEPHYR_API_KEY", "JWT_SECRET"),
-                        rotation_url=ROTATION_URLS.get(secret_type, ""),
-                    ))
+                    stale.append(
+                        StaleSecret(
+                            file_path=env_file,
+                            secret_type=secret_type,
+                            age_days=0,
+                            rotatable=secret_type in ("ZEPHYR_API_KEY", "JWT_SECRET"),
+                            rotation_url=ROTATION_URLS.get(secret_type, ""),
+                        )
+                    )
 
         rotated = 0
         deferred = 0
@@ -130,11 +129,13 @@ class SecretRotationAware:
         for detail in result.details:
             if "DEFER_TO_HUMAN" in detail:
                 for env_file in self.ENV_FILES:
-                    deferred.append(StaleSecret(
-                        file_path=env_file,
-                        secret_type="unknown",
-                        age_days=0,
-                        rotatable=False,
-                        rotation_url="",
-                    ))
+                    deferred.append(
+                        StaleSecret(
+                            file_path=env_file,
+                            secret_type="unknown",
+                            age_days=0,
+                            rotatable=False,
+                            rotation_url="",
+                        )
+                    )
         return deferred

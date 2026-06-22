@@ -14,7 +14,6 @@
 CT-CE-VMS-001: 接收 CE 投递的上下文块, 向量化存储到 ChromaDB（Current: in-memory fallback）。
 """
 
-
 from __future__ import annotations
 
 import importlib
@@ -44,7 +43,7 @@ class ContextIngest:
 
         try:
             _vb_mod = importlib.import_module("zephyr.autonomy_core.vector_bridge")
-            _VectorBridge = getattr(_vb_mod, "VectorBridge")
+            _VectorBridge = _vb_mod.VectorBridge
             from zephyr.governance.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 
             vms = InMemoryFakeVMS()
@@ -70,7 +69,10 @@ class ContextIngest:
 
             logger.info(
                 "[CE-VMS] ingested: task=%s collection=%s stored=%d/%d",
-                task_id, collection, stored, len(records),
+                task_id,
+                collection,
+                stored,
+                len(records),
             )
             return stored
         except Exception as exc:
@@ -85,8 +87,12 @@ class ContextIngest:
         for rec in records:
             rec["_stored_at"] = ts
             _in_memory_collections[collection].append(rec)
-        logger.info("[VMS-INGEST] in-memory fallback: collection=%s count=%d total=%d",
-                     collection, len(records), len(_in_memory_collections[collection]))
+        logger.info(
+            "[VMS-INGEST] in-memory fallback: collection=%s count=%d total=%d",
+            collection,
+            len(records),
+            len(_in_memory_collections[collection]),
+        )
         return len(records)
 
     def query(self, collection: str = "session_context", text: str = "", limit: int = 10) -> list[dict[str, Any]]:
@@ -109,7 +115,16 @@ def ingest_context(
 
 
 def _map_collection(preferred: str) -> str:
-    valid = {"decisions", "code_context", "lessons", "knowledge", "rules", "blueprints", "session_snapshots", "execution_traces"}
+    valid = {
+        "decisions",
+        "code_context",
+        "lessons",
+        "knowledge",
+        "rules",
+        "blueprints",
+        "session_snapshots",
+        "execution_traces",
+    }
     if preferred in valid:
         return preferred
     if "session" in preferred:

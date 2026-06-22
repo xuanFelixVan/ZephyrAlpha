@@ -51,6 +51,7 @@ class HandoffAutoLoader:
             files = sorted(self._dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
             if files:
                 import json
+
                 with open(files[0], encoding="utf-8") as fh:
                     self._latest = json.load(fh)
                 return self._latest

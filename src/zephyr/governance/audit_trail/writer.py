@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 写入失败抛IOError
 # [TESTS] tests/audit-orchestrator/test_writer.py
-
 import json
 import logging
 import os
@@ -26,6 +25,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["AuditReportWriter"]
 
 DEFAULT_REPORT_DIR = Path("data/audit_history")
+
 
 class AuditReportWriter:
     def __init__(self, report_dir: Path | None = None) -> None:
@@ -91,6 +91,7 @@ class AuditReportWriter:
         files = sorted(self._report_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
         return files[:limit]
 
+
 class AuditWriter:
     def __init__(self, backend=None):
         self.backend = backend
@@ -101,12 +102,16 @@ class AuditWriter:
     def flush(self):
         pass
 
+
 def get_audit_writer(backend=None):
     return AuditWriter(backend=backend)
 
+
 def _generate_entry_id():
     import uuid
+
     return str(uuid.uuid4())
 
+
 def _resolve_hmac_key(config=None):
-    return b'default-key'
+    return b"default-key"

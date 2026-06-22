@@ -35,9 +35,9 @@ from typing import Any
 import yaml
 
 __all__ = [
-    "ContractTester",
-    "ContractTestResult",
     "ContractStatus",
+    "ContractTestResult",
+    "ContractTester",
 ]
 
 
@@ -84,9 +84,9 @@ class ContractTester:
             )
         try:
             content = path.read_text(encoding="utf-8")
-            if contract_path.endswith(('.yaml', '.yml')):
+            if contract_path.endswith((".yaml", ".yml")):
                 parsed = yaml.safe_load(content)
-            elif contract_path.endswith('.json'):
+            elif contract_path.endswith(".json"):
                 parsed = json.loads(content)
             else:
                 parsed = {"raw": content}

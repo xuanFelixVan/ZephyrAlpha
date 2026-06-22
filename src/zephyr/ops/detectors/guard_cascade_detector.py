@@ -29,11 +29,13 @@ R520: GuardCascadeDetector
 import time
 from dataclasses import dataclass, field
 
+
 @dataclass
 class GuardTriggerEvent:
     guard_id: str
     triggered_by: str | None
     timestamp: float
+
 
 @dataclass
 class GuardCascadeDetector:
@@ -44,13 +46,15 @@ class GuardCascadeDetector:
     suppressed_guards: set[str] = field(default_factory=set)
 
     def record_trigger(self, guard_id: str, triggered_by: str | None = None) -> None:
-        self.trigger_history.append(GuardTriggerEvent(
-            guard_id=guard_id,
-            triggered_by=triggered_by,
-            timestamp=time.time(),
-        ))
+        self.trigger_history.append(
+            GuardTriggerEvent(
+                guard_id=guard_id,
+                triggered_by=triggered_by,
+                timestamp=time.time(),
+            )
+        )
         if len(self.trigger_history) > self.max_history:
-            self.trigger_history = self.trigger_history[-self.max_history:]
+            self.trigger_history = self.trigger_history[-self.max_history :]
 
     def detect_cascade(self) -> dict:
         now = time.time()
@@ -75,7 +79,7 @@ class GuardCascadeDetector:
         }
 
         if is_cascade:
-            downstream = unique_triggered[self.cascade_depth_threshold - 1:]
+            downstream = unique_triggered[self.cascade_depth_threshold - 1 :]
             self.suppressed_guards.update(downstream)
             result["suppressed"] = list(downstream)
 

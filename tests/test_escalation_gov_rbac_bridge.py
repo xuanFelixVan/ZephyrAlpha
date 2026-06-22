@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.governance.rbac_bridge import (
     EscalationRBACBridge,
     RBACCheckResult,
@@ -119,6 +117,7 @@ class TestPreExecuteCheck:
         mock_result.audit_context = {"info": "test"}
 
         from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision
+
         mock_result.decision = GuardDecision.BLOCKED
 
         mock_guard = MagicMock()

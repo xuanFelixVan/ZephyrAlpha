@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.governance.instrument
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] data; factor; pf_core; ex_core; l10-compliance; shared.foundation.constants
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
@@ -40,50 +30,127 @@ AssetClass = Literal[
 ]
 
 Exchange = Literal[
-    "SSE", "SZSE", "BSE", "SHFE", "DCE", "CZCE", "CFFEX", "INE",
+    "SSE",
+    "SZSE",
+    "BSE",
+    "SHFE",
+    "DCE",
+    "CZCE",
+    "CFFEX",
+    "INE",
     "HKEX",
-    "NYSE", "NASDAQ", "CBOE", "CME", "ICE",
-    "TSE", "OSE",
+    "NYSE",
+    "NASDAQ",
+    "CBOE",
+    "CME",
+    "ICE",
+    "TSE",
+    "OSE",
     "KRX",
     "SGX",
     "TWSE",
-    "NSE", "BSE_IN",
+    "NSE",
+    "BSE_IN",
     "LSE",
-    "XETRA", "EURONEXT", "SIX",
+    "XETRA",
+    "EURONEXT",
+    "SIX",
     "TSX",
     "ASX",
-    "BINANCE", "OKX", "COINBASE", "KRAKEN", "BYBIT",
+    "BINANCE",
+    "OKX",
+    "COINBASE",
+    "KRAKEN",
+    "BYBIT",
     "FX_OTC",
     "OTHER",
 ]
 
 Country = Literal[
-    "CN", "HK", "TW", "JP", "KR", "SG", "IN", "TH", "ID", "VN", "MY",
-    "US", "CA",
-    "UK", "DE", "FR", "CH", "NL", "ES", "IT", "SE", "NO",
-    "AU", "NZ",
-    "BR", "MX",
+    "CN",
+    "HK",
+    "TW",
+    "JP",
+    "KR",
+    "SG",
+    "IN",
+    "TH",
+    "ID",
+    "VN",
+    "MY",
+    "US",
+    "CA",
+    "UK",
+    "DE",
+    "FR",
+    "CH",
+    "NL",
+    "ES",
+    "IT",
+    "SE",
+    "NO",
+    "AU",
+    "NZ",
+    "BR",
+    "MX",
     "GLOBAL",
 ]
 
 CurrencyCode = Literal[
-    "CNY", "HKD", "USD", "JPY", "KRW", "SGD", "TWD", "INR",
-    "GBP", "EUR", "CHF", "CAD", "AUD", "NZD",
-    "BTC", "ETH", "USDT", "USDC",
+    "CNY",
+    "HKD",
+    "USD",
+    "JPY",
+    "KRW",
+    "SGD",
+    "TWD",
+    "INR",
+    "GBP",
+    "EUR",
+    "CHF",
+    "CAD",
+    "AUD",
+    "NZD",
+    "BTC",
+    "ETH",
+    "USDT",
+    "USDC",
 ]
 
 Jurisdiction = Literal[
-    "CN_CSRC", "HK_SFC", "US_SEC", "US_CFTC", "UK_FCA", "EU_ESMA",
-    "JP_FSA", "KR_FSC", "SG_MAS", "AU_ASIC", "CRYPTO_NONE", "MULTI",
+    "CN_CSRC",
+    "HK_SFC",
+    "US_SEC",
+    "US_CFTC",
+    "UK_FCA",
+    "EU_ESMA",
+    "JP_FSA",
+    "KR_FSC",
+    "SG_MAS",
+    "AU_ASIC",
+    "CRYPTO_NONE",
+    "MULTI",
 ]
 
 TradingCalendarName = Literal[
-    "SSE_A", "SZSE_A", "HKEX", "NYSE", "NASDAQ", "TSE", "KRX", "SGX",
-    "LSE", "XETRA", "EURONEXT",
-    "CFFEX_INDEX", "SHFE_COMMODITY", "CME_ELECTRONIC",
+    "SSE_A",
+    "SZSE_A",
+    "HKEX",
+    "NYSE",
+    "NASDAQ",
+    "TSE",
+    "KRX",
+    "SGX",
+    "LSE",
+    "XETRA",
+    "EURONEXT",
+    "CFFEX_INDEX",
+    "SHFE_COMMODITY",
+    "CME_ELECTRONIC",
     "CRYPTO_24x7",
     "FX_24x5",
 ]
+
 
 @dataclass(frozen=True)
 class Instrument:
@@ -104,12 +171,14 @@ class Instrument:
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.identifier}>"
 
+
 @dataclass(frozen=True)
 class Stock(Instrument):
     lot_size: int = 100
     price_tick: Decimal = Decimal("0.01")
     is_adr: bool = False
     is_st: bool = False
+
 
 @dataclass(frozen=True)
 class ETF(Instrument):
@@ -118,6 +187,7 @@ class ETF(Instrument):
     underlying_index: str | None = None
     tracking_method: Literal["full_replication", "sampling", "synthetic"] = "full_replication"
     leverage_factor: Decimal = Decimal("1.0")
+
 
 @dataclass(frozen=True)
 class Future(Instrument):
@@ -131,7 +201,9 @@ class Future(Instrument):
     last_trading_date: date | None = None
     delivery_date: date | None = None
 
+
 OptionType = Literal["call", "put"]
+
 
 @dataclass(frozen=True)
 class Option(Instrument):
@@ -143,6 +215,7 @@ class Option(Instrument):
     exercise_style: Literal["european", "american", "bermudan"] = "european"
     settlement_style: Literal["physical", "cash"] = "physical"
 
+
 @dataclass(frozen=True)
 class Bond(Instrument):
     issuer: str = ""
@@ -151,9 +224,8 @@ class Bond(Instrument):
     coupon_frequency: Literal["annual", "semi_annual", "quarterly", "zero"] = "semi_annual"
     face_value: Decimal = Decimal("100")
     credit_rating: str | None = None
-    bond_type: Literal[
-        "government", "municipal", "corporate", "convertible", "abs", "mbs", "perpetual"
-    ] = "corporate"
+    bond_type: Literal["government", "municipal", "corporate", "convertible", "abs", "mbs", "perpetual"] = "corporate"
+
 
 @dataclass(frozen=True)
 class FX(Instrument):
@@ -162,9 +234,14 @@ class FX(Instrument):
     price_tick: Decimal = Decimal("0.00001")
     lot_size: int = 100_000
 
+
 CryptoContractType = Literal[
-    "spot", "perpetual", "futures", "option",
+    "spot",
+    "perpetual",
+    "futures",
+    "option",
 ]
+
 
 @dataclass(frozen=True)
 class Crypto(Instrument):
@@ -174,7 +251,27 @@ class Crypto(Instrument):
     expiry_date: date | None = None
     funding_interval_hours: int | None = None
 
+
 def make_stock_identifier(exchange: Exchange, symbol: str) -> str:
     return f"{exchange}:{symbol}"
 
-__all__ = ["AssetClass", "Exchange", "Country", "CurrencyCode", "Jurisdiction", "TradingCalendarName", "Instrument", "Stock", "ETF", "Future", "OptionType", "Option", "Bond", "FX", "CryptoContractType", "Crypto", "make_stock_identifier"]
+
+__all__ = [
+    "ETF",
+    "FX",
+    "AssetClass",
+    "Bond",
+    "Country",
+    "Crypto",
+    "CryptoContractType",
+    "CurrencyCode",
+    "Exchange",
+    "Future",
+    "Instrument",
+    "Jurisdiction",
+    "Option",
+    "OptionType",
+    "Stock",
+    "TradingCalendarName",
+    "make_stock_identifier",
+]

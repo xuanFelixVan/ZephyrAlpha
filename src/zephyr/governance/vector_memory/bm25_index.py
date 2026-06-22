@@ -32,6 +32,7 @@ import math
 import re
 from typing import Any
 
+
 class BM25Index:
     def __init__(self) -> None:
         self._documents: list[dict[str, Any]] = []
@@ -87,5 +88,6 @@ class BM25Index:
     def _tokenize(text: str) -> list[str]:
         tokens = re.findall(r"[\u4e00-\u9fff]+|[a-zA-Z0-9_]+", text.lower())
         return [t for t in tokens if len(t) > 0]
+
 
 __all__: list[str] = ["BM25Index"]

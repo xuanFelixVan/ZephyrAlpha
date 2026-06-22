@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-SESSION-LO-UNKNOWN-006
 title: 变更的文件
 category: session_log
@@ -17,7 +17,7 @@ category: session_log
 | 删除 | docs/01_policies_and_standards/governance/architecture/adr-protocol.md | ADR 协议 |
 | 删除 | src/zephyr/kb/adr_ingest.py | ADR 批量摄入脚本 |
 | 编辑 | docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml | decisions 字段升级 |
-| 编辑 | docs/01_policies_and_standards/meta/metadata-registry.md | 删除 ADR 命名空间行 |
+| 编辑 | docs/01_policies_and_standards/meta/metadata_registry.yaml | 删除 ADR 命名空间行 |
 | 编辑 | docs/03_modules/_domain-infra_ops/database/blueprint.md | KBG-0030 路径更新 |
 | 编辑 | docs/03_modules/_domain-infra_ops/llm-security/blueprint.md | KBG-0020 路径更新 |
 | 编辑 | src/zephyr/db/atomic_transaction_manager.py | 测试路径替换 |

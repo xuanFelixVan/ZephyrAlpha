@@ -30,7 +30,6 @@ Mitigation: TPM-based remote attestation with runtime measurement verification.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-import hashlib
 
 
 @dataclass

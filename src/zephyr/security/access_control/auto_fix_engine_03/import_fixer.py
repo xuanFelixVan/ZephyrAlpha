@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.import_fixer
-
 # [INVARIANTS] 只修复可确定正确路径的import;不确定则跳过
-
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml import_fixer段
-
 # [CONSUMERS] engine.py
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ImportFixError
-
 # [TESTS] tests/auto-fix-engine/test_import_fixer.py
-
 import ast
 import logging
 import os
@@ -38,6 +28,7 @@ from zephyr.security.access_control.auto_fix_engine_03.models import (
 )
 
 logger = logging.getLogger(__name__)
+
 
 class ImportFixer(BaseFixer):
     model_config = {"arbitrary_types_allowed": True}
@@ -69,12 +60,14 @@ class ImportFixer(BaseFixer):
                                 pkg_path = src_root / Path(*parts[:-1]) if len(parts) > 2 else src_root / parts[0]
                                 init_file = pkg_path / "__init__.py"
                                 if not init_file.exists() and not (src_root / Path(*parts)).exists():
-                                    findings.append({
-                                        "file": str(py_file),
-                                        "line": node.lineno,
-                                        "module": node.module,
-                                        "type": "broken_import",
-                                    })
+                                    findings.append(
+                                        {
+                                            "file": str(py_file),
+                                            "line": node.lineno,
+                                            "module": node.module,
+                                            "type": "broken_import",
+                                        }
+                                    )
                     elif isinstance(node, ast.Import):
                         for alias in node.names:
                             if alias.name.startswith("zephyr."):
@@ -83,12 +76,14 @@ class ImportFixer(BaseFixer):
                                 if not mod_path.exists():
                                     mod_path2 = src_root / Path(*parts[:-1]) / f"{parts[-1]}.py"
                                     if not mod_path2.exists():
-                                        findings.append({
-                                            "file": str(py_file),
-                                            "line": node.lineno,
-                                            "module": alias.name,
-                                            "type": "broken_import",
-                                        })
+                                        findings.append(
+                                            {
+                                                "file": str(py_file),
+                                                "line": node.lineno,
+                                                "module": alias.name,
+                                                "type": "broken_import",
+                                            }
+                                        )
             except Exception:
                 continue
         return findings
@@ -167,7 +162,9 @@ class ImportFixer(BaseFixer):
             prefix = ".".join(parts[:i])
             suffix = parts[i:] if i < len(parts) else []
             pkg_path = src_root / Path(*parts[:i])
-            if (pkg_path / "__init__.py").exists() or (src_root / Path(*parts[:i-1]) / f"{parts[i-1]}.py").exists():
+            if (pkg_path / "__init__.py").exists() or (
+                src_root / Path(*parts[: i - 1]) / f"{parts[i - 1]}.py"
+            ).exists():
                 if not suffix:
                     candidates.append(prefix)
                 else:

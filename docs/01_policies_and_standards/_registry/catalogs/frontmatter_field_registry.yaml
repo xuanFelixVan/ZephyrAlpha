@@ -53,7 +53,7 @@ ttl: permanent
 total_registered: 53
 depends_on:
   - target: PS-STD-001
-    at: "docs/01_policies_and_standards/meta/metadata-registry.md"
+    at: "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml"
     why: "字段规则真源（校验逻辑/一致性约束/违规检测）。YAML=数据真源, MD=规则真源。修改YAML→MUST检查MD。数据冲突→YAML优先"
     relationship: "dual_ssot"
     linked_version: "6.1.0"

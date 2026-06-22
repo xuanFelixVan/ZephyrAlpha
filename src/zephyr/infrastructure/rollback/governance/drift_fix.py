@@ -30,16 +30,15 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
 from __future__ import annotations
 
 import importlib
-
 from typing import Any
 
 
 class DriftFixHandler:
     """漂移自动修复处理器 — G-CT-005 消费端."""
 
-    def on_drift_fix(self, event: "DriftEvent") -> dict[str, Any]:
+    def on_drift_fix(self, event: DriftEvent) -> dict[str, Any]:
         _mod = importlib.import_module("zephyr.governance.drift_detection.bridges.events")
-        DriftEvent = getattr(_mod, "DriftEvent")
+        DriftEvent = _mod.DriftEvent
         if not event.auto_fixable:
             event.mark_manual_required()
             return {

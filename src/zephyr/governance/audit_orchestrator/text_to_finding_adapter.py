@@ -15,23 +15,20 @@ from __future__ import annotations
 import re
 from datetime import UTC, datetime
 
+from pydantic import BaseModel
+
 from zephyr.governance.audit_trail.finding_model import (
     AuditFinding,
     BlastRadius,
     FindingDimension,
-    FindingLifecycle,
-    FindingRemediation,
     FindingSeverity,
     FindingTarget,
-    FindingTraceability,
     RecommendationBlock,
     RemediationAction,
     RemediationPriority,
     generate_finding_id,
 )
 from zephyr.integration.shared.schema.base_config import BASE_CONFIG
-
-from pydantic import BaseModel
 
 
 class ParsedLine(BaseModel):
@@ -90,7 +87,10 @@ class TextToFindingAdapter:
     _WARNING_RE = re.compile(r"^\s*(?:WARNING|WARN)\s*[:：]\s*(.*)", re.IGNORECASE)
     _SEVERITY_WORD_TAG_RE = re.compile(r"^\s*\[(CRITICAL|HIGH|MEDIUM|LOW)\]\s+(.+)$")
     _FAILED_EXCEPTION_RE = re.compile(r"^\s*(FAILED|EXCEPTION|FATAL|CRITICAL_ERROR):\s+(.+)$")
-    _COUNT_STAT_RE = re.compile(r"^\s*(\d+)\s+(errors?|warnings?|issues?|problems?|violations?|failures?)\s+(found|detected|identified|reported)?", re.IGNORECASE)
+    _COUNT_STAT_RE = re.compile(
+        r"^\s*(\d+)\s+(errors?|warnings?|issues?|problems?|violations?|failures?)\s+(found|detected|identified|reported)?",
+        re.IGNORECASE,
+    )
     _FILE_LINE_RE = re.compile(r"^\s*([^\s:]+\.py):(\d+):?\s+(.+)$")
     _UNICODE_MARK_RE = re.compile(r"^\s*[✗✘⚠]\s+(.+)$")
     _INDENT_ITEM_RE = re.compile(r"^\s{2,}[-*]\s+(.+)$")
@@ -141,7 +141,10 @@ class TextToFindingAdapter:
                 description=parsed.description[:500],
                 evidence=line.strip()[:500],
                 impact={"blast_radius": BlastRadius.file},
-                remediation={"action": RemediationAction.FIX, "priority": self._PRIORITY_MAP.get(priority_tag, RemediationPriority.P2)},
+                remediation={
+                    "action": RemediationAction.FIX,
+                    "priority": self._PRIORITY_MAP.get(priority_tag, RemediationPriority.P2),
+                },
                 lifecycle={"status": "OPEN"},
                 traceability={"related_kb": [], "related_ke": [], "related_finding": []},
                 timestamp=datetime.now(UTC).isoformat(),
@@ -198,7 +201,9 @@ class TextToFindingAdapter:
         m = self._FILE_LINE_RE.match(line)
         if m:
             return self._build_parsed(
-                "MEDIUM", m.group(3), line,
+                "MEDIUM",
+                m.group(3),
+                line,
                 file_path_override=m.group(1).replace("\\", "/"),
                 line_range_override=m.group(2),
             )
@@ -228,7 +233,14 @@ class TextToFindingAdapter:
 
         return None
 
-    def _build_parsed(self, priority: str, content: str, original_line: str, file_path_override: str = "", line_range_override: str = "") -> ParsedLine:
+    def _build_parsed(
+        self,
+        priority: str,
+        content: str,
+        original_line: str,
+        file_path_override: str = "",
+        line_range_override: str = "",
+    ) -> ParsedLine:
         file_path = file_path_override
         line_range = line_range_override
         if not file_path:

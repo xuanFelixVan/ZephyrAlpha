@@ -12,12 +12,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
-from zephyr.shared.shared_services.events.event_bus import DomainEvent, EventBus, EventType
 from zephyr.shared.events.hook_dispatcher import HookConfig, HookDispatcher, HookExecution
+from zephyr.shared.shared_services.events.event_bus import EventBus, EventType
 
 
 class TestHookConfig:
@@ -88,7 +84,7 @@ class TestHookDispatcher:
         hook = HookConfig(
             hook_id="HK-SCRIPT",
             event_type=EventType.TASK_COMPLETED,
-            callback_script='python -c "print(\'done\')"',
+            callback_script="python -c \"print('done')\"",
         )
         dispatcher.register_hook(hook)
         bus.publish(EventType.TASK_COMPLETED, "TASK-100")
@@ -103,7 +99,7 @@ class TestHookDispatcher:
         hook = HookConfig(
             hook_id="HK-FAIL",
             event_type=EventType.TASK_FAILED,
-            callback_script='python -c "print(\'fail-handled\')"',
+            callback_script="python -c \"print('fail-handled')\"",
         )
         dispatcher.register_hook(hook)
         bus.publish(EventType.TASK_FAILED, "TASK-200")
@@ -117,7 +113,7 @@ class TestHookDispatcher:
         hook = HookConfig(
             hook_id="HK-DIS",
             event_type=EventType.TASK_COMPLETED,
-            callback_script='python -c "print(\'should-not-run\')"',
+            callback_script="python -c \"print('should-not-run')\"",
             enabled=False,
         )
         dispatcher.register_hook(hook)
@@ -130,7 +126,7 @@ class TestHookDispatcher:
         hook = HookConfig(
             hook_id="HK-UNREG",
             event_type=EventType.TASK_COMPLETED,
-            callback_script='python -c "print(\'x\')"',
+            callback_script="python -c \"print('x')\"",
         )
         dispatcher.register_hook(hook)
         bus.publish(EventType.TASK_CREATED, "TASK-400")
@@ -139,8 +135,10 @@ class TestHookDispatcher:
     def test_get_executions_filtered_by_hook_id(self, tmp_path):
         bus = EventBus()
         dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
-        h1 = HookConfig(hook_id="HK-F1", event_type=EventType.TASK_COMPLETED, callback_script='python -c "print(\'a\')"')
-        h2 = HookConfig(hook_id="HK-F2", event_type=EventType.TASK_FAILED, callback_script='python -c "print(\'b\')"')
+        h1 = HookConfig(
+            hook_id="HK-F1", event_type=EventType.TASK_COMPLETED, callback_script="python -c \"print('a')\""
+        )
+        h2 = HookConfig(hook_id="HK-F2", event_type=EventType.TASK_FAILED, callback_script="python -c \"print('b')\"")
         dispatcher.register_hook(h1)
         dispatcher.register_hook(h2)
         bus.publish(EventType.TASK_COMPLETED, "TASK-500")
@@ -152,8 +150,10 @@ class TestHookDispatcher:
     def test_get_executions_returns_all(self, tmp_path):
         bus = EventBus()
         dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
-        h1 = HookConfig(hook_id="HK-G1", event_type=EventType.TASK_COMPLETED, callback_script='python -c "print(\'a\')"')
-        h2 = HookConfig(hook_id="HK-G2", event_type=EventType.TASK_FAILED, callback_script='python -c "print(\'b\')"')
+        h1 = HookConfig(
+            hook_id="HK-G1", event_type=EventType.TASK_COMPLETED, callback_script="python -c \"print('a')\""
+        )
+        h2 = HookConfig(hook_id="HK-G2", event_type=EventType.TASK_FAILED, callback_script="python -c \"print('b')\"")
         dispatcher.register_hook(h1)
         dispatcher.register_hook(h2)
         bus.publish(EventType.TASK_COMPLETED, "TASK-600")
@@ -167,7 +167,7 @@ class TestHookDispatcher:
         hook = HookConfig(
             hook_id="HK-BAD",
             event_type=EventType.TASK_COMPLETED,
-            callback_script="python -c \"raise SystemExit(1)\"",
+            callback_script='python -c "raise SystemExit(1)"',
         )
         dispatcher.register_hook(hook)
         bus.publish(EventType.TASK_COMPLETED, "TASK-700")

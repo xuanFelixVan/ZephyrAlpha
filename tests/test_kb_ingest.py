@@ -15,16 +15,15 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
 import yaml
 
 from zephyr.governance.ingest import (
     ALLOWED_EXTENSIONS,
     BLACKLIST_PATTERNS,
-    IngestGate,
-    IngestResult,
     MIN_CONTENT_CHARS,
     REQUIRED_FRONTMATTER_FIELDS,
+    IngestGate,
+    IngestResult,
 )
 from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
 
@@ -32,9 +31,7 @@ from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolat
 def _mock_gate_engine(passed: bool = True) -> MagicMock:
     engine = MagicMock()
     if passed:
-        engine.evaluate.return_value = GateResult(
-            gate_id="G1", task_id="T-1", passed=True, violations=[]
-        )
+        engine.evaluate.return_value = GateResult(gate_id="G1", task_id="T-1", passed=True, violations=[])
     else:
         engine.evaluate.return_value = GateResult(
             gate_id="G1",

@@ -2,33 +2,24 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.verifiers.verification_engine
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+
 
 class Verdict(str, Enum):
     EFFECTIVE = "EFFECTIVE"
     INEFFECTIVE = "INEFFECTIVE"
     HARMFUL = "HARMFUL"
+
 
 @dataclass
 class VerificationResult:
@@ -39,9 +30,9 @@ class VerificationResult:
     verdict: Verdict
     timestamp: float
 
+
 @dataclass
 class VerificationEngine:
-
     def verify(
         self,
         anomaly_id: str,

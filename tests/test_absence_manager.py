@@ -21,25 +21,21 @@
 
 from __future__ import annotations
 
-import os
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from tempfile import TemporaryDirectory
 
 import pytest
 
 from zephyr.behavioral_audit.absence_manager import (
-    AbsenceManagerConfig,
-    OwnerStatus,
-    EscalationEntry,
     CONFIG,
-    ABSENCE_THRESHOLD_DAYS,
-    ABSENCE_STATE_FILE,
+    EscalationEntry,
+    OwnerStatus,
     _load_absence_state,
     _save_absence_state,
-    record_activity,
     check_absence,
-    escalate_if_absent,
     detect_owner_return,
+    escalate_if_absent,
+    record_activity,
     set_severity_limit,
 )
 
@@ -64,13 +60,13 @@ def tmp_state():
 
 class TestOwnerStatus:
     def test_defaults(self):
-        s = OwnerStatus(owner_id="o1", last_active=datetime.now(timezone.utc))
+        s = OwnerStatus(owner_id="o1", last_active=datetime.now(UTC))
         assert s.is_present is True
         assert s.absent_days == 0
         assert s.escalated_to is None
 
     def test_absent(self):
-        s = OwnerStatus(owner_id="o1", last_active=datetime.now(timezone.utc), is_present=False, absent_days=10)
+        s = OwnerStatus(owner_id="o1", last_active=datetime.now(UTC), is_present=False, absent_days=10)
         assert s.is_present is False
         assert s.absent_days == 10
 
@@ -136,7 +132,7 @@ class TestCheckAbsence:
         assert status.absent_days == 0
 
     def test_absent_owner(self, tmp_state):
-        old_time = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
+        old_time = (datetime.now(UTC) - timedelta(days=10)).isoformat()
         state = {"owners": {"owner-1": {"last_active": old_time}}}
         _save_absence_state(state)
         status = check_absence("owner-1")
@@ -150,7 +146,7 @@ class TestCheckAbsence:
 
     def test_exactly_at_threshold(self, tmp_state):
         CONFIG.threshold_days = 7
-        old_time = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+        old_time = (datetime.now(UTC) - timedelta(days=7)).isoformat()
         state = {"owners": {"owner-1": {"last_active": old_time}}}
         _save_absence_state(state)
         status = check_absence("owner-1")
@@ -158,7 +154,7 @@ class TestCheckAbsence:
 
     def test_one_day_below_threshold(self, tmp_state):
         CONFIG.threshold_days = 7
-        old_time = (datetime.now(timezone.utc) - timedelta(days=6)).isoformat()
+        old_time = (datetime.now(UTC) - timedelta(days=6)).isoformat()
         state = {"owners": {"owner-1": {"last_active": old_time}}}
         _save_absence_state(state)
         status = check_absence("owner-1")
@@ -167,13 +163,13 @@ class TestCheckAbsence:
 
 class TestEscalateIfAbsent:
     def test_present_no_escalation(self):
-        status = OwnerStatus(owner_id="o1", last_active=datetime.now(timezone.utc), is_present=True)
+        status = OwnerStatus(owner_id="o1", last_active=datetime.now(UTC), is_present=True)
         result = escalate_if_absent(status)
         assert result is None
 
     def test_absent_with_escalation_list(self):
         CONFIG.escalation_list = ["admin-1", "admin-2"]
-        status = OwnerStatus(owner_id="o1", last_active=datetime.now(timezone.utc), is_present=False, absent_days=10)
+        status = OwnerStatus(owner_id="o1", last_active=datetime.now(UTC), is_present=False, absent_days=10)
         result = escalate_if_absent(status)
         assert result is not None
         assert result.escalated_to == "admin-1"
@@ -181,22 +177,22 @@ class TestEscalateIfAbsent:
 
     def test_absent_without_escalation_list(self):
         CONFIG.escalation_list = []
-        status = OwnerStatus(owner_id="o1", last_active=datetime.now(timezone.utc), is_present=False, absent_days=10)
+        status = OwnerStatus(owner_id="o1", last_active=datetime.now(UTC), is_present=False, absent_days=10)
         result = escalate_if_absent(status)
         assert result is None
 
 
 class TestDetectOwnerReturn:
     def test_recent_activity(self):
-        recent = datetime.now(timezone.utc) - timedelta(hours=1)
+        recent = datetime.now(UTC) - timedelta(hours=1)
         assert detect_owner_return("o1", recent) is True
 
     def test_old_activity(self):
-        old = datetime.now(timezone.utc) - timedelta(days=5)
+        old = datetime.now(UTC) - timedelta(days=5)
         assert detect_owner_return("o1", old) is False
 
     def test_exactly_one_day(self):
-        boundary = datetime.now(timezone.utc) - timedelta(days=1)
+        boundary = datetime.now(UTC) - timedelta(days=1)
         result = detect_owner_return("o1", boundary)
         assert isinstance(result, bool)
 

@@ -27,14 +27,14 @@ module_id: MOD-INF-023
 YAML为SSoT，auto_fix生成config_sync.yaml
 对标 blueprint.md §6.21。
 """
+
 from __future__ import annotations
 
 import os
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -49,7 +49,7 @@ class ConfigConflict:
     key: str
     sources: list[str]
     values: list[str]
-    resolved_to: Optional[str] = None
+    resolved_to: str | None = None
 
 
 @dataclass
@@ -59,7 +59,7 @@ class ConfigAuditReport:
     unused_configs: list[str] = field(default_factory=list)
     total_keys: int = 0
     ssot_source: str = "YAML"
-    report_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    report_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 YAML_CONFIG_PATTERN: re.Pattern[str] = re.compile(r"(\w+)\s*:\s*(.+?)(?:\n|$)")
@@ -70,8 +70,15 @@ HARDCODED_DEFAULT_PATTERN: re.Pattern[str] = re.compile(
 HARDCODED_VAR_PATTERN: re.Pattern[str] = re.compile(r"(\w+)\s*=\s*(?:os\.environ\.get|os\.getenv)")
 
 SECRET_KEY_INDICATORS: set[str] = {
-    "secret", "password", "token", "api_key", "apikey", "private_key",
-    "jwt_secret", "encryption_key", "auth_token",
+    "secret",
+    "password",
+    "token",
+    "api_key",
+    "apikey",
+    "private_key",
+    "jwt_secret",
+    "encryption_key",
+    "auth_token",
 }
 
 
@@ -147,9 +154,7 @@ def detect_conflicts(
                     key=key,
                     sources=list(vals.keys()),
                     values=list(vals.values()),
-                    resolved_to=yaml_source.entries.get(
-                        key, list(vals.values())[0]
-                    ),
+                    resolved_to=yaml_source.entries.get(key, list(vals.values())[0]),
                 )
             )
 
@@ -184,11 +189,7 @@ def generate_config_sync(
 
     lines.append("# Resolved conflicts (YAML SSoT wins)")
     for conflict in report.conflicts:
-        lines.append(
-            f"# {conflict.key}: "
-            f"sources={conflict.sources} "
-            f"values={conflict.values}"
-        )
+        lines.append(f"# {conflict.key}: sources={conflict.sources} values={conflict.values}")
         lines.append(f"{conflict.key}: {conflict.resolved_to or ''}")
         lines.append("")
 
@@ -212,17 +213,22 @@ def run_config_audit(project_root: str) -> dict[str, object]:
     env_path = Path(project_root) / ".env"
     src_root = os.path.join(project_root, "src")
 
-    yaml_source = parse_yaml_config(str(yaml_path)) if yaml_path.exists() else ConfigSource(source_type="YAML", source_path=str(yaml_path))
-    env_source = parse_env_config(str(env_path)) if env_path.exists() else ConfigSource(source_type="ENV", source_path=str(env_path))
+    yaml_source = (
+        parse_yaml_config(str(yaml_path))
+        if yaml_path.exists()
+        else ConfigSource(source_type="YAML", source_path=str(yaml_path))
+    )
+    env_source = (
+        parse_env_config(str(env_path))
+        if env_path.exists()
+        else ConfigSource(source_type="ENV", source_path=str(env_path))
+    )
     code_source = extract_hardcoded_defaults(src_root)
 
     report = detect_conflicts(yaml_source, env_source, code_source)
 
     return {
-        "conflicts": [
-            {"key": c.key, "sources": c.sources, "values": c.values}
-            for c in report.conflicts
-        ],
+        "conflicts": [{"key": c.key, "sources": c.sources, "values": c.values} for c in report.conflicts],
         "missing_secrets": report.missing_secrets,
         "unused_configs": report.unused_configs,
         "total_keys": report.total_keys,

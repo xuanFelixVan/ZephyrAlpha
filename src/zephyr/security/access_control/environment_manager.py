@@ -3,21 +3,28 @@
 
 ENVIRONMENTS = None  # stub constant
 
+
 class EnvConfig:
     """Stub class — implementation pending."""
+
     pass
+
 
 class Environment:
     """Stub class — implementation pending."""
+
     pass
+
 
 def get_env(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'get_env not implemented')
+    raise NotImplementedError("get_env not implemented")
+
 
 def switch_env(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'switch_env not implemented')
+    raise NotImplementedError("switch_env not implemented")
+
 
 __all__ = [
     "ENVIRONMENTS",

@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-171 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.contracts.experiment.experiment_result
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-P1-014 ====
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -51,6 +41,7 @@ AI Prompt
     当 L13 的 Scout Agent 完成一个实验周期后，MUST 产出 ExperimentResult。 每个 ExperimentResult 代表一次完整的对照实验结论——包含实验设计、执行过程、结果指标和可操作建议。 confidence 用于衡量结论的统计可靠性：>0.9 = 高度可信，0.7-0.9 = 中等，<0.7 = 不发布。 L09 研究创新层读取历史实验结论指导研究方向。L11 ML Platform 读取实验结论调整模型策略。
 """
 
+
 @dataclass(frozen=True)
 class ExperimentResult:
     conclusion: str
@@ -74,5 +65,6 @@ class ExperimentResult:
     metrics: dict[str, float] = field(default_factory=dict)
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-P1-014 ====

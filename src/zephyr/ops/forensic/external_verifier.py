@@ -29,9 +29,9 @@ Mitigation: External verifier running in separate process/container that indepen
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
 from enum import Enum
-import time
 
 
 class Verdict(str, Enum):
@@ -57,7 +57,12 @@ class ExternalVerifier:
 
     def verify(self, audit_id: str, fle_decision: str, evidence: dict) -> Verdict:
         verdict = Verdict.CONCUR if evidence.get("confidence", 0.0) > 0.7 else Verdict.DISSENT
-        audit = ExternalAudit(audit_id=audit_id, fle_decision=fle_decision, external_verdict=verdict, reasoning=f"Confidence: {evidence.get('confidence', 0.0)}")
+        audit = ExternalAudit(
+            audit_id=audit_id,
+            fle_decision=fle_decision,
+            external_verdict=verdict,
+            reasoning=f"Confidence: {evidence.get('confidence', 0.0)}",
+        )
         self.verdicts.append(audit)
         if verdict == Verdict.DISSENT:
             self.consecutive_dissents += 1

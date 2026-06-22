@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_known_unknown_registry.py
 
-import pytest
 from zephyr.ops.collectors.known_unknown_registry import (
     KnownUnknown,
     KnownUnknownRegistry,

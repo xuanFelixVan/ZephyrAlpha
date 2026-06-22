@@ -20,6 +20,7 @@
 # [TESTS]
 
 from __future__ import annotations
+
 # ==== BEGIN CODGEN:CTR-TRACE-001 ====
 from dataclasses import dataclass
 from datetime import datetime

@@ -48,8 +48,14 @@ THRESHOLDS_PATH = SCRIPTS_DIR / "_shared" / "thresholds.yaml"
 MANIFEST_PATH = SCRIPTS_DIR / "script_manifest.yaml"
 
 EXPECTED_THRESHOLD_GROUPS = {
-    "scanning", "finding_quality", "error_budget", "sla_timers",
-    "shadow_mode", "script_health", "ast_similarity", "blueprint_sync",
+    "scanning",
+    "finding_quality",
+    "error_budget",
+    "sla_timers",
+    "shadow_mode",
+    "script_health",
+    "ast_similarity",
+    "blueprint_sync",
 }
 
 

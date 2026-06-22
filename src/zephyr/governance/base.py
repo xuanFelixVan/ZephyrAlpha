@@ -2,30 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain-factor/alpha-factor-core/blueprint.md
-
 # [MODULE] zephyr.portfolio.factor.base
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:OCP-001 ====
-
 import abc
 from dataclasses import dataclass, field
-from typing import ClassVar, List
+from typing import ClassVar
+
 # ---
 # layer: l02
 # category: ocp_extension
@@ -50,6 +40,7 @@ AI Prompt
     L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)
 """
 
+
 @dataclass
 class FactorMeta:
     description: str
@@ -58,19 +49,22 @@ class FactorMeta:
     name: str
     version: str
     author: str = "agent"
-    tags: List[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
+
 
 class FactorBase(abc.ABC):
     """L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"""
 
     meta: ClassVar[FactorMeta]
+
     @abc.abstractmethod
     def compute(self) -> list[FactorSignal]:
         """计算因子信号（禁止 look-ahead bias）"""
         ...
+
     def validate_inputs(self) -> bool:
         """输入验证钩子（可选覆盖）。"""
         pass
 
-# ==== END CODGEN:OCP-001 ====
 
+# ==== END CODGEN:OCP-001 ====

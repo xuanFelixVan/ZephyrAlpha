@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 
-import pytest
 
 from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
 

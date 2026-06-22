@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三款扫描器+自动化清理建议。"""
 
+
 class LeanScanner:
     def scan_dead_code(self) -> list[str]:
         return []

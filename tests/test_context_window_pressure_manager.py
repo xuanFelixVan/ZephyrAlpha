@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_context_window_pressure_manager.py
 
-import pytest
 
 from zephyr.ops.diagnosers.context_window_pressure_manager import (
     ContextEntry,

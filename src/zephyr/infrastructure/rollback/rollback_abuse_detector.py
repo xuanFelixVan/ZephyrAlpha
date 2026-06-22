@@ -33,8 +33,8 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
-from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -50,7 +50,6 @@ class AbuseReport:
 
 
 class RollbackAbuseDetector:
-
     EXIT_CODE_ABUSE: int = 44
     MAX_ROLLBACKS_PER_HOUR: int = 5
     MAX_ROLLBACKS_PER_DAY: int = 20
@@ -66,6 +65,7 @@ class RollbackAbuseDetector:
         if not entries:
             try:
                 from zephyr.governance.audit_trail.query import AuditQuery
+
                 query = AuditQuery()
                 core_events = query.by_event_type("rollback_operation")
                 entries = [e for e in core_events if isinstance(e, dict)]
@@ -83,7 +83,7 @@ class RollbackAbuseDetector:
             )
 
         entries = self._read_audit_entries()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         count_1h = 0
         count_24h = 0
@@ -106,15 +106,10 @@ class RollbackAbuseDetector:
             except (ValueError, TypeError):
                 continue
 
-        target_abuse = [
-            f for f, count in file_rollback_count.items()
-            if count >= self.MAX_SAME_FILE_CONSECUTIVE
-        ]
+        target_abuse = [f for f, count in file_rollback_count.items() if count >= self.MAX_SAME_FILE_CONSECUTIVE]
 
         detected = (
-            count_1h > self.MAX_ROLLBACKS_PER_HOUR
-            or count_24h > self.MAX_ROLLBACKS_PER_DAY
-            or len(target_abuse) > 0
+            count_1h > self.MAX_ROLLBACKS_PER_HOUR or count_24h > self.MAX_ROLLBACKS_PER_DAY or len(target_abuse) > 0
         )
 
         recommendation = ""
@@ -138,7 +133,7 @@ class RollbackAbuseDetector:
     def _read_audit_entries(self) -> list[dict[str, Any]]:
         entries: list[dict[str, Any]] = []
         try:
-            with open(self._audit_path, "r", encoding="utf-8") as f:
+            with open(self._audit_path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if line:

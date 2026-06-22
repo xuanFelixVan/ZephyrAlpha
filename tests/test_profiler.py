@@ -12,8 +12,7 @@
 
 from __future__ import annotations
 
-import pytest
-
+from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import BenchmarkCase
 from zephyr.intelligence.model_profiling.pipeline_routing.profiler import (
     MAX_OLLAMA_MODELS,
     SKIP_MODEL_PATTERNS,
@@ -21,7 +20,6 @@ from zephyr.intelligence.model_profiling.pipeline_routing.profiler import (
     ModelProfile,
     ModelProfiler,
 )
-from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import BenchmarkCase
 
 
 class TestCaseResultConstruction:
@@ -75,19 +73,36 @@ class TestCaseResultConstruction:
 
     def test_error_default(self):
         cr = CaseResult(
-            case_id="T", category="c", subcategory="s", passed=False,
-            score=0.0, latency_ms=0.0, tokens_generated=0,
-            tokens_per_second=0.0, output_text="", expected_matches=0,
-            total_expected=0, forbidden_hits=0,
+            case_id="T",
+            category="c",
+            subcategory="s",
+            passed=False,
+            score=0.0,
+            latency_ms=0.0,
+            tokens_generated=0,
+            tokens_per_second=0.0,
+            output_text="",
+            expected_matches=0,
+            total_expected=0,
+            forbidden_hits=0,
         )
         assert cr.error == ""
 
     def test_with_error(self):
         cr = CaseResult(
-            case_id="T", category="c", subcategory="s", passed=False,
-            score=0.0, latency_ms=0.0, tokens_generated=0,
-            tokens_per_second=0.0, output_text="", expected_matches=0,
-            total_expected=0, forbidden_hits=0, error="timeout",
+            case_id="T",
+            category="c",
+            subcategory="s",
+            passed=False,
+            score=0.0,
+            latency_ms=0.0,
+            tokens_generated=0,
+            tokens_per_second=0.0,
+            output_text="",
+            expected_matches=0,
+            total_expected=0,
+            forbidden_hits=0,
+            error="timeout",
         )
         assert cr.error == "timeout"
 
@@ -227,14 +242,20 @@ class TestModelProfilerShouldSkipModel:
 class TestModelProfilerScoreOutput:
     def test_empty_output(self):
         case = BenchmarkCase(
-            case_id="T", category="c", subcategory="s", prompt="p",
+            case_id="T",
+            category="c",
+            subcategory="s",
+            prompt="p",
             expected_patterns=["def"],
         )
         assert ModelProfiler._score_output(case, "") == 0.0
 
     def test_matching_expected_patterns(self):
         case = BenchmarkCase(
-            case_id="T", category="c", subcategory="s", prompt="p",
+            case_id="T",
+            category="c",
+            subcategory="s",
+            prompt="p",
             expected_patterns=["def", "return"],
         )
         score = ModelProfiler._score_output(case, "def foo():\n    return 42")
@@ -242,7 +263,10 @@ class TestModelProfilerScoreOutput:
 
     def test_forbidden_patterns_penalty(self):
         case = BenchmarkCase(
-            case_id="T", category="c", subcategory="s", prompt="p",
+            case_id="T",
+            category="c",
+            subcategory="s",
+            prompt="p",
             expected_patterns=["def"],
             forbidden_patterns=["try:"],
         )
@@ -252,7 +276,10 @@ class TestModelProfilerScoreOutput:
 
     def test_score_bounded(self):
         case = BenchmarkCase(
-            case_id="T", category="c", subcategory="s", prompt="p",
+            case_id="T",
+            category="c",
+            subcategory="s",
+            prompt="p",
             expected_patterns=["def", "return", "class", "if"],
         )
         score = ModelProfiler._score_output(case, "def foo(): return 1")

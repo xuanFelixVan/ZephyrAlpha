@@ -32,12 +32,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-MAPPING_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "asset_index"
-    / "path-migration-mapping.yaml"
-)
+MAPPING_FILE = PROJECT_ROOT / "data" / "asset_index" / "path-migration-mapping.yaml"
 
 EXCLUDED_DIRS = {"__pycache__", ".git", "scripts/migration", "data/asset_index"}
 
@@ -48,7 +43,7 @@ def _load_yaml_safe(path: Path) -> dict:
     except ImportError:
         print("[ERROR] PyYAML not installed.", file=sys.stderr)
         sys.exit(2)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
@@ -218,7 +213,7 @@ def main() -> None:
                 total_errors += 1
                 print(f"  ERROR: {result['file']}")
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Files updated: {total_updated}")
     print(f"  Import changes: {total_changes}")
     print(f"  Errors: {total_errors}")

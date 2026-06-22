@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_model_evolution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_model_evolution
+# [MODULE] zephyr.autonomy_core.skill_model_evolution
 
 # [INVARIANTS] none
 
@@ -34,13 +34,11 @@ LLM 升级影响评估引擎
   4. FallbackPlan: 若不兼容，生成降级/回退方案
 """
 
-
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-
-_MODEL_PROFILES: Dict[str, Dict[str, Any]] = {
+_MODEL_PROFILES: dict[str, dict[str, Any]] = {
     "deepseek-v3": {
         "family": "deepseek",
         "max_context": 65536,
@@ -96,7 +94,7 @@ class SkillModelEvolution:
     """Skill 模型进化兼容性评估器"""
 
     @classmethod
-    def _find_model(cls, model_ref: str) -> Optional[Dict[str, Any]]:
+    def _find_model(cls, model_ref: str) -> dict[str, Any] | None:
         model_lower = model_ref.lower().replace(" ", "-")
         for key, profile in _MODEL_PROFILES.items():
             if key in model_lower or model_lower in key:
@@ -110,9 +108,9 @@ class SkillModelEvolution:
     @classmethod
     def _check_tool_compat(
         cls,
-        old_profile: Dict[str, Any],
-        new_profile: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        old_profile: dict[str, Any],
+        new_profile: dict[str, Any],
+    ) -> dict[str, Any]:
         old_tools = set(old_profile.get("tool_support", []))
         new_tools = set(new_profile.get("tool_support", []))
         lost = old_tools - new_tools
@@ -132,9 +130,9 @@ class SkillModelEvolution:
     @classmethod
     def _check_style_compat(
         cls,
-        old_profile: Dict[str, Any],
-        new_profile: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        old_profile: dict[str, Any],
+        new_profile: dict[str, Any],
+    ) -> dict[str, Any]:
         old_styles = set(old_profile.get("recommended_style", []))
         new_styles = set(new_profile.get("recommended_style", []))
 
@@ -151,9 +149,9 @@ class SkillModelEvolution:
     @classmethod
     def _check_budget_impact(
         cls,
-        old_profile: Dict[str, Any],
-        new_profile: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        old_profile: dict[str, Any],
+        new_profile: dict[str, Any],
+    ) -> dict[str, Any]:
         old_eff = old_profile.get("token_efficiency", 1.0)
         new_eff = new_profile.get("token_efficiency", 1.0)
         old_ctx = old_profile.get("max_context", 0)
@@ -180,7 +178,7 @@ class SkillModelEvolution:
         }
 
     @classmethod
-    def _compute_risk(cls, scores: List[float]) -> str:
+    def _compute_risk(cls, scores: list[float]) -> str:
         avg = sum(scores) / len(scores) if scores else 100.0
         if avg >= 90:
             return "minimal"
@@ -195,43 +193,53 @@ class SkillModelEvolution:
     @classmethod
     def _generate_actions(
         cls,
-        tool_compat: Dict[str, Any],
-        style_compat: Dict[str, Any],
-        budget_impact: Dict[str, Any],
+        tool_compat: dict[str, Any],
+        style_compat: dict[str, Any],
+        budget_impact: dict[str, Any],
         risk: str,
-    ) -> List[Dict[str, str]]:
-        actions: List[Dict[str, str]] = []
+    ) -> list[dict[str, str]]:
+        actions: list[dict[str, str]] = []
 
         if tool_compat.get("tools_lost"):
-            actions.append({
-                "priority": "P0",
-                "action": f"Replace lost tools: {', '.join(tool_compat['tools_lost'])}",
-            })
+            actions.append(
+                {
+                    "priority": "P0",
+                    "action": f"Replace lost tools: {', '.join(tool_compat['tools_lost'])}",
+                }
+            )
 
         if not style_compat.get("compatible"):
             missing = style_compat.get("styles_new_only", [])
-            actions.append({
-                "priority": "P1",
-                "action": f"Adapt skill style to: {', '.join(missing[:3])}",
-            })
+            actions.append(
+                {
+                    "priority": "P1",
+                    "action": f"Adapt skill style to: {', '.join(missing[:3])}",
+                }
+            )
 
         if not budget_impact.get("compatible"):
-            actions.append({
-                "priority": "P1",
-                "action": f"Compact skill body to fit new context window ({budget_impact.get('context_ratio', 0):.0%})",
-            })
+            actions.append(
+                {
+                    "priority": "P1",
+                    "action": f"Compact skill body to fit new context window ({budget_impact.get('context_ratio', 0):.0%})",
+                }
+            )
 
         if risk in ("high", "critical"):
-            actions.append({
-                "priority": "P0",
-                "action": "Run full SkillsBench before production deployment",
-            })
+            actions.append(
+                {
+                    "priority": "P0",
+                    "action": "Run full SkillsBench before production deployment",
+                }
+            )
 
         if risk == "minimal":
-            actions.append({
-                "priority": "P3",
-                "action": "No changes required — safe upgrade",
-            })
+            actions.append(
+                {
+                    "priority": "P3",
+                    "action": "No changes required — safe upgrade",
+                }
+            )
 
         return actions
 
@@ -241,7 +249,7 @@ class SkillModelEvolution:
         skill_id: str,
         old_model: str,
         new_model: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         old_prof = cls._find_model(old_model)
         new_prof = cls._find_model(new_model)
 

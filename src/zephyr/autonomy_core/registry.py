@@ -1,13 +1,13 @@
 # [A_module] module_id=MOD-ORC_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §3
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.registry
+# [MODULE] zephyr.autonomy_core.registry
 
 # [INVARIANTS] skill registration must be atomic; progressive_load must not exceed L3; keyword routing must be O(log N)
 
 # [MODIFY-GUARD] skill-registry.yaml; engine.py; __init__.py
 
-# [CONSUMERS] zephyr.orchestration.runtime_core; zephyr.orchestration.pipeline_routing
+# [CONSUMERS] zephyr.trading; zephyr.integration
 
 # [STABILITY] stable
 
@@ -26,19 +26,29 @@ Bidirectional bridge:
   2. Provide unified query interface for governance gate usage
 """
 
-
 from __future__ import annotations
 
-import yaml
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
+
+import yaml
 from pydantic import BaseModel
 
 _SKILL_REGISTRY_PATH = Path(__file__).resolve().parent / "skill-registry.yaml"
 
 GOVERNANCE_SKILL_TYPES = {
-    "domain": ["governor-specialist", "gate-specialist", "contract-enforcer", "script-writer", "audit-specialist",
-               "rollback-specialist", "drift-detector", "escalation-specialist", "budget-enforcer", "security-specialist"],
+    "domain": [
+        "governor-specialist",
+        "gate-specialist",
+        "contract-enforcer",
+        "script-writer",
+        "audit-specialist",
+        "rollback-specialist",
+        "drift-detector",
+        "escalation-specialist",
+        "budget-enforcer",
+        "security-specialist",
+    ],
     "role": ["architect", "implementer", "governor"],
 }
 
@@ -53,10 +63,10 @@ class AgentCapability(BaseModel):
 class SpecRegistry:
     """Agent Spec registry — interfaces with real skill-registry.yaml."""
 
-    def __init__(self, registry_path: Optional[Path] = None) -> None:
+    def __init__(self, registry_path: Path | None = None) -> None:
         self._entries: dict[str, AgentCapability] = {}
         self._registry_path = registry_path or _SKILL_REGISTRY_PATH
-        self._raw_cache: Optional[Dict[str, Any]] = None
+        self._raw_cache: dict[str, Any] | None = None
         self._load_from_skill_registry()
 
     def _load_from_skill_registry(self) -> None:
@@ -82,15 +92,20 @@ class SpecRegistry:
     def get(self, agent_id: str) -> AgentCapability | None:
         return self._entries.get(agent_id)
 
-    def list_all(self) -> List[Dict[str, Any]]:
-        result: List[Dict[str, Any]] = []
+    def list_all(self) -> list[dict[str, Any]]:
+        result: list[dict[str, Any]] = []
         for sid, cap in self._entries.items():
-            result.append({"skill_id": sid, "name": cap.capabilities[0] if cap.capabilities else sid,
-                           "category": cap.capabilities[1] if len(cap.capabilities) > 1 else "unknown",
-                           "version": cap.version})
+            result.append(
+                {
+                    "skill_id": sid,
+                    "name": cap.capabilities[0] if cap.capabilities else sid,
+                    "category": cap.capabilities[1] if len(cap.capabilities) > 1 else "unknown",
+                    "version": cap.version,
+                }
+            )
         return result
 
-    def list_by_category(self, category: str) -> List[Dict[str, Any]]:
+    def list_by_category(self, category: str) -> list[dict[str, Any]]:
         return [e for e in self.list_all() if e["category"] == category]
 
     def reload(self) -> None:

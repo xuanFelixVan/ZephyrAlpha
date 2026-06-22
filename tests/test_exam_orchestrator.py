@@ -12,10 +12,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from unittest.mock import MagicMock
-
-import pytest
 
 from zephyr.intelligence.model_profiling.capability_passport import (
     BreadthResult,
@@ -23,8 +20,6 @@ from zephyr.intelligence.model_profiling.capability_passport import (
     DepthCapabilityResult,
     DepthResult,
     HallucinationResult,
-    Recommendations,
-    SpeedResult,
 )
 from zephyr.intelligence.model_profiling.exam_orchestrator import (
     ExamOrchestrator,
@@ -207,7 +202,9 @@ class TestComputeOverall:
             model_id="test",
             breadth=BreadthResult(score=0.8, passed=7, total=9, failed_capabilities=["a", "b"]),
             depth=DepthResult(overall_score=0.6, capabilities={}),
-            hallucination=HallucinationResult(overall_rate=0.1, fabrication_rate=0.05, inconsistency_rate=0.03, refusal_rate=0.02),
+            hallucination=HallucinationResult(
+                overall_rate=0.1, fabrication_rate=0.05, inconsistency_rate=0.03, refusal_rate=0.02
+            ),
         )
         expected = round(0.30 * 0.8 + 0.50 * 0.6 + 0.20 * (1.0 - 0.1), 3)
         result = orch._compute_overall(passport)
@@ -220,7 +217,9 @@ class TestComputeOverall:
             model_id="test",
             breadth=BreadthResult(score=1.0, passed=9, total=9, failed_capabilities=[]),
             depth=DepthResult(overall_score=1.0, capabilities={}),
-            hallucination=HallucinationResult(overall_rate=0.0, fabrication_rate=0.0, inconsistency_rate=0.0, refusal_rate=0.0),
+            hallucination=HallucinationResult(
+                overall_rate=0.0, fabrication_rate=0.0, inconsistency_rate=0.0, refusal_rate=0.0
+            ),
         )
         result = orch._compute_overall(passport)
         assert result == round(0.30 * 1.0 + 0.50 * 1.0 + 0.20 * 1.0, 3)
@@ -237,8 +236,12 @@ class TestBuildRecommendations:
                 capabilities={
                     "task_classification": DepthCapabilityResult(pass_=True, f1=0.7),
                     "tag_completion": DepthCapabilityResult(pass_=True, f1=0.65),
-                    "code_fix": DepthCapabilityResult(pass_=False, f1=0.3, failure_reason="low_precision_below_threshold"),
-                    "refactor": DepthCapabilityResult(pass_=False, f1=0.4, failure_reason="low_precision_below_threshold"),
+                    "code_fix": DepthCapabilityResult(
+                        pass_=False, f1=0.3, failure_reason="low_precision_below_threshold"
+                    ),
+                    "refactor": DepthCapabilityResult(
+                        pass_=False, f1=0.4, failure_reason="low_precision_below_threshold"
+                    ),
                     "summary_extraction": DepthCapabilityResult(pass_=True, f1=0.6),
                 },
             ),

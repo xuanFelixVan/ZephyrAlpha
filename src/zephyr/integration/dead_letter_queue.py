@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_dead_letter_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.dead_letter_queue
+# [MODULE] zephyr.integration.dead_letter_queue
 
 # [INVARIANTS] none
 
@@ -37,7 +37,6 @@ DeadLetterQueue — 死信队列
     for dead in dlq.drain():
         ...
 """
-
 
 from __future__ import annotations
 

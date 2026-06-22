@@ -6,11 +6,12 @@ sync_progress.py — 从 domain_progress.json 同步进度到 §2 模块清单�
 DOM-GOV-001 §2 + §7 运维脚本体系.
 用法: python scripts/governance/sync_progress.py
 """
+
 from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -26,7 +27,7 @@ def load_progress() -> dict:
 
 def save_progress(data: dict) -> None:
     """save_progress implementation."""
-    ts = datetime.now(timezone.utc).isoformat()
+    ts = datetime.now(UTC).isoformat()
     data["last_updated"] = ts
     tmp = str(PROGRESS_FILE) + f".{__import__('os').getpid()}.tmp"
     with open(tmp, "w", encoding="utf-8") as f:

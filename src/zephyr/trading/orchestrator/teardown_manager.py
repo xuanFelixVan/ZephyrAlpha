@@ -28,9 +28,10 @@ from __future__ import annotations
 TaskCard CANCELLED/FAILED → 7系统资源清理。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class CleanupTarget(BaseModel):
     system: str
@@ -38,10 +39,17 @@ class CleanupTarget(BaseModel):
     resource_id: str = ""
     status: str = "pending"
 
+
 CLEANUP_SYSTEMS: list[str] = [
-    "orchestrator", "context-engine", "gate_engine",
-    "vector-memory", "database", "feedback-loop", "system-telemetry",
+    "orchestrator",
+    "context-engine",
+    "gate_engine",
+    "vector-memory",
+    "database",
+    "feedback-loop",
+    "system-telemetry",
 ]
+
 
 class TeardownManager:
     def __init__(self):
@@ -57,12 +65,14 @@ class TeardownManager:
                 status="cleaned",
             )
             targets.append(target)
-        self._cleanup_records.append({
-            "task_id": task_id,
-            "reason": reason,
-            "targets": len(targets),
-            "timestamp": datetime.now(timezone.utc),
-        })
+        self._cleanup_records.append(
+            {
+                "task_id": task_id,
+                "reason": reason,
+                "targets": len(targets),
+                "timestamp": datetime.now(UTC),
+            }
+        )
         return targets
 
     def get_records(self) -> list[dict]:

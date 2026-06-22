@@ -31,10 +31,9 @@
 输出: DashboardPanel — 可渲染为文本/JSON/MCP 的监控视图
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -55,7 +54,7 @@ class DashboardPanel:
             "--- Agents ---",
         ]
         for aid, info in self.agents.items():
-            lines.append(f"  {aid}: load={info.get('load',0)}, role={info.get('role','unknown')}")
+            lines.append(f"  {aid}: load={info.get('load', 0)}, role={info.get('role', 'unknown')}")
 
         lines.extend(["", "--- Conflicts ---"])
         lines.append(f"  total={self.conflicts.get('total', 0)}, blocking={self.conflicts.get('blocking', 0)}")
@@ -109,6 +108,7 @@ class A2ADashboard:
 
     def snapshot(self) -> DashboardPanel:
         import time as _time
+
         return DashboardPanel(
             timestamp=_time.time(),
             agents=dict(self._agent_info),

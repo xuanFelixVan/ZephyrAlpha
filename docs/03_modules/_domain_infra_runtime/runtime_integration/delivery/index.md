@@ -2,9 +2,11 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-INF-002
 title: Delivery
 module_id: MOD-031
+updated: "2026-06-22"
+---
 
 # Delivery — 目录索引
 
@@ -22,4 +24,4 @@ module_id: MOD-031
 
 ## 父级目录
 
-- 父级：[runtime-integration](../index.md)
+- 父级：[runtime_integration](../index.md)

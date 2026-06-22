@@ -93,9 +93,9 @@ class Dashboard:
         return Path(target)
 
     def print_summary(self, dashboard: DashboardData) -> None:
-        print(f"\n{'='*50}")
+        print(f"\n{'=' * 50}")
         print("  ZephyrAlpha 资产仪表盘")
-        print(f"{'='*50}")
+        print(f"{'=' * 50}")
         print(f"  健康评分: {dashboard.health_score}")
         print(f"  总资产:   {dashboard.total_assets}")
         print(f"  孤儿率:   {dashboard.orphan_rate_pct:.1f}%")
@@ -105,7 +105,7 @@ class Dashboard:
             print("  ⚠️  告警:")
             for a in dashboard.alerts:
                 print(f"    - {a}")
-        print(f"{'='*50}")
+        print(f"{'=' * 50}")
 
     def main(self) -> None:
         index_path = self.root / "data" / "asset_index" / "unified-asset-index.yaml"

@@ -28,12 +28,13 @@ SecurityResult) are imported from zephyr.shared.protocols.a2a.a2a_protocol.
 """
 
 from zephyr.shared.protocols.a2a.a2a_protocol import (  # noqa: F401
-    MessageType,
     A2ACommunication,
+    MessageType,
     SecurityContext,
     SecurityDecision,
     SecurityResult,
 )
+
 
 class LLMSecurityProtocol:
     def __init__(self, config=None):

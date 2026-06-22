@@ -1,10 +1,20 @@
 rule_id: TRAE-045
 title: 数据治理-质量与血缘
+version: 1.1.1
+layer: L1
+module_id: TRAE-045
+depends_on: []
+tags:
+- TRAE
+- data_governance
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - GOV-DATA-001
 - GOV-DATA-002
 - GOV-DATA-003
-layer: L1
 severity: error
 scope: data_governance
 domain: TRAE
@@ -443,8 +453,7 @@ sections:
     context:
       summary: 三个数据治理策略的版本变更记录
       impact_on_rules:
-      - 文件级元数据修复——enforcement.type从code改为doc（executors为空时type应为doc，与trae_042 RQ-06
-        enforcement验证对齐）
+      - 文件级元数据修复——enforcement.type从code改为doc（executors为空时type应为doc，与trae_042 RQ-06 enforcement验证对齐）
       - GOV-DATA-001 v0.2.1——DQA-001规则文本从4维度扩展为5维度（补齐唯一性维度）
       - GOV-DATA-001 v0.2.0——编号前缀ABS/COND→DQA-，补齐唯一性维度，补充depends_on和ai_autonomy
       - GOV-DATA-002 v0.2.0——编号前缀ABS/COND→DLG-，DLG-001补齐关键数据判定标准4项条件
@@ -468,7 +477,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.1.1
     date: '2026-06-21'

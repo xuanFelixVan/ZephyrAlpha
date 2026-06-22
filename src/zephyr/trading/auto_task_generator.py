@@ -37,13 +37,10 @@ AutoTaskGenerator — 自动任务生成器
     - 限制每批任务数量，防止队列膨胀
 """
 
-
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
-import os
 import time
 from collections import deque
 from pathlib import Path
@@ -184,46 +181,60 @@ class AutoTaskGenerator:
         task_prefix = f"GEN-{stem[:20]}-"
 
         if suffix == ".py":
-            tasks.append((
-                f"{task_prefix}classify",
-                "task_classification",
-                {"text": f"classify this module: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
-            ))
-            tasks.append((
-                f"{task_prefix}tag",
-                "tag_completion",
-                {"text": f"generate tags for: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
-            ))
+            tasks.append(
+                (
+                    f"{task_prefix}classify",
+                    "task_classification",
+                    {"text": f"classify this module: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
+                )
+            )
+            tasks.append(
+                (
+                    f"{task_prefix}tag",
+                    "tag_completion",
+                    {"text": f"generate tags for: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
+                )
+            )
             if len(stem) > 3:
-                tasks.append((
-                    f"{task_prefix}name",
-                    "naming_suggest",
-                    {"text": f"suggest alternative names for module: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
-                ))
+                tasks.append(
+                    (
+                        f"{task_prefix}name",
+                        "naming_suggest",
+                        {"text": f"suggest alternative names for module: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
+                    )
+                )
 
         elif suffix in (".yaml", ".yml"):
-            tasks.append((
-                f"{task_prefix}summary",
-                "summary_extraction",
-                {"text": f"summarize: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
-            ))
-            tasks.append((
-                f"{task_prefix}tag",
-                "tag_completion",
-                {"text": f"generate tags for config: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
-            ))
+            tasks.append(
+                (
+                    f"{task_prefix}summary",
+                    "summary_extraction",
+                    {"text": f"summarize: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
+                )
+            )
+            tasks.append(
+                (
+                    f"{task_prefix}tag",
+                    "tag_completion",
+                    {"text": f"generate tags for config: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
+                )
+            )
 
         elif suffix == ".md":
-            tasks.append((
-                f"{task_prefix}summary",
-                "summary_extraction",
-                {"text": content[:FILE_READ_LIMIT_CHARS]},
-            ))
-            tasks.append((
-                f"{task_prefix}classify",
-                "task_classification",
-                {"text": f"classify this document: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
-            ))
+            tasks.append(
+                (
+                    f"{task_prefix}summary",
+                    "summary_extraction",
+                    {"text": content[:FILE_READ_LIMIT_CHARS]},
+                )
+            )
+            tasks.append(
+                (
+                    f"{task_prefix}classify",
+                    "task_classification",
+                    {"text": f"classify this document: {stem}\n{content[:FILE_READ_LIMIT_CHARS]}"},
+                )
+            )
 
         return tasks
 

@@ -166,9 +166,7 @@ class TestRecordViaDbContract:
 
     def test_invalid_db_path_raises(self, tmp_path: Path) -> None:
         with pytest.raises(sqlite3.OperationalError):
-            record_via_db_contract(
-                "x", "y", 1.0, db_path=str(tmp_path / "nonexistent" / "deep" / "bad.db")
-            )
+            record_via_db_contract("x", "y", 1.0, db_path=str(tmp_path / "nonexistent" / "deep" / "bad.db"))
 
 
 class TestBulkRecordViaDbContract:
@@ -230,16 +228,11 @@ class TestBulkRecordViaDbContract:
     def test_invalid_db_path_raises(self, tmp_path: Path) -> None:
         records = [{"metric_type": "x", "metric_name": "y", "metric_value": 1.0}]
         with pytest.raises(sqlite3.OperationalError):
-            bulk_record_via_db_contract(
-                records, db_path=str(tmp_path / "nope" / "bad.db")
-            )
+            bulk_record_via_db_contract(records, db_path=str(tmp_path / "nope" / "bad.db"))
 
     def test_large_bulk_insert(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
-        records = [
-            {"metric_type": "bulk", "metric_name": f"item_{i}", "metric_value": float(i)}
-            for i in range(50)
-        ]
+        records = [{"metric_type": "bulk", "metric_name": f"item_{i}", "metric_value": float(i)} for i in range(50)]
         count = bulk_record_via_db_contract(records, db_path=str(db_path))
         assert count == 50
         assert _count_rows(db_path) == 50
@@ -248,9 +241,7 @@ class TestBulkRecordViaDbContract:
 class TestDbBridgeEdgeCases:
     def test_record_with_empty_strings(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
-        rowid = record_via_db_contract(
-            "", "", 0.0, tags=[], session_id="", task_id="", db_path=str(db_path)
-        )
+        rowid = record_via_db_contract("", "", 0.0, tags=[], session_id="", task_id="", db_path=str(db_path))
         assert rowid >= 1
         rows = _fetch_all(db_path)
         assert rows[0]["metric_type"] == ""

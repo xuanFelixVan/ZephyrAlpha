@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_system_entropy_monitor.py
 
-import pytest
 
 from zephyr.ops.diagnosers.system_entropy_monitor import (
     EntropySnapshot,
@@ -35,8 +34,11 @@ class TestEntropySnapshot:
 
     def test_is_dataclass(self):
         snap = EntropySnapshot(
-            timestamp=0.0, config_entropy=0.0, behavior_entropy=0.0,
-            total_entropy=0.0, state_hash="",
+            timestamp=0.0,
+            config_entropy=0.0,
+            behavior_entropy=0.0,
+            total_entropy=0.0,
+            state_hash="",
         )
         assert hasattr(snap, "__dataclass_fields__")
 

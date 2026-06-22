@@ -28,15 +28,15 @@
   - exit code 约定：0=无重复 / 1=WARN / 2=ERROR / 3=工具故障 / 4=DEGRADED
 """
 
-
 from __future__ import annotations
 
 import logging
 import traceback
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import IntEnum
-from typing import Any, Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ class DegradationManager:
     ) -> StageResult:
         """执行单个 Stage——独立 try/except + 降级处理."""
         stage = StageResult(stage=stage_name, success=False)
-        started = datetime.now(timezone.utc)
+        started = datetime.now(UTC)
 
         try:
             output = func()
@@ -106,29 +106,23 @@ class DegradationManager:
             if on_degrade:
                 self._report.level = on_degrade
         finally:
-            stage.duration_ms = (
-                datetime.now(timezone.utc) - started
-            ).total_seconds() * 1000
+            stage.duration_ms = (datetime.now(UTC) - started).total_seconds() * 1000
 
         self._report.stages.append(stage)
         return stage
 
-    def run_pipeline(
-        self, stages: list[tuple[str, Callable[[], Any], str | None]]
-    ) -> DegradationReport:
+    def run_pipeline(self, stages: list[tuple[str, Callable[[], Any], str | None]]) -> DegradationReport:
         """运行完整流水线——按顺序执行所有 Stage."""
         self._report = DegradationReport(
-            started_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.now(UTC).isoformat(),
         )
 
-        all_started = datetime.now(timezone.utc)
+        all_started = datetime.now(UTC)
         for name, func, on_degrade in stages:
             self.run_stage(name, func, on_degrade)
 
-        self._report.total_duration_ms = (
-            datetime.now(timezone.utc) - all_started
-        ).total_seconds() * 1000
-        self._report.finished_at = datetime.now(timezone.utc).isoformat()
+        self._report.total_duration_ms = (datetime.now(UTC) - all_started).total_seconds() * 1000
+        self._report.finished_at = datetime.now(UTC).isoformat()
         self._report.exit_code = self._compute_exit_code()
 
         return self._report
@@ -142,11 +136,13 @@ class DegradationManager:
     # ── 内部方法 ─────────────────────────────────────────────
 
     def _log_degradation(self, stage: str, error: str) -> None:
-        self._degradation_log.append({
-            "stage": stage,
-            "error": error,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        self._degradation_log.append(
+            {
+                "stage": stage,
+                "error": error,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
         logger.warning(
             "Stage %s degraded: %s\n%s",
             stage,

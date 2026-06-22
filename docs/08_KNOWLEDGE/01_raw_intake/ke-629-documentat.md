@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-629
 status: active
 title: 何时激活（升级为 `active`）？

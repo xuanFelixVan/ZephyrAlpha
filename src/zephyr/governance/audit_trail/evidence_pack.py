@@ -41,8 +41,6 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.governance.audit_trail.models import AuditEntryV1
-
 _logger = logging.getLogger(__name__)
 
 DEFAULT_AUDIT_DATA_DIR: Path = Path("data/audit-trail")

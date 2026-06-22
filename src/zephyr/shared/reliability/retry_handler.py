@@ -32,13 +32,12 @@ Retry Handler — 指数退避重试 + 可恢复/不可恢复错误分类。
     - 不可恢复错误（ValueError/AssertionError）→ 立即失败
 """
 
-
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
-from typing import Any, Callable
-
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Any
 
 UNRECOVERABLE_EXCEPTIONS = (
     ValueError,
@@ -77,7 +76,6 @@ class RetryResult:
 
 
 class RetryHandler:
-
     def __init__(self, config: RetryConfig | None = None) -> None:
         self._config = config or RetryConfig()
 
@@ -88,23 +86,27 @@ class RetryHandler:
         for i in range(self._config.max_retries + 1):
             try:
                 result = func(*args, **kwargs)
-                attempts.append(RetryAttempt(
-                    attempt=i + 1,
-                    success=True,
-                    delay_s=time.time() - t0,
-                ))
+                attempts.append(
+                    RetryAttempt(
+                        attempt=i + 1,
+                        success=True,
+                        delay_s=time.time() - t0,
+                    )
+                )
                 return RetryResult(
                     success=True,
                     attempts=attempts,
                     total_time_s=time.time() - t0,
                 )
             except Exception as e:
-                attempts.append(RetryAttempt(
-                    attempt=i + 1,
-                    success=False,
-                    delay_s=time.time() - t0,
-                    exception=e,
-                ))
+                attempts.append(
+                    RetryAttempt(
+                        attempt=i + 1,
+                        success=False,
+                        delay_s=time.time() - t0,
+                        exception=e,
+                    )
+                )
 
                 if self._is_unrecoverable(e) or i == self._config.max_retries:
                     return RetryResult(
@@ -115,12 +117,13 @@ class RetryHandler:
                     )
 
                 delay = min(
-                    self._config.base_delay_s * (self._config.backoff_multiplier ** i),
+                    self._config.base_delay_s * (self._config.backoff_multiplier**i),
                     self._config.max_delay_s,
                 )
 
                 if self._config.jitter:
                     import random
+
                     delay *= 0.5 + random.random()
 
                 time.sleep(delay)

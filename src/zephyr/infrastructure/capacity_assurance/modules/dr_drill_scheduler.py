@@ -28,7 +28,6 @@ DR Drill Scheduler — DR 演练调度器 (盲点 #34)
 
 import time
 from dataclasses import dataclass, field
-from typing import Any, Optional
 
 
 @dataclass
@@ -67,7 +66,5 @@ class DRDrillScheduler:
         return {
             "total_drills": len(self._drill_history),
             "success_rate": round(success / len(self._drill_history), 2),
-            "avg_rto_seconds": round(
-                sum(d.rto_seconds for d in self._drill_history) / len(self._drill_history), 1
-            ),
+            "avg_rto_seconds": round(sum(d.rto_seconds for d in self._drill_history) / len(self._drill_history), 1),
         }

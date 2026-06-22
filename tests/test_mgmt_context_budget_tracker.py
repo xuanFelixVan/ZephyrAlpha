@@ -11,18 +11,17 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.context_budget_tracker import (
-        ContextBudgetTracker,
         ContextBudgetLevel,
-        handle_compression_needed,
-        set_default_tracker,
+        ContextBudgetTracker,
     )
-    from zephyr.shared.shared_services.infra_06.observer import Observer, EventType
+    from zephyr.shared.shared_services.infra_06.observer import Observer
 except Exception as _exc:
     pytest.skip(f"cannot import context_budget_tracker: {_exc}", allow_module_level=True)
 

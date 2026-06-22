@@ -33,7 +33,6 @@
 共享标志: --dry-run, --output json/yaml/text, --verbose, --help
 """
 
-
 from __future__ import annotations
 
 import argparse
@@ -43,12 +42,11 @@ import os
 import sys
 from pathlib import Path
 
-from zephyr.infrastructure.asset_inventory.scanner import Scanner
 from zephyr.infrastructure.asset_inventory.classifier import Classifier
-from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
-from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
 from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
-from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle
+from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
+from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
+from zephyr.infrastructure.asset_inventory.scanner import Scanner
 from zephyr.infrastructure.asset_inventory.telemetry import get_telemetry
 
 logger = logging.getLogger(__name__)
@@ -113,6 +111,7 @@ def _cmd_scan(args: argparse.Namespace) -> int:
     s = Scanner()
     if args.dry_run:
         from collections import deque
+
         count = 0
         for d in s.directories:
             ad = ROOT / d
@@ -151,8 +150,10 @@ def _cmd_classify(args: argparse.Namespace) -> int:
         return 2
 
     import json as _json
+
     data = _json.loads(Path(scan_path).read_text(encoding="utf-8"))
     from zephyr.infrastructure.asset_inventory.models import RawFileEntry, ScanResult
+
     entries = [RawFileEntry(**e) for e in data["entries"]]
     scan = ScanResult(**{**data, "entries": entries})
 
@@ -188,12 +189,18 @@ def _cmd_reconcile(args: argparse.Namespace) -> int:
         return 2
 
     import json as _json
+
     sdata = _json.loads(Path(scan_path).read_text(encoding="utf-8"))
     cdata = _json.loads(Path(klass_path).read_text(encoding="utf-8"))
 
     from zephyr.infrastructure.asset_inventory.models import (
-        RawFileEntry, ScanResult, ClassifiedAsset, ClassificationResult, UnifiedAssetIndex,
+        ClassificationResult,
+        ClassifiedAsset,
+        RawFileEntry,
+        ScanResult,
+        UnifiedAssetIndex,
     )
+
     entries = [RawFileEntry(**e) for e in sdata["entries"]]
     scan = ScanResult(**{**sdata, "entries": entries})
     assets = [ClassifiedAsset(**a) for a in cdata.get("assets", [])]
@@ -203,6 +210,7 @@ def _cmd_reconcile(args: argparse.Namespace) -> int:
     existing = None
     if idx_path.exists():
         import yaml
+
         raw = yaml.safe_load(idx_path.read_text(encoding="utf-8"))
         existing = UnifiedAssetIndex(**raw)
 
@@ -261,11 +269,19 @@ def _print_dry_run_preview(report, scan_path: str) -> None:
     lines.append("")
     lines.append("  \u8d44\u4ea7\u72b6\u6001:")
     lines.append(f"    \u4e00\u81f4 (MATCHED):    {report.matched}")
-    lines.append(f"    \u5b64\u513f (ORPHAN):     {len(report.orphans)}   \u2190 \u78c1\u76d8\u5b58\u5728\uff0c\u6ce8\u518c\u8868\u65e0")
-    lines.append(f"    \u5e7d\u7075 (GHOST):      {len(report.ghosts)}   \u2190 \u6ce8\u518c\u8868\u6709\uff0c\u78c1\u76d8\u4e0d\u5b58\u5728")
-    lines.append(f"    \u6f02\u79fb (DRIFT):      {len(report.drifts)}   \u2190 \u6ce8\u518c\u4fe1\u606f/\u78c1\u76d8\u4e0d\u5339\u914d")
+    lines.append(
+        f"    \u5b64\u513f (ORPHAN):     {len(report.orphans)}   \u2190 \u78c1\u76d8\u5b58\u5728\uff0c\u6ce8\u518c\u8868\u65e0"
+    )
+    lines.append(
+        f"    \u5e7d\u7075 (GHOST):      {len(report.ghosts)}   \u2190 \u6ce8\u518c\u8868\u6709\uff0c\u78c1\u76d8\u4e0d\u5b58\u5728"
+    )
+    lines.append(
+        f"    \u6f02\u79fb (DRIFT):      {len(report.drifts)}   \u2190 \u6ce8\u518c\u4fe1\u606f/\u78c1\u76d8\u4e0d\u5339\u914d"
+    )
     if report.renames:
-        lines.append(f"    \u91cd\u547d\u540d (RENAME):    {len(report.renames)}   \u2190 SHA256 \u4ea4\u53c9\u5339\u914d\u68c0\u6d4b")
+        lines.append(
+            f"    \u91cd\u547d\u540d (RENAME):    {len(report.renames)}   \u2190 SHA256 \u4ea4\u53c9\u5339\u914d\u68c0\u6d4b"
+        )
     lines.append("")
     if auto_fixable > 0:
         lines.append("  \u81ea\u52a8\u4fee\u590d\u9884\u89c8:")
@@ -275,12 +291,16 @@ def _print_dry_run_preview(report, scan_path: str) -> None:
             elif ext == ".yaml":
                 lines.append(f"    \u5b64\u513f .yaml \u2192 scaffold gate:    {count} \u4e2a")
         if manual_orphans:
-            lines.append(f"    \u5269\u4f59\u9700\u4eba\u5de5\u5904\u7406\u7684\u5b64\u513f:            {manual_orphans} \u4e2a ({', '.join(f'.{e}' for e in orphans_by_ext if e not in ('.py', '.yaml'))})")
+            lines.append(
+                f"    \u5269\u4f59\u9700\u4eba\u5de5\u5904\u7406\u7684\u5b64\u513f:            {manual_orphans} \u4e2a ({', '.join(f'.{e}' for e in orphans_by_ext if e not in ('.py', '.yaml'))})"
+            )
         lines.append("")
         lines.append("  \u5982\u679c\u6267\u884c reconcile --apply --auto-fix:")
         lines.append(f"    scaffold \u81ea\u52a8\u6ce8\u518c {auto_fixable} \u4e2a\u6587\u4ef6")
         est_after = max(0.0, orphan_pct - (auto_fixable / total * 100) if total else 0.0)
-        lines.append(f"    \u5b64\u513f\u7387: {orphan_pct:.1f}% \u2192 {est_after:.1f}%  (\u2193{orphan_pct - est_after:.1f}pp)")
+        lines.append(
+            f"    \u5b64\u513f\u7387: {orphan_pct:.1f}% \u2192 {est_after:.1f}%  (\u2193{orphan_pct - est_after:.1f}pp)"
+        )
     lines.append("\u2501" * 40)
     lines.append("")
 
@@ -289,6 +309,7 @@ def _print_dry_run_preview(report, scan_path: str) -> None:
 
 def _auto_fix_orphans(orphans: list) -> int:
     import subprocess
+
     fixed = 0
     scaffold_script = str(ROOT / "scripts" / "scaffold.py")
 
@@ -306,7 +327,9 @@ def _auto_fix_orphans(orphans: list) -> int:
                 try:
                     subprocess.run(
                         ["python", scaffold_script, "module", pkg, name, "--desc", f"auto-fix orphan: {rel}"],
-                        capture_output=True, timeout=30, cwd=str(ROOT),
+                        capture_output=True,
+                        timeout=30,
+                        cwd=str(ROOT),
                     )
                     fixed += 1
                 except Exception:
@@ -316,7 +339,9 @@ def _auto_fix_orphans(orphans: list) -> int:
             try:
                 subprocess.run(
                     ["python", scaffold_script, "script", script_rel, "--desc", f"auto-fix orphan: {rel}"],
-                    capture_output=True, timeout=30, cwd=str(ROOT),
+                    capture_output=True,
+                    timeout=30,
+                    cwd=str(ROOT),
                 )
                 fixed += 1
             except Exception:
@@ -332,8 +357,10 @@ def _cmd_dashboard(args: argparse.Namespace) -> int:
         return 2
 
     import yaml
+
     raw = yaml.safe_load(idx_p.read_text(encoding="utf-8"))
     from zephyr.infrastructure.asset_inventory.models import UnifiedAssetIndex
+
     index = UnifiedAssetIndex(**raw)
 
     d = Dashboard()
@@ -357,6 +384,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
         return 1
 
     import yaml
+
     index = yaml.safe_load(idx_p.read_text(encoding="utf-8"))
     health = index.get("health_score", "N/A")
     orphan = index.get("orphan_rate_pct", 0.0)
@@ -431,7 +459,7 @@ def _cmd_bootstrap(args: argparse.Namespace) -> int:
     dash = d.generate(index)
     d.save(dash)
     d.print_summary(dash)
-    print(f"  [5/5] DASHBOARD")
+    print("  [5/5] DASHBOARD")
 
     t = get_telemetry()
     t.inc("bootstrap_completed")
@@ -461,7 +489,7 @@ def _cmd_clean(args: argparse.Namespace) -> int:
 
     if dry:
         print(f"[DRY-RUN] 将删除 {total} 个过期产物")
-        print(f"  运行 --apply 确认删除")
+        print("  运行 --apply 确认删除")
     else:
         print(f"已清理 {total} 个产物")
     return 0
@@ -474,13 +502,15 @@ def _cmd_deps(args: argparse.Namespace) -> int:
         return 2
 
     import json as _json
+
     sdata = _json.loads(Path(scan_path).read_text(encoding="utf-8"))
     entries = sdata.get("entries", sdata.get("assets", []))
 
     from zephyr.infrastructure.asset_inventory.dependency import build_dependency_graph
+
     graph = build_dependency_graph(entries, ROOT)
 
-    print(f"  DEPENDENCY GRAPH")
+    print("  DEPENDENCY GRAPH")
     print(f"  files          {graph.total_files}")
     print(f"  edges          {graph.total_edges}")
     print(f"  nodes          {len(graph.nodes)}")
@@ -494,16 +524,17 @@ def _cmd_deps(args: argparse.Namespace) -> int:
         for imp in graph.orphan_imports[:5]:
             print(f"    → {imp}")
 
-    print(f"  （依赖图统一由 generate_project_depgraph.py 产出到 depgraph.db，不再产 JSON）")
+    print("  （依赖图统一由 generate_project_depgraph.py 产出到 depgraph.db，不再产 JSON）")
     return 0
 
 
 def _cmd_registries(args: argparse.Namespace) -> int:
     from zephyr.infrastructure.asset_inventory.registry_adapter import RegistryManager
+
     mgr = RegistryManager(ROOT)
     entries, skipped = mgr.load_all()
 
-    print(f"  REGISTRIES")
+    print("  REGISTRIES")
     print(f"  files found    {len(mgr.discover_registry_files())}")
     print(f"  entries parsed {len(entries)}")
     print(f"  skipped        {len(skipped)}")

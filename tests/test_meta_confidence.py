@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_meta_confidence.py -q
 
-import pytest
 from zephyr.governance.meta_confidence import MetaConfidence
 
 

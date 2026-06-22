@@ -10,13 +10,12 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_vector_bridge.py
 
-import pytest
 from unittest.mock import MagicMock
 
 from zephyr.autonomy_core.vector_bridge import (
     VectorBridge,
-    VectorSearchResult,
     VectorSearchResponse,
+    VectorSearchResult,
     VMSSearchProtocol,
 )
 
@@ -88,10 +87,12 @@ class TestVectorBridgeWithVms:
         assert bridge.timeout_s == 10.0
 
     def test_successful_search(self):
-        vms = self._make_vms([
-            {"content": "result1", "score": 0.9, "metadata": {"k": "v"}},
-            {"content": "result2", "score": 0.7, "metadata": {}},
-        ])
+        vms = self._make_vms(
+            [
+                {"content": "result1", "score": 0.9, "metadata": {"k": "v"}},
+                {"content": "result2", "score": 0.7, "metadata": {}},
+            ]
+        )
         bridge = VectorBridge(vms)
         resp = bridge.search("ke_entries", "test query", top_k=5)
         assert resp.degraded is False
@@ -100,11 +101,13 @@ class TestVectorBridgeWithVms:
         assert resp.collection == "ke_entries"
 
     def test_results_sorted_by_score(self):
-        vms = self._make_vms([
-            {"content": "low", "score": 0.3},
-            {"content": "high", "score": 0.9},
-            {"content": "mid", "score": 0.6},
-        ])
+        vms = self._make_vms(
+            [
+                {"content": "low", "score": 0.3},
+                {"content": "high", "score": 0.9},
+                {"content": "mid", "score": 0.6},
+            ]
+        )
         bridge = VectorBridge(vms)
         resp = bridge.search("test", "q")
         scores = [r.score for r in resp.results]
@@ -150,9 +153,11 @@ class TestVMSSearchProtocol:
         class GoodVMS:
             def search(self, collection, query, top_k):
                 return []
+
         assert isinstance(GoodVMS(), VMSSearchProtocol)
 
     def test_protocol_fails_for_bad_impl(self):
         class BadVMS:
             pass
+
         assert not isinstance(BadVMS(), VMSSearchProtocol)

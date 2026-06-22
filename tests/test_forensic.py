@@ -15,7 +15,6 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -23,14 +22,8 @@ import pytest
 
 from zephyr.governance.forensic import (
     ForensicEngine,
-    ShellInjectionFinding,
-    FileHashRecord,
-    NtpAttestation,
-    BitRotCheck,
-    ToctouGuard,
-    MerkleChainLink,
     ForensicReport,
-    IRREVERSIBLE_GIT_OPS,
+    NtpAttestation,
 )
 
 
@@ -280,8 +273,8 @@ class TestCleanupInFlightOrphans:
         record_file = in_flight_dir / "test.json"
         record_file.write_text(json.dumps({"status": "FAILED"}), encoding="utf-8")
         import datetime as dt
-        from datetime import timezone
-        old_ts = (dt.datetime.now(timezone.utc) - dt.timedelta(hours=48)).timestamp()
+
+        old_ts = (dt.datetime.now(dt.UTC) - dt.timedelta(hours=48)).timestamp()
         os.utime(str(record_file), (old_ts, old_ts))
         count = engine.cleanup_in_flight_orphans(max_age_hours=24)
         assert count == 1
@@ -290,10 +283,18 @@ class TestCleanupInFlightOrphans:
 
 class TestGenerateForensicReport:
     def test_report_structure(self, engine):
-        with patch.object(engine, "ntp_attest", return_value=NtpAttestation(
-            timestamp_utc="2026-01-01T00:00:00", ntp_server="local",
-            stratum=16, precision=1.0, attested=False, signature="sig"
-        )):
+        with patch.object(
+            engine,
+            "ntp_attest",
+            return_value=NtpAttestation(
+                timestamp_utc="2026-01-01T00:00:00",
+                ntp_server="local",
+                stratum=16,
+                precision=1.0,
+                attested=False,
+                signature="sig",
+            ),
+        ):
             report = engine.generate_forensic_report("test_op", trigger="deploy", message="safe")
         assert isinstance(report, ForensicReport)
         assert report.report_id.startswith("FORENSIC-")
@@ -303,9 +304,17 @@ class TestGenerateForensicReport:
         assert isinstance(report.merkle_chain, list)
 
     def test_report_empty_inputs(self, engine):
-        with patch.object(engine, "ntp_attest", return_value=NtpAttestation(
-            timestamp_utc="2026-01-01T00:00:00", ntp_server="local",
-            stratum=16, precision=1.0, attested=False, signature="sig"
-        )):
+        with patch.object(
+            engine,
+            "ntp_attest",
+            return_value=NtpAttestation(
+                timestamp_utc="2026-01-01T00:00:00",
+                ntp_server="local",
+                stratum=16,
+                precision=1.0,
+                attested=False,
+                signature="sig",
+            ),
+        ):
             report = engine.generate_forensic_report("op")
         assert isinstance(report, ForensicReport)

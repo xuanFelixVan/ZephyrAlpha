@@ -29,6 +29,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 运行时配置完整性十一层纵深审计（L1-L11）+ 自动修复（L7）
@@ -92,9 +93,11 @@ IMMUTABLE_SCHEMA = {
 
 RULE_REQUIRED_FIELDS = {"name", "description", "allow", "deny"}
 
+
 def _rel(path: Path) -> str:
     """_rel implementation."""
     return "/" + str(path.relative_to(REPO_ROOT)).replace("\\", "/")
+
 
 def l1_file_integrity() -> tuple[list[str], list[str], dict]:
     """L1: 文件完整性 + YAML语法 + 编码安全检查"""
@@ -155,6 +158,7 @@ def l1_file_integrity() -> tuple[list[str], list[str], dict]:
             errors.append(f"[L1] {rel}: 编码错误 — {exc}")
 
     return errors, warnings, yaml_data
+
 
 def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
     """L2: Schema深度校验"""
@@ -254,6 +258,7 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
 
     return errors, warnings
 
+
 def l3_cross_reference(yaml_data: dict) -> tuple[list[str], list[str]]:
     """L3: 交叉引用审计"""
     errors = []
@@ -288,7 +293,7 @@ def l3_cross_reference(yaml_data: dict) -> tuple[list[str], list[str]]:
         except ImportError:
             if is_stub:
                 try:
-                    rt = __import__("zephyr.orchestration.runtime_core.orchestrator.trigger_router", fromlist=[attr])
+                    rt = __import__("zephyr.trading.orchestrator.trigger_router", fromlist=[attr])
                     if not hasattr(rt, attr):
                         errors.append(f'[L3] trigger "{ttype}": stub "{attr}" 不在 trigger_router 模块中')
                 except ImportError:
@@ -310,6 +315,7 @@ def l3_cross_reference(yaml_data: dict) -> tuple[list[str], list[str]]:
                             pass
 
     return errors, warnings
+
 
 def l4_path_constants() -> tuple[list[str], list[str], list[dict]]:
     """L4: 全项目路径常量 parents[N] 一致性扫描（返回fix字典列表）"""
@@ -378,6 +384,7 @@ def l4_path_constants() -> tuple[list[str], list[str], list[dict]]:
                 continue
 
     return errors, warnings, fixes
+
 
 def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
     """L5: 治理文档三方对账"""
@@ -466,6 +473,7 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
 
     return errors, warnings
 
+
 def l6_security_posture(yaml_data: dict) -> tuple[list[str], list[str]]:
     """L6: 安全态势审计"""
     errors = []
@@ -495,6 +503,7 @@ def l6_security_posture(yaml_data: dict) -> tuple[list[str], list[str]]:
 
     return errors, warnings
 
+
 def _str_distance(a: str, b: str) -> int:
     """Levenshtein编辑距离（用于拼写检测）"""
     if len(a) < len(b):
@@ -508,6 +517,7 @@ def _str_distance(a: str, b: str) -> int:
             curr.append(min(prev[j + 1] + 1, curr[j] + 1, prev[j] + (0 if ca == cb else 1)))
         prev = curr
     return prev[-1]
+
 
 def l7_manifest_sync(yaml_data: dict) -> tuple[list[str], list[str], list[dict]]:
     """L7: 自动同步检测 — manifest↔文件系统脚本登记对账 + 预埋文件就绪提醒（返回fix列表）"""
@@ -655,6 +665,7 @@ def l7_manifest_sync(yaml_data: dict) -> tuple[list[str], list[str], list[dict]]
 
     return errors, warnings, fixes
 
+
 def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
     """L8: 代码-配置对账 — 硬编码值与YAML注册表同步、路径漂移、状态机完整性、implementation_status标注"""
     errors = []
@@ -790,6 +801,7 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
 
     return errors, warnings
 
+
 def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]]:
     """L9: 注释与追踪审计 — YAML注释计数准确性、git追踪状态、登记表entry_count一致性"""
     errors = []
@@ -910,7 +922,9 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
 
     return errors, warnings
 
+
 PYTEST_BUILTIN_MARKERS = frozenset({"parametrize", "skip", "skipif", "xfail", "usefixtures"})
+
 
 def step10_pytest_markers_sync() -> tuple[list[str], list[str]]:
     """L10: 测试标记对账 — @pytest.mark.* ↔ pyproject.toml markers 双向同步（AGENTS.md §6.2 测试标记注册链）"""
@@ -964,6 +978,7 @@ def step10_pytest_markers_sync() -> tuple[list[str], list[str]]:
         )
 
     return errors, warnings
+
 
 def step11_contract_implementation_audit() -> tuple[list[str], list[str]]:
     """L11: 契约-实现对账 — declarative-contract-tracker-registry.md ↔ config/ YAML implementation_status 交叉校验（根因修复第2层）"""
@@ -1035,9 +1050,12 @@ def step11_contract_implementation_audit() -> tuple[list[str], list[str]]:
             warnings.append(f"[L11] 契约跟踪登记表中登记的 Python 源已不存在: {py_src}（请更新或删除条目）")
 
     if unresolved_count > 0:
-        warnings.append(f"[L11] {unresolved_count} 条声明式契约尚未兑现（详见 declarative-contract-tracker-registry.md）")
+        warnings.append(
+            f"[L11] {unresolved_count} 条声明式契约尚未兑现（详见 declarative-contract-tracker-registry.md）"
+        )
 
     return errors, warnings
+
 
 def main() -> None:
     """入口函数."""
@@ -1235,6 +1253,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_errors else 0)
+
 
 if __name__ == "__main__":
     main()

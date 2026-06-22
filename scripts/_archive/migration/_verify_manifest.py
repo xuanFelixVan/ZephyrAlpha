@@ -1,6 +1,6 @@
 import yaml
 
-with open("data/asset_index/import-update-manifest.yaml", "r", encoding="utf-8") as f:
+with open("data/asset_index/import-update-manifest.yaml", encoding="utf-8") as f:
     data = yaml.safe_load(f)
 
 meta = data["metadata"]

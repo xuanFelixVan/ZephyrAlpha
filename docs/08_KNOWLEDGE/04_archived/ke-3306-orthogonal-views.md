@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3306
 title: 1ter. Orthogonal Views / 正交视图体系
 category: documentation

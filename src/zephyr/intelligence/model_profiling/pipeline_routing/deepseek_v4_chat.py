@@ -37,7 +37,6 @@ DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端
     result = chat.inference("task_classification", "这段代码有什么问题?")
 """
 
-
 from __future__ import annotations
 
 import json
@@ -45,7 +44,6 @@ import logging
 import os
 import re
 import sys
-import time
 from typing import Any
 
 _log = logging.getLogger(__name__)
@@ -62,6 +60,7 @@ def _patch_win32_ver() -> None:
         return
     try:
         import platform as _plat
+
         _orig = _plat.win32_ver
         if getattr(_orig, "_patched", False):
             _win32_ver_patched = True
@@ -79,6 +78,7 @@ def _patch_win32_ver() -> None:
         pass
     _win32_ver_patched = True
 
+
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 
 SYSTEM_PROMPTS: dict[str, str] = {
@@ -90,28 +90,28 @@ SYSTEM_PROMPTS: dict[str, str] = {
     "tag_completion": (
         "You are a tag generator. Given a task description, "
         "infer appropriate tag labels. Tags should be single English words."
-        "\nOutput JSON: {\"tags\": [\"tag1\", \"tag2\"]}"
+        '\nOutput JSON: {"tags": ["tag1", "tag2"]}'
     ),
     "summary_extraction": (
         "You are a summary extractor. Compress the input text into 3 key points, "
         "each point under 50 characters."
-        "\nOutput JSON: {\"points\": [\"point1\", \"point2\", \"point3\"]}"
+        '\nOutput JSON: {"points": ["point1", "point2", "point3"]}'
     ),
     "anomaly_triage": (
         "You are an anomaly triager. Determine whether the input audit/log result is suspicious, "
         "and whether human intervention is needed."
-        "\nOutput JSON: {\"needs_human\": true/false, \"reason\": \"one-line reason\"}"
+        '\nOutput JSON: {"needs_human": true/false, "reason": "one-line reason"}'
     ),
     "query_rewrite": (
         "You are a search optimizer. Rewrite the user's natural language search query "
         "into more precise technical search terms, removing filler words and "
         "retaining core technical concepts."
-        "\nOutput JSON: {\"rewritten\": \"optimized query\"}"
+        '\nOutput JSON: {"rewritten": "optimized query"}'
     ),
     "naming_suggest": (
         "You are a naming suggester. Given code context, "
         "suggest suitable variable/function/class names."
-        "\nOutput JSON: {\"names\": [\"candidate1\", \"candidate2\"]}"
+        '\nOutput JSON: {"names": ["candidate1", "candidate2"]}'
     ),
     "code_fix": (
         "You are a code fixer. Given source code and a problem description, "
@@ -119,27 +119,27 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "Only output changes that are necessary and minimal. "
         "Be precise: old_str must exactly match the source text including whitespace. "
         "Do NOT include reasoning or thinking. Output ONLY the JSON."
-        "\nOutput JSON: {\"fixes\": [{\"old_str\": \"exact source\", \"new_str\": \"replacement\", \"reason\": \"brief\"}]}"
+        '\nOutput JSON: {"fixes": [{"old_str": "exact source", "new_str": "replacement", "reason": "brief"}]}'
     ),
     "refactor": (
         "You are a code refactorer. Given source code, "
         "suggest improvements: simplify logic, extract functions, rename variables, "
         "improve readability. Output exact old_str → new_str replacements."
-        "\nOutput JSON: {\"changes\": [{\"old_str\": \"exact source\", \"new_str\": \"improved code\", \"reason\": \"brief\"}]}"
+        '\nOutput JSON: {"changes": [{"old_str": "exact source", "new_str": "improved code", "reason": "brief"}]}'
     ),
     "code_generate": (
         "You are a code generator. Given a specification or requirement, "
         "generate complete, well-structured Python code. Include imports, docstrings, "
         "and proper typing. "
         "Do NOT include reasoning or thinking. Output ONLY the JSON."
-        "\nOutput JSON: {\"file_path\": \"suggested/filename.py\", \"content\": \"full code here\", \"description\": \"brief\"}"
+        '\nOutput JSON: {"file_path": "suggested/filename.py", "content": "full code here", "description": "brief"}'
     ),
     "dead_code_removal": (
         "You are a dead code detector. Given source code, "
         "identify unused imports, unreachable code blocks, dead functions, "
         "or redundant logic. Output the exact lines that should be removed. "
         "Do NOT include reasoning or thinking. Output ONLY the JSON."
-        "\nOutput JSON: {\"dead_sections\": [{\"old_str\": \"exact dead code\", \"reason\": \"why it's dead\"}]}"
+        '\nOutput JSON: {"dead_sections": [{"old_str": "exact dead code", "reason": "why it\'s dead"}]}'
     ),
 }
 
@@ -204,6 +204,7 @@ class DeepSeekV4Chat:
     def _get_client(self):
         _patch_win32_ver()
         from openai import OpenAI
+
         return OpenAI(base_url=self._base_url, api_key=self._api_key)
 
     def _chat(self, messages: list[dict[str, str]]) -> str:
@@ -240,7 +241,11 @@ class DeepSeekV4Chat:
 
         _log.debug(
             "DeepSeekV4Chat %s thinking=%s: input=%d output=%d cost=%.6f元",
-            self._model, self._thinking, input_tokens, output_tokens, cost,
+            self._model,
+            self._thinking,
+            input_tokens,
+            output_tokens,
+            cost,
         )
 
         return content
@@ -382,6 +387,7 @@ class DeepSeekV4Chat:
         max_retries: int = 3,
     ) -> str:
         import time as _time
+
         for attempt in range(max_retries):
             try:
                 raw = self.ask(prompt, system=system, temperature=temperature)
@@ -390,20 +396,27 @@ class DeepSeekV4Chat:
                 if attempt < max_retries - 1:
                     _log.warning(
                         "DeepSeekV4Chat: %s empty response attempt %d/%d, retrying...",
-                        work_type, attempt + 1, max_retries,
+                        work_type,
+                        attempt + 1,
+                        max_retries,
                     )
                     _time.sleep(1.0)
             except Exception as exc:
                 if attempt < max_retries - 1:
                     _log.warning(
                         "DeepSeekV4Chat: %s error attempt %d/%d: %s, retrying...",
-                        work_type, attempt + 1, max_retries, exc,
+                        work_type,
+                        attempt + 1,
+                        max_retries,
+                        exc,
                     )
                     _time.sleep(2.0)
                 else:
                     _log.error(
                         "DeepSeekV4Chat: %s all %d attempts failed: %s",
-                        work_type, max_retries, exc,
+                        work_type,
+                        max_retries,
+                        exc,
                     )
         _log.warning("DeepSeekV4Chat: %s all %d attempts returned empty", work_type, max_retries)
         return "{}"
@@ -433,8 +446,8 @@ class DeepSeekV4Chat:
                 return {}
             except json.JSONDecodeError:
                 if attempt == 0:
-                    text = text[text.index("{") if "{" in text else 0:]
-                    text = text[:text.rindex("}") + 1] if "}" in text else text
+                    text = text[text.index("{") if "{" in text else 0 :]
+                    text = text[: text.rindex("}") + 1] if "}" in text else text
                 else:
                     break
         _log.warning("DeepSeekV4Chat JSON parse failed; raw=%s", raw[:200])

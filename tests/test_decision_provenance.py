@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_decision_provenance.py
 
-import pytest
 
 from zephyr.ops.detectors.decision_provenance import DecisionProvenance
 

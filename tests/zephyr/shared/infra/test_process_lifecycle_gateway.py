@@ -3,9 +3,9 @@
 """
 Tests for ProcessLifecycleGateway.
 """
+
 from __future__ import annotations
 
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -26,7 +26,6 @@ def gateway():
 
 
 class TestProcessLifecycleGateway:
-
     def test_launch_returns_pooled_process(self, gateway):
         entry = gateway.launch("test-echo", [sys.executable, "-c", "import time; time.sleep(5)"])
         assert entry is not None
@@ -66,7 +65,6 @@ class TestProcessLifecycleGateway:
 
 
 class TestGateScanner:
-
     def test_gate_detects_bare_popen(self, tmp_path: Path):
         from zephyr.governance.rule_enforcement.invariants.en_process_lifecycle_gateway import scan_file
 

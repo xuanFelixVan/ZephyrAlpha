@@ -27,12 +27,11 @@
   - intake_rate > fix_rate → 债务正向增长 → ALERT
 """
 
-
 from __future__ import annotations
 
 import random
 from dataclasses import dataclass
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
 
 @dataclass
@@ -79,13 +78,11 @@ class DebtProjector:
 
             weeks = round(weeks_base, 1)
             ci = (round(lower, 1), round(upper, 1))
-            zero_date = (
-                datetime.now(timezone.utc) + timedelta(weeks=weeks_base)
-            ).strftime("%Y-%m-%d")
+            zero_date = (datetime.now(UTC) + timedelta(weeks=weeks_base)).strftime("%Y-%m-%d")
             if weeks <= 4:
-                rec = f"近在咫尺：{weeks}周(≈{int(weeks/4.3+0.5)}月)——加大力度，一举清零"
+                rec = f"近在咫尺：{weeks}周(≈{int(weeks / 4.3 + 0.5)}月)——加大力度，一举清零"
             elif weeks <= 12:
-                rec = f"可行路径：{weeks}周(≈{int(weeks/4.3+0.5)}月)——保持修复节奏"
+                rec = f"可行路径：{weeks}周(≈{int(weeks / 4.3 + 0.5)}月)——保持修复节奏"
             else:
                 rec = f"长期任务：{weeks}周——建议分阶段milestone推进"
 
@@ -100,9 +97,7 @@ class DebtProjector:
             recommendation=rec,
         )
 
-    def _monte_carlo_sim(
-        self, debt: int, intake: float, fix: float
-    ) -> list[float]:
+    def _monte_carlo_sim(self, debt: int, intake: float, fix: float) -> list[float]:
         results: list[float] = []
         for _ in range(self._SIMULATION_ITERATIONS):
             net = max(0.01, fix * random.gauss(1.0, 0.15) - intake * random.gauss(1.0, 0.15))

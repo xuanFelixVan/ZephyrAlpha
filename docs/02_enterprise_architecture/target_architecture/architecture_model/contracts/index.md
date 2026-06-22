@@ -7,7 +7,7 @@ generated: '2026-05-02'
 depends_on:
 - target: EA-ARCH-MODEL-INDEX
   at: §文件清单
-  why: 父级 architecture-model 索引——contracts 为其子目录，引用父级文件清单
+  why: 父级 architecture_model 索引——contracts 为其子目录，引用父级文件清单
 title: Contracts
 ---
 
@@ -25,8 +25,8 @@ title: Contracts
 
 ## 排除规则（不应放入本目录的内容）
 
-- ❌ 层定义 YAML → `02_enterprise_architecture/target-architecture/architecture-model/layers/`
+- ❌ 层定义 YAML → `02_enterprise_architecture/target_architecture/architecture_model/layers/`
 
 ## 父级目录
 
-- 父级：[architecture-model](../index.md)
+- 父级：[architecture_model](../index.md)

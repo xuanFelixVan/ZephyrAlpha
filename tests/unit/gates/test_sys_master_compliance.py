@@ -7,11 +7,9 @@
 # [TESTS] —
 
 from __future__ import annotations
-import json
-import sys
-from unittest.mock import MagicMock, mock_open, patch
 
-import pytest
+import sys
+from unittest.mock import patch
 
 SYS_MASTER = "zephyr.governance.rule_enforcement.sys_master_compliance"
 

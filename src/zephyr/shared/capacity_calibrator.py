@@ -1,8 +1,8 @@
 # [A_module] module_id=MOD-SHR_capacity_calibrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -24,7 +24,7 @@ class CapacityCalibrator:
             self._measurements[metric_name] = []
         self._measurements[metric_name].append(value)
         if len(self._measurements[metric_name]) > self._history_window:
-            self._measurements[metric_name] = self._measurements[metric_name][-self._history_window:]
+            self._measurements[metric_name] = self._measurements[metric_name][-self._history_window :]
 
     def calibrate(self, metric_name: str, percentile: float = 0.95) -> CalibrationResult:
         values = self._measurements.get(metric_name, [])
@@ -37,5 +37,5 @@ class CapacityCalibrator:
             sorted_vals[-1],
             sorted_vals[idx],
             percentile,
-            datetime.now(timezone.utc).isoformat(),
+            datetime.now(UTC).isoformat(),
         )

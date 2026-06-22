@@ -27,7 +27,6 @@ def simulator(tmp_path: Path) -> RollbackSimulator:
 
 
 class TestRollbackSimulatorInstantiation:
-
     def test_creates_with_defaults(self):
         sim = RollbackSimulator()
         assert sim._project_root is not None
@@ -41,7 +40,6 @@ class TestRollbackSimulatorInstantiation:
 
 
 class TestSimulateRollback:
-
     def test_successful_simulation(self, simulator: RollbackSimulator):
         with patch.object(simulator, "_run_git") as mock_git:
             mock_git.side_effect = [
@@ -105,15 +103,11 @@ class TestSimulateRollback:
             with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
                 mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
                 simulator.simulate_rollback("abc1234")
-                cleanup_calls = [
-                    c for c in mock_git.call_args_list
-                    if "worktree" in str(c) and "remove" in str(c)
-                ]
+                cleanup_calls = [c for c in mock_git.call_args_list if "worktree" in str(c) and "remove" in str(c)]
                 assert len(cleanup_calls) >= 1
 
 
 class TestRunGit:
-
     def test_run_git_success(self, simulator: RollbackSimulator):
         with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
             mock_run.return_value = MagicMock(stdout="output", returncode=0)
@@ -135,7 +129,6 @@ class TestRunGit:
 
 
 class TestBoundaryCases:
-
     def test_empty_commit_sha(self, simulator: RollbackSimulator):
         with patch.object(simulator, "_run_git") as mock_git:
             mock_git.side_effect = ["", ""]

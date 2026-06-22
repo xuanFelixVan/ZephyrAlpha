@@ -12,12 +12,8 @@
 
 from __future__ import annotations
 
-import hashlib
-import hmac
-import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -97,7 +93,7 @@ class TestAttestResultDataclass:
 
 class TestVerifyTimeAttest:
     def test_valid_attestation(self, adapter: TemporalContextAdapter) -> None:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         unix_ts = int(now.timestamp())
         totp = adapter._generate_totp(unix_ts)
         hmac_sig = adapter._compute_hmac("test-session", unix_ts)
@@ -114,7 +110,7 @@ class TestVerifyTimeAttest:
         assert result.drift_seconds < 5
 
     def test_expired_attestation(self, adapter: TemporalContextAdapter) -> None:
-        old_ts = int(datetime.now(timezone.utc).timestamp()) - 300
+        old_ts = int(datetime.now(UTC).timestamp()) - 300
         attest = TimeAttestion(
             unix_timestamp=old_ts,
             iso_timestamp="2020-01-01T00:00:00+00:00",
@@ -127,7 +123,7 @@ class TestVerifyTimeAttest:
         assert result.drift_seconds > 60
 
     def test_invalid_totp(self, adapter: TemporalContextAdapter) -> None:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         unix_ts = int(now.timestamp())
         attest = TimeAttestion(
             unix_timestamp=unix_ts,
@@ -140,7 +136,7 @@ class TestVerifyTimeAttest:
         assert result.exit_code == 26
 
     def test_details_populated(self, adapter: TemporalContextAdapter) -> None:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         unix_ts = int(now.timestamp())
         totp = adapter._generate_totp(unix_ts)
         hmac_sig = adapter._compute_hmac("session", unix_ts)
@@ -157,7 +153,7 @@ class TestVerifyTimeAttest:
         assert any("HMAC" in d for d in result.details)
 
     def test_boundary_drift_within_limit(self, adapter: TemporalContextAdapter) -> None:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         unix_ts = int(now.timestamp()) - 30
         totp = adapter._generate_totp(unix_ts)
         hmac_sig = adapter._compute_hmac("session", unix_ts)
@@ -173,7 +169,7 @@ class TestVerifyTimeAttest:
         assert result.exit_code == 0
 
     def test_boundary_drift_exceeds_limit(self, adapter: TemporalContextAdapter) -> None:
-        old_ts = int(datetime.now(timezone.utc).timestamp()) - 61
+        old_ts = int(datetime.now(UTC).timestamp()) - 61
         attest = TimeAttestion(
             unix_timestamp=old_ts,
             iso_timestamp="2020-01-01T00:00:00+00:00",
@@ -245,16 +241,16 @@ class TestTotpGeneration:
 
 class TestTotpVerification:
     def test_valid_within_window(self, adapter: TemporalContextAdapter) -> None:
-        ts = int(datetime.now(timezone.utc).timestamp())
+        ts = int(datetime.now(UTC).timestamp())
         code = adapter._generate_totp(ts)
         assert adapter._verify_totp(code, ts, adapter.TOTP_WINDOW) is True
 
     def test_invalid_code(self, adapter: TemporalContextAdapter) -> None:
-        ts = int(datetime.now(timezone.utc).timestamp())
+        ts = int(datetime.now(UTC).timestamp())
         assert adapter._verify_totp("000000", ts, adapter.TOTP_WINDOW) is False
 
     def test_window_zero(self, adapter: TemporalContextAdapter) -> None:
-        ts = int(datetime.now(timezone.utc).timestamp())
+        ts = int(datetime.now(UTC).timestamp())
         code = adapter._generate_totp(ts)
         assert adapter._verify_totp(code, ts, 0) is True
 

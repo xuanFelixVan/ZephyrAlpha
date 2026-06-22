@@ -30,10 +30,8 @@
   dominance   → per_turn_instruction_overhead > productive_tokens
 """
 
-
 from __future__ import annotations
 
-import hashlib
 import json
 import logging
 import os
@@ -184,11 +182,13 @@ class InstructionBloatDetector:
     def _record_measurement(self, name: str, token_count: int, byte_count: int) -> None:
         if name not in self._history:
             self._history[name] = []
-        self._history[name].append({
-            "timestamp": time.time(),
-            "token_count": token_count,
-            "byte_count": byte_count,
-        })
+        self._history[name].append(
+            {
+                "timestamp": time.time(),
+                "token_count": token_count,
+                "byte_count": byte_count,
+            }
+        )
         if len(self._history[name]) > 100:
             self._history[name] = self._history[name][-50:]
         self._save_history()
@@ -217,13 +217,15 @@ class InstructionBloatDetector:
                         unused.append(f"{section_header} ({section_lines} lines)")
             if unused:
                 savings = current_tokens // 4
-                suggestions.append(CompactSuggestion(
-                    target_path=target,
-                    current_tokens=current_tokens,
-                    suggestion=f"检测到 {len(unused)} 个大段落，建议审查是否仍在使用",
-                    unused_sections=unused,
-                    estimated_savings=savings,
-                ))
+                suggestions.append(
+                    CompactSuggestion(
+                        target_path=target,
+                        current_tokens=current_tokens,
+                        suggestion=f"检测到 {len(unused)} 个大段落，建议审查是否仍在使用",
+                        unused_sections=unused,
+                        estimated_savings=savings,
+                    )
+                )
         return suggestions
 
     def _load_history(self) -> dict[str, list[dict[str, Any]]]:

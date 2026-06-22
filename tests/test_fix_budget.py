@@ -12,19 +12,13 @@
 
 from __future__ import annotations
 
-import os
-import tempfile
-import time
-
-import pytest
-
 from zephyr.security.access_control.auto_fix_engine_03.fix_budget import (
     DriftBudgetLink,
     FixBudget,
     FixStormGuard,
     LLMCostEstimator,
 )
-from zephyr.security.access_control.auto_fix_engine_03.models import BudgetDecision, BudgetInfo, FixLevel
+from zephyr.security.access_control.auto_fix_engine_03.models import BudgetInfo, FixLevel
 
 
 class TestFixBudget:

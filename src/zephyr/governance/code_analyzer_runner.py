@@ -26,12 +26,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class StageResult:
     stage: str
     status: str
     duration_ms: float
     details: dict[str, Any] = field(default_factory=dict)
+
 
 @dataclass
 class CodeAnalyzerRunner:
@@ -40,8 +42,15 @@ class CodeAnalyzerRunner:
 
     def run(self) -> list[StageResult]:
         self.stages = [
-            StageResult(stage="S1_HASH_SCAN", status="PASS", duration_ms=12.0, details={"threshold": self.baseline_threshold}),
-            StageResult(stage="S2_AST_FUZZY", status="PASS", duration_ms=45.0, details={"threshold": self.baseline_threshold - 0.05}),
+            StageResult(
+                stage="S1_HASH_SCAN", status="PASS", duration_ms=12.0, details={"threshold": self.baseline_threshold}
+            ),
+            StageResult(
+                stage="S2_AST_FUZZY",
+                status="PASS",
+                duration_ms=45.0,
+                details={"threshold": self.baseline_threshold - 0.05},
+            ),
             StageResult(stage="S3_EXPORT", status="PASS", duration_ms=8.0, details={"report": "full_scan_report.yaml"}),
         ]
         return self.stages
@@ -51,4 +60,9 @@ class CodeAnalyzerRunner:
             return {}
         passed = sum(1 for s in self.stages if s.status == "PASS")
         total_ms = sum(s.duration_ms for s in self.stages)
-        return {"stages": len(self.stages), "passed": passed, "total_ms": total_ms, "all_passed": passed == len(self.stages)}
+        return {
+            "stages": len(self.stages),
+            "passed": passed,
+            "total_ms": total_ms,
+            "all_passed": passed == len(self.stages),
+        }

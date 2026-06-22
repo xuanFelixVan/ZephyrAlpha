@@ -1,6 +1,8 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d2_links/validate_depends_on_format.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -9,11 +11,10 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 
 def validate_depends_on(blueprint_path: str) -> tuple[bool, list[str]]:
@@ -24,8 +25,13 @@ def validate_depends_on(blueprint_path: str) -> tuple[bool, list[str]]:
     content = p.read_text(encoding="utf-8")
     errors: list[str] = []
     required_refs = [
-        "MOD-INF-006", "MOD-KB-001", "PS-STD-001", "SCRIPT-QUALITY-001",
-        "module-registry.yaml", "AGENTS.md", "script_manifest.yaml",
+        "MOD-INF-006",
+        "MOD-KB-001",
+        "PS-STD-001",
+        "SCRIPT-QUALITY-001",
+        "module-registry.yaml",
+        "AGENTS.md",
+        "script_manifest.yaml",
     ]
     for ref in required_refs:
         if ref not in content:

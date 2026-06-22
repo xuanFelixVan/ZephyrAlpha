@@ -12,11 +12,10 @@
 
 from __future__ import annotations
 
-import os
-import sqlite3
-import pytest
 from datetime import UTC, datetime
 from pathlib import Path
+
+import pytest
 
 dm_mod = pytest.importorskip("zephyr.data.persistence.database_manager")
 DatabaseManager = dm_mod.DatabaseManager
@@ -36,11 +35,12 @@ TransactionTimeoutError = atm_mod.TransactionTimeoutError
 transition_mod = pytest.importorskip("zephyr.data.persistence.transition")
 
 try:
-    from zephyr.governance.rule_enforcement.task_types import TaskStatus, TaskNamespace
-    from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+    from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
     from zephyr.integration.shared.schema.execution_model import ExecutionModel
+    from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.shared_services.models import TaskCard
+
     HAS_TASK_TYPES = True
 except Exception:
     HAS_TASK_TYPES = False
@@ -282,11 +282,15 @@ class TestTaskRepository:
 
 class TestAtomicTransactionManager:
     def _make_atm(self, tmp_path):
-        from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
         from unittest.mock import MagicMock
+
+        from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
+
         db = tmp_path / "atm_test.db"
         mock_sanitizer = MagicMock(spec=InputSanitizer)
-        mock_sanitizer.validate_path = lambda path, mode="write": Path(path) if Path(path).is_absolute() else tmp_path / path
+        mock_sanitizer.validate_path = lambda path, mode="write": (
+            Path(path) if Path(path).is_absolute() else tmp_path / path
+        )
         atm = AtomicTransactionManager(
             db_path=str(db),
             root=str(tmp_path),
@@ -314,10 +318,9 @@ class TestAtomicTransactionManager:
             tx.execute("CREATE TABLE IF NOT EXISTS test_items (id INTEGER PRIMARY KEY, name TEXT)")
             tx.execute("INSERT INTO test_items (id, name) VALUES (?, ?)", (1, "alpha"))
 
-        with pytest.raises(RuntimeError):
-            with atm.transaction() as tx:
-                tx.execute("INSERT INTO test_items (id, name) VALUES (?, ?)", (2, "beta"))
-                raise RuntimeError("force rollback")
+        with pytest.raises(RuntimeError), atm.transaction() as tx:
+            tx.execute("INSERT INTO test_items (id, name) VALUES (?, ?)", (2, "beta"))
+            raise RuntimeError("force rollback")
 
         rows = atm._conn.execute("SELECT COUNT(*) FROM test_items").fetchone()
         assert rows[0] == 1
@@ -334,10 +337,9 @@ class TestAtomicTransactionManager:
 
     def test_nested_transaction_raises(self, tmp_path):
         atm = self._make_atm(tmp_path)
-        with pytest.raises(TransactionError, match="nested"):
-            with atm.transaction() as tx1:
-                with atm.transaction() as tx2:
-                    pass
+        with pytest.raises(TransactionError, match="nested"), atm.transaction() as tx1:
+            with atm.transaction() as tx2:
+                pass
         atm.close()
 
     def test_validate_write_path(self, tmp_path):

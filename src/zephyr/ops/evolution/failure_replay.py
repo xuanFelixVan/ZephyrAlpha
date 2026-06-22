@@ -27,6 +27,7 @@ Risk: R77 — FLE forgets failure patterns; repeats same mistakes.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class FailureReplay:
     failures: list[dict] = field(default_factory=list)

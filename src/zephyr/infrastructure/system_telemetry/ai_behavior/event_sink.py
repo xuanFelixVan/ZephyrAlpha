@@ -24,7 +24,6 @@
 蓝图 §7: 7 大监测维度 + B37 Error Taxonomy + OTel GenAI Semantic Conventions 对齐。
 """
 
-
 from __future__ import annotations
 
 import hashlib
@@ -63,18 +62,10 @@ class ErrorContext:
         }
 
 
-_VALID_PERSISTENCE: frozenset[str] = frozenset(
-    {"transient", "permanent", "intermittent"}
-)
-_VALID_SOURCE: frozenset[str] = frozenset(
-    {"client", "server", "dependency", "internal"}
-)
-_VALID_EXPECTATION: frozenset[str] = frozenset(
-    {"expected", "unexpected", "unknown"}
-)
-_VALID_SEVERITY: frozenset[str] = frozenset(
-    {"degraded", "blocking", "fatal"}
-)
+_VALID_PERSISTENCE: frozenset[str] = frozenset({"transient", "permanent", "intermittent"})
+_VALID_SOURCE: frozenset[str] = frozenset({"client", "server", "dependency", "internal"})
+_VALID_EXPECTATION: frozenset[str] = frozenset({"expected", "unexpected", "unknown"})
+_VALID_SEVERITY: frozenset[str] = frozenset({"degraded", "blocking", "fatal"})
 
 
 def validate_error_context(ctx: ErrorContext) -> list[str]:
@@ -92,12 +83,10 @@ def validate_error_context(ctx: ErrorContext) -> list[str]:
 
 @dataclass
 class AIBehaviorEvent:
-    event_id: str = field(default_factory=lambda: hashlib.sha256(
-        f"{time.time_ns()}:{threading.get_ident()}".encode()
-    ).hexdigest()[:16])
-    timestamp: str = field(
-        default_factory=lambda: datetime.now(UTC).isoformat()
+    event_id: str = field(
+        default_factory=lambda: hashlib.sha256(f"{time.time_ns()}:{threading.get_ident()}".encode()).hexdigest()[:16]
     )
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     model_name: str = "unknown"
     model_version: str = "unknown"
@@ -198,11 +187,7 @@ class AIBehaviorEvent:
                 "factual_consistency": self.factual_consistency_score,
                 "lint_errors": self.lint_error_count,
             },
-            "error": (
-                self.error_context.snapshot()
-                if self.error_context
-                else None
-            ),
+            "error": (self.error_context.snapshot() if self.error_context else None),
             "rate_limit": {
                 "hit": self.rate_limit_hit,
                 "retries": self.rate_limit_retries,
@@ -218,9 +203,7 @@ _LOCAL: threading.local = threading.local()
 
 
 def _event_stack() -> list[AIBehaviorEvent]:
-    stack: list[AIBehaviorEvent] | None = getattr(
-        _LOCAL, "_ai_event_stack", None
-    )
+    stack: list[AIBehaviorEvent] | None = getattr(_LOCAL, "_ai_event_stack", None)
     if stack is None:
         stack = []
         _LOCAL._ai_event_stack = stack
@@ -266,6 +249,7 @@ def emit_ai_behavior_event(
     if os.environ.get("ZALPHA_AI_BEHAVIOR_TELEMETRY", "1") == "1":
         try:
             from zephyr.infrastructure.system_telemetry.logs.structured_sink import append_jsonl_record
+
             append_jsonl_record(snapshot, labels={"__type": "ai_behavior_event"})
         except Exception:
             pass

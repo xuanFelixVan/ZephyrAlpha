@@ -210,7 +210,10 @@ class TestAccessCheckDataclass:
 class TestContextGuardResultDataclass:
     def test_fields(self):
         result = ContextGuardResult(
-            all_allowed=True, checks=[], blocked_files=[], warning_files=[],
+            all_allowed=True,
+            checks=[],
+            blocked_files=[],
+            warning_files=[],
         )
         assert result.all_allowed is True
         assert len(result.checks) == 0

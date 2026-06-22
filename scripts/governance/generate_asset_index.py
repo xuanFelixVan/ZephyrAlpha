@@ -5,6 +5,7 @@
 RULE-NINE 合规：生成 unified-asset-index.yaml 供新 AI session 冷启动时了解项目全盘资产规模。
 运行方式：python scripts/governance/generate_asset_index.py [--output <path>]
 """
+
 from __future__ import annotations
 
 import os
@@ -140,10 +141,7 @@ def generate(output_path: Path | None = None) -> Path:
         "generated_at": datetime.now(UTC).isoformat(),
         "generated_by": "scripts/governance/generate_asset_index.py",
         "total_assets": all_counts.get("total", 0),
-        "by_category": {
-            cat: all_counts.get(cat, 0)
-            for cat in _FILE_CATEGORIES
-        },
+        "by_category": {cat: all_counts.get(cat, 0) for cat in _FILE_CATEGORIES},
         "by_directory": category_counts,
         "modules": module_map,
         "health": health,

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.actors.api_version_contract import APIVersionContract, VersionStatus
 
 

@@ -25,7 +25,6 @@ G-CT-003 — RollbackResult backward-compat re-export facade.
 Canonical home is now: zephyr.integration.shared_08.contracts.rollback_types
 """
 
-
 from zephyr.integration.shared_08.contracts.rollback_types import (
     RollbackResult,
     RollbackStatus,

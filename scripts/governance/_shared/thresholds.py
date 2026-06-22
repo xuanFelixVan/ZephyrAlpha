@@ -11,6 +11,7 @@ Usage:
     t = get_thresholds()
     max_fpr = t["finding_quality"]["false_positive_rate_max"]
 """
+
 from __future__ import annotations
 
 from pathlib import Path

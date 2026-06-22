@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_latency_slo.py
 
-import pytest
 
 from zephyr.ops.diagnosers.latency_slo import LatencySLO, LatencyWindow
 

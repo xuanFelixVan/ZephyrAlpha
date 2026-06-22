@@ -51,9 +51,7 @@ SSoT: cross_layer_contracts.yaml → CTR-001
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
-from decimal import Decimal
-from typing import Optional
+from datetime import datetime
 
 import pandas as pd
 
@@ -77,7 +75,7 @@ class AkshareProvider(DataSourceBase):
 
     __meta__ = __meta__
 
-    def __init__(self, cache_dir: Optional[str] = None):
+    def __init__(self, cache_dir: str | None = None):
         self._cache_dir = cache_dir
         self._ak = None
 
@@ -86,12 +84,11 @@ class AkshareProvider(DataSourceBase):
         if self._ak is None:
             try:
                 import akshare as ak
+
                 self._ak = ak
                 _logger.info("Akshare loaded successfully. version=%s", getattr(ak, "__version__", "unknown"))
             except ImportError:
-                raise ImportError(
-                    "Akshare not installed. Run: pip install akshare"
-                )
+                raise ImportError("Akshare not installed. Run: pip install akshare")
         return self._ak
 
     def fetch_historical(
@@ -169,9 +166,7 @@ class AkshareProvider(DataSourceBase):
         """
         try:
             df = self._akshare.index_stock_cons_csindex(symbol=index_code)
-            return df[["成分券代码", "成分券名称"]].rename(
-                columns={"成分券代码": "symbol", "成分券名称": "name"}
-            )
+            return df[["成分券代码", "成分券名称"]].rename(columns={"成分券代码": "symbol", "成分券名称": "name"})
         except Exception as e:
             _logger.error("Failed to get index constituents for %s: %s", index_code, e)
             return pd.DataFrame(columns=["symbol", "name"])

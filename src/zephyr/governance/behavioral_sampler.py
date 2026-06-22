@@ -24,9 +24,9 @@ from __future__ import annotations
 """行为采样验证器 — Stage 0.25 低成本快速验证."""
 
 import ast
-import random
 from dataclasses import dataclass, field
 from typing import Any
+
 
 @dataclass
 class BehaviorSample:
@@ -35,6 +35,7 @@ class BehaviorSample:
     output: object = None
     is_pure: bool = False
     passed: bool = False
+
 
 class BehavioralSampler:
     """行为采样——生成测试输入并验证行为一致性."""
@@ -54,7 +55,7 @@ class BehavioralSampler:
     def verify_behavior(self, func_a: callable, func_b: callable, samples: list[Any]) -> BehaviorSample:
         """对相同输入调用两个函数→输出一致=PASS."""
         passed = True
-        for inp in samples[:self._SAMPLE_COUNT]:
+        for inp in samples[: self._SAMPLE_COUNT]:
             try:
                 a = func_a(inp) if inp is not None else func_a()
                 b = func_b(inp) if inp is not None else func_b()
@@ -67,7 +68,7 @@ class BehavioralSampler:
 
         return BehaviorSample(
             func_name=getattr(func_a, "__name__", "?"),
-            inputs=samples[:self._SAMPLE_COUNT],
+            inputs=samples[: self._SAMPLE_COUNT],
             passed=passed,
         )
 

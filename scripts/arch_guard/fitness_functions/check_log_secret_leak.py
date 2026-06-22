@@ -7,10 +7,9 @@
 
 exit: 0=无泄漏, 1=发现泄漏, 2=基础设施错误
 """
+
 from __future__ import annotations
 
-
-import ast
 import re
 import sys
 from pathlib import Path
@@ -20,17 +19,17 @@ SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 SECRET_PATTERNS = [
     re.compile(r'(?:api_?key|secret|token|password|private_?key|auth_?token)\s*=\s*["\']', re.IGNORECASE),
-    re.compile(r'(?:api_?key|secret|token|password|private_?key|auth_?token)\s*\{', re.IGNORECASE),
+    re.compile(r"(?:api_?key|secret|token|password|private_?key|auth_?token)\s*\{", re.IGNORECASE),
     re.compile(r'f["\'].*(?:api_?key|secret|token|password|private_?key).*["\']', re.IGNORECASE),
 ]
 
 LOG_CALL_NAMES = {"log", "info", "debug", "warning", "error", "critical", "print", "msg"}
 
 EXEMPT_PATTERNS = [
-    re.compile(r'os\.environ\.get\(', re.IGNORECASE),
+    re.compile(r"os\.environ\.get\(", re.IGNORECASE),
     re.compile(r'config\[[\'"]', re.IGNORECASE),
-    re.compile(r'settings\.', re.IGNORECASE),
-    re.compile(r'#.*(?:noqa|type:\s*ignore)', re.IGNORECASE),
+    re.compile(r"settings\.", re.IGNORECASE),
+    re.compile(r"#.*(?:noqa|type:\s*ignore)", re.IGNORECASE),
 ]
 
 EXEMPT_PATHS = [

@@ -33,7 +33,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
@@ -92,7 +92,9 @@ def scan_arch_review_triggers() -> list[dict]:
         for trigger_type, keywords in trigger_keywords.items():
             for kw in keywords:
                 if kw.lower() in content.lower():
-                    has_adr_ref = bool(re.search("(?:ADR|adr|KB)[-_]?(?:ref|decision)?[-_]?\\d{1,4}", content, re.IGNORECASE))
+                    has_adr_ref = bool(
+                        re.search("(?:ADR|adr|KB)[-_]?(?:ref|decision)?[-_]?\\d{1,4}", content, re.IGNORECASE)
+                    )
                     if not has_adr_ref:
                         findings.append({"file": rel, "trigger": trigger_type, "keyword": kw, "severity": "LOW"})
                     break
@@ -109,8 +111,8 @@ def main() -> None:
     if findings:
         print(f"\n[ARCH-REVIEW] {len(findings)} 个架构变更可能缺少评审记录:", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] {f['file']}', file=sys.stderr)
-            print(f'    触发类型: {f['trigger']}（关键词: {f['keyword']}）', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['file']}", file=sys.stderr)
+            print(f"    触发类型: {f['trigger']}（关键词: {f['keyword']}）", file=sys.stderr)
             print("    未找到 ADR 引用", file=sys.stderr)
     else:
         print("[ARCH-REVIEW] 架构变更均有评审记录", file=sys.stderr)

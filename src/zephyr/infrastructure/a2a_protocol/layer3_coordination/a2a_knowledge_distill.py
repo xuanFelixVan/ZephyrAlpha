@@ -29,10 +29,9 @@
 输出: DistilledKnowledge — KB-able key-value 结构
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -50,20 +49,25 @@ class A2AKnowledgeDistill:
         self._insights: dict[str, list[DistilledKnowledge]] = {}
 
     def distill(
-        self, agent_id: str, topic: str,
-        raw_notes: str, category: str = "learning",
+        self,
+        agent_id: str,
+        topic: str,
+        raw_notes: str,
+        category: str = "learning",
     ) -> DistilledKnowledge:
         insight = self._compress(raw_notes, topic)
         dk = DistilledKnowledge(
-            source_agent=agent_id, topic=topic,
-            insight=insight, category=category,
+            source_agent=agent_id,
+            topic=topic,
+            insight=insight,
+            category=category,
         )
         if agent_id not in self._insights:
             self._insights[agent_id] = []
         self._insights[agent_id].append(dk)
 
         if len(self._insights[agent_id]) > self._max_insights:
-            self._insights[agent_id] = self._insights[agent_id][-self._max_insights:]
+            self._insights[agent_id] = self._insights[agent_id][-self._max_insights :]
 
         return dk
 

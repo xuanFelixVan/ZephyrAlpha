@@ -11,15 +11,15 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.context_rot_model import (
-        ContextRotModel,
         AttentionScore,
-        DEFAULT_ROT_PARAMS,
+        ContextRotModel,
     )
 except Exception as _exc:
     pytest.skip(f"cannot import context_rot_model: {_exc}", allow_module_level=True)

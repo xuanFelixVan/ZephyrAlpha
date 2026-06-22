@@ -28,7 +28,6 @@ verify_paths.py — 代码路径索引验证 (TASK-012)
 """
 
 import json
-import os
 from pathlib import Path
 from typing import Any
 
@@ -73,6 +72,7 @@ TEST_FILES = {
     "test_pipeline_orchestrator.py": "ghost",
 }
 
+
 def verify_all() -> dict[str, Any]:
     results: dict[str, Any] = {"source_files": {}, "test_files": {}, "stats": {}}
 
@@ -107,23 +107,19 @@ def verify_all() -> dict[str, Any]:
     results["stats"] = {
         "source_expected_exist": expected_exists,
         "source_expected_missing": expected_missing,
-        "source_actually_exist": sum(
-            1 for v in results["source_files"].values() if v["exists"]
-        ),
+        "source_actually_exist": sum(1 for v in results["source_files"].values() if v["exists"]),
         "tests_total": len(TEST_FILES),
-        "tests_exist": sum(
-            1 for v in results["test_files"].values() if v["exists"]
-        ),
-        "ghost_tests": sum(
-            1 for v in results["test_files"].values() if v["type"] == "ghost"
-        ),
+        "tests_exist": sum(1 for v in results["test_files"].values() if v["exists"]),
+        "ghost_tests": sum(1 for v in results["test_files"].values() if v["type"] == "ghost"),
     }
 
     return results
 
+
 if __name__ == "__main__":
     import sys
+
     data = verify_all()
-    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stdout.reconfigure(encoding="utf-8")
     json.dump(data, sys.stdout, indent=2, ensure_ascii=False)
     print()

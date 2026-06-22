@@ -86,19 +86,18 @@ class FlappingDetector:
         history = [h for h in history if h["ts"] > window_start]
         self.alert_states[alert_id] = history
 
-        state_changes = sum(
-            1 for i in range(1, len(history))
-            if history[i]["state"] != history[i - 1]["state"]
-        )
+        state_changes = sum(1 for i in range(1, len(history)) if history[i]["state"] != history[i - 1]["state"])
 
         if state_changes > self.max_state_changes_per_hour:
             self.suppressed_alerts[alert_id] = now + self.suppression_duration
-            self.flapping_events.append({
-                "ts": now,
-                "alert_id": alert_id,
-                "changes_per_hour": state_changes,
-                "severity": FlappingSeverity.SUPPRESSED.value,
-            })
+            self.flapping_events.append(
+                {
+                    "ts": now,
+                    "alert_id": alert_id,
+                    "changes_per_hour": state_changes,
+                    "severity": FlappingSeverity.SUPPRESSED.value,
+                }
+            )
             return {
                 "alert_id": alert_id,
                 "flapping": True,
@@ -108,7 +107,13 @@ class FlappingDetector:
                 "recommendation": "aggregate_into_flapping_group",
             }
 
-        severity = FlappingSeverity.FLAPPING if state_changes > self.max_state_changes_per_hour / 2 else FlappingSeverity.WARNING if state_changes > 3 else FlappingSeverity.NONE
+        severity = (
+            FlappingSeverity.FLAPPING
+            if state_changes > self.max_state_changes_per_hour / 2
+            else FlappingSeverity.WARNING
+            if state_changes > 3
+            else FlappingSeverity.NONE
+        )
 
         return {
             "alert_id": alert_id,
@@ -128,10 +133,7 @@ class FlappingDetector:
         return {
             "suppressed_count": len(self.suppressed_alerts),
             "total_flapping_events": len(self.flapping_events),
-            "recent_flapping": [
-                e for e in self.flapping_events
-                if time.time() - e["ts"] < 3600
-            ],
+            "recent_flapping": [e for e in self.flapping_events if time.time() - e["ts"] < 3600],
         }
 
     def overall_alert_stability(self) -> float:
@@ -139,8 +141,10 @@ class FlappingDetector:
         if total == 0:
             return 1.0
         flapping = sum(
-            1 for aid, hist in self.alert_states.items()
+            1
+            for aid, hist in self.alert_states.items()
             if len(hist) >= 2
-            and sum(1 for i in range(1, len(hist)) if hist[i]["state"] != hist[i - 1]["state"]) > self.max_state_changes_per_hour
+            and sum(1 for i in range(1, len(hist)) if hist[i]["state"] != hist[i - 1]["state"])
+            > self.max_state_changes_per_hour
         )
         return round(max(0.0, 1.0 - flapping / total), 3)

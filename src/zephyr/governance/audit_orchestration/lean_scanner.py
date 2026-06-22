@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class LeanScanner:
     def scan_dead_code(self) -> list[str]:
         return []

@@ -36,32 +36,30 @@ G2 Triage 门禁 — 知识分类评分（T-2-13-B）
 Safety : M
 """
 
-
 from __future__ import annotations
 
-import importlib
 import re
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+from zephyr.governance.ingest import COLLOQUIAL_PATTERNS
+from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.integration.shared_08.contracts.gate import GateResult
-from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
-from zephyr.governance.ingest import COLLOQUIAL_PATTERNS
 
 __all__ = [
-    "TriageResult",
-    "TriageGate",
     "APPROVED_LABELS",
-    "VALID_DOC_TYPES",
-    "VALID_LAYERS",
     "HIGH_VALUE_THRESHOLD",
     "REJECT_THRESHOLD",
+    "VALID_DOC_TYPES",
+    "VALID_LAYERS",
+    "TriageGate",
+    "TriageResult",
 ]
 
 APPROVED_LABELS = [

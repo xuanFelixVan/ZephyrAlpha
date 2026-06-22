@@ -3,21 +3,29 @@
 
 STATE_DEFS = None  # stub constant
 
+
 class SessionManager:
     """Stub class — implementation pending."""
+
     pass
+
 
 class SessionState:
     """Stub class — implementation pending."""
+
     pass
+
 
 class StateDef:
     """Stub class — implementation pending."""
+
     pass
+
 
 def get_state_def(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'get_state_def not implemented')
+    raise NotImplementedError("get_state_def not implemented")
+
 
 __all__ = [
     "STATE_DEFS",

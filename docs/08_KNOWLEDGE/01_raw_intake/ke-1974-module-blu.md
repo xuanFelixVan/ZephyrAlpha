@@ -15,7 +15,7 @@ escalation_protocol_tech_debt:
   rule_obsolescence:
     detection: "规则连续30天未被触发→标记为OBSOLETE"
     action: "通知Owner此规则可能已过时→建议review或移除"
-    
+
   rule_conflict:
     detection: "两条规则对同一场景产生相反升级级别"
     action: "自动标记为CONFLICT→P1升级+Owner解决冲突"

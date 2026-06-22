@@ -44,8 +44,8 @@ AI 施工约定：
 SSoT: MOD-INF-016 §2.20 shared-lock
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import asyncio
 import logging
@@ -59,10 +59,10 @@ from typing import Protocol
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "LockError",
     "DistributedLock",
-    "MemoryLock",
+    "LockError",
     "LockHandle",
+    "MemoryLock",
 ]
 
 logger = logging.getLogger(__name__)

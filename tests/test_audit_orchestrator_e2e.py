@@ -1,8 +1,8 @@
 # [A_test] module_id: SRC-TST-0360 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §test
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §test
 # [MODULE] tests.test_audit_orchestrator_e2e
 # [INVARIANTS] AuditAdmissionController 5模块健康检查覆盖; ResourceAwarePool 双池路由正确
-# [MODIFY-GUARD] audit-orchestrator/blueprint.md; test_audit_orchestrator_e2e.py
+# [MODIFY-GUARD] audit_orchestrator/blueprint.md; test_audit_orchestrator_e2e.py
 # [CONSUMERS] CI; pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,11 +16,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-audit-orchestrator = pytest.importorskip("zephyr.governance.audit_trail")
-AuditAdmissionController = audit-orchestrator.AuditAdmissionController
-AdmissionResult = audit-orchestrator.AdmissionResult
-ResourceAwarePool = audit-orchestrator.ResourceAwarePool
-PoolStats = audit-orchestrator.PoolStats
+audit_orchestrator = pytest.importorskip("zephyr.governance.audit_trail")
+AuditAdmissionController = audit_orchestrator.AuditAdmissionController
+AdmissionResult = audit_orchestrator.AdmissionResult
+ResourceAwarePool = audit_orchestrator.ResourceAwarePool
+PoolStats = audit_orchestrator.PoolStats
 
 
 @pytest.mark.e2e
@@ -121,6 +121,7 @@ class TestResourceAwarePoolE2E:
     def test_submit_and_get_result(self):
         pool = ResourceAwarePool(cpu_workers=2, gpu_workers=1)
         try:
+
             def add(a, b):
                 return a + b
 

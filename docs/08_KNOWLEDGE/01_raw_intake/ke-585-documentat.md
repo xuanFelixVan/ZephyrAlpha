@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-585
 status: active
 title: 8.2 本视图的保障机制

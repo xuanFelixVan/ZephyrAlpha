@@ -32,12 +32,20 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 C_TRACK_LAYERS = [
-    "data", "infrastructure.runtime_integration", "factor",
-    "signal", "risk",
-    "pf_core", "ex_core",
-    "pf_core", "frontend",
-    "research", "compliance",
-    "ml_train", "observability", "integration",
+    "data",
+    "infrastructure.runtime_integration",
+    "factor",
+    "signal",
+    "risk",
+    "pf_core",
+    "ex_core",
+    "pf_core",
+    "frontend",
+    "research",
+    "compliance",
+    "ml_train",
+    "observability",
+    "integration",
 ]
 
 THRESHOLD_DOCS_MD_WARN = 5
@@ -69,44 +77,54 @@ def check_docs_modules_scalability(findings: list[dict[str, Any]]) -> None:
     for layer_name in C_TRACK_LAYERS:
         layer_dir = docs_modules / layer_name
         if not layer_dir.exists():
-            findings.append({
-                "path": str(layer_dir),
-                "issue": "missing_layer_dir",
-                "severity": "ERROR",
-                "msg": f"缺少: {layer_dir}",
-            })
+            findings.append(
+                {
+                    "path": str(layer_dir),
+                    "issue": "missing_layer_dir",
+                    "severity": "ERROR",
+                    "msg": f"缺少: {layer_dir}",
+                }
+            )
             continue
         if has_direct_file(layer_dir, "blueprint.md"):
-            findings.append({
-                "path": str(layer_dir / "blueprint.md"),
-                "issue": "flat_blueprint",
-                "severity": "ERROR",
-                "msg": f"blueprint.md 应在 <module>/ 子目录下,而非层目录平铺 (1500模块不可行)",
-            })
+            findings.append(
+                {
+                    "path": str(layer_dir / "blueprint.md"),
+                    "issue": "flat_blueprint",
+                    "severity": "ERROR",
+                    "msg": "blueprint.md 应在 <module>/ 子目录下,而非层目录平铺 (1500模块不可行)",
+                }
+            )
         md_count = count_direct_items(layer_dir, ".md")
         if md_count >= THRESHOLD_DOCS_MD_ERROR:
-            findings.append({
-                "path": str(layer_dir),
-                "issue": "flat_md",
-                "severity": "ERROR",
-                "msg": f"{md_count} 个直接 .md 文件 (上限 {THRESHOLD_DOCS_MD_ERROR})",
-            })
+            findings.append(
+                {
+                    "path": str(layer_dir),
+                    "issue": "flat_md",
+                    "severity": "ERROR",
+                    "msg": f"{md_count} 个直接 .md 文件 (上限 {THRESHOLD_DOCS_MD_ERROR})",
+                }
+            )
         elif md_count >= THRESHOLD_DOCS_MD_WARN:
-            findings.append({
-                "path": str(layer_dir),
-                "issue": "flat_md",
-                "severity": "WARNING",
-                "msg": f"{md_count} 个直接 .md 文件 (建议上限 {THRESHOLD_DOCS_MD_WARN})",
-            })
+            findings.append(
+                {
+                    "path": str(layer_dir),
+                    "issue": "flat_md",
+                    "severity": "WARNING",
+                    "msg": f"{md_count} 个直接 .md 文件 (建议上限 {THRESHOLD_DOCS_MD_WARN})",
+                }
+            )
 
     all_children = count_direct_items(docs_modules)
     if all_children >= THRESHOLD_DIR_CHILDREN_WARN:
-        findings.append({
-            "path": str(docs_modules),
-            "issue": "dir_size",
-            "severity": "WARNING",
-            "msg": f"{all_children} 个子项 (估算1500模块后可能 >5000)",
-        })
+        findings.append(
+            {
+                "path": str(docs_modules),
+                "issue": "dir_size",
+                "severity": "WARNING",
+                "msg": f"{all_children} 个子项 (估算1500模块后可能 >5000)",
+            }
+        )
 
 
 def check_src_zephyr_scalability(findings: list[dict[str, Any]]) -> None:
@@ -115,38 +133,46 @@ def check_src_zephyr_scalability(findings: list[dict[str, Any]]) -> None:
     for layer_name in C_TRACK_LAYERS:
         layer_dir = src_zephyr / layer_name
         if not layer_dir.exists():
-            findings.append({
-                "path": str(layer_dir),
-                "issue": "missing_layer_dir",
-                "severity": "ERROR",
-                "msg": f"缺少: {layer_dir}",
-            })
+            findings.append(
+                {
+                    "path": str(layer_dir),
+                    "issue": "missing_layer_dir",
+                    "severity": "ERROR",
+                    "msg": f"缺少: {layer_dir}",
+                }
+            )
             continue
         py_files = [f for f in layer_dir.iterdir() if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"]
         py_count = len(py_files)
         if py_count >= THRESHOLD_SRC_PY_ERROR:
-            findings.append({
-                "path": str(layer_dir),
-                "issue": "flat_py",
-                "severity": "ERROR",
-                "msg": f"{py_count} 个直接 .py 文件 (上限 {THRESHOLD_SRC_PY_ERROR}) -- 应采用 <module>/ 子目录隔离",
-            })
+            findings.append(
+                {
+                    "path": str(layer_dir),
+                    "issue": "flat_py",
+                    "severity": "ERROR",
+                    "msg": f"{py_count} 个直接 .py 文件 (上限 {THRESHOLD_SRC_PY_ERROR}) -- 应采用 <module>/ 子目录隔离",
+                }
+            )
         elif py_count >= THRESHOLD_SRC_PY_WARN:
-            findings.append({
-                "path": str(layer_dir),
-                "issue": "flat_py",
-                "severity": "WARNING",
-                "msg": f"{py_count} 个直接 .py 文件 (建议上限 {THRESHOLD_SRC_PY_WARN}) -- 建议采用 <module>/ 子目录隔离",
-            })
+            findings.append(
+                {
+                    "path": str(layer_dir),
+                    "issue": "flat_py",
+                    "severity": "WARNING",
+                    "msg": f"{py_count} 个直接 .py 文件 (建议上限 {THRESHOLD_SRC_PY_WARN}) -- 建议采用 <module>/ 子目录隔离",
+                }
+            )
 
     all_children = count_direct_items(src_zephyr)
     if all_children >= THRESHOLD_DIR_CHILDREN_WARN:
-        findings.append({
-            "path": str(src_zephyr),
-            "issue": "dir_size",
-            "severity": "WARNING",
-            "msg": f"{all_children} 个子项在 src/zephyr/ 下 (估算1500模块后可能 >3000)",
-        })
+        findings.append(
+            {
+                "path": str(src_zephyr),
+                "issue": "dir_size",
+                "severity": "WARNING",
+                "msg": f"{all_children} 个子项在 src/zephyr/ 下 (估算1500模块后可能 >3000)",
+            }
+        )
 
 
 def main() -> None:

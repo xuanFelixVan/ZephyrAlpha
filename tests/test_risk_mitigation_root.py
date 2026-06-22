@@ -108,11 +108,13 @@ class TestDeadlockDetector:
     def test_retry_with_backoff_eventual_success(self):
         dd = DeadlockDetector(max_retries=3, base_delay=0.01)
         counter = {"n": 0}
+
         def flaky():
             counter["n"] += 1
             if counter["n"] < 3:
                 raise RuntimeError("fail")
             return "ok"
+
         result = dd.retry_with_backoff(flaky)
         assert result == "ok"
 
@@ -173,8 +175,10 @@ class TestSchemaVersionGuard:
 
     def test_check_schema_field(self):
         from pydantic import BaseModel
+
         class TestModel(BaseModel):
             name: str = ""
+
         svg = SchemaVersionGuard()
         result = svg.check_schema_field(TestModel, "name")
         assert isinstance(result, bool)
@@ -265,7 +269,9 @@ class TestProvenanceIntegrityChecker:
     def test_verify_chain_empty_db(self, tmp_path):
         db_path = str(tmp_path / "test_prov.db")
         conn = sqlite3.connect(db_path)
-        conn.execute("CREATE TABLE ai_provenance (id INTEGER, prev_hash TEXT, curr_hash TEXT, module TEXT, field TEXT, old_value TEXT, new_value TEXT, author_agent TEXT)")
+        conn.execute(
+            "CREATE TABLE ai_provenance (id INTEGER, prev_hash TEXT, curr_hash TEXT, module TEXT, field TEXT, old_value TEXT, new_value TEXT, author_agent TEXT)"
+        )
         conn.commit()
         conn.close()
         checker = ProvenanceIntegrityChecker(db_path)
@@ -283,7 +289,9 @@ class TestIncrementalHashVerify:
     def test_empty_db(self, tmp_path):
         db_path = str(tmp_path / "test_inc.db")
         conn = sqlite3.connect(db_path)
-        conn.execute("CREATE TABLE ai_provenance (id INTEGER, prev_hash TEXT, curr_hash TEXT, module TEXT, field TEXT, old_value TEXT, new_value TEXT, author_agent TEXT)")
+        conn.execute(
+            "CREATE TABLE ai_provenance (id INTEGER, prev_hash TEXT, curr_hash TEXT, module TEXT, field TEXT, old_value TEXT, new_value TEXT, author_agent TEXT)"
+        )
         conn.commit()
         conn.close()
         assert incremental_hash_verify(db_path) is True

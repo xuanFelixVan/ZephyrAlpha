@@ -9,14 +9,11 @@ import json
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from zephyr.security.llm_defense.llm_security.behavior_audit_logger import (
     AuditAction,
     AuditEvent,
     AuditLogger,
     AuditQuery,
-    RotationPolicy,
     open_audit_log,
 )
 

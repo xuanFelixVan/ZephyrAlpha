@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.shared.knowledge.ke_structurer import KEType, KEStructurer, KnowledgeEntry, KeStructuredOutput
+from zephyr.shared.knowledge.ke_structurer import KeStructuredOutput, KEStructurer, KEType, KnowledgeEntry
 
 
 class TestKEType:
@@ -233,13 +233,21 @@ class TestKEStructurerSaveAndGet:
     def test_save_appends_to_existing(self, tmp_path):
         s = KEStructurer(data_dir=tmp_path)
         entry1 = KnowledgeEntry(
-            ke_id="KE-1", task_id="T-1", ke_type=KEType.INSIGHT,
-            content_snippet="first", source_file="a.py", priority="P2",
+            ke_id="KE-1",
+            task_id="T-1",
+            ke_type=KEType.INSIGHT,
+            content_snippet="first",
+            source_file="a.py",
+            priority="P2",
             created_at="2026-01-01T00:00:00Z",
         )
         entry2 = KnowledgeEntry(
-            ke_id="KE-2", task_id="T-2", ke_type=KEType.INSIGHT,
-            content_snippet="second", source_file="b.py", priority="P1",
+            ke_id="KE-2",
+            task_id="T-2",
+            ke_type=KEType.INSIGHT,
+            content_snippet="second",
+            source_file="b.py",
+            priority="P1",
             created_at="2026-01-01T00:00:00Z",
         )
         s.save_entries([entry1])
@@ -264,9 +272,14 @@ class TestKEStructurerSaveAndGet:
         s = KEStructurer(data_dir=tmp_path)
         entries = [
             KnowledgeEntry(
-                ke_id="KE-1", task_id="T-1", ke_type=KEType.INSIGHT,
-                content_snippet="test", source_file="a.py", priority="P2",
-                created_at="2026-01-01T00:00:00Z", tags=["x"],
+                ke_id="KE-1",
+                task_id="T-1",
+                ke_type=KEType.INSIGHT,
+                content_snippet="test",
+                source_file="a.py",
+                priority="P2",
+                created_at="2026-01-01T00:00:00Z",
+                tags=["x"],
             ),
         ]
         s.save_entries(entries)

@@ -20,11 +20,10 @@
 # [TESTS]
 
 # ==== BEGIN CODGEN:CTR-ERR-006 ====
-from dataclasses import dataclass, field
-
-from typing import Optional
+from dataclasses import dataclass
 
 from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -49,6 +48,7 @@ AI Prompt
     当 ContractEnforcer 装饰器检测到数据不符合 CRT 契约定义时，MUST 抛出 ContractViolationError。 你的代码不需要手动抛出这个错误——ContractEnforcer 自动完成。 如果你收到这个错误，说明上游传递的数据格式不符合 YAML 契约定义——检查数据来源，而不是修改校验逻辑。
 """
 
+
 @dataclass(frozen=True)
 class ContractViolationError:
     contract_id: str
@@ -58,223 +58,11 @@ class ContractViolationError:
     idempotency_key: str
     idempotency_key: str
     violation_type: str
-    actual_type: Optional[str] = None
-    expected_type: Optional[str] = None
-    field_name: Optional[str] = None
+    actual_type: str | None = None
+    expected_type: str | None = None
+    field_name: str | None = None
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-ERR-006 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

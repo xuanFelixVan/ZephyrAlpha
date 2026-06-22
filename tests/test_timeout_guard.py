@@ -13,9 +13,6 @@
 from __future__ import annotations
 
 import time
-import threading
-
-import pytest
 
 from zephyr.governance.timeout_guard import (
     DEFAULT_TIMEOUTS,

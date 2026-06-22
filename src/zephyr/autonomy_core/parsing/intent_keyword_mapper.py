@@ -39,7 +39,6 @@ Data contract ( section 4.3):
 
 from __future__ import annotations
 
-
 import re
 import time
 from enum import Enum
@@ -51,8 +50,8 @@ from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "IntentDomain",
-    "IntentResult",
     "IntentKeywordMapper",
+    "IntentResult",
     "StageLiteral",
 ]
 
@@ -300,7 +299,7 @@ _WORD_BOUNDARY_CACHE: dict[str, re.Pattern[str]] = {}
 
 
 class IntentDomain(str, Enum):
-    """意图识别域（D0-D9 + UNKNOWN，与 metadata-registry.md §9.2 domain 枚举对齐）。"""
+    """意图识别域（D0-D9 + UNKNOWN，与 metadata_registry.yaml §9.2 domain 枚举对齐）。"""
 
     D0 = "D0"
     D1 = "D1"

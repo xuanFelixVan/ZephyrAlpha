@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_pydantic_v2_migrator.py -q
 
-import pytest
 from zephyr.infrastructure.pydantic_v2_migrator import (
     MigrationFinding,
     MigrationReport,
@@ -41,18 +40,22 @@ class TestMigrationReport:
         assert report.error_files == []
 
     def test_total_findings(self):
-        report = MigrationReport(findings=[
-            MigrationFinding(file_path="a.py", line=1, pattern="x"),
-            MigrationFinding(file_path="b.py", line=2, pattern="y"),
-        ])
+        report = MigrationReport(
+            findings=[
+                MigrationFinding(file_path="a.py", line=1, pattern="x"),
+                MigrationFinding(file_path="b.py", line=2, pattern="y"),
+            ]
+        )
         assert report.total_findings == 2
 
     def test_critical_count(self):
-        report = MigrationReport(findings=[
-            MigrationFinding(file_path="a.py", line=1, pattern="x", severity="critical"),
-            MigrationFinding(file_path="b.py", line=2, pattern="y", severity="high"),
-            MigrationFinding(file_path="c.py", line=3, pattern="z", severity="critical"),
-        ])
+        report = MigrationReport(
+            findings=[
+                MigrationFinding(file_path="a.py", line=1, pattern="x", severity="critical"),
+                MigrationFinding(file_path="b.py", line=2, pattern="y", severity="high"),
+                MigrationFinding(file_path="c.py", line=3, pattern="z", severity="critical"),
+            ]
+        )
         assert report.critical_count == 2
 
 
@@ -104,10 +107,7 @@ class TestPydanticV2Migrator:
     def test_scan_finds_validator(self, tmp_path):
         test_file = tmp_path / "validators.py"
         test_file.write_text(
-            "from pydantic import validator\n\n"
-            "@validator('name')\n"
-            "def validate_name(cls, v):\n"
-            "    return v\n",
+            "from pydantic import validator\n\n@validator('name')\ndef validate_name(cls, v):\n    return v\n",
             encoding="utf-8",
         )
         migrator = PydanticV2Migrator()
@@ -148,9 +148,11 @@ class TestPydanticV2Migrator:
 
     def test_generate_migration_checklist_with_findings(self):
         migrator = PydanticV2Migrator()
-        report = MigrationReport(findings=[
-            MigrationFinding(file_path="a.py", line=1, pattern="x", severity="high"),
-        ])
+        report = MigrationReport(
+            findings=[
+                MigrationFinding(file_path="a.py", line=1, pattern="x", severity="high"),
+            ]
+        )
         checklist = migrator.generate_migration_checklist(report)
         assert any("1" in item for item in checklist)
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/rebuild_progress.py | §9.3
 [MODULE] 无（独立脚本）
@@ -17,8 +16,9 @@ P1-2 从任务卡DB重建进度文件
 
 说明：本脚本从DB生成实时摘要，governance.db任务卡表为权威记录。
 """
-import sqlite3
+
 import os
+import sqlite3
 import sys
 from datetime import datetime
 
@@ -63,11 +63,9 @@ def main():
             dconn = sqlite3.connect(DEPGRAPH_DB)
             node_count = dconn.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
             edge_count = dconn.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
-            design_nodes = dconn.execute(
-                "SELECT COUNT(*) FROM nodes WHERE design_maturity='design'"
-            ).fetchone()[0]
+            design_nodes = dconn.execute("SELECT COUNT(*) FROM nodes WHERE design_maturity='design'").fetchone()[0]
             dconn.close()
-            print(f"\n[depgraph.db 状态]")
+            print("\n[depgraph.db 状态]")
             print(f"  节点总数: {node_count}")
             print(f"  边总数: {edge_count}")
             print(f"  设计态节点: {design_nodes}")

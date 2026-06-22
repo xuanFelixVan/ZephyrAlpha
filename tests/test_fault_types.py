@@ -12,7 +12,6 @@ import pytest
 from zephyr.trading.orchestrator.fault_types import (
     DataCorruptionFault,
     ExceptionFault,
-    FaultHandler,
     FaultTypeNotFoundError,
     FaultTypeRegistry,
     LatencyFault,

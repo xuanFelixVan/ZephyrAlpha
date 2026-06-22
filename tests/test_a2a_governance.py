@@ -10,16 +10,12 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_a2a_governance.py -q
 
-from unittest.mock import MagicMock, patch
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.governance.governance_adapter import (
     A2AGovernanceRecord,
     GovernanceAdapter,
 )
 from zephyr.infrastructure.a2a_protocol.governance.phase_hold import (
-    PHASE_HOLD_ACTIVE,
-    PHASE_HOLD_REASON,
     Phase4Hold,
 )
 from zephyr.infrastructure.a2a_protocol.governance.protocol import (

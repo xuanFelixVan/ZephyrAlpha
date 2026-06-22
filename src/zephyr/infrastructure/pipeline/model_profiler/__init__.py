@@ -29,6 +29,7 @@ Quickstart
     from zephyr.intelligence.model_profiling.pipeline.results_writer import write_benchmark_results
     write_benchmark_results(results, "data/model_profiles/")
 """
+
 from . import cli
 
 _LAZY_SYMBOLS = {
@@ -61,8 +62,10 @@ _LAZY_SUBMODULES = [
     "task_model_learner",
 ]
 
+
 def __getattr__(name: str):
     import importlib
+
     if name in _LAZY_SUBMODULES:
         mod = importlib.import_module(f"zephyr.intelligence.model_profiling.pipeline.{name}")
         globals()[name] = mod
@@ -74,29 +77,30 @@ def __getattr__(name: str):
         return value
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-    'ALL_BENCHMARK_CASES',
-    'BenchmarkCase',
-    'CATEGORY_MAP',
-    'CaseResult',
-    'DEFAULT_OLLAMA_URL',
-    'DiscoveredModel',
-    'MAX_OLLAMA_MODELS',
-    'ModelDiscovery',
-    'ModelProfile',
-    'ModelProfiler',
-    'ModelTaskEntry',
-    'ModelTaskMatrix',
-    'SKIP_MODEL_PATTERNS',
-    'TaskRecommendation',
-    'benchmark_suite',
-    'capability_passport',
-    'cli',
-    'deepseek_v4_chat',
-    'exam_orchestrator',
-    'exam_test_cases',
-    'model_discovery',
-    'profiler',
-    'results_writer',
-    'task_model_learner',
+    "ALL_BENCHMARK_CASES",
+    "CATEGORY_MAP",
+    "DEFAULT_OLLAMA_URL",
+    "MAX_OLLAMA_MODELS",
+    "SKIP_MODEL_PATTERNS",
+    "BenchmarkCase",
+    "CaseResult",
+    "DiscoveredModel",
+    "ModelDiscovery",
+    "ModelProfile",
+    "ModelProfiler",
+    "ModelTaskEntry",
+    "ModelTaskMatrix",
+    "TaskRecommendation",
+    "benchmark_suite",
+    "capability_passport",
+    "cli",
+    "deepseek_v4_chat",
+    "exam_orchestrator",
+    "exam_test_cases",
+    "model_discovery",
+    "profiler",
+    "results_writer",
+    "task_model_learner",
 ]

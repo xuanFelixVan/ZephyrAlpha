@@ -3,16 +3,21 @@
 
 RISKY_BUILD_PATTERNS = None  # stub constant
 
+
 class BuildSanitizeResult:
     """Stub class — implementation pending."""
+
     pass
+
 
 class BuildSanitizer:
     """Stub class — implementation pending."""
+
     pass
 
+
 __all__ = [
+    "RISKY_BUILD_PATTERNS",
     "BuildSanitizeResult",
     "BuildSanitizer",
-    "RISKY_BUILD_PATTERNS",
 ]

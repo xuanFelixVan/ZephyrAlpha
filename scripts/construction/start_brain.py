@@ -1,13 +1,13 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.start_brain
-# [INVARIANTS] 
-# [MODIFY-GUARD] 
-# [CONSUMERS] 
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 start_brain.py — ZephyrAlpha 系统大脑一键启动
 ===============================================
@@ -29,9 +29,9 @@ import sys
 import time
 from pathlib import Path
 
+from zephyr.infrastructure.config.runtime_config import RuntimeConfig
 from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
 from zephyr.infrastructure.runtime.auto_task_generator import AutoTaskGenerator
-from zephyr.infrastructure.config.runtime_config import RuntimeConfig
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 
@@ -101,13 +101,13 @@ def main() -> None:
                 ts = time.strftime("%H:%M:%S")
                 pending = core._local_scheduler.pending_count if core._local_scheduler else 0
                 sched_stats = core._local_scheduler.stats if core._local_scheduler else {}
-                orphan_pct = report.orphan_rate * 100 if hasattr(report, 'orphan_rate') else 0
+                orphan_pct = report.orphan_rate * 100 if hasattr(report, "orphan_rate") else 0
 
                 line = (
                     f"[{ts}] c={cycle:>3} | "
                     f"active={report.active} orphan={orphan_pct:.0f}% | "
                     f"gen={submitted} pending={pending} | "
-                    f"done={sched_stats.get('completed',0)} fail={sched_stats.get('failed',0)}"
+                    f"done={sched_stats.get('completed', 0)} fail={sched_stats.get('failed', 0)}"
                 )
                 print(line)
 
@@ -121,11 +121,13 @@ def main() -> None:
                 print(f"[WARN] {e}")
 
     core.shutdown()
-    print(f"\n[OK] 关闭完成")
+    print("\n[OK] 关闭完成")
     print("Goodbye.")
 
 
-def _run_cycle(core: AutoRuntimeCore, generator: AutoTaskGenerator | None, args: argparse.Namespace, cycle: int) -> None:
+def _run_cycle(
+    core: AutoRuntimeCore, generator: AutoTaskGenerator | None, args: argparse.Namespace, cycle: int
+) -> None:
     if not args.no_onboard:
         _auto_onboard(core)
     if generator and not args.no_generate and core._local_scheduler is not None:
@@ -158,12 +160,12 @@ def _auto_onboard(core: AutoRuntimeCore) -> None:
 def _print_brief(core: AutoRuntimeCore, generator: AutoTaskGenerator | None, report, cycle: int) -> None:
     gen_stats = generator.stats if generator else {}
     sched_stats = core._local_scheduler.stats if core._local_scheduler else {}
-    orphan_pct = report.orphan_rate * 100 if hasattr(report, 'orphan_rate') else 0
+    orphan_pct = report.orphan_rate * 100 if hasattr(report, "orphan_rate") else 0
     print(f"\n调和: active={report.active} orphan={orphan_pct:.0f}%")
     if gen_stats:
-        print(f"生成: {gen_stats.get('generated',0)} 提交: {gen_stats.get('submitted',0)}")
+        print(f"生成: {gen_stats.get('generated', 0)} 提交: {gen_stats.get('submitted', 0)}")
     if sched_stats:
-        print(f"调度: done={sched_stats.get('completed',0)} fail={sched_stats.get('failed',0)}")
+        print(f"调度: done={sched_stats.get('completed', 0)} fail={sched_stats.get('failed', 0)}")
 
 
 if __name__ == "__main__":

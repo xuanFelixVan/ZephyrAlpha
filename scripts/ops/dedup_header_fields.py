@@ -7,9 +7,16 @@ from pathlib import Path
 SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 
 FIELD_NAMES = [
-    "BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD",
-    "CONSUMERS", "STABILITY", "SAFETY", "AI_AUTONOMY",
-    "ERROR_CONTRACT", "TESTS",
+    "BLUEPRINT",
+    "MODULE",
+    "INVARIANTS",
+    "MODIFY-GUARD",
+    "CONSUMERS",
+    "STABILITY",
+    "SAFETY",
+    "AI_AUTONOMY",
+    "ERROR_CONTRACT",
+    "TESTS",
 ]
 
 COMMENT_FIELD_RE = re.compile(r"^#\s*\[(\w[\w-]*)\]\s*(.*)")
@@ -40,7 +47,7 @@ def is_default_value(field_name, value):
 def process_file(filepath: Path):
     global files_fixed
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     original = content
@@ -81,9 +88,7 @@ def process_file(filepath: Path):
                     best_value = value
                     global values_restored
                     values_restored += 1
-                elif not best_is_default and curr_is_default:
-                    lines_to_remove.add(idx)
-                elif not best_is_default and not curr_is_default:
+                elif (not best_is_default and curr_is_default) or (not best_is_default and not curr_is_default):
                     lines_to_remove.add(idx)
                 else:
                     lines_to_remove.add(idx)

@@ -29,4 +29,4 @@ zephyr.shared.protocols.a2a.a2a_protocol.
 
 from __future__ import annotations
 
-from zephyr.shared.protocols.a2a.a2a_protocol import MessageType, A2ACommunication  # noqa: F401
+from zephyr.shared.protocols.a2a.a2a_protocol import A2ACommunication, MessageType  # noqa: F401

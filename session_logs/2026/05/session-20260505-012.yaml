@@ -255,11 +255,10 @@ body: |
 
     - docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml（v1.4）
 
-  - **注**: 
+  - **注**:
 
     1. ADR 物理文件已全删——要读 ADR 内容，需通过 KbRepo.get("ADR-NNNN") 或 KB.search()
 
     2. 蓝图对 ADR 的引用（74+ 处）全部通过 ID（"ADR-NNNN"），迁移后零影响
 
     3. 迁移脚本 scripts/governance/adr_to_kb_migration.py 保留为工具，支持 --dry-run / --verify-only / --cleanup-only
-

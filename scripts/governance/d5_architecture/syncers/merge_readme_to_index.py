@@ -8,6 +8,7 @@ Strategy:
 - README.md provides richer human-written description/intro
 - Result: unified index.md with the best of both
 """
+
 from __future__ import annotations
 
 import os
@@ -40,7 +41,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter
 

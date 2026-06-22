@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-007 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.portfolio.contracts.money
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 """
 ZephyrAlpha — shared/contracts/money.py
 
@@ -92,6 +83,7 @@ _CURRENCY_PRECISION: dict[str, int] = {
 扩展方式：新增货币时在此表添加，同时更新 instrument.CurrencyCode Literal。
 """
 
+
 def get_currency_precision(currency: str) -> int:
     """
     查询货币精度（小数位数）。
@@ -109,19 +101,24 @@ def get_currency_precision(currency: str) -> int:
         return 2
     return _CURRENCY_PRECISION[currency]
 
+
 # ═══════════════════════════════════════════════════════════════════
 # 异常类
 # ═══════════════════════════════════════════════════════════════════
 
+
 class MoneyPrecisionError(ValueError):
     """金额精度错误（如试图用 float 构造 Money）。"""
+
 
 class MoneyCurrencyMismatchError(ValueError):
     """币种不匹配错误（如 CNY Money 与 USD Money 直接相加）。"""
 
+
 # ═══════════════════════════════════════════════════════════════════
 # Money 值对象
 # ═══════════════════════════════════════════════════════════════════
+
 
 @dataclass(frozen=True)
 class Money:
@@ -179,7 +176,7 @@ class Money:
         # 禁止 float 进入
         if isinstance(self.amount, float):
             raise MoneyPrecisionError(
-                f"Money.amount 禁止使用 float（{self.amount}），" ' 请用 str 或 Decimal 构造：Money("1234.56", "CNY")'
+                f'Money.amount 禁止使用 float（{self.amount}）， 请用 str 或 Decimal 构造：Money("1234.56", "CNY")'
             )
 
         # int / str / Decimal → Decimal（frozen=True 下用 object.__setattr__ 绕过）
@@ -202,7 +199,7 @@ class Money:
     def _check_same_currency(self, other: Money) -> None:
         if self.currency != other.currency:
             raise MoneyCurrencyMismatchError(
-                f"币种不匹配：{self.currency} vs {other.currency}。" " 请先用 FXRateProvider 换算到相同货币后再运算。"
+                f"币种不匹配：{self.currency} vs {other.currency}。 请先用 FXRateProvider 换算到相同货币后再运算。"
             )
 
     def __add__(self, other: Money) -> Self:
@@ -283,4 +280,5 @@ class Money:
     def is_negative(self) -> bool:
         return self.amount < 0
 
-__all__ = ["get_currency_precision", "MoneyPrecisionError", "MoneyCurrencyMismatchError", "Money"]
+
+__all__ = ["Money", "MoneyCurrencyMismatchError", "MoneyPrecisionError", "get_currency_precision"]

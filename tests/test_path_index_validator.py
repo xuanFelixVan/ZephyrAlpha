@@ -9,10 +9,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.path_index_validator import (
-    PathIndexValidator, PathMismatch,
+    PathIndexValidator,
 )
+
 
 class TestPathIndexValidator:
     def test_instantiation(self):

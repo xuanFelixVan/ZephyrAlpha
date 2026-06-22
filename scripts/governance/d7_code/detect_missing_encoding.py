@@ -16,6 +16,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: open() 缺 encoding 检测（ABS-24 — Python写文件必须指定encoding='utf-8'）
@@ -43,6 +44,7 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 
 import argparse
+
 
 def check_open_encoding(filepath: Path) -> list[dict]:
     """检查 open() 调用缺少 encoding."""
@@ -96,6 +98,7 @@ def check_open_encoding(filepath: Path) -> list[dict]:
     return findings
     """检查 open() 调用缺少 encoding."""
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="open() 缺 encoding 检测（ABS-24）")
@@ -130,6 +133,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
+
 
 if __name__ == "__main__":
     main()

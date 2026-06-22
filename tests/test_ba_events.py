@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] 定义所有漂移事件类型
 # [TESTS] tests/test_ba_events.py
 
-import pytest
 
 from zephyr.shared.shared_services.events import (
     DriftEvent,

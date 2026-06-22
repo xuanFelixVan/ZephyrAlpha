@@ -20,6 +20,7 @@ __manifest__ = {
 }
 
 from __future__ import annotations
+
 import argparse
 import json
 import re
@@ -122,7 +123,7 @@ def check_module(module_relative: str, import_map: dict[str, list[str]]) -> dict
         if file_path.exists():
             stat = file_path.stat()
             size = stat.st_size
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            with open(file_path, encoding="utf-8", errors="ignore") as f:
                 head = f.read(500)
             has_blueprint = "[BLUEPRINT]" in head or "[MODULE]" in head
             has_class_or_def = bool(re.search(r"^(class|def)\s+\w+", head, re.MULTILINE))
@@ -171,7 +172,7 @@ def main() -> None:
         result["category"] = classify(result)
         results.append(result)
         if (i + 1) % 100 == 0:
-            print(f"  进度: {i+1}/{len(orphans)}")
+            print(f"  进度: {i + 1}/{len(orphans)}")
 
     # 按相对路径排序
     results.sort(key=lambda x: x["relative"])
@@ -217,11 +218,17 @@ def main() -> None:
         print(f"\nJSON 已写入: {out_path}")
     else:
         print("\n--- 分类统计 JSON ---")
-        print(json.dumps({
-            "total": len(results),
-            "categories": category_counts,
-            "domain_categories": domain_category,
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "total": len(results),
+                    "categories": category_counts,
+                    "domain_categories": domain_category,
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
 
 
 if __name__ == "__main__":

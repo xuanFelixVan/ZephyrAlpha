@@ -15,7 +15,6 @@
 禁碰规则过滤 + 置信度阈值。输入 TriggerResult 列表,输出 SafetyDecision 分类。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -28,8 +27,8 @@ from zephyr.governance.semantic_audit.models import SafetyDecision, TriggerResul
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "SafetyBoundary",
     "FilteredTrigger",
+    "SafetyBoundary",
 ]
 
 _FORBIDDEN_PATTERNS_PATH = Path(__file__).parent / "forbidden_patterns.yaml"
@@ -60,7 +59,10 @@ class SafetyBoundary:
             if decision != SafetyDecision.PROCEED:
                 logger.debug(
                     "Trigger %s:%s → %s (certainty=%.2f)",
-                    t.trigger_type, t.target_location, decision, t.certainty,
+                    t.trigger_type,
+                    t.target_location,
+                    decision,
+                    t.certainty,
                 )
         return results
 

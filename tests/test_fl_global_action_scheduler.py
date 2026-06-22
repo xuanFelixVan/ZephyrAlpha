@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.actors.global_action_scheduler import (
     ActionState,
     GlobalActionScheduler,

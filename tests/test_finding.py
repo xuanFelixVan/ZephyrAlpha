@@ -63,15 +63,22 @@ class TestRemediationAction:
 class TestLifecycleStatus:
     def test_all_values(self):
         expected = [
-            "OPEN", "IN_PROGRESS", "FIXED", "VERIFIED",
-            "FALSE_POSITIVE", "WONTFIX", "ACCEPTED_RISK",
-            "CLOSED", "OVERDUE", "DEFERRED",
+            "OPEN",
+            "IN_PROGRESS",
+            "FIXED",
+            "VERIFIED",
+            "FALSE_POSITIVE",
+            "WONTFIX",
+            "ACCEPTED_RISK",
+            "CLOSED",
+            "OVERDUE",
+            "DEFERRED",
         ]
         for v in expected:
             assert fmod.LifecycleStatus(v).value == v
 
     def test_lifecycle_status_values_tuple(self):
-        assert fmod.LIFECYCLE_STATUS_VALUES == tuple(m.value for m in fmod.LifecycleStatus)
+        assert tuple(m.value for m in fmod.LifecycleStatus) == fmod.LIFECYCLE_STATUS_VALUES
         assert len(fmod.LIFECYCLE_STATUS_VALUES) == 10
 
 
@@ -255,70 +262,84 @@ class TestFindingCollection:
 
     def test_by_dimension(self):
         fc = fmod.FindingCollection()
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D3,
-            severity=fmod.Severity.HIGH,
-            category="test",
-            target_file="a.py",
-            description="d3 finding",
-        ))
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D6,
-            severity=fmod.Severity.CRITICAL,
-            category="test",
-            target_file="b.py",
-            description="d6 finding",
-        ))
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D3,
+                severity=fmod.Severity.HIGH,
+                category="test",
+                target_file="a.py",
+                description="d3 finding",
+            )
+        )
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D6,
+                severity=fmod.Severity.CRITICAL,
+                category="test",
+                target_file="b.py",
+                description="d6 finding",
+            )
+        )
         d3 = fc.by_dimension(fmod.Dimension.D3)
         assert d3.total == 1
 
     def test_by_severity(self):
         fc = fmod.FindingCollection()
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D3,
-            severity=fmod.Severity.CRITICAL,
-            category="test",
-            target_file="a.py",
-            description="crit",
-        ))
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D3,
-            severity=fmod.Severity.LOW,
-            category="test",
-            target_file="b.py",
-            description="low",
-        ))
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D3,
+                severity=fmod.Severity.CRITICAL,
+                category="test",
+                target_file="a.py",
+                description="crit",
+            )
+        )
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D3,
+                severity=fmod.Severity.LOW,
+                category="test",
+                target_file="b.py",
+                description="low",
+            )
+        )
         crit = fc.by_severity(fmod.Severity.CRITICAL)
         assert crit.total == 1
 
     def test_critical_only(self):
         fc = fmod.FindingCollection()
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D3,
-            severity=fmod.Severity.CRITICAL,
-            category="test",
-            target_file="a.py",
-            description="crit",
-        ))
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D3,
-            severity=fmod.Severity.LOW,
-            category="test",
-            target_file="b.py",
-            description="low",
-        ))
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D3,
+                severity=fmod.Severity.CRITICAL,
+                category="test",
+                target_file="a.py",
+                description="crit",
+            )
+        )
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D3,
+                severity=fmod.Severity.LOW,
+                category="test",
+                target_file="b.py",
+                description="low",
+            )
+        )
         crit = fc.critical_only()
         assert crit.total == 1
 
     def test_summary(self):
         fc = fmod.FindingCollection()
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D3,
-            severity=fmod.Severity.HIGH,
-            category="test",
-            target_file="a.py",
-            description="test",
-        ))
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D3,
+                severity=fmod.Severity.HIGH,
+                category="test",
+                target_file="a.py",
+                description="test",
+            )
+        )
         s = fc.summary()
         assert s["total"] == 1
         assert s["by_severity"]["HIGH"] == 1
@@ -326,13 +347,15 @@ class TestFindingCollection:
 
     def test_to_jsonl(self):
         fc = fmod.FindingCollection()
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D3,
-            severity=fmod.Severity.HIGH,
-            category="test",
-            target_file="a.py",
-            description="test",
-        ))
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D3,
+                severity=fmod.Severity.HIGH,
+                category="test",
+                target_file="a.py",
+                description="test",
+            )
+        )
         jsonl = fc.to_jsonl()
         assert jsonl.endswith("\n")
 
@@ -351,16 +374,18 @@ class TestFindingCollection:
 
     def test_write_jsonl(self, tmp_path):
         fc = fmod.FindingCollection()
-        fc.add(fmod.Finding(
-            dimension=fmod.Dimension.D3,
-            severity=fmod.Severity.HIGH,
-            category="test",
-            target_file="a.py",
-            description="test",
-        ))
+        fc.add(
+            fmod.Finding(
+                dimension=fmod.Dimension.D3,
+                severity=fmod.Severity.HIGH,
+                category="test",
+                target_file="a.py",
+                description="test",
+            )
+        )
         out_path = str(tmp_path / "findings.jsonl")
         fc.write_jsonl(out_path)
-        with open(out_path, "r", encoding="utf-8") as fh:
+        with open(out_path, encoding="utf-8") as fh:
             content = fh.read()
         assert "D3" in content
 

@@ -17,8 +17,8 @@ import pytest
 
 from zephyr.ops.metrics_collector import (
     EMABaseline,
-    MetricSnapshot,
     MetricsCollector,
+    MetricSnapshot,
 )
 
 
@@ -175,18 +175,29 @@ class TestMetricsCollector:
 
     def test_collect_z_scores_bounded_with_natural_variance(self):
         import random
+
         random.seed(42)
         collector = MetricsCollector()
         for _ in range(50):
             cpu = 50.0 + random.gauss(0, 2.0)
             mem = 60.0 + random.gauss(0, 2.0)
             collector.collect(
-                _make_snapshot(system_cpu=cpu, memory_usage_pct=mem, disk_io_wait=5.0,
-                               network_errors_count=0, detection_latency_ms=100.0)
+                _make_snapshot(
+                    system_cpu=cpu,
+                    memory_usage_pct=mem,
+                    disk_io_wait=5.0,
+                    network_errors_count=0,
+                    detection_latency_ms=100.0,
+                )
             )
         result = collector.collect(
-            _make_snapshot(system_cpu=50.0, memory_usage_pct=60.0, disk_io_wait=5.0,
-                           network_errors_count=0, detection_latency_ms=100.0)
+            _make_snapshot(
+                system_cpu=50.0,
+                memory_usage_pct=60.0,
+                disk_io_wait=5.0,
+                network_errors_count=0,
+                detection_latency_ms=100.0,
+            )
         )
         assert result["z_scores"]["system_cpu"] < 10.0
         assert result["z_scores"]["memory_usage_pct"] < 10.0

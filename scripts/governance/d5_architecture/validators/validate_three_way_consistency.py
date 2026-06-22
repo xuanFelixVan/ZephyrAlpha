@@ -17,7 +17,9 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -42,7 +44,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import GOV_DOCS_DIR, REPO_ROOT, SCAN_EXTENSIONS_MD, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.frontmatter import parse_frontmatter_raw_from_file
 from _shared.walk import iter_files
 
@@ -185,14 +187,14 @@ def main() -> None:
     print(f"  frontmatter ≠ registry: {len(fm_reg)}", file=sys.stderr)
     print(f"  blockquote ≠ registry: {len(bq_reg)}", file=sys.stderr)
     for f in fm_bq[:10]:
-        print(f'\n  [{f['severity']}] {f['file']}', file=sys.stderr)
-        print(f'     {f['violation']}', file=sys.stderr)
+        print(f"\n  [{f['severity']}] {f['file']}", file=sys.stderr)
+        print(f"     {f['violation']}", file=sys.stderr)
     for f in fm_reg[:10]:
-        print(f'\n  [{f['severity']}] {f['file']}', file=sys.stderr)
-        print(f'     {f['violation']}', file=sys.stderr)
+        print(f"\n  [{f['severity']}] {f['file']}", file=sys.stderr)
+        print(f"     {f['violation']}", file=sys.stderr)
     for f in bq_reg[:10]:
-        print(f'\n  [{f['severity']}] {f['file']}', file=sys.stderr)
-        print(f'     {f['violation']}', file=sys.stderr)
+        print(f"\n  [{f['severity']}] {f['file']}", file=sys.stderr)
+        print(f"     {f['violation']}", file=sys.stderr)
     hidden = total - min(10, len(fm_bq)) - min(10, len(fm_reg)) - min(10, len(bq_reg))
     if hidden > 0:
         print(f"\n  ... 和 {hidden} 个更多不一致（limit=10/类别）", file=sys.stderr)

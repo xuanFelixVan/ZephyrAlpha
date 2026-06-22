@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-4068
 title: 15. 关键关联
 category: module_blueprint
@@ -10,7 +10,7 @@ category: module_blueprint
 
 | 关联文档 | 说明 |
 |---------|------|
-| `ai-autonomy-authority-registry.md` | 新组件权限的单一真源 |
+| `ai_autonomy_authority_registry.yaml` | 新组件权限的单一真源 |
 | `vibe-coding-pipelines/blueprint.md` | 双管线 + 脚本系统蓝图 |
 | `context-engine/blueprint.md` | Token 预算管理器（context_budget_tracker.py）的归属蓝图 |
 | `gate-engine/blueprint.md` | 熔断器（circuit_breaker.py）的归属蓝图 |

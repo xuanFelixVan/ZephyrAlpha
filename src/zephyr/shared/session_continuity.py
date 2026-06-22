@@ -41,17 +41,16 @@ Vibe Coding 最大痛点：AI 每次新 session 是零记忆的。
     sc.print_restore_summary()
 """
 
-
 from __future__ import annotations
 
 import json
 import sqlite3
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-__all__ = ["SessionContinuity", "SessionState", "ContinuityContext"]
+__all__ = ["ContinuityContext", "SessionContinuity", "SessionState"]
 
 
 @dataclass
@@ -73,14 +72,18 @@ class ContinuityContext:
     remaining_cards: list[str] = field(default_factory=list)
     next_action: str = ""
 
+
 _DEFAULT_DB: Path | None = None
+
 
 def _get_default_db() -> Path:
     global _DEFAULT_DB
     if _DEFAULT_DB is None:
         from zephyr.shared.registry import ServiceRegistry
+
         _DEFAULT_DB = ServiceRegistry.get("db_path")
     return _DEFAULT_DB
+
 
 _DDL_HANDOFFS = """
 CREATE TABLE IF NOT EXISTS handoffs (
@@ -97,6 +100,7 @@ CREATE TABLE IF NOT EXISTS handoffs (
     created_at       TEXT NOT NULL
 )
 """
+
 
 class SessionContinuity:
     """Session 交接包自动生成与恢复"""
@@ -129,21 +133,28 @@ class SessionContinuity:
 
     def save_session_state(self, state: SessionState) -> Path:
         if not state.timestamp_utc:
-            state.timestamp_utc = datetime.now(timezone.utc).isoformat()
+            state.timestamp_utc = datetime.now(UTC).isoformat()
         state_dir = self._project_root / "data" / "session_states"
         state_dir.mkdir(parents=True, exist_ok=True)
         state_path = state_dir / f"{state.session_id}.json"
-        state_path.write_text(json.dumps({
-            "session_id": state.session_id,
-            "dialogue_number": state.dialogue_number,
-            "current_layer": state.current_layer,
-            "cards_completed": state.cards_completed,
-            "cards_failed": state.cards_failed,
-            "last_checkpoint_json": state.last_checkpoint_json,
-            "last_journal_line": state.last_journal_line,
-            "timestamp_utc": state.timestamp_utc,
-            "metadata": state.metadata,
-        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        state_path.write_text(
+            json.dumps(
+                {
+                    "session_id": state.session_id,
+                    "dialogue_number": state.dialogue_number,
+                    "current_layer": state.current_layer,
+                    "cards_completed": state.cards_completed,
+                    "cards_failed": state.cards_failed,
+                    "last_checkpoint_json": state.last_checkpoint_json,
+                    "last_journal_line": state.last_journal_line,
+                    "timestamp_utc": state.timestamp_utc,
+                    "metadata": state.metadata,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
 
         conn = self._get_conn()
         conn.execute(
@@ -202,19 +213,26 @@ class SessionContinuity:
             next_action=next_action,
         )
 
-    def generate_and_save(self, session_id: str = "", task_repo: object | None = None, *, cards_completed: list[str] | None = None, cards_failed: list[str] | None = None) -> Any:
+    def generate_and_save(
+        self,
+        session_id: str = "",
+        task_repo: object | None = None,
+        *,
+        cards_completed: list[str] | None = None,
+        cards_failed: list[str] | None = None,
+    ) -> Any:
         if cards_completed is not None or cards_failed is not None:
             state = SessionState(
                 session_id=session_id,
                 cards_completed=cards_completed or [],
                 cards_failed=cards_failed or [],
-                timestamp_utc=datetime.now(timezone.utc).isoformat(),
+                timestamp_utc=datetime.now(UTC).isoformat(),
             )
             path = self.save_session_state(state)
             return path
         if task_repo is not None:
             return self._generate_and_save_legacy(session_id, task_repo)
-        state = SessionState(session_id=session_id, timestamp_utc=datetime.now(timezone.utc).isoformat())
+        state = SessionState(session_id=session_id, timestamp_utc=datetime.now(UTC).isoformat())
         return self.save_session_state(state)
 
     def _generate_and_save_legacy(self, session_id: str, task_repo: object) -> dict:
@@ -233,8 +251,15 @@ class SessionContinuity:
         next_actions = []
 
         all_statuses = [
-            "COMPLETED", "VERIFIED", "IN_PROGRESS", "BLOCKED",
-            "READY", "RETRY", "PENDING", "WAITING", "FAILED",
+            "COMPLETED",
+            "VERIFIED",
+            "IN_PROGRESS",
+            "BLOCKED",
+            "READY",
+            "RETRY",
+            "PENDING",
+            "WAITING",
+            "FAILED",
         ]
 
         for st in all_statuses:
@@ -254,29 +279,31 @@ class SessionContinuity:
                                 dls = json.loads(dls)
                             except (json.JSONDecodeError, TypeError):
                                 dls = []
-                        in_progress.append({
-                            "task_id": tid,
-                            "step": cs,
-                            "partial_deliverables": dls[:5] if isinstance(dls, list) else [],
-                            "next_step": f"{tid}: {str(title)[:80]}",
-                        })
-                    elif st == "BLOCKED":
-                        waiting = (
-                            t.waiting_for
-                            if hasattr(t, "waiting_for")
-                            else t.get("waiting_for", "")
+                        in_progress.append(
+                            {
+                                "task_id": tid,
+                                "step": cs,
+                                "partial_deliverables": dls[:5] if isinstance(dls, list) else [],
+                                "next_step": f"{tid}: {str(title)[:80]}",
+                            }
                         )
-                        blocked_items.append({
-                            "task_id": tid,
-                            "reason": waiting or "阻塞原因未记录",
-                            "unblock_condition": f"依赖任务就绪或手动解除",
-                        })
+                    elif st == "BLOCKED":
+                        waiting = t.waiting_for if hasattr(t, "waiting_for") else t.get("waiting_for", "")
+                        blocked_items.append(
+                            {
+                                "task_id": tid,
+                                "reason": waiting or "阻塞原因未记录",
+                                "unblock_condition": "依赖任务就绪或手动解除",
+                            }
+                        )
                     elif st in ("READY", "RETRY", "PENDING", "WAITING"):
-                        next_actions.append({
-                            "priority": len(next_actions) + 1,
-                            "action": f"{tid}: {str(title)[:80]}",
-                            "task_ref": tid,
-                        })
+                        next_actions.append(
+                            {
+                                "priority": len(next_actions) + 1,
+                                "action": f"{tid}: {str(title)[:80]}",
+                                "task_ref": tid,
+                            }
+                        )
             except Exception:
                 continue
 
@@ -324,7 +351,7 @@ class SessionContinuity:
                 summary[:500],
                 json.dumps(open_questions, ensure_ascii=False),
                 None,
-                datetime.now(timezone.utc).isoformat(),
+                datetime.now(UTC).isoformat(),
             ),
         )
         conn.commit()
@@ -332,12 +359,15 @@ class SessionContinuity:
 
         self._write_yaml_handoff(handoff)
 
-        write_to_core("session_handoff", {
-            "session_id": session_id,
-            "completed": len(completed),
-            "in_progress": len(in_progress),
-            "blocked": len(blocked_items),
-        })
+        write_to_core(
+            "session_handoff",
+            {
+                "session_id": session_id,
+                "completed": len(completed),
+                "in_progress": len(in_progress),
+                "blocked": len(blocked_items),
+            },
+        )
 
         self._auto_sync_registries()
 
@@ -360,12 +390,14 @@ class SessionContinuity:
                     payload = json.loads(r["payload"]) if isinstance(r["payload"], str) else {}
                 except (json.JSONDecodeError, TypeError):
                     payload = {}
-                decisions.append({
-                    "type": r["event_type"],
-                    "detail": payload.get("action", r["event_type"]),
-                    "timestamp": r["created_at"][:19] if r["created_at"] else "",
-                    "session": session_id,
-                })
+                decisions.append(
+                    {
+                        "type": r["event_type"],
+                        "detail": payload.get("action", r["event_type"]),
+                        "timestamp": r["created_at"][:19] if r["created_at"] else "",
+                        "session": session_id,
+                    }
+                )
             return decisions
         except Exception:
             conn.close()
@@ -375,7 +407,13 @@ class SessionContinuity:
     def _auto_sync_registries() -> None:
         try:
             import subprocess
-            script = Path(__file__).resolve().parents[2].parent.parent / "scripts" / "governance" / "auto_sync_all_registries.py"
+
+            script = (
+                Path(__file__).resolve().parents[2].parent.parent
+                / "scripts"
+                / "governance"
+                / "auto_sync_all_registries.py"
+            )
             if script.exists():
                 subprocess.run(
                     [sys.executable, str(script), "--all", "--warn-only"],
@@ -402,7 +440,6 @@ class SessionContinuity:
 
     def _write_yaml_handoff(self, handoff: dict) -> None:
         """输出 YAML 交接包到 docs/09_audit/handoff/（GOV-AI-008 §2 合规路径）"""
-        import os
 
         out_dir = self._project_root / "docs" / "09_audit" / "handoff"
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -411,43 +448,43 @@ class SessionContinuity:
         yaml_path = out_dir / f"session-{session_id}.yaml"
 
         lines = ["---"]
-        lines.append(f"session_id: \"{handoff['session_id']}\"")
-        lines.append(f"created_at: \"{handoff.get('created_at', '') or datetime.now(timezone.utc).isoformat()}\"")
+        lines.append(f'session_id: "{handoff["session_id"]}"')
+        lines.append(f'created_at: "{handoff.get("created_at", "") or datetime.now(UTC).isoformat()}"')
 
         lines.append("completed_tasks:")
         for ct in handoff.get("completed_tasks", []):
-            lines.append(f"  - \"{ct}\"")
+            lines.append(f'  - "{ct}"')
 
         lines.append("in_progress_tasks:")
         for ip in handoff.get("in_progress_tasks", []):
             if isinstance(ip, dict):
-                lines.append(f"  - task_id: \"{ip.get('task_id', '')}\"")
-                lines.append(f"    step: \"{ip.get('step', 'pending')}\"")
-                lines.append(f"    next_step: \"{ip.get('next_step', '')}\"")
+                lines.append(f'  - task_id: "{ip.get("task_id", "")}"')
+                lines.append(f'    step: "{ip.get("step", "pending")}"')
+                lines.append(f'    next_step: "{ip.get("next_step", "")}"')
             else:
-                lines.append(f"  - \"{ip}\"")
+                lines.append(f'  - "{ip}"')
 
         lines.append("blocked_items:")
         for bi in handoff.get("blocked_items", []):
-            lines.append(f"  - task_id: \"{bi.get('task_id', '')}\"")
-            lines.append(f"    reason: \"{bi.get('reason', '')}\"")
+            lines.append(f'  - task_id: "{bi.get("task_id", "")}"')
+            lines.append(f'    reason: "{bi.get("reason", "")}"')
 
         lines.append("decisions_made:")
         for dm in handoff.get("decisions_made", []):
-            lines.append(f"  - type: \"{dm.get('type', '')}\"")
-            lines.append(f"    detail: \"{dm.get('detail', '')}\"")
+            lines.append(f'  - type: "{dm.get("type", "")}"')
+            lines.append(f'    detail: "{dm.get("detail", "")}"')
 
         lines.append("next_actions:")
         for na in handoff.get("next_actions", []):
             lines.append(f"  - priority: {na.get('priority', 0)}")
-            lines.append(f"    action: \"{na.get('action', '')}\"")
-            lines.append(f"    task_ref: \"{na.get('task_ref', '')}\"")
+            lines.append(f'    action: "{na.get("action", "")}"')
+            lines.append(f'    task_ref: "{na.get("task_ref", "")}"')
 
-        lines.append(f"context_summary: \"{handoff.get('context_summary', '')}\"")
+        lines.append(f'context_summary: "{handoff.get("context_summary", "")}"')
 
         lines.append("open_questions:")
         for oq in handoff.get("open_questions", []):
-            lines.append(f"  - \"{oq}\"")
+            lines.append(f'  - "{oq}"')
 
         yaml_text = "\n".join(lines) + "\n"
         yaml_path.write_text(yaml_text, encoding="utf-8")
@@ -456,9 +493,7 @@ class SessionContinuity:
 
     def get_latest_handoff(self) -> dict | None:
         conn = self._get_conn()
-        row = conn.execute(
-            "SELECT * FROM handoffs ORDER BY created_at DESC LIMIT 1"
-        ).fetchone()
+        row = conn.execute("SELECT * FROM handoffs ORDER BY created_at DESC LIMIT 1").fetchone()
         conn.close()
 
         if row is None:
@@ -549,9 +584,11 @@ class SessionContinuity:
             owner_flag = " ✓Owner已审批" if agent_ctx["owner_approved"] else ""
             auto_flag = " [auto_guard]" if agent_ctx["auto_guard_eligible"] else ""
             print(f"\n{'=' * 60}")
-            print(f"  [Agent Identity] IDE={agent_ctx['ide_source']}"
-                  f" | Maturity={agent_ctx['maturity']}"
-                  f" | Role={agent_ctx['role']}{auto_flag}{owner_flag}")
+            print(
+                f"  [Agent Identity] IDE={agent_ctx['ide_source']}"
+                f" | Maturity={agent_ctx['maturity']}"
+                f" | Role={agent_ctx['role']}{auto_flag}{owner_flag}"
+            )
             print(f"{'=' * 60}")
 
         handoff = self.get_latest_handoff()
@@ -564,7 +601,7 @@ class SessionContinuity:
             return
 
         print("\n" + "=" * 60)
-        print(f"  [Session Continuity] 欢迎回来！")
+        print("  [Session Continuity] 欢迎回来！")
         print(f"  上次 session: {handoff['session_id']}")
         created = handoff.get("created_at", "")[:19]
         print(f"  交接时间: {created}")
@@ -578,7 +615,7 @@ class SessionContinuity:
         print(f"  🚫 阻塞: {len(handoff['blocked_items'])} 个")
         for b in handoff["blocked_items"]:
             print(f"       {b.get('task_id', '?')}: {b.get('reason', '')[:60]}")
-        print(f"  📋 下一步行动:")
+        print("  📋 下一步行动:")
         for a in handoff["next_actions"][:5]:
             print(f"       [{a.get('priority', '?')}] {a.get('action', '')[:80]}")
         print(f"  📝 上下文摘要: {handoff['context_summary'][:120]}")
@@ -588,10 +625,11 @@ class SessionContinuity:
     def _print_asset_summary() -> None:
         try:
             import yaml as _yaml
+
             index_path = self._project_root / "data" / "asset_index" / "unified-asset-index.yaml"
             if not index_path.exists():
                 return
-            with open(index_path, "r", encoding="utf-8") as f:
+            with open(index_path, encoding="utf-8") as f:
                 data = _yaml.safe_load(f) or {}
             health_data = data.get("health", {})
             health = health_data.get("health_grade", health_data.get("health_score", "?"))

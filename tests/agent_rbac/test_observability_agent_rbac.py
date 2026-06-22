@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试 L6 Observability — 指标上报与异常检测"""
-import pytest
+
 from zephyr.security.access_control.observability import (
-    ObservabilityReporter, AnomalyResult, MetricEntry,
+    ObservabilityReporter,
 )
 
 
@@ -49,6 +49,7 @@ class TestMetrics:
     def test_off_hours_destructive_detected(self):
         reporter = ObservabilityReporter()
         import time
+
         midnight_ts = time.mktime((2026, 5, 7, 23, 30, 0, 3, 127, -1))
         result = reporter.detect_off_hours_destructive("a1", "delete:file", midnight_ts)
         assert result.anomaly

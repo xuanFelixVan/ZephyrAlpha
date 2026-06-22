@@ -34,7 +34,7 @@ safety_level: H
 
 病根澄清（审计易混点）
 ---------------------
-名称含 *Orchestrator* 常与「TaskCard 生命周期编排」混淆。**本模块真源为 
+名称含 *Orchestrator* 常与「TaskCard 生命周期编排」混淆。**本模块真源为
 Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十态与合法迁移**
 见 ``zephyr.integration.shared_08.schemas.TaskStatus`` 与 ``zephyr.data.persistence.task_repo.TaskRepository``。
 
@@ -90,33 +90,34 @@ from typing import (
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.integration.shared_08.utils.time_utils import default_now
+from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.shared.shared_services.observability_02.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 __all__ = [
-    "AgentRole",
-    "RoutingStrategy",
-    "RouteDecision",
-    "AgentProfile",
-    "ToolCallRecord",
-    "OrchestrationResult",
-    "SLOSnapshot",
-    "ToolInvoker",
-    "HallucinationCaller",
-    "AgentRouter",
-    "HealthMonitor",
-    "AgentOrchestrator",
     "DEFAULT_ROLE_DOMAIN_MATRIX",
+    "AgentOrchestrator",
+    "AgentProfile",
+    "AgentRole",
+    "AgentRouter",
+    "HallucinationCaller",
+    "HealthMonitor",
+    "OrchestrationResult",
+    "RouteDecision",
+    "RoutingStrategy",
+    "SLOSnapshot",
+    "ToolCallRecord",
+    "ToolInvoker",
 ]
 
 # ---------------------------------------------------------------------------
 # 枚举与常量
 # ---------------------------------------------------------------------------
 
+
 class AgentRole(str, Enum):
-    """ §3 — 6 个 Agent 角色。"""
+    """§3 — 6 个 Agent 角色。"""
 
     ARCHITECT = "architect"  # 架构师：蓝图/KBG/模块拆分
     IMPLEMENTER = "implementer"  # 实施者：代码产出与修复
@@ -125,6 +126,7 @@ class AgentRole(str, Enum):
     RESEARCHER = "researcher"  # 研究员：因子/策略/实验
     OPERATOR = "operator"  # 运营员：运行/监控/回放
 
+
 class RoutingStrategy(str, Enum):
     """四种路由策略。"""
 
@@ -132,6 +134,7 @@ class RoutingStrategy(str, Enum):
     LOAD_BALANCE = "load_balance"
     SPECIALIST_FIRST = "specialist_first"
     FALLBACK_CHAIN = "fallback_chain"
+
 
 #  §3.2 — 6 角色 × 10 域静态映射
 # 每个 (role, domain) 有一个 0.0-1.0 的 capability score；0.0 表示不覆盖
@@ -214,6 +217,7 @@ DEFAULT_ROLE_DOMAIN_MATRIX: dict[AgentRole, dict[str, float]] = {
 # 数据契约
 # ---------------------------------------------------------------------------
 
+
 class AgentProfile(BaseModel):
     """单个 Agent 实例的状态画像（用于 load_balance 策略）。"""
 
@@ -230,6 +234,7 @@ class AgentProfile(BaseModel):
         """当前负载率 = current_load / max_load。"""
         return self.current_load / self.max_load if self.max_load else 1.0
 
+
 class RouteDecision(BaseModel):
     """路由器决策输出。"""
 
@@ -243,6 +248,7 @@ class RouteDecision(BaseModel):
     capability_score: float = Field(ge=0.0, le=1.0, description="首选角色在该域的能力分")
     rationale: str = Field(default="", description="决策解释")
 
+
 class ToolCallRecord(BaseModel):
     """单次 MCP 工具调用记录。"""
 
@@ -255,6 +261,7 @@ class ToolCallRecord(BaseModel):
     latency_ms: int = Field(ge=0, description="耗时毫秒")
     error: str | None = Field(default=None, description="失败原因")
     result_preview: str = Field(default="", description="结果摘要（截断 400 字符）")
+
 
 class OrchestrationResult(BaseModel):
     """单次 orchestrate() 的最终输出。"""
@@ -279,6 +286,7 @@ class OrchestrationResult(BaseModel):
     def _strip_claim(cls, v: str) -> str:
         return v.strip()
 
+
 class SLOSnapshot(BaseModel):
     """5 项 SLO 快照。"""
 
@@ -292,9 +300,11 @@ class SLOSnapshot(BaseModel):
     window_size: int = Field(ge=0)
     healthy: bool = Field(description="是否全部 SLO 达标")
 
+
 # ---------------------------------------------------------------------------
 # 协议：依赖注入（解耦 MCP 与 CoVe）
 # ---------------------------------------------------------------------------
+
 
 @runtime_checkable
 class ToolInvoker(Protocol):
@@ -302,6 +312,7 @@ class ToolInvoker(Protocol):
 
     def __call__(self, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
         ...
+
 
 @runtime_checkable
 class HallucinationCaller(Protocol):
@@ -312,9 +323,11 @@ class HallucinationCaller(Protocol):
     ) -> dict[str, Any]:  # pragma: no cover - Protocol 签名
         ...
 
+
 # ---------------------------------------------------------------------------
 # AgentRouter — 无状态路由
 # ---------------------------------------------------------------------------
+
 
 class AgentRouter:
     """6 角色 × 10 域的无状态路由器。
@@ -434,7 +447,7 @@ class AgentRouter:
             fallback_roles=[r for r, _ in ranked[1:3] if r != best_role],
             capability_score=best_score,
             rationale=(
-                f"load_balance: score={best_score:.2f} " f"util={best_agent.utilization:.2f}"
+                f"load_balance: score={best_score:.2f} util={best_agent.utilization:.2f}"
                 if best_agent
                 else "load_balance: no-agent"
             ),
@@ -487,9 +500,11 @@ class AgentRouter:
         candidates.sort(key=lambda a: (a.utilization, a.agent_id))
         return candidates[0].agent_id
 
+
 # ---------------------------------------------------------------------------
 # HealthMonitor — 5 项 SLO
 # ---------------------------------------------------------------------------
+
 
 class HealthMonitor:
     """滑窗口累计 5 项 SLO 的健康监控器。
@@ -622,6 +637,7 @@ class HealthMonitor:
     def sample_count(self) -> int:
         return len(self._latencies)
 
+
 # ---------------------------------------------------------------------------
 # Orchestrator — directive ↔ MCP 工具链编排
 # ---------------------------------------------------------------------------
@@ -631,6 +647,7 @@ DirectiveChain = list[tuple[str, str, dict[str, Any]]]
 
 # agent_orchestrator.py 位于 src/zephyr/orchestrator/ → 仓库根为 parents[3]
 _REPO_ROOT = Path(__file__).resolve().parents[3]
+
 
 class AgentOrchestrator:
     """Orchestrator Agent：将 directive 序列编排为 MCP 工具链，并运行 CoVe post-hook。
@@ -854,6 +871,7 @@ class AgentOrchestrator:
                 latency_ms=elapsed,
                 error=f"{type(exc).__name__}: {exc}",
             )
+
 
 # ---------------------------------------------------------------------------
 # 仅用于静态检查：statistics 被保留以便未来扩展 p50/p95；防止 ruff unused

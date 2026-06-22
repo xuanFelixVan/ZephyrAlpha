@@ -28,7 +28,7 @@ verifiability: hybrid
 references: []
 codification_level: L2
 codification_at: "2026-05-15"
-submodule_path: src/zephyr/core/
+submodule_path: src/zephyr/infrastructure/task_system/
 runtime_plane: hot
 ttl: permanent
 construction_progress: partially_implemented
@@ -151,7 +151,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 |---|------|------|-----------|
 | 1 | ✅包含 | **合并为一**：MOD-INF-003+004 + 两份场外草稿 + 历史裁定 = 一份自包含蓝图 | 蓝图文件数 3→1，两份旧蓝图 deprecated |
 | 2 | ✅包含 | **全链路贯通**：意图→草稿→蓝图→任务卡→双管线→脚本系统——每步有输入/输出/门禁 | 每个环节 Schema 完整 |
-| 3 | ✅包含 | **TaskCard 模型取最优**：基座继承 shared/schemas.py Task（31字段）+ 扩展防漂移 + 父子层级 + 回滚 + 自治字段 | 基座对齐 metadata-registry.md §7 真源 |
+| 3 | ✅包含 | **TaskCard 模型取最优**：基座继承 shared/schemas.py Task（31字段）+ 扩展防漂移 + 父子层级 + 回滚 + 自治字段 | 基座对齐 metadata_registry.yaml §7 真源 |
 | 4 | ✅包含 | **task_id 格式统一为 `{NAMESPACE}-{SEQ}`** | KBG-001 / STD-005 / SRC-042 |
 | 5 | ✅包含 | **路径合规创建**：MTH-013 原则——AI 不得自主决定目录层级 | 所有路径可追溯到索引 |
 | 6 | ✅包含 | **模型分工明确**：DeepSeek V4 Pro 主力 + GLM 深度审查 + Claude 特种救援 | 分工有基准数据支撑 |
@@ -239,7 +239,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 | 14 | ✅包含 | **Saga 补偿事务执行** | 任务失败时逆序执行 undo_command + DeadLetter处理 |
 | 15 | ✅包含 | **质量基线监控** | QualityBaseline 维护 + M7 偏差检测 + 自动回退模型快照 |
 | 16 | ❌排除 | SQLite CRUD + 10状态机 + N:N映射 | `task_repo.py`（`src/zephyr/db/`）— 已有生产级代码 |
-| 17 | ❌排除 | Task 模型基座（Pydantic V2 31字段） | `shared/schemas.py`（`src/zephyr/shared/`）— metadata-registry.md §7 真源 |
+| 17 | ❌排除 | Task 模型基座（Pydantic V2 31字段） | `shared/schemas.py`（`src/zephyr/shared/`）— metadata_registry.yaml §7 真源 |
 | 18 | ❌排除 | MCP Server Web 层 | `task_manager_server.py`（`src/zephyr/mcp/`） |
 | 19 | ❌排除 | 审计脚本 | MOD-INF-005 — 已有 9+ 脚本 |
 | 20 | ❌排除 | context-engine | `context_engine/` — 已有 7 模块 |
@@ -354,7 +354,7 @@ class TaskLifecycleManager:
 
 #### §4.2.1 TaskCard（Vibe Coding 扩展任务模型）
 
-> **基座**：继承 `shared/schemas.py` `Task`（31 字段，真源 metadata-registry.md §7.1~§7.1.1）
+> **基座**：继承 `shared/schemas.py` `Task`（31 字段，真源 metadata_registry.yaml §7.1~§7.1.1）
 > **扩展**：本蓝图追加 6 维防漂移 + 门禁 + 管线 + 父子层级/可执行回滚/Retry策略/AI自治五级/Prompt版本化/Saga补偿/SLA时限/模型快照/紧急模式/知识隔离/依赖指纹/取消残留/漂移校验/兼容冲击/重规划/范围蔓延/上下文缓存
 
 > ⚠️ **B-20 铁律**：§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4），不复制实现代码。完整 TaskCard 字段定义见 `src/zephyr/infrastructure/runtime_integration/auto-fix-engine/models.py`。
@@ -629,8 +629,8 @@ class TaskLifecycleManager:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| PS-STD-001 | 必须 | §7——task_id/语义28/追踪3/Task共31/状态机 | ≥2.0.0 | `docs/01_policies_and_standards/meta/metadata-registry.md` |
-| PS-STD-011 | 必须 | MTH-012 涌现式设计 + MTH-013 路径合规 | ≥2.6.0 | `docs/01_policies_and_standards/meta/governance-methodology-standard.md` |
+| PS-STD-001 | 必须 | §7——task_id/语义28/追踪3/Task共31/状态机 | ≥2.0.0 | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` |
+| PS-STD-011 | 必须 | MTH-012 涌现式设计 + MTH-013 路径合规 | ≥2.6.0 | `docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml` |
 | GOV-DOC-002 | 必须 | §5.1.2 路径映射 | — | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` |
 | GOV-TASK-001 | 必须 | 任务卡操作指南 | ≥3.0.0 | `docs/01_policies_and_standards/governance/task/task-card-standard.md` |
 | GOV-TASK-004 | 必须 | 取消权限、优先级裁决 | ≥2.0.0 | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` |
@@ -836,7 +836,7 @@ class TaskLifecycleManager:
 |---|--------|---------|:---:|:---:|
 | 1 | shared/schemas.py Task 类存在 | hard | ✅ | ✅ |
 | 2 | task_repo.py 可用 | hard | ✅ | ✅ |
-| 3 | metadata-registry.md §7 字段定义 active | hard | ✅ | ✅ |
+| 3 | metadata_registry.yaml §7 字段定义 active | hard | ✅ | ✅ |
 | 4 | PS-STD-011 ≥ 2.6.0 | hard | ✅ | ✅ |
 | 5 | GOV-AI-002 ≥ 2.0.0 | hard | ✅ | ✅ |
 | 6 | 本蓝图 Owner 已确认 | hard | ☐ | ❌ |
@@ -1353,15 +1353,15 @@ STEP 3: 拆分后验证
 
 | # | 文件 | module_id | 版本 | 完整路径（相对优先） | 编写时用途 |
 |---|------|-----------|------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | 2.0.0+ | `docs/01_policies_and_standards/meta/metadata-registry.md` | §7——task_id/语义28/追踪3/Task共31/状态机 |
+| 1 | 元数据注册表 | PS-STD-001 | 2.0.0+ | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | §7——task_id/语义28/追踪3/Task共31/状态机 |
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
-| 3 | 治理方法论 | PS-STD-011 | 2.6.0+ | `docs/01_policies_and_standards/meta/governance-methodology-standard.md` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
+| 3 | 治理方法论 | PS-STD-011 | 2.6.0+ | `docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
 | 4 | 脚本系统蓝图 | MOD-INF-005 | 3.0.0+ | `docs/03_modules/_domain-infra_ops/script-system/blueprint.md` | 审计消费方 |
 | 5 | 任务卡操作指南 | GOV-TASK-001 | 3.0.0+ | `docs/01_policies_and_standards/governance/task/task-card-standard.md` | 正文结构与门禁速查 |
 | 6 | 任务生命周期标准 | GOV-TASK-004 | 2.0.0+ | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` | 取消权限、优先级裁决 |
 | 7 | 任务关闭标准 | GOV-TASK-005 | 1.1.0+ | `docs/01_policies_and_standards/governance/task/task-closure-standard.md` | 关闭三步法 |
 | 8 | Task Pydantic 模型 | shared/schemas.py | 现有代码 | `src/zephyr/shared/schemas.py` | Task 结构定义 SSoT |
-| 9 | 模型基准排名 | REG-LLM-001 | 1.1.0+ | `docs/01_policies_and_standards/_registry/catalogs/frontier-llm-benchmark-ranking.md` | execution_model 数据依据 |
+| 9 | 模型基准排名 | REG-LLM-001 | 1.1.0+ | `docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml` | execution_model 数据依据 |
 | 10 | 模型路由策略 | GOV-AI-002 | 2.0.0+ | `docs/01_policies_and_standards/governance/ai/model-routing-policy.md` | 任务分配决策树 |
 | 11 | AGENTS.md 项目基准 | — | 4.6.1+ | `AGENTS.md` | 项目全局规则 |
 | 12 | Task 模型基座 | shared/schemas.py | 现有代码 | `src/zephyr/shared/schemas.py` | Task 31 字段——TaskCard 继承 |
@@ -1398,7 +1398,7 @@ STEP 3: 拆分后验证
 | 7 | blueprint_decomposer.py | `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` | 重写 | 输出改为 task_repo(SQLite) + .md |
 | 8 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | 重写 | 接入 task_repo(SQLite) 真源 |
 | 9 | task_completion_gate.py | `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | 读取 | 需同步 G7 门禁 |
-| 10 | metadata-registry.md | `docs/01_policies_and_standards/meta/metadata-registry.md` | 读取 | §7 字段真源 |
+| 10 | metadata_registry.yaml | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 读取 | §7 字段真源 |
 | 11 | task-card-meta-registry.md | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 修改 | 更新迁移状态 |
 
 ---
@@ -1522,8 +1522,8 @@ STEP 3: 拆分后验证
 | 内容 | 真源 | 非真源 |
 |------|------|--------|
 | 任务系统全链路架构 | **本文档 §2.1** | 旧 MOD-INF-003/004（deprecated） |
-| TaskCard 模型 | 基座：**shared/schemas.py Task + metadata-registry.md §7** / 扩展：**本文档 §4.2.1** | core/models.py（派生） |
-| task_id 格式 | **metadata-registry.md §7.10** | — |
+| TaskCard 模型 | 基座：**shared/schemas.py Task + metadata_registry.yaml §7** / 扩展：**本文档 §4.2.1** | core/models.py（派生） |
+| task_id 格式 | **metadata_registry.yaml §7.10** | — |
 | 10 态状态机 + SUSPENDED | **task_repo.py** | — |
 | G0-G7 门禁系统 | **本文档 §4.2.1 GateLevel enum** | — |
 | AI 双管线 M1-M11 模块分工 | **本文档 §16.3 步骤6** | — |

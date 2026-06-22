@@ -70,13 +70,14 @@ def __getattr__(name):
         return _val
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
+    "EVENT_PAYLOAD_MAP",
     "FileEventPayload",
-    "TimeEventPayload",
-    "TaskEventPayload",
     "ManualEventPayload",
     "MetricEventPayload",
-    "EVENT_PAYLOAD_MAP",
+    "TaskEventPayload",
+    "TimeEventPayload",
 ]
 
 

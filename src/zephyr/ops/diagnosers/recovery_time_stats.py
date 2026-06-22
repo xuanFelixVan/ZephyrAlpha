@@ -32,7 +32,6 @@ time (p95). Alert when MTTR doubles from baseline. Feed into Error Budget calc.
 
 from __future__ import annotations
 
-import time
 from dataclasses import dataclass, field
 
 

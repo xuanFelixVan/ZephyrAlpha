@@ -1,7 +1,7 @@
 ---
 
 module_id: MOD-INF-017
-submodule_path: src/zephyr/infra_ops/code_dedup_engine
+submodule_path: src/zephyr/governance/code_dedup_engine
 title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复"
 doc_type: blueprint
 status: Active
@@ -18,7 +18,7 @@ date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/infra_ops/code_dedup_engine/"
+actual_disk_path: "src/zephyr/governance/code_dedup_engine/"
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 3

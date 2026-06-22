@@ -135,10 +135,7 @@ class PipelineRunner:
             dim_findings: list[AuditFinding] = []
 
             with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-                future_to_path = {
-                    executor.submit(self._execute_script, sp, dim, dry_run): sp
-                    for sp in scripts
-                }
+                future_to_path = {executor.submit(self._execute_script, sp, dim, dry_run): sp for sp in scripts}
                 for future in as_completed(future_to_path):
                     try:
                         result = future.result()
@@ -202,7 +199,7 @@ class PipelineRunner:
         total = len(py_files)
         for i, py_file in enumerate(py_files):
             if (i + 1) % 200 == 0 or i == total - 1:
-                print(f"[PROGRESS] Filesystem scan {i+1}/{total} files...", file=sys.stderr)
+                print(f"[PROGRESS] Filesystem scan {i + 1}/{total} files...", file=sys.stderr)
             name = py_file.name
             if name.startswith("_"):
                 continue
@@ -341,6 +338,7 @@ class PipelineRunner:
         if not data or "gates" not in data:
             return {}
         import re
+
         project_root = self._project_root()
         gates_dir = project_root / "src" / "zephyr" / "gates"
         mapping: dict[str, list[str]] = {}
@@ -376,13 +374,13 @@ class PipelineRunner:
         cached_mode = self._script_output_mode.get(script_path)
 
         if cached_mode == "jsonl":
-            result = self._run_subprocess(
-                script_path, repo_root, ["--jsonl", "--warn-only"]
-            )
+            result = self._run_subprocess(script_path, repo_root, ["--jsonl", "--warn-only"])
             if result is not None:
                 findings = self._parse_findings(
-                    result.stdout, dimension=dimension,
-                    script_name=script_name, output_mode="jsonl",
+                    result.stdout,
+                    dimension=dimension,
+                    script_name=script_name,
+                    output_mode="jsonl",
                 )
                 self._script_output_mode[script_path] = "jsonl"
                 return ScriptResult(
@@ -395,13 +393,13 @@ class PipelineRunner:
                 )
 
         if cached_mode == "text":
-            result = self._run_subprocess(
-                script_path, repo_root, ["--warn-only"]
-            )
+            result = self._run_subprocess(script_path, repo_root, ["--warn-only"])
             if result is not None:
                 findings = self._parse_findings(
-                    result.stdout, dimension=dimension,
-                    script_name=script_name, output_mode="text",
+                    result.stdout,
+                    dimension=dimension,
+                    script_name=script_name,
+                    output_mode="text",
                 )
                 self._script_output_mode[script_path] = "text"
                 return ScriptResult(
@@ -413,16 +411,16 @@ class PipelineRunner:
                     output_mode="text",
                 )
 
-        result = self._run_subprocess(
-            script_path, repo_root, ["--jsonl", "--warn-only"]
-        )
+        result = self._run_subprocess(script_path, repo_root, ["--jsonl", "--warn-only"])
         if result is None:
             return ScriptResult(script_path=script_path, exit_code=2, timed_out=True)
 
         if result.returncode in (0, 1):
             findings = self._parse_findings(
-                result.stdout, dimension=dimension,
-                script_name=script_name, output_mode="jsonl",
+                result.stdout,
+                dimension=dimension,
+                script_name=script_name,
+                output_mode="jsonl",
             )
             self._script_output_mode[script_path] = "jsonl"
             return ScriptResult(
@@ -435,25 +433,22 @@ class PipelineRunner:
             )
 
         stderr_lower = result.stderr.lower()
-        if (
-            result.returncode == 2
-            and ("unrecognized arguments" in stderr_lower or "unknown option" in stderr_lower)
-        ):
-            fallback = self._run_subprocess(
-                script_path, repo_root, ["--warn-only"]
-            )
+        if result.returncode == 2 and ("unrecognized arguments" in stderr_lower or "unknown option" in stderr_lower):
+            fallback = self._run_subprocess(script_path, repo_root, ["--warn-only"])
             if fallback is None:
                 return ScriptResult(script_path=script_path, exit_code=2, timed_out=True)
 
             findings = self._parse_findings(
-                fallback.stdout, dimension=dimension,
-                script_name=script_name, output_mode="auto",
+                fallback.stdout,
+                dimension=dimension,
+                script_name=script_name,
+                output_mode="auto",
             )
-            detected_mode = "jsonl" if any(
-                line.strip()
-                and self._try_parse_jsonl(line.strip())
-                for line in fallback.stdout.splitlines()
-            ) else "text"
+            detected_mode = (
+                "jsonl"
+                if any(line.strip() and self._try_parse_jsonl(line.strip()) for line in fallback.stdout.splitlines())
+                else "text"
+            )
             self._script_output_mode[script_path] = detected_mode
             return ScriptResult(
                 script_path=script_path,
@@ -465,8 +460,10 @@ class PipelineRunner:
             )
 
         findings = self._parse_findings(
-            result.stdout, dimension=dimension,
-            script_name=script_name, output_mode="auto",
+            result.stdout,
+            dimension=dimension,
+            script_name=script_name,
+            output_mode="auto",
         )
         self._script_output_mode[script_path] = "auto"
         return ScriptResult(
@@ -504,7 +501,9 @@ class PipelineRunner:
         except Exception:
             return None
 
-    def _parse_findings(self, stdout: str, dimension: str, script_name: str, output_mode: str = "auto") -> list[AuditFinding]:
+    def _parse_findings(
+        self, stdout: str, dimension: str, script_name: str, output_mode: str = "auto"
+    ) -> list[AuditFinding]:
         findings: list[AuditFinding] = []
         if output_mode == "jsonl":
             for line in stdout.splitlines():
@@ -635,7 +634,7 @@ class PipelineRunner:
             import yaml
         except ImportError:
             return None
-        with open(str(dep_path), "r", encoding="utf-8") as f:
+        with open(str(dep_path), encoding="utf-8") as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
         elapsed = time.perf_counter() - t_start
         print(f"[DONE] Loaded depgraph in {elapsed:.1f}s", file=sys.stderr)
@@ -658,7 +657,7 @@ class PipelineRunner:
             import yaml
         except ImportError:
             return None
-        with open(str(mf_path), "r", encoding="utf-8") as f:
+        with open(str(mf_path), encoding="utf-8") as f:
             data = yaml.safe_load(f)
         PipelineRunner._manifest_cache = (current_mtime, data)
         return data
@@ -679,7 +678,7 @@ class PipelineRunner:
             import yaml
         except ImportError:
             return None
-        with open(str(reg_path), "r", encoding="utf-8") as f:
+        with open(str(reg_path), encoding="utf-8") as f:
             data = yaml.safe_load(f)
         PipelineRunner._gate_registry_cache = (current_mtime, data)
         return data
@@ -744,7 +743,7 @@ class PipelineRunner:
             self._set_cached_scan("scan_registries", str_path, findings)
             return findings
         try:
-            with open(str_path, "r", encoding="utf-8") as f:
+            with open(str_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
         except Exception:
             return findings
@@ -756,25 +755,29 @@ class PipelineRunner:
                 phys = entry.get("physical_path", "")
                 status = entry.get("status", "active")
                 if status == "broken":
-                    findings.append(self._make_finding(
-                        dimension="D3",
-                        severity=FindingSeverity.CRITICAL,
-                        category="注册表状态异常",
-                        file_path=phys,
-                        description=f"注册表 {rid} 状态为 broken",
-                        evidence=f"status={status}",
-                        remediation_priority=RemediationPriority.P0,
-                        blast_radius=BlastRadius.system,
-                    ))
+                    findings.append(
+                        self._make_finding(
+                            dimension="D3",
+                            severity=FindingSeverity.CRITICAL,
+                            category="注册表状态异常",
+                            file_path=phys,
+                            description=f"注册表 {rid} 状态为 broken",
+                            evidence=f"status={status}",
+                            remediation_priority=RemediationPriority.P0,
+                            blast_radius=BlastRadius.system,
+                        )
+                    )
                 if status == "pending_scan":
-                    findings.append(self._make_finding(
-                        dimension="D3",
-                        severity=FindingSeverity.MEDIUM,
-                        category="注册表待扫描",
-                        file_path=phys,
-                        description=f"注册表 {rid} 状态为 pending_scan",
-                        evidence=f"status={status}",
-                    ))
+                    findings.append(
+                        self._make_finding(
+                            dimension="D3",
+                            severity=FindingSeverity.MEDIUM,
+                            category="注册表待扫描",
+                            file_path=phys,
+                            description=f"注册表 {rid} 状态为 pending_scan",
+                            evidence=f"status={status}",
+                        )
+                    )
         self._set_cached_scan("scan_registries", str_path, findings)
         return findings
 
@@ -790,9 +793,21 @@ class PipelineRunner:
             return []
         findings: list[AuditFinding] = []
         valid_domains = {
-            "structure", "links", "metadata", "paths", "architecture",
-            "security", "code", "doc_sync", "knowledge", "performance",
-            "compliance", "ai_hallucination", "meta", "a2a", "governance",
+            "structure",
+            "links",
+            "metadata",
+            "paths",
+            "architecture",
+            "security",
+            "code",
+            "doc_sync",
+            "knowledge",
+            "performance",
+            "compliance",
+            "ai_hallucination",
+            "meta",
+            "a2a",
+            "governance",
         }
         for entry in data["scripts"]:
             name = entry.get("name", "UNKNOWN")
@@ -800,26 +815,30 @@ class PipelineRunner:
             domain = entry.get("domain", "")
             abs_path = root / "scripts" / rel_path
             if rel_path and not abs_path.is_file():
-                findings.append(self._make_finding(
-                    dimension="D1",
-                    severity=FindingSeverity.HIGH,
-                    category="脚本文件缺失",
-                    file_path=str(abs_path),
-                    description=f"脚本 {name} 的路径 {rel_path} 指向不存在的文件",
-                    evidence=f"path={rel_path}",
-                    remediation_action=RemediationAction.DELETE,
-                    remediation_priority=RemediationPriority.P1,
-                ))
+                findings.append(
+                    self._make_finding(
+                        dimension="D1",
+                        severity=FindingSeverity.HIGH,
+                        category="脚本文件缺失",
+                        file_path=str(abs_path),
+                        description=f"脚本 {name} 的路径 {rel_path} 指向不存在的文件",
+                        evidence=f"path={rel_path}",
+                        remediation_action=RemediationAction.DELETE,
+                        remediation_priority=RemediationPriority.P1,
+                    )
+                )
             if domain and domain not in valid_domains:
-                findings.append(self._make_finding(
-                    dimension="D1",
-                    severity=FindingSeverity.MEDIUM,
-                    category="脚本域无效",
-                    file_path=str(abs_path) if rel_path else "scripts/script-manifest.yaml",
-                    description=f"脚本 {name} 的 domain '{domain}' 不在有效域列表中",
-                    evidence=f"domain={domain}",
-                    remediation_action=RemediationAction.UPDATE_REF,
-                ))
+                findings.append(
+                    self._make_finding(
+                        dimension="D1",
+                        severity=FindingSeverity.MEDIUM,
+                        category="脚本域无效",
+                        file_path=str(abs_path) if rel_path else "scripts/script-manifest.yaml",
+                        description=f"脚本 {name} 的 domain '{domain}' 不在有效域列表中",
+                        evidence=f"domain={domain}",
+                        remediation_action=RemediationAction.UPDATE_REF,
+                    )
+                )
         self._set_cached_scan("scan_manifest", str_path, findings)
         return findings
 
@@ -849,17 +868,19 @@ class PipelineRunner:
             except Exception:
                 return findings
             if result.returncode != 0:
-                findings.append(self._make_finding(
-                    dimension="D5",
-                    severity=FindingSeverity.HIGH,
-                    category="契约-代码漂移",
-                    file_path="src/zephyr/shared/contracts/",
-                    description="YAML契约与生成代码之间存在漂移",
-                    evidence=result.stdout[:500] if result.stdout else "exit_code=" + str(result.returncode),
-                    remediation_action=RemediationAction.FIX,
-                    remediation_priority=RemediationPriority.P0,
-                    blast_radius=BlastRadius.layer,
-                ))
+                findings.append(
+                    self._make_finding(
+                        dimension="D5",
+                        severity=FindingSeverity.HIGH,
+                        category="契约-代码漂移",
+                        file_path="src/zephyr/shared/contracts/",
+                        description="YAML契约与生成代码之间存在漂移",
+                        evidence=result.stdout[:500] if result.stdout else "exit_code=" + str(result.returncode),
+                        remediation_action=RemediationAction.FIX,
+                        remediation_priority=RemediationPriority.P0,
+                        blast_radius=BlastRadius.layer,
+                    )
+                )
         except Exception:
             pass
         return findings
@@ -883,25 +904,29 @@ class PipelineRunner:
             if gate_file:
                 gate_path = gates_dir / gate_file
                 if not gate_path.is_file():
-                    findings.append(self._make_finding(
-                        dimension="D5",
-                        severity=FindingSeverity.HIGH,
-                        category="门禁文件缺失",
-                        file_path=str(gate_path),
-                        description=f"门禁 {gate_id} 的文件 {gate_file} 不存在",
-                        evidence=f"file={gate_file}",
-                        remediation_action=RemediationAction.CREATE,
-                        remediation_priority=RemediationPriority.P1,
-                    ))
+                    findings.append(
+                        self._make_finding(
+                            dimension="D5",
+                            severity=FindingSeverity.HIGH,
+                            category="门禁文件缺失",
+                            file_path=str(gate_path),
+                            description=f"门禁 {gate_id} 的文件 {gate_file} 不存在",
+                            evidence=f"file={gate_file}",
+                            remediation_action=RemediationAction.CREATE,
+                            remediation_priority=RemediationPriority.P1,
+                        )
+                    )
             if gate_status == "draft":
-                findings.append(self._make_finding(
-                    dimension="D5",
-                    severity=FindingSeverity.LOW,
-                    category="门禁状态为草稿",
-                    file_path=str(gates_dir / gate_file) if gate_file else str(registry_path),
-                    description=f"门禁 {gate_id} 状态为 draft",
-                    evidence=f"status={gate_status}",
-                ))
+                findings.append(
+                    self._make_finding(
+                        dimension="D5",
+                        severity=FindingSeverity.LOW,
+                        category="门禁状态为草稿",
+                        file_path=str(gates_dir / gate_file) if gate_file else str(registry_path),
+                        description=f"门禁 {gate_id} 状态为 draft",
+                        evidence=f"status={gate_status}",
+                    )
+                )
         self._set_cached_scan("scan_gate_registry", str_path, findings)
         return findings
 
@@ -925,7 +950,7 @@ class PipelineRunner:
         t_start = time.perf_counter()
         for i, edge in enumerate(edges):
             if (i + 1) % 3000 == 0:
-                print(f"[PROGRESS] Edge analysis {i+1}/{len(edges)}...", file=sys.stderr)
+                print(f"[PROGRESS] Edge analysis {i + 1}/{len(edges)}...", file=sys.stderr)
             dep_type = edge.get("dep_type", "")
             from_id = edge.get("from", "")
             to_id = edge.get("to", "")
@@ -937,6 +962,7 @@ class PipelineRunner:
         visited: set[str] = set()
         rec_stack: set[str] = set()
         cycle_nodes: set[str] = set()
+
         def _dfs(node: str) -> None:
             visited.add(node)
             rec_stack.add(node)
@@ -949,22 +975,25 @@ class PipelineRunner:
                     cycle_nodes.add(node)
                     cycle_nodes.add(neighbor)
             rec_stack.discard(node)
+
         for n in node_list:
             if n not in visited:
                 _dfs(n)
         if cycle_nodes:
             sample = sorted(cycle_nodes)[:5]
-            findings.append(self._make_finding(
-                dimension="D5",
-                severity=FindingSeverity.CRITICAL,
-                category="循环依赖",
-                file_path=PipelineRunner._depgraph_path,
-                description=f"依赖图中检测到循环依赖，涉及 {len(cycle_nodes)} 个节点",
-                evidence=f"sample_nodes={sample}",
-                remediation_action=RemediationAction.FIX,
-                remediation_priority=RemediationPriority.P0,
-                blast_radius=BlastRadius.system,
-            ))
+            findings.append(
+                self._make_finding(
+                    dimension="D5",
+                    severity=FindingSeverity.CRITICAL,
+                    category="循环依赖",
+                    file_path=PipelineRunner._depgraph_path,
+                    description=f"依赖图中检测到循环依赖，涉及 {len(cycle_nodes)} 个节点",
+                    evidence=f"sample_nodes={sample}",
+                    remediation_action=RemediationAction.FIX,
+                    remediation_priority=RemediationPriority.P0,
+                    blast_radius=BlastRadius.system,
+                )
+            )
         orphan_count = 0
         for node_id in node_list:
             node_data = nodes.get(node_id)
@@ -975,17 +1004,19 @@ class PipelineRunner:
                 if node_id not in owned_by_map:
                     orphan_count += 1
         if orphan_count > 0:
-            findings.append(self._make_finding(
-                dimension="D5",
-                severity=FindingSeverity.MEDIUM,
-                category="孤儿节点",
-                file_path=PipelineRunner._depgraph_path,
-                description=f"依赖图中检测到 {orphan_count} 个无 owned_by 边的模块/脚本节点",
-                evidence=f"orphan_count={orphan_count}",
-                remediation_action=RemediationAction.INVESTIGATE,
-                remediation_priority=RemediationPriority.P2,
-                blast_radius=BlastRadius.module,
-            ))
+            findings.append(
+                self._make_finding(
+                    dimension="D5",
+                    severity=FindingSeverity.MEDIUM,
+                    category="孤儿节点",
+                    file_path=PipelineRunner._depgraph_path,
+                    description=f"依赖图中检测到 {orphan_count} 个无 owned_by 边的模块/脚本节点",
+                    evidence=f"orphan_count={orphan_count}",
+                    remediation_action=RemediationAction.INVESTIGATE,
+                    remediation_priority=RemediationPriority.P2,
+                    blast_radius=BlastRadius.module,
+                )
+            )
         elapsed = time.perf_counter() - t_start
         print(f"[DONE] Depgraph analysis in {elapsed:.1f}s", file=sys.stderr)
         self._set_cached_scan("scan_depgraph", dep_path, findings)
@@ -995,43 +1026,50 @@ class PipelineRunner:
         findings: list[AuditFinding] = []
         try:
             from zephyr.infrastructure.rollback.phase_check_registry import _CHECK_MAP, GateResult
+
             for check_name, check_fn in _CHECK_MAP.items():
                 if not callable(check_fn):
-                    findings.append(self._make_finding(
-                        dimension="D5",
-                        severity=FindingSeverity.HIGH,
-                        category="门禁检查不可调用",
-                        file_path="src/zephyr/governance/rule_enforcement/phase_check_registry.py",
-                        description=f"门禁检查 {check_name} 不是可调用对象",
-                        evidence=f"type={type(check_fn).__name__}",
-                        remediation_action=RemediationAction.FIX,
-                        remediation_priority=RemediationPriority.P1,
-                    ))
+                    findings.append(
+                        self._make_finding(
+                            dimension="D5",
+                            severity=FindingSeverity.HIGH,
+                            category="门禁检查不可调用",
+                            file_path="src/zephyr/governance/rule_enforcement/phase_check_registry.py",
+                            description=f"门禁检查 {check_name} 不是可调用对象",
+                            evidence=f"type={type(check_fn).__name__}",
+                            remediation_action=RemediationAction.FIX,
+                            remediation_priority=RemediationPriority.P1,
+                        )
+                    )
                     continue
                 try:
                     result = check_fn()
                     if not isinstance(result, GateResult):
-                        findings.append(self._make_finding(
+                        findings.append(
+                            self._make_finding(
+                                dimension="D5",
+                                severity=FindingSeverity.HIGH,
+                                category="门禁检查返回类型错误",
+                                file_path="src/zephyr/governance/rule_enforcement/phase_check_registry.py",
+                                description=f"门禁检查 {check_name} 返回 {type(result).__name__}，期望 GateResult",
+                                evidence=f"return_type={type(result).__name__}",
+                                remediation_action=RemediationAction.FIX,
+                                remediation_priority=RemediationPriority.P1,
+                            )
+                        )
+                except Exception as exc:
+                    findings.append(
+                        self._make_finding(
                             dimension="D5",
                             severity=FindingSeverity.HIGH,
-                            category="门禁检查返回类型错误",
+                            category="门禁检查执行失败",
                             file_path="src/zephyr/governance/rule_enforcement/phase_check_registry.py",
-                            description=f"门禁检查 {check_name} 返回 {type(result).__name__}，期望 GateResult",
-                            evidence=f"return_type={type(result).__name__}",
+                            description=f"门禁检查 {check_name} 执行时抛出异常",
+                            evidence=f"error={exc}",
                             remediation_action=RemediationAction.FIX,
                             remediation_priority=RemediationPriority.P1,
-                        ))
-                except Exception as exc:
-                    findings.append(self._make_finding(
-                        dimension="D5",
-                        severity=FindingSeverity.HIGH,
-                        category="门禁检查执行失败",
-                        file_path="src/zephyr/governance/rule_enforcement/phase_check_registry.py",
-                        description=f"门禁检查 {check_name} 执行时抛出异常",
-                        evidence=f"error={exc}",
-                        remediation_action=RemediationAction.FIX,
-                        remediation_priority=RemediationPriority.P1,
-                    ))
+                        )
+                    )
         except Exception:
             pass
         return findings

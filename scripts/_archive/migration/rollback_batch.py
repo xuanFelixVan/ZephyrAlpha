@@ -21,12 +21,11 @@ import argparse
 import os
 import sys
 from datetime import UTC, datetime
-from pathlib import Path
 
 from _migration_shared import (
     BATCH_TO_GROUP,
-    PROJECT_ROOT,
     MIGRATION_LOG_FILE,
+    PROJECT_ROOT,
     load_migration_log,
     save_migration_log,
 )
@@ -95,6 +94,7 @@ def rollback_batch(batch: int, dry_run: bool = False) -> int:
             src_path.parent.mkdir(parents=True, exist_ok=True)
             if dst_path.is_dir():
                 import shutil
+
                 if src_path.exists():
                     shutil.rmtree(str(src_path))
                 shutil.move(str(dst_path), str(src_path))
@@ -113,7 +113,7 @@ def rollback_batch(batch: int, dry_run: bool = False) -> int:
     if not dry_run:
         save_migration_log(log)
 
-    print(f"\n=== Rollback Results ===")
+    print("\n=== Rollback Results ===")
     print(f"  Success: {success}")
     print(f"  Failed:  {failed}")
     print(f"  Skipped: {skipped}")

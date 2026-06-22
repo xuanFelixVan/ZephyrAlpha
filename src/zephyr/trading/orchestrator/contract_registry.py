@@ -32,14 +32,11 @@ ai_read_only_hint 四级：
 - SAFE → 允许调用
 """
 
-
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
 
 from pydantic import BaseModel, Field
-from zephyr.shared.contracts.core.registry import ContractRegistry as _SharedContractRegistry, get_registry as _get_shared_registry
 
 
 class AIReadOnlyHint(str, Enum):
@@ -214,14 +211,14 @@ CONTRACTS: dict[str, Contract] = {
         contract_id="CT-FLE-DB-001",
         producer="Feedback Loop Engine",
         consumer="Database",
-        status="部分实现:metrics_collector已sqlite3持久化metrics表(create/record/bulk_record/query/aggregate),未通过正式zephyr.orchestration.db契约路径",
+        status="部分实现:metrics_collector已sqlite3持久化metrics表(create/record/bulk_record/query/aggregate),未通过正式zephyr.trading.db契约路径",
         ai_read_only_hint=AIReadOnlyHint.CAUTION_STUB,
         trigger="FLE 持久化指标数据",
         input_schema="FLEMetrics",
         output_schema="DBWriteResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation", "error"],
-        ai_prompt="FLE 指标采集 → db 持久化 → 历史分析(metrics_collector已有sqlite3实现,需迁移到zephyr.orchestration.db正式契约)",
+        ai_prompt="FLE 指标采集 → db 持久化 → 历史分析(metrics_collector已有sqlite3实现,需迁移到zephyr.trading.db正式契约)",
         route_target="database",
     ),
     "CT-TELE-FLE-001": Contract(
@@ -1080,9 +1077,14 @@ class ContractRegistry:
             "unique_consumers": len(consumers),
             "by_hint": by_hint,
             "readiness_pct": round(
-                sum(1 for c in CONTRACTS.values()
+                sum(
+                    1
+                    for c in CONTRACTS.values()
                     if hasattr(c.ai_read_only_hint, "name")
-                    and c.ai_read_only_hint.name not in ("DO_NOT_CALL", "IMPL_REQUIRED"))
-                / max(total, 1) * 100, 1,
+                    and c.ai_read_only_hint.name not in ("DO_NOT_CALL", "IMPL_REQUIRED")
+                )
+                / max(total, 1)
+                * 100,
+                1,
             ),
         }

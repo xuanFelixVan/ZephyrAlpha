@@ -9,7 +9,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_protocol_self_context.py -q
-import pytest
 from zephyr.governance.protocol_self_context import ProtocolSelfContext
 
 

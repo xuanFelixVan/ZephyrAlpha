@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import os
-
-import pytest
-
 from zephyr.behavioral_audit.orphan_scanner import (
     OrphanResource,
     find_orphan_data,

@@ -16,18 +16,16 @@ import pytest
 
 from zephyr.governance.kb._backend_protocol import (
     InMemoryMemoryBackend,
-    MemoryBackendError,
-    MemoryRecord,
 )
 from zephyr.intelligence.model_evaluation.unified_memory_api import (
     DEFAULT_EMBEDDING_MODELS,
     UNIFIED_COLLECTION,
+    UnifiedMemoryAPI,
     WriteTrace,
     WriteTraceMissing,
     build_provenance,
     get_unified_memory_api,
     reset_unified_memory_api,
-    UnifiedMemoryAPI,
 )
 
 
@@ -160,7 +158,9 @@ class TestSingletonFunctions:
         backend = InMemoryMemoryBackend()
         api1 = get_unified_memory_api(backend=backend, enforce_capability=False, reset=True, prefer_vms=False)
         reset_unified_memory_api()
-        api2 = get_unified_memory_api(backend=InMemoryMemoryBackend(), enforce_capability=False, reset=True, prefer_vms=False)
+        api2 = get_unified_memory_api(
+            backend=InMemoryMemoryBackend(), enforce_capability=False, reset=True, prefer_vms=False
+        )
         assert api1 is not api2
 
 

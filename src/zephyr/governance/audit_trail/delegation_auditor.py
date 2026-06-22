@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 审计失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_delegation_auditor.py
-
 import logging
 from typing import Any
 
@@ -21,12 +20,14 @@ __all__ = ["DelegationAuditor"]
 
 MAX_DELEGATION_DEPTH = 5
 
+
 class DelegationAuditor:
     def __init__(self) -> None:
         self._bridge = None
         self._available = False
         try:
             from zephyr.governance.audit_trail.delegation_bridge import DelegationBridge
+
             self._bridge = DelegationBridge()
             self._available = self._bridge.is_available()
         except ImportError:
@@ -47,32 +48,38 @@ class DelegationAuditor:
             target = event.get("target", "")
 
             if target in visited:
-                findings.append({
-                    "severity": "RED",
-                    "type": "circular_delegation",
-                    "target": target,
-                    "detail": f"Circular delegation detected: {' -> '.join(chain)}",
-                })
+                findings.append(
+                    {
+                        "severity": "RED",
+                        "type": "circular_delegation",
+                        "target": target,
+                        "detail": f"Circular delegation detected: {' -> '.join(chain)}",
+                    }
+                )
 
             visited.add(target)
 
             depth = event.get("depth", 0)
             if depth > MAX_DELEGATION_DEPTH:
-                findings.append({
-                    "severity": "YELLOW",
-                    "type": "depth_overflow",
-                    "target": target,
-                    "depth": depth,
-                    "detail": f"Delegation depth {depth} exceeds max {MAX_DELEGATION_DEPTH}",
-                })
+                findings.append(
+                    {
+                        "severity": "YELLOW",
+                        "type": "depth_overflow",
+                        "target": target,
+                        "depth": depth,
+                        "detail": f"Delegation depth {depth} exceeds max {MAX_DELEGATION_DEPTH}",
+                    }
+                )
 
             if event.get("deadlock", False):
-                findings.append({
-                    "severity": "RED",
-                    "type": "deadlock",
-                    "target": target,
-                    "detail": "Potential deadlock detected in delegation chain",
-                })
+                findings.append(
+                    {
+                        "severity": "RED",
+                        "type": "deadlock",
+                        "target": target,
+                        "detail": "Potential deadlock detected in delegation chain",
+                    }
+                )
                 if self._bridge:
                     self._bridge.report_delegation_failure(target, "deadlock detected")
 
@@ -86,12 +93,14 @@ class DelegationAuditor:
     def is_available(self) -> bool:
         return self._available
 
+
 class DelegationAuditResult:
-    def __init__(self, delegation_id='', compliant=True, violations=None, timestamp=None):
+    def __init__(self, delegation_id="", compliant=True, violations=None, timestamp=None):
         self.delegation_id = delegation_id
         self.compliant = compliant
         self.violations = violations or []
         self.timestamp = timestamp
+
 
 class DelegationChainAuditor:
     def __init__(self, config=None):
@@ -103,16 +112,18 @@ class DelegationChainAuditor:
     def validate_depth(self, chain, max_depth=5):
         return True
 
+
 class DelegationNode:
-    def __init__(self, node_id='', delegator='', delegate='', scope='', depth=0):
+    def __init__(self, node_id="", delegator="", delegate="", scope="", depth=0):
         self.node_id = node_id
         self.delegator = delegator
         self.delegate = delegate
         self.scope = scope
         self.depth = depth
 
+
 class EscalationType:
-    AUTO = 'AUTO'
-    MANUAL = 'MANUAL'
-    EMERGENCY = 'EMERGENCY'
-    SCHEDULED = 'SCHEDULED'
+    AUTO = "AUTO"
+    MANUAL = "MANUAL"
+    EMERGENCY = "EMERGENCY"
+    SCHEDULED = "SCHEDULED"

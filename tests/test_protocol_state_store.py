@@ -12,7 +12,9 @@
 import json
 import os
 import shutil
+
 import pytest
+
 from zephyr.governance.protocol_state_store import ProtocolStateStore
 
 
@@ -97,14 +99,14 @@ class TestSave:
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("rule_count", 42)
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["state"]["rule_count"] == 42
 
     def test_save_contains_timestamp(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert "timestamp" in data
 
@@ -114,14 +116,14 @@ class TestSave:
         store.save()
         store.update("k", "second")
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["state"]["k"] == "second"
 
     def test_save_empty_state(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["state"] == {}
 
@@ -129,7 +131,7 @@ class TestSave:
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("nested", {"a": {"b": [1, 2, 3]}})
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["state"]["nested"]["a"]["b"] == [1, 2, 3]
 
@@ -144,7 +146,7 @@ class TestBoundaryConditions:
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("msg", "Hello 你好 🌍")
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["state"]["msg"] == "Hello 你好 🌍"
 
@@ -152,7 +154,7 @@ class TestBoundaryConditions:
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("123", "numeric_key")
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["state"]["123"] == "numeric_key"
 
@@ -165,7 +167,7 @@ class TestBoundaryConditions:
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("flag", False)
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["state"]["flag"] is False
 
@@ -175,6 +177,6 @@ class TestBoundaryConditions:
             store.update("counter", i)
             store.save()
         path = store.save()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["state"]["counter"] == 9

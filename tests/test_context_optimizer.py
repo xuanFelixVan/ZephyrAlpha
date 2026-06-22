@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] pytest tests/test_context_optimizer.py
 
-import pytest
 from zephyr.autonomy_core.context_optimizer import ContextOptimizer
 
 

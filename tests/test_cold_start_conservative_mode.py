@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cold_start_conservative_mode.py
 
-import pytest
 
 from zephyr.ops.diagnosers.cold_start_conservative_mode import (
     ColdStartConservativeMode,

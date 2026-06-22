@@ -28,15 +28,12 @@
 每个 tool 返回结构化 JSON dict，调用方按 real keys 消费。
 """
 
-
 from __future__ import annotations
 
-import json
 import logging
 from pathlib import Path
 
 import yaml
-
 from mcp.server import FastMCP
 
 logger = logging.getLogger(__name__)
@@ -60,6 +57,7 @@ class TelemetryMCP:
         telemetry: object | None = None,
     ):
         import importlib
+
         _mod = importlib.import_module("zephyr.infrastructure.system_telemetry")
         Telemetry = _mod.Telemetry
         if telemetry is not None:
@@ -73,7 +71,9 @@ class TelemetryMCP:
     def _register_tools(self) -> None:
         mc = self.mcp
         mc.tool(name="telemetry.health", description="全系统健康聚合视图")(self._health)
-        mc.tool(name="telemetry.metrics_snapshot", description="当前指标快照（最近 N 个采集点）")(self._metrics_snapshot)
+        mc.tool(name="telemetry.metrics_snapshot", description="当前指标快照（最近 N 个采集点）")(
+            self._metrics_snapshot
+        )
         mc.tool(name="telemetry.alerts_status", description="活跃告警列表")(self._alerts_status)
         mc.tool(name="telemetry.system_profile", description="系统资源画像（CPU/内存/磁盘）")(self._system_profile)
         mc.tool(name="telemetry.schema_info", description="Schema 版本与兼容性信息")(self._schema_info)
@@ -107,12 +107,14 @@ class TelemetryMCP:
         points = []
         for i in range(min(count, 100)):
             r = t.metrics.gauge("snapshot", 0.0, index=i)
-            points.append({
-                "ts": r["ts"],
-                "kind": r["kind"],
-                "name": r["name"],
-                "value": r["value"],
-            })
+            points.append(
+                {
+                    "ts": r["ts"],
+                    "kind": r["kind"],
+                    "name": r["name"],
+                    "value": r["value"],
+                }
+            )
         try:
             schema_version = t.schema.get_version()
         except Exception:
@@ -138,7 +140,10 @@ class TelemetryMCP:
             "module_id": t.module_id,
             "pending_alerts": alert_health.get("pending_alerts", 0),
             "configured_rules": len(alert_config.get("rules", [])),
-            "rules": [{"id": r.get("id"), "severity": r.get("severity"), "metric": r.get("metric")} for r in alert_config.get("rules", [])[:5]],
+            "rules": [
+                {"id": r.get("id"), "severity": r.get("severity"), "metric": r.get("metric")}
+                for r in alert_config.get("rules", [])[:5]
+            ],
         }
 
     async def _system_profile(self) -> dict:
@@ -150,7 +155,11 @@ class TelemetryMCP:
         return {
             "module_id": t.module_id,
             "environment": t.environment,
-            "profile": {k: snapshot.get(k) for k in ["cpu_percent", "memory_percent", "disk_percent", "open_files", "thread_count"] if k in snapshot},
+            "profile": {
+                k: snapshot.get(k)
+                for k in ["cpu_percent", "memory_percent", "disk_percent", "open_files", "thread_count"]
+                if k in snapshot
+            },
         }
 
     async def _schema_info(self) -> dict:

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-MODULE-BLU-ZEPHYRALPHA-004
 status: active
 title: ZephyrAlpha 蓝图体系架构标准

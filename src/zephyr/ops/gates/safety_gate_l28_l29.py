@@ -27,15 +27,12 @@ L29: Supply Chain — active CVE → only NOTIFY_OWNER; skill_trust < 0.5 → bl
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from enum import Enum
 import time
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL28L29:
-
     def __init__(self):
         self.last_drill: float = 0.0
         self.cve_active: list[str] = []
@@ -51,12 +48,16 @@ class SafetyGateL28L29:
     def _l28_dr_readiness(self, ctx: ActionContext) -> GateResult:
         days_since = (time.time() - self.last_drill) / 86400.0 if self.last_drill > 0 else 999
         if days_since > 90 and ctx.action_type in ("REPAIR", "DEPLOY"):
-            return GateResult("L28", GateVerdict.REJECT, GateType.HARD, f"DR drill {days_since:.0f}d overdue > 90d limit")
+            return GateResult(
+                "L28", GateVerdict.REJECT, GateType.HARD, f"DR drill {days_since:.0f}d overdue > 90d limit"
+            )
         return GateResult("L28", GateVerdict.PASS, GateType.HARD)
 
     def _l29_supply_chain(self, ctx: ActionContext) -> GateResult:
         if self.cve_active:
-            return GateResult("L29", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Active CVE: {', '.join(self.cve_active)}")
+            return GateResult(
+                "L29", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Active CVE: {', '.join(self.cve_active)}"
+            )
         if self.skill_trust < 0.5:
             return GateResult("L29", GateVerdict.REJECT, GateType.HARD, f"Skill trust {self.skill_trust:.2f} < 0.5")
         return GateResult("L29", GateVerdict.PASS, GateType.HARD)

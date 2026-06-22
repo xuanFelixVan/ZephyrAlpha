@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_human_anomaly_flood_detector.py
 
-import pytest
 
 from zephyr.ops.diagnosers.human_anomaly_flood_detector import (
     FloodLevel,

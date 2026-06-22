@@ -11,13 +11,13 @@
 # [TESTS] python -c "import zephyr.ops.gates"
 
 SUBMODULES = [
-    'adversarial_validation',
-    'ci_cd_pre_scanner',
-    'concurrent_change_deconfliction',
-    'cve_scanner',
-    'deployment_suppression',
-    'emergency_takeover',
-    'federated_security',
-    'license_compliance',
-    'merkle_audit_root',
+    "adversarial_validation",
+    "ci_cd_pre_scanner",
+    "concurrent_change_deconfliction",
+    "cve_scanner",
+    "deployment_suppression",
+    "emergency_takeover",
+    "federated_security",
+    "license_compliance",
+    "merkle_audit_root",
 ]

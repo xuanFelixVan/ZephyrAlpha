@@ -33,6 +33,7 @@ from typing import Any
 
 import yaml
 
+
 def load_risk_params_ssot(project_root: Path) -> dict[str, Any]:
     path = project_root / "config" / "risk_params.yaml"
     if not path.is_file():

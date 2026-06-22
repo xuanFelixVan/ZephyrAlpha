@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """L00 provider_base — DataSourceBase 最小可实例化桩与注册。"""
 
 
@@ -14,7 +15,6 @@ from datetime import datetime
 import pandas as pd
 
 from zephyr.governance.alt_data_connector.provider_base import DataSourceBase, DataSourceMeta
-
 
 _META = DataSourceMeta(
     provider_id="unit-stub-provider",
@@ -27,9 +27,7 @@ _META = DataSourceMeta(
 class _UnitStubProvider(DataSourceBase):
     __meta__ = _META
 
-    def fetch_historical(
-        self, symbol: str, start: datetime, end: datetime, interval: str = "1d"
-    ) -> pd.DataFrame:
+    def fetch_historical(self, symbol: str, start: datetime, end: datetime, interval: str = "1d") -> pd.DataFrame:
         _ = symbol, start, end, interval
         return pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
 
@@ -56,7 +54,5 @@ def test_stub_validate_schema_missing_column_fails() -> None:
 
 def test_stub_validate_schema_full_row_ok() -> None:
     p = _UnitStubProvider()
-    df = pd.DataFrame(
-        [{"open": 1.0, "high": 1.1, "low": 0.9, "close": 1.05, "volume": 100.0}]
-    )
+    df = pd.DataFrame([{"open": 1.0, "high": 1.1, "low": 0.9, "close": 1.05, "volume": 100.0}])
     assert p.validate_schema(df)

@@ -25,7 +25,7 @@ import hashlib
 import uuid
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -94,7 +94,7 @@ class FixAction(BaseModel):
     before: str = ""
     after: str = ""
     metadata: dict[str, Any] = Field(default_factory=dict)
-    validation: Optional[ValidationResult] = None
+    validation: ValidationResult | None = None
     audit_trail_id: str = ""
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     confidence: FixConfidence = FixConfidence.HIGH
@@ -107,10 +107,10 @@ class FixAction(BaseModel):
     escalated: bool = False
     sandbox_verified: bool = False
     fingerprint: str = ""
-    blast_radius: Optional[BlastRadius] = None
+    blast_radius: BlastRadius | None = None
 
     @model_validator(mode="after")
-    def _compute_fingerprint(self) -> "FixAction":
+    def _compute_fingerprint(self) -> FixAction:
         if not self.fingerprint:
             raw = f"{self.action_type}:{self.target}:{self.before}"
             self.fingerprint = hashlib.sha256(raw.encode()).hexdigest()[:16]
@@ -162,9 +162,9 @@ class FixHealthReport(BaseModel):
 
 class ShadowResult(BaseModel):
     safe_to_apply: bool = False
-    test_result: Optional[Any] = None
-    type_result: Optional[Any] = None
-    lint_result: Optional[Any] = None
+    test_result: Any | None = None
+    type_result: Any | None = None
+    lint_result: Any | None = None
     error: str = ""
     shadow_dir: str = ""
 
@@ -184,11 +184,10 @@ class ComplianceEvidence(BaseModel):
     tamper_proof_hash: str = ""
 
     @model_validator(mode="after")
-    def _compute_hash(self) -> "ComplianceEvidence":
+    def _compute_hash(self) -> ComplianceEvidence:
         if not self.tamper_proof_hash:
             raw = (
-                f"{self.fix_id}:{self.action_type}:{self.target}:"
-                f"{self.before_hash}:{self.after_hash}:{self.timestamp}"
+                f"{self.fix_id}:{self.action_type}:{self.target}:{self.before_hash}:{self.after_hash}:{self.timestamp}"
             )
             self.tamper_proof_hash = hashlib.sha256(raw.encode()).hexdigest()[:32]
         return self

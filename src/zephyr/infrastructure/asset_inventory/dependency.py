@@ -29,11 +29,11 @@ DependencyGraph：项目级依赖图 + 环路检测（DFS）+ 优先级联动。
 
 import ast
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field
+
 
 class DependencyNode(BaseModel):
     file_path: str
@@ -43,14 +43,16 @@ class DependencyNode(BaseModel):
     is_leaf: bool = False
     is_root: bool = True
 
+
 class DependencyEdge(BaseModel):
     from_file: str
     to_module: str
     import_type: str = "absolute"
     line_number: int = 0
 
+
 class DependencyGraph(BaseModel):
-    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     based_on_scan: str = ""
     total_files: int = 0
     total_edges: int = 0
@@ -60,10 +62,11 @@ class DependencyGraph(BaseModel):
     circular_dependencies: list[list[str]] = Field(default_factory=list)
     orphan_imports: list[str] = Field(default_factory=list)
 
+
 _STDLIB_MODULES: set[str] = set(sys.stdlib_module_names) if hasattr(sys, "stdlib_module_names") else set()
 
-class DependencyExtractor:
 
+class DependencyExtractor:
     def extract(self, file_path: str, source_code: str) -> list[DependencyEdge]:
         try:
             tree = ast.parse(source_code)
@@ -101,6 +104,7 @@ class DependencyExtractor:
         if imported.startswith("."):
             return "relative"
         return "third_party"
+
 
 def build_dependency_graph(scan_entries: list, project_root: Path) -> DependencyGraph:
     extractor = DependencyExtractor()
@@ -171,7 +175,9 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
         top = e.to_module.split(".")[0]
         resolved = False
         for fp in graph.nodes:
-            if fp.endswith(e.to_module.replace(".", "/") + ".py") or fp.endswith(e.to_module.replace(".", "/") + "/__init__.py"):
+            if fp.endswith(e.to_module.replace(".", "/") + ".py") or fp.endswith(
+                e.to_module.replace(".", "/") + "/__init__.py"
+            ):
                 resolved = True
                 break
             if top == fp.split("/")[-1].replace(".py", ""):
@@ -185,7 +191,8 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
 
     return graph
 
-def _resolve_module_to_file(module_name: str, module_to_file: dict[str, str]) -> Optional[str]:
+
+def _resolve_module_to_file(module_name: str, module_to_file: dict[str, str]) -> str | None:
     if module_name in module_to_file:
         return module_to_file[module_name]
     parts = module_name.split(".")
@@ -194,6 +201,7 @@ def _resolve_module_to_file(module_name: str, module_to_file: dict[str, str]) ->
         if prefix in module_to_file:
             return module_to_file[prefix]
     return None
+
 
 def _infer_layer(file_path: str) -> str:
     if file_path.startswith("src/zephyr/gates/"):
@@ -211,6 +219,7 @@ def _infer_layer(file_path: str) -> str:
     if file_path.startswith("docs/"):
         return "L06_docs"
     return "cross_layer"
+
 
 def _detect_cycles(nodes: dict[str, DependencyNode], adjacency: dict[str, set[str]]) -> list[list[str]]:
     cycles: list[list[str]] = []
@@ -243,6 +252,7 @@ def _detect_cycles(nodes: dict[str, DependencyNode], adjacency: dict[str, set[st
             dfs(fp)
 
     return cycles
+
 
 def priority_from_dependency(imported_by_count: int) -> str:
     if imported_by_count >= 5:

@@ -55,7 +55,7 @@ SSoT: cross_layer_contracts.yaml v3.0
 from __future__ import annotations
 
 import abc
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from typing import ClassVar
 
@@ -65,6 +65,7 @@ import pandas as pd
 @dataclass(frozen=True)
 class DataSourceMeta:
     """数据源元数据"""
+
     provider_id: str
     provider_name: str
     asset_classes: list[str]
@@ -86,19 +87,18 @@ class DataSourceBase(abc.ABC):
 
     禁止直接修改本文件中的抽象接口。
     """
-    _registry: ClassVar[dict[str, type["DataSourceBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[DataSourceBase]]] = {}
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not abc.ABC in cls.__bases__ and hasattr(cls, "__meta__"):
-            meta = getattr(cls, "__meta__")
+        if abc.ABC not in cls.__bases__ and hasattr(cls, "__meta__"):
+            meta = cls.__meta__
             if isinstance(meta, DataSourceMeta):
                 DataSourceBase._registry[meta.provider_id] = cls
 
     @abc.abstractmethod
-    def fetch_historical(
-        self, symbol: str, start: datetime, end: datetime, interval: str = "1d"
-    ) -> pd.DataFrame:
+    def fetch_historical(self, symbol: str, start: datetime, end: datetime, interval: str = "1d") -> pd.DataFrame:
         """获取历史数据，返回标准化 OHLCV DataFrame"""
         ...
 

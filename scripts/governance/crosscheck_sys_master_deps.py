@@ -6,6 +6,7 @@ crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER-001 与 DOM
 DOM-GOV-001 §frontmatter depends_on — CT 交叉检查脚本.
 用法: python scripts/governance/crosscheck_sys_master_deps.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -18,14 +19,25 @@ MOD_MASTER = PROJECT_ROOT / "docs" / "03_modules" / "_master-blueprint" / "bluep
 DOM_GOV = PROJECT_ROOT / "docs" / "03_modules" / "_domain-governance" / "blueprint.md"
 
 EXPECTED_MODULES = [
-    "MOD-INF-018", "MOD-INF-019", "MOD-INF-020",
-    "MOD-INF-021", "MOD-INF-022", "MOD-INF-023",
-    "MOD-INF-024", "MOD-INF-025",
+    "MOD-INF-018",
+    "MOD-INF-019",
+    "MOD-INF-020",
+    "MOD-INF-021",
+    "MOD-INF-022",
+    "MOD-INF-023",
+    "MOD-INF-024",
+    "MOD-INF-025",
 ]
 
 EXPECTED_CTS = [
-    "G-CT-001", "G-CT-002", "G-CT-003", "G-CT-004",
-    "G-CT-005", "G-CT-006", "G-CT-007", "G-CT-008",
+    "G-CT-001",
+    "G-CT-002",
+    "G-CT-003",
+    "G-CT-004",
+    "G-CT-005",
+    "G-CT-006",
+    "G-CT-007",
+    "G-CT-008",
 ]
 
 

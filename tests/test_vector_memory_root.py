@@ -30,7 +30,9 @@ Chunk = vms_schemas.Chunk
 WriteTrace = vms_schemas.WriteTrace
 CollectionMetadata = vms_schemas.CollectionMetadata
 
-fake_vms_mod = pytest.importorskip("zephyr.knowledge.vector_memory.in_memory_fake_vms", reason="in_memory_fake_vms not available")
+fake_vms_mod = pytest.importorskip(
+    "zephyr.knowledge.vector_memory.in_memory_fake_vms", reason="in_memory_fake_vms not available"
+)
 InMemoryFakeVMS = fake_vms_mod.InMemoryFakeVMS
 
 
@@ -69,8 +71,15 @@ class TestVMSErrors:
             raise TTLError("expired")
 
     def test_all_in___all__(self):
-        expected = {"VMSError", "DesignPrincipleError", "ProvenanceMissingError",
-                    "DimensionError", "ChunkStrategyError", "TTLError", "HotColdSeparationError"}
+        expected = {
+            "VMSError",
+            "DesignPrincipleError",
+            "ProvenanceMissingError",
+            "DimensionError",
+            "ChunkStrategyError",
+            "TTLError",
+            "HotColdSeparationError",
+        }
         assert set(vms_errors.__all__) == expected
 
 

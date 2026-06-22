@@ -46,11 +46,11 @@ import json
 import os
 import time
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from threading import Event, Thread
-from typing import Callable
+from threading import Event
 
 DEFAULT_TARGET_MS = 1.0
 METRICS_DIR = Path(os.environ.get("ZEPHYR_METRICS_DIR", "data/metrics"))
@@ -60,6 +60,7 @@ PROBE_ENABLED = os.environ.get("ZEPHYR_T1_KILL_SWITCH_PROBE", "0") == "1"
 @dataclass
 class KillSwitchProbe:
     """Kill Switch 单次探测结果"""
+
     probe_id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
     trigger_timestamp: float = 0.0
     ack_timestamp: float = 0.0
@@ -122,10 +123,7 @@ class KillSwitchSimulator:
         self._write_probe(probe)
 
         if not probe.target_met:
-            print(
-                f"[KILL_SWITCH] WARN: 延迟 {probe.latency_us:.1f}us 超出目标 "
-                f"{self.target_ms}ms (INV-001)"
-            )
+            print(f"[KILL_SWITCH] WARN: 延迟 {probe.latency_us:.1f}us 超出目标 {self.target_ms}ms (INV-001)")
 
         return probe
 

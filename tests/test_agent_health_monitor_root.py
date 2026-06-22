@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
-
 import pytest
 
 from zephyr.trading.orchestrator.agent_health_monitor import (

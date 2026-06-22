@@ -11,17 +11,16 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError on unsupported format
 # [TESTS] tests/orphan-judge/test_report_generator.py
-
 import json
 import logging
-from typing import Any
 
 from zephyr.security.access_control.orphan_judge.db import JudgmentDB
-from zephyr.security.access_control.orphan_judge.models import JudgmentRecord, ScanSummary
+from zephyr.security.access_control.orphan_judge.models import JudgmentRecord
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["ReportGenerator"]
+
 
 class ReportGenerator:
     def __init__(self, db: JudgmentDB | None = None) -> None:
@@ -49,20 +48,22 @@ class ReportGenerator:
     def _as_json(self, records: list[JudgmentRecord]) -> str:
         data = []
         for r in records:
-            data.append({
-                "path": r.path,
-                "verdict": r.verdict,
-                "confidence": r.confidence,
-                "reason": r.reason,
-                "scanned_at": r.scanned_at.isoformat(),
-            })
+            data.append(
+                {
+                    "path": r.path,
+                    "verdict": r.verdict,
+                    "confidence": r.confidence,
+                    "reason": r.reason,
+                    "scanned_at": r.scanned_at.isoformat(),
+                }
+            )
         return json.dumps(data, indent=2, default=str)
 
     def _as_csv(self, records: list[JudgmentRecord]) -> str:
         lines = ["path,verdict,confidence,reason,scanned_at"]
         for r in records:
             reason = r.reason.replace('"', '""')
-            lines.append(f"{r.path},{r.verdict},{r.confidence},\"{reason}\",{r.scanned_at.isoformat()}")
+            lines.append(f'{r.path},{r.verdict},{r.confidence},"{reason}",{r.scanned_at.isoformat()}')
         return "\n".join(lines)
 
     def _as_markdown(self, records: list[JudgmentRecord]) -> str:
@@ -73,7 +74,9 @@ class ReportGenerator:
         s = self._db.summary()
         lines.append("### 统计")
         lines.append(f"- 总数: {s.total}")
-        lines.append(f"- KEEP: {s.keep} | DELETE: {s.delete} | DEPRECATE: {s.deprecate} | EXTRACT_AND_MERGE: {s.extract_and_merge} | ESCALATE: {s.escalate}")
+        lines.append(
+            f"- KEEP: {s.keep} | DELETE: {s.delete} | DEPRECATE: {s.deprecate} | EXTRACT_AND_MERGE: {s.extract_and_merge} | ESCALATE: {s.escalate}"
+        )
         return "\n".join(lines)
 
     def summary_text(self) -> str:

@@ -23,12 +23,14 @@ from __future__ import annotations
 
 """FeatureFlag 管理器（CT-FEATUREFLAG-001）——CT-*运行时开关+audit_log。"""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class FeatureFlag(BaseModel):
     contract_id: str
     enabled: bool = True
     description: str = ""
+
 
 class FeatureFlagManager:
     def __init__(self):

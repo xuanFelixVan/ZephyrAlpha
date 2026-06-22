@@ -1,11 +1,21 @@
 rule_id: TRAE-003
 title: 任务粒度与完成门槛协议
+version: 1.0.0
+layer: L0
+module_id: TRAE-003
+depends_on: []
+tags:
+- TRAE
+- task_management
+- L0
+stability: stable
+safety_level: H
+ai_autonomy: human_gated
 aliases:
 - RULE-SIX
 - RULE-THIRTEEN
 - 任务粒度
 - 完成门槛
-layer: L0
 severity: critical
 scope: task_management
 domain: TRAE
@@ -90,7 +100,7 @@ metadata:
   change_policy: stable
   impact_level: H
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   version: '2.0.0'
   last_modified: '2026-06-22'
 provenance:

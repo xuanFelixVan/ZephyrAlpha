@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 审计失败返回降级结果
 # [TESTS] tests/audit-orchestrator/test_external_tool_audit.py
-
 import logging
 import subprocess
 from pathlib import Path
@@ -22,6 +21,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["ExternalToolAuditor"]
 
 DEFAULT_TIMEOUT = 30
+
 
 class ExternalToolAuditor:
     def __init__(self, timeout: int = DEFAULT_TIMEOUT) -> None:

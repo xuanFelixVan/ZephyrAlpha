@@ -21,7 +21,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import logging
 import os
 import re
@@ -64,16 +63,24 @@ class SafetyGate:
         if not self._enabled:
             return SafetyDecision(approved=True, confidence=FixConfidence.HIGH, reason="Safety gate disabled")
         if action.level == FixLevel.L3_AGENT:
-            return SafetyDecision(approved=False, confidence=FixConfidence.LOW, reason="L3 agent fixes require human approval")
+            return SafetyDecision(
+                approved=False, confidence=FixConfidence.LOW, reason="L3 agent fixes require human approval"
+            )
         target_path = Path(action.target)
         for prot in self._protected_paths:
             if str(target_path).startswith(prot) or prot in str(target_path):
-                return SafetyDecision(approved=False, confidence=FixConfidence.HIGH, reason=f"Target in protected path: {prot}")
+                return SafetyDecision(
+                    approved=False, confidence=FixConfidence.HIGH, reason=f"Target in protected path: {prot}"
+                )
         for pattern in self._protected_patterns:
             if target_path.match(pattern):
-                return SafetyDecision(approved=False, confidence=FixConfidence.HIGH, reason=f"Target matches protected pattern: {pattern}")
+                return SafetyDecision(
+                    approved=False, confidence=FixConfidence.HIGH, reason=f"Target matches protected pattern: {pattern}"
+                )
         if action.level == FixLevel.L2_LLM and action.confidence == FixConfidence.LOW:
-            return SafetyDecision(approved=False, confidence=FixConfidence.LOW, reason="L2 fix with LOW confidence requires approval")
+            return SafetyDecision(
+                approved=False, confidence=FixConfidence.LOW, reason="L2 fix with LOW confidence requires approval"
+            )
         return SafetyDecision(approved=True, confidence=action.confidence, reason="Safety gate passed")
 
 
@@ -88,6 +95,7 @@ class LockGuard:
         if lock_dir.exists() and owner_file.exists():
             try:
                 import json
+
                 data = json.loads(owner_file.read_text(encoding="utf-8"))
                 return True, data.get("owner", "unknown")
             except Exception:
@@ -133,7 +141,9 @@ class FixValidator:
     def validate_fix(self, target: str) -> ValidationResult:
         errors: list[str] = []
         if not Path(target).exists():
-            return ValidationResult(valid=False, check_name="file_exists", evidence="", error=f"Target not found: {target}")
+            return ValidationResult(
+                valid=False, check_name="file_exists", evidence="", error=f"Target not found: {target}"
+            )
         syntax_result = self._check_syntax(target)
         if not syntax_result:
             errors.append("syntax_error")
@@ -172,7 +182,10 @@ class FixValidator:
         try:
             result = subprocess.run(
                 ["python", "-m", "mypy", target, "--no-error-summary"],
-                capture_output=True, text=True, timeout=120, cwd=self._project_root,
+                capture_output=True,
+                text=True,
+                timeout=120,
+                cwd=self._project_root,
             )
             return ValidationResult(
                 valid=result.returncode == 0,
@@ -187,7 +200,10 @@ class FixValidator:
         try:
             result = subprocess.run(
                 ["python", "-m", "ruff", "check", target],
-                capture_output=True, text=True, timeout=60, cwd=self._project_root,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=self._project_root,
             )
             return ValidationResult(
                 valid=result.returncode == 0,
@@ -223,14 +239,23 @@ class CascadeBreaker:
         now = time.time()
         self._cleanup(now)
         if now < self._global_frozen_until:
-            return False, f"Global cascade breaker active until {datetime.fromtimestamp(self._global_frozen_until, tz=UTC).isoformat()}"
+            return (
+                False,
+                f"Global cascade breaker active until {datetime.fromtimestamp(self._global_frozen_until, tz=UTC).isoformat()}",
+            )
         if module and module in self._module_frozen and now < self._module_frozen[module]:
-            return False, f"Module cascade breaker active for {module} until {datetime.fromtimestamp(self._module_frozen[module], tz=UTC).isoformat()}"
+            return (
+                False,
+                f"Module cascade breaker active for {module} until {datetime.fromtimestamp(self._module_frozen[module], tz=UTC).isoformat()}",
+            )
         if module:
             recent = [t for t in self._module_events.get(module, []) if now - t < self._module_window]
             if len(recent) >= self._module_threshold:
                 self._module_frozen[module] = now + self._module_cooldown
-                return False, f"Module cascade breaker triggered for {module}: {len(recent)} fixes in {self._module_window}s"
+                return (
+                    False,
+                    f"Module cascade breaker triggered for {module}: {len(recent)} fixes in {self._module_window}s",
+                )
         recent_global = [t for t in self._global_events if now - t < self._global_window]
         if len(recent_global) >= self._global_threshold:
             self._global_frozen_until = now + self._global_cooldown
@@ -264,6 +289,7 @@ class SandboxExecutor:
         finally:
             try:
                 import shutil
+
                 shutil.rmtree(sandbox_dir, ignore_errors=True)
             except Exception:
                 pass

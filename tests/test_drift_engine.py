@@ -10,10 +10,8 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_drift_engine.py
 
-import os
 import uuid
 
-import pytest
 import yaml
 
 from zephyr.behavioral_audit.drift_engine import (
@@ -27,7 +25,6 @@ from zephyr.behavioral_audit.drift_engine import (
     load_detector_registry,
 )
 from zephyr.behavioral_audit.drift_models import (
-    BulkDriftEvent,
     Detector,
     DriftEvent,
     DriftReport,

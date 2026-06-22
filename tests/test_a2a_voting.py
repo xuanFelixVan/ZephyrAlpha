@@ -10,11 +10,9 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_a2a_voting.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_voting import (
-    VoteAction,
-    VotingResult,
     A2AVoting,
+    VoteAction,
 )
 
 

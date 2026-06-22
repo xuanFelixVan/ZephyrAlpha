@@ -25,11 +25,10 @@ L64: Pre-Trade Risk + Best Execution + Market Microstructure + Counterparty Cred
 L65: KB Injection Defense + AI Code Duplication + Multi-Model Ensemble + DB Migration + Context Contamination + RCA + MTTR + Bus Factor
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL64L65:
-
     def __init__(self):
         self.pre_trade_risk_ok: bool = True
         self.pnl_reconciled: bool = True

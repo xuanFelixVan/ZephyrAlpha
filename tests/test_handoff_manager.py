@@ -10,10 +10,9 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_handoff_manager.py
 
-import pytest
 from zephyr.behavioral_audit.handoff_manager import (
-    HandoffRecord,
     HandoffManager,
+    HandoffRecord,
 )
 
 

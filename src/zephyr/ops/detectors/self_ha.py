@@ -27,6 +27,7 @@ Risk: R173 — FLE itself fails; no other instance takes over.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class SelfHA:
     active_instance: str = "primary"

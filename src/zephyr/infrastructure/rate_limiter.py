@@ -30,20 +30,19 @@
 盲点关闭：B10（缺限流 → 无 DoS 防护）。
 """
 
-
 from __future__ import annotations
 
 import threading
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 __all__ = [
-    "RateLimiter",
-    "RateLimiterStats",
-    "RATE_LIMITED_KEY",
-    "DEFAULT_QPS",
     "DEFAULT_BURST",
     "DEFAULT_MAX_WAIT",
+    "DEFAULT_QPS",
+    "RATE_LIMITED_KEY",
+    "RateLimiter",
+    "RateLimiterStats",
 ]
 
 RATE_LIMITED_KEY = "RATE_LIMITED"

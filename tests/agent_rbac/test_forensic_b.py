@@ -6,12 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """跨切面 B 取证审计 B 层——path/shell/rule_injection 守卫测试."""
+
 from __future__ import annotations
 
-import pytest
 from zephyr.security.access_control.path_guard import PathGuard
-from zephyr.security.access_control.shell_dialect_detector import ShellDialectDetector
 from zephyr.security.access_control.rule_injection_guard import RuleInjectionGuard
+from zephyr.security.access_control.shell_dialect_detector import ShellDialectDetector
 
 
 class TestForensicB:
@@ -50,7 +50,7 @@ class TestForensicB:
 
     def test_rule_injection_eval_detected(self):
         guard = RuleInjectionGuard()
-        result = guard.check("rule_001", "eval('__import__(\"os\").system(\"ls\")')")
+        result = guard.check("rule_001", 'eval(\'__import__("os").system("ls")\')')
         assert result.injection_detected is True
 
     def test_rule_injection_clean(self):

@@ -35,13 +35,12 @@ Reference: Claude Code CVE-2025-59536, Anthropic Sandboxing.
 from __future__ import annotations
 
 import hashlib
-import os
 import threading
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 class SandboxState(str, Enum):
@@ -59,21 +58,39 @@ class AccessDecision(str, Enum):
 
 @dataclass
 class IsolationProfile:
-    read_paths: list[str] = field(default_factory=lambda: [
-        "docs/", "src/zephyr/escalation-engine/",
-    ])
-    write_paths: list[str] = field(default_factory=lambda: [
-        "docs/09_audit/",
-    ])
-    deny_paths: list[str] = field(default_factory=lambda: [
-        "src/", ".env", ".key", ".secret", ".git/",
-    ])
-    network_allowed: list[str] = field(default_factory=lambda: [
-        "localhost", "127.0.0.1",
-    ])
-    network_denied: list[str] = field(default_factory=lambda: [
-        "api.openai.com", "api.anthropic.com", "generativelanguage.googleapis.com",
-    ])
+    read_paths: list[str] = field(
+        default_factory=lambda: [
+            "docs/",
+            "src/zephyr/escalation-engine/",
+        ]
+    )
+    write_paths: list[str] = field(
+        default_factory=lambda: [
+            "docs/09_audit/",
+        ]
+    )
+    deny_paths: list[str] = field(
+        default_factory=lambda: [
+            "src/",
+            ".env",
+            ".key",
+            ".secret",
+            ".git/",
+        ]
+    )
+    network_allowed: list[str] = field(
+        default_factory=lambda: [
+            "localhost",
+            "127.0.0.1",
+        ]
+    )
+    network_denied: list[str] = field(
+        default_factory=lambda: [
+            "api.openai.com",
+            "api.anthropic.com",
+            "generativelanguage.googleapis.com",
+        ]
+    )
     max_memory_mb: int = 256
     max_cpu_seconds: float = 5.0
 
@@ -134,14 +151,17 @@ class EngineSandbox:
         allowed = self._match_path(rel, self._profile.read_paths)
         denied = self._match_path(rel, self._profile.deny_paths)
         if denied:
-            event = SandboxAccessEvent(actor=actor, path=str(rel), decision=AccessDecision.DENY,
-                                       reason=f"Path in deny list")
+            event = SandboxAccessEvent(
+                actor=actor, path=str(rel), decision=AccessDecision.DENY, reason="Path in deny list"
+            )
         elif allowed:
-            event = SandboxAccessEvent(actor=actor, path=str(rel), decision=AccessDecision.ALLOW,
-                                       reason="Read path allowed")
+            event = SandboxAccessEvent(
+                actor=actor, path=str(rel), decision=AccessDecision.ALLOW, reason="Read path allowed"
+            )
         else:
-            event = SandboxAccessEvent(actor=actor, path=str(rel), decision=AccessDecision.DENY,
-                                       reason="Path not in read allowlist")
+            event = SandboxAccessEvent(
+                actor=actor, path=str(rel), decision=AccessDecision.DENY, reason="Path not in read allowlist"
+            )
         self._record(event)
         return event
 
@@ -149,14 +169,17 @@ class EngineSandbox:
         rel = self._resolve_relative(path)
         denied = self._match_path(rel, self._profile.deny_paths)
         if denied:
-            event = SandboxAccessEvent(actor=actor, path=str(rel), decision=AccessDecision.DENY,
-                                       reason=f"Path in deny list")
+            event = SandboxAccessEvent(
+                actor=actor, path=str(rel), decision=AccessDecision.DENY, reason="Path in deny list"
+            )
         elif self._match_path(rel, self._profile.write_paths):
-            event = SandboxAccessEvent(actor=actor, path=str(rel), decision=AccessDecision.ALLOW,
-                                       reason="Write path allowed")
+            event = SandboxAccessEvent(
+                actor=actor, path=str(rel), decision=AccessDecision.ALLOW, reason="Write path allowed"
+            )
         else:
-            event = SandboxAccessEvent(actor=actor, path=str(rel), decision=AccessDecision.DENY,
-                                       reason="Path not in write allowlist")
+            event = SandboxAccessEvent(
+                actor=actor, path=str(rel), decision=AccessDecision.DENY, reason="Path not in write allowlist"
+            )
         self._record(event)
         return event
 
@@ -164,17 +187,20 @@ class EngineSandbox:
         host_lower = host.lower()
         denied = any(d in host_lower for d in self._profile.network_denied)
         if denied:
-            event = SandboxAccessEvent(actor=actor, path=f"network:{host}",
-                                       decision=AccessDecision.DENY,
-                                       reason="External network denied")
+            event = SandboxAccessEvent(
+                actor=actor, path=f"network:{host}", decision=AccessDecision.DENY, reason="External network denied"
+            )
         elif any(a in host_lower for a in self._profile.network_allowed):
-            event = SandboxAccessEvent(actor=actor, path=f"network:{host}",
-                                       decision=AccessDecision.ALLOW,
-                                       reason="Internal network allowed")
+            event = SandboxAccessEvent(
+                actor=actor, path=f"network:{host}", decision=AccessDecision.ALLOW, reason="Internal network allowed"
+            )
         else:
-            event = SandboxAccessEvent(actor=actor, path=f"network:{host}",
-                                       decision=AccessDecision.AUDIT_ONLY,
-                                       reason="Unknown host — audit only")
+            event = SandboxAccessEvent(
+                actor=actor,
+                path=f"network:{host}",
+                decision=AccessDecision.AUDIT_ONLY,
+                reason="Unknown host — audit only",
+            )
         self._record(event)
         return event
 
@@ -217,10 +243,14 @@ class EngineSandbox:
     def lock_sandbox(self, reason: str = "") -> None:
         with self._lock:
             self._state = SandboxState.LOCKED
-        self._record(SandboxAccessEvent(
-            actor="sandbox", path="self", decision=AccessDecision.DENY,
-            reason=f"Sandbox locked: {reason}",
-        ))
+        self._record(
+            SandboxAccessEvent(
+                actor="sandbox",
+                path="self",
+                decision=AccessDecision.DENY,
+                reason=f"Sandbox locked: {reason}",
+            )
+        )
 
     def get_violation_summary(self) -> dict[str, Any]:
         return {

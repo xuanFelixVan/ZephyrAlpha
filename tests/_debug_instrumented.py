@@ -1,31 +1,31 @@
 # [A_test] module_id: SRC-TST-0002 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-import os
+import random
 import sys
 import tempfile
-import time
-import random
 import threading
-from pathlib import Path
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 _GLOBAL_LOG = []
 _LOG_LOCK = threading.Lock()
 
+
 def _log(msg):
     with _LOG_LOCK:
         _GLOBAL_LOG.append(f"[{time.monotonic():.6f}] {msg}")
 
 
-from zephyr.trading.staging_area import StagingArea, CommitStatus
+from zephyr.trading.staging_area import CommitStatus, StagingArea
 
 _orig_atomic_replace = None
 
+
 def _instrumented_atomic_replace(tmp, target, max_retries=5):
-    import zephyr.trading.staging_area as sa_mod
     try:
         after_content = tmp.read_text(encoding="utf-8")
     except Exception:
@@ -43,6 +43,7 @@ def _instrumented_atomic_replace(tmp, target, max_retries=5):
 def test_instrumented():
     global _orig_atomic_replace
     import zephyr.trading.staging_area as sa_mod
+
     _orig_atomic_replace = sa_mod._atomic_replace
     sa_mod._atomic_replace = _instrumented_atomic_replace
 

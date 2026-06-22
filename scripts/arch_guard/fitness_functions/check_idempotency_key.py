@@ -14,6 +14,7 @@ INV-007: 所有跨层事件必须携带幂等 Key（Idempotency Key）：防止�
 
 exit: 0=pass, 1=missing field found
 """
+
 from __future__ import annotations
 
 import sys
@@ -67,7 +68,7 @@ def main() -> int:
         print()
         print("INV-007 要求：所有跨层事件 MUST 携带 idempotency_key 字段。")
         print("修复方式：在各契约 YAML 的 fields 中添加：")
-        print("  - {name: idempotency_key, type: str, required: true, description: \"幂等键（UUID）\"}")
+        print('  - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID）"}')
         return 1
 
     print("✅ INV-007 幂等 Key —— 所有 P0/P1 契约均包含 idempotency_key 字段")

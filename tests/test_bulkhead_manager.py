@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.trading.orchestrator.bulkhead_manager import BULKHEAD_QUOTAS, SHARED_POOLS, BulkheadManager
 
 

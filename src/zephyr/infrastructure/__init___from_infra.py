@@ -4,9 +4,9 @@
 from __future__ import annotations
 
 __all__ = [
-    "shared_core",
-    "shared_services",
-    "runtime_integration",
     "mcp_servers",
     "resource_optimization",
+    "runtime_integration",
+    "shared_core",
+    "shared_services",
 ]

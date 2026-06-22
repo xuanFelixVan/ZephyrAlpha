@@ -27,87 +27,37 @@ ClassificationHandler — ClassificationHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class ClassificationHandler(CheckTypeHandler):
-
-
     name = "classification"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        field_name = str(params.get("field", ""))
 
-                violations = []
+        allowed_values = list(params.get("allowed_values", []))
 
+        if field_name and allowed_values:
+            val = getattr(task, field_name, None)
 
-                field_name = str(params.get("field", ""))
+            if val is not None and str(val) not in [str(v) for v in allowed_values]:
+                violations.append(
+                    {"message": f"Field '{field_name}' value '{val}' not in allowed set", "severity": check.severity}
+                )
 
-
-                allowed_values = list(params.get("allowed_values", []))
-
-
-                if field_name and allowed_values:
-
-
-                    val = getattr(task, field_name, None)
-
-
-                    if val is not None and str(val) not in [str(v) for v in allowed_values]:
-
-
-                        violations.append({"message": f"Field '{field_name}' value '{val}' not in allowed set", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

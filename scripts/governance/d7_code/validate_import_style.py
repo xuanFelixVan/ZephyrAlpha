@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 导入风格一致性校验——相对导入 vs 绝对导入，项目主风格为绝对导入
@@ -47,7 +48,6 @@ SKIP_MODULES = {
     "risk",
     "pf_core",
     "ex_core",
-    "pf_core",
     "frontend",
     "research",
     "compliance",
@@ -56,6 +56,7 @@ SKIP_MODULES = {
 }
 
 ALLOWED_RELATIVE = {"test_schemas.py"}
+
 
 def _has_relative_import(tree: ast.AST) -> list[int]:
     """_has_relative_import implementation."""
@@ -66,6 +67,7 @@ def _has_relative_import(tree: ast.AST) -> list[int]:
                 lines.append(node.lineno)
     return lines
 
+
 def scan_import_style(source_path: Path) -> list[int]:
     """扫描 import 风格合规性."""
     with open(source_path, encoding="utf-8") as f:
@@ -75,6 +77,7 @@ def scan_import_style(source_path: Path) -> list[int]:
     tree = ast.parse(source, filename=str(source_path))
     return _has_relative_import(tree)
     """扫描 import 风格合规性."""
+
 
 def main() -> None:
     """入口函数."""
@@ -119,6 +122,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

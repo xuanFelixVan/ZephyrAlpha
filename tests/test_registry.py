@@ -10,13 +10,11 @@
 # [ERROR_CONTRACT] registry load failure returns empty dict; missing registry file skips load
 # [TESTS] tests/test_registry.py
 
-import yaml
-from pathlib import Path
-from unittest.mock import patch
 
 import pytest
+import yaml
 
-from zephyr.autonomy_core.registry import SpecRegistry, AgentCapability, GOVERNANCE_SKILL_TYPES
+from zephyr.autonomy_core.registry import GOVERNANCE_SKILL_TYPES, AgentCapability, SpecRegistry
 
 
 class TestAgentCapabilityModel:
@@ -132,9 +130,7 @@ class TestSpecRegistryGet:
         reg_file = tmp_path / "skill-registry.yaml"
         data = {
             "skills": {
-                "domain": {
-                    "my-skill": {"name": "My Skill", "description": "desc", "version": "1.0.0"}
-                },
+                "domain": {"my-skill": {"name": "My Skill", "description": "desc", "version": "1.0.0"}},
                 "role": {},
             }
         }
@@ -234,9 +230,7 @@ class TestSpecRegistryListByCategory:
 
     def test_filter_nonexistent_category(self, tmp_path):
         reg_file = tmp_path / "skill-registry.yaml"
-        data = {
-            "skills": {"domain": {"s1": {"name": "S1", "description": "d", "version": "1.0.0"}}, "role": {}}
-        }
+        data = {"skills": {"domain": {"s1": {"name": "S1", "description": "d", "version": "1.0.0"}}, "role": {}}}
         reg_file.write_text(yaml.dump(data, allow_unicode=True), encoding="utf-8")
         reg = SpecRegistry(registry_path=reg_file)
         assert reg.list_by_category("nonexistent") == []

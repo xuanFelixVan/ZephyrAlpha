@@ -24,14 +24,14 @@
 module_id: MOD-INF-023
 实现蓝图 §2.6 定期触发策略：每30min STANDARD + 每6h DEEP。
 集成 DaemonRegistry 统一管理。"""
+
 from __future__ import annotations
 
 import logging
 import threading
-import time
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 
-from zephyr.shared.lifecycle.daemon_registry import DaemonRegistry, DaemonState, registry
+from zephyr.shared.lifecycle.daemon_registry import DaemonState, registry
 
 logger = logging.getLogger(__name__)
 
@@ -79,15 +79,11 @@ class DriftCronScheduler:
     def _run(self):
         while not self._stop_event.is_set():
             try:
-                now = datetime.now(timezone.utc)
+                now = datetime.now(UTC)
                 should_standard = (
-                    self._last_standard is None
-                    or (now - self._last_standard).total_seconds() >= STANDARD_INTERVAL_S
+                    self._last_standard is None or (now - self._last_standard).total_seconds() >= STANDARD_INTERVAL_S
                 )
-                should_deep = (
-                    self._last_deep is None
-                    or (now - self._last_deep).total_seconds() >= DEEP_INTERVAL_S
-                )
+                should_deep = self._last_deep is None or (now - self._last_deep).total_seconds() >= DEEP_INTERVAL_S
 
                 if should_standard:
                     self._run_scan("STANDARD")
@@ -106,7 +102,9 @@ class DriftCronScheduler:
     def _run_scan(self, level: str):
         try:
             import asyncio
-            from zephyr.governance.drift_detection.drift_engine import scan, ScanLevel
+
+            from zephyr.governance.drift_detection.drift_engine import ScanLevel, scan
+
             scan_level = ScanLevel.DEEP if level == "DEEP" else ScanLevel.STANDARD
             try:
                 loop = asyncio.get_running_loop()
@@ -114,7 +112,9 @@ class DriftCronScheduler:
                 loop = None
             if loop is not None:
                 import concurrent.futures
+
                 future = concurrent.futures.Future()
+
                 def _run():
                     new_loop = asyncio.new_event_loop()
                     try:
@@ -124,6 +124,7 @@ class DriftCronScheduler:
                         future.set_exception(exc)
                     finally:
                         new_loop.close()
+
                 t = threading.Thread(target=_run, daemon=True)
                 t.start()
                 t.join(timeout=120)
@@ -136,14 +137,19 @@ class DriftCronScheduler:
                     new_loop.close()
             logger.info(
                 "[Drift][Cron] %s scan complete: %s detectors, %s events",
-                level, result.detectors_run, result.total_drift_events,
+                level,
+                result.detectors_run,
+                result.total_drift_events,
             )
             try:
-                registry.update("drift-cron-scheduler", metadata={
-                    "last_scan": datetime.now(timezone.utc).isoformat(),
-                    "last_scan_level": level,
-                    "last_scan_events": result.total_drift_events,
-                })
+                registry.update(
+                    "drift-cron-scheduler",
+                    metadata={
+                        "last_scan": datetime.now(UTC).isoformat(),
+                        "last_scan_level": level,
+                        "last_scan_events": result.total_drift_events,
+                    },
+                )
             except Exception:
                 pass
         except Exception:

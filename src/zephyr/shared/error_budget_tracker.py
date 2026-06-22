@@ -34,10 +34,10 @@ class ErrorBudgetTracker:
     def status(self) -> BudgetStatus:
         budget = 1.0 - self._slo_target
         if self._total_requests == 0:
-            return BudgetStatus(budget, 0.0, budget, 0.0, float('inf'))
+            return BudgetStatus(budget, 0.0, budget, 0.0, float("inf"))
         error_rate = self._errors / self._total_requests
         consumed = max(0.0, error_rate - (1.0 - self._slo_target - budget))
         remaining = max(0.0, budget - consumed)
         burn_rate = consumed / self._window_hours if self._window_hours > 0 else 0.0
-        tte = remaining / burn_rate if burn_rate > 0 else float('inf')
+        tte = remaining / burn_rate if burn_rate > 0 else float("inf")
         return BudgetStatus(budget, consumed, remaining, burn_rate, tte)

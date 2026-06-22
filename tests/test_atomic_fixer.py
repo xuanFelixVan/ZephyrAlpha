@@ -9,10 +9,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.atomic_fixer import (
-    AtomicFixer, FixPlan, FixStep, FixStepStatus,
+    AtomicFixer,
+    FixPlan,
+    FixStep,
 )
+
 
 class TestAtomicFixer:
     def test_instantiation_default(self):

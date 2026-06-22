@@ -10,11 +10,9 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_prompt_factory_governance.py
 
-import pytest
 
 from zephyr.ops.evolution.prompt_factory_governance import (
     PromptFactoryGovernance,
-    PromptVariant,
 )
 
 

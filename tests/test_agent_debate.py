@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import hashlib
-
 from zephyr.governance.intelligence_governance.agent_debate import (
     AgentDebate,
     DebateRound,

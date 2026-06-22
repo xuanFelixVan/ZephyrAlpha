@@ -1,13 +1,13 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §
 # [MODULE] scripts.governance.generate_path_ownership_map
-# [INVARIANTS] 
-# [MODIFY-GUARD] 
-# [CONSUMERS] 
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 """从蓝图§0.1聚合生成 path-ownership-map.yaml 路径归属声明。
 
 对标: CODEOWNERS + Bazel visibility。
@@ -62,7 +62,9 @@ def extract_actual_disk_path(text: str) -> str:
     if not m:
         return ""
     raw = m.group(1).strip().strip("\"'")
-    parts = [p.strip() for p in raw.replace("+", ",").split(",") if p.strip() and not p.strip().startswith(("D:", "C:", "/"))]
+    parts = [
+        p.strip() for p in raw.replace("+", ",").split(",") if p.strip() and not p.strip().startswith(("D:", "C:", "/"))
+    ]
     return parts[0] if parts else ""
 
 
@@ -194,13 +196,13 @@ def generate_yaml() -> str:
     )
 
     meta_lines = [
-        f"meta:",
+        "meta:",
         f"  generated_at: '{now}'",
-        f"  auto_generated_by: 'scripts/governance/generate_path_ownership_map.py'",
+        "  auto_generated_by: 'scripts/governance/generate_path_ownership_map.py'",
         f"  total_path_claims: {len(entries)}",
         f"  total_ssot_claims: {len(ssot_claims)}",
         f"  total_conflicts: {len(conflicts)}",
-        f"  conflict_resolution: 'ssot_claims_priority'",
+        "  conflict_resolution: 'ssot_claims_priority'",
         "",
     ]
 
@@ -227,7 +229,7 @@ def generate_yaml() -> str:
         for c in conflicts:
             conflict_lines.append(f"  - path: '{c['path']}'")
             for claimant in c["claimants"]:
-                conflict_lines.append(f"    claimant:")
+                conflict_lines.append("    claimant:")
                 conflict_lines.append(f"      blueprint: '{claimant['blueprint']}'")
                 conflict_lines.append(f"      claim_type: '{claimant['claim_type']}'")
                 conflict_lines.append(f"      declared_in: '{claimant['declared_in']}'")
@@ -237,7 +239,9 @@ def generate_yaml() -> str:
         conflict_lines.append("  []")
         conflict_lines.append("")
 
-    return header + "\n".join(meta_lines) + "\n".join(ownership_lines) + "\n".join(ssot_lines) + "\n".join(conflict_lines)
+    return (
+        header + "\n".join(meta_lines) + "\n".join(ownership_lines) + "\n".join(ssot_lines) + "\n".join(conflict_lines)
+    )
 
 
 def cmd_write() -> None:

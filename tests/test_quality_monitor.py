@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
 from zephyr.shared.quality.quality_monitor import (
     CodeQualityReport,
     QualityMetric,
@@ -154,7 +150,11 @@ class TestQualityMetricDataclass:
 class TestCodeQualityReportDataclass:
     def test_report_fields(self):
         r = CodeQualityReport(
-            file_path="a.py", overall_score=0.8, metrics=[], issues=[], passed=True,
+            file_path="a.py",
+            overall_score=0.8,
+            metrics=[],
+            issues=[],
+            passed=True,
         )
         assert r.file_path == "a.py"
         assert r.overall_score == 0.8

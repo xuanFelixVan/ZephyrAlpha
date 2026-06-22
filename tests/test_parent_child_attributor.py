@@ -31,9 +31,7 @@ class TestAttributionChain:
         assert chain.depth == 1
 
     def test_timestamp_auto_set(self):
-        chain = AttributionChain(
-            parent_id="p", child_id="c", tokens_delegated=50, cost_delegated=0.1, depth=1
-        )
+        chain = AttributionChain(parent_id="p", child_id="c", tokens_delegated=50, cost_delegated=0.1, depth=1)
         assert chain.timestamp > 0
 
 

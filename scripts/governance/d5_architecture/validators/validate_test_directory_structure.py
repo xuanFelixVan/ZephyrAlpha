@@ -1,6 +1,8 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_test_directory_structure.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
+
 #!/usr/bin/env python3
 """
 validate_test_directory_structure.py — 测试目录结构校验器
@@ -37,8 +39,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from _shared.thresholds import get
 
 ensure_utf8_stdout()
@@ -71,44 +73,54 @@ def main() -> int:
     violations = []
 
     if UNIT_DIR.exists():
-        root_py_files = [
-            f for f in UNIT_DIR.iterdir()
-            if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"
-        ]
+        root_py_files = [f for f in UNIT_DIR.iterdir() if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"]
         if len(root_py_files) >= error_threshold:
-            violations.append({
-                "severity": "ERROR",
-                "path": "tests/unit/",
-                "count": len(root_py_files),
-                "message": f"tests/unit/ has {len(root_py_files)} flat .py files (error>{error_threshold}) — should use module subdirectories (e.g., tests/unit/db/, tests/unit/shared/)",
-            })
+            violations.append(
+                {
+                    "severity": "ERROR",
+                    "path": "tests/unit/",
+                    "count": len(root_py_files),
+                    "message": f"tests/unit/ has {len(root_py_files)} flat .py files (error>{error_threshold}) — should use module subdirectories (e.g., tests/unit/db/, tests/unit/shared/)",
+                }
+            )
         elif len(root_py_files) >= warn_threshold:
-            violations.append({
-                "severity": "WARN",
-                "path": "tests/unit/",
-                "count": len(root_py_files),
-                "message": f"tests/unit/ has {len(root_py_files)} flat .py files (warn>{warn_threshold}) — consider module subdirectories",
-            })
+            violations.append(
+                {
+                    "severity": "WARN",
+                    "path": "tests/unit/",
+                    "count": len(root_py_files),
+                    "message": f"tests/unit/ has {len(root_py_files)} flat .py files (warn>{warn_threshold}) — consider module subdirectories",
+                }
+            )
 
         subdirs = {d.name for d in UNIT_DIR.iterdir() if d.is_dir() and not d.name.startswith("_")}
         src_modules = _get_src_modules()
         missing_test_dirs = src_modules - subdirs - {"__pycache__"}
-        significant_missing = {m for m in missing_test_dirs if any(
-            (SRC_ZEPHYR / m / f).is_file() and f.suffix == ".py" and f.name != "__init__.py"
-            for f in (SRC_ZEPHYR / m).iterdir()
-        ) if (SRC_ZEPHYR / m).is_dir()}
+        significant_missing = {
+            m
+            for m in missing_test_dirs
+            if any(
+                (SRC_ZEPHYR / m / f).is_file() and f.suffix == ".py" and f.name != "__init__.py"
+                for f in (SRC_ZEPHYR / m).iterdir()
+            )
+            if (SRC_ZEPHYR / m).is_dir()
+        }
         if significant_missing:
-            violations.append({
-                "severity": "WARN",
-                "path": "tests/unit/",
-                "count": len(significant_missing),
-                "message": f"Missing test subdirectories for src modules: {sorted(significant_missing)[:10]}",
-            })
+            violations.append(
+                {
+                    "severity": "WARN",
+                    "path": "tests/unit/",
+                    "count": len(significant_missing),
+                    "message": f"Missing test subdirectories for src modules: {sorted(significant_missing)[:10]}",
+                }
+            )
 
     if not violations:
         print("\u2705 测试目录结构校验通过", file=sys.stderr)
         if args.jsonl:
-            print(json.dumps({"severity": "INFO", "check_id": "TEST-DIR-STRUCTURE", "violations": 0}, ensure_ascii=False))
+            print(
+                json.dumps({"severity": "INFO", "check_id": "TEST-DIR-STRUCTURE", "violations": 0}, ensure_ascii=False)
+            )
         return EXIT_PASS
     print(f"\u274c 测试目录结构问题: {len(violations)} 项", file=sys.stderr)
     for v in violations:
@@ -127,5 +139,7 @@ def main() -> int:
         print("\n\u274c 阻断: 测试目录存在严重平铺问题。", file=sys.stderr)
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     raise SystemExit(main())

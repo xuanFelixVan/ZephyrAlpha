@@ -17,7 +17,6 @@ Checks:
 import argparse
 import hashlib
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -30,12 +29,12 @@ MANIFEST_PATH = PROJECT_ROOT / "data" / "databases" / "governance_metadata" / "e
 
 
 def load_yaml(path: Path) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
 def load_json(path: Path) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -261,13 +260,17 @@ def check_no_duplicate(target_dir: Path) -> bool:
 # Main
 # ---------------------------------------------------------------------------
 def main():
-    parser = argparse.ArgumentParser(
-        description="6-dimensional verification of rule YAML migration"
+    parser = argparse.ArgumentParser(description="6-dimensional verification of rule YAML migration")
+    parser.add_argument(
+        "--check-coverage", action="store_true", help="[DEPRECATED] MD→YAML coverage — migration complete"
     )
-    parser.add_argument("--check-coverage", action="store_true", help="[DEPRECATED] MD→YAML coverage — migration complete")
     parser.add_argument("--check-hash", action="store_true", help="[DEPRECATED] SHA256 hash — source_files removed")
-    parser.add_argument("--check-traceability", action="store_true", help="YAML provenance exists (extracted_at/extracted_by)")
-    parser.add_argument("--check-references", action="store_true", help="All references.rule_ids point to existing YAML")
+    parser.add_argument(
+        "--check-traceability", action="store_true", help="YAML provenance exists (extracted_at/extracted_by)"
+    )
+    parser.add_argument(
+        "--check-references", action="store_true", help="All references.rule_ids point to existing YAML"
+    )
     parser.add_argument("--check-no-orphan", action="store_true", help="No YAML without rule_id")
     parser.add_argument("--check-no-duplicate", action="store_true", help="No duplicate scope+severity YAML")
     parser.add_argument("--all", action="store_true", help="Run all 6 checks")
@@ -294,10 +297,16 @@ def main():
         args.check_no_orphan = True
         args.check_no_duplicate = True
 
-    if not any([
-        args.check_coverage, args.check_hash, args.check_traceability,
-        args.check_references, args.check_no_orphan, args.check_no_duplicate,
-    ]):
+    if not any(
+        [
+            args.check_coverage,
+            args.check_hash,
+            args.check_traceability,
+            args.check_references,
+            args.check_no_orphan,
+            args.check_no_duplicate,
+        ]
+    ):
         parser.print_help()
         print("\nError: at least one check flag is required")
         sys.exit(1)

@@ -39,6 +39,7 @@ from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
+
 class DreamReport(BaseModel):
     model_config = BASE_CONFIG
     archived_files: int = 0
@@ -47,6 +48,7 @@ class DreamReport(BaseModel):
     indexed_entries: int = 0
     committed: bool = False
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+
 
 class DreamCycle:
     """知识固化引擎——从情节记忆到语义记忆的转化。

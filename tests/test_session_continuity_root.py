@@ -125,9 +125,7 @@ class TestSessionContinuityInit:
             project_root=tmp_env["project_root"],
         )
         conn = sqlite3.connect(str(tmp_env["db_path"]))
-        tables = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='handoffs'"
-        ).fetchall()
+        tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='handoffs'").fetchall()
         conn.close()
         assert len(tables) == 1
 
@@ -190,9 +188,7 @@ class TestSaveLoadSessionState:
         sc.save_session_state(state)
         conn = sqlite3.connect(str(tmp_env["db_path"]))
         conn.row_factory = sqlite3.Row
-        row = conn.execute(
-            "SELECT * FROM handoffs WHERE session_id = ?", ("sess-db-check",)
-        ).fetchone()
+        row = conn.execute("SELECT * FROM handoffs WHERE session_id = ?", ("sess-db-check",)).fetchone()
         conn.close()
         assert row is not None
         assert json.loads(row["completed_tasks"]) == ["X"]
@@ -282,14 +278,18 @@ class TestGetLatestHandoff:
         assert result["completed_tasks"] == ["A", "B"]
 
     def test_latest_among_multiple(self, sc: SessionContinuity):
-        sc.save_session_state(SessionState(
-            session_id="sess-early",
-            timestamp_utc="2026-05-22T10:00:00+00:00",
-        ))
-        sc.save_session_state(SessionState(
-            session_id="sess-late",
-            timestamp_utc="2026-05-22T20:00:00+00:00",
-        ))
+        sc.save_session_state(
+            SessionState(
+                session_id="sess-early",
+                timestamp_utc="2026-05-22T10:00:00+00:00",
+            )
+        )
+        sc.save_session_state(
+            SessionState(
+                session_id="sess-late",
+                timestamp_utc="2026-05-22T20:00:00+00:00",
+            )
+        )
         result = sc.get_latest_handoff()
         assert result is not None
         assert result["session_id"] == "sess-late"
@@ -300,11 +300,13 @@ class TestRestoreSession:
         assert sc.restore_session() is None
 
     def test_returns_latest_handoff(self, sc: SessionContinuity):
-        sc.save_session_state(SessionState(
-            session_id="sess-restore",
-            cards_completed=["R1"],
-            timestamp_utc="2026-05-22T16:00:00+00:00",
-        ))
+        sc.save_session_state(
+            SessionState(
+                session_id="sess-restore",
+                cards_completed=["R1"],
+                timestamp_utc="2026-05-22T16:00:00+00:00",
+            )
+        )
         result = sc.restore_session()
         assert result is not None
         assert result["session_id"] == "sess-restore"
@@ -317,11 +319,13 @@ class TestPrintRestoreSummary:
         assert "第一次 session" in output or "没有历史交接包" in output
 
     def test_with_handoff_prints_summary(self, sc: SessionContinuity, capsys: pytest.CaptureFixture[str]):
-        sc.save_session_state(SessionState(
-            session_id="sess-print",
-            cards_completed=["P1"],
-            timestamp_utc="2026-05-22T17:00:00+00:00",
-        ))
+        sc.save_session_state(
+            SessionState(
+                session_id="sess-print",
+                cards_completed=["P1"],
+                timestamp_utc="2026-05-22T17:00:00+00:00",
+            )
+        )
         sc.print_restore_summary()
         output = capsys.readouterr().out
         assert "sess-print" in output

@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 A2A Protocol — MOD-INF-025
 
@@ -40,22 +40,21 @@ def __getattr__(name: str):
 
 
 __all__ = [
-    'auditor',
-    'phase_hold',
-    'protocol',
-    'governance_adapter',
     "A2AProtocol",
     "_base_server",
     "audit_logger",
+    "auditor",
     "error_codes",
+    "governance_adapter",
+    "phase_hold",
     "policy_engine",
+    "protocol",
     "rate_limiter",
     "session_manager",
 ]
 
 
-from zephyr.infrastructure.a2a_protocol.governance.phase_hold import Phase4Hold as A2AProtocol  # noqa: F401
-
+from zephyr.infrastructure.a2a_protocol.governance.phase_hold import Phase4Hold as A2AProtocol
 
 __version__ = "0.1.0"
 __module_id__ = "MOD-INF-025"

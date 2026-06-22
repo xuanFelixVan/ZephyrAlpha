@@ -25,6 +25,7 @@ class DriftBridge:
         self._available = False
         try:
             from zephyr.governance.rule_enforcement.drift_detector import trigger_recovery
+
             self._trigger = trigger_recovery
             self._available = True
         except ImportError:
@@ -35,12 +36,14 @@ class DriftBridge:
         if not self._available or self._trigger is None:
             return {"status": "bridge_unavailable", "module_id": module_id}
         try:
-            return self._trigger({
-                "module_id": module_id,
-                "changed_files": changed_files,
-                "commit_message": message,
-                "scan_level": "STANDARD",
-            })
+            return self._trigger(
+                {
+                    "module_id": module_id,
+                    "changed_files": changed_files,
+                    "commit_message": message,
+                    "scan_level": "STANDARD",
+                }
+            )
         except Exception as exc:
             logger.error("DriftBridge.notify_change failed: %s", exc)
             return {"status": "bridge_error", "error": str(exc)}

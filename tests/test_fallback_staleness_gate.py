@@ -10,11 +10,11 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_fallback_staleness_gate.py -q
 from __future__ import annotations
+
 import os
 import tempfile
-import time
-import pytest
 from pathlib import Path
+
 from zephyr.autonomy_core.fallback_staleness_gate import FallbackStalenessGate, StalenessReport
 
 
@@ -34,9 +34,7 @@ class TestStalenessReport:
         assert sr.alert_message == "OK"
 
     def test_instantiation_stale_true(self):
-        sr = StalenessReport(
-            file_path="x", sha256="", age_days=100.0, is_stale=True, alert_message="old"
-        )
+        sr = StalenessReport(file_path="x", sha256="", age_days=100.0, is_stale=True, alert_message="old")
         assert sr.is_stale is True
 
     def test_equality(self):

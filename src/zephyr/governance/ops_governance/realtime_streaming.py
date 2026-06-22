@@ -20,11 +20,14 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from enum import Enum
+
 
 class PipelineMode(str, Enum):
     BATCH = "Batch"
     STREAM = "Stream"
+
 
 CONNECTION_POOL_MIN: int = 10
 FIFO_MAX_DEPTH: int = 1000

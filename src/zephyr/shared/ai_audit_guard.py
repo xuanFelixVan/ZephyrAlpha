@@ -1,9 +1,9 @@
 # [A_module] module_id=MOD-SHR_ai_audit_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
 from typing import Any
-import time
 
 
 @dataclass
@@ -24,8 +24,10 @@ class AiAuditGuard:
     def check(self, operation: str, agent_id: str, **details: Any) -> AuditRecord:
         needs_approval = any(op in operation for op in self._require_approval)
         record = AuditRecord(
-            operation=operation, agent_id=agent_id,
-            timestamp=time.time(), details=details,
+            operation=operation,
+            agent_id=agent_id,
+            timestamp=time.time(),
+            details=details,
             approved=not needs_approval,
         )
         if needs_approval:

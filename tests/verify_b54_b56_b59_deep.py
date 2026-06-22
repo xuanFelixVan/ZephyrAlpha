@@ -6,22 +6,28 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Deeper integration test: P0 inflation guard + block_sessions_count + timeout exemption"""
-import sys, json, sqlite3
-sys.path.insert(0, r"D:\ZephyrAlpha\src")
+
+import sqlite3
+import sys
+import warnings
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
+
+sys.path.insert(0, r"D:\ZephyrAlpha\src")
+
+from zephyr.governance.persistence.task_repo import (
+    P0InflationFrozenError,
+    TaskRepository,
+)
+from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+from zephyr.integration.shared.schema.severity_types import Priority as P
+from zephyr.shared.shared_services.models import TaskCard
 
 DB = Path(r"D:\ZephyrAlpha\data\databases\governance.db")
 
-from zephyr.governance.persistence.task_repo import (
-    TaskRepository, P0InflationFrozenError, P0InflationWarning,
-)
-from zephyr.shared.shared_services.models import TaskCard
-from zephyr.governance.rule_enforcement.task_types import TaskStatus, TaskNamespace
-from zephyr.integration.shared.schema.severity_types import Priority as P
-
 repo = TaskRepository(enable_gate=False)
-now = datetime.now(timezone.utc)
+now = datetime.now(UTC)
+
 
 def mt(suffix, priority=P.P2, tags=None):
     """make test task"""
@@ -44,6 +50,7 @@ def mt(suffix, priority=P.P2, tags=None):
         updated_at=now,
     )
 
+
 print("=" * 60)
 print("Deeper Integration Test")
 print("=" * 60)
@@ -54,7 +61,7 @@ live_p0 = repo._count_p0_tasks(sqlite3.connect(str(DB)))
 print(f"  Live P0 before test: {live_p0}")
 
 t1 = mt(1, P.P0)
-import warnings
+
 with warnings.catch_warnings(record=True) as w:
     warnings.simplefilter("always")
     if live_p0 >= 5:
@@ -69,7 +76,7 @@ with warnings.catch_warnings(record=True) as w:
         repo.hard_delete(t1.task_id)
     else:
         tcard = repo.create(t1)
-        print(f"  PASS: Created (P0 count < 3)")
+        print("  PASS: Created (P0 count < 3)")
         repo.hard_delete(t1.task_id)
 
 # --- Test 2: block_sessions_count ---
@@ -86,7 +93,7 @@ repo.transition(t2.task_id, TaskStatus.IN_PROGRESS)
 repo.transition(t2.task_id, TaskStatus.BLOCKED, waiting_for="test2")
 after_b2 = repo.get(t2.task_id)
 assert after_b2.block_sessions_count == 2, f"Expected 2, got {after_b2.block_sessions_count}"
-print(f"  PASS: block_sessions_count: 0 -> 1 -> 2")
+print("  PASS: block_sessions_count: 0 -> 1 -> 2")
 
 repo.transition(t2.task_id, TaskStatus.READY)
 repo.hard_delete(t2.task_id)
@@ -104,7 +111,7 @@ repo.transition(t3.task_id, TaskStatus.READY)
 repo.transition(t3.task_id, TaskStatus.IN_PROGRESS)
 repo.transition(t3.task_id, TaskStatus.BLOCKED, waiting_for="t3b2")
 esc2 = repo.check_escalation(t3.task_id)
-assert esc2 is not None, f"P0 with 2 BLOCKED should escalate"
+assert esc2 is not None, "P0 with 2 BLOCKED should escalate"
 assert "P0" in str(esc2["triggers"])
 print(f"  PASS: Escalation triggered: {esc2['triggers']}")
 
@@ -115,13 +122,13 @@ repo.hard_delete(t3.task_id)
 print("\n[Test 4] Timeout exemption...")
 t4 = mt(4, tags=["exempt:timeout", "test"])
 repo.create(t4)
-assert repo._is_timeout_exempt(t4.task_id) == True
+assert repo._is_timeout_exempt(t4.task_id)
 assert repo.check_task_timeout(t4.task_id) is None
 print("  PASS: exempt:timeout tag works")
 
 tagged = repo.list_by_tag("exempt:timeout")
 assert t4.task_id in [t.task_id for t in tagged]
-print(f"  PASS: list_by_tag found exempt task")
+print("  PASS: list_by_tag found exempt task")
 
 repo.hard_delete(t4.task_id)
 

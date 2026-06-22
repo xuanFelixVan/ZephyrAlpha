@@ -41,10 +41,10 @@ from pathlib import Path
 from typing import Any
 
 __all__ = [
+    "EVENT_STORE_SCHEMA",
+    "EventLevel",
     "EventStore",
     "StoredEvent",
-    "EventLevel",
-    "EVENT_STORE_SCHEMA",
 ]
 
 
@@ -88,11 +88,10 @@ class StoredEvent:
 
     def to_row(self) -> tuple:
         import hashlib
+
         payload_str = json.dumps(self.payload, ensure_ascii=False)
         meta_str = json.dumps(self.metadata, ensure_ascii=False)
-        checksum = hashlib.sha256(
-            f"{self.event_id}{self.timestamp}{payload_str}".encode()
-        ).hexdigest()[:16]
+        checksum = hashlib.sha256(f"{self.event_id}{self.timestamp}{payload_str}".encode()).hexdigest()[:16]
         return (
             self.event_id,
             self.timestamp,
@@ -221,9 +220,7 @@ class EventStore:
             conn = self._get_conn()
             try:
                 if component:
-                    row = conn.execute(
-                        "SELECT COUNT(*) FROM events WHERE component = ?", (component,)
-                    ).fetchone()
+                    row = conn.execute("SELECT COUNT(*) FROM events WHERE component = ?", (component,)).fetchone()
                 else:
                     row = conn.execute("SELECT COUNT(*) FROM events").fetchone()
                 return row[0] if row else 0
@@ -234,17 +231,14 @@ class EventStore:
         with self._lock:
             conn = self._get_conn()
             try:
-                row = conn.execute(
-                    "SELECT * FROM events WHERE event_id = ?", (event_id,)
-                ).fetchone()
+                row = conn.execute("SELECT * FROM events WHERE event_id = ?", (event_id,)).fetchone()
                 if not row:
                     return False
                 stored = StoredEvent.from_row(dict(row))
                 import hashlib
+
                 payload_str = json.dumps(stored.payload, ensure_ascii=False)
-                expected = hashlib.sha256(
-                    f"{stored.event_id}{stored.timestamp}{payload_str}".encode()
-                ).hexdigest()[:16]
+                expected = hashlib.sha256(f"{stored.event_id}{stored.timestamp}{payload_str}".encode()).hexdigest()[:16]
                 return expected == row["checksum"]
             finally:
                 conn.close()

@@ -21,6 +21,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import os
@@ -45,7 +46,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _CONTRACTS_YAML = (
@@ -96,19 +97,15 @@ def main() -> int:
         tmp_path = f"{_SNAPSHOT_FILE}.{os.getpid()}.tmp"
 
         try:
-
             Path(tmp_path).write_text(current, encoding="utf-8")
 
             os.replace(tmp_path, _SNAPSHOT_FILE)
 
         except PermissionError:
-
             try:
-
                 os.remove(tmp_path)
 
             except OSError:
-
                 pass
         print("OK: 契约快照已冻结")
         return EXIT_PASS
@@ -148,5 +145,7 @@ def main() -> int:
         print("WARN: 跳过（warn-only 模式）")
         return EXIT_PASS
     return EXIT_FINDINGS
+
+
 if __name__ == "__main__":
     sys.exit(main())

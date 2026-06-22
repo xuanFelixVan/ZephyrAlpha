@@ -30,6 +30,5 @@ from dataclasses import dataclass
 
 @dataclass
 class MemorySelfCheck:
-
     def validate(self, knowledge_entries: list[dict]) -> list[str]:
         return []

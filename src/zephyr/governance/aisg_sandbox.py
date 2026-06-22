@@ -32,7 +32,6 @@ Phase B：将 FF-015 从此文件替换为实际调用入口。
 
 from __future__ import annotations
 
-import ast
 import sys
 import uuid
 from dataclasses import dataclass, field
@@ -47,6 +46,7 @@ if str(_ROOT) not in sys.path:
 @dataclass
 class SandboxResult:
     """AISG 沙箱测试结果"""
+
     test_id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
     test_name: str = ""
     content: str = ""
@@ -85,6 +85,7 @@ class AISGSandbox:
     在开发机上运行 AISG 拦截逻辑的真实测试。
     不执行真实系统命令——仅做静态 AST + 模式匹配分析。
     """
+
     total_tests: ClassVar[int] = 0
     tests_passed: ClassVar[int] = 0
 

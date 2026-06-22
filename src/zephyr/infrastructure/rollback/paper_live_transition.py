@@ -12,9 +12,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -64,7 +63,7 @@ PHASE_ORDER: dict[TransitionPhase, int] = {
 }
 
 
-def get_phase_spec(phase: TransitionPhase) -> Optional[PhaseSpec]:
+def get_phase_spec(phase: TransitionPhase) -> PhaseSpec | None:
     return PHASE_SPECS.get(phase)
 
 
@@ -74,7 +73,7 @@ def valid_transition(from_phase: TransitionPhase, to_phase: TransitionPhase) -> 
     return to_idx == from_idx + 1
 
 
-def get_next_phase(current: TransitionPhase) -> Optional[TransitionPhase]:
+def get_next_phase(current: TransitionPhase) -> TransitionPhase | None:
     phases = list(TransitionPhase)
     idx = phases.index(current) if current in phases else -1
     if idx + 1 < len(phases):
@@ -85,13 +84,13 @@ def get_next_phase(current: TransitionPhase) -> Optional[TransitionPhase]:
 class TransitionState(BaseModel):
     current_phase: TransitionPhase
     started_at: str
-    completed_at: Optional[str] = None
+    completed_at: str | None = None
     ramping_percentage: float = 0.0
 
     @property
     def elapsed_days(self) -> float:
         started = datetime.fromisoformat(self.started_at.replace("Z", "+00:00"))
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         return (now - started).total_seconds() / 86400.0
 
     def ramp_up(self, step_percent: float) -> float:
@@ -102,6 +101,6 @@ class TransitionState(BaseModel):
 def create_transition_state() -> TransitionState:
     return TransitionState(
         current_phase=TransitionPhase.PARALLEL,
-        started_at=datetime.now(timezone.utc).isoformat(),
+        started_at=datetime.now(UTC).isoformat(),
         ramping_percentage=0.0,
     )

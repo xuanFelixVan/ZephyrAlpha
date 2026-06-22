@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_context_package.py
 
-import pytest
 from zephyr.governance.context_package import ContextPackage
 
 

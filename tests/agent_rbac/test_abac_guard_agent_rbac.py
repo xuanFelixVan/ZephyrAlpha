@@ -10,16 +10,15 @@
 """
 
 import time
-import pytest
 
-from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel
 from zephyr.security.access_control.abac_guard import (
-    ABACGuard,
-    ABACContext,
-    TemporalCategory,
-    SensitivityLabel,
     SENSITIVITY_MIN_MATURITY,
+    ABACContext,
+    ABACGuard,
+    SensitivityLabel,
+    TemporalCategory,
 )
+from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel
 
 
 class TestTemporalClassification:

@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 监控失败返回空指标
 # [TESTS] tests/audit-orchestrator/test_self_monitor.py
-
 import logging
 import time
 from datetime import datetime
@@ -21,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["SelfMonitor"]
 
+
 class SelfMonitor:
     def __init__(self) -> None:
         self._start_time = time.monotonic()
@@ -29,6 +29,7 @@ class SelfMonitor:
         self._drift_bridge = None
         try:
             from zephyr.governance.audit_trail.drift_bridge import DriftBridge
+
             self._drift_bridge = DriftBridge()
         except Exception:
             pass
@@ -43,11 +44,13 @@ class SelfMonitor:
         uptime = time.monotonic() - self._start_time
         drift_result = {"is_drifting": False, "drift_score": 0.0}
         if self._drift_bridge and self._drift_bridge.is_available():
-            drift_result = self._drift_bridge.check_drift({
-                "uptime": uptime,
-                "counter_total": sum(self._counters.values()),
-                "gauge_avg": sum(self._gauges.values()) / max(1, len(self._gauges)),
-            })
+            drift_result = self._drift_bridge.check_drift(
+                {
+                    "uptime": uptime,
+                    "counter_total": sum(self._counters.values()),
+                    "gauge_avg": sum(self._gauges.values()) / max(1, len(self._gauges)),
+                }
+            )
 
         return {
             "timestamp": datetime.now().isoformat(),

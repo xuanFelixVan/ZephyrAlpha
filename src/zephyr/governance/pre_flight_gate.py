@@ -2,37 +2,29 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.pre_flight_gate
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
 from dataclasses import dataclass, field
 from enum import Enum, auto
 
-from .budget_models import BudgetDimension, GateDecision
 from .budget_engine import BudgetEngine
+from .budget_models import GateDecision
+
 
 class PreFlightDecision(Enum):
     ALLOW = auto()
     SOFT_WARN = auto()
     HARD_WARN = auto()
     BLOCK = auto()
+
 
 @dataclass
 class PreFlightReport:
@@ -47,8 +39,8 @@ class PreFlightReport:
     def all_green(self) -> bool:
         return self.decision == PreFlightDecision.ALLOW
 
-class PreFlightGate:
 
+class PreFlightGate:
     def __init__(self, engine: BudgetEngine | None = None):
         self._engine = engine or BudgetEngine()
 
@@ -59,15 +51,9 @@ class PreFlightGate:
         estimated_cost: float,
         session_id: str = "",
     ) -> PreFlightReport:
-        tok = self._engine.pre_flight_check(
-            f"{action}-token", estimated_tokens, estimated_cost + 0.01
-        )
-        cst = self._engine.pre_flight_check(
-            f"{action}-cost", estimated_tokens + 100, estimated_cost
-        )
-        tim = self._engine.pre_flight_check(
-            f"{action}-time", estimated_tokens, estimated_cost + 0.02
-        )
+        tok = self._engine.pre_flight_check(f"{action}-token", estimated_tokens, estimated_cost + 0.01)
+        cst = self._engine.pre_flight_check(f"{action}-cost", estimated_tokens + 100, estimated_cost)
+        tim = self._engine.pre_flight_check(f"{action}-time", estimated_tokens, estimated_cost + 0.02)
 
         recs: list[str] = []
         severity = 0

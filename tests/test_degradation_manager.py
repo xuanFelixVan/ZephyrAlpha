@@ -14,11 +14,8 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from zephyr.governance.budget_models import BudgetDimension, ModelTier
 from zephyr.governance.degradation_manager import (
-    DegradationAction,
     DegradationLevel,
     DegradationManager,
     DegradationState,
@@ -44,9 +41,7 @@ class TestDegradationState:
         assert state.can_retreat() is True
 
     def test_cannot_retreat_during_cooldown(self):
-        state = DegradationState(
-            recovery_cooldown_until=time.time() + 3600
-        )
+        state = DegradationState(recovery_cooldown_until=time.time() + 3600)
         assert state.can_retreat() is False
 
 
@@ -120,15 +115,11 @@ class TestDegradationManager:
         assert mgr.state.current_level == DegradationLevel.NORMAL
 
     def test_compute_target_tier_model_switch(self):
-        tier = DegradationManager._compute_target_tier(
-            DegradationLevel.MODEL_SWITCH, ModelTier.PREMIUM
-        )
+        tier = DegradationManager._compute_target_tier(DegradationLevel.MODEL_SWITCH, ModelTier.PREMIUM)
         assert tier == ModelTier.ECONOMY
 
     def test_compute_target_tier_no_downgrade(self):
-        tier = DegradationManager._compute_target_tier(
-            DegradationLevel.NOTIFY, ModelTier.MINIMAL
-        )
+        tier = DegradationManager._compute_target_tier(DegradationLevel.NOTIFY, ModelTier.MINIMAL)
         assert tier == ModelTier.MINIMAL
 
 

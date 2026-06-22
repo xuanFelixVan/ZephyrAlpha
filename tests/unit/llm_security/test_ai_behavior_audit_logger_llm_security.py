@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for ai_behavior_audit_logger.py (T-2-32)
 """
@@ -17,8 +18,11 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+
 from zephyr.security.llm_defense.llm_security.behavior_audit_logger import (
     AuditAction as BehaviorEventType,
+)
+from zephyr.security.llm_defense.llm_security.behavior_audit_logger import (
     AuditEvent,
     AuditLogger,
     AuditQuery,

@@ -50,7 +50,7 @@ from __future__ import annotations
 
 import abc
 from decimal import Decimal
-from typing import ClassVar, Dict, Optional
+from typing import ClassVar
 
 from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
 
@@ -69,20 +69,21 @@ class RiskLimitsCalculator(abc.ABC):
       L2（软限制）：max_sector_concentration —— 触发告警但不硬阻断
       L3（熔断线）：max_drawdown_limit —— 触发全仓暂停
     """
-    _registry: ClassVar[dict[str, type["RiskLimitsCalculator"]]] = {}
+
+    _registry: ClassVar[dict[str, type[RiskLimitsCalculator]]] = {}
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not abc.ABC in cls.__bases__ and hasattr(cls, "__calculator_id__"):
+        if abc.ABC not in cls.__bases__ and hasattr(cls, "__calculator_id__"):
             RiskLimitsCalculator._registry[cls.__calculator_id__] = cls
 
     @abc.abstractmethod
     def calculate(
         self,
-        positions: Dict[str, float],
-        market_values: Dict[str, float],
+        positions: dict[str, float],
+        market_values: dict[str, float],
         total_nav: Decimal,
-        factor_signals: Optional[Dict[str, float]] = None,
+        factor_signals: dict[str, float] | None = None,
     ) -> RiskLimits:
         """计算当前的风险限额约束集"""
         ...

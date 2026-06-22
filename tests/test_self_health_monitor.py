@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_self_health_monitor.py
 
-import pytest
 
 from zephyr.ops.diagnosers.self_health_monitor import (
     HealthStatus,

@@ -64,6 +64,7 @@ class DiagnosisStatus(str, Enum):
 @dataclass
 class DiagnosisReport:
     """单次诊断报告"""
+
     report_id: str
     severity: DiagnosisSeverity = DiagnosisSeverity.INFO
     status: DiagnosisStatus = DiagnosisStatus.UNKNOWN
@@ -97,6 +98,7 @@ class DiagnosisReport:
 @dataclass
 class DiagnosisRule:
     """诊断规则定义"""
+
     rule_id: str
     pattern: str
     severity: DiagnosisSeverity = DiagnosisSeverity.MEDIUM
@@ -170,6 +172,7 @@ class AutoDiagnostics:
     def _load_rules(self, config_path: str) -> None:
         try:
             import yaml
+
             with open(config_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
             for r in data.get("rules", []):
@@ -190,6 +193,7 @@ class AutoDiagnostics:
 
         for rule in self._rules:
             import re
+
             confidence = 0.0
             for keyword in rule.pattern.split("|"):
                 if re.search(keyword, msg, re.IGNORECASE):

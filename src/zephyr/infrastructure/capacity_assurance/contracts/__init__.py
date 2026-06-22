@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """capacity-assurance contracts — ContractBus 44条契约 Pydantic v2 Schema Enforcement."""
 
 from zephyr.infrastructure.capacity_assurance.contracts.contract_bus import ContractBusLoader
 
-__all__ = ['ContractBusLoader', 'batch1_infra', 'batch2_governance', 'contract_bus', 'batch3_integration']
+__all__ = ["ContractBusLoader", "batch1_infra", "batch2_governance", "batch3_integration", "contract_bus"]

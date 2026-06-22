@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.adversarial_robustness import AdversarialFuzzResult, AdversarialRobustnessTester
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -28,7 +30,9 @@ pytestmark = pytest.mark.skipif(not _IMPORT_OK, reason=_IMPORT_REASON)
 
 class TestAdversarialFuzzResult:
     def test_dataclass_fields(self):
-        r = AdversarialFuzzResult(input_variant="test", original_classification="A", fuzzed_classification="B", robust=False)
+        r = AdversarialFuzzResult(
+            input_variant="test", original_classification="A", fuzzed_classification="B", robust=False
+        )
         assert r.input_variant == "test"
         assert r.original_classification == "A"
         assert r.fuzzed_classification == "B"
@@ -39,7 +43,9 @@ class TestAdversarialFuzzResult:
         assert r.robust is False
 
     def test_robust_true(self):
-        r = AdversarialFuzzResult(input_variant="x", original_classification="Y", fuzzed_classification="Y", robust=True)
+        r = AdversarialFuzzResult(
+            input_variant="x", original_classification="Y", fuzzed_classification="Y", robust=True
+        )
         assert r.robust is True
 
 

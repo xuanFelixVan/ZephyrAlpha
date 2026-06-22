@@ -117,10 +117,7 @@ class TestRegistryIntegrity:
 
         assert len(loadable) >= 0
         if missing:
-            pytest.fail(
-                f"{len(loadable)}/{len(all_skills)} skills loadable, "
-                f"{len(missing)} missing: {missing[:5]}..."
-            )
+            pytest.fail(f"{len(loadable)}/{len(all_skills)} skills loadable, {len(missing)} missing: {missing[:5]}...")
 
     def test_skill_registry_yaml_valid(self):
         """skill-registry.yaml 应是合法 YAML."""
@@ -152,9 +149,7 @@ class TestFrontmatterParsing:
         """格式错误的 YAML frontmatter → 应优雅降级而非崩溃."""
         loader = SkillLoader()
         with pytest.raises((yaml.YAMLError, yaml.parser.ParserError)):
-            loader._parse_yaml_frontmatter(
-                "---\nkey: [unclosed bracket\n---\nbody"
-            )
+            loader._parse_yaml_frontmatter("---\nkey: [unclosed bracket\n---\nbody")
 
     def test_empty_frontmatter(self):
         """空的 frontmatter 块 → 返回空字典."""

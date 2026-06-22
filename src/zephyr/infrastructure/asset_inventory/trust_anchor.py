@@ -34,10 +34,12 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
+
 class TrustLevel(str, Enum):
     FULL = "FULL"
     PARTIAL = "PARTIAL"
     BROKEN = "BROKEN"
+
 
 class TrustAnchorResult(BaseModel):
     git_ok: bool = False
@@ -46,6 +48,7 @@ class TrustAnchorResult(BaseModel):
     trust_level: TrustLevel = TrustLevel.BROKEN
     recommendation: str = ""
     checked_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 
 class TripleTrustAnchorGate:
     SELF_SRC_SEARCH = "src/zephyr/asset-inventory/"
@@ -159,6 +162,7 @@ class TripleTrustAnchorGate:
             return float("inf")
         return (datetime.now(timezone.utc) - self._cache.checked_at).total_seconds() / 60
 
+
 # ============================================================================
 # SRC-0040: 从 emergency_bypass.py 合并 — BypassManager + BypassState
 # ============================================================================
@@ -167,6 +171,7 @@ import os as _os
 from datetime import UTC
 from datetime import timedelta as _timedelta
 
+
 class BypassState(BaseModel):
     """旁路状态——对标 K8s Admission Webhook 的 emergency bypass。"""
 
@@ -174,6 +179,7 @@ class BypassState(BaseModel):
     reason: str = ""
     expires_at: datetime | None = None
     is_expired: bool = False
+
 
 class BypassManager:
     """紧急旁路协议——inventory_override.yaml → 强制 GREEN + 自动过期 24h。"""

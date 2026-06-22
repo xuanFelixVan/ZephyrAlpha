@@ -10,7 +10,6 @@
 
 import json
 from datetime import datetime
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -18,9 +17,7 @@ import pytest
 from zephyr.ops.feedback_collector import (
     FeedbackCollector,
     FeedbackEntry,
-    FeedbackSummary,
 )
-
 
 # ---------------------------------------------------------------------------
 # FeedbackCollector
@@ -217,45 +214,27 @@ class TestFeedbackCollector:
 class TestFeedbackLoopScheduler:
     @pytest.fixture
     def mock_scheduler(self):
-        with patch(
-            "zephyr.observability.feedback_loop.scheduler.HealthReporter"
-        ) as hr_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.SafetyGateManager"
-        ) as sgm_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.ActPhaseHandler"
-        ) as aph_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.CollectDetectHandler"
-        ) as cdh_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.MetricsCollector"
-        ) as mc_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.FeedbackCollector"
-        ) as fc_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.DependencyFreshnessMonitor"
-        ) as dfm_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.SilentCorruptionDetector"
-        ) as scd_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.RecursiveDiagnosisTrustEvaluator"
-        ) as rdte_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.TemporalCoherenceOfSelfModel"
-        ) as tcos_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.SelfDiagnosisDataLeakDetector"
-        ) as sdld_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.ModelVersionSemanticDrift"
-        ) as mvsd_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.HumanAnomalyFloodDetector"
-        ) as hafd_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.AdaptiveParamTuning"
-        ) as apt_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.RegimeGainScheduling"
-        ) as rgs_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.RecoveryTimeStats"
-        ) as rts_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.NonstationaryEffectiveness"
-        ) as ne_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.TimezoneSemanticReasoner"
-        ) as tsr_cls, patch(
-            "zephyr.observability.feedback_loop.scheduler.ActionSelector"
-        ) as as_cls:
+        with (
+            patch("zephyr.observability.feedback_loop.scheduler.HealthReporter") as hr_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.SafetyGateManager") as sgm_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.ActPhaseHandler") as aph_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.CollectDetectHandler") as cdh_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.MetricsCollector") as mc_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.FeedbackCollector") as fc_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.DependencyFreshnessMonitor") as dfm_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.SilentCorruptionDetector") as scd_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.RecursiveDiagnosisTrustEvaluator") as rdte_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.TemporalCoherenceOfSelfModel") as tcos_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.SelfDiagnosisDataLeakDetector") as sdld_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.ModelVersionSemanticDrift") as mvsd_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.HumanAnomalyFloodDetector") as hafd_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.AdaptiveParamTuning") as apt_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.RegimeGainScheduling") as rgs_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.RecoveryTimeStats") as rts_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.NonstationaryEffectiveness") as ne_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.TimezoneSemanticReasoner") as tsr_cls,
+            patch("zephyr.observability.feedback_loop.scheduler.ActionSelector") as as_cls,
+        ):
             from zephyr.ops.scheduler import FeedbackLoopScheduler
 
             mock_hr = MagicMock()
@@ -327,44 +306,26 @@ class TestFeedbackLoopScheduler:
         from zephyr.ops.scheduler import FeedbackLoopScheduler
 
         FeedbackLoopScheduler.reset_instance()
-        with patch(
-            "zephyr.observability.feedback_loop.scheduler.HealthReporter"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.SafetyGateManager"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.ActPhaseHandler"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.CollectDetectHandler"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.MetricsCollector"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.FeedbackCollector"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.DependencyFreshnessMonitor"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.SilentCorruptionDetector"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.RecursiveDiagnosisTrustEvaluator"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.TemporalCoherenceOfSelfModel"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.SelfDiagnosisDataLeakDetector"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.ModelVersionSemanticDrift"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.HumanAnomalyFloodDetector"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.AdaptiveParamTuning"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.RegimeGainScheduling"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.RecoveryTimeStats"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.NonstationaryEffectiveness"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.TimezoneSemanticReasoner"
-        ), patch(
-            "zephyr.observability.feedback_loop.scheduler.ActionSelector"
+        with (
+            patch("zephyr.observability.feedback_loop.scheduler.HealthReporter"),
+            patch("zephyr.observability.feedback_loop.scheduler.SafetyGateManager"),
+            patch("zephyr.observability.feedback_loop.scheduler.ActPhaseHandler"),
+            patch("zephyr.observability.feedback_loop.scheduler.CollectDetectHandler"),
+            patch("zephyr.observability.feedback_loop.scheduler.MetricsCollector"),
+            patch("zephyr.observability.feedback_loop.scheduler.FeedbackCollector"),
+            patch("zephyr.observability.feedback_loop.scheduler.DependencyFreshnessMonitor"),
+            patch("zephyr.observability.feedback_loop.scheduler.SilentCorruptionDetector"),
+            patch("zephyr.observability.feedback_loop.scheduler.RecursiveDiagnosisTrustEvaluator"),
+            patch("zephyr.observability.feedback_loop.scheduler.TemporalCoherenceOfSelfModel"),
+            patch("zephyr.observability.feedback_loop.scheduler.SelfDiagnosisDataLeakDetector"),
+            patch("zephyr.observability.feedback_loop.scheduler.ModelVersionSemanticDrift"),
+            patch("zephyr.observability.feedback_loop.scheduler.HumanAnomalyFloodDetector"),
+            patch("zephyr.observability.feedback_loop.scheduler.AdaptiveParamTuning"),
+            patch("zephyr.observability.feedback_loop.scheduler.RegimeGainScheduling"),
+            patch("zephyr.observability.feedback_loop.scheduler.RecoveryTimeStats"),
+            patch("zephyr.observability.feedback_loop.scheduler.NonstationaryEffectiveness"),
+            patch("zephyr.observability.feedback_loop.scheduler.TimezoneSemanticReasoner"),
+            patch("zephyr.observability.feedback_loop.scheduler.ActionSelector"),
         ):
             inst = FeedbackLoopScheduler.get_instance(poll_interval=5.0)
             assert inst is not None
@@ -391,11 +352,7 @@ class TestFeedbackLoopScheduler:
 
         mock_scheduler.max_events = 5
         for i in range(8):
-            mock_scheduler._events.append(
-                FLEPipelineEvent(run_id=f"r{i}", timestamp=float(i), phase="collect")
-            )
-        mock_scheduler._append_event(
-            FLEPipelineEvent(run_id="r8", timestamp=8.0, phase="collect")
-        )
+            mock_scheduler._events.append(FLEPipelineEvent(run_id=f"r{i}", timestamp=float(i), phase="collect"))
+        mock_scheduler._append_event(FLEPipelineEvent(run_id="r8", timestamp=8.0, phase="collect"))
         assert len(mock_scheduler._events) == 5
         assert mock_scheduler._events[0].run_id == "r4"

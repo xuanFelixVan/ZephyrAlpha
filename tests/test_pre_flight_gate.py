@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.budget_engine import BudgetEngine
 from zephyr.governance.budget_models import BudgetDimension, BudgetPolicy, GateDecision
 from zephyr.governance.pre_flight_gate import (

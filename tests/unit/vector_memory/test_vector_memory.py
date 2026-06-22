@@ -13,10 +13,8 @@ vector-memory 模块单元测试 — MOD-INF-011
       InMemoryMemoryBackend / ChunkStrategyRouter / RetrievalFeedback
 """
 
-import pytest
 import numpy as np
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+import pytest
 
 
 class TestCollectionManager:
@@ -70,8 +68,12 @@ class TestDesignPrinciplesEnforcer:
     def test_validate_provenance_ok(self):
         from zephyr.governance.vector_memory.design_principles import DesignPrinciplesEnforcer
 
-        DesignPrinciplesEnforcer.validate_provenance({"origin": "test", "audit_chain": ["test"], "arbitration": "owner"})
-        DesignPrinciplesEnforcer.validate_provenance({"provenance": {"origin": "test", "audit_chain": ["test"], "arbitration": "owner"}})
+        DesignPrinciplesEnforcer.validate_provenance(
+            {"origin": "test", "audit_chain": ["test"], "arbitration": "owner"}
+        )
+        DesignPrinciplesEnforcer.validate_provenance(
+            {"provenance": {"origin": "test", "audit_chain": ["test"], "arbitration": "owner"}}
+        )
 
 
 class TestEmbeddingRouter:
@@ -134,6 +136,7 @@ class TestHybridRetriever:
 
     def test_rrf_constant(self):
         from zephyr.governance.vector_memory.hybrid_retriever import RRF_K
+
         assert RRF_K == 60
 
 

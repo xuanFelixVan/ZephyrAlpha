@@ -5,7 +5,6 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-import pytest
 
 from zephyr.security.llm_defense.llm_security.patterns.secrets import (
     PRECOMPILED_SECRET_PATTERNS,
@@ -37,11 +36,15 @@ class TestScanSecrets:
         assert len(hits) > 0
 
     def test_bearer_token_detected(self):
-        hits = scan_secrets("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U")
+        hits = scan_secrets(
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U"
+        )
         assert len(hits) > 0
 
     def test_jwt_token_detected(self):
-        hits = scan_secrets("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U")
+        hits = scan_secrets(
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U"
+        )
         jwt_hits = [h for h in hits if h["name"] == "jwt_token"]
         assert len(jwt_hits) > 0
 

@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 规范用语重复定义检测（DOC-007 — 引用不复制）
@@ -44,6 +45,7 @@ import argparse
 
 NORMATIVE_PATTERNS = [re.compile("(?:必须|禁止|不得|应当|MUST|SHALL|SHALL NOT|MUST NOT|SHOULD|SHOULD NOT)\\s+.+")]
 
+
 def extract_normative_sentences(content: str) -> list[str]:
     """提取规范性语句"""
     sentences = []
@@ -61,6 +63,7 @@ def extract_normative_sentences(content: str) -> list[str]:
                 break
     return sentences
     "提取规范性语句."
+
 
 def scan_duplicated_normative() -> list[dict]:
     """扫描重复规范性语言."""
@@ -85,6 +88,7 @@ def scan_duplicated_normative() -> list[dict]:
     return findings
     "扫描重复规范性语言."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="规范用语重复定义检测（DOC-007）")
@@ -94,7 +98,7 @@ def main() -> None:
     if findings:
         print(f"\n[NORM-DUP] {len(findings)} 条规范用语在多个文件中重复定义:", file=sys.stderr)
         for f in findings[:20]:
-            print(f'  [{f['severity']}] 「{f['sentence']}」', file=sys.stderr)
+            print(f"  [{f['severity']}] 「{f['sentence']}」", file=sys.stderr)
             for file in f["files"]:
                 print(f"    ← {file}", file=sys.stderr)
         if len(findings) > 20:
@@ -104,6 +108,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

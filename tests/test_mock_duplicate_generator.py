@@ -9,10 +9,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.mock_duplicate_generator import (
-    MockDuplicateGenerator, DuplicateType, GeneratedDuplicate,
+    DuplicateType,
+    GeneratedDuplicate,
+    MockDuplicateGenerator,
 )
+
 
 class TestMockDuplicateGenerator:
     def test_instantiation(self):

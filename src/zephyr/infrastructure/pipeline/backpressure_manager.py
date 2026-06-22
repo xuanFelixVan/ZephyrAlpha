@@ -39,20 +39,24 @@ CTR 契约：
 
 SSoT: cross_layer_contracts.yaml → CTR-BP-001~003
 """
+
 from __future__ import annotations
 
 import logging
 import threading
 import time
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from collections.abc import Callable
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable, Optional
+from typing import Any
 
-from zephyr.infrastructure.pipeline.backpressure_types import BackpressurePause
-from zephyr.infrastructure.pipeline.backpressure_types import BackpressureResume
-from zephyr.infrastructure.pipeline.backpressure_types import BackpressureThrottle
+from zephyr.infrastructure.pipeline.backpressure_types import (
+    BackpressurePause,
+    BackpressureResume,
+    BackpressureThrottle,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -93,21 +97,25 @@ class BackpressureManager:
         with self._lock:
             state = self._get_or_create(signal.symbol)
             state.state = BpState.PAUSED
-            state.paused_at = datetime.now(timezone.utc).isoformat()
+            state.paused_at = datetime.now(UTC).isoformat()
             state.paused_until = time.time() + signal.duration_ms / 1000.0
             state.reason = signal.reason
             state.signal_id = signal.signal_id
-            self._history.append(BpSymbolState(
-                symbol=state.symbol,
-                state=state.state,
-                reason=state.reason,
-                signal_id=state.signal_id,
-                paused_at=state.paused_at,
-            ))
+            self._history.append(
+                BpSymbolState(
+                    symbol=state.symbol,
+                    state=state.state,
+                    reason=state.reason,
+                    signal_id=state.signal_id,
+                    paused_at=state.paused_at,
+                )
+            )
 
             _logger.warning(
                 "[BP] PAUSE symbol=%s duration_ms=%d reason=%s",
-                signal.symbol, signal.duration_ms, signal.reason,
+                signal.symbol,
+                signal.duration_ms,
+                signal.reason,
             )
 
             for handler in self._on_pause_handlers:
@@ -125,17 +133,21 @@ class BackpressureManager:
             state.max_rate_per_sec = signal.max_rate_per_sec
             state.reason = signal.reason
             state.signal_id = signal.signal_id
-            self._history.append(BpSymbolState(
-                symbol=state.symbol,
-                state=state.state,
-                max_rate_per_sec=state.max_rate_per_sec,
-                reason=state.reason,
-                signal_id=state.signal_id,
-            ))
+            self._history.append(
+                BpSymbolState(
+                    symbol=state.symbol,
+                    state=state.state,
+                    max_rate_per_sec=state.max_rate_per_sec,
+                    reason=state.reason,
+                    signal_id=state.signal_id,
+                )
+            )
 
             _logger.info(
                 "[BP] THROTTLE symbol=%s rate=%d/s reason=%s",
-                signal.symbol, signal.max_rate_per_sec, signal.reason,
+                signal.symbol,
+                signal.max_rate_per_sec,
+                signal.reason,
             )
 
             for handler in self._on_throttle_handlers:
@@ -155,17 +167,21 @@ class BackpressureManager:
             state.paused_until = 0.0
             state.reason = signal.reason
             state.signal_id = signal.signal_id
-            self._history.append(BpSymbolState(
-                symbol=state.symbol,
-                state=state.state,
-                reason=state.reason,
-                signal_id=state.signal_id,
-            ))
+            self._history.append(
+                BpSymbolState(
+                    symbol=state.symbol,
+                    state=state.state,
+                    reason=state.reason,
+                    signal_id=state.signal_id,
+                )
+            )
 
             if old_state != BpState.NORMAL:
                 _logger.info(
                     "[BP] RESUME symbol=%s reason=%s (was %s)",
-                    signal.symbol, signal.reason, old_state.value,
+                    signal.symbol,
+                    signal.reason,
+                    old_state.value,
                 )
 
             for handler in self._on_resume_handlers:
@@ -245,13 +261,15 @@ def emit_pause(
     duration_ms: int,
     reason: str,
 ) -> BpSymbolState:
-    return mgr.handle_pause(BackpressurePause(
-        signal_id=_make_bp_signal_id(),
-        symbol=symbol,
-        duration_ms=duration_ms,
-        reason=reason,
-        idempotency_key=str(uuid.uuid4()),
-    ))
+    return mgr.handle_pause(
+        BackpressurePause(
+            signal_id=_make_bp_signal_id(),
+            symbol=symbol,
+            duration_ms=duration_ms,
+            reason=reason,
+            idempotency_key=str(uuid.uuid4()),
+        )
+    )
 
 
 def emit_throttle(
@@ -260,13 +278,15 @@ def emit_throttle(
     max_rate_per_sec: int,
     reason: str,
 ) -> BpSymbolState:
-    return mgr.handle_throttle(BackpressureThrottle(
-        signal_id=_make_bp_signal_id(),
-        symbol=symbol,
-        max_rate_per_sec=max_rate_per_sec,
-        reason=reason,
-        idempotency_key=str(uuid.uuid4()),
-    ))
+    return mgr.handle_throttle(
+        BackpressureThrottle(
+            signal_id=_make_bp_signal_id(),
+            symbol=symbol,
+            max_rate_per_sec=max_rate_per_sec,
+            reason=reason,
+            idempotency_key=str(uuid.uuid4()),
+        )
+    )
 
 
 def emit_resume(
@@ -274,19 +294,21 @@ def emit_resume(
     symbol: str,
     reason: str,
 ) -> BpSymbolState:
-    return mgr.handle_resume(BackpressureResume(
-        signal_id=_make_bp_signal_id(),
-        symbol=symbol,
-        reason=reason,
-        idempotency_key=str(uuid.uuid4()),
-    ))
+    return mgr.handle_resume(
+        BackpressureResume(
+            signal_id=_make_bp_signal_id(),
+            symbol=symbol,
+            reason=reason,
+            idempotency_key=str(uuid.uuid4()),
+        )
+    )
 
 
 __all__ = [
+    "BackpressureManager",
     "BpState",
     "BpSymbolState",
-    "BackpressureManager",
     "emit_pause",
-    "emit_throttle",
     "emit_resume",
+    "emit_throttle",
 ]

@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.integration.shared.schema.schema_registry
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 """
 schema_registry.py —— Schema 版本编目与查询（Phase 10 新增 | 盲点 B25 修复）
 
@@ -55,15 +46,17 @@ from zephyr.integration.shared_08.__version__ import version_compatible
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "SchemaVersion",
     "SchemaEntry",
     "SchemaRegistry",
     "SchemaRegistryError",
+    "SchemaVersion",
     "get_schema_registry",
 ]
 
+
 class SchemaRegistryError(ZephyrBaseError):
     """Schema Registry 操作失败——schema 不存在、版本冲突、兼容性违规。"""
+
 
 @unique
 class SchemaVersion(str, Enum):
@@ -71,6 +64,7 @@ class SchemaVersion(str, Enum):
     V1_1 = "1.1"
     V1_2 = "1.2"
     V2_0 = "2.0"
+
 
 @dataclass(frozen=True)
 class SchemaEntry:
@@ -86,6 +80,7 @@ class SchemaEntry:
     breaking: bool = False
     supersedes: str | None = None
     fields: dict[str, str] = field(default_factory=dict)
+
 
 class SchemaRegistry:
     """集中式 Schema 编目——查询版本、兼容性检查。
@@ -187,7 +182,9 @@ class SchemaRegistry:
     def list_schemas(self) -> list[str]:
         return sorted(self._schemas.keys())
 
+
 _global_schema_registry: SchemaRegistry | None = None
+
 
 def get_schema_registry() -> Self:
     global _global_schema_registry

@@ -28,17 +28,12 @@ from __future__ import annotations
 import time
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.shared.lifecycle.resource_optimization_engine import (
     CacheStats,
     CircuitBreaker,
     CircuitBreakerState,
-    DefensiveStrategy,
     DegradationMatrix,
     HealthCheckResult,
-    OptimizationRecord,
-    OptimizationResult,
     OptimizationStrategy,
     PressureLevel,
     PressureState,
@@ -47,7 +42,6 @@ from zephyr.shared.lifecycle.resource_optimization_engine import (
     ResourceSnapshot,
     _HysteresisConfig,
     _PressureStateMachine,
-    _PressureThresholds,
 )
 
 
@@ -295,6 +289,7 @@ class TestResourceOptimizationEngine:
         mock_psutil.Error = Exception
 
         import sys
+
         sys.modules["psutil"] = mock_psutil
 
         try:

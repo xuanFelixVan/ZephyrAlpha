@@ -6,17 +6,18 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """Phase 执行引擎单元测试——验证 Phase 0→D 四级施工序列。"""
 
 
 import pytest
 
 from zephyr.trading.orchestrator.phase_executor import (
+    PHASE_DEPENDENCIES,
+    PHASE_ORDER,
     ConstructionPhase,
     PhaseExecutor,
     PhaseStatus,
-    PHASE_DEPENDENCIES,
-    PHASE_ORDER,
 )
 
 

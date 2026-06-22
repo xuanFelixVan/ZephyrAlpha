@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_api_dependency_metrics.py
 
-import pytest
 from zephyr.ops.diagnosers.api_dependency_metrics import (
     APIDependencyMetrics,
     DependencyStatusRecord,

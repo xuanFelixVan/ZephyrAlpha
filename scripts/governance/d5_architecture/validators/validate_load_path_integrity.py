@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_load_path_integrity.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
 
 import sys
@@ -11,6 +12,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 #!/usr/bin/env python3
 """
@@ -44,15 +46,15 @@ Usage:
 """
 
 import re
-from pathlib import Path
 import sys
+from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 AGENTS_PATH = REPO_ROOT / "AGENTS.md"
@@ -172,5 +174,7 @@ def main() -> int:
     if args.warn_only:
         return EXIT_PASS
     return EXIT_FINDINGS
+
+
 if __name__ == "__main__":
     raise SystemExit(main())

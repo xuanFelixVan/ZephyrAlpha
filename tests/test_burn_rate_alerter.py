@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_burn_rate_alerter.py
 
-import pytest
 from zephyr.ops.diagnosers.burn_rate_alerter import (
     BurnRateAlerter,
     BurnWindow,

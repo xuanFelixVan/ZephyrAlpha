@@ -2,27 +2,18 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.self_budget_tracker
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 
 @dataclass
 class SelfBudgetStatus:
@@ -33,8 +24,8 @@ class SelfBudgetStatus:
     should_disable_safeguards: bool
     advice: str
 
-class SelfBudgetTracker:
 
+class SelfBudgetTracker:
     def __init__(self, daily_cap: int = 50000, efficiency_threshold: float = 0.5):
         self._daily_cap = daily_cap
         self._efficiency_threshold = efficiency_threshold

@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """L10 Compliance
 =====================================
 
@@ -51,7 +51,26 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 
 from __future__ import annotations
 
-__all__ = ['AISGSandbox', 'ArtifactFinding', 'ArtifactScanner', 'AuditAction', 'AuditDecision', 'ComplianceEngine', 'ComplianceManagerBase', 'ComplianceRule', 'DefaultSecurityGateway', 'ScanFinding', 'ScanReport', 'SecurityContext', 'SecurityGateway', 'aisg_sandbox', 'artifact_scanner', 'compliance_manager', 'default_security_gateway', 'security_gateway_base']
+__all__ = [
+    "AISGSandbox",
+    "ArtifactFinding",
+    "ArtifactScanner",
+    "AuditAction",
+    "AuditDecision",
+    "ComplianceEngine",
+    "ComplianceManagerBase",
+    "ComplianceRule",
+    "DefaultSecurityGateway",
+    "ScanFinding",
+    "ScanReport",
+    "SecurityContext",
+    "SecurityGateway",
+    "aisg_sandbox",
+    "artifact_scanner",
+    "compliance_manager",
+    "default_security_gateway",
+    "security_gateway_base",
+]
 
 _LAZY_IMPORTS = {
     "AISGSandbox": ("zephyr.governance.aisg_sandbox", "AISGSandbox"),
@@ -69,7 +88,13 @@ _LAZY_IMPORTS = {
     "SecurityGateway": ("zephyr.governance.security_gateway_base", "SecurityGateway"),
 }
 
-_SUBMODULES = ["aisg_sandbox", "artifact_scanner", "compliance_manager", "default_security_gateway", "security_gateway_base"]
+_SUBMODULES = [
+    "aisg_sandbox",
+    "artifact_scanner",
+    "compliance_manager",
+    "default_security_gateway",
+    "security_gateway_base",
+]
 
 
 def __getattr__(name):

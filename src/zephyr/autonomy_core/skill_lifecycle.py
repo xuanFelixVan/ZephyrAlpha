@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_lifecycle
+# [MODULE] zephyr.autonomy_core.skill_lifecycle
 
 # [INVARIANTS] none
 
@@ -29,26 +29,25 @@ Skill 生命周期状态机 + 跨模块协调.
 v0.3.0: complete lifecycle with guard functions, transition log, rollback, batch ops.
 """
 
-
 from __future__ import annotations
 
 import json
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Callable
+from typing import Any
 
 from zephyr.autonomy_core.skill_model import SkillStatus
 
 
 class Transition:
-    def __init__(self, from_status: str, to_status: str, reason: str,
-                 timestamp: Optional[float] = None):
+    def __init__(self, from_status: str, to_status: str, reason: str, timestamp: float | None = None):
         self.from_status = from_status
         self.to_status = to_status
         self.reason = reason
         self.timestamp = timestamp or time.time()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "from": self.from_status,
             "to": self.to_status,
@@ -73,9 +72,9 @@ class SkillLifecycle:
     _ALLOW_ALL = True
 
     def __init__(self):
-        self._states: Dict[str, str] = {}
-        self._guards: Dict[str, List[Callable[[str, str], bool]]] = {}
-        self._history: Dict[str, List[Transition]] = {}
+        self._states: dict[str, str] = {}
+        self._guards: dict[str, list[Callable[[str, str], bool]]] = {}
+        self._history: dict[str, list[Transition]] = {}
 
     def register(self, skill_id: str, status: str = SkillStatus.ACTIVE.value):
         self._states[skill_id] = status
@@ -83,27 +82,29 @@ class SkillLifecycle:
     def current_status(self, skill_id: str) -> str:
         return self._states.get(skill_id, SkillStatus.DRAFT.value)
 
-    def add_guard(self, skill_id: str,
-                  guard_fn: Callable[[str, str], bool]):
+    def add_guard(self, skill_id: str, guard_fn: Callable[[str, str], bool]):
         self._guards.setdefault(skill_id, []).append(guard_fn)
 
-    def transition(self, skill_id: str, to_status: str,
-                   reason: str = "") -> Dict[str, Any]:
+    def transition(self, skill_id: str, to_status: str, reason: str = "") -> dict[str, Any]:
         from_status = self.current_status(skill_id)
         allowed = VALID_TRANSITIONS.get(from_status, set())
 
         if to_status not in allowed and not self._ALLOW_ALL:
             return {
-                "skill_id": skill_id, "from": from_status,
-                "to": to_status, "allowed": False,
+                "skill_id": skill_id,
+                "from": from_status,
+                "to": to_status,
+                "allowed": False,
                 "reason": f"Invalid transition: {from_status} → {to_status}",
             }
 
         for guard in self._guards.get(skill_id, []):
             if not guard(skill_id, to_status):
                 return {
-                    "skill_id": skill_id, "from": from_status,
-                    "to": to_status, "allowed": False,
+                    "skill_id": skill_id,
+                    "from": from_status,
+                    "to": to_status,
+                    "allowed": False,
                     "reason": "Guard rejected transition",
                 }
 
@@ -111,33 +112,29 @@ class SkillLifecycle:
         t = Transition(from_status, to_status, reason)
         self._history.setdefault(skill_id, []).append(t)
         self._log_transition(skill_id, t)
-        return {"skill_id": skill_id, "from": from_status,
-                "to": to_status, "allowed": True, "reason": reason}
+        return {"skill_id": skill_id, "from": from_status, "to": to_status, "allowed": True, "reason": reason}
 
-    def history(self, skill_id: str,
-                limit: int = 20) -> List[Dict[str, Any]]:
-        return [t.to_dict() for t in
-                self._history.get(skill_id, [])[-limit:]]
+    def history(self, skill_id: str, limit: int = 20) -> list[dict[str, Any]]:
+        return [t.to_dict() for t in self._history.get(skill_id, [])[-limit:]]
 
-    def rollback(self, skill_id: str) -> Dict[str, Any]:
+    def rollback(self, skill_id: str) -> dict[str, Any]:
         transitions = self._history.get(skill_id, [])
         if len(transitions) < 2:
-            return {"skill_id": skill_id, "rolled_back": False,
-                    "reason": "Insufficient history for rollback"}
+            return {"skill_id": skill_id, "rolled_back": False, "reason": "Insufficient history for rollback"}
         previous = transitions[-2]
-        return self.transition(skill_id, previous.from_status,
-                               reason=f"Rollback to {previous.from_status}")
+        return self.transition(skill_id, previous.from_status, reason=f"Rollback to {previous.from_status}")
 
-    def batch_transition(self, skill_ids: List[str],
-                         to_status: str, reason: str = "") -> Dict[str, Any]:
+    def batch_transition(self, skill_ids: list[str], to_status: str, reason: str = "") -> dict[str, Any]:
         results = {}
         for sid in skill_ids:
             results[sid] = self.transition(sid, to_status, reason)
-        return {"results": results,
-                "total": len(skill_ids),
-                "succeeded": sum(1 for r in results.values() if r["allowed"])}
+        return {
+            "results": results,
+            "total": len(skill_ids),
+            "succeeded": sum(1 for r in results.values() if r["allowed"]),
+        }
 
-    def all_statuses(self) -> Dict[str, str]:
+    def all_statuses(self) -> dict[str, str]:
         return dict(self._states)
 
     # ---- Persistence ----
@@ -146,10 +143,16 @@ class SkillLifecycle:
         try:
             self._TRANSITION_LOG.parent.mkdir(parents=True, exist_ok=True)
             with open(self._TRANSITION_LOG, "a", encoding="utf-8") as f:
-                f.write(json.dumps({
-                    "skill_id": skill_id,
-                    **transition.to_dict(),
-                }, ensure_ascii=False) + "\n")
+                f.write(
+                    json.dumps(
+                        {
+                            "skill_id": skill_id,
+                            **transition.to_dict(),
+                        },
+                        ensure_ascii=False,
+                    )
+                    + "\n"
+                )
         except OSError:
             pass
 

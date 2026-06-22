@@ -31,11 +31,10 @@ from __future__ import annotations
 import json
 import logging
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +68,7 @@ class DeprecationTracker:
         self._deprecations_dir = self._root / _DEPRECATIONS_DIR
 
     def deprecate(self, path: str, ttl_days: int = 30, reason: str = "") -> DeprecationRecord:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expires = now + timedelta(days=ttl_days)
         record = DeprecationRecord(
             path=path,
@@ -84,13 +83,13 @@ class DeprecationTracker:
 
     def check_deprecated(self) -> list[DeprecationRecord]:
         records = self._read_all_records()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expired: list[DeprecationRecord] = []
         for record in records:
             try:
                 expires_dt = datetime.fromisoformat(record.expires_at)
                 if expires_dt.tzinfo is None:
-                    expires_dt = expires_dt.replace(tzinfo=timezone.utc)
+                    expires_dt = expires_dt.replace(tzinfo=UTC)
                 if now >= expires_dt:
                     expired.append(record)
             except (ValueError, TypeError):

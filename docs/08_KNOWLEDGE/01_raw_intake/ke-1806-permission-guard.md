@@ -21,7 +21,7 @@ class PermissionGuard:
     ) -> PermissionResult:
         """
         完整权限判定——横切面A→L0→L5→横切面A
-        
+
         横切面A pre_hooks → L0 ColdStartLock → L0 EmergencyOverride → L0→L5七层检查 → 横切面A post_hooks
 
         输入：Agent 身份 + 请求的动作 + 任务上下文

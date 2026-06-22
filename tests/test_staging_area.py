@@ -1,14 +1,13 @@
 # [A_test] module_id: SRC-TST-1677 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-import os
 import sys
 import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from zephyr.trading.staging_area import StagingArea, CommitStatus, StagingError
+from zephyr.trading.staging_area import CommitStatus, StagingArea
 
 
 def test_write_draft_and_commit():
@@ -39,6 +38,7 @@ def test_conflict_detection():
         sa.write_draft("session-001", "src/bar.py", "draft content")
 
         import time
+
         time.sleep(0.05)
         target.write_text("modified by another session", encoding="utf-8")
 
@@ -106,6 +106,7 @@ def test_get_conflict():
         assert conflict is None, "No conflict yet"
 
         import time
+
         time.sleep(0.05)
         target.write_text("modified", encoding="utf-8")
 
@@ -124,12 +125,15 @@ def test_auto_merge_non_overlapping():
         sa.write_draft("session-001", "src/e.py", "line1\nline2-draft\nline3\n")
 
         import time
+
         time.sleep(0.05)
         target.write_text("line1-modified\nline2\nline3\n", encoding="utf-8")
 
         result = sa.try_auto_merge("session-001", "src/e.py")
-        assert result.status in (CommitStatus.MERGED, CommitStatus.CONFLICT_NEEDS_OWNER), \
-            f"Expected MERGED or CONFLICT_NEEDS_OWNER, got {result.status}: {result.message}"
+        assert result.status in (
+            CommitStatus.MERGED,
+            CommitStatus.CONFLICT_NEEDS_OWNER,
+        ), f"Expected MERGED or CONFLICT_NEEDS_OWNER, got {result.status}: {result.message}"
     print("test_auto_merge_non_overlapping PASSED")
 
 

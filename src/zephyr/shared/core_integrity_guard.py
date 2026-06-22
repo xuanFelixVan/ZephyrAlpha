@@ -26,7 +26,9 @@ class CoreIntegrityGuard:
 
     def check(self, component: str, current_checksum: str) -> IntegrityCheck:
         if component not in self._frozen_components:
-            return IntegrityCheck(component, False, False, "not_frozen: integrity check requires component to be frozen first")
+            return IntegrityCheck(
+                component, False, False, "not_frozen: integrity check requires component to be frozen first"
+            )
         expected = self._checksums.get(component, "")
         valid = current_checksum == expected
         msg = "checksum_match" if valid else f"expected {expected}, got {current_checksum}"

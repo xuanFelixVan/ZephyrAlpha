@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-06-SECURITY-ARCH
 title: Target Architecture –Security Architecture / 目标架构：安全架�?
 doc_type: architecture_view

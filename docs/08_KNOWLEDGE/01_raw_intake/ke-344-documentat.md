@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-344
 status: active
 title: 4.1 架构定位

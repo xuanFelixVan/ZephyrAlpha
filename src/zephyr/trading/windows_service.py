@@ -25,13 +25,12 @@ WindowsService — Windows Service 包装器
 蓝图: ARC-0001 §6.1
 
 注册方式:
-  sc create ZephyrAlpha binPath= "python -m zephyr.orchestration.runtime_core"
+  sc create ZephyrAlpha binPath= "python -m zephyr.trading"
   sc config ZephyrAlpha start= auto
 
 卸载:
   sc delete ZephyrAlpha
 """
-
 
 from __future__ import annotations
 
@@ -40,8 +39,9 @@ import sys
 
 def install_service() -> None:
     import subprocess
+
     python_exe = sys.executable
-    bin_path = f'"{python_exe}" -m zephyr.orchestration.runtime_core'
+    bin_path = f'"{python_exe}" -m zephyr.trading'
     subprocess.run(
         ["sc", "create", "ZephyrAlpha", f"binPath={bin_path}"],
         check=True,
@@ -55,19 +55,21 @@ def install_service() -> None:
 
 def uninstall_service() -> None:
     import subprocess
+
     subprocess.run(["sc", "delete", "ZephyrAlpha"], check=True)
     print("ZephyrAlpha Windows Service uninstalled.")
 
 
 def run_as_service() -> None:
     try:
-        import win32serviceutil
-        import win32service
         import win32event
+        import win32service
+        import win32serviceutil
     except ImportError:
         print("pywin32 not installed. Run: pip install pywin32")
         print("Falling back to console mode...")
         from zephyr.trading.__main__ import main
+
         main()
         return
 

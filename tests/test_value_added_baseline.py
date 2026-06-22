@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_value_added_baseline.py
 
-import pytest
 
 from zephyr.ops.diagnosers.value_added_baseline import ValueAddedBaseline
 

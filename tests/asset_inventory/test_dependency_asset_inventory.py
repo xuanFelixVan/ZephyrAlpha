@@ -10,16 +10,13 @@
 from pathlib import Path
 
 from zephyr.infrastructure.asset_inventory.dependency import (
-    DependencyEdge,
     DependencyExtractor,
-    DependencyGraph,
     DependencyNode,
     _detect_cycles,
     _infer_layer,
     build_dependency_graph,
     priority_from_dependency,
 )
-
 
 _SIMPLE_IMPORTS = """\
 import os

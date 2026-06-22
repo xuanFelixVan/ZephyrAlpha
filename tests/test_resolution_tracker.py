@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_resolution_tracker.py
 
-import pytest
 
 from zephyr.ops.detectors.resolution_tracker import ResolutionTracker
 

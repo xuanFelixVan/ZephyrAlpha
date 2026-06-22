@@ -6,10 +6,14 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试 AgentRbac 异常类型"""
-import pytest
+
 from zephyr.security.access_control.exceptions import (
-    AgentRbacError, PermissionDeniedError, ColdStartLockedError,
-    OverrideTokenExpiredError, KillSwitchTrippedError, DegradationBlockedError,
+    AgentRbacError,
+    ColdStartLockedError,
+    DegradationBlockedError,
+    KillSwitchTrippedError,
+    OverrideTokenExpiredError,
+    PermissionDeniedError,
 )
 
 

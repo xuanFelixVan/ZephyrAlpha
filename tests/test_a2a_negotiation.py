@@ -10,11 +10,10 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_a2a_negotiation.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_negotiation import (
-    NegotiationStatus,
-    NegotiationResult,
     A2ANegotiation,
+    NegotiationResult,
+    NegotiationStatus,
 )
 
 
@@ -41,28 +40,32 @@ class TestA2ANegotiation:
 
     def test_is_resolved_proposed(self):
         result = NegotiationResult(
-            initiator="a", responder="b",
+            initiator="a",
+            responder="b",
             status=NegotiationStatus.PROPOSED,
         )
         assert A2ANegotiation.is_resolved(result) is False
 
     def test_needs_escalation_timeout(self):
         result = NegotiationResult(
-            initiator="a", responder="b",
+            initiator="a",
+            responder="b",
             status=NegotiationStatus.TIMEOUT,
         )
         assert A2ANegotiation.needs_escalation(result) is True
 
     def test_needs_escalation_accepted(self):
         result = NegotiationResult(
-            initiator="a", responder="b",
+            initiator="a",
+            responder="b",
             status=NegotiationStatus.ACCEPTED,
         )
         assert A2ANegotiation.needs_escalation(result) is False
 
     def test_needs_escalation_rejected(self):
         result = NegotiationResult(
-            initiator="a", responder="b",
+            initiator="a",
+            responder="b",
             status=NegotiationStatus.REJECTED,
         )
         assert A2ANegotiation.needs_escalation(result) is True

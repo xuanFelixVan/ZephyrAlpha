@@ -23,7 +23,8 @@ from __future__ import annotations
 
 """修复优先级排序器 — 置信度×Impact×适配性 三因子排序."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 
 @dataclass
 class PrioritizedFix:
@@ -35,6 +36,7 @@ class PrioritizedFix:
     rank: int = 0
     action: str = ""
 
+
 class Prioritizer:
     """三因子修复优先级排序."""
 
@@ -44,14 +46,16 @@ class Prioritizer:
         for dup_id, conf, impact, suit in candidates:
             score = (conf * 0.4) + (min(impact, 100) / 100 * 0.3) + (suit / 100 * 0.3)
             action = "AUTO_FIX" if score >= 0.8 else "SUGGEST" if score >= 0.5 else "INFORM"
-            results.append(PrioritizedFix(
-                dup_group_id=dup_id,
-                confidence=conf,
-                impact_scope=impact,
-                suitability=suit,
-                priority_score=round(score, 3),
-                action=action,
-            ))
+            results.append(
+                PrioritizedFix(
+                    dup_group_id=dup_id,
+                    confidence=conf,
+                    impact_scope=impact,
+                    suitability=suit,
+                    priority_score=round(score, 3),
+                    action=action,
+                )
+            )
         results.sort(key=lambda x: x.priority_score, reverse=True)
         for i, r in enumerate(results):
             r.rank = i + 1

@@ -22,11 +22,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-import pytest
-
-from zephyr.governance.down_migration_generator import DownMigrationGenerator, DownMigration
+from zephyr.governance.down_migration_generator import DownMigration, DownMigrationGenerator
 
 
 class TestDownMigrationGeneratorInit:
@@ -93,13 +91,17 @@ class TestDownMigrationGeneratorGenerate:
 class TestDownMigrationGeneratorBoundary:
     def test_get_head_short_git_failure(self, tmp_path: Path):
         gen = DownMigrationGenerator(project_root=tmp_path)
-        with patch("zephyr.infrastructure.rollback.down_migration_generator.subprocess.run", side_effect=OSError("no git")):
+        with patch(
+            "zephyr.infrastructure.rollback.down_migration_generator.subprocess.run", side_effect=OSError("no git")
+        ):
             sha = gen._get_head_short()
         assert sha == "unknown"
 
     def test_get_changed_files_git_failure(self, tmp_path: Path):
         gen = DownMigrationGenerator(project_root=tmp_path)
-        with patch("zephyr.infrastructure.rollback.down_migration_generator.subprocess.run", side_effect=OSError("no git")):
+        with patch(
+            "zephyr.infrastructure.rollback.down_migration_generator.subprocess.run", side_effect=OSError("no git")
+        ):
             files = gen._get_changed_files("abc123")
         assert files == []
 

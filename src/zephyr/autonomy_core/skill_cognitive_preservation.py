@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_cognitive_preservation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_cognitive_preservation
+# [MODULE] zephyr.autonomy_core.skill_cognitive_preservation
 
 # [INVARIANTS] none
 
@@ -29,24 +29,22 @@ Skill 认知保留 —— 跨 Session/跨 Agent 的 Skill 学习状态持久化.
 保存 Skill 执行后的认知决策链，供后续 Agent 做暖启动(warm-resume).
 """
 
-
 from __future__ import annotations
 
 import json
 import time
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 
 class CognitiveSnapshot:
-    def __init__(self, skill_id: str, state: Dict[str, Any],
-                 timestamp: Optional[float] = None):
+    def __init__(self, skill_id: str, state: dict[str, Any], timestamp: float | None = None):
         self.skill_id = skill_id
         self.state = state
         self.timestamp = timestamp or time.time()
         self.version = state.get("_version", 1)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "skill_id": self.skill_id,
             "state": self.state,
@@ -63,10 +61,10 @@ class SkillCognitivePreservation:
     _MERGE_STRATEGY = "latest_wins"
 
     def __init__(self):
-        self._memory: Dict[str, CognitiveSnapshot] = {}
+        self._memory: dict[str, CognitiveSnapshot] = {}
         self._load_all()
 
-    def save(self, skill_id: str, state: Dict[str, Any]) -> Dict[str, Any]:
+    def save(self, skill_id: str, state: dict[str, Any]) -> dict[str, Any]:
         state["_version"] = state.get("_version", 0) + 1
         state["_saved_at"] = time.time()
         snapshot = CognitiveSnapshot(skill_id, state)
@@ -75,7 +73,7 @@ class SkillCognitivePreservation:
         self._prune_old_snapshots(skill_id)
         return {"skill_id": skill_id, "version": state["_version"], "persisted": True}
 
-    def restore(self, skill_id: str) -> Dict[str, Any]:
+    def restore(self, skill_id: str) -> dict[str, Any]:
         snapshot = self._memory.get(skill_id)
         if snapshot:
             return {
@@ -87,7 +85,7 @@ class SkillCognitivePreservation:
             }
         return {"skill_id": skill_id, "found": False, "state": {}}
 
-    def merge(self, skill_id: str, delta: Dict[str, Any]) -> Dict[str, Any]:
+    def merge(self, skill_id: str, delta: dict[str, Any]) -> dict[str, Any]:
         existing = self._memory.get(skill_id)
         if existing:
             merged = dict(existing.state)
@@ -95,15 +93,13 @@ class SkillCognitivePreservation:
             return self.save(skill_id, merged)
         return self.save(skill_id, delta)
 
-    def list_skills(self) -> List[Dict[str, Any]]:
+    def list_skills(self) -> list[dict[str, Any]]:
         return [
-            {"skill_id": sid, "version": s.version,
-             "age_s": round(time.time() - s.timestamp, 1)}
+            {"skill_id": sid, "version": s.version, "age_s": round(time.time() - s.timestamp, 1)}
             for sid, s in sorted(self._memory.items())
         ]
 
-    def warm_resume_context(self, skill_ids: List[str],
-                            max_tokens: int = 800) -> str:
+    def warm_resume_context(self, skill_ids: list[str], max_tokens: int = 800) -> str:
         parts = []
         token_estimate = 0
         for sid in skill_ids:
@@ -133,18 +129,15 @@ class SkillCognitivePreservation:
             self._SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
             fname = f"{snapshot.skill_id}_{int(snapshot.timestamp)}.json"
             path = self._SNAPSHOT_DIR / fname
-            path.write_text(json.dumps(
-                snapshot.to_dict(), ensure_ascii=False), encoding="utf-8")
+            path.write_text(json.dumps(snapshot.to_dict(), ensure_ascii=False), encoding="utf-8")
         except OSError:
             pass
 
     def _prune_old_snapshots(self, skill_id: str):
         try:
             pattern = f"{skill_id}_*.json"
-            files = sorted(
-                self._SNAPSHOT_DIR.glob(pattern),
-                key=lambda p: p.stat().st_mtime, reverse=True)
-            for f in files[self._MAX_SNAPSHOTS_PER_SKILL:]:
+            files = sorted(self._SNAPSHOT_DIR.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True)
+            for f in files[self._MAX_SNAPSHOTS_PER_SKILL :]:
                 f.unlink(missing_ok=True)
         except OSError:
             pass
@@ -157,9 +150,7 @@ class SkillCognitivePreservation:
                 try:
                     data = json.loads(f.read_text(encoding="utf-8"))
                     sid = data["skill_id"]
-                    snap = CognitiveSnapshot(
-                        skill_id=sid, state=data["state"],
-                        timestamp=data["timestamp"])
+                    snap = CognitiveSnapshot(skill_id=sid, state=data["state"], timestamp=data["timestamp"])
                     existing = self._memory.get(sid)
                     if not existing or snap.timestamp > existing.timestamp:
                         self._memory[sid] = snap
@@ -176,4 +167,4 @@ class SkillCognitivePreservation:
             pass
 
 
-__all__ = ["SkillCognitivePreservation", "CognitiveSnapshot"]
+__all__ = ["CognitiveSnapshot", "SkillCognitivePreservation"]

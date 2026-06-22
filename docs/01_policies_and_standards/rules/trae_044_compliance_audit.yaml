@@ -1,10 +1,20 @@
 rule_id: TRAE-044
 title: 合规治理-审计与监管
+version: 1.4.3
+layer: L1
+module_id: TRAE-044
+depends_on: []
+tags:
+- TRAE
+- compliance_audit
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - GOV-CMP-001
 - GOV-CMP-002
 - GOV-CMP-003
-layer: L1
 severity: error
 scope: compliance_audit
 domain: TRAE
@@ -228,9 +238,7 @@ sections:
     - AUD-004
     examples:
     - title: 审计记录标准格式
-      code: "audit_record:\n  timestamp: \"2026-05-04T10:30:00Z\"\n  operator_id:\
-        \ \"Owner\"\n  operation_type: \"governance_audit\"\n  operation_detail: \"\
-        FULL audit D1-D12, level L2\"\n  result: \"PASS with 3 P1 findings\"\n"
+      code: "audit_record:\n  timestamp: \"2026-05-04T10:30:00Z\"\n  operator_id: \"Owner\"\n  operation_type: \"governance_audit\"\n  operation_detail: \"FULL audit D1-D12, level L2\"\n  result: \"PASS with 3 P1 findings\"\n"
       language: yaml
       note: timestamp使用ISO 8601格式YYYY-MM-DDTHH:MM:SSZ（UTC时区），字段名使用snake_case
   gov_cmp_002_verification:
@@ -335,7 +343,7 @@ sections:
       on_failure: GATE-16间接覆盖
     - order: 5
       action: D5架构一致性——审计YAML↔代码↔文档三方一致、循环依赖、AI自治权限、蓝图同步、接口契约
-      pre_condition: architecture-model/*.yaml+layers/*.yaml(25+)+docs/03_modules/*/blueprint.md+src/zephyr/目录结构+_registry/contracts/*.yaml+ai-autonomy-authority-registry.md
+      pre_condition: architecture-model/*.yaml+layers/*.yaml(25+)+docs/03_modules/*/blueprint.md+src/zephyr/目录结构+_registry/contracts/*.yaml+ai_autonomy_authority_registry.yaml
       expected_result: YAML↔代码↔文档三方一致；零循环依赖；零未登记模块；蓝图与代码同步；AI自治权限注册表自洽
       on_failure: GATE-01~03/06/07/14/16/A/B/SUM/XREF/BLUEPRINT-CODE/CONTRACT/INDEX/13/AUTHORITY门禁阻断
     - order: 6
@@ -346,8 +354,7 @@ sections:
     - order: 7
       action: D7代码质量——审计缺失encoding、FLE import合规、测试覆盖率、未使用导入、直接LLM调用
       pre_condition: src/zephyr/**/*.py+tests/**/*.py
-      expected_result: 测试覆盖率≥70%；零未使用导入；零缺失encoding；公共API有docstring+类型注解；L02-L07零直接LLM
-        SDK调用
+      expected_result: 测试覆盖率≥70%；零未使用导入；零缺失encoding；公共API有docstring+类型注解；L02-L07零直接LLM SDK调用
       on_failure: GATE-18测试收集门禁阻断
     - order: 8
       action: D8文档同步——审计TTL过期、文档生命周期、带日期快照、AI产物位置
@@ -491,8 +498,7 @@ sections:
     - GOV-CMP-003
     steps:
     - order: 1
-      action: 确定审计范围——确定审计类型→查§1.1获取覆盖维度→确定审计等级→查§1.2获取通过条件→git diff --stat获取最近变更文件→检查触发式审计→记录审计范围到Session
-        Log
+      action: 确定审计范围——确定审计类型→查§1.1获取覆盖维度→确定审计等级→查§1.2获取通过条件→git diff --stat获取最近变更文件→检查触发式审计→记录审计范围到Session Log
       pre_condition: 审计需求已明确
       expected_result: 审计范围清单已生成
       on_failure: 范围不明确则暂停
@@ -502,8 +508,7 @@ sections:
       expected_result: 自动化扫描报告已生成
       on_failure: 环境问题先修复
     - order: 3
-      action: 人工复核——审查P0违规(必须修复)→审查P1违规(评估是否需立即修复)→审查P2违规(记录到待办)→对自动化无法覆盖的检查项人工审查(D10运维/D12
-        AI自检/ARG架构评审/G1-G5 KMS管道/MOD-ADMIT准入/回滚策略/渐进式信任/知识衰减)
+      action: 人工复核——审查P0违规(必须修复)→审查P1违规(评估是否需立即修复)→审查P2违规(记录到待办)→对自动化无法覆盖的检查项人工审查(D10运维/D12 AI自检/ARG架构评审/G1-G5 KMS管道/MOD-ADMIT准入/回滚策略/渐进式信任/知识衰减)
       pre_condition: 自动化扫描报告已生成
       expected_result: 复核结论已形成
       on_failure: P0违规必须修复
@@ -513,8 +518,7 @@ sections:
       expected_result: 审计报告已归档
       on_failure: 报告不完整则补全
     - order: 5
-      action: 闭环处置——P0违规立即修复→重跑失败脚本验证→P1违规排入当前sprint→P2违规记录到backlog→修复完成后重新执行步骤2验证→更新审计报告状态为CLOSED→审计追踪记录(GOV-CMP-002
-        §2)
+      action: 闭环处置——P0违规立即修复→重跑失败脚本验证→P1违规排入当前sprint→P2违规记录到backlog→修复完成后重新执行步骤2验证→更新审计报告状态为CLOSED→审计追踪记录(GOV-CMP-002 §2)
       pre_condition: 审计报告已生成
       expected_result: 所有违规已处置并验证，报告状态为CLOSED
       on_failure: P0未修复不关闭
@@ -525,12 +529,10 @@ sections:
     - GOV-CMP-003
     branches:
     - condition: 审计类型为QUICK
-      if_true: run_all.py --dimensions D3 D5 D6 D7 --warn-only → P0=0则PASS记录结果结束 /
-        P0>0则FAIL进入步骤5闭环
+      if_true: run_all.py --dimensions D3 D5 D6 D7 --warn-only → P0=0则PASS记录结果结束 / P0>0则FAIL进入步骤5闭环
       if_false: 继续判断
     - condition: 审计类型为FULL
-      if_true: env_check.py → run_all.py全量脚本（以script-manifest.yaml为准） → L2通过则score_architecture.py生成报告结束
-        / L2未通过则进入步骤5闭环修复后重跑
+      if_true: env_check.py → run_all.py全量脚本（以script-manifest.yaml为准） → L2通过则score_architecture.py生成报告结束 / L2未通过则进入步骤5闭环修复后重跑
       if_false: 继续判断
     - condition: 审计类型为TARGETED
       if_true: run_all.py --dimensions <指定> --warn-only → 目标维度P0=0则PASS记录结果结束 / 目标维度P0>0则FAIL进入步骤5闭环
@@ -621,20 +623,15 @@ sections:
     - GOV-CMP-003
     principles:
     - id: ALIGN-OWASP
-      statement: OWASP ASVS对标——V1架构安全→D5+ARG门禁；V2认证→D6；V3会话→D12；V4访问控制→D5 ABS-05~10；V5输入验证→D6
-        shell=True/危险命令；V7错误处理→D7 COND-44~15；V8数据保护→D6日志敏感词；V10恶意代码→D6全部9个P0安全脚本；V13配置→D1
-        11层纵深+pre-commit
+      statement: OWASP ASVS对标——V1架构安全→D5+ARG门禁；V2认证→D6；V3会话→D12；V4访问控制→D5 ABS-05~10；V5输入验证→D6 shell=True/危险命令；V7错误处理→D7 COND-44~15；V8数据保护→D6日志敏感词；V10恶意代码→D6全部9个P0安全脚本；V13配置→D1 11层纵深+pre-commit
       rationale: 对标OWASP ASVS确保安全审计覆盖面
       applies_to: 安全审计维度设计
     - id: ALIGN-OPENSFF
-      statement: OpenSSF Best Practices Badge对标——基础设施安全→D6 11个安全脚本+pre-commit detect-secrets；代码质量→D7
-        14个质量脚本+ruff；安全审计→本协议全文+脚本数以script-manifest.yaml为准+门禁数以gate-registry.md的total_gates为准；漏洞响应→GOV-CMP-002审计追踪+D6；文档完整性→D8
-        4个文档同步脚本+D9 2个知识脚本
+      statement: OpenSSF Best Practices Badge对标——基础设施安全→D6 11个安全脚本+pre-commit detect-secrets；代码质量→D7 14个质量脚本+ruff；安全审计→本协议全文+脚本数以script-manifest.yaml为准+门禁数以gate-registry.md的total_gates为准；漏洞响应→GOV-CMP-002审计追踪+D6；文档完整性→D8 4个文档同步脚本+D9 2个知识脚本
       rationale: 对标OpenSSF确保开源最佳实践
       applies_to: 合规审计框架设计
     - id: ALIGN-NASA
-      statement: NASA Kaiaulu方法论对标——Git挖掘合规证据→run_all.py（脚本数以script-manifest.yaml为准）+git
-        diff准入；量化合规指标→12维评分+score_architecture.py；可视化项目合规→--dashboard输出+报告模板；最小化审计工作量→4类审计类型+7级频率调度
+      statement: NASA Kaiaulu方法论对标——Git挖掘合规证据→run_all.py（脚本数以script-manifest.yaml为准）+git diff准入；量化合规指标→12维评分+score_architecture.py；可视化项目合规→--dashboard输出+报告模板；最小化审计工作量→4类审计类型+7级频率调度
       rationale: 对标Kaiaulu确保审计方法论科学性
       applies_to: 审计方法论设计
   gov_cmp_003_cross_validation:
@@ -739,11 +736,9 @@ sections:
     - GOV-CMP-002
     items:
     - description: v0.2.0 审批修复
-      details: '#25 审批修复。(1)编号前缀：ABS/COND→AUD-（AUD-001~AUD-004）。(2)AUD-004审计记录格式：指定字段名使用snake_case（timestamp/operator_id/operation_type/operation_detail/result），ISO
-        8601格式YYYY-MM-DDTHH:MM:SSZ。(3)depends_on:GOV-DATA-003,GOV-SEC-002,ai_autonomy:human_gated。(4)date→2026-05-01'
+      details: '#25 审批修复。(1)编号前缀：ABS/COND→AUD-（AUD-001~AUD-004）。(2)AUD-004审计记录格式：指定字段名使用snake_case（timestamp/operator_id/operation_type/operation_detail/result），ISO 8601格式YYYY-MM-DDTHH:MM:SSZ。(3)depends_on:GOV-DATA-003,GOV-SEC-002,ai_autonomy:human_gated。(4)date→2026-05-01'
     - description: v0.3.0 内部矛盾修复
-      details: RQ-01审查修复。gov_cmp_002_scope summary从"5类操作"修正为"6类操作"，impact_on_rules从"5类操作必须审计留痕，扩展为6类"修正为"6类操作必须审计留痕（含安全事件）"，key_decisions补充第6类"安全事件"，与gov_cmp_002
-        actions的6类操作定义对齐
+      details: RQ-01审查修复。gov_cmp_002_scope summary从"5类操作"修正为"6类操作"，impact_on_rules从"5类操作必须审计留痕，扩展为6类"修正为"6类操作必须审计留痕（含安全事件）"，key_decisions补充第6类"安全事件"，与gov_cmp_002 actions的6类操作定义对齐
     - description: v0.1.0 初始版本
       details: 2026-04-30 初始版本
   gov_cmp_003_scope:
@@ -760,8 +755,7 @@ sections:
       - 本协议是全部治理脚本的全覆盖索引（以script-manifest.yaml为准）
       key_decisions:
       - 本文档是：(1)每次审计的执行入口 (2)审计规则/工具/范围/频率的唯一真源 (3)审计结果处置的决策树 (4)全部治理脚本的全覆盖索引（以script-manifest.yaml为准）
-      - 本文档不是：(1)具体审计脚本的实现文档→见scripts/governance/各脚本 (2)门禁策略的详细定义→见gate-registry.md+各策略文件
-        (3)12维度评分算法→见12-dimension_audit_matrix.md §5
+      - 本文档不是：(1)具体审计脚本的实现文档→见scripts/governance/各脚本 (2)门禁策略的详细定义→见gate-registry.md+各策略文件 (3)12维度评分算法→见12-dimension_audit_matrix.md §5
   gov_cmp_003_gate_mapping:
     title: 门禁与维度映射
     section_type: context
@@ -794,12 +788,8 @@ sections:
       summary: 与script-manifest.yaml、gate-registry.md、registry-master-index.yaml的三重交叉验证结果
       impact_on_rules:
       - 脚本覆盖：manifest中所有脚本（以script-manifest.yaml为准）在§2中全覆盖，协议中引用的脚本路径在manifest中存在，P0/P1/P2优先级与manifest一致
-      - 门禁覆盖：GATE-01~03/06/07→D5§2.5; GATE-11/12→D3§2.3; GATE-13→D11§2.11; GATE-14→D5§2.5;
-        GATE-15/16→D3+D5; GATE-17→D1§2.1; GATE-18→D7§2.7; GATE-SQ/ADM/COMMIT/IDX→D11+D1;
-        G1-G5→KMS管道§5步骤3; ARG-001~005→架构评审§5步骤3; VC-A/B/C/D→D12§2.12
-      - 登记表覆盖：validate_registry_master_index.py(P0)→D3; validate_blueprint_registry.py(P1)→D3;
-        check_registry_consistency.py(P1)→D3+D5+D11; validate_enum_consistency.py(P0)+generate_derived_files.py(P2)→D3;
-        validate_architecture_contract_internal.py(P0)→D3+D5; validate_frontmatter_values.py(P0)→D3+D5
+      - 门禁覆盖：GATE-01~03/06/07→D5§2.5; GATE-11/12→D3§2.3; GATE-13→D11§2.11; GATE-14→D5§2.5; GATE-15/16→D3+D5; GATE-17→D1§2.1; GATE-18→D7§2.7; GATE-SQ/ADM/COMMIT/IDX→D11+D1; G1-G5→KMS管道§5步骤3; ARG-001~005→架构评审§5步骤3; VC-A/B/C/D→D12§2.12
+      - 登记表覆盖：validate_registry_master_index.py(P0)→D3; validate_blueprint_registry.py(P1)→D3; check_registry_consistency.py(P1)→D3+D5+D11; validate_enum_consistency.py(P0)+generate_derived_files.py(P2)→D3; validate_architecture_contract_internal.py(P0)→D3+D5; validate_frontmatter_values.py(P0)→D3+D5
       key_decisions:
       - v1.1.0完成三重交叉验证——零遗漏
       - 跨维度脚本正确标注"跨维"
@@ -812,14 +802,11 @@ sections:
     - description: v1.0.0 初始版本
       details: 初始版本。12维度审计清单+4类审计类型+3级审计等级+5步审计流程+报告模板+闭环规则+专业框架对标
     - description: v1.1.0 深度自审计修复
-      details: 与script-manifest.yaml（91脚本）、gate-registry.md（34门禁）、registry-master-index.yaml（38登记表）完成三重交叉验证。新增30+遗漏脚本引用。新增GATE-13/G1-G5/ARG-001~005/MOD-ADMIT/FACTOR-QUALITY/FILE-OP-SAFE门禁覆盖。新增§2.13跨维度统计表。新增§A交叉验证记录。新增depends_on
-        9条规则引用。修正script总数从~90到91
+      details: 与script-manifest.yaml（91脚本）、gate-registry.md（34门禁）、registry-master-index.yaml（38登记表）完成三重交叉验证。新增30+遗漏脚本引用。新增GATE-13/G1-G5/ARG-001~005/MOD-ADMIT/FACTOR-QUALITY/FILE-OP-SAFE门禁覆盖。新增§2.13跨维度统计表。新增§A交叉验证记录。新增depends_on 9条规则引用。修正script总数从~90到91
     - description: v1.2.0 四重交叉验证修复
-      details: 与docs/01_policies_and_standards/下全部37个规则文件逐一核对。depends_on从10条扩展至37条（覆盖PS-STD-000~012、GOV-DOC-001~010、GOV-ARCH-001~005、GOV-MOD-001~004/007、GOV-AI-003~005、GOV-SEC-001~003、GOV-TASK-001/004/005、GOV-CMP-001/002等全部规则）。各维度审计规则栏补充完整路径链接。新增§B规则文件完整路径索引（13类60+文件），支持Vibe
-        Coding场景下AI秒查文件路径
+      details: 与docs/01_policies_and_standards/下全部37个规则文件逐一核对。depends_on从10条扩展至37条（覆盖PS-STD-000~012、GOV-DOC-001~010、GOV-ARCH-001~005、GOV-MOD-001~004/007、GOV-AI-003~005、GOV-SEC-001~003、GOV-TASK-001/004/005、GOV-CMP-001/002等全部规则）。各维度审计规则栏补充完整路径链接。新增§B规则文件完整路径索引（13类60+文件），支持Vibe Coding场景下AI秒查文件路径
     - description: v1.3.0 内部矛盾修复
-      details: RQ-01审查修复。(1)gov_cmp_003_gate_mapping summary从"32个门禁"改为引用SSoT（门禁数以gate-registry.md的total_gates为准），与gov_cmp_003_change_sync的total_gates:25对齐。(2)gov_cmp_003_cross_validation从"34个门禁"改为引用SSoT（所有门禁，门禁数以gate-registry.md为准）。(3)gov_cmp_003
-        actions和procedure的QUICK模式从"建议始终包含D3+D5"改为"必须包含D3+D5"，与gov_cmp_003_quick_reference的"必须包含"对齐。(4)全文件硬编码数字（177脚本/34门禁/38登记表）统一改为SSoT引用（script-manifest.yaml/gate-registry.md/registry-master-index.yaml），消除数字漂移风险
+      details: RQ-01审查修复。(1)gov_cmp_003_gate_mapping summary从"32个门禁"改为引用SSoT（门禁数以gate-registry.md的total_gates为准），与gov_cmp_003_change_sync的total_gates:25对齐。(2)gov_cmp_003_cross_validation从"34个门禁"改为引用SSoT（所有门禁，门禁数以gate-registry.md为准）。(3)gov_cmp_003 actions和procedure的QUICK模式从"建议始终包含D3+D5"改为"必须包含D3+D5"，与gov_cmp_003_quick_reference的"必须包含"对齐。(4)全文件硬编码数字（177脚本/34门禁/38登记表）统一改为SSoT引用（script-manifest.yaml/gate-registry.md/registry-master-index.yaml），消除数字漂移风险
   gov_cmp_003_ai_consumability:
     title: AI消费指南
     section_type: context
@@ -865,16 +852,10 @@ sections:
     context:
       summary: depends_on 37条规范性引用——target/at/why三元组
       impact_on_rules:
-      - 元标准：PS-STD-000(full/根规则); PS-STD-003(§2/安全宪法); PS-STD-001(§3/frontmatter真源);
-        PS-STD-002(full/文档结构); PS-STD-004(full/规则冲突); PS-STD-009(§2.2/§5/§7/§9/废弃归档版本);
-        PS-STD-011(full/MTH方法论); PS-STD-012(§7.3/index完整性)
-      - 文档治理：GOV-DOC-001(full/编号); GOV-DOC-002(§四/目录); GOV-DOC-003(full/命名); GOV-DOC-004(full/路径);
-        GOV-DOC-005(full/编码); GOV-DOC-006(§一~§六/生命周期); GOV-DOC-007(§一~§三/文件安全); GOV-DOC-009(full/文档控制);
-        GOV-DOC-010(full/可发现性)
-      - 架构治理：GOV-ARCH-001(full/KB决策); GOV-ARCH-002(§2~§5/评审门禁); GOV-ARCH-003(full/版本化);
-        GOV-ARCH-005(full/Phase过渡); GOV-ARCH-006(G1-G5/KMS管道); architecture-contract.yaml(VR-001~011/契约)
-      - 模块治理：GOV-MOD-001(full/准入); GOV-MOD-002(full/AI铁律); GOV-MOD-003(MLC-001~003/生命周期);
-        GOV-MOD-004(IFC-001~007/接口契约); GOV-MOD-007(full/多注册表同步)
+      - 元标准：PS-STD-000(full/根规则); PS-STD-003(§2/安全宪法); PS-STD-001(§3/frontmatter真源); PS-STD-002(full/文档结构); PS-STD-004(full/规则冲突); PS-STD-009(§2.2/§5/§7/§9/废弃归档版本); PS-STD-011(full/MTH方法论); PS-STD-012(§7.3/index完整性)
+      - 文档治理：GOV-DOC-001(full/编号); GOV-DOC-002(§四/目录); GOV-DOC-003(full/命名); GOV-DOC-004(full/路径); GOV-DOC-005(full/编码); GOV-DOC-006(§一~§六/生命周期); GOV-DOC-007(§一~§三/文件安全); GOV-DOC-009(full/文档控制); GOV-DOC-010(full/可发现性)
+      - 架构治理：GOV-ARCH-001(full/KB决策); GOV-ARCH-002(§2~§5/评审门禁); GOV-ARCH-003(full/版本化); GOV-ARCH-005(full/Phase过渡); GOV-ARCH-006(G1-G5/KMS管道); architecture-contract.yaml(VR-001~011/契约)
+      - 模块治理：GOV-MOD-001(full/准入); GOV-MOD-002(full/AI铁律); GOV-MOD-003(MLC-001~003/生命周期); GOV-MOD-004(IFC-001~007/接口契约); GOV-MOD-007(full/多注册表同步)
       - AI治理：GOV-AI-003(full/幻觉自检); GOV-AI-004(full/双编辑器); context-rules.yaml(CR-001~015/上下文管理)
       - 安全治理：GOV-SEC-001(full/密钥); GOV-SEC-002(full/访问控制); GOV-SEC-003(full/安全事件)
       - 任务治理：GOV-TASK-001(full/任务卡); GOV-TASK-004(full/生命周期); GOV-TASK-005(§4.2/§4.3/关闭标准)
@@ -904,7 +885,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.4.3
     date: '2026-06-21'

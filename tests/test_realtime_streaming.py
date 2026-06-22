@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.realtime_streaming import (
     BACKPRESSURE_THRESHOLD,
     CONNECTION_POOL_MIN,

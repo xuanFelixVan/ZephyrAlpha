@@ -26,17 +26,14 @@ module_id: MOD-INF-023
 Git bisect 自动溯源：bisect start→每step跑detector→定位root_cause commit。
 对标 blueprint.md §5.6 / TASK-INF-0030 / D-023-15。
 """
+
 from __future__ import annotations
 
-import json
 import os
 import subprocess
 import uuid
 from dataclasses import dataclass, field
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -53,7 +50,7 @@ class BisectResult:
 class GitBisector:
     MAX_BISECT_COMMITS: int = 50
 
-    def __init__(self, project_root: Optional[str] = None) -> None:
+    def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -62,7 +59,7 @@ class GitBisector:
     def _git(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(["git", *args], capture_output=True, text=True, cwd=self._project_root, timeout=30)
 
-    def find_last_good_commit(self, module_id: str) -> Optional[str]:
+    def find_last_good_commit(self, module_id: str) -> str | None:
         audit_dir = os.path.join(self._project_root, "data", "drift_audit", "manifest.json")
         return None
 
@@ -77,13 +74,19 @@ class GitBisector:
             return self._cache[cache_key].get("status") == "pass"
 
         try:
-            subprocess.run(["git", "checkout", commit_hash], capture_output=True, text=True, cwd=self._project_root, timeout=10)
+            subprocess.run(
+                ["git", "checkout", commit_hash], capture_output=True, text=True, cwd=self._project_root, timeout=10
+            )
             script_path = os.path.join(self._project_root, "scripts", "governance", detector_script)
             if not os.path.exists(script_path):
                 return True
             result = subprocess.run(["python", script_path], capture_output=True, text=True, timeout=30)
             passed = result.returncode == 0
-            self._cache[cache_key] = {"commit": commit_hash, "status": "pass" if passed else "fail", "cached_at": datetime.now(timezone.utc).isoformat()}
+            self._cache[cache_key] = {
+                "commit": commit_hash,
+                "status": "pass" if passed else "fail",
+                "cached_at": datetime.now(UTC).isoformat(),
+            }
             return passed
         except Exception:
             return False
@@ -94,7 +97,7 @@ class GitBisector:
         self,
         detector_id: str,
         script_path: str,
-        last_good: Optional[str] = None,
+        last_good: str | None = None,
         first_bad: str = "HEAD~1",
     ) -> BisectResult:
         if last_good is None:
@@ -107,7 +110,8 @@ class GitBisector:
         commit_range = self.get_commit_range(last_good, first_bad)
         if len(commit_range) > self.MAX_BISECT_COMMITS:
             return BisectResult(
-                event_id=uuid.uuid4(), found=False,
+                event_id=uuid.uuid4(),
+                found=False,
                 ai_session_hint=f"Too many commits ({len(commit_range)}>{self.MAX_BISECT_COMMITS}). Owner review needed.",
             )
 

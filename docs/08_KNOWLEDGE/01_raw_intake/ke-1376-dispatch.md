@@ -12,7 +12,7 @@ category: module_blueprint
 ```python
 def dispatch(self, task_card: TaskCard, dry_run: bool = False) -> PipelineResult:
     route = resolve_route(task_card)
-    
+
     if dry_run:
         return PipelineResult(
             task_id=task_card.task_id,
@@ -24,6 +24,6 @@ def dispatch(self, task_card: TaskCard, dry_run: bool = False) -> PipelineResult
             cost_total_usd=0.0,
             cost_records=[],
         )
-    
+
     # ... 正常dispatch流程
 ```

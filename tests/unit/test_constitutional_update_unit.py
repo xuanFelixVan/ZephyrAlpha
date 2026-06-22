@@ -13,9 +13,11 @@ import json
 import tempfile
 from pathlib import Path
 
-import pytest
-
-from zephyr.governance.constitutional_update.constitutional_update import ConstitutionalAutoUpdate, Learning, ProposedUpdate
+from zephyr.governance.constitutional_update.constitutional_update import (
+    ConstitutionalAutoUpdate,
+    Learning,
+    ProposedUpdate,
+)
 
 
 class TestLearning:
@@ -115,12 +117,14 @@ class TestConstitutionalAutoUpdate:
 
     def test_propose_update(self):
         auto = ConstitutionalAutoUpdate(agents_path="AGENTS.md")
-        learnings = [Learning(
-            pattern_id="L-TEST-001",
-            category="test",
-            summary="test learning",
-            source_session="s1",
-        )]
+        learnings = [
+            Learning(
+                pattern_id="L-TEST-001",
+                category="test",
+                summary="test learning",
+                source_session="s1",
+            )
+        ]
         proposal = auto.propose_update(learnings)
         assert proposal is not None
         assert "Auto-Generated Learnings" in proposal.diff
@@ -132,12 +136,14 @@ class TestConstitutionalAutoUpdate:
             agents.write_text("# Test AGENTS\n\n## Section 1\nContent\n\n## Section 2\nMore", encoding="utf-8")
 
             auto = ConstitutionalAutoUpdate(agents_path=str(agents), audit_dir=tmpdir)
-            learnings = [Learning(
-                pattern_id="L-APPLY-001",
-                category="apply",
-                summary="apply test",
-                source_session="s1",
-            )]
+            learnings = [
+                Learning(
+                    pattern_id="L-APPLY-001",
+                    category="apply",
+                    summary="apply test",
+                    source_session="s1",
+                )
+            ]
             proposal = auto.propose_update(learnings)
             assert proposal is not None
 

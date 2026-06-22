@@ -12,9 +12,10 @@
 
 from __future__ import annotations
 
-import pytest
 from datetime import datetime
 from decimal import Decimal
+
+import pytest
 
 provider_base = pytest.importorskip("zephyr.l00_data_source.provider_base")
 quality_gate = pytest.importorskip("zephyr.l00_data_source.quality_gate")
@@ -80,6 +81,7 @@ class TestDataSourceBase:
 
             def fetch_historical(self, symbol, start, end, interval="1d"):
                 import pandas as pd
+
                 return pd.DataFrame({"open": [1], "high": [2], "low": [0.5], "close": [1.5], "volume": [100]})
 
             def subscribe_realtime(self, symbols):
@@ -101,6 +103,7 @@ class TestDataSourceBase:
 
             def fetch_historical(self, symbol, start, end, interval="1d"):
                 import pandas as pd
+
                 return pd.DataFrame()
 
             def subscribe_realtime(self, symbols):
@@ -108,6 +111,7 @@ class TestDataSourceBase:
 
         ds = MockDataSource()
         import pandas as pd
+
         valid_df = pd.DataFrame({"open": [1], "high": [2], "low": [0.5], "close": [1.5], "volume": [100]})
         assert ds.validate_schema(valid_df) is True
 
@@ -122,6 +126,7 @@ class TestDataSourceBase:
 
             def fetch_historical(self, symbol, start, end, interval="1d"):
                 import pandas as pd
+
                 return pd.DataFrame()
 
             def subscribe_realtime(self, symbols):
@@ -129,6 +134,7 @@ class TestDataSourceBase:
 
         ds = MockDataSource()
         import pandas as pd
+
         bad_df = pd.DataFrame({"open": [1], "close": [2]})
         assert ds.validate_schema(bad_df) is False
 
@@ -144,6 +150,7 @@ class TestDataSourceBase:
 
             def fetch_historical(self, symbol, start, end, interval="1d"):
                 import pandas as pd
+
                 return pd.DataFrame()
 
             def subscribe_realtime(self, symbols):
@@ -163,6 +170,7 @@ class TestDataSourceBase:
 
             def fetch_historical(self, symbol, start, end, interval="1d"):
                 import pandas as pd
+
                 return pd.DataFrame()
 
             def subscribe_realtime(self, symbols):
@@ -175,6 +183,7 @@ class TestDataSourceBase:
         class NoMetaSource(DataSourceBase):
             def fetch_historical(self, symbol, start, end, interval="1d"):
                 import pandas as pd
+
                 return pd.DataFrame()
 
             def subscribe_realtime(self, symbols):
@@ -269,27 +278,19 @@ class TestDataQualityGate:
         assert report.quality_score == 1.0
 
     def test_is_within_normal_range(self):
-        result = DataQualityGate.is_within_normal_range(
-            Decimal("110"), Decimal("100")
-        )
+        result = DataQualityGate.is_within_normal_range(Decimal("110"), Decimal("100"))
         assert result is True
 
     def test_is_within_normal_range_exceeds(self):
-        result = DataQualityGate.is_within_normal_range(
-            Decimal("120"), Decimal("100")
-        )
+        result = DataQualityGate.is_within_normal_range(Decimal("120"), Decimal("100"))
         assert result is False
 
     def test_is_within_normal_range_zero_prev(self):
-        result = DataQualityGate.is_within_normal_range(
-            Decimal("10"), Decimal("0")
-        )
+        result = DataQualityGate.is_within_normal_range(Decimal("10"), Decimal("0"))
         assert result is False
 
     def test_is_within_normal_range_custom_limit(self):
-        result = DataQualityGate.is_within_normal_range(
-            Decimal("125"), Decimal("100"), limit_pct=Decimal("0.30")
-        )
+        result = DataQualityGate.is_within_normal_range(Decimal("125"), Decimal("100"), limit_pct=Decimal("0.30"))
         assert result is True
 
     def test_quality_threshold_constant(self):

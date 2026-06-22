@@ -17,10 +17,9 @@ DM-105: depgraph 未分配节点三策略处理脚本
 [TESTS] manual --dry-run
 """
 
-import csv
-import os
-import sys
 import argparse
+import csv
+import sys
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -53,6 +52,7 @@ def load_csv_mapping(csv_path):
 def load_bp_mapping(yaml_path):
     """加载 blueprint-domain-mapping.yaml: blueprint_id -> {domain_id, subdomain_id}"""
     from ruamel.yaml import YAML
+
     yaml = YAML()
     yaml.preserve_quotes = True
     with open(yaml_path, encoding="utf-8") as f:
@@ -77,6 +77,7 @@ def load_bp_mapping(yaml_path):
 def load_depgraph(db_path):
     """加载 depgraph DB，返回与原 YAML 结构兼容的 dict"""
     import sqlite3
+
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     data = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
@@ -101,11 +102,12 @@ def load_depgraph(db_path):
 def save_depgraph(data, db_path):
     """将修改后的 nodes 写回 depgraph DB"""
     import sqlite3
+
     conn = sqlite3.connect(str(db_path))
     for nid, node in data.get("nodes", {}).items():
         row = dict(node)
         row["node_type"] = row.pop("type", "")
-        sets = ", ".join(f"{k}=?" for k in row.keys() if k != "node_id")
+        sets = ", ".join(f"{k}=?" for k in row if k != "node_id")
         vals = [v for k, v in row.items() if k != "node_id"]
         if sets:
             conn.execute(f"UPDATE nodes SET {sets} WHERE node_id=?", vals + [nid])
@@ -218,9 +220,21 @@ EXACT_FILE_HINTS = {
     "scripts/script_manifest.yaml": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),
     "docs/03_modules/module-registry.yaml": ("MOD-INF-026", "D-OBS", "D-OBS-ASSET_INVENTORY"),
     "docs/03_modules/blueprint-registry.yaml": ("MOD-INF-026", "D-OBS", "D-OBS-ASSET_INVENTORY"),
-    "docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),
-    "docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),
-    "docs/01_policies_and_standards/_registry/schemas/frontmatter-schema.json": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),
+    "docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml": (
+        "MOD-INF-005",
+        "D-GOV",
+        "D-GOV-SCRIPT_GOVERNANCE",
+    ),
+    "docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml": (
+        "MOD-INF-005",
+        "D-GOV",
+        "D-GOV-SCRIPT_GOVERNANCE",
+    ),
+    "docs/01_policies_and_standards/_registry/schemas/frontmatter-schema.json": (
+        "MOD-INF-005",
+        "D-GOV",
+        "D-GOV-SCRIPT_GOVERNANCE",
+    ),
     "docs/02_enterprise_architecture/migration-registry.yaml": ("MOD-INF-026", "D-OBS", "D-OBS-ASSET_INVENTORY"),
     "src/zephyr/shared/SHARED-QUICKREF.yml": ("MOD-INF-016", "D-INFRA", "D-INFRA-LIFECYCLE_MANAGEMENT"),
     "scripts/governance/test_concurrent_safety.ps1": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),
@@ -237,7 +251,13 @@ def match_blueprint_for_path(path_str, csv_mapping, bp_mapping):
         bp_id, domain_id, subdomain_id = EXACT_FILE_HINTS[path_str]
         if bp_id in bp_mapping:
             bp_info = bp_mapping[bp_id]
-            return bp_id, bp_info.get("domain_id", domain_id), bp_info.get("subdomain_id", subdomain_id), "assimilate_exact_file", "high"
+            return (
+                bp_id,
+                bp_info.get("domain_id", domain_id),
+                bp_info.get("subdomain_id", subdomain_id),
+                "assimilate_exact_file",
+                "high",
+            )
         return bp_id, domain_id, subdomain_id, "assimilate_exact_file", "high"
 
     # 策略0: 路径前缀精确映射
@@ -247,7 +267,13 @@ def match_blueprint_for_path(path_str, csv_mapping, bp_mapping):
                 return "", "", "", "deprecate_prefix", "high"
             if bp_id in bp_mapping:
                 bp_info = bp_mapping[bp_id]
-                return bp_id, bp_info.get("domain_id", domain_id), bp_info.get("subdomain_id", subdomain_id), "assimilate_path_prefix", "high"
+                return (
+                    bp_id,
+                    bp_info.get("domain_id", domain_id),
+                    bp_info.get("subdomain_id", subdomain_id),
+                    "assimilate_path_prefix",
+                    "high",
+                )
             return bp_id, domain_id, subdomain_id, "assimilate_path_prefix", "medium"
 
     # 策略1: CSV 精确匹配
@@ -255,7 +281,13 @@ def match_blueprint_for_path(path_str, csv_mapping, bp_mapping):
         entry = csv_mapping[path_str]
         bp_id = entry.get("blueprint_id", "")
         if bp_id:
-            return bp_id, entry.get("domain_id", ""), entry.get("subdomain_id", ""), "assimilate_csv", entry.get("confidence", "high")
+            return (
+                bp_id,
+                entry.get("domain_id", ""),
+                entry.get("subdomain_id", ""),
+                "assimilate_csv",
+                entry.get("confidence", "high"),
+            )
 
     # 策略1.5: 测试文件名匹配
     if path_str.startswith("tests/"):
@@ -264,7 +296,13 @@ def match_blueprint_for_path(path_str, csv_mapping, bp_mapping):
             bp_id = TEST_BLUEPRINT_HINTS[fname]
             if bp_id in bp_mapping:
                 bp_info = bp_mapping[bp_id]
-                return bp_id, bp_info.get("domain_id", ""), bp_info.get("subdomain_id", ""), "assimilate_test_name", "medium"
+                return (
+                    bp_id,
+                    bp_info.get("domain_id", ""),
+                    bp_info.get("subdomain_id", ""),
+                    "assimilate_test_name",
+                    "medium",
+                )
             return bp_id, "", "", "assimilate_test_name", "low"
         # tests/unit/<subdir>/ 匹配
         parts = path_str.split("/")
@@ -274,7 +312,13 @@ def match_blueprint_for_path(path_str, csv_mapping, bp_mapping):
                 bp_id = TEST_UNIT_DIR_HINTS[unit_dir]
                 if bp_id in bp_mapping:
                     bp_info = bp_mapping[bp_id]
-                    return bp_id, bp_info.get("domain_id", ""), bp_info.get("subdomain_id", ""), "assimilate_test_unit_dir", "medium"
+                    return (
+                        bp_id,
+                        bp_info.get("domain_id", ""),
+                        bp_info.get("subdomain_id", ""),
+                        "assimilate_test_unit_dir",
+                        "medium",
+                    )
                 return bp_id, "", "", "assimilate_test_unit_dir", "low"
 
     # 策略2: 包路径启发式匹配
@@ -283,7 +327,13 @@ def match_blueprint_for_path(path_str, csv_mapping, bp_mapping):
         bp_id = PKG_BLUEPRINT_HINTS[pkg]
         if bp_id in bp_mapping:
             bp_info = bp_mapping[bp_id]
-            return bp_id, bp_info.get("domain_id", ""), bp_info.get("subdomain_id", ""), "assimilate_heuristic", "medium"
+            return (
+                bp_id,
+                bp_info.get("domain_id", ""),
+                bp_info.get("subdomain_id", ""),
+                "assimilate_heuristic",
+                "medium",
+            )
         return bp_id, "", "", "assimilate_heuristic", "low"
 
     # 策略3: 按子包名匹配 CSV 中的同目录文件
@@ -292,7 +342,13 @@ def match_blueprint_for_path(path_str, csv_mapping, bp_mapping):
         for csv_path, entry in csv_mapping.items():
             if csv_path.startswith(prefix) and entry.get("blueprint_id"):
                 bp_id = entry["blueprint_id"]
-                return bp_id, entry.get("domain_id", ""), entry.get("subdomain_id", ""), "assimilate_dir_neighbor", "medium"
+                return (
+                    bp_id,
+                    entry.get("domain_id", ""),
+                    entry.get("subdomain_id", ""),
+                    "assimilate_dir_neighbor",
+                    "medium",
+                )
 
     return "", "", "", "unmatched", "none"
 
@@ -621,7 +677,13 @@ def main():
         verify_nodes = verify_graph.get("nodes", {})
         if verify_nodes is None:
             verify_nodes = {}
-        empty_after = sum(1 for nd in verify_nodes.values() if (nd.get("blueprint_id") or "") == "" and nd.get("lifecycle") != "design" and file_exists_on_disk(nd.get("path", "")))
+        empty_after = sum(
+            1
+            for nd in verify_nodes.values()
+            if (nd.get("blueprint_id") or "") == ""
+            and nd.get("lifecycle") != "design"
+            and file_exists_on_disk(nd.get("path", ""))
+        )
         deprecated_after = sum(1 for nd in verify_nodes.values() if nd.get("decision") == "DEPRECATE")
         print(f"  验证: 磁盘存在但空 blueprint_id 的节点: {empty_after}")
         print(f"  验证: 标记 DEPRECATE 的节点: {deprecated_after}")
@@ -633,7 +695,7 @@ def main():
     print("\n" + "=" * 60)
     print("DM-105 处理结果汇总")
     print("=" * 60)
-    print(f"\n--- 策略1: 归入 (Assimilate) ---")
+    print("\n--- 策略1: 归入 (Assimilate) ---")
     print(f"  总计归入: {stats['assimilated']}")
     print(f"    精确文件映射: {stats['assimilate_exact_file']}")
     print(f"    CSV 精确匹配: {stats['assimilated_assimilate_csv']}")
@@ -643,7 +705,7 @@ def main():
     print(f"    包路径启发式: {stats['assimilated_assimilate_heuristic']}")
     print(f"    目录邻居匹配: {stats['assimilated_assimilate_dir_neighbor']}")
 
-    print(f"\n--- 策略2: 新建 (Create New) ---")
+    print("\n--- 策略2: 新建 (Create New) ---")
     print(f"  总计标记新蓝图: {stats['new_blueprint']}")
     # 按新蓝图 ID 分组
     new_bp_groups = Counter()
@@ -652,7 +714,7 @@ def main():
     for bp_id, count in new_bp_groups.most_common():
         print(f"    {bp_id}: {count} 个节点")
 
-    print(f"\n--- 策略3: 废弃 (Deprecate) ---")
+    print("\n--- 策略3: 废弃 (Deprecate) ---")
     print(f"  空 blueprint_id 中废弃: {stats['deprecated']}")
     print(f"  Ghost 归档废弃: {stats['ghost_archive_deprecated']}")
     print(f"  Ghost 测试废弃: {stats['ghost_test_deprecated']}")
@@ -660,12 +722,16 @@ def main():
     print(f"  Ghost missing 废弃: {stats['ghost_missing_deprecated']}")
     print(f"  Ghost 有 counterpart 保留: {stats['ghost_has_counterpart']}")
     print(f"  Ghost 未知状态: {stats['ghost_unknown']}")
-    total_deprecated = (stats['deprecated'] + stats['ghost_archive_deprecated'] +
-                        stats['ghost_test_deprecated'] + stats['ghost_design_deprecated'] +
-                        stats['ghost_missing_deprecated'])
+    total_deprecated = (
+        stats["deprecated"]
+        + stats["ghost_archive_deprecated"]
+        + stats["ghost_test_deprecated"]
+        + stats["ghost_design_deprecated"]
+        + stats["ghost_missing_deprecated"]
+    )
     print(f"  总计废弃: {total_deprecated}")
 
-    print(f"\n--- Orphan 处理 ---")
+    print("\n--- Orphan 处理 ---")
     print(f"  已解决: {len(resolved_orphans)}")
     print(f"    不在 nodes 中移除: {stats['orphan_removed_not_in_nodes']}")
     print(f"    已有 blueprint 解决: {stats['orphan_resolved_has_blueprint']}")
@@ -673,20 +739,20 @@ def main():
     print(f"    匹配蓝图解决: {stats['orphan_assimilated']}")
     print(f"  剩余真 orphan: {len(remaining_orphans)}")
 
-    print(f"\n--- 仍无法分配 ---")
+    print("\n--- 仍无法分配 ---")
     print(f"  仍无 blueprint_id: {stats['still_unassigned']}")
     if still_unassigned:
         print("  前20个未分配节点:")
         for node_id, path_str in still_unassigned[:20]:
             print(f"    {path_str}")
 
-    print(f"\n--- 验证结果 ---")
+    print("\n--- 验证结果 ---")
     print(f"  磁盘存在但空 blueprint_id: {empty_after}")
     print(f"  标记 DEPRECATE 总计: {deprecated_after}")
 
     # 输出归入详情（前30条）
     if assimilated_nodes:
-        print(f"\n--- 归入详情（前30条）---")
+        print("\n--- 归入详情（前30条）---")
         for node_id, path_str, bp_id, strategy, confidence in assimilated_nodes[:30]:
             print(f"  {path_str} → {bp_id} ({strategy}, {confidence})")
 

@@ -26,10 +26,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
+
 class CEBootstrapLevel(Enum):
     CE_MVP = "ce_mvp"
     FUNCTIONAL = "functional"
     FULL_CE = "full_ce"
+
 
 @dataclass
 class BootstrapGate:
@@ -39,8 +41,10 @@ class BootstrapGate:
     passed: bool = False
     graduation_log: list[str] = field(default_factory=list)
 
+
 class CEBootstrap:
     """三级递进建造序列: CE-MVP → Functional → FullCE (DD75)."""
+
     def __init__(self) -> None:
         self._level = CEBootstrapLevel.CE_MVP
         self._gates: dict[CEBootstrapLevel, BootstrapGate] = {}
@@ -51,5 +55,6 @@ class CEBootstrap:
 
     def graduate(self, target: CEBootstrapLevel) -> BootstrapGate:
         return BootstrapGate(level=target)
+
 
 ce_bootstrap_default = CEBootstrap()

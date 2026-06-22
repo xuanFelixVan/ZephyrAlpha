@@ -31,12 +31,10 @@
 输出: 冲突列表 + 严重度 + 重叠区域
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 
 class ConflictSeverity(str, Enum):
@@ -69,7 +67,9 @@ class ChangeSet:
 
     def add_file(self, path: str, start: int, end: int, symbols: list[str] | None = None):
         self.files[path] = ChangeRange(
-            file_path=path, start_line=start, end_line=end,
+            file_path=path,
+            start_line=start,
+            end_line=end,
             symbols=symbols or [],
         )
 
@@ -103,7 +103,6 @@ class ConflictDetector:
         self._resource_exclusive = resource_exclusive
 
     def detect(self, changes_a: ChangeSet, changes_b: ChangeSet) -> list[Conflict]:
-
         conflicts: list[Conflict] = []
 
         all_files = set(changes_a.files.keys()) | set(changes_b.files.keys())
@@ -124,48 +123,56 @@ class ConflictDetector:
                 common_symbols = list(set(range_a.symbols) & set(range_b.symbols))
 
                 if common_symbols:
-                    conflicts.append(Conflict(
-                        conflict_type=ConflictType.SYMBOL_CONFLICT,
-                        severity=ConflictSeverity.BLOCKING,
-                        agent_a=changes_a.agent_id,
-                        agent_b=changes_b.agent_id,
-                        description=f"Both agents modified symbols {common_symbols} in {file_path}",
-                        file_path=file_path,
-                        conflicting_symbols=common_symbols,
-                    ))
+                    conflicts.append(
+                        Conflict(
+                            conflict_type=ConflictType.SYMBOL_CONFLICT,
+                            severity=ConflictSeverity.BLOCKING,
+                            agent_a=changes_a.agent_id,
+                            agent_b=changes_b.agent_id,
+                            description=f"Both agents modified symbols {common_symbols} in {file_path}",
+                            file_path=file_path,
+                            conflicting_symbols=common_symbols,
+                        )
+                    )
                 elif severity in (ConflictSeverity.SEVERE, ConflictSeverity.BLOCKING):
-                    conflicts.append(Conflict(
-                        conflict_type=ConflictType.LINE_OVERLAP,
-                        severity=severity,
-                        agent_a=changes_a.agent_id,
-                        agent_b=changes_b.agent_id,
-                        description=f"Line overlap L{overlap_start}-L{overlap_end} in {file_path}",
-                        file_path=file_path,
-                        overlap_start=overlap_start,
-                        overlap_end=overlap_end,
-                    ))
+                    conflicts.append(
+                        Conflict(
+                            conflict_type=ConflictType.LINE_OVERLAP,
+                            severity=severity,
+                            agent_a=changes_a.agent_id,
+                            agent_b=changes_b.agent_id,
+                            description=f"Line overlap L{overlap_start}-L{overlap_end} in {file_path}",
+                            file_path=file_path,
+                            overlap_start=overlap_start,
+                            overlap_end=overlap_end,
+                        )
+                    )
                 elif range_a.symbols and range_b.symbols:
-                    conflicts.append(Conflict(
-                        conflict_type=ConflictType.SEMANTIC_DIVERGENCE,
-                        severity=ConflictSeverity.MODERATE,
-                        agent_a=changes_a.agent_id,
-                        agent_b=changes_b.agent_id,
-                        description=f"Adjacent symbols in {file_path}: A:{range_a.symbols} vs B:{range_b.symbols}",
-                        file_path=file_path,
-                    ))
+                    conflicts.append(
+                        Conflict(
+                            conflict_type=ConflictType.SEMANTIC_DIVERGENCE,
+                            severity=ConflictSeverity.MODERATE,
+                            agent_a=changes_a.agent_id,
+                            agent_b=changes_b.agent_id,
+                            description=f"Adjacent symbols in {file_path}: A:{range_a.symbols} vs B:{range_b.symbols}",
+                            file_path=file_path,
+                        )
+                    )
 
         if self._resource_exclusive:
             locked_a = set(changes_a.locked_resources)
             locked_b = set(changes_b.locked_resources)
             common_locks = locked_a & locked_b
             for resource in common_locks:
-                conflicts.append(Conflict(
-                    conflict_type=ConflictType.RESOURCE_LOCK,
-                    severity=ConflictSeverity.BLOCKING,
-                    agent_a=changes_a.agent_id,
-                    agent_b=changes_b.agent_id,
-                    description=f"Resource lock conflict on '{resource}'",
-                ))
+                conflicts.append(
+                    Conflict(
+                        conflict_type=ConflictType.RESOURCE_LOCK,
+                        severity=ConflictSeverity.BLOCKING,
+                        agent_a=changes_a.agent_id,
+                        agent_b=changes_b.agent_id,
+                        description=f"Resource lock conflict on '{resource}'",
+                    )
+                )
 
         return conflicts
 
@@ -173,10 +180,7 @@ class ConflictDetector:
         return len(self.detect(changes_a, changes_b)) > 0
 
     def is_blocking(self, changes_a: ChangeSet, changes_b: ChangeSet) -> bool:
-        return any(
-            c.severity == ConflictSeverity.BLOCKING
-            for c in self.detect(changes_a, changes_b)
-        )
+        return any(c.severity == ConflictSeverity.BLOCKING for c in self.detect(changes_a, changes_b))
 
     def _severity_from_overlap(
         self, start: int, end: int, range_a: ChangeRange, range_b: ChangeRange

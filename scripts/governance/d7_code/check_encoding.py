@@ -34,7 +34,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -47,7 +47,7 @@ MOJIBAKE_MARKERS = [
     "\u93d4\u63d2\u53c2",  # 镹插叆 — extremely rare in normal text
     "\u93d4\u659c\u7280\u6362",  # 镹斜犺换
     "\u93d4\u529c\u00b0\u20ac",  # 镹宁°€
-    "\u94c6\u003f",        # 锆?
+    "\u94c6\u003f",  # 锆?
 ]
 
 
@@ -83,10 +83,11 @@ def _detect_mojibake_bytes(raw: bytes) -> bool:
     #   which decode to the correct Chinese text
     # We extract CJK segments and test them individually
     import re as _re
+
     # 2a: test segments WITHOUT U+FFFD
     clean_content = content.replace("\ufffd", "")
     if clean_content.strip():
-        cjk_segments = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf]+', clean_content)
+        cjk_segments = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]+", clean_content)
         for seg in cjk_segments:
             if len(seg) < 2:
                 continue
@@ -111,8 +112,7 @@ def _detect_mojibake_bytes(raw: bytes) -> bool:
                         # If partial round-trip produces ANY common CJK, it's mojibake
                         # because normal Chinese -> GBK -> UTF-8 should fail completely
                         # (not produce partial valid CJK)
-                        partial_cjk = sum(1 for c in partial_rt
-                                          if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
+                        partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
                         if partial_cjk >= 3:
                             return True
                     except Exception:
@@ -123,7 +123,7 @@ def _detect_mojibake_bytes(raw: bytes) -> bool:
     # 2b: test segments WITH U+FFFD — split at U+FFFD and test sub-segments
     # U+FFFD appears when UTF-8 bytes are not valid GBK sequences
     if "\ufffd" in content:
-        cjk_with_replacement = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+', content)
+        cjk_with_replacement = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+", content)
         for seg in cjk_with_replacement:
             if "\ufffd" not in seg:
                 continue  # already tested in 2a
@@ -152,7 +152,7 @@ def _detect_mojibake_bytes(raw: bytes) -> bool:
     # This is a strong mojibake signal
     if "\ufffd" in content:
         # Check if U+FFFD appears within or adjacent to CJK text
-        cjk_context = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]', content)
+        cjk_context = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]", content)
         if len(cjk_context) >= 2:
             return True
 
@@ -196,11 +196,15 @@ def check_file_encoding(filepath: str) -> list[str]:
         findings.append(f"INJ-007 WARNING: file '{filepath}' has {crlf_count} CRLF line endings — should use LF")
     for pattern in AUTO_GUESS_PATTERNS:
         if pattern in raw:
-            findings.append(f"INJ-007 FAIL: file '{filepath}' contains '{pattern.decode()}' — autoGuessEncoding must be false")
+            findings.append(
+                f"INJ-007 FAIL: file '{filepath}' contains '{pattern.decode()}' — autoGuessEncoding must be false"
+            )
     try:
         content = raw.decode("utf-8")
         if _detect_mojibake(content):
-            findings.append(f"INJ-007 FAIL: file '{filepath}' contains GBK-as-UTF-8 mojibake — double-encoded garbled text detected")
+            findings.append(
+                f"INJ-007 FAIL: file '{filepath}' contains GBK-as-UTF-8 mojibake — double-encoded garbled text detected"
+            )
     except UnicodeDecodeError:
         pass
     return findings

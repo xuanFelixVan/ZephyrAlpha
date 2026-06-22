@@ -15,7 +15,6 @@
 监听文件变更，判定是否触发语义审计。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -66,10 +65,7 @@ class TriggerEngine:
             yellows = sum(1 for r in results if r.severity == Severity.YELLOW)
             types = set(r.trigger_type for r in results)
             decision.trigger_type = ";".join(sorted(types))
-            decision.reason = (
-                f"{reds} RED, {yellows} YELLOW triggers from "
-                f"{len(changed_files)} changed files"
-            )
+            decision.reason = f"{reds} RED, {yellows} YELLOW triggers from {len(changed_files)} changed files"
         else:
             decision.reason = "no_triggers_detected"
 

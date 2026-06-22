@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-INT_pipeline_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.integration.pipeline_bridge
+# [MODULE] zephyr.autonomy_core.integration.pipeline_bridge
 
 # [INVARIANTS] none
 
@@ -33,24 +33,22 @@ PipelineSkillBridge — Agent Spec → Pipeline 双向桥接
     # → 加载 database-specialist + implementer
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
 
 from zephyr.autonomy_core.skill_loader import SkillLoader
-from zephyr.autonomy_core.trigger_router import TriggerRouter, ConstructionStage
+from zephyr.autonomy_core.trigger_router import ConstructionStage, TriggerRouter
 
 
 @dataclass
 class SkillInjectionResult:
     skill_id: str
-    domain_skill_id: Optional[str]
-    role_skill_id: Optional[str]
+    domain_skill_id: str | None
+    role_skill_id: str | None
     l0_constitution: dict
-    l1_domain_meta: Optional[dict] = None
-    l1_role_meta: Optional[dict] = None
+    l1_domain_meta: dict | None = None
+    l1_role_meta: dict | None = None
     l2_domain_body: str = ""
     l2_role_body: str = ""
     token_budget: dict = field(default_factory=dict)
@@ -69,12 +67,10 @@ class SkillInjectionResult:
 
 
 class SkillContextInjector:
-
-    def __init__(self, loader: Optional[SkillLoader] = None):
+    def __init__(self, loader: SkillLoader | None = None):
         self._loader = loader or SkillLoader()
 
-    def inject(self, domain_skill_id: str, role_skill_id: str,
-               load_l3: bool = False) -> SkillInjectionResult:
+    def inject(self, domain_skill_id: str, role_skill_id: str, load_l3: bool = False) -> SkillInjectionResult:
         try:
             domain = self._loader.progressive_load(domain_skill_id)
             role = self._loader.progressive_load(role_skill_id)
@@ -146,7 +142,6 @@ class SkillContextInjector:
 
 
 class PipelineSkillBridge:
-
     def __init__(self):
         self._router = TriggerRouter()
         self._injector = SkillContextInjector()
@@ -167,7 +162,7 @@ class PipelineSkillBridge:
     def inject_for_task(
         self,
         task_description: str,
-        stage: Optional[str] = None,
+        stage: str | None = None,
         load_l3: bool = False,
     ) -> SkillInjectionResult:
         construction_stage = None

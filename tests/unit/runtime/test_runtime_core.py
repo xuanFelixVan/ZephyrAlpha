@@ -8,22 +8,22 @@
 
 """Test suite: runtime_core"""
 
-import pytest
-import threading
 import time
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+from zephyr.shared.lifecycle.resource_optimization_models import (
+    OptimizationStrategy,
+    ResourceSnapshot,
+)
 from zephyr.trading.resource_optimization import (
     CircuitBreaker,
     CircuitBreakerState,
     PressureLevel,
     ResourceOptimizationEngine,
-    _PressureStateMachine,
     _HysteresisConfig,
-)
-from zephyr.shared.lifecycle.resource_optimization_models import (
-    OptimizationStrategy,
-    ResourceSnapshot,
+    _PressureStateMachine,
 )
 
 
@@ -188,12 +188,27 @@ class TestAutoRuntimeCoreInit:
     @patch("zephyr.trading.auto_runtime_core.StatusDashboard")
     @patch("zephyr.trading.auto_runtime_core.RuntimeConfig")
     def test_init_creates_components(
-        self, mock_cfg_cls, mock_dashboard, mock_orphan, mock_auto_int,
-        mock_scanner, mock_lifecycle, mock_finalizer, mock_circadian,
-        mock_work_orch, mock_int_reg, mock_health, mock_feedback,
-        mock_dream, mock_stop, mock_night, mock_cap_reg, mock_audit,
+        self,
+        mock_cfg_cls,
+        mock_dashboard,
+        mock_orphan,
+        mock_auto_int,
+        mock_scanner,
+        mock_lifecycle,
+        mock_finalizer,
+        mock_circadian,
+        mock_work_orch,
+        mock_int_reg,
+        mock_health,
+        mock_feedback,
+        mock_dream,
+        mock_stop,
+        mock_night,
+        mock_cap_reg,
+        mock_audit,
     ):
         from zephyr.trading.auto_runtime_core import AutoRuntimeCore
+
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = "/tmp/test_audit"
         mock_cfg.capability_card_dir = MagicMock()
@@ -235,12 +250,27 @@ class TestAutoRuntimeCoreInit:
     @patch("zephyr.trading.auto_runtime_core.StatusDashboard")
     @patch("zephyr.trading.auto_runtime_core.RuntimeConfig")
     def test_learner_summary_when_not_initialized(
-        self, mock_cfg_cls, mock_dashboard, mock_orphan, mock_auto_int,
-        mock_scanner, mock_lifecycle, mock_finalizer, mock_circadian,
-        mock_work_orch, mock_int_reg, mock_health, mock_feedback,
-        mock_dream, mock_stop, mock_night, mock_cap_reg, mock_audit,
+        self,
+        mock_cfg_cls,
+        mock_dashboard,
+        mock_orphan,
+        mock_auto_int,
+        mock_scanner,
+        mock_lifecycle,
+        mock_finalizer,
+        mock_circadian,
+        mock_work_orch,
+        mock_int_reg,
+        mock_health,
+        mock_feedback,
+        mock_dream,
+        mock_stop,
+        mock_night,
+        mock_cap_reg,
+        mock_audit,
     ):
         from zephyr.trading.auto_runtime_core import AutoRuntimeCore
+
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = "/tmp/test_audit"
         mock_cfg.capability_card_dir = MagicMock()
@@ -279,12 +309,27 @@ class TestAutoRuntimeCoreInit:
     @patch("zephyr.trading.auto_runtime_core.StatusDashboard")
     @patch("zephyr.trading.auto_runtime_core.RuntimeConfig")
     def test_get_task_model_recommendations_empty(
-        self, mock_cfg_cls, mock_dashboard, mock_orphan, mock_auto_int,
-        mock_scanner, mock_lifecycle, mock_finalizer, mock_circadian,
-        mock_work_orch, mock_int_reg, mock_health, mock_feedback,
-        mock_dream, mock_stop, mock_night, mock_cap_reg, mock_audit,
+        self,
+        mock_cfg_cls,
+        mock_dashboard,
+        mock_orphan,
+        mock_auto_int,
+        mock_scanner,
+        mock_lifecycle,
+        mock_finalizer,
+        mock_circadian,
+        mock_work_orch,
+        mock_int_reg,
+        mock_health,
+        mock_feedback,
+        mock_dream,
+        mock_stop,
+        mock_night,
+        mock_cap_reg,
+        mock_audit,
     ):
         from zephyr.trading.auto_runtime_core import AutoRuntimeCore
+
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = "/tmp/test_audit"
         mock_cfg.capability_card_dir = MagicMock()

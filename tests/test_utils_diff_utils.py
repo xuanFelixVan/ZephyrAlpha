@@ -20,12 +20,13 @@
 # [TESTS] pytest tests/test_utils_diff_utils.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.diff_utils import (
-    compute_diff,
-    apply_patch,
-    try_apply_patch,
     PatchConflictError,
+    apply_patch,
+    compute_diff,
     similarity_ratio,
+    try_apply_patch,
 )
 
 

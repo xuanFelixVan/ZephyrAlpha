@@ -11,11 +11,11 @@
 # [TESTS] python -c "import zephyr.ops.gates"
 
 SUBMODULES = [
-    'action_reversibility',
-    'data_quality_gate',
-    'db_integrity',
-    'dynamic_llm_cost_router',
-    'flag_lifecycle_manager',
-    'llm_cost_router',
-    'meta_performance_gate',
+    "action_reversibility",
+    "data_quality_gate",
+    "db_integrity",
+    "dynamic_llm_cost_router",
+    "flag_lifecycle_manager",
+    "llm_cost_router",
+    "meta_performance_gate",
 ]

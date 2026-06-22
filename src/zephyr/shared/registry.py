@@ -21,19 +21,22 @@ from __future__ import annotations
 
 import logging
 import threading
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
-_VALID_KEYS = frozenset({
-    "task_repo",
-    "db_connection",
-    "db_path",
-    "vector-memory",
-    "chromadb_client",
-    "reranker",
-    "collection_schemas",
-})
+_VALID_KEYS = frozenset(
+    {
+        "task_repo",
+        "db_connection",
+        "db_path",
+        "vector-memory",
+        "chromadb_client",
+        "reranker",
+        "collection_schemas",
+    }
+)
 
 
 class ServiceRegistry:
@@ -52,9 +55,7 @@ class ServiceRegistry:
     def register(cls, key: str, factory: Callable[[], Any]) -> None:
         """注册服务工厂。factory 必须是无参可调用对象。"""
         if key not in _VALID_KEYS:
-            raise KeyError(
-                f"Invalid service key '{key}'. Valid keys: {sorted(_VALID_KEYS)}"
-            )
+            raise KeyError(f"Invalid service key '{key}'. Valid keys: {sorted(_VALID_KEYS)}")
         with cls._lock:
             cls._factories[key] = factory
             cls._instances.pop(key, None)
@@ -64,16 +65,13 @@ class ServiceRegistry:
     def get(cls, key: str) -> Any:
         """获取服务实例（首次调用时惰性创建）。"""
         if key not in _VALID_KEYS:
-            raise KeyError(
-                f"Invalid service key '{key}'. Valid keys: {sorted(_VALID_KEYS)}"
-            )
+            raise KeyError(f"Invalid service key '{key}'. Valid keys: {sorted(_VALID_KEYS)}")
         with cls._lock:
             if key in cls._instances:
                 return cls._instances[key]
             if key not in cls._factories:
                 raise KeyError(
-                    f"Service '{key}' not registered. "
-                    f"Call ServiceRegistry.register('{key}', factory) first."
+                    f"Service '{key}' not registered. Call ServiceRegistry.register('{key}', factory) first."
                 )
             instance = cls._factories[key]()
             cls._instances[key] = instance

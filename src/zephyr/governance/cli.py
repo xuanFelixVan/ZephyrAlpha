@@ -27,10 +27,10 @@ import argparse
 import sys
 from pathlib import Path
 
-from zephyr.governance.exit_codes import ExitCode
-from zephyr.governance.scanner import Scanner
 from zephyr.governance.auto_fixer import AutoFixer
+from zephyr.governance.exit_codes import ExitCode
 from zephyr.governance.report import ReportGenerator
+from zephyr.governance.scanner import Scanner
 
 
 def _collect_py_files(target: str | None) -> list[str]:
@@ -143,8 +143,10 @@ def _cmd_scan(args: argparse.Namespace) -> None:
     low_count = sum(1 for d in duplicates if d.similarity < 0.8)
 
     if not args.quiet:
-        print(f"[SCAN] Found {len(duplicates)} duplicate groups "
-              f"(high:{high_count} med:{med_count} low:{low_count}, skipped:{skipped})")
+        print(
+            f"[SCAN] Found {len(duplicates)} duplicate groups "
+            f"(high:{high_count} med:{med_count} low:{low_count}, skipped:{skipped})"
+        )
         for dup in duplicates[:20]:
             print(f"  {dup.group_id}: {len(dup.members)} members, sim={dup.similarity:.3f}")
         if len(duplicates) > 20:
@@ -188,7 +190,7 @@ def _cmd_fix(args: argparse.Namespace) -> None:
     for dup in duplicates:
         if batch_remaining <= 0:
             break
-        for (src_path, _), (tgt_path, _) in zip(dup.members[::2], dup.members[1::2]):
+        for (src_path, _), (tgt_path, _) in zip(dup.members[::2], dup.members[1::2], strict=False):
             if fixer.can_fix(dup.similarity, 0, 0, False):
                 if args.dry_run:
                     print(f"[FIX] DRY-RUN: Would fix {src_path} ⇄ {tgt_path}")
@@ -232,6 +234,7 @@ def _cmd_verify(args: argparse.Namespace) -> None:
     print("[VERIFY] Verifying engine integrity...")
     try:
         import sys as _sys
+
         _pkg = _sys.modules.get("zephyr.testing.code_dedup")
         _ver = getattr(_pkg, "__version__", "unknown") if _pkg else "unknown"
         print(f"[VERIFY] code_dedup_engine v{_ver}")
@@ -252,6 +255,7 @@ def _cmd_verify(args: argparse.Namespace) -> None:
 def _cmd_benchmark(args: argparse.Namespace) -> None:
     print("[BENCHMARK] Running 5-group self-benchmark...")
     from zephyr.governance.self_benchmark import SelfBenchmark
+
     bench = SelfBenchmark()
     result = bench.run_benchmark()
 
@@ -261,8 +265,10 @@ def _cmd_benchmark(args: argparse.Namespace) -> None:
 
     regression = bench.check_regression(result)
     if regression is not None:
-        print(f"[BENCHMARK] REGRESSION DETECTED: pass rate {regression.current_pass_rate:.1%} "
-              f"(was {regression.previous_pass_rate:.1%}, delta={regression.delta:+.1%})")
+        print(
+            f"[BENCHMARK] REGRESSION DETECTED: pass rate {regression.current_pass_rate:.1%} "
+            f"(was {regression.previous_pass_rate:.1%}, delta={regression.delta:+.1%})"
+        )
         print(f"[BENCHMARK] Failed cases: {', '.join(regression.failed_cases)}")
         sys.exit(ExitCode.WARN)
 

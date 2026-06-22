@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -153,7 +153,7 @@ class TestSkillEvaluatorEvaluateTokenEfficiency:
 
 class TestSkillEvaluatorEvaluate:
     def test_evaluate_import_error(self):
-        with patch.dict("sys.modules", {"zephyr.orchestration.agent_lifecycle.skill_loader": None}):
+        with patch.dict("sys.modules", {"zephyr.autonomy_core.skill_loader": None}):
             result = SkillEvaluator.evaluate("no-skill")
             assert result["skill_id"] == "no-skill"
             assert result["overall_score"] == 0.0
@@ -177,8 +177,8 @@ class TestSkillEvaluatorEvaluate:
         mock_fresh_instance = MagicMock()
         mock_fresh_instance.current_state.return_value = {"freshness_score": 80.0}
         mock_fresh_cls = MagicMock(return_value=mock_fresh_instance)
-        with patch("zephyr.orchestration.agent_lifecycle.skill_loader.SkillLoader", return_value=mock_loader):
-            with patch("zephyr.orchestration.agent_lifecycle.skill_freshness.FreshnessDecayModel", mock_fresh_cls):
+        with patch("zephyr.autonomy_core.skill_loader.SkillLoader", return_value=mock_loader):
+            with patch("zephyr.autonomy_core.skill_freshness.FreshnessDecayModel", mock_fresh_cls):
                 result = SkillEvaluator.evaluate("test-skill")
                 assert result["skill_id"] == "test-skill"
                 assert result["overall_score"] > 0

@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.cross_session_detector import CrossSessionDetector, SessionToken
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -26,7 +28,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestSessionToken:
-
     def test_defaults(self):
         token = SessionToken(agent_id="a1", session_id="s1")
         assert token.agent_id == "a1"
@@ -43,7 +44,6 @@ class TestSessionToken:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestCrossSessionDetector:
-
     def test_sign_and_verify_valid(self):
         csd = CrossSessionDetector(secret_key="testsecret1234567890123456789012")
         token = csd.sign_token("agent-1", "session-1")
@@ -67,8 +67,9 @@ class TestCrossSessionDetector:
 
     def test_unknown_session_valid_sig(self):
         csd = CrossSessionDetector(secret_key="testsecret1234567890123456789012")
-        import hmac
         import hashlib
+        import hmac
+
         nonce = "fakenonce12345678"
         ts = "2026-01-01T00:00:00+00:00"
         payload = f"agent-x:session-unknown:{nonce}:{ts}"

@@ -3,9 +3,12 @@
 
 BLOCKED_NATIVE_APIS = None  # stub constant
 
+
 class NativeApiGuard:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "BLOCKED_NATIVE_APIS",

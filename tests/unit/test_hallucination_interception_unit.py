@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 测试套件：幻觉拦截率测试（T-3-08）
 ====================================

@@ -16,16 +16,16 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.integration.shared.schema.schemas import TaskNamespace, TaskStatus
+from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.shared_services.models import (
+    DecompositionResult,
+    GateCheckResult,
     GateLevel,
     TaskAuditFinding,
     TaskCard,
-    DecompositionResult,
-    GateCheckResult,
 )
-from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.integration.shared.schema.schemas import TaskStatus, TaskNamespace
-from zephyr.integration.shared.schema.severity_types import SafetyLevel, Priority
 
 _NOW = datetime(2026, 5, 23, 12, 0, 0)
 
@@ -283,6 +283,7 @@ class TestGateCheckResult:
     def test_checked_at_is_iso_format(self):
         gcr = GateCheckResult(gate_id=GateLevel.G1, task_id="STD-003", passed=True)
         from datetime import datetime as dt
+
         dt.fromisoformat(gcr.checked_at)
 
     def test_missing_gate_id_raises(self):

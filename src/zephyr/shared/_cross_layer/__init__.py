@@ -6,16 +6,16 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """_cross_layer: Cross-layer integration pipelines for domain blueprints."""
 
 __all__ = [
     "AlphaSignalPipeline",
     "MLExperimentPipeline",
-    "ml_experiment_pipeline",
     "alpha_signal_pipeline",
+    "ml_experiment_pipeline",
 ]
 
 _LAZY_IMPORTS = {
@@ -24,6 +24,7 @@ _LAZY_IMPORTS = {
 }
 
 _SUBMODULES = ["alpha_signal_pipeline", "ml_experiment_pipeline"]
+
 
 def __getattr__(name):
     if name in _LAZY_IMPORTS:

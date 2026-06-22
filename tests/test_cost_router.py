@@ -12,12 +12,10 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.cost_router import (
+    PRICING_TABLE,
     LLMProvider,
     ModelPricing,
-    PRICING_TABLE,
     RoutingPolicy,
     estimate_cost,
     get_pricing,
@@ -30,9 +28,17 @@ from zephyr.governance.cost_router import (
 class TestLLMProvider:
     def test_all_providers_exist(self):
         expected = [
-            "deepseek", "glm-4.7", "glm-4.6", "glm-4.5", "kimi-k2",
-            "claude-sonnet-4.5", "o4-mini", "gpt-5.1-codex", "grok-4",
-            "gpt-5.2", "qwen3-coder",
+            "deepseek",
+            "glm-4.7",
+            "glm-4.6",
+            "glm-4.5",
+            "kimi-k2",
+            "claude-sonnet-4.5",
+            "o4-mini",
+            "gpt-5.1-codex",
+            "grok-4",
+            "gpt-5.2",
+            "qwen3-coder",
         ]
         for name in expected:
             assert any(m.value == name for m in LLMProvider)

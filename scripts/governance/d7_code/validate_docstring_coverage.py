@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: Docstring 覆盖率校验——模块/类/公共函数必须有 docstring
@@ -47,13 +48,13 @@ SKIP_MODULES = {
     "risk",
     "pf_core",
     "ex_core",
-    "pf_core",
     "frontend",
     "research",
     "compliance",
     "ml_train",
     "integration",
 }
+
 
 def _has_docstring(node: ast.AST) -> bool:
     """_has_docstring implementation."""
@@ -68,11 +69,13 @@ def _has_docstring(node: ast.AST) -> bool:
             return True
     return False
 
+
 def _is_public(name: str) -> bool:
     """_is_public implementation."""
     if name.startswith("__") and name.endswith("__"):
         return False
     return not name.startswith("_")
+
 
 def scan_docstrings(source_path: Path) -> tuple[bool, list[str]]:
     """扫描 docstring 覆盖率."""
@@ -104,6 +107,7 @@ def scan_docstrings(source_path: Path) -> tuple[bool, list[str]]:
 
     return _has_docstring(tree), missing
     """扫描 docstring 覆盖率."""
+
 
 def main() -> None:
     """入口函数."""
@@ -150,6 +154,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

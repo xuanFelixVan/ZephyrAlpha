@@ -48,16 +48,16 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection, init_db
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace
+from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "FileTaskMapper",
     "RegisterReport",
-    "SyncReport",
     "SyncInconsistency",
+    "SyncReport",
     "classify_file_to_namespace",
 ]
 

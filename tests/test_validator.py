@@ -10,10 +10,8 @@
 # [ERROR_CONTRACT] FeedbackLoopError
 # [TESTS] tests/test_validator.py
 
-import os
-import pytest
-from zephyr.ops.validator import validate_all, validate_one, missing_files, BASE
 from zephyr.ops.template import SKELETONS
+from zephyr.ops.validator import BASE, missing_files, validate_all, validate_one
 
 
 class TestBASE:

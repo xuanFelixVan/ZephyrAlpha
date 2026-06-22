@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """ZephyrAlpha — L02 Alpha Factor Layer
 
 SSoT: cross_layer_contracts.yaml v3.0
@@ -34,16 +34,17 @@ CTR 契约依赖声明（承重墙标记）
   - CTR-ERR-002  FactorComputationError → L03
 
 """
+
 from __future__ import annotations
 
 __all__ = [
-    'FactorBase',
-    'FactorMeta',
-    'FactorRegistry',
-    'autodiscover_factors',
-    'base',
-    'factor_base',
+    "FactorBase",
+    "FactorMeta",
+    "FactorRegistry",
     "alpha_signal_pipeline",
+    "autodiscover_factors",
+    "base",
+    "factor_base",
     "momentum_factor",
     "value_factor",
 ]

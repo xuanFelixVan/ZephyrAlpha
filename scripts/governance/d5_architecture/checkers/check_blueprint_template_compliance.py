@@ -48,6 +48,7 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
 
 def main() -> int:
     import argparse
+
     parser = argparse.ArgumentParser(description="蓝图模板合规检查（委托到 check_blueprint_compliance.py）")
     parser.add_argument("blueprint", nargs="+", help="蓝图文件路径")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")

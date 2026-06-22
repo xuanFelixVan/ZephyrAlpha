@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.skill_compliance import PII_PATTERNS, SkillCompliance
 
 
@@ -46,9 +44,7 @@ class TestCheckPii:
         assert any(f["type"] == "credit_card" for f in result["findings"])
 
     def test_multiple_pii_types(self):
-        result = SkillCompliance._check_pii(
-            "email: user@example.com card: 4111222233334444"
-        )
+        result = SkillCompliance._check_pii("email: user@example.com card: 4111222233334444")
         assert result["pii_detected"] is True
         types = {f["type"] for f in result["findings"]}
         assert "email" in types

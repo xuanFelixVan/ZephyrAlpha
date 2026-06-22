@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-037
-submodule_path: src/zephyr/infra_ops
+submodule_path: src/zephyr/governance/registry_governance
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-16"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/infra_ops/"
+actual_disk_path: "src/zephyr/governance/registry_governance/"
 last_updated: "2026-05-16"
 last_verified: "2026-05-16"
 generation: 1
@@ -995,10 +995,10 @@ class OverlapResult:
 
 | # | 文件 | module_id | 完整路径（相对优先） | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | `docs/01_policies_and_standards/meta/metadata-registry.md` | 编号规则、doc_type词表 |
+| 1 | 元数据注册表 | PS-STD-001 | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | 编号注册 |
-| 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md` | AI操作权限 |
+| 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml` | AI操作权限 |
 | 5 | 注册表总索引 | — | `docs/registry_of_registries.yaml` | 43个注册表主索引 |
 | 6 | 注册表模板 | TPL-REGISTER-001 | `docs/01_policies_and_standards/templates/register-registry.md` | 功能域注册表Schema |
 

@@ -50,8 +50,6 @@ Depends    : sqlite_schema.py
 from __future__ import annotations
 
 import logging
-import os
-import shutil
 import sqlite3
 import threading
 import time
@@ -67,30 +65,32 @@ from zephyr.governance.persistence.sqlite_schema import (
 from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = [
+    "DatabaseHealthStatus",
     "DatabaseManager",
     "DatabaseManagerError",
-    "DatabaseHealthStatus",
 ]
 
 logger = logging.getLogger(__name__)
 
 BACKUP_DIR: Path = REPO_ROOT / "data" / "backups"
 
+
 class DatabaseManagerError(RuntimeError):
     """DatabaseManager 基础异常。"""
+
 
 class DatabaseHealthStatus:
     """数据库健康状态快照。"""
 
     __slots__ = (
-        "healthy",
-        "schema_version",
-        "db_size_bytes",
-        "wal_size_bytes",
-        "table_count",
-        "integrity_ok",
         "checked_at",
+        "db_size_bytes",
         "error",
+        "healthy",
+        "integrity_ok",
+        "schema_version",
+        "table_count",
+        "wal_size_bytes",
     )
 
     def __init__(
@@ -129,6 +129,7 @@ class DatabaseHealthStatus:
         status = "HEALTHY" if self.healthy else f"UNHEALTHY: {self.error}"
         return f"DatabaseHealthStatus(v{self.schema_version}, {status})"
 
+
 class DatabaseManager:
     """
     统一的数据库生命周期管理器。
@@ -161,9 +162,7 @@ class DatabaseManager:
         pool_size: int = 2,
     ) -> None:
         self._db_path: Path = Path(db_path) if db_path is not None else DB_PATH
-        self._backup_dir: Path = (
-            Path(backup_dir) if backup_dir is not None else BACKUP_DIR
-        )
+        self._backup_dir: Path = Path(backup_dir) if backup_dir is not None else BACKUP_DIR
         self._pool_size = pool_size
         self._lock = threading.Lock()
 
@@ -302,9 +301,7 @@ class DatabaseManager:
             if wal_path.exists():
                 wal_size = wal_path.stat().st_size
 
-            tables = conn.execute(
-                "SELECT COUNT(*) FROM sqlite_master WHERE type='table'"
-            ).fetchone()[0]
+            tables = conn.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table'").fetchone()[0]
 
             conn.close()
 
@@ -603,9 +600,7 @@ class DatabaseManager:
         try:
             conn.execute("PRAGMA journal_mode = WAL")
             integrity = conn.execute("PRAGMA integrity_check").fetchone()
-            tables = conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
-            ).fetchall()
+            tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").fetchall()
             row_counts = {}
             for t in tables:
                 cnt = conn.execute(f"SELECT COUNT(*) FROM [{t['name']}]").fetchone()
@@ -754,9 +749,7 @@ class DatabaseManager:
             "health": health.to_dict(),
             "stats": stats,
             "schema_drift": drift,
-            "query_performance": {
-                op: s for op, s in qm_stats.items()
-            },
+            "query_performance": {op: s for op, s in qm_stats.items()},
         }
 
     def __enter__(self) -> DatabaseManager:

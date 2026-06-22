@@ -7,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS] zephyr.data.persistence.task_repo; zephyr.data.persistence.transition; zephyr.knowledge.kb.pipeline.triage; zephyr.knowledge.kb.pipeline.ingest; zephyr.knowledge.kb.pipeline.extract; zephyr.knowledge.kb.pipeline.activate; zephyr.knowledge.kb.pipeline.analyze; zephyr.orchestration.agent_lifecycle.skill_executor
+# [CONSUMERS] zephyr.data.persistence.task_repo; zephyr.data.persistence.transition; zephyr.knowledge.kb.pipeline.triage; zephyr.knowledge.kb.pipeline.ingest; zephyr.knowledge.kb.pipeline.extract; zephyr.knowledge.kb.pipeline.activate; zephyr.knowledge.kb.pipeline.analyze; zephyr.autonomy_core.skill_executor
 
 # [STABILITY] evolving
 
@@ -69,7 +69,6 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
   drift_budget        - 漂移预算检查（T-V2-012 第 19 种，G1/G6 实验性）—— 模块漂移事件数是否超出 SLO 预算
 """
 
-
 from __future__ import annotations
 
 import json
@@ -82,7 +81,6 @@ from typing import Any, ClassVar
 
 import yaml
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection, ensure_schema
 from zephyr.governance.rule_enforcement.gate_types import (
     GateEngineError,
     GateResult,
@@ -91,20 +89,16 @@ from zephyr.governance.rule_enforcement.gate_types import (
 )
 from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
 from zephyr.governance.rule_enforcement.task_types import Task
+from zephyr.integration.shared_08.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
 from zephyr.shared.io.io_cache import FileCache
-from zephyr.shared.blueprint_code_auditor import BlueprintCodeAuditor, DriftItem
-from zephyr.shared.code_economy_analyzer import CodeEconomyAnalyzer, EconomyReport
-from zephyr.shared.combinatorial_gate import CombineOp, CombinatorialGate, GateResult as CombGateResult
-from zephyr.shared.core_integrity_guard import CoreIntegrityGuard, IntegrityCheck
-from zephyr.shared.slo_review_assistant import SloReviewAssistant, SloStatus
 
 __all__ = [
+    "GATES_DIR",
     "GateEngine",
+    "GateEngineError",
     "GateResult",
     "GateViolation",
-    "GateEngineError",
     "GateViolationError",
-    "GATES_DIR",
 ]
 
 # ---------------------------------------------------------------------------
@@ -209,17 +203,20 @@ def _detect_mojibake(file_path: Path) -> bool:
     # Method 1: known markers
     MOJIBAKE_MARKERS = [
         "\u9516\u65a4\u62f7",  # 锟斤拷 — classic GBK mojibake
-        "\u93d4\u63d2\u53c2", "\u93d4\u659c\u7280\u6362", "\u93d4\u529c\u00b0\u20ac",
+        "\u93d4\u63d2\u53c2",
+        "\u93d4\u659c\u7280\u6362",
+        "\u93d4\u529c\u00b0\u20ac",
         "\u94c6\u003f",
     ]
     if any(m in content for m in MOJIBAKE_MARKERS):
         return True
     # Method 2: round-trip via GBK (CJK segments only)
     import re as _re
+
     # 2a: test segments WITHOUT U+FFFD
     clean_content = content.replace("\ufffd", "")
     if clean_content.strip():
-        cjk_segments = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf]+', clean_content)
+        cjk_segments = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]+", clean_content)
         for seg in cjk_segments:
             if len(seg) < 2:
                 continue
@@ -239,8 +236,7 @@ def _detect_mojibake(file_path: Path) -> bool:
                     # Partial decode may reveal mojibake
                     try:
                         partial_rt = gbk_bytes.decode("utf-8", errors="replace")
-                        partial_cjk = sum(1 for c in partial_rt
-                                          if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
+                        partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
                         if partial_cjk >= 3:
                             return True
                     except Exception:
@@ -249,7 +245,7 @@ def _detect_mojibake(file_path: Path) -> bool:
                 pass
     # 2b: test segments WITH U+FFFD — split at U+FFFD and test sub-segments
     if "\ufffd" in content:
-        cjk_with_replacement = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+', content)
+        cjk_with_replacement = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+", content)
         for seg in cjk_with_replacement:
             if "\ufffd" not in seg:
                 continue
@@ -273,7 +269,7 @@ def _detect_mojibake(file_path: Path) -> bool:
                     pass
     # Method 3: U+FFFD in CJK context
     if "\ufffd" in content:
-        cjk_context = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]', content)
+        cjk_context = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]", content)
         if len(cjk_context) >= 2:
             return True
     # Method 4: statistical fallback
@@ -406,10 +402,8 @@ def _check_field_presence_task(task: Task, params: dict[str, Any]) -> list[str]:
         val = getattr(task, fname, None)
         if (
             val is None
-            or isinstance(val, str)
-            and len(val.strip()) == 0
-            or isinstance(val, (list, dict))
-            and len(val) == 0
+            or (isinstance(val, str) and len(val.strip()) == 0)
+            or (isinstance(val, (list, dict)) and len(val) == 0)
         ):
             missing.append(fname)
     return missing
@@ -672,7 +666,9 @@ def _run_check(
 
     elif ct == "enforcement_mode_check":
         try:
-            from zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator import run_check as en2_check
+            from zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator import (
+                run_check as en2_check,
+            )
 
             result = en2_check()
             if not result.passed:
@@ -683,7 +679,9 @@ def _run_check(
 
     elif ct == "contract_compatibility_check":
         try:
-            from zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility import run_check as en3_check
+            from zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility import (
+                run_check as en3_check,
+            )
 
             result = en3_check()
             if not result.passed:
@@ -695,6 +693,7 @@ def _run_check(
     elif ct == "security_artifact_scan":
         try:
             import importlib
+
             _mod = importlib.import_module("zephyr.governance.artifact_scanner")
             ArtifactScanner = _mod.ArtifactScanner
 
@@ -819,6 +818,31 @@ def _run_check(
         except Exception as exc:
             _add(f"Zero residue scan failed: {exc}", detail=str(exc))
 
+    elif ct == "post_doc_review_check":
+        try:
+            from zephyr.governance.rule_enforcement.invariants.post_doc_review_check import (
+                PostDocReviewScanner,
+            )
+
+            session_id = str(check.params.get("session_id", "")) if hasattr(check, "params") else ""
+            scanner = PostDocReviewScanner(project_root=project_root, session_id=session_id)
+            report = scanner.scan()
+            if not report.is_clean:
+                for fg in report.pending_regularization:
+                    _add(
+                        f"待规格化项: {fg.issue_type} in {fg.file_path}:{fg.line_number}",
+                        detail=f"[{fg.rule_ref}] {fg.issue_text}",
+                        severity="P1",
+                    )
+            if report.regularization_triggered:
+                _add(
+                    f"待规格化项≥3，已触发规格化流程 (task_id={report.regularization_task_id})",
+                    detail=f"pending_count={len(report.pending_regularization)}",
+                    severity="P1",
+                )
+        except Exception as exc:
+            _add(f"Post doc review scan failed: {exc}", detail=str(exc))
+
     elif ct in {
         "score_threshold",
         "manual_approval",
@@ -897,7 +921,6 @@ def _run_check(
         except (TypeError, ValueError):
             exit_code = -1
         try:
-            from zephyr.integration.shared_08.contracts.protocols import GateActionProtocol
             from zephyr.governance.contract import get_gate_action
 
             gate_action, description = get_gate_action(exit_code)
@@ -960,39 +983,90 @@ class GateEngine:
 
     _GATE_FILES: dict[str, str] = {
         "G0": "task/g0_orc_gate_engine.yaml",
-        "G1": "g1-ingest.yaml",
-        "G2": "g2-triage.yaml",
-        "G3": "g3-evaluate.yaml",
-        "G4": "g4-activate.yaml",
-        "G5": "g5-extract.yaml",
-        "G6": "g6-ctr-compliance.yaml",
-        "G6_BP": "g6-blueprint-compliance.yaml",
+        "G1": "g1_ingest.yaml",
+        "G2": "g2_triage.yaml",
+        "G3": "g3_evaluate.yaml",
+        "G4": "g4_activate.yaml",
+        "G5": "g5_extract.yaml",
+        "G6": "g6_ctr_compliance.yaml",
+        "G6_BP": "g6_blueprint_compliance.yaml",
         "G7": "task/g7_orc_gate_engine.yaml",
-        "G10": "g7-position-limits.yaml",
-        "G11": "g8-leverage.yaml",
-        "G12": "g9-strategy-correlation.yaml",
-        "EN-001": "invariants/en-001-circular-dependency.yaml",
-        "EN-002": "invariants/en-002-enforcement-validator.yaml",
-        "EN-003": "invariants/en-003-contract-compatibility.yaml",
-        "ZERO-RESIDUE": "zero-residue.yaml",
-        "MAD-001": "admission/mad-001-architecture-necessity.yaml",
-        "MAD-002": "admission/mad-002-phase-relevance.yaml",
-        "MAD-003": "admission/mad-003-dependency-compliance.yaml",
-        "MAD-004": "admission/mad-004-interface-definability.yaml",
-        "GATE-DEDUP": "gate-dedup.yaml",
+        "G10": "g7_position_limits.yaml",
+        "G11": "g8_leverage.yaml",
+        "G12": "g9_strategy_correlation.yaml",
+        "EN-001": "invariants/en_001_circular_dependency.yaml",
+        "EN-002": "invariants/en_002_enforcement_validator.yaml",
+        "EN-003": "invariants/en_003_contract_compatibility.yaml",
+        "ZERO-RESIDUE": "zero_residue.yaml",
+        "MAD-001": "admission/mad_001_architecture_necessity.yaml",
+        "MAD-002": "admission/mad_002_phase_relevance.yaml",
+        "MAD-003": "admission/mad_003_dependency_compliance.yaml",
+        "MAD-004": "admission/mad_004_interface_definability.yaml",
+        "GATE-DEDUP": "gate_dedup.yaml",
+        "G_TRAE_003": "g_trae_003.yaml",
+        "G_TRAE_004": "g_trae_004.yaml",
+        "G_TRAE_006": "g_trae_006.yaml",
+        "G_TRAE_007": "g_trae_007.yaml",
+        "G_TRAE_008": "g_trae_008.yaml",
+        "G_TRAE_009": "g_trae_009.yaml",
+        "G_TRAE_018": "g_trae_018.yaml",
+        "G_TRAE_020": "g_trae_020.yaml",
+        "G_TRAE_021": "g_trae_021.yaml",
+        "G_TRAE_052": "g_trae_052.yaml",
+        "G_TRAE_053": "g_trae_053.yaml",
+        "G_TRAE_054": "g_trae_054.yaml",
+        "G_TRAE_055": "g_trae_055.yaml",
+        "G_TRAE_010": "g_trae_010.yaml",
+        "G_TRAE_011": "g_trae_011.yaml",
+        "G_TRAE_012": "g_trae_012.yaml",
+        "G_TRAE_016": "g_trae_016.yaml",
+        "G_TRAE_017": "g_trae_017.yaml",
+        "G_TRAE_022": "g_trae_022.yaml",
+        "G_TRAE_023": "g_trae_023.yaml",
+        "G_TRAE_028": "g_trae_028.yaml",
+        "G_TRAE_029": "g_trae_029.yaml",
+        "G_TRAE_030": "g_trae_030.yaml",
+        "G_TRAE_031": "g_trae_031.yaml",
+        "G_TRAE_032": "g_trae_032.yaml",
+        "G_TRAE_033": "g_trae_033.yaml",
+        "G_TRAE_034": "g_trae_034.yaml",
+        "G_TRAE_035": "g_trae_035.yaml",
+        "G_TRAE_036": "g_trae_036.yaml",
+        "G_TRAE_037": "g_trae_037.yaml",
+        "G_TRAE_038": "g_trae_038.yaml",
+        "G_TRAE_039": "g_trae_039.yaml",
+        "G_TRAE_040": "g_trae_040.yaml",
+        "G_TRAE_044": "g_trae_044.yaml",
+        "G_TRAE_045": "g_trae_045.yaml",
+        "G_TRAE_046": "g_trae_046.yaml",
+        "G_TRAE_047": "g_trae_047.yaml",
+        "G_TRAE_024": "g_trae_024.yaml",
+        "G_TRAE_025": "g_trae_025.yaml",
+        "G_TRAE_026": "g_trae_026.yaml",
+        "G_TRAE_027": "g_trae_027.yaml",
+        "G_TRAE_041": "g_trae_041.yaml",
+        "G_TRAE_042": "g_trae_042.yaml",
+        "G_TRAE_043": "g_trae_043.yaml",
+        "G_TRAE_048": "g_trae_048.yaml",
+        "G_TRAE_049": "g_trae_049.yaml",
+        "G_TRAE_050": "g_trae_050.yaml",
+        "G_TRAE_051": "g_trae_051.yaml",
+        "POST_DOC_REVIEW": "post_doc_review.yaml",
     }
 
-    MANDATORY_GATES: frozenset[str] = frozenset({
-        "G0",
-        "G7",
-        "EN-001",
-        "EN-002",
-        "EN-003",
-        "ZERO-RESIDUE",
-        "G10",
-        "G11",
-        "G12",
-    })
+    MANDATORY_GATES: frozenset[str] = frozenset(
+        {
+            "G0",
+            "G7",
+            "EN-001",
+            "EN-002",
+            "EN-003",
+            "ZERO-RESIDUE",
+            "G10",
+            "G11",
+            "G12",
+        }
+    )
 
     @classmethod
     def is_mandatory(cls, gate_id: str) -> bool:

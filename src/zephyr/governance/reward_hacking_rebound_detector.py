@@ -37,7 +37,6 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 
 class ReboundPhase(str, Enum):
@@ -106,7 +105,7 @@ class ReboundDetector:
         severity: str = "medium",
         description: str = "",
         event_id: str = "",
-        timestamp: Optional[float] = None,
+        timestamp: float | None = None,
     ) -> None:
         ts = timestamp if timestamp is not None else time.time()
         rec = BehaviorRecord(
@@ -143,8 +142,7 @@ class ReboundDetector:
                     continue
                 if phase_iii.severity >= phase_i.severity:
                     matching_improvements = [
-                        imp for imp in improvements
-                        if phase_i.timestamp < imp.timestamp < phase_iii.timestamp
+                        imp for imp in improvements if phase_i.timestamp < imp.timestamp < phase_iii.timestamp
                     ]
                     if matching_improvements:
                         return ReboundDetection(
@@ -171,6 +169,4 @@ class ReboundDetector:
 
     def _prune_old_records(self, agent_id: str, now: float) -> None:
         cutoff = now - self._sliding_window_seconds
-        self._records[agent_id] = [
-            r for r in self._records[agent_id] if r.timestamp >= cutoff
-        ]
+        self._records[agent_id] = [r for r in self._records[agent_id] if r.timestamp >= cutoff]

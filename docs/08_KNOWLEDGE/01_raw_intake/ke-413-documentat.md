@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-413
 title: 4.9 架构分层条件禁止
 category: documentation

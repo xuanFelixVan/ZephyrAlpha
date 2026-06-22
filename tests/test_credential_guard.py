@@ -11,9 +11,8 @@
 # [TESTS] python -m pytest tests/test_credential_guard.py -q
 
 from __future__ import annotations
-import hashlib
-import pytest
-from zephyr.governance.credential_guard import CredentialGuard, CREDENTIAL_PATTERNS
+
+from zephyr.governance.credential_guard import CredentialGuard
 
 
 class TestCredentialGuardInstantiation:
@@ -73,7 +72,7 @@ class TestScanLine:
 
     def test_multiple_patterns_in_one_line(self):
         guard = CredentialGuard()
-        line = 'sk-AbCdEfGhIjKlMnOpQrStUvWxYz0123456789 and AKIAIOSFODNN7EXAMPLE'
+        line = "sk-AbCdEfGhIjKlMnOpQrStUvWxYz0123456789 and AKIAIOSFODNN7EXAMPLE"
         result = guard.scan_line(line)
         assert len(result) >= 2
 

@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_schema_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_schema_registry
+# [MODULE] zephyr.autonomy_core.skill_schema_registry
 
 # [INVARIANTS] none
 
@@ -28,29 +28,27 @@ Version: 0.3.0
 Skill I/O Schema 注册与契约验证——确保 Skill 输入输出符合预期结构.
 """
 
-
 from __future__ import annotations
 
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 
 class SkillSchemaRegistry:
     """Skill I/O Schema 注册与契约验证."""
 
-    _schemas: Dict[str, Dict[str, Any]] = {}
+    _schemas: dict[str, dict[str, Any]] = {}
 
     @classmethod
-    def register(cls, skill_id: str, input_schema: Dict[str, Any],
-                 output_schema: Dict[str, Any]) -> Dict[str, Any]:
+    def register(cls, skill_id: str, input_schema: dict[str, Any], output_schema: dict[str, Any]) -> dict[str, Any]:
         cls._schemas[skill_id] = {"input": input_schema, "output": output_schema}
         return {"skill_id": skill_id, "registered": True}
 
     @classmethod
-    def get_schema(cls, skill_id: str) -> Dict[str, Any]:
+    def get_schema(cls, skill_id: str) -> dict[str, Any]:
         return cls._schemas.get(skill_id, {})
 
     @classmethod
-    def validate_input(cls, skill_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_input(cls, skill_id: str, data: dict[str, Any]) -> dict[str, Any]:
         schema = cls._schemas.get(skill_id, {}).get("input", {})
         errors = []
         for key, rules in schema.items():
@@ -64,7 +62,7 @@ class SkillSchemaRegistry:
         return {"valid": len(errors) == 0, "errors": errors}
 
     @classmethod
-    def validate_output(cls, skill_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_output(cls, skill_id: str, data: dict[str, Any]) -> dict[str, Any]:
         schema = cls._schemas.get(skill_id, {}).get("output", {})
         errors = []
         for key, rules in schema.items():
@@ -78,7 +76,7 @@ class SkillSchemaRegistry:
         return {"valid": len(errors) == 0, "errors": errors}
 
     @classmethod
-    def list_registered(cls) -> List[str]:
+    def list_registered(cls) -> list[str]:
         return sorted(cls._schemas.keys())
 
     @classmethod

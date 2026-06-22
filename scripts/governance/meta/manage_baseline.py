@@ -28,22 +28,21 @@ timeout_seconds: 30
 warn_only: false
 """
 
-import os
 import argparse
 import hashlib
 import json
+import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _BASELINE_DIR = _REPO_ROOT / "scripts" / "governance" / "meta" / "baselines"
 _CURRENT_BASELINE = _BASELINE_DIR / "current_baseline.jsonl"
 _BASELINE_META = _BASELINE_DIR / "baseline_meta.json"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load_findings(path: str | Path) -> list[dict]:
@@ -86,7 +85,7 @@ def save_baseline(source: str | Path, label: str = "") -> dict:
         with open(tmp_path, encoding="utf-8") as f:
             for finding in findings:
                 f.write(json.dumps(finding, ensure_ascii=False) + "\n")
-    
+
         os.replace(tmp_path, output_path)
     except PermissionError:
         try:
@@ -98,7 +97,7 @@ def save_baseline(source: str | Path, label: str = "") -> dict:
         with open(tmp_path, encoding="utf-8") as f:
             for finding in findings:
                 f.write(json.dumps(finding, ensure_ascii=False) + "\n")
-    
+
         os.replace(tmp_path, _CURRENT_BASELINE)
     except PermissionError:
         try:
@@ -116,7 +115,7 @@ def save_baseline(source: str | Path, label: str = "") -> dict:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             json.dump(meta, f, ensure_ascii=False, indent=2)
-    
+
         os.replace(tmp_path, _BASELINE_META)
     except PermissionError:
         try:
@@ -206,7 +205,7 @@ def main() -> None:
         if args.json:
             print(json.dumps(result, ensure_ascii=False, indent=2))
         else:
-            print(f"\n[BASELINE] 对比完成", file=sys.stderr)
+            print("\n[BASELINE] 对比完成", file=sys.stderr)
             print(f"  当前: {result['current_total']}, 基线: {result['baseline_total']}", file=sys.stderr)
             print(f"  🆕 NEW: {result['new_count']}", file=sys.stderr)
             print(f"  ✅ RESOLVED: {result['resolved_count']}", file=sys.stderr)

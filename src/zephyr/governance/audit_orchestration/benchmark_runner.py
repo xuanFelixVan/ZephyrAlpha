@@ -29,6 +29,7 @@ BASELINES: dict[str, dict] = {
     "CT-PIPE-ORC-001": {"p50_ms": 10, "p95_ms": 50, "p99_ms": 100},
 }
 
+
 class BenchmarkRunner:
     def get_baseline(self, contract_id: str) -> dict:
         return BASELINES.get(contract_id, {"p50_ms": 100, "p95_ms": 500, "p99_ms": 1000})

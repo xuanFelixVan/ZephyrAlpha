@@ -2,9 +2,11 @@
 doc_type: index
 status: Active
 generated: '2026-05-06'
-blueprint_id: DOM-GOV-001
+blueprint_id: GOV-060
 title: Competitive Analysis
 module_id: GOV-060
+updated: "2026-06-22"
+---
 
 # Competitive Analysis — 目录索引
 

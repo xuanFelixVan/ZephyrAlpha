@@ -20,15 +20,15 @@ agent_drift_detection:
       definition: "模型对相同系统提示词的解释随版本更新/上下文积累而变化"
       symptoms: ["工具调用错误", "推理步骤缺失", "参数构造不一致"]
       detection: "定期对比相同输入→输出语义相似度(cosine<0.85→告警)"
-    
+
     concept_drift:
       definition: "输入输出关系随环境变化而改变——如市场条件改变导致风险评估行为漂移"
       detection: "Sliding window性能指标对比(当前周 vs 基准月)"
-    
+
     data_drift:
       definition: "输入数据分布变化——市场数据格式/频率/范围改变影响AI判断"
       detection: "输入特征分布KS检验(p<0.01→数据漂移告警)"
-    
+
     goal_drift:
       definition: "Agent在自我迭代中逐渐偏离原始目标——如为'效率'牺牲安全性"
       symptom: "同一任务类型的人工推翻率缓慢上升(周环比>5%)"
@@ -41,7 +41,7 @@ agent_drift_detection:
       concept_drift_medium: P1
       data_drift_low: P2
       goal_drift: P0  # 最高优先级——目标漂移是最危险的退化
-    
+
     auto_correction:
       prompt_drift: "自动重新加载Baseline系统提示词+回滚到已知良好版本"
       concept_drift: "自动重新训练/校准置信度模型"

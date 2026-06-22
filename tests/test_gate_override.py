@@ -21,10 +21,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
-
-import pytest
 
 from zephyr.governance.rule_enforcement.gate_override import GateOverride, OverrideRecord
 
@@ -36,7 +34,7 @@ class TestOverrideRecord:
             session_id="sess-1",
             reason="emergency",
             granted_by="admin",
-            expires_at=datetime.now(timezone.utc) + timedelta(minutes=30),
+            expires_at=datetime.now(UTC) + timedelta(minutes=30),
         )
         assert r.gate_id == "G0"
         assert r.session_id == "sess-1"
@@ -51,7 +49,7 @@ class TestOverrideRecord:
             session_id="sess-2",
             reason="test",
             granted_by="owner",
-            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+            expires_at=datetime.now(UTC) + timedelta(hours=1),
         )
         assert r.is_expired is False
 
@@ -61,12 +59,12 @@ class TestOverrideRecord:
             session_id="sess-3",
             reason="test",
             granted_by="owner",
-            expires_at=datetime.now(timezone.utc) - timedelta(seconds=1),
+            expires_at=datetime.now(UTC) - timedelta(seconds=1),
         )
         assert r.is_expired is True
 
     def test_is_expired_exactly_now(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         r = OverrideRecord(
             gate_id="G3",
             session_id="sess-4",
@@ -77,13 +75,13 @@ class TestOverrideRecord:
         assert r.is_expired is True
 
     def test_custom_created_at(self):
-        custom = datetime(2025, 1, 1, tzinfo=timezone.utc)
+        custom = datetime(2025, 1, 1, tzinfo=UTC)
         r = OverrideRecord(
             gate_id="G4",
             session_id="sess-5",
             reason="custom",
             granted_by="owner",
-            expires_at=datetime.now(timezone.utc) + timedelta(minutes=5),
+            expires_at=datetime.now(UTC) + timedelta(minutes=5),
             created_at=custom,
         )
         assert r.created_at == custom
@@ -94,7 +92,7 @@ class TestOverrideRecord:
             session_id="",
             reason="",
             granted_by="",
-            expires_at=datetime.now(timezone.utc) + timedelta(minutes=1),
+            expires_at=datetime.now(UTC) + timedelta(minutes=1),
         )
         assert r.gate_id == ""
         assert r.session_id == ""
@@ -130,7 +128,7 @@ class TestGateOverride:
         go = GateOverride()
         record = go.grant("G2", "sess-3", "short ttl", ttl_minutes=5)
         assert record.is_expired is False
-        delta = record.expires_at - datetime.now(timezone.utc)
+        delta = record.expires_at - datetime.now(UTC)
         assert delta.total_seconds() > 240
         assert delta.total_seconds() < 360
 

@@ -1,8 +1,19 @@
 rule_id: TRAE-022
 title: 行为边界-条件禁止(代码与安全)
+version: 1.0.0
+layer: L1
+module_id: TRAE-022
+depends_on:
+- TRAE-023
+tags:
+- TRAE
+- conditional_prohibition_code_security
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - COND-05~COND-26
-layer: L1
 severity: error
 scope: conditional_prohibition_code_security
 domain: TRAE
@@ -173,7 +184,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

@@ -10,16 +10,18 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.approver_check import (
-        verify_approver,
-        SUPERADMIN_AGENTS,
         RESTRICTED_ACTIONS,
+        SUPERADMIN_AGENTS,
+        verify_approver,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

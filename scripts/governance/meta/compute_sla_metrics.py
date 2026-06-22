@@ -32,7 +32,7 @@ warn_only: false
 import argparse
 import json
 import sys
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean
 
@@ -45,7 +45,6 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 from _shared.constants import SCRIPTS_DIR
-
 
 SLA_METRICS_PATH = SCRIPTS_DIR / "meta" / "sla_metrics.jsonl"
 DEFAULT_OUTPUT = SCRIPTS_DIR / "meta" / "sla_weekly_report.json"

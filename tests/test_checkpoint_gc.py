@@ -16,9 +16,6 @@ import json
 import os
 import time
 
-import pytest
-from pathlib import Path
-
 from zephyr.governance.checkpoint_gc import CheckpointGC, GCResult
 
 

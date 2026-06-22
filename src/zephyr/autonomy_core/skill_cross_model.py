@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_cross_model
+# [MODULE] zephyr.autonomy_core.skill_cross_model
 
 # [INVARIANTS] none
 
@@ -28,10 +28,10 @@ Author: factory-agent
 Version: 0.2.0
 """
 
-import json
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 
 class ModelProvider(str, Enum):
     DEEPSEEK = "DeepSeek"
@@ -41,6 +41,7 @@ class ModelProvider(str, Enum):
     QWEN = "Qwen"
     LLAMA = "Llama"
     MISTRAL = "Mistral"
+
 
 @dataclass
 class ModelCapability:
@@ -52,9 +53,10 @@ class ModelCapability:
     supports_vision: bool = False
     prompt_format: str = "default"
     tag_style: str = "default"
-    stop_tokens: List[str] = field(default_factory=list)
+    stop_tokens: list[str] = field(default_factory=list)
 
-_MODEL_CAPABILITIES: Dict[str, ModelCapability] = {
+
+_MODEL_CAPABILITIES: dict[str, ModelCapability] = {
     "DeepSeek": ModelCapability(
         provider=ModelProvider.DEEPSEEK,
         max_context_tokens=131072,
@@ -102,26 +104,27 @@ _MODEL_CAPABILITIES: Dict[str, ModelCapability] = {
     ),
 }
 
+
 @dataclass
 class CrossModelContext:
     system_prompt: str = ""
     user_content: str = ""
-    tools: List[Dict[str, Any]] = field(default_factory=list)
-    history: List[Dict[str, str]] = field(default_factory=list)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    tools: list[dict[str, Any]] = field(default_factory=list)
+    history: list[dict[str, str]] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
 
 class SkillCrossModel:
-
     def __init__(self, default_provider: str = "DeepSeek"):
         self._default_provider = default_provider
-        self._fallback_chain: List[str] = []
-        self._adapter_registry: Dict[str, callable] = {}
-        self._normalization_rules: Dict[str, Dict[str, str]] = {
+        self._fallback_chain: list[str] = []
+        self._adapter_registry: dict[str, callable] = {}
+        self._normalization_rules: dict[str, dict[str, str]] = {
             "role_mapping": {"system": "system", "user": "user", "assistant": "assistant"},
             "stop_phrase_mapping": {},
         }
 
-    def get_capability(self, provider: str) -> Optional[ModelCapability]:
+    def get_capability(self, provider: str) -> ModelCapability | None:
         return _MODEL_CAPABILITIES.get(provider)
 
     def supports_feature(self, provider: str, feature: str) -> bool:
@@ -130,10 +133,10 @@ class SkillCrossModel:
             return False
         return getattr(cap, f"supports_{feature}", False)
 
-    def set_fallback_chain(self, providers: List[str]) -> None:
+    def set_fallback_chain(self, providers: list[str]) -> None:
         self._fallback_chain = [p for p in providers if p in _MODEL_CAPABILITIES]
 
-    def resolve_provider(self, preferred: Optional[str] = None) -> str:
+    def resolve_provider(self, preferred: str | None = None) -> str:
         target = preferred or self._default_provider
         if target in _MODEL_CAPABILITIES:
             return target
@@ -142,14 +145,12 @@ class SkillCrossModel:
                 return fb
         return self._default_provider
 
-    def adapt_messages(
-        self, context: CrossModelContext, target_provider: str
-    ) -> Dict[str, Any]:
+    def adapt_messages(self, context: CrossModelContext, target_provider: str) -> dict[str, Any]:
         cap = self.get_capability(target_provider)
         if cap is None:
             return {"error": f"Unknown provider: {target_provider}"}
 
-        messages: List[Dict[str, Any]] = []
+        messages: list[dict[str, Any]] = []
 
         if context.system_prompt:
             if cap.tag_style == "anthropic":
@@ -164,7 +165,7 @@ class SkillCrossModel:
         if context.user_content:
             messages.append({"role": "user", "content": context.user_content})
 
-        payload: Dict[str, Any] = {
+        payload: dict[str, Any] = {
             "provider": target_provider,
             "format": cap.prompt_format,
             "messages": messages,
@@ -178,7 +179,7 @@ class SkillCrossModel:
 
         return payload
 
-    def _adapt_tools_anthropic(self, tools: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _adapt_tools_anthropic(self, tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
         adapted = []
         for tool in tools:
             t = tool.copy()
@@ -204,19 +205,20 @@ class SkillCrossModel:
 
         if cap.tag_style == "xml":
             import re
+
             normalized = re.sub(r"</?system>", "", normalized)
             normalized = re.sub(r"</?function_calls>", "", normalized)
             normalized = re.sub(r"</?invoke>", "", normalized)
 
         return normalized.strip()
 
-    def score_compatibility(self, skill_prompt: str, provider: str) -> Dict[str, Any]:
+    def score_compatibility(self, skill_prompt: str, provider: str) -> dict[str, Any]:
         cap = self.get_capability(provider)
         if cap is None:
             return {"score": 0.0, "issues": [f"Unknown provider: {provider}"]}
 
         score = 1.0
-        issues: List[str] = []
+        issues: list[str] = []
 
         estimated_tokens = len(skill_prompt) // 3
         if estimated_tokens > cap.max_context_tokens * 0.8:
@@ -229,9 +231,7 @@ class SkillCrossModel:
 
         return {"score": max(0.0, score), "provider": provider, "issues": issues}
 
-    def adapt(
-        self, skill_id: str, target_model: str
-    ) -> Dict[str, Any]:
+    def adapt(self, skill_id: str, target_model: str) -> dict[str, Any]:
         compatible = target_model in _MODEL_CAPABILITIES
         cap = self.get_capability(target_model) if compatible else None
         return {
@@ -243,10 +243,12 @@ class SkillCrossModel:
                 "function_calling": cap.supports_function_calling if cap else False,
                 "streaming": cap.supports_streaming if cap else False,
                 "vision": cap.supports_vision if cap else False,
-            } if cap else {},
+            }
+            if cap
+            else {},
         }
 
-    def list_providers(self) -> List[Dict[str, Any]]:
+    def list_providers(self) -> list[dict[str, Any]]:
         return [
             {
                 "name": name,

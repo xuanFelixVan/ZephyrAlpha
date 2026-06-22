@@ -2,38 +2,30 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.collectors.feedback_collector
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+
 
 class FeedbackChannel(str, Enum):
     ACTION_RESULT = "action_result"
     OWNER_ACK = "owner_ack"
 
+
 class OwnerResponse(str, Enum):
     ACK = "ack"
     OVERRIDE = "override"
     IGNORE = "ignore"
+
 
 @dataclass
 class ActionResult:
@@ -48,12 +40,14 @@ class ActionResult:
     def __post_init__(self):
         self.delta = self.post_value - self.pre_value
 
+
 @dataclass
 class OwnerAck:
     anomaly_id: str
     response: OwnerResponse
     timestamp: float
     note: str = ""
+
 
 @dataclass
 class FeedbackCollector:

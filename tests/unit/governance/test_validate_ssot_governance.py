@@ -25,8 +25,8 @@ ScanReport             : p0/p1/p2 计数 / has_p0 / total_count
 render_report          : 无矛盾 / 有矛盾 / frontmatter 包含
 SsotValidator.run      : 集成测试（临时目录）
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from pathlib import Path
 
@@ -34,8 +34,8 @@ import pytest
 
 from scripts.governance._shared.frontmatter import parse_frontmatter as _parse_frontmatter
 from scripts.governance.d5_architecture.validators.validate_ssot import (
-    VALID_PRIORITIES,
     VALID_DOCUMENT_STATUSES,
+    VALID_PRIORITIES,
     Contradiction,
     FileMeta,
     ScanReport,

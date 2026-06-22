@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -61,17 +61,17 @@ class TestScanDependencies:
 
 class TestCheckVendorLockin:
     def test_recent_update_ok(self):
-        recent = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+        recent = (datetime.now(UTC) - timedelta(days=30)).isoformat()
         result = check_vendor_lockin(recent)
         assert result == VendorRisk.OK
 
     def test_old_update_critical(self):
-        old = (datetime.now(timezone.utc) - timedelta(days=400)).isoformat()
+        old = (datetime.now(UTC) - timedelta(days=400)).isoformat()
         result = check_vendor_lockin(old)
         assert result == VendorRisk.CRITICAL
 
     def test_medium_age_warning(self):
-        medium = (datetime.now(timezone.utc) - timedelta(days=280)).isoformat()
+        medium = (datetime.now(UTC) - timedelta(days=280)).isoformat()
         result = check_vendor_lockin(medium)
         assert result == VendorRisk.WARNING
 
@@ -84,7 +84,7 @@ class TestCheckVendorLockin:
             check_vendor_lockin(None)
 
     def test_custom_threshold(self):
-        recent = (datetime.now(timezone.utc) - timedelta(days=200)).isoformat()
+        recent = (datetime.now(UTC) - timedelta(days=200)).isoformat()
         result = check_vendor_lockin(recent, months_threshold=24)
         assert result == VendorRisk.OK
 

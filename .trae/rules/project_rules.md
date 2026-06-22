@@ -5,6 +5,14 @@
 
 ---
 
+## 第一原则：AI消费优先（TRAE-057）
+
+> **所有产出物 MUST 以 AI可发现、可解析、可执行 为第一优先级。**
+> 格式分工铁律：规则/元数据=YAML，叙事/蓝图=Markdown，代码=十一字段头部。
+> 真源：[trae_057_ai_consumer_first.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_057_ai_consumer_first.yaml)
+
+---
+
 ## 资产全景
 
 | 资产 | 数量 | 发现入口 |
@@ -63,6 +71,7 @@
 3. 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 4. 读本文件（project_rules.md）→ 了解怎么做事
 5. 按需定位具体注册表 → 开工
+6. **创建任何代码/脚本/模块前** → MUST 读 [trae_056_module_creation_workflow.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml)（TRAE-056 完整工作流程：冷启动→搜索→设计态→准入→蓝图→创建→路径审查→头部锚定→启动设计→注册同步→对齐验证，11个阶段）
 ```
 
 | # | 绝对禁止 | 后果 |
@@ -274,6 +283,8 @@ STEP 3 逐行价值检查：每行内容在其他地方存在？删除后有无�
 
 ## RULE-FOUR：创建即注册
 **YAML真源**: → 参见 rules/trae_001_file_operation_security.yaml
+
+> **⚠️ 完整创建工作流程**：本节是"创建即注册"的约束。创建任何代码/脚本/模块的**完整11阶段工作流程**（冷启动→搜索→设计态→准入→蓝图→创建→路径审查→头部锚定→启动设计→注册同步→对齐验证）见 [TRAE-056](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml)。创建前 MUST 先读 TRAE-056。
 
 **核心**：scaffold.py 是唯一创建入口。绕过它创建的文件 = 孤儿。
 
@@ -541,39 +552,87 @@ STEP 3: 复用决策（四选一）
 
 ---
 
-## RULE-TEN：治理施工流程
+## RULE-TEN：治理施工流程（14步统一流程）
 **YAML真源**: → 参见 rules/trae_005_modification_governance.yaml
 
-**触发**：对项目结构做任何非平凡变更——移动模块、拆分包、重构依赖、批量修改标签。
+**触发**：对项目做任何非平凡变更——恢复功能、新建功能、移动模块、拆分包、重构依赖、批量修改标签。
 
-### 五步强制流程
+### 14步统一流程
+
+```
+阶段一：分析设计（只读不改代码）
+  STEP 1   读蓝图       → 读取功能对应蓝图，理解设计意图
+  STEP 2   全量定位     → 全项目搜索所有相关文件（本包+孤儿+重复+跨蓝图）
+  STEP 3   归属裁定     → 孤儿纳入/重复去重/跨蓝图归属裁定
+  STEP 4   蓝图设计     → 在蓝图里设计依赖关系+启动方式+自动运行+自动结束
+
+阶段二：施工
+  STEP 5   位置校验     → 按蓝图设计调整文件位置/命名/注册
+  STEP 6   修复断链     → 按蓝图设计的依赖关系修复import断链
+  STEP 7   补全头部     → 补全文件头部十字段
+  STEP 8   运行测试     → pytest运行功能测试
+  STEP 9   修复失败     → 修复失败测试直到通过
+
+阶段三：安全验证
+  STEP 10  红蓝对抗     → 罗列极限测试清单+执行+修复漏洞
+
+阶段四：收尾对齐
+  STEP 11  更新蓝图     → 将实际状态写回蓝图frontmatter(file_manifest+dependency_graph+version+construction_progress+§0.2)
+  STEP 12  三方对齐     → 全景图+蓝图+代码头部三方一致验证
+  STEP 13  更新索引     → 更新所有相关INDEX/注册表/manifest
+  STEP 14  报告         → 向统筹AI报告状态
+```
+
+**核心原则**：先分析再动手，先设计再施工。跳过任何步骤 = 违规。
+
+### 轻量模式（仅结构变更时）
+
+当变更仅涉及文件移动/重命名/依赖调整，不涉及功能恢复/新建时，可使用5步轻量模式：
 
 ```
 STEP 1  依赖图推演 → 模拟变更后的依赖链，确认不会产生新循环/堵塞
 STEP 2  蓝图归属   → 确认目标包有蓝图，模块的 [BLUEPRINT] 指向正确
 STEP 3  导入路径映射 → 列出所有受影响的 import 语句（Grep 全项目）
 STEP 4  执行操作   → 按推演验证过的计划操作
-STEP 5  验证       → 重新生成 depgraph + path-tree + diagnose，确认无回退
+STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 ```
 
-### 治理因果链（从根到叶，不按数量从大到小）
+> 轻量模式跳过的步骤：STEP 1读蓝图(已有蓝图)、STEP 2-3全量定位+归属裁定(无新文件)、STEP 4蓝图设计(无新设计)、STEP 7补全头部(无新文件)、STEP 8-9测试(无代码变更)、STEP 10红蓝对抗(无功能变更)、STEP 13更新索引(无注册变更)。
 
-```
-第1层 架构决定 → 第2层 结构重构 → 第3层 元数据对齐 → 第4层 质量补全
-```
+### 三方对齐（STEP 12 验证内容）
 
-| 顺序 | 治理项 | 为什么先做 |
-|:---:|--------|-----------|
-| 1 | 跨包违规（架构重构） | **根因**：shared/ 职责不清 |
-| 2 | God模块分解 | 依赖#1：包边界清晰后才知道该拆什么 |
-| 3 | 孤儿模块消理 | 依赖#1+#2：重构后很多孤儿自然获得消费者 |
-| 4 | 空 blueprint_id | 依赖#1：重构后归属可能变化 |
-| 5 | 稳定性/自治违规 | 依赖#1+#4：架构和标签都稳定后才能准确判断 |
-| 6 | 测试覆盖 | **最后做**：先重构再写测试 |
+| 对齐维度 | 对齐什么 | 验证方法 |
+|----------|---------|---------|
+| 全景图对齐 | depgraph.db ↔ 磁盘实际文件 | `diagnose_depgraph.py` 文件级：depgraph里有的文件是否都存在？磁盘上的文件是否都在depgraph里？ |
+| 蓝图对齐 | 蓝图 frontmatter.file_manifest + dependency_graph ↔ 实际代码 | 蓝图声明的模块是否都实现了？代码里的文件是否都在 file_manifest 里？ |
+| 代码头部对齐 | [BLUEPRINT]/[CONSUMERS]/[MODULE] ↔ 实际引用 | 头部声明的蓝图ID是否指向正确蓝图？[CONSUMERS]列出的消费者是否真的import了本模块？ |
 
-### 价值判定（RULE-THREE 补充）
+> 路径树不作为独立对齐维度——它是全景图的派生物，全景图对了路径树自动对。
 
-**零消费者≠无价值。** 判断删除/移动看功能价值，不看消费者数量。`kill_switch.py` 零消费者≠能删。
+**详细规格**：→ 参见 `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md §2.3`
+
+### 治理顺序铁律（从根到叶）
+
+| 顺序 | 治理项 | 前置依赖 |
+|:---:|--------|---------|
+| 1 | 跨包违规（架构重构） | — |
+| 2 | God模块分解 | #1 完成 |
+| 3 | 孤儿模块消理 | #1+#2 完成 |
+| 4 | blueprint_id 对齐 | #1 完成 |
+| 5 | 稳定性/自治修复 | #1+#4 完成 |
+| 6 | 测试覆盖补全 | #1~#5 全部完成 |
+
+❌ 禁止跳序 | ❌ 禁止按数量从大到小 | ❌ 禁止先测试后重构
+
+### 删除判定三维度（RULE-THREE 补充）
+
+| 维度 | 判定问题 | YES→ | NO→ |
+|---------|---------|------|-----|
+| 独立功能 | 代码有独立功能价值？ | 保留 | 下一维度 |
+| 客观原因 | 零消费者因管线未接通？ | 保留 | 下一维度 |
+| 重建成本 | 删除后需重新实现？ | 保留 | 可删除 |
+
+> 例：`kill_switch.py` 零消费者，但有独立功能价值 → 保留
 
 ### 域归属铁律
 
@@ -1164,7 +1223,7 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 | 修改蓝图§5.5自动化触发机制 / 修改代码实现 | `python scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py --blueprint <蓝图路径>` | §5.5状态列与代码不一致 → 禁止关闭任务 |
 | **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定：对照分类表 → 🕐 定时(circadian_scheduler) / ⚡ 事件(hook_registry) / 🕐+⚡ 双轨 | 单轨实现或未注册 → 禁止关闭任务 |
 | **读取/修改 depgraph** | `python scripts/governance/extract_depgraph.py --summary`（读取）/ `python scripts/governance/apply_depgraph.py --batch <变更文件>`（修改） → 详见 RULE-SIXTEEN | 直接 Read 157MB → OOM 崩溃 |
-| **蓝图-代码-路径树三方对齐** | 结构变更后 MUST 同步刷新：⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db）。仅 depgraph.db 为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 §4 | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
+| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph.db↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db）。仅 depgraph.db 为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
 | **创建/删除/移动文件后** | `python scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |
 | 安全敏感变更 | `python scripts/governance/d6_security/scan_secret_leak.py` | 泄漏 → 硬阻断 CI |
 | 回滚/撤销 | `python scripts/rollback.py preflight` → CLEAN → `rollback.py <cmd>` | preflight FAIL → 禁止回滚 |
@@ -1203,7 +1262,7 @@ STEP 4.12 — Budget Enforcer 激活: Token/Cost/Time 三维预算
 STEP 4.13 — Audit Trail: 审计链完整性 + 最近 50 条事件注入
 STEP 4.14 — A2A Protocol: 发现→通信→调度→防护 四段检查
 STEP 4.15 — DepMap 依赖图: ⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db）。用 `python scripts/governance/extract_depgraph.py --summary` 替代。正常期: `python scripts/governance/generate_project_depgraph.py --max-workers 8` → 文件级+包级依赖
-STEP 4.16 — 三方对齐验证: `python scripts/governance/check_rule_four_way_alignment.py --all`（YAML↔DB↔Code↔Blueprint）。exit≠0 → 漂移，禁止开工，先修复对齐
+STEP 4.16 — 三方对齐验证: ①全景图对齐: `diagnose_depgraph.py`（depgraph.db↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。exit≠0 → 漂移，禁止开工，先修复对齐
 STEP 5   — 按需定位具体注册表 → 开工
 ```
 
@@ -1213,7 +1272,7 @@ STEP 5   — 按需定位具体注册表 → 开工
 
 ## Session 开关门
 
-**进门**: 读 [registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) → 读 `docs/03_modules/_sys_master/blueprint.md` §0 → 查看 `data/capability_cards/` 目录（skill_*.yaml）
+**进门**: 读 [registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) → 读 `docs/03_modules/_sys_master/blueprint.md` §0 → 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 记录 session 起点 commit（R1 防御：`python scripts/record_session_start_commit.py <session_id>`）
 
 **关门**（缺一不可）:
 ```
@@ -1231,7 +1290,8 @@ STEP 5   — 按需定位具体注册表 → 开工
 9. 确认本次 session 产生的所有 .py 文件在合法三目录中
 10. 废墟引用检查: 删过文件/目录 → 确认无其他文件引用已删路径
 11. `python scripts/governance/run_all.py --depth full` — 全量审计扫描
-12. IN_PROGRESS任务检查: `python -c "from zephyr.governance.task_repo import TaskRepository; r=TaskRepository(); t=r.list_by_status('IN_PROGRESS'); assert len(t)==0, f'{len(t)} IN_PROGRESS tasks remain — 关门前必须关闭或释放"`
+11.1. POST_DOC_REVIEW 门禁: `python -m zephyr.governance.rule_enforcement.invariants.post_doc_review_check <session_id>` — R1 防御：git-backed 权威列表 + 篡改检测 + 文档内容审查（tampering_detected=true → RED 拒绝关门）
+12. IN_PROGRESS任务检查: `python -c "from zephyr.governance.task_repo import TaskRepository; r=TaskRepository(); t=r.list_by_status('IN_PROGRESS'); assert len(t)==0, f'{len(t)} IN_PROGRESS tasks remain — 关门前必须关闭或释放'"`
 13. 写 Session Log（session_logs/YYYY/MM/session-YYYYMMDD-NNN.yaml）
 ```
 

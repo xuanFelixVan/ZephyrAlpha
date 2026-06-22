@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_memory_provenance.py -q
 
 import hashlib
-import pytest
+
 from zephyr.governance.memory_provenance import MemoryProvenanceLog
 
 
@@ -95,7 +95,7 @@ class TestTrace:
         mpl = MemoryProvenanceLog()
         mpl.record("first", "same-content")
         mpl.record("second", "same-content")
-        h = hashlib.sha256("same-content".encode()).hexdigest()
+        h = hashlib.sha256(b"same-content").hexdigest()
         result = mpl.trace(h)
         assert result["agent"] == "first"
 

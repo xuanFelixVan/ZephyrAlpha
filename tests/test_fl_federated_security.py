@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_federated_security.py
 
-import pytest
 from zephyr.ops.gates.federated_security import FederatedSecurity
 
 

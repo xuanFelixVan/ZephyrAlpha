@@ -14,17 +14,17 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from zephyr.governance.report import (
     DebtProjection,
     DuplicationIntakeRate,
     EngineSelfMetrics,
-    ExitCode as ReportExitCode,
     HealthComponents,
     HotspotCategory,
     ReportGenerator,
     ScanMetadata,
+)
+from zephyr.governance.report import (
+    ExitCode as ReportExitCode,
 )
 
 

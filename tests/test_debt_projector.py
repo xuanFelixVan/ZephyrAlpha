@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.debt_projector import (
-    DebtProjector, DebtProjectionResult,
+    DebtProjectionResult,
+    DebtProjector,
 )
+
 
 class TestDebtProjector:
     def test_instantiation(self):
@@ -21,21 +22,15 @@ class TestDebtProjector:
 
     def test_project_returns_result(self):
         proj = DebtProjector()
-        result = proj.project(
-            current_debt_groups=10, intake_rate_groups_per_week=2.0, fix_rate_groups_per_week=1.0
-        )
+        result = proj.project(current_debt_groups=10, intake_rate_groups_per_week=2.0, fix_rate_groups_per_week=1.0)
         assert isinstance(result, DebtProjectionResult)
 
     def test_project_zero_rates(self):
         proj = DebtProjector()
-        result = proj.project(
-            current_debt_groups=0, intake_rate_groups_per_week=0.0, fix_rate_groups_per_week=0.0
-        )
+        result = proj.project(current_debt_groups=0, intake_rate_groups_per_week=0.0, fix_rate_groups_per_week=0.0)
         assert isinstance(result, DebtProjectionResult)
 
     def test_project_negative_values(self):
         proj = DebtProjector()
-        result = proj.project(
-            current_debt_groups=-1, intake_rate_groups_per_week=0.0, fix_rate_groups_per_week=0.0
-        )
+        result = proj.project(current_debt_groups=-1, intake_rate_groups_per_week=0.0, fix_rate_groups_per_week=0.0)
         assert isinstance(result, DebtProjectionResult)

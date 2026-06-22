@@ -10,9 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_deadman_switch.py
 
-import time
-
-import pytest
 
 from zephyr.ops.resilience.deadman_switch import (
     DeadmanState,

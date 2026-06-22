@@ -6,13 +6,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """跨切面 D 异常检测 + 蓝图保真 + 原生API守卫 + 内存守卫 测试."""
+
 from __future__ import annotations
 
-import pytest
 from zephyr.security.access_control.anomaly_detector import AnomalyDetector
 from zephyr.security.access_control.blueprint_fidelity import BlueprintFidelity
-from zephyr.security.access_control.native_api_guard import NativeApiGuard
 from zephyr.security.access_control.memory_guard import MemoryGuard
+from zephyr.security.access_control.native_api_guard import NativeApiGuard
 
 
 class TestCrossCutD:

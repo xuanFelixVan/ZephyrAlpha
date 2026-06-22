@@ -10,8 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_incident_postmortem.py
 
-import pytest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from zephyr.trading.orchestrator.incident_postmortem import Incident, IncidentManager
 
@@ -28,7 +27,7 @@ class TestIncidentModel:
         assert inc.created_at is not None
 
     def test_create_with_all_fields(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         inc = Incident(
             incident_id="INC-002",
             severity="P0",

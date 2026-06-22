@@ -10,6 +10,7 @@
 from pathlib import Path
 
 import pytest
+
 from zephyr.autonomy_core.context_assembler import ContextAssembler
 from zephyr.autonomy_core.context_pipeline import run_context_four_stage
 

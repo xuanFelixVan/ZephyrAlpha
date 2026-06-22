@@ -57,12 +57,14 @@ class TestDeepSeekV4ChatInit:
 
     def test_none_api_key_falls_back_to_env(self):
         import os as _os
+
         chat = DeepSeekV4Chat(api_key=None)
         expected = _os.getenv("DEEPSEEK_API_KEY", "")
         assert chat._api_key == expected
 
     def test_empty_api_key_falls_back_to_env(self):
         import os as _os
+
         chat = DeepSeekV4Chat(api_key="")
         expected = _os.getenv("DEEPSEEK_API_KEY", "")
         assert chat._api_key == expected
@@ -138,7 +140,7 @@ class TestParseJson:
         assert result == {"key": "value"}
 
     def test_non_dict_json_returns_empty(self):
-        result = DeepSeekV4Chat._parse_json('[1, 2, 3]')
+        result = DeepSeekV4Chat._parse_json("[1, 2, 3]")
         assert result == {}
 
 

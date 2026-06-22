@@ -28,7 +28,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 _logger = logging.getLogger(__name__)
@@ -70,20 +70,24 @@ class AuditDelegationBridge:
             "task_id": task_id,
             "capability": capability,
             "delegation_depth": depth,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "provenance": "delegation_bridge",
         }
 
         try:
-            from zephyr.governance.audit_trail.writer import AuditWriter
             from pathlib import Path
+
+            from zephyr.governance.audit_trail.writer import AuditWriter
 
             writer = AuditWriter(Path("data/audit-trail"))
             chain_hash = writer.write(record)
             record["chain_hash"] = chain_hash
             _logger.info(
                 "Delegation audit: %s → %s (depth=%d, task=%s)",
-                from_agent, to_agent, depth, task_id,
+                from_agent,
+                to_agent,
+                depth,
+                task_id,
             )
         except Exception:
             _logger.exception("Failed to persist delegation audit record")
@@ -105,7 +109,7 @@ class AuditDelegationBridge:
                 "signature_id": "ANM-010",
                 "severity": "CRITICAL",
                 "agent_id": agent_id,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "details": {
                     "delegation_depth": depth,
                     "max_allowed": _MAX_DELEGATION_DEPTH,
@@ -117,7 +121,7 @@ class AuditDelegationBridge:
                 "signature_id": "ANM-010",
                 "severity": "HIGH",
                 "agent_id": agent_id,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "details": {
                     "delegation_depth": depth,
                     "max_allowed": _MAX_DELEGATION_DEPTH,
@@ -149,18 +153,20 @@ class AuditDelegationBridge:
             from_cap = set(step.get("from_capabilities", []))
             to_cap = set(step.get("to_capabilities", []))
             if from_cap and to_cap and to_cap - from_cap:
-                anomalies.append({
-                    "signature_id": "ANM-005",
-                    "severity": "CRITICAL",
-                    "agent_id": step.get("to_agent", ""),
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "details": {
-                        "anomaly": "privilege_escalation_via_delegation",
-                        "escalated_capabilities": sorted(to_cap - from_cap),
-                        "from_agent": step.get("from_agent", ""),
-                        "to_agent": step.get("to_agent", ""),
-                    },
-                })
+                anomalies.append(
+                    {
+                        "signature_id": "ANM-005",
+                        "severity": "CRITICAL",
+                        "agent_id": step.get("to_agent", ""),
+                        "timestamp": datetime.now(UTC).isoformat(),
+                        "details": {
+                            "anomaly": "privilege_escalation_via_delegation",
+                            "escalated_capabilities": sorted(to_cap - from_cap),
+                            "from_agent": step.get("from_agent", ""),
+                            "to_agent": step.get("to_agent", ""),
+                        },
+                    }
+                )
 
         return anomalies
 

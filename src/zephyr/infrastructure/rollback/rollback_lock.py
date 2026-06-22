@@ -38,17 +38,16 @@ from __future__ import annotations
 import json
 import os
 import time
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 __all__ = [
-    "RollbackLock",
-    "LockPriority",
     "LockAcquireResult",
+    "LockPriority",
     "LockStatus",
+    "RollbackLock",
 ]
 
 
@@ -89,7 +88,6 @@ class LockRequest:
 
 
 class RollbackLock:
-
     DEFAULT_LOCK_DIR: str = ".zephyr"
     DEFAULT_LOCK_FILE: str = "rollback.lock"
     DEFAULT_QUEUE_FILE: str = "rollback_lock_queue.jsonl"
@@ -119,7 +117,7 @@ class RollbackLock:
             priority=priority,
             owner=owner,
             task=task,
-            created_at=datetime.now(timezone.utc).isoformat(),
+            created_at=datetime.now(UTC).isoformat(),
             timeout_ms=timeout_ms,
             expires_at="",
         )
@@ -132,14 +130,17 @@ class RollbackLock:
                 os.O_CREAT | os.O_EXCL | os.O_RDWR,
                 0o644,
             )
-            lock_data = json.dumps({
-                "lock_id": request.lock_id,
-                "owner": owner,
-                "priority": priority.value,
-                "task": task,
-                "acquired_at": datetime.now(timezone.utc).isoformat(),
-                "ttl_seconds": self.DEFAULT_TTL_SECONDS,
-            }, ensure_ascii=False)
+            lock_data = json.dumps(
+                {
+                    "lock_id": request.lock_id,
+                    "owner": owner,
+                    "priority": priority.value,
+                    "task": task,
+                    "acquired_at": datetime.now(UTC).isoformat(),
+                    "ttl_seconds": self.DEFAULT_TTL_SECONDS,
+                },
+                ensure_ascii=False,
+            )
 
             os.write(fd, lock_data.encode("utf-8"))
             os.close(fd)
@@ -173,14 +174,17 @@ class RollbackLock:
                     os.O_CREAT | os.O_EXCL | os.O_RDWR,
                     0o644,
                 )
-                lock_data = json.dumps({
-                    "lock_id": request.lock_id,
-                    "owner": request.owner,
-                    "priority": request.priority.value,
-                    "task": request.task,
-                    "acquired_at": datetime.now(timezone.utc).isoformat(),
-                    "ttl_seconds": self.DEFAULT_TTL_SECONDS,
-                }, ensure_ascii=False)
+                lock_data = json.dumps(
+                    {
+                        "lock_id": request.lock_id,
+                        "owner": request.owner,
+                        "priority": request.priority.value,
+                        "task": request.task,
+                        "acquired_at": datetime.now(UTC).isoformat(),
+                        "ttl_seconds": self.DEFAULT_TTL_SECONDS,
+                    },
+                    ensure_ascii=False,
+                )
                 os.write(fd, lock_data.encode("utf-8"))
                 os.close(fd)
                 self._dequeue_request(request.lock_id)
@@ -294,7 +298,7 @@ class RollbackLock:
         )
 
     def _generate_lock_id(self) -> str:
-        ts = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")
+        ts = datetime.now(UTC).strftime("%Y%m%d%H%M%S%f")
         return f"RBLK-{ts}"
 
     def _try_steal_expired_lock(self) -> bool:
@@ -306,7 +310,7 @@ class RollbackLock:
             ttl = lock_data.get("ttl_seconds", self.DEFAULT_TTL_SECONDS)
             if acquired_at:
                 acquired_dt = datetime.fromisoformat(acquired_at)
-                elapsed = (datetime.now(timezone.utc) - acquired_dt).total_seconds()
+                elapsed = (datetime.now(UTC) - acquired_dt).total_seconds()
                 if elapsed > ttl:
                     return True
             return False
@@ -316,14 +320,20 @@ class RollbackLock:
     def _enqueue_request(self, request: LockRequest) -> None:
         try:
             with open(self._queue_path, "a", encoding="utf-8") as f:
-                f.write(json.dumps({
-                    "lock_id": request.lock_id,
-                    "priority": request.priority.value,
-                    "owner": request.owner,
-                    "task": request.task,
-                    "created_at": request.created_at,
-                    "timeout_ms": request.timeout_ms,
-                }, ensure_ascii=False) + "\n")
+                f.write(
+                    json.dumps(
+                        {
+                            "lock_id": request.lock_id,
+                            "priority": request.priority.value,
+                            "owner": request.owner,
+                            "task": request.task,
+                            "created_at": request.created_at,
+                            "timeout_ms": request.timeout_ms,
+                        },
+                        ensure_ascii=False,
+                    )
+                    + "\n"
+                )
         except Exception:
             pass
 
@@ -345,7 +355,7 @@ class RollbackLock:
             return
         try:
             lines = self._queue_path.read_text(encoding="utf-8").strip().split("\n")
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             valid_lines: list[str] = []
             for line in lines:
                 if not line.strip():

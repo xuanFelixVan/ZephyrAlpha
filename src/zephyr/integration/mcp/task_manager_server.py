@@ -37,6 +37,8 @@ from pathlib import Path
 
 from mcp.server import FastMCP
 
+from zephyr.governance.rule_enforcement.task_types import TaskNamespace, normalize_execution_model
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
 from zephyr.shared.shared_services.models import (
     DecompositionResult,
@@ -44,8 +46,6 @@ from zephyr.shared.shared_services.models import (
     TaskCard,
     TaskStatus,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace, normalize_execution_model
-from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
 logger = logging.getLogger(__name__)
 
@@ -154,11 +154,19 @@ class TaskManagerMCP:
             mgr._rbac_guard("create_task")
             from zephyr.shared.schema.schemas import Priority
 
-            raw = json.dumps({
-                "title": title, "source_blueprint": source_blueprint,
-                "source_section": source_section, "description": description,
-                "namespace": namespace, "priority": priority, "phase": phase,
-            }, sort_keys=True, ensure_ascii=False)
+            raw = json.dumps(
+                {
+                    "title": title,
+                    "source_blueprint": source_blueprint,
+                    "source_section": source_section,
+                    "description": description,
+                    "namespace": namespace,
+                    "priority": priority,
+                    "phase": phase,
+                },
+                sort_keys=True,
+                ensure_ascii=False,
+            )
             arg_hash = hashlib.sha256(raw.encode("utf-8")).hexdigest()
             cached = mgr._idempotency_cache.get(arg_hash)
             if cached is not None:
@@ -166,9 +174,7 @@ class TaskManagerMCP:
 
             ns = getattr(TaskNamespace, namespace.upper(), TaskNamespace.CP)
             seq = mgr._next_seq(ns)
-            if mgr.task_repo:
-                task_id = f"{ns.value}-{seq}"
-            elif not task_id.strip():
+            if mgr.task_repo or not task_id.strip():
                 task_id = f"{ns.value}-{seq}"
 
             now = datetime.now(UTC)
@@ -220,17 +226,20 @@ class TaskManagerMCP:
             if downstream_outputs:
                 try:
                     from zephyr.governance.architecture_governance.path_resolver import PathResolver
+
                     resolver = PathResolver(str(Path(__file__).resolve().parents[3]))
                     warnings = []
                     for item in downstream_outputs:
-                        if isinstance(item, dict) and 'path' in item:
-                            resolution = resolver.validate_path(item['path'])
+                        if isinstance(item, dict) and "path" in item:
+                            resolution = resolver.validate_path(item["path"])
                             if resolution.status != "OK" and resolution.suggested_path:
-                                warnings.append({
-                                    "expected": item['path'],
-                                    "suggested": resolution.suggested_path,
-                                    "status": resolution.status,
-                                })
+                                warnings.append(
+                                    {
+                                        "expected": item["path"],
+                                        "suggested": resolution.suggested_path,
+                                        "status": resolution.status,
+                                    }
+                                )
                     if warnings:
                         resp["g8_warnings"] = warnings
                 except ImportError:
@@ -483,6 +492,7 @@ def _extract_yaml_frontmatter(content: str) -> dict | None:
         return None
     try:
         import yaml as _yaml
+
         fm = _yaml.safe_load(raw_yaml)
         if isinstance(fm, dict):
             return fm
@@ -538,7 +548,10 @@ def _parse_yaml_frontmatter_to_taskcard(fm: dict) -> TaskCard:
     acceptance = _normalize_str_list(fm.get("acceptance_criteria") or fm.get("acceptance", []))
     depends_on = _normalize_str_list(fm.get("depends_on", []))
     blocked_by = _normalize_str_list(fm.get("blocked_by", []))
-    deliverables = [item.get("path", item.get("description", str(item))) if isinstance(item, dict) else str(item) for item in downstream_outputs]
+    deliverables = [
+        item.get("path", item.get("description", str(item))) if isinstance(item, dict) else str(item)
+        for item in downstream_outputs
+    ]
     files_in_scope = _normalize_str_list(fm.get("files_in_scope", []))
 
     tags = _merge_tags(
@@ -823,8 +836,12 @@ def _parse_time(s: str) -> datetime:
 
 
 def _taskcard_to_md(tc: TaskCard) -> str:
-    created = tc.created_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.created_at, "strftime") else str(tc.created_at)[:16]
-    updated = tc.updated_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.updated_at, "strftime") else str(tc.updated_at)[:16]
+    created = (
+        tc.created_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.created_at, "strftime") else str(tc.created_at)[:16]
+    )
+    updated = (
+        tc.updated_at.strftime("%Y-%m-%d %H:%M") if hasattr(tc.updated_at, "strftime") else str(tc.updated_at)[:16]
+    )
 
     tag_parts = _split_tags(tc.tags)
 
@@ -835,11 +852,11 @@ def _taskcard_to_md(tc: TaskCard) -> str:
         lines = []
         for item in items:
             if isinstance(item, dict):
-                lines.append(f"{prefix}- path: \"{item.get('path', '')}\"")
+                lines.append(f'{prefix}- path: "{item.get("path", "")}"')
                 if item.get("description"):
-                    lines.append(f"{prefix}  description: \"{item.get('description', '')}\"")
+                    lines.append(f'{prefix}  description: "{item.get("description", "")}"')
             else:
-                lines.append(f"{prefix}- \"{item}\"")
+                lines.append(f'{prefix}- "{item}"')
         return "\n" + "\n".join(lines)
 
     def _yaml_rule_list(items: list[dict], indent: int = 2) -> str:
@@ -849,9 +866,9 @@ def _taskcard_to_md(tc: TaskCard) -> str:
         lines = []
         for item in items:
             if isinstance(item, dict):
-                lines.append(f"{prefix}- module_id: \"{item.get('module_id', '')}\"")
-                lines.append(f"{prefix}  section: \"{item.get('section', '')}\"")
-                lines.append(f"{prefix}  reason: \"{item.get('reason', '')}\"")
+                lines.append(f'{prefix}- module_id: "{item.get("module_id", "")}"')
+                lines.append(f'{prefix}  section: "{item.get("section", "")}"')
+                lines.append(f'{prefix}  reason: "{item.get("reason", "")}"')
         return "\n" + "\n".join(lines)
 
     def _yaml_context_list(items: list[dict], indent: int = 2) -> str:
@@ -861,8 +878,8 @@ def _taskcard_to_md(tc: TaskCard) -> str:
         lines = []
         for item in items:
             if isinstance(item, dict):
-                lines.append(f"{prefix}- file_path: \"{item.get('file_path', '')}\"")
-                lines.append(f"{prefix}  reason: \"{item.get('reason', '')}\"")
+                lines.append(f'{prefix}- file_path: "{item.get("file_path", "")}"')
+                lines.append(f'{prefix}  reason: "{item.get("reason", "")}"')
         return "\n" + "\n".join(lines)
 
     gates_str = ", ".join(f"'{g.value}'" for g in tc.completed_gates) if tc.completed_gates else ""
@@ -880,7 +897,7 @@ allowed_touch:{_yaml_list(tc.allowed_touch)}
 forbidden_touch:{_yaml_list(tc.forbidden_touch)}
 applicable_rules:{_yaml_rule_list(tc.applicable_rules)}
 context_assembly_manifest:{_yaml_context_list(tc.context_assembly_manifest)}
-assigned_model: "{tc.execution_model.value if hasattr(tc.execution_model, 'value') else tc.execution_model}"
+assigned_model: "{tc.execution_model.value if hasattr(tc.execution_model, "value") else tc.execution_model}"
 assigned_pipeline: "{tc.assigned_pipeline}"
 pipeline_modules:{_yaml_list(tc.pipeline_modules)}
 estimated_tokens: {tc.estimated_tokens}
@@ -889,19 +906,30 @@ acceptance_criteria:{_yaml_list(tc.acceptance)}
 rollback_instructions: "{tc.rollback_instructions}"
 depends_on:{_yaml_list(tc.depends_on)}
 blocked_by:{_yaml_list(tc.blocked_by)}
-status: "{tc.status.value if hasattr(tc.status, 'value') else tc.status}"
-tags_fn:{_yaml_list(tag_parts.get('tags_fn', []))}
-tags_ly: "{tag_parts.get('tags_ly', '')}"
-tags_md: "{tag_parts.get('tags_md', '')}"
-tags_st: "{tag_parts.get('tags_st', '')}"
-tags_mo:{_yaml_list(tag_parts.get('tags_mo', []))}
+status: "{tc.status.value if hasattr(tc.status, "value") else tc.status}"
+tags_fn:{_yaml_list(tag_parts.get("tags_fn", []))}
+tags_ly: "{tag_parts.get("tags_ly", "")}"
+tags_md: "{tag_parts.get("tags_md", "")}"
+tags_st: "{tag_parts.get("tags_st", "")}"
+tags_mo:{_yaml_list(tag_parts.get("tags_mo", []))}
 completed_gates: [{gates_str}]
 blocked_gates: {json.dumps(tc.blocked_gates, ensure_ascii=False)}
 artifact_paths:{_yaml_list(tc.artifact_paths)}
-audit_findings:{_yaml_list(
-    [{"finding_id": f.finding_id, "dimension": f.dimension, "severity": f.severity, "description": f.description} for f in tc.audit_findings]
-    if tc.audit_findings else []
-)}
+audit_findings:{
+        _yaml_list(
+            [
+                {
+                    "finding_id": f.finding_id,
+                    "dimension": f.dimension,
+                    "severity": f.severity,
+                    "description": f.description,
+                }
+                for f in tc.audit_findings
+            ]
+            if tc.audit_findings
+            else []
+        )
+    }
 ke_entries:{_yaml_list(tc.ke_entries)}
 ai_autonomy_level: "{tc.ai_autonomy_level}"
 autonomy_checklist:{_yaml_list(tc.autonomy_checklist)}
@@ -913,30 +941,37 @@ autonomy_checklist:{_yaml_list(tc.autonomy_checklist)}
 {tc.description}
 
 ## 触发条件
-{chr(10).join(f'- {dep}' for dep in tc.depends_on) if tc.depends_on else '- 无前置依赖'}
+{chr(10).join(f"- {dep}" for dep in tc.depends_on) if tc.depends_on else "- 无前置依赖"}
 
 ## 执行步骤
 
 ### 读
-{chr(10).join(f'- {f}' for f in tc.upstream_files) if tc.upstream_files else '-（见 upstream_files）'}
+{chr(10).join(f"- {f}" for f in tc.upstream_files) if tc.upstream_files else "-（见 upstream_files）"}
 
 ### 做
-{chr(10).join(f'- {m}' for m in tc.pipeline_modules) if tc.pipeline_modules else '- 按管线模块执行'}
+{chr(10).join(f"- {m}" for m in tc.pipeline_modules) if tc.pipeline_modules else "- 按管线模块执行"}
 
 ### 产
-{chr(10).join(f'- {d.get("path", str(d))} — {d.get("description", "")}' if isinstance(d, dict) else f'- {d}' for d in tc.downstream_outputs) if tc.downstream_outputs else '-（见 downstream_outputs）'}
+{
+        chr(10).join(
+            f"- {d.get('path', str(d))} — {d.get('description', '')}" if isinstance(d, dict) else f"- {d}"
+            for d in tc.downstream_outputs
+        )
+        if tc.downstream_outputs
+        else "-（见 downstream_outputs）"
+    }
 
 ### 检
 - 运行对应测试套件
 - 门禁 G5 完成验证
 
 ## 验收标准
-{chr(10).join(f'- {a}' for a in tc.acceptance) if tc.acceptance else '- 见 acceptance_criteria'}
+{chr(10).join(f"- {a}" for a in tc.acceptance) if tc.acceptance else "- 见 acceptance_criteria"}
 
 ## 风险与缓解
 | 风险 | 缓解 |
 |------|------|
-| 回滚 | {tc.rollback_instructions if tc.rollback_instructions else '无特定回滚方案'} |
+| 回滚 | {tc.rollback_instructions if tc.rollback_instructions else "无特定回滚方案"} |
 
 ---
 *创建: {created} | 更新: {updated}*

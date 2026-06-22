@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/rollback_depgraph.py | §8.2
 [MODULE] 无（独立脚本）
@@ -19,8 +18,9 @@ P1-2 从备份回滚depgraph.db
     python rollback_depgraph.py <备份路径>
     python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.db.backup.pre_migration
 """
-import shutil
+
 import os
+import shutil
 import sys
 
 DST = r"D:\ZephyrAlpha\data\databases\depgraph.db"

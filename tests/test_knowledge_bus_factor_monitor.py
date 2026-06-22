@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_bus_factor_monitor.py
 
-import pytest
 
 from zephyr.ops.diagnosers.knowledge_bus_factor_monitor import KnowledgeBusFactorMonitor
 

@@ -40,18 +40,15 @@
     python -m zephyr.knowledge.kb --safe-mode        # 切换到安全模式
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
 import os
-import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -239,6 +236,7 @@ class FreezeCircuitBreaker:
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="KB Emergency Freeze/Safe Mode Circuit Breaker")
     parser.add_argument("--freeze", action="store_true", help="Manually freeze KB (complete lockdown)")
     parser.add_argument("--safe-mode", action="store_true", help="Switch to safe mode (read-only)")
@@ -253,13 +251,19 @@ def main() -> None:
         state = cb.current_state()
         if args.json:
             if state:
-                print(json.dumps({
-                    "mode": state.mode.value,
-                    "reason": state.reason.value,
-                    "since": state.since,
-                    "triggered_by": state.triggered_by,
-                    "details": state.details,
-                }, ensure_ascii=False, indent=2))
+                print(
+                    json.dumps(
+                        {
+                            "mode": state.mode.value,
+                            "reason": state.reason.value,
+                            "since": state.since,
+                            "triggered_by": state.triggered_by,
+                            "details": state.details,
+                        },
+                        ensure_ascii=False,
+                        indent=2,
+                    )
+                )
             else:
                 print(json.dumps({"mode": "normal", "reason": "none"}, ensure_ascii=False))
         else:

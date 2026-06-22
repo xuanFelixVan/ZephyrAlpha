@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 直接 LLM 调用检测（COND-30 — L02-L07禁止直接import LLM SDK）
@@ -68,6 +69,7 @@ B_TRACK_DIRS = {
     "shared",
 }
 
+
 def is_business_layer(filepath: Path, src_dir: Path) -> bool:
     """判断是否为业务层"""
     try:
@@ -85,6 +87,7 @@ def is_business_layer(filepath: Path, src_dir: Path) -> bool:
         return True
     return False
     "判断是否为业务层."
+
 
 def check_llm_imports(filepath: Path) -> list[dict]:
     """检查 LLM 直接调用"""
@@ -109,6 +112,7 @@ def check_llm_imports(filepath: Path) -> list[dict]:
     return findings
     "检查 LLM 直接调用."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="直接 LLM 调用检测（COND-30）")
@@ -129,13 +133,14 @@ def main() -> None:
     if all_findings:
         print(f"\n[LLM-CALL] {len(all_findings)} 个业务层直接 LLM 调用:", file=sys.stderr)
         for f in all_findings:
-            print(f'  [{f['severity']}] {f['file']}:{f['line']}', file=sys.stderr)
-            print(f'    {f['import_name']}', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['file']}:{f['line']}", file=sys.stderr)
+            print(f"    {f['import_name']}", file=sys.stderr)
     else:
         print("[LLM-CALL] 业务层无直接 LLM 调用", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
+
 
 if __name__ == "__main__":
     main()

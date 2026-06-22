@@ -13,6 +13,7 @@
 
 信号合成组合器。聚合信号生成、策略、合成为统一入口。
 """
+
 from __future__ import annotations
 
 from zephyr.signal_fundamental.gen.aggregator_base import (
@@ -27,7 +28,14 @@ from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizer
 from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 __all__ = [
-    'CapitalAllocationResult', 'CapitalAllocatorBase', 'DegradationMonitorBase',
-    'SignalAggregatorBase', 'SignalSynthesizerBase', 'SynthesizedSignal',
-    'aggregator_base', 'capital_allocator', 'signal_synthesizer', 'synthesized_signal',
+    "CapitalAllocationResult",
+    "CapitalAllocatorBase",
+    "DegradationMonitorBase",
+    "SignalAggregatorBase",
+    "SignalSynthesizerBase",
+    "SynthesizedSignal",
+    "aggregator_base",
+    "capital_allocator",
+    "signal_synthesizer",
+    "synthesized_signal",
 ]

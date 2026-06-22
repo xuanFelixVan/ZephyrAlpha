@@ -173,10 +173,7 @@ def _resolve_all(
             domain = parts[1]
             fname = parts[-1]
             if fname in filename_index:
-                domain_candidates = [
-                    c for c in filename_index[fname]
-                    if domain in c
-                ]
+                domain_candidates = [c for c in filename_index[fname] if domain in c]
                 if len(domain_candidates) == 1:
                     resolved[mod] = domain_candidates[0]
                     continue
@@ -269,7 +266,7 @@ def main() -> None:
 
     if unresolved:
         total_unresolved = sum(cnt for _, cnt in unresolved)
-        print(f"\n  Top unresolved (by frequency):")
+        print("\n  Top unresolved (by frequency):")
         for mod, cnt in sorted(unresolved, key=lambda x: -x[1])[:20]:
             print(f"    {mod} ({cnt})")
 
@@ -279,7 +276,7 @@ def main() -> None:
 
     prefix_map = _build_prefix_mapping(resolved)
 
-    print(f"\nStep 5: Scanning tests/ .py files for replacements...")
+    print("\nStep 5: Scanning tests/ .py files for replacements...")
     py_files: list[Path] = []
     if TESTS_DIR.exists():
         for f in TESTS_DIR.rglob("*.py"):
@@ -303,7 +300,7 @@ def main() -> None:
                 total_errors += 1
                 print(f"  ERROR: {result['file']}")
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Files updated: {total_updated}")
     print(f"  Import changes: {total_changes}")
     print(f"  Errors: {total_errors}")

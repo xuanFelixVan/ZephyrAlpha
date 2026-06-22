@@ -1,6 +1,8 @@
 # [A_module] module_id=MOD-RES_degradation_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+import threading
+
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.infrastructure.budget_enforcement.degradation_manager
 # [INVARIANTS] pending_review
@@ -8,16 +10,15 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
-
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 import time
-import threading
 from dataclasses import dataclass, field
 from enum import Enum, auto
 
 from .budget_models import BudgetDimension, ModelTier
+
 
 class DegradationLevel(Enum):
     NORMAL = (auto(), "正常模式")
@@ -28,6 +29,7 @@ class DegradationLevel(Enum):
     MINIMAL = (auto(), "最小模式——95%")
     HALT = (auto(), "停止——100%")
 
+
 @dataclass
 class DegradationAction:
     level: DegradationLevel
@@ -37,6 +39,7 @@ class DegradationAction:
     narrow_context: bool = False
     reroute_provider: str = ""
     timestamp: float = field(default_factory=time.time)
+
 
 @dataclass
 class DegradationState:
@@ -58,8 +61,8 @@ class DegradationState:
         now = time.time()
         return now > self.recovery_cooldown_until
 
-class DegradationManager:
 
+class DegradationManager:
     LEVEL_ORDER: list[DegradationLevel] = [
         DegradationLevel.NORMAL,
         DegradationLevel.NOTIFY,

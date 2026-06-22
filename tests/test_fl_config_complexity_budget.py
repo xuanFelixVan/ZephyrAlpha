@@ -10,8 +10,7 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_config_complexity_budget.py
 
-import pytest
-from zephyr.ops.gates.config_complexity_budget import ConfigComplexityBudget, ConfigMetric
+from zephyr.ops.gates.config_complexity_budget import ConfigComplexityBudget
 
 
 class TestConfigComplexityBudgetInstantiation:

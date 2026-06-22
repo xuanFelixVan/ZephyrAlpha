@@ -12,13 +12,11 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.trading.orchestrator.construction_guide import (
+    MOCK_STRATEGIES,
     ConstructionConfig,
     ConstructionGuide,
     ConstructionMode,
-    MOCK_STRATEGIES,
     MockStrategy,
 )
 

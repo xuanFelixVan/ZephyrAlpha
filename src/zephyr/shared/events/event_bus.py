@@ -36,7 +36,6 @@ Import 路径映射:
     from zephyr.shared.shared_services.events.event_bus import EventBus     -> zephyr.integration.shared_08.event_bus
 """
 
-
 from zephyr.integration.shared_08.event_bus import (  # noqa: F401
     DomainEvent,
     EventBus,

@@ -31,8 +31,8 @@ EnvWatcher — 环境变量热重载监控器。
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -46,7 +46,6 @@ class EnvChangeAlert:
 
 
 class EnvWatcher:
-
     SENTINEL_FILE: str = ".zephyr/last_env_reload.json"
     ENV_FILES: list[str] = [".env", ".env.local"]
 
@@ -75,7 +74,7 @@ class EnvWatcher:
         return EnvChangeAlert(
             env_file=",".join(self.ENV_FILES),
             changed_keys=changed_keys,
-            changed_at=datetime.now(timezone.utc).isoformat(),
+            changed_at=datetime.now(UTC).isoformat(),
             agent_action="RELOAD_ENV_FROM_SENTINEL",
         )
 

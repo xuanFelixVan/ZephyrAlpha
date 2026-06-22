@@ -17,13 +17,13 @@ auto_maintenance:
       active: "score > 0.01（每天至少触发0.01次 = 每100天至少1次）"
       dormant: "0 < score <= 0.01（存在且配置但极少触发）"
       zombie: "score == 0（90天内从未触发——候选删除）"
-    
+
     auto_deprecation:
       zombie_threshold_days: 90
       action: "自动标记 [DEPRECATED_CANDIDATE] + 在Owner健康仪表盘中高亮"
       owner_review: "Owner确认删除 → 规则归档（非物理删除——保留历史）"
       auto_cleanup: "Owner 14天内未审阅 → 规则自动禁用（非删除）+ 告警升级"
-    
+
     protected_rules:  # 以下规则永不被自动deprecate，即使score=0
       - "L0 不可变核心规则"
       - "Kill Switch 触发器规则"
@@ -42,7 +42,7 @@ auto_maintenance:
       - at: 30
         level: "error"
         message: "规则数达到上限——禁止新增规则直到删除达到28条以下"
-    
+
     cost_per_rule:
       avg_execution_time_us: 8.5        # 每条规则的平均检查耗时（微秒）
       complexity_budget_us: 255         # 30条 × 8.5us = 总耗时预算
@@ -70,27 +70,27 @@ auto_maintenance:
         display: "今日 ALLOW 次数"
         healthy_range: "无上限——越多越正常"
         alarm: "无（这是常态）"
-        
+
       - metric: "today_auto_guard_count"
         display: "今日 AUTO_GUARD 次数（及后验通过率%）"
         healthy_range: "< 20次 AND 后验通过率 > 90%"
         alarm: "auto_guard > 50次 → 规则太严或Agent行为异常。后验通过率 < 80% → Agent信任度下降"
-        
+
       - metric: "today_blocked_count"
         display: "今日 BLOCKED 次数"
         healthy_range: "< 5次"
         alarm: "> 10次 → Agent频繁触碰权限边界——可能被投毒或理解偏差"
-        
+
       - metric: "kill_switch_status"
         display: "Kill Switch 状态 [NORMAL / WARNING / TRIGGERED / MAINTENANCE] + 最近触发时间"
         healthy_range: "NORMAL"
         alarm: "非NORMAL = 立即关注"
-        
+
       - metric: "agent_maturity_distribution"
         display: "Agent成熟度分布 [L1:3, L2:2, L3:1, L4:0]"
         healthy_range: "L1+L2 > 50% 且 无异常跳跃"
         alarm: "L3+占比 > 30% → 高风险Agent过多"
-    
+
     auto_generation: "每次 PermissionGuard.check() 执行后异步更新"
     visual_indicator: |
       ┌─────────────────────────────────────────────┐

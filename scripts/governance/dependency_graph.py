@@ -74,8 +74,6 @@ def has_cycle(graph: dict[str, list[str]]) -> tuple[bool, list[str] | None]:
         color[node] = BLACK
         return False
 
-
-
     for node in graph:
         if color.get(node) == WHITE:
             if dfs(node):

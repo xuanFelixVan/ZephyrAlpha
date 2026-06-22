@@ -18,52 +18,55 @@ from typing import Annotated, Any, Self
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from zephyr.governance.rule_enforcement.task_types import TaskNamespace
 from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
+from zephyr.integration.shared.schema.execution_model import (
+    ExecutionModel,
+    normalize_execution_model,
+)
 from zephyr.integration.shared.schema.severity_types import (
     AuditSeverity,
     CircuitBreakerState,
     Priority,
     SafetyLevel,
 )
-from zephyr.integration.shared.schema.execution_model import (
-    ExecutionModel,
-    normalize_execution_model,
-)
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace
 
 __all__ = [
-    "TaskStatus",
-    "TaskNamespace",
-    "ExecutionModel",
-    "normalize_execution_model",
-    "SafetyLevel",
-    "Classification",
-    "EvolutionPolicy",
-    "AuditSeverity",
-    "Priority",
-    "CircuitBreakerState",
-    "KeCategory",
-    "Task",
+    "BASE_CONFIG",
     "AuditFinding",
     "AuditReport",
-    "KnowledgeEntry",
-    "FailurePattern",
+    "AuditSeverity",
     "BlockedItem",
+    "CircuitBreakerState",
+    "Classification",
     "Decision",
-    "NextAction",
-    "HandoffPackage",
-    "BASE_CONFIG",
+    "EvolutionPolicy",
+    "ExecutionModel",
+    "FailurePattern",
     "FailureType",
+    "HandoffPackage",
+    "KeCategory",
+    "KnowledgeEntry",
+    "NextAction",
+    "Priority",
+    "SafetyLevel",
+    "Task",
+    "TaskNamespace",
+    "TaskStatus",
+    "normalize_execution_model",
 ]
 
 _STABILITY_FROZEN = True
 _FROZEN_PUBLIC_API = frozenset(__all__)
 
+
 def __getattr__(name: str):
     if name in _FROZEN_PUBLIC_API:
         import logging
+
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.integration.shared.schema.schemas", name
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.integration.shared.schema.schemas",
+            name,
         )
     raise AttributeError(f"module 'zephyr.integration.shared.schema.schemas' has no attribute {name!r}")
 
@@ -137,9 +140,7 @@ class KnowledgeEntry(BaseModel):
 
     ke_id: Annotated[str, Field(pattern=r"^KE-\d{3,}$", description="KE ID, format KE-NNN")]
     title: str = Field(min_length=1, max_length=300)
-    category: KeCategory = Field(
-        default=KeCategory.best_practice, description="Knowledge entry content type"
-    )
+    category: KeCategory = Field(default=KeCategory.best_practice, description="Knowledge entry content type")
     source_file: str = Field(min_length=1, description="Source file relative path")
     source_git_deleted: bool = Field(default=False, description="Whether source file is git-deleted")
     fingerprint_sha256: str | None = Field(
@@ -203,7 +204,7 @@ class Decision(BaseModel):
     decision_id: str = Field(min_length=1)
     summary: str = Field(min_length=1, max_length=500)
     rationale: str = Field(min_length=1, max_length=1000)
-    kb_ref: str | None = Field(default=None, description="Associated KB decision record") 
+    kb_ref: str | None = Field(default=None, description="Associated KB decision record")
 
 
 class NextAction(BaseModel):
@@ -256,7 +257,7 @@ class HandoffPackage(BaseModel):
 # shared→governance→integration→governance cycle.
 # These are imported AFTER all local definitions to ensure the module is
 # fully initialized before triggering the governance import chain.
-from zephyr.governance.rule_enforcement.task_types import (  # noqa: E402
+from zephyr.governance.rule_enforcement.task_types import (
     Task,
     TaskStatus,
 )

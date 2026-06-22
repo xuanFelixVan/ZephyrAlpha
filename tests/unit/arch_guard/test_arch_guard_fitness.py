@@ -30,9 +30,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 ARCH_GUARD_ROOT = REPO_ROOT / "scripts" / "arch_guard"
 FF_ROOT = ARCH_GUARD_ROOT / "fitness_functions"
 
-FF_SCRIPTS_ON_DISK = sorted(
-    f.stem for f in FF_ROOT.glob("check_*.py") if f.is_file()
-)
+FF_SCRIPTS_ON_DISK = sorted(f.stem for f in FF_ROOT.glob("check_*.py") if f.is_file())
 
 GUARD_SCRIPTS = [
     ("check_acl_boundary", ARCH_GUARD_ROOT / "check_acl_boundary.py"),

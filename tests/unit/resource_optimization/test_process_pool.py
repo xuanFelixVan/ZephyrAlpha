@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 test_process_pool.py - MCPProcessPool unit tests
 =================================================
@@ -14,13 +15,10 @@ TASK-INF-0142 Phase 4 verification.
 """
 
 
-import subprocess
 import sys
 import time
 
-import pytest
-
-from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool, PooledProcess
+from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool
 
 
 class TestProcessPoolBasic:

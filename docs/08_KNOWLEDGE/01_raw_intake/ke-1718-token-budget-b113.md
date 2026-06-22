@@ -19,14 +19,14 @@ class TokenBudget(BaseModel):
 def _check_token_budget(self, estimated_tokens: int) -> tuple[bool, str]:
     """跨dispatch Token预算协调"""
     budget = self._token_budget
-    
+
     if budget.consumed + estimated_tokens > budget.limit * budget.block_threshold:
         return False, f"Token预算耗尽：{budget.consumed}/{budget.limit}"
-    
+
     if budget.consumed + estimated_tokens > budget.limit * budget.warn_threshold:
         # 发出WARNING→仍允许执行但通知Owner
         self._notify_budget_warning(budget.consumed + estimated_tokens, budget.limit)
-    
+
     budget.consumed += estimated_tokens
     return True, ""
 ```

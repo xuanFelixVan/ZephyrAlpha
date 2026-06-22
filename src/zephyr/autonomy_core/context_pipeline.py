@@ -25,7 +25,7 @@ context_pipeline — Context Engine **四段流水线组合根**
 
 病根（为何审计会判「 Assembler ≠ build→compress→validate→inject 」）
 --------------------------------------------------------------------
-1. ``zephyr.orchestration.context_management`` 包文档与 ``docs/.../context-engine-interface.md``
+1. ``zephyr.autonomy_core`` 包文档与 ``docs/.../context-engine-interface.md``
    将 **同一语义**约束为 ``build → compress → validate → inject``。
 2. 实现演进时三段能力落在 **独立类**：``ContextAssembler``（已将 build + 超限 compress
    内联在同一 ``assemble``）、``DocCompressor``、``ContextInjector``，
@@ -42,7 +42,6 @@ context_pipeline — Context Engine **四段流水线组合根**
 inject 省略时仍可完成前三段闭环；KB 不可用则不要传 ``kb_repo``。
 """
 
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -57,8 +56,8 @@ from zephyr.autonomy_core.architecture_context_loader import (
 from zephyr.autonomy_core.context_assembler import AssembledContext, AssemblyError, ContextAssembler
 from zephyr.autonomy_core.context_injector import ContextInjector, InjectedContext
 from zephyr.autonomy_core.context_rule_registry import ContextRuleRegistry
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 InjectMode = Literal["none", "task_id", "module_id", "keyword"]
 

@@ -23,8 +23,8 @@ from __future__ import annotations
 
 """context_outcome_tracker.py — 因果链追踪 (B14, DD88, TASK-017)"""
 
-from dataclasses import dataclass, field
-from collections import Counter
+from dataclasses import dataclass
+
 
 @dataclass
 class ContextOutcomeLink:
@@ -34,8 +34,10 @@ class ContextOutcomeLink:
     success_rate: float = 0.0
     suspect: bool = False
 
+
 class ContextOutcomeTracker:
     """ContextBlock → Agent Action → Action Success 三级因果关联 (DD88)."""
+
     def __init__(self) -> None:
         self._links: dict[str, ContextOutcomeLink] = {}
 

@@ -14,16 +14,13 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
-
-import pytest
 
 from zephyr.infrastructure.asset_inventory.trust_anchor import (
     BypassManager,
     BypassState,
+    TripleTrustAnchorGate,
     TrustAnchorResult,
     TrustLevel,
-    TripleTrustAnchorGate,
 )
 
 
@@ -198,7 +195,6 @@ class TestBypassManager:
             "expires_at": (datetime.now(UTC) - timedelta(hours=1)).isoformat(),
         }
         import yaml
-        (override_dir / "inventory_override.yaml").write_text(
-            yaml.dump(override_data), encoding="utf-8"
-        )
+
+        (override_dir / "inventory_override.yaml").write_text(yaml.dump(override_data), encoding="utf-8")
         assert mgr.is_bypass_active() is False

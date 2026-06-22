@@ -31,24 +31,20 @@ warn_only: false
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
 AUDIT_MATRIX_PATH = (
-    REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "target-architecture"
-    / "dimension_audit_matrix.md"
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "dimension_audit_matrix.md"
 )
 ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts" / "arch_guard" / "manifest.yaml"
 INVARIANTS_PATH = (
@@ -172,6 +168,7 @@ def score_default(dim: str) -> float:
     """score_default implementation."""
     return 6.0
 
+
 SCORING_FNS = {
     "D5": score_d5_architecture,
     "D6": score_d6_security,
@@ -203,7 +200,7 @@ def format_report(scores: dict[str, float], total: float) -> str:
     lines = [
         "=" * 70,
         "ZephyrAlpha 12 维架构评分报告",
-        f"生成时间: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}",
+        f"生成时间: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}",
         "=" * 70,
         "",
         f"{'维度':<6} {'名称':<16} {'分数':>6} {'权重':>6} {'加权':>6}",
@@ -245,7 +242,7 @@ def main() -> int:
 
     if args.dashboard:
         output = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "scores": scores,
             "weighted_total": total,
             "dimension_names": DIMENSION_NAMES,
@@ -257,10 +254,10 @@ def main() -> int:
 
     if args.quarterly:
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
         snapshot_path = OUTPUT_DIR / f"score_snapshot_{ts}.json"
         snapshot = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "scores": scores,
             "weighted_total": total,
         }
@@ -292,5 +289,7 @@ def main() -> int:
             print(f"[WARN] 无法读取对比文件: {e}")
 
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

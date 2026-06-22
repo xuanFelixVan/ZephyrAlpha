@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_telemetry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_telemetry
+# [MODULE] zephyr.autonomy_core.skill_telemetry
 
 # [INVARIANTS] none
 
@@ -28,14 +28,13 @@ Version: 0.3.0
 Skill Telemetry——使用遥测采集与聚合分析.
 """
 
-
 from __future__ import annotations
 
 import json
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 
 class SkillTelemetry:
@@ -45,35 +44,33 @@ class SkillTelemetry:
     _MAX_EVENTS = 500
 
     def __init__(self):
-        self._events: List[Dict[str, Any]] = []
+        self._events: list[dict[str, Any]] = []
 
-    def record(self, skill_id: str, event: str,
-               metadata: Optional[Dict[str, Any]] = None) -> None:
+    def record(self, skill_id: str, event: str, metadata: dict[str, Any] | None = None) -> None:
         entry = {
-            "skill_id": skill_id, "event": event,
+            "skill_id": skill_id,
+            "event": event,
             "metadata": metadata or {},
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "epoch": time.time(),
         }
         self._events.append(entry)
         if len(self._events) > self._MAX_EVENTS:
-            self._events = self._events[-self._MAX_EVENTS:]
+            self._events = self._events[-self._MAX_EVENTS :]
         self._persist(entry)
 
-    def query(self, skill_id: str,
-              since_hours: int = 24) -> List[Dict[str, Any]]:
+    def query(self, skill_id: str, since_hours: int = 24) -> list[dict[str, Any]]:
         cutoff = time.time() - since_hours * 3600
-        return [e for e in self._events
-                if e["skill_id"] == skill_id and e["epoch"] > cutoff]
+        return [e for e in self._events if e["skill_id"] == skill_id and e["epoch"] > cutoff]
 
-    def stats(self, skill_id: Optional[str] = None) -> Dict[str, Any]:
+    def stats(self, skill_id: str | None = None) -> dict[str, Any]:
         events = self._events
         if skill_id:
             events = [e for e in events if e["skill_id"] == skill_id]
         if not events:
             return {"total_events": 0}
 
-        event_counts: Dict[str, int] = {}
+        event_counts: dict[str, int] = {}
         for e in events:
             evt = e["event"]
             event_counts[evt] = event_counts.get(evt, 0) + 1
@@ -86,7 +83,7 @@ class SkillTelemetry:
             "last_event": events[-1]["timestamp"],
         }
 
-    def _persist(self, entry: Dict[str, Any]):
+    def _persist(self, entry: dict[str, Any]):
         try:
             self._TELEMETRY_LOG.parent.mkdir(parents=True, exist_ok=True)
             with open(self._TELEMETRY_LOG, "a", encoding="utf-8") as f:

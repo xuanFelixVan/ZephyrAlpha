@@ -20,7 +20,6 @@ import pytest
 from zephyr.governance.rollback_wal import (
     RollbackWAL,
     WALEntry,
-    WALStatus,
 )
 
 

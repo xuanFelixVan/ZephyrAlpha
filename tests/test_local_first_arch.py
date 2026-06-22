@@ -12,12 +12,10 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.infrastructure.a2a_protocol.local_first_arch import (
+    LOCAL_FIRST,
     ComputeLocation,
     LocalFirstPolicy,
-    LOCAL_FIRST,
 )
 
 

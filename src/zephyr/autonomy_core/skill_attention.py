@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_attention | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_attention
+# [MODULE] zephyr.autonomy_core.skill_attention
 
 # [INVARIANTS] none
 
@@ -29,11 +29,10 @@ Skill 注意力管理 —— 上下文窗口预算分配与裁剪。
 在多 Skill 并发注入时，按优先级 + freshness 动态分配 token 配额。
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
+from typing import Any
 
 
 @dataclass
@@ -46,16 +45,20 @@ class AttentionSlot:
 
 @dataclass
 class AttentionPlan:
-    slots: List[AttentionSlot] = field(default_factory=list)
+    slots: list[AttentionSlot] = field(default_factory=list)
     total_budget: int = 0
     total_allocated: int = 0
-    overflow_skills: List[str] = field(default_factory=list)
+    overflow_skills: list[str] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "slots": [
-                {"skill_id": s.skill_id, "allocated_tokens": s.allocated_tokens,
-                 "priority": s.priority, "freshness": s.freshness}
+                {
+                    "skill_id": s.skill_id,
+                    "allocated_tokens": s.allocated_tokens,
+                    "priority": s.priority,
+                    "freshness": s.freshness,
+                }
                 for s in self.slots
             ],
             "total_budget": self.total_budget,
@@ -77,9 +80,9 @@ class SkillAttention:
 
     @staticmethod
     def allocate(
-        skill_candidates: List[Dict[str, Any]],
-        window_size: Optional[int] = None,
-        max_skills: Optional[int] = None,
+        skill_candidates: list[dict[str, Any]],
+        window_size: int | None = None,
+        max_skills: int | None = None,
     ) -> AttentionPlan:
         budget = window_size or SkillAttention.DEFAULT_L2_TOKEN_BUDGET
         max_n = max_skills or SkillAttention.DEFAULT_MAX_SKILLS
@@ -95,29 +98,32 @@ class SkillAttention:
         overflow = [s[0] for s in scored[max_n:]]
 
         if not selected:
-            return AttentionPlan(slots=[], total_budget=budget,
-                                 total_allocated=0, overflow_skills=overflow)
+            return AttentionPlan(slots=[], total_budget=budget, total_allocated=0, overflow_skills=overflow)
 
         total_weight = sum(s[1] for s in selected) or 1.0
         slots = []
         total_alloc = 0
         for sid, weight, candidate in selected:
             allocated = max(50, int(budget * weight / total_weight))
-            slots.append(AttentionSlot(
-                skill_id=sid,
-                allocated_tokens=allocated,
-                priority=candidate.get("priority", 0.5),
-                freshness=candidate.get("freshness_score", 50.0),
-            ))
+            slots.append(
+                AttentionSlot(
+                    skill_id=sid,
+                    allocated_tokens=allocated,
+                    priority=candidate.get("priority", 0.5),
+                    freshness=candidate.get("freshness_score", 50.0),
+                )
+            )
             total_alloc += allocated
 
         return AttentionPlan(
-            slots=slots, total_budget=budget,
-            total_allocated=total_alloc, overflow_skills=overflow,
+            slots=slots,
+            total_budget=budget,
+            total_allocated=total_alloc,
+            overflow_skills=overflow,
         )
 
     @staticmethod
-    def inject_context(plan: AttentionPlan, skill_bodies: Dict[str, str]) -> str:
+    def inject_context(plan: AttentionPlan, skill_bodies: dict[str, str]) -> str:
         parts = []
         for slot in plan.slots:
             body = skill_bodies.get(slot.skill_id, "")

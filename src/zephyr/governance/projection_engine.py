@@ -31,7 +31,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.persistence.event_store import EventRecord, EventStore
+from zephyr.governance.persistence.event_store import EventStore
 from zephyr.governance.persistence.sqlite_schema import DB_PATH
 
 logger = logging.getLogger(__name__)
@@ -130,9 +130,7 @@ class ProjectionEngine:
             try:
                 state = handler(state, payload)
             except Exception as exc:
-                raise ProjectionError(
-                    f"Handler {ev.event_type} failed for event {ev.event_id}: {exc}"
-                ) from exc
+                raise ProjectionError(f"Handler {ev.event_type} failed for event {ev.event_id}: {exc}") from exc
 
         return state
 

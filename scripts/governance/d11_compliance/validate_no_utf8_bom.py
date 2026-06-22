@@ -15,6 +15,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -24,14 +25,14 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
-from _shared.constants import EXIT_PASS
-
-
 import argparse
 import json
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_PASS
 
 __manifest__ = """
 dimensions: [D1, D11]
@@ -50,7 +51,17 @@ description: >
 """
 
 TARGET_EXTENSIONS = {".yaml", ".md", ".py"}
-EXCLUDE_DIRS = {".git", ".ailocks", "node_modules", "__pycache__", ".venv", "venv", ".pytest_cache", ".mypy_cache", "_DO_NOT_USE_old_tree"}
+EXCLUDE_DIRS = {
+    ".git",
+    ".ailocks",
+    "node_modules",
+    "__pycache__",
+    ".venv",
+    "venv",
+    ".pytest_cache",
+    ".mypy_cache",
+    "_DO_NOT_USE_old_tree",
+}
 
 
 def scan_for_bom(root: Path) -> list[str]:

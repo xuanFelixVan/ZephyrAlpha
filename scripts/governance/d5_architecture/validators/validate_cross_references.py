@@ -48,7 +48,6 @@ import re
 import sys
 from pathlib import Path
 
-
 _SCRIPT_DIR = Path(__file__).resolve().parent
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
@@ -59,7 +58,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXCLUDE_DIRS, GOV_DOCS_DIR, REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXCLUDE_DIRS, EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
@@ -211,6 +210,7 @@ def _build_adr_registry() -> set[str]:
     if db_path.exists():
         try:
             import sqlite3
+
             conn = sqlite3.connect(str(db_path))
             cur = conn.execute("SELECT ke_id FROM knowledge WHERE category = 'architecture_decision'")
             for row in cur:
@@ -701,5 +701,7 @@ def main() -> None:
     else:
         print(f"🟡 GATE-XREF 通过（有 {len(_warnings)} 个设计性警告）")
         return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

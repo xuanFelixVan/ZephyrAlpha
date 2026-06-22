@@ -11,11 +11,12 @@
 # [TESTS] test_auto_fix_engine.py
 
 import hashlib
-from datetime import UTC, datetime
 
 import pytest
 
-models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="auto-fix-engine.models not available")
+models = pytest.importorskip(
+    "zephyr.security.access_control.auto_fix_engine_03.models", reason="auto-fix-engine.models not available"
+)
 FixAction = models.FixAction
 FixStatus = models.FixStatus
 FixLevel = models.FixLevel
@@ -92,7 +93,7 @@ class TestFixAction:
 
     def test_fingerprint_auto_computed(self):
         action = FixAction(action_type="rename_var", target="foo.py:L10", before="old_val")
-        raw = f"rename_var:foo.py:L10:old_val"
+        raw = "rename_var:foo.py:L10:old_val"
         expected = hashlib.sha256(raw.encode()).hexdigest()[:16]
         assert action.fingerprint == expected
 
@@ -136,7 +137,7 @@ class TestFixAction:
 
     def test_empty_before_fingerprint(self):
         action = FixAction(action_type="delete_file", target="temp.py", before="")
-        raw = f"delete_file:temp.py:"
+        raw = "delete_file:temp.py:"
         expected = hashlib.sha256(raw.encode()).hexdigest()[:16]
         assert action.fingerprint == expected
 
@@ -155,7 +156,9 @@ class TestComplianceEvidence:
         assert evidence.tamper_proof_hash != ""
 
     def test_tamper_proof_hash_preserved_if_provided(self):
-        evidence = ComplianceEvidence(fix_id="fx123", action_type="rename_var", target="foo.py", tamper_proof_hash="custom_hash_1234567890123456")
+        evidence = ComplianceEvidence(
+            fix_id="fx123", action_type="rename_var", target="foo.py", tamper_proof_hash="custom_hash_1234567890123456"
+        )
         assert evidence.tamper_proof_hash == "custom_hash_1234567890123456"
 
     def test_tamper_proof_hash_deterministic(self):
@@ -205,7 +208,13 @@ class TestBaseFixer:
             fixer.rollback("target")
 
     def test_with_optional_fields(self):
-        fixer = BaseFixer(fixer_id="fixer_002", action_type="refactor", level=FixLevel.L2_LLM, dimension="quality", description="Refactor module")
+        fixer = BaseFixer(
+            fixer_id="fixer_002",
+            action_type="refactor",
+            level=FixLevel.L2_LLM,
+            dimension="quality",
+            description="Refactor module",
+        )
         assert fixer.level == FixLevel.L2_LLM
         assert fixer.dimension == "quality"
         assert fixer.description == "Refactor module"

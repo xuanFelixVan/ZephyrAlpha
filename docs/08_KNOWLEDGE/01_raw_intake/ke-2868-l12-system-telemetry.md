@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-2868
 status: active
 title: infra_ops

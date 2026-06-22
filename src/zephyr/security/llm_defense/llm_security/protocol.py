@@ -21,7 +21,7 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
@@ -31,8 +31,8 @@ class SecurityContext:
     request_id: str
     layer_name: str
     raw_input: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    traces: List[Dict[str, Any]] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
+    traces: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -41,7 +41,7 @@ class SecurityResult:
     reason: str
     layer_name: str
     score: float = 1.0
-    details: Dict[str, Any] = field(default_factory=dict)
+    details: dict[str, Any] = field(default_factory=dict)
 
 
 class LLMSecurityProtocol(ABC):
@@ -94,7 +94,7 @@ class LLMSecurityProtocol(ABC):
         """
         ...
 
-    async def pre_check(self, ctx: SecurityContext) -> Optional[SecurityResult]:
+    async def pre_check(self, ctx: SecurityContext) -> SecurityResult | None:
         """可选前置检查钩子。返回非 None 值将短路 evaluate()。
 
         Args:

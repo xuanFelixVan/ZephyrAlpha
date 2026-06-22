@@ -34,7 +34,6 @@ CapabilityPassport --- AI 模型能力护照
     - recommendations: 推荐 (safe_capabilities, unsafe_capabilities)
 """
 
-
 from __future__ import annotations
 
 import json
@@ -145,8 +144,7 @@ class CapabilityPassport:
         for k, v in asdict(self).items():
             result[k] = v
         result["depth"]["capabilities"] = {
-            cap: asdict(cap_result)
-            for cap, cap_result in self.depth.capabilities.items()
+            cap: asdict(cap_result) for cap, cap_result in self.depth.capabilities.items()
         }
         return result
 
@@ -203,10 +201,7 @@ class CapabilityPassport:
     def list_all() -> list[str]:
         if not PASSPORTS_DIR.exists():
             return []
-        return [
-            p.stem.replace("_", ":")
-            for p in PASSPORTS_DIR.glob("*.json")
-        ]
+        return [p.stem.replace("_", ":") for p in PASSPORTS_DIR.glob("*.json")]
 
 
 def compute_grade(score: float) -> str:

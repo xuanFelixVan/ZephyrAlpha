@@ -41,7 +41,6 @@ ZephyrAlpha — system-telemetry/contract_metrics.py
 SSoT: cross_layer_contracts.yaml → CTR-SLA-001~006
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -112,7 +111,7 @@ class ContractMetricsCollector:
 
         self._sla_buffer.append(record)
         if len(self._sla_buffer) > self._MAX_SLA_BUFFER:
-            self._sla_buffer = self._sla_buffer[-self._MAX_SLA_BUFFER:]
+            self._sla_buffer = self._sla_buffer[-self._MAX_SLA_BUFFER :]
         if not passed:
             _logger.warning(
                 "[SLA] %s 超限: %d us > %d us (trace=%s)",
@@ -142,6 +141,7 @@ class ContractMetricsCollector:
         baseline_std: float | None = None,
     ) -> DriftAlert | None:
         from zephyr.behavioral_audit.contract_drift_detector import detect_contract_drift as _detect
+
         return _detect(
             contract_id=contract_id,
             field_name=field_name,

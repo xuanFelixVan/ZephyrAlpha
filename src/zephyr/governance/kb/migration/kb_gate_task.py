@@ -20,8 +20,8 @@
 # [TESTS]
 
 """KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ADR-0040 / tasks 表）。"""
-from __future__ import annotations
 
+from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path

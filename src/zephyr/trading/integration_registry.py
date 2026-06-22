@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
+
 class IntegrationPoint(BaseModel):
     model_config = BASE_CONFIG
     point_id: str
@@ -42,6 +43,7 @@ class IntegrationPoint(BaseModel):
     sla: str = "best_effort"
     status: str = "DISCONNECTED"
 
+
 class ValidationReport(BaseModel):
     model_config = BASE_CONFIG
     total: int = 0
@@ -49,6 +51,7 @@ class ValidationReport(BaseModel):
     degraded: int = 0
     disconnected: int = 0
     details: list[dict[str, str]] = Field(default_factory=list)
+
 
 class IntegrationRegistry:
     """集成注册表——AutoRuntime Core 与所有现有系统的连接点清单。"""

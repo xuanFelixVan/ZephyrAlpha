@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] handles None expected_output gracefully
 # [TESTS] tests/test_skill_learning.py
 
-import pytest
 from zephyr.autonomy_core.skill_learning import SkillLearning
 
 
@@ -41,7 +40,9 @@ class TestAddExecution:
 
     def test_add_with_expected_output_high_delta(self):
         sl = SkillLearning()
-        result = sl.add_execution("skill-3", "completely different", expected_output="totally unrelated text", success=False)
+        result = sl.add_execution(
+            "skill-3", "completely different", expected_output="totally unrelated text", success=False
+        )
         assert result["delta"] > 0.3
         assert "significant_divergence" in result["patterns_found"]
 

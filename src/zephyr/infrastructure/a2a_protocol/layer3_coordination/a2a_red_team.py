@@ -26,7 +26,6 @@ R81-C04 Phase 2: 实现具体攻击逻辑，集成 CI 红白对抗 pipeline.
 对标: A2ASECBENCH 六大攻击面 + OWASP ASI07 Agent间消息安全 + "Agents of Chaos" 11种无越狱系统性失败
 """
 
-
 from __future__ import annotations
 
 import time
@@ -366,7 +365,7 @@ class A2ARedTeam:
             task_id = "a2a-task-attack-chain-006"
 
             for i in range(5):
-                result = chain.delegate(task_id, f"agent-{i}", f"agent-{i+1}")
+                result = chain.delegate(task_id, f"agent-{i}", f"agent-{i + 1}")
                 if "error" in result:
                     return {
                         "penetrated": True,
@@ -398,7 +397,12 @@ class A2ARedTeam:
             return {"penetrated": False, "defense_worked": True, "detail": f"Attack blocked: {e}"}
 
     def _attack_fallback(self) -> dict:
-        return {"penetrated": False, "defense_worked": True, "detail": "No attack logic for this vector", "mitigation": "N/A"}
+        return {
+            "penetrated": False,
+            "defense_worked": True,
+            "detail": "No attack logic for this vector",
+            "mitigation": "N/A",
+        }
 
     # ==== AV-003: 恶意内容 Artifact Poisoning ====
 

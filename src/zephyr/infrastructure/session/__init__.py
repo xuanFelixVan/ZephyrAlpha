@@ -6,12 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.session — auto-generated package init."""
-from . import session_boundary
-from . import session_continuity
 
-__all__ = ['session_boundary', 'session_continuity']
+from . import session_boundary, session_continuity
 
+__all__ = ["session_boundary", "session_continuity"]

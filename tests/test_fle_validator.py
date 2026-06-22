@@ -13,9 +13,7 @@
 import os
 from unittest.mock import patch
 
-import pytest
-
-from zephyr.ops.validator import validate_all, validate_one, missing_files, BASE
+from zephyr.ops.validator import BASE, missing_files, validate_all, validate_one
 
 
 class TestValidatorInstantiation:
@@ -63,6 +61,7 @@ class TestMissingFiles:
 
     def test_missing_subset_of_skeletons(self):
         from zephyr.ops.template import SKELETONS
+
         result = missing_files()
         for path in result:
             assert path in SKELETONS

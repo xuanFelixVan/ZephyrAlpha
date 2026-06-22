@@ -10,9 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_feedback_delay_compensator.py
 
-import time
-
-import pytest
 
 from zephyr.ops.diagnosers.feedback_delay_compensator import (
     DelayState,

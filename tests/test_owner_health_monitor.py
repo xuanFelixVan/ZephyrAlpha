@@ -14,7 +14,9 @@ import time
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.owner_health_monitor", reason="owner_health_monitor not available")
+mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.owner_health_monitor", reason="owner_health_monitor not available"
+)
 OwnerHealthMonitor = mod.OwnerHealthMonitor
 
 

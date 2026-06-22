@@ -27,8 +27,6 @@ Owner Health Monitor — Owner 决策疲劳检测 (盲点 #22)
 """
 
 import time
-from dataclasses import dataclass
-from typing import Any, Optional
 
 
 class OwnerHealthMonitor:
@@ -51,7 +49,7 @@ class OwnerHealthMonitor:
         self._total_alerts += 1
 
     def check(self) -> dict:
-        dismissal_rate = (self._dismissals / max(self._total_alerts, 1))
+        dismissal_rate = self._dismissals / max(self._total_alerts, 1)
         idle_time = time.time() - self._last_active
 
         state = "HEALTHY"

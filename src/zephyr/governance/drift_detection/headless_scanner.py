@@ -26,17 +26,15 @@ module_id: MOD-INF-023
 LIGHT+DEEP 与会话日志 _interrupt_log.jsonl 扫描。
 对标 blueprint.md §2.18 / D-023-32。
 """
+
 from __future__ import annotations
 
 import json
 import os
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from dataclasses import dataclass
 
-from .drift_models import ScanResult, ScanLevel
+from .drift_models import ScanResult
 
 
 @dataclass
@@ -62,6 +60,7 @@ def _scan_script(script_path: str) -> list[HeadlessDiffEntry]:
         return []
     try:
         import subprocess
+
         result = subprocess.run(["python", script_path], capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
             return []
@@ -69,15 +68,20 @@ def _scan_script(script_path: str) -> list[HeadlessDiffEntry]:
         if not isinstance(output, list):
             return []
         return [
-            HeadlessDiffEntry(file=entry.get("file", ""), hunk=entry.get("hunk", ""),
-                              dimension=entry.get("dimension", ""), sha256=entry.get("sha256", ""))
-            for entry in output if isinstance(entry, dict)
+            HeadlessDiffEntry(
+                file=entry.get("file", ""),
+                hunk=entry.get("hunk", ""),
+                dimension=entry.get("dimension", ""),
+                sha256=entry.get("sha256", ""),
+            )
+            for entry in output
+            if isinstance(entry, dict)
         ]
     except Exception:
         return []
 
 
-def headless_scan_light(modules: list[str], project_root: Optional[str] = None) -> ScanResult:
+def headless_scan_light(modules: list[str], project_root: str | None = None) -> ScanResult:
     root = project_root or os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     scripts_dir = os.path.join(root, "scripts", "governance", "d5_architecture")
     results: list[object] = []
@@ -88,8 +92,12 @@ def headless_scan_light(modules: list[str], project_root: Optional[str] = None) 
         entries = _scan_script(fp)
         results.extend(entries)
     return ScanResult(
-        scan_id=uuid.uuid4(), detectors_run=len(list(os.listdir(scripts_dir))) if os.path.isdir(scripts_dir) else 0,
-        total_drift_events=len(results), new_events=[], resolved_events=[], storm_mode_triggered=len(results) > 50,
+        scan_id=uuid.uuid4(),
+        detectors_run=len(list(os.listdir(scripts_dir))) if os.path.isdir(scripts_dir) else 0,
+        total_drift_events=len(results),
+        new_events=[],
+        resolved_events=[],
+        storm_mode_triggered=len(results) > 50,
     )
 
 
@@ -98,20 +106,22 @@ def parse_interrupt_log(log_path: str) -> list[InterruptLog]:
         return []
     entries: list[InterruptLog] = []
     try:
-        with open(log_path, "r", encoding="utf-8") as fh:
+        with open(log_path, encoding="utf-8") as fh:
             for line in fh:
                 line = line.strip()
                 if not line:
                     continue
                 try:
                     data = json.loads(line)
-                    entries.append(InterruptLog(
-                        session_id=data.get("session_id", ""),
-                        triggered_by=data.get("triggered_by", ""),
-                        context_at=data.get("context_at", ""),
-                        scan_outcome=data.get("scan_outcome", ""),
-                        errors_found=data.get("errors_found", 0),
-                    ))
+                    entries.append(
+                        InterruptLog(
+                            session_id=data.get("session_id", ""),
+                            triggered_by=data.get("triggered_by", ""),
+                            context_at=data.get("context_at", ""),
+                            scan_outcome=data.get("scan_outcome", ""),
+                            errors_found=data.get("errors_found", 0),
+                        )
+                    )
                 except json.JSONDecodeError:
                     pass
     except (OSError, UnicodeDecodeError):

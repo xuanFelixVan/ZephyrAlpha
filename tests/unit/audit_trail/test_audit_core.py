@@ -66,12 +66,14 @@ class TestAuditWriterWrite:
 
     def test_write_returns_chain_hash(self, tmp_dir):
         writer = AuditWriter(data_dir=tmp_dir, enable_merkle=False)
-        chain_hash = writer.write({
-            "event_type": "file_write",
-            "agent_id": "test-agent",
-            "operation": "write",
-            "status": "success",
-        })
+        chain_hash = writer.write(
+            {
+                "event_type": "file_write",
+                "agent_id": "test-agent",
+                "operation": "write",
+                "status": "success",
+            }
+        )
         assert isinstance(chain_hash, str)
         assert len(chain_hash) == 64
 
@@ -102,7 +104,7 @@ class TestAuditWriterWrite:
         writer.write({"event_type": "file_read", "agent_id": "b"})
         events_path = os.path.join(tmp_dir, "events.jsonl")
         assert os.path.exists(events_path)
-        with open(events_path, "r", encoding="utf-8") as f:
+        with open(events_path, encoding="utf-8") as f:
             lines = f.readlines()
         assert len(lines) == 2
         for line in lines:
@@ -114,7 +116,7 @@ class TestAuditWriterWrite:
         writer.write({"event_type": "heartbeat", "agent_id": "a"})
         writer.write({"event_type": "heartbeat", "agent_id": "b"})
         events_path = os.path.join(tmp_dir, "events.jsonl")
-        with open(events_path, "r", encoding="utf-8") as f:
+        with open(events_path, encoding="utf-8") as f:
             lines = f.readlines()
         first = json.loads(lines[0])
         second = json.loads(lines[1])

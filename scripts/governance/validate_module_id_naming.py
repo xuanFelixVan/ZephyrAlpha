@@ -22,14 +22,14 @@ module_id 命名合规性校验门禁
   python scripts/governance/validate_module_id_naming.py [--warn-only] [--blueprint-dir DIR]
 """
 
+import argparse
 import re
 import sys
-import argparse
 from pathlib import Path
 
-VALID_MODULE_ID_PATTERN = re.compile(r'^[A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4}$')
+VALID_MODULE_ID_PATTERN = re.compile(r"^[A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4}$")
 
-NESTED_ID_PATTERN = re.compile(r'^([A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4})-[A-Z]')
+NESTED_ID_PATTERN = re.compile(r"^([A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4})-[A-Z]")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -62,24 +62,28 @@ def validate_blueprint(filepath: Path, warn_only: bool = False) -> list[dict]:
         return violations
 
     if not VALID_MODULE_ID_PATTERN.match(module_id):
-        violations.append({
-            "file": str(filepath.relative_to(PROJECT_ROOT)),
-            "module_id": module_id,
-            "violation": "FORMAT_INVALID",
-            "message": f"module_id '{module_id}' does not match pattern {VALID_MODULE_ID_PATTERN.pattern}",
-        })
+        violations.append(
+            {
+                "file": str(filepath.relative_to(PROJECT_ROOT)),
+                "module_id": module_id,
+                "violation": "FORMAT_INVALID",
+                "message": f"module_id '{module_id}' does not match pattern {VALID_MODULE_ID_PATTERN.pattern}",
+            }
+        )
 
     nested_match = NESTED_ID_PATTERN.match(module_id)
     if nested_match:
         parent_id = nested_match.group(1)
-        violations.append({
-            "file": str(filepath.relative_to(PROJECT_ROOT)),
-            "module_id": module_id,
-            "violation": "NESTED_ID",
-            "message": f"module_id '{module_id}' uses nested numbering (parent={parent_id}). "
-                       f"Use independent numbering + parent_module field instead. "
-                       f"See PS-STD-001 §5.4 rule #7.",
-        })
+        violations.append(
+            {
+                "file": str(filepath.relative_to(PROJECT_ROOT)),
+                "module_id": module_id,
+                "violation": "NESTED_ID",
+                "message": f"module_id '{module_id}' uses nested numbering (parent={parent_id}). "
+                f"Use independent numbering + parent_module field instead. "
+                f"See PS-STD-001 §5.4 rule #7.",
+            }
+        )
 
     return violations
 
@@ -98,7 +102,7 @@ def main():
         all_violations.extend(violations)
 
     if not all_violations:
-        print(f"[CLEAN] All module_ids comply with PS-STD-001 §5 naming rules.")
+        print("[CLEAN] All module_ids comply with PS-STD-001 §5 naming rules.")
         return 0
 
     print(f"[VIOLATION] {len(all_violations)} module_id naming violation(s) found:\n")

@@ -25,11 +25,10 @@ L36: context_rot > 35% + dilution > 0.3 → context refresh before action
 L37: worsening > 0.4 → only NOTIFY_OWNER; trust_decay > baseline*1.5 → force L0
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL36L37:
-
     def __init__(self):
         self.context_rot: float = 0.0
         self.dilution: float = 0.0
@@ -51,7 +50,11 @@ class SafetyGateL36L37:
 
     def _l37_vibe_maintainability(self, ctx: ActionContext) -> GateResult:
         if self.worsening > 0.4:
-            return GateResult("L37", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Vibe worsening {self.worsening:.2f} > 0.4")
+            return GateResult(
+                "L37", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Vibe worsening {self.worsening:.2f} > 0.4"
+            )
         if self.trust_decay > self.baseline_decay * 1.5:
-            return GateResult("L37", GateVerdict.REJECT, GateType.HARD, f"Trust decay {self.trust_decay:.3f} — force L0")
+            return GateResult(
+                "L37", GateVerdict.REJECT, GateType.HARD, f"Trust decay {self.trust_decay:.3f} — force L0"
+            )
         return GateResult("L37", GateVerdict.PASS, GateType.HARD)

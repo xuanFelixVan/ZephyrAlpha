@@ -30,13 +30,12 @@ TopologyChangeLog — 分支拓扑变更日志。
     zephyr rollback --branch-topology 回滚分支级操作。
 """
 
-
 from __future__ import annotations
 
 import json
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -63,7 +62,6 @@ class TopologyChange:
 
 
 class TopologyChangeLog:
-
     LOG_FILE: str = ".zephyr/topology_change_log.jsonl"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -89,14 +87,18 @@ class TopologyChangeLog:
             result = subprocess.run(
                 ["git", "reflog", f"{branch_name}", "--format=%H", "-1"],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             sha = result.stdout.strip()
             if sha:
                 subprocess.run(
                     ["git", "branch", branch_name, sha],
                     cwd=str(self._project_root),
-                    capture_output=True, text=True, timeout=5,
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
                 )
                 return True
         except Exception:
@@ -108,22 +110,24 @@ class TopologyChangeLog:
             return []
 
         changes: list[TopologyChange] = []
-        with open(self._log_path, "r", encoding="utf-8") as f:
+        with open(self._log_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
                     continue
                 try:
                     entry = json.loads(line)
-                    changes.append(TopologyChange(
-                        op=TopologyOp(entry["op"]),
-                        branch=entry["branch"],
-                        target=entry["target"],
-                        before_sha=entry["before_sha"],
-                        after_sha=entry["after_sha"],
-                        timestamp_utc=entry["timestamp_utc"],
-                        details=entry.get("details", {}),
-                    ))
+                    changes.append(
+                        TopologyChange(
+                            op=TopologyOp(entry["op"]),
+                            branch=entry["branch"],
+                            target=entry["target"],
+                            before_sha=entry["before_sha"],
+                            after_sha=entry["after_sha"],
+                            timestamp_utc=entry["timestamp_utc"],
+                            details=entry.get("details", {}),
+                        )
+                    )
                 except (json.JSONDecodeError, KeyError, ValueError):
                     continue
 
@@ -141,18 +145,22 @@ class TopologyChangeLog:
             branches = subprocess.run(
                 ["git", "branch", "--format=%(refname:short)"],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             current_branch = subprocess.run(
                 ["git", "rev-parse", "--abbrev-ref", "HEAD"],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
 
             return {
                 "branches": [b for b in branches.stdout.strip().split("\n") if b],
                 "current": current_branch.stdout.strip(),
-                "snapshot_at": datetime.now(timezone.utc).isoformat(),
+                "snapshot_at": datetime.now(UTC).isoformat(),
             }
         except Exception:
             return {}

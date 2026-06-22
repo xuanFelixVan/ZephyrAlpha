@@ -70,10 +70,16 @@ def run_self_test() -> SelfTestReport:
     # Check 1: Import chain
     t1 = time.perf_counter()
     try:
-        from zephyr.governance.escalation_engine import EscalationEngine
-        from zephyr.governance.escalation_models import EscalationLevel, EscalationState, RuleCategory, EconomicGuard, DelegationStrategy
-        from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitState
         from zephyr.governance.delegation_engine import DelegationEngine
+        from zephyr.governance.escalation_engine import EscalationEngine
+        from zephyr.governance.escalation_models import (
+            DelegationStrategy,
+            EconomicGuard,
+            EscalationLevel,
+            EscalationState,
+            RuleCategory,
+        )
+        from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitState
 
         check_results.append(CheckResult("import_chain", True, detail="All core symbols importable"))
     except ImportError as e:
@@ -219,39 +225,49 @@ def main():
 if __name__ == "__main__":
     raise SystemExit(main())
 
+
 class SelfTest:
-    def __init__(self, test_name='', passed=True, details=None):
+    def __init__(self, test_name="", passed=True, details=None):
         self.test_name = test_name
         self.passed = passed
         self.details = details or {}
 
+
 class CheckStatus:
-    PASS = 'PASS'
-    FAIL = 'FAIL'
-    WARNING = 'WARNING'
-    SKIP = 'SKIP'
-    ERROR = 'ERROR'
+    PASS = "PASS"
+    FAIL = "FAIL"
+    WARNING = "WARNING"
+    SKIP = "SKIP"
+    ERROR = "ERROR"
+
 
 def _check_sqlite_integrity(db_path):
     return True
 
+
 def _check_ke_count():
     return True
+
 
 def _check_category_coverage():
     return True
 
+
 def _check_wal_health(db_path):
     return True
+
 
 def _check_freeze_state():
     return True
 
+
 def _check_tombstone_integrity(db_path):
     return True
 
+
 def _check_silent_period():
     return True
+
 
 def _check_filesystem_permissions():
     return True

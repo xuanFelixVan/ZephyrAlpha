@@ -1,10 +1,22 @@
 rule_id: TRAE-029
 title: 文档治理-操作安全
+version: 1.1.0
+layer: L1
+module_id: TRAE-029
+depends_on:
+- TRAE-028
+- TRAE-041
+tags:
+- TRAE
+- doc_operation_safety
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - DOC-007
 - DOC-009
 - DOC-010
-layer: L1
 severity: error
 scope: doc_operation_safety
 domain: TRAE
@@ -35,7 +47,7 @@ sections:
       fail: 使用普通Markdown链接[文字](不存在的路径)——会被计为断链
     - type: trigger
       check: 删除文件强制三步
-      pass: 1.Grep工具: pattern='旧文件名' path='d:/ZephyrAlpha' output_mode='files_with_matches' -n=true 找所有引用;2.同一commit内更新或移除所有引用;3.删除后确认断链增量符合预期
+      pass: "1.Grep工具: pattern='旧文件名' path='d:/ZephyrAlpha' output_mode='files_with_matches' -n=true 找所有引用;2.同一commit内更新或移除所有引用;3.删除后确认断链增量符合预期"
       fail: 分两次commit先删文件后清引用
     - type: trigger
       check: 移动/重命名文件强制两步
@@ -442,7 +454,7 @@ sections:
     - description: GOV-DOC-007 v1.1.1 (2026-06-19)
       details: RQ-09修复;provenance.source_files标记status:archived+添加archive_note(源.md已合并入YAML)
     - description: GOV-DOC-007 v1.1.2 (2026-06-21)
-      details: P1修复;Select-String(PowerShell命令违反RULE-SEVENTEEN)改为Grep工具引用格式;移除不存在的check_dead_links.py引用;kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/architecture-contract.yaml→architecture_contract.yaml);不存在的rule-classification-and-arbitration-standard.md引用修正为trae_041_meta_rule_classification.yaml
+      details: P1修复;Select-String(PowerShell命令违反RULE-SEVENTEEN)改为Grep工具引用格式;移除不存在的check_dead_links.py引用;kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/architecture-contract.yaml→architecture_contract.yaml);不存在的rule_classification_and_arbitration_standard.yaml引用修正为trae_041_meta_rule_classification.yaml
     - description: GOV-DOC-009 v1.9.0 (2026-06-21)
       details: P1修复;aliases移除DOC-008(与trae_028冲突,DOC-008属trae_028);doc_008 section original_rules移除DOC-008(该section实际关于DOC-001~DOC-004,DOC-008是错误引用)
 references:
@@ -458,7 +470,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   version: "1.1.0"
   last_modified: "2026-06-21"
   change_history:

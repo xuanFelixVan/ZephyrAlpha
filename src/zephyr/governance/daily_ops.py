@@ -11,7 +11,9 @@
 # [TESTS] tests/test_budget_enforcer/
 
 from __future__ import annotations
+
 from enum import Enum
+
 
 class OpsPhase(str, Enum):
     P1_PRE_OPEN = "08:00-09:30 盘前"
@@ -20,11 +22,13 @@ class OpsPhase(str, Enum):
     P4_MAINTENANCE = "16:30-17:30 盘后维护"
     P5_SUMMARY = "17:30-18:00 日终总结"
 
+
 class QuickCommand(str, Enum):
     CRISIS = "/crisis"
     STATUS = "/status"
     NOTES = "/notes"
     PUBLISH = "/publish"
+
 
 QUICK_COMMANDS: dict[QuickCommand, str] = {
     QuickCommand.CRISIS: "立即Pause所有策略仅Emergency defense·内存Only",

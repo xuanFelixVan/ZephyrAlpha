@@ -15,13 +15,12 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sqlite3
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
-
-import sqlite3
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
@@ -57,9 +56,7 @@ class CausalChainBrokenError(Exception):
     def __init__(self, chain: list[str], break_point: str):
         self.chain = chain
         self.break_point = break_point
-        super().__init__(
-            f"Causal chain broken at '{break_point}' in chain: {' -> '.join(chain)}"
-        )
+        super().__init__(f"Causal chain broken at '{break_point}' in chain: {' -> '.join(chain)}")
 
 
 @dataclass
@@ -73,7 +70,7 @@ class ConflictEntry:
 
 
 class CausalConflictDetector:
-    def __init__(self, depgraph_path: Optional[str] = None):
+    def __init__(self, depgraph_path: str | None = None):
         self._depgraph_path = Path(depgraph_path) if depgraph_path else DEFAULT_DEPGRAPH_PATH
         self._depgraph: dict[str, Any] = {}
         self._adj_forward: dict[str, list[str]] = defaultdict(list)
@@ -128,18 +125,20 @@ class CausalConflictDetector:
                     blueprints.add(bp)
             if len(blueprints) >= 2:
                 chain = self._build_causal_chain(consumers)
-                conflicts.append({
-                    "conflict_type": "resource_mutex",
-                    "severity": "high",
-                    "description": f"Resource '{resource}' accessed by {len(consumers)} modules across {len(blueprints)} blueprints",
-                    "causal_chain": chain,
-                    "modules_involved": [self._node_to_path.get(c, c) for c in consumers],
-                    "details": {
-                        "resource": resource,
-                        "consumer_count": len(consumers),
-                        "blueprints": sorted(blueprints),
-                    },
-                })
+                conflicts.append(
+                    {
+                        "conflict_type": "resource_mutex",
+                        "severity": "high",
+                        "description": f"Resource '{resource}' accessed by {len(consumers)} modules across {len(blueprints)} blueprints",
+                        "causal_chain": chain,
+                        "modules_involved": [self._node_to_path.get(c, c) for c in consumers],
+                        "details": {
+                            "resource": resource,
+                            "consumer_count": len(consumers),
+                            "blueprints": sorted(blueprints),
+                        },
+                    }
+                )
         return conflicts
 
     def detect_architecture_conflicts(self) -> list[dict[str, Any]]:
@@ -170,19 +169,21 @@ class CausalConflictDetector:
                     continue
                 if dep_order < src_order:
                     chain = self._build_causal_chain([node_id, dep_id])
-                    conflicts.append({
-                        "conflict_type": "architecture_reverse",
-                        "severity": "high",
-                        "description": f"Layer violation: {src_layer}({src_order}) depends on {dep_layer}({dep_order}) — reverse dependency",
-                        "causal_chain": chain,
-                        "modules_involved": [path, dep_path],
-                        "details": {
-                            "source_layer": src_layer,
-                            "target_layer": dep_layer,
-                            "source_order": src_order,
-                            "target_order": dep_order,
-                        },
-                    })
+                    conflicts.append(
+                        {
+                            "conflict_type": "architecture_reverse",
+                            "severity": "high",
+                            "description": f"Layer violation: {src_layer}({src_order}) depends on {dep_layer}({dep_order}) — reverse dependency",
+                            "causal_chain": chain,
+                            "modules_involved": [path, dep_path],
+                            "details": {
+                                "source_layer": src_layer,
+                                "target_layer": dep_layer,
+                                "source_order": src_order,
+                                "target_order": dep_order,
+                            },
+                        }
+                    )
         return conflicts
 
     def detect_dependency_conflicts(self) -> list[dict[str, Any]]:
@@ -198,19 +199,21 @@ class CausalConflictDetector:
                 reverse_deps = self._adj_forward.get(dep_id, [])
                 if node_id in reverse_deps:
                     chain = self._build_causal_chain([node_id, dep_id, node_id])
-                    conflicts.append({
-                        "conflict_type": "dependency_cycle",
-                        "severity": "critical",
-                        "description": f"Circular dependency between {self._node_to_path.get(node_id, node_id)} and {self._node_to_path.get(dep_id, dep_id)}",
-                        "causal_chain": chain,
-                        "modules_involved": [
-                            self._node_to_path.get(node_id, node_id),
-                            self._node_to_path.get(dep_id, dep_id),
-                        ],
-                        "details": {
-                            "cycle_type": "direct",
-                        },
-                    })
+                    conflicts.append(
+                        {
+                            "conflict_type": "dependency_cycle",
+                            "severity": "critical",
+                            "description": f"Circular dependency between {self._node_to_path.get(node_id, node_id)} and {self._node_to_path.get(dep_id, dep_id)}",
+                            "causal_chain": chain,
+                            "modules_involved": [
+                                self._node_to_path.get(node_id, node_id),
+                                self._node_to_path.get(dep_id, dep_id),
+                            ],
+                            "details": {
+                                "cycle_type": "direct",
+                            },
+                        }
+                    )
         indirect_cycles = self._find_indirect_cycles()
         for cycle in indirect_cycles:
             cycle_set = set(cycle)
@@ -219,17 +222,19 @@ class CausalConflictDetector:
                 continue
             visited_pairs.add(pair_key)
             chain = self._build_causal_chain(cycle)
-            conflicts.append({
-                "conflict_type": "dependency_cycle",
-                "severity": "high",
-                "description": f"Indirect circular dependency: {' -> '.join(self._node_to_path.get(n, n) for n in cycle)}",
-                "causal_chain": chain,
-                "modules_involved": [self._node_to_path.get(n, n) for n in cycle],
-                "details": {
-                    "cycle_type": "indirect",
-                    "cycle_length": len(cycle),
-                },
-            })
+            conflicts.append(
+                {
+                    "conflict_type": "dependency_cycle",
+                    "severity": "high",
+                    "description": f"Indirect circular dependency: {' -> '.join(self._node_to_path.get(n, n) for n in cycle)}",
+                    "causal_chain": chain,
+                    "modules_involved": [self._node_to_path.get(n, n) for n in cycle],
+                    "details": {
+                        "cycle_type": "indirect",
+                        "cycle_length": len(cycle),
+                    },
+                }
+            )
         return conflicts
 
     def _find_indirect_cycles(self, max_depth: int = 5) -> list[list[str]]:
@@ -268,20 +273,22 @@ class CausalConflictDetector:
                 dep_order = safety_order.get(dep_safety, 0)
                 if dep_order > node_order and node_order > 0:
                     chain = self._build_causal_chain([node_id, dep_id])
-                    conflicts.append({
-                        "conflict_type": "priority_mismatch",
-                        "severity": "medium",
-                        "description": f"Priority conflict: {node_safety} module depends on {dep_safety} module (lower priority depending on higher)",
-                        "causal_chain": chain,
-                        "modules_involved": [
-                            self._node_to_path.get(node_id, node_id),
-                            self._node_to_path.get(dep_id, dep_id),
-                        ],
-                        "details": {
-                            "source_safety": node_safety,
-                            "target_safety": dep_safety,
-                        },
-                    })
+                    conflicts.append(
+                        {
+                            "conflict_type": "priority_mismatch",
+                            "severity": "medium",
+                            "description": f"Priority conflict: {node_safety} module depends on {dep_safety} module (lower priority depending on higher)",
+                            "causal_chain": chain,
+                            "modules_involved": [
+                                self._node_to_path.get(node_id, node_id),
+                                self._node_to_path.get(dep_id, dep_id),
+                            ],
+                            "details": {
+                                "source_safety": node_safety,
+                                "target_safety": dep_safety,
+                            },
+                        }
+                    )
         return conflicts
 
     def _build_causal_chain(self, node_ids: list[str]) -> list[str]:
@@ -318,102 +325,127 @@ def _run_warn_only() -> dict[str, Any]:
     try:
         detector._load_depgraph()
         node_count = len(detector._path_to_node)
-        results["checks"].append({
-            "name": "depgraph_load",
-            "status": "PASS" if node_count > 0 else "WARN",
-            "detail": {"nodes_loaded": node_count},
-        })
+        results["checks"].append(
+            {
+                "name": "depgraph_load",
+                "status": "PASS" if node_count > 0 else "WARN",
+                "detail": {"nodes_loaded": node_count},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "depgraph_load",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "depgraph_load",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
     try:
         resource_conflicts = detector.detect_resource_conflicts()
-        results["checks"].append({
-            "name": "detect_resource_conflicts",
-            "status": "PASS",
-            "detail": {"conflict_count": len(resource_conflicts)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_resource_conflicts",
+                "status": "PASS",
+                "detail": {"conflict_count": len(resource_conflicts)},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "detect_resource_conflicts",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_resource_conflicts",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
     try:
         arch_conflicts = detector.detect_architecture_conflicts()
-        results["checks"].append({
-            "name": "detect_architecture_conflicts",
-            "status": "PASS",
-            "detail": {"conflict_count": len(arch_conflicts)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_architecture_conflicts",
+                "status": "PASS",
+                "detail": {"conflict_count": len(arch_conflicts)},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "detect_architecture_conflicts",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_architecture_conflicts",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
     try:
         dep_conflicts = detector.detect_dependency_conflicts()
-        results["checks"].append({
-            "name": "detect_dependency_conflicts",
-            "status": "PASS",
-            "detail": {"conflict_count": len(dep_conflicts)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_dependency_conflicts",
+                "status": "PASS",
+                "detail": {"conflict_count": len(dep_conflicts)},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "detect_dependency_conflicts",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_dependency_conflicts",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
     try:
         pri_conflicts = detector.detect_priority_conflicts()
-        results["checks"].append({
-            "name": "detect_priority_conflicts",
-            "status": "PASS",
-            "detail": {"conflict_count": len(pri_conflicts)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_priority_conflicts",
+                "status": "PASS",
+                "detail": {"conflict_count": len(pri_conflicts)},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "detect_priority_conflicts",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_priority_conflicts",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
     try:
         all_checks = detector.run_all_checks()
-        results["checks"].append({
-            "name": "run_all_checks",
-            "status": "PASS",
-            "detail": {"total_conflicts": all_checks["total_conflicts"]},
-        })
+        results["checks"].append(
+            {
+                "name": "run_all_checks",
+                "status": "PASS",
+                "detail": {"total_conflicts": all_checks["total_conflicts"]},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "run_all_checks",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
-    results["overall"] = "PASS" if all(
-        c["status"] == "PASS" for c in results["checks"]
-    ) else "WARN"
+        results["checks"].append(
+            {
+                "name": "run_all_checks",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
+    results["overall"] = "PASS" if all(c["status"] == "PASS" for c in results["checks"]) else "WARN"
     return results
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Causal Conflict Detector — cross-module causal conflict detection"
-    )
+    parser = argparse.ArgumentParser(description="Causal Conflict Detector — cross-module causal conflict detection")
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="Run checks in warn-only mode",
     )
     parser.add_argument(
-        "--depgraph", type=str, default="",
+        "--depgraph",
+        type=str,
+        default="",
         help="Path to dependency graph YAML",
     )
     parser.add_argument(
-        "--output", type=str, default="",
+        "--output",
+        type=str,
+        default="",
         help="Output JSON file path for conflict report",
     )
     args = parser.parse_args()
@@ -444,7 +476,7 @@ def main() -> int:
 
     if args.output:
         out_path = PROJECT_ROOT / args.output
-        tmp_path = f"{str(out_path)}.{os.getpid()}.tmp"
+        tmp_path = f"{out_path!s}.{os.getpid()}.tmp"
         try:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(report, f, indent=2, default=str)

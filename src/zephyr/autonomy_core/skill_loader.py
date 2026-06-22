@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_loader
+# [MODULE] zephyr.autonomy_core.skill_loader
 
 # [INVARIANTS] none
 
@@ -19,18 +19,17 @@
 
 # [TESTS]
 
-import os
 import re
-import yaml
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Any
 
+import yaml
 
 _BASE_DIR = Path(__file__).resolve().parent
 _REGISTRY_PATH = _BASE_DIR / "skill-registry.yaml"
 
 
-def _tokenize(text: str) -> List[str]:
+def _tokenize(text: str) -> list[str]:
     return re.findall(r"\w+|[^\w\s]", text)
 
 
@@ -39,13 +38,12 @@ def _count_tokens(text: str) -> int:
 
 
 class SkillLoader:
-
-    def __init__(self, registry_path: Optional[Path] = None):
+    def __init__(self, registry_path: Path | None = None):
         self.registry_path = registry_path or _REGISTRY_PATH
-        self._l0_cache: Optional[Dict[str, Any]] = None
+        self._l0_cache: dict[str, Any] | None = None
 
-    def _load_registry(self) -> Dict[str, Any]:
-        with open(self.registry_path, "r", encoding="utf-8") as f:
+    def _load_registry(self) -> dict[str, Any]:
+        with open(self.registry_path, encoding="utf-8") as f:
             return yaml.safe_load(f) or {}
 
     def _resolve_skill_path(self, skill_id: str) -> Path:
@@ -65,7 +63,7 @@ class SkillLoader:
                     return resolved
         raise KeyError(f"Skill {skill_id} not found in registry")
 
-    def _parse_yaml_frontmatter(self, content: str) -> Dict[str, Any]:
+    def _parse_yaml_frontmatter(self, content: str) -> dict[str, Any]:
         match = re.match(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
         if match:
             return yaml.safe_load(match.group(1)) or {}
@@ -77,9 +75,9 @@ class SkillLoader:
             return match.group(1).strip()
         return content.strip()
 
-    def _load_l1_frontmatter(self, skill_id: str) -> Dict[str, Any]:
+    def _load_l1_frontmatter(self, skill_id: str) -> dict[str, Any]:
         path = self._resolve_skill_path(skill_id)
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             content = f.read()
         fm = self._parse_yaml_frontmatter(content)
         return {
@@ -94,7 +92,7 @@ class SkillLoader:
 
     def _load_l2_body(self, skill_id: str) -> str:
         path = self._resolve_skill_path(skill_id)
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             content = f.read()
         body = self._extract_body(content)
         if _count_tokens(body) > 500:
@@ -103,7 +101,7 @@ class SkillLoader:
 
     def _compress_to_critical_rules(self, body: str) -> str:
         lines = body.split("\n")
-        critical_sections: List[str] = []
+        critical_sections: list[str] = []
         in_critical = False
         for line in lines:
             if re.match(r"^#{1,3}\s*(CRITICAL|CRITICAL:|关键|MUST|必做)", line, re.IGNORECASE):
@@ -116,14 +114,14 @@ class SkillLoader:
         if not critical_sections:
             header_match = re.search(r"^(#{1,3}\s+.+)$", body, re.MULTILINE)
             if header_match:
-                first_section = body[body.find(header_match.group(1)):]
+                first_section = body[body.find(header_match.group(1)) :]
                 lines = first_section.split("\n")
                 critical_sections = lines[:20]
             else:
                 critical_sections = lines[:20]
         return "\n".join(critical_sections)
 
-    def _list_l3_references(self, skill_id: str) -> List[Dict[str, str]]:
+    def _list_l3_references(self, skill_id: str) -> list[dict[str, str]]:
         registry = self._load_registry()
         skills = registry.get("skills", {})
         for category in ("domain", "role"):
@@ -139,7 +137,7 @@ class SkillLoader:
                 return _BASE_DIR / "references" / ref.get("path", ref_name)
         return _BASE_DIR / "references" / ref_name
 
-    def load_l0(self) -> Dict[str, Any]:
+    def load_l0(self) -> dict[str, Any]:
         if self._l0_cache is not None:
             return self._l0_cache
         agents_md = _BASE_DIR / "skills" / "factory" / "AGENT.md"
@@ -158,7 +156,7 @@ class SkillLoader:
             return ref_path.read_text(encoding="utf-8")
         raise FileNotFoundError(f"L3 reference {ref_name} not found for {skill_id}")
 
-    def progressive_load(self, skill_id: str) -> Dict[str, Any]:
+    def progressive_load(self, skill_id: str) -> dict[str, Any]:
         l1 = self._load_l1_frontmatter(skill_id)
         l2 = self._load_l2_body(skill_id)
         result = {"l1": l1, "l2": l2}
@@ -166,7 +164,7 @@ class SkillLoader:
         result["token_count_l2"] = _count_tokens(l2)
         return result
 
-    def progressive_load_full(self, skill_id: str) -> Dict[str, Any]:
+    def progressive_load_full(self, skill_id: str) -> dict[str, Any]:
         result = self.progressive_load(skill_id)
         l3_contents = {}
         for ref in result.get("l3_available", []):
@@ -179,7 +177,7 @@ class SkillLoader:
         result["l3_contents"] = l3_contents
         return result
 
-    def check_token_budget(self, domain_skill_id: str, role_skill_id: str) -> Dict[str, Any]:
+    def check_token_budget(self, domain_skill_id: str, role_skill_id: str) -> dict[str, Any]:
         domain_body = self._load_l2_body(domain_skill_id)
         role_body = self._load_l2_body(role_skill_id)
         domain_tokens = _count_tokens(domain_body)
@@ -197,10 +195,13 @@ class SkillLoader:
 _STABILITY_FROZEN = True
 _FROZEN_PUBLIC_API = frozenset({"SkillLoader"})
 
+
 def __getattr__(name: str):
     if name in _FROZEN_PUBLIC_API:
         import logging
+
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.orchestration.agent_lifecycle.skill_loader", name
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.autonomy_core.skill_loader",
+            name,
         )
-    raise AttributeError(f"module 'zephyr.orchestration.agent_lifecycle.skill_loader' has no attribute {name!r}")
+    raise AttributeError(f"module 'zephyr.autonomy_core.skill_loader' has no attribute {name!r}")

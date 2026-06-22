@@ -54,10 +54,10 @@ from enum import Enum, unique
 from typing import Any, Protocol, runtime_checkable
 
 __all__ = [
-    "LifecycleState",
-    "ModuleHealth",
     "LifecycleAware",
     "LifecycleManager",
+    "LifecycleState",
+    "ModuleHealth",
 ]
 
 logger = logging.getLogger(__name__)

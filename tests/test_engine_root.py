@@ -13,21 +13,19 @@
 from __future__ import annotations
 
 from contextlib import ExitStack
-
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 from zephyr.security.access_control.auto_fix_engine_03.models import (
+    BudgetDecision,
+    BudgetInfo,
     FixAction,
     FixConfidence,
     FixHealthReport,
-    FixLevel,
     FixReport,
     FixStatus,
     SafetyDecision,
-    BudgetDecision,
-    BudgetInfo,
 )
 
 
@@ -59,7 +57,7 @@ def mock_engine():
     with ExitStack() as stack:
         mocks = {}
         for p in patches:
-            name = p.rsplit('.', 1)[-1]
+            name = p.rsplit(".", 1)[-1]
             mocks[name] = stack.enter_context(patch(p))
         MockBudget = mocks["FixBudget"]
         MockStormGuard = mocks["FixStormGuard"]
@@ -70,7 +68,9 @@ def mock_engine():
         MockBatchFixer = mocks["BatchFixer"]
         MockHealthCheck = mocks["FixHealthCheck"]
         mock_budget = MockBudget.return_value
-        mock_budget.check.return_value = BudgetDecision(allowed=True, reason="ok", remaining_daily=50, remaining_monthly=500)
+        mock_budget.check.return_value = BudgetDecision(
+            allowed=True, reason="ok", remaining_daily=50, remaining_monthly=500
+        )
         mock_budget.get_info.return_value = BudgetInfo()
         mock_cascade = MockCascadeBreaker.return_value
         mock_cascade.check.return_value = (True, "")
@@ -87,6 +87,7 @@ def mock_engine():
         mock_health = MockHealthCheck.return_value
         mock_health.check.return_value = FixHealthReport()
         from zephyr.security.access_control.auto_fix_engine_03.engine import AutoFixEngine
+
         engine = AutoFixEngine(config_path="/nonexistent_config_xyz.yaml")
         yield engine
 
@@ -116,7 +117,9 @@ class TestAutoFixEngineFix:
 
     def test_fix_safety_denied(self, mock_engine):
         mock_engine._safety_gate.check.return_value = SafetyDecision(
-            approved=False, confidence=FixConfidence.LOW, reason="dangerous target",
+            approved=False,
+            confidence=FixConfidence.LOW,
+            reason="dangerous target",
         )
         result = mock_engine.fix("zombie_cleanup", "target.py")
         assert result.status == FixStatus.APPROVAL_PENDING
@@ -124,7 +127,10 @@ class TestAutoFixEngineFix:
 
     def test_fix_budget_denied(self, mock_engine):
         mock_engine._fix_budget.check.return_value = BudgetDecision(
-            allowed=False, reason="budget exhausted", remaining_daily=0, remaining_monthly=0,
+            allowed=False,
+            reason="budget exhausted",
+            remaining_daily=0,
+            remaining_monthly=0,
         )
         result = mock_engine.fix("zombie_cleanup", "target.py")
         assert result.status == FixStatus.FAILED
@@ -187,7 +193,9 @@ class TestAutoFixEngineApproveReject:
         mock_engine._approval_queue.approve.assert_called_once_with("action123")
 
     def test_reject_delegates(self, mock_engine):
-        mock_engine._approval_queue.reject.return_value = FixAction(action_type="test", target="f.py", status=FixStatus.CANCELLED)
+        mock_engine._approval_queue.reject.return_value = FixAction(
+            action_type="test", target="f.py", status=FixStatus.CANCELLED
+        )
         result = mock_engine.reject("action123")
         mock_engine._approval_queue.reject.assert_called_once_with("action123")
 

@@ -34,8 +34,8 @@
 
 Safety : M
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -48,8 +48,8 @@ from zephyr.governance.kb.ingest import IngestGate
 from zephyr.shared.schema.schemas import Priority
 
 __all__ = [
-    "BatchIngestReport",
     "BatchIngestEntry",
+    "BatchIngestReport",
     "BatchIngestor",
 ]
 

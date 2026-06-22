@@ -14,6 +14,7 @@
 
 对标 AUDIT-06 F-15：安全扫描脚本无独立单元测试的缺口修复。
 """
+
 from __future__ import annotations
 
 import os
@@ -93,7 +94,7 @@ class TestDetectPermanentFileDeletion:
 class TestExitCodeConstants:
     def test_exit_constants_defined(self):
         sys.path.insert(0, str(GOV_DIR / "_shared"))
-        from constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+        from constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
         assert EXIT_PASS == 0
         assert EXIT_FINDINGS == 1

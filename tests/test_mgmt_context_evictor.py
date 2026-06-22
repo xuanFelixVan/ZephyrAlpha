@@ -11,17 +11,17 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.context_evictor import (
-        ContextEvictor,
         ContextBlock,
+        ContextEvictor,
         EvictionResult,
         PriorityLevel,
-        DEFAULT_EVICTION_WEIGHTS,
     )
 except Exception as _exc:
     pytest.skip(f"cannot import context_evictor: {_exc}", allow_module_level=True)
@@ -69,8 +69,22 @@ class TestContextEvictor:
     def test_evict_exceeds_budget_removes_low_priority(self):
         evictor = ContextEvictor()
         blocks = [
-            ContextBlock(block_id="low", content="x", token_estimate=500, priority=PriorityLevel.LOW, freshness=0.1, relevance=0.1),
-            ContextBlock(block_id="high", content="y", token_estimate=500, priority=PriorityLevel.HIGH, freshness=0.9, relevance=0.9),
+            ContextBlock(
+                block_id="low",
+                content="x",
+                token_estimate=500,
+                priority=PriorityLevel.LOW,
+                freshness=0.1,
+                relevance=0.1,
+            ),
+            ContextBlock(
+                block_id="high",
+                content="y",
+                token_estimate=500,
+                priority=PriorityLevel.HIGH,
+                freshness=0.9,
+                relevance=0.9,
+            ),
         ]
         result = evictor.evict(blocks, token_budget=600)
         assert result.kept_count >= 1
@@ -80,7 +94,14 @@ class TestContextEvictor:
         evictor = ContextEvictor()
         blocks = [
             ContextBlock(block_id="pinned", content="p", token_estimate=500, priority=PriorityLevel.PINNED),
-            ContextBlock(block_id="low", content="l", token_estimate=500, priority=PriorityLevel.LOW, freshness=0.1, relevance=0.1),
+            ContextBlock(
+                block_id="low",
+                content="l",
+                token_estimate=500,
+                priority=PriorityLevel.LOW,
+                freshness=0.1,
+                relevance=0.1,
+            ),
         ]
         result = evictor.evict(blocks, token_budget=600)
         pinned_ids = [b.block_id for b in result.kept if b.is_pinned]

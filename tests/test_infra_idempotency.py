@@ -20,10 +20,11 @@
 # [TESTS] pytest tests/test_infra_idempotency.py -q
 
 import pytest
+
 from zephyr.shared.shared_services.infra_06.idempotency import (
-    IdempotencyStatus,
     IdempotencyError,
     IdempotencyRecord,
+    IdempotencyStatus,
     IdempotencyStore,
     _build_idempotency_key,
 )
@@ -111,6 +112,7 @@ class TestIdempotencyStore:
 
     def test_ttl_expiry(self):
         import time
+
         store = IdempotencyStore(default_ttl_seconds=0.01)
         store.start("key-1")
         store.complete("key-1", result="old")
@@ -146,5 +148,6 @@ class TestBuildIdempotencyKey:
 class TestIdempotencyError:
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         err = IdempotencyError("conflict", details={"key": "k"})
         assert isinstance(err, ZephyrBaseError)

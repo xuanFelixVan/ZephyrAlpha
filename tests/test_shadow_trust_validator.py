@@ -9,8 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.shadow_trust_validator import ShadowTrustValidator
+
 
 class TestShadowTrustValidator:
     def test_instantiation(self):

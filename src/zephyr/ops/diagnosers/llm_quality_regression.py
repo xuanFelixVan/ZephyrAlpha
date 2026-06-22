@@ -27,6 +27,7 @@ Risk: R161 — New model version produces worse diagnoses than previous.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class LLMQualityRegression:
     previous_accuracy: float = 0.0

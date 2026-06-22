@@ -45,8 +45,8 @@ AI 施工约定：
 SSoT: MOD-INF-016 §2.14 shared-idempotency
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import hashlib
 import logging
@@ -58,9 +58,9 @@ from typing import Any
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "IdempotencyStatus",
     "IdempotencyError",
     "IdempotencyRecord",
+    "IdempotencyStatus",
     "IdempotencyStore",
 ]
 

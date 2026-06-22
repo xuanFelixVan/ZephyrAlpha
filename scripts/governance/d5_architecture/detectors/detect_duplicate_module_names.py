@@ -41,7 +41,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_PY, SRC_DIR, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_PY, SRC_DIR
 from _shared.walk import iter_files
 
 
@@ -101,15 +101,13 @@ def _analyze_pair(file_a: Path, file_b: Path) -> tuple[str, str, str | None]:
     imports_a = _parse_import_targets(file_a)
     imports_b = _parse_import_targets(file_b)
 
-    a_consumes_b = (
-        any(t == pkg_b or t.startswith(pkg_b + ".") for t in imports_a)
-        or any(t == "zephyr" or t.startswith("zephyr.") for t in imports_a)
+    a_consumes_b = any(t == pkg_b or t.startswith(pkg_b + ".") for t in imports_a) or (
+        any(t == "zephyr" or t.startswith("zephyr.") for t in imports_a)
         and _file_to_module_path(file_b) in str(imports_a)
     )
 
-    b_consumes_a = (
-        any(t == pkg_a or t.startswith(pkg_a + ".") for t in imports_b)
-        or any(t == "zephyr" or t.startswith("zephyr.") for t in imports_b)
+    b_consumes_a = any(t == pkg_a or t.startswith(pkg_a + ".") for t in imports_b) or (
+        any(t == "zephyr" or t.startswith("zephyr.") for t in imports_b)
         and _file_to_module_path(file_a) in str(imports_b)
     )
 

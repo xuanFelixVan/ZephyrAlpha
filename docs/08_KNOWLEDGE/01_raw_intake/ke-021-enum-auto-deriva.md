@@ -29,9 +29,8 @@ category: agent_instruction
      - `_registry/catalogs/frontmatter-field-registry.md`（派生——字段数据）
      - `_registry/contracts/architecture-contract.yaml`（派生——契约约束）
      - `_registry/schemas/frontmatter-schema.json`（派生——JSON Schema）
-     - `meta/metadata-registry.md`（派生——速查引用）
+     - `meta/metadata_registry.yaml`（派生——速查引用）
      - `_registry/catalogs/registry-master-index.yaml`（派生——entry_count）
   4. **CI 门禁强制校验**：`validate_enum_consistency.py` 自动比对 vocabulary YAML 与所有派生文件的枚举列表，不一致 → CI 失败
 
 - **专业参考**：OpenAPI → `spec.yaml` 是 canonical，`swagger-ui` 是派生（spec 改了 UI 自动更新）/ Terraform → `.tf.json` 是 canonical，`terraform-docs` 是派生（state 改了 docs 自动更新）/ K8s → CRD YAML 是 canonical，`kubectl explain` 是派生（CRD 改了 explain 自动更新）/ ITIL SACM → CI 属性变更必须同步到所有消费该属性的 CMDB 视图
-

@@ -12,7 +12,7 @@ category: documentation
 |------|------|--------|
 | 标准文档的三层模板体系（L1/L2/L3） | **本文档 §3.1** | rule-document-format-standard.md v1.0.0（已取代） |
 | L1 标准子类型与章节适用性规则 | **本文档 §3.2** | — |
-| Frontmatter 必填字段 | **metadata-registry.md §2** | 本文档 §2 仅引用，不重复定义 |
+| Frontmatter 必填字段 | **metadata_registry.yaml §2** | 本文档 §2 仅引用，不重复定义 |
 | 文件命名规范 | **trae_028_doc_structure_naming.yaml v2.0.1** | 本文档 §5 仅引用，不重复定义 |
 | 消费者注册表格式 | **本文档 §3.3 §4** | — |
 | 变更同步规则格式 | **本文档 §3.3 §7** | — |

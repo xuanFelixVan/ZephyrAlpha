@@ -14,9 +14,12 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-import pytest
-
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixConfidence, FixLevel, FixStatus, ValidationResult
+from zephyr.security.access_control.auto_fix_engine_03.models import (
+    FixAction,
+    FixConfidence,
+    FixStatus,
+    ValidationResult,
+)
 from zephyr.security.access_control.auto_fix_engine_03.self_heal_agent import SelfHealAgent
 
 

@@ -17,8 +17,8 @@ SSoT: cross_layer_contracts.yaml + invariants.yaml + architecture-model/layers/*
 
 from __future__ import annotations
 
-import os
 import json
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -31,22 +31,17 @@ if not REPO_ROOT.exists():
 import yaml
 
 CONTRACTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross_layer_contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
 )
 INVARIANTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/"
-    "architecture-model/cross-cutting/invariants.yaml"
+    "docs/02_enterprise_architecture/target-architecture/architecture-model/cross-cutting/invariants.yaml"
 )
-LAYERS_DIR = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/architecture-model/layers"
-)
+LAYERS_DIR = REPO_ROOT / ("docs/02_enterprise_architecture/target-architecture/architecture-model/layers")
 ADR_DIR = REPO_ROOT / "docs/02_enterprise_architecture/adr"
 OUTPUT_PATH = REPO_ROOT / "src/zephyr/context-engine/architecture-context.json"
 HANDOFF_DIR = REPO_ROOT / "docs/19_development_workspace/handoff-logs"
 CAPACITY_SLO_YAML = REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
-GATE_REGISTRY_YAML = (
-    REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"
-)
+GATE_REGISTRY_YAML = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"
 MODULE_REGISTRY_YAML = REPO_ROOT / "docs/03_modules/module-registry.yaml"
 CAPABILITY_HEATMAP_YAML = (
     REPO_ROOT
@@ -70,6 +65,7 @@ LAYER_NAMES = {
     "l12": "系统遥测层",
     "l13": "实验层",
 }
+
 
 def main() -> None:
     context = {
@@ -95,9 +91,9 @@ def main() -> None:
     tmp_path = f"{OUTPUT_PATH}.{os.getpid()}.tmp"
     try:
         Path(tmp_path).write_text(
-        json.dumps(context, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+            json.dumps(context, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
         os.replace(tmp_path, OUTPUT_PATH)
     except PermissionError:
         try:
@@ -126,6 +122,7 @@ def main() -> None:
     modc = (context.get("module_registry") or {}).get("module_count")
     if modc is not None:
         print(f"  - 模块登记: {modc}")
+
 
 def _extract_contracts_summary(context: dict) -> None:
     if not CONTRACTS_YAML.exists():
@@ -164,6 +161,7 @@ def _extract_contracts_summary(context: dict) -> None:
         "p1": p1_list,
         "version_negotiation_rules": [r["text"] for r in neg.get("rules", [])],
     }
+
 
 def _extract_invariants(context: dict) -> None:
     if not INVARIANTS_YAML.exists():
@@ -216,6 +214,7 @@ def _extract_layer_summary(context: dict) -> None:
             layers.append({"id": key, "name": name, "layer_position": int(key[1:])})
     context["layers"] = layers
 
+
 def _extract_adr_summary(context: dict) -> None:
     adrs: list[dict] = []
     if not ADR_DIR.exists():
@@ -241,6 +240,7 @@ def _extract_adr_summary(context: dict) -> None:
         )
 
     context["adrs"] = adrs
+
 
 def _extract_governance_rules(context: dict) -> None:
     gov_dir = REPO_ROOT / "docs/01_policies_and_standards/governance"
@@ -292,12 +292,14 @@ def _extract_session_logs(context: dict) -> None:
     for yf in yaml_files:
         try:
             data = yaml.safe_load(yf.read_text(encoding="utf-8", errors="replace"))
-            recent.append({
-                "id": data.get("session_id", yf.stem),
-                "date": data.get("date", ""),
-                "phase": data.get("current_phase", ""),
-                "agent": data.get("author_agent", ""),
-            })
+            recent.append(
+                {
+                    "id": data.get("session_id", yf.stem),
+                    "date": data.get("date", ""),
+                    "phase": data.get("current_phase", ""),
+                    "agent": data.get("author_agent", ""),
+                }
+            )
         except Exception:
             pass
 

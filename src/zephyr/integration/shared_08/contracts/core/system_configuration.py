@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-164 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.contracts.core.system_configuration
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-P1-010 ====
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -50,6 +40,7 @@ AI Prompt
 
 """
 
+
 @dataclass(frozen=True)
 class SystemConfiguration:
     config_id: str
@@ -66,5 +57,6 @@ class SystemConfiguration:
     retry_policy: str = "linear"
     schema_version: str = "1.0"
     timeout_ms: int = 1000
+
 
 # ==== END CODGEN:CTR-P1-010 ====

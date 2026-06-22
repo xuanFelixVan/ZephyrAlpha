@@ -35,21 +35,26 @@ Backend  : InProcessVectorMemory (11子模块 + 8 Collection + HybridRetriever)
 - vector-memory.health_check     — 全景健康检查
 """
 
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from zephyr.shared.ports import VectorMemoryProtocol
+    pass
 
 from zephyr.infrastructure._base_server import BaseMCPServer
 
 __all__ = ["VectorMemoryServer", "create_server"]
 
 VMS_COLLECTION_NAMES = [
-    "decisions", "code_context", "lessons", "knowledge",
-    "rules", "blueprints", "session_snapshots", "execution_traces",
+    "decisions",
+    "code_context",
+    "lessons",
+    "knowledge",
+    "rules",
+    "blueprints",
+    "session_snapshots",
+    "execution_traces",
 ]
 
 

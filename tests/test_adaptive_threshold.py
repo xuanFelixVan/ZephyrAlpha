@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from collections import deque
 
-import pytest
-
 from zephyr.governance.rule_enforcement.adaptive_threshold import AdaptiveThreshold, ThresholdState
 
 

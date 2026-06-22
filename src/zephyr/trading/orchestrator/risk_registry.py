@@ -28,10 +28,11 @@ from __future__ import annotations
 实现集成冲突裁决 + R-MOD-1~34 风险缓解状态追踪。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
+
 
 class RiskStatus(str, Enum):
     OPEN = "open"
@@ -39,11 +40,13 @@ class RiskStatus(str, Enum):
     ACCEPTED = "accepted"
     CLOSED = "closed"
 
+
 class RiskSeverity(str, Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
     CRITICAL = "CRITICAL"
+
 
 class Risk(BaseModel):
     risk_id: str
@@ -52,8 +55,9 @@ class Risk(BaseModel):
     mitigation_plan: str = ""
     affected_contracts: list[str] = Field(default_factory=list)
     status: RiskStatus = RiskStatus.OPEN
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
 
 class ConflictResolution(BaseModel):
     conflict_id: str
@@ -62,6 +66,7 @@ class ConflictResolution(BaseModel):
     resolution: str
     rationale: str = ""
     resolved_by: str = ""
+
 
 RISKS: dict[str, Risk] = {
     f"R-MOD-{i}": Risk(
@@ -73,6 +78,7 @@ RISKS: dict[str, Risk] = {
     )
     for i in range(1, 35)
 }
+
 
 class RiskRegistry:
     def get(self, risk_id: str) -> Risk | None:
@@ -89,7 +95,7 @@ class RiskRegistry:
         if risk is None:
             return False
         risk.status = RiskStatus.MITIGATED
-        risk.updated_at = datetime.now(timezone.utc)
+        risk.updated_at = datetime.now(UTC)
         return True
 
     def accept(self, risk_id: str) -> bool:
@@ -97,5 +103,5 @@ class RiskRegistry:
         if risk is None:
             return False
         risk.status = RiskStatus.ACCEPTED
-        risk.updated_at = datetime.now(timezone.utc)
+        risk.updated_at = datetime.now(UTC)
         return True

@@ -36,7 +36,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -158,8 +158,8 @@ def main() -> None:
         for rtype, items in by_type.items():
             print(f"\n  {rtype} ({len(items)} 个):", file=sys.stderr)
             for f in items[:10]:
-                print(f'    [{f['severity']}] {f['contract_id']}', file=sys.stderr)
-                print(f'      {f['detail']}', file=sys.stderr)
+                print(f"    [{f['severity']}] {f['contract_id']}", file=sys.stderr)
+                print(f"      {f['detail']}", file=sys.stderr)
     else:
         print("[IFC] 接口契约合规", file=sys.stderr)
     if args.warn_only:

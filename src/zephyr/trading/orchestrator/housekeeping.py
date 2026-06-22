@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """文件卫生保洁管理器（CT-HOUSEKEEPING）——临时文件扫描+日志轮转+废弃目录清理。"""
 
+
 class HousekeepingManager:
     TEMP_PATTERNS: list[str] = ["_temp*", "_check*", "_phase_*", "*.tmp", "*.bak"]
 

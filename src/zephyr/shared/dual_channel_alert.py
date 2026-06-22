@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 
 class Channel(Enum):
@@ -23,8 +22,15 @@ class DualChannelAlert:
     def __init__(self):
         self._alerts: list[DualAlert] = []
 
-    def send(self, title: str, message: str, channels: tuple[Channel, ...] = (Channel.DASHBOARD, Channel.MESSAGING)) -> DualAlert:
-        alert = DualAlert(title=title, message=message, dashboard_sent=Channel.DASHBOARD in channels, messaging_sent=Channel.MESSAGING in channels)
+    def send(
+        self, title: str, message: str, channels: tuple[Channel, ...] = (Channel.DASHBOARD, Channel.MESSAGING)
+    ) -> DualAlert:
+        alert = DualAlert(
+            title=title,
+            message=message,
+            dashboard_sent=Channel.DASHBOARD in channels,
+            messaging_sent=Channel.MESSAGING in channels,
+        )
         self._alerts.append(alert)
         return alert
 

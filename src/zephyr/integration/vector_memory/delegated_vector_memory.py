@@ -37,7 +37,6 @@ from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime
-from typing import Any
 
 from zephyr.governance.kb.unified_memory_api import UnifiedMemoryAPI, WriteTrace, get_unified_memory_api
 from zephyr.integration.vector_memory.interface import MemoryEntry, VectorMemoryBase
@@ -63,7 +62,9 @@ class UnifiedVectorMemoryAdapter(VectorMemoryBase):
         chain = entry.metadata.get("audit_chain")
         if not isinstance(chain, list) or not chain:
             chain = ["VMS-ADAPTER", entry.collection]
-        prov = WriteTrace(origin=origin, audit_chain=[str(x) for x in chain], arbitration=entry.metadata.get("arbitration"))
+        prov = WriteTrace(
+            origin=origin, audit_chain=[str(x) for x in chain], arbitration=entry.metadata.get("arbitration")
+        )
         return self._api.write(entry.collection, entry.content, prov)
 
     def search(self, query: str, collection: str, top_k: int = 10) -> list[MemoryEntry]:

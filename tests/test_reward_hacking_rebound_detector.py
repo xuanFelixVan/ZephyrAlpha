@@ -14,11 +14,7 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from zephyr.governance.reward_hacking_rebound_detector import (
-    BehaviorRecord,
-    ReboundDetection,
     ReboundDetector,
     ReboundPhase,
     ReboundSeverity,

@@ -33,15 +33,11 @@ Context Engine — AI 上下文组装与 Token 预算管理。
     - 支持 context_assembly_manifest 路径索引
 """
 
-
 from __future__ import annotations
 
-import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-
 
 DEFAULT_MAX_TOKENS = 20000
 
@@ -73,7 +69,6 @@ class TokenBudget:
 
 
 class ContextEngine:
-
     CHARS_PER_TOKEN = 4
 
     def __init__(self, project_root: Path | None = None, max_tokens: int = DEFAULT_MAX_TOKENS) -> None:
@@ -114,19 +109,21 @@ class ContextEngine:
             if truncate and total_tokens + token_estimate > available:
                 remaining = available - total_tokens
                 if remaining > 100:
-                    content = content[:remaining * self.CHARS_PER_TOKEN]
+                    content = content[: remaining * self.CHARS_PER_TOKEN]
                     token_estimate = remaining
                 else:
                     break
 
             total_tokens += token_estimate
 
-            slices.append(ContextSlice(
-                file_path=file_path,
-                content=content,
-                token_estimate=token_estimate,
-                reason=reason,
-            ))
+            slices.append(
+                ContextSlice(
+                    file_path=file_path,
+                    content=content,
+                    token_estimate=token_estimate,
+                    reason=reason,
+                )
+            )
 
         return ContextAssembly(
             task_id=task_id,

@@ -19,6 +19,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -44,8 +45,8 @@ MODEL_ROLES = {
     "reviewer_b": "Opus — 终审 (Claude + GLM 意见)",
 }
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def evaluate_finding(finding: dict) -> dict:
@@ -109,9 +110,12 @@ def main() -> None:
         if "--json" in sys.argv:
             print(json_mod.dumps(result, ensure_ascii=False, indent=2))
         else:
-            print(f"\n[CROSS-MODEL] 多模型共识验证 (Demo)", file=sys.stderr)
-            print(f"  模型: Claude (施工) → GLM (审查) → Opus (终审)", file=sys.stderr)
-            print(f"  共识率: {result['consensus_rate']}% ({result['consensus_reached']}/{result['total_findings']})", file=sys.stderr)
+            print("\n[CROSS-MODEL] 多模型共识验证 (Demo)", file=sys.stderr)
+            print("  模型: Claude (施工) → GLM (审查) → Opus (终审)", file=sys.stderr)
+            print(
+                f"  共识率: {result['consensus_rate']}% ({result['consensus_reached']}/{result['total_findings']})",
+                file=sys.stderr,
+            )
             for r in result["results"]:
                 icon = "✅" if r["consensus_reached"] else "⚠"
                 print(f"  {icon} {r['finding_id']}: {r['votes']}/3 ({r['detail']})", file=sys.stderr)

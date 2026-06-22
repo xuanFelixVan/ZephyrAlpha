@@ -12,13 +12,11 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.ml_engineering import (
-    DataLeakCheck,
-    LEAK_CHECKS,
-    MarketRegime,
     FEATURE_STORE_SCHEMA,
+    LEAK_CHECKS,
+    DataLeakCheck,
+    MarketRegime,
 )
 
 

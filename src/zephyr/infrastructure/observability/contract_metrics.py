@@ -1,9 +1,8 @@
 # [A_module] module_id=MOD-INF_contract_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CT-TEL-001 ====
 from dataclasses import dataclass, field
+from datetime import datetime
 
-from datetime import datetime, timezone
-from typing import Dict
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -25,8 +24,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass
 class TelemetryMetrics:
@@ -36,10 +36,12 @@ class TelemetryMetrics:
     metric_value: float
     module_id: str
     timestamp: datetime
-    labels: Dict[str, str] = field(default_factory=dict)
+    labels: dict[str, str] = field(default_factory=dict)
     schema_version: str = "1.0"
 
+
 # ==== END CODGEN:CT-TEL-001 ====
+
 
 class ContractMetricsCollector:
     def __init__(self, config=None):
@@ -57,19 +59,22 @@ class ContractMetricsCollector:
         self._metrics.clear()
         return metrics
 
+
 class DriftAlert:
-    def __init__(self, alert_id='', contract='', drift_type='', severity='medium', message=''):
+    def __init__(self, alert_id="", contract="", drift_type="", severity="medium", message=""):
         self.alert_id = alert_id
         self.contract = contract
         self.drift_type = drift_type
         self.severity = severity
         self.message = message
 
+
 def get_contract_metrics():
     return ContractMetricsCollector()
 
+
 class SlaRecord:
-    def __init__(self, contract='', threshold=0.0, actual=0.0, breached=False, timestamp=None):
+    def __init__(self, contract="", threshold=0.0, actual=0.0, breached=False, timestamp=None):
         self.contract = contract
         self.threshold = threshold
         self.actual = actual

@@ -28,14 +28,13 @@
   - --force-monoculture CLI 覆盖逻辑
 """
 
-
 from __future__ import annotations
 
-import json
-import yaml
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
+
+import yaml
 
 
 @dataclass
@@ -114,21 +113,23 @@ class MonocultureGuard:
 
         risks = []
         for func_name, brs in entries:
-            risks.append({
-                "function": func_name,
-                "blast_radius_score": brs.blast_radius_score,
-                "level": brs.level,
-                "caller_count": brs.caller_count,
-                "cross_layer_count": brs.cross_layer_count,
-                "on_critical_path": brs.on_critical_path,
-                "has_independent_unit_test": brs.has_independent_unit_test,
-                "recommendation": brs.recommendation,
-                "mitigating_action": brs.mitigating_action,
-            })
+            risks.append(
+                {
+                    "function": func_name,
+                    "blast_radius_score": brs.blast_radius_score,
+                    "level": brs.level,
+                    "caller_count": brs.caller_count,
+                    "cross_layer_count": brs.cross_layer_count,
+                    "on_critical_path": brs.on_critical_path,
+                    "has_independent_unit_test": brs.has_independent_unit_test,
+                    "recommendation": brs.recommendation,
+                    "mitigating_action": brs.mitigating_action,
+                }
+            )
 
         data = {
             "version": "1.0.0",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "risks": risks,
         }
 

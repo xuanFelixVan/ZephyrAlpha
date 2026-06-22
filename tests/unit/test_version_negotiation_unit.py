@@ -5,15 +5,14 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-from __future__ import annotations
 """版本协商器单元测试——forward-compat + deprecation 流程验证。"""
 
+from __future__ import annotations
 
 import pytest
 
 from zephyr.integration.shared_08.version_negotiation import (
     ChangeType,
-    DeprecationRecord,
     SchemaName,
     VersionNegotiator,
     VersionSegment,
@@ -46,9 +45,7 @@ class TestVersionSegment:
 
 class TestDeprecation:
     def test_register_deprecation(self, negotiator):
-        record = negotiator.register_deprecation(
-            SchemaName.TASKCARD, "old_field", "v1.0.0", reason="已废弃"
-        )
+        record = negotiator.register_deprecation(SchemaName.TASKCARD, "old_field", "v1.0.0", reason="已废弃")
         assert record.deprecated_in == "v1.0.0"
         assert record.removal_target == "v3.0.0"
 
@@ -70,23 +67,17 @@ class TestDeprecation:
 
 class TestNegotiate:
     def test_consumer_supports_producer_version(self, negotiator):
-        result = negotiator.negotiate(
-            SchemaName.TASKCARD, "v1.0.0", "v2.0.0"
-        )
+        result = negotiator.negotiate(SchemaName.TASKCARD, "v1.0.0", "v2.0.0")
         assert result.negotiated_version == "v1.0.0"
         assert not result.degraded
 
     def test_consumer_behind_producer(self, negotiator):
-        result = negotiator.negotiate(
-            SchemaName.TASKCARD, "v2.0.0", "v1.0.0"
-        )
+        result = negotiator.negotiate(SchemaName.TASKCARD, "v2.0.0", "v1.0.0")
         assert result.degraded
         assert result.negotiated_version == "v1.0.0"
 
     def test_consumer_same_version(self, negotiator):
-        result = negotiator.negotiate(
-            SchemaName.TASKCARD, "v1.5.0", "v1.5.0"
-        )
+        result = negotiator.negotiate(SchemaName.TASKCARD, "v1.5.0", "v1.5.0")
         assert not result.degraded
 
 

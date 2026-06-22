@@ -35,4 +35,3 @@ category: agent_instruction
   YAML 的弱点"人类可读性"由 Markdown 视图补足——这恰恰是"一源双态"模式的设计意图：canonical 负责精确，presentation 负责易读。
 
 - **专业参考**：K8s → CRD YAML as canonical schema + `kubectl explain` as derived docs / Terraform → `.tf.json` as canonical + `terraform-docs` as derived README / OpenAPI → `spec.yaml` as canonical + Swagger UI as rendered presentation / ISO 42010 → Architecture Description 可以有多种 View，但 Rationale（为什么）和 Model（有什么）必须可追溯至同一 canonical 源
-

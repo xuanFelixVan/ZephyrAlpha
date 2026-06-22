@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_ontology | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_ontology
+# [MODULE] zephyr.autonomy_core.skill_ontology
 
 # [INVARIANTS] none
 
@@ -34,11 +34,10 @@ Skill 本体对齐引擎
   4. AlignmentScore: 计算本体对齐度
 """
 
-
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 
 class SkillOntology:
@@ -67,8 +66,8 @@ class SkillOntology:
     }
 
     @classmethod
-    def extract_entities(cls, content: str) -> List[Dict[str, str]]:
-        entities: List[Dict[str, str]] = []
+    def extract_entities(cls, content: str) -> list[dict[str, str]]:
+        entities: list[dict[str, str]] = []
         seen: set = set()
 
         for pattern, entity_type in cls.ENTITY_PATTERNS:
@@ -84,22 +83,20 @@ class SkillOntology:
     @classmethod
     def match_entities(
         cls,
-        extracted: List[Dict[str, str]],
-        kb_entities: Optional[List[Dict[str, str]]] = None,
-    ) -> Dict[str, Any]:
+        extracted: list[dict[str, str]],
+        kb_entities: list[dict[str, str]] | None = None,
+    ) -> dict[str, Any]:
         kb_set: set = set()
         if kb_entities:
             kb_set = {f"{e.get('type', '')}:{e.get('value', '')}" for e in kb_entities}
 
-        matched: List[Dict[str, str]] = []
-        unmatched: List[Dict[str, str]] = []
-        novel: List[Dict[str, str]] = []
+        matched: list[dict[str, str]] = []
+        unmatched: list[dict[str, str]] = []
+        novel: list[dict[str, str]] = []
 
         for entity in extracted:
             key = f"{entity['type']}:{entity['value']}"
-            if kb_entities is None:
-                matched.append(entity)
-            elif key in kb_set:
+            if kb_entities is None or key in kb_set:
                 matched.append(entity)
             else:
                 unmatched.append(entity)
@@ -123,20 +120,22 @@ class SkillOntology:
         cls,
         skill_id: str,
         skill_body: str,
-        kb_entities: Optional[List[Dict[str, str]]] = None,
-    ) -> Dict[str, Any]:
+        kb_entities: list[dict[str, str]] | None = None,
+    ) -> dict[str, Any]:
         entities = cls.extract_entities(skill_body)
         match_result = cls.match_entities(entities, kb_entities)
 
-        gaps: List[Dict[str, str]] = []
+        gaps: list[dict[str, str]] = []
         for novel in match_result.get("novel_entities", []):
             kata_type = cls._KATA_MAP.get(novel["type"], "Unknown")
-            gaps.append({
-                "entity": novel["value"],
-                "type": novel["type"],
-                "kb_category": kata_type,
-                "action": f"Create {kata_type} entity '{novel['value']}' in KB",
-            })
+            gaps.append(
+                {
+                    "entity": novel["value"],
+                    "type": novel["type"],
+                    "kb_category": kata_type,
+                    "action": f"Create {kata_type} entity '{novel['value']}' in KB",
+                }
+            )
 
         score = match_result["match_rate"]
 

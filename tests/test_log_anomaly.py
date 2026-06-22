@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_log_anomaly.py
 
-import pytest
 
 from zephyr.ops.detectors.log_anomaly import LogAnomaly
 

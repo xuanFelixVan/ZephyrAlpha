@@ -4,17 +4,22 @@
 RESTRICTED_LICENSES = None  # stub constant
 RESTRICTED_PACKAGES = None  # stub constant
 
+
 class DependencyAuditResult:
     """Stub class — implementation pending."""
+
     pass
+
 
 class DependencyAuditor:
     """Stub class — implementation pending."""
+
     pass
 
+
 __all__ = [
-    "DependencyAuditResult",
-    "DependencyAuditor",
     "RESTRICTED_LICENSES",
     "RESTRICTED_PACKAGES",
+    "DependencyAuditResult",
+    "DependencyAuditor",
 ]

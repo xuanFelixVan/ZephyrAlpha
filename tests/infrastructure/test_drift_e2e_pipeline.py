@@ -143,11 +143,11 @@ def test_e2e_gate_engine_drift_budget():
     """
     E2E STEP 4: Gate Engine 执行 drift_budget check
     """
-    from zephyr.shared.shared_services.models import TaskCard
     from zephyr.governance.rule_enforcement.gate_engine import (
         CheckConfig,
         _run_check,
     )
+    from zephyr.shared.shared_services.models import TaskCard
 
     task = TaskCard(
         task_id="ADR-9999",

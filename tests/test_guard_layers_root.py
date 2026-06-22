@@ -11,20 +11,20 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
-import time
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
 try:
     from zephyr.security.access_control.guard_layers import (
-        ColdStartLock,
-        EscalationHandler,
         AutoGuard,
         AutoGuardMode,
         AutoGuardResult,
+        ColdStartLock,
+        EscalationHandler,
     )
 except Exception as _exc:
     pytest.skip(f"无法导入 guard_layers: {_exc}", allow_module_level=True)

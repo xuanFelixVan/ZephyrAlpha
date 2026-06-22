@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_pipeline_lock | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.pipeline_lock
+# [MODULE] zephyr.integration.pipeline_lock
 
 # [INVARIANTS] none
 
@@ -38,7 +38,6 @@ v0.8.0 新增 FileLockBackend——跨进程锁，覆盖 Trae+Cursor+RooCode 多
         ...  # 安全执行
         lock.release("task-001")
 """
-
 
 from __future__ import annotations
 
@@ -121,7 +120,7 @@ class MemoryLockBackend(LockBackend):
         with self._lock:
             conflicts: list[str] = []
 
-            for lyr in (layer_locks or []):
+            for lyr in layer_locks or []:
                 owner = self._layer_locks.get(lyr)
                 if owner and owner != task_id:
                     if owner not in conflicts:
@@ -149,7 +148,7 @@ class MemoryLockBackend(LockBackend):
 
             for fp in file_paths:
                 self._file_locks[fp] = task_id
-            for lyr in (layer_locks or []):
+            for lyr in layer_locks or []:
                 self._layer_locks[lyr] = task_id
             self._task_files.setdefault(task_id, set()).update(file_paths)
 
@@ -208,9 +207,7 @@ class FileLockBackend(LockBackend):
     _DEFAULT_LOCK_TTL_S = 300.0
 
     def __init__(self, lock_root: str | None = None, lock_ttl_s: float | None = None) -> None:
-        self._lock_root = lock_root or os.path.join(
-            os.getcwd(), self._DEFAULT_LOCK_ROOT
-        )
+        self._lock_root = lock_root or os.path.join(os.getcwd(), self._DEFAULT_LOCK_ROOT)
         self._lock_ttl_s = lock_ttl_s or self._DEFAULT_LOCK_TTL_S
         self._thread_lock = threading.RLock()
 
@@ -257,7 +254,7 @@ class FileLockBackend(LockBackend):
         if not os.path.isfile(owner_file):
             return None
         try:
-            with open(owner_file, "r", encoding="utf-8") as fh:
+            with open(owner_file, encoding="utf-8") as fh:
                 return json.load(fh)
         except Exception:
             return None
@@ -297,7 +294,7 @@ class FileLockBackend(LockBackend):
             conflicts: list[str] = []
 
             all_targets: list[str] = list(file_paths)
-            for lyr in (layer_locks or []):
+            for lyr in layer_locks or []:
                 all_targets.append(f"LAYER:{lyr}")
 
             for fp in all_targets:
@@ -307,9 +304,7 @@ class FileLockBackend(LockBackend):
                         self._cleanup_stale(lock_dir)
                     else:
                         owner = self._read_owner(lock_dir)
-                        conflict_task = (
-                            owner.get("task_id", "unknown") if owner else "unknown"
-                        )
+                        conflict_task = owner.get("task_id", "unknown") if owner else "unknown"
                         if conflict_task != task_id and conflict_task not in conflicts:
                             conflicts.append(conflict_task)
                         continue
@@ -325,21 +320,12 @@ class FileLockBackend(LockBackend):
                             self._write_owner(lock_dir, task_id)
                         except FileExistsError:
                             owner = self._read_owner(lock_dir)
-                            conflict_task = (
-                                owner.get("task_id", "unknown")
-                                if owner
-                                else "unknown"
-                            )
-                            if (
-                                conflict_task != task_id
-                                and conflict_task not in conflicts
-                            ):
+                            conflict_task = owner.get("task_id", "unknown") if owner else "unknown"
+                            if conflict_task != task_id and conflict_task not in conflicts:
                                 conflicts.append(conflict_task)
                     else:
                         owner = self._read_owner(lock_dir)
-                        conflict_task = (
-                            owner.get("task_id", "unknown") if owner else "unknown"
-                        )
+                        conflict_task = owner.get("task_id", "unknown") if owner else "unknown"
                         if conflict_task != task_id and conflict_task not in conflicts:
                             conflicts.append(conflict_task)
 
@@ -465,9 +451,7 @@ class PipelineLock:
         waited_ms = 0
 
         while True:
-            result = self._backend.try_acquire(
-                task_id, file_paths, layer_locks=layer_locks
-            )
+            result = self._backend.try_acquire(task_id, file_paths, layer_locks=layer_locks)
 
             if result.acquired:
                 result.waited_ms = waited_ms

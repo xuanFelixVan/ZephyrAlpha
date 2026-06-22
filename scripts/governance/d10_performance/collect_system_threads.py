@@ -50,7 +50,6 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
@@ -75,7 +74,7 @@ class ThreadSnapshot:
     per_process: list[dict] = field(default_factory=list)
 
 
-def collect_threads(top: Optional[int] = None) -> ThreadSnapshot:
+def collect_threads(top: int | None = None) -> ThreadSnapshot:
     """collect_threads implementation."""
     try:
         import psutil
@@ -91,11 +90,13 @@ def collect_threads(top: Optional[int] = None) -> ThreadSnapshot:
                 info = p.info
                 nt = info.get("num_threads") or 0
                 total += nt
-                processes.append({
-                    "pid": info.get("pid", 0),
-                    "name": info.get("name", "?"),
-                    "num_threads": nt,
-                })
+                processes.append(
+                    {
+                        "pid": info.get("pid", 0),
+                        "name": info.get("name", "?"),
+                        "num_threads": nt,
+                    }
+                )
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
     except Exception:
@@ -115,9 +116,7 @@ def collect_threads(top: Optional[int] = None) -> ThreadSnapshot:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="全系统线程数快照采集器（D10 性能维度）"
-    )
+    parser = argparse.ArgumentParser(description="全系统线程数快照采集器（D10 性能维度）")
     parser.add_argument("--top", type=int, default=None, help="仅输出 Top-N 线程占用进程")
     parser.add_argument("--json", action="store_true", help="JSON 输出")
     parser.add_argument("--output", type=str, default=None, help="输出文件路径")

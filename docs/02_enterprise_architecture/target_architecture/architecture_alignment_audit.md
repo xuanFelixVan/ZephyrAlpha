@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ARCH-003
 title: 知识库抽屉索引
 doc_type: index

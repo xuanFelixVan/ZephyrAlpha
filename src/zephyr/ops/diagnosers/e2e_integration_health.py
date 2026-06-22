@@ -132,15 +132,23 @@ class E2EIntegrationHealth:
             elif result["health"] == IntegrationHealth.DEGRADED.value:
                 degraded += 1
 
-        overall = IntegrationHealth.BROKEN if broken > 0 else IntegrationHealth.DEGRADED if degraded > 1 else IntegrationHealth.HEALTHY
+        overall = (
+            IntegrationHealth.BROKEN
+            if broken > 0
+            else IntegrationHealth.DEGRADED
+            if degraded > 1
+            else IntegrationHealth.HEALTHY
+        )
 
-        self.health_history.append({
-            "ts": time.time(),
-            "overall": overall.value,
-            "broken_count": broken,
-            "degraded_count": degraded,
-            "total": len(self.integrations),
-        })
+        self.health_history.append(
+            {
+                "ts": time.time(),
+                "overall": overall.value,
+                "broken_count": broken,
+                "degraded_count": degraded,
+                "total": len(self.integrations),
+            }
+        )
         if len(self.health_history) > 500:
             self.health_history = self.health_history[-500:]
 
@@ -174,7 +182,8 @@ class E2EIntegrationHealth:
         if not self.integrations:
             return 1.0
         healthy = sum(
-            1 for name in self.integrations
+            1
+            for name in self.integrations
             if self.check_integration_health(name)["health"] == IntegrationHealth.HEALTHY.value
         )
         return round(healthy / len(self.integrations), 3)

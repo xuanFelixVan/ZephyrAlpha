@@ -1,21 +1,22 @@
-import yaml
 import os
-import sys
 import time
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor, as_completed
+
+import yaml
 
 OLD_DEPGRAPH = "data/databases/depgraph.db"
 NEW_DEPGRAPH = "data/databases/depgraph.db"
 PATH_TREE = "data/databases/depgraph.db"
 OUTPUT = "data/asset_index/migration-registry.yaml"
 
+
 def load_yaml(path):
     t0 = time.perf_counter()
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
-    print(f"  Loaded {path}: {time.perf_counter()-t0:.2f}s")
+    print(f"  Loaded {path}: {time.perf_counter() - t0:.2f}s")
     return data
+
 
 def build_module_map(depgraph_v3):
     file_to_module = {}
@@ -44,6 +45,7 @@ def build_module_map(depgraph_v3):
                     file_to_module[pf] = []
                 file_to_module[pf].append(mid)
     return file_to_module, module_id_to_info
+
 
 def resolve_ambiguous(file_to_module, module_id_to_info):
     file_to_domain = {}
@@ -84,6 +86,7 @@ def resolve_ambiguous(file_to_module, module_id_to_info):
     print(f"  Resolved {resolved_count}/{ambiguous_count} ambiguous file-to-module mappings")
     return file_to_domain, file_to_new_path
 
+
 def build_old_path_prefix_map(module_id_to_info):
     prefix_map = {}
     for mid, info in module_id_to_info.items():
@@ -97,6 +100,7 @@ def build_old_path_prefix_map(module_id_to_info):
                 prefix_map[prefix].append(mid)
     return prefix_map
 
+
 def build_domain_directory_map(path_tree):
     domain_dir_map = {}
     for domain in path_tree.get("path_design_spec", {}).get("domains", path_tree.get("domains", [])):
@@ -104,6 +108,7 @@ def build_domain_directory_map(path_tree):
         td = domain.get("target_directory", "")
         domain_dir_map[did] = td
     return domain_dir_map
+
 
 def build_blueprint_to_domain(depgraph_v3):
     bp_to_domain = {}
@@ -113,6 +118,7 @@ def build_blueprint_to_domain(depgraph_v3):
             if bp:
                 bp_to_domain[bp] = domain_id
     return bp_to_domain
+
 
 OLD_LAYER_TO_DOMAIN = {
     "data": "D-DATA",
@@ -207,6 +213,7 @@ NON_MIGRABLE_PREFIXES = [
     ".aidrafts/",
 ]
 
+
 def classify_file_type(path):
     if path.startswith("src/zephyr/"):
         if "/test" in path or path.endswith("_test.py"):
@@ -225,6 +232,7 @@ def classify_file_type(path):
     if path.startswith(".github/"):
         return "infra"
     return "other"
+
 
 def determine_domain(old_path, file_to_domain, file_to_new_path, bp_to_domain, old_node):
     if old_path in file_to_domain:
@@ -250,6 +258,7 @@ def determine_domain(old_path, file_to_domain, file_to_new_path, bp_to_domain, o
 
     return None, "unassigned", None
 
+
 def compute_new_path(old_path, domain, domain_dir_map, match_method, match_key):
     if domain is None:
         return None
@@ -268,7 +277,11 @@ def compute_new_path(old_path, domain, domain_dir_map, match_method, match_key):
         old_parts = old_path.replace("src/zephyr/", "").split("/")
         filename = old_parts[-1]
         sub_parts = old_parts[:-1]
-        new_path = domain_dir.rstrip("/") + "/" + "/".join(sub_parts[1:]) if len(sub_parts) > 1 else domain_dir.rstrip("/") + "/"
+        new_path = (
+            domain_dir.rstrip("/") + "/" + "/".join(sub_parts[1:])
+            if len(sub_parts) > 1
+            else domain_dir.rstrip("/") + "/"
+        )
         new_path = new_path.rstrip("/") + "/" + filename
         return new_path
 
@@ -284,28 +297,34 @@ def compute_new_path(old_path, domain, domain_dir_map, match_method, match_key):
 
     return None
 
+
 def compute_changes(old_path, new_path, domain, match_method):
     changes = []
     if new_path and old_path != new_path:
-        changes.append({
-            "type": "physical_move",
-            "from": old_path,
-            "to": new_path,
-        })
+        changes.append(
+            {
+                "type": "physical_move",
+                "from": old_path,
+                "to": new_path,
+            }
+        )
     if new_path and old_path.startswith("src/zephyr/") and new_path.startswith("src/zephyr/"):
         old_import = old_path.replace("/", ".").removesuffix(".py")
         new_import = new_path.replace("/", ".").removesuffix(".py")
         if old_import != new_import:
-            changes.append({
-                "type": "self_import_update",
-                "old_import": old_import,
-                "new_import": new_import,
-            })
+            changes.append(
+                {
+                    "type": "self_import_update",
+                    "old_import": old_import,
+                    "new_import": new_import,
+                }
+            )
     if domain:
         changes.append({"type": "domain_assignment", "domain": domain})
     if match_method == "unassigned":
         changes.append({"type": "needs_domain_ruling"})
     return changes
+
 
 def main():
     print("=== STEP 2C: Migration Registry Generator ===")
@@ -347,12 +366,14 @@ def main():
 
         is_non_migrable = any(old_path.startswith(p) for p in NON_MIGRABLE_PREFIXES)
         if is_non_migrable:
-            non_migrable.append({
-                "file_id": node_id,
-                "path": old_path,
-                "type": node_data.get("type", ""),
-                "reason": "non_migrable_prefix",
-            })
+            non_migrable.append(
+                {
+                    "file_id": node_id,
+                    "path": old_path,
+                    "type": node_data.get("type", ""),
+                    "reason": "non_migrable_prefix",
+                }
+            )
             stats["non_migrable"] += 1
             continue
 
@@ -361,9 +382,7 @@ def main():
         )
         match_method_stats[match_method] += 1
 
-        new_path = compute_new_path(
-            old_path, domain, domain_dir_map, match_method, match_key
-        )
+        new_path = compute_new_path(old_path, domain, domain_dir_map, match_method, match_key)
 
         changes = compute_changes(old_path, new_path, domain, match_method)
 
@@ -398,17 +417,17 @@ def main():
 
         entries.append(entry)
 
-    print(f"\n[4/5] Generating migration registry...")
+    print("\n[4/5] Generating migration registry...")
     print(f"  Total entries: {len(entries)}")
     print(f"  Non-migrable: {len(non_migrable)}")
     print(f"  Unassigned: {len(unassigned_files)}")
     print(f"  Ambiguous (resolved by scoring): {stats.get('ambiguous', 0)}")
 
-    print(f"\n  Match method breakdown:")
+    print("\n  Match method breakdown:")
     for method, count in sorted(match_method_stats.items(), key=lambda x: -x[1]):
         print(f"    {method}: {count}")
 
-    print(f"\n  Domain distribution:")
+    print("\n  Domain distribution:")
     for domain, count in sorted(domain_stats.items(), key=lambda x: -x[1]):
         print(f"    {domain}: {count}")
 
@@ -445,7 +464,7 @@ def main():
     file_size_mb = os.path.getsize(OUTPUT) / (1024 * 1024)
     print(f"  File size: {file_size_mb:.1f} MB")
 
-    print(f"\n=== SUMMARY ===")
+    print("\n=== SUMMARY ===")
     print(f"  Old depgraph nodes: {total}")
     print(f"  Migration entries: {len(entries)}")
     print(f"  Non-migrable (data/docs/config): {len(non_migrable)}")
@@ -453,6 +472,7 @@ def main():
     print(f"  Ambiguous (resolved): {stats.get('ambiguous', 0)}")
     print(f"  Coverage: {(len(entries) - len(unassigned_files)) / len(entries) * 100:.1f}%")
     print(f"  Unassigned rate: {len(unassigned_files) / len(entries) * 100:.2f}%")
+
 
 if __name__ == "__main__":
     main()

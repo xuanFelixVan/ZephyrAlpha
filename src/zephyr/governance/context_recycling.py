@@ -15,8 +15,7 @@ from __future__ import annotations
 import json
 import logging
 import zlib
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
@@ -54,7 +53,7 @@ class ContextRecycling:
 
         ctx = CompressedContext(
             session_id=session_id,
-            compressed_at=datetime.now(timezone.utc).isoformat(),
+            compressed_at=datetime.now(UTC).isoformat(),
             origin_size_bytes=len(raw_bytes),
             compressed_size_bytes=len(compressed),
             compression_ratio=round(ratio, 4),
@@ -71,7 +70,7 @@ class ContextRecycling:
         )
         return ctx
 
-    def restore(self, session_id: str) -> Optional[str]:
+    def restore(self, session_id: str) -> str | None:
         ctx = self._store.get(session_id)
         if ctx is None or not ctx.data:
             logger.warning("ContextRecycling: no data for session=%s", session_id)
@@ -83,7 +82,7 @@ class ContextRecycling:
             logger.error("ContextRecycling restore failed for %s: %s", session_id, exc)
             return None
 
-    def store(self, session_id: str) -> Optional[CompressedContext]:
+    def store(self, session_id: str) -> CompressedContext | None:
         return self._store.get(session_id)
 
     def purge(self, session_id: str) -> bool:
@@ -108,7 +107,7 @@ class ContextRecycling:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
     def import_json(self, file_path: str) -> int:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             raw = json.load(f)
         count = 0
         for sid, d in raw.items():

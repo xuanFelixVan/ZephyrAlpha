@@ -2,37 +2,27 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner
-
 # [INVARIANTS] 只从成功修复学习;模式MUST持久化;频率MUST递增
-
 # [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml
-
 # [CONSUMERS] engine.py;MOD-INF-010(feedback-loop)
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] PatternMiningError
-
 # [TESTS] tests/auto-fix-engine/test_fix_pattern_miner.py
-
 import json
 import logging
 import os
 import sqlite3
 from collections import defaultdict
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixStatus
 
 logger = logging.getLogger(__name__)
+
 
 class FixPatternMiner:
     def __init__(self, db_path: str = "data/databases/governance.db") -> None:
@@ -99,15 +89,17 @@ class FixPatternMiner:
             conn.close()
             patterns = []
             for row in rows:
-                patterns.append({
-                    "pattern_id": row[0],
-                    "action_type": row[1],
-                    "dimension": row[2],
-                    "frequency": row[3],
-                    "success_rate": row[4],
-                    "last_seen": row[5],
-                    "pattern_data": json.loads(row[6]) if row[6] else {},
-                })
+                patterns.append(
+                    {
+                        "pattern_id": row[0],
+                        "action_type": row[1],
+                        "dimension": row[2],
+                        "frequency": row[3],
+                        "success_rate": row[4],
+                        "last_seen": row[5],
+                        "pattern_data": json.loads(row[6]) if row[6] else {},
+                    }
+                )
             return patterns
         except Exception:
             return []
@@ -134,15 +126,27 @@ class FixPatternMiner:
                 new_rate = (existing[1] * existing[0] + pattern["success_rate"] * pattern["frequency"]) / new_freq
                 conn.execute(
                     "UPDATE fix_patterns SET frequency=?, success_rate=?, last_seen=?, pattern_data=? WHERE pattern_id=?",
-                    (new_freq, new_rate, pattern["last_seen"], json.dumps(pattern["pattern_data"], ensure_ascii=False), pattern["pattern_id"]),
+                    (
+                        new_freq,
+                        new_rate,
+                        pattern["last_seen"],
+                        json.dumps(pattern["pattern_data"], ensure_ascii=False),
+                        pattern["pattern_id"],
+                    ),
                 )
             else:
                 conn.execute(
                     "INSERT INTO fix_patterns (pattern_id, action_type, dimension, frequency, success_rate, last_seen, pattern_data) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (pattern["pattern_id"], pattern["action_type"], pattern["dimension"],
-                     pattern["frequency"], pattern["success_rate"], pattern["last_seen"],
-                     json.dumps(pattern["pattern_data"], ensure_ascii=False)),
+                    (
+                        pattern["pattern_id"],
+                        pattern["action_type"],
+                        pattern["dimension"],
+                        pattern["frequency"],
+                        pattern["success_rate"],
+                        pattern["last_seen"],
+                        json.dumps(pattern["pattern_data"], ensure_ascii=False),
+                    ),
                 )
             conn.commit()
             conn.close()

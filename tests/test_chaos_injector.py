@@ -14,22 +14,20 @@ from __future__ import annotations
 
 import os
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-import pytest
-
 from zephyr.behavioral_audit.chaos_injector import (
+    INJECTORS,
     ChaosInjection,
     ChaosInjectionType,
     ChaosMetrics,
     ChaosPhase,
     ChaosResult,
-    INJECTORS,
+    import_hallucination,
+    inject_fake_todo_bomb,
     inject_path_rename,
     inject_yaml_field_flip,
-    inject_fake_todo_bomb,
-    import_hallucination,
 )
 
 
@@ -83,7 +81,7 @@ class TestChaosInjection:
         assert ci.rolled_back_at is None
 
     def test_instantiation_custom(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ci = ChaosInjection(
             injection_id="chaos-custom",
             injection_type=ChaosInjectionType.YAML_FIELD_FLIP,
@@ -116,7 +114,9 @@ class TestChaosMetrics:
         assert m.false_negative_rate == 0.0
 
     def test_summary(self):
-        m = ChaosMetrics(total_injections=10, detected=7, missed=2, degraded=1, avg_time_to_detect_sec=4.2, false_negative_rate=0.2)
+        m = ChaosMetrics(
+            total_injections=10, detected=7, missed=2, degraded=1, avg_time_to_detect_sec=4.2, false_negative_rate=0.2
+        )
         s = m.summary()
         assert s["detection_rate"] == "7/10"
         assert s["miss_count"] == 2

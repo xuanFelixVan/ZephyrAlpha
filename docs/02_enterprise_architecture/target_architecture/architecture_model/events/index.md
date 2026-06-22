@@ -2,7 +2,7 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: Events
 module_id: GOV-041
 
@@ -20,8 +20,8 @@ module_id: GOV-041
 
 ## 排除规则（不应放入本目录的内容）
 
-- ❌ DDD 领域模型 → `02_enterprise_architecture/target-architecture/architecture-model/domain/`
+- ❌ DDD 领域模型 → `02_enterprise_architecture/target_architecture/architecture_model/domain/`
 
 ## 父级目录
 
-- 父级：[architecture-model](../index.md)
+- 父级：[architecture_model](../index.md)

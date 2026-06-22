@@ -26,9 +26,6 @@ Trace Capacity Injector — W3C TraceContext 容量元数据注入 (盲点 #25)
   - ContractBus 调用自动注入 tracestate
 """
 
-import random
-from typing import Any, Optional
-
 
 class TraceCapacityInjector:
     """
@@ -50,10 +47,12 @@ class TraceCapacityInjector:
         self._queue_depth = queue_depth
 
     def inject_tracestate(self) -> str:
-        return (f"zephyr=1,"
-                f"cap_eb_tier:{self._error_budget_tier},"
-                f"cap_mod_cnt:{self._module_count},"
-                f"cap_qd:{self._queue_depth}")
+        return (
+            f"zephyr=1,"
+            f"cap_eb_tier:{self._error_budget_tier},"
+            f"cap_mod_cnt:{self._module_count},"
+            f"cap_qd:{self._queue_depth}"
+        )
 
     def get_capacity_headers(self) -> dict:
         return {

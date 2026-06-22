@@ -5,7 +5,6 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-import pytest
 
 from zephyr.security.llm_defense.llm_security.self_protection.isolation import (
     AccessPattern,

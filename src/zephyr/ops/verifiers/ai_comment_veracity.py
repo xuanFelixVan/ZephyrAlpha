@@ -45,12 +45,14 @@ class VeracityLevel(str, Enum):
 
 @dataclass
 class AICommentVeracity:
-    suspicious_patterns: list[str] = field(default_factory=lambda: [
-        "always returns",
-        "never fails",
-        "guaranteed to",
-        "will never",
-    ])
+    suspicious_patterns: list[str] = field(
+        default_factory=lambda: [
+            "always returns",
+            "never fails",
+            "guaranteed to",
+            "will never",
+        ]
+    )
 
     findings: list[dict] = field(default_factory=list)
     total_comments: int = 0
@@ -65,7 +67,7 @@ class AICommentVeracity:
     ) -> VeracityLevel:
         self.total_comments += 1
         comment_lower = comment_text.lower()
-        
+
         for pattern in self.suspicious_patterns:
             if pattern in comment_lower:
                 self.flagged_comments += 1
@@ -78,7 +80,7 @@ class AICommentVeracity:
                 }
                 self.findings.append(finding)
                 return VeracityLevel.SUSPICIOUS
-        
+
         return VeracityLevel.VERIFIED
 
     def get_veracity_score(self) -> float:

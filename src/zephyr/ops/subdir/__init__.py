@@ -3,11 +3,11 @@
 # [MODULE] zephyr.ops.subdir
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
-# [CONSUMERS] 
+# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 
 __all__ = ["test_file"]

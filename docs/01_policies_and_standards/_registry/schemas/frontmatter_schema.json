@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://zephyralpha.dev/schemas/frontmatter-schema.json",
-  "$comment": "自动生成自 PS-STD-001 metadata-registry.md。依赖词表：doc_type-vocabulary.yaml / rule_form-vocabulary.yaml / status-vocabulary.yaml。禁止手写——枚举变更必须先改词表再改 PS-STD-001 最后重新生成本文件。",
+  "$comment": "自动生成自 PS-STD-001 metadata_registry.yaml。依赖词表：doc_type-vocabulary.yaml / rule_form-vocabulary.yaml / status-vocabulary.yaml。禁止手写——枚举变更必须先改词表再改 PS-STD-001 最后重新生成本文件。",
   "title": "ZephyrAlpha Frontmatter Schema",
   "description": "机器可读的 frontmatter 验证 schema。从 PS-STD-001 自动生成，禁止手写。枚举值使用 oneOf+const+description 模式（对标 SchemaStore 最佳实践），IDE 可对每个枚举值显示中文解释。分阶段必填闸门由 pre-commit 脚本执行（JSON Schema 无法表达条件必填）。",
   "type": "object",

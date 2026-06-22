@@ -9,8 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.observation_window_guard import ObservationWindowGuard
+
 
 class TestObservationWindowGuard:
     def test_instantiation(self):

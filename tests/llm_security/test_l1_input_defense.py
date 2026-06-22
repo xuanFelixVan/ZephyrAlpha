@@ -7,14 +7,13 @@
 # [TESTS] —
 import pytest
 
+from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
 from zephyr.security.llm_defense.llm_security.layers.l1_input import (
-    DefenseResult,
     EncodingBypassDefender,
     InputDefenseLayer,
     SourceType,
     ToolResultTransformGuard,
 )
-from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
 
 
 class TestInputDefenseLayer:
@@ -155,11 +154,11 @@ class TestEncodingBypassDefender:
     def test_normalize_homoglyphs(self, defender):
         content = "асt nоrmаl"
         normalized = defender.normalize_homoglyphs(content)
-        assert "act normal" == normalized
+        assert normalized == "act normal"
 
     def test_strip_zero_width(self, defender):
         content = "hello\u200b\u200c world"
         stripped = defender.strip_zero_width(content)
         assert "\u200b" not in stripped
         assert "\u200c" not in stripped
-        assert "hello world" == stripped
+        assert stripped == "hello world"

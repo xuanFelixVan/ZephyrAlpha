@@ -29,14 +29,14 @@ encoding_regression: UTF-8→其他编码(编码退化检测)
 size_anomaly: 修改后体积突变(>10× or <0.1×)
 对标 blueprint.md §6.30。
 """
+
 from __future__ import annotations
 
 import os
 import stat
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -47,7 +47,7 @@ class FileAttrIssue:
     expected: str
     actual: str
     severity: str = "MINOR"
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 _FILE_ATTR_CACHE: dict[str, dict[str, object]] = {}
@@ -114,7 +114,7 @@ def check_size_anomaly(
     return issues
 
 
-def check_encoding(file_path: str) -> Optional[str]:
+def check_encoding(file_path: str) -> str | None:
     try:
         with open(file_path, "rb") as f:
             raw = f.read(4)

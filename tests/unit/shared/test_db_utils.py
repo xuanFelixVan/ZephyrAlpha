@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 =============================================
 覆盖矩阵：
@@ -22,8 +23,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.integration.shared_08.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
 
 
@@ -32,12 +31,7 @@ class TestEnsureSchema:
         db = tmp_path / "test_schema.db"
         ensure_schema(db)
         conn = sqlite3.connect(str(db))
-        tables = {
-            row[0]
-            for row in conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='table'"
-            ).fetchall()
-        }
+        tables = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
         conn.close()
         assert "tasks" in tables
         assert "events" in tables
@@ -47,9 +41,7 @@ class TestEnsureSchema:
         ensure_schema(db)
         ensure_schema(db)
         conn = sqlite3.connect(str(db))
-        count = conn.execute(
-            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='tasks'"
-        ).fetchone()[0]
+        count = conn.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='tasks'").fetchone()[0]
         conn.close()
         assert count == 1
 

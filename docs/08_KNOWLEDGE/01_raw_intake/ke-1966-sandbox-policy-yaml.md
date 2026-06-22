@@ -17,7 +17,7 @@ sandbox:
   isolation:
     namespace_pattern: "CAP-SANDBOX-NS-{module}-{agent_id}"
     process_isolation: "subprocess"
-    
+
   resource_limits:
     cpu:
       max_time_seconds: 300
@@ -30,18 +30,18 @@ sandbox:
       read_only_paths: ["/system", "/config"]
     network:
       allowed: false
-      
+
   timeout:
     hard_timeout_seconds: 600
     kill_signal: "SIGKILL"
-    
+
   policy_lifecycle:
     valid_state_transitions:
       draft: [active]
       active: [deprecated]
       deprecated: [archived]
     states: ["draft", "active", "deprecated", "archived"]
-    
+
   modes:
     - mode: STRICT
       description: "完全隔离执行"

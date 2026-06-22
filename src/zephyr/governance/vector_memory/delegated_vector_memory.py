@@ -33,14 +33,12 @@ DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器
 - ``get_collection_stats``：以 ``recall(topic=collection)`` 条数近似条目数
 """
 
-
 from __future__ import annotations
 
+import importlib as _il
 import logging
 from datetime import UTC, datetime
-from typing import Any
 
-import importlib as _il
 _mod = _il.import_module("zephyr.research.unified_memory_api")
 UnifiedMemoryAPI = _mod.UnifiedMemoryAPI
 WriteTrace = _mod.WriteTrace
@@ -68,7 +66,9 @@ class UnifiedVectorMemoryAdapter(VectorMemoryBase):
         chain = entry.metadata.get("audit_chain")
         if not isinstance(chain, list) or not chain:
             chain = ["VMS-ADAPTER", entry.collection]
-        prov = WriteTrace(origin=origin, audit_chain=[str(x) for x in chain], arbitration=entry.metadata.get("arbitration"))
+        prov = WriteTrace(
+            origin=origin, audit_chain=[str(x) for x in chain], arbitration=entry.metadata.get("arbitration")
+        )
         return self._api.write(entry.collection, entry.content, prov)
 
     def search(self, query: str, collection: str, top_k: int = 10) -> list[MemoryEntry]:

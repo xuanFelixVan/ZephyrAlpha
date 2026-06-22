@@ -13,20 +13,26 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import MagicMock
 
 from zephyr.intelligence.model_evaluation.activate import (
     ACTIVE_DIR_NAME,
-    ActivateGate,
-    ActivateResult,
     AUTO_ACTIVATE_THRESHOLD,
     FUTURE_DIR_NAME,
+    ActivateGate,
+    ActivateResult,
 )
 
 
-def _make_ke_file(tmp_path: Path, module_id: str = "KE-001", ai_value_score: float = 9.5, priority: str = "P0", classification: str = "KNOWLEDGE_ENTRY", depends_on: list | None = None, target_path: str = "") -> Path:
+def _make_ke_file(
+    tmp_path: Path,
+    module_id: str = "KE-001",
+    ai_value_score: float = 9.5,
+    priority: str = "P0",
+    classification: str = "KNOWLEDGE_ENTRY",
+    depends_on: list | None = None,
+    target_path: str = "",
+) -> Path:
     fm_lines = [
         "---",
         f"module_id: {module_id}",

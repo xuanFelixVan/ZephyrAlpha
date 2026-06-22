@@ -27,19 +27,19 @@ P0 Hotfix 快速旁路处理：[HOTFIX]/[EMERGENCY] commit 自动标记为 ACKNO
 对标 blueprint.md §2.12（热修复/紧急变更旁路）。
 同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。
 """
+
 from __future__ import annotations
 
 import json
 import os
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-from typing import Optional
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 
 _CORE_AUDIT_AVAILABLE = False
 try:
     from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:
     _CoreAuditWriter = None
@@ -56,13 +56,12 @@ class HotfixAuditEntry:
     module_ids: list[str]
     dimensions: list[str]
     owner_ack: str = ""
-    timestamp: Optional[datetime] = None
-    suppressed_until: Optional[datetime] = None
+    timestamp: datetime | None = None
+    suppressed_until: datetime | None = None
 
 
 class HotfixBypass:
-
-    def __init__(self, project_root: Optional[str] = None) -> None:
+    def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -92,7 +91,7 @@ class HotfixBypass:
         affected_dimensions: list[str],
         owner_ack: str = "",
     ) -> HotfixAuditEntry:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         entry = HotfixAuditEntry(
             entry_id=uuid.uuid4(),
             commit_hash=commit_hash,
@@ -107,7 +106,7 @@ class HotfixBypass:
         return entry
 
     def check_expired_hotfixes(self) -> list[str]:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expired: list[str] = []
         for ch, entry in list(self._active_hotfixes.items()):
             if entry.suppressed_until and now >= entry.suppressed_until:
@@ -119,7 +118,7 @@ class HotfixBypass:
         entry = self._active_hotfixes.get(commit_hash)
         if entry is None:
             return False
-        if entry.suppressed_until and datetime.now(timezone.utc) < entry.suppressed_until:
+        if entry.suppressed_until and datetime.now(UTC) < entry.suppressed_until:
             return True
         return False
 

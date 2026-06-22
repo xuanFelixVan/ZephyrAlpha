@@ -4,13 +4,18 @@
 FORBIDDEN_SEQUENCES = None  # stub constant
 SEQUENCE_TIMEOUT = None  # stub constant
 
+
 class SequenceEvent:
     """Stub class — implementation pending."""
+
     pass
+
 
 class SequenceGuard:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "FORBIDDEN_SEQUENCES",

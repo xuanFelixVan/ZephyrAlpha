@@ -39,6 +39,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 
 import pytest
+
 from zephyr.ops.auto_evolution import (
     DEFAULT_AUTO_CONFIG,
     AutoEvolutionConfig,

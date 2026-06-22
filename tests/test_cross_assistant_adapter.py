@@ -11,8 +11,8 @@
 # [TESTS] python -m pytest tests/test_cross_assistant_adapter.py -q
 
 from __future__ import annotations
-import pytest
-from zephyr.governance.cross_assistant_adapter import CrossAssistantAdapter, SUPPORTED_IDES
+
+from zephyr.governance.cross_assistant_adapter import SUPPORTED_IDES, CrossAssistantAdapter
 
 
 class TestCrossAssistantAdapterInstantiation:

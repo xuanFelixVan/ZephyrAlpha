@@ -15,7 +15,6 @@
 7 SLI + 5 容量 SLI + 退化检测。定时自检,输出 HEALTHY/DEGRADED/CRITICAL。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -23,17 +22,17 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import yaml
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "HealthStatus",
     "HealthLevel",
-    "SelfHealth",
+    "HealthStatus",
     "SLIResult",
+    "SelfHealth",
 ]
 
 _HEALTH_LEVELS: dict[str, int] = {"HEALTHY": 0, "DEGRADED": 1, "CRITICAL": 2}
@@ -151,10 +150,17 @@ class SelfHealth:
 
     def _check_pipeline_files_exist(self) -> SLIResult:
         expected = [
-            "models.py", "reference_extractor.py", "trigger_engine.py",
-            "safety_boundary.py", "alignment_engine.py", "issue_aggregator.py",
-            "llm_bridge.py", "self_healer.py", "fix_prioritizer.py",
-            "blast_radius.py", "self_health.py",
+            "models.py",
+            "reference_extractor.py",
+            "trigger_engine.py",
+            "safety_boundary.py",
+            "alignment_engine.py",
+            "issue_aggregator.py",
+            "llm_bridge.py",
+            "self_healer.py",
+            "fix_prioritizer.py",
+            "blast_radius.py",
+            "self_health.py",
         ]
         pkg_dir = Path(__file__).parent
         missing = [f for f in expected if not (pkg_dir / f).exists()]
@@ -164,11 +170,6 @@ class SelfHealth:
 
     def _check_models_importable(self) -> SLIResult:
         try:
-            from zephyr.governance.semantic_audit.models import (
-                ExtractedReferences,
-                TriggerResult,
-                SemanticAuditReport,
-            )
             return SLIResult("models_import_ok", True, 1.0, 1.0)
         except Exception as exc:
             return SLIResult("models_import_fail", False, 0.0, 1.0, str(exc))
@@ -196,6 +197,7 @@ class SelfHealth:
     def _check_circular_imports(self) -> SLIResult:
         try:
             import importlib
+
             importlib.import_module("zephyr.security.semantic_auditor")
             return SLIResult("no_circular_import", True, 1.0, 1.0)
         except ImportError as exc:
@@ -205,7 +207,6 @@ class SelfHealth:
 
     def _check_self_module_importable(self) -> SLIResult:
         try:
-            from zephyr.governance.semantic_audit.self_health import SelfHealth
             return SLIResult("self_health_import_ok", True, 1.0, 1.0)
         except Exception as exc:
             return SLIResult("self_health_import_fail", False, 0.0, 1.0, str(exc))
@@ -241,6 +242,7 @@ class SelfHealth:
         start = time.time()
         try:
             import importlib
+
             importlib.import_module("zephyr.security.semantic_auditor")
             elapsed = time.time() - start
             if elapsed > 2.0:

@@ -26,6 +26,7 @@ Blindspot: FLE performance evaluated only externally; internal benchmark invisib
 
 from dataclasses import dataclass
 
+
 @dataclass
 class MetaPerformanceGate:
     mttd_seconds: float = 300.0

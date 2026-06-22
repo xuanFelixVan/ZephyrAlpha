@@ -356,4 +356,3 @@ body: |
     2. 测试脚本建议放在 tests/integration/test_e2e_pipeline.py
 
     3. 第一个要测的场景：从 AkshareProvider 拉沪深300 → 等权 → 风险校验 → 模拟执行 → TCA
-

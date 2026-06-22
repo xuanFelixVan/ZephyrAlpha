@@ -49,4 +49,4 @@ from __future__ import annotations
 from zephyr.data_governance.provider_base import DataSourceBase, DataSourceMeta
 from zephyr.data_governance.quality_gate import DataQualityGate
 
-__all__ = ['DataQualityGate', 'DataSourceBase', 'DataSourceMeta', 'provider_base', 'quality_gate']
+__all__ = ["DataQualityGate", "DataSourceBase", "DataSourceMeta", "provider_base", "quality_gate"]

@@ -13,8 +13,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from enum import Enum
-from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -27,14 +25,14 @@ from zephyr.security.access_control.orphan_judge.judge import (
 )
 
 __all__ = [
-    "Verdict",
     "Confidence",
-    "LayerResult",
     "Judgment",
-    "OrphanJudgeReport",
     "JudgmentRecord",
-    "ScanSummary",
+    "LayerResult",
     "OrphanJudgeConfig",
+    "OrphanJudgeReport",
+    "ScanSummary",
+    "Verdict",
 ]
 
 
@@ -77,9 +75,11 @@ class OrphanJudgeConfig(BaseModel):
     docstring_ratio_weight: float = Field(default=0.10, ge=0.0, le=1.0)
     test_exists_weight: float = Field(default=0.10, ge=0.0, le=1.0)
     import_depth_weight: float = Field(default=0.25, ge=0.0, le=1.0)
-    registry_candidates: list[str] = Field(default_factory=lambda: [
-        "docs/registry_of_registries.yaml",
-        "scripts/script-manifest.yaml",
-        "src/zephyr/gates/_registry.yaml",
-        "data/asset_index/unified-asset-index.yaml",
-    ])
+    registry_candidates: list[str] = Field(
+        default_factory=lambda: [
+            "docs/registry_of_registries.yaml",
+            "scripts/script-manifest.yaml",
+            "src/zephyr/gates/_registry.yaml",
+            "data/asset_index/unified-asset-index.yaml",
+        ]
+    )

@@ -15,13 +15,14 @@ L11 — ML Inference Base
 
 模型推理引擎抽象基类。
 """
+
 from __future__ import annotations
 
 import abc
 from typing import ClassVar
 
-from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
+from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
 
 
 class InferenceEngineBase(abc.ABC):
@@ -35,7 +36,8 @@ class InferenceEngineBase(abc.ABC):
       - 必须包含 inference_ms 和 confidence
       - idempotency_key（INV-007）：每个推理请求必须关联幂等键
     """
-    _registry: ClassVar[dict[str, type["InferenceEngineBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[InferenceEngineBase]]] = {}
 
     @abc.abstractmethod
     def predict(self, request: ModelServingRequest) -> ModelServingResponse:
@@ -52,4 +54,4 @@ __all__ = [
 ]
 
 # Re-export from trainer_base for backward compatibility
-from zephyr.ml_train.trainer_base import ModelMetadata, ModelTrainerBase, ModelRegistry  # noqa: F401,E402
+from zephyr.ml_train.trainer_base import ModelMetadata, ModelRegistry, ModelTrainerBase  # noqa: F401

@@ -5,27 +5,30 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-import time
 
 import pytest
 
+from zephyr.infrastructure.a2a_protocol.governance.protocol import (
+    SecurityContext,
+    SecurityDecision,
+)
 from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import (
-    AIRecursionGuard,
     AgentExecutionProtector,
+    AIRecursionGuard,
     CircuitState,
     CostAsymmetryDefender,
-    _L5CostBudget as CostBudget,
     LLMCostCircuitBreaker,
     LSGPerformanceBudget,
     ModelExtractionDefender,
     ResourceProtectionLayer,
     SemanticCacheCollisionDefender,
     SlidingWindowRateLimiter,
-    _L5TokenBudget as TokenBudget,
 )
-from zephyr.infrastructure.a2a_protocol.governance.protocol import (
-    SecurityContext,
-    SecurityDecision,
+from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import (
+    _L5CostBudget as CostBudget,
+)
+from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import (
+    _L5TokenBudget as TokenBudget,
 )
 
 
@@ -223,9 +226,7 @@ class TestResourceProtectionLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_full_pipeline_ok(self):
-        layer = ResourceProtectionLayer(
-            max_tokens=100000, max_cost_cents=500.0
-        )
+        layer = ResourceProtectionLayer(max_tokens=100000, max_cost_cents=500.0)
         ctx = make_ctx(raw_input="What is the weather today?")
         result = await layer.evaluate(ctx)
         assert result.decision == SecurityDecision.ALLOW
@@ -233,8 +234,6 @@ class TestResourceProtectionLayer:
     @pytest.mark.asyncio
     async def test_evaluate_cost_asymmetry_blocked(self):
         layer = ResourceProtectionLayer(max_cost_cents=500.0)
-        ctx = make_ctx(
-            raw_input="Please analyze this codebase and review all files in detail"
-        )
+        ctx = make_ctx(raw_input="Please analyze this codebase and review all files in detail")
         result = await layer.evaluate(ctx)
         assert result.decision == SecurityDecision.DENY

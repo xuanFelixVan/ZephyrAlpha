@@ -26,8 +26,7 @@ Hawthorne Blind — AI 霍桑效应消除 (盲点 #31)
   - AI 不应感知自己被监控的精确指标
 """
 
-from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 
 class HawthorneBlind:

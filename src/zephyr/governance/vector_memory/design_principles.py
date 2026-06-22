@@ -53,9 +53,7 @@ class DesignPrinciplesEnforcer:
     @staticmethod
     def validate_dimension(dim: int) -> None:
         if dim not in ALLOWED_DIMENSIONS:
-            raise DimensionError(
-                f"嵌入维度 {dim} 不在白名单中。允许: {sorted(ALLOWED_DIMENSIONS)}"
-            )
+            raise DimensionError(f"嵌入维度 {dim} 不在白名单中。允许: {sorted(ALLOWED_DIMENSIONS)}")
 
     @staticmethod
     def validate_chunk_strategy(name: str, chunk_strategy: str) -> None:
@@ -67,23 +65,24 @@ class DesignPrinciplesEnforcer:
         if name in COLD_COLLECTIONS and chunk_strategy in CHUNK_STRATEGIES_HOT:
             _logger.warning(
                 "冷数据 Collection '%s' 使用了热数据分块策略 '%s'——可能不适合",
-                name, chunk_strategy,
+                name,
+                chunk_strategy,
             )
         schema = COLLECTION_SCHEMAS.get(name, {})
         expected = schema.get("chunk_strategy", "")
         if expected and chunk_strategy != expected:
             _logger.warning(
                 "Collection '%s' 的分块策略 '%s' 与蓝图预期 '%s' 不一致",
-                name, chunk_strategy, expected,
+                name,
+                chunk_strategy,
+                expected,
             )
 
     @staticmethod
     def validate_ttl(name: str, ttl_days: int) -> None:
         expected_ttl = TTL_MAP.get(name)
         if expected_ttl is not None and ttl_days != expected_ttl:
-            raise TTLError(
-                f"Collection '{name}' 的 TTL 应为 {expected_ttl}d，实际 {ttl_days}d"
-            )
+            raise TTLError(f"Collection '{name}' 的 TTL 应为 {expected_ttl}d，实际 {ttl_days}d")
 
     @staticmethod
     def validate_provenance(metadata: dict[str, Any] | None) -> None:
@@ -104,9 +103,7 @@ class DesignPrinciplesEnforcer:
             arbitration = metadata.get("arbitration", "")
         trace = WriteTrace(origin=origin, audit_chain=audit_chain, arbitration=arbitration)
         if not ProvenanceEnforcer.validate(trace):
-            raise ProvenanceMissingError(
-                "provenance 校验失败: origin/audit_chain/arbitration 不完整"
-            )
+            raise ProvenanceMissingError("provenance 校验失败: origin/audit_chain/arbitration 不完整")
 
     @staticmethod
     def validate_all(

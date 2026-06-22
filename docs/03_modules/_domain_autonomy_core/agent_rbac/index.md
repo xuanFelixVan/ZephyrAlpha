@@ -1,11 +1,11 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-INF-018
 created: '2026-05-05'
 doc_type: index
 module_id: MOD-INF-068
 status: Active
 title: Agent RBAC — 七层纵深防御 + 六横切面 权限系统
-updated: '2026-05-08'
+updated: '2026-06-22'
 version: 0.14.0
 ---
 

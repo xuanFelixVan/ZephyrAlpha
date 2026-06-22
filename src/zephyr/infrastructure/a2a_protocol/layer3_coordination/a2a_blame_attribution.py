@@ -29,7 +29,6 @@
 方法: 基于 A2ACausalTrace 的因果图 + 破坏性贡献度分析
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -63,35 +62,33 @@ class A2ABlameAttribution:
     def add_record(self, agent_id: str, action: str, timestamp: float, impact_score: float = 0.0):
         record_id = f"{agent_id}:{action}:{timestamp}"
         self._records[record_id] = {
-            "agent_id": agent_id, "action": action,
-            "timestamp": timestamp, "impact_score": impact_score,
+            "agent_id": agent_id,
+            "action": action,
+            "timestamp": timestamp,
+            "impact_score": impact_score,
         }
 
     def attribute(self, incident_id: str, suspect_agents: list[str]) -> BlameReport:
         report = BlameReport(incident_id=incident_id)
 
-        total_impact = sum(
-            r["impact_score"] for r in self._records.values()
-            if r["agent_id"] in suspect_agents
-        )
+        total_impact = sum(r["impact_score"] for r in self._records.values() if r["agent_id"] in suspect_agents)
         if total_impact == 0:
             total_impact = 1.0
 
         for agent_id in suspect_agents:
-            agent_records = [
-                r for r in self._records.values()
-                if r["agent_id"] == agent_id
-            ]
+            agent_records = [r for r in self._records.values() if r["agent_id"] == agent_id]
             if not agent_records:
                 continue
 
             contribution = sum(r["impact_score"] for r in agent_records) / total_impact
-            report.items.append(BlameItem(
-                agent_id=agent_id,
-                action=agent_records[-1]["action"],
-                contribution=round(contribution, 3),
-                evidence=f"{len(agent_records)} actions recorded",
-            ))
+            report.items.append(
+                BlameItem(
+                    agent_id=agent_id,
+                    action=agent_records[-1]["action"],
+                    contribution=round(contribution, 3),
+                    evidence=f"{len(agent_records)} actions recorded",
+                )
+            )
 
         report.items.sort(key=lambda x: x.contribution, reverse=True)
         if report.items:

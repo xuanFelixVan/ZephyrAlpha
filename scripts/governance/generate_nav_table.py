@@ -15,6 +15,7 @@ generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -24,9 +25,9 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS
-
 
 __manifest__ = """
 args: []
@@ -40,8 +41,8 @@ timeout_seconds: 60
 warn_only: false
 """
 
-import os
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -51,11 +52,17 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 MAPPING_FILE = PROJECT_ROOT / "config" / "nav_table_mapping.yaml"
 AGENTS_FILE = PROJECT_ROOT.parent / "AGENTS.md"
 DOC_META_INDEX = (
-    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index-registry.yaml"
+    PROJECT_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "document-metadata-index-registry.yaml"
 )
 SCRIPT_MANIFEST = PROJECT_ROOT / "scripts" / "governance" / "script_manifest.yaml"
 SECTION_START = "## 5.2 全流程导航表"
 SECTION_END = "## 6. AI 施工执行原则"
+
 
 def load_registry_paths(registry_path) -> dict:
     """从 document-metadata-index-registry.yaml 提取所有已知文件路径。"""
@@ -66,6 +73,7 @@ def load_registry_paths(registry_path) -> dict:
         if p:
             paths.add(p)
     return paths
+
 
 def load_registry_modules(registry_path) -> dict:
     """从 document-metadata-index-registry.yaml 提取 module_id → {path, title, status, version} 映射。"""
@@ -82,6 +90,7 @@ def load_registry_modules(registry_path) -> dict:
             }
     return modules
 
+
 def load_script_names(script_manifest_path) -> dict:
     """从 script_manifest.yaml 提取所有已知脚本名。"""
     data = load_yaml(script_manifest_path)
@@ -91,6 +100,7 @@ def load_script_names(script_manifest_path) -> dict:
         if n:
             names.add(n)
     return names
+
 
 def validate_file_exists(file_path, project_root) -> list[dict]:
     """检查 referenced 路径对应的文件是否真实存在。"""
@@ -102,6 +112,7 @@ def validate_file_exists(file_path, project_root) -> list[dict]:
         return (True, "")
     return (False, f"文件不存在: {file_path}")
 
+
 def format_rule_files_section(rule_module_ids, manual_files, registry_modules, project_root) -> None:
     """将 module_id + manual_files 拼接为'核心规则文件'列。"""
     parts = []
@@ -110,7 +121,7 @@ def format_rule_files_section(rule_module_ids, manual_files, registry_modules, p
             info = registry_modules[mid]
             st = f"{mid}"
             if info.get("status") != "active":
-                st += f' ({info['status']})'
+                st += f" ({info['status']})"
             parts.append(st)
         else:
             parts.append(f"{mid}")
@@ -122,6 +133,7 @@ def format_rule_files_section(rule_module_ids, manual_files, registry_modules, p
             parts.append(f"`{mf}` ❌")
     return "、".join(parts)
 
+
 def format_scripts_list(script_items, known_scripts) -> None:
     """格式化脚本列表，标注不存在/已废弃的脚本。"""
     parts = []
@@ -130,8 +142,7 @@ def format_scripts_list(script_items, known_scripts) -> None:
         if name in known_scripts:
             parts.append(f"`{name}`")
         elif (
-            name.startswith("p")
-            and "pre_commit" in name.lower()
+            (name.startswith("p") and "pre_commit" in name.lower())
             or ("CI " in name or name.startswith("CI "))
             or ("run_all.py" in name or name == "人工")
         ):
@@ -139,6 +150,7 @@ def format_scripts_list(script_items, known_scripts) -> None:
         else:
             parts.append(f"`{name}` ⚠️")
     return "、".join(parts)
+
 
 def generate_stage_table(mapping, registry_modules, known_scripts, project_root) -> str:
     """生成阶段表格"""
@@ -158,6 +170,7 @@ def generate_stage_table(mapping, registry_modules, known_scripts, project_root)
         rows.append(f"| **{sid} {name}** | {actions} | {checks_str} | {scripts_str} | {rules_str} |")
     return rows
 
+
 def generate_dimension_table(mapping, known_scripts) -> str:
     """生成维度表格"""
     rows = []
@@ -175,14 +188,16 @@ def generate_dimension_table(mapping, known_scripts) -> str:
         rows.append(f"| **{did}** | **{name}** | {scope} | {checks_str} | {scripts_str} | {linked_rules} |")
     return rows
 
+
 def generate_mantra(mapping) -> str:
     """生成维度表格."""
     lines = []
     for m in mapping["mantra"]:
-        lines.append(f'{m['num']}. {m['text']}→ {m['dim']}')
+        lines.append(f"{m['num']}. {m['text']}→ {m['dim']}")
     "生成内容."
     return lines
     "生成口诀."
+
 
 def generate_methodology_table(mapping, project_root) -> str:
     """生成方法论表格"""
@@ -198,6 +213,7 @@ def generate_methodology_table(mapping, project_root) -> str:
         rows.append(f"| {stage} | {path_display} | {desc} |")
     return rows
     "生成方法论表格."
+
 
 def build_section(mapping, registry_modules, known_scripts, project_root) -> dict:
     """构建段落"""
@@ -230,28 +246,30 @@ def build_section(mapping, registry_modules, known_scripts, project_root) -> dic
     )
     "构建段落."
 
+
 def validate_mapping(mapping, registry_modules, known_scripts, project_root) -> list[dict]:
     """交叉验证：检查 mapping 中引用的 module_id 和脚本是否在 registries 中存在。"""
     issues = []
     for stage in mapping.get("seven_stages", []):
         for mid in stage.get("rule_module_ids", []):
             if mid not in registry_modules:
-                issues.append(f'[WARN] 阶段 {stage['id']} 引用未注册的 module_id: {mid}')
+                issues.append(f"[WARN] 阶段 {stage['id']} 引用未注册的 module_id: {mid}")
             elif registry_modules[mid]["status"] == "deprecated":
-                issues.append(f'[INFO] 阶段 {stage['id']} 引用的 {mid} 状态为 deprecated')
+                issues.append(f"[INFO] 阶段 {stage['id']} 引用的 {mid} 状态为 deprecated")
         for mf in stage.get("manual_files", []):
             ok, err = validate_file_exists(mf, project_root)
             if not ok:
-                issues.append(f'[WARN] 阶段 {stage['id']} 引用不存在的文件: {mf}')
+                issues.append(f"[WARN] 阶段 {stage['id']} 引用不存在的文件: {mf}")
     for dim in mapping.get("audit_dimensions", []):
         for sn in dim.get("script_names", []):
             if sn not in known_scripts:
-                issues.append(f'[WARN] 维度 {dim['id']} 引用未注册的脚本: {sn}')
+                issues.append(f"[WARN] 维度 {dim['id']} 引用未注册的脚本: {sn}")
     for mf in mapping.get("methodology_files", []):
         ok, err = validate_file_exists(mf["path"], project_root)
         if not ok:
-            issues.append(f'[WARN] 方法论文件不存在: {mf['path']}')
+            issues.append(f"[WARN] 方法论文件不存在: {mf['path']}")
     return issues
+
 
 def main() -> None:
     """入口函数."""
@@ -305,6 +323,7 @@ def main() -> None:
     print("✅ AGENTS.md §5.2 已生成")
     if issues:
         print(f"⚠️ 出现 {len(issues)} 个交叉验证警告（见上方报告）")
+
 
 if __name__ == "__main__":
     main()

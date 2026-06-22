@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-254
 status: active
 title: 3. Reading order / 推荐阅读顺序

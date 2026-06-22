@@ -12,9 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
 import time
 
+import pytest
 
 mod = pytest.importorskip(
     "zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_tracing",
@@ -63,9 +63,14 @@ class TestA2ATracing:
 class TestSpan:
     def test_duration(self):
         span = mod.Span(
-            span_id="s1", trace_id="t1", parent_span_id=None,
-            agent_id="a1", action="read", resource="file.py",
-            start_time=time.time(), end_time=time.time() + 1.0,
+            span_id="s1",
+            trace_id="t1",
+            parent_span_id=None,
+            agent_id="a1",
+            action="read",
+            resource="file.py",
+            start_time=time.time(),
+            end_time=time.time() + 1.0,
         )
         dur = span.duration
         assert isinstance(dur, float)

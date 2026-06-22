@@ -23,7 +23,6 @@ from __future__ import annotations
 
 """AI Session 手递手（CT-SESSION-HANDOFF）——session状态保存+下一个AI加载。"""
 
-from datetime import datetime, timezone
 
 class SessionHandoffManager:
     def save_checkpoint(self, session_id: str, completed: list[str], failed: list[str]) -> dict:

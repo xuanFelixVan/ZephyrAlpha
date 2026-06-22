@@ -62,7 +62,6 @@ SQL 注入防护
         report = eng.compliance_rate_trend(period="week")
 """
 
-
 from __future__ import annotations
 
 from pathlib import Path

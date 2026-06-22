@@ -21,8 +21,7 @@
 
 """Streaming — A2A 流式传输"""
 
-
-from typing import Generator, Dict, Any
+from collections.abc import Generator
 
 
 class StreamingManager:
@@ -31,7 +30,7 @@ class StreamingManager:
     @staticmethod
     def stream_chunk(content: str, chunk_size: int = 256) -> Generator[str, None, None]:
         for i in range(0, len(content), chunk_size):
-            yield content[i:i + chunk_size]
+            yield content[i : i + chunk_size]
 
     @staticmethod
     def assemble_stream(chunks: list) -> str:

@@ -22,6 +22,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -32,12 +33,11 @@ warn_only: false
 """
 
 
-import os
 import json as json_mod
+import os
 import sys
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _COST_DB = _REPO_ROOT / "scripts" / "governance" / "meta" / "script_cost_db.jsonl"
@@ -54,8 +54,8 @@ MODEL_PRICING: dict[str, dict[str, float]] = {
     "cursor-small": {"prompt": 0.0, "completion": 0.0},
 }
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load_state() -> dict:
@@ -73,14 +73,15 @@ def _save_state(data: dict) -> None:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             json_mod.dump(data, f, ensure_ascii=False, indent=2)
-    
-    
+
         os.replace(tmp_path, _COST_STATE)
     except PermissionError:
         try:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def record_cost(script: str, model: str, tokens: int, cost: float, detail: str = "") -> dict:
     """record_cost implementation."""
     now = datetime.now(UTC)
@@ -158,13 +159,16 @@ def main() -> None:
                 detail = sys.argv[i + 1]
         if script and model:
             result = record_cost(script, model, tokens, cost, detail)
-            print(f"[COST] ${result['cost_usd']:.4f} | {result['script']} @ {result['model']} ({result['tokens']} tokens)", file=sys.stderr)
+            print(
+                f"[COST] ${result['cost_usd']:.4f} | {result['script']} @ {result['model']} ({result['tokens']} tokens)",
+                file=sys.stderr,
+            )
     elif "--report" in sys.argv:
         r = report()
         if "--json" in sys.argv:
             print(json_mod.dumps(r, ensure_ascii=False, indent=2))
         else:
-            print(f"\n[COST] AI 执行费用追踪", file=sys.stderr)
+            print("\n[COST] AI 执行费用追踪", file=sys.stderr)
             print(f"  累计花费: ${r['total_cost_usd']:.4f}", file=sys.stderr)
             print(f"  累计 tokens: {r['total_tokens']:,}", file=sys.stderr)
             print(f"  累计 API调用: {r['total_api_calls']}", file=sys.stderr)
@@ -177,7 +181,9 @@ def main() -> None:
         print("模型定价:", file=sys.stderr)
         for model, pricing in MODEL_PRICING.items():
             est = estimate_cost(10000, 5000, model)
-            print(f"  {model:20s}: ${pricing['prompt']:.4f}/1K prompt, ${pricing['completion']:.4f}/1K completion → ~${est:.4f}/15K tokens")
+            print(
+                f"  {model:20s}: ${pricing['prompt']:.4f}/1K prompt, ${pricing['completion']:.4f}/1K completion → ~${est:.4f}/15K tokens"
+            )
     else:
         print("Usage: track_script_costs.py --record ... | --report | --monthly | --estimate", file=sys.stderr)
 

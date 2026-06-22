@@ -26,6 +26,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class SimStep:
     iteration: int
@@ -33,6 +34,7 @@ class SimStep:
     content: str
     expected_hash: str = ""
     tolerance: float = 0.0
+
 
 @dataclass
 class CodeSimulator:
@@ -48,11 +50,13 @@ class CodeSimulator:
     def run(self) -> list[dict[str, Any]]:
         for step in self.steps:
             self.current_content = step.content
-            self.history.append({
-                "iteration": step.iteration,
-                "operation": step.operation,
-                "content_len": len(self.current_content),
-            })
+            self.history.append(
+                {
+                    "iteration": step.iteration,
+                    "operation": step.operation,
+                    "content_len": len(self.current_content),
+                }
+            )
         return self.history
 
     def get_final(self) -> str:

@@ -28,7 +28,6 @@
   - 退出码约定
 """
 
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -173,7 +172,7 @@ def load_policy_tree() -> dict[str, Any]:
         try:
             import yaml
 
-            with open(_POLICY_TREE_YAML_PATH, "r", encoding="utf-8") as f:
+            with open(_POLICY_TREE_YAML_PATH, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
             if isinstance(data, dict) and "version" in data:
                 return data
@@ -232,18 +231,23 @@ def load_policy_rules() -> list[dict[str, Any]]:
         },
     ]
 
+
 class AppConfig:
     def __init__(self, config_path=None, data=None):
         self.config_path = config_path
         self.data = data or {}
 
+
 def load_config(path=None):
     return AppConfig(config_path=path)
+
 
 def reload_config(app_config):
     return app_config
 
-DEFAULT_CONFIG_FILENAMES = ['config.yaml', 'config.yml', '.code_dedup.yaml']
+
+DEFAULT_CONFIG_FILENAMES = ["config.yaml", "config.yml", ".code_dedup.yaml"]
+
 
 def _deep_merge_lists(base, override):
     return override if override is not None else base

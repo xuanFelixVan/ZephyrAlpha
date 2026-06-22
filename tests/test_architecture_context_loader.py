@@ -15,8 +15,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from zephyr.autonomy_core.architecture_context_loader import (
     DEFAULT_ARCH_CONTEXT_PATH,
     format_architecture_context_excerpt,
@@ -76,7 +74,11 @@ class TestFormatArchitectureContextExcerpt:
     def test_limits_invariants_items_to_eight(self):
         data = {"invariants": {"items": [f"inv_{i}" for i in range(20)], "total": 20}}
         result = format_architecture_context_excerpt(data)
-        parsed = json.loads(result.split("--- ZEPHYR_ARCH_CONTEXT ---\n", 1)[1].replace("…[truncated]", "").strip() if "…[truncated]" in result else result.split("--- ZEPHYR_ARCH_CONTEXT ---\n", 1)[1])
+        parsed = json.loads(
+            result.split("--- ZEPHYR_ARCH_CONTEXT ---\n", 1)[1].replace("…[truncated]", "").strip()
+            if "…[truncated]" in result
+            else result.split("--- ZEPHYR_ARCH_CONTEXT ---\n", 1)[1]
+        )
         assert len(parsed["invariants"]["items"]) <= 8
 
     def test_limits_layers_to_twenty_four(self):

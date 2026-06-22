@@ -11,11 +11,9 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
-import time
-
-import pytest
 
 from zephyr.security.access_control.kill_switch import (
     DEFAULT_TRIGGERS,
@@ -161,31 +159,35 @@ class TestKillSwitch:
         assert result == TriggerResult.NO_ACTION
 
     def test_record_event_below_threshold_returns_warning(self):
-        ks = KillSwitch(triggers=[
-            TriggerDefinition(
-                trigger="rapid_file_deletion",
-                description="test",
-                default_threshold=3,
-                window_seconds=60.0,
-                cooldown_seconds=30.0,
-                auto_release=True,
-            )
-        ])
+        ks = KillSwitch(
+            triggers=[
+                TriggerDefinition(
+                    trigger="rapid_file_deletion",
+                    description="test",
+                    default_threshold=3,
+                    window_seconds=60.0,
+                    cooldown_seconds=30.0,
+                    auto_release=True,
+                )
+            ]
+        )
         event = TriggerEvent(trigger="rapid_file_deletion", agent_id="agent-1")
         result = ks.record_event(event)
         assert result == TriggerResult.WARNING
 
     def test_record_event_at_threshold_blocks_agent(self):
-        ks = KillSwitch(triggers=[
-            TriggerDefinition(
-                trigger="rapid_file_deletion",
-                description="test",
-                default_threshold=3,
-                window_seconds=60.0,
-                cooldown_seconds=30.0,
-                auto_release=True,
-            )
-        ])
+        ks = KillSwitch(
+            triggers=[
+                TriggerDefinition(
+                    trigger="rapid_file_deletion",
+                    description="test",
+                    default_threshold=3,
+                    window_seconds=60.0,
+                    cooldown_seconds=30.0,
+                    auto_release=True,
+                )
+            ]
+        )
         for _ in range(3):
             event = TriggerEvent(trigger="rapid_file_deletion", agent_id="agent-1")
             ks.record_event(event)
@@ -265,16 +267,18 @@ class TestKillSwitch:
         assert any("manual" in t for t in ks.status.tripped_triggers)
 
     def test_multi_agent_triggers_global_block(self):
-        ks = KillSwitch(triggers=[
-            TriggerDefinition(
-                trigger="rapid_file_deletion",
-                description="test",
-                default_threshold=1,
-                window_seconds=60.0,
-                cooldown_seconds=30.0,
-                auto_release=True,
-            )
-        ])
+        ks = KillSwitch(
+            triggers=[
+                TriggerDefinition(
+                    trigger="rapid_file_deletion",
+                    description="test",
+                    default_threshold=1,
+                    window_seconds=60.0,
+                    cooldown_seconds=30.0,
+                    auto_release=True,
+                )
+            ]
+        )
         for agent_id in ["agent-1", "agent-2", "agent-3"]:
             event = TriggerEvent(trigger="rapid_file_deletion", agent_id=agent_id)
             result = ks.record_event(event)
@@ -296,6 +300,7 @@ class TestKillSwitch:
 class TestGetKillSwitch:
     def test_singleton(self):
         from zephyr.security.access_control import kill_switch as ks_mod
+
         ks_mod._kill_switch_instance = None
         ks1 = get_kill_switch()
         ks2 = get_kill_switch()
@@ -304,6 +309,7 @@ class TestGetKillSwitch:
 
     def test_returns_kill_switch_instance(self):
         from zephyr.security.access_control import kill_switch as ks_mod
+
         ks_mod._kill_switch_instance = None
         ks = get_kill_switch()
         assert isinstance(ks, KillSwitch)

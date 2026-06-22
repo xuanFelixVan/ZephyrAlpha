@@ -6,19 +6,18 @@
 # [AI_AUTONOMY] ai_modifiable
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 
 """trading-contracts.market — market data and signal domain contracts."""
 
+from zephyr.trading.trading_contracts.market.factor_monitor_report import FactorMonitorReport
 from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.market.instrument import (
-    AssetClass,
     ETF,
     FX,
+    AssetClass,
     Bond,
     Country,
     Crypto,
@@ -34,37 +33,38 @@ from zephyr.trading.trading_contracts.market.instrument import (
     TradingCalendarName,
 )
 from zephyr.trading.trading_contracts.market.macro_factor_signal import MacroFactorSignal
-from zephyr.trading.trading_contracts.market.factor_monitor_report import FactorMonitorReport
+from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
+from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 __all__ = [
-    "FactorSignal",
-    "SynthesizedSignal",
-    "NormalizedMarketData",
-    "Instrument",
-    "Stock",
     "ETF",
-    "Future",
-    "Option",
-    "OptionType",
-    "Bond",
     "FX",
+    "AssetClass",
+    "Bond",
+    "Country",
     "Crypto",
     "CryptoContractType",
-    "AssetClass",
-    "Exchange",
-    "Country",
     "CurrencyCode",
-    "Jurisdiction",
-    "TradingCalendarName",
-    "MacroFactorSignal",
+    "Exchange",
     "FactorMonitorReport",
+    "FactorSignal",
+    "Future",
+    "Instrument",
+    "Jurisdiction",
+    "MacroFactorSignal",
+    "NormalizedMarketData",
+    "Option",
+    "OptionType",
     "SignalDegradationWarning",
-    "market_data",
+    "Stock",
+    "SynthesizedSignal",
+    "TradingCalendarName",
     "factor_monitor_report",
     "factor_signal",
     "instrument",
     "macro_factor_signal",
+    "market_data",
     "signal_degradation_warning",
     "synthesized_signal",
 ]

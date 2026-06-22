@@ -19,14 +19,15 @@
 
 # [TESTS] pytest tests/test_io_content_fingerprint.py -q
 
+
 import pytest
-from pathlib import Path
+
 from zephyr.integration.shared_08.content_fingerprint import (
+    FingerprintError,
+    FingerprintNotFoundError,
+    compute_bulk,
     compute_hash,
     verify_hash,
-    compute_bulk,
-    FingerprintNotFoundError,
-    FingerprintError,
 )
 
 

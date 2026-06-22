@@ -20,10 +20,12 @@
 # [TESTS] pytest tests/test_security_capability.py -q
 
 import warnings
+
 import pytest
+
 from zephyr.integration.shared_08.security.capability import (
-    CapabilityDenied,
     Capability,
+    CapabilityDenied,
     CapabilityRegistry,
     capability_check,
 )
@@ -57,9 +59,7 @@ class TestCapability:
 
 class TestCapabilityDenied:
     def test_attributes(self):
-        err = CapabilityDenied(
-            action="write", target_path="secret.key", rule_name="deny_secrets"
-        )
+        err = CapabilityDenied(action="write", target_path="secret.key", rule_name="deny_secrets")
         assert err.action == "write"
         assert err.target_path == "secret.key"
         assert err.rule_name == "deny_secrets"

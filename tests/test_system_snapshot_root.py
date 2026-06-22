@@ -11,23 +11,21 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
-import json
 import sqlite3
-import tempfile
-from pathlib import Path
 
 import pytest
 
 try:
     from zephyr.autonomy_core.system_snapshot import (
+        CESnapshot,
         SystemSnapshot,
         SystemSnapshotter,
-        SnapshotBuildError,
-        CESnapshot,
         take_snapshot,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -37,7 +35,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=_IMPORT_REASON)
 class TestSystemSnapshot:
-
     def test_frozen_model(self):
         snap = SystemSnapshot(
             timestamp="2026-01-01T00:00:00",
@@ -86,7 +83,6 @@ class TestSystemSnapshot:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=_IMPORT_REASON)
 class TestSystemSnapshotter:
-
     def test_capture_with_temp_dirs(self, tmp_path):
         snapshots_dir = tmp_path / "snapshots"
         gates_dir = tmp_path / "gates"
@@ -185,7 +181,6 @@ class TestSystemSnapshotter:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=_IMPORT_REASON)
 class TestCESnapshot:
-
     def test_defaults(self):
         snap = CESnapshot()
         assert snap.active_sessions == 0
@@ -215,7 +210,6 @@ class TestCESnapshot:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=_IMPORT_REASON)
 class TestTakeSnapshot:
-
     def test_returns_ce_snapshot(self):
         snap = take_snapshot()
         assert isinstance(snap, CESnapshot)

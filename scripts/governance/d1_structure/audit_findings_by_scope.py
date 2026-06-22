@@ -65,6 +65,7 @@ ensure_utf8_stdout()
 
 FINDINGS_PATH = REPO_ROOT / "scripts" / "governance" / "reports" / "findings.jsonl"
 
+
 def _load_findings(findings_path: Path) -> list[dict]:
     """加载 findings.jsonl 文件。
 
@@ -79,7 +80,7 @@ def _load_findings(findings_path: Path) -> list[dict]:
     """
     if not findings_path.exists():
         raise FileNotFoundError(
-            f"Finding 文件不存在: {findings_path}\n" f"请先运行: python scripts/governance/run_all.py --warn-only"
+            f"Finding 文件不存在: {findings_path}\n请先运行: python scripts/governance/run_all.py --warn-only"
         )
     findings: list[dict] = []
     with open(findings_path, encoding="utf-8") as f:
@@ -88,6 +89,7 @@ def _load_findings(findings_path: Path) -> list[dict]:
             if line:
                 findings.append(json.loads(line))
     return findings
+
 
 def _filter_by_scope(findings: list[dict], scope: str) -> list[dict]:
     """按目录路径筛选 Finding。
@@ -100,6 +102,7 @@ def _filter_by_scope(findings: list[dict], scope: str) -> list[dict]:
         list[dict]: 匹配 scope 的 Finding 子集。
     """
     return [f for f in findings if scope in json.dumps(f, ensure_ascii=False)]
+
 
 def _print_summary(findings: list[dict], scope: str | None) -> None:
     """输出汇总统计到 stdout。
@@ -132,6 +135,7 @@ def _print_summary(findings: list[dict], scope: str | None) -> None:
         total_sev[s] = total_sev.get(s, 0) + 1
     print(f"\n  严重度总计: {' / '.join(f'{k}={v}' for k, v in sorted(total_sev.items()))}", file=sys.stderr)
 
+
 def _print_details(findings: list[dict]) -> None:
     """输出每条 Finding 的详细信息到 stdout。
 
@@ -149,6 +153,7 @@ def _print_details(findings: list[dict]) -> None:
         print(f"  [{sev}] {dim} | {desc}", file=sys.stderr)
         if ev:
             print(f"         {ev}", file=sys.stderr)
+
 
 def main() -> None:
     """入口——解析参数并执行 Finding 筛选分析。"""
@@ -183,6 +188,7 @@ def main() -> None:
     if args.warn_only or not scoped:
         sys.exit(EXIT_PASS)
     sys.exit(EXIT_FINDINGS)
+
 
 if __name__ == "__main__":
     main()

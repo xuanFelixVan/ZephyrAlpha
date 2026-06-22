@@ -16,9 +16,6 @@ import json
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
-
-import pytest
 
 from zephyr.security.access_control.auto_fix_engine_03.interrupt_guard import InterruptGuard
 

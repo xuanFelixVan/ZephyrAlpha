@@ -55,7 +55,6 @@ templates:
       {context}
 """
 
-
 from __future__ import annotations
 
 import re
@@ -67,22 +66,22 @@ import structlog
 import yaml
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.autonomy_core.token_budget import estimate_tokens
+from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 if TYPE_CHECKING:
     from zephyr.autonomy_core.context_injector import ContextInjector, InjectedContext
 
 __all__ = [
+    "PromptRegistry",
+    "PromptRegistryError",
+    "PromptTemplate",
     "PromptVariable",
     "PromptVersion",
-    "PromptTemplate",
     "RenderedPrompt",
-    "PromptRegistryError",
-    "TokenBudgetExceededError",
     "TemplateNotFoundError",
+    "TokenBudgetExceededError",
     "VariableError",
-    "PromptRegistry",
 ]
 
 _log = structlog.get_logger().bind(layer="infra", module="prompt_registry")
@@ -256,7 +255,7 @@ class PromptTemplate(BaseModel):
 
         if token_count > self.token_budget:
             raise TokenBudgetExceededError(
-                f"模板 '{self.template_id}' 渲染后 {token_count} tokens，" f"超出预算 {self.token_budget}"
+                f"模板 '{self.template_id}' 渲染后 {token_count} tokens，超出预算 {self.token_budget}"
             )
 
         return RenderedPrompt(
@@ -353,7 +352,7 @@ class PromptRegistry:
         key = (template.template_id, template.version)
         if key in self._templates and not allow_overwrite:
             raise PromptRegistryError(
-                f"模板 '{template.template_id}' v{template.version} 已注册，" "如需替换请使用 allow_overwrite=True"
+                f"模板 '{template.template_id}' v{template.version} 已注册，如需替换请使用 allow_overwrite=True"
             )
         self._templates[key] = template
 

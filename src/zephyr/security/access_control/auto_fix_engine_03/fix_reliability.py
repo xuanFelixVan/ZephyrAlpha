@@ -21,7 +21,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import logging
 import os
 import sqlite3
@@ -34,12 +33,9 @@ from typing import Any
 
 from zephyr.security.access_control.auto_fix_engine_03.models import (
     FixAction,
-    FixConfidence,
     FixDeadLetter,
     FixLevel,
     FixStatus,
-    FixHistory,
-    ValidationResult,
 )
 
 logger = logging.getLogger(__name__)
@@ -125,7 +121,14 @@ class ConflictResolver:
         result: list[FixAction] = []
         _CONFIDENCE_ORDER = {"high": 0, "medium": 1, "low": 2}
         for target, target_actions in by_target.items():
-            sorted_actions = sorted(target_actions, key=lambda a: (a.level.value, _CONFIDENCE_ORDER.get(a.confidence.value, 1), a.timestamp.isoformat() if isinstance(a.timestamp, datetime) else str(a.timestamp)))
+            sorted_actions = sorted(
+                target_actions,
+                key=lambda a: (
+                    a.level.value,
+                    _CONFIDENCE_ORDER.get(a.confidence.value, 1),
+                    a.timestamp.isoformat() if isinstance(a.timestamp, datetime) else str(a.timestamp),
+                ),
+            )
             result.extend(sorted_actions)
         return result
 

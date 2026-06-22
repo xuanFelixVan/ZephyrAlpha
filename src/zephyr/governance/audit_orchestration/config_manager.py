@@ -23,7 +23,6 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel
 
 class ConfigManager:
     def __init__(self, config_path: str = "config/system_config.yaml"):

@@ -29,14 +29,12 @@ CI 集成: 每次 PR 运行真实回滚 → 确认回滚可行 + 无副作用。
 返回是否安全回滚 + 影响面分析 + 冲突报告。
 """
 
-
 from __future__ import annotations
 
 import subprocess
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -52,7 +50,6 @@ class SimulationResult:
 
 
 class RollbackSimulator:
-
     WORKTREE_PREFIX: str = ".zephyr/sim_worktree_"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -74,7 +71,9 @@ class RollbackSimulator:
             result = subprocess.run(
                 ["git", "revert", "--no-edit", commit_sha],
                 cwd=str(worktree_path),
-                capture_output=True, text=True, timeout=30,
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
 
             if result.returncode == 0:
@@ -116,7 +115,9 @@ class RollbackSimulator:
             result = subprocess.run(
                 ["git"] + args,
                 cwd=str(cwd or self._project_root),
-                capture_output=True, text=True, timeout=15,
+                capture_output=True,
+                text=True,
+                timeout=15,
             )
             return result.stdout
         except Exception:

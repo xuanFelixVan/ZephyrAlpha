@@ -26,6 +26,7 @@ SLA 阈值（来自 SSoT）：
 
 Phase G | Safety: LOW (只读性能测量，不修改生产代码)
 """
+
 from __future__ import annotations
 
 import gc
@@ -35,64 +36,98 @@ import sys
 import time
 import tracemalloc
 import uuid
+from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import Any, Callable, Iterator
 
 import numpy as np
 import pandas as pd
 import pytest
 
-from zephyr.governance.memory_provider import MemoryProvider
+from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
 from zephyr.factor.factor_base import FactorRegistry, autodiscover_factors
-from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
-from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+from zephyr.governance.compliance_gate_a6.default_security_gateway import DefaultSecurityGateway
+from zephyr.governance.memory_provider import MemoryProvider
+from zephyr.infrastructure.system_telemetry.contract_metrics import ContractMetricsCollector
+from zephyr.integration.backpressure_manager import BackpressureManager, emit_pause, emit_resume
+from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
 from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
-from zephyr.ex_core.order_manager import OrderManager
 from zephyr.pf_core.default_tca_engine import DefaultTCAEngine
+from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
 from zephyr.simulation.backtest_base import (
-    BacktestEngineBase,
     BacktestResult,
-    FactorDiscovery,
 )
 from zephyr.simulation.default_backtest_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
-from zephyr.governance.compliance_gate_a6.default_security_gateway import DefaultSecurityGateway
-from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
-from zephyr.infrastructure.system_telemetry.contract_metrics import ContractMetricsCollector, get_contract_metrics
 from zephyr.simulation.implementations.default_experiment_pipeline import DefaultExperimentPipeline
-from zephyr.integration.backpressure_manager import BackpressureManager, emit_pause, emit_resume
-from zephyr.integration.shared_08.contracts.backpressure.pause import BackpressurePause
-from zephyr.integration.shared_08.contracts.backpressure.resume import BackpressureResume
-from zephyr.integration.shared_08.contracts.backpressure.throttle import BackpressureThrottle
-from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
 from zephyr.trading.trading_contracts.execution.fill import Fill
-from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
 
 ALL_SYMBOLS = [
-    "600519", "000858", "601318", "600036", "000333",
-    "601166", "600900", "601398", "600276", "000001",
-    "600030", "000651", "601012", "600887", "002415",
-    "300750", "688981", "000568", "600809", "002475",
-    "603259", "600585", "300059", "601688", "600048",
-    "000002", "002714", "300015", "601888", "600570",
-    "688111", "300124", "002594", "601318", "600519",
-    "600900", "000858", "600801", "002230", "300498",
-    "601100", "600276", "002142", "601628", "600050",
-    "000333", "688012", "300760", "002049", "600745",
+    "600519",
+    "000858",
+    "601318",
+    "600036",
+    "000333",
+    "601166",
+    "600900",
+    "601398",
+    "600276",
+    "000001",
+    "600030",
+    "000651",
+    "601012",
+    "600887",
+    "002415",
+    "300750",
+    "688981",
+    "000568",
+    "600809",
+    "002475",
+    "603259",
+    "600585",
+    "300059",
+    "601688",
+    "600048",
+    "000002",
+    "002714",
+    "300015",
+    "601888",
+    "600570",
+    "688111",
+    "300124",
+    "002594",
+    "601318",
+    "600519",
+    "600900",
+    "000858",
+    "600801",
+    "002230",
+    "300498",
+    "601100",
+    "600276",
+    "002142",
+    "601628",
+    "600050",
+    "000333",
+    "688012",
+    "300760",
+    "002049",
+    "600745",
 ]
 
 SLA_THRESHOLDS: dict[str, float] = {
@@ -181,7 +216,7 @@ def _make_trace() -> TraceContext:
     return TraceContext(
         trace_id=f"trace-{uuid.uuid4().hex[:12]}",
         span_id=f"span-{uuid.uuid4().hex[:8]}",
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
         idempotency_key=str(uuid.uuid4()),
         service_name="benchmark",
     )
@@ -196,7 +231,7 @@ def _make_factor_signal(
     return FactorSignal(
         factor_id=factor_id,
         symbol=symbol,
-        as_of_date=datetime.now(timezone.utc),
+        as_of_date=datetime.now(UTC),
         raw_value=raw_value,
         idempotency_key=str(uuid.uuid4()),
         trace_context=trace,
@@ -264,7 +299,7 @@ class TestPhaseGLatencyByLayer:
     def test_l00_data_acquisition_latency(self):
         collector = PerfCollector()
         provider = MemoryProvider(seed=42)
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=100)
 
         for _ in range(3):
@@ -296,7 +331,7 @@ class TestPhaseGLatencyByLayer:
     def test_l02_factor_computation_latency(self):
         collector = PerfCollector()
         provider = MemoryProvider(seed=42)
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=100)
 
         momentum_cls = FactorRegistry.get("momentum_20d")
@@ -437,7 +472,7 @@ class TestPhaseGLatencyByLayer:
             strategy_id="bench",
             filled_quantity=Decimal("200"),
             fill_price=Decimal("101"),
-            fill_timestamp=datetime.now(timezone.utc),
+            fill_timestamp=datetime.now(UTC),
             commission=Decimal("6"),
             idempotency_key=str(uuid.uuid4()),
         )
@@ -459,13 +494,16 @@ class TestPhaseGLatencyByLayer:
         engine = DefaultBacktestEngine(BacktestConfig())
         dates = pd.date_range("2025-01-01", "2025-06-30", freq="B")
 
-        prices = pd.DataFrame({
-            "close": [100.0 + i * 0.2 for i in range(len(dates))],
-            "open": [99.5 + i * 0.2 for i in range(len(dates))],
-            "high": [101.0 + i * 0.2 for i in range(len(dates))],
-            "low": [99.0 + i * 0.2 for i in range(len(dates))],
-            "volume": [1000000.0 for _ in range(len(dates))],
-        }, index=dates)
+        prices = pd.DataFrame(
+            {
+                "close": [100.0 + i * 0.2 for i in range(len(dates))],
+                "open": [99.5 + i * 0.2 for i in range(len(dates))],
+                "high": [101.0 + i * 0.2 for i in range(len(dates))],
+                "low": [99.0 + i * 0.2 for i in range(len(dates))],
+                "volume": [1000000.0 for _ in range(len(dates))],
+            },
+            index=dates,
+        )
 
         signals = pd.DataFrame(
             {"600519": np.where(np.arange(len(dates)) % 40 < 20, 1.0, -1.0)},
@@ -618,7 +656,7 @@ class TestPhaseGFullPipelineThroughput:
         tca = DefaultTCAEngine()
 
         collector = PerfCollector()
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=100)
 
         for _ in range(3):
@@ -674,7 +712,7 @@ class TestPhaseGFullPipelineThroughput:
         FactorRegistry.clear()
         autodiscover_factors()
         aggregator = DefaultSignalAggregator()
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=100)
 
         results: dict[int, float] = {}
@@ -744,7 +782,7 @@ class TestPhaseGSLACompliance:
         autodiscover_factors()
 
         trace = _make_trace()
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=100)
         reports: list[SlaReport] = []
 
@@ -766,7 +804,9 @@ class TestPhaseGSLACompliance:
                     trace_context=trace,
                 )
         r = collector.finalize()["CTR-001"]
-        reports.append(SlaReport("CTR-001", 10.0, r.p99_ms, r.p99_ms <= 10.0, (10.0 - r.p99_ms) / 10.0 * 100, len(r.samples)))
+        reports.append(
+            SlaReport("CTR-001", 10.0, r.p99_ms, r.p99_ms <= 10.0, (10.0 - r.p99_ms) / 10.0 * 100, len(r.samples))
+        )
 
         # CTR-002: FactorSignal
         collector = PerfCollector()
@@ -774,7 +814,9 @@ class TestPhaseGSLACompliance:
             with measure_ms("CTR-002", collector):
                 _make_factor_signal("momentum_20d", "600519", 0.05, trace)
         r = collector.finalize()["CTR-002"]
-        reports.append(SlaReport("CTR-002", 50.0, r.p99_ms, r.p99_ms <= 50.0, (50.0 - r.p99_ms) / 50.0 * 100, len(r.samples)))
+        reports.append(
+            SlaReport("CTR-002", 50.0, r.p99_ms, r.p99_ms <= 50.0, (50.0 - r.p99_ms) / 50.0 * 100, len(r.samples))
+        )
 
         # CTR-003: RiskLimits
         collector = PerfCollector()
@@ -783,7 +825,9 @@ class TestPhaseGSLACompliance:
             with measure_ms("CTR-003", collector):
                 validator.validate_order("600519", 0.05, {}, {"max_single_position": 0.10})
         r = collector.finalize()["CTR-003"]
-        reports.append(SlaReport("CTR-003", 5.0, r.p99_ms, r.p99_ms <= 5.0, (5.0 - r.p99_ms) / 5.0 * 100, len(r.samples)))
+        reports.append(
+            SlaReport("CTR-003", 5.0, r.p99_ms, r.p99_ms <= 5.0, (5.0 - r.p99_ms) / 5.0 * 100, len(r.samples))
+        )
 
         # CTR-004: Order
         collector = PerfCollector()
@@ -800,7 +844,9 @@ class TestPhaseGSLACompliance:
                     idempotency_key=str(uuid.uuid4()),
                 )
         r = collector.finalize()["CTR-004"]
-        reports.append(SlaReport("CTR-004", 5.0, r.p99_ms, r.p99_ms <= 5.0, (5.0 - r.p99_ms) / 5.0 * 100, len(r.samples)))
+        reports.append(
+            SlaReport("CTR-004", 5.0, r.p99_ms, r.p99_ms <= 5.0, (5.0 - r.p99_ms) / 5.0 * 100, len(r.samples))
+        )
 
         # CTR-005: Fill
         broker = SimulationBroker()
@@ -830,24 +876,28 @@ class TestPhaseGSLACompliance:
                     strategy_id="test",
                     filled_quantity=Decimal("100"),
                     fill_price=Decimal("1800"),
-                    fill_timestamp=datetime.now(timezone.utc),
+                    fill_timestamp=datetime.now(UTC),
                     commission=Decimal("5"),
                     idempotency_key=str(uuid.uuid4()),
                 )
         r = collector.finalize()["CTR-005"]
-        reports.append(SlaReport("CTR-005", 100.0, r.p99_ms, r.p99_ms <= 100.0, (100.0 - r.p99_ms) / 100.0 * 100, len(r.samples)))
+        reports.append(
+            SlaReport("CTR-005", 100.0, r.p99_ms, r.p99_ms <= 100.0, (100.0 - r.p99_ms) / 100.0 * 100, len(r.samples))
+        )
 
         # CTR-006: PositionSnapshot
         collector = PerfCollector()
         for _ in range(30):
             with measure_ms("CTR-006", collector):
                 PositionSnapshot(
-                    as_of_timestamp=datetime.now(timezone.utc),
+                    as_of_timestamp=datetime.now(UTC),
                     idempotency_key=str(uuid.uuid4()),
                     portfolio_id="test",
                 )
         r = collector.finalize()["CTR-006"]
-        reports.append(SlaReport("CTR-006", 50.0, r.p99_ms, r.p99_ms <= 50.0, (50.0 - r.p99_ms) / 50.0 * 100, len(r.samples)))
+        reports.append(
+            SlaReport("CTR-006", 50.0, r.p99_ms, r.p99_ms <= 50.0, (50.0 - r.p99_ms) / 50.0 * 100, len(r.samples))
+        )
 
         failed = [rpt for rpt in reports if not rpt.passed]
         assert len(failed) == 0, (
@@ -898,7 +948,7 @@ class TestPhaseGSLACompliance:
         """延迟分布统计——足够多的样本形成有效分布"""
         collector = PerfCollector()
         provider = MemoryProvider(seed=42)
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=100)
 
         FactorRegistry.clear()
@@ -924,7 +974,7 @@ class TestPhaseGSLACompliance:
         provider = MemoryProvider(seed=42)
         FactorRegistry.clear()
         autodiscover_factors()
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=100)
 
         collector = PerfCollector()
@@ -968,7 +1018,7 @@ class TestPhaseGMemoryBaseline:
         snap_before = tracemalloc.take_snapshot()
 
         provider = MemoryProvider(seed=42)
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=252)
 
         for sym in ALL_SYMBOLS[:20]:

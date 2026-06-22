@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """完整性自检测试."""
+
 from __future__ import annotations
 
-import pytest
 from zephyr.security.access_control.integrity_self_check import IntegritySelfCheck
 
 

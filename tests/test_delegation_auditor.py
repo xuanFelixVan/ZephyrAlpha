@@ -75,7 +75,7 @@ class TestDelegationChainAuditor:
     def test_depth_exceeded(self):
         auditor = DelegationChainAuditor(max_depth=3)
         chain = [
-            DelegationNode(agent_id=f"a{i}", permission_level=5 - i, delegated_by=f"a{i-1}" if i > 0 else "")
+            DelegationNode(agent_id=f"a{i}", permission_level=5 - i, delegated_by=f"a{i - 1}" if i > 0 else "")
             for i in range(5)
         ]
         result = auditor.audit_chain(chain)
@@ -153,7 +153,7 @@ class TestDelegationChainAuditorDetectEscalation:
     def test_detect_escalation_depth_exceeded(self):
         auditor = DelegationChainAuditor(max_depth=2)
         chain = [
-            DelegationNode(agent_id=f"a{i}", permission_level=5 - i, delegated_by=f"a{i-1}" if i > 0 else "")
+            DelegationNode(agent_id=f"a{i}", permission_level=5 - i, delegated_by=f"a{i - 1}" if i > 0 else "")
             for i in range(4)
         ]
         escalations = auditor.detect_escalation(chain)

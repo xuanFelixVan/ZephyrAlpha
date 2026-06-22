@@ -22,20 +22,32 @@
 
 Phase E | Safety: MEDIUM (网络请求)
 """
+
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone, timedelta
-from decimal import Decimal
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
 logger = logging.getLogger(__name__)
 
 UNIVERSE_CSI300 = [
-    "600519", "000858", "601318", "000333", "600036",
-    "601398", "600900", "002415", "688981", "300750",
-    "600276", "601088", "002594", "688981", "601288",
+    "600519",
+    "000858",
+    "601318",
+    "000333",
+    "600036",
+    "601398",
+    "600900",
+    "002415",
+    "688981",
+    "300750",
+    "600276",
+    "601088",
+    "002594",
+    "688981",
+    "601288",
 ]
 
 MIN_CSI300_SYMBOLS = 5
@@ -51,6 +63,7 @@ def _is_network_available() -> bool:
         return _NETWORK_OK
     try:
         import socket
+
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(3)
         sock.connect(("push2his.eastmoney.com", 80))
@@ -67,6 +80,7 @@ def _is_akshare_installed() -> bool:
         return _AKSHARE_OK
     try:
         import akshare  # noqa: F401
+
         _AKSHARE_OK = True
     except ImportError:
         _AKSHARE_OK = False
@@ -88,7 +102,7 @@ def _akshare_has_usable_bar_data() -> bool:
         from zephyr.data.akshare_provider import AkshareProvider
 
         provider = AkshareProvider()
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=120)
         df = provider.fetch_historical("600519", start=start, end=end)
         _AKSHARE_BARS_OK = df is not None and len(df) >= 10
@@ -124,6 +138,7 @@ class TestAkshareRealData:
         from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
+
         provider = AkshareProvider()
         assert provider is not None
         assert provider._ak is None
@@ -135,6 +150,7 @@ class TestAkshareRealData:
         from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
+
         provider = AkshareProvider()
         df = provider.get_stock_list()
         assert df is not None
@@ -148,6 +164,7 @@ class TestAkshareRealData:
         from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
+
         provider = AkshareProvider()
         df = provider.get_index_constituents("000300")
         assert df is not None
@@ -160,13 +177,14 @@ class TestAkshareRealData:
 
     def test_fetch_daily_kline_600519(self):
         """获取贵州茅台最近 60 日 K 线数据"""
+        from datetime import datetime, timedelta
+
         from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
-        from datetime import datetime, timezone, timedelta
 
         provider = AkshareProvider()
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=90)
 
         df = provider.fetch_historical("600519", start=start, end=end)
@@ -181,13 +199,14 @@ class TestAkshareRealData:
 
     def test_fetch_multiple_symbols(self):
         """获取多只 CSI 300 成分股最近 30 日数据"""
+        from datetime import datetime, timedelta
+
         from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
-        from datetime import datetime, timezone, timedelta
 
         provider = AkshareProvider()
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=60)
 
         symbols_to_test = UNIVERSE_CSI300[:MIN_CSI300_SYMBOLS]
@@ -199,24 +218,24 @@ class TestAkshareRealData:
 
         symbols_with_data = sum(1 for df in results.values() if len(df) >= 10)
         if symbols_with_data < 3:
-            pytest.skip(
-                f"仅 {symbols_with_data}/{MIN_CSI300_SYMBOLS} 只股票有足够 K 线（数据源侧不稳定时跳过）"
-            )
+            pytest.skip(f"仅 {symbols_with_data}/{MIN_CSI300_SYMBOLS} 只股票有足够 K 线（数据源侧不稳定时跳过）")
 
     def test_quality_gate_on_real_data(self):
         """用真实行情数据过 Quality Gate"""
+        from datetime import datetime, timedelta
+
         from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
+
         from zephyr.governance.default_quality_gate import (
             DefaultQualityGate,
         )
-        from datetime import datetime, timezone, timedelta
 
         provider = AkshareProvider()
         gate = DefaultQualityGate(max_stale_seconds=86400 * 30)
 
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=30)
 
         df = provider.fetch_historical("600519", start=start, end=end)
@@ -248,13 +267,14 @@ class TestAkshareMiniPipeline:
     @pytest.fixture(scope="class")
     def real_data(self):
         """获取 5 只 CSI 300 成分股最近 120 日数据"""
+        from datetime import datetime, timedelta
+
         from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
-        from datetime import datetime, timezone, timedelta
 
         provider = AkshareProvider()
-        end = datetime.now(timezone.utc)
+        end = datetime.now(UTC)
         start = end - timedelta(days=180)
 
         data = {}
@@ -279,20 +299,22 @@ class TestAkshareMiniPipeline:
         batch = []
         for sym, df in real_data.items():
             last = df.iloc[-1]
-            batch.append({
-                "symbol": sym,
-                "open": float(last["open"]),
-                "high": float(last["high"]),
-                "low": float(last["low"]),
-                "close": float(last["close"]),
-                "volume": float(last["volume"]),
-                "timestamp": last["date"],
-                "prev_close": float(df.iloc[-2]["close"]) if len(df) >= 2 else None,
-            })
+            batch.append(
+                {
+                    "symbol": sym,
+                    "open": float(last["open"]),
+                    "high": float(last["high"]),
+                    "low": float(last["low"]),
+                    "close": float(last["close"]),
+                    "volume": float(last["volume"]),
+                    "timestamp": last["date"],
+                    "prev_close": float(df.iloc[-2]["close"]) if len(df) >= 2 else None,
+                }
+            )
 
         reports = gate.check_batch(batch)
         passed = sum(1 for r in reports if r.passed)
-        assert passed >= len(batch) - 1, f"Expected >= {len(batch)-1} passed, got {passed}/{len(batch)}"
+        assert passed >= len(batch) - 1, f"Expected >= {len(batch) - 1} passed, got {passed}/{len(batch)}"
 
     def test_simple_momentum_signal(self, real_data):
         """简单动量信号——20 日收益率"""
@@ -309,14 +331,15 @@ class TestAkshareMiniPipeline:
 
     def test_risk_limit_on_real_positions(self, real_data):
         """用真实数据构建虚拟持仓 + 风控校验"""
+        from datetime import datetime
+
         from zephyr.risk.implementations.default_risk_validator import (
             DefaultRiskValidator,
         )
         from zephyr.risk.risk_manager import RiskLimits
-        from datetime import datetime, timezone
 
         limits = RiskLimits(
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             idempotency_key="lim-real-001",
             max_single_position=0.15,
             max_gross_leverage=1.0,

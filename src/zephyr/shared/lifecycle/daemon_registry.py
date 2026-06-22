@@ -43,11 +43,10 @@ SSoT: MOD-INF-016 2.7 shared-lifecycle
 from __future__ import annotations
 
 import logging
-import os
 import threading
 import time
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import StrEnum, unique
 from typing import Any, ClassVar, Protocol, runtime_checkable
 
@@ -237,7 +236,8 @@ class DaemonRegistry:
     def stop_low_priority(cls, min_priority: int = 0) -> list[str]:
         with cls._lock:
             candidates = [
-                (name, entry) for name, entry in cls._entries.items()
+                (name, entry)
+                for name, entry in cls._entries.items()
                 if entry.state == DaemonState.RUNNING and entry.priority <= min_priority
             ]
         candidates.sort(key=lambda x: x[1].priority)
@@ -284,23 +284,26 @@ class DaemonRegistry:
         snap = ResourceSnapshot(timestamp=time.time())
         try:
             import psutil
+
             mem = psutil.virtual_memory()
             snap.memory_percent = mem.percent
-            snap.memory_used_gb = mem.used / (1024 ** 3)
-            snap.memory_total_gb = mem.total / (1024 ** 3)
+            snap.memory_used_gb = mem.used / (1024**3)
+            snap.memory_total_gb = mem.total / (1024**3)
             snap.cpu_percent = psutil.cpu_percent(interval=0)
             snap.process_count = len(psutil.pids())
         except ImportError:
             try:
                 import os
+
                 if os.name == "nt":
                     import ctypes
+
                     kernel32 = ctypes.windll.kernel32
                     MEMORYSTATUSEX = ctypes.c_ulonglong * 8
                     mem_status = MEMORYSTATUSEX()
                     kernel32.GlobalMemoryStatusEx(ctypes.byref(mem_status))
-                    snap.memory_total_gb = mem_status[0] / (1024 ** 3)
-                    snap.memory_used_gb = mem_status[2] / (1024 ** 3)
+                    snap.memory_total_gb = mem_status[0] / (1024**3)
+                    snap.memory_used_gb = mem_status[2] / (1024**3)
                     snap.memory_percent = mem_status[4]
             except Exception:
                 pass
@@ -336,12 +339,15 @@ class DaemonRegistry:
                 snap = cls.snapshot_resources()
                 cls._pressure_history.append(snap)
                 if len(cls._pressure_history) > cls._max_history:
-                    cls._pressure_history = cls._pressure_history[-cls._max_history:]
+                    cls._pressure_history = cls._pressure_history[-cls._max_history :]
 
                 if snap.pressure != PressureLevel.NORMAL:
                     logger.warning(
                         "DaemonRegistry: resource pressure %s (mem=%.1f%%, procs=%d, cpu=%.1f%%)",
-                        snap.pressure.value, snap.memory_percent, snap.process_count, snap.cpu_percent,
+                        snap.pressure.value,
+                        snap.memory_percent,
+                        snap.process_count,
+                        snap.cpu_percent,
                     )
                     for cb in cls._on_pressure_callbacks:
                         try:

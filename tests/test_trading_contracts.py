@@ -10,27 +10,35 @@
 # [ERROR_CONTRACT] ImportError->skip_module;AttributeError->skip_test
 # [TESTS] test_trading_contracts.py
 
-from datetime import date, datetime
+from datetime import datetime
 from decimal import Decimal
 
 import pytest
 
-order_mod = pytest.importorskip("zephyr.trading.trading_contracts.execution.order", reason="trading-contracts.order not available")
+order_mod = pytest.importorskip(
+    "zephyr.trading.trading_contracts.execution.order", reason="trading-contracts.order not available"
+)
 Order = order_mod.Order
 OrderSide = order_mod.OrderSide
 OrderType = order_mod.OrderType
 OrderStatus = order_mod.OrderStatus
 
-fill_mod = pytest.importorskip("zephyr.trading.trading_contracts.execution.fill", reason="trading-contracts.fill not available")
+fill_mod = pytest.importorskip(
+    "zephyr.trading.trading_contracts.execution.fill", reason="trading-contracts.fill not available"
+)
 Fill = fill_mod.Fill
 
-instrument_mod = pytest.importorskip("zephyr.governance.instrument", reason="trading-contracts.instrument not available")
+instrument_mod = pytest.importorskip(
+    "zephyr.governance.instrument", reason="trading-contracts.instrument not available"
+)
 Instrument = instrument_mod.Instrument
 Stock = instrument_mod.Stock
 ETF = instrument_mod.ETF
 make_stock_identifier = instrument_mod.make_stock_identifier
 
-money_mod = pytest.importorskip("zephyr.trading.trading_contracts.portfolio.contracts.money", reason="trading-contracts.money not available")
+money_mod = pytest.importorskip(
+    "zephyr.trading.trading_contracts.portfolio.contracts.money", reason="trading-contracts.money not available"
+)
 Money = money_mod.Money
 MoneyPrecisionError = money_mod.MoneyPrecisionError
 MoneyCurrencyMismatchError = money_mod.MoneyCurrencyMismatchError

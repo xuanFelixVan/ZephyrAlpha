@@ -12,8 +12,6 @@
 
 import hashlib
 
-import pytest
-
 from zephyr.ops.detectors.silent_corruption_detector import (
     CorruptionSeverity,
     SilentCorruptionDetector,

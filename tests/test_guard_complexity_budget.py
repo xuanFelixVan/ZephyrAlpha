@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.forensic.guard_complexity_budget import GuardComplexityBudget
 
 

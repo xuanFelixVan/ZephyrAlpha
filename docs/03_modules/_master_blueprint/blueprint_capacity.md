@@ -188,20 +188,20 @@ priority: P0
 module_dependency_graph:
   storage: "SQLite 表 `module_deps` + 内存邻接表"
   vertices: "1,500 模块节点——每个模块一个 node_id"
-  
+
   edge_types:
     IMPORT_DEPENDS:
       detection: "Python AST 静态分析——src/zephyr/ 下所有 .py 文件的 import 语句"
       semantics: "模块 A import 了模块 B → B 的 API 变更影响 A"
       weight: 1.0
       count_estimate: "1,500 模块 × 平均 3 个模块内 import = ~4,500 边"
-      
+
     BLUEPRINT_DEPENDS:
       detection: "解析每个 blueprint.md 的 depends_on 字段"
       semantics: "蓝图 A 声明依赖蓝图 B → 逻辑依赖"
       weight: 0.8
       count_estimate: "1,500 模块 × 平均 2 依赖 = ~3,000 边"
-      
+
     SCRIPT_DEPENDS:
       detection: "从升级章二的 impact_graph 反向推导——脚本 S 关联模块 A 和 B → 间接模块依赖"
       semantics: "模块 A 和 B 被同一脚本覆盖 → 脚本执行时两者必须一致"
@@ -224,7 +224,7 @@ module_dependency_graph:
     action: "G0 任务准入时→自动查询 affected_modules →
             若受影响模块的 affected_scripts > 0 → Gate 判定 WARN →
             提示 AI:'你的变更影响 {n} 个其他模块的 {m} 个治理脚本——建议先跑 {module_list} 的增量扫描'"
-    
+
   build_strategy:
     full_rebuild: "每日 03:00 全量重建（与升级章二 impact_graph 同步）"
     incremental: "模块新增/删除/__init__.py 变更时→增量更新该模块的出入边"
@@ -257,7 +257,7 @@ priority: P0
 blueprint_registry_v2:
   storage_backend: "SQLite `blueprint_index` 表 + 每日 YAML 导出（人类可读快照）"
   migration: "当前 blueprint-registry.yaml → 导入 SQLite → YAML 保留为只读历史快照"
-  
+
   sqlite_schema:
     blueprint_index:
       columns:
@@ -278,7 +278,7 @@ blueprint_registry_v2:
         - "idx_blueprint_layer ON blueprint_index(layer)"
         - "idx_blueprint_status ON blueprint_index(status)"
         - "idx_blueprint_priority ON blueprint_index(priority)"
-        
+
     blueprint_reconciliation_log:
       columns:
         - check_time: "TEXT PK"     # ISO8601
@@ -297,7 +297,7 @@ blueprint_registry_v2:
       3. 计算 completeness_score（基于 depends_on 引用的蓝图是否存在）
       4. 每日 02:00 全量校验——遍历 docs/03_modules/ 下所有 blueprint.md
          → 对比 blueprint_index → 写入 reconciliation_log
-         
+
   query_interface:
     by_layer: "SELECT * FROM blueprint_index WHERE layer = ? AND status != 'Archived'"
     by_dependency: |
@@ -316,7 +316,7 @@ blueprint_registry_v2:
     tables: "blueprint_idx_{layer}——每个 C-track 层一张表"
     cross_layer: "blueprint_idx_cross_layer——_cross_layer/ 和 _master-blueprint/ 共用"
     benefits: "减少单表行数 → 查询延迟降低 → WAL 写入竞争降低"
-    
+
   consistency_guarantees:
     daily_reconciliation: "每日 02:00 自动对账——发现不一致 → P2 Finding"
     stale_detection: "blueprint_index.last_updated < 30d ago AND status='Active' → 蓝图可能僵尸化 → P1 告警"
@@ -421,31 +421,31 @@ ce_selective_injection:
       - factor: layer_match
         weight: 0.30
         description: "蓝图的 layer == task.target_layer → 满分；相邻层 → 0.5；跨层 → 0.1"
-        
+
       - factor: dependency_closure
         weight: 0.25
         description: "task.related_files 所属模块的依赖链上所有模块蓝图→分数随距离衰减"
         source: "GAP-M01 module_deps 表"
-        
+
       - factor: script_governance
         weight: 0.20
         description: "task.related_files 触发的脚本所属模块的蓝图→需了解为何这些脚本要跑"
         source: "升级章二 impact_graph"
-        
+
       - factor: recency
         weight: 0.10
         description: "最近被读取/更新的蓝图优先→热度加权"
-        
+
       - factor: maturity_context
         weight: 0.15
         description: "M1/M2 模块施工时需要更多蓝图（规范+参考）→ M3/M4 只需目标蓝图"
         source: "§十五 M1-M4 成熟度定义"
-    
+
     scoring_formula: |
       relevance_score = Σ(weight_i × factor_score_i)
       分数归一化到 [0, 1]
       取 top_k 蓝图注入——k 由剩余 token 预算决定
-      
+
   blueprint_tiering:
     tiers:
       tier_0_full: "完整 blueprint.md 全文注入——仅限 task.target_module 的蓝图（必注入）"
@@ -511,17 +511,17 @@ script_lifecycle:
       description: "新创建的脚本——仅运行在 shadow 模式（不阻断，只记录）"
       duration: "≥ 10 次执行 AND ≥ 7 天 → 自动晋升为 STABLE"
       gate_behavior: "G7 WARN（不阻断）"
-      
+
     STABLE:
       description: "已验证的脚本——正常参与门禁判定"
       gate_behavior: "正常执行——exit 0/1/2/3 按门禁契约"
-      
+
     DEPRECATED:
       description: "计划废弃的脚本——仍运行但 AI 收到提醒"
       trigger: "连续 30 天零触发 OR Owner 显式标记"
       gate_behavior: "exit code 降权——0→WARN, 1→FAIL(可被下一个STABLE脚本覆盖)"
       migration_hint: "提示 AI：'{successor_script_path}' 替代了此脚本"
-      
+
     ARCHIVED:
       description: "已废弃——不运行，仅保留源码供参考"
       trigger: "DEPRECATED 状态 > 90 天 → 自动归档"
@@ -532,15 +532,15 @@ script_lifecycle:
     S0_instant:
       criteria: "P50 执行时间 < 10s AND 近 100 次执行 FAIL 率 < 1%"
       pool: "quick 池——最高优先级"
-      
+
     S1_fast:
       criteria: "P50 执行时间 10-60s AND FAIL 率 < 3%"
       pool: "quick 池"
-      
+
     S2_medium:
       criteria: "P50 执行时间 60-180s AND FAIL 率 < 5%"
       pool: "long_tail 池（参考 Gate Engine GAP-C07）"
-      
+
     S3_heavy:
       criteria: "P50 执行时间 > 180s OR FAIL 率 > 5%"
       pool: "disruptive 池——需 Owner 审批"
@@ -589,29 +589,29 @@ startup_dag:
     tier_0_bare_metal:  # 无依赖——最先启动
       - {system: Database, timeout_s: 5, description: "SQLite 连接池 + WAL 启用"}
       - {system: MCP_Servers, timeout_s: 10, description: "stdio 服务启动——先于任何业务系统"}
-      
+
     tier_1_core:  # 依赖 tier_0
       - {system: Vector_Memory, timeout_s: 15, depends_on: [Database], description: "ChromaDB 初始化 + collection 加载"}
       - {system: LLM_Security, timeout_s: 5, depends_on: [], description: "安全策略加载——无数据依赖"}
       - {system: System_Telemetry, timeout_s: 5, depends_on: [Database], description: "metrics 端点注册"}
-      
+
     tier_2_engines:  # 依赖 tier_1
       - {system: Knowledge_Base, timeout_s: 20, depends_on: [Vector_Memory, Database]}
       - {system: Script_System, timeout_s: 30, depends_on: [Database], description: "script_manifest 加载 + 脚本索引预热"}
       - {system: Context_Engine, timeout_s: 15, depends_on: [Knowledge_Base, Vector_Memory]}
-      
+
     tier_3_business:  # 依赖 tier_2
-      - {system: Gate_Engine, timeout_s: 10, depends_on: [Script_System, Database], 
+      - {system: Gate_Engine, timeout_s: 10, depends_on: [Script_System, Database],
          description: "冷启动协议 phase_0→phase_2（参考 Gate Engine GAP-C01）"}
       - {system: Task_Pipeline, timeout_s: 10, depends_on: [Context_Engine]}
       - {system: Feedback_Loop, timeout_s: 15, depends_on: [System_Telemetry, Database]}
-      
+
     tier_4_front:  # 依赖 tier_3
       - {system: Orchestrator, timeout_s: 20, depends_on: [Gate_Engine, Task_Pipeline, Context_Engine, Script_System, Knowledge_Base]}
 
   total_startup_budget:
     tier_0: "max(5,10) = 15s（DB + MCP 并行）"
-    tier_1: "max(15,5,5) = 15s（VMS + LSG + Telemetry 并行）"  
+    tier_1: "max(15,5,5) = 15s（VMS + LSG + Telemetry 并行）"
     tier_2: "max(20,30,15) = 30s（KB + Script + CE 并行）"
     tier_3: "max(10,10,15) = 15s（Gate + Pipeline + FLE 并行）"
     tier_4: "20s（Orc 串行——依赖 tier_3 全部）"
@@ -622,7 +622,7 @@ startup_dag:
     dependency_graph: "Script System 启动后后台异步构建（不阻塞 Orc 的就绪状态）"
     blueprint_index: "BlueprintAutoIndexer 全量扫描→SQLite（~30s，后台执行）"
     kb_vectors: "ChromaDB collection 延迟加载——首次查询时才加载 HNSW 索引"
-  
+
   circular_dependency_resolution:
     problem: "Gate Engine 需要 Script System 的 manifest，Script System 的治理脚本需要 Gate Engine 判定"
     resolution: |
@@ -630,7 +630,7 @@ startup_dag:
       Script System 启动后→先加载本地缓存的 script_manifest→不依赖 Gate
       Gate Engine 启动后→从 Script System 的 manifest 缓存重建 DependencyGraph
       运行时：两者通过 CT-SCRIPT-GATE-001 契约交互→不存在启动循环
-      
+
   health_probe_chain:
     endpoint: "GET /health/readyz——系统级聚合就绪探针"
     logic: |
@@ -672,14 +672,14 @@ cost_model:
       cost_per_1k_tokens: 0.0     # 本地模型免费
       rate_limit: "无限制（受 GPU VRAM 限制）"
       preference: "默认选择——除非任务复杂度 > M3"
-      
+
     external_deepseek:
       cost_per_1M_input_tokens: 2.0   # ¥2/1M input
       cost_per_1M_output_tokens: 8.0  # ¥8/1M output
       rate_limit: "200K tokens/min"
       use_case: "仅限 M3/M4 模块的复杂分析任务"
       require_approval: "单次 > 50K tokens → 需 Owner 确认"
-      
+
     external_claude:
       cost_per_1M_input_tokens: 15.0
       cost_per_1M_output_tokens: 75.0
@@ -691,7 +691,7 @@ cost_model:
     monthly_budget: 500.0  # ¥500/月硬上限
     weekly_budget: 150.0   # ¥150/周软上限（超过→P1 告警，不硬阻断）
     daily_budget: 30.0     # ¥30/天硬上限
-    
+
     enforcement:
       daily_exceeded: "硬阻断外部模型调用→降级为本地模型→通知 Owner"
       weekly_exceeded: "P1 告警 + 暂停所有外部模型→仅本地模型可用"
@@ -702,12 +702,12 @@ cost_model:
       per_agent: "每个 AI session 的 token 消耗按 agent_session_id 归因"
       per_module: "按 task.target_module 归因→哪些模块最烧钱"
       per_task_type: "MODEL_BUILD vs AUDIT vs REFACTOR 的成本对比"
-    
+
     dashboard:
       real_time: "当前小时的成本 burn rate + 今日累计"
       trends: "7天/30天成本趋势→识别异常增长"
       cost_efficiency: "¥/有效代码行数（需 B-MOD-307 Token 产出度量配合）"
-      
+
   model_selection_rules:
     auto_select:
       M1_module: "always local_qwen3_8b"
@@ -747,27 +747,27 @@ master_blueprint_governance:
     max_single_section_lines: 500 # 单节超过→P2 建议拆分
     current: "~4000 行——v1.0.0 升级章新增 ~600 行，§-2 新增 ~800 行"
     projected_v1_1: "~5500 行——仍在限制内"
-    
+
   chapter_management:
     structure:
       §-2: "容量二次审计（本章）——容量缺口清单"
       §升级章一~十: "v1.0.0 新增设计——核心容量架构"
       §零~三十七: "v0.9.2 现存设计——集成契约与治理体系"
-    
+
     auto_toc: |
       每次蓝图更新后自动生成目录树→写入本文件头部（YAML frontmatter 后）
       AI session 冷启动时→先读目录树→再按需跳转→节省 token
-      
+
   self_integrity:
     depends_on_self_check: |
       本蓝图的 depends_on 列表中引用了 16 个外部文件
       每日自动验证这些文件是否存在 + 内容未漂移
       方法：本蓝图 SHA-256 × 所有 depends_on 文件 SHA-256 = 完整性指纹
-      
+
     cross_reference_validator: |
       本蓝图中所有 "详见 §X" 引用→自动验证 §X 确实存在
       本蓝图中所有 CT-* 契约编号→自动验证在 §二契约总表中已登记
-      
+
   split_threshold:
     condition: "MOD-MASTER-001 > 8000 行 OR 单节 > 800 行"
     action: |
@@ -818,24 +818,24 @@ cross_system_transaction:
         system: Orchestrator
         action: "创建 TaskCard→status=TODO"
         compensation: "TaskCard→status=CANCELLED, reason='saga_rollback'"
-        
+
       step_2:
         system: Gate_Engine
         action: "评估 G0-G7 门禁→判定 PASS/FAIL"
         compensation: "删除 GateEvaluation 记录（仅保留审计日志）"
         idempotency: "task_id 已评估过→返回缓存结果（不重复评估）"
-        
+
       step_3:
         system: Script_System
         action: "执行治理脚本→收集 Findings"
         compensation: "标记 Findings 为 ROLLED_BACK（不删除——保留审计踪迹）"
         retry: "失败时最多重试 3 次→3 次后触发 saga 回滚"
-        
+
       step_4:
         system: Database
         action: "写入 Findings + 更新 TaskCard.status→BLOCKED/COMPLETED"
         compensation: "回滚 TaskCard.status→TODO + Findings→ROLLED_BACK"
-        
+
     saga_coordinator:
       location: "Orchestrator 内部的 SagaCoordinator 类"
       state_tracking: "SQLite `saga_state` 表——记录每个 saga 的当前步骤和状态"
@@ -844,7 +844,7 @@ cross_system_transaction:
           Orchestrator 重启后扫描 saga_state 表中的 IN_PROGRESS saga
           → 从上次成功的步骤后重试
           → 最多重试 3 次→仍失败→P0 告警 + 人工介入
-          
+
   isolation:
     conflict_detection: |
       两个 saga 同时操作同一个 task_id→第二个 saga 发现 task_id 已有 IN_PROGRESS saga
@@ -860,7 +860,7 @@ cross_system_transaction:
 ```
 当前：模块数 51→升级章一预测 1,500 时资源够用（纸面推算）
 问题：从 51→100→500→1000→1500 的过程中，瓶颈何时出现？
-- 模块 800 时 DB 写入延迟开始飙升？ 
+- 模块 800 时 DB 写入延迟开始飙升？
 - 模块 1200 时 CE token 预算开始溢出？
 这些需要预测——而不是等到真的出问题才发现。
 ```
@@ -888,16 +888,16 @@ capacity_digital_twin:
       - chromadb_query_latency_p99: "随 vector_count 增长→预计在 ~6M vectors 时需要分区"
       - ce_token_overflow_rate: "随 module_count 增长→预计在 ~1000 模块时 20K 预算不足"
       - memory_usage_gb: "线性增长→预计在 ~1200 模块时接近 64GB 上限"
-      
+
   calibration:
     data_source: "历史容量指标（来自升级章七的 Prometheus metrics）"
     calibration_points: "[51, 100, 200, 400, 800] 模块规模时的实测数据"
     method: "用 51→400 的数据训练模型→预测 800 和 1500 的值→与实际对比→修正模型"
-    
+
   early_warning:
     trigger: "预测值触及 SLO 阈值的 80% → P1 告警：'N 模块后将出现瓶颈'"
     action: "自动生成瓶颈缓解建议→通知 Owner→建议扩容/优化/分区"
-    
+
   what_if_simulation:
     scenarios:
       - "如果 100 AI 同时跑全量扫描（非增量）→系统表现？"
@@ -934,19 +934,19 @@ contract_versioning:
     MAJOR: "breaking change——消费方 MUST 更新代码才能正常工作"
     MINOR: "backward-compatible 新增字段/功能——消费方可选升级"
     PATCH: "文档修正/示例更新——不影响契约语义"
-    
+
   breaking_change_catalog:
     - "删除已有字段"
     - "修改字段类型（str→int）"
     - "修改枚举值集合（新增 OK，删除是 breaking）"
     - "修改 circuit_breaker 阈值（降低）"
     - "修改 ai_read_only_hint（SAFE→DO_NOT_CALL）"
-    
+
   deprecation_policy:
     window: "MAJOR 版本前至少保留 1 个 MINOR 版本的过渡期"
     signaling: "旧版本标记 @deprecated——输出 WARNING 日志而非拒绝调用"
     migration_guide: "每条废弃契约附带 migration_guide 字段→消费方 AI 可直接执行迁移"
-    
+
   consumer_notification:
     mechanism: "升级章四的 BlueprintAutoIndexer + depends_on 解析"
     flow: |
@@ -984,19 +984,19 @@ cross_ai_consistency:
     code_style:
       enforcement: "预提交 pre-commit hook——ruff + mypy + black 统一格式化"
       auto_fix: "CI 自动运行 black --check→不通过→拒绝 merge"
-      
+
     architectural_pattern:
       detection: "AST 分析——检测是否使用项目禁止的模式"
       banned_patterns: ["直接 import 其他系统的内部模块（违反 AP1）", "裸 except:", "os.system()"]
       severity: "P0——直接阻断（GATE-18 pre-commit）"
-      
+
     design_decision_consistency:
       mechanism: |
         每次 AI session 结束时→自动提取本 session 中做出的设计决策
         → 与同一模块的历史设计决策对比
         → 冲突检测：AI #42 的决策是否与 AI #17 3 天前的决策矛盾？
         → 矛盾则生成 DESIGN_CONFLICT Finding → 分配 Owner 裁决
-      
+
     naming_convention:
       enforcement: "基于 AI 自动学习的项目命名约定（从现有代码中提取 pattern）"
       tolerance: "允许 5% 的新变异——防止过度僵化"
@@ -1042,17 +1042,17 @@ master_capacity_slos_v1_1:
     description: "模块依赖图谱查询（BFS depth≤3）延迟 P99"
     target_ms: 500
     relates_to: "GAP-M01"
-    
+
   - id: GATE-M-002-blueprint-reconciliation
     description: "蓝图注册表与文件系统每日对账——漂移条目数上限"
     target: "< 5 条目/日"
     relates_to: "GAP-M02"
-    
+
   - id: GATE-M-003-kb-partition-query
     description: "KB 分区查询延迟 P99（含 metadata 预过滤 + embedding search）"
     target_ms: 1000
     relates_to: "GAP-M03"
-    
+
   - id: GATE-M-004-ce-injection-effectiveness
     description: "CE 注入蓝图的 AI 实际引用率（rolling 24h）"
     target: "> 60%"
@@ -1062,7 +1062,7 @@ master_capacity_slos_v1_1:
     description: "12 系统全量冷启动至 readyz=200 耗时上限"
     target_ms: 180000      # 3 分钟
     relates_to: "GAP-M06"
-    
+
   - id: GATE-M-006-llm-cost-burn-rate
     description: "LLM API 单日成本上限（硬阻断）"
     target: "¥30/day"
@@ -1290,27 +1290,27 @@ architecture:
   impact_graph:
     storage: "SQLite 表 `impact_graph` + 内存 LRU 缓存"
     structure: "有向图 G = (V_files, V_scripts, E_depends)"
-    
+
     vertices:
       V_files:
         - type: "源文件节点"
         - key: "file_path_hash"
         - attributes: [glob_pattern, module_id, last_modified]
         - count_estimate: "1,500 模块 × 平均 10 文件/模块 = 15,000 节点"
-        
+
       V_scripts:
         - type: "脚本节点"
         - key: "script_path_hash"
         - attributes: [dimension, phase, avg_runtime_ms, dependencies]
         - count_estimate: "10,000 节点"
-    
+
     edges:
       E_depends:
         - type: "file → script 依赖边"
         - semantics: "脚本 S 读取了文件 F → F 变更时 S 需要重跑"
         - weight: "1.0 (默认) / 0.5 (弱依赖——如仅读取import引用)"
         - count_estimate: "10,000 脚本 × 平均 8 文件/脚本 = 80,000 边"
-        
+
       E_before:
         - type: "script → script 前置依赖边"
         - semantics: "S1 必须在 S2 之前执行"
@@ -1323,7 +1323,7 @@ architecture:
       trigger: "脚本新增或修改时 → 自动重建该脚本的 file→script 边"
       tool: "scripts/governance/impact/build_dependency_graph.py"
       format: "每个脚本输出一个 .deps.yaml 到 scripts/governance/_deps/"
-      
+
     glob_expansion:
       description: "脚本中的 glob 模式（如 '**/*.py'）展开到具体文件路径"
       trigger: "新文件创建时 → 重新评估所有包含 glob 的脚本"
@@ -1404,17 +1404,17 @@ design:
     allocation: "先到先得 + 优先级抢占"
     slot_timeout_s: 300  # AI session 最长持有时间
     renewal_interval_s: 30  # 心跳续约间隔
-    
+
   license_lifecycle:
     acquire:
       preconditions: ["AI session 有效", "不超过该AI的max_concurrent_scans=3"]
       timeout: "30s 内未获取 → 排队等待 → 超时返回 BUSY"
       response: "{granted: bool, license_id: uuid, expires_at: ISO8601}"
-    
+
     hold:
       heartbeat: "每30s发送 /_license/{id}/heartbeat → 续约TTL=300s"
       active_scans: "每个license下最多3个并发扫描 (对应3个文件变更批次)"
-    
+
     release:
       trigger: ["扫描完成", "AI session 结束", "心跳超时300s未续约"]
       action: "归还slot → 通知等待队列 → 清理ScanCache关联"
@@ -1446,7 +1446,7 @@ status: NEW
 
 session_model:
   lifecycle: [CREATED, CONTEXT_BUILDING, WORKING, SCANNING, IDLE, COMPLETED, TIMED_OUT]
-  
+
   isolation:
     workspace: "每个AI session 独立工作目录 (git worktree 或文件锁范围)"
     file_conflict: "两个AI修改同一文件 → 后提交者收到 CONFLICT 通知 → 进入冲突解决流程"
@@ -1549,7 +1549,7 @@ execution_pool:
       scale_up_threshold: "队列深度 > 50 → +16 workers (最多到80)"
       scale_down_threshold: "队列深度 < 10 持续60s → -8 workers (最少到12)"
       cooldown_s: 120  # 两次扩缩之间最少间隔
-    
+
   pool_routing:
     quick_pool: {max_workers: 48, target_scripts: "D1-D4 C1-C3 快速检查"}
     content_pool: {max_workers: 24, target_scripts: "D5-D8 内容分析"}
@@ -1559,7 +1559,7 @@ execution_pool:
   process_isolation:
     per_script: {timeout_s: 120, memory_limit_mb: 256, cpu_affinity: "auto"}
     sandbox: "--no-verify 应急通道除外 → 其余均在 restricted sandbox 执行"
-    
+
   result_storage:
     format: "JSONL 追加写入 scripts/governance/_results/{script_hash[:8]}/{date}.jsonl"
     retention: "30天热数据 + 365天冷归档"
@@ -1583,7 +1583,7 @@ scheduling_model:
     P1_HIGH: {max_concurrent: 30, preemptive: false, timeout_s: 120}
     P2_NORMAL: {max_concurrent: 40, preemptive: false, timeout_s: 300}
     P3_LOW: {max_concurrent: 10, preemptive: false, timeout_s: 600}
-    
+
   fair_share:
     per_agent_limit: "每个AI agent最多同时占用 8 个执行槽"
     per_module_limit: "每个模块最多同时占用 4 个执行槽"
@@ -1612,7 +1612,7 @@ event_driven_monitoring:
     - "AI session 状态变更 → FLE.on_session_change()"
     - "license 池水位变化 → FLE.on_license_pool_change()"
     - "队列深度告警 → FLE.on_queue_pressure()"
-  
+
   baseline_poll:
     interval: 300s  # 5分钟全量健康基线 (替代30s)
     scope: "系统级指标 (CPU/内存/磁盘/连接数)"
@@ -1648,17 +1648,17 @@ when: "单机 CPU 利用率持续 > 85% 超过 1h 时触发迁移评估"
 shard_design:
   shard_count: "从 1 → N (N≤8)"
   shard_key: "hash(module_id) % N"
-  
+
   shard_responsibilities:
     shard_0: "modules 0-187 → 约1,250个脚本"
     shard_1: "modules 188-375"
     shard_2-7: "同理"
-  
+
   coordination:
     type: "当前 SQLite 单文件 → 未来 Redis cluster"
     distributed_lock: "当前 文件锁 → 未来 Redis Redlock"
     event_bus: "当前 内存Observer → 未来 Redis Pub/Sub 或 NATS"
-    
+
   data_partitioning:
     sqlite: "每分片独立 sqlite 文件 → shared-nothing"
     chromadb: "每分片独立 collection → shard_{id}_{collection_name}"
@@ -1920,9 +1920,9 @@ STEP 3: 拆分后验证
 
 | # | 文件 | module_id | 版本 | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则 |
+| 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
-| 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012/013 |
+| 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 | 5 | 基线蓝图 | MOD-MASTER-002 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 现存设计 |
 | 6 | 索引蓝图 | MOD-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 导航索引 |
@@ -1944,4 +1944,3 @@ STEP 3: 拆分后验证
 | 1 | 容量蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_capacity.md` | 修改 | 本文件 |
 | 2 | 基线蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 读取 | 依赖 |
 | 3 | 索引蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 读取 | 导航 |
-

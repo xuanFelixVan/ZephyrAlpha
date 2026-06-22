@@ -14,7 +14,7 @@ category: module_blueprint
 
 ```yaml
 cryptographic_audit_integrity:
-  
+
   hash_chain:
     principle: "每条审计记录 = {data, prev_hash, timestamp, signature}——修改任一条→后续所有hash断裂"
     structure:
@@ -64,7 +64,7 @@ cryptographic_audit_integrity:
         - "时间线重建(所有事件按因果顺序排列)"
       format: "in-toto layout + DSSE签名信封 + JSON证据索引"
       verification: "第三方可用独立工具验证整个证据包完整性——无需信任生成系统"
-    
+
     causal_graph:
       principle: "每条审计记录维护因果依赖——operation_A导致了escalation_B触发了notification_C"
       structure: "有向无环图(DAG)——节点=审计记录, 边=因果关系(触发/导致/依赖)"

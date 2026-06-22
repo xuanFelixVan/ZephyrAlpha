@@ -13,7 +13,7 @@
 from __future__ import annotations
 
 import json
-import time
+from datetime import UTC
 from pathlib import Path
 
 import pytest
@@ -39,7 +39,6 @@ def rollback_lock(tmp_path: Path, lock_dir: Path) -> RollbackLock:
 
 
 class TestRollbackLockInstantiation:
-
     def test_creates_with_defaults(self, tmp_path: Path):
         lk = RollbackLock(project_root=tmp_path)
         assert lk._lock_dir.exists()
@@ -56,7 +55,6 @@ class TestRollbackLockInstantiation:
 
 
 class TestAcquire:
-
     def test_acquire_success(self, rollback_lock: RollbackLock):
         result = rollback_lock.acquire(owner="test-owner", task="test-task")
         assert isinstance(result, LockAcquireResult)
@@ -71,9 +69,7 @@ class TestAcquire:
         assert data["owner"] == "test-owner"
 
     def test_acquire_with_priority(self, rollback_lock: RollbackLock):
-        result = rollback_lock.acquire(
-            owner="test-owner", priority=LockPriority.CRITICAL, task="urgent"
-        )
+        result = rollback_lock.acquire(owner="test-owner", priority=LockPriority.CRITICAL, task="urgent")
         assert result.acquired is True
         data = json.loads(rollback_lock._lock_path.read_text(encoding="utf-8"))
         assert data["priority"] == "critical"
@@ -91,7 +87,6 @@ class TestAcquire:
 
 
 class TestRelease:
-
     def test_release_success(self, rollback_lock: RollbackLock):
         acquire_result = rollback_lock.acquire(owner="test-owner")
         release_result = rollback_lock.release(acquire_result.lock_id)
@@ -123,7 +118,6 @@ class TestRelease:
 
 
 class TestStatus:
-
     def test_status_unlocked(self, rollback_lock: RollbackLock):
         status = rollback_lock.status()
         assert isinstance(status, LockStatus)
@@ -146,7 +140,6 @@ class TestStatus:
 
 
 class TestForceRelease:
-
     def test_force_release_existing(self, rollback_lock: RollbackLock):
         rollback_lock.acquire(owner="test-owner")
         result = rollback_lock.force_release()
@@ -167,14 +160,11 @@ class TestForceRelease:
 
 
 class TestLockExpiry:
-
     def test_expired_lock_can_be_stolen(self, rollback_lock: RollbackLock):
         rollback_lock.acquire(owner="old-owner")
         data = json.loads(rollback_lock._lock_path.read_text(encoding="utf-8"))
         data["acquired_at"] = "2000-01-01T00:00:00+00:00"
-        rollback_lock._lock_path.write_text(
-            json.dumps(data, ensure_ascii=False), encoding="utf-8"
-        )
+        rollback_lock._lock_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         assert rollback_lock._try_steal_expired_lock() is True
 
     def test_fresh_lock_cannot_be_stolen(self, rollback_lock: RollbackLock):
@@ -186,9 +176,9 @@ class TestLockExpiry:
 
 
 class TestQueueManagement:
-
     def test_enqueue_creates_file(self, rollback_lock: RollbackLock):
         from zephyr.governance.rollback_lock import LockRequest
+
         req = LockRequest(
             lock_id="TEST-001",
             priority=LockPriority.NORMAL,
@@ -205,14 +195,16 @@ class TestQueueManagement:
         assert rollback_lock._count_queue() == 0
 
     def test_count_queue_with_entries(self, rollback_lock: RollbackLock):
+        from datetime import datetime
+
         from zephyr.governance.rollback_lock import LockRequest
-        from datetime import datetime, timezone
+
         req = LockRequest(
             lock_id="TEST-001",
             priority=LockPriority.NORMAL,
             owner="test",
             task="test-task",
-            created_at=datetime.now(timezone.utc).isoformat(),
+            created_at=datetime.now(UTC).isoformat(),
             timeout_ms=5000,
             expires_at="",
         )

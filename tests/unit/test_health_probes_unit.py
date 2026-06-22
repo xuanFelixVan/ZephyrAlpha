@@ -6,10 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """HealthCheck 探针单元测试。"""
 
 
 import pytest
+
 from zephyr.infrastructure.system_telemetry.health_probes import HealthProbeManager
 
 

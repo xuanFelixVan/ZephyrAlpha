@@ -37,6 +37,7 @@ _GATE_SEQ: dict[str, tuple[TaskNamespace, int]] = {
     "G5": (TaskNamespace.KBG, 9105),
 }
 
+
 def build_kb_gate_eval_task(*, gate_id: str, title: str, deliverable: Path) -> Task:
     """构造 ``GateEngine.evaluate(task, gate_id)`` 所需的最小 Task。"""
     ns, seq = _GATE_SEQ[gate_id]

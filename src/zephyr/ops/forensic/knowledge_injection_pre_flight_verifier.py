@@ -28,6 +28,7 @@ R515: KnowledgeInjectionPreFlightVerifier
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class DryRunResult:
     rule_id: str
@@ -35,6 +36,7 @@ class DryRunResult:
     false_positives: int = 0
     true_positives: int = 0
     net_benefit: float = 0.0
+
 
 @dataclass
 class KnowledgeInjectionPreFlightVerifier:
@@ -46,7 +48,7 @@ class KnowledgeInjectionPreFlightVerifier:
     def add_historical_incident(self, incident: dict) -> None:
         self.historical_incidents.append(incident)
         if len(self.historical_incidents) > self.max_stored_incidents:
-            self.historical_incidents = self.historical_incidents[-self.max_stored_incidents:]
+            self.historical_incidents = self.historical_incidents[-self.max_stored_incidents :]
 
     def verify_rule(self, rule: dict) -> dict:
         rule_id = rule.get("rule_id", "unknown")
@@ -62,9 +64,7 @@ class KnowledgeInjectionPreFlightVerifier:
             else:
                 false_positives += 1
 
-        net_benefit = (true_positives * 1.0 - false_positives * 0.3) / max(
-            len(self.historical_incidents), 1
-        )
+        net_benefit = (true_positives * 1.0 - false_positives * 0.3) / max(len(self.historical_incidents), 1)
 
         result = DryRunResult(
             rule_id=rule_id,

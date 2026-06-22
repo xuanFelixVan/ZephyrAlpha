@@ -8,50 +8,43 @@
 
 """Test suite: agent-rbac core — identity + permission_guard + rbac_guard + immutable_core + kill_switch"""
 
-import time
-
 import pytest
 
 from zephyr.integration.shared_08.contracts.identity.agent_identity import (
     MATURITY_AUTO_GUARD_TIMEOUT,
     MATURITY_TLB_LIMITS,
-    MaturityLevel,
+    ROLE_DEFAULT_PERMISSIONS,
     AgentIdentity,
     AgentRole,
     IDESource,
-    ROLE_DEFAULT_PERMISSIONS,
+    MaturityLevel,
 )
 from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision, GuardResult
+from zephyr.security.access_control.abac_guard import ABACContext, ABACGuard, SensitivityLabel, TemporalCategory
+from zephyr.security.access_control.decision_explainer import DecisionExplainer, Explanation
+from zephyr.security.access_control.exceptions import (
+    AgentRbacError,
+    ColdStartLockedError,
+    PermissionDeniedError,
+)
 from zephyr.security.access_control.immutable_core import (
-    ALWAYS_BLOCKED_OPERATIONS,
-    PROTECTED_PATHS,
     ImmutableCore,
     IntegrityResult,
 )
-from zephyr.security.access_control.rbac_guard import (
-    ALWAYS_ALLOW_OPERATIONS,
-    ALWAYS_BLOCKED_OPERATIONS as RBAC_BLOCKED_OPS,
-    AUTO_GUARD_OPERATIONS,
-    RBACGuard,
-    PermissionDecision,
-    PermissionResult,
-)
+from zephyr.security.access_control.input_guard import InputDecision, InputGuard
 from zephyr.security.access_control.kill_switch import (
     KillSwitch,
     KillSwitchState,
     TriggerEvent,
     TriggerResult,
 )
-from zephyr.security.access_control.exceptions import (
-    AgentRbacError,
-    ColdStartLockedError,
-    PermissionDeniedError,
+from zephyr.security.access_control.output_guard import OutputDecision, OutputGuard
+from zephyr.security.access_control.rbac_guard import (
+    PermissionDecision,
+    PermissionResult,
+    RBACGuard,
 )
-from zephyr.security.access_control.input_guard import InputGuard, InputDecision
-from zephyr.security.access_control.sequence_guard import SequenceGuard, SequenceEvent
-from zephyr.security.access_control.output_guard import OutputGuard, OutputDecision
-from zephyr.security.access_control.abac_guard import ABACGuard, ABACContext, TemporalCategory, SensitivityLabel
-from zephyr.security.access_control.decision_explainer import DecisionExplainer, Explanation
+from zephyr.security.access_control.sequence_guard import SequenceEvent, SequenceGuard
 
 
 @pytest.fixture

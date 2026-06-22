@@ -34,6 +34,7 @@ from pathlib import Path
 
 from zephyr.trading.capability_registry import CapabilityRegistry
 
+
 @dataclass
 class ModuleDiscovery:
     module_path: str
@@ -48,12 +49,14 @@ class ModuleDiscovery:
     docstring: str | None = None
     imports: list[str] = field(default_factory=list)
 
+
 @dataclass
 class UnregisteredModule:
     discovery: ModuleDiscovery
     reason: str = "new"
     priority: str = "P1"
     suggested_layer: str = "local"
+
 
 class ModuleOnboardingScanner:
     """模块接入扫描器——主动发现未注册模块。"""
@@ -99,12 +102,14 @@ class ModuleOnboardingScanner:
             cap_id = f"{disc.package}-{disc.module_name}".replace("_", "-")
             if cap_id not in registered_ids:
                 priority = "P0" if disc.has_blueprint else "P1"
-                unregistered.append(UnregisteredModule(
-                    discovery=disc,
-                    reason="missing_registration",
-                    priority=priority,
-                    suggested_layer="local",
-                ))
+                unregistered.append(
+                    UnregisteredModule(
+                        discovery=disc,
+                        reason="missing_registration",
+                        priority=priority,
+                        suggested_layer="local",
+                    )
+                )
         return unregistered
 
     def _parse_module(self, path: Path) -> ModuleDiscovery | None:

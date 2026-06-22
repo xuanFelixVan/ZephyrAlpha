@@ -1,0 +1,136 @@
+module_id: MOD-INF-007
+schema_version: '1.0'
+doc_type: gate
+gate_id: G_TRAE_034
+gate_name: g_trae_034
+title: G_TRAE_034 Gate — 任务系统-卡片标准与生命周期
+description: 自动化门禁：强制执行 TRAE-034（任务系统-卡片标准与生命周期）规则。将规则从文档约束升级为phase_gate自动阻断。
+rule_ids:
+- TRAE-034
+status: active
+ttl: permanent
+scope: global
+category: compliance
+owner: MOD-INF-007
+consumer: gate_engine
+ai_autonomy: autonomous
+token_budget: 200
+latency_budget_ms: 500
+execution_plane: warm
+trigger:
+  event: phase_transition
+  precondition: task.status == 'IN_PROGRESS' or task.status == 'COMPLETED'
+  frequency: per_task
+depends_on_gates:
+- G0
+blocked_by_gates: []
+parallel_allowed_with: []
+entry_conditions:
+- id: G_TRAE_034-C00
+  name: task_001_template_check
+  type: field_presence
+  description: '任务卡标准——核心字段非空 (rule: TRAE-034)'
+  check: rule_yaml_valid and conditions_met["task_001_template"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_034.py
+  rule_ids:
+  - TRAE-034
+  anti_pattern:
+    description: prohibition violated
+    example: AI ignores TRAE-034 task_001_template requirement
+  params: &id001
+    required_fields:
+    - task_id
+    - title
+    - description
+    - files_in_scope
+    - deliverables
+    - acceptance
+- id: G_TRAE_034-C01
+  name: task_001_fields_check
+  type: field_presence
+  description: '任务卡标准——核心字段非空 (rule: TRAE-034)'
+  check: rule_yaml_valid and conditions_met["task_001_fields"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_034.py
+  rule_ids:
+  - TRAE-034
+  anti_pattern:
+    description: 系统自动分配，格式错误拒绝建卡
+    example: AI ignores TRAE-034 task_001_fields requirement
+  params: *id001
+- id: G_TRAE_034-C02
+  name: task_001_fields_check
+  type: field_presence
+  description: '任务卡标准——核心字段非空 (rule: TRAE-034)'
+  check: rule_yaml_valid and conditions_met["task_001_fields"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_034.py
+  rule_ids:
+  - TRAE-034
+  anti_pattern:
+    description: 拒绝建卡
+    example: AI ignores TRAE-034 task_001_fields requirement
+  params: *id001
+- id: G_TRAE_034-C03
+  name: task_001_fields_check
+  type: field_presence
+  description: '任务卡标准——核心字段非空 (rule: TRAE-034)'
+  check: rule_yaml_valid and conditions_met["task_001_fields"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_034.py
+  rule_ids:
+  - TRAE-034
+  anti_pattern:
+    description: 拒绝建卡
+    example: AI ignores TRAE-034 task_001_fields requirement
+  params: *id001
+- id: G_TRAE_034-C04
+  name: task_001_fields_check
+  type: field_presence
+  description: '任务卡标准——核心字段非空 (rule: TRAE-034)'
+  check: rule_yaml_valid and conditions_met["task_001_fields"]
+  severity: error
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_034.py
+  rule_ids:
+  - TRAE-034
+  anti_pattern:
+    description: 拒绝建卡
+    example: AI ignores TRAE-034 task_001_fields requirement
+  params: *id001
+mutating_rules: []
+severity_levels:
+  error: 硬阻断——任务不得推进，raise GateViolationError
+  warning: 软警告——passed=True，写入events警告流
+  info: 仅记录——不告警不阻塞
+failure_actions:
+  reject: 拒绝——返回错误，对象停留在当前状态
+  flag: 标记——通过但附加warning flag
+simulation:
+  supported: true
+  mock_input: tests/fixtures/g_trae_034_mock.yaml
+  expected_output: passed=True when rule conditions met
+  rollback_on_failure: true
+upgrade_triggers:
+- condition: Rule TRAE-034 YAML updated with new sections
+  action: version bump + update entry_conditions
+  approval: MOD-INF-007 owner
+change_log:
+- version: 0.1.0
+  date: '2026-06-22'
+  author: session-20260622-gate-batch
+  change: 初始创建 — 自动生成自 TRAE-034 规则YAML
+phase: PHASE_0_SKELETON
+auto: true
+on_failure: reject
+on_pass: pass

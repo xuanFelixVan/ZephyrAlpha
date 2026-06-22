@@ -21,4 +21,4 @@ deny:
 ```
 
 - `capabilities.yaml` 自身禁止被 AI 修改 → 防止权限旁路
-- `trigger_router.yaml` 虽不在 `write_config` deny 列表中，但其 schema 被定义为 Human-Gated（ai-autonomy-authority-registry.md §2.9），实际修改须走 Owner 审批
+- `trigger_router.yaml` 虽不在 `write_config` deny 列表中，但其 schema 被定义为 Human-Gated（ai_autonomy_authority_registry.yaml §2.9），实际修改须走 Owner 审批

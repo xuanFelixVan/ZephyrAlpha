@@ -31,20 +31,18 @@ ContextAssembler — 上下文装配、校验、影子留档
   4. shadow    — 生成影子副本供脚本系统 B 线复查
 """
 
-
 from __future__ import annotations
 
 import hashlib
+import logging
 from datetime import UTC, datetime
 from pathlib import Path
-
-import logging
 from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 if True:
     from zephyr.autonomy_core.context_rule_registry import ContextRuleRegistry
@@ -331,9 +329,7 @@ class ContextAssembler:
             est = estimate_tokens(content)
             entry.token_estimate = est
 
-            parts.append(
-                f"\n--- FILE: {path.name} ({entry.reason}) ---" f"\nPATH: {entry.file_path}\n\n" f"{content}\n"
-            )
+            parts.append(f"\n--- FILE: {path.name} ({entry.reason}) ---\nPATH: {entry.file_path}\n\n{content}\n")
 
         full_text = "\n".join(parts)
         total_chars = len(full_text)
@@ -439,12 +435,12 @@ class RawContext(BaseModel):
 
 
 def build_context(
-    task: "TaskCard | None" = None,
+    task: TaskCard | None = None,
     *,
     task_type: str | None = None,
     target_layer: str | None = None,
     session_id: str = "",
-    vms: "Any | None" = None,
+    vms: Any | None = None,
 ) -> RawContext:
     """BUILD 阶段入口——从 VMS 四 Collection 检索组装原始上下文。
 
@@ -509,7 +505,7 @@ def build_context(
     return ctx
 
 
-def _infer_task_type(task: "TaskCard") -> str:
+def _infer_task_type(task: TaskCard) -> str:
     pipeline_type = getattr(task, "pipeline_task_type", None)
     if pipeline_type:
         return pipeline_type
@@ -517,7 +513,18 @@ def _infer_task_type(task: "TaskCard") -> str:
     tags = getattr(task, "tags", []) or []
     for tag in tags:
         tag_lower = tag.lower()
-        if tag_lower in {"code_gen", "code_review", "analysis", "ops_fix", "doc", "refactor", "test", "audit", "query", "debug"}:
+        if tag_lower in {
+            "code_gen",
+            "code_review",
+            "analysis",
+            "ops_fix",
+            "doc",
+            "refactor",
+            "test",
+            "audit",
+            "query",
+            "debug",
+        }:
             return tag_lower
 
     title = getattr(task, "title", "") or ""
@@ -542,7 +549,7 @@ def _infer_task_type(task: "TaskCard") -> str:
     return "code_gen"
 
 
-def _safe_search(vms: "Any", collection: str, query: str, top_k: int) -> list[str]:
+def _safe_search(vms: Any, collection: str, query: str, top_k: int) -> list[str]:
     if not query:
         return []
     results = vms.search(collection, query, top_k=top_k)
@@ -581,7 +588,6 @@ def _build_context_from_kb(task_type: str, layer: str) -> RawContext:
     ctx = RawContext(embedded_defaults=_get_embedded_defaults(task_type, layer))
 
     try:
-        from zephyr.intelligence.model_evaluation.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
         from zephyr.intelligence.model_evaluation.reranker import Reranker
 
         kb = _get_or_init_kb()
@@ -618,16 +624,21 @@ def _get_or_init_kb() -> UnifiedMemoryAPI | None:
     if _KBS_CACHE is not None:
         return _KBS_CACHE
     try:
-        from zephyr.intelligence.model_evaluation.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
-        from zephyr.governance.kb.bootstrap import Bootstrap, BootstrapConfig
         from pathlib import Path
+
+        from zephyr.governance.kb.bootstrap import Bootstrap, BootstrapConfig
+        from zephyr.intelligence.model_evaluation.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
 
         kb = UnifiedMemoryAPI(backend=InMemoryMemoryBackend(), enforce_capability=False)
         config = BootstrapConfig(min_ke_count=1, min_categories=1, max_chunks_per_file=10)
         engine = Bootstrap(project_root=Path.cwd(), config=config, kb_api=kb)
         result = engine.run()
         _KBS_CACHE = kb
-        _logger.info("KB context bridge initialized: %d KEs in %d categories", result.total_activated, len(result.categories_found))
+        _logger.info(
+            "KB context bridge initialized: %d KEs in %d categories",
+            result.total_activated,
+            len(result.categories_found),
+        )
         return kb
     except Exception as exc:
         _logger.warning("KB context bridge initialization failed: %s", exc)

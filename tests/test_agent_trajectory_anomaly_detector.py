@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.detectors.agent_trajectory_anomaly_detector import (
     AgentTrajectoryAnomalyDetector,
     TrajectoryAnomalyType,
@@ -123,8 +121,7 @@ class TestDetectDrift:
 
     def test_drift_backward(self):
         det = AgentTrajectoryAnomalyDetector(drift_threshold=0.5)
-        backward_phases = ["act", "detect", "collect", "verify", "act",
-                           "collect", "detect", "act", "verify", "collect"]
+        backward_phases = ["act", "detect", "collect", "verify", "act", "collect", "detect", "act", "verify", "collect"]
         for i, phase in enumerate(backward_phases):
             det.record_step(TrajectoryEvent(phase, f"comp_{i}", float(i), "h1", "h2"))
         result = det._detect_drift()

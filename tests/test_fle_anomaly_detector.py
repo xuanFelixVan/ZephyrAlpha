@@ -12,24 +12,18 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any
 from unittest.mock import MagicMock
 
-import pytest
-
-from zephyr.ops.feedback_collector import (
-    FeedbackCollector,
-    ActionResult,
-)
-from zephyr.ops.metrics_collector import (
-    EMABaseline,
-    MetricSnapshot,
-    MetricsCollector,
-)
 from zephyr.ops.detectors.anomaly_detector import (
     AnomalyDetector,
     AnomalyEvent,
+)
+from zephyr.ops.feedback_collector import (
+    FeedbackCollector,
+)
+from zephyr.ops.metrics_collector import (
+    MetricsCollector,
+    MetricSnapshot,
 )
 from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
 

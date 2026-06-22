@@ -28,8 +28,8 @@ SessionManager — AI 代理会话生命周期管理器
 SSoT: config/session_state_machine.yaml
 ADR: ADR-0032（Agent 路由 / Orchestration）
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import logging
 import uuid
@@ -41,7 +41,7 @@ from typing import Any, ClassVar
 
 import yaml
 
-__all__ = ["SessionManager", "SessionState", "Session", "SessionError"]
+__all__ = ["Session", "SessionError", "SessionManager", "SessionState"]
 
 _logger = logging.getLogger(__name__)
 
@@ -161,7 +161,7 @@ class SessionManager:
         *,
         reason: str = "manual",
         force: bool = False,
-    ) -> session:  # type: ignore  # noqa: F821
+    ) -> session:  # type: ignore
         session = self.get_session(session_id)
         current = session.state
 
@@ -222,8 +222,7 @@ class SessionManager:
         allowed = _TRANSITION_MAP.get(current.value, set())
         if target.value not in allowed:
             raise SessionError(
-                f"Invalid transition: {current.value} → {target.value}. "
-                f"Allowed from {current.value}: {sorted(allowed)}"
+                f"Invalid transition: {current.value} → {target.value}. Allowed from {current.value}: {sorted(allowed)}"
             )
 
         if target == SessionState.ACTIVE and current == SessionState.COMPLETED:

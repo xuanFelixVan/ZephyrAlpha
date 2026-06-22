@@ -29,8 +29,9 @@ KE Linker — 知识条目关联图。
     任务卡 TASK-INF-0121
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
+
 
 @dataclass
 class KELink:
@@ -40,6 +41,7 @@ class KELink:
     strength: float
     evidence: str = ""
 
+
 @dataclass
 class KEGraph:
     nodes: dict[str, dict[str, Any]]
@@ -47,8 +49,8 @@ class KEGraph:
     connected_components: int
     density: float
 
-class KELinker:
 
+class KELinker:
     RELATION_TYPES: list[str] = [
         "depends_on",
         "derives_from",
@@ -61,8 +63,7 @@ class KELinker:
     def __init__(self) -> None:
         self._links: list[KELink] = []
 
-    def link(self, source_ke_id: str, target_ke_id: str,
-             relation_type: str, evidence: str = "") -> KELink:
+    def link(self, source_ke_id: str, target_ke_id: str, relation_type: str, evidence: str = "") -> KELink:
         if relation_type not in self.RELATION_TYPES:
             relation_type = "depends_on"
 
@@ -85,21 +86,20 @@ class KELinker:
                 if i >= j:
                     continue
 
-                new_links.append(self.link(
-                    source_ke_id=src,
-                    target_ke_id=tgt,
-                    relation_type="depends_on",
-                    evidence=f"Same task: {task_id}",
-                ))
+                new_links.append(
+                    self.link(
+                        source_ke_id=src,
+                        target_ke_id=tgt,
+                        relation_type="depends_on",
+                        evidence=f"Same task: {task_id}",
+                    )
+                )
 
         return new_links
 
     def build_graph(self, nodes: dict[str, dict[str, Any]]) -> KEGraph:
         node_ids = set(nodes.keys())
-        relevant_links = [
-            l for l in self._links
-            if l.source_ke_id in node_ids and l.target_ke_id in node_ids
-        ]
+        relevant_links = [l for l in self._links if l.source_ke_id in node_ids and l.target_ke_id in node_ids]
 
         components = self._count_connected_components(node_ids, relevant_links)
 
@@ -136,8 +136,7 @@ class KELinker:
         return related
 
     @staticmethod
-    def _count_connected_components(node_ids: set[str],
-                                     links: list[KELink]) -> int:
+    def _count_connected_components(node_ids: set[str], links: list[KELink]) -> int:
         parent: dict[str, str] = {}
 
         def find(x: str) -> str:

@@ -26,4 +26,4 @@ errors.py —— Re-export wrapper → canonical: zephyr.shared.foundation.error
 修改异常层次请编辑 foundation/errors.py，不要编辑本文件。
 """
 
-from zephyr.shared.foundation.errors import *  # noqa: F401, F403
+from zephyr.shared.foundation.errors import *  # noqa: F403

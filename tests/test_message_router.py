@@ -10,20 +10,16 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_message_router.py
 
-import pytest
-from zephyr.infrastructure.a2a_protocol.layer2_communication.message_router import MessageRouter
 from zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_schemas import (
     A2AMessage,
     A2AMessagePart,
     PartType,
 )
+from zephyr.infrastructure.a2a_protocol.layer2_communication.message_router import MessageRouter
 
 
 def _make_message(*part_specs):
-    parts = [
-        A2AMessagePart(part_type=pt, content=content, metadata=meta)
-        for pt, content, meta in part_specs
-    ]
+    parts = [A2AMessagePart(part_type=pt, content=content, metadata=meta) for pt, content, meta in part_specs]
     return A2AMessage(
         message_id="a2a-msg-router-1",
         from_agent="agent-a",

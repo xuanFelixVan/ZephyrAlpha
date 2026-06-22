@@ -11,6 +11,7 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
@@ -18,9 +19,9 @@ import pytest
 try:
     from zephyr.security.access_control.post_action_verifier import (
         PostActionVerifier,
-        ActionVerification,
         VerificationResult,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -30,7 +31,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestPostActionVerifier:
-
     def setup_method(self):
         self.verifier = PostActionVerifier()
 

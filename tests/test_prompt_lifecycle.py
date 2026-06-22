@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.infrastructure.a2a_protocol.prompt_lifecycle import (
     PROMPT_REGRESSION_THRESHOLD,
     PROMPT_STORE,

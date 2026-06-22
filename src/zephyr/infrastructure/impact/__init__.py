@@ -6,12 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.impact — auto-generated package init."""
-from . import impact_propagator
-from . import llm_impact_analyzer
 
-__all__ = ['impact_propagator', 'llm_impact_analyzer']
+from . import impact_propagator, llm_impact_analyzer
 
+__all__ = ["impact_propagator", "llm_impact_analyzer"]

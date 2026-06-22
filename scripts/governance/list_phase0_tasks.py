@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/list_phase0_tasks.py | §1.11
 [MODULE] 无（独立脚本）
@@ -15,8 +14,9 @@ P1-2 列出所有Phase 0任务卡状态
 根因：§1.11要求建卡验收脚本，原脚本缺失
 治根：落盘查询脚本确保可验证Phase 0任务卡完整性
 """
-import sqlite3
+
 import os
+import sqlite3
 import sys
 
 DB_PATH = r"D:\ZephyrAlpha\data\databases\governance.db"

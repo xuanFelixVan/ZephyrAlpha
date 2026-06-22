@@ -20,9 +20,9 @@
 
 ---
 
-**任务卡ID**: DM-024  
-**执行时间**: 2026-06-14T16:18:36.083Z  
-**执行模型**: qwen  
+**任务卡ID**: DM-024
+**执行时间**: 2026-06-14T16:18:36.083Z
+**执行模型**: qwen
 **验证类型**: 只读验证
 
 ---
@@ -44,8 +44,8 @@
 python -c "import sqlite3;conn=sqlite3.connect(r'd:\ZephyrAlpha\data\databases\depgraph.db');c=conn.cursor();c.execute(\"SELECT COUNT(*) FROM edges WHERE dep_type='sibling'\");print(f'sibling_edges={c.fetchone()[0]}')"
 ```
 
-**实际值**: `sibling_edges=0`  
-**预期值**: `0`  
+**实际值**: `sibling_edges=0`
+**预期值**: `0`
 **状态**: ✅ 通过
 
 **结论**: DM-019 的 sibling 边修复未被 DM-022 回退，修复持久有效。
@@ -59,8 +59,8 @@ python -c "import sqlite3;conn=sqlite3.connect(r'd:\ZephyrAlpha\data\databases\d
 python -c "import sqlite3;conn=sqlite3.connect(r'd:\ZephyrAlpha\data\databases\depgraph.db');c=conn.cursor();c.execute('SELECT COUNT(*) FROM edges');print(f'total_edges={c.fetchone()[0]}')"
 ```
 
-**实际值**: `total_edges=7608`  
-**预期值**: `~7,608`  
+**实际值**: `total_edges=7608`
+**预期值**: `~7,608`
 **状态**: ✅ 通过
 
 **结论**: 总边数精确匹配预期值，DM-019 的边数压缩修复完全保留。
@@ -90,7 +90,7 @@ python -c "import sqlite3;conn=sqlite3.connect(r'd:\ZephyrAlpha\data\databases\d
 python d:\ZephyrAlpha\scripts\governance\diagnose_depgraph.py
 ```
 
-**退出码**: `0`  
+**退出码**: `0`
 **状态**: ✅ 通过
 
 **关键输出摘要**:
@@ -113,7 +113,7 @@ python d:\ZephyrAlpha\scripts\governance\diagnose_depgraph.py
 python d:\ZephyrAlpha\scripts\governance\extract_depgraph.py --summary
 ```
 
-**退出码**: `0`  
+**退出码**: `0`
 **状态**: ✅ 通过
 
 **关键指标**:
@@ -131,7 +131,7 @@ python d:\ZephyrAlpha\scripts\governance\extract_depgraph.py --summary
 python d:\ZephyrAlpha\scripts\governance\audit_registration.py
 ```
 
-**退出码**: `1`  
+**退出码**: `1`
 **状态**: ⚠️ 基线状态（非本次任务引入）
 
 **问题统计**:
@@ -266,5 +266,5 @@ DIAGNOSIS SUMMARY (v3.1.0)
 
 ---
 
-**报告生成时间**: 2026-06-14T16:19:32.911Z  
+**报告生成时间**: 2026-06-14T16:19:32.911Z
 **验证执行者**: DM-024 Code Mode (qwen)

@@ -19,8 +19,8 @@
 - L2 灰名单条件触发（落盘 .md / M 级 MCP）
 - L3 黑名单禁止（纯代码补全 / session 元信息）
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import json
 from pathlib import Path

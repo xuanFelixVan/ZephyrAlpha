@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_meta_observability.py -q
 
-import pytest
 from zephyr.governance.meta_observability import MetaObservability
 
 

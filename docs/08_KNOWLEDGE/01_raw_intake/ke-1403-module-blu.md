@@ -12,7 +12,7 @@ category: module_blueprint
 |---|------|-----------|
 | 1 | **合并为一**：MOD-INF-003+004 + 两份场外草稿 + 历史裁定 = 一份自包含蓝图 | 蓝图文件数 3→1，两份旧蓝图 deprecated |
 | 2 | **全链路贯通**：意图→草稿→蓝图→任务卡→双管线→脚本系统——每步有输入/输出/门禁 | 每个环节 Schema 完整 |
-| 3 | **TaskCard 模型取最优**：基座继承 shared/schemas.py Task（31字段）+ 扩展防漂移 + 父子层级 + 回滚 + 自治字段 | 基座对齐 metadata-registry.md §7 真源——不留两套模型 |
+| 3 | **TaskCard 模型取最优**：基座继承 shared/schemas.py Task（31字段）+ 扩展防漂移 + 父子层级 + 回滚 + 自治字段 | 基座对齐 metadata_registry.yaml §7 真源——不留两套模型 |
 | 4 | **task_id 格式统一为 `{NAMESPACE}-{SEQ}`** | ADR-001 / STD-005 / SRC-042——对标 Jira，自文档 |
 | 5 | **路径合规创建**：MTH-013 原则——AI 不得自主决定目录层级 | 所有路径可追溯到索引 |
 | 6 | **模型分工明确**：DeepSeek V4 Pro 主力 + GLM 深度审查 + Claude 特种救援 | 分工有基准数据支撑 |

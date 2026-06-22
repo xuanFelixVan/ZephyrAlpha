@@ -1,0 +1,133 @@
+module_id: MOD-INF-007
+schema_version: '1.0'
+doc_type: gate
+gate_id: G_TRAE_043
+gate_name: g_trae_043
+title: G_TRAE_043 Gate — 元规则-元数据与度量
+description: 自动化门禁：强制执行 TRAE-043（元规则-元数据与度量）规则。将规则从文档约束升级为phase_gate自动阻断。
+rule_ids:
+- TRAE-043
+status: active
+ttl: permanent
+scope: global
+category: compliance
+owner: MOD-INF-007
+consumer: gate_engine
+ai_autonomy: autonomous
+token_budget: 200
+latency_budget_ms: 500
+execution_plane: warm
+trigger:
+  event: phase_transition
+  precondition: task.status == 'IN_PROGRESS' or task.status == 'COMPLETED'
+  frequency: per_task
+depends_on_gates:
+- G0
+blocked_by_gates: []
+parallel_allowed_with: []
+entry_conditions:
+- id: G_TRAE_043-C00
+  name: ps_std_001_frontmatter_required_check
+  type: field_presence
+  description: '模块审计——任务元数据完整 (rule: TRAE-043)'
+  check: rule_yaml_valid and conditions_met["ps_std_001_frontmatter_required"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_043.py
+  rule_ids:
+  - TRAE-043
+  anti_pattern:
+    description: 必填字段缺失或值不合规
+    example: AI ignores TRAE-043 ps_std_001_frontmatter_required requirement
+  params: &id001
+    required_fields:
+    - task_id
+    - title
+    - description
+- id: G_TRAE_043-C01
+  name: ps_std_000_irreversibility_check
+  type: field_presence
+  description: '模块审计——任务元数据完整 (rule: TRAE-043)'
+  check: rule_yaml_valid and conditions_met["ps_std_000_irreversibility"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_043.py
+  rule_ids:
+  - TRAE-043
+  anti_pattern:
+    description: 使用非二元标准(如严重性)判定
+    example: AI ignores TRAE-043 ps_std_000_irreversibility requirement
+  params: *id001
+- id: G_TRAE_043-C02
+  name: ps_std_000_conditional_irreversibility_check
+  type: field_presence
+  description: '模块审计——任务元数据完整 (rule: TRAE-043)'
+  check: rule_yaml_valid and conditions_met["ps_std_000_conditional_irreversibility"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_043.py
+  rule_ids:
+  - TRAE-043
+  anti_pattern:
+    description: 条件性不可逆规则停留在COND
+    example: AI ignores TRAE-043 ps_std_000_conditional_irreversibility requirement
+  params: *id001
+- id: G_TRAE_043-C03
+  name: ps_std_000_frozen_check
+  type: field_presence
+  description: '模块审计——任务元数据完整 (rule: TRAE-043)'
+  check: rule_yaml_valid and conditions_met["ps_std_000_frozen"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_043.py
+  rule_ids:
+  - TRAE-043
+  anti_pattern:
+    description: AI自主修改frozen标准
+    example: AI ignores TRAE-043 ps_std_000_frozen requirement
+  params: *id001
+- id: G_TRAE_043-C04
+  name: gov_metrics_prohibitions_check
+  type: field_presence
+  description: '模块审计——任务元数据完整 (rule: TRAE-043)'
+  check: rule_yaml_valid and conditions_met["gov_metrics_prohibitions"]
+  severity: warning
+  on_failure: flag
+  verifiable: true
+  verification_method: python tests/test_g_trae_043.py
+  rule_ids:
+  - TRAE-043
+  anti_pattern:
+    description: 度量流程违规
+    example: AI ignores TRAE-043 gov_metrics_prohibitions requirement
+  params: *id001
+mutating_rules: []
+severity_levels:
+  error: 硬阻断——任务不得推进，raise GateViolationError
+  warning: 软警告——passed=True，写入events警告流
+  info: 仅记录——不告警不阻塞
+failure_actions:
+  reject: 拒绝——返回错误，对象停留在当前状态
+  flag: 标记——通过但附加warning flag
+simulation:
+  supported: true
+  mock_input: tests/fixtures/g_trae_043_mock.yaml
+  expected_output: passed=True when rule conditions met
+  rollback_on_failure: true
+upgrade_triggers:
+- condition: Rule TRAE-043 YAML updated with new sections
+  action: version bump + update entry_conditions
+  approval: MOD-INF-007 owner
+change_log:
+- version: 0.1.0
+  date: '2026-06-22'
+  author: session-20260622-gate-batch
+  change: 初始创建 — 自动生成自 TRAE-043 规则YAML
+phase: PHASE_0_SKELETON
+auto: true
+on_failure: reject
+on_pass: pass

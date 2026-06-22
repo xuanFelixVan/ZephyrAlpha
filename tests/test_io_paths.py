@@ -19,18 +19,18 @@
 
 # [TESTS] pytest tests/test_io_paths.py -q
 
-import pytest
 from pathlib import Path
+
 from zephyr.integration.shared_08.paths import (
-    find_repo_root,
-    REPO_ROOT,
     DB_DIR,
     DB_PATH,
     GATES_DIR,
-    SNAPSHOTS_DIR,
-    RATIONALE_LOG_PATH,
-    VECTOR_INDEX_DIR,
     MODELS_CACHE_DIR,
+    RATIONALE_LOG_PATH,
+    REPO_ROOT,
+    SNAPSHOTS_DIR,
+    VECTOR_INDEX_DIR,
+    find_repo_root,
 )
 
 

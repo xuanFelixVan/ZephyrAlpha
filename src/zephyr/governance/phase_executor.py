@@ -23,10 +23,11 @@ from __future__ import annotations
 
 """6Phase施工执行器 — Phase 0~5 执行状态追踪."""
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class PhaseStatus:
@@ -35,6 +36,7 @@ class PhaseStatus:
     completed: bool = False
     file_count: int = 0
     notes: str = ""
+
 
 class PhaseExecutor:
     """6 Phase 施工执行器."""
@@ -84,13 +86,15 @@ class PhaseExecutor:
             py_count = len(list(self._pkg.glob("*.py")))
             completed = py_count >= phase["files"]
 
-            results.append(PhaseStatus(
-                name=phase["name"],
-                description=phase["desc"],
-                completed=completed,
-                file_count=py_count,
-                notes=f"达成 {py_count}/{phase['files']} 文件",
-            ))
+            results.append(
+                PhaseStatus(
+                    name=phase["name"],
+                    description=phase["desc"],
+                    completed=completed,
+                    file_count=py_count,
+                    notes=f"达成 {py_count}/{phase['files']} 文件",
+                )
+            )
         return results
 
     def generate_report(self) -> dict[str, Any]:
@@ -100,7 +104,7 @@ class PhaseExecutor:
         total_files = len(list(self._pkg.glob("*.py")))
 
         return {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "phases_completed": f"{completed}/{len(self._PHASES)}",
             "total_python_files": total_files,
             "phases": [

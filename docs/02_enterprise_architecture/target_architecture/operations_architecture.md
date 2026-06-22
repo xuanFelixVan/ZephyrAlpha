@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-08-OPERATIONS-ARCH
 title: Target Architecture — Operations Architecture
 doc_type: architecture_view

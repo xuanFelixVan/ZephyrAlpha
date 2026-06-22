@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """TaskManagerMCP（FastMCP）协议与 BlueprintDecomposer 绑定单测。"""
 
 
@@ -13,10 +14,10 @@ import json
 
 import pytest
 
-from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
-from zephyr.shared.shared_services.models import DecompositionResult
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.infrastructure.task_manager_server import TaskManagerMCP
+from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
+from zephyr.shared.shared_services.models import DecompositionResult
 
 
 @pytest.fixture()

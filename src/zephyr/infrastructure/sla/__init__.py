@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.sla — auto-generated package init."""
+
 from . import sla_monitor
 
-__all__ = ['sla_monitor']
-
+__all__ = ["sla_monitor"]

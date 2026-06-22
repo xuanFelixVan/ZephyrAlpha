@@ -15,9 +15,6 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
-import yaml
-
 from zephyr.governance.kb.analyze import (
     SCORING_DIMENSIONS,
     VALUE_SCORE_THRESHOLD,
@@ -25,7 +22,6 @@ from zephyr.governance.kb.analyze import (
     AnalyzeResult,
 )
 from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
-from zephyr.intelligence.model_evaluation.kb_repo import KeStatus
 
 
 def _high_score_text() -> str:
@@ -58,22 +54,13 @@ def _high_score_text() -> str:
 
 
 def _low_score_text() -> str:
-    return (
-        "---\n"
-        "module_id: KE-101\n"
-        "title: Simple Note\n"
-        "category: general\n"
-        "---\n\n"
-        "Hello world.\n"
-    )
+    return "---\nmodule_id: KE-101\ntitle: Simple Note\ncategory: general\n---\n\nHello world.\n"
 
 
 def _mock_gate_engine(passed: bool = True) -> MagicMock:
     engine = MagicMock()
     if passed:
-        engine.evaluate.return_value = GateResult(
-            gate_id="G3", task_id="T-1", passed=True, violations=[]
-        )
+        engine.evaluate.return_value = GateResult(gate_id="G3", task_id="T-1", passed=True, violations=[])
     else:
         engine.evaluate.return_value = GateResult(
             gate_id="G3",

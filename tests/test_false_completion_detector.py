@@ -11,12 +11,13 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.false_completion_detector import FalseCompletionDetector, CompletionClaim
+    from zephyr.security.access_control.false_completion_detector import CompletionClaim, FalseCompletionDetector
 except Exception as exc:
     pytest.skip(f"Cannot import false_completion_detector: {exc}", allow_module_level=True)
 

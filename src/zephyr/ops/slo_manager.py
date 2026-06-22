@@ -23,7 +23,6 @@ from __future__ import annotations
 
 """SLO/SLI 管理器（CT-SLO-001）——14条CT-* p95/p99目标 + Error Budget。"""
 
-from pydantic import BaseModel, Field
 
 SLO_MATRIX: dict[str, dict] = {
     "CT-ORC-SCRIPT-001": {"slos": [("p95", 3600.0)], "metric": "duration_s"},
@@ -41,6 +40,7 @@ SLO_MATRIX: dict[str, dict] = {
     "CT-PIPE-ORC-001": {"slos": [("p95", 2.0)], "metric": "duration_s"},
     "CT-ORC-DB-001": {"slos": [("p95", 0.5)], "metric": "duration_s"},
 }
+
 
 class SLOManager:
     def get_slos(self, contract_id: str) -> dict | None:

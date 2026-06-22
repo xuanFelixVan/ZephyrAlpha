@@ -19,20 +19,21 @@ from pydantic import BaseModel, Field
 try:
     from zephyr.governance.audit_trail.finding_model import (
         AuditFinding,
+        BlastRadius,
         FindingDimension,
         FindingImpact,
         FindingLifecycle,
         FindingRemediation,
         FindingSeverity,
+        FindingStatus,
         FindingTarget,
         FindingTraceability,
         RecommendationBlock,
-        BlastRadius,
         RemediationAction,
         RemediationPriority,
-        FindingStatus,
         generate_finding_id,
     )
+
     _FINDING_MODEL_AVAILABLE = True
 except ImportError:
     _FINDING_MODEL_AVAILABLE = False
@@ -60,6 +61,7 @@ class AuditAdmissionController:
         for name, module_path in self._MODULE_MAP.items():
             try:
                 import importlib
+
                 self._modules[name] = importlib.import_module(module_path)
             except ImportError:
                 self._modules[name] = None
@@ -137,7 +139,10 @@ class AuditAdmissionController:
                 description=f"Module {module_name} health check: {health_status}",
                 evidence=f"healthy={is_healthy}",
                 impact=FindingImpact(blast_radius=BlastRadius.module),
-                remediation=FindingRemediation(action=RemediationAction.INVESTIGATE, priority=RemediationPriority.P1 if not is_healthy else RemediationPriority.P4),
+                remediation=FindingRemediation(
+                    action=RemediationAction.INVESTIGATE,
+                    priority=RemediationPriority.P1 if not is_healthy else RemediationPriority.P4,
+                ),
                 lifecycle=FindingLifecycle(status=FindingStatus.OPEN if not is_healthy else FindingStatus.CLOSED),
                 traceability=FindingTraceability(),
                 recommendation_block=RecommendationBlock(),
@@ -149,6 +154,7 @@ class AuditAdmissionController:
         if jsonl_lines:
             try:
                 from zephyr.governance.audit_trail.finding_ingest import FindingIngest
+
                 ingest = FindingIngest()
                 ingest.ingest_findings(findings)
             except Exception:

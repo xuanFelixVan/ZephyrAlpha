@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_agent_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.agent_observability
+# [MODULE] zephyr.autonomy_core.agent_observability
 
 # [INVARIANTS] none
 
@@ -26,28 +26,27 @@ Author: factory-agent
 Version: 0.1.0
 """
 
-
-from datetime import datetime, timezone
-from typing import Dict, Any, List
+from datetime import UTC, datetime
+from typing import Any
 
 
 class AgentObservability:
     """Agent Trace 全链路可观测性"""
 
     def __init__(self):
-        self._traces: Dict[str, Dict[str, Any]] = {}
+        self._traces: dict[str, dict[str, Any]] = {}
 
     def start_trace(self, skill_id: str) -> str:
-        trace_id = f"trace-{skill_id}-{datetime.now(timezone.utc).timestamp()}"
-        self._traces[trace_id] = {"skill_id": skill_id, "spans": [], "start_time": datetime.now(timezone.utc).isoformat()}
+        trace_id = f"trace-{skill_id}-{datetime.now(UTC).timestamp()}"
+        self._traces[trace_id] = {"skill_id": skill_id, "spans": [], "start_time": datetime.now(UTC).isoformat()}
         return trace_id
 
-    def add_span(self, trace_id: str, span_name: str, metadata: Dict[str, Any] = None) -> Dict[str, Any]:
+    def add_span(self, trace_id: str, span_name: str, metadata: dict[str, Any] = None) -> dict[str, Any]:
         if trace_id not in self._traces:
             raise KeyError(f"Trace {trace_id} not found")
-        span = {"name": span_name, "metadata": metadata or {}, "timestamp": datetime.now(timezone.utc).isoformat()}
+        span = {"name": span_name, "metadata": metadata or {}, "timestamp": datetime.now(UTC).isoformat()}
         self._traces[trace_id]["spans"].append(span)
         return span
 
-    def get_trace(self, trace_id: str) -> Dict[str, Any]:
+    def get_trace(self, trace_id: str) -> dict[str, Any]:
         return self._traces.get(trace_id, {})

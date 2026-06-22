@@ -11,7 +11,7 @@
 # [TESTS] python -c "import zephyr.testing.code_dedup"
 
 SUBMODULES = [
-    'cli',
-    'debt_projector',
-    'mock_duplicate_generator',
+    "cli",
+    "debt_projector",
+    "mock_duplicate_generator",
 ]

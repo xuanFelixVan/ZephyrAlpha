@@ -4,6 +4,7 @@
 Uses lazy imports to avoid double-registration in StrategyRegistry
 (pf_core and portfolio.core would both trigger @StrategyRegistry.register).
 """
-from zephyr.governance.strategies.default_equity_strategy import DefaultEquityStrategy, RebalanceMode  # noqa: F401
+
+from zephyr.governance.strategies.default_equity_strategy import DefaultEquityStrategy, RebalanceMode
 
 __all__ = ["DefaultEquityStrategy", "RebalanceMode"]

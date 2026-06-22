@@ -21,19 +21,19 @@ token_budget:
       window_size_seconds: 86400
       algorithm: "token_bucket"
       burst_ratio: 1.5
-    
+
     - level: L1 (MODULE)
       budget_id_pattern: "module_{module_id}"
       tokens_per_window: 1000000
       window_size_seconds: 86400
       algorithm: "token_bucket"
-    
+
     - level: L2 (AGENT)
       budget_id_pattern: "agent_{agent_id}"
       tokens_per_window: 100000
       window_size_seconds: 3600
       algorithm: "sliding_window"
-    
+
     - level: L3 (MODEL)
       budget_id_pattern: "model_{model_name}"
       tokens_per_window: 500000

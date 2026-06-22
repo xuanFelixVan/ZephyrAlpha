@@ -34,6 +34,6 @@ ZephyrAlpha 元数据登记表
 >
 > **处理原则**：问题 1 迁移方案已定义（§3.7），施工 beta 批量执行。问题 2 在后续 session 批量执行迁移。**在问题解决之前，不得新增使用旧长名或 `internal` 的文件。**
 >
-> > 拆分预判条件见 §6（文件末尾）👉 `metadata-registry.md#split-conditions`
+> > 拆分预判条件见 §6（文件末尾）👉 `metadata_registry.yaml#split-conditions`
 
 ---

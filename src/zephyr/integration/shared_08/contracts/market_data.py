@@ -1,13 +1,11 @@
 # [A_module] module_id=MOD-INT_market_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-001 ====
 from dataclasses import dataclass, field
-
-from datetime import datetime, timezone
+from datetime import datetime
 from decimal import Decimal
-from typing import List
-from typing import Optional
 
 from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -32,6 +30,7 @@ AI Prompt
     当你需要在 L02 中使用来自 L00 的行情数据时，MUST 使用 NormalizedMarketData 类型。 该类型的 symbol 字段已由 L00 标准化为 "600519.SH" 格式（证券代码.交易所），你不需要再做格式转换。 所有价格字段（open/high/low/close）和成交量（volume）使用 Decimal 类型——禁止用 float 做任何算术运算。 如果 quality_score < 0.7，该数据可能不可靠，请标记为低置信度。 如果 is_suspended = True，不要基于该数据生成任何信号，跳过该标的。 ingested_at 为数据入库时间，不一定等于 timestamp（数据时间戳），请使用 timestamp 做截面对齐。
 """
 
+
 @dataclass(frozen=True)
 class NormalizedMarketData:
     close: Decimal
@@ -45,193 +44,19 @@ class NormalizedMarketData:
     symbol: str
     timestamp: datetime
     volume: Decimal
-    adj_factor: Optional[Decimal] = None
-    amount: Optional[Decimal] = None
+    adj_factor: Decimal | None = None
+    amount: Decimal | None = None
     config_load_retry_policy: str = "linear"
     config_load_timeout_ms: int = 1000
-    exceptions: List[str] = field(default_factory=list)
-    ingested_at: Optional[datetime] = None
+    exceptions: list[str] = field(default_factory=list)
+    ingested_at: datetime | None = None
     is_suspended: bool = False
     max_retries: int = 3
     quality_score: float = 1.0
     retry_policy: str = "exponential_backoff"
     schema_version: str = "1.0"
     timeout_ms: int = 5000
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-001 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

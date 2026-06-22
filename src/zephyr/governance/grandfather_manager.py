@@ -27,13 +27,13 @@
   - 第三定律考古豁免：3项测试通过 → --override-grandfather 可覆盖
 """
 
-
 from __future__ import annotations
 
-import yaml
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
+
+import yaml
 
 
 @dataclass
@@ -46,11 +46,13 @@ class GrandfatherEntry:
     is_fossil: bool = False
     auto_fix: bool = True
     severity: str = "medium"
-    archaeology_tests: dict[str, bool] = field(default_factory=lambda: {
-        "git_log_found_original": False,
-        "all_callers_have_tests": False,
-        "revert_one_command": False,
-    })
+    archaeology_tests: dict[str, bool] = field(
+        default_factory=lambda: {
+            "git_log_found_original": False,
+            "all_callers_have_tests": False,
+            "revert_one_command": False,
+        }
+    )
     manual_override: bool = False
 
 
@@ -74,7 +76,7 @@ class GrandfatherManager:
         except ValueError:
             return True, "invalid_date"
 
-        age = (datetime.now(timezone.utc) - detected.replace(tzinfo=timezone.utc)).days
+        age = (datetime.now(UTC) - detected.replace(tzinfo=UTC)).days
         if age >= self._GRANDFATHER_AGE_DAYS:
             return False, f"grandfather_protected: {age}days≥30days——禁止自动修复"
         return True, "auto_fix_allowed"
@@ -92,7 +94,7 @@ class GrandfatherManager:
         except ValueError:
             return None
 
-        age = (datetime.now(timezone.utc) - detected.replace(tzinfo=timezone.utc)).days
+        age = (datetime.now(UTC) - detected.replace(tzinfo=UTC)).days
         if age < self._FOSSIL_AGE_DAYS:
             return None
 
@@ -181,7 +183,7 @@ class GrandfatherManager:
             entries_data.append(e)
         data = {
             "version": "1.0.0",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
             "total_entries": len(entries_data),
             "entries": entries_data,
         }

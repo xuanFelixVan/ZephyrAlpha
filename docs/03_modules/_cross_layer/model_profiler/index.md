@@ -1,27 +1,26 @@
 ---
-blueprint_id: DOM-GOV-001
-created: '2026-05-09'
 doc_type: index
-module_id: MOD-INF-052
-status: Active
-title: model-profiler — 目录索引
-updated: '2026-05-09'
-version: 1.0.0
+status: active
+title: "model_profiler — 目录索引"
+module_id: "MOD-INF-034"
+blueprint_id: "MOD-INF-034"
+version: "2.2.0"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-
-# model-profiler
+# model_profiler
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-09
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blueprint.md](blueprint.md) | Markdown | 模型性能检测与任务学习引擎蓝图 — 7 维评测 + 任务×模型增量学习 + 智能路由决策 |
+| [blueprint.md](blueprint.md) | Markdown | Model Profiler 蓝图 — 模型画像器·LLM能力基线测量 |
+| [index.md](index.md) | Markdown | model-profiler — 目录索引 |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

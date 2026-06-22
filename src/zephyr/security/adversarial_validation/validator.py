@@ -14,8 +14,12 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
+from zephyr.security.adversarial_validation.blast_radius import AbortThresholdError, BlastRadius
+from zephyr.security.adversarial_validation.bypass_recorder import BypassRecorder
+from zephyr.security.adversarial_validation.cleanup import Cleanup, CleanupVerificationError
+from zephyr.security.adversarial_validation.defense_runner import DefenseRunner
 from zephyr.security.adversarial_validation.models import (
     AttackScenario,
     AttackTier,
@@ -26,11 +30,7 @@ from zephyr.security.adversarial_validation.models import (
     SteadyStateSummary,
 )
 from zephyr.security.adversarial_validation.scenario_loader import ScenarioLoader
-from zephyr.security.adversarial_validation.defense_runner import DefenseRunner
-from zephyr.security.adversarial_validation.bypass_recorder import BypassRecorder
 from zephyr.security.adversarial_validation.steady_state import SteadyState, SteadyStateDriftError
-from zephyr.security.adversarial_validation.cleanup import Cleanup, CleanupVerificationError
-from zephyr.security.adversarial_validation.blast_radius import BlastRadius, AbortThresholdError
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,6 @@ class SessionError(RuntimeError):
 
 
 class RedBlueValidator:
-
     def __init__(self) -> None:
         self._loader = ScenarioLoader()
         self._defense = DefenseRunner()
@@ -84,9 +83,7 @@ class RedBlueValidator:
                     self._blast.record_bypass(scenario)
                 except AbortThresholdError as e:
                     logger.critical("blast_radius_aborted error=%s", str(e))
-                    report = self._build_report(
-                        session_id, scene_results, blocked, bypassed, start
-                    )
+                    report = self._build_report(session_id, scene_results, blocked, bypassed, start)
                     report.circuit_breaker_open = True
                     return report
 
@@ -103,9 +100,7 @@ class RedBlueValidator:
         except CleanupVerificationError:
             logger.error("cleanup_failed")
 
-        report = self._build_report(
-            session_id, scene_results, blocked, bypassed, start
-        )
+        report = self._build_report(session_id, scene_results, blocked, bypassed, start)
         report.steady_state_summary = steady_summary
         report.cleanup_verified = cleanup_ok
 

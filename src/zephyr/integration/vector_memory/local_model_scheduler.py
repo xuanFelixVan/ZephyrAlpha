@@ -5,6 +5,6 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler, LocalModelScheduler as _LocalModelScheduler  # noqa: F401
+from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
 
 __all__ = ["LocalModelScheduler"]

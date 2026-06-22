@@ -1,13 +1,13 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.local_layer_daemon
-# [INVARIANTS] 
-# [MODIFY-GUARD] 
-# [CONSUMERS] 
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 local_layer_daemon.py — L2 本地模型层守护进程（薄包装）
 ========================================================
@@ -31,13 +31,14 @@ import sys
 
 def main() -> None:
     try:
-        from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
         from zephyr.infrastructure.config.runtime_config import RuntimeConfig
+        from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
     except ImportError:
         _fallback()
         return
 
     import argparse
+
     parser = argparse.ArgumentParser(description="L2 本地模型层守护进程 (AutoRuntime Core)")
     parser.add_argument("--once", action="store_true")
     parser.add_argument("--interval", type=float, default=10.0)
@@ -58,6 +59,7 @@ def main() -> None:
     if not args.no_demo:
         try:
             from zephyr.governance.knowledge_management.vector_memory.local_model_scheduler import LocalModelScheduler
+
             scheduler = LocalModelScheduler()
             scheduler.ensure_models()
             scheduler.start()
@@ -66,6 +68,7 @@ def main() -> None:
             print(f"L2 demo skipped: {e}")
 
     import signal
+
     shutdown = False
 
     def _sig(sig: int, frame: object) -> None:
@@ -80,6 +83,7 @@ def main() -> None:
     else:
         while not shutdown:
             import time
+
             time.sleep(config.poll_interval)
             report = core.reconcile()
             print(f"[{time.strftime('%H:%M:%S')}] active={report.active} orphan_rate={report.orphan_rate:.1%}")
@@ -89,9 +93,10 @@ def main() -> None:
 
 
 def _fallback() -> None:
-    from zephyr.governance.knowledge_management.vector_memory.local_model_scheduler import LocalModelScheduler
-    import time
     import signal
+    import time
+
+    from zephyr.governance.knowledge_management.vector_memory.local_model_scheduler import LocalModelScheduler
 
     print("Fallback: running LocalModelScheduler directly (AutoRuntime Core not available)")
     scheduler = LocalModelScheduler()

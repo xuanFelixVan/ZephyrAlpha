@@ -6,12 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """orchestrator.resilience — auto-generated package init."""
-from . import deferred_queue
-from . import failure_matcher
 
-__all__ = ['deferred_queue', 'failure_matcher', 'hallucination_detector', 'rollback_manager']
+from . import deferred_queue, failure_matcher
 
+__all__ = ["deferred_queue", "failure_matcher", "hallucination_detector", "rollback_manager"]

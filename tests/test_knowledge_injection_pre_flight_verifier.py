@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.forensic.knowledge_injection_pre_flight_verifier import (
     DryRunResult,
     KnowledgeInjectionPreFlightVerifier,
@@ -56,11 +54,13 @@ class TestKnowledgeInjectionPreFlightVerifier:
     def test_verify_rule_approved(self):
         v = KnowledgeInjectionPreFlightVerifier()
         for i in range(10):
-            v.add_historical_incident({
-                "id": f"inc-{i}",
-                "metrics": {"cpu": 90.0 + i},
-                "would_detect_earlier": True,
-            })
+            v.add_historical_incident(
+                {
+                    "id": f"inc-{i}",
+                    "metrics": {"cpu": 90.0 + i},
+                    "would_detect_earlier": True,
+                }
+            )
         rule = {"rule_id": "high-cpu", "rule_type": "threshold", "condition": "cpu", "threshold": 80}
         result = v.verify_rule(rule)
         assert result["approved"] is True

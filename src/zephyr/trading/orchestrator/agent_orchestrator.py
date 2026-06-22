@@ -32,7 +32,7 @@ safety_level: H
 
 病根澄清（审计易混点）
 ---------------------
-名称含 *Orchestrator* 常与「TaskCard 生命周期编排」混淆。**本模块真源为 
+名称含 *Orchestrator* 常与「TaskCard 生命周期编排」混淆。**本模块真源为
 Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十态与合法迁移**
 见 ``zephyr.integration.shared_08.schemas.TaskStatus`` 与 ``zephyr.data.persistence.task_repo.TaskRepository``。
 
@@ -70,7 +70,6 @@ Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十�
 - **可测试**：时间源 ``now`` 与 UUID 生成器 ``id_factory`` 均可注入。
 """
 
-
 from __future__ import annotations
 
 import json
@@ -91,25 +90,25 @@ from typing import (
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.integration.shared_08.utils.time_utils import default_now
+from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.shared.shared_services.observability_02.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 __all__ = [
-    "AgentRole",
-    "RoutingStrategy",
-    "RouteDecision",
-    "AgentProfile",
-    "ToolCallRecord",
-    "OrchestrationResult",
-    "SLOSnapshot",
-    "ToolInvoker",
-    "HallucinationCaller",
-    "AgentRouter",
-    "HealthMonitor",
-    "AgentOrchestrator",
     "DEFAULT_ROLE_DOMAIN_MATRIX",
+    "AgentOrchestrator",
+    "AgentProfile",
+    "AgentRole",
+    "AgentRouter",
+    "HallucinationCaller",
+    "HealthMonitor",
+    "OrchestrationResult",
+    "RouteDecision",
+    "RoutingStrategy",
+    "SLOSnapshot",
+    "ToolCallRecord",
+    "ToolInvoker",
 ]
 
 # ---------------------------------------------------------------------------
@@ -118,7 +117,7 @@ __all__ = [
 
 
 class AgentRole(str, Enum):
-    """ §3 — 6 个 Agent 角色。"""
+    """§3 — 6 个 Agent 角色。"""
 
     ARCHITECT = "architect"  # 架构师：蓝图/KBG/模块拆分
     IMPLEMENTER = "implementer"  # 实施者：代码产出与修复
@@ -448,7 +447,7 @@ class AgentRouter:
             fallback_roles=[r for r, _ in ranked[1:3] if r != best_role],
             capability_score=best_score,
             rationale=(
-                f"load_balance: score={best_score:.2f} " f"util={best_agent.utilization:.2f}"
+                f"load_balance: score={best_score:.2f} util={best_agent.utilization:.2f}"
                 if best_agent
                 else "load_balance: no-agent"
             ),
@@ -766,9 +765,7 @@ class AgentOrchestrator:
                 if claim:
                     self._input_sanitizer.validate_llm_context(claim)
                 if ctx:
-                    self._input_sanitizer.validate_llm_context(
-                        json.dumps(ctx, ensure_ascii=False, default=str)
-                    )
+                    self._input_sanitizer.validate_llm_context(json.dumps(ctx, ensure_ascii=False, default=str))
             except ContextInjectionError as exc:
                 budget = token_budget if token_budget is not None else self._default_budget
                 latency_ms = int((time.perf_counter() - started) * 1000)
@@ -892,13 +889,16 @@ class AgentOrchestrator:
         if AgentOrchestrator._lsg_gateway_instance is None:
             try:
                 from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+
                 AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
             except Exception:
                 return None
         gw = AgentOrchestrator._lsg_gateway_instance
         try:
             import asyncio
+
             from zephyr.shared.contracts.security import SecurityDecision
+
             text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
             result = asyncio.run(
                 gw.scan_agent_action(
@@ -924,6 +924,7 @@ class AgentOrchestrator:
                     )
                 )
                 from zephyr.shared.contracts.security import SecurityDecision
+
                 if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                     return result.blocked_by or "lsg_agent_scan"
             except Exception:

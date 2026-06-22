@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
+
 class WorkNode(BaseModel):
     model_config = BASE_CONFIG
     node_id: str
@@ -41,11 +42,13 @@ class WorkNode(BaseModel):
     layer_override: str | None = None
     priority_override: str | None = None
 
+
 class WorkEdge(BaseModel):
     model_config = BASE_CONFIG
     from_node: str
     to_node: str
     condition: str = "success"
+
 
 class WorkDAG(BaseModel):
     model_config = BASE_CONFIG
@@ -59,6 +62,7 @@ class WorkDAG(BaseModel):
     max_parallelism: int = 3
     retry_on_failure: int = 2
     timeout_minutes: int = 60
+
 
 class WorkItem(BaseModel):
     model_config = BASE_CONFIG

@@ -27,6 +27,7 @@ Risk: R51 — New knowledge catastrophically erases old critical knowledge.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class EWCKBReview:
     importance_weights: dict[str, float] = field(default_factory=dict)

@@ -12,7 +12,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import sqlite3
@@ -73,7 +72,7 @@ class TestGatePersistencePersistScanResult:
         scan_id = uuid.uuid4()
         gp.persist_scan_result(scan_id, {"detectors_run": 1})
         result_path = os.path.join(gp._audit_dir, f"{scan_id}_result.json")
-        with open(result_path, "r", encoding="utf-8") as f:
+        with open(result_path, encoding="utf-8") as f:
             data = json.load(f)
         assert "sha256" in data
         assert "persisted_at" in data
@@ -155,7 +154,7 @@ class TestGatePersistenceUpdateManifest:
         gp.update_manifest(uuid.uuid4(), "COMPLETED")
         gp.update_manifest(uuid.uuid4(), "FAILED")
         manifest_path = os.path.join(gp._audit_dir, "manifest.json")
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             data = json.load(f)
         assert len(data["entries"]) == 2
         assert data["entries"][0]["status"] == "COMPLETED"
@@ -166,7 +165,7 @@ class TestGatePersistenceUpdateManifest:
         for _ in range(110):
             gp.update_manifest(uuid.uuid4(), "COMPLETED")
         manifest_path = os.path.join(gp._audit_dir, "manifest.json")
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             data = json.load(f)
         assert len(data["entries"]) == 100
 
@@ -176,6 +175,6 @@ class TestGatePersistenceUpdateManifest:
         with open(manifest_path, "w", encoding="utf-8") as f:
             f.write("NOT VALID JSON{{{")
         gp.update_manifest(uuid.uuid4(), "COMPLETED")
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             data = json.load(f)
         assert len(data["entries"]) == 1

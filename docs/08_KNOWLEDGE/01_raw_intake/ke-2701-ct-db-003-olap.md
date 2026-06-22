@@ -25,7 +25,7 @@ operations:
   compliance_rate_trend:
     input: "period, limit, gate_id?: str"
     output: "list[TrendRow]"
-    
+
   knowledge_activation_trend:
     input: "period, limit, category?: str"
     output: "list[TrendRow]"

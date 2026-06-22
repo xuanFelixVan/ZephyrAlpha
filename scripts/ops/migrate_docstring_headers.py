@@ -7,9 +7,16 @@ from pathlib import Path
 SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 
 FIELD_NAMES = [
-    "BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD",
-    "CONSUMERS", "STABILITY", "SAFETY", "AI_AUTONOMY",
-    "ERROR_CONTRACT", "TESTS",
+    "BLUEPRINT",
+    "MODULE",
+    "INVARIANTS",
+    "MODIFY-GUARD",
+    "CONSUMERS",
+    "STABILITY",
+    "SAFETY",
+    "AI_AUTONOMY",
+    "ERROR_CONTRACT",
+    "TESTS",
 ]
 
 FIELD_RE = re.compile(r"^\[(\w[\w-]*)\]\s*(.*)")
@@ -32,7 +39,7 @@ def process_file(filepath: Path):
     global files_scanned, files_fixed, fields_migrated, docstrings_cleaned
     files_scanned += 1
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
     lines = content.split("\n")
 
@@ -51,7 +58,7 @@ def process_file(filepath: Path):
     if docstring_end == -1:
         return
 
-    docstring_lines = lines[docstring_start:docstring_end + 1]
+    docstring_lines = lines[docstring_start : docstring_end + 1]
 
     has_field_in_docstring = False
     docstring_fields = {}
@@ -105,7 +112,7 @@ def process_file(filepath: Path):
             fields_migrated += 1
 
     remaining_docstring = []
-    for dl in new_lines[docstring_start:docstring_end + 1]:
+    for dl in new_lines[docstring_start : docstring_end + 1]:
         stripped = dl.strip()
         m = FIELD_RE.match(stripped)
         if m and m.group(1) in FIELD_NAMES:
@@ -113,13 +120,14 @@ def process_file(filepath: Path):
         remaining_docstring.append(dl)
 
     non_empty_remaining = [
-        l for l in remaining_docstring
+        l
+        for l in remaining_docstring
         if l.strip() and l.strip() != quote_char and not (l.strip().startswith(quote_char) and l.strip() == quote_char)
     ]
 
     if not non_empty_remaining:
         before = new_lines[:docstring_start]
-        after = new_lines[docstring_end + 1:]
+        after = new_lines[docstring_end + 1 :]
         while before and before[-1].strip() == "":
             before.pop()
         while after and after[0].strip() == "":
@@ -133,7 +141,7 @@ def process_file(filepath: Path):
             if stripped == "" and cleaned and cleaned[-1].strip() == "":
                 continue
             cleaned.append(dl)
-        new_lines[docstring_start:docstring_end + 1] = cleaned
+        new_lines[docstring_start : docstring_end + 1] = cleaned
         docstrings_cleaned += 1
 
     result = "\n".join(new_lines)

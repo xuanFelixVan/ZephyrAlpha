@@ -12,14 +12,12 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.context_manager import (
-    HallucinationLevel,
     MAX_HISTORY_DAYS,
     TIER_TOKENS,
-    TokenTier,
     TRIM_DUPLICATE_THRESHOLD,
+    HallucinationLevel,
+    TokenTier,
 )
 
 
@@ -41,9 +39,13 @@ class TestTokenTier:
             assert isinstance(tokens, int)
 
     def test_tier_ordering(self):
-        values = [TIER_TOKENS[TokenTier.T0], TIER_TOKENS[TokenTier.T1],
-                  TIER_TOKENS[TokenTier.T2], TIER_TOKENS[TokenTier.T3],
-                  TIER_TOKENS[TokenTier.T4]]
+        values = [
+            TIER_TOKENS[TokenTier.T0],
+            TIER_TOKENS[TokenTier.T1],
+            TIER_TOKENS[TokenTier.T2],
+            TIER_TOKENS[TokenTier.T3],
+            TIER_TOKENS[TokenTier.T4],
+        ]
         assert values == sorted(values)
 
     def test_enum_is_str_subclass(self):

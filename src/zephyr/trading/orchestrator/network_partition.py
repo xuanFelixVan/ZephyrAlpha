@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """网络分区容忍（CT-NETWORK-PARTITION）——CAP定理CP优先+脑裂检测+quorum write。"""
 
+
 class NetworkPartitionGuard:
     def __init__(self):
         self._partitioned = False

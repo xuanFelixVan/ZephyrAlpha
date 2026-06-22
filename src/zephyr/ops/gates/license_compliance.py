@@ -52,9 +52,15 @@ class DependencyLicense:
 class LicenseCompliance:
     dependencies: list[DependencyLicense] = field(default_factory=list)
     forbidden_licenses: set[str] = field(default_factory=lambda: {"AGPL-3.0", "GPL-3.0"})
-    copyleft_licenses: set[str] = field(default_factory=lambda: {
-        "GPL-2.0", "GPL-3.0", "LGPL-3.0", "AGPL-3.0", "MPL-2.0",
-    })
+    copyleft_licenses: set[str] = field(
+        default_factory=lambda: {
+            "GPL-2.0",
+            "GPL-3.0",
+            "LGPL-3.0",
+            "AGPL-3.0",
+            "MPL-2.0",
+        }
+    )
 
     def register(self, package: str, version: str, spdx: str) -> LicenseRisk:
         if spdx in self.forbidden_licenses:

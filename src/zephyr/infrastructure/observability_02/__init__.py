@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """shared.observability — auto-generated package init."""
-from . import health_discovery
-from . import session_audit
 
-__all__ = ['health', 'health_discovery', 'logging', 'metrics', 'session_audit', 'token_utils', 'tracing']
+from . import health_discovery, session_audit
+
+__all__ = ["health", "health_discovery", "logging", "metrics", "session_audit", "token_utils", "tracing"]

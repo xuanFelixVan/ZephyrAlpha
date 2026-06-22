@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_trend_cycle_separator.py
 
-import pytest
 
 from zephyr.ops.detectors.trend_cycle_separator import TrendCycleSeparator
 

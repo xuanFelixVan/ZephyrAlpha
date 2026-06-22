@@ -40,16 +40,13 @@ SSoT: cross_layer_contracts.yaml → CTR-003 + CTR-ERR-004
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from decimal import Decimal
-from typing import Any
+from datetime import UTC, datetime
 
+from zephyr.risk.risk_manager import RiskLimits
 from zephyr.risk.risk_manager_base import (
     PositionLimitCheckerBase,
     RiskCheckResult,
 )
-from zephyr.risk.risk_manager import RiskLimits
-
 
 __checker_id__ = "default-position-limit-checker"
 
@@ -60,7 +57,7 @@ class DefaultPositionLimitChecker(PositionLimitCheckerBase):
     __checker_id__ = __checker_id__
 
     def check_single_position(self, symbol: str, weight: float, limit: float) -> RiskCheckResult:
-        check_id = f"pos-{symbol}-{int(datetime.now(timezone.utc).timestamp())}"
+        check_id = f"pos-{symbol}-{int(datetime.now(UTC).timestamp())}"
         override_limit = None
         if isinstance(limit, RiskLimits):
             override_limit = (limit.symbol_overrides or {}).get(symbol)
@@ -76,12 +73,12 @@ class DefaultPositionLimitChecker(PositionLimitCheckerBase):
             limit_value=effective_limit,
             actual_value=weight,
             message=f"symbol={symbol} weight={weight:.4f} limit={effective_limit:.4f} override={override_limit}",
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             severity="HALT" if not passed else "info",
         )
 
     def check_sector_concentration(self, sector: str, weight: float, limit: float) -> RiskCheckResult:
-        check_id = f"sector-{sector}-{int(datetime.now(timezone.utc).timestamp())}"
+        check_id = f"sector-{sector}-{int(datetime.now(UTC).timestamp())}"
         effective_limit = limit.max_sector_concentration if isinstance(limit, RiskLimits) else limit
         passed = weight <= effective_limit
         return RiskCheckResult(
@@ -91,12 +88,12 @@ class DefaultPositionLimitChecker(PositionLimitCheckerBase):
             limit_value=effective_limit,
             actual_value=weight,
             message=f"sector={sector} weight={weight:.4f} limit={effective_limit:.4f}",
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             severity="HALT" if not passed else "info",
         )
 
     def check_gross_leverage(self, current_leverage: float, limit: float) -> RiskCheckResult:
-        check_id = f"lev-{int(datetime.now(timezone.utc).timestamp())}"
+        check_id = f"lev-{int(datetime.now(UTC).timestamp())}"
         effective_limit = limit.max_gross_leverage if isinstance(limit, RiskLimits) else limit
         passed = current_leverage <= effective_limit
         return RiskCheckResult(
@@ -106,7 +103,7 @@ class DefaultPositionLimitChecker(PositionLimitCheckerBase):
             limit_value=effective_limit,
             actual_value=current_leverage,
             message=f"leverage={current_leverage:.4f} limit={effective_limit:.4f}",
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             severity="HALT" if not passed else "info",
         )
 

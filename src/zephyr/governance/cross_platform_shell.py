@@ -29,13 +29,11 @@ CrossPlatformShell — 跨平台 Shell 脚本双输出。
 .ps1: #Requires -Version 5.1 + Set-ExecutionPolicy 保护
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -47,7 +45,6 @@ class CrossPlatformScripts:
 
 
 class CrossPlatformShell:
-
     OUTPUT_DIR: str = "data/rollback/down"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -56,7 +53,7 @@ class CrossPlatformShell:
         self._output_dir.mkdir(parents=True, exist_ok=True)
 
     def generate(self, commit_sha: str, gpg_sign: bool = False) -> CrossPlatformScripts:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         bash_content = self._build_bash(commit_sha, gpg_sign)
         pwsh_content = self._build_pwsh(commit_sha, gpg_sign)
@@ -77,41 +74,45 @@ class CrossPlatformShell:
     def _build_bash(self, commit_sha: str, gpg_sign: bool) -> str:
         lines = [
             "#!/usr/bin/env bash",
-            f"# ZephyrAlpha Rollback Script — Linux/macOS",
+            "# ZephyrAlpha Rollback Script — Linux/macOS",
             f"# Target: {commit_sha}",
-            f"# Generated: {datetime.now(timezone.utc).isoformat()}",
+            f"# Generated: {datetime.now(UTC).isoformat()}",
             "",
             "set -euo pipefail",
             "",
-            'echo "[ROLLBACK] Starting rollback to commit {}"'.format(commit_sha),
+            f'echo "[ROLLBACK] Starting rollback to commit {commit_sha}"',
         ]
         if gpg_sign:
             lines.append(f"git revert --gpg-sign --no-edit {commit_sha}")
         else:
             lines.append(f"git revert --no-edit {commit_sha}")
-        lines.extend([
-            "",
-            'echo "[ROLLBACK] Complete"',
-        ])
+        lines.extend(
+            [
+                "",
+                'echo "[ROLLBACK] Complete"',
+            ]
+        )
         return "\n".join(lines)
 
     def _build_pwsh(self, commit_sha: str, gpg_sign: bool) -> str:
         lines = [
             "#Requires -Version 5.1",
-            f"# ZephyrAlpha Rollback Script — Windows PowerShell",
+            "# ZephyrAlpha Rollback Script — Windows PowerShell",
             f"# Target: {commit_sha}",
-            f"# Generated: {datetime.now(timezone.utc).isoformat()}",
+            f"# Generated: {datetime.now(UTC).isoformat()}",
             "",
             "$ErrorActionPreference = 'Stop'",
             "",
-            'Write-Host "[ROLLBACK] Starting rollback to commit {}"'.format(commit_sha),
+            f'Write-Host "[ROLLBACK] Starting rollback to commit {commit_sha}"',
         ]
         if gpg_sign:
             lines.append(f"git revert --gpg-sign --no-edit {commit_sha}")
         else:
             lines.append(f"git revert --no-edit {commit_sha}")
-        lines.extend([
-            "",
-            'Write-Host "[ROLLBACK] Complete"',
-        ])
+        lines.extend(
+            [
+                "",
+                'Write-Host "[ROLLBACK] Complete"',
+            ]
+        )
         return "\n".join(lines)

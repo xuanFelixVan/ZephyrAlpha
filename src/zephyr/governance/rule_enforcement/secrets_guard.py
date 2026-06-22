@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """Secrets 守护（CT-SECRETS-001）——.env校验+git log扫描+日志脱敏。"""
 
+
 class SecretsGuard:
     REQUIRED_KEYS: list[str] = ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "DEEPSEEK_API_KEY"]
 

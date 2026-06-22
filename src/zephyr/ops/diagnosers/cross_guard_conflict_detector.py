@@ -28,11 +28,13 @@ R513: CrossGuardConflictDetector
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class GuardDecision:
     guard_id: str
     decision: str
     confidence: float
+
 
 @dataclass
 class CrossGuardConflictDetector:
@@ -41,16 +43,20 @@ class CrossGuardConflictDetector:
     conflict_threshold: float = 3.0
 
     OPPOSING_DECISIONS = {
-        ("act", "suppress"), ("suppress", "act"),
-        ("upgrade", "downgrade"), ("downgrade", "upgrade"),
-        ("enable", "disable"), ("disable", "enable"),
-        ("alert", "silence"), ("silence", "alert"),
+        ("act", "suppress"),
+        ("suppress", "act"),
+        ("upgrade", "downgrade"),
+        ("downgrade", "upgrade"),
+        ("enable", "disable"),
+        ("disable", "enable"),
+        ("alert", "silence"),
+        ("silence", "alert"),
     }
 
     def record_decision_batch(self, decisions: list[GuardDecision]) -> None:
         self.decision_history.append(decisions)
         if len(self.decision_history) > self.max_history:
-            self.decision_history = self.decision_history[-self.max_history:]
+            self.decision_history = self.decision_history[-self.max_history :]
 
     def detect_conflicts(self) -> dict:
         if not self.decision_history:
@@ -59,7 +65,7 @@ class CrossGuardConflictDetector:
         conflict_pairs = {}
         for batch in self.decision_history[-30:]:
             for i, g1 in enumerate(batch):
-                for g2 in batch[i + 1:]:
+                for g2 in batch[i + 1 :]:
                     if (g1.decision, g2.decision) in self.OPPOSING_DECISIONS:
                         pair = tuple(sorted([g1.guard_id, g2.guard_id]))
                         if pair not in conflict_pairs:

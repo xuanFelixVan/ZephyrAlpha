@@ -10,9 +10,7 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_handbook.py -q
 
-from pathlib import Path
 
-import pytest
 from zephyr.shared.maintenance.handbook import Handbook, HandbookSection
 
 

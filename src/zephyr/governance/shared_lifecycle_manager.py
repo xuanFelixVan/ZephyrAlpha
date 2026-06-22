@@ -28,14 +28,14 @@
   - shared-lifecycle.yaml 维护
 """
 
-
 from __future__ import annotations
 
-import yaml
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
+
+import yaml
 
 
 class LifecycleStage(str, Enum):
@@ -89,21 +89,23 @@ class SharedLifecycleManager:
             function_name=function_name,
             module_path=module_path,
             lifecycle_stage=LifecycleStage.ACTIVE.value,
-            active_since=datetime.now(timezone.utc).isoformat(),
+            active_since=datetime.now(UTC).isoformat(),
             caller_count=caller_count,
         )
         self._entries[key] = entry
         self._save()
         return entry
 
-    def transition(self, function_name: str, module_path: str, to_stage: str, reason: str = "") -> LifecycleEntry | None:
+    def transition(
+        self, function_name: str, module_path: str, to_stage: str, reason: str = ""
+    ) -> LifecycleEntry | None:
         """状态转移."""
         key = f"{module_path}::{function_name}"
         entry = self._entries.get(key)
         if entry is None:
             return None
 
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         entry.lifecycle_stage = to_stage
 
         if to_stage == LifecycleStage.DEPRECATED.value:
@@ -133,7 +135,7 @@ class SharedLifecycleManager:
             old_import=f"from {old_module} import {old_function}",
             new_import=f"from {new_module} import {new_function}",
             deprecation_reason=reason,
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
         )
 
     def remove_from_shadow_manifest(self, function_name: str, module_path: str) -> bool:
@@ -143,7 +145,7 @@ class SharedLifecycleManager:
         if entry is None:
             return False
         entry.lifecycle_stage = LifecycleStage.DEPRECATED.value
-        entry.deprecated_at = datetime.now(timezone.utc).isoformat()
+        entry.deprecated_at = datetime.now(UTC).isoformat()
         self._entries[key] = entry
         self._save()
         return True
@@ -198,7 +200,7 @@ class SharedLifecycleManager:
 
         yaml_data = {
             "version": "1.0.0",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
             "total_functions": len(functions_data),
             "functions": functions_data,
         }

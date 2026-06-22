@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """CT-PIPE-ORC-001 路由纯逻辑单测。"""
 
 
@@ -26,12 +27,8 @@ def test_modules_slice_m6_to_end() -> None:
 
 
 def test_resolve_audit_p0_vs_p1() -> None:
-    r0 = resolve_ct_pipe_orc001(
-        CtPipeRoutingHints(task_type="AUDIT", priority_value="P0", target_layer=None)
-    )
-    r1 = resolve_ct_pipe_orc001(
-        CtPipeRoutingHints(task_type="AUDIT", priority_value="P1", target_layer=None)
-    )
+    r0 = resolve_ct_pipe_orc001(CtPipeRoutingHints(task_type="AUDIT", priority_value="P0", target_layer=None))
+    r1 = resolve_ct_pipe_orc001(CtPipeRoutingHints(task_type="AUDIT", priority_value="P1", target_layer=None))
     assert r0.node_id == "M3"
     assert r1.node_id == "M4"
 
@@ -42,11 +39,7 @@ def test_resolve_doc_write_requires_layer() -> None:
 
 
 def test_resolve_doc_write_foundation_vs_other() -> None:
-    r_f = resolve_ct_pipe_orc001(
-        CtPipeRoutingHints(task_type="DOC_WRITE", priority_value="P2", target_layer="L01")
-    )
-    r_o = resolve_ct_pipe_orc001(
-        CtPipeRoutingHints(task_type="REFACTOR", priority_value="P2", target_layer="L30")
-    )
+    r_f = resolve_ct_pipe_orc001(CtPipeRoutingHints(task_type="DOC_WRITE", priority_value="P2", target_layer="L01"))
+    r_o = resolve_ct_pipe_orc001(CtPipeRoutingHints(task_type="REFACTOR", priority_value="P2", target_layer="L30"))
     assert r_f.node_id == "M5"
     assert r_o.node_id == "M6"

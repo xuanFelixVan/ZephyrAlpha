@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import pytest
 
-
 l05 = pytest.importorskip("zephyr.pf_core", reason="l05-portfolio-construction not importable")
 
 from zephyr.pf_core.strategy_base import (
@@ -78,8 +77,11 @@ class TestStrategyMeta:
 
     def test_defaults(self):
         m = StrategyMeta(
-            strategy_id="s1", name="S1", strategy_type="t",
-            version="1.0", description="d",
+            strategy_id="s1",
+            name="S1",
+            strategy_type="t",
+            version="1.0",
+            description="d",
         )
         assert m.factor_dependencies == []
         assert m.author == "agent"
@@ -88,16 +90,22 @@ class TestStrategyMeta:
 
     def test_frozen(self):
         m = StrategyMeta(
-            strategy_id="s1", name="S1", strategy_type="t",
-            version="1.0", description="d",
+            strategy_id="s1",
+            name="S1",
+            strategy_type="t",
+            version="1.0",
+            description="d",
         )
         with pytest.raises(AttributeError):
             m.strategy_id = "other"
 
     def test_custom_fields(self):
         m = StrategyMeta(
-            strategy_id="s1", name="S1", strategy_type="t",
-            version="1.0", description="d",
+            strategy_id="s1",
+            name="S1",
+            strategy_type="t",
+            version="1.0",
+            description="d",
             factor_dependencies=["f1", "f2"],
             author="human",
             tags=["alpha"],

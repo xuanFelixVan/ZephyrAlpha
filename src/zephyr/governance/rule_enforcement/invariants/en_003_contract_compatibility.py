@@ -36,10 +36,9 @@ import importlib
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import yaml
-from zephyr.shared.contracts.core.enforcer import enforce_output as _enforce_output, enforce_input as _enforce_input
 
 PROJECT_ROOT = Path(__file__).parents[4]
 CONTRACTS_PATH = (
@@ -87,10 +86,7 @@ class CompatibilityResult:
     def summary(self) -> str:
         if self.passed:
             return f"[PASS] EN-003: {self.matched}/{self.total} contracts field-compatible"
-        return (
-            f"[FAIL] EN-003: {len(self.mismatches)} mismatch(es)\n"
-            + "\n".join(f"  - {m}" for m in self.mismatches)
-        )
+        return f"[FAIL] EN-003: {len(self.mismatches)} mismatch(es)\n" + "\n".join(f"  - {m}" for m in self.mismatches)
 
 
 def _load_contracts() -> dict[str, Any]:
@@ -119,7 +115,7 @@ def _get_dataclass_fields(module_path: str, class_name: str) -> dict[str, str] |
 
 def _strip_module_path(physical_path: str) -> tuple[str, str] | None:
     path = Path(physical_path)
-    if not path.suffix == ".py":
+    if path.suffix != ".py":
         return None
 
     rel = path
@@ -184,15 +180,11 @@ def run_check() -> CompatibilityResult:
         extra_in_code = actual_field_names - spec_field_names
 
         if missing_in_code:
-            mismatches.append(
-                f"{cid}/{class_name}: fields in spec but missing in code: {sorted(missing_in_code)}"
-            )
+            mismatches.append(f"{cid}/{class_name}: fields in spec but missing in code: {sorted(missing_in_code)}")
             contract_ok = False
 
         if extra_in_code:
-            mismatches.append(
-                f"{cid}/{class_name}: fields in code but missing in spec: {sorted(extra_in_code)}"
-            )
+            mismatches.append(f"{cid}/{class_name}: fields in code but missing in spec: {sorted(extra_in_code)}")
             contract_ok = False
 
         for sf in spec_fields:
@@ -206,9 +198,7 @@ def run_check() -> CompatibilityResult:
             actual_type_short = actual_type.split("[")[0]
 
             if spec_type_short != actual_type_short and spec_type != actual_type:
-                mismatches.append(
-                    f"{cid}/{class_name}.{fname}: spec type={spec_type}, code type={actual_type}"
-                )
+                mismatches.append(f"{cid}/{class_name}.{fname}: spec type={spec_type}, code type={actual_type}")
                 contract_ok = False
 
         if contract_ok:

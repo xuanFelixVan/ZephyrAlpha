@@ -2,30 +2,21 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_diff
-
 # [INVARIANTS] diff MUST展示before/after;MUST可逆
-
 # [MODIFY-GUARD] blueprint.md §3
-
 # [CONSUMERS] engine.py;fix_report.py;compliance_auditor.py
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DiffError
-
 # [TESTS] tests/auto-fix-engine/test_fix_diff.py
-
 import difflib
 import hashlib
 from typing import Any
 
 from zephyr.security.access_control.auto_fix_engine_03.models import FixAction
+
 
 class FixDiff:
     @staticmethod
@@ -35,7 +26,8 @@ class FixDiff:
         before_lines = action.before.splitlines(keepends=True)
         after_lines = action.after.splitlines(keepends=True)
         diff = difflib.unified_diff(
-            before_lines, after_lines,
+            before_lines,
+            after_lines,
             fromfile=f"{action.target} (before)",
             tofile=f"{action.target} (after)",
             lineterm="",
@@ -60,7 +52,8 @@ class FixDiff:
         before_lines = before.splitlines(keepends=True)
         after_lines = after.splitlines(keepends=True)
         diff = difflib.unified_diff(
-            before_lines, after_lines,
+            before_lines,
+            after_lines,
             fromfile=f"{label} (before)",
             tofile=f"{label} (after)",
             lineterm="",
@@ -77,8 +70,10 @@ class FixDiff:
 
     @staticmethod
     def reverse(action: FixAction) -> FixAction:
-        reversed_action = action.model_copy(update={
-            "before": action.after,
-            "after": action.before,
-        })
+        reversed_action = action.model_copy(
+            update={
+                "before": action.after,
+                "after": action.before,
+            }
+        )
         return reversed_action

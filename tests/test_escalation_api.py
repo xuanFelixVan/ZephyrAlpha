@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_escalation_api.py
 
-import pytest
 
 from zephyr.governance.escalation_api import EscalationAPI
 

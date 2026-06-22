@@ -54,8 +54,10 @@ _LAZY_SUBMODULES = [
     "exam_test_cases",
 ]
 
+
 def __getattr__(name: str):
     import importlib
+
     if name in _LAZY_SUBMODULES:
         if name == "capability_passport":
             mod = importlib.import_module("zephyr.intelligence.model_profiling.capability_passport")
@@ -74,37 +76,23 @@ def __getattr__(name: str):
         return value
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-
-    'compute_grade',
-
-    'exam_test_cases',
-
-    'ALL_EXAM_CASES',
-
-    'BreadthResult',
-
-    'CapabilityPassport',
-
-    'CASES_BY_CAPABILITY',
-
-    'DepthCapabilityResult',
-
-    'DepthResult',
-
-    'Difficulty',
-
-    'DriftResult',
-
-    'ExamOrchestrator',
-
-    'ExamTestCase',
-
-    'HallucinationResult',
-
-    'Recommendations',
-
-    'SpeedResult',
-    'capability_passport',
-    'exam_orchestrator',
+    "ALL_EXAM_CASES",
+    "CASES_BY_CAPABILITY",
+    "BreadthResult",
+    "CapabilityPassport",
+    "DepthCapabilityResult",
+    "DepthResult",
+    "Difficulty",
+    "DriftResult",
+    "ExamOrchestrator",
+    "ExamTestCase",
+    "HallucinationResult",
+    "Recommendations",
+    "SpeedResult",
+    "capability_passport",
+    "compute_grade",
+    "exam_orchestrator",
+    "exam_test_cases",
 ]

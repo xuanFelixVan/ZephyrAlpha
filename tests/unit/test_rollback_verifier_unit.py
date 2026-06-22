@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for RollbackVerifier — 回滚后验证器 (MOD-INF-021 §7 Phase 1.4).
 
@@ -13,14 +14,11 @@ Tests: g0_verify, clean_pycache, heal_db_consistency, differential_check.
 """
 
 
-import os as _os
 import sqlite3
 import tempfile
 import time
 from contextlib import contextmanager
 from pathlib import Path
-
-import pytest
 
 from zephyr.governance.rollback_verifier import RollbackVerifier
 
@@ -33,6 +31,7 @@ def _temp_dir():
         yield root
     finally:
         import gc
+
         gc.collect()
         for _ in range(100):
             try:

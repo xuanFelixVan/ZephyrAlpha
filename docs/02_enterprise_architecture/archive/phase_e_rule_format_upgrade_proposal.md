@@ -2,7 +2,7 @@
 module_id: EA-DOC-017
 title: 阶段E — 规则文件格式升级施工方案
 doc_type: discussion
-status: in_progress
+status: Active
 version: 2.0.0
 layer: L1
 owner: architecture

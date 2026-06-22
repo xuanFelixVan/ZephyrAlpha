@@ -7,12 +7,11 @@
 # [TESTS] —
 """Tests for MOD-INF-026 Classifier module."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from zephyr.infrastructure.asset_inventory.classifier import Classifier
 from zephyr.infrastructure.asset_inventory.models import (
     AssetType,
-    ClassificationResult,
     RawFileEntry,
     ScanResult,
 )
@@ -25,7 +24,7 @@ def _make_entry(path: str, ext: str = ".py", size: int = 100) -> RawFileEntry:
         file_name=path.split("/")[-1],
         extension=ext,
         size_bytes=size,
-        mtime_utc=datetime.now(timezone.utc),
+        mtime_utc=datetime.now(UTC),
         sha256="d" * 64,
     )
 

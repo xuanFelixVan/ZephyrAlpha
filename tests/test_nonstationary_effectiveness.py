@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_nonstationary_effectiveness.py
 
-import pytest
 
 from zephyr.ops.diagnosers.nonstationary_effectiveness import (
     EffectivenessState,

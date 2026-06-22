@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_routing_plugins | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.routing_plugins
+# [MODULE] zephyr.integration.routing_plugins
 
 # [INVARIANTS] none
 
@@ -45,26 +45,25 @@ Pipeline Routing Plugin System — K8s Scheduling Framework 对标
     router = PipelineRouter([MyPlugin(), *DEFAULT_PLUGINS])
 """
 
-
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import ClassVar
 
-from zephyr.integration.ct_pipe_routing import CtPipeRoutingHints, _make_decision, modules_slice_from_node
-from zephyr.integration.models import PipelineRouteDecision, M_MODULES, M_MODULE_SPECS
+from zephyr.integration.ct_pipe_routing import CtPipeRoutingHints, _make_decision
+from zephyr.integration.models import M_MODULE_SPECS, M_MODULES, PipelineRouteDecision
 
 __all__ = [
-    "RoutingPlugin",
-    "RoutingContext",
-    "PipelineRouter",
-    "NoEligibleNodeError",
-    "TaskTypeFilter",
-    "ComplexityFilter",
-    "PriorityScorer",
-    "PipelineAffinityScorer",
-    "CostScorer",
     "DEFAULT_PLUGINS",
+    "ComplexityFilter",
+    "CostScorer",
+    "NoEligibleNodeError",
+    "PipelineAffinityScorer",
+    "PipelineRouter",
+    "PriorityScorer",
+    "RoutingContext",
+    "RoutingPlugin",
+    "TaskTypeFilter",
 ]
 
 _FOUNDATION_LAYERS = frozenset({"L00", "L01", "L10"})
@@ -298,12 +297,8 @@ class PipelineRouter:
         for f in self._filters:
             f.apply(ctx)
             if not ctx.candidates:
-                rejections = "; ".join(
-                    f"{n}:{r}" for n, r in sorted(ctx.rejections.items())
-                )
-                raise NoEligibleNodeError(
-                    f"No eligible node for task_type={hints.task_type}: {rejections}"
-                )
+                rejections = "; ".join(f"{n}:{r}" for n, r in sorted(ctx.rejections.items()))
+                raise NoEligibleNodeError(f"No eligible node for task_type={hints.task_type}: {rejections}")
 
         for s in self._scorers:
             s.apply(ctx)
@@ -312,9 +307,7 @@ class PipelineRouter:
         scored.sort(reverse=True)
         best_score, best_node = scored[0]
 
-        detail = ", ".join(
-            f"{n}={ctx.scores[n]:.0f}" for _, n in scored[:3]
-        )
+        detail = ", ".join(f"{n}={ctx.scores[n]:.0f}" for _, n in scored[:3])
         return _make_decision(
             best_node,
             f"Filter→{len(ctx.candidates)} nodes; Score→{best_node}={best_score:.0f} [{detail}]",

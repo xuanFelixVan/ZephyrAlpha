@@ -30,6 +30,5 @@ from dataclasses import dataclass
 
 @dataclass
 class CapacityAwareRepair:
-
     def check_headroom(self, action_cost: float, available: float) -> bool:
         return available >= action_cost * 1.2

@@ -11,6 +11,7 @@
 # [TESTS] tests/test_rule_e2e.py
 
 import pytest
+
 from zephyr.governance.rule_engine import RuleLoader
 
 

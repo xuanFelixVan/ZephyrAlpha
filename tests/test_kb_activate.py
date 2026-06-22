@@ -13,20 +13,18 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-import pytest
 import yaml
 
+from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
 from zephyr.intelligence.model_evaluation.activate import (
     ACTIVE_DIR_NAME,
-    AUTO_ACTIVATE_THRESHOLD,
+    FUTURE_DIR_NAME,
     ActivateGate,
     ActivateResult,
-    FUTURE_DIR_NAME,
 )
-from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
-from zephyr.intelligence.model_evaluation.kb_repo import KeRecord, KeStatus
+from zephyr.intelligence.model_evaluation.kb_repo import KeStatus
 
 
 def _make_frontmatter(**kwargs: object) -> str:
@@ -46,9 +44,7 @@ def _make_frontmatter(**kwargs: object) -> str:
 def _mock_gate_engine(passed: bool = True) -> MagicMock:
     engine = MagicMock()
     if passed:
-        engine.evaluate.return_value = GateResult(
-            gate_id="G4", task_id="T-1", passed=True, violations=[]
-        )
+        engine.evaluate.return_value = GateResult(gate_id="G4", task_id="T-1", passed=True, violations=[])
     else:
         engine.evaluate.return_value = GateResult(
             gate_id="G4",

@@ -2,30 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.eval_harness
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import json
 import time
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
 
 CATEGORY_INTENT = "INTENT"
 CATEGORY_ORCHESTRATOR = "ORCHESTRATOR"
@@ -34,6 +24,7 @@ CATEGORY_EVOLUTION = "EVOLUTION"
 
 CATEGORIES = frozenset({CATEGORY_INTENT, CATEGORY_ORCHESTRATOR, CATEGORY_HALLUCINATION, CATEGORY_EVOLUTION})
 
+
 @dataclass
 class EvalCase:
     case_id: str
@@ -41,12 +32,14 @@ class EvalCase:
     description: str = ""
     runner: Callable[[], EvalOutcome] | None = None
 
+
 @dataclass
 class EvalOutcome:
     passed: bool
     expected: object = None
     actual: object = None
     latency_ms: float = 0.0
+
 
 @dataclass
 class EvalCaseResult:
@@ -58,12 +51,14 @@ class EvalCaseResult:
     latency_ms: float = 0.0
     error: str | None = None
 
+
 @dataclass
 class CategoryStats:
     total: int = 0
     passed: int = 0
     failed: int = 0
     pass_rate: float = 0.0
+
 
 @dataclass
 class EvalReport:
@@ -76,8 +71,9 @@ class EvalReport:
     error_breakdown: dict[str, int] = field(default_factory=dict)
     by_category: dict[str, CategoryStats] = field(default_factory=dict)
 
-class EvalResult:
-    ...
+
+class EvalResult: ...
+
 
 class EvalHarness:
     cases: list[EvalCase]
@@ -209,8 +205,10 @@ class EvalHarness:
             default=str,
         )
 
+
 def _ok() -> EvalOutcome:
     return EvalOutcome(passed=True, expected=1, actual=1)
+
 
 def _gen_cases(prefix: str, category: str, count: int, id_prefix: str = "IE") -> list[EvalCase]:
     return [
@@ -223,14 +221,18 @@ def _gen_cases(prefix: str, category: str, count: int, id_prefix: str = "IE") ->
         for i in range(1, count + 1)
     ]
 
+
 def build_intent_cases() -> list[EvalCase]:
     return _gen_cases("IE", CATEGORY_INTENT, 10)
+
 
 def build_orchestrator_cases() -> list[EvalCase]:
     return _gen_cases("OR", CATEGORY_ORCHESTRATOR, 10)
 
+
 def build_hallucination_cases() -> list[EvalCase]:
     return _gen_cases("HA", CATEGORY_HALLUCINATION, 5)
+
 
 def build_evolution_cases() -> list[EvalCase]:
     return _gen_cases("EV", CATEGORY_EVOLUTION, 5)

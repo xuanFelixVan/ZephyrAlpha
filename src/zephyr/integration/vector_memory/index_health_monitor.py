@@ -39,7 +39,7 @@ from __future__ import annotations
 
 import logging
 import shutil
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -199,12 +199,14 @@ class IndexHealthMonitor:
                                     expired += 1
                             except Exception:
                                 pass
-                reports.append(TTLExpiryReport(
-                    collection=col_name,
-                    expired_count=expired,
-                    total_count=total,
-                    ttl_days=ttl_days,
-                ))
+                reports.append(
+                    TTLExpiryReport(
+                        collection=col_name,
+                        expired_count=expired,
+                        total_count=total,
+                        ttl_days=ttl_days,
+                    )
+                )
             except Exception:
                 pass
         return reports

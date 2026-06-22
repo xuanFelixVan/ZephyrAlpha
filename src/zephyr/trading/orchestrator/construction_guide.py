@@ -31,12 +31,11 @@
 3. Mock 模式：开发环境使用 cheap_fast 模型、低 token 预算、跳过飞书通知
 """
 
-
 from __future__ import annotations
 
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class MockStrategy(str, Enum):

@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 桥接失败返回None或空结果
 # [TESTS] tests/audit-orchestrator/test_bridge.py
-
 import logging
 from typing import Any
 
@@ -19,8 +18,10 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["OrchestratorBridge", "write_to_core"]
 
+
 def write_to_core(channel: str, payload: dict[str, Any]) -> None:
     logger.info("write_to_core channel=%s payload_keys=%s", channel, list(payload.keys()))
+
 
 class OrchestratorBridge:
     def __init__(self) -> None:
@@ -35,36 +36,42 @@ class OrchestratorBridge:
     def _init_bridges(self) -> None:
         try:
             from zephyr.governance.audit_trail.drift_bridge import DriftBridge
+
             self._drift_bridge = DriftBridge()
         except Exception as exc:
             logger.warning("DriftBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_trail.feedback_bridge import FeedbackBridge
+
             self._feedback_bridge = FeedbackBridge()
         except Exception as exc:
             logger.warning("FeedbackBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_trail.delegation_bridge import DelegationBridge
+
             self._delegation_bridge = DelegationBridge()
         except Exception as exc:
             logger.warning("DelegationBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.merkle_hourly import MerkleHourlyBridge
+
             self._merkle_bridge = MerkleHourlyBridge()
         except Exception as exc:
             logger.warning("MerkleHourlyBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_trail.trust_bridge import TrustBridge
+
             self._trust_bridge = TrustBridge()
         except Exception as exc:
             logger.warning("TrustBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_trail.tiered_storage_bridge import TieredStorageBridge
+
             self._storage_bridge = TieredStorageBridge()
         except Exception as exc:
             logger.warning("TieredStorageBridge init failed: %s", exc)
@@ -99,7 +106,9 @@ class OrchestratorBridge:
             "storage": self._storage_bridge is not None and self._storage_bridge.is_available(),
         }
 
+
 def _get_writer(backend=None):
     return None
 
-_AVAILABLE = ['writer', 'query', 'replay', 'integrity']
+
+_AVAILABLE = ["writer", "query", "replay", "integrity"]

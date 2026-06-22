@@ -41,8 +41,7 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from zephyr.governance.analytics_base import AttributionEngineBase
 from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
@@ -86,7 +85,7 @@ class DefaultAttributionEngine(AttributionEngineBase):
             interaction_effect=interaction_effect,
             sector_attributions={},
             factor_attributions={},
-            generated_at=datetime.now(timezone.utc),
+            generated_at=datetime.now(UTC),
             idempotency_key=idempotency_key,
         )
 

@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """audit-trail MOD-INF-020 import 冒烟测试 — 验证核心模块可被导入."""
 
 import sys
@@ -29,7 +30,8 @@ class TestAuditTrailImportSmoke:
     def test_import_audit_trail_init(self) -> None:
         """测试导入 zephyr.governance.audit_trail 包自身."""
         _ensure_path()
-        import zephyr.governance.audit_trail  # noqa: F401
+        import zephyr.governance.audit_trail
+
         assert hasattr(zephyr.governance.audit_trail, "__all__")
 
     def test_import_models(self) -> None:
@@ -46,24 +48,28 @@ class TestAuditTrailImportSmoke:
         """测试导入 AuditWriter — 不可变审计写入器."""
         _ensure_path()
         from zephyr.governance.audit_trail.writer import AuditWriter
+
         assert AuditWriter is not None
 
     def test_import_integrity(self) -> None:
         """测试导入 IntegrityVerifier — 链式完整性验证."""
         _ensure_path()
         from zephyr.governance.integrity import IntegrityVerifier
+
         assert IntegrityVerifier is not None
 
     def test_import_agent_signer(self) -> None:
         """测试导入 AgentSigner — Ed25519密码学签名."""
         _ensure_path()
         from zephyr.governance.audit_trail.agent_signer import AgentSigner
+
         assert AgentSigner is not None
 
     def test_import_query(self) -> None:
         """测试导入 AuditQuery — 审计查询接口."""
         _ensure_path()
         from zephyr.governance.audit_trail.query import AuditQuery
+
         assert AuditQuery is not None
 
 

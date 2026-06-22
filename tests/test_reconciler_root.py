@@ -12,16 +12,12 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta, timezone
-from pathlib import Path
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.infrastructure.asset_inventory.models import (
     AssetType,
-    ClassifiedAsset,
     ClassificationResult,
-    DriftType,
+    ClassifiedAsset,
     RawFileEntry,
     ReconciliationReport,
     ScanResult,

@@ -23,7 +23,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -45,8 +46,9 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class Market_Data_Provider:
@@ -55,19 +57,5 @@ class Market_Data_Provider:
     supported_instruments: tuple[str, ...]
     update_frequency_ms: int
 
+
 # ==== END CODGEN:EXT-002 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

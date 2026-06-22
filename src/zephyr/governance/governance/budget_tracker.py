@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """G-CT-009 契约：Rollback → Budget 回滚成本计入预算."""
 
+
 class RollbackBudgetTracker:
     """回滚成本追踪→Budget."""
 

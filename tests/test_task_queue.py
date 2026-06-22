@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
 from zephyr.trading.orchestrator.core.task_queue import (
     QueueConfig,
     QueueItem,
@@ -185,7 +181,9 @@ class TestQueueItemDataclass:
 
     def test_custom_values(self):
         item = QueueItem(
-            item_id="Q2", task_id="T2", priority="P0",
+            item_id="Q2",
+            task_id="T2",
+            priority="P0",
             status=QueueItemStatus.DISPATCHED,
         )
         assert item.priority == "P0"

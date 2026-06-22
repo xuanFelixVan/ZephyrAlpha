@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_objective_tracker.py
 
-import pytest
 from zephyr.governance.objective_tracker import ObjectiveTracker
 
 

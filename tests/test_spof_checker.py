@@ -15,11 +15,11 @@ from __future__ import annotations
 import pytest
 
 from zephyr.governance.spof_checker import (
-    SPOFType,
-    SPOFReport,
     SPOF_CHECKS,
-    check_spof,
+    SPOFReport,
+    SPOFType,
     all_mitigated,
+    check_spof,
 )
 
 

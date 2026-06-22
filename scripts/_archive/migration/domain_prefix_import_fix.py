@@ -110,7 +110,9 @@ def _build_domain_prefix_mapping() -> dict[str, str]:
                 old_sub = f"zephyr.{child.name}.{sub_module}"
                 new_sub = f"zephyr.{domain}.{child.name}.{sub_module}"
 
-                old_sub_path = ZEPHYR_SRC / child.name / "/".join(parts[:-1]) if len(parts) > 1 else ZEPHYR_SRC / child.name
+                old_sub_path = (
+                    ZEPHYR_SRC / child.name / "/".join(parts[:-1]) if len(parts) > 1 else ZEPHYR_SRC / child.name
+                )
                 if old_sub_path.exists() and any(old_sub_path.glob("*.py")):
                     continue
 
@@ -123,6 +125,7 @@ def _build_domain_prefix_mapping() -> dict[str, str]:
             mapping[old_mod] = new_mods[0]
         else:
             from collections import Counter
+
             counts = Counter(new_mods)
             best, count = counts.most_common(1)[0]
             if count > 1 and count / len(new_mods) >= 0.5:
@@ -235,7 +238,7 @@ def main() -> None:
                 total_errors += 1
                 print(f"  ERROR: {result['file']}")
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Files updated: {total_updated}")
     print(f"  Import changes: {total_changes}")
     print(f"  Errors: {total_errors}")

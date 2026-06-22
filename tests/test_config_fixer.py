@@ -16,7 +16,9 @@ from pathlib import Path
 
 import pytest
 
-config_mod = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.config_fixer", reason="config_fixer not available")
+config_mod = pytest.importorskip(
+    "zephyr.security.access_control.auto_fix_engine_03.config_fixer", reason="config_fixer not available"
+)
 ConfigFixer = config_mod.ConfigFixer
 
 models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
@@ -47,7 +49,9 @@ class TestConfigFixerScan:
 
     def test_scan_detects_merge_conflict(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
-        (tmp_path / "test.yaml").write_text("key: val\n<<<<<<< HEAD\na: 1\n=======\nb: 2\n>>>>>>> br\n", encoding="utf-8")
+        (tmp_path / "test.yaml").write_text(
+            "key: val\n<<<<<<< HEAD\na: 1\n=======\nb: 2\n>>>>>>> br\n", encoding="utf-8"
+        )
         fixer = ConfigFixer()
         result = fixer.scan()
         assert any(f["type"] == "merge_conflict_markers" for f in result)

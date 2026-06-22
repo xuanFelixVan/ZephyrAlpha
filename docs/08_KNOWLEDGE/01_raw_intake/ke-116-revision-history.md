@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-116
 title: 10. Revision history / 修订记录
 category: documentation

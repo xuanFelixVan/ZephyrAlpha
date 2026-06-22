@@ -15,16 +15,14 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.governance.triage import (
-    TriageGate,
-    TriageResult,
     APPROVED_LABELS,
-    VALID_DOC_TYPES,
-    VALID_LAYERS,
     HIGH_VALUE_THRESHOLD,
     REJECT_THRESHOLD,
+    VALID_DOC_TYPES,
+    VALID_LAYERS,
+    TriageGate,
+    TriageResult,
 )
 
 

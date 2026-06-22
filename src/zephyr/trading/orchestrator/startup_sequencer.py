@@ -28,10 +28,11 @@ from __future__ import annotations
 5层启动顺序 + 120s全局超时。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class StartupLayer(str, Enum):
     L1_DATABASE = "L1_database"
@@ -39,6 +40,7 @@ class StartupLayer(str, Enum):
     L3_FLE = "L3_feedback_loop"
     L4_CORE_SERVICES = "L4_core_services"
     L5_TELEMETRY = "L5_telemetry"
+
 
 STARTUP_ORDER: tuple[StartupLayer, ...] = (
     StartupLayer.L1_DATABASE,
@@ -52,19 +54,28 @@ STARTUP_COMPONENTS: dict[StartupLayer, list[str]] = {
     StartupLayer.L1_DATABASE: ["database"],
     StartupLayer.L2_VMS: ["vector-memory"],
     StartupLayer.L3_FLE: ["feedback-loop"],
-    StartupLayer.L4_CORE_SERVICES: ["orchestrator", "script_system", "knowledge_base",
-                                      "context-engine", "gate_engine", "pipeline",
-                                      "llm-security", "mcp_servers"],
+    StartupLayer.L4_CORE_SERVICES: [
+        "orchestrator",
+        "script_system",
+        "knowledge_base",
+        "context-engine",
+        "gate_engine",
+        "pipeline",
+        "llm-security",
+        "mcp_servers",
+    ],
     StartupLayer.L5_TELEMETRY: ["system-telemetry"],
 }
 
 GLOBAL_TIMEOUT_S: float = 120.0
+
 
 class StartupState(BaseModel):
     layer: StartupLayer
     status: str = "pending"
     started_at: datetime | None = None
     completed_at: datetime | None = None
+
 
 class StartupSequencer:
     def __init__(self):
@@ -91,10 +102,10 @@ class StartupSequencer:
 
         state = self._states[layer]
         state.status = "running"
-        state.started_at = datetime.now(timezone.utc)
+        state.started_at = datetime.now(UTC)
         return True
 
     def complete_layer(self, layer: StartupLayer) -> None:
         state = self._states[layer]
         state.status = "completed"
-        state.completed_at = datetime.now(timezone.utc)
+        state.completed_at = datetime.now(UTC)

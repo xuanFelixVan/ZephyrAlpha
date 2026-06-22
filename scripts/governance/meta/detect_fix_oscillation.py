@@ -81,8 +81,7 @@ def detect_oscillations(findings_path: Path) -> dict[str, list[dict]]:
         count = len(finding_ids)
         if count >= OSCILLATION_THRESHOLD:
             oscillations[key] = [
-                r for r in records
-                if f"{r.get('target', {}).get('file_path', '')}::{r.get('dimension', '??')}" == key
+                r for r in records if f"{r.get('target', {}).get('file_path', '')}::{r.get('dimension', '??')}" == key
             ]
     return oscillations
 

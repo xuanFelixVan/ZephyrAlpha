@@ -24,7 +24,7 @@ TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）
 =====================================================
 任务编号 : T-V2-007（experimental RI-03）
 权限层级 : Human-Gated（M3 路由表修改 = 关键架构变更，R84 修正）
-真源声明 : ai-autonomy-authority-registry.md §2.9（RI-03）+ §2.10（三件套）
+真源声明 : ai_autonomy_authority_registry.yaml §2.9（RI-03）+ §2.10（三件套）
 关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
            B6 §2.4（RI-03 设计）+ §3.4（experimental 部署）
 创建日期 : 2026-04-27
@@ -57,7 +57,6 @@ experimental 起始集（5 种 trigger_type）
 
 from __future__ import annotations
 
-
 import importlib
 import logging
 from collections.abc import Callable
@@ -71,21 +70,21 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 __all__ = [
-    "TriggerSafety",
-    "TriggerHandlerSpec",
-    "RouterDispatchResult",
-    "TriggerRouter",
-    "TriggerRouterConfigError",
     "DEFAULT_ROUTER_YAML_PATH",
     "PHASE1D_TRIGGER_TYPES",
-    "load_router_config",
+    "RouterDispatchResult",
+    "TriggerHandlerSpec",
+    "TriggerRouter",
+    "TriggerRouterConfigError",
+    "TriggerSafety",
     "get_trigger_router",
-    "reset_trigger_router",
-    "handle_onboarding_stub",
-    "handle_drift_stub",
-    "handle_cleanup_stub",
-    "handle_blueprint_stub",
     "handle_blueprint_lookup_stub",
+    "handle_blueprint_stub",
+    "handle_cleanup_stub",
+    "handle_drift_stub",
+    "handle_onboarding_stub",
+    "load_router_config",
+    "reset_trigger_router",
 ]
 
 _logger = logging.getLogger(__name__)
@@ -631,6 +630,7 @@ def handle_drift_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """
     try:
         from zephyr.governance.rule_enforcement.drift_detector import trigger_recovery
+
         result = trigger_recovery(payload)
         return {
             "handler": "drift_detected",

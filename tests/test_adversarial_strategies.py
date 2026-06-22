@@ -117,7 +117,13 @@ class TestAdversarialSampleGenerator:
         samples = gen.generate("test output")
         assert len(samples) == 5
         strategy_names = {s.strategy_name for s in samples}
-        assert strategy_names == {"prompt_injection", "jailbreak", "data_poisoning", "model_evasion", "output_manipulation"}
+        assert strategy_names == {
+            "prompt_injection",
+            "jailbreak",
+            "data_poisoning",
+            "model_evasion",
+            "output_manipulation",
+        }
 
     def test_generate_single_strategy(self):
         gen = AdversarialSampleGenerator()

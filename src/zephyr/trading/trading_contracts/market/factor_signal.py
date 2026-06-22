@@ -2,29 +2,20 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.market.factor_signal
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] signal; _cross_layer
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-002 ====
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
+
 
 @dataclass(frozen=True)
 class FactorSignal:
@@ -45,5 +36,6 @@ class FactorSignal:
     schema_version: str = "1.0"
     timeout_ms: int = 3000
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-002 ====

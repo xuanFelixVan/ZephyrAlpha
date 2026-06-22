@@ -48,7 +48,6 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 import hashlib
 import os
 import shutil
@@ -58,12 +57,12 @@ from contextlib import contextmanager
 from pathlib import Path
 
 __all__ = [
+    "AtomicWriteError",
     "atomic_write",
-    "safe_read",
+    "backup_and_rollback",
     "backup_file",
     "restore_backup",
-    "backup_and_rollback",
-    "AtomicWriteError",
+    "safe_read",
 ]
 
 
@@ -153,9 +152,7 @@ def safe_read(
     if verify_sha256:
         actual = hashlib.sha256(content.encode(encoding)).hexdigest()
         if actual != verify_sha256:
-            raise ValueError(
-                f"SHA-256 mismatch for {filepath}: " f"expected {verify_sha256[:16]}..., got {actual[:16]}..."
-            )
+            raise ValueError(f"SHA-256 mismatch for {filepath}: expected {verify_sha256[:16]}..., got {actual[:16]}...")
 
     return content
 

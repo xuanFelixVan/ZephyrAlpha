@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for intent_parser.py (T-3-20, A26, V-09)
 ====================================================
@@ -19,6 +20,7 @@ Unit tests for intent_parser.py (T-3-20, A26, V-09)
 from typing import Any
 
 import pytest
+
 from zephyr.autonomy_core.intent_keyword_mapper import IntentKeywordMapper, IntentResult
 from zephyr.autonomy_core.intent_parser import (
     DEFAULT_STAGE_THRESHOLDS,

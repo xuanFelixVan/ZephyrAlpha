@@ -33,7 +33,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD_YAML, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_MD_YAML
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.thresholds import get
@@ -108,11 +108,11 @@ def main() -> None:
     if findings:
         print(f"\n[CASCADE] {len(findings)} 个废弃模块级联影响 >= {CASCADE_THRESHOLD} 个文件:", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] {f['deprecated_id']} — 影响 {f['cascade_count']} 个文件', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['deprecated_id']} — 影响 {f['cascade_count']} 个文件", file=sys.stderr)
             for aff in f["affected"][:10]:
                 print(f"    ← {aff}", file=sys.stderr)
             if len(f["affected"]) > 10:
-                print(f'    ... 还有 {len(f['affected']) - 10} 个', file=sys.stderr)
+                print(f"    ... 还有 {len(f['affected']) - 10} 个", file=sys.stderr)
     else:
         print(f"[CASCADE] 无级联影响 >= {CASCADE_THRESHOLD} 的废弃模块", file=sys.stderr)
     if args.warn_only:

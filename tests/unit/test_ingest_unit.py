@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 测试套件：G1 Ingest 门禁（T-2-13-A）
 =====================================
@@ -23,6 +24,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.ingest import IngestGate
 
 

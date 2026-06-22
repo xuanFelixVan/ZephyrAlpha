@@ -16,8 +16,6 @@ import sqlite3
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.governance.kb.graph_validator import (
     GraphValidator,
     ValidationIssue,
@@ -46,8 +44,15 @@ def _create_test_db(tmp_path: Path) -> Path:
     return db_path
 
 
-def _insert_ke(db_path: Path, ke_id: str, title: str = "Test", category: str = "general",
-               source_file: str = "test.md", fingerprint: str | None = None, status: str = "INDEXED") -> None:
+def _insert_ke(
+    db_path: Path,
+    ke_id: str,
+    title: str = "Test",
+    category: str = "general",
+    source_file: str = "test.md",
+    fingerprint: str | None = None,
+    status: str = "INDEXED",
+) -> None:
     conn = sqlite3.connect(str(db_path))
     conn.execute(
         "INSERT OR REPLACE INTO knowledge (ke_id, title, category, source_file, fingerprint_sha256, status, created_at, updated_at) "
@@ -163,7 +168,9 @@ class TestGraphValidator:
         file_a = tmp_path / "a.md"
         file_b = tmp_path / "b.md"
         file_a.write_text("Completely different content about apples and oranges and bananas.", encoding="utf-8")
-        file_b.write_text("Totally unrelated text about quantum physics and mathematics and algorithms.", encoding="utf-8")
+        file_b.write_text(
+            "Totally unrelated text about quantum physics and mathematics and algorithms.", encoding="utf-8"
+        )
         db_path = _create_test_db(tmp_path)
         with patch("zephyr.knowledge.kb.chromadb_init.get_chroma_client", return_value=_mock_chromadb_no_collections()):
             validator = _make_validator(db_path)

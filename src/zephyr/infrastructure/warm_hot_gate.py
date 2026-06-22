@@ -38,8 +38,8 @@ from enum import Enum
 from typing import Any
 
 __all__ = [
-    "WarmHotGate",
     "GateCheckResult",
+    "WarmHotGate",
     "WarmHotStatus",
 ]
 
@@ -119,9 +119,7 @@ class WarmHotGate:
 
         if any(msg for p, msg in checks if not p and "BLOCKING" in msg.upper()):
             result.status = WarmHotStatus.BLOCKED
-            result.blocking_issues = [
-                msg for _, msg in checks if "BLOCKING" in msg.upper()
-            ]
+            result.blocking_issues = [msg for _, msg in checks if "BLOCKING" in msg.upper()]
         elif result.checks_failed and self._require_all:
             result.status = WarmHotStatus.BLOCKED
             result.blocking_issues = result.checks_failed[:]
@@ -137,6 +135,7 @@ class WarmHotGate:
 
         try:
             from zephyr.infrastructure.contract_tester import ContractTester
+
             tester = ContractTester(strict=True)
             for cpath in contract_paths:
                 result = tester.test_contract(cpath)
@@ -153,6 +152,7 @@ class WarmHotGate:
 
         try:
             from zephyr.infrastructure.config_validator import ConfigValidator
+
             validator = ConfigValidator()
             for cp in config_paths:
                 result = validator.validate(cp, strict=True)
@@ -173,8 +173,10 @@ class WarmHotGate:
 
     def _verify_resources(self, context: dict) -> tuple[bool, str]:
         import shutil
+
         min_disk_free_mb = context.get("min_disk_free_mb", 100)
         import tempfile
+
         tmp_dir = tempfile.gettempdir()
         usage = shutil.disk_usage(tmp_dir)
         free_mb = usage.free / (1024 * 1024)

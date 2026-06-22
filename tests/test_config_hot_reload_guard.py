@@ -10,9 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_config_hot_reload_guard.py
 
-import time
-
-import pytest
 
 from zephyr.ops.resilience.config_hot_reload_guard import (
     ConfigConsistency,

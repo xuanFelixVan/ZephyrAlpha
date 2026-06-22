@@ -11,19 +11,21 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import os
 import tempfile
+
 import pytest
 
 try:
+    from zephyr.autonomy_core.context_assembler import AssemblyError
     from zephyr.autonomy_core.context_pipeline import (
+        ContextFourStageResult,
         run_context_four_stage,
         run_context_four_stage_or_raise,
-        ContextFourStageResult,
     )
-    from zephyr.autonomy_core.context_assembler import AssemblyError
 except Exception as _exc:
     pytest.skip(f"cannot import context_pipeline: {_exc}", allow_module_level=True)
 
@@ -51,7 +53,9 @@ class TestRunContextFourStage:
         assert result.injected is None
 
     def test_inject_mode_without_kb_repo_adds_warning(self):
-        result = run_context_four_stage([], require_absolute_manifest_paths=False, inject_mode="keyword", inject_query="test")
+        result = run_context_four_stage(
+            [], require_absolute_manifest_paths=False, inject_mode="keyword", inject_query="test"
+        )
         assert any("kb_repo" in w for w in result.pipeline_warnings)
 
 
@@ -66,7 +70,9 @@ class TestRunContextFourStageOrRaise:
             tmp = f.name
         try:
             manifest = [{"file_path": tmp, "reason": "test"}]
-            result = run_context_four_stage_or_raise(manifest, require_absolute_manifest_paths=False, compress_manifest=False)
+            result = run_context_four_stage_or_raise(
+                manifest, require_absolute_manifest_paths=False, compress_manifest=False
+            )
             assert result.g3_passed is True
         finally:
             os.unlink(tmp)

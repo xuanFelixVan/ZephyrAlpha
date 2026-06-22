@@ -13,8 +13,6 @@
 import os
 import tempfile
 
-import pytest
-
 from zephyr.ops.gates.blueprint_code_reconciler import BlueprintCodeReconciler, DriftReport
 
 

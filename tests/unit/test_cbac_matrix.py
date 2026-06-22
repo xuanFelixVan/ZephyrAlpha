@@ -6,12 +6,14 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """CBAC 矩阵单元测试——18条capability + checksum防篡改。"""
 
 
 import pytest
-from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
+
 from zephyr.governance.rule_enforcement.capability_checker import CapabilityChecker
+from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
 
 
 @pytest.fixture
@@ -44,7 +46,7 @@ def test_deny_unknown_action(checker):
     assert not checker.capability_check("orchestrator", "script_system", "shutdown")
 
 
-def test_audit_log_records( checker):
+def test_audit_log_records(checker):
     checker.capability_check("orchestrator", "script_system", "dispatch_task")
     checker.capability_check("script_system", "orchestrator", "invoke_gate")
     assert len(checker.audit_log()) >= 1

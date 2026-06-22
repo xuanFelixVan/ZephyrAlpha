@@ -92,18 +92,12 @@ class TestTrustScore:
         assert score.negative_deltas == 3
 
     def test_from_ledger_score_clamped_upper(self):
-        entries = [
-            TrustEntry(f"E{i}", "2026-01-01T00:00:00+00:00", 0.1, "ok", "rb")
-            for i in range(20)
-        ]
+        entries = [TrustEntry(f"E{i}", "2026-01-01T00:00:00+00:00", 0.1, "ok", "rb") for i in range(20)]
         score = TrustScore.from_ledger(entries)
         assert score.score <= 1.0
 
     def test_from_ledger_score_clamped_lower(self):
-        entries = [
-            TrustEntry(f"E{i}", "2026-01-01T00:00:00+00:00", -0.3, "crit", "rb")
-            for i in range(20)
-        ]
+        entries = [TrustEntry(f"E{i}", "2026-01-01T00:00:00+00:00", -0.3, "crit", "rb") for i in range(20)]
         score = TrustScore.from_ledger(entries)
         assert score.score >= -1.0
 

@@ -15,7 +15,9 @@ import time
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.config_reload_semantic", reason="config_reload_semantic not available")
+mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.config_reload_semantic", reason="config_reload_semantic not available"
+)
 ConfigReloadSemantic = mod.ConfigReloadSemantic
 
 

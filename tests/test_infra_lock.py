@@ -20,7 +20,9 @@
 # [TESTS] pytest tests/test_infra_lock.py -q
 
 import asyncio
+
 import pytest
+
 from zephyr.shared.shared_services.infra_06.lock import (
     LockError,
     LockHandle,
@@ -42,9 +44,7 @@ class TestLockHandle:
 class TestMemoryLock:
     def test_acquire_and_release(self):
         lock = MemoryLock()
-        handle = asyncio.get_event_loop().run_until_complete(
-            lock.acquire("resource-1")
-        )
+        handle = asyncio.get_event_loop().run_until_complete(lock.acquire("resource-1"))
         assert handle is not None
         assert handle.lock_name == "resource-1"
         released = asyncio.get_event_loop().run_until_complete(lock.release(handle))
@@ -119,5 +119,6 @@ class TestMemoryLock:
 class TestLockError:
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         err = LockError("locked", details={"name": "r1"})
         assert isinstance(err, ZephyrBaseError)

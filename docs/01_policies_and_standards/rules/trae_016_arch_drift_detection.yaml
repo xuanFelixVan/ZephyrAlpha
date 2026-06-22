@@ -1,5 +1,17 @@
 rule_id: TRAE-016
 title: 架构约束-漂移检测
+version: 1.2.0
+layer: L1
+module_id: TRAE-016
+depends_on:
+- TRAE-017
+tags:
+- TRAE
+- architecture_drift
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - ARCH-019
 - ARCH-020
@@ -7,7 +19,6 @@ aliases:
 - ARCH-022
 - ARCH-023
 - ARCH-024
-layer: L1
 severity: error
 scope: architecture_drift
 domain: TRAE
@@ -134,7 +145,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   version: "1.2.0"
   last_modified: "2026-06-21"
   change_history:

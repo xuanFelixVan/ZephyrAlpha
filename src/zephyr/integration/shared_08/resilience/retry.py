@@ -38,16 +38,14 @@ SSoT: MOD-INF-016 §2.6 shared-resilience
 Version: 0.1.0
 """
 
-
 from __future__ import annotations
 
 import asyncio
 import functools
 import logging
 import random
-import time
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Concatenate, ParamSpec, TypeVar
 
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
@@ -80,7 +78,7 @@ class RetryConfig:
 
     def delay_for_attempt(self, attempt: int) -> float:
         raw = min(
-            self.base_delay_seconds * (self.backoff_multiplier ** attempt),
+            self.base_delay_seconds * (self.backoff_multiplier**attempt),
             self.max_delay_seconds,
         )
         if self.jitter:

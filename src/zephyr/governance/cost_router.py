@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import logging
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -169,7 +168,7 @@ def route(
     return LLMProvider.DEEPSEEK
 
 
-def get_pricing(provider: LLMProvider) -> Optional[ModelPricing]:
+def get_pricing(provider: LLMProvider) -> ModelPricing | None:
     return PRICING_TABLE.get(provider)
 
 

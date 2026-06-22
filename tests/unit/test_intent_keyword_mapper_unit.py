@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for intent_keyword_mapper.py (T-2-21)
 =================================================
@@ -15,6 +16,7 @@ Minimum: 10 tests
 
 
 import pytest
+
 from zephyr.autonomy_core.intent_keyword_mapper import (
     IntentKeywordMapper,
     IntentResult,

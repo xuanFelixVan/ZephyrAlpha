@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_registry
+# [MODULE] zephyr.autonomy_core.skill_registry
 
 # [INVARIANTS] none
 
@@ -38,7 +38,6 @@ AI 施工约定：
 
 SSoT: MOD-INF-019 §12 盲点 B34
 """
-
 
 from __future__ import annotations
 
@@ -207,10 +206,10 @@ class SkillDefinition(BaseModel):
 
 
 __all__ = [
-    "PromptVariable",
     "PromptTemplate",
+    "PromptVariable",
     "SkillCategory",
-    "SkillParameter",
-    "SkillOutput",
     "SkillDefinition",
+    "SkillOutput",
+    "SkillParameter",
 ]

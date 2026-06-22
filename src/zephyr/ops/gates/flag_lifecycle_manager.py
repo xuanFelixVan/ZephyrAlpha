@@ -27,6 +27,7 @@ Risk: R11 — Dead flags create config debt and false diagnostic paths.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class FlagLifecycleManager:
     flags: dict[str, str] = field(default_factory=dict)

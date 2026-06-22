@@ -1,5 +1,17 @@
 rule_id: TRAE-014
 title: 架构约束-蓝图对齐
+version: 1.0.0
+layer: L1
+module_id: TRAE-014
+depends_on:
+- TRAE-042
+tags:
+- TRAE
+- architecture_blueprint
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - ARCH-007
 - ARCH-008
@@ -7,7 +19,6 @@ aliases:
 - ARCH-010
 - ARCH-011
 - ARCH-012
-layer: L1
 severity: error
 scope: architecture_blueprint
 domain: TRAE
@@ -132,6 +143,760 @@ sections:
     - version: "1.0.0"
       date: "2026-06-13"
       change: "从onboarding_detail.md §十五和project_rules.md RULE-TEN提取为TRAE-014规则YAML"
+  s1_1_purpose:
+    title: 目的
+    section_type: information
+    original_rules:
+    - PS-STD-005 §1.1
+    summary: 确保ZephyrAlpha项目每份蓝图具备可追溯、可定位、可归属、可扩展四个属性
+    key_points:
+    - 可追溯——从总蓝图到域蓝图到模块蓝图的完整引用链可逐级回溯
+    - 可定位——AI Agent新session冷启动时能从总蓝图逐级下钻到需要的模块蓝图
+    - 可归属——每份模块蓝图明确声明自己归属于哪个域集成蓝图
+    - 可扩展——新增领域时有明确的目录创建规则和ID命名空间
+  s1_2_scope:
+    title: 责任范围
+    section_type: information
+    original_rules:
+    - PS-STD-005 §1.2
+    summary: 本标准管理蓝图三级金字塔模型、目录存放位置、ID命名体系、归属声明、AI定位规则、注册表联动
+    manages:
+    - 蓝图的三级金字塔模型(System/Domain/Module)
+    - 每级蓝图的目录存放位置
+    - 蓝图ID命名体系
+    - 蓝图归属声明——frontmatter字段belongs_to
+    - AI Agent蓝图定位规则
+    - 注册表联动规则
+  s1_3_boundary:
+    title: 责任边界
+    section_type: information
+    original_rules:
+    - PS-STD-005 §1.3
+    summary: 本标准不覆盖单个蓝图章节结构、技术决策内容、审批流程、模块生命周期、frontmatter字段定义
+    not_covered:
+    - 单个蓝图的章节结构以blueprint_construction_template.md为准
+    - 蓝图内的技术决策内容各蓝图独立定义
+    - 蓝图审批流程以MOD-INF-006任务系统蓝图和gate-engine门禁规则为准
+    - 模块生命周期以GOV-MOD-003为准
+    - frontmatter字段定义以PS-STD-001为准
+  s2_ssot:
+    title: SSoT声明
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §2
+    conditions:
+    - type: constraint
+      check: 蓝图体系相关定义出现冲突时
+      pass: 以本标准对应的真源章节为准
+      fail: 多处定义不一致导致AI无法判断真源
+    ssot_table:
+    - content: 蓝图三级金字塔结构定义
+      source: 本标准§3
+    - content: 蓝图目录存放位置约定
+      source: 本标准§4
+    - content: 蓝图ID命名体系
+      source: 本标准§5
+    - content: 蓝图归属字段belongs_to合法值
+      source: 本标准§6
+    - content: AI Agent蓝图定位顺序
+      source: 本标准§7
+    - content: 蓝图注册表字段扩展blueprint_level
+      source: 本标准§8
+    prohibitions:
+    - 任何与本文档冲突的定义不以本文档为准
+  s3_1_pyramid_model:
+    title: 三级金字塔模型
+    section_type: information
+    original_rules:
+    - PS-STD-005 §3.1
+    summary: 蓝图体系采用三级金字塔结构——Level 0全系统总蓝图到Level 1功能域集成蓝图到Level 2单模块蓝图
+    levels:
+    - level: Level 0
+      name: SYSTEM-MASTER
+      id: MOD-MASTER-001
+      responsibility: 定义14层架构跨层数据契约和13个基础设施系统集成契约
+    - level: Level 1
+      name: DOMAIN
+      examples:
+      - MOD-MASTER-001(L01基础设施层集成蓝图)
+      - MOD-DOMAIN-SIG-001(L02因子+L03信号域)
+      - MOD-DOMAIN-RISK-001(L04-L07执行域)
+      - MOD-DOMAIN-ML-001(L11-L13 ML域)
+    - level: Level 2
+      name: MODULE
+      count: 19份模块蓝图
+  s3_2_three_level_def:
+    title: 三级定义
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §3.2
+    conditions:
+    - type: constraint
+      check: 创建或修改蓝图时
+      pass: 蓝图属性符合对应层级的定义
+      fail: 蓝图层级属性不匹配
+    level_definitions:
+      level_0:
+        blueprint_layer: SYSTEM
+        id_prefix: MOD-MASTER
+        responsibility: 定义14层架构之间的跨层数据契约和13个基础设施系统之间的集成契约
+        key_constraint: 总蓝图可以定义层间传什么不定义单个模块内部怎么干
+        loading_strategy: AI新session MUST首先定位总蓝图按需下钻到域蓝图
+      level_1:
+        blueprint_layer: DOMAIN
+        id_prefix: MOD-DOMAIN-{DOMAIN_CODE}
+        responsibility: 定义一个功能域内的多个系统/层之间的集成关系
+        key_constraint: 域蓝图只定义域内集成不重复模块蓝图的内部架构
+      level_2:
+        blueprint_layer: MODULE
+        id_prefix: MOD-{LAYER}-{NNN}或MOD-{DOMAIN}-{NNN}
+        responsibility: 定义单个系统/模块的完整设计——边界、状态机、Schema、API、存储、门禁
+        key_constraint: 模块蓝图引用集成合同但集成合同的定义在上级蓝图
+        loading_strategy: AI仅在需要该模块时阅读完整蓝图
+  s3_3_creation_triggers:
+    title: 三级蓝图存在条件与创建规则
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §3.3
+    conditions:
+    - type: trigger
+      check: 创建新蓝图时
+      pass: 满足对应层级的创建条件并通过前置闸门
+      fail: 不满足创建条件或前置闸门未通过
+    creation_rules:
+    - level: Level 0
+      condition: 系统≥3个功能域且出现跨域数据契约需求
+      pre_gate: 无(Level 0有且仅有一份)
+    - level: Level 1
+      condition: 某一域内模块≥5且出现≥3组跨模块交互
+      pre_gate: 域蓝图声明的responsibility_domain必须不与任何已有域蓝图重叠
+    - level: Level 2
+      condition: 每创建一个新的功能模块
+      pre_gate: 'GOV-MOD-001 §7 #5 功能域重叠检查通过'
+    prohibitions:
+    - Level 2创建前未通过GOV-MOD-001功能域重叠检查
+    - 为已被覆盖的功能域创建平行蓝图
+  s4_1_directory_tree:
+    title: 整体目录树
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §4.1
+    conditions:
+    - type: constraint
+      check: 创建蓝图目录时
+      pass: 目录结构符合三级金字塔目录树约定
+      fail: 目录结构混乱导致蓝图无法定位
+    directory_structure:
+      root: docs/03_modules/
+      level_0_dir: _system-master/
+      level_1_dirs:
+      - _master-blueprint/
+      - _domain-l02-l03/
+      - _domain-l04-l07/
+      - _domain-l11-l13/
+      level_2_dirs:
+      - _cross_layer/
+      - l00_data_source/
+      - l01_infrastructure/
+      - l02_alpha_factor/
+      - l03_signal_generation/
+      - l04_risk_management/
+      - l05_portfolio_construction/
+      - l06_trade_execution/
+      - l07_post_trade_analytics/
+      - l08_human_ai_interface/
+      - l09_research_innovation/
+      - l10_compliance/
+      - l11_ml_platform/
+      - l12_system_telemetry/
+      - l13_experimentation/
+      catalogs_dir: 99_catalogs/
+  s4_2_dir_naming:
+    title: 目录命名规则
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §4.2
+    conditions:
+    - type: constraint
+      check: 创建蓝图目录时
+      pass: 目录名符合命名约定表
+      fail: 目录名不规范导致层次混乱
+    naming_rules:
+    - dir_type: Level 0总蓝图
+      convention: _system-master/
+      example: _system-master/
+    - dir_type: Level 1域蓝图
+      convention: _domain-{layer-range}/
+      example: _domain-l02-l03/
+    - dir_type: Level 2模块蓝图
+      convention: l{NN}_{name}/
+      example: l01_infrastructure/
+    - dir_type: 模块子目录
+      convention: '{module-name}/'
+      example: task-system/
+    - dir_type: 交付记录子目录
+      convention: delivery/
+      example: delivery/
+    rules:
+    - Level 0和Level 1的蓝图目录以_下划线前缀与Level 2模块目录区分
+    - Level 2的模块目录以层级编号l{NN}开头对齐module-registry.yaml的layer字段
+    - 所有目录名全小写kebab-case禁止大写中文空格
+  s4_3_filename_rules:
+    title: 蓝图文件名约定
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §4.3
+    conditions:
+    - type: constraint
+      check: 创建蓝图文件时
+      pass: 文件名符合对应层级约定
+      fail: 文件名不规范导致AI无法定位
+    filename_rules:
+    - blueprint_type: Level 0总蓝图
+      filename: system-master-blueprint.md
+      example: MOD-MASTER-001
+    - blueprint_type: Level 1域蓝图
+      filename: domain-integration-blueprint.md
+      example: MOD-DOMAIN-SIG-001
+    - blueprint_type: Level 2模块蓝图
+      filename: blueprint.md
+      example: MOD-INF-006/blueprint.md
+    rules:
+    - Level 2模块蓝图文件名统一是blueprint.md——模块名在目录名中
+    - Level 0/1蓝图文件名描述性命名——目录下只有一份独立蓝图文件
+  s5_1_id_prefix:
+    title: ID前缀约定
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §5.1
+    conditions:
+    - type: constraint
+      check: 创建蓝图ID时
+      pass: ID前缀符合对应层级约定
+      fail: ID前缀不规范导致层级混乱
+    id_prefix_table:
+    - level: Level 0总蓝图
+      prefix: SYS-MASTER
+      format: SYS-MASTER-NNN
+      example: SYS-MASTER-001
+    - level: Level 1域蓝图
+      prefix: MOD-DOMAIN
+      format: MOD-DOMAIN-{CODE}-NNN
+      example: MOD-DOMAIN-L01-001
+    - level: Level 2模块蓝图
+      prefix: MOD-{LAYER/DOMAIN}
+      format: MOD-{LAYER}-NNN或MOD-{DOMAIN}-NNN
+      example: MOD-INF-006
+    - level: Level 2基础设施模块
+      prefix: MOD-INF
+      format: MOD-INF-NNN
+      example: MOD-INF-005
+    - level: Level 2知识库模块
+      prefix: MOD-KB
+      format: MOD-KB-NNN
+      example: MOD-KB-001
+    - level: Level 2数据源模块
+      prefix: MOD-DS
+      format: MOD-DS-NNN
+      example: MOD-DS-001
+    - level: Level 2因子模块
+      prefix: MOD-AF
+      format: MOD-AF-NNN
+      example: MOD-AF-001
+    - level: Level 2信号模块
+      prefix: MOD-SIG
+      format: MOD-SIG-NNN
+      example: MOD-SIG-001
+    - level: Level 2风控模块
+      prefix: MOD-RISK
+      format: MOD-RISK-NNN
+      example: MOD-RISK-001
+    - level: Level 2组合模块
+      prefix: MOD-PC
+      format: MOD-PC-NNN
+      example: MOD-PC-001
+    - level: Level 2执行模块
+      prefix: MOD-EXE
+      format: MOD-EXE-NNN
+      example: MOD-EXE-001
+    - level: Level 2归因模块
+      prefix: MOD-PTA
+      format: MOD-PTA-NNN
+      example: MOD-PTA-001
+    - level: Level 2人机模块
+      prefix: MOD-UI
+      format: MOD-UI-NNN
+      example: MOD-UI-001
+    - level: Level 2研创模块
+      prefix: MOD-RES
+      format: MOD-RES-NNN
+      example: MOD-RES-001
+    - level: Level 2合规模块
+      prefix: MOD-CMP
+      format: MOD-CMP-NNN
+      example: MOD-CMP-001
+    - level: Level 2 ML模块
+      prefix: MOD-ML
+      format: MOD-ML-NNN
+      example: MOD-ML-001
+    - level: Level 2实验模块
+      prefix: MOD-EXP
+      format: MOD-EXP-NNN
+      example: MOD-EXP-001
+  s5_2_legacy_compat:
+    title: 既存蓝图ID兼容性
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §5.2
+    conditions:
+    - type: constraint
+      check: 处理既存蓝图ID时
+      pass: 既存蓝图ID保持不动遵循相容性规则
+      fail: 强制改名导致引用断裂
+    compatibility_table:
+    - existing_id: MOD-MASTER-001
+      new_level: Level 1当前→Level 0 beta升级后
+      note: 当前承担L01域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
+    - existing_id: MOD-INF-001~017
+      new_level: Level 2 MODULE
+      note: 不涉及不兼容
+    - existing_id: MOD-KB-001
+      new_level: Level 2 MODULE
+      note: 不涉及不兼容
+    - existing_id: MOD-INF-003(deprecated)
+      new_level: Level 2 MODULE
+      note: 已废弃兼容性不适用
+    - existing_id: MOD-INF-004(deprecated)
+      new_level: Level 2 MODULE
+      note: 已废弃兼容性不适用
+    rules:
+    - 既存蓝图不强制改名——新标准只要求新增蓝图遵循ID体系
+    - 既存蓝图在第一份该层的experimental升级蓝图时自然迁移
+  s6_1_belongs_to:
+    title: belongs_to字段
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §6.1
+    conditions:
+    - type: constraint
+      check: 创建或修改Level 2模块蓝图时
+      pass: frontmatter声明belongs_to字段指向上级蓝图
+      fail: 缺少belongs_to导致蓝图无归属
+    actions:
+    - type: mandatory
+      step: Level 2模块蓝图MUST在frontmatter中声明belongs_to字段指向其上级蓝图
+    belongs_to_values:
+    - condition: 1期创建的模块蓝图
+      value: MOD-MASTER-001
+      reason: 当前只有这个域蓝图
+    - condition: beta+创建的L02因子蓝图
+      value: MOD-DOMAIN-SIG-001
+      reason: 信号域集成蓝图待创建
+    - condition: beta+创建的L06执行蓝图
+      value: MOD-DOMAIN-RISK-001
+      reason: 执行域集成蓝图待创建
+    - condition: 跨层基础设施模块
+      value: SYS-MASTER-001
+      reason: 全系统总蓝图
+    example: 'module_id: MOD-INF-006; belongs_to: MOD-MASTER-001'
+  s6_2_domain_belongs_to:
+    title: 域蓝图的belongs_to
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §6.2
+    conditions:
+    - type: constraint
+      check: 创建Level 1域蓝图时
+      pass: 域蓝图声明belongs_to指向Level 0总蓝图
+      fail: 域蓝图无上级导致金字塔断裂
+    actions:
+    - type: mandatory
+      step: Level 1域蓝图MUST声明belongs_to指向Level 0总蓝图
+    example: 'module_id: MOD-DOMAIN-SIG-001; belongs_to: SYS-MASTER-001'
+  s6_3_references:
+    title: references字段
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §6.3
+    conditions:
+    - type: constraint
+      check: Level 2模块蓝图需要声明直接依赖时
+      pass: frontmatter声明references字段列出直接依赖的其他模块蓝图
+      fail: 依赖关系平铺在depends_on或body文本中无法机器读取
+    actions:
+    - type: recommended
+      step: Level 2模块蓝图SHOULD在frontmatter中声明references字段——列出其直接依赖的其他模块蓝图(同级Level 2)
+    rationale: references字段提供字段级引用追踪——改了某一蓝图时能机器扫描哪些其他蓝图引用了我
+    example_references:
+    - id: MOD-INF-005
+      at: §3~§5
+      why: Finding Schema和脚本system exit code约定
+    - id: MOD-INF-007
+      at: §1
+      why: G0-G7门禁判决逻辑
+  s6_4_traceability:
+    title: 引用链可追踪性
+    section_type: information
+    original_rules:
+    - PS-STD-005 §6.4
+    summary: 蓝图引用链从SYS-MASTER-001逐级下钻到模块蓝图形成完整可追踪树
+    traceability_tree:
+    - level: Level 0
+      id: SYS-MASTER-001
+    - level: Level 1
+      id: MOD-DOMAIN-L01-001
+      belongs_to: SYS-MASTER-001
+    - level: Level 2
+      id: MOD-INF-006
+      belongs_to: MOD-DOMAIN-L01-001
+      references:
+      - MOD-INF-005
+      - MOD-INF-007
+  s7_1_cold_start:
+    title: 新Session冷启动定位路径
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §7.1
+    conditions:
+    - type: trigger
+      check: AI新session冷启动时
+      pass: 按六级路径逐级下钻定位蓝图
+      fail: 跳过Level 0/1直接读Level 2导致缺跨系统上下文
+    cold_start_path:
+    - step: Step 1
+      action: AI读AGENTS.md(项目入口)
+    - step: Step 2
+      action: AGENTS.md跳转PS-STD-005(本标准蓝图体系总设计)
+    - step: Step 3
+      action: PS-STD-005定位Level 0总蓝图路径
+    - step: Step 4
+      action: Level 0总蓝图分派到Level 1域蓝图
+    - step: Step 5
+      action: Level 1域蓝图定位到Level 2模块蓝图
+    - step: Step 6
+      action: Level 2模块蓝图实现任务开发
+    prohibitions:
+    - 跳过Level 0直接读Level 2——没有跨系统上下文
+  s7_2_token_strategy:
+    title: Token加载策略
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §7.2
+    conditions:
+    - type: constraint
+      check: 加载蓝图内容时
+      pass: 按三层内存模型分配Token预算
+      fail: 一次性加载所有蓝图导致Token溢出
+    token_strategy:
+    - layer: 热内存
+      strategy: 自动加载(每次会话)
+      content: PS-STD-005 §3+§4+§7+Level 0总蓝图§1(系统清单+拓扑图)
+      token_budget: '~800'
+      loading: AGENTS.md自动注入
+    - layer: 领域触发
+      strategy: 领域触发(按任务)
+      content: 对应Level 1域集成蓝图+该域内≥3个Module蓝图§1
+      token_budget: '~2000'
+      loading: Gate Engine或Pipeline Router自动加载
+    - layer: 冷内存
+      strategy: 按需检索(Index→full)
+      content: Level 2模块蓝图全文§1-§12
+      token_budget: '~8000/模块'
+      loading: MCP检索+CE build→compress→inject
+    codified_context_mapping:
+    - codified_tier: Tier 1 Constitution(热记忆660行)
+      zephyralpha: Level 0总蓝图§0+Level 1域蓝图§1
+    - codified_tier: Tier 2 Domain Experts(19 Agent按触发)
+      zephyralpha: Level 1域蓝图+本域内的Level 2模块蓝图
+    - codified_tier: Tier 3 Knowledge Base(34按需检索)
+      zephyralpha: Level 2模块蓝图§1-§12全文+02_enterprise_architecture/架构视图
+    cold_start_checklist: 新AI session打开项目后MUST先读§2 SSoT声明的真源(§3蓝图金字塔+§4目录结构)再按§7.1逐级下钻
+  s8_1_blueprint_registry:
+    title: blueprint-registry.yaml扩展
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §8.1
+    conditions:
+    - type: constraint
+      check: 维护blueprint-registry.yaml时
+      pass: 每条blueprints[]记录包含blueprint_level字段
+      fail: 缺少blueprint_level导致层级不可机器读取
+    actions:
+    - type: mandatory
+      step: 在每条blueprints[]记录中新增blueprint_level字段——值为SYSTEM/DOMAIN/MODULE
+    level_values:
+    - value: system
+      meaning: Level 0全系统总蓝图
+      id_prefix: SYS-MASTER或MOD-MASTER(1变体)
+    - value: domain
+      meaning: Level 1功能域集成蓝图
+      id_prefix: MOD-DOMAIN或MOD-MASTER(1变体)
+    - value: module
+      meaning: Level 2单模块蓝图
+      id_prefix: MOD-{LAYER/DOMAIN}
+  s8_2_module_registry:
+    title: module-registry.yaml扩展
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §8.2
+    conditions:
+    - type: constraint
+      check: 维护module-registry.yaml时
+      pass: 每条modules[]记录的blueprint下包含parent_blueprint字段
+      fail: 缺少parent_blueprint导致模块与蓝图关系断裂
+    actions:
+    - type: recommended
+      step: 在每条modules[]记录的blueprint下新增parent_blueprint字段——指向上级蓝图ID
+  s9_legacy_mapping:
+    title: 既存蓝图的归属映射
+    section_type: information
+    original_rules:
+    - PS-STD-005 §9
+    summary: 1阶段既存的19份蓝图的归属映射——所有Level 2模块蓝图的上级都是MOD-MASTER-001
+    legacy_mapping:
+    - module_id: MOD-MASTER-001
+      title: 集成闭环总蓝图
+      belongs_to: 域蓝图层
+      blueprint_level: domain
+    - module_id: MOD-INF-001
+      title: 容量保障体系
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-002
+      title: 运行时集成
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-003
+      title: 任务卡+KMS(deprecated)
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-004
+      title: Vibe Coding双管线(deprecated)
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-005
+      title: 脚本系统
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-006
+      title: 任务系统
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-KB-001
+      title: 知识库
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-007
+      title: Gate Engine
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-008
+      title: Context Engine
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-009
+      title: Pipeline
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-010
+      title: Feedback Loop
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-011
+      title: Vector Memory
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-012
+      title: Database
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-013
+      title: MCP Servers
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-014
+      title: LLM Security
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-015
+      title: System Telemetry
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-016
+      title: Shared+Core
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    - module_id: MOD-INF-017
+      title: Code Dedup Engine
+      belongs_to: MOD-MASTER-001
+      blueprint_level: module
+    note: 1阶段所有Level 2模块蓝图的上级都是MOD-MASTER-001即L01基础设施域集成蓝图beta+时L02+的模块蓝图将归属到新建的对应Level 1域蓝图
+  s10_prohibitions:
+    title: 禁止行为
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §10
+    conditions:
+    - type: constraint
+      check: 创建或修改蓝图时
+      pass: 不违反任何禁止行为
+      fail: 违反禁止行为导致蓝图体系混乱
+    prohibitions:
+    - 创建蓝图时不声明belongs_to字段——AI无法判断蓝图在金字塔中的位置
+    - 将Level 2模块蓝图混放在Level 0/1的_前缀目录下——ID命名空间混乱层次关系不可恢复
+    - Level 2模块蓝图文件名用{module}-blueprint.md——目录名已经承载模块名重复
+    - 在Level 2模块蓝图中定义跨系统的CT-*合同——合同应该在上级域蓝图/总蓝图
+    - AI新session跳过Level 0直接读Level 2——缺跨系统上下文
+    - 在既存蓝图frontmatter中加入belongs_to时改module_id或status——仅新增frontmatter字段即可
+    - 为已被覆盖的功能域创建平行蓝图——需要新范围时应升级原蓝图而非创建同级新蓝图
+    upgrade_priority:
+    - 1升级原蓝图(version bump+changelog在既存蓝图中新增节)
+    - 2拆分原蓝图为父蓝图+子蓝图(须声明responsibility_domain+covers[])
+    - 禁止创建平行蓝图后合并
+  s11_std_relations:
+    title: 与已有标准的关系
+    section_type: information
+    original_rules:
+    - PS-STD-005 §11
+    summary: 本标准与PS-STD系列其他标准的关系——登记表层标准后果可逆
+    relations:
+    - std: PS-STD-000宪法
+      responsibility: 规则怎么分类
+      relation: 本标准是登记表层标准——后果可逆(重组目录归属是可逆操作)
+    - std: PS-STD-001字段
+      responsibility: frontmatter字段定义
+      relation: belongs_to字段的定义以本标准为准不与其他字段冲突
+    - std: PS-STD-002模板
+      responsibility: 单个标准怎么写
+      relation: 本标准遵循PS-STD-002的Common Core+该子类型的条件章节
+    - std: PS-STD-003行为边界
+      responsibility: ABS/COND/REC
+      relation: 本标准的禁止行为在本§10因果关系可逆——违反即重组目录归属不需要纳入宪法
+  s12_normative_refs:
+    title: 标准间引用规范
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §12
+    conditions:
+    - type: constraint
+      check: 引用其他标准或文档时
+      pass: 按规范性引用和资料性引用分类
+      fail: 引用混乱导致真源不清
+    normative_references:
+    - document: 01_policies_and_standards/templates/blueprint-construction-template.md
+      content: 蓝图模板——单份蓝图的章节结构
+      conflict_authority: 蓝图模板
+    - document: PS-STD-000(meta_standard_constitution.yaml)
+      content: 元标准宪法——规则分类(标准vs宪法)
+      conflict_authority: PS-STD-000
+    - document: PS-STD-001(metadata_registry.yaml)
+      content: frontmatter字段定义
+      conflict_authority: PS-STD-001
+    - document: PS-STD-002(document_structure_standard.yaml)
+      content: L1标准模板——格式定义型子类型适用的章节集
+      conflict_authority: PS-STD-002
+    - document: 03_modules/module-registry.yaml
+      content: 模块生命周期登记
+      conflict_authority: module-registry.yaml
+    - document: 03_modules/blueprint-registry.yaml
+      content: 蓝图深度评估
+      conflict_authority: 本标准+blueprint-registry.yaml(§8.1扩展字段以本标准为准)
+    informative_references:
+    - Codified Context(arXiv 2602.20478)——三层记忆模型(设计参考)
+    - Microsoft Edge AI Blueprint Architecture——master-blueprint→domain-blueprint→component层级(设计参考)
+    - HP Inc AI-Blueprints specification.md——specification.md vs blueprint.md双层分离(设计参考)
+    - TOGAF Architecture Repository——COBIT对齐架构仓库分级存放
+  s13_exception_exemption:
+    title: 异常豁免机制
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §13
+    conditions:
+    - type: constraint
+      check: 临时性违反本标准时
+      pass: 符合豁免级别定义并满足触发条件
+      fail: 无豁免依据的违反视为违规
+    exemption_levels:
+    - level: 瞬态豁免
+      definition: 1既有蓝图不强制立即声明belongs_to
+      trigger: 现有蓝图>20份且Owner判断立即声明成本过高
+      approval: 本声明即可——Owner已知
+    - level: 建设豁免
+      definition: 目录迁移中允许暂时存在双目录(旧目录+新目录)
+      trigger: 目录迁移过程中必须不能一次切换
+      approval: Owner口头批准
+    failure_condition: 本标准发布后experimental结束时(任务系统v0.3.0升级完成+GateEngine G7完整度门禁激活)所有既存蓝图MUST已声明belongs_to届时瞬态豁免自动失效
+  s14_ai_consumable:
+    title: AI可消费性声明
+    section_type: information
+    original_rules:
+    - PS-STD-005 §14
+    summary: 本标准的AI可消费性维度——语义无歧义上下文自足示例充分Token估算AI工具兼容性
+    dimensions:
+    - dimension: 语义无歧义
+      status: pass
+      note: MUST/SHOULD/MAY精确使用所有约定有对照表
+    - dimension: 上下文自足
+      status: pass
+      note: 不需要读外部文档即可执行目录创建和ID生成
+    - dimension: 示例充分
+      status: pass
+      note: 每项规则覆盖目录创建和ID生成
+    - dimension: Token估算
+      status: '~3000 tokens'
+      note: 最小必读§3+§4+§5(ID命名)+§7(定位)+§9(归属映射)——约1200 tokens
+    - dimension: AI工具兼容性
+      status: pass
+      note: 全文Markdown+YAML对照表——AI可直接消费无需额外推理
+  s15_self_check:
+    title: 完整性自检清单
+    section_type: information
+    original_rules:
+    - PS-STD-005 §15
+    summary: 本标准由AI Agent生成自检清单为SHOULD(可选)——不具备独立验证力
+    checklist:
+    - section: §1目的与范围
+      items: 目的责任范围(管什么)责任边界(不管什么)
+      status: pass
+    - section: §2 SSoT声明
+      items: 真源/非真源表格+以本标准为准
+      status: pass
+    - section: §3主体内容
+      items: 三级金字塔完整定义(Level 0/1/2属性+职责+条件)
+      status: pass
+    - section: §4目录结构约定
+      items: 整体目录树+命名规则表
+      status: pass
+    - section: §5蓝图ID命名体系
+      items: ID前缀表+两层ID前缀完整覆盖14层
+      status: pass
+    - section: §6蓝图归属与引用链
+      items: belongs_to字段定义+references+引用链图
+      status: pass
+    - section: §7 AI Agent蓝图定位规则
+      items: 冷启动路径+Token预算+Codified Context对照
+      status: pass
+    - section: §8注册表联动
+      items: blueprint-registry.yaml+module-registry.yaml新增字段
+      status: pass
+    - section: §9既存蓝图归属映射
+      items: 19份既存蓝图→belongs_to映射
+      status: pass
+    - section: §10禁止行为
+      items: 7条MUST NOT
+      status: pass
+    - section: §14 AI可消费性声明
+      items: 可理解性+Token预算
+      status: pass
+    - section: §12标准间引用
+      items: normative/informative分离
+      status: pass
+    - section: §5.2既存蓝图相容性
+      items: ID不变
+      status: pass
+    - section: frontmatter完整
+      items: 所有PS-STD-001定义的必填字段
+      status: pass
 references:
   rule_ids:
   - TRAE-042
@@ -152,7 +917,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

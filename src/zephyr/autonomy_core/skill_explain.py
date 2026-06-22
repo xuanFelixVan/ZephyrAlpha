@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_explain | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_explain
+# [MODULE] zephyr.autonomy_core.skill_explain
 
 # [INVARIANTS] none
 
@@ -34,11 +34,9 @@ XAI 可解释性引擎
   4. CounterfactualWhatIf: 如果选了其他 Skill 会怎样
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class SkillExplain:
@@ -50,45 +48,55 @@ class SkillExplain:
         skill_id: str,
         task_description: str,
         matched_stage: str,
-        matched_keywords: List[str],
-    ) -> Dict[str, Any]:
+        matched_keywords: list[str],
+    ) -> dict[str, Any]:
         chain = []
 
-        chain.append({
-            "step": 1,
-            "label": "trigger_received",
-            "detail": f"Pipeline dispatched task with stage='{matched_stage}'",
-            "confidence": 1.0,
-        })
+        chain.append(
+            {
+                "step": 1,
+                "label": "trigger_received",
+                "detail": f"Pipeline dispatched task with stage='{matched_stage}'",
+                "confidence": 1.0,
+            }
+        )
 
         keyword_detail = ", ".join(matched_keywords[:5]) if matched_keywords else "no keyword match"
-        chain.append({
-            "step": 2,
-            "label": "keyword_extraction",
-            "detail": f"Extracted keywords: {keyword_detail}",
-            "confidence": 0.9 if matched_keywords else 0.3,
-        })
+        chain.append(
+            {
+                "step": 2,
+                "label": "keyword_extraction",
+                "detail": f"Extracted keywords: {keyword_detail}",
+                "confidence": 0.9 if matched_keywords else 0.3,
+            }
+        )
 
-        chain.append({
-            "step": 3,
-            "label": "skill_lookup",
-            "detail": f"Looked up skill '{skill_id}' in registry via TriggerRouter",
-            "confidence": 0.85 if matched_keywords else 0.5,
-        })
+        chain.append(
+            {
+                "step": 3,
+                "label": "skill_lookup",
+                "detail": f"Looked up skill '{skill_id}' in registry via TriggerRouter",
+                "confidence": 0.85 if matched_keywords else 0.5,
+            }
+        )
 
-        chain.append({
-            "step": 4,
-            "label": "skill_loaded",
-            "detail": f"Progressive disclosure loaded L0+L1+L2 for skill '{skill_id}'",
-            "confidence": 0.80,
-        })
+        chain.append(
+            {
+                "step": 4,
+                "label": "skill_loaded",
+                "detail": f"Progressive disclosure loaded L0+L1+L2 for skill '{skill_id}'",
+                "confidence": 0.80,
+            }
+        )
 
-        chain.append({
-            "step": 5,
-            "label": "skill_injected",
-            "detail": f"Injected skill context into Pipeline module context",
-            "confidence": 0.75,
-        })
+        chain.append(
+            {
+                "step": 5,
+                "label": "skill_injected",
+                "detail": "Injected skill context into Pipeline module context",
+                "confidence": 0.75,
+            }
+        )
 
         return {
             "skill_id": skill_id,
@@ -102,26 +110,41 @@ class SkillExplain:
         cls,
         task_description: str,
         chosen_skill_id: str,
-        alternatives: List[str],
-    ) -> Dict[str, Any]:
-        factors: Dict[str, float] = {}
+        alternatives: list[str],
+    ) -> dict[str, Any]:
+        factors: dict[str, float] = {}
         task_lower = task_description.lower()
 
         keyword_weights = {
-            "database": 0.95, "migration": 0.90, "sql": 0.85,
-            "mcp": 0.90, "tool": 0.75, "server": 0.80,
-            "context": 0.85, "ctx": 0.70,
-            "feedback": 0.80, "loop": 0.65,
-            "gate": 0.85, "rbac": 0.90, "permission": 0.85,
-            "blueprint": 0.95, "audit": 0.90, "drift": 0.80,
-            "knowledge": 0.80, "kb": 0.70,
-            "rollback": 0.90, "undo": 0.75,
-            "vector": 0.85, "memory": 0.75,
-            "a2a": 0.90, "agent": 0.80,
-            "security": 0.95, "injection": 0.90,
+            "database": 0.95,
+            "migration": 0.90,
+            "sql": 0.85,
+            "mcp": 0.90,
+            "tool": 0.75,
+            "server": 0.80,
+            "context": 0.85,
+            "ctx": 0.70,
+            "feedback": 0.80,
+            "loop": 0.65,
+            "gate": 0.85,
+            "rbac": 0.90,
+            "permission": 0.85,
+            "blueprint": 0.95,
+            "audit": 0.90,
+            "drift": 0.80,
+            "knowledge": 0.80,
+            "kb": 0.70,
+            "rollback": 0.90,
+            "undo": 0.75,
+            "vector": 0.85,
+            "memory": 0.75,
+            "a2a": 0.90,
+            "agent": 0.80,
+            "security": 0.95,
+            "injection": 0.90,
         }
 
-        scores: Dict[str, float] = {}
+        scores: dict[str, float] = {}
         for kw, weight in keyword_weights.items():
             if kw in task_lower:
                 for alt in alternatives:
@@ -147,18 +170,20 @@ class SkillExplain:
     def _counterfactual(
         cls,
         chosen: str,
-        alternatives: List[str],
-        scores: Dict[str, float],
-    ) -> List[Dict[str, Any]]:
-        results: List[Dict[str, Any]] = []
+        alternatives: list[str],
+        scores: dict[str, float],
+    ) -> list[dict[str, Any]]:
+        results: list[dict[str, Any]] = []
         for alt in alternatives:
             if alt != chosen:
                 alt_score = scores.get(alt, 0.1)
-                results.append({
-                    "skill": alt,
-                    "estimated_accuracy": round(alt_score, 2),
-                    "diff_from_chosen": round(min(0.95, scores.get(chosen, 0.7)) - alt_score, 2),
-                })
+                results.append(
+                    {
+                        "skill": alt,
+                        "estimated_accuracy": round(alt_score, 2),
+                        "diff_from_chosen": round(min(0.95, scores.get(chosen, 0.7)) - alt_score, 2),
+                    }
+                )
         return sorted(results, key=lambda x: -x["estimated_accuracy"])[:3]
 
     @classmethod
@@ -167,12 +192,13 @@ class SkillExplain:
         skill_id: str,
         output_quality: float,
         llm_model: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         skill_factor = 0.0
         llm_factor = 0.0
 
         try:
             from zephyr.autonomy_core.skill_evaluator import SkillEvaluator
+
             eval_result = SkillEvaluator.evaluate(skill_id)
             skill_factor = eval_result.get("overall_score", 50.0) / 100.0
         except Exception:
@@ -180,6 +206,7 @@ class SkillExplain:
 
         try:
             from zephyr.autonomy_core.skill_model_evolution import SkillModelEvolution
+
             impact = SkillModelEvolution.assess_impact(skill_id, "deepseek-v3", llm_model)
             llm_score = impact.get("overall_score", 100.0)
             llm_factor = llm_score / 100.0

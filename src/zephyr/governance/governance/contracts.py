@@ -8,14 +8,15 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """G-CT-003 消费端 — Escalation.on_rollback_failure() + G-CT-004/G-CT-006/G-CT-008 升级入口."""
 
 from typing import Any
 
 from zephyr.integration.shared_08.contracts.rollback_types import RollbackResult
+
 
 class EscalationContracts:
     """升级协议入口 — G-CT-003/004/006/008 消费端."""

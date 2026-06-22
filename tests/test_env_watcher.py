@@ -21,12 +21,9 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
-import pytest
-
-from zephyr.governance.env_watcher import EnvWatcher, EnvChangeAlert
+from zephyr.governance.env_watcher import EnvChangeAlert, EnvWatcher
 
 
 class TestEnvWatcherInit:

@@ -67,12 +67,14 @@ class WireheadingPrevention:
         actual = hashlib.sha256(definition.encode("utf-8")).hexdigest()[:32]
 
         if actual != expected:
-            self.modification_attempts.append({
-                "metric": name,
-                "time": time.time(),
-                "expected_hash": expected,
-                "actual_hash": actual,
-            })
+            self.modification_attempts.append(
+                {
+                    "metric": name,
+                    "time": time.time(),
+                    "expected_hash": expected,
+                    "actual_hash": actual,
+                }
+            )
             if len(self.modification_attempts) >= 3:
                 self._trigger_safe_mode()
             self.state = WireheadState.ATTEMPT_DETECTED

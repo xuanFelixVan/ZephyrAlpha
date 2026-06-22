@@ -13,14 +13,13 @@
 #                  PERMISSION_DENIED: 静默跳过该进程
 # [TESTS] test_speed_baseline_checker.py
 
+import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-import time
 
 import psutil
 import yaml
-
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 _MANIFEST_PATH = _PROJECT_ROOT / "scripts" / "script-manifest.yaml"
@@ -171,10 +170,10 @@ def check_speed_anomalies() -> SpeedCheckResult:
 
 
 __all__ = [
-    "SpeedCategory",
     "SPEED_THRESHOLDS",
     "SpeedAnomaly",
-    "SpeedCheckResult",
     "SpeedBaselineChecker",
+    "SpeedCategory",
+    "SpeedCheckResult",
     "check_speed_anomalies",
 ]

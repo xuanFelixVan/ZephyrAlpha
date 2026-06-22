@@ -31,7 +31,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
 
 
 class GateVerdict(str, Enum):
@@ -79,35 +78,37 @@ class ActionContext:
 
 @dataclass
 class SafetyGatePipeline:
-    gates: list[tuple[str, GateType]] = field(default_factory=lambda: [
-        ("L1_BASIC_THRESHOLD", GateType.HARD),
-        ("L2_FREQUENCY_LIMIT", GateType.SOFT),
-        ("L3_TRADING_SILENCE", GateType.WARN),
-        ("L4_DEPENDENCY_HEALTH", GateType.HARD),
-        ("L5_BUDGET_ENFORCE", GateType.HARD),
-        ("L6_ROLLBACK_INTEGRITY", GateType.HARD),
-        ("L7_IDEMPOTENCY", GateType.HARD),
-        ("L8_CONFIG_AS_CODE", GateType.WARN),
-        ("L9_FLAG_INTERACTION", GateType.SOFT),
-        ("L10_DB_INTEGRITY", GateType.HARD),
-        ("L11_PROVENANCE_CHAIN", GateType.HARD),
-        ("L12_SCHEMA_VERSIONING", GateType.HARD),
-        ("L13_SESSION_AWARE", GateType.WARN),
-        ("L14_RBAC", GateType.HARD),
-        ("L15_DEPLOY_SECURITY", GateType.HARD),
-        ("L16_ONLINE_ADAPTATION", GateType.WARN),
-        ("L17_AUTONOMY_BOUNDARY", GateType.HARD),
-        ("L18_CONTINUAL_LEARNING", GateType.WARN),
-        ("L19_COGNITIVE_OVERLOAD", GateType.SOFT),
-        ("L20_FLE_INTEGRITY", GateType.HARD),
-        ("L21_SUPPLY_CHAIN_CVE", GateType.HARD),
-        ("L22_DATA_FOUNDATION", GateType.HARD),
-        ("L23_META_PERFORMANCE", GateType.SOFT),
-        ("L24_AGENTIC_OPS", GateType.WARN),
-        ("L25_LLM_QUALITY", GateType.HARD),
-        ("L26_CHAOS_GOVERNANCE", GateType.WARN),
-        ("L27_COMPLIANCE", GateType.HARD),
-    ])
+    gates: list[tuple[str, GateType]] = field(
+        default_factory=lambda: [
+            ("L1_BASIC_THRESHOLD", GateType.HARD),
+            ("L2_FREQUENCY_LIMIT", GateType.SOFT),
+            ("L3_TRADING_SILENCE", GateType.WARN),
+            ("L4_DEPENDENCY_HEALTH", GateType.HARD),
+            ("L5_BUDGET_ENFORCE", GateType.HARD),
+            ("L6_ROLLBACK_INTEGRITY", GateType.HARD),
+            ("L7_IDEMPOTENCY", GateType.HARD),
+            ("L8_CONFIG_AS_CODE", GateType.WARN),
+            ("L9_FLAG_INTERACTION", GateType.SOFT),
+            ("L10_DB_INTEGRITY", GateType.HARD),
+            ("L11_PROVENANCE_CHAIN", GateType.HARD),
+            ("L12_SCHEMA_VERSIONING", GateType.HARD),
+            ("L13_SESSION_AWARE", GateType.WARN),
+            ("L14_RBAC", GateType.HARD),
+            ("L15_DEPLOY_SECURITY", GateType.HARD),
+            ("L16_ONLINE_ADAPTATION", GateType.WARN),
+            ("L17_AUTONOMY_BOUNDARY", GateType.HARD),
+            ("L18_CONTINUAL_LEARNING", GateType.WARN),
+            ("L19_COGNITIVE_OVERLOAD", GateType.SOFT),
+            ("L20_FLE_INTEGRITY", GateType.HARD),
+            ("L21_SUPPLY_CHAIN_CVE", GateType.HARD),
+            ("L22_DATA_FOUNDATION", GateType.HARD),
+            ("L23_META_PERFORMANCE", GateType.SOFT),
+            ("L24_AGENTIC_OPS", GateType.WARN),
+            ("L25_LLM_QUALITY", GateType.HARD),
+            ("L26_CHAOS_GOVERNANCE", GateType.WARN),
+            ("L27_COMPLIANCE", GateType.HARD),
+        ]
+    )
 
     frequency_counters: dict[str, int] = field(default_factory=dict)
     FREQ_LIMIT_24H: int = field(default=10)
@@ -151,7 +152,9 @@ class SafetyGatePipeline:
             "L26_CHAOS_GOVERNANCE": self._l26,
             "L27_COMPLIANCE": self._l27,
         }
-        handler = handlers.get(name, lambda c, g: GateResult(layer=name, verdict=GateVerdict.PASS, gate_type=g, reason="UNIMPLEMENTED"))
+        handler = handlers.get(
+            name, lambda c, g: GateResult(layer=name, verdict=GateVerdict.PASS, gate_type=g, reason="UNIMPLEMENTED")
+        )
         return handler(ctx, gtype)
 
     def _l1(self, ctx: ActionContext, gt: GateType) -> GateResult:
@@ -161,7 +164,9 @@ class SafetyGatePipeline:
         key = ctx.action_type
         self.frequency_counters[key] = self.frequency_counters.get(key, 0) + 1
         if self.frequency_counters[key] > self.FREQ_LIMIT_24H:
-            return GateResult("L2", GateVerdict.REJECT, gt, f"Frequency limit {self.FREQ_LIMIT_24H}/24h exceeded for {key}")
+            return GateResult(
+                "L2", GateVerdict.REJECT, gt, f"Frequency limit {self.FREQ_LIMIT_24H}/24h exceeded for {key}"
+            )
         return GateResult("L2", GateVerdict.PASS, gt)
 
     def _l3(self, ctx: ActionContext, gt: GateType) -> GateResult:
@@ -206,7 +211,12 @@ class SafetyGatePipeline:
 
     def _l12(self, ctx: ActionContext, gt: GateType) -> GateResult:
         if ctx.schema_version != ctx.expected_schema_version:
-            return GateResult("L12", GateVerdict.REJECT, gt, f"Schema mismatch: {ctx.schema_version} vs expected {ctx.expected_schema_version}")
+            return GateResult(
+                "L12",
+                GateVerdict.REJECT,
+                gt,
+                f"Schema mismatch: {ctx.schema_version} vs expected {ctx.expected_schema_version}",
+            )
         return GateResult("L12", GateVerdict.PASS, gt)
 
     def _l13(self, ctx: ActionContext, gt: GateType) -> GateResult:
@@ -232,7 +242,9 @@ class SafetyGatePipeline:
 
     def _l19(self, ctx: ActionContext, gt: GateType) -> GateResult:
         if ctx.owner_fatigue > 0.7:
-            return GateResult("L19", GateVerdict.REJECT, gt, f"Owner fatigue {ctx.owner_fatigue:.2f} > 0.7: defer non-P0")
+            return GateResult(
+                "L19", GateVerdict.REJECT, gt, f"Owner fatigue {ctx.owner_fatigue:.2f} > 0.7: defer non-P0"
+            )
         return GateResult("L19", GateVerdict.PASS, gt)
 
     def _l20(self, ctx: ActionContext, gt: GateType) -> GateResult:
@@ -247,7 +259,9 @@ class SafetyGatePipeline:
 
     def _l22(self, ctx: ActionContext, gt: GateType) -> GateResult:
         if ctx.data_quality_score < 80.0:
-            return GateResult("L22", GateVerdict.REJECT, gt, f"Data quality {ctx.data_quality_score:.1f} < threshold 80")
+            return GateResult(
+                "L22", GateVerdict.REJECT, gt, f"Data quality {ctx.data_quality_score:.1f} < threshold 80"
+            )
         return GateResult("L22", GateVerdict.PASS, gt)
 
     def _l23(self, ctx: ActionContext, gt: GateType) -> GateResult:

@@ -27,17 +27,15 @@ resume_workflow: 自动加载注入context推进状态
 abort: 文件状态不一致→重新生成+通知Owner
 对标 blueprint.md §6.14。
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
 import os
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
-
-import yaml
 
 
 @dataclass
@@ -63,10 +61,8 @@ class HandoffPackage:
     token_estimate: int = 0
     owner_id: str = ""
     status: str = "READY"
-    created_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
-    last_verified_at: Optional[str] = None
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    last_verified_at: str | None = None
 
 
 def _sha256_file(filepath: str) -> str:
@@ -116,8 +112,7 @@ def build_handoff_package(
         baseline_diff[fpath] = [f"current: {snapshot.get(fpath, 'N/A')[:100]}"]
 
     related_ids = [
-        f"related-{detector_id}-{hashlib.md5(fpath.encode()).hexdigest()[:6]}"
-        for fpath in related_files[:3]
+        f"related-{detector_id}-{hashlib.md5(fpath.encode()).hexdigest()[:6]}" for fpath in related_files[:3]
     ]
 
     package = HandoffPackage(
@@ -154,10 +149,7 @@ def serialize_package(pkg: HandoffPackage, output_dir: str) -> str:
         "pre_fix_snapshot": pkg.pre_fix_snapshot,
         "baseline_diff": pkg.baseline_diff,
         "related_drift_ids": pkg.related_drift_ids,
-        "file_integrity": [
-            {"file_path": fi.file_path, "sha256_before": fi.sha256_before}
-            for fi in pkg.file_integrity
-        ],
+        "file_integrity": [{"file_path": fi.file_path, "sha256_before": fi.sha256_before} for fi in pkg.file_integrity],
         "token_estimate": pkg.token_estimate,
         "owner_id": pkg.owner_id,
         "status": pkg.status,
@@ -181,13 +173,13 @@ def serialize_package(pkg: HandoffPackage, output_dir: str) -> str:
     return path
 
 
-def load_package(filepath: str) -> Optional[HandoffPackage]:
+def load_package(filepath: str) -> HandoffPackage | None:
     """从JSON文件加载handoff package。"""
     if not os.path.exists(filepath):
         return None
 
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             data = json.loads(f.read())
     except Exception:
         return None
@@ -230,12 +222,9 @@ def verify_integrity(pkg: HandoffPackage) -> tuple[bool, list[str]]:
         fi.verified = fi.sha256_before == current_sha and fi.sha256_before != ""
 
         if not fi.verified:
-            violations.append(
-                f"{fi.file_path}: expected {fi.sha256_before[:8]}... "
-                f"got {current_sha[:8]}..."
-            )
+            violations.append(f"{fi.file_path}: expected {fi.sha256_before[:8]}... got {current_sha[:8]}...")
 
-    pkg.last_verified_at = datetime.now(timezone.utc).isoformat()
+    pkg.last_verified_at = datetime.now(UTC).isoformat()
 
     if violations:
         pkg.status = "DIVERGED"
@@ -272,7 +261,7 @@ def resume_workflow(
     injected_context = "\n".join(context_lines)
 
     pkg.status = target_state
-    pkg.last_verified_at = datetime.now(timezone.utc).isoformat()
+    pkg.last_verified_at = datetime.now(UTC).isoformat()
 
     return {
         "status": "RESUMED",

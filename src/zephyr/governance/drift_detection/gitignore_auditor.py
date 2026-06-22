@@ -27,29 +27,53 @@ over_ignored_critical_files: 规则模拟检查误匹配
 gitignore_pattern_coverage: 新文件类型未被覆盖建议添加
 对标 blueprint.md §6.24。
 """
+
 from __future__ import annotations
 
 import fnmatch
 import os
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
-
 
 GENERATED_FILE_EXTENSIONS: set[str] = {
-    ".pkl", ".joblib", ".cache", ".pyc", ".pyo",
-    ".egg", ".whl", ".tar.gz", ".zip",
-    ".jpg", ".jpeg", ".png", ".gif", ".svg",
-    ".mp3", ".mp4", ".avi", ".mov",
-    ".exe", ".dll", ".so", ".dylib",
-    ".log", ".db", ".sqlite", ".sqlite3",
+    ".pkl",
+    ".joblib",
+    ".cache",
+    ".pyc",
+    ".pyo",
+    ".egg",
+    ".whl",
+    ".tar.gz",
+    ".zip",
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".svg",
+    ".mp3",
+    ".mp4",
+    ".avi",
+    ".mov",
+    ".exe",
+    ".dll",
+    ".so",
+    ".dylib",
+    ".log",
+    ".db",
+    ".sqlite",
+    ".sqlite3",
     ".lock",
 }
 
 CRITICAL_FILE_EXTENSIONS: set[str] = {
-    ".py", ".yaml", ".yml", ".json", ".toml",
-    ".cfg", ".ini", ".env", ".md",
+    ".py",
+    ".yaml",
+    ".yml",
+    ".json",
+    ".toml",
+    ".cfg",
+    ".ini",
+    ".env",
+    ".md",
 }
 
 CRITICAL_FILE_PATTERNS: list[str] = [
@@ -80,7 +104,7 @@ def parse_gitignore(project_root: str) -> list[str]:
     if not os.path.exists(gi_path):
         return rules
     try:
-        with open(gi_path, "r", encoding="utf-8") as f:
+        with open(gi_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith("#"):

@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """feedback-loop.docs — auto-generated package init."""
+
 from . import cold_start_manual
 
-__all__ = ['cold_start_manual']
-
+__all__ = ["cold_start_manual"]

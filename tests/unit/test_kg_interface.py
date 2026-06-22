@@ -10,9 +10,7 @@ import pytest
 from zephyr.integration.shared_08.kg_interface import (
     InMemoryKnowledgeGraph,
     KGEntity,
-    KGPath,
     KGRelation,
-    KGSubgraph,
     KnowledgeGraphInterface,
     create_knowledge_graph,
 )
@@ -140,7 +138,7 @@ class TestInMemoryKnowledgeGraph:
         for i in range(10):
             kg.add_entity(_make_entity(f"e{i}"))
             if i > 0:
-                kg.add_relation(_make_rel(f"r{i}", f"e{i-1}", f"e{i}"))
+                kg.add_relation(_make_rel(f"r{i}", f"e{i - 1}", f"e{i}"))
         path = kg.query_path("e0", "e9", max_depth=3)
         assert len(path.nodes) == 0
 

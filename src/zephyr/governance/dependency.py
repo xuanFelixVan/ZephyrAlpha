@@ -29,9 +29,8 @@ from __future__ import annotations
 
 import ast
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -53,7 +52,7 @@ class DependencyEdge(BaseModel):
 
 
 class DependencyGraph(BaseModel):
-    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     based_on_scan: str = ""
     total_files: int = 0
     total_edges: int = 0
@@ -68,7 +67,6 @@ _STDLIB_MODULES: set[str] = set(sys.stdlib_module_names) if hasattr(sys, "stdlib
 
 
 class DependencyExtractor:
-
     def extract(self, file_path: str, source_code: str) -> list[DependencyEdge]:
         try:
             tree = ast.parse(source_code)
@@ -177,7 +175,9 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
         top = e.to_module.split(".")[0]
         resolved = False
         for fp in graph.nodes:
-            if fp.endswith(e.to_module.replace(".", "/") + ".py") or fp.endswith(e.to_module.replace(".", "/") + "/__init__.py"):
+            if fp.endswith(e.to_module.replace(".", "/") + ".py") or fp.endswith(
+                e.to_module.replace(".", "/") + "/__init__.py"
+            ):
                 resolved = True
                 break
             if top == fp.split("/")[-1].replace(".py", ""):
@@ -192,7 +192,7 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
     return graph
 
 
-def _resolve_module_to_file(module_name: str, module_to_file: dict[str, str]) -> Optional[str]:
+def _resolve_module_to_file(module_name: str, module_to_file: dict[str, str]) -> str | None:
     if module_name in module_to_file:
         return module_to_file[module_name]
     parts = module_name.split(".")

@@ -7,14 +7,13 @@ Now canonical for shared layer, keeping infrastructure free of shared->infra rev
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
 
 __all__ = [
     "BackpressurePause",
-    "BackpressureThrottle",
     "BackpressureResume",
+    "BackpressureThrottle",
 ]
 
 
@@ -27,7 +26,7 @@ class BackpressurePause:
     symbol: str
     action: str = "PAUSE"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 
 @dataclass(frozen=True)
@@ -39,7 +38,7 @@ class BackpressureThrottle:
     symbol: str
     action: str = "THROTTLE"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 
 @dataclass(frozen=True)
@@ -50,4 +49,4 @@ class BackpressureResume:
     symbol: str
     action: str = "RESUME"
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None

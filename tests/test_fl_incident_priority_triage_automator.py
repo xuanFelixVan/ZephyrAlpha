@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.actors.incident_priority_triage_automator import (
     IncidentPriorityTriageAutomator,
     Severity,

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_model_version_detector.py -q
 
-import pytest
 from zephyr.governance.model_version_detector import ModelVersionDetector
 
 

@@ -6,12 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Vibe Coding / Novel Attack / Cybersec 2026 攻击面扩展测试."""
+
 from __future__ import annotations
 
-import pytest
-from zephyr.security.access_control.vibe_coding_guard import VibeCodingGuard
-from zephyr.security.access_control.novel_attack_guard import NovelAttackGuard
 from zephyr.security.access_control.cybersec_2026_guard import Cybersec2026Guard
+from zephyr.security.access_control.novel_attack_guard import NovelAttackGuard
+from zephyr.security.access_control.vibe_coding_guard import VibeCodingGuard
 
 
 class TestAttackSurface:

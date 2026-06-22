@@ -4,7 +4,9 @@ GATE-MODULEID: Validate module_id uniqueness and index/file consistency.
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -141,19 +143,19 @@ def main() -> int:
     if not args.dim or args.dim == 1:
         errs = check_dim1(id_map)
         all_errors.extend(errs)
-        print(f'  DIM-1 (uniqueness): {('PASS' if not errs else f'{len(errs)} errors')}')
+        print(f"  DIM-1 (uniqueness): {('PASS' if not errs else f'{len(errs)} errors')}")
     if not args.dim or args.dim == 3:
         errs = check_dim3(id_map)
         all_errors.extend(errs)
-        print(f'  DIM-3 (naming convention): {('PASS' if not errs else f'{len(errs)} errors')}')
+        print(f"  DIM-3 (naming convention): {('PASS' if not errs else f'{len(errs)} errors')}")
     if not args.dim or args.dim == 4:
         errs = check_dim4(id_map)
         all_warnings.extend(errs)
-        print(f'  DIM-4 (sequential coverage): {('PASS' if not errs else f'{len(errs)} warnings')}')
+        print(f"  DIM-4 (sequential coverage): {('PASS' if not errs else f'{len(errs)} warnings')}")
     if not args.dim or args.dim == 2:
         errs = check_dim2()
         all_errors.extend(errs)
-        print(f'  DIM-2 (index-file consistency): {('PASS' if not errs else f'{len(errs)} errors')}')
+        print(f"  DIM-2 (index-file consistency): {('PASS' if not errs else f'{len(errs)} errors')}")
     if all_warnings:
         print(f"\nGATE-MODULEID: {len(all_warnings)} warnings (non-blocking):")
         for w in all_warnings:

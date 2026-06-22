@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_otel_adapter.py
 
-import pytest
 
 from zephyr.ops.detectors.otel_adapter import OTelAdapter
 

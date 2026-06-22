@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.integrity_check import IntegrityCheck, IntegrityReport
 
 

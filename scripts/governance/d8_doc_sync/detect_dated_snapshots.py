@@ -14,6 +14,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 带日期快照文件检测（GOV-DOC-006 §三 — 应使用LATEST命名）
@@ -43,6 +44,7 @@ ensure_utf8_stdout()
 import argparse
 
 DATED_PATTERN = re.compile(r"-\d{4}-\d{2}-\d{2}\.(json|yaml|yml|md)$", re.IGNORECASE)
+
 
 def main() -> None:
     """入口函数."""
@@ -81,6 +83,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

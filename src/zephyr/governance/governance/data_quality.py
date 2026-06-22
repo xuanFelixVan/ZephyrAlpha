@@ -2,29 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-006 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.data_quality
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from enum import Enum
-from typing import Callable, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class DQDimension(str, Enum):
     COMPLETENESS = "Completeness"
@@ -34,12 +24,14 @@ class DQDimension(str, Enum):
     UNIQUENESS = "Uniqueness"
     VALIDITY = "Validity"
 
+
 class DQSpec(BaseModel):
     dimension: DQDimension
     label: str
     metric: str
     threshold: float = 0.95
     check_func: str = ""
+
 
 DQ_SPECS: dict[DQDimension, DQSpec] = {
     DQDimension.COMPLETENESS: DQSpec(
@@ -86,13 +78,16 @@ DQ_SPECS: dict[DQDimension, DQSpec] = {
     ),
 }
 
-def get_dq_spec(dim: DQDimension) -> Optional[DQSpec]:
+
+def get_dq_spec(dim: DQDimension) -> DQSpec | None:
     return DQ_SPECS.get(dim)
+
 
 def score_dq(dim: DQDimension, value: float) -> float:
     spec = DQ_SPECS.get(dim)
     if spec is None:
         return 0.0
     return min(1.0, value / spec.threshold)
+
 
 DQ_DIM_COUNT: int = 6

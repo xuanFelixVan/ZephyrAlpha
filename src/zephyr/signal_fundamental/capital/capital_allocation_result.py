@@ -2,28 +2,18 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.signal_fundamental.capital.capital_allocation_result
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] signal
-
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 # ==== BEGIN CODGEN:CTR-P1-003 ====
-
 from dataclasses import dataclass, field
+
 
 @dataclass(frozen=True)
 class CapitalAllocationResult:
@@ -34,5 +24,6 @@ class CapitalAllocationResult:
     strategy_allocations: dict[str, float] = field(default_factory=dict)
     rebalance_threshold: float = 0.05
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-003 ====

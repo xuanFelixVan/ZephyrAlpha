@@ -2,26 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner
-
 # [INVARIANTS] 只清理指向不存在文件的引用;不删除文件本身
-
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml zombie_cleaner段
-
 # [CONSUMERS] engine.py;MOD-INF-026(asset-inventory)
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ZombieCleanError
-
 # [TESTS] tests/auto-fix-engine/test_zombie_cleaner.py
-
-import ast
 import logging
 import os
 import re
@@ -38,6 +27,7 @@ from zephyr.security.access_control.auto_fix_engine_03.models import (
 )
 
 logger = logging.getLogger(__name__)
+
 
 class ZombieCleaner(BaseFixer):
     model_config = {"arbitrary_types_allowed": True}
@@ -57,7 +47,9 @@ class ZombieCleaner(BaseFixer):
         for yaml_file in repo_root.rglob("*.yaml"):
             try:
                 content = yaml_file.read_text(encoding="utf-8")
-                path_refs = re.findall(r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content)
+                path_refs = re.findall(
+                    r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content
+                )
                 for ref in path_refs:
                     if not (repo_root / ref).exists() and not Path(ref).is_absolute():
                         findings.append({"file": str(yaml_file), "reference": ref, "type": "zombie_reference"})
@@ -93,7 +85,9 @@ class ZombieCleaner(BaseFixer):
             original = content
             repo_root = Path(os.getcwd())
             if target.endswith(".yaml"):
-                path_refs = re.findall(r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content)
+                path_refs = re.findall(
+                    r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content
+                )
                 for ref in path_refs:
                     if not (repo_root / ref).exists() and not Path(ref).is_absolute():
                         lines = content.split("\n")
@@ -148,7 +142,12 @@ class ZombieCleaner(BaseFixer):
                     if "site-packages" not in clean_ref and "lib/python" not in clean_ref:
                         remaining_zombies.append(ref)
             if remaining_zombies:
-                return ValidationResult(valid=False, check_name="zombie_clean", evidence=f"Remaining zombies: {remaining_zombies}", error="Zombie references still present")
+                return ValidationResult(
+                    valid=False,
+                    check_name="zombie_clean",
+                    evidence=f"Remaining zombies: {remaining_zombies}",
+                    error="Zombie references still present",
+                )
             return ValidationResult(valid=True, check_name="zombie_clean", evidence="No zombie references found")
         except Exception as exc:
             return ValidationResult(valid=False, check_name="zombie_clean", evidence="", error=str(exc))

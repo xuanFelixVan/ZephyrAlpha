@@ -15,8 +15,8 @@ CI 集成:
         run: python scripts/generate_pathway_registry.py --check
 """
 
-import os
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
@@ -186,18 +186,18 @@ def generate_yaml(entries: list[dict]) -> str:
     buf.write("\npathways:\n")
 
     for entry in entries:
-        buf.write(f"  - module_id: \"{entry['module_id']}\"\n")
-        buf.write(f"    name: \"{entry['name']}\"\n")
-        buf.write(f"    layer: \"{entry['layer']}\"\n")
-        buf.write(f"    blueprint: \"{entry['blueprint']}\"\n")
+        buf.write(f'  - module_id: "{entry["module_id"]}"\n')
+        buf.write(f'    name: "{entry["name"]}"\n')
+        buf.write(f'    layer: "{entry["layer"]}"\n')
+        buf.write(f'    blueprint: "{entry["blueprint"]}"\n')
         if entry["source_dir"]:
-            buf.write(f"    source_dir: \"{entry['source_dir']}\"\n")
+            buf.write(f'    source_dir: "{entry["source_dir"]}"\n')
         else:
             buf.write('    source_dir: ""\n')
         if entry["test_dir"]:
-            buf.write(f"    test_dir: \"{entry['test_dir']}\"\n")
+            buf.write(f'    test_dir: "{entry["test_dir"]}"\n')
         if entry["config"]:
-            buf.write(f"    config: \"{entry['config']}\"\n")
+            buf.write(f'    config: "{entry["config"]}"\n')
         counts = entry.get("path_index_counts") or {}
         if any(counts.values()):
             buf.write("    path_index_counts:\n")

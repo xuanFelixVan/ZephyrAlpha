@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.governance.paper_live_transition import (
     PHASE_ORDER,
@@ -127,14 +125,14 @@ class TestTransitionState:
     def test_creation(self):
         state = TransitionState(
             current_phase=TransitionPhase.PARALLEL,
-            started_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.now(UTC).isoformat(),
         )
         assert state.current_phase == TransitionPhase.PARALLEL
         assert state.ramping_percentage == 0.0
         assert state.completed_at is None
 
     def test_elapsed_days(self):
-        past = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
+        past = (datetime.now(UTC) - timedelta(days=2)).isoformat()
         state = TransitionState(
             current_phase=TransitionPhase.PARALLEL,
             started_at=past,
@@ -144,7 +142,7 @@ class TestTransitionState:
     def test_ramp_up_increments(self):
         state = TransitionState(
             current_phase=TransitionPhase.GRAY_RAMP,
-            started_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.now(UTC).isoformat(),
             ramping_percentage=0.0,
         )
         result = state.ramp_up(20.0)
@@ -154,7 +152,7 @@ class TestTransitionState:
     def test_ramp_up_caps_at_100(self):
         state = TransitionState(
             current_phase=TransitionPhase.GRAY_RAMP,
-            started_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.now(UTC).isoformat(),
             ramping_percentage=90.0,
         )
         result = state.ramp_up(20.0)
@@ -164,7 +162,7 @@ class TestTransitionState:
     def test_ramp_up_multiple_steps(self):
         state = TransitionState(
             current_phase=TransitionPhase.GRAY_RAMP,
-            started_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.now(UTC).isoformat(),
             ramping_percentage=0.0,
         )
         state.ramp_up(20.0)

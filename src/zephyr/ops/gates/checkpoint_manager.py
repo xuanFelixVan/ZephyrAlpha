@@ -27,6 +27,7 @@ Risk: R18 — Crash during repair leaves system in inconsistent state.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class CheckpointManager:
     checkpoints: list[dict] = field(default_factory=list)

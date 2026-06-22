@@ -29,8 +29,8 @@ Mitigation: Daily blueprint-vs-code scan with auto-PR generation for detected dr
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import os
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -51,12 +51,14 @@ class BlueprintCodeReconciler:
         if os.path.isdir(blueprint_dir):
             for fname in os.listdir(blueprint_dir):
                 if fname.endswith(".py"):
-                    results.append(DriftReport(
-                        file=fname,
-                        blueprint_version="0.14.0",
-                        code_version="0.14.0",
-                        drifted=False,
-                    ))
+                    results.append(
+                        DriftReport(
+                            file=fname,
+                            blueprint_version="0.14.0",
+                            code_version="0.14.0",
+                            drifted=False,
+                        )
+                    )
         self.reports.extend(results)
         return results
 

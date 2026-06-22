@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_metric_cardinality_guard.py
 
-import pytest
 
 from zephyr.ops.detectors.metric_cardinality_guard import (
     CardinalityStatus,

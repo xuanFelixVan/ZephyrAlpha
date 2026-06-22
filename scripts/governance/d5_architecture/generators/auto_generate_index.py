@@ -17,7 +17,9 @@ Design: Surgical editing model
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import os
@@ -38,7 +40,6 @@ import argparse
 import re
 import sys
 from pathlib import Path
-
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
@@ -205,7 +206,7 @@ def fix_index(directory) -> None:
                 os.remove(tmp_path)
             except OSError:
                 pass
-            return "SKIP", f"locked by another process"
+            return "SKIP", "locked by another process"
         return "FIXED", f"counts corrected ({disk_subdir_count} subdirs + {disk_file_count} files = {total})"
     return "OK", "already correct"
 

@@ -7,46 +7,46 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.lifecycle — lifecycle management, resource optimization, and module lifecycle hooks."""
 
 from . import scope_guard
 
 __all__ = [
-    'scope_guard',
-    'task_lifecycle_manager',
-    'hooks',
-    'lazy_loader',
-    'registry',
-    'resource_optimization_models',
-    'CacheStats',
-    'CircuitBreaker',
-    'CircuitBreakerState',
-    'ClampedPercent',
-    'DaemonEntry',
-    'DaemonPressureLevel',
-    'DaemonRegistry',
-    'DaemonResourceSnapshot',
-    'DaemonState',
-    'DefensiveStrategy',
-    'DegradationMatrix',
-    'HealthCheckResult',
-    'LazyModuleRegistry',
-    'LifecycleAware',
-    'LifecycleManager',
-    'LifecycleState',
-    'ModuleEntry',
-    'ModuleHealth',
-    'OptimizationRecord',
-    'OptimizationResult',
-    'OptimizationStrategy',
-    'PressureLevel',
-    'PressureState',
-    'ProcessPoolStats',
-    'ResourceOptimizationEngine',
-    'ResourceSnapshot',
-    'daemon_registry',
-    'resource_optimization_engine',
+    "CacheStats",
+    "CircuitBreaker",
+    "CircuitBreakerState",
+    "ClampedPercent",
+    "DaemonEntry",
+    "DaemonPressureLevel",
+    "DaemonRegistry",
+    "DaemonResourceSnapshot",
+    "DaemonState",
+    "DefensiveStrategy",
+    "DegradationMatrix",
+    "HealthCheckResult",
+    "LazyModuleRegistry",
+    "LifecycleAware",
+    "LifecycleManager",
+    "LifecycleState",
+    "ModuleEntry",
+    "ModuleHealth",
+    "OptimizationRecord",
+    "OptimizationResult",
+    "OptimizationStrategy",
+    "PressureLevel",
+    "PressureState",
+    "ProcessPoolStats",
+    "ResourceOptimizationEngine",
+    "ResourceSnapshot",
+    "daemon_registry",
+    "hooks",
+    "lazy_loader",
+    "registry",
+    "resource_optimization_engine",
+    "resource_optimization_models",
+    "scope_guard",
+    "task_lifecycle_manager",
 ]

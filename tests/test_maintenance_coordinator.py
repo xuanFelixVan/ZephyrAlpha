@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_maintenance_coordinator.py
 
-import pytest
 
 from zephyr.ops.detectors.maintenance_coordinator import MaintenanceCoordinator
 

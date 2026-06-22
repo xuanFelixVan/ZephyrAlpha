@@ -31,9 +31,8 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 
 class BudgetDimension(Enum):
@@ -92,8 +91,8 @@ class BudgetConsumption:
     consumed_hourly: float = 0.0
     consumed_per_request: float = 0.0
     request_count_daily: int = 0
-    last_reset_daily: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    last_reset_hourly: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_reset_daily: datetime = field(default_factory=lambda: datetime.now(UTC))
+    last_reset_hourly: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -116,7 +115,7 @@ class BudgetAlert:
     dimension: BudgetDimension = BudgetDimension.TOKEN
     level: BudgetLevel = BudgetLevel.L0_NORMAL
     message: str = ""
-    triggered_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    triggered_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     acknowledged: bool = False
 
 

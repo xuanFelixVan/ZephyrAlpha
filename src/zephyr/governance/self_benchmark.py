@@ -28,7 +28,6 @@
   - 原子写入历史文件 (temp + os.replace)
 """
 
-
 from __future__ import annotations
 
 import json
@@ -38,11 +37,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.scanner import Scanner
-from zephyr.governance.signature_matcher import SignatureMatcher
 from zephyr.governance.ast_comparator import ASTComparator
 from zephyr.governance.behavioral_sampler import BehavioralSampler
 from zephyr.governance.micro_clone_detector import MicroCloneDetector
+from zephyr.governance.scanner import Scanner
 
 
 @dataclass
@@ -347,9 +345,7 @@ class SelfBenchmark:
 
     @staticmethod
     def _write_temp(code: str) -> str:
-        f = tempfile.NamedTemporaryFile(
-            suffix=".py", mode="w", encoding="utf-8", delete=False
-        )
+        f = tempfile.NamedTemporaryFile(suffix=".py", mode="w", encoding="utf-8", delete=False)
         f.write(code)
         f.close()
         return f.name

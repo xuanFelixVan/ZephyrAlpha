@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class HousekeepingManager:
     TEMP_PATTERNS: list[str] = ["_temp*", "_check*", "_phase_*", "*.tmp", "*.bak"]
 

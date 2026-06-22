@@ -11,17 +11,17 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.pattern_library import (
+        KNOWN_DANGEROUS_PATTERNS,
         DangerousPattern,
         DangerousPatternLibrary,
-        DangerousPatternMatch,
         DangerousPatternType,
-        KNOWN_DANGEROUS_PATTERNS,
         PatternEntry,
         PatternLibrary,
         PatternQuery,
@@ -42,6 +42,7 @@ class TestPatternType:
 class TestPatternEntry:
     def test_tags_deduplication(self):
         from datetime import datetime
+
         now = datetime(2026, 1, 1)
         entry = PatternEntry(
             pattern_id="PAT-001",
@@ -79,8 +80,12 @@ class TestPatternLibrary:
 
     def test_query_by_domain(self):
         lib = PatternLibrary()
-        lib.create(title="D0 Pattern", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L01", description="d0")
-        lib.create(title="D1 Pattern", pattern_type=PatternType.SUCCESS_PATTERN, domain="D1", layer="L01", description="d1")
+        lib.create(
+            title="D0 Pattern", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L01", description="d0"
+        )
+        lib.create(
+            title="D1 Pattern", pattern_type=PatternType.SUCCESS_PATTERN, domain="D1", layer="L01", description="d1"
+        )
         results = lib.query(PatternQuery(domain="D0"))
         assert len(results) == 1
         assert results[0].domain == "D0"
@@ -95,22 +100,34 @@ class TestPatternLibrary:
 
     def test_query_by_keyword(self):
         lib = PatternLibrary()
-        lib.create(title="Cache Invalidation", pattern_type=PatternType.ANTI_PATTERN, domain="D0", layer="L01", description="desc")
-        lib.create(title="Other", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L01", description="desc")
+        lib.create(
+            title="Cache Invalidation",
+            pattern_type=PatternType.ANTI_PATTERN,
+            domain="D0",
+            layer="L01",
+            description="desc",
+        )
+        lib.create(
+            title="Other", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L01", description="desc"
+        )
         results = lib.query(PatternQuery(keyword="cache"))
         assert len(results) == 1
         assert "Cache" in results[0].title
 
     def test_delete(self):
         lib = PatternLibrary()
-        lib.create(title="To Delete", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L01", description="d")
+        lib.create(
+            title="To Delete", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L01", description="d"
+        )
         assert lib.delete("PAT-001") is True
         assert lib.get("PAT-001") is None
         assert lib.delete("PAT-001") is False
 
     def test_update(self):
         lib = PatternLibrary()
-        lib.create(title="Original", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L01", description="d")
+        lib.create(
+            title="Original", pattern_type=PatternType.SUCCESS_PATTERN, domain="D0", layer="L01", description="d"
+        )
         updated = lib.update("PAT-001", title="Updated")
         assert updated is not None
         assert updated.title == "Updated"

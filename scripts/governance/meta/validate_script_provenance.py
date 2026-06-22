@@ -24,6 +24,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块
@@ -34,7 +35,6 @@ warn_only: false
 """
 
 
-import os
 import hashlib
 import json as json_mod
 import os
@@ -42,14 +42,13 @@ import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _PROVENANCE_DB = _SCRIPTS_DIR / "meta" / "script_provenance_db.json"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load_db() -> dict:
@@ -67,14 +66,15 @@ def _save_db(data: dict) -> None:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             json_mod.dump(data, f, ensure_ascii=False, indent=2)
-    
-    
+
         os.replace(tmp_path, _PROVENANCE_DB)
     except PermissionError:
         try:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def _hash_content(content: str) -> str:
     """_hash_content implementation."""
     return hashlib.sha256(content.encode()).hexdigest()[:16]
@@ -84,8 +84,12 @@ def _get_git_author(file_path: str) -> str:
     """_get_git_author implementation."""
     result = subprocess.run(
         ["git", "log", "-1", "--format=%an", "--", file_path],
-        capture_output=True, text=True, timeout=5,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=5,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     return result.stdout.strip() or "unknown"
 
@@ -94,8 +98,12 @@ def _get_git_commit(file_path: str) -> str:
     """_get_git_commit implementation."""
     result = subprocess.run(
         ["git", "log", "-1", "--format=%H", "--", file_path],
-        capture_output=True, text=True, timeout=5,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=5,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     return result.stdout.strip()[:12] or "unknown"
 
@@ -124,12 +132,14 @@ def register_all() -> dict:
         if rel in scripts_db:
             known = scripts_db[rel]
             if known.get("last_content_hash") != current_hash:
-                known.setdefault("change_history", []).append({
-                    "timestamp": now,
-                    "content_hash": current_hash,
-                    "author": author,
-                    "commit": commit,
-                })
+                known.setdefault("change_history", []).append(
+                    {
+                        "timestamp": now,
+                        "content_hash": current_hash,
+                        "author": author,
+                        "commit": commit,
+                    }
+                )
                 known["last_modified_at"] = now
                 known["last_modified_by"] = author
                 known["modified_by_ai"] = _is_ai_author(author)
@@ -176,19 +186,23 @@ def list_provenance(json_output: bool = False) -> list[dict]:
     db = _load_db()
     result = []
     for path, entry in db.get("scripts", {}).items():
-        result.append({
-            "path": path,
-            "creator": entry.get("creator", ""),
-            "ai_created": entry.get("creator_is_ai", False),
-            "total_modifications": entry.get("total_modifications", 0),
-            "last_modified_by": entry.get("last_modified_by", ""),
-        })
+        result.append(
+            {
+                "path": path,
+                "creator": entry.get("creator", ""),
+                "ai_created": entry.get("creator_is_ai", False),
+                "total_modifications": entry.get("total_modifications", 0),
+                "last_modified_by": entry.get("last_modified_by", ""),
+            }
+        )
     if json_output:
         print(json_mod.dumps(result, ensure_ascii=False, indent=2))
     else:
         for r in result:
             ai_tag = "🤖" if r["ai_created"] else "👤"
-            print(f"  {ai_tag} {r['path']}: by {r['creator']} ({r['total_modifications']} modifications)", file=sys.stderr)
+            print(
+                f"  {ai_tag} {r['path']}: by {r['creator']} ({r['total_modifications']} modifications)", file=sys.stderr
+            )
 
 
 def main() -> None:
@@ -209,7 +223,10 @@ def main() -> None:
         db = _load_db()
         print(json_mod.dumps(db, ensure_ascii=False, indent=2))
     else:
-        print("Usage: python validate_script_provenance.py --register-all | --check <path> | --list | --json", file=sys.stderr)
+        print(
+            "Usage: python validate_script_provenance.py --register-all | --check <path> | --list | --json",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":

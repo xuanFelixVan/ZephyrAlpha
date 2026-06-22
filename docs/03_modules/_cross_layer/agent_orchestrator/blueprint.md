@@ -1,6 +1,6 @@
-﻿---
+---
 module_id: MOD-INF-039
-submodule_path: src/zephyr/orchestrator
+submodule_path: src/zephyr/trading/orchestrator
 title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
 doc_type: blueprint
 template_for: blueprint
@@ -15,7 +15,7 @@ date: "2026-05-19"
 valid_from: "2026-05-19"
 ttl: permanent
 construction_progress: completed
-actual_disk_path: "src/zephyr/orchestrator/"
+actual_disk_path: "src/zephyr/trading/orchestrator/"
 belongs_to: "MOD-INF-035"
 generation: 1
 functional_domain: operations
@@ -518,7 +518,7 @@ class DetectionResult(BaseModel):
 
 | # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则 |
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | B轨接口规范 | AI-ENG-ORC-001 | `D:\ZephyrAlpha\docs\03_modules\_b_track_interfaces\agent-orchestrator-interface.md` | 接口定义 |
 | 4 | AutoRuntime Core | MOD-INF-035 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` | 父模块蓝图 |

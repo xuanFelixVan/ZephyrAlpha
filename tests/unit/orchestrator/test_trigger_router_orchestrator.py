@@ -30,6 +30,7 @@ import textwrap
 from pathlib import Path
 
 import pytest
+
 from zephyr.trading.orchestrator.trigger_router import (
     DEFAULT_ROUTER_YAML_PATH,
     PHASE1D_TRIGGER_TYPES,
@@ -532,7 +533,6 @@ class TestDefaultStubHandlers:
         assert isinstance(result, dict)
         assert result["handler"] == expected
         assert result["phase"] in ("1d-stub", "operational")
-        
 
     def test_drift_stub_operational(self):
         """``handle_drift_stub`` 已升级为真实调用 trigger_recovery，返回 operational。"""

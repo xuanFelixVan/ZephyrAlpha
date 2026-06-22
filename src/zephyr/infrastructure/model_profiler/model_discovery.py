@@ -24,7 +24,6 @@ ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型
         print(f"{m.name} | {m.source} | {m.size_gb:.1f}GB")
 """
 
-
 from __future__ import annotations
 
 import importlib
@@ -88,20 +87,22 @@ class ModelDiscovery:
                 continue
 
             details = raw.get("details", {}) if isinstance(raw.get("details"), dict) else {}
-            models.append(DiscoveredModel(
-                name=name,
-                source="ollama",
-                provider=name.split(":")[0] if ":" in name else name,
-                size_bytes=int(raw.get("size", 0)),
-                parameter_size=details.get("parameter_size", ""),
-                quantization_level=details.get("quantization_level", ""),
-                family=details.get("family", ""),
-                available=True,
-                metadata={
-                    "modified_at": raw.get("modified_at", ""),
-                    "digest": raw.get("digest", ""),
-                },
-            ))
+            models.append(
+                DiscoveredModel(
+                    name=name,
+                    source="ollama",
+                    provider=name.split(":")[0] if ":" in name else name,
+                    size_bytes=int(raw.get("size", 0)),
+                    parameter_size=details.get("parameter_size", ""),
+                    quantization_level=details.get("quantization_level", ""),
+                    family=details.get("family", ""),
+                    available=True,
+                    metadata={
+                        "modified_at": raw.get("modified_at", ""),
+                        "digest": raw.get("digest", ""),
+                    },
+                )
+            )
 
         _log.info("ModelDiscovery: found %d Ollama models", len(models))
         return models
@@ -109,8 +110,8 @@ class ModelDiscovery:
     def discover_remote(self) -> list[DiscoveredModel]:
         """列出 Budget Enforcer 中注册的远程 API 模型。"""
         _mod = importlib.import_module("zephyr.intelligence.model_profiling.provider_data")
-        DEFAULT_PROVIDERS = getattr(_mod, "DEFAULT_PROVIDERS")
-        TIER_MODEL_MAP = getattr(_mod, "TIER_MODEL_MAP")
+        DEFAULT_PROVIDERS = _mod.DEFAULT_PROVIDERS
+        TIER_MODEL_MAP = _mod.TIER_MODEL_MAP
 
         models: list[DiscoveredModel] = []
         seen: set[str] = set()
@@ -123,21 +124,32 @@ class ModelDiscovery:
                 prov, model_name = full_key.split(":", 1)
                 cfg = DEFAULT_PROVIDERS.get(prov, {})
 
-                models.append(DiscoveredModel(
-                    name=full_key,
-                    source="remote_api",
-                    provider=prov,
-                    size_bytes=0,
-                    parameter_size="",
-                    family=prov,
-                    available=True,
-                    metadata={
-                        "api_model": str(cfg.get(model_name.split(":")[0] if ":" in model_name else list(cfg.keys())[0] if cfg else "", "")),
-                        "price_per_1k_input": float(cfg.get("price_per_1k_input", 0.0)),
-                        "price_per_1k_output": float(cfg.get("price_per_1k_output", 0.0)),
-                        "region": str(cfg.get("cc", "")),
-                    },
-                ))
+                models.append(
+                    DiscoveredModel(
+                        name=full_key,
+                        source="remote_api",
+                        provider=prov,
+                        size_bytes=0,
+                        parameter_size="",
+                        family=prov,
+                        available=True,
+                        metadata={
+                            "api_model": str(
+                                cfg.get(
+                                    model_name.split(":")[0]
+                                    if ":" in model_name
+                                    else list(cfg.keys())[0]
+                                    if cfg
+                                    else "",
+                                    "",
+                                )
+                            ),
+                            "price_per_1k_input": float(cfg.get("price_per_1k_input", 0.0)),
+                            "price_per_1k_output": float(cfg.get("price_per_1k_output", 0.0)),
+                            "region": str(cfg.get("cc", "")),
+                        },
+                    )
+                )
 
         _log.info("ModelDiscovery: found %d remote API models", len(models))
         return models

@@ -11,34 +11,36 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 反序列化失败抛ValidationError
 # [TESTS] tests/audit-orchestrator/test_models.py
-
 from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
 
 __all__ = [
-    "AuditType",
-    "Severity",
-    "Priority",
-    "FixLevel",
-    "DiscoveryReport",
-    "ChangedFile",
+    "AuditContext",
     "AuditIssue",
+    "AuditType",
+    "ChangedFile",
+    "DiscoveryReport",
+    "FixLevel",
     "GlobalAuditReport",
     "OrchestratorStatus",
-    "AuditContext",
+    "Priority",
+    "Severity",
 ]
+
 
 class AuditType(str, Enum):
     STRUCTURAL = "structural"
     SEMANTIC = "semantic"
     BEHAVIORAL = "behavioral"
 
+
 class Severity(str, Enum):
     RED = "RED"
     YELLOW = "YELLOW"
     GREEN = "GREEN"
+
 
 class Priority(str, Enum):
     P0_SEC = "P0_SEC"
@@ -46,10 +48,12 @@ class Priority(str, Enum):
     P1 = "P1"
     OPT = "OPT"
 
+
 class FixLevel(str, Enum):
     L1_AUTO = "L1_AUTO"
     L2_LLM = "L2_LLM"
     L3_HUMAN = "L3_HUMAN"
+
 
 class ChangedFile(BaseModel):
     path: str
@@ -58,11 +62,13 @@ class ChangedFile(BaseModel):
     new_hash: str = ""
     priority: int = 3
 
+
 class DiscoveryReport(BaseModel):
     changed_files: list[ChangedFile] = Field(default_factory=list)
     total_scanned: int = 0
     skipped_unchanged: int = 0
     audit_type_distribution: dict[str, int] = Field(default_factory=dict)
+
 
 class AuditIssue(BaseModel):
     issue_id: str = Field(..., description="唯一标识")
@@ -73,6 +79,7 @@ class AuditIssue(BaseModel):
     auto_fixable: bool = Field(default=False, description="是否可自动修复")
     fix_level: FixLevel = Field(default=FixLevel.L3_HUMAN, description="修复级别")
     suggested_fix: str | None = Field(default=None, description="修复建议")
+
 
 class GlobalAuditReport(BaseModel):
     audit_id: str = ""
@@ -86,12 +93,14 @@ class GlobalAuditReport(BaseModel):
     skipped_by_cache: int = 0
     issues: list[AuditIssue] = Field(default_factory=list)
 
+
 class OrchestratorStatus(BaseModel):
     phase: str = "IDLE"
     active_sessions: int = 0
     pending_tasks: int = 0
     circuit_breakers: dict[str, str] = Field(default_factory=dict)
     last_audit_id: str | None = None
+
 
 class AuditContext(BaseModel):
     session_id: str = ""

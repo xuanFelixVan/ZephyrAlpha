@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.forensic.interrupt_coherence_validator import (
     CoherenceStatus,
     InterruptCoherenceValidator,

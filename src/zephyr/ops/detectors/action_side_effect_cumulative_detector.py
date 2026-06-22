@@ -28,6 +28,7 @@ R526: ActionSideEffectCumulativeDetector
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ActionSideEffectCumulativeDetector:
     baseline_metrics: dict[str, float] = field(default_factory=dict)
@@ -43,7 +44,7 @@ class ActionSideEffectCumulativeDetector:
             self.cumulative_effects[metric_name] = []
         self.cumulative_effects[metric_name].append(delta)
         if len(self.cumulative_effects[metric_name]) > self.max_effects_per_metric:
-            self.cumulative_effects[metric_name] = self.cumulative_effects[metric_name][-self.max_effects_per_metric:]
+            self.cumulative_effects[metric_name] = self.cumulative_effects[metric_name][-self.max_effects_per_metric :]
 
     def detect_cumulative_drift(self) -> dict:
         findings = {}

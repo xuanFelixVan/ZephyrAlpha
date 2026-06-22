@@ -12,13 +12,11 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_auto_runtime_core.py
-from pathlib import Path
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 from zephyr.trading.runtime_config import RuntimeConfig
+
 
 class TestAutoRuntimeCoreInit:
     def test_init_with_default_config(self, tmp_path):
@@ -59,6 +57,7 @@ class TestAutoRuntimeCoreInit:
         assert (tmp_path / "audit").exists()
         assert (tmp_path / "cards").exists()
 
+
 class TestAutoRuntimeCoreBoot:
     def test_boot_success(self, tmp_path):
         config = RuntimeConfig(
@@ -93,6 +92,7 @@ class TestAutoRuntimeCoreBoot:
         assert core._booted is True
         assert report.success is True
 
+
 class TestAutoRuntimeCoreShutdown:
     def test_shutdown(self, tmp_path):
         config = RuntimeConfig(
@@ -115,6 +115,7 @@ class TestAutoRuntimeCoreShutdown:
             report = core.shutdown()
 
         assert core._booted is False
+
 
 class TestAutoRuntimeCoreProperties:
     def test_capability_registry_property(self, tmp_path):
@@ -148,6 +149,7 @@ class TestAutoRuntimeCoreProperties:
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
             core = AutoRuntimeCore(config)
         assert core.integration_registry is core._integration_registry
+
 
 class TestAutoRuntimeCoreCanStop:
     def test_can_stop_when_clear(self, tmp_path):
@@ -188,6 +190,7 @@ class TestAutoRuntimeCoreCanStop:
                 with patch.object(core._dream_cycle, "needs_archival", return_value=False):
                     assert core.can_stop() is False
 
+
 class TestAutoRuntimeCoreLearnFromTaskResult:
     def test_learn_no_task_learner(self, tmp_path):
         config = RuntimeConfig(
@@ -205,6 +208,7 @@ class TestAutoRuntimeCoreLearnFromTaskResult:
             core = AutoRuntimeCore(config)
         core._task_learner = None
         core.learn_from_task_result("classify", "qwen3", 100.0, 50, 0.9)
+
 
 class TestAutoRuntimeCoreGetRecommendations:
     def test_get_recommendations_no_learner(self, tmp_path):

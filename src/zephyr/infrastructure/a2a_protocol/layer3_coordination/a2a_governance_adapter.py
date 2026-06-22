@@ -30,11 +30,9 @@
 提供更接近协议的治理集成点.
 """
 
-
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 from dataclasses import dataclass, field
 
@@ -49,6 +47,7 @@ def _get_lsg():
         return _lsg_gateway
     try:
         import importlib
+
         _lsg_gateway = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway").LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
@@ -62,6 +61,7 @@ def _lsg_scan_a2a_content_sync(from_agent: str, to_agent: str, content: str) -> 
         return None
     try:
         from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+
         result = asyncio.run(
             gw.scan_agent_action(
                 text=content,
@@ -86,6 +86,7 @@ def _lsg_scan_a2a_content_sync(from_agent: str, to_agent: str, content: str) -> 
                 )
             )
             from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
         except Exception:
@@ -109,8 +110,10 @@ class A2AGovernanceAdapter:
 
     def scan(
         self,
-        from_agent: str, to_agent: str,
-        message_id: str, content: str,
+        from_agent: str,
+        to_agent: str,
+        message_id: str,
+        content: str,
     ) -> list[GovernanceCheckResult]:
         results: list[GovernanceCheckResult] = []
 
@@ -120,12 +123,14 @@ class A2AGovernanceAdapter:
 
         lsg_blocked_by = _lsg_scan_a2a_content_sync(from_agent, to_agent, content)
         if lsg_blocked_by:
-            results.append(GovernanceCheckResult(
-                check_id="lsg_security",
-                passed=False,
-                details={"blocked_by": lsg_blocked_by, "from": from_agent, "to": to_agent},
-                recommendation=f"LSG blocked: {lsg_blocked_by}",
-            ))
+            results.append(
+                GovernanceCheckResult(
+                    check_id="lsg_security",
+                    passed=False,
+                    details={"blocked_by": lsg_blocked_by, "from": from_agent, "to": to_agent},
+                    recommendation=f"LSG blocked: {lsg_blocked_by}",
+                )
+            )
 
         return results
 

@@ -25,10 +25,9 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Counter as CounterType
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class GateSLI:
@@ -60,6 +59,7 @@ class GateSLI:
     def p99_latency_ms(self) -> float:
         return _percentile(self.latencies_ms, 99)
 
+
 def _percentile(data: list[float], pct: float) -> float:
     if not data:
         return 0.0
@@ -67,6 +67,7 @@ def _percentile(data: list[float], pct: float) -> float:
     idx = int(len(sorted_data) * pct / 100.0)
     idx = min(idx, len(sorted_data) - 1)
     return sorted_data[idx]
+
 
 class GateHealth:
     def __init__(self) -> None:
@@ -97,10 +98,13 @@ class GateHealth:
         latency_penalty = max(0, (sli.p99_latency_ms - 1000) / 5000)
         return max(0.0, min(1.0, sli.pass_rate - fp_penalty - latency_penalty))
 
+
 __all__ = ["GateHealth", "GateSLI"]
+
 
 def main() -> None:
     pass
+
 
 if __name__ == "__main__":
     main()

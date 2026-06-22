@@ -53,8 +53,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 from _shared.encoding import ensure_utf8_stdout
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 ensure_utf8_stdout()
 
@@ -65,6 +65,7 @@ except ImportError as e:
     print(f"[SKIP] reset_cbg.py 无法加载 CBGManager（依赖缺失: {e}）", file=sys.stderr)
     print("       此脚本需要 zephyr.governance.gates.circuit_breaker 及相关依赖存在时才能运行", file=sys.stderr)
     sys.exit(0 if _warn_only else 2)
+
 
 def main() -> None:
     """入口函数."""
@@ -149,7 +150,7 @@ def main() -> None:
             sys.exit(EXIT_PASS)
         if record.state != CircuitBreakerState.OPEN:
             print(
-                f"[reset_cbg] {args.caller} → {args.target} " f"当前状态={record.state.value}，非 OPEN 无需重置",
+                f"[reset_cbg] {args.caller} → {args.target} 当前状态={record.state.value}，非 OPEN 无需重置",
                 file=sys.stderr,
             )
             sys.exit(EXIT_PASS)
@@ -161,6 +162,7 @@ def main() -> None:
     else:
         print(f"[reset_cbg] RESET FAIL: {args.caller} → {args.target}", file=sys.stderr)
         sys.exit(EXIT_FINDINGS)
+
 
 if __name__ == "__main__":
     main()

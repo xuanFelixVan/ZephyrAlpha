@@ -199,10 +199,7 @@ class EventStore:
             if i > 0:
                 prev_ev = events[i - 1]
                 if ev.timestamp < prev_ev.timestamp:
-                    errors.append(
-                        f"Timestamp regression at position {i}: "
-                        f"{ev.timestamp} < {prev_ev.timestamp}"
-                    )
+                    errors.append(f"Timestamp regression at position {i}: {ev.timestamp} < {prev_ev.timestamp}")
 
             try:
                 json.loads(ev.payload)
@@ -214,8 +211,8 @@ class EventStore:
 
             if i > 0 and prev_hash:
                 expected_prev = hashlib.sha256(
-                    f"{events[i-1].event_id}|{events[i-1].task_id}|{events[i-1].event_type}|"
-                    f"{events[i-1].payload}|{events[i-1].timestamp}|{events[i-1].session_id or ''}".encode("utf-8")
+                    f"{events[i - 1].event_id}|{events[i - 1].task_id}|{events[i - 1].event_type}|"
+                    f"{events[i - 1].payload}|{events[i - 1].timestamp}|{events[i - 1].session_id or ''}".encode()
                 ).hexdigest()
                 if prev_hash != expected_prev:
                     errors.append(f"Checksum chain break at position {i}")

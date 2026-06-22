@@ -27,12 +27,11 @@ v0.2.0: 统一 GateResult 数据模型——GatePipeline 与 GateEngine 共享�
   - from_engine() 工厂方法桥接 GateEngine 的输出
 """
 
-
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum, auto
 from typing import Any
 
@@ -62,7 +61,7 @@ class GateResult:
     status: GateStatus
     reasons: list[str] = field(default_factory=list)
     affected_tasks: list[str] = field(default_factory=list)
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     task_id: str = ""
     violations: list[GateViolation] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
@@ -102,17 +101,19 @@ class GateResult:
                 violations.append(v)
                 reasons.append(v.message)
             elif hasattr(v, "message"):
-                violations.append(GateViolation(
-                    check_id=getattr(v, "check_id", ""),
-                    check_name=getattr(v, "check_name", ""),
-                    severity=getattr(v, "severity", "P2"),
-                    message=getattr(v, "message", ""),
-                    detail=getattr(v, "detail", None),
-                ))
+                violations.append(
+                    GateViolation(
+                        check_id=getattr(v, "check_id", ""),
+                        check_name=getattr(v, "check_name", ""),
+                        severity=getattr(v, "severity", "P2"),
+                        message=getattr(v, "message", ""),
+                        detail=getattr(v, "detail", None),
+                    )
+                )
                 reasons.append(getattr(v, "message", ""))
         details = getattr(engine_result, "details", {}) or {}
         evaluated_at = getattr(engine_result, "evaluated_at", "")
-        ts = datetime.now(timezone.utc)
+        ts = datetime.now(UTC)
         if evaluated_at:
             try:
                 ts = datetime.fromisoformat(evaluated_at)

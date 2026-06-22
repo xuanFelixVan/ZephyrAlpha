@@ -36,9 +36,7 @@ from __future__ import annotations
 
 import ast
 import hashlib
-import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -75,7 +73,6 @@ class HallucinationResult:
 
 
 class HallucinationGuard:
-
     MAX_ROUNDS: int = 3
     EXIT_CODE_HALLUCINATION: int = 11
 
@@ -95,14 +92,16 @@ class HallucinationGuard:
                 continue
 
             content = p.read_text(encoding="utf-8")
-            states.append(FileState(
-                path=str(p.relative_to(self._project_root)),
-                md5=hashlib.md5(content.encode()).hexdigest(),
-                sha256=hashlib.sha256(content.encode()).hexdigest(),
-                line_count=len(content.splitlines()),
-                function_signatures=self._extract_functions(content),
-                class_names=self._extract_classes(content),
-            ))
+            states.append(
+                FileState(
+                    path=str(p.relative_to(self._project_root)),
+                    md5=hashlib.md5(content.encode()).hexdigest(),
+                    sha256=hashlib.sha256(content.encode()).hexdigest(),
+                    line_count=len(content.splitlines()),
+                    function_signatures=self._extract_functions(content),
+                    class_names=self._extract_classes(content),
+                )
+            )
 
         return states
 
@@ -116,14 +115,16 @@ class HallucinationGuard:
 
         claimed: list[FileState] = []
         for item in ai_claimed_state:
-            claimed.append(FileState(
-                path=item.get("path", ""),
-                md5=item.get("md5", ""),
-                sha256=item.get("sha256", ""),
-                line_count=item.get("line_count", 0),
-                function_signatures=item.get("function_signatures", []),
-                class_names=item.get("class_names", []),
-            ))
+            claimed.append(
+                FileState(
+                    path=item.get("path", ""),
+                    md5=item.get("md5", ""),
+                    sha256=item.get("sha256", ""),
+                    line_count=item.get("line_count", 0),
+                    function_signatures=item.get("function_signatures", []),
+                    class_names=item.get("class_names", []),
+                )
+            )
 
         mismatches: list[str] = []
         actual_map = {s.path: s for s in actual}

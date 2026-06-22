@@ -11,17 +11,16 @@ from __future__ import annotations
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
-
-from datetime import date
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel
+
 
 class ChangeImpact(str, Enum):
     BREAKING = "Breaking"
     ENHANCEMENT = "Enhancement"
     FIX = "Fix"
+
 
 class ChangeRecord(BaseModel):
     date: str
@@ -30,6 +29,7 @@ class ChangeRecord(BaseModel):
     sections_affected: str
     description: str
     author: str = "AI-assisted, Owner ratified"
+
 
 CHANGELOG: list[ChangeRecord] = [
     ChangeRecord(
@@ -42,11 +42,14 @@ CHANGELOG: list[ChangeRecord] = [
     ),
 ]
 
+
 def append_change(record: ChangeRecord) -> None:
     CHANGELOG.insert(0, record)
 
-def get_latest() -> Optional[ChangeRecord]:
+
+def get_latest() -> ChangeRecord | None:
     return CHANGELOG[0] if CHANGELOG else None
+
 
 def latest_version() -> str:
     return CHANGELOG[0].version if CHANGELOG else "v0.1.0"

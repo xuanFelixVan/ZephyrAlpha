@@ -43,17 +43,17 @@ AI 施工约定：
 SSoT: MOD-INF-016 §2.17 shared-pagination
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 __all__ = [
-    "Page",
     "CursorPage",
-    "OffsetPagination",
     "CursorPagination",
+    "OffsetPagination",
+    "Page",
     "paginate",
     "paginate_cursor",
 ]

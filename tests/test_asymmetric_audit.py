@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.asymmetric_audit import AsymmetricAudit, AuditQuorum
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

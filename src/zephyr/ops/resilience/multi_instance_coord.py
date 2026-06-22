@@ -29,10 +29,10 @@ Mitigation: Raft consensus-based leader election with split-brain protection.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from enum import Enum
 import time
 import uuid
+from dataclasses import dataclass, field
+from enum import Enum
 
 
 class InstanceRole(str, Enum):

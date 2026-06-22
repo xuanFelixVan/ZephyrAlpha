@@ -45,7 +45,6 @@ StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（T-2-04�
 
 from __future__ import annotations
 
-
 import json as _json
 from dataclasses import dataclass
 from pathlib import Path
@@ -53,15 +52,15 @@ from typing import Any
 
 import yaml
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
 from zephyr.integration.shared_08.io.paths import REPO_ROOT
+from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
 from zephyr.integration.shared_08.utils.time_utils import now_iso
 
 __all__ = [
+    "GhostTask",
+    "OrphanFile",
     "StateSynchronizer",
     "SyncResult",
-    "OrphanFile",
-    "GhostTask",
 ]
 
 

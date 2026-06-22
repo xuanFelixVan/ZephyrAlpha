@@ -11,10 +11,9 @@
 # [TESTS] pytest tests/test_contract_tester.py -q
 
 import json
-from pathlib import Path
 
-import pytest
 import yaml
+
 from zephyr.infrastructure.contract_tester import (
     ContractStatus,
     ContractTester,
@@ -79,14 +78,16 @@ class TestContractTester:
     def test_test_contract_valid_yaml(self, tmp_path):
         contract = tmp_path / "contract.yaml"
         contract.write_text(
-            yaml.dump({
-                "version": "1.0",
-                "module_id": "MOD-001",
-                "priority": "P0",
-                "status": "active",
-                "phase": 1,
-                "enabled": True,
-            }),
+            yaml.dump(
+                {
+                    "version": "1.0",
+                    "module_id": "MOD-001",
+                    "priority": "P0",
+                    "status": "active",
+                    "phase": 1,
+                    "enabled": True,
+                }
+            ),
             encoding="utf-8",
         )
         tester = ContractTester()
@@ -137,12 +138,8 @@ class TestContractTester:
     def test_test_directory(self, tmp_path):
         subdir = tmp_path / "contracts"
         subdir.mkdir()
-        (subdir / "a.yaml").write_text(
-            yaml.dump({"version": "1.0"}), encoding="utf-8"
-        )
-        (subdir / "b.yaml").write_text(
-            yaml.dump({"version": "2.0"}), encoding="utf-8"
-        )
+        (subdir / "a.yaml").write_text(yaml.dump({"version": "1.0"}), encoding="utf-8")
+        (subdir / "b.yaml").write_text(yaml.dump({"version": "2.0"}), encoding="utf-8")
         tester = ContractTester()
         results = tester.test_directory(str(subdir))
         assert len(results) == 2
@@ -164,9 +161,7 @@ class TestContractTester:
         contract = tmp_path / "c.yaml"
         contract.write_text(yaml.dump({"version": ""}), encoding="utf-8")
         tester = ContractTester()
-        result = tester.test_contract(
-            str(contract), validate_required=False, validate_types=False
-        )
+        result = tester.test_contract(str(contract), validate_required=False, validate_types=False)
         assert result.status == ContractStatus.PASS
 
     def test_test_contract_malformed_yaml(self, tmp_path):

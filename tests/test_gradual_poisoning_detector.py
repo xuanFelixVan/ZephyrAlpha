@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_gradual_poisoning_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.gradual_poisoning_detector import (
     GradualPoisoningDetector,

@@ -25,7 +25,6 @@ import logging
 import os
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +73,7 @@ class ZephyrLock:
 class ConcurrencyManager:
     active_locks: dict[str, ZephyrLock] = field(default_factory=dict)
 
-    def check_conflict(self, path: str, session_id: str) -> Optional[ConflictType]:
+    def check_conflict(self, path: str, session_id: str) -> ConflictType | None:
         lock = self.active_locks.get(path)
         if lock and lock.is_active:
             return ConflictType.SAME_FILE

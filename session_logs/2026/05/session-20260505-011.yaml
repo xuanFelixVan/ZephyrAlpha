@@ -246,4 +246,3 @@ body: |
     2. ArtifactScanner 的 S-05-FILE-ENV 规则对自身代码敏感，集成到 CI 时需配置 exclude 列表
 
     3. EN-003 的 52 个 mismatch 已在 Phase E 审计中评估为非阻塞——但在 Phase G 需确认是否需修复
-

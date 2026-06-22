@@ -9,12 +9,74 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
+"""Re-export bridge for layer3_coordination core coordination symbols.
 
-from .supervisor import Supervisor
-from .construction_verifier import ConstructionVerifier, StubAnalysis, VerifierResult
-from .deadlock_guard import DeadlockGuard
-from .livelock_detector import LivelockDetector
-from .cascade_guard import CascadeGuard
-from .conflict_detector import ConflictDetector, Conflict, ConflictType, ConflictSeverity, ChangeRange, ChangeSet
-from .arbitrator import Arbitrator, AgentRole, FileOwnership, AgentMeta, ArbitrationResult
-from .semantic_diff import SemanticDiffEngine, SemanticDiffType, SemanticDiffEntry, SemanticDiffReport, SemanticRegion
+Aggregates 23 symbols from 8 source modules to preserve backward compatibility
+for ``from layer3_coordination._core_coordination import ...`` consumers.
+"""
+
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import (
+    AgentMeta,
+    AgentRole,
+    ArbitrationResult,
+    Arbitrator,
+    FileOwnership,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.cascade_guard import (
+    CascadeGuard,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.conflict_detector import (
+    ChangeRange,
+    ChangeSet,
+    Conflict,
+    ConflictDetector,
+    ConflictSeverity,
+    ConflictType,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.construction_verifier import (
+    ConstructionVerifier,
+    StubAnalysis,
+    VerifierResult,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.deadlock_guard import (
+    DeadlockGuard,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.livelock_detector import (
+    LivelockDetector,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.semantic_diff import (
+    SemanticDiffEngine,
+    SemanticDiffEntry,
+    SemanticDiffReport,
+    SemanticDiffType,
+    SemanticRegion,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor import (
+    Supervisor,
+)
+
+__all__ = [
+    "AgentMeta",
+    "AgentRole",
+    "ArbitrationResult",
+    "Arbitrator",
+    "CascadeGuard",
+    "ChangeRange",
+    "ChangeSet",
+    "Conflict",
+    "ConflictDetector",
+    "ConflictSeverity",
+    "ConflictType",
+    "ConstructionVerifier",
+    "DeadlockGuard",
+    "FileOwnership",
+    "LivelockDetector",
+    "SemanticDiffEngine",
+    "SemanticDiffEntry",
+    "SemanticDiffReport",
+    "SemanticDiffType",
+    "SemanticRegion",
+    "StubAnalysis",
+    "Supervisor",
+    "VerifierResult",
+]

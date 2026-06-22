@@ -11,20 +11,21 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/test_kg_interface.py
-
 import threading
 import uuid
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Protocol, runtime_checkable
+
 
 @dataclass(frozen=True)
 class KGEntity:
     entity_id: str
     entity_type: str = "concept"
     name: str = ""
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+
 
 @dataclass(frozen=True)
 class KGRelation:
@@ -32,18 +33,21 @@ class KGRelation:
     source_id: str
     target_id: str
     relation_type: str = "related_to"
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+
 
 @dataclass
 class KGPath:
     nodes: list[KGEntity] = field(default_factory=list)
     edges: list[KGRelation] = field(default_factory=list)
 
+
 @dataclass
 class KGSubgraph:
     entities: list[KGEntity] = field(default_factory=list)
     relations: list[KGRelation] = field(default_factory=list)
     depth: int = 0
+
 
 @runtime_checkable
 class KnowledgeGraphInterface(Protocol):
@@ -56,6 +60,7 @@ class KnowledgeGraphInterface(Protocol):
     def query_path(self, from_id: str, to_id: str, max_depth: int = 5) -> KGPath: ...
     def query_subgraph(self, center_id: str, depth: int = 1) -> KGSubgraph: ...
     def stats(self) -> dict[str, int]: ...
+
 
 class InMemoryKnowledgeGraph:
     def __init__(self) -> None:
@@ -209,10 +214,12 @@ class InMemoryKnowledgeGraph:
         with self._lock:
             return {"entities": len(self._entities), "relations": len(self._relations)}
 
+
 def create_knowledge_graph(backend: str = "memory") -> KnowledgeGraphInterface:
     if backend == "memory":
         return InMemoryKnowledgeGraph()
     raise ValueError(f"Unknown KG backend: {backend}")
+
 
 __all__ = [
     "InMemoryKnowledgeGraph",

@@ -11,23 +11,22 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
 
-import os
-import tempfile
+sys.path.insert(0, "src")
+
 
 import pytest
 
 try:
     from zephyr.autonomy_core.context_assembler import (
-        ContextAssembler,
         AssembledContext,
-        AssemblyError,
+        ContextAssembler,
         FileEntry,
         RawContext,
         build_context,
         validate_authority_chain,
     )
+
     _IMPORT_OK = True
     _IMPORT_ERR = None
 except Exception as exc:

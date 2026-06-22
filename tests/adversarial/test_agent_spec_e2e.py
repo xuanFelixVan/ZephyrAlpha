@@ -23,7 +23,6 @@ from __future__ import annotations
 import pytest
 
 from zephyr.autonomy_core.engine import SpecEngine, UpgradePhase, UpgradeResult
-from zephyr.autonomy_core.skill_loader import SkillLoader
 from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
 
 
@@ -112,9 +111,7 @@ class TestDriftCheck:
     def test_drift_check_known_skill_exists(self):
         engine = SpecEngine()
         result = engine.drift_check()
-        all_ids = result["healthy_ids"] + [
-            d["skill_id"] for d in result["drifted_details"]
-        ]
+        all_ids = result["healthy_ids"] + [d["skill_id"] for d in result["drifted_details"]]
         assert "SKILL-ROL-ARC-001" in all_ids
         assert "SKILL-ROL-IMP-001" in all_ids
         assert "SKILL-ROL-GOV-001" in all_ids

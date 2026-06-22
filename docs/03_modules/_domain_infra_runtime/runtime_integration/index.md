@@ -1,111 +1,65 @@
 ---
 doc_type: index
-status: Active
-generated: '2026-05-02'
-updated: '2026-05-05'
-blueprint_id: DOM-GOV-001
-title: Runtime Integration
+status: active
+title: "runtime_integration — 目录索引"
 module_id: MOD-INF-002
+blueprint_id: MOD-INF-002
+version: "6.1.1"
+created: "2026-05-01"
+updated: "2026-06-22"
 ---
 
-# Runtime Integration — 目录索引
+# runtime_integration
+
+> 本文件由 `generate_missing_index_md.py` 自动生成（后经手动校正）
+> 生成日期：2026-06-22
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**infra_ops 层模块 — runtime integration**。
+本目录存放：**L01 infrastructure 层 / infra 功能域 — Runtime Integration 模块蓝图**。
+代码承载分布在 `src/zephyr/shared/` + `src/zephyr/infrastructure/` + `src/zephyr/governance/lifecycle_manager/`。
 
-## 文件清单
+## 模块概览
 
-| 文件 | 说明 |
+| 维度 | 详情 |
 |------|------|
-| blueprint.md | 模块蓝图 v5.0.1——15 RI 模块 + 48 Cross-Layer 缺口填补 + 155+ 项总盲点（v3:49 + v4:55 + v5:50+）+ §13 终极取证审计（10项致命假设） |
-| index.md | 目录索引（本文件） |
+| 蓝图路径 | [blueprint.md](./blueprint.md) |
+| 蓝图版本 | v6.1.1 |
+| 代码承载 | `src/zephyr/shared/` + `src/zephyr/infrastructure/` + `src/zephyr/governance/lifecycle_manager/` |
+| 功能域 | infra |
+| 层级 | L01 infrastructure |
+| 施工进度 | completed |
+| 父模块 | MOD-MASTER-001 |
 
-## 关联子蓝图/设计文档（本模块下属）
+## 15 核心 RI 模块（与 MOD-INF-016 Shared Core 承载关系）
 
-| RI 模块 | 路径 | Phase | MOD-INF-016 承载 | 说明 |
-|---------|------|:--:|:--:|------|
-| RI-01 EventBus | `blueprint.md §5.1` | 1b | `shared/observer.py` | 四级PriorityQueue + DeliverySemantics(AT_LEAST_ONCE) + DLQ SQLite持久化 + 背压传导链 + 消费者组 + Schema兼容 + SpeculativeExecution |
-| RI-02 ModuleLifecycle | `blueprint.md §5.1` | 1a | `shared/lifecycle/hooks.py` | 拓扑排序/版本约束/优雅关闭协议(drain→force kill)/预热期/Crash-Only设计 |
-| RI-03 ConfigCenter | `blueprint.md §5.1` | 1a | `shared/config/` | 热重载/Feature Flags(渐进推出1%→100%+交互矩阵+Kill Switch)/写入校验/Schema兼容性策略/配置审计/回滚 |
-| RI-04 DependencyInjector | `blueprint.md §5.1` | 1a | `shared/production/di_container.py` | 构造注入 + ABC接口绑定 + 循环依赖检测——统一由MOD-INF-016承载 |
-| RI-05 ResilienceGuard | `blueprint.md §5.1` | 2a | `shared/resilience/` | 七合一：CircuitBreaker+RateLimiter+Timeout+Bulkhead+LoadShedder+RetryBudget+自适应并发 |
-| RI-06 IdempotencyGuard | `blueprint.md §5.1` | 2a | `shared/production/idempotency.py` | TTL分级：关键流ES expected_version天然去重/非关键流SQLite 24h TTL |
-| RI-07 SecretsManager | `blueprint.md §5.1` | 2a | `shared/production/secrets.py` | AES-256-GCM加密 + ConfigCenter加密字段唯一后端 + 泄露检测 |
-| RI-08 ErrorHandler | `blueprint.md §5.1` | 1a | `shared/errors.py` + `shared/logging.py` | SRE分类 + W3C Trace Context(traceparent) + OpenTelemetry兼容 |
-| RI-09 HealthCheck | `blueprint.md §5.1` | 2a | `shared/health.py` | 三级状态 + 具体SLI阈值(CPU>80%→DEGRADED) + Reconciliation Loop持续对账 + TrustDecayTracker |
-| RI-10 TelemetryCollector | `blueprint.md §5.1` | 1b | `shared/production/metrics.py` | per-module基数限制(500)+LRU淘汰 + PromptFingerprint + DeadModuleDetector |
-| RI-11 CacheLayer | `blueprint.md §5.1` | 2a | `shared/production/cache.py` | LRU+VMS语义缓存+TTL分层 + DataAffinity |
-| RI-12 AutoDiagnostics | `blueprint.md §5.1` | 2b | **独立落地** | Runbook→诊断→自愈→KB自动补充 + SelfLimiter(自限反馈) |
-| RI-13 EventStore | `blueprint.md §5.1` | 3·触发 | **独立落地** | ES+CQRS+快照+时间旅行(写隔离) + Crypto-Shredding + SagaCoordinator(Phase 4触发) |
-| RI-14 DryRunSimulator | `blueprint.md §5.1` | 2b | **独立落地** | sandbox预演 + 一致性验证套件 + CrossSessionLoopDetector + AI自预演(SelfSimulate) |
-| RI-15 CostTracker | `blueprint.md §5.1` | 2b | **独立落地** | 全资源FinOps(LLM+CPU+内存+IO+PnL) + per-module费用归属 + MaintainabilityScore |
+| RI 模块 | 代码承载 | 承载文件 |
+|---------|:---:|------|
+| RI-01 EventBus | **MOD-INF-016** | `shared/observer.py` + `shared/events/` + `shared/events/dlq.py` |
+| RI-02 ModuleLifecycle | **MOD-INF-016** | `lifecycle_manager/hooks.py` |
+| RI-03 ConfigCenter | **MOD-INF-016** | `shared/config/` + `shared/flags.py` |
+| RI-04 DependencyInjector | **MOD-INF-016** (planned) | `shared/production/di_container.py`（待施工） |
+| RI-05 ResilienceGuard | **MOD-INF-016** | `shared/resilience/` |
+| RI-06 IdempotencyGuard | **MOD-INF-016** | `shared/production/idempotency.py` |
+| RI-07 SecretsManager | **MOD-INF-016** | `shared/production/secrets.py` |
+| RI-08 ErrorHandler | **MOD-INF-016** | `shared/errors.py` + `shared/logging.py` |
+| RI-09 HealthCheck | **MOD-INF-016** | `shared/health.py` |
+| RI-10 TelemetryCollector | **MOD-INF-016** | `shared/production/metrics.py` |
+| RI-11 CacheLayer | **MOD-INF-016** | `shared/production/cache.py` |
+| RI-12 AutoDiagnostics | **独立落地** | `infra_ops/auto_diagnostics.py` |
+| RI-13 EventStore | **独立落地** | `infra_ops/event_store.py` |
+| RI-14 DryRunSimulator | **独立落地** | `infra_ops/dry_run_simulator.py` |
+| RI-15 CostTracker | **独立落地** | `infra_ops/cost_tracker.py` |
 
-## 1人+AI 运维专项（v3→v4→v5 持续增强）
+> **职责准则**：MOD-INF-002 定义"运行时集成体系需要什么"（WHAT + WHY），MOD-INF-016 承载"公共实现"（HOW）。
 
-| 设计 | 版本 | 路径 | 说明 |
-|------|:--:|------|------|
-| Owner 告警预算 | v3 | `§6.3` | 每日实时告警上限 N=10，超出→汇总为日报 |
-| 五级通知分层 | v3 | `§6.3` | 💀CRITICAL立即飞书 / 🟡WARNING每小时 / 🟢INFO每日 / ⚪DEBUG仅Dashboard / ✨AI_SELF_HEALED日报 |
-| 休假模式 | v3 | `§7` | Owner离线72h→熔断/预算/轮转全自动 |
-| 睡眠时段协议 | v4 | `§5.3, §6.5` | 23:00-07:00；CRITICAL仅触发1次→5min无响应→自愈 |
-| 认知负荷预算 | v4 | `§6.5` | 决策容量模型 C_max；超80%→轻负载日；超100%→认知超载保护 |
-| 自动决策引擎 | v4 | `§5.3` | RPN<50+影响≤3模块+费用≤$0.10→自动执行 |
-| 晨报推送 | v4 | `§6.5` | 07:00 Daily Briefing: 昨日指标+费用+自愈+待审批 |
-| 弃用螺旋防护 | v4 | `§6.5` | 72h无Owner介入→降低告警频率30% |
+## 目录内容
 
-## 金融/交易系统专项（v5.0.0 新增）
+| 文件/目录 | 类型 | 说明 |
+|-----------|------|------|
+| `blueprint.md` | 蓝图 | Runtime Integration 蓝图 v6.1.1——15 核心 RI 模块 + 48 Cross-Layer 缺口填补 + 交易基础设施 + 模块通信模式 + AI 施工模式库 |
+| `changes/` | 目录 | 变更记录 |
 
-| 设计 | 路径 | 说明 |
-|------|------|------|
-| Trading Kill Switch | `§5.3` | 代码骨架——5步停止序列：取消订单+清空EventBus+切换READ_ONLY+审计 |
-| 5级 TradingMode | `§5.8` | NORMAL/PAPER/BACKTEST/READ_ONLY/KILLED——全模式切换 |
-| 确定性复现双骨干 | `§5.3` | SimulatedClock + DeterministicRandom——回测可复现保证 |
-| 纸交易基础设施 | `§5.8` | AI新模块默认PAPER模式——无实盘风险 |
-| Pre-Trade 风控管道 | `§2.1-K02` | 订单→仓位→资金→敞口→合规→交易所 6步检查链 |
-| 订单状态机标准化 | `§2.1-K03` | FIX Protocol对齐——NEW→PENDING→PARTIAL→FILLED/CANCELLED/REJECTED |
-| 交易对账 | `§2.1-K07` | 系统订单 vs 经纪商回执 vs 清算报告 三方diff |
-| EOD 日终处理 | `§2.1-K09` | 持仓结算/PnL/保证金/归档自动化 |
+## 导航
 
-## 模块通信模式目录（v5.0.0 新增）
-
-| 模式 | 支持 | 路径 |
-|------|:--:|------|
-| Pub/Sub | ✅ | `shared/observer.py` |
-| Request/Reply | ⚠️ | `§5.9` Phase 1b |
-| Scatter/Gather | ❌ | `§5.9` Phase 2b |
-| Pipeline/Chain | ❌ | `§5.9` |
-| Content-Based Router | ❌ | `§5.9` Phase 1b |
-| Message Filter | ❌ | `§5.9` Phase 1b |
-| Aggregator | ❌ | `§5.9` Phase 2b |
-
-## AI 施工模式库（v5.0.0 新增）
-
-| 设计 | 路径 | 说明 |
-|------|------|------|
-| 模块模板系统 | `§5.3` | Jinja2 模板——新模块自动生成骨架 |
-| 反模式目录 | `§2.1-O02` | "在这个系统中绝对不要做什么" |
-| 设计决策树 | `§2.1-O03` | "用EventBus还是直接调用？"→决策流程 |
-| AI 信心标注 | `§2.1-O07` | 代码级信心0-1→决定审查深度 |
-| 渐进审查深度 | `§2.1-O08` | 3级：轻审(lint+safety)→中审(+contract)→重审(+full+Owner) |
-| Code Ownership | `§2.1-O06` | AI生成% vs Owner修改% vs AI修复% |
-
-## 蓝图质量
-
-| 设计 | 版本 | 路径 | 说明 |
-|------|:--:|------|------|
-| 设计原则 | v3 | `§5.2` | Crash-Only / StructuredConcurrency / Fail-Closed / ImmutableEvents / ProgressiveDisclosure |
-| FMEA | v3→v4→v5 | `§9` | 17项失效模式 RPN 分析 |
-| 五视图体系 | v3 | `§6.4` | 静态拓扑/动态行为/故障传播/容量伸缩/Owner感知 |
-| 55+盲点分类清单 | v4 | `§2.1` | A-J 十个维度系统化审计 |
-| 50+盲点分类清单 | v5 | `§2.1` | K-O 五个新增维度 |
-
-## 排除规则（不应放入本目录的内容）
-
-- ❌ 其他模块文档 → `../`
-- ❌ 各 RI 模块的独立施工文档 → 统一在 `blueprint.md §12`
-- ❌ MOD-INF-016 Shared Core 的实现代码 → `../../../src/zephyr/shared/`
-
-## 父级目录
-
-- 父级：[infra_ops](../index.md)
+- [上级目录](../index.md)

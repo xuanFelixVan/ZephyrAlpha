@@ -2,30 +2,21 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.cost_attributor
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
-from dataclasses import dataclass, field
 from collections import defaultdict
+from dataclasses import dataclass, field
 
 from .budget_models import BudgetDimension
+
 
 @dataclass
 class CostAttribution:
@@ -38,6 +29,7 @@ class CostAttribution:
     session_id: str = ""
     timestamp: float = field(default_factory=time.time)
 
+
 @dataclass
 class CostSummary:
     total_tokens: int = 0
@@ -45,6 +37,7 @@ class CostSummary:
     by_action_type: dict[str, float] = field(default_factory=lambda: defaultdict(float))
     by_dimension: dict[str, float] = field(default_factory=lambda: defaultdict(float))
     top_expensive: list[CostAttribution] = field(default_factory=list)
+
 
 class CostAttributor:
     def __init__(self, top_n: int = 10):

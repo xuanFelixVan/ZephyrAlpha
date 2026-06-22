@@ -6,29 +6,30 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """code-dedup-engine 核心模块单元测试 — Scanner, MonocultureGuard, AutoFixer."""
 
 
-import pytest
 import tempfile
 from pathlib import Path
 
-from zephyr.governance.scanner import (
-    Scanner,
-    ScanResult,
-    DuplicateGroup,
-)
-from zephyr.governance.monoculture_guard import (
-    MonocultureGuard,
-    BlastRadiusScore,
-)
+import pytest
+
 from zephyr.governance.auto_fixer import (
     AutoFixer,
+    FixLevel,
     FixParams,
     SafetyTier,
-    FixLevel,
 )
-
+from zephyr.governance.monoculture_guard import (
+    BlastRadiusScore,
+    MonocultureGuard,
+)
+from zephyr.governance.scanner import (
+    DuplicateGroup,
+    Scanner,
+    ScanResult,
+)
 
 _SAMPLE_PYTHON = """
 def add(a, b):
@@ -235,33 +236,45 @@ class TestMonocultureGuard:
         self.guard = MonocultureGuard()
 
     def test_compute_brs_safe(self):
-        brs = self.guard.compute_brs(caller_count=0, cross_layer_count=0, on_critical_path=False, has_independent_unit_test=True)
+        brs = self.guard.compute_brs(
+            caller_count=0, cross_layer_count=0, on_critical_path=False, has_independent_unit_test=True
+        )
         assert brs.level == "SAFE"
         assert brs.blast_radius_score <= 25
         assert not self.guard.should_block_dedup(brs)
 
     def test_compute_brs_caution(self):
-        brs = self.guard.compute_brs(caller_count=8, cross_layer_count=2, on_critical_path=False, has_independent_unit_test=False)
+        brs = self.guard.compute_brs(
+            caller_count=8, cross_layer_count=2, on_critical_path=False, has_independent_unit_test=False
+        )
         assert brs.level == "CAUTION"
         assert 26 <= brs.blast_radius_score <= 50
 
     def test_compute_brs_risky(self):
-        brs = self.guard.compute_brs(caller_count=14, cross_layer_count=4, on_critical_path=False, has_independent_unit_test=False)
+        brs = self.guard.compute_brs(
+            caller_count=14, cross_layer_count=4, on_critical_path=False, has_independent_unit_test=False
+        )
         assert brs.level == "RISKY"
         assert 51 <= brs.blast_radius_score <= 75
 
     def test_compute_brs_dangerous(self):
-        brs = self.guard.compute_brs(caller_count=25, cross_layer_count=10, on_critical_path=True, has_independent_unit_test=False)
+        brs = self.guard.compute_brs(
+            caller_count=25, cross_layer_count=10, on_critical_path=True, has_independent_unit_test=False
+        )
         assert brs.level == "DANGEROUS"
         assert brs.blast_radius_score >= 76
         assert self.guard.should_block_dedup(brs)
 
     def test_brs_max_capped_at_100(self):
-        brs = self.guard.compute_brs(caller_count=100, cross_layer_count=100, on_critical_path=True, has_independent_unit_test=False)
+        brs = self.guard.compute_brs(
+            caller_count=100, cross_layer_count=100, on_critical_path=True, has_independent_unit_test=False
+        )
         assert brs.blast_radius_score <= 100
 
     def test_generate_report_dangerous(self):
-        brs = self.guard.compute_brs(caller_count=25, cross_layer_count=10, on_critical_path=True, has_independent_unit_test=False)
+        brs = self.guard.compute_brs(
+            caller_count=25, cross_layer_count=10, on_critical_path=True, has_independent_unit_test=False
+        )
         report = self.guard.generate_report("shared_func", brs)
         assert "Monoculture" in report
         assert "shared_func" in report
@@ -283,7 +296,9 @@ class TestMonocultureGuard:
             out.unlink(missing_ok=True)
 
     def test_blast_radius_score_fields(self):
-        brs = BlastRadiusScore(caller_count=3, cross_layer_count=1, on_critical_path=True, has_independent_unit_test=False)
+        brs = BlastRadiusScore(
+            caller_count=3, cross_layer_count=1, on_critical_path=True, has_independent_unit_test=False
+        )
         assert brs.caller_count == 3
         assert brs.on_critical_path is True
         assert brs.has_independent_unit_test is False
@@ -311,13 +326,17 @@ class TestAutoFixer:
         assert self.fixer.can_fix(similarity=0.95, caller_count=3, blast_radius=30, is_grandfathered=True) is True
 
     def test_fix_success(self):
-        result = self.fixer.fix("src_a", "src_b", similarity=0.95, caller_count=3, blast_radius=30, is_grandfathered=False)
+        result = self.fixer.fix(
+            "src_a", "src_b", similarity=0.95, caller_count=3, blast_radius=30, is_grandfathered=False
+        )
         assert result["fixed"] is True
         assert result["source"] == "src_a"
         assert self.fixer.fix_count == 1
 
     def test_fix_blocked(self):
-        result = self.fixer.fix("src_a", "src_b", similarity=0.95, caller_count=10, blast_radius=30, is_grandfathered=False)
+        result = self.fixer.fix(
+            "src_a", "src_b", similarity=0.95, caller_count=10, blast_radius=30, is_grandfathered=False
+        )
         assert result["fixed"] is False
         assert result["reason"] == "safety_constraint_blocked"
 

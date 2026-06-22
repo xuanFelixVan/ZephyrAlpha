@@ -47,14 +47,13 @@ Usage:
         dimension=Dimension.D3,
         severity=Severity.HIGH,
         category="元数据合规",
-        target_file="docs/01_policies_and_standards/meta/index.md",
+        target_file="docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml",
         description="缺少必填字段 'version'",
         evidence="frontmatter 中未找到 version 字段",
         remediation_action=RemediationAction.FIX,
         remediation_priority="P0",
     )
 """
-
 
 from __future__ import annotations
 
@@ -63,6 +62,7 @@ import json
 import os
 from datetime import UTC, datetime
 from enum import Enum
+
 from zephyr.integration.shared.schema.schemas import Priority
 
 
@@ -264,9 +264,7 @@ class Finding:
         return self.to_json() + "\n"
 
     def __repr__(self) -> str:
-        return (
-            f"Finding({self.finding_id}, D={self.dimension.value}, " f"SEV={self.severity.value}, {self.target_file})"
-        )
+        return f"Finding({self.finding_id}, D={self.dimension.value}, SEV={self.severity.value}, {self.target_file})"
 
     @classmethod
     def from_result_dict(

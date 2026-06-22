@@ -26,9 +26,7 @@ Multi-Model Vendor Risk — 多模型供应商风险缓和 (盲点 #38)
   - 后备模型池定义
 """
 
-import time
 from collections import defaultdict
-from typing import Any, Optional
 
 
 class MultiModelVendorRisk:
@@ -39,18 +37,13 @@ class MultiModelVendorRisk:
     SINGLE_VENDOR_SATURATION_THRESHOLD = 0.70
 
     def __init__(self):
-        self._vendor_usage: dict[str, dict[str, int]] = defaultdict(
-            lambda: defaultdict(int)
-        )
+        self._vendor_usage: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
 
     def record(self, vendor: str, model: str, tokens: int):
         self._vendor_usage[vendor][model] += tokens
 
     def check(self) -> dict:
-        total = sum(
-            sum(models.values())
-            for vendor, models in self._vendor_usage.items()
-        )
+        total = sum(sum(models.values()) for vendor, models in self._vendor_usage.items())
         if total == 0:
             return {"risk": "N/A", "vendor_shares": {}}
 

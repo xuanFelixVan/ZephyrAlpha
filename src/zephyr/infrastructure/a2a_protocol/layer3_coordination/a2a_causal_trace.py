@@ -28,7 +28,6 @@
 输出: CausalPath — 端到端因果路径
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -75,10 +74,15 @@ class A2ACausalTrace:
 
     def add_node(self, trace_id: str, node_id: str, agent_id: str, action: str, resource: str, timestamp: float):
         if trace_id in self._graphs:
-            self._graphs[trace_id].add_node(CausalNode(
-                node_id=node_id, agent_id=agent_id, action=action,
-                resource=resource, timestamp=timestamp,
-            ))
+            self._graphs[trace_id].add_node(
+                CausalNode(
+                    node_id=node_id,
+                    agent_id=agent_id,
+                    action=action,
+                    resource=resource,
+                    timestamp=timestamp,
+                )
+            )
 
     def add_dependency(self, trace_id: str, from_node: str, to_node: str, dep_type: str = "read_after_write"):
         if trace_id in self._graphs:

@@ -2,30 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.diagnosers.diagnosis_engine
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-import numpy as np
 
 @dataclass
 class Diagnosis:
@@ -34,9 +23,9 @@ class Diagnosis:
     confidence: float
     evidence_chain: list[str] = field(default_factory=list)
 
+
 @dataclass
 class DiagnosisEngine:
-
     def diagnose(self, anomaly_id: str, anomaly_evidence: dict[str, Any]) -> Diagnosis:
         diagnosis_id = str(uuid.uuid4())[:8]
         metric_name = anomaly_evidence.get("metric_name", "unknown")

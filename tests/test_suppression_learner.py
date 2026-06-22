@@ -11,9 +11,7 @@
 # [TESTS] test_suppression_learner.py
 
 import uuid
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.behavioral_audit.suppression_learner import (
     SuppressionLearner,
@@ -23,7 +21,7 @@ from zephyr.behavioral_audit.suppression_learner import (
 
 class TestSuppressionRule:
     def test_creation(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         rule = SuppressionRule(
             rule_id=uuid.uuid4(),
             detector_id="db_schema_drift",
@@ -40,7 +38,7 @@ class TestSuppressionRule:
         assert rule.last_reviewed_at is None
 
     def test_default_values(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         rule = SuppressionRule(
             rule_id=uuid.uuid4(),
             detector_id="d",
@@ -186,7 +184,7 @@ class TestGetRulesNeedingReview:
         for _ in range(3):
             learner.record_false_positive("det", "mod", "dim", "sig")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig")
-        learner._patterns[key].created_at = datetime.now(timezone.utc) - timedelta(days=31)
+        learner._patterns[key].created_at = datetime.now(UTC) - timedelta(days=31)
         needs = learner.get_rules_needing_review()
         assert len(needs) == 1
 

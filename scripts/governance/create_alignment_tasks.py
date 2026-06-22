@@ -18,7 +18,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from zephyr.governance.persistence.task_repo import TaskRepository, Task
+from zephyr.governance.persistence.task_repo import Task, TaskRepository
 
 BATCH_ID = "ALIGN-BATCH-001"
 SOURCE_BP = "MOD-INF-005"
@@ -36,7 +36,10 @@ TASKS = [
             str(PROJECT_ROOT / "data" / "databases" / "depgraph.db"),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "data" / "asset_index" / "orphan-disposition.yaml"), "desc": "孤儿处置决议：接通/保留/删除"},
+            {
+                "path": str(PROJECT_ROOT / "data" / "asset_index" / "orphan-disposition.yaml"),
+                "desc": "孤儿处置决议：接通/保留/删除",
+            },
         ],
         "allowed_touch": [
             "src/zephyr/**/__init__.py",
@@ -51,7 +54,10 @@ TASKS = [
             {"module_id": "RULE-TWO", "section": "§2", "reason": "接通后必须有消费者"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "data" / "asset_index" / "depgraph-diagnosis.yaml"), "reason": "孤儿节点清单"},
+            {
+                "file_path": str(PROJECT_ROOT / "data" / "asset_index" / "depgraph-diagnosis.yaml"),
+                "reason": "孤儿节点清单",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -86,7 +92,10 @@ TASKS = [
             str(PROJECT_ROOT / "scripts" / "governance" / "add_file_headers.py"),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "data" / "asset_index" / "empty-blueprint-fix-report.yaml"), "desc": "修复报告：每个文件的blueprint_id赋值"},
+            {
+                "path": str(PROJECT_ROOT / "data" / "asset_index" / "empty-blueprint-fix-report.yaml"),
+                "desc": "修复报告：每个文件的blueprint_id赋值",
+            },
         ],
         "allowed_touch": [
             "src/zephyr/**/*.py",
@@ -103,7 +112,10 @@ TASKS = [
             {"module_id": "GOV-ENG-002", "section": "§5", "reason": "头字段格式规范"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "scripts" / "governance" / "add_file_headers.py"), "reason": "已有DIR_TO_BLUEPRINT映射表"},
+            {
+                "file_path": str(PROJECT_ROOT / "scripts" / "governance" / "add_file_headers.py"),
+                "reason": "已有DIR_TO_BLUEPRINT映射表",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -153,7 +165,10 @@ TASKS = [
             {"module_id": "RULE-ZERO", "section": "§1", "reason": "写入前获取锁"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "data" / "asset_index" / "depgraph-diagnosis.yaml"), "reason": "循环依赖清单"},
+            {
+                "file_path": str(PROJECT_ROOT / "data" / "asset_index" / "depgraph-diagnosis.yaml"),
+                "reason": "循环依赖清单",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -187,8 +202,14 @@ TASKS = [
             str(PROJECT_ROOT / "src" / "zephyr" / "escalation-engine" / "self_test.py"),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "escalation-engine" / "__init__.py"), "desc": "改为延迟导入"},
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "escalation-engine" / "self_test.py"), "desc": "直接import adapter"},
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "escalation-engine" / "__init__.py"),
+                "desc": "改为延迟导入",
+            },
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "escalation-engine" / "self_test.py"),
+                "desc": "直接import adapter",
+            },
         ],
         "allowed_touch": [
             "src/zephyr/escalation-engine/__init__.py",
@@ -202,7 +223,10 @@ TASKS = [
             {"module_id": "RULE-ONE", "section": "§1", "reason": "原子写入"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "escalation-engine" / "__init__.py"), "reason": "当前导入结构"},
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "escalation-engine" / "__init__.py"),
+                "reason": "当前导入结构",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -235,7 +259,10 @@ TASKS = [
             str(PROJECT_ROOT / "src" / "zephyr" / "llm-security" / "protocol.py"),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "llm-security" / "gateway.py"), "desc": "移除对l7_validation的直接import"},
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "llm-security" / "gateway.py"),
+                "desc": "移除对l7_validation的直接import",
+            },
         ],
         "allowed_touch": [
             "src/zephyr/llm-security/gateway.py",
@@ -247,8 +274,14 @@ TASKS = [
             {"module_id": "RULE-ZERO", "section": "§1", "reason": "写入前获取锁"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "llm-security" / "gateway.py"), "reason": "当前导入结构"},
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "llm-security" / "protocol.py"), "reason": "已有接口定义"},
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "llm-security" / "gateway.py"),
+                "reason": "当前导入结构",
+            },
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "llm-security" / "protocol.py"),
+                "reason": "已有接口定义",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -282,8 +315,14 @@ TASKS = [
         ],
         "downstream_outputs": [
             {"path": str(PROJECT_ROOT / "src" / "zephyr" / "telemetry" / "event_types.py"), "desc": "公共event定义"},
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "telemetry" / "traces" / "span_stub.py"), "desc": "改为import event_types"},
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "telemetry" / "logs" / "structured_sink.py"), "desc": "改为import event_types"},
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "telemetry" / "traces" / "span_stub.py"),
+                "desc": "改为import event_types",
+            },
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "telemetry" / "logs" / "structured_sink.py"),
+                "desc": "改为import event_types",
+            },
         ],
         "allowed_touch": [
             "src/zephyr/telemetry/traces/span_stub.py",
@@ -295,7 +334,10 @@ TASKS = [
             {"module_id": "RULE-FOUR", "section": "§2", "reason": "新文件通过scaffold.py创建"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "telemetry" / "traces" / "span_stub.py"), "reason": "当前导入结构"},
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "telemetry" / "traces" / "span_stub.py"),
+                "reason": "当前导入结构",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -332,8 +374,14 @@ TASKS = [
             str(PROJECT_ROOT / "src" / "zephyr" / "budget-enforcer" / "budget_engine.py"),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "rollback" / "phase_check_registry.py"), "desc": "改为注册制"},
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "budget-enforcer" / "budget_engine.py"), "desc": "移除对system_telemetry的直接import"},
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "rollback" / "phase_check_registry.py"),
+                "desc": "改为注册制",
+            },
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "budget-enforcer" / "budget_engine.py"),
+                "desc": "移除对system_telemetry的直接import",
+            },
         ],
         "allowed_touch": [
             "src/zephyr/rollback/phase_check_registry.py",
@@ -348,8 +396,14 @@ TASKS = [
             {"module_id": "RULE-ONE", "section": "§1", "reason": "原子写入"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "rollback" / "phase_check_registry.py"), "reason": "当前注册机制"},
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "budget-enforcer" / "budget_engine.py"), "reason": "当前对system_telemetry的依赖"},
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "rollback" / "phase_check_registry.py"),
+                "reason": "当前注册机制",
+            },
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "budget-enforcer" / "budget_engine.py"),
+                "reason": "当前对system_telemetry的依赖",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -385,7 +439,10 @@ TASKS = [
             str(PROJECT_ROOT / "src" / "zephyr" / "budget-enforcer" / "model_router.py"),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "model-profiler" / "model_router_interface.py"), "desc": "提取的接口"},
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "model-profiler" / "model_router_interface.py"),
+                "desc": "提取的接口",
+            },
         ],
         "allowed_touch": [
             "src/zephyr/model-profiler/profiler.py",
@@ -397,7 +454,10 @@ TASKS = [
             {"module_id": "RULE-ZERO", "section": "§1", "reason": "写入前获取锁"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "budget-enforcer" / "model_router.py"), "reason": "当前依赖结构"},
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "budget-enforcer" / "model_router.py"),
+                "reason": "当前依赖结构",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -430,7 +490,10 @@ TASKS = [
             str(PROJECT_ROOT / "src" / "zephyr" / "agent-spec" / "skill_feedback.py"),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "kb" / "unified_memory_api.py"), "desc": "移除对storage的反向import"},
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "kb" / "unified_memory_api.py"),
+                "desc": "移除对storage的反向import",
+            },
             {"path": str(PROJECT_ROOT / "src" / "zephyr" / "agent-spec" / "skill_feedback.py"), "desc": "改为事件通知"},
         ],
         "allowed_touch": [
@@ -445,7 +508,10 @@ TASKS = [
             {"module_id": "RULE-ZERO", "section": "§1", "reason": "写入前获取锁"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "kb" / "unified_memory_api.py"), "reason": "当前双向依赖"},
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "kb" / "unified_memory_api.py"),
+                "reason": "当前双向依赖",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -479,7 +545,10 @@ TASKS = [
             str(PROJECT_ROOT / "src" / "zephyr" / "risk" / "risk_validator.py"),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "src" / "zephyr" / "ex_core" / "execution_engine.py"), "desc": "改为通过公共接口引用"},
+            {
+                "path": str(PROJECT_ROOT / "src" / "zephyr" / "ex_core" / "execution_engine.py"),
+                "desc": "改为通过公共接口引用",
+            },
         ],
         "allowed_touch": [
             "src/zephyr/ex_core/execution_engine.py",
@@ -493,8 +562,14 @@ TASKS = [
             {"module_id": "RULE-ZERO", "section": "§1", "reason": "写入前获取锁"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "ex_core" / "execution_engine.py"), "reason": "当前跨层import"},
-            {"file_path": str(PROJECT_ROOT / "src" / "zephyr" / "risk" / "risk_validator.py"), "reason": "应使用的公共接口"},
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "ex_core" / "execution_engine.py"),
+                "reason": "当前跨层import",
+            },
+            {
+                "file_path": str(PROJECT_ROOT / "src" / "zephyr" / "risk" / "risk_validator.py"),
+                "reason": "应使用的公共接口",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -524,10 +599,22 @@ TASKS = [
         "source_blueprint": "PS-REG-012",
         "source_section": "§19",
         "upstream_files": [
-            str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "directory-registry.md"),
+            str(
+                PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "directory-registry.md"
+            ),
         ],
         "downstream_outputs": [
-            {"path": str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "directory-registry.md"), "desc": "补登记后的完整注册表"},
+            {
+                "path": str(
+                    PROJECT_ROOT
+                    / "docs"
+                    / "01_policies_and_standards"
+                    / "_registry"
+                    / "catalogs"
+                    / "directory-registry.md"
+                ),
+                "desc": "补登记后的完整注册表",
+            },
         ],
         "allowed_touch": [
             "docs/01_policies_and_standards/_registry/catalogs/directory-registry.md",
@@ -538,7 +625,17 @@ TASKS = [
             {"module_id": "PS-REG-012", "section": "§4", "reason": "注册表格式规范"},
         ],
         "context_assembly_manifest": [
-            {"file_path": str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "directory-registry.md"), "reason": "当前注册表"},
+            {
+                "file_path": str(
+                    PROJECT_ROOT
+                    / "docs"
+                    / "01_policies_and_standards"
+                    / "_registry"
+                    / "catalogs"
+                    / "directory-registry.md"
+                ),
+                "reason": "当前注册表",
+            },
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -699,7 +796,10 @@ TASKS = [
         "downstream_outputs": [
             {"path": str(PROJECT_ROOT / "data" / "databases" / "depgraph.db"), "desc": "最终依赖图"},
             {"path": str(PROJECT_ROOT / "data" / "asset_index" / "depgraph-diagnosis.yaml"), "desc": "最终诊断报告"},
-            {"path": str(PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "system-dependency-map.md"), "desc": "更新的§19"},
+            {
+                "path": str(PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "system-dependency-map.md"),
+                "desc": "更新的§19",
+            },
         ],
         "allowed_touch": [
             "data/databases/depgraph.db",
@@ -726,10 +826,20 @@ TASKS = [
         ],
         "rollback_instructions": "git checkout恢复system-dependency-map.md，重新生成旧版depgraph",
         "depends_on": [
-            "TASK-ALN-0001", "TASK-ALN-0002", "TASK-ALN-0003", "TASK-ALN-0004",
-            "TASK-ALN-0005", "TASK-ALN-0006", "TASK-ALN-0007", "TASK-ALN-0008",
-            "TASK-ALN-0009", "TASK-ALN-0010", "TASK-ALN-0011", "TASK-ALN-0012",
-            "TASK-ALN-0013", "TASK-ALN-0014",
+            "TASK-ALN-0001",
+            "TASK-ALN-0002",
+            "TASK-ALN-0003",
+            "TASK-ALN-0004",
+            "TASK-ALN-0005",
+            "TASK-ALN-0006",
+            "TASK-ALN-0007",
+            "TASK-ALN-0008",
+            "TASK-ALN-0009",
+            "TASK-ALN-0010",
+            "TASK-ALN-0011",
+            "TASK-ALN-0012",
+            "TASK-ALN-0013",
+            "TASK-ALN-0014",
         ],
         "status": "PENDING",
         "tags_fn": ["governance", "verification"],

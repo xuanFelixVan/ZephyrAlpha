@@ -46,8 +46,8 @@ Safety  : M（初始化目录 + 创建 collection，幂等）
     client = get_chroma_client()       # 返回 PersistentClient
     collection = client.get_collection("ke_entries")
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from pathlib import Path
 from typing import Any

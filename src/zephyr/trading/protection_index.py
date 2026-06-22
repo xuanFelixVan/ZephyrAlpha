@@ -12,15 +12,13 @@
 
 from __future__ import annotations
 
-import hashlib
 import logging
-import os
 import struct
 import threading
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from zephyr.trading.verdict_engine import ProtectionLevel
 
@@ -29,7 +27,7 @@ logger = logging.getLogger(__name__)
 ANCHOR_PATTERNS: list[str] = [
     ".trae/rules/",
     "project_rules.md",
-    "rule-registry.md",
+    "_index.yaml",
     "AGENTS.md",
     "CLAUDE.md",
     "kill_switch.py",
@@ -114,15 +112,15 @@ def _fnv1a_64(data: bytes) -> int:
 
 
 class _SimpleBloomFilter:
-    __slots__ = ("_size", "_num_hashes", "_bits", "_count")
+    __slots__ = ("_bits", "_count", "_num_hashes", "_size")
 
     def __init__(self, expected_items: int = 2000, fp_rate: float = 0.001) -> None:
         if expected_items <= 0:
             expected_items = 2000
         if fp_rate <= 0 or fp_rate >= 1:
             fp_rate = 0.001
-        self._size = max(_BLOOM_DEFAULT_SIZE, int(-expected_items * (fp_rate ** 0.5) * 2))
-        self._num_hashes = max(3, int(-expected_items * (fp_rate ** 0.5) / self._size * 8) + 3)
+        self._size = max(_BLOOM_DEFAULT_SIZE, int(-expected_items * (fp_rate**0.5) * 2))
+        self._num_hashes = max(3, int(-expected_items * (fp_rate**0.5) / self._size * 8) + 3)
         self._bits: bytearray = bytearray((self._size + 7) // 8)
         self._count: int = 0
 
@@ -133,7 +131,7 @@ class _SimpleBloomFilter:
             idx = h % self._size
             byte_idx = idx >> 3
             bit_idx = idx & 7
-            self._bits[byte_idx] |= (1 << bit_idx)
+            self._bits[byte_idx] |= 1 << bit_idx
         self._count += 1
 
     def might_contain(self, item: str) -> bool:
@@ -165,7 +163,7 @@ class _PrefixTrie:
 
     def __init__(self) -> None:
         self._children: dict[str, _PrefixTrie] = {}
-        self._value: Optional[ProtectionLevel] = None
+        self._value: ProtectionLevel | None = None
 
     def insert(self, prefix: str, level: ProtectionLevel) -> None:
         node = self
@@ -175,9 +173,9 @@ class _PrefixTrie:
             node = node._children[ch]
         node._value = level
 
-    def lookup(self, path: str) -> Optional[ProtectionLevel]:
+    def lookup(self, path: str) -> ProtectionLevel | None:
         node = self
-        result: Optional[ProtectionLevel] = None
+        result: ProtectionLevel | None = None
         for ch in path:
             if ch in node._children:
                 node = node._children[ch]
@@ -217,7 +215,7 @@ class _PrefixTrie:
 class ProtectionIndex:
     def __init__(
         self,
-        project_root: Optional[str] = None,
+        project_root: str | None = None,
         bloom_expected_items: int = 2000,
         bloom_fp_rate: float = 0.001,
     ) -> None:
@@ -249,7 +247,7 @@ class ProtectionIndex:
     def is_anchor(self, file_path: str) -> bool:
         return self.query(file_path) == ProtectionLevel.anchor
 
-    def get_entry(self, file_path: str) -> Optional[ProtectionEntry]:
+    def get_entry(self, file_path: str) -> ProtectionEntry | None:
         with self._lock:
             return self._entries.get(file_path)
 

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_rumor_noise_filter.py
 
-import pytest
 
 from zephyr.ops.detectors.rumor_noise_filter import (
     RumorNoiseFilter,

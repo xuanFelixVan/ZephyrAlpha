@@ -22,10 +22,9 @@
 import random
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -60,7 +59,7 @@ class MutationResult(BaseModel):
     blocked: bool
     bypassed: bool
     latency_ms: float = 0.0
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class MutationReport(BaseModel):
@@ -71,8 +70,8 @@ class MutationReport(BaseModel):
     bypassed: int = 0
     errors: int = 0
     block_rate_pct: float = 0.0
-    by_technique: Dict[str, Dict[str, int]] = Field(default_factory=dict)
-    top_bypassed: List[MutationResult] = Field(default_factory=list)
+    by_technique: dict[str, dict[str, int]] = Field(default_factory=dict)
+    top_bypassed: list[MutationResult] = Field(default_factory=list)
     started_at: str = ""
     completed_at: str = ""
     duration_seconds: float = 0.0
@@ -94,44 +93,75 @@ class AdversarialMutator:
       - reverse: 反转关键片段（检验语义层盲点）
     """
 
-    _ZERO_WIDTH_CHARS = ["\u200b", "\u200c", "\u200d", "\u2060", "\uFEFF"]
+    _ZERO_WIDTH_CHARS = ["\u200b", "\u200c", "\u200d", "\u2060", "\ufeff"]
     _HOMOGLYPH_MAP = {
-        "a": "а", "e": "е", "o": "о", "p": "р", "c": "с",
-        "y": "у", "x": "х", "i": "і",
-        "A": "А", "B": "В", "E": "Е", "H": "Н",
-        "K": "К", "M": "М", "O": "О", "P": "Р",
-        "C": "С", "T": "Т", "Y": "У", "X": "Х",
+        "a": "а",
+        "e": "е",
+        "o": "о",
+        "p": "р",
+        "c": "с",
+        "y": "у",
+        "x": "х",
+        "i": "і",
+        "A": "А",
+        "B": "В",
+        "E": "Е",
+        "H": "Н",
+        "K": "К",
+        "M": "М",
+        "O": "О",
+        "P": "Р",
+        "C": "С",
+        "T": "Т",
+        "Y": "У",
+        "X": "Х",
     }
     _SENSITIVE_WORDS = [
-        "ignore", "forget", "override", "system", "prompt", "instruction",
-        "jailbreak", "bypass", "hack", "exploit", "password", "secret",
-        "unfiltered", "unrestricted", "uncensored", "DAN", "developer mode",
+        "ignore",
+        "forget",
+        "override",
+        "system",
+        "prompt",
+        "instruction",
+        "jailbreak",
+        "bypass",
+        "hack",
+        "exploit",
+        "password",
+        "secret",
+        "unfiltered",
+        "unrestricted",
+        "uncensored",
+        "DAN",
+        "developer mode",
     ]
     _HTML_ENTITIES = {"<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;", "&": "&amp;"}
 
-    def __init__(self, enabled_techniques: Optional[List[MutationTechnique]] = None):
+    def __init__(self, enabled_techniques: list[MutationTechnique] | None = None):
         self._techniques = enabled_techniques or list(MutationTechnique)
-        self._results: List[MutationResult] = []
+        self._results: list[MutationResult] = []
         self._started_at: float = 0.0
 
-    def mutate(self, payload_id: str, content: str) -> List[MutatedPayload]:
-        mutated: List[MutatedPayload] = []
+    def mutate(self, payload_id: str, content: str) -> list[MutatedPayload]:
+        mutated: list[MutatedPayload] = []
         for tech in self._techniques:
             fn = getattr(self, f"_mutate_{tech.value}", None)
             if fn is None:
                 continue
             result = fn(content)
             if result and result != content:
-                mutated.append(MutatedPayload(
-                    original_id=payload_id,
-                    technique=tech.value,
-                    original=content[:200],
-                    mutated=result[:500],
-                    mutation_desc=f"{tech.value}: {content[:50]}... → {result[:80]}...",
-                ))
+                mutated.append(
+                    MutatedPayload(
+                        original_id=payload_id,
+                        technique=tech.value,
+                        original=content[:200],
+                        mutated=result[:500],
+                        mutation_desc=f"{tech.value}: {content[:50]}... → {result[:80]}...",
+                    )
+                )
         return mutated
 
-    def run(self, payloads_data: Dict[str, Any]) -> MutationReport:
+    def run(self, payloads_data: dict[str, Any]) -> MutationReport:
         self._started_at = time.time()
         payloads = payloads_data.get("payloads", [])
         total_originals = len(payloads)
@@ -139,7 +169,7 @@ class AdversarialMutator:
         from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
         gateway = LSGSecurityGateway()
-        variants_to_scan: List[Tuple[str, str, str]] = []
+        variants_to_scan: list[tuple[str, str, str]] = []
 
         for entry in payloads:
             pid = entry.get("id", "unknown")
@@ -206,7 +236,7 @@ class AdversarialMutator:
         bypassed = sum(1 for r in self._results if r.bypassed)
         errors = sum(1 for r in self._results if r.decision == "error")
 
-        by_tech: Dict[str, Dict[str, int]] = defaultdict(lambda: {"blocked": 0, "bypassed": 0, "total": 0})
+        by_tech: dict[str, dict[str, int]] = defaultdict(lambda: {"blocked": 0, "bypassed": 0, "total": 0})
         for r in self._results:
             by_tech[r.technique]["blocked"] += 1 if r.blocked else 0
             by_tech[r.technique]["bypassed"] += 1 if r.bypassed else 0
@@ -219,7 +249,7 @@ class AdversarialMutator:
         )[:20]
 
         return MutationReport(
-            report_id=f"am_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
+            report_id=f"am_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}",
             total_originals=total_originals,
             total_mutations=total,
             blocked=blocked,
@@ -228,8 +258,8 @@ class AdversarialMutator:
             block_rate_pct=round(blocked / max(total, 1) * 100, 2),
             by_technique=dict(by_tech),
             top_bypassed=top_bypassed,
-            started_at=datetime.fromtimestamp(self._started_at, tz=timezone.utc).isoformat(),
-            completed_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.fromtimestamp(self._started_at, tz=UTC).isoformat(),
+            completed_at=datetime.now(UTC).isoformat(),
             duration_seconds=round(time.time() - self._started_at, 3),
         )
 
@@ -249,6 +279,7 @@ class AdversarialMutator:
 
     def _mutate_base64_fragment(self, content: str) -> str:
         import base64
+
         words = content.split()
         if not words:
             return content
@@ -262,7 +293,7 @@ class AdversarialMutator:
     def _mutate_whitespace_split(self, content: str) -> str:
         for word in self._SENSITIVE_WORDS:
             if word in content.lower():
-                split = word[:len(word)//2] + "\n" + word[len(word)//2:]
+                split = word[: len(word) // 2] + "\n" + word[len(word) // 2 :]
                 content = content.replace(word, split, 1)
         return content
 
@@ -292,6 +323,7 @@ class AdversarialMutator:
 
     def _mutate_unicode_normalize(self, content: str) -> str:
         import unicodedata
+
         try:
             return unicodedata.normalize("NFKC", content)
         except Exception:
@@ -299,6 +331,7 @@ class AdversarialMutator:
 
     def _mutate_url_encode(self, content: str) -> str:
         from urllib.parse import quote
+
         return quote(content[:100], safe="")
 
     def _mutate_reverse(self, content: str) -> str:
@@ -306,5 +339,5 @@ class AdversarialMutator:
         return content[mid:] + content[:mid]
 
     @property
-    def results(self) -> List[MutationResult]:
+    def results(self) -> list[MutationResult]:
         return list(self._results)

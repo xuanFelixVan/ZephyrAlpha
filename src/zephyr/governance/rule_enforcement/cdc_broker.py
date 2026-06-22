@@ -28,11 +28,11 @@ CDC 契约经纪人（Consumer-Driven Contract Broker — CT-CDC-001）
 Pact Broker 本地 SQLite 简化版 + 3步生命周期。
 """
 
-import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from pydantic import BaseModel, Field
+
 
 class ConsumerExpectation(BaseModel):
     consumer: str
@@ -40,6 +40,7 @@ class ConsumerExpectation(BaseModel):
     contract_id: str
     expected_schema_version: str
     status: str = "pending"
+
 
 class PactRecord(BaseModel):
     pact_id: str
@@ -49,7 +50,8 @@ class PactRecord(BaseModel):
     consumer_version: str
     producer_version: str
     verified: bool = False
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
 
 class CdcBroker:
     def __init__(self, db_path: str | None = None):
@@ -57,8 +59,9 @@ class CdcBroker:
         self._expectations: list[ConsumerExpectation] = []
         self._pacts: list[PactRecord] = []
 
-    def register_expectation(self, consumer: str, producer: str,
-                              contract_id: str, schema_version: str) -> ConsumerExpectation:
+    def register_expectation(
+        self, consumer: str, producer: str, contract_id: str, schema_version: str
+    ) -> ConsumerExpectation:
         exp = ConsumerExpectation(
             consumer=consumer,
             producer=producer,
@@ -71,8 +74,7 @@ class CdcBroker:
     def get_expectations(self, producer: str) -> list[ConsumerExpectation]:
         return [e for e in self._expectations if e.producer == producer]
 
-    def verify_pact(self, pact_id: str, consumer: str, producer: str,
-                    contract_id: str, version: str) -> PactRecord:
+    def verify_pact(self, pact_id: str, consumer: str, producer: str, contract_id: str, version: str) -> PactRecord:
         pact = PactRecord(
             pact_id=pact_id,
             consumer=consumer,

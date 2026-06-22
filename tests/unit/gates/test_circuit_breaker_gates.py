@@ -19,6 +19,7 @@ T-V2-005 单元测试 — CircuitBreakerGateway (CBG)
 """
 
 import pytest
+
 from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.governance.rule_enforcement.circuit_breaker import (
     DEFAULT_THRESHOLD,
@@ -26,7 +27,11 @@ from zephyr.governance.rule_enforcement.circuit_breaker import (
     CircuitBreakerCheck,
     CircuitBreakerState,
     CircuitOpenError,
+)
+from zephyr.governance.rule_enforcement.circuit_breaker import (
     get_compliance as get_l08_policy,
+)
+from zephyr.governance.rule_enforcement.circuit_breaker import (
     register_compliance as register_l08_policy,
 )
 

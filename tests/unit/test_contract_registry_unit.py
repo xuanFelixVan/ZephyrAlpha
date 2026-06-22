@@ -6,16 +6,16 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """Contract registry unit tests -- CT-* contracts registered and ai_read_only_hint checked."""
 
 
 import pytest
 
 from zephyr.trading.orchestrator.contract_registry import (
-    AIReadOnlyHint,
-    Contract,
-    ContractRegistry,
     CONTRACTS,
+    AIReadOnlyHint,
+    ContractRegistry,
 )
 
 

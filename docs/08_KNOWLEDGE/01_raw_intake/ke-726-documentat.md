@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-726
 title: 竞品分析
 category: documentation

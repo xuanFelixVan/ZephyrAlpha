@@ -28,15 +28,17 @@ from __future__ import annotations
 K8s Controller Pattern——每30s调和5项 invariants。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
+
 
 class Invariant(BaseModel):
     name: str
     current: str = ""
     expected: str = ""
     ok: bool = True
+
 
 RECONCILE_INVARIANTS: list[str] = [
     "contract_checksums_consistent",
@@ -46,10 +48,12 @@ RECONCILE_INVARIANTS: list[str] = [
     "dlq_message_count",
 ]
 
+
 class ReconcileResult(BaseModel):
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     invariants: list[Invariant] = Field(default_factory=list)
     all_ok: bool = True
+
 
 class ReconciliationLoop:
     def __init__(self):

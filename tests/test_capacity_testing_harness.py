@@ -12,7 +12,9 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.capacity_testing_harness", reason="capacity_testing_harness not available")
+mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.capacity_testing_harness", reason="capacity_testing_harness not available"
+)
 CapacityTestingHarness = mod.CapacityTestingHarness
 
 
@@ -53,13 +55,17 @@ class TestCapacityTestingHarness:
 
     def test_test_live_kill_switch_exception(self):
         harness = CapacityTestingHarness()
+
         class BadKillSwitch:
             def activate(self, reason):
                 raise RuntimeError("broken")
+
             def deactivate(self):
                 raise RuntimeError("broken")
+
             def is_active(self):
                 raise RuntimeError("broken")
+
         result = harness.test_live_kill_switch(BadKillSwitch())
         assert result["passed"] is False
         assert "error" in result

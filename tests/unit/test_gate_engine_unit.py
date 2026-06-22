@@ -26,6 +26,7 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.gate_engine import (
     GateEngine,
@@ -37,8 +38,8 @@ from zephyr.governance.rule_enforcement.gate_engine import (
     _check_line_ending,
     _check_path_blacklist,
 )
-from zephyr.shared.shared_services.models import TaskCard
 from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.shared.shared_services.models import TaskCard
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -46,12 +47,31 @@ from zephyr.governance.rule_enforcement.task_types import TaskStatus
 
 GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "gates"
 
-EXPECTED_GATE_IDS = frozenset({
-    "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G6_BP", "G7", "G10", "G11", "G12",
-    "EN-001", "EN-002", "EN-003", "ZERO-RESIDUE",
-    "MAD-001", "MAD-002", "MAD-003", "MAD-004",
-    "GATE-DEDUP",
-})
+EXPECTED_GATE_IDS = frozenset(
+    {
+        "G0",
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G6_BP",
+        "G7",
+        "G10",
+        "G11",
+        "G12",
+        "EN-001",
+        "EN-002",
+        "EN-003",
+        "ZERO-RESIDUE",
+        "MAD-001",
+        "MAD-002",
+        "MAD-003",
+        "MAD-004",
+        "GATE-DEDUP",
+    }
+)
 
 
 @pytest.fixture()
@@ -338,7 +358,7 @@ def test_gate_result_persisted_to_db(db_path: Path, engine: GateEngine) -> None:
 
 def test_multiple_evaluations_all_persisted(db_path: Path, engine: GateEngine) -> None:
     for i in range(3):
-        task = _make_task(task_id=f"SRC-{100+i:03d}")
+        task = _make_task(task_id=f"SRC-{100 + i:03d}")
         engine.evaluate(task, "G1")
     conn = sqlite3.connect(str(db_path))
     count = conn.execute("SELECT COUNT(*) FROM gates").fetchone()[0]

@@ -39,8 +39,8 @@ import importlib
 import logging
 import threading
 import time
-from dataclasses import dataclass, field
-from typing import Any, Optional
+from dataclasses import dataclass
+from typing import Any
 
 __all__ = ["LazyModuleRegistry", "ModuleEntry"]
 
@@ -101,7 +101,9 @@ class LazyModuleRegistry:
 
         logger.info(
             "LazyModuleRegistry: loaded '%s' from '%s' in %.3fs",
-            name, entry.import_path, elapsed,
+            name,
+            entry.import_path,
+            elapsed,
         )
         return module
 

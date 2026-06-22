@@ -12,8 +12,9 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
 
 models = pytest.importorskip("zephyr.infrastructure.asset_inventory.models")
 dependency = pytest.importorskip("zephyr.infrastructure.asset_inventory.dependency")
@@ -80,7 +81,7 @@ class TestRawFileEntry:
             file_name="foo.py",
             extension=".py",
             size_bytes=1024,
-            mtime_utc=datetime.now(timezone.utc),
+            mtime_utc=datetime.now(UTC),
             sha256="abc123",
         )
         assert entry.relative_path == "src/zephyr/foo.py"
@@ -110,7 +111,7 @@ class TestScanResult:
             file_name="a.py",
             extension=".py",
             size_bytes=100,
-            mtime_utc=datetime.now(timezone.utc),
+            mtime_utc=datetime.now(UTC),
             sha256="deadbeef",
         )
         sr = models.ScanResult(
@@ -128,7 +129,7 @@ class TestClassifiedAsset:
             relative_path="src/zephyr/bar.py",
             asset_type=models.AssetType.MODULE,
             size_bytes=2048,
-            mtime_utc=datetime.now(timezone.utc),
+            mtime_utc=datetime.now(UTC),
             sha256="cafe1234",
         )
         assert asset.layer is models.AssetLayer.CROSS_LAYER
@@ -142,7 +143,7 @@ class TestClassifiedAsset:
                 relative_path="x.py",
                 asset_type=models.AssetType.MODULE,
                 size_bytes=100,
-                mtime_utc=datetime.now(timezone.utc),
+                mtime_utc=datetime.now(UTC),
                 sha256="abc",
                 classification_confidence=1.5,
             )
@@ -255,7 +256,7 @@ class TestGitAssetMetadata:
         assert meta.ai_commits_ratio == 0.0
 
     def test_with_values(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         meta = metadata_mod.GitAssetMetadata(
             file_path="a.py",
             first_commit_sha="abc",
@@ -274,7 +275,7 @@ class TestGitCommitInfo:
         info = metadata_mod.GitCommitInfo(
             sha="deadbeef",
             author="alice",
-            date=datetime.now(timezone.utc),
+            date=datetime.now(UTC),
             message="initial commit",
         )
         assert info.lines_added == 0
@@ -334,7 +335,9 @@ class TestTripleTrustAnchorGate:
         assert trust_anchor.TripleTrustAnchorGate._calculate_trust(True, False, True) is trust_anchor.TrustLevel.PARTIAL
 
     def test_calculate_trust_broken(self):
-        assert trust_anchor.TripleTrustAnchorGate._calculate_trust(False, False, False) is trust_anchor.TrustLevel.BROKEN
+        assert (
+            trust_anchor.TripleTrustAnchorGate._calculate_trust(False, False, False) is trust_anchor.TrustLevel.BROKEN
+        )
 
     def test_recommend_full(self):
         rec = trust_anchor.TripleTrustAnchorGate._recommend(trust_anchor.TrustLevel.FULL)

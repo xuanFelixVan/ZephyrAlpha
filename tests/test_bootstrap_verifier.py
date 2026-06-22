@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.bootstrap_verifier import BootstrapVerifier, BootstrapCheck
+    from zephyr.security.access_control.bootstrap_verifier import BootstrapVerifier
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

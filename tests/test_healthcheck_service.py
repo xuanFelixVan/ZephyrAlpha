@@ -23,12 +23,9 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-import pytest
-
-from zephyr.shared.healthcheck_service import HealthStatus, HealthReport, HealthcheckService
-
+from zephyr.shared.healthcheck_service import HealthcheckService, HealthReport, HealthStatus
 
 PROJECT_ROOT = Path(r"d:\ZephyrAlpha")
 
@@ -155,14 +152,20 @@ class TestHealthcheckServiceCheckGit:
 
     def test_git_timeout_returns_unhealthy(self):
         import subprocess as sp
+
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        with patch("zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=sp.TimeoutExpired(cmd="git", timeout=5)):
+        with patch(
+            "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run",
+            side_effect=sp.TimeoutExpired(cmd="git", timeout=5),
+        ):
             status = svc._check_git()
             assert status.healthy is False
 
     def test_git_not_found_returns_unhealthy(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        with patch("zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=FileNotFoundError):
+        with patch(
+            "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=FileNotFoundError
+        ):
             status = svc._check_git()
             assert status.healthy is False
 
@@ -246,7 +249,9 @@ class TestHealthcheckServiceBoundary:
 
     def test_python_not_found_returns_unhealthy(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        with patch("zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=FileNotFoundError):
+        with patch(
+            "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=FileNotFoundError
+        ):
             status = svc._check_python()
             assert status.healthy is False
             assert status.message == "Python not found"

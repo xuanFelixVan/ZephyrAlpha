@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from zephyr.trading.orchestrator.batch_orchestrator import BatchOrchestrator, BatchProgress
 
 

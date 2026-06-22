@@ -167,35 +167,55 @@ class TestFeedbackCollector:
     def test_repair_failure_rate_all_success(self):
         fc = FeedbackCollector()
         for i in range(5):
-            fc.collect_action_result(ActionResult(
-                action_type="repair", anomaly_id=f"anom-{i}",
-                pre_value=100.0, post_value=90.0,
-                success_flag=True, timestamp=1000.0 + i,
-            ))
+            fc.collect_action_result(
+                ActionResult(
+                    action_type="repair",
+                    anomaly_id=f"anom-{i}",
+                    pre_value=100.0,
+                    post_value=90.0,
+                    success_flag=True,
+                    timestamp=1000.0 + i,
+                )
+            )
         assert fc.repair_failure_rate() == pytest.approx(0.0)
 
     def test_repair_failure_rate_mixed(self):
         fc = FeedbackCollector()
-        fc.collect_action_result(ActionResult(
-            action_type="repair", anomaly_id="a1",
-            pre_value=100.0, post_value=90.0,
-            success_flag=True, timestamp=1000.0,
-        ))
-        fc.collect_action_result(ActionResult(
-            action_type="repair", anomaly_id="a2",
-            pre_value=100.0, post_value=100.0,
-            success_flag=False, timestamp=1001.0,
-        ))
+        fc.collect_action_result(
+            ActionResult(
+                action_type="repair",
+                anomaly_id="a1",
+                pre_value=100.0,
+                post_value=90.0,
+                success_flag=True,
+                timestamp=1000.0,
+            )
+        )
+        fc.collect_action_result(
+            ActionResult(
+                action_type="repair",
+                anomaly_id="a2",
+                pre_value=100.0,
+                post_value=100.0,
+                success_flag=False,
+                timestamp=1001.0,
+            )
+        )
         assert fc.repair_failure_rate() == pytest.approx(0.5)
 
     def test_repair_failure_rate_all_fail(self):
         fc = FeedbackCollector()
         for i in range(3):
-            fc.collect_action_result(ActionResult(
-                action_type="repair", anomaly_id=f"anom-{i}",
-                pre_value=100.0, post_value=100.0,
-                success_flag=False, timestamp=1000.0 + i,
-            ))
+            fc.collect_action_result(
+                ActionResult(
+                    action_type="repair",
+                    anomaly_id=f"anom-{i}",
+                    pre_value=100.0,
+                    post_value=100.0,
+                    success_flag=False,
+                    timestamp=1000.0 + i,
+                )
+            )
         assert fc.repair_failure_rate() == pytest.approx(1.0)
 
     def test_owner_override_rate_empty(self):
@@ -205,52 +225,85 @@ class TestFeedbackCollector:
     def test_owner_override_rate_all_ack(self):
         fc = FeedbackCollector()
         for i in range(4):
-            fc.collect_owner_ack(OwnerAck(
-                anomaly_id=f"anom-{i}",
-                response=OwnerResponse.ACK,
-                timestamp=1000.0 + i,
-            ))
+            fc.collect_owner_ack(
+                OwnerAck(
+                    anomaly_id=f"anom-{i}",
+                    response=OwnerResponse.ACK,
+                    timestamp=1000.0 + i,
+                )
+            )
         assert fc.owner_override_rate() == pytest.approx(0.0)
 
     def test_owner_override_rate_mixed(self):
         fc = FeedbackCollector()
-        fc.collect_owner_ack(OwnerAck(
-            anomaly_id="a1", response=OwnerResponse.ACK, timestamp=1000.0,
-        ))
-        fc.collect_owner_ack(OwnerAck(
-            anomaly_id="a2", response=OwnerResponse.OVERRIDE, timestamp=1001.0,
-        ))
+        fc.collect_owner_ack(
+            OwnerAck(
+                anomaly_id="a1",
+                response=OwnerResponse.ACK,
+                timestamp=1000.0,
+            )
+        )
+        fc.collect_owner_ack(
+            OwnerAck(
+                anomaly_id="a2",
+                response=OwnerResponse.OVERRIDE,
+                timestamp=1001.0,
+            )
+        )
         assert fc.owner_override_rate() == pytest.approx(0.5)
 
     def test_window_trims_old_action_results(self):
         fc = FeedbackCollector(window_seconds=10.0)
-        fc.collect_action_result(ActionResult(
-            action_type="repair", anomaly_id="old",
-            pre_value=100.0, post_value=90.0,
-            success_flag=True, timestamp=0.0,
-        ))
-        fc.collect_action_result(ActionResult(
-            action_type="repair", anomaly_id="new",
-            pre_value=100.0, post_value=90.0,
-            success_flag=True, timestamp=20.0,
-        ))
+        fc.collect_action_result(
+            ActionResult(
+                action_type="repair",
+                anomaly_id="old",
+                pre_value=100.0,
+                post_value=90.0,
+                success_flag=True,
+                timestamp=0.0,
+            )
+        )
+        fc.collect_action_result(
+            ActionResult(
+                action_type="repair",
+                anomaly_id="new",
+                pre_value=100.0,
+                post_value=90.0,
+                success_flag=True,
+                timestamp=20.0,
+            )
+        )
         ids = [ar.anomaly_id for ar in fc.action_results]
         assert "old" not in ids
         assert "new" in ids
 
     def test_window_trims_old_owner_acks(self):
         fc = FeedbackCollector(window_seconds=10.0)
-        fc.collect_action_result(ActionResult(
-            action_type="repair", anomaly_id="anchor",
-            pre_value=100.0, post_value=90.0,
-            success_flag=True, timestamp=20.0,
-        ))
-        fc.collect_owner_ack(OwnerAck(
-            anomaly_id="old", response=OwnerResponse.ACK, timestamp=0.0,
-        ))
-        fc.collect_owner_ack(OwnerAck(
-            anomaly_id="new", response=OwnerResponse.ACK, timestamp=20.0,
-        ))
+        fc.collect_action_result(
+            ActionResult(
+                action_type="repair",
+                anomaly_id="anchor",
+                pre_value=100.0,
+                post_value=90.0,
+                success_flag=True,
+                timestamp=20.0,
+            )
+        )
+        fc.collect_owner_ack(
+            OwnerAck(
+                anomaly_id="old",
+                response=OwnerResponse.ACK,
+                timestamp=0.0,
+            )
+        )
+        fc.collect_owner_ack(
+            OwnerAck(
+                anomaly_id="new",
+                response=OwnerResponse.ACK,
+                timestamp=20.0,
+            )
+        )
         ids = [a.anomaly_id for a in fc.owner_acks]
         assert "old" not in ids
         assert "new" in ids

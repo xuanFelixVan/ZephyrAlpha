@@ -28,13 +28,11 @@
   - Vibe Coding 场景性价比最高的检测维度
 """
 
-
 from __future__ import annotations
 
 import ast
 import hashlib
 from dataclasses import dataclass, field
-from pathlib import Path
 
 
 @dataclass
@@ -67,9 +65,7 @@ class SignatureMatcher:
         for entry in entries:
             fp = entry.get("signature_fingerprint", "")
             if fp:
-                self._index.setdefault(fp, []).append(
-                    f"{entry.get('file', '?')}::{entry.get('name', '?')}"
-                )
+                self._index.setdefault(fp, []).append(f"{entry.get('file', '?')}::{entry.get('name', '?')}")
 
     def compute_fingerprint(self, param_types: list[str], return_type: str = "") -> str:
         """计算签名指纹 = SHA256(param_types + return_type)[:12]."""
@@ -78,9 +74,7 @@ class SignatureMatcher:
             canonical += "->" + return_type
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:12]
 
-    def match(
-        self, fingerprint: str, file_path: str = ""
-    ) -> SignatureMatch | None:
+    def match(self, fingerprint: str, file_path: str = "") -> SignatureMatch | None:
         """O(1) 精确匹配——返回碰撞结果."""
         candidates = self._index.get(fingerprint)
         if not candidates:
@@ -95,9 +89,7 @@ class SignatureMatcher:
             method="signature_collision",
         )
 
-    def match_bulk(
-        self, fingerprints: list[tuple[str, str]]
-    ) -> list[SignatureMatch]:
+    def match_bulk(self, fingerprints: list[tuple[str, str]]) -> list[SignatureMatch]:
         """批量匹配 [(fingerprint, file_path), ...]."""
         results: list[SignatureMatch] = []
         for fp, fpath in fingerprints:

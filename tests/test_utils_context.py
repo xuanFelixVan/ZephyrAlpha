@@ -20,11 +20,12 @@
 # [TESTS] pytest tests/test_utils_context.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.context import (
     RequestContext,
     current_context,
-    set_context,
     get_request_id,
+    set_context,
     set_request_id,
 )
 
@@ -34,11 +35,13 @@ def _clear_context():
     ctx = current_context()
     if ctx is not None:
         from zephyr.integration.shared_08.context import _current_context
+
         _current_context.set(None)
     yield
     ctx2 = current_context()
     if ctx2 is not None:
         from zephyr.integration.shared_08.context import _current_context
+
         _current_context.set(None)
 
 
@@ -105,12 +108,14 @@ class TestCurrentContext:
         token = set_context(ctx)
         assert current_context() is ctx
         from zephyr.integration.shared_08.context import _current_context
+
         _current_context.reset(token)
 
     def test_set_and_reset(self):
         ctx = RequestContext(tenant_id="temp")
         token = set_context(ctx)
         from zephyr.integration.shared_08.context import _current_context
+
         _current_context.reset(token)
         assert current_context() is None
 
@@ -126,6 +131,7 @@ class TestGetRequestId:
         token = set_context(ctx)
         assert get_request_id() == "req-456"
         from zephyr.integration.shared_08.context import _current_context
+
         _current_context.reset(token)
 
 

@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -79,7 +78,7 @@ INCIDENT_PROTOCOLS: dict[IncidentLevel, IncidentProtocol] = {
 }
 
 
-def get_protocol(level: IncidentLevel) -> Optional[IncidentProtocol]:
+def get_protocol(level: IncidentLevel) -> IncidentProtocol | None:
     return INCIDENT_PROTOCOLS.get(level)
 
 

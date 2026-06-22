@@ -24,9 +24,6 @@
 Canonical definition: zephyr.shared.contracts.escalation.budget_alert
 """
 
-
 from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert, BudgetSeverity, BudgetType
 
 __all__ = ["BudgetAlert", "BudgetSeverity", "BudgetType"]
-
-

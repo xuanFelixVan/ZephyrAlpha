@@ -15,7 +15,6 @@ from __future__ import annotations
 import json
 import time
 from datetime import UTC, datetime
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -68,8 +67,10 @@ class TestSelfMonitor:
 
     def test_check_basic(self, data_dir_with_events):
         mon = SelfMonitor(data_dir=data_dir_with_events)
-        with patch("zephyr.governance.integrity.IntegrityVerifier") as mock_v, \
-             patch("zephyr.governance.audit_trail.query.AuditQuery") as mock_q:
+        with (
+            patch("zephyr.governance.integrity.IntegrityVerifier") as mock_v,
+            patch("zephyr.governance.audit_trail.query.AuditQuery") as mock_q,
+        ):
             mock_v_inst = MagicMock()
             mock_v_inst.verify_chain.return_value = {"status": "valid", "events_checked": 2, "issues": []}
             mock_v.return_value = mock_v_inst

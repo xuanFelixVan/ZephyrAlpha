@@ -10,15 +10,12 @@
 # [ERROR_CONTRACT] raises KeyError on invalid skill_id; raises ValueError on path traversal
 # [TESTS] pytest tests/test_skill_loader.py -q
 
-import os
-import tempfile
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 import yaml
 
-from zephyr.autonomy_core.skill_loader import SkillLoader, _tokenize, _count_tokens
+from zephyr.autonomy_core.skill_loader import SkillLoader, _count_tokens, _tokenize
 
 
 @pytest.fixture
@@ -76,7 +73,7 @@ def loader(tmp_registry_dir):
 
 @pytest.fixture
 def patched_loader(tmp_registry_dir, loader):
-    with patch("zephyr.orchestration.agent_lifecycle.skill_loader._BASE_DIR", tmp_registry_dir):
+    with patch("zephyr.autonomy_core.skill_loader._BASE_DIR", tmp_registry_dir):
         yield loader
 
 
@@ -186,7 +183,7 @@ class TestLoadL0:
         reg = tmp_path / "skill-registry.yaml"
         reg.write_text("skills: {domain: {}, role: {}}", encoding="utf-8")
         sl = SkillLoader(registry_path=reg)
-        with patch("zephyr.orchestration.agent_lifecycle.skill_loader._BASE_DIR", tmp_path):
+        with patch("zephyr.autonomy_core.skill_loader._BASE_DIR", tmp_path):
             result = sl.load_l0()
             assert result["content"] == ""
 
@@ -240,7 +237,7 @@ class TestProgressiveLoadFull:
         reg_file = tmp_path / "skill-registry.yaml"
         reg_file.write_text(yaml.dump(registry, allow_unicode=True), encoding="utf-8")
         sl = SkillLoader(registry_path=reg_file)
-        with patch("zephyr.orchestration.agent_lifecycle.skill_loader._BASE_DIR", tmp_path):
+        with patch("zephyr.autonomy_core.skill_loader._BASE_DIR", tmp_path):
             result = sl.progressive_load_full("SKILL-DOM-XX-001")
             assert result["l3_contents"]["nonexistent_ref"] is None
 

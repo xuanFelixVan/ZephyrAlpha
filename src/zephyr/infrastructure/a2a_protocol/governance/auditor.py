@@ -27,12 +27,15 @@ from __future__ import annotations
 # Reason: zephyr.infrastructure.rollback.contracts does not export AuditWriter yet
 try:
     import importlib as _il
+
     _mod = _il.import_module("zephyr.infrastructure.rollback.contracts")
     AuditWriter = _mod.AuditWriter
 except (ImportError, AttributeError):
+
     class AuditWriter:
         def write(self, **kwargs):
             return kwargs
+
 
 class A2AAuditor:
     """Agent-to-Agent 通信审计."""

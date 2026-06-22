@@ -21,24 +21,25 @@
 
 from __future__ import annotations
 
-import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
 
-from zephyr.trading.autopilot import AutoPilot
-from zephyr.shared.shared_services.models import TaskCard
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
+from zephyr.integration.shared.schema.base_config import Classification
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.shared_services.models import TaskCard
+from zephyr.trading.autopilot import AutoPilot
 
 
-def _make_test_task(task_id: str, title: str, priority: Priority = Priority.P2, batch_id: str = "test-batch") -> TaskCard:
-    now = datetime.now(timezone.utc)
+def _make_test_task(
+    task_id: str, title: str, priority: Priority = Priority.P2, batch_id: str = "test-batch"
+) -> TaskCard:
+    now = datetime.now(UTC)
     return TaskCard(
         task_id=task_id,
         namespace=TaskNamespace.DW,
@@ -172,7 +173,7 @@ class TestClaimAndExecuteCycle:
 
         repo._conn.execute(
             "UPDATE tasks SET status='COMPLETED', completed_at=? WHERE task_id=?",
-            (datetime.now(timezone.utc).isoformat(), claimed.task_id),
+            (datetime.now(UTC).isoformat(), claimed.task_id),
         )
         repo._conn.commit()
 
@@ -185,7 +186,9 @@ class TestClaimAndExecuteCycle:
     def test_dependency_blocks_claim(self, repo: TaskRepository, autopilot: AutoPilot):
         t_parent = _make_test_task("DW-9210", "父任务", Priority.P1)
         r_parent = repo.create(t_parent, allow_direct_create=True)
-        repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r_parent.task_id,))
+        repo._conn.execute(
+            "UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r_parent.task_id,)
+        )
         repo._conn.commit()
 
         t_child = _make_test_task("DW-9211", "子任务（依赖父任务）", Priority.P1)
@@ -200,9 +203,7 @@ class TestClaimAndExecuteCycle:
 
 
 class TestConcurrentClaim:
-    def test_two_autopilots_claim_different_tasks(
-        self, repo: TaskRepository, db_path: Path
-    ):
+    def test_two_autopilots_claim_different_tasks(self, repo: TaskRepository, db_path: Path):
         import time
 
         for i in range(10):
@@ -221,10 +222,7 @@ class TestConcurrentClaim:
             return t.task_id if t else None
 
         with ThreadPoolExecutor(max_workers=4) as executor:
-            futures = [
-                executor.submit(claim_from_session, f"test-session-{i:03d}")
-                for i in range(4)
-            ]
+            futures = [executor.submit(claim_from_session, f"test-session-{i:03d}") for i in range(4)]
             for f in as_completed(futures):
                 result = f.result()
                 if result:
@@ -233,9 +231,7 @@ class TestConcurrentClaim:
         assert len(claimed_ids) == 4
         assert len(set(claimed_ids)) == 4
 
-    def test_100_concurrent_claim_single_task(
-        self, repo: TaskRepository, db_path: Path
-    ):
+    def test_100_concurrent_claim_single_task(self, repo: TaskRepository, db_path: Path):
         """100 个 session 同时抢 1 个任务 → 只有 1 个成功"""
         t = _make_test_task("DW-9400", "抢手任务", Priority.P0)
         r = repo.create(t, allow_direct_create=True)
@@ -250,9 +246,7 @@ class TestConcurrentClaim:
             return t.task_id if t else None
 
         with ThreadPoolExecutor(max_workers=16) as executor:
-            futures = [
-                executor.submit(try_claim, f"cs-{i:04d}") for i in range(100)
-            ]
+            futures = [executor.submit(try_claim, f"cs-{i:04d}") for i in range(100)]
             for f in as_completed(futures):
                 results.append(f.result())
 

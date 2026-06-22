@@ -11,12 +11,12 @@
 # [TESTS] python -c "import zephyr.testing.code_dedup"
 
 SUBMODULES = [
-    'annotations',
-    'cache_manager',
-    'canary_manager',
-    'canary_register',
-    'code_analyzer_runner',
-    'code_simulator',
-    'path_index_validator',
-    'symbol_index',
+    "annotations",
+    "cache_manager",
+    "canary_manager",
+    "canary_register",
+    "code_analyzer_runner",
+    "code_simulator",
+    "path_index_validator",
+    "symbol_index",
 ]

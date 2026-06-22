@@ -23,10 +23,10 @@ from __future__ import annotations
 
 """路径索引验证——验证 config 数据集相对路径表与实际文件系统同步."""
 
-import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
 
 @dataclass
 class PathMismatch:
@@ -34,6 +34,7 @@ class PathMismatch:
     actual_status: str
     expected_exists: bool
     actual_exists: bool
+
 
 @dataclass
 class PathIndexValidator:
@@ -46,9 +47,14 @@ class PathIndexValidator:
             fp = self.root / ip
             exists = fp.exists()
             if not exists:
-                self.mismatches.append(PathMismatch(
-                    indexed_path=ip, actual_status="MISSING", expected_exists=True, actual_exists=False,
-                ))
+                self.mismatches.append(
+                    PathMismatch(
+                        indexed_path=ip,
+                        actual_status="MISSING",
+                        expected_exists=True,
+                        actual_exists=False,
+                    )
+                )
 
         return {
             "total_checked": len(indexed_paths),

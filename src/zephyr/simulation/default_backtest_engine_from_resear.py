@@ -35,10 +35,8 @@ from __future__ import annotations
 
 import logging
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
 from decimal import Decimal
-from typing import Optional
 
 import pandas as pd
 
@@ -55,6 +53,7 @@ __backtest_id__ = "default-backtest-engine"
 @dataclass
 class BacktestConfig:
     """回测配置"""
+
     initial_capital: Decimal = Decimal("1000000")
     commission_rate: Decimal = Decimal("0.0003")
     slippage_bps: Decimal = Decimal("1")
@@ -66,12 +65,13 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
     __backtest_id__ = __backtest_id__
 
-    def __init__(self, config: Optional[BacktestConfig] = None):
+    def __init__(self, config: BacktestConfig | None = None):
         self._config = config or BacktestConfig()
         self._results: list[BacktestResult] = []
 
-    def run(self, data: pd.DataFrame, signals: pd.DataFrame,
-            initial_capital: float = 1000000.0, **kwargs) -> BacktestResult:
+    def run(
+        self, data: pd.DataFrame, signals: pd.DataFrame, initial_capital: float = 1000000.0, **kwargs
+    ) -> BacktestResult:
         """执行回测
 
         Args:
@@ -85,7 +85,11 @@ class DefaultBacktestEngine(BacktestEngineBase):
         daily_nav: list[float] = [float(capital)]
         trades: list[dict] = []
 
-        dates = sorted(data.index.get_level_values("date").unique()) if isinstance(data.index, pd.MultiIndex) else sorted(data.index.unique())
+        dates = (
+            sorted(data.index.get_level_values("date").unique())
+            if isinstance(data.index, pd.MultiIndex)
+            else sorted(data.index.unique())
+        )
 
         for date in dates:
             date_str = str(date)
@@ -115,7 +119,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
         total_return = float((nav_series.iloc[-1] - nav_series.iloc[0]) / nav_series.iloc[0])
         annual_return = total_return * 252 / len(daily_nav) if len(daily_nav) > 0 else 0.0
-        sharpe = float(returns.mean() / returns.std() * (252 ** 0.5)) if returns.std() > 0 else 0.0
+        sharpe = float(returns.mean() / returns.std() * (252**0.5)) if returns.std() > 0 else 0.0
         max_dd = self._calc_max_drawdown(nav_series)
         win_rate = float((returns > 0).sum() / len(returns)) if len(returns) > 0 else 0.0
 
@@ -132,8 +136,9 @@ class DefaultBacktestEngine(BacktestEngineBase):
         )
 
         self._results.append(result)
-        _logger.info("Backtest completed: result_id=%s sharpe=%.2f return=%.2f%%",
-                      result_id, sharpe, total_return * 100)
+        _logger.info(
+            "Backtest completed: result_id=%s sharpe=%.2f return=%.2f%%", result_id, sharpe, total_return * 100
+        )
         return result
 
     def _rebalance(
@@ -151,10 +156,15 @@ class DefaultBacktestEngine(BacktestEngineBase):
         for symbol in current_symbols - target_symbols:
             price = self._get_price(data, symbol, date)
             if price > 0:
-                trades.append({
-                    "date": str(date), "symbol": symbol, "side": "SELL",
-                    "quantity": float(positions[symbol]), "price": float(price),
-                })
+                trades.append(
+                    {
+                        "date": str(date),
+                        "symbol": symbol,
+                        "side": "SELL",
+                        "quantity": float(positions[symbol]),
+                        "price": float(price),
+                    }
+                )
             del positions[symbol]
 
         for symbol in target_symbols - current_symbols:
@@ -162,10 +172,15 @@ class DefaultBacktestEngine(BacktestEngineBase):
             if price > 0:
                 target_weight = target_weights.get(symbol, 0.0)
                 target_qty = Decimal("100")
-                trades.append({
-                    "date": str(date), "symbol": symbol, "side": "BUY",
-                    "quantity": float(target_qty), "price": float(price),
-                })
+                trades.append(
+                    {
+                        "date": str(date),
+                        "symbol": symbol,
+                        "side": "BUY",
+                        "quantity": float(target_qty),
+                        "price": float(price),
+                    }
+                )
                 positions[symbol] = target_qty
 
     def _get_price(self, data: pd.DataFrame, symbol: str, date) -> Decimal:
@@ -196,4 +211,4 @@ class DefaultBacktestEngine(BacktestEngineBase):
         return float(dd.min()) * -1 if not dd.empty else 0.0
 
 
-__all__ = ["DefaultBacktestEngine", "BacktestConfig"]
+__all__ = ["BacktestConfig", "DefaultBacktestEngine"]

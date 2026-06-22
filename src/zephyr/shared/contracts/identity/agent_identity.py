@@ -14,7 +14,6 @@ import hashlib
 import hmac
 import time
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -46,32 +45,60 @@ class AgentRole(str, Enum):
 
 ROLE_DEFAULT_PERMISSIONS: dict[AgentRole, list[str]] = {
     AgentRole.READER: [
-        "read:docs", "read:src", "read:tests",
-        "read:config", "read:logs", "read:data",
+        "read:docs",
+        "read:src",
+        "read:tests",
+        "read:config",
+        "read:logs",
+        "read:data",
     ],
     AgentRole.WRITER: [
-        "read:docs", "read:src", "read:tests",
-        "write:src", "write:tests",
-        "read:config", "read:logs", "read:data",
+        "read:docs",
+        "read:src",
+        "read:tests",
+        "write:src",
+        "write:tests",
+        "read:config",
+        "read:logs",
+        "read:data",
     ],
     AgentRole.EXECUTOR: [
-        "read:docs", "read:src", "read:tests",
-        "write:src", "write:tests",
-        "execute:scripts", "execute:tests",
-        "read:config", "read:logs", "read:data",
+        "read:docs",
+        "read:src",
+        "read:tests",
+        "write:src",
+        "write:tests",
+        "execute:scripts",
+        "execute:tests",
+        "read:config",
+        "read:logs",
+        "read:data",
     ],
     AgentRole.ADMIN: [
-        "read:docs", "read:src", "read:tests",
-        "write:src", "write:tests",
-        "execute:scripts", "execute:tests",
-        "read:config", "read:logs", "read:data",
-        "manage:rbac", "manage:kill_switch",
-        "manage:gates", "manage:deploy",
+        "read:docs",
+        "read:src",
+        "read:tests",
+        "write:src",
+        "write:tests",
+        "execute:scripts",
+        "execute:tests",
+        "read:config",
+        "read:logs",
+        "read:data",
+        "manage:rbac",
+        "manage:kill_switch",
+        "manage:gates",
+        "manage:deploy",
     ],
     AgentRole.AUDITOR: [
-        "read:docs", "read:src", "read:tests",
-        "read:config", "read:logs", "read:data",
-        "read:audit", "audit:full",
+        "read:docs",
+        "read:src",
+        "read:tests",
+        "read:config",
+        "read:logs",
+        "read:data",
+        "read:audit",
+        "audit:full",
     ],
 }
 
@@ -101,7 +128,7 @@ class AgentIdentity(BaseModel):
     model: str = "unknown"
     task_context: str = ""
     session_token: str = ""
-    parent_session_id: Optional[str] = None
+    parent_session_id: str | None = None
     delegation_depth: int = 0
     permissions: list[str] = Field(default_factory=list)
     auto_guard_eligible: bool = False
@@ -131,7 +158,7 @@ class AgentIdentity(BaseModel):
             return False
         expected = hmac.new(
             secret.encode("utf-8"),
-            f"{self.session_id}:{self.created_at}:{self._maturity_value()}".encode("utf-8"),
+            f"{self.session_id}:{self.created_at}:{self._maturity_value()}".encode(),
             hashlib.sha256,
         ).hexdigest()
         return hmac.compare_digest(self.session_token, expected)

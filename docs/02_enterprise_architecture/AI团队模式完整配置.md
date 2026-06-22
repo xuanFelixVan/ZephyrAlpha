@@ -742,7 +742,7 @@ Core principles:
 ### Mode Position in Pipeline
 - TYPE: DIAGNOSTIC — finds root causes, may fix simple issues
 - PRECEDED BY: 🔍 Scout (context) or 🪃 Orchestrator (direct delegation)
-- FOLLOWED BY: 
+- FOLLOWED BY:
   - Simple fix (<3 files, <50 lines) → 🔎 Review (L1) → 🔐 Safety Review → ✅
   - Complex fix (>3 files, >50 lines) → 🏗️ Architect → 💻 Code → [审查] → 🔐 Safety Review → ✅
 - MUST NOT: declare task complete after fixing — your fix must go through Review + Safety Review
@@ -881,32 +881,32 @@ Core principles:
    ## Review Round [N]
    ### Status: PASS / REJECT
    ### Issues Found: [count]
-   
+
    #### Plan Issues (if reviewing Architect output)
    - [P1] [specific issue or ✅]
    - [P2] [specific issue or ✅]
    ...
-   
+
    #### Hallucination Issues
    - [A1] [specific issue or ✅]
    - [A2] [specific issue or ✅]
    ...
-   
+
    #### Drift Issues
    - [B1] [specific issue or ✅]
    ...
-   
+
    #### Completeness Issues
    - [C1] [specific issue or ✅]
    ...
-   
+
    #### Consistency Issues
    - [D1] [specific issue or ✅]
    ...
-   
+
    ### Blocking Issues: [count]
    - [description if any]
-   
+
    ### Verdict: [PASS - proceed / REJECT - fix required / BLOCKED - user decision needed]
 
 ### Handoff
@@ -1018,7 +1018,7 @@ Core principles:
    ## Safety Review Round [N]
    ### Status: PASS / REJECT
    ### Issues Found: [count]
-   
+
    #### Trap Detection Issues
    - [T1] [specific issue or ✅]
    - [T2] [specific issue or ✅]
@@ -1027,7 +1027,7 @@ Core principles:
    ...
    - [S1] [specific issue or ✅]
    ...
-   
+
    #### Security Boundary Issues
    - [A1] [specific issue or ✅]
    ...
@@ -1037,10 +1037,10 @@ Core principles:
    ...
    - [P1] [specific issue or ✅]
    ...
-   
+
    ### Critical Issues: [count]
    - [description if any]
-   
+
    ### Verdict: [PASS - proceed to completion / REJECT - fix required]
 
 ### Handoff

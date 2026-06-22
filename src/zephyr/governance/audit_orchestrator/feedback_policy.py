@@ -11,13 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 策略评估失败返回保守策略
 # [TESTS] tests/audit-orchestrator/test_feedback_policy.py
-
 import logging
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["FeedbackPolicy", "PolicyDecision"]
+
 
 class PolicyDecision:
     def __init__(
@@ -37,6 +37,7 @@ class PolicyDecision:
             "detail": self.detail,
         }
 
+
 class FeedbackPolicy:
     SEVERITY_WEIGHTS: dict[str, float] = {
         "RED": 1.0,
@@ -51,6 +52,7 @@ class FeedbackPolicy:
         self._available = False
         try:
             from zephyr.governance.audit_trail.feedback_bridge import FeedbackBridge
+
             self._bridge = FeedbackBridge()
             self._available = self._bridge.is_available()
         except ImportError:
@@ -66,10 +68,9 @@ class FeedbackPolicy:
         yellow_count = sum(1 for f in findings if f.get("severity") == "YELLOW")
         total_count = len(findings)
 
-        weighted_score = sum(
-            self.SEVERITY_WEIGHTS.get(f.get("severity", "GREEN"), 0.0)
-            for f in findings
-        ) / max(1, total_count)
+        weighted_score = sum(self.SEVERITY_WEIGHTS.get(f.get("severity", "GREEN"), 0.0) for f in findings) / max(
+            1, total_count
+        )
 
         if not self._available or self._bridge is None:
             if weighted_score > 0.5:

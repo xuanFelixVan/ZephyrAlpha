@@ -20,12 +20,12 @@
 # [TESTS]
 
 __all__ = [
-    "ContractViolationError",
+    "ContractBus",
     "ContractBusError",
     "ContractDefinition",
-    "ContractRegistry",
     "ContractEnforcer",
-    "ContractBus",
+    "ContractRegistry",
+    "ContractViolationError",
     "enforce_contract",
     "get_bus",
 ]
@@ -41,9 +41,9 @@ ContractBus — 跨层通信抽象 + Pydantic v2 Schema Enforcement (M-09)
 """
 import asyncio
 import functools
-import traceback
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -54,9 +54,7 @@ class ContractViolationError(Exception):
         self.field = field
         self.expected = expected
         self.got = got
-        super().__init__(
-            f"ContractViolation [{contract_id}] {field}: expected {expected}, got {got}"
-        )
+        super().__init__(f"ContractViolation [{contract_id}] {field}: expected {expected}, got {got}")
 
 
 class ContractBusError(Exception):
@@ -79,7 +77,7 @@ class ContractRegistry:
     def register(self, definition: ContractDefinition):
         self._contracts[definition.contract_id] = definition
 
-    def get(self, contract_id: str) -> Optional[ContractDefinition]:
+    def get(self, contract_id: str) -> ContractDefinition | None:
         return self._contracts.get(contract_id)
 
     def list_all(self) -> list[str]:
@@ -115,7 +113,7 @@ class ContractEnforcer:
 
 
 class ContractBus:
-    def __init__(self, registry: Optional[ContractRegistry] = None):
+    def __init__(self, registry: ContractRegistry | None = None):
         self.registry = registry or ContractRegistry()
         self.enforcer = ContractEnforcer(self.registry)
         self._validate_on_call = True
@@ -143,9 +141,7 @@ def enforce_contract(contract_id: str):
             except ContractViolationError:
                 raise
             except Exception as e:
-                raise ContractBusError(
-                    f"[{contract_id}] {func.__name__} failed: {e}"
-                ) from e
+                raise ContractBusError(f"[{contract_id}] {func.__name__} failed: {e}") from e
 
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -154,9 +150,7 @@ def enforce_contract(contract_id: str):
             except ContractViolationError:
                 raise
             except Exception as e:
-                raise ContractBusError(
-                    f"[{contract_id}] {func.__name__} failed: {e}"
-                ) from e
+                raise ContractBusError(f"[{contract_id}] {func.__name__} failed: {e}") from e
 
         if asyncio.iscoroutinefunction(func):
             return async_wrapper  # type: ignore[return-value]

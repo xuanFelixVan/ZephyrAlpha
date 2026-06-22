@@ -16,8 +16,6 @@ import os
 import time
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.kb.quiet_period_monitor import QuietPeriodMonitor, QuietPeriodReport
 
 

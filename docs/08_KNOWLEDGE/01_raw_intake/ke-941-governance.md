@@ -15,7 +15,7 @@ category: governance
 |--------|------|---------|
 | 文档元数据索引 | `_registry/catalogs/document-metadata-index-registry.yaml` | 所有 governance/ + meta/ 下的规则文件 |
 | 文档清单 | `_registry/catalogs/document-metadata-index-registry.yaml` | 所有文档文件的 inventory（auto-generated，取代已废弃的 master-document-inventory-registry.md） |
-| 规则注册表 | PS-REG-001 `_registry/catalogs/rule-registry.md` | 所有规则的索引 |
+| 规则注册表 | PS-REG-001 `_registry/catalogs/_index.yaml` | 所有规则的索引 |
 
 **操作流程**：
 

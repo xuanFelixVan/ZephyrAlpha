@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """Token 预算管理器单元测试——验证三级预算控制与 degraded 标记。"""
 
 
@@ -13,10 +14,10 @@ import pytest
 
 from zephyr.autonomy_core.token_budget import (
     BUDGET_CAPS,
-    TokenBudgetTier,
-    BudgetState,
     DEGRADED_THRESHOLD,
+    BudgetState,
     TokenBudgetManager,
+    TokenBudgetTier,
 )
 
 

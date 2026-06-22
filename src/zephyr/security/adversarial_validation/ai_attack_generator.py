@@ -19,17 +19,6 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.security.adversarial_validation.models import (
-    AttackScenario,
-    AttackTier,
-    BlastRadiusLevel,
-    DefenseSpec,
-    InjectionSpec,
-    ScenarioSource,
-    Severity,
-    SteadyStateSpec,
-)
-
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["AIAttackGenerator", "AttackGenerationError"]
@@ -66,7 +55,6 @@ class AttackGenerationError(RuntimeError):
 
 
 class AIAttackGenerator:
-
     def __init__(self) -> None:
         self._registry_path = _REGISTRY_PATH
         self._generated: list[str] = []

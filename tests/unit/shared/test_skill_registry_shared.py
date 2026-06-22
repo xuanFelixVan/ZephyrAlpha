@@ -36,6 +36,7 @@ Safety: MEDIUM（Pydantic 模型契约验证）
 
 import pytest
 from pydantic import ValidationError
+
 from zephyr.autonomy_core.skill_registry import (
     PromptTemplate,
     PromptVariable,
@@ -256,7 +257,9 @@ class TestSkillDefinition:
                 name="x",
                 version="bad-version",
                 prompt_template=PromptTemplate(
-                    template_id="t", name="t", template_str="t",
+                    template_id="t",
+                    name="t",
+                    template_str="t",
                 ),
             )
 
@@ -267,7 +270,9 @@ class TestSkillDefinition:
                 name="x",
                 stability="retired",
                 prompt_template=PromptTemplate(
-                    template_id="t", name="t", template_str="t",
+                    template_id="t",
+                    name="t",
+                    template_str="t",
                 ),
             )
 
@@ -276,7 +281,9 @@ class TestSkillDefinition:
             skill_id="minimal",
             name="Minimal",
             prompt_template=PromptTemplate(
-                template_id="m", name="m", template_str="m",
+                template_id="m",
+                name="m",
+                template_str="m",
             ),
         )
         assert skill.version == "1.0.0"

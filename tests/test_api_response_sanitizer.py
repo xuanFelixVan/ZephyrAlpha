@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.api_response_sanitizer import APIResponseSanitizer
 
 
@@ -65,7 +63,7 @@ class TestSanitize:
 
     def test_multiple_dangerous_patterns_all_sanitized(self):
         sanitizer = APIResponseSanitizer()
-        result = sanitizer.sanitize('<script>x</script> javascript:bad() onerror=boom onclick=go')
+        result = sanitizer.sanitize("<script>x</script> javascript:bad() onerror=boom onclick=go")
         assert "<script" not in result
         assert "javascript:" not in result
         assert "onerror=" not in result
@@ -76,7 +74,7 @@ class TestSanitize:
 class TestIsSuspicious:
     def test_detects_script_tag(self):
         sanitizer = APIResponseSanitizer()
-        assert sanitizer.is_suspicious('<script>alert(1)</script>') is True
+        assert sanitizer.is_suspicious("<script>alert(1)</script>") is True
 
     def test_detects_eval(self):
         sanitizer = APIResponseSanitizer()
@@ -96,7 +94,7 @@ class TestIsSuspicious:
 
     def test_case_insensitive_detection(self):
         sanitizer = APIResponseSanitizer()
-        assert sanitizer.is_suspicious('<SCRIPT>bad</SCRIPT>') is True
+        assert sanitizer.is_suspicious("<SCRIPT>bad</SCRIPT>") is True
 
     def test_partial_match_not_flagged_for_eval(self):
         sanitizer = APIResponseSanitizer()
@@ -106,7 +104,7 @@ class TestIsSuspicious:
 class TestBoundaryConditions:
     def test_sanitize_preserves_surrounding_content(self):
         sanitizer = APIResponseSanitizer()
-        result = sanitizer.sanitize('before<script>bad</script>after')
+        result = sanitizer.sanitize("before<script>bad</script>after")
         assert result.startswith("before")
         assert result.endswith("after")
 

@@ -12,21 +12,19 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
-import pytest
+from datetime import datetime
 
 from zephyr.behavioral_audit.ai_context_injector import (
-    InjectionLevel,
+    _INJECTOR_MAP,
     HealthSnapshot,
-    TopDriftItem,
     InjectedContext,
+    InjectionLevel,
+    TopDriftItem,
     build_health_snapshot,
     build_top_drifts,
+    inject_full,
     inject_minimal,
     inject_standard,
-    inject_full,
-    _INJECTOR_MAP,
 )
 
 
@@ -63,9 +61,7 @@ class TestHealthSnapshot:
         assert snap.state_distribution == {}
 
     def test_snapshot_time_auto_set(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=0, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M1", active_drift_count=0, budget_remaining={}, state_distribution={})
         assert isinstance(snap.snapshot_time, datetime)
         assert snap.snapshot_time.tzinfo is not None
 
@@ -80,23 +76,17 @@ class TestHealthSnapshot:
         assert snap.state_distribution["TRIAGED"] == 1
 
     def test_boundary_zero_drift_count(self):
-        snap = HealthSnapshot(
-            module_id="M0", active_drift_count=0, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M0", active_drift_count=0, budget_remaining={}, state_distribution={})
         assert snap.active_drift_count == 0
 
     def test_boundary_large_drift_count(self):
-        snap = HealthSnapshot(
-            module_id="M0", active_drift_count=9999, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M0", active_drift_count=9999, budget_remaining={}, state_distribution={})
         assert snap.active_drift_count == 9999
 
 
 class TestTopDriftItem:
     def test_creates_with_all_fields(self):
-        item = TopDriftItem(
-            event_id="e1", detector_id="d1", severity="HIGH", roi_score=0.9, description="test"
-        )
+        item = TopDriftItem(event_id="e1", detector_id="d1", severity="HIGH", roi_score=0.9, description="test")
         assert item.event_id == "e1"
         assert item.detector_id == "d1"
         assert item.severity == "HIGH"
@@ -104,23 +94,17 @@ class TestTopDriftItem:
         assert item.description == "test"
 
     def test_boundary_zero_roi_score(self):
-        item = TopDriftItem(
-            event_id="e2", detector_id="d2", severity="LOW", roi_score=0.0, description=""
-        )
+        item = TopDriftItem(event_id="e2", detector_id="d2", severity="LOW", roi_score=0.0, description="")
         assert item.roi_score == 0.0
 
     def test_boundary_negative_roi_score(self):
-        item = TopDriftItem(
-            event_id="e3", detector_id="d3", severity="INFO", roi_score=-1.0, description="neg"
-        )
+        item = TopDriftItem(event_id="e3", detector_id="d3", severity="INFO", roi_score=-1.0, description="neg")
         assert item.roi_score == -1.0
 
 
 class TestInjectedContext:
     def test_creates_with_required_fields(self):
-        ctx = InjectedContext(
-            level=InjectionLevel.MINIMAL, token_estimate=10, content="test content"
-        )
+        ctx = InjectedContext(level=InjectionLevel.MINIMAL, token_estimate=10, content="test content")
         assert ctx.level == InjectionLevel.MINIMAL
         assert ctx.token_estimate == 10
         assert ctx.content == "test content"
@@ -267,9 +251,7 @@ class TestInjectMinimal:
         assert "active_drifts=5" in ctx.content
 
     def test_handles_empty_state_distribution(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=0, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M1", active_drift_count=0, budget_remaining={}, state_distribution={})
         ctx = inject_minimal(snap)
         assert "active_drifts=0" in ctx.content
 
@@ -286,9 +268,7 @@ class TestInjectMinimal:
         assert "P2=15" in ctx.content
 
     def test_boundary_zero_drifts(self):
-        snap = HealthSnapshot(
-            module_id="M0", active_drift_count=0, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M0", active_drift_count=0, budget_remaining={}, state_distribution={})
         ctx = inject_minimal(snap)
         assert ctx.level == InjectionLevel.MINIMAL
         assert ctx.token_estimate > 0
@@ -311,9 +291,7 @@ class TestInjectStandard:
         assert "d1" in ctx.content
 
     def test_handles_empty_drifts_list(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=0, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M1", active_drift_count=0, budget_remaining={}, state_distribution={})
         ctx = inject_standard(snap, [])
         assert ctx.level == InjectionLevel.STANDARD
         assert "Top active drifts" in ctx.content
@@ -325,9 +303,7 @@ class TestInjectStandard:
             budget_remaining={"P0": 3},
             state_distribution={"DETECTED": 3},
         )
-        drifts = [
-            TopDriftItem(event_id="e1", detector_id="d1", severity="HIGH", roi_score=0.9, description="top")
-        ]
+        drifts = [TopDriftItem(event_id="e1", detector_id="d1", severity="HIGH", roi_score=0.9, description="top")]
         ctx = inject_standard(snap, drifts)
         assert "active_drifts=3" in ctx.content
 
@@ -347,12 +323,8 @@ class TestInjectStandard:
         assert "d2" in ctx.content
 
     def test_boundary_roi_score_formatting(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=1, budget_remaining={}, state_distribution={}
-        )
-        drifts = [
-            TopDriftItem(event_id="e1", detector_id="d1", severity="HIGH", roi_score=0.876, description="test")
-        ]
+        snap = HealthSnapshot(module_id="M1", active_drift_count=1, budget_remaining={}, state_distribution={})
+        drifts = [TopDriftItem(event_id="e1", detector_id="d1", severity="HIGH", roi_score=0.876, description="test")]
         ctx = inject_standard(snap, drifts)
         assert "ROI=0.9" in ctx.content
 
@@ -373,9 +345,7 @@ class TestInjectFull:
         assert "FULL DRIFT INVENTORY" in ctx.content
 
     def test_includes_total_events_count(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=2, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M1", active_drift_count=2, budget_remaining={}, state_distribution={})
         events = [
             {"severity": "HIGH", "detector_id": "d1", "description": "a", "roi_score": 0.8},
             {"severity": "LOW", "detector_id": "d2", "description": "b", "roi_score": 0.1},
@@ -384,9 +354,7 @@ class TestInjectFull:
         assert "Total events: 2" in ctx.content
 
     def test_handles_auto_fixable_events(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=1, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M1", active_drift_count=1, budget_remaining={}, state_distribution={})
         events = [
             {
                 "severity": "INFO",
@@ -401,17 +369,13 @@ class TestInjectFull:
         assert "auto_fixable" in ctx.content
 
     def test_handles_empty_events_list(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=0, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M1", active_drift_count=0, budget_remaining={}, state_distribution={})
         ctx = inject_full(snap, [])
         assert ctx.level == InjectionLevel.FULL
         assert "Total events: 0" in ctx.content
 
     def test_sorts_by_severity_then_roi(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=3, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M1", active_drift_count=3, budget_remaining={}, state_distribution={})
         events = [
             {"severity": "INFO", "detector_id": "d_info", "description": "low sev", "roi_score": 0.9},
             {"severity": "CRITICAL", "detector_id": "d_crit", "description": "high sev", "roi_score": 0.1},
@@ -422,9 +386,7 @@ class TestInjectFull:
         assert crit_pos < info_pos
 
     def test_boundary_description_truncated_to_100(self):
-        snap = HealthSnapshot(
-            module_id="M1", active_drift_count=1, budget_remaining={}, state_distribution={}
-        )
+        snap = HealthSnapshot(module_id="M1", active_drift_count=1, budget_remaining={}, state_distribution={})
         events = [
             {"severity": "INFO", "detector_id": "d1", "description": "x" * 200, "roi_score": 0.5},
         ]

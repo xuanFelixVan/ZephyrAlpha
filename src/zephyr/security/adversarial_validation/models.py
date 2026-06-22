@@ -14,29 +14,28 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Annotated
 
 from pydantic import BaseModel, Field
 
 __all__: list[str] = [
-    "Severity",
+    "AttackScenario",
     "AttackTier",
     "BlastRadiusLevel",
-    "ResultClass",
-    "ScenarioSource",
-    "InjectionSpec",
-    "DefenseSpec",
-    "SteadyStateSpec",
-    "SteadyStateSummary",
-    "AttackScenario",
-    "ScenarioResult",
     "BypassEntry",
-    "RedBlueReport",
     "ConvergenceResult",
     "DefenseResult",
+    "DefenseSpec",
     "GameDayResult",
     "InjectionResult",
+    "InjectionSpec",
     "InjectionType",
+    "RedBlueReport",
+    "ResultClass",
+    "ScenarioResult",
+    "ScenarioSource",
+    "Severity",
+    "SteadyStateSpec",
+    "SteadyStateSummary",
 ]
 
 
@@ -60,8 +59,13 @@ class AttackTier(str, Enum):
     @classmethod
     def from_label(cls, label: str) -> AttackTier:
         mapping: dict[str, AttackTier] = {
-            "L1": cls.TIER_1, "L2": cls.TIER_2, "L3": cls.TIER_3,
-            "L4": cls.TIER_4, "L5": cls.TIER_5, "L6": cls.TIER_6, "L7": cls.TIER_7,
+            "L1": cls.TIER_1,
+            "L2": cls.TIER_2,
+            "L3": cls.TIER_3,
+            "L4": cls.TIER_4,
+            "L5": cls.TIER_5,
+            "L6": cls.TIER_6,
+            "L7": cls.TIER_7,
         }
         if label.upper() in mapping:
             return mapping[label.upper()]

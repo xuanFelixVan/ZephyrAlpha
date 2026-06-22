@@ -13,8 +13,6 @@
 from __future__ import annotations
 
 import logging
-import os
-import subprocess
 from pathlib import Path
 
 import yaml
@@ -28,7 +26,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["ConstitutionGuard", "ConstitutionViolationError", "ConstitutionArticle"]
+__all__: list[str] = ["ConstitutionArticle", "ConstitutionGuard", "ConstitutionViolationError"]
 
 _REGISTRY_PATH: Path = Path(__file__).parent / "_constitution-registry.yaml"
 
@@ -38,10 +36,15 @@ class ConstitutionViolationError(RuntimeError):
 
 
 class ConstitutionArticle:
-
-    def __init__(self, article_id: str, name: str, derived_from: str = "",
-                 defense_action: str = "", applicable_gates: list[str] | None = None,
-                 status: str = "active") -> None:
+    def __init__(
+        self,
+        article_id: str,
+        name: str,
+        derived_from: str = "",
+        defense_action: str = "",
+        applicable_gates: list[str] | None = None,
+        status: str = "active",
+    ) -> None:
         self.article_id: str = article_id
         self.name: str = name
         self.derived_from: str = derived_from
@@ -54,9 +57,7 @@ class ConstitutionArticle:
 
 
 class ConstitutionGuard:
-
-    def __init__(self, registry_path: Path | None = None,
-                 gate_engine: GateEngine | None = None) -> None:
+    def __init__(self, registry_path: Path | None = None, gate_engine: GateEngine | None = None) -> None:
         self._registry_path: Path = registry_path or _REGISTRY_PATH
         self._gate_engine: GateEngine | None = gate_engine
         self._articles: list[ConstitutionArticle] = []
@@ -148,19 +149,22 @@ class ConstitutionGuard:
             try:
                 for gate_id in article.applicable_gates:
                     result = self._gate_engine.evaluate(
-                        {"task_id": f"constitution-{article.article_id}",
-                         "title": article.name},
+                        {"task_id": f"constitution-{article.article_id}", "title": article.name},
                         gate_id,
                     )
                     if not result.passed:
-                        logger.warning("constitution_gate_blocked article=%s gate=%s msg=%s",
-                                       article.article_id, gate_id,
-                                       getattr(result, "message", ""))
+                        logger.warning(
+                            "constitution_gate_blocked article=%s gate=%s msg=%s",
+                            article.article_id,
+                            gate_id,
+                            getattr(result, "message", ""),
+                        )
                         return False
                 return True
             except Exception:
-                logger.warning("constitution_gate_fallback article=%s action=%s",
-                               article.article_id, action, exc_info=True)
+                logger.warning(
+                    "constitution_gate_fallback article=%s action=%s", article.article_id, action, exc_info=True
+                )
 
         checks: dict[str, str] = {
             "prompt_injection_filter.scan": "src/zephyr/llm-security",
@@ -199,6 +203,5 @@ class ConstitutionGuard:
         if not target.startswith("src/") and not target.startswith("scripts/"):
             return True
 
-        logger.warning("constitution_check_failed article=%s action=%s target=%s",
-                       article.article_id, action, target)
+        logger.warning("constitution_check_failed article=%s action=%s target=%s", article.article_id, action, target)
         return False

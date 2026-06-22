@@ -9,11 +9,64 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
+"""Re-export bridge for layer3_coordination intelligence symbols.
 
-from .a2a_collusion_detector import A2ACollusionDetector, CollusionFinding, CollusionReport
-from .a2a_blame_attribution import A2ABlameAttribution, BlameItem, BlameReport
-from .a2a_causal_trace import A2ACausalTrace, CausalNode, CausalEdge, CausalGraph
-from .a2a_behavior_fingerprint import A2ABehaviorFingerprint, BehaviorFingerprint
-from .a2a_knowledge_distill import A2AKnowledgeDistill, DistilledKnowledge
-from .a2a_latent_comm import A2ALatentComm, LatentCommSignal
-from .a2a_cross_agent_semantic_flow import CrossAgentSemanticFlow, SemanticFlowNode, SemanticFlow
+Aggregates 19 symbols from 7 source modules to preserve backward compatibility
+for ``from layer3_coordination._intelligence import ...`` consumers.
+"""
+
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_behavior_fingerprint import (
+    A2ABehaviorFingerprint,
+    BehaviorFingerprint,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_blame_attribution import (
+    A2ABlameAttribution,
+    BlameItem,
+    BlameReport,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_causal_trace import (
+    A2ACausalTrace,
+    CausalEdge,
+    CausalGraph,
+    CausalNode,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_collusion_detector import (
+    A2ACollusionDetector,
+    CollusionFinding,
+    CollusionReport,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_cross_agent_semantic_flow import (
+    CrossAgentSemanticFlow,
+    SemanticFlow,
+    SemanticFlowNode,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_knowledge_distill import (
+    A2AKnowledgeDistill,
+    DistilledKnowledge,
+)
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_latent_comm import (
+    A2ALatentComm,
+    LatentCommSignal,
+)
+
+__all__ = [
+    "A2ABehaviorFingerprint",
+    "A2ABlameAttribution",
+    "A2ACausalTrace",
+    "A2ACollusionDetector",
+    "A2AKnowledgeDistill",
+    "A2ALatentComm",
+    "BehaviorFingerprint",
+    "BlameItem",
+    "BlameReport",
+    "CausalEdge",
+    "CausalGraph",
+    "CausalNode",
+    "CollusionFinding",
+    "CollusionReport",
+    "CrossAgentSemanticFlow",
+    "DistilledKnowledge",
+    "LatentCommSignal",
+    "SemanticFlow",
+    "SemanticFlowNode",
+]

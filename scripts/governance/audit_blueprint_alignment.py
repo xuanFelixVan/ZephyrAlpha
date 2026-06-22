@@ -14,6 +14,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -23,16 +24,16 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
-from _shared.constants import EXIT_FINDINGS
-
-
-import ast
 import argparse
+import ast
 import json
 import re
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS
 
 __manifest__ = """
 args:
@@ -131,7 +132,7 @@ def check_gct(gov_dir: Path) -> list[str]:
     issues = []
     bp_path = BP["DOM-GOV-001"]
     if bp_path.exists():
-        gcts_from_bp = set(re.findall(r'G-CT-\d+', bp_path.read_text(encoding="utf-8")))
+        gcts_from_bp = set(re.findall(r"G-CT-\d+", bp_path.read_text(encoding="utf-8")))
         if len(gcts_from_bp) < 8:
             issues.append(f"蓝图 GCT 引用不满 8 条（实际 {len(gcts_from_bp)}）")
     for gct, (src_m, dst_m) in GCT_MAP.items():
@@ -160,10 +161,12 @@ def check_blueprint_symbols(mod_ids: list[str]) -> dict[str, list[str]]:
             results[mod_id] = ["蓝图缺失"]
             continue
         content = bp_path.read_text(encoding="utf-8")
-        bp_classes = set(re.findall(
-            r'\b([A-Z][a-zA-Z0-9]+(?:Guard|Manager|Detector|Core|Switch|Bridge|Handler|Auditor|Verifier|Simulator|Registry|Checker|Validator|Tracker|Writer|Generator|Runner|Isolator|Enforcer|Hook|Policy|Lock|Event|Context|Request|Result|Alert|Contract|Fix))\b',
-            content,
-        ))
+        bp_classes = set(
+            re.findall(
+                r"\b([A-Z][a-zA-Z0-9]+(?:Guard|Manager|Detector|Core|Switch|Bridge|Handler|Auditor|Verifier|Simulator|Registry|Checker|Validator|Tracker|Writer|Generator|Runner|Isolator|Enforcer|Hook|Policy|Lock|Event|Context|Request|Result|Alert|Contract|Fix))\b",
+                content,
+            )
+        )
         src_dir = SRC.get(mod_id)
         code_classes: set[str] = set()
         if src_dir and src_dir.exists():
@@ -233,11 +236,13 @@ def run_audit(module_filter: str | None = None) -> dict:
                         stats["tiny"] += 1
                         all_issues.append(f"TINY [{mod_id}] {tc.stem}: {fp.relative_to(ROOT)} ({size}B)")
 
-        module_results.append({
-            "module_id": mod_id,
-            "blueprint_ok": bp_ok,
-            "task_cards": tc_count,
-        })
+        module_results.append(
+            {
+                "module_id": mod_id,
+                "blueprint_ok": bp_ok,
+                "task_cards": tc_count,
+            }
+        )
 
     gct_issues: list[str] = []
     gov_dir = SRC.get("DOM-GOV-001")
@@ -284,21 +289,21 @@ def main() -> None:
 
         for mod in result["modules"]:
             bp_mark = "✅" if mod["blueprint_ok"] else "❌ MISSING"
-            print(f"\n{'─'*60}")
+            print(f"\n{'─' * 60}")
             print(f"  {mod['module_id']}  蓝图: {bp_mark}  ({mod['task_cards']} 任务卡)")
-            print(f"{'─'*60}")
+            print(f"{'─' * 60}")
 
-        print(f"\n{'─'*60}")
-        print(f"  GCT 桥接审计")
-        print(f"{'─'*60}")
+        print(f"\n{'─' * 60}")
+        print("  GCT 桥接审计")
+        print(f"{'─' * 60}")
         for gi in result["gct_issues"]:
             print(f"  ❌ {gi}")
         if not result["gct_issues"]:
-            print(f"  ✅ 8/8 GCT bridged")
+            print("  ✅ 8/8 GCT bridged")
 
-        print(f"\n{'─'*60}")
-        print(f"  蓝图符号 → 代码落地")
-        print(f"{'─'*60}")
+        print(f"\n{'─' * 60}")
+        print("  蓝图符号 → 代码落地")
+        print(f"{'─' * 60}")
         for mod_id, missing in result["symbol_missing"].items():
             if missing and missing[0] != "蓝图缺失":
                 print(f"  [{mod_id}] 蓝图声明但未实现: {missing[:15]}...")
@@ -307,21 +312,23 @@ def main() -> None:
             else:
                 print(f"  [{mod_id}] 蓝图类名全部落地 ✅")
 
-        print(f"\n{'='*60}")
-        print(f"  审计总结")
-        print(f"{'='*60}")
+        print(f"\n{'=' * 60}")
+        print("  审计总结")
+        print(f"{'=' * 60}")
         print(f"  总文件: {stats['total']}")
-        print(f"  ✅ OK: {stats['ok']}  ❌ 缺失: {stats['missing']}  ⚠️ THIN: {stats['thin']}  📄 TINY: {stats['tiny']}  💥 ERR: {stats['error']}")
+        print(
+            f"  ✅ OK: {stats['ok']}  ❌ 缺失: {stats['missing']}  ⚠️ THIN: {stats['thin']}  📄 TINY: {stats['tiny']}  💥 ERR: {stats['error']}"
+        )
         if all_issues:
             print(f"\n  ⚠️ 问题列表 ({len(all_issues)}):")
             for iss in all_issues[:30]:
                 print(f"    {iss}")
             if len(all_issues) > 30:
-                print(f"    ... 还有 {len(all_issues)-30} 条")
+                print(f"    ... 还有 {len(all_issues) - 30} 条")
         else:
-            print(f"\n  🎉 全部对齐，无任何问题！")
+            print("\n  🎉 全部对齐，无任何问题！")
 
-        print(f"\n--- 代码量 ---")
+        print("\n--- 代码量 ---")
         for mod_id, cs in result["code_stats"].items():
             print(f"  {mod_id}: {cs['files']} .py, {cs['loc']} LOC")
 

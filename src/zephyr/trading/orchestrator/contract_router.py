@@ -41,7 +41,6 @@
   CT-PIPE-ORC-001 → Pipeline
 """
 
-
 from __future__ import annotations
 
 from typing import Any
@@ -51,7 +50,6 @@ from pydantic import BaseModel, Field
 from zephyr.trading.orchestrator.contract_registry import (
     AIReadOnlyHint,
     ContractRegistry,
-    ContractCallResult,
 )
 
 ROUTE_MAP: dict[str, str] = {

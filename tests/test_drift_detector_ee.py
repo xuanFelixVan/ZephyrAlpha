@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_drift_detector_ee.py
 
-import pytest
 
 from zephyr.governance.drift_detector import DriftDetector
 

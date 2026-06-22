@@ -13,9 +13,8 @@
 from __future__ import annotations
 
 import os
-import pytest
 
-from zephyr.autonomy_core.skill_feature_flags import SkillFeatureFlags, _PREDEFINED_FLAGS
+from zephyr.autonomy_core.skill_feature_flags import _PREDEFINED_FLAGS, SkillFeatureFlags
 
 
 class TestSkillFeatureFlagsInstantiation:

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_tone_adapter_v2.py
 
-import pytest
 
 from zephyr.ops.diagnosers.tone_adapter_v2 import ToneAdapterV2
 

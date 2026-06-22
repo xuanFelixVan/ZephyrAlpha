@@ -6,9 +6,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """G-CT-003 — Rollback → Escalation 集成测试."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 
 class TestGCT003RollbackToEscalation:
@@ -16,12 +15,14 @@ class TestGCT003RollbackToEscalation:
 
     def test_rollback_result_creatable(self):
         from zephyr.governance.result_types import RollbackResult
+
         r = RollbackResult(rollback_id="R001", target="test")
         assert r.status is not None
 
     def test_escalation_consumes_rollback(self):
-        from zephyr.governance.result_types import RollbackResult, RollbackStatus
         from zephyr.governance.contracts import EscalationContracts
+        from zephyr.governance.result_types import RollbackResult, RollbackStatus
+
         r = RollbackResult(rollback_id="R001", target="test", status=RollbackStatus.FAILED)
         esc = EscalationContracts()
         result = esc.on_rollback_failure(r)
@@ -29,6 +30,7 @@ class TestGCT003RollbackToEscalation:
 
     def test_status_enum_values(self):
         from zephyr.governance.result_types import RollbackStatus
+
         assert RollbackStatus.SUCCESS is not None
         assert RollbackStatus.FAILED is not None
         assert RollbackStatus.PARTIAL is not None

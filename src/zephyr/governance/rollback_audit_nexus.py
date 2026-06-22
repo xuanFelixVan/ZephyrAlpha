@@ -30,18 +30,18 @@ RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog.
     同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。
 """
 
-
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 _CORE_AUDIT_AVAILABLE = False
 try:
     from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:
     _CoreAuditWriter = None
@@ -61,7 +61,6 @@ class AuditEvent:
 
 
 class RollbackAuditNexus:
-
     NEXUS_LOG_PATH: str = ".zephyr/audit/rollback_nexus_audit.jsonl"
     NEXUS_SUMMARY_PATH: str = ".zephyr/audit/rollback_nexus_summary.json"
 
@@ -114,7 +113,7 @@ class RollbackAuditNexus:
         success: bool,
         details: dict[str, Any] | None = None,
     ) -> AuditEvent:
-        ts = datetime.now(timezone.utc)
+        ts = datetime.now(UTC)
         event = AuditEvent(
             event_id=f"RB-AUDIT-{ts.strftime('%Y%m%d-%H%M%S-%f')}",
             event_type=event_type,
@@ -137,7 +136,7 @@ class RollbackAuditNexus:
         success_count = 0
         events_by_type: dict[str, int] = {}
 
-        with open(self._nexus_log, "r", encoding="utf-8") as f:
+        with open(self._nexus_log, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
@@ -157,7 +156,7 @@ class RollbackAuditNexus:
             "success_count": success_count,
             "success_rate": success_count / total if total > 0 else 0.0,
             "events_by_type": events_by_type,
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }
 
         self._nexus_summary.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -168,7 +167,7 @@ class RollbackAuditNexus:
             return []
 
         events: list[dict[str, Any]] = []
-        with open(self._nexus_log, "r", encoding="utf-8") as f:
+        with open(self._nexus_log, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:

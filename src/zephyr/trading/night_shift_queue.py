@@ -37,6 +37,7 @@ from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
+
 class NightShiftEntry(BaseModel):
     model_config = BASE_CONFIG
     id: str = Field(default="", description="NSL-{sequence}")
@@ -50,6 +51,7 @@ class NightShiftEntry(BaseModel):
     human_decision: str | None = None
     human_timestamp: str | None = None
     human_notes: str | None = None
+
 
 class NightShiftQueue:
     """夜班登记表——API 夜间执行遇到不确定时登记，留待人类裁定。"""

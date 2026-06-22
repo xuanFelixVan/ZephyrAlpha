@@ -12,23 +12,19 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
 from zephyr.behavioral_audit.chaos_injector import (
+    INJECTORS,
+    ChaosInjection,
     ChaosInjectionType,
+    ChaosMetrics,
     ChaosPhase,
     ChaosResult,
-    ChaosInjection,
-    ChaosMetrics,
-    inject_path_rename,
-    inject_yaml_field_flip,
-    inject_fake_todo_bomb,
-    import_hallucination,
-    INJECTORS,
     _find_p2_targets,
     _write_metrics,
+    import_hallucination,
+    inject_fake_todo_bomb,
+    inject_path_rename,
+    inject_yaml_field_flip,
 )
 
 
@@ -176,6 +172,7 @@ class TestWriteMetrics:
         m = ChaosMetrics(total_injections=5, detected=3, missed=2, false_negative_rate=0.4)
         _write_metrics(m, str(tmp_path))
         import os
+
         assert os.path.exists(tmp_path / "_chaos_metrics.json")
 
     def test_noop_when_no_state_dir(self):

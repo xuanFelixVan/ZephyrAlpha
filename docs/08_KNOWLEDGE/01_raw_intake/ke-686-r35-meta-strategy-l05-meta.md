@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-DOCUMENTAT-R35-META-STRATEGY-L05-META-001
 status: active
 title: 决策 R35：meta_strategy 归属 `l05/meta_router/`，不新建 l15 层（Closes OQ-023，N11）

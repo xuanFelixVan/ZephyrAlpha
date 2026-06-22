@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 类型注解覆盖率校验——公共函数参数和返回值必须有类型注解
@@ -47,7 +48,6 @@ SKIP_MODULES = {
     "risk",
     "pf_core",
     "ex_core",
-    "pf_core",
     "frontend",
     "research",
     "compliance",
@@ -55,15 +55,18 @@ SKIP_MODULES = {
     "integration",
 }
 
+
 def _is_public(name: str) -> bool:
     """_is_public implementation."""
     if name.startswith("__") and name.endswith("__"):
         return False
     return not name.startswith("_")
 
+
 def _has_return_annotation(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
     """_has_return_annotation implementation."""
     return node.returns is not None
+
 
 def _missing_param_annotations(node: ast.FunctionDef | ast.AsyncFunctionDef) -> list[str]:
     """_missing_param_annotations implementation."""
@@ -76,6 +79,7 @@ def _missing_param_annotations(node: ast.FunctionDef | ast.AsyncFunctionDef) -> 
         if arg.annotation is None:
             missing.append(arg.arg)
     return missing
+
 
 def scan_type_annotations(source_path: Path) -> list[str]:
     """扫描类型注解覆盖率."""
@@ -117,6 +121,7 @@ def scan_type_annotations(source_path: Path) -> list[str]:
 
     return issues
     """扫描类型注解覆盖率."""
+
 
 def main() -> None:
     """入口函数."""
@@ -163,6 +168,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.behavioral_audit.cross_module_score import (
     CrossModuleReport,
@@ -34,7 +32,7 @@ class TestModuleScore:
         assert ms.category_score == {}
 
     def test_custom_fields(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ms = ModuleScore(
             module_id="MOD-002",
             health_index=0.5,
@@ -79,7 +77,7 @@ class TestCrossModuleScorer:
 
     def test_compute_single_module_healthy(self):
         scorer = CrossModuleScorer()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ms = ModuleScore(
             module_id="MOD-A",
             health_index=0.95,
@@ -91,7 +89,7 @@ class TestCrossModuleScorer:
 
     def test_compute_rustiness_with_old_resolution(self):
         scorer = CrossModuleScorer()
-        old = datetime.now(timezone.utc) - timedelta(days=80)
+        old = datetime.now(UTC) - timedelta(days=80)
         ms = ModuleScore(
             module_id="MOD-OLD",
             health_index=0.9,
@@ -109,14 +107,14 @@ class TestCrossModuleScorer:
 
     def test_compute_rustiness_recent_gives_zero(self):
         scorer = CrossModuleScorer()
-        recent = datetime.now(timezone.utc) - timedelta(days=5)
+        recent = datetime.now(UTC) - timedelta(days=5)
         ms = ModuleScore(module_id="MOD-RECENT", health_index=0.9, last_resolved_at=recent)
         scorer.compute({"MOD-RECENT": ms})
         assert ms.rustiness_factor == 0.0
 
     def test_compute_worst_modules_sorted(self):
         scorer = CrossModuleScorer()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ms_low = ModuleScore(module_id="LOW", health_index=0.2, last_resolved_at=now)
         ms_high = ModuleScore(module_id="HIGH", health_index=0.95, last_resolved_at=now)
         ms_mid = ModuleScore(module_id="MID", health_index=0.6, last_resolved_at=now)
@@ -127,7 +125,7 @@ class TestCrossModuleScorer:
 
     def test_compute_history_appended(self):
         scorer = CrossModuleScorer()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ms = ModuleScore(module_id="M1", health_index=0.8, last_resolved_at=now)
         scorer.compute({"M1": ms})
         scorer.compute({"M1": ms})
@@ -183,7 +181,7 @@ class TestCrossModuleScorer:
 
     def test_compute_rustiness_cap_at_one(self):
         scorer = CrossModuleScorer()
-        very_old = datetime.now(timezone.utc) - timedelta(days=500)
+        very_old = datetime.now(UTC) - timedelta(days=500)
         ms = ModuleScore(module_id="VERY-OLD", health_index=0.9, last_resolved_at=very_old)
         scorer.compute({"VERY-OLD": ms})
         assert ms.rustiness_factor <= 1.0

@@ -10,12 +10,11 @@
 """
 
 import time
-import pytest
 
 from zephyr.security.access_control.sequence_guard import (
-    SequenceGuard,
-    SequenceEvent,
     FORBIDDEN_SEQUENCES,
+    SequenceEvent,
+    SequenceGuard,
 )
 
 

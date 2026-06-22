@@ -23,8 +23,9 @@ from __future__ import annotations
 
 """sensitivity_classifier.py — 数据分级 (B9, DD83, TASK-015 beta w)"""
 
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
+
 
 class SensitivityLevel(Enum):
     PUBLIC = "public"
@@ -32,14 +33,17 @@ class SensitivityLevel(Enum):
     CONFIDENTIAL = "confidential"
     RESTRICTED = "restricted"
 
+
 @dataclass
 class ClassificationResult:
     ke_id: str
     level: SensitivityLevel
     confidence: float
 
+
 class SensitivityClassifier:
     """ML auto-classify KE (Public/Internal/Confidential/Restricted) (DD83)."""
+
     def classify(self, ke_id: str, content: str) -> ClassificationResult:
         level = SensitivityLevel.INTERNAL
         if "key" in content.lower() or "secret" in content.lower():

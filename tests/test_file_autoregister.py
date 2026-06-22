@@ -10,11 +10,9 @@
 # [ERROR_CONTRACT] register requires valid manifest_path; yaml.safe_load on corrupt file raises exception
 # [TESTS] pytest tests/test_file_autoregister.py
 
-import os
-import pytest
-import yaml
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+
+import yaml
 
 from zephyr.autonomy_core.file_autoregister import FileAutoRegister
 
@@ -53,7 +51,7 @@ class TestRegister:
         manifest_path = self._write_manifest(tmp_path)
         far = FileAutoRegister(manifest_path=manifest_path)
         far.register("scripts/my_script.py", module="my_mod")
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = yaml.safe_load(f)
         assert "my_script" in manifest["scripts"]
         assert manifest["scripts"]["my_script"]["path"] == "scripts/my_script.py"
@@ -64,7 +62,7 @@ class TestRegister:
         manifest_path = self._write_manifest(tmp_path)
         far = FileAutoRegister(manifest_path=manifest_path)
         far.register("scripts/no_mod_script.py")
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = yaml.safe_load(f)
         assert manifest["scripts"]["no_mod_script"]["module"] == "unknown"
 
@@ -73,7 +71,7 @@ class TestRegister:
         manifest_path = self._write_manifest(tmp_path, existing)
         far = FileAutoRegister(manifest_path=manifest_path)
         far.register("scripts/new_script.py", module="new")
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = yaml.safe_load(f)
         assert "old_script" in manifest["scripts"]
         assert "new_script" in manifest["scripts"]
@@ -83,7 +81,7 @@ class TestRegister:
         manifest_path = self._write_manifest(tmp_path, existing)
         far = FileAutoRegister(manifest_path=manifest_path)
         far.register("scripts/dup_script.py", module="updated")
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = yaml.safe_load(f)
         assert manifest["scripts"]["dup_script"]["module"] == "updated"
 
@@ -106,6 +104,6 @@ class TestRegister:
         far = FileAutoRegister(manifest_path=manifest_path)
         result = far.register("scripts/fresh.py", module="fresh")
         assert result["registered"] is True
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = yaml.safe_load(f)
         assert "fresh" in manifest["scripts"]

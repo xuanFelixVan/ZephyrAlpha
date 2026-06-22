@@ -15,8 +15,6 @@ import time
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
-
 from zephyr.autonomy_core.ide_watcher import IDEWatcher
 
 

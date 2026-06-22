@@ -31,13 +31,12 @@ CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU
 - 其他 Collection → LRU 缓存 (默认 1024 条)
 """
 
-
 from __future__ import annotations
 
 import hashlib
 import logging
 import threading
-from typing import Any, ClassVar
+from typing import Any
 
 import numpy as np
 
@@ -123,7 +122,9 @@ class CacheLayer:
         self._clear_all()
 
     def invalidate_all_on_model_change(self, new_model_version: str, old_model_version: str = "") -> None:
-        _logger.info("CacheLayer: 模型版本变更 %s → %s，清除全部缓存 (mitigates R7)", old_model_version, new_model_version)
+        _logger.info(
+            "CacheLayer: 模型版本变更 %s → %s，清除全部缓存 (mitigates R7)", old_model_version, new_model_version
+        )
         self._clear_all()
 
     def _clear_all(self) -> None:

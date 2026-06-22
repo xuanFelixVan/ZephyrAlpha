@@ -11,6 +11,7 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
@@ -33,7 +34,9 @@ class TestIntentState:
 class TestIntentDeclaration:
     def test_is_valid_active(self):
         decl = IntentDeclaration(
-            agent_id="a1", file="f.py", task="fix",
+            agent_id="a1",
+            file="f.py",
+            task="fix",
             expected_operations=["read", "write"],
             state=IntentState.ACTIVE,
         )
@@ -41,7 +44,9 @@ class TestIntentDeclaration:
 
     def test_is_valid_drifted(self):
         decl = IntentDeclaration(
-            agent_id="a1", file="f.py", task="fix",
+            agent_id="a1",
+            file="f.py",
+            task="fix",
             expected_operations=["read"],
             state=IntentState.DRIFTED,
         )
@@ -49,7 +54,9 @@ class TestIntentDeclaration:
 
     def test_is_valid_exceeded(self):
         decl = IntentDeclaration(
-            agent_id="a1", file="f.py", task="fix",
+            agent_id="a1",
+            file="f.py",
+            task="fix",
             expected_operations=["read"],
             state=IntentState.EXCEEDED,
         )
@@ -57,7 +64,9 @@ class TestIntentDeclaration:
 
     def test_default_state(self):
         decl = IntentDeclaration(
-            agent_id="a1", file="f.py", task="fix",
+            agent_id="a1",
+            file="f.py",
+            task="fix",
             expected_operations=["read"],
         )
         assert decl.state == IntentState.DECLARED

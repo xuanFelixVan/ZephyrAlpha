@@ -17,11 +17,11 @@ Contracts: ME-CT-001~006
   A5: 特征数据泄漏 — 注入敏感训练数据特征
   A6: 模型注册表投毒 — 注册恶意模型污染registry
 """
+
 from __future__ import annotations
 
 import sys
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -37,11 +37,13 @@ def attack(attack_id: str, description: str):
     def decorator(fn):
         _ATTACKS.append({"id": attack_id, "description": description, "fn": fn})
         return fn
+
     return decorator
 
 
 def _try_import(module_path: str) -> bool:
     import importlib
+
     try:
         importlib.import_module(module_path)
         return True
@@ -96,17 +98,20 @@ def attack_02_inference_tampering() -> dict[str, Any]:
                 class TamperedResponse:
                     prediction = 9999.0
                     confidence = 0.9999
+
                 return TamperedResponse()
 
         pipeline.register_engine(TamperedEngine)
-        pipeline.register_model(ModelMetadata(
-            model_id="tampered_model",
-            model_version="1.0",
-            model_type="classifier",
-            framework="sklearn",
-            features=["f1"],
-            target="y",
-        ))
+        pipeline.register_model(
+            ModelMetadata(
+                model_id="tampered_model",
+                model_version="1.0",
+                model_type="classifier",
+                framework="sklearn",
+                features=["f1"],
+                target="y",
+            )
+        )
         result = pipeline.run()
         extreme_value = result.best_effect_size > 100.0
         return {
@@ -124,7 +129,6 @@ def attack_03_p_hacking() -> dict[str, Any]:
     """模拟p-hacking: 多次运行变体实验寻找虚假显著性。"""
     try:
         from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
-        from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline._global_run_count = 0
         MLExperimentPipeline._seen_idempotency_keys.clear()
@@ -176,17 +180,20 @@ def attack_04_promotion_bypass() -> dict[str, Any]:
                 class Response:
                     prediction = 0.099
                     confidence = 0.951
+
                 return Response()
 
         pipeline.register_engine(BarelyPassingEngine)
-        pipeline.register_model(ModelMetadata(
-            model_id="barely_model",
-            model_version="1.0",
-            model_type="classifier",
-            framework="sklearn",
-            features=["f1"],
-            target="y",
-        ))
+        pipeline.register_model(
+            ModelMetadata(
+                model_id="barely_model",
+                model_version="1.0",
+                model_type="classifier",
+                framework="sklearn",
+                features=["f1"],
+                target="y",
+            )
+        )
         result = pipeline.run()
 
         marginally_significant = result.best_effect_size < 0.15 and result.significant_results > 0
@@ -198,7 +205,9 @@ def attack_04_promotion_bypass() -> dict[str, Any]:
             "effect_size": result.best_effect_size,
             "significant": result.significant_results,
             "promoted": result.promoted,
-            "status": "MARGINAL MODEL PROMOTED — promotion threshold bypassed" if attack_succeeded else "threshold blocked marginal promotion (defense held)",
+            "status": "MARGINAL MODEL PROMOTED — promotion threshold bypassed"
+            if attack_succeeded
+            else "threshold blocked marginal promotion (defense held)",
         }
     except Exception as e:
         return {"attack_succeeded": False, "defense_detected": True, "status": f"exception: {type(e).__name__}"}
@@ -208,7 +217,6 @@ def attack_04_promotion_bypass() -> dict[str, Any]:
 def attack_05_feature_leakage() -> dict[str, Any]:
     try:
         from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
-        from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline._global_run_count = 0
         MLExperimentPipeline._seen_idempotency_keys.clear()
@@ -245,7 +253,9 @@ def attack_05_feature_leakage() -> dict[str, Any]:
             "defense_detected": not attack_succeeded,
             "promoted": result.promoted,
             "feature_keys": list(sensitive_features.keys()),
-            "status": "SENSITIVE FEATURES EXPLOITED IN PIPELINE" if attack_succeeded else "sensitive features blocked by defense",
+            "status": "SENSITIVE FEATURES EXPLOITED IN PIPELINE"
+            if attack_succeeded
+            else "sensitive features blocked by defense",
         }
     except Exception as e:
         return {"attack_succeeded": False, "defense_detected": True, "status": f"exception: {type(e).__name__}"}
@@ -255,9 +265,11 @@ def attack_05_feature_leakage() -> dict[str, Any]:
 def attack_06_registry_poisoning() -> dict[str, Any]:
     try:
         import builtins
+
         original_builtins_keys = set(builtins.__dict__.keys())
 
         from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
+
         pipeline = MLExperimentPipeline()
         clean_snapshot = pipeline._snapshot_builtins()
 
@@ -280,7 +292,12 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
             "status": "DEFENSE HELD: builtins restored" if defense_held else "DEFENSE FAILED: builtins still modified",
         }
     except Exception as e:
-        return {"detected": True, "attack_succeeded": False, "defense_prevented": True, "status": f"exception: {type(e).__name__}"}
+        return {
+            "detected": True,
+            "attack_succeeded": False,
+            "defense_prevented": True,
+            "status": f"exception: {type(e).__name__}",
+        }
 
 
 def run_all_attacks() -> dict[str, Any]:
@@ -291,18 +308,22 @@ def run_all_attacks() -> dict[str, Any]:
             attack_result = attack_info["fn"]()
             if "attack_succeeded" in attack_result and "defense_detected" in attack_result:
                 attack_result["detected"] = attack_result["defense_detected"] and not attack_result["attack_succeeded"]
-            results.append({
-                "attack_id": attack_info["id"],
-                "description": attack_info["description"],
-                **attack_result,
-            })
+            results.append(
+                {
+                    "attack_id": attack_info["id"],
+                    "description": attack_info["description"],
+                    **attack_result,
+                }
+            )
         except Exception as e:
-            results.append({
-                "attack_id": attack_info["id"],
-                "description": attack_info["description"],
-                "detected": False,
-                "error": str(e),
-            })
+            results.append(
+                {
+                    "attack_id": attack_info["id"],
+                    "description": attack_info["description"],
+                    "detected": False,
+                    "error": str(e),
+                }
+            )
 
     results.sort(key=lambda r: r["attack_id"])
     detected = [r for r in results if r.get("detected")]

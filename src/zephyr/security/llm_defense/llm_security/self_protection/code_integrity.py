@@ -20,14 +20,12 @@
 # [TESTS]
 
 import hashlib
-import json
 import os
 import threading
 import time
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -42,28 +40,27 @@ class FileIntegrityRecord(BaseModel):
     path: str
     sha256: str
     size_bytes: int = 0
-    last_verified: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    last_verified: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     status: str = IntegrityStatus.UNKNOWN
 
 
 class CodeIntegrityGuard:
-
-    _CRITICAL_DIRS: Tuple[str, ...] = (
+    _CRITICAL_DIRS: tuple[str, ...] = (
         "src/zephyr/llm-security/layers",
         "src/zephyr/llm-security/self_protection",
     )
 
     def __init__(self, project_root: str = ""):
         self._project_root = project_root or os.getcwd()
-        self._baseline: Dict[str, str] = {}
-        self._records: Dict[str, FileIntegrityRecord] = {}
+        self._baseline: dict[str, str] = {}
+        self._records: dict[str, FileIntegrityRecord] = {}
         self._lock = threading.Lock()
         self._compromised: bool = False
         self._last_scan_time: float = 0.0
         self._scan_interval_seconds: float = 1800.0
 
-    def compute_baseline_for_directory(self, dir_path: str) -> List[FileIntegrityRecord]:
-        records: List[FileIntegrityRecord] = []
+    def compute_baseline_for_directory(self, dir_path: str) -> list[FileIntegrityRecord]:
+        records: list[FileIntegrityRecord] = []
         base = Path(os.path.join(self._project_root, dir_path))
         if not base.exists():
             return records
@@ -92,8 +89,8 @@ class CodeIntegrityGuard:
         self._last_scan_time = time.time()
         return records
 
-    def compute_full_baseline(self) -> List[FileIntegrityRecord]:
-        all_records: List[FileIntegrityRecord] = []
+    def compute_full_baseline(self) -> list[FileIntegrityRecord]:
+        all_records: list[FileIntegrityRecord] = []
         for d in self._CRITICAL_DIRS:
             all_records.extend(self.compute_baseline_for_directory(d))
         return all_records
@@ -103,19 +100,13 @@ class CodeIntegrityGuard:
         fp = Path(os.path.join(self._project_root, file_path))
 
         if not fp.exists():
-            return FileIntegrityRecord(
-                path=file_path, sha256="", size_bytes=0, status=IntegrityStatus.UNKNOWN
-            )
+            return FileIntegrityRecord(path=file_path, sha256="", size_bytes=0, status=IntegrityStatus.UNKNOWN)
 
         try:
             content = fp.read_bytes()
             current_sha = hashlib.sha256(content).hexdigest()
             expected_sha = existing.sha256 if existing else ""
-            status = (
-                IntegrityStatus.CLEAN
-                if current_sha == expected_sha
-                else IntegrityStatus.TAMPERED
-            )
+            status = IntegrityStatus.CLEAN if current_sha == expected_sha else IntegrityStatus.TAMPERED
             record = FileIntegrityRecord(
                 path=file_path,
                 sha256=current_sha,
@@ -128,13 +119,11 @@ class CodeIntegrityGuard:
                     self._compromised = True
             return record
         except (OSError, PermissionError):
-            return FileIntegrityRecord(
-                path=file_path, sha256="", size_bytes=0, status=IntegrityStatus.UNKNOWN
-            )
+            return FileIntegrityRecord(path=file_path, sha256="", size_bytes=0, status=IntegrityStatus.UNKNOWN)
 
-    def verify_all(self) -> Dict[str, Any]:
-        results: List[FileIntegrityRecord] = []
-        tampered: List[str] = []
+    def verify_all(self) -> dict[str, Any]:
+        results: list[FileIntegrityRecord] = []
+        tampered: list[str] = []
 
         for file_path in list(self._baseline.keys()):
             record = self.verify_single(file_path)
@@ -148,10 +137,10 @@ class CodeIntegrityGuard:
             "tampered": len(tampered),
             "tampered_files": tampered,
             "compromised": self._compromised,
-            "scanned_at": datetime.now(timezone.utc).isoformat(),
+            "scanned_at": datetime.now(UTC).isoformat(),
         }
 
-    def periodic_scan_if_due(self) -> Optional[Dict[str, Any]]:
+    def periodic_scan_if_due(self) -> dict[str, Any] | None:
         if time.time() - self._last_scan_time >= self._scan_interval_seconds:
             return self.verify_all()
         return None
@@ -161,5 +150,5 @@ class CodeIntegrityGuard:
         return self._compromised
 
     @property
-    def baseline(self) -> Dict[str, str]:
+    def baseline(self) -> dict[str, str]:
         return dict(self._baseline)

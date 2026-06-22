@@ -12,12 +12,11 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 import time
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from zephyr.governance.audit_trail.writer import AuditWriter
@@ -52,6 +51,7 @@ class FindingIngest:
         self._writer_initialized = True
         try:
             from zephyr.governance.audit_trail.writer import get_audit_writer
+
             self._writer = get_audit_writer()
         except Exception:
             _logger.debug("FindingIngest: audit-trail.writer unavailable, will use local JSONL fallback")
@@ -67,7 +67,7 @@ class FindingIngest:
         errors = 0
         finding_ids: list[str] = []
         try:
-            with open(jsonl_path, "r", encoding="utf-8") as f:
+            with open(jsonl_path, encoding="utf-8") as f:
                 for line in f:
                     total += 1
                     stripped = line.strip()
@@ -161,6 +161,7 @@ class FindingIngest:
             return
         try:
             from zephyr.integration.shared_08.event_bus import bus
+
             bus.subscribe("audit.finding_created", cls._on_finding_created)
             bus.subscribe("audit.finding_resolved", cls._on_finding_resolved)
             cls._subscribers_registered = True
@@ -170,18 +171,20 @@ class FindingIngest:
     @staticmethod
     def _on_finding_created(payload: dict) -> None:
         import logging
+
         logger = logging.getLogger(__name__)
         severity = payload.get("severity", "")
         if severity in ("CRITICAL", "HIGH"):
-            logger.info("Event: audit.finding_created severity=%s finding_id=%s",
-                       severity, payload.get("finding_id", ""))
+            logger.info(
+                "Event: audit.finding_created severity=%s finding_id=%s", severity, payload.get("finding_id", "")
+            )
 
     @staticmethod
     def _on_finding_resolved(payload: dict) -> None:
         import logging
+
         logger = logging.getLogger(__name__)
-        logger.info("Event: audit.finding_resolved finding_id=%s",
-                   payload.get("finding_id", ""))
+        logger.info("Event: audit.finding_resolved finding_id=%s", payload.get("finding_id", ""))
 
     def _write_to_audit_trail(self, finding: AuditFinding) -> bool:
         writer = self._get_writer()
@@ -221,6 +224,7 @@ class FindingIngest:
     def _emit_event(self, finding: AuditFinding) -> None:
         try:
             from zephyr.integration.shared_08.event_bus import bus
+
             payload = finding.to_finding_dict()
             bus.emit(topic="audit.finding_created", payload=payload)
         except Exception:

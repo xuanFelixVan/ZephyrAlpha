@@ -25,4 +25,4 @@ tags: [audit, findings, security-incident]
 | Secret 泄漏类 | `secret-leak-<short-id>.md` |
 | 通用安全事件（24h 内初稿） | `incident-YYYYMMDD-<id>.md` |
 
-具体内容结构见 `docs/02_enterprise_architecture/target-architecture/06-security_architecture.md` 对应章节。
+具体内容结构见 `docs/02_enterprise_architecture/target_architecture/06-security_architecture.md` 对应章节。

@@ -15,10 +15,7 @@ from __future__ import annotations
 import json
 import os
 import uuid
-from pathlib import Path
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from zephyr.governance.rule_enforcement.integration_test_runner import (
     IntegrationTestRunner,
@@ -91,7 +88,9 @@ class TestPipCheck:
         mock_result = MagicMock()
         mock_result.returncode = 0
         mock_result.stdout = "No broken requirements found."
-        with patch("zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run", return_value=mock_result):
+        with patch(
+            "zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run", return_value=mock_result
+        ):
             result = runner.pip_check()
         assert isinstance(result, SelfTestResult)
         assert result.tests_run == 1
@@ -104,7 +103,9 @@ class TestPipCheck:
         mock_result = MagicMock()
         mock_result.returncode = 1
         mock_result.stdout = "some-package 1.0 requires missing-dep"
-        with patch("zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run", return_value=mock_result):
+        with patch(
+            "zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run", return_value=mock_result
+        ):
             result = runner.pip_check()
         assert result.passed is False
         assert result.failures == 1
@@ -113,6 +114,7 @@ class TestPipCheck:
 
     def test_pip_check_timeout(self, tmp_path):
         import subprocess as sp
+
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         with patch(
             "zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run",
@@ -125,7 +127,6 @@ class TestPipCheck:
         assert pip_entry["status"] == "ERROR"
 
     def test_pip_check_file_not_found(self, tmp_path):
-        import subprocess as sp
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         with patch(
             "zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run",
@@ -200,12 +201,20 @@ class TestTypeCheck:
 class TestRunAll:
     def test_run_all_aggregates_results(self, tmp_path):
         runner = IntegrationTestRunner(project_root=str(tmp_path))
-        mock_pip = SelfTestResult(test_id=uuid.uuid4(), passed=True, tests_run=1, checks=[{"check": "pip", "status": "PASS", "detail": ""}])
-        mock_import = SelfTestResult(test_id=uuid.uuid4(), passed=True, tests_run=2, checks=[{"check": "imp", "status": "PASS", "detail": ""}])
-        mock_type = SelfTestResult(test_id=uuid.uuid4(), passed=True, tests_run=1, checks=[{"check": "type", "status": "PASS", "detail": ""}])
-        with patch.object(runner, "pip_check", return_value=mock_pip), \
-             patch.object(runner, "import_check", return_value=mock_import), \
-             patch.object(runner, "type_check", return_value=mock_type):
+        mock_pip = SelfTestResult(
+            test_id=uuid.uuid4(), passed=True, tests_run=1, checks=[{"check": "pip", "status": "PASS", "detail": ""}]
+        )
+        mock_import = SelfTestResult(
+            test_id=uuid.uuid4(), passed=True, tests_run=2, checks=[{"check": "imp", "status": "PASS", "detail": ""}]
+        )
+        mock_type = SelfTestResult(
+            test_id=uuid.uuid4(), passed=True, tests_run=1, checks=[{"check": "type", "status": "PASS", "detail": ""}]
+        )
+        with (
+            patch.object(runner, "pip_check", return_value=mock_pip),
+            patch.object(runner, "import_check", return_value=mock_import),
+            patch.object(runner, "type_check", return_value=mock_type),
+        ):
             result = runner.run_all()
         assert result.tests_run == 4
         assert len(result.checks) == 3
@@ -213,12 +222,24 @@ class TestRunAll:
 
     def test_run_all_propagates_failure(self, tmp_path):
         runner = IntegrationTestRunner(project_root=str(tmp_path))
-        mock_pip = SelfTestResult(test_id=uuid.uuid4(), passed=False, tests_run=1, failures=1, checks=[{"check": "pip", "status": "FAIL", "detail": "err"}])
-        mock_import = SelfTestResult(test_id=uuid.uuid4(), passed=True, tests_run=2, checks=[{"check": "imp", "status": "PASS", "detail": ""}])
-        mock_type = SelfTestResult(test_id=uuid.uuid4(), passed=True, tests_run=1, checks=[{"check": "type", "status": "PASS", "detail": ""}])
-        with patch.object(runner, "pip_check", return_value=mock_pip), \
-             patch.object(runner, "import_check", return_value=mock_import), \
-             patch.object(runner, "type_check", return_value=mock_type):
+        mock_pip = SelfTestResult(
+            test_id=uuid.uuid4(),
+            passed=False,
+            tests_run=1,
+            failures=1,
+            checks=[{"check": "pip", "status": "FAIL", "detail": "err"}],
+        )
+        mock_import = SelfTestResult(
+            test_id=uuid.uuid4(), passed=True, tests_run=2, checks=[{"check": "imp", "status": "PASS", "detail": ""}]
+        )
+        mock_type = SelfTestResult(
+            test_id=uuid.uuid4(), passed=True, tests_run=1, checks=[{"check": "type", "status": "PASS", "detail": ""}]
+        )
+        with (
+            patch.object(runner, "pip_check", return_value=mock_pip),
+            patch.object(runner, "import_check", return_value=mock_import),
+            patch.object(runner, "type_check", return_value=mock_type),
+        ):
             result = runner.run_all()
         assert result.passed is False
         assert result.failures == 1
@@ -228,9 +249,11 @@ class TestRunAll:
         mock_pip = SelfTestResult(test_id=uuid.uuid4(), passed=True, tests_run=1, errors=0, checks=[])
         mock_import = SelfTestResult(test_id=uuid.uuid4(), passed=True, tests_run=2, errors=1, checks=[])
         mock_type = SelfTestResult(test_id=uuid.uuid4(), passed=True, tests_run=1, errors=0, checks=[])
-        with patch.object(runner, "pip_check", return_value=mock_pip), \
-             patch.object(runner, "import_check", return_value=mock_import), \
-             patch.object(runner, "type_check", return_value=mock_type):
+        with (
+            patch.object(runner, "pip_check", return_value=mock_pip),
+            patch.object(runner, "import_check", return_value=mock_import),
+            patch.object(runner, "type_check", return_value=mock_type),
+        ):
             result = runner.run_all()
         assert result.errors == 1
 

@@ -10,12 +10,10 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_a2a_saga.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_saga import (
-    SagaStatus,
-    SagaStep,
-    SagaResult,
     A2ASaga,
+    SagaResult,
+    SagaStatus,
 )
 
 

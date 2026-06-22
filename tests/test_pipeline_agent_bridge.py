@@ -12,12 +12,9 @@
 
 from __future__ import annotations
 
-from typing import Any
 from unittest.mock import MagicMock, patch
 
-import pytest
-
-from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineResult, PipelineStatus
+from zephyr.integration.models import ModuleResult, PipelineResult, PipelineStatus
 from zephyr.integration.pipeline_agent_bridge import (
     M_TO_ROLE,
     PipelineAgentBridge,

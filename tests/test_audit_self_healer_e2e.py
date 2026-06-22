@@ -25,7 +25,7 @@ class _InMemoryRollbackHandler:
 
     def checkpoint(self, target_path: str) -> bool:
         try:
-            with open(target_path, "r", encoding="utf-8") as f:
+            with open(target_path, encoding="utf-8") as f:
                 self._snapshots[target_path] = f.read()
             return True
         except OSError:

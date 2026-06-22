@@ -12,18 +12,14 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
 from zephyr.infrastructure.asset_inventory.dependency import (
     DependencyEdge,
     DependencyExtractor,
     DependencyGraph,
     DependencyNode,
+    _infer_layer,
     build_dependency_graph,
     priority_from_dependency,
-    _infer_layer,
 )
 
 

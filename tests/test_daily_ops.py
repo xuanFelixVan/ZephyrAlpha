@@ -12,11 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.daily_ops import (
-    OpsPhase,
     QUICK_COMMANDS,
+    OpsPhase,
     QuickCommand,
 )
 
@@ -74,7 +72,9 @@ class TestQuickCommandsDict:
         assert "Pause" in QUICK_COMMANDS[QuickCommand.CRISIS] or "Emergency" in QUICK_COMMANDS[QuickCommand.CRISIS]
 
     def test_status_description(self):
-        assert "指标" in QUICK_COMMANDS[QuickCommand.STATUS] or "dashboard" in QUICK_COMMANDS[QuickCommand.STATUS].lower()
+        assert (
+            "指标" in QUICK_COMMANDS[QuickCommand.STATUS] or "dashboard" in QUICK_COMMANDS[QuickCommand.STATUS].lower()
+        )
 
     def test_notes_description(self):
         assert "markdown" in QUICK_COMMANDS[QuickCommand.NOTES].lower() or "事件" in QUICK_COMMANDS[QuickCommand.NOTES]

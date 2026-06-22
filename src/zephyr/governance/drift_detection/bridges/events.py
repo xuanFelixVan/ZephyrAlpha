@@ -20,9 +20,10 @@
 # [TESTS]
 
 """G-CT-005 — DriftEvent Pydantic V2 BaseModel 漂移事件定义."""
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -45,7 +46,7 @@ class DriftState(str, Enum):
 
 class DriftEvent(BaseModel):
     drift_id: str
-    detected_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    detected_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     target: str
     drift_type: DriftType = DriftType.CODE_DIVERGENCE
     fix_suggestion: str = ""

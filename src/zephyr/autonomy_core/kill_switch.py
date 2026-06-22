@@ -25,7 +25,6 @@
 #
 """kill_switch.py -- safety circuit breaker (DD110, TASK-019)"""
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass

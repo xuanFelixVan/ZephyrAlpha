@@ -15,8 +15,6 @@ from __future__ import annotations
 import sys
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.intelligence.model_profiling.cli import (
     cmd_discover,
     cmd_drift,

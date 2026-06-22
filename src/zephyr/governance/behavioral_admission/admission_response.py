@@ -11,9 +11,8 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidDecisionError
 # [TESTS] tests/test_admission_response.py
-
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -22,11 +21,13 @@ from zephyr.governance.behavioral_admission.admission_controller import (
     AdmissionResult,
 )
 
+
 class AdmissionResponseStatus(str, Enum):
     ADMITTED = "admitted"
     QUEUED = "queued"
     REJECTED = "rejected"
     DEGRADED = "degraded"
+
 
 _DECISION_TO_STATUS: dict[AdmissionDecision, AdmissionResponseStatus] = {
     AdmissionDecision.ADMIT: AdmissionResponseStatus.ADMITTED,
@@ -34,6 +35,7 @@ _DECISION_TO_STATUS: dict[AdmissionDecision, AdmissionResponseStatus] = {
     AdmissionDecision.CIRCUIT_OPEN: AdmissionResponseStatus.DEGRADED,
     AdmissionDecision.REJECTED: AdmissionResponseStatus.REJECTED,
 }
+
 
 class InvalidDecisionError(ValueError):
     def __init__(self, decision: Any) -> None:
@@ -44,14 +46,15 @@ class InvalidDecisionError(ValueError):
             f"{[d.value for d in AdmissionDecision]}"
         )
 
+
 class AdmissionResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     status: AdmissionResponseStatus
     request_id: str
-    queue_position: Optional[int] = None
-    estimated_wait_seconds: Optional[float] = None
-    rejection_reason: Optional[str] = None
+    queue_position: int | None = None
+    estimated_wait_seconds: float | None = None
+    rejection_reason: str | None = None
     degraded_capabilities: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -85,6 +88,7 @@ class AdmissionResponse(BaseModel):
             result["metadata"] = self.metadata
         return result
 
+
 class AdmissionResponseBuilder:
     def __init__(self, admission_controller: Any = None) -> None:
         self._controller = admission_controller
@@ -94,11 +98,11 @@ class AdmissionResponseBuilder:
         decision: AdmissionDecision | AdmissionResult,
         request_id: str,
         *,
-        queue_position: Optional[int] = None,
-        estimated_wait_seconds: Optional[float] = None,
-        rejection_reason: Optional[str] = None,
-        degraded_capabilities: Optional[list[str]] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        queue_position: int | None = None,
+        estimated_wait_seconds: float | None = None,
+        rejection_reason: str | None = None,
+        degraded_capabilities: list[str] | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> AdmissionResponse:
         if isinstance(decision, AdmissionResult):
             return self._from_result(decision, request_id, metadata=metadata)
@@ -118,7 +122,7 @@ class AdmissionResponseBuilder:
         self,
         items: list[tuple[AdmissionDecision | AdmissionResult, str]],
         *,
-        common_metadata: Optional[dict[str, Any]] = None,
+        common_metadata: dict[str, Any] | None = None,
     ) -> list[AdmissionResponse]:
         responses: list[AdmissionResponse] = []
         for decision, request_id in items:
@@ -137,11 +141,11 @@ class AdmissionResponseBuilder:
         decision: AdmissionDecision,
         request_id: str,
         *,
-        queue_position: Optional[int],
-        estimated_wait_seconds: Optional[float],
-        rejection_reason: Optional[str],
-        degraded_capabilities: Optional[list[str]],
-        metadata: Optional[dict[str, Any]],
+        queue_position: int | None,
+        estimated_wait_seconds: float | None,
+        rejection_reason: str | None,
+        degraded_capabilities: list[str] | None,
+        metadata: dict[str, Any] | None,
     ) -> AdmissionResponse:
         status = _DECISION_TO_STATUS.get(decision)
         if status is None:
@@ -176,7 +180,7 @@ class AdmissionResponseBuilder:
         result: AdmissionResult,
         request_id: str,
         *,
-        metadata: Optional[dict[str, Any]],
+        metadata: dict[str, Any] | None,
     ) -> AdmissionResponse:
         status = _DECISION_TO_STATUS.get(result.decision)
         if status is None:

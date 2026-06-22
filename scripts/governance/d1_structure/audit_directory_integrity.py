@@ -85,12 +85,13 @@ _DOC_TYPE_SUFFIX_MAP = {
     "schema": ".json",
 }
 _LEGIT_MULTI_WORD_SUFFIXES = {"-state-machine.md", "-session-state-machine.md", "-standard-constitution.md"}
-_FILENAME_EXCEPTIONS = frozenset({"metadata-registry.md"})
+_FILENAME_EXCEPTIONS = frozenset({"metadata_registry.yaml"})
 _RE_FRONTMATTER_MODULE_ID = re.compile("^module_id:\\s*([^\\s#]+)", re.MULTILINE)
 _RE_MD_LINK = re.compile("\\[([^\\]]*)\\]\\(([^)]+)\\)")
 
+
 class Finding:
-    __slots__ = ("dimension", "severity", "file", "detail")
+    __slots__ = ("detail", "dimension", "file", "severity")
 
     def __init__(self, dimension: str, severity: str, file: str, detail: str):
         """__init__ implementation."""
@@ -107,12 +108,14 @@ class Finding:
         """__repr__ implementation."""
         return f"Finding({self.dimension}, {self.severity}, {self.file!r}, {self.detail!r})"
 
+
 def _rel(path: Path) -> str:
     """to dict."""
     try:
         return path.relative_to(REPO_ROOT).as_posix()
     except ValueError:
         return str(path).replace("\\", "/")
+
 
 def _read_frontmatter(filepath: Path) -> dict[str, Any]:
     """_read_frontmatter implementation."""
@@ -141,6 +144,7 @@ def _read_frontmatter(filepath: Path) -> dict[str, Any]:
     mid = _RE_FRONTMATTER_MODULE_ID.search(raw[: max(end, 500)])
     return {"module_id": mid.group(1).strip().strip("\"'")} if mid else {}
 
+
 def _list_md_files_recursive(root: Path) -> list[Path]:
     """_list_md_files_recursive implementation."""
     result = []
@@ -157,6 +161,7 @@ def _list_md_files_recursive(root: Path) -> list[Path]:
                 result.append(entry)
     return result
 
+
 _MODULE_ID_PATTERN = re.compile(
     "^(?:PS-STD|PS-REG|META-(?:GLS|IDX|TERM)|GOV-(?:ARCH|SEC|DATA|CMP|DOC|AI|TASK|MOD|OP|REG)|CAT|OPS-(?:IDX|VC|DEV|MIG)|DOM|TPL|ARCH|REG)-\\d+$"
 )
@@ -165,6 +170,7 @@ _FILE_HEADER_NAMES = frozenset(
 )
 _MID_HEADER_NAMES = frozenset({"module_id", "module id", "编号", "id"})
 _RE_BACKTICK_FILE = re.compile("^`([^`]+\\.(?:md|ya?ml|json))`$")
+
 
 def _parse_index_table(index_path: Path) -> dict[str, str]:
     """Parse index.md table, return {filename: module_id}.
@@ -235,12 +241,14 @@ def _parse_index_table(index_path: Path) -> dict[str, str]:
         result[filename] = module_id
     return result
 
+
 def _find_index_for_dir(dir_path: Path) -> Path | None:
     """_find_index_for_dir implementation."""
     candidate = dir_path / "index.md"
     if candidate.exists():
         return candidate
     return None
+
 
 def check_d1_ghost_files() -> list[Finding]:
     """check d1 ghost files"""
@@ -274,6 +282,7 @@ def check_d1_ghost_files() -> list[Finding]:
             )
     return findings
 
+
 def check_d2_id_conflicts() -> list[Finding]:
     """check d2 id conflicts"""
     findings = []
@@ -287,9 +296,10 @@ def check_d2_id_conflicts() -> list[Finding]:
     for mid, files in id_map.items():
         if len(files) > 1:
             findings.append(
-                Finding("D2-ID冲突", "CRITICAL", mid, f'module_id 被 {len(files)} 个文件同时占用: {', '.join(files)}')
+                Finding("D2-ID冲突", "CRITICAL", mid, f"module_id 被 {len(files)} 个文件同时占用: {', '.join(files)}")
             )
     return findings
+
 
 def check_d3_index_counts() -> list[Finding]:
     """check d3 index counts"""
@@ -347,6 +357,7 @@ def check_d3_index_counts() -> list[Finding]:
             )
     return findings
 
+
 def check_d4_naming_convention() -> list[Finding]:
     """check d3 index counts."""
     findings = []
@@ -399,6 +410,7 @@ def check_d4_naming_convention() -> list[Finding]:
     return findings
     "check d4 naming convention."
 
+
 def check_d5_missing_entries() -> list[Finding]:
     """check d5 missing entries"""
     findings = []
@@ -426,6 +438,7 @@ def check_d5_missing_entries() -> list[Finding]:
                 )
     return findings
     "check d5 missing entries."
+
 
 def _print_report(findings: list[Finding]) -> None:
     """_print_report implementation."""
@@ -469,6 +482,7 @@ def _print_report(findings: list[Finding]) -> None:
     print(file=sys.stderr)
     print("-" * 60, file=sys.stderr)
 
+
 def main() -> None:
     """入口函数"""
     global REPO_ROOT, _PS_ROOT
@@ -496,6 +510,7 @@ def main() -> None:
         sys.exit(EXIT_PASS)
     sys.exit(EXIT_FINDINGS)
     "入口函数."
+
 
 if __name__ == "__main__":
     main()

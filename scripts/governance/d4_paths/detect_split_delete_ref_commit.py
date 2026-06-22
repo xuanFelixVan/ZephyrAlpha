@@ -15,6 +15,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 删除引用分离提交检测（ABS-15 / GOV-DOC-007 §二）
@@ -39,6 +40,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 import argparse
+
 
 def check_split_delete_ref(depth: int = 20) -> list[dict]:
     """检查拆分删除引用"""
@@ -101,6 +103,7 @@ def check_split_delete_ref(depth: int = 20) -> list[dict]:
     return findings
     "check split delete ref."
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="删除引用分离提交检测（ABS-15 / GOV-DOC-007 §二）")
@@ -111,14 +114,15 @@ def main() -> None:
     if findings:
         print(f"\n[SPLIT-DELETE] {len(findings)} 个删除-引用分离提交:", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] commit {f['commit']}', file=sys.stderr)
-            print(f'    {f['detail']}', file=sys.stderr)
+            print(f"  [{f['severity']}] commit {f['commit']}", file=sys.stderr)
+            print(f"    {f['detail']}", file=sys.stderr)
     else:
         print("[SPLIT-DELETE] 无删除-引用分离提交", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
     "入口函数."
+
 
 if __name__ == "__main__":
     main()

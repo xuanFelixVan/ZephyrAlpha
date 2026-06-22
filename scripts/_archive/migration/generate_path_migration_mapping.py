@@ -33,24 +33,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEPGRAPH_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "databases"
-    / "depgraph.db"
-)
-PATH_TREE_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "asset_index"
-    / "project-path-tree.yaml"
-)
-OUTPUT_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "asset_index"
-    / "path-migration-mapping.yaml"
-)
+DEPGRAPH_FILE = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+PATH_TREE_FILE = PROJECT_ROOT / "data" / "asset_index" / "project-path-tree.yaml"
+OUTPUT_FILE = PROJECT_ROOT / "data" / "asset_index" / "path-migration-mapping.yaml"
 
 EXCLUDED_PREFIXES = [
     "scripts/migration/",
@@ -69,7 +54,7 @@ def _load_yaml_safe(path: Path) -> dict:
     if not path.exists():
         print(f"[ERROR] File not found: {path}", file=sys.stderr)
         sys.exit(1)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     if not isinstance(data, dict):
         print(f"[ERROR] Invalid YAML: {path}", file=sys.stderr)
@@ -198,19 +183,21 @@ def _collect_raw_claims(depgraph: dict, domain_group_map: dict[str, str]) -> lis
 
                 change_type = "unchanged" if old_path == target_path else "moved"
 
-                claims.append({
-                    "old_path": old_path,
-                    "target_path": target_path,
-                    "type": mod_type,
-                    "domain": domain_id,
-                    "domain_group": domain_group_map.get(domain_id, ""),
-                    "module_id": module_id,
-                    "module_name": mod_name,
-                    "build_status": build_status,
-                    "pf_count": pf_count,
-                    "target_dir": target_dir,
-                    "change_type": change_type,
-                })
+                claims.append(
+                    {
+                        "old_path": old_path,
+                        "target_path": target_path,
+                        "type": mod_type,
+                        "domain": domain_id,
+                        "domain_group": domain_group_map.get(domain_id, ""),
+                        "module_id": module_id,
+                        "module_name": mod_name,
+                        "build_status": build_status,
+                        "pf_count": pf_count,
+                        "target_dir": target_dir,
+                        "change_type": change_type,
+                    }
+                )
 
     print(f"  Raw claims collected: {len(claims)}")
     print(f"  Found at original:   {found_at_original_count}")
@@ -408,7 +395,7 @@ def validate_mapping(result: dict) -> list[str]:
                 errors.append(f"EXCLUDED_FILE_IN_MAPPING: {op}")
                 break
 
-    print(f"\n=== Validation Results ===")
+    print("\n=== Validation Results ===")
     print(f"  Errors:   {len(errors)}")
     print(f"  Warnings: {len(warnings)}")
 
@@ -468,7 +455,7 @@ def main() -> None:
     result = generate_file_level_mapping(depgraph, path_tree)
 
     meta = result["meta"]
-    print(f"\n=== Summary ===")
+    print("\n=== Summary ===")
     print(f"  Total mappings:   {meta['total_mappings']}")
     print(f"  Moved files:      {meta['moved_files']}")
     print(f"  Unchanged files:  {meta['unchanged_files']}")

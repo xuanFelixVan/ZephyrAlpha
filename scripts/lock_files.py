@@ -41,19 +41,18 @@ Version: 2.0.0
 
 from __future__ import annotations
 
-import os
 import json
 import os
 import shutil
 import sys
 import time
-import uuid
 from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "governance" / "d3_metadata"))
 from check_naming_convention import check_file as _check_naming  # noqa: E402
+
 LOCK_ROOT = REPO_ROOT / ".ailocks"
 DEFAULT_TTL_S = 1800.0  # 30 分钟——超时未释放视为死锁（AI 对话级锁）
 REGISTRY_PATH = LOCK_ROOT / "registry.json"
@@ -114,13 +113,17 @@ def _read_owner(lock_dir: Path) -> dict[str, Any] | None:
 def _write_owner(lock_dir: Path, owner_id: str, task: str = "") -> None:
     lock_dir.mkdir(parents=True, exist_ok=True)
     _owner_file(lock_dir).write_text(
-        json.dumps({
-            "owner_id": owner_id,
-            "pid": os.getpid(),
-            "timestamp": time.time(),
-            "task": task,
-            "hostname": os.environ.get("COMPUTERNAME", "unknown"),
-        }, ensure_ascii=False, indent=2),
+        json.dumps(
+            {
+                "owner_id": owner_id,
+                "pid": os.getpid(),
+                "timestamp": time.time(),
+                "task": task,
+                "hostname": os.environ.get("COMPUTERNAME", "unknown"),
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
         encoding="utf-8",
     )
 
@@ -149,9 +152,9 @@ def _save_registry(registry: dict[str, Any]) -> None:
     tmp_path = f"{REGISTRY_PATH}.{os.getpid()}.tmp"
     try:
         Path(tmp_path).write_text(
-        json.dumps(registry, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+            json.dumps(registry, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
         os.replace(tmp_path, REGISTRY_PATH)
     except PermissionError:
         try:
@@ -233,7 +236,9 @@ def cmd_acquire(file_path: str, owner_id: str, task: str = "", skip_naming_check
 
     # 命名规范门禁：写入前校验文件名合规性（可跳过，用于历史命名文件）
     if not skip_naming_check:
-        naming_violations = _check_naming(normalized, Path(REPO_ROOT / normalized) if (REPO_ROOT / normalized).exists() else None, REPO_ROOT)
+        naming_violations = _check_naming(
+            normalized, Path(REPO_ROOT / normalized) if (REPO_ROOT / normalized).exists() else None, REPO_ROOT
+        )
         if naming_violations:
             print(f"NAMING VIOLATION — {normalized} 命名不合规，拒绝写入：")
             for v in naming_violations:
@@ -253,7 +258,7 @@ def cmd_acquire(file_path: str, owner_id: str, task: str = "", skip_naming_check
             existing_task = owner.get("task", "") if owner else ""
             if existing_task:
                 print(f"  对方任务: {existing_task}")
-            print(f"  请等待对方释放或协调后重试")
+            print("  请等待对方释放或协调后重试")
             return 1
 
     try:
@@ -437,7 +442,7 @@ class LockGuard:
         self.task = task
         self._acquired = False
 
-    def __enter__(self) -> "LockGuard":
+    def __enter__(self) -> LockGuard:
         pre_write_guard(self.file_path, self.session_id, self.task)
         self._acquired = True
         return self

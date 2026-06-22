@@ -11,12 +11,11 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 创世块损坏返回恢复失败
 # [TESTS] tests/audit-orchestrator/test_genesis.py
-
 import hashlib
 import json
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +25,7 @@ __all__ = ["GenesisBlock"]
 
 DEFAULT_GENESIS_DIR = Path("data/audit_genesis")
 GENESIS_FILE = "genesis_block.json"
+
 
 class GenesisBlock:
     def __init__(self, genesis_dir: Path | None = None) -> None:
@@ -40,7 +40,7 @@ class GenesisBlock:
 
         block = {
             "version": "1.0",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "block_hash": "",
             "audit_dimensions": [
                 "DIM-REGISTRATION-001",

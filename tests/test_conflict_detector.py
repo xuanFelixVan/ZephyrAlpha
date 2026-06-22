@@ -10,13 +10,10 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_conflict_detector.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.conflict_detector import (
-    ConflictSeverity,
-    ConflictType,
     ChangeSet,
     ConflictDetector,
-    Conflict,
+    ConflictType,
 )
 
 

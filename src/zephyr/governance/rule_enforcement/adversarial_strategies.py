@@ -12,7 +12,6 @@
 
 """Adversarial sample generator and 5 attack strategies for gate validation."""
 
-
 from __future__ import annotations
 
 import hashlib
@@ -26,14 +25,14 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = [
-    "AdversarialSampleGenerator",
     "AdversarialSample",
-    "StrategyError",
-    "PromptInjection",
-    "Jailbreak",
+    "AdversarialSampleGenerator",
     "DataPoisoning",
+    "Jailbreak",
     "ModelEvasion",
     "OutputManipulation",
+    "PromptInjection",
+    "StrategyError",
 ]
 
 
@@ -53,16 +52,13 @@ class AdversarialSample:
 class AttackStrategy(ABC):
     @property
     @abstractmethod
-    def name(self) -> str:
-        ...
+    def name(self) -> str: ...
 
     @abstractmethod
-    def generate(self, output: str) -> AdversarialSample:
-        ...
+    def generate(self, output: str) -> AdversarialSample: ...
 
     @abstractmethod
-    def detect(self, sample: str) -> bool:
-        ...
+    def detect(self, sample: str) -> bool: ...
 
 
 class PromptInjection(AttackStrategy):
@@ -160,7 +156,7 @@ class ModelEvasion(AttackStrategy):
     def generate(self, output: str) -> AdversarialSample:
         evasion_techniques = [
             output.replace("e", "3").replace("a", "4").replace("i", "1") + " [EVASION:leet]",
-            " ".join(output[i:i + 2] for i in range(0, len(output), 2)) + " [EVASION:split]",
+            " ".join(output[i : i + 2] for i in range(0, len(output), 2)) + " [EVASION:split]",
             output + " [EVASION:encoding=rot13]",
         ]
         idx = int(hashlib.md5(output.encode()).hexdigest(), 16) % len(evasion_techniques)
@@ -215,9 +211,7 @@ class AdversarialSampleGenerator:
     }
 
     def __init__(self) -> None:
-        self._strategies: dict[str, AttackStrategy] = {
-            name: cls() for name, cls in self.STRATEGY_MAP.items()
-        }
+        self._strategies: dict[str, AttackStrategy] = {name: cls() for name, cls in self.STRATEGY_MAP.items()}
 
     def generate(self, output: str, strategy_name: str | None = None) -> list[AdversarialSample]:
         if strategy_name is not None:

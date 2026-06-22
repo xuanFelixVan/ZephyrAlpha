@@ -26,11 +26,11 @@ module_id: MOD-INF-023
 跨模块全局健康度评分（加权平均 + 允许阈值 + rustiness系数）。
 对标 blueprint.md §2.19 / D-023-33。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -38,7 +38,7 @@ class ModuleScore:
     module_id: str
     health_index: float
     active_drifts: int = 0
-    last_resolved_at: Optional[datetime] = None
+    last_resolved_at: datetime | None = None
     rustiness_factor: float = 0.0
     category_score: dict[str, float] = field(default_factory=dict)
 
@@ -68,7 +68,7 @@ class CrossModuleScorer:
 
         weighted_sum = 0.0
         weight_total = 0.0
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         for mid, ms in module_scores.items():
             rustiness = self._compute_rustiness(ms.last_resolved_at, now)
@@ -81,14 +81,13 @@ class CrossModuleScorer:
 
         overall = weighted_sum / weight_total if weight_total > 0 else 0.0
 
-        worst = sorted(module_scores.keys(),
-                       key=lambda k: module_scores[k].health_index - module_scores[k].rustiness_factor * 0.1,
-                       reverse=False)[:3]
+        worst = sorted(
+            module_scores.keys(),
+            key=lambda k: module_scores[k].health_index - module_scores[k].rustiness_factor * 0.1,
+            reverse=False,
+        )[:3]
 
-        rustiness_warnings = [
-            mid for mid, ms in module_scores.items()
-            if ms.rustiness_factor > 0.0
-        ]
+        rustiness_warnings = [mid for mid, ms in module_scores.items() if ms.rustiness_factor > 0.0]
 
         report = CrossModuleReport(
             overall_score=round(overall, 4),
@@ -111,7 +110,7 @@ class CrossModuleScorer:
         else:
             return {"status": "GOLDEN", "action": "Golden — all clear"}
 
-    def _compute_rustiness(self, last_resolved_at: Optional[datetime], now: datetime) -> float:
+    def _compute_rustiness(self, last_resolved_at: datetime | None, now: datetime) -> float:
         if last_resolved_at is None:
             return 1.0
         delta = now.replace(tzinfo=None) - last_resolved_at.replace(tzinfo=None)

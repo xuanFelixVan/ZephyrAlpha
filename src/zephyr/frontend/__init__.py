@@ -8,9 +8,9 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 
 """L08 Human-AI Interface
 =====================================
@@ -47,4 +47,4 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策： 目录双轨治理
 """
 
-__all__ = ['interface_base']
+__all__ = ["interface_base"]

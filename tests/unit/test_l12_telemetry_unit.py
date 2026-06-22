@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 L12 — System Telemetry Phase D 覆盖
 =====================================
@@ -16,8 +17,6 @@ SLA 测量 / 漂移检测 / 违规记录 / 统计聚合。
 Phase D | Safety: LOW（框架验证，无外部 IO）
 """
 
-
-import pytest
 
 from zephyr.infrastructure.system_telemetry.contract_metrics import (
     ContractMetricsCollector,
@@ -99,14 +98,22 @@ class TestContractMetricsCollector:
     def test_detect_drift_below_threshold(self):
         c = ContractMetricsCollector()
         alert = c.detect_contract_drift(
-            "CTR-003", "signal_value", 5.5, baseline_median=5.0, baseline_std=1.0,
+            "CTR-003",
+            "signal_value",
+            5.5,
+            baseline_median=5.0,
+            baseline_std=1.0,
         )
         assert alert is None  # z = 0.5 < 5.0
 
     def test_detect_drift_above_threshold(self):
         c = ContractMetricsCollector()
         alert = c.detect_contract_drift(
-            "CTR-003", "signal_value", 50.0, baseline_median=5.0, baseline_std=1.0,
+            "CTR-003",
+            "signal_value",
+            50.0,
+            baseline_median=5.0,
+            baseline_std=1.0,
         )
         assert alert is not None
         assert alert.contract_id == "CTR-003"

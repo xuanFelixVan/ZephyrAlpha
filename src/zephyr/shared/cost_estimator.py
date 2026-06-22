@@ -16,7 +16,9 @@ class CostEstimator:
     def __init__(self, pricing: dict[str, tuple[float, float]] | None = None):
         self._pricing = pricing or {"default": (0.01, 0.03)}
 
-    def estimate(self, operation: str, input_tokens: int, output_tokens: int = 0, model_id: str = "default") -> CostEstimate:
+    def estimate(
+        self, operation: str, input_tokens: int, output_tokens: int = 0, model_id: str = "default"
+    ) -> CostEstimate:
         input_price, output_price = self._pricing.get(model_id, self._pricing["default"])
         total = (input_tokens * input_price + output_tokens * output_price) / 1000.0
         return CostEstimate(operation, input_tokens + output_tokens, total, model_id)

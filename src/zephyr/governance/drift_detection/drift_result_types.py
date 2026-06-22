@@ -59,6 +59,7 @@ class SemanticDriftResult:
         drift_detected: 是否检测到不一致。
         detail: 人类可读的漂移详情。
     """
+
     dimension: str
     concept: str
     yaml_a_count: int = 0
@@ -202,6 +203,7 @@ class DBSchemaDriftResult:
         orm_vs_migration_drifts: ORM 模型与迁移脚本之间的差异。
         index_inconsistencies: 索引层面的不一致。
     """
+
     detector_name: str = "db_schema_drift"
     schema_vs_orm_drifts: list[dict[str, object]] = field(default_factory=list)
     orm_vs_migration_drifts: list[dict[str, object]] = field(default_factory=list)
@@ -263,7 +265,7 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
         try:
             conn = sqlite3.connect(str(db_file))
             cursor = conn.cursor()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' " "AND name NOT LIKE 'sqlite_%'")
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
             db_tables = {row[0].lower() for row in cursor.fetchall()}
 
             for tbl in db_tables:
@@ -280,7 +282,7 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
                             severity=Severity.MAJOR,
                             source_file=str(db_file),
                             description=(
-                                f"DB table {tbl}: schema mismatch. " f"DB={len(db_cols)} cols, ORM={len(orm_cols)} cols"
+                                f"DB table {tbl}: schema mismatch. DB={len(db_cols)} cols, ORM={len(orm_cols)} cols"
                             ),
                             details=(f"DB only: {db_only}, ORM only: {orm_only}"),
                             timestamp=datetime.now(UTC),
@@ -318,7 +320,7 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
                                 detector_id="db_schema_drift",
                                 severity=Severity.MAJOR,
                                 source_file=str(latest),
-                                description=(f"ORM {tbl_name} missing from " f"latest migration {latest.name}"),
+                                description=(f"ORM {tbl_name} missing from latest migration {latest.name}"),
                                 timestamp=datetime.now(UTC),
                                 state=DriftState.DETECTED,
                                 scan_level=ScanLevel.STANDARD,
@@ -344,6 +346,7 @@ class DepVersionDriftResult:
         missing_from_requirements: 已安装但不在 requirements.txt 中的包。
         extra_in_requirements: 在 requirements.txt 中但未安装的包。
     """
+
     detector_name: str = "dep_version_drift"
     mismatched_packages: list[dict[str, str]] = field(default_factory=list)
     missing_from_requirements: list[str] = field(default_factory=list)
@@ -410,7 +413,7 @@ def detect_dep_version_drift(project_root: str) -> list[DriftEvent]:
                     detector_id="dep_version_drift",
                     severity=Severity.MINOR,
                     source_file=str(req_file),
-                    description=(f"Package {pkg_name} in requirements.txt " f"but not installed"),
+                    description=(f"Package {pkg_name} in requirements.txt but not installed"),
                     timestamp=datetime.now(UTC),
                     state=DriftState.DETECTED,
                     scan_level=ScanLevel.LIGHT,
@@ -425,12 +428,12 @@ def detect_dep_version_drift(project_root: str) -> list[DriftEvent]:
                     detector_id="dep_version_drift",
                     severity=Severity.INFO,
                     source_file=str(req_file),
-                    description=(f"Package {pkg_name}: expected {constraint}, " f"installed {installed_ver}"),
+                    description=(f"Package {pkg_name}: expected {constraint}, installed {installed_ver}"),
                     timestamp=datetime.now(UTC),
                     state=DriftState.DETECTED,
                     scan_level=ScanLevel.LIGHT,
                     auto_fixable=True,
-                    fix_description=(f"Update {pkg_name}>= to match " f"installed {installed_ver}"),
+                    fix_description=(f"Update {pkg_name}>= to match installed {installed_ver}"),
                 )
             )
 
@@ -442,9 +445,7 @@ def detect_dep_version_drift(project_root: str) -> list[DriftEvent]:
                     detector_id="dep_version_drift",
                     severity=Severity.MAJOR,
                     source_file=str(req_file),
-                    description=(
-                        f"Package {pkg_name} installed " f"({installed[pkg_name]}) but not in " f"requirements.txt"
-                    ),
+                    description=(f"Package {pkg_name} installed ({installed[pkg_name]}) but not in requirements.txt"),
                     timestamp=datetime.now(UTC),
                     state=DriftState.DETECTED,
                     scan_level=ScanLevel.LIGHT,
@@ -507,6 +508,7 @@ class SecurityPolicyDriftResult:
         auth_middleware_gaps: 缺少认证中间件的端点文件列表。
         secrets_found: 代码中发现的硬编码密钥列表。
     """
+
     detector_name: str = "security_policy_drift"
     input_sanitization_gaps: list[str] = field(default_factory=list)
     auth_middleware_gaps: list[str] = field(default_factory=list)
@@ -571,7 +573,7 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
                     detector_id="security_policy_drift",
                     severity=Severity.MAJOR,
                     source_file=str(py_file),
-                    description=(f"Endpoint detected in {py_file.name} " f"but no input sanitizer found"),
+                    description=(f"Endpoint detected in {py_file.name} but no input sanitizer found"),
                     timestamp=datetime.now(UTC),
                     state=DriftState.DETECTED,
                     scan_level=ScanLevel.DEEP,
@@ -587,7 +589,7 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
                     detector_id="security_policy_drift",
                     severity=Severity.CRITICAL,
                     source_file=str(py_file),
-                    description=(f"Endpoint detected in {py_file.name} " f"but no auth middleware found"),
+                    description=(f"Endpoint detected in {py_file.name} but no auth middleware found"),
                     timestamp=datetime.now(UTC),
                     state=DriftState.DETECTED,
                     scan_level=ScanLevel.DEEP,
@@ -608,11 +610,11 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
                 line_no = content[: match.start()].count("\n") + 1
                 events.append(
                     DriftEvent(
-                        event_id=(f"drift-sec-secret-" f"{py_file.stem}-L{line_no}"),
+                        event_id=(f"drift-sec-secret-{py_file.stem}-L{line_no}"),
                         detector_id="security_policy_drift",
                         severity=Severity.CRITICAL,
                         source_file=f"{py_file}:{line_no}",
-                        description=(f"{desc}: " f"{match.group(0)[:80]}"),
+                        description=(f"{desc}: {match.group(0)[:80]}"),
                         timestamp=datetime.now(UTC),
                         state=DriftState.DETECTED,
                         scan_level=ScanLevel.DEEP,
@@ -635,6 +637,7 @@ class DocCodeCoevolutionResult:
         code_newer_violations: 代码比蓝图新 >7 天的违规文件列表。
         interface_drifts: 蓝图声明的接口在代码中缺失的漂移列表。
     """
+
     detector_name: str = "doc_code_coevolution"
     code_newer_violations: list[str] = field(default_factory=list)
     interface_drifts: list[dict[str, str]] = field(default_factory=list)
@@ -702,16 +705,13 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
                     cf_mtime_dt = datetime.fromtimestamp(cf_mtime, tz=UTC)
                     events.append(
                         DriftEvent(
-                            event_id=(f"drift-doc-{bp.stem}-" f"{cf.stem}-code-newer"),
+                            event_id=(f"drift-doc-{bp.stem}-{cf.stem}-code-newer"),
                             detector_id="doc_code_coevolution",
                             severity=Severity.MAJOR,
                             source_file=str(cf),
-                            description=(f"Code {cf.name} newer than " f"blueprint {bp.name} >7 days"),
+                            description=(f"Code {cf.name} newer than blueprint {bp.name} >7 days"),
                             details=(
-                                f"Blueprint mtime: "
-                                f"{bp_mtime_dt.isoformat()}, "
-                                f"Code mtime: "
-                                f"{cf_mtime_dt.isoformat()}"
+                                f"Blueprint mtime: {bp_mtime_dt.isoformat()}, Code mtime: {cf_mtime_dt.isoformat()}"
                             ),
                             timestamp=datetime.now(UTC),
                             state=DriftState.DETECTED,
@@ -754,11 +754,11 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
                 if not found_in_code:
                     events.append(
                         DriftEvent(
-                            event_id=(f"drift-doc-iface-" f"{func_name}-missing"),
+                            event_id=(f"drift-doc-iface-{func_name}-missing"),
                             detector_id="doc_code_coevolution",
                             severity=Severity.MAJOR,
                             source_file=str(bp),
-                            description=(f"Blueprint interface " f"{func_name}() not found in code"),
+                            description=(f"Blueprint interface {func_name}() not found in code"),
                             timestamp=datetime.now(UTC),
                             state=DriftState.DETECTED,
                             scan_level=ScanLevel.STANDARD,
@@ -781,6 +781,7 @@ class TestCoverageDriftResult:
         module_coverage_ratio: 模块级 test/src 行数比。
         degradation_warnings: 覆盖率退化的警告信息。
     """
+
     detector_name: str = "test_coverage_drift"
     module_coverage_ratio: dict[str, float] = field(default_factory=dict)
     degradation_warnings: list[str] = field(default_factory=list)
@@ -840,9 +841,7 @@ def detect_test_coverage_drift(project_root: str) -> list[DriftEvent]:
                         detector_id="test_coverage_drift",
                         severity=Severity.MAJOR,
                         source_file=str(src_root / module),
-                        description=(
-                            f"Module {module}: test coverage ratio " f"{ratio:.1%} ({test_lines}T/{src_lines}S)"
-                        ),
+                        description=(f"Module {module}: test coverage ratio {ratio:.1%} ({test_lines}T/{src_lines}S)"),
                         details="Test-to-source ratio below 30% threshold",
                         timestamp=datetime.now(UTC),
                         state=DriftState.DETECTED,
@@ -867,6 +866,7 @@ class KnowledgeGraphSyncResult:
         relations_created: 新创建的关系数。
         orphans_found: 发现的孤立节点数。
     """
+
     detector_name: str = "knowledge_graph_sync"
     entities_created: int = 0
     relations_created: int = 0
@@ -919,7 +919,7 @@ def detect_knowledge_graph_sync(
                 detector_id="knowledge_graph_sync",
                 severity=Severity.INFO,
                 source_file="knowledge_graph",
-                description=(f"Detector {orphan_id} registered " f"but never produced an event"),
+                description=(f"Detector {orphan_id} registered but never produced an event"),
                 details="Candidate for removal or deprioritization",
                 timestamp=datetime.now(UTC),
                 state=DriftState.DETECTED,
@@ -946,7 +946,7 @@ def detect_knowledge_graph_sync(
                     detector_id="knowledge_graph_sync",
                     severity=Severity.INFO,
                     source_file="knowledge_graph",
-                    description=(f"Detectors {d1} and {d2} " f"co-occurred {count} times"),
+                    description=(f"Detectors {d1} and {d2} co-occurred {count} times"),
                     details="CORRELATED_WITH candidate for knowledge graph",
                     timestamp=datetime.now(UTC),
                     state=DriftState.DETECTED,

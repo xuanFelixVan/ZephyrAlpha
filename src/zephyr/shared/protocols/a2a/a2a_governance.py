@@ -1,12 +1,12 @@
 # [A_module] module_id=MOD-SHR_a2a_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_domain-shared/protocols/blueprint.md
 # [MODULE] zephyr.shared.protocols.a2a.a2a_governance
-# [INVARIANTS] no imports from zephyr.infrastructure or zephyr.orchestration; Protocol interfaces and data contracts only
+# [INVARIANTS] no imports from zephyr.infrastructure or zephyr.trading; Protocol interfaces and data contracts only
 # [MODIFY-GUARD] interface changes require consumer audit
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] zephyr.orchestration.agent_communication; zephyr.infrastructure.a2a_protocol
+# [CONSUMERS] zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
 # [ERROR_CONTRACT] Protocol violations caught at type-check time
 # [TESTS] tests/test_shared_protocols.py
 
@@ -27,6 +27,7 @@ from typing import Any, Protocol, runtime_checkable
 @dataclass
 class A2AGovernanceRecord:
     """Audit record for A2A agent-pair governance decisions."""
+
     agent_pair: tuple[str, str]
     action: str
     granted: bool = False
@@ -43,28 +44,22 @@ class GovernanceAdapterProtocol(Protocol):
     audit_communication satisfies this protocol.
     """
 
-    def verify_pair(self, agent_a: str, agent_b: str, content: str = "") -> A2AGovernanceRecord:
-        ...
+    def verify_pair(self, agent_a: str, agent_b: str, content: str = "") -> A2AGovernanceRecord: ...
 
-    def escalate_if_needed(self, record: A2AGovernanceRecord, severity: str = "WARN") -> A2AGovernanceRecord:
-        ...
+    def escalate_if_needed(self, record: A2AGovernanceRecord, severity: str = "WARN") -> A2AGovernanceRecord: ...
 
-    def audit_communication(self, record: A2AGovernanceRecord, session_id: str = "") -> A2AGovernanceRecord:
-        ...
+    def audit_communication(self, record: A2AGovernanceRecord, session_id: str = "") -> A2AGovernanceRecord: ...
 
 
 @runtime_checkable
 class Phase4HoldProtocol(Protocol):
     """Protocol interface for A2A Phase 4 hold checks."""
 
-    def check(self) -> dict[str, Any]:
-        ...
+    def check(self) -> dict[str, Any]: ...
 
-    def can_proceed(self, current_phase: str) -> bool:
-        ...
+    def can_proceed(self, current_phase: str) -> bool: ...
 
-    def is_hold_active(self) -> bool:
-        ...
+    def is_hold_active(self) -> bool: ...
 
 
 __all__ = [

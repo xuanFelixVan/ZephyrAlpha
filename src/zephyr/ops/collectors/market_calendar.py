@@ -27,6 +27,7 @@ Risk: R48 — Holiday false alarms erode trust in FLE.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class MarketCalendar:
     holidays: set[str] = field(default_factory=set)

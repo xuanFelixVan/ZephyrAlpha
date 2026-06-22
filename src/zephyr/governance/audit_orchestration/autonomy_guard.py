@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class AutonomyGuard:
     AUTONOMY_LEVELS: dict[str, list[str]] = {
         "level1": ["health_check", "metrics_collect", "dlq_replay"],

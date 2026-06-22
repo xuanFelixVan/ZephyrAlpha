@@ -32,7 +32,7 @@ def load_key_facts() -> dict:
     if not KEY_FACTS_PATH.exists():
         print(f"ERROR: key_facts.yaml 不存在: {KEY_FACTS_PATH}")
         sys.exit(2)
-    with open(KEY_FACTS_PATH, "r", encoding="utf-8") as f:
+    with open(KEY_FACTS_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 

@@ -8,6 +8,7 @@ check_capacity_slo_ssot.py — capacity_slo.yaml 注册表 + 与 invariants 数�
 
 exit: 0=pass, 1=fail, 2=config missing
 """
+
 from __future__ import annotations
 
 import sys
@@ -62,9 +63,7 @@ def main() -> int:
             print(f"FAIL: {iid} 在 capacity_slo 中缺少 max_latency_ms")
             return 1
         if int(got) != int(expected_ms):
-            print(
-                f"FAIL: {iid} 毫秒不一致 invariants={expected_ms} capacity_slo.arch_guard={got}"
-            )
+            print(f"FAIL: {iid} 毫秒不一致 invariants={expected_ms} capacity_slo.arch_guard={got}")
             return 1
 
     print(f"OK: capacity_slo 注册 {len(registry)} 条 SLI，与 invariants 数字对齐")

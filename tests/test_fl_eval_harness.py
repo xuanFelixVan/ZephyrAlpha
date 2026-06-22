@@ -16,12 +16,9 @@ import pytest
 
 from zephyr.ops.eval_harness import (
     CATEGORY_INTENT,
-    CATEGORY_ORCHESTRATOR,
-    CATEGORIES,
     EvalCase,
     EvalHarness,
     EvalOutcome,
-    EvalReport,
 )
 
 

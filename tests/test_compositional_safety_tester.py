@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_compositional_safety_tester.py
 
-import pytest
 from zephyr.governance.compositional_safety_tester import CompositionalSafetyTester
 
 

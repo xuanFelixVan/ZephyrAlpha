@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_ide_watcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.ide_watcher
+# [MODULE] zephyr.autonomy_core.ide_watcher
 
 # [INVARIANTS] none
 
@@ -26,22 +26,21 @@ Author: factory-agent
 Version: 0.1.0
 """
 
-
 import os
-import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Dict, Any, Callable, Optional
+from typing import Any
 
 
 class IDEWatcher:
     """IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.md"""
 
-    def __init__(self, skills_dir: Optional[Path] = None):
+    def __init__(self, skills_dir: Path | None = None):
         self.skills_dir = skills_dir or (Path(__file__).resolve().parent / "skills")
-        self._last_mtimes: Dict[str, float] = {}
+        self._last_mtimes: dict[str, float] = {}
         self._callbacks: list = []
 
-    def scan(self) -> Dict[str, Any]:
+    def scan(self) -> dict[str, Any]:
         changes = []
         for root, dirs, files in os.walk(str(self.skills_dir)):
             for f in files:

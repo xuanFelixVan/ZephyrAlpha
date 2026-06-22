@@ -12,7 +12,9 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.token_value_attribution", reason="token_value_attribution not available")
+mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.token_value_attribution", reason="token_value_attribution not available"
+)
 TokenValueAttribution = mod.TokenValueAttribution
 
 

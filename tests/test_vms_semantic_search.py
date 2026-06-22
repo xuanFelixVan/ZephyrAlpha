@@ -8,13 +8,18 @@
 """
 端到端语义搜索验证 — 使用真实嵌入模型 (bge-small-zh-v1.5)
 """
+
 from __future__ import annotations
-import shutil, sys, time
+
+import shutil
+import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 TEST_DIR = Path("data/semantic_test")
+
 
 def main():
     if TEST_DIR.exists():
@@ -51,7 +56,10 @@ def main():
 
     print("\n[3] 写入测试数据 (knowledge)...")
     docs = [
-        ("ADR-0032: 采用 FAISS mmap 替代 ChromaDB HTTP 微服务作为向量数据库后端", {"provenance": {"origin": "architect"}}),
+        (
+            "ADR-0032: 采用 FAISS mmap 替代 ChromaDB HTTP 微服务作为向量数据库后端",
+            {"provenance": {"origin": "architect"}},
+        ),
         ("部署 v2.3.1 到生产环境，使用零停机滚动更新策略", {"provenance": {"origin": "devops"}}),
         ("Python 3.12 引入了 PEP 695 类型参数语法改进", {"provenance": {"origin": "researcher"}}),
         ("Redis Streams 消费者组使用 XREADGROUP 实现可靠消息处理", {"provenance": {"origin": "engineer"}}),
@@ -110,6 +118,7 @@ def main():
     print("  语义搜索验证完成!")
     print("=" * 60)
     return True
+
 
 if __name__ == "__main__":
     main()

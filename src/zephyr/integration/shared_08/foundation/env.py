@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.foundation.env
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 """
 env.py —— 环境检测工具（Phase 9 新增 | 盲点 B20 修复）
 
@@ -54,12 +45,13 @@ from enum import Enum, unique
 __all__ = [
     "Env",
     "current_env",
-    "is_dev",
-    "is_staging",
-    "is_prod",
-    "is_test",
     "is_debug",
+    "is_dev",
+    "is_prod",
+    "is_staging",
+    "is_test",
 ]
+
 
 @unique
 class Env(str, Enum):
@@ -68,7 +60,9 @@ class Env(str, Enum):
     PROD = "production"
     TEST = "test"
 
+
 _ENV_KEY = "ZEPHYR_ENV"
+
 
 def _detect_env() -> Self:
     explicit = os.environ.get(_ENV_KEY)
@@ -83,7 +77,9 @@ def _detect_env() -> Self:
 
     return Env.DEV
 
+
 _CURRENT_ENV: Env | None = None
+
 
 def current_env() -> Self:
     global _CURRENT_ENV
@@ -91,17 +87,22 @@ def current_env() -> Self:
         _CURRENT_ENV = _detect_env()
     return _CURRENT_ENV
 
+
 def is_dev() -> bool:
     return current_env() == Env.DEV
+
 
 def is_staging() -> bool:
     return current_env() == Env.STAGING
 
+
 def is_prod() -> bool:
     return current_env() == Env.PROD
 
+
 def is_test() -> bool:
     return current_env() == Env.TEST
+
 
 def is_debug() -> bool:
     """仅在 dev 环境下为 True——生产环境永远 False。"""

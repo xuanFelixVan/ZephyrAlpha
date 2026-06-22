@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_prompt_opt | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_prompt_opt
+# [MODULE] zephyr.autonomy_core.skill_prompt_opt
 
 # [INVARIANTS] none
 
@@ -34,11 +34,10 @@ Skill Prompt 自动优化器
   4. TokenReduction: 量化压缩带来的 Token 节省
 """
 
-
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 
 class SkillPromptOptimizer:
@@ -68,7 +67,7 @@ class SkillPromptOptimizer:
     ]
 
     @classmethod
-    def compute_readability(cls, text: str) -> Dict[str, Any]:
+    def compute_readability(cls, text: str) -> dict[str, Any]:
         words = len(re.findall(r"\b\w+\b", text))
         sentences = max(len(re.findall(r"[.!?。！？]+", text)), 1)
         syllables = len(re.findall(r"[aeiouyáéíóúàèìòùäëïöü]+", text, re.IGNORECASE))
@@ -101,20 +100,22 @@ class SkillPromptOptimizer:
         }
 
     @classmethod
-    def compress(cls, body: str) -> Tuple[str, Dict[str, Any]]:
+    def compress(cls, body: str) -> tuple[str, dict[str, Any]]:
         compressed = body
 
-        reductions: List[Dict[str, Any]] = []
+        reductions: list[dict[str, Any]] = []
         for pattern, replacement in cls.REDUNDANT_PATTERNS:
             matches = list(re.finditer(pattern, compressed, re.IGNORECASE))
             if matches:
                 saved = sum(m.end() - m.start() for m in matches)
                 compressed = re.sub(pattern, replacement, compressed, flags=re.IGNORECASE)
-                reductions.append({
-                    "pattern": pattern[:50],
-                    "occurrences": len(matches),
-                    "chars_saved": saved,
-                })
+                reductions.append(
+                    {
+                        "pattern": pattern[:50],
+                        "occurrences": len(matches),
+                        "chars_saved": saved,
+                    }
+                )
 
         blank_lines = len(re.findall(r"\n{3,}", compressed))
         if blank_lines:
@@ -133,9 +134,9 @@ class SkillPromptOptimizer:
 
     @classmethod
     def reorder_sections(cls, body: str) -> str:
-        sections: Dict[str, str] = {}
+        sections: dict[str, str] = {}
         current_section = "preamble"
-        current_lines: List[str] = []
+        current_lines: list[str] = []
 
         for line in body.split("\n"):
             match = re.match(r"^#{1,3}\s+(.+)$", line)
@@ -151,7 +152,7 @@ class SkillPromptOptimizer:
         if current_lines:
             sections[current_section] = "\n".join(current_lines)
 
-        result_lines: List[str] = []
+        result_lines: list[str] = []
         if "preamble" in sections:
             result_lines.append(sections["preamble"])
 
@@ -169,10 +170,11 @@ class SkillPromptOptimizer:
         return "\n".join(result_lines)
 
     @classmethod
-    def optimize(cls, skill_id: str, body: Optional[str] = None) -> Dict[str, Any]:
+    def optimize(cls, skill_id: str, body: str | None = None) -> dict[str, Any]:
         if body is None:
             try:
                 from zephyr.autonomy_core.skill_loader import SkillLoader
+
                 loader = SkillLoader()
                 loaded = loader.progressive_load(skill_id)
                 body = loaded.get("l2", "")

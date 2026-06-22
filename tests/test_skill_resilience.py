@@ -12,8 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from zephyr.autonomy_core.skill_resilience import SkillResilience
 
@@ -102,9 +103,7 @@ class TestRecordSuccess:
 
 class TestRetryWithBackoff:
     def test_succeeds_on_first_try(self):
-        result, attempts = SkillResilience.retry_with_backoff(
-            "skill_ok", lambda: 42
-        )
+        result, attempts = SkillResilience.retry_with_backoff("skill_ok", lambda: 42)
         assert result == 42
         assert attempts == 1
 
@@ -118,10 +117,8 @@ class TestRetryWithBackoff:
                 raise ValueError("transient")
             return "ok"
 
-        with patch("zephyr.orchestration.agent_lifecycle.skill_resilience.time.sleep"):
-            result, attempts = SkillResilience.retry_with_backoff(
-                "skill_flaky", flaky, max_retries=3
-            )
+        with patch("zephyr.autonomy_core.skill_resilience.time.sleep"):
+            result, attempts = SkillResilience.retry_with_backoff("skill_flaky", flaky, max_retries=3)
         assert result == "ok"
         assert attempts == 2
 
@@ -129,11 +126,9 @@ class TestRetryWithBackoff:
         def always_fail():
             raise RuntimeError("boom")
 
-        with patch("zephyr.orchestration.agent_lifecycle.skill_resilience.time.sleep"):
+        with patch("zephyr.autonomy_core.skill_resilience.time.sleep"):
             with pytest.raises(RuntimeError, match="boom"):
-                SkillResilience.retry_with_backoff(
-                    "skill_dead", always_fail, max_retries=2
-                )
+                SkillResilience.retry_with_backoff("skill_dead", always_fail, max_retries=2)
 
     def test_uses_default_max_retries(self):
         call_count = 0
@@ -143,7 +138,7 @@ class TestRetryWithBackoff:
             call_count += 1
             raise ValueError("fail")
 
-        with patch("zephyr.orchestration.agent_lifecycle.skill_resilience.time.sleep"):
+        with patch("zephyr.autonomy_core.skill_resilience.time.sleep"):
             with pytest.raises(ValueError):
                 SkillResilience.retry_with_backoff("skill_dead2", always_fail)
         assert call_count == SkillResilience.MAX_RETRIES

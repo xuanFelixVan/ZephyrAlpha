@@ -31,10 +31,9 @@ RollbackTargetStaleness — 回滚目标陈旧度检测。
 from __future__ import annotations
 
 import subprocess
-from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -48,7 +47,6 @@ class StalenessResult:
 
 
 class RollbackTargetStaleness:
-
     EXIT_CODE_STALE: int = 42
     MAX_AGE_DAYS: int = 30
 
@@ -67,7 +65,7 @@ class RollbackTargetStaleness:
                 recommendation="Could not determine commit date",
             )
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         age_days = (now - commit_date).total_seconds() / 86400
         is_stale = age_days > self.MAX_AGE_DAYS
 
@@ -93,7 +91,9 @@ class RollbackTargetStaleness:
             result = subprocess.run(
                 ["git", "show", "-s", "--format=%aI", commit_sha],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             if result.returncode == 0 and result.stdout.strip():
                 return datetime.fromisoformat(result.stdout.strip())

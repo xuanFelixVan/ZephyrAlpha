@@ -2,28 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.ipi_defense
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import re
 import time
 from dataclasses import dataclass, field
+
 
 @dataclass
 class IPIDefenseReport:
@@ -35,8 +26,8 @@ class IPIDefenseReport:
     advice: str
     timestamp: float = field(default_factory=time.time)
 
-class IPIDefense:
 
+class IPIDefense:
     IPI_PATTERNS: dict[str, list[str]] = {
         "prompt_injection": [
             r"(?:ignore|forget|disregard)\s+(?:all\s+)?(?:previous|above|prior)\s+(?:instructions?|prompts?)",

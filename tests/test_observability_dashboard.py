@@ -12,12 +12,10 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.observability_governance.observability_dashboard import (
-    DashboardPanel,
     SLI,
     DashboardConfig,
+    DashboardPanel,
 )
 
 
@@ -37,9 +35,16 @@ class TestSLI:
 
     def test_expected_slis(self):
         expected = {
-            "cpu", "memory", "disk_io", "network_throughput",
-            "context_length", "token_consumption", "decision_accuracy",
-            "state_awareness", "knowledge_retrieval", "feedback_adoption",
+            "cpu",
+            "memory",
+            "disk_io",
+            "network_throughput",
+            "context_length",
+            "token_consumption",
+            "decision_accuracy",
+            "state_awareness",
+            "knowledge_retrieval",
+            "feedback_adoption",
             "data_freshness",
         }
         actual = {s.value for s in SLI}

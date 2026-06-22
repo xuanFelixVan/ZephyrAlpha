@@ -34,10 +34,14 @@ from zephyr.infrastructure.system_telemetry.ai_behavior import (
 )
 from zephyr.infrastructure.system_telemetry.alerts import AlertLevel, AlertSubsystem
 from zephyr.infrastructure.system_telemetry.archive import next_archive_batch_id
-from zephyr.infrastructure.system_telemetry.auto_bootstrap import get_global_telemetry, register_module, get_registered_modules
+from zephyr.infrastructure.system_telemetry.auto_bootstrap import (
+    get_global_telemetry,
+    get_registered_modules,
+    register_module,
+)
 from zephyr.infrastructure.system_telemetry.contract_metrics import (
-    ContractMetricsCollector,
     CT_TEL_SLA,
+    ContractMetricsCollector,
     DriftAlert,
     SlaRecord,
     get_contract_metrics,
@@ -46,7 +50,15 @@ from zephyr.infrastructure.system_telemetry.contract_metrics import (
 )
 from zephyr.infrastructure.system_telemetry.facade import Telemetry
 from zephyr.infrastructure.system_telemetry.health import HealthSubsystem
+from zephyr.infrastructure.system_telemetry.health_probes import (
+    HealthProbeManager,
+    HealthzProbe,
+    LivenessProbe,
+    ProbeStatus,
+    ReadinessProbe,
+)
 from zephyr.infrastructure.system_telemetry.logs import flush as logs_flush
+from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricsBridge
 from zephyr.infrastructure.system_telemetry.profiles import ProfileSubsystem
 from zephyr.infrastructure.system_telemetry.schema import SchemaSubsystem
 from zephyr.infrastructure.system_telemetry.traces import (
@@ -58,71 +70,62 @@ from zephyr.infrastructure.system_telemetry.traces import (
     list_active_spans,
     noop_span,
 )
-
-from zephyr.infrastructure.system_telemetry.health_probes import (
-    ProbeStatus,
-    LivenessProbe,
-    ReadinessProbe,
-    HealthzProbe,
-    HealthProbeManager,
-)
-from zephyr.infrastructure.system_telemetry.watchdog import WatchdogHeartbeat, Watchdog
-from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricsBridge
+from zephyr.infrastructure.system_telemetry.watchdog import Watchdog, WatchdogHeartbeat
 
 __all__ = [
-    'ai_behavior',
-    'alerts',
-    'archive',
-    'auto_bootstrap',
-    'contract_metrics',
-    'emit_ai_behavior_event',
-    'facade',
-    'get_contract_metrics',
-    'get_global_telemetry',
-    'get_registered_modules',
-    'get_trace_tree',
-    'health',
-    'health_aggregator',
-    'health_probes',
-    'list_active_spans',
-    'logs',
-    'logs_flush',
-    'next_archive_batch_id',
-    'noop_span',
-    'profiles',
-    'register_module',
-    'schema',
-    'traces',
-    'validate_error_context',
-    'watchdog',
-    'AIBehaviorEvent',
-    'AlertLevel',
-    'AlertSubsystem',
-    'ContractMetricsCollector',
-    'CT_TEL_SLA',
-    'DriftAlert',
-    'ErrorContext',
-    'HealthProbeManager',
-    'HealthSubsystem',
-    'HealthzProbe',
-    'LivenessProbe',
-    'ProbeStatus',
-    'ProfileSubsystem',
-    'ReadinessProbe',
-    'SchemaSubsystem',
-    'SlaRecord',
-    'Span',
-    'SpanEvent',
-    'Telemetry',
-    'TraceContext',
-    'TraceSampler',
-    'Watchdog',
-    'WatchdogHeartbeat',
-    'get_ct_tel_stats',
-    'measure_ct_tel_sla',
+    "CT_TEL_SLA",
+    "AIBehaviorEvent",
+    "AlertLevel",
+    "AlertSubsystem",
+    "ContractMetricsCollector",
+    "DriftAlert",
+    "ErrorContext",
+    "HealthProbeManager",
+    "HealthSubsystem",
+    "HealthzProbe",
+    "LivenessProbe",
+    "ProbeStatus",
+    "ProfileSubsystem",
+    "ReadinessProbe",
+    "SchemaSubsystem",
+    "SlaRecord",
+    "Span",
+    "SpanEvent",
+    "Telemetry",
+    "TraceContext",
+    "TraceSampler",
+    "Watchdog",
+    "WatchdogHeartbeat",
     "_budget_telemetry_bridge",
     "_trace_bridge",
+    "ai_behavior",
+    "alerts",
+    "archive",
+    "auto_bootstrap",
+    "contract_metrics",
+    "emit_ai_behavior_event",
+    "facade",
+    "get_contract_metrics",
+    "get_ct_tel_stats",
+    "get_global_telemetry",
+    "get_registered_modules",
+    "get_trace_tree",
+    "health",
+    "health_aggregator",
+    "health_probes",
+    "list_active_spans",
+    "logs",
+    "logs_flush",
+    "measure_ct_tel_sla",
     "metrics_bridge",
+    "next_archive_batch_id",
+    "noop_span",
+    "profiles",
+    "register_module",
+    "schema",
+    "traces",
+    "validate_error_context",
+    "watchdog",
 ]
 
 __all__.append("MetricsBridge")

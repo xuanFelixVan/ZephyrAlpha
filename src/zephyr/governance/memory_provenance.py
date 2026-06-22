@@ -25,21 +25,23 @@ Memory Provenance — v0.9.0 记忆溯源追踪: 每条memory record的来源age
 """
 
 from __future__ import annotations
-import hashlib,json
-from datetime import datetime,timezone
+
+import hashlib
+from datetime import UTC, datetime
+
 
 class MemoryProvenanceLog:
     def __init__(self):
-        self._records:list[dict]=[]
+        self._records: list[dict] = []
 
-    def record(self, agent_id:str, content:str, source_contract:str="")->str:
-        h=hashlib.sha256(content.encode()).hexdigest()
-        ts=datetime.now(timezone.utc).isoformat()
-        self._records.append({"agent":agent_id,"hash":h,"timestamp":ts,"contract":source_contract})
+    def record(self, agent_id: str, content: str, source_contract: str = "") -> str:
+        h = hashlib.sha256(content.encode()).hexdigest()
+        ts = datetime.now(UTC).isoformat()
+        self._records.append({"agent": agent_id, "hash": h, "timestamp": ts, "contract": source_contract})
         return h
 
-    def trace(self, content_hash:str)->dict|None:
+    def trace(self, content_hash: str) -> dict | None:
         for r in self._records:
-            if r["hash"]==content_hash:
+            if r["hash"] == content_hash:
                 return r
         return None

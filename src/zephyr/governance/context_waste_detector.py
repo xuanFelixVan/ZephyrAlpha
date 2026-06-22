@@ -1,28 +1,20 @@
 # [A_module] module_id=MOD-RES_context_waste_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
-# [MODULE] zephyr.infrastructure.budget_enforcement.context_waste_detector
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
-# [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
-
-from dataclasses import dataclass, field
 from collections import OrderedDict
+
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
+# [MODULE] zephyr.infrastructure.budget_enforcement.context_waste_detector
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+from dataclasses import dataclass
+
 
 @dataclass
 class WasteReport:
@@ -32,6 +24,7 @@ class WasteReport:
     redundancy_score: float
     actionable: bool
     advice: str
+
 
 class ContextWasteDetector:
     def __init__(self, max_context: int = 32000, waste_threshold: float = 0.5):

@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-import json
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
 
 import pytest
 
@@ -42,6 +40,7 @@ def data_dir_with_expired(tmp_path):
     old_hot = hot_dir / "old_events.jsonl"
     old_hot.write_text('{"test": "old"}\n', encoding="utf-8")
     import os
+
     os.utime(old_hot, (old_time, old_time))
 
     recent_hot = hot_dir / "recent_events.jsonl"
@@ -57,7 +56,9 @@ def data_dir_with_expired(tmp_path):
 
 @pytest.fixture
 def enforcer(data_dir_with_expired):
-    policy = RetentionPolicy(hot_retention_days=30, warm_retention_days=180, cold_retention_days=365, require_owner_approval=True)
+    policy = RetentionPolicy(
+        hot_retention_days=30, warm_retention_days=180, cold_retention_days=365, require_owner_approval=True
+    )
     return RetentionEnforcer(data_dir=data_dir_with_expired, policy=policy)
 
 

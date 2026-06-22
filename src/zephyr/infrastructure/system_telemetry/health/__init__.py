@@ -91,29 +91,54 @@ class HealthSubsystem:
             "ts": self._last_check,
         }
 
-class HealthStatus:
-    HEALTHY = 'HEALTHY'
-    DEGRADED = 'DEGRADED'
-    UNHEALTHY = 'UNHEALTHY'
-    UNKNOWN = 'UNKNOWN'
 
-    def __init__(self, status='UNKNOWN', message='', components=None):
+class HealthStatus:
+    HEALTHY = "HEALTHY"
+    DEGRADED = "DEGRADED"
+    UNHEALTHY = "UNHEALTHY"
+    UNKNOWN = "UNKNOWN"
+
+    def __init__(self, status="UNKNOWN", message="", components=None):
         self.status = status
         self.message = message
         self.components = components or {}
 
+
 class HealthSummary:
-    def __init__(self, overall_status='UNKNOWN', components=None, timestamp=None):
+    def __init__(self, overall_status="UNKNOWN", components=None, timestamp=None):
         self.overall_status = overall_status
         self.components = components or {}
         self.timestamp = timestamp
 
+
 class AggregateHealth:
-    def __init__(self, overall='UNKNOWN', components=None, timestamp=None):
+    def __init__(self, overall="UNKNOWN", components=None, timestamp=None):
         self.overall = overall
         self.components = components or {}
         self.timestamp = timestamp
 
+
 def collect_health():
     return HealthStatus()
-__all__ = ['AggregateHealth', 'DEGRADED', 'HEALTHY', 'HealthStatus', 'HealthSubsystem', 'HealthSummary', 'STATUS_DEGRADED', 'STATUS_DOWN', 'STATUS_HEALTHY', 'UNHEALTHY', 'UNKNOWN', 'collect_health', 'heartbeat', 'register', 'set_healthy', 'set_unhealthy', 'shutdown', 'status']
+
+
+__all__ = [
+    "DEGRADED",
+    "HEALTHY",
+    "STATUS_DEGRADED",
+    "STATUS_DOWN",
+    "STATUS_HEALTHY",
+    "UNHEALTHY",
+    "UNKNOWN",
+    "AggregateHealth",
+    "HealthStatus",
+    "HealthSubsystem",
+    "HealthSummary",
+    "collect_health",
+    "heartbeat",
+    "register",
+    "set_healthy",
+    "set_unhealthy",
+    "shutdown",
+    "status",
+]

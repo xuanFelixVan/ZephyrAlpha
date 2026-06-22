@@ -6,21 +6,21 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """system-telemetry 红队对抗测试 — 边界·并发·注入·资源耗尽·关闭韧性（MOD-INF-015 v0.9.0）"""
+
 from __future__ import annotations
 
-import sys
 import os
+import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
-import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
 
 def _init_t(module_id: str = "red_team") -> object:
     from zephyr.infrastructure.system_telemetry import Telemetry
+
     return Telemetry(module_id, test_mode=True)
 
 
@@ -29,6 +29,7 @@ class TestBoundaryAttacks:
 
     def test_empty_module_id_does_not_crash(self):
         from zephyr.infrastructure.system_telemetry import Telemetry
+
         t = Telemetry("", test_mode=True)
         r = t.metrics.gauge("cpu", 1.0)
         assert r["name"] == "cpu"
@@ -99,6 +100,7 @@ class TestDeepNesting:
 
     def test_long_module_id(self):
         from zephyr.infrastructure.system_telemetry import Telemetry
+
         long_id = "m" * 10000
         t = Telemetry(long_id, test_mode=True)
         r = t.metrics.gauge("test", 1.0)
@@ -106,7 +108,7 @@ class TestDeepNesting:
 
     def test_special_char_metric_name(self):
         t = _init_t()
-        r = t.logs.info('Special: !@#$%^&*()_+-=[]{}|;\':",./<>?')
+        r = t.logs.info("Special: !@#$%^&*()_+-=[]{}|;':\",./<>?")
         assert "Special:" in r["message"]
 
 
@@ -305,6 +307,7 @@ class TestAllSubsystemsAfterAttacks:
 
     def test_all_subsystems_survive_attack(self):
         from zephyr.infrastructure.system_telemetry import Telemetry
+
         t = Telemetry("survival", test_mode=True)
         for _ in range(100):
             t.metrics.gauge("g", 1.0)

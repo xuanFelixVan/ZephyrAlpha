@@ -12,8 +12,8 @@
 
 import hashlib
 import json
-import pytest
-from zephyr.governance.merkle_audit import MerkleTree, MerkleAudit
+
+from zephyr.governance.merkle_audit import MerkleAudit, MerkleTree
 
 
 class TestMerkleTreeInstantiation:

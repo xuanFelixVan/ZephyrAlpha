@@ -26,13 +26,14 @@ Phase C 升级后测试——验证四种止损模式的实际行为。
 
 Safety: HIGH | Phase C 升级
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
+
 from zephyr.risk.stop_loss import (
-    StopLossResult,
     evaluate_stop_loss,
     reset_kill_switch,
     trigger_kill_switch,
@@ -43,7 +44,7 @@ class TestEvaluateStopLossFixedPct:
     """固定比例止损测试"""
 
     def test_triggers_below_stop(self):
-        position = {"entry_price": 10.0, "qty": 100, "entry_date": datetime.now(timezone.utc)}
+        position = {"entry_price": 10.0, "qty": 100, "entry_date": datetime.now(UTC)}
         rules = {"method": "fixed_pct", "stop_loss_pct": 0.05}
         assert evaluate_stop_loss(position, current_price=9.4, rules=rules) is True
 
@@ -76,14 +77,12 @@ class TestEvaluateStopLossTimeBased:
     """时间止损测试"""
 
     def test_triggers_past_max_hold(self):
-        position = {"entry_price": 10.0, "qty": 100,
-                     "entry_date": datetime.now(timezone.utc) - timedelta(days=25)}
+        position = {"entry_price": 10.0, "qty": 100, "entry_date": datetime.now(UTC) - timedelta(days=25)}
         rules = {"method": "time_based", "max_hold_days": 20}
         assert evaluate_stop_loss(position, current_price=10.0, rules=rules) is True
 
     def test_no_trigger_within_hold(self):
-        position = {"entry_price": 10.0, "qty": 100,
-                     "entry_date": datetime.now(timezone.utc)}
+        position = {"entry_price": 10.0, "qty": 100, "entry_date": datetime.now(UTC)}
         rules = {"method": "time_based", "max_hold_days": 20}
         assert evaluate_stop_loss(position, current_price=10.0, rules=rules) is False
 

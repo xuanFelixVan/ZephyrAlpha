@@ -46,15 +46,14 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 __all__ = [
-    "Page",
     "CursorPage",
-    "OffsetPagination",
     "CursorPagination",
+    "OffsetPagination",
+    "Page",
     "paginate",
     "paginate_cursor",
 ]

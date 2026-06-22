@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -44,8 +44,13 @@ class TestPressureLevel:
 class TestOptimizationStrategy:
     def test_values(self):
         expected = [
-            "cache_warm", "io_batch", "process_pool", "lazy_init",
-            "streaming_read", "schedule_adapt", "memory_compact",
+            "cache_warm",
+            "io_batch",
+            "process_pool",
+            "lazy_init",
+            "streaming_read",
+            "schedule_adapt",
+            "memory_compact",
         ]
         actual = [s.value for s in OptimizationStrategy]
         assert actual == expected
@@ -249,7 +254,7 @@ class TestPressureState:
         assert state.cooldown_remaining_s == 0.0
 
     def test_custom(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         state = PressureState(
             current_level=PressureLevel.CRITICAL,
             previous_level=PressureLevel.WARNING,

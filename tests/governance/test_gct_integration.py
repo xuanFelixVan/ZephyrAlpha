@@ -6,12 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """G-CT GCT集成契约测试."""
+
 from __future__ import annotations
 
-import pytest
-from zephyr.governance.result_types import RollbackResult, RollbackStatus, ValidationResult
-from zephyr.governance.contracts import EscalationContracts
 from zephyr.governance.alerts import BudgetAlert, BudgetSeverity
+from zephyr.governance.contracts import EscalationContracts
+from zephyr.governance.result_types import RollbackResult, RollbackStatus, ValidationResult
 from zephyr.infrastructure.a2a_protocol import A2ACommunication, MessageType
 
 
@@ -58,11 +58,12 @@ class TestGCT004EscalationToRBAC:
 class TestGCT005DriftToRollback:
     def test_drift_event_importable(self):
         from zephyr.shared.shared_services.events import DriftEvent
+
         assert DriftEvent is not None
 
     def test_drift_fix_handler(self):
-        from zephyr.shared.shared_services.events import DriftEvent
         from zephyr.governance.drift_fix import DriftFixHandler
+        from zephyr.shared.shared_services.events import DriftEvent
 
         event = DriftEvent(drift_id="DR-001", target="module_a", auto_fixable=True, fix_suggestion="revert to baseline")
         handler = DriftFixHandler()
@@ -93,15 +94,16 @@ class TestGCT006BudgetToEscalation:
 
 class TestGCT007SpecToRBACAudit:
     def test_agent_spec_registry(self):
-        from zephyr.autonomy_core.registry import SpecRegistry, AgentCapability
+        from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+
         registry = SpecRegistry()
         cap = AgentCapability(agent_id="agent_007", capabilities=["read", "write"])
         registry.register(cap)
         assert cap.agent_id == "agent_007"
 
     def test_capability_scope_restricted(self):
-        from zephyr.security.access_control.capability_check import verify_capability_scope
         from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.security.access_control.capability_check import verify_capability_scope
 
         cap = AgentCapability(agent_id="rogue", capabilities=["destroy"])
         result = verify_capability_scope(cap)
@@ -121,10 +123,12 @@ class TestGCT008A2AToRBACEscalation:
 
     def test_verify_a2a_pair_allowed(self):
         from zephyr.security.access_control.a2a_check import verify_a2a_pair
+
         result = verify_a2a_pair("orchestrator", "worker")
         assert result["approved"] is True
 
     def test_verify_a2a_pair_blocked(self):
         from zephyr.security.access_control.a2a_check import verify_a2a_pair
+
         result = verify_a2a_pair("rogue_agent", "worker")
         assert result["approved"] is False

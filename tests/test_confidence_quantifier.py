@@ -12,11 +12,8 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.confidence_quantifier import (
     ConfidenceQuantifier,
-    ConfidenceRecord,
     ConfidenceResult,
 )
 

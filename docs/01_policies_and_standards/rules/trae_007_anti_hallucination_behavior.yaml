@@ -1,11 +1,21 @@
 rule_id: TRAE-007
 title: 防幻觉-行为约束层
+version: 1.0.0
+layer: L0
+module_id: TRAE-007
+depends_on: []
+tags:
+- TRAE
+- code_behavior
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - ANTI-HALL-07
 - ANTI-HALL-08
 - ANTI-HALL-09
 - ANTI-HALL-10
-layer: L0
 severity: critical
 scope: code_behavior
 domain: TRAE
@@ -235,10 +245,8 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001
-  note: '2026-06-19 RQ审查：移除已删除的 code_construction_standards.md 源文件引用（内容已迁移到
-    trae_006/007/008/009 + project_rules.md + onboarding_detail.md）；同步 project_rules.md
-    和 onboarding_detail.md 的哈希到当前值'
+  note: '2026-06-19 RQ审查：移除已删除的 code_construction_standards.md 源文件引用（内容已迁移到 trae_006/007/008/009 + project_rules.md + onboarding_detail.md）；同步 project_rules.md 和 onboarding_detail.md 的哈希到当前值'

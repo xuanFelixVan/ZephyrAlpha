@@ -30,8 +30,8 @@ Mitigation: Time-based operational mode switching (weekend/month-end/quarter-end
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
 from datetime import datetime
+from enum import Enum
 
 
 class OpMode(str, Enum):
@@ -46,9 +46,14 @@ class OpMode(str, Enum):
 @dataclass
 class OperationalSeasonality:
     mode: OpMode = OpMode.WEEKDAY
-    threshold_multipliers: dict[str, float] = field(default_factory=lambda: {
-        "WEEKEND": 0.7, "MONTH_END": 0.5, "QUARTER_END": 0.3, "YEAR_END": 0.2,
-    })
+    threshold_multipliers: dict[str, float] = field(
+        default_factory=lambda: {
+            "WEEKEND": 0.7,
+            "MONTH_END": 0.5,
+            "QUARTER_END": 0.3,
+            "YEAR_END": 0.2,
+        }
+    )
 
     def auto_mode(self) -> OpMode:
         now = datetime.now()

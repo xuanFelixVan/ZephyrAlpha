@@ -106,9 +106,7 @@ class DesignPrinciplesEnforcer:
     @staticmethod
     def validate_dimension(dim: int) -> None:
         if dim not in ALLOWED_DIMENSIONS:
-            raise DimensionError(
-                f"嵌入维度 {dim} 不在白名单中。允许: {sorted(ALLOWED_DIMENSIONS)}"
-            )
+            raise DimensionError(f"嵌入维度 {dim} 不在白名单中。允许: {sorted(ALLOWED_DIMENSIONS)}")
 
     @staticmethod
     def validate_chunk_strategy(name: str, chunk_strategy: str) -> None:
@@ -120,32 +118,31 @@ class DesignPrinciplesEnforcer:
         if name in COLD_COLLECTIONS and chunk_strategy in CHUNK_STRATEGIES_HOT:
             _logger.warning(
                 "冷数据 Collection '%s' 使用了热数据分块策略 '%s'——可能不适合",
-                name, chunk_strategy,
+                name,
+                chunk_strategy,
             )
         schema = COLLECTION_SCHEMAS.get(name, {})
         expected = schema.get("chunk_strategy", "")
         if expected and chunk_strategy != expected:
             _logger.warning(
                 "Collection '%s' 的分块策略 '%s' 与蓝图预期 '%s' 不一致",
-                name, chunk_strategy, expected,
+                name,
+                chunk_strategy,
+                expected,
             )
 
     @staticmethod
     def validate_ttl(name: str, ttl_days: int) -> None:
         expected_ttl = TTL_MAP.get(name)
         if expected_ttl is not None and ttl_days != expected_ttl:
-            raise TTLError(
-                f"Collection '{name}' 的 TTL 应为 {expected_ttl}d，实际 {ttl_days}d"
-            )
+            raise TTLError(f"Collection '{name}' 的 TTL 应为 {expected_ttl}d，实际 {ttl_days}d")
 
     @staticmethod
     def validate_provenance(metadata: dict[str, Any] | None) -> None:
         if metadata is None:
             raise ProvenanceMissingError("写入操作必须提供 provenance metadata")
         if "provenance" not in metadata and "origin" not in metadata:
-            raise ProvenanceMissingError(
-                "provenance 缺失: metadata 必须包含 'origin' 或 'provenance' 字段"
-            )
+            raise ProvenanceMissingError("provenance 缺失: metadata 必须包含 'origin' 或 'provenance' 字段")
 
     @staticmethod
     def validate_all(
@@ -161,6 +158,7 @@ class DesignPrinciplesEnforcer:
             DesignPrinciplesEnforcer.validate_ttl(name, ttl_days)
         else:
             DesignPrinciplesEnforcer.validate_chunk_strategy(name, chunk_strategy)
+
 
 COLLECTION_SCHEMAS: dict[str, dict[str, Any]] = {
     "decisions": {
@@ -301,9 +299,7 @@ class CollectionManager:
         strict: bool = True,
     ) -> CollectionInfo:
         if name not in COLLECTION_SCHEMAS:
-            raise KeyError(
-                f"未知 Collection: {name}。允许值: {', '.join(COLLECTION_NAMES)}"
-            )
+            raise KeyError(f"未知 Collection: {name}。允许值: {', '.join(COLLECTION_NAMES)}")
 
         DesignPrinciplesEnforcer.validate_all(name, dim, chunk_strategy, ttl_days, strict=strict)
 
@@ -355,23 +351,25 @@ class CollectionManager:
         for name in COLLECTION_NAMES:
             schema = COLLECTION_SCHEMAS[name]
             exists = name in existing_names
-            results.append(CollectionInfo(
-                name=name,
-                dimension=schema["dimension"],
-                chunk_strategy=schema["chunk_strategy"],
-                ttl_days=schema["ttl_days"],
-                ai_autonomy_level=schema["ai_autonomy_level"],
-                embedding_model=schema["embedding_model"],
-                metadata={
-                    "dimension": schema["dimension"],
-                    "chunk_strategy": schema["chunk_strategy"],
-                    "ttl_days": schema["ttl_days"],
-                    "ai_autonomy_level": schema["ai_autonomy_level"],
-                    "embedding_model": schema["embedding_model"],
-                    "hnsw:space": schema["hnsw:space"],
-                },
-                exists=exists,
-            ))
+            results.append(
+                CollectionInfo(
+                    name=name,
+                    dimension=schema["dimension"],
+                    chunk_strategy=schema["chunk_strategy"],
+                    ttl_days=schema["ttl_days"],
+                    ai_autonomy_level=schema["ai_autonomy_level"],
+                    embedding_model=schema["embedding_model"],
+                    metadata={
+                        "dimension": schema["dimension"],
+                        "chunk_strategy": schema["chunk_strategy"],
+                        "ttl_days": schema["ttl_days"],
+                        "ai_autonomy_level": schema["ai_autonomy_level"],
+                        "embedding_model": schema["embedding_model"],
+                        "hnsw:space": schema["hnsw:space"],
+                    },
+                    exists=exists,
+                )
+            )
         return results
 
     def migrate_collection(self, from_name: str, to_name: str) -> CollectionInfo:
@@ -420,7 +418,12 @@ class CollectionManager:
                 embeddings=source_data.get("embeddings"),
             )
 
-        _logger.info("CollectionManager: 迁移 Collection '%s' → '%s' (%d 条记录)", from_name, to_name, len(source_data.get("ids", [])))
+        _logger.info(
+            "CollectionManager: 迁移 Collection '%s' → '%s' (%d 条记录)",
+            from_name,
+            to_name,
+            len(source_data.get("ids", [])),
+        )
         return CollectionInfo(
             name=to_name,
             dimension=schema.get("dimension", 1024),
@@ -511,7 +514,7 @@ class CollectionManager:
             if not all_data or not all_data.get("ids"):
                 continue
             expired_ids = []
-            for doc_id, meta in zip(all_data["ids"], all_data.get("metadatas", []) or []):
+            for doc_id, meta in zip(all_data["ids"], all_data.get("metadatas", []) or [], strict=False):
                 written_at = meta.get("written_at", "") if meta else ""
                 if not written_at:
                     continue
@@ -524,5 +527,7 @@ class CollectionManager:
             if expired_ids:
                 col.delete(ids=expired_ids)
                 purged[name] = len(expired_ids)
-                _logger.info("CollectionManager: purged %d expired docs from '%s' (ttl=%dd)", len(expired_ids), name, ttl_days)
+                _logger.info(
+                    "CollectionManager: purged %d expired docs from '%s' (ttl=%dd)", len(expired_ids), name, ttl_days
+                )
         return purged

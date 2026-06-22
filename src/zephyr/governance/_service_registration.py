@@ -21,7 +21,7 @@ D-DATA → ServiceRegistry 注册模块
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +38,8 @@ def register_services() -> None:
 
     # task_repo — TaskRepository 实例
     def _make_task_repo() -> Any:
-        from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
         from zephyr.governance.persistence.task_repo import TaskRepository
+
         return TaskRepository()
 
     ServiceRegistry.register("task_repo", _make_task_repo)
@@ -47,6 +47,7 @@ def register_services() -> None:
     # db_connection — sqlite3.Connection
     def _make_db_connection() -> Any:
         from zephyr.governance.persistence.sqlite_schema import get_db_connection
+
         return get_db_connection()
 
     ServiceRegistry.register("db_connection", _make_db_connection)
@@ -54,6 +55,7 @@ def register_services() -> None:
     # db_path — Path
     def _make_db_path() -> Any:
         from zephyr.governance.persistence.sqlite_schema import DB_PATH
+
         return DB_PATH
 
     ServiceRegistry.register("db_path", _make_db_path)
@@ -61,6 +63,7 @@ def register_services() -> None:
     # vector-memory — InProcessVectorMemory
     def _make_vector_memory() -> Any:
         from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+
         return InProcessVectorMemory()
 
     ServiceRegistry.register("vector-memory", _make_vector_memory)
@@ -68,6 +71,7 @@ def register_services() -> None:
     # chromadb_client — ChromaDB client
     def _make_chromadb_client() -> Any:
         from zephyr.governance.kb.chromadb_init import get_chroma_client
+
         return get_chroma_client()
 
     ServiceRegistry.register("chromadb_client", _make_chromadb_client)
@@ -75,6 +79,7 @@ def register_services() -> None:
     # reranker — Reranker instance
     def _make_reranker() -> Any:
         from zephyr.governance.kb.reranker import Reranker
+
         return Reranker()
 
     ServiceRegistry.register("reranker", _make_reranker)
@@ -82,6 +87,7 @@ def register_services() -> None:
     # collection_schemas — COLLECTION_SCHEMAS dict
     def _make_collection_schemas() -> Any:
         from zephyr.governance.vector_memory.collection_manager import COLLECTION_SCHEMAS
+
         return COLLECTION_SCHEMAS
 
     ServiceRegistry.register("collection_schemas", _make_collection_schemas)

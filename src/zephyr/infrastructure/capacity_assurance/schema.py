@@ -47,8 +47,6 @@ PRAGMA 基线：
 import hashlib
 import os
 import sqlite3
-from pathlib import Path
-from typing import Optional
 
 
 class SchemaManager:
@@ -57,11 +55,11 @@ class SchemaManager:
     TTL_DAYS = 7
     SCHEMA_VERSION = "2.6.0"
 
-    def __init__(self, db_path: Optional[str] = None):
+    def __init__(self, db_path: str | None = None):
         self.db_path = db_path or get_db_path()
         self._ddl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ddl.sql")
 
-    def init_db(self, db_path: Optional[str] = None) -> sqlite3.Connection:
+    def init_db(self, db_path: str | None = None) -> sqlite3.Connection:
         target = db_path or self.db_path
         os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
 
@@ -79,7 +77,7 @@ class SchemaManager:
 
     def _load_ddl(self) -> str:
         if os.path.exists(self._ddl_path):
-            with open(self._ddl_path, "r", encoding="utf-8") as f:
+            with open(self._ddl_path, encoding="utf-8") as f:
                 return f.read()
         return self._inline_ddl()
 
@@ -149,23 +147,26 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
 
     def _ensure_schema_version(self, conn: sqlite3.Connection):
         conn.execute(
-            "CREATE TABLE IF NOT EXISTS _capacity_schema_version ("
-            "  version TEXT NOT NULL, applied_at TEXT NOT NULL"
-            ")"
+            "CREATE TABLE IF NOT EXISTS _capacity_schema_version (  version TEXT NOT NULL, applied_at TEXT NOT NULL)"
         )
         row = conn.execute("SELECT COUNT(*) FROM _capacity_schema_version").fetchone()
         if row[0] == 0:
             conn.execute(
                 "INSERT INTO _capacity_schema_version (version, applied_at) VALUES (?, datetime('now'))",
-                (self.SCHEMA_VERSION,)
+                (self.SCHEMA_VERSION,),
             )
 
-    def migrate(self, db_path: Optional[str] = None):
+    def migrate(self, db_path: str | None = None):
         target = db_path or self.db_path
         conn = sqlite3.connect(target)
         existing = self._existing_tables(conn)
-        required = {"ai_provenance", "capacity_metrics", "error_budget",
-                     "token_budget_usage", "capacity_metrics_hourly"}
+        required = {
+            "ai_provenance",
+            "capacity_metrics",
+            "error_budget",
+            "token_budget_usage",
+            "capacity_metrics_hourly",
+        }
         missing = required - existing
         if missing:
             ddl = self._load_ddl()
@@ -175,12 +176,10 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
         conn.close()
 
     def _existing_tables(self, conn: sqlite3.Connection) -> set:
-        rows = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table'"
-        ).fetchall()
+        rows = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
         return {r[0] for r in rows}
 
-    def verify(self, db_path: Optional[str] = None) -> dict:
+    def verify(self, db_path: str | None = None) -> dict:
         target = db_path or self.db_path
         conn = sqlite3.connect(target)
         result = {
@@ -192,20 +191,48 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
         }
 
         required_tables = {
-            "ai_provenance": ["id", "module", "field", "old_value", "new_value",
-                              "author_agent", "timestamp", "audit_result",
-                              "prev_hash", "curr_hash"],
-            "capacity_metrics": ["ts", "sli_id", "value", "governance_layer",
-                                  "runtime_plane", "compensated"],
-            "error_budget": ["slo_id", "window_start", "window_end",
-                             "budget_total", "budget_consumed", "budget_remaining",
-                             "response_tier", "last_updated"],
-            "token_budget_usage": ["ts", "budget_level", "level_id",
-                                    "tokens_consumed", "tokens_remaining",
-                                    "model_name", "cost_usd"],
-            "capacity_metrics_hourly": ["slo_id", "hour_bucket", "avg_value",
-                                         "p99_value", "max_value", "sample_count",
-                                         "governance_layer", "runtime_plane"],
+            "ai_provenance": [
+                "id",
+                "module",
+                "field",
+                "old_value",
+                "new_value",
+                "author_agent",
+                "timestamp",
+                "audit_result",
+                "prev_hash",
+                "curr_hash",
+            ],
+            "capacity_metrics": ["ts", "sli_id", "value", "governance_layer", "runtime_plane", "compensated"],
+            "error_budget": [
+                "slo_id",
+                "window_start",
+                "window_end",
+                "budget_total",
+                "budget_consumed",
+                "budget_remaining",
+                "response_tier",
+                "last_updated",
+            ],
+            "token_budget_usage": [
+                "ts",
+                "budget_level",
+                "level_id",
+                "tokens_consumed",
+                "tokens_remaining",
+                "model_name",
+                "cost_usd",
+            ],
+            "capacity_metrics_hourly": [
+                "slo_id",
+                "hour_bucket",
+                "avg_value",
+                "p99_value",
+                "max_value",
+                "sample_count",
+                "governance_layer",
+                "runtime_plane",
+            ],
         }
 
         for table, expected_cols in required_tables.items():
@@ -231,9 +258,7 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
                 rec_id, prev_hash, curr_hash = row[0], row[1], row[2]
                 if expected_prev is not None and prev_hash != expected_prev:
                     result["hash_chain_valid"] = False
-                    result["hash_chain_errors"].append(
-                        f"id={rec_id}: prev_hash={prev_hash}, expected={expected_prev}"
-                    )
+                    result["hash_chain_errors"].append(f"id={rec_id}: prev_hash={prev_hash}, expected={expected_prev}")
                 expected_prev = curr_hash
         except sqlite3.OperationalError:
             pass
@@ -241,9 +266,7 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
         # TTL check
         try:
             cutoff = f"datetime('now', '-{self.TTL_DAYS} days')"
-            count = conn.execute(
-                f"SELECT COUNT(*) FROM capacity_metrics WHERE ts < {cutoff}"
-            ).fetchone()[0]
+            count = conn.execute(f"SELECT COUNT(*) FROM capacity_metrics WHERE ts < {cutoff}").fetchone()[0]
             result["ttl_eligible_rows"] = count
         except sqlite3.OperationalError:
             pass
@@ -251,19 +274,15 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
         conn.close()
         return result
 
-    def ttl_cleanup(self, db_path: Optional[str] = None) -> int:
+    def ttl_cleanup(self, db_path: str | None = None) -> int:
         target = db_path or self.db_path
         conn = sqlite3.connect(target)
         cutoff = f"datetime('now', '-{self.TTL_DAYS} days')"
         total = 0
         try:
-            cur = conn.execute(
-                f"DELETE FROM capacity_metrics WHERE ts < {cutoff}"
-            )
+            cur = conn.execute(f"DELETE FROM capacity_metrics WHERE ts < {cutoff}")
             total += cur.rowcount
-            cur = conn.execute(
-                f"DELETE FROM token_budget_usage WHERE ts < {cutoff}"
-            )
+            cur = conn.execute(f"DELETE FROM token_budget_usage WHERE ts < {cutoff}")
             total += cur.rowcount
             conn.commit()
         except sqlite3.OperationalError:
@@ -272,13 +291,16 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
         return total
 
     @staticmethod
-    def compute_hash(module: str, field: str, old_value: Optional[str],
-                     new_value: Optional[str], author_agent: str,
-                     timestamp: str, prev_hash: Optional[str]) -> str:
-        payload = "|".join([
-            module, field, old_value or "", new_value or "",
-            author_agent, timestamp, prev_hash or ""
-        ])
+    def compute_hash(
+        module: str,
+        field: str,
+        old_value: str | None,
+        new_value: str | None,
+        author_agent: str,
+        timestamp: str,
+        prev_hash: str | None,
+    ) -> str:
+        payload = "|".join([module, field, old_value or "", new_value or "", author_agent, timestamp, prev_hash or ""])
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -288,14 +310,19 @@ class MetricsWriteBuffer:
 
     BATCH_SIZE = 100
 
-    def __init__(self, db_path: Optional[str] = None):
+    def __init__(self, db_path: str | None = None):
         self.db_path = db_path or get_db_path()
         self._buffer: list[tuple] = []
 
-    def add(self, ts: str, sli_id: str, value: float,
-            governance_layer: Optional[str] = None,
-            runtime_plane: Optional[str] = None,
-            compensated: int = 0):
+    def add(
+        self,
+        ts: str,
+        sli_id: str,
+        value: float,
+        governance_layer: str | None = None,
+        runtime_plane: str | None = None,
+        compensated: int = 0,
+    ):
         self._buffer.append((ts, sli_id, value, governance_layer, runtime_plane, compensated))
         if len(self._buffer) >= self.BATCH_SIZE:
             self.flush()
@@ -309,7 +336,7 @@ class MetricsWriteBuffer:
             conn.executemany(
                 "INSERT INTO capacity_metrics (ts, sli_id, value, governance_layer, runtime_plane, compensated) "
                 "VALUES (?, ?, ?, ?, ?, ?)",
-                self._buffer
+                self._buffer,
             )
             conn.commit()
             count = len(self._buffer)
@@ -337,7 +364,6 @@ def get_db_path() -> str:
             return path
 
     default = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "data", "capacity.db"
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "capacity.db"
     )
     return default

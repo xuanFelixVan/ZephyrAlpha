@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.audit_trail.provenance_tracker import (
     ProvenanceRecord,
     embed_provenance,
@@ -95,6 +93,7 @@ class TestExtractProvenance:
                 "agent_session_id": rec.agent_session_id,
                 "generated_at": rec.generated_at,
             }
+
         extracted = extract_provenance(DictLike())
         assert extracted is not None
         assert extracted.module_id == "MOD-001"
@@ -102,6 +101,7 @@ class TestExtractProvenance:
     def test_extract_from_object_without_provenance(self):
         class NoProv:
             value = 42
+
         obj = NoProv()
         result = extract_provenance(obj)
         assert result is None
@@ -114,6 +114,7 @@ class TestExtractProvenance:
                 "agent_session_id": "session-xyz",
                 "generated_at": "2026-01-01",
             }
+
         obj = WithProv()
         result = extract_provenance(obj)
         assert result is not None

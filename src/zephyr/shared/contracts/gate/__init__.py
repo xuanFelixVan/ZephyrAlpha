@@ -18,9 +18,9 @@ from zephyr.shared.contracts.gate.gate_result import (
 )
 
 __all__ = [
-    "GateViolation",
-    "GateResult",
     "GateEngineError",
+    "GateResult",
+    "GateViolation",
     "GateViolationError",
     "gate_result",
 ]

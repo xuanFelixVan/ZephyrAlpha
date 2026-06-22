@@ -20,12 +20,12 @@
 # [TESTS] pytest tests/test_foundation_flags.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.flags import (
-    FlagState,
     FeatureFlag,
-    FlagRegistry,
     FlagNotFoundError,
-    global_flag_registry,
+    FlagRegistry,
+    FlagState,
 )
 
 
@@ -170,5 +170,6 @@ class TestFlagRegistry:
 class TestFlagNotFoundError:
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         err = FlagNotFoundError("not found", details={"key": "x"})
         assert isinstance(err, ZephyrBaseError)

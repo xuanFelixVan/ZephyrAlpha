@@ -26,6 +26,7 @@ Blindspot: Resource exhaustion predicted days in advance; no proactive alert.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class CapacityForecast:
     days_until_full: float = float("inf")

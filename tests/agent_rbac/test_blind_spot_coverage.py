@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """盲点覆盖测试."""
+
 from __future__ import annotations
 
-import pytest
 from zephyr.security.access_control.blind_spot_tracker import BlindSpotTracker
 
 

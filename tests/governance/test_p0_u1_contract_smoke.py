@@ -14,9 +14,8 @@ DOM-GOV-001 P0 测试用例 — P0-U1 冒烟测试 + P0-U2 输入校验 + P0-I1 
   P0-I1: 集成测试 (SYS-MASTER-001 层级约束, MOD-MASTER-001 CT 不冲突)
   P0-I2: 施工顺序验证 (§4 拓扑排序, 前置未完成时禁止后续开工)
 """
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 
 class TestP0U1ContractSmoke:
@@ -24,19 +23,22 @@ class TestP0U1ContractSmoke:
 
     def test_gct_001_rbac_to_audit_write(self):
         from zephyr.security.access_control.contracts import RBACAuditBridge
+
         bridge = RBACAuditBridge()
         assert hasattr(bridge, "check_and_log")
 
     def test_gct_002_audit_to_rollback_trigger(self):
-        from zephyr.governance.audit_trail.anomaly import AnomalyEvent, AnomalyDetector
+        from zephyr.governance.audit_trail.anomaly import AnomalyDetector, AnomalyEvent
+
         event = AnomalyEvent(agent_id="test", operation_signature="delete", resource_path="/tmp")
         detector = AnomalyDetector()
         assert hasattr(event, "agent_id")
         assert isinstance(detector.detect({"operation": "delete", "agent": "test"}), (type(None), AnomalyEvent))
 
     def test_gct_003_rollback_to_escalation(self):
-        from zephyr.governance.result_types import RollbackResult
         from zephyr.governance.contracts import EscalationContracts
+        from zephyr.governance.result_types import RollbackResult
+
         result = RollbackResult(rollback_id="R001", target="test_module")
         esc = EscalationContracts()
         assert hasattr(result, "status")
@@ -45,17 +47,16 @@ class TestP0U1ContractSmoke:
     def test_gct_004_escalation_to_rbac(self):
         from zephyr.governance.approval import ApprovalRequest
         from zephyr.security.access_control.approver_check import verify_approver
-        req = ApprovalRequest(
-            task_id="T001", requested_action="deploy",
-            human_approver="admin", reason="emergency"
-        )
+
+        req = ApprovalRequest(task_id="T001", requested_action="deploy", human_approver="admin", reason="emergency")
         assert hasattr(req, "task_id")
         result = verify_approver("bytebuddy", "admin")
         assert isinstance(result, dict)
 
     def test_gct_005_drift_to_rollback(self):
-        from zephyr.shared.shared_services.events import DriftEvent
         from zephyr.governance.drift_fix import DriftFixHandler
+        from zephyr.shared.shared_services.events import DriftEvent
+
         event = DriftEvent(drift_id="D001", target="test_config")
         handler = DriftFixHandler()
         assert hasattr(event, "drift_id")
@@ -64,6 +65,7 @@ class TestP0U1ContractSmoke:
     def test_gct_006_budget_to_escalation(self):
         from zephyr.governance.alerts import BudgetAlert
         from zephyr.governance.budget_handler import on_budget_alert
+
         alert = BudgetAlert(alert_id="B001")
         assert hasattr(alert, "alert_id")
         result = on_budget_alert(alert)
@@ -72,6 +74,7 @@ class TestP0U1ContractSmoke:
     def test_gct_007_agent_spec_to_audit(self):
         from zephyr.autonomy_core.registry import AgentCapability
         from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
+
         cap = AgentCapability(agent_id="test_agent", capabilities=["cap_1"])
         result = record_agent_spec(cap)
         assert result is not None
@@ -80,6 +83,7 @@ class TestP0U1ContractSmoke:
     def test_gct_008_a2a_to_rbac(self):
         from zephyr.infrastructure.a2a_protocol import A2ACommunication
         from zephyr.security.access_control.a2a_check import verify_a2a_pair
+
         comm = A2ACommunication(a2a_id="A001", from_agent_id="superadmin", to_agent_id="admin")
         assert hasattr(comm, "a2a_id")
         result = verify_a2a_pair("superadmin", "admin")
@@ -90,14 +94,16 @@ class TestP0U2InputValidation:
     """P0-U2: 输入校验"""
 
     def test_invalid_module_id_rejected(self):
-        from zephyr.security.access_control.capability_check import verify_capability_scope
         from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.security.access_control.capability_check import verify_capability_scope
+
         cap = AgentCapability(agent_id="NON_EXISTENT_MODULE", capabilities=["any_cap"])
         result = verify_capability_scope(cap)
         assert result is not None
 
     def test_no_false_cycle_detection(self):
         from zephyr.governance.contracts import EscalationContracts
+
         esc = EscalationContracts()
         assert hasattr(esc, "on_a2a_failure")
 
@@ -107,17 +113,21 @@ class TestP0I1Integration:
 
     def test_sys_master_level1_mapping(self):
         expected_modules = [
-            "MOD-INF-018", "MOD-INF-019", "MOD-INF-020",
-            "MOD-INF-021", "MOD-INF-022", "MOD-INF-023",
-            "MOD-INF-024", "MOD-INF-025",
+            "MOD-INF-018",
+            "MOD-INF-019",
+            "MOD-INF-020",
+            "MOD-INF-021",
+            "MOD-INF-022",
+            "MOD-INF-023",
+            "MOD-INF-024",
+            "MOD-INF-025",
         ]
         for mid in expected_modules:
-            assert mid.startswith("MOD-INF-"), (
-                f"{mid} 应符合 MOD-INF-xxx 命名规范"
-            )
+            assert mid.startswith("MOD-INF-"), f"{mid} 应符合 MOD-INF-xxx 命名规范"
 
     def test_ct_contract_no_conflict(self):
         from zephyr.security.access_control.contracts import RBACAuditBridge
+
         bridge = RBACAuditBridge()
         assert hasattr(bridge, "check_and_log")
 

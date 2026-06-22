@@ -619,8 +619,13 @@ class GovernanceServer(BaseMCPServer):
         self, session_id: str, operation: str, maturity: str = "L2_REGULAR", role: str = "executor"
     ) -> dict[str, Any]:
         try:
-            from zephyr.shared.contracts.identity.agent_identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
             from zephyr.security.access_control.permission_guard import PermissionGuard
+            from zephyr.shared.contracts.identity.agent_identity import (
+                AgentIdentity,
+                AgentRole,
+                IDESource,
+                MaturityLevel,
+            )
 
             ml = MaturityLevel(maturity)
             ar = AgentRole(role)
@@ -798,7 +803,7 @@ class GovernanceServer(BaseMCPServer):
     def _escalate(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
         try:
             from zephyr.governance.escalation_engine import EscalationEngine
-from zephyr.governance.escalation_models import RuleCategory
+            from zephyr.governance.escalation_models import RuleCategory
 
             engine = EscalationEngine("mcp-governance")
             cat = RuleCategory(category)
@@ -818,7 +823,7 @@ from zephyr.governance.escalation_models import RuleCategory
     def _check_budget(self, dimension: str = "ALL") -> dict[str, Any]:
         try:
             from zephyr.governance.budget_engine import BudgetEngine
-from zephyr.governance.budget_models import BudgetDimension
+            from zephyr.governance.budget_models import BudgetDimension
 
             engine = BudgetEngine()
             dims = (
@@ -864,7 +869,7 @@ from zephyr.governance.budget_models import BudgetDimension
     def _escalation_resolve(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
         try:
             from zephyr.governance.escalation_engine import EscalationEngine
-from zephyr.governance.escalation_models import RuleCategory
+            from zephyr.governance.escalation_models import RuleCategory
 
             engine = EscalationEngine("mcp-resolve")
             cat = RuleCategory(category)

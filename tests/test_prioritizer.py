@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-import pytest
-
-from zephyr.governance.prioritizer import Prioritizer, PrioritizedFix
+from zephyr.governance.prioritizer import PrioritizedFix, Prioritizer
 
 
 class TestPrioritizedFix:

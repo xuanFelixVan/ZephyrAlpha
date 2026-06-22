@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_network_partition.py
 
-import pytest
 
 from zephyr.trading.orchestrator.network_partition import NetworkPartitionGuard
 

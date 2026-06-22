@@ -31,13 +31,12 @@ RunbookGenerator — 回滚操作 Runbook 自动生成。
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 
 class RunbookGenerator:
-
     RUNBOOK_DIR: str = ".zephyr/runbooks"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -46,44 +45,44 @@ class RunbookGenerator:
         self._runbook_dir.mkdir(parents=True, exist_ok=True)
 
     def generate(self, operation_type: str, audit_records: list[dict[str, Any]]) -> Path:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         runbook_id = f"RB-{operation_type}-{now.strftime('%Y%m%d-%H%M')}"
 
         lines: list[str] = []
         lines.append(f"# Runbook: {operation_type}")
-        lines.append(f"")
+        lines.append("")
         lines.append(f"- **Runbook ID**: {runbook_id}")
         lines.append(f"- **Generated At**: {now.isoformat()}")
         lines.append(f"- **Source**: Auto-generated from {len(audit_records)} audit records")
-        lines.append(f"")
-        lines.append(f"## 1. Trigger Conditions")
-        lines.append(f"")
+        lines.append("")
+        lines.append("## 1. Trigger Conditions")
+        lines.append("")
         triggers = self._extract_triggers(audit_records)
         for t in triggers:
             lines.append(f"- {t}")
-        lines.append(f"")
-        lines.append(f"## 2. Pre-flight Checks")
-        lines.append(f"")
-        lines.append(f"- [ ] Verify git working tree is clean")
-        lines.append(f"- [ ] Verify not in detached HEAD state")
-        lines.append(f"- [ ] Verify no rebase/merge in progress")
-        lines.append(f"- [ ] Verify remote is not ahead of local")
-        lines.append(f"")
-        lines.append(f"## 3. Execution Steps")
-        lines.append(f"")
+        lines.append("")
+        lines.append("## 2. Pre-flight Checks")
+        lines.append("")
+        lines.append("- [ ] Verify git working tree is clean")
+        lines.append("- [ ] Verify not in detached HEAD state")
+        lines.append("- [ ] Verify no rebase/merge in progress")
+        lines.append("- [ ] Verify remote is not ahead of local")
+        lines.append("")
+        lines.append("## 3. Execution Steps")
+        lines.append("")
         for i, step in enumerate(self._extract_steps(audit_records), 1):
             lines.append(f"{i}. {step}")
-        lines.append(f"")
-        lines.append(f"## 4. Rollback Method (if this operation fails)")
-        lines.append(f"")
-        lines.append(f"```bash")
-        lines.append(f"python src/zephyr/rollback/rollback_bootstrap.py --project-root .")
-        lines.append(f"```")
-        lines.append(f"")
-        lines.append(f"## 5. Audit Summary")
-        lines.append(f"")
-        lines.append(f"| Timestamp | Operation | Success | Details |")
-        lines.append(f"|-----------|-----------|---------|---------|")
+        lines.append("")
+        lines.append("## 4. Rollback Method (if this operation fails)")
+        lines.append("")
+        lines.append("```bash")
+        lines.append("python src/zephyr/rollback/rollback_bootstrap.py --project-root .")
+        lines.append("```")
+        lines.append("")
+        lines.append("## 5. Audit Summary")
+        lines.append("")
+        lines.append("| Timestamp | Operation | Success | Details |")
+        lines.append("|-----------|-----------|---------|---------|")
         for r in audit_records[-5:]:
             ts = r.get("timestamp_utc", "")[:19]
             op = r.get("operation", "")

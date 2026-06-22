@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
 ss = pytest.importorskip(
@@ -38,7 +36,7 @@ def _clear_buffer():
 class TestConfigure:
     def test_configure_log_dir(self, tmp_path):
         ss.configure(log_dir=tmp_path / "logs")
-        assert ss._DEFAULT_LOG_DIR == tmp_path / "logs"
+        assert tmp_path / "logs" == ss._DEFAULT_LOG_DIR
 
     def test_configure_buffer_size(self):
         ss.configure(buffer_size=100)

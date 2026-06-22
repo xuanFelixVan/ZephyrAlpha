@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.diagnosers.data_volume_growth_monitor import (
     DataVolumeGrowthMonitor,
     GrowthModel,

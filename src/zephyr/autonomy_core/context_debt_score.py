@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class DebtScore:
     ke_id: str
@@ -34,8 +35,10 @@ class DebtScore:
     deprecation_risk: float
     deprecated: bool
 
+
 class ContextDebtScorer:
     """per-KE deprecation_risk = age * conflict * ref_staleness; >0.7 → [DEPRECATED] (DD93)."""
+
     def score(self, ke_id: str, age_days: float, conflict_count: int, ref_staleness: float) -> DebtScore:
         risk = (age_days / 365) * max(1, conflict_count) * max(0.1, ref_staleness)
         risk_clamped = min(1.0, risk)

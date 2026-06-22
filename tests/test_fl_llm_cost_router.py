@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_llm_cost_router.py
 
-import pytest
 from zephyr.ops.gates.llm_cost_router import LLMCostRouter
 
 

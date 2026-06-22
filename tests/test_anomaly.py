@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.audit_trail.anomaly import AnomalyDetector, AnomalyResult, AnomalySignature
 from zephyr.governance.audit_trail.models import AuditEventType
 
@@ -190,10 +188,12 @@ class TestAnomalyDetectorScan:
         detector = AnomalyDetector()
         events = []
         for i in range(12):
-            events.append({
-                "agent_id": "a1",
-                "timestamp": f"2026-05-22T10:00:{i:02d}+00:00",
-            })
+            events.append(
+                {
+                    "agent_id": "a1",
+                    "timestamp": f"2026-05-22T10:00:{i:02d}+00:00",
+                }
+            )
         results = detector.scan(events=events)
         hf = [r for r in results if r.signature == AnomalySignature.HIGH_FREQUENCY]
         assert len(hf) == 1

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_fragmentation_index.py
 
-import pytest
 from zephyr.autonomy_core.fragmentation_index import FragmentationIndex, FragmentationScore
 
 

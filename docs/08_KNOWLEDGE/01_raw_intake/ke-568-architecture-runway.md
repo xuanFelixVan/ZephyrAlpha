@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-568
 status: active
 title: 8. Architecture Runway / 架构预留通道

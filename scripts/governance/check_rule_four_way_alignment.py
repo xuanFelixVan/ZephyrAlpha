@@ -12,7 +12,6 @@
 from __future__ import annotations
 
 import argparse
-import os
 import sqlite3
 import sys
 from pathlib import Path
@@ -58,9 +57,7 @@ def _get_db_rule_ids() -> set[str]:
     try:
         conn = sqlite3.connect(str(DB_PATH), timeout=10.0)
         conn.row_factory = sqlite3.Row
-        cursor = conn.execute(
-            "SELECT DISTINCT node_id FROM nodes WHERE node_type = 'rule'"
-        )
+        cursor = conn.execute("SELECT DISTINCT node_id FROM nodes WHERE node_type = 'rule'")
         ids = {row["node_id"] for row in cursor.fetchall()}
         conn.close()
         return ids
@@ -195,7 +192,9 @@ def _check_yaml_blueprint(rules: dict[str, dict[str, Any]]) -> list[str]:
                     found_in_map = True
                     break
             if not found_in_map:
-                issues.append(f"YAML↔Blueprint: L0 rule {rule_id} declares blueprint refs {bp_refs} but no blueprint.md references it back")
+                issues.append(
+                    f"YAML↔Blueprint: L0 rule {rule_id} declares blueprint refs {bp_refs} but no blueprint.md references it back"
+                )
     return issues
 
 
@@ -261,7 +260,7 @@ def main() -> int:
 
     l0_count = sum(1 for d in rules.values() if d.get("layer") == "L0")
     l0_issues = [i for i in all_issues if "L0" in i]
-    print(f"\n--- Summary ---")
+    print("\n--- Summary ---")
     print(f"  Total rules: {len(rules)} | L0 rules: {l0_count}")
     print(f"  Total issues: {len(all_issues)} | L0 issues: {len(l0_issues)}")
 

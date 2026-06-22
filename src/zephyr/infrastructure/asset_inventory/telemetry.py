@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 
 _sys_telemetry = None
 
+
 def _get_sys_telemetry():
     global _sys_telemetry
     if _sys_telemetry is None:
@@ -50,11 +51,13 @@ def _get_sys_telemetry():
             _sys_telemetry = False
     return _sys_telemetry if _sys_telemetry is not False else None
 
+
 class MetricPoint(BaseModel):
     name: str = Field(description="指标名")
     value: float = Field(description="指标值")
     labels: dict[str, str] = Field(default_factory=dict, description="标签")
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
 
 class InventorySelfMetrics:
     """盘点系统自监控——内存中累计，可导出到 JSON / stdout / OTEL。"""
@@ -122,10 +125,13 @@ class InventorySelfMetrics:
         except Exception as exc:
             logger.warning("telemetry push_to_facade failed: %s", exc)
 
+
 TELEMETRY = InventorySelfMetrics()
+
 
 def get_telemetry() -> InventorySelfMetrics:
     return TELEMETRY
+
 
 # ============================================================================
 # SRC-0040: 从 notifications.py 合并 — NotificationManager + 通知通道
@@ -140,6 +146,7 @@ from urllib.error import URLError as _URLError
 from urllib.request import Request as _Request
 from urllib.request import urlopen as _urlopen
 
+
 class NotificationRecord(BaseModel):
     """通知记录。"""
 
@@ -148,6 +155,7 @@ class NotificationRecord(BaseModel):
     message: str
     sent_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     delivered: bool | None = None
+
 
 class NotificationChannel(_ABC):
     """通知通道抽象基类。"""
@@ -158,6 +166,7 @@ class NotificationChannel(_ABC):
     @property
     @_abstractmethod
     def channel_name(self) -> str: ...
+
 
 class ConsoleChannel(NotificationChannel):
     """控制台通知通道。"""
@@ -176,6 +185,7 @@ class ConsoleChannel(NotificationChannel):
         prefix = self._SEVERITY_PREFIX.get(severity, "[UNKNOWN]")
         print(f"{prefix} {message}")
         return NotificationRecord(channel="console", severity=severity, message=message, delivered=True)
+
 
 class FeishuWebhook(NotificationChannel):
     """飞书 Webhook 通知通道。"""
@@ -217,6 +227,7 @@ class FeishuWebhook(NotificationChannel):
             record.delivered = False
 
         return record
+
 
 class SmtpEmailChannel(NotificationChannel):
     """SMTP 邮件通知通道。"""
@@ -283,6 +294,7 @@ class SmtpEmailChannel(NotificationChannel):
             record.delivered = False
 
         return record
+
 
 class NotificationManager:
     """通知通道选择与路由——宽进严出。"""

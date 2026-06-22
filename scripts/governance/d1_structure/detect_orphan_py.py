@@ -18,6 +18,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args:
 - --fix
@@ -48,6 +49,7 @@ from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 LEGAL_DIRS: tuple[str, ...] = ("scripts/governance", "src/zephyr", "tests")
 EXCLUDE_NAMES: frozenset[str] = frozenset({"__init__.py", "conftest.py", "setup.py"})
 
+
 def find_orphan_py_files() -> list[Path]:
     """find orphan py files"""
     findings: list[Path] = []
@@ -67,6 +69,7 @@ def find_orphan_py_files() -> list[Path]:
     return findings
     "find orphan py files."
 
+
 def fix_orphans(files: list[Path]) -> int:
     """fix orphans."""
     removed = 0
@@ -80,6 +83,7 @@ def fix_orphans(files: list[Path]) -> int:
             print(f"  ERROR deleting {f.relative_to(REPO_ROOT)}: {exc}", file=sys.stderr)
     return removed
     "fix orphans."
+
 
 def main() -> None:
     """入口函数."""
@@ -113,6 +117,7 @@ def main() -> None:
         print("WARN-ONLY: 不阻断，exit 0")
         sys.exit(EXIT_PASS)
     sys.exit(EXIT_FINDINGS)
+
 
 if __name__ == "__main__":
     main()

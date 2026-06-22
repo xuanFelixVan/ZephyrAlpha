@@ -29,9 +29,9 @@ Mitigation: Loop detection via action ID repetition tracking with cooldown enfor
 
 from __future__ import annotations
 
+import time
 from collections import deque
 from dataclasses import dataclass, field
-import time
 
 
 @dataclass
@@ -50,7 +50,11 @@ class InfiniteLoopDetector:
     def track(self, action_signature: str) -> bool:
         now = time.time()
         self.recent_actions.append(LoopAction(action_signature=action_signature, timestamp=now))
-        recent_matches = [a for a in self.recent_actions if a.action_signature == action_signature and now - a.timestamp < self.cooldown_seconds]
+        recent_matches = [
+            a
+            for a in self.recent_actions
+            if a.action_signature == action_signature and now - a.timestamp < self.cooldown_seconds
+        ]
         if len(recent_matches) >= self.loop_threshold:
             self.active_loops.add(action_signature)
             return True

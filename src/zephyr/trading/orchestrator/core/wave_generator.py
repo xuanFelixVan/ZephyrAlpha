@@ -38,7 +38,6 @@ Wave 编号从 0 开始，Wave 0 = 无前置依赖的任务。
 
 from __future__ import annotations
 
-
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -46,8 +45,8 @@ from pathlib import Path
 from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
 
 __all__ = [
-    "WaveGenerator",
     "Wave",
+    "WaveGenerator",
     "WaveStatus",
 ]
 

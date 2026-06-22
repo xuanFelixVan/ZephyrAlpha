@@ -2,5 +2,6 @@
 from .default_equity_strategy import *
 
 __all__ = [
-    "DefaultEquityStrategy", "RebalanceMode",
+    "DefaultEquityStrategy",
+    "RebalanceMode",
 ]

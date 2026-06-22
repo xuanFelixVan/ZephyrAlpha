@@ -68,7 +68,7 @@ class EmergentBehaviorDetector:
                 self.metric_history[name] = []
             self.metric_history[name].append(value)
             if len(self.metric_history[name]) > self.window_size:
-                self.metric_history[name] = self.metric_history[name][-self.window_size:]
+                self.metric_history[name] = self.metric_history[name][-self.window_size :]
 
     def compute_pairwise_correlations(self) -> dict[str, float]:
         names = list(self.metric_history.keys())
@@ -104,20 +104,24 @@ class EmergentBehaviorDetector:
             self.state = EmergenceState.STABLE
 
         if self.state != prev_state and self.state != EmergenceState.STABLE:
-            self.emergence_events.append({
-                "ts": time.time(),
-                "from_state": prev_state.value,
-                "to_state": self.state.value,
-                "high_correlations": list(high_corr.keys()),
-            })
+            self.emergence_events.append(
+                {
+                    "ts": time.time(),
+                    "from_state": prev_state.value,
+                    "to_state": self.state.value,
+                    "high_correlations": list(high_corr.keys()),
+                }
+            )
 
         return {
             "state": self.state.value,
             "high_correlation_pairs": len(high_corr),
             "correlation_details": {k: round(v, 3) for k, v in high_corr.items()},
             "recommendation": (
-                "investigate_coupling" if self.state == EmergenceState.CRITICAL
-                else "increase_observation_frequency" if self.state == EmergenceState.CORRELATING
+                "investigate_coupling"
+                if self.state == EmergenceState.CRITICAL
+                else "increase_observation_frequency"
+                if self.state == EmergenceState.CORRELATING
                 else "continue_monitoring"
             ),
         }

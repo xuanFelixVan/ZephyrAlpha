@@ -18,18 +18,18 @@ This package re-exports for backward compatibility.
 from __future__ import annotations
 
 __all__ = [
-    'ExecutionEngine',
-    'ExecutionEngineRunRecord',
-    'ExecutionConfig',
-    'AlgoType',
-    'BrokerInterface',
-    'FillCallback',
-    'OrderManager',
-    'OrderAction',
-    'execution_engine',
-    'order_manager',
-    'broker_interface',
-    'adapters',
+    "AlgoType",
+    "BrokerInterface",
+    "ExecutionConfig",
+    "ExecutionEngine",
+    "ExecutionEngineRunRecord",
+    "FillCallback",
+    "OrderAction",
+    "OrderManager",
+    "adapters",
+    "broker_interface",
+    "execution_engine",
+    "order_manager",
 ]
 
 _LAZY_IMPORTS = {
@@ -45,9 +45,11 @@ _LAZY_IMPORTS = {
 
 _SUBMODULES = ["execution_engine", "order_manager", "broker_interface", "adapters"]
 
+
 def __getattr__(name):
     if name in _LAZY_IMPORTS:
         import importlib
+
         mod_path, attr_name = _LAZY_IMPORTS[name]
         mod = importlib.import_module(mod_path)
         value = getattr(mod, attr_name)
@@ -55,6 +57,7 @@ def __getattr__(name):
         return value
     if name in _SUBMODULES:
         import importlib
+
         if name == "adapters":
             mod = importlib.import_module("zephyr.ex_core.adapters")
         else:

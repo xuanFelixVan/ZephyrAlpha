@@ -24,8 +24,9 @@ from __future__ import annotations
 """问题追踪——扫描中发现需要人工处理的问题."""
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
+
 
 @dataclass
 class Question:
@@ -34,6 +35,7 @@ class Question:
     description: str
     raised_at: str
     status: str = "OPEN"
+
 
 @dataclass
 class QuestionTracker:
@@ -44,7 +46,7 @@ class QuestionTracker:
             q_id=q_id,
             category=category,
             description=description,
-            raised_at=datetime.now(timezone.utc).isoformat(),
+            raised_at=datetime.now(UTC).isoformat(),
         )
         self.questions[q_id] = q
         return q

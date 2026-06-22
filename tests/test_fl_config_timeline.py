@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.collectors.config_timeline import ConfigTimeline
 
 

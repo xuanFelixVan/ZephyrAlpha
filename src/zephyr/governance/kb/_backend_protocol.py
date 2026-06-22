@@ -33,7 +33,6 @@ vms_memory_backend.py depend on, with no import cycle.
 This module must NOT import from unified_memory_api.py or vms_memory_backend.py.
 """
 
-
 from __future__ import annotations
 
 import threading
@@ -42,10 +41,10 @@ from typing import Any, Protocol, runtime_checkable
 from pydantic import BaseModel, ConfigDict, Field
 
 __all__ = [
-    "MemoryBackend",
-    "MemoryRecord",
-    "MemoryBackendError",
     "InMemoryMemoryBackend",
+    "MemoryBackend",
+    "MemoryBackendError",
+    "MemoryRecord",
 ]
 
 

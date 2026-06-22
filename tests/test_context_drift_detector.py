@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.context_drift_detector import ContextDriftDetector
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:

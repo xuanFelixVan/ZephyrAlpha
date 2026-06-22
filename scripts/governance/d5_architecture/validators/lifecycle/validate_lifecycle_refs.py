@@ -15,7 +15,9 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -36,7 +38,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SCAN_EXTENSIONS_MD, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.thresholds import get
 from _shared.walk import iter_files
@@ -170,12 +172,12 @@ def main() -> None:
     print(f"  LRC-004（draft 被 3+ active 引用）: {len(lrc004)}", file=sys.stderr)
     for f in lrc001[:10]:
         print(
-            f'\n  [MEDIUM] {f['file']}\n     LRC-001: 引用 draft 文件 {f.get('target_module_id') or f.get('target_file')}',
+            f"\n  [MEDIUM] {f['file']}\n     LRC-001: 引用 draft 文件 {f.get('target_module_id') or f.get('target_file')}",
             file=sys.stderr,
         )
     for f in lrc004[:10]:
         print(
-            f'\n  [MEDIUM] {f['file']}\n     LRC-004: 被 {f.get('reference_count')} 个 active 文件引用', file=sys.stderr
+            f"\n  [MEDIUM] {f['file']}\n     LRC-004: 被 {f.get('reference_count')} 个 active 文件引用", file=sys.stderr
         )
     if findings:
         hidden = len(lrc001) - 10 if len(lrc001) > 10 else 0

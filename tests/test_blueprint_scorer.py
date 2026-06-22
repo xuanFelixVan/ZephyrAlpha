@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.trading.orchestrator.blueprint_scorer import score_and_rank_routes, score_blueprint_route
 
 

@@ -47,7 +47,6 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 import asyncio
 import logging
 import time
@@ -60,10 +59,10 @@ from typing import Protocol
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "LockError",
     "DistributedLock",
-    "MemoryLock",
+    "LockError",
     "LockHandle",
+    "MemoryLock",
 ]
 
 logger = logging.getLogger(__name__)

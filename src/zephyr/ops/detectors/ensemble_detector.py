@@ -27,6 +27,7 @@ Risk: R21 — False negatives on anomalies detectable only by ensemble voting.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class EnsembleDetector:
     detectors: list[str] = field(default_factory=list)

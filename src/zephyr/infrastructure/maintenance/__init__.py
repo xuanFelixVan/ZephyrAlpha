@@ -6,14 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.maintenance — auto-generated package init."""
-from . import autonomy_monitor
-from . import dogfooding
-from . import handbook
-from . import zero_config
 
-__all__ = ['autonomy_monitor', 'dogfooding', 'handbook', 'zero_config']
+from . import autonomy_monitor, dogfooding, handbook, zero_config
 
+__all__ = ["autonomy_monitor", "dogfooding", "handbook", "zero_config"]

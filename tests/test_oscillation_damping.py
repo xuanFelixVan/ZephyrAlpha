@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_oscillation_damping.py
 
-import pytest
 
 from zephyr.ops.resilience.oscillation_damping import (
     DampingState,

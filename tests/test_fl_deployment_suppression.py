@@ -10,9 +10,7 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_deployment_suppression.py
 
-import time
-import pytest
-from zephyr.ops.gates.deployment_suppression import DeploymentSuppression, DeployGateState
+from zephyr.ops.gates.deployment_suppression import DeployGateState, DeploymentSuppression
 
 
 class TestDeploymentSuppressionInstantiation:

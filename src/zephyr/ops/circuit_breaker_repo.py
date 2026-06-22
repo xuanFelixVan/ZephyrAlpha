@@ -29,14 +29,13 @@ circuit_breaker_repo.py — circuit_breaker_state 表持久化仓库（AUDIT-07 
 
 from __future__ import annotations
 
-
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
 from zephyr.governance.persistence.circuit_breaker_types import CircuitBreakerState
+from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
 
 __all__ = [
     "CircuitBreakerRecord",
@@ -59,7 +58,7 @@ class CircuitBreakerRecord:
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _row_to_record(row: Any) -> Self:
@@ -113,8 +112,7 @@ class CircuitBreakerRepo:
                      last_failure_at, opened_at, reason, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (caller, target, state.value, failure_count,
-                 last_failure_at, opened_at, reason, now, now),
+                (caller, target, state.value, failure_count, last_failure_at, opened_at, reason, now, now),
             )
             self._conn.execute("COMMIT")
             return cursor.lastrowid
@@ -143,8 +141,7 @@ class CircuitBreakerRepo:
                     opened_at = ?, reason = ?, updated_at = ?
                 WHERE caller_module = ? AND target_module = ?
                 """,
-                (state.value, failure_count, last_failure_at,
-                 opened_at, reason, now, caller, target),
+                (state.value, failure_count, last_failure_at, opened_at, reason, now, caller, target),
             )
             self._conn.execute("COMMIT")
         except Exception:
@@ -170,9 +167,7 @@ class CircuitBreakerRepo:
             raise
 
     def list_open(self) -> list[CircuitBreakerRecord]:
-        cursor = self._conn.execute(
-            "SELECT * FROM circuit_breaker_state WHERE state = 'OPEN' ORDER BY opened_at DESC"
-        )
+        cursor = self._conn.execute("SELECT * FROM circuit_breaker_state WHERE state = 'OPEN' ORDER BY opened_at DESC")
         return [_row_to_record(row) for row in cursor.fetchall()]
 
     def close(self) -> None:

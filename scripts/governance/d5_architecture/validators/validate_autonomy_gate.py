@@ -42,7 +42,7 @@ ensure_utf8_stdout()
 import argparse
 import subprocess
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 AUTONOMY_LEVELS = {
     "full": ["create", "modify", "delete", "move", "rename", "refactor"],
@@ -148,10 +148,10 @@ def main() -> None:
     print(f"  AI commit: {ai_count}", file=sys.stderr)
     print(f"  疑似越权操作: {len(findings)}", file=sys.stderr)
     for f in findings:
-        print(f'\n  ⚠ [{f['severity']}] {f['hash']} — {f['author']}', file=sys.stderr)
-        print(f'     {f['message']}', file=sys.stderr)
-        print(f'     违规动作: {', '.join(f['violations'])}', file=sys.stderr)
-        print(f'     涉及文件: {f['files_touched']}', file=sys.stderr)
+        print(f"\n  ⚠ [{f['severity']}] {f['hash']} — {f['author']}", file=sys.stderr)
+        print(f"     {f['message']}", file=sys.stderr)
+        print(f"     违规动作: {', '.join(f['violations'])}", file=sys.stderr)
+        print(f"     涉及文件: {f['files_touched']}", file=sys.stderr)
     if findings:
         print(f"\n⚠ {len(findings)} 次 AI 操作涉嫌越权/跳过门禁！", file=sys.stderr)
     if args.warn_only:

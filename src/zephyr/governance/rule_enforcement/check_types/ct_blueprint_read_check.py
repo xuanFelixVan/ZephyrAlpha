@@ -27,78 +27,30 @@ BlueprintReadCheckHandler — BlueprintReadCheckHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class BlueprintReadCheckHandler(CheckTypeHandler):
-
-
     name = "blueprint_read_check"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        target_blueprint = str(params.get("target_blueprint", ""))
 
-                violations = []
+        if not target_blueprint:
+            violations.append({"message": "blueprint_read_check missing target_blueprint", "severity": check.severity})
 
-
-                target_blueprint = str(params.get("target_blueprint", ""))
-
-
-                if not target_blueprint:
-
-
-                    violations.append({"message": "blueprint_read_check missing target_blueprint", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

@@ -18,7 +18,7 @@ last_updated: "2026-05-15"
 last_verified: "2026-05-14"
 construction_progress: completed
 drift_status: reviewed
-actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys-master\\blueprint.md"
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys_master\\blueprint.md"
 template_for: blueprint
 generation: 2
 functional_domain: system
@@ -778,7 +778,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| PS-STD-005 | 必须 | 定义本蓝图的合法位置 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` |
+| PS-STD-005 | 必须 | 定义本蓝图的合法位置 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
 | MOD-MASTER-001 | 必须 | 12系统集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
 | architecture-model/index.yaml | 可选 | 拓扑数据 | — | `D:\ZephyrAlpha\architecture-model\_index.yaml` |
 | blueprint-registry.yaml | 可选 | 蓝图健康度 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
@@ -839,7 +839,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
 | 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
 | 全部模块蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\*\blueprint.md` + `D:\ZephyrAlpha\docs\03_modules\_cross_layer\*\blueprint.md` |
-| 架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` |
+| 架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
 | 架构模型 | `D:\ZephyrAlpha\architecture-model\layers\*.yaml` |
 | 业务层代码 | `D:\ZephyrAlpha\src\zephyr\data\` ~ `D:\ZephyrAlpha\src\zephyr\simulation\` |
 | 基础设施代码 | `D:\ZephyrAlpha\src\zephyr\gates\`, `D:\ZephyrAlpha\src\zephyr\context-engine\`, ... |
@@ -863,7 +863,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 当本文变更时，同步更新：
 1. `docs/03_modules/blueprint-registry.yaml` —— 新增 SYS-MASTER-001 登记行
-2. `docs/01_policies_and_standards/meta/blueprint-architecture-standard.md` —— 若 Level 0 定义调整
+2. `docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml` —— 若 Level 0 定义调整
 3. `architecture-rationale-log.md` —— 追加 beta 相关决策
 
 ---
@@ -1091,7 +1091,7 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 
 ```
 部署管线:
-  Build → Unit Test → Gate G0-G7 → Canary(1h) → 渐进(10%→50%→100%) 
+  Build → Unit Test → Gate G0-G7 → Canary(1h) → 渐进(10%→50%→100%)
   任一阶段失败→自动回滚(old commit)
 ```
 
@@ -1470,7 +1470,7 @@ Inference Pipeline: 实时数据→→→→因子计算→→→模型预测
 ```
 AI Velocity:
   Commits/session, LOC/session, Cost per commit ($)
-  Target:  ≥3 commits/session 
+  Target:  ≥3 commits/session
 ```
 
 ---
@@ -1628,10 +1628,10 @@ MIiFID II Art.27 Best Execution:
 
 ```
 Market Impact (元):  η·σ·(X/V)^γ + ε
-   η (冲击系数)   = 0.14  | 
+   η (冲击系数)   = 0.14  |
    γ (冲击指数)   = 0.6   |
    ε (固定成本)   = 0.01  |   SV→slip 基于 体积函数
-   σ (波动率)     = 20天↓ 
+   σ (波动率)     = 20天↓
 ```
 
 ### 49.3 FIX Protocol 映射
@@ -2243,7 +2243,7 @@ System Entropy (每次commit计算):
   3) ruff check . --exit-zero
   4) Gate G0-G4 自检
   5) Demo: 启动数据源→加载1天→因子→信号→1虚拟订单
-  
+
   ALL ✅ → GREEN—系统无条件可重建
   ANY ❌ → YELLOW—Owner 12h内修复
   连续2天❌ → RED—Owner MUST NOW
@@ -2271,7 +2271,7 @@ System Entropy (每次commit计算):
 
 ```
 策略A: 回测 Sharpe=2.1 → 预计实盘=?
-  
+
   老化衰减 (Look-ahead消除)              -0.2
   成本衰减 (冲击+佣金+滑点)              -0.3
   过拟合衰减(PURE OOS beyond WFO)        -0.15
@@ -2279,7 +2279,7 @@ System Entropy (每次commit计算):
   其他未建模                             -0.05
   ─────────────────────────────────────────
   预计实盘 Sharpe = 2.1 - 0.8 = 1.3 ✅ (>0.8 =上线)
-  
+
   上线后实盘 Sharpe<1.0 → 触发策略审查
 ```
 
@@ -2507,12 +2507,12 @@ Round 3: 综合裁决
     classes: "PascalCase"          # 不是 snake_case
     functions: "snake_case"        # 不是 camelCase
     constants: "UPPER_SNAKE_CASE"  # 不是 PascalCase
-  
+
   imports:
     order: ["stdlib", "third_party", "zephyr_internal"]
     style: "absolute_imports_only"  # 禁止相对导入 from . import
     forbidden: ["from module import *"]
-  
+
   typing:
     all_public_functions: "MUST have type annotations"
     all_public_classes: "MUST have type annotations"
@@ -2842,18 +2842,18 @@ FORBIDDEN:
 ```
 灵敏度分析 (每个上线策略 MUST):
   滑动每个参数 ±20%, 步长5%
-  
+
   Parameter         -20%    -15%    ...    0%    ...    +15%    +20%
   ───────────────────────────────────────────────────────────────
   lookback_window   Shar=1.1  Shar=1.3  Shar=1.5  Shar=1.6  Shar=1.5
   entry_threshold   Shar=1.8  Shar=1.7  Shar=1.5  Shar=1.0  Shar=0.5
   stop_loss_pct     Shar=1.6  Shar=1.5  Shar=1.5  Shar=1.4  Shar=0.3
-  
+
   判定:
     lookback_window: Robust (Sharpe波动小)
     entry_threshold: 🔴 高度敏感——参数选择极关键
     stop_loss_pct:  Moderate
-  
+
   敏感参数: 必须做额外OOS验证
 ```
 
@@ -2867,7 +2867,7 @@ FORBIDDEN:
     - VaR/CVaR 置信区间
     - MaxDD 分布 (不是单一值, 是分布!)
     - 破产概率 (Path中AUM≤0的概率)
-    
+
   阀值: 破产概率 > 0.01 → 策略需要调整
 ```
 
@@ -3036,8 +3036,8 @@ Pre-Regime Change Signals (提前1-4周):
   ☐ VIX 期货升水转贴水 (term structure inversion)
   ☐ 国债期限利差倒挂或变陡
   ☐ 央行发言转向
-  
-  3/4 触发 → 体制切换预警 → 
+
+  3/4 触发 → 体制切换预警 →
     ① 策略权重重新校准
     ② 减仓敏感资产
     ③ Owner 通知
@@ -3111,7 +3111,7 @@ Audit Readiness Check (每季):
   - 所有直接+传递依赖列表
   - 每个依赖的版本+许可证+hash
   - 已知漏洞(CVE)关联
-  
+
 AI MUST 在添加新依赖前:
   1) 检查 SBOM 中是否已有类似功能依赖(避免重复)
   2) 评估许可证兼容性
@@ -3134,7 +3134,7 @@ AI MUST 在添加新依赖前:
 ```
 每周: AI 扫描所有依赖
   有更新 → AI 生成 PR + changelog 分析 + 测试全跑
-  
+
   自动合并条件:
     patch 版本 (1.0.x→1.0.y): 测试全绿 → Auto-merge
     minor 版本 (1.x→1.y): 测试全绿 + Owner扫一眼 → merge
@@ -3175,7 +3175,7 @@ statemachine:
 从 YAML spec 自动生成测试:
   for each transition:
     test_CAN_transition_<from>_to_<to>_on_<event>()
-  
+
   for each invalid transition:
     test_CANNOT_transition_<from>_to_<to>
 
@@ -3268,7 +3268,7 @@ experiment:
 
 所需样本:
   n ≈ 2(Z_α/2 + Z_β)²·σ² / MDE²
-  
+
 规则:
   达到所需样本前: 🛑 不能停止——防止偷窥(peeking)
   达到统计显著(p<0.05): 可提前结束
@@ -3484,16 +3484,16 @@ Session 启动时:
     ☐ Reallocated Sectors: 0 (关注增长趋势)
     ☐ Wear Level: <80% (寿命消耗)
     ☐ Temperature: <60°C
-  
+
   RAM:
     ☐ 最近一次 memtest: <30天 & PASS
     ☐ 可用内存: >20% (非 error——这个是资源监控)
-  
-  Power:  
+
+  Power:
     ☐ UPS 连接: Yes
     ☐ UPS 电池: >80% capacity
     ☐ UPS 预估续航: >15min
-  
+
   Thermal:
     ☐ CPU Temp: <80°C
     ☐ GPU Temp: <80°C (如有)
@@ -3545,8 +3545,8 @@ SSD 濒死 (SMART warning):
   ☐ 已知 API EOL (End-of-Life)日期追踪 → 倒计时提醒
 
 代码适配流程:
-  第三方 API 弃用通知 → 
-    AI 生成impact_analysis: 哪些模块受影响? 
+  第三方 API 弃用通知 →
+    AI 生成impact_analysis: 哪些模块受影响?
     → AI 生成 migration plan: 新API调用方式+测试
     → Owner批准→AI执行迁移→测试全绿→合并
 ```
@@ -3697,7 +3697,7 @@ Aggregate Failure Score:
   failure_i:  单个故障的 severity (0-10)
   severity_i: 故障类型系数 (润滑偏差1.0 / 数据质量2.0 / 安全5.0)
   persistence_i: 持续时长系数 (0-1h:0.5 / 1-24h:1.0 / >24h:2.0)
-  
+
   AFS < 2.0:  ✅ 正常运转
   AFS 2.0-5.0: 🟡 聚合风险——Owner 评估
   AFS 5.0-10.0: 🔴 级联风险——减仓+暂停新开仓
@@ -3734,7 +3734,7 @@ Aggregate Failure Score:
 每个 AI 产出被自动切分为 Logical Chunks:
 
 Chunk #1 (lines 10-45): 新增函数 calculate_momentum → [ACCEPT] [REJECT] [MODIFY]
-Chunk #2 (lines 46-89): 修改参数默认值      → [ACCEPT] [REJECT] [MODIFY]  
+Chunk #2 (lines 46-89): 修改参数默认值      → [ACCEPT] [REJECT] [MODIFY]
 Chunk #3 (lines 90-120): 新增type hints      → [ACCEPT] [REJECT] [MODIFY]
 Chunk #4 (lines 121-150): 注释更新           → [ACCEPT] [REJECT] [MODIFY]
 
@@ -3762,7 +3762,7 @@ Owner 操作:
 ```
 每次增量审查后记录:
   - 总 Chunks / ACCEPT% / REJECT% / MODIFY%
-  - 审查耗时 (秒)  
+  - 审查耗时 (秒)
   - 审查后 WQA 评分(§39)
 
 Weekly pattern:
@@ -3791,14 +3791,14 @@ Weekly pattern:
 ```
 Point-in-Time Universe:
   每天: 系统存储当日可交易全集(symbol_list + tradeable=true)
-  
-  回测时: 
+
+  回测时:
     for day in 2016-01-01..2024-12-31:
       pool = get_universe(day)  // 只用当天的成分股
       factors = calculate(pool, day)
       signals = generate(factors)
       trades = execute(signals, pool)
-    
+
   NOT:
     pool = get_universe(TODAY)  // ❌ 前视——用今天知道的成分股
     for day in history: ...
@@ -3864,10 +3864,10 @@ Point-in-Time Universe:
 
 | # | 文件 | module_id | 版本 | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------|------------|----------|
-| 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表、frontmatter模板 |
+| 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表、frontmatter模板 |
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
-| 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
-| 4 | 蓝图架构标准 | PS-STD-005 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` | 三级金字塔规范 |
+| 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
+| 4 | 蓝图架构标准 | PS-STD-005 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` | 三级金字塔规范 |
 | 5 | 蓝图模板 | — | v3.5/v3.6 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 蓝图编写模板 |
 | 6 | 压缩工作流标准 | GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 产出物规格化 |
 | 7 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |

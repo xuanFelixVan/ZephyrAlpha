@@ -37,8 +37,8 @@ from zephyr.governance.persistence.sqlite_schema import DB_PATH, SchemaManager, 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "SnapshotManager",
     "SnapshotError",
+    "SnapshotManager",
 ]
 
 
@@ -199,13 +199,13 @@ class SnapshotManager:
                     if ev.event_id == last_event_id:
                         cutoff_idx = i
                         break
-                events_after = all_events[cutoff_idx + 1:] if cutoff_idx >= 0 else all_events
+                events_after = all_events[cutoff_idx + 1 :] if cutoff_idx >= 0 else all_events
             else:
                 cutoff_idx = -1
                 for i, ev in enumerate(all_events):
                     if ev.timestamp <= cutoff_timestamp:
                         cutoff_idx = i
-                events_after = all_events[cutoff_idx + 1:] if cutoff_idx >= 0 else all_events
+                events_after = all_events[cutoff_idx + 1 :] if cutoff_idx >= 0 else all_events
         else:
             events_after = store.replay_events(task_id)
 

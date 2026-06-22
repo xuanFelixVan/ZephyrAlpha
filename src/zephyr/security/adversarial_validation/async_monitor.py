@@ -16,15 +16,14 @@ import logging
 import threading
 import time
 from enum import Enum
-from pathlib import Path
 
-from zephyr.security.adversarial_validation.circuit_breaker import CircuitBreaker, CircuitState
 from zephyr.security.adversarial_validation.bypass_recorder import BypassRecorder
-from zephyr.security.adversarial_validation.cleanup import Cleanup, CleanupVerificationError
+from zephyr.security.adversarial_validation.circuit_breaker import CircuitBreaker, CircuitState
+from zephyr.security.adversarial_validation.cleanup import Cleanup
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["AsyncMonitor", "MonitorState", "MonitorAlert", "MonitorStallError"]
+__all__: list[str] = ["AsyncMonitor", "MonitorAlert", "MonitorStallError", "MonitorState"]
 
 DEFAULT_POLL_INTERVAL_S: int = 30
 
@@ -49,7 +48,6 @@ class MonitorStallError(RuntimeError):
 
 
 class AsyncMonitor:
-
     def __init__(self, poll_interval_s: int = DEFAULT_POLL_INTERVAL_S) -> None:
         self._poll_interval_s: int = max(poll_interval_s, 5)
         self._state: MonitorState = MonitorState.IDLE
@@ -100,31 +98,31 @@ class AsyncMonitor:
                 self._consecutive_failures += 1
                 if self._consecutive_failures >= 5:
                     self._state = MonitorState.STALLED
-                    self._alerts.append(MonitorAlert(
-                        "stall_detector", "CRITICAL",
-                        f"Monitor stalled after {self._consecutive_failures} failures"
-                    ))
+                    self._alerts.append(
+                        MonitorAlert(
+                            "stall_detector", "CRITICAL", f"Monitor stalled after {self._consecutive_failures} failures"
+                        )
+                    )
                     logger.critical("async_monitor_stalled failures=%d", self._consecutive_failures)
 
             self._stop_event.wait(self._poll_interval_s)
 
     def _check_circuit_breaker(self) -> None:
         if self._circuit_breaker.state == CircuitState.OPEN:
-            self._alerts.append(MonitorAlert(
-                "circuit_breaker", "HIGH", "Circuit breaker OPEN - adversarial testing paused"
-            ))
+            self._alerts.append(
+                MonitorAlert("circuit_breaker", "HIGH", "Circuit breaker OPEN - adversarial testing paused")
+            )
 
     def _check_bypass_backlog(self) -> None:
         bypass_entries = self._bypass_recorder.escalated_entries()
         if len(bypass_entries) > 0:
-            self._alerts.append(MonitorAlert(
-                "bypass_backlog", "MEDIUM",
-                f"{len(bypass_entries)} escalated bypass entries pending resolution"
-            ))
+            self._alerts.append(
+                MonitorAlert(
+                    "bypass_backlog", "MEDIUM", f"{len(bypass_entries)} escalated bypass entries pending resolution"
+                )
+            )
 
     def _check_cleanup_residue(self) -> None:
         cleanup = Cleanup()
         if not cleanup.verified():
-            self._alerts.append(MonitorAlert(
-                "cleanup_residue", "LOW", "Cleanup residue detected - artifacts remain"
-            ))
+            self._alerts.append(MonitorAlert("cleanup_residue", "LOW", "Cleanup residue detected - artifacts remain"))

@@ -1,12 +1,33 @@
 rule_id: TRAE-024
 title: 方法论-诊断与根因分析
+version: 1.0.0
+layer: L2
+module_id: TRAE-024
+depends_on:
+- TRAE-041
+- TRAE-042
+tags:
+- TRAE
+- methodology_diagnosis
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - MTH-001
 - MTH-002
 - MTH-003
+- MTH-004
+- MTH-005
 - MTH-006
+- MTH-007
+- MTH-008
+- MTH-009
+- MTH-010
+- MTH-011
+- MTH-012
+- MTH-013
 - PS-STD-011
-layer: L2
 severity: warning
 scope: methodology_diagnosis
 domain: TRAE
@@ -69,6 +90,8 @@ sections:
     actions:
     - type: mandatory
       step: 1.明确问题→2.查找标准(专业框架映射表)→3.适配标准(有现成方案→适配；无→记录原因自行定义)→4.记录溯源(规则"专业参考"字段填写专业框架和章节号)
+    - type: verification
+      step: 每条规则的"专业参考"字段是否已填写，且能追溯到具体的专业框架章节
     prohibitions: []
   mth_002:
     title: 架构上下文自检
@@ -83,6 +106,8 @@ sections:
     actions:
     - type: mandatory
       step: 1.定位架构层(layer字段→对应目录)→2.查验架构完整性(该层目录是否有架构描述文件)→3.不完整则探查架构该有的样子(专业框架+社区实践)→4.仅当架构完整时才操作文件
+    - type: verification
+      step: 新建/移动文件时，检查其layer字段是否匹配所在目录、该目录是否已有架构描述文件
     prohibitions: []
   mth_003:
     title: 目标优先原则
@@ -94,13 +119,16 @@ sections:
       check: 规则字面执行与系统目标冲突时
       pass: 选择最接近系统目标的路径
       fail: 规则形式主义压倒系统目标
+    applicable_scenarios:
+    - 规则间冲突仲裁失败(如优先级表无法覆盖的新型冲突)
+    - 规则漏洞导致破坏性后果(规则未覆盖的边界情况)
+    - 规则滞后于架构进化(字段改名后引用未同步导致的安全空白)
     actions:
     - type: mandatory
       step: 1.冲突识别(规则矛盾/破坏性后果/规则滞后)→2.裁决方向(目标优先于规则)→3.偏离记录MUST(偏离规则/原因/替代方案/达到目标)→4.事后修正(评估是否需修改原规则)
-    prohibitions:
-    - 以"规则说不允许"作为停止思考的借口
-    - 跳过步骤1(判断最优方案)直接进入步骤2(检查规则约束)
-    - 在3b中只说"不能"不给覆盖建议
+    - type: verification
+      step: 所有偏离操作必须出现在Session Log或ADR中，且包含完整的偏离记录四要素(规则/原因/替代方案/达到目标)
+    prohibitions: []
   mth_006:
     section_type: root_cause_analysis
     title: 根源分析原则
@@ -124,10 +152,249 @@ sections:
     - decision: 诊断反转验证不可跳过
       evidence: 初始诊断与深挖结论可能不一致
       conclusion: 不一致时追问为什么初始诊断是错的
+    actions:
+    - type: verification
+      step: 每次修复后追问——如果再发生一次同类问题，我还会回到这个文件来改吗？如果答案是"不会"→治根不彻底
     prohibitions:
     - 在第一个为什么就停下
     - 治标不治根(仅作用于当前实例)
     - 跳过诊断反转验证
+  mth_004:
+    title: 对标=架构标准非机构冗余
+    section_type: rule
+    original_rules:
+    - MTH-004
+    conditions:
+    - type: pre_condition
+      check: 做出架构对标决策时
+      pass: 复刻架构容量/分层设计/治理体系，不复刻人力/合规/容灾冗余
+      fail: 过于豪华(堆叠无意义冗余层)或过于简陋(以"一个人"为由放低架构标准)导致1500模块规模时崩溃
+    actions:
+    - type: mandatory
+      step: 应复刻——架构容量(模块间接口定义/依赖管理)/分层设计(关注点隔离)/治理体系(版本管理/变更控制/审计追溯)
+    - type: mandatory
+      step: 不应复刻——人力冗余(多团队并行开发)/合规冗余(多地监管报告)/容灾冗余(多数据中心热备)
+    - type: mandatory
+      step: 判断标准——为"减少耦合/提高可测试性/降低认知负担"→适用；为"让两个团队不互相踩脚"→冗余
+    - type: verification
+      step: 每个架构决策标注对标动机——是"耦合分离"还是"组织边界"
+    prohibitions:
+    - 过于豪华(堆叠无意义的冗余层)
+    - 过于简陋(以"一个人"为由放低架构标准)
+  mth_005:
+    title: 模块天花板与自治预留
+    section_type: rule
+    original_rules:
+    - MTH-005
+    conditions:
+    - type: pre_condition
+      check: 设计模块架构时
+      pass: 当前设计考虑1500+规模并为AI自治预留接口
+      fail: 50模块时看似合理的设计在200模块时成为瓶颈，1500模块时不得不重写
+    actions:
+    - type: mandatory
+      step: 1.当前设计必须考虑1500+规模——接口是否仍清晰/依赖树是否不爆炸/命名空间是否不冲突
+    - type: mandatory
+      step: 2.为AI自治预留接口(低成本不实现)——模块元数据标准化/清晰的状态机/机器可读的策略契约
+    - type: mandatory
+      step: 3.当前不开发AI自治模块——预留接口是声明式标记不是实现，实现推迟到Phase 5
+    - type: verification
+      step: CI中检查每个新模块是否有完整frontmatter(AI自治的数据基础)；定期扫描接口契约完整性
+    prohibitions:
+    - 以"现在先这样以后再改"为由跳过1500+规模设计
+    - 将预留接口当作实现来开发
+  mth_007:
+    title: 决策质量四问
+    section_type: rule
+    original_rules:
+    - MTH-007
+    conditions:
+    - type: pre_condition
+      check: 每次向Owner提交方案时
+      pass: 经过四问检查(埋雷/容量/对标/建议)
+      fail: 方案存在埋雷风险或容量不足或缺乏行业先例支撑
+    actions:
+    - type: mandatory
+      step: 1.埋雷检查——这个选择会不会给未来埋雷？选A方案未来纠正需要重写架构吗？有清晰的拆除路径吗？
+    - type: mandatory
+      step: 2.容量检查——这个选择会不会限制未来容量？容量被谁消耗？还有多少余量？
+    - type: mandatory
+      step: 3.专业对标——专业机构/Vibe Coding社区怎么做的？我们的选择在行业中有没有先例支撑？
+    - type: mandatory
+      step: 4.最终建议(带推理)——"A在埋雷维度无风险/容量维度有余量/对标维度有IETF/OWASP先例支撑，因此推荐A"
+    - type: verification
+      step: 每次建议被Owner采纳后，未来3个session内是否因为该建议的"埋雷"而被迫返工？如果是→四问执行不彻底
+    prohibitions:
+    - 这个看着顺眼就选它(跳过四问)
+    - 我觉得没问题(跳过对标)
+    - 以后再说(跳过埋雷检查)
+  mth_008:
+    title: SSoT冲突裁决协议
+    section_type: rule
+    original_rules:
+    - MTH-008
+    conditions:
+    - type: trigger
+      check: 发现SSoT冲突时(同一概念在多个文件定义)
+      pass: 按时序/职责/先例裁决出唯一真源
+      fail: 两个AI session读到不同定义执行不同规则，工程质量不一致
+    actions:
+    - type: mandatory
+      step: 1.时序优先——谁先注册/定义该概念？查frontmatter date或created_at字段
+    - type: mandatory
+      step: 2.职责归属——该概念的语义属于哪个文件的自然领域？语义匹配度=该概念名是否直接描述了该文件的core purpose
+    - type: mandatory
+      step: 3.专业先例——IETF RFC编辑(已有RFC号不收回，新文档用更高的未使用号)/OWASP(发现项目缩写冲突时后来者必须重命名)
+    - type: mandatory
+      step: 4.裁决输出——真源文件X(module_id+绝对路径)/冲突文件Y/修复方式(Y迁移到独立编号空间/删除Y中重复定义/Y改为引用X)
+    - type: verification
+      step: 裁决后执行grep "ABS-" --files-with-matches是否只返回PS-STD-003？如果在其他文件中仍有ABS-引用，裁决未执行完毕
+    prohibitions:
+    - 编号空间(如ABS-/LFC-/MTH-)属于多个文件
+    - 字段定义(如status/stability)的真源不是PS-STD-001
+    - 裁决后未验证冲突文件是否已清理引用
+  mth_009:
+    title: 补漏与终止双检
+    section_type: rule
+    original_rules:
+    - MTH-009
+    conditions:
+    - type: pre_condition
+      check: 每次审查结束时
+      pass: 补漏检查+够用检查均完成并记录
+      fail: 项目节奏失控(过度审查同一个东西或还没审完就跳到下一个)
+    actions:
+    - type: mandatory
+      step: 1.补漏检查——按专业机构/Vibe Coding社区的标准框架，当前审查范围内是否还有未覆盖的类别？打开专业框架映射表→找到本次涉及的领域→逐条过，标记"已覆盖"/"当前阶段不适用"/"进入Backlog"
+    - type: mandatory
+      step: 2.够用检查——以当前已知条件和项目阶段，现有规则量是否已够用？当前规则是否能覆盖下一个开发阶段的所有已知需求？是→停止。"万一将来需要"不构成施工理由
+    - type: mandatory
+      step: 3.双检记录MUST——"已覆盖：{列举}"/"进入Backlog：{列举+预计Phase}"/"当前阶段不适用：{列举+原因}"
+    - type: verification
+      step: 本次审查结束后，下一个Phase的施工是否因为本次的"够用检查"遗漏而被迫回补？如果是→"够用"判定错误
+    prohibitions:
+    - 以"万一将来需要"构成施工理由
+    - 跳过双检记录直接结束审查
+    - 过度审查同一个东西(已够用仍继续)
+  mth_010:
+    title: 规则体系架构审查原则
+    section_type: rule
+    original_rules:
+    - MTH-010
+    conditions:
+    - type: trigger
+      check: 每次规则体系变动后(新增/合并/重命名/重组)
+      pass: 执行四步审查(名字=责任/责任声明/文件夹职责/专业机构对标)
+      fail: 规则体系结构混乱，文件名与责任不一致
+    actions:
+    - type: mandatory
+      step: Step1名字=责任检查——文件名是否一眼看出责任？(否→重命名)/文件名后缀是否统一？(否→统一后缀)/文件名与title是否一致？(否→修正不一致的一方)
+    - type: mandatory
+      step: Step2责任声明检查——是否有正向责任声明§1.2？(否→补写§1.2)/是否有负向责任边界§1.3？(否→补写§1.3)/责任边界是否指向正确文件？(否→修正指向)
+    - type: mandatory
+      step: Step3文件夹职责检查——每个文件夹是否有责任声明？(否→写入index.md)/文件夹是否只装一种类型？(否→迁移异类文件)/文件夹命名是否遵循规范？(否→重命名)
+    - type: mandatory
+      step: Step4专业机构对标——文件划分是否与对标机构一致？(否→补充差距分析)/命名是否与对标机构一致？(否→修正命名)/是否有对标差异的正当理由？(否→补写论证或修正)
+    - type: frequency
+      step: 审查频率——变更触发(新增/合并/重命名→受影响目录立即执行)/定期审计(全部01_policies_and_standards/，每90天或Phase转换时)
+    - type: completion_criteria
+      step: 完成标准——输出审查报告{Step1结果+Step2结果+Step3结果+Step4结果}。Step1-3有不合格→修复后重新审查。Step4有差距但已论证正当理由→记录为"已知差距"
+    prohibitions:
+    - 跳过MTH-010直接提交
+    - Step1-3不合格时标记"通过"
+    - 以"将来再修"跳过重命名
+    - 选择性对标
+  mth_011:
+    title: 内容冗余审计三分类法
+    section_type: rule
+    original_rules:
+    - MTH-011
+    conditions:
+    - type: trigger
+      check: 审计文件内容冗余时
+      pass: 按三分类(重复/废话/有价值)处理
+      fail: 文件堆积冗余内容，维护成本高
+    actions:
+    - type: mandatory
+      step: 三分类判定——🔴重复(该内容已在其他文件中被权威定义→删除改为引用真源文件`→ PS-STD-XXX §N`)/🟡废话(过度设计/很快过时/没人执行/层级错位→删除，如需保留下沉到操作手册或代码)/🟢有价值(本文独有/不可推导/对决策有实际约束→保留，检查是否应移到更合适的文件)
+    - type: quantitative
+      step: 量化评估——🔴+🟡>80%→考虑废除整个文件；60%~80%→大幅瘦身；30%~60%→删除🔴🟡；<30%→健康
+    - type: mandatory
+      step: 快速判定清单(逐段初筛三步依次执行)——1.独有吗？(有其他文件已定义→🔴重复→删除引用真源)/2.有人用吗？(从不被执行/引用→🟡废话→删除)/3.指的路对吗？(路径失效/编号不存在→修正为真实引用或内容已过时→删除)
+    - type: mandatory
+      step: 治根处理——🔴重复→删除并替换为对真源的引用；🟡废话→直接删除；🟢有价值→保留同时执行责任归属检查(放在当前文件是最合适的吗？)
+    prohibitions: []
+  mth_011_file_retirement:
+    title: 文件退役原则
+    section_type: procedure
+    original_rules:
+    - MTH-011 附文件退役原则
+    conditions:
+    - type: trigger
+      check: 文件需要退役时
+      pass: 提取独特知识后删除原件
+      fail: 退役文件残留或变成孤儿备份
+    actions:
+    - type: mandatory
+      step: 1.提取——文件中有独特知识(🟢类)吗？→提取到正确文件。没有→跳步骤3
+    - type: mandatory
+      step: 2.注入——提取内容必须去"应该放的地方"，不能改成另一个孤儿文件。查PS-STD-011 §3确定域归属
+    - type: mandatory
+      step: 3.删除——删除原件。git log保留历史
+    prohibitions:
+    - 把退役文件改名当备份(XXX_old/XXX_deprecated)
+    - 提取内容后原件不删
+  mth_012:
+    title: 涌现式设计原则
+    section_type: rule
+    original_rules:
+    - MTH-012
+    conditions:
+    - type: pre_condition
+      check: 创建/完善结构化文档时
+      pass: 模板填空保下限+草稿差异识别做上限
+      fail: 草稿血肉浪费或模板下限不保
+    actions:
+    - type: mandatory
+      step: Step1模板填空(保下限)——模板每个必填节填满，不跳节/不"待定"/不空着
+    - type: mandatory
+      step: Step2草稿差异识别——草稿内容逐段与模板结构对比(模板外内容：草稿有"三轮审计结果"但模板没有§审计记录；模板内不足：草稿§架构决策有5框架对比+15维度评分，模板只给了3行空间)
+    - type: mandatory
+      step: Step3差异分析三问判定——结构性还是装饰性？(装饰性丢弃)/未来AI session读到它会不会做出不同的决策？(会就纳入)/属于当前文件还是应迁移？(应迁移就迁移)
+    - type: conditional
+      step: Step4反向修正模板(仅显著差异时触发)——模板有但实例没用到的节→是否真的需要？/实例需要但模板缺的→修正模板/模板节容量不足→扩大或拆分/模板字段定义过时→修正
+    - type: trigger_condition
+      step: Step4触发条件——实例比模板多≥2个完整节/某节深度≥3倍模板/ADR裁定字段格式升级(`→ KB:decisions`)
+    prohibitions: []
+    notes:
+    - MTH-011 vs MTH-012互补：MTH-012做加法(哪些该加)，MTH-011做减法(哪些该删)
+    - 模板定义下限(及格线)，涌现式设计定义上限(草稿血肉不能浪费)
+  mth_013:
+    title: 路径架构合规创建原则
+    section_type: rule
+    original_rules:
+    - MTH-013
+    provenance: PS-STD-011 MTH-013
+    conditions:
+    - type: pre_condition
+      check: 所有文件/目录创建操作
+      pass: 按索引授权或Owner批准的路径创建
+      fail: AI自行决定目录层级产生孤立目录
+    actions:
+    - type: mandatory
+      step: 三步决策流程——1.目标路径是否已存在于项目树中？→按现有路径写入(零决策) 2.否→该文件类型在索引中有定义吗？查GOV-DOC-002 §5.1.2路径映射表+registry-master-index.yaml+document-metadata-index.yaml 3a.索引已定义→按索引创建目录→写入文件 3b.否(全新领域)→标记"新路径结构"→提交Owner讨论→临时存放sketches_and_drafts/{YYYY-MM-DD}/proposed-path-structure.md→通过则更新索引→创建目录→写入文件；未通过则不创建，任务卡标blocked.PATH_NOT_DEFINED
+    - type: mandatory
+      step: 5条核心原则——1.零自主创建权(AI永远不能自行决定新目录层级，必须有索引授权或Owner批准) 2.先查索引再行动(所有路径操作前强制查询GOV-DOC-002 §5.1.2+registry-master-index.yaml) 3.新结构必须登记(批准的新增目录创建后同一session内同步更新三个索引文件) 4.临时文件也守规矩(sketches_and_drafts/下也必须放在规定的草案目录下，禁止根目录创建) 5.目录存在性前置检查(写入前先os.path.exists(os.path.dirname(path))→不存在走三步流程)
+    - type: verification
+      step: 索引查询清单(按顺序任一有定义即可行动)——1.GOV-DOC-002 §5.1.2路径映射表(该文件类型的标准存放路径) 2.registry-master-index.yaml(是否有类似模块的目录结构先例) 3.document-metadata-index.yaml(是否有类似文件类型的存放路径先例) 4.module-id-registry.yaml(如果是新目录对应新模块——module_id是否已注册)
+    prohibitions:
+    - 使用os.makedirs创建未在索引中定义的目录层级(必须先走三步流程)
+    - 在项目根目录创建临时文件(如temp.py/test.md，临时文件必须放sketches_and_drafts/)
+    - '"我觉得应该放这"决定路径(感觉不是导航工具)'
+    - 跳过索引查询直接mkdir(即使目录看起来很像正确的结构)
+    - 创建了新目录但不在同一session内更新索引(目录成为"孤岛"，AI无法发现其存在)
+    notes:
+    - 文件类型索引参考——蓝图(GOV-DOC-002 §5.1.2模块文档)/任务卡(Task Pydantic model schemas.py)/治理标准(GOV-DOC-002 §5.1.2治理文档)/源代码(GOV-DOC-002 §5.1.2业务代码)/测试代码(GOV-DOC-002 §5.1.2测试代码)/审计脚本(scripts/governance/index.md)/草案草稿(GOV-DOC-002 §5.1.2草案目录)
   general_principles:
     title: 总则最优先行原则
     section_type: rule
@@ -143,6 +410,8 @@ sections:
       step: 1.先判断最优方案(不考虑规则约束)→2.再检查规则约束→3a无约束则执行→3b有约束则输出(最优方案X/被规则Y约束/是否值得覆盖/需要什么审批)
     prohibitions:
     - 以"规则说不允许"作为停止思考的借口
+    - 跳过步骤1(判断最优方案)直接进入步骤2(检查规则约束)
+    - 在3b中只说"不能"不给覆盖建议
   clean_project:
     title: 项目清爽原则
     section_type: rule
@@ -170,7 +439,7 @@ sections:
       change: "RQ-01~RQ-14审查修复——移除3个错误context段(mr_scope/mr_normative_refs/mr_change_history，内容为元数据注册表非方法论诊断)；添加正确change_history段；修复provenance路径(下划线→连字符匹配meta/index.md)并添加note标注源文件已迁移；aliases补充PS-STD-011(文件含PS-STD-011总则和项目清爽原则)"
     - version: "1.0.0"
       date: "2026-06-13"
-      change: "初始提取——从governance-methodology-standard.md提取MTH-001/002/003/006方法论诊断与根因分析规则"
+      change: "初始提取——从governance_methodology_standard.yaml提取MTH-001/002/003/006方法论诊断与根因分析规则"
 references:
   rule_ids:
   - TRAE-041
@@ -186,7 +455,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

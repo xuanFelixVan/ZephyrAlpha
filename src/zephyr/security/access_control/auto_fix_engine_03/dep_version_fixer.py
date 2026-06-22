@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.dep_version_fixer
-
 # [INVARIANTS] 只统一版本;不升级major版本;以最高minor/patch为准
-
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml dep_version_fixer段
-
 # [CONSUMERS] engine.py
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DepVersionFixError
-
 # [TESTS] tests/auto-fix-engine/test_dep_version_fixer.py
-
 import logging
 import os
 import re
@@ -38,6 +28,7 @@ from zephyr.security.access_control.auto_fix_engine_03.models import (
 )
 
 logger = logging.getLogger(__name__)
+
 
 class DepVersionFixer(BaseFixer):
     model_config = {"arbitrary_types_allowed": True}
@@ -65,23 +56,27 @@ class DepVersionFixer(BaseFixer):
                     match = re.match(r"^([A-Za-z0-9_\-]+)\s*([><=!~]+)\s*([0-9][0-9A-Za-z.\-]*)", line)
                     if match:
                         pkg, op, ver = match.groups()
-                        dep_versions[pkg.lower()].append({
-                            "file": str(req_file),
-                            "operator": op,
-                            "version": ver,
-                            "line": line,
-                        })
+                        dep_versions[pkg.lower()].append(
+                            {
+                                "file": str(req_file),
+                                "operator": op,
+                                "version": ver,
+                                "line": line,
+                            }
+                        )
             except Exception:
                 continue
         for pkg, entries in dep_versions.items():
             versions = set(e["version"] for e in entries)
             if len(versions) > 1:
-                findings.append({
-                    "package": pkg,
-                    "versions": list(versions),
-                    "locations": entries,
-                    "type": "version_conflict",
-                })
+                findings.append(
+                    {
+                        "package": pkg,
+                        "versions": list(versions),
+                        "locations": entries,
+                        "type": "version_conflict",
+                    }
+                )
         pyproject = repo_root / "pyproject.toml"
         if pyproject.exists():
             try:
@@ -91,12 +86,14 @@ class DepVersionFixer(BaseFixer):
                     if pkg.lower() in dep_versions:
                         for entry in dep_versions[pkg.lower()]:
                             if entry["version"] != ver:
-                                findings.append({
-                                    "package": pkg.lower(),
-                                    "versions": [ver, entry["version"]],
-                                    "locations": [{"file": str(pyproject), "version": ver}, entry],
-                                    "type": "pyproject_conflict",
-                                })
+                                findings.append(
+                                    {
+                                        "package": pkg.lower(),
+                                        "versions": [ver, entry["version"]],
+                                        "locations": [{"file": str(pyproject), "version": ver}, entry],
+                                        "type": "pyproject_conflict",
+                                    }
+                                )
             except Exception:
                 pass
         return findings
@@ -169,6 +166,7 @@ class DepVersionFixer(BaseFixer):
         def _parse(v: str) -> tuple[int, ...]:
             parts = re.findall(r"\d+", v)
             return tuple(int(p) for p in parts)
+
         try:
             return _parse(ver_a) > _parse(ver_b)
         except (ValueError, IndexError):
@@ -187,7 +185,12 @@ class DepVersionFixer(BaseFixer):
                     pkg_versions[match.group(1).lower()].append(match.group(2))
             conflicts = {p: vs for p, vs in pkg_versions.items() if len(set(vs)) > 1}
             if conflicts:
-                return ValidationResult(valid=False, check_name="dep_version_fix", evidence=f"Conflicts: {conflicts}", error="Version conflicts remain")
+                return ValidationResult(
+                    valid=False,
+                    check_name="dep_version_fix",
+                    evidence=f"Conflicts: {conflicts}",
+                    error="Version conflicts remain",
+                )
             return ValidationResult(valid=True, check_name="dep_version_fix", evidence="No version conflicts")
         except Exception as exc:
             return ValidationResult(valid=False, check_name="dep_version_fix", evidence="", error=str(exc))

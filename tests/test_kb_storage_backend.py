@@ -167,11 +167,13 @@ class TestInMemoryMemoryBackend:
         def writer(start):
             try:
                 for i in range(20):
-                    backend.write(MemoryRecord(
-                        chunk_id=f"c-{start}-{i}",
-                        topic=f"t-{start}",
-                        content=f"content-{start}-{i}",
-                    ))
+                    backend.write(
+                        MemoryRecord(
+                            chunk_id=f"c-{start}-{i}",
+                            topic=f"t-{start}",
+                            content=f"content-{start}-{i}",
+                        )
+                    )
             except Exception as e:
                 errors.append(e)
 

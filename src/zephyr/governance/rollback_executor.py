@@ -41,7 +41,6 @@ RollbackExecutor — 回滚执行器核心封装。
     preflight_check → is_committed? → revert or discard → verify → audit
 """
 
-
 from __future__ import annotations
 
 import json
@@ -49,29 +48,30 @@ import os
 import subprocess
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from zephyr.governance.rollback_lock import LockPriority, RollbackLock
 from zephyr.governance.sqlite_dumper import SqliteDumper
-from zephyr.governance.rollback_lock import RollbackLock, LockPriority
 
 _AUDIT_AVAILABLE = False
 try:
     from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+
     _AUDIT_AVAILABLE = True
 except ImportError:
     _CoreAuditWriter = None
 
 __all__ = [
-    "RollbackExecutor",
-    "RollbackOp",
     "DiscardDecision",
+    "DiscardResult",
     "PreflightResult",
     "PreviewResult",
+    "RollbackExecutor",
+    "RollbackOp",
     "RollbackResult",
-    "DiscardResult",
 ]
 
 
@@ -133,7 +133,6 @@ class DiscardResult:
 
 
 class RollbackExecutor:
-
     def __init__(
         self,
         project_root: Path | None = None,
@@ -154,7 +153,7 @@ class RollbackExecutor:
                 pass
 
     def _generate_execution_id(self) -> str:
-        ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+        ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
         short_uuid = uuid.uuid4().hex[:8]
         return f"RBEXEC-{ts}-{short_uuid}"
 
@@ -165,7 +164,7 @@ class RollbackExecutor:
         self._in_flight_dir.mkdir(parents=True, exist_ok=True)
         record: dict[str, Any] = {
             "execution_id": execution_id,
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
             "step": step,
             "status": status,
         }
@@ -201,8 +200,7 @@ class RollbackExecutor:
                 step = record.get("step", "")
                 if status == "FAILED":
                     execution_id = record.get("execution_id", f.stem)
-                    self._write_in_flight(execution_id, step, "RECOVERING",
-                                          {"recovered_from": f.stem})
+                    self._write_in_flight(execution_id, step, "RECOVERING", {"recovered_from": f.stem})
                     recovered.append(execution_id)
             except (json.JSONDecodeError, KeyError):
                 pass
@@ -280,9 +278,7 @@ class RollbackExecutor:
         elif len(changed_files) > 5:
             conflict_risk = "medium"
 
-        existing_merges = self._run_git([
-            "log", "--oneline", "--merges", f"{commit_sha}..HEAD"
-        ])
+        existing_merges = self._run_git(["log", "--oneline", "--merges", f"{commit_sha}..HEAD"])
         if existing_merges.strip():
             conflict_risk = "high"
 
@@ -470,8 +466,12 @@ class RollbackExecutor:
     def full_revert(self, commit_sha: str, dry_run: bool = False, audit_session: str = "") -> RollbackResult:
         return self._execute(RollbackOp.FULL_REVERT, commit_sha, dry_run=dry_run, audit_session=audit_session)
 
-    def partial_revert(self, commit_sha: str, file_globs: list[str], dry_run: bool = False, audit_session: str = "") -> RollbackResult:
-        return self._execute(RollbackOp.PARTIAL_REVERT, commit_sha, file_globs=file_globs, dry_run=dry_run, audit_session=audit_session)
+    def partial_revert(
+        self, commit_sha: str, file_globs: list[str], dry_run: bool = False, audit_session: str = ""
+    ) -> RollbackResult:
+        return self._execute(
+            RollbackOp.PARTIAL_REVERT, commit_sha, file_globs=file_globs, dry_run=dry_run, audit_session=audit_session
+        )
 
     def discard(self, files: list[str], audit_session: str = "") -> RollbackResult:
         return self._execute(RollbackOp.DISCARD, "", file_list=files, audit_session=audit_session)
@@ -484,8 +484,9 @@ class RollbackExecutor:
 
     def _lsg_verify_critical_operation(self, operation: str, target: str) -> None:
         try:
-            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
             import asyncio
+
+            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
             gateway = LSGSecurityGateway()
             content = f"rollback:{operation} target:{target}"
@@ -530,8 +531,8 @@ class RollbackExecutor:
         audit_session: str,
     ) -> dict[str, Any]:
         return {
-            "audit_id": f"ROLLBACK-DISCARD-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "audit_id": f"ROLLBACK-DISCARD-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "operation": "discard_routing",
             "decision": decision.value,
             "files_in_scope": files,
@@ -574,12 +575,16 @@ class RollbackExecutor:
                 except (json.JSONDecodeError, FileNotFoundError):
                     pass
         if canceled:
-            self._write_op_audit(operation="BREAK_GLASS_CANCEL", commit_sha="", success=True,
-                                 details={"task_id": task_id, "reason": reason}, audit_session="BREAK_GLASS")
+            self._write_op_audit(
+                operation="BREAK_GLASS_CANCEL",
+                commit_sha="",
+                success=True,
+                details={"task_id": task_id, "reason": reason},
+                audit_session="BREAK_GLASS",
+            )
         return {"canceled": canceled, "task_id": task_id, "reason": reason}
 
     def _resolve_env_owner(self) -> str | None:
-        import os
         return os.environ.get("ZEPHYR_OWNER_SESSION_ID") or os.environ.get("OWNER_SESSION_ID")
 
     def _execute(
@@ -616,8 +621,12 @@ class RollbackExecutor:
                     audit_session=audit_session,
                 )
                 return RollbackResult(
-                    success=False, operation=operation, commit_sha=commit_sha,
-                    files_reverted=0, db_tables_restored=0, db_rows_restored=0,
+                    success=False,
+                    operation=operation,
+                    commit_sha=commit_sha,
+                    files_reverted=0,
+                    db_tables_restored=0,
+                    db_rows_restored=0,
                     execution_id=execution_id,
                     errors=preflight.errors,
                 )
@@ -631,11 +640,14 @@ class RollbackExecutor:
         )
 
         if not lock_result.acquired:
-            self._write_in_flight(execution_id, "acquire_lock", "FAILED",
-                                  {"reason": lock_result.reason})
+            self._write_in_flight(execution_id, "acquire_lock", "FAILED", {"reason": lock_result.reason})
             return RollbackResult(
-                success=False, operation=operation, commit_sha=commit_sha,
-                files_reverted=0, db_tables_restored=0, db_rows_restored=0,
+                success=False,
+                operation=operation,
+                commit_sha=commit_sha,
+                files_reverted=0,
+                db_tables_restored=0,
+                db_rows_restored=0,
                 execution_id=execution_id,
                 errors=[f"Could not acquire rollback lock: {lock_result.reason}"],
             )
@@ -646,32 +658,31 @@ class RollbackExecutor:
             if dry_run:
                 preview = self.preview(commit_sha)
                 result = RollbackResult(
-                    success=True, operation=operation, commit_sha=commit_sha,
+                    success=True,
+                    operation=operation,
+                    commit_sha=commit_sha,
                     files_reverted=len(preview.changed_files),
-                    db_tables_restored=0, db_rows_restored=0,
+                    db_tables_restored=0,
+                    db_rows_restored=0,
                     execution_id=execution_id,
                 )
             elif operation == RollbackOp.FULL_REVERT:
                 self._write_in_flight(execution_id, "git_revert", "PENDING")
                 git_result = self._git_revert(commit_sha)
                 files_reverted = git_result.get("files_changed", 0)
-                self._write_in_flight(execution_id, "git_revert", "SUCCESS",
-                                      {"files_changed": files_reverted})
+                self._write_in_flight(execution_id, "git_revert", "SUCCESS", {"files_changed": files_reverted})
                 self._write_in_flight(execution_id, "g0_verify", "PENDING")
                 g0_passed = self._g0_verify()
-                self._write_in_flight(execution_id, "g0_verify",
-                                      "SUCCESS" if g0_passed else "FAILED")
+                self._write_in_flight(execution_id, "g0_verify", "SUCCESS" if g0_passed else "FAILED")
             elif operation == RollbackOp.PARTIAL_REVERT:
                 if not file_globs:
                     raise ValueError("partial_revert requires file_globs")
                 self._write_in_flight(execution_id, "partial_revert", "PENDING")
                 git_result = self._git_partial_revert(commit_sha, file_globs)
                 files_reverted = git_result.get("files_changed", 0)
-                self._write_in_flight(execution_id, "partial_revert", "SUCCESS",
-                                      {"files_changed": files_reverted})
+                self._write_in_flight(execution_id, "partial_revert", "SUCCESS", {"files_changed": files_reverted})
                 g0_passed = self._g0_verify(files=file_globs)
-                self._write_in_flight(execution_id, "g0_verify",
-                                      "SUCCESS" if g0_passed else "FAILED")
+                self._write_in_flight(execution_id, "g0_verify", "SUCCESS" if g0_passed else "FAILED")
             elif operation == RollbackOp.DISCARD:
                 if not file_list:
                     raise ValueError("discard requires file_list")
@@ -686,8 +697,7 @@ class RollbackExecutor:
                     if f in discardable:
                         self._run_git(["reset", "HEAD", "--", f])
                 files_reverted = len(discardable)
-                self._write_in_flight(execution_id, "discard", "SUCCESS",
-                                      {"files_discarded": discardable})
+                self._write_in_flight(execution_id, "discard", "SUCCESS", {"files_discarded": discardable})
             elif operation == RollbackOp.HARD_RESET:
                 self._write_in_flight(execution_id, "hard_reset", "PENDING")
                 self._run_git(["reset", "--hard", commit_sha])
@@ -701,11 +711,14 @@ class RollbackExecutor:
                 restore_result = self._dumper.restore(jsonl_path)
                 db_tables_restored = restore_result.tables_restored
                 db_rows_restored = restore_result.rows_restored
-                self._write_in_flight(execution_id, "db_restore", "SUCCESS",
-                                      {"tables": db_tables_restored, "rows": db_rows_restored})
+                self._write_in_flight(
+                    execution_id, "db_restore", "SUCCESS", {"tables": db_tables_restored, "rows": db_rows_restored}
+                )
 
             result = RollbackResult(
-                success=True, operation=operation, commit_sha=commit_sha,
+                success=True,
+                operation=operation,
+                commit_sha=commit_sha,
                 files_reverted=files_reverted,
                 db_tables_restored=db_tables_restored,
                 db_rows_restored=db_rows_restored,
@@ -714,6 +727,7 @@ class RollbackExecutor:
 
             try:
                 from zephyr.governance.contract import resolve_exit_code
+
                 _exit = resolve_exit_code(result.exit_code)
                 object.__setattr__(result, "exit_code_resolution", _exit)
             except Exception:
@@ -746,7 +760,9 @@ class RollbackExecutor:
                 audit_session=audit_session,
             )
             return RollbackResult(
-                success=False, operation=operation, commit_sha=commit_sha,
+                success=False,
+                operation=operation,
+                commit_sha=commit_sha,
                 files_reverted=files_reverted,
                 db_tables_restored=db_tables_restored,
                 db_rows_restored=db_rows_restored,
@@ -835,8 +851,8 @@ class RollbackExecutor:
         audit_session: str,
     ) -> None:
         record = {
-            "audit_id": f"ROLLBACK-OP-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "audit_id": f"ROLLBACK-OP-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "operation": operation,
             "commit_sha": commit_sha,
             "success": success,

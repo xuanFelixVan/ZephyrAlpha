@@ -10,13 +10,12 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_reconciliation_loop.py
 
-import pytest
 
 from zephyr.trading.orchestrator.reconciliation_loop import (
-    ReconciliationLoop,
-    ReconcileResult,
-    Invariant,
     RECONCILE_INVARIANTS,
+    Invariant,
+    ReconcileResult,
+    ReconciliationLoop,
 )
 
 

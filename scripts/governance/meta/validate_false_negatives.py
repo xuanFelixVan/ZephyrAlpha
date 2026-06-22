@@ -31,7 +31,6 @@ warn_only: false
 """
 
 
-import os
 import argparse
 import json as json_mod
 import os
@@ -39,7 +38,6 @@ import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -49,8 +47,8 @@ _CASES_INDEX = _CASES_DIR / "cases_index.yaml"
 _RESULTS_LOG = _CASES_DIR / "results.jsonl"
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _ensure_cases_dir() -> None:
@@ -60,10 +58,9 @@ def _ensure_cases_dir() -> None:
         tmp_path = f"{_CASES_INDEX}.{os.getpid()}.tmp"
         try:
             Path(tmp_path).write_text(
-            "# 已知缺陷测试用例索引\n# 格式：dimension / 预期检测出的脚本 / 预期 Finding 描述\n"
-            "cases: {}\n",
-            encoding="utf-8",
-        )
+                "# 已知缺陷测试用例索引\n# 格式：dimension / 预期检测出的脚本 / 预期 Finding 描述\ncases: {}\n",
+                encoding="utf-8",
+            )
             os.replace(tmp_path, _CASES_INDEX)
         except PermissionError:
             try:
@@ -88,8 +85,9 @@ def list_cases() -> list[dict]:
     return result
 
 
-def add_case(case_file: str, dimension: str, expected_script: str,
-             expected_description: str, severity: str = "HIGH") -> dict:
+def add_case(
+    case_file: str, dimension: str, expected_script: str, expected_description: str, severity: str = "HIGH"
+) -> dict:
     """add_case implementation."""
     data = _load_cases()
     case_id = f"FN-{len(data['cases']) + 1:03d}"
@@ -97,6 +95,7 @@ def add_case(case_file: str, dimension: str, expected_script: str,
     dest = _CASES_DIR / f"case_{case_id}.md"
     if os.path.isabs(case_file):
         import shutil
+
         shutil.copy(case_file, dest)
     else:
         src = _REPO_ROOT / case_file
@@ -177,8 +176,12 @@ def run_validation(dimension_filter: str | None = None) -> dict:
 
         proc = subprocess.run(
             [sys.executable, str(script_path), "--target", str(case_file)],
-            capture_output=True, text=True, timeout=30,
-            cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            timeout=30,
+            cwd=str(_REPO_ROOT),
+            encoding="utf-8",
+            errors="replace",
             env={**os.environ, "PYTHONPATH": str(_SCRIPTS_DIR)},
         )
 
@@ -232,24 +235,30 @@ def main() -> None:
     if args.list_cases:
         cases = list_cases()
         for c in cases:
-            print(f"  [{c['case_id']}] [{c.get('dimension', '?')}] {c.get('expected_description', '')}", file=sys.stderr)
+            print(
+                f"  [{c['case_id']}] [{c.get('dimension', '?')}] {c.get('expected_description', '')}", file=sys.stderr
+            )
     elif args.add_case and args.expected_script and args.expected_desc:
-        result = add_case(args.add_case, args.dimension or "D1",
-                          args.expected_script, args.expected_desc, args.severity)
+        result = add_case(
+            args.add_case, args.dimension or "D1", args.expected_script, args.expected_desc, args.severity
+        )
         print(f"[FN-DETECT] {result}", file=sys.stderr)
     else:
         result = run_validation(args.dimension)
         if args.json:
             print(json_mod.dumps(result, ensure_ascii=False, indent=2))
         else:
-            print(f"\n[FN-DETECT] 假阴性检测完成", file=sys.stderr)
+            print("\n[FN-DETECT] 假阴性检测完成", file=sys.stderr)
             print(f"  总用例: {result['total_cases']}", file=sys.stderr)
             print(f"  ✅ 检测成功: {result['detected']}", file=sys.stderr)
             print(f"  ❌ 假阴性: {result['not_detected']}", file=sys.stderr)
             print(f"  检测率: {result['detection_rate']}%", file=sys.stderr)
             for r in result["results"]:
                 if not r["detected"]:
-                    print(f"  ⚠ [{r['case_id']}] [{r['severity']}] {r['expected_description']}: {r['detail']}", file=sys.stderr)
+                    print(
+                        f"  ⚠ [{r['case_id']}] [{r['severity']}] {r['expected_description']}: {r['detail']}",
+                        file=sys.stderr,
+                    )
         sys.exit(0 if result["all_passed"] else 1)
 
 

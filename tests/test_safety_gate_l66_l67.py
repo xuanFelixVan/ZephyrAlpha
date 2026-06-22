@@ -12,8 +12,6 @@
 
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
 from zephyr.ops.gates.safety_gate_l66_l67 import SafetyGateL66L67
 

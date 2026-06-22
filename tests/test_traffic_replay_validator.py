@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_traffic_replay_validator.py
 
-import pytest
 
 from zephyr.ops.detectors.traffic_replay_validator import (
     ReplaySession,

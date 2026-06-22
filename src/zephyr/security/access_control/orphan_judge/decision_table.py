@@ -31,7 +31,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class Verdict(str, Enum):
@@ -62,9 +62,13 @@ _DECISION_TABLE: list[DecisionEntry] = [
     DecisionEntry(condition="safety_blocked=True", verdict=Verdict.ESCALATE, priority=0),
     DecisionEntry(condition="registered=True", verdict=Verdict.KEEP, priority=1),
     DecisionEntry(condition="reachable=True", verdict=Verdict.KEEP, priority=2),
-    DecisionEntry(condition="is_duplicate=False AND has_unique_value=True", verdict=Verdict.KEEP_AND_REGISTER, priority=3),
+    DecisionEntry(
+        condition="is_duplicate=False AND has_unique_value=True", verdict=Verdict.KEEP_AND_REGISTER, priority=3
+    ),
     DecisionEntry(condition="is_duplicate=False AND has_unique_value=False", verdict=Verdict.DELETE, priority=4),
-    DecisionEntry(condition="is_duplicate=True AND has_unique_value=True", verdict=Verdict.EXTRACT_AND_MERGE, priority=5),
+    DecisionEntry(
+        condition="is_duplicate=True AND has_unique_value=True", verdict=Verdict.EXTRACT_AND_MERGE, priority=5
+    ),
     DecisionEntry(condition="is_duplicate=True AND has_unique_value=False", verdict=Verdict.DELETE, priority=6),
     DecisionEntry(condition="uncertain=True", verdict=Verdict.ESCALATE, priority=7),
 ]

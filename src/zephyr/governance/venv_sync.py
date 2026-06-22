@@ -34,13 +34,14 @@ pip freeze 保存回滚前后的依赖快照用于差异审计。
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class DepDiff:
     added: list[str]
     removed: list[str]
     changed: list[str]
+
 
 @dataclass
 class VenvSyncResult:
@@ -50,8 +51,8 @@ class VenvSyncResult:
     diff: DepDiff
     details: list[str] = field(default_factory=list)
 
-class VenvSync:
 
+class VenvSync:
     REQUIREMENTS_FILE: str = "requirements.txt"
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -64,14 +65,18 @@ class VenvSync:
 
         if skip_deps:
             return VenvSyncResult(
-                success=True, before_freeze=before, after_freeze=before,
+                success=True,
+                before_freeze=before,
+                after_freeze=before,
                 diff=DepDiff([], [], []),
                 details=["Dependency sync skipped (--no-deps-sync)"],
             )
 
         if not self._req_path.exists():
             return VenvSyncResult(
-                success=True, before_freeze=before, after_freeze=before,
+                success=True,
+                before_freeze=before,
+                after_freeze=before,
                 diff=DepDiff([], [], []),
                 details=["No requirements.txt found"],
             )
@@ -79,7 +84,10 @@ class VenvSync:
         try:
             subprocess.run(
                 ["pip", "install", "-r", str(self._req_path)],
-                capture_output=True, text=True, timeout=60, check=True,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                check=True,
             )
             details.append("pip install -r requirements.txt: SUCCESS")
         except subprocess.CalledProcessError as e:
@@ -92,15 +100,20 @@ class VenvSync:
         details.append(f"Dependency diff: +{len(diff.added)} -{len(diff.removed)} ~{len(diff.changed)}")
 
         return VenvSyncResult(
-            success=True, before_freeze=before, after_freeze=after,
-            diff=diff, details=details,
+            success=True,
+            before_freeze=before,
+            after_freeze=after,
+            diff=diff,
+            details=details,
         )
 
     def _freeze(self) -> str:
         try:
             result = subprocess.run(
                 ["pip", "freeze"],
-                capture_output=True, text=True, timeout=15,
+                capture_output=True,
+                text=True,
+                timeout=15,
             )
             return result.stdout.strip()
         except Exception:
@@ -112,10 +125,7 @@ class VenvSync:
 
         added = [pkg for pkg in after_map if pkg not in before_map]
         removed = [pkg for pkg in before_map if pkg not in after_map]
-        changed = [
-            pkg for pkg in before_map
-            if pkg in after_map and before_map[pkg] != after_map[pkg]
-        ]
+        changed = [pkg for pkg in before_map if pkg in after_map and before_map[pkg] != after_map[pkg]]
 
         return DepDiff(added=added, removed=removed, changed=changed)
 

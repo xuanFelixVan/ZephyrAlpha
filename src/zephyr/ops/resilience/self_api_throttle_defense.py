@@ -97,12 +97,14 @@ class SelfAPIThrottleDefense:
             return {"action_id": action_id, "allowed": True, "target": target}
 
         if queue_not_full and priority <= 2:
-            self.action_queue.append({
-                "action_id": action_id,
-                "target": target,
-                "priority": priority,
-                "queued_at": time.time(),
-            })
+            self.action_queue.append(
+                {
+                    "action_id": action_id,
+                    "target": target,
+                    "priority": priority,
+                    "queued_at": time.time(),
+                }
+            )
             return {"action_id": action_id, "allowed": False, "queued": True, "target": target}
 
         self.throttled_count += 1
@@ -151,8 +153,10 @@ class SelfAPIThrottleDefense:
             "throttled_total": self.throttled_count,
             "active_targets": len(self.target_tokens),
             "recommendation": (
-                "emergency_throttle_all_non_critical" if self.throttle_state == ThrottleState.SATURATED
-                else "reduce_non_critical_actions" if self.throttle_state == ThrottleState.THROTTLING
+                "emergency_throttle_all_non_critical"
+                if self.throttle_state == ThrottleState.SATURATED
+                else "reduce_non_critical_actions"
+                if self.throttle_state == ThrottleState.THROTTLING
                 else "continue"
             ),
         }

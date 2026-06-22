@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import json
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -80,9 +79,7 @@ class TestCreateGenesis:
         assert data["genesis_id"] == block.genesis_id
 
     def test_with_witnesses(self, tmp_path):
-        witness = WitnessSignature(
-            witness_id="w1", signature_hex="ab", signed_at="2026-01-01T00:00:00Z"
-        )
+        witness = WitnessSignature(witness_id="w1", signature_hex="ab", signed_at="2026-01-01T00:00:00Z")
         manager = GenesisManager(data_dir=tmp_path / "g4")
         block = manager.create_genesis(witnesses=[witness])
         assert len(block.witness_signatures) == 1

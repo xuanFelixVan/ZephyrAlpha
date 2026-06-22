@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
-
 from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
 
 

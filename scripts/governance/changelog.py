@@ -6,7 +6,9 @@ changelog.py — 治理域变更日志生成/追加工具.
 DOM-GOV-001 §7 运维脚本.
 用法: python scripts/governance/changelog.py [--since YYYY-MM-DD] [--format yaml|markdown]
 """
+
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -15,12 +17,11 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CHANGELOG_FILE = PROJECT_ROOT / "docs" / "03_modules" / "_domain-governance" / "domain_progress.json"
@@ -31,14 +32,15 @@ def load_progress() -> dict:
     if not CHANGELOG_FILE.exists():
         return {}
     import json
+
     return json.loads(CHANGELOG_FILE.read_text(encoding="utf-8"))
 
 
 def generate_changelog(data: dict, since: str | None = None) -> list[str]:
     """Generate output from input data."""
     entries: list[str] = []
-    entries.append(f"# DOM-GOV-001 Change Log")
-    entries.append(f"Generated: {datetime.now(timezone.utc).isoformat()}")
+    entries.append("# DOM-GOV-001 Change Log")
+    entries.append(f"Generated: {datetime.now(UTC).isoformat()}")
     entries.append("")
 
     modules = data.get("modules", {})

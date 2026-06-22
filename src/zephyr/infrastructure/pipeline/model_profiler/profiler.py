@@ -44,7 +44,6 @@ import json
 import logging
 import re
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
@@ -56,8 +55,17 @@ MAX_OLLAMA_MODELS = 10
 
 # 跳过非对话模型（embedding 模型等不适合 benchmark）
 SKIP_MODEL_PATTERNS = [
-    "bge", "embed", "nomic", "mxbai", "all-minilm", "multilingual-e5",
-    "snowflake", "gte-", "e5-", "stella", "jina-embed",
+    "bge",
+    "embed",
+    "nomic",
+    "mxbai",
+    "all-minilm",
+    "multilingual-e5",
+    "snowflake",
+    "gte-",
+    "e5-",
+    "stella",
+    "jina-embed",
 ]
 
 
@@ -116,8 +124,8 @@ class ModelProfiler:
         max_ollama_models: int = MAX_OLLAMA_MODELS,
     ) -> None:
         _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.model_discovery")
-        DEFAULT_OLLAMA_URL = getattr(_mod, "DEFAULT_OLLAMA_URL")
-        ModelDiscovery = getattr(_mod, "ModelDiscovery")
+        DEFAULT_OLLAMA_URL = _mod.DEFAULT_OLLAMA_URL
+        ModelDiscovery = _mod.ModelDiscovery
         if ollama_url is None:
             ollama_url = DEFAULT_OLLAMA_URL
         self._url = ollama_url.rstrip("/")
@@ -132,7 +140,7 @@ class ModelProfiler:
     def profile_all(self) -> list[ModelProfile]:
         """对所有可用模型运行全量 benchmark。"""
         models = self._discovery.discover_all()
-        ollama_models = [m for m in models if m.source == "ollama"][:self._max_models]
+        ollama_models = [m for m in models if m.source == "ollama"][: self._max_models]
         remote_models = [m for m in models if m.source == "remote_api"]
 
         all_profiles: list[ModelProfile] = []
@@ -167,7 +175,7 @@ class ModelProfiler:
             return []
 
         profiles: list[ModelProfile] = []
-        for model in models[:self._max_models]:
+        for model in models[: self._max_models]:
             if self._should_skip_model(model.name):
                 _log.info("Skipping non-chat model: %s", model.name)
                 continue
@@ -180,14 +188,10 @@ class ModelProfiler:
 
     def quick_profile(self, model_name: str) -> ModelProfile | None:
         """对单个模型跑快速 benchmark（仅 latency + semantic 维度）。"""
-        import requests
         _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.benchmark_suite")
-        CATEGORY_MAP = getattr(_mod, "CATEGORY_MAP")
+        CATEGORY_MAP = _mod.CATEGORY_MAP
 
-        quick_cases = (
-            CATEGORY_MAP.get("latency", [])[:3]
-            + CATEGORY_MAP.get("semantic", [])[:2]
-        )
+        quick_cases = CATEGORY_MAP.get("latency", [])[:3] + CATEGORY_MAP.get("semantic", [])[:2]
 
         profile = ModelProfile(
             model_name=model_name,
@@ -204,23 +208,15 @@ class ModelProfiler:
         for case in quick_cases:
             try:
                 start = time.perf_counter()
-                content, token_count = self._call_ollama(
-                    model_name, case.prompt, case.max_tokens
-                )
+                content, token_count = self._call_ollama(model_name, case.prompt, case.max_tokens)
                 elapsed_ms = (time.perf_counter() - start) * 1000
                 latencies.append(elapsed_ms)
                 total_tokens += token_count
                 total_time += elapsed_ms
 
                 score = self._score_output(case, content)
-                expected_matches = sum(
-                    1 for p in case.expected_patterns
-                    if re.search(p, content, re.IGNORECASE)
-                )
-                forbidden_hits = sum(
-                    1 for p in case.forbidden_patterns
-                    if re.search(p, content, re.IGNORECASE)
-                )
+                expected_matches = sum(1 for p in case.expected_patterns if re.search(p, content, re.IGNORECASE))
+                forbidden_hits = sum(1 for p in case.forbidden_patterns if re.search(p, content, re.IGNORECASE))
                 passed = score >= 0.5 and forbidden_hits == 0
 
                 tps = (token_count / elapsed_ms * 1000) if elapsed_ms > 0 else 0.0
@@ -260,19 +256,14 @@ class ModelProfiler:
         profile.case_results = case_results
         profile.total_tests = len(case_results)
         profile.passed_tests = sum(1 for r in case_results if r.passed)
-        profile.average_score = (
-            sum(r.score for r in case_results) / len(case_results)
-            if case_results else 0.0
-        )
+        profile.average_score = sum(r.score for r in case_results) / len(case_results) if case_results else 0.0
         if latencies:
             profile.latency_p50_ms = self._percentile(latencies, 0.50)
             profile.latency_p95_ms = self._percentile(latencies, 0.95)
             profile.latency_p99_ms = self._percentile(latencies, 0.99)
         profile.total_tokens = total_tokens
         profile.total_time_ms = total_time
-        profile.throughput_tokens_per_sec = (
-            (total_tokens / total_time * 1000) if total_time > 0 else 0.0
-        )
+        profile.throughput_tokens_per_sec = (total_tokens / total_time * 1000) if total_time > 0 else 0.0
         profile.recommendation = "quick_profile_only"
         return profile
 
@@ -287,9 +278,9 @@ class ModelProfiler:
 
     def _profile_ollama_model(self, model: DiscoveredModel) -> ModelProfile | None:
         _mod_bs = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.benchmark_suite")
-        ALL_BENCHMARK_CASES = getattr(_mod_bs, "ALL_BENCHMARK_CASES")
+        ALL_BENCHMARK_CASES = _mod_bs.ALL_BENCHMARK_CASES
         _mod_md = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.model_discovery")
-        _DM = getattr(_mod_md, "DiscoveredModel")
+        _DM = _mod_md.DiscoveredModel
         profile = ModelProfile(
             model_name=model.name,
             source=model.source,
@@ -307,23 +298,15 @@ class ModelProfiler:
         for case in ALL_BENCHMARK_CASES:
             try:
                 start = time.perf_counter()
-                content, token_count = self._call_ollama(
-                    model.name, case.prompt, case.max_tokens
-                )
+                content, token_count = self._call_ollama(model.name, case.prompt, case.max_tokens)
                 elapsed_ms = (time.perf_counter() - start) * 1000
                 all_latencies.append(elapsed_ms)
                 total_tokens += token_count
                 total_time += elapsed_ms
 
                 score = self._score_output(case, content)
-                expected_matches = sum(
-                    1 for p in case.expected_patterns
-                    if re.search(p, content, re.IGNORECASE)
-                )
-                forbidden_hits = sum(
-                    1 for p in case.forbidden_patterns
-                    if re.search(p, content, re.IGNORECASE)
-                )
+                expected_matches = sum(1 for p in case.expected_patterns if re.search(p, content, re.IGNORECASE))
+                forbidden_hits = sum(1 for p in case.forbidden_patterns if re.search(p, content, re.IGNORECASE))
                 passed = score >= 0.5 and forbidden_hits == 0
 
                 tps = (token_count / elapsed_ms * 1000) if elapsed_ms > 0 else 0.0
@@ -373,8 +356,8 @@ class ModelProfiler:
         total_time: float,
     ) -> None:
         _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.benchmark_suite")
-        ALL_BENCHMARK_CASES = getattr(_mod, "ALL_BENCHMARK_CASES")
-        CATEGORY_MAP = getattr(_mod, "CATEGORY_MAP")
+        ALL_BENCHMARK_CASES = _mod.ALL_BENCHMARK_CASES
+        CATEGORY_MAP = _mod.CATEGORY_MAP
         profile.case_results = case_results
         profile.total_tests = len(case_results)
         profile.passed_tests = sum(1 for r in case_results if r.passed)
@@ -390,9 +373,7 @@ class ModelProfiler:
             profile.latency_p95_ms = self._percentile(sorted_lat, 0.95)
             profile.latency_p99_ms = self._percentile(sorted_lat, 0.99)
 
-        profile.throughput_tokens_per_sec = (
-            (total_tokens / total_time * 1000) if total_time > 0 else 0.0
-        )
+        profile.throughput_tokens_per_sec = (total_tokens / total_time * 1000) if total_time > 0 else 0.0
 
         for cat, cat_cases in CATEGORY_MAP.items():
             cat_results = [r for r in case_results if r.category == cat]
@@ -402,39 +383,48 @@ class ModelProfiler:
 
         hallu_results = [r for r in case_results if r.category == "hallucination"]
         if hallu_results:
-            profile.hallucination_rate = round(
-                1.0 - sum(r.score for r in hallu_results) / len(hallu_results), 3
-            )
+            profile.hallucination_rate = round(1.0 - sum(r.score for r in hallu_results) / len(hallu_results), 3)
 
         profile.refusal_rate = round(
-            sum(1 for r in case_results
-                if r.error or (r.output_text and "不存在" not in r.output_text
-                               and "无法" not in r.output_text and len(r.output_text) < 5))
-            / max(len(case_results), 1), 3
+            sum(
+                1
+                for r in case_results
+                if r.error
+                or (
+                    r.output_text
+                    and "不存在" not in r.output_text
+                    and "无法" not in r.output_text
+                    and len(r.output_text) < 5
+                )
+            )
+            / max(len(case_results), 1),
+            3,
         )
 
-        json_cases = [r for r in case_results if r.category in ("latency", "quality")
-                      and any(c.category == "quality" and c.subcategory == "json_format"
-                              for c in ALL_BENCHMARK_CASES if c.case_id == r.case_id)]
+        json_cases = [
+            r
+            for r in case_results
+            if r.category in ("latency", "quality")
+            and any(
+                c.category == "quality" and c.subcategory == "json_format"
+                for c in ALL_BENCHMARK_CASES
+                if c.case_id == r.case_id
+            )
+        ]
         if json_cases:
             profile.json_validity_rate = round(
-                sum(1 for r in json_cases if _is_valid_json(r.output_text))
-                / len(json_cases), 3
+                sum(1 for r in json_cases if _is_valid_json(r.output_text)) / len(json_cases), 3
             )
 
         code_cases = [r for r in case_results if r.category in ("code_generation", "code_fix")]
         if code_cases:
-            profile.code_validity_rate = round(
-                sum(r.score for r in code_cases) / len(code_cases), 3
-            )
+            profile.code_validity_rate = round(sum(r.score for r in code_cases) / len(code_cases), 3)
 
     # ------------------------------------------------------------------
     # Ollama API 调用
     # ------------------------------------------------------------------
 
-    def _call_ollama(
-        self, model: str, prompt: str, max_tokens: int = 512
-    ) -> tuple[str, int]:
+    def _call_ollama(self, model: str, prompt: str, max_tokens: int = 512) -> tuple[str, int]:
         import requests
 
         body: dict[str, Any] = {
@@ -502,23 +492,17 @@ class ModelProfiler:
     @staticmethod
     def _score_output(case: BenchmarkCase, output: str) -> float:
         _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.benchmark_suite")
-        BenchmarkCase = getattr(_mod, "BenchmarkCase")
+        BenchmarkCase = _mod.BenchmarkCase
         if not output:
             return 0.0
 
         score = 0.0
         if case.expected_patterns:
-            matched = sum(
-                1 for p in case.expected_patterns
-                if re.search(p, output, re.IGNORECASE)
-            )
+            matched = sum(1 for p in case.expected_patterns if re.search(p, output, re.IGNORECASE))
             score = matched / len(case.expected_patterns) * 0.6
 
         if case.forbidden_patterns:
-            violations = sum(
-                1 for p in case.forbidden_patterns
-                if re.search(p, output, re.IGNORECASE)
-            )
+            violations = sum(1 for p in case.forbidden_patterns if re.search(p, output, re.IGNORECASE))
             penalty = violations / len(case.forbidden_patterns) * 0.5
             score = max(0.0, score - penalty)
 
@@ -560,10 +544,7 @@ class ModelProfiler:
             for p in scored[1:]:
                 gap = best.average_score - p.average_score
                 speed_gap = best.latency_p50_ms - p.latency_p50_ms
-                p.recommendation = (
-                    f"RANK #{p.rank} — gap={gap:.2f}, "
-                    f"latency_delta={speed_gap:.0f}ms vs best"
-                )
+                p.recommendation = f"RANK #{p.rank} — gap={gap:.2f}, latency_delta={speed_gap:.0f}ms vs best"
 
     # ------------------------------------------------------------------
     # 工具方法
@@ -586,7 +567,9 @@ class ModelProfiler:
     # ------------------------------------------------------------------
 
     def print_ranking(self, profiles: list[ModelProfile]) -> None:
-        header = f"{'Rank':>4} {'Model':<30} {'Score':>7} {'P50ms':>8} {'P95ms':>8} {'Tok/s':>8} {'Pass':>6} {'Hallu%':>8}"
+        header = (
+            f"{'Rank':>4} {'Model':<30} {'Score':>7} {'P50ms':>8} {'P95ms':>8} {'Tok/s':>8} {'Pass':>6} {'Hallu%':>8}"
+        )
         print("\n" + "=" * len(header))
         print("  Model Performance Benchmark Results")
         print("=" * len(header))
@@ -611,12 +594,14 @@ class ModelProfiler:
         self._print_category_breakdown(profiles)
 
     def _print_category_breakdown(self, profiles: list[ModelProfile]) -> None:
-        categories = ["code_generation", "code_fix", "semantic",
-                      "hallucination", "quality", "reasoning"]
+        categories = ["code_generation", "code_fix", "semantic", "hallucination", "quality", "reasoning"]
         labels = {
-            "code_generation": "代码生成", "code_fix": "代码修复",
-            "semantic": "语义理解", "hallucination": "幻觉检测",
-            "quality": "输出质量", "reasoning": "逻辑推理",
+            "code_generation": "代码生成",
+            "code_fix": "代码修复",
+            "semantic": "语义理解",
+            "hallucination": "幻觉检测",
+            "quality": "输出质量",
+            "reasoning": "逻辑推理",
         }
 
         print("\n  Category Breakdown:")
@@ -634,14 +619,16 @@ class ModelProfiler:
                 if isinstance(val, float):
                     print(f" {val:>8.2f}", end="")
                 else:
-                    print(f" {str(val):>8}", end="")
+                    print(f" {val!s:>8}", end="")
             print()
 
         if scored := [p for p in profiles if p.average_score > 0 and p.available]:
-            print(f"\n  >>> Best model: {scored[0].model_name} "
-                  f"(score={scored[0].average_score:.2f}, "
-                  f"P50={scored[0].latency_p50_ms:.0f}ms, "
-                  f"throughput={scored[0].throughput_tokens_per_sec:.0f} tok/s)")
+            print(
+                f"\n  >>> Best model: {scored[0].model_name} "
+                f"(score={scored[0].average_score:.2f}, "
+                f"P50={scored[0].latency_p50_ms:.0f}ms, "
+                f"throughput={scored[0].throughput_tokens_per_sec:.0f} tok/s)"
+            )
 
 
 def _is_valid_json(text: str) -> bool:
@@ -661,7 +648,7 @@ def _is_valid_json(text: str) -> bool:
     brace_end = text.rfind("}")
     if brace_start >= 0 and brace_end > brace_start:
         try:
-            json.loads(text[brace_start:brace_end + 1])
+            json.loads(text[brace_start : brace_end + 1])
             return True
         except (json.JSONDecodeError, ValueError):
             pass

@@ -1,4 +1,4 @@
-﻿---
+---
 classification: confidential
 date: '2026-05-06'
 doc_type: index
@@ -10,7 +10,7 @@ status: Active
 title: Target Architecture — Navigation Guide / 目标架构导航
 version: 2.2.0
 depends_on:
-  - {target: EA-INDEX, at: "§子目录", why: "父级 EA 索引——target-architecture 为其子目录，引用父级子目录一览"}
+  - {target: EA-INDEX, at: "§子目录", why: "父级 EA 索引——target_architecture 为其子目录，引用父级子目录一览"}
 ---
 
 # Target Architecture — Navigation Guide
@@ -20,7 +20,7 @@ depends_on:
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**目标架构视图（TOGAF）— overview 到 dimension-audit-matrix + architecture-model/ + diagrams/**。
+本目录只存放：**目标架构视图（TOGAF）— overview 到 dimension-audit-matrix + architecture_model/ + diagrams/**。
 
 ## 文件清单
 
@@ -53,7 +53,7 @@ It describes the target architecture using the **ISO 42010 + TOGAF four-layer + 
 - **TOGAF** — defines the four view layers: Business / Information / Application / Technology.
 - **C4 Model** — defines application-level visualization: System Context (L1) and Container (L2).
 
-> **Relation to `AGENTS.md` §6.9**: Markdown views here are the narrative *Architecture Description Set*; machine-consumable facts live under `architecture-model/` YAML with the dual-tree split declared in repo-root **`architecture-model/SCOPE.yaml`**. On conflict, YAML + SCOPE win; record rationale in `architecture-rationale-log.md`.
+> **Relation to `AGENTS.md` §6.9**: Markdown views here are the narrative *Architecture Description Set*; machine-consumable facts live under `architecture_model/` YAML with the dual-tree split declared in repo-root **`architecture_model/SCOPE.yaml`**. On conflict, YAML + SCOPE win; record rationale in `architecture-rationale-log.md`.
 
 ---
 
@@ -65,7 +65,7 @@ It describes the target architecture using the **ISO 42010 + TOGAF four-layer + 
 - **TOGAF** — 定四层视图：Business / Information / Application / Technology。
 - **C4 Model** — 定应用视图的可视化：系统上下文（L1）和容器（L2）。
 
-> **与 `AGENTS.md` §6.9 的关系**：本目录下 **TOGAF/C4 视图 Markdown** 充当 *Architecture Description Set* 的阅读真源；**可机读事实**（分层登记、跨层契约、不变量、technology-landscape 全量等）以 `architecture-model/` 下 YAML + 仓库根 **`architecture-model/SCOPE.yaml`** 双树分工为准。二者冲突时——以 YAML + SCOPE 为机器裁决依据，并回写 rationale-log。
+> **与 `AGENTS.md` §6.9 的关系**：本目录下 **TOGAF/C4 视图 Markdown** 充当 *Architecture Description Set* 的阅读真源；**可机读事实**（分层登记、跨层契约、不变量、technology-landscape 全量等）以 `architecture_model/` 下 YAML + 仓库根 **`architecture_model/SCOPE.yaml`** 双树分工为准。二者冲突时——以 YAML + SCOPE 为机器裁决依据，并回写 rationale-log。
 
 ---
 
@@ -100,13 +100,13 @@ TOGAF 10 视图（00-10）按架构抽象层切分。正交视图按运行时特
 | `operations_architecture.md` | OPS | 运维域全景（部署/监控/备份/灾备/变更/事件/容量/成本）？Runbook 目录？ | SRE、运维工程师、架构师 | **draft** · v0.2.0 · 2026-04-19 |
 | `governance_architecture.md` | GOV | 治理体系三层边界（Policy/Factory/Runtime）？39 治理系统分层归属？AI 自治三层预留口子？激活路径？ | 架构师、合规、治理工程师、AI 协作者 | active · v1.0.0 · 2026-04-19 |
 | `frontend_architecture.md` | FE | 前端层（frontend/）的分层 / Module Federation / State / Design System / 构建部署 / Activation Triggers ？ | 前端开发者、架构师、产品设计 | active · v1.0.0 · 2026-04-19 |
-| `architecture-model/cross-cutting/capability_heatmap.yaml` | BA | 业务能力与成熟度条目（机器可读 SSoT） | 业务负责人、架构师 | active |
-| `architecture-model/index.yaml` + `architecture-model/layers/*.yaml` | AA | 应用/模块与分层属性（联邦制索引 + 各层清单） | 开发者、架构师 | active |
-| `architecture-model/technology/technology_landscape.yaml` | TA | 技术雷达与选型清单（Adopt/Trial/Hold） | SRE、实施者 | active |
+| `architecture_model/cross_cutting/capability_heatmap.yaml` | BA | 业务能力与成熟度条目（机器可读 SSoT） | 业务负责人、架构师 | active |
+| `architecture_model/index.yaml` + `architecture_model/layers/*.yaml` | AA | 应用/模块与分层属性（联邦制索引 + 各层清单） | 开发者、架构师 | active |
+| `architecture_model/technology/technology_landscape.yaml` | TA | 技术雷达与选型清单（Adopt/Trial/Hold） | SRE、实施者 | active |
 | `integration_architecture.md` §3.2 | AA/TA | 集成点枚举（EI 系列等；v1.1.0 起由本视图承载） | 开发者、SRE | active |
-| `architecture-model/` 🆕 | **YAML SSoT** | 联邦制 YAML 模型（24 分区：14 层 + shared + frontend + scripts + cross-cutting + contracts + events + ddd-model + technology + core-services + shared-infra），所有视图的模块属性数据源 | AI 协作者、架构师、CI 门禁 | active · v2.0.0 · 2026-04-21 |
-| `architecture-model/scripts/check_architecture_gates.py` 🆕 | CI | GATE-01~08 + GATE-SC + EXTRA-01~03 自动检查脚本（已迁移至 `scripts/governance/d5_architecture/`） | CI、架构师 | active · v2.1.0 · 2026-05-02 |
-| `architecture-model/cross-cutting/invariants.yaml` 🆕 | GOV | 不变核心（immutable core）机器可读 SSoT | 架构师、合规 | active · v1.0.0 · 2026-04-21 |
+| `architecture_model/` 🆕 | **YAML SSoT** | 联邦制 YAML 模型（24 分区：14 层 + shared + frontend + scripts + cross_cutting + contracts + events + ddd_model + technology + core-services + shared-infra），所有视图的模块属性数据源 | AI 协作者、架构师、CI 门禁 | active · v2.0.0 · 2026-04-21 |
+| `architecture_model/scripts/check_architecture_gates.py` 🆕 | CI | GATE-01~08 + GATE-SC + EXTRA-01~03 自动检查脚本（已迁移至 `scripts/governance/d5_architecture/`） | CI、架构师 | active · v2.1.0 · 2026-05-02 |
+| `architecture_model/cross_cutting/invariants.yaml` 🆕 | GOV | 不变核心（immutable core）机器可读 SSoT | 架构师、合规 | active · v1.0.0 · 2026-04-21 |
 | `dimension_audit_matrix.md` | Cross-layer | 12 维架构质量评分矩阵 + 一人开发场景风险考量 | 架构师、审计 | active · v1.0.0 |
 | `session_carryover_schema.md` | Cross-layer | AI 会话跨 Context Window 接续的 Schema/协议定义 | AI 协作者、架构师 | active · v1.0.0 |
 | `diagrams/` | All | Mermaid 图源文件（跨域图，被多份文档引用） | 所有人 | active |
@@ -133,7 +133,7 @@ TOGAF 10 视图（00-10）按架构抽象层切分。正交视图按运行时特
 
 **Governance / 治理工程师**：`governance_architecture.md`（三层边界定义 + 39 系统分层 + 激活时间表）→ `application_architecture.md §5`（scripts 治理代码拓扑）→ `security_architecture.md`（治理与安全交集）→ KB:decisions namespace（KBG-0010 治理架构三层边界，原物理文件已迁入）→ 源讨论稿 `archive/reorg-2026-04-24/realized-as-adr/working-designs/governance-three-layer-boundary-design.md`（ARC-20260424-004，决策溯源）
 
-**AI collaborator / AI 协作者（推荐首选路径 v1.8.0）**：`architecture-model/index.yaml`（全局索引，1 分钟定位任何模块）→ 按需读取 `architecture-model/layers/lXX.yaml`（模块属性 SSoT）→ `overview.md`（设计哲学）→ 按需读取视图正文（设计理由与叙事）
+**AI collaborator / AI 协作者（推荐首选路径 v1.8.0）**：`architecture_model/index.yaml`（全局索引，1 分钟定位任何模块）→ 按需读取 `architecture_model/layers/lXX.yaml`（模块属性 SSoT）→ `overview.md`（设计哲学）→ 按需读取视图正文（设计理由与叙事）
 
 **Frontend developer / 前端开发者**：`frontend_architecture.md`（全篇）→ `integration_architecture.md §3/§4`（API 契约规范）→ `data_architecture.md §2`（了解所需业务数据对象）→ `application_architecture.md §4.1 L08`（api_gateway 子模块）→ `security_architecture.md`（前端安全策略，active v1.0.0）
 
@@ -198,7 +198,7 @@ TOGAF 10 视图（00-10）按架构抽象层切分。正交视图按运行时特
 | Type / 类型 | Style / 风格 | Purpose / 用途 |
 |------------|-------------|---------------|
 | **View** (00–10) | Narrative: explains **why** / 叙事性：解释"为什么" | For humans, conveys architectural intent / 给人读，传递架构意图 |
-| **YAML SSoT** (architecture-model/) | Structured: lists **what** / 结构化：列出"有哪些" | For machines, AI, and CI gates / 给机器读、给 AI、给 CI 门禁 |
+| **YAML SSoT** (architecture_model/) | Structured: lists **what** / 结构化：列出"有哪些" | For machines, AI, and CI gates / 给机器读、给 AI、给 CI 门禁 |
 
 No catalog without a view = a list without a soul.
 No view without a catalog = empty talk.
@@ -228,8 +228,8 @@ This document set was split and promoted from `DW-IA-DESIGN-001` (`target-inform
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
 | 2026-05-06 | **v2.2.0（AUDIT-04 / 治理收口）**：双树与 SCOPE/SSoT 地图对齐；Python ≥3.11 基线贯通；`09_audit/findings` 与契约 `ownership_model`；`validate_ssot` + 登记表 + `batch_create_index_md` 修正；INV-005 源码/EA 分层消歧。详情见 [revision_history.md](revision_history.md)。 |
-| 2026-05-02 | **v2.1.0（审计修复批次）**：修复 4 项 SSoT 对齐问题：(a) `architecture-model/infra/` 创建 core_services.yaml + shared_infra.yaml 骨架文件，消除 `_index.yaml` 引用不存在文件的问题；(b) `architecture_principles.md` v1.1.0 §0 新增安全红线 4 条（R1-R4），`overview.md` 同步改为引用链接，消除安全红线双源；(c) `ssot-authority-map.md` v2.3.0 移除 `layer_01` 历史误标、拆分矛盾追踪为活跃/已解决；(d) 修订历史归档至 `revision_history.md`，index.md 仅保留最近 3 条。 |
-| 2026-05-01 | **v2.0.0（架构审查 P0 修复批次）**：(a) **删除 `dependency-graph-framework.md`**，其唯一独有价值——依赖置信度分级（L1/L2/L3）已提取迁入 `architecture-model/layers/schema.yaml` v2.1。(b) **by-domain 双轨结构调整**：§1bis 整节切除 + §2 文档清单 5 行 by-domain 删除。(c) **同步 06/08 视图状态**：`security_architecture.md` skeleton → active v1.0.0；`operations_architecture.md` skeleton → draft v0.2.0。 |
+| 2026-05-02 | **v2.1.0（审计修复批次）**：修复 4 项 SSoT 对齐问题：(a) `architecture_model/infra/` 创建 core_services.yaml + shared_infra.yaml 骨架文件，消除 `_index.yaml` 引用不存在文件的问题；(b) `architecture_principles.md` v1.1.0 §0 新增安全红线 4 条（R1-R4），`overview.md` 同步改为引用链接，消除安全红线双源；(c) `ssot-authority-map.md` v2.3.0 移除 `layer_01` 历史误标、拆分矛盾追踪为活跃/已解决；(d) 修订历史归档至 `revision_history.md`，index.md 仅保留最近 3 条。 |
+| 2026-05-01 | **v2.0.0（架构审查 P0 修复批次）**：(a) **删除 `dependency-graph-framework.md`**，其唯一独有价值——依赖置信度分级（L1/L2/L3）已提取迁入 `architecture_model/layers/schema.yaml` v2.1。(b) **by-domain 双轨结构调整**：§1bis 整节切除 + §2 文档清单 5 行 by-domain 删除。(c) **同步 06/08 视图状态**：`security_architecture.md` skeleton → active v1.0.0；`operations_architecture.md` skeleton → draft v0.2.0。 |
 
 ## 排除规则（不应放入本目录的内容）
 

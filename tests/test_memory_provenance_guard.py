@@ -10,6 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
@@ -17,7 +18,6 @@ import pytest
 try:
     from zephyr.security.access_control.memory_provenance_guard import (
         MemoryProvenance,
-        ProvenanceAuditEntry,
         MemoryProvenanceGuard,
     )
 except Exception as _exc:

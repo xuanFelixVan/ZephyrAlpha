@@ -26,5 +26,4 @@ context.py —— Re-export wrapper → canonical: zephyr.shared.utils.context
 修改上下文逻辑请编辑 utils/context.py，不要编辑本文件。
 """
 
-from zephyr.shared.utils.context import *  # noqa: F401, F403
-from zephyr.shared.utils.context import __all__
+from zephyr.shared.utils.context import *  # noqa: F403

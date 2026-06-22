@@ -31,13 +31,12 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from zephyr.security.access_control.orphan_judge.cascade_analyzer import CascadeAnalyzer, CascadeResult
+from zephyr.security.access_control.orphan_judge.cascade_analyzer import CascadeAnalyzer
 from zephyr.security.access_control.orphan_judge.decision_table import DecisionTable, Verdict
-from zephyr.security.access_control.orphan_judge.safety_fence import SafetyFence, SafetyCheckResult
+from zephyr.security.access_control.orphan_judge.safety_fence import SafetyFence
 
 logger = logging.getLogger(__name__)
 

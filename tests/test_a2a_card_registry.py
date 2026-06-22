@@ -10,10 +10,9 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_a2a_card_registry.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.a2a_card_registry import card_registry
 from zephyr.infrastructure.a2a_protocol.layer1_discovery.a2a_registry import A2ARegistry
-from zephyr.infrastructure.a2a_protocol.layer1_discovery.agent_card import AgentCard, AgentCapability
+from zephyr.infrastructure.a2a_protocol.layer1_discovery.agent_card import AgentCapability, AgentCard
 
 
 class TestCardRegistry:

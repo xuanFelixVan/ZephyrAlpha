@@ -34,14 +34,13 @@ audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
 
 from __future__ import annotations
 
-import hashlib
 import json
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from zephyr.governance.audit_trail.integrity import MerkleAggregator
 
@@ -123,7 +122,9 @@ class HourlyMerkleAggregator:
         )
         _logger.info(
             "HourlyMerkleAggregator: aggregated hour %s, root=%s, entries=%d",
-            hour_key, merkle_root[:16], len(entry_hashes),
+            hour_key,
+            merkle_root[:16],
+            len(entry_hashes),
         )
         return result
 
@@ -174,7 +175,7 @@ class HourlyMerkleAggregator:
             return []
 
         events: list[dict[str, Any]] = []
-        with open(self._event_log_path, "r", encoding="utf-8") as f:
+        with open(self._event_log_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:

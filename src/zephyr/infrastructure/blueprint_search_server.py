@@ -24,7 +24,7 @@ BlueprintSearchServer — MCP Server for blueprint discovery
 =============================================================
 Task ID  : T-V2-010 (experimental RI-07 — Blueprint Routing MCP Server)
 Spec     : MOD-INF-013 §3（MCP Tool 清单）+ MOD-INF-009 §8（蓝图触发路由表）
-Protocol : MCP/0.3 (JSON-RPC 2.0 over stdio, 
+Protocol : MCP/0.3 (JSON-RPC 2.0 over stdio,
 关联决策  : R90 (蓝图三级金字塔架构) + R91 (MCP 蓝图检索 tool 落地)
 
 This MCP server provides **AI agents** with the capability to discover which
@@ -57,13 +57,10 @@ Registered Tools
     Source: ``config/blueprint_routing.yaml`` §routes
 """
 
-
 from __future__ import annotations
 
 import logging
 import time
-from functools import lru_cache
-from pathlib import Path
 from typing import Any
 
 import yaml
@@ -93,6 +90,7 @@ BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint-registr
 # ---------------------------------------------------------------------------
 # Server
 # ---------------------------------------------------------------------------
+
 
 class BlueprintSearchServer(BaseMCPServer):
     """MCP server for discovering relevant blueprint documents.
@@ -267,9 +265,11 @@ class BlueprintSearchServer(BaseMCPServer):
 
         return config.get("routes", [])
 
+
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     """Start the blueprint search MCP server on stdio."""
@@ -283,6 +283,7 @@ def main() -> None:
 
     server = BlueprintSearchServer()
     server.run()
+
 
 if __name__ == "__main__":
     main()

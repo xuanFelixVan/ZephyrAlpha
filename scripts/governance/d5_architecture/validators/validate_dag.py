@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_dag.py | §
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_dag.py | §
 """
 对标 dimension_audit_matrix.md §4.3：
   校验代码级 import 依赖图无循环，与 detect_depends_on_cycles.py（YAML 级）互补。
@@ -32,7 +32,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, SRC_DIR, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, SRC_DIR
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -138,5 +138,7 @@ def main() -> int:
         return EXIT_FINDINGS
     print(f"\n[OK] DAG 无循环 — {len(graph)} 个层级节点已校验")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

@@ -12,9 +12,10 @@
 
 from __future__ import annotations
 
-import pytest
+from unittest.mock import MagicMock, patch
+
 import numpy as np
-from unittest.mock import patch, MagicMock
+import pytest
 
 cache_layer = pytest.importorskip("zephyr.integration.local_model.cache_layer")
 embedding_router = pytest.importorskip("zephyr.integration.local_model.embedding_router")
@@ -184,8 +185,9 @@ class TestEmbeddingRouter:
         assert embedding_router.verify_model_checksum(Path("/nonexistent")) is False
 
     def test_verify_model_checksum_no_expected(self):
-        from pathlib import Path
         import tempfile
+        from pathlib import Path
+
         with tempfile.TemporaryDirectory() as td:
             td_path = Path(td)
             assert embedding_router.verify_model_checksum(td_path) is True
@@ -206,7 +208,7 @@ class TestOllamaEmbedder:
 
     def test_available_false_when_not_reachable(self):
         emb = OllamaEmbedder()
-        with patch.object(emb, '_verify', side_effect=RuntimeError("not reachable")):
+        with patch.object(emb, "_verify", side_effect=RuntimeError("not reachable")):
             assert emb.available is False
 
     def test_encode_empty_list(self):
@@ -236,7 +238,7 @@ class TestOllamaChat:
 
     def test_available_false_when_not_reachable(self):
         chat = OllamaChat()
-        with patch.object(chat, '_verify', side_effect=RuntimeError("not reachable")):
+        with patch.object(chat, "_verify", side_effect=RuntimeError("not reachable")):
             assert chat.available is False
 
     def test_supported_work_types(self):

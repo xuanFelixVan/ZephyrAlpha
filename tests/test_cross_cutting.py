@@ -11,6 +11,7 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import time
@@ -19,12 +20,13 @@ import pytest
 
 try:
     from zephyr.security.access_control.cross_cutting import (
-        PermissionHookRegistry,
-        HookType,
-        PermissionTopology,
         AutoMaintenance,
         ForensicAssurance,
+        HookType,
+        PermissionHookRegistry,
+        PermissionTopology,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -34,7 +36,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestPermissionHookRegistry:
-
     def test_register_and_trigger(self):
         registry = PermissionHookRegistry()
         calls = []
@@ -85,7 +86,6 @@ class TestPermissionHookRegistry:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestPermissionTopology:
-
     def test_add_node(self):
         topo = PermissionTopology()
         node = topo.add_node("A")
@@ -135,7 +135,6 @@ class TestPermissionTopology:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestAutoMaintenance:
-
     def test_record_and_zombie_detection(self):
         am = AutoMaintenance()
         am._rule_last_used["old_rule"] = time.time() - (31 * 86400)
@@ -168,7 +167,6 @@ class TestAutoMaintenance:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestForensicAssurance:
-
     def test_sign_and_verify(self):
         fa = ForensicAssurance()
         record = fa.sign_record({"event": "login", "agent": "a1"})

@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.infrastructure.a2a_protocol.offline_resilience import (
     DECAY_RATE_PER_24H,
     DECAY_START_HOURS,

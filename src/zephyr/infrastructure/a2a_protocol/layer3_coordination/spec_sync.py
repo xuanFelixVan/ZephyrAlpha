@@ -29,10 +29,9 @@
 方法: 基于 ConstructionVerifier 的漂移检测 + 增量同步记录
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -76,7 +75,4 @@ class SpecSync:
         return "synced"
 
     def list_drifted(self) -> list[str]:
-        return [
-            mid for mid, entry in self._entries.items()
-            if entry.status != "synced"
-        ]
+        return [mid for mid, entry in self._entries.items() if entry.status != "synced"]

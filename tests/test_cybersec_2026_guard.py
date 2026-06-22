@@ -11,12 +11,18 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.cybersec_2026_guard import Cybersec2026Guard, CyberSecVerdict, CYBERSEC_2026_VECTORS
+    from zephyr.security.access_control.cybersec_2026_guard import (
+        CYBERSEC_2026_VECTORS,
+        Cybersec2026Guard,
+        CyberSecVerdict,
+    )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -26,7 +32,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestCyberSecVerdict:
-
     def test_defaults(self):
         v = CyberSecVerdict(threat_category="none")
         assert v.severity == "LOW"
@@ -48,7 +53,6 @@ class TestCyberSecVerdict:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestCybersec2026Guard:
-
     def test_scan_clean_context(self):
         guard = Cybersec2026Guard()
         result = guard.scan({"source": "internal", "model": "verified"})

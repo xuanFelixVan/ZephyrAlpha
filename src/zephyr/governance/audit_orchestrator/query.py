@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 查询失败返回空结果而非抛异常
 # [TESTS] tests/audit-orchestrator/test_query.py
-
 import json
 import logging
 from datetime import datetime, timedelta
@@ -25,6 +24,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["AuditQueryEngine"]
 
 DEFAULT_REPORT_DIR = Path("data/audit_history")
+
 
 class AuditQueryEngine:
     def __init__(self, report_dir: Path | None = None) -> None:

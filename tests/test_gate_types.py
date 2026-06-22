@@ -21,7 +21,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime
 
 import pytest
 
@@ -44,7 +44,9 @@ class TestGateViolation:
         assert v.detail is None
 
     def test_creation_with_detail(self):
-        v = GateViolation(check_id="CHK-002", check_name="path", severity="P1", message="invalid path", detail="/bad/path")
+        v = GateViolation(
+            check_id="CHK-002", check_name="path", severity="P1", message="invalid path", detail="/bad/path"
+        )
         assert v.detail == "/bad/path"
 
     def test_empty_strings(self):

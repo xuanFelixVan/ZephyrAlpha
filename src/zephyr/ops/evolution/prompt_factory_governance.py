@@ -29,9 +29,9 @@ Mitigation: Prompt template factory with versioning, audit trail, and A/B test s
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import hashlib
 import time
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -53,7 +53,13 @@ class PromptFactoryGovernance:
         content_hash = hashlib.sha256(content.encode()).hexdigest()[:12]
         existing = self.variants.get(template_id, [])
         version = len(existing) + 1
-        variant = PromptVariant(variant_id=f"{template_id}-v{version}", template_id=template_id, version=version, content=content, content_hash=content_hash)
+        variant = PromptVariant(
+            variant_id=f"{template_id}-v{version}",
+            template_id=template_id,
+            version=version,
+            content=content,
+            content_hash=content_hash,
+        )
         if template_id not in self.variants:
             self.variants[template_id] = []
         self.variants[template_id].append(variant)

@@ -40,11 +40,10 @@ EmbeddingRouter — MOD-INF-011 双嵌入维度路由
     bge-small 也失败 → InMemoryBackend（零向量兜底）
 """
 
-
 from __future__ import annotations
 
-import logging
 import hashlib
+import logging
 import time
 from pathlib import Path
 from typing import Any, Literal
@@ -56,12 +55,22 @@ _logger = logging.getLogger(__name__)
 MODEL_DIR_BGE_M3: Path = Path("models/bge-m3")
 MODEL_DIR_BGE_SMALL: Path = Path("models/bge-small-zh-v1.5")
 
-BGE_M3_COLLECTIONS: frozenset[str] = frozenset({
-    "decisions", "code_context", "lessons", "knowledge", "rules",
-})
-BGE_SMALL_COLLECTIONS: frozenset[str] = frozenset({
-    "blueprints", "session_snapshots", "execution_traces",
-})
+BGE_M3_COLLECTIONS: frozenset[str] = frozenset(
+    {
+        "decisions",
+        "code_context",
+        "lessons",
+        "knowledge",
+        "rules",
+    }
+)
+BGE_SMALL_COLLECTIONS: frozenset[str] = frozenset(
+    {
+        "blueprints",
+        "session_snapshots",
+        "execution_traces",
+    }
+)
 
 BGE_M3_BATCH_SIZE: int = 16
 BGE_SMALL_BATCH_SIZE: int = 32
@@ -167,7 +176,9 @@ class EmbeddingRouter:
                 vec = self._embed_bge_small("hello world warmup")
                 self._bge_small_dim = int(vec.shape[0])
                 if self._bge_small_dim > 0 and not np.any(np.isnan(vec)):
-                    _logger.info("EmbeddingRouter: bge-small 预热成功 (%dd, backend=%s)", self._bge_small_dim, self._backend)
+                    _logger.info(
+                        "EmbeddingRouter: bge-small 预热成功 (%dd, backend=%s)", self._bge_small_dim, self._backend
+                    )
                 else:
                     raise ValueError("输出维度异常")
             except Exception:
@@ -273,10 +284,18 @@ class EmbeddingRouter:
                 start = time.perf_counter()
                 vec = self._embed_bge_m3(text)
                 elapsed = (time.perf_counter() - start) * 1000
-                _logger.debug("EmbeddingRouter: BGE-M3 embed %s → %s (%dd, %.1fms)", text[:30], collection_name, vec.shape[0], elapsed)
+                _logger.debug(
+                    "EmbeddingRouter: BGE-M3 embed %s → %s (%dd, %.1fms)",
+                    text[:30],
+                    collection_name,
+                    vec.shape[0],
+                    elapsed,
+                )
                 return vec
             elif self._bge_small_available:
-                _logger.warning("EmbeddingRouter: BGE-M3 不可用，降级为 bge-small (%dd) → %s", self._bge_small_dim, collection_name)
+                _logger.warning(
+                    "EmbeddingRouter: BGE-M3 不可用，降级为 bge-small (%dd) → %s", self._bge_small_dim, collection_name
+                )
                 return self._embed_bge_small(text)
             else:
                 raise RuntimeError("无可用嵌入模型")
@@ -286,7 +305,13 @@ class EmbeddingRouter:
                 start = time.perf_counter()
                 vec = self._embed_bge_small(text)
                 elapsed = (time.perf_counter() - start) * 1000
-                _logger.debug("EmbeddingRouter: bge-small embed %s → %s (%dd, %.1fms)", text[:30], collection_name, vec.shape[0], elapsed)
+                _logger.debug(
+                    "EmbeddingRouter: bge-small embed %s → %s (%dd, %.1fms)",
+                    text[:30],
+                    collection_name,
+                    vec.shape[0],
+                    elapsed,
+                )
                 return vec
             else:
                 raise RuntimeError("bge-small 模型不可用")

@@ -28,7 +28,6 @@
     - 本模块不直接操作 SQLite——GateEngine 负责持久化
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -40,7 +39,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["PhaseCheckRegistry", "run_check", "GateResult"]
+__all__ = ["GateResult", "PhaseCheckRegistry", "run_check"]
 
 
 class GateResult(str, Enum):
@@ -348,7 +347,12 @@ def check_blueprint_compliance() -> GateResult:
 
 def check_agent_rbac() -> GateResult:
     try:
-        from zephyr.integration.shared_08.contracts.identity.agent_identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
+        from zephyr.integration.shared_08.contracts.identity.agent_identity import (
+            AgentIdentity,
+            AgentRole,
+            IDESource,
+            MaturityLevel,
+        )
         from zephyr.security.access_control.immutable_core import get_immutable_core
         from zephyr.security.access_control.permission_guard import PermissionGuard
 
@@ -466,8 +470,8 @@ def check_mcp_servers_health() -> GateResult:
 
 def check_escalation_protocol() -> GateResult:
     try:
-        from zephyr.integration.shared_08.contracts.protocols import SelfTestableProtocol
         from zephyr.governance.self_test import HealthLevel, run_self_test
+        from zephyr.integration.shared_08.contracts.protocols import SelfTestableProtocol
 
         report = run_self_test()
         if report.overall == HealthLevel.CRITICAL:
@@ -598,8 +602,8 @@ def check_shadow_mode() -> GateResult:
 
 def check_rollback_drill() -> GateResult:
     try:
-        from zephyr.ops.kill_switch import KillSwitch
         from zephyr.governance.rollback_executor import RollbackExecutor
+        from zephyr.ops.kill_switch import KillSwitch
 
         executor = RollbackExecutor()
         pf = executor.preflight_check()
@@ -723,6 +727,7 @@ def check_dependency_audit() -> GateResult:
 def check_a2a_hold() -> GateResult:
     try:
         import importlib
+
         _mod = importlib.import_module("zephyr.infrastructure.a2a_protocol.governance")
         A2AProtocol = _mod.A2AProtocol
 
@@ -788,6 +793,29 @@ def check_lsg_security() -> GateResult:
         return GateResult.YELLOW
 
 
+def _check_trae_gate_factory(gate_name: str) -> Callable[[], GateResult]:
+    """Factory: create a check function for a TRAE rule gate.
+
+    Verifies the gate YAML file exists and is loadable by GateEngine.
+    """
+
+    def _check() -> GateResult:
+        gate_file = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement" / f"{gate_name}.yaml"
+        if not gate_file.exists():
+            return GateResult.RED
+        try:
+            import yaml as _yaml
+
+            data = _yaml.safe_load(gate_file.read_text(encoding="utf-8"))
+            if data.get("gate_id") and data.get("entry_conditions"):
+                return GateResult.GREEN
+            return GateResult.YELLOW
+        except Exception:
+            return GateResult.RED
+
+    return _check
+
+
 _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_session_manager": check_session_manager,
     "gate_session_continuity": check_session_continuity,
@@ -845,6 +873,54 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_skill_canary": check_skill_canary,
     "gate_dependency_audit": check_dependency_audit,
     "gate_a2a_hold": check_a2a_hold,
+    "g_trae_003": _check_trae_gate_factory("g_trae_003"),
+    "g_trae_004": _check_trae_gate_factory("g_trae_004"),
+    "g_trae_006": _check_trae_gate_factory("g_trae_006"),
+    "g_trae_007": _check_trae_gate_factory("g_trae_007"),
+    "g_trae_008": _check_trae_gate_factory("g_trae_008"),
+    "g_trae_009": _check_trae_gate_factory("g_trae_009"),
+    "g_trae_018": _check_trae_gate_factory("g_trae_018"),
+    "g_trae_020": _check_trae_gate_factory("g_trae_020"),
+    "g_trae_021": _check_trae_gate_factory("g_trae_021"),
+    "g_trae_052": _check_trae_gate_factory("g_trae_052"),
+    "g_trae_053": _check_trae_gate_factory("g_trae_053"),
+    "g_trae_054": _check_trae_gate_factory("g_trae_054"),
+    "g_trae_055": _check_trae_gate_factory("g_trae_055"),
+    "g_trae_010": _check_trae_gate_factory("g_trae_010"),
+    "g_trae_011": _check_trae_gate_factory("g_trae_011"),
+    "g_trae_012": _check_trae_gate_factory("g_trae_012"),
+    "g_trae_016": _check_trae_gate_factory("g_trae_016"),
+    "g_trae_017": _check_trae_gate_factory("g_trae_017"),
+    "g_trae_022": _check_trae_gate_factory("g_trae_022"),
+    "g_trae_023": _check_trae_gate_factory("g_trae_023"),
+    "g_trae_028": _check_trae_gate_factory("g_trae_028"),
+    "g_trae_029": _check_trae_gate_factory("g_trae_029"),
+    "g_trae_030": _check_trae_gate_factory("g_trae_030"),
+    "g_trae_031": _check_trae_gate_factory("g_trae_031"),
+    "g_trae_032": _check_trae_gate_factory("g_trae_032"),
+    "g_trae_033": _check_trae_gate_factory("g_trae_033"),
+    "g_trae_034": _check_trae_gate_factory("g_trae_034"),
+    "g_trae_035": _check_trae_gate_factory("g_trae_035"),
+    "g_trae_036": _check_trae_gate_factory("g_trae_036"),
+    "g_trae_037": _check_trae_gate_factory("g_trae_037"),
+    "g_trae_038": _check_trae_gate_factory("g_trae_038"),
+    "g_trae_039": _check_trae_gate_factory("g_trae_039"),
+    "g_trae_040": _check_trae_gate_factory("g_trae_040"),
+    "g_trae_044": _check_trae_gate_factory("g_trae_044"),
+    "g_trae_045": _check_trae_gate_factory("g_trae_045"),
+    "g_trae_046": _check_trae_gate_factory("g_trae_046"),
+    "g_trae_047": _check_trae_gate_factory("g_trae_047"),
+    "g_trae_024": _check_trae_gate_factory("g_trae_024"),
+    "g_trae_025": _check_trae_gate_factory("g_trae_025"),
+    "g_trae_026": _check_trae_gate_factory("g_trae_026"),
+    "g_trae_027": _check_trae_gate_factory("g_trae_027"),
+    "g_trae_041": _check_trae_gate_factory("g_trae_041"),
+    "g_trae_042": _check_trae_gate_factory("g_trae_042"),
+    "g_trae_043": _check_trae_gate_factory("g_trae_043"),
+    "g_trae_048": _check_trae_gate_factory("g_trae_048"),
+    "g_trae_049": _check_trae_gate_factory("g_trae_049"),
+    "g_trae_050": _check_trae_gate_factory("g_trae_050"),
+    "g_trae_051": _check_trae_gate_factory("g_trae_051"),
 }
 
 
@@ -872,6 +948,7 @@ def run_check(check_name: str) -> GateResult:
     except Exception:
         logger.exception("Check '%s' failed with exception", check_name)
         return GateResult.RED
+
 
 def check_critical_findings(phase, findings=None):
     return []

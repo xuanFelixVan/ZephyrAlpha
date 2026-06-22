@@ -30,10 +30,12 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 
+
 class CoherenceStatus(str, Enum):
     COHERENT = "coherent"
     PARTIALLY_DIRTY = "partially_dirty"
     INCOHERENT = "incoherent"
+
 
 @dataclass
 class InterruptCoherenceValidator:
@@ -65,7 +67,9 @@ class InterruptCoherenceValidator:
             issues.append(f"{len(self.known_locks)} orphaned locks: {list(self.known_locks)[:5]}")
 
         if self.known_actions_in_flight:
-            issues.append(f"{len(self.known_actions_in_flight)} half-applied actions: {list(self.known_actions_in_flight)[:5]}")
+            issues.append(
+                f"{len(self.known_actions_in_flight)} half-applied actions: {list(self.known_actions_in_flight)[:5]}"
+            )
 
         if issues:
             status = CoherenceStatus.INCOHERENT if len(issues) >= 3 else CoherenceStatus.PARTIALLY_DIRTY
@@ -82,7 +86,7 @@ class InterruptCoherenceValidator:
         }
         self.coherence_checks.append(result)
         if len(self.coherence_checks) > self.max_checks:
-            self.coherence_checks = self.coherence_checks[-self.max_checks:]
+            self.coherence_checks = self.coherence_checks[-self.max_checks :]
 
         return result
 
@@ -102,7 +106,4 @@ class InterruptCoherenceValidator:
         }
 
     def get_coherence_history(self) -> list[dict]:
-        return [
-            c for c in self.coherence_checks
-            if not c.get("coherent", True)
-        ]
+        return [c for c in self.coherence_checks if not c.get("coherent", True)]

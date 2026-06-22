@@ -11,11 +11,10 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 打包失败返回None
 # [TESTS] tests/audit-orchestrator/test_evidence_pack.py
-
 import hashlib
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -23,12 +22,15 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["EvidencePack"]
 
+
 class EvidencePack:
     def __init__(self, output_dir: Path | None = None) -> None:
         self._output_dir = Path(output_dir or Path("data/audit_evidence"))
         self._output_dir.mkdir(parents=True, exist_ok=True)
 
-    def pack(self, audit_id: str, findings: list[dict[str, Any]], metadata: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    def pack(
+        self, audit_id: str, findings: list[dict[str, Any]], metadata: dict[str, Any] | None = None
+    ) -> dict[str, Any] | None:
         try:
             serialized = json.dumps(findings, sort_keys=True, ensure_ascii=False, default=str)
             evidence_hash = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
@@ -36,7 +38,7 @@ class EvidencePack:
             pack_data = {
                 "audit_id": audit_id,
                 "evidence_hash": evidence_hash,
-                "created_at": datetime.now(timezone.utc).isoformat(),
+                "created_at": datetime.now(UTC).isoformat(),
                 "finding_count": len(findings),
                 "findings": findings,
                 "metadata": metadata or {},
@@ -44,6 +46,7 @@ class EvidencePack:
 
             output_path = self._output_dir / f"{audit_id}_evidence.json"
             import os
+
             tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
             try:
                 tmp_path.write_text(
@@ -86,15 +89,18 @@ class EvidencePack:
         for path in sorted(self._output_dir.glob("*_evidence.json"), key=lambda p: p.stat().st_mtime, reverse=True):
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
-                results.append({
-                    "audit_id": data.get("audit_id", ""),
-                    "evidence_hash": data.get("evidence_hash", "")[:16],
-                    "finding_count": data.get("finding_count", 0),
-                    "created_at": data.get("created_at", ""),
-                })
+                results.append(
+                    {
+                        "audit_id": data.get("audit_id", ""),
+                        "evidence_hash": data.get("evidence_hash", "")[:16],
+                        "finding_count": data.get("finding_count", 0),
+                        "created_at": data.get("created_at", ""),
+                    }
+                )
             except Exception:
                 continue
         return results
+
 
 class EvidencePackExporter:
     def __init__(self, config=None):
@@ -106,16 +112,18 @@ class EvidencePackExporter:
     def pack(self, items):
         return {}
 
+
 class EvidencePackMetadata:
-    def __init__(self, pack_id='', created=None, source='', item_count=0, checksum=''):
+    def __init__(self, pack_id="", created=None, source="", item_count=0, checksum=""):
         self.pack_id = pack_id
         self.created = created
         self.source = source
         self.item_count = item_count
         self.checksum = checksum
 
+
 class ExportResult:
-    def __init__(self, success=True, output_path='', item_count=0, errors=None):
+    def __init__(self, success=True, output_path="", item_count=0, errors=None):
         self.success = success
         self.output_path = output_path
         self.item_count = item_count

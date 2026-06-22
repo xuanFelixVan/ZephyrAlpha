@@ -21,8 +21,7 @@
 
 """Re-export shim: zephyr.integration.shared_08.session_audit → zephyr.infrastructure.shared_services.observability_02.session_audit"""
 
-
-from zephyr.integration.shared_08.session_audit import (  # noqa: F401
+from zephyr.integration.shared_08.session_audit import (
     CostRecord,
     DecisionRecord,
     ErrorRecord,

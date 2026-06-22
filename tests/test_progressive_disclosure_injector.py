@@ -11,8 +11,6 @@
 # [TESTS] python -m pytest tests/test_progressive_disclosure_injector.py -q
 from __future__ import annotations
 
-import pytest
-
 from zephyr.autonomy_core.progressive_disclosure_injector import (
     DisclosureResult,
     ProgressiveDisclosureInjector,

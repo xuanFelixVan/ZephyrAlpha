@@ -24,8 +24,9 @@ from __future__ import annotations
 """后果追踪——记录每次修复操作对依赖方的影响."""
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
+
 
 @dataclass
 class Consequence:
@@ -35,6 +36,7 @@ class Consequence:
     timestamp: str
     rollback_available: bool = True
     status: str = "APPLIED"
+
 
 @dataclass
 class ConsequenceTracker:
@@ -46,7 +48,7 @@ class ConsequenceTracker:
             fix_id=fix_id,
             target_file=target_file,
             impacted_files=impacted_files,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         self.history.append(c)
         self.rollback_stack.append(c)

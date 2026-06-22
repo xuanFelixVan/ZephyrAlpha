@@ -9,10 +9,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.code_analyzer_runner import (
-    CodeAnalyzerRunner, StageResult,
+    CodeAnalyzerRunner,
 )
+
 
 class TestCodeAnalyzerRunner:
     def test_instantiation(self):

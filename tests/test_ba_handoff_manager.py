@@ -15,8 +15,6 @@ from __future__ import annotations
 import json
 import os
 
-import pytest
-
 from zephyr.behavioral_audit.handoff_manager import (
     FileIntegrityRecord,
     HandoffPackage,
@@ -177,7 +175,7 @@ class TestSerializePackage:
         )
         output_dir = str(tmp_path / "handoff_output2")
         path = serialize_package(pkg, output_dir)
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["package_id"] == "hp-002"
         assert data["severity"] == "CRITICAL"
@@ -295,6 +293,7 @@ class TestVerifyIntegrity:
         test_file = tmp_path / "test.py"
         test_file.write_text("hello", encoding="utf-8")
         import hashlib
+
         with open(str(test_file), "rb") as f:
             sha = hashlib.sha256(f.read()).hexdigest()
         fir = FileIntegrityRecord(file_path=str(test_file), sha256_before=sha)

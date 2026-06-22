@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_dry_run_simulator.py -q
 
-import pytest
 from zephyr.infrastructure.dry_run_simulator import (
     DryRunSimulator,
     SimulationResult,
@@ -62,61 +61,73 @@ class TestDryRunSimulator:
 
     def test_simulate_safe_operation(self, tmp_path):
         sim = DryRunSimulator(sandbox_root=str(tmp_path / "dry_runs"))
-        result = sim.simulate({
-            "type": "file_write",
-            "target": str(tmp_path / "safe_file.py"),
-            "content": "print('hello')",
-        })
+        result = sim.simulate(
+            {
+                "type": "file_write",
+                "target": str(tmp_path / "safe_file.py"),
+                "content": "print('hello')",
+            }
+        )
         assert isinstance(result, SimulationResult)
         assert result.status in (SimulationStatus.PASSED, SimulationStatus.PASSED_WITH_WARNINGS)
 
     def test_simulate_dangerous_pattern(self, tmp_path):
         sim = DryRunSimulator(sandbox_root=str(tmp_path / "dry_runs"))
-        result = sim.simulate({
-            "type": "file_write",
-            "target": "/tmp/test.sh",
-            "content": "rm -rf /",
-        })
+        result = sim.simulate(
+            {
+                "type": "file_write",
+                "target": "/tmp/test.sh",
+                "content": "rm -rf /",
+            }
+        )
         assert result.status == SimulationStatus.BLOCKED
         assert result.risk == SimulationRisk.CRITICAL
         assert any("危险操作模式" in w for w in result.warnings)
 
     def test_simulate_sensitive_path(self, tmp_path):
         sim = DryRunSimulator(sandbox_root=str(tmp_path / "dry_runs"))
-        result = sim.simulate({
-            "type": "file_write",
-            "target": "C:\\Windows\\System32\\test.py",
-            "content": "safe content",
-        })
+        result = sim.simulate(
+            {
+                "type": "file_write",
+                "target": "C:\\Windows\\System32\\test.py",
+                "content": "safe content",
+            }
+        )
         assert result.risk in (SimulationRisk.HIGH, SimulationRisk.CRITICAL)
         assert any("敏感路径" in w for w in result.warnings)
 
     def test_simulate_drop_table(self, tmp_path):
         sim = DryRunSimulator(sandbox_root=str(tmp_path / "dry_runs"))
-        result = sim.simulate({
-            "type": "sql",
-            "target": "db.sqlite",
-            "content": "DROP TABLE users;",
-        })
+        result = sim.simulate(
+            {
+                "type": "sql",
+                "target": "db.sqlite",
+                "content": "DROP TABLE users;",
+            }
+        )
         assert result.status == SimulationStatus.BLOCKED
         assert result.risk == SimulationRisk.CRITICAL
 
     def test_simulate_file_operation_tracks_affected(self, tmp_path):
         sim = DryRunSimulator(sandbox_root=str(tmp_path / "dry_runs"))
-        result = sim.simulate({
-            "type": "file_write",
-            "target": "/tmp/output.txt",
-            "content": "data",
-        })
+        result = sim.simulate(
+            {
+                "type": "file_write",
+                "target": "/tmp/output.txt",
+                "content": "data",
+            }
+        )
         assert "/tmp/output.txt" in result.affected_files
 
     def test_simulate_rollback_plan(self, tmp_path):
         sim = DryRunSimulator(sandbox_root=str(tmp_path / "dry_runs"))
-        result = sim.simulate({
-            "type": "file_delete",
-            "target": "/tmp/old_file.txt",
-            "content": "",
-        })
+        result = sim.simulate(
+            {
+                "type": "file_delete",
+                "target": "/tmp/old_file.txt",
+                "content": "",
+            }
+        )
         assert result.rollback_plan != ""
 
     def test_simulate_batch(self, tmp_path):
@@ -132,11 +143,13 @@ class TestDryRunSimulator:
 
     def test_simulate_unknown_type(self, tmp_path):
         sim = DryRunSimulator(sandbox_root=str(tmp_path / "dry_runs"))
-        result = sim.simulate({
-            "type": "unknown",
-            "target": "/tmp/test",
-            "content": "data",
-        })
+        result = sim.simulate(
+            {
+                "type": "unknown",
+                "target": "/tmp/test",
+                "content": "data",
+            }
+        )
         assert isinstance(result, SimulationResult)
 
     def test_simulate_empty_operation(self, tmp_path):

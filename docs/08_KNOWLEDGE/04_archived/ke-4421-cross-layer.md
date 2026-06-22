@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-MODULE-BLU-CROSS-LAYER-000
 title: cross_layer 模块蓝图索引
 category: module_blueprint

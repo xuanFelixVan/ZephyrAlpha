@@ -43,7 +43,6 @@ AS-CT-004: 信号降级→告警路由
 AS-CT-005: 跨层审计追踪
 """
 
-
 from __future__ import annotations
 
 import uuid
@@ -57,9 +56,9 @@ _MAX_WORKERS = 8
 
 __all__ = [
     "AlphaSignalPipeline",
-    "PipelineStage",
-    "PipelineResult",
     "PipelineError",
+    "PipelineResult",
+    "PipelineStage",
 ]
 
 try:
@@ -67,6 +66,7 @@ try:
     from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
     from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
     from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+
     _CONTRACTS_AVAILABLE = True
 except ImportError:
     _CONTRACTS_AVAILABLE = False
@@ -111,9 +111,16 @@ class AlphaSignalPipeline:
     转化为统一的合成交易信号，并执行信号质量校验和降级路由。
     """
 
-    _FACTOR_NAME_BLACKLIST = frozenset({
-        "malicious", "poison", "exploit", "trojan", "backdoor", "hack",
-    })
+    _FACTOR_NAME_BLACKLIST = frozenset(
+        {
+            "malicious",
+            "poison",
+            "exploit",
+            "trojan",
+            "backdoor",
+            "hack",
+        }
+    )
     _SUSPICIOUS_FACTORS: set[str] = set()
     _CONFIDENCE_CAP = 1.0
     _EXTREME_WEIGHT_THRESHOLD = 2.0
@@ -128,6 +135,7 @@ class AlphaSignalPipeline:
     def _snapshot_builtins() -> frozenset[str]:
         try:
             import builtins
+
             return frozenset(builtins.__dict__.keys())
         except Exception:
             return frozenset()
@@ -137,6 +145,7 @@ class AlphaSignalPipeline:
         violations: list[str] = []
         try:
             import builtins
+
             current = set(builtins.__dict__.keys())
             added = current - snapshot
             if added:
@@ -164,9 +173,7 @@ class AlphaSignalPipeline:
         name_lower = synthesizer_cls.__name__.lower()
         for banned in self._FACTOR_NAME_BLACKLIST:
             if banned in name_lower:
-                self._degraded_reasons.append(
-                    f"Rejected suspicious synthesizer: {synthesizer_cls.__name__}"
-                )
+                self._degraded_reasons.append(f"Rejected suspicious synthesizer: {synthesizer_cls.__name__}")
                 return
         self._synthesizers.append(synthesizer_cls)
 
@@ -183,15 +190,18 @@ class AlphaSignalPipeline:
         )
 
         if not _CONTRACTS_AVAILABLE:
-            result.errors.append({
-                "stage": "preflight",
-                "message": "L02/L03 contracts unavailable — running in degraded mode",
-            })
+            result.errors.append(
+                {
+                    "stage": "preflight",
+                    "message": "L02/L03 contracts unavailable — running in degraded mode",
+                }
+            )
             result.degraded = True
 
         if not self._factors:
             try:
                 from zephyr.governance.factor.factor_base import FactorBase as FB
+
                 discovered = getattr(FB, "discover_factors", lambda: [])()
                 self._factors = list(discovered) if discovered else []
             except Exception:
@@ -199,10 +209,12 @@ class AlphaSignalPipeline:
 
         if not self._factors:
             result.status = "no_factors"
-            result.errors.append({
-                "stage": PipelineStage.FACTOR_DISCOVERY.value,
-                "message": "No factors discovered or registered",
-            })
+            result.errors.append(
+                {
+                    "stage": PipelineStage.FACTOR_DISCOVERY.value,
+                    "message": "No factors discovered or registered",
+                }
+            )
             return result
 
         factor_signals: list = []
@@ -212,8 +224,7 @@ class AlphaSignalPipeline:
 
         with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, len(self._factors))) as executor:
             futures = {
-                executor.submit(self._compute_single, factor_cls, key): factor_cls
-                for factor_cls in self._factors
+                executor.submit(self._compute_single, factor_cls, key): factor_cls for factor_cls in self._factors
             }
             for future in as_completed(futures):
                 try:
@@ -222,22 +233,26 @@ class AlphaSignalPipeline:
                         violations = self._check_builtins_integrity(builtins_snapshot)
                         if violations:
                             result.factors_failed += 1
-                            result.errors.append({
-                                "stage": PipelineStage.FACTOR_COMPUTE.value,
-                                "factor": futures[future].__name__,
-                                "error": f"BUILTINS TAMPERED: {violations}",
-                            })
+                            result.errors.append(
+                                {
+                                    "stage": PipelineStage.FACTOR_COMPUTE.value,
+                                    "factor": futures[future].__name__,
+                                    "error": f"BUILTINS TAMPERED: {violations}",
+                                }
+                            )
                             continue
                     if signals:
                         factor_signals.extend(signals if isinstance(signals, list) else [signals])
                         result.factors_computed += 1
                 except Exception as e:
                     result.factors_failed += 1
-                    result.errors.append({
-                        "stage": PipelineStage.FACTOR_COMPUTE.value,
-                        "factor": futures[future].__name__,
-                        "error": str(e),
-                    })
+                    result.errors.append(
+                        {
+                            "stage": PipelineStage.FACTOR_COMPUTE.value,
+                            "factor": futures[future].__name__,
+                            "error": str(e),
+                        }
+                    )
 
         if not factor_signals:
             result.status = "no_signals"
@@ -259,14 +274,10 @@ class AlphaSignalPipeline:
             sv = getattr(s, "signal_value", 0.0)
             if abs(sv) > 1000.0:
                 extreme_signal_detected = True
-                self._degraded_reasons.append(
-                    f"Extreme signal_value={sv:.1f} detected from synthesizer"
-                )
+                self._degraded_reasons.append(f"Extreme signal_value={sv:.1f} detected from synthesizer")
             meta_conf = getattr(s, "confidence", 0.0)
             if meta_conf > self._EXTREME_WEIGHT_THRESHOLD:
-                self._degraded_reasons.append(
-                    f"Extreme confidence={meta_conf:.4f} > {self._EXTREME_WEIGHT_THRESHOLD}"
-                )
+                self._degraded_reasons.append(f"Extreme confidence={meta_conf:.4f} > {self._EXTREME_WEIGHT_THRESHOLD}")
 
         result.signal_count = len(synthesized)
         raw_confidence = self._aggregate_confidence(synthesized)
@@ -289,17 +300,21 @@ class AlphaSignalPipeline:
 
         if result.degraded:
             for reason in self._degraded_reasons:
-                result.errors.append({
-                    "stage": PipelineStage.SIGNAL_VALIDATION.value,
-                    "message": reason,
-                    "confidence": result.confidence,
-                })
+                result.errors.append(
+                    {
+                        "stage": PipelineStage.SIGNAL_VALIDATION.value,
+                        "message": reason,
+                        "confidence": result.confidence,
+                    }
+                )
             if result.confidence < 0.5 and not self._degraded_reasons:
-                result.errors.append({
-                    "stage": PipelineStage.SIGNAL_VALIDATION.value,
-                    "message": f"Signal degraded: confidence={result.confidence:.3f} < 0.5",
-                    "confidence": result.confidence,
-                })
+                result.errors.append(
+                    {
+                        "stage": PipelineStage.SIGNAL_VALIDATION.value,
+                        "message": f"Signal degraded: confidence={result.confidence:.3f} < 0.5",
+                        "confidence": result.confidence,
+                    }
+                )
 
         result.stage = PipelineStage.CAPITAL_ALLOCATION
         result.status = "completed_with_errors" if result.errors else "completed"
@@ -318,6 +333,7 @@ class AlphaSignalPipeline:
         if not self._synthesizers:
             try:
                 from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase as SSB
+
                 synthesizers = getattr(SSB, "_registry", {})
                 self._synthesizers = list(synthesizers.values())
             except Exception:
@@ -331,12 +347,14 @@ class AlphaSignalPipeline:
                 elif isinstance(sig, dict) and "confidence" in sig:
                     raw_confidences.append(sig["confidence"])
             avg_confidence = sum(raw_confidences) / len(raw_confidences) if raw_confidences else 0.5
-            return [{
-                "synthesized": True,
-                "signal_count": len(factor_signals),
-                "key": idempotency_key,
-                "confidence": avg_confidence,
-            }]
+            return [
+                {
+                    "synthesized": True,
+                    "signal_count": len(factor_signals),
+                    "key": idempotency_key,
+                    "confidence": avg_confidence,
+                }
+            ]
 
         results = []
         for synth_cls in self._synthesizers:
@@ -363,13 +381,20 @@ class AlphaSignalPipeline:
 
 if __name__ == "__main__":
     import json as _json
+
     pipe = AlphaSignalPipeline()
     result = pipe.run()
-    print(_json.dumps({
-        "status": result.status,
-        "factors_computed": result.factors_computed,
-        "signal_count": result.signal_count,
-        "confidence": result.confidence,
-        "degraded": result.degraded,
-        "errors": result.errors,
-    }, indent=2, ensure_ascii=False))
+    print(
+        _json.dumps(
+            {
+                "status": result.status,
+                "factors_computed": result.factors_computed,
+                "signal_count": result.signal_count,
+                "confidence": result.confidence,
+                "degraded": result.degraded,
+                "errors": result.errors,
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+    )

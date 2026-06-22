@@ -2,28 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.adversarial_tester
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
 from dataclasses import dataclass, field
 from typing import Any
+
 
 @dataclass
 class AdversarialTestCase:
@@ -34,6 +25,7 @@ class AdversarialTestCase:
     payload: str
     metadata: dict[str, Any] = field(default_factory=dict)
 
+
 @dataclass
 class AdversarialResult:
     test: AdversarialTestCase
@@ -43,8 +35,8 @@ class AdversarialResult:
     detail: str
     run_at: float = field(default_factory=time.time)
 
-class AdversarialTester:
 
+class AdversarialTester:
     BUDGET_ADVERSARIAL_TESTS: list[AdversarialTestCase] = [
         AdversarialTestCase(
             test_id="ADV-BUDGET-001",
@@ -117,7 +109,10 @@ class AdversarialTester:
             passed = detected == test.expected_detected
             detail = f"{'PASS' if passed else 'FAIL'}: expected_detected={test.expected_detected}, actual_detected={detected}, confidence={confidence:.0%}"
         else:
-            detected = any(kw in test.payload.lower() for kw in ["ignore_previous", "bypass", "unlimited", "modify", "repeat 10", "delegate"])
+            detected = any(
+                kw in test.payload.lower()
+                for kw in ["ignore_previous", "bypass", "unlimited", "modify", "repeat 10", "delegate"]
+            )
             confidence = 0.5 if detected else 0.1
             passed = detected == test.expected_detected
             detail = f"{'PASS' if passed else 'FAIL'} (basic keyword check)"
@@ -132,6 +127,7 @@ class AdversarialTester:
 
     def _run_ipi_injection(self, test: AdversarialTestCase) -> AdversarialResult:
         from .ipi_defense import IPIDefense
+
         defense = IPIDefense()
         report = defense.scan(test.payload)
         detected = report.attack_detected
@@ -142,6 +138,7 @@ class AdversarialTester:
 
     def _run_cold_start_abuse(self, test: AdversarialTestCase) -> AdversarialResult:
         from .ipi_defense import IPIDefense
+
         defense = IPIDefense()
         report = defense.scan(test.payload)
         detected = report.attack_detected
@@ -152,6 +149,7 @@ class AdversarialTester:
 
     def _run_delegation_chain(self, test: AdversarialTestCase) -> AdversarialResult:
         from .ipi_defense import IPIDefense
+
         defense = IPIDefense()
         report = defense.scan(test.payload)
         detected = report.attack_detected
@@ -162,6 +160,7 @@ class AdversarialTester:
 
     def _run_stream_abort_bypass(self, test: AdversarialTestCase) -> AdversarialResult:
         from .stream_abort_guard import StreamAbortGuard
+
         guard = StreamAbortGuard(
             micro_transaction_threshold=0.05,
             micro_transaction_accumulation_limit=0.50,
@@ -174,12 +173,13 @@ class AdversarialTester:
                 break
         passed = detected == test.expected_detected
         confidence = 0.95 if detected else 0.1
-        detail = f"{'PASS' if passed else 'FAIL'}: micro-transaction accumulation {'detected' if detected else 'NOT detected'} after {i+1} chunks"
+        detail = f"{'PASS' if passed else 'FAIL'}: micro-transaction accumulation {'detected' if detected else 'NOT detected'} after {i + 1} chunks"
         return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
 
     def _run_race_condition(self, test: AdversarialTestCase) -> AdversarialResult:
         from .budget_engine import BudgetEngine
         from .budget_models import BudgetDimension
+
         engine = BudgetEngine()
         v1 = engine.get_consumption_version(BudgetDimension.COST)
         ok1, v2, _ = engine.try_claim_budget("provider-zhipu", BudgetDimension.COST, 5.0, expected_version=v1)

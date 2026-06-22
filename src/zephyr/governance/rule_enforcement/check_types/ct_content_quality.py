@@ -27,102 +27,45 @@ ContentQualityHandler — ContentQualityHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class ContentQualityHandler(CheckTypeHandler):
-
-
     name = "content_quality"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        deliverables = list(task.deliverables or [])
 
-                violations = []
+        dep_paths = [project_root / p for p in deliverables]
 
+        min_lines = int(params.get("min_lines", 5))
 
-                deliverables = list(task.deliverables or [])
+        for fp in dep_paths:
+            try:
+                lines = fp.read_text(encoding="utf-8").splitlines()
 
+            except (FileNotFoundError, UnicodeDecodeError):
+                continue
 
-                dep_paths = [project_root / p for p in deliverables]
+            non_empty = [l for l in lines if l.strip() and not l.strip().startswith("#")]
 
+            if len(non_empty) < min_lines:
+                violations.append(
+                    {"message": f"Empty shell: {fp} ({len(non_empty)} lines)", "severity": check.severity}
+                )
 
-                min_lines = int(params.get("min_lines", 5))
-
-
-                for fp in dep_paths:
-
-
-                    try:
-
-
-                        lines = fp.read_text(encoding="utf-8").splitlines()
-
-
-                    except (FileNotFoundError, UnicodeDecodeError):
-
-
-                        continue
-
-
-                    non_empty = [l for l in lines if l.strip() and not l.strip().startswith("#")]
-
-
-                    if len(non_empty) < min_lines:
-
-
-                        violations.append({"message": f"Empty shell: {fp} ({len(non_empty)} lines)", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

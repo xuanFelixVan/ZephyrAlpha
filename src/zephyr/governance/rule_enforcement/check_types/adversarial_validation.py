@@ -12,13 +12,12 @@
 
 """AdversarialValidation check type handler — registers with check_type_registry."""
 
-
 from __future__ import annotations
 
 from typing import Any
 
-from zephyr.governance.rule_enforcement.adversarial_validation import AdversarialValidationGate
 from zephyr.governance.rule_enforcement.adversarial_strategies import AdversarialSampleGenerator
+from zephyr.governance.rule_enforcement.adversarial_validation import AdversarialValidationGate
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
 from zephyr.governance.rule_enforcement.task_types import Task
 
@@ -51,28 +50,31 @@ class AdversarialValidationHandler(CheckTypeHandler):
         result = self._gate.validate(output, {"task_id": getattr(task, "task_id", "")})
 
         if not result.passed:
-            violations.append({
-                "message": "Adversarial validation failed: confidence=%.2f violations=%d"
-                % (result.confidence, len(result.violations)),
-                "severity": getattr(check, "severity", "P1"),
-                "details": {
-                    "confidence": result.confidence,
-                    "violations": result.violations,
-                },
-            })
+            violations.append(
+                {
+                    "message": "Adversarial validation failed: confidence=%.2f violations=%d"
+                    % (result.confidence, len(result.violations)),
+                    "severity": getattr(check, "severity", "P1"),
+                    "details": {
+                        "confidence": result.confidence,
+                        "violations": result.violations,
+                    },
+                }
+            )
 
         if strategies:
             test_results = self._gate.adversarial_test(output, strategies)
             for tr in test_results:
                 if not tr.passed:
-                    violations.append({
-                        "message": "Adversarial strategy '%s' failed: score=%.2f"
-                        % (tr.strategy_name, tr.score),
-                        "severity": getattr(check, "severity", "P1"),
-                        "details": {
-                            "strategy": tr.strategy_name,
-                            "score": tr.score,
-                        },
-                    })
+                    violations.append(
+                        {
+                            "message": "Adversarial strategy '%s' failed: score=%.2f" % (tr.strategy_name, tr.score),
+                            "severity": getattr(check, "severity", "P1"),
+                            "details": {
+                                "strategy": tr.strategy_name,
+                                "score": tr.score,
+                            },
+                        }
+                    )
 
         return violations

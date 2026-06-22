@@ -54,7 +54,7 @@ class DiagnosticSelfConsistencyVerifier:
                 action_match=replayed.action_type == original.action_type,
                 embedding_similarity=sim,
                 semantic_equivalence=sim > 0.92))
-        
+
         consistency = sum(1 for r in replays
                           if r.diagnosis_match or r.semantic_equivalence) / len(replays)
         if consistency < self.CONSISTENCY_ALERT_THRESHOLD:

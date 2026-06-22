@@ -23,8 +23,8 @@ from __future__ import annotations
 
 """Import表面积负债追踪 — SBS 0-100 + shared burden score."""
 
-from collections import defaultdict
 from pathlib import Path
+
 
 class ImportSurfaceTracker:
     """Import表面积 (SBS) 负债追踪."""

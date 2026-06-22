@@ -131,12 +131,10 @@ class IntegrityGuard:
             "version": manifest.version,
             "generated_at": manifest.generated_at,
             "layer1_kes": [
-                {"path": e.path, "sha256": e.sha256, "size": e.size, "mtime": e.mtime}
-                for e in manifest.layer1_kes
+                {"path": e.path, "sha256": e.sha256, "size": e.size, "mtime": e.mtime} for e in manifest.layer1_kes
             ],
             "layer2_sources": [
-                {"path": e.path, "sha256": e.sha256, "size": e.size, "mtime": e.mtime}
-                for e in manifest.layer2_sources
+                {"path": e.path, "sha256": e.sha256, "size": e.size, "mtime": e.mtime} for e in manifest.layer2_sources
             ],
             "layer3_aggregate": manifest.layer3_aggregate,
         }
@@ -163,7 +161,9 @@ class IntegrityGuard:
         if stored is None:
             return DriftReport(
                 timestamp=datetime.now(UTC).isoformat(),
-                layer=layer, total=0, matched=0,
+                layer=layer,
+                total=0,
+                matched=0,
                 is_clean=False,
             )
 
@@ -189,8 +189,12 @@ class IntegrityGuard:
         is_clean = len(mismatches) == 0 and len(added) == 0 and len(removed) == 0
         return DriftReport(
             timestamp=datetime.now(UTC).isoformat(),
-            layer=layer, total=max(total, 1), matched=matched,
-            mismatches=mismatches, added=added, removed=removed,
+            layer=layer,
+            total=max(total, 1),
+            matched=matched,
+            mismatches=mismatches,
+            added=added,
+            removed=removed,
             is_clean=is_clean,
         )
 
@@ -213,11 +217,13 @@ class IntegrityGuard:
                 if ce.sha256 == se.sha256:
                     matched.append(ce.path)
                 else:
-                    mismatches.append({
-                        "path": ce.path,
-                        "expected": se.sha256,
-                        "actual": ce.sha256,
-                    })
+                    mismatches.append(
+                        {
+                            "path": ce.path,
+                            "expected": se.sha256,
+                            "actual": ce.sha256,
+                        }
+                    )
             else:
                 added.append(ce.path)
 
@@ -238,12 +244,14 @@ class IntegrityGuard:
         for f in sorted(directory.glob(pattern)):
             try:
                 content = f.read_bytes()
-                entries.append(HashEntry(
-                    path=str(f.relative_to(self._root)).replace("\\", "/"),
-                    sha256=hashlib.sha256(content).hexdigest(),
-                    size=len(content),
-                    mtime=datetime.fromtimestamp(f.stat().st_mtime, tz=UTC).isoformat(),
-                ))
+                entries.append(
+                    HashEntry(
+                        path=str(f.relative_to(self._root)).replace("\\", "/"),
+                        sha256=hashlib.sha256(content).hexdigest(),
+                        size=len(content),
+                        mtime=datetime.fromtimestamp(f.stat().st_mtime, tz=UTC).isoformat(),
+                    )
+                )
             except Exception as e:
                 logger.warning("Failed to hash %s: %s", f, e)
         return entries
@@ -251,6 +259,7 @@ class IntegrityGuard:
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="KB Integrity Guard - SHA256 Source Manifest + CI Tamper Detection")
     sub = parser.add_subparsers(dest="cmd")
 
@@ -272,16 +281,22 @@ def main() -> None:
     if args.cmd == "verify":
         report = guard.verify(layer=args.layer)
         if args.json:
-            print(json.dumps({
-                "timestamp": report.timestamp,
-                "layer": report.layer,
-                "total": report.total,
-                "matched": report.matched,
-                "mismatches": report.mismatches,
-                "added": report.added,
-                "removed": report.removed,
-                "is_clean": report.is_clean,
-            }, ensure_ascii=False, indent=2))
+            print(
+                json.dumps(
+                    {
+                        "timestamp": report.timestamp,
+                        "layer": report.layer,
+                        "total": report.total,
+                        "matched": report.matched,
+                        "mismatches": report.mismatches,
+                        "added": report.added,
+                        "removed": report.removed,
+                        "is_clean": report.is_clean,
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
         else:
             print(f"Integrity Verification (Layer {report.layer}):")
             print(f"  Total:     {report.total}")
@@ -290,7 +305,7 @@ def main() -> None:
             print(f"  Added:     {len(report.added)}")
             print(f"  Removed:   {len(report.removed)}")
             if report.mismatches:
-                print(f"  Mismatched files:")
+                print("  Mismatched files:")
                 for m in report.mismatches:
                     print(f"    {m['path']}: expected={m['expected'][:16]}..., actual={m['actual'][:16]}...")
             if report.added:

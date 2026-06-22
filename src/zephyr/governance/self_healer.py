@@ -46,12 +46,12 @@ from zephyr.governance.semantic_audit.models import HealResult, LLMFixResult
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "SelfHealError",
     "HealResult",
-    "SelfHealer",
     "IssueAggregatorProtocol",
     "LLMBridgeProtocol",
     "RollbackHandlerProtocol",
+    "SelfHealError",
+    "SelfHealer",
 ]
 
 
@@ -108,7 +108,7 @@ def _is_modification_allowed(target_path: str) -> tuple[bool, str]:
     if not os.path.isfile(target_path):
         return True, ""
     try:
-        with open(target_path, "r", encoding="utf-8") as f:
+        with open(target_path, encoding="utf-8") as f:
             head = f.read(4096)
     except OSError as exc:
         return False, f"无法读取文件头部: {exc}"
@@ -184,9 +184,7 @@ class SelfHealer:
         # Step 3: 修复内容获取
         fix_content = fix_suggestion
         if not fix_content and self._llm_bridge is not None:
-            llm_result = self._llm_bridge.generate_fix(
-                {"target_path": target_path, "issue": issue_description}
-            )
+            llm_result = self._llm_bridge.generate_fix({"target_path": target_path, "issue": issue_description})
             if llm_result.success and llm_result.fix_text:
                 fix_content = llm_result.fix_text
             else:
@@ -269,9 +267,7 @@ class SelfHealer:
             issue_description = issue.get("issue_description", issue.get("issue", ""))
             fix_suggestion = issue.get("fix_suggestion", issue.get("fix", ""))
             if not target_path:
-                results.append(
-                    HealResult(success=False, reason="缺少 target_path", rollback_applied=False)
-                )
+                results.append(HealResult(success=False, reason="缺少 target_path", rollback_applied=False))
                 continue
             result = self.heal(target_path, issue_description, fix_suggestion)
             results.append(result)
@@ -309,7 +305,7 @@ class SelfHealer:
         if not os.path.isfile(target_path):
             return False
         try:
-            with open(target_path, "r", encoding="utf-8") as f:
+            with open(target_path, encoding="utf-8") as f:
                 content = f.read()
             if not content.strip():
                 logger.warning("验证失败: 文件为空 — %s", target_path)
@@ -321,7 +317,8 @@ class SelfHealer:
             try:
                 result = subprocess.run(
                     [
-                        "python", "-c",
+                        "python",
+                        "-c",
                         f"import py_compile; py_compile.compile(r'{target_path}', doraise=True)",
                     ],
                     capture_output=True,

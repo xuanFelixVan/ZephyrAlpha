@@ -31,19 +31,21 @@ Notifier — 多渠道 Owner 通知。
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
+
 
 class NotificationLevel(str, Enum):
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
 
+
 class NotificationChannel(str, Enum):
     FILE = "file"
     CONSOLE = "console"
+
 
 @dataclass
 class Notification:
@@ -53,7 +55,8 @@ class Notification:
     message: str
     task_id: str = ""
     channel: NotificationChannel = NotificationChannel.CONSOLE
-    timestamp_utc: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp_utc: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+
 
 @dataclass
 class NotifyConfig:
@@ -61,18 +64,17 @@ class NotifyConfig:
     min_level: NotificationLevel = NotificationLevel.INFO
     rate_limit_per_minute: int = 30
 
-class Notifier:
 
+class Notifier:
     def __init__(self, output_dir: Path | None = None) -> None:
         self._output_dir = output_dir or Path("data/notifications")
         self._config = NotifyConfig()
         self._notification_count = 0
-        self._window_start = datetime.now(timezone.utc)
+        self._window_start = datetime.now(UTC)
 
-    def notify(self, level: NotificationLevel, title: str, message: str,
-               task_id: str = "") -> Notification:
+    def notify(self, level: NotificationLevel, title: str, message: str, task_id: str = "") -> Notification:
         notification = Notification(
-            notification_id=f"NOTIF-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            notification_id=f"NOTIF-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             level=level,
             title=title,
             message=message,
@@ -93,14 +95,18 @@ class Notifier:
         self._output_dir.mkdir(parents=True, exist_ok=True)
         notification_path = self._output_dir / f"{notification.notification_id}.json"
         notification_path.write_text(
-            json.dumps({
-                "notification_id": notification.notification_id,
-                "level": notification.level.value,
-                "title": notification.title,
-                "message": notification.message,
-                "task_id": notification.task_id,
-                "timestamp_utc": notification.timestamp_utc,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "notification_id": notification.notification_id,
+                    "level": notification.level.value,
+                    "title": notification.title,
+                    "message": notification.message,
+                    "task_id": notification.task_id,
+                    "timestamp_utc": notification.timestamp_utc,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )
 

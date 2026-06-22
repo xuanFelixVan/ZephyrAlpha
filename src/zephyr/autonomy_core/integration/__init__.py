@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Agent Spec → Pipeline 集成桥接层
 
@@ -23,4 +23,4 @@ Agent Spec → Pipeline 集成桥接层
 #     SkillInjectionResult,
 # )
 
-__all__ = ['PipelineSkillBridge', 'SkillContextInjector', 'SkillInjectionResult', 'pipeline_bridge']
+__all__ = ["PipelineSkillBridge", "SkillContextInjector", "SkillInjectionResult", "pipeline_bridge"]

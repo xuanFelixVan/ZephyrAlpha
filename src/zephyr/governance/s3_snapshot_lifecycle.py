@@ -32,13 +32,11 @@ S3 Snapshot Lifecycle Manager — 快照防生命周期过期。
     - 恢复前检查 S3 对象存在性
 """
 
-
 from __future__ import annotations
 
 import json
-import os
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -95,7 +93,6 @@ class SnapshotExistenceCheck:
 
 
 class S3SnapshotLifecycle:
-
     def __init__(self, snapshot_dir: Path | None = None) -> None:
         self._snapshot_dir = snapshot_dir or Path("data/rollback/db_snapshots")
         self._manifest_dir = self._snapshot_dir / ".manifests"
@@ -117,7 +114,7 @@ class S3SnapshotLifecycle:
         cold: list[SnapshotManifest] = []
         expired: list[SnapshotManifest] = []
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         manifests = self._load_manifests()
 
         for m in manifests:
@@ -126,9 +123,7 @@ class S3SnapshotLifecycle:
 
             if age_days > self._policy.expiration_days:
                 expired.append(m)
-            elif age_days > self._policy.transition_to_glacier_days:
-                cold.append(m)
-            elif unreferenced_days > 90:
+            elif age_days > self._policy.transition_to_glacier_days or unreferenced_days > 90:
                 cold.append(m)
             elif unreferenced_days > 30:
                 warm.append(m)
@@ -143,7 +138,7 @@ class S3SnapshotLifecycle:
         }
 
     def fast_purge(self, max_age_days: int = 90, dry_run: bool = False) -> FastPurgeResult:
-        cutoff = datetime.now(timezone.utc) - timedelta(days=max_age_days)
+        cutoff = datetime.now(UTC) - timedelta(days=max_age_days)
         purged_keys: list[str] = []
         errors: list[str] = []
 
@@ -182,9 +177,7 @@ class S3SnapshotLifecycle:
             return SnapshotExistenceCheck(
                 exists=True,
                 key=key,
-                last_modified=datetime.fromtimestamp(
-                    snapshot_path.stat().st_mtime, tz=timezone.utc
-                ).isoformat(),
+                last_modified=datetime.fromtimestamp(snapshot_path.stat().st_mtime, tz=UTC).isoformat(),
             )
 
         return SnapshotExistenceCheck(
@@ -199,8 +192,8 @@ class S3SnapshotLifecycle:
 
         manifest = SnapshotManifest(
             snapshot_key=key,
-            created_at=datetime.now(timezone.utc),
-            last_referenced_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
+            last_referenced_at=datetime.now(UTC),
             size_bytes=size_bytes,
             sha256=sha256_hash,
             commit_sha=commit_sha,
@@ -213,7 +206,7 @@ class S3SnapshotLifecycle:
         manifests = self._load_manifests()
         for m in manifests:
             if m.snapshot_key == key:
-                m.last_referenced_at = datetime.now(timezone.utc)
+                m.last_referenced_at = datetime.now(UTC)
                 self._save_manifest(m)
                 return
 
@@ -224,14 +217,16 @@ class S3SnapshotLifecycle:
         for manifest_file in self._manifest_dir.glob("*.manifest.json"):
             try:
                 data = json.loads(manifest_file.read_text(encoding="utf-8"))
-                manifests.append(SnapshotManifest(
-                    snapshot_key=data["snapshot_key"],
-                    created_at=datetime.fromisoformat(data["created_at"]),
-                    last_referenced_at=datetime.fromisoformat(data["last_referenced_at"]),
-                    size_bytes=data.get("size_bytes", 0),
-                    sha256=data.get("sha256", ""),
-                    commit_sha=data.get("commit_sha", ""),
-                ))
+                manifests.append(
+                    SnapshotManifest(
+                        snapshot_key=data["snapshot_key"],
+                        created_at=datetime.fromisoformat(data["created_at"]),
+                        last_referenced_at=datetime.fromisoformat(data["last_referenced_at"]),
+                        size_bytes=data.get("size_bytes", 0),
+                        sha256=data.get("sha256", ""),
+                        commit_sha=data.get("commit_sha", ""),
+                    )
+                )
             except (json.JSONDecodeError, KeyError):
                 pass
         return manifests
@@ -259,10 +254,7 @@ class S3SnapshotLifecycle:
         try:
             kgs_data = json.loads(kgs_path.read_text(encoding="utf-8"))
             if "snapshots" in kgs_data:
-                kgs_data["snapshots"] = [
-                    s for s in kgs_data["snapshots"]
-                    if s.get("key") not in purged_keys
-                ]
+                kgs_data["snapshots"] = [s for s in kgs_data["snapshots"] if s.get("key") not in purged_keys]
                 kgs_path.write_text(
                     json.dumps(kgs_data, ensure_ascii=False, indent=2),
                     encoding="utf-8",

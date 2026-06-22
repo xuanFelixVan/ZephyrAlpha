@@ -28,16 +28,13 @@ type_hint_incompatibility: X|Y vs Union[X,Y] 等语法糖检测
 auto_fixable: 自动降级语法到目标Python版本
 对标 blueprint.md §6.22。
 """
+
 from __future__ import annotations
 
-import ast
-import os
 import re
-import sys
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -100,10 +97,7 @@ def _check_union_syntax(
                     line_no=i,
                     issue_type="union_syntax",
                     current_syntax=line.strip()[:80],
-                    suggested_fix=(
-                        f"Replace X|Y with Union[X,Y] "
-                        f"for Python {target_minor} compatibility"
-                    ),
+                    suggested_fix=(f"Replace X|Y with Union[X,Y] for Python {target_minor} compatibility"),
                     severity="MAJOR",
                 )
             )
@@ -128,7 +122,7 @@ def _check_stdlib_imports(
             for mod in modules:
                 pattern = rf"(?:^import\s+{mod}|from\s+{mod}\s+import)"
                 for match in re.finditer(pattern, content, re.MULTILINE):
-                    line_no = content[:match.start()].count("\n") + 1
+                    line_no = content[: match.start()].count("\n") + 1
                     issues.append(
                         PythonCompatIssue(
                             issue_id=f"pycompat-stdlib-{mod}-L{line_no}",
@@ -137,8 +131,7 @@ def _check_stdlib_imports(
                             issue_type="stdlib_incompat",
                             current_syntax=match.group(0),
                             suggested_fix=(
-                                f"Module {mod} requires Python 3.{ver_minor}+. "
-                                f"Install backport or bump target."
+                                f"Module {mod} requires Python 3.{ver_minor}+. Install backport or bump target."
                             ),
                             severity="MAJOR",
                         )
@@ -157,7 +150,7 @@ def _check_type_hints(
     type_statement_pattern = re.compile(r"^type\s+\w+\s*=", re.MULTILINE)
     if target_minor < 12:
         for match in type_statement_pattern.finditer(content):
-            line_no = content[:match.start()].count("\n") + 1
+            line_no = content[: match.start()].count("\n") + 1
             issues.append(
                 PythonCompatIssue(
                     issue_id=f"pycompat-type-alias-L{line_no}",
@@ -165,10 +158,7 @@ def _check_type_hints(
                     line_no=line_no,
                     issue_type="type_alias",
                     current_syntax=content.splitlines()[line_no - 1].strip()[:80],
-                    suggested_fix=(
-                        f"Replace 'type X = ...' with "
-                        f"'X = TypeAlias' for Python <3.12"
-                    ),
+                    suggested_fix=("Replace 'type X = ...' with 'X = TypeAlias' for Python <3.12"),
                     severity="MINOR",
                 )
             )
@@ -188,8 +178,11 @@ def scan_python_compat(
         if all(
             s not in str(p).lower()
             for s in (
-                ".git", "__pycache__", ".venv",
-                "venv", "node_modules",
+                ".git",
+                "__pycache__",
+                ".venv",
+                "venv",
+                "node_modules",
             )
         )
     ]
@@ -217,14 +210,10 @@ def auto_fix_compat(
         if issue.issue_type == "union_syntax":
             pattern_str = r"(\w+|\w+\[\w+\]|\w+)\s*\|\s*(\w+|None)"
             replacement = f"Union[{r'\1'}, {r'\2'}]"
-            fixes[issue.issue_id] = (
-                f"Replace {issue.current_syntax[:40]}... "
-                f"→ Union[X, Y]"
-            )
+            fixes[issue.issue_id] = f"Replace {issue.current_syntax[:40]}... → Union[X, Y]"
         elif issue.issue_type == "stdlib_incompat":
             fixes[issue.issue_id] = (
-                f"Install backported {issue.current_syntax} "
-                f"or bump target to Python 3.{target_minor}+"
+                f"Install backported {issue.current_syntax} or bump target to Python 3.{target_minor}+"
             )
     return fixes
 
@@ -235,10 +224,10 @@ def generate_compat_report(
 ) -> str:
     """生成兼容性报告。"""
     lines: list[str] = [
-        f"# Python Compatibility Report",
+        "# Python Compatibility Report",
         f"# Target: Python {target_python}",
         f"# Total issues: {len(issues)}",
-        f"# Generated: {datetime.now(timezone.utc).isoformat()}",
+        f"# Generated: {datetime.now(UTC).isoformat()}",
         "",
     ]
 
@@ -249,9 +238,7 @@ def generate_compat_report(
     for itype, it_issues in sorted(by_type.items()):
         lines.append(f"## {itype} ({len(it_issues)} issues)")
         for iss in it_issues[:10]:
-            lines.append(
-                f"- [{iss.severity}] {iss.file_path}:{iss.line_no}"
-            )
+            lines.append(f"- [{iss.severity}] {iss.file_path}:{iss.line_no}")
             lines.append(f"  Current: {iss.current_syntax[:60]}")
             lines.append(f"  Fix: {iss.suggested_fix[:80]}")
         lines.append("")

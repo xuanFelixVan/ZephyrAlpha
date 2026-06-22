@@ -59,15 +59,16 @@ class RumorNoiseFilter:
             self.pending_signals[signal_id] = []
 
         self.pending_signals[signal_id] = [
-            s for s in self.pending_signals[signal_id]
-            if now - s["ts"] < self.corroboration_window
+            s for s in self.pending_signals[signal_id] if now - s["ts"] < self.corroboration_window
         ]
 
-        self.pending_signals[signal_id].append({
-            "source": source,
-            "content": content,
-            "ts": now,
-        })
+        self.pending_signals[signal_id].append(
+            {
+                "source": source,
+                "content": content,
+                "ts": now,
+            }
+        )
 
         unique_sources = {s["source"] for s in self.pending_signals[signal_id]}
 
@@ -76,11 +77,13 @@ class RumorNoiseFilter:
         return SignalCredibility.UNVERIFIED
 
     def can_act_on(self, signal_id: str) -> bool:
-        return self.ingest_signal(signal_id, "", "") == SignalCredibility.CONFIRMED \
-            if signal_id in self.pending_signals else False
+        return (
+            self.ingest_signal(signal_id, "", "") == SignalCredibility.CONFIRMED
+            if signal_id in self.pending_signals
+            else False
+        )
 
     def get_unverified_count(self) -> int:
         return sum(
-            1 for sources in self.pending_signals.values()
-            if len({s["source"] for s in sources}) < self.min_sources
+            1 for sources in self.pending_signals.values() if len({s["source"] for s in sources}) < self.min_sources
         )

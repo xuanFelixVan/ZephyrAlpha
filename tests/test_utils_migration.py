@@ -20,15 +20,15 @@
 # [TESTS] pytest tests/test_utils_migration.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.migration import (
-    Migration,
     MIGRATIONS,
-    migrate_task,
+    MigrationError,
+    _find_path,
+    _register_bidirectional,
     downgrade_task,
     latest_schema_version,
-    MigrationError,
-    _register_bidirectional,
-    _find_path,
+    migrate_task,
 )
 
 

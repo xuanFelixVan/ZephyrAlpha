@@ -16,11 +16,11 @@ category: agent_instruction
 | 你的任务 | 必须读的文件（只读这些） | Token 成本 | 禁止做的事 |
 |---------|------------------------|:---:|---------|
 | **首次入职 / 了解项目全貌** | `README.md` + `docs/02_enterprise_architecture/target-architecture/00-overview.md` + 本文件 §1~§5（项目根目录 → 架构概览 → AI 规则总纲）；若需了解治理体系 → `scripts/governance/quickstart.md` | ~4500 | ❌ 禁止一上来就读本文件 §6~§7 全部 19 条施工原则——先知道"是什么"再知道"怎么干" / ❌ 禁止施工后跳过审计——不审不清，不清不继续 |
-| **修改/优化任何规则文件** | `meta/index.md` + `meta/glossary-glossary.md` + `meta/rule-lifecycle-and-change-standard.md` | ~2000 | ❌ 禁止全量读取 meta/ 下 12 个文件 |
-| **创建新标准文档** | `meta/index.md` + `meta/glossary-glossary.md` + `meta/document-structure-standard.md` + `meta/metadata-registry.md` §1~§4 | ~2500 | ❌ 禁止读 PS-STD-003 行为边界全文——仅按需查对应 ABS/COND 条目 |
-| **修改代码** | `meta/glossary-glossary.md` + `src/zephyr/shared/contracts/`；若修改 `scripts/governance/` 脚本 → 加读 `scripts/governance/quality-standard.md` | ~1500 | ❌ 禁止读 meta/ 其他规则文件——代码已有 pre-commit/CI 强制 |
+| **修改/优化任何规则文件** | `meta/index.md` + `_registry/vocabularies/glossary.yaml` + `meta/rule_lifecycle_and_change_standard.yaml` | ~2000 | ❌ 禁止全量读取 meta/ 下 12 个文件 |
+| **创建新标准文档** | `meta/index.md` + `_registry/vocabularies/glossary.yaml` + `meta/document_structure_standard.yaml` + `meta/metadata_registry.yaml` §1~§4 | ~2500 | ❌ 禁止读 PS-STD-003 行为边界全文——仅按需查对应 ABS/COND 条目 |
+| **修改代码** | `_registry/vocabularies/glossary.yaml` + `src/zephyr/shared/contracts/`；若修改 `scripts/governance/` 脚本 → 加读 `scripts/governance/quality-standard.md` | ~1500 | ❌ 禁止读 meta/ 其他规则文件——代码已有 pre-commit/CI 强制 |
 | **修改 config/ YAML 或审计配置** | `_registry/catalogs/declarative-contract-tracker-registry.md`（必须先读） + `capabilities.yaml` + `scripts/governance/d1_structure/validate_config_integrity.py`（跑基线） | ~800 | ❌ 禁止信任 config/ 下所有 YAML 都是运行时配置 |
-| **审查规则体系一致性** | `meta/index.md` + `meta/glossary-glossary.md` + `meta/rule-classification-and-arbitration-standard.md` + `meta/rule-verification-standard.md` + `_registry/catalogs/rule-registry.md` | ~3500 | ❌ 禁止读 PS-STD-002 模板文件——审查读的是内容不是格式 |
+| **审查规则体系一致性** | `meta/index.md` + `_registry/vocabularies/glossary.yaml` + `meta/rule_classification_and_arbitration_standard.yaml` + `meta/rule_verification_standard.yaml` + `_registry/catalogs/_index.yaml` | ~3500 | ❌ 禁止读 PS-STD-002 模板文件——审查读的是内容不是格式 |
 | **运行项目审计/扫描检查** | `scripts/governance/index.md` | ~600 | ❌ 禁止跳过审计直接施工——先跑 run_all.py 看当前状态 |
 | **查找/操作任何登记表/注册表** | `_registry/catalogs/registry-master-index.yaml` | ~800 | ❌ 禁止跨目录翻找 YAML——先查总索引再定位到具体登记表 |
 | **了解未兑现的 YAML 承诺** | `_registry/catalogs/declarative-contract-tracker-registry.md`（契约跟踪登记表） | ~500 | ❌ 禁止信任有 implementation_status 的 YAML 全部兑现——先查契约跟踪表确认 |

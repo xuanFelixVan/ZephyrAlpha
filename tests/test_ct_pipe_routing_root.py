@@ -21,9 +21,9 @@ from zephyr.integration.ct_pipe_routing import (
     CtPipeRoutingHints,
     PipelineRoutingInputsError,
     ct_pipe_hints_from_task_card,
+    enforce_affinity,
     modules_slice_from_node,
     resolve_ct_pipe_orc001,
-    enforce_affinity,
 )
 from zephyr.integration.models import PipelineRouteDecision
 

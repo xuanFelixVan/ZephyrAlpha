@@ -11,19 +11,21 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.security.access_control.defense_depth import (
+        DEFENSE_DEPTH,
         DefenseLayer,
         LayerDef,
-        DEFENSE_DEPTH,
+        all_enabled,
         get_layer,
         get_layer_by_level,
-        all_enabled,
     )
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -33,7 +35,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestDefenseLayer:
-
     def test_enum_values(self):
         assert DefenseLayer.L1_DEP_AUDIT.value == "L1_DEP_AUDIT"
         assert DefenseLayer.L6_CIRCUIT_BREAKER.value == "L6_CIRCUIT_BREAKER"
@@ -44,7 +45,6 @@ class TestDefenseLayer:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestLayerDef:
-
     def test_creation(self):
         ld = LayerDef(
             layer=DefenseLayer.L1_DEP_AUDIT,
@@ -59,7 +59,6 @@ class TestLayerDef:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestDefenseDepthConstants:
-
     def test_all_layers_present(self):
         for dl in DefenseLayer:
             assert dl in DEFENSE_DEPTH
@@ -71,7 +70,6 @@ class TestDefenseDepthConstants:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestGetLayer:
-
     def test_valid_layer(self):
         result = get_layer(DefenseLayer.L1_DEP_AUDIT)
         assert result is not None
@@ -84,7 +82,6 @@ class TestGetLayer:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestGetLayerByLevel:
-
     def test_level_1(self):
         result = get_layer_by_level(1)
         assert result is not None
@@ -110,6 +107,5 @@ class TestGetLayerByLevel:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestAllEnabled:
-
     def test_all_enabled_default(self):
         assert all_enabled() is True

@@ -23,14 +23,15 @@ Upsert        : 新建 / 覆盖更新
 Concurrency   : 多线程并发读（WAL 安全）/ 单 Writer 序列化
 Helpers       : allowed_transitions / is_terminal
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
 from threading import Thread
 
 import pytest
+
 from zephyr.governance.persistence.task_repo import (
     InvalidTransitionError,
     TaskNotFoundError,
@@ -38,10 +39,10 @@ from zephyr.governance.persistence.task_repo import (
     allowed_transitions,
     is_terminal,
 )
-from zephyr.shared.shared_services.models import TaskCard
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.shared_services.models import TaskCard
 
 _UTC = UTC
 

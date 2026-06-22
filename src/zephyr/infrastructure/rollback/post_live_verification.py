@@ -13,9 +13,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Callable, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class PLVCheck(str, Enum):
@@ -67,7 +66,7 @@ PLV_CHECKS: dict[PLVCheck, PLVSpec] = {
 }
 
 
-def get_plv_spec(check: PLVCheck) -> Optional[PLVSpec]:
+def get_plv_spec(check: PLVCheck) -> PLVSpec | None:
     return PLV_CHECKS.get(check)
 
 

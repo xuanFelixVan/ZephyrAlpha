@@ -42,15 +42,13 @@ AI 施工约定：
 SSoT: MOD-INF-024 §12 盲点 B28
 """
 
-
 from __future__ import annotations
 
 import threading
 from dataclasses import dataclass, field
 from enum import Enum, unique
-from typing import Any
 
-from zephyr.shared.shared_services.observability_02.token_utils import estimate_tokens, DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.shared.shared_services.observability_02.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 
 
 @unique
@@ -274,8 +272,8 @@ class QuotaTracker:
 
 
 __all__ = [
-    "TruncationStrategy",
     "BudgetEntry",
     "ContextBudget",
     "QuotaTracker",
+    "TruncationStrategy",
 ]

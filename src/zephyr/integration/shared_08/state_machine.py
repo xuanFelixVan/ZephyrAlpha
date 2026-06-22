@@ -36,32 +36,30 @@ SSoT: MOD-INF-038 blueprint.md §4
 Version: 0.1.0
 """
 
-
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from enum import Enum
 from pathlib import Path
 from threading import RLock
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 import yaml
 
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "InvalidTransitionError",
-    "TransitionGuardError",
-    "StateMachineRegistryError",
     "ConflictReport",
+    "InvalidTransitionError",
+    "SideEffect",
     "StateDefinition",
+    "StateMachine",
+    "StateMachineConfig",
+    "StateMachineRegistry",
+    "StateMachineRegistryError",
     "Transition",
     "TransitionGuard",
-    "SideEffect",
-    "StateMachineConfig",
-    "StateMachine",
-    "StateMachineRegistry",
+    "TransitionGuardError",
     "get_state_machine_registry",
 ]
 
@@ -146,18 +144,12 @@ class StateMachineConfig(Generic[S]):
     def __post_init__(self) -> None:
         state_values = {sd.state for sd in self.states}
         if self.initial not in state_values:
-            raise StateMachineRegistryError(
-                f"[{self.fsm_id}] initial state {self.initial!r} not in defined states"
-            )
+            raise StateMachineRegistryError(f"[{self.fsm_id}] initial state {self.initial!r} not in defined states")
         for t in self.transitions:
             if t.source not in state_values:
-                raise StateMachineRegistryError(
-                    f"[{self.fsm_id}] transition source {t.source!r} not in defined states"
-                )
+                raise StateMachineRegistryError(f"[{self.fsm_id}] transition source {t.source!r} not in defined states")
             if t.target not in state_values:
-                raise StateMachineRegistryError(
-                    f"[{self.fsm_id}] transition target {t.target!r} not in defined states"
-                )
+                raise StateMachineRegistryError(f"[{self.fsm_id}] transition target {t.target!r} not in defined states")
 
     @property
     def state_names(self) -> set[str]:
@@ -218,16 +210,12 @@ class StateMachine(Generic[S]):
         with self._lock:
             allowed = self._config.transition_map.get(self._current, set())
             if target not in allowed:
-                raise InvalidTransitionError(
-                    self._config.fsm_id, self._current, target, allowed
-                )
+                raise InvalidTransitionError(self._config.fsm_id, self._current, target, allowed)
             key = (self._current, target)
             matching = [t for t in self._config.transitions if t.source == self._current and t.target == target]
             if matching and matching[0].guard is not None:
                 if not matching[0].guard.check(self._current, target, context):
-                    raise TransitionGuardError(
-                        self._config.fsm_id, self._current, target, "guard rejected"
-                    )
+                    raise TransitionGuardError(self._config.fsm_id, self._current, target, "guard rejected")
             old = self._current
             effects = self._side_effect_map.get(key, [])
             for eff in effects:
@@ -275,7 +263,7 @@ class StateMachineRegistry:
         if not self._registry_path.exists():
             return
         try:
-            with open(self._registry_path, "r", encoding="utf-8") as f:
+            with open(self._registry_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
             if not data or "state_machines" not in data:
                 return
@@ -291,9 +279,7 @@ class StateMachineRegistry:
             if config.fsm_id in self._configs:
                 existing = self._configs[config.fsm_id]
                 if isinstance(existing, StateMachineConfig):
-                    raise StateMachineRegistryError(
-                        f"Duplicate fsm_id: {config.fsm_id!r} already registered"
-                    )
+                    raise StateMachineRegistryError(f"Duplicate fsm_id: {config.fsm_id!r} already registered")
             self._configs[config.fsm_id] = config
             self._persist_entry(config)
             logger.info("Registered state machine: %s (owner: %s)", config.fsm_id, config.owner_module)
@@ -304,17 +290,14 @@ class StateMachineRegistry:
             "fsm_id": config.fsm_id,
             "owner_module": config.owner_module,
             "states": [str(sd.state) for sd in config.states],
-            "transitions": [
-                {"source": str(t.source), "target": str(t.target)}
-                for t in config.transitions
-            ],
+            "transitions": [{"source": str(t.source), "target": str(t.target)} for t in config.transitions],
             "initial": str(config.initial),
         }
         if not self._registry_path.exists():
             data: dict[str, Any] = {"state_machines": []}
         else:
             try:
-                with open(self._registry_path, "r", encoding="utf-8") as f:
+                with open(self._registry_path, encoding="utf-8") as f:
                     data = yaml.safe_load(f) or {"state_machines": []}
             except Exception:
                 data = {"state_machines": []}
@@ -325,10 +308,12 @@ class StateMachineRegistry:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
             import os
+
             os.replace(tmp_path, str(self._registry_path))
         except PermissionError:
             try:
                 import os
+
                 os.remove(tmp_path)
             except OSError:
                 pass
@@ -354,9 +339,7 @@ class StateMachineRegistry:
             conflicts: list[ConflictReport] = []
             for name, fsm_ids in state_names.items():
                 if len(fsm_ids) > 1:
-                    conflicts.append(ConflictReport(
-                        name=name, fsm_ids=fsm_ids, conflict_type="state_name"
-                    ))
+                    conflicts.append(ConflictReport(name=name, fsm_ids=fsm_ids, conflict_type="state_name"))
             return conflicts
 
 

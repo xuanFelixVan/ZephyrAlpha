@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_hypernetwork.py
 
-import pytest
 
 from zephyr.ops.evolution.hypernetwork import HyperNetwork
 

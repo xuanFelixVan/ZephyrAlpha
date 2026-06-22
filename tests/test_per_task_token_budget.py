@@ -12,7 +12,9 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.per_task_token_budget", reason="per_task_token_budget not available")
+mod = pytest.importorskip(
+    "zephyr.ops.capacity_assurance.per_task_token_budget", reason="per_task_token_budget not available"
+)
 PerTaskTokenBudget = mod.PerTaskTokenBudget
 TaskBudget = mod.TaskBudget
 

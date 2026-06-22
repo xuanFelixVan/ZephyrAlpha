@@ -20,7 +20,9 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from typing import Self
+
 """
 env.py —— 环境检测工具（Phase 9 新增 | 盲点 B20 修复）
 
@@ -54,11 +56,11 @@ from enum import Enum, unique
 __all__ = [
     "Env",
     "current_env",
-    "is_dev",
-    "is_staging",
-    "is_prod",
-    "is_test",
     "is_debug",
+    "is_dev",
+    "is_prod",
+    "is_staging",
+    "is_test",
 ]
 
 

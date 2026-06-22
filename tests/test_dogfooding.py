@@ -11,14 +11,12 @@
 # [TESTS] pytest tests/test_dogfooding.py -q
 
 import json
-from pathlib import Path
 
-import pytest
 from zephyr.shared.maintenance.dogfooding import (
     DOGFOOD_TASKS,
+    Dogfooding,
     DogfoodReport,
     DogfoodTask,
-    Dogfooding,
 )
 
 

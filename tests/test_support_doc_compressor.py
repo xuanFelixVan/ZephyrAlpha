@@ -11,17 +11,17 @@
 # [TESTS] self
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.doc_compressor import (
-        DocCompressor,
-        CompressionPolicy,
-        CompressionInvariantError,
-        CompressionOutcome,
         DEFAULT_POLICY,
+        CompressionOutcome,
+        CompressionPolicy,
+        DocCompressor,
         load_policy_from_yaml,
     )
 except Exception as _exc:
@@ -110,8 +110,9 @@ class TestDocCompressorSingleton:
 
 class TestLoadPolicyFromYaml:
     def test_load_nonexistent_returns_default(self):
-        from pathlib import Path
         import warnings
+        from pathlib import Path
+
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             policy = load_policy_from_yaml(Path("/nonexistent/policy.yaml"))

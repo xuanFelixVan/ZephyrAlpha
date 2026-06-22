@@ -112,7 +112,7 @@ def main() -> None:
 
     total = check_implemented({**R1_BLINDSPOTS, **R2_BLINDSPOTS, **R4_BLINDSPOTS})
     print()
-    print(f"总计: {total['implemented']}/{total['total']} 盲点已闭合 ({total['implemented']*100//total['total']}%)")
+    print(f"总计: {total['implemented']}/{total['total']} 盲点已闭合 ({total['implemented'] * 100 // total['total']}%)")
     print(f"R1={len(R1_BLINDSPOTS)} R2={len(R2_BLINDSPOTS)} R4={len(R4_BLINDSPOTS)} = {total['total']} total")
 
 

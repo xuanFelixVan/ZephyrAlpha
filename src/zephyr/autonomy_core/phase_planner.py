@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_phase_planner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.phase_planner
+# [MODULE] zephyr.autonomy_core.phase_planner
 
 # [INVARIANTS] none
 
@@ -26,10 +26,9 @@ Author: factory-agent
 Version: 0.1.0
 """
 
-
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Dict, Any, List, Optional
-from datetime import datetime, timezone
+from typing import Any
 
 
 class PhaseStatus(str, Enum):
@@ -41,17 +40,19 @@ class PhaseStatus(str, Enum):
 
 
 class Phase:
-    def __init__(self, name: str, seq: int, description: str, depends_on: List[str], status: PhaseStatus = PhaseStatus.BACKLOG):
+    def __init__(
+        self, name: str, seq: int, description: str, depends_on: list[str], status: PhaseStatus = PhaseStatus.BACKLOG
+    ):
         self.name = name
         self.seq = seq
         self.description = description
         self.depends_on = depends_on
         self.status = status
-        self.started_at: Optional[datetime] = None
-        self.done_at: Optional[datetime] = None
-        self.verified_at: Optional[datetime] = None
+        self.started_at: datetime | None = None
+        self.done_at: datetime | None = None
+        self.verified_at: datetime | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "seq": self.seq,
@@ -63,7 +64,7 @@ class Phase:
             "verified_at": self.verified_at.isoformat() if self.verified_at else None,
         }
 
-    def can_start(self, completed_phases: List[str]) -> bool:
+    def can_start(self, completed_phases: list[str]) -> bool:
         return all(dep in completed_phases for dep in self.depends_on)
 
 
@@ -117,7 +118,7 @@ class PhasePlanner:
     SkillProjection = {"Phase1": 8, "Phase2": 20, "Phase3": 50, "Final": 100}
 
     def __init__(self):
-        self.phases: Dict[str, Phase] = {}
+        self.phases: dict[str, Phase] = {}
         for name, seq, desc, deps in self.PhaseDefinitions:
             self.phases[name] = Phase(name, seq, desc, deps)
 
@@ -127,7 +128,7 @@ class PhasePlanner:
     def set_status(self, name: str, status: PhaseStatus) -> Phase:
         phase = self.phases[name]
         phase.status = status
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if status == PhaseStatus.IN_PROGRESS:
             phase.started_at = now
         elif status == PhaseStatus.DONE:
@@ -136,20 +137,20 @@ class PhasePlanner:
             phase.verified_at = now
         return phase
 
-    def get_ready_phases(self) -> List[str]:
+    def get_ready_phases(self) -> list[str]:
         done = [n for n, p in self.phases.items() if p.status in (PhaseStatus.DONE, PhaseStatus.VERIFIED)]
         return [n for n, p in self.phases.items() if p.status == PhaseStatus.BACKLOG and p.can_start(done)]
 
-    def all_phases(self) -> List[Dict[str, Any]]:
+    def all_phases(self) -> list[dict[str, Any]]:
         return [p.to_dict() for p in self.phases.values()]
 
-    def phase_summary(self) -> Dict[str, int]:
+    def phase_summary(self) -> dict[str, int]:
         counts = {s.value: 0 for s in PhaseStatus}
         for p in self.phases.values():
             counts[p.status.value] += 1
         return counts
 
-    def current_projection(self) -> Dict[str, int]:
+    def current_projection(self) -> dict[str, int]:
         done = sum(1 for p in self.phases.values() if p.status in (PhaseStatus.DONE, PhaseStatus.VERIFIED))
         if done <= 6:
             return self.SkillProjection["Phase1"]

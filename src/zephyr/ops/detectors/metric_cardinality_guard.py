@@ -71,12 +71,12 @@ class MetricCardinalityGuard:
         current_cardinality = len(m["unique_label_sets"])
 
         if current_cardinality > self.max_cardinality:
-            m["unique_label_sets"] = set(list(m["unique_label_sets"])[-self.warning_cardinality:])
+            m["unique_label_sets"] = set(list(m["unique_label_sets"])[-self.warning_cardinality :])
             current_cardinality = len(m["unique_label_sets"])
         m["history"].append({"ts": time.time(), "cardinality": current_cardinality})
 
         if len(m["history"]) > self.window_size:
-            m["history"] = m["history"][-self.window_size:]
+            m["history"] = m["history"][-self.window_size :]
 
         if current_cardinality > m["peak_cardinality"]:
             m["peak_cardinality"] = current_cardinality
@@ -104,7 +104,7 @@ class MetricCardinalityGuard:
         if alert:
             self.cardinality_alerts.append({**alert, "ts": time.time()})
             if len(self.cardinality_alerts) > self.max_alerts:
-                self.cardinality_alerts = self.cardinality_alerts[-self.max_alerts:]
+                self.cardinality_alerts = self.cardinality_alerts[-self.max_alerts :]
 
         return {
             "metric": metric_name,
@@ -161,8 +161,5 @@ class MetricCardinalityGuard:
     def overall_cardinality_health(self) -> float:
         if not self.metrics:
             return 1.0
-        critical = sum(
-            1 for name, m in self.metrics.items()
-            if len(m["unique_label_sets"]) >= self.max_cardinality
-        )
+        critical = sum(1 for name, m in self.metrics.items() if len(m["unique_label_sets"]) >= self.max_cardinality)
         return round(max(0.0, 1.0 - critical * 0.2), 3)

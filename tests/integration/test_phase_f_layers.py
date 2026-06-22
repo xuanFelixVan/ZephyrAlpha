@@ -19,12 +19,12 @@
 
 Phase F | Safety: MEDIUM
 """
+
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import Any
 
 import pandas as pd
 import pytest
@@ -38,6 +38,42 @@ from zephyr.frontend.interface_base import (
     NotificationLevel,
     NotificationManagerBase,
 )
+from zephyr.governance.compliance_gate_a6.default_security_gateway import DefaultSecurityGateway
+from zephyr.governance.security_gateway_base import (
+    AuditAction,
+    AuditDecision,
+    ComplianceEngine,
+    SecurityGateway,
+)
+from zephyr.infrastructure.system_telemetry.contract_metrics import (
+    ContractMetricsCollector,
+    DriftAlert,
+    SlaRecord,
+    get_contract_metrics,
+)
+from zephyr.integration.backpressure_manager import (
+    BackpressureManager,
+    BpState,
+    emit_pause,
+    emit_resume,
+    emit_throttle,
+)
+from zephyr.integration.shared_08.contracts.core.system_configuration import SystemConfiguration
+from zephyr.integration.shared_08.contracts.core.telemetry_emitter import TelemetryEmitter
+from zephyr.integration.shared_08.contracts.experiment_result import ExperimentResult
+from zephyr.integration.shared_08.contracts.factor_monitor_report import FactorMonitorReport
+from zephyr.integration.shared_08.contracts.macro_factor_signal import MacroFactorSignal
+from zephyr.integration.shared_08.contracts.model_serving_response import ModelServingResponse
+from zephyr.integration.shared_08.contracts.performance_attribution_report import PerformanceAttributionReport
+from zephyr.integration.shared_08.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
+from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
+from zephyr.intelligence.model_evaluation.inference_base import (
+    InferenceEngineBase,
+    ModelMetadata,
+    ModelRegistry,
+    ModelTrainerBase,
+)
+from zephyr.pf_core.compliance_rule import ComplianceRule
 from zephyr.simulation.backtest_base import (
     BacktestEngineBase,
     BacktestResult,
@@ -47,25 +83,8 @@ from zephyr.simulation.default_backtest_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
-from zephyr.governance.security_gateway_base import (
-    AuditAction,
-    AuditDecision,
-    ComplianceEngine,
-    SecurityGateway,
-)
-from zephyr.governance.compliance_gate_a6.default_security_gateway import DefaultSecurityGateway
-from zephyr.intelligence.model_evaluation.inference_base import (
-    InferenceEngineBase,
-    ModelMetadata,
-    ModelRegistry,
-    ModelTrainerBase,
-)
-from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
-from zephyr.infrastructure.system_telemetry.contract_metrics import (
-    ContractMetricsCollector,
-    DriftAlert,
-    SlaRecord,
-    get_contract_metrics,
+from zephyr.simulation.implementations.default_experiment_pipeline import (
+    DefaultExperimentPipeline,
 )
 from zephyr.simulation.pipeline_base import (
     ExperimentConfig,
@@ -73,33 +92,12 @@ from zephyr.simulation.pipeline_base import (
     ExperimentPipelineBase,
     ScoutAgentBase,
 )
-from zephyr.simulation.implementations.default_experiment_pipeline import (
-    DefaultExperimentPipeline,
-)
-from zephyr.integration.backpressure_manager import (
-    BackpressureManager,
-    BpState,
-    BpSymbolState,
-    emit_pause,
-    emit_throttle,
-    emit_resume,
-)
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.pf_core.compliance_rule import ComplianceRule
-from zephyr.integration.shared_08.contracts.factor_monitor_report import FactorMonitorReport
 from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.integration.shared_08.contracts.experiment_result import ExperimentResult
-from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.integration.shared_08.contracts.model_serving_response import ModelServingResponse
-from zephyr.integration.shared_08.contracts.macro_factor_signal import MacroFactorSignal
-from zephyr.integration.shared_08.contracts.performance_attribution_report import PerformanceAttributionReport
+from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
-from zephyr.integration.shared_08.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.integration.shared_08.contracts.core.system_configuration import SystemConfiguration
-from zephyr.integration.shared_08.contracts.core.telemetry_emitter import TelemetryEmitter
 
 
 class TestPhaseFL08:
@@ -132,7 +130,7 @@ class TestPhaseFL08:
             action="override_risk_limit",
             reason="Manual override for large order",
             requester="trader_01",
-            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+            expires_at=datetime.now(UTC) + timedelta(hours=1),
         )
         assert ar.request_id.startswith("req-")
         assert ar.action == "override_risk_limit"
@@ -194,13 +192,16 @@ class TestPhaseFL09:
         engine = DefaultBacktestEngine(BacktestConfig())
         dates = pd.date_range("2025-01-01", "2025-03-31", freq="B")
 
-        prices = pd.DataFrame({
-            "close": [1800.0 + i * 0.3 for i in range(len(dates))],
-            "open": [1795.0 + i * 0.3 for i in range(len(dates))],
-            "high": [1805.0 + i * 0.3 for i in range(len(dates))],
-            "low": [1790.0 + i * 0.3 for i in range(len(dates))],
-            "volume": [1000000.0 for _ in range(len(dates))],
-        }, index=dates)
+        prices = pd.DataFrame(
+            {
+                "close": [1800.0 + i * 0.3 for i in range(len(dates))],
+                "open": [1795.0 + i * 0.3 for i in range(len(dates))],
+                "high": [1805.0 + i * 0.3 for i in range(len(dates))],
+                "low": [1790.0 + i * 0.3 for i in range(len(dates))],
+                "volume": [1000000.0 for _ in range(len(dates))],
+            },
+            index=dates,
+        )
 
         signals = pd.DataFrame(
             {"600519": 1.0},
@@ -300,8 +301,10 @@ class TestPhaseFL11:
 
         class TestTrainer(ModelTrainerBase):
             __model_id__ = "test-model"
+
             def train(self, features, target, idempotency_key):
                 return {"r2": 0.85}
+
             def validate(self, features, target):
                 return {"r2": 0.82}
 
@@ -319,6 +322,7 @@ class TestPhaseFL11:
         class BadTrainer(ModelTrainerBase):
             def train(self, features, target, idempotency_key):
                 return {}
+
             def validate(self, features, target):
                 return {}
 
@@ -536,7 +540,9 @@ class TestPhaseFBackpressure:
     def test_backpressure_manager_auto_resume_on_timeout(self):
         mgr = BackpressureManager()
         state = mgr.handle_pause(
-            __import__("zephyr.integration.shared_08.contracts.backpressure.pause", fromlist=["BackpressurePause"]).BackpressurePause(
+            __import__(
+                "zephyr.integration.shared_08.contracts.backpressure.pause", fromlist=["BackpressurePause"]
+            ).BackpressurePause(
                 signal_id="bp-001",
                 symbol="600519",
                 duration_ms=1,
@@ -547,6 +553,7 @@ class TestPhaseFBackpressure:
         assert state.state == BpState.PAUSED
 
         import time
+
         time.sleep(0.01)
 
         assert mgr.is_blocked("600519") is False
@@ -616,7 +623,7 @@ class TestPhaseFP1Contracts:
 
     def test_ctr_p1_003_capital_allocation_result(self):
         car = CapitalAllocationResult(
-            allocation_date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            allocation_date=datetime.now(UTC).strftime("%Y-%m-%d"),
             total_allocated_weight=1.0,
             allocation_method="risk_parity",
             strategy_allocations={"600519": 0.4, "000858": 0.3, "601318": 0.3},
@@ -654,7 +661,7 @@ class TestPhaseFP1Contracts:
         event = StrategyLifecycleEvent(
             strategy_id="test-strat",
             event_type="activated",
-            event_timestamp=datetime.now(timezone.utc).isoformat(),
+            event_timestamp=datetime.now(UTC).isoformat(),
             triggered_by="scheduler",
             reason="Daily rebalance",
             previous_status="idle",
@@ -674,8 +681,8 @@ class TestPhaseFP1Contracts:
             vwap_price=Decimal("100.5"),
             slippage_bps=5.0,
             commission=Decimal("6"),
-            execution_start=datetime.now(timezone.utc).isoformat(),
-            execution_end=datetime.now(timezone.utc).isoformat(),
+            execution_start=datetime.now(UTC).isoformat(),
+            execution_end=datetime.now(UTC).isoformat(),
             broker_id="simulation",
             idempotency_key=str(uuid.uuid4()),
         )
@@ -683,7 +690,7 @@ class TestPhaseFP1Contracts:
 
     def test_ctr_p1_008_risk_dashboard_snapshot(self):
         snapshot = RiskDashboardSnapshot(
-            snapshot_time=datetime.now(timezone.utc).isoformat(),
+            snapshot_time=datetime.now(UTC).isoformat(),
             portfolio_id="test-portfolio",
             portfolio_var_1d=50000.0,
             max_drawdown_current=0.05,
@@ -716,8 +723,8 @@ class TestPhaseFP1Contracts:
             environment="production",
             version="1.0",
             is_active=True,
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
             idempotency_key=str(uuid.uuid4()),
         )
         assert isinstance(cfg, SystemConfiguration)
@@ -725,7 +732,7 @@ class TestPhaseFP1Contracts:
     def test_ctr_p1_011_risk_metrics_report(self):
         report = RiskMetricsReport(
             portfolio_id="test-portfolio",
-            as_of_date=datetime.now(timezone.utc),
+            as_of_date=datetime.now(UTC),
             var_1d_95=50000.0,
             var_1d_99=75000.0,
             cvar_1d_95=65000.0,
@@ -756,8 +763,8 @@ class TestPhaseFP1Contracts:
             jurisdiction="cn_a_share",
             is_active=True,
             version="1.0",
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
             idempotency_key=str(uuid.uuid4()),
         )
         assert isinstance(rule, ComplianceRule)
@@ -773,7 +780,7 @@ class TestPhaseFP1Contracts:
             metric_value=45.2,
             source_module="l06-trade-execution",
             correlation_id=f"corr-{uuid.uuid4().hex[:8]}",
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             labels={},
             idempotency_key=str(uuid.uuid4()),
         )
@@ -793,8 +800,8 @@ class TestPhaseFP1Contracts:
             confidence=0.85,
             p_value=0.02,
             sample_size=500,
-            start_timestamp=datetime.now(timezone.utc),
-            end_timestamp=datetime.now(timezone.utc),
+            start_timestamp=datetime.now(UTC),
+            end_timestamp=datetime.now(UTC),
             metrics={"sharpe_diff": 0.3},
             actionable_suggestions=["deploy_variant_b"],
             idempotency_key=str(uuid.uuid4()),
@@ -808,7 +815,7 @@ class TestPhaseFP1Contracts:
         syn = SynthesizedSignal(
             signal_id=f"syn-{uuid.uuid4().hex[:8]}",
             symbol="600519",
-            as_of_timestamp=datetime.now(timezone.utc),
+            as_of_timestamp=datetime.now(UTC),
             signal_value=0.5,
             signal_direction="LONG",
             confidence=0.8,

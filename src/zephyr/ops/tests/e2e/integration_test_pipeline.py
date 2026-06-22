@@ -32,18 +32,15 @@ from __future__ import annotations
 import time
 import uuid
 
+from zephyr.ops.collectors.feedback_collector import FeedbackCollector
 from zephyr.ops.collectors.metrics_collector import MetricsCollector, MetricSnapshot
-from zephyr.ops.collectors.feedback_collector import FeedbackCollector, ActionResult, OwnerAck
 from zephyr.ops.detectors.anomaly_detector import AnomalyDetector
 from zephyr.ops.diagnosers.diagnosis_engine import DiagnosisEngine
-from zephyr.ops.actors.action_selector import ActionSelector
-from zephyr.ops.verifiers.verification_engine import VerificationEngine, Verdict
-from zephyr.ops.gates.safety_gate_l1_l27 import SafetyGatePipeline, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, SafetyGatePipeline
 from zephyr.ops.gates.safety_gate_l66_l67 import SafetyGateL66L67
 
 
 class IntegrationTestPipeline:
-
     def __init__(self):
         self.metrics = MetricsCollector()
         self.feedback = FeedbackCollector()
@@ -117,11 +114,19 @@ class IntegrationTestPipeline:
     def test_67_gates_full(self) -> dict[str, bool]:
         gates = SafetyGateL66L67()
         ctx = ActionContext(
-            action_id="test-67", action_type="REPAIR", severity=5,
-            autonomy_level=2, timestamp=time.time(),
-            has_rollback=True, is_idempotent=True, compliance_ok=True,
-            schema_version=1, expected_schema_version=1, data_quality_score=95.0,
-            cost_estimate=0.01, budget_remaining=1000.0,
+            action_id="test-67",
+            action_type="REPAIR",
+            severity=5,
+            autonomy_level=2,
+            timestamp=time.time(),
+            has_rollback=True,
+            is_idempotent=True,
+            compliance_ok=True,
+            schema_version=1,
+            expected_schema_version=1,
+            data_quality_score=95.0,
+            cost_estimate=0.01,
+            budget_remaining=1000.0,
         )
         gate_results = gates.evaluate(ctx)
         return {

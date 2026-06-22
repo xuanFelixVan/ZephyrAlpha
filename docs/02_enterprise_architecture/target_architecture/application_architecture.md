@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-03-APPLICATION-ARCH
 title: Target Architecture — Application Architecture / 目标架构：应用架构
 doc_type: architecture_view

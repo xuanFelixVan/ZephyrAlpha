@@ -24,8 +24,8 @@ EventBus Upgrade — 事件总线升级 (M-16)
 支持事件版本化 + 增量升级机制。
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Optional
 
 
 class EventVersionError(Exception):
@@ -38,7 +38,7 @@ class EventSchema:
     version: int
     fields: list[str]
     deprecated_fields: list[str] = field(default_factory=list)
-    migration_fn: Optional[Callable[[dict], dict]] = None
+    migration_fn: Callable[[dict], dict] | None = None
 
 
 class EventBusUpgrader:
@@ -66,8 +66,7 @@ class EventBusUpgrader:
         latest = self.get_latest_version(event_type)
         return current_version == latest
 
-    def upgrade(self, event_type: str, event_data: dict,
-                from_version: int, to_version: int) -> dict:
+    def upgrade(self, event_type: str, event_data: dict, from_version: int, to_version: int) -> dict:
         schemas = self._schemas.get(event_type, {})
         if not schemas:
             raise EventVersionError(f"Unknown event type: {event_type}")
@@ -76,9 +75,7 @@ class EventBusUpgrader:
         for v in range(from_version, to_version):
             next_schema = schemas.get(v + 1)
             if next_schema is None:
-                raise EventVersionError(
-                    f"No schema for {event_type} v{v + 1}"
-                )
+                raise EventVersionError(f"No schema for {event_type} v{v + 1}")
             for deprecated_field in next_schema.deprecated_fields:
                 data.pop(deprecated_field, None)
 
@@ -87,8 +84,7 @@ class EventBusUpgrader:
 
         return data
 
-    def upgrade_to_latest(self, event_type: str, event_data: dict,
-                          from_version: int) -> dict:
+    def upgrade_to_latest(self, event_type: str, event_data: dict, from_version: int) -> dict:
         latest = self.get_latest_version(event_type)
         if from_version == latest:
             return event_data

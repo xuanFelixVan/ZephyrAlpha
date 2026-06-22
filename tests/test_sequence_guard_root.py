@@ -11,15 +11,16 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import time
-import pytest
+
 from zephyr.security.access_control.sequence_guard import (
-    SequenceGuard,
-    SequenceEvent,
     FORBIDDEN_SEQUENCES,
     SEQUENCE_TIMEOUT,
+    SequenceEvent,
+    SequenceGuard,
 )
 
 

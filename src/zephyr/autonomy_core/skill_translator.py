@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_translator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_translator
+# [MODULE] zephyr.autonomy_core.skill_translator
 
 # [INVARIANTS] none
 
@@ -33,13 +33,11 @@ Version: 0.2.0
   3. ToolRemapping: 工具名差异校正
 """
 
-
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-
-_MODEL_ADAPTATIONS: Dict[str, Dict[str, Any]] = {
+_MODEL_ADAPTATIONS: dict[str, dict[str, Any]] = {
     "deepseek": {
         "style": "structured, step-by-step, table-heavy",
         "phrases": {
@@ -101,8 +99,8 @@ class SkillTranslator:
     def _apply_adaptation(
         cls,
         body: str,
-        target_adaptation: Dict[str, Any],
-        source_adaptation: Dict[str, Any],
+        target_adaptation: dict[str, Any],
+        source_adaptation: dict[str, Any],
     ) -> str:
         result = body
 
@@ -129,12 +127,13 @@ class SkillTranslator:
         cls,
         skill_id: str,
         target_model_family: str,
-        custom_body: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        custom_body: str | None = None,
+    ) -> dict[str, Any]:
         body = custom_body
         if body is None:
             try:
                 from zephyr.autonomy_core.skill_loader import SkillLoader
+
                 loader = SkillLoader()
                 loaded = loader.progressive_load(skill_id)
                 body = loaded.get("l2", "")

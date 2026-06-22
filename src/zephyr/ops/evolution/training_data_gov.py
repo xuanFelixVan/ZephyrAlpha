@@ -29,9 +29,9 @@ Mitigation: Training data version snapshots with distribution drift detection.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import hashlib
 import time
+from dataclasses import dataclass, field
 
 
 @dataclass

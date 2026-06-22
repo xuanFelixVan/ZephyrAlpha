@@ -14,16 +14,14 @@ from __future__ import annotations
 
 import os
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-import pytest
-
 from zephyr.behavioral_audit.config_consistency import (
+    SECRET_KEY_INDICATORS,
     ConfigAuditReport,
     ConfigConflict,
     ConfigSource,
-    SECRET_KEY_INDICATORS,
     detect_conflicts,
     extract_hardcoded_defaults,
     generate_config_sync,
@@ -74,7 +72,7 @@ class TestConfigAuditReport:
         assert isinstance(r.report_time, datetime)
 
     def test_instantiation_custom(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         r = ConfigAuditReport(
             conflicts=[ConfigConflict(key="k", sources=["YAML"], values=["v"])],
             missing_secrets=["api_key"],

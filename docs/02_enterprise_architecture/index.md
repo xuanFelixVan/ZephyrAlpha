@@ -43,18 +43,24 @@ title: 02 Enterprise Architecture
 
 | 子目录 | 说明 | 入口 | 轨道 |
 |--------|------|------|:---:|
-| `target-architecture/` | 目标架构视图（TOGAF 10 + 2 正交 + YAML SSoT + 图表） | [target-architecture/index.md](target-architecture/index.md) | 人 + 机 |
+| `target_architecture/` | 目标架构视图（TOGAF 10 + 2 正交 + YAML SSoT + 图表） | [target_architecture/index.md](target_architecture/index.md) | 人 + 机 |
+| `archive/` | 归档文档（阶段4搬家对齐方案、全景图健康度报告、域归并映射等） | — | 人类视图 |
 
 > `designs/` 和 `by-domain/` 目录已于 2026-05-03 物理删除（僵尸目录——索引已移除引用但物理目录未删，现已彻底清除）。
-> 
+>
 > `adr/` 目录已于 2026-05 前全量迁入 `knowledge` 表（33 条 KB 决策记录，全部 VERIFIED），物理目录及配套文件（registry、template、protocol、adr_ingest.py）已删除。KB 决策记录 现通过 KE 管线检索，不再作为独立子目录存在。
 
 ## 顶层文件清单
 
 | 文件 | 说明 | 轨道 |
 |------|------|:---:|
-| architecture-rationale-log.md | 架构推导与决策链日志 | 人类视图 |
-| ssot-authority-map.md | SSoT 权威映射 | 人类视图 |
+| architecture_upgrade_discussion.md | 架构升级深度讨论记录（39域方案+8层升级+D1-D78裁定清单+数据库架构） | 人类视图 |
+| 依赖与架构全景图能力定位书.md | 依赖与架构全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |
+| architecture_decisions_pending.md | 待定决策清单（T1-T17 待定项与裁定状态） | 人类视图 |
+| ssot_authority_map.md | SSoT 权威映射 | 人类视图 |
+| migration_registry.yaml | 迁移注册表 | 机器视图 |
+| t18_implementation_plan.md | T18 实施计划 | 人类视图 |
+| AI团队模式完整配置.md | AI 团队模式完整配置 | 人类视图 |
 
 ## 排除规则（严禁放入本目录的内容）
 

@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-import pytest
-
-from zephyr.autonomy_core.skill_guardrails import SkillGuardrails, DESTRUCTIVE
+from zephyr.autonomy_core.skill_guardrails import DESTRUCTIVE, SkillGuardrails
 
 
 class TestSkillGuardrailsInstantiation:

@@ -78,16 +78,18 @@ class AlertSubsystem:
             if rule.get("metric") == metric_name:
                 condition = rule.get("condition", "")
                 if self._check_condition(value, condition):
-                    triggered.append({
-                        "id": rule.get("id") or uuid.uuid4().hex[:12],
-                        "name": rule.get("name"),
-                        "module_id": self._module_id,
-                        "severity": rule.get("severity"),
-                        "level": rule.get("severity"),
-                        "message": f"{metric_name} {condition} {value}",
-                        "value": value,
-                        "fired": time.time(),
-                    })
+                    triggered.append(
+                        {
+                            "id": rule.get("id") or uuid.uuid4().hex[:12],
+                            "name": rule.get("name"),
+                            "module_id": self._module_id,
+                            "severity": rule.get("severity"),
+                            "level": rule.get("severity"),
+                            "message": f"{metric_name} {condition} {value}",
+                            "value": value,
+                            "fired": time.time(),
+                        }
+                    )
         self._pending_alerts.extend(triggered)
         return triggered
 
@@ -108,4 +110,26 @@ class AlertSubsystem:
         except (ValueError, IndexError):
             pass
         return False
-__all__ = ['AlertLevel', 'AlertSubsystem', 'CRITICAL', 'ERROR', 'INFO', 'WARNING', 'ack', 'alert', 'before', 'condition', 'data', 'evaluate', 'fire', 'health', 'level', 'op', 'pending', 'threshold', 'triggered']
+
+
+__all__ = [
+    "CRITICAL",
+    "ERROR",
+    "INFO",
+    "WARNING",
+    "AlertLevel",
+    "AlertSubsystem",
+    "ack",
+    "alert",
+    "before",
+    "condition",
+    "data",
+    "evaluate",
+    "fire",
+    "health",
+    "level",
+    "op",
+    "pending",
+    "threshold",
+    "triggered",
+]

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_resource_starvation_aware.py
 
-import pytest
 
 from zephyr.ops.resilience.resource_starvation_aware import (
     ResourceBudget,

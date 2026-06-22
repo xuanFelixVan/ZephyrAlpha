@@ -1,27 +1,25 @@
 ---
-
 doc_type: index
 status: active
-title: "MOD-INF-016 — 目录索引"
+title: "MOD_INF_016 — 目录索引"
+module_id: ""
+blueprint_id: "MOD-INF-016"
 version: "1.0.0"
-created: "2026-05-06"
-updated: "2026-05-06"
-blueprint_id: DOM-GOV-001
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-
-# MOD-INF-016
+# MOD_INF_016
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-06
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [TASK-INF-0100.md](TASK-INF-0100.md) | Markdown | §1 模块骨架搭建与定位验证——Shared+Core 跨层基础设施概述完整性审计 |
+| [index.md](index.md) | Markdown | MOD-INF-016 — 目录索引 |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

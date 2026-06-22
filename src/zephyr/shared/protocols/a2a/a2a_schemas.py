@@ -1,12 +1,12 @@
 # [A_module] module_id=MOD-SHR_a2a_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_domain-shared/protocols/blueprint.md
 # [MODULE] zephyr.shared.protocols.a2a.a2a_schemas
-# [INVARIANTS] no imports from zephyr.infrastructure or zephyr.orchestration; data contracts only
+# [INVARIANTS] no imports from zephyr.infrastructure or zephyr.trading; data contracts only
 # [MODIFY-GUARD] schema changes require consumer audit
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] zephyr.orchestration.agent_communication; zephyr.infrastructure.a2a_protocol
+# [CONSUMERS] zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
 # [ERROR_CONTRACT] Pydantic validation errors on schema violation
 # [TESTS] tests/test_shared_protocols.py
 
@@ -18,9 +18,10 @@ These are data contracts shared between all domains.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field
 
@@ -45,11 +46,11 @@ class A2AMessage(BaseModel):
     from_agent: str
     to_agent: str
     task_id: str
-    parts: List[A2AMessagePart] = []
+    parts: list[A2AMessagePart] = []
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    context_ref: Optional[str] = None
+    context_ref: str | None = None
 
-    def add_part(self, part_type: PartType, content: str, metadata: Optional[dict] = None) -> A2AMessagePart:
+    def add_part(self, part_type: PartType, content: str, metadata: dict | None = None) -> A2AMessagePart:
         part = A2AMessagePart(part_type=part_type, content=content, metadata=metadata or {})
         self.parts.append(part)
         return part
@@ -71,15 +72,15 @@ class A2ATask(BaseModel):
     task_id: str = Field(..., pattern=r"^a2a-task-[a-z0-9-]+$")
     status: A2ATaskStatus = A2ATaskStatus.CREATED
     from_agent: str
-    to_agent: Optional[str] = None
+    to_agent: str | None = None
     description: str
-    context_ref: Optional[str] = None
-    context_package: Optional[Dict[str, Any]] = None
+    context_ref: str | None = None
+    context_package: dict[str, Any] | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    deadline: Optional[datetime] = None
-    result: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+    deadline: datetime | None = None
+    result: dict[str, Any] | None = None
+    error: str | None = None
     retry_count: int = 0
     max_retries: int = 3
 
@@ -109,21 +110,21 @@ class ContextPackage:
         self.task_id = task_id
         self.source_agent = source_agent
         self.created_at = datetime.utcnow()
-        self.blueprints: Dict[str, str] = {}
+        self.blueprints: dict[str, str] = {}
         self.decisions: list = []
-        self.session_state: Dict[str, Any] = {}
+        self.session_state: dict[str, Any] = {}
         self.locks_held: list = []
 
     def add_blueprint(self, name: str, content: str):
         self.blueprints[name] = content
 
-    def add_decision(self, decision_id: str, data: Dict[str, Any]):
+    def add_decision(self, decision_id: str, data: dict[str, Any]):
         self.decisions.append({"id": decision_id, "data": data})
 
-    def set_session_state(self, state: Dict[str, Any]):
+    def set_session_state(self, state: dict[str, Any]):
         self.session_state = state
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "task_id": self.task_id,
             "source_agent": self.source_agent,
@@ -143,7 +144,7 @@ class HandoffRecord:
         self.timestamp = datetime.utcnow()
         self.acknowledged = False
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "from": self.from_agent,
             "to": self.to_agent,
@@ -156,29 +157,22 @@ class HandoffRecord:
 
 @runtime_checkable
 class HandoffManagerProtocol(Protocol):
-    def handoff(self, from_agent: str, to_agent: str, task_id: str, reason: str) -> HandoffRecord:
-        ...
+    def handoff(self, from_agent: str, to_agent: str, task_id: str, reason: str) -> HandoffRecord: ...
 
-    def acknowledge(self, to_agent: str, task_id: str) -> bool:
-        ...
+    def acknowledge(self, to_agent: str, task_id: str) -> bool: ...
 
 
 @runtime_checkable
 class MessageRouterProtocol(Protocol):
-    def register_handler(self, part_type: PartType, handler: Callable) -> None:
-        ...
+    def register_handler(self, part_type: PartType, handler: Callable) -> None: ...
 
-    def route(self, message: A2AMessage) -> Dict[str, List]:
-        ...
+    def route(self, message: A2AMessage) -> dict[str, list]: ...
 
 
 @runtime_checkable
 class PushNotifierProtocol(Protocol):
-    def subscribe(self, agent_id: str, callback: Callable) -> None:
-        ...
+    def subscribe(self, agent_id: str, callback: Callable) -> None: ...
 
-    def unsubscribe(self, agent_id: str, callback: Callable) -> None:
-        ...
+    def unsubscribe(self, agent_id: str, callback: Callable) -> None: ...
 
-    def notify(self, agent_id: str, event: str, data: Optional[dict] = None) -> int:
-        ...
+    def notify(self, agent_id: str, event: str, data: dict | None = None) -> int: ...

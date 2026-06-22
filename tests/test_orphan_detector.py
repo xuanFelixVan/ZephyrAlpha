@@ -10,12 +10,12 @@
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_orphan_detector.py
 
-import pytest
 from unittest.mock import MagicMock
-from dataclasses import dataclass, field
+
+import pytest
 
 from zephyr.security.access_control.orphan_judge.orphan_detector import OrphanDetector, OrphanReport
-from zephyr.trading.module_onboarding_scanner import UnregisteredModule, ModuleDiscovery
+from zephyr.trading.module_onboarding_scanner import ModuleDiscovery, UnregisteredModule
 
 
 def _make_discovery(package: str = "test_pkg", module_name: str = "test_mod") -> ModuleDiscovery:
@@ -26,7 +26,9 @@ def _make_discovery(package: str = "test_pkg", module_name: str = "test_mod") ->
     )
 
 
-def _make_orphan(package: str = "test_pkg", module_name: str = "orphan_mod", priority: str = "P1") -> UnregisteredModule:
+def _make_orphan(
+    package: str = "test_pkg", module_name: str = "orphan_mod", priority: str = "P1"
+) -> UnregisteredModule:
     return UnregisteredModule(
         discovery=_make_discovery(package=package, module_name=module_name),
         reason="new",

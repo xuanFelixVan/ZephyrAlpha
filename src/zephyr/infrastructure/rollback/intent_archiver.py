@@ -32,10 +32,9 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -57,7 +56,6 @@ class IntentArchiveStatus:
 
 
 class IntentArchiver:
-
     EXIT_CODE_INTENT_PRUNE: int = 46
     ARCHIVE_DIR: str = ".zephyr/intent_archive"
 
@@ -68,7 +66,7 @@ class IntentArchiver:
         self._manifest_path = self._archive_dir / "manifest.jsonl"
 
     def archive(self, operation_id: str, intent_text: str, author: str = "") -> IntentRecord:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         intent_id = f"INTENT-{now.strftime('%Y%m%d-%H%M%S-%f')}"
 
         content_hash = hashlib.sha256(intent_text.encode()).hexdigest()
@@ -96,13 +94,19 @@ class IntentArchiver:
         )
 
         with open(self._manifest_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "intent_id": record.intent_id,
-                "operation_id": record.operation_id,
-                "author": record.author,
-                "archived_at": record.archived_at,
-                "content_hash": record.content_hash,
-            }, ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "intent_id": record.intent_id,
+                        "operation_id": record.operation_id,
+                        "author": record.author,
+                        "archived_at": record.archived_at,
+                        "content_hash": record.content_hash,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
             f.flush()
 
         return record
@@ -116,7 +120,7 @@ class IntentArchiver:
         missing_files = 0
 
         try:
-            with open(self._manifest_path, "r", encoding="utf-8") as f:
+            with open(self._manifest_path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -133,7 +137,7 @@ class IntentArchiver:
         except FileNotFoundError:
             pass
 
-        integrity_pass = (missing_files == 0)
+        integrity_pass = missing_files == 0
         exit_code = self.EXIT_CODE_INTENT_PRUNE if not integrity_pass else 0
 
         return IntentArchiveStatus(
@@ -148,7 +152,7 @@ class IntentArchiver:
             return None
 
         try:
-            with open(self._manifest_path, "r", encoding="utf-8") as f:
+            with open(self._manifest_path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if not line:

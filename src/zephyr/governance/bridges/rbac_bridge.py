@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """G-CT-007 契约：Budget → RBAC 配额限制."""
 
+
 class BudgetRBACBridge:
     """预算消耗→RBAC权限降级."""
 

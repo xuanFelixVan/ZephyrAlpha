@@ -49,13 +49,13 @@ import threading
 from pathlib import Path
 from typing import Any, ClassVar
 
+from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 from zephyr.integration.vector_memory.collection_manager import (
-    CollectionInfo,
-    CollectionManager,
     COLLECTION_NAMES,
     VMS_PERSIST_DIR,
+    CollectionInfo,
+    CollectionManager,
 )
-from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
 _logger = logging.getLogger(__name__)
 
@@ -132,6 +132,7 @@ class InProcessVectorMemory:
         if self._started:
             return
         import os
+
         os.environ.setdefault("CHROMA_TELEMETRY_IMPL", "none")
         os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
 
@@ -148,27 +149,33 @@ class InProcessVectorMemory:
         self._index_health_monitor = IndexHealthMonitor(self._collection_manager)
 
         from zephyr.integration.vector_memory.bridge_layer import BridgeLayer
-        from zephyr.integration.vector_memory.vector_bridge import VectorBridge
         from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+        from zephyr.integration.vector_memory.vector_bridge import VectorBridge
 
         self._bridge_layer = BridgeLayer(self._collection_manager)
         self._vector_bridge = VectorBridge(self)
         self._in_memory_backend = InMemoryMemoryBackend()
 
         self._started = True
-        _logger.info("VMS: 启动完成 (11子模块全部初始化, BGE-M3=%s, bge-small=%s)", self._embedding_router.bge_m3_available, self._embedding_router.bge_small_available)
+        _logger.info(
+            "VMS: 启动完成 (11子模块全部初始化, BGE-M3=%s, bge-small=%s)",
+            self._embedding_router.bge_m3_available,
+            self._embedding_router.bge_small_available,
+        )
 
         try:
             baseline = self._index_health_monitor.check_all()
-            _logger.info("VMS: 启动后健康基线: %s/%s healthy, drift=%s",
-                         baseline.collections_healthy, baseline.collections_healthy + baseline.collections_unhealthy, baseline.drift_detected)
+            _logger.info(
+                "VMS: 启动后健康基线: %s/%s healthy, drift=%s",
+                baseline.collections_healthy,
+                baseline.collections_healthy + baseline.collections_unhealthy,
+                baseline.drift_detected,
+            )
         except Exception as exc:
             _logger.warning("VMS: 健康基线检查失败: %s", exc)
 
         self._stop_event.clear()
-        self._maintenance_thread = threading.Thread(
-            target=self._maintenance_loop, daemon=True, name="vms-maintenance"
-        )
+        self._maintenance_thread = threading.Thread(target=self._maintenance_loop, daemon=True, name="vms-maintenance")
         self._maintenance_thread.start()
         _logger.info("VMS: 维护线程已启动")
 
@@ -234,6 +241,7 @@ class InProcessVectorMemory:
         k: int = 5,
     ) -> list[dict[str, Any]]:
         from zephyr.integration.vector_memory.bridge_layer import COLLECTION_ALIASES
+
         collection_name = COLLECTION_ALIASES.get(collection_name, collection_name)
         col = self._collection_manager.get_collection(collection_name)
         if col.count() == 0:
@@ -244,20 +252,24 @@ class InProcessVectorMemory:
                 trace = self._hybrid_retriever.search(query, collection_name, k=k)
                 hits: list[dict[str, Any]] = []
                 for h in trace.hits:
-                    hits.append({
-                        "id": h.id,
-                        "content": h.content,
-                        "score": h.score,
-                        "score_breakdown": h.score_breakdown,
-                        "metadata": h.metadata,
-                        "provenance": h.provenance,
-                    })
+                    hits.append(
+                        {
+                            "id": h.id,
+                            "content": h.content,
+                            "score": h.score,
+                            "score_breakdown": h.score_breakdown,
+                            "metadata": h.metadata,
+                            "provenance": h.provenance,
+                        }
+                    )
                 return hits
             except Exception:
                 _logger.debug("HybridRetriever 检索失败，降级为原始 EmbeddingRouter 检索")
 
         try:
-            if self._started and self._embedding_router.bge_m3_available or self._embedding_router.bge_small_available:
+            if (
+                self._started and self._embedding_router.bge_m3_available
+            ) or self._embedding_router.bge_small_available:
                 query_embedding = self._embedding_router.embed(query, collection_name)
                 results = col.query(
                     query_embeddings=[query_embedding.tolist()],
@@ -287,6 +299,7 @@ class InProcessVectorMemory:
         k: int = 5,
     ) -> list[dict[str, Any]]:
         from zephyr.integration.vector_memory.bridge_layer import COLLECTION_ALIASES
+
         collection_name = COLLECTION_ALIASES.get(collection_name, collection_name)
         col = self._collection_manager.get_collection(collection_name)
         all_data = col.get(include=["documents", "metadatas"])
@@ -335,6 +348,7 @@ class InProcessVectorMemory:
 
     def clear_all(self) -> None:
         from zephyr.integration.vector_memory.collection_manager import COLLECTION_SCHEMAS
+
         for name in COLLECTION_SCHEMAS:
             try:
                 col = self._collection_manager.get_collection(name)

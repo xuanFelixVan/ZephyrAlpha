@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_streaming.py
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.layer2_communication.streaming import StreamingManager
 
 

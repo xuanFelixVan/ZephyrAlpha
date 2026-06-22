@@ -28,7 +28,6 @@
 输出: NegotiationResult — 协议内容 + 妥协条款
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -78,10 +77,10 @@ class A2ANegotiation:
         resource: str,
         initial_terms: dict,
     ) -> NegotiationResult:
-
         current = NegotiationOffer(resource=resource, proposed_by=initiator, terms=initial_terms)
         result = NegotiationResult(
-            initiator=initiator, responder=responder,
+            initiator=initiator,
+            responder=responder,
             status=NegotiationStatus.PROPOSED,
             final_terms=initial_terms,
         )
@@ -111,7 +110,9 @@ class A2ANegotiation:
         return result
 
     def _evaluate_offer(
-        self, agent_id: str, offer: NegotiationOffer,
+        self,
+        agent_id: str,
+        offer: NegotiationOffer,
     ) -> dict:
         return {
             "decision": NegotiationStatus.ACCEPTED,

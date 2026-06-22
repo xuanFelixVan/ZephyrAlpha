@@ -56,9 +56,7 @@ class DataVolumeGrowthMonitor:
     storage_sinks: dict[str, dict] = field(default_factory=dict)
     growth_alerts: list[dict] = field(default_factory=list)
 
-    def register_sink(
-        self, sink_name: str, current_bytes: int, max_bytes: int, retention_days: float
-    ) -> None:
+    def register_sink(self, sink_name: str, current_bytes: int, max_bytes: int, retention_days: float) -> None:
         self.storage_sinks[sink_name] = {
             "current_bytes": current_bytes,
             "max_bytes": max_bytes,

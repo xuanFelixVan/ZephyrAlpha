@@ -16,7 +16,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.audit_trail.cli import COMMANDS, cmd_search, cmd_verify, cmd_stats, cmd_trail, cmd_health, cmd_query_agent, main
+from zephyr.governance.audit_trail.cli import (
+    COMMANDS,
+    main,
+)
 
 
 class TestCommandsRegistry:
@@ -32,7 +35,10 @@ class TestCmdSearch:
             {"timestamp": "2026-05-22T10:00:00Z", "agent_id": "a1", "event_type": "write"},
         ]
         with patch("zephyr.governance.audit_trail.cli.AuditQuery", return_value=mock_query, create=True):
-            with patch.dict("sys.modules", {"zephyr.governance.audit_trail.query": MagicMock(AuditQuery=MagicMock(return_value=mock_query))}):
+            with patch.dict(
+                "sys.modules",
+                {"zephyr.governance.audit_trail.query": MagicMock(AuditQuery=MagicMock(return_value=mock_query))},
+            ):
                 pass
         mock_query.search("test")
         mock_query.search.assert_called_once_with("test")

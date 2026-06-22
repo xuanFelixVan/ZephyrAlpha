@@ -20,7 +20,9 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from typing import Self
+
 # AI-generated: T-3-11 Agent Health Monitor
 """
 AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO）
@@ -63,11 +65,11 @@ from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 
 __all__ = [
+    "AgentHealthMonitor",
+    "AgentHealthStatus",
     "HealthState",
     "SLOConfig",
-    "AgentHealthStatus",
     "SLOViolation",
-    "AgentHealthMonitor",
 ]
 
 

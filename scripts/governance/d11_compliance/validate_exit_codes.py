@@ -33,14 +33,14 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, REPO_ROOT, SCRIPTS_DIR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, SCRIPTS_DIR
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-RE_SYS_EXIT_BARE = re.compile(r'sys\.exit\(\s*([012])\s*\)')
-RE_RETURN_BARE = re.compile(r'^(\s*)return\s+([012])\s*$', re.MULTILINE)
-RE_EXIT_CONST = re.compile(r'EXIT_PASS|EXIT_FINDINGS|EXIT_ERROR')
+RE_SYS_EXIT_BARE = re.compile(r"sys\.exit\(\s*([012])\s*\)")
+RE_RETURN_BARE = re.compile(r"^(\s*)return\s+([012])\s*$", re.MULTILINE)
+RE_EXIT_CONST = re.compile(r"EXIT_PASS|EXIT_FINDINGS|EXIT_ERROR")
 EXCLUDE_DIRS = frozenset({"_shared", "__pycache__", "test_fixtures"})
 
 _BARE_TO_CONST = {"0": "EXIT_PASS", "1": "EXIT_FINDINGS", "2": "EXIT_ERROR"}

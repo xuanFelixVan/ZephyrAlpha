@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.engine
+# [MODULE] zephyr.autonomy_core.engine
 
 # [INVARIANTS] none
 
@@ -30,26 +30,24 @@ SpecEngine 是 agent-spec 的统一入口，负责将静态蓝图转化为可执
 四阶段流程: discover(发现) → generate(生成) → validate(验证) → register(注册)
 """
 
-
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Any
 
 import yaml
 
 from zephyr.autonomy_core.skill_factory import SkillFactory
-from zephyr.autonomy_core.skill_loader import SkillLoader
 from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
-from zephyr.autonomy_core.trigger_router import TriggerRouter, ConstructionStage
-from zephyr.autonomy_core.skill_lifecycle import SkillLifecycle
-from zephyr.autonomy_core.skill_model import SkillStatus
+from zephyr.autonomy_core.skill_loader import SkillLoader
+from zephyr.autonomy_core.trigger_router import TriggerRouter
 
 _AUDIT_AVAILABLE = False
 try:
-    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
     from zephyr.governance.audit_trail.writer import AuditWriter
+    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
+
     _AUDIT_AVAILABLE = True
 except ImportError:
     AuditWriter = None
@@ -70,16 +68,16 @@ class UpgradeResult:
     def __init__(self, blueprint_path: str):
         self.blueprint_path = blueprint_path
         self.phase = UpgradePhase.DISCOVER
-        self.skill_id: Optional[str] = None
-        self.skill_path: Optional[Path] = None
+        self.skill_id: str | None = None
+        self.skill_path: Path | None = None
         self.module_name: str = ""
-        self.errors: List[str] = []
-        self.warnings: List[str] = []
-        self.phase_results: Dict[str, Dict[str, Any]] = {}
-        self.started_at = datetime.now(timezone.utc)
-        self.finished_at: Optional[datetime] = None
+        self.errors: list[str] = []
+        self.warnings: list[str] = []
+        self.phase_results: dict[str, dict[str, Any]] = {}
+        self.started_at = datetime.now(UTC)
+        self.finished_at: datetime | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "blueprint_path": self.blueprint_path,
             "phase": self.phase,
@@ -104,7 +102,7 @@ class SpecEngine:
         print(result.to_dict())
     """
 
-    def __init__(self, registry_path: Optional[Path] = None):
+    def __init__(self, registry_path: Path | None = None):
         self.factory = SkillFactory()
         self.loader = SkillLoader(registry_path)
         self.freshness = FreshnessDecayModel()
@@ -131,7 +129,7 @@ class SpecEngine:
             self._register(result)
 
             result.phase = UpgradePhase.COMPLETE
-            result.finished_at = datetime.now(timezone.utc)
+            result.finished_at = datetime.now(UTC)
             self._write_audit("skill_upgrade_complete", result)
 
         except Exception as exc:
@@ -139,13 +137,13 @@ class SpecEngine:
 
         return result
 
-    def upgrade_batch(self, blueprint_paths: List[str]) -> List[UpgradeResult]:
+    def upgrade_batch(self, blueprint_paths: list[str]) -> list[UpgradeResult]:
         results = []
         for bp in blueprint_paths:
             results.append(self.upgrade(bp))
         return results
 
-    def status(self, skill_id: Optional[str] = None) -> Dict[str, Any]:
+    def status(self, skill_id: str | None = None) -> dict[str, Any]:
         if skill_id:
             return {
                 "skill_id": skill_id,
@@ -162,7 +160,7 @@ class SpecEngine:
             "deprecated": registry.get("metadata", {}).get("deprecated_skills", 0),
         }
 
-    def validate_skill(self, skill_id: str) -> Dict[str, Any]:
+    def validate_skill(self, skill_id: str) -> dict[str, Any]:
         try:
             data = self.loader.progressive_load(skill_id)
             l1 = data.get("l1", {})
@@ -214,7 +212,7 @@ class SpecEngine:
         result.phase_results["discover"] = {"module_name": module_name, "blueprint": blueprint_path}
         return module_name
 
-    def _generate(self, module_name: str, blueprint_path: str, result: UpgradeResult) -> Optional[Path]:
+    def _generate(self, module_name: str, blueprint_path: str, result: UpgradeResult) -> Path | None:
         result.phase = UpgradePhase.GENERATE
         try:
             skill_path = self.factory.generate_domain_skill(module_name, blueprint_path)
@@ -271,11 +269,11 @@ class SpecEngine:
     def _fail(self, result: UpgradeResult, phase: str, reason: str) -> UpgradeResult:
         result.phase = UpgradePhase.FAILED
         result.errors.append(f"[{phase}] {reason}")
-        result.finished_at = datetime.now(timezone.utc)
+        result.finished_at = datetime.now(UTC)
         self._write_audit("skill_upgrade_failed", result)
         return result
 
-    def _lookup_registry(self, skill_id: str) -> Optional[Dict[str, Any]]:
+    def _lookup_registry(self, skill_id: str) -> dict[str, Any] | None:
         registry = self.loader._load_registry()
         for category in ("domain", "role"):
             if skill_id in registry.get("skills", {}).get(category, {}):
@@ -285,17 +283,19 @@ class SpecEngine:
     def _write_audit(self, event_type: str, result: UpgradeResult):
         if self._audit_writer is not None:
             try:
-                self._audit_writer.write({
-                    "event_type": event_type,
-                    "module": "agent-spec.engine",
-                    "blueprint_path": result.blueprint_path,
-                    "skill_id": result.skill_id,
-                    "phase": result.phase,
-                    "success": result.phase == UpgradePhase.COMPLETE,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
+                self._audit_writer.write(
+                    {
+                        "event_type": event_type,
+                        "module": "agent-spec.engine",
+                        "blueprint_path": result.blueprint_path,
+                        "skill_id": result.skill_id,
+                        "phase": result.phase,
+                        "success": result.phase == UpgradePhase.COMPLETE,
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
             except Exception:
                 pass
 
 
-__all__ = ["SpecEngine", "UpgradeResult", "UpgradePhase"]
+__all__ = ["SpecEngine", "UpgradePhase", "UpgradeResult"]

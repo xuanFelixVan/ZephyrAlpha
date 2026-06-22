@@ -11,11 +11,8 @@
 # [TESTS] tests/test_drift_infrastructure.py
 
 import json
-import os
 import uuid
 from datetime import UTC, datetime, timedelta
-
-import pytest
 
 from zephyr.behavioral_audit.drift_infrastructure import (
     CheckpointWriter,
@@ -32,7 +29,6 @@ from zephyr.behavioral_audit.drift_infrastructure import (
     get_or_create_budget,
     register_env_tags,
 )
-from zephyr.behavioral_audit.drift_models import DriftBudget
 
 
 class TestMaintenanceWindow:

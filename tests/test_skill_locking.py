@@ -18,7 +18,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.autonomy_core.skill_locking import SkillLock, SkillFileLock
+from zephyr.autonomy_core.skill_locking import SkillFileLock, SkillLock
 
 
 class TestSkillLockInstantiation:
@@ -32,7 +32,7 @@ class TestSkillLockInstantiation:
         assert SkillLock.DEFAULT_TIMEOUT_S == 30.0
 
     def test_lock_dir_default(self):
-        assert SkillLock.LOCK_DIR == Path("_locks")
+        assert Path("_locks") == SkillLock.LOCK_DIR
 
 
 class TestSkillLockGetLock:
@@ -149,7 +149,7 @@ class TestSkillLockTimeout:
 
 class TestSkillFileLockInstantiation:
     def test_lock_dir_default(self):
-        assert SkillFileLock.LOCK_DIR == Path("_locks")
+        assert Path("_locks") == SkillFileLock.LOCK_DIR
 
 
 class TestSkillFileLockAcquire:

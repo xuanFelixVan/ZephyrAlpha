@@ -30,11 +30,11 @@ Task Scheduler — 任务调度器。
 """
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
+
 
 class ScheduleStatus(str, Enum):
     PENDING = "pending"
@@ -42,6 +42,7 @@ class ScheduleStatus(str, Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"
+
 
 @dataclass
 class ScheduledTask:
@@ -56,6 +57,7 @@ class ScheduledTask:
     estimated_tokens: int = 0
     timeout_minutes: int = 60
 
+
 @dataclass
 class ScheduleResult:
     total_scheduled: int
@@ -64,8 +66,8 @@ class ScheduleResult:
     failed: int
     tasks: list[ScheduledTask]
 
-class TaskScheduler:
 
+class TaskScheduler:
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/queue")
         self._schedule_path = self._data_dir / "schedules.jsonl"
@@ -73,9 +75,9 @@ class TaskScheduler:
 
     def schedule(self, task_id: str, estimated_tokens: int = 0) -> ScheduledTask:
         scheduled = ScheduledTask(
-            schedule_id=f"SCHED-{task_id}-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            schedule_id=f"SCHED-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             task_id=task_id,
-            scheduled_at=datetime.now(timezone.utc).isoformat(),
+            scheduled_at=datetime.now(UTC).isoformat(),
             estimated_tokens=estimated_tokens,
         )
 
@@ -88,7 +90,7 @@ class TaskScheduler:
         task = self._tasks.get(schedule_id)
         if task:
             task.status = ScheduleStatus.RUNNING
-            task.started_at = datetime.now(timezone.utc).isoformat()
+            task.started_at = datetime.now(UTC).isoformat()
             self._persist_task(task)
         return task
 
@@ -96,7 +98,7 @@ class TaskScheduler:
         task = self._tasks.get(schedule_id)
         if task:
             task.status = ScheduleStatus.COMPLETED
-            task.completed_at = datetime.now(timezone.utc).isoformat()
+            task.completed_at = datetime.now(UTC).isoformat()
             self._persist_task(task)
         return task
 
@@ -104,7 +106,7 @@ class TaskScheduler:
         task = self._tasks.get(schedule_id)
         if task:
             task.status = ScheduleStatus.FAILED
-            task.completed_at = datetime.now(timezone.utc).isoformat()
+            task.completed_at = datetime.now(UTC).isoformat()
             self._persist_task(task)
         return task
 
@@ -120,7 +122,11 @@ class TaskScheduler:
 
     def get_stats(self) -> dict[str, int]:
         stats: dict[str, int] = {
-            "pending": 0, "running": 0, "completed": 0, "failed": 0, "cancelled": 0,
+            "pending": 0,
+            "running": 0,
+            "completed": 0,
+            "failed": 0,
+            "cancelled": 0,
         }
         for task in self._tasks.values():
             stats[task.status.value] += 1
@@ -129,11 +135,17 @@ class TaskScheduler:
     def _persist_task(self, task: ScheduledTask) -> None:
         self._data_dir.mkdir(parents=True, exist_ok=True)
         with open(self._schedule_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "schedule_id": task.schedule_id,
-                "task_id": task.task_id,
-                "scheduled_at": task.scheduled_at,
-                "started_at": task.started_at,
-                "completed_at": task.completed_at,
-                "status": task.status.value,
-            }, ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "schedule_id": task.schedule_id,
+                        "task_id": task.task_id,
+                        "scheduled_at": task.scheduled_at,
+                        "started_at": task.started_at,
+                        "completed_at": task.completed_at,
+                        "status": task.status.value,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )

@@ -27,6 +27,7 @@ Risk: R118 — No feedback loop from notification to diagnosis quality.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class NotificationFeedback:
     responses: list[dict] = field(default_factory=list)

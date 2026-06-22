@@ -1,8 +1,8 @@
 # DM-018: Sibling 边膨胀诊断报告
 
-> **任务卡ID**: DM-018  
-> **诊断日期**: 2026-06-14  
-> **诊断类型**: 只读诊断（禁止写入 depgraph.db 和源码文件）  
+> **任务卡ID**: DM-018
+> **诊断日期**: 2026-06-14
+> **诊断类型**: 只读诊断（禁止写入 depgraph.db 和源码文件）
 > **状态**: COMPLETED
 
 ---
@@ -224,6 +224,6 @@ CREATE TABLE IF NOT EXISTS edges (
 
 ---
 
-**报告生成时间**: 2026-06-14T15:51:00Z  
-**诊断脚本**: `scripts/governance/diagnose_depgraph.py`  
+**报告生成时间**: 2026-06-14T15:51:00Z
+**诊断脚本**: `scripts/governance/diagnose_depgraph.py`
 **诊断人员**: AI Agent (Code Mode)

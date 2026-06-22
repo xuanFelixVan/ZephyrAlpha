@@ -10,12 +10,10 @@
 # [ERROR_CONTRACT] FileNotFoundError on missing manifest dir; yaml.YAMLError on corrupt input
 # [TESTS] tests/test_file_autorregister.py
 
-import os
-import yaml
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
+import yaml
 
 from zephyr.autonomy_core.file_autorregister import FileAutoRegister
 

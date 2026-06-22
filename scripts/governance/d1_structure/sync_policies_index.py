@@ -12,6 +12,7 @@
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args:
 - --check
@@ -61,7 +62,7 @@ _SUBDIRS = [
         "meta/",
         '元规则——定义"规则怎么写、怎么管"',
         "meta/index.md",
-        "[_registry/catalogs/rule-registry.md](_registry/catalogs/rule-registry.md)",
+        "[_registry/catalogs/_index.yaml](_registry/catalogs/_index.yaml)",
     ),
     (
         "governance/",
@@ -80,6 +81,7 @@ _SUBDIRS = [
     ),
 ]
 
+
 def _count_files(root: Path) -> int:
     """_count_files implementation."""
     count = 0
@@ -97,6 +99,7 @@ def _count_files(root: Path) -> int:
             count += 1
     return count
 
+
 def _count_recursive(root: Path) -> int:
     """_count_recursive implementation."""
     total = 0
@@ -108,6 +111,7 @@ def _count_recursive(root: Path) -> int:
         if entry.is_file() and entry.suffix in (".md", ".yaml", ".yml", ".json"):
             total += 1
     return total
+
 
 def _generate_table() -> list[str]:
     """_generate_table implementation."""
@@ -132,6 +136,7 @@ def _generate_table() -> list[str]:
     lines.append(TABLE_END_MARKER)
     return lines
 
+
 def _find_table_range(content: str) -> tuple[int, int] | None:
     """Find the old table block: starts with '| 子目录' and ends with 'master-document-inventory-registry.md）。'"""
     start = content.find("| 子目录 ")
@@ -153,6 +158,7 @@ def _find_table_range(content: str) -> tuple[int, int] | None:
     else:
         prev_nl += 1
     return (prev_nl, end)
+
 
 def sync(check_only: bool = False) -> int:
     """同步索引."""
@@ -191,7 +197,7 @@ def sync(check_only: bool = False) -> int:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             f.write(updated)
-    
+
         os.replace(tmp_path, PS_IDX_PATH)
     except PermissionError:
         try:
@@ -202,6 +208,7 @@ def sync(check_only: bool = False) -> int:
     return EXIT_PASS
     """sync."""
 
+
 def main() -> None:
     """入口函数."""
     parser = ArgumentParser(description="从磁盘扫描同步 PS-IDX-001 §二 文件数量表格")
@@ -211,6 +218,7 @@ def main() -> None:
 
     code = sync(check_only=args.check)
     sys.exit(code)
+
 
 if __name__ == "__main__":
     main()

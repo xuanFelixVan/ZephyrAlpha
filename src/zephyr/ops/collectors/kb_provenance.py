@@ -27,6 +27,7 @@ Risk: R136 — Unreliable source knowledge weighted equally with verified knowle
 
 from dataclasses import dataclass
 
+
 @dataclass
 class KBProvenance:
     source: str = "unknown"

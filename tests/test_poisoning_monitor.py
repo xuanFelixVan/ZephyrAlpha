@@ -9,7 +9,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_poisoning_monitor.py -q
-import pytest
 from zephyr.autonomy_core.poisoning_monitor import PoisoningMonitor, PoisoningRisk
 
 
@@ -40,8 +39,12 @@ class TestPoisoningRisk:
         assert risk.score_delta > 0.0
 
     def test_equality(self):
-        a = PoisoningRisk(ke_id="X", cosine_to_nearest=0.9, cosine_to_centroid=0.8, likely_poisoned=False, score_delta=0.0)
-        b = PoisoningRisk(ke_id="X", cosine_to_nearest=0.9, cosine_to_centroid=0.8, likely_poisoned=False, score_delta=0.0)
+        a = PoisoningRisk(
+            ke_id="X", cosine_to_nearest=0.9, cosine_to_centroid=0.8, likely_poisoned=False, score_delta=0.0
+        )
+        b = PoisoningRisk(
+            ke_id="X", cosine_to_nearest=0.9, cosine_to_centroid=0.8, likely_poisoned=False, score_delta=0.0
+        )
         assert a == b
 
 

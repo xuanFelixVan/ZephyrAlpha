@@ -63,6 +63,7 @@ TEMP_FILE_PATTERNS = [
 
 TEMP_DIR_NAMES = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
 
+
 def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
     """扫描临时文件与缓存目录，返回 (发现列表, 已扫描文件数)。"""
     if scan_dir is None:
@@ -111,6 +112,7 @@ def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
 
     return findings, files_scanned
 
+
 def clean_temp_files(scan_dir: Path | None = None, dry_run: bool = True) -> tuple[list[str], int]:
     """清理临时文件与缓存目录，返回 (已清理列表, 已扫描文件数)。"""
     if scan_dir is None:
@@ -132,6 +134,7 @@ def clean_temp_files(scan_dir: Path | None = None, dry_run: bool = True) -> tupl
                 cleaned.append(f"[DRY] {rel}/")
             else:
                 import shutil
+
                 shutil.rmtree(dirpath_p, ignore_errors=True)
                 cleaned.append(f"[DEL] {rel}/")
 
@@ -189,6 +192,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

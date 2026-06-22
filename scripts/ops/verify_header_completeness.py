@@ -1,8 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/verify_header_completeness.py | §
 import re
-import sys
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 
@@ -23,7 +22,7 @@ def scan_file(filepath: Path):
     global files_scanned
     files_scanned += 1
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         lines = f.readlines()
 
     found_fields = set()
@@ -66,7 +65,7 @@ def main():
     print()
     print("MISSING FIELD STATISTICS:")
     print(f"  {'Field':<20} {'Missing':>8} {'Type':>6}")
-    print(f"  {'-'*20} {'-'*8} {'-'*6}")
+    print(f"  {'-' * 20} {'-' * 8} {'-' * 6}")
     for f in ALL_FIELDS:
         req_tag = "REQ" if f in REQUIRED_FIELDS else "opt"
         print(f"  {f:<20} {missing_stats.get(f, 0):>8} {req_tag:>6}")

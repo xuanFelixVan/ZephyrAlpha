@@ -28,7 +28,6 @@
 # SRC-0037: 版本分叉→独立命名 — 升级策略（非事件版本化）
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -39,8 +38,8 @@ from typing import Any
 __all__ = [
     "EventBusUpgrade",
     "UpgradePlan",
-    "UpgradeStep",
     "UpgradeStatus",
+    "UpgradeStep",
 ]
 
 
@@ -267,6 +266,7 @@ class EventBusUpgrade:
 
         try:
             import importlib
+
             importlib.import_module("zephyr.infrastructure.event_store")
 
             result["event_store_available"] = True

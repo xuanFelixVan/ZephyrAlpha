@@ -15,6 +15,7 @@ exit codes: 0=合法, 1=不合法
 """
 
 from __future__ import annotations
+
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 __manifest__ = """
@@ -46,6 +47,7 @@ ensure_utf8_stdout()
 PATTERN = re.compile(
     r"^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)" r"(\([a-zA-Z0-9_.-]+\))?" r": .{1,200}$"
 )
+
 
 def main() -> None:
     """入口函数."""
@@ -90,6 +92,7 @@ def main() -> None:
         sys.exit(EXIT_FINDINGS)
 
     sys.exit(EXIT_PASS)
+
 
 if __name__ == "__main__":
     main()

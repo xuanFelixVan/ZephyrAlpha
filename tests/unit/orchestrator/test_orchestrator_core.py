@@ -13,22 +13,20 @@ from pathlib import Path
 
 import pytest
 
+from zephyr.trading.orchestrator.contract_registry import (
+    CONTRACTS,
+    AIReadOnlyHint,
+    Contract,
+    ContractCallResult,
+    ContractRegistry,
+    TelemetryType,
+)
 from zephyr.trading.orchestrator.trigger_router import (
-    PHASE1D_TRIGGER_TYPES,
-    RouterDispatchResult,
     TriggerHandlerSpec,
     TriggerRouter,
     TriggerRouterConfigError,
     TriggerSafety,
     load_router_config,
-)
-from zephyr.trading.orchestrator.contract_registry import (
-    AIReadOnlyHint,
-    CONTRACTS,
-    Contract,
-    ContractCallResult,
-    ContractRegistry,
-    TelemetryType,
 )
 
 

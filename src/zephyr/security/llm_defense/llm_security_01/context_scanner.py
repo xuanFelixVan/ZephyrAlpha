@@ -14,7 +14,6 @@
 CT-CE-LSG-001: 接收 CE 投递的上下文块, 九层纵深防御扫描后返回安全判定。
 """
 
-
 from __future__ import annotations
 
 import asyncio
@@ -54,7 +53,7 @@ class ContextScanner:
         t0 = time.perf_counter()
 
         try:
-            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway, ScanMode
+            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
             gateway = LSGSecurityGateway()
             blocked: list[dict[str, Any]] = []
@@ -87,22 +86,28 @@ class ContextScanner:
                     if result.decision.value == "DENY":
                         all_passed = False
                         blocked.append(block)
-                        warnings.append({
-                            "block_index": i,
-                            "rule": f"layer_{result.layers_denied}",
-                            "message": f"Blocked by LSG: layers_evaluated={result.layers_evaluated} layers_denied={result.layers_denied}",
-                        })
+                        warnings.append(
+                            {
+                                "block_index": i,
+                                "rule": f"layer_{result.layers_denied}",
+                                "message": f"Blocked by LSG: layers_evaluated={result.layers_evaluated} layers_denied={result.layers_denied}",
+                            }
+                        )
                         logger.info(
                             "[CE-LSG] blocked block %d: type=%s decision=%s",
-                            i, block.get("type"), result.decision,
+                            i,
+                            block.get("type"),
+                            result.decision,
                         )
                     elif result.decision.value == "FLAG":
                         sanitized.append(block)
-                        warnings.append({
-                            "block_index": i,
-                            "rule": "flagged",
-                            "message": f"Flagged: score={result.total_score}",
-                        })
+                        warnings.append(
+                            {
+                                "block_index": i,
+                                "rule": "flagged",
+                                "message": f"Flagged: score={result.total_score}",
+                            }
+                        )
                     else:
                         sanitized.append(block)
 
@@ -111,7 +116,11 @@ class ContextScanner:
             elapsed = round((time.perf_counter() - t0) * 1000)
             logger.info(
                 "[CE-LSG] scan: task=%s passed=%s elapsed=%dms blocked=%d warnings=%d",
-                task_id, all_passed, elapsed, len(blocked), len(warnings),
+                task_id,
+                all_passed,
+                elapsed,
+                len(blocked),
+                len(warnings),
             )
 
             return SecurityCheckResponse(

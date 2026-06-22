@@ -7,6 +7,7 @@
 # [TESTS] —
 # AI-generated: T-4-01 (A28) · AutoEvolutionEngine 单元测试
 from __future__ import annotations
+
 """
 test_auto_evolution · stable 全自动进化引擎单元测试
 =====================================================
@@ -38,6 +39,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 
 import pytest
+
 from zephyr.ops.auto_evolution import (
     DEFAULT_AUTO_CONFIG,
     AutoEvolutionConfig,
@@ -49,6 +51,8 @@ from zephyr.ops.auto_evolution import (
 from zephyr.ops.evolution_engine import (
     EvolutionEngine,
     EvolutionProposal,
+)
+from zephyr.ops.evolution_engine import (
     Severity as EvolutionSeverity,
 )
 from zephyr.ops.feedback_collector import FeedbackCollector

@@ -44,9 +44,8 @@ import asyncio
 import functools
 import logging
 import random
-import time
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Concatenate, ParamSpec, TypeVar
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
@@ -79,7 +78,7 @@ class RetryConfig:
 
     def delay_for_attempt(self, attempt: int) -> float:
         raw = min(
-            self.base_delay_seconds * (self.backoff_multiplier ** attempt),
+            self.base_delay_seconds * (self.backoff_multiplier**attempt),
             self.max_delay_seconds,
         )
         if self.jitter:

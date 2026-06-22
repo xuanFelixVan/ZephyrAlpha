@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """单元测试——真源优先级裁决器（Truth Source Validator）
 
 验证 5 级优先级链裁决正确性：Tier 0 > Tier 1 > Tier 2 > Tier 3 > Tier 4。
@@ -16,9 +17,7 @@ from __future__ import annotations
 import pytest
 
 from zephyr.governance.rule_enforcement.truth_source_validator import (
-    AuditLogEntry,
     TruthClaim,
-    TruthConflict,
     TruthSourceValidator,
     TruthTier,
 )
@@ -31,9 +30,7 @@ def validator():
 
 class TestClassifySource:
     def test_tier0_master_blueprint(self, validator):
-        tier = validator.classify_source(
-            "docs/03_modules/_master-blueprint/blueprint.md"
-        )
+        tier = validator.classify_source("docs/03_modules/_master-blueprint/blueprint.md")
         assert tier == TruthTier.TIER_0
 
     def test_tier1_architecture_model(self, validator):
@@ -238,20 +235,27 @@ class TestResolveAll:
     def test_resolve_all_multiple_facts(self, validator):
         claims_by_fact = {
             "fact.A": [
-                TruthClaim(fact_id="fact.A", value=1,
-                           source_path="docs/03_modules/_master-blueprint/blueprint.md",
-                           tier=TruthTier.TIER_0),
-                TruthClaim(fact_id="fact.A", value=2,
-                           source_path="src/zephyr/code.py",
-                           tier=TruthTier.TIER_4),
+                TruthClaim(
+                    fact_id="fact.A",
+                    value=1,
+                    source_path="docs/03_modules/_master-blueprint/blueprint.md",
+                    tier=TruthTier.TIER_0,
+                ),
+                TruthClaim(fact_id="fact.A", value=2, source_path="src/zephyr/code.py", tier=TruthTier.TIER_4),
             ],
             "fact.B": [
-                TruthClaim(fact_id="fact.B", value="alpha",
-                           source_path="architecture-model/layers/test.yaml",
-                           tier=TruthTier.TIER_1),
-                TruthClaim(fact_id="fact.B", value="beta",
-                           source_path="docs/01_policies_and_standards/policy.md",
-                           tier=TruthTier.TIER_3),
+                TruthClaim(
+                    fact_id="fact.B",
+                    value="alpha",
+                    source_path="architecture-model/layers/test.yaml",
+                    tier=TruthTier.TIER_1,
+                ),
+                TruthClaim(
+                    fact_id="fact.B",
+                    value="beta",
+                    source_path="docs/01_policies_and_standards/policy.md",
+                    tier=TruthTier.TIER_3,
+                ),
             ],
         }
         conflicts = validator.resolve_all(claims_by_fact)

@@ -2,9 +2,12 @@
 class ComplianceLayer:
     def __init__(self, config=None):
         self.config = config or {}
+
     def validate(self, operation):
         return True
+
     def check_policy(self, policy_id):
         return True
+
     def enforce_compliance(self, operation, policy):
         pass

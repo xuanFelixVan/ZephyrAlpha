@@ -29,7 +29,6 @@
 输出: CollusionReport — 合谋风险评分 + 参与 Agent 列表
 """
 
-
 from __future__ import annotations
 
 from collections import defaultdict
@@ -42,6 +41,7 @@ class CollusionFinding:
     agent_ids: list[str]
     evidence: list[dict]
     risk_score: float
+
 
 @dataclass
 class CollusionReport:
@@ -67,12 +67,14 @@ class A2ACollusionDetector:
         for (a, b), count in pairs:
             if count >= self._mutual_review_threshold:
                 risk = min(1.0, count / (self._mutual_review_threshold * 2))
-                report.findings.append(CollusionFinding(
-                    pattern="mutual_review",
-                    agent_ids=[a, b],
-                    evidence=[{"interaction_count": count}],
-                    risk_score=round(risk, 2),
-                ))
+                report.findings.append(
+                    CollusionFinding(
+                        pattern="mutual_review",
+                        agent_ids=[a, b],
+                        evidence=[{"interaction_count": count}],
+                        risk_score=round(risk, 2),
+                    )
+                )
 
         report.clean = len(report.findings) == 0
         return report

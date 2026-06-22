@@ -9,16 +9,14 @@
 
 from __future__ import annotations
 
-import pytest
-
-from zephyr.trading.orchestrator.contract_registry import ContractRegistry
-from zephyr.trading.orchestrator.contract_router import ContractRouter
 from zephyr.infrastructure.system_telemetry.health_probes import (
+    SPECIAL_RULES,
     SYSTEMS,
     HealthProbeManager,
     ProbeStatus,
-    SPECIAL_RULES,
 )
+from zephyr.trading.orchestrator.contract_registry import ContractRegistry
+from zephyr.trading.orchestrator.contract_router import ContractRouter
 
 
 def test_ct_health_registered():

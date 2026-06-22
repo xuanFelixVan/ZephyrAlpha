@@ -25,4 +25,4 @@ Core types (PartType, A2AMessagePart, A2AMessage) are imported from
 zephyr.shared.protocols.a2a.a2a_schemas.
 """
 
-from zephyr.shared.protocols.a2a.a2a_schemas import PartType, A2AMessagePart, A2AMessage  # noqa: F401
+from zephyr.shared.protocols.a2a.a2a_schemas import A2AMessage, A2AMessagePart, PartType  # noqa: F401

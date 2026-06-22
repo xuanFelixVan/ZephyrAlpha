@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_temporal_coherence_of_self_model.py
 
-import pytest
 
 from zephyr.ops.detectors.temporal_coherence_of_self_model import (
     SelfModelSnapshot,
@@ -32,9 +31,7 @@ class TestSelfModelSnapshot:
         assert snap.health_score == 0.95
 
     def test_default_hash(self):
-        snap = SelfModelSnapshot(
-            timestamp=0.0, capabilities={}, limits={}, health_score=0.0
-        )
+        snap = SelfModelSnapshot(timestamp=0.0, capabilities={}, limits={}, health_score=0.0)
         assert snap.hash == ""
 
 
@@ -137,9 +134,7 @@ class TestTemporalCoherenceOfSelfModelCheckCoherence:
 
 class TestTemporalCoherenceComputeDictSimilarity:
     def test_identical_dicts(self):
-        result = TemporalCoherenceOfSelfModel._compute_dict_similarity(
-            {"a": 1.0, "b": 2.0}, {"a": 1.0, "b": 2.0}
-        )
+        result = TemporalCoherenceOfSelfModel._compute_dict_similarity({"a": 1.0, "b": 2.0}, {"a": 1.0, "b": 2.0})
         assert result == 1.0
 
     def test_empty_dicts(self):
@@ -147,13 +142,9 @@ class TestTemporalCoherenceComputeDictSimilarity:
         assert result == 1.0
 
     def test_completely_different(self):
-        result = TemporalCoherenceOfSelfModel._compute_dict_similarity(
-            {"a": 100.0}, {"a": 1.0}
-        )
+        result = TemporalCoherenceOfSelfModel._compute_dict_similarity({"a": 100.0}, {"a": 1.0})
         assert result < 0.5
 
     def test_one_empty_one_not(self):
-        result = TemporalCoherenceOfSelfModel._compute_dict_similarity(
-            {"a": 1.0}, {}
-        )
+        result = TemporalCoherenceOfSelfModel._compute_dict_similarity({"a": 1.0}, {})
         assert result < 1.0

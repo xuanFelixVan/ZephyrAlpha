@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-import pytest
-
-from zephyr.governance.audit_trail.wqa_scorer import WQAScore, WQA_DIMENSIONS
+from zephyr.governance.audit_trail.wqa_scorer import WQA_DIMENSIONS, WQAScore
 
 
 class TestWQAScore:
@@ -51,40 +49,60 @@ class TestWQAScore:
 
     def test_rating_a_plus(self):
         score = WQAScore(
-            w1_test_coverage=0.95, w2_blueprint_alignment=0.95, w3_ruff_zero_warn=0.9,
-            w4_gate_no_new_fail=0.95, w5_owner_no_revert=0.9, w6_session_completion=0.9,
+            w1_test_coverage=0.95,
+            w2_blueprint_alignment=0.95,
+            w3_ruff_zero_warn=0.9,
+            w4_gate_no_new_fail=0.95,
+            w5_owner_no_revert=0.9,
+            w6_session_completion=0.9,
             w7_token_efficiency=0.9,
         )
         assert score.rating == "A+"
 
     def test_rating_a(self):
         score = WQAScore(
-            w1_test_coverage=0.85, w2_blueprint_alignment=0.85, w3_ruff_zero_warn=0.8,
-            w4_gate_no_new_fail=0.85, w5_owner_no_revert=0.8, w6_session_completion=0.8,
+            w1_test_coverage=0.85,
+            w2_blueprint_alignment=0.85,
+            w3_ruff_zero_warn=0.8,
+            w4_gate_no_new_fail=0.85,
+            w5_owner_no_revert=0.8,
+            w6_session_completion=0.8,
             w7_token_efficiency=0.8,
         )
         assert score.rating == "A"
 
     def test_rating_b(self):
         score = WQAScore(
-            w1_test_coverage=0.75, w2_blueprint_alignment=0.7, w3_ruff_zero_warn=0.7,
-            w4_gate_no_new_fail=0.7, w5_owner_no_revert=0.7, w6_session_completion=0.7,
+            w1_test_coverage=0.75,
+            w2_blueprint_alignment=0.7,
+            w3_ruff_zero_warn=0.7,
+            w4_gate_no_new_fail=0.7,
+            w5_owner_no_revert=0.7,
+            w6_session_completion=0.7,
             w7_token_efficiency=0.7,
         )
         assert score.rating == "B"
 
     def test_rating_c(self):
         score = WQAScore(
-            w1_test_coverage=0.65, w2_blueprint_alignment=0.6, w3_ruff_zero_warn=0.6,
-            w4_gate_no_new_fail=0.6, w5_owner_no_revert=0.6, w6_session_completion=0.6,
+            w1_test_coverage=0.65,
+            w2_blueprint_alignment=0.6,
+            w3_ruff_zero_warn=0.6,
+            w4_gate_no_new_fail=0.6,
+            w5_owner_no_revert=0.6,
+            w6_session_completion=0.6,
             w7_token_efficiency=0.6,
         )
         assert score.rating == "C"
 
     def test_rating_d(self):
         score = WQAScore(
-            w1_test_coverage=0.5, w2_blueprint_alignment=0.5, w3_ruff_zero_warn=0.5,
-            w4_gate_no_new_fail=0.5, w5_owner_no_revert=0.5, w6_session_completion=0.5,
+            w1_test_coverage=0.5,
+            w2_blueprint_alignment=0.5,
+            w3_ruff_zero_warn=0.5,
+            w4_gate_no_new_fail=0.5,
+            w5_owner_no_revert=0.5,
+            w6_session_completion=0.5,
             w7_token_efficiency=0.5,
         )
         assert score.rating == "D"

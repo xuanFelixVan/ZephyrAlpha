@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-317
 status: active
 title: 3.5 治理层（09-GOV）三平面归属（同步批次）

@@ -7,6 +7,7 @@
 # [TESTS] —
 
 from __future__ import annotations
+
 """Test suite: budget_engine"""
 
 
@@ -15,11 +16,9 @@ import pytest
 from zephyr.governance.budget_engine import BudgetEngine
 from zephyr.governance.budget_models import (
     BudgetAlert,
-    BudgetConsumption,
     BudgetDimension,
     BudgetLevel,
     BudgetPolicy,
-    DegradationStep,
     GateDecision,
     GateResult,
     ModelTier,
@@ -233,7 +232,9 @@ class TestRegisterPolicy:
 class TestTryClaimBudget:
     def test_successful_claim(self, engine: BudgetEngine) -> None:
         ok, version, msg = engine.try_claim_budget(
-            "provider-1", BudgetDimension.TOKEN, 100.0,
+            "provider-1",
+            BudgetDimension.TOKEN,
+            100.0,
         )
         assert ok is True
         assert version >= 0
@@ -241,14 +242,19 @@ class TestTryClaimBudget:
 
     def test_claim_exceeds_daily_budget(self, engine: BudgetEngine) -> None:
         ok, version, msg = engine.try_claim_budget(
-            "provider-2", BudgetDimension.COST, 100.0,
+            "provider-2",
+            BudgetDimension.COST,
+            100.0,
         )
         assert ok is False
         assert "Insufficient daily budget" in msg
 
     def test_claim_version_mismatch(self, engine: BudgetEngine) -> None:
         ok, version, msg = engine.try_claim_budget(
-            "provider-3", BudgetDimension.TOKEN, 100.0, expected_version=999,
+            "provider-3",
+            BudgetDimension.TOKEN,
+            100.0,
+            expected_version=999,
         )
         assert ok is False
         assert "Version mismatch" in msg

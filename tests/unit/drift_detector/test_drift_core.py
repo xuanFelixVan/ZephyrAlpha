@@ -8,15 +8,13 @@
 
 """Test suite: drift-detector core — drift_engine + baseline_manager + drift_models"""
 
-import json
 import os
-import shutil
-import tempfile
 import uuid
 from datetime import UTC, datetime
 
 import pytest
 
+from zephyr.behavioral_audit.baseline_manager import BaselineManager, DiffReport
 from zephyr.behavioral_audit.drift_engine import (
     STORM_THRESHOLD,
     _create_bulk_event,
@@ -39,7 +37,6 @@ from zephyr.behavioral_audit.drift_models import (
     ScanResult,
     Severity,
 )
-from zephyr.behavioral_audit.baseline_manager import BaselineManager, DiffReport
 
 
 @pytest.fixture
@@ -497,7 +494,6 @@ class TestBaselineManager:
 class TestDriftInfrastructure:
     def test_maintenance_window(self):
         from zephyr.behavioral_audit.drift_infrastructure import (
-            MaintenanceWindow,
             declare_maintenance_window,
             get_maintenance_window,
         )

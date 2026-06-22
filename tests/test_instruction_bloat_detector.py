@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import json
-import os
-import tempfile
-
 import pytest
 
 from zephyr.governance.instruction_bloat_detector import (

@@ -26,10 +26,7 @@ Time Partitioned SLO — 时间分区容量模式 (盲点 #29)
   - 不同时段不同 SLO target
 """
 
-import time
 from datetime import datetime
-from dataclasses import dataclass
-from typing import Any, Optional
 
 
 class TimePartitionedSLO:

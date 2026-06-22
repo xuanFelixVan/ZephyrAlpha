@@ -23,9 +23,8 @@ from __future__ import annotations
 
 """全局降级级联预防（CT-DEGRADE-CASCADE）——降级传播链检测+熔断。"""
 
-DEGRADE_PROPAGATION_CHAIN: list[str] = [
-    "script_system", "feedback-loop", "orchestrator"
-]
+DEGRADE_PROPAGATION_CHAIN: list[str] = ["script_system", "feedback-loop", "orchestrator"]
+
 
 class DegradeCascadeGuard:
     def detect_cascade(self, degraded_systems: list[str]) -> bool:

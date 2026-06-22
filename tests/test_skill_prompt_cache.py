@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] get returns Optional[str]; set returns None; purge_expired returns int
 # [TESTS] pytest tests/test_skill_prompt_cache.py -q
 
-import time
 
 import pytest
 

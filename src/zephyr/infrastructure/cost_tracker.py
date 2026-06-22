@@ -37,16 +37,15 @@ import sqlite3
 import threading
 import uuid
 from dataclasses import dataclass, field
-from datetime import UTC, date, datetime
-from enum import Enum
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 __all__ = [
+    "COST_TRACKER_SCHEMA",
+    "CostReport",
     "CostTracker",
     "UsageRecord",
-    "CostReport",
-    "COST_TRACKER_SCHEMA",
 ]
 
 _MODEL_PRICING: dict[str, dict[str, float]] = {
@@ -97,10 +96,9 @@ class UsageRecord:
         pricing = _MODEL_PRICING.get(self.model)
         if not pricing:
             pricing = {"prompt_per_1k": 0.001, "completion_per_1k": 0.002}
-        cost = (
-            (self.tokens_in / 1000) * pricing["prompt_per_1k"]
-            + (self.tokens_out / 1000) * pricing["completion_per_1k"]
-        )
+        cost = (self.tokens_in / 1000) * pricing["prompt_per_1k"] + (self.tokens_out / 1000) * pricing[
+            "completion_per_1k"
+        ]
         return round(cost, 8)
 
 
@@ -202,9 +200,7 @@ class CostTracker:
         with self._lock:
             conn = self._get_conn()
             try:
-                rows = conn.execute(
-                    "SELECT * FROM usage_records WHERE date = ?", (date_str,)
-                ).fetchall()
+                rows = conn.execute("SELECT * FROM usage_records WHERE date = ?", (date_str,)).fetchall()
 
                 report.record_count = len(rows)
                 for row in rows:

@@ -56,6 +56,7 @@ class LLMFixAdapter(BaseFixer):
             return self._llm_bridge
         try:
             from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway
+
             self._llm_bridge = LLMGateway()
             return self._llm_bridge
         except ImportError:
@@ -79,6 +80,7 @@ class LLMFixAdapter(BaseFixer):
             return action
         try:
             from pathlib import Path
+
             target_path = Path(target)
             if not target_path.exists():
                 action.status = FixStatus.FAILED
@@ -104,6 +106,7 @@ class LLMFixAdapter(BaseFixer):
             action.confidence = FixConfidence.MEDIUM
             if not dry_run:
                 import os
+
                 tmp_path = f"{target}.{os.getpid()}.tmp"
                 try:
                     with open(tmp_path, "w", encoding="utf-8") as f:
@@ -145,6 +148,7 @@ class LLMFixAdapter(BaseFixer):
 
     def validate(self, target: str) -> ValidationResult:
         from pathlib import Path
+
         target_path = Path(target)
         if not target_path.exists():
             return ValidationResult(valid=False, check_name="llm_fix", evidence="", error="Target not found")
@@ -153,7 +157,9 @@ class LLMFixAdapter(BaseFixer):
             compile(content, target, "exec")
             is_clean, _ = self._secret_guard.scan(content)
             if not is_clean:
-                return ValidationResult(valid=False, check_name="llm_fix", evidence="Secret leak detected", error="Secret leak in output")
+                return ValidationResult(
+                    valid=False, check_name="llm_fix", evidence="Secret leak detected", error="Secret leak in output"
+                )
             return ValidationResult(valid=True, check_name="llm_fix", evidence="Syntax check passed, no secrets")
         except SyntaxError as exc:
             return ValidationResult(valid=False, check_name="llm_fix", evidence="", error=f"Syntax error: {exc}")

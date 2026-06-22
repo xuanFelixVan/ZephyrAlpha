@@ -34,19 +34,19 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.task_types import GateLevel, TaskCard, TaskNamespace, TaskStatus
-from zephyr.shared.registry import ServiceRegistry
 from zephyr.integration.shared.schema.schemas import Priority, SafetyLevel
+from zephyr.shared.registry import ServiceRegistry
+from zephyr.shared.task_types import GateLevel, TaskCard, TaskNamespace, TaskStatus
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "AuditFinding",
-    "FindingTaskBridge",
-    "FindingSeverity",
-    "bridge_findings_to_tasks",
-    "SEVERITY_TO_PRIORITY",
     "DIMENSION_TO_MODULE_INFO",
+    "SEVERITY_TO_PRIORITY",
+    "AuditFinding",
+    "FindingSeverity",
+    "FindingTaskBridge",
+    "bridge_findings_to_tasks",
 ]
 
 FindingSeverity = str
@@ -108,9 +108,11 @@ _DEFAULT_MODULE_INFO: dict[str, str] = {
     "pipeline_modules": "M1",
 }
 
+
 @dataclass
 class AuditFinding:
     """来自脚本审计系统的一条发现"""
+
     finding_id: str
     dimension: str
     severity: FindingSeverity
@@ -124,9 +126,11 @@ class AuditFinding:
         if self.severity not in SEVERITY_TO_PRIORITY:
             raise ValueError(f"Invalid severity: {self.severity}")
 
+
 @dataclass
 class BridgeResult:
     """桥接操作结果"""
+
     findings_processed: int = 0
     tasks_created: int = 0
     tasks_failed: int = 0
@@ -139,6 +143,7 @@ class BridgeResult:
         if self.findings_processed == 0:
             return 0.0
         return self.tasks_created / self.findings_processed
+
 
 class FindingTaskBridge:
     """将脚本审计发现桥接到任务系统，自动创建 TaskCard。
@@ -227,9 +232,7 @@ class FindingTaskBridge:
         phase: int,
     ) -> TaskCard:
         seq = self._repo.next_seq(namespace)
-        module_info = DIMENSION_TO_MODULE_INFO.get(
-            finding.dimension, _DEFAULT_MODULE_INFO
-        )
+        module_info = DIMENSION_TO_MODULE_INFO.get(finding.dimension, _DEFAULT_MODULE_INFO)
         priority = SEVERITY_TO_PRIORITY.get(finding.severity, Priority.P3)
 
         safety = SafetyLevel.M
@@ -238,9 +241,7 @@ class FindingTaskBridge:
 
         task_id = f"{namespace.value}-{seq}"
 
-        description = (
-            f"[自动桥接] {finding.severity.upper()} Finding: {finding.description}"
-        )
+        description = f"[自动桥接] {finding.severity.upper()} Finding: {finding.description}"
         if finding.suggested_fix:
             description += f" — 建议修复: {finding.suggested_fix}"
 
@@ -295,6 +296,7 @@ class FindingTaskBridge:
             created_at=now,
             updated_at=now,
         )
+
 
 def bridge_findings_to_tasks(
     findings: list[AuditFinding],

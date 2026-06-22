@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-3148
 status: active
 title: Bug #4: AISGSandbox.scan_content() 返回 `list[str]` 而非 `list[dict]`

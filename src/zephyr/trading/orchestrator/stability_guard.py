@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """API 稳定性守护（CT-STABILITY）——public API签名锁+breaking change检测。"""
 
+
 class StabilityGuard:
     def lock_api(self, module: str, exports: list[str]) -> dict:
         return {"module": module, "exports": exports, "locked": True}

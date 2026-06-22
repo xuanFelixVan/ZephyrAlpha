@@ -27,11 +27,10 @@
   - 引擎Tax报告：认知负担 + 维护增值税 + TIOBE健康图表
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -83,7 +82,7 @@ class SimplicityAuditor:
             cognitive_burden=cognitive,
             maintenance_tax=tax,
             recommendation=rec,
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
         )
 
     @staticmethod

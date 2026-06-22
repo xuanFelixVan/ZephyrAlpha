@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from zephyr.governance.audit_trail.delegation_bridge import AuditDelegationBridge
 
@@ -47,7 +45,9 @@ class TestRecordDelegation:
 
     def test_record_delegation_handles_writer_failure(self):
         bridge = AuditDelegationBridge()
-        with patch("zephyr.governance.audit_trail.delegation_bridge.AuditWriter", side_effect=Exception("fail"), create=True):
+        with patch(
+            "zephyr.governance.audit_trail.delegation_bridge.AuditWriter", side_effect=Exception("fail"), create=True
+        ):
             result = bridge.record_delegation(
                 from_agent="a0",
                 to_agent="a1",
@@ -87,8 +87,20 @@ class TestAuditDelegationChain:
     def test_valid_chain_no_anomalies(self):
         bridge = AuditDelegationBridge()
         chain = [
-            {"from_agent": "a0", "to_agent": "a1", "depth": 1, "from_capabilities": ["read", "write"], "to_capabilities": ["read"]},
-            {"from_agent": "a1", "to_agent": "a2", "depth": 2, "from_capabilities": ["read"], "to_capabilities": ["read"]},
+            {
+                "from_agent": "a0",
+                "to_agent": "a1",
+                "depth": 1,
+                "from_capabilities": ["read", "write"],
+                "to_capabilities": ["read"],
+            },
+            {
+                "from_agent": "a1",
+                "to_agent": "a2",
+                "depth": 2,
+                "from_capabilities": ["read"],
+                "to_capabilities": ["read"],
+            },
         ]
         anomalies = bridge.audit_delegation_chain(chain)
         assert len(anomalies) == 0

@@ -11,24 +11,39 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.autonomy_core.context_rot_model import ContextRotModel, ContextDecayResult
+    from zephyr.autonomy_core.context_rot_model import ContextDecayResult, ContextRotModel
 except Exception as _exc:
     pytest.skip(f"cannot import context_rot_model: {_exc}", allow_module_level=True)
 
 
 class TestContextDecayResult:
     def test_frozen(self):
-        r = ContextDecayResult(context_id="c1", token_count=100, age_seconds=60.0, decay_factor=0.8, effective_weight=0.8, recommendation="keep")
+        r = ContextDecayResult(
+            context_id="c1",
+            token_count=100,
+            age_seconds=60.0,
+            decay_factor=0.8,
+            effective_weight=0.8,
+            recommendation="keep",
+        )
         with pytest.raises(AttributeError):
             r.context_id = "c2"
 
     def test_fields(self):
-        r = ContextDecayResult(context_id="c1", token_count=100, age_seconds=60.0, decay_factor=0.8, effective_weight=0.8, recommendation="keep")
+        r = ContextDecayResult(
+            context_id="c1",
+            token_count=100,
+            age_seconds=60.0,
+            decay_factor=0.8,
+            effective_weight=0.8,
+            recommendation="keep",
+        )
         assert r.context_id == "c1"
         assert r.token_count == 100
         assert r.decay_factor == 0.8

@@ -27,7 +27,8 @@ TokenBucket自修改速率限制 — 每小时最多N次，防止失控螺旋
 """
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 
 @dataclass
 class SelfModificationRateLimiter:
@@ -81,9 +82,7 @@ class SelfModificationRateLimiter:
             "max_burst": self.max_burst,
             "total_modifications_allowed": self.total_requests - self.blocked_count,
             "total_blocked": self.blocked_count,
-            "block_rate": round(
-                self.blocked_count / max(self.total_requests, 1), 3
-            ),
+            "block_rate": round(self.blocked_count / max(self.total_requests, 1), 3),
         }
 
     def emergency_override(self) -> dict:

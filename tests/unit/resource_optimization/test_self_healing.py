@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 test_self_healing.py - Self-healing + config + EventBus + Audit integration tests
 ==================================================================================
@@ -14,11 +15,9 @@ TASK-INF-0143 Phase 5 verification.
 """
 
 
-import os
 import time
 from unittest.mock import MagicMock, patch
 
-import pytest
 import yaml
 
 from zephyr.shared.lifecycle.resource_optimization_engine import (
@@ -91,16 +90,12 @@ class TestSelfHealing:
     def test_self_heal_disabled(self):
         engine = ResourceOptimizationEngine()
         engine._self_healing_enabled = False
-        result = engine._self_heal_cycle(
-            ResourceSnapshot(memory_percent=90.0, pressure=PressureLevel.CRITICAL)
-        )
+        result = engine._self_heal_cycle(ResourceSnapshot(memory_percent=90.0, pressure=PressureLevel.CRITICAL))
         assert result is None
 
     def test_self_heal_normal_pressure_skipped(self):
         engine = ResourceOptimizationEngine()
-        result = engine._self_heal_cycle(
-            ResourceSnapshot(pressure=PressureLevel.NORMAL)
-        )
+        result = engine._self_heal_cycle(ResourceSnapshot(pressure=PressureLevel.NORMAL))
         assert result is None
 
     def test_select_healing_strategy(self):
@@ -116,6 +111,7 @@ class TestSelfHealing:
         engine._self_healing_verification_delay_s = 0.0
 
         from zephyr.shared.lifecycle.resource_optimization_models import OptimizationResult
+
         mock_opt.return_value = OptimizationResult(
             strategy=OptimizationStrategy.MEMORY_COMPACT,
             success=True,
@@ -157,16 +153,12 @@ class TestEventBusIntegration:
     def test_emit_skipped_when_disabled(self):
         engine = ResourceOptimizationEngine()
         engine._eventbus_enabled = False
-        engine._emit_pressure_event(
-            ResourceSnapshot(pressure=PressureLevel.WARNING)
-        )
+        engine._emit_pressure_event(ResourceSnapshot(pressure=PressureLevel.WARNING))
 
     def test_emit_skipped_when_same_level(self):
         engine = ResourceOptimizationEngine()
         engine._last_pressure_level = PressureLevel.WARNING
-        engine._emit_pressure_event(
-            ResourceSnapshot(pressure=PressureLevel.WARNING)
-        )
+        engine._emit_pressure_event(ResourceSnapshot(pressure=PressureLevel.WARNING))
 
     @patch("zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine.get_bus", create=True)
     def test_emit_on_pressure_change(self, mock_get_bus):
@@ -199,6 +191,7 @@ class TestAuditIntegration:
         engine = ResourceOptimizationEngine()
         engine._audit_enabled = False
         from zephyr.shared.lifecycle.resource_optimization_models import OptimizationRecord
+
         record = OptimizationRecord(
             trigger=PressureLevel.WARNING,
             strategy=OptimizationStrategy.MEMORY_COMPACT,
@@ -211,6 +204,7 @@ class TestAuditIntegration:
         engine._audit_enabled = True
 
         from zephyr.shared.lifecycle.resource_optimization_models import OptimizationRecord
+
         record = OptimizationRecord(
             trigger=PressureLevel.WARNING,
             strategy=OptimizationStrategy.MEMORY_COMPACT,

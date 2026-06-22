@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.trading.orchestrator.benchmark_runner import BASELINES, BenchmarkRunner
 
 

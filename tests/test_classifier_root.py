@@ -13,16 +13,13 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from pathlib import Path
-
-import pytest
 
 from zephyr.infrastructure.asset_inventory.classifier import (
-    Classifier,
     LAYER_BY_DIR,
     REGISTRY_PATTERNS,
     STATUS_BY_DIR,
     TYPE_MAPPING,
+    Classifier,
     _generate_classification_id,
 )
 from zephyr.infrastructure.asset_inventory.models import (
@@ -30,8 +27,6 @@ from zephyr.infrastructure.asset_inventory.models import (
     AssetStatus,
     AssetType,
     ClassificationResult,
-    ClassifiedAsset,
-    Priority,
     RawFileEntry,
     ScanResult,
 )

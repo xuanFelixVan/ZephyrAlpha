@@ -11,17 +11,18 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.autonomy_core.doc_compressor import (
-        DocCompressor,
-        CompressionPolicy,
-        CompressionOutcome,
-        CompressionInvariantError,
         DEFAULT_POLICY,
+        CompressionInvariantError,
+        CompressionOutcome,
+        CompressionPolicy,
+        DocCompressor,
     )
 except Exception as exc:
     pytest.skip(f"无法导入 doc_compressor: {exc}", allow_module_level=True)
@@ -116,7 +117,9 @@ class TestDocCompressor:
 
     def test_singleton_instance(self):
         DocCompressor.reset_instance()
-        policy = CompressionPolicy(min_chars=100, max_chars=5000, preserve_immutable_blocks=["<!-- IMMUTABLE_START -->"])
+        policy = CompressionPolicy(
+            min_chars=100, max_chars=5000, preserve_immutable_blocks=["<!-- IMMUTABLE_START -->"]
+        )
         inst1 = DocCompressor.instance(policy=policy, reset=True)
         inst2 = DocCompressor.instance()
         assert inst1 is inst2

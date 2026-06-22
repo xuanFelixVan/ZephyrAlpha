@@ -104,12 +104,14 @@ class FeedbackDelayCompensator:
         effective = (delta * expected_direction) > 0
 
         if not effective and abs(delta) > abs(pre) * 0.1:
-            self.delay_violations.append({
-                "action_id": action_id,
-                "action_type": action["type"],
-                "expected_delay": action["delay"],
-                "actual_delta": round(delta, 4),
-            })
+            self.delay_violations.append(
+                {
+                    "action_id": action_id,
+                    "action_type": action["type"],
+                    "expected_delay": action["delay"],
+                    "actual_delta": round(delta, 4),
+                }
+            )
 
         return {
             "action_id": action_id,
@@ -122,14 +124,16 @@ class FeedbackDelayCompensator:
 
     def get_pending_summary(self) -> list[dict]:
         return [
-            {"id": aid, "target": a["target_metric"], "remaining_s": round(max(0, a["suppressed_until"] - time.time()), 1)}
+            {
+                "id": aid,
+                "target": a["target_metric"],
+                "remaining_s": round(max(0, a["suppressed_until"] - time.time()), 1),
+            }
             for aid, a in self.pending_actions.items()
             if a["state"] == DelayState.WAITING
         ]
 
     def cleanup_completed(self) -> int:
         before = len(self.pending_actions)
-        self.pending_actions = {
-            aid: a for aid, a in self.pending_actions.items() if a["state"] != DelayState.IDLE
-        }
+        self.pending_actions = {aid: a for aid, a in self.pending_actions.items() if a["state"] != DelayState.IDLE}
         return before - len(self.pending_actions)

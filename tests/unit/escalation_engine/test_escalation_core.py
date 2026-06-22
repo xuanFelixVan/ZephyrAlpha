@@ -8,13 +8,11 @@
 
 """Test suite: escalation_core (EscalationEngine + DelegationEngine)"""
 
-import threading
 from datetime import UTC, datetime, timedelta
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
-from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitBreakerConfig, CircuitState
 from zephyr.governance.delegation_engine import DelegationEngine
 from zephyr.governance.escalation_engine import EscalationEngine
 from zephyr.governance.escalation_models import (
@@ -29,12 +27,15 @@ from zephyr.governance.escalation_models import (
     EscalationState,
     RuleCategory,
 )
+from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitBreakerConfig, CircuitState
 
 
 @pytest.fixture(autouse=True)
 def _disable_lsg():
-    with patch.object(EscalationEngine, "_lsg_scan_input", lambda self, desc: None), \
-         patch.object(DelegationEngine, "_lsg_verify_delegation", lambda self, event: None):
+    with (
+        patch.object(EscalationEngine, "_lsg_scan_input", lambda self, desc: None),
+        patch.object(DelegationEngine, "_lsg_verify_delegation", lambda self, event: None),
+    ):
         yield
 
 
@@ -260,9 +261,7 @@ class TestGenerateSuggestion:
     def test_each_level_has_suggestion(self, engine):
         for level in EscalationLevel:
             event = EscalationEvent(level=level)
-            rule = EscalationRule(
-                rule_id="T", category=RuleCategory.CUSTOM, target_level=level
-            )
+            rule = EscalationRule(rule_id="T", category=RuleCategory.CUSTOM, target_level=level)
             suggestion = EscalationEngine._generate_suggestion(event, rule)
             assert isinstance(suggestion, str)
             assert len(suggestion) > 0

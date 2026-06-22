@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_collaborative_learning.py
 
-import pytest
 
 from zephyr.ops.diagnosers.collaborative_learning import CollaborativeLearning
 

@@ -33,7 +33,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -80,11 +80,9 @@ class CapacityBudget(BaseModel):
 class CapacityState(BaseModel):
     active_tasks: int = 0
     queued_tasks: int = 0
-    system_active: dict[str, int] = Field(
-        default_factory=lambda: {k.value: 0 for k in SystemPool}
-    )
+    system_active: dict[str, int] = Field(default_factory=lambda: {k.value: 0 for k in SystemPool})
     max_concurrent: int = 64
-    last_updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_updated: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class CapacityBudgetController:
@@ -127,17 +125,15 @@ class CapacityBudgetController:
         pool = self._try_parse_system(system)
         if pool:
             self._state.system_active[pool.value] += 1
-        self._state.last_updated = datetime.now(timezone.utc)
+        self._state.last_updated = datetime.now(UTC)
 
     def release(self, task_id: str, system: str) -> str | None:
         self._state.active_tasks = max(0, self._state.active_tasks - 1)
         pool = self._try_parse_system(system)
         if pool:
-            self._state.system_active[pool.value] = max(
-                0, self._state.system_active[pool.value] - 1
-            )
+            self._state.system_active[pool.value] = max(0, self._state.system_active[pool.value] - 1)
 
-        self._state.last_updated = datetime.now(timezone.utc)
+        self._state.last_updated = datetime.now(UTC)
 
         if self._queue:
             next_task = self._queue.pop(0)

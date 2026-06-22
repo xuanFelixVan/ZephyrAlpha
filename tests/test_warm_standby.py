@@ -119,7 +119,10 @@ class TestWarmStandbyInit:
 class TestInitialize:
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_initialize_creates_state_file(
-        self, mock_run: MagicMock, standby: WarmStandby, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         worktree_result = MagicMock()
         worktree_result.returncode = 0
@@ -134,7 +137,10 @@ class TestInitialize:
 
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_initialize_returns_true_if_dir_exists(
-        self, mock_run: MagicMock, standby: WarmStandby, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         standby_dir = tmp_project / ".zephyr/warm_standby"
         standby_dir.mkdir(parents=True)
@@ -144,7 +150,9 @@ class TestInitialize:
 
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_initialize_failure(
-        self, mock_run: MagicMock, standby: WarmStandby,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
     ) -> None:
         mock_run.side_effect = OSError("git not found")
         result = standby.initialize("abc1234")
@@ -159,7 +167,9 @@ class TestCutover:
         assert "No warm standby initialized" in result.details
 
     def test_cutover_corrupt_state_file(
-        self, standby: WarmStandby, tmp_project: Path,
+        self,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         state_path = tmp_project / ".zephyr/warm_standby_state.json"
         state_path.parent.mkdir(parents=True, exist_ok=True)
@@ -170,7 +180,10 @@ class TestCutover:
 
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_cutover_success(
-        self, mock_run: MagicMock, standby: WarmStandby, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         state_path = tmp_project / ".zephyr/warm_standby_state.json"
         state_path.parent.mkdir(parents=True, exist_ok=True)
@@ -194,7 +207,10 @@ class TestCutover:
 
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_cutover_git_checkout_failure(
-        self, mock_run: MagicMock, standby: WarmStandby, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         state_path = tmp_project / ".zephyr/warm_standby_state.json"
         state_path.parent.mkdir(parents=True, exist_ok=True)
@@ -215,7 +231,10 @@ class TestCutover:
 class TestRotate:
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_rotate_removes_old_and_initializes(
-        self, mock_run: MagicMock, standby: WarmStandby, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         standby_dir = tmp_project / ".zephyr/warm_standby"
         standby_dir.mkdir(parents=True)
@@ -229,7 +248,9 @@ class TestRotate:
 
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_rotate_remove_failure_still_initializes(
-        self, mock_run: MagicMock, standby: WarmStandby,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
     ) -> None:
         remove_error = MagicMock(side_effect=OSError("worktree remove failed"))
         add_result = MagicMock()
@@ -245,7 +266,10 @@ class TestVerifyIntegrity:
 
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_verify_success(
-        self, mock_run: MagicMock, standby: WarmStandby, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         standby_dir = tmp_project / ".zephyr/warm_standby"
         standby_dir.mkdir(parents=True)
@@ -256,7 +280,10 @@ class TestVerifyIntegrity:
 
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_verify_git_failure(
-        self, mock_run: MagicMock, standby: WarmStandby, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         standby_dir = tmp_project / ".zephyr/warm_standby"
         standby_dir.mkdir(parents=True)
@@ -267,7 +294,10 @@ class TestVerifyIntegrity:
 
     @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
     def test_verify_exception(
-        self, mock_run: MagicMock, standby: WarmStandby, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        standby: WarmStandby,
+        tmp_project: Path,
     ) -> None:
         standby_dir = tmp_project / ".zephyr/warm_standby"
         standby_dir.mkdir(parents=True)

@@ -11,14 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PushError;CallbackConnectionError
 # [TESTS] tests/test_mcp_result_push.py
-
 import json
 import logging
 import os
 import threading
 import time
-import urllib.request
 import urllib.error
+import urllib.request
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -31,21 +30,25 @@ _MAX_RETRIES = 3
 _RETRY_DELAY_SECONDS = 1.0
 _CALLBACK_TIMEOUT_SECONDS = 10
 
+
 class PushError(Exception):
     def __init__(self, task_id: str, message: str) -> None:
         self.task_id = task_id
         super().__init__(f"PushError({task_id}): {message}")
+
 
 class CallbackConnectionError(PushError):
     def __init__(self, task_id: str, url: str, detail: str) -> None:
         self.url = url
         super().__init__(task_id, f"callback connection failed to {url}: {detail}")
 
+
 class PushStatus(str, Enum):
     PENDING = "pending"
     PUSHED = "pushed"
     FAILED = "failed"
     CALLBACK_ERROR = "callback_error"
+
 
 def _atomic_write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -62,17 +65,20 @@ def _atomic_write_json(path: Path, data: Any) -> None:
             pass
         raise
 
+
 def _load_state() -> dict[str, Any]:
     if not _STATE_FILE.exists():
         return {"tasks": {}}
     try:
-        with open(_STATE_FILE, "r", encoding="utf-8") as f:
+        with open(_STATE_FILE, encoding="utf-8") as f:
             return json.load(f)
     except (json.JSONDecodeError, OSError):
         return {"tasks": {}}
 
+
 def _save_state(state: dict[str, Any]) -> None:
     _atomic_write_json(_STATE_FILE, state)
+
 
 class ResultPushManager:
     def __init__(
@@ -98,7 +104,7 @@ class ResultPushManager:
         if not self._state_file.exists():
             return {"tasks": {}}
         try:
-            with open(self._state_file, "r", encoding="utf-8") as f:
+            with open(self._state_file, encoding="utf-8") as f:
                 return json.load(f)
         except (json.JSONDecodeError, OSError):
             return {"tasks": {}}
@@ -188,12 +194,15 @@ class ResultPushManager:
             _log.warning("task %s has no callback_url, marking as pushed (no-op)", task["task_id"])
             return PushStatus.PUSHED
 
-        payload = json.dumps({
-            "task_id": task["task_id"],
-            "status": "completed",
-            "result": result,
-            "pushed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        }, ensure_ascii=False).encode("utf-8")
+        payload = json.dumps(
+            {
+                "task_id": task["task_id"],
+                "status": "completed",
+                "result": result,
+                "pushed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            },
+            ensure_ascii=False,
+        ).encode("utf-8")
 
         req = urllib.request.Request(
             callback_url,
@@ -244,11 +253,15 @@ class ResultPushManager:
         watch_dir.mkdir(parents=True, exist_ok=True)
 
         output_path = watch_dir / f"{task['task_id']}.json"
-        content = json.dumps({
-            "task_id": task["task_id"],
-            "result": result,
-            "pushed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        }, ensure_ascii=False, indent=2)
+        content = json.dumps(
+            {
+                "task_id": task["task_id"],
+                "result": result,
+                "pushed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
 
         tmp_path = f"{output_path}.{os.getpid()}.tmp"
         try:
@@ -271,7 +284,8 @@ class ResultPushManager:
             state = self._load()
             tasks = state.get("tasks", {})
         return [
-            tid for tid, t in tasks.items()
+            tid
+            for tid, t in tasks.items()
             if t.get("status") in (PushStatus.PENDING.value, PushStatus.FAILED.value, PushStatus.CALLBACK_ERROR.value)
         ]
 

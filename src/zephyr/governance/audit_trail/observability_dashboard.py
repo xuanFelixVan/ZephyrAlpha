@@ -14,7 +14,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 
 class DashboardPanel(str, Enum):
@@ -44,7 +43,7 @@ class DashboardConfig:
     refresh_interval_seconds: int = 10
 
     @staticmethod
-    def default() -> "DashboardConfig":
+    def default() -> DashboardConfig:
         return DashboardConfig(
             panels={
                 "system_health": {

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_failure_matcher.py -q
 
-import pytest
 from zephyr.trading.orchestrator.resilience.failure_matcher import (
     FailureCategory,
     FailureMatch,
@@ -240,12 +239,19 @@ class TestFailureMatcherAggregateFailures:
 
 class TestFailureCategory:
     def test_all_categories_exist(self):
-        expected = ["network", "timeout", "validation", "permission", "disk_space",
-                     "dependency", "syntax", "logic", "unknown"]
+        expected = [
+            "network",
+            "timeout",
+            "validation",
+            "permission",
+            "disk_space",
+            "dependency",
+            "syntax",
+            "logic",
+            "unknown",
+        ]
         for name in expected:
-            assert hasattr(FailureCategory, name.upper()) or any(
-                c.value == name for c in FailureCategory
-            )
+            assert hasattr(FailureCategory, name.upper()) or any(c.value == name for c in FailureCategory)
 
     def test_category_values(self):
         assert FailureCategory.NETWORK.value == "network"

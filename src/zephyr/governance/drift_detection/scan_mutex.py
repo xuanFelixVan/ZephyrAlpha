@@ -26,16 +26,15 @@ module_id: MOD-INF-023
 多实例竞态控制：文件锁 + 排队/合并策略 + 优先级抢占 + stale lock 检测。
 对标 blueprint.md §2.15（多实例竞态控制）。
 """
+
 from __future__ import annotations
 
 import json
 import os
 import time
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from dataclasses import dataclass
+from datetime import UTC, datetime
 
 from .drift_models import ScanLevel
 
@@ -63,7 +62,7 @@ class ScanMutex:
     MAX_WAIT_LIGHT_S: float = 30.0
     MAX_WAIT_DEEP_S: float = 120.0
 
-    def __init__(self, project_root: Optional[str] = None) -> None:
+    def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -75,11 +74,11 @@ class ScanMutex:
     def is_locked(self) -> bool:
         return os.path.exists(self._lock_path)
 
-    def read_lock(self) -> Optional[ScanLockRecord]:
+    def read_lock(self) -> ScanLockRecord | None:
         if not os.path.exists(self._lock_path):
             return None
         try:
-            with open(self._lock_path, "r", encoding="utf-8") as fh:
+            with open(self._lock_path, encoding="utf-8") as fh:
                 data = json.load(fh)
             return ScanLockRecord(
                 pid=int(data.get("pid", 0)),
@@ -102,9 +101,9 @@ class ScanMutex:
         record = ScanLockRecord(
             pid=os.getpid(),
             scan_id=scan_id,
-            scan_start_time=datetime.now(timezone.utc).isoformat(),
+            scan_start_time=datetime.now(UTC).isoformat(),
             scan_level=level,
-            acquired_at=datetime.now(timezone.utc).isoformat(),
+            acquired_at=datetime.now(UTC).isoformat(),
         )
         self._write_lock(record)
         return True
@@ -180,8 +179,8 @@ class ScanMutex:
         try:
             acquired = datetime.fromisoformat(lock.acquired_at)
         except (ValueError, TypeError):
-            acquired = datetime.now(timezone.utc)
-        age = datetime.now(timezone.utc).replace(tzinfo=None) - acquired.replace(tzinfo=None)
+            acquired = datetime.now(UTC)
+        age = datetime.now(UTC).replace(tzinfo=None) - acquired.replace(tzinfo=None)
         slo = 60.0
         return age.total_seconds() > slo * self.SLO_MULTIPLIER
 

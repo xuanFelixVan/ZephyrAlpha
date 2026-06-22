@@ -10,9 +10,7 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_timezone_semantic_reasoner.py
 
-from datetime import datetime, timezone
-
-import pytest
+from datetime import UTC, datetime
 
 from zephyr.ops.diagnosers.timezone_semantic_reasoner import (
     TimezoneSemanticReasoner,
@@ -62,27 +60,27 @@ class TestTimezoneSemanticReasonerInstantiation:
 class TestIsMarketActive:
     def test_active_during_window(self):
         tsr = TimezoneSemanticReasoner(venue_active_windows={"TEST": (0, 24)})
-        dt = datetime(2026, 1, 1, 12, 0, tzinfo=timezone.utc)
+        dt = datetime(2026, 1, 1, 12, 0, tzinfo=UTC)
         assert tsr.is_market_active("TEST", dt) is True
 
     def test_inactive_outside_window(self):
         tsr = TimezoneSemanticReasoner(venue_active_windows={"TEST": (22, 23)})
-        dt = datetime(2026, 1, 1, 12, 0, tzinfo=timezone.utc)
+        dt = datetime(2026, 1, 1, 12, 0, tzinfo=UTC)
         assert tsr.is_market_active("TEST", dt) is False
 
     def test_unknown_venue_inactive(self):
         tsr = TimezoneSemanticReasoner()
-        dt = datetime(2026, 1, 1, 12, 0, tzinfo=timezone.utc)
+        dt = datetime(2026, 1, 1, 12, 0, tzinfo=UTC)
         assert tsr.is_market_active("UNKNOWN", dt) is False
 
     def test_boundary_start_hour_active(self):
         tsr = TimezoneSemanticReasoner(venue_active_windows={"TEST": (10, 20)})
-        dt = datetime(2026, 1, 1, 10, 0, tzinfo=timezone.utc)
+        dt = datetime(2026, 1, 1, 10, 0, tzinfo=UTC)
         assert tsr.is_market_active("TEST", dt) is True
 
     def test_boundary_end_hour_inactive(self):
         tsr = TimezoneSemanticReasoner(venue_active_windows={"TEST": (10, 20)})
-        dt = datetime(2026, 1, 1, 20, 0, tzinfo=timezone.utc)
+        dt = datetime(2026, 1, 1, 20, 0, tzinfo=UTC)
         assert tsr.is_market_active("TEST", dt) is False
 
     def test_none_dt_uses_now(self):

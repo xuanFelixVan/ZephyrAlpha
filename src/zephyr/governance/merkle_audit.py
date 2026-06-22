@@ -36,7 +36,9 @@ class MerkleTree:
         self._aggregator = _MerkleAggregator
 
     def add_event(self, event: dict) -> None:
-        import hashlib, json
+        import hashlib
+        import json
+
         self._leaves.append(hashlib.sha256(json.dumps(event, sort_keys=True).encode()).hexdigest())
 
     def root_hash(self) -> str:

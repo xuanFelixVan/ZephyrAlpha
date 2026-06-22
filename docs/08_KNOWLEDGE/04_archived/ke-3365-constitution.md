@@ -10,7 +10,7 @@ category: documentation
 
 | 属性 | 值 |
 |------|-----|
-| 存储位置 | `meta/behavior-boundaries-standard.md`（PS-STD-003） |
+| 存储位置 | `meta/behavior_boundaries_standard.yaml`（PS-STD-003） |
 | 内容 | 所有 ABS 条目 + 条件性不可逆的 COND 条目 |
 | 判定标准 | 违反后后果不可逆（包括条件性不可逆） |
 | 修改门槛 | Owner 批准 + ADR |

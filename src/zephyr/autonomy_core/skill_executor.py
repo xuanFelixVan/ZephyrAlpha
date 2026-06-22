@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_executor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_executor
+# [MODULE] zephyr.autonomy_core.skill_executor
 
 # [INVARIANTS] none
 
@@ -19,19 +19,17 @@
 
 # [TESTS]
 
-import json
 import hashlib
-from datetime import datetime, timezone
-from typing import Optional, Dict, Any, List, Tuple
-from pathlib import Path
+from datetime import UTC, datetime
+from typing import Any
 
-from zephyr.autonomy_core.skill_model import SkillStatus
 from zephyr.autonomy_core.skill_loader import SkillLoader
 
 _CORE_AUDIT_AVAILABLE = False
 try:
-    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
     from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
+
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:
     _CoreAuditWriter = None
@@ -43,9 +41,9 @@ class VersionCheckpoint:
     def __init__(self, skill_id: str, label: str = ""):
         self.skill_id = skill_id
         self.label = label
-        self.timestamp = datetime.now(timezone.utc)
+        self.timestamp = datetime.now(UTC)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "skill_id": self.skill_id,
             "label": self.label,
@@ -62,7 +60,7 @@ class RollbackManager:
         return VersionCheckpoint(skill_id, f"skill_{skill_id}")
 
     @staticmethod
-    def rollback(checkpoint: VersionCheckpoint) -> Dict[str, Any]:
+    def rollback(checkpoint: VersionCheckpoint) -> dict[str, Any]:
         return {
             "action": "rollback",
             "checkpoint": checkpoint.to_dict(),
@@ -76,7 +74,7 @@ class AuditEvent:
     def __init__(self, event_type: str, skill_id: str):
         self.event_type = event_type
         self.skill_id = skill_id
-        self.timestamp = datetime.now(timezone.utc)
+        self.timestamp = datetime.now(UTC)
 
     _EVENT_MAP = {
         "skill_loaded": {"type_id": 1, "type_name": "AI_ACTION"},
@@ -85,7 +83,7 @@ class AuditEvent:
         "skill_unloaded": {"type_id": 1, "type_name": "AI_ACTION"},
     }
 
-    def to_entry(self, extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def to_entry(self, extra: dict[str, Any] | None = None) -> dict[str, Any]:
         mapped = self._EVENT_MAP.get(self.event_type, {"type_id": 1, "type_name": "AI_ACTION"})
         entry = {
             "event_type": self.event_type,
@@ -107,7 +105,7 @@ class GateResult:
         self.passed = passed
         self.message = message
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {"gate_id": self.gate_id, "passed": self.passed, "message": self.message}
 
 
@@ -123,7 +121,7 @@ class PermissionLevel:
     }
 
     @classmethod
-    def get_tools(cls, level: str) -> List[str]:
+    def get_tools(cls, level: str) -> list[str]:
         return cls._TOOLS.get(level, cls._TOOLS[cls.READ_ONLY])
 
 
@@ -139,7 +137,7 @@ class BudgetEnforcer:
     }
 
     @classmethod
-    def check(cls, domain_tokens: int, role_tokens: int) -> Dict[str, Any]:
+    def check(cls, domain_tokens: int, role_tokens: int) -> dict[str, Any]:
         total = domain_tokens + role_tokens
         return {
             "domain_tokens": domain_tokens,
@@ -150,7 +148,7 @@ class BudgetEnforcer:
         }
 
     @classmethod
-    def downgrade(cls) -> Dict[str, Any]:
+    def downgrade(cls) -> dict[str, Any]:
         return {"action": "downgrade", "L1_only": True, "L2_critical_only": True, "L3_skipped": True}
 
 
@@ -166,15 +164,15 @@ class SkillFeedbackLoop:
         return GateResult("G0", True, "No anomalies predicted")
 
     @staticmethod
-    def diagnose(skill_id: str) -> Dict[str, Any]:
+    def diagnose(skill_id: str) -> dict[str, Any]:
         return {"skill_id": skill_id, "root_cause": "none", "severity": "info"}
 
     @staticmethod
-    def act(skill_id: str) -> Dict[str, Any]:
+    def act(skill_id: str) -> dict[str, Any]:
         return {"skill_id": skill_id, "action": "none_required", "suggestion": "monitor"}
 
     @staticmethod
-    def verify(skill_id: str, fix: Dict[str, Any]) -> bool:
+    def verify(skill_id: str, fix: dict[str, Any]) -> bool:
         return True
 
 
@@ -186,16 +184,16 @@ class EscalationHandler:
     LEVEL_CRITICAL = "critical"
 
     @classmethod
-    def escalate(cls, skill_id: str, level: str, reason: str) -> Dict[str, Any]:
+    def escalate(cls, skill_id: str, level: str, reason: str) -> dict[str, Any]:
         return {
             "skill_id": skill_id,
             "escalation_level": level,
             "reason": reason,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     @classmethod
-    def determine_level(cls, gate_results: List[GateResult]) -> str:
+    def determine_level(cls, gate_results: list[GateResult]) -> str:
         failures = [g for g in gate_results if not g.passed]
         if not failures:
             return cls.LEVEL_LIGHT
@@ -210,7 +208,7 @@ class ScriptCollector:
     EXIT_CODES = {0: "pass", 1: "fail", 2: "warning", 3: "error"}
 
     @classmethod
-    def collect(cls, skill_id: str, exit_code: int, stdout: str) -> Dict[str, Any]:
+    def collect(cls, skill_id: str, exit_code: int, stdout: str) -> dict[str, Any]:
         return {
             "skill_id": skill_id,
             "exit_code": exit_code,
@@ -224,7 +222,7 @@ class KBIntegration:
     """对接 MOD-KB-001 知识库——Skill↔KB 双向同步"""
 
     @staticmethod
-    def skill_to_kb(skill_id: str, skill_body: str) -> Dict[str, Any]:
+    def skill_to_kb(skill_id: str, skill_body: str) -> dict[str, Any]:
         return {
             "action": "generate_ke_draft",
             "skill_id": skill_id,
@@ -232,7 +230,7 @@ class KBIntegration:
         }
 
     @staticmethod
-    def kb_to_skill(skill_id: str, citations: int) -> Dict[str, Any]:
+    def kb_to_skill(skill_id: str, citations: int) -> dict[str, Any]:
         if citations >= 5:
             return {"action": "upgrade_to_instruction", "skill_id": skill_id, "citations": citations}
         return {"action": "keep_as_reference", "skill_id": skill_id, "citations": citations}
@@ -245,9 +243,9 @@ class KBIntegration:
 class SkillExecutor:
     """Skill 执行引擎——八项跨模块集成编排"""
 
-    def __init__(self, loader: Optional[SkillLoader] = None):
+    def __init__(self, loader: SkillLoader | None = None):
         self.loader = loader or SkillLoader()
-        self.audit_log: List[Dict[str, Any]] = []
+        self.audit_log: list[dict[str, Any]] = []
         self._core_writer: _CoreAuditWriter | None = None
         if _CORE_AUDIT_AVAILABLE:
             try:
@@ -255,7 +253,7 @@ class SkillExecutor:
             except Exception:
                 pass
 
-    def _write_audit(self, event_type: str, skill_id: str, extra: Optional[Dict[str, Any]] = None):
+    def _write_audit(self, event_type: str, skill_id: str, extra: dict[str, Any] | None = None):
         evt = AuditEvent(event_type, skill_id)
         entry = evt.to_entry(extra)
         self.audit_log.append(entry)
@@ -271,8 +269,8 @@ class SkillExecutor:
                 pass
         return entry
 
-    def execute(self, skill_id: str, task_description: str = "") -> Dict[str, Any]:
-        results: Dict[str, Any] = {"skill_id": skill_id, "steps": {}}
+    def execute(self, skill_id: str, task_description: str = "") -> dict[str, Any]:
+        results: dict[str, Any] = {"skill_id": skill_id, "steps": {}}
 
         checkpoint = RollbackManager.create_checkpoint(skill_id)
         results["checkpoint"] = checkpoint.to_dict()
@@ -320,10 +318,14 @@ class SkillExecutor:
             results["status"] = "rolled_back"
             return results
 
-        self._write_audit("skill_applied", skill_id, {
-            "execution_steps": list(results["steps"].keys()),
-            "gate_result": "PASS",
-        })
+        self._write_audit(
+            "skill_applied",
+            skill_id,
+            {
+                "execution_steps": list(results["steps"].keys()),
+                "gate_result": "PASS",
+            },
+        )
 
         results["kb_sync"] = KBIntegration.skill_to_kb(skill_id, results.get("l2_body", ""))
         results["status"] = "completed"
@@ -332,10 +334,11 @@ class SkillExecutor:
 
         return results
 
-    def _run_gate_checks(self, skill_id: str, l1: Dict[str, Any], results: Dict[str, Any]) -> List[GateResult]:
-        gate_results: List[GateResult] = []
+    def _run_gate_checks(self, skill_id: str, l1: dict[str, Any], results: dict[str, Any]) -> list[GateResult]:
+        gate_results: list[GateResult] = []
 
         from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+
         engine = GateEngine()
         gate_results.append(GateResult("G0", True, "GateEngine accessible"))
 
@@ -373,19 +376,21 @@ class SkillExecutor:
 
         return gate_results
 
-    def _handle_load_failure(self, skill_id: str, results: Dict[str, Any], checkpoint: VersionCheckpoint) -> Dict[str, Any]:
+    def _handle_load_failure(
+        self, skill_id: str, results: dict[str, Any], checkpoint: VersionCheckpoint
+    ) -> dict[str, Any]:
         RollbackManager.rollback(checkpoint)
         escalation = EscalationHandler.escalate(skill_id, EscalationHandler.LEVEL_MODERATE, "Skill load failed")
         results["escalation"] = escalation
         results["status"] = "load_failed"
         return results
 
-    def _infer_permission(self, tools: List[str]) -> str:
+    def _infer_permission(self, tools: list[str]) -> str:
         if "Execute" in tools or "RunCommand" in tools:
             return PermissionLevel.ADMIN
         if "Write" in tools or "SearchReplace" in tools:
             return PermissionLevel.CODE_MODIFY
         return PermissionLevel.READ_ONLY
 
-    def get_audit_trail(self) -> List[Dict[str, Any]]:
+    def get_audit_trail(self) -> list[dict[str, Any]]:
         return self.audit_log

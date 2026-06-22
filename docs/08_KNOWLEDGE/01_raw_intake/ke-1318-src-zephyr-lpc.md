@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-GOVERNANCE-SRC-ZEPHYR-LPC-007
 status: active
 title: 三、`src/zephyr/` 双轨结构（LPC）

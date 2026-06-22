@@ -7,7 +7,7 @@
 
 # [MODIFY-GUARD] resource_optimization_engine.py; resource_optimization_models.py; daemon_registry.py
 
-# [CONSUMERS] zephyr.orchestration.runtime_core; zephyr.orchestration.pipeline_routing; zephyr.orchestration.agent_lifecycle
+# [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
 
 # [STABILITY] evolving
 
@@ -37,48 +37,26 @@ Version: 0.1.0
 
 """
 
-
-
-
-
 from __future__ import annotations
 
-
-
 import logging
-
 from dataclasses import dataclass, field
-
 from enum import Enum, unique
-
 from typing import Any, Protocol, runtime_checkable
 
-
-
 __all__ = [
-
-    "LifecycleState",
-
-    "ModuleHealth",
-
     "LifecycleAware",
-
     "LifecycleManager",
-
+    "LifecycleState",
+    "ModuleHealth",
 ]
-
 
 
 logger = logging.getLogger(__name__)
 
 
-
-
-
 @unique
-
 class LifecycleState(str, Enum):
-
     CREATED = "CREATED"
 
     INITIALIZING = "INITIALIZING"
@@ -98,13 +76,8 @@ class LifecycleState(str, Enum):
     FAILED = "FAILED"
 
 
-
-
-
 @dataclass(frozen=True)
-
 class ModuleHealth:
-
     module_name: str
 
     state: LifecycleState
@@ -116,140 +89,81 @@ class ModuleHealth:
     details: dict[str, Any] = field(default_factory=dict)
 
 
-
-
-
 @runtime_checkable
-
 class LifecycleAware(Protocol):
-
     @property
-
     def module_name(self) -> str: ...
 
-
-
     async def on_init(self) -> None:
-
         pass
-
-
 
     async def on_startup(self) -> None:
-
         pass
-
-
 
     async def on_shutdown(self) -> None:
-
         pass
-
-
 
     async def health_check(self) -> ModuleHealth:
-
         pass
-
-
-
 
 
 class LifecycleManager:
-
     def __init__(self) -> None:
-
         self._modules: list[LifecycleAware] = []
 
-
-
     def register(self, module: LifecycleAware) -> None:
-
         self._modules.append(module)
 
-
-
     @property
-
     def modules(self) -> list[LifecycleAware]:
-
         return list(self._modules)
 
-
-
     async def startup_all(self) -> None:
-
         for mod in self._modules:
-
             try:
-
                 await mod.on_init()
 
                 logger.info("module '%s': init OK", mod.module_name)
 
             except Exception as exc:
-
                 logger.error("module '%s': init FAILED: %s", mod.module_name, exc)
 
                 raise
 
-
-
         for mod in self._modules:
-
             try:
-
                 await mod.on_startup()
 
                 logger.info("module '%s': startup OK", mod.module_name)
 
             except Exception as exc:
-
                 logger.error("module '%s': startup FAILED: %s", mod.module_name, exc)
 
                 raise
 
-
-
     async def shutdown_all(self) -> None:
-
         for mod in reversed(self._modules):
-
             try:
-
                 await mod.on_shutdown()
 
                 logger.info("module '%s': shutdown OK", mod.module_name)
 
             except Exception as exc:
-
                 logger.error("module '%s': shutdown FAILED: %s", mod.module_name, exc)
 
-
-
     async def health_check_all(self) -> dict[str, ModuleHealth]:
-
         results: dict[str, ModuleHealth] = {}
 
         for mod in self._modules:
-
             try:
-
                 results[mod.module_name] = await mod.health_check()
 
             except Exception as exc:
-
                 results[mod.module_name] = ModuleHealth(
-
                     module_name=mod.module_name,
-
                     state=LifecycleState.FAILED,
-
                     healthy=False,
-
                     message=str(exc),
-
                 )
 
         return results
-

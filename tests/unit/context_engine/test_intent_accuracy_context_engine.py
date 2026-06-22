@@ -18,8 +18,8 @@ Test matrix:
   - boundary tests: empty, long, special chars
   - total >= 15 tests
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from zephyr.autonomy_core.intent_keyword_mapper import (
     IntentKeywordMapper,

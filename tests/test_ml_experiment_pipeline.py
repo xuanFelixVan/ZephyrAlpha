@@ -10,13 +10,13 @@
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_ml_experiment_pipeline.py
 
-import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
+
 from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import (
-    MLExperimentPipeline,
-    PipelineStage,
     ExperimentResult,
+    MLExperimentPipeline,
     PipelineError,
+    PipelineStage,
 )
 
 
@@ -153,6 +153,7 @@ class TestMLExperimentPipeline:
 
         class MockEngine:
             __name__ = "test_model"
+
             def predict(self, features):
                 pred = MagicMock()
                 pred.prediction = 0.9

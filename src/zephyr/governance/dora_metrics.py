@@ -11,10 +11,9 @@ from __future__ import annotations
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
-
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
+
 
 @dataclass
 class DORATargets:
@@ -22,6 +21,7 @@ class DORATargets:
     lead_time_hours: float = 1.0
     change_failure_rate_pct: float = 5.0
     mttr_hours: float = 1.0
+
 
 @dataclass
 class DORACollector:
@@ -32,7 +32,7 @@ class DORACollector:
     total_changes: int = 0
     incidents: int = 0
     total_recovery_hours: float = 0.0
-    last_updated: Optional[str] = None
+    last_updated: str | None = None
 
     @property
     def df_met(self) -> bool:
@@ -68,7 +68,7 @@ class DORACollector:
 
     def record_deployment(self, count: int = 1) -> None:
         self.deployments_this_week += count
-        self.last_updated = datetime.now(timezone.utc).isoformat()
+        self.last_updated = datetime.now(UTC).isoformat()
 
     def record_change(self, lead_time_hours: float, failed: bool = False) -> None:
         self.total_changes += 1
@@ -78,12 +78,12 @@ class DORACollector:
         )
         if failed:
             self.failure_count += 1
-        self.last_updated = datetime.now(timezone.utc).isoformat()
+        self.last_updated = datetime.now(UTC).isoformat()
 
     def record_incident(self, recovery_hours: float) -> None:
         self.incidents += 1
         self.total_recovery_hours += recovery_hours
-        self.last_updated = datetime.now(timezone.utc).isoformat()
+        self.last_updated = datetime.now(UTC).isoformat()
 
     def report(self) -> dict[str, object]:
         return {

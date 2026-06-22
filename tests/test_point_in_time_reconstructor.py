@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from zephyr.ops.forensic.point_in_time_reconstructor import PointInTimeReconstructor
 
 

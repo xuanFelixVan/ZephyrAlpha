@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-1352
 status: active
 title: Ke Module Blu     003

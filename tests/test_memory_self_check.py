@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_memory_self_check.py
 
-import pytest
 
 from zephyr.ops.diagnosers.memory_self_check import MemorySelfCheck
 

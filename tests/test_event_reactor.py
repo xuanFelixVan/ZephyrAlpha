@@ -12,10 +12,8 @@
 
 from __future__ import annotations
 
-import pytest
-
-from zephyr.shared.shared_services.events.event_bus import DomainEvent, EventBus, EventType
 from zephyr.shared.events.event_reactor import EventReactor, Reaction
+from zephyr.shared.shared_services.events.event_bus import EventBus, EventType
 
 
 class TestReaction:

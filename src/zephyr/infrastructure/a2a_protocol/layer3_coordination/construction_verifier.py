@@ -21,7 +21,6 @@
 
 """施工后验证器 — 自指悖论防御：不橡胶图章，真正验证 A2A 协议模块的施工完整性"""
 
-
 import ast
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -69,7 +68,11 @@ def _analyze_py_file(file_path: Path) -> StubAnalysis:
         line_count = len(lines)
         tree = ast.parse(source)
         classes = [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]
-        functions = [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and not any(isinstance(p, ast.ClassDef) for p in [])]
+        functions = [
+            n
+            for n in ast.walk(tree)
+            if isinstance(n, ast.FunctionDef) and not any(isinstance(p, ast.ClassDef) for p in [])
+        ]
         class_count = len(classes)
         method_count = 0
         for cls in classes:
@@ -221,8 +224,7 @@ class ConstructionVerifier:
 
         if result.empty_stubs > 0:
             result.issues.append(
-                f"{result.empty_stubs}/{result.total_files} files are empty stubs — "
-                f"模块处于 Hold 状态，功能未实现"
+                f"{result.empty_stubs}/{result.total_files} files are empty stubs — 模块处于 Hold 状态，功能未实现"
             )
 
         for key_file in _KEY_IMPLEMENTED_MODULES:

@@ -1,14 +1,14 @@
 # [A_module] module_id=MOD-ORC_pipeline_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §4.1
-# [MODULE] zephyr.orchestration.pipeline_routing.pipeline_orchestrator
+# [MODULE] zephyr.integration.pipeline_orchestrator
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 PipelineOrchestrator — M1-M11 管线协调器
 =========================================
@@ -52,7 +52,6 @@ from zephyr.integration.models import PipelineOrchestratorConfig
     result = orchestrator.dispatch(task_card)
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -69,9 +68,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from zephyr.shared.shared_services.models import TaskCard
-    from zephyr.intelligence.model_profiling.pipeline_routing.profiler import ModelProfiler
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
+    from zephyr.intelligence.model_profiling.pipeline_routing.profiler import ModelProfiler
+    from zephyr.shared.shared_services.models import TaskCard
 
 from zephyr.integration.circuit_breaker_manager import CircuitBreakerManager
 from zephyr.integration.cost_tracker import CostTracker
@@ -111,7 +110,6 @@ from zephyr.integration.pipeline_lock import LockResult, PipelineLock
 from zephyr.integration.preemption_manager import PreemptionManager
 from zephyr.integration.routing_plugins import PipelineRouter
 from zephyr.shared.task_types import TaskStatus
-from zephyr.integration.shared_08.contracts.protocols import ModuleStatusProtocol
 
 _RBAC_AVAILABLE = False
 try:
@@ -124,8 +122,8 @@ except ImportError:
 
 _AUDIT_AVAILABLE = False
 try:
-    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
     from zephyr.governance.audit_trail.writer import AuditWriter
+    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
 
     _AUDIT_AVAILABLE = True
 except ImportError:
@@ -225,7 +223,9 @@ class PipelineOrchestrator:
         self._audit_writer = AuditWriter() if _AUDIT_AVAILABLE else None
         self._skill_bridge = PipelineSkillBridge() if _SKILL_BRIDGE_AVAILABLE else None
         self._night_shift_counter: int = 0
-        self._local_scheduler: LocalModelScheduler | None = LocalModelScheduler() if _LOCAL_SCHEDULER_AVAILABLE else None
+        self._local_scheduler: LocalModelScheduler | None = (
+            LocalModelScheduler() if _LOCAL_SCHEDULER_AVAILABLE else None
+        )
         self._model_profiler: ModelProfiler | None = ModelProfiler() if _PROFILER_AVAILABLE else None
         self._periodic_profile_interval_s: float = self._cfg.periodic_profile_interval_s
         self._auto_profile_on_startup: bool = self._cfg.auto_profile_on_startup
@@ -436,7 +436,7 @@ class PipelineOrchestrator:
                     )
                 elif gate_action in ("WARN", "ROLLBACK", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
                     ct_warnings.append(
-                        f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} " f"pipeline={pipeline_action}"
+                        f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} pipeline={pipeline_action}"
                     )
             except Exception:
                 pass
@@ -480,8 +480,7 @@ class PipelineOrchestrator:
         experiment_route = self._resolve_experiment(task_card)
         if experiment_route is not None:
             ct_warnings.append(
-                f"AB-EXPERIMENT: experiment={experiment_route.experiment_id} "
-                f"variant={experiment_route.variant.value}"
+                f"AB-EXPERIMENT: experiment={experiment_route.experiment_id} variant={experiment_route.variant.value}"
             )
 
         if hints is None:
@@ -1436,9 +1435,10 @@ class PipelineOrchestrator:
         # SRC-0022: Real LLM API via LLMGateway with explicit model ID mapping
         #   Model → API ID: DeepSeek-V4-Pro/deepseek → deepseek-chat, GLM-5.1/glm → glm-4-flash
         #   Provider config (base_url, api_key_env, default_model) defined in
-        #   zephyr.orchestration.agent_lifecycle.llm_gateway._PROVIDERS.
+        #   zephyr.autonomy_core.llm_gateway._PROVIDERS.
         try:
-            from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway, LLMResponse
+            from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway
+            from zephyr.shared.contracts.llm_gateway_protocol import LLMResponse
 
             llm_resp: LLMResponse = LLMGateway.call(
                 messages,
@@ -1910,7 +1910,7 @@ class PipelineOrchestrator:
                     affected_modules=["M3", "M7"],
                     homogeneous_verdict=None,
                     detail=f"M3(DeepSeek)与M7(GLM)共识但摘要差异显著(相似度={sim:.1%})——可能存在细微分歧",
-                    minority_report=f"verdict一致({m3_verdict!r})但摘要差异度={1-sim:.1%}",
+                    minority_report=f"verdict一致({m3_verdict!r})但摘要差异度={1 - sim:.1%}",
                 )
 
         return ModelCollapseAlert()
@@ -1944,6 +1944,7 @@ class PipelineOrchestrator:
         """
         try:
             from zephyr.governance.budget_engine import BudgetEngine
+
             engine = BudgetEngine()
             result = engine.pre_flight_check(
                 operation_id=f"pipeline-{task_card.task_id}",
@@ -1951,6 +1952,7 @@ class PipelineOrchestrator:
                 estimated_cost=0.01,
             )
             from zephyr.governance.budget_models import GateDecision
+
             if result.decision == GateDecision.DENY:
                 self._log(
                     "WARN",

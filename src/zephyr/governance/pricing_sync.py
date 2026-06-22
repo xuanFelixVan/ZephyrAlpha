@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.pricing_sync
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import json
 import logging
 import os
@@ -32,6 +22,7 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class PriceEntry:
     model: str
@@ -39,6 +30,7 @@ class PriceEntry:
     output_per_1k: float
     provider: str
     updated_at: float = field(default_factory=time.time)
+
 
 class PricingSync:
     def __init__(self, pricing_path: str = "config/model_pricing.yaml"):
@@ -48,7 +40,7 @@ class PricingSync:
 
     def _load(self) -> None:
         if self._pricing_path.exists():
-            with open(self._pricing_path, "r", encoding="utf-8") as f:
+            with open(self._pricing_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f) or {}
                 for model_name, cfg in data.items():
                     self._prices[model_name] = PriceEntry(
@@ -115,7 +107,7 @@ class PricingSync:
             logger.warning("PricingSync: LiteLLM price file not found, skip sync")
             return 0
         try:
-            with open(litellm_json_path, "r", encoding="utf-8") as f:
+            with open(litellm_json_path, encoding="utf-8") as f:
                 litellm_data = json.load(f)
         except (json.JSONDecodeError, OSError) as e:
             logger.warning("PricingSync: failed to load LiteLLM prices: %s", e)
@@ -132,10 +124,16 @@ class PricingSync:
             output_per_1k = output_price * 1000
             provider = info.get("litellm_provider", "unknown")
             existing = self._prices.get(model_key)
-            if existing is None or abs(existing.input_per_1k - input_per_1k) > 1e-8 or abs(existing.output_per_1k - output_per_1k) > 1e-8:
+            if (
+                existing is None
+                or abs(existing.input_per_1k - input_per_1k) > 1e-8
+                or abs(existing.output_per_1k - output_per_1k) > 1e-8
+            ):
                 self._prices[model_key] = PriceEntry(
-                    model=model_key, input_per_1k=input_per_1k,
-                    output_per_1k=output_per_1k, provider=provider,
+                    model=model_key,
+                    input_per_1k=input_per_1k,
+                    output_per_1k=output_per_1k,
+                    provider=provider,
                 )
                 updated += 1
         if updated > 0:

@@ -28,18 +28,16 @@
   - RECOVER：引擎启动时扫描残留 tar.gz → 自动恢复原始文件
 """
 
-
 from __future__ import annotations
 
 import hashlib
 import json
-import os
 import tarfile
-import tempfile
-import yaml
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
+import yaml
 
 
 class FixStepStatus:
@@ -86,7 +84,7 @@ class AtomicFixer:
             "status": FixStepStatus.PENDING,
             "steps": [s.__dict__ for s in steps],
             "completion_marker": "",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
         }
 
         payload = json.dumps(plan_data, ensure_ascii=False, sort_keys=True)
@@ -115,7 +113,7 @@ class AtomicFixer:
         manifest = {
             "plan_hash": plan.plan_hash,
             "dup_id": plan.dup_id,
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "files": [],
         }
 
@@ -124,10 +122,12 @@ class AtomicFixer:
                 abs_path = self._project_root / file_path
                 if abs_path.exists():
                     tar.add(str(abs_path), arcname=file_path)
-                    manifest["files"].append({
-                        "file": file_path,
-                        "sha256": self._file_sha256(abs_path),
-                    })
+                    manifest["files"].append(
+                        {
+                            "file": file_path,
+                            "sha256": self._file_sha256(abs_path),
+                        }
+                    )
 
         manifest_path = self._checkpoint_dir / f"manifest_{plan.plan_hash}.json"
         manifest_path.write_text(
@@ -162,7 +162,7 @@ class AtomicFixer:
             completed_steps.add(step.step)
 
         plan.status = FixStepStatus.COMPLETED
-        plan.completion_marker = datetime.now(timezone.utc).isoformat()
+        plan.completion_marker = datetime.now(UTC).isoformat()
         self._save_fix_plan(plan)
         self._cleanup_checkpoint(plan.plan_hash)
         return True, "FIX_APPLIED"

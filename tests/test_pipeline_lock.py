@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_pipeline_lock
 # [INVARIANTS] MemoryLockBackend acquire/release cycle must be symmetric; PipelineLock timeout=0 must be non-blocking
-# [MODIFY-GUARD] zephyr.orchestration.pipeline_routing.pipeline_lock
+# [MODIFY-GUARD] zephyr.integration.pipeline_lock
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,11 +10,10 @@
 # [ERROR_CONTRACT] pytest.raises on invalid input
 # [TESTS] —
 
-import pytest
 
 from zephyr.integration.pipeline_lock import (
-    LockStatus,
     LockResult,
+    LockStatus,
     MemoryLockBackend,
     PipelineLock,
 )

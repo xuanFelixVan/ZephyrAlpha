@@ -11,21 +11,23 @@
 # [TESTS] self
 
 import time
+
 import pytest
+
 from zephyr.governance.slo_contract import (
-    BudgetTier,
-    BudgetTier_ordering,
-    BudgetSnapshot,
-    ContractPriority,
     DEFAULT_CONTRACTS,
     DEFAULT_SLIS,
+    TIER_POLICY,
+    TRADING_OVERRIDE,
+    BudgetSnapshot,
+    BudgetTier,
+    BudgetTier_ordering,
+    ContractPriority,
     SLIDefinition,
     SLIName,
     SLIReading,
     SLOContractEngine,
     SLOContractTerms,
-    TIER_POLICY,
-    TRADING_OVERRIDE,
 )
 
 
@@ -121,9 +123,7 @@ class TestSLIReading:
         assert isinstance(reading.timestamp, float)
 
     def test_within_slo_false(self):
-        reading = SLIReading(
-            name=SLIName.DEADLOCK, value=0.5, within_slo=False
-        )
+        reading = SLIReading(name=SLIName.DEADLOCK, value=0.5, within_slo=False)
         assert reading.within_slo is False
         assert reading.value == 0.5
 

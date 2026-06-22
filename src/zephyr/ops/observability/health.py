@@ -39,8 +39,8 @@ Phase 6 新增（盲点 B9）——解决 LifecycleManager 虽有单模块健康
 SSoT: MOD-INF-016 §2.16 shared-health
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass, field
@@ -56,10 +56,10 @@ from zephyr.shared.lifecycle.hooks import (
 )
 
 __all__ = [
-    "HealthSummary",
     "AggregateHealth",
-    "collect_health",
     "HealthStatus",
+    "HealthSummary",
+    "collect_health",
 ]
 
 

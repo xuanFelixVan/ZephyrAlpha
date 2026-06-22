@@ -29,15 +29,13 @@
   - 全量重建：重新扫描所有源文件生成缓存
 """
 
-
 from __future__ import annotations
 
 import hashlib
 import json
 import os
-import shutil
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -120,7 +118,7 @@ class CacheManager:
 
         data = self._cache.model_dump()
         data["cache_metadata"]["_integrity"] = self._compute_integrity(data)
-        data["cache_metadata"]["generated_at"] = datetime.now(timezone.utc).isoformat()
+        data["cache_metadata"]["generated_at"] = datetime.now(UTC).isoformat()
 
         json_text = json.dumps(data, ensure_ascii=False, indent=2)
 
@@ -154,13 +152,9 @@ class CacheManager:
             self._cache = FunctionCache()
 
         removed = set(removed_ids or [])
-        self._cache.functions = [
-            f for f in self._cache.functions if f.id not in removed
-        ]
+        self._cache.functions = [f for f in self._cache.functions if f.id not in removed]
         for entry in added:
-            self._cache.functions = [
-                f for f in self._cache.functions if f.id != entry.id
-            ]
+            self._cache.functions = [f for f in self._cache.functions if f.id != entry.id]
             self._cache.functions.append(entry)
 
         self._cache.cache_metadata.total_functions = len(self._cache.functions)
@@ -170,9 +164,9 @@ class CacheManager:
         """全量重建缓存."""
         self._cache = FunctionCache(
             cache_metadata=CacheMetadata(
-                generated_at=datetime.now(timezone.utc).isoformat(),
+                generated_at=datetime.now(UTC).isoformat(),
                 total_functions=len(entries),
-                last_full_scan=datetime.now(timezone.utc).isoformat(),
+                last_full_scan=datetime.now(UTC).isoformat(),
                 version="1.0.0",
             ),
             functions=entries,
@@ -202,15 +196,13 @@ class CacheManager:
         for func in self._cache.functions:
             self._index[func.id] = func
             if func.signature_fingerprint:
-                self._signature_index.setdefault(
-                    func.signature_fingerprint, []
-                ).append(func)
+                self._signature_index.setdefault(func.signature_fingerprint, []).append(func)
 
     def _rebuild_from_scratch(self) -> FunctionCache:
         """缓存损坏或不存在→返回空缓存（外部负责全量扫描填充）."""
         self._cache = FunctionCache(
             cache_metadata=CacheMetadata(
-                generated_at=datetime.now(timezone.utc).isoformat(),
+                generated_at=datetime.now(UTC).isoformat(),
                 total_functions=0,
                 last_full_scan="",
                 version="1.0.0",

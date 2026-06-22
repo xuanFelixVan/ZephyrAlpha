@@ -27,6 +27,7 @@ Risk: R61 — Error log spikes undetected while CPU/memory look normal.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class LogAnomaly:
     error_rate_threshold: float = 0.05

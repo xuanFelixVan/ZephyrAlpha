@@ -27,6 +27,7 @@ Risk: R131 — One compromised instance poisons federation.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class FederatedSecurity:
     trusted_peers: set[str] = field(default_factory=set)

@@ -28,18 +28,19 @@ context_rot_model.py — n² Attention 衰减数学模型 (DD7, TASK-014 beta a)
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
-from datetime import datetime, timezone, timedelta
+from datetime import UTC
 
-UTC = timezone.utc
+UTC = UTC
 
 K_DEFAULT: float = 0.35
 BASE_TOKENS: float = 250.0
 
+
 @dataclass(frozen=True)
 class ContextDecayResult:
     """上下文衰减计算结果。"""
+
     context_id: str
     token_count: int
     age_seconds: float

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-436
 title: 5. 当前已经产出的关键文档
 category: documentation

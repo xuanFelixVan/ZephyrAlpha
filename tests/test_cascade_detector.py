@@ -12,21 +12,14 @@
 
 from __future__ import annotations
 
-import json
-import os
 import tempfile
-from datetime import datetime, timezone, timedelta
-from pathlib import Path
-from unittest.mock import patch
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.behavioral_audit.cascade_detector import (
+    CASCADE_CONFIG,
     CascadeAlert,
     CascadeConfig,
     CascadeEvent,
-    CASCADE_CONFIG,
-    _CASCADE_STATE_FILE,
     _load_cascade_state,
     _save_cascade_state,
     detect_cascade,
@@ -40,7 +33,7 @@ class TestCascadeEvent:
         evt = CascadeEvent(
             event_id="evt-001",
             module="zephyr.shared",
-            detected_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            detected_at=datetime(2026, 1, 1, tzinfo=UTC),
         )
         assert evt.event_id == "evt-001"
         assert evt.module == "zephyr.shared"
@@ -48,7 +41,7 @@ class TestCascadeEvent:
         assert evt.fix_diff == ""
 
     def test_instantiation_with_optional_fields(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         evt = CascadeEvent(
             event_id="evt-002",
             module="zephyr.infrastructure.budget_enforcement",
@@ -62,7 +55,7 @@ class TestCascadeEvent:
 
 class TestCascadeAlert:
     def test_instantiation_defaults(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         alert = CascadeAlert(
             alert_id="cascade-test-001",
             module="zephyr.shared",
@@ -76,7 +69,7 @@ class TestCascadeAlert:
         assert alert.forensics_report == ""
 
     def test_instantiation_full(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         later = now + timedelta(hours=1)
         alert = CascadeAlert(
             alert_id="cascade-test-002",
@@ -116,7 +109,7 @@ class TestDetectCascade:
         assert result == []
 
     def test_below_threshold_no_alert(self):
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         events = [
             {"event_id": "e1", "source_file": "src/zephyr/shared/foo.py", "timestamp": now},
             {"event_id": "e2", "source_file": "src/zephyr/shared/bar.py", "timestamp": now},
@@ -125,11 +118,8 @@ class TestDetectCascade:
         assert result == []
 
     def test_at_threshold_triggers_alert(self):
-        now = datetime.now(timezone.utc).isoformat()
-        events = [
-            {"event_id": f"e{i}", "source_file": "src/zephyr/shared/mod.py", "timestamp": now}
-            for i in range(3)
-        ]
+        now = datetime.now(UTC).isoformat()
+        events = [{"event_id": f"e{i}", "source_file": "src/zephyr/shared/mod.py", "timestamp": now} for i in range(3)]
         result = detect_cascade(events)
         assert len(result) == 1
         assert result[0].module == "zephyr"
@@ -139,28 +129,19 @@ class TestDetectCascade:
         assert "Cascade detected" in result[0].forensics_report
 
     def test_events_outside_window_no_alert(self):
-        old = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
-        events = [
-            {"event_id": f"e{i}", "source_file": "src/zephyr/shared/mod.py", "timestamp": old}
-            for i in range(4)
-        ]
+        old = (datetime.now(UTC) - timedelta(hours=2)).isoformat()
+        events = [{"event_id": f"e{i}", "source_file": "src/zephyr/shared/mod.py", "timestamp": old} for i in range(4)]
         result = detect_cascade(events)
         assert result == []
 
     def test_events_without_timestamp_skipped(self):
-        events = [
-            {"event_id": f"e{i}", "source_file": "src/zephyr/shared/mod.py"}
-            for i in range(5)
-        ]
+        events = [{"event_id": f"e{i}", "source_file": "src/zephyr/shared/mod.py"} for i in range(5)]
         result = detect_cascade(events)
         assert result == []
 
     def test_unknown_module_for_no_src_prefix(self):
-        now = datetime.now(timezone.utc).isoformat()
-        events = [
-            {"event_id": f"e{i}", "source_file": "random_file.py", "timestamp": now}
-            for i in range(4)
-        ]
+        now = datetime.now(UTC).isoformat()
+        events = [{"event_id": f"e{i}", "source_file": "random_file.py", "timestamp": now} for i in range(4)]
         result = detect_cascade(events)
         assert len(result) == 1
         assert result[0].module == "unknown"
@@ -200,7 +181,7 @@ class TestIsAutoFixPaused:
             original_dir = CASCADE_CONFIG.state_dir
             CASCADE_CONFIG.state_dir = tmpdir
             try:
-                pause_until = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
+                pause_until = (datetime.now(UTC) + timedelta(hours=1)).isoformat()
                 state = {
                     "events": [],
                     "alerts": [
@@ -221,7 +202,7 @@ class TestIsAutoFixPaused:
             original_dir = CASCADE_CONFIG.state_dir
             CASCADE_CONFIG.state_dir = tmpdir
             try:
-                pause_until = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+                pause_until = (datetime.now(UTC) - timedelta(hours=1)).isoformat()
                 state = {
                     "events": [],
                     "alerts": [

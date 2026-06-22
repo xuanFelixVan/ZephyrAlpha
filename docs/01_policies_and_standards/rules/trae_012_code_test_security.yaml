@@ -1,10 +1,24 @@
 rule_id: TRAE-012
 title: 代码构建-测试与安全
+version: 1.5.0
+layer: L1
+module_id: TRAE-012
+depends_on:
+- TRAE-047
+- TRAE-007
+- TRAE-009
+- TRAE-046
+tags:
+- TRAE
+- code_test_security
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - CODE-008
 - CODE-009
 - CODE-010
-layer: L1
 severity: error
 scope: code_test_security
 domain: TRAE
@@ -39,8 +53,7 @@ sections:
     - type: mandatory
       step: 产出代码后逐项自检：功能完整/边界处理/错误路径/类型一致/导入完整
     prohibitions:
-    - '占位符规则见 trae_007_anti_hallucination_behavior.yaml（ANTI-HALL-07）——禁止TODO/FIXME/HACK/.../pass/NotImplementedError（@abstractmethod豁免）；禁止#
-      implement later / # will add'
+    - '占位符规则见 trae_007_anti_hallucination_behavior.yaml（ANTI-HALL-07）——禁止TODO/FIXME/HACK/.../pass/NotImplementedError（@abstractmethod豁免）；禁止# implement later / # will add'
   code_009:
     title: 编辑优先与最小变更(#8/#9/#10)
     section_type: rule
@@ -200,9 +213,7 @@ sections:
       change: '循环审查修复：gov_eng_012_verification占位符检查的grep命令改为Grep工具引用（违反RULE-SEVENTEEN）；references.rule_ids移除3个TRAE-012自引用重复（RQ-02去重）'
     - version: 1.2.0
       date: '2026-06-19'
-      change: 'RQ审查修复（STEP10散布完整修复）：code_008/code_009/code_010 三个 section 的 prohibitions
-        改为引用 trae_007/009（ANTI-HALL-07~18），消除 #7-#18 规则的重复定义；references.rule_ids 添加
-        TRAE-007 和 TRAE-009。保留 conditions/actions 执行层细节'
+      change: 'RQ审查修复（STEP10散布完整修复）：code_008/code_009/code_010 三个 section 的 prohibitions 改为引用 trae_007/009（ANTI-HALL-07~18），消除 #7-#18 规则的重复定义；references.rule_ids 添加 TRAE-007 和 TRAE-009。保留 conditions/actions 执行层细节'
     - version: 1.1.0
       date: '2026-06-19'
       change: RQ审查修复：移除断链引用validate_file_headers.py(脚本不存在,项目级断链,trae_047也引用)改为引用TRAE-047+scan_secret_leak.py（RQ-04）；provenance标注源文件已superseded（RQ-04/RQ-09）；补充change_history（RQ-14）
@@ -233,7 +244,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   version: "1.5.0"
   last_modified: "2026-06-21"
   change_history:

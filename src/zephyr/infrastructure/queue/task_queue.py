@@ -32,17 +32,15 @@ Task Queue — 后台任务队列 + 自动 Dispatch。
     - 间隔可配置（默认 5 分钟）
 """
 
-
 from __future__ import annotations
 
-import json
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
 
 
 class QueueItemStatus(str, Enum):
@@ -59,7 +57,7 @@ class QueueItem:
     task_id: str
     priority: str = "P2"
     status: QueueItemStatus = QueueItemStatus.ENQUEUED
-    enqueued_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    enqueued_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     dispatched_at: str = ""
 
 
@@ -72,7 +70,6 @@ class QueueConfig:
 
 
 class TaskQueue:
-
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/queue")
         self._items: list[QueueItem] = []
@@ -83,7 +80,7 @@ class TaskQueue:
 
     def enqueue(self, task_id: str, priority: str = "P2") -> QueueItem:
         item = QueueItem(
-            item_id=f"QITEM-{task_id}-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            item_id=f"QITEM-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             task_id=task_id,
             priority=priority,
         )
@@ -92,9 +89,9 @@ class TaskQueue:
 
     def dequeue_next(self) -> QueueItem | None:
         ready = [
-            i for i in self._items
-            if i.status == QueueItemStatus.ENQUEUED
-            and (not self._config.only_p0 or i.priority == "P0")
+            i
+            for i in self._items
+            if i.status == QueueItemStatus.ENQUEUED and (not self._config.only_p0 or i.priority == "P0")
         ]
 
         ready.sort(key=lambda x: {"P0": 0, "P1": 1, "P2": 2}.get(x.priority, 3))
@@ -102,7 +99,7 @@ class TaskQueue:
         if ready:
             item = ready[0]
             item.status = QueueItemStatus.DISPATCHED
-            item.dispatched_at = datetime.now(timezone.utc).isoformat()
+            item.dispatched_at = datetime.now(UTC).isoformat()
             return item
 
         return None
@@ -140,8 +137,5 @@ class TaskQueue:
 
     def clear_completed(self) -> int:
         before = len(self._items)
-        self._items = [
-            i for i in self._items
-            if i.status not in (QueueItemStatus.COMPLETED, QueueItemStatus.FAILED)
-        ]
+        self._items = [i for i in self._items if i.status not in (QueueItemStatus.COMPLETED, QueueItemStatus.FAILED)]
         return before - len(self._items)

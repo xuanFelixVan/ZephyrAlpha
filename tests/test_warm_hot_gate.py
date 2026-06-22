@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_warm_hot_gate.py -q
 
-import pytest
 from zephyr.infrastructure.warm_hot_gate import (
     GateCheckResult,
     WarmHotGate,

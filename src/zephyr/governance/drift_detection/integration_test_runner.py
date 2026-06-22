@@ -26,6 +26,7 @@ module_id: MOD-INF-023
 随声执行器：`pip install -e . \r\n python -m drift-detector --mode test`。
 对标 blueprint.md §2.20 / D-023-34。
 """
+
 from __future__ import annotations
 
 import json
@@ -34,9 +35,7 @@ import subprocess
 import sys
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -51,8 +50,7 @@ class SelfTestResult:
 
 
 class IntegrationTestRunner:
-
-    def __init__(self, project_root: Optional[str] = None) -> None:
+    def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self._project_root = project_root
@@ -66,7 +64,10 @@ class IntegrationTestRunner:
         try:
             result = subprocess.run(
                 [sys.executable, "-m", "pip", "check"],
-                capture_output=True, text=True, cwd=self._project_root, timeout=60,
+                capture_output=True,
+                text=True,
+                cwd=self._project_root,
+                timeout=60,
             )
             if result.returncode != 0:
                 results.passed = False
@@ -87,10 +88,20 @@ class IntegrationTestRunner:
         results = SelfTestResult(test_id=test_id, passed=True)
 
         modules = [
-            "drift_models", "drift_engine", "reconciler", "state_machine",
-            "baseline_manager", "detector_dispatcher", "scan_mutex",
-            "drift_hotfix_bypass", "suppression_learner", "gate_persistence",
-            "headless_scanner", "cross_module_score", "self_check", "self_test_verifier",
+            "drift_models",
+            "drift_engine",
+            "reconciler",
+            "state_machine",
+            "baseline_manager",
+            "detector_dispatcher",
+            "scan_mutex",
+            "drift_hotfix_bypass",
+            "suppression_learner",
+            "gate_persistence",
+            "headless_scanner",
+            "cross_module_score",
+            "self_check",
+            "self_test_verifier",
         ]
         for mod in modules:
             try:
@@ -121,7 +132,7 @@ class IntegrationTestRunner:
         return self._finalize(results)
 
     def run_all(self) -> SelfTestResult:
-        total = SelfTestResult(test_id=uuid.uuid4(), passed=True, run_at=datetime.now(timezone.utc).isoformat())
+        total = SelfTestResult(test_id=uuid.uuid4(), passed=True, run_at=datetime.now(UTC).isoformat())
 
         for check_fn in [self.pip_check, self.import_check, self.type_check]:
             r = check_fn()
@@ -135,16 +146,21 @@ class IntegrationTestRunner:
         return self._finalize(total)
 
     def _finalize(self, result: SelfTestResult) -> SelfTestResult:
-        result.run_at = datetime.now(timezone.utc).isoformat()
+        result.run_at = datetime.now(UTC).isoformat()
         filepath = os.path.join(self._result_dir, f"{result.test_id}_test.json")
         with open(filepath, "w", encoding="utf-8") as fh:
-            json.dump({
-                "test_id": str(result.test_id),
-                "passed": result.passed,
-                "tests_run": result.tests_run,
-                "failures": result.failures,
-                "errors": result.errors,
-                "checks": result.checks,
-                "run_at": result.run_at,
-            }, fh, indent=2, ensure_ascii=False)
+            json.dump(
+                {
+                    "test_id": str(result.test_id),
+                    "passed": result.passed,
+                    "tests_run": result.tests_run,
+                    "failures": result.failures,
+                    "errors": result.errors,
+                    "checks": result.checks,
+                    "run_at": result.run_at,
+                },
+                fh,
+                indent=2,
+                ensure_ascii=False,
+            )
         return result

@@ -12,12 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.commit_quality_gate import (
-    CommitQualityGate,
-    CommitQualityReport,
     COMMIT_MSG_REQUIREMENTS,
+    CommitQualityGate,
 )
 
 

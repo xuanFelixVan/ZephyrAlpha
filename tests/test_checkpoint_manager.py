@@ -20,10 +20,9 @@
 # [TESTS] python -m pytest tests/test_checkpoint_manager.py -q
 
 from __future__ import annotations
+
 import json
 from pathlib import Path
-
-import pytest
 
 from zephyr.autonomy_core.checkpoint_manager import Checkpoint, CheckpointManager
 
@@ -91,9 +90,7 @@ class TestCheckpointManager:
             token_count=99,
         )
         mgr.save(ckpt)
-        data = json.loads(
-            (tmp_path / "store" / "persist-1.json").read_text(encoding="utf-8")
-        )
+        data = json.loads((tmp_path / "store" / "persist-1.json").read_text(encoding="utf-8"))
         assert data["id"] == "persist-1"
         assert data["context_snapshot"] == "hello"
         assert data["ke_ids"] == ["KE-A", "KE-B"]

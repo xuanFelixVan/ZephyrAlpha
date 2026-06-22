@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """KISS 约束执行器（CT-KISS-001）——AI产出复杂度检测+bloat check。"""
 
+
 class KissEnforcer:
     MAX_CLASSES: int = 3
     MAX_METHOD_LINES: int = 30

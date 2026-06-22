@@ -1,10 +1,11 @@
 import ast
 import os
 import re
-import yaml
 import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+import yaml
 
 REGISTRY = "data/asset_index/migration-registry.yaml"
 PROJECT_ROOT = "D:/ZephyrAlpha"
@@ -12,12 +13,13 @@ OUTPUT = "data/asset_index/import-update-manifest.yaml"
 
 SCAN_DIRS = ["src/zephyr/", "scripts/", "tests/"]
 
+
 def build_import_map(registry_path):
     print("[1/4] Loading migration registry...")
     t0 = time.perf_counter()
-    with open(registry_path, "r", encoding="utf-8") as f:
+    with open(registry_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
-    print(f"  Loaded: {time.perf_counter()-t0:.2f}s")
+    print(f"  Loaded: {time.perf_counter() - t0:.2f}s")
 
     old_to_new = {}
     for entry in data.get("entries", []):
@@ -44,9 +46,10 @@ def build_import_map(registry_path):
     print(f"  Prefix map entries: {len(prefix_map)}")
     return old_to_new, prefix_map
 
+
 def scan_file_imports(filepath):
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             source = f.read()
     except (OSError, PermissionError):
         return []
@@ -69,23 +72,28 @@ def scan_file_imports(filepath):
 
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom) and node.module:
-            imports.append({
-                "line": node.lineno,
-                "module": node.module,
-                "names": [alias.name for alias in node.names],
-                "raw": f"from {node.module} import ...",
-                "type": "from_import",
-            })
+            imports.append(
+                {
+                    "line": node.lineno,
+                    "module": node.module,
+                    "names": [alias.name for alias in node.names],
+                    "raw": f"from {node.module} import ...",
+                    "type": "from_import",
+                }
+            )
         elif isinstance(node, ast.Import):
             for alias in node.names:
-                imports.append({
-                    "line": node.lineno,
-                    "module": alias.name,
-                    "names": [alias.name],
-                    "raw": f"import {alias.name}",
-                    "type": "import",
-                })
+                imports.append(
+                    {
+                        "line": node.lineno,
+                        "module": alias.name,
+                        "names": [alias.name],
+                        "raw": f"import {alias.name}",
+                        "type": "import",
+                    }
+                )
     return imports
+
 
 def find_all_py_files():
     py_files = []
@@ -101,6 +109,7 @@ def find_all_py_files():
                     py_files.append((abs_path, rel_path))
     return py_files
 
+
 def match_import(imp_module, old_to_new, prefix_map):
     if imp_module in old_to_new:
         return old_to_new[imp_module], "exact_match"
@@ -109,7 +118,7 @@ def match_import(imp_module, old_to_new, prefix_map):
         prefix = ".".join(imp_module.split(".")[:i])
         if prefix in old_to_new:
             new_prefix = old_to_new[prefix]
-            suffix = imp_module[len(prefix):]
+            suffix = imp_module[len(prefix) :]
             return new_prefix + suffix, "prefix_match"
 
     if imp_module.startswith("zephyr."):
@@ -123,6 +132,7 @@ def match_import(imp_module, old_to_new, prefix_map):
 
     return None, "no_change_needed"
 
+
 def main():
     print("=== STEP 2D: Import Update Manifest Generator ===\n")
 
@@ -131,7 +141,7 @@ def main():
     print("\n[2/4] Scanning .py files...")
     t0 = time.perf_counter()
     py_files = find_all_py_files()
-    print(f"  Found {len(py_files)} .py files in {time.perf_counter()-t0:.2f}s")
+    print(f"  Found {len(py_files)} .py files in {time.perf_counter() - t0:.2f}s")
 
     print("\n[3/4] Parsing imports...")
     t0 = time.perf_counter()
@@ -150,13 +160,15 @@ def main():
                 continue
             new_module, match_type = match_import(imp["module"], old_to_new, prefix_map)
             if new_module and new_module != imp["module"]:
-                file_updates.append({
-                    "line": imp["line"],
-                    "old": imp["module"],
-                    "new": new_module,
-                    "type": imp["type"],
-                    "match_type": match_type,
-                })
+                file_updates.append(
+                    {
+                        "line": imp["line"],
+                        "old": imp["module"],
+                        "new": new_module,
+                        "type": imp["type"],
+                        "match_type": match_type,
+                    }
+                )
         return rel_path, imports, file_updates
 
     with ThreadPoolExecutor(max_workers=8) as executor:
@@ -169,17 +181,19 @@ def main():
                 files_with_updates += 1
                 for u in file_updates:
                     match_stats[u["match_type"]] += 1
-                all_updates.append({
-                    "file": rel_path,
-                    "change_count": len(file_updates),
-                    "changes": file_updates,
-                })
+                all_updates.append(
+                    {
+                        "file": rel_path,
+                        "change_count": len(file_updates),
+                        "changes": file_updates,
+                    }
+                )
 
     print(f"  Scanned {len(py_files)} files, {total_imports_scanned} imports, {zephyr_imports_scanned} zephyr imports")
     print(f"  Files with updates needed: {files_with_updates}")
     print(f"  Total import changes: {sum(u['change_count'] for u in all_updates)}")
     print(f"  Match stats: {dict(match_stats)}")
-    print(f"  Time: {time.perf_counter()-t0:.2f}s")
+    print(f"  Time: {time.perf_counter() - t0:.2f}s")
 
     print("\n[4/4] Writing manifest...")
     output_data = {
@@ -211,12 +225,13 @@ def main():
     file_size_mb = os.path.getsize(OUTPUT) / (1024 * 1024)
     print(f"  File size: {file_size_mb:.1f} MB")
 
-    print(f"\n=== SUMMARY ===")
+    print("\n=== SUMMARY ===")
     print(f"  Files scanned: {len(py_files)}")
     print(f"  Files needing import updates: {files_with_updates}")
     print(f"  Total import changes: {sum(u['change_count'] for u in all_updates)}")
     print(f"  Exact matches: {match_stats.get('exact_match', 0)}")
     print(f"  Prefix matches: {match_stats.get('prefix_match', 0)}")
+
 
 if __name__ == "__main__":
     main()

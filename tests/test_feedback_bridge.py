@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
 import pytest
 
 from zephyr.governance.audit_trail.feedback_bridge import AuditFeedbackBridge
@@ -28,9 +26,19 @@ class TestAuditFeedbackBridgeInit:
     def test_anomaly_mapping_keys(self):
         bridge = AuditFeedbackBridge()
         expected_keys = {
-            "ANM-001", "ANM-002", "ANM-003", "ANM-004",
-            "ANM-005", "ANM-006", "ANM-007", "ANM-008",
-            "ANM-009", "ANM-010", "ANM-011", "ANM-012", "ANM-013",
+            "ANM-001",
+            "ANM-002",
+            "ANM-003",
+            "ANM-004",
+            "ANM-005",
+            "ANM-006",
+            "ANM-007",
+            "ANM-008",
+            "ANM-009",
+            "ANM-010",
+            "ANM-011",
+            "ANM-012",
+            "ANM-013",
         }
         assert set(bridge._anomaly_to_signal.keys()) == expected_keys
 
@@ -150,9 +158,12 @@ class TestScanAndBridge:
     def test_scan_and_bridge_handles_import_error(self, monkeypatch):
         bridge = AuditFeedbackBridge()
         import zephyr.governance.audit_trail.feedback_bridge as mod
+
         original = mod.AuditFeedbackBridge.scan_and_bridge
+
         def broken_scan(self):
             raise RuntimeError("import failed")
+
         monkeypatch.setattr(mod.AuditFeedbackBridge, "scan_and_bridge", broken_scan)
         with pytest.raises(RuntimeError):
             bridge.scan_and_bridge()

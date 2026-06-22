@@ -14,7 +14,7 @@ import time
 
 import pytest
 
-from zephyr.ops.metrics_collector import MetricType, MetricsCollector
+from zephyr.ops.metrics_collector import MetricsCollector, MetricType
 
 
 class TestMetricsCollectorInstantiation:

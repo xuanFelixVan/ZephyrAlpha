@@ -1,6 +1,8 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_vocabulary_coverage.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
+
 #!/usr/bin/env python3
 """验证 frontmatter-schema.json 中的枚举字段是否在 vocabularies/ 目录有对应词汇表。
 
@@ -19,14 +21,13 @@ Exit codes:
 # Governance script manifest
 
 
-import argparse
 import json
-import re
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
+
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
 from pathlib import Path
 
 
@@ -91,7 +92,8 @@ def find_vocabularies(vocab_dir: Path) -> set[str]:
 
     返回的字段名使用连字符形式（如 ai-autonomy、blueprint-refs-status），
     与 schema 字段名（下划线/点号形式）通过统一替换规则匹配。
-"""
+    """
+
 
 __manifest__ = """
 args: []
@@ -104,4 +106,3 @@ priority: P2
 timeout_seconds: 30
 warn_only: false
 """
-

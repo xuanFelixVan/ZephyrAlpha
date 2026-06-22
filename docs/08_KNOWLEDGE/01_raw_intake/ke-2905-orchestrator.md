@@ -12,7 +12,7 @@ class Orchestrator:
     def create_task(self, task_card: TaskCard):
         # Step 1: 交给Pipeline做路由决策
         result = self.pipeline.dispatch(task_card)
-        
+
         # Step 2: 根据PipelineResult决定后续动作
         if result.overall_status == PipelineStatus.CLAUDE_RESCUE:
             self.schedule_rescue(task_card, result.rescue_reason)

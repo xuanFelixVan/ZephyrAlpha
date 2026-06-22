@@ -25,11 +25,10 @@ L48: dependency integrity verified + transitive trust chain intact
 L49: owner cognitive budget respected + alert flooding suppressed
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL48L49:
-
     def __init__(self):
         self.dependency_integrity_ok: bool = True
         self.transitive_trust_score: float = 1.0
@@ -47,7 +46,9 @@ class SafetyGateL48L49:
         if not self.dependency_integrity_ok:
             return GateResult("L48", GateVerdict.REJECT, GateType.HARD, "Dependency integrity broken")
         if self.transitive_trust_score < 0.5:
-            return GateResult("L48", GateVerdict.REJECT, GateType.HARD, f"Transitive trust {self.transitive_trust_score:.2f} < 0.5")
+            return GateResult(
+                "L48", GateVerdict.REJECT, GateType.HARD, f"Transitive trust {self.transitive_trust_score:.2f} < 0.5"
+            )
         return GateResult("L48", GateVerdict.PASS, GateType.HARD)
 
     def _l49_cognitive_safety(self, ctx: ActionContext) -> GateResult:

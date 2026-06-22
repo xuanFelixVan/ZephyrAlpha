@@ -7,11 +7,10 @@
 # [TESTS] —
 """Tests for MOD-INF-026 Scanner module."""
 
+from datetime import UTC
 from pathlib import Path
 
-import pytest
-
-from zephyr.infrastructure.asset_inventory.scanner import Scanner, _generate_scan_id, _sha256, _process_one
+from zephyr.infrastructure.asset_inventory.scanner import Scanner, _generate_scan_id, _process_one, _sha256
 
 
 class TestGenerateScanId:
@@ -94,16 +93,19 @@ class TestScanner:
         d = tmp_path / "src"
         d.mkdir(parents=True, exist_ok=True)
         (d / "old.py").write_text("old")
-        from datetime import datetime, timedelta, timezone
-        old_time = datetime.now(timezone.utc) - timedelta(hours=2)
+        from datetime import datetime, timedelta
+
+        old_time = datetime.now(UTC) - timedelta(hours=2)
 
         s = Scanner(directories=["src"], excludes=set(), root=tmp_path)
         result = s.scan(incremental=True, last_scan_time=old_time)
         assert result.scan_mode == "incremental"
 
     def test_save(self, tmp_path: Path) -> None:
-        from zephyr.infrastructure.asset_inventory.models import ScanResult
         import json
+
+        from zephyr.infrastructure.asset_inventory.models import ScanResult
+
         out = tmp_path / "scan.json"
         sr = ScanResult(
             scan_id="SCAN-20260507-999",

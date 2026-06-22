@@ -9,11 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
-from pathlib import Path
 from zephyr.governance.shared_lifecycle_manager import (
-    SharedLifecycleManager, LifecycleStage, LifecycleEntry,
+    LifecycleStage,
+    SharedLifecycleManager,
 )
+
 
 class TestSharedLifecycleManager:
     def test_instantiation_default(self):
@@ -21,9 +21,7 @@ class TestSharedLifecycleManager:
         assert mgr is not None
 
     def test_instantiation_with_path(self, tmp_path):
-        mgr = SharedLifecycleManager(
-            lifecycle_path=str(tmp_path / "lifecycle.yaml")
-        )
+        mgr = SharedLifecycleManager(lifecycle_path=str(tmp_path / "lifecycle.yaml"))
         assert mgr is not None
 
     def test_register_active(self):

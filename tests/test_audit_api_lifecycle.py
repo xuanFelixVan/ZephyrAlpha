@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from zephyr.governance.audit_trail.api_lifecycle import (
     APIEndpoint,
@@ -36,8 +34,8 @@ class TestDeprecationNotice:
     def test_days_until_removal_future(self):
         notice = DeprecationNotice(
             api_name="test_api",
-            deprecated_at=datetime.now(timezone.utc).isoformat(),
-            removal_at=(datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+            deprecated_at=datetime.now(UTC).isoformat(),
+            removal_at=(datetime.now(UTC) + timedelta(days=30)).isoformat(),
             grace_period_days=90,
         )
         assert notice.days_until_removal > 0
@@ -63,8 +61,8 @@ class TestDeprecationNotice:
     def test_not_expired_property(self):
         notice = DeprecationNotice(
             api_name="test_api",
-            deprecated_at=datetime.now(timezone.utc).isoformat(),
-            removal_at=(datetime.now(timezone.utc) + timedelta(days=90)).isoformat(),
+            deprecated_at=datetime.now(UTC).isoformat(),
+            removal_at=(datetime.now(UTC) + timedelta(days=90)).isoformat(),
             grace_period_days=90,
         )
         assert notice.expired is False
@@ -87,8 +85,8 @@ class TestAPIEndpoint:
     def test_with_deprecation(self):
         notice = DeprecationNotice(
             api_name="test",
-            deprecated_at=datetime.now(timezone.utc).isoformat(),
-            removal_at=(datetime.now(timezone.utc) + timedelta(days=90)).isoformat(),
+            deprecated_at=datetime.now(UTC).isoformat(),
+            removal_at=(datetime.now(UTC) + timedelta(days=90)).isoformat(),
         )
         ep = APIEndpoint(name="test", version="1.0", deprecation=notice)
         assert ep.deprecation is not None

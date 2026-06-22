@@ -15,8 +15,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
 
 
@@ -37,6 +35,7 @@ class TestSyncEvolutionProposalsToBackpressure:
 
     def test_skips_when_no_critical_proposals(self):
         from zephyr.ops.evolution_engine import Severity
+
         proposals = [FakeProposal(severity=Severity.HIGH)]
         result = sync_evolution_proposals_to_backpressure(proposals, MagicMock())
         assert result["throttled"] is False
@@ -44,9 +43,10 @@ class TestSyncEvolutionProposalsToBackpressure:
 
     def test_throttles_on_critical_proposals(self):
         from zephyr.ops.evolution_engine import Severity
+
         proposals = [FakeProposal(severity=Severity.CRITICAL)]
         mock_bp = MagicMock()
-        with patch("zephyr.orchestration.pipeline_routing.backpressure_manager.emit_throttle") as mock_emit:
+        with patch("zephyr.integration.backpressure_manager.emit_throttle") as mock_emit:
             result = sync_evolution_proposals_to_backpressure(proposals, mock_bp)
             assert result["throttled"] is True
             assert result["critical_count"] == 1

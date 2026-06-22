@@ -43,12 +43,13 @@ from __future__ import annotations
 import abc
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, ClassVar, List
+from typing import Any, ClassVar
 
 
 @dataclass(frozen=True)
 class BacktestResult:
     """回测结果"""
+
     strategy_id: str
     start_date: str
     end_date: str
@@ -64,6 +65,7 @@ class BacktestResult:
 @dataclass(frozen=True)
 class FactorDiscovery:
     """因子发现记录"""
+
     factor_id: str
     name: str
     ic_mean: float
@@ -78,12 +80,13 @@ class BacktestEngineBase(abc.ABC):
 
     实现者要求：接收信号序列 + 价格数据，输出标准回测报告。
     """
-    _registry: ClassVar[dict[str, type["BacktestEngineBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[BacktestEngineBase]]] = {}
 
     @abc.abstractmethod
-    def run(self, signals: List[Any], prices: List[Any]) -> BacktestResult:
+    def run(self, signals: list[Any], prices: list[Any]) -> BacktestResult:
         """执行回测，返回标准化结果"""
         ...
 
 
-__all__ = ["BacktestResult", "FactorDiscovery", "BacktestEngineBase"]
+__all__ = ["BacktestEngineBase", "BacktestResult", "FactorDiscovery"]

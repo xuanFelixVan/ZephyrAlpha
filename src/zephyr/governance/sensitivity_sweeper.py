@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class SweepResult:
     threshold: float
@@ -40,6 +41,7 @@ class SweepResult:
         if self.precision_rate + self.recall_rate == 0:
             return 0.0
         return 2.0 * (self.precision_rate * self.recall_rate) / (self.precision_rate + self.recall_rate)
+
 
 @dataclass
 class SensitivitySweeper:

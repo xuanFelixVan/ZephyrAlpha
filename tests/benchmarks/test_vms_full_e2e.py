@@ -24,15 +24,13 @@ FAISS + SQLite WAL 端到端完整测试
   13. 存储占用
   14. 关机
 """
+
 from __future__ import annotations
 
-import json
-import os
 import shutil
 import sys
 import threading
 import time
-import uuid
 from pathlib import Path
 
 import numpy as np
@@ -79,6 +77,7 @@ def main():
     print("\n[1] VMS 启动 + 嵌入模型状态...")
 
     from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+
     vms = InProcessVectorMemory(persist_dir=str(TEST_DIR))
     t0 = time.perf_counter()
     vms.start()
@@ -106,14 +105,38 @@ def main():
     print("\n[3] 单条写入 (含 provenance)...")
 
     write_data = {
-        "decisions": ("ADR-0032: 采用 FAISS mmap 替代 ChromaDB HTTP 微服务", {"provenance": {"origin": "architect", "source": "ADR-0032"}}),
-        "code_context": ("def search_hybrid(query, k=5): return retriever.search(query, k)", {"provenance": {"origin": "coder", "source": "hybrid_retriever.py"}}),
-        "lessons": ("FAISS mmap 多进程共享时，写入必须落盘才能被其他进程看到", {"provenance": {"origin": "engineer", "source": "incident-2026-05-09"}}),
-        "knowledge": ("BGE-M3 是 BAAI 发布的多语言嵌入模型，输出 1024 维向量", {"provenance": {"origin": "researcher", "source": "BAAI/bge-m3"}}),
-        "rules": ("所有 VMS 写入必须包含 provenance.origin 字段", {"provenance": {"origin": "governance", "source": "rule-G-001"}}),
-        "blueprints": ("VMS 蓝图 §12 定义了 ChromaDB → FAISS 的 6 步迁移方案", {"provenance": {"origin": "architect", "source": "VMS-blueprint"}}),
-        "session_snapshots": ("2026-05-09 Phase 2 施工完成，122/122 测试通过", {"provenance": {"origin": "agent", "source": "session-20260509"}}),
-        "execution_traces": ("task-migrate-chroma2faiss completed in 3.2s with 0 errors", {"provenance": {"origin": "orchestrator", "source": "task-migrate"}}),
+        "decisions": (
+            "ADR-0032: 采用 FAISS mmap 替代 ChromaDB HTTP 微服务",
+            {"provenance": {"origin": "architect", "source": "ADR-0032"}},
+        ),
+        "code_context": (
+            "def search_hybrid(query, k=5): return retriever.search(query, k)",
+            {"provenance": {"origin": "coder", "source": "hybrid_retriever.py"}},
+        ),
+        "lessons": (
+            "FAISS mmap 多进程共享时，写入必须落盘才能被其他进程看到",
+            {"provenance": {"origin": "engineer", "source": "incident-2026-05-09"}},
+        ),
+        "knowledge": (
+            "BGE-M3 是 BAAI 发布的多语言嵌入模型，输出 1024 维向量",
+            {"provenance": {"origin": "researcher", "source": "BAAI/bge-m3"}},
+        ),
+        "rules": (
+            "所有 VMS 写入必须包含 provenance.origin 字段",
+            {"provenance": {"origin": "governance", "source": "rule-G-001"}},
+        ),
+        "blueprints": (
+            "VMS 蓝图 §12 定义了 ChromaDB → FAISS 的 6 步迁移方案",
+            {"provenance": {"origin": "architect", "source": "VMS-blueprint"}},
+        ),
+        "session_snapshots": (
+            "2026-05-09 Phase 2 施工完成，122/122 测试通过",
+            {"provenance": {"origin": "agent", "source": "session-20260509"}},
+        ),
+        "execution_traces": (
+            "task-migrate-chroma2faiss completed in 3.2s with 0 errors",
+            {"provenance": {"origin": "orchestrator", "source": "task-migrate"}},
+        ),
     }
 
     write_times = []
@@ -133,7 +156,6 @@ def main():
     print("\n[4] 批量写入 (add_vectors_batch)...")
 
     from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
-    from zephyr.governance.vector_memory.sqlite_metadata_store import SQLiteMetadataStore
 
     faiss_cm = vms._collection_manager
     meta_store = vms._metadata_store
@@ -148,7 +170,8 @@ def main():
     for i in range(200):
         vid = f"knowledge::batch::{i}"
         meta_store.add_document(
-            vector_id=vid, collection="knowledge",
+            vector_id=vid,
+            collection="knowledge",
             content=f"Batch doc {i}: random knowledge entry",
             metadata={"batch_idx": i, "source": "batch_test"},
             provenance={"origin": "benchmark_batch"},
@@ -196,8 +219,11 @@ def main():
         hits = meta_store.search_fts(query, collection, k=10)
         t = time.perf_counter() - t0
         found = len(hits) > 0
-        check(f"FTS5 '{query}' → {collection}", found == expect_hits,
-              f"hits={len(hits)}, expect={expect_hits}, time={fmt(t)}")
+        check(
+            f"FTS5 '{query}' → {collection}",
+            found == expect_hits,
+            f"hits={len(hits)}, expect={expect_hits}, time={fmt(t)}",
+        )
 
     # =========================================================================
     # 7. 混合检索 (HybridRetriever)
@@ -206,7 +232,6 @@ def main():
 
     try:
         from zephyr.governance.vector_memory.hybrid_retriever import HybridRetriever
-        from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
         embed_router = vms._embedding_router
         retriever = HybridRetriever(faiss_cm, embed_router, meta_store)
@@ -232,7 +257,7 @@ def main():
         check(f"recall({name})", len(results) > 0, f"count={len(results)}")
         if results:
             has_meta = "metadata" in results[0] or "id" in results[0]
-            check(f"  recall 结果含元数据", has_meta)
+            check("  recall 结果含元数据", has_meta)
 
     # =========================================================================
     # 9. IVF+PQ 索引
@@ -252,8 +277,11 @@ def main():
     t0 = time.perf_counter()
     ivf_cm.add_vectors_batch("knowledge", train_vecs)
     ivf_write_time = time.perf_counter() - t0
-    check("IVF+PQ 批量写入 5000 条", ivf_cm.count("knowledge") == 5000,
-          f"count={ivf_cm.count('knowledge')}, time={fmt(ivf_write_time)}")
+    check(
+        "IVF+PQ 批量写入 5000 条",
+        ivf_cm.count("knowledge") == 5000,
+        f"count={ivf_cm.count('knowledge')}, time={fmt(ivf_write_time)}",
+    )
 
     query_ivf = np.random.randn(1024).astype(np.float32)
     query_ivf /= np.linalg.norm(query_ivf) + 1e-8
@@ -306,12 +334,11 @@ def main():
     for name in ["decisions", "knowledge", "rules"]:
         faiss_count = faiss_cm.count(name)
         sqlite_count = meta_store.count_by_collection(name)
-        map_count = meta_store._conn.execute(
-            "SELECT COUNT(*) FROM vms_id_map WHERE collection=?", (name,)
-        ).fetchone()[0]
+        map_count = meta_store._conn.execute("SELECT COUNT(*) FROM vms_id_map WHERE collection=?", (name,)).fetchone()[
+            0
+        ]
         match = faiss_count == sqlite_count == map_count
-        check(f"  {name}: FAISS={faiss_count} SQLite={sqlite_count} Map={map_count}",
-              match, f"mismatch!")
+        check(f"  {name}: FAISS={faiss_count} SQLite={sqlite_count} Map={map_count}", match, "mismatch!")
 
     # =========================================================================
     # 12. 并发写入

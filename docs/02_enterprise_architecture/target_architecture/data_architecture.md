@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-05-DATA-ARCH
 title: Target Architecture — Data Architecture / 目标架构：数据架构
 doc_type: architecture_view

@@ -20,6 +20,7 @@
 # [TESTS]
 
 from __future__ import annotations
+
 # AI-generated: T-3-10 Agent Orchestrator (ADR-0032)
 """
 AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康监控
@@ -90,24 +91,24 @@ from typing import (
 
 from pydantic import BaseModel, Field, field_validator
 
+from zephyr.ops.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
-from zephyr.ops.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 __all__ = [
-    "AgentRole",
-    "RoutingStrategy",
-    "RouteDecision",
-    "AgentProfile",
-    "ToolCallRecord",
-    "OrchestrationResult",
-    "SLOSnapshot",
-    "ToolInvoker",
-    "HallucinationCaller",
-    "AgentRouter",
-    "HealthMonitor",
-    "AgentOrchestrator",
     "DEFAULT_ROLE_DOMAIN_MATRIX",
+    "AgentOrchestrator",
+    "AgentProfile",
+    "AgentRole",
+    "AgentRouter",
+    "HallucinationCaller",
+    "HealthMonitor",
+    "OrchestrationResult",
+    "RouteDecision",
+    "RoutingStrategy",
+    "SLOSnapshot",
+    "ToolCallRecord",
+    "ToolInvoker",
 ]
 
 # ---------------------------------------------------------------------------
@@ -446,7 +447,7 @@ class AgentRouter:
             fallback_roles=[r for r, _ in ranked[1:3] if r != best_role],
             capability_score=best_score,
             rationale=(
-                f"load_balance: score={best_score:.2f} " f"util={best_agent.utilization:.2f}"
+                f"load_balance: score={best_score:.2f} util={best_agent.utilization:.2f}"
                 if best_agent
                 else "load_balance: no-agent"
             ),
@@ -704,7 +705,7 @@ class AgentOrchestrator:
             self._input_sanitizer = input_sanitizer
         elif sanitize_llm_context:
             _mod = importlib.import_module("zephyr.security.llm_defense.llm_security.input_sanitizer")
-            InputSanitizer = getattr(_mod, "InputSanitizer")
+            InputSanitizer = _mod.InputSanitizer
             self._input_sanitizer = InputSanitizer(root=str(_REPO_ROOT))
         else:
             self._input_sanitizer = None
@@ -763,7 +764,7 @@ class AgentOrchestrator:
         ctx = context or {}
         if self._input_sanitizer is not None:
             _mod = importlib.import_module("zephyr.security.llm_defense.llm_security.input_sanitizer")
-            ContextInjectionError = getattr(_mod, "ContextInjectionError")
+            ContextInjectionError = _mod.ContextInjectionError
             try:
                 if claim:
                     self._input_sanitizer.validate_llm_context(claim)

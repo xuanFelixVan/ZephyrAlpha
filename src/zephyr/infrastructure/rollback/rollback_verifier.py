@@ -38,7 +38,6 @@ import shutil
 import sqlite3
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -67,7 +66,6 @@ class DifferentialReport:
 
 
 class RollbackVerifier:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -104,6 +102,7 @@ class RollbackVerifier:
             elif f_path.suffix in (".yaml", ".yml"):
                 try:
                     import yaml
+
                     yaml.safe_load(f_path.read_text(encoding="utf-8"))
                 except Exception as e:
                     syntax_errors.append(f"{f_path_str}: YAML parse error: {e}")
@@ -135,8 +134,7 @@ class RollbackVerifier:
     def heal_db_consistency(self, db_path: Path | None = None) -> DBHealReport:
         db = db_path or (self._project_root / "data" / "databases" / "governance.db")
         if not db.exists():
-            return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0,
-                                details=["DB not found"])
+            return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0, details=["DB not found"])
 
         tasks_fixed = 0
         gates_fixed = 0
@@ -185,8 +183,7 @@ class RollbackVerifier:
                 details=details,
             )
         except Exception as e:
-            return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0,
-                                details=[str(e)])
+            return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0, details=[str(e)])
 
     def differential_check(self, db_before: Path, db_after: Path) -> DifferentialReport:
         rows_compared = 0

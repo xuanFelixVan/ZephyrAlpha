@@ -8,8 +8,6 @@
 """
 
 from __future__ import annotations
-from _shared.constants import EXIT_FINDINGS
-
 
 import argparse
 import json
@@ -18,6 +16,8 @@ import os
 import re
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -108,7 +108,9 @@ def generate_report() -> dict:
     return {
         "total_blind_spots": grand_total,
         "covered_in_code": grand_covered,
-        "overall_closure_rate": f"{grand_covered}/{grand_total} ({grand_covered/grand_total*100:.1f}%)" if grand_total else "N/A",
+        "overall_closure_rate": f"{grand_covered}/{grand_total} ({grand_covered / grand_total * 100:.1f}%)"
+        if grand_total
+        else "N/A",
         "subsystems": subsystems,
         "code_references": code_refs,
     }
@@ -130,13 +132,13 @@ def main() -> None:
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return
 
-    print(f"\n{'='*60}")
-    print(f"  盲点闭合追踪报告")
-    print(f"{'='*60}")
+    print(f"\n{'=' * 60}")
+    print("  盲点闭合追踪报告")
+    print(f"{'=' * 60}")
     print(f"  全项目盲点总数: {report['total_blind_spots']}")
     print(f"  代码中已引用:   {report['covered_in_code']}")
     print(f"  闭合率:         {report['overall_closure_rate']}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     for subsystem, stats in report["subsystems"].items():
         print(f"  [{subsystem}]")
@@ -145,10 +147,15 @@ def main() -> None:
         print()
 
     uncovered_count = 0
-    for subsystem, ids in {k: v for k, v in {
-        "pipeline": extract_ids_from_blueprint("docs/03_modules/_cross_layer/pipeline/blueprint.md", "pipeline"),
-        "feedback-loop": extract_ids_from_blueprint("docs/03_modules/_cross_layer/feedback-loop/blueprint.md", "feedback-loop"),
-    }.items()}.items():
+    for subsystem, ids in {
+        k: v
+        for k, v in {
+            "pipeline": extract_ids_from_blueprint("docs/03_modules/_cross_layer/pipeline/blueprint.md", "pipeline"),
+            "feedback-loop": extract_ids_from_blueprint(
+                "docs/03_modules/_cross_layer/feedback-loop/blueprint.md", "feedback-loop"
+            ),
+        }.items()
+    }.items():
         code_refs = scan_codebase_for_references(ids)
         uncovered = [bid for bid in ids if bid not in code_refs]
         if uncovered:
@@ -156,7 +163,7 @@ def main() -> None:
             for bid in sorted(uncovered)[:20]:
                 print(f"    {bid}")
             if len(uncovered) > 20:
-                print(f"    ... and {len(uncovered)-20} more")
+                print(f"    ... and {len(uncovered) - 20} more")
             uncovered_count += len(uncovered)
             print()
 

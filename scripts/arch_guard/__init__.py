@@ -15,4 +15,15 @@
   invariants.yaml 中 fitness_function_path 字段指向本目录的具体脚本。
   本目录是 invariants 的"执行面"——invariants 是"设计面"。
 """
-__all__ = ['check_acl_boundary', 'check_cross_plane_communication', 'check_fe_acl_boundary', 'check_hot_path_purity', 'check_scaffold_exit_gates', 'check_schema_consistency', 'fitness_functions', 'import_linter', 'run_all']
+
+__all__ = [
+    "check_acl_boundary",
+    "check_cross_plane_communication",
+    "check_fe_acl_boundary",
+    "check_hot_path_purity",
+    "check_scaffold_exit_gates",
+    "check_schema_consistency",
+    "fitness_functions",
+    "import_linter",
+    "run_all",
+]

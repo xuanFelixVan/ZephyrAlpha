@@ -43,13 +43,13 @@ warn_only: false
 import argparse
 import json as json_mod
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
+
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
@@ -103,15 +103,17 @@ def _scan_file(file_path: Path) -> list[dict]:
     try:
         content = file_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
-        findings.append({
-            "file": str(file_path.relative_to(_REPO_ROOT)),
-            "severity": "CRITICAL",
-            "line": 0,
-            "column": 0,
-            "char_code": "U+????",
-            "char_name": "UNREADABLE",
-            "detail": "文件无法以 UTF-8 读取——可能被损坏或编码错误",
-        })
+        findings.append(
+            {
+                "file": str(file_path.relative_to(_REPO_ROOT)),
+                "severity": "CRITICAL",
+                "line": 0,
+                "column": 0,
+                "char_code": "U+????",
+                "char_name": "UNREADABLE",
+                "detail": "文件无法以 UTF-8 读取——可能被损坏或编码错误",
+            }
+        )
         return findings
 
     for idx, ch in enumerate(content):
@@ -119,27 +121,31 @@ def _scan_file(file_path: Path) -> list[dict]:
         if cp in DANGEROUS_INVISIBLE:
             line = content[:idx].count("\n") + 1
             col = idx - (content[:idx].rfind("\n") + 1) + 1 if "\n" in content[:idx] else idx + 1
-            findings.append({
-                "file": str(file_path.relative_to(_REPO_ROOT)),
-                "severity": "CRITICAL",
-                "line": line,
-                "column": col,
-                "char_code": f"U+{cp:04X}",
-                "char_name": DANGEROUS_INVISIBLE[cp],
-                "detail": f"发现不可见控制字符 {DANGEROUS_INVISIBLE[cp]} (U+{cp:04X})——可能为 Rules File Backdoor 投毒",
-            })
+            findings.append(
+                {
+                    "file": str(file_path.relative_to(_REPO_ROOT)),
+                    "severity": "CRITICAL",
+                    "line": line,
+                    "column": col,
+                    "char_code": f"U+{cp:04X}",
+                    "char_name": DANGEROUS_INVISIBLE[cp],
+                    "detail": f"发现不可见控制字符 {DANGEROUS_INVISIBLE[cp]} (U+{cp:04X})——可能为 Rules File Backdoor 投毒",
+                }
+            )
         elif cp < 0x20 and cp not in CONTROL_WHITELIST:
             line = content[:idx].count("\n") + 1
             col = idx - (content[:idx].rfind("\n") + 1) + 1 if "\n" in content[:idx] else idx + 1
-            findings.append({
-                "file": str(file_path.relative_to(_REPO_ROOT)),
-                "severity": "HIGH",
-                "line": line,
-                "column": col,
-                "char_code": f"U+{cp:04X}",
-                "char_name": f"ASCII CONTROL {cp}",
-                "detail": f"ASCII 控制字符 U+{cp:04X} 不应出现在文本文件规则中",
-            })
+            findings.append(
+                {
+                    "file": str(file_path.relative_to(_REPO_ROOT)),
+                    "severity": "HIGH",
+                    "line": line,
+                    "column": col,
+                    "char_code": f"U+{cp:04X}",
+                    "char_name": f"ASCII CONTROL {cp}",
+                    "detail": f"ASCII 控制字符 U+{cp:04X} 不应出现在文本文件规则中",
+                }
+            )
 
     return findings
 

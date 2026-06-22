@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.cache_manager import (
-    CacheManager, FunctionCacheEntry, CacheMetadata, FunctionCache,
+    CacheManager,
+    FunctionCache,
 )
+
 
 class TestCacheManager:
     def test_instantiation_default(self):

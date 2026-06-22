@@ -11,16 +11,15 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 存储失败返回False
 # [TESTS] tests/audit-orchestrator/test_tiered_storage.py
-
-import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["TieredStorage"]
+
 
 class TieredStorage:
     HOT_DAYS = 7
@@ -56,15 +55,16 @@ class TieredStorage:
 
             target_dir = self._warm_dir if tier == "warm" else self._cold_dir
             target_path = target_dir / report_path.name
-            result["details"].append({
-                "file": report_path.name,
-                "from": tier_from(report_path),
-                "to": tier,
-            })
+            result["details"].append(
+                {
+                    "file": report_path.name,
+                    "from": tier_from(report_path),
+                    "to": tier,
+                }
+            )
 
             if not dry_run:
                 try:
-                    import os
                     report_path.rename(target_path)
                     result["migrated"] += 1
                 except Exception as exc:
@@ -88,6 +88,7 @@ class TieredStorage:
             if path.exists():
                 return path
         return None
+
 
 def tier_from(path: Path) -> str:
     age = datetime.now() - datetime.fromtimestamp(path.stat().st_mtime)

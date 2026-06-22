@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from zephyr.governance.lifecycle_governance.api_lifecycle import (
     APIEndpoint,
@@ -37,24 +37,24 @@ class TestDeprecationNotice:
     def test_creation(self):
         notice = DeprecationNotice(
             api_name="test-api",
-            deprecated_at=datetime.now(timezone.utc).isoformat(),
-            removal_at=(datetime.now(timezone.utc) + timedelta(days=90)).isoformat(),
+            deprecated_at=datetime.now(UTC).isoformat(),
+            removal_at=(datetime.now(UTC) + timedelta(days=90)).isoformat(),
         )
         assert notice.api_name == "test-api"
         assert notice.grace_period_days == 90
 
     def test_days_until_removal_positive(self):
-        future = datetime.now(timezone.utc) + timedelta(days=45)
+        future = datetime.now(UTC) + timedelta(days=45)
         notice = DeprecationNotice(
             api_name="test",
-            deprecated_at=datetime.now(timezone.utc).isoformat(),
+            deprecated_at=datetime.now(UTC).isoformat(),
             removal_at=future.isoformat(),
             grace_period_days=90,
         )
         assert notice.days_until_removal > 0
 
     def test_days_until_removal_expired(self):
-        past = datetime.now(timezone.utc) - timedelta(days=200)
+        past = datetime.now(UTC) - timedelta(days=200)
         notice = DeprecationNotice(
             api_name="test",
             deprecated_at=past.isoformat(),
@@ -64,7 +64,7 @@ class TestDeprecationNotice:
         assert notice.days_until_removal == 0
 
     def test_expired_property(self):
-        past = datetime.now(timezone.utc) - timedelta(days=200)
+        past = datetime.now(UTC) - timedelta(days=200)
         notice = DeprecationNotice(
             api_name="test",
             deprecated_at=past.isoformat(),
@@ -76,8 +76,8 @@ class TestDeprecationNotice:
     def test_not_expired_property(self):
         notice = DeprecationNotice(
             api_name="test",
-            deprecated_at=datetime.now(timezone.utc).isoformat(),
-            removal_at=(datetime.now(timezone.utc) + timedelta(days=90)).isoformat(),
+            deprecated_at=datetime.now(UTC).isoformat(),
+            removal_at=(datetime.now(UTC) + timedelta(days=90)).isoformat(),
             grace_period_days=90,
         )
         assert notice.expired is False

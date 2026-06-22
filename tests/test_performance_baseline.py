@@ -11,11 +11,12 @@
 # [TESTS] test_performance_baseline.py
 
 import pytest
+
 from zephyr.behavioral_audit.performance_baseline import (
-    LatencySegment,
-    PERFORMANCE_BASELINE,
-    E2E_MAX_MS,
     E2E_BUDGET_BREAKDOWN,
+    E2E_MAX_MS,
+    PERFORMANCE_BASELINE,
+    LatencySegment,
     get_segment,
     validate_e2e,
 )

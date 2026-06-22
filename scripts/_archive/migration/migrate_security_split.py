@@ -12,11 +12,9 @@ DM-315: 拆分security/目录到多设计域路径
 """
 
 import os
-import re
 import shutil
-import sys
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 ROOT = Path(r"D:\ZephyrAlpha")
 SRC = ROOT / "src" / "zephyr"
@@ -112,7 +110,7 @@ def move_files():
 def update_imports_in_file(file_path: str) -> list:
     """更新单个文件中的import路径和MODULE头部"""
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
     except (UnicodeDecodeError, PermissionError):
         return []
@@ -219,8 +217,10 @@ def main():
     deleted = delete_old_files()
 
     print("\n" + "=" * 60)
-    print(f"完成: 创建 {len(created)} 目录, 移动 {len(moved)} 文件, "
-          f"更新 {len(changes)} import, 删除 {len(deleted)} 旧目录")
+    print(
+        f"完成: 创建 {len(created)} 目录, 移动 {len(moved)} 文件, "
+        f"更新 {len(changes)} import, 删除 {len(deleted)} 旧目录"
+    )
     print("=" * 60)
 
 

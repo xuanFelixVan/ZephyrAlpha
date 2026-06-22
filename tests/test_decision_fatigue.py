@@ -12,13 +12,11 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.decision_fatigue import (
     EisenhowerPriority,
     TaskTriage,
-    triage,
     filter_priority,
+    triage,
 )
 
 
@@ -102,10 +100,7 @@ class TestFilterPriority:
 
 class TestBoundary:
     def test_triage_all_same_priority(self):
-        tasks = [
-            TaskTriage(task_id=f"T{i}", description="d", urgent=True, important=True)
-            for i in range(5)
-        ]
+        tasks = [TaskTriage(task_id=f"T{i}", description="d", urgent=True, important=True) for i in range(5)]
         result = triage(tasks)
         assert len(result[EisenhowerPriority.P0_DO_NOW]) == 5
         assert len(result[EisenhowerPriority.P1_SCHEDULE]) == 0

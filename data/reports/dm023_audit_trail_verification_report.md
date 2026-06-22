@@ -1,8 +1,8 @@
 # DM-023: audit_trail 循环依赖修复复查验证报告
 
-**任务卡ID**: DM-023  
-**执行时间**: 2026-06-14  
-**执行模型**: deepseek  
+**任务卡ID**: DM-023
+**执行时间**: 2026-06-14
+**执行模型**: deepseek
 **前置任务**: DM-022（audit_trail 循环依赖修复）
 
 ---
@@ -84,7 +84,7 @@ def __getattr__(name):
 - `ScriptResult`
 - `TextToFindingAdapter`
 
-**结论**: 
+**结论**:
 - `TextToFindingAdapter` 不再在顶层 import
 - 使用了 `__getattr__` 延迟导入机制
 - 所有符号已在 `__all__` 中注册

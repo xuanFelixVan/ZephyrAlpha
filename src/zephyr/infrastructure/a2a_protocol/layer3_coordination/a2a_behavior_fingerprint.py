@@ -30,10 +30,8 @@
 当 Agent 行为偏离其历史指纹时 → 触发 A2AAnomalyDetector
 """
 
-
 from __future__ import annotations
 
-from collections import defaultdict
 from dataclasses import dataclass, field
 
 
@@ -46,7 +44,7 @@ class BehaviorFingerprint:
     total_session_seconds: float = 0.0
     interactions: dict[str, int] = field(default_factory=dict)
 
-    def similarity(self, other: "BehaviorFingerprint") -> float:
+    def similarity(self, other: BehaviorFingerprint) -> float:
         actions_a = set(self.action_counts.keys())
         actions_b = set(other.action_counts.keys())
         if not actions_a or not actions_b:

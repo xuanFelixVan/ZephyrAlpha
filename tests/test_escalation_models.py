@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
-
-import pytest
+from datetime import datetime
 
 from zephyr.governance.escalation_models import (
     DEFAULT_ESCALATION_RULES,

@@ -75,12 +75,14 @@ class DedupExtractor(BaseFixer):
                 continue
         for h, occurrences in code_blocks.items():
             if len(occurrences) >= self._min_occurrences:
-                findings.append({
-                    "hash": h,
-                    "occurrences": len(occurrences),
-                    "locations": occurrences,
-                    "type": "code_duplication",
-                })
+                findings.append(
+                    {
+                        "hash": h,
+                        "occurrences": len(occurrences),
+                        "locations": occurrences,
+                        "type": "code_duplication",
+                    }
+                )
         return findings
 
     def _normalize_code(self, code: str) -> str:
@@ -170,7 +172,9 @@ class DedupExtractor(BaseFixer):
             compile(content, target, "exec")
             return ValidationResult(valid=True, check_name="dedup_extraction", evidence="Syntax check passed")
         except SyntaxError as exc:
-            return ValidationResult(valid=False, check_name="dedup_extraction", evidence="", error=f"Syntax error: {exc}")
+            return ValidationResult(
+                valid=False, check_name="dedup_extraction", evidence="", error=f"Syntax error: {exc}"
+            )
 
     def rollback(self, target: str) -> bool:
         return False

@@ -6,7 +6,9 @@ update_progress.py — 从 domain_progress.json 批量更新施工进度.
 DOM-GOV-001 §7 运维脚本.
 用法: python scripts/governance/update_progress.py [module_id] [progress_pct]
 """
+
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -15,13 +17,12 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PROGRESS_FILE = PROJECT_ROOT / "docs" / "03_modules" / "_domain-governance" / "domain_progress.json"
@@ -36,7 +37,7 @@ def load() -> dict:
 
 def save(data: dict) -> None:
     """save implementation."""
-    data["last_updated"] = datetime.now(timezone.utc).isoformat()
+    data["last_updated"] = datetime.now(UTC).isoformat()
     tmp = str(PROGRESS_FILE) + f".{__import__('os').getpid()}.tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)

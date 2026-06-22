@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for evolution_engine.py (T-3-14, A24)
 =================================================
@@ -18,15 +19,18 @@ Unit tests for evolution_engine.py (T-3-14, A24)
 from datetime import UTC, datetime
 
 import pytest
+
 from zephyr.ops.evolution_engine import (
     DEFAULT_THRESHOLDS,
     EvolutionEngine,
     EvolutionProposal,
     EvolutionReport,
     EvolutionSignal,
-    Severity as EvolutionSeverity,
     FeedbackLayer,
     evolve,
+)
+from zephyr.ops.evolution_engine import (
+    Severity as EvolutionSeverity,
 )
 from zephyr.ops.feedback_collector import FeedbackCollector
 

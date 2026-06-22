@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class AgentQualityTracker:
     def __init__(self):
         self._scores: dict[str, list[float]] = {}

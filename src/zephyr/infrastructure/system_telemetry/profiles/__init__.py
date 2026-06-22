@@ -17,8 +17,8 @@
 
 from __future__ import annotations
 
-import time
 import threading
+import time
 
 
 class ProfileSubsystem:
@@ -41,17 +41,50 @@ class ProfileSubsystem:
             name = self._active_profile
             self._active_profile = None
             self._start_time = 0.0
-        return {"name": name, "action": "stop", "elapsed_s": round(elapsed, 6), "module_id": self._module_id, "elapsed_ms": round(elapsed * 1000, 3)}
+        return {
+            "name": name,
+            "action": "stop",
+            "elapsed_s": round(elapsed, 6),
+            "module_id": self._module_id,
+            "elapsed_ms": round(elapsed * 1000, 3),
+        }
 
     def snapshot(self) -> dict:
         if self._test_mode:
-            return {"module_id": self._module_id, "cpu_percent": 0.0, "memory_mb": 0.0, "memory_percent": 0.0, "disk_percent": 0.0, "open_files": 0, "thread_count": 0, "test_mode": True}
+            return {
+                "module_id": self._module_id,
+                "cpu_percent": 0.0,
+                "memory_mb": 0.0,
+                "memory_percent": 0.0,
+                "disk_percent": 0.0,
+                "open_files": 0,
+                "thread_count": 0,
+                "test_mode": True,
+            }
         try:
             import psutil
+
             proc = psutil.Process()
             mem = proc.memory_info()
             disk = psutil.disk_usage("/")
-            return {"module_id": self._module_id, "cpu_percent": proc.cpu_percent(interval=0.1), "memory_percent": proc.memory_percent(), "memory_mb": round(mem.rss / (1024 * 1024), 2), "disk_percent": disk.percent, "open_files": len(proc.open_files()), "thread_count": proc.num_threads(), "test_mode": False}
+            return {
+                "module_id": self._module_id,
+                "cpu_percent": proc.cpu_percent(interval=0.1),
+                "memory_percent": proc.memory_percent(),
+                "memory_mb": round(mem.rss / (1024 * 1024), 2),
+                "disk_percent": disk.percent,
+                "open_files": len(proc.open_files()),
+                "thread_count": proc.num_threads(),
+                "test_mode": False,
+            }
         except Exception:
-            return {"module_id": self._module_id, "cpu_percent": -1.0, "memory_mb": 0.0, "disk_percent": -1.0, "error": "psutil unavailable"}
-__all__ = ['ProfileSubsystem', 'disk', 'elapsed', 'mem', 'name', 'proc', 'snapshot', 'start', 'stop']
+            return {
+                "module_id": self._module_id,
+                "cpu_percent": -1.0,
+                "memory_mb": 0.0,
+                "disk_percent": -1.0,
+                "error": "psutil unavailable",
+            }
+
+
+__all__ = ["ProfileSubsystem", "disk", "elapsed", "mem", "name", "proc", "snapshot", "start", "stop"]

@@ -10,4 +10,5 @@
 # [ERROR_CONTRACT] ImportError_on_missing_module
 # [TESTS] tests/test_domain_structure.py
 """registry_management subdomain package — D-GOV-REGISTRY_MANAGEMENT."""
+
 __all__ = []

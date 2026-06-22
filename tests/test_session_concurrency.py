@@ -15,13 +15,11 @@ from __future__ import annotations
 import os
 import tempfile
 
-import pytest
-
 from zephyr.security.access_control.session_concurrency import (
     CONFLICT_SCENARIOS,
     LOCK_TTL_SECONDS,
-    ConflictType,
     ConcurrencyManager,
+    ConflictType,
     LockLevel,
     ZephyrLock,
     detect_mtime_conflict,

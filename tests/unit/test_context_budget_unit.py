@@ -9,8 +9,6 @@
 Unit tests for context_budget.py
 """
 
-import pytest
-
 from zephyr.autonomy_core.context_budget import (
     BudgetEntry,
     ContextBudget,

@@ -41,7 +41,6 @@ Usage:
 
 from __future__ import annotations
 
-
 import logging
 import threading
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
@@ -165,6 +164,7 @@ def get_queue(
         _queue = TaskQueue(repo, orchestrator)
     return _queue
 
+
 class QueueConfig:
     def __init__(self, max_size=1000, priority_levels=3, timeout=300, retry_limit=3):
         self.max_size = max_size
@@ -172,17 +172,19 @@ class QueueConfig:
         self.timeout = timeout
         self.retry_limit = retry_limit
 
+
 class QueueItem:
-    def __init__(self, item_id='', task=None, priority=0, created_at=None, status='pending'):
+    def __init__(self, item_id="", task=None, priority=0, created_at=None, status="pending"):
         self.item_id = item_id
         self.task = task
         self.priority = priority
         self.created_at = created_at
         self.status = status
 
+
 class QueueItemStatus:
-    PENDING = 'PENDING'
-    RUNNING = 'RUNNING'
-    COMPLETED = 'COMPLETED'
-    FAILED = 'FAILED'
-    CANCELLED = 'CANCELLED'
+    PENDING = "PENDING"
+    RUNNING = "RUNNING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    CANCELLED = "CANCELLED"

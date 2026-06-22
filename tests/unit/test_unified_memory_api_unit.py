@@ -30,6 +30,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+from zephyr.integration.shared_08.security.capability import CapabilityDenied, CapabilityRegistry
 from zephyr.intelligence.model_evaluation.unified_memory_api import (
     UNIFIED_COLLECTION,
     ChromaMemoryBackend,
@@ -43,7 +45,6 @@ from zephyr.intelligence.model_evaluation.unified_memory_api import (
     get_unified_memory_api,
     reset_unified_memory_api,
 )
-from zephyr.integration.shared_08.security.capability import CapabilityDenied, CapabilityRegistry
 
 # ---------------------------------------------------------------------------
 # Fixtures

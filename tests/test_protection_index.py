@@ -11,24 +11,26 @@
 # [TESTS] python -m pytest tests/test_protection_index.py -q
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
     from zephyr.trading.protection_index import (
-        ProtectionIndex,
-        ProtectionEntry,
-        IndexStats,
-        _fnv1a_64,
-        _SimpleBloomFilter,
-        _PrefixTrie,
         ANCHOR_PATTERNS,
-        PROTECTED_PATTERNS,
         NORMAL_PATTERNS,
+        PROTECTED_PATTERNS,
         PUBLIC_PATTERNS,
+        IndexStats,
+        ProtectionEntry,
+        ProtectionIndex,
+        _fnv1a_64,
+        _PrefixTrie,
+        _SimpleBloomFilter,
     )
     from zephyr.trading.verdict_engine import ProtectionLevel
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as exc:
@@ -38,7 +40,6 @@ except Exception as exc:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestPatternConstants:
-
     def test_anchor_patterns_non_empty(self):
         assert len(ANCHOR_PATTERNS) > 0
 
@@ -68,7 +69,6 @@ class TestPatternConstants:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionEntry:
-
     def test_defaults(self):
         entry = ProtectionEntry()
         assert entry.path == ""
@@ -96,7 +96,6 @@ class TestProtectionEntry:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestIndexStats:
-
     def test_defaults(self):
         stats = IndexStats()
         assert stats.total_entries == 0
@@ -115,7 +114,6 @@ class TestIndexStats:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestFnv1a64:
-
     def test_returns_int(self):
         result = _fnv1a_64(b"hello")
         assert isinstance(result, int)
@@ -137,7 +135,6 @@ class TestFnv1a64:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestSimpleBloomFilter:
-
     def test_add_and_might_contain(self):
         bf = _SimpleBloomFilter(expected_items=100, fp_rate=0.01)
         bf.add("project_rules.md")
@@ -188,7 +185,6 @@ class TestSimpleBloomFilter:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestPrefixTrie:
-
     def test_insert_and_lookup(self):
         trie = _PrefixTrie()
         trie.insert("src/zephyr/", ProtectionLevel.protected)
@@ -233,7 +229,6 @@ class TestPrefixTrie:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexQuery:
-
     def test_query_anchor_exact(self):
         idx = ProtectionIndex(project_root=".")
         assert idx.query("project_rules.md") == ProtectionLevel.anchor
@@ -269,7 +264,6 @@ class TestProtectionIndexQuery:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexBatch:
-
     def test_query_batch(self):
         idx = ProtectionIndex(project_root=".")
         paths = [
@@ -290,7 +284,6 @@ class TestProtectionIndexBatch:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexIsAnchor:
-
     def test_is_anchor_true(self):
         idx = ProtectionIndex(project_root=".")
         assert idx.is_anchor("project_rules.md") is True
@@ -306,7 +299,6 @@ class TestProtectionIndexIsAnchor:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexRegisterUnregister:
-
     def test_register_adds_entry(self):
         idx = ProtectionIndex(project_root=".")
         idx.register("custom/path.py", ProtectionLevel.protected, "MOD-TEST", "test reason")
@@ -346,7 +338,6 @@ class TestProtectionIndexRegisterUnregister:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexGetEntry:
-
     def test_get_entry_nonexistent(self):
         idx = ProtectionIndex(project_root=".")
         assert idx.get_entry("nonexistent.py") is None
@@ -360,7 +351,6 @@ class TestProtectionIndexGetEntry:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexRebuild:
-
     def test_rebuild_returns_stats(self):
         idx = ProtectionIndex(project_root=".")
         idx.register("custom.py", ProtectionLevel.anchor, "MOD", "test")
@@ -386,7 +376,6 @@ class TestProtectionIndexRebuild:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexGetStats:
-
     def test_stats_type(self):
         idx = ProtectionIndex(project_root=".")
         stats = idx.get_stats()
@@ -410,7 +399,6 @@ class TestProtectionIndexGetStats:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexVerifyIntegrity:
-
     def test_healthy_index(self):
         idx = ProtectionIndex(project_root=".")
         issues = idx.verify_integrity()
@@ -426,7 +414,6 @@ class TestProtectionIndexVerifyIntegrity:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestProtectionIndexHealthCheck:
-
     def test_healthy_status(self):
         idx = ProtectionIndex(project_root=".")
         result = idx.health_check()

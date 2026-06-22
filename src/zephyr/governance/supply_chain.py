@@ -31,20 +31,15 @@ audit-trail.supply_chain — MOD-INF-020 · 供应链审计
   - 供应链攻击检测: 检测可疑的包来源
 """
 
-
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import subprocess
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
-
-from zephyr.governance.audit_trail.models import AuditEventType
 
 _logger = logging.getLogger(__name__)
 
@@ -184,7 +179,9 @@ class SupplyChainAuditor:
         if not is_valid:
             _logger.warning(
                 "SupplyChainAuditor: integrity mismatch for %s (expected=%s, actual=%s)",
-                package_name, expected_sha256[:16], actual_hash[:16] if actual_hash else "N/A",
+                package_name,
+                expected_sha256[:16],
+                actual_hash[:16] if actual_hash else "N/A",
             )
 
         return IntegrityVerifyResult(
@@ -203,7 +200,10 @@ class SupplyChainAuditor:
         try:
             result = subprocess.run(
                 ["pip", "show", "-f", package_name],
-                capture_output=True, text=True, encoding="utf-8", timeout=10,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=10,
             )
             if result.returncode != 0:
                 return ""

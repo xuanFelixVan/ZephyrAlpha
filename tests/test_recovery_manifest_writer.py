@@ -9,9 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
-from pathlib import Path
 from zephyr.governance.recovery_manifest_writer import RecoveryManifestWriter
+
 
 class TestRecoveryManifestWriter:
     def test_instantiation(self):
@@ -28,7 +27,5 @@ class TestRecoveryManifestWriter:
 
     def test_write_empty_files(self, tmp_path):
         writer = RecoveryManifestWriter()
-        result = writer.write(
-            affected_files=[], output_path=str(tmp_path / "recovery.yaml")
-        )
+        result = writer.write(affected_files=[], output_path=str(tmp_path / "recovery.yaml"))
         assert result is not None

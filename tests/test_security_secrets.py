@@ -20,15 +20,16 @@
 # [TESTS] pytest tests/test_security_secrets.py -q
 
 import asyncio
-import os
+
 import pytest
+
 from zephyr.security.llm_defense.llm_security.patterns.secrets import (
-    SecretsError,
-    SecretProvider,
-    EnvSecretProvider,
-    DotEnvSecretProvider,
-    sanitize_secret,
     SECRET_INDICATOR_PATTERNS,
+    DotEnvSecretProvider,
+    EnvSecretProvider,
+    SecretProvider,
+    SecretsError,
+    sanitize_secret,
 )
 
 
@@ -64,17 +65,13 @@ class TestEnvSecretProvider:
     def test_get_existing_secret(self, monkeypatch):
         monkeypatch.setenv("TEST_SECRET_001", "my-secret-value")
         provider = EnvSecretProvider()
-        result = asyncio.get_event_loop().run_until_complete(
-            provider.get_secret("TEST_SECRET_001")
-        )
+        result = asyncio.get_event_loop().run_until_complete(provider.get_secret("TEST_SECRET_001"))
         assert result == "my-secret-value"
 
     def test_get_missing_secret_raises(self):
         provider = EnvSecretProvider()
         with pytest.raises(SecretsError, match="not found"):
-            asyncio.get_event_loop().run_until_complete(
-                provider.get_secret("NONEXISTENT_SECRET_XYZ_999")
-            )
+            asyncio.get_event_loop().run_until_complete(provider.get_secret("NONEXISTENT_SECRET_XYZ_999"))
 
     def test_get_secret_or_default_exists(self, monkeypatch):
         monkeypatch.setenv("TEST_SECRET_002", "val")
@@ -160,5 +157,6 @@ class TestDotEnvSecretProvider:
 class TestSecretsError:
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         err = SecretsError("secret not found", details={"key": "X"})
         assert isinstance(err, ZephyrBaseError)

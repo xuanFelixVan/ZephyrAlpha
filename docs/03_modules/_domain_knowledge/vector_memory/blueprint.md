@@ -1,6 +1,6 @@
-﻿---
+---
 module_id: MOD-INF-011
-submodule_path: src/zephyr/vector-memory
+submodule_path: src/zephyr/governance/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
@@ -15,7 +15,7 @@ valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 belongs_to: "MOD-MASTER-001"
-actual_disk_path: "src/zephyr/vector-memory/"
+actual_disk_path: "src/zephyr/governance/vector_memory/"
 last_updated: "2026-05-18"
 last_verified: "2026-05-18"
 generation: 1
@@ -1418,7 +1418,7 @@ class FeedbackEntry(BaseModel):
 | 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 注册 |
 | 7 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码规范 |
 | 8 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
-| 9 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则 |
+| 9 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 10 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 
 ---

@@ -11,6 +11,7 @@
 [ERROR_CONTRACT] exit 0=CLEAN, exit 1=ORPHANS, exit 2=ERROR
 [TESTS] tests/governance/test_check_orphan_outputs.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -22,13 +23,14 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import argparse
 import re
 import subprocess
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: [--warn-only]
@@ -51,10 +53,7 @@ def count_importers(module_path: str) -> int:
     else:
         import_stmt = f"from zephyr.{parts[-1]}"
     try:
-        result = subprocess.run(
-            ["rg", "-c", import_stmt, str(SRC_DIR)],
-            capture_output=True, text=True, timeout=30
-        )
+        result = subprocess.run(["rg", "-c", import_stmt, str(SRC_DIR)], capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
             return 0
         return len([line for line in result.stdout.strip().splitlines() if line])
@@ -88,11 +87,11 @@ def main() -> int:
                     path_part = parts[2] if len(parts) > 2 else ""
                     consumer_min_str = parts[4] if len(parts) > 4 else "≥1"
                     if "src/zephyr" in path_part:
-                        match = re.search(r'src/zephyr/([^\s`|]+)', path_part)
+                        match = re.search(r"src/zephyr/([^\s`|]+)", path_part)
                         if match:
                             module_path = match.group(1).rstrip("/`")
                             min_val = 1
-                            m = re.search(r'≥(\d+)', consumer_min_str)
+                            m = re.search(r"≥(\d+)", consumer_min_str)
                             if m:
                                 min_val = int(m.group(1))
                             if min_val > 0:

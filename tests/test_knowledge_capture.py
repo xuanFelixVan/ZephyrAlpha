@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_capture.py
 
-import pytest
 
 from zephyr.ops.collectors.knowledge_capture import KnowledgeCapture
 

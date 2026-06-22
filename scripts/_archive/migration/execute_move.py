@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import argparse
-import os
 import shutil
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -31,8 +30,8 @@ from pathlib import Path
 
 from _migration_shared import (
     BATCH_TO_GROUP,
-    PROJECT_ROOT,
     MIGRATION_LOG_FILE,
+    PROJECT_ROOT,
     filter_by_batch,
     load_mapping,
     load_migration_log,
@@ -85,13 +84,15 @@ def _build_file_copy_plan(batch_mappings: list[dict]) -> list[dict]:
             continue
         seen_targets.add(target_key)
 
-        plan.append({
-            "src": str(source),
-            "dst": str(target),
-            "domain": m.get("domain", ""),
-            "module_id": m.get("module_id", ""),
-            "module_name": m.get("module_name", ""),
-        })
+        plan.append(
+            {
+                "src": str(source),
+                "dst": str(target),
+                "domain": m.get("domain", ""),
+                "module_id": m.get("module_id", ""),
+                "module_name": m.get("module_name", ""),
+            }
+        )
 
     return plan
 
@@ -114,7 +115,12 @@ def _copy_single_file(src_str: str, dst_str: str) -> dict:
         try:
             if target.stat().st_size == source.stat().st_size:
                 if target.read_bytes() == source.read_bytes():
-                    return {"src": src_str, "dst": dst_str, "status": "skipped", "reason": "already_exists_same_content"}
+                    return {
+                        "src": src_str,
+                        "dst": dst_str,
+                        "status": "skipped",
+                        "reason": "already_exists_same_content",
+                    }
         except OSError:
             pass
 
@@ -147,7 +153,7 @@ def execute_batch(batch: int, dry_run: bool = False) -> int:
             domains_in_plan[d] = domains_in_plan.get(d, 0) + 1
         for d, c in sorted(domains_in_plan.items()):
             print(f"  {d}: {c} files")
-        print(f"\nSample copies:")
+        print("\nSample copies:")
         for p in plan[:10]:
             rel_src = Path(p["src"]).relative_to(PROJECT_ROOT) if p["src"].startswith(str(PROJECT_ROOT)) else p["src"]
             rel_dst = Path(p["dst"]).relative_to(PROJECT_ROOT) if p["dst"].startswith(str(PROJECT_ROOT)) else p["dst"]
@@ -204,7 +210,11 @@ def execute_batch(batch: int, dry_run: bool = False) -> int:
                 skipped += 1
             else:
                 failed += 1
-                rel_src = Path(result["src"]).relative_to(PROJECT_ROOT) if result["src"].startswith(str(PROJECT_ROOT)) else result["src"]
+                rel_src = (
+                    Path(result["src"]).relative_to(PROJECT_ROOT)
+                    if result["src"].startswith(str(PROJECT_ROOT))
+                    else result["src"]
+                )
                 print(f"  FAILED: {rel_src} ({result.get('reason', '')})")
 
     batch_entry["completed_at"] = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -217,7 +227,7 @@ def execute_batch(batch: int, dry_run: bool = False) -> int:
 
     save_migration_log(log)
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Copied:  {success}")
     print(f"  Failed:  {failed}")
     print(f"  Skipped: {skipped}")

@@ -21,28 +21,27 @@
 from __future__ import annotations
 
 import inspect
-import logging
-import sqlite3
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def repo():
     """创建 TaskRepository 实例。"""
     from zephyr.governance.persistence.task_repo import TaskRepository
+
     return TaskRepository()
 
 
 # ---------------------------------------------------------------------------
 # PART 1: 端到端测试
 # ---------------------------------------------------------------------------
+
 
 class TestE2E:
     """端到端功能验证。"""
@@ -71,12 +70,14 @@ class TestE2E:
         reminder_block = source[dm401_idx:return_idx]
         assert "if to_status == TaskStatus.COMPLETED:" in reminder_block
         # 不应该有 `and session_id` 作为 if 条件的一部分
-        assert "and session_id" not in reminder_block.split("if to_status")[1].split(":")[0], \
+        assert "and session_id" not in reminder_block.split("if to_status")[1].split(":")[0], (
             "DM-401 修复后不应有 `and session_id` 条件"
+        )
 
     def test_list_by_status_in_progress_works(self, repo):
         """list_by_status('IN_PROGRESS') 正常工作。"""
         import warnings
+
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             tasks = repo.list_by_status("IN_PROGRESS")
@@ -98,6 +99,7 @@ class TestE2E:
 # ---------------------------------------------------------------------------
 # PART 2: 红蓝对抗测试
 # ---------------------------------------------------------------------------
+
 
 class TestRedBlue:
     """红蓝对抗：异常输入和边界条件。"""
@@ -145,6 +147,7 @@ class TestRedBlue:
     def test_session_close_check_command_works(self, repo):
         """Session 关门检查命令可执行。"""
         import warnings
+
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             tasks = repo.list_by_status("IN_PROGRESS")

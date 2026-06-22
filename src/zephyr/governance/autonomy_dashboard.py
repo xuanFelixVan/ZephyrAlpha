@@ -33,16 +33,13 @@ Autonomy Dashboard — AI 自主感知健康仪表。
     - 对标特斯拉 Autopilot disengagement 人工接管模式
 """
 
-
 from __future__ import annotations
 
 import json
-import time
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
-
 
 EXIT_AUTONOMY_DOWNGRADED = 35
 
@@ -93,7 +90,7 @@ class HealthGauge:
     tier: int = 2
 
     @classmethod
-    def from_metrics(cls, metrics: AutonomyMetrics) -> "HealthGauge":
+    def from_metrics(cls, metrics: AutonomyMetrics) -> HealthGauge:
         success_score = metrics.success_rate * cls.success_weight
 
         intervention_score = (1.0 - metrics.intervention_rate) * cls.intervention_penalty
@@ -128,7 +125,6 @@ class DowngradeEvent:
 
 
 class AutonomyDashboard:
-
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/rollback/autonomy")
         self._metrics_path = self._data_dir / "autonomy_metrics.json"
@@ -179,7 +175,7 @@ class AutonomyDashboard:
         gauge = self.evaluate_health()
 
         return {
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "health_score": round(gauge.score, 4),
             "autonomy_tier": gauge.tier,
             "tier_description": self._tier_description(gauge.tier),
@@ -239,23 +235,20 @@ class AutonomyDashboard:
         self._save_metrics(AutonomyMetrics())
 
     def _check_degradation(self, gauge: HealthGauge) -> None:
-        recent_history = self._load_recent_history(
-            timedelta(seconds=self._degradation_window_s)
-        )
+        recent_history = self._load_recent_history(timedelta(seconds=self._degradation_window_s))
 
         if len(recent_history) < 2:
             return
 
         low_health_count = sum(
-            1 for h in recent_history
-            if HealthGauge.from_metrics(h).score < self._degradation_threshold
+            1 for h in recent_history if HealthGauge.from_metrics(h).score < self._degradation_threshold
         )
 
         if low_health_count >= len(recent_history):
             previous_tier = self._get_current_tier_from_history(recent_history[:-1])
             if gauge.tier < previous_tier:
                 event = DowngradeEvent(
-                    timestamp_utc=datetime.now(timezone.utc).isoformat(),
+                    timestamp_utc=datetime.now(UTC).isoformat(),
                     from_tier=previous_tier,
                     to_tier=gauge.tier,
                     health_score=gauge.score,
@@ -284,24 +277,28 @@ class AutonomyDashboard:
     def _save_metrics(self, metrics: AutonomyMetrics) -> None:
         self._data_dir.mkdir(parents=True, exist_ok=True)
         self._metrics_path.write_text(
-            json.dumps({
-                "total_rollbacks": metrics.total_rollbacks,
-                "successful_rollbacks": metrics.successful_rollbacks,
-                "failed_rollbacks": metrics.failed_rollbacks,
-                "human_interventions": metrics.human_interventions,
-                "false_positives": metrics.false_positives,
-                "total_token_cost": metrics.total_token_cost,
-                "total_time_to_restore_ms": metrics.total_time_to_restore_ms,
-                "samples_since_reset": metrics.samples_since_reset,
-                "last_updated": datetime.now(timezone.utc).isoformat(),
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "total_rollbacks": metrics.total_rollbacks,
+                    "successful_rollbacks": metrics.successful_rollbacks,
+                    "failed_rollbacks": metrics.failed_rollbacks,
+                    "human_interventions": metrics.human_interventions,
+                    "false_positives": metrics.false_positives,
+                    "total_token_cost": metrics.total_token_cost,
+                    "total_time_to_restore_ms": metrics.total_time_to_restore_ms,
+                    "samples_since_reset": metrics.samples_since_reset,
+                    "last_updated": datetime.now(UTC).isoformat(),
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )
 
     def _append_history(self, metrics: AutonomyMetrics) -> None:
         self._data_dir.mkdir(parents=True, exist_ok=True)
         entry = {
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "total_rollbacks": metrics.total_rollbacks,
             "success_rate": metrics.success_rate,
             "intervention_rate": metrics.intervention_rate,
@@ -313,7 +310,7 @@ class AutonomyDashboard:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
     def _load_recent_history(self, window: timedelta) -> list[AutonomyMetrics]:
-        cutoff = datetime.now(timezone.utc) - window
+        cutoff = datetime.now(UTC) - window
         recent: list[AutonomyMetrics] = []
 
         if not self._history_path.exists():
@@ -326,12 +323,12 @@ class AutonomyDashboard:
                 entry = json.loads(line)
                 ts = datetime.fromisoformat(entry["timestamp_utc"])
                 if ts >= cutoff:
-                    recent.append(AutonomyMetrics(
-                        total_rollbacks=entry.get("total_rollbacks", 0),
-                        successful_rollbacks=int(
-                            entry.get("total_rollbacks", 0) * entry.get("success_rate", 1.0)
-                        ),
-                    ))
+                    recent.append(
+                        AutonomyMetrics(
+                            total_rollbacks=entry.get("total_rollbacks", 0),
+                            successful_rollbacks=int(entry.get("total_rollbacks", 0) * entry.get("success_rate", 1.0)),
+                        )
+                    )
         except (json.JSONDecodeError, ValueError):
             pass
 

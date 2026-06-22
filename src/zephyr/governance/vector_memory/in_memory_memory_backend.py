@@ -31,7 +31,6 @@ InMemoryMemoryBackend — MOD-INF-011 降级兜底
 - 极简内存 dict 存储（write/recall/search 兼容接口）
 """
 
-
 from __future__ import annotations
 
 import logging

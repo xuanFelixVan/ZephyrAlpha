@@ -11,15 +11,15 @@ context_drift_detector.py — 新增文件（L2 ABAC 扩展）
 class ContextDriftDetector:
     """
     Context Drift 检测器——实时追踪Agent操作链中的意图漂移。
-    
+
     核心原理：
     - 对比"当前操作模式"与"任务启动时的原始意图"
     - 当语义距离超过阈值 → 标记为漂移
     """
-    
+
     def __init__(self, drift_window: int = 10):
         self.drift_window = drift_window  # 检测最近N步操作链
-    
+
     async def detect_drift(
         self,
         original_intent: str,
@@ -28,7 +28,7 @@ class ContextDriftDetector:
     ) -> DriftReport:
         """
         检测操作链中的意图漂移。
-        
+
         三个检测维度：
         1. 操作类型漂移——初始为read→逐步转为write/delete（类型熵增）
         2. 路径漂移——操作目标从src/逐步扩展到config/、data/（路径熵增）
@@ -37,16 +37,16 @@ class ContextDriftDetector:
         # 维度1: 操作类型熵
         type_entropy = self._compute_type_entropy(operation_chain)
         type_drift = type_entropy > 1.5  # 从单一操作类型变为多类型混合
-        
+
         # 维度2: 路径熵
         path_entropy = self._compute_path_entropy(operation_chain)
         path_drift = path_entropy > 2.0  # 操作路径明显扩展
-        
+
         # 维度3: 语义距离
         semantic_drift = await self._compute_semantic_drift(
             original_intent, operation_chain
         )
-        
+
         return DriftReport(
             type_drift=type_drift,
             path_drift=path_drift,

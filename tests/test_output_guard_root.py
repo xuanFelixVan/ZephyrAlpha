@@ -11,17 +11,17 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
-import pytest
 
 from zephyr.security.access_control.output_guard import (
     CREDENTIAL_PATTERNS,
     MAX_OUTPUT_SIZE,
+    PII_PATTERNS,
     OutputDecision,
     OutputGuard,
     OutputResult,
-    PII_PATTERNS,
 )
 
 
@@ -241,7 +241,7 @@ class TestOutputGuard:
     def test_truncation_with_pii(self):
         guard = OutputGuard()
         phone = "13812345678"
-        large_content = (phone + " " + "B" * MAX_OUTPUT_SIZE)
+        large_content = phone + " " + "B" * MAX_OUTPUT_SIZE
         result = guard.check(large_content)
         assert result.decision == OutputDecision.SANITIZED
         assert any("PHONE_CN" in f for f in result.findings)

@@ -22,9 +22,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class DriftType(str, Enum):
@@ -62,5 +61,5 @@ DRIFT_MONITORS: dict[DriftType, DriftConfig] = {
 }
 
 
-def get_drift_config(dt: DriftType) -> Optional[DriftConfig]:
+def get_drift_config(dt: DriftType) -> DriftConfig | None:
     return DRIFT_MONITORS.get(dt)

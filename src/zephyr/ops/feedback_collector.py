@@ -35,7 +35,6 @@ Feedback entries are stored in-memory and can be flushed to disk
 as JSON for downstream analysis or audit logging.
 """
 
-
 from __future__ import annotations
 
 import json
@@ -47,9 +46,9 @@ from pydantic import BaseModel, Field, field_validator
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
+    "FeedbackCollector",
     "FeedbackEntry",
     "FeedbackSummary",
-    "FeedbackCollector",
 ]
 
 _VALID_SCORE_RANGE = (1, 5)
@@ -194,30 +193,34 @@ class FeedbackCollector:
     def store_path(self) -> Path | None:
         return self._store_path
 
+
 class ActionResult:
-    def __init__(self, action='', success=True, duration=0.0, error=None, metadata=None):
+    def __init__(self, action="", success=True, duration=0.0, error=None, metadata=None):
         self.action = action
         self.success = success
         self.duration = duration
         self.error = error
         self.metadata = metadata or {}
 
+
 class FeedbackChannel:
-    DIRECT = 'DIRECT'
-    OBSERVATION = 'OBSERVATION'
-    METRIC = 'METRIC'
-    ALERT = 'ALERT'
-    USER = 'USER'
+    DIRECT = "DIRECT"
+    OBSERVATION = "OBSERVATION"
+    METRIC = "METRIC"
+    ALERT = "ALERT"
+    USER = "USER"
+
 
 class OwnerResponse:
-    def __init__(self, action='', approved=False, reason='', timestamp=None):
+    def __init__(self, action="", approved=False, reason="", timestamp=None):
         self.action = action
         self.approved = approved
         self.reason = reason
         self.timestamp = timestamp
 
+
 class OwnerAck:
-    def __init__(self, ack_id='', owner='', action='', timestamp=None):
+    def __init__(self, ack_id="", owner="", action="", timestamp=None):
         self.ack_id = ack_id
         self.owner = owner
         self.action = action

@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-ORC_skill_freshness_ext | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §3.2
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_freshness_ext
+# [MODULE] zephyr.autonomy_core.skill_freshness_ext
 # [INVARIANTS] scan_all and auto_deprecate must not be inlined into skill_freshness.py — they get lost on file overwrite
 # [MODIFY-GUARD] skill_freshness.py, skill_lifecycle.py
 # [CONSUMERS] auto_runtime_core.py (CircadianScheduler), event_bus subscribers
@@ -21,14 +21,14 @@ This module is the canonical location. Import from here.
 
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Any
 
 from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
 from zephyr.autonomy_core.skill_lifecycle import SkillLifecycle
 from zephyr.autonomy_core.skill_model import SkillStatus
 
 
-def scan_all_freshness(model: FreshnessDecayModel | None = None) -> Dict[str, Any]:
+def scan_all_freshness(model: FreshnessDecayModel | None = None) -> dict[str, Any]:
     if model is None:
         model = FreshnessDecayModel()
     data = model._load()
@@ -45,37 +45,49 @@ def scan_all_freshness(model: FreshnessDecayModel | None = None) -> Dict[str, An
         else:
             healthy.append(info)
     try:
-        from zephyr.integration.shared_08.event_bus import bus, EventPriority
+        from zephyr.integration.shared_08.event_bus import EventPriority, bus
+
         if criticals:
             bus.emit("skill.freshness_critical", {"criticals": criticals}, priority=EventPriority.HIGH)
         if warnings:
             bus.emit("skill.freshness_warning", {"warnings": warnings}, priority=EventPriority.NORMAL)
     except Exception:
         pass
-    return {"total_scanned": len(data), "healthy": len(healthy),
-            "warnings": len(warnings), "criticals": len(criticals)}
+    return {"total_scanned": len(data), "healthy": len(healthy), "warnings": len(warnings), "criticals": len(criticals)}
 
 
-def auto_deprecate_skill(lifecycle: SkillLifecycle, skill_id: str,
-                         freshness_score: float, reason: str = "") -> Dict[str, Any]:
+def auto_deprecate_skill(
+    lifecycle: SkillLifecycle, skill_id: str, freshness_score: float, reason: str = ""
+) -> dict[str, Any]:
     current = lifecycle.current_status(skill_id)
     if current != SkillStatus.ACTIVE.value:
         return {"action": "skipped", "skill_id": skill_id, "current_status": current, "reason": "not active"}
     if freshness_score <= 10.0:
-        result = lifecycle.transition(skill_id, SkillStatus.DEPRECATED.value,
-                                      reason=reason or f"freshness_score={freshness_score:.1f} <= critical")
+        result = lifecycle.transition(
+            skill_id,
+            SkillStatus.DEPRECATED.value,
+            reason=reason or f"freshness_score={freshness_score:.1f} <= critical",
+        )
         try:
-            from zephyr.integration.shared_08.event_bus import bus, EventPriority
-            bus.emit("skill.deprecated", {"skill_id": skill_id, "freshness_score": freshness_score},
-                     priority=EventPriority.HIGH)
+            from zephyr.integration.shared_08.event_bus import EventPriority, bus
+
+            bus.emit(
+                "skill.deprecated",
+                {"skill_id": skill_id, "freshness_score": freshness_score},
+                priority=EventPriority.HIGH,
+            )
         except Exception:
             pass
         return result
     if freshness_score <= 30.0:
         try:
-            from zephyr.integration.shared_08.event_bus import bus, EventPriority
-            bus.emit("skill.freshness_warning", {"skill_id": skill_id, "freshness_score": freshness_score},
-                     priority=EventPriority.NORMAL)
+            from zephyr.integration.shared_08.event_bus import EventPriority, bus
+
+            bus.emit(
+                "skill.freshness_warning",
+                {"skill_id": skill_id, "freshness_score": freshness_score},
+                priority=EventPriority.NORMAL,
+            )
         except Exception:
             pass
         return {"action": "warning_issued", "skill_id": skill_id, "freshness_score": freshness_score}
@@ -94,4 +106,4 @@ def increment_round(loader, session_id: str) -> int:
     return loader._conversation_round[session_id]
 
 
-__all__ = ["scan_all_freshness", "auto_deprecate_skill", "should_load_onboarding", "increment_round"]
+__all__ = ["auto_deprecate_skill", "increment_round", "scan_all_freshness", "should_load_onboarding"]

@@ -12,9 +12,9 @@
 
 import pytest
 
-from zephyr.governance.transition import TransitionMixin
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
 from zephyr.governance.persistence.task_repo import TaskNotFoundError
+from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.governance.transition import TransitionMixin
 
 
 class TestTransitionMixinImport:
@@ -31,8 +31,16 @@ class TestTransitionMixinImport:
 class TestTaskStatusEnum:
     def test_all_status_values(self):
         expected = {
-            "PENDING", "IN_PROGRESS", "COMPLETED", "VERIFIED",
-            "FAILED", "BLOCKED", "WAITING", "READY", "RETRY", "CANCELLED",
+            "PENDING",
+            "IN_PROGRESS",
+            "COMPLETED",
+            "VERIFIED",
+            "FAILED",
+            "BLOCKED",
+            "WAITING",
+            "READY",
+            "RETRY",
+            "CANCELLED",
         }
         actual = {s.value for s in TaskStatus}
         assert actual == expected
@@ -56,12 +64,14 @@ class TestTaskStatusEnum:
 class TestTransitionMixinViaTaskRepo:
     def test_transition_nonexistent_raises(self):
         from zephyr.governance.persistence.task_repo import TaskRepository
+
         repo = TaskRepository(enable_gate=False)
         with pytest.raises(TaskNotFoundError):
             repo.transition("NONEXISTENT-99999", TaskStatus.IN_PROGRESS)
 
     def test_transition_invalid_status_raises(self):
         from zephyr.governance.persistence.task_repo import TaskRepository
+
         repo = TaskRepository(enable_gate=False)
         with pytest.raises((ValueError, TaskNotFoundError)):
             repo.transition("NONEXISTENT-99999", "INVALID_STATUS")

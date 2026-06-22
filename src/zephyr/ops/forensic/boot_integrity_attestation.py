@@ -153,8 +153,10 @@ class BootIntegrityAttestation:
             "deleted_files_count": len(deleted_files),
             "degraded": self.boot_integrity != BootIntegrityResult.ATTESTED and self.auto_degrade_on_failure,
             "recommendation": (
-                "owner_override_required" if self.boot_integrity == BootIntegrityResult.TAMPERED
-                else "review_changes" if violation_count > 0
+                "owner_override_required"
+                if self.boot_integrity == BootIntegrityResult.TAMPERED
+                else "review_changes"
+                if violation_count > 0
                 else "proceed_full_auto"
             ),
         }

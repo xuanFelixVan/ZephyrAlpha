@@ -154,7 +154,10 @@ class AuditFinding(BaseModel):
                 "dimension": "D3",
                 "severity": "HIGH",
                 "category": "元数据合规",
-                "target": {"file_path": "docs/01_policies_and_standards/meta/index.md", "line_range": "1-10"},
+                "target": {
+                    "file_path": "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml",
+                    "line_range": "1-10",
+                },
                 "description": "缺少必填字段 'version'",
                 "evidence": "frontmatter 中未找到 version 字段",
                 "impact": {"blast_radius": "file"},

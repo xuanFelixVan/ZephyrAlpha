@@ -29,8 +29,8 @@ mcp.BlueprintSearchServer._find_relevant_blueprint 共用。
 SSoT: config/blueprint_routing.yaml routes
 ADR: ADR-0032（Agent 路由）+ ADR-0033（MCP）
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import fnmatch
 from typing import Any

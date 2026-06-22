@@ -10,8 +10,8 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_pipeline_bridge.py
 
-import pytest
 from unittest.mock import MagicMock, patch
+
 from zephyr.autonomy_core.integration.pipeline_bridge import (
     PipelineSkillBridge,
     SkillContextInjector,

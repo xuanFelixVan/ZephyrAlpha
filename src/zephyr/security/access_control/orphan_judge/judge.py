@@ -26,7 +26,6 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 
-
 from __future__ import annotations
 
 import importlib
@@ -58,6 +57,7 @@ try:
         RemediationPriority,
         generate_finding_id,
     )
+
     _FINDING_AVAILABLE = True
 except ImportError:
     _FINDING_AVAILABLE = False
@@ -65,13 +65,13 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "OrphanJudgeError",
-    "Verdict",
     "Confidence",
-    "LayerResult",
     "Judgment",
-    "OrphanJudgeReport",
+    "LayerResult",
     "OrphanJudge",
+    "OrphanJudgeError",
+    "OrphanJudgeReport",
+    "Verdict",
 ]
 
 _SYSTEM_CRITICAL_PATTERNS = [
@@ -247,7 +247,9 @@ class OrphanJudge:
                 evidence=json.dumps(j.evidence, ensure_ascii=False) if j.evidence else "",
                 remediation=FindingRemediation(
                     action=RemediationAction.INVESTIGATE if j.verdict == Verdict.ESCALATE else RemediationAction.FIX,
-                    priority=RemediationPriority.P1 if severity in (FindingSeverity.CRITICAL, FindingSeverity.HIGH) else RemediationPriority.P2,
+                    priority=RemediationPriority.P1
+                    if severity in (FindingSeverity.CRITICAL, FindingSeverity.HIGH)
+                    else RemediationPriority.P2,
                 ),
             )
             sys.stdout.write(finding.to_jsonl())
@@ -268,26 +270,30 @@ class OrphanJudge:
         l0 = self._run_layer(self._l0, path, "L0")
         layers.append(l0)
         if l0.data.get("is_registered", l0.passed):
-            return self._jsonl_judgment(Judgment(
-                path=path,
-                verdict=Verdict.KEEP,
-                confidence=Confidence.HIGH,
-                layers=layers,
-                reason="File is registered in at least one registry",
-                evidence={"registered_in": l0.data.get("registered_in", [])},
-            ))
+            return self._jsonl_judgment(
+                Judgment(
+                    path=path,
+                    verdict=Verdict.KEEP,
+                    confidence=Confidence.HIGH,
+                    layers=layers,
+                    reason="File is registered in at least one registry",
+                    evidence={"registered_in": l0.data.get("registered_in", [])},
+                )
+            )
 
         l1 = self._run_layer(self._l1, path, "L1")
         layers.append(l1)
         if l1.data.get("is_reachable", l1.passed):
-            return self._jsonl_judgment(Judgment(
-                path=path,
-                verdict=Verdict.KEEP,
-                confidence=Confidence.HIGH,
-                layers=layers,
-                reason="File is reachable via import chain but not registered",
-                evidence={"referenced_by": l1.data.get("referenced_by", [])},
-            ))
+            return self._jsonl_judgment(
+                Judgment(
+                    path=path,
+                    verdict=Verdict.KEEP,
+                    confidence=Confidence.HIGH,
+                    layers=layers,
+                    reason="File is reachable via import chain but not registered",
+                    evidence={"referenced_by": l1.data.get("referenced_by", [])},
+                )
+            )
 
         l2 = self._run_layer(self._l2, path, "L2")
         layers.append(l2)
@@ -299,14 +305,16 @@ class OrphanJudge:
         layers.append(l4)
 
         if l4.data.get("is_uncertain", False) and "not available" in l4.detail:
-            return self._jsonl_judgment(Judgment(
-                path=path,
-                verdict=Verdict.ESCALATE,
-                confidence=Confidence.LOW,
-                layers=layers,
-                reason="L4 standalone evaluator unavailable, cannot determine value",
-                requires_review=True,
-            ))
+            return self._jsonl_judgment(
+                Judgment(
+                    path=path,
+                    verdict=Verdict.ESCALATE,
+                    confidence=Confidence.LOW,
+                    layers=layers,
+                    reason="L4 standalone evaluator unavailable, cannot determine value",
+                    requires_review=True,
+                )
+            )
 
         verdict, confidence, reason = self._decision_route(l2, l3, l4)
 
@@ -317,15 +325,17 @@ class OrphanJudge:
             confidence = Confidence.LOW
             reason = f"Safety fence blocked: {original_reason}"
 
-        return self._jsonl_judgment(Judgment(
-            path=path,
-            verdict=verdict,
-            confidence=confidence,
-            layers=layers,
-            reason=reason,
-            safety_blocked=safety_blocked,
-            requires_review=verdict == Verdict.ESCALATE or confidence != Confidence.HIGH,
-        ))
+        return self._jsonl_judgment(
+            Judgment(
+                path=path,
+                verdict=verdict,
+                confidence=confidence,
+                layers=layers,
+                reason=reason,
+                safety_blocked=safety_blocked,
+                requires_review=verdict == Verdict.ESCALATE or confidence != Confidence.HIGH,
+            )
+        )
 
     def batch_judge(
         self,
@@ -342,10 +352,7 @@ class OrphanJudge:
         candidates: list[str] = []
         if scope_path.is_dir():
             for py_file in scope_path.rglob("*.py"):
-                if any(
-                    p in py_file.parts
-                    for p in ("__pycache__", ".mypy_cache", "_snapshots", ".aidrafts")
-                ):
+                if any(p in py_file.parts for p in ("__pycache__", ".mypy_cache", "_snapshots", ".aidrafts")):
                     continue
                 candidates.append(str(py_file))
                 if len(candidates) >= min(limit, _MAX_BATCH_SIZE):
@@ -409,10 +416,7 @@ class OrphanJudge:
                     check_id="orphan_judge_quick_scan",
                     check_name="orphan-judge",
                     severity=severity,
-                    message=(
-                        f"Found {orphan_count} orphan files "
-                        f"({escalate_count} ESCALATE, {delete_count} DELETE)"
-                    ),
+                    message=(f"Found {orphan_count} orphan files ({escalate_count} ESCALATE, {delete_count} DELETE)"),
                 )
             )
 

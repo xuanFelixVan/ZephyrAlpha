@@ -91,6 +91,7 @@ class TestLazyModuleRegistryLoad:
         reg.register("json", "json")
         mod = reg.load("json")
         import json as expected
+
         assert mod is expected
         assert reg.is_loaded("json") is True
 
@@ -129,6 +130,7 @@ class TestLazyModuleRegistryGet:
         reg.load("json")
         mod = reg.get("json")
         import json as expected
+
         assert mod is expected
 
     def test_get_unregistered_raises_keyerror(self):

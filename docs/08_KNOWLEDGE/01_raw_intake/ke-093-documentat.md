@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-093
 title: 1.3 与其他视图的边界
 category: documentation

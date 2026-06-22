@@ -13,10 +13,8 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-
-import pytest
 
 from zephyr.governance.owner_absent import (
     EXIT_OWNER_ABSENT_L1,
@@ -44,7 +42,7 @@ class TestOwnerAbsentInstantiation:
 class TestCheckOwnerStatus:
     def test_recent_interaction_level0(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         status = oa.check_owner_status(now)
         assert status.level == 0
         assert status.exit_code == 0
@@ -52,7 +50,7 @@ class TestCheckOwnerStatus:
 
     def test_l3_timeout_30min_absent(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
-        past = (datetime.now(timezone.utc) - timedelta(minutes=35)).isoformat()
+        past = (datetime.now(UTC) - timedelta(minutes=35)).isoformat()
         status = oa.check_owner_status(past)
         assert status.level == 3
         assert status.exit_code == EXIT_OWNER_ABSENT_L3
@@ -60,7 +58,7 @@ class TestCheckOwnerStatus:
 
     def test_l1_timeout_7day_absent(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
-        past = (datetime.now(timezone.utc) - timedelta(days=8)).isoformat()
+        past = (datetime.now(UTC) - timedelta(days=8)).isoformat()
         status = oa.check_owner_status(past)
         assert status.level == 1
         assert status.exit_code == EXIT_OWNER_ABSENT_L1
@@ -80,7 +78,7 @@ class TestCheckOwnerStatus:
 
     def test_exactly_30min_boundary(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
-        past = (datetime.now(timezone.utc) - timedelta(seconds=1800)).isoformat()
+        past = (datetime.now(UTC) - timedelta(seconds=1800)).isoformat()
         status = oa.check_owner_status(past)
         assert status.level >= 3 or status.level == 0
 
@@ -147,7 +145,7 @@ class TestGetAbsentStatus:
 
     def test_with_old_interaction(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
-        old_ts = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
+        old_ts = (datetime.now(UTC) - timedelta(days=10)).isoformat()
         oa._data_dir.mkdir(parents=True, exist_ok=True)
         oa._state_path.write_text(
             json.dumps({"last_owner_interaction": old_ts, "ping_attempts": 5}),

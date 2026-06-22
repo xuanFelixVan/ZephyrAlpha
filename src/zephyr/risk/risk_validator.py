@@ -49,9 +49,8 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass
-from datetime import datetime
 from decimal import Decimal
-from typing import ClassVar, Dict, List, Optional
+from typing import ClassVar
 
 
 class ViolatedConstraint(str):
@@ -66,6 +65,7 @@ class ViolatedConstraint(str):
 @dataclass(frozen=True)
 class ViolationDetail:
     """单条违规详情"""
+
     constraint: str
     description: str
     limit_value: Decimal
@@ -87,11 +87,12 @@ class RiskValidator(abc.ABC):
       - position_limit / leverage_limit / drawdown_trigger 均为 HALT 级别
       - kill_switch 触发后 MUST 阻断所有订单，直到人工确认恢复
     """
-    _registry: ClassVar[dict[str, type["RiskValidator"]]] = {}
+
+    _registry: ClassVar[dict[str, type[RiskValidator]]] = {}
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not abc.ABC in cls.__bases__ and hasattr(cls, "__validator_id__"):
+        if abc.ABC not in cls.__bases__ and hasattr(cls, "__validator_id__"):
             RiskValidator._registry[cls.__validator_id__] = cls
 
     @abc.abstractmethod
@@ -99,25 +100,25 @@ class RiskValidator(abc.ABC):
         self,
         symbol: str,
         target_weight: float,
-        current_holdings: Dict[str, float],
-        limits: Dict,
-    ) -> List[ViolationDetail]:
+        current_holdings: dict[str, float],
+        limits: dict,
+    ) -> list[ViolationDetail]:
         """对单笔订单做 pre-trade 风控校验"""
         ...
 
     @abc.abstractmethod
     def validate_portfolio(
         self,
-        holdings: Dict[str, float],
-        market_values: Dict[str, float],
+        holdings: dict[str, float],
+        market_values: dict[str, float],
         total_nav: Decimal,
-        limits: Dict,
-    ) -> List[ViolationDetail]:
+        limits: dict,
+    ) -> list[ViolationDetail]:
         """对全组合做风控状态校验"""
         ...
 
     @staticmethod
-    def is_kill_switch_triggered(violations: List[ViolationDetail]) -> bool:
+    def is_kill_switch_triggered(violations: list[ViolationDetail]) -> bool:
         """判断是否应触发 kill_switch"""
         halt_violations = [v for v in violations if v.severity == "HALT"]
         return len(halt_violations) > 0

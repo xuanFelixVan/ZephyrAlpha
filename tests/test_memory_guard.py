@@ -10,12 +10,13 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.memory_guard import MemoryGuard, MemoryAccessLog
+    from zephyr.security.access_control.memory_guard import MemoryAccessLog, MemoryGuard
 except Exception as _exc:
     pytest.skip(f"Cannot import memory_guard: {_exc}", allow_module_level=True)
 

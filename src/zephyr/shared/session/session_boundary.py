@@ -30,10 +30,10 @@ Session Boundary — 会话边界管理。
 """
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+
 
 @dataclass
 class SessionBoundary:
@@ -45,6 +45,7 @@ class SessionBoundary:
     files_modified: int = 0
     tokens_used: int = 0
 
+
 @dataclass
 class SessionBudget:
     max_cards: int = 115
@@ -52,8 +53,8 @@ class SessionBudget:
     used_cards: int = 0
     used_tokens: int = 0
 
-class SessionBoundaryManager:
 
+class SessionBoundaryManager:
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/session")
         self._boundaries: list[SessionBoundary] = []
@@ -62,17 +63,16 @@ class SessionBoundaryManager:
     def open_session(self, session_id: str) -> SessionBoundary:
         boundary = SessionBoundary(
             session_id=session_id,
-            start_time=datetime.now(timezone.utc).isoformat(),
+            start_time=datetime.now(UTC).isoformat(),
         )
         self._boundaries.append(boundary)
         return boundary
 
     def close_session(self, boundary: SessionBoundary) -> None:
-        boundary.end_time = datetime.now(timezone.utc).isoformat()
+        boundary.end_time = datetime.now(UTC).isoformat()
         self._save_boundary(boundary)
 
-    def record_activity(self, boundary: SessionBoundary, cards: int = 0,
-                        files: int = 0, tokens: int = 0) -> None:
+    def record_activity(self, boundary: SessionBoundary, cards: int = 0, files: int = 0, tokens: int = 0) -> None:
         boundary.cards_processed += cards
         boundary.files_created += files
         boundary.tokens_used += tokens
@@ -100,7 +100,7 @@ class SessionBoundaryManager:
                 end_time = data.get("end_time", "")
                 if end_time:
                     end_dt = datetime.fromisoformat(end_time)
-                    if (datetime.now(timezone.utc) - end_dt).days > max_age_days:
+                    if (datetime.now(UTC) - end_dt).days > max_age_days:
                         f.unlink()
                         cleared += 1
             except (json.JSONDecodeError, ValueError):
@@ -112,14 +112,18 @@ class SessionBoundaryManager:
         self._data_dir.mkdir(parents=True, exist_ok=True)
         path = self._data_dir / f"session_{boundary.session_id}.json"
         path.write_text(
-            json.dumps({
-                "session_id": boundary.session_id,
-                "start_time": boundary.start_time,
-                "end_time": boundary.end_time,
-                "cards_processed": boundary.cards_processed,
-                "files_created": boundary.files_created,
-                "files_modified": boundary.files_modified,
-                "tokens_used": boundary.tokens_used,
-            }, ensure_ascii=False, indent=2),
+            json.dumps(
+                {
+                    "session_id": boundary.session_id,
+                    "start_time": boundary.start_time,
+                    "end_time": boundary.end_time,
+                    "cards_processed": boundary.cards_processed,
+                    "files_created": boundary.files_created,
+                    "files_modified": boundary.files_modified,
+                    "tokens_used": boundary.tokens_used,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
             encoding="utf-8",
         )

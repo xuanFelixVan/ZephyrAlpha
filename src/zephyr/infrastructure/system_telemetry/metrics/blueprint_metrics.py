@@ -45,7 +45,6 @@ Codified Context (arXiv 2602.20478) §5.2 Maintenance Cost:
    tracking usage patterns enables informed refactoring decisions"
 """
 
-
 from __future__ import annotations
 
 import json
@@ -54,7 +53,7 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 
-__all__ = ["record_blueprint_read", "BlueprintReadEvent", "METRICS_FILE"]
+__all__ = ["METRICS_FILE", "BlueprintReadEvent", "record_blueprint_read"]
 
 _logger = logging.getLogger(__name__)
 _UTC = UTC

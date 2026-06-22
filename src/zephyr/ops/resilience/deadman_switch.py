@@ -29,7 +29,6 @@ Mitigation: 60s heartbeat; 3 consecutive misses → automatic self-lock + extern
 
 from __future__ import annotations
 
-import threading
 import time
 from dataclasses import dataclass, field
 from enum import Enum

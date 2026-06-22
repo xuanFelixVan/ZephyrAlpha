@@ -27,7 +27,6 @@ and economic guard integration.
 Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §2
 """
 
-
 from __future__ import annotations
 
 import importlib
@@ -38,7 +37,6 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitState
 from zephyr.governance.escalation_metrics import EscalationMetrics
 from zephyr.governance.escalation_models import (
     DEFAULT_ESCALATION_RULES,
@@ -51,6 +49,7 @@ from zephyr.governance.escalation_models import (
     EscalationState,
     RuleCategory,
 )
+from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitState
 
 
 class EscalationEngine:
@@ -380,7 +379,10 @@ class EscalationEngine:
             dd = self._extension_detectors.get("DriftDetector")
             if dd and event.category == RuleCategory.DRIFT_DETECTED:
                 if hasattr(dd, "is_drifting"):
-                    metrics = {"event_rate": float(len(self._recent_escalations)), "category_code": float(event.category.value)}
+                    metrics = {
+                        "event_rate": float(len(self._recent_escalations)),
+                        "category_code": float(event.category.value),
+                    }
                     if dd.is_drifting(metrics):
                         event.description += " | behavioral_drift=True"
                         if event.level.value < EscalationLevel.L2_HUMAN_REVIEW.value:
@@ -391,7 +393,9 @@ class EscalationEngine:
         try:
             ma = self._extension_detectors.get("MerkleAudit")
             if ma and hasattr(ma, "record"):
-                root_hash = ma.record({"event_id": event.event_id, "category": event.category.name, "level": event.level.name})
+                root_hash = ma.record(
+                    {"event_id": event.event_id, "category": event.category.name, "level": event.level.name}
+                )
                 event.description += f" | merkle_root={root_hash[:12]}"
         except Exception:
             pass

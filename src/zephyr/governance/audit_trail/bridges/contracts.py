@@ -28,7 +28,7 @@ append-only JSONL + SHA-256 哈希链 + HMAC-SHA256 + Lamport 时钟 + Merkle �
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
@@ -58,7 +58,7 @@ class AuditWriter:
         metadata: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """写入审计记录——不可变追加到核心审计链."""
-        ts = timestamp or datetime.now(timezone.utc).isoformat()
+        ts = timestamp or datetime.now(UTC).isoformat()
         event = {
             "event_type": "rbac_decision",
             "agent_id": agent_id,

@@ -12,13 +12,10 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from datetime import datetime
-from pathlib import Path
-from typing import Iterator
 
-from zephyr.governance.persistence.sqlite_schema import DB_PATH, get_db_connection
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.security.access_control.orphan_judge.models import JudgmentRecord, ScanSummary
 
 logger = logging.getLogger(__name__)
@@ -91,16 +88,19 @@ class JudgmentDB:
         ).fetchall()
         return [
             JudgmentRecord(
-                path=r[0], verdict=r[1], confidence=r[2], reason=r[3],
-                layers_json=r[4], scanned_at=datetime.fromisoformat(r[5]), file_hash=r[6],
+                path=r[0],
+                verdict=r[1],
+                confidence=r[2],
+                reason=r[3],
+                layers_json=r[4],
+                scanned_at=datetime.fromisoformat(r[5]),
+                file_hash=r[6],
             )
             for r in rows
         ]
 
     def summary(self) -> ScanSummary:
-        rows = self._conn.execute(
-            "SELECT verdict, COUNT(*) FROM judgment_records GROUP BY verdict"
-        ).fetchall()
+        rows = self._conn.execute("SELECT verdict, COUNT(*) FROM judgment_records GROUP BY verdict").fetchall()
         s = ScanSummary(total=sum(r[1] for r in rows))
         for verdict, count in rows:
             if verdict == "KEEP":

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_staleness_manager.py
 
-import pytest
 from zephyr.autonomy_core.staleness_manager import StalenessManager, StalenessReport
 
 

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.AssertionError
 # [TESTS] tests/test_benchmark_suite.py
 
-import pytest
 
 from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import (
     ALL_BENCHMARK_CASES,

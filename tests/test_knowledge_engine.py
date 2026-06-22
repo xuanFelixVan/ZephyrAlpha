@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.knowledge_engine import (
     KnowledgeEntry,
     KnowledgeIndex,

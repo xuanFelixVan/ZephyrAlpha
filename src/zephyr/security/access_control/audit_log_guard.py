@@ -3,11 +3,14 @@
 
 LOG_INJECTION_PATTERNS = None  # stub constant
 
+
 class AuditLogGuard:
     """Stub class — implementation pending."""
+
     pass
 
+
 __all__ = [
-    "AuditLogGuard",
     "LOG_INJECTION_PATTERNS",
+    "AuditLogGuard",
 ]

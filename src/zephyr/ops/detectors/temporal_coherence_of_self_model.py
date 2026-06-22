@@ -31,6 +31,7 @@ import json
 import time
 from dataclasses import dataclass, field
 
+
 @dataclass
 class SelfModelSnapshot:
     timestamp: float
@@ -38,6 +39,7 @@ class SelfModelSnapshot:
     limits: dict[str, float]
     health_score: float
     hash: str = ""
+
 
 @dataclass
 class TemporalCoherenceOfSelfModel:
@@ -58,7 +60,7 @@ class TemporalCoherenceOfSelfModel:
         )
         self.snapshots.append(snapshot)
         if len(self.snapshots) > self.max_snapshots:
-            self.snapshots = self.snapshots[-self.max_snapshots:]
+            self.snapshots = self.snapshots[-self.max_snapshots :]
         return h
 
     def check_coherence(self) -> dict:

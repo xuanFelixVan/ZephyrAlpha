@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-024
-submodule_path: src/zephyr/budget-enforcer
+submodule_path: src/zephyr/integration/budget_enforcer
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
 doc_type: blueprint
 status: Active
@@ -19,7 +19,7 @@ summary: ZephyrAlpha Token/Cost/Time 三维预算强制执行蓝图 v0.7.0——
 tags: [budget, token, cost, time, enforcement, degradation, infrastructure, pre-flight, in-flight, self-budget, model-router, cache, burn-rate, roi, chargeback, loop-detection, pricing-sync, stream-abort, quality-gate, env-profile, agent-sub-pool, policy-sandbox, waste-detection, batch-routing, model-discovery, timeout-guard, instruction-bloat, history-tax, provider-tier, cost-spiral, cross-provider, narrow-reroute, spiral-ews, poison-cascade, parent-child-attribution, workflow-budget, resume-cost, think-time, guard-efficiency, trust-ring, tamper-evident, fail-mode, bootstrapping, ipi-defense, anti-abuse, adversarial-testing, supply-chain-isolation]
 priority: P2
 runtime_plane: hot
-depends_on: 
+depends_on:
 - {target: MOD-INF-014", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
 ---
 ssot_claims:
@@ -39,7 +39,7 @@ consumer_registry:
     consumers: ["MOD-INF-008 Context Engine", "MOD-INF-006 Task System", "MOD-INF-015 System Telemetry"]
   - tier: "optional"
     consumers: ["MOD-INF-032 Resource Optimization", "MOD-INF-034 Model Capability Exam"]
-actual_disk_path: "src/zephyr/budget-enforcer/"
+actual_disk_path: "src/zephyr/integration/budget_enforcer/"
 last_updated: "2026-05-18"
 last_verified: "2026-05-18"
 generation: 3

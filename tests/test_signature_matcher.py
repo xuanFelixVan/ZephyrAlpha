@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.signature_matcher import (
     SignatureMatch,
     SignatureMatcher,
@@ -108,10 +106,12 @@ class TestSignatureMatcher:
 
     def test_match_bulk(self):
         sm = SignatureMatcher()
-        sm.build_index([
-            {"signature_fingerprint": "abc123", "file": "a.py", "name": "foo"},
-            {"signature_fingerprint": "def456", "file": "b.py", "name": "bar"},
-        ])
+        sm.build_index(
+            [
+                {"signature_fingerprint": "abc123", "file": "a.py", "name": "foo"},
+                {"signature_fingerprint": "def456", "file": "b.py", "name": "bar"},
+            ]
+        )
         results = sm.match_bulk([("abc123", "a.py"), ("def456", "b.py"), ("zzz", "c.py")])
         assert len(results) == 2
 

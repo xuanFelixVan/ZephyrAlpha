@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_distillation.py
 
-import pytest
 
 from zephyr.ops.evolution.knowledge_distillation import KnowledgeDistillation
 

@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.shadow_workspace
-
 # [INVARIANTS] 预演失败MUST阻止应用;沙箱目录MUST在验证后清理
-
 # [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml shadow_workspace段
-
 # [CONSUMERS] engine.py
-
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ShadowWorkspaceError
-
 # [TESTS] tests/auto-fix-engine/test_shadow_workspace.py
-
 import logging
 import os
 import shutil
@@ -29,9 +19,10 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, ShadowResult, ValidationResult
+from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, ShadowResult
 
 logger = logging.getLogger(__name__)
+
 
 class ShadowWorkspace:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
@@ -89,8 +80,11 @@ class ShadowWorkspace:
         try:
             cmd = ["python", "-m", "pytest", "-x", "-q", "--tb=short", shadow_dir]
             result = subprocess.run(
-                cmd, capture_output=True, text=True,
-                timeout=self._pytest_timeout, cwd=project_root or os.getcwd(),
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=self._pytest_timeout,
+                cwd=project_root or os.getcwd(),
             )
             return {
                 "passed": result.returncode == 0,
@@ -106,8 +100,11 @@ class ShadowWorkspace:
         try:
             cmd = ["python", "-m", "mypy", shadow_file, "--no-error-summary"]
             result = subprocess.run(
-                cmd, capture_output=True, text=True,
-                timeout=60, cwd=project_root or os.getcwd(),
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=project_root or os.getcwd(),
             )
             return {
                 "passed": result.returncode == 0,
@@ -120,8 +117,11 @@ class ShadowWorkspace:
         try:
             cmd = ["python", "-m", "ruff", "check", shadow_file]
             result = subprocess.run(
-                cmd, capture_output=True, text=True,
-                timeout=30, cwd=project_root or os.getcwd(),
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=project_root or os.getcwd(),
             )
             return {
                 "passed": result.returncode == 0,

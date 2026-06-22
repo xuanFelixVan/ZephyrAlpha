@@ -30,7 +30,6 @@
 对标: Cross-Agent Intent Preservation (跨Agent意图保真)
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -66,15 +65,22 @@ class CrossAgentSemanticFlow:
         self._flows[flow_id] = SemanticFlow(flow_id=flow_id)
 
     def add_node(
-        self, flow_id: str, agent_id: str, task_id: str,
-        intent_summary: str, output_summary: str,
+        self,
+        flow_id: str,
+        agent_id: str,
+        task_id: str,
+        intent_summary: str,
+        output_summary: str,
     ):
         if flow_id in self._flows:
-            self._flows[flow_id].nodes.append(SemanticFlowNode(
-                agent_id=agent_id, task_id=task_id,
-                intent_summary=intent_summary,
-                output_summary=output_summary,
-            ))
+            self._flows[flow_id].nodes.append(
+                SemanticFlowNode(
+                    agent_id=agent_id,
+                    task_id=task_id,
+                    intent_summary=intent_summary,
+                    output_summary=output_summary,
+                )
+            )
 
     def get_flow(self, flow_id: str) -> SemanticFlow | None:
         return self._flows.get(flow_id)

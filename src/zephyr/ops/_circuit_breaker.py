@@ -12,7 +12,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_escalation_engine_imports.py
-
 from zephyr.ops.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerConfig,

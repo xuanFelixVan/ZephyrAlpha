@@ -16,7 +16,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from zephyr.ops.evolution_engine import (
-    DEFAULT_THRESHOLDS,
     EvolutionEngine,
     EvolutionProposal,
     EvolutionReport,

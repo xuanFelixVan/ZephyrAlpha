@@ -27,6 +27,7 @@ Risk: R102b — Weekend low-urgency repairs escalate unnecessarily.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class CalendarAdapter:
     is_weekend: bool = False

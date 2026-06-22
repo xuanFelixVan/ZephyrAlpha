@@ -14,14 +14,12 @@
 CT-SCRIPT-KB-001: 审计脚本执行完成后将 findings 写入 Knowledge Base。
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
-import os
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -53,8 +51,9 @@ class KBBridge:
 
         try:
             from zephyr.shared.registry import ServiceRegistry
+
             conn = ServiceRegistry.get("db_connection")
-            now = datetime.now(timezone.utc).isoformat()
+            now = datetime.now(UTC).isoformat()
             published = 0
 
             for finding in findings:

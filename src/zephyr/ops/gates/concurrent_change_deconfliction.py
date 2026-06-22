@@ -29,9 +29,9 @@ Mitigation: Concurrent change detection with optimistic locking and conflict res
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
 from enum import Enum
-import time
 
 
 class ChangeSource(str, Enum):
@@ -58,7 +58,9 @@ class ConcurrentChangeDeconfliction:
     def attempt(self, source: ChangeSource, resource: str, expected_version: int) -> bool:
         current_version = self.resource_versions.get(resource, 0)
         if expected_version != current_version:
-            self.resolution_log.append(ChangeAttempt(source=source, resource=resource, version=expected_version, accepted=False))
+            self.resolution_log.append(
+                ChangeAttempt(source=source, resource=resource, version=expected_version, accepted=False)
+            )
             return False
         new_version = current_version + 1
         self.resource_versions[resource] = new_version

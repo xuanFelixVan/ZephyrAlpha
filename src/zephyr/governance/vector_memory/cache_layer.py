@@ -7,9 +7,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [ERROR_CONTRACT]
+# [TESTS]
 
-from zephyr.integration.local_model.cache_layer import CacheLayer, CacheLayer as _CacheLayer  # noqa: F401
+from zephyr.integration.local_model.cache_layer import CacheLayer
 
 __all__ = ["CacheLayer"]

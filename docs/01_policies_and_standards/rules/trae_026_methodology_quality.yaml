@@ -1,10 +1,22 @@
 rule_id: TRAE-026
 title: 方法论-质量与度量
+version: 1.0.0
+layer: L2
+module_id: TRAE-026
+depends_on:
+- TRAE-024
+- TRAE-025
+tags:
+- TRAE
+- methodology_quality
+- L2
+stability: evolving
+safety_level: L
+ai_autonomy: ai_modifiable
 aliases:
 - MTH-010
 - MTH-011
 - MTH-014
-layer: L2
 severity: warning
 scope: methodology_quality
 domain: TRAE
@@ -92,6 +104,279 @@ sections:
     - PS-STD-009
     summary: "PS-STD-009(规则生命周期与变更标准)的scope/normative_refs/change_history已迁移至权威文件trae_042_meta_rule_standard.yaml(ps_std_009_scope/ps_std_009_normative_refs/ps_std_009_change_history章节)。本文件仅保留MTH-010/011/014方法论规则。"
     authoritative_source: trae_042_meta_rule_standard.yaml
+  ps_std_006_purpose_scope:
+    title: 目的与范围
+    section_type: information
+    original_rules:
+    - PS-STD-006 §1
+    summary: 定义ZephyrAlpha规则体系的可量化健康度指标，回答核心问题——规则体系在变好还是变坏。对标ISO 42001 §9.1、COBIT 2019 EDM05、ITIL 4 Service Value Chain、Kubernetes SIG-Arch。
+    prohibitions: []
+  ps_std_006_purpose:
+    title: 目的
+    section_type: information
+    original_rules:
+    - PS-STD-006 §1.1
+    summary: 定义ZephyrAlpha规则体系的可量化健康度指标，回答一个核心问题——规则体系在变好还是变坏？
+    references:
+    - ISO 42001 §9.1：AI管理系统必须定期评估绩效
+    - COBIT 2019 EDM05：绩效管理——确保治理目标达成可被度量
+    - ITIL 4 Service Value Chain：度量驱动持续改进
+    - Kubernetes SIG-Arch：Conformance报告通过率作为生态健康指标
+    prohibitions: []
+  ps_std_006_scope:
+    title: 适用范围
+    section_type: information
+    original_rules:
+    - PS-STD-006 §1.2
+    summary: 适用于01_policies_and_standards/下所有规则文件。
+    prohibitions: []
+  ps_std_006_terminology:
+    title: 术语
+    section_type: information
+    original_rules:
+    - PS-STD-006 §1.3
+    terms:
+    - term: KPI
+      meaning: Key Performance Indicator——关键绩效指标
+    - term: 基线
+      meaning: 首次度量时建立的参照值
+    - term: 告警阈值
+      meaning: 触发治理告警的KPI边界值
+    - term: 度量周期
+      meaning: 两次度量之间的时间间隔
+    prohibitions: []
+  ps_std_006_core_kpi:
+    title: 核心 KPI（6 项）
+    section_type: rule
+    original_rules:
+    - PS-STD-006 §2
+    summary: 定义6项核心KPI——K1规则合规率/K2规则新鲜度/K3引用链健康度/K4格式错误密度/K5一致性违规率/K6 SSoT冲突数。覆盖合规性、新鲜度、引用健康、格式质量、一致性、SSoT六个维度。
+    prohibitions: []
+  ps_std_006_kpi_overview:
+    title: KPI 总览
+    section_type: information
+    original_rules:
+    - PS-STD-006 §2.1
+    kpi_list:
+    - id: K1
+      name: 规则合规率
+      meaning: frontmatter完全符合PS-STD-001的文件比例
+      method: 自动化扫描
+      direction: 越高越好
+    - id: K2
+      name: 规则新鲜度
+      meaning: date在30天内的文件比例
+      method: 自动化扫描
+      direction: 越高越好
+    - id: K3
+      name: 引用链健康度
+      meaning: depends_on引用全部指向存在文件的比例
+      method: 自动化扫描
+      direction: 越高越好
+    - id: K4
+      name: 格式错误密度
+      meaning: 每千行规则文本中的格式错误数（如分隔符错误、类型错误）
+      method: 自动化/人工
+      direction: 越低越好
+    - id: K5
+      name: 一致性违规率
+      meaning: stability↔ai_autonomy等一致性约束被违反的比例
+      method: 自动化扫描
+      direction: 越低越好
+    - id: K6
+      name: SSoT冲突数
+      meaning: 同一概念在多个文件中被定义的次数
+      method: 人工审查
+      direction: 越低越好
+    prohibitions: []
+  ps_std_006_k1_compliance_rate:
+    title: K1 规则合规率
+    section_type: rule
+    original_rules:
+    - PS-STD-006 §2.2
+    formula: 合规文件数 / 总文件数 × 100%
+    compliance_definition: frontmatter所有必填字段存在 + 值在受控词表中 + 类型正确（version为string）
+    data_source: PS-STD-001 §2.2（分阶段闸门）+ §2.6（一致性约束）
+    current_baseline: 待首次度量后建立
+    alert_threshold: '< 80%'
+    target: '≥ 95%'
+    prohibitions: []
+  ps_std_006_k2_freshness:
+    title: K2 规则新鲜度
+    section_type: rule
+    original_rules:
+    - PS-STD-006 §2.3
+    formula: date在30天内的文件数 / 总文件数 × 100%
+    freshness_definition: date字段值与度量日期的差距 ≤ 30天
+    note: frozen文件不强制新鲜度（稳定型规则不需要频繁更新）
+    current_baseline: 待首次度量后建立
+    alert_threshold: '< 30%（活跃文件）'
+    target: '≥ 60%（活跃文件）'
+    prohibitions: []
+  ps_std_006_k3_reference_health:
+    title: K3 引用链健康度
+    section_type: rule
+    original_rules:
+    - PS-STD-006 §2.4
+    formula: 所有depends_on引用目标存在且版本匹配的文件数 / 有depends_on的文件数 × 100%
+    health_definition: depends_on中每个引用指向的文件存在且路径正确
+    supplementary_check: 引用链深度必须 = 1层（DOC-009死规则：A→B直接声明，禁止A→B→C）
+    current_baseline: 待首次度量后建立
+    alert_threshold: '< 90%'
+    target: 100%
+    prohibitions: []
+  ps_std_006_k4_format_error_density:
+    title: K4 格式错误密度
+    section_type: rule
+    original_rules:
+    - PS-STD-006 §2.5
+    formula: 格式错误总数 / 总规则行数 × 1000
+    error_examples: 'frontmatter分隔符非---、YAML非法转义、version为number类型'
+    data_source: PS-STD-012 §2.1（V1阻断条件）
+    current_baseline: 待首次度量后建立
+    alert_threshold: '> 5错误/千行'
+    target: 0错误/千行
+    prohibitions: []
+  ps_std_006_k5_consistency_violation:
+    title: K5 一致性违规率
+    section_type: rule
+    original_rules:
+    - PS-STD-006 §2.6
+    formula: 一致性约束被违反的文件数 / 受约束的文件数 × 100%
+    check_constraint: frozen → immutable_core（单向强制）
+    data_source: PS-STD-001 §2.6 + PS-STD-004 §6.3
+    current_baseline: 待首次度量后建立
+    alert_threshold: '> 5%'
+    target: 0%
+    prohibitions: []
+  ps_std_006_k6_ssot_conflict:
+    title: K6 SSoT 冲突数
+    section_type: rule
+    original_rules:
+    - PS-STD-006 §2.7
+    formula: 被多次定义的核心概念数（手动计数）
+    conflict_definition: 同一概念在glossary.yaml外被 ≥ 2个文件定义
+    data_source: glossary.yaml（META-GLS-001）作为仲裁基准
+    current_baseline: 待首次度量后建立（已知：SSoT曾在PS-STD-003和PS-STD-001中被独立定义，现已统一）
+    alert_threshold: '> 3个冲突'
+    target: 0
+    prohibitions: []
+  ps_std_006_measurement_cycle:
+    title: 度量周期与责任
+    section_type: procedure
+    original_rules:
+    - PS-STD-006 §3
+    schedule:
+    - kpi: K1~K3
+      method: 自动化扫描
+      cycle: 每次pre-commit
+      executor: CI脚本
+      report_to: Owner
+    - kpi: K4~K5
+      method: 自动化扫描
+      cycle: 每次pre-commit
+      executor: CI脚本
+      report_to: Owner
+    - kpi: K1~K5
+      method: 趋势报告
+      cycle: 每月
+      executor: AI汇总
+      report_to: Owner
+    - kpi: K6
+      method: 人工审查
+      cycle: 每季度
+      executor: Owner
+      report_to: Owner（自审）
+    prohibitions: []
+  ps_std_006_report_format:
+    title: 报告格式
+    section_type: procedure
+    original_rules:
+    - PS-STD-006 §4
+    summary: 月度度量报告应有固定结构——KPI快照表+趋势分析+改进建议。
+    report_title_format: ZephyrAlpha 治理度量月报 —— YYYY-MM
+    report_sections:
+    - name: KPI快照
+      fields: KPI/本月值/上月值/趋势/状态
+    - name: 趋势分析
+      content: 变化>10%的KPI的原因分析（5 Whys）+ 是否触发告警阈值
+    - name: 改进建议
+      content: 建议的规则修改 + 建议的新规则（如适用）
+    prohibitions: []
+  ps_std_006_alert_response:
+    title: 告警响应流程
+    section_type: procedure
+    original_rules:
+    - PS-STD-006 §5
+    conditions:
+    - type: trigger
+      check: KPI触发告警阈值
+      pass: 自动通知Owner并完成判定与修复
+      fail: 告警未响应或未修复
+    actions:
+    - type: mandatory
+      step: KPI触发告警阈值→自动通知Owner→Owner判定三种情况：A.误报(度量脚本故障)→修复度量脚本→重新度量；B.真实退化(规则体系正在变坏)→5 Whys根源分析→诊断反转验证(初始诊断与深挖结论一致？不一致→追问为什么错了)→制定修复计划→执行修复→下次度量验证；C.阈值不合理(规则体系在变好但阈值太严)→Owner调整告警阈值→更新本标准
+    prohibitions: []
+  ps_std_006_prohibitions:
+    title: 禁止行为
+    section_type: rule
+    original_rules:
+    - PS-STD-006 §6
+    prohibitions:
+    - 无理由跳过月度度量周期
+    - 手动修改度量数据以美化报告
+    - 告警触发后超过14天不分析、不修复
+    - 连续3个月同一KPI在告警状态而不调整策略
+  ps_std_006_baseline_process:
+    title: 基线建立流程
+    section_type: procedure
+    original_rules:
+    - PS-STD-006 §7
+    conditions:
+    - type: pre_condition
+      check: 首次度量前
+      pass: 基线建立完成并产出首次报告
+      fail: 无法进行趋势判定
+    actions:
+    - type: mandatory
+      step: 1.确定度量范围(列出01_policies_and_standards/下所有规则文件)→2.执行全量扫描(对K1~K6逐项运行度量脚本/人工审查)→3.记录基线值(将各KPI首次度量值写入本标准§2各KPI的当前基线字段)→4.校准阈值(如基线值已低于告警阈值，Owner重新评估阈值合理性)→5.产出首次报告(按§4格式产出基线报告)
+    notes:
+    - 基线后的首次度量不计入趋势恶化判定——它只是起点
+    prohibitions: []
+  ps_std_006_new_kpi_process:
+    title: 新增 KPI 流程
+    section_type: procedure
+    original_rules:
+    - PS-STD-006 §8
+    conditions:
+    - type: trigger
+      check: Owner认为需要新增度量指标时
+      pass: 新KPI通过审核并实现回填基线
+      fail: 度量体系无法扩展
+    actions:
+    - type: mandatory
+      step: '1.提议(在Session Log中提议新KPI，格式：新增KPI {编号}/{名称}/{公式}/{目标}/{告警阈值}/{对标框架})→2.审核(确认新KPI不与现有KPI重复、度量方式可行有可自动化的数据源)→3.添加(在本标准§2中新增KPI条目，更新§3度量周期表)→4.实现(CI度量脚本增加新扫描规则)→5.回填基线(首次运行建立新KPI基线)'
+    prohibitions:
+    - 添加无法自动度量的KPI（AI自行掌握尺度会导致数据不可比）
+  ps_std_006_change_history:
+    title: 变更记录
+    section_type: information
+    original_rules:
+    - PS-STD-006 §9
+    change_history:
+    - version: 1.1.1
+      date: '2026-05-01'
+      change: 正文版本号修正：1.0.1→1.1.0（对齐frontmatter）。版本号patch+1。
+    - version: 1.1.0
+      date: '2026-05-01'
+      change: 'depends_on升级为结构化行级格式（DOC-009行级精度死规则）。(1)原[PS-STD-004, PS-STD-012]→三条结构化条目，新增PS-STD-001（K1数据源）。(2)K3补充检查对齐DOC-009死规则：引用链深度必须=1层。版本号minor+1。'
+    - version: 1.0.1
+      date: '2026-05-01'
+      change: 状态升格：draft→active。6项KPI已在运营验证中稳定使用，正式激活为标准。版本号patch+1。
+    - version: 1.0.0
+      date: '2026-05-01'
+      change: 初始创建——meta/系统性复查补齐。定义6项KPI，对标ISO 42001 §9+COBIT 2019 EDM05。
+    prohibitions: []
 references:
   rule_ids:
   - TRAE-024
@@ -107,7 +392,7 @@ metadata:
   change_policy: evolving
   impact_level: L
   modification_permission: ai_modifiable
-  superseded_by: null
+  superseded_by:
   version: "1.0.5"
   last_modified: "2026-06-21"
   change_history:

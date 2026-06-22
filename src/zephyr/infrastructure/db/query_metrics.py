@@ -50,12 +50,12 @@ from __future__ import annotations
 
 import logging
 import sqlite3
-import statistics
 import threading
 import time
 from collections import deque
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, Callable, Sequence, TypeVar
+from typing import Any, TypeVar
 
 from zephyr.governance.persistence.sqlite_schema import DB_PATH
 
@@ -71,10 +71,11 @@ _MAX_SAMPLES: int = 1000
 
 F = TypeVar("F", bound=Callable[..., Any])
 
+
 class PercentileTracker:
     """轻量延迟百分位追踪器（保留最近 N 个样本）。"""
 
-    __slots__ = ("_samples", "_max_size", "_lock")
+    __slots__ = ("_lock", "_max_size", "_samples")
 
     def __init__(self, max_size: int = _MAX_SAMPLES) -> None:
         self._samples: deque[float] = deque(maxlen=max_size)
@@ -125,6 +126,7 @@ class PercentileTracker:
         if f + 1 < len(sorted_samples):
             return sorted_samples[f] + c * (sorted_samples[f + 1] - sorted_samples[f])
         return sorted_samples[f]
+
 
 class QueryMetrics:
     """
@@ -190,11 +192,10 @@ class QueryMetrics:
         explain_rows = []
         try:
             from zephyr.governance.persistence.sqlite_schema import DB_PATH as schema_db_path
+
             explain_conn = sqlite3.connect(str(schema_db_path))
             try:
-                explain_result = explain_conn.execute(
-                    f"EXPLAIN QUERY PLAN {sql}", params if params else ()
-                )
+                explain_result = explain_conn.execute(f"EXPLAIN QUERY PLAN {sql}", params if params else ())
                 explain_rows = [dict(r) for r in explain_result.fetchall()]
             except Exception:
                 explain_rows = [{"error": "explain_failed"}]
@@ -203,10 +204,12 @@ class QueryMetrics:
         except Exception:
             explain_rows = [{"error": "explain_unavailable"}]
         import json as _json
+
         explain_json = _json.dumps(explain_rows, ensure_ascii=False, default=str)
         try:
             conn = sqlite3.connect(str(self._db_path))
             from datetime import UTC, datetime
+
             conn.execute(
                 """
                 INSERT INTO slow_queries (operation, duration_ms, sql_preview, params_preview, explain_plan, recorded_at)
@@ -296,5 +299,6 @@ class QueryMetrics:
         """清空所有采样数据（测试用）。"""
         with self._lock:
             self._trackers.clear()
+
 
 query_metrics = QueryMetrics.instance()

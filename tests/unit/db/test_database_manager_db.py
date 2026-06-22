@@ -29,15 +29,17 @@ Task: MOD-INF-012 | Safety: M
 """
 
 import pytest
+
+from zephyr.governance.persistence.database_manager import (
+    DatabaseHealthStatus as DatabaseHealthStatus,
+)
 from zephyr.governance.persistence.database_manager import (
     DatabaseManager,
     DatabaseManagerError,
-    DatabaseHealthStatus as DatabaseHealthStatus,
 )
 
 
 class TestDatabaseHealthStatus:
-
     def test_construct_healthy(self):
         hs = DatabaseHealthStatus(
             healthy=True,
@@ -116,7 +118,6 @@ class TestDatabaseHealthStatus:
 
 
 class TestDatabaseManagerLifecycle:
-
     def test_init_with_auto_init(self, tmp_path):
         db_path = tmp_path / "test.db"
         dm = DatabaseManager(db_path, auto_init=True)
@@ -149,7 +150,6 @@ class TestDatabaseManagerLifecycle:
 
 
 class TestDatabaseManagerConnection:
-
     def test_get_connection(self, tmp_path):
         db_path = tmp_path / "conn.db"
         dm = DatabaseManager(db_path, auto_init=True)
@@ -179,7 +179,6 @@ class TestDatabaseManagerConnection:
 
 
 class TestDatabaseManagerHealthCheck:
-
     def test_health_check_healthy(self, tmp_path):
         db_path = tmp_path / "health.db"
         dm = DatabaseManager(db_path, auto_init=True)
@@ -212,7 +211,6 @@ class TestDatabaseManagerHealthCheck:
 
 
 class TestDatabaseManagerBackup:
-
     def test_backup_creates_file(self, tmp_path):
         db_path = tmp_path / "bu.db"
         backup_dir = tmp_path / "backups"
@@ -233,7 +231,6 @@ class TestDatabaseManagerBackup:
 
 
 class TestDatabaseManagerWal:
-
     def test_wal_checkpoint_truncate(self, tmp_path):
         db_path = tmp_path / "wal.db"
         dm = DatabaseManager(db_path, auto_init=True)
@@ -244,7 +241,6 @@ class TestDatabaseManagerWal:
 
 
 class TestDatabaseManagerMaintenance:
-
     def test_maintenance_on_healthy(self, tmp_path):
         db_path = tmp_path / "maint.db"
         dm = DatabaseManager(db_path, auto_init=True)
@@ -258,7 +254,6 @@ class TestDatabaseManagerMaintenance:
 
 
 class TestDatabaseManagerStats:
-
     def test_stats_returns_counts(self, tmp_path):
         db_path = tmp_path / "stats.db"
         dm = DatabaseManager(db_path, auto_init=True)
@@ -275,7 +270,6 @@ class TestDatabaseManagerStats:
 
 
 class TestDatabaseManagerClose:
-
     def test_close_generates_backup(self, tmp_path):
         db_path = tmp_path / "close_bu.db"
         backup_dir = tmp_path / "close_backups"

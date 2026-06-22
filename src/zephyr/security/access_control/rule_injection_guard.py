@@ -3,13 +3,18 @@
 
 INJECTION_PATTERNS = None  # stub constant
 
+
 class RuleInjectionCheck:
     """Stub class — implementation pending."""
+
     pass
+
 
 class RuleInjectionGuard:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "INJECTION_PATTERNS",

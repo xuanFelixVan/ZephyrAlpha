@@ -1,5 +1,19 @@
 rule_id: TRAE-019
 title: 行为边界-系统安全绝对禁止
+version: 1.0.0
+layer: L0
+module_id: TRAE-019
+depends_on:
+- TRAE-018
+- TRAE-020
+- TRAE-021
+tags:
+- TRAE
+- security_prohibition
+- L0
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
 aliases:
 - ABS-09
 - ABS-10
@@ -9,7 +23,6 @@ aliases:
 - ABS-14
 - ABS-15
 - ABS-16
-layer: L0
 severity: critical
 scope: security_prohibition
 domain: TRAE
@@ -168,7 +181,7 @@ metadata:
   change_policy: frozen
   impact_level: H
   modification_permission: immutable_core
-  superseded_by: null
+  superseded_by:
   version: "3.4.0"
   last_modified: "2026-06-21"
 provenance:

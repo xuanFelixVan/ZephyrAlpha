@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for graph_validator.py (T-2-11-C)
 """
@@ -14,9 +15,10 @@ Unit tests for graph_validator.py (T-2-11-C)
 from pathlib import Path
 
 import pytest
-from zephyr.governance.persistence.sqlite_schema import init_db
+
 from zephyr.governance.kb.chromadb_init import init_chromadb
 from zephyr.governance.kb.graph_validator import GraphValidator, ValidationSeverity
+from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
 
 

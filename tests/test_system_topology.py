@@ -10,20 +10,19 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_system_topology.py
 
-import pytest
 
 from zephyr.behavioral_audit.system_topology import (
     BTRACK_LABELS,
     BTRACK_SYSTEM_COUNT,
-    BTrackSystem,
-    CTRACK_LAYER_COUNT,
     CTRACK_LABELS,
-    CTrackLayer,
+    CTRACK_LAYER_COUNT,
     LAYER_GRAPH,
-    RUNTIME_PLANE_COUNT,
-    RuntimePlane,
     PLANE_LABELS,
+    RUNTIME_PLANE_COUNT,
+    BTrackSystem,
+    CTrackLayer,
     LayerTopology,
+    RuntimePlane,
     btrack_systems_for_layer,
     get_downstream_chain,
     get_layer,
@@ -37,9 +36,7 @@ class TestCTrackLayer:
     def test_all_members_present(self):
         expected = [f"L{i:02d}" for i in range(14)]
         for prefix in expected:
-            assert hasattr(CTrackLayer, prefix) or any(
-                m.name.startswith(prefix) for m in CTrackLayer
-            )
+            assert hasattr(CTrackLayer, prefix) or any(m.name.startswith(prefix) for m in CTrackLayer)
 
     def test_member_count(self):
         assert len(CTrackLayer) == CTRACK_LAYER_COUNT

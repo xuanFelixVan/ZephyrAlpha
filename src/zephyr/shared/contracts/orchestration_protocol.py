@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-SHR_orchestration_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.orchestration_protocol
-# [INVARIANTS] Protocol MUST NOT import from zephyr.orchestration; only structural subtyping
+# [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; all consumers
 # [CONSUMERS] zephyr.infrastructure.rollback; zephyr.governance.ops_governance; zephyr.infrastructure.rollback; zephyr.trading.orchestrator.chaos_hooks; zephyr.trading.orchestrator.batch_orchestrator
 # [STABILITY] stable
@@ -13,7 +13,7 @@
 from __future__ import annotations
 
 import importlib
-from typing import Any, Dict, List, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -29,7 +29,7 @@ class ShadowCanaryProtocol(Protocol):
 class ChaosEngineProtocol(Protocol):
     """Chaos fault injection engine protocol - decouples D-RES/D-GOV from D-ORCH."""
 
-    def get_injection_points(self) -> List[Dict[str, Any]]: ...
+    def get_injection_points(self) -> list[dict[str, Any]]: ...
 
     def inject(self, injection_type_or_point: str = "", **kwargs: Any) -> Any: ...
 
@@ -39,11 +39,9 @@ class ChaosEngineProtocol(Protocol):
 
     def cleanup(self) -> None: ...
 
-    def fault_inject(
-        self, target: str, fault_type: str, params: Optional[Dict[str, Any]] = None
-    ) -> Any: ...
+    def fault_inject(self, target: str, fault_type: str, params: dict[str, Any] | None = None) -> Any: ...
 
-    def get_active_faults(self) -> List[Any]: ...
+    def get_active_faults(self) -> list[Any]: ...
 
     def is_healthy(self) -> bool: ...
 
@@ -52,7 +50,7 @@ class ChaosEngineProtocol(Protocol):
 class BatchOrchestratorProtocol(Protocol):
     """Batch task orchestrator protocol - decouples D-RES/D-GOV from D-ORCH."""
 
-    def claim_next(self) -> Optional[Any]: ...
+    def claim_next(self) -> Any | None: ...
 
     def mark_done(self, task_id: str) -> None: ...
 
@@ -65,19 +63,17 @@ class BatchOrchestratorProtocol(Protocol):
 
 def create_shadow_canary() -> ShadowCanaryProtocol:
     _mod = importlib.import_module("zephyr.autonomy_core.shadow_canary")
-    _ShadowCanary = getattr(_mod, "ShadowCanary")
+    _ShadowCanary = _mod.ShadowCanary
     return _ShadowCanary()
 
 
 def create_chaos_engine() -> ChaosEngineProtocol:
     _mod = importlib.import_module("zephyr.trading.orchestrator.chaos_engine")
-    _ChaosEngine = getattr(_mod, "ChaosEngine")
+    _ChaosEngine = _mod.ChaosEngine
     return _ChaosEngine()
 
 
-def create_batch_orchestrator(
-    repo: Any, batch_id: str, worker_id: str, **kwargs: Any
-) -> BatchOrchestratorProtocol:
+def create_batch_orchestrator(repo: Any, batch_id: str, worker_id: str, **kwargs: Any) -> BatchOrchestratorProtocol:
     _mod = importlib.import_module("zephyr.trading.orchestrator.batch_orchestrator")
-    _BatchOrchestrator = getattr(_mod, "BatchOrchestrator")
+    _BatchOrchestrator = _mod.BatchOrchestrator
     return _BatchOrchestrator(repo, batch_id, worker_id, **kwargs)

@@ -37,7 +37,6 @@ FLE 单向依赖原则（ 不直接 import Orchestrator，
 通过 Protocol 适配器 fire-and-forget，防止循环依赖。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -48,10 +47,10 @@ from typing import Any
 from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
 
 __all__ = [
-    "AnomalySeverity",
     "AnomalyReport",
-    "ScheduleAdjustment",
+    "AnomalySeverity",
     "DecisionEngine",
+    "ScheduleAdjustment",
     "reflect_on_blueprint",
 ]
 
@@ -116,8 +115,8 @@ class DecisionEngine:
             action_type=action_type,
             throttle_pct=throttle,
             reason=f"Anomaly detected: {report.anomaly_type} "
-                   f"deviation={report.deviation_pct:.1f}% "
-                   f"metric={report.metric_name}",
+            f"deviation={report.deviation_pct:.1f}% "
+            f"metric={report.metric_name}",
             anomaly_report=report,
         )
 

@@ -9,7 +9,7 @@
 #
 # 任务编号 : T-V2-007（experimental RI-03）
 # 权限层级 : Human-Gated（路由表修改 = 关键架构变更，R84 修正）
-# 真源声明 : ai_autonomy_authority_registry.md §2.9（RI-03）+ §2.10（三件套）
+# 真源声明 : ai_autonomy_authority_registry.yaml §2.9（RI-03）+ §2.10（三件套）
 # 关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
 #            B6 §2.4（RI-03 设计）
 # 创建日期 : 2026-04-27
@@ -43,7 +43,7 @@ ttl: permanent
 
 triggers:
   onboarding:
-    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_onboarding_stub"
+    handler: "zephyr.trading.orchestrator.trigger_router.handle_onboarding_stub"
     description: "新会话或 Agent 注册时加载上下文与历史"
     safety: "M"
     enabled: true
@@ -53,7 +53,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 layer_router.get_layer_order() 真实实现，fallback 到 stub"
 
   drift_detected:
-    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_drift_stub"
+    handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_stub"
     description: "Drift Detector 报告偏移时触发恢复流程"
     safety: "H"
     enabled: true
@@ -63,7 +63,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 drift_detector.trigger_recovery() 真实实现，fallback 到 stub"
 
   compression_needed:
-    handler: "zephyr.orchestration.context_management.context_budget_tracker.handle_compression_needed"
+    handler: "zephyr.autonomy_core.context_budget_tracker.handle_compression_needed"
     description: "Token 预算紧张时通过 DocCompressor 压缩文档"
     safety: "M"
     enabled: true
@@ -73,7 +73,7 @@ triggers:
     notes: "Phase C — 真实实现已兑现"
 
   cleanup_due:
-    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_cleanup_stub"
+    handler: "zephyr.trading.orchestrator.trigger_router.handle_cleanup_stub"
     description: "周期性清理任务（孤儿快照 / 过期审计日志等）"
     safety: "L"
     enabled: true
@@ -83,7 +83,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 archive_drafts_zone.py 真实脚本，fallback 到 stub"
 
   blueprint_published:
-    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_blueprint_stub"
+    handler: "zephyr.trading.orchestrator.trigger_router.handle_blueprint_stub"
     description: "新蓝图发布后触发反思循环与 KE 索引"
     safety: "M"
     enabled: true
@@ -93,7 +93,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 feedback_loop.decision_engine.reflect_on_blueprint() 真实实现，fallback 到 stub"
 
   blueprint_lookup:
-    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_blueprint_lookup_stub"
+    handler: "zephyr.trading.orchestrator.trigger_router.handle_blueprint_lookup_stub"
     description: "AI Agent 查询当前任务该读哪份蓝图——路由到 config/blueprint_routing.yaml"
     safety: "L"
     enabled: true

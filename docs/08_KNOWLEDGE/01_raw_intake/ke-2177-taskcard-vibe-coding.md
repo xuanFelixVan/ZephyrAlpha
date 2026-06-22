@@ -9,7 +9,7 @@ category: module_blueprint
 
 3.2.1 TaskCard（Vibe Coding 扩展任务模型）
 
-> **基座**：继承 [shared/schemas.py](file:///D:/ZephyrAlpha/src/zephyr/shared/schemas.py) `Task`（**31 字段**，真源 [metadata-registry.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/meta/metadata-registry.md) §7.1~§7.1.1）
+> **基座**：继承 [shared/schemas.py](file:///D:/ZephyrAlpha/src/zephyr/shared/schemas.py) `Task`（**31 字段**，真源 [metadata_registry.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/meta/metadata_registry.yaml) §7.1~§7.1.1）
 >
 > **扩展**：本蓝图追加 6 维防漂移 + 门禁 + 管线 + **v0.4.0 新增：父子层级/可执行回滚/Retry策略/AI自治五级** 等 Vibe Coding 执行层字段
 
@@ -32,7 +32,7 @@ class GateLevel(str, Enum):
     G6 = "G6"  # 关闭门禁——artifact_paths 残留物已处理
 
 class TaskNamespace(str, Enum):
-    """任务命名空间——裁定 #21 + metadata-registry.md §7.2"""
+    """任务命名空间——裁定 #21 + metadata_registry.yaml §7.2"""
     ADR = "ADR"  # 架构决策记录
     CP = "CP"    # 施工计划
     KE = "KE"    # 知识条目
@@ -53,7 +53,7 @@ class TaskCard(Task):
     """
     Vibe Coding 任务模型——继承 shared/schemas.py Task（31字段）+ 追加执行层字段
 
-    父类（Task，metadata-registry.md §7 真源）提供：
+    父类（Task，metadata_registry.yaml §7 真源）提供：
       task_id(namespace-seq), namespace, seq, title, status(10态), priority(P0-P3),
       phase, execution_model, model_rationale, fallback_model, safety_level,
       directive, idempotent, classification, evolution_policy, estimate_hours,

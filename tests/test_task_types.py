@@ -17,15 +17,14 @@ import pytest
 from pydantic import ValidationError
 
 from zephyr.governance.rule_enforcement.task_types import (
+    ExecutionModel,
     Task,
     TaskNamespace,
     TaskStatus,
-    ExecutionModel,
     normalize_execution_model,
 )
 from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-
 
 _NOW = datetime(2026, 5, 22, 12, 0, 0)
 

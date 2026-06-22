@@ -20,7 +20,9 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from typing import Self
+
 """
 schema_registry.py —— Schema 版本编目与查询（Phase 10 新增 | 盲点 B25 修复）
 
@@ -55,10 +57,10 @@ from zephyr.shared.__version__ import version_compatible
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "SchemaVersion",
     "SchemaEntry",
     "SchemaRegistry",
     "SchemaRegistryError",
+    "SchemaVersion",
     "get_schema_registry",
 ]
 

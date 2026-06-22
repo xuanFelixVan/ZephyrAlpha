@@ -10,8 +10,8 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_embedding_version_lock.py -q
 from __future__ import annotations
-import pytest
-from zephyr.autonomy_core.embedding_version_lock import EmbeddingVersionLock, EmbeddingVersionInfo
+
+from zephyr.autonomy_core.embedding_version_lock import EmbeddingVersionInfo, EmbeddingVersionLock
 
 
 class TestEmbeddingVersionInfo:
@@ -28,9 +28,7 @@ class TestEmbeddingVersionInfo:
         assert evi.needs_regression_test is True
 
     def test_instantiation_defaults(self):
-        evi = EmbeddingVersionInfo(
-            model_name="m", model_version="1.0", ke_count=0, needs_regression_test=False
-        )
+        evi = EmbeddingVersionInfo(model_name="m", model_version="1.0", ke_count=0, needs_regression_test=False)
         assert evi.ke_count == 0
         assert evi.needs_regression_test is False
 

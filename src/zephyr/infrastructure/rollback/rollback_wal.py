@@ -33,8 +33,8 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -60,7 +60,6 @@ class WALStatus:
 
 
 class RollbackWAL:
-
     EXIT_CODE_WAL_INCOMPLETE: int = 45
     WAL_FILE: str = ".zephyr/rollback_wal.jsonl"
 
@@ -69,7 +68,7 @@ class RollbackWAL:
         self._wal_path = self._project_root / self.WAL_FILE
 
     def write_ahead(self, operation: str, from_commit: str, to_commit: str, files: list[str]) -> WALEntry:
-        entry_id = f"WAL-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S-%f')}"
+        entry_id = f"WAL-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S-%f')}"
 
         entry = WALEntry(
             entry_id=entry_id,
@@ -78,20 +77,26 @@ class RollbackWAL:
             to_commit=to_commit,
             files=files,
             status="PENDING",
-            written_at=datetime.now(timezone.utc).isoformat(),
+            written_at=datetime.now(UTC).isoformat(),
         )
 
         self._wal_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self._wal_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "entry_id": entry.entry_id,
-                "operation": entry.operation,
-                "from_commit": entry.from_commit,
-                "to_commit": entry.to_commit,
-                "files": entry.files,
-                "status": entry.status,
-                "written_at": entry.written_at,
-            }, ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "entry_id": entry.entry_id,
+                        "operation": entry.operation,
+                        "from_commit": entry.from_commit,
+                        "to_commit": entry.to_commit,
+                        "files": entry.files,
+                        "status": entry.status,
+                        "written_at": entry.written_at,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
             f.flush()
 
         return entry
@@ -107,7 +112,7 @@ class RollbackWAL:
         for e in entries:
             if e.get("entry_id") == entry_id:
                 e["status"] = "COMPLETE"
-                e["completed_at"] = datetime.now(timezone.utc).isoformat()
+                e["completed_at"] = datetime.now(UTC).isoformat()
                 found = True
             updated.append(e)
 
@@ -159,7 +164,7 @@ class RollbackWAL:
         if not self._wal_path.exists():
             return []
         entries: list[dict[str, Any]] = []
-        with open(self._wal_path, "r", encoding="utf-8") as f:
+        with open(self._wal_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:

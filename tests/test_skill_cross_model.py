@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest exit 0 = all pass; exit != 0 = regression
 # [TESTS] tests/test_skill_cross_model.py
 
-import pytest
 
 from zephyr.autonomy_core.skill_cross_model import (
     CrossModelContext,
@@ -184,6 +183,7 @@ class TestAdaptMessages:
 
     def test_anthropic_tag_style_wraps_system(self):
         from zephyr.autonomy_core.skill_cross_model import _MODEL_CAPABILITIES
+
         scm = SkillCrossModel()
         ctx = CrossModelContext(system_prompt="Be helpful", user_content="Hello")
         orig = _MODEL_CAPABILITIES.get("Claude")

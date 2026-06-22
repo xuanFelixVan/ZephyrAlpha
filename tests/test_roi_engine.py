@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.behavioral_audit.roi_engine import (
     ROIEngine,
     ROIScore,
@@ -113,9 +111,33 @@ class TestROIEngine:
 
     def test_rank_sorts_by_roi(self):
         engine = ROIEngine()
-        s1 = ROIScore(detector_id="a", impact_weight=10.0, frequency_score=1.0, effort_score=1.0, roi=10.0, rank=0, effort_tier="auto_fixable")
-        s2 = ROIScore(detector_id="b", impact_weight=5.0, frequency_score=1.0, effort_score=1.0, roi=5.0, rank=0, effort_tier="auto_fixable")
-        s3 = ROIScore(detector_id="c", impact_weight=2.0, frequency_score=1.0, effort_score=1.0, roi=2.0, rank=0, effort_tier="auto_fixable")
+        s1 = ROIScore(
+            detector_id="a",
+            impact_weight=10.0,
+            frequency_score=1.0,
+            effort_score=1.0,
+            roi=10.0,
+            rank=0,
+            effort_tier="auto_fixable",
+        )
+        s2 = ROIScore(
+            detector_id="b",
+            impact_weight=5.0,
+            frequency_score=1.0,
+            effort_score=1.0,
+            roi=5.0,
+            rank=0,
+            effort_tier="auto_fixable",
+        )
+        s3 = ROIScore(
+            detector_id="c",
+            impact_weight=2.0,
+            frequency_score=1.0,
+            effort_score=1.0,
+            roi=2.0,
+            rank=0,
+            effort_tier="auto_fixable",
+        )
         ranked = engine.rank([s3, s1, s2])
         assert ranked[0].detector_id == "a"
         assert ranked[0].rank == 1
@@ -131,7 +153,15 @@ class TestROIEngine:
 
     def test_rank_single_element(self):
         engine = ROIEngine()
-        s = ROIScore(detector_id="x", impact_weight=1.0, frequency_score=1.0, effort_score=1.0, roi=1.0, rank=0, effort_tier="auto_fixable")
+        s = ROIScore(
+            detector_id="x",
+            impact_weight=1.0,
+            frequency_score=1.0,
+            effort_score=1.0,
+            roi=1.0,
+            rank=0,
+            effort_tier="auto_fixable",
+        )
         ranked = engine.rank([s])
         assert len(ranked) == 1
         assert ranked[0].rank == 1

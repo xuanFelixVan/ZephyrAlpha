@@ -1,8 +1,18 @@
 rule_id: TRAE-038
 title: 架构治理-CTR注入规则
+version: 1.0.0
+layer: L1
+module_id: TRAE-038
+depends_on: []
+tags:
+- TRAE
+- architecture_ctr_injection
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - GOV-ARC-CTR-001
-layer: L1
 severity: error
 scope: architecture_ctr_injection
 domain: TRAE
@@ -294,7 +304,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
 provenance:
   migration_note: 源文件已迁移为trae_038.yaml格式，本文件现为SSoT。源文件hash为迁移前历史记录。
   extracted_at: '2026-06-13T00:00:00'

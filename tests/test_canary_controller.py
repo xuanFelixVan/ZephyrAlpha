@@ -10,18 +10,15 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_canary_controller.py
 
-import os
 import json
-import tempfile
-
-import pytest
+import os
 
 from zephyr.behavioral_audit.canary_controller import (
+    CONFIG,
     CanaryComparison,
     CanaryConfig,
     CanaryResult,
     CanaryRun,
-    CONFIG,
     classify_event_id,
     get_canary_history,
     promote_detector,
@@ -228,7 +225,7 @@ class TestStatePersistence:
             assert cr.result == CanaryResult.PROMOTE
             state_file = os.path.join(str(tmp_path), "_canary_state.json")
             assert os.path.exists(state_file)
-            with open(state_file, "r", encoding="utf-8") as f:
+            with open(state_file, encoding="utf-8") as f:
                 state = json.loads(f.read())
             assert state["v1_detector_id"] == "v1"
             assert state["v2_detector_id"] == "v2"

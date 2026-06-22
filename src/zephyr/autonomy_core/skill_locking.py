@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_locking | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_locking
+# [MODULE] zephyr.autonomy_core.skill_locking
 
 # [INVARIANTS] none
 
@@ -29,7 +29,6 @@ Skill 并发安全锁 —— 多 Session/多 Agent 并发读写保护.
 基于文件锁 + 内存锁双层保护，防 registry/skill-file 竞争条件.
 """
 
-
 from __future__ import annotations
 
 import os
@@ -37,13 +36,13 @@ import threading
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any
 
 
 class SkillLock:
     """Skill 读写锁 —— 并发安全."""
 
-    _LOCKS: Dict[str, threading.RLock] = {}
+    _LOCKS: dict[str, threading.RLock] = {}
     _LOCK_FACTORY = threading.Lock()
 
     LOCK_DIR = Path("_locks")
@@ -93,7 +92,7 @@ class SkillLock:
             lock.release()
 
     @classmethod
-    def lock_stats(cls) -> Dict[str, Any]:
+    def lock_stats(cls) -> dict[str, Any]:
         return {"active_locks": len(cls._LOCKS)}
 
 
@@ -132,4 +131,4 @@ class SkillFileLock:
                 pass
 
 
-__all__ = ["SkillLock", "SkillFileLock"]
+__all__ = ["SkillFileLock", "SkillLock"]

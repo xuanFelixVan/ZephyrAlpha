@@ -11,16 +11,15 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 存储失败返回False
 # [TESTS] tests/audit-orchestrator/test_tiered_storage.py
-
-import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["TieredStorage"]
+
 
 class TieredStorage:
     HOT_DAYS = 7
@@ -56,15 +55,16 @@ class TieredStorage:
 
             target_dir = self._warm_dir if tier == "warm" else self._cold_dir
             target_path = target_dir / report_path.name
-            result["details"].append({
-                "file": report_path.name,
-                "from": tier_from(report_path),
-                "to": tier,
-            })
+            result["details"].append(
+                {
+                    "file": report_path.name,
+                    "from": tier_from(report_path),
+                    "to": tier,
+                }
+            )
 
             if not dry_run:
                 try:
-                    import os
                     report_path.rename(target_path)
                     result["migrated"] += 1
                 except Exception as exc:
@@ -89,6 +89,7 @@ class TieredStorage:
                 return path
         return None
 
+
 def tier_from(path: Path) -> str:
     age = datetime.now() - datetime.fromtimestamp(path.stat().st_mtime)
     if age.days <= TieredStorage.HOT_DAYS:
@@ -97,8 +98,9 @@ def tier_from(path: Path) -> str:
         return "warm"
     return "cold"
 
+
 class MigrationRecord:
-    def __init__(self, record_id='', source_tier='', target_tier='', entry_id='', timestamp=None, status='pending'):
+    def __init__(self, record_id="", source_tier="", target_tier="", entry_id="", timestamp=None, status="pending"):
         self.record_id = record_id
         self.source_tier = source_tier
         self.target_tier = target_tier
@@ -106,23 +108,28 @@ class MigrationRecord:
         self.timestamp = timestamp
         self.status = status
 
+
 class StorageTier:
-    HOT = 'HOT'
-    WARM = 'WARM'
-    COLD = 'COLD'
-    ARCHIVE = 'ARCHIVE'
+    HOT = "HOT"
+    WARM = "WARM"
+    COLD = "COLD"
+    ARCHIVE = "ARCHIVE"
+
 
 class TierConfig:
-    def __init__(self, tier='', max_age_days=365, max_size_mb=1024, compression=False):
+    def __init__(self, tier="", max_age_days=365, max_size_mb=1024, compression=False):
         self.tier = tier
         self.max_age_days = max_age_days
         self.max_size_mb = max_size_mb
         self.compression = compression
 
+
 class TieredStorageManager:
     def __init__(self, config=None):
         self.config = config or {}
+
     def migrate(self, entry, target_tier):
-        return MigrationRecord(target_tier=target_tier, entry_id=getattr(entry, 'entry_id', ''))
+        return MigrationRecord(target_tier=target_tier, entry_id=getattr(entry, "entry_id", ""))
+
     def get_tier(self, entry_id):
         return StorageTier.HOT

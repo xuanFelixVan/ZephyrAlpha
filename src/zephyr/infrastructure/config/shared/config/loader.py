@@ -44,7 +44,6 @@ SSoT: MOD-INF-016 §2.12 shared-config
 Version: 0.1.0
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -53,12 +52,12 @@ from typing import Any, TypeVar
 
 import yaml
 
-from zephyr.integration.shared_08.foundation.errors import ConfigError, ValidationError
+from zephyr.integration.shared_08.foundation.errors import ConfigError
 
 __all__ = [
+    "ConfigLoadError",
     "load_yaml_config",
     "load_yaml_config_validated",
-    "ConfigLoadError",
 ]
 
 logger = logging.getLogger(__name__)

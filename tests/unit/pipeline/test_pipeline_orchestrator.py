@@ -12,13 +12,13 @@ import sys
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-from zephyr.shared.shared_services.models import TaskCard
 from zephyr.integration.pipeline_routing import (
     M_MODULE_SPECS,
     M_MODULES,
     PipelineOrchestrator,
     PipelineStatus,
 )
+from zephyr.shared.shared_services.models import TaskCard
 
 
 def _make_task(task_id: str, **overrides) -> TaskCard:

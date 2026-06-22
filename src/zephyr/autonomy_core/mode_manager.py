@@ -24,7 +24,7 @@ from __future__ import annotations
 """mode_manager.py — 模式管理器 (DD102, TASK-019)"""
 
 from enum import Enum
-from dataclasses import dataclass
+
 
 class CEMode(Enum):
     VIBE = "vibe"
@@ -32,8 +32,10 @@ class CEMode(Enum):
     LEARNING = "learning"
     PRODUCTION = "production"
 
+
 class ModeManager:
     """mode_transition_proof 因果验证 + per-mode budget 表 (DD102)."""
+
     def __init__(self, mode: CEMode = CEMode.VIBE) -> None:
         self._mode = mode
 

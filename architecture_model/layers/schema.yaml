@@ -90,7 +90,7 @@ operational_schema:
 
     module_id:
 
-      MOD-017 string
+      type: string
 
       required: false
 

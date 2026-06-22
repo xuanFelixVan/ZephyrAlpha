@@ -1,18 +1,22 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/test_event_hook.py | §
 import sys
+
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
 
-from zephyr.integration.zephyr.event_hook import hook_registry, TransitionEvent
-from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.integration.zephyr.event_hook import TransitionEvent, hook_registry
+
 from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 init_db()
 
 events = []
 
+
 def log(event: TransitionEvent):
     events.append(event.task_id)
     print(f"Hook fired: {event.task_id} {event.from_status} -> {event.to_status}")
+
 
 hook_registry.register(log, priority=1, name="test-logger")
 

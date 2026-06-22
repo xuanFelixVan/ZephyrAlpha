@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_otel_instrumentation.py -q
 import time
-import pytest
+
 from zephyr.autonomy_core.otel_instrumentation import OTelInstrumentation, PipelineTraceSpan
 
 

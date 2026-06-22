@@ -37,7 +37,6 @@ task_id 真源：`schemas.Task` 要求 `^(KBG|CP|KE|STD|DW|SRC|OPS)-\\d+$`
 task_id 格式（§3.2.1）：{NAMESPACE}-{SEQ}（SQLite auto-increment 保证唯一性）
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -47,15 +46,15 @@ from pathlib import Path
 
 import yaml
 
+from zephyr.integration.shared.schema.execution_model import ExecutionModel
+from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.shared_services.models import (
     DecompositionResult,
     GateLevel,
     TaskCard,
     TaskStatus,
 )
-from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.shared.task_types import TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 
 logger = logging.getLogger(__name__)
 
@@ -319,9 +318,9 @@ class BlueprintDecomposer:
             if "根因" not in desc:
                 desc = f"根因：蓝图 {bp_module_id} 要求实现 {name}。治根：按蓝图规格实现。{desc}"
             if "施工步骤" not in desc:
-                desc = desc + " 施工步骤：(1) 按蓝图 {0} §auto-extracted 实现 {1}。".format(bp_module_id, name)
+                desc = desc + f" 施工步骤：(1) 按蓝图 {bp_module_id} §auto-extracted 实现 {name}。"
             if "验收标准" not in desc:
-                desc = desc + " 验收标准：{0} 的产出物存在且符合蓝图描述。".format(name)
+                desc = desc + f" 验收标准：{name} 的产出物存在且符合蓝图描述。"
 
             return TaskCard(
                 task_id=task_id,

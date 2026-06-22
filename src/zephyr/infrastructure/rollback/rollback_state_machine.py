@@ -34,8 +34,8 @@ RollbackStateMachine — 回滚步骤级状态机。
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -73,7 +73,6 @@ class StateMachineResult:
 
 
 class RollbackStateMachine:
-
     STEPS: list[tuple[str, StepType, int]] = [
         ("preflight", StepType.REVERSIBLE, 3),
         ("acquire_lock", StepType.REVERSIBLE, 5),
@@ -90,10 +89,7 @@ class RollbackStateMachine:
         self._init_steps()
 
     def _init_steps(self) -> None:
-        self._steps = [
-            RollbackStep(name=name, step_type=st, max_retries=retries)
-            for name, st, retries in self.STEPS
-        ]
+        self._steps = [RollbackStep(name=name, step_type=st, max_retries=retries) for name, st, retries in self.STEPS]
 
     @property
     def current_step(self) -> RollbackStep | None:
@@ -111,7 +107,7 @@ class RollbackStateMachine:
             return
 
         step.status = status
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         if status == StepStatus.PENDING and not step.started_at:
             step.started_at = now
 
@@ -145,9 +141,7 @@ class RollbackStateMachine:
         failed_steps = [s for s in self._steps if s.status == StepStatus.FAILED]
         failed_step = failed_steps[0].name if failed_steps else ""
 
-        overall = StepStatus.SUCCESS if all_success else (
-            StepStatus.FAILED if failed_steps else StepStatus.PENDING
-        )
+        overall = StepStatus.SUCCESS if all_success else (StepStatus.FAILED if failed_steps else StepStatus.PENDING)
 
         return StateMachineResult(
             success=all_success,

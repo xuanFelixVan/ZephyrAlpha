@@ -6,20 +6,20 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Escalation — MOD-INF-022
 
 升级协议：异常事件阶梯升级 L0-L4 + Owner通知.
 """
-from . import a2a_failure
-from . import budget_handler
 
+from zephyr.governance.approval import ApprovalRequest
 from zephyr.governance.contracts import EscalationContracts
 from zephyr.governance.rbac_bridge import EscalationRBACBridge, RBACCheckResult
-from zephyr.governance.approval import ApprovalRequest
+
+from . import a2a_failure, budget_handler
 
 __all__ = [
     "ApprovalRequest",

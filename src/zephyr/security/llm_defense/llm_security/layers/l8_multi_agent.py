@@ -2,22 +2,27 @@
 class MultiAgentSecurityLayer:
     def __init__(self, config=None):
         self.config = config or {}
+
     def validate(self, interaction):
         return True
+
     def check_communication(self, source, target):
         return True
+
     def enforce_boundary(self, agent_id, boundary):
         pass
 
 
-from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class AgentCommunicationItem:
     """Represents a communication item between agents."""
-    def __init__(self, source_id: str = "", target_id: str = "", message_type: str = "", content: Any = None, timestamp: str = ""):
+
+    def __init__(
+        self, source_id: str = "", target_id: str = "", message_type: str = "", content: Any = None, timestamp: str = ""
+    ):
         self.source_id = source_id
         self.target_id = target_id
         self.message_type = message_type
@@ -27,16 +32,20 @@ class AgentCommunicationItem:
 
 class AgentIdentityResolver:
     """Resolves and verifies agent identities."""
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
-    def resolve(self, agent_id: str) -> Dict[str, Any]:
+
+    def resolve(self, agent_id: str) -> dict[str, Any]:
         return {"id": agent_id, "verified": True}
+
     def verify_identity(self, agent_id: str, credentials: Any) -> bool:
         return True
 
 
 class CrossAgentPermission(Enum):
     """Permissions for cross-agent interactions."""
+
     COMMUNICATE = "communicate"
     DELEGATE = "delegate"
     OBSERVE = "observe"
@@ -46,6 +55,7 @@ class CrossAgentPermission(Enum):
 
 class Scope(Enum):
     """Scopes for multi-agent interactions."""
+
     GLOBAL = "global"
     DOMAIN = "domain"
     SESSION = "session"
@@ -55,16 +65,20 @@ class Scope(Enum):
 
 class TrustScoreCalculator:
     """Calculates trust scores for agents."""
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
-    def calculate(self, agent_id: str, history: Optional[List[Any]] = None) -> float:
+
+    def calculate(self, agent_id: str, history: list[Any] | None = None) -> float:
         return 1.0
+
     def update_score(self, agent_id: str, event: Any) -> float:
         return 1.0
 
 
 class TrustTier(Enum):
     """Trust tiers for agents."""
+
     FULL = "full"
     PARTIAL = "partial"
     RESTRICTED = "restricted"

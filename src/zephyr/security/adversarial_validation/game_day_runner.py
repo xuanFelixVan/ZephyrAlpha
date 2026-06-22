@@ -15,19 +15,18 @@ from __future__ import annotations
 import logging
 from enum import Enum
 
-from zephyr.security.adversarial_validation.validator import RedBlueValidator, SessionError
+from zephyr.security.adversarial_validation.blast_radius import AbortThresholdError
 from zephyr.security.adversarial_validation.models import (
     AttackTier,
     BlastRadiusLevel,
     GameDayResult,
     RedBlueReport,
 )
-from zephyr.security.adversarial_validation.blast_radius import AbortThresholdError
-from zephyr.security.adversarial_validation.convergence_checker import ConvergenceFailureError
+from zephyr.security.adversarial_validation.validator import RedBlueValidator
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["GameDayRunner", "GameDayFrequency", "GameDayError"]
+__all__: list[str] = ["GameDayError", "GameDayFrequency", "GameDayRunner"]
 
 
 class GameDayFrequency(str, Enum):
@@ -62,7 +61,6 @@ class GameDayError(RuntimeError):
 
 
 class GameDayRunner:
-
     def __init__(self) -> None:
         self._validator = RedBlueValidator()
 
@@ -98,7 +96,11 @@ class GameDayRunner:
 
         logger.info(
             "game_day_complete frequency=%s attacks=%d blocked=%d bypassed=%d rate=%.1f%%",
-            frequency.value, report.total, report.blocked, report.bypassed, report.blocked_rate * 100,
+            frequency.value,
+            report.total,
+            report.blocked,
+            report.bypassed,
+            report.blocked_rate * 100,
         )
         return result
 

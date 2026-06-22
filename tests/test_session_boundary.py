@@ -13,20 +13,17 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-
-import pytest
 
 from zephyr.shared.session.session_boundary import (
     SessionBoundary,
-    SessionBudget,
     SessionBoundaryManager,
+    SessionBudget,
 )
 
 
 class TestSessionBoundaryDataclass:
-
     def test_default_values(self):
         b = SessionBoundary(session_id="s-001", start_time="2026-01-01T00:00:00+00:00")
         assert b.session_id == "s-001"
@@ -52,7 +49,6 @@ class TestSessionBoundaryDataclass:
 
 
 class TestSessionBudgetDataclass:
-
     def test_default_values(self):
         b = SessionBudget()
         assert b.max_cards == 115
@@ -62,7 +58,6 @@ class TestSessionBudgetDataclass:
 
 
 class TestSessionBoundaryManager:
-
     def test_instantiation_with_tmp_path(self, tmp_path):
         mgr = SessionBoundaryManager(data_dir=tmp_path / "sessions")
         assert mgr._data_dir == tmp_path / "sessions"
@@ -179,7 +174,7 @@ class TestSessionBoundaryManager:
         old_boundary = SessionBoundary(
             session_id="old-session",
             start_time="2020-01-01T00:00:00+00:00",
-            end_time=(datetime.now(timezone.utc) - timedelta(days=60)).isoformat(),
+            end_time=(datetime.now(UTC) - timedelta(days=60)).isoformat(),
         )
         mgr._save_boundary(old_boundary)
         cleared = mgr.clean_old_boundaries(max_age_days=30)
@@ -189,8 +184,8 @@ class TestSessionBoundaryManager:
         mgr = SessionBoundaryManager(data_dir=tmp_path)
         recent_boundary = SessionBoundary(
             session_id="recent-session",
-            start_time=datetime.now(timezone.utc).isoformat(),
-            end_time=datetime.now(timezone.utc).isoformat(),
+            start_time=datetime.now(UTC).isoformat(),
+            end_time=datetime.now(UTC).isoformat(),
         )
         mgr._save_boundary(recent_boundary)
         cleared = mgr.clean_old_boundaries(max_age_days=30)

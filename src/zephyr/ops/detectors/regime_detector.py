@@ -27,6 +27,7 @@ Risk: R49 — Crisis-mode diagnosis logic identical to normal; catastrophic fals
 
 from dataclasses import dataclass
 
+
 @dataclass
 class RegimeDetector:
     current_regime: str = "NORMAL"

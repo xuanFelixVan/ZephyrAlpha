@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import logging
 import os
-import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -48,7 +47,6 @@ class ScheduleConflictError(RuntimeError):
 
 
 class GameDayScheduler:
-
     def __init__(self, state_path: Path | None = None) -> None:
         self._state_path: Path = state_path or _STATE_PATH
         self._runner = GameDayRunner()
@@ -61,9 +59,7 @@ class GameDayScheduler:
             return []
 
         if self._is_running():
-            raise ScheduleConflictError(
-                f"Cannot trigger {trigger_name}: game day already running"
-            )
+            raise ScheduleConflictError(f"Cannot trigger {trigger_name}: game day already running")
 
         results: list[dict] = []
         self._set_running(True)
@@ -73,12 +69,14 @@ class GameDayScheduler:
                 if self._should_run(freq):
                     result = self._runner.run_game_day(freq)
                     self._record_run(freq, result)
-                    results.append({
-                        "frequency": freq.value,
-                        "total": result.total_attacks,
-                        "blocked": result.passed,
-                        "bypassed": result.bypasses,
-                    })
+                    results.append(
+                        {
+                            "frequency": freq.value,
+                            "total": result.total_attacks,
+                            "blocked": result.passed,
+                            "bypassed": result.bypasses,
+                        }
+                    )
         finally:
             self._set_running(False)
 
@@ -135,13 +133,15 @@ class GameDayScheduler:
 
         if "history" not in self._state:
             self._state["history"] = []
-        self._state["history"].append({
-            "frequency": frequency.value,
-            "timestamp": datetime.now(UTC).isoformat(),
-            "total": result.total_attacks,
-            "blocked": result.passed,
-            "bypassed": result.bypasses,
-        })
+        self._state["history"].append(
+            {
+                "frequency": frequency.value,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "total": result.total_attacks,
+                "blocked": result.passed,
+                "bypassed": result.bypasses,
+            }
+        )
         self._state["history"] = self._state["history"][-50:]
         self._save_state()
 

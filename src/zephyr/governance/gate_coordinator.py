@@ -8,19 +8,23 @@ from __future__ import annotations
 # [CONSUMERS] zephyr.infrastructure.rollback.rollback_engine
 # [STABILITY] evolving; [SAFETY] M; [AI_AUTONOMY] ai_modifiable
 # [TESTS] scripts/connect/rbk_gate.py --trigger
-# [ERROR_CONTRACT] 
+# [ERROR_CONTRACT]
 """Rollback→Gate 协调器 — freeze_all / thaw_all"""
 
 import logging
 from dataclasses import dataclass
-from typing import Any
 
 logger = logging.getLogger(__name__)
-__all__ = ["GateCoordinator", "CoordinatorResult", "freeze_all_gates", "thaw_all_gates"]
+__all__ = ["CoordinatorResult", "GateCoordinator", "freeze_all_gates", "thaw_all_gates"]
+
 
 @dataclass
 class CoordinatorResult:
-    frozen: bool = False; gates_count: int = 0; status: str = "complete"; error: str | None = None
+    frozen: bool = False
+    gates_count: int = 0
+    status: str = "complete"
+    error: str | None = None
+
 
 class GateCoordinator:
     def freeze_all(self) -> CoordinatorResult:
@@ -31,7 +35,10 @@ class GateCoordinator:
         logger.info("[RBK-GATE] thawing all gates")
         return CoordinatorResult(frozen=False, gates_count=6, status="complete")
 
+
 def freeze_all_gates() -> CoordinatorResult:
     return GateCoordinator().freeze_all()
+
+
 def thaw_all_gates() -> CoordinatorResult:
     return GateCoordinator().thaw_all()

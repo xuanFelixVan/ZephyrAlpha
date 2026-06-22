@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_context_engine_support.py
 
-import pytest
 
 import zephyr.autonomy_core.support as support_pkg
 
@@ -25,16 +24,20 @@ class TestSupportPackageImport:
 
     def test_submodule_importable_architecture(self):
         from zephyr.autonomy_core.support import architecture_context_loader
+
         assert architecture_context_loader is not None
 
     def test_submodule_importable_doc_compressor(self):
         from zephyr.autonomy_core.support import doc_compressor
+
         assert doc_compressor is not None
 
     def test_submodule_importable_prompt_registry(self):
         from zephyr.autonomy_core.support import prompt_registry
+
         assert prompt_registry is not None
 
     def test_submodule_importable_system_snapshot(self):
         from zephyr.autonomy_core.support import system_snapshot
+
         assert system_snapshot is not None

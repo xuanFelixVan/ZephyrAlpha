@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_discovery | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_discovery
+# [MODULE] zephyr.autonomy_core.skill_discovery
 
 # [INVARIANTS] none
 
@@ -29,12 +29,12 @@ Skill 发现——从模块蓝图与源码自动发现可生成 Skill 的模块�
 v0.3.0: 新增 auto_generate_missing() — B156 自动化 Skill 生成闭环.
 """
 
-
 from __future__ import annotations
 
-import yaml
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
+
+import yaml
 
 from zephyr.autonomy_core.skill_factory import SkillFactory
 from zephyr.autonomy_core.skill_loader import SkillLoader
@@ -46,7 +46,7 @@ class DiscoveryGap:
         self.blueprint_path = blueprint_path
         self.reason = reason
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "module_name": self.module_name,
             "blueprint_path": self.blueprint_path,
@@ -56,12 +56,12 @@ class DiscoveryGap:
 
 class DiscoveryResult:
     def __init__(self):
-        self.existing_skills: List[str] = []
-        self.gaps: List[DiscoveryGap] = []
-        self.generated: List[str] = []
-        self.errors: List[str] = []
+        self.existing_skills: list[str] = []
+        self.gaps: list[DiscoveryGap] = []
+        self.generated: list[str] = []
+        self.errors: list[str] = []
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "existing_skills": self.existing_skills,
             "gaps": [g.to_dict() for g in self.gaps],
@@ -76,8 +76,8 @@ class SkillDiscovery:
     """Skill 发现——从模块蓝图自动发现可生成 Skill 的模块."""
 
     @staticmethod
-    def scan_modules(modules_path: str) -> List[Dict[str, Any]]:
-        results: List[Dict[str, Any]] = []
+    def scan_modules(modules_path: str) -> list[dict[str, Any]]:
+        results: list[dict[str, Any]] = []
         base = Path(modules_path)
         if not base.exists() or not base.is_dir():
             return results
@@ -91,19 +91,21 @@ class SkillDiscovery:
                 for md_file in sorted(cat_path.glob("*.md")):
                     skill_id = md_file.stem
                     frontmatter = SkillDiscovery._parse_frontmatter(md_file)
-                    results.append({
-                        "skill_id": (
-                            f"SKILL-DOM-{skill_id[:3].upper()}-001"
-                            if category_dir == "domain"
-                            else f"SKILL-ROL-{skill_id[:3].upper()}-001"
-                        ),
-                        "name": skill_id,
-                        "source": md_file.as_posix(),
-                        "category": category_dir,
-                        "version": frontmatter.get("version", "0.1.0"),
-                        "freshness": frontmatter.get("freshness_score", 0.0),
-                        "description": frontmatter.get("description", "")[:100],
-                    })
+                    results.append(
+                        {
+                            "skill_id": (
+                                f"SKILL-DOM-{skill_id[:3].upper()}-001"
+                                if category_dir == "domain"
+                                else f"SKILL-ROL-{skill_id[:3].upper()}-001"
+                            ),
+                            "name": skill_id,
+                            "source": md_file.as_posix(),
+                            "category": category_dir,
+                            "version": frontmatter.get("version", "0.1.0"),
+                            "freshness": frontmatter.get("freshness_score", 0.0),
+                            "description": frontmatter.get("description", "")[:100],
+                        }
+                    )
 
         all_skills = base / "all_skill_modules.py"
         if all_skills.exists():
@@ -119,20 +121,22 @@ class SkillDiscovery:
                 if line.startswith('"') and line.endswith('",'):
                     module_name = line.strip('" ,')
                     if module_name not in [r["name"] for r in results]:
-                        results.append({
-                            "skill_id": f"SKILL-MOD-{module_name[:3].upper()}",
-                            "name": module_name,
-                            "source": "all_skill_modules.py",
-                            "category": "registered",
-                            "version": "registered",
-                            "freshness": 0.0,
-                            "description": f"Registered module: {module_name}",
-                        })
+                        results.append(
+                            {
+                                "skill_id": f"SKILL-MOD-{module_name[:3].upper()}",
+                                "name": module_name,
+                                "source": "all_skill_modules.py",
+                                "category": "registered",
+                                "version": "registered",
+                                "freshness": 0.0,
+                                "description": f"Registered module: {module_name}",
+                            }
+                        )
 
         return results
 
     @staticmethod
-    def discover_gaps(docs_path: Optional[str] = None) -> DiscoveryResult:
+    def discover_gaps(docs_path: str | None = None) -> DiscoveryResult:
         result = DiscoveryResult()
 
         registry = SkillLoader()._load_registry()
@@ -165,17 +169,18 @@ class SkillDiscovery:
 
             module_id = SkillDiscovery._derive_skill_id(module_name)
             if module_id and module_id not in existing_ids:
-                result.gaps.append(DiscoveryGap(
-                    module_name=module_name,
-                    blueprint_path=str(bp_file),
-                    reason=f"No Skill registered for module '{module_name}' — expected skill_id={module_id}",
-                ))
+                result.gaps.append(
+                    DiscoveryGap(
+                        module_name=module_name,
+                        blueprint_path=str(bp_file),
+                        reason=f"No Skill registered for module '{module_name}' — expected skill_id={module_id}",
+                    )
+                )
 
         return result
 
     @staticmethod
-    def auto_generate_missing(docs_path: Optional[str] = None,
-                              dry_run: bool = True) -> DiscoveryResult:
+    def auto_generate_missing(docs_path: str | None = None, dry_run: bool = True) -> DiscoveryResult:
         gap_result = SkillDiscovery.discover_gaps(docs_path)
         if not gap_result.gaps:
             return gap_result
@@ -219,8 +224,14 @@ class SkillDiscovery:
         for part in bp_file.parts:
             if part.startswith("l") and "_" in part:
                 for p in bp_file.parent.parts:
-                    if p not in ("docs", "03_modules", "infrastructure.runtime_integration", "factor",
-                                 "blueprints", "module"):
+                    if p not in (
+                        "docs",
+                        "03_modules",
+                        "infrastructure.runtime_integration",
+                        "factor",
+                        "blueprints",
+                        "module",
+                    ):
                         clean = p.replace("_", "-").strip()
                         if len(clean) > 1 and not any(c in clean for c in ("[", "]", ":", "(", ")")):
                             return clean
@@ -236,7 +247,7 @@ class SkillDiscovery:
         return f"SKILL-DOM-{short[:3].upper()}-001"
 
     @staticmethod
-    def _parse_frontmatter(md_file: Path) -> Dict[str, Any]:
+    def _parse_frontmatter(md_file: Path) -> dict[str, Any]:
         content = md_file.read_text(encoding="utf-8")
         if not content.startswith("---"):
             return {}
@@ -249,4 +260,4 @@ class SkillDiscovery:
             return {}
 
 
-__all__ = ["SkillDiscovery", "DiscoveryResult", "DiscoveryGap"]
+__all__ = ["DiscoveryGap", "DiscoveryResult", "SkillDiscovery"]

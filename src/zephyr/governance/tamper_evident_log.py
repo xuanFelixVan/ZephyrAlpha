@@ -8,15 +8,15 @@ from __future__ import annotations
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
-
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 import hashlib
 import json
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+
 
 @dataclass
 class LogEntry:
@@ -26,6 +26,7 @@ class LogEntry:
     prev_hash: str
     timestamp: float = field(default_factory=time.time)
     hash: str = ""
+
 
 class TamperEvidentLog:
     def __init__(self, log_path: str = "logs/tamper_evident.jsonl"):
@@ -39,7 +40,7 @@ class TamperEvidentLog:
     def _load_chain(self) -> None:
         if not self._log_path.exists():
             return
-        with open(self._log_path, "r", encoding="utf-8") as f:
+        with open(self._log_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
@@ -78,24 +79,33 @@ class TamperEvidentLog:
         self._last_hash = h
 
         with open(self._log_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "entry_id": entry.entry_id,
-                "action": entry.action,
-                "data": entry.data,
-                "prev_hash": entry.prev_hash,
-                "timestamp": entry.timestamp,
-                "hash": entry.hash,
-            }, ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "entry_id": entry.entry_id,
+                        "action": entry.action,
+                        "data": entry.data,
+                        "prev_hash": entry.prev_hash,
+                        "timestamp": entry.timestamp,
+                        "hash": entry.hash,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
 
         try:
             from zephyr.governance.audit_trail.writer import get_audit_writer
-            get_audit_writer().write({
-                "event_type": "budget_enforcement",
-                "action_type": action,
-                "agent_id": "budget-enforcer",
-                "target_path": str(self._log_path),
-                "operation": action,
-            })
+
+            get_audit_writer().write(
+                {
+                    "event_type": "budget_enforcement",
+                    "action_type": action,
+                    "agent_id": "budget-enforcer",
+                    "target_path": str(self._log_path),
+                    "operation": action,
+                }
+            )
         except Exception:
             pass
 
@@ -104,7 +114,7 @@ class TamperEvidentLog:
     def verify(self) -> tuple[bool, int]:
         prev = "0" * 64
         for i, entry in enumerate(self._chain):
-            raw = f"{i+1}:{entry.action}:{entry.data}:{entry.timestamp}:{prev}"
+            raw = f"{i + 1}:{entry.action}:{entry.data}:{entry.timestamp}:{prev}"
             expected = hashlib.sha256(raw.encode()).hexdigest()
             if expected != entry.hash:
                 return False, i

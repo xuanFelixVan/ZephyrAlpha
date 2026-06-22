@@ -43,17 +43,16 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 from collections.abc import Callable
 from typing import Any
 
 __all__ = [
-    "Migration",
     "MIGRATIONS",
-    "migrate_task",
+    "Migration",
+    "MigrationError",
     "downgrade_task",
     "latest_schema_version",
-    "MigrationError",
+    "migrate_task",
 ]
 
 

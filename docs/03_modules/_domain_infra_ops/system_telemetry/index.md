@@ -1,27 +1,26 @@
 ---
-blueprint_id: DOM-GOV-001
-created: '2026-05-03'
 doc_type: index
-module_id: MOD-INF-079
-status: Draft
-title: system-telemetry — 目录索引
-updated: '2026-05-03'
-version: 1.0.0
+status: active
+title: "system_telemetry — 目录索引"
+module_id: "MOD-INF-015"
+blueprint_id: "MOD-INF-015"
+version: "2.0.2"
+created: "2026-06-22"
+updated: "2026-06-22"
 ---
 
-
-# system-telemetry
+# system_telemetry
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-03
+> 生成日期：2026-06-22
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blueprint.md](blueprint.md) | Markdown | blueprint.md |
+| [blueprint.md](blueprint.md) | Markdown | System Telemetry 蓝图+施工图 — 全系统可观测性 |
+| [index.md](index.md) | Markdown | system-telemetry — 目录索引 |
 
 ## 导航
 
 - [上级目录](../index.md)
-- [项目根](../../index.md)

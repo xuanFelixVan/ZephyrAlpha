@@ -6,9 +6,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """G-CT-006 — Budget → Escalation 集成测试."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 
 class TestGCT006BudgetToEscalation:
@@ -16,17 +15,20 @@ class TestGCT006BudgetToEscalation:
 
     def test_budget_alert_creatable(self):
         from zephyr.governance.alerts import BudgetAlert
+
         a = BudgetAlert(alert_id="B001")
         assert a.alert_id == "B001"
 
     def test_budget_handler_accepts_alert(self):
         from zephyr.governance.alerts import BudgetAlert
         from zephyr.governance.budget_handler import on_budget_alert
+
         a = BudgetAlert(alert_id="B001")
         result = on_budget_alert(a)
         assert result is not None
 
     def test_budget_severity_enum(self):
         from zephyr.governance.alerts import BudgetSeverity
+
         assert BudgetSeverity.WARNING is not None
         assert BudgetSeverity.CRITICAL is not None

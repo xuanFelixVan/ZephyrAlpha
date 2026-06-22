@@ -1,12 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/generate_manifest.py | §
 """Generate complete script_manifest.yaml from scripts/ tree scan."""
-import os, sys, yaml
+
+import os
+import sys
 from datetime import date
 from pathlib import Path
+
+import yaml
 
 SCRIPTS_ROOT = Path("scripts")
 OUTPUT_PATH = "scripts/script_manifest.yaml"
 EXCLUDE_DIRS = {"__pycache__", "reports", ".git", "node_modules"}
+
 
 def extract_description(filepath: Path) -> str:
     try:
@@ -24,12 +29,14 @@ def extract_description(filepath: Path) -> str:
     except Exception:
         return "Could not read"
 
+
 def determine_phase(rel_path: str) -> str:
     parts = rel_path.lower().replace("\\", "/").split("/")
     for p in parts:
         if "phase" in p or "g0" in p or "g1" in p or "g2" in p or "gate" in p:
             return "hot-path"
     return "warm-path"
+
 
 def determine_domain(rel_path: str) -> str:
     parts = rel_path.lower().replace("\\", "/").split("/")
@@ -60,6 +67,7 @@ def determine_domain(rel_path: str) -> str:
         return parts[0]
     return "misc"
 
+
 scripts = []
 for root, dirs, files in os.walk(SCRIPTS_ROOT):
     dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
@@ -71,16 +79,18 @@ for root, dirs, files in os.walk(SCRIPTS_ROOT):
         desc = extract_description(full)
         domain = determine_domain(rel)
         phase = determine_phase(rel)
-        scripts.append({
-            "name": rel,
-            "path": rel,
-            "description": desc,
-            "domain": domain,
-            "execution_plane": phase,
-            "status": "registered",
-            "timeout_seconds": 60,
-            "dimensions": [],
-        })
+        scripts.append(
+            {
+                "name": rel,
+                "path": rel,
+                "description": desc,
+                "domain": domain,
+                "execution_plane": phase,
+                "status": "registered",
+                "timeout_seconds": 60,
+                "dimensions": [],
+            }
+        )
 
 manifest = {
     "manifest_version": "2.0.0",
@@ -91,6 +101,7 @@ manifest = {
 }
 
 import os as _os
+
 tmp_path = f"{OUTPUT_PATH}.{_os.getpid()}.tmp"
 try:
     with open(tmp_path, "w", encoding="utf-8") as f:

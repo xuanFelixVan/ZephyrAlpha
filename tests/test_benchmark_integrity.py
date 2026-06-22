@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] import失败→skip
 # [TESTS] pytest tests/test_benchmark_integrity.py -q
 
-import pytest
 from zephyr.behavioral_audit.benchmark_integrity import (
     HEALTH_CHECK_INTERVAL,
     PIT_MAX_DELAY_MINUTES,

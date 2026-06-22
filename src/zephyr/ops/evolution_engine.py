@@ -2,34 +2,24 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.evolution_engine
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
-import math
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum, auto
+from enum import Enum
 from typing import Any
 
 import numpy as np
+
 
 class Severity(Enum):
     CRITICAL = "CRITICAL"
@@ -37,10 +27,12 @@ class Severity(Enum):
     MEDIUM = "MEDIUM"
     LOW = "LOW"
 
+
 class FeedbackLayer(Enum):
     L1_TASK = "L1_TASK"
     L2_PATTERN = "L2_PATTERN"
     L3_ARCHITECTURE = "L3_ARCHITECTURE"
+
 
 class EvolutionSignal(Enum):
     HIGH_RETRY_RATE = "HIGH_RETRY_RATE"
@@ -48,6 +40,7 @@ class EvolutionSignal(Enum):
     CONTEXT_OVERFLOW = "CONTEXT_OVERFLOW"
     DEPENDENCY_BOTTLENECK = "DEPENDENCY_BOTTLENECK"
     LOW_KNOWLEDGE_HIT = "LOW_KNOWLEDGE_HIT"
+
 
 LowScoreHook = Callable[[Any], None]
 ApplyFn = Callable[["EvolutionProposal"], bool]
@@ -69,6 +62,7 @@ _PATTERN_TAG_GROUPS: dict[EvolutionSignal, set[str]] = {
     EvolutionSignal.LOW_KNOWLEDGE_HIT: {"needs-review", "stale", "missing-ke"},
 }
 
+
 @dataclass(frozen=True)
 class EvolutionProposal:
     proposal_id: str
@@ -86,6 +80,7 @@ class EvolutionProposal:
     owner_approved: bool = False
     dry_run: bool = True
 
+
 @dataclass
 class EvolutionReport:
     window_entry_count: int = 0
@@ -94,6 +89,7 @@ class EvolutionReport:
     l2_triggered: int = 0
     l3_triggered: int = 0
     applied_count: int = 0
+
 
 class EvolutionEngine:
     learning_rate: float = 0.1
@@ -147,7 +143,11 @@ class EvolutionEngine:
         self.q_table[sk][ak] = value
 
     def update(
-        self, state: str, action: str, reward: float, next_state: str,
+        self,
+        state: str,
+        action: str,
+        reward: float,
+        next_state: str,
     ) -> None:
         current_q = self.get_q(state, action)
         next_actions = self.q_table.get(self._state_key(next_state), {})
@@ -227,7 +227,7 @@ class EvolutionEngine:
                     severity=severity,
                     title="Low-score acceptance drift detected",
                     rationale=f"{len(low_ids)} task(s) below score threshold",
-                    evidence=[f"Task {tid}: score={e.score}" for tid, e in zip(low_ids, low_scores)],
+                    evidence=[f"Task {tid}: score={e.score}" for tid, e in zip(low_ids, low_scores, strict=False)],
                     affected_task_ids=list(low_ids),
                     recommended_action="Review low-scoring tasks and adjust thresholds",
                     estimated_impact="Reduced pipeline quality",
@@ -337,8 +337,9 @@ class EvolutionEngine:
 
     def _lsg_scan_proposals(self, report: EvolutionReport) -> None:
         try:
-            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
             import asyncio
+
+            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
             gateway = LSGSecurityGateway()
             flagged = []
@@ -348,13 +349,12 @@ class EvolutionEngine:
                 if result.decision.value not in ("allow", "ALLOW"):
                     flagged.append(p.proposal_id)
             if flagged:
-                report.proposals = [
-                    p for p in report.proposals if p.proposal_id not in flagged
-                ]
+                report.proposals = [p for p in report.proposals if p.proposal_id not in flagged]
         except ImportError:
             pass
         except Exception:
             pass
+
 
 def evolve(
     collector: Any,

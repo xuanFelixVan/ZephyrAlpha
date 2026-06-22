@@ -31,15 +31,16 @@ from __future__ import annotations
 本文件以14条决策为准。
 """
 
-from datetime import datetime, timezone
 from enum import Enum
 
 from pydantic import BaseModel, Field
+
 
 class DecisionStatus(str, Enum):
     ACTIVE = "active"
     RE_EVALUATED = "re_evaluated"
     SUPERSEDED = "superseded"
+
 
 class DesignDecision(BaseModel):
     dd_id: str
@@ -50,6 +51,7 @@ class DesignDecision(BaseModel):
     re_evaluate_when: str = ""
     impact_scope: str = ""
     status: DecisionStatus = DecisionStatus.ACTIVE
+
 
 DECISIONS: dict[str, DesignDecision] = {
     "DD-1": DesignDecision(
@@ -179,6 +181,7 @@ DECISIONS: dict[str, DesignDecision] = {
         impact_scope="契约命名规范",
     ),
 }
+
 
 class DecisionRegistry:
     def get(self, dd_id: str) -> DesignDecision | None:

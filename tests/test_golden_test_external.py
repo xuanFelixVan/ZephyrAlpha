@@ -62,20 +62,26 @@ class TestRegister:
 class TestEvaluate:
     def test_matching_evaluation(self):
         gte = GoldenTestExternal()
-        gte.register(GoldenTest(test_id="GT-001", input_symptoms={}, expected_diagnosis="overload", expected_action="scale"))
+        gte.register(
+            GoldenTest(test_id="GT-001", input_symptoms={}, expected_diagnosis="overload", expected_action="scale")
+        )
         result = gte.evaluate("GT-001", "overload", "scale")
         assert result is True
         assert gte.results["GT-001"] is True
 
     def test_mismatched_diagnosis(self):
         gte = GoldenTestExternal()
-        gte.register(GoldenTest(test_id="GT-001", input_symptoms={}, expected_diagnosis="overload", expected_action="scale"))
+        gte.register(
+            GoldenTest(test_id="GT-001", input_symptoms={}, expected_diagnosis="overload", expected_action="scale")
+        )
         result = gte.evaluate("GT-001", "underload", "scale")
         assert result is False
 
     def test_mismatched_action(self):
         gte = GoldenTestExternal()
-        gte.register(GoldenTest(test_id="GT-001", input_symptoms={}, expected_diagnosis="overload", expected_action="scale"))
+        gte.register(
+            GoldenTest(test_id="GT-001", input_symptoms={}, expected_diagnosis="overload", expected_action="scale")
+        )
         result = gte.evaluate("GT-001", "overload", "restart")
         assert result is False
 

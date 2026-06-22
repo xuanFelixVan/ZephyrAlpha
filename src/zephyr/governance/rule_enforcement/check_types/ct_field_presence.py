@@ -27,84 +27,33 @@ FieldPresenceHandler — FieldPresenceHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class FieldPresenceHandler(CheckTypeHandler):
-
-
     name = "field_presence"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        required = list(params.get("required_fields", []))
 
-                violations = []
+        for f in required:
+            val = getattr(task, f, None)
 
+            if val is None or (isinstance(val, str) and not val.strip()):
+                violations.append({"message": f"Missing or empty required field: {f}", "severity": check.severity})
 
-                required = list(params.get("required_fields", []))
-
-
-                for f in required:
-
-
-                    val = getattr(task, f, None)
-
-
-                    if val is None or (isinstance(val, str) and not val.strip()):
-
-
-                        violations.append({"message": f"Missing or empty required field: {f}", "severity": check.severity})
-
-
-                return violations
-
-
+        return violations

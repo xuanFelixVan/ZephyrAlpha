@@ -60,15 +60,14 @@ soft attention sparsity 特性。
 
 from __future__ import annotations
 
-
 from dataclasses import dataclass
 from threading import RLock
-from typing import Self, ClassVar
+from typing import ClassVar, Self
 
 __all__ = [
+    "DEFAULT_ROT_PARAMS",
     "AttentionScore",
     "ContextRotModel",
-    "DEFAULT_ROT_PARAMS",
 ]
 
 DEFAULT_ROT_PARAMS: dict[str, float] = {

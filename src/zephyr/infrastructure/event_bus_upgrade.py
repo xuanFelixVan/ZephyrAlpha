@@ -31,10 +31,12 @@ DEPRECATED: 此文件已废弃。
 import warnings
 
 from zephyr.integration.shared.events.upgrade_strategy import *  # noqa: F403
-from zephyr.shared.events.upgrade_strategy import EventBusUpgrade as _SharedEventBusUpgrade, UpgradePlan as _SharedUpgradePlan, UpgradeStatus as _SharedUpgradeStatus
+from zephyr.shared.events.upgrade_strategy import EventBusUpgrade as _SharedEventBusUpgrade
+from zephyr.shared.events.upgrade_strategy import UpgradePlan as _SharedUpgradePlan
 
 warnings.warn(
-    "zephyr.infrastructure.event_bus_upgrade is deprecated; " "use zephyr.integration.shared.events.upgrade_strategy instead.",
+    "zephyr.infrastructure.event_bus_upgrade is deprecated; "
+    "use zephyr.integration.shared.events.upgrade_strategy instead.",
     DeprecationWarning,
     stacklevel=2,
 )

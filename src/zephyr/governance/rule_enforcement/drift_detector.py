@@ -42,7 +42,6 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
 对标: MOD-INF-023 blueprint.md §2.5（自动对账策略）+ trigger_router.yaml drift_detected
 """
 
-
 from __future__ import annotations
 
 import asyncio
@@ -50,8 +49,6 @@ import logging
 import os
 import uuid
 from datetime import UTC, datetime
-
-from zephyr.integration.shared_08.contracts.protocols import DriftBudgetCheckerProtocol, RecoveryTriggerProtocol
 from typing import Any
 
 logger = logging.getLogger(__name__)

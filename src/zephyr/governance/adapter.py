@@ -38,7 +38,6 @@ Usage:
         raise EscalationBlocked(result.reason)
 """
 
-
 from __future__ import annotations
 
 import logging

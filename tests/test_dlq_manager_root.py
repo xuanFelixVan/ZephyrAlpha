@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
-import pytest
+from datetime import UTC, datetime
 
 from zephyr.trading.orchestrator.dlq_manager import DLQManager, DLQMessage
 
@@ -31,7 +29,7 @@ class TestDLQMessage:
         assert msg.last_attempt_at is None
 
     def test_custom_values(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         msg = DLQMessage(
             message_id="m1",
             contract_id="c1",

@@ -33,7 +33,6 @@ from pathlib import Path
 from _migration_shared import (
     BATCH_TO_GROUP,
     PROJECT_ROOT,
-    filter_by_batch,
     get_domain_dirs_for_batch,
     load_import_manifest,
     load_mapping,
@@ -67,7 +66,7 @@ def _resolve_filepath(filepath: str, resolver: dict) -> list[str]:
         prefix = "/".join(parts[:i]) + "/"
         for old_p, new_p in old_to_new.items():
             if old_p.startswith(prefix):
-                suffix = filepath[len(old_p):]
+                suffix = filepath[len(old_p) :]
                 candidate = new_p + suffix
                 if candidate not in paths_to_try:
                     paths_to_try.append(candidate)
@@ -207,12 +206,12 @@ def update_batch(batch: int, dry_run: bool = False) -> int:
                 if len(error_samples) < 10:
                     error_samples.append(f"  {result['file']} -> {result['status']}")
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"  Files updated: {total_updated}")
     print(f"  Import changes: {total_changes}")
     print(f"  Errors: {total_errors}")
     if error_samples:
-        print(f"  Error samples:")
+        print("  Error samples:")
         for s in error_samples:
             print(s)
 

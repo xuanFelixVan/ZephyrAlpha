@@ -29,7 +29,6 @@ Priority: P2 (beta)
 """
 
 import json
-import os
 from pathlib import Path
 
 CE_ROOT = Path(__file__).resolve().parent
@@ -40,6 +39,7 @@ CATEGORIES = {
     "data": "*.json",
     "other": "*.yaml",
 }
+
 
 def collect_files() -> dict[str, list[dict[str, str]]]:
     manifest: dict[str, list[dict[str, str]]] = {}
@@ -53,17 +53,16 @@ def collect_files() -> dict[str, list[dict[str, str]]]:
         manifest[category] = entries
     return manifest
 
+
 def generate_manifest() -> str:
     data = {
         "module_id": "MOD-INF-008",
         "root": str(CE_ROOT),
         "files": collect_files(),
-        "total_py_files": sum(
-            1 for _ in CE_ROOT.glob("*.py")
-            if not _.name.startswith("_")
-        ),
+        "total_py_files": sum(1 for _ in CE_ROOT.glob("*.py") if not _.name.startswith("_")),
     }
     return json.dumps(data, indent=2, ensure_ascii=False)
+
 
 if __name__ == "__main__":
     print(generate_manifest())

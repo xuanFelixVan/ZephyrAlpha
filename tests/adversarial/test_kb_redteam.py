@@ -26,16 +26,11 @@
 
 from __future__ import annotations
 
-import hashlib
-import json
 import os
-import sqlite3
-import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -55,9 +50,7 @@ def _snap_dir() -> Path:
     return d
 
 
-
 class TestRedTeamComplete:
-
     # === R4: 高维向量碰撞攻击 ===
 
     def test_R4_high_dim_collision_attack(self):
@@ -84,19 +77,17 @@ test whether a near-duplicate can bypass semantic deduplication.
 
         near_dupe_id = "KE-R4-TEST-DUPE-001"
         near_dupe_content = original_content.replace("42 words", "43 words").replace(
-            "module_id: KE-R4-TEST-ORIG-001",
-            "module_id: KE-R4-TEST-DUPE-001"
+            "module_id: KE-R4-TEST-ORIG-001", "module_id: KE-R4-TEST-DUPE-001"
         )
         dupe_path = ke_dir / f"{near_dupe_id}.md"
         dupe_path.write_text(near_dupe_content, encoding="utf-8")
 
         try:
             from zephyr.governance.kb.graph_validator import GraphValidator
+
             gv = GraphValidator()
             result = gv.check_near_duplicate(str(orig_path), str(dupe_path))
-            assert result.get("is_duplicate", False), (
-                f"R4 FAIL: Near-duplicate should be detected. Got: {result}"
-            )
+            assert result.get("is_duplicate", False), f"R4 FAIL: Near-duplicate should be detected. Got: {result}"
         except (ImportError, AttributeError) as e:
             pytest.skip(f"GraphValidator not available: {e}")
         finally:
@@ -130,12 +121,13 @@ Document B with standard content for collision boundary testing.
 
         try:
             from zephyr.governance.kb.graph_validator import GraphValidator
+
             gv = GraphValidator()
             result = gv.check_near_duplicate(str(base_path), str(mod_path))
 
-            assert (
-                result.get("similarity", 0) < 0.95 or result.get("is_duplicate", False)
-            ), f"R4 BOUNDARY: Very similar docs should either have high similarity or be flagged. Got: {result}"
+            assert result.get("similarity", 0) < 0.95 or result.get("is_duplicate", False), (
+                f"R4 BOUNDARY: Very similar docs should either have high similarity or be flagged. Got: {result}"
+            )
         except (ImportError, AttributeError) as e:
             pytest.skip(f"GraphValidator not available: {e}")
         finally:
@@ -144,20 +136,17 @@ Document B with standard content for collision boundary testing.
 
 
 class TestRedTeamStateMachine:
-
     # === R5: 状态机非法跳转 ===
 
     def test_R5_invalid_state_transition(self):
         """攻击: 尝试将KE从 draft 直接跳到 verified 跳过 reviewed。"""
         try:
             from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
+
             repo = KbRepo()
 
             allowed = repo.validate_state_transition(KeStatus.DRAFT, KeStatus.VERIFIED)
-            assert not allowed, (
-                f"R5 FAIL: DRAFT->VERIFIED should be rejected. "
-                "Must go through SUBMITTED and REVIEWED."
-            )
+            assert not allowed, "R5 FAIL: DRAFT->VERIFIED should be rejected. Must go through SUBMITTED and REVIEWED."
         except (ImportError, AttributeError) as e:
             pytest.skip(f"KbRepo not available: {e}")
 
@@ -165,6 +154,7 @@ class TestRedTeamStateMachine:
         """攻击: 尝试标记 KE 状态为自身（无意义操作）。"""
         try:
             from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
+
             repo = KbRepo()
 
             for status in KeStatus:
@@ -177,24 +167,23 @@ class TestRedTeamStateMachine:
         """攻击: 尝试将KE从 reviewed 回退到 draft。"""
         try:
             from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
+
             repo = KbRepo()
 
             allowed = repo.validate_state_transition(KeStatus.REVIEWED, KeStatus.DRAFT)
-            assert not allowed, (
-                f"R5 FAIL: REVIEWED->DRAFT should be rejected (backwards transition)."
-            )
+            assert not allowed, "R5 FAIL: REVIEWED->DRAFT should be rejected (backwards transition)."
         except (ImportError, AttributeError) as e:
             pytest.skip(f"KbRepo not available: {e}")
 
 
 class TestRedTeamChromaDBBypass:
-
     # === R6: ChromaDB直接篡改 ===
 
     def test_R6_chromadb_tampering_attack(self):
         """攻击: 直接向ChromaDB注入向量，绕过SQLite元数据层。"""
         try:
             from zephyr.governance.kb.chromadb_init import get_chroma_client
+
             client = get_chroma_client()
             coll = client.get_or_create_collection("ke_entries")
 
@@ -235,6 +224,7 @@ class TestRedTeamChromaDBBypass:
 
         try:
             from zephyr.governance.self_test import _check_ghost_scan as ghost_scan
+
             report = ghost_scan(PROJECT_ROOT)
 
             valid_statuses = ("PASS", "WARN", "FAIL", "SKIP")
@@ -246,7 +236,6 @@ class TestRedTeamChromaDBBypass:
 
 
 class TestRedTeamContextOverflow:
-
     # === R7: 上下文溢出攻击 ===
 
     def test_R7_oversized_document_rejection(self):
@@ -268,15 +257,16 @@ class TestRedTeamContextOverflow:
             try:
                 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
                 from zephyr.governance.self_test import SelfTest
+
                 os.environ["ZEPHYR_PROJECT_ROOT"] = str(PROJECT_ROOT)
                 st = SelfTest()
                 report = st.run()
                 assert any(
-                    "size" in c.detail.lower() or "oversized" in c.detail.lower()
-                    for c in report.checks
-                ) or report.overall.value in ("WARN", "FAIL"), (
-                    f"R7 FAIL: {file_size}B file should trigger size warning."
-                )
+                    "size" in c.detail.lower() or "oversized" in c.detail.lower() for c in report.checks
+                ) or report.overall.value in (
+                    "WARN",
+                    "FAIL",
+                ), f"R7 FAIL: {file_size}B file should trigger size warning."
             except (ImportError, OSError, RuntimeError):
                 pass
 
@@ -303,7 +293,6 @@ class TestRedTeamContextOverflow:
 
 
 class TestRedTeamTimingAttack:
-
     # === R8: 调度时差攻击 ===
 
     def test_R8_stale_ke_expiry_attack(self):
@@ -334,15 +323,14 @@ and flagged by the load-bearing wall check or self-test.
 
         try:
             from datetime import datetime as dt
+
             if isinstance(ttl_raw, dt):
                 ttl_dt = ttl_raw
             else:
                 ttl_str = str(ttl_raw).replace("Z", "+00:00")
                 ttl_dt = dt.fromisoformat(ttl_str)
             is_expired = ttl_dt.replace(tzinfo=UTC) < datetime.now(UTC)
-            assert is_expired, (
-                f"R8 DEFENSE: TTL {ttl_raw} should be detected as expired."
-            )
+            assert is_expired, f"R8 DEFENSE: TTL {ttl_raw} should be detected as expired."
         except (ValueError, TypeError) as exc:
             pytest.fail(f"R8 FAIL: Cannot parse TTL: {exc}")
         finally:
@@ -373,18 +361,18 @@ This is a normal KE with a future TTL. Should be accepted.
         fm = yaml.safe_load(future_content.split("---")[1])
         ttl_raw = fm.get("ttl", "")
         from datetime import datetime as dt
+
         if isinstance(ttl_raw, dt):
             ttl_dt = ttl_raw
         else:
             ttl_str = str(ttl_raw).replace("Z", "+00:00")
             ttl_dt = dt.fromisoformat(ttl_str)
-        assert ttl_dt.replace(tzinfo=UTC) > datetime.now(UTC), f"R8: Future TTL should be in the future."
+        assert ttl_dt.replace(tzinfo=UTC) > datetime.now(UTC), "R8: Future TTL should be in the future."
 
         future_path.unlink(missing_ok=True)
 
 
 class TestRedTeamSelfReference:
-
     # === R9: 递归知识自引用 ===
 
     def test_R9_direct_self_reference_attack(self):
@@ -393,7 +381,7 @@ class TestRedTeamSelfReference:
         ke_dir.mkdir(parents=True, exist_ok=True)
 
         self_ref_id = "KE-R9-SELF-001"
-        self_ref_content = f"""---
+        self_ref_content = """---
 module_id: KE-R9-SELF-001
 category: attack
 version: 1
@@ -415,9 +403,7 @@ This KE depends on itself, creating a direct cycle.
         assert self_ref_id in deps, "Expected self-reference in depends_on"
 
         cycle_detected = self_ref_id in deps
-        assert cycle_detected, (
-            f"R9 DEFENSE: Direct self-reference from {self_ref_id} should be detected as a cycle."
-        )
+        assert cycle_detected, f"R9 DEFENSE: Direct self-reference from {self_ref_id} should be detected as a cycle."
 
         self_ref_path.unlink(missing_ok=True)
 
@@ -430,7 +416,7 @@ This KE depends on itself, creating a direct cycle.
         ke_b_id = "KE-R9-CYCLE-B"
         ke_c_id = "KE-R9-CYCLE-C"
 
-        ke_a = f"""---
+        ke_a = """---
 module_id: KE-R9-CYCLE-A
 category: attack
 version: 1
@@ -439,7 +425,7 @@ depends_on:
 ---
 A depends on B
 """
-        ke_b = f"""---
+        ke_b = """---
 module_id: KE-R9-CYCLE-B
 category: attack
 version: 1
@@ -448,7 +434,7 @@ depends_on:
 ---
 B depends on C
 """
-        ke_c = f"""---
+        ke_c = """---
 module_id: KE-R9-CYCLE-C
 category: attack
 version: 1
@@ -469,9 +455,7 @@ C depends on A
         }
 
         cycle = _has_cycle(graph)
-        assert cycle, (
-            f"R9 DEFENSE: 3-KE cycle A→B→C→A should be detected. Graph: {graph}"
-        )
+        assert cycle, f"R9 DEFENSE: 3-KE cycle A→B→C→A should be detected. Graph: {graph}"
 
         (ke_dir / f"{ke_a_id}.md").unlink(missing_ok=True)
         (ke_dir / f"{ke_b_id}.md").unlink(missing_ok=True)
@@ -486,7 +470,7 @@ C depends on A
         b_id = "KE-R9-LINEAR-B"
         c_id = "KE-R9-LINEAR-C"
 
-        ke_a = f"""---
+        ke_a = """---
 module_id: KE-R9-LINEAR-A
 category: infrastructure
 version: 1
@@ -495,7 +479,7 @@ depends_on:
 ---
 A depends on B (linear)
 """
-        ke_b = f"""---
+        ke_b = """---
 module_id: KE-R9-LINEAR-B
 category: infrastructure
 version: 1
@@ -522,9 +506,7 @@ C is a leaf (linear chain, no cycle)
             c_id: [],
         }
         cycle = _has_cycle(graph)
-        assert not cycle, (
-            f"R9 DEFENSE: Linear A→B→C chain should NOT be flagged as a cycle."
-        )
+        assert not cycle, "R9 DEFENSE: Linear A→B→C chain should NOT be flagged as a cycle."
 
         (ke_dir / f"{a_id}.md").unlink(missing_ok=True)
         (ke_dir / f"{b_id}.md").unlink(missing_ok=True)

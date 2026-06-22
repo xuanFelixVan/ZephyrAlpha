@@ -8,39 +8,38 @@
 
 """Test suite: shared_core"""
 
-import pytest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
+
+from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
 from zephyr.integration.shared.schema.schemas import (
     AuditFinding,
     AuditReport,
     AuditSeverity,
-    BlockedItem,
-    Decision,
+    ExecutionModel,
     FailureType,
     HandoffPackage,
     KeCategory,
     KnowledgeEntry,
     NextAction,
     Task,
-    TaskStatus,
     TaskNamespace,
-    ExecutionModel,
+    TaskStatus,
 )
-from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
 from zephyr.integration.shared_08.paths import (
-    find_repo_root,
-    REPO_ROOT,
     DB_DIR,
     GATES_DIR,
+    REPO_ROOT,
+    find_repo_root,
 )
 
 
 class TestTaskModel:
     def test_task_creation_minimal(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         task = Task(
             task_id="SRC-001",
             title="Test task",
@@ -85,6 +84,7 @@ class TestTaskModel:
 
     def test_normalize_execution_model(self):
         from zephyr.governance.rule_enforcement.task_types import normalize_execution_model
+
         assert normalize_execution_model("deepseek") == ExecutionModel.deepseek
         assert normalize_execution_model("glm") == ExecutionModel.glm
         assert normalize_execution_model("claude") == ExecutionModel.claude
@@ -124,7 +124,7 @@ class TestAuditReport:
             scanner="test-scanner",
             scan_target="/test/path",
             findings=findings,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         assert report.p0_count == 1
         assert report.p1_count == 1
@@ -139,7 +139,7 @@ class TestAuditReport:
             scanner="test-scanner",
             scan_target="/test/path",
             findings=findings,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         assert report.passed is True
 
@@ -148,7 +148,7 @@ class TestAuditReport:
             report_id="R-003",
             scanner="test-scanner",
             scan_target="/test/path",
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         assert report.passed is True
         assert report.p0_count == 0
@@ -156,7 +156,7 @@ class TestAuditReport:
 
 class TestKnowledgeEntry:
     def test_creation(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ke = KnowledgeEntry(
             ke_id="KE-001",
             title="Test KE",
@@ -173,8 +173,8 @@ class TestKnowledgeEntry:
                 ke_id="invalid",
                 title="Test",
                 source_file="test.py",
-                created_at=datetime.now(timezone.utc),
-                updated_at=datetime.now(timezone.utc),
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
             )
 
     def test_updated_before_created_rejected(self):
@@ -183,8 +183,8 @@ class TestKnowledgeEntry:
                 ke_id="KE-002",
                 title="Test",
                 source_file="test.py",
-                created_at=datetime(2026, 1, 2, tzinfo=timezone.utc),
-                updated_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+                created_at=datetime(2026, 1, 2, tzinfo=UTC),
+                updated_at=datetime(2026, 1, 1, tzinfo=UTC),
             )
 
     def test_invalid_sha256_rejected(self):
@@ -193,15 +193,15 @@ class TestKnowledgeEntry:
                 ke_id="KE-003",
                 title="Test",
                 source_file="test.py",
-                created_at=datetime.now(timezone.utc),
-                updated_at=datetime.now(timezone.utc),
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
                 fingerprint_sha256="tooshort",
             )
 
 
 class TestHandoffPackage:
     def test_creation(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         pkg = HandoffPackage(
             session_id="session-20260518-001",
             completed_tasks=["T-001"],
@@ -217,7 +217,7 @@ class TestHandoffPackage:
         assert pkg.completed_tasks == ["T-001"]
 
     def test_overlap_tasks_rejected(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         with pytest.raises(Exception):
             HandoffPackage(
                 session_id="session-20260518-002",
@@ -232,7 +232,7 @@ class TestHandoffPackage:
             )
 
     def test_next_actions_sorted_by_priority(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         pkg = HandoffPackage(
             session_id="session-20260518-003",
             completed_tasks=[],

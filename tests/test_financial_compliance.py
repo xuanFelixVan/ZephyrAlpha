@@ -12,16 +12,14 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.financial_compliance import (
+    FRAMEWORK_DIMENSIONS,
+    PROTOCOL_DEFS,
+    SAFEGUARD_LABELS,
     ComplianceLayer,
-    Safeguard,
     Protocol,
     ProtocolDef,
-    SAFEGUARD_LABELS,
-    PROTOCOL_DEFS,
-    FRAMEWORK_DIMENSIONS,
+    Safeguard,
     get_protocol,
     get_safeguard,
 )

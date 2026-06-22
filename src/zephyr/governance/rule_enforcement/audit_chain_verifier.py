@@ -29,18 +29,20 @@ import hashlib
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
 
 _CORE_AUDIT_AVAILABLE = False
 try:
     from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:
     _CoreAuditWriter = None
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class AuditEntry:
@@ -49,14 +51,15 @@ class AuditEntry:
     reasons: list[str]
     previous_hash: str
     hash: str
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
+
 
 @dataclass
 class AuditReport:
     entries: list[AuditEntry]
     chain_valid: bool
     reproduced: bool
-    verified_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    verified_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def summary(self) -> str:
         return (
@@ -64,6 +67,7 @@ class AuditReport:
             f"chain={'OK' if self.chain_valid else 'BROKEN'}, "
             f"reproduced={'OK' if self.reproduced else 'MISMATCH'}"
         )
+
 
 class AuditChainVerifier:
     def __init__(self) -> None:
@@ -119,7 +123,9 @@ class AuditChainVerifier:
         valid = True
         for entry in self._chain:
             if entry.previous_hash != prev:
-                logger.error("chain break at %s: expected=%s got=%s", entry.gate_id, prev[:16], entry.previous_hash[:16])
+                logger.error(
+                    "chain break at %s: expected=%s got=%s", entry.gate_id, prev[:16], entry.previous_hash[:16]
+                )
                 valid = False
                 break
             payload = {
@@ -149,7 +155,9 @@ class AuditChainVerifier:
                 reproduced = False
                 break
 
-        return AuditReport(entries=list(self._chain), chain_valid=self.verify_chain().chain_valid, reproduced=reproduced)
+        return AuditReport(
+            entries=list(self._chain), chain_valid=self.verify_chain().chain_valid, reproduced=reproduced
+        )
 
     @staticmethod
     def _compute_hash(payload: dict) -> str:
@@ -164,10 +172,13 @@ class AuditChainVerifier:
         self._chain.clear()
         self._last_hash = "0" * 64
 
+
 __all__ = ["AuditChainVerifier", "AuditEntry", "AuditReport"]
+
 
 def main() -> None:
     pass
+
 
 if __name__ == "__main__":
     main()

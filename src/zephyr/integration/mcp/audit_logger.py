@@ -44,11 +44,12 @@ from zephyr.shared.io.paths import REPO_ROOT
 _CORE_AUDIT_AVAILABLE = False
 try:
     from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:
     _CoreAuditWriter = None
 
-__all__ = ["AuditLogger", "create_audit_logger", "AUDIT_LOG_DIR", "AUDIT_JSONL_PATH"]
+__all__ = ["AUDIT_JSONL_PATH", "AUDIT_LOG_DIR", "AuditLogger", "create_audit_logger"]
 
 AUDIT_LOG_DIR = REPO_ROOT / "logs" / "mcp_audit"
 AUDIT_JSONL_PATH = AUDIT_LOG_DIR / "tools_call.jsonl"

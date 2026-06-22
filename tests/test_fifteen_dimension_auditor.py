@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.fifteen_dimension_auditor import (
-    FifteenDimensionAuditor, DimensionAudit, AuditCertificate,
+    AuditCertificate,
+    FifteenDimensionAuditor,
 )
+
 
 class TestFifteenDimensionAuditor:
     def test_instantiation(self):

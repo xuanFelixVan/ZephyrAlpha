@@ -32,7 +32,6 @@ Circuit Breaker — 熔断器：连续失败 → OPEN → 暂停执行。
     - HALF_OPEN 试探性恢复
 """
 
-
 from __future__ import annotations
 
 import time

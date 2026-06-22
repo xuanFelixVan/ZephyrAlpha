@@ -27,8 +27,8 @@ Risk: R15 — Trust eroded; owner overrides correct repairs due to lack of expla
 
 from dataclasses import dataclass
 
+
 @dataclass
 class ActionExplainability:
-
     def explain(self, action: dict) -> str:
         return f"Action: {action.get('type')} — Reason: {action.get('reason')}"

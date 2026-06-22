@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_constructor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_constructor
+# [MODULE] zephyr.autonomy_core.skill_constructor
 
 # [INVARIANTS] none
 
@@ -37,14 +37,12 @@ Version: 0.2.0
   7. 可选：触发 AGENTS.md 触发表更新
 """
 
-
 from __future__ import annotations
 
-import hashlib
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import yaml
 
@@ -110,19 +108,19 @@ class SkillConstructor:
         "heal": "auto-fix-engine",
     }
 
-    def __init__(self, base_dir: Optional[Path] = None):
+    def __init__(self, base_dir: Path | None = None):
         self._base_dir = base_dir or _BASE_DIR
         self._skills_dir = self._base_dir / "skills"
         self._registry_path = self._base_dir / "skill-registry.yaml"
 
-    def _parse_blueprint(self, blueprint_path: str) -> Dict[str, Any]:
+    def _parse_blueprint(self, blueprint_path: str) -> dict[str, Any]:
         path = Path(blueprint_path)
         if not path.is_absolute():
             path = self._base_dir.parent.parent / path
 
         content = path.read_text(encoding="utf-8")
 
-        fm: Dict[str, Any] = {}
+        fm: dict[str, Any] = {}
         body = content
         match = re.match(r"^---\s*\n(.*?)\n---\s*\n(.*)", content, re.DOTALL)
         if match:
@@ -139,10 +137,10 @@ class SkillConstructor:
             "content": content,
         }
 
-    def _extract_sections(self, body: str) -> Dict[str, str]:
-        sections: Dict[str, str] = {}
+    def _extract_sections(self, body: str) -> dict[str, str]:
+        sections: dict[str, str] = {}
         current_section = "preamble"
-        current_lines: List[str] = []
+        current_lines: list[str] = []
 
         for line in body.split("\n"):
             header_match = re.match(r"^#{1,3}\s+(.+)$", line)
@@ -159,7 +157,7 @@ class SkillConstructor:
 
         return sections
 
-    def _extract_core_operations(self, sections: Dict[str, str], body: str) -> str:
+    def _extract_core_operations(self, sections: dict[str, str], body: str) -> str:
         for key in ["核心操作", "core operations", "操作", "operations", "核心职能"]:
             for sk, sv in sections.items():
                 if key in sk:
@@ -177,7 +175,7 @@ class SkillConstructor:
 
         return "\n\n".join(parts) if parts else ""
 
-    def _extract_constraints(self, sections: Dict[str, str], body: str) -> str:
+    def _extract_constraints(self, sections: dict[str, str], body: str) -> str:
         for key in ["约束", "constraints", "限制", "restrictions", "注意事项"]:
             for sk, sv in sections.items():
                 if key in sk:
@@ -186,7 +184,7 @@ class SkillConstructor:
         constraints = re.findall(r"(?:MUST|必须|必须确保|不可|不能|禁止|不允许)\s*(.+?)(?:[。；\n]|$)", body)
         return "\n".join(f"- {c.strip()}" for c in constraints[:12]) if constraints else ""
 
-    def _extract_common_errors(self, sections: Dict[str, str]) -> str:
+    def _extract_common_errors(self, sections: dict[str, str]) -> str:
         for key in ["常见错误", "common errors", "错误模式", "error patterns", "陷阱", "pitfalls", "注意事项"]:
             for sk, sv in sections.items():
                 if key in sk:
@@ -194,7 +192,7 @@ class SkillConstructor:
 
         return ""
 
-    def _infer_skill_name(self, blueprint_data: Dict[str, Any]) -> str:
+    def _infer_skill_name(self, blueprint_data: dict[str, Any]) -> str:
         fm = blueprint_data.get("frontmatter", {})
         module_id = fm.get("module_id", "")
 
@@ -214,7 +212,7 @@ class SkillConstructor:
 
         return "master-blueprint"
 
-    def _resolve_skill_id(self, skill_name: str) -> Optional[str]:
+    def _resolve_skill_id(self, skill_name: str) -> str | None:
         if not _REGISTRY_PATH.exists():
             return None
 
@@ -233,7 +231,7 @@ class SkillConstructor:
         constraints: str,
         errors: str,
     ) -> str:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         parts = [
             "---",
@@ -247,7 +245,7 @@ class SkillConstructor:
             "  - grep",
             "  - run_command",
             "model_hint: deepseek",
-            f"freshness_score: 100.0",
+            "freshness_score: 100.0",
             f"last_validated: {now}",
             "version: 0.1.0",
             "---",
@@ -261,27 +259,31 @@ class SkillConstructor:
         ]
 
         if constraints:
-            parts.extend([
-                "## 独特约束",
-                "",
-                constraints,
-                "",
-            ])
+            parts.extend(
+                [
+                    "## 独特约束",
+                    "",
+                    constraints,
+                    "",
+                ]
+            )
 
         if errors:
-            parts.extend([
-                "## 常见错误模式",
-                "",
-                errors,
-                "",
-            ])
+            parts.extend(
+                [
+                    "## 常见错误模式",
+                    "",
+                    errors,
+                    "",
+                ]
+            )
 
         parts.append("---")
         parts.append(f"_Auto-generated by SkillConstructor at {now}_")
 
         return "\n".join(parts)
 
-    def construct(self, blueprint_path: str) -> Dict[str, Any]:
+    def construct(self, blueprint_path: str) -> dict[str, Any]:
         try:
             bp = self._parse_blueprint(blueprint_path)
         except Exception as e:
@@ -331,11 +333,12 @@ class SkillConstructor:
             "errors_extracted": bool(errors),
         }
 
-    def validate_construction(self, skill_id: str) -> Dict[str, Any]:
-        issues: List[str] = []
+    def validate_construction(self, skill_id: str) -> dict[str, Any]:
+        issues: list[str] = []
         try:
             loader = None
             from zephyr.autonomy_core.skill_loader import SkillLoader
+
             loader = SkillLoader()
             result = loader.progressive_load(skill_id)
             if not result.get("l1", {}).get("skill_id"):
@@ -357,7 +360,7 @@ class SkillConstructor:
             "issues": issues,
         }
 
-    def _load_registry(self) -> Dict[str, Any]:
+    def _load_registry(self) -> dict[str, Any]:
         if not _REGISTRY_PATH.exists():
             return {}
         return yaml.safe_load(_REGISTRY_PATH.read_text(encoding="utf-8")) or {}

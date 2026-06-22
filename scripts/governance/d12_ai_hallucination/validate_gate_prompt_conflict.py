@@ -23,6 +23,7 @@ exit codes: 0=无冲突, 1=发现冲突, 2=执行错误
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -32,9 +33,9 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 from _shared.constants import EXIT_ERROR
-
 
 __manifest__ = """
 args: []
@@ -92,21 +93,23 @@ def _load_gate_rules() -> list[dict[str, Any]]:
         for c in checks:
             if not isinstance(c, dict):
                 continue
-            rules.append({
-                "gate_id": gate_id,
-                "scope": scope,
-                "activation_stage": activation,
-                "gate_on_failure": on_failure,
-                "check_id": str(c.get("id", "")),
-                "check_type": str(c.get("type", "")),
-                "check_name": str(c.get("name", "")),
-                "severity": str(c.get("severity", "")),
-                "on_failure": str(c.get("on_failure", "reject")),
-                "description": str(c.get("description", "")),
-                "fix_hint": str(c.get("fix_hint", "")),
-                "anti_pattern": str(c.get("anti_pattern", "")),
-                "source_file": yf.name,
-            })
+            rules.append(
+                {
+                    "gate_id": gate_id,
+                    "scope": scope,
+                    "activation_stage": activation,
+                    "gate_on_failure": on_failure,
+                    "check_id": str(c.get("id", "")),
+                    "check_type": str(c.get("type", "")),
+                    "check_name": str(c.get("name", "")),
+                    "severity": str(c.get("severity", "")),
+                    "on_failure": str(c.get("on_failure", "reject")),
+                    "description": str(c.get("description", "")),
+                    "fix_hint": str(c.get("fix_hint", "")),
+                    "anti_pattern": str(c.get("anti_pattern", "")),
+                    "source_file": yf.name,
+                }
+            )
 
     return rules
 
@@ -139,8 +142,7 @@ def _extract_agents_directives(text: str) -> dict[str, list[str]]:
     return directives
 
 
-def detect_conflicts(gate_rules: list[dict[str, Any]],
-                     directives: dict[str, list[str]]) -> list[dict[str, Any]]:
+def detect_conflicts(gate_rules: list[dict[str, Any]], directives: dict[str, list[str]]) -> list[dict[str, Any]]:
     """Detect issues in target and report findings."""
     conflicts: list[dict[str, Any]] = []
 
@@ -158,80 +160,107 @@ def detect_conflicts(gate_rules: list[dict[str, Any]],
             for d_text in directives["must_not_actions"]:
                 common_words = _shared_keywords(rule_text, d_text)
                 if common_words and _semantic_contradiction(rule_text, d_text, "gate_blocks", "agents_allows"):
-                    conflicts.append({
-                        "type": "GATE_BLOCKS_AGENTS_ALLOWS",
-                        "severity": "HIGH",
+                    conflicts.append(
+                        {
+                            "type": "GATE_BLOCKS_AGENTS_ALLOWS",
+                            "severity": "HIGH",
+                            "gate_id": rule["gate_id"],
+                            "check_id": rule["check_id"],
+                            "check_name": rule["check_name"],
+                            "gate_description": description[:120],
+                            "agents_directive": d_text[:120],
+                            "shared_keywords": common_words,
+                            "detail": f"门禁 {rule['gate_id']}:{rule['check_id']} 禁止的操作在 AGENTS.md 中被允许",
+                        }
+                    )
+
+        for d_text in directives["must_actions"]:
+            common_words = _shared_keywords(rule_text, d_text)
+            if common_words and _semantic_contradiction(rule_text, d_text, "gate_requires", "agents_discourages"):
+                conflicts.append(
+                    {
+                        "type": "GATE_REQUIRES_AGENTS_DISCOURAGES",
+                        "severity": "MEDIUM",
                         "gate_id": rule["gate_id"],
                         "check_id": rule["check_id"],
                         "check_name": rule["check_name"],
                         "gate_description": description[:120],
                         "agents_directive": d_text[:120],
                         "shared_keywords": common_words,
-                        "detail": f"门禁 {rule['gate_id']}:{rule['check_id']} 禁止的操作在 AGENTS.md 中被允许"
-                    })
-
-        for d_text in directives["must_actions"]:
-            common_words = _shared_keywords(rule_text, d_text)
-            if common_words and _semantic_contradiction(rule_text, d_text, "gate_requires", "agents_discourages"):
-                conflicts.append({
-                    "type": "GATE_REQUIRES_AGENTS_DISCOURAGES",
-                    "severity": "MEDIUM",
-                    "gate_id": rule["gate_id"],
-                    "check_id": rule["check_id"],
-                    "check_name": rule["check_name"],
-                    "gate_description": description[:120],
-                    "agents_directive": d_text[:120],
-                    "shared_keywords": common_words,
-                    "detail": f"门禁 {rule['gate_id']}:{rule['check_id']} 要求的检查在 AGENTS.md 中被忽略"
-                })
+                        "detail": f"门禁 {rule['gate_id']}:{rule['check_id']} 要求的检查在 AGENTS.md 中被忽略",
+                    }
+                )
 
         for d_text in directives["bypass_signals"]:
             if is_blocking and _shared_keywords(rule_text, d_text):
-                conflicts.append({
-                    "type": "GATE_BLOCKING_VS_BYPASS_SIGNAL",
-                    "severity": "HIGH",
-                    "gate_id": rule["gate_id"],
-                    "check_id": rule["check_id"],
-                    "check_name": rule["check_name"],
-                    "gate_description": description[:120],
-                    "agents_directive": d_text[:120],
-                    "detail": f"门禁 {rule['gate_id']}:{rule['check_id']} 硬阻断但 AGENTS.md 中存在跳过/豁免信号"
-                })
+                conflicts.append(
+                    {
+                        "type": "GATE_BLOCKING_VS_BYPASS_SIGNAL",
+                        "severity": "HIGH",
+                        "gate_id": rule["gate_id"],
+                        "check_id": rule["check_id"],
+                        "check_name": rule["check_name"],
+                        "gate_description": description[:120],
+                        "agents_directive": d_text[:120],
+                        "detail": f"门禁 {rule['gate_id']}:{rule['check_id']} 硬阻断但 AGENTS.md 中存在跳过/豁免信号",
+                    }
+                )
 
         if rule.get("activation_stage") == "shadow" and is_blocking:
             for d_text in directives["hard_rules"]:
                 common_words = _shared_keywords(rule_text, d_text)
                 if common_words:
-                    conflicts.append({
-                        "type": "SHADOW_GATE_VS_HARD_RULE",
-                        "severity": "MEDIUM",
-                        "gate_id": rule["gate_id"],
-                        "check_id": rule["check_id"],
-                        "check_name": rule["check_name"],
-                        "activation_stage": "shadow",
-                        "agents_directive": d_text[:120],
-                        "detail": f"影子门禁 {rule['gate_id']} 与 AGENTS.md 硬规则语义重叠，"
-                                  f"应从 shadow 升级为 p0"
-                    })
+                    conflicts.append(
+                        {
+                            "type": "SHADOW_GATE_VS_HARD_RULE",
+                            "severity": "MEDIUM",
+                            "gate_id": rule["gate_id"],
+                            "check_id": rule["check_id"],
+                            "check_name": rule["check_name"],
+                            "activation_stage": "shadow",
+                            "agents_directive": d_text[:120],
+                            "detail": f"影子门禁 {rule['gate_id']} 与 AGENTS.md 硬规则语义重叠，应从 shadow 升级为 p0",
+                        }
+                    )
 
     return conflicts
 
 
 def _shared_keywords(text_a: str, text_b: str) -> list[str]:
     """_shared_keywords implementation."""
-    stop_words = {"the", "a", "an", "is", "are", "of", "to", "in", "for", "on", "and",
-                  "or", "not", "with", "be", "by", "as", "at", "from", "this", "that",
-                  "必须", "禁止", "必须显式"}
-    words_a = set(w.lower() for w in re.findall(r"[a-zA-Z\u4e00-\u9fff]{3,}", text_a)
-                  if w.lower() not in stop_words)
-    words_b = set(w.lower() for w in re.findall(r"[a-zA-Z\u4e00-\u9fff]{3,}", text_b)
-                  if w.lower() not in stop_words)
+    stop_words = {
+        "the",
+        "a",
+        "an",
+        "is",
+        "are",
+        "of",
+        "to",
+        "in",
+        "for",
+        "on",
+        "and",
+        "or",
+        "not",
+        "with",
+        "be",
+        "by",
+        "as",
+        "at",
+        "from",
+        "this",
+        "that",
+        "必须",
+        "禁止",
+        "必须显式",
+    }
+    words_a = set(w.lower() for w in re.findall(r"[a-zA-Z\u4e00-\u9fff]{3,}", text_a) if w.lower() not in stop_words)
+    words_b = set(w.lower() for w in re.findall(r"[a-zA-Z\u4e00-\u9fff]{3,}", text_b) if w.lower() not in stop_words)
     shared = words_a & words_b
     return sorted(shared)[:10] if len(shared) >= 2 else []
 
 
-def _semantic_contradiction(gate_text: str, agents_text: str,
-                            gate_stance: str, agents_stance: str) -> bool:
+def _semantic_contradiction(gate_text: str, agents_text: str, gate_stance: str, agents_stance: str) -> bool:
     """_semantic_contradiction implementation."""
     contradiction_pairs = [
         ({"必须", "must", "required"}, {"禁止", "never", "must not", "跳过"}),

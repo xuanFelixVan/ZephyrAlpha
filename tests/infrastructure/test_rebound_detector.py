@@ -6,16 +6,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Tests for Reward Hacking Rebound Detector — §2.37-D, Blind spot #161."""
+
 from __future__ import annotations
 
 import time
-import pytest
 
 from zephyr.governance.reward_hacking_rebound_detector import (
-    BehaviorRecord,
     ReboundDetector,
-    ReboundDetection,
-    ReboundPhase,
     ReboundSeverity,
 )
 
@@ -166,7 +163,6 @@ class TestReboundDetectorMultipleAgents:
 class TestReboundDetectorIntegration:
     def test_engine_hook_with_rebound_detector(self):
         from zephyr.governance.escalation_engine import EscalationEngine
-from zephyr.governance.escalation_models import RuleCategory
 
         engine = EscalationEngine("rebound-test", hooks_enabled=True)
         rd = engine._extension_detectors.get("ReboundDetector")
@@ -174,7 +170,7 @@ from zephyr.governance.escalation_models import RuleCategory
 
     def test_rebound_category_triggers_l4(self):
         from zephyr.governance.escalation_engine import EscalationEngine
-from zephyr.governance.escalation_models import RuleCategory
+        from zephyr.governance.escalation_models import RuleCategory
 
         engine = EscalationEngine("rebound-test", hooks_enabled=False)
         event = engine.evaluate(RuleCategory.REWARD_HACKING_REBOUND, "reward hacking rebound detected")

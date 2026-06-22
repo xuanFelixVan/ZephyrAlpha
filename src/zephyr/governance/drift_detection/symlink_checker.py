@@ -28,13 +28,12 @@ symlink_to_outside: VCS边界外的文件链接
 dead_reference_pages: symlink引用已被清理的文档页面
 对标 blueprint.md §6.29。
 """
+
 from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -44,7 +43,7 @@ class SymlinkIssue:
     target_path: str
     issue_type: str
     severity: str = "MAJOR"
-    detected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 def check_broken_symlinks(project_root: str) -> list[SymlinkIssue]:

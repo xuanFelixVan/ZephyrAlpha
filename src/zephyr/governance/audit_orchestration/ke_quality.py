@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class KnowledgeEntryQuality:
     def score(self, completeness: float, accuracy: float, timeliness: float) -> float:
         return (completeness + accuracy + timeliness) / 3.0

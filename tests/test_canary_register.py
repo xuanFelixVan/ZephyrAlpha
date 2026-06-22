@@ -9,9 +9,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
-from pathlib import Path
 from zephyr.governance.canary_register import CanaryRegister
+
 
 class TestCanaryRegister:
     def test_instantiation_default(self):

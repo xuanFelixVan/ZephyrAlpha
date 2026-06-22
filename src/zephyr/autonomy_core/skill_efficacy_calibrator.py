@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_efficacy_calibrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_efficacy_calibrator
+# [MODULE] zephyr.autonomy_core.skill_efficacy_calibrator
 
 # [INVARIANTS] none
 
@@ -35,30 +35,27 @@ Skill 效能实证校准 —— Anti-Regression SkillsBench
   5. CalibrationAdvisor: 给出调优建议
 """
 
-
 from __future__ import annotations
 
 import json
 import statistics
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 
 class SkillsBenchRunner:
     """基准测试执行器"""
 
-    def __init__(self, history_path: Optional[Path] = None):
-        self._history_path = history_path or (
-            Path(__file__).resolve().parent / "_benchmark_history.json"
-        )
-        self._history: Dict[str, List[Dict[str, Any]]] = self._load_history()
+    def __init__(self, history_path: Path | None = None):
+        self._history_path = history_path or (Path(__file__).resolve().parent / "_benchmark_history.json")
+        self._history: dict[str, list[dict[str, Any]]] = self._load_history()
 
-    def _load_history(self) -> Dict[str, List[Dict[str, Any]]]:
+    def _load_history(self) -> dict[str, list[dict[str, Any]]]:
         if self._history_path.exists():
             try:
                 return json.loads(self._history_path.read_text(encoding="utf-8"))
-            except (json.JSONDecodeError, IOError):
+            except (OSError, json.JSONDecodeError):
                 pass
         return {}
 
@@ -66,7 +63,7 @@ class SkillsBenchRunner:
         try:
             data = json.dumps(self._history, ensure_ascii=False, indent=2)
             self._history_path.write_text(data, encoding="utf-8")
-        except IOError:
+        except OSError:
             pass
 
     def record_run(
@@ -79,7 +76,7 @@ class SkillsBenchRunner:
         checks_total: int,
     ):
         entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "score": score,
             "latency_ms": latency_ms,
             "accuracy": accuracy,
@@ -89,10 +86,10 @@ class SkillsBenchRunner:
         self._history.setdefault(skill_id, []).append(entry)
         self._save_history()
 
-    def get_history(self, skill_id: str, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_history(self, skill_id: str, limit: int = 10) -> list[dict[str, Any]]:
         return self._history.get(skill_id, [])[-limit:]
 
-    def detect_regression(self, skill_id: str) -> Dict[str, Any]:
+    def detect_regression(self, skill_id: str) -> dict[str, Any]:
         history = self.get_history(skill_id, 20)
         if len(history) < 3:
             return {
@@ -127,7 +124,9 @@ class SkillsBenchRunner:
             "score_drop": round(score_drop, 2),
             "old_mean_score": round(old_mean, 2),
             "new_mean_score": round(new_mean, 2),
-            "latency_trend": "increasing" if latency_increase > 50 else ("decreasing" if latency_increase < -50 else "stable"),
+            "latency_trend": "increasing"
+            if latency_increase > 50
+            else ("decreasing" if latency_increase < -50 else "stable"),
             "latency_change_ms": round(latency_increase, 2),
             "old_mean_latency": round(old_lat_mean, 2),
             "new_mean_latency": round(new_lat_mean, 2),
@@ -143,9 +142,9 @@ class SkillEfficacyCalibrator:
 
     def __init__(self):
         self._runner = SkillsBenchRunner()
-        self._bench_results: Dict[str, List[Dict[str, Any]]] = {}
+        self._bench_results: dict[str, list[dict[str, Any]]] = {}
 
-    def run_benchmark(self, skill_id: str, check_items: Optional[List[str]] = None) -> Dict[str, Any]:
+    def run_benchmark(self, skill_id: str, check_items: list[str] | None = None) -> dict[str, Any]:
         checks = check_items or [
             "metadata_completeness",
             "body_non_empty",
@@ -154,7 +153,7 @@ class SkillEfficacyCalibrator:
             "frontmatter_valid",
         ]
 
-        results: List[Dict[str, Any]] = []
+        results: list[dict[str, Any]] = []
         passed_count = 0
         total_latency_ms = 0.0
 
@@ -162,14 +161,14 @@ class SkillEfficacyCalibrator:
             from zephyr.autonomy_core.skill_loader import SkillLoader
 
             loader = SkillLoader()
-            t0 = datetime.now(timezone.utc)
+            t0 = datetime.now(UTC)
 
             skill = loader.progressive_load(skill_id)
             l1 = skill.get("l1", {})
             l2 = skill.get("l2", "")
             tokens = skill.get("token_count_l2", 0)
 
-            t1 = datetime.now(timezone.utc)
+            t1 = datetime.now(UTC)
             load_latency = (t1 - t0).total_seconds() * 1000
             total_latency_ms += load_latency
 
@@ -254,12 +253,12 @@ class SkillEfficacyCalibrator:
                 "passed": False,
             }
 
-    def calibrate(self, skill_id: str, target_accuracy: float) -> Dict[str, Any]:
+    def calibrate(self, skill_id: str, target_accuracy: float) -> dict[str, Any]:
         bench = self.run_benchmark(skill_id)
         current = bench.get("accuracy", 0.0)
         gap = target_accuracy - current
 
-        suggestions: List[str] = []
+        suggestions: list[str] = []
         if bench.get("error"):
             suggestions.append(f"Fix error: {bench['error']}")
         for r in bench.get("results", []):

@@ -10,9 +10,9 @@
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_infrastructure_base.py -q
 
-import abc
 
 import pytest
+
 from zephyr.infrastructure.infrastructure_base import (
     ConfigManagerBase,
     InfrastructureManagerBase,

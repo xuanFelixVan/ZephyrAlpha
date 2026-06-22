@@ -53,6 +53,7 @@ _SUBMODULES = [
     "task_model_learner",
 ]
 
+
 def __getattr__(name: str):
     if name in _SUBMODULES:
         import importlib
@@ -62,42 +63,44 @@ def __getattr__(name: str):
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-from zephyr.intelligence.model_profiling.model_discovery import (
-    DEFAULT_OLLAMA_URL,
-    DiscoveredModel,
-    ModelDiscovery,
-)
+
 from zephyr.intelligence.model_profiling.benchmark_suite import (
     ALL_BENCHMARK_CASES,
     CATEGORY_MAP,
     BenchmarkCase,
 )
+from zephyr.intelligence.model_profiling.model_discovery import (
+    DEFAULT_OLLAMA_URL,
+    DiscoveredModel,
+    ModelDiscovery,
+)
 from zephyr.intelligence.model_profiling.profiler import (
+    MAX_OLLAMA_MODELS,
+    SKIP_MODEL_PATTERNS,
     CaseResult,
     ModelProfile,
     ModelProfiler,
-    SKIP_MODEL_PATTERNS,
-    MAX_OLLAMA_MODELS,
 )
 from zephyr.intelligence.model_profiling.task_model_learner import (
     ModelTaskEntry,
     ModelTaskMatrix,
     TaskRecommendation,
 )
+
 __all__ = [
     "ALL_BENCHMARK_CASES",
-    "BenchmarkCase",
-    "CaseResult",
     "CATEGORY_MAP",
     "DEFAULT_OLLAMA_URL",
-    "DiscoveredModel",
     "MAX_OLLAMA_MODELS",
+    "SKIP_MODEL_PATTERNS",
+    "BenchmarkCase",
+    "CaseResult",
+    "DiscoveredModel",
     "ModelDiscovery",
     "ModelProfile",
     "ModelProfiler",
     "ModelTaskEntry",
     "ModelTaskMatrix",
-    "SKIP_MODEL_PATTERNS",
     "TaskRecommendation",
     "benchmark_suite",
     "capability_passport",
@@ -105,9 +108,9 @@ __all__ = [
     "deepseek_v4_chat",
     "exam_orchestrator",
     "exam_test_cases",
+    "model_discovery",
     "profiler",
     "provider_data",
     "results_writer",
     "task_model_learner",
-    "model_discovery",
 ]

@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空proposals
 # [TESTS] tests/orphan-judge/test_feedback_bridge.py
-
 import logging
 from pathlib import Path
 from tempfile import mkdtemp
@@ -21,12 +20,14 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["FeedbackBridge"]
 
+
 class FeedbackBridge:
     def __init__(self) -> None:
         self._loop = None
         self._available = False
         try:
             from zephyr.trading.feedback_loop import FeedbackLoop
+
             self._loop = FeedbackLoop(Path(mkdtemp(prefix="orphan_feedback_")))
             self._available = True
         except ImportError:
@@ -38,18 +39,23 @@ class FeedbackBridge:
         if not self._available or self._loop is None:
             return []
         try:
-            entry = [{
-                "id": file_path.replace("/", "_"),
-                "module": "orphan-judge",
-                "context": f"Misjudgment: {file_path} predicted={predicted} actual={actual}",
-            }]
+            entry = [
+                {
+                    "id": file_path.replace("/", "_"),
+                    "module": "orphan-judge",
+                    "context": f"Misjudgment: {file_path} predicted={predicted} actual={actual}",
+                }
+            ]
             proposals = self._loop.analyze_pending(entry)
-            return [{
-                "source": p.source,
-                "pattern": p.pattern,
-                "change": p.suggested_rule_change,
-                "confidence": p.confidence,
-            } for p in proposals]
+            return [
+                {
+                    "source": p.source,
+                    "pattern": p.pattern,
+                    "change": p.suggested_rule_change,
+                    "confidence": p.confidence,
+                }
+                for p in proposals
+            ]
         except Exception as exc:
             logger.error("FeedbackBridge.report_misjudgment failed: %s", exc)
             return []

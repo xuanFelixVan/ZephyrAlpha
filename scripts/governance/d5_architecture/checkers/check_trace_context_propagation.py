@@ -44,7 +44,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -67,7 +67,6 @@ CONSUMER_LAYERS = {
     "risk",
     "pf_core",
     "ex_core",
-    "pf_core",
 }
 
 ALL_LAYERS = sorted(PRODUCER_LAYERS | CONSUMER_LAYERS)
@@ -311,7 +310,7 @@ def main() -> None:
         is_producer = layer in PRODUCER_LAYERS
         tag = "[P]" if is_producer else "[C]"
 
-        print(f"  {tag} {layer}: {has}/{total} 文件引用 TraceContext, " f"{viols} 条违规")
+        print(f"  {tag} {layer}: {has}/{total} 文件引用 TraceContext, {viols} 条违规")
 
         if is_producer and total > 0 and has < total:
             print(f"       ⚠  生产者层但 {total - has} 个文件未引用 TraceContext")

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VIEW-02-INFORMATION-ARCH
 title: Target Architecture — Information Architecture / 目标架构：信息架构
 doc_type: architecture_view
@@ -326,7 +326,7 @@ Current status: under re-discussion (OQ-001, OQ-002, OQ-010 reopened). Three pre
 | `02_enterprise_architecture/architecture-rationale-log.md` | Architecture derivation and decision chain / 架构推导与决策链 |
 | `19_development_workspace/structure-and-mapping/discussion-document-standard.md` | Document standard v2.0.0 / 讨论文档标准 |
 | `19_development_workspace/structure-and-mapping/document-triage-guide.md` | Document triage guide / 文档分流指南 |
-| `19_development_workspace/structure-and-mapping/terminology-mapping-reference.md` | Terminology mapping / 术语映射表 |
+| `19_development_workspace/structure-and-mapping/_registry/vocabularies/terminology_mapping.yaml` | Terminology mapping / 术语映射表 |
 | `19_development_workspace/structure-and-mapping/handoff-log.md` | AI session handoff log / AI 会话交接记录 |
 | `19_development_workspace/open-questions/open-questions-register.md` | Open questions register / 未决问题登记 |
 

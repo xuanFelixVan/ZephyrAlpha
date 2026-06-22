@@ -21,7 +21,7 @@ class AgentDirective(BaseModel):
 class PipelineAgentBridge(BaseModel):
     role_mapping: dict[str, str]  # "M3" → "generator_agent"
     directive_chain: list[AgentDirective]
-    
+
     def bridge(self, route_decision: PipelineRouteDecision) -> AgentDirective:
         """路由决策→AgentDirective翻译"""
 ```

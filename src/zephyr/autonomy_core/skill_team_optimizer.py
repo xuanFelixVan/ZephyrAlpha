@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_team_optimizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_team_optimizer
+# [MODULE] zephyr.autonomy_core.skill_team_optimizer
 
 # [INVARIANTS] none
 
@@ -28,13 +28,11 @@ Version: 0.3.0
 Skill 团队组合优化器
 """
 
-
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
-
-_SKILL_PAIRS_COMPAT: Dict[str, Dict[str, float]] = {
+_SKILL_PAIRS_COMPAT: dict[str, dict[str, float]] = {
     "database-specialist": {
         "implementer": 0.95,
         "reviewer": 0.85,
@@ -73,7 +71,6 @@ _SKILL_PAIRS_COMPAT: Dict[str, Dict[str, float]] = {
 
 
 class SkillTeamOptimizer:
-
     @classmethod
     def _compat_score(cls, skill_a: str, skill_b: str) -> float:
         base_a = skill_a.split("/")[-1]
@@ -93,12 +90,12 @@ class SkillTeamOptimizer:
         return 0.5
 
     @classmethod
-    def _coverage(cls, team: List[str], task_keywords: List[str]) -> float:
+    def _coverage(cls, team: list[str], task_keywords: list[str]) -> float:
         matched = sum(1 for kw in task_keywords for s in team if kw.lower() in s.lower())
         return min(matched / max(len(task_keywords), 1), 1.0)
 
     @classmethod
-    def _team_score(cls, team: List[str], task_keywords: List[str]) -> Tuple[float, float, float]:
+    def _team_score(cls, team: list[str], task_keywords: list[str]) -> tuple[float, float, float]:
         if len(team) < 2:
             return 0.3, 0.5, 0.4
         pairs = 0
@@ -116,9 +113,9 @@ class SkillTeamOptimizer:
     def optimize(
         cls,
         task_description: str,
-        available_skills: Optional[List[str]] = None,
+        available_skills: list[str] | None = None,
         max_team_size: int = 3,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         task_lower = task_description.lower()
         keyword_map = {
             "database": "database-specialist",
@@ -144,8 +141,8 @@ class SkillTeamOptimizer:
             "memory": "vector-memory",
             "a2a": "a2a-protocol",
         }
-        skills_matched: List[str] = []
-        keywords: List[str] = []
+        skills_matched: list[str] = []
+        keywords: list[str] = []
         for kw, skill in keyword_map.items():
             if kw in task_lower:
                 keywords.append(kw)
@@ -155,16 +152,26 @@ class SkillTeamOptimizer:
         candidates = available_skills or skills_matched
         if len(candidates) < 3:
             domain = [
-                "database-specialist", "mcp-specialist", "context-specialist",
-                "feedback-specialist", "gate-specialist", "agent-specialist",
-                "rollback-specialist", "knowledge-specialist", "lsg-security",
-                "drift-detector", "code-dedup-engine", "auto-fix-engine",
-                "vector-memory", "a2a-protocol", "system-telemetry",
+                "database-specialist",
+                "mcp-specialist",
+                "context-specialist",
+                "feedback-specialist",
+                "gate-specialist",
+                "agent-specialist",
+                "rollback-specialist",
+                "knowledge-specialist",
+                "lsg-security",
+                "drift-detector",
+                "code-dedup-engine",
+                "auto-fix-engine",
+                "vector-memory",
+                "a2a-protocol",
+                "system-telemetry",
             ]
             extra = [s for s in domain if s not in candidates]
-            candidates = candidates + extra[:max_team_size - len(candidates)]
+            candidates = candidates + extra[: max_team_size - len(candidates)]
 
-        best_team: List[str] = candidates[:max_team_size]
+        best_team: list[str] = candidates[:max_team_size]
         best_score = 0.0
         best_compat = 0.0
         best_coverage = 0.0
@@ -179,7 +186,7 @@ class SkillTeamOptimizer:
                         best_coverage = coverage
                         best_team = list(team)
 
-        rationale_parts: List[str] = []
+        rationale_parts: list[str] = []
         if best_coverage > 0.6:
             rationale_parts.append(f"high coverage ({best_coverage:.0%})")
         if best_compat > 0.7:
@@ -196,7 +203,7 @@ class SkillTeamOptimizer:
             "compatibility": round(best_compat, 2),
             "coverage": round(best_coverage, 2),
             "rationale": ", ".join(rationale_parts),
-            "alternatives": ([
-                {"team": best_team[:2], "score": round(best_score * 0.85, 2)}
-            ] if len(best_team) == 3 else []),
+            "alternatives": (
+                [{"team": best_team[:2], "score": round(best_score * 0.85, 2)}] if len(best_team) == 3 else []
+            ),
         }

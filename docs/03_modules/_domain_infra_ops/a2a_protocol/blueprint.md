@@ -1,6 +1,6 @@
-﻿---
+---
 module_id: MOD-INF-025
-submodule_path: src/zephyr/infra_ops/a2a_protocol
+submodule_path: src/zephyr/infrastructure/a2a_protocol
 title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
 doc_type: blueprint
 status: Active
@@ -16,7 +16,7 @@ date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: scaffold
-actual_disk_path: "src/zephyr/infra_ops/a2a_protocol/"
+actual_disk_path: "src/zephyr/infrastructure/a2a_protocol/"
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 3
@@ -1367,7 +1367,7 @@ STEP 3: 拆分后验证
 | 蓝图模板 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` |
 | 压缩工作流标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` |
 | 代码构建标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` |
-| 治理方法论 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` |
+| 治理方法论 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` |
 | 脚本质量标准 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` |
 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` |
 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |

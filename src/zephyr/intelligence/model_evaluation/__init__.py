@@ -14,45 +14,55 @@
 模型评估、推理、知识库统一域。
 包含原 research/ 和 ml_train/ 的核心模块。
 """
+
 from __future__ import annotations
+
 
 def __getattr__(name):
     """Lazy imports to avoid triggering circular import chains at package load time."""
     _lazy = {
-        'KbRepo': '.kb_repo',
-        'KeStatus': '.kb_repo',
-        'UnifiedMemoryAPI': '.unified_memory_api',
-        'Reranker': '.reranker',
-        'ActivateGate': '.activate',
-        'sync_to_vms': '.sync_engine',
-        'BacktestEngineBase': '.backtest_base',
-        'BacktestResult': '.backtest_base',
-        'FactorDiscovery': '.backtest_base',
-        'InferenceEngineBase': '.inference_base',
-        'ModelMetadata': '.inference_base',
-        'ModelRegistry': '.inference_base',
-        'ModelTrainerBase': '.inference_base',
+        "KbRepo": ".kb_repo",
+        "KeStatus": ".kb_repo",
+        "UnifiedMemoryAPI": ".unified_memory_api",
+        "Reranker": ".reranker",
+        "ActivateGate": ".activate",
+        "sync_to_vms": ".sync_engine",
+        "BacktestEngineBase": ".backtest_base",
+        "BacktestResult": ".backtest_base",
+        "FactorDiscovery": ".backtest_base",
+        "InferenceEngineBase": ".inference_base",
+        "ModelMetadata": ".inference_base",
+        "ModelRegistry": ".inference_base",
+        "ModelTrainerBase": ".inference_base",
     }
     if name in _lazy:
         import importlib
+
         mod = importlib.import_module(_lazy[name], __name__)
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
-    'KbRepo', 'KeStatus',
-    'UnifiedMemoryAPI',
-    'Reranker',
-    'ActivateGate',
-    'sync_to_vms',
-    'BacktestEngineBase', 'BacktestResult', 'FactorDiscovery',
-    'InferenceEngineBase', 'ModelMetadata', 'ModelRegistry', 'ModelTrainerBase',
-    'model_evaluation',
+    "ActivateGate",
+    "BacktestEngineBase",
+    "BacktestResult",
+    "FactorDiscovery",
+    "InferenceEngineBase",
+    "KbRepo",
+    "KeStatus",
+    "ModelMetadata",
+    "ModelRegistry",
+    "ModelTrainerBase",
+    "Reranker",
+    "UnifiedMemoryAPI",
     "activate",
     "backtest_base",
     "inference_base",
     "kb_repo",
+    "model_evaluation",
     "reranker",
     "sync_engine",
+    "sync_to_vms",
     "unified_memory_api",
 ]

@@ -192,7 +192,7 @@ DELETE FROM domains WHERE domain_id = 'D-SECURITY-LLM';
 
 ```sql
 -- H7修复后验证
-SELECT d.domain_id, d.current_modules, 
+SELECT d.domain_id, d.current_modules,
        (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id) as actual
 FROM domains d
 WHERE d.current_modules != (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id);
@@ -246,7 +246,7 @@ WHERE d.current_modules != (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.d
 -- A4.1: 域级双向依赖（当前实际数据）
 SELECT d1.from_domain, d1.to_domain, d1.edge_count, d2.edge_count as reverse_count
 FROM domain_dependencies d1
-JOIN domain_dependencies d2 
+JOIN domain_dependencies d2
   ON d1.from_domain = d2.to_domain AND d1.to_domain = d2.from_domain
 WHERE d1.from_domain < d1.to_domain
 ORDER BY d1.from_domain;
@@ -466,7 +466,7 @@ FROM arch_layers l
 ORDER BY node_count ASC;
 
 -- 删除零引用且非标准层的记录
-DELETE FROM arch_layers 
+DELETE FROM arch_layers
 WHERE layer_id NOT IN ('L0_infrastructure', 'L1_foundation', 'L2_domain', 'L3_application')
   AND layer_id NOT IN (
     SELECT DISTINCT architecture_layer FROM nodes WHERE architecture_layer IS NOT NULL AND architecture_layer != ''
@@ -672,12 +672,12 @@ WHERE domain_id = 'D-GOVERNANCE'
 
 ```sql
 -- F1: 原型占比告警查询（供监控脚本使用）
-SELECT 
+SELECT
     COUNT(*) as total_nodes,
     SUM(CASE WHEN design_maturity = 'prototype' THEN 1 ELSE 0 END) as prototype_count,
     ROUND(SUM(CASE WHEN design_maturity = 'prototype' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) as prototype_pct,
-    CASE 
-        WHEN SUM(CASE WHEN design_maturity = 'prototype' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) > 60 
+    CASE
+        WHEN SUM(CASE WHEN design_maturity = 'prototype' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) > 60
         THEN 'ALERT: prototype ratio exceeds 60%'
         ELSE 'OK'
     END as status
@@ -777,7 +777,7 @@ FROM nodes;
 
 ```sql
 -- I2.1: 识别所有非法路径
-SELECT node_id, path FROM nodes 
+SELECT node_id, path FROM nodes
 WHERE path LIKE 'D-%'          -- 域ID前缀
    OR path GLOB '[A-Z]:/%'     -- 绝对路径
    OR path LIKE '//%'          -- UNC/nix绝对路径
@@ -799,7 +799,7 @@ WHERE path GLOB '[A-Z]:/%' OR path LIKE '//%' OR path LIKE '\\\\%';
 
 ```sql
 -- 验证无非法路径残留
-SELECT COUNT(*) FROM nodes 
+SELECT COUNT(*) FROM nodes
 WHERE path LIKE 'D-%' OR path GLOB '[A-Z]:/%' OR path LIKE '//%';
 -- 期望：0
 ```
@@ -835,14 +835,14 @@ WHERE path LIKE 'D-%' OR path GLOB '[A-Z]:/%' OR path LIKE '//%';
 ```sql
 -- I5.1: 清除指向不存在node_id的belongs_to引用
 UPDATE nodes SET belongs_to = ''
-WHERE belongs_to IS NOT NULL 
+WHERE belongs_to IS NOT NULL
   AND belongs_to != ''
   AND belongs_to NOT IN (SELECT node_id FROM nodes);
 
 -- I5.2: 从蓝图路径反推belongs_to（对module/script类型，belongs_to应指向blueprint节点）
 UPDATE nodes SET belongs_to = (
-    SELECT n2.node_id FROM nodes n2 
-    WHERE n2.type = 'blueprint' 
+    SELECT n2.node_id FROM nodes n2
+    WHERE n2.type = 'blueprint'
       AND n2.blueprint_id = nodes.blueprint_id
       AND n2.blueprint_id IS NOT NULL AND n2.blueprint_id != ''
     LIMIT 1
@@ -851,7 +851,7 @@ WHERE (belongs_to IS NULL OR belongs_to = '' OR belongs_to NOT IN (SELECT node_i
   AND blueprint_id IS NOT NULL AND blueprint_id != '';
 
 -- I5.3: 验证
-SELECT COUNT(*) FROM nodes 
+SELECT COUNT(*) FROM nodes
 WHERE belongs_to IS NOT NULL AND belongs_to != ''
   AND belongs_to NOT IN (SELECT node_id FROM nodes);
 -- 期望：0
@@ -892,7 +892,7 @@ WHERE belongs_to IS NOT NULL AND belongs_to != ''
 ```sql
 -- I8: 修复 build_status 矛盾（V3.4 兼容，不使用 state 字段）
 -- 方案：若目录路径以 src/zephyr/ 开头（代码目录），认为已构建
-UPDATE arch_directory_tree 
+UPDATE arch_directory_tree
 SET build_status = 'built'
 WHERE build_status = 'unbuilt'
   AND path LIKE 'src/zephyr/%';
@@ -938,7 +938,7 @@ SELECT build_status, COUNT(*) FROM arch_directory_tree GROUP BY build_status;
 -- 如果所有consumer_domain都是D-SHARED，说明生成器未正确推导
 
 -- I9.1: 识别当前的共享契约分布
-SELECT provider_domain, consumer_domain, COUNT(*) FROM contracts 
+SELECT provider_domain, consumer_domain, COUNT(*) FROM contracts
 GROUP BY provider_domain, consumer_domain;
 
 -- I9.2: 从边缘推导消费者域
@@ -1082,7 +1082,7 @@ conn.close()
 
 ```sql
 -- 孤儿率统计（排除design态）
-SELECT 
+SELECT
     COUNT(*) as total_orphans,
     ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM nodes), 1) as orphan_pct
 FROM nodes n
@@ -1193,7 +1193,7 @@ conn.close()
 -- I15: 从node_type和domain_id自动生成tags
 UPDATE nodes SET tags = json_array(
     node_type,
-    CASE 
+    CASE
         WHEN architecture_layer = 'L0_infrastructure' THEN 'infrastructure'
         WHEN architecture_layer = 'L1_foundation' THEN 'foundation'
         WHEN architecture_layer = 'L2_domain' THEN 'domain'
@@ -1847,4 +1847,3 @@ _schema_version, arch_bottlenecks, arch_constraints, arch_directory_tree, arch_d
 | audit_domain_nodes.py | `D:/ZephyrAlpha/scripts/governance/repair/audit_domain_nodes.py` | 审计超容域的粒度分布（SRC-100200，当前8个超容域） |
 
 > **注**：audit_domain_nodes.py 中的 domains_13 列表基于旧数据（含 D-SECURITY 等已解决域），实际使用时需基于当前8个超容域清单更新。
-

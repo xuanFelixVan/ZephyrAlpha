@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.forensic.external_verifier import (
     ExternalAudit,
     ExternalVerifier,
@@ -30,9 +28,7 @@ class TestVerdict:
 
 class TestExternalAudit:
     def test_creation(self):
-        audit = ExternalAudit(
-            audit_id="a1", fle_decision="repair", external_verdict=Verdict.CONCUR, reasoning="ok"
-        )
+        audit = ExternalAudit(audit_id="a1", fle_decision="repair", external_verdict=Verdict.CONCUR, reasoning="ok")
         assert audit.audit_id == "a1"
         assert audit.external_verdict is Verdict.CONCUR
         assert isinstance(audit.timestamp, float)

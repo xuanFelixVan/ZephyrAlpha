@@ -18,28 +18,28 @@ This package re-exports for backward compatibility.
 from __future__ import annotations
 
 __all__ = [
-    'AISGSandbox',
-    'ArtifactFinding',
-    'ArtifactScanner',
-    'AuditAction',
-    'AuditDecision',
-    'ComplianceEngine',
-    'ComplianceManagerBase',
-    'ComplianceRule',
-    'DefaultSecurityGateway',
-    'ScanFinding',
-    'ScanReport',
-    'SecurityContext',
-    'SecurityGateway',
-    'aisg_sandbox',
-    'artifact_scanner',
-    'compliance_manager',
-    'default_security_gateway',
-    'security_gateway_base',
+    "AISGSandbox",
+    "ArtifactFinding",
+    "ArtifactScanner",
+    "AuditAction",
+    "AuditDecision",
+    "ComplianceEngine",
+    "ComplianceManagerBase",
+    "ComplianceRule",
+    "DefaultSecurityGateway",
+    "ScanFinding",
+    "ScanReport",
+    "SecurityContext",
+    "SecurityGateway",
+    "aisg_sandbox",
+    "artifact_scanner",
+    "compliance_manager",
+    "default_security_gateway",
     "evidence_pack",
     "financial_compliance",
     "integrity",
     "merkle_hourly",
+    "security_gateway_base",
 ]
 
 _LAZY_IMPORTS = {
@@ -58,11 +58,19 @@ _LAZY_IMPORTS = {
     "SecurityGateway": ("zephyr.governance.security_gateway_base", "SecurityGateway"),
 }
 
-_SUBMODULES = ["aisg_sandbox", "artifact_scanner", "compliance_manager", "default_security_gateway", "security_gateway_base"]
+_SUBMODULES = [
+    "aisg_sandbox",
+    "artifact_scanner",
+    "compliance_manager",
+    "default_security_gateway",
+    "security_gateway_base",
+]
+
 
 def __getattr__(name):
     if name in _LAZY_IMPORTS:
         import importlib
+
         mod_path, attr_name = _LAZY_IMPORTS[name]
         mod = importlib.import_module(mod_path)
         value = getattr(mod, attr_name)
@@ -70,6 +78,7 @@ def __getattr__(name):
         return value
     if name in _SUBMODULES:
         import importlib
+
         mod = importlib.import_module(f"zephyr.governance.{name}")
         globals()[name] = mod
         return mod

@@ -44,7 +44,6 @@ ME-CT-005: 模型提升审批链
 ME-CT-006: 跨层审计追踪
 """
 
-
 from __future__ import annotations
 
 import uuid
@@ -57,10 +56,10 @@ from typing import Any
 _MAX_WORKERS = 8
 
 __all__ = [
-    "MLExperimentPipeline",
-    "PipelineStage",
     "ExperimentResult",
+    "MLExperimentPipeline",
     "PipelineError",
+    "PipelineStage",
 ]
 
 try:
@@ -71,6 +70,7 @@ try:
         ExperimentMetric,
         ExperimentPipelineBase,
     )
+
     _CONTRACTS_AVAILABLE = True
 except ImportError:
     _CONTRACTS_AVAILABLE = False
@@ -132,6 +132,7 @@ class MLExperimentPipeline:
     def _snapshot_builtins() -> frozenset[str]:
         try:
             import builtins
+
             return frozenset(builtins.__dict__.keys())
         except Exception:
             return frozenset()
@@ -141,6 +142,7 @@ class MLExperimentPipeline:
         violations: list[str] = []
         try:
             import builtins
+
             current = set(builtins.__dict__.keys())
             added = current - snapshot
             if added:
@@ -175,14 +177,16 @@ class MLExperimentPipeline:
                 idempotency_key=key,
                 significant_results=MLExperimentPipeline._global_run_count,
                 promoted=True,
-                errors=[{
-                    "stage": "p_hacking_detection",
-                    "message": (
-                        f"Potential p-hacking: {MLExperimentPipeline._global_run_count} experiment runs "
-                        f"detected across {len(MLExperimentPipeline._seen_idempotency_keys)} unique keys "
-                        f"(threshold: {MLExperimentPipeline._MAX_RUNS_BEFORE_P_HACKING_WARNING})"
-                    ),
-                }],
+                errors=[
+                    {
+                        "stage": "p_hacking_detection",
+                        "message": (
+                            f"Potential p-hacking: {MLExperimentPipeline._global_run_count} experiment runs "
+                            f"detected across {len(MLExperimentPipeline._seen_idempotency_keys)} unique keys "
+                            f"(threshold: {MLExperimentPipeline._MAX_RUNS_BEFORE_P_HACKING_WARNING})"
+                        ),
+                    }
+                ],
             )
             result.completed_at = datetime.utcnow().isoformat()
             return result
@@ -195,15 +199,18 @@ class MLExperimentPipeline:
         )
 
         if not _CONTRACTS_AVAILABLE:
-            result.errors.append({
-                "stage": "preflight",
-                "message": "L11/L13 contracts unavailable — running in degraded mode",
-            })
+            result.errors.append(
+                {
+                    "stage": "preflight",
+                    "message": "L11/L13 contracts unavailable — running in degraded mode",
+                }
+            )
 
         result.stage = PipelineStage.MODEL_DISCOVERY
         if not self._models:
             try:
                 from zephyr.ml_train.trainer_base import ModelTrainerBase as MTB
+
                 registry = getattr(MTB, "_registry", {})
                 discovered = [
                     ModelMetadata(
@@ -223,10 +230,12 @@ class MLExperimentPipeline:
         result.models_discovered = len(self._models)
         if not self._models:
             result.status = "no_models"
-            result.errors.append({
-                "stage": PipelineStage.MODEL_DISCOVERY.value,
-                "message": "No models discovered or registered",
-            })
+            result.errors.append(
+                {
+                    "stage": PipelineStage.MODEL_DISCOVERY.value,
+                    "message": "No models discovered or registered",
+                }
+            )
             return result
 
         result.stage = PipelineStage.INFERENCE_EXEC
@@ -240,9 +249,10 @@ class MLExperimentPipeline:
             for model in self._models:
                 engine = self._find_engine(model.model_id)
                 if engine:
-                    futures[executor.submit(
-                        self._run_inference, engine, model, test_features, key
-                    )] = (engine.__name__, model.model_id)
+                    futures[executor.submit(self._run_inference, engine, model, test_features, key)] = (
+                        engine.__name__,
+                        model.model_id,
+                    )
 
             for future in as_completed(futures):
                 try:
@@ -251,22 +261,26 @@ class MLExperimentPipeline:
                         violations = self._check_and_restore_builtins(builtins_snapshot)
                         if violations:
                             result.inferences_failed += 1
-                            result.errors.append({
-                                "stage": PipelineStage.INFERENCE_EXEC.value,
-                                "model": futures[future][1],
-                                "error": f"BUILTINS TAMPERED AND RESTORED: {violations}",
-                            })
+                            result.errors.append(
+                                {
+                                    "stage": PipelineStage.INFERENCE_EXEC.value,
+                                    "model": futures[future][1],
+                                    "error": f"BUILTINS TAMPERED AND RESTORED: {violations}",
+                                }
+                            )
                             continue
                     if pred:
                         predictions.append(pred)
                         result.inferences_run += 1
                 except Exception as e:
                     result.inferences_failed += 1
-                    result.errors.append({
-                        "stage": PipelineStage.INFERENCE_EXEC.value,
-                        "model": futures[future][1],
-                        "error": str(e),
-                    })
+                    result.errors.append(
+                        {
+                            "stage": PipelineStage.INFERENCE_EXEC.value,
+                            "model": futures[future][1],
+                            "error": str(e),
+                        }
+                    )
 
         if not predictions:
             result.status = "no_predictions"
@@ -284,12 +298,14 @@ class MLExperimentPipeline:
         result.stage = PipelineStage.PRODUCTION_PROMOTE
         result.promoted = result.significant_results > 0 and result.best_effect_size > 0.1
         if not result.promoted:
-            result.errors.append({
-                "stage": PipelineStage.PRODUCTION_PROMOTE.value,
-                "message": "No model met promotion threshold",
-                "significant": result.significant_results,
-                "threshold": 0.1,
-            })
+            result.errors.append(
+                {
+                    "stage": PipelineStage.PRODUCTION_PROMOTE.value,
+                    "message": "No model met promotion threshold",
+                    "significant": result.significant_results,
+                    "threshold": 0.1,
+                }
+            )
 
         result.status = "completed_with_errors" if result.errors else "completed"
 
@@ -302,6 +318,7 @@ class MLExperimentPipeline:
             return matched[0]
         try:
             from zephyr.ml_train.inference_base import InferenceEngineBase as IEB
+
             registry = getattr(IEB, "_registry", {})
             for name, cls in registry.items():
                 if model_id.lower() in name.lower():
@@ -312,7 +329,10 @@ class MLExperimentPipeline:
 
     @staticmethod
     def _run_inference(
-        engine_cls: type, model: ModelMetadata, features: dict[str, Any], idempotency_key: str,
+        engine_cls: type,
+        model: ModelMetadata,
+        features: dict[str, Any],
+        idempotency_key: str,
     ) -> dict[str, Any] | None:
         engine = engine_cls()
         if hasattr(engine, "predict"):
@@ -348,11 +368,13 @@ class MLExperimentPipeline:
                         result.best_model = pred.get("model_id")
                 count += 1
             except Exception as e:
-                result.errors.append({
-                    "stage": PipelineStage.METRIC_COLLECTION.value,
-                    "model": pred.get("model_id", "unknown"),
-                    "error": str(e),
-                })
+                result.errors.append(
+                    {
+                        "stage": PipelineStage.METRIC_COLLECTION.value,
+                        "model": pred.get("model_id", "unknown"),
+                        "error": str(e),
+                    }
+                )
         return count
 
     @staticmethod
@@ -369,13 +391,20 @@ class MLExperimentPipeline:
 
 if __name__ == "__main__":
     import json as _json
+
     pipe = MLExperimentPipeline()
     result = pipe.run()
-    print(_json.dumps({
-        "status": result.status,
-        "models_discovered": result.models_discovered,
-        "inferences_run": result.inferences_run,
-        "significant_results": result.significant_results,
-        "promoted": result.promoted,
-        "errors": result.errors,
-    }, indent=2, ensure_ascii=False))
+    print(
+        _json.dumps(
+            {
+                "status": result.status,
+                "models_discovered": result.models_discovered,
+                "inferences_run": result.inferences_run,
+                "significant_results": result.significant_results,
+                "promoted": result.promoted,
+                "errors": result.errors,
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+    )

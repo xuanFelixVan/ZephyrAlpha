@@ -46,20 +46,19 @@ Version: 0.14.0
 from __future__ import annotations
 
 import re
-from typing import Any
 
 __all__ = [
+    "MIN_COMPATIBLE_SHARED_VERSION",
+    "VersionMismatchError",
     "__version__",
     "__version_info__",
-    "MIN_COMPATIBLE_SHARED_VERSION",
     "check_shared_version",
-    "VersionMismatchError",
+    "version_compatible",
     "version_eq",
-    "version_lt",
-    "version_lte",
     "version_gt",
     "version_gte",
-    "version_compatible",
+    "version_lt",
+    "version_lte",
     "version_major",
     "version_minor",
     "version_patch",

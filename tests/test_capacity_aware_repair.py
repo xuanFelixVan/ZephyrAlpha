@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_capacity_aware_repair.py
 
-import pytest
 from zephyr.ops.diagnosers.capacity_aware_repair import CapacityAwareRepair
 
 

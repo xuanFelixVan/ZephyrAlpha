@@ -241,9 +241,9 @@ class InputSanitizer:
 __all__ = [
     "ALLOWED_COMMANDS",
     "ALLOWED_WRITE_DIRS",
-    "ContextInjectionError",
-    "CommandInjectionError",
     "DANGEROUS_PATTERNS",
+    "CommandInjectionError",
+    "ContextInjectionError",
     "InputSanitizer",
     "PathTraversalError",
     "SanitizationError",

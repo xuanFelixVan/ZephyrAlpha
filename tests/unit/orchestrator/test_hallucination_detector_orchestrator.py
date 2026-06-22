@@ -28,8 +28,8 @@ Unit tests for hallucination_detector.py (T-3-07, ADR-0039)
 15. 审计回调被触发一次
 16. Step 1 返回非法 JSON → 自动降级到 keyword 兜底
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
@@ -38,6 +38,7 @@ from typing import Any
 
 import pytest
 from pydantic import ValidationError
+
 from zephyr.trading.orchestrator.hallucination_detector import (
     KEYWORD_HALLU_RULES,
     BudgetState,

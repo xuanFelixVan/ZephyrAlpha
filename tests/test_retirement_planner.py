@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_retirement_planner.py
 
-import pytest
 
 from zephyr.ops.diagnosers.retirement_planner import RetirementPlanner
 

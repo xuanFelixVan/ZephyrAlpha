@@ -6,9 +6,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """风险缓解测试."""
+
 from __future__ import annotations
 
-import pytest
 from zephyr.security.access_control.risk_mitigation import RiskMitigation
 
 

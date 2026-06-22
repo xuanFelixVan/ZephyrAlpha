@@ -98,7 +98,7 @@ class TestPathResolver:
 
     def test_resolve_downstream(self, temp_project):
         resolver = PathResolver(temp_project)
-        content = "downstream_outputs:\n  - path: \"/fake/path.py\"\n"
+        content = 'downstream_outputs:\n  - path: "/fake/path.py"\n'
         result = resolver.resolve_downstream(content)
         assert "resolved" in result
         assert "corrections" in result

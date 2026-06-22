@@ -128,9 +128,7 @@ class TestLayerIsolation:
                     layer_in_path = other_layer.replace("_", "/")
                     if layer_in_path in normalized:
                         violations.append(
-                            f"行 {lineno}: 低层导入高层 — "
-                            f"{current_layer} 不能 import {other_layer} "
-                            f"({import_path})"
+                            f"行 {lineno}: 低层导入高层 — {current_layer} 不能 import {other_layer} ({import_path})"
                         )
 
         if violations:

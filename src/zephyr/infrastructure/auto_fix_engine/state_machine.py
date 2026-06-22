@@ -26,8 +26,6 @@ from enum import Enum
 from threading import RLock
 from typing import Any
 
-from zephyr.shared.state_machine import StateMachine as _SharedStateMachineBase
-
 logger = logging.getLogger(__name__)
 
 
@@ -49,7 +47,11 @@ _TRANSITIONS: dict[FixState, set[FixState]] = {
     FixState.DETECTED: {FixState.DIAGNOSED, FixState.DEAD_LETTER},
     FixState.DIAGNOSED: {FixState.TRIAGED, FixState.DEAD_LETTER},
     FixState.TRIAGED: {FixState.ACKNOWLEDGED, FixState.DEAD_LETTER},
-    FixState.ACKNOWLEDGED: {FixState.RESOLVING, FixState.DEAD_LETTER, FixState.CANCELLED if hasattr(FixState, "CANCELLED") else FixState.DEAD_LETTER},
+    FixState.ACKNOWLEDGED: {
+        FixState.RESOLVING,
+        FixState.DEAD_LETTER,
+        FixState.CANCELLED if hasattr(FixState, "CANCELLED") else FixState.DEAD_LETTER,
+    },
     FixState.RESOLVING: {FixState.RESOLVED, FixState.DEAD_LETTER},
     FixState.RESOLVED: {FixState.VERIFIED, FixState.RESOLVING, FixState.DEAD_LETTER},
     FixState.VERIFIED: {FixState.CLOSED, FixState.RESOLVING},
@@ -66,8 +68,7 @@ class InvalidFixTransitionError(Exception):
         self.target = target
         self.allowed = allowed or set()
         super().__init__(
-            f"Invalid fix transition: {current.value} -> {target.value} "
-            f"(allowed: {[s.value for s in self.allowed]})"
+            f"Invalid fix transition: {current.value} -> {target.value} (allowed: {[s.value for s in self.allowed]})"
         )
 
 

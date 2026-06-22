@@ -59,9 +59,9 @@ from typing import Any
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
-    "SqliteDumper",
     "DumpResult",
     "RestoreResult",
+    "SqliteDumper",
     "VerifyResult",
 ]
 
@@ -99,7 +99,6 @@ class VerifyResult:
 
 
 class SqliteDumper:
-
     def __init__(
         self,
         db_path: Path | None = None,
@@ -122,14 +121,16 @@ class SqliteDumper:
         columns: list[dict[str, str]] = []
         rows_info = conn.execute(f"PRAGMA table_info('{table}')").fetchall()
         for col in rows_info:
-            columns.append({
-                "cid": col["cid"],
-                "name": col["name"],
-                "type": col["type"],
-                "notnull": bool(col["notnull"]),
-                "dflt_value": col["dflt_value"],
-                "pk": bool(col["pk"]),
-            })
+            columns.append(
+                {
+                    "cid": col["cid"],
+                    "name": col["name"],
+                    "type": col["type"],
+                    "notnull": bool(col["notnull"]),
+                    "dflt_value": col["dflt_value"],
+                    "pk": bool(col["pk"]),
+                }
+            )
         return {"table": table, "columns": columns}
 
     def _get_table_data(self, conn: sqlite3.Connection, table: str) -> list[dict[str, Any]]:
@@ -194,39 +195,52 @@ class SqliteDumper:
             total_rows = 0
 
             now = now_iso()
-            header_line = (
-                f"{JSONL_HEADER_PREFIX} | encoding: utf-8"
-                f" | timestamp: {now} | commit: {commit_sha}"
-            )
+            header_line = f"{JSONL_HEADER_PREFIX} | encoding: utf-8 | timestamp: {now} | commit: {commit_sha}"
 
             tmp_path = output_path.with_suffix(".jsonl.tmp")
 
             with open(tmp_path, "w", encoding="utf-8") as f:
                 f.write(header_line + "\n")
-                f.write(json.dumps({
-                    "schema_version": schema_version,
-                    "table_count": len(tables),
-                    "tables": tables,
-                }, ensure_ascii=False) + "\n")
+                f.write(
+                    json.dumps(
+                        {
+                            "schema_version": schema_version,
+                            "table_count": len(tables),
+                            "tables": tables,
+                        },
+                        ensure_ascii=False,
+                    )
+                    + "\n"
+                )
 
                 for table in tables:
                     schema = self._get_table_schema(conn, table)
                     data = self._get_table_data(conn, table)
 
-                    table_serialized = json.dumps({
-                        "schema": schema,
-                        "data": data,
-                    }, ensure_ascii=False, sort_keys=True)
+                    table_serialized = json.dumps(
+                        {
+                            "schema": schema,
+                            "data": data,
+                        },
+                        ensure_ascii=False,
+                        sort_keys=True,
+                    )
 
                     table_hash = hashlib.sha256(table_serialized.encode("utf-8")).digest()
                     table_hashes.append(table_hash)
 
-                    f.write(json.dumps({
-                        "table": table,
-                        "schema": schema,
-                        "data": data,
-                        "row_count": len(data),
-                    }, ensure_ascii=False) + "\n")
+                    f.write(
+                        json.dumps(
+                            {
+                                "table": table,
+                                "schema": schema,
+                                "data": data,
+                                "row_count": len(data),
+                            },
+                            ensure_ascii=False,
+                        )
+                        + "\n"
+                    )
 
                     total_rows += len(data)
 
@@ -269,7 +283,7 @@ class SqliteDumper:
             raise FileNotFoundError(f"Dump file not found: {source_path}")
 
         lines: list[str] = []
-        with open(source_path, "r", encoding="utf-8") as f:
+        with open(source_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith("#"):
@@ -318,6 +332,7 @@ class SqliteDumper:
 
             if tables_restored > 0 and target_db == self._db_path:
                 from zephyr.governance.persistence.sqlite_schema import get_db_connection
+
                 vconn = get_db_connection(target_db)
                 vconn.execute("PRAGMA integrity_check")
                 vconn.close()
@@ -356,7 +371,7 @@ class SqliteDumper:
 
         lines: list[dict[str, Any]] = []
         all_lines_raw: list[str] = []
-        with open(source_path, "r", encoding="utf-8") as f:
+        with open(source_path, encoding="utf-8") as f:
             for line in f:
                 stripped = line.strip()
                 if stripped and not stripped.startswith("#"):
@@ -386,10 +401,14 @@ class SqliteDumper:
         table_hashes: list[bytes] = []
         total_row_count = 0
         for obj in table_objects:
-            table_serialized = json.dumps({
-                "schema": obj.get("schema"),
-                "data": obj.get("data"),
-            }, ensure_ascii=False, sort_keys=True)
+            table_serialized = json.dumps(
+                {
+                    "schema": obj.get("schema"),
+                    "data": obj.get("data"),
+                },
+                ensure_ascii=False,
+                sort_keys=True,
+            )
             table_hash = hashlib.sha256(table_serialized.encode("utf-8")).digest()
             table_hashes.append(table_hash)
             total_row_count += len(obj.get("data", []))
@@ -397,7 +416,7 @@ class SqliteDumper:
         computed_merkle_root = self._compute_merkle_root(table_hashes)
 
         if claimed_merkle_root:
-            merkle_match = (computed_merkle_root == claimed_merkle_root)
+            merkle_match = computed_merkle_root == claimed_merkle_root
             if not merkle_match:
                 details.append(
                     f"Merkle root mismatch: computed={computed_merkle_root[:16]}..."
@@ -425,10 +444,13 @@ class SqliteDumper:
 
     def _resolve_current_commit(self) -> str:
         import subprocess
+
         try:
             result = subprocess.run(
                 ["git", "rev-parse", "--short", "HEAD"],
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             if result.returncode == 0:
                 return result.stdout.strip()
@@ -438,9 +460,7 @@ class SqliteDumper:
 
     def _resolve_schema_version(self, conn: sqlite3.Connection) -> str:
         try:
-            row = conn.execute(
-                "SELECT schema_version FROM zalpha_metadata LIMIT 1"
-            ).fetchone()
+            row = conn.execute("SELECT schema_version FROM zalpha_metadata LIMIT 1").fetchone()
             if row:
                 return row["schema_version"]
         except Exception:

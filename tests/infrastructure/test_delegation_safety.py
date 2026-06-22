@@ -15,17 +15,12 @@ Tests each of the four safety constraints independently:
 
 Blueprint: docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md D-022-02
 """
-import time
-
-import pytest
 
 from zephyr.governance.escalation import (
     DelegationEngine,
     DelegationStrategy,
-    EscalationLevel,
-    RuleCategory,
-    EscalationState,
     EscalationEvent,
+    RuleCategory,
 )
 
 

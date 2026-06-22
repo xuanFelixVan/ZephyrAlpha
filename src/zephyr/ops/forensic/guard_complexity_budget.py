@@ -28,6 +28,7 @@ R523: GuardComplexityBudget
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class GuardComplexityBudget:
     active_guard_count: int = 0
@@ -45,7 +46,7 @@ class GuardComplexityBudget:
         }
         self.guard_complexity_history.append(entry)
         if len(self.guard_complexity_history) > self.max_history:
-            self.guard_complexity_history = self.guard_complexity_history[-self.max_history:]
+            self.guard_complexity_history = self.guard_complexity_history[-self.max_history :]
 
         return self._evaluate_budget(entry)
 
@@ -65,18 +66,10 @@ class GuardComplexityBudget:
         if entry["marginal_value"] < self.marginal_value_threshold:
             if status == "healthy":
                 status = "warning"
-            warnings.append(
-                f"Marginal value ({entry['marginal_value']}) below threshold"
-            )
+            warnings.append(f"Marginal value ({entry['marginal_value']}) below threshold")
 
-        recent_values = [
-            e["marginal_value"]
-            for e in self.guard_complexity_history[-8:]
-            if "marginal_value" in e
-        ]
-        if len(recent_values) >= 4 and all(
-            v < self.marginal_value_threshold * 3 for v in recent_values
-        ):
+        recent_values = [e["marginal_value"] for e in self.guard_complexity_history[-8:] if "marginal_value" in e]
+        if len(recent_values) >= 4 and all(v < self.marginal_value_threshold * 3 for v in recent_values):
             warnings.append("Persistent low marginal value — consider guard consolidation")
 
         return {
@@ -85,9 +78,12 @@ class GuardComplexityBudget:
             "maintainability_threshold": self.maintainability_threshold,
             "warnings": warnings,
             "recommendation": (
-                "STOP_ADDING" if status == "critical"
-                else "CONSOLIDATE" if "consolidation" in str(warnings).lower()
-                else "CAUTION" if status == "warning"
+                "STOP_ADDING"
+                if status == "critical"
+                else "CONSOLIDATE"
+                if "consolidation" in str(warnings).lower()
+                else "CAUTION"
+                if status == "warning"
                 else "CONTINUE"
             ),
         }
@@ -96,12 +92,7 @@ class GuardComplexityBudget:
         return {
             "active_guard_count": self.active_guard_count,
             "maintainability_threshold": self.maintainability_threshold,
-            "utilization_ratio": round(
-                self.active_guard_count / self.maintainability_threshold, 2
-            ),
-            "recent_marginal_values": [
-                e.get("marginal_value", 0)
-                for e in self.guard_complexity_history[-10:]
-            ],
+            "utilization_ratio": round(self.active_guard_count / self.maintainability_threshold, 2),
+            "recent_marginal_values": [e.get("marginal_value", 0) for e in self.guard_complexity_history[-10:]],
             "total_historical_additions": len(self.guard_complexity_history),
         }

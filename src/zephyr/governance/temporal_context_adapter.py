@@ -29,14 +29,12 @@ Agent 恢复时提交时间证明 → Adapter 验证 → 对齐 AI 上下文。
 验伪失败 → exit code 26 (TIME_ATTEST_FAIL)。
 """
 
-
 from __future__ import annotations
 
 import hashlib
 import hmac
-import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -61,7 +59,6 @@ class AttestResult:
 
 
 class TemporalContextAdapter:
-
     EXIT_CODE_TIME_ATTEST_FAIL: int = 26
     MAX_TIME_DRIFT_SECONDS: int = 60
     TOTP_WINDOW: int = 2
@@ -70,7 +67,7 @@ class TemporalContextAdapter:
         self._project_root = project_root or Path.cwd()
 
     def verify_time_attest(self, attest: TimeAttestion) -> AttestResult:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         actual_unix = int(now.timestamp())
         drift = abs(actual_unix - attest.unix_timestamp)
 
@@ -82,11 +79,7 @@ class TemporalContextAdapter:
         details.append(f"TOTP: {'VALID' if totp_valid else 'INVALID'}")
         details.append(f"HMAC: {'VALID' if hmac_valid else 'INVALID'}")
 
-        passed = (
-            drift <= self.MAX_TIME_DRIFT_SECONDS
-            and totp_valid
-            and hmac_valid
-        )
+        passed = drift <= self.MAX_TIME_DRIFT_SECONDS and totp_valid and hmac_valid
 
         exit_code = self.EXIT_CODE_TIME_ATTEST_FAIL if not passed else 0
 
@@ -100,7 +93,7 @@ class TemporalContextAdapter:
         )
 
     def generate_attest_prompt(self, agent_session: str) -> dict[str, Any]:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         unix_ts = int(now.timestamp())
         totp = self._generate_totp(unix_ts)
         hmac_sig = self._compute_hmac(agent_session, unix_ts)
@@ -129,7 +122,7 @@ class TemporalContextAdapter:
         secret = b"ZephyrAlpha-TOTP-Secret-v1"
         digest = hmac.new(secret, msg, hashlib.sha256).digest()
         offset = digest[-1] & 0x0F
-        code = (int.from_bytes(digest[offset:offset+4], "big") & 0x7FFFFFFF) % 1000000
+        code = (int.from_bytes(digest[offset : offset + 4], "big") & 0x7FFFFFFF) % 1000000
         return f"{code:06d}"
 
     def _verify_hmac(self, attest: TimeAttestion) -> bool:

@@ -21,7 +21,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -29,12 +29,14 @@ from zephyr.governance.rule_enforcement.audit_chain_verifier import AuditChainVe
 from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
 
 
-def _make_result(gate_id: str = "G1", status: GateStatus = GateStatus.PASS, reasons: list[str] | None = None) -> GateResult:
+def _make_result(
+    gate_id: str = "G1", status: GateStatus = GateStatus.PASS, reasons: list[str] | None = None
+) -> GateResult:
     return GateResult(
         gate_id=gate_id,
         status=status,
         reasons=reasons or [],
-        timestamp=datetime(2026, 5, 22, 12, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 5, 22, 12, 0, 0, tzinfo=UTC),
     )
 
 
@@ -65,9 +67,9 @@ class TestAuditEntry:
         assert isinstance(entry.timestamp, datetime)
 
     def test_default_timestamp_is_utc_now(self):
-        before = datetime.now(timezone.utc)
+        before = datetime.now(UTC)
         entry = AuditEntry(gate_id="G0", status=GateStatus.FAIL, reasons=[], previous_hash="", hash="")
-        after = datetime.now(timezone.utc)
+        after = datetime.now(UTC)
         assert before <= entry.timestamp <= after
 
     def test_reasons_shares_reference_on_direct_construction(self):
@@ -97,9 +99,9 @@ class TestAuditReport:
         assert "1 entries" in report.summary()
 
     def test_verified_at_default(self):
-        before = datetime.now(timezone.utc)
+        before = datetime.now(UTC)
         report = AuditReport(entries=[], chain_valid=True, reproduced=True)
-        after = datetime.now(timezone.utc)
+        after = datetime.now(UTC)
         assert before <= report.verified_at <= after
 
 
@@ -352,7 +354,7 @@ class TestAuditChainVerifierBoundary:
             gate_id="G1",
             status=GateStatus.PASS,
             reasons=None,
-            timestamp=datetime(2026, 5, 22, 12, 0, 0, tzinfo=timezone.utc),
+            timestamp=datetime(2026, 5, 22, 12, 0, 0, tzinfo=UTC),
         )
         with pytest.raises(TypeError):
             v.append("G1", result)

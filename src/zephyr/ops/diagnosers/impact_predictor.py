@@ -30,6 +30,5 @@ from dataclasses import dataclass
 
 @dataclass
 class ImpactPredictor:
-
     def predict(self, action: str, scope: list[str]) -> dict[str, float]:
         return {s: 0.0 for s in scope}

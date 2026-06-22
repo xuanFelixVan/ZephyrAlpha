@@ -14,7 +14,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_degradation_stage_failure():
-    from zephyr.governance.degradation import DegradationManager, DegradationLevel
+    from zephyr.governance.degradation import DegradationLevel, DegradationManager
+
     dm = DegradationManager()
 
     def always_fail():
@@ -31,6 +32,7 @@ def test_degradation_stage_failure():
 def test_degradation_pipeline():
     from zephyr.governance.degradation import DegradationManager
     from zephyr.governance.exit_codes import ExitCode
+
     dm = DegradationManager()
 
     stages = [

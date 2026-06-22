@@ -10,9 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cognitive_load_budget.py
 
-import time
-
-import pytest
 
 from zephyr.ops.diagnosers.cognitive_load_budget import (
     CognitiveLoadBudget,

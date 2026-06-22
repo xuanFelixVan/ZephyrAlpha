@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator import (
     VALID_ENFORCEMENT_MODES,
     EnforcementResult,
@@ -232,9 +230,7 @@ class TestCheck:
 
     @patch("zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator.run_check")
     def test_fail(self, mock_run):
-        mock_run.return_value = EnforcementResult(
-            passed=False, total_contracts=1, violations=["v1"]
-        )
+        mock_run.return_value = EnforcementResult(passed=False, total_contracts=1, violations=["v1"])
         passed, msg = check()
         assert passed is False
         assert "[FAIL]" in msg

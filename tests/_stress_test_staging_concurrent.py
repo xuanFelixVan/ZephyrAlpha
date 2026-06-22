@@ -1,18 +1,17 @@
 # [A_test] module_id: SRC-TST-0005 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-import os
+import random
 import sys
 import tempfile
 import time
-import random
 import traceback
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from zephyr.trading.staging_area import StagingArea, CommitStatus
+from zephyr.trading.staging_area import CommitStatus, StagingArea
 
 MAX_RETRIES = 50
 NUM_SESSIONS = 10
@@ -27,7 +26,7 @@ def _robust_read(path):
         except PermissionError:
             if attempt == 4:
                 raise
-            time.sleep(0.01 * (2 ** attempt) + random.uniform(0, 0.005))
+            time.sleep(0.01 * (2**attempt) + random.uniform(0, 0.005))
     return ""
 
 
@@ -87,9 +86,7 @@ def run_scenario(name, num_sessions, setup_fn, modify_fn, verify_fn):
                 futures = []
                 for i in range(num_sessions):
                     sid = f"s-{i:03d}"
-                    futures.append(executor.submit(
-                        session_worker, sid, tmpdir, file_path, modify_fn, result_bucket
-                    ))
+                    futures.append(executor.submit(session_worker, sid, tmpdir, file_path, modify_fn, result_bucket))
                 for f in as_completed(futures):
                     f.result()
 
@@ -105,22 +102,27 @@ def run_scenario(name, num_sessions, setup_fn, modify_fn, verify_fn):
             verify_ok, verify_msg = verify_fn(final_content, num_sessions)
 
             if failed == 0 and verify_ok:
-                successes.append({"round": round_num, "retries": max(
-                    (v.get("retries", 0) for v in result_bucket.values()), default=0
-                )})
+                successes.append(
+                    {
+                        "round": round_num,
+                        "retries": max((v.get("retries", 0) for v in result_bucket.values()), default=0),
+                    }
+                )
             else:
                 errors = {}
                 for sid, info in sorted(result_bucket.items()):
                     if info["status"] != "success":
                         err = info.get("error", info.get("msg", info["status"]))
                         errors.setdefault(err, []).append(sid)
-                failures_detail.append({
-                    "round": round_num,
-                    "success": success,
-                    "failed": failed,
-                    "errors": errors,
-                    "verify_msg": verify_msg if not verify_ok else "",
-                })
+                failures_detail.append(
+                    {
+                        "round": round_num,
+                        "success": success,
+                        "failed": failed,
+                        "errors": errors,
+                        "verify_msg": verify_msg if not verify_ok else "",
+                    }
+                )
 
     total = REPEAT_ROUNDS
     ok = len(successes)
@@ -144,8 +146,10 @@ def scenario_append_non_overlapping(tmpdir):
     target.write_text("# Shared config file\n", encoding="utf-8")
     return file_path, "# Shared config file\n"
 
+
 def modify_append(current, sid):
     return current + f"# session-{sid} added this line\n"
+
 
 def verify_append(final, nsessions):
     lines = final.splitlines()
@@ -154,7 +158,7 @@ def verify_append(final, nsessions):
     if not final.startswith("# Shared config file\n"):
         return False, "Header corrupted"
     if len(lines) != nsessions + 1:
-        return False, f"Expected {nsessions+1} lines, got {len(lines)}"
+        return False, f"Expected {nsessions + 1} lines, got {len(lines)}"
     try:
         final.encode("utf-8").decode("utf-8")
     except Exception:
@@ -169,6 +173,7 @@ def scenario_counter(tmpdir):
     target.write_text("counter = 0\n", encoding="utf-8")
     return file_path, "counter = 0\n"
 
+
 def modify_counter(current, sid):
     for line in current.splitlines(keepends=True):
         if line.startswith("counter = "):
@@ -176,12 +181,13 @@ def modify_counter(current, sid):
             return current.replace(line, f"counter = {val + 1}\n", 1)
     return current
 
+
 def verify_counter(final, nsessions):
     expected = f"counter = {nsessions}\n"
     if final != expected:
-        return False, f"Expected {repr(expected)}, got {repr(final)}"
+        return False, f"Expected {expected!r}, got {final!r}"
     if final.count("\n") != 1:
-        return False, f"Extra newlines"
+        return False, "Extra newlines"
     try:
         final.encode("utf-8").decode("utf-8")
     except Exception:
@@ -206,12 +212,14 @@ def scenario_mixed(tmpdir):
     target.write_text(initial, encoding="utf-8")
     return file_path, initial
 
+
 def modify_mixed(current, sid):
     idx = int(sid.split("-")[1])
     if idx < 5:
         return current.replace("DEBUG = False", f"DEBUG = {idx < 3}")
     else:
         return current.replace("DATA_DIR = /data", f"DATA_DIR = /data/{idx}")
+
 
 def verify_mixed(final, nsessions):
     if "# Header" not in final:
@@ -236,6 +244,7 @@ def scenario_chinese(tmpdir):
     target.write_text("# \u4e2d\u6587\u914d\u7f6e\u6587\u4ef6\n", encoding="utf-8")
     return file_path, "# \u4e2d\u6587\u914d\u7f6e\u6587\u4ef6\n"
 
+
 chinese_lines_global = [
     "\u6570\u636e\u5e93\u5730\u5740 = localhost:5432",
     "\u7f13\u5b58\u8fc7\u671f\u65f6\u95f4 = 3600\u79d2",
@@ -249,9 +258,11 @@ chinese_lines_global = [
     "\u5907\u4efd\u8def\u5f84 = /backup/data",
 ]
 
+
 def modify_chinese(current, sid):
     idx = int(sid.split("-")[1]) % len(chinese_lines_global)
     return current + chinese_lines_global[idx] + "\n"
+
 
 def verify_chinese(final, nsessions):
     if not final.startswith("# \u4e2d\u6587\u914d\u7f6e\u6587\u4ef6\n"):
@@ -262,7 +273,7 @@ def verify_chinese(final, nsessions):
         return False, "UTF-8 corruption"
     lines = final.splitlines()
     if len(lines) != nsessions + 1:
-        return False, f"Expected {nsessions+1} lines, got {len(lines)}"
+        return False, f"Expected {nsessions + 1} lines, got {len(lines)}"
     return True, ""
 
 
@@ -273,6 +284,7 @@ def scenario_severe_contention(tmpdir):
     target.write_text("v=0\n", encoding="utf-8")
     return file_path, "v=0\n"
 
+
 def modify_bump(current, sid):
     for line in current.splitlines(keepends=True):
         if line.startswith("v="):
@@ -280,12 +292,13 @@ def modify_bump(current, sid):
             return f"v={val + 1}\n"
     return current
 
+
 def verify_bump(final, nsessions):
     expected = f"v={nsessions}\n"
     if final != expected:
-        return False, f"Expected {repr(expected)}, got {repr(final)}"
+        return False, f"Expected {expected!r}, got {final!r}"
     if final.count("\n") != 1:
-        return False, f"Extra newlines"
+        return False, "Extra newlines"
     try:
         final.encode("utf-8").decode("utf-8")
     except Exception:
@@ -302,6 +315,7 @@ def scenario_heavy_write(tmpdir):
     target.write_text(content, encoding="utf-8")
     return file_path, content
 
+
 def modify_heavy(current, sid):
     idx = int(sid.split("-")[1])
     lines = current.splitlines(keepends=True)
@@ -309,6 +323,7 @@ def modify_heavy(current, sid):
     if target_line < len(lines):
         lines[target_line] = f"line_{target_line:04d} = modified_by_{sid}\n"
     return "".join(lines)
+
 
 def verify_heavy(final, nsessions):
     try:
@@ -328,16 +343,22 @@ if __name__ == "__main__":
     print("=" * 70 + "\n")
 
     test_matrix = [
-        ("Non-overlapping append",     scenario_append_non_overlapping,  modify_append,  verify_append,  NUM_SESSIONS),
-        ("Non-overlapping append (HC)", scenario_append_non_overlapping, modify_append,  verify_append,  NUM_HIGH_CONCURRENCY),
-        ("Overlapping counter",        scenario_counter,               modify_counter,  verify_counter, NUM_SESSIONS),
-        ("Overlapping counter (HC)",    scenario_counter,               modify_counter,  verify_counter, NUM_HIGH_CONCURRENCY),
-        ("Mixed regions",              scenario_mixed,                 modify_mixed,    verify_mixed,   NUM_SESSIONS),
-        ("Mixed regions (HC)",         scenario_mixed,                 modify_mixed,    verify_mixed,   NUM_HIGH_CONCURRENCY),
-        ("Chinese UTF-8",              scenario_chinese,               modify_chinese,  verify_chinese, NUM_SESSIONS),
-        ("Severe contention",          scenario_severe_contention,     modify_bump,     verify_bump,    NUM_SESSIONS),
-        ("Severe contention (HC)",     scenario_severe_contention,     modify_bump,     verify_bump,    NUM_HIGH_CONCURRENCY),
-        ("Heavy write (100 lines)",    scenario_heavy_write,           modify_heavy,    verify_heavy,   NUM_SESSIONS),
+        ("Non-overlapping append", scenario_append_non_overlapping, modify_append, verify_append, NUM_SESSIONS),
+        (
+            "Non-overlapping append (HC)",
+            scenario_append_non_overlapping,
+            modify_append,
+            verify_append,
+            NUM_HIGH_CONCURRENCY,
+        ),
+        ("Overlapping counter", scenario_counter, modify_counter, verify_counter, NUM_SESSIONS),
+        ("Overlapping counter (HC)", scenario_counter, modify_counter, verify_counter, NUM_HIGH_CONCURRENCY),
+        ("Mixed regions", scenario_mixed, modify_mixed, verify_mixed, NUM_SESSIONS),
+        ("Mixed regions (HC)", scenario_mixed, modify_mixed, verify_mixed, NUM_HIGH_CONCURRENCY),
+        ("Chinese UTF-8", scenario_chinese, modify_chinese, verify_chinese, NUM_SESSIONS),
+        ("Severe contention", scenario_severe_contention, modify_bump, verify_bump, NUM_SESSIONS),
+        ("Severe contention (HC)", scenario_severe_contention, modify_bump, verify_bump, NUM_HIGH_CONCURRENCY),
+        ("Heavy write (100 lines)", scenario_heavy_write, modify_heavy, verify_heavy, NUM_SESSIONS),
     ]
 
     total_ok = 0

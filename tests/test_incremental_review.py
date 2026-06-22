@@ -12,11 +12,9 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.audit_orchestration.incremental_review import (
-    ReviewChunk,
     REVIEW_DIMENSIONS,
+    ReviewChunk,
 )
 
 

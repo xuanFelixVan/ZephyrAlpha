@@ -26,7 +26,6 @@ Registry Governance — MOD-INF-037
 Functional domain registry management + SSoT gate + consistency checks.
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -39,9 +38,7 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
-REGISTRY_PATH = Path(
-    "docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml"
-)
+REGISTRY_PATH = Path("docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml")
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
@@ -87,16 +84,18 @@ class FunctionalDomainRegistry:
             entries_raw = data.get("entries", [])
             self._entries = []
             for e in entries_raw:
-                self._entries.append(DomainEntry(
-                    domain=e.get("domain", ""),
-                    subdomain=e.get("subdomain", ""),
-                    ssot_module=e.get("ssot_module", ""),
-                    ssot_path=e.get("ssot_path", ""),
-                    covers=e.get("covers", []),
-                    aliases=e.get("aliases", []),
-                    change_policy=e.get("change_policy", e.get("stability", "evolving")),
-                    modification_permission=e.get("modification_permission", e.get("ai_autonomy", "human_gated")),
-                ))
+                self._entries.append(
+                    DomainEntry(
+                        domain=e.get("domain", ""),
+                        subdomain=e.get("subdomain", ""),
+                        ssot_module=e.get("ssot_module", ""),
+                        ssot_path=e.get("ssot_path", ""),
+                        covers=e.get("covers", []),
+                        aliases=e.get("aliases", []),
+                        change_policy=e.get("change_policy", e.get("stability", "evolving")),
+                        modification_permission=e.get("modification_permission", e.get("ai_autonomy", "human_gated")),
+                    )
+                )
             self._loaded = True
             logger.info("Loaded %d functional domain entries", len(self._entries))
         except Exception as exc:
@@ -138,9 +137,7 @@ class FunctionalDomainRegistry:
                 if overlap_covers:
                     result.has_overlap = True
                     result.overlapping_entries.append(e)
-                    result.overlap_details.append(
-                        f"Cover overlap with {e.ssot_module}: {overlap_covers}"
-                    )
+                    result.overlap_details.append(f"Cover overlap with {e.ssot_module}: {overlap_covers}")
 
         if not result.has_overlap and (name or description):
             query_text = f"{name} {description}".lower()
@@ -173,10 +170,7 @@ class FunctionalDomainRegistry:
         overlap = self.check_overlap(domain, subdomain, covers)
         if overlap.has_overlap:
             detail = "; ".join(overlap.overlap_details)
-            raise ValueError(
-                f"Functional domain overlap detected: {detail}. "
-                f"Resolve overlap before registering."
-            )
+            raise ValueError(f"Functional domain overlap detected: {detail}. Resolve overlap before registering.")
 
         new_entry = DomainEntry(
             domain=domain,
@@ -205,16 +199,18 @@ class FunctionalDomainRegistry:
             "entries": [],
         }
         for e in self._entries:
-            data["entries"].append({
-                "domain": e.domain,
-                "subdomain": e.subdomain,
-                "ssot_module": e.ssot_module,
-                "ssot_path": e.ssot_path,
-                "covers": e.covers,
-                "aliases": e.aliases,
-                "change_policy": e.change_policy,
-                "modification_permission": e.modification_permission,
-            })
+            data["entries"].append(
+                {
+                    "domain": e.domain,
+                    "subdomain": e.subdomain,
+                    "ssot_module": e.ssot_module,
+                    "ssot_path": e.ssot_path,
+                    "covers": e.covers,
+                    "aliases": e.aliases,
+                    "change_policy": e.change_policy,
+                    "modification_permission": e.modification_permission,
+                }
+            )
 
         tmp_path = f"{self._path}.{os.getpid()}.tmp"
         try:
@@ -243,4 +239,4 @@ class FunctionalDomainRegistry:
         return len(self._entries)
 
 
-__all__ = ["FunctionalDomainRegistry", "DomainEntry", "OverlapResult", "REGISTRY_PATH"]
+__all__ = ["REGISTRY_PATH", "DomainEntry", "FunctionalDomainRegistry", "OverlapResult"]

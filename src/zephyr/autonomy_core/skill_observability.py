@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_skill_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_observability
+# [MODULE] zephyr.autonomy_core.skill_observability
 
 # [INVARIANTS] none
 
@@ -29,14 +29,13 @@ Skill 可观测性 —— Trace/Span/Metric/Log 四维信号.
 集成: skill_feedback → metrics, skill_executor → traces, skill_lifecycle → events.
 """
 
-
 from __future__ import annotations
 
 import json
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -44,9 +43,9 @@ class Span:
     name: str
     start_ms: int = 0
     end_ms: int = 0
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "duration_ms": self.end_ms - self.start_ms if self.end_ms else 0,
@@ -60,10 +59,10 @@ class Trace:
     skill_id: str
     start_ms: int = field(default_factory=lambda: int(time.time() * 1000))
     end_ms: int = 0
-    spans: List[Span] = field(default_factory=list)
+    spans: list[Span] = field(default_factory=list)
     status: str = "running"
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "trace_id": self.trace_id,
             "skill_id": self.skill_id,
@@ -77,33 +76,31 @@ class Trace:
 class SkillObservability:
     """Skill 可观测性 —— Trace/Span/Metric/Log."""
 
-    _TRACES: Dict[str, Trace] = {}
-    _METRICS: Dict[str, List[Dict[str, Any]]] = {}
+    _TRACES: dict[str, Trace] = {}
+    _METRICS: dict[str, list[dict[str, Any]]] = {}
     _EVENT_LOG = Path("_journals/skill_events.jsonl")
     _MAX_EVENTS = 500
 
     # ---- Trace API ----
 
     @classmethod
-    def start_trace(cls, skill_id: str) -> Dict[str, Any]:
+    def start_trace(cls, skill_id: str) -> dict[str, Any]:
         trace_id = f"trace-{skill_id}-{int(time.time() * 1000)}"
         trace = Trace(trace_id=trace_id, skill_id=skill_id)
         cls._TRACES[trace_id] = trace
         return {"trace_id": trace_id, "skill_id": skill_id, "status": "started"}
 
     @classmethod
-    def add_span(cls, trace_id: str, span_name: str,
-                 metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def add_span(cls, trace_id: str, span_name: str, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
         trace = cls._TRACES.get(trace_id)
         if not trace:
             return {"error": f"Trace not found: {trace_id}"}
-        span = Span(name=span_name, start_ms=int(time.time() * 1000),
-                    metadata=metadata or {})
+        span = Span(name=span_name, start_ms=int(time.time() * 1000), metadata=metadata or {})
         trace.spans.append(span)
         return {"trace_id": trace_id, "span_name": span_name, "status": "span_added"}
 
     @classmethod
-    def end_span(cls, trace_id: str, span_name: str) -> Dict[str, Any]:
+    def end_span(cls, trace_id: str, span_name: str) -> dict[str, Any]:
         trace = cls._TRACES.get(trace_id)
         if not trace:
             return {"error": f"Trace not found: {trace_id}"}
@@ -114,7 +111,7 @@ class SkillObservability:
         return {"error": f"Running span '{span_name}' not found in trace {trace_id}"}
 
     @classmethod
-    def end_trace(cls, trace_id: str, status: str = "completed") -> Dict[str, Any]:
+    def end_trace(cls, trace_id: str, status: str = "completed") -> dict[str, Any]:
         trace = cls._TRACES.get(trace_id)
         if not trace:
             return {"error": f"Trace not found: {trace_id}"}
@@ -126,29 +123,32 @@ class SkillObservability:
         return trace.to_dict()
 
     @classmethod
-    def get_trace(cls, trace_id: str) -> Optional[Dict[str, Any]]:
+    def get_trace(cls, trace_id: str) -> dict[str, Any] | None:
         trace = cls._TRACES.get(trace_id)
         return trace.to_dict() if trace else None
 
     # ---- Metrics API ----
 
     @classmethod
-    def record_metric(cls, skill_id: str, metric_name: str,
-                      value: float, tags: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
+    def record_metric(
+        cls, skill_id: str, metric_name: str, value: float, tags: dict[str, str] | None = None
+    ) -> dict[str, Any]:
         entry = {
-            "skill_id": skill_id, "metric": metric_name,
-            "value": value, "tags": tags or {},
+            "skill_id": skill_id,
+            "metric": metric_name,
+            "value": value,
+            "tags": tags or {},
             "timestamp": time.time(),
         }
         cls._METRICS.setdefault(skill_id, []).append(entry)
         if len(cls._METRICS[skill_id]) > cls._MAX_EVENTS:
-            cls._METRICS[skill_id] = cls._METRICS[skill_id][-cls._MAX_EVENTS:]
+            cls._METRICS[skill_id] = cls._METRICS[skill_id][-cls._MAX_EVENTS :]
         return entry
 
     @classmethod
-    def get_metrics(cls, skill_id: Optional[str] = None,
-                    metric_name: Optional[str] = None,
-                    limit: int = 50) -> List[Dict[str, Any]]:
+    def get_metrics(
+        cls, skill_id: str | None = None, metric_name: str | None = None, limit: int = 50
+    ) -> list[dict[str, Any]]:
         if skill_id:
             entries = cls._METRICS.get(skill_id, [])
         else:
@@ -162,11 +162,12 @@ class SkillObservability:
     # ---- Event Log API ----
 
     @classmethod
-    def log_event(cls, skill_id: str, event_type: str,
-                  detail: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def log_event(cls, skill_id: str, event_type: str, detail: dict[str, Any] | None = None) -> dict[str, Any]:
         event = {
-            "skill_id": skill_id, "event_type": event_type,
-            "detail": detail or {}, "timestamp": time.time(),
+            "skill_id": skill_id,
+            "event_type": event_type,
+            "detail": detail or {},
+            "timestamp": time.time(),
         }
         try:
             cls._EVENT_LOG.parent.mkdir(parents=True, exist_ok=True)
@@ -179,7 +180,7 @@ class SkillObservability:
     # ---- Health Summary ----
 
     @classmethod
-    def health_summary(cls) -> Dict[str, Any]:
+    def health_summary(cls) -> dict[str, Any]:
         return {
             "active_traces": len(cls._TRACES),
             "skills_with_metrics": len(cls._METRICS),
@@ -192,4 +193,4 @@ class SkillObservability:
         cls._METRICS.clear()
 
 
-__all__ = ["SkillObservability", "Trace", "Span"]
+__all__ = ["SkillObservability", "Span", "Trace"]

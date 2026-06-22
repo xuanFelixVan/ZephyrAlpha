@@ -64,7 +64,6 @@ MCP 扩展码：-32001(ERR_TOOL_NOT_FOUND) / -32002(ERR_TOOL_EXECUTION) /
 - 两条路径均 speak MCP over stdio——属有意的渐进迁移，而非实现漏做。
 """
 
-
 from __future__ import annotations
 
 import json
@@ -76,22 +75,24 @@ from typing import Any, TextIO
 import structlog
 
 __all__ = [
-    "BaseMCPServer",
-    "ToolDefinition",
-    "MCPError",
-    "ERR_PARSE_ERROR",
+    "ERR_GATE_FAILED",
+    "ERR_INTERNAL_ERROR",
+    "ERR_INVALID_PARAMS",
     "ERR_INVALID_REQUEST",
     "ERR_METHOD_NOT_FOUND",
-    "ERR_INVALID_PARAMS",
-    "ERR_INTERNAL_ERROR",
-    "ERR_TOOL_NOT_FOUND",
-    "ERR_TOOL_EXECUTION",
-    "ERR_GATE_FAILED",
+    "ERR_PARSE_ERROR",
     "ERR_RBAC_DENIED",
+    "ERR_TOOL_EXECUTION",
+    "ERR_TOOL_NOT_FOUND",
+    "BaseMCPServer",
+    "MCPError",
+    "ToolDefinition",
 ]
 
 JSONRPC_VERSION = "2.0"
 MCP_PROTOCOL_VERSION = "2024-11-05"
+
+import asyncio
 
 from zephyr.infrastructure.error_codes import (
     ERR_GATE_FAILED,
@@ -104,8 +105,6 @@ from zephyr.infrastructure.error_codes import (
     ERR_TOOL_EXECUTION,
     ERR_TOOL_NOT_FOUND,
 )
-
-import asyncio
 
 
 class MCPError(Exception):
@@ -189,6 +188,7 @@ class BaseMCPServer:
             return
         try:
             from zephyr.governance.rbac_bridge import EscalationRBACBridge
+
             self._rbac_guard = EscalationRBACBridge()
             self._agent_session_id = self.server_id
         except ImportError:
@@ -198,6 +198,7 @@ class BaseMCPServer:
         self._agent_session_id = session_id
         try:
             from zephyr.governance.rbac_bridge import EscalationRBACBridge
+
             self._rbac_guard = EscalationRBACBridge()
             self._log.info("rbac_enabled", session_id=session_id or "auto-detect")
         except ImportError:
@@ -276,6 +277,7 @@ class BaseMCPServer:
         在 ``__init_subclass__`` 或 ``__init__`` 中调用 ``_install_decorated_tools()``
         自动注册所有被装饰的方法。
         """
+
         def decorator(handler: Callable[..., Any]) -> Callable[..., Any]:
             handler._mcp_tool_meta = {
                 "name": name,
@@ -283,6 +285,7 @@ class BaseMCPServer:
                 "input_schema": input_schema,
             }
             return handler
+
         return decorator
 
     def _install_decorated_tools(self) -> None:
@@ -375,29 +378,39 @@ class BaseMCPServer:
         level = getattr(tool, "safety_level", "L")
         if level == "H":
             return self._err(
-                req_id, ERR_RBAC_DENIED,
+                req_id,
+                ERR_RBAC_DENIED,
                 f"Tool {tool_name!r} requires Owner approval (safety_level=H). "
                 f"Submit exemption in MOD-INF-018 before retry.",
             )
         if level == "M":
-            return self._ok(req_id, {
-                "content": [{
-                    "type": "text",
-                    "text": json.dumps({
-                        "confirmation_required": True,
-                        "tool": tool_name,
-                        "message": f"Confirm execution of {tool_name!r} (safety_level=M)",
-                    }, ensure_ascii=False),
-                }],
-                "isError": False,
-            })
+            return self._ok(
+                req_id,
+                {
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": json.dumps(
+                                {
+                                    "confirmation_required": True,
+                                    "tool": tool_name,
+                                    "message": f"Confirm execution of {tool_name!r} (safety_level=M)",
+                                },
+                                ensure_ascii=False,
+                            ),
+                        }
+                    ],
+                    "isError": False,
+                },
+            )
 
         if self._rbac_guard is not None:
             sid = self._agent_session_id or self.server_id
             rbac_result = self._rbac_guard.pre_execute_check(sid, f"mcp:{tool_name}", "")
             if not rbac_result.passed:
                 return self._err(
-                    req_id, ERR_RBAC_DENIED,
+                    req_id,
+                    ERR_RBAC_DENIED,
                     f"RBAC blocked {tool_name!r}: {rbac_result.reason} "
                     f"(layer={rbac_result.layer}, rule={rbac_result.rule_id})",
                 )
@@ -528,9 +541,7 @@ class BaseMCPServer:
         inp: TextIO = input_stream or sys.stdin
         out: TextIO = output_stream or sys.stdout
 
-        self._log.info(
-            "server_started", server_id=self.server_id, version=self.version, mode="async"
-        )
+        self._log.info("server_started", server_id=self.server_id, version=self.version, mode="async")
 
         while True:
             line = await loop.run_in_executor(None, inp.readline)

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-1069
 status: active
 title: 6.2 TRAE 域（AI Session 强制注入规则）

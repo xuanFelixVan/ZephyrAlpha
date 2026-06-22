@@ -5,6 +5,6 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-from zephyr.integration.local_model.ollama_embedding import OllamaEmbedder, OllamaEmbedder as _OllamaEmbedder  # noqa: F401
+from zephyr.integration.local_model.ollama_embedding import OllamaEmbedder
 
 __all__ = ["OllamaEmbedder"]

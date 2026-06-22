@@ -45,18 +45,14 @@ class TestPricingTier:
 
 class TestCostBudgetExceededError:
     def test_error_message(self):
-        err = CostBudgetExceededError(
-            current=6.0, limit=5.0, provider="openai", model="gpt-4o"
-        )
+        err = CostBudgetExceededError(current=6.0, limit=5.0, provider="openai", model="gpt-4o")
         assert "6.0000" in str(err)
         assert "5.0000" in str(err)
         assert "openai" in str(err)
         assert "gpt-4o" in str(err)
 
     def test_error_attributes(self):
-        err = CostBudgetExceededError(
-            current=6.0, limit=5.0, provider="deepseek", model="v4"
-        )
+        err = CostBudgetExceededError(current=6.0, limit=5.0, provider="deepseek", model="v4")
         assert err.current == 6.0
         assert err.limit == 5.0
         assert err.provider == "deepseek"

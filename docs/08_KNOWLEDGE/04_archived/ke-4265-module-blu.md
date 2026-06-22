@@ -16,7 +16,7 @@ category: module_blueprint
 | 4 | SQLite 唯一持久化数据库 | KBG-0030 |
 | 5 | 任务卡 .md + SQLite 双轨制——task_repo.create() 后同步 .md | 机器可查(SQL) + 人可读(md) |
 | 6 | 门禁在状态转换前执行 | GOV-TASK-004 §门禁机制 |
-| 7 | 任务卡编号 `{NAMESPACE}-{SEQ}`（ADR/CP/KE/STD/DW/SRC/OPS） | metadata-registry.md §7.10 |
+| 7 | 任务卡编号 `{NAMESPACE}-{SEQ}`（ADR/CP/KE/STD/DW/SRC/OPS） | metadata_registry.yaml §7.10 |
 | 8 | 蓝图 draft/review 状态不得拆卡 | 内容不稳定 |
 | 9 | **MTH-013 路径合规创建**——AI 不得自主决定目录层级 | 零自主创建权——必须先查索引 |
 | 10 | **TaskCard 模型强制继承 `shared/schemas.py` Task**——禁止独立定义 | SSoT 唯一——Task 类已被 KBG-0030/KBG-0038/task_repo.py 引用 |

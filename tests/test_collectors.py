@@ -11,41 +11,57 @@
 # [TESTS] tests/test_collectors.py
 
 import time
+
 import pytest
-from zephyr.ops.metrics_collector import MetricSnapshot, EMABaseline, MetricsCollector
-from zephyr.ops.feedback_collector import (
-    FeedbackChannel, OwnerResponse, ActionResult, OwnerAck, FeedbackCollector,
-)
-from zephyr.ops.collectors.data_quality_validator import DataQualityValidator
-from zephyr.ops.collectors.token_finops import TokenFinOps
-from zephyr.ops.collectors.known_unknown_registry import (
-    KnownUnknownState, KnownUnknown, KnownUnknownRegistry,
-)
-from zephyr.ops.collectors.knowledge_freshness import KnowledgeFreshness
-from zephyr.ops.collectors.knowledge_capture import KnowledgeCapture
-from zephyr.ops.collectors.knowledge_injection import KnowledgeInjection
-from zephyr.ops.collectors.knowledge_packaging import KnowledgePackaging
-from zephyr.ops.collectors.kb_provenance import KBProvenance
-from zephyr.ops.collectors.financial_stratification import FinancialStratification
-from zephyr.ops.collectors.notification_feedback import NotificationFeedback
-from zephyr.ops.collectors.market_event_integrator import (
-    MarketMode, MarketEvent, MarketEventIntegrator,
-)
-from zephyr.ops.collectors.market_calendar import MarketCalendar
-from zephyr.ops.collectors.llm_cost_accounting import LLMCostAccounting
+
 from zephyr.ops.collectors.calendar_adapter import CalendarAdapter
 from zephyr.ops.collectors.config_timeline import ConfigTimeline
+from zephyr.ops.collectors.data_quality_validator import DataQualityValidator
+from zephyr.ops.collectors.financial_stratification import FinancialStratification
+from zephyr.ops.collectors.kb_provenance import KBProvenance
+from zephyr.ops.collectors.knowledge_capture import KnowledgeCapture
+from zephyr.ops.collectors.knowledge_freshness import KnowledgeFreshness
+from zephyr.ops.collectors.knowledge_injection import KnowledgeInjection
+from zephyr.ops.collectors.knowledge_packaging import KnowledgePackaging
+from zephyr.ops.collectors.known_unknown_registry import (
+    KnownUnknownRegistry,
+    KnownUnknownState,
+)
+from zephyr.ops.collectors.llm_cost_accounting import LLMCostAccounting
+from zephyr.ops.collectors.market_calendar import MarketCalendar
+from zephyr.ops.collectors.market_event_integrator import (
+    MarketEventIntegrator,
+    MarketMode,
+)
+from zephyr.ops.collectors.notification_feedback import NotificationFeedback
 from zephyr.ops.collectors.schema_evolution import SchemaEvolution
 from zephyr.ops.collectors.schema_migration import (
-    MigrationStatus, MigrationStep, SchemaMigration,
+    MigrationStatus,
+    MigrationStep,
+    SchemaMigration,
 )
 from zephyr.ops.collectors.temporal_event_store import TemporalEventStore
+from zephyr.ops.collectors.token_finops import TokenFinOps
+from zephyr.ops.feedback_collector import (
+    ActionResult,
+    FeedbackChannel,
+    FeedbackCollector,
+    OwnerAck,
+    OwnerResponse,
+)
+from zephyr.ops.metrics_collector import EMABaseline, MetricsCollector, MetricSnapshot
 
 
 class TestMetricSnapshot:
     def test_create(self):
-        s = MetricSnapshot(timestamp=1.0, system_cpu=50.0, memory_usage_pct=60.0,
-                           disk_io_wait=5.0, network_errors_count=0, detection_latency_ms=10.0)
+        s = MetricSnapshot(
+            timestamp=1.0,
+            system_cpu=50.0,
+            memory_usage_pct=60.0,
+            disk_io_wait=5.0,
+            network_errors_count=0,
+            detection_latency_ms=10.0,
+        )
         assert s.system_cpu == 50.0
         assert s.network_errors_count == 0
 
@@ -59,8 +75,14 @@ class TestEMABaseline:
 
     def test_update_single_snapshot(self):
         ema = EMABaseline()
-        s = MetricSnapshot(timestamp=1.0, system_cpu=50.0, memory_usage_pct=60.0,
-                           disk_io_wait=5.0, network_errors_count=2, detection_latency_ms=10.0)
+        s = MetricSnapshot(
+            timestamp=1.0,
+            system_cpu=50.0,
+            memory_usage_pct=60.0,
+            disk_io_wait=5.0,
+            network_errors_count=2,
+            detection_latency_ms=10.0,
+        )
         ema.update(s)
         assert ema.cpu_ema == pytest.approx(5.0)
         assert len(ema.history) == 1
@@ -68,8 +90,14 @@ class TestEMABaseline:
     def test_update_multiple_snapshots(self):
         ema = EMABaseline()
         for i in range(5):
-            s = MetricSnapshot(timestamp=float(i), system_cpu=50.0, memory_usage_pct=60.0,
-                               disk_io_wait=5.0, network_errors_count=0, detection_latency_ms=10.0)
+            s = MetricSnapshot(
+                timestamp=float(i),
+                system_cpu=50.0,
+                memory_usage_pct=60.0,
+                disk_io_wait=5.0,
+                network_errors_count=0,
+                detection_latency_ms=10.0,
+            )
             ema.update(s)
         assert len(ema.history) == 5
         assert ema.cpu_var >= 0
@@ -82,8 +110,14 @@ class TestMetricsCollector:
 
     def test_collect_first_snapshot(self):
         mc = MetricsCollector()
-        s = MetricSnapshot(timestamp=1.0, system_cpu=50.0, memory_usage_pct=60.0,
-                           disk_io_wait=5.0, network_errors_count=0, detection_latency_ms=10.0)
+        s = MetricSnapshot(
+            timestamp=1.0,
+            system_cpu=50.0,
+            memory_usage_pct=60.0,
+            disk_io_wait=5.0,
+            network_errors_count=0,
+            detection_latency_ms=10.0,
+        )
         result = mc.collect(s)
         assert "z_scores" in result
         assert "anomaly_triggered" in result
@@ -91,16 +125,28 @@ class TestMetricsCollector:
 
     def test_collect_z_scores_computed(self):
         mc = MetricsCollector()
-        s = MetricSnapshot(timestamp=1.0, system_cpu=50.0, memory_usage_pct=60.0,
-                           disk_io_wait=5.0, network_errors_count=0, detection_latency_ms=10.0)
+        s = MetricSnapshot(
+            timestamp=1.0,
+            system_cpu=50.0,
+            memory_usage_pct=60.0,
+            disk_io_wait=5.0,
+            network_errors_count=0,
+            detection_latency_ms=10.0,
+        )
         result = mc.collect(s)
         assert "z_scores" in result
         assert "system_cpu" in result["z_scores"]
 
     def test_collect_anomaly_triggered_field_present(self):
         mc = MetricsCollector()
-        s = MetricSnapshot(timestamp=1.0, system_cpu=50.0, memory_usage_pct=60.0,
-                           disk_io_wait=5.0, network_errors_count=0, detection_latency_ms=10.0)
+        s = MetricSnapshot(
+            timestamp=1.0,
+            system_cpu=50.0,
+            memory_usage_pct=60.0,
+            disk_io_wait=5.0,
+            network_errors_count=0,
+            detection_latency_ms=10.0,
+        )
         result = mc.collect(s)
         assert isinstance(result["anomaly_triggered"], bool)
 
@@ -123,13 +169,15 @@ class TestOwnerResponseEnum:
 
 class TestActionResult:
     def test_delta_calculated(self):
-        ar = ActionResult(action_type="repair", anomaly_id="a1", pre_value=10.0,
-                          post_value=8.0, success_flag=True, timestamp=1.0)
+        ar = ActionResult(
+            action_type="repair", anomaly_id="a1", pre_value=10.0, post_value=8.0, success_flag=True, timestamp=1.0
+        )
         assert ar.delta == -2.0
 
     def test_delta_zero(self):
-        ar = ActionResult(action_type="repair", anomaly_id="a1", pre_value=10.0,
-                          post_value=10.0, success_flag=True, timestamp=1.0)
+        ar = ActionResult(
+            action_type="repair", anomaly_id="a1", pre_value=10.0, post_value=10.0, success_flag=True, timestamp=1.0
+        )
         assert ar.delta == 0.0
 
 
@@ -141,8 +189,9 @@ class TestFeedbackCollector:
 
     def test_collect_action_result(self):
         fc = FeedbackCollector()
-        ar = ActionResult(action_type="repair", anomaly_id="a1", pre_value=10.0,
-                          post_value=8.0, success_flag=True, timestamp=100.0)
+        ar = ActionResult(
+            action_type="repair", anomaly_id="a1", pre_value=10.0, post_value=8.0, success_flag=True, timestamp=100.0
+        )
         fc.collect_action_result(ar)
         assert len(fc.action_results) == 1
 

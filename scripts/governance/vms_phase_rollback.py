@@ -95,7 +95,7 @@ def main() -> None:
             print(f"  环境变量: {info['env_var']}")
             print(f"  描述:     {info['description']}")
             print(f"  模块:     {', '.join(info['modules'])}")
-            print(f"  PowerShell 回滚命令:")
+            print("  PowerShell 回滚命令:")
             for cmd in ROLLBACK_COMMANDS[phase_id]:
                 print(f"    > {cmd}")
         return
@@ -103,7 +103,7 @@ def main() -> None:
     phase_id = args.phase
     info = PHASE_ROLLBACKS[phase_id]
     print(f"Phase {phase_id} 回滚: {info['name']}")
-    print(f"=" * 60)
+    print("=" * 60)
     print(f"环境变量: {info['env_var']}")
     print(f"描述: {info['description']}")
     print(f"受影响的模块: {', '.join(info['modules'])}")

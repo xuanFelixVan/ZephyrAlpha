@@ -3,13 +3,18 @@
 
 EXPECTED_MODULES = None  # stub constant
 
+
 class IntegrityCheck:
     """Stub class — implementation pending."""
+
     pass
+
 
 class IntegritySelfCheck:
     """Stub class — implementation pending."""
+
     pass
+
 
 __all__ = [
     "EXPECTED_MODULES",

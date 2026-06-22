@@ -23,6 +23,7 @@ from __future__ import annotations
 
 """Session 冲突预防契约（CT-SESSION-CONFLICT）——文件锁+并发session检测+冲突resolution。"""
 
+
 class SessionConflictGuard:
     def __init__(self):
         self._active_sessions: dict[str, set[str]] = {}

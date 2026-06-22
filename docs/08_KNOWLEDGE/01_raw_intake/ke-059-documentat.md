@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-059
 status: active
 title: 0.2 本文档不是

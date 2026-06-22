@@ -15,7 +15,9 @@ exit codes: 0=无绕过, 1=发现绕过, 2=执行错误
 """
 
 from __future__ import annotations
+
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 __manifest__ = """
@@ -192,10 +194,7 @@ def analyze_bypasses(rows: list[dict[str, Any]], hours: int) -> list[str]:
             shared_kw = risks_i & risks_j
             if shared_kw:
                 flags.append(
-                    "TB1 "
-                    f"tasks={iid},{jid} "
-                    f"deliverable_overlap={sorted(overlap)[:3]} "
-                    f"risk_kw={sorted(shared_kw)[:5]}"
+                    f"TB1 tasks={iid},{jid} deliverable_overlap={sorted(overlap)[:3]} risk_kw={sorted(shared_kw)[:5]}"
                 )
 
     for tid, r in by_id.items():
@@ -212,21 +211,13 @@ def analyze_bypasses(rows: list[dict[str, Any]], hours: int) -> list[str]:
             if not common:
                 continue
             chain = f"{tid}->{d}"
-            next_deps = [
-                str(x)
-                for x in _parse_json_list(br.get("depends_on"))
-                if isinstance(x, str) and x in by_id
-            ]
+            next_deps = [str(x) for x in _parse_json_list(br.get("depends_on")) if isinstance(x, str) and x in by_id]
             extended = False
             for e in next_deps:
                 er = by_id[e]
                 trip = common & _risky_stems(_aggregate_text(er))
                 if trip:
-                    flags.append(
-                        "TB3 "
-                        f"chain={tid}->{d}->{e} "
-                        f"risk_kw={sorted(trip)[:5]}"
-                    )
+                    flags.append(f"TB3 chain={tid}->{d}->{e} risk_kw={sorted(trip)[:5]}")
                     extended = True
             if not extended:
                 flags.append(f"TB3 chain={chain} risk_kw={sorted(common)[:5]}")

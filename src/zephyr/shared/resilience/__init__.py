@@ -15,15 +15,14 @@ Version: 0.1.0
 """
 
 __all__ = [
+    "CircuitBreaker",
+    "CircuitOpenError",
+    "CircuitState",
+    "FallbackChain",
     "RetryConfig",
     "RetryExhaustedError",
     "async_retry",
-    "CircuitState",
-    "CircuitBreaker",
-    "CircuitOpenError",
-    "FallbackChain",
+    "circuit_breaker",
     "fallback",
     "retry",
-    "circuit_breaker",
 ]
-

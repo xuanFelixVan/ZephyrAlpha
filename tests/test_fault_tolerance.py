@@ -12,12 +12,10 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.fault_tolerance import (
     BULKHEAD_ALLOCATION,
-    BulkheadPool,
     DEGRADATION_LAYERS,
+    BulkheadPool,
     DegradationLevel,
     FaultToleranceManager,
     RetryPolicy,

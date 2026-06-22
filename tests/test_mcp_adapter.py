@@ -9,7 +9,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_mcp_adapter.py -q
-import pytest
 from zephyr.infrastructure.a2a_protocol.governance.governance_adapter import MCPAdapter, MCPSource
 
 

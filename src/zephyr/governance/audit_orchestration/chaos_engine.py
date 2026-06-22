@@ -23,8 +23,6 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel
-
 INJECTION_POINTS: list[dict] = [
     {"name": "vms_latency", "system": "vector-memory", "type": "latency", "duration_s": 30},
     {"name": "vms_error", "system": "vector-memory", "type": "error", "duration_s": 10},

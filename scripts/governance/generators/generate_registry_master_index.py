@@ -15,8 +15,8 @@ Usage:
 
 from __future__ import annotations
 
-import os
 import argparse
+import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -188,7 +188,7 @@ def main() -> None:
             f.write("# 来源: _registry/catalogs/*.yaml frontmatter\n")
             f.write("# 手工编辑无效——修改请通过各登记表的 frontmatter\n\n")
             yaml.dump(result, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
+
         os.replace(tmp_path, args.output)
     except PermissionError:
         try:

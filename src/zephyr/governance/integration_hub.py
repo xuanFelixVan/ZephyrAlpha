@@ -23,8 +23,9 @@ from __future__ import annotations
 
 """集成协调器 — 24集成+19更新+16GitHub整合."""
 
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
+
 
 @dataclass
 class IntegrationPoint:
@@ -32,6 +33,7 @@ class IntegrationPoint:
     type: str = "external"
     status: str = "pending"
     verified: bool = False
+
 
 class IntegrationHub:
     """跨边界集成协调."""
@@ -55,8 +57,11 @@ class IntegrationHub:
     def verify_all(self) -> list[IntegrationPoint]:
         """标记验证通过的集成点."""
         verified_modules = [
-            "cache_manager.py", "scanner.py", "report.py",
-            "verify_dedup.py", "config.py",
+            "cache_manager.py",
+            "scanner.py",
+            "report.py",
+            "verify_dedup.py",
+            "config.py",
         ]
         for pt in self._points:
             if any(m.replace(".py", "") in pt.name.lower() for m in verified_modules):
@@ -68,44 +73,51 @@ class IntegrationHub:
         points = self.verify_all()
         verified = sum(1 for p in points if p.verified)
         return {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "total_integrations": len(points),
             "verified": verified,
             "percentage": f"{verified}/{len(points)}",
         }
 
+
 def register_ce_rules() -> int:
     try:
-        from zephyr.autonomy_core.context_rule_registry import ContextRuleRegistry, ContextRule
+        from zephyr.autonomy_core.context_rule_registry import ContextRule, ContextRuleRegistry
     except ImportError:
         return 0
 
     registry = ContextRuleRegistry()
-    registry.register(ContextRule(
-        rule_id="DEDUP-HOT-001",
-        trigger_conditions={},
-        content="@intentional-duplicate 标记规范: 重复代码标记注解; 退出码: 0=PASS/1=WARN/2=ERROR/3=TOOL_ERROR/4=DEGRADED; BRS阈值: ≥80=BLOCK_FIX",
-        priority=90,
-        injection_level="HOT",
-        max_tokens=400,
-        source_module="MOD-INF-017",
-    ))
-    registry.register(ContextRule(
-        rule_id="DEDUP-DOMAIN-001",
-        trigger_conditions={"keywords": ["dedup", "去重", "重复", "duplicate", "clone"]},
-        content="影子 API 清单: 见 shadow_apimanifest.yaml; 策略树: config/policy-tree.yaml R001-R005",
-        priority=70,
-        injection_level="DOMAIN",
-        max_tokens=800,
-        source_module="MOD-INF-017",
-    ))
-    registry.register(ContextRule(
-        rule_id="DEDUP-COLD-001",
-        trigger_conditions={"on_demand": True},
-        content="完整去重策略树: config/policy-tree.yaml; 修复流程: extraction_safety→auto_fixer→atomic_fixer→verifier",
-        priority=30,
-        injection_level="COLD",
-        max_tokens=2000,
-        source_module="MOD-INF-017",
-    ))
+    registry.register(
+        ContextRule(
+            rule_id="DEDUP-HOT-001",
+            trigger_conditions={},
+            content="@intentional-duplicate 标记规范: 重复代码标记注解; 退出码: 0=PASS/1=WARN/2=ERROR/3=TOOL_ERROR/4=DEGRADED; BRS阈值: ≥80=BLOCK_FIX",
+            priority=90,
+            injection_level="HOT",
+            max_tokens=400,
+            source_module="MOD-INF-017",
+        )
+    )
+    registry.register(
+        ContextRule(
+            rule_id="DEDUP-DOMAIN-001",
+            trigger_conditions={"keywords": ["dedup", "去重", "重复", "duplicate", "clone"]},
+            content="影子 API 清单: 见 shadow_apimanifest.yaml; 策略树: config/policy-tree.yaml R001-R005",
+            priority=70,
+            injection_level="DOMAIN",
+            max_tokens=800,
+            source_module="MOD-INF-017",
+        )
+    )
+    registry.register(
+        ContextRule(
+            rule_id="DEDUP-COLD-001",
+            trigger_conditions={"on_demand": True},
+            content="完整去重策略树: config/policy-tree.yaml; 修复流程: extraction_safety→auto_fixer→atomic_fixer→verifier",
+            priority=30,
+            injection_level="COLD",
+            max_tokens=2000,
+            source_module="MOD-INF-017",
+        )
+    )
     return len(registry.list_rules())

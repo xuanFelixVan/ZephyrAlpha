@@ -1,11 +1,12 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: GOV-006
 doc_type: index
 generated: '2026-05-02'
 module_id: GOV-006
 status: Active
 title: _registry/schemas/ 目录索引
 version: 1.0.0
+updated: "2026-06-22"
 ---
 
 

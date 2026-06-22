@@ -16,7 +16,6 @@ exit 0 = CLEAN（允许写入）, exit 1 = BLOCKED（拒绝写入）。
 from __future__ import annotations
 
 import argparse
-import os
 import re
 import subprocess
 import sys
@@ -42,7 +41,10 @@ def _check_lock(file_path: str) -> tuple[bool, str]:
     """_check_lock implementation."""
     result = subprocess.run(
         [sys.executable, str(_LOCK_SCRIPT), "check", file_path],
-        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
         timeout=10,
         cwd=str(_PROJECT_ROOT),
     )
@@ -74,6 +76,7 @@ def _check_phase_health() -> tuple[bool, str]:
     """_check_phase_health implementation."""
     try:
         from zephyr.governance.rule_enforcement.phase_manager import GateResult, session_startup
+
         result = session_startup(quick=True)
         if result["ready"]:
             return True, f"PHASE_OK: {result['green']}G/{result['yellow']}Y/{result['red']}R"
@@ -96,7 +99,10 @@ def _check_registered(file_path: str, is_create: bool) -> tuple[bool, str]:
     parts = rel.parts
     allowed_dirs = {"src", "scripts", "tests", "docs", "config", "data", ".trae"}
     if parts and parts[0] not in allowed_dirs:
-        return False, f"UNREGISTERED_DIR: {parts[0]!r} 不在允许目录 {allowed_dirs}——新建文件 MUST 走 scaffold.py（RULE-FOUR）"
+        return (
+            False,
+            f"UNREGISTERED_DIR: {parts[0]!r} 不在允许目录 {allowed_dirs}——新建文件 MUST 走 scaffold.py（RULE-FOUR）",
+        )
     return True, "OK"
 
 
@@ -121,17 +127,23 @@ def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
         # Method 1: known markers
         MOJIBAKE_MARKERS = [
             "\u9516\u65a4\u62f7",  # 锟斤拷
-            "\u93d4\u63d2\u53c2", "\u93d4\u659c\u7280\u6362", "\u93d4\u529c\u00b0\u20ac",
+            "\u93d4\u63d2\u53c2",
+            "\u93d4\u659c\u7280\u6362",
+            "\u93d4\u529c\u00b0\u20ac",
             "\u94c6\u003f",
         ]
         if any(m in content for m in MOJIBAKE_MARKERS):
-            return False, f"MOJIBAKE_BLOCK: {file_path} contains known mojibake markers — fix encoding before modifying (DM-378)"
+            return (
+                False,
+                f"MOJIBAKE_BLOCK: {file_path} contains known mojibake markers — fix encoding before modifying (DM-378)",
+            )
         # Method 2: round-trip via GBK (CJK segments only)
         import re as _re
+
         # 2a: test segments WITHOUT U+FFFD
         clean_content = content.replace("\ufffd", "")
         if clean_content.strip():
-            cjk_segments = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf]+', clean_content)
+            cjk_segments = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]+", clean_content)
             for seg in cjk_segments:
                 if len(seg) < 2:
                     continue
@@ -146,22 +158,27 @@ def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
                                 rt_cjk_density = rt_cjk / len(roundtrip)
                                 orig_cjk_density = orig_cjk / len(seg)
                                 if rt_cjk_density >= orig_cjk_density:
-                                    return False, f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (round-trip detected) — fix encoding before modifying (DM-378)"
+                                    return (
+                                        False,
+                                        f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (round-trip detected) — fix encoding before modifying (DM-378)",
+                                    )
                     except UnicodeDecodeError:
                         # Partial decode may reveal mojibake
                         try:
                             partial_rt = gbk_bytes.decode("utf-8", errors="replace")
-                            partial_cjk = sum(1 for c in partial_rt
-                                              if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
+                            partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
                             if partial_cjk >= 3:
-                                return False, f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (partial round-trip) — fix encoding before modifying (DM-378)"
+                                return (
+                                    False,
+                                    f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (partial round-trip) — fix encoding before modifying (DM-378)",
+                                )
                         except Exception:
                             pass
                 except UnicodeEncodeError:
                     pass
         # 2b: test segments WITH U+FFFD — split at U+FFFD and test sub-segments
         if "\ufffd" in content:
-            cjk_with_replacement = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+', content)
+            cjk_with_replacement = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+", content)
             for seg in cjk_with_replacement:
                 if "\ufffd" not in seg:
                     continue
@@ -178,16 +195,22 @@ def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
                                     rt_cjk_density = rt_cjk / len(roundtrip)
                                     orig_cjk_density = orig_cjk / len(sub)
                                     if rt_cjk_density >= orig_cjk_density:
-                                        return False, f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (round-trip with U+FFFD) — fix encoding before modifying (DM-378)"
+                                        return (
+                                            False,
+                                            f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (round-trip with U+FFFD) — fix encoding before modifying (DM-378)",
+                                        )
                         except UnicodeDecodeError:
                             pass
                     except UnicodeEncodeError:
                         pass
         # Method 3: U+FFFD in CJK context
         if "\ufffd" in content:
-            cjk_context = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]', content)
+            cjk_context = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]", content)
             if len(cjk_context) >= 2:
-                return False, f"MOJIBAKE_BLOCK: {file_path} has U+FFFD replacement chars in CJK context — likely mojibake (DM-378)"
+                return (
+                    False,
+                    f"MOJIBAKE_BLOCK: {file_path} has U+FFFD replacement chars in CJK context — likely mojibake (DM-378)",
+                )
         # Method 4: statistical fallback
         total_cjk = sum(1 for c in content if 0x4E00 <= ord(c) <= 0x9FFF)
         if total_cjk >= 50:
@@ -231,11 +254,18 @@ def main() -> int:
 
     if args.json:
         import json
-        print(json.dumps({
-            "allowed": len(blocked) == 0,
-            "checks": checks,
-            "file": args.file_path,
-        }, ensure_ascii=False, indent=2))
+
+        print(
+            json.dumps(
+                {
+                    "allowed": len(blocked) == 0,
+                    "checks": checks,
+                    "file": args.file_path,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     else:
         for c in checks:
             icon = "  PASS" if c["pass"] else "  BLOCK"
@@ -244,7 +274,7 @@ def main() -> int:
         if blocked:
             print(f"\n  BLOCKED ({len(blocked)}/{len(checks)} checks failed)")
             print(f"  File: {args.file_path}")
-            print(f"  Action required: 修复以上 BLOCK 项后重试")
+            print("  Action required: 修复以上 BLOCK 项后重试")
         else:
             print(f"\n  ALL CLEAR ({len(checks)}/{len(checks)}) — 允许写入 {args.file_path}")
 

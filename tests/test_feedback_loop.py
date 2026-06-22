@@ -15,7 +15,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
-import pytest
 
 from zephyr.trading.feedback_loop import EvolutionProposal, FeedbackLoop
 

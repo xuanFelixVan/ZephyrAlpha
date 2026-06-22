@@ -12,9 +12,6 @@
 
 from __future__ import annotations
 
-import threading
-import time
-
 import pytest
 
 from zephyr.shared.lifecycle.daemon_registry import (

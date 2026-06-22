@@ -32,12 +32,11 @@ KMS Interface — KE 推送契约 + 生命周期关联。
     - §3.2.3 接口契约
 """
 
-
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -72,7 +71,6 @@ TASK_KE_LIFECYCLE: dict[str, str] = {
 
 
 class KMSInterface:
-
     PUSH_FORMAT = {
         "ke_record": {
             "task_id": "string",
@@ -88,30 +86,37 @@ class KMSInterface:
         self._data_dir = data_dir or Path("data/knowledge")
         self._push_log_path = self._data_dir / "kms_push_log.jsonl"
 
-    def push_ke(self, task_id: str, ke_type: str, content_snippet: str,
-                source_file: str = "", priority: str = "P2") -> KERecord:
+    def push_ke(
+        self, task_id: str, ke_type: str, content_snippet: str, source_file: str = "", priority: str = "P2"
+    ) -> KERecord:
         record = KERecord(
             task_id=task_id,
             ke_type=ke_type,
             content_snippet=content_snippet[:500],
             source_file=source_file,
             priority=priority,
-            created_at=datetime.now(timezone.utc).isoformat(),
+            created_at=datetime.now(UTC).isoformat(),
             lifecycle_phase="active",
         )
 
         self._data_dir.mkdir(parents=True, exist_ok=True)
 
         with open(self._push_log_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "task_id": record.task_id,
-                "ke_type": record.ke_type,
-                "content_snippet": record.content_snippet,
-                "source_file": record.source_file,
-                "priority": record.priority,
-                "created_at": record.created_at,
-                "lifecycle_phase": record.lifecycle_phase,
-            }, ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "task_id": record.task_id,
+                        "ke_type": record.ke_type,
+                        "content_snippet": record.content_snippet,
+                        "source_file": record.source_file,
+                        "priority": record.priority,
+                        "created_at": record.created_at,
+                        "lifecycle_phase": record.lifecycle_phase,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
 
         return record
 

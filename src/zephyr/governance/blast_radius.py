@@ -25,7 +25,6 @@ blast_radius — MOD-INF-028 §3.1 Stage 9
 from __future__ import annotations
 
 import logging
-import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -38,9 +37,7 @@ __all__ = ["BlastRadiusAnalyzer", "BlastRadiusReport"]
 
 logger = logging.getLogger(__name__)
 
-_DEPGRAPH_DEFAULT_PATH = Path(
-    "D:/ZephyrAlpha/data/databases/depgraph.db"
-)
+_DEPGRAPH_DEFAULT_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 
 
 class DepgraphLoadError(RuntimeError):
@@ -134,11 +131,9 @@ class BlastRadiusAnalyzer:
     def _load_depgraph(self) -> None:
         """加载 depgraph YAML 并构建索引."""
         if not self._depgraph_path.exists():
-            raise DepgraphLoadError(
-                f"depgraph not found: {self._depgraph_path}"
-            )
+            raise DepgraphLoadError(f"depgraph not found: {self._depgraph_path}")
         try:
-            with open(self._depgraph_path, "r", encoding="utf-8") as f:
+            with open(self._depgraph_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
         except yaml.YAMLError as exc:
             raise DepgraphLoadError(f"invalid YAML: {exc}") from exc
@@ -210,20 +205,18 @@ class BlastRadiusAnalyzer:
         """
         normalized = file_path.replace("\\", "/")
         if normalized.startswith("src/"):
-            normalized = normalized[len("src/"):]
+            normalized = normalized[len("src/") :]
         if normalized.endswith(".py"):
-            normalized = normalized[:-len(".py")]
+            normalized = normalized[: -len(".py")]
         if normalized.endswith("/__init__"):
-            normalized = normalized[:-len("/__init__")]
+            normalized = normalized[: -len("/__init__")]
         return normalized.replace("/", ".")
 
     def _infer_module_path(self, file_path: str) -> str:
         """从文件路径推断模块路径（与 _module_path_from_file 相同逻辑）."""
         return self._module_path_from_file(file_path)
 
-    def _find_transitive_dependents(
-        self, source_path: str
-    ) -> tuple[list[str], int]:
+    def _find_transitive_dependents(self, source_path: str) -> tuple[list[str], int]:
         """BFS 查找传递依赖，返回 (所有受影响文件, 最长链深度).
 
         从 source_path 出发，逐层扩展反向依赖，
@@ -290,9 +283,7 @@ class BlastRadiusAnalyzer:
             risk_level=risk,
         )
 
-    def analyze_batch(
-        self, findings: list[SemanticAuditFinding]
-    ) -> list[BlastRadiusReport]:
+    def analyze_batch(self, findings: list[SemanticAuditFinding]) -> list[BlastRadiusReport]:
         """批量分析多个审计发现的爆炸半径.
 
         Args:
@@ -303,9 +294,7 @@ class BlastRadiusAnalyzer:
         """
         return [self.analyze(f) for f in findings]
 
-    def get_dependency_chain(
-        self, source_path: str, max_depth: int | None = None
-    ) -> dict[str, list[str]]:
+    def get_dependency_chain(self, source_path: str, max_depth: int | None = None) -> dict[str, list[str]]:
         """获取指定文件的逐层依赖链.
 
         Args:
@@ -361,9 +350,7 @@ class BlastRadiusAnalyzer:
             if finding is None:
                 continue
             inner_finding = getattr(finding, "finding", None)
-            if inner_finding is not None and isinstance(
-                inner_finding, SemanticAuditFinding
-            ):
+            if inner_finding is not None and isinstance(inner_finding, SemanticAuditFinding):
                 reports.append(self.analyze(inner_finding))
             elif isinstance(finding, SemanticAuditFinding):
                 reports.append(self.analyze(finding))

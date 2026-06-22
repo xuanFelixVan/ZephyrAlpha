@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] this file
 
-import pytest
 
 from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
 from zephyr.ops.gates.safety_gate_l62_l63 import SafetyGateL62L63

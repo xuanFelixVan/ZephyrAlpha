@@ -17,8 +17,6 @@ from pathlib import Path
 from tempfile import mkdtemp
 from typing import Any
 
-from zephyr.shared.resilience.fallback import FallbackChain as _FallbackChain
-
 logger = logging.getLogger(__name__)
 
 __all__ = ["FeedbackBridge"]
@@ -30,6 +28,7 @@ class FeedbackBridge:
         self._available = False
         try:
             from zephyr.trading.feedback_loop import FeedbackLoop
+
             self._loop = FeedbackLoop(Path(mkdtemp(prefix="ao_feedback_")))
             self._available = True
         except ImportError:
@@ -41,19 +40,25 @@ class FeedbackBridge:
         if not self._available or self._loop is None:
             return []
         try:
-            entries = [{
-                "id": f.get("issue_id", str(i)),
-                "module": "audit-orchestrator",
-                "context": f.get("detail", f.get("type", "unknown finding")),
-            } for i, f in enumerate(findings)]
+            entries = [
+                {
+                    "id": f.get("issue_id", str(i)),
+                    "module": "audit-orchestrator",
+                    "context": f.get("detail", f.get("type", "unknown finding")),
+                }
+                for i, f in enumerate(findings)
+            ]
             proposals = self._loop.analyze_pending(entries)
-            return [{
-                "proposal_id": p.proposal_id,
-                "source": p.source,
-                "pattern": p.pattern,
-                "change": p.suggested_rule_change,
-                "confidence": p.confidence,
-            } for p in proposals]
+            return [
+                {
+                    "proposal_id": p.proposal_id,
+                    "source": p.source,
+                    "pattern": p.pattern,
+                    "change": p.suggested_rule_change,
+                    "confidence": p.confidence,
+                }
+                for p in proposals
+            ]
         except Exception as exc:
             logger.error("FeedbackBridge.analyze_audit_findings failed: %s", exc)
             return []
@@ -63,14 +68,17 @@ class FeedbackBridge:
             return []
         try:
             proposals = self._loop.generate_proposals(pending)
-            return [{
-                "proposal_id": p.proposal_id,
-                "source": p.source,
-                "pattern": p.pattern,
-                "change": p.suggested_rule_change,
-                "confidence": p.confidence,
-                "status": p.status,
-            } for p in proposals]
+            return [
+                {
+                    "proposal_id": p.proposal_id,
+                    "source": p.source,
+                    "pattern": p.pattern,
+                    "change": p.suggested_rule_change,
+                    "confidence": p.confidence,
+                    "status": p.status,
+                }
+                for p in proposals
+            ]
         except Exception as exc:
             logger.error("FeedbackBridge.generate_rules failed: %s", exc)
             return []
@@ -80,6 +88,7 @@ class FeedbackBridge:
             return False
         try:
             from zephyr.trading.feedback_loop import EvolutionProposal
+
             p = EvolutionProposal(
                 source=proposal.get("source", "unknown"),
                 pattern=proposal.get("pattern", ""),

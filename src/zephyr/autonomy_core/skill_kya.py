@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 
-# [MODULE] zephyr.orchestration.agent_lifecycle.skill_kya
+# [MODULE] zephyr.autonomy_core.skill_kya
 
 # [INVARIANTS] none
 
@@ -29,18 +29,19 @@ Version: 0.3.0
 Know Your Agent certification
 """
 
-from datetime import datetime, timezone, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 RISKY = {"write_file", "search_replace", "delete_file", "run_command", "execute", "bash"}
+
 
 class SkillKYA:
     EXPIRE_DAYS = 90
 
     def __init__(self):
-        self._certs: Dict[str, Dict[str, Any]] = {}
+        self._certs: dict[str, dict[str, Any]] = {}
 
-    def _assess(self, tools: List[str]) -> str:
+    def _assess(self, tools: list[str]) -> str:
         risky = sum(1 for t in tools if t in RISKY)
         total = len(tools)
         if risky >= 5 or total > 15:
@@ -51,30 +52,41 @@ class SkillKYA:
             return "intermediate"
         return "basic"
 
-    def certify(self, skill_id: str, tools: Optional[List[str]] = None) -> Dict[str, Any]:
+    def certify(self, skill_id: str, tools: list[str] | None = None) -> dict[str, Any]:
         if tools is None:
             try:
                 from zephyr.autonomy_core.skill_loader import SkillLoader
+
                 tools = list(SkillLoader().progressive_load(skill_id).get("l1", {}).get("allowed_tools", []))
             except Exception:
                 tools = []
         tier = self._assess(tools)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expires = now + timedelta(days=self.EXPIRE_DAYS)
-        cert = {"skill_id": skill_id, "kya_level": tier, "certified": True,
-                "assigned_at": now.isoformat(), "expires_at": expires.isoformat(),
-                "expires_in_days": self.EXPIRE_DAYS, "tools_count": len(tools),
-                "risky_count": sum(1 for t in tools if t in RISKY)}
+        cert = {
+            "skill_id": skill_id,
+            "kya_level": tier,
+            "certified": True,
+            "assigned_at": now.isoformat(),
+            "expires_at": expires.isoformat(),
+            "expires_in_days": self.EXPIRE_DAYS,
+            "tools_count": len(tools),
+            "risky_count": sum(1 for t in tools if t in RISKY),
+        }
         self._certs[skill_id] = cert
         return cert
 
-    def revalidate(self, skill_id: str) -> Dict[str, Any]:
+    def revalidate(self, skill_id: str) -> dict[str, Any]:
         existing = self._certs.get(skill_id)
         if existing:
             try:
                 expires = datetime.fromisoformat(existing.get("expires_at", ""))
-                if datetime.now(timezone.utc) < expires:
-                    return {"skill_id": skill_id, "status": "still_valid", "expires_in_days": (expires - datetime.now(timezone.utc)).days}
+                if datetime.now(UTC) < expires:
+                    return {
+                        "skill_id": skill_id,
+                        "status": "still_valid",
+                        "expires_in_days": (expires - datetime.now(UTC)).days,
+                    }
             except (ValueError, TypeError):
                 pass
         return self.certify(skill_id)

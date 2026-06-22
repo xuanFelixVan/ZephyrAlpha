@@ -37,20 +37,18 @@
 - tools/list 聚合：一次调用获取全系统工具目录
 """
 
-
 from __future__ import annotations
 
 import json
 import logging
 import threading
 import time
-from pathlib import Path
 from typing import Any
 
 from zephyr.infrastructure._base_server import (
     BaseMCPServer,
-    MCPError,
 )
+from zephyr.infrastructure.audit_logger import AuditLogger, create_audit_logger
 from zephyr.infrastructure.error_codes import (
     ERR_GATE_FAILED,
     ERR_INTERNAL_ERROR,
@@ -59,11 +57,9 @@ from zephyr.infrastructure.error_codes import (
     ERR_TOOL_EXECUTION,
     ERR_TOOL_NOT_FOUND,
 )
-from zephyr.infrastructure.audit_logger import AuditLogger, create_audit_logger
 from zephyr.infrastructure.rate_limiter import (
     RATE_LIMITED_KEY,
     PerToolRateLimiter,
-    RateLimiterStats,
 )
 
 __all__ = ["MCPGateway", "create_gateway", "start_gateway"]
@@ -83,6 +79,7 @@ def _get_lsg():
         return _lsg_gateway
     try:
         import importlib
+
         _lsg_gateway = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway").LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
@@ -96,7 +93,9 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
         return None
     try:
         import asyncio
+
         from zephyr.shared.protocols.a2a.a2a_protocol import SecurityDecision
+
         result = asyncio.run(
             gw.scan_agent_action(
                 text=text,
@@ -121,6 +120,7 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
                 )
             )
             from zephyr.shared.protocols.a2a.a2a_protocol import SecurityDecision
+
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
         except Exception:
@@ -195,9 +195,7 @@ class CircuitBreaker:
                 "failures": self._failures,
                 "threshold": self._threshold,
                 "last_failure": (
-                    time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self._last_failure))
-                    if self._last_failure
-                    else None
+                    time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self._last_failure)) if self._last_failure else None
                 ),
             }
 
@@ -298,9 +296,7 @@ class MCPGateway(BaseMCPServer):
         self._init_server_handlers()
         self._audit = audit_logger or create_audit_logger()
         self._rate_limiter = rate_limiter or PerToolRateLimiter()
-        self._circuit_breakers: dict[str, CircuitBreaker] = {
-            sid: CircuitBreaker(sid) for sid in self._routes
-        }
+        self._circuit_breakers: dict[str, CircuitBreaker] = {sid: CircuitBreaker(sid) for sid in self._routes}
         self._agg_tool_count = 0
 
         self._register_gateway_tools()
@@ -308,47 +304,56 @@ class MCPGateway(BaseMCPServer):
     def _init_server_handlers(self) -> None:
         try:
             from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
+
             self._server_instances["knowledge_base"] = KnowledgeBaseServer()
         except Exception as exc:
             _log.warning("kb server init failed: %s", exc)
         try:
             from zephyr.infrastructure.gate_engine_server import GateEngineServer
+
             self._server_instances["gate_engine"] = GateEngineServer()
         except Exception as exc:
             _log.warning("gate engine init failed: %s", exc)
         try:
             from zephyr.infrastructure.doc_guard_server import DocGuardServer
+
             self._server_instances["session_handoff"] = DocGuardServer()
         except Exception as exc:
             _log.warning("doc guard init failed: %s", exc)
         try:
             from zephyr.infrastructure.sentinel_server import SentinelServer
+
             self._server_instances["intent_router"] = SentinelServer()
         except Exception as exc:
             _log.warning("sentinel init failed: %s", exc)
         try:
             from zephyr.infrastructure.blueprint_search_server import BlueprintSearchServer
+
             self._server_instances["blueprint_search"] = BlueprintSearchServer()
         except Exception as exc:
             _log.warning("blueprint search init failed: %s", exc)
         # task_manager via FastMCP — import only for tools/list
         try:
             from zephyr.infrastructure.task_manager_server import TaskManagerMCP
+
             self._server_instances["task_manager"] = TaskManagerMCP()
         except Exception as exc:
             _log.warning("task manager init failed: %s", exc)
         try:
             from zephyr.infrastructure.governance_server import GovernanceServer
+
             self._server_instances["governance"] = GovernanceServer()
         except Exception as exc:
             _log.warning("governance server init failed: %s", exc)
         try:
             from zephyr.infrastructure.telemetry_server import TelemetryMCP
+
             self._server_instances["telemetry"] = TelemetryMCP()
         except Exception as exc:
             _log.warning("telemetry server init failed: %s", exc)
         try:
             from zephyr.infrastructure.vector_memory_server import VectorMemoryServer
+
             self._server_instances["vector-memory"] = VectorMemoryServer()
         except Exception as exc:
             _log.warning("vector-memory server init failed: %s", exc)
@@ -409,28 +414,30 @@ class MCPGateway(BaseMCPServer):
                 srv_tools = {}
             for tname, tdef in srv_tools.items():
                 sanitized = self._sanitize_schema(getattr(tdef, "input_schema", {}))
-                aggregated.append({
-                    "name": tname,
-                    "description": getattr(tdef, "description", ""),
-                    "inputSchema": sanitized,
-                })
+                aggregated.append(
+                    {
+                        "name": tname,
+                        "description": getattr(tdef, "description", ""),
+                        "inputSchema": sanitized,
+                    }
+                )
 
         for tname, tdef in self._tools.items():
             sanitized = self._sanitize_schema(getattr(tdef, "input_schema", {}))
-            aggregated.append({
-                "name": tname,
-                "description": getattr(tdef, "description", ""),
-                "inputSchema": sanitized,
-            })
+            aggregated.append(
+                {
+                    "name": tname,
+                    "description": getattr(tdef, "description", ""),
+                    "inputSchema": sanitized,
+                }
+            )
 
         self._agg_tool_count = len(aggregated)
         return {
             "tools": aggregated,
             "count": len(aggregated),
             "source": "mcp_gateway_aggregated",
-            "degraded_servers": [
-                sid for sid, cb in self._circuit_breakers.items() if cb.is_open
-            ],
+            "degraded_servers": [sid for sid, cb in self._circuit_breakers.items() if cb.is_open],
         }
 
     # ------------------------------------------------------------------
@@ -455,16 +462,19 @@ class MCPGateway(BaseMCPServer):
         return resp
 
     def _handle_initialize(self, request: dict[str, Any]) -> dict[str, Any]:
-        return self._ok(request.get("id"), {
-            "protocolVersion": "2024-11-05",
-            "serverInfo": {
-                "name": _GATEWAY_ID,
-                "version": _GATEWAY_VERSION,
+        return self._ok(
+            request.get("id"),
+            {
+                "protocolVersion": "2024-11-05",
+                "serverInfo": {
+                    "name": _GATEWAY_ID,
+                    "version": _GATEWAY_VERSION,
+                },
+                "capabilities": {
+                    "tools": {"listChanged": True},
+                },
             },
-            "capabilities": {
-                "tools": {"listChanged": True},
-            },
-        })
+        )
 
     def _handle_tools_call_with_pipeline(
         self,
@@ -484,16 +494,20 @@ class MCPGateway(BaseMCPServer):
         if routed_sid is None:
             msg = self._err(req_id, ERR_TOOL_NOT_FOUND, f"unknown tool: {tool_name!r}")
             self._audit.log_call(
-                client_session_id=session_id, tool_name=tool_name,
-                result_status="not_found", duration_ms=int((time.monotonic()-t0)*1000),
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status="not_found",
+                duration_ms=int((time.monotonic() - t0) * 1000),
             )
             return msg
 
         if not self._rate_limiter.try_acquire(routed_sid):
             duration_ms = int((time.monotonic() - t0) * 1000)
             self._audit.log_call(
-                client_session_id=session_id, tool_name=tool_name,
-                result_status=RATE_LIMITED_KEY, duration_ms=duration_ms,
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status=RATE_LIMITED_KEY,
+                duration_ms=duration_ms,
             )
             return self._err(req_id, ERR_RBAC_DENIED, f"{RATE_LIMITED_KEY}: {tool_name!r} (10QPS exceeded)")
 
@@ -503,8 +517,10 @@ class MCPGateway(BaseMCPServer):
         if lsg_blocked:
             duration_ms = int((time.monotonic() - t0) * 1000)
             self._audit.log_call(
-                client_session_id=session_id, tool_name=tool_name,
-                result_status="lsg_blocked", duration_ms=duration_ms,
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status="lsg_blocked",
+                duration_ms=duration_ms,
             )
             return self._err(req_id, ERR_RBAC_DENIED, f"LSG security blocked: {lsg_blocked}")
 
@@ -520,9 +536,11 @@ class MCPGateway(BaseMCPServer):
                 f"{'server unavailable' if server is None else 'degraded service'}"
             )
             self._audit.log_call(
-                client_session_id=session_id, tool_name=tool_name,
-                result_status="circuit_open", error_code=ERR_GATE_FAILED,
-                duration_ms=int((time.monotonic()-t0)*1000),
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status="circuit_open",
+                error_code=ERR_GATE_FAILED,
+                duration_ms=int((time.monotonic() - t0) * 1000),
             )
             return self._err(req_id, ERR_GATE_FAILED, degraded_msg)
 
@@ -538,15 +556,18 @@ class MCPGateway(BaseMCPServer):
                     result_data = tdef.handler(**args) if args else tdef.handler()
                     content_text = json.dumps(result_data, ensure_ascii=False)
                     self._audit.log_call(
-                        client_session_id=session_id, tool_name=tool_name,
+                        client_session_id=session_id,
+                        tool_name=tool_name,
                         result_status="success",
                         duration_ms=int((time.perf_counter() - t0) * 1000),
                     )
                     return self._ok(req_id, {"content": [{"type": "text", "text": content_text}]})
                 except Exception as exc:
                     self._audit.log_call(
-                        client_session_id=session_id, tool_name=tool_name,
-                        result_status="error", error_code=ERR_INTERNAL_ERROR,
+                        client_session_id=session_id,
+                        tool_name=tool_name,
+                        result_status="error",
+                        error_code=ERR_INTERNAL_ERROR,
                         error_message=str(exc),
                         duration_ms=int((time.perf_counter() - t0) * 1000),
                     )
@@ -566,8 +587,10 @@ class MCPGateway(BaseMCPServer):
                     "arguments": self._restore_args(tool_name, routed_sid, params.get("arguments", {})),
                 },
             }
-            resp = srv.handle_request(inner_req) if srv else self._err(
-                req_id, ERR_TOOL_EXECUTION, f"server {routed_sid!r} not loaded"
+            resp = (
+                srv.handle_request(inner_req)
+                if srv
+                else self._err(req_id, ERR_TOOL_EXECUTION, f"server {routed_sid!r} not loaded")
             )
 
             error = resp.get("error")
@@ -579,17 +602,22 @@ class MCPGateway(BaseMCPServer):
 
             if error:
                 self._audit.log_call(
-                    client_session_id=session_id, tool_name=tool_name,
-                    arguments_hash=arg_hash, result_status=status,
-                    error_code=error.get("code"), error_message=error.get("message"),
+                    client_session_id=session_id,
+                    tool_name=tool_name,
+                    arguments_hash=arg_hash,
+                    result_status=status,
+                    error_code=error.get("code"),
+                    error_message=error.get("message"),
                     duration_ms=duration_ms,
                 )
                 if cb:
                     cb.failure()
             else:
                 self._audit.log_call(
-                    client_session_id=session_id, tool_name=tool_name,
-                    arguments_hash=arg_hash, result_status=status,
+                    client_session_id=session_id,
+                    tool_name=tool_name,
+                    arguments_hash=arg_hash,
+                    result_status=status,
                     duration_ms=duration_ms,
                 )
                 if cb:
@@ -605,9 +633,12 @@ class MCPGateway(BaseMCPServer):
         except Exception as exc:
             duration_ms = int((time.perf_counter() - t0) * 1000)
             self._audit.log_call(
-                client_session_id=session_id, tool_name=tool_name,
-                result_status="error", error_code=ERR_INTERNAL_ERROR,
-                error_message=str(exc), duration_ms=duration_ms,
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status="error",
+                error_code=ERR_INTERNAL_ERROR,
+                error_message=str(exc),
+                duration_ms=duration_ms,
             )
             if cb:
                 cb.failure()
@@ -636,9 +667,7 @@ class MCPGateway(BaseMCPServer):
                 return sid
         return None
 
-    def _check_safety_level(
-        self, tool_name: str, routed_sid: str, session_id: str
-    ) -> dict[str, Any] | None:
+    def _check_safety_level(self, tool_name: str, routed_sid: str, session_id: str) -> dict[str, Any] | None:
         """检查工具 safety_level 并执行 RBAC 强制（R2 修复）。
 
         - L (Low): 直接放行，返回 None
@@ -665,14 +694,19 @@ class MCPGateway(BaseMCPServer):
                 "jsonrpc": "2.0",
                 "id": None,
                 "result": {
-                    "content": [{
-                        "type": "text",
-                        "text": json.dumps({
-                            "confirm_required": True,
-                            "tool": tool_name,
-                            "message": f"Tool {tool_name!r} requires confirmation (safety_level=M). Re-invoke with confirm=true.",
-                        }, ensure_ascii=False),
-                    }],
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": json.dumps(
+                                {
+                                    "confirm_required": True,
+                                    "tool": tool_name,
+                                    "message": f"Tool {tool_name!r} requires confirmation (safety_level=M). Re-invoke with confirm=true.",
+                                },
+                                ensure_ascii=False,
+                            ),
+                        }
+                    ],
                 },
             }
 
@@ -768,9 +802,7 @@ class MCPGateway(BaseMCPServer):
             "status": "operational",
             "gateway_version": _GATEWAY_VERSION,
             "servers_loaded": len(self._server_instances),
-            "circuit_breakers": {
-                sid: cb.status() for sid, cb in self._circuit_breakers.items()
-            },
+            "circuit_breakers": {sid: cb.status() for sid, cb in self._circuit_breakers.items()},
             "rate_limit": {
                 sid: {
                     "qps": s.permits_per_second,
@@ -788,14 +820,16 @@ class MCPGateway(BaseMCPServer):
         servers = []
         for sid, route in self._routes.items():
             cb = self._circuit_breakers.get(sid)
-            servers.append({
-                "server_id": sid,
-                "module": route.get("module", ""),
-                "transport": route.get("transport", ""),
-                "loaded": sid in self._server_instances,
-                "circuit_breaker": cb.status() if cb else "N/A",
-                "status": route.get("status", "active"),
-            })
+            servers.append(
+                {
+                    "server_id": sid,
+                    "module": route.get("module", ""),
+                    "transport": route.get("transport", ""),
+                    "loaded": sid in self._server_instances,
+                    "circuit_breaker": cb.status() if cb else "N/A",
+                    "status": route.get("status", "active"),
+                }
+            )
         return {"servers": servers, "count": len(servers)}
 
     def _audit_stats(self, client_session_id: str) -> dict[str, Any]:

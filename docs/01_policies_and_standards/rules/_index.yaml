@@ -2,10 +2,10 @@ version: 2.1.0
 generated_at: '2026-06-21T00:00:00'
 description: ZephyrAlpha规则YAML总索引（Phase E迁移产物；v2.1.0审查修复trae_029/031/034 aliases对齐）
 schema_version: 2.0.0
-total_rules: 55
+total_rules: 57
 layer_distribution:
-  L0_critical: 17
-  L1_error: 27
+  L0_critical: 18
+  L1_error: 28
   L2_warning: 11
 
 schema:
@@ -926,3 +926,24 @@ rules:
   - ARCH-CAP-008
   - ARCH-CAP-009
   section_count: 11
+- rule_id: TRAE-056
+  title: 操作-模块/蓝图/代码创建完整工作流程
+  layer: L1
+  severity: error
+  scope: module_creation_workflow
+  file: trae_056_module_creation_workflow.yaml
+  aliases:
+  - OPS-WORKFLOW-001
+  - CREATE-WORKFLOW-001
+  section_count: 15
+- rule_id: TRAE-057
+  title: AI消费优先原则
+  layer: L0
+  severity: error
+  scope: global
+  file: trae_057_ai_consumer_first.yaml
+  aliases:
+  - AICF-001
+  - AI-FIRST-001
+  - AI-CONSUMER-FIRST
+  section_count: 6

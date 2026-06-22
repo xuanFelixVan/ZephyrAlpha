@@ -2,9 +2,11 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: Delivery
 module_id: MOD-027
+updated: "2026-06-22"
+---
 
 # Delivery — 目录索引
 
@@ -22,4 +24,4 @@ module_id: MOD-027
 
 ## 父级目录
 
-- 父级：[vibe-coding-pipelines](../index.md)
+- 父级：[vibe_coding_pipelines](../index.md)

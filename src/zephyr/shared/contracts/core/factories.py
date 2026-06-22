@@ -26,8 +26,8 @@ Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float→Decima
 SSoT: cross_layer_contracts.yaml v3.0
 Status: HAND-MAINTAINED — codegen disabled (Phase D)
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import importlib
 from datetime import UTC, datetime
@@ -69,7 +69,7 @@ def make_risk_limits(
 ):
     """创建 RiskLimits 实例——与 CTR-003（float VaR 上限）对齐。"""
     _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_limits")
-    _RiskLimits = getattr(_mod, "RiskLimits")
+    _RiskLimits = _mod.RiskLimits
     mpv: float | None = None
     if max_portfolio_var_1d is not None:
         mpv = float(max_portfolio_var_1d)
@@ -104,7 +104,7 @@ def make_risk_dashboard_snapshot(
 ):
     """创建 RiskDashboardSnapshot——用于 L04→L08 监控面板推送。"""
     _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_dashboard_snapshot")
-    _RiskDashboardSnapshot = getattr(_mod, "RiskDashboardSnapshot")
+    _RiskDashboardSnapshot = _mod.RiskDashboardSnapshot
     return _RiskDashboardSnapshot(
         snapshot_time=datetime.now(UTC).isoformat(),
         portfolio_id=portfolio_id,
@@ -145,7 +145,7 @@ def make_risk_metrics_report(
 ):
     """创建 RiskMetricsReport——用于 L04→L05/L07/L08/L10 风险指标推送。"""
     _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_metrics")
-    _RiskMetricsReport = getattr(_mod, "RiskMetricsReport")
+    _RiskMetricsReport = _mod.RiskMetricsReport
     return _RiskMetricsReport(
         portfolio_id=portfolio_id,
         as_of_date=as_of_date or datetime.now(UTC),
@@ -184,7 +184,7 @@ def make_factor_signal(
 ):
     """创建 FactorSignal 实例——因子信号标准化入口。"""
     _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.market.factor_signal")
-    _FactorSignal = getattr(_mod, "FactorSignal")
+    _FactorSignal = _mod.FactorSignal
     return _FactorSignal(
         as_of_date=as_of_date or datetime.now(UTC),
         factor_id=factor_id,
@@ -218,7 +218,7 @@ def make_synthesized_signal(
 ):
     """创建 SynthesizedSignal 实例——L03 合成信号标准化入口。"""
     _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.market.synthesized_signal")
-    _SynthesizedSignal = getattr(_mod, "SynthesizedSignal")
+    _SynthesizedSignal = _mod.SynthesizedSignal
     return _SynthesizedSignal(
         signal_id=signal_id,
         symbol=symbol,
@@ -252,7 +252,7 @@ def make_order(
 ):
     """创建 Order 实例——L05 委托指令标准化入口。"""
     _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.execution.order")
-    _Order = getattr(_mod, "Order")
+    _Order = _mod.Order
     return _Order(
         idempotency_key=idempotency_key or f"ord-{order_id}",
         order_id=order_id,
@@ -267,12 +267,12 @@ def make_order(
 
 
 __all__ = [
-    "_to_decimal",
     "_optional_decimal",
-    "make_risk_limits",
-    "make_risk_dashboard_snapshot",
-    "make_risk_metrics_report",
+    "_to_decimal",
     "make_factor_signal",
-    "make_synthesized_signal",
     "make_order",
+    "make_risk_dashboard_snapshot",
+    "make_risk_limits",
+    "make_risk_metrics_report",
+    "make_synthesized_signal",
 ]

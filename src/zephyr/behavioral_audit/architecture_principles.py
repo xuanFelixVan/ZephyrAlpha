@@ -12,9 +12,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from enum import Enum
 from functools import wraps
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -36,25 +37,21 @@ class BlueprintIronLaw(str, Enum):
 
 
 PRINCIPLE_DEFS: dict[ArchPrinciple, dict[str, str]] = {
-    ArchPrinciple.P1_SSOT: {
-        "label": "P1-SSoT (KBG-0001)",
-        "statement": "YAML=真源，MD=衍生视图",
-        "kb_ref": "KBG-0001"
-    },
+    ArchPrinciple.P1_SSOT: {"label": "P1-SSoT (KBG-0001)", "statement": "YAML=真源，MD=衍生视图", "kb_ref": "KBG-0001"},
     ArchPrinciple.P2_YAML_SCHEMA: {
         "label": "P2-YAML Schema (KBG-0002)",
         "statement": "单Schema，Phased Required Fields（Phase 0→Phase 5）",
-        "kb_ref": "KBG-0002"
+        "kb_ref": "KBG-0002",
     },
     ArchPrinciple.P3_DUAL_AI: {
         "label": "P3-DeepSeek Pipeline (KBG-0003)",
         "statement": "DeepSeek V4 Pro 全管线+ Claude 极端救援",
-        "kb_ref": "KBG-0003"
+        "kb_ref": "KBG-0003",
     },
     ArchPrinciple.P4_OCP: {
         "label": "P4-OCP (KBG-0004)",
         "statement": "Open-Closed Principle——对扩展开放，对修改封闭",
-        "kb_ref": "KBG-0004"
+        "kb_ref": "KBG-0004",
     },
     ArchPrinciple.P5_BLUEPRINT_FIRST: {
         "label": "P5-Blueprint First (G6)",
@@ -76,7 +73,7 @@ def princpled_check(*principles: ArchPrinciple) -> Callable[[F], F]:
     """装饰器：为函数标记适用的架构原则。"""
 
     def decorator(func: F) -> F:
-        setattr(func, "_zephyr_principles", list(principles))
+        func._zephyr_principles = list(principles)
 
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:

@@ -6,8 +6,8 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [BLUEPRINT] docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 
 print("hello")

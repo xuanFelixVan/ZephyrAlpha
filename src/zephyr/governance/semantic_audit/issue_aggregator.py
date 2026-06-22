@@ -15,11 +15,9 @@
 收集各阶段审计结果，去重合并排序输出。
 """
 
-
 from __future__ import annotations
 
 import logging
-from collections import defaultdict
 from datetime import datetime
 
 from zephyr.governance.semantic_audit.models import (
@@ -89,9 +87,7 @@ class IssueAggregator:
         seen: dict[str, TriggerResult] = {}
         for t in triggers:
             key = f"{t.trigger_type}:{t.target_location}"
-            if key not in seen:
-                seen[key] = t
-            elif t.severity == Severity.RED and seen[key].severity != Severity.RED:
+            if key not in seen or (t.severity == Severity.RED and seen[key].severity != Severity.RED):
                 seen[key] = t
         return list(seen.values())
 

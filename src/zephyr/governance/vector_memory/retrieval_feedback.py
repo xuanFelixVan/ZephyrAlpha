@@ -31,14 +31,13 @@ RetrievalFeedback — MOD-INF-011 FLE 检索质量消费
 - sample_for_quality_monitor(): 为 QM 子系统提供抽样数据
 """
 
-
 from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
@@ -77,11 +76,15 @@ class RetrievalFeedback:
         if self._vms is None:
             _logger.warning("RetrievalFeedback: VMS 未注入，跳过失败模式写入")
             return None
-        return self._vms.write("lessons", pattern_text, metadata={
-            "origin": "fle/retrieval_feedback",
-            "audit_chain": ["fle"],
-            "arbitration": "autonomous",
-        })
+        return self._vms.write(
+            "lessons",
+            pattern_text,
+            metadata={
+                "origin": "fle/retrieval_feedback",
+                "audit_chain": ["fle"],
+                "arbitration": "autonomous",
+            },
+        )
 
     def track_long_tail(self, query: str) -> None:
         self._long_tail[query] = self._long_tail.get(query, 0) + 1
@@ -99,7 +102,13 @@ class RetrievalFeedback:
             timestamp=datetime.now(UTC).isoformat(),
         )
         self._feedback_log.append(entry)
-        _logger.info("RetrievalFeedback: %s → %s (%d hits, rating=%s)", entry.query[:30], entry.collection, entry.hit_count, entry.rating)
+        _logger.info(
+            "RetrievalFeedback: %s → %s (%d hits, rating=%s)",
+            entry.query[:30],
+            entry.collection,
+            entry.hit_count,
+            entry.rating,
+        )
         return entry
 
     def track_hit_rates(self) -> dict[str, dict[str, Any]]:

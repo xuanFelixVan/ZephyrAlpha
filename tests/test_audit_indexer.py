@@ -13,10 +13,6 @@
 from __future__ import annotations
 
 import json
-import sqlite3
-from pathlib import Path
-
-import pytest
 
 from zephyr.governance.audit_trail.indexer import AuditIndexer, IndexResult
 
@@ -135,15 +131,17 @@ class TestQueryStats:
     def test_stats_after_rebuild(self, tmp_path):
         events_path = tmp_path / "events.jsonl"
         events_path.write_text(
-            json.dumps({
-                "entry_id": "E001",
-                "event_type": "file_write",
-                "timestamp": "2026-01-01T00:00:00Z",
-                "lamport": 1,
-                "agent_id": "agent-1",
-                "session_id": "sess-1",
-                "entry_hash": "aa",
-            }),
+            json.dumps(
+                {
+                    "entry_id": "E001",
+                    "event_type": "file_write",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "lamport": 1,
+                    "agent_id": "agent-1",
+                    "session_id": "sess-1",
+                    "entry_hash": "aa",
+                }
+            ),
             encoding="utf-8",
         )
         db_path = tmp_path / "test.db"

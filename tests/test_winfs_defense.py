@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] ImportError->skip_module;AttributeError->skip_test
 # [TESTS] test_winfs_defense.py
 
-import os
 import sys
 
 import pytest

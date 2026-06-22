@@ -20,6 +20,7 @@
 # [TESTS]
 
 import importlib as _il
+
 _mod = _il.import_module("zephyr.autonomy_core.token_budget")
 for _n in getattr(_mod, "__all__", [n for n in dir(_mod) if not n.startswith("_")]):
     globals()[_n] = getattr(_mod, _n)

@@ -7,11 +7,10 @@
 # [TESTS] —
 """Tests for MOD-INF-026 Lifecycle module — 蓝图 §2.6 + §22 附录 H 要求 >85% 覆盖."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
-from zephyr.infrastructure.asset_inventory.lifecycle import DEFAULT_DECAY_DAYS, Lifecycle
+from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle
 from zephyr.infrastructure.asset_inventory.models import (
-    AssetLifecycleEvent,
     AssetStatus,
     AssetType,
     ClassifiedAsset,
@@ -34,7 +33,7 @@ def _asset(
         status=status,
         priority=priority,
         size_bytes=100,
-        mtime_utc=mtime or datetime.now(timezone.utc),
+        mtime_utc=mtime or datetime.now(UTC),
         sha256="a" * 64,
         registered_in=registered_in or [],
     )
@@ -42,7 +41,7 @@ def _asset(
 
 class TestTimeDecay:
     def test_active_to_stale(self) -> None:
-        old_mtime = datetime.now(timezone.utc) - timedelta(days=400)
+        old_mtime = datetime.now(UTC) - timedelta(days=400)
         a = _asset("src/old_mod.py", asset_type=AssetType.MODULE, mtime=old_mtime, registered_in=["REG-MOD-001"])
         index = UnifiedAssetIndex(total_assets=1, assets=[a])
 
@@ -54,8 +53,14 @@ class TestTimeDecay:
         assert events[0].to_status == AssetStatus.STALE
 
     def test_stale_to_deprecated(self) -> None:
-        very_old = datetime.now(timezone.utc) - timedelta(days=800)
-        a = _asset("src/very_old.py", asset_type=AssetType.MODULE, status=AssetStatus.STALE, mtime=very_old, registered_in=["REG-MOD-001"])
+        very_old = datetime.now(UTC) - timedelta(days=800)
+        a = _asset(
+            "src/very_old.py",
+            asset_type=AssetType.MODULE,
+            status=AssetStatus.STALE,
+            mtime=very_old,
+            registered_in=["REG-MOD-001"],
+        )
         index = UnifiedAssetIndex(total_assets=1, assets=[a])
 
         lc = Lifecycle()
@@ -64,7 +69,7 @@ class TestTimeDecay:
         assert events[0].to_status == AssetStatus.DEPRECATED
 
     def test_recent_active_no_trigger(self) -> None:
-        recent = datetime.now(timezone.utc) - timedelta(days=10)
+        recent = datetime.now(UTC) - timedelta(days=10)
         a = _asset("src/recent.py", asset_type=AssetType.MODULE, mtime=recent, registered_in=["REG-MOD-001"])
         index = UnifiedAssetIndex(total_assets=1, assets=[a])
 
@@ -73,7 +78,7 @@ class TestTimeDecay:
         assert len(events) == 0
 
     def test_deprecated_skips_time_decay(self) -> None:
-        old_mtime = datetime.now(timezone.utc) - timedelta(days=1000)
+        old_mtime = datetime.now(UTC) - timedelta(days=1000)
         a = _asset("src/dead.py", asset_type=AssetType.MODULE, status=AssetStatus.DEPRECATED, mtime=old_mtime)
         index = UnifiedAssetIndex(total_assets=1, assets=[a])
 
@@ -83,7 +88,7 @@ class TestTimeDecay:
         assert len(time_decay_events) == 0
 
     def test_data_type_shorter_decay(self) -> None:
-        old_mtime = datetime.now(timezone.utc) - timedelta(days=35)
+        old_mtime = datetime.now(UTC) - timedelta(days=35)
         a = _asset("data/old.db", asset_type=AssetType.DATA, mtime=old_mtime, registered_in=["REG-DATA-001"])
         index = UnifiedAssetIndex(total_assets=1, assets=[a])
 
@@ -166,8 +171,7 @@ class TestDirConvention:
 class TestEvaluate:
     def test_multiple_assets(self) -> None:
         active = _asset("src/a.py")
-        stale = _asset("src/b.py", status=AssetStatus.STALE,
-                        mtime=datetime.now(timezone.utc) - timedelta(days=800))
+        stale = _asset("src/b.py", status=AssetStatus.STALE, mtime=datetime.now(UTC) - timedelta(days=800))
         deprecated_dir = _asset("src/_deprecated/c.py")
         index = UnifiedAssetIndex(total_assets=3, assets=[active, stale, deprecated_dir])
 
@@ -176,7 +180,7 @@ class TestEvaluate:
         assert len(events) >= 2
 
     def test_status_updated_in_output(self) -> None:
-        old_mtime = datetime.now(timezone.utc) - timedelta(days=400)
+        old_mtime = datetime.now(UTC) - timedelta(days=400)
         a = _asset("src/old.py", mtime=old_mtime, registered_in=["REG-MOD-001"])
         index = UnifiedAssetIndex(total_assets=1, assets=[a])
 
@@ -185,7 +189,7 @@ class TestEvaluate:
         assert new_index.assets[0].status == AssetStatus.STALE
 
     def test_custom_decay_days(self) -> None:
-        old_mtime = datetime.now(timezone.utc) - timedelta(days=5)
+        old_mtime = datetime.now(UTC) - timedelta(days=5)
         a = _asset("src/fast.py", asset_type=AssetType.DATA, mtime=old_mtime, registered_in=["REG-DATA-001"])
         index = UnifiedAssetIndex(total_assets=1, assets=[a])
 
@@ -195,7 +199,7 @@ class TestEvaluate:
         assert len(events) == 1
 
     def test_event_structure(self) -> None:
-        old_mtime = datetime.now(timezone.utc) - timedelta(days=400)
+        old_mtime = datetime.now(UTC) - timedelta(days=400)
         a = _asset("src/old.py", mtime=old_mtime)
         index = UnifiedAssetIndex(total_assets=1, assets=[a])
 

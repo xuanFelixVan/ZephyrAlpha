@@ -17,6 +17,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 from _shared.constants import EXIT_ERROR, EXIT_PASS
 
 __manifest__ = """
@@ -41,23 +42,42 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 _STATUS_ICON: dict[str, str] = {
-    "pending": "⬜", "ready": "🟡", "in_progress": "🔵",
-    "completed": "✅", "verified": "🌟", "failed": "❌",
-    "blocked": "🔴", "waiting": "⏳", "retry": "🔄", "cancelled": "🚫",
+    "pending": "⬜",
+    "ready": "🟡",
+    "in_progress": "🔵",
+    "completed": "✅",
+    "verified": "🌟",
+    "failed": "❌",
+    "blocked": "🔴",
+    "waiting": "⏳",
+    "retry": "🔄",
+    "cancelled": "🚫",
 }
 
 _STATUS_ORDER = (
-    "pending", "ready", "in_progress", "completed", "verified",
-    "blocked", "waiting", "failed", "retry", "cancelled",
+    "pending",
+    "ready",
+    "in_progress",
+    "completed",
+    "verified",
+    "blocked",
+    "waiting",
+    "failed",
+    "retry",
+    "cancelled",
 )
 
 _PRIORITY_WEIGHT: dict[str, int] = {"P0": 0, "P1": 1, "P2": 2, "P3": 3, "P4": 4}
 _PRIORITY_LABEL: dict[str, str] = {
-    "P0": "🔴 P0", "P1": "🟠 P1", "P2": "🟡 P2", "P3": "🟢 P3", "P4": "⚪ P4",
+    "P0": "🔴 P0",
+    "P1": "🟠 P1",
+    "P2": "🟡 P2",
+    "P3": "🟢 P3",
+    "P4": "⚪ P4",
 }
 
 _PHASE_LABELS: dict[int, str] = {
@@ -114,17 +134,17 @@ def render_all(cards: list) -> None:
     overall_ratio = completed / max(total, 1)
 
     print(f"\n{'=' * 60}", file=out)
-    print(f"  ZephyrAlpha 任务系统 — 全局进度", file=out)
+    print("  ZephyrAlpha 任务系统 — 全局进度", file=out)
     print(f"  {now_utc}", file=out)
     print(f"{'=' * 60}", file=out)
 
-    print(f"\n-- 全局概览 --", file=out)
+    print("\n-- 全局概览 --", file=out)
     print(f"  总计 {total} 张任务卡  [{_bar(overall_ratio)}] {overall_ratio:.0%}", file=out)
     print(f"  ✅ 已完成: {completed:>4}    🔵 进行中: {in_progress:>4}", file=out)
     print(f"  ⬜ 待开始: {pending:>4}    🔴 阻塞/等待: {blocked:>4}", file=out)
     print(f"  ❌ 失败:   {failed:>4}    🚫 已取消: {cancelled:>4}", file=out)
 
-    print(f"\n-- 按 Phase 分组 --", file=out)
+    print("\n-- 按 Phase 分组 --", file=out)
     for ph in sorted(phase_counts):
         pc = phase_counts[ph]
         ph_total = sum(pc.values())
@@ -147,7 +167,7 @@ def render_all(cards: list) -> None:
         if detail:
             print(f"    {detail}", file=out)
 
-    print(f"\n-- 状态分布 --", file=out)
+    print("\n-- 状态分布 --", file=out)
     for sv in _STATUS_ORDER:
         n = status_counts.get(sv, 0)
         if n == 0:
@@ -155,15 +175,18 @@ def render_all(cards: list) -> None:
         bar_w = min(30, max(1, int(n / max(total, 1) * 30)))
         print(f"  {_icon(sv)} {sv:<14} {'█' * bar_w} {n:>4}  ({n / max(total, 1):.0%})", file=out)
 
-    print(f"\n-- 优先级分布 --", file=out)
+    print("\n-- 优先级分布 --", file=out)
     for pv in sorted(priority_counts, key=lambda p: _PRIORITY_WEIGHT.get(p, 99)):
         n = priority_counts[pv]
         label = _PRIORITY_LABEL.get(pv, pv)
         bar_w = min(30, max(1, int(n / max(total, 1) * 30)))
         print(f"  {label:<8} {'█' * bar_w} {n:>4}", file=out)
 
-    active_p0 = [c for c in cards if c.priority.value == "P0"
-                 and _sv(c) in ("pending", "ready", "in_progress", "blocked", "waiting")]
+    active_p0 = [
+        c
+        for c in cards
+        if c.priority.value == "P0" and _sv(c) in ("pending", "ready", "in_progress", "blocked", "waiting")
+    ]
     if active_p0:
         print(f"\n-- 活跃 P0 任务 ({len(active_p0)} 个) --", file=out)
         for c in sorted(active_p0, key=lambda x: x.task_id):
@@ -184,9 +207,14 @@ def render_json(cards: list) -> None:
         "total": len(cards),
         "by_status": dict(status_counts),
         "tasks": [
-            {"task_id": c.task_id, "title": c.title, "status": _sv(c),
-             "priority": c.priority.value, "phase": c.phase,
-             "source_blueprint": c.source_blueprint}
+            {
+                "task_id": c.task_id,
+                "title": c.title,
+                "status": _sv(c),
+                "priority": c.priority.value,
+                "phase": c.phase,
+                "source_blueprint": c.source_blueprint,
+            }
             for c in sorted(cards, key=lambda x: x.task_id)
         ],
     }
@@ -215,7 +243,7 @@ def render_drift_check(repo: TaskRepository) -> int:
     total_drift = len(should_be_ready) + len(should_be_blocked)
 
     print(f"\n{'=' * 60}")
-    print(f"  依赖漂移检测 (DM-362)")
+    print("  依赖漂移检测 (DM-362)")
     print(f"{'=' * 60}")
 
     if should_be_ready:
@@ -223,22 +251,24 @@ def render_drift_check(repo: TaskRepository) -> int:
         for item in should_be_ready:
             print(f"  {item['task_id']}: {item['current_status']} → {item['expected_status']} | {item['details']}")
     else:
-        print(f"\n-- 应提升为READY的任务: 无 --")
+        print("\n-- 应提升为READY的任务: 无 --")
 
     if should_be_blocked:
         print(f"\n-- 应降为BLOCKED的任务 ({len(should_be_blocked)} 个) --")
         for item in should_be_blocked:
             print(f"  {item['task_id']}: {item['current_status']} → {item['expected_status']} | {item['details']}")
     else:
-        print(f"\n-- 应降为BLOCKED的任务: 无 --")
+        print("\n-- 应降为BLOCKED的任务: 无 --")
 
     if auto_promoted:
         print(f"\n-- 最近auto_promoted事件 ({len(auto_promoted)} 条) --")
         for item in auto_promoted[:10]:
             payload = item.get("payload", {})
-            print(f"  {item['task_id']}: {payload.get('from_status','?')} → {payload.get('to_status','?')} (触发: {payload.get('trigger_task','?')}) @ {item['created_at'][:19]}")
+            print(
+                f"  {item['task_id']}: {payload.get('from_status', '?')} → {payload.get('to_status', '?')} (触发: {payload.get('trigger_task', '?')}) @ {item['created_at'][:19]}"
+            )
     else:
-        print(f"\n-- 最近auto_promoted事件: 无 --")
+        print("\n-- 最近auto_promoted事件: 无 --")
 
     print(f"\n  漂移总计: {total_drift}")
     print(f"{'─' * 60}\n")
@@ -250,7 +280,7 @@ def render_auto_close_dry_run(repo: TaskRepository) -> int:
     candidates = repo.detect_completed_candidates()
 
     print(f"\n{'=' * 60}")
-    print(f"  已完成候选检测 (DM-363 dry-run)")
+    print("  已完成候选检测 (DM-363 dry-run)")
     print(f"{'=' * 60}")
 
     if candidates:
@@ -260,7 +290,7 @@ def render_auto_close_dry_run(repo: TaskRepository) -> int:
             for f in item["existing_files"]:
                 print(f"    ✅ {f}")
     else:
-        print(f"\n-- 无已完成未关闭的任务 --")
+        print("\n-- 无已完成未关闭的任务 --")
 
     print(f"\n  候选总计: {len(candidates)}")
     print(f"{'─' * 60}\n")
@@ -272,12 +302,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="任务系统全局进度摘要")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出")
     parser.add_argument("--quiet", "-q", action="store_true", help="安静模式")
-    parser.add_argument("--warn-only", action="store_true",
-                        help="警告模式——不因未完成任务返回非零 exit code")
-    parser.add_argument("--drift-check", action="store_true",
-                        help="DM-362: 依赖漂移检测")
-    parser.add_argument("--auto-close-dry-run", action="store_true",
-                        help="DM-363: 已完成候选检测(dry-run)")
+    parser.add_argument("--warn-only", action="store_true", help="警告模式——不因未完成任务返回非零 exit code")
+    parser.add_argument("--drift-check", action="store_true", help="DM-362: 依赖漂移检测")
+    parser.add_argument("--auto-close-dry-run", action="store_true", help="DM-363: 已完成候选检测(dry-run)")
     args = parser.parse_args()
 
     init_db()

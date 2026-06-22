@@ -45,23 +45,22 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 from typing import Any
 
 __all__ = [
-    "ZephyrBaseError",
     "ConfigError",
-    "ContractError",
-    "SecurityError",
-    "ValidationError",
-    "TaskError",
-    "PipelineError",
-    "GateError",
     "ContextError",
-    "FeedbackError",
+    "ContractError",
     "DataError",
+    "FeedbackError",
+    "GateError",
     "IOError",
+    "PipelineError",
+    "SecurityError",
+    "TaskError",
     "UnimplementedError",
+    "ValidationError",
+    "ZephyrBaseError",
 ]
 
 

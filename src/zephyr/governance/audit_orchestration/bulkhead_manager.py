@@ -23,8 +23,6 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
-
 BULKHEAD_QUOTAS: dict[str, dict] = {
     "orchestrator": {"threads": 8, "sqlite_connections": 3, "memory_mb": 256},
     "script_system": {"threads": 4, "sqlite_connections": 2, "memory_mb": 128},

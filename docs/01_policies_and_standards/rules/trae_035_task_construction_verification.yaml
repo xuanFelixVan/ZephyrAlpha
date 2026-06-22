@@ -1,9 +1,19 @@
 rule_id: TRAE-035
 title: 任务系统-施工与验证
+version: 1.2.3
+layer: L1
+module_id: TRAE-035
+depends_on: []
+tags:
+- TRAE
+- task_construction_verification
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - TASK-002
 - TASK-003
-layer: L1
 severity: error
 scope: task_construction_verification
 domain: TRAE
@@ -137,11 +147,9 @@ sections:
       fail: 可豁免(但仍需循环验收)
     actions:
     - type: mandatory
-      step: 循环验收通过后重新生成依赖全景图——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py
-        --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
+      step: 循环验收通过后重新生成依赖全景图——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
     - type: mandatory
-      step: 重新生成路径树——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py
-        --write
+      step: 重新生成路径树——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
     - type: mandatory
       step: 运行诊断——python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
     - type: mandatory
@@ -160,13 +168,11 @@ sections:
     - type: mandatory
       step: G7注册审计——python D:/ZephyrAlpha/scripts/governance/audit_registration.py
     - type: mandatory
-      step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py
-        --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
+      step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
     - type: mandatory
       step: G6依赖图诊断——python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
     - type: mandatory
-      step: 路径树刷新——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py
-        --write
+      step: 路径树刷新——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
     prohibitions: []
   task_002_scope:
     title: 施工与验证-目的与范围
@@ -273,8 +279,7 @@ sections:
       expected_exit: 0
       on_fail: 有孤儿禁止关闭
     - step: G6依赖全景图生成（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
-      command: python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py
-        --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db
+      command: python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db
       expected_exit: 0
       on_fail: 结构未同步
     - step: G6依赖图诊断
@@ -282,8 +287,7 @@ sections:
       expected_exit: 0
       on_fail: 有错误需修复
     - step: 路径树刷新
-      command: python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py
-        --write
+      command: python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
       expected_exit: 0
       on_fail: 下个session看到旧结构
   task_002_normative_refs:
@@ -346,7 +350,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   change_history:
   - version: 1.2.3
     date: '2026-06-21'

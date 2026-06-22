@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.governance.audit_trail.compliance_map import (
     ComplianceFramework,
     ComplianceMapper,

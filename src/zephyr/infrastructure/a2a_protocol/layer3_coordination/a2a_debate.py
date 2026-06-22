@@ -29,7 +29,6 @@
 输出: DebateResult — winner/consensus/synthesis
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -81,28 +80,34 @@ class A2ADebate:
     ) -> DebateResult:
         result = DebateResult(agent_a_id=agent_a_id, agent_b_id=agent_b_id, topic=topic)
 
-        result.rounds.append(DebateRound(
-            phase=DebatePhase.CLAIM,
-            agent_a_statement=claim_a,
-            agent_b_statement=claim_b,
-            round_number=1,
-        ))
+        result.rounds.append(
+            DebateRound(
+                phase=DebatePhase.CLAIM,
+                agent_a_statement=claim_a,
+                agent_b_statement=claim_b,
+                round_number=1,
+            )
+        )
 
         rebuttal_a, rebuttal_b = self._rebut(claim_a, claim_b)
-        result.rounds.append(DebateRound(
-            phase=DebatePhase.REBUTTAL,
-            agent_a_statement=rebuttal_a,
-            agent_b_statement=rebuttal_b,
-            round_number=2,
-        ))
+        result.rounds.append(
+            DebateRound(
+                phase=DebatePhase.REBUTTAL,
+                agent_a_statement=rebuttal_a,
+                agent_b_statement=rebuttal_b,
+                round_number=2,
+            )
+        )
 
         synthesis_a, synthesis_b = self._synthesize(claim_a, claim_b, rebuttal_a, rebuttal_b)
-        result.rounds.append(DebateRound(
-            phase=DebatePhase.SYNTHESIS,
-            agent_a_statement=synthesis_a,
-            agent_b_statement=synthesis_b,
-            round_number=3,
-        ))
+        result.rounds.append(
+            DebateRound(
+                phase=DebatePhase.SYNTHESIS,
+                agent_a_statement=synthesis_a,
+                agent_b_statement=synthesis_b,
+                round_number=3,
+            )
+        )
 
         result.synthesis = f"{agent_a_id}: {synthesis_a}\n{agent_b_id}: {synthesis_b}"
         result.consensus = self._judge(result)
@@ -115,7 +120,11 @@ class A2ADebate:
         return rebuttal_a, rebuttal_b
 
     def _synthesize(
-        self, claim_a: str, claim_b: str, rebuttal_a: str, rebuttal_b: str,
+        self,
+        claim_a: str,
+        claim_b: str,
+        rebuttal_a: str,
+        rebuttal_b: str,
     ) -> tuple[str, str]:
         synthesis_a = f"Integrated: best of {claim_a} with guardrails from {claim_b}"
         synthesis_b = f"Integrated: core of {claim_b} protected by {claim_a}"

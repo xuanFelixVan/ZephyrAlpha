@@ -19,14 +19,13 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
 import argparse
 import hashlib
 import json
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 
 def verify_jsonl_chain(jsonl_path: str) -> dict:
@@ -36,7 +35,7 @@ def verify_jsonl_chain(jsonl_path: str) -> dict:
     event_count = 0
 
     try:
-        with open(jsonl_path, "r", encoding="utf-8") as f:
+        with open(jsonl_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
@@ -74,10 +73,13 @@ def verify_jsonl_chain(jsonl_path: str) -> dict:
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Zero-dependency audit trail integrity verifier")
-    parser.add_argument("jsonl", nargs="?", default="data/audit-trail/events.jsonl",
-                        help="Path to events.jsonl (default: data/audit-trail/events.jsonl)")
-    parser.add_argument("--warn-only", action="store_true",
-                        help="Always exit 0 (for safety in automated scans)")
+    parser.add_argument(
+        "jsonl",
+        nargs="?",
+        default="data/audit-trail/events.jsonl",
+        help="Path to events.jsonl (default: data/audit-trail/events.jsonl)",
+    )
+    parser.add_argument("--warn-only", action="store_true", help="Always exit 0 (for safety in automated scans)")
     args = parser.parse_args()
 
     result = verify_jsonl_chain(args.jsonl)

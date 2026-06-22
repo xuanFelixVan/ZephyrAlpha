@@ -11,7 +11,7 @@ emergency_override.py — 新增文件
 class EmergencyOverrideToken(BaseModel):
     """
     Owner签发的JIT临时越权令牌。
-    
+
     安全约束：
     - 最大有效期：5分钟
     - 最大签发数：每小时3个
@@ -34,7 +34,7 @@ class EmergencyOverrideToken(BaseModel):
 class EmergencyOverrideManager:
     MAX_TOKENS_PER_HOUR: int = 3
     MAX_TOKEN_LIFETIME_MINUTES: int = 5
-    
+
     async def issue_token(
         self,
         owner: OwnerIdentity,
@@ -49,7 +49,7 @@ class EmergencyOverrideManager:
         # 3. 签发JWT格式token（含layers和operations声明）
         # 4. 写入不可变审计日志：{who, what, when, why}
         # 5. 通知其他活跃Agent：有紧急覆盖在执行
-    
+
     async def validate_and_consume(
         self,
         token: EmergencyOverrideToken,
@@ -63,6 +63,6 @@ class EmergencyOverrideManager:
         # 4. allowed_operations匹配检查
         # 5. used_count++——一次性消耗
         # 6. 审计日志：{token_id, agent_id, action, layers_bypassed, result}
-    
+
     async def revoke_token(self, token_id: str) -> bool:
         """Owner手动吊销——即使token未过期也立即失效"""

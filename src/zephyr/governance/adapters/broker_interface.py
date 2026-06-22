@@ -39,7 +39,7 @@ SSoT: cross_layer_contracts.yaml v3.0 → OCP-003
 from __future__ import annotations
 
 import abc
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.order import Order
@@ -82,7 +82,7 @@ class BrokerInterface(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def query_order(self, broker_order_id: str) -> Optional[Order]:
+    def query_order(self, broker_order_id: str) -> Order | None:
         """查询委托状态"""
         ...
 

@@ -61,10 +61,12 @@ class ToilQuantification:
         if action_class == ActionClass.MANUAL_REQUIRED:
             self.manual_actions += 1
 
-        self.action_history.append({
-            "ts": now,
-            "class": action_class.value,
-        })
+        self.action_history.append(
+            {
+                "ts": now,
+                "class": action_class.value,
+            }
+        )
 
         cutoff = now - self.window_days * 86400
         self.action_history = [a for a in self.action_history if a["ts"] > cutoff]

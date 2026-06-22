@@ -1,6 +1,12 @@
 # [A_module] module_id=MOD-ORC__pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+from zephyr.autonomy_core.architecture_context_loader import (
+    DEFAULT_ARCH_CONTEXT_PATH,
+    format_architecture_context_excerpt,
+    load_architecture_context_dict,
+)
+
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core._pipeline
 # [INVARIANTS] __all__列表不变; 公开API不变
@@ -11,7 +17,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_context_engine_imports.py
-
 from zephyr.autonomy_core.context_pipeline import (
     ContextFourStageResult,
     run_context_four_stage,
@@ -20,11 +25,6 @@ from zephyr.autonomy_core.context_pipeline import (
 from zephyr.autonomy_core.context_rule_registry import (
     ContextRule,
     ContextRuleRegistry,
-)
-from zephyr.autonomy_core.architecture_context_loader import (
-    DEFAULT_ARCH_CONTEXT_PATH,
-    format_architecture_context_excerpt,
-    load_architecture_context_dict,
 )
 from zephyr.autonomy_core.token_budget import (
     DEFAULT_CONTEXT_TOKEN_BUDGET,
@@ -47,14 +47,14 @@ _SUBMODULES = [
 ]
 
 __all__ = [
+    "DEFAULT_ARCH_CONTEXT_PATH",
+    "DEFAULT_CONTEXT_TOKEN_BUDGET",
     "ContextFourStageResult",
-    "run_context_four_stage",
-    "run_context_four_stage_or_raise",
     "ContextRule",
     "ContextRuleRegistry",
-    "DEFAULT_ARCH_CONTEXT_PATH",
+    "estimate_tokens",
     "format_architecture_context_excerpt",
     "load_architecture_context_dict",
-    "DEFAULT_CONTEXT_TOKEN_BUDGET",
-    "estimate_tokens",
+    "run_context_four_stage",
+    "run_context_four_stage_or_raise",
 ]

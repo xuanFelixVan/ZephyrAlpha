@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """core.sync — auto-generated package init."""
+
 from . import blueprint_code_sync
 
-__all__ = ['blueprint_code_sync']
-
+__all__ = ["blueprint_code_sync"]

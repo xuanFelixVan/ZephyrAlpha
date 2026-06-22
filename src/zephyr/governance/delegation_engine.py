@@ -27,7 +27,6 @@ Supports load-balanced, expertise-match, round-robin, and priority-queue strateg
 Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §4
 """
 
-
 from __future__ import annotations
 
 import threading

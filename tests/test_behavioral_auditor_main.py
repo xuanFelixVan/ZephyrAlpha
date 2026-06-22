@@ -11,36 +11,44 @@
 # [TESTS] test_behavioral_auditor_main.py
 
 import argparse
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from zephyr.autonomy_core.__main__ import _cmd_scan, _cmd_self_test, _cmd_budget, _cmd_list, _cmd_status
+import pytest
+
+from zephyr.autonomy_core.__main__ import _cmd_budget, _cmd_list, _cmd_scan, _cmd_self_test, _cmd_status
 
 
 class TestMainFunction:
     def test_status_command(self):
-        with patch("zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]):
-            with patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier") as mock_cls:
-                mock_inst = MagicMock()
-                mock_inst.run_all.return_value = MagicMock(summary="8/8 checks passed")
-                mock_cls.return_value = mock_inst
-                with patch("zephyr.behavioral_audit.self_check.bootstrap_self_check", return_value=True):
-                    with patch("sys.argv", ["prog", "status"]):
-                        from zephyr.autonomy_core.__main__ import main
-                        result = main()
-                        assert result == 0
+        with (
+            patch(
+                "zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]
+            ),
+            patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier") as mock_cls,
+        ):
+            mock_inst = MagicMock()
+            mock_inst.run_all.return_value = MagicMock(summary="8/8 checks passed")
+            mock_cls.return_value = mock_inst
+            with patch("zephyr.behavioral_audit.self_check.bootstrap_self_check", return_value=True):
+                with patch("sys.argv", ["prog", "status"]):
+                    from zephyr.autonomy_core.__main__ import main
+
+                    result = main()
+                    assert result == 0
 
     def test_scan_command(self):
-        with patch("zephyr.orchestration.agent_lifecycle.__main__._cmd_scan", return_value=0):
+        with patch("zephyr.autonomy_core.__main__._cmd_scan", return_value=0):
             with patch("sys.argv", ["prog", "scan"]):
                 from zephyr.autonomy_core.__main__ import main
+
                 result = main()
                 assert result == 0
 
     def test_no_command_defaults(self):
-        with patch("zephyr.orchestration.agent_lifecycle.__main__._cmd_status", return_value=0):
+        with patch("zephyr.autonomy_core.__main__._cmd_status", return_value=0):
             with patch("sys.argv", ["prog"]):
                 from zephyr.autonomy_core.__main__ import main
+
                 result = main()
                 assert result == 0
 
@@ -69,7 +77,7 @@ class TestCmdScan:
         with patch("zephyr.behavioral_audit.drift_engine.ScanLevel", mock_scan_level):
             with patch("zephyr.behavioral_audit.drift_engine.build_report", return_value=mock_report):
                 with patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_result):
-                    with patch("zephyr.orchestration.agent_lifecycle.__main__.asyncio") as mock_asyncio:
+                    with patch("zephyr.autonomy_core.__main__.asyncio") as mock_asyncio:
                         mock_loop = MagicMock()
                         mock_loop.run_until_complete.return_value = mock_result
                         mock_asyncio.new_event_loop.return_value = mock_loop
@@ -92,7 +100,7 @@ class TestCmdScan:
         with patch("zephyr.behavioral_audit.drift_engine.ScanLevel", mock_scan_level):
             with patch("zephyr.behavioral_audit.drift_engine.build_report", return_value=mock_report):
                 with patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_result):
-                    with patch("zephyr.orchestration.agent_lifecycle.__main__.asyncio") as mock_asyncio:
+                    with patch("zephyr.autonomy_core.__main__.asyncio") as mock_asyncio:
                         mock_loop = MagicMock()
                         mock_loop.run_until_complete.return_value = mock_result
                         mock_asyncio.new_event_loop.return_value = mock_loop
@@ -103,7 +111,7 @@ class TestCmdScan:
         args = argparse.Namespace(level="LIGHT")
         mock_scan_level = MagicMock()
         with patch("zephyr.behavioral_audit.drift_engine.ScanLevel", mock_scan_level):
-            with patch("zephyr.orchestration.agent_lifecycle.__main__.asyncio") as mock_asyncio:
+            with patch("zephyr.autonomy_core.__main__.asyncio") as mock_asyncio:
                 mock_loop = MagicMock()
                 mock_loop.run_until_complete.side_effect = RuntimeError("boom")
                 mock_asyncio.new_event_loop.return_value = mock_loop
@@ -155,25 +163,37 @@ class TestCmdBudget:
 
     def test_budget_allowed(self):
         args = argparse.Namespace(module_id="MOD-INF-023", tier="P0", json=False)
-        with patch("zephyr.behavioral_audit.drift_infrastructure.check_budget_for_gate", return_value={"allowed": True, "reason": "OK"}):
+        with patch(
+            "zephyr.behavioral_audit.drift_infrastructure.check_budget_for_gate",
+            return_value={"allowed": True, "reason": "OK"},
+        ):
             result = _cmd_budget(args)
             assert result == 0
 
     def test_budget_blocked(self):
         args = argparse.Namespace(module_id="MOD-INF-023", tier="P0", json=False)
-        with patch("zephyr.behavioral_audit.drift_infrastructure.check_budget_for_gate", return_value={"allowed": False, "reason": "Over budget"}):
+        with patch(
+            "zephyr.behavioral_audit.drift_infrastructure.check_budget_for_gate",
+            return_value={"allowed": False, "reason": "Over budget"},
+        ):
             result = _cmd_budget(args)
             assert result == 1
 
     def test_budget_json(self):
         args = argparse.Namespace(module_id="MOD-INF-023", tier="P0", json=True)
-        with patch("zephyr.behavioral_audit.drift_infrastructure.check_budget_for_gate", return_value={"allowed": True, "reason": "OK"}):
+        with patch(
+            "zephyr.behavioral_audit.drift_infrastructure.check_budget_for_gate",
+            return_value={"allowed": True, "reason": "OK"},
+        ):
             result = _cmd_budget(args)
             assert result == 0
 
     def test_budget_default_module(self):
         args = argparse.Namespace(module_id=None, tier="P0", json=False)
-        with patch("zephyr.behavioral_audit.drift_infrastructure.check_budget_for_gate", return_value={"allowed": True, "reason": "OK"}) as mock_cb:
+        with patch(
+            "zephyr.behavioral_audit.drift_infrastructure.check_budget_for_gate",
+            return_value={"allowed": True, "reason": "OK"},
+        ) as mock_cb:
             result = _cmd_budget(args)
             mock_cb.assert_called_once_with("MOD-INF-023", "P0")
 
@@ -187,7 +207,9 @@ class TestCmdList:
 
     def test_list_text(self):
         args = argparse.Namespace(json=False)
-        mock_det = MagicMock(id="DD-001", severity=MagicMock(value="HIGH"), category="arch", status="active", auto_fixable=False)
+        mock_det = MagicMock(
+            id="DD-001", severity=MagicMock(value="HIGH"), category="arch", status="active", auto_fixable=False
+        )
         with patch("zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[mock_det]):
             result = _cmd_list(args)
             assert result == 0
@@ -195,9 +217,12 @@ class TestCmdList:
     def test_list_json(self):
         args = argparse.Namespace(json=True)
         mock_det = MagicMock(
-            id="DD-001", drift_dimension="architecture",
-            severity=MagicMock(value="HIGH"), category="arch",
-            status="active", auto_fixable=False,
+            id="DD-001",
+            drift_dimension="architecture",
+            severity=MagicMock(value="HIGH"),
+            category="arch",
+            status="active",
+            auto_fixable=False,
         )
         with patch("zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[mock_det]):
             result = _cmd_list(args)
@@ -215,21 +240,29 @@ class TestCmdStatus:
         mock_verifier = MagicMock()
         mock_result = MagicMock(summary="8/8 checks passed")
         mock_verifier.run_all.return_value = mock_result
-        with patch("zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]):
-            with patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier", return_value=mock_verifier):
-                with patch("zephyr.behavioral_audit.self_check.bootstrap_self_check", return_value=True):
-                    result = _cmd_status(MagicMock())
-                    assert result == 0
+        with (
+            patch(
+                "zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]
+            ),
+            patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier", return_value=mock_verifier),
+        ):
+            with patch("zephyr.behavioral_audit.self_check.bootstrap_self_check", return_value=True):
+                result = _cmd_status(MagicMock())
+                assert result == 0
 
     def test_status_degraded(self):
         mock_verifier = MagicMock()
         mock_result = MagicMock(summary="5/8 checks passed")
         mock_verifier.run_all.return_value = mock_result
-        with patch("zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]):
-            with patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier", return_value=mock_verifier):
-                with patch("zephyr.behavioral_audit.self_check.bootstrap_self_check", return_value=False):
-                    result = _cmd_status(MagicMock())
-                    assert result == 1
+        with (
+            patch(
+                "zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]
+            ),
+            patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier", return_value=mock_verifier),
+        ):
+            with patch("zephyr.behavioral_audit.self_check.bootstrap_self_check", return_value=False):
+                result = _cmd_status(MagicMock())
+                assert result == 1
 
     def test_status_registry_fail(self):
         with patch("zephyr.behavioral_audit.drift_engine.load_detector_registry", side_effect=RuntimeError("fail")):
@@ -247,8 +280,12 @@ class TestCmdStatus:
         mock_verifier = MagicMock()
         mock_result = MagicMock(summary="5/8 checks passed")
         mock_verifier.run_all.return_value = mock_result
-        with patch("zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]):
-            with patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier", return_value=mock_verifier):
-                with patch("zephyr.behavioral_audit.self_check.bootstrap_self_check", return_value=True):
-                    result = _cmd_status(MagicMock())
-                    assert result == 1
+        with (
+            patch(
+                "zephyr.behavioral_audit.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]
+            ),
+            patch("zephyr.behavioral_audit.self_test_verifier.SelfTestVerifier", return_value=mock_verifier),
+        ):
+            with patch("zephyr.behavioral_audit.self_check.bootstrap_self_check", return_value=True):
+                result = _cmd_status(MagicMock())
+                assert result == 1

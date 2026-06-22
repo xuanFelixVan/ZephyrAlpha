@@ -14,6 +14,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: Session 门禁检查完整性校验（OPS-VC-005 §3 — 12项gate_check）
@@ -56,6 +57,7 @@ GATE_CHECK_ITEMS = {
     "D2_permission_mode",
 }
 
+
 def find_latest_session_log() -> Path | None:
     """查找最新会话日志"""
     log_dirs = [
@@ -71,6 +73,7 @@ def find_latest_session_log() -> Path | None:
             return logs[0]
     return None
     "查找最新会话日志."
+
 
 def main() -> None:
     """入口函数"""
@@ -108,13 +111,14 @@ def main() -> None:
     if findings:
         print(f"\n[GATE-CHECK] {len(findings)} 个门禁检查问题（{log_path.name}）:", file=sys.stderr)
         for f in findings:
-            print(f'  [{f['severity']}] {f['detail']}', file=sys.stderr)
+            print(f"  [{f['severity']}] {f['detail']}", file=sys.stderr)
     else:
         print(f"[GATE-CHECK] 门禁检查完整（{log_path.name}）", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
     "入口函数."
+
 
 if __name__ == "__main__":
     main()

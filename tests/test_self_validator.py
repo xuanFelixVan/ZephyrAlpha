@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_self_validator.py
 
-import pytest
 from zephyr.governance.self_validator import SelfValidator
 
 

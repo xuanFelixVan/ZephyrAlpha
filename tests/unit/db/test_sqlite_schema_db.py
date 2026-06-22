@@ -36,6 +36,7 @@ Task: T-1-02 | Safety: M | experimental
 import sqlite3
 
 import pytest
+
 from zephyr.governance.persistence.sqlite_schema import (
     get_db_connection,
     init_db,
@@ -224,7 +225,7 @@ class TestTaskFilesForeignKey:
         conn.execute("PRAGMA foreign_keys = ON")
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
-                "INSERT INTO task_files (task_id, file_path, role) " "VALUES ('NONEXISTENT-999', 'test.py', 'in_scope')"
+                "INSERT INTO task_files (task_id, file_path, role) VALUES ('NONEXISTENT-999', 'test.py', 'in_scope')"
             )
         conn.close()
 

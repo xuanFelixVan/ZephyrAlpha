@@ -5,6 +5,6 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-from zephyr.integration.local_model.ollama_chat import OllamaChat, OllamaChat as _OllamaChat  # noqa: F401
+from zephyr.integration.local_model.ollama_chat import OllamaChat
 
 __all__ = ["OllamaChat"]

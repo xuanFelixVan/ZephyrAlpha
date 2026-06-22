@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 test_streaming_reader.py - StreamingReader unit tests
 ======================================================
@@ -16,9 +17,7 @@ TASK-INF-0140 Phase 2 verification.
 
 import json
 
-import pytest
-
-from zephyr.integration.shared_08.io.streaming_reader import tail_jsonl, stream_jsonl
+from zephyr.integration.shared_08.io.streaming_reader import stream_jsonl, tail_jsonl
 
 
 def _write_jsonl(path, records: list[dict]) -> None:

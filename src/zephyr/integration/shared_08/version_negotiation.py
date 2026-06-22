@@ -11,16 +11,16 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/shared/test_version_negotiation.py
-
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import total_ordering
-from typing import Any
+
 
 class SchemaName(Enum):
     TASKCARD = "TaskCard"
     FINDING = "Finding"
     KNOWLEDGE_ENTRY = "KnowledgeEntry"
+
 
 class ChangeType(Enum):
     ADD_OPTIONAL = "add_optional"
@@ -28,6 +28,7 @@ class ChangeType(Enum):
     REMOVE_FIELD = "remove_field"
     TYPE_CHANGE = "type_change"
     RENAME_FIELD = "rename_field"
+
 
 @total_ordering
 @dataclass(frozen=True)
@@ -61,6 +62,7 @@ class VersionSegment:
     def __hash__(self) -> int:
         return hash((self.major, self.minor, self.patch))
 
+
 @dataclass
 class DeprecationRecord:
     schema_name: SchemaName
@@ -70,6 +72,7 @@ class DeprecationRecord:
     reason: str = ""
     migration_guide: str = ""
 
+
 @dataclass
 class NegotiationResult:
     schema_name: SchemaName
@@ -78,6 +81,7 @@ class NegotiationResult:
     negotiated_version: str
     degraded: bool = False
     warnings: list[str] = field(default_factory=list)
+
 
 class VersionNegotiator:
     def __init__(self) -> None:
@@ -154,7 +158,12 @@ class VersionNegotiator:
         )
 
     def check_breaking_change(self, change_type: ChangeType, version: str) -> bool:
-        return change_type in (ChangeType.REMOVE_FIELD, ChangeType.ADD_REQUIRED, ChangeType.TYPE_CHANGE, ChangeType.RENAME_FIELD)
+        return change_type in (
+            ChangeType.REMOVE_FIELD,
+            ChangeType.ADD_REQUIRED,
+            ChangeType.TYPE_CHANGE,
+            ChangeType.RENAME_FIELD,
+        )
 
     def required_transition_versions(self, change_type: ChangeType) -> int:
         mapping: dict[ChangeType, int] = {
@@ -165,6 +174,7 @@ class VersionNegotiator:
             ChangeType.RENAME_FIELD: 2,
         }
         return mapping.get(change_type, 0)
+
 
 __all__ = [
     "ChangeType",

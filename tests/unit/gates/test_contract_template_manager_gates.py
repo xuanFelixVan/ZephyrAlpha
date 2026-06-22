@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 Unit tests for contract_template_manager.py (T-2-31, C55)
 ==========================================================
@@ -17,6 +18,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.rule_enforcement.contract_template_manager import (
     ContractParameter,
     ContractTemplate,

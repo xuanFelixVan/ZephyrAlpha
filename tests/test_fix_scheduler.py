@@ -12,12 +12,8 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock
-
-import pytest
-
 from zephyr.security.access_control.auto_fix_engine_03.fix_scheduler import FixScheduler, SchedulerMode
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixLevel, FixReport, FixStatus
+from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixLevel, FixReport
 
 
 def _make_action(target: str = "t.py") -> FixAction:
@@ -75,6 +71,7 @@ class TestStartStop:
 class TestSubmitEvent:
     def test_submit_event_event_driven(self):
         processed = []
+
         def fake_fix(actions):
             processed.extend(actions)
 

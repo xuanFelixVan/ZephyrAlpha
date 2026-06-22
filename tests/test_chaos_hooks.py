@@ -7,15 +7,12 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.trading.orchestrator.chaos_engine import ChaosEngine
 from zephyr.trading.orchestrator.chaos_hooks import (
     ChaosHook,
     ChaosHookPolicy,
     HookContext,
 )
-from zephyr.trading.orchestrator.fault_types import FaultTypeRegistry, LatencyFault
 
 
 class TestChaosHookPolicy:

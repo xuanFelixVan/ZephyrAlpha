@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from enum import Enum
 
+
 class WalkthroughScenario(str, Enum):
     COLD_START = "COLD_START"
     FINDING_TO_TASK = "FINDING_TO_TASK"
@@ -34,11 +35,13 @@ class WalkthroughScenario(str, Enum):
     STARTUP_SEQUENCE = "STARTUP_SEQUENCE"
     TEARDOWN_CLEANUP = "TEARDOWN_CLEANUP"
 
+
 class ScenarioResult:
     def __init__(self, scenario: str, passed: bool, failures: list[str] | None = None):
         self.scenario = scenario
         self.passed = passed
         self.failures = failures or []
+
 
 class EndToEndWalkthrough:
     def __init__(self):

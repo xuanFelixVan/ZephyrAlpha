@@ -15,8 +15,6 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
-import warnings
-
 import pytest
 
 models_mod = pytest.importorskip("zephyr.security.adversarial_validation.models")
@@ -79,7 +77,6 @@ def _make_scenario(
 
 @pytest.mark.e2e
 class TestDefenseRunnerE2E:
-
     def test_run_defense_with_gate_engine(self):
         if GateEngine is None:
             pytest.skip("GateEngine not available")
@@ -150,9 +147,14 @@ class TestDefenseRunnerE2E:
 
 @pytest.mark.e2e
 class TestConstitutionGuardE2E:
-
     def test_load_constitution(self):
-        registry_path = Path(__file__).resolve().parent.parent / "src" / "zephyr" / "red-blue-validator" / "_constitution-registry.yaml"
+        registry_path = (
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "zephyr"
+            / "red-blue-validator"
+            / "_constitution-registry.yaml"
+        )
         guard = ConstitutionGuard(registry_path=registry_path)
         articles = guard.load()
         assert len(articles) > 0
@@ -166,7 +168,13 @@ class TestConstitutionGuardE2E:
     def test_validate_constitution_with_gate_engine(self):
         if GateEngine is None:
             pytest.skip("GateEngine not available")
-        registry_path = Path(__file__).resolve().parent.parent / "src" / "zephyr" / "red-blue-validator" / "_constitution-registry.yaml"
+        registry_path = (
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "zephyr"
+            / "red-blue-validator"
+            / "_constitution-registry.yaml"
+        )
         with GateEngine() as ge:
             guard = ConstitutionGuard(registry_path=registry_path, gate_engine=ge)
             guard.load()
@@ -177,7 +185,13 @@ class TestConstitutionGuardE2E:
             assert isinstance(result, bool)
 
     def test_validate_constitution_fallback(self):
-        registry_path = Path(__file__).resolve().parent.parent / "src" / "zephyr" / "red-blue-validator" / "_constitution-registry.yaml"
+        registry_path = (
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "zephyr"
+            / "red-blue-validator"
+            / "_constitution-registry.yaml"
+        )
         guard = ConstitutionGuard(registry_path=registry_path, gate_engine=None)
         guard.load()
         active = guard.get_active()
@@ -222,12 +236,17 @@ class TestConstitutionGuardE2E:
                 target = target_map.get(first_article.defense_action)
                 if target and Path(target).exists():
                     assert result is True, (
-                        f"Article {first_article.article_id} with known existing path "
-                        f"should pass fallback check"
+                        f"Article {first_article.article_id} with known existing path should pass fallback check"
                     )
 
     def test_guard_attack(self):
-        registry_path = Path(__file__).resolve().parent.parent / "src" / "zephyr" / "red-blue-validator" / "_constitution-registry.yaml"
+        registry_path = (
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "zephyr"
+            / "red-blue-validator"
+            / "_constitution-registry.yaml"
+        )
         guard = ConstitutionGuard(registry_path=registry_path, gate_engine=None)
         guard.load()
         scenario_with_ref = _make_scenario(
@@ -253,7 +272,6 @@ class TestConstitutionGuardE2E:
 @pytest.mark.e2e
 @pytest.mark.filterwarnings("ignore::pytest.PytestUnhandledThreadExceptionWarning")
 class TestSteadyStateE2E:
-
     def test_import_time_real_measurement(self):
         ss = SteadyState()
         metric_def = None
@@ -275,9 +293,7 @@ class TestSteadyStateE2E:
         assert isinstance(t2, float)
         assert t1 >= 0
         assert t2 >= 0
-        assert abs(t1 - t2) < 500, (
-            f"Repeated import_time measurements should be close: t1={t1}ms t2={t2}ms"
-        )
+        assert abs(t1 - t2) < 500, f"Repeated import_time measurements should be close: t1={t1}ms t2={t2}ms"
 
     def test_verify_before_after_attack(self):
         ss = SteadyState()
@@ -311,9 +327,7 @@ class TestSteadyStateE2E:
         }
         summary = ss._compute_drift()
         assert isinstance(summary, SteadyStateSummary)
-        assert summary.drifted >= 1, (
-            f"Artificially drifted metrics should be detected: drifted={summary.drifted}"
-        )
+        assert summary.drifted >= 1, f"Artificially drifted metrics should be detected: drifted={summary.drifted}"
         assert summary.drift_rate > 0.0, (
             f"Drift rate should be positive when metrics changed: rate={summary.drift_rate}"
         )

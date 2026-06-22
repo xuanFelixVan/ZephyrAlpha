@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-4624
 title: L10 Compliance（2 个新文件）
 category: session_log

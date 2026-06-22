@@ -28,9 +28,8 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Optional
 
 from zephyr.infrastructure.asset_inventory.models import (
     AssetLifecycleEvent,
@@ -61,14 +60,14 @@ class Lifecycle:
 
     def __init__(
         self,
-        decay_days: Optional[dict[AssetType, int]] = None,
-        root: Optional[Path] = None,
+        decay_days: dict[AssetType, int] | None = None,
+        root: Path | None = None,
     ) -> None:
         self.decay_days = decay_days or DEFAULT_DECAY_DAYS
         self.root = root or Path(__file__).resolve().parents[3]
 
     def evaluate(self, index: UnifiedAssetIndex) -> tuple[list[AssetLifecycleEvent], UnifiedAssetIndex]:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         events: list[AssetLifecycleEvent] = []
         updated_assets: list[ClassifiedAsset] = []
 
@@ -83,7 +82,9 @@ class Lifecycle:
         new_index = index.model_copy(update={"assets": updated_assets})
         return events, new_index
 
-    def _evaluate_one(self, asset: ClassifiedAsset, now: datetime, index: UnifiedAssetIndex) -> list[AssetLifecycleEvent]:
+    def _evaluate_one(
+        self, asset: ClassifiedAsset, now: datetime, index: UnifiedAssetIndex
+    ) -> list[AssetLifecycleEvent]:
         events: list[AssetLifecycleEvent] = []
         triggered_by: list[str] = []
 
@@ -104,7 +105,7 @@ class Lifecycle:
 
         return events
 
-    def _check_time_decay(self, asset: ClassifiedAsset, now: datetime) -> Optional[AssetLifecycleEvent]:
+    def _check_time_decay(self, asset: ClassifiedAsset, now: datetime) -> AssetLifecycleEvent | None:
         if asset.status not in (AssetStatus.ACTIVE, AssetStatus.STALE):
             return None
 
@@ -112,7 +113,7 @@ class Lifecycle:
         mtime = asset.mtime_utc
 
         if mtime.tzinfo is None:
-            mtime = mtime.replace(tzinfo=timezone.utc)
+            mtime = mtime.replace(tzinfo=UTC)
 
         age = now - mtime
 
@@ -123,7 +124,7 @@ class Lifecycle:
                 asset_path=asset.relative_path,
                 from_status=AssetStatus.STALE,
                 to_status=AssetStatus.DEPRECATED,
-                rule_detail=f"最后修改 {age.days} 天前，超过 {max_days*2} 天",
+                rule_detail=f"最后修改 {age.days} 天前，超过 {max_days * 2} 天",
             )
         if age > timedelta(days=max_days) and asset.status == AssetStatus.ACTIVE:
             return AssetLifecycleEvent(
@@ -136,7 +137,7 @@ class Lifecycle:
             )
         return None
 
-    def _check_zero_ref(self, asset: ClassifiedAsset, index: UnifiedAssetIndex) -> Optional[AssetLifecycleEvent]:
+    def _check_zero_ref(self, asset: ClassifiedAsset, index: UnifiedAssetIndex) -> AssetLifecycleEvent | None:
         if asset.priority == Priority.P0:
             return None
         if asset.status in (AssetStatus.DEPRECATED, AssetStatus.ARCHIVED):
@@ -153,7 +154,7 @@ class Lifecycle:
             )
         return None
 
-    def _check_dir_convention(self, asset: ClassifiedAsset) -> Optional[AssetLifecycleEvent]:
+    def _check_dir_convention(self, asset: ClassifiedAsset) -> AssetLifecycleEvent | None:
         path = asset.relative_path
         if "/_deprecated/" in path and asset.status != AssetStatus.DEPRECATED:
             return AssetLifecycleEvent(
@@ -162,7 +163,7 @@ class Lifecycle:
                 asset_path=path,
                 from_status=asset.status,
                 to_status=AssetStatus.DEPRECATED,
-                rule_detail=f"文件位于 _deprecated/ 目录",
+                rule_detail="文件位于 _deprecated/ 目录",
             )
         if "/_archived/" in path and asset.status != AssetStatus.ARCHIVED:
             return AssetLifecycleEvent(
@@ -171,7 +172,7 @@ class Lifecycle:
                 asset_path=path,
                 from_status=asset.status,
                 to_status=AssetStatus.ARCHIVED,
-                rule_detail=f"文件位于 _archived/ 目录",
+                rule_detail="文件位于 _archived/ 目录",
             )
         return None
 
@@ -180,23 +181,26 @@ class Lifecycle:
             return
         try:
             from zephyr.governance.audit_trail.writer import AuditWriter
+
             writer = AuditWriter()
             for evt in events:
-                writer.write({
-                    "event_type": "lifecycle_state_change",
-                    "agent_id": "asset-inventory",
-                    "session_id": "auto",
-                    "target_path": evt.asset_path,
-                    "operation": evt.event_type,
-                    "status": f"{evt.from_status.value}→{evt.to_status.value}",
-                    "payload": {
-                        "from_status": evt.from_status.value,
-                        "to_status": evt.to_status.value,
-                        "rule_detail": evt.rule_detail,
-                    },
-                    "provenance": "automated",
-                    "metadata": {"event_id": evt.event_id},
-                })
+                writer.write(
+                    {
+                        "event_type": "lifecycle_state_change",
+                        "agent_id": "asset-inventory",
+                        "session_id": "auto",
+                        "target_path": evt.asset_path,
+                        "operation": evt.event_type,
+                        "status": f"{evt.from_status.value}→{evt.to_status.value}",
+                        "payload": {
+                            "from_status": evt.from_status.value,
+                            "to_status": evt.to_status.value,
+                            "rule_detail": evt.rule_detail,
+                        },
+                        "provenance": "automated",
+                        "metadata": {"event_id": evt.event_id},
+                    }
+                )
         except Exception:
             pass
 
@@ -207,6 +211,7 @@ class Lifecycle:
             return
 
         import yaml
+
         raw = yaml.safe_load(index_path.read_text(encoding="utf-8"))
         index = UnifiedAssetIndex(**raw)
         events, new_index = self.evaluate(index)
@@ -217,7 +222,7 @@ class Lifecycle:
 
 
 def _generate_event_id() -> str:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     seq = str(now.timestamp()).replace(".", "")[-4:]
     return f"LCEVT-{now.strftime('%Y%m%d')}-{seq}"
 

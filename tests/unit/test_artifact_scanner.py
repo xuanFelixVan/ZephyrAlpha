@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """ArtifactScanner — SSRF / 凭据等规则冒烟测试。"""
 
 

@@ -35,7 +35,7 @@ Phase 定义：
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -91,7 +91,7 @@ class PhaseState(BaseModel):
 class ConstructionProgress(BaseModel):
     current_phase: ConstructionPhase = ConstructionPhase.PHASE_0
     phases: dict[str, PhaseState] = Field(default_factory=dict)
-    last_updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_updated: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class PhaseExecutor:
@@ -135,9 +135,9 @@ class PhaseExecutor:
 
         phase_state = self._progress.phases[phase.value]
         phase_state.status = PhaseStatus.IN_PROGRESS
-        phase_state.started_at = datetime.now(timezone.utc)
+        phase_state.started_at = datetime.now(UTC)
         phase_state.context_check_passed = True
-        self._progress.last_updated = datetime.now(timezone.utc)
+        self._progress.last_updated = datetime.now(UTC)
         return True
 
     def complete_phase(self, phase: ConstructionPhase) -> bool:
@@ -148,8 +148,8 @@ class PhaseExecutor:
             return False
 
         phase_state.status = PhaseStatus.COMPLETED
-        phase_state.completed_at = datetime.now(timezone.utc)
-        self._progress.last_updated = datetime.now(timezone.utc)
+        phase_state.completed_at = datetime.now(UTC)
+        self._progress.last_updated = datetime.now(UTC)
 
         next_idx = PHASE_ORDER.index(phase) + 1
         if next_idx < len(PHASE_ORDER):

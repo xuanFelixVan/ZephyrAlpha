@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_emergent_behavior_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.emergent_behavior_detector import (
     EmergenceState,

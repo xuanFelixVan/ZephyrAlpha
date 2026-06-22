@@ -12,8 +12,6 @@
 
 import time
 
-import pytest
-
 from zephyr.ops.diagnosers.temporal_integrity_guard import (
     TemporalIntegrityGuard,
     TimeAnomaly,

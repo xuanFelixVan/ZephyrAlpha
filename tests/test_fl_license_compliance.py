@@ -10,8 +10,7 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_license_compliance.py
 
-import pytest
-from zephyr.ops.gates.license_compliance import LicenseCompliance, LicenseRisk, DependencyLicense
+from zephyr.ops.gates.license_compliance import LicenseCompliance, LicenseRisk
 
 
 class TestLicenseComplianceInstantiation:

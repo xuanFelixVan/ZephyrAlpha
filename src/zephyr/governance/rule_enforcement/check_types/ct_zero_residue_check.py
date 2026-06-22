@@ -27,99 +27,43 @@ ZeroResidueCheckHandler — ZeroResidueCheckHandler
 
 """
 
-
-
-
 from __future__ import annotations
-
-
-
-
 
 from typing import Any
 
-
-
-
-
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
-
-
 from zephyr.governance.rule_enforcement.task_types import Task
 
 
-
-
-
-
-
-
 @register_check_type
-
-
 class ZeroResidueCheckHandler(CheckTypeHandler):
-
-
     name = "zero_residue_check"
 
-
-
-
-
     def run(
-
-
         self,
-
-
         task: Task,
-
-
         params: dict[str, Any],
-
-
         check: Any,
-
-
         project_root: Any,
-
-
     ) -> list[dict[str, Any]]:
+        violations = []
 
+        try:
+            from zephyr.governance.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner
 
-                violations = []
+            scanner = ZeroResidueScanner(project_root=project_root)
 
+            report = scanner.scan()
 
-                try:
+            if not report.is_clean:
+                for fg in report.findings:
+                    sev = "P0" if fg.severity == "error" else "P1"
 
+                    violations.append(
+                        {"message": fg.message, "severity": sev, "detail": f"[{fg.rule_id}] {fg.file_rel}"}
+                    )
 
-                    from zephyr.governance.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner
+        except Exception as exc:
+            violations.append({"message": f"Zero residue scan failed: {exc}", "severity": "P2"})
 
-
-                    scanner = ZeroResidueScanner(project_root=project_root)
-
-
-                    report = scanner.scan()
-
-
-                    if not report.is_clean:
-
-
-                        for fg in report.findings:
-
-
-                            sev = "P0" if fg.severity == "error" else "P1"
-
-
-                            violations.append({"message": fg.message, "severity": sev, "detail": f"[{fg.rule_id}] {fg.file_rel}"})
-
-
-                except Exception as exc:
-
-
-                    violations.append({"message": f"Zero residue scan failed: {exc}", "severity": "P2"})
-
-
-                return violations
-
-
+        return violations

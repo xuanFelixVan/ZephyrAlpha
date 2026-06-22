@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_self_reflection.py
 
-import pytest
 
 from zephyr.ops.evolution.self_reflection import SelfReflection
 

@@ -58,6 +58,7 @@ class ApprovalAction(str, Enum):
 @dataclass(frozen=True)
 class Notification:
     """通知消息"""
+
     notification_id: str
     title: str
     body: str
@@ -70,6 +71,7 @@ class Notification:
 @dataclass(frozen=True)
 class ApprovalRequest:
     """人工审批请求"""
+
     request_id: str
     action: str
     reason: str
@@ -88,7 +90,8 @@ class DashboardBase(abc.ABC):
       - refresh(interval_s): 定时刷新数据
       - 支持多页面/多组件组合
     """
-    _registry: ClassVar[dict[str, type["DashboardBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[DashboardBase]]] = {}
 
     @abc.abstractmethod
     def render(self, data: dict[str, Any]) -> None:
@@ -108,7 +111,8 @@ class NotificationManagerBase(abc.ABC):
       - channels(): 返回可用通知渠道列表
       - 支持多渠道：飞书 / 邮件 / 钉钉 / 企业微信 / Slack
     """
-    _registry: ClassVar[dict[str, type["NotificationManagerBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[NotificationManagerBase]]] = {}
 
     @abc.abstractmethod
     def send(self, notification: Notification, channels: list[str] | None = None) -> bool:
@@ -134,7 +138,8 @@ class ApprovalGatewayBase(abc.ABC):
       2. 人工通过 L08 Dashboard 查看 → decide approve/reject
       3. 审批结果写回 → L05/L06 继续或中止
     """
-    _registry: ClassVar[dict[str, type["ApprovalGatewayBase"]]] = {}
+
+    _registry: ClassVar[dict[str, type[ApprovalGatewayBase]]] = {}
 
     @abc.abstractmethod
     def submit(self, request: ApprovalRequest) -> str:
@@ -153,11 +158,11 @@ class ApprovalGatewayBase(abc.ABC):
 
 
 __all__ = [
-    "NotificationLevel",
     "ApprovalAction",
-    "Notification",
+    "ApprovalGatewayBase",
     "ApprovalRequest",
     "DashboardBase",
+    "Notification",
+    "NotificationLevel",
     "NotificationManagerBase",
-    "ApprovalGatewayBase",
 ]

@@ -49,7 +49,6 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-
 import threading
 import time
 from dataclasses import dataclass
@@ -57,13 +56,13 @@ from enum import Enum, unique
 from typing import Any
 
 __all__ = [
-    "MetricType",
+    "COUNT_API_ERRORS",
+    "COUNT_LLM_CALLS",
+    "HIST_LATENCY",
     "MetricSnapshot",
+    "MetricType",
     "MetricsRegistry",
     "get_registry",
-    "COUNT_LLM_CALLS",
-    "COUNT_API_ERRORS",
-    "HIST_LATENCY",
 ]
 
 COUNT_LLM_CALLS = "zephyr_llm_calls_total"

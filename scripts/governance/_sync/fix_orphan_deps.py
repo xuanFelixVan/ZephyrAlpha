@@ -7,8 +7,11 @@ fix_orphan_deps.py — 一次性修复孤儿依赖引用
 2. 蓝图模块引用清除: MOD-MASTER-001 / MOD-INF-011 / MOD-INF-014 不是 task_id
 3. COMPLETED 任务孤儿清理: 移除不存在的依赖
 """
-import sqlite3, json, re
-from datetime import datetime, timezone
+
+import json
+import re
+import sqlite3
+from datetime import UTC, datetime
 
 __manifest__ = """
 args: []
@@ -21,7 +24,7 @@ warn_only: false
 
 
 DB = "data/databases/governance.db"
-NOW = datetime.now(timezone.utc).isoformat()
+NOW = datetime.now(UTC).isoformat()
 
 conn = sqlite3.connect(DB)
 all_ids = {r[0] for r in conn.execute("SELECT task_id FROM tasks WHERE is_deleted=0").fetchall()}
@@ -30,14 +33,14 @@ rows = conn.execute(
     "SELECT task_id, depends_on, status FROM tasks WHERE is_deleted=0 AND depends_on != '[]'"
 ).fetchall()
 
-_RANGE_RE = re.compile(r'^([A-Z]+-[A-Z]+(?:-\d+)?-(\d+))~(\d+)$')
-_MODULE_RE = re.compile(r'^MOD-[A-Z]+-\d+$')
+_RANGE_RE = re.compile(r"^([A-Z]+-[A-Z]+(?:-\d+)?-(\d+))~(\d+)$")
+_MODULE_RE = re.compile(r"^MOD-[A-Z]+-\d+$")
 
 fixes = {
-    'range_expanded': 0,
-    'module_ref_removed': 0,
-    'dead_ref_removed': 0,
-    'total_tasks_updated': 0,
+    "range_expanded": 0,
+    "module_ref_removed": 0,
+    "dead_ref_removed": 0,
+    "total_tasks_updated": 0,
 }
 
 for r in rows:
@@ -68,22 +71,22 @@ for r in rows:
                     expanded.append(candidate)
             if expanded:
                 new_deps.extend(expanded)
-                fixes['range_expanded'] += 1
+                fixes["range_expanded"] += 1
                 changed = True
-                print(f"  [RANGE] {tid}: {dep} → {expanded[:5]}{'...' if len(expanded)>5 else ''}")
+                print(f"  [RANGE] {tid}: {dep} → {expanded[:5]}{'...' if len(expanded) > 5 else ''}")
             else:
                 print(f"  [RANGE-EMPTY] {tid}: {dep} → no matches, dropping")
                 changed = True
             continue
 
         if _MODULE_RE.match(dep):
-            fixes['module_ref_removed'] += 1
+            fixes["module_ref_removed"] += 1
             changed = True
             print(f"  [MODULE] {tid}: dropping module ref {dep}")
             continue
 
-        if status == 'COMPLETED':
-            fixes['dead_ref_removed'] += 1
+        if status == "COMPLETED":
+            fixes["dead_ref_removed"] += 1
             changed = True
             continue
 
@@ -91,15 +94,12 @@ for r in rows:
 
     if changed:
         new_json = json.dumps(new_deps, ensure_ascii=False)
-        conn.execute(
-            "UPDATE tasks SET depends_on=?, updated_at=? WHERE task_id=?",
-            (new_json, NOW, tid)
-        )
-        fixes['total_tasks_updated'] += 1
+        conn.execute("UPDATE tasks SET depends_on=?, updated_at=? WHERE task_id=?", (new_json, NOW, tid))
+        fixes["total_tasks_updated"] += 1
 
 conn.commit()
 
-print(f"\n=== Fix Summary ===")
+print("\n=== Fix Summary ===")
 print(f"  Range notations expanded: {fixes['range_expanded']}")
 print(f"  Module refs removed: {fixes['module_ref_removed']}")
 print(f"  Dead refs removed (COMPLETED tasks): {fixes['dead_ref_removed']}")

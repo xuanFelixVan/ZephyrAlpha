@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Auto-generated contracts package — external
 
@@ -20,5 +20,4 @@ from zephyr.shared.contracts.external.ext_002 import Market_Data_Provider
 from zephyr.shared.contracts.external.ext_003 import LLM_Providers
 from zephyr.shared.contracts.external.ext_004 import Feishu
 
-__all__ = ['ext_001', 'ext_002', 'ext_003', 'ext_004', 'Broker_API', 'Market_Data_Provider', 'LLM_Providers', 'Feishu']
-
+__all__ = ["Broker_API", "Feishu", "LLM_Providers", "Market_Data_Provider", "ext_001", "ext_002", "ext_003", "ext_004"]

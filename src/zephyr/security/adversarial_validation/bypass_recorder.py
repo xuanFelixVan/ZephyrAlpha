@@ -12,11 +12,9 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 import uuid
-from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -31,7 +29,6 @@ _LOG_DIR: Path = Path("data/red_blue/bypass_logs")
 
 
 class BypassRecorder:
-
     def __init__(self, log_dir: Path | None = None) -> None:
         self._log_dir: Path = log_dir or _LOG_DIR
         os.makedirs(self._log_dir, exist_ok=True)
@@ -51,7 +48,9 @@ class BypassRecorder:
             existing.count += 1
             if existing.count >= 3 and not existing.escalated:
                 existing.escalated = True
-                logger.warning("escalation_triggered scenario_id=%s gate_id=%s count=%d", scenario_id, gate_id, existing.count)
+                logger.warning(
+                    "escalation_triggered scenario_id=%s gate_id=%s count=%d", scenario_id, gate_id, existing.count
+                )
             self._write_log(existing)
             return existing
 
@@ -96,18 +95,20 @@ class BypassRecorder:
                 raw = yaml.safe_load(f)
                 existing = raw if isinstance(raw, list) else []
 
-        existing.append({
-            "entry_id": entry.entry_id,
-            "scenario_id": entry.scenario_id,
-            "gate_id": entry.gate_id,
-            "attack_payload": entry.attack_payload,
-            "defense_response": entry.defense_response,
-            "root_cause": entry.root_cause,
-            "tier": entry.tier.value,
-            "count": entry.count,
-            "escalated": entry.escalated,
-            "occurred_at": entry.occurred_at.isoformat(),
-        })
+        existing.append(
+            {
+                "entry_id": entry.entry_id,
+                "scenario_id": entry.scenario_id,
+                "gate_id": entry.gate_id,
+                "attack_payload": entry.attack_payload,
+                "defense_response": entry.defense_response,
+                "root_cause": entry.root_cause,
+                "tier": entry.tier.value,
+                "count": entry.count,
+                "escalated": entry.escalated,
+                "occurred_at": entry.occurred_at.isoformat(),
+            }
+        )
 
         tmp = log_file.with_suffix(f".{os.getpid()}.tmp")
         with open(tmp, "w", encoding="utf-8") as f:

@@ -1,18 +1,27 @@
 ---
-module_id: MOD-034
-title: L11 ML Platform 层索引
+module_id: MOD-L11-001
+title: D-ML-TRAIN 域索引
 doc_type: index
 status: Active
-layer: L11
-date: '2026-05-05'
+layer: domain
+date: "2026-06-22"
+version: "2.0.0"
 ---
 
-# L11 ML Platform
+# D-ML-TRAIN — ML 训练域索引
+
+> **架构裁定**：D19/D21 — 14层降级为域属性，D-ML-TRAIN 为唯一分类。
+> **命名规范**：统一下划线（snake_case）。
 
 ## 模块清单
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L11-001 | ML Core | [blueprint](ml-core/blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L11-001 | ML Core | [blueprint](ml_core/blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l11_ml_platform.yaml`
+**架构模型真源**：`docs/03_modules/_domain_ml_train/ml_core/blueprint.md`
+
+## 导航
+
+- [上级目录](../index.md)
+- [架构真源](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md)

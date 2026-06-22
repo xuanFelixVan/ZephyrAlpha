@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回 False
 # [TESTS] tests/orphan-judge/test_kb_bridge.py
-
 import logging
 from typing import Any
 
@@ -19,12 +18,14 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["KbBridge"]
 
+
 class KbBridge:
     def __init__(self) -> None:
         self._api = None
         self._available = False
         try:
-            from zephyr.intelligence.model_evaluation.unified_memory_api import get_unified_memory_api, build_provenance
+            from zephyr.intelligence.model_evaluation.unified_memory_api import build_provenance, get_unified_memory_api
+
             self._api = get_unified_memory_api()
             self._build_prov = build_provenance
             self._available = True
@@ -50,11 +51,14 @@ class KbBridge:
             return []
         try:
             records = self._api.search(query=query, k=k)
-            return [{
-                "topic": getattr(r, "topic", ""),
-                "content": getattr(r, "content", ""),
-                "chunk_id": getattr(r, "chunk_id", ""),
-            } for r in records]
+            return [
+                {
+                    "topic": getattr(r, "topic", ""),
+                    "content": getattr(r, "content", ""),
+                    "chunk_id": getattr(r, "chunk_id", ""),
+                }
+                for r in records
+            ]
         except Exception as exc:
             logger.error("KbBridge.search_history failed: %s", exc)
             return []

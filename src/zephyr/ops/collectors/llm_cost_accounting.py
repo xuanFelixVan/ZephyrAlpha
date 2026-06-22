@@ -27,6 +27,7 @@ Risk: R35 — Surprise bill from runaway LLM calls.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class LLMCostAccounting:
     total_cost: float = 0.0

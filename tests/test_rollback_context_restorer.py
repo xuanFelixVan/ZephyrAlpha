@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.rollback_context_restorer import (
     RestoreContext,
     RollbackContextRestorer,

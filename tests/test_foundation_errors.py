@@ -20,20 +20,21 @@
 # [TESTS] pytest tests/test_foundation_errors.py -q
 
 import pytest
+
 from zephyr.integration.shared_08.errors import (
-    ZephyrBaseError,
     ConfigError,
-    ContractError,
-    SecurityError,
-    ValidationError,
-    TaskError,
-    PipelineError,
-    GateError,
     ContextError,
-    FeedbackError,
+    ContractError,
     DataError,
+    FeedbackError,
+    GateError,
     IOError,
+    PipelineError,
+    SecurityError,
+    TaskError,
     UnimplementedError,
+    ValidationError,
+    ZephyrBaseError,
 )
 
 

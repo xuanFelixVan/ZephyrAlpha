@@ -33,7 +33,6 @@
   异常: |z_score| > threshold → 触发告警
 """
 
-
 from __future__ import annotations
 
 import time
@@ -132,7 +131,6 @@ class A2AAnomalyDetector:
         metric: MetricKey,
         value: float,
     ) -> AnomalyRecord | None:
-
         if agent_id not in self._baselines:
             self._baselines[agent_id] = {}
         if metric not in self._baselines[agent_id]:
@@ -160,7 +158,7 @@ class A2AAnomalyDetector:
             baseline_std=round(baseline.std, 3),
             timestamp=time.time(),
             description=f"{agent_id}/{metric.value}: z={z:.2f}, "
-                        f"val={value:.2f}, μ={baseline.mean:.2f}, σ={baseline.std:.2f}",
+            f"val={value:.2f}, μ={baseline.mean:.2f}, σ={baseline.std:.2f}",
         )
 
     def record_batch(

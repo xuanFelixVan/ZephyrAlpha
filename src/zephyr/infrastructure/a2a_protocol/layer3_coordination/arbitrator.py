@@ -30,13 +30,10 @@
 输出: 仲裁结果 — winner + reason + 失败方补偿建议
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import IntEnum
-
-from zephyr.integration.shared_08.foundation.constants import EscalationLevel
 
 
 class AgentRole(IntEnum):
@@ -49,7 +46,7 @@ class AgentRole(IntEnum):
     OBSERVER = 10
 
     @classmethod
-    def from_string(cls, s: str) -> "AgentRole":
+    def from_string(cls, s: str) -> AgentRole:
         s_lower = s.lower().replace("-", "_").replace(" ", "_")
         mapping = {
             "superadmin": cls.SUPERADMIN,
@@ -122,7 +119,6 @@ class Arbitrator:
         agent_b: AgentMeta,
         conflicted_files: list[str],
     ) -> ArbitrationResult:
-
         result = self._tier1_priority(agent_a, agent_b)
         if result is not None:
             return result
@@ -138,12 +134,16 @@ class Arbitrator:
 
         if role_diff > 20:
             return ArbitrationResult(
-                winner=a.agent_id, loser=b.agent_id, tier=1,
+                winner=a.agent_id,
+                loser=b.agent_id,
+                tier=1,
                 reason=f"Role priority: {a.role.name}({a.role.value}) > {b.role.name}({b.role.value})",
             )
         if role_diff < -20:
             return ArbitrationResult(
-                winner=b.agent_id, loser=a.agent_id, tier=1,
+                winner=b.agent_id,
+                loser=a.agent_id,
+                tier=1,
                 reason=f"Role priority: {b.role.name}({b.role.value}) > {a.role.name}({a.role.value})",
             )
 
@@ -154,18 +154,25 @@ class Arbitrator:
     def _tier1_session_age(self, a: AgentMeta, b: AgentMeta) -> ArbitrationResult | None:
         if a.tasks_completed > b.tasks_completed + 5:
             return ArbitrationResult(
-                winner=a.agent_id, loser=b.agent_id, tier=1,
+                winner=a.agent_id,
+                loser=b.agent_id,
+                tier=1,
                 reason=f"Seniority: {a.tasks_completed} tasks > {b.tasks_completed} tasks",
             )
         if b.tasks_completed > a.tasks_completed + 5:
             return ArbitrationResult(
-                winner=b.agent_id, loser=a.agent_id, tier=1,
+                winner=b.agent_id,
+                loser=a.agent_id,
+                tier=1,
                 reason=f"Seniority: {b.tasks_completed} tasks > {a.tasks_completed} tasks",
             )
         return None
 
     def _tier2_ownership(
-        self, a: AgentMeta, b: AgentMeta, conflicted_files: list[str],
+        self,
+        a: AgentMeta,
+        b: AgentMeta,
+        conflicted_files: list[str],
     ) -> ArbitrationResult | None:
         a_score = 0
         b_score = 0
@@ -185,23 +192,33 @@ class Arbitrator:
 
         if a_score > b_score and a_score > 0:
             return ArbitrationResult(
-                winner=a.agent_id, loser=b.agent_id, tier=2,
+                winner=a.agent_id,
+                loser=b.agent_id,
+                tier=2,
                 reason=f"File ownership: A={a_score} > B={b_score} on {conflicted_files}",
             )
         if b_score > a_score and b_score > 0:
             return ArbitrationResult(
-                winner=b.agent_id, loser=a.agent_id, tier=2,
+                winner=b.agent_id,
+                loser=a.agent_id,
+                tier=2,
                 reason=f"File ownership: B={b_score} > A={a_score} on {conflicted_files}",
             )
         return None
 
     def _tier3_escalation(
-        self, a: AgentMeta, b: AgentMeta, conflicted_files: list[str],
+        self,
+        a: AgentMeta,
+        b: AgentMeta,
+        conflicted_files: list[str],
     ) -> ArbitrationResult:
         return ArbitrationResult(
-            winner=None, loser=None, tier=3, escalation=True,
+            winner=None,
+            loser=None,
+            tier=3,
+            escalation=True,
             reason=f"Cannot auto-resolve: {a.agent_id}({a.role.name}) vs "
-                   f"{b.agent_id}({b.role.name}) on {conflicted_files}",
+            f"{b.agent_id}({b.role.name}) on {conflicted_files}",
             escalation_message=f"ESC-A2A: conflict on {conflicted_files} between {a.agent_id} and {b.agent_id}",
             compensation="Both agents: pause conflicting files → escalate → await human or superadmin",
         )

@@ -6,8 +6,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试 IntentBinder — 意图绑定与连续验证"""
-import pytest
-from zephyr.security.access_control.intent_binder import IntentBinder, IntentDeclaration, IntentState
+
+from zephyr.security.access_control.intent_binder import IntentBinder, IntentState
 
 
 class TestIntentDeclaration:

@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_llm_quality_regression.py
 
-import pytest
 
 from zephyr.ops.diagnosers.llm_quality_regression import LLMQualityRegression
 

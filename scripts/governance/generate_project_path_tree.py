@@ -30,7 +30,6 @@ import logging
 import os
 import sqlite3
 import subprocess
-import re
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -44,10 +43,11 @@ def _yaml_load(path):
     """Load YAML with C loader if available (10-50x faster than pure Python)."""
     try:
         from yaml import CSafeLoader
+
         loader = CSafeLoader
     except ImportError:
         loader = yaml.SafeLoader
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.load(f, Loader=loader)
 
 
@@ -147,7 +147,8 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
             if state == "design":
                 return
 
-            cursor.execute("""INSERT OR IGNORE INTO arch_directory_tree
+            cursor.execute(
+                """INSERT OR IGNORE INTO arch_directory_tree
                 (path, parent_path, path_type, domain_id, design_maturity, blueprint_id,
                  change_policy, modification_permission, build_status, last_scanned)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
@@ -161,8 +162,9 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
                     node_data.get("__stability__", node_data.get("change_policy", "")),
                     node_data.get("__ai_autonomy__", node_data.get("modification_permission", "")),
                     node_data.get("build_status", "unbuilt"),
-                    datetime.now(UTC).isoformat()
-                ))
+                    datetime.now(UTC).isoformat(),
+                ),
+            )
 
             # Recurse into children
             for key, val in node_data.items():
@@ -180,7 +182,7 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
         desc = f"path_tree_update; total_files={total_files}; total_directories={total_dirs}"
         conn.execute(
             "INSERT OR REPLACE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
-            (4, datetime.now(UTC).isoformat(), desc)
+            (4, datetime.now(UTC).isoformat(), desc),
         )
 
         conn.commit()
@@ -194,9 +196,7 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
         conn.close()
 
 
-DEPGRAPH_DB_PATH = (
-    PROJECT_ROOT / "data" / "databases" / "depgraph.db"
-)
+DEPGRAPH_DB_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 
 SCAN_ROOTS = ["src/zephyr", "scripts", "tests", "config", "docs", "data"]
 SKIP_DIRS = {
@@ -275,8 +275,13 @@ def load_domain_derivation() -> dict:
     # From path design sections (blueprint_paths, test_paths, etc.)
     # These define design-state paths for non-code areas
     path_sections = [
-        "blueprint_paths", "test_paths", "script_paths",
-        "knowledge_paths", "data_paths", "gate_paths", "frontend_paths",
+        "blueprint_paths",
+        "test_paths",
+        "script_paths",
+        "knowledge_paths",
+        "data_paths",
+        "gate_paths",
+        "frontend_paths",
     ]
     for section_name in path_sections:
         section_data = data.get(section_name)
@@ -410,8 +415,7 @@ def derive_domain_for_path(rel_path: str, domain_derivation: dict) -> tuple:
     return "", ""
 
 
-def scan_directory(root: Path, prefix: str = "", depth: int = 0,
-                   domain_derivation: dict = None) -> dict:
+def scan_directory(root: Path, prefix: str = "", depth: int = 0, domain_derivation: dict = None) -> dict:
     if depth > MAX_DEPTH:
         return {"__truncated__": True}
 
@@ -636,9 +640,7 @@ def cmd_write() -> None:
     new_tree = generate_tree(domain_derivation)
 
     # Load migration registry for pending_deletion marking (read-only)
-    migration_registry_path = (
-        PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml"
-    )
+    migration_registry_path = PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml"
     pending_entries = []
     if migration_registry_path.exists():
         try:
@@ -657,7 +659,7 @@ def cmd_write() -> None:
         except Exception:
             pass
 
-    print(f"[PATH-TREE] Computation done. Ready to write (lock needed).")
+    print("[PATH-TREE] Computation done. Ready to write (lock needed).")
 
     # === PHASE 2: Lock → Read → Merge → Write → Unlock ===
     # Only this phase needs the lock. It's fast (read YAML + merge dicts + write YAML).
@@ -673,21 +675,32 @@ def cmd_write() -> None:
         if not lock_script.exists():
             break
         result = subprocess.run(
-            [sys.executable, str(lock_script), "acquire",
-             str(DEPGRAPH_DB_PATH), session_id, "--task", "path-tree generation"],
-            capture_output=True, text=True
+            [
+                sys.executable,
+                str(lock_script),
+                "acquire",
+                str(DEPGRAPH_DB_PATH),
+                session_id,
+                "--task",
+                "path-tree generation",
+            ],
+            capture_output=True,
+            text=True,
         )
         if result.returncode == 0:
             lock_acquired = True
             print(f"[LOCK] Acquired write lock on panorama (owner={session_id})")
             break
         if attempt < max_retries:
-            print(f"[LOCK] Panorama locked by another session (attempt {attempt}/{max_retries}), waiting {retry_delay}s...")
+            print(
+                f"[LOCK] Panorama locked by another session (attempt {attempt}/{max_retries}), waiting {retry_delay}s..."
+            )
             import time
+
             time.sleep(retry_delay)
         else:
             print(f"[LOCKED] Cannot acquire lock after {max_retries} attempts: {result.stdout.strip()}")
-            print(f"         Another AI session is writing. Retry later.")
+            print("         Another AI session is writing. Retry later.")
             sys.exit(1)
 
     try:
@@ -740,11 +753,11 @@ def cmd_write() -> None:
     finally:
         if lock_acquired and lock_script.exists():
             subprocess.run(
-                [sys.executable, str(lock_script), "release",
-                 str(DEPGRAPH_DB_PATH), session_id],
-                capture_output=True, text=True
+                [sys.executable, str(lock_script), "release", str(DEPGRAPH_DB_PATH), session_id],
+                capture_output=True,
+                text=True,
             )
-            print(f"[LOCK] Released write lock on panorama")
+            print("[LOCK] Released write lock on panorama")
 
 
 def cmd_check() -> None:
@@ -796,7 +809,6 @@ def cmd_check() -> None:
 def cmd_write_db(db_path: str) -> None:
     """Write tree to SQLite database (DM-100025)"""
     import sqlite3
-    import json
 
     print(f"[PATH-TREE-DB] Writing to {db_path}...")
 
@@ -818,7 +830,8 @@ def cmd_write_db(db_path: str) -> None:
             if state == "design":
                 return
 
-            cursor.execute("""INSERT OR IGNORE INTO arch_directory_tree
+            cursor.execute(
+                """INSERT OR IGNORE INTO arch_directory_tree
                 (path, parent_path, path_type, domain_id, design_maturity, blueprint_id,
                  change_policy, modification_permission, build_status, last_scanned)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
@@ -832,8 +845,9 @@ def cmd_write_db(db_path: str) -> None:
                     node_data.get("__stability__", ""),
                     node_data.get("__ai_autonomy__", ""),
                     "unbuilt",
-                    datetime.now(UTC).isoformat()
-                ))
+                    datetime.now(UTC).isoformat(),
+                ),
+            )
 
             # Recurse into children
             for child_name, child_data in node_data.get("children", {}).items():
@@ -859,7 +873,9 @@ def cmd_write_db(db_path: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate panorama tree section")
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--write", action="store_true", help="[DEPRECATED] Write tree to panorama YAML (DB is now the SSoT)")
+    group.add_argument(
+        "--write", action="store_true", help="[DEPRECATED] Write tree to panorama YAML (DB is now the SSoT)"
+    )
     group.add_argument("--check", action="store_true", help="CI mode: exit 1 if mismatch")
     parser.add_argument("--output-db", type=str, default="", help="Write tree to SQLite database (DM-100025)")
     args = parser.parse_args()
@@ -871,7 +887,9 @@ def main() -> None:
     elif args.write:
         cmd_write()
     else:
-        print("[DEPRECATED] Default stdout YAML output is deprecated. DB is now the SSoT. YAML output will be removed in a future version.")
+        print(
+            "[DEPRECATED] Default stdout YAML output is deprecated. DB is now the SSoT. YAML output will be removed in a future version."
+        )
         domain_derivation = load_domain_derivation()
         tree = generate_tree(domain_derivation)
         print(yaml.dump({"tree": tree}, allow_unicode=True, default_flow_style=False, sort_keys=False))

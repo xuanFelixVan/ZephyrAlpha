@@ -16,7 +16,7 @@ date: "2026-05-16"
 ttl: permanent
 last_updated: "2026-05-16"
 construction_progress: partially_implemented
-actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-governance\\capacity-upgrade\\blueprint.md"
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\capacity_upgrade\\blueprint.md"
 template_for: blueprint
 generation: 2
 functional_domain: governance

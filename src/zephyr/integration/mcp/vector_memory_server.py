@@ -44,8 +44,14 @@ from zephyr.integration.mcp._base_server import BaseMCPServer
 __all__ = ["VectorMemoryServer", "create_server"]
 
 VMS_COLLECTION_NAMES = [
-    "decisions", "code_context", "lessons", "knowledge",
-    "rules", "blueprints", "session_snapshots", "execution_traces",
+    "decisions",
+    "code_context",
+    "lessons",
+    "knowledge",
+    "rules",
+    "blueprints",
+    "session_snapshots",
+    "execution_traces",
 ]
 
 

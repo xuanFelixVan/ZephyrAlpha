@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -48,7 +47,7 @@ E2E_BUDGET_BREAKDOWN: dict[str, int] = {
 }
 
 
-def get_segment(name: str) -> Optional[LatencySegment]:
+def get_segment(name: str) -> LatencySegment | None:
     for seg in PERFORMANCE_BASELINE:
         if seg.name == name:
             return seg

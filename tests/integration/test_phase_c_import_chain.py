@@ -10,6 +10,7 @@
 验证所有 Phase C concrete class 的 import 路径在工作。
 对标 Phase B 的 test_import_chain.py——Phase C 升级版。
 """
+
 from __future__ import annotations
 
 import importlib
@@ -27,13 +28,19 @@ class ConcreteClass(NamedTuple):
 PHASE_C_CLASSES: list[ConcreteClass] = [
     ConcreteClass("zephyr.data.akshare_provider", "AkshareProvider", "L00"),
     ConcreteClass("zephyr.governance.default_quality_gate", "DefaultQualityGate", "L00"),
-    ConcreteClass("zephyr.signal_fundamental.gen.implementations.default_signal_aggregator", "DefaultSignalAggregator", "L03"),
-    ConcreteClass("zephyr.signal_fundamental.strategy.implementations.default_capital_allocator", "DefaultCapitalAllocator", "L03"),
+    ConcreteClass(
+        "zephyr.signal_fundamental.gen.implementations.default_signal_aggregator", "DefaultSignalAggregator", "L03"
+    ),
+    ConcreteClass(
+        "zephyr.signal_fundamental.strategy.implementations.default_capital_allocator", "DefaultCapitalAllocator", "L03"
+    ),
     ConcreteClass("zephyr.risk.implementations.default_position_limit_checker", "DefaultPositionLimitChecker", "L04"),
     ConcreteClass("zephyr.risk.implementations.default_stop_loss_engine", "DefaultStopLossEngine", "L04"),
     ConcreteClass("zephyr.risk.implementations.default_risk_limits_calculator", "DefaultRiskLimitsCalculator", "L04"),
     ConcreteClass("zephyr.risk.implementations.default_risk_validator", "DefaultRiskValidator", "L04"),
-    ConcreteClass("zephyr.risk.implementations.default_risk_manager_orchestrator", "DefaultRiskManagerOrchestrator", "L04"),
+    ConcreteClass(
+        "zephyr.risk.implementations.default_risk_manager_orchestrator", "DefaultRiskManagerOrchestrator", "L04"
+    ),
     ConcreteClass("zephyr.pf_core.default_equity_strategy", "DefaultEquityStrategy", "L05"),
     ConcreteClass("zephyr.ex_core.adapters.simulation_broker", "SimulationBroker", "L06"),
     ConcreteClass("zephyr.execution.core.order_manager", "OrderManager", "L06"),

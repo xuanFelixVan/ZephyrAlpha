@@ -27,8 +27,6 @@ Observer Effect Compensator — 容量监控污染 SLI (盲点 #30, M-33)
 """
 
 import time
-from dataclasses import dataclass
-from typing import Any, Optional
 
 
 class ObserverEffectCompensator:

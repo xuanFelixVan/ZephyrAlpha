@@ -7,7 +7,7 @@
 
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 
-# [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.orchestration.runtime_core
+# [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.trading
 
 # [STABILITY] evolving
 
@@ -28,19 +28,10 @@ ModelRotation — ModelRotation
 """
 
 
-
 # SRC-0068a: 从 _gen_inherited.py 拆分 — 骨骼模板数据
 
-
-
-
-
 SKELETONS: dict[str, str] = {
-
-
     # === DIAGNOSERS remaining ===
-
-
     "diagnosers/model_rotation.py": '''"""Model Rotation — v0.9.0 R125
 
 
@@ -97,8 +88,6 @@ class ModelRotation:
 
 
 ''',
-
-
     "diagnosers/knowledge_market.py": '''"""Knowledge Market — v0.9.0 R126
 
 
@@ -139,8 +128,6 @@ class KnowledgeMarket:
 
 
 ''',
-
-
     "diagnosers/tone_adapter.py": '''"""Tone Adapter — v0.9.0 R127
 
 
@@ -181,8 +168,6 @@ class ToneAdapter:
 
 
 ''',
-
-
     "diagnosers/prompt_sanitizer.py": '''"""Prompt Sanitizer — v0.10.0 R133
 
 
@@ -217,8 +202,6 @@ class PromptSanitizer:
 
 
 ''',
-
-
     "diagnosers/amplification_guard.py": '''"""Amplification Guard — v0.10.0 R134
 
 
@@ -259,8 +242,6 @@ class AmplificationGuard:
 
 
 ''',
-
-
     "diagnosers/vertical_self_assessment.py": '''"""Vertical Self Assessment — v0.10.0 R137
 
 
@@ -301,8 +282,6 @@ class VerticalSelfAssessment:
 
 
 ''',
-
-
     "diagnosers/value_added_baseline.py": '''"""Value Added Baseline — v0.10.0 R138
 
 
@@ -349,8 +328,6 @@ class ValueAddedBaseline:
 
 
 ''',
-
-
     "diagnosers/retirement_planner.py": '''"""Retirement Planner — v0.10.0 R139
 
 
@@ -391,8 +368,6 @@ class RetirementPlanner:
 
 
 ''',
-
-
     "diagnosers/model_rotation_v2.py": '''"""Model Rotation v2 — v0.10.0 R140
 
 
@@ -430,8 +405,6 @@ class ModelRotationV2:
 
 
 ''',
-
-
     "diagnosers/tone_adapter_v2.py": '''"""Tone Adapter v2 — v0.10.0 R141
 
 
@@ -475,8 +448,6 @@ class ToneAdapterV2:
 
 
 ''',
-
-
     "diagnosers/self_llm_observability.py": '''"""Self LLM Observability — v0.12.0 R160
 
 
@@ -520,8 +491,6 @@ class SelfLLMObservability:
 
 
 ''',
-
-
     "diagnosers/llm_quality_regression.py": '''"""LLM Quality Regression — v0.12.0 R161
 
 
@@ -568,11 +537,7 @@ class LLMQualityRegression:
 
 
 ''',
-
-
     # === GATES ===
-
-
     "gates/config_governance.py": '''"""Config Governance — v0.3.0 R8
 
 
@@ -616,8 +581,6 @@ class ConfigGovernance:
 
 
 ''',
-
-
     "gates/flag_lifecycle_manager.py": '''"""Flag Lifecycle Manager — v0.3.0 R11
 
 
@@ -658,8 +621,6 @@ class FlagLifecycleManager:
 
 
 ''',
-
-
     "gates/db_integrity.py": '''"""DB Integrity Gate — v0.3.0 R17
 
 
@@ -700,8 +661,6 @@ class DBIntegrity:
 
 
 ''',
-
-
     "gates/checkpoint_manager.py": '''"""Checkpoint Manager — v0.3.0 R18
 
 
@@ -745,8 +704,6 @@ class CheckpointManager:
 
 
 ''',
-
-
     "gates/llm_cost_router.py": '''"""LLM Cost Router — v0.3.0 R20
 
 
@@ -790,8 +747,6 @@ class LLMCostRouter:
 
 
 ''',
-
-
     "gates/autonomy_maturity.py": '''"""Autonomy Maturity Ladder — v0.7.0 R86
 
 
@@ -823,8 +778,6 @@ class AutonomyMaturity:
 
 
 ''',
-
-
     "gates/autonomy_credit.py": '''"""Autonomy Credit System — v0.7.0 R87
 
 
@@ -859,8 +812,6 @@ class AutonomyCredit:
 
 
 ''',
-
-
     "gates/emergency_takeover.py": '''"""Emergency Takeover — v0.7.0 R88
 
 
@@ -901,8 +852,6 @@ class EmergencyTakeover:
 
 
 ''',
-
-
     "gates/merkle_audit_root.py": '''"""Merkle Audit Root — v0.8.0 R104
 
 
@@ -946,8 +895,6 @@ class MerkleAuditRoot:
 
 
 ''',
-
-
     "gates/cve_scanner.py": '''"""CVE Scanner — v0.8.0 R106
 
 
@@ -988,8 +935,6 @@ class CVEScanner:
 
 
 ''',
-
-
     "gates/ci_cd_pre_scanner.py": '''"""CI/CD Pre-Scanner — v0.8.0 R107
 
 
@@ -1027,8 +972,6 @@ class CICDPreScanner:
 
 
 ''',
-
-
     "gates/blueprint_validator.py": '''"""Blueprint Validator — v0.8.0 R108
 
 
@@ -1066,8 +1009,6 @@ class BlueprintValidator:
 
 
 ''',
-
-
     "gates/dynamic_llm_cost_router.py": '''"""Dynamic LLM Cost Router — v0.8.0 R109
 
 
@@ -1105,8 +1046,6 @@ class DynamicLLMCostRouter:
 
 
 ''',
-
-
     "gates/conflict_arbitration.py": '''"""Conflict Arbitration — v0.10.0 R130
 
 
@@ -1144,8 +1083,6 @@ class ConflictArbitration:
 
 
 ''',
-
-
     "gates/federated_security.py": '''"""Federated Security — v0.10.0 R131
 
 
@@ -1186,8 +1123,6 @@ class FederatedSecurity:
 
 
 ''',
-
-
     "gates/adversarial_validation.py": '''"""Adversarial Validation — v0.10.0 R132
 
 
@@ -1225,8 +1160,6 @@ class AdversarialValidation:
 
 
 ''',
-
-
     "gates/data_quality_gate.py": '''"""Data Quality Gate — v0.11.0 R143
 
 
@@ -1264,8 +1197,6 @@ class DataQualityGate:
 
 
 ''',
-
-
     "gates/meta_performance_gate.py": '''"""Meta Performance Gate — v0.11.0 R158
 
 
@@ -1297,11 +1228,7 @@ class MetaPerformanceGate:
 
 
 ''',
-
-
     # === COLLECTORS ===
-
-
     "collectors/temporal_event_store.py": '''"""Temporal Event Store — v0.3.0 R9
 
 
@@ -1342,8 +1269,6 @@ class TemporalEventStore:
 
 
 ''',
-
-
     "collectors/knowledge_capture.py": '''"""Knowledge Capture — v0.4.0 R30
 
 
@@ -1384,8 +1309,6 @@ class KnowledgeCapture:
 
 
 ''',
-
-
     "collectors/llm_cost_accounting.py": '''"""LLM Cost Accounting — v0.4.0 R35
 
 
@@ -1426,8 +1349,6 @@ class LLMCostAccounting:
 
 
 ''',
-
-
     "collectors/knowledge_freshness.py": '''"""Knowledge Freshness — v0.5.0 R47
 
 
@@ -1474,8 +1395,6 @@ class KnowledgeFreshness:
 
 
 ''',
-
-
     "collectors/market_calendar.py": '''"""Market Calendar — v0.5.0 R48
 
 
@@ -1516,8 +1435,6 @@ class MarketCalendar:
 
 
 ''',
-
-
     "collectors/financial_stratification.py": '''"""Financial Stratification — v0.5.0 R50
 
 
@@ -1549,8 +1466,6 @@ class FinancialStratification:
 
 
 ''',
-
-
     "collectors/config_timeline.py": '''"""Config Timeline — v0.8.0 R99
 
 
@@ -1591,8 +1506,6 @@ class ConfigTimeline:
 
 
 ''',
-
-
     "collectors/knowledge_injection.py": '''"""Knowledge Injection — v0.8.0 R102
 
 
@@ -1633,8 +1546,6 @@ class KnowledgeInjection:
 
 
 ''',
-
-
     "collectors/calendar_adapter.py": '''"""Calendar Adapter — v0.8.0 R102b
 
 
@@ -1666,8 +1577,6 @@ class CalendarAdapter:
 
 
 ''',
-
-
     "collectors/data_quality_validator.py": '''"""Data Quality Validator — v0.9.0 R110
 
 
@@ -1705,8 +1614,6 @@ class DataQualityValidator:
 
 
 ''',
-
-
     "collectors/schema_evolution.py": '''"""Schema Evolution — v0.9.0 R111
 
 
@@ -1738,8 +1645,6 @@ class SchemaEvolution:
 
 
 ''',
-
-
     "collectors/notification_feedback.py": '''"""Notification Feedback — v0.9.0 R118
 
 
@@ -1780,8 +1685,6 @@ class NotificationFeedback:
 
 
 ''',
-
-
     "collectors/knowledge_packaging.py": '''"""Knowledge Packaging — v0.9.0 R123
 
 
@@ -1819,8 +1722,6 @@ class KnowledgePackaging:
 
 
 ''',
-
-
     "collectors/kb_provenance.py": '''"""KB Provenance — v0.10.0 R136
 
 
@@ -1855,8 +1756,6 @@ class KBProvenance:
 
 
 ''',
-
-
     "collectors/token_finops.py": '''"""Token FinOps — v0.12.0 R162
 
 
@@ -1897,11 +1796,7 @@ class TokenFinOps:
 
 
 ''',
-
-
     # === DETECTORS ===
-
-
     "detectors/ensemble_detector.py": '''"""Ensemble Detector — v0.4.0 R21
 
 
@@ -1942,8 +1837,6 @@ class EnsembleDetector:
 
 
 ''',
-
-
     "detectors/multi_signal_correlator.py": '''"""Multi-Signal Correlator — v0.4.0 R22
 
 
@@ -1981,8 +1874,6 @@ class MultiSignalCorrelator:
 
 
 ''',
-
-
     "detectors/positive_feedback_defense.py": '''"""Positive Feedback Defense — v0.4.0 R28
 
 
@@ -2032,8 +1923,6 @@ class PositiveFeedbackDefense:
 
 
 ''',
-
-
     "detectors/concept_drift.py": '''"""Concept Drift Detector — v0.5.0 R42
 
 
@@ -2074,8 +1963,6 @@ class ConceptDrift:
 
 
 ''',
-
-
     "detectors/ensemble_drift.py": '''"""Ensemble Drift — v0.5.0 R43
 
 
@@ -2122,8 +2009,6 @@ class EnsembleDrift:
 
 
 ''',
-
-
     "detectors/regime_detector.py": '''"""Regime Detector — v0.5.0 R49
 
 
@@ -2176,8 +2061,6 @@ class RegimeDetector:
 
 
 ''',
-
-
     "detectors/log_anomaly.py": '''"""Log Anomaly Detector — v0.6.0 R61
 
 
@@ -2218,8 +2101,6 @@ class LogAnomaly:
 
 
 ''',
-
-
     "detectors/trace_causal_bridge.py": '''"""Trace Causal Bridge — v0.6.0 R62
 
 
@@ -2260,8 +2141,6 @@ class TraceCausalBridge:
 
 
 ''',
-
-
     "detectors/cross_signal_validator.py": '''"""Cross-Signal Validator — v0.6.0 R63
 
 
@@ -2299,8 +2178,6 @@ class CrossSignalValidator:
 
 
 ''',
-
-
     "detectors/ebpf_monitor.py": '''"""eBPF Monitor — v0.6.0 R64
 
 
@@ -2332,8 +2209,6 @@ class EBPFMonitor:
 
 
 ''',
-
-
     "detectors/synthetic_anomaly_generator.py": '''"""Synthetic Anomaly Generator — v0.9.0 R112
 
 
@@ -2371,8 +2246,6 @@ class SyntheticAnomalyGenerator:
 
 
 ''',
-
-
     "detectors/trend_cycle_separator.py": '''"""Trend-Cycle Separator — v0.9.0 R113
 
 
@@ -2410,8 +2283,6 @@ class TrendCycleSeparator:
 
 
 ''',
-
-
     "detectors/anomaly_clustering.py": '''"""Anomaly Clustering — v0.9.0 R119
 
 
@@ -2452,8 +2323,6 @@ class AnomalyClustering:
 
 
 ''',
-
-
     "detectors/temporal_pattern.py": '''"""Temporal Pattern Detector — v0.12.0 R164
 
 
@@ -2494,8 +2363,6 @@ class TemporalPattern:
 
 
 ''',
-
-
     "detectors/resolution_tracker.py": '''"""Resolution Tracker — v0.12.0 R165
 
 
@@ -2536,8 +2403,6 @@ class ResolutionTracker:
 
 
 ''',
-
-
     "detectors/decision_provenance.py": '''"""Decision Provenance — v0.12.0 R166
 
 
@@ -2578,8 +2443,6 @@ class DecisionProvenance:
 
 
 ''',
-
-
     "detectors/blast_radius.py": '''"""Blast Radius Detector — v0.12.0 R167
 
 
@@ -2620,8 +2483,6 @@ class BlastRadius:
 
 
 ''',
-
-
     "detectors/maintenance_coordinator.py": '''"""Maintenance Coordinator — v0.12.0 R168
 
 
@@ -2662,8 +2523,6 @@ class MaintenanceCoordinator:
 
 
 ''',
-
-
     "detectors/version_migrator.py": '''"""Version Migrator — v0.12.0 R169
 
 
@@ -2701,8 +2560,6 @@ class VersionMigrator:
 
 
 ''',
-
-
     "detectors/otel_adapter.py": '''"""OTel Adapter — v0.12.0 R170
 
 
@@ -2734,8 +2591,6 @@ class OTelAdapter:
 
 
 ''',
-
-
     "detectors/chaos_engineering.py": '''"""Chaos Engineering — v0.13.0 R172
 
 
@@ -2776,8 +2631,6 @@ class ChaosEngineering:
 
 
 ''',
-
-
     "detectors/self_ha.py": '''"""Self HA — v0.13.0 R173
 
 
@@ -2812,8 +2665,6 @@ class SelfHA:
 
 
 ''',
-
-
     "detectors/autoscale_remediation.py": '''"""Autoscale Remediation — v0.13.0 R174
 
 
@@ -2845,8 +2696,6 @@ class AutoscaleRemediation:
 
 
 ''',
-
-
     "detectors/blast_radius_budget.py": '''"""Blast Radius Budget — v0.13.0 R178
 
 
@@ -2881,8 +2730,6 @@ class BlastRadiusBudget:
 
 
 ''',
-
-
     "detectors/flag_lifecycle.py": '''"""Flag Lifecycle Detector — v0.13.0 R180
 
 
@@ -2911,8 +2758,6 @@ class FlagLifecycle:
 
 
 ''',
-
-
     "detectors/openfeature.py": '''"""OpenFeature Integration — v0.13.0 R181
 
 
@@ -2941,8 +2786,6 @@ class OpenFeature:
 
 
 ''',
-
-
     "detectors/config_drift.py": '''"""Config Drift Detector — v0.13.0 R182
 
 
@@ -2974,8 +2817,6 @@ class ConfigDrift:
 
 
 ''',
-
-
     "detectors/self_audit.py": '''"""Self Audit — v0.13.0 R183
 
 
@@ -3007,8 +2848,6 @@ class SelfAudit:
 
 
 ''',
-
-
     "detectors/regulatory_audit.py": '''"""Regulatory Audit Detector — v0.13.0 R184
 
 
@@ -3040,8 +2879,6 @@ class RegulatoryAudit:
 
 
 ''',
-
-
     "detectors/cross_system_correlator.py": '''"""Cross-System Correlator — v0.13.0 R185
 
 
@@ -3079,8 +2916,6 @@ class CrossSystemCorrelator:
 
 
 ''',
-
-
     "detectors/runbook_executor.py": '''"""Runbook Executor — v0.13.0 R186a
 
 
@@ -3118,8 +2953,6 @@ class RunbookExecutor:
 
 
 ''',
-
-
     "detectors/capacity_forecast.py": '''"""Capacity Forecast — v0.13.0 R186b
 
 
@@ -3148,11 +2981,7 @@ class CapacityForecast:
 
 
 ''',
-
-
     # === VERIFIERS ===
-
-
     "verifiers/action_explainability.py": '''"""Action Explainability — v0.3.0 R15
 
 
@@ -3190,8 +3019,6 @@ class ActionExplainability:
 
 
 ''',
-
-
     "verifiers/dry_run_sandbox.py": '''"""Dry Run Sandbox — v0.3.0 R19
 
 
@@ -3229,8 +3056,6 @@ class DryRunSandbox:
 
 
 ''',
-
-
     "verifiers/rollback_integrity.py": '''"""Rollback Integrity — v0.3.0 R18b
 
 
@@ -3265,8 +3090,6 @@ class RollbackIntegrity:
 
 
 ''',
-
-
     "verifiers/cross_module_integration.py": '''"""Cross-Module Integration Verifier — v0.5.0 R39
 
 
@@ -3298,8 +3121,6 @@ class CrossModuleIntegration:
 
 
 ''',
-
-
     "verifiers/digital_twin_sandbox.py": '''"""Digital Twin Sandbox — v0.6.0 R55
 
 
@@ -3331,8 +3152,6 @@ class DigitalTwinSandbox:
 
 
 ''',
-
-
     "verifiers/sim2real_calibration.py": '''"""Sim2Real Calibration — v0.6.0 R56
 
 
@@ -3379,8 +3198,6 @@ class Sim2RealCalibration:
 
 
 ''',
-
-
     "verifiers/attack_simulator.py": '''"""Attack Simulator — v0.6.0 R57
 
 
@@ -3412,8 +3229,6 @@ class AttackSimulator:
 
 
 ''',
-
-
     "verifiers/preventive_repair.py": '''"""Preventive Repair — v0.6.0 R69
 
 
@@ -3451,8 +3266,6 @@ class PreventiveRepair:
 
 
 ''',
-
-
     "verifiers/auto_rollback.py": '''"""Auto Rollback — v0.8.0 R93
 
 
@@ -3490,8 +3303,6 @@ class AutoRollback:
 
 
 ''',
-
-
     "verifiers/no_llm_degradation.py": '''"""No-LLM Degradation Mode — v0.8.0 R94
 
 
@@ -3523,8 +3334,6 @@ class NoLLMDegradation:
 
 
 ''',
-
-
     "verifiers/canary_repair.py": '''"""Canary Repair — v0.8.0 R104b
 
 
@@ -3556,8 +3365,6 @@ class CanaryRepair:
 
 
 ''',
-
-
     "verifiers/ab_test.py": '''"""A/B Test Verifier — v0.9.0 R117
 
 
@@ -3604,8 +3411,6 @@ class ABTest:
 
 
 ''',
-
-
     "verifiers/federated_protocol.py": '''"""Federated Protocol — v0.10.0 R129
 
 
@@ -3637,8 +3442,6 @@ class FederatedProtocol:
 
 
 ''',
-
-
     "verifiers/pre_flight_simulator.py": '''"""Pre-Flight Simulator — v0.12.0 R169b
 
 
@@ -3676,11 +3479,7 @@ class PreFlightSimulator:
 
 
 ''',
-
-
     # === ACTORS ===
-
-
     "actors/alert_router.py": '''"""Alert Router — v0.3.0 R13
 
 
@@ -3730,8 +3529,6 @@ class AlertRouter:
 
 
 ''',
-
-
     "actors/saga_compensator.py": '''"""Saga Compensator — v0.3.0 R19b
 
 
@@ -3769,8 +3566,6 @@ class SagaCompensator:
 
 
 ''',
-
-
     "actors/notification_personalizer.py": '''"""Notification Personalizer — v0.6.0 R67
 
 
@@ -3811,8 +3606,6 @@ class NotificationPersonalizer:
 
 
 ''',
-
-
     "actors/intent_driven_ops.py": '''"""Intent-Driven Ops — v0.12.0 R159
 
 
@@ -3853,8 +3646,6 @@ class IntentDrivenOps:
 
 
 ''',
-
-
     "actors/multi_agent_orchestrator.py": '''"""Multi-Agent Orchestrator — v0.12.0 R159b
 
 
@@ -3892,8 +3683,6 @@ class MultiAgentOrchestrator:
 
 
 ''',
-
-
     "actors/agent_lifecycle.py": '''"""Agent Lifecycle Manager — v0.12.0 R159c
 
 
@@ -3931,11 +3720,7 @@ class AgentLifecycle:
 
 
 ''',
-
-
     # === EVOLUTION ===
-
-
     "evolution/ewc_kb_review.py": '''"""EWC KB Review — v0.6.0 R51
 
 
@@ -3976,8 +3761,6 @@ class EWCKBReview:
 
 
 ''',
-
-
     "evolution/knowledge_distillation.py": '''"""Knowledge Distillation — v0.6.0 R52
 
 
@@ -4015,8 +3798,6 @@ class KnowledgeDistillation:
 
 
 ''',
-
-
     "evolution/teacher_transfer.py": '''"""Teacher Transfer — v0.6.0 R53
 
 
@@ -4060,8 +3841,6 @@ class TeacherTransfer:
 
 
 ''',
-
-
     "evolution/dynamic_threshold.py": '''"""Dynamic Threshold — v0.7.0 R71
 
 
@@ -4096,8 +3875,6 @@ class DynamicThreshold:
 
 
 ''',
-
-
     "evolution/hypernetwork.py": '''"""HyperNetwork — v0.7.0 R72
 
 
@@ -4135,8 +3912,6 @@ class HyperNetwork:
 
 
 ''',
-
-
     "evolution/online_feature_importance.py": '''"""Online Feature Importance — v0.7.0 R73
 
 
@@ -4177,8 +3952,6 @@ class OnlineFeatureImportance:
 
 
 ''',
-
-
     "evolution/conformal_prediction.py": '''"""Conformal Prediction — v0.7.0 R74
 
 
@@ -4216,8 +3989,6 @@ class ConformalPrediction:
 
 
 ''',
-
-
     "evolution/self_reflection.py": '''"""Self Reflection — v0.7.0 R75
 
 
@@ -4255,8 +4026,6 @@ class SelfReflection:
 
 
 ''',
-
-
     "evolution/auto_reward.py": '''"""Auto Reward — v0.7.0 R76
 
 
@@ -4294,8 +4063,6 @@ class AutoReward:
 
 
 ''',
-
-
     "evolution/failure_replay.py": '''"""Failure Replay — v0.7.0 R77
 
 
@@ -4336,8 +4103,6 @@ class FailureReplay:
 
 
 ''',
-
-
     "evolution/cross_gen_validation.py": '''"""Cross-Gen Validation — v0.7.0 R78
 
 
@@ -4375,8 +4140,6 @@ class CrossGenValidation:
 
 
 ''',
-
-
     "docs/cold_start_manual.py": '''"""Cold Start Manual — v0.8.0 R96
 
 
@@ -4411,14 +4174,7 @@ FLE Cold Start Protocol:
 
 
 ''',
-
-
 }
 
 
-
-
-
 __all__ = ["SKELETONS"]
-
-

@@ -16,13 +16,11 @@ import argparse
 import json
 import sys
 
-from zephyr.security.adversarial_validation.validator import RedBlueValidator, SessionError
-from zephyr.security.adversarial_validation.scenario_loader import ScenarioLoader
-from zephyr.security.adversarial_validation.models import AttackTier, BlastRadiusLevel
-from zephyr.security.adversarial_validation.game_day_runner import GameDayRunner, GameDayFrequency
-from zephyr.security.adversarial_validation.game_day_scheduler import GameDayScheduler
-from zephyr.security.adversarial_validation.convergence_checker import ConvergenceChecker
 from zephyr.security.adversarial_validation.cold_start import ColdStart
+from zephyr.security.adversarial_validation.game_day_runner import GameDayFrequency, GameDayRunner
+from zephyr.security.adversarial_validation.models import AttackTier, BlastRadiusLevel
+from zephyr.security.adversarial_validation.scenario_loader import ScenarioLoader
+from zephyr.security.adversarial_validation.validator import RedBlueValidator
 
 __all__: list[str] = ["main"]
 
@@ -39,14 +37,19 @@ def _run(args: argparse.Namespace) -> None:
         tier=tier,
         blast_radius=radius,
     )
-    print(json.dumps({
-        "session_id": report.session_id,
-        "total": report.total,
-        "blocked": report.blocked,
-        "bypassed": report.bypassed,
-        "blocked_rate": report.blocked_rate,
-        "duration_ms": report.duration_ms,
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "session_id": report.session_id,
+                "total": report.total,
+                "blocked": report.blocked,
+                "bypassed": report.bypassed,
+                "blocked_rate": report.blocked_rate,
+                "duration_ms": report.duration_ms,
+            },
+            indent=2,
+        )
+    )
 
 
 def _list(args: argparse.Namespace) -> None:
@@ -86,8 +89,7 @@ def _gameday(args: argparse.Namespace) -> None:
     runner = GameDayRunner()
     freq = GameDayFrequency(args.frequency)
     result = runner.run_game_day(freq)
-    print(f"GameDay[{freq.value}]: {result.total_attacks} attacks, "
-          f"blocked={result.passed} bypassed={result.bypasses}")
+    print(f"GameDay[{freq.value}]: {result.total_attacks} attacks, blocked={result.passed} bypassed={result.bypasses}")
 
 
 def _onboard(args: argparse.Namespace) -> None:
@@ -108,8 +110,8 @@ def main() -> None:
 
     run_p = sub.add_parser("run", help="Run adversarial session")
     run_p.add_argument("--name", help="Session name")
-    run_p.add_argument("--tier", choices=["L1","L2","L3","L4","L5","L6","L7"], help="Attack tier")
-    run_p.add_argument("--blast-radius", choices=["FILE","MODULE","CROSS_MODULE","SYSTEM"])
+    run_p.add_argument("--tier", choices=["L1", "L2", "L3", "L4", "L5", "L6", "L7"], help="Attack tier")
+    run_p.add_argument("--blast-radius", choices=["FILE", "MODULE", "CROSS_MODULE", "SYSTEM"])
 
     list_p = sub.add_parser("list", help="List scenarios")
     list_p.add_argument("--active-only", action="store_true")
@@ -121,7 +123,7 @@ def main() -> None:
     sub.add_parser("status", help="Show scenario counts")
 
     gd_p = sub.add_parser("gameday", help="Run game day")
-    gd_p.add_argument("--frequency", choices=["per_commit","daily","weekly","monthly"], default="per_commit")
+    gd_p.add_argument("--frequency", choices=["per_commit", "daily", "weekly", "monthly"], default="per_commit")
 
     ob_p = sub.add_parser("onboard", help="Onboard new module")
     ob_p.add_argument("module_path")

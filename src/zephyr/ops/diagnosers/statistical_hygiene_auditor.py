@@ -69,24 +69,28 @@ class StatisticalHygieneAuditor:
         attempts = self.threshold_attempts[metric_name]
 
         if attempts > self.max_threshold_attempts:
-            self.violations.append({
-                "ts": time.time(),
-                "type": StatViolation.P_HACKING.value,
-                "metric": metric_name,
-                "attempts": attempts,
-            })
+            self.violations.append(
+                {
+                    "ts": time.time(),
+                    "type": StatViolation.P_HACKING.value,
+                    "metric": metric_name,
+                    "attempts": attempts,
+                }
+            )
             return {"violation": StatViolation.P_HACKING.value, "metric": metric_name, "attempts": attempts}
         return {"ok": True}
 
     def set_active_metrics(self, count: int) -> dict:
         self.active_metrics_count = count
         if count > 20:
-            self.violations.append({
-                "ts": time.time(),
-                "type": StatViolation.MULTIPLE_COMPARISONS.value,
-                "active_metrics": count,
-                "bonferroni_alpha": round(0.05 / max(count, 1), 5),
-            })
+            self.violations.append(
+                {
+                    "ts": time.time(),
+                    "type": StatViolation.MULTIPLE_COMPARISONS.value,
+                    "active_metrics": count,
+                    "bonferroni_alpha": round(0.05 / max(count, 1), 5),
+                }
+            )
             return {
                 "violation": StatViolation.MULTIPLE_COMPARISONS.value,
                 "count": count,
@@ -113,12 +117,14 @@ class StatisticalHygieneAuditor:
         bias_detected = confirmation_rate > 0.90 and total > 20
 
         if bias_detected:
-            self.violations.append({
-                "ts": time.time(),
-                "type": StatViolation.SURVIVORSHIP_BIAS.value,
-                "confirmation_rate": round(confirmation_rate, 3),
-                "total": total,
-            })
+            self.violations.append(
+                {
+                    "ts": time.time(),
+                    "type": StatViolation.SURVIVORSHIP_BIAS.value,
+                    "confirmation_rate": round(confirmation_rate, 3),
+                    "total": total,
+                }
+            )
 
         return {
             "survivorship_bias": bias_detected,
@@ -129,12 +135,14 @@ class StatisticalHygieneAuditor:
 
     def check_sample_size(self, sample_count: int, metric_name: str) -> dict:
         if sample_count < self.min_sample_size:
-            self.violations.append({
-                "ts": time.time(),
-                "type": StatViolation.SMALL_SAMPLE.value,
-                "metric": metric_name,
-                "sample_count": sample_count,
-            })
+            self.violations.append(
+                {
+                    "ts": time.time(),
+                    "type": StatViolation.SMALL_SAMPLE.value,
+                    "metric": metric_name,
+                    "sample_count": sample_count,
+                }
+            )
             return {
                 "violation": StatViolation.SMALL_SAMPLE.value,
                 "sample_count": sample_count,

@@ -36,14 +36,14 @@ from pydantic import BaseModel, Field, model_validator
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
-    "M_MODULES",
-    "M_MODULE_SPECS",
+    "AFFINITY_CONSTRAINTS",
     "A_DAG",
     "B_DAG",
+    "M_MODULES",
+    "M_MODULE_SPECS",
     "ABExperimentRoute",
-    "AFFINITY_CONSTRAINTS",
-    "AffinityWeight",
     "AIImpactAssessment",
+    "AffinityWeight",
     "ArtifactClassification",
     "ArtifactType",
     "CircuitBreakerState",
@@ -107,6 +107,7 @@ class ModuleStatus(str, Enum):
 
 class ExecutionMode(str, Enum):
     """三层执行模式——L1(Trae)/L2(Local)/L3(API)"""
+
     TRAE = "trae"
     LOCAL = "local"
     API = "api"
@@ -206,12 +207,10 @@ class PipelineResult(BaseModel):
         description="Pipeline→AgentOrchestrator 桥接结果——B34+B36",
     )
     skill_injection: dict | None = Field(
-        default=None,
-        description="Agent Spec Skill 注入结果——domain/role skill 上下文"
+        default=None, description="Agent Spec Skill 注入结果——domain/role skill 上下文"
     )
     night_shift_log: list[NightShiftAmbiguityLogEntry] = Field(
-        default_factory=list,
-        description="夜班登记表——API 夜间不确定条目"
+        default_factory=list, description="夜班登记表——API 夜间不确定条目"
     )
 
 
@@ -264,10 +263,7 @@ class NightShiftAmbiguityLogEntry(BaseModel):
     task_id: str = Field(..., description="关联任务ID")
     module: str = Field(..., description="触发模块节点 Mx")
     context: str = Field(..., description="不确定的上下文描述")
-    options: list[dict[str, str]] = Field(
-        default_factory=list,
-        description="可选方案列表 [{label, description}]"
-    )
+    options: list[dict[str, str]] = Field(default_factory=list, description="可选方案列表 [{label, description}]")
     auto_decision: str = Field(default="C", description="API 自动选择的最保守方案")
     requires_human: bool = Field(default=True, description="需要人类裁定")
     human_decision: str | None = Field(default=None, description="人类裁定结果")
@@ -282,6 +278,7 @@ class NightShiftAmbiguityLogEntry(BaseModel):
 
 class CircuitBreakerState(str, Enum):
     """断路器三态——对标 Netflix Hystrix。"""
+
     CLOSED = "closed"
     OPEN = "open"
     HALF_OPEN = "half_open"
@@ -289,6 +286,7 @@ class CircuitBreakerState(str, Enum):
 
 class ModelVersionInfo(BaseModel):
     """模型版本锁定信息——对标 Langfuse model registry。"""
+
     model_config = BASE_CONFIG
     model_name: str
     version: str
@@ -300,6 +298,7 @@ class ModelVersionInfo(BaseModel):
 
 class ModelConfidence(BaseModel):
     """模型输出置信度——B158。"""
+
     model_config = BASE_CONFIG
     score: float = Field(default=0.0, ge=0.0, le=1.0)
     source: str = Field(default="", description="logprob | self_eval | ensemble")
@@ -308,6 +307,7 @@ class ModelConfidence(BaseModel):
 
 class AIImpactAssessment(BaseModel):
     """AI 影响评估——NIST AI RMF MAP 函数。"""
+
     model_config = BASE_CONFIG
     risk_tier: str = Field(default="low", description="low | medium | high | critical")
     affected_stakeholders: list[str] = Field(default_factory=list)
@@ -318,6 +318,7 @@ class AIImpactAssessment(BaseModel):
 
 class CostRecord(BaseModel):
     """LLM 调用成本记录——B161。"""
+
     model_config = BASE_CONFIG
     model: str
     tokens_input: int = 0
@@ -328,6 +329,7 @@ class CostRecord(BaseModel):
 
 class DeadLetterEntry(BaseModel):
     """死信队列条目——B169。"""
+
     model_config = BASE_CONFIG
     task_id: str
     failed_at: str = Field(default_factory=lambda: datetime.now().isoformat())
@@ -338,22 +340,27 @@ class DeadLetterEntry(BaseModel):
 
 class EmergencyFallbackPlan(BaseModel):
     """三模全失败降级计划——B147。"""
+
     model_config = BASE_CONFIG
     activated: bool = False
     all_models_failed: list[str] = Field(default_factory=list)
-    recommended_action: str = Field(default="WAIT_AND_RETRY", description="WAIT_AND_RETRY | ESCALATE_TO_HUMAN | USE_CACHED | ABORT")
+    recommended_action: str = Field(
+        default="WAIT_AND_RETRY", description="WAIT_AND_RETRY | ESCALATE_TO_HUMAN | USE_CACHED | ABORT"
+    )
     wait_before_retry_s: int = 300
     fallback_routes: list[str] = Field(default_factory=list)
 
 
 class ExperimentVariant(str, Enum):
     """A/B 实验变体——B159。"""
+
     CONTROL = "control"
     TREATMENT = "treatment"
 
 
 class ABExperimentRoute(BaseModel):
     """A/B 实验路由决策——B159。"""
+
     model_config = BASE_CONFIG
     experiment_id: str
     variant: ExperimentVariant
@@ -404,24 +411,38 @@ class PipelineOrchestratorConfig(BaseModel):
     )
     model_versions: list[ModelVersionInfo] = Field(
         default_factory=lambda: [
-            ModelVersionInfo(model_name="deepseek", version="v4-pro", context_limit_tokens=128000, cost_per_1k_input=0.00174, cost_per_1k_output=0.00348),
-            ModelVersionInfo(model_name="glm", version="5.1", context_limit_tokens=128000, cost_per_1k_input=0.0, cost_per_1k_output=0.0),
-            ModelVersionInfo(model_name="claude", version="opus-4.7", context_limit_tokens=200000, cost_per_1k_input=0.005, cost_per_1k_output=0.025),
+            ModelVersionInfo(
+                model_name="deepseek",
+                version="v4-pro",
+                context_limit_tokens=128000,
+                cost_per_1k_input=0.00174,
+                cost_per_1k_output=0.00348,
+            ),
+            ModelVersionInfo(
+                model_name="glm",
+                version="5.1",
+                context_limit_tokens=128000,
+                cost_per_1k_input=0.0,
+                cost_per_1k_output=0.0,
+            ),
+            ModelVersionInfo(
+                model_name="claude",
+                version="opus-4.7",
+                context_limit_tokens=200000,
+                cost_per_1k_input=0.005,
+                cost_per_1k_output=0.025,
+            ),
         ],
         description="B150 模型版本锁定 + B170 上下文窗口限制",
     )
     log_buffer_max: int = Field(default=2000, description="B148 日志缓冲区上限")
     latency_samples_max: int = Field(default=100, description="B148 延迟样本上限")
     human_detection_method: str = Field(
-        default="heartbeat",
-        description="人类在场检测方式: heartbeat | manual_switch | time_window"
+        default="heartbeat", description="人类在场检测方式: heartbeat | manual_switch | time_window"
     )
     working_hours_start: int = Field(default=9, ge=0, le=23, description="工作时间开始（时）")
     working_hours_end: int = Field(default=21, ge=0, le=23, description="工作时间结束（时）")
-    local_model_always_on: bool = Field(
-        default=True,
-        description="本地模型 24/7 常驻运行"
-    )
+    local_model_always_on: bool = Field(default=True, description="本地模型 24/7 常驻运行")
     accuracy_tracking_enabled: bool = Field(default=False, description="B155 准确率追踪")
 
 
@@ -686,27 +707,34 @@ class PipelineAffinityConstraint(BaseModel):
 
 AFFINITY_CONSTRAINTS: list[PipelineAffinityConstraint] = [
     PipelineAffinityConstraint(
-        constraint_type="model", node_a="M3", node_b="M7",
+        constraint_type="model",
+        node_a="M3",
+        node_b="M7",
         weight=AffinityWeight.HARD,
         description="双盲审查必须用不同模型——M3/M7 hard antiAffinity",
     ),
     PipelineAffinityConstraint(
-        constraint_type="model", node_a="M8", node_b="M9",
+        constraint_type="model",
+        node_a="M8",
+        node_b="M9",
         weight=AffinityWeight.SOFT,
         description="建议合规+风险用不同模型交叉审查",
     ),
     PipelineAffinityConstraint(
-        constraint_type="sandbox", node_a="M1",
+        constraint_type="sandbox",
+        node_a="M1",
         weight=AffinityWeight.HARD,
         description="M1-M4必须在full/standard沙箱执行",
     ),
     PipelineAffinityConstraint(
-        constraint_type="pipeline", node_a="A",
+        constraint_type="pipeline",
+        node_a="A",
         weight=AffinityWeight.HARD,
         description="A区产出必须经M5打包→M6边界标记",
     ),
     PipelineAffinityConstraint(
-        constraint_type="model", node_a="M8",
+        constraint_type="model",
+        node_a="M8",
         weight=AffinityWeight.SOFT,
         description="M8-M11优先DeepSeek降低成本",
     ),
@@ -734,6 +762,7 @@ class ArtifactType(str, Enum):
 
 class ArtifactClassification(str, Enum):
     """artifact 数据分级——对标 SOC2 CC7.2 + DLP 策略。"""
+
     PUBLIC = "public"
     INTERNAL = "internal"
     CONFIDENTIAL = "confidential"
@@ -966,6 +995,7 @@ class M10ReportOutput(BaseModel):
 
 class M6DiffOutput(BaseModel):
     """M6 差异检测输出——B区审计入口信号。"""
+
     has_changes: bool = False
     changed_files: list[str] = []
     diff_summary: str = ""

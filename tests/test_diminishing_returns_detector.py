@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_diminishing_returns_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.diminishing_returns_detector import (
     DiminishingReturnsDetector,

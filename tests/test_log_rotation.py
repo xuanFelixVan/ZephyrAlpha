@@ -12,11 +12,7 @@
 
 from __future__ import annotations
 
-import gzip
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
-
-import pytest
 
 from zephyr.governance.audit_trail.log_rotation import (
     LogRotationManager,

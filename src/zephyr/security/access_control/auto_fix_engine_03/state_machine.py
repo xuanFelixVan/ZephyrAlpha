@@ -47,7 +47,11 @@ _TRANSITIONS: dict[FixState, set[FixState]] = {
     FixState.DETECTED: {FixState.DIAGNOSED, FixState.DEAD_LETTER},
     FixState.DIAGNOSED: {FixState.TRIAGED, FixState.DEAD_LETTER},
     FixState.TRIAGED: {FixState.ACKNOWLEDGED, FixState.DEAD_LETTER},
-    FixState.ACKNOWLEDGED: {FixState.RESOLVING, FixState.DEAD_LETTER, FixState.CANCELLED if hasattr(FixState, "CANCELLED") else FixState.DEAD_LETTER},
+    FixState.ACKNOWLEDGED: {
+        FixState.RESOLVING,
+        FixState.DEAD_LETTER,
+        FixState.CANCELLED if hasattr(FixState, "CANCELLED") else FixState.DEAD_LETTER,
+    },
     FixState.RESOLVING: {FixState.RESOLVED, FixState.DEAD_LETTER},
     FixState.RESOLVED: {FixState.VERIFIED, FixState.RESOLVING, FixState.DEAD_LETTER},
     FixState.VERIFIED: {FixState.CLOSED, FixState.RESOLVING},
@@ -64,8 +68,7 @@ class InvalidFixTransitionError(Exception):
         self.target = target
         self.allowed = allowed or set()
         super().__init__(
-            f"Invalid fix transition: {current.value} -> {target.value} "
-            f"(allowed: {[s.value for s in self.allowed]})"
+            f"Invalid fix transition: {current.value} -> {target.value} (allowed: {[s.value for s in self.allowed]})"
         )
 
 
@@ -132,16 +135,18 @@ class FixStateMachine:
             self._history.clear()
             return self._current
 
+
 class DriftEventRecord:
-    def __init__(self, record_id='', drift_type='', state='detected', timestamp=None, details=None):
+    def __init__(self, record_id="", drift_type="", state="detected", timestamp=None, details=None):
         self.record_id = record_id
         self.drift_type = drift_type
         self.state = state
         self.timestamp = timestamp
         self.details = details or {}
 
+
 class DriftStateMachine:
-    def __init__(self, initial_state='detected'):
+    def __init__(self, initial_state="detected"):
         self.state = initial_state
         self.history = []
 
@@ -152,10 +157,12 @@ class DriftStateMachine:
     def can_transition(self, target):
         return True
 
+
 class InvalidTransitionError(Exception):
-    def __init__(self, current='', target='', message=''):
+    def __init__(self, current="", target="", message=""):
         self.current = current
         self.target = target
-        super().__init__(message or f'Invalid transition: {current} -> {target}')
+        super().__init__(message or f"Invalid transition: {current} -> {target}")
 
-TERMINAL_STATES = ['resolved', 'escalated', 'ignored', 'cancelled']
+
+TERMINAL_STATES = ["resolved", "escalated", "ignored", "cancelled"]

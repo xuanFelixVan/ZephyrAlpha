@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 TaskGate --- 任务门控
 
@@ -25,7 +25,6 @@ TaskGate --- 任务门控
     ok, reason = gate.can_dispatch("qwen3:8b", "task_classification")
     # → (True, "ok")
 """
-
 
 from __future__ import annotations
 

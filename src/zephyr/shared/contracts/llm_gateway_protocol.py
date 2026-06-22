@@ -1,9 +1,9 @@
 # [A_module] module_id=MOD-SHR_llm_gateway_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.llm_gateway_protocol
-# [INVARIANTS] Protocol MUST NOT import from zephyr.orchestration; only structural subtyping
+# [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; all consumers of LLMGateway
-# [CONSUMERS] zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine; zephyr.orchestration.agent_lifecycle.llm_gateway
+# [CONSUMERS] zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine; zephyr.autonomy_core.llm_gateway
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,24 +13,25 @@
 """
 LLMGatewayProtocol — LLM 网关抽象接口
 =====================================
-从 zephyr.orchestration.agent_lifecycle.llm_gateway.LLMGateway 提取的 Protocol 接口。
+从 zephyr.autonomy_core.llm_gateway.LLMGateway 提取的 Protocol 接口。
 D-INFRA 和 D-ORCH 均依赖此接口，消除跨域直接依赖。
 
-实现方: zephyr.orchestration.agent_lifecycle.llm_gateway.LLMGateway
+实现方: zephyr.autonomy_core.llm_gateway.LLMGateway
 消费者: zephyr.infrastructure.pipeline.llm_gateway
         zephyr.infrastructure.auto_fix_engine.llm_fix_adapter
-        zephyr.orchestration.pipeline_routing.pipeline_orchestrator
+        zephyr.integration.pipeline_orchestrator
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 
 @dataclass(frozen=True)
 class LLMResponse:
     """LLM 调用响应 — 与 orchestration.agent_lifecycle.llm_gateway.LLMResponse 结构一致。"""
+
     content: str
     model: str
     provider: str
@@ -45,6 +46,7 @@ class LLMResponse:
 @dataclass(frozen=True)
 class ProviderConfig:
     """LLM Provider 配置 — 与 orchestration.agent_lifecycle.llm_gateway.ProviderConfig 结构一致。"""
+
     base_url: str
     default_model: str
     api_key_env: str
@@ -75,7 +77,7 @@ class LLMGatewayProtocol(Protocol):
         """发送消息到 LLM，返回响应。支持降级链自动切换 provider。"""
         ...
 
-    def route(self, skill_id: str, model_hint: Optional[str] = None) -> dict[str, Any]:
+    def route(self, skill_id: str, model_hint: str | None = None) -> dict[str, Any]:
         """根据 skill_id 和模型提示，返回路由信息。"""
         ...
 

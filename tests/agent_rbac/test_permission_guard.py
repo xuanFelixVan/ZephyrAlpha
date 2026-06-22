@@ -6,14 +6,18 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试 PermissionGuard — 七层统一编排"""
+
+from pathlib import Path
+
 import pytest
 import yaml
-from pathlib import Path
-from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel, AgentRole
+
+from zephyr.security.access_control.identity import AgentIdentity
 from zephyr.security.access_control.permission_guard import (
-    PermissionGuard, GuardDecision, GuardResult,
+    GuardDecision,
+    GuardResult,
+    PermissionGuard,
 )
-from zephyr.security.access_control.exceptions import ColdStartLockedError
 
 
 @pytest.fixture
@@ -21,11 +25,36 @@ def temp_rbac_config(tmp_path: Path, monkeypatch) -> Path:
     config = {
         "version": "0.14.0",
         "agents": {
-            "test-pg-1": {"maturity": "L0_INTERN", "permissions": ["read:docs"], "auto_guard_eligible": False, "owner_approved": False},
-            "test-pg-2": {"maturity": "L0_INTERN", "permissions": ["read:docs"], "auto_guard_eligible": False, "owner_approved": False},
-            "test-pg-3": {"maturity": "L0_INTERN", "permissions": ["read:docs"], "auto_guard_eligible": True, "owner_approved": False},
-            "test-pg-4": {"maturity": "L0_INTERN", "permissions": ["read:docs"], "auto_guard_eligible": False, "owner_approved": False},
-            "test-pg-5": {"maturity": "L0_INTERN", "permissions": ["read:docs"], "auto_guard_eligible": False, "owner_approved": False},
+            "test-pg-1": {
+                "maturity": "L0_INTERN",
+                "permissions": ["read:docs"],
+                "auto_guard_eligible": False,
+                "owner_approved": False,
+            },
+            "test-pg-2": {
+                "maturity": "L0_INTERN",
+                "permissions": ["read:docs"],
+                "auto_guard_eligible": False,
+                "owner_approved": False,
+            },
+            "test-pg-3": {
+                "maturity": "L0_INTERN",
+                "permissions": ["read:docs"],
+                "auto_guard_eligible": True,
+                "owner_approved": False,
+            },
+            "test-pg-4": {
+                "maturity": "L0_INTERN",
+                "permissions": ["read:docs"],
+                "auto_guard_eligible": False,
+                "owner_approved": False,
+            },
+            "test-pg-5": {
+                "maturity": "L0_INTERN",
+                "permissions": ["read:docs"],
+                "auto_guard_eligible": False,
+                "owner_approved": False,
+            },
         },
     }
     config_dir = tmp_path / "config"
@@ -39,6 +68,7 @@ class TestBasicFlows:
     def test_read_allowed(self, tmp_path, monkeypatch, temp_rbac_config):
         monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
         from zephyr.security.access_control.immutable_core import ImmutableCore
+
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -50,6 +80,7 @@ class TestBasicFlows:
     def test_always_blocked(self, tmp_path, monkeypatch, temp_rbac_config):
         monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
         from zephyr.security.access_control.immutable_core import ImmutableCore
+
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -61,6 +92,7 @@ class TestBasicFlows:
     def test_write_with_auto_guard(self, tmp_path, monkeypatch, temp_rbac_config):
         monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
         from zephyr.security.access_control.immutable_core import ImmutableCore
+
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -76,6 +108,7 @@ class TestBlockedScenarios:
     def test_blocked_by_l0(self, tmp_path, monkeypatch, temp_rbac_config):
         monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
         from zephyr.security.access_control.immutable_core import ImmutableCore
+
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -86,6 +119,7 @@ class TestBlockedScenarios:
     def test_explain_blocked(self, tmp_path, monkeypatch, temp_rbac_config):
         monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
         from zephyr.security.access_control.immutable_core import ImmutableCore
+
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)

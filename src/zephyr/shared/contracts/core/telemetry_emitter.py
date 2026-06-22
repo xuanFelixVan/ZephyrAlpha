@@ -20,6 +20,7 @@
 # [TESTS]
 
 from __future__ import annotations
+
 # ==== BEGIN CODGEN:CTR-P1-013 ====
 from dataclasses import dataclass, field
 from datetime import datetime

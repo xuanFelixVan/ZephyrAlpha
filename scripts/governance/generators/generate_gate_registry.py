@@ -13,8 +13,8 @@ Usage:
 
 from __future__ import annotations
 
-import os
 import argparse
+import os
 import re
 import sys
 from datetime import UTC, datetime
@@ -153,7 +153,7 @@ def main() -> None:
             f.write(f"# 来源: {PRE_COMMIT_PATH}\n")
             f.write("# 手工编辑无效——修改请通过 .pre_commit-config.yaml\n\n")
             yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
+
         os.replace(tmp_path, args.output)
     except PermissionError:
         try:

@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.shared.reliability.diff_planner import (
     ChangePlan,
     DiffHunk,
@@ -149,8 +147,12 @@ class TestPlanChanges:
 class TestDiffHunkDataclass:
     def test_fields(self):
         hunk = DiffHunk(
-            old_start=1, old_count=2, new_start=1, new_count=3,
-            old_lines=["a\n", "b\n"], new_lines=["a\n", "c\n", "d\n"],
+            old_start=1,
+            old_count=2,
+            new_start=1,
+            new_count=3,
+            old_lines=["a\n", "b\n"],
+            new_lines=["a\n", "c\n", "d\n"],
         )
         assert hunk.old_start == 1
         assert hunk.old_count == 2

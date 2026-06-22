@@ -13,16 +13,11 @@
 [TESTS] self
 """
 
-import tempfile
-from pathlib import Path
-
 import pytest
 import yaml
 
 from zephyr.infrastructure.registry_governance import (
-    DomainEntry,
     FunctionalDomainRegistry,
-    OverlapResult,
 )
 
 

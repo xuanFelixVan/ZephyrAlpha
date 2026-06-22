@@ -1,5 +1,20 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
+version: 1.1.0
+layer: L1
+module_id: TRAE-028
+depends_on:
+- TRAE-010
+- TRAE-022
+- TRAE-030
+- TRAE-042
+tags:
+- TRAE
+- doc_structure_naming
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - DOC-001
 - DOC-002
@@ -8,7 +23,6 @@ aliases:
 - DOC-005
 - DOC-006
 - DOC-008
-layer: L1
 severity: error
 scope: doc_structure_naming
 domain: TRAE
@@ -849,7 +863,7 @@ sections:
     - description: GOV-DOC-006不覆盖-文件删除移动安全门禁
       details: trae_029_doc_operation_security.yaml(GOV-DOC-007)
     - description: GOV-DOC-006不覆盖-详细状态值枚举全表
-      details: meta/metadata-registry.md(PS-STD-001) §4.1
+      details: meta/metadata_registry.yaml(PS-STD-001) §4.1
     - description: GOV-DOC-006不覆盖-规则退役整体审批流程
       details: trae_042_meta_rule_standard.yaml(PS-STD-009) §5
   gov_doc_002_new_directory_procedure:
@@ -1004,7 +1018,7 @@ sections:
     - description: GOV-DOC-008 v1.0.2 (2026-06-21)
       details: 编号冲突修复;GOV-DOC-007与trae_029的GOV-DOC-007(文件删除/移动安全门禁)冲突;本规则重编号为GOV-DOC-008
     - description: GOV-DOC-008 v1.0.3 (2026-06-21)
-      details: P1修复;aliases补充DOC-008(gov_doc_008_file_split_threshold section的original_rules已含DOC-008但aliases缺失);kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/project-path-tree.yaml→project_path_tree.yaml/path-ownership-map.yaml→path_ownership_map.yaml);移除不存在的文件引用(open-questions-register.md/module-relocation-matrix.yaml);修正不存在的meta/rule-lifecycle-and-change-standard.md引用为trae_042_meta_rule_standard.yaml
+      details: P1修复;aliases补充DOC-008(gov_doc_008_file_split_threshold section的original_rules已含DOC-008但aliases缺失);kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/project-path-tree.yaml→project_path_tree.yaml/path-ownership-map.yaml→path_ownership_map.yaml);移除不存在的文件引用(open-questions-register.md/module-relocation-matrix.yaml);修正不存在的meta/rule_lifecycle_and_change_standard.yaml引用为trae_042_meta_rule_standard.yaml
   gov_doc_003_naming_ssot:
     title: 命名规则唯一真源声明 (GOV-DOC-003 §SSoT)
     section_type: rule
@@ -1101,7 +1115,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   version: "1.1.0"
   last_modified: "2026-06-21"
   change_history:

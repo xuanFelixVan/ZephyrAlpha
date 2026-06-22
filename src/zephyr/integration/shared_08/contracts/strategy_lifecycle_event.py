@@ -1,9 +1,7 @@
 # [A_module] module_id=MOD-INT_strategy_lifecycle_event | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-006 ====
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from typing import Dict
-from typing import Optional
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -25,8 +23,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class StrategyLifecycleEvent:
@@ -40,182 +39,8 @@ class StrategyLifecycleEvent:
     reason: str
     strategy_id: str
     triggered_by: str
-    performance_snapshot: Optional[Dict[str, float]] = None
+    performance_snapshot: dict[str, float] | None = None
     schema_version: str = "1.0"
 
+
 # ==== END CODGEN:CTR-P1-006 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

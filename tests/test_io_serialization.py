@@ -20,23 +20,25 @@
 # [TESTS] pytest tests/test_io_serialization.py -q
 
 import json
-import pytest
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
-from enum import Enum, unique
-from dataclasses import dataclass
+from enum import Enum
+
+import pytest
+
 from zephyr.integration.shared_08.serialization import (
-    SerializationFormat,
-    SerializationError,
-    to_dict,
-    from_dict,
-    to_json,
-    from_json,
-    serialize_decimal,
-    deserialize_decimal,
-    serialize_datetime,
-    deserialize_datetime,
     ENCODING_RULES,
+    SerializationError,
+    SerializationFormat,
+    deserialize_datetime,
+    deserialize_decimal,
+    from_dict,
+    from_json,
+    serialize_datetime,
+    serialize_decimal,
+    to_dict,
+    to_json,
 )
 
 
@@ -199,5 +201,6 @@ class TestSerializationFormat:
 class TestSerializationError:
     def test_inherits_zephyr_base_error(self):
         from zephyr.integration.shared_08.errors import ZephyrBaseError
+
         err = SerializationError("fail", details={"type": "bad"})
         assert isinstance(err, ZephyrBaseError)

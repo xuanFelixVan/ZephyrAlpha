@@ -29,14 +29,11 @@
   - 设计模式白名单（Strategy/Adapter/Factory/Template Method/Observer/Decorator）
 """
 
-
 from __future__ import annotations
 
 import ast
 import hashlib
-from dataclasses import dataclass, field
-from typing import Any
-
+from dataclasses import dataclass
 
 # ── 豁免规则 ──────────────────────────────────────────────────
 
@@ -77,9 +74,7 @@ class ASTComparator:
 
     # ── 公共 API ──────────────────────────────────────────────
 
-    def compare(
-        self, func_a: str, func_b: str, name_a: str = "", name_b: str = ""
-    ) -> ASTCompareResult:
+    def compare(self, func_a: str, func_b: str, name_a: str = "", name_b: str = "") -> ASTCompareResult:
         """比较两个函数的 AST 结构."""
         exempt_check = self._check_exemption(name_a, name_b)
         if exempt_check.exempted:
@@ -105,9 +100,7 @@ class ASTComparator:
             partial_match_ratio=round(lcs_ratio, 3),
         )
 
-    def compare_bulk(
-        self, pairs: list[tuple[str, str, str, str]]
-    ) -> list[ASTCompareResult]:
+    def compare_bulk(self, pairs: list[tuple[str, str, str, str]]) -> list[ASTCompareResult]:
         """批量比较 [(func_a, func_b, name_a, name_b), ...]."""
         return [self.compare(a, b, na, nb) for a, b, na, nb in pairs]
 
@@ -116,9 +109,7 @@ class ASTComparator:
         normalized = self._normalize_ast(source)
         return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16]
 
-    def cluster_templates(
-        self, functions: list[tuple[str, str]]
-    ) -> dict[str, list[str]]:
+    def cluster_templates(self, functions: list[tuple[str, str]]) -> dict[str, list[str]]:
         """模板聚类——基于命名前缀 + 结构相似度."""
         clusters: dict[str, list[str]] = {}
         prefix_groups: dict[str, list[str]] = {}
@@ -154,23 +145,39 @@ class ASTComparator:
 
         class _Normalizer(ast.NodeTransformer):
             def visit_Expr(self, node: ast.Expr) -> ast.Expr | None:
-                if isinstance(node.value, ast.Constant) and isinstance(
-                    node.value.value, str
-                ):
+                if isinstance(node.value, ast.Constant) and isinstance(node.value.value, str):
                     return None
                 return node
 
             def visit_Name(self, node: ast.Name) -> ast.Name:
                 if node.id not in {
-                    "self", "cls", "None", "True", "False",
-                    "int", "str", "float", "bool", "list", "dict", "set",
-                    "tuple", "bytes", "type", "object", "range", "len",
-                    "print", "isinstance", "super", "Exception",
+                    "self",
+                    "cls",
+                    "None",
+                    "True",
+                    "False",
+                    "int",
+                    "str",
+                    "float",
+                    "bool",
+                    "list",
+                    "dict",
+                    "set",
+                    "tuple",
+                    "bytes",
+                    "type",
+                    "object",
+                    "range",
+                    "len",
+                    "print",
+                    "isinstance",
+                    "super",
+                    "Exception",
                 }:
                     node.id = "_VAR_"
                 return node
 
-            def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.FunctionDef:  # noqa: N802
+            def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.FunctionDef:
                 node.name = "_FUNC_"
                 return self.generic_visit(node)
 

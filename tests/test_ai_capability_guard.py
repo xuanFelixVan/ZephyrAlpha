@@ -22,8 +22,9 @@
 from __future__ import annotations
 
 import os
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from zephyr.governance.rule_enforcement.ai_capability_guard import (
     CapabilityLevel,
@@ -126,24 +127,34 @@ class TestRequireCapability:
     def test_enforcement_blocks_insufficient_level(self):
         os.environ["ZEPHYR_ENFORCE_CAPABILITY"] = "true"
         try:
+
             @require_capability("restricted_op", min_level=CapabilityLevel.FULL)
             def guarded():
                 return "secret"
 
-            with patch("zephyr.governance.rule_enforcement.ai_capability_guard._check_file_level", return_value=CapabilityLevel.IMMUTABLE):
-                with pytest.raises(PermissionError):
-                    guarded()
+            with (
+                patch(
+                    "zephyr.governance.rule_enforcement.ai_capability_guard._check_file_level",
+                    return_value=CapabilityLevel.IMMUTABLE,
+                ),
+                pytest.raises(PermissionError),
+            ):
+                guarded()
         finally:
             os.environ.pop("ZEPHYR_ENFORCE_CAPABILITY", None)
 
     def test_enforcement_allows_sufficient_level(self):
         os.environ["ZEPHYR_ENFORCE_CAPABILITY"] = "true"
         try:
+
             @require_capability("open_op", min_level=CapabilityLevel.IMMUTABLE)
             def open_func():
                 return "ok"
 
-            with patch("zephyr.governance.rule_enforcement.ai_capability_guard._check_file_level", return_value=CapabilityLevel.FULL):
+            with patch(
+                "zephyr.governance.rule_enforcement.ai_capability_guard._check_file_level",
+                return_value=CapabilityLevel.FULL,
+            ):
                 result = open_func()
                 assert result == "ok"
         finally:
@@ -151,6 +162,7 @@ class TestRequireCapability:
 
     def test_enforcement_off_by_default(self):
         os.environ.pop("ZEPHYR_ENFORCE_CAPABILITY", None)
+
         @require_capability("any_op", min_level=CapabilityLevel.FULL)
         def unguarded():
             return "allowed"

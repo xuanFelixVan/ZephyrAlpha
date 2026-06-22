@@ -18,14 +18,15 @@
   7. gate_engine disabled 时跳过门禁
   8. 非法 gate_id 抛出 GateEngineError
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import sqlite3
 from collections.abc import Generator
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.gate_engine import (
     GateEngine,
@@ -37,9 +38,9 @@ from zephyr.governance.rule_enforcement.gate_engine import (
     _check_line_ending,
     _check_path_blacklist,
 )
-from zephyr.shared.shared_services.models import TaskCard
-from zephyr.governance.rule_enforcement.task_types import TaskStatus, TaskNamespace
+from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.shared_services.models import TaskCard
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -358,7 +359,7 @@ def test_gate_result_persisted_to_db(db_path: Path, engine: GateEngine) -> None:
 
 def test_multiple_evaluations_all_persisted(db_path: Path, engine: GateEngine) -> None:
     for i in range(3):
-        task = _make_task(task_id=f"SRC-{100+i:03d}")
+        task = _make_task(task_id=f"SRC-{100 + i:03d}")
         engine.evaluate(task, "G1")
     conn = sqlite3.connect(str(db_path))
     count = conn.execute("SELECT COUNT(*) FROM gates").fetchone()[0]

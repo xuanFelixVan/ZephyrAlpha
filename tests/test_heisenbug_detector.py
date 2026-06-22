@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_heisenbug_detector.py
 
-import pytest
 
 from zephyr.ops.detectors.heisenbug_detector import (
     HeisenbugDetector,

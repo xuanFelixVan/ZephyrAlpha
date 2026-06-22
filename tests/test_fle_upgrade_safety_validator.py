@@ -12,11 +12,6 @@
 
 from __future__ import annotations
 
-import hashlib
-import json
-
-import pytest
-
 from zephyr.ops.forensic.fle_upgrade_safety_validator import (
     FLEUpgradeSafetyValidator,
     UpgradeSafetyResult,
@@ -26,8 +21,11 @@ from zephyr.ops.forensic.fle_upgrade_safety_validator import (
 class TestUpgradeSafetyResult:
     def test_creation(self):
         r = UpgradeSafetyResult(
-            version_from="0.40.0", version_to="0.41.0", compatible=True,
-            breaking_changes=[], state_compatibility={"thresholds": True},
+            version_from="0.40.0",
+            version_to="0.41.0",
+            compatible=True,
+            breaking_changes=[],
+            state_compatibility={"thresholds": True},
         )
         assert r.compatible is True
         assert r.breaking_changes == []
@@ -35,8 +33,11 @@ class TestUpgradeSafetyResult:
 
     def test_creation_incompatible(self):
         r = UpgradeSafetyResult(
-            version_from="0.40.0", version_to="0.41.0", compatible=False,
-            breaking_changes=["schema_hash_mismatch"], state_compatibility={},
+            version_from="0.40.0",
+            version_to="0.41.0",
+            compatible=False,
+            breaking_changes=["schema_hash_mismatch"],
+            state_compatibility={},
         )
         assert r.compatible is False
         assert len(r.breaking_changes) == 1
@@ -70,7 +71,11 @@ class TestFLEUpgradeSafetyValidator:
         v = FLEUpgradeSafetyValidator()
         schema = {"thresholds": {}, "rules": {}}
         h = v.register_current_state_schema(schema)
-        result = v.validate_upgrade("0.42.0", h, ["thresholds", "rules", "baselines", "config_hashes", "guard_states", "cycle_count", "self_model"])
+        result = v.validate_upgrade(
+            "0.42.0",
+            h,
+            ["thresholds", "rules", "baselines", "config_hashes", "guard_states", "cycle_count", "self_model"],
+        )
         assert result["can_upgrade"] is True
         assert result["recommendation"] == "SAFE_TO_UPGRADE"
 
@@ -94,7 +99,15 @@ class TestFLEUpgradeSafetyValidator:
         v = FLEUpgradeSafetyValidator()
         schema = {"all": True}
         v.register_current_state_schema(schema)
-        expected_keys = ["thresholds", "rules", "baselines", "config_hashes", "guard_states", "cycle_count", "self_model"]
+        expected_keys = [
+            "thresholds",
+            "rules",
+            "baselines",
+            "config_hashes",
+            "guard_states",
+            "cycle_count",
+            "self_model",
+        ]
         result = v.validate_upgrade("0.42.0", v.state_schema_hash, expected_keys)
         assert result["can_upgrade"] is True
         assert result["state_keys_verified"] == 7

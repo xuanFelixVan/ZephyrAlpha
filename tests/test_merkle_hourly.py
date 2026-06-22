@@ -14,9 +14,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
-
-import pytest
 
 from zephyr.governance.merkle_hourly import (
     AggregationResult,

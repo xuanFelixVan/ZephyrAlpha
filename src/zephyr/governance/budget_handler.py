@@ -24,14 +24,13 @@
 G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理.
 """
 
-
 from __future__ import annotations
 
 import logging
 from typing import Any
 
-from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
 from zephyr.governance.contracts import EscalationContracts
+from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
 
 _logger = logging.getLogger(__name__)
 _escalation = EscalationContracts()

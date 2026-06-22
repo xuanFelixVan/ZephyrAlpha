@@ -27,6 +27,7 @@ Risk: R64 — Kernel bottleneck causes application anomaly; misdiagnosed as app 
 
 from dataclasses import dataclass
 
+
 @dataclass
 class EBPFMonitor:
     enabled: bool = False

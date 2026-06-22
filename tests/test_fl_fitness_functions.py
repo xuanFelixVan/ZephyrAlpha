@@ -12,21 +12,16 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.ops.fitness_functions import (
-    METRIC_COMPLIANCE_RATE,
-    METRIC_MODULE_COUPLING,
-    METRIC_TEST_COVERAGE,
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessThresholds,
     MetricStatus,
-    from_gate_results,
     fitness_anomaly_detection_precision,
     fitness_false_positive_rate,
     fitness_mtti_seconds,
     fitness_owner_override_rate,
+    from_gate_results,
 )
 
 

@@ -11,13 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 检测失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_anomaly.py
-
 import logging
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["AnomalyDetector"]
+
 
 class AnomalyDetector:
     def __init__(self, window_size: int = 50) -> None:
@@ -27,7 +27,7 @@ class AnomalyDetector:
     def feed(self, value: float) -> None:
         self._values.append(value)
         if len(self._values) > self._window_size * 2:
-            self._values = self._values[-self._window_size:]
+            self._values = self._values[-self._window_size :]
 
     def detect(self, value: float, threshold: float = 2.0) -> dict[str, Any]:
         self.feed(value)
@@ -35,10 +35,10 @@ class AnomalyDetector:
         if len(self._values) < 10:
             return {"is_anomaly": False, "z_score": 0.0, "reason": "insufficient_data"}
 
-        recent = self._values[-self._window_size:]
+        recent = self._values[-self._window_size :]
         mean = sum(recent) / len(recent)
         variance = sum((x - mean) ** 2 for x in recent) / len(recent)
-        std_dev = variance ** 0.5
+        std_dev = variance**0.5
 
         if std_dev == 0:
             return {"is_anomaly": value != mean, "z_score": 0.0 if value == mean else float("inf")}

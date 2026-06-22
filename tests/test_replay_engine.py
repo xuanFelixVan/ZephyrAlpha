@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-import json
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
 
 import pytest
 
@@ -29,9 +27,33 @@ from zephyr.governance.audit_trail.replay_engine import (
 def sample_events():
     now = datetime.now(UTC)
     return [
-        {"entry_id": "r1", "agent_id": "agent-a", "action_type": "write", "target_path": "/tmp/f1.py", "lamport_clock_counter": 1, "lamport_clock_ide": "ide-1", "timestamp": now.isoformat()},
-        {"entry_id": "r2", "agent_id": "agent-b", "action_type": "read", "target_path": "/tmp/f2.py", "lamport_clock_counter": 2, "lamport_clock_ide": "ide-1", "timestamp": (now - timedelta(hours=1)).isoformat()},
-        {"entry_id": "r3", "agent_id": "agent-a", "operation": "delete", "file_path": "/tmp/f3.py", "lamport_clock_counter": 3, "lamport_clock_ide": "ide-2", "timestamp": (now - timedelta(hours=2)).isoformat()},
+        {
+            "entry_id": "r1",
+            "agent_id": "agent-a",
+            "action_type": "write",
+            "target_path": "/tmp/f1.py",
+            "lamport_clock_counter": 1,
+            "lamport_clock_ide": "ide-1",
+            "timestamp": now.isoformat(),
+        },
+        {
+            "entry_id": "r2",
+            "agent_id": "agent-b",
+            "action_type": "read",
+            "target_path": "/tmp/f2.py",
+            "lamport_clock_counter": 2,
+            "lamport_clock_ide": "ide-1",
+            "timestamp": (now - timedelta(hours=1)).isoformat(),
+        },
+        {
+            "entry_id": "r3",
+            "agent_id": "agent-a",
+            "operation": "delete",
+            "file_path": "/tmp/f3.py",
+            "lamport_clock_counter": 3,
+            "lamport_clock_ide": "ide-2",
+            "timestamp": (now - timedelta(hours=2)).isoformat(),
+        },
     ]
 
 
@@ -48,7 +70,9 @@ class TestReplaySnapshot:
         assert snap.state == {}
 
     def test_custom_values(self):
-        snap = ReplaySnapshot(lamport_counter=5, entry_count=3, last_entry_id="e1", last_agent_id="a1", state={"key": "val"})
+        snap = ReplaySnapshot(
+            lamport_counter=5, entry_count=3, last_entry_id="e1", last_agent_id="a1", state={"key": "val"}
+        )
         assert snap.lamport_counter == 5
         assert snap.state["key"] == "val"
 
@@ -144,5 +168,7 @@ class TestReplayEngine:
         events = [
             {"entry_id": "nt1", "agent_id": "a", "lamport_clock_counter": 1, "lamport_clock_ide": "x"},
         ]
-        result = engine.replay_range(start_timestamp="2020-01-01T00:00:00Z", end_timestamp="2020-12-31T23:59:59Z", events=events)
+        result = engine.replay_range(
+            start_timestamp="2020-01-01T00:00:00Z", end_timestamp="2020-12-31T23:59:59Z", events=events
+        )
         assert result.events_replayed == 0

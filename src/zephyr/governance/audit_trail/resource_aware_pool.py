@@ -12,17 +12,19 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from concurrent.futures import Future, ThreadPoolExecutor
-from typing import Any, Callable
+from typing import Any
 
 from pydantic import BaseModel
 
-
-_GPU_TASK_TYPES: frozenset[str] = frozenset({
-    "llm_inference",
-    "semantic_analysis",
-    "embedding",
-})
+_GPU_TASK_TYPES: frozenset[str] = frozenset(
+    {
+        "llm_inference",
+        "semantic_analysis",
+        "embedding",
+    }
+)
 
 
 class PoolStats(BaseModel):

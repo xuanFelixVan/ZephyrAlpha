@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-308
 status: active
 title: 3.3 doc_type 与 layer 的联动

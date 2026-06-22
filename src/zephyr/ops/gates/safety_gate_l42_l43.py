@@ -25,11 +25,10 @@ L42: counterfactual_harm_rate + decision_entropy → severity-dependent action l
 L43: net_negative_value → only P1; data_expired → no action; no_checkpoints → block upgrade
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL42L43:
-
     def __init__(self):
         self.counterfactual_harm_rate: float = 0.0
         self.decision_entropy: float = 0.0
@@ -46,9 +45,13 @@ class SafetyGateL42L43:
 
     def _l42_causal_integrity(self, ctx: ActionContext) -> GateResult:
         if self.counterfactual_harm_rate > 0.2:
-            return GateResult("L42", GateVerdict.REJECT, GateType.HARD, f"CF harm rate {self.counterfactual_harm_rate:.2f} > 0.2")
+            return GateResult(
+                "L42", GateVerdict.REJECT, GateType.HARD, f"CF harm rate {self.counterfactual_harm_rate:.2f} > 0.2"
+            )
         if self.decision_entropy > 0.8:
-            return GateResult("L42", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Decision entropy {self.decision_entropy:.2f} high")
+            return GateResult(
+                "L42", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Decision entropy {self.decision_entropy:.2f} high"
+            )
         return GateResult("L42", GateVerdict.PASS, GateType.HARD)
 
     def _l43_survivability(self, ctx: ActionContext) -> GateResult:

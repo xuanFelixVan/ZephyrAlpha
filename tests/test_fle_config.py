@@ -12,8 +12,6 @@
 
 from dataclasses import fields
 
-import pytest
-
 from zephyr.ops.config import FLEConfig
 
 

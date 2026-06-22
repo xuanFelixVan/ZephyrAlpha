@@ -23,8 +23,8 @@ from __future__ import annotations
 
 """过时共享函数检测器 — 无caller × 30天 → STALE标记."""
 
-from datetime import datetime, timezone, timedelta
-from pathlib import Path
+from datetime import UTC, datetime
+
 
 class StaleSharedDetector:
     """过时共享函数检测."""
@@ -33,7 +33,7 @@ class StaleSharedDetector:
 
     def detect(self, functions_with_callers: list[dict]) -> list[str]:
         """无caller × 30天未使用 → STALE."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         stale: list[str] = []
 
         for func_info in functions_with_callers:
@@ -50,7 +50,7 @@ class StaleSharedDetector:
             except ValueError:
                 continue
 
-            if (now - used_date.replace(tzinfo=timezone.utc)).days >= self._STALE_AGE_DAYS:
+            if (now - used_date.replace(tzinfo=UTC)).days >= self._STALE_AGE_DAYS:
                 stale.append(func_info["name"])
 
         return stale

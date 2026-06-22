@@ -8,11 +8,11 @@ Blue Team: 系统防御——SYS-MASTER-CMP gate + crosscheck_sys_master_deps.py
 exit 0 = 所有攻击被防御系统检测到（预期行为）
 exit 1 = 至少一个攻击未被检测到（漏洞）
 """
+
 from __future__ import annotations
 
 import json
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -23,16 +23,17 @@ GATE = [sys.executable, str(PROJECT_ROOT / "src" / "zephyr" / "gates" / "sys_mas
 def run_gate() -> list[dict]:
     """run_gate implementation - call check functions directly to avoid subprocess/argv issues."""
     from zephyr.governance.rule_enforcement.sys_master_compliance import (
+        check_ai_rules_count,
         check_blueprint_existence,
         check_cold_start_integration,
-        check_depends_on_integrity,
         check_construction_progress_consistency,
-        check_version_consistency,
-        check_ai_rules_count,
+        check_crosscheck_script,
+        check_depends_on_integrity,
         check_gate_registry_entry,
         check_sli_data_sources,
-        check_crosscheck_script,
+        check_version_consistency,
     )
+
     all_checks = []
     all_checks.extend(check_blueprint_existence())
     all_checks.extend(check_cold_start_integration())
@@ -81,6 +82,7 @@ def extract_fm_boundaries(text: str) -> tuple[str, str]:
 # Attack 1: MOD-MASTER-001 frontmatter construction_progress corruption
 # ============================================================
 
+
 def attack_01_frontmatter() -> Attack:
     """attack_01_frontmatter implementation."""
     a = Attack("M01-frontmatter_corruption")
@@ -109,6 +111,7 @@ def attack_01_frontmatter() -> Attack:
 # ============================================================
 # Attack 2: blueprint-registry.yaml drift for SYS-MASTER-001
 # ============================================================
+
 
 def attack_02_registry() -> Attack:
     """attack_02_registry implementation."""
@@ -143,6 +146,7 @@ def attack_02_registry() -> Attack:
 # Gate防御：check_depends_on_integrity() YAML解析 depends_on，检查 target=="MOD-MASTER-001"
 # ============================================================
 
+
 def attack_03_depends_on() -> Attack:
     """attack_03_depends_on implementation."""
     a = Attack("M03-depends_on_broken")
@@ -169,6 +173,7 @@ def attack_03_depends_on() -> Attack:
 # Attack：删除 project_rules.md 冷启动序列中对 SYS-MASTER-001 的引用
 # Gate防御：check_cold_start_integration() 搜索 STEP 1..STEP 5 区间内的 SYS-MASTER 或 _sys-master
 # ============================================================
+
 
 def attack_04_cold_start() -> Attack:
     """attack_04_cold_start implementation."""
@@ -197,6 +202,7 @@ def attack_04_cold_start() -> Attack:
 # Gate防御：check_crosscheck_script() subprocess.run 检查 exit code
 # ============================================================
 
+
 def attack_05_crosscheck() -> Attack:
     """attack_05_crosscheck implementation."""
     a = Attack("M05-crosscheck_broken")
@@ -223,6 +229,7 @@ def attack_05_crosscheck() -> Attack:
 # Gate防御：check_blueprint_existence() 检查文件存在
 # ============================================================
 
+
 def attack_06_missing() -> Attack:
     """attack_06_missing implementation."""
     a = Attack("M06-missing_blueprint")
@@ -248,6 +255,7 @@ def attack_06_missing() -> Attack:
 # Gate防御：check_ai_rules_count() re.findall 计数 >= 76
 # ============================================================
 
+
 def attack_07_rules() -> Attack:
     """attack_07_rules implementation."""
     a = Attack("M07-ai_rules_regression")
@@ -272,6 +280,7 @@ def attack_07_rules() -> Attack:
 # ============================================================
 # Main
 # ============================================================
+
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
@@ -322,12 +331,9 @@ def main() -> int:
             "total_attacks": len(results),
             "detected": detected,
             "missed": missed,
-            "detection_rate": f"{detected}/{len(results)}"
+            "detection_rate": f"{detected}/{len(results)}",
         },
-        "attacks": [
-            {"name": r.name, "detected": r.detected, "detail": r.detail}
-            for r in results
-        ]
+        "attacks": [{"name": r.name, "detected": r.detected, "detail": r.detail} for r in results],
     }
 
     report_path = PROJECT_ROOT / "docs" / "09_audit" / "adversarial_test_sys_master_20260507.json"

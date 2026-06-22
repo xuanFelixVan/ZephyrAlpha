@@ -13,9 +13,6 @@
 from __future__ import annotations
 
 import sys
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 from zephyr.security.access_control.auto_fix_engine_03.escalation_bridge import EscalationBridge
 from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixLevel, FixStatus

@@ -21,8 +21,8 @@ GATE-11 命名规范门禁单测
 - TestN07AdrIdFilenameMismatch：N-07 module_id 与文件名编号一致性
 - TestPathExemption：PATH_EXEMPT_PREFIXES 路径豁免
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import sys
 from pathlib import Path

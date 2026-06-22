@@ -48,24 +48,28 @@ class PointInTimeReconstructor:
 
     def take_snapshot(self, state: dict) -> None:
         now = time.time()
-        self.snapshots.append({
-            "ts": now,
-            "state": state.copy(),
-            "vector_clock": dict(self.vector_clock),
-        })
+        self.snapshots.append(
+            {
+                "ts": now,
+                "state": state.copy(),
+                "vector_clock": dict(self.vector_clock),
+            }
+        )
         self.last_snapshot_at = now
         if len(self.snapshots) > 24:
             self.snapshots = self.snapshots[-24:]
 
     def record_event(self, component: str, event_type: str, payload: dict) -> None:
         self.vector_clock[component] = self.vector_clock.get(component, 0) + 1
-        self.events.append({
-            "ts": time.time(),
-            "component": component,
-            "type": event_type,
-            "payload": payload,
-            "vc": dict(self.vector_clock),
-        })
+        self.events.append(
+            {
+                "ts": time.time(),
+                "component": component,
+                "type": event_type,
+                "payload": payload,
+                "vc": dict(self.vector_clock),
+            }
+        )
         if len(self.events) > 10000:
             self.events = self.events[-10000:]
 

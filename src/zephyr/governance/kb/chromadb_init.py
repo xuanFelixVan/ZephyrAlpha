@@ -51,7 +51,6 @@ Safety  : M（初始化目录 + 创建 collection，幂等）
     collection = client.get_collection("ke_entries")
 """
 
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -59,8 +58,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared_08.io.paths import MODELS_CACHE_DIR, VECTOR_INDEX_DIR
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.integration.shared_08.io.paths import MODELS_CACHE_DIR, VECTOR_INDEX_DIR
 
 COLLECTION_NAMES = ("ke_entries", "vibe_rules", "blueprints", "failure_patterns")
 

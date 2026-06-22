@@ -26,13 +26,13 @@ module_id: MOD-INF-023
 定义漂移检测系统的所有核心数据类、枚举和类型别名。
 对标 blueprint.md §2.3（漂移状态机数据表）、§7（文件组成）。
 """
+
 from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum, auto
-from typing import Optional
 
 
 class DriftState(Enum):
@@ -76,8 +76,8 @@ class DriftEvent:
     state: DriftState
     created_at: datetime
     updated_at: datetime
-    resolved_by: Optional[str] = None
-    resolution_detail: Optional[str] = None
+    resolved_by: str | None = None
+    resolution_detail: str | None = None
     auto_fixed: bool = False
     rollback_verified: bool = False
 
@@ -149,7 +149,7 @@ class CascadeEvent:
     module_id: str
     trigger_count: int = 0
     repair_loop_events: list[uuid.UUID] = field(default_factory=list)
-    cascade_lock_until: Optional[datetime] = None
+    cascade_lock_until: datetime | None = None
 
 
 @dataclass
@@ -176,9 +176,9 @@ class ForensicsReport:
 @dataclass
 class ConfigConflict:
     key_name: str
-    env_source_value: Optional[str] = None
-    yaml_source_value: Optional[object] = None
-    hardcoded_default_value: Optional[object] = None
+    env_source_value: str | None = None
+    yaml_source_value: object | None = None
+    hardcoded_default_value: object | None = None
 
 
 @dataclass
@@ -194,7 +194,7 @@ class BreakingChange:
 class OrphanFile:
     file_path: str
     classification: OrphanClassification
-    last_modified: Optional[datetime] = None
+    last_modified: datetime | None = None
     suggestion: str = ""
 
 
@@ -204,8 +204,8 @@ class Detector:
     drift_dimension: str
     severity: Severity
     category: str
-    script: Optional[str] = None
-    method: Optional[str] = None
+    script: str | None = None
+    method: str | None = None
     status: str = "active"
     auto_fixable: bool = False
     check_dims: list[str] = field(default_factory=list)

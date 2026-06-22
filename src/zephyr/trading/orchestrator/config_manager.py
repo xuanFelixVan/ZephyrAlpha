@@ -23,7 +23,6 @@ from __future__ import annotations
 
 """统一配置管理器（CT-CONFIG-001）——12系统共享配置读写+启动时校验。"""
 
-from pydantic import BaseModel
 
 class ConfigManager:
     def __init__(self, config_path: str = "config/system_config.yaml"):

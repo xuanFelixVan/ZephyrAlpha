@@ -26,6 +26,7 @@ Blindspot: Repairs launched without pre-flight checklist validation.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class PreFlightSimulator:
     checklist: list[str] = field(default_factory=list)

@@ -23,6 +23,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: arbitrate_findings.py — Finding 仲裁器（跨脚本冲突解决引擎）
@@ -57,11 +58,16 @@ DIMENSION_PRIORITY: dict[str, int] = {
 }
 
 SEVERITY_WEIGHT: dict[str, int] = {
-    "CRITICAL": 5, "HIGH": 4, "MEDIUM": 3, "LOW": 2, "INFO": 1, "PASS": 0,
+    "CRITICAL": 5,
+    "HIGH": 4,
+    "MEDIUM": 3,
+    "LOW": 2,
+    "INFO": 1,
+    "PASS": 0,
 }
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load_findings(path: str | Path) -> list[dict]:
@@ -177,11 +183,16 @@ def main() -> None:
     if "--json" in sys.argv:
         print(json_mod.dumps(result, ensure_ascii=False, indent=2))
     else:
-        print(f"[ARBITRATOR] {result['total_files']} 个文件, {result['conflicts_resolved']} 个冲突已裁决", file=sys.stderr)
+        print(
+            f"[ARBITRATOR] {result['total_files']} 个文件, {result['conflicts_resolved']} 个冲突已裁决", file=sys.stderr
+        )
         for r in result["results"]:
             if r["status"] == "resolved":
                 w = r["winner"]
-                print(f"  ✅ {r['file_path']}: {w.get('dimension')} [{w.get('severity')}] — overruled {r.get('conflicting_from')}", file=sys.stderr)
+                print(
+                    f"  ✅ {r['file_path']}: {w.get('dimension')} [{w.get('severity')}] — overruled {r.get('conflicting_from')}",
+                    file=sys.stderr,
+                )
             elif r["status"] == "flag_for_review":
                 print(f"  ⚠ {r['file_path']}: 无法自动裁决，标记人工审查", file=sys.stderr)
 

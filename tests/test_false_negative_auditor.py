@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.false_negative_auditor import (
-    FalseNegativeAuditor, FNAuditResult,
+    FalseNegativeAuditor,
+    FNAuditResult,
 )
+
 
 class TestFalseNegativeAuditor:
     def test_instantiation(self):

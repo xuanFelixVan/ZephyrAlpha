@@ -31,20 +31,20 @@ error_budget:
       action: "指标仪表板更新"
       notification_channel: "metrics_dashboard"
       auto_recovery: true
-    
+
     - tier: L1 (YELLOW)
       burn_rate_range: [1.0, 3.0)
       action: "模块日志告警 + 频率限制建议"
       notification_channel: "module_logs"
       auto_recovery: true
-    
+
     - tier: L2 (ORANGE)
       burn_rate_range: [3.0, 6.0)
       action: "AI 代理工作区通知 + Token Budget 收紧"
       notification_channel: "ai_workspace"
       auto_recovery: false
       escalation_timeout_minutes: 30
-    
+
     - tier: L3 (RED)
       burn_rate_range: [6.0, 14.4)
       action: "模型路由切换 + 全局通知"
@@ -52,7 +52,7 @@ error_budget:
       auto_recovery: false
       triggers: ["CT-1 模型路由切换"]
       escalation_timeout_minutes: 15
-    
+
     - tier: L4 (BLACK)
       burn_rate_range: [14.4, inf)
       action: "全平台通知 + Kill Switch 触发"
@@ -62,7 +62,7 @@ error_budget:
 
   burn_rate_calculation:
     formula: "burn_rate = (error_ratio / (1 - slo_target)) * (alert_window / evaluation_window)"
-    
+
   conservation:
     max_budget_consumption_pct: 100.0
     min_budget_remaining_pct: 0.0

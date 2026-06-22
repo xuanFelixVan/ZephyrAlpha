@@ -11,6 +11,7 @@
 [ERROR_CONTRACT] exit 0=CLEAN, exit 1=DRIFT, exit 2=ERROR
 [TESTS] tests/governance/test_check_blueprint_code_alignment.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -22,13 +23,14 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import argparse
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 
 __manifest__ = """
 args: [--warn-only, --json, --package]
@@ -46,7 +48,7 @@ SRC_DIR = REPO_ROOT / "src" / "zephyr"
 BLUEPRINT_REGISTRY = BLUEPRINTS_DIR / "blueprint-registry.yaml"
 MODULE_REGISTRY = BLUEPRINTS_DIR / "module-registry.yaml"
 
-BLUEPRINT_HEADER_RE = re.compile(r'\[BLUEPRINT\]\s+(\S+)')
+BLUEPRINT_HEADER_RE = re.compile(r"\[BLUEPRINT\]\s+(\S+)")
 MODULE_ID_RE = re.compile(r'(?:-\s*)?module_id:\s*["\']?(\S+?)["\']?\s*$')
 
 
@@ -134,20 +136,24 @@ def check_header_vs_registry(
         expected_modid = pkg_to_modid.get(pkg_name)
 
         if header_modid not in blueprint_registry:
-            drifts.append({
-                "type": "ORPHAN_MODULE_ID",
-                "severity": "HIGH",
-                "file": entry["file"],
-                "detail": f"[BLUEPRINT] 引用 {header_modid} 不在 blueprint-registry.yaml 中",
-            })
+            drifts.append(
+                {
+                    "type": "ORPHAN_MODULE_ID",
+                    "severity": "HIGH",
+                    "file": entry["file"],
+                    "detail": f"[BLUEPRINT] 引用 {header_modid} 不在 blueprint-registry.yaml 中",
+                }
+            )
 
         if expected_modid and header_modid != expected_modid:
-            drifts.append({
-                "type": "MODULE_ID_DRIFT",
-                "severity": "HIGH",
-                "file": entry["file"],
-                "detail": f"包 {pkg_name} 应属 {expected_modid}，但 [BLUEPRINT] 标注 {header_modid}",
-            })
+            drifts.append(
+                {
+                    "type": "MODULE_ID_DRIFT",
+                    "severity": "HIGH",
+                    "file": entry["file"],
+                    "detail": f"包 {pkg_name} 应属 {expected_modid}，但 [BLUEPRINT] 标注 {header_modid}",
+                }
+            )
 
     return drifts
 
@@ -191,17 +197,19 @@ def check_blueprint_file_list(
         if not src_base.exists():
             continue
 
-        file_table_re = re.compile(r'\|\s*`([^`]+\.py)`\s*\|[^|]*\|[^|]*\|[^|]*\|\s*已实现\s*\|')
+        file_table_re = re.compile(r"\|\s*`([^`]+\.py)`\s*\|[^|]*\|[^|]*\|[^|]*\|\s*已实现\s*\|")
         for match in file_table_re.finditer(content):
             filename = match.group(1)
             full_path = src_base / filename
             if not full_path.exists():
-                drifts.append({
-                    "type": "BLUEPRINT_FILE_MISSING",
-                    "severity": "MEDIUM",
-                    "file": str(full_path.relative_to(REPO_ROOT)),
-                    "detail": f"蓝图 {fm_modid} §4 声明已实现，但磁盘不存在: {filename}",
-                })
+                drifts.append(
+                    {
+                        "type": "BLUEPRINT_FILE_MISSING",
+                        "severity": "MEDIUM",
+                        "file": str(full_path.relative_to(REPO_ROOT)),
+                        "detail": f"蓝图 {fm_modid} §4 声明已实现，但磁盘不存在: {filename}",
+                    }
+                )
 
     return drifts
 
@@ -244,7 +252,7 @@ def check_code_not_in_blueprint(
             continue
 
         listed_files: set[str] = set()
-        file_table_re = re.compile(r'\|\s*`([^`]+\.py)`\s*\|')
+        file_table_re = re.compile(r"\|\s*`([^`]+\.py)`\s*\|")
         for match in file_table_re.finditer(content):
             listed_files.add(match.group(1))
 
@@ -259,12 +267,14 @@ def check_code_not_in_blueprint(
                 except OSError:
                     pass
                 if has_header:
-                    drifts.append({
-                        "type": "CODE_NOT_IN_BLUEPRINT",
-                        "severity": "LOW",
-                        "file": str(py_file.relative_to(REPO_ROOT)),
-                        "detail": f"代码文件有[BLUEPRINT]头部但不在蓝图 {fm_modid} §4 文件清单中",
-                    })
+                    drifts.append(
+                        {
+                            "type": "CODE_NOT_IN_BLUEPRINT",
+                            "severity": "LOW",
+                            "file": str(py_file.relative_to(REPO_ROOT)),
+                            "detail": f"代码文件有[BLUEPRINT]头部但不在蓝图 {fm_modid} §4 文件清单中",
+                        }
+                    )
 
     return drifts
 
@@ -293,15 +303,22 @@ def main() -> None:
 
     if args.json:
         import json
-        print(json.dumps({
-            "total_findings": len(all_findings),
-            "high": high_count,
-            "medium": medium_count,
-            "low": low_count,
-            "findings": all_findings,
-            "code_headers_scanned": len(code_headers),
-            "blueprints_in_registry": len(blueprint_registry),
-        }, ensure_ascii=False, indent=2))
+
+        print(
+            json.dumps(
+                {
+                    "total_findings": len(all_findings),
+                    "high": high_count,
+                    "medium": medium_count,
+                    "low": low_count,
+                    "findings": all_findings,
+                    "code_headers_scanned": len(code_headers),
+                    "blueprints_in_registry": len(blueprint_registry),
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     else:
         print("=" * 60)
         print("蓝图↔代码双向对齐检测")
@@ -318,20 +335,20 @@ def main() -> None:
                 by_type.setdefault(f["type"], []).append(f)
 
             for ftype, items in by_type.items():
-                print(f"{'─'*60}")
+                print(f"{'─' * 60}")
                 print(f"  {ftype} ({len(items)} 条)")
-                print(f"{'─'*60}")
+                print(f"{'─' * 60}")
                 for item in items[:20]:
                     icon = "❌" if item["severity"] == "HIGH" else ("⚠️" if item["severity"] == "MEDIUM" else "ℹ️")
                     print(f"  {icon} {item['file']}")
                     print(f"     {item['detail']}")
                 if len(items) > 20:
-                    print(f"  ... 还有 {len(items)-20} 条")
+                    print(f"  ... 还有 {len(items) - 20} 条")
 
         print()
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(f"  总结: {len(all_findings)} 条漂移 (HIGH:{high_count} MEDIUM:{medium_count} LOW:{low_count})")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
 
     has_high = high_count > 0
     if has_high and not args.warn_only:

@@ -26,6 +26,7 @@ SSoT: 本模块是全项目死锁检测的唯一真源。A2A Protocol 消费本�
 """
 
 from __future__ import annotations
+
 from typing import Any
 
 

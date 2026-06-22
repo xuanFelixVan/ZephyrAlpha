@@ -19,10 +19,13 @@
 
 # [TESTS]
 
+
 def __getattr__(name: str):
     from zephyr.ops.observability import token_utils as _tu
+
     if name in _tu.__all__:
         return getattr(_tu, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = ["DEFAULT_CONTEXT_TOKEN_BUDGET", "estimate_tokens"]

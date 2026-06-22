@@ -6,11 +6,11 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """orchestrator.core — auto-generated package init."""
+
 from . import trigger_router
 
-__all__ = ['agent_orchestrator', 'task_queue', 'trigger_router', 'wave_generator']
-
+__all__ = ["agent_orchestrator", "task_queue", "trigger_router", "wave_generator"]

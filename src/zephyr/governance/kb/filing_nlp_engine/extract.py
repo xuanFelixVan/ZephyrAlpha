@@ -39,7 +39,6 @@ Safety : M
 
 from __future__ import annotations
 
-
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -48,17 +47,17 @@ from typing import Any
 
 import yaml
 
+from zephyr.governance.kb.kb_engine.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.integration.shared_08.contracts.gate import GateResult
-from zephyr.governance.kb.kb_engine.kb_gate_task import build_kb_gate_eval_task
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
 
 __all__ = [
-    "ExtractResult",
-    "ExtractGate",
-    "LESSONS_DIR_NAME",
     "BEST_PRACTICES_DIR_NAME",
     "EXTRACTION_TEMPLATES",
+    "LESSONS_DIR_NAME",
+    "ExtractGate",
+    "ExtractResult",
 ]
 
 LESSONS_DIR_NAME = "06_lessons_learned"

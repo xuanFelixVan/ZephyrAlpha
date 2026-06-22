@@ -24,7 +24,7 @@ CBAC 能力检查器 (Capability-Based Access Control)
 
 任务编号 : T-V2-004（experimental CBAC 最小版）
 权限层级 : Immutable Core（G1 §2.10 声明）
-真源声明 : ai-autonomy-authority-registry.md §2.10
+真源声明 : ai_autonomy_authority_registry.yaml §2.10
 创建日期 : 2026-04-27
 
 功能说明
@@ -39,11 +39,10 @@ CBAC 能力检查器 (Capability-Based Access Control)
 
 from __future__ import annotations
 
-
 import fnmatch
 from pathlib import Path
 from threading import RLock
-from typing import Self, Any
+from typing import Any, Self
 
 try:
     from pydantic import BaseModel, Field
@@ -70,7 +69,7 @@ class CapabilityDenied(Exception):
         self.rule_name = rule_name
         self.reason = reason
         super().__init__(
-            f"CapabilityDenied: action='{action}' target='{target_path}' " f"rule='{rule_name}' reason='{reason}'"
+            f"CapabilityDenied: action='{action}' target='{target_path}' rule='{rule_name}' reason='{reason}'"
         )
 
 

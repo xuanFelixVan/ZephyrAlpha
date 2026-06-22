@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-705
 status: active
 title: Stage 17：G1 新建独立 Data Architecture 视图（S14 Phase 2 子任务 2.1，2026-04-19）

@@ -14,8 +14,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from zephyr.shared.lifecycle.task_lifecycle_manager import (
     GateID,
     GateResult,

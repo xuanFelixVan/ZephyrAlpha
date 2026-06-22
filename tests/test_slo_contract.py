@@ -20,24 +20,20 @@
 # [TESTS] test_slo_contract
 from __future__ import annotations
 
-import time
-
-import pytest
-
 from zephyr.governance.slo_contract import (
     DEFAULT_CONTRACTS,
     DEFAULT_SLIS,
+    TIER_POLICY,
     TRADING_OVERRIDE,
+    BudgetSnapshot,
     BudgetTier,
     BudgetTier_ordering,
-    BudgetSnapshot,
     ContractPriority,
     SLIDefinition,
     SLIName,
     SLIReading,
     SLOContractEngine,
     SLOContractTerms,
-    TIER_POLICY,
 )
 
 
@@ -80,7 +76,9 @@ class TestSLIDefinition:
         assert d.window_seconds == 86400.0
 
     def test_custom_window(self):
-        d = SLIDefinition(name=SLIName.DEADLOCK, description="t", target=0.99, error_budget_ratio=0.01, window_seconds=3600)
+        d = SLIDefinition(
+            name=SLIName.DEADLOCK, description="t", target=0.99, error_budget_ratio=0.01, window_seconds=3600
+        )
         assert d.window_seconds == 3600
 
 

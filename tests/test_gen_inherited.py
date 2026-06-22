@@ -11,8 +11,8 @@
 # [TESTS] python -m pytest tests/test_gen_inherited.py -q
 
 import os
-import pytest
-from zephyr.ops._gen_inherited import SKELETONS, BASE
+
+from zephyr.ops._gen_inherited import BASE, SKELETONS
 
 
 class TestGenInheritedInstantiation:

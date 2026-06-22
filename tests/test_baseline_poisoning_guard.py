@@ -11,12 +11,8 @@
 # [TESTS] tests/test_baseline_poisoning_guard.py
 
 import hashlib
-import json
-
-import pytest
 
 import zephyr.behavioral_audit.baseline_poisoning_guard as _bpg_mod
-
 from zephyr.behavioral_audit.baseline_poisoning_guard import (
     HASH_CHAIN,
     BaselineSnapshot,
@@ -33,7 +29,8 @@ from zephyr.behavioral_audit.baseline_poisoning_guard import (
 
 class TestBaselineSnapshot:
     def test_default_fields(self):
-        from datetime import datetime, timezone
+        from datetime import datetime
+
         snap = BaselineSnapshot(
             version=1,
             file_path="test.py",
@@ -73,7 +70,7 @@ class TestHashChainEntry:
 class TestSha256:
     def test_known_value(self):
         result = _sha256("hello")
-        expected = hashlib.sha256("hello".encode("utf-8")).hexdigest()
+        expected = hashlib.sha256(b"hello").hexdigest()
         assert result == expected
 
     def test_empty_string(self):

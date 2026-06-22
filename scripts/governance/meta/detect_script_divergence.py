@@ -38,7 +38,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import EXIT_PASS, REPO_ROOT, SCRIPTS_DIR
+from _shared.constants import EXIT_PASS, SCRIPTS_DIR
 
 RUN_ALL_PATH = SCRIPTS_DIR / "run_all.py"
 
@@ -49,12 +49,18 @@ EXPECTED_CHAINS = {
 }
 
 EXPECTED_TIMEOUT_CATEGORIES = {
-    "D1": "file_scan", "D2": "file_scan",
-    "D3": "content_analysis", "D4": "file_scan",
-    "D5": "content_analysis", "D6": "content_analysis",
-    "D7": "content_analysis", "D8": "content_analysis",
-    "D9": "knowledge_ai", "D10": "content_analysis",
-    "D11": "content_analysis", "D12": "knowledge_ai",
+    "D1": "file_scan",
+    "D2": "file_scan",
+    "D3": "content_analysis",
+    "D4": "file_scan",
+    "D5": "content_analysis",
+    "D6": "content_analysis",
+    "D7": "content_analysis",
+    "D8": "content_analysis",
+    "D9": "knowledge_ai",
+    "D10": "content_analysis",
+    "D11": "content_analysis",
+    "D12": "knowledge_ai",
 }
 
 
@@ -73,9 +79,13 @@ def extract_chains() -> dict:
                 if isinstance(target, ast.Name) and target.id == "DEPENDENCY_CHAINS":
                     chains = {}
                     if isinstance(node.value, ast.Dict):
-                        for key, value in zip(node.value.keys, node.value.values):
+                        for key, value in zip(node.value.keys, node.value.values, strict=False):
                             name = key.s if isinstance(key, ast.Constant) else ""
-                            dims = tuple(elt.s for elt in value.elts if isinstance(elt, ast.Constant)) if isinstance(value, ast.Tuple) else ()
+                            dims = (
+                                tuple(elt.s for elt in value.elts if isinstance(elt, ast.Constant))
+                                if isinstance(value, ast.Tuple)
+                                else ()
+                            )
                             if name and dims:
                                 chains[name] = dims
                     return chains
@@ -97,7 +107,7 @@ def extract_timeout_categories() -> dict:
                 if isinstance(target, ast.Name) and target.id == "DIMENSION_TIMEOUT_CATEGORIES":
                     cats = {}
                     if isinstance(node.value, ast.Dict):
-                        for key, value in zip(node.value.keys, node.value.values):
+                        for key, value in zip(node.value.keys, node.value.values, strict=False):
                             dim = key.s if isinstance(key, ast.Constant) else ""
                             cat = value.s if isinstance(value, ast.Constant) else ""
                             if dim:

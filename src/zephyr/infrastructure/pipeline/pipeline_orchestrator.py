@@ -56,7 +56,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from zephyr.shared.shared_services.models import TaskCard
 from zephyr.infrastructure.pipeline.circuit_breaker_manager import CircuitBreakerManager
 from zephyr.infrastructure.pipeline.cost_tracker import CostTracker
 from zephyr.infrastructure.pipeline.ct_pipe_routing import (
@@ -94,6 +93,7 @@ from zephyr.infrastructure.pipeline.models import (
 from zephyr.infrastructure.pipeline.pipeline_lock import LockResult, PipelineLock
 from zephyr.infrastructure.pipeline.preemption_manager import PreemptionManager
 from zephyr.infrastructure.pipeline.routing_plugins import PipelineRouter
+from zephyr.shared.shared_services.models import TaskCard
 from zephyr.shared.task_types import TaskStatus
 
 _RBAC_AVAILABLE = False
@@ -115,9 +115,9 @@ except ImportError:
 
 _SKILL_BRIDGE_AVAILABLE = False
 try:
-    _mod = __import__("importlib").import_module("zephyr.orchestration.agent_lifecycle.integration.pipeline_bridge")
-    PipelineSkillBridge = getattr(_mod, "PipelineSkillBridge")
-    SkillInjectionResult = getattr(_mod, "SkillInjectionResult")
+    _mod = __import__("importlib").import_module("zephyr.autonomy_core.integration.pipeline_bridge")
+    PipelineSkillBridge = _mod.PipelineSkillBridge
+    SkillInjectionResult = _mod.SkillInjectionResult
 
     _SKILL_BRIDGE_AVAILABLE = True
 except ImportError:
@@ -135,7 +135,7 @@ except ImportError:
 _PROFILER_AVAILABLE = False
 try:
     _mod = __import__("importlib").import_module("zephyr.intelligence.model_profiling.pipeline.profiler")
-    ModelProfiler = getattr(_mod, "ModelProfiler")
+    ModelProfiler = _mod.ModelProfiler
 
     _PROFILER_AVAILABLE = True
 except ImportError:
@@ -286,8 +286,8 @@ class PipelineOrchestrator:
 
         profiles = self._model_profiler.profile_ollama_only()
         _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.results_writer")
-        to_model_benchmark_result = getattr(_mod, "to_model_benchmark_result")
-        write_benchmark_results = getattr(_mod, "write_benchmark_results")
+        to_model_benchmark_result = _mod.to_model_benchmark_result
+        write_benchmark_results = _mod.write_benchmark_results
 
         write_benchmark_results(profiles)
         results = [to_model_benchmark_result(p) for p in profiles if p.available]
@@ -305,7 +305,7 @@ class PipelineOrchestrator:
             return None
 
         _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.results_writer")
-        to_model_benchmark_result = getattr(_mod, "to_model_benchmark_result")
+        to_model_benchmark_result = _mod.to_model_benchmark_result
 
         return to_model_benchmark_result(best)
 
@@ -313,8 +313,8 @@ class PipelineOrchestrator:
         """检测指定模型是否发生性能漂移。"""
         try:
             _mod = importlib.import_module("zephyr.intelligence.model_profiling.pipeline.results_writer")
-            detect_drift = getattr(_mod, "detect_drift")
-            load_benchmark_history = getattr(_mod, "load_benchmark_history")
+            detect_drift = _mod.detect_drift
+            load_benchmark_history = _mod.load_benchmark_history
         except ImportError:
             return None
 
@@ -415,7 +415,7 @@ class PipelineOrchestrator:
                     )
                 elif gate_action in ("WARN", "ROLLBACK", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
                     ct_warnings.append(
-                        f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} " f"pipeline={pipeline_action}"
+                        f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} pipeline={pipeline_action}"
                     )
             except Exception:
                 pass
@@ -459,8 +459,7 @@ class PipelineOrchestrator:
         experiment_route = self._resolve_experiment(task_card)
         if experiment_route is not None:
             ct_warnings.append(
-                f"AB-EXPERIMENT: experiment={experiment_route.experiment_id} "
-                f"variant={experiment_route.variant.value}"
+                f"AB-EXPERIMENT: experiment={experiment_route.experiment_id} variant={experiment_route.variant.value}"
             )
 
         if hints is None:
@@ -629,8 +628,8 @@ class PipelineOrchestrator:
 
                 if _SKILL_BRIDGE_AVAILABLE and skill_injection is not None and skill_injection.loaded:
                     try:
-                        _mod = importlib.import_module("zephyr.orchestration.agent_lifecycle.skill_feedback")
-                        SkillFeedback = getattr(_mod, "SkillFeedback")
+                        _mod = importlib.import_module("zephyr.autonomy_core.skill_feedback")
+                        SkillFeedback = _mod.SkillFeedback
 
                         fb = SkillFeedback()
                         for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:
@@ -1416,9 +1415,10 @@ class PipelineOrchestrator:
         # SRC-0022: Real LLM API via LLMGateway with explicit model ID mapping
         #   Model → API ID: DeepSeek-V4-Pro/deepseek → deepseek-chat, GLM-5.1/glm → glm-4-flash
         #   Provider config (base_url, api_key_env, default_model) defined in
-        #   zephyr.orchestration.agent_lifecycle.llm_gateway._PROVIDERS.
+        #   zephyr.autonomy_core.llm_gateway._PROVIDERS.
         try:
-            from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway, LLMResponse
+            from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway
+            from zephyr.shared.contracts.llm_gateway_protocol import LLMResponse
 
             llm_resp: LLMResponse = LLMGateway.call(
                 messages,
@@ -1900,7 +1900,7 @@ class PipelineOrchestrator:
                     affected_modules=["M3", "M7"],
                     homogeneous_verdict=None,
                     detail=f"M3(DeepSeek)与M7(GLM)共识但摘要差异显著(相似度={sim:.1%})——可能存在细微分歧",
-                    minority_report=f"verdict一致({m3_verdict!r})但摘要差异度={1-sim:.1%}",
+                    minority_report=f"verdict一致({m3_verdict!r})但摘要差异度={1 - sim:.1%}",
                 )
 
         return ModelCollapseAlert()
@@ -1934,6 +1934,7 @@ class PipelineOrchestrator:
         """
         try:
             from zephyr.governance.budget_engine import BudgetEngine
+
             engine = BudgetEngine()
             result = engine.pre_flight_check(
                 operation_id=f"pipeline-{task_card.task_id}",
@@ -1941,6 +1942,7 @@ class PipelineOrchestrator:
                 estimated_cost=0.01,
             )
             from zephyr.governance.budget_models import GateDecision
+
             if result.decision == GateDecision.DENY:
                 self._log(
                     "WARN",

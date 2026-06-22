@@ -16,8 +16,6 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
-import pytest
-
 from zephyr.ops.actors.action_selector import ActionRecord, ActionSelector
 from zephyr.ops.protocols import ActionType
 

@@ -30,7 +30,6 @@ CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索
 - context_assembly(): 多 Collection 结果拼接 + dedup
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -54,13 +53,15 @@ class CrossCollectionRetriever:
             try:
                 trace = self._hybrid_retriever.search(query, col_name, k=max(k, 3))
                 for hit in trace.hits:
-                    all_hits.append({
-                        "id": hit.id,
-                        "content": hit.content,
-                        "score": hit.score,
-                        "collection": col_name,
-                        "metadata": hit.metadata,
-                    })
+                    all_hits.append(
+                        {
+                            "id": hit.id,
+                            "content": hit.content,
+                            "score": hit.score,
+                            "collection": col_name,
+                            "metadata": hit.metadata,
+                        }
+                    )
             except Exception as e:
                 _logger.debug("CrossCollectionRetriever: %s 检索失败: %s", col_name, e)
 

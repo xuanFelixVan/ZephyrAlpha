@@ -15,8 +15,6 @@ from __future__ import annotations
 import dataclasses
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility import (
     TYPE_ALIAS_MAP,
     CompatibilityResult,
@@ -146,8 +144,11 @@ class TestGetDataclassFields:
             value: int
 
         import sys
+
         sys.modules["_test_sample_dc"] = sys.modules[__name__]
-        with patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility.importlib.import_module") as mock_import:
+        with patch(
+            "zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility.importlib.import_module"
+        ) as mock_import:
             mock_mod = type("mod", (), {"SampleDC": SampleDC})()
             mock_import.return_value = mock_mod
             result = _get_dataclass_fields("_test_sample_dc", "SampleDC")
@@ -164,7 +165,9 @@ class TestGetDataclassFields:
         assert result is None
 
     def test_non_dataclass(self):
-        result = _get_dataclass_fields("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility", "TYPE_ALIAS_MAP")
+        result = _get_dataclass_fields(
+            "zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility", "TYPE_ALIAS_MAP"
+        )
         assert result is None
 
 
@@ -317,9 +320,7 @@ class TestCheck:
 
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility.run_check")
     def test_fail(self, mock_run):
-        mock_run.return_value = CompatibilityResult(
-            passed=False, total=2, matched=1, mismatches=["m1"]
-        )
+        mock_run.return_value = CompatibilityResult(passed=False, total=2, matched=1, mismatches=["m1"])
         passed, msg = check()
         assert passed is False
         assert "[FAIL]" in msg

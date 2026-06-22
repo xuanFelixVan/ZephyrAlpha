@@ -31,10 +31,9 @@
   3. 签名失败 → 标记为 session_smuggling_attempt → 记录 + block
 """
 
-
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -53,19 +52,24 @@ class SessionSmugglingDefense:
         self._blocked_agents: set[str] = set()
 
     def verify_session(
-        self, reported_agent: str, signature: str,
-        message_id: str, timestamp: float,
+        self,
+        reported_agent: str,
+        signature: str,
+        message_id: str,
+        timestamp: float,
     ) -> bool:
         if reported_agent in self._blocked_agents:
             return False
 
         if not signature or len(signature) < 16:
-            self._record_attempt(SmugglingAttempt(
-                reported_agent=reported_agent,
-                actual_agent="unknown",
-                message_id=message_id,
-                timestamp=timestamp,
-            ))
+            self._record_attempt(
+                SmugglingAttempt(
+                    reported_agent=reported_agent,
+                    actual_agent="unknown",
+                    message_id=message_id,
+                    timestamp=timestamp,
+                )
+            )
             return False
 
         return True

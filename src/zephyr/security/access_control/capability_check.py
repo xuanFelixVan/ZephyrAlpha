@@ -4,9 +4,11 @@
 MAX_CAPABILITIES = None  # stub constant
 RESTRICTED_CAPABILITIES = None  # stub constant
 
+
 def verify_capability_scope(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'verify_capability_scope not implemented')
+    raise NotImplementedError("verify_capability_scope not implemented")
+
 
 __all__ = [
     "MAX_CAPABILITIES",

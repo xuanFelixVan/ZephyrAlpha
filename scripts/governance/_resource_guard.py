@@ -18,14 +18,14 @@ import os
 import subprocess
 import sys
 import threading
-import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 try:
     import resource as _resource_mod
+
     _HAS_RESOURCE = True
 except ImportError:
     _resource_mod = None
@@ -39,10 +39,7 @@ class ResourceLimitExceededError(Exception):
         self.resource_name = resource_name
         self.current = current
         self.limit = limit
-        super().__init__(
-            f"Resource limit exceeded: {resource_name} "
-            f"current={current:.1f} limit={limit:.1f}"
-        )
+        super().__init__(f"Resource limit exceeded: {resource_name} current={current:.1f} limit={limit:.1f}")
 
 
 class DegradationAction(Enum):
@@ -82,8 +79,8 @@ class WorkerResourceGuard:
         self._usage = WorkerUsage()
         self._lock = threading.Lock()
         self._enforce_stop = threading.Event()
-        self._enforce_thread: Optional[threading.Thread] = None
-        self._degradation_callback: Optional[Any] = None
+        self._enforce_thread: threading.Thread | None = None
+        self._degradation_callback: Any | None = None
 
     @property
     def limits(self) -> WorkerLimits:
@@ -99,8 +96,7 @@ class WorkerResourceGuard:
         try:
             _resource_mod.setrlimit(
                 _resource_mod.RLIMIT_AS,
-                (self._limits.memory_limit_mb * 1024 * 1024,
-                 self._limits.memory_limit_mb * 1024 * 1024),
+                (self._limits.memory_limit_mb * 1024 * 1024, self._limits.memory_limit_mb * 1024 * 1024),
             )
             results["rlimit_as"] = "set"
         except (ValueError, _resource_mod.error, AttributeError) as exc:
@@ -108,8 +104,7 @@ class WorkerResourceGuard:
         try:
             _resource_mod.setrlimit(
                 _resource_mod.RLIMIT_CPU,
-                (self._limits.cpu_limit_seconds,
-                 self._limits.cpu_limit_seconds),
+                (self._limits.cpu_limit_seconds, self._limits.cpu_limit_seconds),
             )
             results["rlimit_cpu"] = "set"
         except (ValueError, _resource_mod.error, AttributeError) as exc:
@@ -137,20 +132,19 @@ class WorkerResourceGuard:
     def _build_preexec_fn(self):
         if not _HAS_RESOURCE:
             return None
+
         def _preexec():
             try:
                 _resource_mod.setrlimit(
                     _resource_mod.RLIMIT_AS,
-                    (self._limits.memory_limit_mb * 1024 * 1024,
-                     self._limits.memory_limit_mb * 1024 * 1024),
+                    (self._limits.memory_limit_mb * 1024 * 1024, self._limits.memory_limit_mb * 1024 * 1024),
                 )
             except (ValueError, _resource_mod.error, AttributeError):
                 pass
             try:
                 _resource_mod.setrlimit(
                     _resource_mod.RLIMIT_CPU,
-                    (self._limits.cpu_limit_seconds,
-                     self._limits.cpu_limit_seconds),
+                    (self._limits.cpu_limit_seconds, self._limits.cpu_limit_seconds),
                 )
             except (ValueError, _resource_mod.error, AttributeError):
                 pass
@@ -161,6 +155,7 @@ class WorkerResourceGuard:
                 )
             except (ValueError, _resource_mod.error, AttributeError):
                 pass
+
         return _preexec
 
     def check_usage(self) -> dict[str, Any]:
@@ -178,8 +173,7 @@ class WorkerResourceGuard:
                 "fd_limit": self._limits.fd_limit,
             },
             "memory_pct": (
-                usage.memory_mb / self._limits.memory_limit_mb * 100
-                if self._limits.memory_limit_mb > 0 else 0
+                usage.memory_mb / self._limits.memory_limit_mb * 100 if self._limits.memory_limit_mb > 0 else 0
             ),
         }
 
@@ -189,6 +183,7 @@ class WorkerResourceGuard:
         open_fds = 0
         try:
             import psutil
+
             proc = psutil.Process(os.getpid())
             mem_info = proc.memory_info()
             mem_mb = mem_info.rss / (1024 * 1024)
@@ -245,9 +240,7 @@ class WorkerResourceGuard:
                         pass
                 if usage.degradation == DegradationAction.EMERGENCY_STOP:
                     if mem_mb > self._limits.memory_limit_mb:
-                        raise ResourceLimitExceededError(
-                            "memory", usage.memory_mb, self._limits.memory_limit_mb
-                        )
+                        raise ResourceLimitExceededError("memory", usage.memory_mb, self._limits.memory_limit_mb)
             self._enforce_stop.wait(timeout=check_interval)
 
     def stop_enforce(self) -> None:
@@ -265,18 +258,22 @@ def _run_warn_only() -> dict[str, Any]:
     results: dict[str, Any] = {"checks": []}
     apply_result = guard.apply_limits()
     apply_ok = all(v in ("set", "skipped_windows") for v in apply_result.values())
-    results["checks"].append({
-        "name": "apply_limits",
-        "status": "PASS" if apply_ok else "WARN",
-        "detail": apply_result,
-    })
+    results["checks"].append(
+        {
+            "name": "apply_limits",
+            "status": "PASS" if apply_ok else "WARN",
+            "detail": apply_result,
+        }
+    )
     usage = guard.check_usage()
     mem_pct = usage["memory_pct"]
-    results["checks"].append({
-        "name": "check_usage",
-        "status": "PASS" if mem_pct < 90 else "WARN",
-        "detail": usage,
-    })
+    results["checks"].append(
+        {
+            "name": "check_usage",
+            "status": "PASS" if mem_pct < 90 else "WARN",
+            "detail": usage,
+        }
+    )
     wrap_result = "PASS"
     try:
         completed = guard.wrap_subprocess(
@@ -287,34 +284,39 @@ def _run_warn_only() -> dict[str, Any]:
             wrap_result = "WARN"
     except Exception as exc:
         wrap_result = f"WARN: {exc}"
-    results["checks"].append({
-        "name": "wrap_subprocess",
-        "status": wrap_result,
-    })
-    results["overall"] = "PASS" if all(
-        c["status"] == "PASS" for c in results["checks"]
-    ) else "WARN"
+    results["checks"].append(
+        {
+            "name": "wrap_subprocess",
+            "status": wrap_result,
+        }
+    )
+    results["overall"] = "PASS" if all(c["status"] == "PASS" for c in results["checks"]) else "WARN"
     return results
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Worker Resource Guard — subprocess worker RLIMIT management"
-    )
+    parser = argparse.ArgumentParser(description="Worker Resource Guard — subprocess worker RLIMIT management")
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="Run checks in warn-only mode (no enforcement)",
     )
     parser.add_argument(
-        "--memory-limit", type=int, default=512,
+        "--memory-limit",
+        type=int,
+        default=512,
         help="Memory limit in MB (default: 512)",
     )
     parser.add_argument(
-        "--cpu-limit", type=int, default=300,
+        "--cpu-limit",
+        type=int,
+        default=300,
         help="CPU limit in seconds (default: 300)",
     )
     parser.add_argument(
-        "--fd-limit", type=int, default=256,
+        "--fd-limit",
+        type=int,
+        default=256,
         help="File descriptor limit (default: 256)",
     )
     args = parser.parse_args()

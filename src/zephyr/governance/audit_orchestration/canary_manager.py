@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+
 class CanaryManager:
     def __init__(self):
         self._canary_weight: float = 0.1

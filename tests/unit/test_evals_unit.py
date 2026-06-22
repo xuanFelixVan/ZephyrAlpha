@@ -30,9 +30,7 @@ class TestEvalCase:
         assert case.tags == []
 
     def test_create_with_tags(self):
-        case = EvalCase(
-            case_id="c2", input="test", expected_output="test", tags=["unit", "smoke"], threshold=0.8
-        )
+        case = EvalCase(case_id="c2", input="test", expected_output="test", tags=["unit", "smoke"], threshold=0.8)
         assert case.tags == ["unit", "smoke"]
         assert case.threshold == 0.8
 
@@ -83,9 +81,7 @@ class TestEvalResult:
         assert "[FAIL]" in result.summary
 
     def test_with_error(self):
-        result = EvalResult(
-            case_id="c3", passed=False, overall_score=0.0, error="evaluation failed"
-        )
+        result = EvalResult(case_id="c3", passed=False, overall_score=0.0, error="evaluation failed")
         assert result.error == "evaluation failed"
         assert not result.passed
 
@@ -98,20 +94,24 @@ class TestEvalSuiteResult:
         assert suite.mean_score == 0.0
 
     def test_all_pass(self):
-        suite = EvalSuiteResult(results=[
-            EvalResult("c1", True, 0.9),
-            EvalResult("c2", True, 0.85),
-        ])
+        suite = EvalSuiteResult(
+            results=[
+                EvalResult("c1", True, 0.9),
+                EvalResult("c2", True, 0.85),
+            ]
+        )
         assert suite.pass_count == 2
         assert suite.fail_count == 0
         assert suite.pass_rate == 1.0
         assert suite.mean_score == 0.875
 
     def test_mixed(self):
-        suite = EvalSuiteResult(results=[
-            EvalResult("c1", True, 0.9),
-            EvalResult("c2", False, 0.5),
-        ])
+        suite = EvalSuiteResult(
+            results=[
+                EvalResult("c1", True, 0.9),
+                EvalResult("c2", False, 0.5),
+            ]
+        )
         assert suite.pass_count == 1
         assert suite.fail_count == 1
         assert suite.pass_rate == 0.5

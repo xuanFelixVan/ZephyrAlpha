@@ -646,7 +646,8 @@ blueprints:
   generation: 1
   last_updated: '2026-05-19'
   file_path: _cross_layer/agent-orchestrator/blueprint.md
-  construction_progress: completed- module_id: MOD-INF-042
+  construction_progress: completed
+  module_id: MOD-INF-042
   name: local-model
   title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
   layer: L01

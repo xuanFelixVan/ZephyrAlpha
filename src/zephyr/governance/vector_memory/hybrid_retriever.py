@@ -38,7 +38,6 @@ Pipeline
 - 可插拔 reranker 预留接口 (Phase 3)
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -46,7 +45,7 @@ import math
 import threading
 import time
 from datetime import UTC, datetime
-from typing import Any, ClassVar
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -168,17 +167,21 @@ class HybridRetriever:
     def _get_or_build_bm25(self, collection_name: str) -> BM25Index:
         if collection_name not in self._bm25_indexes:
             bm25 = BM25Index()
-            all_data = self._collection_manager.get_collection(collection_name).get(
-                include=["documents", "metadatas"]
-            )
+            all_data = self._collection_manager.get_collection(collection_name).get(include=["documents", "metadatas"])
             documents: list[dict[str, Any]] = []
             if all_data.get("ids"):
                 for i, doc_id in enumerate(all_data["ids"]):
-                    documents.append({
-                        "id": doc_id,
-                        "content": all_data.get("documents", [""] * len(all_data["ids"]))[i] if all_data.get("documents") else "",
-                        "metadata": all_data.get("metadatas", [{}] * len(all_data["ids"]))[i] if all_data.get("metadatas") else {},
-                    })
+                    documents.append(
+                        {
+                            "id": doc_id,
+                            "content": all_data.get("documents", [""] * len(all_data["ids"]))[i]
+                            if all_data.get("documents")
+                            else "",
+                            "metadata": all_data.get("metadatas", [{}] * len(all_data["ids"]))[i]
+                            if all_data.get("metadatas")
+                            else {},
+                        }
+                    )
             bm25.index(documents)
             with self._lock:
                 self._bm25_indexes[collection_name] = bm25
@@ -214,9 +217,7 @@ class HybridRetriever:
                 hits.append((doc_id, score, meta))
         return hits
 
-    def _sparse_search(
-        self, query: str, collection_name: str, k: int
-    ) -> list[tuple[str, float, dict[str, Any]]]:
+    def _sparse_search(self, query: str, collection_name: str, k: int) -> list[tuple[str, float, dict[str, Any]]]:
         bm25 = self._get_or_build_bm25(collection_name)
         scores = bm25.search(query, k)
         col = self._collection_manager.get_collection(collection_name)
@@ -283,8 +284,12 @@ class HybridRetriever:
         if col_data.get("ids"):
             for i, doc_id in enumerate(col_data["ids"]):
                 doc_map[doc_id] = {
-                    "content": col_data.get("documents", [""] * len(col_data["ids"]))[i] if col_data.get("documents") else "",
-                    "metadata": col_data.get("metadatas", [{}] * len(col_data["ids"]))[i] if col_data.get("metadatas") else {},
+                    "content": col_data.get("documents", [""] * len(col_data["ids"]))[i]
+                    if col_data.get("documents")
+                    else "",
+                    "metadata": col_data.get("metadatas", [{}] * len(col_data["ids"]))[i]
+                    if col_data.get("metadatas")
+                    else {},
                 }
 
         try:
@@ -305,14 +310,16 @@ class HybridRetriever:
                 continue
             doc_info = doc_map.get(doc_id, {})
             provenance = doc_info.get("metadata", {}).get("provenance")
-            filtered.append(ScoredHit(
-                id=doc_id,
-                content=doc_info.get("content", ""),
-                score=round(score, 4),
-                score_breakdown={k: round(v, 4) for k, v in breakdown.items()},
-                metadata=doc_info.get("metadata", {}),
-                provenance=provenance,
-            ))
+            filtered.append(
+                ScoredHit(
+                    id=doc_id,
+                    content=doc_info.get("content", ""),
+                    score=round(score, 4),
+                    score_breakdown={k: round(v, 4) for k, v in breakdown.items()},
+                    metadata=doc_info.get("metadata", {}),
+                    provenance=provenance,
+                )
+            )
             if len(filtered) >= k:
                 break
 

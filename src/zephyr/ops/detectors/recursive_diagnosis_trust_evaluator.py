@@ -28,12 +28,14 @@ R517: RecursiveDiagnosisTrustEvaluator
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class ExternalSignal:
     source: str
     value: float
     threshold: float
     direction: str
+
 
 @dataclass
 class RecursiveDiagnosisTrustEvaluator:
@@ -43,7 +45,10 @@ class RecursiveDiagnosisTrustEvaluator:
 
     def register_external_signal(self, name: str, value: float, threshold: float, direction: str = "above") -> None:
         self.external_signals[name] = ExternalSignal(
-            source=name, value=value, threshold=threshold, direction=direction,
+            source=name,
+            value=value,
+            threshold=threshold,
+            direction=direction,
         )
 
     def update_external_signal(self, name: str, value: float) -> None:
@@ -53,7 +58,7 @@ class RecursiveDiagnosisTrustEvaluator:
     def evaluate_trust(self, self_diagnosis: dict) -> dict:
         self.self_diagnosis_history.append(self_diagnosis)
         if len(self.self_diagnosis_history) > self.max_history:
-            self.self_diagnosis_history = self.self_diagnosis_history[-self.max_history:]
+            self.self_diagnosis_history = self.self_diagnosis_history[-self.max_history :]
 
         external_verdict = self._aggregate_external_signals()
         self_verdict = self_diagnosis.get("status", "unknown")
@@ -63,11 +68,11 @@ class RecursiveDiagnosisTrustEvaluator:
         return {
             "self_diagnosis_status": self_verdict,
             "external_verdict": external_verdict,
-            "trust-score": round(trust-score, 3),
-            "trustworthy": trust-score >= 0.5,
-            "recommendation": "trust_self" if trust-score >= 0.7 else (
-                "trust_external" if trust-score < 0.5 else "inconclusive"
-            ),
+            "trust-score": round(trust - score, 3),
+            "trustworthy": trust - score >= 0.5,
+            "recommendation": "trust_self"
+            if trust - score >= 0.7
+            else ("trust_external" if trust - score < 0.5 else "inconclusive"),
         }
 
     def _aggregate_external_signals(self) -> str:
@@ -96,7 +101,8 @@ class RecursiveDiagnosisTrustEvaluator:
         if self_verdict == "unknown" or external_verdict == "unknown":
             return 0.4
         healthy_pairs = [
-            ("healthy", "degraded"), ("degraded", "unhealthy"),
+            ("healthy", "degraded"),
+            ("degraded", "unhealthy"),
         ]
         for h, d in healthy_pairs:
             if (self_verdict == h and external_verdict == d) or (self_verdict == d and external_verdict == h):

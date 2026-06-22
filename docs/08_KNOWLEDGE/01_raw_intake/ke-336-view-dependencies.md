@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KE-336
 status: active
 title: 4. View dependencies / 视图依赖关系

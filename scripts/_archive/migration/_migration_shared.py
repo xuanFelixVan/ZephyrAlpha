@@ -20,7 +20,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MAPPING_FILE = PROJECT_ROOT / "data" / "asset_index" / "path-migration-mapping.yaml"
 IMPORT_MANIFEST_FILE = PROJECT_ROOT / "data" / "asset_index" / "import-update-manifest.yaml"
 MIGRATION_LOG_FILE = PROJECT_ROOT / "data" / "asset_index" / "migration-log.yaml"
-PATH_TREE_FILE = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "project-path-tree.yaml"
+PATH_TREE_FILE = (
+    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "project-path-tree.yaml"
+)
 
 BATCH_TO_GROUP = {
     1: "cross_cutting_infra",
@@ -39,7 +41,7 @@ def load_yaml(path: Path) -> dict:
     if not path.exists():
         print(f"[ERROR] File not found: {path}", file=sys.stderr)
         sys.exit(1)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     if not isinstance(data, dict):
         print(f"[ERROR] Invalid YAML structure in {path}", file=sys.stderr)
@@ -49,6 +51,7 @@ def load_yaml(path: Path) -> dict:
 
 def save_yaml(path: Path, data: dict) -> None:
     import yaml
+
     content = yaml.dump(data, default_flow_style=False, allow_unicode=True, sort_keys=False)
     atomic_write(path, content)
 

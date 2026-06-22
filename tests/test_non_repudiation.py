@@ -11,12 +11,14 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import pytest
 
 try:
-    from zephyr.security.access_control.non_repudiation import NonRepudiation, AuditEntry
+    from zephyr.security.access_control.non_repudiation import AuditEntry, NonRepudiation
+
     _IMPORT_OK = True
     _IMPORT_REASON = ""
 except Exception as e:
@@ -26,7 +28,6 @@ except Exception as e:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestAuditEntry:
-
     def test_entry_fields(self):
         entry = AuditEntry(
             entry_id="NR-test-abc",
@@ -45,7 +46,6 @@ class TestAuditEntry:
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}")
 class TestNonRepudiation:
-
     def test_sign_returns_audit_entry(self):
         nr = NonRepudiation(secret_key="test-secret-key-for-unit-test")
         entry = nr.sign(operation="write", agent_id="agent-1")

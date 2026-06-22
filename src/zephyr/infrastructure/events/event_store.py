@@ -30,12 +30,12 @@ Event Store — 事件持久化存储。
 """
 
 import json
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from zephyr.shared.shared_services.events.event_bus import DomainEvent
+
 
 @dataclass
 class EventStoreQuery:
@@ -44,8 +44,8 @@ class EventStoreQuery:
     since: str = ""
     limit: int = 100
 
-class EventStore:
 
+class EventStore:
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or Path("data/events")
         self._store_path = self._data_dir / "event_store.jsonl"
@@ -54,13 +54,19 @@ class EventStore:
         self._data_dir.mkdir(parents=True, exist_ok=True)
 
         with open(self._store_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "event_id": event.event_id,
-                "event_type": event.event_type.value,
-                "task_id": event.task_id,
-                "payload": event.payload,
-                "timestamp_utc": event.timestamp_utc,
-            }, ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "event_id": event.event_id,
+                        "event_type": event.event_type.value,
+                        "task_id": event.task_id,
+                        "payload": event.payload,
+                        "timestamp_utc": event.timestamp_utc,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
 
     def append_batch(self, events: list[DomainEvent]) -> None:
         for event in events:
@@ -88,7 +94,7 @@ class EventStore:
             except (json.JSONDecodeError, KeyError):
                 pass
 
-        return results[:query.limit]
+        return results[: query.limit]
 
     def get_all_for_task(self, task_id: str) -> list[dict[str, Any]]:
         return self.query(EventStoreQuery(task_id=task_id, limit=1000))

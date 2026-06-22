@@ -2,33 +2,24 @@
 from __future__ import annotations
 
 # [BLUEPRINT] SRC-076 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.startup_shutdown
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import logging
 import time
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable, Optional
 
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
+
 
 class StartupPhase(str, Enum):
     P1_SECRETS_DB = "P1_SECRETS_DB"
@@ -38,11 +29,13 @@ class StartupPhase(str, Enum):
     P5_OMS_RISK = "P5_OMS_RISK"
     P6_DASHBOARD_TELEMETRY = "P6_DASHBOARD_TELEMETRY"
 
+
 class PhaseState(str, Enum):
     PENDING = "PENDING"
     RUNNING = "RUNNING"
     HEALTHY = "HEALTHY"
     FAILED = "FAILED"
+
 
 class StartupPhaseDef(BaseModel):
     phase: StartupPhase
@@ -55,9 +48,9 @@ class StartupPhaseDef(BaseModel):
     @property
     def is_ready(self) -> bool:
         return all(
-            STARTUP_DAG.get(dep) is not None and STARTUP_DAG[dep].state == PhaseState.HEALTHY
-            for dep in self.depends_on
+            STARTUP_DAG.get(dep) is not None and STARTUP_DAG[dep].state == PhaseState.HEALTHY for dep in self.depends_on
         )
+
 
 STARTUP_DAG: dict[StartupPhase, StartupPhaseDef] = {
     StartupPhase.P1_SECRETS_DB: StartupPhaseDef(
@@ -106,6 +99,7 @@ STARTUP_DAG: dict[StartupPhase, StartupPhaseDef] = {
 
 SHUTDOWN_SEQUENCE: list[StartupPhase] = list(reversed(list(StartupPhase)))
 
+
 class StartupOrchestrator:
     def __init__(self, health_check_fn: Callable[[str], bool]) -> None:
         self._health_check = health_check_fn
@@ -129,6 +123,7 @@ class StartupOrchestrator:
                 return False
         return True
 
+
 class ShutdownOrchestrator:
     def __init__(self, shutdown_fn: Callable[[StartupPhase], bool]) -> None:
         self._shutdown = shutdown_fn
@@ -146,11 +141,14 @@ class ShutdownOrchestrator:
                 return False
         return True
 
-def get_phase_def(phase: StartupPhase) -> Optional[StartupPhaseDef]:
+
+def get_phase_def(phase: StartupPhase) -> StartupPhaseDef | None:
     return STARTUP_DAG.get(phase)
+
 
 def startup_ordered_phases() -> list[StartupPhase]:
     return list(StartupPhase)
+
 
 def shutdown_ordered_phases() -> list[StartupPhase]:
     return list(SHUTDOWN_SEQUENCE)

@@ -11,7 +11,6 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 审计失败返回降级结果
 # [TESTS] tests/audit-orchestrator/test_external_tool_audit.py
-
 import logging
 import subprocess
 from pathlib import Path
@@ -22,6 +21,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["ExternalToolAuditor"]
 
 DEFAULT_TIMEOUT = 30
+
 
 class ExternalToolAuditor:
     def __init__(self, timeout: int = DEFAULT_TIMEOUT) -> None:
@@ -90,12 +90,14 @@ class ExternalToolAuditor:
     def is_available(self) -> bool:
         return self._available
 
+
 class ChainValidationResult:
-    def __init__(self, tool_id='', valid=True, chain_intact=True, errors=None):
+    def __init__(self, tool_id="", valid=True, chain_intact=True, errors=None):
         self.tool_id = tool_id
         self.valid = valid
         self.chain_intact = chain_intact
         self.errors = errors or []
+
 
 class ExternalToolCallAuditor:
     def __init__(self, config=None):
@@ -107,17 +109,19 @@ class ExternalToolCallAuditor:
     def validate_chain(self, tool_id):
         return ChainValidationResult(tool_id=tool_id)
 
+
 class ToolCallRecord:
-    def __init__(self, tool_id='', call_id='', timestamp=None, parameters=None, result_hash=''):
+    def __init__(self, tool_id="", call_id="", timestamp=None, parameters=None, result_hash=""):
         self.tool_id = tool_id
         self.call_id = call_id
         self.timestamp = timestamp
         self.parameters = parameters or {}
         self.result_hash = result_hash
 
+
 class ToolCallStatus:
-    SUCCESS = 'SUCCESS'
-    FAILURE = 'FAILURE'
-    TIMEOUT = 'TIMEOUT'
-    PENDING = 'PENDING'
-    RETRY = 'RETRY'
+    SUCCESS = "SUCCESS"
+    FAILURE = "FAILURE"
+    TIMEOUT = "TIMEOUT"
+    PENDING = "PENDING"
+    RETRY = "RETRY"

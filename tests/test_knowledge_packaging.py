@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_packaging.py
 
-import pytest
 from zephyr.ops.collectors.knowledge_packaging import KnowledgePackaging
 
 

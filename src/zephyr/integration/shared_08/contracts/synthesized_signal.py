@@ -1,12 +1,10 @@
 # [A_module] module_id=MOD-INT_synthesized_signal | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-015 ====
 from dataclasses import dataclass, field
-
-from datetime import datetime, timezone
-from typing import Dict
-from typing import Optional
+from datetime import datetime
 
 from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -31,6 +29,7 @@ AI Prompt
     当 L03 信号合成引擎完成因子信号聚合后，MUST 产出 SynthesizedSignal。 每个 SynthesizedSignal 代表一个标的在一个时间截面上的综合交易判断。 signal_value 是标准化后的合成信号值（-3 到 3），正值为做多信号，负值为做空信号。 contributing_factors 记录参与合成的因子 ID 及其权重——用于归因分析。 L04 风控层使用此信号做 pre-trade risk check。L05 组合构建层使用此信号做组合优化输入。 generation_latency_ms 记录信号合成耗时，用于 SLO 监控。
 """
 
+
 @dataclass(frozen=True)
 class SynthesizedSignal:
     as_of_timestamp: datetime
@@ -43,186 +42,12 @@ class SynthesizedSignal:
     signal_id: str
     signal_value: float
     symbol: str
-    contributing_factors: Dict[str, float] = field(default_factory=dict)
+    contributing_factors: dict[str, float] = field(default_factory=dict)
     is_degraded: bool = False
     regime: str = ""
     schema_version: str = "1.0"
     suggested_position_pct: float = 0
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-P1-015 ====
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

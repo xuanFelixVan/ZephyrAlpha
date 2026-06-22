@@ -6,9 +6,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """测试 TOCTOU Guard — 竞态防护"""
-import pytest
+
 from pathlib import Path
-from zephyr.security.access_control.toctou_guard import TOCTOUGuard, FileIntegrityCheck
+
+from zephyr.security.access_control.toctou_guard import TOCTOUGuard
 
 
 class TestTOCTOUGuard:

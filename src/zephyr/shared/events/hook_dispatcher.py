@@ -31,15 +31,12 @@ Hook Dispatcher — 任务状态变更 → 外部回调触发。
     - MTH-015 模板实现
 """
 
-
 from __future__ import annotations
 
-import json
 import subprocess
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable
 
 from zephyr.shared.shared_services.events.event_bus import DomainEvent, EventBus, EventType
 
@@ -64,14 +61,10 @@ class HookExecution:
 
 
 class HookDispatcher:
-
-    def __init__(self, event_bus: EventBus | None = None,
-                 data_dir: Path | None = None) -> None:
+    def __init__(self, event_bus: EventBus | None = None, data_dir: Path | None = None) -> None:
         self._bus = event_bus or EventBus.get_instance()
         self._data_dir = data_dir or Path("data/events")
-        self._hooks: dict[EventType, list[HookConfig]] = {
-            et: [] for et in EventType
-        }
+        self._hooks: dict[EventType, list[HookConfig]] = {et: [] for et in EventType}
         self._executions: list[HookExecution] = []
         self._bus.subscribe(EventType.TASK_COMPLETED, self._on_event)
         self._bus.subscribe(EventType.TASK_FAILED, self._on_event)
@@ -103,21 +96,25 @@ class HookDispatcher:
                 timeout=30,
             )
 
-            self._executions.append(HookExecution(
-                hook_id=hook.hook_id,
-                event_id=event.event_id,
-                success=result.returncode == 0,
-                response=result.stdout[:500],
-                timestamp_utc=datetime.now(timezone.utc).isoformat(),
-            ))
+            self._executions.append(
+                HookExecution(
+                    hook_id=hook.hook_id,
+                    event_id=event.event_id,
+                    success=result.returncode == 0,
+                    response=result.stdout[:500],
+                    timestamp_utc=datetime.now(UTC).isoformat(),
+                )
+            )
         except (subprocess.TimeoutExpired, Exception) as e:
-            self._executions.append(HookExecution(
-                hook_id=hook.hook_id,
-                event_id=event.event_id,
-                success=False,
-                response=str(e)[:500],
-                timestamp_utc=datetime.now(timezone.utc).isoformat(),
-            ))
+            self._executions.append(
+                HookExecution(
+                    hook_id=hook.hook_id,
+                    event_id=event.event_id,
+                    success=False,
+                    response=str(e)[:500],
+                    timestamp_utc=datetime.now(UTC).isoformat(),
+                )
+            )
 
     def _call_webhook(self, hook: HookConfig, event: DomainEvent) -> None:
         pass

@@ -26,7 +26,6 @@ Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检�
     drift_report = detect_drift(history)
 """
 
-
 from __future__ import annotations
 
 import importlib
@@ -43,7 +42,7 @@ DEFAULT_OUTPUT_DIR = "data/model_profiles"
 
 def _lazy_profiler_types():
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.profiler")
-    return getattr(_mod, "ModelProfile"), getattr(_mod, "CaseResult")
+    return _mod.ModelProfile, _mod.CaseResult
 
 
 def write_benchmark_results(
@@ -52,8 +51,8 @@ def write_benchmark_results(
 ) -> str:
     """将 benchmark 结果写入 JSONL 文件（每行一个模型的结果）。"""
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.profiler")
-    ModelProfile = getattr(_mod, "ModelProfile")
-    CaseResult = getattr(_mod, "CaseResult")
+    ModelProfile = _mod.ModelProfile
+    CaseResult = _mod.CaseResult
     base = Path(output_dir)
     base.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -112,10 +111,7 @@ def detect_drift(
     prev_latency = prev.get("latency_p50_ms", 1.0)
     latency_pct = (latency_delta / prev_latency) if prev_latency > 0 else 0.0
 
-    drift_detected = (
-        abs(score_delta) > threshold_score_decline
-        or latency_pct > threshold_latency_increase_pct
-    )
+    drift_detected = abs(score_delta) > threshold_score_decline or latency_pct > threshold_latency_increase_pct
 
     category_drift: dict[str, float] = {}
     for cat in set(list(latest.get("category_scores", {}).keys())):
@@ -134,13 +130,11 @@ def detect_drift(
             "latency_delta_ms": round(latency_delta, 1),
             "latency_increase_pct": round(latency_pct * 100, 1),
             "throughput_delta_tok_per_sec": round(
-                latest.get("throughput_tokens_per_sec", 0.0)
-                - prev.get("throughput_tokens_per_sec", 0.0), 1
+                latest.get("throughput_tokens_per_sec", 0.0) - prev.get("throughput_tokens_per_sec", 0.0), 1
             ),
             "category_drift": category_drift,
             "hallucination_rate_delta": round(
-                latest.get("hallucination_rate", 0.0)
-                - prev.get("hallucination_rate", 0.0), 4
+                latest.get("hallucination_rate", 0.0) - prev.get("hallucination_rate", 0.0), 4
             ),
         },
     }
@@ -149,8 +143,8 @@ def detect_drift(
 def to_model_benchmark_result(profile) -> dict[str, Any]:
     """将 ModelProfile 转换为 Pipeline 中 ModelBenchmarkResult 格式。"""
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.profiler")
-    ModelProfile = getattr(_mod, "ModelProfile")
-    CaseResult = getattr(_mod, "CaseResult")
+    ModelProfile = _mod.ModelProfile
+    CaseResult = _mod.CaseResult
     return {
         "model_name": profile.model_name,
         "model_version": profile.model_name.split(":")[-1] if ":" in profile.model_name else "",
@@ -168,16 +162,13 @@ def to_model_benchmark_result(profile) -> dict[str, Any]:
         "vs_previous_version": None,
         "recommendation": profile.recommendation,
         "regression_detected": profile.average_score < 0.3,
-        "regression_tasks": [
-            r.case_id for r in profile.case_results
-            if r.passed is False and r.error == ""
-        ],
+        "regression_tasks": [r.case_id for r in profile.case_results if r.passed is False and r.error == ""],
     }
 
 
 def _profile_to_dict(p) -> dict[str, Any]:
     _mod = importlib.import_module("zephyr.intelligence.model_profiling.profiler")
-    ModelProfile = getattr(_mod, "ModelProfile")
+    ModelProfile = _mod.ModelProfile
     return {
         "model_name": p.model_name,
         "source": p.source,

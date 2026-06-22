@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-SHR_shared | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 __all__ = [
+    "MIN_COMPATIBLE_SHARED_VERSION",
     "AdaptiveSampler",
     "AiAuditGuard",
     "AiUnderstandabilityConstraint",
@@ -44,7 +45,6 @@ __all__ = [
     "HeartbeatServer",
     "InvalidTransitionError",
     "LongevityMonitor",
-    "MIN_COMPATIBLE_SHARED_VERSION",
     "ModelCapacityProbe",
     "ModuleBirthRegistry",
     "OutcomeRecord",

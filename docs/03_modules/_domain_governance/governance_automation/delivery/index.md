@@ -2,9 +2,11 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-INF-005
 title: Delivery
 module_id: MOD-025
+updated: "2026-06-22"
+---
 
 # Delivery — 脚本系统交付记录
 
@@ -30,4 +32,4 @@ module_id: MOD-025
 
 ## 父级目录
 
-- 父级：[script-system](../index.md)
+- 父级：[governance_automation](../index.md)

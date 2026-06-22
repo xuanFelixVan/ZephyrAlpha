@@ -15,8 +15,6 @@ import os
 import tempfile
 import uuid
 
-import pytest
-
 from zephyr.behavioral_audit.drift_models import ScanLevel
 from zephyr.behavioral_audit.scan_mutex import (
     QueuedScan,

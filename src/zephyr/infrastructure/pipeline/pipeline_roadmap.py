@@ -37,12 +37,15 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-
 __all__ = [
-    "AuditIndependenceProof",
+    "PIPELINE_DEPENDENCIES",
+    "PIPELINE_DEPENDENCIES_MAP",
+    "PIPELINE_VERSION_MAP",
+    "PROFILES",
     "AdversarialDeceptionProtocol",
     "AlertEscalationTracker",
     "AntiPatternEntry",
+    "AuditIndependenceProof",
     "BlueprintCodeDriftChecker",
     "BlueprintCodeDriftEntry",
     "ByzantineFailureCheck",
@@ -75,32 +78,28 @@ __all__ = [
     "OrchestratorIntegrationBridge",
     "OutcomeBiasCheck",
     "PhaseStatus",
-    "PIPELINE_DEPENDENCIES",
-    "PIPELINE_DEPENDENCIES_MAP",
-    "PIPELINE_VERSION_MAP",
     "PipelineOrchestratorRoadmapMixin",
     "PipelineSignalData",
     "PolicyDiffReport",
     "PolicyTestCase",
-    "PositionEffectCheck",
     "PortfolioRiskSnapshot",
+    "PositionEffectCheck",
     "PostmortemReport",
-    "PROFILES",
     "ROICalculator",
     "ReproducibilityManifest",
     "ResilienceBudget",
     "ReviewDebtTracker",
     "RouteDecisionLog",
-    "SagaLogEntry",
-    "SchedulingProfileDef",
-    "select_profile",
-    "SessionBrief",
-    "SilentFailureAlert",
     "SLOMetric",
     "SLOState",
+    "SagaLogEntry",
+    "SchedulingProfileDef",
+    "SessionBrief",
+    "SilentFailureAlert",
     "StopTheLineTrigger",
     "SupplyChainIntegrityCheck",
     "TOCTOUGuardResult",
+    "select_profile",
 ]
 
 
@@ -211,18 +210,22 @@ class HealthReport:
     self_healing_suggestions: list[str] = field(default_factory=list)
 
     def as_json(self) -> str:
-        return json.dumps({
-            "overall_status": self.overall_status,
-            "open_circuit_breakers": self.open_circuit_breakers,
-            "dead_letter_count": self.dead_letter_count,
-            "cost_total_usd": round(self.cost_total_usd, 4),
-            "self_healing_suggestions": self.self_healing_suggestions,
-        }, ensure_ascii=False, indent=2)
+        return json.dumps(
+            {
+                "overall_status": self.overall_status,
+                "open_circuit_breakers": self.open_circuit_breakers,
+                "dead_letter_count": self.dead_letter_count,
+                "cost_total_usd": round(self.cost_total_usd, 4),
+                "self_healing_suggestions": self.self_healing_suggestions,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
 
     def as_markdown(self) -> str:
         lines = [
-            f"# Pipeline Health Report",
-            f"",
+            "# Pipeline Health Report",
+            "",
             f"**Status:** {self.overall_status}",
             f"**Open Circuit Breakers:** {self.open_circuit_breakers}",
             f"**Dead Letters:** {self.dead_letter_count}",
@@ -343,17 +346,19 @@ class OrchestratorIntegrationBridge(BaseModel):
     contract_version: str = "CT-PIPE-ORC-001"
     enabled: bool = True
 
-    PIPELINE_COMPLETE_DOWNSTREAM: list[str] = Field(default_factory=lambda: [
-        "Orchestrator.assign_session",
-        "FeedbackLoopEngine.receive",
-        "CapacityAssurance.update_token_budget",
-        "SessionContinuity.save_state",
-        "DeadLetterQueue.check_replay",
-        "CostTracker.accumulate",
-        "Descheduler.scan",
-        "NotificationSystem.send",
-        "AuditTrail.write_decision",
-    ])
+    PIPELINE_COMPLETE_DOWNSTREAM: list[str] = Field(
+        default_factory=lambda: [
+            "Orchestrator.assign_session",
+            "FeedbackLoopEngine.receive",
+            "CapacityAssurance.update_token_budget",
+            "SessionContinuity.save_state",
+            "DeadLetterQueue.check_replay",
+            "CostTracker.accumulate",
+            "Descheduler.scan",
+            "NotificationSystem.send",
+            "AuditTrail.write_decision",
+        ]
+    )
 
     def emit_pipeline_complete(self, result: dict) -> dict:
         return {
@@ -480,67 +485,78 @@ class Dependency(BaseModel):
 
 PIPELINE_DEPENDENCIES: list[Dependency] = [
     Dependency(
-        module_id="MOD-INF-006", module_name="Task System",
+        module_id="MOD-INF-006",
+        module_name="Task System",
         relation="runtime_call",
         description="读取TaskCard→dispatch()→PipelineResult",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-007", module_name="Gate Engine",
+        module_id="MOD-INF-007",
+        module_name="Gate Engine",
         relation="pre_check",
         description="dispatch()前G6检查——AI是否已读蓝图",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-008", module_name="Context Engine",
+        module_id="MOD-INF-008",
+        module_name="Context Engine",
         relation="config_consume",
         description="blueprint_routing.yaml→触发路由匹配",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-010", module_name="Feedback Loop",
+        module_id="MOD-INF-010",
+        module_name="Feedback Loop",
         relation="feedback_to",
         description="FLE反馈→调复杂度估计→重新路由",
         status="📋 Backlog",
     ),
     Dependency(
-        module_id="MOD-INF-003", module_name="Orchestrator",
+        module_id="MOD-INF-003",
+        module_name="Orchestrator",
         relation="upstream",
         description="Orc.create_task→Pipe.dispatch→Orc.assign_session",
         status="📋 Backlog",
     ),
     Dependency(
-        module_id="MOD-INF-016", module_name="Shared",
+        module_id="MOD-INF-016",
+        module_name="Shared",
         relation="contract_consume",
         description="LifecycleAware/Observer/TelemetryEmitter/MetricsRegistry",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-014", module_name="LLM Security",
+        module_id="MOD-INF-014",
+        module_name="LLM Security",
         relation="pre_check",
         description="LSG L1+L3输入输出检测(v0.8.0 B131已集成)",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-012", module_name="DeferredQueue",
+        module_id="MOD-INF-012",
+        module_name="DeferredQueue",
         relation="downstream",
         description="dispatch LOCKED→DeferredQueue.enqueue→auto-retry",
         status="📋 Backlog",
     ),
     Dependency(
-        module_id="MOD-INF-001", module_name="Capacity Assurance",
+        module_id="MOD-INF-001",
+        module_name="Capacity Assurance",
         relation="contract_consume",
         description="Kill Switch前置检查+Token Budget扣减+Graceful Degradation",
         status="📋 Backlog",
     ),
     Dependency(
-        module_id="MOD-INF-017", module_name="Audit Trail",
+        module_id="MOD-INF-017",
+        module_name="Audit Trail",
         relation="downstream",
         description="Decision Log→audit_trail持久化",
         status="📋 Backlog",
     ),
     Dependency(
-        module_id="b_pipeline.yaml", module_name="Pipeline SSoT",
+        module_id="b_pipeline.yaml",
+        module_name="Pipeline SSoT",
         relation="ssoT",
         description="Pipeline YAML canonical source",
         status="✅ implemented",
@@ -663,6 +679,7 @@ class SilentFailureAlert(BaseModel):
 
 class AuditIndependenceProof(BaseModel):
     """B435: 审计独立性论证——证明M7(GLM)与M3(DeepSeek)无共享训练数据。"""
+
     m3_model: str = "deepseek-v4-pro"
     m7_model: str = "glm-5.1"
     shared_training_data: bool = False
@@ -672,6 +689,7 @@ class AuditIndependenceProof(BaseModel):
 
 class TOCTOUGuardResult(BaseModel):
     """B439: TOCTOU 防护——路由与调用间隙的重验证。"""
+
     pre_route_hash: str = ""
     pre_call_hash: str = ""
     gap_ms: float = 0.0
@@ -681,6 +699,7 @@ class TOCTOUGuardResult(BaseModel):
 
 class ByzantineFailureCheck(BaseModel):
     """B457: 拜占庭故障检测——AI输出"对但有害"的差分检测。"""
+
     output_text: str = ""
     benign_interpretation: str = ""
     harmful_interpretation: str = ""
@@ -689,6 +708,7 @@ class ByzantineFailureCheck(BaseModel):
 
 class MannKendallResult(BaseModel):
     """B455: Mann-Kendall趋势检验——检测 SLO 掩盖的退化。"""
+
     trend_detected: bool = False
     p_value: float = 0.0
     slope: float = 0.0
@@ -697,6 +717,7 @@ class MannKendallResult(BaseModel):
 
 class DriftIntoFailureAlert(BaseModel):
     """B455: Drift Into Failure 告警。"""
+
     metric: str = ""
     trend_result: MannKendallResult = MannKendallResult()
     alert: bool = False
@@ -709,6 +730,7 @@ class DriftIntoFailureAlert(BaseModel):
 
 class PositionEffectCheck(BaseModel):
     """B466: Position Effect——AI持有代码后产生的偏见检测。"""
+
     code_authored_by_ai: bool = False
     bias_detected: bool = False
     bias_score: float = 0.0
@@ -716,6 +738,7 @@ class PositionEffectCheck(BaseModel):
 
 class OutcomeBiasCheck(BaseModel):
     """B467: Outcome Bias——用交易结果反推代码质量的检测。"""
+
     trading_pnl: float = 0.0
     code_quality_score: float = 0.0
     correlation_detected: bool = False
@@ -723,6 +746,7 @@ class OutcomeBiasCheck(BaseModel):
 
 class ReviewDebtTracker(BaseModel):
     """B474-B475: Vibe Coding 审查债务追踪。"""
+
     ai_lines_generated: int = 0
     human_lines_reviewed: int = 0
     unreviewed_lines: int = 0
@@ -736,6 +760,7 @@ class ReviewDebtTracker(BaseModel):
 
 class ReproducibilityManifest(BaseModel):
     """B484-B485: AI 非确定性——Reproducibility Manifest。"""
+
     task_id: str
     seed: int = 42
     temperature: float = 0.7
@@ -745,6 +770,7 @@ class ReproducibilityManifest(BaseModel):
 
 class ConceptDriftMonitor(BaseModel):
     """B489: 概念漂移监测——Python/ML 生态演化检测。"""
+
     version_keyed: bool = True
     drift_detected: bool = False
     distribution_shift_score: float = 0.0
@@ -757,6 +783,7 @@ class ConceptDriftMonitor(BaseModel):
 
 class DegradationTimeline(BaseModel):
     """B494-B499: 两年运维时间轴退化阶段追踪。"""
+
     stage: str = "T+0"
     expected_degradation: str = ""
     detection_trigger: str = ""
@@ -765,6 +792,7 @@ class DegradationTimeline(BaseModel):
 
 class DependencyRotDetector(BaseModel):
     """B500: 依赖腐烂——Python/API/Ruleset/Hardware 联动老化检测。"""
+
     python_deps_stale: bool = False
     api_versions_mismatched: bool = False
     ruleset_freshness_score: float = 100.0
@@ -777,6 +805,7 @@ class DependencyRotDetector(BaseModel):
 
 class StopTheLineTrigger(BaseModel):
     """B504: API 灭绝——Stop the Line 硬中断。"""
+
     api_down: bool = False
     active_dispatches_blocked: int = 0
     estimated_recovery_s: float = 0.0
@@ -784,6 +813,7 @@ class StopTheLineTrigger(BaseModel):
 
 class AdversarialDeceptionProtocol(BaseModel):
     """B506: 对抗市场——Pipeline 行为伪装协议。"""
+
     enabled: bool = False
     noise_injection_rate: float = 0.0
     behavior_shuffle: bool = False
@@ -796,6 +826,7 @@ class AdversarialDeceptionProtocol(BaseModel):
 
 class MarketDataPipelineStatus(BaseModel):
     """B512-B513: 行情管道状态。"""
+
     data_source: str = ""
     latency_ms: float = 0.0
     data_quality_score: float = 100.0
@@ -804,6 +835,7 @@ class MarketDataPipelineStatus(BaseModel):
 
 class AlertEscalationTracker(BaseModel):
     """B515: 告警触达——触发→分级→行动→超时→自动升级。"""
+
     alert_level: str = "INFO"
     triggered_at: str = ""
     action_taken: bool = False
@@ -817,6 +849,7 @@ class AlertEscalationTracker(BaseModel):
 
 class DataProvenanceTracker(BaseModel):
     """B526: 训练数据血缘→标准化来源→漂移→毒化→合规记录。"""
+
     source: str = ""
     ingested_at: str = ""
     drift_detected: bool = False
@@ -825,6 +858,7 @@ class DataProvenanceTracker(BaseModel):
 
 class SupplyChainIntegrityCheck(BaseModel):
     """B530: 供应链——pip/conda/docker→SBOM→不可变哈希→CVE扫描。"""
+
     packages_scanned: int = 0
     cve_found: int = 0
     integrity_ok: bool = True
@@ -837,6 +871,7 @@ class SupplyChainIntegrityCheck(BaseModel):
 
 class PortfolioRiskSnapshot(BaseModel):
     """B532: 组合风险——Cov矩阵+VaR/CVaR快照。"""
+
     var_95: float = 0.0
     cvar_95: float = 0.0
     strategy_correlation_matrix: dict[str, dict[str, float]] = Field(default_factory=dict)
@@ -844,6 +879,7 @@ class PortfolioRiskSnapshot(BaseModel):
 
 class CrossMarketGuard(BaseModel):
     """B533-B537: 跨市场执行+时区+监管+做市 合成守卫。"""
+
     markets_active: list[str] = Field(default_factory=list)
     tz_amplification_risk: bool = False
     regulatory_arbitrage_detected: bool = False
@@ -857,6 +893,7 @@ class CrossMarketGuard(BaseModel):
 
 class CodebaseHealthScore(BaseModel):
     """B538: 代码库多维度健康评分。"""
+
     test_coverage_pct: float = 0.0
     complexity_score: float = 0.0
     tech_debt_ratio: float = 0.0
@@ -865,6 +902,7 @@ class CodebaseHealthScore(BaseModel):
 
 class AntiPatternEntry(BaseModel):
     """B541: Anti-Pattern Registry 条目。"""
+
     pattern_id: str = ""
     description: str = ""
     severity: str = "WARN"
@@ -878,6 +916,7 @@ class AntiPatternEntry(BaseModel):
 
 class PostmortemReport(BaseModel):
     """B544: Blameless Postmortem——无责故障复盘。"""
+
     incident_id: str = ""
     root_cause: str = ""
     learning: str = ""
@@ -886,6 +925,7 @@ class PostmortemReport(BaseModel):
 
 class ResilienceBudget(BaseModel):
     """B555: 韧性投资预算分配。"""
+
     safety_margin_pct: float = 25.0
     antifragility_injection_rate: float = 0.05
     remaining_budget: float = 100.0
@@ -1013,4 +1053,3 @@ PIPELINE_VERSION_MAP: dict[str, dict] = {
     "v0.35.0": {"section": "§55", "audit_round": "第三十五轮", "b_range": "B611-B620"},
     "v0.36.0": {"section": "§56", "audit_round": "第三十六轮", "b_range": "B621-B624"},
 }
-

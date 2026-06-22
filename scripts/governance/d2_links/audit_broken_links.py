@@ -1,6 +1,8 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d2_links/audit_broken_links.py | §
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -9,12 +11,11 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
 import re
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 MD_LINK = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 

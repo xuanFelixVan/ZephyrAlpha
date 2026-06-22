@@ -25,14 +25,9 @@ import hashlib
 import json
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.external_merkle_proof import (
     ExternalMerkleProof,
-    MerkleNode,
     MerkleProof,
-    MerkleTree,
-    VerificationResult,
 )
 
 

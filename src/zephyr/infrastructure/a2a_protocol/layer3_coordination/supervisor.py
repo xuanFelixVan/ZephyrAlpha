@@ -21,8 +21,6 @@
 
 """Supervisor — A2A Layer 3 Coordination"""
 
-
-from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 
 from ..layer2_communication.a2a_state import A2ATask, A2ATaskStatus
@@ -32,8 +30,8 @@ class Supervisor:
     """监督者——任务分配、死锁检测、超时管理"""
 
     def __init__(self):
-        self._tasks: Dict[str, A2ATask] = {}
-        self._agent_load: Dict[str, int] = {}
+        self._tasks: dict[str, A2ATask] = {}
+        self._agent_load: dict[str, int] = {}
         self.MIN_TIMEOUT_MINUTES = 10
         self.MAX_TIMEOUT_HOURS = 24
 
@@ -61,27 +59,29 @@ class Supervisor:
             return True
         return False
 
-    def detect_deadlocks(self) -> List[Dict]:
+    def detect_deadlocks(self) -> list[dict]:
         deadlocks = []
         waiting_tasks = [t for t in self._tasks.values() if t.status == A2ATaskStatus.IN_PROGRESS]
         now = datetime.utcnow()
         for task in waiting_tasks:
             if task.deadline and now > task.deadline:
-                deadlocks.append({
-                    "task_id": task.task_id,
-                    "agent": task.to_agent,
-                    "deadline": task.deadline.isoformat(),
-                    "action": "escalate",
-                })
+                deadlocks.append(
+                    {
+                        "task_id": task.task_id,
+                        "agent": task.to_agent,
+                        "deadline": task.deadline.isoformat(),
+                        "action": "escalate",
+                    }
+                )
         return deadlocks
 
     def get_agent_load(self, agent_id: str) -> int:
         return self._agent_load.get(agent_id, 0)
 
-    def get_pending_tasks(self) -> List[A2ATask]:
+    def get_pending_tasks(self) -> list[A2ATask]:
         return [t for t in self._tasks.values() if t.status in (A2ATaskStatus.CREATED, A2ATaskStatus.QUEUED)]
 
-    def escalate_timeouts(self) -> List[Dict]:
+    def escalate_timeouts(self) -> list[dict]:
         now = datetime.utcnow()
         timeouts = []
         for task in self._tasks.values():

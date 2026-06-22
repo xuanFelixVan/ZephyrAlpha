@@ -10,10 +10,8 @@
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_self_check.py
 
-import os
 import tempfile
-
-import pytest
+from pathlib import Path
 
 from zephyr.behavioral_audit.self_check import (
     bootstrap_self_check,
@@ -22,7 +20,6 @@ from zephyr.behavioral_audit.self_check import (
     run_self_check,
     sha256_file,
 )
-from pathlib import Path
 
 
 class TestSha256File:

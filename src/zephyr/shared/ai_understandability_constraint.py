@@ -20,7 +20,7 @@ class AiUnderstandabilityConstraint:
 
     def check(self, content: str) -> UnderstandabilityResult:
         violations = []
-        lines = content.split('\n')
+        lines = content.split("\n")
         long_lines = sum(1 for l in lines if len(l) > self._max_line_length)
         if long_lines > 0:
             violations.append(f"{long_lines} lines exceed {self._max_line_length} chars")

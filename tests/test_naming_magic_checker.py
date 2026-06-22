@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import os
-
-import pytest
-
 from zephyr.behavioral_audit.naming_magic_checker import (
     NamingMagicAlert,
     scan_naming_magic,

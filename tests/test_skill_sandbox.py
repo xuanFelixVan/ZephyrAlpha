@@ -12,22 +12,20 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
-from pathlib import Path
-from unittest.mock import patch, MagicMock
 
 from zephyr.autonomy_core.skill_sandbox import (
-    SkillSandbox,
     _DEFAULT_SAFE_TOOLS,
-    _RISKY_TOOLS,
     _FORBIDDEN_TOOLS,
-    _DANGEROUS_COMMAND_PATTERNS,
+    SkillSandbox,
 )
 
 
 @pytest.fixture(autouse=True)
 def _mock_write_to_core():
-    with patch("zephyr.orchestration.agent_lifecycle.skill_sandbox.write_to_core") as mock_wtc:
+    with patch("zephyr.autonomy_core.skill_sandbox.write_to_core") as mock_wtc:
         yield mock_wtc
 
 

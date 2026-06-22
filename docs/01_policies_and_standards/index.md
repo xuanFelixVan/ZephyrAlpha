@@ -1,23 +1,17 @@
 ---
-module_id: GOV-023
-status: Active
-title: Index
-version: 0.1.0
----
-﻿﻿﻿﻿﻿﻿﻿﻿---
 module_id: PS-IDX-001
 title: 规则体系总索引
 doc_type: index
 status: active
-version: "1.4.0"
+version: "2.0.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-04"
+date: "2026-06-22"
 ttl: permanent
-summary: "01_policies_and_standards/ 的顶层导航入口。列出全部 6 个子目录的结构、职责和关键文件。所有目录项和文件项均附带中文说明。新 AI session 的第一站——读完此文件即理解整个规则体系的全貌。"
+summary: "01_policies_and_standards/ 的顶层导航入口。v2.0.0：对齐 meta/ 目录删除后的新结构（rules/ + _registry/ + templates/），移除14层引用，统一下划线命名。"
 tags: [index, root, navigation, policies-and-standards]
 rule_form: declarative
 scope: global
@@ -27,11 +21,11 @@ verifiability: manual
 
 # 规则体系总索引
 
-> **module_id**: PS-IDX-001 | **version**: 1.4.0 | **status**: active
+> **module_id**: PS-IDX-001 | **version**: 2.0.0 | **status**: active
 
-本文件是 `01_policies_and_standards/` 的顶层导航入口。**新 AI session 的第一站**——读完此文件即理解整个规则体系的全貌，无需遍历 6 个子目录。
+本文件是 `01_policies_and_standards/` 的顶层导航入口。**新 AI session 的第一站**——读完此文件即理解整个规则体系的全貌。
 
-> **对标**：ISO/IEC Directives Part 2 要求标准目录提供索引文件。meta/index.md 定义了 index 文件的六模块模板。AGENTS.md §5.1 零记忆重启标准：AI 每次都是"新员工"，必须有一个文件让它 3 分钟内理解目录结构。
+> **架构真源**：[architecture_upgrade_discussion.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md) §二（39域方案，14层降级为域属性）
 
 ---
 
@@ -39,94 +33,87 @@ verifiability: manual
 
 ```
 01_policies_and_standards/
-├── meta/                        ← 元规则（关于规则体系的规则）
-│   ├── index.md                 ← 元规则索引入口（新 AI 优先读）
-│   ├── meta-standard-constitution-standard.md      ← 最高层级元宪法
-│   ├── metadata-registry.md               ← frontmatter 字段规范真源（字段数据真源见 frontmatter-field-registry.md）
-│   ├── document-structure-standard.md     ← 标准文档模板
-│   ├── behavior-boundaries-standard.md    ← 行为边界（绝对禁止/条件禁止）
-│   ├── rule-classification-and-arbitration-standard.md ← 规则分类与冲突仲裁
-│   ├── governance-metrics-standard.md     ← 治理度量 KPI
-│   ├── rule-lifecycle-and-change-standard.md ← 规则生命周期+变更门控
-│   ├── governance-methodology-standard.md ← 治理方法论 MTH-001~010
-│   ├── rule-verification-standard.md      ← 规则验证分级体系
-│   ├── glossary-glossary.md                        ← 术语表（仲裁源）
-│   ├── terminology-mapping-reference.md             ← 术语大白话双向映射表
-│   └── blueprint-architecture-standard.md ← 蓝图架构标准
-│
-├── governance/                  ← 声明式全局规则（"应该是什么"）
-│   ├── ai/                      ← AI 治理（自主权、幻觉自检、onboarding）
-│   ├── architecture/            ← 架构治理（评审门、版本策略、KB 决策记录 协议）
-│   ├── compliance/              ← 合规治理（审计追踪、监管分类）
-│   ├── data/                    ← 数据治理（血缘、质量、留存）
-│   ├── document/                ← 文档治理（命名、路径、目录结构、生命周期）
-│   ├── module/                  ← 模块治理（准入、注入规则、接口契约）
-│   ├── security/                ← 安全治理（访问控制、密钥管理、应急）
-│   └── task/                    ← 任务治理（卡片标准、生命周期、handoff）
-│
-├── operational/                 ← 过程式操作手册（"怎么做"）
-│   ├── devops/                  ← DevOps 操作（pre-commit、CI、架构变更 playbook）
-│   ├── migration/               ← 迁移操作（旧体系→当前项目审计）
-│   └── vibe_coding/             ← Vibe Coding 操作（上下文规则、状态机、应急手册）
-│
-├── domains/                     ← 层/域特定规则
-│   ├── L00_data_source/         ← L00 数据源层
-│   │   ├── governance/          ← 声明式规则
-│   │   └── operational/         ← 过程式手册
-│   ├── L02_alpha_factor/        ← L02 Alpha 因子层
-│   │   ├── governance/          ← 声明式规则
-│   │   └── operational/         ← 过程式手册
-│   ├── L04_risk_management/     ← L04 风险管理层
-│   │   ├── governance/          ← 声明式规则
-│   │   └── operational/         ← 过程式手册
-│   └── L07_post_trade_analytics/ ← L07 盘后分析层
-│       ├── governance/          ← 声明式规则
-│       └── operational/         ← 过程式手册
+├── rules/                       ← 规则文件唯一真源（48 个 trae_*.yaml）
+│   ├── _index.yaml              ← 规则索引
+│   ├── trae_001_file_operation_security.yaml       ← 文件操作安全（RULE-ZERO~FOUR）
+│   ├── trae_002_anti_orphan_search_first.yaml      ← 搜索先行（RULE-EIGHT）
+│   ├── trae_003_task_granularity_threshold.yaml    ← 任务粒度（RULE-SIX）
+│   ├── trae_004_parallel_atomic_transaction.yaml   ← 并行原子事务（RULE-ONE）
+│   ├── trae_005_modification_governance.yaml       ← 修改治理（RULE-SEVENTEEN）
+│   ├── trae_006-009_anti_hallucination_*.yaml      ← 防幻觉四层（结构/行为/输出/安全）
+│   ├── trae_010-012_code_*.yaml                    ← 代码命名/类型/测试
+│   ├── trae_013-017_arch_*.yaml                    ← 架构治理（跨包/蓝图/路径/漂移/顺序）
+│   ├── trae_018-023_behavior_*.yaml                ← 行为边界（禁止/条件）
+│   ├── trae_024-027_methodology_*.yaml             ← 方法论（诊断/决策/质量/协作）
+│   ├── trae_028-030_doc_*.yaml                     ← 文档（结构/操作/编号）
+│   ├── trae_031_security_key_access.yaml           ← 安全密钥访问
+│   ├── trae_032-033_module_*.yaml                  ← 模块生命周期/注册同步
+│   ├── trae_034-035_task_*.yaml                    ← 任务卡标准/施工验证
+│   ├── trae_036-039_arch_*.yaml                    ← 架构门控/版本/注入/幻觉检测
+│   ├── trae_040_ai_model_routing.yaml              ← AI 模型路由
+│   ├── trae_041-043_meta_rule_*.yaml               ← 元规则（分类/标准/元数据）
+│   ├── trae_044_compliance_audit.yaml              ← 合规审计
+│   ├── trae_045_data_quality_lineage.yaml          ← 数据质量血缘
+│   ├── trae_046-047_engineering_*.yaml             ← 工程代码重构/文件头
+│   ├── trae_048-049_ops_*.yaml                     ← 运维（Vibe Coding/域手册）
+│   ├── trae_050-051_domain_policy_*.yaml           ← 域策略（因子/风险回测）
+│   ├── trae_052_cross_blueprint_change_cleanup.yaml ← 跨蓝图变更清理
+│   ├── trae_053_automation_dual_track.yaml         ← 自动化双轨
+│   ├── trae_054_depgraph_access_protocol.yaml      ← 全景图访问协议
+│   ├── trae_055_arch_domain_capacity.yaml          ← 架构域容量
+│   ├── trae_056_module_creation_workflow.yaml      ← 模块创建工作流
+│   └── trae_057_ai_consumer_first.yaml             ← AI消费优先原则
 │
 ├── _registry/                   ← 注册表 + 验证契约（机器可读）
-│   ├── catalogs/                ← 集中注册表（20 个 YAML/MD——详见 catalogs/index.md）
-│   │   ├── registry-master-index.yaml            ← 登记表总索引
-│   │   ├── document-metadata-index-registry.yaml         ← 文件元数据索引（auto-generated）
-│   │   ├── frontmatter-field-registry.md       ← frontmatter 字段数据 SSoT（字段规范见 metadata-registry.md）
-│   │   └── ...（其余 16 个 catalog 文件见 catalogs/index.md）
+│   ├── catalogs/                ← 集中注册表（24 个 YAML/MD）
+│   │   ├── registry_of_registries.yaml             ← 注册表之注册表（48 个注册表总索引）
+│   │   ├── gate_registry.yaml                      ← 门禁注册表
+│   │   ├── functional_domain_registry.yaml         ← 功能域注册表（39域）
+│   │   ├── frontmatter_field_registry.yaml         ← frontmatter 字段注册表
+│   │   ├── rule_catalog_registry.yaml              ← 规则目录注册表
+│   │   ├── project_path_tree.yaml                  ← 项目路径树
+│   │   └── ...（其余 18 个 catalog 文件）
 │   ├── contracts/               ← 架构合规契约
-│   │   └── architecture-contract.yaml             ← 架构合规自动验证契约
+│   │   ├── architecture_contract.yaml              ← 架构合规自动验证契约
+│   │   ├── contract_mapping_table.yaml             ← 契约映射表
+│   │   └── model_capability_contract.yaml          ← 模型能力契约
 │   ├── schemas/                 ← JSON Schema 定义
-│   │   └── frontmatter-schema.json                ← frontmatter 字段校验 Schema
-│   └── vocabularies/            ← 受控词表（11 个——详见 vocabularies/index.md）
-│       ├── doc_type-vocabulary.yaml               ← 文档类型受控枚举（27 值）
-│       ├── rule_form-vocabulary.yaml              ← 规则形式受控枚举
-│       ├── status-vocabulary.yaml                 ← 文档状态受控枚举
-│       └── ttl-vocabulary.yaml                    ← TTL 周期受控枚举
+│   │   ├── frontmatter_schema.json                 ← frontmatter 字段校验 Schema
+│   │   └── session_log_schema.yaml                 ← 会话日志 Schema
+│   └── vocabularies/            ← 受控词表（25 个）
+│       ├── glossary.yaml                           ← 术语表（仲裁源）
+│       ├── terminology_mapping.yaml                ← 术语映射表
+│       ├── doc_type_vocabulary.yaml                ← 文档类型受控枚举
+│       ├── domain_vocabulary.yaml                  ← 域受控枚举
+│       ├── layer_vocabulary.yaml                   ← 层级受控枚举
+│       └── ...（其余 20 个 vocabulary 文件）
 │
-└── templates/                   ← 文档模板（10 个标准模板，KB 决策记录 模板已迁入 KB）
-    ├── blueprint-construction-template.md     ← 蓝图 + 施工指引统一模板
-    ├── playbook-template.md      ← 操作手册模板
-    ├── policy-policy.md        ← 策略模板
-    ├── protocol-protocol.md      ← 协议模板
-    ├── register-registry.md      ← 注册表模板
-    ├── risk-register-registry.md ← 风险登记表模板
-    ├── roadmap-template.md       ← 路线图模板
-    ├── runbook-runbook.md       ← 执行手册模板
-    ├── standard-standard.md      ← 标准模板
+└── templates/                   ← 文档模板（11 个标准模板）
+    ├── blueprint_construction_template.md          ← 蓝图 + 施工指引统一模板
+    ├── dependency_graph_template.md                ← 依赖图模板
+    ├── playbook_runbook.md                         ← 操作手册模板
+    ├── policy_template.md                          ← 策略模板
+    ├── protocol_template.md                        ← 协议模板
+    ├── register_template.md                        ← 注册表模板
+    ├── risk_register_template.md                   ← 风险登记表模板
+    ├── roadmap_template.md                         ← 路线图模板
+    ├── runbook_template.md                         ← 执行手册模板
+    ├── standard_template.md                        ← 标准模板
+    └── index.md
 ```
 
 ---
 
 ## 二、各子目录关键信息
 
-<!-- TABLE-AUTO-START -->
-| 子目录 | 职责 | 管辖文件数 | 索引入口 | 注册表 |
-|--------|------|:---------:|---------|--------|
-| `meta/` | 元规则——定义"规则怎么写、怎么管" | 12 | [meta/index.md](meta/index.md) | [_registry/catalogs/rule-registry.md](_registry/catalogs/rule-registry.md) |
-| `governance/` | 声明式全局规则——8 个治理域 | 41 | [governance/index.md](governance/index.md) | [document-metadata-index-registry.yaml](_registry/catalogs/document-metadata-index-registry.yaml) |
-| `operational/` | 过程式操作手册——3 个操作域 | 4 | [operational/index.md](operational/index.md) | 同上 |
-| `domains/` | 层域特定规则——4 个架构层 | 8 | [domains/index.md](domains/index.md) | 同上 |
-| `_registry/` | 注册表+契约——4 个子目录 | 48 | [不需要（机器可读）](不需要（机器可读）) | 自身即注册表 |
-| `templates/` | 文档模板 | 10 | [不需要（文件名自描述）](不需要（文件名自描述）) | [document-metadata-index-registry.yaml](_registry/catalogs/document-metadata-index-registry.yaml) |
+| 子目录 | 职责 | 管辖文件数 | 索引入口 |
+|--------|------|:---------:|---------|
+| `rules/` | 规则文件唯一真源——48 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略） | 49 | [rules/_index.yaml](rules/_index.yaml) |
+| `_registry/` | 注册表+契约+Schema+词表——4 个子目录 | 55 | [_registry/index.md](_registry/index.md) |
+| `templates/` | 文档模板——11 个标准模板 | 11 | [templates/index.md](templates/index.md) |
 
-> **合计**：6 个子目录，123 个文件，全部注册在 [document-metadata-index-registry.yaml](_registry/catalogs/document-metadata-index-registry.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory-registry.md）。
-<!-- TABLE-AUTO-END -->
+> **合计**：3 个子目录，115 个文件。
+> **历史变更**：`meta/` 目录已于 2026-06 删除，规则文件合并至 `rules/`；`governance/`、`operational/`、`domains/` 目录已删除，内容合并至 `rules/` 对应 trae_*.yaml 文件。
 
 ---
 
@@ -138,11 +125,8 @@ verifiability: manual
 
 | 类别 | 存放位置 | 说明 |
 |------|---------|------|
-| **元规则** | `meta/` | 关于规则体系的规则——格式、分类、生命周期、方法论 |
-| **声明式治理规则** | `governance/` | 全局策略、标准、协议——"应该是什么状态" |
-| **过程式操作手册** | `operational/` | 施工步骤、应急流程、上下文规则——"怎么达到那个状态" |
-| **层域规则** | `domains/` | 各架构层的专属规则和操作手册 |
-| **机器注册表** | `_registry/` | 自动索引、受控词表、验证契约 |
+| **规则文件** | `rules/` | 48 个 trae_*.yaml——文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略 |
+| **机器注册表** | `_registry/` | 自动索引、受控词表、验证契约、Schema |
 | **文档模板** | `templates/` | 新建文件的起点 |
 
 ### 3.2 责任边界（本目录不管什么）
@@ -152,28 +136,29 @@ verifiability: manual
 | 文件类型 | 不在此目录的原因 | 正确位置 |
 |---------|---------------|---------|
 | 企业架构视图（TOGAF） | 架构模型不是规则 | `docs/02_enterprise_architecture/` |
-| 架构决策记录（KB 决策记录，已冻结 2026-04-27） | 架构决策不是规则标准；凭证真源为 KB | **`KB:decisions`**（Git-backed；旧 `docs/02_enterprise_architecture/adr/` 已移除） |
+| 架构决策记录（KB 决策记录） | 架构决策不是规则标准；凭证真源为 KB | **`KB:decisions`**（Git-backed） |
 | 模块生命周期文档 | 蓝图+施工图+交付 | `docs/03_modules/` |
 | 知识库条目 | 经验积累不是规则 | `docs/08_knowledge/` |
 | 审计报告 | 事后评估不是规则 | `docs/09_audit/` |
-| Session Log | 临时会话记录 | 已迁至项目外部独立目录（2026-05-02）。`docs/19_development_workspace/` 目录已删除。 |
 | 业务代码 | 可执行代码 | `src/zephyr/` |
 | 治理/审计脚本 | 工具不是规则 | `scripts/governance/` / `scripts/audit/` |
 
-### 3.3 `governance/` vs `operational/` 边界判据
+### 3.3 规则分类体系
 
-这是本目录最重要的架构边界。判据如下：
+规则按 trae_XXX 编号分类，共 10 个工作线：
 
-| 我要放一个文件…… | 对照问题 | 放 governance/ 如果…… | 放 operational/ 如果…… |
-|:----------------|:--------|:---------------------|:----------------------|
-| | "这个文件描述什么？" | 描述 **期望状态**（声明式） | 描述 **执行步骤**（过程式） |
-| | "怎么判断？" | 能用 `policy`/`standard`/`protocol` 做 doc_type | 能用 `operational_rule` 做 doc_type |
-| | 对标 | K8s Declarative Config / ITIL Policy | K8s Imperative Command / ITIL Procedure |
-
-**正例（放对了）**：
-- `governance/architecture/architecture-review-policy.md` ← 声明式：定义了"什么变更必须评审"（期望状态）
-- `operational/vibe_coding/vibe-coding-session-state-runbook.md` ← 过程式：定义了"AI 加载上下文的步骤"（执行步骤）
-- `operational/devops/architecture-change-playbook.md`（OPS-DEV-002）← 过程式：定义了"架构变更 L1~L4 四级操作步骤+回滚方案"（执行步骤）。该文件曾错放在 `operational/architecture/`，已于 2026-05-01 审查后迁至 `operational/devops/`——`architecture` 既是 governance 域名又是 operational 路径名违反 AGENTS.md §5.1 原则 2（责任唯一）。
+| 编号范围 | 工作线 | 说明 |
+|---------|--------|------|
+| trae_001-005 | 文件操作 + 任务粒度 | RULE-ZERO~EIGHT 施工铁律 |
+| trae_006-009 | 防幻觉四层 | 结构/行为/输出/安全 |
+| trae_010-012 | 代码构建 | 命名/类型/测试 |
+| trae_013-017 | 架构治理 | 跨包/蓝图/路径/漂移/顺序 |
+| trae_018-023 | 行为边界 | 绝对禁止/条件禁止 |
+| trae_024-027 | 方法论 | 诊断/决策/质量/协作 |
+| trae_028-030 | 文档治理 | 结构/操作/编号 |
+| trae_031-035 | 安全+模块+任务 | 密钥/生命周期/注册/任务卡 |
+| trae_036-039 | 架构门控+幻觉检测 | 门控/版本/注入/检测 |
+| trae_040-057 | AI路由+元规则+运维+域策略 | 18 个规则文件 |
 
 ---
 
@@ -182,22 +167,20 @@ verifiability: manual
 ### 4.1 新 AI session 冷启动（所有任务通用）
 
 ```
-1. 本文件（index.md）                     ← 3 分钟了解全貌
-2. meta/index.md                          ← 元规则全貌
-3. meta/glossary-glossary.md                       ← 术语对齐
-4. meta/rule-classification-and-arbitration-standard.md ← 规则怎么分类
+1. 本文件（index.md）                              ← 3 分钟了解全貌
+2. rules/_index.yaml                               ← 规则索引全貌
+3. _registry/vocabularies/glossary.yaml            ← 术语对齐
+4. rules/trae_041_meta_rule_classification.yaml    ← 规则怎么分类
 ```
 
 ### 4.2 按任务类型定向阅读
 
 | 你的任务 | 读完通用 4 步后，继续读 | Token 成本 |
 |---------|----------------------|:---:|
-| **修改/优化规则文件** | `meta/rule-lifecycle-and-change-standard.md` | ~1500 |
-| **创建新标准文档** | `meta/document-structure-standard.md` + `meta/metadata-registry.md` §1~§4 | ~2500 |
-| **审查规则体系** | `meta/rule-verification-standard.md` + `_registry/catalogs/rule-registry.md` | ~2000 |
+| **修改/优化规则文件** | `rules/trae_032_module_lifecycle.yaml` | ~1500 |
+| **创建新标准文档** | `rules/trae_030_doc_numbering_metadata.yaml` + `rules/trae_043_meta_rule_metadata.yaml` | ~2500 |
+| **审查规则体系** | `rules/trae_044_compliance_audit.yaml` + `_registry/catalogs/registry_of_registries.yaml` | ~2000 |
 | **操作具体文件夹** | 对应规则文件 | ~1000 |
-
-> 以上路径对齐 AGENTS.md §8.2 三层记忆模型。
 
 ---
 
@@ -205,13 +188,14 @@ verifiability: manual
 
 | 注册表 | 路径 | 用途 |
 |--------|------|------|
-| **文件注册表** | [_registry/catalogs/document-metadata-index-registry.yaml](_registry/catalogs/document-metadata-index-registry.yaml) | 全部文件的 machine-readable 元数据索引（auto-generated） |
-| **文档清单** | [_registry/catalogs/document-metadata-index-registry.yaml](_registry/catalogs/document-metadata-index-registry.yaml) | 全部文档的完整列表（auto-generated，取代已废弃的 master-document-inventory-registry.md） |
-| **任务卡注册表** | [_registry/catalogs/task-card-meta-registry.md](_registry/catalogs/task-card-meta-registry.md) | 任务卡元数据定义 |
-| **架构契约** | [_registry/contracts/architecture-contract.yaml](_registry/contracts/architecture-contract.yaml) | 架构合规自动验证契约 |
-| **doc_type 词表** | [_registry/vocabularies/doc_type-vocabulary.yaml](_registry/vocabularies/doc_type-vocabulary.yaml) | 文档类型受控枚举 |
-| **rule_form 词表** | [_registry/vocabularies/rule_form-vocabulary.yaml](_registry/vocabularies/rule_form-vocabulary.yaml) | 规则形式受控枚举 |
-| **status 词表** | [_registry/vocabularies/status-vocabulary.yaml](_registry/vocabularies/status-vocabulary.yaml) | 文档状态受控枚举 |
+| **注册表之注册表** | [_registry/catalogs/registry_of_registries.yaml](_registry/catalogs/registry_of_registries.yaml) | 48 个注册表总索引 |
+| **门禁注册表** | [_registry/catalogs/gate_registry.yaml](_registry/catalogs/gate_registry.yaml) | 全部门禁清单 |
+| **功能域注册表** | [_registry/catalogs/functional_domain_registry.yaml](_registry/catalogs/functional_domain_registry.yaml) | 39 域清单 |
+| **架构契约** | [_registry/contracts/architecture_contract.yaml](_registry/contracts/architecture_contract.yaml) | 架构合规自动验证契约 |
+| **frontmatter Schema** | [_registry/schemas/frontmatter_schema.json](_registry/schemas/frontmatter_schema.json) | frontmatter 字段校验 Schema |
+| **术语表** | [_registry/vocabularies/glossary.yaml](_registry/vocabularies/glossary.yaml) | 术语仲裁源 |
+| **doc_type 词表** | [_registry/vocabularies/doc_type_vocabulary.yaml](_registry/vocabularies/doc_type_vocabulary.yaml) | 文档类型受控枚举 |
+| **domain 词表** | [_registry/vocabularies/domain_vocabulary.yaml](_registry/vocabularies/domain_vocabulary.yaml) | 域受控枚举 |
 
 ---
 
@@ -219,7 +203,8 @@ verifiability: manual
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
-| 1.4.0 | 2026-05-04 | 审计修复。(1) §一 删除 meta/ 下已迁移文件的注释行（rule-registry.md、registry_of_registries.yaml 已物理删除）。(2) §二 文件数全面更新（非 index 文件口径）：meta/ 11→12、governance/ 38→42、operational/ 4→4、domains/ 8→8、_registry/ 32→35、templates/ 11→11。全局合计 104→112（非 index 文件）。(3) §三.3 断链修复：architecture-review-gate.md → architecture-review-policy.md。(4) §三.1 Session Log 路径：标记为已迁至外部独立目录。(5) 配套修复 15 个文件中的 56 处 `19_development_workspace/` 引用、6 个子索引文件数对账。版本号 minor +1。 |
-| 1.2.0 | 2026-05-02 | 审计修复——全量文件数对账。(1) §一 目录树：_registry/catalogs/ 从 3 个文件更新为 10+1，templates/ 从 9 个模板更新为 11 个。(2) §二 文件数：meta/ 12→13、operational/ 9→7、domains/ 12→20、_registry/ 8→20、templates/ 9→12；索引入口 operational/ 和 domains/ 从"（待建）"更新为实际路径。全局合计 96→122。版本号 minor +1。 |
-| 1.1.0 | 2026-05-01 | 目录树全中文化 + 索引策略明确。(1) §一 目录结构速览——所有子目录行（governance/ 8 个子域、operational/ 3 个子域、_registry/ 4 个子目录+其下 8 个文件、domains/ L02/L04/L07 下的 governance/operational、templates/ 9 个模板文件）全部补上中文说明。(2) §二 表格——_registry/ 和 templates/ 的"索引入口"从"（待建）"改为"不需要"（原因：机器可读/文件名自描述）。operational/ 和 domains/ 保留"（待建）"（需建但非紧急）。 |
-| 1.0.0 | 2026-05-01 | 初始创建。(1) §一 目录结构速览——6 子目录树形图含中文标注。(2) §二 各子目录关键信息——职责、文件数、入口、注册表。(3) §三 责任声明——正向 6 类、负向 8 类、governance/operational 边界判据。(4) §四 推荐阅读顺序——冷启动 4 步 + 按任务定向。(5) §五 关键注册表速查——7 个注册表入口。对标 meta/index.md 六模块模板。 |
+| 2.0.0 | 2026-06-22 | 架构升级对齐。(1) 删除 meta/ 目录引用（已物理删除，规则合并至 rules/）。(2) 删除 governance/、operational/、domains/ 目录引用（已删除，内容合并至 rules/）。(3) 新增 rules/ 目录（48 个 trae_*.yaml）。(4) 更新 _registry/ 文件数（catalogs 24 + contracts 3 + schemas 3 + vocabularies 25 = 55）。(5) 统一下划线命名（doc_type-vocabulary.yaml → doc_type_vocabulary.yaml 等）。(6) 移除14层引用（D19/D21 裁定：14层降级为域属性）。 |
+| 1.4.0 | 2026-05-04 | 审计修复。meta/ 下已迁移文件注释行删除；文件数全面更新。 |
+| 1.2.0 | 2026-05-02 | 审计修复——全量文件数对账。 |
+| 1.1.0 | 2026-05-01 | 目录树全中文化 + 索引策略明确。 |
+| 1.0.0 | 2026-05-01 | 初始创建。 |

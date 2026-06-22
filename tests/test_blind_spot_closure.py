@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.trading.orchestrator.blind_spot_closure import BLIND_SPOTS, BlindSpot, BlindSpotClosure
 
 

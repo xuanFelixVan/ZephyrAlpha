@@ -27,6 +27,7 @@ Risk: R111 — New schema fields dropped; diagnosis misses new evidence dimensio
 
 from dataclasses import dataclass
 
+
 @dataclass
 class SchemaEvolution:
     version: int = 1

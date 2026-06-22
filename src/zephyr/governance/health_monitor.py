@@ -28,11 +28,10 @@
   - 引擎自观指标聚合
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -60,24 +59,24 @@ class HealthMonitor:
 
     # 维度定义（名称, 满分, 权重, 计算方法描述）
     _DIMENSIONS: list[dict[str, Any]] = [
-        {"name": "duplication_rate",        "max": 100, "w": 1.5, "desc": "重复函数占比(越低越好)"},
-        {"name": "shared_coverage",         "max": 100, "w": 1.2, "desc": "shared/函数覆盖率"},
-        {"name": "signature_collisions",    "max": 100, "w": 1.5, "desc": "签名碰撞数(0=满分)"},
-        {"name": "import_health",           "max": 100, "w": 0.8, "desc": "import健康度"},
-        {"name": "stale_shared_count",      "max": 100, "w": 0.8, "desc": "过期共享函数数"},
-        {"name": "auto_fix_success_rate",   "max": 100, "w": 1.0, "desc": "自动修复成功率"},
-        {"name": "micro_clone_density",     "max": 100, "w": 1.3, "desc": "微克隆密度(越低越好)"},
-        {"name": "blast_radius_score",      "max": 100, "w": 1.5, "desc": "Monoculture爆炸半径BRS"},
-        {"name": "shared_burden_score",     "max": 100, "w": 1.0, "desc": "Import表面积SBS"},
-        {"name": "simplicity_audit_score",  "max": 100, "w": 1.2, "desc": "引擎自审计SAS"},
-        {"name": "contract_consistency",    "max": 100, "w": 1.0, "desc": "API契约一致性"},
-        {"name": "cross_boundary_health",   "max": 100, "w": 0.8, "desc": "跨边界克隆健康度"},
-        {"name": "fpr_7d",                  "max": 100, "w": 0.8, "desc": "7天误报率(越低越好)"},
-        {"name": "cache_hit_ratio",         "max": 100, "w": 0.6, "desc": "缓存命中率"},
-        {"name": "detection_latency_inverse","max": 100,"w": 0.6, "desc": "检测延迟(逆数化)"},
-        {"name": "fix_doom_loop_count",     "max": 100, "w": 0.8, "desc": "Doom Loop触发数"},
-        {"name": "known_shared_ratio",      "max": 100, "w": 0.8, "desc": "已知shared等价函数占比"},
-        {"name": "intentional_duplicate_ratio", "max":100,"w":0.5,"desc": "有意重复占比(设计模式等)"},
+        {"name": "duplication_rate", "max": 100, "w": 1.5, "desc": "重复函数占比(越低越好)"},
+        {"name": "shared_coverage", "max": 100, "w": 1.2, "desc": "shared/函数覆盖率"},
+        {"name": "signature_collisions", "max": 100, "w": 1.5, "desc": "签名碰撞数(0=满分)"},
+        {"name": "import_health", "max": 100, "w": 0.8, "desc": "import健康度"},
+        {"name": "stale_shared_count", "max": 100, "w": 0.8, "desc": "过期共享函数数"},
+        {"name": "auto_fix_success_rate", "max": 100, "w": 1.0, "desc": "自动修复成功率"},
+        {"name": "micro_clone_density", "max": 100, "w": 1.3, "desc": "微克隆密度(越低越好)"},
+        {"name": "blast_radius_score", "max": 100, "w": 1.5, "desc": "Monoculture爆炸半径BRS"},
+        {"name": "shared_burden_score", "max": 100, "w": 1.0, "desc": "Import表面积SBS"},
+        {"name": "simplicity_audit_score", "max": 100, "w": 1.2, "desc": "引擎自审计SAS"},
+        {"name": "contract_consistency", "max": 100, "w": 1.0, "desc": "API契约一致性"},
+        {"name": "cross_boundary_health", "max": 100, "w": 0.8, "desc": "跨边界克隆健康度"},
+        {"name": "fpr_7d", "max": 100, "w": 0.8, "desc": "7天误报率(越低越好)"},
+        {"name": "cache_hit_ratio", "max": 100, "w": 0.6, "desc": "缓存命中率"},
+        {"name": "detection_latency_inverse", "max": 100, "w": 0.6, "desc": "检测延迟(逆数化)"},
+        {"name": "fix_doom_loop_count", "max": 100, "w": 0.8, "desc": "Doom Loop触发数"},
+        {"name": "known_shared_ratio", "max": 100, "w": 0.8, "desc": "已知shared等价函数占比"},
+        {"name": "intentional_duplicate_ratio", "max": 100, "w": 0.5, "desc": "有意重复占比(设计模式等)"},
     ]
 
     def compute(
@@ -100,12 +99,14 @@ class HealthMonitor:
 
             score = max(0.0, min(100.0, raw))
 
-            dimensions.append(HealthDimension(
-                name=name,
-                score=score,
-                weight=weight,
-                status=self._classify_dimension(score),
-            ))
+            dimensions.append(
+                HealthDimension(
+                    name=name,
+                    score=score,
+                    weight=weight,
+                    status=self._classify_dimension(score),
+                )
+            )
 
             weighted_sum += score * weight
             total_weight += weight
@@ -126,7 +127,7 @@ class HealthMonitor:
             dimensions=dimensions,
             hotspots=hotspots[:3],
             session_summary=session_summary,
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
         )
 
     # ── 内部 ──────────────────────────────────────────────────
@@ -176,7 +177,7 @@ class HealthMonitor:
         hotspot_names = [h.get("category", "?") for h in hotspots[:3]]
 
         lines = [
-            f"| Dedup Health | {overall} | {trend_icon} | Grade {self._compute_grade(overall)} | {datetime.now(timezone.utc).strftime('%m-%d %H:%M')} |",
+            f"| Dedup Health | {overall} | {trend_icon} | Grade {self._compute_grade(overall)} | {datetime.now(UTC).strftime('%m-%d %H:%M')} |",
         ]
         if hotspot_names:
             lines.append(f"| Hotspots | {', '.join(hotspot_names)} |")

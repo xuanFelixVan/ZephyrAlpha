@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cross_guard_conflict_detector.py
 
-import pytest
 
 from zephyr.ops.diagnosers.cross_guard_conflict_detector import (
     CrossGuardConflictDetector,

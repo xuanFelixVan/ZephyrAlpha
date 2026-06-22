@@ -44,9 +44,13 @@ print()
 print("B. Field Completeness")
 with_domain = sum(1 for n in nodes.values() if n.get("domain_id", ""))
 migrable = sum(1 for n in nodes.values() if n.get("type", "") not in ("doc", "data", "config", "infra"))
-migrable_no_domain = sum(1 for n in nodes.values() if n.get("type", "") not in ("doc", "data", "config", "infra") and not n.get("domain_id", ""))
+migrable_no_domain = sum(
+    1
+    for n in nodes.values()
+    if n.get("type", "") not in ("doc", "data", "config", "infra") and not n.get("domain_id", "")
+)
 b2_pct = (migrable - migrable_no_domain) / migrable * 100 if migrable > 0 else 0
-print(f"  [B1] Nodes with domain: {with_domain}/{len(nodes)} ({with_domain/len(nodes)*100:.1f}%)")
+print(f"  [B1] Nodes with domain: {with_domain}/{len(nodes)} ({with_domain / len(nodes) * 100:.1f}%)")
 print(f"  [B2] Migrable with domain: {migrable - migrable_no_domain}/{migrable} ({b2_pct:.1f}%)")
 print(f"  [B3] Migrable WITHOUT domain: {migrable_no_domain}")
 
@@ -59,7 +63,7 @@ for n in nodes.values():
         domain_stats[d] = domain_stats.get(d, 0) + 1
 c1 = len(domain_stats) >= 25
 print(f"  [C1] Domain count: {len(domain_stats)}/30 -> {'PASS' if c1 else 'FAIL'}")
-print(f"  [C2] Missing: D-ALT-DATA, D-DATA-ENG, D-SELL-DECISION, D-POSITION, D-REPORTING (new domains, expected)")
+print("  [C2] Missing: D-ALT-DATA, D-DATA-ENG, D-SELL-DECISION, D-POSITION, D-REPORTING (new domains, expected)")
 
 edge_orphans = 0
 node_ids = set(nodes.keys())

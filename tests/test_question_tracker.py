@@ -9,10 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-import pytest
 from zephyr.governance.question_tracker import (
-    QuestionTracker, Question,
+    Question,
+    QuestionTracker,
 )
+
 
 class TestQuestionTracker:
     def test_instantiation(self):

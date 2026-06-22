@@ -34,10 +34,8 @@
     sb.pre_flight_check("batch_delete", affected_ke_count=50)
 """
 
-
 from __future__ import annotations
 
-import json
 import logging
 import os
 import time
@@ -45,7 +43,6 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -172,11 +169,11 @@ class SafetyBrake:
     ) -> bool:
         wait = seconds or self._QUIET_PERIOD_SECONDS
         logger.warning("SAFETY BRAKE: %d-second cooling for: %s", wait, reason)
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"  SAFETY BRAKE ENGAGED — {reason}")
         print(f"  Cooling period: {wait} seconds")
-        print(f"  Press Ctrl+C to abort.")
-        print(f"{'='*60}\n")
+        print("  Press Ctrl+C to abort.")
+        print(f"{'=' * 60}\n")
 
         try:
             for remaining in range(wait, 0, -1):
@@ -222,6 +219,7 @@ class SafetyBrake:
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="KB Safety Brake")
     sub = parser.add_subparsers(dest="cmd")
 
@@ -244,15 +242,16 @@ def main() -> None:
         print(f"  Cooling:   {result.cooling_period_seconds}s")
         print(f"  Devil's Advocate: {'required' if result.devils_advocate_required else 'not required'}")
         if result.blocking_issues:
-            print(f"  BLOCKING:")
+            print("  BLOCKING:")
             for b in result.blocking_issues:
                 print(f"    - {b}")
         if result.warnings:
-            print(f"  WARNINGS:")
+            print("  WARNINGS:")
             for w in result.warnings:
                 print(f"    - {w}")
         if not result.passed:
             import sys
+
             sys.exit(1)
         return
 

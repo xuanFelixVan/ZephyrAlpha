@@ -13,9 +13,6 @@
 from __future__ import annotations
 
 import time
-from unittest.mock import patch
-
-import pytest
 
 from zephyr.infrastructure.asset_inventory.telemetry import (
     ConsoleChannel,
@@ -23,7 +20,6 @@ from zephyr.infrastructure.asset_inventory.telemetry import (
     InventorySelfMetrics,
     MetricPoint,
     NotificationManager,
-    NotificationRecord,
     SmtpEmailChannel,
     get_telemetry,
 )

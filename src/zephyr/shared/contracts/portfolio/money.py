@@ -20,7 +20,9 @@
 # [TESTS]
 
 from __future__ import annotations
+
 from typing import Self
+
 """
 ZephyrAlpha — shared/contracts/money.py
 
@@ -49,9 +51,9 @@ ZephyrAlpha — shared/contracts/money.py
 """
 
 
+import importlib
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN, Decimal, getcontext
-import importlib
 
 # Lazy import for CurrencyCode (upward dependency from L0 shared → L3 trading)
 _TARGET_MODULE = "zephyr.execution.trading.trading_contracts.market.instrument"
@@ -62,6 +64,7 @@ def __getattr__(name):
         mod = importlib.import_module(_TARGET_MODULE)
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 # 全局 Decimal 精度（28 位有效数字，足够金融计算，含复利/开方等）
 getcontext().prec = 28
@@ -195,7 +198,7 @@ class Money:
         # 禁止 float 进入
         if isinstance(self.amount, float):
             raise MoneyPrecisionError(
-                f"Money.amount 禁止使用 float（{self.amount}），" ' 请用 str 或 Decimal 构造：Money("1234.56", "CNY")'
+                f'Money.amount 禁止使用 float（{self.amount}）， 请用 str 或 Decimal 构造：Money("1234.56", "CNY")'
             )
 
         # int / str / Decimal → Decimal（frozen=True 下用 object.__setattr__ 绕过）
@@ -218,7 +221,7 @@ class Money:
     def _check_same_currency(self, other: Money) -> None:
         if self.currency != other.currency:
             raise MoneyCurrencyMismatchError(
-                f"币种不匹配：{self.currency} vs {other.currency}。" " 请先用 FXRateProvider 换算到相同货币后再运算。"
+                f"币种不匹配：{self.currency} vs {other.currency}。 请先用 FXRateProvider 换算到相同货币后再运算。"
             )
 
     def __add__(self, other: Money) -> Self:

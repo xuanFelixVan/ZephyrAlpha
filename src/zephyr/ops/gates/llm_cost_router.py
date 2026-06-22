@@ -27,6 +27,7 @@ Risk: R20 — FLE burns budget on low-value diagnostics.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class LLMCostRouter:
     budget_monthly: float = 1000.0

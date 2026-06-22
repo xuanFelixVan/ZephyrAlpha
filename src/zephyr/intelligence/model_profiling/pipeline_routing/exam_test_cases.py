@@ -37,7 +37,6 @@ ExamTestCases --- 入职考试 27 道标准题
     dead_code_removal   → DC
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -212,11 +211,7 @@ EX_NS_001 = ExamTestCase(
     case_id="EX-NS-001",
     capability="naming_suggest",
     difficulty=Difficulty.EASY,
-    prompt=(
-        "suggest alternative names for module: calc\n"
-        "def f(x, y):\n"
-        "    return x + y"
-    ),
+    prompt=("suggest alternative names for module: calc\ndef f(x, y):\n    return x + y"),
     expected_structure_keys=["names"],
     expected_contains=["calculator", "math_utils", "arithmetic"],
 )
@@ -296,11 +291,7 @@ EX_CF_001 = ExamTestCase(
     case_id="EX-CF-001",
     capability="code_fix",
     difficulty=Difficulty.EASY,
-    prompt=(
-        "fix bug: calc\n"
-        "def add(a, b):\n"
-        "    return a - b  # BUG: should be a + b"
-    ),
+    prompt=("fix bug: calc\ndef add(a, b):\n    return a - b  # BUG: should be a + b"),
     expected_structure_keys=["fixes"],
     expected_old_str="a - b",
     expected_new_str="a + b",
@@ -344,13 +335,7 @@ EX_RF_001 = ExamTestCase(
     case_id="EX-RF-001",
     capability="refactor",
     difficulty=Difficulty.EASY,
-    prompt=(
-        "refactor: calc\n"
-        "x = 10\n"
-        "y = 20\n"
-        "z = 30\n"
-        "result = x + y + z  # magic numbers everywhere"
-    ),
+    prompt=("refactor: calc\nx = 10\ny = 20\nz = 30\nresult = x + y + z  # magic numbers everywhere"),
     expected_structure_keys=["changes"],
     expected_contains=["constant", "TEN", "MAGIC"],
 )
@@ -396,8 +381,7 @@ EX_CG_001 = ExamTestCase(
     capability="code_generate",
     difficulty=Difficulty.EASY,
     prompt=(
-        "generate: a function called is_prime that takes an integer n "
-        "and returns True if n is prime, False otherwise."
+        "generate: a function called is_prime that takes an integer n and returns True if n is prime, False otherwise."
     ),
     expected_structure_keys=["content"],
     expected_contains=["def is_prime", "for", "return"],
@@ -491,23 +475,41 @@ EX_DC_003 = ExamTestCase(
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
     # task_classification
-    EX_CL_001, EX_CL_002, EX_CL_003,
+    EX_CL_001,
+    EX_CL_002,
+    EX_CL_003,
     # tag_completion
-    EX_TG_001, EX_TG_002, EX_TG_003,
+    EX_TG_001,
+    EX_TG_002,
+    EX_TG_003,
     # summary_extraction
-    EX_SE_001, EX_SE_002, EX_SE_003,
+    EX_SE_001,
+    EX_SE_002,
+    EX_SE_003,
     # naming_suggest
-    EX_NS_001, EX_NS_002, EX_NS_003,
+    EX_NS_001,
+    EX_NS_002,
+    EX_NS_003,
     # anomaly_triage
-    EX_AT_001, EX_AT_002, EX_AT_003,
+    EX_AT_001,
+    EX_AT_002,
+    EX_AT_003,
     # code_fix
-    EX_CF_001, EX_CF_002, EX_CF_003,
+    EX_CF_001,
+    EX_CF_002,
+    EX_CF_003,
     # refactor
-    EX_RF_001, EX_RF_002, EX_RF_003,
+    EX_RF_001,
+    EX_RF_002,
+    EX_RF_003,
     # code_generate
-    EX_CG_001, EX_CG_002, EX_CG_003,
+    EX_CG_001,
+    EX_CG_002,
+    EX_CG_003,
     # dead_code_removal
-    EX_DC_001, EX_DC_002, EX_DC_003,
+    EX_DC_001,
+    EX_DC_002,
+    EX_DC_003,
 ]
 
 CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}

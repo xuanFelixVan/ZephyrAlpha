@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class IntegrityReport:
     layer: str
@@ -34,7 +35,15 @@ class IntegrityReport:
     order_preserved: bool
     missing_items: list[str] = field(default_factory=list)
 
+
 class IntegrityCheck:
     """Inject 后 hash 注入前后对比 + order preserved (DD106)."""
+
     def verify(self, layer: str, before_hash: str, after_hash: str) -> IntegrityReport:
-        return IntegrityReport(layer=layer, content_hash=before_hash, inject_time="2026-05-07", hashes_match=before_hash == after_hash, order_preserved=True)
+        return IntegrityReport(
+            layer=layer,
+            content_hash=before_hash,
+            inject_time="2026-05-07",
+            hashes_match=before_hash == after_hash,
+            order_preserved=True,
+        )

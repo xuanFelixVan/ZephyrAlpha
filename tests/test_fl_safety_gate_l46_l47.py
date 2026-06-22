@@ -10,9 +10,8 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_safety_gate_L46_L47.py
 
-import pytest
-from zephyr.ops.gates.safety_gate_l46_l47 import SafetyGateL46L47
 from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
+from zephyr.ops.gates.safety_gate_l46_l47 import SafetyGateL46L47
 
 
 def _ctx(**overrides) -> ActionContext:

@@ -20,6 +20,7 @@
 # [TESTS] pytest tests/test_ce_explain_cli.py -q
 
 from __future__ import annotations
+
 import json
 
 import pytest

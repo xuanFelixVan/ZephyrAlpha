@@ -15,4 +15,4 @@ category: documentation
 | 蓝图深度评估登记表 | `03_modules/blueprint-registry.yaml` | REG-MOD-003 |
 | Embedding模型注册表 | `src/zephyr/config/embedding_model_registry.yaml` | REG-AI-002 |
 
-> **已迁入**（2026-05-03）：rule-registry.md、registry_of_registries.yaml、ai-autonomy-authority-registry.md、model-capability-contract.yaml（→ `_registry/contracts/`）
+> **已迁入**（2026-05-03）：_index.yaml、registry_of_registries.yaml、ai_autonomy_authority_registry.yaml、model-capability-contract.yaml（→ `_registry/contracts/`）

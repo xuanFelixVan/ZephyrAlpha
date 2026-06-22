@@ -55,13 +55,17 @@ class TestMCPStress:
 
     def test_concurrent_sessions_no_deadlock(self, gw: MCPGateway):
         """并发 20 session 同时 tools/call → 验证无死锁。"""
+
         def _call(session_id: int):
-            return gw.handle_request({
-                "jsonrpc": "2.0", "id": session_id,
-                "method": "tools/call",
-                "params": {"name": "test_a.echo", "arguments": {"message": str(session_id)}},
-                "_session_id": f"stress_{session_id}",
-            })
+            return gw.handle_request(
+                {
+                    "jsonrpc": "2.0",
+                    "id": session_id,
+                    "method": "tools/call",
+                    "params": {"name": "test_a.echo", "arguments": {"message": str(session_id)}},
+                    "_session_id": f"stress_{session_id}",
+                }
+            )
 
         t0 = time.perf_counter()
         with concurrent.futures.ThreadPoolExecutor(max_workers=20) as pool:
@@ -80,12 +84,15 @@ class TestMCPStress:
 
         rate_limited = 0
         for i in range(15):
-            resp = gw.handle_request({
-                "jsonrpc": "2.0", "id": i,
-                "method": "tools/call",
-                "params": {"name": "knowledge_base.echo", "arguments": {}},
-                "_session_id": "rate_test",
-            })
+            resp = gw.handle_request(
+                {
+                    "jsonrpc": "2.0",
+                    "id": i,
+                    "method": "tools/call",
+                    "params": {"name": "knowledge_base.echo", "arguments": {}},
+                    "_session_id": "rate_test",
+                }
+            )
             if resp.get("error", {}).get("code") == -32004:
                 rate_limited += 1
 
@@ -94,12 +101,15 @@ class TestMCPStress:
     def test_gateway_health_under_load(self, gw: MCPGateway):
         """Gateway health status 在高负载下仍然可查询。"""
         t0 = time.perf_counter()
-        resp = gw.handle_request({
-            "jsonrpc": "2.0", "id": 999,
-            "method": "tools/call",
-            "params": {"name": "mcp_gateway.health_status", "arguments": {}},
-            "_session_id": "health_check",
-        })
+        resp = gw.handle_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 999,
+                "method": "tools/call",
+                "params": {"name": "mcp_gateway.health_status", "arguments": {}},
+                "_session_id": "health_check",
+            }
+        )
         elapsed_ms = (time.perf_counter() - t0) * 1000
         result = resp.get("result", {})
         text = result.get("content", [{}])[0].get("text", "{}")

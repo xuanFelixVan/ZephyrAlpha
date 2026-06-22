@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 from __future__ import annotations
+
 """
 测试套件：G3 Evaluate 门禁（T-2-13-C）
 ======================================
@@ -22,6 +23,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from zephyr.governance.kb.analyze import SCORING_DIMENSIONS, VALUE_SCORE_THRESHOLD, AnalyzeGate
 
 

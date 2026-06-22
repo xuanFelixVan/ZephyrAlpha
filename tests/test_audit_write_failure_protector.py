@@ -12,14 +12,10 @@
 
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock
 
-import pytest
-
-from zephyr.governance.audit_write_failure_protector import AuditWriteProtector
 from zephyr.governance.audit_trail.writer import AuditWriter
+from zephyr.governance.audit_write_failure_protector import AuditWriteProtector
 
 
 def _make_writer(tmp_path: Path) -> AuditWriter:

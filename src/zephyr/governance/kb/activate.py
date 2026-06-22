@@ -45,17 +45,17 @@ from typing import Any
 
 import yaml
 
-from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.gate import GateResult
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
+from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
+from zephyr.shared.contracts.gate import GateResult
 
 __all__ = [
-    "ActivateResult",
-    "ActivateGate",
-    "AUTO_ACTIVATE_THRESHOLD",
     "ACTIVE_DIR_NAME",
+    "AUTO_ACTIVATE_THRESHOLD",
     "FUTURE_DIR_NAME",
+    "ActivateGate",
+    "ActivateResult",
 ]
 
 AUTO_ACTIVATE_THRESHOLD = 9.0

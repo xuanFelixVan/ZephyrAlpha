@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_model_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.model_router
+# [MODULE] zephyr.integration.model_router
 
 # [INVARIANTS] none
 
@@ -39,7 +39,6 @@ ModelRouter — 模型路由与降级链管理
     chain = ModelRouter.fallback_chain_for("deepseek")
     cost = ModelRouter.estimate_cost("deepseek", 5000)
 """
-
 
 from __future__ import annotations
 

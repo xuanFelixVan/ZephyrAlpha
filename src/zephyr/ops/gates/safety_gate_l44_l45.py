@@ -25,11 +25,10 @@ L44: self_SLO_compliance OK + API contracts intact + chain amplification control
 L45: execution quality no degradation + noise correctly filtered + learning ceiling respected
 """
 
-from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict, GateType, GateResult, ActionContext
+from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 
 class SafetyGateL44L45:
-
     def __init__(self):
         self.slo_compliant: bool = True
         self.api_contracts_intact: bool = True
@@ -51,12 +50,19 @@ class SafetyGateL44L45:
         if not self.api_contracts_intact:
             return GateResult("L44", GateVerdict.REJECT, GateType.HARD, "API contracts broken")
         if self.chain_amplification > 1.0:
-            return GateResult("L44", GateVerdict.OBSERVE_ONLY, GateType.HARD, f"Chain amplification {self.chain_amplification:.2f} > 1.0")
+            return GateResult(
+                "L44",
+                GateVerdict.OBSERVE_ONLY,
+                GateType.HARD,
+                f"Chain amplification {self.chain_amplification:.2f} > 1.0",
+            )
         return GateResult("L44", GateVerdict.PASS, GateType.HARD)
 
     def _l45_causal_interrogability(self, ctx: ActionContext) -> GateResult:
         if self.learning_ceiling_reached:
             return GateResult("L45", GateVerdict.OBSERVE_ONLY, GateType.HARD, "Learning ceiling reached")
         if self.execution_quality < 0.5:
-            return GateResult("L45", GateVerdict.REJECT, GateType.HARD, f"Execution quality {self.execution_quality:.2f} degraded")
+            return GateResult(
+                "L45", GateVerdict.REJECT, GateType.HARD, f"Execution quality {self.execution_quality:.2f} degraded"
+            )
         return GateResult("L45", GateVerdict.PASS, GateType.HARD)

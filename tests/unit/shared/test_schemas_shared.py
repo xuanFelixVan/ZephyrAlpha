@@ -18,17 +18,17 @@ HandoffPackage : 有效 × 3 / 无效 × 3 / validator × 3
 
 额外：strict mode (extra="forbid")、枚举值校验、BASE_CONFIG 验证
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 from datetime import UTC, datetime
 from typing import Any
 
 import pytest
 from pydantic import ValidationError
+
 from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.severity_types import AuditSeverity, SafetyLevel
 from zephyr.integration.shared.schema.schemas import (
     AuditFinding,
     AuditReport,
@@ -39,6 +39,7 @@ from zephyr.integration.shared.schema.schemas import (
     KnowledgeEntry,
     NextAction,
 )
+from zephyr.integration.shared.schema.severity_types import AuditSeverity, SafetyLevel
 
 _UTC = UTC
 _NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=_UTC)

@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class ModelStrategy:
     task_type: str
@@ -32,8 +33,10 @@ class ModelStrategy:
     model: str
     fallback_model: str
 
+
 class ContextModelStrategy:
     """task_type→model selection: simple task→small model, complex→large (DD118)."""
+
     _STRATEGIES: dict[str, ModelStrategy] = {
         "CODE_GEN": ModelStrategy("CODE_GEN", "L2", "Qwen2.5-3B-Instruct", "Qwen2.5-Coder-7B"),
         "CODE_REVIEW": ModelStrategy("CODE_REVIEW", "L2", "Qwen2.5-Coder-7B", "Claude-Sonnet-4"),
@@ -41,4 +44,6 @@ class ContextModelStrategy:
     }
 
     def select(self, task_type: str) -> ModelStrategy:
-        return self._STRATEGIES.get(task_type, ModelStrategy(task_type, "L2", "Qwen2.5-3B-Instruct", "Qwen2.5-Coder-7B"))
+        return self._STRATEGIES.get(
+            task_type, ModelStrategy(task_type, "L2", "Qwen2.5-3B-Instruct", "Qwen2.5-Coder-7B")
+        )

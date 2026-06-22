@@ -12,6 +12,7 @@
 
 import os
 import tempfile
+from datetime import UTC
 
 import pytest
 
@@ -34,8 +35,9 @@ class TestSymlinkIssue:
         assert issue.detected_at is not None
 
     def test_instantiation_custom(self):
-        from datetime import datetime, timezone
-        dt = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        from datetime import datetime
+
+        dt = datetime(2026, 1, 1, tzinfo=UTC)
         issue = SymlinkIssue(
             issue_id="test-2",
             symlink_path="/tmp/link2",

@@ -10,29 +10,28 @@
 Tests the complete chain: EscalationEngine → RBAC bridge → Audit trail → Rollback trigger.
 Blueprint: docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md §2
 """
-import uuid
-from unittest.mock import patch, MagicMock
+
+from unittest.mock import patch
 
 import pytest
 
 from zephyr.governance.escalation import (
+    CircuitState,
+    DelegationEngine,
+    DelegationStrategy,
     EscalationEngine,
     EscalationLevel,
     EscalationState,
-    DelegationEngine,
-    DelegationStrategy,
-    DelegationRecord,
     RuleCategory,
-    CircuitBreaker,
-    CircuitState,
-    EconomicGuard,
 )
 
 
 @pytest.fixture(autouse=True)
 def _disable_lsg():
-    with patch.object(EscalationEngine, "_lsg_scan_input", lambda self, desc: None), \
-         patch.object(DelegationEngine, "_lsg_verify_delegation", lambda self, event: None):
+    with (
+        patch.object(EscalationEngine, "_lsg_scan_input", lambda self, desc: None),
+        patch.object(DelegationEngine, "_lsg_verify_delegation", lambda self, event: None),
+    ):
         yield
 
 

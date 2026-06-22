@@ -27,6 +27,7 @@ Risk: R102 — FLE relearns what owner already knows.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class KnowledgeInjection:
     injected: list[dict] = field(default_factory=list)

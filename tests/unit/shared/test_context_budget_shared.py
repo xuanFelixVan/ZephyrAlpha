@@ -49,7 +49,6 @@
 Safety: HIGH（上下文预算管防控是 token 过载防线）
 """
 
-import pytest
 from zephyr.autonomy_core.context_budget import (
     BudgetEntry,
     ContextBudget,
@@ -142,14 +141,18 @@ class TestBudgetProperties:
     def test_entries_total(self):
         b = ContextBudget(total_budget=16000)
         from zephyr.autonomy_core.context_budget import BudgetEntry
-        b.entries = [BudgetEntry(key="a", content="hello world", tokens=5),
-                      BudgetEntry(key="b", content="hi", tokens=2)]
+
+        b.entries = [
+            BudgetEntry(key="a", content="hello world", tokens=5),
+            BudgetEntry(key="b", content="hi", tokens=2),
+        ]
         assert b.entries_total == 7
 
     def test_consumed(self):
         b = ContextBudget(total_budget=16000)
         b.allocate(100)
         from zephyr.autonomy_core.context_budget import BudgetEntry
+
         b.entries = [BudgetEntry(key="x", content="test", tokens=50)]
         assert b.consumed == 150
 

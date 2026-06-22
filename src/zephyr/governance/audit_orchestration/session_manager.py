@@ -39,9 +39,9 @@ from typing import Any
 import yaml
 
 __all__ = [
+    "SessionManager",
     "SessionState",
     "SessionTransitionError",
-    "SessionManager",
     "load_state_machine_config",
 ]
 
@@ -110,6 +110,7 @@ class SessionManager:
 
     def create_session(self, session_id: str | None = None) -> str:
         import uuid
+
         sid = session_id or str(uuid.uuid4())[:8]
         with self._lock:
             if sid in self._sessions:
@@ -129,21 +130,18 @@ class SessionManager:
                 raise KeyError(f"Session {session_id} not found")
             current = session["state"]
             target = SessionState(target_state)
-            allowed = any(
-                t.get("from") == current.value and t.get("to") == target.value
-                for t in self._transitions
-            )
+            allowed = any(t.get("from") == current.value and t.get("to") == target.value for t in self._transitions)
             if not allowed:
-                raise SessionTransitionError(
-                    f"Transition {current.value} -> {target.value} not allowed"
-                )
+                raise SessionTransitionError(f"Transition {current.value} -> {target.value} not allowed")
             session["state"] = target
             session["last_transition_at"] = time.time()
-            session["history"].append({
-                "from": current.value,
-                "to": target.value,
-                "at": time.time(),
-            })
+            session["history"].append(
+                {
+                    "from": current.value,
+                    "to": target.value,
+                    "at": time.time(),
+                }
+            )
         _logger.info("Session %s: %s -> %s", session_id, current.value, target.value)
         return target
 
@@ -173,7 +171,4 @@ class SessionManager:
     @property
     def active_sessions(self) -> list[str]:
         with self._lock:
-            return [
-                sid for sid, s in self._sessions.items()
-                if s["state"] == SessionState.ACTIVE
-            ]
+            return [sid for sid, s in self._sessions.items() if s["state"] == SessionState.ACTIVE]

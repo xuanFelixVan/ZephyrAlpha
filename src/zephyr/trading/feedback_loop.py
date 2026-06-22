@@ -43,6 +43,7 @@ from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
+
 class EvolutionProposal(BaseModel):
     model_config = BASE_CONFIG
     proposal_id: str = Field(default_factory=lambda: f"PROP-{datetime.now().strftime('%Y%m%d%H%M%S')}")
@@ -51,6 +52,7 @@ class EvolutionProposal(BaseModel):
     suggested_rule_change: str = ""
     confidence: float = 0.0
     status: str = "DRAFT"
+
 
 class FeedbackLoop:
     """反馈闭环——登记表裁定驱动规则进化。
@@ -70,13 +72,15 @@ class FeedbackLoop:
         for entry in pending_entries:
             module = entry.get("module", "unknown")
             context = entry.get("context", "")
-            proposals.append(EvolutionProposal(
-                source=f"NSL-{entry.get('id', '?')}",
-                pattern=f"Recurring ambiguity in {module}",
-                suggested_rule_change=f"Add deterministic rule for {module}: {context[:80]}",
-                confidence=0.6,
-                status="DRAFT",
-            ))
+            proposals.append(
+                EvolutionProposal(
+                    source=f"NSL-{entry.get('id', '?')}",
+                    pattern=f"Recurring ambiguity in {module}",
+                    suggested_rule_change=f"Add deterministic rule for {module}: {context[:80]}",
+                    confidence=0.6,
+                    status="DRAFT",
+                )
+            )
         return proposals
 
     def generate_proposals(self, pending_entries: list[dict[str, Any]]) -> list[EvolutionProposal]:

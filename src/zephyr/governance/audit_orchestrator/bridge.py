@@ -11,13 +11,13 @@ from __future__ import annotations
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 桥接失败返回None或空结果
 # [TESTS] tests/audit-orchestrator/test_bridge.py
-
 import logging
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["OrchestratorBridge"]
+
 
 class OrchestratorBridge:
     def __init__(self) -> None:
@@ -32,36 +32,42 @@ class OrchestratorBridge:
     def _init_bridges(self) -> None:
         try:
             from zephyr.governance.audit_trail.drift_bridge import DriftBridge
+
             self._drift_bridge = DriftBridge()
         except Exception as exc:
             logger.warning("DriftBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_trail.feedback_bridge import FeedbackBridge
+
             self._feedback_bridge = FeedbackBridge()
         except Exception as exc:
             logger.warning("FeedbackBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_trail.delegation_bridge import DelegationBridge
+
             self._delegation_bridge = DelegationBridge()
         except Exception as exc:
             logger.warning("DelegationBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_orchestrator.merkle_hourly import MerkleHourlyBridge
+
             self._merkle_bridge = MerkleHourlyBridge()
         except Exception as exc:
             logger.warning("MerkleHourlyBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_trail.trust_bridge import TrustBridge
+
             self._trust_bridge = TrustBridge()
         except Exception as exc:
             logger.warning("TrustBridge init failed: %s", exc)
 
         try:
             from zephyr.governance.audit_trail.tiered_storage_bridge import TieredStorageBridge
+
             self._storage_bridge = TieredStorageBridge()
         except Exception as exc:
             logger.warning("TieredStorageBridge init failed: %s", exc)

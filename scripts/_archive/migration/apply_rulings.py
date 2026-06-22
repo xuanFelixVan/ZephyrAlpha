@@ -1,6 +1,7 @@
-import yaml
 import os
 import time
+
+import yaml
 
 REGISTRY = "data/asset_index/migration-registry.yaml"
 
@@ -18,14 +19,15 @@ RULINGS = {
     "scripts/script_manifest.yaml": ("D-GOVERNANCE", "脚本清单是治理注册表的一部分，归D-GOVERNANCE"),
 }
 
+
 def apply_rulings():
     print("=== STEP 2C Ruling: Resolving 276 unassigned files ===")
     print()
 
     t0 = time.perf_counter()
-    with open(REGISTRY, "r", encoding="utf-8") as f:
+    with open(REGISTRY, encoding="utf-8") as f:
         data = yaml.safe_load(f)
-    print(f"  Loaded registry: {time.perf_counter()-t0:.2f}s")
+    print(f"  Loaded registry: {time.perf_counter() - t0:.2f}s")
 
     unassigned = data.get("unassigned_files", [])
     print(f"  Unassigned files: {len(unassigned)}")
@@ -58,12 +60,12 @@ def apply_rulings():
 
     print(f"\n  Ruled: {ruled_count}")
     print(f"  Still unassigned: {len(still_unassigned)}")
-    print(f"\n  Ruling breakdown:")
+    print("\n  Ruling breakdown:")
     for domain, count in sorted(ruling_breakdown.items(), key=lambda x: -x[1]):
         print(f"    {domain}: {count}")
 
     if still_unassigned:
-        print(f"\n  Remaining unassigned files:")
+        print("\n  Remaining unassigned files:")
         for entry in still_unassigned:
             path = entry.get("old_state", {}).get("path", "")
             ftype = entry.get("old_state", {}).get("type", "")
@@ -99,11 +101,12 @@ def apply_rulings():
             pass
         raise
 
-    print(f"\n=== RESULT ===")
+    print("\n=== RESULT ===")
     print(f"  Total entries: {len(entries)}")
     print(f"  Still unassigned: {len(still_unassigned)}")
     print(f"  Coverage: {coverage:.1f}%")
     print(f"  Unassigned rate: {unassigned_rate:.2f}%")
+
 
 if __name__ == "__main__":
     apply_rulings()

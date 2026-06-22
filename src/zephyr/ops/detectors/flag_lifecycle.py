@@ -26,6 +26,7 @@ Blindspot: Feature flag zombie detection across distributed system.
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class FlagLifecycle:
     flags: dict[str, str] = field(default_factory=dict)

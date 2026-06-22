@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -32,7 +32,7 @@ class BudgetType(str, Enum):
 
 class BudgetAlert(BaseModel):
     alert_id: str
-    detected_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    detected_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     session_id: str = ""
     budget_type: BudgetType = BudgetType.TOKEN
     burn_rate: float = 0.0
@@ -41,7 +41,15 @@ class BudgetAlert(BaseModel):
     severity: BudgetSeverity = BudgetSeverity.WARNING
 
     @classmethod
-    def from_burn_rate(cls, alert_id: str, burn_rate: float, threshold: float, remaining: float, session_id: str = "", budget_type: BudgetType = BudgetType.TOKEN) -> BudgetAlert:
+    def from_burn_rate(
+        cls,
+        alert_id: str,
+        burn_rate: float,
+        threshold: float,
+        remaining: float,
+        session_id: str = "",
+        budget_type: BudgetType = BudgetType.TOKEN,
+    ) -> BudgetAlert:
         if remaining <= 0:
             severity = BudgetSeverity.CRITICAL
         elif burn_rate > threshold:

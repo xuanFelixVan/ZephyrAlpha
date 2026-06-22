@@ -29,15 +29,12 @@ cooldown 记录: (agent_session, file_path, until_iso) → rollback_quarantine.d
 cooldown 状态绑定到 Agent Identity session token。
 """
 
-
 from __future__ import annotations
 
-import json
 import sqlite3
-from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -56,7 +53,6 @@ class CooldownCheck:
 
 
 class AgentCooldown:
-
     COOLDOWN_MINUTES: int = 5
     DB_NAME: str = ".zephyr/rollback_quarantine.db"
 
@@ -89,7 +85,7 @@ class AgentCooldown:
         file_paths: list[str],
         reason: str = "post_rollback_cooldown",
     ) -> list[CooldownEntry]:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         cooldown_until = now + timedelta(minutes=self.COOLDOWN_MINUTES)
 
         entries: list[CooldownEntry] = []
@@ -118,7 +114,7 @@ class AgentCooldown:
         conn = sqlite3.connect(str(self._db_path))
         self._cleanup_expired(conn)
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         blocked_files: list[str] = []
         remaining: dict[str, int] = {}
@@ -174,7 +170,7 @@ class AgentCooldown:
         conn = sqlite3.connect(str(self._db_path))
         self._cleanup_expired(conn)
 
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         rows = conn.execute(
             "SELECT agent_session, file_path, cooldown_until, reason FROM cooldown WHERE agent_session=? AND cooldown_until > ?",
             (agent_session, now),
@@ -194,6 +190,6 @@ class AgentCooldown:
         return entries
 
     def _cleanup_expired(self, conn: sqlite3.Connection) -> None:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         conn.execute("DELETE FROM cooldown WHERE cooldown_until <= ?", (now,))
         conn.commit()

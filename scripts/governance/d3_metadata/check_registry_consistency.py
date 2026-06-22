@@ -43,16 +43,10 @@ try:
     FINDING_AVAILABLE = True
 except ImportError:
     FINDING_AVAILABLE = False
-ROR_PATH = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "registry_of_registries.yaml"
-)
+ROR_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_of_registries.yaml"
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.yaml_utils import load_yaml
+
 
 def get_nested_value(data: dict, yaml_path: str) -> str | None:
     """get nested value"""
@@ -66,6 +60,7 @@ def get_nested_value(data: dict, yaml_path: str) -> str | None:
         else:
             return None
     return current
+
 
 def get_registry_value(registry_data: dict, yaml_path: str, module_id: str) -> str | None:
     """get registry value"""
@@ -87,6 +82,7 @@ def get_registry_value(registry_data: dict, yaml_path: str, module_id: str) -> s
                 return str(item) if item is not None else None
     return None
 
+
 def get_physical_value(module_path_relative: str, frontmatter_key: str) -> str | None:
     """get physical value"""
     file_path = REPO_ROOT / "docs" / module_path_relative / "blueprint.md"
@@ -95,6 +91,7 @@ def get_physical_value(module_path_relative: str, frontmatter_key: str) -> str |
     fm = parse_frontmatter_from_file(file_path) or {}
     val = fm.get(frontmatter_key)
     return str(val) if val is not None else None
+
 
 def collect_module_ids(ror: dict, rule: dict) -> set:
     """collect module ids"""
@@ -146,6 +143,7 @@ def collect_module_ids(ror: dict, rule: dict) -> set:
                 module_ids |= module_ids_from_registry
     return module_ids
 
+
 def get_module_path(ror: dict, module_id: str) -> str | None:
     """get module path"""
     reg_info = next((r for r in ror["registries"] if r["id"] == "REG-001"), None)
@@ -159,6 +157,7 @@ def get_module_path(ror: dict, module_id: str) -> str | None:
                     path = item.get("path", "")
                     return path.replace("docs/", "").rstrip("/")
     return None
+
 
 def check_rule(ror: dict, rule: dict) -> FindingCollection:
     """check rule"""
@@ -240,6 +239,7 @@ def check_rule(ror: dict, rule: dict) -> FindingCollection:
             collection.add(f)
     return collection
 
+
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="跨登记表一致性校验脚本")
@@ -279,6 +279,7 @@ def main() -> None:
         if args.warn_only:
             sys.exit(EXIT_PASS)
         sys.exit(EXIT_FINDINGS)
+
 
 if __name__ == "__main__":
     main()

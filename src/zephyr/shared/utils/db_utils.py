@@ -26,6 +26,7 @@ Previously re-exported from zephyr.governance.persistence.sqlite_schema.
 Now uses shared.io.paths for DB_PATH and provides own connection logic
 to eliminate shared->data.persistence circular import.
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -35,9 +36,9 @@ from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [
     "DB_PATH",
+    "ensure_schema",
     "get_db_connection",
     "init_db",
-    "ensure_schema",
 ]
 
 _PRAGMAS = [
@@ -61,10 +62,10 @@ def _apply_pragmas(conn: sqlite3.Connection) -> None:
 
 def get_db_connection(db_path: str | Path | None = None) -> sqlite3.Connection:
     """Get a SQLite connection with standard PRAGMA baseline applied.
-    
+
     Args:
         db_path: Optional path to database. Defaults to DB_PATH.
-    
+
     Returns:
         sqlite3.Connection with PRAGMAs applied.
     """
@@ -77,13 +78,13 @@ def get_db_connection(db_path: str | Path | None = None) -> sqlite3.Connection:
 
 def init_db(db_path: str | Path | None = None) -> str:
     """Ensure database exists and schema is initialized.
-    
+
     This is a lightweight version — for full schema migration support,
     use zephyr.data.persistence.sqlite_schema.init_db directly.
-    
+
     Args:
         db_path: Optional path to database. Defaults to DB_PATH.
-    
+
     Returns:
         str: Path to the initialized database.
     """

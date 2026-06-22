@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.scheduler_safety
-
 # [INVARIANTS] SafetyGateManager.run_safety_gates returns dict[str, bool]
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS] zephyr.observability.feedback_loop.scheduler
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -32,6 +22,7 @@ from zephyr.ops.forensic.boot_integrity_attestation import BootIntegrityAttestat
 from zephyr.ops.gates.deployment_suppression import DeploymentSuppression
 from zephyr.ops.resilience.config_hot_reload_guard import ConfigHotReloadGuard
 from zephyr.ops.security.wireheading_prevention import WireheadingPrevention
+
 
 @dataclass
 class SafetyGateManager:
@@ -75,14 +66,14 @@ class SafetyGateManager:
             return results
         try:
             import yaml
+
             with open(registry_path, encoding="utf-8") as f:
                 registry = yaml.safe_load(f)
         except Exception:
             return results
 
         fle_entries = [
-            e for e in registry.get("gates", [])
-            if e.get("category") == "fle_self_defense" and e.get("file")
+            e for e in registry.get("gates", []) if e.get("category") == "fle_self_defense" and e.get("file")
         ]
 
         for entry in fle_entries:
@@ -106,6 +97,7 @@ class SafetyGateManager:
             module_path = f"zephyr.{rel_path}"
             try:
                 import importlib
+
                 module = importlib.import_module(module_path)
             except ImportError:
                 return True
@@ -118,10 +110,7 @@ class SafetyGateManager:
                         gate_class = attr
                         break
             if gate_class is None:
-                candidates = [
-                    a for a in dir(module)
-                    if isinstance(getattr(module, a), type) and not a.startswith("_")
-                ]
+                candidates = [a for a in dir(module) if isinstance(getattr(module, a), type) and not a.startswith("_")]
                 if not candidates:
                     return True
                 gate_class = getattr(module, candidates[0])
@@ -138,10 +127,12 @@ class SafetyGateManager:
                 continue
             try:
                 import inspect
+
                 sig = inspect.signature(method)
                 params = list(sig.parameters.keys())
                 if method_name == "evaluate":
                     from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext
+
                     ctx = ActionContext(
                         action_id=action_id,
                         action_type="fle_action",
@@ -152,6 +143,7 @@ class SafetyGateManager:
                     result = method(ctx)
                     if hasattr(result, "verdict"):
                         from zephyr.ops.gates.safety_gate_l1_l27 import GateVerdict
+
                         return result.verdict != GateVerdict.REJECT
                     return bool(result)
                 elif len(params) == 0:

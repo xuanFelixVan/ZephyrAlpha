@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_version_migrator.py
 
-import pytest
 
 from zephyr.ops.detectors.version_migrator import VersionMigrator
 

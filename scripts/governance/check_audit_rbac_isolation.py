@@ -6,6 +6,7 @@ check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import a
 DOM-GOV-001 §5 裁定: Audit 不依赖 RBAC，RBAC 单向调用 Audit.
 用法: python scripts/governance/check_audit_rbac_isolation.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -16,12 +17,11 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
-
-
 import ast
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 AUDIT_DIR = PROJECT_ROOT / "src" / "zephyr" / "governance" / "audit-trail"

@@ -5,11 +5,19 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 """Signal Capital Allocation sub-package"""
+
 from __future__ import annotations
 
 from zephyr.signal_fundamental.capital.capital_allocation_result import CapitalAllocationResult
 from zephyr.signal_fundamental.capital.capital_allocator import CapitalAllocatorBase
-from zephyr.signal_fundamental.capital.default_capital_allocator import DefaultCapitalAllocator, AllocationMethod
+from zephyr.signal_fundamental.capital.default_capital_allocator import AllocationMethod, DefaultCapitalAllocator
 
-__all__ = ["capital_allocation_result", "capital_allocator", "default_capital_allocator",
-           "CapitalAllocationResult", "CapitalAllocatorBase", "DefaultCapitalAllocator", "AllocationMethod"]
+__all__ = [
+    "AllocationMethod",
+    "CapitalAllocationResult",
+    "CapitalAllocatorBase",
+    "DefaultCapitalAllocator",
+    "capital_allocation_result",
+    "capital_allocator",
+    "default_capital_allocator",
+]

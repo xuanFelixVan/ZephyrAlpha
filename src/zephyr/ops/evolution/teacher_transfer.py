@@ -27,6 +27,7 @@ Risk: R53 — New instance repeats all mistakes previous instance learned from.
 
 from dataclasses import dataclass
 
+
 @dataclass
 class TeacherTransfer:
     transferred: bool = False

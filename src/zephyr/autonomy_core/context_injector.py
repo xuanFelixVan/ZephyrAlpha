@@ -35,27 +35,26 @@ string for prompt construction. Supports three retrieval modes:
 Respects token budget limits from ContextBudgetTracker.
 """
 
-
 from __future__ import annotations
 
 import time
-from enum import Enum, IntEnum
+from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
-    "InjectedContext",
-    "RetrievalMode",
     "ContextInjector",
+    "InjectedContext",
     "InjectionLayer",
-    "ValidatedContext",
     "InjectionResult",
-    "inject",
+    "RetrievalMode",
+    "ValidatedContext",
     "format_context",
+    "inject",
 ]
 
 
@@ -105,12 +104,9 @@ class ContextInjector:
         matching: list[Any] = []
         for rec in records:
             if (
-                hasattr(rec, "tags")
-                and task_id in rec.tags
-                or hasattr(rec, "summary")
-                and task_id in rec.summary
-                or hasattr(rec, "source_file")
-                and task_id in rec.source_file
+                (hasattr(rec, "tags") and task_id in rec.tags)
+                or (hasattr(rec, "summary") and task_id in rec.summary)
+                or (hasattr(rec, "source_file") and task_id in rec.source_file)
             ):
                 matching.append(rec)
 
@@ -121,12 +117,9 @@ class ContextInjector:
         matching: list[Any] = []
         for rec in records:
             if (
-                hasattr(rec, "category")
-                and rec.category == module_id
-                or hasattr(rec, "tags")
-                and module_id in rec.tags
-                or hasattr(rec, "ke_id")
-                and module_id in rec.ke_id
+                (hasattr(rec, "category") and rec.category == module_id)
+                or (hasattr(rec, "tags") and module_id in rec.tags)
+                or (hasattr(rec, "ke_id") and module_id in rec.ke_id)
             ):
                 matching.append(rec)
 
@@ -293,7 +286,9 @@ class InjectionResult(BaseModel):
     layer_count: dict[str, int] = Field(default_factory=dict, description="各层条目数")
     budget_remaining: int = Field(default=0, ge=0, description="剩余 token 预算")
     injected_successfully: bool = Field(default=True, description="注入是否成功")
-    authority_score: float = Field(default=0.0, ge=0.0, le=1.0, description="权威分数：CE build(0.7)→Orc check(0.85)→User review(1.0)")
+    authority_score: float = Field(
+        default=0.0, ge=0.0, le=1.0, description="权威分数：CE build(0.7)→Orc check(0.85)→User review(1.0)"
+    )
     authority_reviewed: bool = Field(default=False, description="是否通过 authority chain review")
 
 
@@ -355,8 +350,9 @@ def _lsg_scan_context(context: ValidatedContext) -> bool:
     Returns True only if LSG explicitly allows the content.
     """
     try:
-        from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
         import asyncio
+
+        from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
         gateway = LSGSecurityGateway()
         content_parts = []
@@ -461,9 +457,7 @@ def inject(
         layer_tokens_val = estimate_tokens(text)
         if total_tokens + layer_tokens_val > session_limit:
             if layer_name == "knowledge":
-                text, layer_tokens_val = _trim_knowledge_layer(
-                    context, text, session_limit - total_tokens
-                )
+                text, layer_tokens_val = _trim_knowledge_layer(context, text, session_limit - total_tokens)
             elif layer_name == "examples":
                 continue
             else:
@@ -566,14 +560,16 @@ def _timeout_degradation(session_limit: int) -> InjectionResult:
     """CE 10s 超时降级——仅注入硬编码规则。"""
     global _CE_TIMEOUT_METRIC
     _CE_TIMEOUT_METRIC += 1
-    hardcoded = "\n".join([
-        "## CE Timeout — Hardcoded Rules Only",
-        "1. Never delete files (R-ONLY-CREATE)",
-        "2. Never ask questions (R-NO-ASK)",
-        "3. Always use encoding='utf-8' (R-UTF8)",
-        "4. Related changes in same commit (R-ATOMIC)",
-        "5. Post-task audit mandatory (R-AUDIT)",
-    ])
+    hardcoded = "\n".join(
+        [
+            "## CE Timeout — Hardcoded Rules Only",
+            "1. Never delete files (R-ONLY-CREATE)",
+            "2. Never ask questions (R-NO-ASK)",
+            "3. Always use encoding='utf-8' (R-UTF8)",
+            "4. Related changes in same commit (R-ATOMIC)",
+            "5. Post-task audit mandatory (R-AUDIT)",
+        ]
+    )
     return InjectionResult(
         token_count=estimate_tokens(hardcoded),
         layer_tokens={"system": estimate_tokens(hardcoded)},

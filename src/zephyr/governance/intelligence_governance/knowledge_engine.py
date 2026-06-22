@@ -21,10 +21,8 @@
 
 from __future__ import annotations
 
-import json
 import logging
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
@@ -45,7 +43,7 @@ class KnowledgeIndex(BaseModel):
     inverted_index: dict[str, list[str]] = Field(default_factory=dict)
 
     def index(self, entry: KnowledgeEntry) -> None:
-        entry.indexed_at = datetime.now(timezone.utc).isoformat()
+        entry.indexed_at = datetime.now(UTC).isoformat()
         self.entries[entry.entry_id] = entry
         for tag in entry.tags:
             self.inverted_index.setdefault(tag, []).append(entry.entry_id)
@@ -54,7 +52,11 @@ class KnowledgeIndex(BaseModel):
         query_lower = query.lower()
         results: list[KnowledgeEntry] = []
         for entry in self.entries.values():
-            if query_lower in entry.title.lower() or query_lower in entry.content.lower() or any(query_lower in t.lower() for t in entry.tags):
+            if (
+                query_lower in entry.title.lower()
+                or query_lower in entry.content.lower()
+                or any(query_lower in t.lower() for t in entry.tags)
+            ):
                 results.append(entry)
         return results
 
@@ -74,7 +76,7 @@ class KnowledgeIndex(BaseModel):
         return [self.entries[eid] for eid in related_ids if eid in self.entries]
 
 
-_knowledge_index: Optional[KnowledgeIndex] = None
+_knowledge_index: KnowledgeIndex | None = None
 
 
 def get_index() -> KnowledgeIndex:

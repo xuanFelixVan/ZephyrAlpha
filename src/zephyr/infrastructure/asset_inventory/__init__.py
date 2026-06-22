@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 asset-inventory — MOD-INF-026 · 资产盘点系统：发现→分类→登记→对账→生命周期
 ==============================================================================
@@ -41,56 +41,56 @@ asset-inventory — MOD-INF-026 · 资产盘点系统：发现→分类→登记
 """
 
 __all__ = [
-    'BypassManager',
-    'BypassState',
-    'Classifier',
-    'ConcurrentScanner',
-    'ConsoleChannel',
-    'Dashboard',
-    'DependencyEdge',
-    'DependencyExtractor',
-    'DependencyGraph',
-    'DependencyNode',
-    'GitAssetMetadata',
-    'GitCommitInfo',
-    'GitMetadataExtractor',
-    'IndexGenerator',
-    'KnowledgeTransferGate',
-    'Lifecycle',
-    'MigrationPlan',
-    'MultiIDERuleGenerator',
-    'NotificationChannel',
-    'NotificationManager',
-    'Reconciler',
-    'RegistryAdapter',
-    'RegistryManager',
-    'RegistryParseError',
-    'Scanner',
-    'SchemaEvolutionManager',
-    'SecurityAccessLogger',
-    'SecurityFilter',
-    'TELEMETRY',
-    'TripleTrustAnchorGate',
-    'TrustAnchorResult',
-    'TrustLevel',
-    'build_dependency_graph',
-    'classifier',
-    'dashboard',
-    'dependency',
-    'get_telemetry',
-    'index_generator',
-    'lifecycle',
-    'mcp_server',
-    'merge_scans',
-    'metadata',
-    'models',
-    'priority_from_dependency',
-    'reconciler',
-    'registry_adapter',
-    'scanner',
-    'telemetry',
-    'trust_anchor',
-    '__main__',
+    "TELEMETRY",
+    "BypassManager",
+    "BypassState",
+    "Classifier",
+    "ConcurrentScanner",
+    "ConsoleChannel",
+    "Dashboard",
+    "DependencyEdge",
+    "DependencyExtractor",
+    "DependencyGraph",
+    "DependencyNode",
+    "GitAssetMetadata",
+    "GitCommitInfo",
+    "GitMetadataExtractor",
+    "IndexGenerator",
+    "KnowledgeTransferGate",
+    "Lifecycle",
+    "MigrationPlan",
+    "MultiIDERuleGenerator",
+    "NotificationChannel",
+    "NotificationManager",
+    "Reconciler",
+    "RegistryAdapter",
+    "RegistryManager",
+    "RegistryParseError",
+    "Scanner",
+    "SchemaEvolutionManager",
+    "SecurityAccessLogger",
+    "SecurityFilter",
+    "TripleTrustAnchorGate",
+    "TrustAnchorResult",
+    "TrustLevel",
+    "__main__",
+    "build_dependency_graph",
+    "classifier",
+    "dashboard",
+    "dependency",
+    "get_telemetry",
+    "index_generator",
+    "lifecycle",
+    "mcp_server",
+    "merge_scans",
+    "metadata",
+    "models",
+    "priority_from_dependency",
+    "reconciler",
+    "registry_adapter",
+    "scanner",
+    "telemetry",
+    "trust_anchor",
 ]
 
 _LAZY_IMPORTS = {
@@ -151,6 +151,7 @@ _SUBMODULES = [
     "trust_anchor",
     "__main__",
 ]
+
 
 def __getattr__(name):
     if name in _LAZY_IMPORTS:

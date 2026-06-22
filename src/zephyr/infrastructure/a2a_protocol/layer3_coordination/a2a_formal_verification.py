@@ -32,7 +32,6 @@ Phase 5+ 策略: TLA+/Coq 完整形式化证明
 输出: VerificationReport — 验证通过/失败 + 反例路径
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -87,11 +86,13 @@ class A2AFormalVerification:
         for prop_name, description in self._PROPERTIES:
             result = self._check_property(prop_name)
             if not result:
-                report.violations.append(PropertyCheck(
-                    property_name=prop_name,
-                    status=VerificationStatus.VIOLATED,
-                    description=description,
-                ))
+                report.violations.append(
+                    PropertyCheck(
+                        property_name=prop_name,
+                        status=VerificationStatus.VIOLATED,
+                        description=description,
+                    )
+                )
                 report.verified = False
 
         return report

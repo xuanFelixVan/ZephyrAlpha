@@ -1,7 +1,9 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: GOV-061
 title: Research Notes
 module_id: GOV-061
+updated: "2026-06-22"
+---
 
 # Research Notes
 
@@ -22,13 +24,13 @@ module_id: GOV-061
 
 | 文件 | 说明 |
 |------|------|
-| [competitive-analysis/ballethip_system_comparison.md](competitive-analysis/ballethip_system_comparison.md) | BalletHip 系统对比分析 |
-| [competitive-analysis/architecture_blindspot_analysis.md](competitive-analysis/architecture_blindspot_analysis.md) | 架构盲点补全分析 |
-| [competitive-analysis/ballethip_raw_material_visual_log.md](competitive-analysis/ballethip_raw_material_visual_log.md) | BalletHip 原始素材图文记录 |
-| [competitive-analysis/observability_contract_todo.md](competitive-analysis/observability_contract_todo.md) | 可观测性契约备忘 |
+| [competitive_analysis/ballethip_system_comparison.md](competitive_analysis/ballethip_system_comparison.md) | BalletHip 系统对比分析 |
+| [competitive_analysis/architecture_blindspot_analysis.md](competitive_analysis/architecture_blindspot_analysis.md) | 架构盲点补全分析 |
+| [competitive_analysis/ballethip_raw_material_visual_log.md](competitive_analysis/ballethip_raw_material_visual_log.md) | BalletHip 原始素材图文记录 |
+| [competitive_analysis/observability_contract_todo.md](competitive_analysis/observability_contract_todo.md) | 可观测性契约备忘 |
 
 ## 技术可行性
 
 | 文件 | 说明 |
 |------|------|
-| [technical-feasibility/vibe_coding_ai_implementation_assessment.md](technical-feasibility/vibe_coding_ai_implementation_assessment.md) | AI 氛围编程实现评估 |
+| [technical_feasibility/vibe_coding_ai_implementation_assessment.md](technical_feasibility/vibe_coding_ai_implementation_assessment.md) | AI 氛围编程实现评估 |

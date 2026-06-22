@@ -60,24 +60,36 @@ class ConfigFixer(BaseFixer):
             try:
                 content = config_file.read_text(encoding="utf-8")
                 if "<<<<<<< " in content or "=======" in content or ">>>>>>> " in content:
-                    findings.append({
-                        "file": str(config_file),
-                        "type": "merge_conflict_markers",
-                    })
-                tab_lines = [i + 1 for i, line in enumerate(content.splitlines()) if "\t" in line and not line.strip().startswith("#")]
+                    findings.append(
+                        {
+                            "file": str(config_file),
+                            "type": "merge_conflict_markers",
+                        }
+                    )
+                tab_lines = [
+                    i + 1
+                    for i, line in enumerate(content.splitlines())
+                    if "\t" in line and not line.strip().startswith("#")
+                ]
                 if tab_lines:
-                    findings.append({
-                        "file": str(config_file),
-                        "lines": tab_lines[:10],
-                        "type": "tab_indentation",
-                    })
-                trailing_ws = [i + 1 for i, line in enumerate(content.splitlines()) if line.rstrip() != line and line.strip()]
+                    findings.append(
+                        {
+                            "file": str(config_file),
+                            "lines": tab_lines[:10],
+                            "type": "tab_indentation",
+                        }
+                    )
+                trailing_ws = [
+                    i + 1 for i, line in enumerate(content.splitlines()) if line.rstrip() != line and line.strip()
+                ]
                 if len(trailing_ws) > 5:
-                    findings.append({
-                        "file": str(config_file),
-                        "count": len(trailing_ws),
-                        "type": "trailing_whitespace",
-                    })
+                    findings.append(
+                        {
+                            "file": str(config_file),
+                            "count": len(trailing_ws),
+                            "type": "trailing_whitespace",
+                        }
+                    )
             except Exception:
                 continue
         return findings
@@ -135,6 +147,7 @@ class ConfigFixer(BaseFixer):
             re.DOTALL,
         )
         count = 0
+
         def _resolve(match: re.Match) -> str:
             nonlocal count
             ours = match.group(1)
@@ -145,6 +158,7 @@ class ConfigFixer(BaseFixer):
                 return ours
             fixes.append(f"Merge conflict {count}: kept theirs")
             return theirs
+
         content = pattern.sub(_resolve, content)
         return content
 
@@ -185,12 +199,20 @@ class ConfigFixer(BaseFixer):
         try:
             content = target_path.read_text(encoding="utf-8")
             if "<<<<<<< " in content:
-                return ValidationResult(valid=False, check_name="config_fix", evidence="Merge conflict markers present", error="Unresolved merge conflicts")
+                return ValidationResult(
+                    valid=False,
+                    check_name="config_fix",
+                    evidence="Merge conflict markers present",
+                    error="Unresolved merge conflicts",
+                )
             try:
                 import yaml
+
                 yaml.safe_load(content)
             except yaml.YAMLError as exc:
-                return ValidationResult(valid=False, check_name="config_fix", evidence="", error=f"YAML parse error: {exc}")
+                return ValidationResult(
+                    valid=False, check_name="config_fix", evidence="", error=f"YAML parse error: {exc}"
+                )
             return ValidationResult(valid=True, check_name="config_fix", evidence="YAML valid, no merge conflicts")
         except Exception as exc:
             return ValidationResult(valid=False, check_name="config_fix", evidence="", error=str(exc))

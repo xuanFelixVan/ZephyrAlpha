@@ -27,8 +27,8 @@ warn_only: false
 """
 
 
-import os
 import argparse
+import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -38,8 +38,8 @@ import yaml
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _KILL_SWITCH_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "kill_switch_state.yaml"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load() -> dict:
@@ -57,14 +57,15 @@ def _save(data: dict) -> None:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
-    
+
         os.replace(tmp_path, _KILL_SWITCH_PATH)
     except PermissionError:
         try:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def cmd_list() -> None:
     """cmd_list implementation."""
     data = _load()
@@ -119,9 +120,9 @@ def cmd_global_freeze(reason: str) -> None:
     data["freeze_reason"] = reason
     data["freeze_set_at"] = datetime.now(UTC).isoformat()
     _save(data)
-    print(f"[KILL-SWITCH] 🔴 全局冻结已激活", file=sys.stderr)
+    print("[KILL-SWITCH] 🔴 全局冻结已激活", file=sys.stderr)
     print(f"  原因: {reason}", file=sys.stderr)
-    print(f"  所有新脚本开发暂停——只允许修复现有脚本的错误", file=sys.stderr)
+    print("  所有新脚本开发暂停——只允许修复现有脚本的错误", file=sys.stderr)
 
 
 def cmd_global_thaw() -> None:
@@ -131,7 +132,7 @@ def cmd_global_thaw() -> None:
     data["freeze_reason"] = ""
     data["freeze_set_at"] = ""
     _save(data)
-    print(f"[KILL-SWITCH] 🟢 全局冻结已解除", file=sys.stderr)
+    print("[KILL-SWITCH] 🟢 全局冻结已解除", file=sys.stderr)
 
 
 def main() -> None:

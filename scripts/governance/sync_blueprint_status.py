@@ -16,6 +16,7 @@
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -24,15 +25,13 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS
-
-
 import json
 import os
 import sys
 from pathlib import Path
 
 import yaml
+from _shared.constants import EXIT_PASS
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 _MODULE_REGISTRY = _PROJECT_ROOT / "docs" / "03_modules" / "module-registry.yaml"
@@ -41,7 +40,7 @@ _BLUEPRINT_REGISTRY = _PROJECT_ROOT / "docs" / "03_modules" / "blueprint-registr
 
 def _safe_read_yaml(path: Path) -> dict:
     """_safe_read_yaml implementation."""
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
 
@@ -109,31 +108,34 @@ def analyze() -> list[dict]:
         cp_status = cp.get("status", "")
         mod_id = mod.get("module_id", "?")
         mod_name = mod.get("name", "?")
-        bp_dir = _PROJECT_ROOT / "docs" / "03_modules" / (
-            mod.get("layer", "") or "infrastructure.runtime_integration"
-        )
+        bp_dir = _PROJECT_ROOT / "docs" / "03_modules" / (mod.get("layer", "") or "infrastructure.runtime_integration")
         name = mod.get("path", "").split("/")[-1] if mod.get("path") else mod_name
         blueprint_dir = _PROJECT_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / name
 
-        expected = "Active" if cp_status in ("phase_2_complete", "completed") or (
-            isinstance(cp_status, str) and cp_status.startswith("phase_") and cp_status.endswith("_complete")
-        ) else "Draft"
+        expected = (
+            "Active"
+            if cp_status in ("phase_2_complete", "completed")
+            or (isinstance(cp_status, str) and cp_status.startswith("phase_") and cp_status.endswith("_complete"))
+            else "Draft"
+        )
 
         # normalize: "active"→"Active"
         if isinstance(bp_status, str):
             bp_status = bp_status.strip().title()
 
         if bp_status != expected:
-            issues.append({
-                "module_id": mod_id,
-                "name": mod_name,
-                "current": bp_status,
-                "expected": expected,
-                "cp_status": cp_status,
-                "registry_fix": True,  # any mismatch → fix
-                "blueprint_dir": str(blueprint_dir),
-                "blueprint_exists": (blueprint_dir / "blueprint.md").exists(),
-            })
+            issues.append(
+                {
+                    "module_id": mod_id,
+                    "name": mod_name,
+                    "current": bp_status,
+                    "expected": expected,
+                    "cp_status": cp_status,
+                    "registry_fix": True,  # any mismatch → fix
+                    "blueprint_dir": str(blueprint_dir),
+                    "blueprint_exists": (blueprint_dir / "blueprint.md").exists(),
+                }
+            )
 
     return issues
 
@@ -186,7 +188,9 @@ def main() -> int:
     if apply_mode:
         if fixes_registry > 0:
             _atomic_write_yaml(_MODULE_REGISTRY, reg)
-        print(f"\nAPPLIED: {fixes_registry} registry + {fixes_blueprint} blueprint = {fixes_registry + fixes_blueprint} fixes")
+        print(
+            f"\nAPPLIED: {fixes_registry} registry + {fixes_blueprint} blueprint = {fixes_registry + fixes_blueprint} fixes"
+        )
 
     n = len(issues)
     if apply_mode:

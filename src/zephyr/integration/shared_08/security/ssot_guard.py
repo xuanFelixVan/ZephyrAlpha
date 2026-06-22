@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.security.ssot_guard
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 #!/usr/bin/env python3
 """
 SSoT 锁定卫兵 (SSoT Guard) - Pre-commit Hook
@@ -76,11 +67,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
+
 def _fix_windows_console() -> None:
     """将 Windows 控制台 stdout/stderr 设置为 UTF-8，仅在脚本直接运行时调用。"""
     if sys.platform == "win32":
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -116,8 +109,10 @@ PATH_FIELD_PATTERNS: tuple[str, ...] = (
 
 from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
 
+
 class SsotError(ZephyrBaseError):
     """SSoT Guard 模块专属基类。"""
+
 
 class SsotViolation(SsotError):
     """SSoT 一致性违规——应阻断 commit。"""
@@ -127,12 +122,15 @@ class SsotViolation(SsotError):
         self.message = message
         super().__init__(f"[{check_id}] {message}")
 
+
 class RegistryParseError(SsotError):
     """注册表 YAML 解析失败。"""
+
 
 # ---------------------------------------------------------------------------
 # 数据结构
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class CheckResult:
@@ -148,6 +146,7 @@ class CheckResult:
         lines = [f"{icon} [{self.check_id}] {self.message}"]
         lines.extend(f"   • {d}" for d in self.details)
         return "\n".join(lines)
+
 
 @dataclass
 class GuardReport:
@@ -173,9 +172,11 @@ class GuardReport:
         lines.append(sep)
         return "\n".join(lines)
 
+
 # ---------------------------------------------------------------------------
 # Git 辅助函数
 # ---------------------------------------------------------------------------
+
 
 def _repo_root() -> Path:
     """返回 git 仓库根目录。"""
@@ -186,6 +187,7 @@ def _repo_root() -> Path:
         check=True,
     )
     return Path(result.stdout.strip())
+
 
 def _staged_files(repo_root: Path) -> dict[str, str]:
     """
@@ -214,9 +216,11 @@ def _staged_files(repo_root: Path) -> dict[str, str]:
             staged[parts[1].replace("\\", "/")] = status_char
     return staged
 
+
 # ---------------------------------------------------------------------------
 # 注册表路径提取
 # ---------------------------------------------------------------------------
+
 
 def _extract_declared_paths(registry_content: str) -> list[str]:
     """
@@ -236,6 +240,7 @@ def _extract_declared_paths(registry_content: str) -> list[str]:
                 break
     return list(dict.fromkeys(paths))  # 去重保序
 
+
 def _validate_path_format(path: str) -> str | None:
     """
     验证路径格式是否合法。
@@ -247,9 +252,11 @@ def _validate_path_format(path: str) -> str | None:
         return f"反斜杠分隔符不允许出现在注册表路径中: {path}"
     return None
 
+
 # ---------------------------------------------------------------------------
 # 主检查类
 # ---------------------------------------------------------------------------
+
 
 class SsotGuard:
     """
@@ -468,9 +475,11 @@ class SsotGuard:
             message="注册表路径格式全部合法",
         )
 
+
 # ---------------------------------------------------------------------------
 # CLI 入口
 # ---------------------------------------------------------------------------
+
 
 def main() -> int:
     """Pre-commit hook 入口，返回 0（通过）或 1（阻断）。"""
@@ -480,6 +489,7 @@ def main() -> int:
     report = guard.run()
     print(str(report))
     return 0 if report.passed else 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -3,25 +3,33 @@
 
 COMPLIANCE_MATRIX = None  # stub constant
 
+
 class ComplianceItem:
     """Stub class — implementation pending."""
+
     pass
+
 
 class ComplianceStatus:
     """Stub class — implementation pending."""
+
     pass
+
 
 def compliant_items(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'compliant_items not implemented')
+    raise NotImplementedError("compliant_items not implemented")
+
 
 def get_by_reg_id(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'get_by_reg_id not implemented')
+    raise NotImplementedError("get_by_reg_id not implemented")
+
 
 def non_compliant_items(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'non_compliant_items not implemented')
+    raise NotImplementedError("non_compliant_items not implemented")
+
 
 __all__ = [
     "COMPLIANCE_MATRIX",

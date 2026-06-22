@@ -27,7 +27,7 @@ shutdown() 流程:
     - 总超时 60s（不阻塞进程退出）
     - 强制退出前最后一次尝试: 将剩余 buffer 写入 emergency_shutdown.jsonl
     - 下次启动时自动加载 emergency_shutdown.jsonl → 正常路径处理
-  
+
   应急丢失检测:
     启动时检测上次是否正常 shutdown（检查 shutdown audit event 是否存在）
     → 缺失 → P2 "上次关闭异常，可能有遥测数据丢失"

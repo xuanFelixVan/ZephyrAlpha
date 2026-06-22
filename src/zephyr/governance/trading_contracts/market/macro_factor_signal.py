@@ -23,6 +23,7 @@
 
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class MacroFactorSignal:
     factor_id: str

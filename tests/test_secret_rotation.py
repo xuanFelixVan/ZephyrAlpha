@@ -78,21 +78,26 @@ class TestPendingRotations:
 class TestSecretEntry:
     def test_days_since_rotation(self):
         entry = SecretEntry(
-            secret_id="s1", service_name="svc",
+            secret_id="s1",
+            service_name="svc",
             last_rotated=time.time() - 86400,
         )
         assert entry.days_since_rotation >= 1.0
 
     def test_needs_rotation(self):
         entry = SecretEntry(
-            secret_id="s1", service_name="svc",
-            last_rotated=0, rotation_interval_days=1,
+            secret_id="s1",
+            service_name="svc",
+            last_rotated=0,
+            rotation_interval_days=1,
         )
         assert entry.needs_rotation is True
 
     def test_no_rotation_needed(self):
         entry = SecretEntry(
-            secret_id="s1", service_name="svc",
-            last_rotated=time.time(), rotation_interval_days=90,
+            secret_id="s1",
+            service_name="svc",
+            last_rotated=time.time(),
+            rotation_interval_days=90,
         )
         assert entry.needs_rotation is False

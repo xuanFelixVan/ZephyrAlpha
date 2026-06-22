@@ -48,7 +48,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import ClassVar, Optional
+from typing import ClassVar
 
 
 class QualityFailureReason(str, Enum):
@@ -70,12 +70,13 @@ class RecoveryHint(str, Enum):
 @dataclass(frozen=True)
 class QualityReport:
     """单条数据质量校验报告"""
+
     symbol: str
     quality_score: float  # 0.0 ~ 1.0，< 0.7 不合格
     passed: bool
-    failure_reason: Optional[QualityFailureReason] = None
-    failed_field: Optional[str] = None
-    failed_value: Optional[str] = None
+    failure_reason: QualityFailureReason | None = None
+    failed_field: str | None = None
+    failed_value: str | None = None
     recovery_hint: RecoveryHint = RecoveryHint.SKIP_SYMBOL
     checked_at: datetime = field(default_factory=datetime.utcnow)
 
@@ -93,12 +94,13 @@ class DataQualityGate(abc.ABC):
       - 禁止静默丢弃数据——不合格必须显式抛出 CTR-ERR-001
       - 禁止降级质量阈值——0.7 是硬编码最低线
     """
+
     QUALITY_THRESHOLD: ClassVar[float] = 0.7
-    _registry: ClassVar[dict[str, type["DataQualityGate"]]] = {}
+    _registry: ClassVar[dict[str, type[DataQualityGate]]] = {}
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not abc.ABC in cls.__bases__ and hasattr(cls, "__gate_id__"):
+        if abc.ABC not in cls.__bases__ and hasattr(cls, "__gate_id__"):
             DataQualityGate._registry[cls.__gate_id__] = cls
 
     @abc.abstractmethod
@@ -111,7 +113,7 @@ class DataQualityGate(abc.ABC):
         close: Decimal,
         volume: Decimal,
         timestamp: datetime,
-        prev_close: Optional[Decimal] = None,
+        prev_close: Decimal | None = None,
     ) -> QualityReport:
         """对单条行情数据执行质量校验"""
         ...

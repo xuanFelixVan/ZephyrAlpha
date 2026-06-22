@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_preemption_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 
-# [MODULE] zephyr.orchestration.pipeline_routing.preemption_manager
+# [MODULE] zephyr.integration.preemption_manager
 
 # [INVARIANTS] none
 
@@ -34,7 +34,6 @@ P0/P1 任务可抢占 P2/P3 任务。被抢占的任务迁移到 WAITING 状态,
 
 SRC-0027: 从 PipelineOrchestrator 提取.
 """
-
 
 from __future__ import annotations
 

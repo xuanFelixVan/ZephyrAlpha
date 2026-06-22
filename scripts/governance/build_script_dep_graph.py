@@ -20,7 +20,7 @@ import sys
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_MANIFEST_PATH = PROJECT_ROOT / "scripts" / "script_manifest.yaml"
@@ -43,7 +43,7 @@ class ScriptNode:
 
 
 class ScriptDepGraph:
-    def __init__(self, manifest_path: Optional[str] = None):
+    def __init__(self, manifest_path: str | None = None):
         self._manifest_path = Path(manifest_path) if manifest_path else DEFAULT_MANIFEST_PATH
         self._nodes: dict[str, ScriptNode] = {}
         self._adj_forward: dict[str, list[str]] = defaultdict(list)
@@ -58,8 +58,10 @@ class ScriptDepGraph:
         return {
             "total_scripts": len(self._nodes),
             "total_edges": sum(len(v) for v in self._adj_forward.values()),
-            "nodes": {name: {"path": n.path, "depends_on": n.depends_on, "imports": n.imports}
-                      for name, n in self._nodes.items()},
+            "nodes": {
+                name: {"path": n.path, "depends_on": n.depends_on, "imports": n.imports}
+                for name, n in self._nodes.items()
+            },
             "edges": [{"from": src, "to": dst} for src, dsts in self._adj_forward.items() for dst in dsts],
         }
 
@@ -68,7 +70,8 @@ class ScriptDepGraph:
             return
         try:
             import yaml
-            with open(str(self._manifest_path), "r", encoding="utf-8") as f:
+
+            with open(str(self._manifest_path), encoding="utf-8") as f:
                 manifest = yaml.safe_load(f) or {}
         except ImportError:
             manifest = self._load_manifest_json_fallback()
@@ -92,7 +95,7 @@ class ScriptDepGraph:
     def _load_manifest_json_fallback(self) -> dict[str, Any]:
         json_path = self._manifest_path.with_suffix(".json")
         if json_path.exists():
-            with open(str(json_path), "r", encoding="utf-8") as f:
+            with open(str(json_path), encoding="utf-8") as f:
                 return json.load(f)
         return {}
 
@@ -104,7 +107,7 @@ class ScriptDepGraph:
             if not script_file.exists():
                 continue
             try:
-                with open(str(script_file), "r", encoding="utf-8", errors="ignore") as f:
+                with open(str(script_file), encoding="utf-8", errors="ignore") as f:
                     source = f.read()
                 tree = ast.parse(source, filename=str(script_file))
                 for ast_node in ast.walk(tree):
@@ -229,78 +232,95 @@ def _run_warn_only() -> dict[str, Any]:
     graph = ScriptDepGraph()
     try:
         dag = graph.build_dag()
-        results["checks"].append({
-            "name": "build_dag",
-            "status": "PASS",
-            "detail": {"total_scripts": dag["total_scripts"], "total_edges": dag["total_edges"]},
-        })
+        results["checks"].append(
+            {
+                "name": "build_dag",
+                "status": "PASS",
+                "detail": {"total_scripts": dag["total_scripts"], "total_edges": dag["total_edges"]},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "build_dag",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "build_dag",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
         results["overall"] = "WARN"
         return results
     try:
         topo = graph.topological_sort()
-        results["checks"].append({
-            "name": "topological_sort",
-            "status": "PASS" if len(topo) == dag["total_scripts"] else "WARN",
-            "detail": {"sorted_count": len(topo), "expected": dag["total_scripts"]},
-        })
+        results["checks"].append(
+            {
+                "name": "topological_sort",
+                "status": "PASS" if len(topo) == dag["total_scripts"] else "WARN",
+                "detail": {"sorted_count": len(topo), "expected": dag["total_scripts"]},
+            }
+        )
     except CyclicDependencyError as exc:
-        results["checks"].append({
-            "name": "topological_sort",
-            "status": "WARN",
-            "detail": {"error": str(exc), "cycles": exc.cycles},
-        })
+        results["checks"].append(
+            {
+                "name": "topological_sort",
+                "status": "WARN",
+                "detail": {"error": str(exc), "cycles": exc.cycles},
+            }
+        )
     try:
         cycles = graph.detect_cycles()
-        results["checks"].append({
-            "name": "detect_cycles",
-            "status": "PASS" if len(cycles) == 0 else "WARN",
-            "detail": {"cycle_count": len(cycles)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_cycles",
+                "status": "PASS" if len(cycles) == 0 else "WARN",
+                "detail": {"cycle_count": len(cycles)},
+            }
+        )
     except Exception as exc:
-        results["checks"].append({
-            "name": "detect_cycles",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
+        results["checks"].append(
+            {
+                "name": "detect_cycles",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
     try:
         levels = graph.get_execution_levels()
-        results["checks"].append({
-            "name": "get_execution_levels",
-            "status": "PASS" if len(levels) > 0 else "WARN",
-            "detail": {"level_count": len(levels)},
-        })
+        results["checks"].append(
+            {
+                "name": "get_execution_levels",
+                "status": "PASS" if len(levels) > 0 else "WARN",
+                "detail": {"level_count": len(levels)},
+            }
+        )
     except CyclicDependencyError as exc:
-        results["checks"].append({
-            "name": "get_execution_levels",
-            "status": "WARN",
-            "detail": {"error": str(exc)},
-        })
-    results["overall"] = "PASS" if all(
-        c["status"] == "PASS" for c in results["checks"]
-    ) else "WARN"
+        results["checks"].append(
+            {
+                "name": "get_execution_levels",
+                "status": "WARN",
+                "detail": {"error": str(exc)},
+            }
+        )
+    results["overall"] = "PASS" if all(c["status"] == "PASS" for c in results["checks"]) else "WARN"
     return results
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Script Dependency Graph — DAG construction and topological sort"
-    )
+    parser = argparse.ArgumentParser(description="Script Dependency Graph — DAG construction and topological sort")
     parser.add_argument(
-        "--warn-only", action="store_true",
+        "--warn-only",
+        action="store_true",
         help="Run checks in warn-only mode",
     )
     parser.add_argument(
-        "--manifest", type=str, default="",
+        "--manifest",
+        type=str,
+        default="",
         help="Path to script manifest YAML",
     )
     parser.add_argument(
-        "--output", type=str, default="",
+        "--output",
+        type=str,
+        default="",
         help="Output JSON file path for DAG data",
     )
     args = parser.parse_args()
@@ -352,7 +372,7 @@ def main() -> int:
             "execution_levels": levels,
         }
         out_path = PROJECT_ROOT / args.output
-        tmp_path = f"{str(out_path)}.{os.getpid()}.tmp"
+        tmp_path = f"{out_path!s}.{os.getpid()}.tmp"
         try:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(output_data, f, indent=2, default=str)

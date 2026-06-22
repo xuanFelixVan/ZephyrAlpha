@@ -4,9 +4,11 @@
 RESTRICTED_ACTIONS = None  # stub constant
 SUPERADMIN_AGENTS = None  # stub constant
 
+
 def verify_approver(*args, **kwargs):
     """Stub function — implementation pending."""
-    raise NotImplementedError(f'verify_approver not implemented')
+    raise NotImplementedError("verify_approver not implemented")
+
 
 __all__ = [
     "RESTRICTED_ACTIONS",

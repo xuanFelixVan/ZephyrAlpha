@@ -12,8 +12,6 @@
 
 from __future__ import annotations
 
-import json
-
 import pytest
 
 from zephyr.intelligence.model_profiling.pipeline_routing.capability_passport import (
@@ -221,10 +219,19 @@ class TestCapabilityPassportToDict:
         p = CapabilityPassport(model_id="test", overall_score=0.5)
         d = p.to_dict()
         expected_keys = {
-            "passport_version", "model_id", "exam_timestamp",
-            "exam_duration_seconds", "git_commit", "overall_grade",
-            "overall_score", "breadth", "depth", "speed",
-            "hallucination", "drift", "recommendations",
+            "passport_version",
+            "model_id",
+            "exam_timestamp",
+            "exam_duration_seconds",
+            "git_commit",
+            "overall_grade",
+            "overall_score",
+            "breadth",
+            "depth",
+            "speed",
+            "hallucination",
+            "drift",
+            "recommendations",
         }
         assert expected_keys.issubset(set(d.keys()))
 
@@ -287,6 +294,7 @@ class TestCapabilityPassportSaveLoad:
 class TestPassportsDir:
     def test_passports_dir_is_path(self):
         from pathlib import Path
+
         assert isinstance(PASSPORTS_DIR, Path)
 
     def test_passports_dir_contains_data_brain_passports(self):

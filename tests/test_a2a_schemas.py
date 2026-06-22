@@ -11,10 +11,11 @@
 # [TESTS] tests/test_a2a_schemas.py
 
 import pytest
+
 from zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_schemas import (
-    PartType,
-    A2AMessagePart,
     A2AMessage,
+    A2AMessagePart,
+    PartType,
 )
 
 

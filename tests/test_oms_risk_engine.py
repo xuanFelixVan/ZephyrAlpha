@@ -12,15 +12,12 @@
 
 from __future__ import annotations
 
-import pytest
-
 from zephyr.risk.oms_risk_engine import (
     AtTradeCheck,
     OMSRiskEngine,
     OrderState,
     PostTradeMetrics,
     PreTradeCheck,
-    RiskCheckResult,
     RiskLayer,
     is_terminal,
     valid_transitions,

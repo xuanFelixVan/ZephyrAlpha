@@ -2,28 +2,19 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.parent_child_attributor
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 import time
-from dataclasses import dataclass, field
 from collections import defaultdict
+from dataclasses import dataclass, field
+
 
 @dataclass
 class AttributionChain:
@@ -34,6 +25,7 @@ class AttributionChain:
     depth: int
     timestamp: float = field(default_factory=time.time)
 
+
 @dataclass
 class DelegationReport:
     total_delegated_tokens: int
@@ -43,6 +35,7 @@ class DelegationReport:
     bottleneck: str
     advice: str
 
+
 class ParentChildAttributor:
     def __init__(self, max_depth: int = 5, max_delegation: int = 100000):
         self._max_depth = max_depth
@@ -50,7 +43,9 @@ class ParentChildAttributor:
         self._chains: list[AttributionChain] = []
         self._delegation_map: dict[str, list[AttributionChain]] = defaultdict(list)
 
-    def record_delegation(self, parent_id: str, child_id: str, tokens: int, cost: float, depth: int = 1) -> AttributionChain:
+    def record_delegation(
+        self, parent_id: str, child_id: str, tokens: int, cost: float, depth: int = 1
+    ) -> AttributionChain:
         chain = AttributionChain(
             parent_id=parent_id,
             child_id=child_id,

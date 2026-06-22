@@ -10,9 +10,8 @@
 # [ERROR_CONTRACT] none
 # [TESTS] self
 
-import pytest
 
-from zephyr.ops.slo_manager import SLOManager, SLO_MATRIX
+from zephyr.ops.slo_manager import SLO_MATRIX, SLOManager
 
 
 class TestSLOManagerInstantiation:

@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_deadlock_detector.py -q
 
 from __future__ import annotations
-import pytest
+
 from zephyr.governance.deadlock_detector import DeadlockDetector
 
 

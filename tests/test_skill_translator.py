@@ -10,8 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_skill_translator.py
 
-import pytest
-from zephyr.autonomy_core.skill_translator import SkillTranslator, _MODEL_ADAPTATIONS
+from zephyr.autonomy_core.skill_translator import _MODEL_ADAPTATIONS, SkillTranslator
 
 
 class TestSkillTranslatorInstantiation:

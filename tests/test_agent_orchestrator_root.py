@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -210,7 +210,12 @@ class TestHealthMonitorRecordAndSnapshot:
         hm = HealthMonitor()
         result = OrchestrationResult(
             task_id="T-1",
-            route=RouteDecision(domain="D0", strategy=RoutingStrategy.CAPABILITY_MATCH, primary_role=AgentRole.ARCHITECT, capability_score=0.8),
+            route=RouteDecision(
+                domain="D0",
+                strategy=RoutingStrategy.CAPABILITY_MATCH,
+                primary_role=AgentRole.ARCHITECT,
+                capability_score=0.8,
+            ),
             success=True,
             latency_ms=100,
             token_used=80,
@@ -232,7 +237,12 @@ class TestHealthMonitorRecordAndSnapshot:
         hm = HealthMonitor()
         result = OrchestrationResult(
             task_id="T-1",
-            route=RouteDecision(domain="D0", strategy=RoutingStrategy.CAPABILITY_MATCH, primary_role=AgentRole.ARCHITECT, capability_score=0.8),
+            route=RouteDecision(
+                domain="D0",
+                strategy=RoutingStrategy.CAPABILITY_MATCH,
+                primary_role=AgentRole.ARCHITECT,
+                capability_score=0.8,
+            ),
             success=True,
             latency_ms=100,
         )

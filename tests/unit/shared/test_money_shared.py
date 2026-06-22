@@ -36,6 +36,7 @@ import warnings
 from decimal import Decimal
 
 import pytest
+
 from zephyr.shared.contracts.portfolio.money import (
     Money,
     MoneyCurrencyMismatchError,

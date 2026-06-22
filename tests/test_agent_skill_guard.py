@@ -10,7 +10,6 @@
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_agent_skill_guard.py
 
-import pytest
 
 from zephyr.ops.security.agent_skill_guard import (
     AgentSkillGuard,

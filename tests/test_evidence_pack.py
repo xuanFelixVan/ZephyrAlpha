@@ -15,8 +15,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from zephyr.governance.audit_orchestrator.evidence_pack import (
     EvidencePackExporter,
     EvidencePackMetadata,
@@ -85,7 +83,7 @@ class TestEvidencePackExporterExportJson:
         result = exporter.export_json(events, pack_id="FILE-CHECK")
         output_path = Path(result.output_path)
         assert output_path.exists()
-        with open(output_path, "r", encoding="utf-8") as f:
+        with open(output_path, encoding="utf-8") as f:
             pack = json.load(f)
         assert "metadata" in pack
         assert "events" in pack
@@ -108,7 +106,7 @@ class TestEvidencePackExporterExportJson:
         events = [{"event_type": "test"}]
         result = exporter.export_json(events, pack_id="FILTER-PACK", filters={"agent": "a1"})
         output_path = Path(result.output_path)
-        with open(output_path, "r", encoding="utf-8") as f:
+        with open(output_path, encoding="utf-8") as f:
             pack = json.load(f)
         assert pack["metadata"]["filters"] == {"agent": "a1"}
 
@@ -133,7 +131,7 @@ class TestEvidencePackExporterExportFca:
         result = exporter.export_fca(events, pack_id="FCA-STRUCT")
         output_path = Path(result.output_path)
         assert output_path.exists()
-        with open(output_path, "r", encoding="utf-8") as f:
+        with open(output_path, encoding="utf-8") as f:
             fca_data = json.load(f)
         assert "header" in fca_data
         assert "records" in fca_data

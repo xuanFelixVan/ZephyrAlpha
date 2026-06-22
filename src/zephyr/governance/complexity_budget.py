@@ -28,13 +28,11 @@ McCCabe 复杂度 > 15 / 文件 → 反向回溯 + Lint 阻断。
 复杂度超过阈值 → exit 38 (COMPLEXITY_OVER_BUDGET)。
 """
 
-
 from __future__ import annotations
 
 import ast
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -48,7 +46,6 @@ class ComplexityReport:
 
 
 class ComplexityBudget:
-
     EXIT_CODE_COMPLEXITY: int = 38
     MAX_MCCABE_PER_FILE: int = 15
     MAX_FUNCTIONS_PER_FILE: int = 30
@@ -94,11 +91,11 @@ class ComplexityBudget:
     def _compute_mccabe(tree: ast.AST) -> int:
         complexity = 1
         for node in ast.walk(tree):
-            if isinstance(node, (ast.If, ast.While, ast.For, ast.AsyncFor)):
-                complexity += 1
-            elif isinstance(node, ast.ExceptHandler):
-                complexity += 1
-            elif isinstance(node, (ast.And, ast.Or)):
+            if (
+                isinstance(node, (ast.If, ast.While, ast.For, ast.AsyncFor))
+                or isinstance(node, ast.ExceptHandler)
+                or isinstance(node, (ast.And, ast.Or))
+            ):
                 complexity += 1
             elif isinstance(node, ast.BoolOp):
                 complexity += len(node.values) - 1

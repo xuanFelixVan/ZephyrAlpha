@@ -61,7 +61,12 @@ def _is_critical(script_name: str) -> bool:
 
 def _load_test_cases(script_entries: list[dict]) -> dict[str, list[tuple[str, int, str, str]]]:
     all_cases = [
-        (e.get("name") or e.get("path", "unknown"), e.get("timeout_seconds", 60), e.get("description", ""), ",".join(e.get("dimensions", [])))
+        (
+            e.get("name") or e.get("path", "unknown"),
+            e.get("timeout_seconds", 60),
+            e.get("description", ""),
+            ",".join(e.get("dimensions", [])),
+        )
         for e in script_entries
     ]
     quick = [tc for tc in all_cases if _is_quick(tc[0])]
@@ -88,8 +93,10 @@ def _run_subprocess_safe(cmd: list[str], timeout: int, cwd: str) -> tuple[int, s
 
     proc = None
     try:
-        with open(out_path, "w", encoding="utf-8", errors="replace") as out_f, \
-             open(err_path, "w", encoding="utf-8", errors="replace") as err_f:
+        with (
+            open(out_path, "w", encoding="utf-8", errors="replace") as out_f,
+            open(err_path, "w", encoding="utf-8", errors="replace") as err_f,
+        ):
             proc = subprocess.Popen(cmd, stdout=out_f, stderr=err_f, cwd=cwd)
 
         proc.wait(timeout=timeout)
@@ -247,8 +254,7 @@ class TestGovernanceScriptsQuick:
 
         with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
             futures = {
-                executor.submit(_run_help_one, name, timeout, repo_root): name
-                for name, timeout, _, _ in test_cases
+                executor.submit(_run_help_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
             }
             for future in as_completed(futures):
                 result = future.result()
@@ -316,8 +322,7 @@ class TestGovernanceScriptsCritical:
 
         with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
             futures = {
-                executor.submit(_run_help_one, name, timeout, repo_root): name
-                for name, timeout, _, _ in test_cases
+                executor.submit(_run_help_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
             }
             for future in as_completed(futures):
                 result = future.result()
@@ -378,8 +383,7 @@ class TestGovernanceScriptsIntegration:
 
         with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
             futures = {
-                executor.submit(_run_jsonl_one, name, timeout, repo_root): name
-                for name, timeout, _, _ in test_cases
+                executor.submit(_run_jsonl_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
             }
             for future in as_completed(futures):
                 result = future.result()
@@ -413,8 +417,7 @@ class TestGovernanceScriptsFull:
 
         with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
             futures = {
-                executor.submit(_run_help_one, name, timeout, repo_root): name
-                for name, timeout, _, _ in test_cases
+                executor.submit(_run_help_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
             }
             for future in as_completed(futures):
                 result = future.result()
@@ -453,8 +456,7 @@ class TestGovernanceScriptsFull:
 
         with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
             futures = {
-                executor.submit(_run_timing_one, name, timeout, repo_root): name
-                for name, timeout, _, _ in test_cases
+                executor.submit(_run_timing_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
             }
             for future in as_completed(futures):
                 elapsed, name = future.result()

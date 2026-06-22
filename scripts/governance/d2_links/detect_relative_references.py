@@ -16,6 +16,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 相对路径引用检测（DOC-004 — 应使用绝对路径）
@@ -49,6 +50,7 @@ MODULE_ID_PATTERN = re.compile(
 )
 
 RELATIVE_PATH_PATTERN = re.compile(r"^\.\.?[\\/]")
+
 
 def scan_relative_references() -> list[dict]:
     """scan relative references."""
@@ -102,6 +104,7 @@ def scan_relative_references() -> list[dict]:
     return findings
     """scan relative references."""
 
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="相对路径引用检测（DOC-004）")
@@ -123,6 +126,7 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
+
 
 if __name__ == "__main__":
     main()

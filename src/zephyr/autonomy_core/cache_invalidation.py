@@ -23,10 +23,11 @@ from __future__ import annotations
 
 """cache_invalidation.py — 缓存一致性 (DD113, TASK-020)"""
 
-from datetime import datetime, timezone
 from dataclasses import dataclass
+from datetime import UTC, datetime
 
-UTC = timezone.utc
+UTC = UTC
+
 
 @dataclass
 class CacheVersion:
@@ -34,8 +35,10 @@ class CacheVersion:
     version: int
     invalidated_at: str
 
+
 class CacheInvalidationManager:
     """Mem/Redis 缓存 + event-driven KE update → cache invalidation (DD113)."""
+
     def __init__(self) -> None:
         self._versions: dict[str, CacheVersion] = {}
 

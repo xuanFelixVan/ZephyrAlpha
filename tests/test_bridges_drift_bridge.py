@@ -14,8 +14,7 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -31,7 +30,14 @@ def bridge(tmp_path):
 def bridge_with_events(tmp_path):
     log_path = tmp_path / "events.jsonl"
     events = [
-        {"entry_id": "e1", "event_type": "anomaly_detected", "agent_id": "a", "timestamp": datetime.now(UTC).isoformat(), "target_path": "/tmp/f1.py", "severity": "HIGH"},
+        {
+            "entry_id": "e1",
+            "event_type": "anomaly_detected",
+            "agent_id": "a",
+            "timestamp": datetime.now(UTC).isoformat(),
+            "target_path": "/tmp/f1.py",
+            "severity": "HIGH",
+        },
     ]
     with open(log_path, "w", encoding="utf-8") as f:
         for e in events:
@@ -61,8 +67,10 @@ class TestDriftBridge:
         assert b._audit_events_path == tmp_path / "events.jsonl"
 
     def test_sync_no_events(self, bridge):
-        with patch.object(bridge, "_scan_audit_anomalies", return_value=[]), \
-             patch.object(bridge, "_scan_drift_events", return_value=[]):
+        with (
+            patch.object(bridge, "_scan_audit_anomalies", return_value=[]),
+            patch.object(bridge, "_scan_drift_events", return_value=[]),
+        ):
             result = bridge.sync()
             assert isinstance(result, BridgeResult)
             assert result.audit_anomalies == 0
@@ -76,8 +84,10 @@ class TestDriftBridge:
         drift_events = [
             {"drift_id": "d1", "target_path": "/tmp/f1.py", "severity": "HIGH"},
         ]
-        with patch.object(bridge, "_scan_audit_anomalies", return_value=audit_anomalies), \
-             patch.object(bridge, "_scan_drift_events", return_value=drift_events):
+        with (
+            patch.object(bridge, "_scan_audit_anomalies", return_value=audit_anomalies),
+            patch.object(bridge, "_scan_drift_events", return_value=drift_events),
+        ):
             result = bridge.sync()
             assert result.matched == 1
             assert result.unmatched_audit == 0
@@ -90,8 +100,10 @@ class TestDriftBridge:
         drift_events = [
             {"drift_id": "d1", "target_path": "/tmp/f2.py", "severity": "MEDIUM"},
         ]
-        with patch.object(bridge, "_scan_audit_anomalies", return_value=audit_anomalies), \
-             patch.object(bridge, "_scan_drift_events", return_value=drift_events):
+        with (
+            patch.object(bridge, "_scan_audit_anomalies", return_value=audit_anomalies),
+            patch.object(bridge, "_scan_drift_events", return_value=drift_events),
+        ):
             result = bridge.sync()
             assert result.matched == 0
             assert result.unmatched_audit == 1
@@ -102,8 +114,10 @@ class TestDriftBridge:
             {"signature_id": "ANM-001", "severity": "CRITICAL", "target_path": "/tmp/critical.py"},
         ]
         drift_events = []
-        with patch.object(bridge, "_scan_audit_anomalies", return_value=audit_anomalies), \
-             patch.object(bridge, "_scan_drift_events", return_value=drift_events):
+        with (
+            patch.object(bridge, "_scan_audit_anomalies", return_value=audit_anomalies),
+            patch.object(bridge, "_scan_drift_events", return_value=drift_events),
+        ):
             result = bridge.sync()
             assert result.critical_gaps == 1
 
@@ -126,8 +140,9 @@ class TestDriftBridge:
         assert len(events) == 1
 
     def test_sync_timestamp_set(self, bridge):
-        with patch.object(bridge, "_scan_audit_anomalies", return_value=[]), \
-             patch.object(bridge, "_scan_drift_events", return_value=[]):
+        with (
+            patch.object(bridge, "_scan_audit_anomalies", return_value=[]),
+            patch.object(bridge, "_scan_drift_events", return_value=[]),
+        ):
             result = bridge.sync()
             assert result.synced_at != ""
-

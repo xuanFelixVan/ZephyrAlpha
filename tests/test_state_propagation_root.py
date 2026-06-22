@@ -10,13 +10,12 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_state_propagation_root.py
 
-import pytest
 
 from zephyr.trading.orchestrator.state_propagation import (
-    StatePropagator,
-    StatePropagationEvent,
-    PropagationTarget,
     PROPAGATION_RULES,
+    PropagationTarget,
+    StatePropagationEvent,
+    StatePropagator,
 )
 
 

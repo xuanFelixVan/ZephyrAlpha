@@ -29,15 +29,15 @@ from pydantic import BaseModel, Field
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 __all__: list[str] = [
-    "VMS_PERSIST_DIR",
     "ALLOWED_DIMENSIONS",
-    "HOT_COLLECTIONS",
-    "COLD_COLLECTIONS",
-    "CHUNK_STRATEGIES_HOT",
     "CHUNK_STRATEGIES_COLD",
-    "TTL_MAP",
-    "COLLECTION_SCHEMAS",
+    "CHUNK_STRATEGIES_HOT",
+    "COLD_COLLECTIONS",
     "COLLECTION_NAMES",
+    "COLLECTION_SCHEMAS",
+    "HOT_COLLECTIONS",
+    "TTL_MAP",
+    "VMS_PERSIST_DIR",
     "CollectionInfo",
 ]
 

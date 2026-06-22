@@ -32,7 +32,6 @@ ANP (Agent Negotiation Protocol) — 对标 Google ANP 开放提案:
 输出: NegotiatedFrame — 双方匹配后的通信参数
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -82,8 +81,10 @@ class A2AFrameNegotiation:
         success = version != "" and fmt != ""
 
         return NegotiatedFrame(
-            protocol_version=version, frame_format=fmt,
-            compression=comp, max_message_size=max_size,
+            protocol_version=version,
+            frame_format=fmt,
+            compression=comp,
+            max_message_size=max_size,
             agreed_capabilities=agreed_caps,
             negotiation_successful=success,
         )

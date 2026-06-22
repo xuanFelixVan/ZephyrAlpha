@@ -42,6 +42,11 @@ from zephyr.autonomy_core.intent_parser import (
     IntentParser,
     LLMIntentVerdict,
 )
+from zephyr.infrastructure._base_server import JSONRPC_VERSION, BaseMCPServer
+from zephyr.infrastructure.doc_guard_server import DocGuardServer
+from zephyr.infrastructure.gate_engine_server import GateEngineServer
+from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
+from zephyr.infrastructure.sentinel_server import SentinelServer
 from zephyr.ops.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
@@ -57,11 +62,6 @@ from zephyr.ops.fitness_functions import (
     MetricStatus,
     from_gate_results,
 )
-from zephyr.infrastructure._base_server import JSONRPC_VERSION, BaseMCPServer
-from zephyr.infrastructure.doc_guard_server import DocGuardServer
-from zephyr.infrastructure.gate_engine_server import GateEngineServer
-from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
-from zephyr.infrastructure.sentinel_server import SentinelServer
 from zephyr.trading.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentRole,

@@ -33,7 +33,6 @@ from __future__ import annotations
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -46,7 +45,6 @@ class FixResult:
 
 
 class ForwardFixRunner:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -65,7 +63,9 @@ class ForwardFixRunner:
             result = subprocess.run(
                 ["git", "diff", f"{commit_sha}..HEAD"],
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             patch_path.write_text(result.stdout, encoding="utf-8")
 
@@ -93,7 +93,9 @@ class ForwardFixRunner:
             result = subprocess.run(
                 ["git"] + args,
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             return result.stdout
         except Exception:

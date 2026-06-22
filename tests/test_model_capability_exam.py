@@ -12,10 +12,7 @@
 
 from __future__ import annotations
 
-import json
-
 import pytest
-
 
 cp_mod = pytest.importorskip("zephyr.intelligence.model_profiling.capability_passport")
 tc_mod = pytest.importorskip("zephyr.intelligence.model_profiling.exam_test_cases")
@@ -187,10 +184,20 @@ class TestExamOrchestrator:
     def test_instantiation(self):
         class FakeChat:
             _model = "test-model"
+
             def inference(self, capability, prompt):
-                return {"category": "other", "tags": [], "points": [], "names": [],
-                        "needs_human": False, "reason": "ok", "fixes": [],
-                        "changes": [], "dead_sections": [], "content": ""}
+                return {
+                    "category": "other",
+                    "tags": [],
+                    "points": [],
+                    "names": [],
+                    "needs_human": False,
+                    "reason": "ok",
+                    "fixes": [],
+                    "changes": [],
+                    "dead_sections": [],
+                    "content": "",
+                }
 
         orch = ExamOrchestrator(FakeChat(), model_id="test-model")
         assert orch._model_id == "test-model"
@@ -198,19 +205,24 @@ class TestExamOrchestrator:
     def test_run_full_exam(self):
         class FakeChat:
             def inference(self, capability, prompt):
-                return {"category": "other", "tags": ["tag1"], "points": ["p1"],
-                        "names": ["name1"], "needs_human": False, "reason": "ok",
-                        "fixes": [{"old_str": "a - b", "new_str": "a + b"}],
-                        "changes": [{"old_str": "x = 10", "new_str": "X = 10"}],
-                        "dead_sections": [{"old_str": "import json"}],
-                        "content": "def is_prime(n): return True"}
+                return {
+                    "category": "other",
+                    "tags": ["tag1"],
+                    "points": ["p1"],
+                    "names": ["name1"],
+                    "needs_human": False,
+                    "reason": "ok",
+                    "fixes": [{"old_str": "a - b", "new_str": "a + b"}],
+                    "changes": [{"old_str": "x = 10", "new_str": "X = 10"}],
+                    "dead_sections": [{"old_str": "import json"}],
+                    "content": "def is_prime(n): return True",
+                }
 
         orch = ExamOrchestrator(FakeChat(), model_id="fake-model")
         passport = orch.run_full_exam(skip_drift=True)
         assert isinstance(passport, CapabilityPassport)
         assert passport.model_id == "fake-model"
-        assert passport.overall_grade in ("A+", "A", "A-", "B+", "B", "B-",
-                                           "C+", "C", "C-", "D", "F")
+        assert passport.overall_grade in ("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F")
         assert 0.0 <= passport.overall_score <= 1.0
         assert passport.exam_duration_seconds >= 0
 

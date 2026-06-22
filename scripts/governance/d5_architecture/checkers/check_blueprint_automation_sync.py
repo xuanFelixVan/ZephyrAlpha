@@ -11,6 +11,7 @@ r"""
 [ERROR_CONTRACT] exit 0=CLEAN, exit 1=DRIFT, exit 2=ERROR
 [TESTS] tests/governance/test_check_blueprint_automation_sync.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -22,13 +23,13 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+
 ensure_utf8_stdout()
 
 import argparse
-import ast
 import re
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 
 __manifest__ = """
 args: [--warn-only, --json, --blueprint]
@@ -45,7 +46,7 @@ BLUEPRINTS_DIR = REPO_ROOT / "docs" / "03_modules"
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 AUTOMATION_TABLE_RE = re.compile(
-    r'\|\s*([^|]+)\s*\|\s*(auto_boot|auto_scheduled|auto_event|on_demand)\s*\|\s*([^|]+)\s*\|\s*(✅已实现|⚠️待实现|⚠️部分实现|⚠️未实现|❌未实现)\s*\|'
+    r"\|\s*([^|]+)\s*\|\s*(auto_boot|auto_scheduled|auto_event|on_demand)\s*\|\s*([^|]+)\s*\|\s*(✅已实现|⚠️待实现|⚠️部分实现|⚠️未实现|❌未实现)\s*\|"
 )
 
 MODULE_ID_RE = re.compile(r'module_id:\s*["\']?(\S+?)["\']?\s*$')
@@ -55,20 +56,41 @@ CODE_IMPLEMENTATION_PROBES: dict[str, dict] = {
     "MOD-INF-011": {
         "package": "vector-memory",
         "probes": {
-            "VMS启动": {"file": "runtime/auto_runtime_core.py", "pattern": r"_vms\s*=\s*InProcessVectorMemory|VMS\.start\(\)"},
-            "TTL过期清理": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*purge_expired|purge_expired"},
-            "定时健康检查": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*check_all|check_all"},
-            "定时快照备份": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*snapshot_backup|snapshot_backup"},
-            "自动修复": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*auto_repair|auto_repair"},
+            "VMS启动": {
+                "file": "runtime/auto_runtime_core.py",
+                "pattern": r"_vms\s*=\s*InProcessVectorMemory|VMS\.start\(\)",
+            },
+            "TTL过期清理": {
+                "file": "vector-memory/in_process_vector_memory.py",
+                "pattern": r"_maintenance_loop.*purge_expired|purge_expired",
+            },
+            "定时健康检查": {
+                "file": "vector-memory/in_process_vector_memory.py",
+                "pattern": r"_maintenance_loop.*check_all|check_all",
+            },
+            "定时快照备份": {
+                "file": "vector-memory/in_process_vector_memory.py",
+                "pattern": r"_maintenance_loop.*snapshot_backup|snapshot_backup",
+            },
+            "自动修复": {
+                "file": "vector-memory/in_process_vector_memory.py",
+                "pattern": r"_maintenance_loop.*auto_repair|auto_repair",
+            },
             "检索缓存": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_cache_layer|CacheLayer"},
-            "检索反馈收集": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_retrieval_feedback|RetrievalFeedback"},
+            "检索反馈收集": {
+                "file": "vector-memory/in_process_vector_memory.py",
+                "pattern": r"_retrieval_feedback|RetrievalFeedback",
+            },
             "语义检索": {"file": "vector-memory/hybrid_retriever.py", "pattern": r"class HybridRetriever"},
             "写入": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"def write\("},
             "8 Collection初始化": {"file": "vector-memory/collection_manager.py", "pattern": r"init_all_collections"},
             "嵌入模型warmup": {"file": "vector-memory/embedding_router.py", "pattern": "def warmup"},
             "启动时健康检查": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"check_all"},
             "启动时漂移检测": {"file": "vector-memory/index_health_monitor.py", "pattern": r"detect_drift"},
-            "模型版本变更清缓存": {"file": "vector-memory/cache_layer.py", "pattern": r"invalidate_all_on_model_change"},
+            "模型版本变更清缓存": {
+                "file": "vector-memory/cache_layer.py",
+                "pattern": r"invalidate_all_on_model_change",
+            },
             "完整性校验": {"file": "vector-memory/index_health_monitor.py", "pattern": r"integrity_check"},
             "定时漂移检测": {"file": "vector-memory/index_health_monitor.py", "pattern": r"detect_drift"},
         },
@@ -105,12 +127,14 @@ def extract_automation_table(content: str) -> list[dict]:
         trigger = match.group(2).strip()
         strategy = match.group(3).strip()
         status = match.group(4).strip()
-        rows.append({
-            "operation": operation,
-            "trigger": trigger,
-            "strategy": strategy,
-            "status": status,
-        })
+        rows.append(
+            {
+                "operation": operation,
+                "trigger": trigger,
+                "strategy": strategy,
+                "status": status,
+            }
+        )
     return rows
 
 
@@ -169,24 +193,28 @@ def check_automation_sync(blueprint_path: Path | None = None) -> list[dict]:
                 continue
 
             if bp_status in ("⚠️待实现", "⚠️未实现") and code_impl is True:
-                findings.append({
-                    "type": "AUTOMATION_DRIFT_IMPLEMENTED",
-                    "severity": "HIGH",
-                    "blueprint": str(bp_file.relative_to(REPO_ROOT)),
-                    "module_id": module_id,
-                    "detail": f"§5.5 '{operation}' 标注'{bp_status}'但代码已实现",
-                    "fix": f"更新蓝图§5.5 '{operation}' 状态为 ✅已实现",
-                })
+                findings.append(
+                    {
+                        "type": "AUTOMATION_DRIFT_IMPLEMENTED",
+                        "severity": "HIGH",
+                        "blueprint": str(bp_file.relative_to(REPO_ROOT)),
+                        "module_id": module_id,
+                        "detail": f"§5.5 '{operation}' 标注'{bp_status}'但代码已实现",
+                        "fix": f"更新蓝图§5.5 '{operation}' 状态为 ✅已实现",
+                    }
+                )
 
             elif bp_status == "✅已实现" and code_impl is False:
-                findings.append({
-                    "type": "AUTOMATION_DRIFT_MISSING",
-                    "severity": "HIGH",
-                    "blueprint": str(bp_file.relative_to(REPO_ROOT)),
-                    "module_id": module_id,
-                    "detail": f"§5.5 '{operation}' 标注'✅已实现'但代码中未找到实现",
-                    "fix": f"实现代码或更新蓝图§5.5 '{operation}' 状态为 ⚠️待实现",
-                })
+                findings.append(
+                    {
+                        "type": "AUTOMATION_DRIFT_MISSING",
+                        "severity": "HIGH",
+                        "blueprint": str(bp_file.relative_to(REPO_ROOT)),
+                        "module_id": module_id,
+                        "detail": f"§5.5 '{operation}' 标注'✅已实现'但代码中未找到实现",
+                        "fix": f"实现代码或更新蓝图§5.5 '{operation}' 状态为 ⚠️待实现",
+                    }
+                )
 
     return findings
 
@@ -206,12 +234,19 @@ def main() -> None:
 
     if args.json:
         import json
-        print(json.dumps({
-            "total_findings": len(findings),
-            "high": high_count,
-            "medium": medium_count,
-            "findings": findings,
-        }, ensure_ascii=False, indent=2))
+
+        print(
+            json.dumps(
+                {
+                    "total_findings": len(findings),
+                    "high": high_count,
+                    "medium": medium_count,
+                    "findings": findings,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     else:
         print("=" * 60)
         print("蓝图§5.5自动化触发机制↔代码实现同步校验")

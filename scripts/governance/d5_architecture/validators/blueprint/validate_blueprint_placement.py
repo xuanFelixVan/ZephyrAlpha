@@ -43,7 +43,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 
@@ -80,8 +80,11 @@ def _collect_blueprints() -> dict[str, tuple[Path, dict]]:
     if not BLUEPRINTS_DIR.exists():
         return result
     for md_file in BLUEPRINTS_DIR.rglob("blueprint.md"):
-        fm = parse_frontmatter_from_file(md_file)
-        if fm is None:
+        fm_tuple = parse_frontmatter_from_file(md_file)
+        if fm_tuple is None:
+            continue
+        fm = fm_tuple[0] if isinstance(fm_tuple, tuple) else fm_tuple
+        if not isinstance(fm, dict):
             continue
         module_id = fm.get("module_id", "")
         if not isinstance(module_id, str) or not module_id:
@@ -231,5 +234,7 @@ def main() -> int:
         print(f"\n⚠️  CI 模式——{total_p1} 条 P1 违规（不阻塞提交）")
         return EXIT_PASS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

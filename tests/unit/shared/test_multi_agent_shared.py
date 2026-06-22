@@ -32,7 +32,6 @@
 Safety: LOW（编排基座，不直接影响安全）
 """
 
-import pytest
 from zephyr.infrastructure.a2a_protocol.multi_agent import (
     AgentCard,
     AgentRole,
@@ -191,12 +190,20 @@ class TestTaskDispatch:
 
     def test_assign_to_capable(self):
         dispatch = TaskDispatch()
-        dispatch.register_agent(AgentCard(
-            agent_id="b1", role=AgentRole.BUILDER, capabilities=["python"],
-        ))
-        dispatch.register_agent(AgentCard(
-            agent_id="b2", role=AgentRole.BUILDER, capabilities=["rust"],
-        ))
+        dispatch.register_agent(
+            AgentCard(
+                agent_id="b1",
+                role=AgentRole.BUILDER,
+                capabilities=["python"],
+            )
+        )
+        dispatch.register_agent(
+            AgentCard(
+                agent_id="b2",
+                role=AgentRole.BUILDER,
+                capabilities=["rust"],
+            )
+        )
 
         task = dispatch.assign_to_capable("t1", "write rust", required_capability="rust")
         assert task is not None
@@ -235,11 +242,13 @@ class TestResultMerge:
 
     def test_vote_strategy(self):
         merge = ResultMerge(strategy=MergeStrategy.VOTE)
-        result = merge.merge([
-            {"answer": "A"},
-            {"answer": "A"},
-            {"answer": "B"},
-        ])
+        result = merge.merge(
+            [
+                {"answer": "A"},
+                {"answer": "A"},
+                {"answer": "B"},
+            ]
+        )
         assert result["strategy"] == "vote"
         assert result["winner"] == "A"
         assert result["vote_count"] == 2
@@ -247,41 +256,49 @@ class TestResultMerge:
 
     def test_vote_with_result_key(self):
         merge = ResultMerge(strategy=MergeStrategy.VOTE)
-        result = merge.merge([
-            {"result": "X"},
-            {"result": "Y"},
-            {"result": "X"},
-        ])
+        result = merge.merge(
+            [
+                {"result": "X"},
+                {"result": "Y"},
+                {"result": "X"},
+            ]
+        )
         assert result["winner"] == "X"
 
     def test_chain_strategy(self):
         merge = ResultMerge(strategy=MergeStrategy.CHAIN)
-        result = merge.merge([
-            {"result": "step1", "context": {"a": 1}},
-            {"result": "step2", "context": {"b": 2}},
-        ])
+        result = merge.merge(
+            [
+                {"result": "step1", "context": {"a": 1}},
+                {"result": "step2", "context": {"b": 2}},
+            ]
+        )
         assert result["strategy"] == "chain"
         assert result["outputs"] == ["step1", "step2"]
         assert result["context"] == {"a": 1, "b": 2}
 
     def test_consensus_reached(self):
         merge = ResultMerge(strategy=MergeStrategy.CONSENSUS)
-        result = merge.merge([
-            {"result": "agree"},
-            {"result": "agree"},
-            {"result": "agree"},
-        ])
+        result = merge.merge(
+            [
+                {"result": "agree"},
+                {"result": "agree"},
+                {"result": "agree"},
+            ]
+        )
         assert result["consensus_reached"] is True
         assert result["result"] == "agree"
         assert result["disagreements"] == 0
 
     def test_consensus_not_reached(self):
         merge = ResultMerge(strategy=MergeStrategy.CONSENSUS)
-        result = merge.merge([
-            {"result": "A"},
-            {"result": "B"},
-            {"result": "C"},
-        ])
+        result = merge.merge(
+            [
+                {"result": "A"},
+                {"result": "B"},
+                {"result": "C"},
+            ]
+        )
         assert result["consensus_reached"] is False
         assert result["result"] is None
         assert result["disagreements"] == 2

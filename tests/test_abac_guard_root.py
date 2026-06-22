@@ -11,24 +11,24 @@
 # [TESTS] self
 
 import sys
+
 sys.path.insert(0, "src")
 
 import time
-import pytest
-from zephyr.security.access_control.abac_guard import (
-    ABACGuard,
-    ABACContext,
-    TLBRecord,
-    TemporalCategory,
-    SensitivityLabel,
-    SENSITIVITY_MIN_MATURITY,
-    MATURITY_OPERATION_MAP,
-)
+
 from zephyr.integration.shared_08.contracts.identity.agent_identity import (
     AgentIdentity,
     AgentRole,
-    MaturityLevel,
     IDESource,
+    MaturityLevel,
+)
+from zephyr.security.access_control.abac_guard import (
+    SENSITIVITY_MIN_MATURITY,
+    ABACContext,
+    ABACGuard,
+    SensitivityLabel,
+    TemporalCategory,
+    TLBRecord,
 )
 
 

@@ -25,6 +25,7 @@
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -33,9 +34,6 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_ERROR
-
-
 import argparse
 import ast
 import re
@@ -43,9 +41,9 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 import yaml
+from _shared.constants import EXIT_ERROR
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
@@ -98,13 +96,15 @@ class AuditResult:
     @property
     def is_clean(self) -> bool:
         """is_clean implementation."""
-        return not any([
-            self.orphan_modules,
-            self.orphan_scripts,
-            self.orphan_gates,
-            self.zombie_references,
-            self.missing_all,
-        ])
+        return not any(
+            [
+                self.orphan_modules,
+                self.orphan_scripts,
+                self.orphan_gates,
+                self.zombie_references,
+                self.missing_all,
+            ]
+        )
 
     @property
     def total_issues(self) -> int:
@@ -171,6 +171,7 @@ def audit(changed_files: set[Path] | None = None) -> AuditResult:
 # ===================================================================
 # 注册表构建
 # ===================================================================
+
 
 def _build_module_registry() -> dict[str, set[str]]:
     """返回 {package_name: {module_name, ...}} 表示 __all__ 中已注册的模块。"""
@@ -290,6 +291,7 @@ def _batch_collect_imports() -> dict[str, list[str]]:
 # 孤儿扫描
 # ===================================================================
 
+
 def _scan_module_orphans(
     registered: dict[str, set[str]],
     import_map: dict[str, list[str]],
@@ -326,12 +328,14 @@ def _scan_module_orphans(
         module_name = py_file.stem
 
         if pkg not in registered:
-            result.orphan_modules.append(OrphanEntry(
-                path=py_file,
-                relative=rel_str,
-                package=pkg,
-                suggestion=f"Package '{pkg}' 的 __init__.py 不包含任何 __all__ 条目",
-            ))
+            result.orphan_modules.append(
+                OrphanEntry(
+                    path=py_file,
+                    relative=rel_str,
+                    package=pkg,
+                    suggestion=f"Package '{pkg}' 的 __init__.py 不包含任何 __all__ 条目",
+                )
+            )
             continue
 
         class_name = "".join(p.capitalize() for p in module_name.split("_"))
@@ -345,14 +349,16 @@ def _scan_module_orphans(
                 # 有消费者 = 已有自然发现机制 = 豁免
                 continue
 
-            result.orphan_modules.append(OrphanEntry(
-                path=py_file,
-                relative=rel_str,
-                package=pkg,
-                suggestion=(
-                    f"from zephyr.{pkg.replace('/', '.').replace('\\', '.')}.{module_name} import {class_name}"
-                ),
-            ))
+            result.orphan_modules.append(
+                OrphanEntry(
+                    path=py_file,
+                    relative=rel_str,
+                    package=pkg,
+                    suggestion=(
+                        f"from zephyr.{pkg.replace('/', '.').replace('\\', '.')}.{module_name} import {class_name}"
+                    ),
+                )
+            )
 
 
 def _scan_script_orphans(
@@ -380,11 +386,13 @@ def _scan_script_orphans(
             continue
 
         if rel_str not in registered:
-            result.orphan_scripts.append(OrphanEntry(
-                path=py_file,
-                relative=rel_str,
-                suggestion=f"python scripts/scaffold.py script {rel.with_suffix('').as_posix()}",
-            ))
+            result.orphan_scripts.append(
+                OrphanEntry(
+                    path=py_file,
+                    relative=rel_str,
+                    suggestion=f"python scripts/scaffold.py script {rel.with_suffix('').as_posix()}",
+                )
+            )
 
 
 def _scan_gate_orphans(
@@ -408,16 +416,19 @@ def _scan_gate_orphans(
             continue
 
         if yaml_file.name not in registered:
-            result.orphan_gates.append(OrphanEntry(
-                path=yaml_file,
-                relative=yaml_file.name,
-                suggestion=f"python scripts/scaffold.py gate {yaml_file.stem.upper()}",
-            ))
+            result.orphan_gates.append(
+                OrphanEntry(
+                    path=yaml_file,
+                    relative=yaml_file.name,
+                    suggestion=f"python scripts/scaffold.py gate {yaml_file.stem.upper()}",
+                )
+            )
 
 
 # ===================================================================
 # 僵尸引用检测
 # ===================================================================
+
 
 def _detect_zombie_references(
     module_registry: dict[str, set[str]],
@@ -432,11 +443,13 @@ def _detect_zombie_references(
         for entry in manifest.get("scripts", []):
             path_str = entry.get("path", "")
             if path_str and not (SCRIPTS_DIR / path_str).exists():
-                result.zombie_references.append(ZombieEntry(
-                    reference=path_str,
-                    registry="script_manifest.yaml",
-                    detail=entry.get("description", ""),
-                ))
+                result.zombie_references.append(
+                    ZombieEntry(
+                        reference=path_str,
+                        registry="script_manifest.yaml",
+                        detail=entry.get("description", ""),
+                    )
+                )
 
     # Gate registry
     if GATE_REGISTRY.exists():
@@ -444,16 +457,19 @@ def _detect_zombie_references(
         for entry in registry_data.get("gates", []):
             file_name = entry.get("file", "")
             if file_name and not (GATES_DIR / file_name).exists():
-                result.zombie_references.append(ZombieEntry(
-                    reference=f"gate_id={entry.get('gate_id', '?')}",
-                    registry="_registry.yaml",
-                    detail=f"file={file_name}, title={entry.get('title', '')}",
-                ))
+                result.zombie_references.append(
+                    ZombieEntry(
+                        reference=f"gate_id={entry.get('gate_id', '?')}",
+                        registry="_registry.yaml",
+                        detail=f"file={file_name}, title={entry.get('title', '')}",
+                    )
+                )
 
 
 # ===================================================================
 # __init__.py 缺 __all__
 # ===================================================================
+
 
 def _detect_missing_all(result: AuditResult, changed_files: set[Path] | None = None) -> None:
     """检测有 .py 模块但包级 __init__.py 无 __all__ 的包。
@@ -467,18 +483,13 @@ def _detect_missing_all(result: AuditResult, changed_files: set[Path] | None = N
         # 增量模式：仅检查变更文件所在目录的 __init__.py，或 __init__.py 自身变更
         if changed_files is not None:
             parent_dir = init_py.parent
-            relevant = any(
-                cf == init_py or cf.parent == parent_dir
-                for cf in changed_files
-            )
+            relevant = any(cf == init_py or cf.parent == parent_dir for cf in changed_files)
             if not relevant:
                 continue
 
         pkg_dir = init_py.parent
         py_files = [
-            f for f in pkg_dir.glob("*.py")
-            if f.name not in EXCLUDE_FROM_MODULE_AUDIT
-            and not f.name.startswith("_")
+            f for f in pkg_dir.glob("*.py") if f.name not in EXCLUDE_FROM_MODULE_AUDIT and not f.name.startswith("_")
         ]
 
         if not py_files:
@@ -493,15 +504,16 @@ def _detect_missing_all(result: AuditResult, changed_files: set[Path] | None = N
 # 格式化输出
 # ===================================================================
 
+
 def print_report(ar: AuditResult, compact: bool = False) -> str:
     """格式化审计报告。"""
     lines: list[str] = []
 
     total = ar.total_issues
     status = "CLEAN" if ar.is_clean else f"ISSUES ({total})"
-    lines.append(f"\n{'='*60}")
+    lines.append(f"\n{'=' * 60}")
     lines.append(f"  RULE-TWO 注册审计: {status}")
-    lines.append(f"{'='*60}")
+    lines.append(f"{'=' * 60}")
 
     if ar.is_clean:
         lines.append("\n  No orphan files detected — all modules registered.")
@@ -546,6 +558,7 @@ def print_report(ar: AuditResult, compact: bool = False) -> str:
 # ===================================================================
 # 增量扫描支持
 # ===================================================================
+
 
 def _get_changed_files_from_git() -> set[Path]:
     """通过 git diff 获取相对于 HEAD 的变更文件集合。
@@ -610,6 +623,7 @@ def _get_changed_files_from_git() -> set[Path]:
 # CLI
 # ===================================================================
 
+
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
@@ -643,23 +657,14 @@ def main() -> None:
 
     if args.json:
         import json
+
         output = {
-            "orphan_modules": [
-                {"relative": oe.relative, "suggestion": oe.suggestion}
-                for oe in ar.orphan_modules
-            ],
-            "orphan_scripts": [
-                {"relative": oe.relative, "suggestion": oe.suggestion}
-                for oe in ar.orphan_scripts
-            ],
-            "orphan_gates": [
-                {"relative": oe.relative, "suggestion": oe.suggestion}
-                for oe in ar.orphan_gates
-            ],
+            "orphan_modules": [{"relative": oe.relative, "suggestion": oe.suggestion} for oe in ar.orphan_modules],
+            "orphan_scripts": [{"relative": oe.relative, "suggestion": oe.suggestion} for oe in ar.orphan_scripts],
+            "orphan_gates": [{"relative": oe.relative, "suggestion": oe.suggestion} for oe in ar.orphan_gates],
             "missing_all": [p.relative_to(PROJECT_ROOT).as_posix() for p in ar.missing_all],
             "zombie_references": [
-                {"reference": ze.reference, "registry": ze.registry, "detail": ze.detail}
-                for ze in ar.zombie_references
+                {"reference": ze.reference, "registry": ze.registry, "detail": ze.detail} for ze in ar.zombie_references
             ],
             "total_issues": ar.total_issues,
         }
@@ -688,7 +693,7 @@ def _interactive_fix(ar: AuditResult) -> None:
         elif choice == "y":
             _auto_register_module(oe)
         else:
-            print(f"    SKIPPED")
+            print("    SKIPPED")
 
     for oe in ar.orphan_scripts:
         choice = input(f"  注册脚本 {oe.relative}? [y/n/d/q] ").strip().lower()
@@ -700,7 +705,7 @@ def _interactive_fix(ar: AuditResult) -> None:
         elif choice == "y":
             _auto_register_script(oe)
         else:
-            print(f"    SKIPPED")
+            print("    SKIPPED")
 
 
 def _auto_register_module(oe: OrphanEntry) -> None:
@@ -718,14 +723,14 @@ def _auto_register_module(oe: OrphanEntry) -> None:
             content = import_line + "\n" + content
         if "__all__" in content:
             if class_name not in content:
-                pattern = r'(\[__all__\s*=\s*\[)(.*?)(\])'
+                pattern = r"(\[__all__\s*=\s*\[)(.*?)(\])"
                 match = re.search(pattern, content, re.DOTALL)
                 if match:
                     mid = match.group(2)
                     entries = [e.strip().strip('"').strip("'") for e in mid.split(",") if e.strip()]
                     entries.append(class_name)
                     new_mid = "\n    " + ",\n    ".join(f'"{e}"' for e in sorted(set(entries))) + ",\n"
-                    content = content[: match.start(2)] + new_mid + content[match.end(2):]
+                    content = content[: match.start(2)] + new_mid + content[match.end(2) :]
                 else:
                     content += f'\n__all__.append("{class_name}")\n'
         else:
@@ -734,6 +739,7 @@ def _auto_register_module(oe: OrphanEntry) -> None:
         content = f'{import_line}\n\n__all__ = [\n    "{class_name}",\n]\n'
 
     import os
+
     tmp_path = Path(str(init_py) + f".{os.getpid()}.tmp")
     tmp_path.write_text(content, encoding="utf-8")
     os.replace(str(tmp_path), str(init_py))
@@ -747,6 +753,7 @@ def _auto_register_script(oe: OrphanEntry) -> None:
         return
 
     import os
+
     manifest = yaml.safe_load(SCRIPT_MANIFEST.read_text(encoding="utf-8")) or {}
     scripts = manifest.get("scripts", [])
 

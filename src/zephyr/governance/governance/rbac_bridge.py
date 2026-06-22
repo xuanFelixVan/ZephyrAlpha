@@ -31,13 +31,19 @@ _logger = logging.getLogger(__name__)
 
 _AGENT_RBAC_AVAILABLE = False
 try:
-    from zephyr.integration.shared_08.contracts.identity.agent_identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
+    from zephyr.integration.shared_08.contracts.identity.agent_identity import (
+        AgentIdentity,
+        AgentRole,
+        IDESource,
+        MaturityLevel,
+    )
     from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision, GuardResult
     from zephyr.security.access_control.permission_guard import PermissionGuard
 
     _AGENT_RBAC_AVAILABLE = True
 except ImportError:
     pass
+
 
 @dataclass
 class RBACCheckResult:
@@ -47,6 +53,7 @@ class RBACCheckResult:
     rule_id: str = ""
     reason: str = ""
     audit_context: dict[str, Any] = field(default_factory=dict)
+
 
 class EscalationRBACBridge:
     """升级事件→RBAC权限提升 + Pipeline 前置 RBAC 检查."""

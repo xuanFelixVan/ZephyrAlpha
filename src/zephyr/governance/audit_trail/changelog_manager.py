@@ -12,9 +12,7 @@
 
 from __future__ import annotations
 
-from datetime import date
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -50,7 +48,7 @@ def append_change(record: ChangeRecord) -> None:
     CHANGELOG.insert(0, record)
 
 
-def get_latest() -> Optional[ChangeRecord]:
+def get_latest() -> ChangeRecord | None:
     return CHANGELOG[0] if CHANGELOG else None
 
 

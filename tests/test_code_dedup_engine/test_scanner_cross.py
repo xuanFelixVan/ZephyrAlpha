@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 def test_same_file_no_duplicate():
     from zephyr.governance.scanner import Scanner
+
     s = Scanner()
     s.scan_file(Path(__file__))
     dupes = s.find_duplicates()
@@ -23,6 +24,7 @@ def test_same_file_no_duplicate():
 
 def test_cross_file_similarity():
     from zephyr.governance.scanner import Scanner
+
     s = Scanner()
     s.scan_file(Path(__file__))
     s.scan_file(Path(__file__).parent / "test_config.py")

@@ -45,8 +45,8 @@ AI 施工约定：
 SSoT: MOD-INF-016 §2.12 shared-cache
 Version: 0.1.0
 """
-from __future__ import annotations
 
+from __future__ import annotations
 
 import logging
 import time
@@ -56,11 +56,11 @@ from typing import Any, Protocol, TypeVar
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
-    "CacheError",
-    "CacheStats",
-    "CacheProvider",
-    "MemoryCache",
     "TTL_EXPIRED_DEFAULT_SECONDS",
+    "CacheError",
+    "CacheProvider",
+    "CacheStats",
+    "MemoryCache",
     "cache_key",
 ]
 

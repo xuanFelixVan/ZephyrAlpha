@@ -28,12 +28,11 @@ timeout_seconds: 30
 warn_only: false
 """
 
-import os
 import argparse
+import os
 import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -44,8 +43,8 @@ PHASE_ORDER = {"phase1": 1, "phase2": 2, "phase3": 3}
 NEXT_PHASE = {"phase1": "phase2", "phase2": "phase3", "phase3": "phase3"}
 PHASE_DAYS = {"phase1": 7, "phase2": 7, "phase3": 0}
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load() -> dict:
@@ -64,14 +63,15 @@ def _save(data: dict) -> None:
     try:
         with open(tmp_path, encoding="utf-8") as f:
             yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
-    
+
         os.replace(tmp_path, _SHADOW_STATE_PATH)
     except PermissionError:
         try:
             os.remove(tmp_path)
         except OSError:
             pass
+
+
 def get_activation_phase(script_name: str) -> str:
     """get_activation_phase implementation."""
     data = _load()
@@ -148,17 +148,21 @@ def check_health() -> dict:
                 elapsed_days = 0
 
             if phase == "phase1" and elapsed_days >= PHASE_DAYS["phase1"]:
-                results.append({
-                    "script": name,
-                    "action": "auto_promote_to_phase2",
-                    "elapsed_days": elapsed_days,
-                })
+                results.append(
+                    {
+                        "script": name,
+                        "action": "auto_promote_to_phase2",
+                        "elapsed_days": elapsed_days,
+                    }
+                )
             elif phase == "phase2" and elapsed_days >= PHASE_DAYS["phase2"]:
-                results.append({
-                    "script": name,
-                    "action": "ready_for_phase3",
-                    "elapsed_days": elapsed_days,
-                })
+                results.append(
+                    {
+                        "script": name,
+                        "action": "ready_for_phase3",
+                        "elapsed_days": elapsed_days,
+                    }
+                )
 
     return {
         "timestamp": now.isoformat(),

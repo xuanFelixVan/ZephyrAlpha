@@ -1,5 +1,19 @@
 rule_id: TRAE-034
 title: 任务系统-卡片标准与生命周期
+version: 1.3.3
+layer: L1
+module_id: TRAE-034
+depends_on:
+- TRAE-003
+- TRAE-024
+- TRAE-053
+tags:
+- TRAE
+- task_card_lifecycle
+- L1
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
 aliases:
 - TASK-001
 - TASK-004
@@ -7,7 +21,6 @@ aliases:
 - GOV-TASK-001
 - GOV-TASK-004
 - GOV-TASK-005
-layer: L1
 severity: error
 scope: task_card_lifecycle
 domain: TRAE
@@ -154,8 +167,7 @@ sections:
     conditions: []
     actions:
     - type: mandatory
-      step: 关闭三步法——STEP1产物验证(deliverables全部产出路径正确内容完整)/STEP2残留清扫(无_temp*_check*_audit*临时文件)/STEP3注册审计(audit_registration.py
-        exit 0)
+      step: 关闭三步法——STEP1产物验证(deliverables全部产出路径正确内容完整)/STEP2残留清扫(无_temp*_check*_audit*临时文件)/STEP3注册审计(audit_registration.py exit 0)
     - type: mandatory
       step: 循环验收协议——连续2次验收0错误才可COMPLETED；3轮修复仍无法归零→FAILED升级Owner
     - type: mandatory
@@ -488,8 +500,7 @@ sections:
     - type: mandatory
       step: Step2临时文件清除——删除temp_*/*.backup/*-v2.*/*-v3.*/*-round2.*/__pycache__/*.pyc/tmp_*/ttl:session文件
     - type: mandatory
-      step: Step3残留物检测——运行task_completion_gate.py扫描scope-paths，分类处置(ORPHAN_SHELL/STALE_SKELETON/DUPLICATE/LEGACY_TEST删除;
-        VALID_FILE由Owner判定)
+      step: Step3残留物检测——运行task_completion_gate.py扫描scope-paths，分类处置(ORPHAN_SHELL/STALE_SKELETON/DUPLICATE/LEGACY_TEST删除; VALID_FILE由Owner判定)
     prohibitions:
     - 禁止跳过清扫三步法直接声明COMPLETED
   task_005_cancel:
@@ -971,7 +982,7 @@ sections:
         relationship: 状态机实现+门禁检查逻辑+超时检测
       - rule: handoff-protocol.md
         relationship: 升级通知通过交接协议open_questions传递
-      - rule: metadata-registry.md §7
+      - rule: metadata_registry.yaml §7
         relationship: 优先级和状态枚举值SSoT
       - rule: trae_029_doc_operation_security.yaml(GOV-DOC-007)
         relationship: 安全门禁管删除前，关闭标准管完成后
@@ -1002,9 +1013,9 @@ sections:
       - level: P4
         definition: 低优——锦上添花的改进、实验性探索
         scenario: 美化、重构非关键模块
-      impact_on_rules: 优先级字段枚举值以metadata-registry.md §7为准
+      impact_on_rules: 优先级字段枚举值以metadata_registry.yaml §7为准
       key_decisions:
-      - SSoT声明：优先级枚举值定义以metadata-registry.md为准
+      - SSoT声明：优先级枚举值定义以metadata_registry.yaml为准
   task_004_owner_options:
     title: Owner升级后决策选项
     section_type: decision_tree
@@ -1095,8 +1106,7 @@ sections:
     - GOV-TASK-005
     steps:
     - step: 清扫通过
-      command: python src/zephyr/governance/rule_enforcement/task_completion_gate.py
-        --scan
+      command: python src/zephyr/governance/rule_enforcement/task_completion_gate.py --scan
       expected_exit: 0
       on_fail: 执行--clean后重新扫描
     - step: 编码合规
@@ -1234,7 +1244,7 @@ sections:
         why: 根源分析——task-card-standard.md§3引用其深挖协议
       - target: PS-STD-001
         at: §7
-        why: metadata-registry.md§7定义的任务卡字段schema为优先级和状态枚举的SSoT
+        why: metadata_registry.yaml§7定义的任务卡字段schema为优先级和状态枚举的SSoT
       impact_on_rules: 字段定义和治理规则引用外部SSoT
       key_decisions: []
   task_001_examples:
@@ -1343,7 +1353,7 @@ metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
-  superseded_by: null
+  superseded_by:
   version: "1.3.3"
   last_modified: "2026-06-21"
   change_history:

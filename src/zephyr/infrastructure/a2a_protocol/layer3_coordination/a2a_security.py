@@ -32,7 +32,6 @@
 输出: A2ASecurityReport — 每个 Message Part 的安全判定
 """
 
-
 from __future__ import annotations
 
 import re
@@ -81,13 +80,13 @@ class A2ASecurityReport:
 
 
 _PROMPT_INJECTION_PATTERNS = [
-    (r"ignore\s+(all\s+)?(previous|prior)\s+(instructions?|prompts?|context)",
-     "Prompt injection: 'ignore previous instructions'"),
-    (r"(you\s+are|act\s+as|roleplay\s+as)\s+(now|from\s+now\s+on)",
-     "Role override: 'you are now / act as'"),
+    (
+        r"ignore\s+(all\s+)?(previous|prior)\s+(instructions?|prompts?|context)",
+        "Prompt injection: 'ignore previous instructions'",
+    ),
+    (r"(you\s+are|act\s+as|roleplay\s+as)\s+(now|from\s+now\s+on)", "Role override: 'you are now / act as'"),
     (r"^\s*system\s*:\s*", "System prompt hijacking: 'system:' prefix"),
-    (r"(forget|disregard|override)\s+(everything|all)\s+(you|above|before)",
-     "Memory override: 'forget everything'"),
+    (r"(forget|disregard|override)\s+(everything|all)\s+(you|above|before)", "Memory override: 'forget everything'"),
 ]
 
 _CODE_EXEC_PATTERNS = [
@@ -99,13 +98,10 @@ _CODE_EXEC_PATTERNS = [
 ]
 
 _CREDENTIAL_PATTERNS = [
-    (r"""(?:api[_-]?key|apikey|secret[_-]?key)\s*[:=]\s*['"][A-Za-z0-9_\-]{20,}['"]""",
-     "API key/secret exposed"),
-    (r"""(?:password|passwd|pwd)\s*[:=]\s*['"][^'"]{4,}['"]""",
-     "Password exposed"),
+    (r"""(?:api[_-]?key|apikey|secret[_-]?key)\s*[:=]\s*['"][A-Za-z0-9_\-]{20,}['"]""", "API key/secret exposed"),
+    (r"""(?:password|passwd|pwd)\s*[:=]\s*['"][^'"]{4,}['"]""", "Password exposed"),
     (r"""sk-[A-Za-z0-9]{32,}""", "OpenAI-style secret key"),
-    (r"""(?:token|auth[_-]?token)\s*[:=]\s*['"][A-Za-z0-9_\-.]{20,}['"]""",
-     "Auth token exposed"),
+    (r"""(?:token|auth[_-]?token)\s*[:=]\s*['"][A-Za-z0-9_\-.]{20,}['"]""", "Auth token exposed"),
 ]
 
 _PATH_TRAVERSAL_PATTERNS = [
@@ -158,11 +154,13 @@ class A2ASecurityScanner:
         findings: list[SecurityFinding] = []
 
         if len(content.encode("utf-8")) > self._max_payload_bytes:
-            findings.append(SecurityFinding(
-                category=ThreatCategory.OVERSIZED_PAYLOAD,
-                verdict=SecurityVerdict.SUSPICIOUS,
-                description=f"Payload exceeds max size ({len(content.encode('utf-8'))} > {self._max_payload_bytes})",
-            ))
+            findings.append(
+                SecurityFinding(
+                    category=ThreatCategory.OVERSIZED_PAYLOAD,
+                    verdict=SecurityVerdict.SUSPICIOUS,
+                    description=f"Payload exceeds max size ({len(content.encode('utf-8'))} > {self._max_payload_bytes})",
+                )
+            )
 
         if self._scan_categories[ThreatCategory.PROMPT_INJECTION]:
             findings.extend(self._scan_patterns(content, _PROMPT_INJECTION_PATTERNS, ThreatCategory.PROMPT_INJECTION))
@@ -182,12 +180,17 @@ class A2ASecurityScanner:
         clean = not any(f.verdict == SecurityVerdict.MALICIOUS for f in findings)
 
         return A2ASecurityReport(
-            agent_id=agent_id, message_id=message_id,
-            findings=findings, clean=clean,
+            agent_id=agent_id,
+            message_id=message_id,
+            findings=findings,
+            clean=clean,
         )
 
     def _scan_patterns(
-        self, content: str, patterns: list[tuple[str, str]], category: ThreatCategory,
+        self,
+        content: str,
+        patterns: list[tuple[str, str]],
+        category: ThreatCategory,
     ) -> list[SecurityFinding]:
         findings: list[SecurityFinding] = []
         lines = content.split("\n")
@@ -197,20 +200,22 @@ class A2ASecurityScanner:
             for lineno, line in enumerate(lines, 1):
                 match = pattern.search(line)
                 if match:
-                    findings.append(SecurityFinding(
-                        category=category,
-                        verdict=SecurityVerdict.MALICIOUS,
-                        description=description,
-                        line_number=lineno,
-                        matched_pattern=pattern_str,
-                    ))
+                    findings.append(
+                        SecurityFinding(
+                            category=category,
+                            verdict=SecurityVerdict.MALICIOUS,
+                            description=description,
+                            line_number=lineno,
+                            matched_pattern=pattern_str,
+                        )
+                    )
                     break
 
         return findings
 
     @staticmethod
     def scan_multiple(
-        scanner: "A2ASecurityScanner",
+        scanner: A2ASecurityScanner,
         messages: list[tuple[str, str, str]],
     ) -> list[A2ASecurityReport]:
         results: list[A2ASecurityReport] = []

@@ -12,10 +12,6 @@
 
 from __future__ import annotations
 
-import time
-
-import pytest
-
 from zephyr.governance.error_budget_burst_limiter import BurstLimiter
 
 

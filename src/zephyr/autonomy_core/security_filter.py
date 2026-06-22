@@ -14,7 +14,6 @@
 CT-CE-LSG-001: 将构建好的上下文块送入 LSGSecurityGateway 扫描后返回安全的执行上下文。
 """
 
-
 from __future__ import annotations
 
 import logging
@@ -24,8 +23,8 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "SecurityFilter",
     "FilterResult",
+    "SecurityFilter",
     "filter_context",
 ]
 

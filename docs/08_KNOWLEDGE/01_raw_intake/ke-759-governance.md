@@ -22,7 +22,7 @@ category: governance
 
 **负向责任**（本目录不管的事，去对应目录找）：
 - 架构治理（ADR、评审门控）→ `governance/architecture/`
-- AI 自治权限注册表 → `governance/ai/ai-autonomy-authority-registry.md`
+- AI 自治权限注册表 → `governance/ai/ai_autonomy_authority_registry.yaml`
 - 文档命名和路径规范 → `governance/document/`
 - 代码实现的模块接口 Schema → `src/zephyr/shared/contracts/`
 

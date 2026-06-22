@@ -23,8 +23,6 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 from zephyr.autonomy_core.verify_paths import (
     CE_DIR,
     SOURCE_FILES,
@@ -156,8 +154,10 @@ class TestVerifyAllBoundaryConditions:
             assert result["stats"]["ghost_tests"] == 0
 
     def test_both_dicts_empty(self):
-        with patch("zephyr.autonomy_core.verify_paths.SOURCE_FILES", {}), \
-             patch("zephyr.autonomy_core.verify_paths.TEST_FILES", {}):
+        with (
+            patch("zephyr.autonomy_core.verify_paths.SOURCE_FILES", {}),
+            patch("zephyr.autonomy_core.verify_paths.TEST_FILES", {}),
+        ):
             result = verify_all()
             assert result["source_files"] == {}
             assert result["test_files"] == {}

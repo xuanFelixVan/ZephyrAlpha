@@ -21,7 +21,6 @@ import pytest
 
 from zephyr.governance.drift_detector import trigger_recovery
 
-
 _EXPECTED_KEYS = {
     "recovery_id",
     "module_id",
@@ -114,10 +113,12 @@ class TestHotfixBypass:
         mock_bypass_inst.is_hotfix_commit.return_value = True
         mock_bypass_cls.return_value = mock_bypass_inst
 
-        result = trigger_recovery({
-            "module_id": "MOD-TEST",
-            "commit_message": "[HOTFIX] critical fix",
-        })
+        result = trigger_recovery(
+            {
+                "module_id": "MOD-TEST",
+                "commit_message": "[HOTFIX] critical fix",
+            }
+        )
 
         assert result["hotfix_bypass"] is True
         assert result["recovery_status"] == "HOTFIX_BYPASSED"
@@ -132,10 +133,12 @@ class TestHotfixBypass:
 
         mock_scan.return_value = _make_scan_result()
 
-        result = trigger_recovery({
-            "module_id": "MOD-TEST",
-            "commit_message": "normal commit",
-        })
+        result = trigger_recovery(
+            {
+                "module_id": "MOD-TEST",
+                "commit_message": "normal commit",
+            }
+        )
 
         assert result["hotfix_bypass"] is False
         assert result["recovery_status"] != "HOTFIX_BYPASSED"
@@ -144,10 +147,12 @@ class TestHotfixBypass:
     def test_hotfix_bypass_instantiation_failure_non_fatal(self, mock_bypass_cls):
         mock_bypass_cls.side_effect = RuntimeError("config missing")
 
-        result = trigger_recovery({
-            "module_id": "MOD-TEST",
-            "commit_message": "[HOTFIX] fix",
-        })
+        result = trigger_recovery(
+            {
+                "module_id": "MOD-TEST",
+                "commit_message": "[HOTFIX] fix",
+            }
+        )
 
         assert isinstance(result, dict)
         assert result["hotfix_bypass"] is False
@@ -163,10 +168,12 @@ class TestScanLevel:
 
         mock_scan.return_value = _make_scan_result()
 
-        result = trigger_recovery({
-            "module_id": "MOD-TEST",
-            "scan_level": "INVALID_LEVEL",
-        })
+        result = trigger_recovery(
+            {
+                "module_id": "MOD-TEST",
+                "scan_level": "INVALID_LEVEL",
+            }
+        )
 
         assert isinstance(result, dict)
         assert result["recovery_status"] in ("NO_DRIFT_FOUND", "SCAN_FAILED", "INITIATED")
@@ -180,10 +187,12 @@ class TestScanLevel:
 
         mock_scan.return_value = _make_scan_result()
 
-        result = trigger_recovery({
-            "module_id": "MOD-TEST",
-            "scan_level": "DEEP",
-        })
+        result = trigger_recovery(
+            {
+                "module_id": "MOD-TEST",
+                "scan_level": "DEEP",
+            }
+        )
 
         assert isinstance(result, dict)
         assert result["recovery_status"] == "NO_DRIFT_FOUND"
@@ -216,7 +225,9 @@ class TestTriggerRecoveryWithDriftEvents:
     @patch("zephyr.behavioral_audit.cascade_detector.detect_cascade", return_value=[])
     @patch("zephyr.behavioral_audit.drift_engine.scan")
     @patch("zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass")
-    def test_fully_recovered_when_all_fixed(self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls):
+    def test_fully_recovered_when_all_fixed(
+        self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls
+    ):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
         mock_bypass_cls.return_value = mock_bypass_inst
@@ -229,10 +240,12 @@ class TestTriggerRecoveryWithDriftEvents:
         mock_fixer.auto_fix.return_value = True
         mock_fixer_cls.return_value = mock_fixer
 
-        result = trigger_recovery({
-            "module_id": "MOD-TEST",
-            "changed_files": ["a.py", "b.py"],
-        })
+        result = trigger_recovery(
+            {
+                "module_id": "MOD-TEST",
+                "changed_files": ["a.py", "b.py"],
+            }
+        )
 
         assert result["recovery_status"] == "FULLY_RECOVERED"
         assert len(result["fix_results"]) == 2
@@ -243,7 +256,9 @@ class TestTriggerRecoveryWithDriftEvents:
     @patch("zephyr.behavioral_audit.cascade_detector.detect_cascade", return_value=[])
     @patch("zephyr.behavioral_audit.drift_engine.scan")
     @patch("zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass")
-    def test_partially_recovered_when_some_fixed(self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls):
+    def test_partially_recovered_when_some_fixed(
+        self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls
+    ):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
         mock_bypass_cls.return_value = mock_bypass_inst
@@ -269,7 +284,9 @@ class TestTriggerRecoveryWithDriftEvents:
     @patch("zephyr.behavioral_audit.cascade_detector.detect_cascade", return_value=[])
     @patch("zephyr.behavioral_audit.drift_engine.scan")
     @patch("zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass")
-    def test_recovery_failed_when_none_fixed(self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls):
+    def test_recovery_failed_when_none_fixed(
+        self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls
+    ):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
         mock_bypass_cls.return_value = mock_bypass_inst
@@ -293,7 +310,9 @@ class TestCascadeLockout:
     @patch("zephyr.behavioral_audit.cascade_detector.detect_cascade")
     @patch("zephyr.behavioral_audit.drift_engine.scan")
     @patch("zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass")
-    def test_cascade_lockout_when_auto_fix_paused(self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused):
+    def test_cascade_lockout_when_auto_fix_paused(
+        self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused
+    ):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
         mock_bypass_cls.return_value = mock_bypass_inst

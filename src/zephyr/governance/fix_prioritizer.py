@@ -95,9 +95,7 @@ class FixPrioritizer:
         expected_keys = {"severity", "impact", "urgency", "dependency_depth"}
         actual_keys = set(weights.keys())
         if actual_keys != expected_keys:
-            raise ValueError(
-                f"权重键必须为 {sorted(expected_keys)}，实际为 {sorted(actual_keys)}"
-            )
+            raise ValueError(f"权重键必须为 {sorted(expected_keys)}，实际为 {sorted(actual_keys)}")
         total = sum(weights.values())
         if not (0.999 <= total <= 1.001):
             raise ValueError(f"权重之和必须为 1.0，实际为 {total:.6f}")
@@ -159,11 +157,13 @@ class FixPrioritizer:
         for fix in fixes:
             depth = depths.get(fix.finding.finding_id, 0)
             score = self._compute_weighted_score(fix, depth, max_affected)
-            results.append(PrioritizedFixResult(
-                fix=fix,
-                priority_score=round(score, 6),
-                dependency_depth=depth,
-            ))
+            results.append(
+                PrioritizedFixResult(
+                    fix=fix,
+                    priority_score=round(score, 6),
+                    dependency_depth=depth,
+                )
+            )
 
         results.sort(key=lambda r: r.priority_score, reverse=True)
         for i, r in enumerate(results):
@@ -193,10 +193,12 @@ class FixPrioritizer:
         results: list[PrioritizedFixResult] = []
         for fix in fixes:
             depth = depths.get(fix.finding.finding_id, 0)
-            results.append(PrioritizedFixResult(
-                fix=fix,
-                dependency_depth=depth,
-            ))
+            results.append(
+                PrioritizedFixResult(
+                    fix=fix,
+                    dependency_depth=depth,
+                )
+            )
 
         results.sort(
             key=lambda r: (

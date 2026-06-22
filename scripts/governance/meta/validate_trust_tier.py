@@ -17,6 +17,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -47,15 +48,14 @@ import fnmatch
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
 
 import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _POLICY_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "trust_tier_policy.yaml"
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _load_policy() -> dict:
@@ -68,14 +68,22 @@ def _get_changed_files() -> list[str]:
     """_get_changed_files implementation."""
     result = subprocess.run(
         ["git", "diff", "--cached", "--name-only"],
-        capture_output=True, text=True, timeout=10,
-        cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=10,
+        cwd=str(_REPO_ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     if result.returncode != 0 or not result.stdout.strip():
         result = subprocess.run(
             ["git", "diff", "--name-only", "HEAD"],
-            capture_output=True, text=True, timeout=10,
-            cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=str(_REPO_ROOT),
+            encoding="utf-8",
+            errors="replace",
         )
     return [f.strip() for f in result.stdout.strip().split("\n") if f.strip()]
 
@@ -100,12 +108,14 @@ def check_changed_files() -> dict:
             if _match_path(fp, perm["paths"]):
                 tier = perm["tier"]
                 if tier == "T2":
-                    violations.append({
-                        "file": fp,
-                        "assigned_tier": "T2",
-                        "rule": "修改需 Owner 审批",
-                        "detail": perm.get("reason", ""),
-                    })
+                    violations.append(
+                        {
+                            "file": fp,
+                            "assigned_tier": "T2",
+                            "rule": "修改需 Owner 审批",
+                            "detail": perm.get("reason", ""),
+                        }
+                    )
                 break
 
     return {
@@ -120,7 +130,7 @@ def policy_status() -> None:
     """policy_status implementation."""
     policy = _load_policy()
     tiers = policy.get("tiers", {})
-    print(f"\n[TRUST-TIER] 当前策略:", file=sys.stderr)
+    print("\n[TRUST-TIER] 当前策略:", file=sys.stderr)
     for tier_name, tier_info in tiers.items():
         allowed = len(tier_info.get("allowed_operations", []))
         forbidden = len(tier_info.get("forbidden_operations", []))
@@ -129,7 +139,10 @@ def policy_status() -> None:
     file_perms = policy.get("file_permissions", [])
     print(f"\n  文件权限映射 ({len(file_perms)} 组):", file=sys.stderr)
     for fp in file_perms:
-        print(f"    [{fp['tier']}] {fp['paths'][:3]}{'...' if len(fp['paths']) > 3 else ''} — {fp.get('reason', '')[:60]}", file=sys.stderr)
+        print(
+            f"    [{fp['tier']}] {fp['paths'][:3]}{'...' if len(fp['paths']) > 3 else ''} — {fp.get('reason', '')[:60]}",
+            file=sys.stderr,
+        )
 
 
 def main() -> None:
@@ -169,7 +182,7 @@ def main() -> None:
     print(f"[TRUST-TIER] ⚠ {result['violation_count']} 个文件涉及 Trust-Tier 限制", file=sys.stderr)
     for v in result["violations"]:
         print(f"  [{v['assigned_tier']}] {v['file']}: {v['rule']} — {v['detail']}", file=sys.stderr)
-    print(f"\n  提示: T2 文件需要 Owner 审批后提交。如果是 Owner 本人操作，请确认后继续。", file=sys.stderr)
+    print("\n  提示: T2 文件需要 Owner 审批后提交。如果是 Owner 本人操作，请确认后继续。", file=sys.stderr)
 
     if args.jsonl:
         print(

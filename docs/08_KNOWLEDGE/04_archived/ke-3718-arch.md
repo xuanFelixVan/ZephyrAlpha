@@ -34,4 +34,4 @@ category: governance_rule
 | ARCH-020 | KMS G4 强制人工最终拍板，AI 不得自主激活知识 | — | doc | `02_enterprise_architecture/adr/adr-0005-kms-architecture.md` L172 |
 | ARCH-021 | YAML 门禁文件严禁直接写 P0/P1/P2，必须使用 error/warning/info | — | doc | `02_enterprise_architecture/gate-strategy-standard.md` L111 |
 | ARCH-022 | Pydantic 模型禁止 Any 类型字段（边界透传场景除外且需注释） | — | doc | `02_enterprise_architecture/adr/adr-0040-pydantic-v2-structured-contracts.md` L59 |
-| ARCH-023 | H/CRITICAL 级 FLE 提案强制 Owner 审批 | 
+| ARCH-023 | H/CRITICAL 级 FLE 提案强制 Owner 审批 |

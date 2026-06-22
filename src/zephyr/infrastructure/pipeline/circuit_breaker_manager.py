@@ -185,8 +185,7 @@ class CircuitBreakerManager:
                 self._states[cb_key] = CircuitBreakerState.OPEN
                 self._log(
                     "WARN",
-                    f"CircuitBreaker[{model}] CLOSED→OPEN "
-                    f"({len(recent)} failures in {self._failure_window_s}s)",
+                    f"CircuitBreaker[{model}] CLOSED→OPEN ({len(recent)} failures in {self._failure_window_s}s)",
                 )
                 return CircuitBreakerState.OPEN
             return CircuitBreakerState.CLOSED

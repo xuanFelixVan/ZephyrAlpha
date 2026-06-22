@@ -28,6 +28,7 @@ R514: PromptOptimizationRegressionDetector
 
 from dataclasses import dataclass, field
 
+
 @dataclass
 class PromptOptimizationRegressionDetector:
     old_prompt_results: list[float] = field(default_factory=list)
@@ -87,6 +88,7 @@ class PromptOptimizationRegressionDetector:
 
         x = df / (df + t * t + 1e-10)
         import math as m
+
         p_value = 2.0 * (1.0 - 0.5 * (1.0 + m.erf(abs(t) / m.sqrt(2.0))))
 
         return t, min(p_value, 1.0)

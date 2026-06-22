@@ -28,15 +28,12 @@ CrossAgentConflictDetector — 多 Agent 并发冲突检测。
 双写入检测：同一文件被不同 session_id 同时修改 → ConflictResolution。
 """
 
-
 from __future__ import annotations
 
-import json
 import subprocess
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 
 @dataclass
@@ -50,7 +47,6 @@ class ConflictReport:
 
 
 class CrossAgentConflictDetector:
-
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
@@ -80,14 +76,16 @@ class CrossAgentConflictDetector:
                     authors.add(agent)
             if len(authors) > 1:
                 agent_list = list(authors)
-                reports.append(ConflictReport(
-                    file_path=f,
-                    agent_a=agent_list[0],
-                    agent_b=agent_list[1] if len(agent_list) > 1 else "",
-                    has_conflict=True,
-                    resolution="SERIALIZE",
-                    timestamp_utc=datetime.now(timezone.utc).isoformat(),
-                ))
+                reports.append(
+                    ConflictReport(
+                        file_path=f,
+                        agent_a=agent_list[0],
+                        agent_b=agent_list[1] if len(agent_list) > 1 else "",
+                        has_conflict=True,
+                        resolution="SERIALIZE",
+                        timestamp_utc=datetime.now(UTC).isoformat(),
+                    )
+                )
 
         return reports
 
@@ -121,7 +119,9 @@ class CrossAgentConflictDetector:
             result = subprocess.run(
                 ["git"] + args,
                 cwd=str(self._project_root),
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             return result.stdout
         except Exception:

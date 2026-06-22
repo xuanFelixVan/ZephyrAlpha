@@ -20,8 +20,7 @@ ttl: permanent
 
 | 文件 | 说明 |
 |------|------|
-| architecture_alignment_audit.md | 架构对齐审计报告 — 文档体系全局合规检查（2026-04-25） |
-| ssot-validation-LATEST.md | SSoT 矛盾扫描报告 — frontmatter 字段一致性自动化扫描（2026-05-02） |
+| _(空)_ | 历史报告已删除（architecture_alignment_audit.md 于 2026-06-22 删除，Superseded + 超 TTL；ssot-validation-LATEST.md 从未存在） |
 
 ## 排除规则（不应放入本目录的内容）
 

@@ -2,26 +2,17 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
-
 # [MODULE] zephyr.trading.orchestrator.state.file_task_mapper
-
 # [INVARIANTS] none
-
 # [MODIFY-GUARD] none
-
 # [CONSUMERS]
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
-
 from typing import Self
+
 """
 FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）
 ============================================================
@@ -49,18 +40,19 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.integration.shared_08.io.paths import REPO_ROOT
-from zephyr.shared.task_types import TaskNamespace
+from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection, init_db
 from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.task_types import TaskNamespace
 
 __all__ = [
     "FileTaskMapper",
     "RegisterReport",
-    "SyncReport",
     "SyncInconsistency",
+    "SyncReport",
     "classify_file_to_namespace",
 ]
+
 
 def classify_file_to_namespace(file_path: str) -> TaskNamespace:
     """
@@ -97,12 +89,14 @@ def classify_file_to_namespace(file_path: str) -> TaskNamespace:
 
     return TaskNamespace.OPS
 
+
 @dataclass
 class RegisterReport:
     total: int = 0
     inserted: int = 0
     skipped_existing: int = 0
     errors: list[str] = field(default_factory=list)
+
 
 @dataclass
 class SyncInconsistency:
@@ -113,11 +107,13 @@ class SyncInconsistency:
     task_status: str
     issue: str
 
+
 @dataclass
 class SyncReport:
     checked: int = 0
     consistent: int = 0
     inconsistencies: list[SyncInconsistency] = field(default_factory=list)
+
 
 class FileTaskMapper:
     """

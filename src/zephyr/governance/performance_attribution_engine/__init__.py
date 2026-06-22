@@ -6,9 +6,9 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] 
-# [ERROR_CONTRACT] 
-# [TESTS] 
+# [CONSUMERS]
+# [ERROR_CONTRACT]
+# [TESTS]
 """L07 Post-Trade Analytics
 =====================================
 
@@ -48,10 +48,10 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 from __future__ import annotations
 
 # MIGRATED: from zephyr.ops.analytics_base import (  # removed by TC-7-2
-    # AttributionEngineBase,  # removed by TC-7-2
-    # PerformanceAttributionReport,  # removed by TC-7-2
-    # TCAEngineBase,  # removed by TC-7-2
+# AttributionEngineBase,  # removed by TC-7-2
+# PerformanceAttributionReport,  # removed by TC-7-2
+# TCAEngineBase,  # removed by TC-7-2
 # )  # removed by TC-7-2
-# 
-__all__ = ['AttributionEngineBase', 'PerformanceAttributionReport', 'TCAEngineBase', 'analytics_base']
-# 
+#
+__all__ = ["AttributionEngineBase", "PerformanceAttributionReport", "TCAEngineBase", "analytics_base"]
+#

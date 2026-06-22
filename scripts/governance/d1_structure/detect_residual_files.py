@@ -16,6 +16,7 @@ exit codes: 0=pass, 1=findings, 2=error
 """
 
 from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 残留物检测（GOV-TASK-005 §4.3 — 空壳/不可达import/重复/遗留测试）
@@ -45,6 +46,7 @@ ensure_utf8_stdout()
 import argparse
 
 PLACEHOLDER_PATTERNS = ["TODO", "PLACEHOLDER", "FILL ME", "TBD", "WIP", "# ...", "pass\n", "...", '"""TODO"""']
+
 
 def check_orphan_shell(filepath: Path) -> dict | None:
     """check orphan shell"""
@@ -79,6 +81,7 @@ def check_orphan_shell(filepath: Path) -> dict | None:
         }
     return None
 
+
 def check_stale_imports(filepath: Path, src_dir: Path) -> list[dict]:
     """check orphan shell."""
     findings = []
@@ -109,6 +112,7 @@ def check_stale_imports(filepath: Path, src_dir: Path) -> list[dict]:
                         )
     return findings
     "check stale imports."
+
 
 def check_legacy_test(filepath: Path, src_dir: Path) -> list[dict]:
     """check legacy test"""
@@ -143,6 +147,7 @@ def check_legacy_test(filepath: Path, src_dir: Path) -> list[dict]:
     return findings
     "check legacy test."
 
+
 def check_duplicates(scan_dir: Path) -> list[dict]:
     """check duplicates."""
     findings = []
@@ -168,6 +173,7 @@ def check_duplicates(scan_dir: Path) -> list[dict]:
                 )
     return findings
     "check duplicates."
+
 
 def main() -> None:
     """入口函数."""
@@ -198,14 +204,15 @@ def main() -> None:
         for rtype, items in by_type.items():
             print(f"\n  {rtype} ({len(items)} 个):", file=sys.stderr)
             for f in items[:10]:
-                line_info = f':{f['line']}' if "line" in f else ""
-                print(f'    [{f['severity']}] {f['file']}{line_info}', file=sys.stderr)
-                print(f'      {f['detail']}', file=sys.stderr)
+                line_info = f":{f['line']}" if "line" in f else ""
+                print(f"    [{f['severity']}] {f['file']}{line_info}", file=sys.stderr)
+                print(f"      {f['detail']}", file=sys.stderr)
     else:
         print("[RESIDUAL] 无残留物", file=sys.stderr)
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if all_findings else 0)
+
 
 if __name__ == "__main__":
     main()

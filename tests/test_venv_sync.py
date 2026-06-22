@@ -52,8 +52,11 @@ class TestVenvSyncResult:
     def test_create_result(self) -> None:
         diff = DepDiff(added=[], removed=[], changed=[])
         result = VenvSyncResult(
-            success=True, before_freeze="a==1", after_freeze="a==2",
-            diff=diff, details=["ok"],
+            success=True,
+            before_freeze="a==1",
+            after_freeze="a==2",
+            diff=diff,
+            details=["ok"],
         )
         assert result.success is True
         assert result.before_freeze == "a==1"
@@ -63,7 +66,10 @@ class TestVenvSyncResult:
     def test_result_default_details(self) -> None:
         diff = DepDiff(added=[], removed=[], changed=[])
         result = VenvSyncResult(
-            success=False, before_freeze="", after_freeze="", diff=diff,
+            success=False,
+            before_freeze="",
+            after_freeze="",
+            diff=diff,
         )
         assert result.details == []
 
@@ -177,7 +183,10 @@ class TestSync:
 
     @patch("zephyr.infrastructure.rollback.venv_sync.subprocess.run")
     def test_sync_with_requirements_success(
-        self, mock_run: MagicMock, venv_sync: VenvSync, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        venv_sync: VenvSync,
+        tmp_project: Path,
     ) -> None:
         req_path = tmp_project / "requirements.txt"
         req_path.write_text("requests==2.31.0\n", encoding="utf-8")
@@ -191,7 +200,10 @@ class TestSync:
 
     @patch("zephyr.infrastructure.rollback.venv_sync.subprocess.run")
     def test_sync_pip_install_fails(
-        self, mock_run: MagicMock, venv_sync: VenvSync, tmp_project: Path,
+        self,
+        mock_run: MagicMock,
+        venv_sync: VenvSync,
+        tmp_project: Path,
     ) -> None:
         req_path = tmp_project / "requirements.txt"
         req_path.write_text("bad-package==99.99.99\n", encoding="utf-8")
