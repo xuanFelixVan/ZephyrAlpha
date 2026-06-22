@@ -796,7 +796,7 @@ STEP 1-14 按14步统一流程执行
 ## 统筹AI（你）的职责
 
 ```
-你是统筹AI，负责协调18个功能AI的工作。
+你是统筹AI，负责协调19个功能AI的工作。
 
 ## 你的职责
 1. 基础设施准备: depgraph.db建表 + conftest.py插件 + 静态存活地图
@@ -806,9 +806,12 @@ STEP 1-14 按14步统一流程执行
 5. 进度追踪: 记录18个AI的完成状态
 
 ## 启动顺序
+- 第0波(任务卡修复，必须最先): AI-20 修复F14/F19/F1/F11任务卡+创建F20元任务卡
 - 第1波(无依赖): AI-02, AI-03, AI-04, AI-05, AI-06, AI-08, AI-09, AI-10, AI-16, AI-18, AI-19
 - 第2波(依赖第1波): AI-01, AI-07, AI-11, AI-13, AI-14, AI-15
 - 第3波(依赖第2波): AI-12, AI-17
+
+⚠️ AI-20 必须在第1波之前完成F14/F19任务卡修复，否则AI-14/AI-19执行时源码包范围错误。
 ```
 
 ---
@@ -853,3 +856,126 @@ STEP 1-14 按14步统一流程执行
 每张卡完成后transition(COMPLETED)，全部完成后报告F19整体状态。
 ```
 
+
+
+***
+
+## AI-20: F20 监控系统统一修复
+
+```
+你是AI-20，负责修复"监控系统运行状态"功能的任务卡覆盖缺口。
+
+## 你的元任务卡
+- task_id: DM-201023
+- 功能: F20 监控系统统一修复
+- 源码包: src/zephyr/shared/
+- 蓝图来源: GOV-PHASE-D-F20（跨域修复任务）
+
+## 背景
+全项目扫描发现 96 个监控相关 .py 文件，分散在 6 个域。但任务卡覆盖存在三个缺口：
+1. F14(DM-201014) 源码包写错：只有 integration/，缺失 ops/（32 个监控文件无覆盖）
+2. F19(DM-201019) 范围过窄：只覆盖 infrastructure/system_telemetry/，缺失 infrastructure/ 下其余 12 个监控文件
+3. shared/ 下 16 个监控文件完全无任务卡覆盖
+
+你的任务分两部分：先修复已有任务卡缺口，再创建并执行 F20 详细任务卡。
+
+## 监控文件分布（96 个）
+| 域 | 文件数 | 覆盖状态 |
+|---|:---:|---|
+| src/zephyr/trading/ | 9 | F1覆盖，但未列出 health_monitor/gpu_monitor |
+| src/zephyr/ops/ | 32 | ❌ F14缺失此包 |
+| src/zephyr/integration/ | 11 | F14覆盖 |
+| src/zephyr/infrastructure/ | 21 | ⚠️ F19只覆盖 system_telemetry/ 子目录 |
+| src/zephyr/shared/ | 16 | ❌ 无任务卡 |
+| src/zephyr/autonomy_core/ | 7 | F11覆盖，但未列出监控文件 |
+
+## 阶段A：修复已有任务卡 + 创建 F20 详细任务卡
+
+### A.1 修复 F14 任务卡（增加 ops/ 源码包）
+读取元任务卡:
+  python -c "import sys; sys.path.insert(0,'src'); from zephyr.governance.task_repo import TaskRepository; tr=TaskRepository(); t=tr.get('DM-201014'); print(t.description)"
+
+修复F14的files_in_scope，增加ops/:
+  from zephyr.governance.task_repo import TaskRepository
+  tr = TaskRepository()
+  tr.update('DM-201014', files_in_scope=[
+      "d:/ZephyrAlpha/src/zephyr/integration/",
+      "d:/ZephyrAlpha/src/zephyr/ops/"
+  ])
+  # 验证
+  t = tr.get('DM-201014')
+  print(t.files_in_scope)
+
+### A.2 扩展 F19 任务卡（改为整个 infrastructure/ 域）
+  tr.update('DM-201019', files_in_scope=[
+      "d:/ZephyrAlpha/src/zephyr/infrastructure/"
+  ])
+  # 验证
+  t = tr.get('DM-201019')
+  print(t.files_in_scope)
+
+### A.3 补充 F1 任务卡（子系统清单增加监控组件）
+  t = tr.get('DM-201001')
+  new_desc = t.description + "\n监控子系统: health_monitor + gpu_monitor + ide_health_daemon + agent_health_monitor + blueprint_health"
+  tr.update('DM-201001', description=new_desc)
+
+### A.4 补充 F11 任务卡（子系统清单增加监控组件）
+  t = tr.get('DM-201011')
+  new_desc = t.description + "\n监控子系统: agent_observability + context_health_score + poisoning_monitor + skill_observability + skill_telemetry + system_snapshot"
+  tr.update('DM-201011', description=new_desc)
+
+### A.5 创建 F20 详细任务卡
+按14步工作流拆分详细任务卡（序号从201231开始）:
+  - DM-201231: shared/health.py + healthcheck_service.py 恢复
+  - DM-201232: shared/longevity_monitor.py + maintenance/autonomy_monitor.py 恢复
+  - DM-201233: shared/metrics.py + observability_02/ 恢复
+  - DM-201234: shared/quality/quality_monitor.py + sla/sla_monitor.py 恢复
+  - DM-201235: shared/contracts/ 下4个telemetry契约恢复
+  - DM-201236: 蓝图更新+三方对齐+索引更新
+
+用TaskRepository.create(task, allow_direct_create=True)创建每张卡
+
+## 阶段B：审查任务卡
+逐张审查: 模板字段(18项) + 粒度门禁(deliverables≤1/files_in_scope≤3) + 依赖顺序 + 描述结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+STEP 1  读蓝图: Grep "shared" docs/03_modules/ 找共享层蓝图
+STEP 2  全量定位: Glob src/zephyr/shared/**/*.py，筛选16个监控文件:
+        - shared/health.py, shared/healthcheck_service.py
+        - shared/longevity_monitor.py, shared/maintenance/autonomy_monitor.py
+        - shared/metrics.py
+        - shared/observability_02/health.py, health_discovery.py, metrics.py
+        - shared/quality/quality_monitor.py
+        - shared/shared_services/observability_02/health.py, metrics.py
+        - shared/sla/sla_monitor.py
+        - shared/contracts/core/telemetry_emitter.py
+        - shared/contracts/market/factor_monitor_report.py
+        - shared/contracts/risk/risk_dashboard_snapshot.py, risk_metrics.py
+STEP 3  归属裁定: 判断 observability_02/ 与 shared_services/observability_02/ 是否重复（RULE-THREE）
+STEP 4  蓝图设计: 设计 shared/ 监控组件的依赖关系+启动方式
+STEP 5  位置校验: extract_depgraph.py --modules 查 shared/ 域归属
+STEP 6  修复断链: python -c "import zephyr.shared.health" 逐模块验证
+STEP 7  补全头部: 补全[BLUEPRINT]/[MODULE]/[INVARIANTS]等十字段
+STEP 8  运行测试: python -m pytest tests/ -k "shared or health or monitor" -v
+STEP 9  修复失败: 修复失败测试直到通过
+STEP 10 红蓝对抗: 测试健康探针失效、监控数据篡改、SLA违规未告警
+STEP 11 更新蓝图: 更新shared/蓝图frontmatter
+STEP 12 三方对齐: diagnose_depgraph.py + 蓝图↔代码 + 代码头部↔引用
+STEP 13 更新索引: 更新 shared/__init__.py 导出
+STEP 14 报告: 报告F20恢复状态 + F14/F19/F1/F11任务卡修复确认
+
+## 完成标准
+1. F14 任务卡 files_in_scope 包含 integration/ + ops/
+2. F19 任务卡 files_in_scope 包含整个 infrastructure/
+3. F1 任务卡 description 包含监控子系统清单
+4. F11 任务卡 description 包含监控子系统清单
+5. F20 详细任务卡已创建并通过审查
+6. F20 任务卡已执行完成（shared/ 16个监控文件恢复）
+7. 三方对齐 PASS
+
+每张卡完成后transition(COMPLETED)，全部完成后向统筹AI报告F20整体状态+其他任务卡修复确认。
+```

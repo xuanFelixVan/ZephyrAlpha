@@ -26,11 +26,22 @@ models:
     latency_budget_ms: 30
     tags: [english, multilingual, lightweight]
 
+  - name: paraphrase-multilingual-MiniLM-L12-v2
+    dimension: 384
+    provider: sentence-transformers
+    max_length: 512
+    default: true
+    description: "Multilingual 50+ language model, 384d, used for COLD collections (blueprints/session_snapshots/execution_traces)"
+    runtime_plane: cold
+    latency_budget_ms: 50
+    local_path: "data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2"
+    tags: [multilingual, retrieval, lightweight, cold-path]
+
   - name: bge-small-zh
     dimension: 512
     provider: BAAI
     max_length: 512
-    default: true
+    default: false
     description: "BGE small Chinese model, optimized for Chinese text retrieval"
     runtime_plane: cold
     latency_budget_ms: 50
@@ -41,10 +52,11 @@ models:
     provider: BAAI
     max_length: 8192
     default: false
-    description: "BGE M3 multilingual model, supports dense/sparse/colbert"
+    description: "BGE M3 multilingual model, supports dense/sparse/colbert, used for HOT collections"
     runtime_plane: cold
     latency_budget_ms: 100
-    tags: [multilingual, retrieval, dense-sparse]
+    local_path: "data/models/local_model/bge-m3"
+    tags: [multilingual, retrieval, dense-sparse, hot-path]
 
   - name: text2vec-base-chinese
     dimension: 768
@@ -58,15 +70,18 @@ models:
 
 selection_rules:
   - priority: 1
-    condition: "input_language == 'zh' and not multilingual_required and latency_budget_ms < 80"
-    recommended: "bge-small-zh"
+    condition: "collection in ['blueprints','session_snapshots','execution_traces']"
+    recommended: "paraphrase-multilingual-MiniLM-L12-v2"
   - priority: 2
-    condition: "input_language != 'zh' or multilingual_required == true"
+    condition: "collection in ['decisions','code_context','lessons','knowledge','rules']"
     recommended: "bge-m3"
   - priority: 3
+    condition: "input_language == 'zh' and not multilingual_required and latency_budget_ms < 80"
+    recommended: "bge-small-zh"
+  - priority: 4
     condition: "dimension_budget <= 768 and general_purpose == true"
     recommended: "text2vec-base-chinese"
-  - priority: 4
+  - priority: 5
     condition: "input_language == 'en' and latency_budget_ms < 50"
     recommended: "all-MiniLM-L6-v2"
 

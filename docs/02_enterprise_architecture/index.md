@@ -44,7 +44,8 @@ title: 02 Enterprise Architecture
 | 子目录 | 说明 | 入口 | 轨道 |
 |--------|------|------|:---:|
 | `target_architecture/` | 目标架构视图（TOGAF 10 + 2 正交 + YAML SSoT + 图表） | [target_architecture/index.md](target_architecture/index.md) | 人 + 机 |
-| `archive/` | 归档文档（阶段4搬家对齐方案、全景图健康度报告、域归并映射等） | — | 人类视图 |
+
+> `archive/` 目录已于 2026-06-23 物理删除（DM-200908）。历史文档价值已提取至 `architecture_upgrade_discussion.md` §二十六 和 `project_memory.md` Lessons Learned。
 
 > `designs/` 和 `by-domain/` 目录已于 2026-05-03 物理删除（僵尸目录——索引已移除引用但物理目录未删，现已彻底清除）。
 >
