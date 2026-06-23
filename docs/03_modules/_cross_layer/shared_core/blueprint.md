@@ -4,20 +4,20 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.18.0"
+version: "0.19.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-03"
-last_updated: "2026-05-17"
+last_updated: "2026-06-23"
 valid_from: "2026-05-03"
 ttl: permanent
 construction_progress: completed
 actual_disk_path: "src/zephyr/shared/ + src/zephyr/core/"
 belongs_to: "MOD-MASTER-001"
-summary: "跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现)"
+summary: "跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现) + F20 监控系统恢复(16文件: health/longevity/metrics/observability/quality/sla/contracts)"
 tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.17.0]
 priority: P0
 runtime_plane: hot
@@ -81,6 +81,17 @@ depends_on:
 | 1 | shared/ (215 files) | §2 | 跨层共享基础设施 | 已实现 | |
 | 2 | core/ (60 files) | §3 | 核心模块 | 已实现 | |
 | 3 | shared/infra/process_lifecycle_gateway.py | §2.10 | 进程生命周期统一入口网关 | 已实现 | |
+| 4 | shared/health.py + healthcheck_service.py | §2.7 | 健康监控服务(F20恢复) | 已实现 | |
+| 5 | shared/longevity_monitor.py | §2.7 | 长寿监控(F20恢复) | 已实现 | |
+| 6 | shared/metrics.py | §2.8 | 指标收集(F20恢复) | 已实现 | |
+| 7 | shared/observability_02/ (health/health_discovery/metrics) | §2.7 | 可观测性子模块(F20恢复) | 已实现 | |
+| 8 | shared/shared_services/observability_02/ (health/metrics) | §2.7 | 可观测性代理(F20恢复) | 已实现 | |
+| 9 | shared/quality/quality_monitor.py | §2.7 | 质量监控代理(F20恢复) | 已实现 | |
+| 10 | shared/sla/sla_monitor.py | §2.7 | SLA监控代理(F20恢复) | 已实现 | |
+| 11 | shared/maintenance/autonomy_monitor.py | §2.7 | 自治监控(F20恢复) | 已实现 | |
+| 12 | shared/contracts/core/telemetry_emitter.py | §2.1 | 遥测契约(F20恢复) | 已实现 | |
+| 13 | shared/contracts/market/factor_monitor_report.py | §2.1 | 因子监控报告契约(F20恢复) | 已实现 | |
+| 14 | shared/contracts/risk/ (risk_dashboard_snapshot/risk_metrics) | §2.1 | 风险监控契约(F20恢复) | 已实现 | |
 
 ### §0.2 对齐验证矩阵
 
@@ -99,6 +110,7 @@ depends_on:
 | 蓝图版本 | 代码覆盖范围 | 状态 |
 |---------|------------|:---:|
 | v0.17.0 | 115 已跟踪文件 + 109 shared子目录 + 53 core子目录 | ✅ |
+| v0.19.0 | F20 监控系统恢复: 16个shared/监控文件补全11字段头部 + shim目标路径修复 | ✅ |
 
 ---
 
