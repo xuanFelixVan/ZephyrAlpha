@@ -200,10 +200,13 @@ def generate_dependency_diagram(domain_id: str, conn: sqlite3.Connection) -> str
 def main() -> None:
     """入口：生成域全景依赖图。"""
     parser = argparse.ArgumentParser(description="G3: 生成域全景依赖图(.mmd)")
-    parser.add_argument("domain_id", type=str, help="域ID (如 D-TRADING)")
+    parser.add_argument("domain_id", type=str, nargs="?", default=None, help="域ID (如 D-TRADING)。--all 模式下可省略")
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
     parser.add_argument("--all", action="store_true", help="生成所有域的依赖图")
     args = parser.parse_args()
+
+    if not args.all and not args.domain_id:
+        parser.error("domain_id 是必填参数（除非使用 --all）")
 
     if not DEPGRAPH_DB.exists():
         print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)

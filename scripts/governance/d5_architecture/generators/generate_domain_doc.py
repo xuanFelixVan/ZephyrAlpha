@@ -133,13 +133,13 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection) -> str:
     lines = []
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
     lines.append("---")
-    lines.append(f"doc_type: domain_architecture_doc")
+    lines.append("doc_type: domain_architecture_doc")
     lines.append(f"title: {domain_id} {info['domain_name']}架构文档")
-    lines.append(f"version: \"1.0\"")
-    lines.append(f"status: active")
+    lines.append("version: \"1.0\"")
+    lines.append("status: active")
     lines.append(f"date: {now.split()[0]}")
-    lines.append(f"owner: auto-generator")
-    lines.append(f"ttl: permanent")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
     lines.append(f"# {domain_id} {info['domain_name']}架构文档")
@@ -227,10 +227,13 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection) -> str:
 def main() -> None:
     """入口：生成指定域的 MD 文档。"""
     parser = argparse.ArgumentParser(description="G2: 生成域架构文档")
-    parser.add_argument("domain_id", type=str, help="域ID (如 D-TRADING)")
+    parser.add_argument("domain_id", type=str, nargs="?", default=None, help="域ID (如 D-TRADING)。--all 模式下可省略")
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
     parser.add_argument("--all", action="store_true", help="生成所有域的文档")
     args = parser.parse_args()
+
+    if not args.all and not args.domain_id:
+        parser.error("domain_id 是必填参数（除非使用 --all）")
 
     if not DEPGRAPH_DB.exists():
         print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)

@@ -1,0 +1,1310 @@
+%% D-GOVERNANCE 域全景依赖图
+%% 生成时间: 2026-06-23 13:28:38
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 4289, 依赖边数: 6306
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_GOVERNANCE[lifecycle_management]
+        01_跨域交叉点_vs_29_D_GOVERNANCE_D_GOV_11["01-跨域交叉点 vs 29-D-GOVERNANCE/D-GOV-11 [design]"]
+        D_GOVERNANCE_45_Capability_List_45项能力清单["D-GOVERNANCE/45 Capability List 45项能力清单 [design]"]
+        D_GOVERNANCE_5_Drift_Detection_5类漂移检测["D-GOVERNANCE/5 Drift Detection 5类漂移检测 [design]"]
+        D_GOVERNANCE_A2A_Failure_Escalation_A2A失败升级["...RNANCE/A2A Failure Escalation A2A失败升级 [design]"]
+        D_GOVERNANCE_A2A_Gateway_Policy_Engine_A2A检查网关策略引擎["...A2A Gateway Policy Engine A2A检查网关策略引擎 [design]"]
+        D_GOVERNANCE_A2A_Iron_Law_A2A铁律["D-GOVERNANCE/A2A Iron Law A2A铁律 [design]"]
+        D_GOVERNANCE_A2A_Protocol_Governance_Auditor_A2A协议治理审计器["...rotocol Governance Auditor A2A协议治理审计器 [design]"]
+        D_GOVERNANCE_A2A_Protocol_Governance_Contracts_A2A协议治理契约["...otocol Governance Contracts A2A协议治理契约 [design]"]
+        D_GOVERNANCE_A2A_Protocol_Phase_Hold_A2A协议阶段保持["...NCE/A2A Protocol Phase Hold A2A协议阶段保持 [design]"]
+        D_GOVERNANCE_ACO多路径依赖搜索器_ACOMultiPathDependencySearcher["...径依赖搜索器 ACOMultiPathDependencySearcher [design]"]
+        D_GOVERNANCE_ADR_Decision_Tracking_ADR决策追踪["...ERNANCE/ADR Decision Tracking ADR决策追踪 [design]"]
+        D_GOVERNANCE_ADR_Generation_ADR架构决策记录自动生成["...VERNANCE/ADR Generation ADR架构决策记录自动生成 [design]"]
+        D_GOVERNANCE_ADR_Generation_ADR生成["D-GOVERNANCE/ADR Generation ADR生成 [design]"]
+        D_GOVERNANCE_ADR_Simulation_ADR仿真["D-GOVERNANCE/ADR Simulation ADR仿真 [design]"]
+        D_GOVERNANCE_ADR传播_多ADR交互_回溯_变更仿真等["D-GOVERNANCE/ADR传播/多ADR交互/回溯/变更仿真等 [design]"]
+        D_GOVERNANCE_ADR解析_约束提取_双向关联_校验_推演等["D-GOVERNANCE/ADR解析/约束提取/双向关联/校验/推演等 [design]"]
+        D_GOVERNANCE_AI_Autonomy_Boundary_AI自治边界["D-GOVERNANCE/AI Autonomy Boundary AI自治边界 [design]"]
+        D_GOVERNANCE_AI_Autonomy_Boundary_Manager_AI自治边界管理器["...I Autonomy Boundary Manager AI自治边界管理器 [design]"]
+        D_GOVERNANCE_AI_Code_Review_AI代码审查["D-GOVERNANCE/AI Code Review AI代码审查 [design]"]
+        D_GOVERNANCE_AI_Code_Standards_AI代码标准["D-GOVERNANCE/AI Code Standards AI代码标准 [design]"]
+        D_GOVERNANCE_AI_Construction_Governor_AI施工治理器["...ANCE/AI Construction Governor AI施工治理器 [design]"]
+        D_GOVERNANCE_AI_Ethics_Statement_AI伦理声明["D-GOVERNANCE/AI Ethics Statement AI伦理声明 [design]"]
+        D_GOVERNANCE_AI_Hallucination_Detection_AI幻觉检测["...NCE/AI Hallucination Detection AI幻觉检测 [design]"]
+        D_GOVERNANCE_AI_Self_Diagnosis_AI自诊断监督["D-GOVERNANCE/AI Self Diagnosis AI自诊断监督 [design]"]
+        D_GOVERNANCE_AIConstructionGovernor_AI建设治理器["...RNANCE/AIConstructionGovernor AI建设治理器 [design]"]
+        D_GOVERNANCE_AI模型能力持续提升["D-GOVERNANCE/AI模型能力持续提升 [design]"]
+        D_GOVERNANCE_AI治理框架_AI_Governance_Framework["...RNANCE/AI治理框架 AI Governance Framework [design]"]
+        D_GOVERNANCE_AI生成策略合规["D-GOVERNANCE/AI生成策略合规 [design]"]
+        D_GOVERNANCE_ALPHA_SIGNAL_DOMAIN_001_Alpha信号域标识["...CE/ALPHA-SIGNAL-DOMAIN-001 Alpha信号域标识 [design]"]
+        D_GOVERNANCE_API_Dependency_API依赖["D-GOVERNANCE/API Dependency API依赖 [design]"]
+        D_GOVERNANCE_AST_Call_Graph_AST调用图["D-GOVERNANCE/AST Call Graph AST调用图 [design]"]
+        D_GOVERNANCE_AST_Call_Graph_Generator_AST调用图生成器["...CE/AST Call Graph Generator AST调用图生成器 [design]"]
+        D_GOVERNANCE_AST解析_调用图_膨胀检测_清理_可视化等["D-GOVERNANCE/AST解析/调用图/膨胀检测/清理/可视化等 [design]"]
+        D_GOVERNANCE_AaC_Compiler_AaC编译器["D-GOVERNANCE/AaC Compiler AaC编译器 [design]"]
+        D_GOVERNANCE_AaC_DSL_约束定义_漂移检测_修复_CI集成等["D-GOVERNANCE/AaC DSL/约束定义/漂移检测/修复/CI集成等 [design]"]
+        D_GOVERNANCE_AaC_DSL编译_CI门禁_漂移_修复_报告等["D-GOVERNANCE/AaC DSL编译/CI门禁/漂移/修复/报告等 [design]"]
+        D_GOVERNANCE_Activation_Phase_Set_激活阶段集["D-GOVERNANCE/Activation Phase Set 激活阶段集 [design]"]
+        D_GOVERNANCE_Administrator_管理员角色["D-GOVERNANCE/Administrator 管理员角色 [design]"]
+        D_GOVERNANCE_Admission_Response_准入响应["D-GOVERNANCE/Admission Response 准入响应 [design]"]
+        D_GOVERNANCE_Adoption_Curve_Modeler_采纳曲线建模器["...RNANCE/Adoption Curve Modeler 采纳曲线建模器 [design]"]
+        D_GOVERNANCE_Agent_Debate_Agent辩论机制["D-GOVERNANCE/Agent Debate Agent辩论机制 [design]"]
+        D_GOVERNANCE_Agent_Hard_Boundary_Agent硬边界["...VERNANCE/Agent Hard Boundary Agent硬边界 [design]"]
+        D_GOVERNANCE_Agent_OS_Policy_Engine_Agent_OS策略引擎["...E/Agent OS Policy Engine Agent OS策略引擎 [design]"]
+        D_GOVERNANCE_Agent_RBAC_Approver_Check_Agent_RBAC审批人检查["...t RBAC Approver Check Agent RBAC审批人检查 [design]"]
+        D_GOVERNANCE_Agent_RBAC_Govern___s_Contracts_Agent_RBAC治理桥契约["...nce Bridges Contracts Agent RBAC治理桥契约 [design]"]
+        D_GOVERNANCE_Agentic_Drift_Protection_Agentic_Drift防护["...ntic Drift Protection Agentic Drift防护 [design]"]
+        D_GOVERNANCE_Agentic_Regulator四层治理框架["D-GOVERNANCE/Agentic Regulator四层治理框架 [design]"]
+        D_GOVERNANCE_Agent架构_Agent_Architecture["D-GOVERNANCE/Agent架构 Agent Architecture [design]"]
+        D_GOVERNANCE_Agent集群_Agent_Cluster_MARL["D-GOVERNANCE/Agent集群 Agent Cluster MARL [design]"]
+        D_GOVERNANCE_Approval_Escalation_审批升级["D-GOVERNANCE/Approval Escalation 审批升级 [design]"]
+        D_GOVERNANCE_Architecture_Contracts_架构契约["D-GOVERNANCE/Architecture Contracts 架构契约 [design]"]
+        D_GOVERNANCE_Architecture_Drift_Detection_架构漂移检测与纠正闭环["...hitecture Drift Detection 架构漂移检测与纠正闭环 [design]"]
+        D_GOVERNANCE_Architecture_Principles_架构原则定义["...RNANCE/Architecture Principles 架构原则定义 [design]"]
+        D_GOVERNANCE_Architecture_Tech_Debt_Tracker_架构技术债追踪器["...chitecture Tech Debt Tracker 架构技术债追踪器 [design]"]
+        D_GOVERNANCE_Architecture_Test_Suite_架构测试套件["...RNANCE/Architecture Test Suite 架构测试套件 [design]"]
+        D_GOVERNANCE_Architecture_as_Code_Engine_架构即代码引擎["...E/Architecture as Code Engine 架构即代码引擎 [design]"]
+        D_GOVERNANCE_Architecture_as_Code_架构即代码["D-GOVERNANCE/Architecture as Code 架构即代码 [design]"]
+        D_GOVERNANCE_ArchitectureGovernance_架构治理["D-GOVERNANCE/ArchitectureGovernance 架构治理 [design]"]
+        D_GOVERNANCE_Audit_&_Compliance_Traceability_审计与合规追溯["...dit & Compliance Traceability 审计与合规追溯 [design]"]
+        D_GOVERNANCE_Audit_Chain_Domain_审计链域["D-GOVERNANCE/Audit Chain Domain 审计链域 [design]"]
+        D_GOVERNANCE_Audit_Engine_审计引擎["D-GOVERNANCE/Audit Engine 审计引擎 [design]"]
+        D_GOVERNANCE_Audit_Integrity_Verifier_审计完整性验证器["...NCE/Audit Integrity Verifier 审计完整性验证器 [design]"]
+        D_GOVERNANCE_Audit_Log_Immutable_审计日志不可篡改["...VERNANCE/Audit Log Immutable 审计日志不可篡改 [design]"]
+        D_GOVERNANCE_Audit_Log_Non_Tamperable_审计日志不可篡改["...NCE/Audit Log Non-Tamperable 审计日志不可篡改 [design]"]
+        D_GOVERNANCE_Audit_Log_Non_Tamperable_审计日志不可篡改删除["...E/Audit Log Non-Tamperable 审计日志不可篡改删除 [design]"]
+        D_GOVERNANCE_Audit_Orchestrator_审计编排器["D-GOVERNANCE/Audit Orchestrator 审计编排器 [design]"]
+        D_GOVERNANCE_AuditContext_Cons____Interface_AuditContext消费接口["...t Consumer Interface AuditContext消费接口 [design]"]
+        D_GOVERNANCE_AuditContext_审计上下文接口["D-GOVERNANCE/AuditContext 审计上下文接口 [design]"]
+        D_GOVERNANCE_AuditContextUpdate_审计上下文更新["D-GOVERNANCE/AuditContextUpdate 审计上下文更新 [design]"]
+        D_GOVERNANCE_AuditLedger_审计账本["D-GOVERNANCE/AuditLedger 审计账本 [design]"]
+        D_GOVERNANCE_AuditQuery_审计查询["D-GOVERNANCE/AuditQuery 审计查询 [design]"]
+        D_GOVERNANCE_A股T+1制度不变["D-GOVERNANCE/A股T+1制度不变 [design]"]
+        D_GOVERNANCE_Behavioral_Auditor_行为审计器["D-GOVERNANCE/Behavioral Auditor 行为审计器 [design]"]
+        D_GOVERNANCE_Benchmark_Integrity_基准完整性["D-GOVERNANCE/Benchmark Integrity 基准完整性 [design]"]
+        D_GOVERNANCE_Blueprint_Code_Do____Way_Alignment_蓝图_代码_文档三方对齐["...ment Three Way Alignment 蓝图-代码-文档三方对齐 [design]"]
+        D_GOVERNANCE_Blueprint_Code_Do___ay_Alignment_蓝图_代码_文档三方对齐机制["...nt Three Way Alignment 蓝图-代码-文档三方对齐机制 [design]"]
+        D_GOVERNANCE_Blueprint_Code_Traceability_蓝图_代码追溯["...E/Blueprint-Code Traceability 蓝图-代码追溯 [design]"]
+        D_GOVERNANCE_Blueprint_Code_Do___ay_Alignment_蓝图_代码_文档三方必须对齐["...oc Three-Way Alignment 蓝图-代码-文档三方必须对齐 [design]"]
+        D_GOVERNANCE_Broker_Resilience_Broker韧性["D-GOVERNANCE/Broker Resilience Broker韧性 [design]"]
+        D_GOVERNANCE_Budget_Handler_预算处理["D-GOVERNANCE/Budget Handler 预算处理 [design]"]
+        D_GOVERNANCE_Budget_Tracker_预算追踪["D-GOVERNANCE/Budget Tracker 预算追踪 [design]"]
+        D_GOVERNANCE_Business_Capability_Module_Mapper_业务能力_模块映射器["...s Capability-Module Mapper 业务能力-模块映射器 [design]"]
+        D_GOVERNANCE_BusinessCapabilityMapper_业务能力映射器["...ANCE/BusinessCapabilityMapper 业务能力映射器 [design]"]
+        D_GOVERNANCE_CFA_Institute两层治理框架["D-GOVERNANCE/CFA Institute两层治理框架 [design]"]
+        D_GOVERNANCE_CQRS_ES_Modeling_CQRS_ES建模["D-GOVERNANCE/CQRS/ES Modeling CQRS/ES建模 [design]"]
+        D_GOVERNANCE_CTR_P1_009_Governance_Contract_CTR_P1_009治理架构契约["... Governance Contract CTR-P1-009治理架构契约 [design]"]
+        D_GOVERNANCE_CTR_P1_012_ComplianceRule_合规规则["...RNANCE/CTR-P1-012 ComplianceRule 合规规则 [design]"]
+        D_GOVERNANCE_Captide_对冲基金AI平台["D-GOVERNANCE/Captide 对冲基金AI平台 [design]"]
+        D_GOVERNANCE_Causal_Conflict_Detector_因果冲突检测器["...ANCE/Causal Conflict Detector 因果冲突检测器 [design]"]
+        D_GOVERNANCE_Cedar_Cedar策略语言["D-GOVERNANCE/Cedar Cedar策略语言 [design]"]
+        D_GOVERNANCE_Change_Approval_Chain_Not_Bypassable_变更审批链不可被绕过["...roval Chain Not Bypassable 变更审批链不可被绕过 [design]"]
+        D_GOVERNANCE_Change_Approval_Flow_变更审批流["D-GOVERNANCE/Change Approval Flow 变更审批流 [design]"]
+        D_GOVERNANCE_Change_Impact_Analyzer_变更影响分析器["...RNANCE/Change Impact Analyzer 变更影响分析器 [design]"]
+        D_GOVERNANCE_Change_Shock_Radius_Predictor_变更冲击半径预测器["...ange Shock Radius Predictor 变更冲击半径预测器 [design]"]
+        D_GOVERNANCE_Check_Threeway_Alignment_检查三对齐["...RNANCE/Check Threeway Alignment 检查三对齐 [design]"]
+        D_GOVERNANCE_Closed_Loop_Rule_闭环规则["D-GOVERNANCE/Closed-Loop Rule 闭环规则 [design]"]
+        D_GOVERNANCE_Code_Dedup_Engine_代码去重引擎["D-GOVERNANCE/Code Dedup Engine 代码去重引擎 [design]"]
+        D_GOVERNANCE_CogAlpha["D-GOVERNANCE/CogAlpha [design]"]
+        D_GOVERNANCE_Compliance_Scripts_合规脚本["D-GOVERNANCE/Compliance Scripts 合规脚本 [design]"]
+        D_GOVERNANCE_ComplianceAudit_合规审计["D-GOVERNANCE/ComplianceAudit 合规审计 [design]"]
+        %% ... 还有 4189 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_governance_adapter_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_adversarial_tester_py -->|import_depends| src_zephyr_governance_ipi_defense_py
+    src_zephyr_governance_adversarial_tester_py -->|import_depends| src_zephyr_governance_stream_abort_guard_py
+    src_zephyr_governance_adversarial_tester_py -->|import_depends| src_zephyr_governance_budget_engine_py
+    src_zephyr_governance_adversarial_tester_py -->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_a2a_failure_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_analytics_base_py -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    src_zephyr_governance_akshare_provider_py -->|import_depends| src_zephyr_governance_provider_base_py
+    src_zephyr_governance_audit_schema_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_batch_ingest_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_budget_engine_py -->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_budget_tracker_py -->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_burn_rate_monitor_py -->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_budget_handler_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_classifier_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_cli_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_compliance_manager_py -->|import_depends| src_zephyr_governance_compliance_rule_py
+    src_zephyr_governance_cost_attributor_py -->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_dashboard_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_database_manager_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_database_manager_py -->|import_depends| src_zephyr_governance_persistence_query_metrics_py
+    src_zephyr_governance_default_attribution_engine_py -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    src_zephyr_governance_decision_fatigue_cli_py -->|import_depends| src_zephyr_governance_decision_fatigue_py
+    src_zephyr_governance_default_security_gateway_py -->|import_depends| src_zephyr_governance_security_gateway_base_py
+    src_zephyr_governance_default_security_gateway_py -->|import_depends| src_zephyr_governance_aisg_sandbox_py
+    src_zephyr_governance_default_quality_gate_py -->|import_depends| src_zephyr_governance_quality_gate_py
+    src_zephyr_governance_delegation_engine_py -->|import_depends| src_zephyr_governance_escalation_models_py
+    src_zephyr_governance_degradation_manager_py -->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_dlq_retry_policy_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_escalation_engine_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_event_store_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_escalation_smoke_tests_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_finding_ingest_py -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
+    src_zephyr_governance_gate_event_adapter_py -->|import_depends| src_zephyr_governance_persistence_event_store_py
+    src_zephyr_governance_gate_event_adapter_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_ingest_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_index_generator_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_lifecycle_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_memory_provider_py -->|import_depends| src_zephyr_governance_provider_base_py
+    src_zephyr_governance_model_provider_data_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_model_router_py -->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_momentum_factor_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_olap_engine_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| src_zephyr_governance_audit_orchestrator_query_py
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    src_zephyr_governance_phase_manager_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_policy_tree_validator_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_pre_flight_gate_py -->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_pre_flight_gate_py -->|import_depends| src_zephyr_governance_budget_engine_py
+    src_zephyr_governance_projection_engine_py -->|import_depends| src_zephyr_governance_persistence_event_store_py
+    src_zephyr_governance_projection_engine_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_query_py -->|import_depends| src_zephyr_governance_persistence_base_repo_py
+    src_zephyr_governance_query_metrics_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_reconciler_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_registry_adapter_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_rollback_integration_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_rollback_executor_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_scanner_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_security_gateway_base_py -->|import_depends| src_zephyr_governance_compliance_rule_py
+    src_zephyr_governance_self_benchmark_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_self_test_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_snapshot_manager_py -->|import_depends| src_zephyr_governance_persistence_event_store_py
+    src_zephyr_governance_snapshot_manager_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_sqlite_dumper_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_strategy_registry_py -->|import_depends| src_zephyr_governance_strategy_base_py
+    src_zephyr_governance_task_repo_py -->|import_depends| src_zephyr_governance_sqlite_schema_py
+    src_zephyr_governance_task_repo_py -->|import_depends| src_zephyr_governance_event_store_py
+    src_zephyr_governance_task_repo_py -->|import_depends| src_zephyr_governance_projection_engine_py
+    src_zephyr_governance_task_repo_py -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    src_zephyr_governance_transition_py -->|import_depends| src_zephyr_governance_persistence_base_repo_py
+    src_zephyr_governance_transition_py -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    src_zephyr_governance_triage_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_value_factor_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance__core_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance__delegation_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance__service_registration_py -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    src_zephyr_governance__service_registration_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance__service_registration_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance__safety_py -->|import_depends| src_zephyr_governance___init___py
+    %% ... 还有 2367 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-GOVERNANCE (10 条)
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_GOVERNANCE_alignment_check_py_三方对齐检查
+    D_ALT_DATA[D-ALT_DATA] -->|event| D_GOVERNANCE_M6_业务_模块映射
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_GOVERNANCE_SecurityScanCompleted_安全扫描完成
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_GOVERNANCE_M4_已管理_Managed
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_GOVERNANCE_GovernancePolicy_治理策略
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_GOVERNANCE_Vibe_Coding_Governance_Vibe_Coding治理
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_GOVERNANCE_ICFDT_AI治理报告
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_GOVERNANCE_ACO多路径依赖搜索器_ACOMultiPathDependencySearcher
+    D_ALT_DATA[D-ALT_DATA] -->|config_depends| D_GOVERNANCE_文档完整性校验_Documentation_Completeness_Validation
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_GOVERNANCE_Multi_Model_Consensus_多模型共识归档
+    %% D-AUTONOMY_CORE -> D-GOVERNANCE (45 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|import_depends| src_zephyr_governance___init___py
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|import_depends| src_zephyr_governance___init___py
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_AuditContext_Cons____Interface_AuditContext消费接口
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_环路检测_死锁预测_循环消除_条件___imination_Condition_Solving
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_Governance_Three____理三层边界Policy_Factory_Runtime
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_GOVERNANCE_系统复杂性_System_Complexity
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_Audit_Log_Immutable_审计日志不可篡改
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_Dependency_Amplification_Analyzer_依赖放大效应分析器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_rule_lifecycle_py_规则生命周期
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_依赖效果类型检查器_DependencyEffectTypeChecker
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_D_GOV_16~26_Dependency_Semantic_Series_依赖语义系列
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_GovernancePolicy_治理策略
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_governance_report_py_治理状态报告
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_Audit_Orchestrator_审计编排器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_GD_01_治理分三层
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_SPOF_Checker_单点故障检测器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_Singapore_IMDA_新加坡IMDA
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_GAT变更影响预测器_GATChangeImpactPredictor
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_渐进式全球扩展_Progressive_Global_Expansion
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_Phase_3_变更审批L4_L5激活
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_ComplianceChecker_合规检查器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_OPA_Rego_Policy_Engine_OPA_Rego策略引擎
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_GOVERNANCE_Phase_1_变更审批L1_L3激活
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_GOVERNANCE_E_0093_合规域→治理域依赖
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_GOVERNANCE_PermissionGuard_权限守卫接口
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_GOVERNANCE_Gartner_Agentic_AI失败率预测
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_路径索引_子图同构_GNN_传播概率等
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_GOVERNANCE_Agent_RBAC_Approver_Check_Agent_RBAC审批人检查
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_GOVERNANCE_A2A_Protocol_Phase_Hold_A2A协议阶段保持
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_GOVERNANCE_Governance_Automation_治理自动化
+    %% D-BEHAVIORAL_AUDIT -> D-GOVERNANCE (3 条)
+    D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
+    D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    %% D-COMPLIANCE -> D-GOVERNANCE (142 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_evidence_pack_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_aisg_sandbox_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_compliance_manager_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_default_security_gateway_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_security_gateway_base_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_orchestrator___init___py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_contracts_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_anomaly_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_drift_bridge_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_tr___es_tiered_storage_bridge_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_trust_bridge_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_feedback_bridge_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_tr___ridges_delegation_bridge_py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_behavioral_admission___init___py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_compliance_gate_a6___init___py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_implementations___init___py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_semantic_auditor___init___py
+    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_zero_knowledge_audit_stub___init___py
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| docs_03_modules__alpha_signal_domain_blueprint_md
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_Runtime层_Runtime_Layer
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_GOVERNANCE_AST_Call_Graph_Generator_AST调用图生成器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_GOVERNANCE_Santander机械执行vs文本治理
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_放大热点识别器_AmplificationHotspotIdentifier
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_PermissionGuard_权限守卫接口
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_FrontendGovernanceEvent_前端治理事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_Developer_Portal_开发者门户
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_Dependency_Change_Log_模块依赖变更日志
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_命令侧_查询侧_冲突检测_聚合边界验证_Aggregator_Command_Query
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_TiMi
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_GOVERNANCE_Reporting_Review_Attribution_报告_复盘_归因
+    %% D-CROSS_ASSET -> D-GOVERNANCE (6 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_GOVERNANCE_Rollback_Governance_Auditor_回滚治理审计器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_GOVERNANCE_治理_任务解耦_Santander
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_GOVERNANCE_依赖会话类型验证器_DependencySessionTypeValidator
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_GOVERNANCE_drift_scan_py_漂移扫描
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_GOVERNANCE_CogAlpha
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_GOVERNANCE_D5_Architecture_Validators_D5架构验证器
+    %% D-DATA_GOV -> D-GOVERNANCE (5 条)
+    D_DATA_GOV[D-DATA_GOV] -->|contract| D_GOVERNANCE_Kurshan_Agentic_R___lator_Four_Layer_Governance
+    D_DATA_GOV[D-DATA_GOV] -->|data| D_GOVERNANCE_compliance_matrix_py_合规矩阵
+    D_DATA_GOV[D-DATA_GOV] -->|data| D_GOVERNANCE_Escalation_Governance_Contracts_升级治理契约
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_GOVERNANCE_组织拓扑_Conway映射_认知负载_团队边界
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_GOVERNANCE_Conditional_Gate_Extension_条件门禁扩展
+    %% D-DATA_SEC -> D-GOVERNANCE (6 条)
+    D_DATA_SEC[D-DATA_SEC] -->|import_depends| src_zephyr_governance_sqlite_schema_py
+    D_DATA_SEC[D-DATA_SEC] -->|contract| D_GOVERNANCE_EVT_AUT_AUDIT_Consume_Event_EVT_AUT_AUDIT消费事件
+    D_DATA_SEC[D-DATA_SEC] -->|event| D_GOVERNANCE_FrontendGovernanc___FrontendGovernanceEvent消费接口
+    D_DATA_SEC[D-DATA_SEC] -->|contract| D_GOVERNANCE_依赖地狱5维检测器_DependencyHell5DDetector
+    D_DATA_SEC[D-DATA_SEC] -->|data| D_GOVERNANCE_Governance_Automation_Engine_治理自动化引擎
+    D_DATA_SEC[D-DATA_SEC] -->|event| D_GOVERNANCE_E_0124_治理域→自治核心依赖
+    %% D-EX_CORE -> D-GOVERNANCE (10 条)
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_broker_interface_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_adapters_broker_interface_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_adapters_broker_interface_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_governance_broker_interface_py
+    D_EX_CORE[D-EX_CORE] -->|config_depends| src_zephyr_governance___init___py
+    %% D-FACTOR -> D-GOVERNANCE (5 条)
+    D_FACTOR[D-FACTOR] -->|import_depends| src_zephyr_governance___init___py
+    D_FACTOR[D-FACTOR] -->|import_depends| src_zephyr_governance___init___py
+    D_FACTOR[D-FACTOR] -->|import_depends| src_zephyr_governance___init___py
+    D_FACTOR[D-FACTOR] -->|import_depends| src_zephyr_governance___init___py
+    D_FACTOR[D-FACTOR] -->|config_depends| src_zephyr_governance___init___py
+    %% D-FRONTEND -> D-GOVERNANCE (23 条)
+    D_FRONTEND[D-FRONTEND] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_FRONTEND[D-FRONTEND] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_FRONTEND[D-FRONTEND] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_FRONTEND[D-FRONTEND] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_FRONTEND[D-FRONTEND] -->|contract| D_GOVERNANCE_GD_01_治理分三层
+    D_FRONTEND[D-FRONTEND] -->|data| D_GOVERNANCE_alignment_check_py_三方对齐检查
+    D_FRONTEND[D-FRONTEND] -->|data| D_GOVERNANCE_配置漂移检查器_Config_Drift_Checker
+    D_FRONTEND[D-FRONTEND] -->|event| D_GOVERNANCE_CogAlpha
+    D_FRONTEND[D-FRONTEND] -->|contract| D_GOVERNANCE_Governance_Automation_治理自动化
+    D_FRONTEND[D-FRONTEND] -->|event| D_GOVERNANCE_Gartner_Agentic_AI失败率预测
+    D_FRONTEND[D-FRONTEND] -->|contract| D_GOVERNANCE_个人证券账户权限随时间逐步开放_P___ns_Gradually_Open_Over_Time
+    D_FRONTEND[D-FRONTEND] -->|contract| D_GOVERNANCE_45_Capability_List_45项能力清单
+    D_FRONTEND[D-FRONTEND] -->|data| D_GOVERNANCE_Vibe_Coding_Governance_Vibe_Coding治理
+    D_FRONTEND[D-FRONTEND] -->|event| D_GOVERNANCE_依赖漂移距离度量器_DependencyDriftDistanceMeter
+    D_FRONTEND[D-FRONTEND] -->|event| D_GOVERNANCE_Hard_Boundary_Non_Modifiable_硬边界不可修改
+    D_FRONTEND[D-FRONTEND] -->|contract| D_GOVERNANCE_服务目录_Golden_Path_技术雷达_自助服务
+    D_FRONTEND[D-FRONTEND] -->|data| D_GOVERNANCE_Semantic_Auditor_语义审计器
+    D_FRONTEND[D-FRONTEND] -->|data| D_GOVERNANCE_AST_Call_Graph_Generator_AST调用图生成器
+    D_FRONTEND[D-FRONTEND] -->|contract| D_GOVERNANCE_组件存在性校验_Component_Existence_Validation
+    D_FRONTEND[D-FRONTEND] -->|contract| D_GOVERNANCE_家用网络30Mbps带宽足够
+    D_FRONTEND[D-FRONTEND] -->|contract| D_GOVERNANCE_交易日志留存_Logger
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_GOVERNANCE_Policy层_Policy_Layer
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_GOVERNANCE_Knowledge_Graph_Interface_知识图谱接口
+    %% D-GOV_AUDIT -> D-GOVERNANCE (15 条)
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance___init___py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_tr___dit_admission_controller_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_resource_aware_pool_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_semantic_audit_kb_gate_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance___init___py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_integrity_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_or____text_to_finding_adapter_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_agent_spec_registry_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_resource_aware_pool_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_cold_start_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_evidence_pack_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_or____text_to_finding_adapter_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_security_gateway_base_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_aisg_sandbox_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_schema_py
+    %% D-GOV_DRIFT -> D-GOVERNANCE (3 条)
+    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_orchestrator_merkle_hourly_py
+    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| src_zephyr_governance___init___py
+    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| scripts_governance__shared_frontmatter_py
+    %% D-GOV_RULE -> D-GOVERNANCE (2 条)
+    D_GOV_RULE[D-GOV_RULE] -->|import_depends| src_zephyr_governance___init___py
+    D_GOV_RULE[D-GOV_RULE] -->|config_depends| src_zephyr_governance_rule_enf___ment_invariants___init___py
+    %% D-INFRA_OPS -> D-GOVERNANCE (56 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_Audit_Log_Immutable_审计日志不可篡改
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_ComplianceRule_Co___nterface_ComplianceRule消费接口
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_Change_Shock_Radius_Predictor_变更冲击半径预测器
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_GOVERNANCE_L3+_Change_Impact_Assessment_L3+变更影响评估
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_Ecosystem_Risk_Di___fication_Analyzer_生态风险分散分析器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_Business_Capability_Module_Mapper_业务能力_模块映射器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_Knowledge_Graph_Interface_知识图谱接口
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_GOVERNANCE_Fault_Tolerance_容错
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_GOVERNANCE_AI_Ethics_Statement_AI伦理声明
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_Orchestration_Agent_编排代理
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_IIA_Three_Lines_Model_模型
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_GOVERNANCE_单机部署足够支撑当前AUM规模
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_GA_Multi_Objective_Refactoring_遗传算法多目标重构
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_GOVERNANCE_NL解析_图查询转换_社区发现_摘要等
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_GOVERNANCE_自适应治理参数_Adaptive_Governance_Parameters
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_GOVERNANCE_FrontendGovernanceEvent_前端治理事件
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_compliance_matrix_py_合规矩阵
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_GOVERNANCE_隐式依赖GNN发现器_ImplicitDependencyGNNFinder
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_依赖漂移距离度量器_DependencyDriftDistanceMeter
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_GOVERNANCE_数字线程完整性评分器_DigitalThreadIntegrityScorer
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_集成架构_Integration_Architecture
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_GOVERNANCE_Captide_对冲基金AI平台
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_GraphRAG_Reasoning_GraphRAG推理
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_RBACBridge_RBAC桥接接口
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_GOVERNANCE_AI_Self_Diagnosis_AI自诊断监督
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_iFind_QPS上限维持20
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_GOVERNANCE_System_Topology_系统拓扑
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_GOVERNANCE_AuditContextUpdate_审计上下文更新
+    %% D-INFRA_RUNTIME -> D-GOVERNANCE (19 条)
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_infrastructure_a2a____nance_governance_adapter_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_orchestrator_bridge_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_integrity_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
+    %% D-INTEGRATION -> D-GOVERNANCE (11 条)
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_integration_mcp_governance_server_py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance_architec___governance_path_resolver_py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_integration_mcp_governance_server_py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| src_zephyr_governance___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| src_zephyr_governance___init___py
+    %% D-INTELLIGENCE -> D-GOVERNANCE (7 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_governance___init___py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_governance___init___py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_governance___init___py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_governance___init___py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_governance___init___py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| src_zephyr_governance___init___py
+    %% D-MKT_DATA -> D-GOVERNANCE (2 条)
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| src_zephyr_governance___init___py
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| src_zephyr_governance___init___py
+    %% D-OPS -> D-GOVERNANCE (56 条)
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance_persistence_circuit_breaker_types_py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_ops_evolution_prompt_factory_governance_py
+    D_OPS[D-OPS] -->|config_depends| src_zephyr_governance___init___py
+    D_OPS[D-OPS] -->|config_depends| src_zephyr_governance___init___py
+    D_OPS[D-OPS] -->|config_depends| src_zephyr_governance___init___py
+    D_OPS[D-OPS] -->|contract| docs_03_modules__alpha_signal_domain_blueprint_md
+    D_OPS[D-OPS] -->|contract| D_GOVERNANCE_依赖效果类型检查器_DependencyEffectTypeChecker
+    D_OPS[D-OPS] -->|event| D_GOVERNANCE_GOV_RSTR_001_治理限制器标识
+    D_OPS[D-OPS] -->|data| D_GOVERNANCE_蓝图解析_代码解析_追溯链_漂移检___ility_Chain_Drift_Detection
+    D_OPS[D-OPS] -->|contract| D_GOVERNANCE_FrontendGovernanceRequest_前端治理请求
+    D_OPS[D-OPS] -->|contract| D_GOVERNANCE_SecurityScanResult_安全扫描结果
+    D_OPS[D-OPS] -->|data| D_GOVERNANCE_Windows操作系统兼容性维持
+    D_OPS[D-OPS] -->|data| D_GOVERNANCE_MCP_Governance_Server_MCP治理服务
+    D_OPS[D-OPS] -->|data| D_GOVERNANCE_Causal_Conflict_Detector_因果冲突检测器
+    D_OPS[D-OPS] -->|data| D_GOVERNANCE_L4+_Gray_Release_L4+灰度验证
+    D_OPS[D-OPS] -->|contract| D_GOVERNANCE_关系类型分类器_RelationTypeClassifier
+    D_OPS[D-OPS] -->|contract| D_GOVERNANCE_配置一致性校验_Config_Consistency_Validation
+    D_OPS[D-OPS] -->|event| D_GOVERNANCE_Architecture_Contracts_架构契约
+    D_OPS[D-OPS] -->|event| D_GOVERNANCE_Kill_Switch_Layered_Kill_Switch分层
+    D_OPS[D-OPS] -->|data| D_GOVERNANCE_VS_005_审计合规流
+    D_OPS[D-OPS] -->|event| D_GOVERNANCE_Dependency_Tempor___volution_Analyzer_依赖时序演化分析器
+    D_OPS[D-OPS] -->|data| D_GOVERNANCE_EU_AI_Act字面合规_EU_AI_Act_Literal_Compliance
+    %% D-PF_ALLOC -> D-GOVERNANCE (14 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|import_depends| src_zephyr_governance_strategy_base_py
+    D_PF_ALLOC[D-PF_ALLOC] -->|config_depends| src_zephyr_governance___init___py
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_GOVERNANCE_Agent集群_Agent_Cluster_MARL
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_GOVERNANCE_Rollback_Result_Types_回滚结果类型
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_GOVERNANCE_Hard_Boundary_Non_Modifiable_硬边界不可修改
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_GOVERNANCE_蓝图_Blueprint
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_GOVERNANCE_M1_初始_Ad_Hoc
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_GOVERNANCE_扁平化_锁定_拆分_替代_评估_策略等_Strategy
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_GOVERNANCE_Dependency_Manager_依赖管理
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_GOVERNANCE_E_GV_04_AuditAnomalyDetected_审计
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_GOVERNANCE_A2A_Gateway_Policy_Engine_A2A检查网关策略引擎
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_GOVERNANCE_RBACBridge_Consumer_Interface_RBACBridge消费接口
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_GOVERNANCE_ALPHA_SIGNAL_DOMAIN_001_Alpha信号域标识
+    D_PF_ALLOC[D-PF_ALLOC] -->|config_depends| D_GOVERNANCE_配置漂移_Config_Drift
+    %% D-PF_CORE -> D-GOVERNANCE (12 条)
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_default_attribution_engine_py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_compliance_rule_py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_risk_limits_py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_default_tca_engine_py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_strategy_base_py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_strategy_registry_py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_performa___ribution_engine___init___py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_strategy_base_py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_strategy_engine___init___py
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_governance_strategies_default_equity_strategy_py
+    D_PF_CORE[D-PF_CORE] -->|contract| docs_03_modules__alpha_signal_domain_blueprint_md
+    %% D-POSITION -> D-GOVERNANCE (1 条)
+    D_POSITION[D-POSITION] -->|config_depends| src_zephyr_governance___init___py
+    %% D-REPORTING -> D-GOVERNANCE (11 条)
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_analytics_base_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_analytics_base_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_analytics_base_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_analytics_base_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_analytics_base_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_default_tca_engine_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_governance_default_attribution_engine_py
+    D_REPORTING[D-REPORTING] -->|contract| docs_03_modules__alpha_signal_domain_blueprint_md
+    %% D-RISK -> D-GOVERNANCE (1 条)
+    D_RISK[D-RISK] -->|config_depends| src_zephyr_governance___init___py
+    %% D-SECURITY -> D-GOVERNANCE (7 条)
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance___init___py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance___init___py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_rule_enforcement_drift_detector_py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance___init___py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
+    %% D-SELL_DECISION -> D-GOVERNANCE (7 条)
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_GOVERNANCE_GD_05_变更审批分级制
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_GOVERNANCE_AST_Call_Graph_AST调用图
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_GOVERNANCE_L_001
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_GOVERNANCE_Admission_Response_准入响应
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_GOVERNANCE_环路检测_死锁预测_循环消除_条件___imination_Condition_Solving
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_GOVERNANCE_Rollback_Governance_Contracts_回滚治理契约
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_GOVERNANCE_ProFiT
+    %% D-SHARED -> D-GOVERNANCE (3 条)
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_governance___init___py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_governance_py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_governance_py
+    %% D-SIGNAL -> D-GOVERNANCE (2 条)
+    D_SIGNAL[D-SIGNAL] -->|import_depends| src_zephyr_governance___init___py
+    D_SIGNAL[D-SIGNAL] -->|contract| docs_03_modules__alpha_signal_domain_blueprint_md
+    %% D-TRADING -> D-GOVERNANCE (36 条)
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance___init___py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance___init___py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance___init___py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance___init___py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_tr___dit_admission_controller_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_semantic_audit_self_healer_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_capacity_governance_loop_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance___init___py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_drift_detector_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_drift_detector_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_compliance_rule_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_instrument_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_compliance_rule_py
+    D_TRADING[D-TRADING] -->|runtime| src_zephyr_governance_compliance_rule_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-GOVERNANCE -> D-AUTONOMY_CORE (220 条)
+    src_zephyr_governance_integration_hub_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    scripts_governance_d5_architecture_audit_agent_spec_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_adversarial_robustness_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_agent_observability_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_agent_spec_main_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_agent_spec_registry_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_alignment_scorer_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_all_skill_modules_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_assembly_context_assembler_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_architecture_context_loader_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_assembly_context_pipeline_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_assembly_context_injector_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_atomic_injector_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_ba_main_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_behavioral_auditor_main_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_budget_forecaster_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_cache_invalidation_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_capability_check_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_ce_bootstrap_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_ce_explain_cli_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_ce_cache_invalidation_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_ce_integrity_check_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_ce_vibe_shortcuts_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_ce_playground_v2_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_checkpoint_manager_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_citation_walker_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_cold_start_booster_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_complexity_budget_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    tests_test_config_safety_guard_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    %% D-GOVERNANCE -> D-AUTONOMY_PERM (23 条)
+    D_GOVERNANCE_本体层_多边存储_查询优化_时序图_语义检测_GraphRAG等 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Decision_Audit_Trail_决策审计追踪 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Audit_&_Compliance_Traceability_审计与合规追溯 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_§17_依赖图域模块补充_Dependency_Graph_Module_Supplement -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Phase_4_治理自动化激活 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_ADR_Simulation_ADR仿真 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Legacy_Issue_Adjudication_遗留问题裁定 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Gartner_Agentic_AI失败率预测 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_CogAlpha -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_蓝图解析_代码解析_追溯链_漂移检___ility_Chain_Drift_Detection -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_FinKG基准_FinKG_Benchmark -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_关联性_Interconnectedness -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Budget_Tracker_预算追踪 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Phase_Check_Registry_阶段检查注册表 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Phase_Manager_阶段管理器 -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_AST_Call_Graph_AST调用图 -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_DriftGovernance_漂移治理 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Consume_Event_Set_消费事件集 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_Phase_Manager_阶段管理器 -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_SSoT_CAP_INV_SSoT_CAP不变量 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_M6_业务_模块映射 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_FrontendGovernanc___FrontendGovernanceEvent消费接口 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_GOVERNANCE_漂移检测检查器_Drift_Detection_Checker -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    %% D-GOVERNANCE -> D-BEHAVIORAL_AUDIT (103 条)
+    src_zephyr_governance_budget_engine_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_governance_rule_enforcement_drift_detector_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_governance_rule_enforcement_drift_detector_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_governance_rule_enforcement_drift_detector_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_governance_rule_enf___ck_types_ct_drift_budget_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_infrastructure_governance_server_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_infrastructure_governance_server_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    src_zephyr_infrastructure_governance_server_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_absence_manager_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ai_context_injector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ai_construction_detectors_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ai_construction_detectors_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_architecture_contracts_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_architecture_principles_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_backcompat_checker_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_baseline_manager_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_baseline_poisoning_guard_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ba_dashboard_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ba_chaos_injector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ba_canary_controller_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ba_data_lifecycle_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ba_dependency_manager_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ba_state_machine_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_ba_handoff_manager_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_benchmark_integrity_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_brain_integration_root_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_canary_controller_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    tests_test_cascade_detector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    %% D-GOVERNANCE -> D-CROSS_ASSET (2 条)
+    tests_test_ml_experiment_pipeline_py -->|test_depends| D_CROSS_ASSET[D-CROSS_ASSET]
+    tests_ml_experiment_test_adversarial_ml_py -->|test_depends| D_CROSS_ASSET[D-CROSS_ASSET]
+    %% D-GOVERNANCE -> D-DATA_ENG (26 条)
+    D_GOVERNANCE_依赖会话类型验证器_DependencySessionTypeValidator -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Semantic_Similarity_Scorer_语义相似度评分器 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_E_GV_03_PolicyUpdated_策略 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Hybrid_Classical_Quantum_Bridge_混合经典量子桥 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Cross_Cutting_Triangle_横切三角 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_A2A_Protocol_Phase_Hold_A2A协议阶段保持 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_DOM_GOV_CAP_001_容量升级 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_GraphRAG_Query_GraphRAG查询 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Kleisli_Effect_Engine_Kleisli效果引擎 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_AST解析_调用图_膨胀检测_清理_可视化等 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_适当性管理_Management -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_E_GV_03_PolicyUpdated_策略 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Phase_Manager_阶段管理器 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Audit_Log_Immutable_审计日志不可篡改 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_三方对齐检查器_Three_party_Alignment_Checker -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_ALPHA_SIGNAL_DOMAIN_001_Alpha信号域标识 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_CTR_P1_012_ComplianceRule_合规规则 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_No_Module_Online____ut_Governance_治理检查未通过不可上线模块 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Cross_Domain_Intersection_跨域交叉点 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_M9_变更影响分析 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Kill_Switch_Governance_Layer_治理层Kill_Switch -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_静态分析_动态采集_AI推断_配置发现等 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_治理架构_Governance_Architecture -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_模块变更审计_Module_Change_Audit -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Team_Topology_团队拓扑 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_GOVERNANCE_Off_site_Planning_Modules_场外规划模块 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    %% D-GOVERNANCE -> D-EX_CORE (23 条)
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_EX_CORE[D-EX_CORE]
+    tests_test_cli_py -->|test_depends| D_EX_CORE[D-EX_CORE]
+    tests_test_trade_execution_py -->|test_depends| D_EX_CORE[D-EX_CORE]
+    tests_test_trade_execution_py -->|test_depends| D_EX_CORE[D-EX_CORE]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_EX_CORE[D-EX_CORE]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_EX_CORE[D-EX_CORE]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_EX_CORE[D-EX_CORE]
+    tests_integration_test_phase_e_main_flow_py -->|test_depends| D_EX_CORE[D-EX_CORE]
+    tests_unit_test_execution_engine_unit_py -->|test_depends| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_Phase_4_治理自动化激活 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_Agentic_Regulator四层治理框架 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_治理架构_Governance_Architecture -->|data| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_Dependency_Manager_依赖管理 -->|event| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_SPOF_Checker_单点故障检测器 -->|event| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_语义查询接口_SemanticQueryInterface -->|config_depends| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_Contract_Version_Management_契约版本管理 -->|event| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_Dw151_Full_Verify_dw151满验证 -->|data| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_M2_发展中_Developing -->|data| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_EU_AI_Act_Article___ng_EU_AI_Act_Article_14合规映射 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_Governance_Three____理三层边界Policy_Factory_Runtime -->|contract| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_PermissionDecision_权限决策 -->|event| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_Data_Classification_数据分类 -->|event| D_EX_CORE[D-EX_CORE]
+    D_GOVERNANCE_蓝图解析_代码解析_追溯链_漂移检___ility_Chain_Drift_Detection -->|config_depends| D_EX_CORE[D-EX_CORE]
+    %% D-GOVERNANCE -> D-EX_SOR (15 条)
+    D_GOVERNANCE_Construction_Gate_施工门禁 -->|data| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_Decision_Fatigue_Detector_决策疲劳检测器 -->|data| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_治理约束执行_Execution_Governance -->|contract| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_RMS计算_热力图_趋势_解耦建议等 -->|data| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_L3_策略变更_Strategy_Change -->|contract| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_代码_Code -->|data| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_A2A_Protocol_Phase_Hold_A2A协议阶段保持 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_GD_01_治理分三层 -->|data| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_FineGrainedDependencyAnalyzer_细粒度依赖分析器 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_Agent_OS_Policy_Engine_Agent_OS策略引擎 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_依赖漂移距离度量器_DependencyDriftDistanceMeter -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_Dependency_Tempor___volution_Analyzer_依赖时序演化分析器 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_Kleisli_Effect_Engine_Kleisli效果引擎 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_L4+_Gray_Release_L4+灰度验证 -->|event| D_EX_SOR[D-EX_SOR]
+    D_GOVERNANCE_E_0125_治理域→集成域依赖 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    %% D-GOVERNANCE -> D-FACTOR (46 条)
+    tests_alpha_signal_test_adversarial_alpha_signal_py -->|test_depends| D_FACTOR[D-FACTOR]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_FACTOR[D-FACTOR]
+    tests_integration_test_phase_e_main_flow_py -->|test_depends| D_FACTOR[D-FACTOR]
+    tests_integration_test_phase_e_layers_py -->|test_depends| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Dependency_Deduplication_Advisor_依赖去重顾问 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_DDDRuleCheck_DDD铁律检查 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_依赖地狱5维检测器_DependencyHell5DDetector -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Singapore_IMDA_新加坡IMDA -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Budget_Handler_预算处理 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_GOV_CMP_003_治理合规标识 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_依赖效果类型检查器_DependencyEffectTypeChecker -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_IncidentEscalated_事件升级 -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Dw151_Full_Verify_dw151满验证 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_L4_架构变更_Architecture_Change -->|event| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_三方对齐检查器_Three_party_Alignment_Checker -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_配置漂移检查器_Config_Drift_Checker -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Governance_Automation_治理自动化 -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_MCP_Governance_Server_MCP治理服务 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Budget_Tracker_预算追踪 -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Constitutional_Update_宪法更新 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Org_System_Dependency_Mapper_组织_系统依赖映射器 -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_M5_优化_Optimizing -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Governance_Enforcement_Bus_GEB_治理执行总线 -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Audit_&_Compliance_Traceability_审计与合规追溯 -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_E_0123_前端域→治理域依赖 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Causal_Conflict_Detector_因果冲突检测器 -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_E_GV_01_GatePassed_E_GV_01门禁通过 -->|event| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_GATE_RES_独立研究模块 -->|data| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_路径索引_子图同构_GNN_传播概率等 -->|contract| D_FACTOR[D-FACTOR]
+    D_GOVERNANCE_Data_Quality_数据质量 -->|data| D_FACTOR[D-FACTOR]
+    %% D-GOVERNANCE -> D-FRONTEND (11 条)
+    tests_test_human_ai_interface_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_integration_test_phase_f_layers_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_integration_test_phase_e_layers_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_unit_test_dashboard_unit_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_unit_test_dashboard_unit_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_unit_test_dashboard_unit_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_unit_test_dashboard_unit_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_unit_test_dashboard_unit_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_unit_test_dashboard_unit_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_unit_test_interface_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    tests_unit_test_interface_py -->|test_depends| D_FRONTEND[D-FRONTEND]
+    %% D-GOVERNANCE -> D-GOV_AUDIT (192 条)
+    src_zephyr_governance_audit_write_failure_protector_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_compliance_map_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_database_manager_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_finding_ingest_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_kb_gate_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_lifecycle_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_rollback_audit_nexus_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_rollback_abuse_detector_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_rollback_executor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_tamper_evident_log_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_supply_chain_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance___init___py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_or___dit_admission_controller_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_or___rator_delegation_auditor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_contracts_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_feedback_policy_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_query_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_audit_orchestrator_merkle_hourly_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    %% D-GOVERNANCE -> D-GOV_DRIFT (36 条)
+    src_zephyr_governance_merkle_audit_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_orchestrator_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator_self_monitor_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_rule_enf___t_enforcement_mode_check_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_ai_self_diagnosis_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_audit_integrity_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_breaking_change_detector_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_bridges_drift_bridge_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_drift_bridge_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_en_002_enforcement_validator_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_gate_health_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_gate_integrity_guard_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_integrity_root_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_kb_integrity_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_test_self_monitor_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_adversarial_test_audit_integration_fracture_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_adversarial_test_audit_adversarial_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_unit_test_artifact_scanner_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_unit_test_truth_source_validator_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_unit_test_validate_authority_registry_unit_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_unit_test_validate_blueprint_overlap_unit_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_unit_test_validate_truth_source_cascade_unit_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    tests_unit_test_validate_ssot_unit_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    %% D-GOVERNANCE -> D-GOV_RULE (269 条)
+    src_zephyr_governance_ingest_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_task_repo_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_transition_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_triage_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance___init___py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_audit_or___tration_file_task_mapper_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_audit_or___n_state_file_task_mapper_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_constitutional_update___init___py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_extract_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_triage_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_kb_pipeline_triage_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf____audit_findings_resolved_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf____audit_findings_resolved_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_governance_rule_enf____ct_blueprint_read_check_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    %% D-GOVERNANCE -> D-INFRA_RUNTIME (207 条)
+    src_zephyr_governance_audit_orchestration_failure_matcher_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_governance_audit_orchestration_finding_bridge_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_governance_audit_orchestration_trigger_router_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_governance_audit_or___silience_failure_matcher_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_governance_audit_trail_bridges_trust_bridge_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_governance_drift_de___ion_drift_cron_scheduler_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_governance_server_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_a2a____ocol_governance___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_infrastructure_rollback_governance___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_a2a_full_verification_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_rollback_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_scaffold_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_construction_local_layer_daemon_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_construction_start_brain_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_governance_analyze_change_impact_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_governance_run_all_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_governance__e2e_verify_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_governance_meta_finding_state_machine_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_governance_meta_validate_emergency_bypass_log_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    scripts_governance__shared_base_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    tests_test_a2a_card_registry_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    tests_test_a2a_governance_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-GOVERNANCE -> D-INTEGRATION (351 条)
+    src_zephyr_governance_adapter_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_approval_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_base_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_contracts_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_cost_budget_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_database_manager_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_default_security_gateway_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_finding_ingest_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_gate_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_ingest_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_olap_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_result_types_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_spec_auditor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_sqlite_dumper_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_task_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_task_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_task_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_transition_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_triage_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_audit_orchestrator_pipeline_runner_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_audit_or____text_to_finding_adapter_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_audit_trail_finding_model_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_bridges_spec_auditor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_governance_contracts_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_governance_rbac_bridge_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_governance_rbac_bridge_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_implemen___default_security_gateway_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    %% D-GOVERNANCE -> D-INTELLIGENCE (85 条)
+    src_zephyr_governance_model_router_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_governance_model_router_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_governance_triage_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_benchmark_suite_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_capability_passport_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_cli_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_cross_layer_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_deepseek_v4_chat_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_exam_orchestrator_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_exam_orchestrator_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_exam_orchestrator_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_exam_test_cases_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_kb_activate_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_kb_activate_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_kb_analyze_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_kb_pipeline_activate_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_kb_repo_root_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_kb_reranker_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_kb_unified_memory_api_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_model_discovery_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_profiler_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_profiler_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_provider_data_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_results_writer_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_results_writer_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_task_gate_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    tests_test_task_model_learner_py -->|test_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-GOVERNANCE -> D-KNOWLEDGE (19 条)
+    D_GOVERNANCE_Phase_2_Activation_Phase_Phase_2激活阶段 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_Dependency_Change_Log_依赖变更日志 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_需求_代码双向追溯引擎_Requi___rectionalTraceabilityEngine -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_Drift_Fix_漂移修复 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_Event_Driven_Dependency_Tracer_事件驱动依赖追踪器 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_Kurshan_Agentic_R___lator_Four_Layer_Governance -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_Minimum_Viable_Governance_MVG_治理 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_A股T+1制度不变 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_GOV_RSTR_001_治理限制器标识 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_E_GV_02_GateFailed_E_GV_02门禁失败 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_SEC_AI_Trading_Ad___rading_Advisor_Registration -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_Governance_Enforcement_Bus_GEB_治理执行总线 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_ExecutionAudit_Co___nterface_ExecutionAudit消费接口 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_Consequence_Manager_后果管理器 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_API_Dependency_API依赖 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_契约版本注册_兼容性矩阵_升级路径等_Contract_Path -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_隐式依赖GNN发现器_ImplicitDependencyGNNFinder -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_个人证券账户权限随时间逐步开放_P___ns_Gradually_Open_Over_Time -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_GOVERNANCE_FrontendGovernanceRequest_前端治理请求 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    %% D-GOVERNANCE -> D-MKT_DATA (51 条)
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_test_db_auto_ops_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_test_kb_chromadb_init_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_test_kb_storage_chromadb_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_test_knowledge_engine_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_test_market_data_pipeline_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_test_realtime_streaming_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_integration_test_akshare_real_data_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_integration_test_phase_e_main_flow_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_unit_test_context_injector_unit_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_unit_test_graph_validator_unit_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_unit_test_instrument_unit_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_unit_context_engine_test____injector_context_engine_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_unit_kb_test_graph_validator_kb_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    tests_unit_shared_test_instrument_shared_py -->|test_depends| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_安全架构_Security_Architecture -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_Governance_Automation_治理自动化 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_PSO隐式依赖发现器_PSOImplicitDependencyFinder -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_Data_Source_Reliability_数据源可靠性 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_轻微漂移自动纠正_Minor_Drift_Auto_Correction -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_ArchitectureGovernance_架构治理 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_ADR_Generation_ADR架构决策记录自动生成 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_Data_Source_Reliability_数据源可靠性 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_依赖效果类型检查器_DependencyEffectTypeChecker -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_AI_Ethics_Statement_AI伦理声明 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_E_GV_02_GateFailed_E_GV_02门禁失败 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_Architecture_Principles_架构原则定义 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_GOVERNANCE_Critical_Path_Analyzer_关键路径分析器 -->|data| D_MKT_DATA[D-MKT_DATA]
+    %% D-GOVERNANCE -> D-ML_SERVE (9 条)
+    D_GOVERNANCE_SecurityScanCompleted_安全扫描完成 -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_GOVERNANCE_Hubble -->|event| D_ML_SERVE[D-ML_SERVE]
+    D_GOVERNANCE_ADR解析_约束提取_双向关联_校验_推演等 -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_GOVERNANCE_EU_AI_Act_Article___ng_EU_AI_Act_Article_14合规映射 -->|event| D_ML_SERVE[D-ML_SERVE]
+    D_GOVERNANCE_Agent集群_Agent_Cluster_MARL -->|event| D_ML_SERVE[D-ML_SERVE]
+    D_GOVERNANCE_Governance_Domain_治理域 -->|data| D_ML_SERVE[D-ML_SERVE]
+    D_GOVERNANCE_安全架构_Security_Architecture -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_GOVERNANCE_架构漂移_Architecture_Drift -->|config_depends| D_ML_SERVE[D-ML_SERVE]
+    D_GOVERNANCE_Agent_OS_Policy_Engine_Agent_OS策略引擎 -->|contract| D_ML_SERVE[D-ML_SERVE]
+    %% D-GOVERNANCE -> D-ML_TRAIN (8 条)
+    D_GOVERNANCE_PhaseGateManager_阶段门禁管理 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_GOVERNANCE_DriftGovernance_漂移治理 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_GOVERNANCE_Governance_Enforcement_Bus_GEB_治理执行总线 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_GOVERNANCE_集成架构_Integration_Architecture -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_GOVERNANCE_AuditContext_Cons____Interface_AuditContext消费接口 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_GOVERNANCE_L3+_Rollback_Readiness_L3+回滚方案就绪性 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_GOVERNANCE_Architecture_Test_Suite_架构测试套件 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_GOVERNANCE_Registry_Governance_注册治理 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-GOVERNANCE -> D-OPS (422 条)
+    src_zephyr_governance_audit_or___ation_agent_orchestrator_py -->|import_depends| D_OPS[D-OPS]
+    src_zephyr_governance_audit_or____core_agent_orchestrator_py -->|import_depends| D_OPS[D-OPS]
+    src_zephyr_governance_persistence_circuit_breaker_types_py -->|import_depends| D_OPS[D-OPS]
+    scripts_governance_session_simulator_py -->|import_depends| D_OPS[D-OPS]
+    scripts_governance__e2e_verify_py -->|import_depends| D_OPS[D-OPS]
+    tests_test_ab_test_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_action_composition_health_monitor_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_action_explainability_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_action_interaction_detector_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_action_efficacy_decay_detector_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_action_reversibility_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_actors_init_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_action_selector_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_action_side_effect_cumulative_detector_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_adaptive_param_tuning_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_agent_lifecycle_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_agent_skill_guard_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_ai_comment_veracity_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_agent_trajectory_anomaly_detector_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_alert_desensitization_curve_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_alert_router_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_amplification_guard_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_anomaly_clustering_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_api_dependency_metrics_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_api_version_contract_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_architectural_sod_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_attack_simulator_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_audit_spec_auditor_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_automated_rca_postmortem_generator_py -->|test_depends| D_OPS[D-OPS]
+    tests_test_autonomy_credit_py -->|test_depends| D_OPS[D-OPS]
+    %% D-GOVERNANCE -> D-PF_ALLOC (1 条)
+    src_zephyr_governance_strategy_engine___init___py -->|import_depends| D_PF_ALLOC[D-PF_ALLOC]
+    %% D-GOVERNANCE -> D-PF_CORE (30 条)
+    tests_test_portfolio_construction_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    tests_test_post_trade_analytics_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    tests_test_post_trade_analytics_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    tests_integration_test_phase_f_layers_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    tests_integration_test_phase_e_main_flow_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    tests_unit_test_analytics_base_contract_py -->|test_depends| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_SystemAlert_系统告警 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_GraphRAG_Query_GraphRAG查询 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_Per_Agent_Gate_Layer_单Agent门控层 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_AST_Call_Graph_Generator_AST调用图生成器 -->|data| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_Pre_Write_Gate_预写门禁 -->|event| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_Closed_Loop_Rule_闭环规则 -->|data| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_实时执行_Real_time_Execution -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_SPOF_Checker_单点故障检测器 -->|data| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_SecurityScanCompleted_安全扫描完成 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_QuantaAlpha -->|event| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_模块契约一致性检查_Module_Contract_Consistency_Check -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_Data_Classification_数据分类 -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_Change_Approval_Chain_Not_Bypassable_变更审批链不可被绕过 -->|data| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_M3_已定义_Defined -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_语义查询接口_SemanticQueryInterface -->|event| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_PELT变点检测_PELT_Change_Point_Detection -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_Cross_Domain_Intersection_跨域交叉点 -->|data| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_P0_P1_P2_Priority_P0_P1_P2优先级 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_NL解析_图查询转换_社区发现_摘要等 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_依赖强度量化器_DependencyStrengthQuantifier -->|contract| D_PF_CORE[D-PF_CORE]
+    D_GOVERNANCE_Regulatory_Mapping_Engine_监管映射引擎 -->|event| D_PF_CORE[D-PF_CORE]
+    %% D-GOVERNANCE -> D-POSITION (14 条)
+    D_GOVERNANCE_Blueprint_Code_Do____Way_Alignment_蓝图_代码_文档三方对齐 -->|data| D_POSITION[D-POSITION]
+    D_GOVERNANCE_Durable_Execution_持久化执行 -->|contract| D_POSITION[D-POSITION]
+    D_GOVERNANCE_命令侧_查询侧_冲突检测_聚合边界验证_Aggregator_Command_Query -->|data| D_POSITION[D-POSITION]
+    D_GOVERNANCE_GOV_SUB_003_治理子模块标识 -->|event| D_POSITION[D-POSITION]
+    D_GOVERNANCE_自进化循环审查报告_Self_evolving_Review_Report -->|contract| D_POSITION[D-POSITION]
+    D_GOVERNANCE_ComplianceChecker_合规检查器 -->|data| D_POSITION[D-POSITION]
+    D_GOVERNANCE_Fan_In_Fan_Out_Analyzer_扇入扇出分析器 -->|data| D_POSITION[D-POSITION]
+    D_GOVERNANCE_AuditContextUpdate_审计上下文更新 -->|contract| D_POSITION[D-POSITION]
+    D_GOVERNANCE_Windows操作系统兼容性维持 -->|contract| D_POSITION[D-POSITION]
+    D_GOVERNANCE_治理自动化覆盖率_Governance_Automation_Coverage -->|data| D_POSITION[D-POSITION]
+    D_GOVERNANCE_iFind_QPS上限维持20 -->|contract| D_POSITION[D-POSITION]
+    D_GOVERNANCE_Rollback_Governance_Contracts_回滚治理契约 -->|event| D_POSITION[D-POSITION]
+    D_GOVERNANCE_Critical_Path_Analyzer_关键路径分析器 -->|event| D_POSITION[D-POSITION]
+    D_GOVERNANCE_ContractRegistry____erface_ContractRegistry消费接口 -->|config_depends| D_POSITION[D-POSITION]
+    %% D-GOVERNANCE -> D-REPORTING (17 条)
+    src_zephyr_governance_default_attribution_engine_py -->|import_depends| D_REPORTING[D-REPORTING]
+    src_zephyr_governance_default_tca_engine_py -->|import_depends| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_FactorMAD_因子 -->|contract| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_GOV_SUB_002_治理子模块标识 -->|contract| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_RTX_3090显存24GB足够承载本地LLM+交易引擎 -->|event| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_自进化循环审查报告_Self_evolving_Review_Report -->|event| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_SR_26_2_模型风险管理新指引 -->|data| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_D_GOV_16~26_Dependency_Semantic_Series_依赖语义系列 -->|contract| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_QuantaAlpha -->|contract| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_Admission_Response_准入响应 -->|contract| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_服务目录_Golden_Path_技术雷达_自助服务 -->|contract| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_AaC_DSL编译_CI门禁_漂移_修复_报告等 -->|contract| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_Constitutional_Update_宪法更新 -->|config_depends| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_灰度发布_Canary_Release -->|config_depends| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_Upadrasta_ARA_自适应风险架构 -->|data| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_GATE_HK_04_港股时段限制 -->|config_depends| D_REPORTING[D-REPORTING]
+    D_GOVERNANCE_ConfigChanged_参数变更事件 -->|event| D_REPORTING[D-REPORTING]
+    %% D-GOVERNANCE -> D-RISK (130 条)
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_RISK[D-RISK]
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_RISK[D-RISK]
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_RISK[D-RISK]
+    tests_test_risk_management_py -->|test_depends| D_RISK[D-RISK]
+    tests_test_risk_management_py -->|test_depends| D_RISK[D-RISK]
+    tests_test_risk_management_py -->|test_depends| D_RISK[D-RISK]
+    tests_test_risk_management_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_akshare_real_data_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_akshare_real_data_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_phase_e_main_flow_py -->|test_depends| D_RISK[D-RISK]
+    tests_integration_test_phase_e_main_flow_py -->|test_depends| D_RISK[D-RISK]
+    tests_unit_test_execution_engine_unit_py -->|test_depends| D_RISK[D-RISK]
+    tests_unit_test_stop_loss_py -->|test_depends| D_RISK[D-RISK]
+    D_GOVERNANCE_Budget_Handler_预算处理 -->|contract| D_RISK[D-RISK]
+    D_GOVERNANCE_合规架构_Compliance_Architecture -->|contract| D_RISK[D-RISK]
+    D_GOVERNANCE_E_GV_02_GateFailed_E_GV_02门禁失败 -->|contract| D_RISK[D-RISK]
+    D_GOVERNANCE_GD_05_变更审批分级制 -->|contract| D_RISK[D-RISK]
+    D_GOVERNANCE_OPA_Rego_Policy_Engine_OPA_Rego策略引擎 -->|contract| D_RISK[D-RISK]
+    D_GOVERNANCE_RMS计算_热力图_趋势_解耦建议等 -->|contract| D_RISK[D-RISK]
+    D_GOVERNANCE_GOV_FSTR_001_File_Structure_Governance_治理文件 -->|contract| D_RISK[D-RISK]
+    D_GOVERNANCE_L_001 -->|contract| D_RISK[D-RISK]
+    D_GOVERNANCE_EVT_EX_AUDIT_Consume_Event_EVT_EX_AUDIT消费事件 -->|contract| D_RISK[D-RISK]
+    %% D-GOVERNANCE -> D-SECURITY (421 条)
+    src_zephyr_governance_default_security_gateway_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_default_security_gateway_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_delegation_engine_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_drift_fix_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_escalation_engine_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_llm_impact_analyzer_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_rollback_executor_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_governance_drift_fix_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_governance_rbac_bridge_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_implemen___default_security_gateway_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_rule_enforcement_drift_detector_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_governance_rule_enforcement_drift_detector_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_infrastructure_governance_server_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SECURITY[D-SECURITY]
+    scripts_a2a_full_verification_py -->|import_depends| D_SECURITY[D-SECURITY]
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SECURITY[D-SECURITY]
+    tests_conftest_py -->|test_depends| D_SECURITY[D-SECURITY]
+    tests_test_a2a_check_py -->|test_depends| D_SECURITY[D-SECURITY]
+    tests_test_abac_guard_root_py -->|test_depends| D_SECURITY[D-SECURITY]
+    tests_test_adversarial_resilience_py -->|test_depends| D_SECURITY[D-SECURITY]
+    tests_test_agent_creation_policy_py -->|test_depends| D_SECURITY[D-SECURITY]
+    tests_test_anomaly_detector_py -->|test_depends| D_SECURITY[D-SECURITY]
+    tests_test_anti_pattern_guard_root_py -->|test_depends| D_SECURITY[D-SECURITY]
+    %% D-GOVERNANCE -> D-SHARED (269 条)
+    src_zephyr_governance_alerts_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_base_repo_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_budget_handler_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_context_budget_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_contracts_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_cost_budget_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_default_quality_gate_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_performance_attribution_report_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_pipeline_base_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_query_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_task_repo_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance__service_registration_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance__service_registration_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_agent_spec_registry_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___ion_agent_health_monitor_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___ion_agent_health_monitor_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___ation_batch_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___ation_batch_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___ation_agent_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___ation_agent_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___ation_agent_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_orchestration_deferred_queue_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___tration_file_task_mapper_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___tration_file_task_mapper_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_audit_or___tration_file_task_mapper_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-GOVERNANCE -> D-SIGNAL (57 条)
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SIGNAL[D-SIGNAL]
+    tests_test_alpha_signal_pipeline_py -->|test_depends| D_SIGNAL[D-SIGNAL]
+    tests_alpha_signal_test_adversarial_alpha_signal_py -->|test_depends| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Conditional_Gate_Extension_条件门禁扩展 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Architecture_as_Code_Engine_架构即代码引擎 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Kurshan_Agentic_R___lator_Four_Layer_Governance -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_DriftGovernance_漂移治理 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_GD_01_治理分三层 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Audit_Integrity_Verifier_审计完整性验证器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_文档_Documentation -->|data| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_GATE_RES_独立研究模块 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_放大趋势追踪器_AmplificationTrendTracker -->|data| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_alignment_check_py_三方对齐检查 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_语义查询接口_SemanticQueryInterface -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_M5_优化_Optimizing -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_D5_Architecture_Validators_D5架构验证器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_GATE_RES_独立研究模块 -->|data| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Architecture_Contracts_架构契约 -->|event| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_DDDViolationDetected_DDD违规检出 -->|event| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Singapore_IMDA_新加坡IMDA -->|data| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Org_Topology_组织拓扑 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_ExecutionAuditEvent_执行审计事件 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Cross_Environment_Consistency_跨环境一致性校验 -->|event| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_PELT变点检测_PELT_Change_Point_Detection -->|data| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Governance_Rules____AI_Modifiable_治理规则不可被AI自动修改 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_GA_Multi_Objective_Refactoring_遗传算法多目标重构 -->|event| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_E_0126_治理域→运行时基础设施依赖 -->|data| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_AuditLedger_审计账本 -->|data| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_E_GV_03_PolicyUpdated_策略 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_GOVERNANCE_Compliance_Scripts_合规脚本 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    %% D-GOVERNANCE -> D-SIGNAL_FUNDAMENTAL (6 条)
+    tests_test_cross_layer_py -->|test_depends| D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL]
+    tests_integration_test_phase_e_main_flow_py -->|test_depends| D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL]
+    tests_unit_test_signal_synthesizer_contract_py -->|test_depends| D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL]
+    %% D-GOVERNANCE -> D-SIMULATION (28 条)
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SIMULATION[D-SIMULATION]
+    tests_test_cross_layer_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_test_research_innovation_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_e2e_pipeline_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_phase_g_perf_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_phase_f_layers_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_phase_f_layers_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_phase_f_layers_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    tests_integration_test_phase_f_layers_py -->|test_depends| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_硬边界门禁路线图_Hard_Boundary_Gate_Roadmap -->|contract| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_EventBus_事件总线接口 -->|contract| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_Tech_Debt_Compound_Effect_Modeler_技术债复合效应建模器 -->|data| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_Governance_Degrad___n_Manual_Confirm_治理降级必须人工确认 -->|data| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_左Kan扩展依赖解析器_LeftKanExtensionDependencyResolver -->|contract| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_LifecycleManager_生命周期管理器 -->|contract| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_数据漂移_Data_Drift -->|contract| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_GAT变更影响预测器_GATChangeImpactPredictor -->|data| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_Org_System_Dependency_Mapper_组织_系统依赖映射器 -->|event| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_Vibe_Coding_Enforcer_Vibe_Coding执行器 -->|event| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_GOV_FSTR_001_File_Structure_Governance_治理文件 -->|contract| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_Critical_Path_Analyzer_关键路径分析器 -->|contract| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_A2A_Protocol_Governance_Auditor_A2A协议治理审计器 -->|data| D_SIMULATION[D-SIMULATION]
+    D_GOVERNANCE_Orphan_Judge_孤儿判定器 -->|event| D_SIMULATION[D-SIMULATION]
+    %% D-GOVERNANCE -> D-TRADING (248 条)
+    src_zephyr_governance_analytics_base_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_analytics_base_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_analytics_base_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_broker_interface_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_broker_interface_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_broker_interface_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_phase_check_registry_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_adapters_broker_interface_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_adapters_broker_interface_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_adapters_broker_interface_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_audit_orchestrator_feedback_bridge_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_strategies_default_equity_strategy_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 2447 条
+    %% 跨域入边: 520 条
+    %% 跨域出边: 3339 条

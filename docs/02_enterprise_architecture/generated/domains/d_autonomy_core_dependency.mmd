@@ -1,0 +1,878 @@
+%% D-AUTONOMY_CORE 域全景依赖图
+%% 生成时间: 2026-06-23 13:28:37
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 650, 依赖边数: 1772
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_AUTONOMY_CORE[自治核心]
+        D_AUTONOMY_CORE_11_Agents_Full_MVP_11个Agent全部MVP实现["...RE/11 Agents Full MVP 11个Agent全部MVP实现 [design]"]
+        D_AUTONOMY_CORE_8_Collection_U___ager_8大Collection统一Schema管理["...Schema Manager 8大Collection统一Schema管理 [design]"]
+        D_AUTONOMY_CORE_A2A_Check_A2A检查["D-AUTONOMY-CORE/A2A Check A2A检查 [design]"]
+        D_AUTONOMY_CORE_A2A_Check_Gateway_A2A检查网关["...TONOMY-CORE/A2A Check Gateway A2A检查网关 [design]"]
+        D_AUTONOMY_CORE_A2A_Check_Gateway_Policy_Engine_A2A检查网关策略引擎["...eck Gateway Policy Engine A2A检查网关策略引擎 [design]"]
+        D_AUTONOMY_CORE_A2A_Check_Non_Bypassable_A2A检查不可绕过["...RE/A2A Check Non-Bypassable A2A检查不可绕过 [design]"]
+        D_AUTONOMY_CORE_A2A_Check_Protocol_A2A检查协议["...ONOMY-CORE/A2A Check Protocol A2A检查协议 [design]"]
+        D_AUTONOMY_CORE_A2A_Communication_Agent间通信["...ONOMY-CORE/A2A Communication Agent间通信 [design]"]
+        D_AUTONOMY_CORE_A2A_Protocol_A2A协议["D-AUTONOMY-CORE/A2A Protocol A2A协议 [design]"]
+        D_AUTONOMY_CORE_ABAC策略_ABAC_Policy["D-AUTONOMY-CORE/ABAC策略 ABAC Policy [design]"]
+        D_AUTONOMY_CORE_AGENTICAITA_AGENTICAITA框架["...TONOMY-CORE/AGENTICAITA AGENTICAITA框架 [design]"]
+        D_AUTONOMY_CORE_AI_人工智能["D-AUTONOMY-CORE/AI 人工智能 [design]"]
+        D_AUTONOMY_CORE_AI_治理执行者角色["D-AUTONOMY-CORE/AI 治理执行者角色 [design]"]
+        D_AUTONOMY_CORE_AISI_2026报告["D-AUTONOMY-CORE/AISI 2026报告 [design]"]
+        D_AUTONOMY_CORE_AI自主执行率阈值_AI_A___us_Execution_Rate_Threshold["...I Autonomous Execution Rate Threshold [design]"]
+        D_AUTONOMY_CORE_AI自治行为审计_AI_Autonomous_Behavior_Audit["...AI自治行为审计 AI Autonomous Behavior Audit [design]"]
+        D_AUTONOMY_CORE_AI自治运维是闭环而非开环_Closed_Loop_Autonomy["...RE/AI自治运维是闭环而非开环 Closed-Loop Autonomy [design]"]
+        D_AUTONOMY_CORE_AI自治运维闭环_AI自治运维["D-AUTONOMY-CORE/AI自治运维闭环 AI自治运维 [design]"]
+        D_AUTONOMY_CORE_AI自治进化与闭环优化["D-AUTONOMY-CORE/AI自治进化与闭环优化 [design]"]
+        D_AUTONOMY_CORE_API_LLM["D-AUTONOMY-CORE/API LLM [design]"]
+        D_AUTONOMY_CORE_ARA_Adaptive_Risk_Architecture_ARA自适应风险架构["...Adaptive Risk Architecture ARA自适应风险架构 [design]"]
+        D_AUTONOMY_CORE_ARA自适应风险架构_ARA_Adaptive_Risk_Architecture["...适应风险架构 ARA Adaptive Risk Architecture [design]"]
+        D_AUTONOMY_CORE_ARS双轨结算模型_ARS_Dual_track_Settlement_Model["...轨结算模型 ARS Dual-track Settlement Model [design]"]
+        D_AUTONOMY_CORE_AWQ_4_bit_Quantization_AWQ_4_bit量化["...RE/AWQ 4-bit Quantization AWQ 4-bit量化 [design]"]
+        D_AUTONOMY_CORE_AWS_Agentic_AI___ic_AI_Security_Scope_Matrix["... AWS Agentic AI Security Scope Matrix [design]"]
+        D_AUTONOMY_CORE_AWS_Resilient_AI_Agents_AWS弹性AI_Agent["...AWS Resilient AI Agents AWS弹性AI Agent [design]"]
+        D_AUTONOMY_CORE_Actor_Actor执行器["D-AUTONOMY-CORE/Actor Actor执行器 [design]"]
+        D_AUTONOMY_CORE_Actor_执行器["D-AUTONOMY-CORE/Actor 执行器 [design]"]
+        D_AUTONOMY_CORE_Actor_Evaluato___Evaluator_SelfReflection三组件["...ion Actor-Evaluator-SelfReflection三组件 [design]"]
+        D_AUTONOMY_CORE_Adaptive_Z_Score_Trigger_Engine_自适应Z分数触发引擎["...ive Z-Score Trigger Engine 自适应Z分数触发引擎 [design]"]
+        D_AUTONOMY_CORE_Agent_Architecture_Position_Agent架构在全局架构中的位置["...rchitecture Position Agent架构在全局架构中的位置 [design]"]
+        D_AUTONOMY_CORE_Agent_Architec____Unified_Source_Agent架构唯一真源["...chitecture Unified Source Agent架构唯一真源 [design]"]
+        D_AUTONOMY_CORE_Agent_Audit_Trail_Agent审计链["...ONOMY-CORE/Agent Audit Trail Agent审计链 [design]"]
+        D_AUTONOMY_CORE_Agent_Autonomy_Boundary_Agent自治边界["...ORE/Agent Autonomy Boundary Agent自治边界 [design]"]
+        D_AUTONOMY_CORE_Agent_Budget_Enforcer_Agent预算执行器["...CORE/Agent Budget Enforcer Agent预算执行器 [design]"]
+        D_AUTONOMY_CORE_Agent_Card_Registry_Agent_Card注册表["...ORE/Agent Card Registry Agent Card注册表 [design]"]
+        D_AUTONOMY_CORE_Agent_Challenge_代理挑战["D-AUTONOMY-CORE/Agent Challenge 代理挑战 [design]"]
+        D_AUTONOMY_CORE_Agent_Cold_Start_Agent冷启动与技能注册["...Y-CORE/Agent Cold Start Agent冷启动与技能注册 [design]"]
+        D_AUTONOMY_CORE_Agent_Cold_Sta____Registration_Agent冷启动与技能注册["...tart Skill Registration Agent冷启动与技能注册 [design]"]
+        D_AUTONOMY_CORE_Agent_Collabor___n_Flow_Panorama_Agent协作流全景图["...llaboration Flow Panorama Agent协作流全景图 [design]"]
+        D_AUTONOMY_CORE_Agent_Command_Chain_Agent分层指挥链["...Y-CORE/Agent Command Chain Agent分层指挥链 [design]"]
+        D_AUTONOMY_CORE_Agent_Communication_Protocol_Agent间通信协议["...ent Communication Protocol Agent间通信协议 [design]"]
+        D_AUTONOMY_CORE_Agent_Communication_Security_Agent通信安全["...gent Communication Security Agent通信安全 [design]"]
+        D_AUTONOMY_CORE_Agent_Coordination_Agent协调["...ONOMY-CORE/Agent Coordination Agent协调 [design]"]
+        D_AUTONOMY_CORE_Agent_Dispatch_Agent调度分发["D-AUTONOMY-CORE/Agent Dispatch Agent调度分发 [design]"]
+        D_AUTONOMY_CORE_Agent_Drift_Guard_Agent漂移守卫["...NOMY-CORE/Agent Drift Guard Agent漂移守卫 [design]"]
+        D_AUTONOMY_CORE_Agent_Drift量化检____Drift_Quantitative_Checker["...化检查器 Agent Drift Quantitative Checker [design]"]
+        D_AUTONOMY_CORE_Agent_Error_Recovery_Agent错误恢复与优雅降级["...E/Agent Error Recovery Agent错误恢复与优雅降级 [design]"]
+        D_AUTONOMY_CORE_Agent_Escalation_Engine_Agent升级引擎["...ORE/Agent Escalation Engine Agent升级引擎 [design]"]
+        D_AUTONOMY_CORE_Agent_Four_Level_Autonomy_Model_Agent四级自治模型["...Four Level Autonomy Model Agent四级自治模型 [design]"]
+        D_AUTONOMY_CORE_Agent_Identity_Manager_Agent身份管理器["...ORE/Agent Identity Manager Agent身份管理器 [design]"]
+        D_AUTONOMY_CORE_Agent_Kill_Switch_Agent紧急制动["...NOMY-CORE/Agent Kill Switch Agent紧急制动 [design]"]
+        D_AUTONOMY_CORE_Agent_Legacy_Issue_Decision_Agent遗留问题裁定21项["... Legacy Issue Decision Agent遗留问题裁定21项 [design]"]
+        D_AUTONOMY_CORE_Agent_Memory_Agent记忆["D-AUTONOMY-CORE/Agent Memory Agent记忆 [design]"]
+        D_AUTONOMY_CORE_Agent_Memory_Architecture_Agent记忆架构["...E/Agent Memory Architecture Agent记忆架构 [design]"]
+        D_AUTONOMY_CORE_Agent_Memory_V___r_Retrieval_RAG_Agent记忆向量检索["...mory Vector Retrieval RAG Agent记忆向量检索 [design]"]
+        D_AUTONOMY_CORE_Agent_Observability_Agent可观测性["...MY-CORE/Agent Observability Agent可观测性 [design]"]
+        D_AUTONOMY_CORE_Agent_Permission_Guard_Agent权限守卫["...CORE/Agent Permission Guard Agent权限守卫 [design]"]
+        D_AUTONOMY_CORE_Agent_Process_Crash_Agent进程崩溃["...MY-CORE/Agent Process Crash Agent进程崩溃 [design]"]
+        D_AUTONOMY_CORE_Agent_Registry_Agent注册表["D-AUTONOMY-CORE/Agent Registry Agent注册表 [design]"]
+        D_AUTONOMY_CORE_Agent_Resource_Manager_Agent资源管理器["...ORE/Agent Resource Manager Agent资源管理器 [design]"]
+        D_AUTONOMY_CORE_Agent_Spec_Agent规格["D-AUTONOMY-CORE/Agent Spec Agent规格 [design]"]
+        D_AUTONOMY_CORE_Agent_Stability_Index_ASI_索引["...OMY-CORE/Agent Stability Index ASI 索引 [design]"]
+        D_AUTONOMY_CORE_Agent_State_Agent状态检查点["D-AUTONOMY-CORE/Agent State Agent状态检查点 [design]"]
+        D_AUTONOMY_CORE_Agent_State_Manager_Agent状态管理器["...Y-CORE/Agent State Manager Agent状态管理器 [design]"]
+        D_AUTONOMY_CORE_Agent_Test_Chaos_Engineering_Agent测试与混沌工程["...t Test Chaos Engineering Agent测试与混沌工程 [design]"]
+        D_AUTONOMY_CORE_Agent_Testing_Chaos_Engineering_Agent测试与混沌工程["...esting Chaos Engineering Agent测试与混沌工程 [design]"]
+        D_AUTONOMY_CORE_Agent_Three_Layer_Command_Chain_Agent三层指挥链["... Three Layer Command Chain Agent三层指挥链 [design]"]
+        D_AUTONOMY_CORE_Agent_Upgrade_Safety_Mode_Agent升级安全模式["...Agent Upgrade Safety Mode Agent升级安全模式 [design]"]
+        D_AUTONOMY_CORE_Agent_Version_Management_Agent版本管理策略[".../Agent Version Management Agent版本管理策略 [design]"]
+        D_AUTONOMY_CORE_Agent_R_Agent_R实时反思["D-AUTONOMY-CORE/Agent-R Agent-R实时反思 [design]"]
+        D_AUTONOMY_CORE_AgentCard_Agent技能卡["D-AUTONOMY-CORE/AgentCard Agent技能卡 [design]"]
+        D_AUTONOMY_CORE_Agentic_Financial_Market_Model_AFMM_模型["...gentic Financial Market Model AFMM 模型 [design]"]
+        D_AUTONOMY_CORE_Agent串谋检测_Agent_Collusion_Detection["...E/Agent串谋检测 Agent Collusion Detection [design]"]
+        D_AUTONOMY_CORE_Agent可观测性["D-AUTONOMY-CORE/Agent可观测性 [design]"]
+        D_AUTONOMY_CORE_Agent安全约束["D-AUTONOMY-CORE/Agent安全约束 [design]"]
+        D_AUTONOMY_CORE_Agent架构安全约束["D-AUTONOMY-CORE/Agent架构安全约束 [design]"]
+        D_AUTONOMY_CORE_Agent漏洞全景与防御升级___anorama_and_Defense_Upgrade["...rability Panorama and Defense Upgrade [design]"]
+        D_AUTONOMY_CORE_Agent行为约束["D-AUTONOMY-CORE/Agent行为约束 [design]"]
+        D_AUTONOMY_CORE_Agent身份注册与认证_A___stration_and_Authentication["...ntity Registration and Authentication [design]"]
+        D_AUTONOMY_CORE_Agent轮换策略_Agent_Rotation_Strategy["...ORE/Agent轮换策略 Agent Rotation Strategy [design]"]
+        D_AUTONOMY_CORE_Agent间信任利用攻击_Inter_agent_Trust_Exploitation["...信任利用攻击 Inter-agent Trust Exploitation [design]"]
+        D_AUTONOMY_CORE_Agent间通信协议["D-AUTONOMY-CORE/Agent间通信协议 [design]"]
+        D_AUTONOMY_CORE_Anthropic_Agent_Skills_Anthropic_Agent技能标准["...opic Agent Skills Anthropic Agent技能标准 [design]"]
+        D_AUTONOMY_CORE_Architecture_C___o_Domain_Mapping_架构组件到功能域映射["...omponent to Domain Mapping 架构组件到功能域映射 [design]"]
+        D_AUTONOMY_CORE_Architecture_Diagram_Relations_与其他架构图的关系["...hitecture Diagram Relations 与其他架构图的关系 [design]"]
+        D_AUTONOMY_CORE_Assurance_Gap_Manager_保障缺口管理器["...MY-CORE/Assurance Gap Manager 保障缺口管理器 [design]"]
+        D_AUTONOMY_CORE_Async_Reflection_反思为异步执行["D-AUTONOMY-CORE/Async Reflection 反思为异步执行 [design]"]
+        D_AUTONOMY_CORE_Audit_Trail_审计追踪["D-AUTONOMY-CORE/Audit Trail 审计追踪 [design]"]
+        D_AUTONOMY_CORE_AuditLogger_审计日志器["D-AUTONOMY-CORE/AuditLogger 审计日志器 [design]"]
+        D_AUTONOMY_CORE_AuditTrace_Interface_审计追踪接口["...NOMY-CORE/AuditTrace Interface 审计追踪接口 [design]"]
+        D_AUTONOMY_CORE_Auto_Fix_Engine_自动修复引擎["D-AUTONOMY-CORE/Auto-Fix Engine 自动修复引擎 [design]"]
+        D_AUTONOMY_CORE_AutoGen_2_0["D-AUTONOMY-CORE/AutoGen 2.0 [design]"]
+        D_AUTONOMY_CORE_Automated_Operations_Execution_自动化运维执行["...utomated Operations Execution 自动化运维执行 [design]"]
+        D_AUTONOMY_CORE_AutonomousExecutionRateDegraded_自主执行率降级["...tonomousExecutionRateDegraded 自主执行率降级 [design]"]
+        D_AUTONOMY_CORE_Autonomy_Boundary_Enforcer_自治边界执行器["...RE/Autonomy Boundary Enforcer 自治边界执行器 [design]"]
+        D_AUTONOMY_CORE_Autonomy_Circuit_Breaker_自治熔断条件["...-CORE/Autonomy Circuit Breaker 自治熔断条件 [design]"]
+        D_AUTONOMY_CORE_Autonomy_Maturity_Grading_自治成熟度分级["...ORE/Autonomy Maturity Grading 自治成熟度分级 [design]"]
+        D_AUTONOMY_CORE_Autonomy_Passport_自治护照["D-AUTONOMY-CORE/Autonomy Passport 自治护照 [design]"]
+        D_AUTONOMY_CORE_Autopilot_自动驾驶["D-AUTONOMY-CORE/Autopilot 自动驾驶 [design]"]
+        %% ... 还有 550 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_autonomy_core_context_assembler_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_budget_tracker_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_budget_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_pipeline_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_injector_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_engine_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_intent_parser_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_prompt_registry_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_constructor_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_consensus_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_contract_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_discovery_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_evaluator_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_executor_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_efficacy_calibrator_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_explain_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_factory_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_feedback_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_freshness_ext_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_kill_switch_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_kya_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_lifecycle_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_postmortem_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_prompt_opt_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_shadow_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_workflow_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_skill_translator_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core__pipeline_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core___main___py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_assembly_context_assembler_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core___init___from_orches_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_assembly_context_injector_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_assembly_context_pipeline_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_manag___t_context_budget_tracker_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_management___init___py -->|import_depends| src_zephyr_autonomy_core_management_context_evictor_py
+    src_zephyr_autonomy_core_management___init___py -->|import_depends| src_zephyr_autonomy_core_management_context_rot_model_py
+    src_zephyr_autonomy_core_parsing_intent_parser_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_support_prompt_registry_py -->|import_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_architecture_context_loader_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_adversarial_robustness_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_all_skill_modules_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_alignment_scorer_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_agent_observability_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_budget_forecaster_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_atomic_injector_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_cache_invalidation_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_ce_bootstrap_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_ce_explain_cli_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_ce_vibe_shortcuts_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_checkpoint_manager_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_ce_playground_v2_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_cold_start_booster_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_citation_walker_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_complexity_budget_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_contextual_fetch_api_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_config_safety_guard_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_evaluator_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_evictor_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_debt_score_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_health_score_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_outcome_tracker_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_optimizer_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_model_strategy_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_playground_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_rot_model_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_dependency_tracker_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_domain_decay_config_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_rule_registry_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_curation_loop_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_diversity_constraint_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_context_value_attribution_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_diff_injector_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_dispatch_table_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_embedding_version_lock_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_file_autoregister_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_fallback_staleness_gate_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_file_autorregister_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    src_zephyr_autonomy_core_host_resource_governor_py -->|config_depends| src_zephyr_autonomy_core___init___py
+    %% ... 还有 563 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-AUTONOMY_CORE (9 条)
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_AUTONOMY_CORE_Context_Engine_上下文引擎
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_AUTONOMY_CORE_用户损失减少_User_Loss_Reduction
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_AUTONOMY_CORE_信号产出延迟修复策略_Signal_Strategy_Latency
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_AUTONOMY_CORE_LLM_Inference_LLM推理调用
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_AUTONOMY_CORE_Autonomy_Passport_自治护照
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_AUTONOMY_CORE_市场状态Agent→D_PF_ALLOC
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_AUTONOMY_CORE_LLMDeg_LLMDeg降级策略
+    D_ALT_DATA[D-ALT_DATA] -->|config_depends| D_AUTONOMY_CORE_Principal_Track_本金轨道
+    D_ALT_DATA[D-ALT_DATA] -->|config_depends| D_AUTONOMY_CORE_Agent_Three_Layer_Command_Chain_Agent三层指挥链
+    %% D-COMPLIANCE -> D-AUTONOMY_CORE (126 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_LLM_Inference_Timeout_LLM推理超时
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_Cold_Start_6_Step_冷启动6步流程
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_AutonomousExecutionRateDegraded_自主执行率降级
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_Agent_State_Agent状态检查点
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_自治域不依赖业务域_Auto___main_No_Business_Dependency
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_Autonomy_Maturity_Grading_自治成熟度分级
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_四轨决策路径中Agent职责
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_MoMA_MoMA混合路由
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_基础设施自优化_Base
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_AI_治理执行者角色
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_Offline_Autonomy_离线自治
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_BudgetExceeded_预算超限
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_Szpruch可扩展运行时治理
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_Strategy_Agent_策略Agent
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_Layered_Timeout_Strategy_分层超时策略
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_自治策略库_自治策略库_Strategy
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_Jaccard相似度
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_Skill_Discovery_&_Matching_技能发现与匹配
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_Actor_Actor执行器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_Agent_Architec____Unified_Source_Agent架构唯一真源
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_8_Collection_U___ager_8大Collection统一Schema管理
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_AUTONOMY_CORE_Agent_Cold_Sta____Registration_Agent冷启动与技能注册
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_Memory_Provenance_Enforcer_记忆来源强制器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_幻觉检测指标_Hallucination_Detection_Metrics
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_全自动自治等级_L4_Full_Auto
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_否决规则引擎_Veto_Rule_Engine
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_Saga_Distribut___on_Compensation_Saga分布式事务补偿
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_Cold_Start_Process_冷启动流程
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_AUTONOMY_CORE_boundary_audit_py_自治行为审计
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_AUTONOMY_CORE_Agent_Challenge_代理挑战
+    %% D-CROSS_ASSET -> D-AUTONOMY_CORE (6 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_AUTONOMY_CORE_Context_Engine_上下文引擎
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_AUTONOMY_CORE_Market_Maker_B___&_Simulation_庄家行为模式自迭代识别与模拟
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_AUTONOMY_CORE_输出验证层_Output_Validation_Layer
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_AUTONOMY_CORE_Agent安全约束
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_AUTONOMY_CORE_AI_治理执行者角色
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_AUTONOMY_CORE_决策可解释性_Decision_Explainability
+    %% D-DATA_GOV -> D-AUTONOMY_CORE (5 条)
+    D_DATA_GOV[D-DATA_GOV] -->|contract| D_AUTONOMY_CORE_Agent_Test_Chaos_Engineering_Agent测试与混沌工程
+    D_DATA_GOV[D-DATA_GOV] -->|data| D_AUTONOMY_CORE_Test_Hierarchy_Model_测试层级模型
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_AUTONOMY_CORE_Agent_Architecture_Position_Agent架构在全局架构中的位置
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_AUTONOMY_CORE_Shadow_Mode_Testing_影子模式测试
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_AUTONOMY_CORE_Reflection_Frequency_Control_反思频率控制
+    %% D-DATA_SEC -> D-AUTONOMY_CORE (2 条)
+    D_DATA_SEC[D-DATA_SEC] -->|contract| D_AUTONOMY_CORE_Fee_Track_费用轨道
+    D_DATA_SEC[D-DATA_SEC] -->|data| D_AUTONOMY_CORE_MI9_Agent_Intelligence_Protocol_协议
+    %% D-FRONTEND -> D-AUTONOMY_CORE (25 条)
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_Route_Evaluation_&_Optimization_路由评估与优化
+    D_FRONTEND[D-FRONTEND] -->|data| D_AUTONOMY_CORE_基础设施自优化_Base
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_行为可预测_Behavioral_Predictability
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_LLM_Degradation_Strategy_LLM降级策略
+    D_FRONTEND[D-FRONTEND] -->|event| D_AUTONOMY_CORE_Health_Check_健康检查
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_Route_Logging_&_Audit_路由日志与审计
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_人工确认自治等级_L2_Human_Confirm
+    D_FRONTEND[D-FRONTEND] -->|event| D_AUTONOMY_CORE_人工通知自治等级_L3_Human_Notify
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_自治域不依赖业务域_Auto___main_No_Business_Dependency
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_市场状态Agent→D_PF_ALLOC
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_Governance_Drift_Protector_治理漂移防护器
+    D_FRONTEND[D-FRONTEND] -->|event| D_AUTONOMY_CORE_行为基线建立_Behavior_Baseline_Establishment
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_CTR_TRACE_001_AuditTrace_审计追踪
+    D_FRONTEND[D-FRONTEND] -->|data| D_AUTONOMY_CORE_FSM_Verifier_FSM验证器
+    D_FRONTEND[D-FRONTEND] -->|event| D_AUTONOMY_CORE_Order_Management_订单管理
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_AUTONOMY_CORE_BudgetExceeded_预算超限
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_Reflexion_Agent_Required_需要自反Agent
+    D_FRONTEND[D-FRONTEND] -->|event| D_AUTONOMY_CORE_Agent_Memory_V___r_Retrieval_RAG_Agent记忆向量检索
+    D_FRONTEND[D-FRONTEND] -->|data| D_AUTONOMY_CORE_Session_Concurrency_会话并发
+    D_FRONTEND[D-FRONTEND] -->|data| D_AUTONOMY_CORE_CapabilityCard_能力卡片
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_AUTONOMY_CORE_决策路径偏离检测_Decision_Path_Deviation_Detection
+    D_FRONTEND[D-FRONTEND] -->|data| D_AUTONOMY_CORE_Phase_5_Agentic_Drift防护激活
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_AUTONOMY_CORE_Data_Quality_Check_数据质量检查
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_Cost_Controller_成本控制器
+    D_FRONTEND[D-FRONTEND] -->|contract| D_AUTONOMY_CORE_GATE_TRUST_01_多Agent通信
+    %% D-GOVERNANCE -> D-AUTONOMY_CORE (220 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_autonomy_core___init___py
+    %% D-INFRA_OPS -> D-AUTONOMY_CORE (43 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_Named_Accountability_Manager_命名问责管理器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_Data_Quality_Check_数据质量检查
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_行为基线监控_Behavior_Baseline_Monitoring
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_A2A_Check_Non_Bypassable_A2A检查不可绕过
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_AUTONOMY_CORE_信号产出延迟修复策略_Signal_Strategy_Latency
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_AUTONOMY_CORE_Self_Reflection_自反评估
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_Agent身份注册与认证_A___stration_and_Authentication
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_Escalation_Engine_升级引擎
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_Neuro_Symbolic_Fusion_Reasoning_神经符号融合推理
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_GATE_GA_01_多Agent架构
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_AUTONOMY_CORE_Agent_Command_Chain_Agent分层指挥链
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_AUTONOMY_CORE_Market_Data_Analysis_市场数据分析
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_Agent_Process_Crash_Agent进程崩溃
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_Functional_Domain_List_功能域清单
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_执行阶段_Execution_Phase
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_DeepSeek_7B_DeepSeek_7B模型
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_ABAC策略_ABAC_Policy
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_自治边界检查器_Autonomy_Boundary_Checker
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_AUTONOMY_CORE_AWS_Agentic_AI___ic_AI_Security_Scope_Matrix
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_AgentCard_Agent技能卡
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_Main_Force_Cap___rative_Analysis_主力资金行为自迭代分析
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_Agent_Drift量化检____Drift_Quantitative_Checker
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_Internal_Contest_Mechanism_内部竞赛机制
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_AUTONOMY_CORE_Szpruch可扩展运行时治理
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_GATE_SZP_02_多Agent工作流
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_Message_Format_消息格式
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_AUTONOMY_CORE_Anthropic_Agent_Skills_Anthropic_Agent技能标准
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_AUTONOMY_CORE_Command_Flow_指令流
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_AUTONOMY_CORE_ExperimentAnomaly_实验异常检测
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_AUTONOMY_CORE_Redis内存超限修复策略
+    %% D-INTEGRATION -> D-AUTONOMY_CORE (2 条)
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_autonomy_core___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_autonomy_core___init___py
+    %% D-INTELLIGENCE -> D-AUTONOMY_CORE (1 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_autonomy_core___init___py
+    %% D-OPS -> D-AUTONOMY_CORE (37 条)
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_autonomy_core___init___py
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_AI自主执行率阈值_AI_A___us_Execution_Rate_Threshold
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_GLM_5_1_GLM_5_1模型
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_Agent_Communication_Security_Agent通信安全
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_反思轨迹上报_Reflection_Trajectory_Report
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_Cost_Control_成本控制
+    D_OPS[D-OPS] -->|event| D_AUTONOMY_CORE_GATE_TRUST_01_多Agent通信
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_EscalationTriggered_升级触发
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Backtest_Execution_回测执行
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_Kill_Switch_Operation_Kill_Switch操作
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Agent架构安全约束
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_Agent_Memory_V___r_Retrieval_RAG_Agent记忆向量检索
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_KillSwitchActivated_紧急停机激活
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Resource_Optimization_资源优化
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_Strategic_Bus_战略层消息总线
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Human_Supervis____AI_Limitations_人类监督者理解AI限制
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Route_Logging_&_Audit_路由日志与审计
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_JSON_RPC_2_0_JSON_RPC_2_0协议
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_Architecture_C___o_Domain_Mapping_架构组件到功能域映射
+    D_OPS[D-OPS] -->|event| D_AUTONOMY_CORE_Neuro_Symbolic_Fusion_Reasoning_神经符号融合推理
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Actor_Evaluato___Evaluator_SelfReflection三组件
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Agent_Drift量化检____Drift_Quantitative_Checker
+    D_OPS[D-OPS] -->|contract| D_AUTONOMY_CORE_资金安全_Fund_Safety
+    D_OPS[D-OPS] -->|config_depends| D_AUTONOMY_CORE_iFind_QPS超限修复策略
+    D_OPS[D-OPS] -->|event| D_AUTONOMY_CORE_Neuro_Symbolic_Fusion_Reasoning_神经符号融合推理
+    D_OPS[D-OPS] -->|event| D_AUTONOMY_CORE_LangGraph_图谱
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Context_Recycling_上下文回收
+    D_OPS[D-OPS] -->|event| D_AUTONOMY_CORE_Local_LLM_Ownership_本地LLM归属
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_Szpruch可扩展运行时治理
+    D_OPS[D-OPS] -->|data| D_AUTONOMY_CORE_SelfReflection_自反思器
+    %% D-PF_ALLOC -> D-AUTONOMY_CORE (6 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_AUTONOMY_CORE_MASEval_5_Dimension_Assessment_MASEval五维评估
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_AUTONOMY_CORE_Part_Type_Definition_Part类型定义
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_AUTONOMY_CORE_Task_Orchestration_任务编排
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_AUTONOMY_CORE_自动降级与人工升级_Auto_Degrade_and_Human_Upgrade
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_AUTONOMY_CORE_Context_Manager_上下文管理
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_AUTONOMY_CORE_全自动自治等级_L4_Full_Auto
+    %% D-SELL_DECISION -> D-AUTONOMY_CORE (6 条)
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_AUTONOMY_CORE_Resource_Optimization_资源优化
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_AUTONOMY_CORE_Multi_Level_Reflection_多级反思
+    D_SELL_DECISION[D-SELL_DECISION] -->|config_depends| D_AUTONOMY_CORE_FCA_Mills_Review自治光谱
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_AUTONOMY_CORE_Self_Reflective_Agent_自反Agent
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_AUTONOMY_CORE_iFind_QPS超限修复策略
+    D_SELL_DECISION[D-SELL_DECISION] -->|config_depends| D_AUTONOMY_CORE_GPU_Memory_Insufficient_GPU显存不足
+    %% D-TRADING -> D-AUTONOMY_CORE (3 条)
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_autonomy_core___init___py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_autonomy_core___init___py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_autonomy_core___init___py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-AUTONOMY_CORE -> D-AUTONOMY_PERM (31 条)
+    D_AUTONOMY_CORE_GATE_GA_01_多Agent架构 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_AWQ_4_bit_Quantization_AWQ_4_bit量化 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_A2A_Check_A2A检查 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Test_Level_Model_测试层级模型 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_故障可恢复_Failure_Recoverability -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Message_Format_消息格式 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_8_Collection_U___ager_8大Collection统一Schema管理 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Agent_Challenge_代理挑战 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Context_Recycling_上下文回收 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_基础设施自优化_Base -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Evolution_Agent_进化Agent -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Error_Recovery_优雅降级_错误恢复与优雅降级 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_LLM_Inference_LLM推理调用 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_评估阶段_Evaluation_Phase -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Shadow_Mode_Testing_影子模式测试 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Stop_Loss_Management_止损管理 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Agent_Communication_Security_Agent通信安全 -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Claude_Claude模型 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Natural_Person___ne_Stop_Override_自然人可干预停止覆盖 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_AI自治运维闭环_AI自治运维 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_API_LLM -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Agent_Three_Layer_Command_Chain_Agent三层指挥链 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Agent身份注册与认证_A___stration_and_Authentication -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_AI自治运维是闭环而非开环_Closed_Loop_Autonomy -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Strategic_Bus_战略层消息总线 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Assurance_Gap_Manager_保障缺口管理器 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Knowledge_Query_知识库查询 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_阈值拆分攻击检测_Thres____Splitting_Attack_Detection -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_GATE_SZP_01_日内高频 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_AUTONOMY_CORE_Cost_Governance_成本治理 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    %% D-AUTONOMY_CORE -> D-DATA_ENG (20 条)
+    D_AUTONOMY_CORE_Self_Reflection_自反评估 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Agent_State_Manager_Agent状态管理器 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Degradation_Strategy_Matrix_降级策略矩阵 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Architecture_C___o_Domain_Mapping_架构组件到功能域映射 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_ReflCtrl_ReflCtrl频率控制 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_FCA_Mills_Review自治光谱 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_SAMULE_SAMULE三级反思 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Incremental_Sc___cy_Graph_Decision_增量扫描依赖图决策 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_CTR_TRACE_001_AuditTrace_审计追踪 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Agent_Command_Chain_Agent分层指挥链 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_MultiAgentBench_MultiAgentBench评估框架 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Guardian_Agent_守护智能体 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Strategy_Execution_策略执行 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Four_Track_Dec___ponsibility_四轨决策路径中Agent的职责 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Decision_Checkpoint_决策前快照检查点 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_RBAC_Bridge_RBAC桥接 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Retry_Strategy_重试策略 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Agent_Command_Chain_Agent分层指挥链 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Cross_Layer_Interaction_Rules_跨层交互规则 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_AUTONOMY_CORE_Agent_R_Agent_R实时反思 -->|event| D_DATA_ENG[D-DATA_ENG]
+    %% D-AUTONOMY_CORE -> D-EX_CORE (15 条)
+    D_AUTONOMY_CORE_LLM_Prompt_Cha___es_Review_LLM_prompt变更需人工审核 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_LangGraph_图谱 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_Offline_Autonomy_离线自治 -->|event| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_Human_Supervis___ret_AI_Output_人类监督者正确解读AI输出 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_Execution_Layer_Agents_执行层Agent组 -->|event| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_Drift_Detection_漂移检测 -->|data| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_FSM_Verifier_FSM验证器 -->|config_depends| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_降级策略_Degrade_Strategy -->|config_depends| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_A2A_Check_A2A检查 -->|config_depends| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_Principal_Track_本金轨道 -->|data| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_Cold_Start_6_Step_冷启动6步流程 -->|event| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_AWQ_4_bit_Quantization_AWQ_4_bit量化 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_RegimeDetector_Agent_市场状态Agent -->|data| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_Governance_Drift_Protector_治理漂移防护器 -->|config_depends| D_EX_CORE[D-EX_CORE]
+    D_AUTONOMY_CORE_Agent安全约束 -->|config_depends| D_EX_CORE[D-EX_CORE]
+    %% D-AUTONOMY_CORE -> D-EX_SOR (15 条)
+    D_AUTONOMY_CORE_Orchestrator_Agent_编排Agent -->|contract| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_Risk_Manager_风控经理 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_BlackSwanDetected_黑天鹅检测 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_假阴性率_False_Negative_Rate -->|data| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_Risk_Agent_风控Agent -->|contract| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_Multi_Agent_Or___MCP_Protocol_多智能体编排框架与MCP协议 -->|data| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_Multi_Agent_Co___ent_Dimensions_多Agent协作评估维度 -->|data| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_D_AUT -->|event| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_GATE_SZP_01_日内高频 -->|event| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_Risk_Manager_风控经理 -->|data| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_Agent_Testing_Chaos_Engineering_Agent测试与混沌工程 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_Claude_Claude模型 -->|data| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_质量保障自驱动_Quality_Assurance_Self_Drive -->|data| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_Knowledge_&_Memory_知识与记忆 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_AUTONOMY_CORE_GATE_GA_02_监控盲区 -->|data| D_EX_SOR[D-EX_SOR]
+    %% D-AUTONOMY_CORE -> D-FACTOR (34 条)
+    D_AUTONOMY_CORE_NVIDIA_Agentic_Autonomy_Levels_NVIDIA自治等级 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Part_Type_Definition_Part类型定义 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_LLM_Agent_Router_LLM_Agent路由 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Local_LLM_Selection_本地LLM选型 -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Session_Concurrency_会话并发 -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Microsoft_Agent_Governance_Toolkit_AGT_治理 -->|data| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_决策可解释性_Decision_Explainability -->|data| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Stage_1_Task_Classifier_Stage_1任务分类器 -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_TimingAnalyst_Agent_择时Agent -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Agent_Permission_Guard_Agent权限守卫 -->|data| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_MASEval_MASEval评估框架 -->|data| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_PreFlect_前瞻反思 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Cost_Governance_成本治理 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Three_Layer_Co___Chain_Architecture_三层指挥链架构图 -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_行为可预测_Behavioral_Predictability -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Procedural_Memory_程序记忆 -->|data| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Evaluator_Evaluator评估器 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Poisoning_Monitor_投毒监控器 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_ReflCtrl_ReflCtrl反思频率控制 -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Strategy_Self_Correction_Loop_策略自我修正闭环 -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_LangChain_LangChain框架 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Causal_LLM_Routing_因果LLM路由 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_七层纵深防御_Seven_layer_Defense_in_Depth -->|config_depends| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_多重故障叠加修复策略_Strategy -->|config_depends| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Autopilot_自动驾驶 -->|data| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Agent_Audit_Trail_Agent审计链 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Autonomy_Maturity_Grading_自治成熟度分级 -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_GPU显存超限修复策略 -->|event| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Real_Time_In_Trajectory_Reflection_实时轨迹内反思 -->|contract| D_FACTOR[D-FACTOR]
+    D_AUTONOMY_CORE_Human_in_the_Loop_Gateway_人在闭环网关 -->|config_depends| D_FACTOR[D-FACTOR]
+    %% D-AUTONOMY_CORE -> D-GOVERNANCE (45 条)
+    src_zephyr_autonomy_core_context_assembler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_autonomy_core_vector_writer_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_MASEval_MASEval评估框架 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Five_Stage_Memory_Pipeline_五阶段记忆流水线 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_DeepSeek_V4_Pro_DeepSeek_V4_Pro模型 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_LLMInference_LLM推理 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Memory_Layer_Specs_各层记忆规格 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Local_LLM_Prio____Low_Latency_本地LLM优先用于低延迟任务 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Inter_Agent_Co____Pass_A2A_Agent间通信必须经过A2A检查 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_SysDeg_SysDeg系统降级策略 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_TiMi_TiMi框架 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_GATE_TRUST_03_Meta_Governance_治理 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Four_Layer_Versioning_四层版本化分类法 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_MI9_Agent_Intelligence_Protocol_协议 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Success_Metrics_成功指标 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Self_Reflectiv___tion_Trajectory_自反Agent反思轨迹 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_ChromaDB_Runtime_Validator_ChromaDB运行验证器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Circuit_Breaker_熔断器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Test_Level_Model_测试层级模型 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_AWQ_4_bit_Quantization_AWQ_4_bit量化 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Resource_Optimization_资源优化 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_TimingAnalyst_Agent_择时Agent -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_请求协商阶段_Request_Negotiation_Phase -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_ChromaDB_Runtime_Validator_ChromaDB运行验证器 -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Drift_Detection_漂移检测 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Guardian_Agent_Conditional_Gate_守护智能体条件门禁 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_请求协商阶段_Request_Negotiation_Phase -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_BudgetExceeded_预算超限 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_漂移自适应_Drift_Adaptation -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    D_AUTONOMY_CORE_Agent轮换策略_Agent_Rotation_Strategy -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-AUTONOMY_CORE -> D-GOV_AUDIT (3 条)
+    src_zephyr_autonomy_core_engine_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_autonomy_core_skill_executor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_autonomy_core_skill_sandbox_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    %% D-AUTONOMY_CORE -> D-GOV_RULE (1 条)
+    src_zephyr_autonomy_core_skill_executor_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    %% D-AUTONOMY_CORE -> D-INFRA_RUNTIME (31 条)
+    D_AUTONOMY_CORE_Agent_Collabor___n_Flow_Panorama_Agent协作流全景图 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Monitoring_Agent_监控Agent -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_11_Agents_Full_MVP_11个Agent全部MVP实现 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Dual_Channel_Scheduler_Decision_双通道调度决策 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Multi_Modal_Financial_Reasoning_多模态金融推理 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Agent_Dispatch_Agent调度分发 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_agentskills_io_agentskills_io技能标准 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_进程心跳超时修复策略_Strategy_Timeout -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_GLM_5_1_GLM_5_1模型 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_人工通知自治等级_L3_Human_Notify -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Tactical_Layer_Agents_战术层Agent组 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_System_Design____ognitive_Ability_系统设计人类认知能力 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Multi_Agent_Simultaneous_Failure_多Agent同时故障 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Report_Generation_报告生成 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_TimingAnalyst_Agent_择时Agent -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_时间分散攻击_Time_Dispersion_Attack -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_MASEval_MASEval评估框架 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_级联失败_Cascading_Failure -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_GATE_SZP_03_轨迹漂移盲区 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Qwen2_5_7B_Instruct_Qwen2_5_7B_Instruct模型 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Inference_Gating_推理门控 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Benchmark_Analysis_对标分析 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Incremental_Sc___cy_Graph_Decision_增量扫描依赖图决策 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_StrategyRetired_策略退役 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Agent_Error_Recovery_Agent错误恢复与优雅降级 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_时间分散攻击_Time_Dispersion_Attack -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_Microsoft_Agent_Governance_Toolkit_AGT_治理 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_AISI_2026报告 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_ContestTrade_ContestTrade框架 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_AUTONOMY_CORE_RegimeDetector_Agent_市场状态Agent -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-AUTONOMY_CORE -> D-INTEGRATION (76 条)
+    src_zephyr_autonomy_core_context_assembler_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_context_pipeline_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_context_injector_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_doc_compressor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_intent_parser_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_intent_keyword_mapper_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_pattern_library_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_pattern_library_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_prompt_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_skill_executor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_skill_freshness_ext_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_skill_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_skill_router_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_system_snapshot_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_task_context_builder_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_assembly_context_assembler_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_assembly_context_injector_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_assembly_context_pipeline_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_management_context_evictor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_parsing_intent_parser_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_parsing_intent_keyword_mapper_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_support_doc_compressor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_support_prompt_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_autonomy_core_support_system_snapshot_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    D_AUTONOMY_CORE_Agent_Audit_Trail_Agent审计链 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_AUTONOMY_CORE_Agent_Drift_Guard_Agent漂移守卫 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_AUTONOMY_CORE_Error_Classifi___Recovery_Strategy_错误分类与恢复策略 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_AUTONOMY_CORE_iFind_QPS超限修复策略 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_AUTONOMY_CORE_ABAC策略_ABAC_Policy -->|contract| D_INTEGRATION[D-INTEGRATION]
+    %% D-AUTONOMY_CORE -> D-INTELLIGENCE (32 条)
+    src_zephyr_autonomy_core_context_assembler_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_autonomy_core_context_assembler_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_DeepSeek_V4_Pro_DeepSeek_V4_Pro模型 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Agent_Memory_Agent记忆 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_磁盘空间不足修复策略_Strategy_Disk -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Research_Agent_研究Agent -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_LLM_Prompt_Cha___es_Review_LLM_prompt变更需人工审核 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Human_Supervis____AI_Limitations_人类监督者理解AI限制 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Redis内存超限修复策略 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Four_Layer_Versioning_四层版本化 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_HedgeAgents_HedgeAgents框架 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_A2A_Communication_Agent间通信 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Named_Accountability_Manager_命名问责管理器 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Self_Healing_自愈系统 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Named_Accountability_Manager_命名问责管理器 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_CrowdnessWarning_拥挤度告警 -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_AuditTrace_Interface_审计追踪接口 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Error_Recovery_优雅降级_错误恢复与优雅降级 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_LLMDeg_LLMDeg降级策略 -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Autonomy_Passport_自治护照 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_HealthStatus_健康状态 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Route_Logging_&_Audit_路由日志与审计 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Governance_Drift_Protector_治理漂移防护器 -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Error_Classifi___Recovery_Strategy_错误分类与恢复策略 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Agent_Drift_Guard_Agent漂移守卫 -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Agent_Stability_Index_ASI_索引 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Methodology_Co___Design_Decisions_方法论约束与设计决策 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Hi_DARTS_Hi_DARTS框架 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_MAR_Multi_Agent_Reflexion多Agent反思 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_AUTONOMY_CORE_Agent漏洞全景与防御升级___anorama_and_Defense_Upgrade -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-AUTONOMY_CORE -> D-KNOWLEDGE (17 条)
+    D_AUTONOMY_CORE_Agent_Testing_Chaos_Engineering_Agent测试与混沌工程 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Agent_Observability_Agent可观测性 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Shadow_Mode_Testing_影子模式测试 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Session_Concurrency_会话并发 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Retry_Strategy_重试策略 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_A2A_Check_Gateway_A2A检查网关 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_市场状态Agent→D_PF_ALLOC -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Execution_Layer_Agents_执行层Agent组 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Principal_Track_本金轨道 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Skill_Registration_技能注册 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_LLM_Prompt_Tem___o_Modify_LLM_prompt模板不可自动修改 -->|config_depends| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Human_Supervis____AI_Limitations_人类监督者理解AI限制 -->|config_depends| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Architecture_C___o_Domain_Mapping_架构组件到功能域映射 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_GPU_Memory_Insufficient_GPU显存不足 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_Inter_Agent_Co____Pass_A2A_Agent间通信必须经过A2A检查 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_DeepSeek_7B_DeepSeek_7B模型 -->|config_depends| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_AUTONOMY_CORE_OverfittingDetected_过拟合检测 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    %% D-AUTONOMY_CORE -> D-MKT_DATA (26 条)
+    D_AUTONOMY_CORE_SAMULE_SAMULE三级反思 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Feedback_Flow_反馈流 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Agent_Challenge_代理挑战 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_策略自我修正闭环_Strategy_Self_correction_Loop -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_LLM_Prompt_Cha___es_Review_LLM_prompt变更需人工审核 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Agent架构安全约束 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_SignalAnalyst_Agent_信号Agent -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_GATE_GA_02_监控盲区 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Agent_Memory_Architecture_Agent记忆架构 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_ChromaDB_Runtime_Validator_ChromaDB运行验证器 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_MoMA_MoMA混合路由 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_决策可解释性_Decision_Explainability -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_AGENTICAITA_AGENTICAITA框架 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_NexTrade_NexTrade交易系统 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_PermissionChanged_权限变更 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Agent安全约束 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Inference_Gating_推理门控 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Agent_Memory_Architecture_Agent记忆架构 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Rule_Engine_规则引擎 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Dual_Channel_Scheduler_Decision_双通道调度决策 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_T0Trader_Agent_做TAgent -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_决策可解释性_Decision_Explainability -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_QuantAgent_QuantAgent框架 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_SysDeg_SysDeg系统降级策略 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Autonomy_Passport_自治护照 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_AUTONOMY_CORE_Shadow_Mode_Testing_影子模式测试 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    %% D-AUTONOMY_CORE -> D-ML_SERVE (7 条)
+    D_AUTONOMY_CORE_L1_L5_Test_Levels_L1_L5测试层级 -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_AUTONOMY_CORE_Self_Reflectiv___tion_Trajectory_自反Agent反思轨迹 -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_AUTONOMY_CORE_时间分散攻击_Time_Dispersion_Attack -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_AUTONOMY_CORE_LLM_Inference_LLM推理调用 -->|data| D_ML_SERVE[D-ML_SERVE]
+    D_AUTONOMY_CORE_假阴性率_False_Negative_Rate -->|config_depends| D_ML_SERVE[D-ML_SERVE]
+    D_AUTONOMY_CORE_Auto_Fix_Engine_自动修复引擎 -->|event| D_ML_SERVE[D-ML_SERVE]
+    D_AUTONOMY_CORE_Tactical_Layer_Agents_战术层Agent组 -->|contract| D_ML_SERVE[D-ML_SERVE]
+    %% D-AUTONOMY_CORE -> D-ML_TRAIN (15 条)
+    D_AUTONOMY_CORE_NVIDIA_Agentic_Autonomy_Levels_NVIDIA自治等级 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_DecisionTraceBroken_决策溯源断链 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_LLMDeg_LLMDeg降级策略 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_Skill_Version_Management_技能版本管理与退役 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_Neuro_Symbolic_Fusion_Reasoning_神经符号融合推理 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_FAISS_FAISS向量检索引擎 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_KillSwitchActivated_Kill_Switch激活 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_Claude_Claude模型 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_A2A_Check_Non_Bypassable_A2A检查不可绕过 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_Bootstrap_Superadmin_超级管理员引导 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_Learn_经验学习 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_MI9_Agent_Intelligence_Protocol_协议 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_Agent架构安全约束 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_Agent_Legacy_Issue_Decision_Agent遗留问题裁定21项 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    D_AUTONOMY_CORE_Self_Healing_自愈系统 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-AUTONOMY_CORE -> D-PF_CORE (15 条)
+    D_AUTONOMY_CORE_Natural_Person___ne_Stop_Override_自然人可干预停止覆盖 -->|data| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_StrategyRetired_策略退役 -->|data| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_TiMi_TiMi框架 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_Local_API_Time_Task_Routing_本地_API分时分任务路由 -->|event| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_Compliance_Check_合规检查 -->|event| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_CrewAI -->|event| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_CoreReadOnlyState_核心只读状态 -->|event| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_Agent_Audit_Trail_Agent审计链 -->|event| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_Guardian_Agent_Conditional_Gate_守护智能体条件门禁 -->|event| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_Error_Classifi___Recovery_Strategy_错误分类与恢复策略 -->|event| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_Cold_Start_6_Step_冷启动6步流程 -->|data| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_LLM路由_方案_适配器系列___outer_Schema_Adapter_Series -->|contract| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_Production_Agent_Key_Metrics_生产级Agent关键指标 -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_Autonomy_Maturity_Grading_自治成熟度分级 -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_AUTONOMY_CORE_红队对抗框架_Red_Team_Adversarial_Framework -->|event| D_PF_CORE[D-PF_CORE]
+    %% D-AUTONOMY_CORE -> D-POSITION (7 条)
+    D_AUTONOMY_CORE_multi_agent_patterns_multi_agent_patterns项目 -->|contract| D_POSITION[D-POSITION]
+    D_AUTONOMY_CORE_CTR_TRACE_001_AuditTrace_审计追踪 -->|contract| D_POSITION[D-POSITION]
+    D_AUTONOMY_CORE_Incremental_Sc___cy_Graph_Decision_增量扫描依赖图决策 -->|contract| D_POSITION[D-POSITION]
+    D_AUTONOMY_CORE_GATE_TRUST_02_Agent间协议 -->|event| D_POSITION[D-POSITION]
+    D_AUTONOMY_CORE_Cheng_Adaptive___lti_Agent_Cheng自适应LLM多Agent -->|data| D_POSITION[D-POSITION]
+    D_AUTONOMY_CORE_Inter_Agent_Co____Pass_A2A_Agent间通信必须经过A2A检查 -->|event| D_POSITION[D-POSITION]
+    D_AUTONOMY_CORE_Named_Accountability_Manager_命名问责管理器 -->|contract| D_POSITION[D-POSITION]
+    %% D-AUTONOMY_CORE -> D-REPORTING (10 条)
+    D_AUTONOMY_CORE_Detect_异常检测 -->|contract| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_Learn_经验学习 -->|contract| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_Stop_Loss_Management_止损管理 -->|contract| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_ARA自适应风险架构_ARA_Adaptive_Risk_Architecture -->|data| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_Self_Reflective_Agent_自反Agent -->|contract| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_人工审批自治等级_L1_Human_Approval -->|event| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_GATE_SZP_03_轨迹漂移盲区 -->|contract| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_TraceContext_追踪上下文 -->|contract| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_Memory_Provenance_Enforcer_记忆来源强制器 -->|config_depends| D_REPORTING[D-REPORTING]
+    D_AUTONOMY_CORE_HedgeAgents_HedgeAgents框架 -->|config_depends| D_REPORTING[D-REPORTING]
+    %% D-AUTONOMY_CORE -> D-RISK (87 条)
+    D_AUTONOMY_CORE_Microsoft_Agent_Governance_Toolkit_AGT_治理 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Memory_Layer_Specs_各层记忆规格 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Memory_Provenance_Enforcer_记忆来源强制器 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_KillSwitchActivated_紧急停机激活 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Feedback_Flow_反馈流 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Agent架构安全约束 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Guardian_Agent_Conditional_Gate_守护智能体条件门禁 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_PermissionChanged_权限变更 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Test_Level_Model_测试层级模型 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Portfolio_Optimization_组合优化 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Degradation_Strategy_Matrix_降级策略矩阵 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_11_Agents_Full_MVP_11个Agent全部MVP实现 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Health_Monitor_健康监控器 -->|event| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Layered_Timeout_Strategy_分层超时策略 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Jaccard相似度 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_8_Collection_U___ager_8大Collection统一Schema管理 -->|event| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Strategic_Bus_战略层消息总线 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Reflexion_Agent_自反Agent -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_质量保障自驱动_Quality_Assurance_Self_Drive -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Strategy_Execution_策略执行 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Command_Flow_指令流 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_AI自主执行率阈值_AI_A___us_Execution_Rate_Threshold -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Route_Evaluation_&_Optimization_路由评估与优化 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Functional_Domain_List_功能域清单 -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_GPU显存超限修复策略 -->|event| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_全自动自治等级_L4_Full_Auto -->|data| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_PreFlect_前瞻反思 -->|event| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_MCP_Triple_Gate_MCP三重门 -->|contract| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_Architecture_Diagram_Relations_与其他架构图的关系 -->|event| D_RISK[D-RISK]
+    D_AUTONOMY_CORE_输出验证层_Output_Validation_Layer -->|event| D_RISK[D-RISK]
+    %% D-AUTONOMY_CORE -> D-SECURITY (67 条)
+    src_zephyr_autonomy_core_context_injector_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_autonomy_core_llm_gateway_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_autonomy_core_security_filter_py -->|import_depends| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Learn_经验学习 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_DeepSeek_V4_Pro_DeepSeek_V4_Pro模型 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Strategy_Agent_策略Agent -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Agent_Drift_Guard_Agent漂移守卫 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Reflexion_Agent_Required_需要自反Agent -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Human_Supervis___ret_AI_Output_人类监督者正确解读AI输出 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Cross_Layer_Interaction_Rules_跨层交互规则 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Hi_DARTS_Hi_DARTS框架 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Hi_DARTS_Hi_DARTS框架 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Cross_Layer_Interaction_Matrix_跨层交互矩阵 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_BEST_Route_BEST_Route路由 -->|data| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Agent_Observability_Agent可观测性 -->|data| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Agent_Communication_Protocol_Agent间通信协议 -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Agent_Communication_Security_Agent通信安全 -->|event| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_ContestTrade_ContestTrade框架 -->|event| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Agent_Four_Level_Autonomy_Model_Agent四级自治模型 -->|event| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_资金安全_Fund_Safety -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Agent_R_Agent_R实时反思 -->|event| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Governance_Drift_Protector_治理漂移防护器 -->|data| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Operations_Agent_运维Agent -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_幻觉防护_Hallucination_Protection -->|contract| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_漂移自适应_Drift_Adaptation -->|event| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Part_Type_Definition_Part类型定义 -->|event| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Guardian_Agent_守护智能体 -->|data| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Agent行为约束 -->|data| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_Model_Hot_Swap_模型热交换 -->|data| D_SECURITY[D-SECURITY]
+    D_AUTONOMY_CORE_GPU_Memory_Insufficient_GPU显存不足 -->|event| D_SECURITY[D-SECURITY]
+    %% D-AUTONOMY_CORE -> D-SHARED (6 条)
+    src_zephyr_autonomy_core_context_budget_tracker_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_autonomy_core_context_budget_tracker_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_autonomy_core_context_budget_tracker_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_autonomy_core_llm_gateway_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_autonomy_core_manag___t_context_budget_tracker_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-AUTONOMY_CORE -> D-SIGNAL (53 条)
+    D_AUTONOMY_CORE_Evaluator_Evaluator评估器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_人工审批自治等级_L1_Human_Approval -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_LLMDeg_LLMDeg降级策略 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Skill_Version_Management_技能版本管理与退役 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Internal_Contest_Mechanism_内部竞赛机制 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Hi_DARTS_Hi_DARTS框架 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Conflict_Resolution_冲突解决 -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Conflict_Resolution_冲突解决 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_幻觉防护_Hallucination_Protection -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_A2A_Check_Protocol_A2A检查协议 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Cold_Start_Req___Registration_Agent冷启动需要技能注册 -->|event| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_GPU_Management_GPU管理 -->|event| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Operations_Agent_运维Agent -->|event| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Cheng_Adaptive___lti_Agent_Cheng自适应LLM多Agent -->|event| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Agent_Version_Management_Agent版本管理策略 -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_System_Design____ognitive_Ability_系统设计人类认知能力 -->|event| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Agent_Challenge_代理挑战 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Model_Hot_Swap_模型热交换 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_AWS_Agentic_AI___ic_AI_Security_Scope_Matrix -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Automated_Operations_Execution_自动化运维执行 -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_MAN+ESM_MAN+ESM框架 -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_审计可追溯_Audit_Traceability -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Detect_异常检测 -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_路径绕过攻击_Path_Bypass_Attack -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_LLM_Prompt_Cha___es_Review_LLM_prompt变更需人工审核 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Report_Generation_报告生成 -->|event| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Evolution_Agent_进化Agent -->|contract| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_TimingAnalyst_Agent_择时Agent -->|data| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_Notification_通知发送 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_AUTONOMY_CORE_LLM_Inference_Timeout_LLM推理超时 -->|contract| D_SIGNAL[D-SIGNAL]
+    %% D-AUTONOMY_CORE -> D-SIMULATION (8 条)
+    D_AUTONOMY_CORE_Skill_Version_Management_技能版本管理与退役 -->|contract| D_SIMULATION[D-SIMULATION]
+    D_AUTONOMY_CORE_执行阶段_Execution_Phase -->|data| D_SIMULATION[D-SIMULATION]
+    D_AUTONOMY_CORE_Gasmi_Agent间信任利用攻击 -->|data| D_SIMULATION[D-SIMULATION]
+    D_AUTONOMY_CORE_关键Agent定义_Critical_Agent_Definition -->|contract| D_SIMULATION[D-SIMULATION]
+    D_AUTONOMY_CORE_Tactical_Bus_战术层消息总线 -->|contract| D_SIMULATION[D-SIMULATION]
+    D_AUTONOMY_CORE_Agent_Escalation_Engine_Agent升级引擎 -->|contract| D_SIMULATION[D-SIMULATION]
+    D_AUTONOMY_CORE_全自动自治等级_L4_Full_Auto -->|config_depends| D_SIMULATION[D-SIMULATION]
+    D_AUTONOMY_CORE_SessionStateChanged_会话状态变更 -->|contract| D_SIMULATION[D-SIMULATION]
+    %% D-AUTONOMY_CORE -> D-TRADING (17 条)
+    D_AUTONOMY_CORE_boundary_audit_py_自治行为审计 -->|contract| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Decision_Checkpoint_决策前快照检查点 -->|contract| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_涌现行为分类_Emergent_Behavior_Classification -->|data| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Task_Orchestration_任务编排 -->|data| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Conflict_&_Contradiction_Matrix_冲突与矛盾矩阵 -->|data| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Strategy_Self_Correction_Loop_策略自我修正闭环 -->|event| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Rule_Engine_规则引擎 -->|contract| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Reflexion_Agent_Required_需要自反Agent -->|contract| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Test_Level_Model_测试层级模型 -->|event| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Architecture_Diagram_Relations_与其他架构图的关系 -->|data| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_GATE_GA_03_独立运行环境 -->|data| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Agent_Autonomy_Boundary_Agent自治边界 -->|contract| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_GATE_GA_03_独立运行环境 -->|event| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_DeepSeek_V4_Pro_DeepSeek_V4_Pro模型 -->|event| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_NIST_AI_Agent____ds_Initiative_NIST_AI代理标准倡议 -->|data| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_幻觉防护_Hallucination_Protection -->|config_depends| D_TRADING[D-TRADING]
+    D_AUTONOMY_CORE_Four_Layer_Versioning_四层版本化分类法 -->|config_depends| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 643 条
+    %% 跨域入边: 491 条
+    %% 跨域出边: 638 条

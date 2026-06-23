@@ -1,0 +1,143 @@
+"""G6: 从 depgraph.db edges 表生成域间依赖矩阵MD文档
+
+[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
+[MODULE] scripts.governance.d5_architecture.generators.generate_cross_domain_matrix
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到generated/cross_domain_matrix.md
+[MODIFY-GUARD] 修改需通过DM-200911任务卡或后续维护任务卡
+[CONSUMERS] CI自动触发;人工查看generated/cross_domain_matrix.md
+[STABILITY] evolving
+[SAFETY] L
+[AI_AUTONOMY] ai_modifiable
+[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[TESTS] tests/test_dm200911_generators.py
+[DOMAIN] D-GOVERNANCE
+"""
+
+from __future__ import annotations
+
+import sqlite3
+import sys
+from datetime import datetime
+from pathlib import Path
+
+DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated/cross_domain_matrix.md")
+
+
+def get_cross_domain_edges(conn: sqlite3.Connection) -> list[dict]:
+    """查询所有跨域依赖边。"""
+    cur = conn.execute(
+        """SELECT n1.domain_id as from_domain, n2.domain_id as to_domain,
+                  COUNT(*) as edge_count,
+                  GROUP_CONCAT(DISTINCT e.dep_type) as dep_types
+           FROM edges e
+           JOIN nodes n1 ON e.from_node_id = n1.node_id
+           JOIN nodes n2 ON e.to_node_id = n2.node_id
+           WHERE n1.domain_id != n2.domain_id
+             AND n1.domain_id IS NOT NULL
+             AND n2.domain_id IS NOT NULL
+           GROUP BY n1.domain_id, n2.domain_id
+           ORDER BY edge_count DESC"""
+    )
+    return [
+        {
+            "from_domain": r[0],
+            "to_domain": r[1],
+            "edge_count": r[2],
+            "dep_types": r[3] or "",
+        }
+        for r in cur.fetchall()
+    ]
+
+
+def get_all_domain_ids(conn: sqlite3.Connection) -> list[str]:
+    """查询所有域ID。"""
+    cur = conn.execute("SELECT domain_id FROM domains ORDER BY domain_id")
+    return [r[0] for r in cur.fetchall()]
+
+
+def generate_cross_domain_matrix() -> str:
+    """生成域间依赖矩阵MD文档。"""
+    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    try:
+        edges = get_cross_domain_edges(conn)
+        domain_ids = get_all_domain_ids(conn)
+    finally:
+        conn.close()
+
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # 构建矩阵 from_domain -> to_domain -> count
+    matrix: dict[str, dict[str, int]] = {}
+    for e in edges:
+        matrix.setdefault(e["from_domain"], {})[e["to_domain"]] = e["edge_count"]
+
+    lines = []
+    # frontmatter
+    lines.append("---")
+    lines.append('doc_type: cross_domain_matrix')
+    lines.append('title: 域间依赖矩阵')
+    lines.append('version: "1.0"')
+    lines.append('status: active')
+    lines.append(f'date: {now.split()[0]}')
+    lines.append('owner: auto-generator')
+    lines.append('ttl: permanent')
+    lines.append("---")
+    lines.append("")
+    lines.append("# 域间依赖矩阵")
+    lines.append("")
+    lines.append("> 本文档由 generate_cross_domain_matrix.py 从 depgraph.db 自动生成")
+    lines.append(f"> 最后更新: {now}")
+    lines.append("> 数据源: depgraph.db edges表 + nodes表")
+    lines.append("")
+
+    # 统计概览
+    total_edges = sum(e["edge_count"] for e in edges)
+    lines.append("## 统计概览")
+    lines.append("")
+    lines.append("| 指标 | 值 |")
+    lines.append("|------|-----|")
+    lines.append(f"| 域总数 | {len(domain_ids)} |")
+    lines.append(f"| 跨域依赖对数 | {len(edges)} |")
+    lines.append(f"| 跨域依赖边总数 | {total_edges} |")
+    lines.append("")
+
+    # 依赖最多的域对（Top 20）
+    lines.append("## 跨域依赖 Top 20（按边数降序）")
+    lines.append("")
+    lines.append("| 源域 | 目标域 | 边数 | 依赖类型 |")
+    lines.append("|------|--------|:---:|---------|")
+    for e in edges[:20]:
+        lines.append(
+            f"| {e['from_domain']} | {e['to_domain']} | {e['edge_count']} | {e['dep_types']} |"
+        )
+    lines.append("")
+
+    # 完整矩阵（简化版：只显示有依赖的域对）
+    lines.append("## 完整跨域依赖清单")
+    lines.append("")
+    lines.append("| # | 源域 | 目标域 | 边数 | 依赖类型 |")
+    lines.append("|:---:|------|--------|:---:|---------|")
+    for i, e in enumerate(edges, 1):
+        lines.append(
+            f"| {i} | {e['from_domain']} | {e['to_domain']} | {e['edge_count']} | {e['dep_types']} |"
+        )
+    lines.append("")
+
+    return "\n".join(lines)
+
+
+def main() -> None:
+    """入口：生成域间依赖矩阵。"""
+    if not DEPGRAPH_DB.exists():
+        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
+        sys.exit(1)
+
+    content = generate_cross_domain_matrix()
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_PATH.write_text(content, encoding="utf-8", newline="\n")
+    print(f"[OK] 生成 {OUTPUT_PATH} ({len(content)} 字符)")
+
+
+if __name__ == "__main__":
+    main()

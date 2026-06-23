@@ -1,0 +1,436 @@
+%% D-PF_ALLOC 域全景依赖图
+%% 生成时间: 2026-06-23 13:28:38
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 114, 依赖边数: 303
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_PF_ALLOC[组合分配]
+        D_PF_ALLOC_4级决策_APPROVE_REDUCE_REJECT_FLATTEN["...OC/4级决策 APPROVE/REDUCE/REJECT/FLATTEN [design]"]
+        D_PF_ALLOC_7状态生命周期_7_State_Lifecycle["D-PF-ALLOC/7状态生命周期 7-State Lifecycle [design]"]
+        D_PF_ALLOC_A_Share_Dynamic_Pos___ficient_Calculator_A股动态仓位系数["...ition Coefficient Calculator A股动态仓位系数 [design]"]
+        D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算["...osition Dynamic Calculator A股凯利仓位动态计算 [design]"]
+        D_PF_ALLOC_A_Share_Position_Formula_Calculator_A股仓位公式计算器["...Position Formula Calculator A股仓位公式计算器 [design]"]
+        D_PF_ALLOC_CapitalAllocationRe___italAllocationResult_策略分配契约["...ntract CapitalAllocationResult 策略分配契约 [design]"]
+        D_PF_ALLOC_Copula_GARCH_Copula_GARCH模型["D-PF-ALLOC/Copula-GARCH Copula-GARCH模型 [design]"]
+        D_PF_ALLOC_D_EXECUTION_执行["D-PF-ALLOC/D-EXECUTION 执行 [design]"]
+        D_PF_ALLOC_D_L0→D_L1_降级路径["D-PF-ALLOC/D-L0→D-L1 降级路径 [design]"]
+        D_PF_ALLOC_D_L1→D_L2_降级路径["D-PF-ALLOC/D-L1→D-L2 降级路径 [design]"]
+        D_PF_ALLOC_D_L2→D_L3_降级路径["D-PF-ALLOC/D-L2→D-L3 降级路径 [design]"]
+        D_PF_ALLOC_D_PF_ALLOC_组合分配域_Portfolio_Allocation_Domain["...LOC 组合分配域 Portfolio Allocation Domain [design]"]
+        D_PF_ALLOC_Dynamic_Capital_Allocator_动态资金分配器["...LOC/Dynamic Capital Allocator 动态资金分配器 [design]"]
+        D_PF_ALLOC_E_0073_D_RISK→D_PF_ALLOC边["D-PF-ALLOC/E-0073 D-RISK→D-PF-ALLOC边 [design]"]
+        D_PF_ALLOC_ESRB系统性风险向量_ESRB_Systemic_Risk_Vector["...ESRB系统性风险向量 ESRB Systemic Risk Vector [design]"]
+        D_PF_ALLOC_Execution_Feedback_Bridge执行反馈桥["...-ALLOC/Execution Feedback Bridge执行反馈桥 [design]"]
+        D_PF_ALLOC_IC加权_IC_Weighting["D-PF-ALLOC/IC加权 IC Weighting [design]"]
+        D_PF_ALLOC_Kelly公式_Kelly_Formula["D-PF-ALLOC/Kelly公式 Kelly Formula [design]"]
+        D_PF_ALLOC_Leverage_Manager_杠杆管理器["D-PF-ALLOC/Leverage Manager 杠杆管理器 [design]"]
+        D_PF_ALLOC_MOD_L05_001_蓝图["D-PF-ALLOC/MOD-L05-001 蓝图 [design]"]
+        D_PF_ALLOC_MaxDDLimit_Allocation_Strategist最大回撤限制分配器["...DLimit Allocation Strategist最大回撤限制分配器 [design]"]
+        D_PF_ALLOC_Meta_Strategy_Router元策略路由["D-PF-ALLOC/Meta-Strategy Router元策略路由 [design]"]
+        D_PF_ALLOC_Module_Registry_4状态映射["D-PF-ALLOC/Module Registry 4状态映射 [design]"]
+        D_PF_ALLOC_Multi_Strategy_Capital_Allocator多策略资金分配["...lti-Strategy Capital Allocator多策略资金分配 [design]"]
+        D_PF_ALLOC_P2_signal_engine_策略路由进程["D-PF-ALLOC/P2 signal_engine 策略路由进程 [design]"]
+        D_PF_ALLOC_PA_02_Strategy_Screening_3D_策略["...-ALLOC/PA-02 Strategy Screening 3D 策略 [design]"]
+        D_PF_ALLOC_PA_03_Rolling_Window_Correlation_PA_03滚动窗口相关性["...lling Window Correlation PA-03滚动窗口相关性 [design]"]
+        D_PF_ALLOC_PA_04增量_标的级_板块级集中度监控["D-PF-ALLOC/PA-04增量 标的级/板块级集中度监控 [design]"]
+        D_PF_ALLOC_PA_04增量_隐性串谋检测扩展["D-PF-ALLOC/PA-04增量 隐性串谋检测扩展 [design]"]
+        D_PF_ALLOC_PA_05增量_传染路径检测与隔离["D-PF-ALLOC/PA-05增量 传染路径检测与隔离 [design]"]
+        D_PF_ALLOC_PA_06_07_08_A_Share_Position_仓位["...ALLOC/PA-06/07/08 A-Share Position 仓位 [design]"]
+        D_PF_ALLOC_PA_09_Stackelberg_Game_PA_09斯塔克尔伯格博弈[".../PA-09 Stackelberg Game PA-09斯塔克尔伯格博弈 [design]"]
+        D_PF_ALLOC_PA_11_12_Strategy_Retirement_策略["...ALLOC/PA-11/12 Strategy Retirement 策略 [design]"]
+        D_PF_ALLOC_PA_14_Position_Limit_Gate_仓位["D-PF-ALLOC/PA-14 Position Limit Gate 仓位 [design]"]
+        D_PF_ALLOC_PA_15_Execution_Feedback_Bridge_执行["...OC/PA-15 Execution Feedback Bridge 执行 [design]"]
+        D_PF_ALLOC_PA_CapitalAllocated_事件["D-PF-ALLOC/PA-CapitalAllocated 事件 [design]"]
+        D_PF_ALLOC_PA_CorrelationGateTriggered_事件["...-ALLOC/PA-CorrelationGateTriggered 事件 [design]"]
+        D_PF_ALLOC_PA_E01_CapitalAllocated_资本分配完成事件["...LLOC/PA-E01 CapitalAllocated 资本分配完成事件 [design]"]
+        D_PF_ALLOC_PA_E02_StrategyRetired_策略退役事件["D-PF-ALLOC/PA-E02 StrategyRetired 策略退役事件 [design]"]
+        D_PF_ALLOC_PA_E03_CorrelationGateTriggered_相关性门禁触发事件["...03 CorrelationGateTriggered 相关性门禁触发事件 [design]"]
+        D_PF_ALLOC_PA_E04_StrategyScreened_策略筛选完成事件["...LLOC/PA-E04 StrategyScreened 策略筛选完成事件 [design]"]
+        D_PF_ALLOC_PA_StrategyRetired_事件["D-PF-ALLOC/PA-StrategyRetired 事件 [design]"]
+        D_PF_ALLOC_PA_StrategyRetired_策略退役事件["D-PF-ALLOC/PA-StrategyRetired 策略退役事件 [design]"]
+        D_PF_ALLOC_Position_Limit_Gate_Checker仓位限制门禁检查器[".../Position Limit Gate Checker仓位限制门禁检查器 [design]"]
+        D_PF_ALLOC_Position_Sizer_仓位计算器["D-PF-ALLOC/Position Sizer 仓位计算器 [design]"]
+        D_PF_ALLOC_RebalanceDecided_再平衡决策事件["D-PF-ALLOC/RebalanceDecided 再平衡决策事件 [design]"]
+        D_PF_ALLOC_RebalanceDecided事件["D-PF-ALLOC/RebalanceDecided事件 [design]"]
+        D_PF_ALLOC_Rolling_Window_Dyna___rrelation_Analyzer滚动窗口动态相关性["...Dynamic Correlation Analyzer滚动窗口动态相关性 [design]"]
+        D_PF_ALLOC_ST_006_量化踩踏["D-PF-ALLOC/ST-006 量化踩踏 [design]"]
+        D_PF_ALLOC_Signal_Synthesis_Combiner信号合成器["...-ALLOC/Signal Synthesis Combiner信号合成器 [design]"]
+        D_PF_ALLOC_Stackelberg_Game_Th____Follower_Stackelberg博弈跟随策略["...-Theoretic Follower Stackelberg博弈跟随策略 [design]"]
+        D_PF_ALLOC_Strategy_Correlation_Gate_G12_Executor策略相关性门禁["... Correlation Gate G12 Executor策略相关性门禁 [design]"]
+        D_PF_ALLOC_Strategy_Retirement_Capital_Recycler策略退役资金回收器["... Retirement Capital Recycler策略退役资金回收器 [design]"]
+        D_PF_ALLOC_Strategy_Retirement_Trigger策略退役触发器["...OC/Strategy Retirement Trigger策略退役触发器 [design]"]
+        D_PF_ALLOC_Strategy_Screening_3D_Evaluator策略筛选三维评估器["...ategy Screening 3D Evaluator策略筛选三维评估器 [design]"]
+        D_PF_ALLOC__PARALLEL_DISCUSSIONS_md_并行["D-PF-ALLOC/_PARALLEL_DISCUSSIONS.md 并行 [design]"]
+        D_PF_ALLOC_§30_1_4_D_PF_ALLOC_组合分配域（15个模块）["...ALLOC/§30.1.4 D-PF-ALLOC 组合分配域（15个模块） [design]"]
+        D_PF_ALLOC_仲裁规则_Arbitration_Rules["D-PF-ALLOC/仲裁规则 Arbitration Rules [design]"]
+        D_PF_ALLOC_体制自适应权重_Regime_Adaptive_Weight["...-ALLOC/体制自适应权重 Regime Adaptive Weight [design]"]
+        D_PF_ALLOC_信号传染_Signal_Contagion["D-PF-ALLOC/信号传染 Signal Contagion [design]"]
+        D_PF_ALLOC_信号冲突检测_Signal_Conflict_Detection["...LLOC/信号冲突检测 Signal Conflict Detection [design]"]
+        D_PF_ALLOC_共振融合_Resonance_Fusion["D-PF-ALLOC/共振融合 Resonance Fusion [design]"]
+        D_PF_ALLOC_决策去重_Decision_Deduplication["D-PF-ALLOC/决策去重 Decision Deduplication [design]"]
+        D_PF_ALLOC_冷启动协议_Cold_Start_Protocol["D-PF-ALLOC/冷启动协议 Cold Start Protocol [design]"]
+        D_PF_ALLOC_准入门控_Admission_Gate["D-PF-ALLOC/准入门控 Admission Gate [design]"]
+        D_PF_ALLOC_分批建仓_Batch_Position_Building["D-PF-ALLOC/分批建仓 Batch Position Building [design]"]
+        D_PF_ALLOC_半Kelly硬上限_Half_Kelly_Hard_Cap["D-PF-ALLOC/半Kelly硬上限 Half Kelly Hard Cap [design]"]
+        D_PF_ALLOC_因子模型_Factor_Model["D-PF-ALLOC/因子模型 Factor Model [design]"]
+        D_PF_ALLOC_因子正交性_Factor_Orthogonality["D-PF-ALLOC/因子正交性 Factor Orthogonality [design]"]
+        D_PF_ALLOC_因子重叠_Factor_Overlap["D-PF-ALLOC/因子重叠 Factor Overlap [design]"]
+        D_PF_ALLOC_域内依赖图_Intra_domain_Dependency_Graph["...C/域内依赖图 Intra-domain Dependency Graph [design]"]
+        D_PF_ALLOC_多策略投票_Multi_Strategy_Voting["D-PF-ALLOC/多策略投票 Multi-Strategy Voting [design]"]
+        D_PF_ALLOC_安全隔离_Safety_Isolation["D-PF-ALLOC/安全隔离 Safety Isolation [design]"]
+        D_PF_ALLOC_尾部相关性飙升_Tail_Correlation_Surge["...-ALLOC/尾部相关性飙升 Tail Correlation Surge [design]"]
+        D_PF_ALLOC_情绪传染_Sentiment_Contagion["D-PF-ALLOC/情绪传染 Sentiment Contagion [design]"]
+        D_PF_ALLOC_收缩估计_Shrinkage_Estimation["D-PF-ALLOC/收缩估计 Shrinkage Estimation [design]"]
+        D_PF_ALLOC_数据流优化_Data_Flow_Optimization["D-PF-ALLOC/数据流优化 Data Flow Optimization [design]"]
+        D_PF_ALLOC_板块级拥挤_Sector_level_Crowding["D-PF-ALLOC/板块级拥挤 Sector-level Crowding [design]"]
+        D_PF_ALLOC_标的级拥挤_Target_level_Crowding["D-PF-ALLOC/标的级拥挤 Target-level Crowding [design]"]
+        D_PF_ALLOC_模块组合发现_Module_Combination_Discovery["...C/模块组合发现 Module Combination Discovery [design]"]
+        D_PF_ALLOC_模型共振反应_Model_Resonance_Response["...ALLOC/模型共振反应 Model Resonance Response [design]"]
+        D_PF_ALLOC_模型叠加尾部放大_Model_Stacking_Tail_Amplification["...部放大 Model Stacking Tail Amplification [design]"]
+        D_PF_ALLOC_模型间假设不一致_Inter_model_Assumption_Inconsistency["... Inter-model Assumption Inconsistency [design]"]
+        D_PF_ALLOC_盘中执行必做项_Intraday_Execution_Must_do["...OC/盘中执行必做项 Intraday Execution Must-do [design]"]
+        D_PF_ALLOC_目标权重向量输出_Target_Weight_Vector_Output[".../目标权重向量输出 Target Weight Vector Output [design]"]
+        D_PF_ALLOC_相关性体制监控_Correlation_Regime_Monitoring["...相关性体制监控 Correlation Regime Monitoring [design]"]
+        D_PF_ALLOC_策略冲突检测_Strategy_Conflict_Detection["...OC/策略冲突检测 Strategy Conflict Detection [design]"]
+        D_PF_ALLOC_策略同质化检测_Strategy_Homogeneity_Detection["...略同质化检测 Strategy Homogeneity Detection [design]"]
+        D_PF_ALLOC_策略容量超限_Strategy_Capacity_Exceeded["...LOC/策略容量超限 Strategy Capacity Exceeded [design]"]
+        D_PF_ALLOC_策略指纹相似度_Strategy_Fingerprint_Similarity["...指纹相似度 Strategy Fingerprint Similarity [design]"]
+        D_PF_ALLOC_策略权重进化_Strategy_Weight_Evolution["...LLOC/策略权重进化 Strategy Weight Evolution [design]"]
+        D_PF_ALLOC_策略衰减检测_Strategy_Decay_Detection["...ALLOC/策略衰减检测 Strategy Decay Detection [design]"]
+        D_PF_ALLOC_组合级硬约束_Portfolio_Hard_Constraints["...LOC/组合级硬约束 Portfolio Hard Constraints [design]"]
+        D_PF_ALLOC_股票池重叠_Stock_Pool_Overlap["D-PF-ALLOC/股票池重叠 Stock Pool Overlap [design]"]
+        D_PF_ALLOC_解耦保证_Decoupling_Guarantee["D-PF-ALLOC/解耦保证 Decoupling Guarantee [design]"]
+        D_PF_ALLOC_资本传染_Capital_Contagion["D-PF-ALLOC/资本传染 Capital Contagion [design]"]
+        D_PF_ALLOC_跨策略仓位合并_Cross_Strategy_Position_Merging["...略仓位合并 Cross-Strategy Position Merging [design]"]
+        D_PF_ALLOC_隐性串谋检测_Implicit_Collusion_Detection["...C/隐性串谋检测 Implicit Collusion Detection [design]"]
+        D_PF_ALLOC_风险预算范式_Risk_Budgeting_Paradigm["...-ALLOC/风险预算范式 Risk Budgeting Paradigm [design]"]
+        src_zephyr_pf_alloc_["src/zephyr/pf_alloc/ [design]"]
+        %% ... 还有 14 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    D_PF_ALLOC_A_Share_Dynamic_Pos___ficient_Calculator_A股动态仓位系数 -->|import_depends| D_PF_ALLOC_Meta_Strategy_Router元策略路由
+    D_PF_ALLOC_Meta_Strategy_Router元策略路由 -->|import_depends| D_PF_ALLOC_Strategy_Screening_3D_Evaluator策略筛选三维评估器
+    D_PF_ALLOC_Strategy_Screening_3D_Evaluator策略筛选三维评估器 -->|import_depends| D_PF_ALLOC_Rolling_Window_Dyna___rrelation_Analyzer滚动窗口动态相关性
+    D_PF_ALLOC_Rolling_Window_Dyna___rrelation_Analyzer滚动窗口动态相关性 -->|import_depends| D_PF_ALLOC_Multi_Strategy_Capital_Allocator多策略资金分配
+    D_PF_ALLOC_Multi_Strategy_Capital_Allocator多策略资金分配 -->|import_depends| D_PF_ALLOC_Strategy_Correlation_Gate_G12_Executor策略相关性门禁
+    D_PF_ALLOC_Strategy_Correlation_Gate_G12_Executor策略相关性门禁 -->|import_depends| D_PF_ALLOC_A_Share_Position_Formula_Calculator_A股仓位公式计算器
+    D_PF_ALLOC_A_Share_Position_Formula_Calculator_A股仓位公式计算器 -->|import_depends| D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算
+    D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算 -->|import_depends| D_PF_ALLOC_Stackelberg_Game_Th____Follower_Stackelberg博弈跟随策略
+    D_PF_ALLOC_Stackelberg_Game_Th____Follower_Stackelberg博弈跟随策略 -->|import_depends| D_PF_ALLOC_Signal_Synthesis_Combiner信号合成器
+    D_PF_ALLOC_Signal_Synthesis_Combiner信号合成器 -->|import_depends| D_PF_ALLOC_Strategy_Retirement_Trigger策略退役触发器
+    D_PF_ALLOC_Strategy_Retirement_Trigger策略退役触发器 -->|import_depends| D_PF_ALLOC_Strategy_Retirement_Capital_Recycler策略退役资金回收器
+    D_PF_ALLOC_Strategy_Retirement_Capital_Recycler策略退役资金回收器 -->|import_depends| D_PF_ALLOC_MaxDDLimit_Allocation_Strategist最大回撤限制分配器
+    D_PF_ALLOC_MaxDDLimit_Allocation_Strategist最大回撤限制分配器 -->|import_depends| D_PF_ALLOC_Position_Limit_Gate_Checker仓位限制门禁检查器
+    D_PF_ALLOC_Position_Limit_Gate_Checker仓位限制门禁检查器 -->|import_depends| D_PF_ALLOC_Execution_Feedback_Bridge执行反馈桥
+    D_PF_ALLOC_Execution_Feedback_Bridge执行反馈桥 -->|import_depends| D_PF_ALLOC_§30_1_4_D_PF_ALLOC_组合分配域（15个模块）
+    D_PF_ALLOC_§30_1_4_D_PF_ALLOC_组合分配域（15个模块） -->|import_depends| D_PF_ALLOC_Dynamic_Capital_Allocator_动态资金分配器
+    D_PF_ALLOC_Dynamic_Capital_Allocator_动态资金分配器 -->|import_depends| D_PF_ALLOC_Position_Sizer_仓位计算器
+    D_PF_ALLOC_Position_Sizer_仓位计算器 -->|import_depends| D_PF_ALLOC_Leverage_Manager_杠杆管理器
+    D_PF_ALLOC_Leverage_Manager_杠杆管理器 -->|import_depends| D_PF_ALLOC_PA_02_Strategy_Screening_3D_策略
+    D_PF_ALLOC_PA_02_Strategy_Screening_3D_策略 -->|import_depends| D_PF_ALLOC_PA_03_Rolling_Window_Correlation_PA_03滚动窗口相关性
+    D_PF_ALLOC_PA_03_Rolling_Window_Correlation_PA_03滚动窗口相关性 -->|import_depends| D_PF_ALLOC_PA_06_07_08_A_Share_Position_仓位
+    D_PF_ALLOC_PA_06_07_08_A_Share_Position_仓位 -->|import_depends| D_PF_ALLOC_PA_09_Stackelberg_Game_PA_09斯塔克尔伯格博弈
+    D_PF_ALLOC_PA_09_Stackelberg_Game_PA_09斯塔克尔伯格博弈 -->|import_depends| D_PF_ALLOC_PA_11_12_Strategy_Retirement_策略
+    D_PF_ALLOC_PA_11_12_Strategy_Retirement_策略 -->|import_depends| D_PF_ALLOC_PA_15_Execution_Feedback_Bridge_执行
+    D_PF_ALLOC_PA_15_Execution_Feedback_Bridge_执行 -->|import_depends| D_PF_ALLOC_体制自适应权重_Regime_Adaptive_Weight
+    D_PF_ALLOC_体制自适应权重_Regime_Adaptive_Weight -->|import_depends| D_PF_ALLOC_策略指纹相似度_Strategy_Fingerprint_Similarity
+    D_PF_ALLOC_策略指纹相似度_Strategy_Fingerprint_Similarity -->|import_depends| D_PF_ALLOC_因子正交性_Factor_Orthogonality
+    D_PF_ALLOC_因子正交性_Factor_Orthogonality -->|import_depends| D_PF_ALLOC_多策略投票_Multi_Strategy_Voting
+    D_PF_ALLOC_多策略投票_Multi_Strategy_Voting -->|import_depends| D_PF_ALLOC_共振融合_Resonance_Fusion
+    D_PF_ALLOC_共振融合_Resonance_Fusion -->|import_depends| D_PF_ALLOC_决策去重_Decision_Deduplication
+    D_PF_ALLOC_决策去重_Decision_Deduplication -->|import_depends| D_PF_ALLOC_跨策略仓位合并_Cross_Strategy_Position_Merging
+    D_PF_ALLOC_跨策略仓位合并_Cross_Strategy_Position_Merging -->|import_depends| D_PF_ALLOC_信号冲突检测_Signal_Conflict_Detection
+    D_PF_ALLOC_信号冲突检测_Signal_Conflict_Detection -->|import_depends| D_PF_ALLOC_风险预算范式_Risk_Budgeting_Paradigm
+    D_PF_ALLOC_风险预算范式_Risk_Budgeting_Paradigm -->|import_depends| D_PF_ALLOC_收缩估计_Shrinkage_Estimation
+    D_PF_ALLOC_收缩估计_Shrinkage_Estimation -->|import_depends| D_PF_ALLOC_因子模型_Factor_Model
+    D_PF_ALLOC_因子模型_Factor_Model -->|import_depends| D_PF_ALLOC_Copula_GARCH_Copula_GARCH模型
+    D_PF_ALLOC_Copula_GARCH_Copula_GARCH模型 -->|import_depends| D_PF_ALLOC_相关性体制监控_Correlation_Regime_Monitoring
+    D_PF_ALLOC_相关性体制监控_Correlation_Regime_Monitoring -->|import_depends| D_PF_ALLOC_7状态生命周期_7_State_Lifecycle
+    D_PF_ALLOC_7状态生命周期_7_State_Lifecycle -->|import_depends| D_PF_ALLOC_冷启动协议_Cold_Start_Protocol
+    D_PF_ALLOC_冷启动协议_Cold_Start_Protocol -->|import_depends| D_PF_ALLOC_策略衰减检测_Strategy_Decay_Detection
+    D_PF_ALLOC_策略衰减检测_Strategy_Decay_Detection -->|import_depends| D_PF_ALLOC_Kelly公式_Kelly_Formula
+    D_PF_ALLOC_Kelly公式_Kelly_Formula -->|import_depends| D_PF_ALLOC_半Kelly硬上限_Half_Kelly_Hard_Cap
+    D_PF_ALLOC_半Kelly硬上限_Half_Kelly_Hard_Cap -->|import_depends| D_PF_ALLOC_组合级硬约束_Portfolio_Hard_Constraints
+    D_PF_ALLOC_组合级硬约束_Portfolio_Hard_Constraints -->|import_depends| D_PF_ALLOC_分批建仓_Batch_Position_Building
+    D_PF_ALLOC_分批建仓_Batch_Position_Building -->|import_depends| D_PF_ALLOC_策略同质化检测_Strategy_Homogeneity_Detection
+    D_PF_ALLOC_策略同质化检测_Strategy_Homogeneity_Detection -->|import_depends| D_PF_ALLOC_隐性串谋检测_Implicit_Collusion_Detection
+    D_PF_ALLOC_隐性串谋检测_Implicit_Collusion_Detection -->|import_depends| D_PF_ALLOC_尾部相关性飙升_Tail_Correlation_Surge
+    D_PF_ALLOC_尾部相关性飙升_Tail_Correlation_Surge -->|import_depends| D_PF_ALLOC_因子重叠_Factor_Overlap
+    D_PF_ALLOC_因子重叠_Factor_Overlap -->|import_depends| D_PF_ALLOC_股票池重叠_Stock_Pool_Overlap
+    D_PF_ALLOC_股票池重叠_Stock_Pool_Overlap -->|import_depends| D_PF_ALLOC_标的级拥挤_Target_level_Crowding
+    D_PF_ALLOC_标的级拥挤_Target_level_Crowding -->|import_depends| D_PF_ALLOC_板块级拥挤_Sector_level_Crowding
+    D_PF_ALLOC_板块级拥挤_Sector_level_Crowding -->|import_depends| D_PF_ALLOC_资本传染_Capital_Contagion
+    D_PF_ALLOC_资本传染_Capital_Contagion -->|import_depends| D_PF_ALLOC_信号传染_Signal_Contagion
+    D_PF_ALLOC_信号传染_Signal_Contagion -->|import_depends| D_PF_ALLOC_情绪传染_Sentiment_Contagion
+    D_PF_ALLOC_情绪传染_Sentiment_Contagion -->|import_depends| D_PF_ALLOC_模型间假设不一致_Inter_model_Assumption_Inconsistency
+    D_PF_ALLOC_模型间假设不一致_Inter_model_Assumption_Inconsistency -->|import_depends| D_PF_ALLOC_模型共振反应_Model_Resonance_Response
+    D_PF_ALLOC_模型共振反应_Model_Resonance_Response -->|import_depends| D_PF_ALLOC_模型叠加尾部放大_Model_Stacking_Tail_Amplification
+    D_PF_ALLOC_模型叠加尾部放大_Model_Stacking_Tail_Amplification -->|import_depends| D_PF_ALLOC_策略容量超限_Strategy_Capacity_Exceeded
+    D_PF_ALLOC_策略容量超限_Strategy_Capacity_Exceeded -->|import_depends| D_PF_ALLOC_ST_006_量化踩踏
+    D_PF_ALLOC_ST_006_量化踩踏 -->|import_depends| D_PF_ALLOC_目标权重向量输出_Target_Weight_Vector_Output
+    D_PF_ALLOC_目标权重向量输出_Target_Weight_Vector_Output -->|import_depends| D_PF_ALLOC_4级决策_APPROVE_REDUCE_REJECT_FLATTEN
+    D_PF_ALLOC_4级决策_APPROVE_REDUCE_REJECT_FLATTEN -->|import_depends| D_PF_ALLOC_模块组合发现_Module_Combination_Discovery
+    D_PF_ALLOC_模块组合发现_Module_Combination_Discovery -->|import_depends| D_PF_ALLOC_数据流优化_Data_Flow_Optimization
+    D_PF_ALLOC_数据流优化_Data_Flow_Optimization -->|import_depends| D_PF_ALLOC_策略权重进化_Strategy_Weight_Evolution
+    D_PF_ALLOC_策略权重进化_Strategy_Weight_Evolution -->|import_depends| D_PF_ALLOC_Module_Registry_4状态映射
+    D_PF_ALLOC_Module_Registry_4状态映射 -->|import_depends| D_PF_ALLOC_D_L0→D_L1_降级路径
+    D_PF_ALLOC_D_L0→D_L1_降级路径 -->|import_depends| D_PF_ALLOC_D_L1→D_L2_降级路径
+    D_PF_ALLOC_D_L1→D_L2_降级路径 -->|import_depends| D_PF_ALLOC_D_L2→D_L3_降级路径
+    D_PF_ALLOC_D_L2→D_L3_降级路径 -->|import_depends| D_PF_ALLOC_P2_signal_engine_策略路由进程
+    D_PF_ALLOC_P2_signal_engine_策略路由进程 -->|import_depends| D_PF_ALLOC_策略冲突检测_Strategy_Conflict_Detection
+    D_PF_ALLOC_策略冲突检测_Strategy_Conflict_Detection -->|import_depends| D_PF_ALLOC_盘中执行必做项_Intraday_Execution_Must_do
+    D_PF_ALLOC_盘中执行必做项_Intraday_Execution_Must_do -->|import_depends| D_PF_ALLOC_MOD_L05_001_蓝图
+    D_PF_ALLOC_MOD_L05_001_蓝图 -->|import_depends| D_PF_ALLOC_IC加权_IC_Weighting
+    D_PF_ALLOC_IC加权_IC_Weighting -->|import_depends| D_PF_ALLOC_PA_04增量_隐性串谋检测扩展
+    D_PF_ALLOC_PA_04增量_隐性串谋检测扩展 -->|import_depends| D_PF_ALLOC_PA_04增量_标的级_板块级集中度监控
+    D_PF_ALLOC_PA_04增量_标的级_板块级集中度监控 -->|import_depends| D_PF_ALLOC_PA_05增量_传染路径检测与隔离
+    D_PF_ALLOC_PA_05增量_传染路径检测与隔离 -->|import_depends| D_PF_ALLOC_安全隔离_Safety_Isolation
+    D_PF_ALLOC_安全隔离_Safety_Isolation -->|import_depends| D_PF_ALLOC_解耦保证_Decoupling_Guarantee
+    D_PF_ALLOC_解耦保证_Decoupling_Guarantee -->|import_depends| D_PF_ALLOC_ESRB系统性风险向量_ESRB_Systemic_Risk_Vector
+    D_PF_ALLOC_ESRB系统性风险向量_ESRB_Systemic_Risk_Vector -->|import_depends| D_PF_ALLOC_仲裁规则_Arbitration_Rules
+    %% ... 还有 20 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-COMPLIANCE -> D-PF_ALLOC (20 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_PF_ALLOC_PA_09_Stackelberg_Game_PA_09斯塔克尔伯格博弈
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_PF_ALLOC_因子模型_Factor_Model
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_PF_ALLOC_因子重叠_Factor_Overlap
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_PF_ALLOC_§30_1_4_D_PF_ALLOC_组合分配域（15个模块）
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_PF_ALLOC_Copula_GARCH_Copula_GARCH模型
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_PF_ALLOC_因子正交性_Factor_Orthogonality
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_PF_ALLOC_组合级硬约束_Portfolio_Hard_Constraints
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_PF_ALLOC_多策略投票_Multi_Strategy_Voting
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_PF_ALLOC_股票池重叠_Stock_Pool_Overlap
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_PF_ALLOC_安全隔离_Safety_Isolation
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_PF_ALLOC_域内依赖图_Intra_domain_Dependency_Graph
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_PF_ALLOC_PA_E01_CapitalAllocated_资本分配完成事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_PF_ALLOC_PA_02_Strategy_Screening_3D_策略
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_PF_ALLOC_风险预算范式_Risk_Budgeting_Paradigm
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_PF_ALLOC_板块级拥挤_Sector_level_Crowding
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_PF_ALLOC_PA_09_Stackelberg_Game_PA_09斯塔克尔伯格博弈
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_PF_ALLOC_PA_E03_CorrelationGateTriggered_相关性门禁触发事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_PF_ALLOC_决策去重_Decision_Deduplication
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_PF_ALLOC_D_L0→D_L1_降级路径
+    %% D-CROSS_ASSET -> D-PF_ALLOC (2 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_PF_ALLOC_CapitalAllocationRe___italAllocationResult_策略分配契约
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_PF_ALLOC_Leverage_Manager_杠杆管理器
+    %% D-FRONTEND -> D-PF_ALLOC (5 条)
+    D_FRONTEND[D-FRONTEND] -->|contract| D_PF_ALLOC_Strategy_Correlation_Gate_G12_Executor策略相关性门禁
+    D_FRONTEND[D-FRONTEND] -->|contract| D_PF_ALLOC_策略同质化检测_Strategy_Homogeneity_Detection
+    D_FRONTEND[D-FRONTEND] -->|contract| D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_PF_ALLOC_PA_14_Position_Limit_Gate_仓位
+    D_FRONTEND[D-FRONTEND] -->|data| D_PF_ALLOC_Strategy_Screening_3D_Evaluator策略筛选三维评估器
+    %% D-GOVERNANCE -> D-PF_ALLOC (1 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
+    %% D-INFRA_OPS -> D-PF_ALLOC (11 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_PF_ALLOC_盘中执行必做项_Intraday_Execution_Must_do
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_PF_ALLOC_Copula_GARCH_Copula_GARCH模型
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_PF_ALLOC_PA_05增量_传染路径检测与隔离
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_PF_ALLOC_PA_E01_CapitalAllocated_资本分配完成事件
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_PF_ALLOC_PA_09_Stackelberg_Game_PA_09斯塔克尔伯格博弈
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_PF_ALLOC_ST_006_量化踩踏
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_PF_ALLOC_PA_14_Position_Limit_Gate_仓位
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_PF_ALLOC_盘中执行必做项_Intraday_Execution_Must_do
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_PF_ALLOC_策略权重进化_Strategy_Weight_Evolution
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_PF_ALLOC_PA_CorrelationGateTriggered_事件
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_PF_ALLOC_Dynamic_Capital_Allocator_动态资金分配器
+    %% D-OPS -> D-PF_ALLOC (8 条)
+    D_OPS[D-OPS] -->|data| D_PF_ALLOC_4级决策_APPROVE_REDUCE_REJECT_FLATTEN
+    D_OPS[D-OPS] -->|event| D_PF_ALLOC_因子正交性_Factor_Orthogonality
+    D_OPS[D-OPS] -->|contract| D_PF_ALLOC_域内依赖图_Intra_domain_Dependency_Graph
+    D_OPS[D-OPS] -->|contract| D_PF_ALLOC_Execution_Feedback_Bridge执行反馈桥
+    D_OPS[D-OPS] -->|data| D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算
+    D_OPS[D-OPS] -->|event| D_PF_ALLOC_股票池重叠_Stock_Pool_Overlap
+    D_OPS[D-OPS] -->|config_depends| D_PF_ALLOC_PA_06_07_08_A_Share_Position_仓位
+    D_OPS[D-OPS] -->|contract| D_PF_ALLOC_相关性体制监控_Correlation_Regime_Monitoring
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-PF_ALLOC -> D-ALT_DATA (2 条)
+    D_PF_ALLOC_PA_CapitalAllocated_事件 -->|data| D_ALT_DATA[D-ALT_DATA]
+    D_PF_ALLOC_E_0073_D_RISK→D_PF_ALLOC边 -->|event| D_ALT_DATA[D-ALT_DATA]
+    %% D-PF_ALLOC -> D-AUTONOMY_CORE (6 条)
+    D_PF_ALLOC_风险预算范式_Risk_Budgeting_Paradigm -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_PF_ALLOC_PA_02_Strategy_Screening_3D_策略 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_PF_ALLOC_数据流优化_Data_Flow_Optimization -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_PF_ALLOC_资本传染_Capital_Contagion -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_PF_ALLOC_策略冲突检测_Strategy_Conflict_Detection -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_PF_ALLOC_4级决策_APPROVE_REDUCE_REJECT_FLATTEN -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    %% D-PF_ALLOC -> D-AUTONOMY_PERM (5 条)
+    D_PF_ALLOC_MaxDDLimit_Allocation_Strategist最大回撤限制分配器 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_PF_ALLOC_安全隔离_Safety_Isolation -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_PF_ALLOC_模型叠加尾部放大_Model_Stacking_Tail_Amplification -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_PF_ALLOC_策略冲突检测_Strategy_Conflict_Detection -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_PF_ALLOC_Strategy_Correlation_Gate_G12_Executor策略相关性门禁 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    %% D-PF_ALLOC -> D-DATA_ENG (4 条)
+    D_PF_ALLOC_RebalanceDecided事件 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_PF_ALLOC_Leverage_Manager_杠杆管理器 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_PF_ALLOC_PA_11_12_Strategy_Retirement_策略 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_PF_ALLOC_RebalanceDecided事件 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    %% D-PF_ALLOC -> D-EX_CORE (1 条)
+    D_PF_ALLOC_PA_04增量_标的级_板块级集中度监控 -->|data| D_EX_CORE[D-EX_CORE]
+    %% D-PF_ALLOC -> D-EX_SOR (4 条)
+    D_PF_ALLOC_目标权重向量输出_Target_Weight_Vector_Output -->|contract| D_EX_SOR[D-EX_SOR]
+    D_PF_ALLOC_PA_E03_CorrelationGateTriggered_相关性门禁触发事件 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_PF_ALLOC_隐性串谋检测_Implicit_Collusion_Detection -->|data| D_EX_SOR[D-EX_SOR]
+    D_PF_ALLOC_因子模型_Factor_Model -->|config_depends| D_EX_SOR[D-EX_SOR]
+    %% D-PF_ALLOC -> D-FACTOR (7 条)
+    D_PF_ALLOC_体制自适应权重_Regime_Adaptive_Weight -->|contract| D_FACTOR[D-FACTOR]
+    D_PF_ALLOC_冷启动协议_Cold_Start_Protocol -->|contract| D_FACTOR[D-FACTOR]
+    D_PF_ALLOC_模型共振反应_Model_Resonance_Response -->|event| D_FACTOR[D-FACTOR]
+    D_PF_ALLOC_标的级拥挤_Target_level_Crowding -->|contract| D_FACTOR[D-FACTOR]
+    D_PF_ALLOC_D_L1→D_L2_降级路径 -->|event| D_FACTOR[D-FACTOR]
+    D_PF_ALLOC_Rolling_Window_Dyna___rrelation_Analyzer滚动窗口动态相关性 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_PF_ALLOC_数据流优化_Data_Flow_Optimization -->|contract| D_FACTOR[D-FACTOR]
+    %% D-PF_ALLOC -> D-GOVERNANCE (14 条)
+    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_pf_core_strategy_portfolio_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_Position_Sizer_仓位计算器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_风险预算范式_Risk_Budgeting_Paradigm -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_PA_E02_StrategyRetired_策略退役事件 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC__PARALLEL_DISCUSSIONS_md_并行 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_CapitalAllocationRe___italAllocationResult_策略分配契约 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_隐性串谋检测_Implicit_Collusion_Detection -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_D_EXECUTION_执行 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_股票池重叠_Stock_Pool_Overlap -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_IC加权_IC_Weighting -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_PA_04增量_标的级_板块级集中度监控 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_ST_006_量化踩踏 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_PF_ALLOC_收缩估计_Shrinkage_Estimation -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-PF_ALLOC -> D-INFRA_RUNTIME (10 条)
+    D_PF_ALLOC_资本传染_Capital_Contagion -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_Copula_GARCH_Copula_GARCH模型 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_Dynamic_Capital_Allocator_动态资金分配器 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_情绪传染_Sentiment_Contagion -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_PA_E01_CapitalAllocated_资本分配完成事件 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_跨策略仓位合并_Cross_Strategy_Position_Merging -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_域内依赖图_Intra_domain_Dependency_Graph -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_模型间假设不一致_Inter_model_Assumption_Inconsistency -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_4级决策_APPROVE_REDUCE_REJECT_FLATTEN -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_PF_ALLOC_因子重叠_Factor_Overlap -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-PF_ALLOC -> D-INTEGRATION (8 条)
+    D_PF_ALLOC_组合级硬约束_Portfolio_Hard_Constraints -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_PF_ALLOC_Dynamic_Capital_Allocator_动态资金分配器 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_PF_ALLOC_Meta_Strategy_Router元策略路由 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_PF_ALLOC_Leverage_Manager_杠杆管理器 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_PF_ALLOC_Strategy_Retirement_Capital_Recycler策略退役资金回收器 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_PF_ALLOC_策略同质化检测_Strategy_Homogeneity_Detection -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_PF_ALLOC_PA_E03_CorrelationGateTriggered_相关性门禁触发事件 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_PF_ALLOC_Strategy_Screening_3D_Evaluator策略筛选三维评估器 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    %% D-PF_ALLOC -> D-INTELLIGENCE (8 条)
+    D_PF_ALLOC_板块级拥挤_Sector_level_Crowding -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_PF_ALLOC_共振融合_Resonance_Fusion -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_PF_ALLOC_Rolling_Window_Dyna___rrelation_Analyzer滚动窗口动态相关性 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_PF_ALLOC_情绪传染_Sentiment_Contagion -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_PF_ALLOC_模型叠加尾部放大_Model_Stacking_Tail_Amplification -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_PF_ALLOC_CapitalAllocationRe___italAllocationResult_策略分配契约 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_PF_ALLOC_Kelly公式_Kelly_Formula -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_PF_ALLOC_D_EXECUTION_执行 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-PF_ALLOC -> D-KNOWLEDGE (3 条)
+    D_PF_ALLOC_跨策略仓位合并_Cross_Strategy_Position_Merging -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_PF_ALLOC_Rolling_Window_Dyna___rrelation_Analyzer滚动窗口动态相关性 -->|config_depends| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_PF_ALLOC_PA_E04_StrategyScreened_策略筛选完成事件 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    %% D-PF_ALLOC -> D-MKT_DATA (7 条)
+    D_PF_ALLOC_A_Share_Position_Formula_Calculator_A股仓位公式计算器 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_PF_ALLOC_ST_006_量化踩踏 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_PF_ALLOC_Multi_Strategy_Capital_Allocator多策略资金分配 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_PF_ALLOC_ST_006_量化踩踏 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_PF_ALLOC_D_L1→D_L2_降级路径 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_PF_ALLOC_股票池重叠_Stock_Pool_Overlap -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_PF_ALLOC_信号冲突检测_Signal_Conflict_Detection -->|data| D_MKT_DATA[D-MKT_DATA]
+    %% D-PF_ALLOC -> D-ML_TRAIN (2 条)
+    D_PF_ALLOC_安全隔离_Safety_Isolation -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_PF_ALLOC_D_EXECUTION_执行 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-PF_ALLOC -> D-PF_CORE (6 条)
+    D_PF_ALLOC_PA_StrategyRetired_策略退役事件 -->|event| D_PF_CORE[D-PF_CORE]
+    D_PF_ALLOC_情绪传染_Sentiment_Contagion -->|data| D_PF_CORE[D-PF_CORE]
+    D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_PF_ALLOC_PA_06_07_08_A_Share_Position_仓位 -->|data| D_PF_CORE[D-PF_CORE]
+    D_PF_ALLOC_Stackelberg_Game_Th____Follower_Stackelberg博弈跟随策略 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_PF_ALLOC_A_Share_Position_Formula_Calculator_A股仓位公式计算器 -->|event| D_PF_CORE[D-PF_CORE]
+    %% D-PF_ALLOC -> D-POSITION (2 条)
+    D_PF_ALLOC_信号传染_Signal_Contagion -->|contract| D_POSITION[D-POSITION]
+    D_PF_ALLOC_组合级硬约束_Portfolio_Hard_Constraints -->|config_depends| D_POSITION[D-POSITION]
+    %% D-PF_ALLOC -> D-REPORTING (3 条)
+    D_PF_ALLOC_决策去重_Decision_Deduplication -->|contract| D_REPORTING[D-REPORTING]
+    D_PF_ALLOC_资本传染_Capital_Contagion -->|contract| D_REPORTING[D-REPORTING]
+    D_PF_ALLOC_PA_14_Position_Limit_Gate_仓位 -->|data| D_REPORTING[D-REPORTING]
+    %% D-PF_ALLOC -> D-RISK (26 条)
+    D_PF_ALLOC_因子模型_Factor_Model -->|contract| D_RISK[D-RISK]
+    D_PF_ALLOC_信号传染_Signal_Contagion -->|event| D_RISK[D-RISK]
+    D_PF_ALLOC_Strategy_Retirement_Capital_Recycler策略退役资金回收器 -->|data| D_RISK[D-RISK]
+    D_PF_ALLOC_共振融合_Resonance_Fusion -->|contract| D_RISK[D-RISK]
+    D_PF_ALLOC_PA_09_Stackelberg_Game_PA_09斯塔克尔伯格博弈 -->|contract| D_RISK[D-RISK]
+    D_PF_ALLOC_Module_Registry_4状态映射 -->|event| D_RISK[D-RISK]
+    D_PF_ALLOC_策略同质化检测_Strategy_Homogeneity_Detection -->|contract| D_RISK[D-RISK]
+    D_PF_ALLOC_RebalanceDecided_再平衡决策事件 -->|data| D_RISK[D-RISK]
+    D_PF_ALLOC_模型间假设不一致_Inter_model_Assumption_Inconsistency -->|event| D_RISK[D-RISK]
+    D_PF_ALLOC_策略冲突检测_Strategy_Conflict_Detection -->|event| D_RISK[D-RISK]
+    D_PF_ALLOC_策略同质化检测_Strategy_Homogeneity_Detection -->|data| D_RISK[D-RISK]
+    D_PF_ALLOC_组合级硬约束_Portfolio_Hard_Constraints -->|contract| D_RISK[D-RISK]
+    D_PF_ALLOC_PA_E02_StrategyRetired_策略退役事件 -->|data| D_RISK[D-RISK]
+    D_PF_ALLOC_分批建仓_Batch_Position_Building -->|contract| D_RISK[D-RISK]
+    D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算 -->|data| D_RISK[D-RISK]
+    D_PF_ALLOC_PA_StrategyRetired_策略退役事件 -->|config_depends| D_RISK[D-RISK]
+    D_PF_ALLOC_Copula_GARCH_Copula_GARCH模型 -->|data| D_RISK[D-RISK]
+    D_PF_ALLOC_MaxDDLimit_Allocation_Strategist最大回撤限制分配器 -->|contract| D_RISK[D-RISK]
+    D_PF_ALLOC_准入门控_Admission_Gate -->|event| D_RISK[D-RISK]
+    D_PF_ALLOC_情绪传染_Sentiment_Contagion -->|event| D_RISK[D-RISK]
+    D_PF_ALLOC_Strategy_Screening_3D_Evaluator策略筛选三维评估器 -->|data| D_RISK[D-RISK]
+    D_PF_ALLOC_安全隔离_Safety_Isolation -->|data| D_RISK[D-RISK]
+    D_PF_ALLOC_收缩估计_Shrinkage_Estimation -->|contract| D_RISK[D-RISK]
+    D_PF_ALLOC_PA_04增量_标的级_板块级集中度监控 -->|event| D_RISK[D-RISK]
+    D_PF_ALLOC_Execution_Feedback_Bridge执行反馈桥 -->|event| D_RISK[D-RISK]
+    D_PF_ALLOC_D_PF_ALLOC_组合分配域_Portfolio_Allocation_Domain -->|domain_dependency| D_RISK[D-RISK]
+    %% D-PF_ALLOC -> D-SECURITY (14 条)
+    D_PF_ALLOC_Kelly公式_Kelly_Formula -->|contract| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_分批建仓_Batch_Position_Building -->|contract| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_策略权重进化_Strategy_Weight_Evolution -->|data| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_风险预算范式_Risk_Budgeting_Paradigm -->|event| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_Dynamic_Capital_Allocator_动态资金分配器 -->|event| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_准入门控_Admission_Gate -->|data| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_MOD_L05_001_蓝图 -->|contract| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_RebalanceDecided_再平衡决策事件 -->|data| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_分批建仓_Batch_Position_Building -->|data| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_风险预算范式_Risk_Budgeting_Paradigm -->|event| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_Execution_Feedback_Bridge执行反馈桥 -->|contract| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_Strategy_Retirement_Capital_Recycler策略退役资金回收器 -->|config_depends| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_MOD_L05_001_蓝图 -->|event| D_SECURITY[D-SECURITY]
+    D_PF_ALLOC_CapitalAllocationRe___italAllocationResult_策略分配契约 -->|contract| D_SECURITY[D-SECURITY]
+    %% D-PF_ALLOC -> D-SELL_DECISION (2 条)
+    D_PF_ALLOC_模型共振反应_Model_Resonance_Response -->|contract| D_SELL_DECISION[D-SELL_DECISION]
+    D_PF_ALLOC_策略指纹相似度_Strategy_Fingerprint_Similarity -->|event| D_SELL_DECISION[D-SELL_DECISION]
+    %% D-PF_ALLOC -> D-SHARED (2 条)
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_pf_alloc_ -->|contract| D_SHARED[D-SHARED]
+    %% D-PF_ALLOC -> D-SIGNAL (13 条)
+    D_PF_ALLOC_标的级拥挤_Target_level_Crowding -->|contract| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_隐性串谋检测_Implicit_Collusion_Detection -->|contract| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_Strategy_Retirement_Capital_Recycler策略退役资金回收器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_PA_E01_CapitalAllocated_资本分配完成事件 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_Signal_Synthesis_Combiner信号合成器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_PA_StrategyRetired_事件 -->|event| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_相关性体制监控_Correlation_Regime_Monitoring -->|data| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_Leverage_Manager_杠杆管理器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_PA_CorrelationGateTriggered_事件 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC__PARALLEL_DISCUSSIONS_md_并行 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_A_Share_Kelly_Posit___namic_Calculator_A股凯利仓位动态计算 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_标的级拥挤_Target_level_Crowding -->|data| D_SIGNAL[D-SIGNAL]
+    D_PF_ALLOC_模型叠加尾部放大_Model_Stacking_Tail_Amplification -->|contract| D_SIGNAL[D-SIGNAL]
+    %% D-PF_ALLOC -> D-SIMULATION (3 条)
+    D_PF_ALLOC_Rolling_Window_Dyna___rrelation_Analyzer滚动窗口动态相关性 -->|event| D_SIMULATION[D-SIMULATION]
+    D_PF_ALLOC_D_EXECUTION_执行 -->|event| D_SIMULATION[D-SIMULATION]
+    D_PF_ALLOC_P2_signal_engine_策略路由进程 -->|config_depends| D_SIMULATION[D-SIMULATION]
+    %% D-PF_ALLOC -> D-TRADING (4 条)
+    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_TRADING[D-TRADING]
+    D_PF_ALLOC_模块组合发现_Module_Combination_Discovery -->|data| D_TRADING[D-TRADING]
+    D_PF_ALLOC_PA_06_07_08_A_Share_Position_仓位 -->|contract| D_TRADING[D-TRADING]
+    D_PF_ALLOC_组合级硬约束_Portfolio_Hard_Constraints -->|data| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 100 条
+    %% 跨域入边: 47 条
+    %% 跨域出边: 156 条
