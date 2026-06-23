@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-SCR_ide_health_service | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md | §new-IDE
+# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] scripts.ide_health_service
-# [INVARIANTS] --status不修改任何状态(只读);--start调用register_daemon后阻塞保持运行
+# [INVARIANTS] --status优先PID文件检测(跨进程),回退registry(进程内);--start检查已在运行后写PID文件+atexit清理+阻塞;--start-background后台分离子进程非阻塞启动;stale PID文件自动清理
 # [MODIFY-GUARD] MOD-INF-032 §new-IDE
 # [CONSUMERS] .trae/rules/project_rules.md; .trae/rules/onboarding_detail.md; AGENTS.md; docs/01_policies_and_standards/rules/trae_053_automation_dual_track.yaml
 # [STABILITY] evolving
@@ -23,7 +23,9 @@
 from __future__ import annotations
 
 import argparse
+import atexit
 import logging
+import os
 import sys
 import time
 from pathlib import Path
@@ -34,6 +36,86 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 logger = logging.getLogger(__name__)
+
+# PID 文件路径（跨进程状态持久化）
+# daemon_registry 是进程内 ClassVar，--start/--status 是两个独立进程，
+# 进程间内存隔离导致 --status 永远看不到 --start 注册的 daemon。
+# PID 文件是跨进程状态检测的唯一可靠机制。
+_PID_FILE = _PROJECT_ROOT / ".runtime" / "ide_health_daemon.pid"
+
+
+def _write_pid_file() -> None:
+    """原子写入当前进程 PID 到 PID 文件（RULE-ONE 原子写入模板）。"""
+    _PID_FILE.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = f"{_PID_FILE}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(str(os.getpid()))
+        os.replace(tmp_path, _PID_FILE)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
+def _read_pid_file() -> int | None:
+    """读取 PID 文件，返回 PID 或 None（文件不存在/损坏）。"""
+    if not _PID_FILE.exists():
+        return None
+    try:
+        return int(_PID_FILE.read_text(encoding="utf-8").strip())
+    except (ValueError, OSError):
+        return None
+
+
+def _remove_pid_file() -> None:
+    """清理 PID 文件（atexit 钩子调用）。"""
+    try:
+        _PID_FILE.unlink(missing_ok=True)
+    except OSError:
+        pass
+
+
+def _is_pid_alive(pid: int) -> bool:
+    """检查 PID 对应的进程是否存活。"""
+    try:
+        import psutil
+
+        return psutil.pid_exists(pid)
+    except ImportError:
+        # 无 psutil 时用 os.kill(pid, 0) 探测
+        try:
+            os.kill(pid, 0)
+            return True
+        except OSError:
+            return False
+
+
+def _check_pid_status() -> dict[str, str] | None:
+    """通过 PID 文件检测守护进程状态（跨进程）。
+
+    返回 dict 表示检测到状态（running true/false），返回 None 表示无 PID 文件
+    （回退到 registry 检查，用于 boot_hooks 进程内启动场景）。
+    """
+    pid = _read_pid_file()
+    if pid is None:
+        return None
+    alive = _is_pid_alive(pid)
+    if not alive:
+        # stale PID 文件：进程已死但文件残留 → 清理
+        _remove_pid_file()
+        return {"running": "false", "ghost_count": "0", "detail": f"stale PID {pid} 已清理"}
+    # 进程存活时尝试获取 ghost_count
+    ghost_count = "0"
+    try:
+        from zephyr.trading.ide_health_daemon import scan_ghost_windows
+
+        ghost_count = str(len(scan_ghost_windows()))
+    except Exception:
+        pass
+    return {"running": "true", "ghost_count": ghost_count, "detail": f"pid={pid} 存活"}
 
 
 def _get_daemon_status() -> dict[str, str]:
@@ -75,8 +157,11 @@ def _check_registry_status() -> dict[str, str]:
 
 
 def cmd_status() -> int:
-    """--status: 查询守护进程状态。"""
-    status = _check_registry_status()
+    """--status: 查询守护进程状态。优先 PID 文件(跨进程)，回退 registry(进程内)。"""
+    status = _check_pid_status()
+    if status is None:
+        # 无 PID 文件 → 回退到 registry 检查(boot_hooks 进程内启动场景)
+        status = _check_registry_status()
     running = status["running"]
     print(f"running={running}")
     print(f"ghost_count={status['ghost_count']}")
@@ -86,6 +171,15 @@ def cmd_status() -> int:
 
 def cmd_start() -> int:
     """--start: 注册并启动守护进程，然后阻塞保持运行。"""
+    # 跨进程检测：是否已有守护进程在运行
+    existing_pid = _read_pid_file()
+    if existing_pid is not None and _is_pid_alive(existing_pid):
+        print(f"IdeHealthDaemon 已在运行 (pid={existing_pid})，无需重复启动")
+        return 0
+    # stale PID 文件清理（进程已死但文件残留）
+    if existing_pid is not None:
+        _remove_pid_file()
+
     try:
         from zephyr.trading.ide_health_daemon import register_daemon
     except ImportError as e:
@@ -99,6 +193,13 @@ def cmd_start() -> int:
         print(f"ERROR: 启动失败: {e}", file=sys.stderr)
         return 1
 
+    # 写入 PID 文件（跨进程状态持久化）+ 注册 atexit 清理
+    try:
+        _write_pid_file()
+    except OSError as e:
+        print(f"WARNING: PID 文件写入失败: {e}", file=sys.stderr)
+    atexit.register(_remove_pid_file)
+
     print("IdeHealthDaemon 已启动（Ctrl+C 退出）")
     print("守护进程每 30s 扫描一次 TRAE 幽灵窗口并自动清理")
 
@@ -111,6 +212,52 @@ def cmd_start() -> int:
         return 0
 
 
+def cmd_start_background() -> int:
+    """--start-background: 后台启动守护进程（非阻塞，立即返回）。
+
+    用 subprocess.Popen 启动分离的子进程运行 --start，主进程立即返回。
+    适用于 AI 冷启动序列 STEP 0（避免阻塞后续步骤）。
+    """
+    # 检查是否已有守护进程在运行
+    existing_pid = _read_pid_file()
+    if existing_pid is not None and _is_pid_alive(existing_pid):
+        print(f"IdeHealthDaemon 已在运行 (pid={existing_pid})，无需重复启动")
+        return 0
+    if existing_pid is not None:
+        _remove_pid_file()
+
+    # 后台分离启动子进程运行 --start
+    import subprocess
+
+    creation_flags = 0
+    if os.name == "nt":
+        creation_flags = subprocess.DETACHED_PROCESS | subprocess.CREATE_NO_WINDOW
+
+    proc = subprocess.Popen(
+        [sys.executable, str(Path(__file__).resolve()), "--start"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        stdin=subprocess.DEVNULL,
+        creationflags=creation_flags,
+        close_fds=True,
+    )
+
+    # 等待 PID 文件出现（最多 5 秒）
+    for _ in range(50):
+        time.sleep(0.1)
+        pid = _read_pid_file()
+        if pid is not None and _is_pid_alive(pid):
+            print(f"IdeHealthDaemon 后台启动成功 (pid={pid})")
+            return 0
+
+    # PID 文件未出现，检查子进程是否还活着
+    if proc.poll() is None:
+        print(f"WARNING: 守护进程子进程 (pid={proc.pid}) 已启动但 PID 文件未生成，请用 --status 检查")
+        return 0
+    print(f"ERROR: 守护进程子进程启动后立即退出 (code={proc.returncode})", file=sys.stderr)
+    return 1
+
+
 def main() -> None:
     """CLI 入口。"""
     parser = argparse.ArgumentParser(
@@ -119,6 +266,9 @@ def main() -> None:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--status", action="store_true", help="查询守护进程状态")
     group.add_argument("--start", action="store_true", help="注册并启动守护进程（阻塞）")
+    group.add_argument(
+        "--start-background", action="store_true", help="后台启动守护进程（非阻塞，立即返回，AI冷启动用）"
+    )
 
     args = parser.parse_args()
 
@@ -126,6 +276,8 @@ def main() -> None:
         sys.exit(cmd_status())
     elif args.start:
         sys.exit(cmd_start())
+    elif args.start_background:
+        sys.exit(cmd_start_background())
 
 
 if __name__ == "__main__":

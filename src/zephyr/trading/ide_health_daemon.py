@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-ORC_ide_health_daemon | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md | §new-IDE
+# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.ide_health_daemon
 # [INVARIANTS] scan_ghost_windows 必须零副作用（只读）；kill_ghost_windows 必须日志记录每个 killed PID；track_task_process 线程安全；kill_task_processes 幂等
 # [MODIFY-GUARD] MOD-INF-032 §new-IDE
