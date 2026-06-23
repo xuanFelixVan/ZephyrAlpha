@@ -50,9 +50,7 @@ def _connect_ro(db_path: Path) -> sqlite3.Connection:
 
 def _discover_tables(conn: sqlite3.Connection) -> list[str]:
     """自动发现所有表名。"""
-    rows = conn.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
-    ).fetchall()
+    rows = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").fetchall()
     return [r[0] for r in rows]
 
 
@@ -120,62 +118,60 @@ def run_baseline(db_path: Path, runs: int) -> dict:
         domain_count = conn.execute("SELECT COUNT(*) FROM domains").fetchone()[0]
 
         # 取一个真实 domain_id 用于按域过滤测试
-        sample_domain = conn.execute(
-            "SELECT domain_id FROM domains ORDER BY rowid LIMIT 1"
-        ).fetchone()[0]
+        sample_domain = conn.execute("SELECT domain_id FROM domains ORDER BY rowid LIMIT 1").fetchone()[0]
         # 取一个真实 node_id 用于递归测试
-        sample_node = conn.execute(
-            "SELECT node_id FROM nodes ORDER BY rowid LIMIT 1"
-        ).fetchone()[0]
+        sample_node = conn.execute("SELECT node_id FROM nodes ORDER BY rowid LIMIT 1").fetchone()[0]
 
         scenarios: list[dict] = []
 
         # T1: 全表 COUNT nodes（基线扫描）
-        scenarios.append(_run_scenario(
-            conn, "T1_count_nodes", "SELECT COUNT(*) FROM nodes", (), runs
-        ))
+        scenarios.append(_run_scenario(conn, "T1_count_nodes", "SELECT COUNT(*) FROM nodes", (), runs))
 
         # T2: 全表 COUNT edges
-        scenarios.append(_run_scenario(
-            conn, "T2_count_edges", "SELECT COUNT(*) FROM edges", (), runs
-        ))
+        scenarios.append(_run_scenario(conn, "T2_count_edges", "SELECT COUNT(*) FROM edges", (), runs))
 
         # T3: 跨域 JOIN（nodes JOIN edges JOIN domains）— 核心测试
-        scenarios.append(_run_scenario(
-            conn,
-            "T3_cross_domain_join",
-            """SELECT n.domain_id AS from_domain, d2.domain_id AS to_domain, COUNT(*) AS edge_cnt
+        scenarios.append(
+            _run_scenario(
+                conn,
+                "T3_cross_domain_join",
+                """SELECT n.domain_id AS from_domain, d2.domain_id AS to_domain, COUNT(*) AS edge_cnt
                FROM edges e
                JOIN nodes n ON e.from_node_id = n.node_id
                JOIN nodes n2 ON e.to_node_id = n2.node_id
                JOIN domains d2 ON n2.domain_id = d2.domain_id
                GROUP BY n.domain_id, d2.domain_id""",
-            (), runs
-        ))
+                (),
+                runs,
+            )
+        )
 
         # T4: 按域过滤节点
-        scenarios.append(_run_scenario(
-            conn,
-            "T4_filter_by_domain",
-            "SELECT * FROM nodes WHERE domain_id = ?",
-            (sample_domain,), runs
-        ))
+        scenarios.append(
+            _run_scenario(
+                conn, "T4_filter_by_domain", "SELECT * FROM nodes WHERE domain_id = ?", (sample_domain,), runs
+            )
+        )
 
         # T5: 节点出度统计（JOIN nodes + edges + GROUP BY）
-        scenarios.append(_run_scenario(
-            conn,
-            "T5_outdegree_stats",
-            """SELECT n.node_id, n.path, COUNT(e.edge_id) AS out_deg
+        scenarios.append(
+            _run_scenario(
+                conn,
+                "T5_outdegree_stats",
+                """SELECT n.node_id, n.path, COUNT(e.edge_id) AS out_deg
                FROM nodes n LEFT JOIN edges e ON n.node_id = e.from_node_id
                GROUP BY n.node_id ORDER BY out_deg DESC LIMIT 50""",
-            (), runs
-        ))
+                (),
+                runs,
+            )
+        )
 
         # T6: 递归依赖路径（WITH RECURSIVE CTE，深度 5）
-        scenarios.append(_run_scenario(
-            conn,
-            "T6_recursive_deps_depth5",
-            """WITH RECURSIVE dep_chain AS (
+        scenarios.append(
+            _run_scenario(
+                conn,
+                "T6_recursive_deps_depth5",
+                """WITH RECURSIVE dep_chain AS (
                  SELECT from_node_id, to_node_id, 1 AS depth
                  FROM edges WHERE from_node_id = ?
                  UNION ALL
@@ -184,28 +180,36 @@ def run_baseline(db_path: Path, runs: int) -> dict:
                  WHERE dc.depth < 5
                )
                SELECT COUNT(*) FROM dep_chain""",
-            (sample_node,), runs
-        ))
+                (sample_node,),
+                runs,
+            )
+        )
 
         # T7: 全量节点+域信息 JOIN
-        scenarios.append(_run_scenario(
-            conn,
-            "T7_nodes_with_domain",
-            """SELECT n.*, d.domain_name, d.layer_id
+        scenarios.append(
+            _run_scenario(
+                conn,
+                "T7_nodes_with_domain",
+                """SELECT n.*, d.domain_name, d.layer_id
                FROM nodes n LEFT JOIN domains d ON n.domain_id = d.domain_id""",
-            (), runs
-        ))
+                (),
+                runs,
+            )
+        )
 
         # T8: 跨域依赖统计（仅跨域边）
-        scenarios.append(_run_scenario(
-            conn,
-            "T8_cross_domain_edges_only",
-            """SELECT COUNT(*) FROM edges e
+        scenarios.append(
+            _run_scenario(
+                conn,
+                "T8_cross_domain_edges_only",
+                """SELECT COUNT(*) FROM edges e
                JOIN nodes n1 ON e.from_node_id = n1.node_id
                JOIN nodes n2 ON e.to_node_id = n2.node_id
                WHERE n1.domain_id != n2.domain_id""",
-            (), runs
-        ))
+                (),
+                runs,
+            )
+        )
 
         # 查询计划检查（T3 的索引使用情况）
         t3_plan = _explain_plan(conn, scenarios[2]["sql"])
@@ -230,9 +234,7 @@ def run_baseline(db_path: Path, runs: int) -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="depgraph.db 查询性能基线测试（只读，万级节点跨域JOIN延迟）"
-    )
+    parser = argparse.ArgumentParser(description="depgraph.db 查询性能基线测试（只读，万级节点跨域JOIN延迟）")
     parser.add_argument("--runs", type=int, default=5, help="每个场景运行次数（默认5）")
     parser.add_argument("--output", type=str, help="输出到 JSON 文件（默认 stdout）")
     args = parser.parse_args()
@@ -262,14 +264,20 @@ def main() -> None:
 
     # 控制台摘要
     print("\n=== 性能基线摘要 ===", file=sys.stderr)
-    print(f"DB: {result['db_size_mb']}MB | nodes={result['node_count']} | edges={result['edge_count']} | domains={result['domain_count']}", file=sys.stderr)
+    print(
+        f"DB: {result['db_size_mb']}MB | nodes={result['node_count']} | edges={result['edge_count']} | domains={result['domain_count']}",
+        file=sys.stderr,
+    )
     print(f"{'场景':<30} {'行数':>8} {'平均ms':>10} {'中位ms':>10} {'最大ms':>10}", file=sys.stderr)
     print("-" * 75, file=sys.stderr)
     for s in result["scenarios"]:
         if s["status"] == "OK":
-            print(f"{s['scenario']:<30} {s['row_count']:>8} {s['avg_ms']:>10.3f} {s['median_ms']:>10.3f} {s['max_ms']:>10.3f}", file=sys.stderr)
+            print(
+                f"{s['scenario']:<30} {s['row_count']:>8} {s['avg_ms']:>10.3f} {s['median_ms']:>10.3f} {s['max_ms']:>10.3f}",
+                file=sys.stderr,
+            )
         else:
-            print(f"{s['scenario']:<30} {'ERR':>8} {s.get('error','')}", file=sys.stderr)
+            print(f"{s['scenario']:<30} {'ERR':>8} {s.get('error', '')}", file=sys.stderr)
 
 
 if __name__ == "__main__":

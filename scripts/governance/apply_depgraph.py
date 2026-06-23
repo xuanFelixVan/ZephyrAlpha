@@ -53,7 +53,13 @@ _db_write_lock_lock = threading.Lock()
 
 
 @contextlib.contextmanager
-def _db_write_lock(owner_id: str | None = None, task: str = "depgraph write", db_path: Path | str | None = None, max_retries: int = 30, retry_interval: float = 1.0):
+def _db_write_lock(
+    owner_id: str | None = None,
+    task: str = "depgraph write",
+    db_path: Path | str | None = None,
+    max_retries: int = 30,
+    retry_interval: float = 1.0,
+):
     """depgraph.db 写入文件锁上下文管理器（跨进程互斥 + 进程内串行 + 重试）。
 
     双重保护：
@@ -339,7 +345,10 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     domain_op_count += 1
                 elif op == "update_path":
                     count = cmd_update_path(
-                        module_id=change.get("module_id", ""), new_path=change.get("new_path", ""), dry_run=False, conn=conn
+                        module_id=change.get("module_id", ""),
+                        new_path=change.get("new_path", ""),
+                        dry_run=False,
+                        conn=conn,
                     )
                     if count < 0:
                         raise RuntimeError(f"change #{i}: update_path failed")
@@ -358,7 +367,10 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     domain_op_count += 1
                 elif op == "update_domain_layer":
                     ok = cmd_update_domain_layer(
-                        domain_id=change.get("domain_id", ""), layer_id=change.get("layer_id", ""), dry_run=False, conn=conn
+                        domain_id=change.get("domain_id", ""),
+                        layer_id=change.get("layer_id", ""),
+                        dry_run=False,
+                        conn=conn,
                     )
                     if not ok:
                         raise RuntimeError(f"change #{i}: update_domain_layer failed")
@@ -495,10 +507,14 @@ def add_design_edge(
                 print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
                 return -1
             if from_node[1] != "design":
-                print(f"ERROR: from_node_id={from_node_id} design_maturity={from_node[1]}（应为design）", file=sys.stderr)
+                print(
+                    f"ERROR: from_node_id={from_node_id} design_maturity={from_node[1]}（应为design）", file=sys.stderr
+                )
                 return -1
 
-            to_node = conn.execute("SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (to_node_id,)).fetchone()
+            to_node = conn.execute(
+                "SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (to_node_id,)
+            ).fetchone()
             if not to_node:
                 print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
                 return -1
@@ -739,7 +755,8 @@ def cmd_update_domain_id(
                 return -1
 
             rows = conn.execute(
-                "SELECT node_id, path, domain_id FROM nodes WHERE belongs_to=? OR blueprint_id=?", (module_id, module_id)
+                "SELECT node_id, path, domain_id FROM nodes WHERE belongs_to=? OR blueprint_id=?",
+                (module_id, module_id),
             ).fetchall()
             if not rows:
                 print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
@@ -754,7 +771,8 @@ def cmd_update_domain_id(
                 return len(rows)
 
             cur = conn.execute(
-                "UPDATE nodes SET domain_id=? WHERE belongs_to=? OR blueprint_id=?", (new_domain_id, module_id, module_id)
+                "UPDATE nodes SET domain_id=? WHERE belongs_to=? OR blueprint_id=?",
+                (new_domain_id, module_id, module_id),
             )
             if own_conn:
                 conn.commit()
@@ -983,7 +1001,9 @@ def cmd_update_domain_layer(
         if own_conn:
             conn = sqlite3.connect(db_path)
         try:
-            existing = conn.execute("SELECT domain_id, layer_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            existing = conn.execute(
+                "SELECT domain_id, layer_id FROM domains WHERE domain_id=?", (domain_id,)
+            ).fetchone()
             if not existing:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
                 return False
