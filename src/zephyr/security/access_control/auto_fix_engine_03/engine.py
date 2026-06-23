@@ -315,7 +315,7 @@ class AutoFixEngine:
                 with open(db_path, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
                 try:
-                    from zephyr.integration.shared_08.event_bus import bus
+                    from zephyr.shared.event_bus import bus
 
                     bus.emit(
                         "audit.finding_resolved",

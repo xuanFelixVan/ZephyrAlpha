@@ -78,6 +78,8 @@ class ScheduledTask:
         self.layer = layer
         self.callback = callback
         self.last_run_date: str = ""
+        # hour=-1 表示每小时执行，用 last_run_hour 去重（格式 YYYY-MM-DD-HH）
+        self.last_run_hour: str = ""
 
 
 class CircadianScheduler:
@@ -270,7 +272,7 @@ class CircadianScheduler:
             if hits_total > 0:
                 logger.warning("LLM security scan: %d total hits across %d files", hits_total, len(py_files))
                 try:
-                    from zephyr.integration.shared_08.event_bus import bus
+                    from zephyr.shared.event_bus import bus
 
                     bus.emit(topic="security.secrets_detected", payload={"hits": hits_total})
                 except Exception:
@@ -660,13 +662,25 @@ class CircadianScheduler:
         last_minute: int = -1
         while self._running:
             now = datetime.now()
-            if now.minute == 0 and now.minute != last_minute:
+            # 每次都更新 last_minute，确保整点检测正确（否则连续两个整点无法触发）
+            if now.minute != last_minute:
                 last_minute = now.minute
-                today = now.strftime("%Y-%m-%d")
-                for task in self._tasks:
-                    if task.hour == now.hour and task.last_run_date != today:
-                        task.last_run_date = today
-                        if task.callback:
+                if now.minute == 0:
+                    today = now.strftime("%Y-%m-%d")
+                    current_hour_key = now.strftime("%Y-%m-%d-%H")
+                    for task in self._tasks:
+                        should_run = False
+                        if task.hour == -1:
+                            # hour=-1: 每小时整点执行，用 last_run_hour 去重
+                            if task.last_run_hour != current_hour_key:
+                                should_run = True
+                                task.last_run_hour = current_hour_key
+                        else:
+                            # hour>=0: 每天指定小时执行，用 last_run_date 去重
+                            if task.hour == now.hour and task.last_run_date != today:
+                                should_run = True
+                                task.last_run_date = today
+                        if should_run and task.callback:
                             try:
                                 task.callback()
                             except Exception:
@@ -679,7 +693,13 @@ class CircadianScheduler:
         self._state_path.parent.mkdir(parents=True, exist_ok=True)
         state = {
             "tasks": [
-                {"hour": t.hour, "name": t.name, "layer": t.layer, "last_run_date": t.last_run_date}
+                {
+                    "hour": t.hour,
+                    "name": t.name,
+                    "layer": t.layer,
+                    "last_run_date": t.last_run_date,
+                    "last_run_hour": t.last_run_hour,
+                }
                 for t in self._tasks
             ]
         }

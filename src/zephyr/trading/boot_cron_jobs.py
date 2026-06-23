@@ -138,7 +138,7 @@ def register_boot_cron_jobs(
         )
 
         try:
-            from zephyr.integration.shared_08.event_bus import bus
+            from zephyr.shared.event_bus import bus
 
             def _on_freshness_critical(payload: dict) -> None:
                 try:
@@ -348,8 +348,70 @@ def register_boot_cron_jobs(
             callback=_recover_stale_tasks,
         )
 
+        # MCP 集群定时健康检查（每小时自愈）：检测死亡进程并自动重启
+        def _mcp_health_check() -> None:
+            try:
+                import importlib.util
+
+                launcher_path = project_root / "scripts" / "mcp" / "launcher.py"
+                if not launcher_path.exists():
+                    logger.debug("MCP health check: launcher.py not found")
+                    return
+
+                spec = importlib.util.spec_from_file_location("launcher_health", launcher_path)
+                if spec is None or spec.loader is None:
+                    logger.warning("MCP health check: launcher spec creation failed")
+                    return
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+
+                gateway = getattr(mod, "_gateway", None)
+                if gateway is None:
+                    logger.debug("MCP health check: _gateway is None (cluster not started)")
+                    return
+
+                server_scripts = getattr(mod, "SERVER_SCRIPTS", {})
+                if not server_scripts:
+                    logger.debug("MCP health check: SERVER_SCRIPTS empty")
+                    return
+
+                healthy = 0
+                recovered = 0
+                failed = 0
+                for server_id in server_scripts:
+                    try:
+                        if mod.check_server_health(server_id, gateway):
+                            healthy += 1
+                        else:
+                            if mod.restart_server(server_id, gateway):
+                                recovered += 1
+                                logger.info("MCP health check: recovered server '%s'", server_id)
+                            else:
+                                failed += 1
+                                logger.warning("MCP health check: failed to recover server '%s'", server_id)
+                    except Exception as exc:
+                        failed += 1
+                        logger.warning("MCP health check: error checking '%s': %s", server_id, exc)
+
+                logger.info(
+                    "MCP health check: %d servers (healthy=%d, recovered=%d, failed=%d)",
+                    len(server_scripts),
+                    healthy,
+                    recovered,
+                    failed,
+                )
+            except Exception as e:
+                logger.warning("MCP health check failed: %s", e)
+
+        circadian_scheduler.register_task(
+            hour=-1,
+            name="mcp_health_check",
+            layer="L1",
+            callback=_mcp_health_check,
+        )
+
         logger.info(
-            "Task system cron jobs registered: escalation/timeout/orphan_scan/daily_dedup/budget_health/budget_alignment/temp_cleanup/triple_alignment/escalation_self_test/stale_task_recovery"
+            "Task system cron jobs registered: escalation/timeout/orphan_scan/daily_dedup/budget_health/budget_alignment/temp_cleanup/triple_alignment/escalation_self_test/stale_task_recovery/mcp_health_check"
         )
     except Exception as e:
         logger.warning("Failed to register task system cron jobs: %s", e)

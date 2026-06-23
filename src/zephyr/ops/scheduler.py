@@ -279,7 +279,7 @@ class FeedbackLoopScheduler:
                 issues = result.get("issues", [])
                 logger.warning("FLE audit trail: chain COMPROMISED — %d issues: %s", len(issues), issues[:3])
                 try:
-                    from zephyr.integration.shared_08.event_bus import bus
+                    from zephyr.shared.event_bus import bus
 
                     bus.emit(topic="audit_chain.compromised", payload={"issues": issues})
                 except Exception:
@@ -594,7 +594,7 @@ class FeedbackLoopScheduler:
 
     def _publish_to_event_bus(self, event: FLEPipelineEvent) -> None:
         try:
-            from zephyr.integration.shared_08.event_bus import EventPriority, bus
+            from zephyr.shared.event_bus import EventPriority, bus
 
             priority = EventPriority.HIGH if event.anomaly_detected else EventPriority.NORMAL
             bus.emit(

@@ -344,7 +344,7 @@ def register_boot_hooks() -> None:
         hook_registry.register(_on_blueprint_changed_triple_align, priority=72, name="triple_align_event")
 
         try:
-            from zephyr.integration.shared_08.event_bus import EventBusBackpressure
+            from zephyr.shared.event_bus import EventBusBackpressure
 
             _bus = EventBusBackpressure()
             _bus.subscribe("blueprint.changed", _on_blueprint_changed_triple_align)

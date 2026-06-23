@@ -217,7 +217,7 @@ def auto_subscribe_eventbus() -> None:
         return
 
     try:
-        from zephyr.integration.shared_08.event_bus import EventBus, EventType
+        from zephyr.shared.event_bus import EventBus, EventType
 
         bus = EventBus.get_instance()
 
