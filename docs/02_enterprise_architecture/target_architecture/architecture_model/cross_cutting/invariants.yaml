@@ -25,8 +25,8 @@ invariants:
     category: capital_safety
     statement: "Kill Switch 延迟 < 1ms：风控硬拦截必须�?1ms 内触发熔�?"
 
-    owner: l04-risk-management
-    sub_owner: l04-stop-loss / l04-limits
+    owner: D-RISK
+    sub_owner: D-RISK / D-RISK
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_kill_switch_latency.py
     kb_ref: KBG-0009
@@ -38,8 +38,8 @@ invariants:
   - id: INV-002
     category: capital_safety
     statement: "单一持仓限制 �?5% NAV：任何单个仓位不得超过净资产价值的 5%"
-    owner: l04-risk-management
-    sub_owner: l04-limits
+    owner: D-RISK
+    sub_owner: D-RISK
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_position_limit.py
     kb_ref: KBG-0009
@@ -51,8 +51,8 @@ invariants:
   - id: INV-003
     category: capital_safety
     statement: "日损失限额触发自动暂停：当日亏损触及预设阈值时系统自动暂停交易"
-    owner: l04-risk-management
-    sub_owner: l04-monitor
+    owner: D-RISK
+    sub_owner: D-RISK
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_daily_loss_limit.py
     kb_ref: KBG-0009
@@ -64,8 +64,8 @@ invariants:
   - id: INV-004
     category: data_integrity
     statement: "PIT（Point-in-Time）铁律：回测数据禁止未来信息泄露（Look-ahead Bias 零容忍）"
-    owner: l02-alpha-factor
-    sub_owner: l02-pipeline / l02-factors
+    owner: D-FACTOR
+    sub_owner: D-FACTOR / D-FACTOR
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_pit_compliance.py
     kb_ref: KBG-0005
@@ -76,8 +76,8 @@ invariants:
   - id: INV-005
     category: boundary_integrity
     statement: "Broker ACL 边界：仅 `src/zephyr/ex_core/adapters/`（Python 包路�?`ex_core`�? EA 分层条目�?`layers/l06_trade_execution.yaml`）可调用 Broker API；其他层禁止直连�?"
-    owner: l06-trade-execution
-    sub_owner: l06-adapters
+    owner: D-EX_CORE
+    sub_owner: D-EX_CORE
     enforcement: arch_guard
     fitness_function_path: scripts/arch_guard/check_acl_boundary.py
     kb_ref: KBG-0008
@@ -89,8 +89,8 @@ invariants:
     category: boundary_integrity
     statement: "前后端唯一接触点：前端只能通过 L08 api_gateway 访问后端，禁止前端直接调用任何内部服�?"
 
-    owner: l08-human-ai-interface
-    sub_owner: l08-api-gateway
+    owner: D-FRONTEND
+    sub_owner: D-FRONTEND
     enforcement: arch_guard
     fitness_function_path: scripts/arch_guard/check_fe_acl_boundary.py
     kb_ref: KBG-0007
@@ -103,7 +103,7 @@ invariants:
     category: idempotency
     statement: "所有跨层事件必须携带幂�?Key（Idempotency Key）：防止重复处理"
     owner: shared-contracts
-    sub_owner: shared/contracts/base_event.py
+    sub_owner: shared / contracts / base_event.py
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_idempotency_key.py
     kb_ref: KBG-0010
@@ -115,7 +115,7 @@ invariants:
   - id: INV-008
     category: boundary_integrity
     statement: "跨层依赖方向：低层不�?import 高层（L00 不得 import L04+），依赖只能向上"
-    owner: l01-infrastructure
+    owner: D-INFRA_OPS
     sub_owner: shared-contracts
     enforcement: arch_guard
     fitness_function_path: scripts/arch_guard/import_linter/layer_boundary_check.py
@@ -129,7 +129,7 @@ invariants:
     statement: "OCP 契约冻结：shared/contracts/ 中的接口一�?release，不得修改签名（只能扩展�?"
 
     owner: shared-contracts
-    sub_owner: shared/contracts/_frozen_signatures/
+    sub_owner: shared / contracts / _frozen_signatures / 
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_ocp_signatures.py
     kb_ref: KBG-0004
@@ -151,8 +151,8 @@ invariants:
   - id: INV-011
     category: boundary_integrity
     statement: "Cold �?Hot 禁止直接通信：Cold Path 输出必须先落 Warm Path 并经影子验证后方可进�?Hot Path"
-    owner: l13-experiment-pipeline
-    sub_owner: l13-shadow / l13-champion-challenger
+    owner: D-INTELLIGENCE
+    sub_owner: D-INTELLIGENCE / D-INTELLIGENCE
     enforcement: arch_guard
     fitness_function_path: scripts/arch_guard/check_cross_plane_communication.py
     kb_ref: KBG-0011
@@ -164,8 +164,8 @@ invariants:
   - id: INV-012
     category: boundary_integrity
     statement: "Hot Path 禁止同步调用 Python 代码：Hot 路径严禁直接调用任何 Python asyncio 代码"
-    owner: l04-risk-management
-    sub_owner: l04-limits / l06-sor
+    owner: D-RISK
+    sub_owner: D-RISK / D-EX_CORE
     enforcement: arch_guard
     fitness_function_path: scripts/arch_guard/check_hot_path_purity.py
     kb_ref: KBG-0011
@@ -177,7 +177,7 @@ invariants:
   - id: INV-013
     category: capital_safety
     statement: "风控参数三平面一致性：Cold 回测 / Warm 实盘 / Hot 拦截必须使用同一 config/risk_params.yaml 参数"
-    owner: l04-risk-management
+    owner: D-RISK
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_risk_params_consistency.py
     kb_ref: KBG-0011
@@ -190,8 +190,8 @@ invariants:
     category: data_integrity
     statement: "Survivorship Bias 零容忍：回测数据集必须包含退�?停牌标的，不得使用存活者偏差数�?"
 
-    owner: l00-data-source
-    sub_owner: l00-storage / l00-quality
+    owner: D-MKT_DATA
+    sub_owner: D-MKT_DATA / D-MKT_DATA
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_survivorship_bias.py
     kb_ref: KBG-0005
@@ -204,8 +204,8 @@ invariants:
     category: boundary_integrity
     statement: "AISG 拦截门禁：所�?AI 生成的代�?/ 指令必须�?L10 AISG security_gateway 拦截验证后才能执�?"
 
-    owner: l10-governance-compliance
-    sub_owner: l10-security-gateway
+    owner: D-COMPLIANCE
+    sub_owner: D-COMPLIANCE
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_aisg_gateway.py
     kb_ref: KBG-0010
@@ -216,8 +216,8 @@ invariants:
   - id: INV-016
     category: boundary_integrity
     statement: "审计日志不可篡改：policy_decision_ledger.jsonl 仅允�?append-only 写入，禁止删�?修改历史记录"
-    owner: l10-governance-compliance
-    sub_owner: scripts/audit_log/decision_provenance.py
+    owner: D-COMPLIANCE
+    sub_owner: scripts / audit_log / decision_provenance.py
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_audit_log_immutability.py
     kb_ref: KBG-0010
@@ -231,7 +231,7 @@ invariants:
     statement: "SSoT-CAP-INV: 架构模型中每个概念必须有且仅有一个权威来�?"
 
     owner: ZephyrAlpha-Owner
-    sub_owner: "ssot-authority-map / architecture_model/index.yaml"
+    sub_owner: "ssot-authority-map / architecture_model / index.yaml"
     enforcement: manual_review
     fitness_function_path: "scripts/arch_guard/fitness_functions/check_ssot_cap.py"
     priority: P1
@@ -242,7 +242,7 @@ invariants:
     category: boundary_integrity
     statement: "Hot↔Warm 必须通过 IPC 协议通信（runtime_plane_tag.py），禁止直接函数调用"
     owner: ZephyrAlpha-Owner
-    sub_owner: "l04-stop-loss / l06-sor / shared-runtime-plane-tag"
+    sub_owner: "l04-stop-loss / D-EX_CORE / shared-runtime-plane-tag"
     enforcement: arch_guard
     fitness_function_path: "scripts/arch_guard/fitness_functions/check_hot_warm_ipc.py"
     priority: P1
@@ -254,7 +254,7 @@ invariants:
     statement: "Warm→Cold 必须通过 Parquet/Redis Streams 异步通信，禁止同步阻�?"
 
     owner: ZephyrAlpha-Owner
-    sub_owner: "l05-optimization / l11-serving / shared-runtime-plane-tag"
+    sub_owner: "l05-optimization / D-ML_SERVE / shared-runtime-plane-tag"
     enforcement: arch_guard
     fitness_function_path: "scripts/arch_guard/fitness_functions/check_warm_cold_async.py"
     priority: P1
