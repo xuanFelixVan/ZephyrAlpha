@@ -1,6 +1,6 @@
 rule_id: TRAE-047
 title: 工程治理-文件头部与扩展
-version: 1.0.5
+version: 1.1.0
 layer: L1
 module_id: TRAE-047
 depends_on: []
@@ -37,7 +37,13 @@ sections:
       fail: 格式不匹配
     actions:
     - type: mandatory
-      step: A_full格式：10字段注释头部——[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]
+      step: 'A_full格式：14字段注释头部——[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]'
+    - type: mandatory
+      step: '[DEPENDENCIES]上游依赖——填此文件import的模块，分号分隔；强制AI创建代码时到全景图查上游节点是否存在'
+    - type: mandatory
+      step: '[STARTUP]启动方式——枚举auto_start/event_driven/scheduled/manual/imported；强制AI声明文件触发方式'
+    - type: mandatory
+      step: '[MATURITY]设计成熟度——枚举design/prototype/production/legacy；强制AI声明设计态还是运营态'
     - type: mandatory
       step: A_test格式：6字段简化版——[BLUEPRINT]/[MODULE]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[TESTS]
     - type: mandatory
@@ -47,7 +53,7 @@ sections:
     - type: mandatory
       step: E_shell格式：4字段注释——[BLUEPRINT]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]
     - type: mandatory
-      step: 锚定文件时执行7步：判断归属蓝图→添加表头→更新蓝图§0.1→更新蓝图§11→更新蓝图§10→更新注册表→验证双向对齐
+      step: 锚定文件时执行7步：判断归属蓝图→添加表头→更新蓝图§0.1→更新蓝图§11→更新蓝图§10→更新注册表和全景图→验证双向对齐
     - type: mandatory
       step: 修改枚举值MUST同步检查PS-STD-001对应章节
     prohibitions:
@@ -118,8 +124,8 @@ sections:
     original_rules:
     - GOV-ENG-002
     items:
-    - description: A_full(.py十字段注释头部)
-      details: '适用: code, script | 字段数: 10'
+    - description: A_full(.py十四字段注释头部)
+      details: '适用: code, script | 字段数: 14'
     - description: A_test(.py六字段简化版)
       details: '适用: test | 字段数: 6'
     - description: B_yaml(YAML 5字段注释块)
@@ -149,6 +155,14 @@ sections:
       statement: 'ai_autonomy枚举: immutable_core(不可变核心AI只能读)/human_gated(人工闸门AI可提议需Owner批准)/ai_modifiable(AI可修改)'
       rationale: 与PS-REG-012完全一致，零冲突
       applies_to: 所有文件表头的[AI_AUTONOMY]/ai_autonomy字段
+    - id: MATURITY-ENUM
+      statement: 'maturity枚举: design(设计态仅有蓝图无代码)/prototype(运营态快速原型无测试)/production(运营态生产级有测试)/legacy(运营态设计过时待重构)'
+      rationale: 与depgraph.db nodes.design_maturity字段完全一致，零冲突
+      applies_to: 所有A_full格式文件表头的[MATURITY]字段
+    - id: STARTUP-ENUM
+      statement: 'startup枚举: auto_start(自动启动)/event_driven(事件驱动)/scheduled(定时调度)/manual(手动触发)/imported(被动导入不主动启动)'
+      rationale: 与depgraph.db nodes启动方式字段一致，强制AI声明文件触发方式
+      applies_to: 所有A_full格式文件表头的[STARTUP]字段
     - id: HEADER-FORMAT-ENUM
       statement: 'header_format枚举: A_full/A_test/B_yaml/C_json/D_md/E_shell/exempt'
       rationale: 新增枚举，定义文件类型到表头格式的映射
@@ -238,14 +252,14 @@ sections:
       expected_result: 依赖声明已添加
       on_failure: 依赖未声明
     - order: 6
-      action: 更新注册表
+      action: 更新注册表和全景图
       pre_condition: 蓝图已更新
-      expected_result: script-manifest.yaml/__init__.py/_registry.yaml已更新
-      on_failure: 注册表未更新=孤儿
+      expected_result: script-manifest.yaml/__init__.py/_registry.yaml已更新 + depgraph.db nodes表已INSERT/UPDATE对应节点(design_maturity/path/domain_id/belongs_to) + edges表已INSERT上下游依赖边
+      on_failure: 注册表或全景图未更新=孤儿
     - order: 7
       action: 验证双向对齐
       pre_condition: 所有更新完成
-      expected_result: Grep蓝图→文件+Grep文件→蓝图均命中
+      expected_result: Grep蓝图→文件+Grep文件→蓝图均命中 + extract_depgraph.py --modules <module_id>能查到节点
       on_failure: 双向对齐失败——必须修复
   gov_eng_002_verification:
     title: 文件头部验证流程
@@ -414,6 +428,9 @@ sections:
     - version: 1.0.2
       date: '2026-06-19'
       change: RQ审查STEP13修复：修复6处kebab-case引用违规(template-registry.yaml→template_registry.yaml×1, blueprint-registry.yaml→blueprint_registry.yaml×3, module-registry.yaml→module_registry.yaml×4)，符合§2.2 snake_case裁定(RQ-05)
+    - version: 1.1.0
+      date: '2026-06-24'
+      change: A_full格式从10字段升级为14字段——新增[DEPENDENCIES](上游依赖,对应edges表from→to)/[STARTUP](启动方式,枚举auto_start/event_driven/scheduled/manual/imported)/[MATURITY](设计成熟度,枚举design/prototype/production/legacy,对应nodes.design_maturity)；新增MATURITY-ENUM和STARTUP-ENUM枚举定义；锚定7步流程步骤6从"更新注册表"升级为"更新注册表和全景图"(depgraph.db nodes/edges表同步)；目的——反向促进AI创建代码时到全景图先填写定位，防止漂移和幻觉
     context:
       summary: GOV-ENG-002 v1.0.0从GOV-ENG-001§7独立；GOV-ENG-003 v1.0.0基于2026-05-19基线数据
       impact_on_rules: GOV-ENG-002独立后GOV-ENG-001§7仅保留速查表
@@ -486,6 +503,14 @@ metadata:
   modification_permission: human_gated
   superseded_by:
   change_history:
+  - version: 1.1.0
+    date: '2026-06-24'
+    by: session-20260624-header
+    changes:
+    - A_full格式从10字段升级为14字段——新增[DEPENDENCIES]/[STARTUP]/[MATURITY]三个字段
+    - 新增MATURITY-ENUM(design/prototype/production/legacy)和STARTUP-ENUM(auto_start/event_driven/scheduled/manual/imported)枚举定义
+    - 锚定7步流程步骤6从"更新注册表"升级为"更新注册表和全景图"(depgraph.db nodes/edges表同步)
+    - 目的——反向促进AI创建代码时到全景图先填写定位，防止漂移和幻觉
   - version: 1.0.5
     date: '2026-06-21'
     by: AI-Assistant
