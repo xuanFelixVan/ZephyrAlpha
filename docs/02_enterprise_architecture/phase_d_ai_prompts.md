@@ -1,4 +1,4 @@
-# 阶段D：34个AI完整提示词
+# 阶段D：37个AI完整提示词
 
 > 每个AI复制自己的提示词，在新对话中执行。
 > 工作流程：创建详细任务卡 → 审查任务卡 → 循环修复 → 执行任务卡
@@ -27,7 +27,7 @@
 
 **⚠️ 多 AI 并发提交协议（MUST 遵守）**:
 
-本阶段有 34 个 AI 并发工作。文件修改 MUST 走 StagingArea 草稿模式，禁止直接 `git commit`。
+本阶段有 37 个 AI 并发工作。文件修改 MUST 走 StagingArea 草稿模式，禁止直接 `git commit`。
 
 ```
 from zephyr.trading.staging_area import StagingArea
@@ -777,14 +777,14 @@ STEP 1-14 按14步统一流程执行
 
 ***
 
-## AI-18: F18 治理脚本系统(7维度)
+## AI-18: F18 治理脚本系统(12维度)
 
 ```
-你是AI-18，负责恢复F18 治理脚本系统(7维度)功能。
+你是AI-18，负责恢复F18 治理脚本系统(12维度)功能。
 
 ## 你的元任务卡
 - task_id: DM-201018
-- 功能: F18 治理脚本系统(7维度)
+- 功能: F18 治理脚本系统(12维度)
 - 蓝图: MOD-INF-005
 - 源码包: scripts/governance/
 - 包含子系统: 457个治理脚本(d1元数据~d7安全) + script_manifest + 质量标准8维度 + 命名规范N-01~N-15
@@ -1628,4 +1628,181 @@ P2优先级。代码去重防止重复造轮子。
 - STEP 10重点: 测试去重误判、原子修复回滚失败、爆炸半径超限
 
 每张卡完成后transition(COMPLETED)，全部完成后报告F34整体状态。
+```
+
+***
+
+## AI-35: F35 文件结构治理引擎
+
+```
+你是AI-35，负责恢复F35 文件结构治理引擎功能。
+
+## 你的元任务卡
+- task_id: DM-201035
+- 功能: F35 文件结构治理引擎
+- 蓝图: GOV-FSTR-001
+- 源码包: scripts/governance/restructuring/（计划路径）
+- 蓝图路径: docs/03_modules/_restructuring/blueprint.md
+- 包含子系统: 大文件拆分(>500行按职责拆分) + 跨目录重复合并 + 按需激活(延迟加载) + 安全搬家(不破坏导入链)
+- 蓝图版本: v4.2.0, generation 3
+- construction_progress: design_only（仅有设计文档，无代码实现）
+
+## 背景
+文件结构治理——全项目文件结构优化引擎。目标 LLM 友好上限 300 行/文件。当前规模约 20 个大文件 + 约 10 组跨目录重复。与 F17（交易骨架清理）不同：F17 限于交易域，F35 是跨层横切功能，覆盖全项目文件结构治理。
+
+## 阶段A：创建详细任务卡
+1. 读取元任务卡:
+   python -c "import sys; sys.path.insert(0,'src'); from zephyr.governance.task_repo import TaskRepository; tr=TaskRepository(); t=tr.get('DM-201035'); print(t.description)"
+2. 读蓝图: Read docs/03_modules/_restructuring/blueprint.md
+3. 拆分详细任务卡:
+   - DM-203501: 大文件拆分引擎(>500行检测+按职责拆分)
+   - DM-203502: 跨目录重复检测+合并引擎
+   - DM-203503: 按需激活/延迟加载机制
+   - DM-203504: 安全搬家(文件移动不破坏导入链)
+   - DM-203505: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+逐张审查: 模板字段(18项) + 粒度门禁 + 依赖顺序 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 1: Read docs/03_modules/_restructuring/blueprint.md
+- STEP 2: Glob src/zephyr/**/*.py 统计>500行文件; Grep 重复功能模块
+- STEP 5: extract_depgraph.py --modules 查文件结构归属
+- STEP 8: python -m pytest tests/ -k "restructure or file_split or dedup_merge" -v
+- STEP 10: 测试拆分后导入断裂、合并后功能丢失、搬家后路径失效
+- STEP 12: diagnose_depgraph.py + 蓝图↔代码 + 代码头部↔引用
+
+## 完成标准
+1. 大文件拆分引擎可检测>500行文件并按职责自动拆分
+2. 跨目录重复检测可发现同功能多副本
+3. 按需激活机制可实现未使用模块延迟加载
+4. 安全搬家可保证文件移动后导入链不断裂
+5. 三方对齐 PASS
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F35整体状态。
+```
+
+***
+
+## AI-36: F36 审计追踪链（不可变审计链）
+
+```
+你是AI-36，负责恢复F36 审计追踪链功能。
+
+## 你的元任务卡
+- task_id: DM-201036
+- 功能: F36 审计追踪链（不可变审计链）
+- 蓝图: MOD-INF-020
+- 源码包: src/zephyr/governance/audit_trail/（352个.py文件）
+- 蓝图路径: docs/03_modules/_domain_governance/audit_trail/blueprint.md
+- 包含子系统: JSONL唯一真源写入 + 哈希链防篡改 + HMAC系统级签名 + Ed25519 Agent级不可否认签名 + CoT推理链审计 + 13种异常行为签名检测 + Merkle小时级完整性 + 证据包(evidence_pack) + 重放引擎(replay_engine) + 分层存储 + 隐私脱敏 + 信任引擎
+- 蓝图版本: v2.1.0, generation 9
+- construction_progress: partially_implemented
+- 功能域: D-GOV_AUDIT/audit-trail
+
+## 背景
+不可变动作审计与密码学完整性保证。与F6（漂移检测/行为审计）不同：F6检测基线偏离和行为边界，F36解决操作记录不可篡改+不可否认+密码学可验证。目标容量 100 AI并发 × 10,000脚本 × 峰值120条/秒写入。
+
+## 阶段A：创建详细任务卡
+1. 读取元任务卡:
+   python -c "import sys; sys.path.insert(0,'src'); from zephyr.governance.task_repo import TaskRepository; tr=TaskRepository(); t=tr.get('DM-201036'); print(t.description)"
+2. 读蓝图: Read docs/03_modules/_domain_governance/audit_trail/blueprint.md
+3. 拆分详细任务卡:
+   - DM-203601: JSONL写入+哈希链防篡改恢复
+   - DM-203602: HMAC系统级签名+Ed25519 Agent级签名恢复
+   - DM-203603: CoT推理链审计+13种异常行为签名检测恢复
+   - DM-203604: Merkle完整性+证据包+重放引擎恢复
+   - DM-203605: 分层存储+隐私脱敏+信任引擎恢复
+   - DM-203606: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+逐张审查: 模板字段(18项) + 粒度门禁 + 依赖顺序 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 1: Read docs/03_modules/_domain_governance/audit_trail/blueprint.md
+- STEP 2: Glob src/zephyr/governance/audit_trail/**/*.py 定位352个文件
+- STEP 5: extract_depgraph.py --modules 查audit_trail域归属
+- STEP 6: python -c "from zephyr.governance.audit_trail import *" 逐模块验证导入
+- STEP 8: python -m pytest tests/ -k "audit_trail or hash_chain or merkle or evidence" -v
+- STEP 10: 测试哈希链篡改检测、签名伪造检测、重放攻击防护、并发写入冲突
+- STEP 12: diagnose_depgraph.py + 蓝图↔代码 + 代码头部↔引用
+
+## 完成标准
+1. JSONL写入+哈希链可检测篡改
+2. HMAC+Ed25519签名可实现不可否认
+3. 13种异常行为签名检测全部可用
+4. Merkle完整性验证通过
+5. 证据包+重放引擎功能正常
+6. 三方对齐 PASS
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F36整体状态。
+```
+
+***
+
+## AI-37: F37 资源优化引擎
+
+```
+你是AI-37，负责恢复F37 资源优化引擎功能。
+
+## 你的元任务卡
+- task_id: DM-201037
+- 功能: F37 资源优化引擎
+- 蓝图: MOD-INF-032
+- 源码包: src/zephyr/infrastructure/lifecycle/resource_optimization_engine.py + src/zephyr/shared/lifecycle/resource_optimization_engine.py + src/zephyr/trading/lifecycle_manager.py + src/zephyr/trading/gpu_monitor.py
+- 蓝图路径: docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md
+- 包含子系统: MAPE-K闭环(Monitor→Analyze→Plan→Execute) + 进程池化 + I/O零拷贝缓存(LRU淘汰) + 智能调度 + 内存水位管理 + 缓存复用 + 流式处理 + 自愈闭环 + GPU监控(nvidia-smi) + DefensiveStrategyEngine(应急保护) + OffensiveStrategyEngine(主动提效)
+- 蓝图版本: v5.4.0, generation 2
+- construction_progress: partially_implemented
+- 功能域: D-INFRA-OPS/resource_optimization
+
+## 背景
+MAPE-K驱动的资源优化引擎。与F21（守护系统/IDE健康守护）共享蓝图MOD-INF-032但职责不同：F21聚焦IDE幽灵窗口扫描+过期锁清理（守护进程层面），F37聚焦进程池化+I/O缓存+智能调度+自愈（资源优化层面）。与F27（容量保障）也不同：F27是SLI/SLO+Error Budget，F37是MAPE-K资源利用率优化。当前管理51模块，目标1,500模块/100 AI并发。
+
+## 阶段A：创建详细任务卡
+1. 读取元任务卡:
+   python -c "import sys; sys.path.insert(0,'src'); from zephyr.governance.task_repo import TaskRepository; tr=TaskRepository(); t=tr.get('DM-201037'); print(t.description)"
+2. 读蓝图: Read docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md
+3. 拆分详细任务卡:
+   - DM-203701: MAPE-K闭环(Monitor→Analyze→Plan→Execute)恢复
+   - DM-203702: 进程池化+I/O零拷贝缓存(LRU)恢复
+   - DM-203703: 智能调度+内存水位管理恢复
+   - DM-203704: GPU监控+自愈闭环恢复
+   - DM-203705: DefensiveStrategy+OffensiveStrategy双引擎恢复
+   - DM-203706: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+逐张审查: 模板字段(18项) + 粒度门禁 + 依赖顺序 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 1: Read docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md
+- STEP 2: Glob src/zephyr/infrastructure/lifecycle/resource_optimization_engine.py + shared/lifecycle/ + trading/lifecycle_manager.py + trading/gpu_monitor.py
+- STEP 5: extract_depgraph.py --modules 查resource_optimization域归属
+- STEP 6: python -c "from zephyr.infrastructure.lifecycle.resource_optimization_engine import *" 验证导入
+- STEP 8: python -m pytest tests/ -k "resource_optimization or mape_k or gpu_monitor or lifecycle" -v
+- STEP 10: 测试进程池耗尽、I/O缓存失效、内存水位超限、GPU故障自愈、MAPE-K闭环中断
+- STEP 12: diagnose_depgraph.py + 蓝图↔代码 + 代码头部↔引用
+
+## 完成标准
+1. MAPE-K闭环可自动Monitor→Analyze→Plan→Execute
+2. 进程池化可避免子进程频繁创建销毁
+3. I/O零拷贝缓存LRU淘汰正常
+4. GPU监控可采集nvidia-smi数据
+5. 自愈闭环可检测故障并自动恢复
+6. Defensive+Offensive双引擎协同工作
+7. 三方对齐 PASS
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F37整体状态。
 ```
