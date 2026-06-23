@@ -1,4 +1,24 @@
 # [A_module] module_id=MOD-SHR_longevity_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
+
+# [MODULE] zephyr.shared.longevity_monitor
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
 from __future__ import annotations
 
 import time
