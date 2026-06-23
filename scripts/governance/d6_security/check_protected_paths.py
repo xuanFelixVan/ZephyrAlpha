@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/check_protected_paths.py | §
+# [MODULE] scripts.governance.d6_security.check_protected_paths
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d6_security.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """check_protected_paths.py — 受保护路径写入检查（IRN-010）
 
 对标：GOV-MOD-002 IRN-010（受保护路径不可写）

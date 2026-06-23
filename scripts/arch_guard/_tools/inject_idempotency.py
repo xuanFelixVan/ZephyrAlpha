@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_tools/inject_idempotency.py | §
+# [MODULE] scripts.arch_guard._tools.inject_idempotency
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard._tools.build_ocp_manifest
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """为所有 P0/P1 契约添加 idempotency_key 字段——状态感知版本。
 
 策略：

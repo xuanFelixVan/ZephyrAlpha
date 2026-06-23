@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/base.py | §
+# [MODULE] scripts.governance._shared.base
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 base.py — 审计脚本基类
 

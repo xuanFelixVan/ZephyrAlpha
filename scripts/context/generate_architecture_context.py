@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/context/generate_architecture_context.py | §
+# [MODULE] scripts.context.generate_architecture_context
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 generate_architecture_context.py — 预编译架构上下文包生成器
 

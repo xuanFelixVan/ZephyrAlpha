@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/mcp/stop_all.py | §
+# [MODULE] scripts.mcp.stop_all
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.mcp.status_all
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """MCP 全 Server 停止脚本（MOD-INF-013 §14）。
 
 通过 PID 文件精准停止 MCP Server 进程，避免误杀其他 Python 进程。

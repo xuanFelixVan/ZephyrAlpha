@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/run_all.py | §
+# [MODULE] scripts.governance.run_all
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 run_all.py — 脚本系统统一入口脚本
 

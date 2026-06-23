@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §DM-311
 # [MODULE] scripts.migration.dm311_autonomy_core_split
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.migration.dm314_infra_ops_split
+# [CONSUMERS] DM-311任务卡
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] 剪切粘贴模式(shutil.move); 从migration-registry.yaml读取映射; 按子目录分批; 移动后更新import+头部字段; 更新迁移登记表status; 全局更新外部引用
 # [MODIFY-GUARD] migration-registry.yaml格式变更需同步
-# [CONSUMERS] DM-311任务卡
 # [STABILITY] volatile
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

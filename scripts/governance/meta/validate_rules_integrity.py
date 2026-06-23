@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_rules_integrity.py | §
+# [MODULE] scripts.governance.meta.validate_rules_integrity
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.meta.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_rules_integrity.py — 规则文件完整性保护
 

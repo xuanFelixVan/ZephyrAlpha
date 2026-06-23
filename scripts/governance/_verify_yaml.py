@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_verify_yaml.py | §
+# [MODULE] scripts.governance._verify_yaml
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Module docstring — see module-level docstring for details."""
 
 import yaml

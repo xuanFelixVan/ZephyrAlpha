@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_domain_governance/blueprint.md | §rule_engine
 # [MODULE] scripts.governance.check_rule_four_way_alignment
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] CI pipeline; governance audit; Phase Manager
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] YAML↔DB↔Code↔Blueprint 四方对齐; L0 规则 100% 对齐才 exit 0
 # [MODIFY-GUARD] rule_engine.py; sync_rule_registry.py; verify_rule_yaml_migration.py
-# [CONSUMERS] CI pipeline; governance audit; Phase Manager
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

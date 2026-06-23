@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/fix_freeze_manifest.py | §
+# [MODULE] scripts.fix_freeze_manifest
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Fix freezemanifest.yaml - comprehensive repair of all corrupted desc fields."""
 
 from pathlib import Path

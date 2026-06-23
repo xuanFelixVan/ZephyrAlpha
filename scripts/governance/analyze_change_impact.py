@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] GOV-070 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.analyze_change_impact
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [CONSUMERS] run_incremental.py;phase_manager.py
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] 影响分析必须包含传递依赖;增量扫描列表不可遗漏直接依赖
 # [MODIFY-GUARD] 依赖图格式变更需同步generate_project_depgraph.py
-# [CONSUMERS] run_incremental.py;phase_manager.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

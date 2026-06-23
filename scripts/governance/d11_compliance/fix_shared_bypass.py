@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/fix_shared_bypass.py | §
+# [MODULE] scripts.governance.d11_compliance.fix_shared_bypass
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d11_compliance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 fix_shared_bypass.py - D-D-07 auto-fix tool (validate_script_quality.py --fix companion)
 Aligns with AGENTS.md section 6.5 (script self-creation repository mandatory convention)

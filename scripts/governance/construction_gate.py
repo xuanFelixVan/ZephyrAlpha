@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/construction_gate.py | §
+# [MODULE] scripts.governance.construction_gate
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.architecture_governance.path_resolver
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Construction Gate — 施工前路径校验门禁
 调用 PathResolver 校验任务卡的 downstream_outputs 路径是否匹配当前项目结构。

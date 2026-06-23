@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/verify_file_paths.py | §
+# [MODULE] scripts.governance.verify_file_paths
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """代码路径索引验证脚本（MOD-INF-013 §5 governance）。"""
 
 from __future__ import annotations

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/run_deepseek_v4_exam.py | §
+# [MODULE] scripts.run_deepseek_v4_exam
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 DeepSeek V4 入职考试运行脚本
 ============================

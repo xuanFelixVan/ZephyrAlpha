@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/detect_script_divergence.py | §
+# [MODULE] scripts.governance.meta.detect_script_divergence
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.meta.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_script_divergence.py — 脚本实现与蓝图规范分歧检测（蓝图 §27.3 B81）
 

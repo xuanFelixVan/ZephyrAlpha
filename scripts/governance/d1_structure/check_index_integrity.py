@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/check_index_integrity.py | §
+# [MODULE] scripts.governance.d1_structure.check_index_integrity
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d1_structure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 check_index_integrity.py — 索引完整性校验
 

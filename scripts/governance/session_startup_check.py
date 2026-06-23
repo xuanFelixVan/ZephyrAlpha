@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/session_startup_check.py | §
+# [MODULE] scripts.governance.session_startup_check
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.ops_governance.phase_manager; zephyr.governance.ops_governance.phase_check_registry
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状态报告.
 
 用法:

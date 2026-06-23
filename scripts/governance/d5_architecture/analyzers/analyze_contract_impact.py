@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/analyzers/analyze_contract_impact.py | §
+# [MODULE] scripts.governance.d5_architecture.analyzers.analyze_contract_impact
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d5_architecture.analyzers.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """analyze_contract_impact.py — 契约变更影响分析器
 
 

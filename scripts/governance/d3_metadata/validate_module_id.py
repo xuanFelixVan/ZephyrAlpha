@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_module_id.py | §
+# [MODULE] scripts.governance.d3_metadata.validate_module_id
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d3_metadata.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 GATE-MODULEID: Validate module_id uniqueness and index/file consistency.
 """

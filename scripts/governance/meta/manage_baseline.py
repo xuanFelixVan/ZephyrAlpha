@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_baseline.py | §
+# [MODULE] scripts.governance.meta.manage_baseline
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.meta.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 manage_baseline.py — Finding 基线快照管理
 

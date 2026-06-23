@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_emergency_bypass_log.py | §
+# [MODULE] scripts.governance.meta.validate_emergency_bypass_log
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """validate_emergency_bypass_log.py — 应急绕过审计脚本
 
 MOD-INF-005 §13.2 — 验证应急绕过（--no-verify）是否合规：

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/check_blueprint_code_alignment.py | §
+# [MODULE] scripts.governance.d5_architecture.check_blueprint_code_alignment
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | S10.2
 [MODULE] scripts.governance.d5_architecture.check_blueprint_code_alignment

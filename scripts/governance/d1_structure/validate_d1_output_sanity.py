@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/validate_d1_output_sanity.py | §
+# [MODULE] scripts.governance.d1_structure.validate_d1_output_sanity
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d1_structure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_d1_output_sanity.py — D1 产出物合理性校验（蓝图 §31 B93）
 

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_script_ab_test.py | §
+# [MODULE] scripts.governance.meta.manage_script_ab_test
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.meta.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 manage_script_ab_test.py — 脚本 A/B 对照模式 (Kayenta-style)
 

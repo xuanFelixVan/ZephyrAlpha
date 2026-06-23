@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/check_idempotency.py | §
+# [MODULE] scripts.governance.d7_code.check_idempotency
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d7_code.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """check_idempotency.py — 幂等性缺失检查（HC-9）
 
 对标：GOV-AI-009 HC-9（幂等性缺失——L06 执行层代码缺少幂等 Key）

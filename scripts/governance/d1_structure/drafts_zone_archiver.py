@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/drafts_zone_archiver.py | §
+# [MODULE] scripts.governance.d1_structure.drafts_zone_archiver
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d1_structure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 草稿区生命周期归档器 (Drafts Zone Lifecycle Archiver · V-16)
 

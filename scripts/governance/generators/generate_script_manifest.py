@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/generate_script_manifest.py | §
+# [MODULE] scripts.governance.generators.generate_script_manifest
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES] scripts.governance.generators.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 generate_script_manifest.py — 脚本清单自动生成器
 

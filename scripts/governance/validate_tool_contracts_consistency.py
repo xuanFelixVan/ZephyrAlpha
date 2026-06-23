@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/validate_tool_contracts_consistency.py | §
+# [MODULE] scripts.governance.validate_tool_contracts_consistency
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Tool Contract 一致性校验脚本（MOD-INF-013 §9 R3）。
 
 对比 tool-contracts.yaml 中 tool 的 input_schema ↔ 代码中 handler 实际注册的参数。

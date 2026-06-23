@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/rebuild_audit_index.py | §
+# [MODULE] scripts.governance.rebuild_audit_index
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.audit_trail.indexer
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生索引
 ==============================================================================

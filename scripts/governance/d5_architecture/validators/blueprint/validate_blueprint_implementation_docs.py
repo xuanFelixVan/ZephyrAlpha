@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_implementation_docs.py | §
+# [MODULE] scripts.governance.d5_architecture.validators.blueprint.validate_blueprint_implementation_docs
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d5_architecture.validators.blueprint.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 AGENTS.md 6.4 铁律五 + 铁律六：construction_progress 必须 LS 磁盘验证，
 蓝图中声称的文件路径必须在磁盘上真实存在。

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/scan_runtime_log_secrets.py | §
+# [MODULE] scripts.governance.d6_security.scan_runtime_log_secrets
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d6_security.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 对标 architecture_principles.md §1bis R2 安全红线：
   "日志输出禁止包含密钥/Token/Secret 值"

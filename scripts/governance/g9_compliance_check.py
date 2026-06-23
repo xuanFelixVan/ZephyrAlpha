@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/g9_compliance_check.py | §
+# [MODULE] scripts.governance.g9_compliance_check
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """G9 四蓝图跨模块集成合规门禁执行器.
 
 机械执行 7 项检查，零人工介入。

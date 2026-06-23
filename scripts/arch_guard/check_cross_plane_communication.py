@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_cross_plane_communication.py | §
+# [MODULE] scripts.arch_guard.check_cross_plane_communication
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 check_cross_plane_communication.py — INV-011 拓扑 + 静态越界 import 嗅探
 

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/cleanup_p0_ops_pending.py | §
+# [MODULE] scripts.governance._sync.cleanup_p0_ops_pending
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance._sync.check_p0_status
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成
 """

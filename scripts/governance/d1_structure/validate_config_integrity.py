@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/validate_config_integrity.py | §
+# [MODULE] scripts.governance.d1_structure.validate_config_integrity
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d1_structure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_config_integrity.py — 运行时配置完整性十一层纵深审计 + 自动同步检测
 

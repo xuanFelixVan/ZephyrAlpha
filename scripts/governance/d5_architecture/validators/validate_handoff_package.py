@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_handoff_package.py | §
+# [MODULE] scripts.governance.d5_architecture.validators.validate_handoff_package
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d5_architecture.validators.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """validate_handoff_package.py — HandoffPackage 完整性校验
 
 

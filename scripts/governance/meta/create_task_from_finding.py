@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/create_task_from_finding.py | §
+# [MODULE] scripts.governance.meta.create_task_from_finding
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.governance.rule_enforcement.task_types; zephyr.integration.__init__; zephyr.shared.shared_services.models; zephyr.governance.persistence.task_repo
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 create_task_from_finding.py — Finding → 任务卡自动创建引擎
 

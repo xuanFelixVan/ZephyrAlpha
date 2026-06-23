@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/finding_state_machine.py | §
+# [MODULE] scripts.governance.meta.finding_state_machine
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 finding_state_machine.py — Finding 全生命周期状态机
 

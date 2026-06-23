@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/fix_module_manifest_layout.py | §
+# [MODULE] scripts.governance.generators.fix_module_manifest_layout
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.generators.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 r"""
 fix_module_manifest_layout.py — 校正治理脚本模块 docstring 与 ``__manifest__`` 的顺序
 

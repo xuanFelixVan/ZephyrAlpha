@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §
 # [MODULE] scripts.governance.generate_path_ownership_map
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS]
 # [MODIFY-GUARD]
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

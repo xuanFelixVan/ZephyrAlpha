@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py | §
+# [MODULE] scripts.governance.d5_architecture.validators.validate_static_manifest_drift
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d5_architecture.validators.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Module docstring — see module-level docstring for details."""
 
 from __future__ import annotations

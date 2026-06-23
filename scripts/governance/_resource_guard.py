@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] GOV-069 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance._resource_guard
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] run_all.py;_concurrency.py
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] Worker内存不可超过限制;超限必须降级
 # [MODIFY-GUARD] 限制值变更需同步resource_guard.py
-# [CONSUMERS] run_all.py;_concurrency.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

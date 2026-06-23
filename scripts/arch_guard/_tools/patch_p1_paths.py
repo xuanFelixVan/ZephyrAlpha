@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_tools/patch_p1_paths.py | §
+# [MODULE] scripts.arch_guard._tools.patch_p1_paths
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard._tools.inject_idempotency
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """一次性工具——为 9 个 P1 契约补齐 physical_path 并运行 codegen。
 CTR-P1-001~009 的 physical_path 均为 null，导致 generate_contracts.py 无法生成 Python dataclass。
 """

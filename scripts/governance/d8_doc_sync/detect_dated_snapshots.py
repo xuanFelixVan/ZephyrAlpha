@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d8_doc_sync/detect_dated_snapshots.py | §
+# [MODULE] scripts.governance.d8_doc_sync.detect_dated_snapshots
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d8_doc_sync.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_dated_snapshots.py — 带日期快照文件检测
 

@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] GOV-073 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.detect_causal_conflicts
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] run_all.py;phase_manager.py
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] 冲突检测不可遗漏;冲突必须包含因果链
 # [MODIFY-GUARD] 冲突类型变更需同步conflict_detector.py
-# [CONSUMERS] run_all.py;phase_manager.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

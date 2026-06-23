@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/generate_derived_files.py | §
+# [MODULE] scripts.governance.d3_metadata.generate_derived_files
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d3_metadata.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 generate_derived_files.py — 枚举自动派生生成器（Level 3 终极防御）
 v1.0.0 — 2026-05-03

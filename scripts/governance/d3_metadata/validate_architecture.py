@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_architecture.py | §
+# [MODULE] scripts.governance.d3_metadata.validate_architecture
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d3_metadata.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_architecture.py - Validate rule files against architecture-contract.yaml
 Reads architecture-contract.yaml and validates all .md/.yaml files under

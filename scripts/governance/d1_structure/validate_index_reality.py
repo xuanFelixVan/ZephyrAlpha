@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/validate_index_reality.py | §
+# [MODULE] scripts.governance.d1_structure.validate_index_reality
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d1_structure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Module docstring — see module-level docstring for details."""
 
 from __future__ import annotations

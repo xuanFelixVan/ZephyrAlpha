@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_fle_action_metadata.py | §
+# [MODULE] scripts.governance.d7_code.validate_fle_action_metadata
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d7_code.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_fle_action_metadata.py — FLE Action 元数据校验
 

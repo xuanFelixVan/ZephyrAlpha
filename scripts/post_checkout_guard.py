@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-# [A_script] module_id=MOD-GOV_post_checkout_guard | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback-system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.post_checkout_guard
-# [INVARIANTS] 只读扫描 .ailocks/；不修改锁状态；只警告不阻断（事后检测）
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.rollback.concurrency_guard
 # [CONSUMERS] .git/hooks/post-checkout
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] 只读扫描 .ailocks/；不修改锁状态；只警告不阻断（事后检测）
+# [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=无冲突或仅警告; 永不 exit 1（不阻断 checkout）
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
-# [DOMAIN] D-GOVERNANCE
+# [A_script] module_id=MOD-GOV_post_checkout_guard | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """
 Post-checkout Guard — 事后检测 checkout 是否覆盖了其他 session 的文件锁。
 

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/sync_audit_protocol_numbers.py | §
+# [MODULE] scripts.governance.generators.sync_audit_protocol_numbers
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.generators.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 #!/usr/bin/env python3
 """sync_audit_protocol_numbers.py — 从 SSoT 注册表自动同步审计协议中的硬编码数字。
 

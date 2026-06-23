@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/generate_pathway_registry.py | §
+# [MODULE] scripts.generate_pathway_registry
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 #!/usr/bin/env python3
 """从所有 MOD 蓝图的 §路径索引 章节自动生成 system-pathway-registry.yaml。
 

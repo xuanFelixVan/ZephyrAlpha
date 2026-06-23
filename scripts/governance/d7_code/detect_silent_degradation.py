@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/detect_silent_degradation.py | §
+# [MODULE] scripts.governance.d7_code.detect_silent_degradation
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d7_code.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_silent_degradation.py — 静默降级检测
 

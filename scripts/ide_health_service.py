@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SCR_ide_health_service | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] scripts.ide_health_service
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] .trae/rules/project_rules.md; .trae/rules/onboarding_detail.md; AGENTS.md; docs/01_policies_and_standards/rules/trae_053_automation_dual_track.yaml
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] --status优先PID文件检测(跨进程),回退registry(进程内);--start检查已在运行后写PID文件+atexit清理+阻塞;--start-background后台分离子进程非阻塞启动;stale PID文件自动清理
 # [MODIFY-GUARD] MOD-INF-032 §new-IDE
-# [CONSUMERS] .trae/rules/project_rules.md; .trae/rules/onboarding_detail.md; AGENTS.md; docs/01_policies_and_standards/rules/trae_053_automation_dual_track.yaml
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 导入失败时打印明确错误信息并exit 1;--status守护进程未运行时exit 0并打印stopped
 # [TESTS]
+# [A_module] module_id=MOD-SCR_ide_health_service | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """IDE健康守护进程CLI包装器
 
 包装 src/zephyr/trading/ide_health_daemon.py，提供 --status/--start CLI 接口。

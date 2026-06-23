@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_test_coverage.py | §
+# [MODULE] scripts.governance.d7_code.validate_test_coverage
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d7_code.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_test_coverage.py — 测试覆盖率治理校验器
 

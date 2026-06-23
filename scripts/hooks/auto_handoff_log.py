@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/hooks/auto_handoff_log.py | §
+# [MODULE] scripts.hooks.auto_handoff_log
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.hooks.git_secrets_setup.sh
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 from __future__ import annotations
 
 #!/usr/bin/env python3

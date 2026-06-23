@@ -1,10 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d9_knowledge/detect_orphan_documents.py | §
 # [MODULE] scripts.governance.governance.d9_knowledge.detect_orphan_documents
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d9_knowledge.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] read-only audit script; no file modifications
 # [MODIFY-GUARD] header fields; core validation logic
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_orphan_documents.py — 孤立文档检测
 

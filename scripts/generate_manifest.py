@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/generate_manifest.py | §
+# [MODULE] scripts.generate_manifest
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Generate complete script_manifest.yaml from scripts/ tree scan."""
 
 import os

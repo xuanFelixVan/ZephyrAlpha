@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/gate_engine_selfcheck.py | §
+# [MODULE] scripts.governance.gate_engine_selfcheck
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.circuit_breaker
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Gate Engine Bootstrap Self-Check — Quis custodiet ipsos custodes?
 ===================================================================

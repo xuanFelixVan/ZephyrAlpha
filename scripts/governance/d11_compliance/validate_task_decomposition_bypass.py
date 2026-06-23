@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_task_decomposition_bypass.py | §
+# [MODULE] scripts.governance.d11_compliance.validate_task_decomposition_bypass
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d11_compliance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_task_decomposition_bypass.py — Task Decomposition Bypass 检测
 =====================================================================

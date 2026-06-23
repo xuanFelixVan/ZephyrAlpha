@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SCRIPT-record_session_start_commit | layer=script | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
 # [MODULE] scripts.record_session_start_commit
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] project_rules.md 进门流程; PostDocReviewScanner._get_session_start_commit()
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] session_start_commit.txt 必须是 40 位十六进制 commit hash
 # [MODIFY-GUARD] post_doc_review_check.py R1 防御依赖此脚本输出的文件
-# [CONSUMERS] project_rules.md 进门流程; PostDocReviewScanner._get_session_start_commit()
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] git 不可用 → exit 1; session_id 为空 → exit 1
 # [TESTS] tests/test_post_doc_review.py
+# [A_module] module_id=MOD-SCRIPT-record_session_start_commit | layer=script | stability=stable | safety=L | ai_autonomy=ai_modifiable
 """
 记录 session 起点 commit hash——R1 防御数据流起点。
 

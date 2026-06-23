@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/pre_write_gate.py | §
 # [MODULE] scripts.governance.pre_delete_safety_check
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] RULE-THREE删除审判; pre_write_gate.py --delete; migration pipeline
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] exit 0=SAFE(允许删除); exit 1=BLOCKED(禁止删除); --dry-run不修改任何文件
 # [MODIFY-GUARD] 只读检查脚本，禁止修改任何目标文件
-# [CONSUMERS] RULE-THREE删除审判; pre_write_gate.py --delete; migration pipeline
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] immutable_core

@@ -1,8 +1,12 @@
 # [BLUEPRINT] GOV-074 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §2.1
 # [MODULE] scripts.governance.generate_target_path_tree
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] DM-107; 迁移执行脚本; depgraph对齐验证
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] 输出MUST覆盖35域; 每个模块MUST有target_path; target_path MUST按ssot_path推导
 # [MODIFY-GUARD] target-path-tree.yaml结构变更需同步panorama/depgraph
-# [CONSUMERS] DM-107; 迁移执行脚本; depgraph对齐验证
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

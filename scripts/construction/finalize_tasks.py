@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/finalize_tasks.py | §
+# [MODULE] scripts.construction.finalize_tasks
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.integration.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 import sys
 
 sys.path.insert(0, r"d:\ZephyrAlpha\src")

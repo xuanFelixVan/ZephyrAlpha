@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/align_header_ten_fields.py | §
+# [MODULE] scripts.ops.align_header_ten_fields
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.ops.fill_blueprint_ids
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 import os
 import re
 import sys

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_ruins_references.py | §
+# [MODULE] scripts.governance.d4_paths.detect_ruins_references
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d4_paths.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """detect_ruins_references.py — 残骸/废弃路径引用检测
 
 

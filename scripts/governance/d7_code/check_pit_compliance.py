@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/check_pit_compliance.py | §
+# [MODULE] scripts.governance.d7_code.check_pit_compliance
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d7_code.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """check_pit_compliance.py — PIT 合规检查（HC-10）
 
 对标：GOV-AI-009 HC-10（PIT 铁律绕过——回测代码访问了未来数据）

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d12_ai_hallucination/validate_gate_prompt_conflict.py | §
+# [MODULE] scripts.governance.d12_ai_hallucination.validate_gate_prompt_conflict
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d12_ai_hallucination.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_gate_prompt_conflict.py — Gate-Prompt 冲突检测
 =====================================================

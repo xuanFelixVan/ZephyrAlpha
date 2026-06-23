@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_rule_frontmatter.py | §
 # [MODULE] scripts.governance.d3_metadata.validate_rule_frontmatter
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] phase_manager;pre_commit
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] 7标准字段必填;字段顺序固定;枚举值合法
 # [MODIFY-GUARD] 修改前MUST确认与scaffold.py的RULE_TEMPLATE一致
-# [CONSUMERS] phase_manager;pre_commit
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

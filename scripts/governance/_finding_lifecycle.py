@@ -1,8 +1,12 @@
 # [BLUEPRINT] GOV-068 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance._finding_lifecycle
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] run_all.py;phase_manager.py
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] 活跃Finding不可自动清理;归档操作可逆
 # [MODIFY-GUARD] TTL规则变更需同步finding_state_machine.py
-# [CONSUMERS] run_all.py;phase_manager.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

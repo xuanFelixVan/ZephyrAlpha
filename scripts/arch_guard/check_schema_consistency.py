@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_schema_consistency.py | §
+# [MODULE] scripts.arch_guard.check_schema_consistency
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 check_schema_consistency.py — INV-010 契约物理路径存在性（Schema canonical 基线）
 

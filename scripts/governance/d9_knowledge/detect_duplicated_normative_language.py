@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d9_knowledge/detect_duplicated_normative_language.py | §
+# [MODULE] scripts.governance.d9_knowledge.detect_duplicated_normative_language
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d9_knowledge.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_duplicated_normative_language.py — 规范用语重复定义检测
 

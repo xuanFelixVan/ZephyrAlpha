@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.demo_a2a_coordination
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS]
 # [MODIFY-GUARD]
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

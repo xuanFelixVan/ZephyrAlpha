@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/crosscheck_sys_master_deps.py | §
+# [MODULE] scripts.governance.crosscheck_sys_master_deps
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 #!/usr/bin/env python
 """
 crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER-001 与 DOM-GOV-001 一致.

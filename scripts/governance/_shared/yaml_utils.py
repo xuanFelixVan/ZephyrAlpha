@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/yaml_utils.py | §
+# [MODULE] scripts.governance._shared.yaml_utils
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance._shared.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 _shared/yaml_utils.py — YAML 文件加载共享工具
 

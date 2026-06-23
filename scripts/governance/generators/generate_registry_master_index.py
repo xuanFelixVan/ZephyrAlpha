@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/generate_registry_master_index.py | §
+# [MODULE] scripts.governance.generators.generate_registry_master_index
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.generators.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 generate_registry_master_index.py — 登记表总索引自动生成器
 

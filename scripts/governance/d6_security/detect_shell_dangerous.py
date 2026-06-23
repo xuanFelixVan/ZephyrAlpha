@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_shell_dangerous.py | §
+# [MODULE] scripts.governance.d6_security.detect_shell_dangerous
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d6_security.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_shell_dangerous.py — 危险 Shell 命令检测
 

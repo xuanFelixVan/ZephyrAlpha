@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py | §
+# [MODULE] scripts.governance.d5_architecture.syncers.sync_registry_from_blueprints
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d5_architecture.syncers.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """sync_registry_from_blueprints.py -- 从 blueprint.md frontmatter 同步 blueprint-registry.yaml
 
 对标: Problem IX -- blueprint-registry.yaml 大面积不同步

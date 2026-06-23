@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
 # [MODULE] scripts.governance.validate_module_id_naming
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] phase_manager.py; CI pipeline; AI session 冷启动
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] module_id 必须符合 PS-STD-001 §5 命名规范; 禁止嵌套编号
 # [MODIFY-GUARD] PS-STD-001 §5; PS-REG-012 frontmatter-field-registry.md; module_id_registry.yaml
-# [CONSUMERS] phase_manager.py; CI pipeline; AI session 冷启动
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

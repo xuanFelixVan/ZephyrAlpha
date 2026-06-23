@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/test_event_hook.py | §
+# [MODULE] scripts.construction.test_event_hook
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.__init__; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 import sys
 
 sys.path.insert(0, r"d:\ZephyrAlpha\src")

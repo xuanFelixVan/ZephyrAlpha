@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/generate_gate_registry.py | §
+# [MODULE] scripts.governance.generators.generate_gate_registry
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.generators.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 generate_gate_registry.py — 门禁登记表自动生成器
 

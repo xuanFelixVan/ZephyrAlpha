@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_false_negatives.py | §
+# [MODULE] scripts.governance.meta.validate_false_negatives
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.meta.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """validate_false_negatives.py — 假阴性检测引擎 (Fitness Functions)
 
 对标 B17（False Negative 检测）+ 《Building Evolutionary Architectures》Fitness Functions

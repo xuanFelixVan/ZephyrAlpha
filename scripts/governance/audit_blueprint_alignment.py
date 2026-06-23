@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/audit_blueprint_alignment.py | §
+# [MODULE] scripts.governance.audit_blueprint_alignment
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """audit_blueprint_alignment.py — 蓝图↔任务卡↔代码 三维对齐审计工具
 
 扫描 blueprints → task cards → downstream_outputs → 磁盘文件，

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/rollback.py | §
+# [MODULE] scripts.rollback
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.infrastructure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Rollback System CLI — MOD-INF-021 v0.10.0 Git-native+SQLite Checkpoint 操作入口。
 

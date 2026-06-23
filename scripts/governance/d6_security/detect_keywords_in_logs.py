@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_keywords_in_logs.py | §
+# [MODULE] scripts.governance.d6_security.detect_keywords_in_logs
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d6_security.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_keywords_in_logs.py — 日志输出敏感关键词检测
 

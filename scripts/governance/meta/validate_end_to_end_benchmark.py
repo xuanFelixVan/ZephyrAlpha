@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_end_to_end_benchmark.py | §
+# [MODULE] scripts.governance.meta.validate_end_to_end_benchmark
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.meta.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """validate_end_to_end_benchmark.py — END-TO-END 基准测试引擎
 
 对标 B59（END-TO-END 基准测试）+ Kayenta Score Computation。

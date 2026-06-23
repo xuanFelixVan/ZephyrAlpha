@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_registry_consistency.py | §
+# [MODULE] scripts.governance.d3_metadata.check_registry_consistency
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d3_metadata.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """check_registry_consistency — 跨登记表一致性校验。
 
 读取 registry_of_registries.yaml，按 cross_registry_rules 比对多登记表共享字段。

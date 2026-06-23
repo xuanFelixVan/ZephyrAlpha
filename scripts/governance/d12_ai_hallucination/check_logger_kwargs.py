@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d12_ai_hallucination/check_logger_kwargs.py | §
+# [MODULE] scripts.governance.d12_ai_hallucination.check_logger_kwargs
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d12_ai_hallucination.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """========================================================
 
 病根（Root Cause）：项目存在双日志系统（structlog + 标准 logging），

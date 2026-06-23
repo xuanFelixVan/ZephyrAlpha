@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d8_doc_sync/validate_document_lifecycle.py | §
+# [MODULE] scripts.governance.d8_doc_sync.validate_document_lifecycle
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d8_doc_sync.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 validate_document_lifecycle.py — 文档生命周期校验
 

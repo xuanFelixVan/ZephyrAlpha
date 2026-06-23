@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-xxx | scripts/governance/phase_a_backup.py
+# [MODULE] scripts.governance.phase_a_backup
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 phase_a_backup.py — 阶段A安全网 Tier0/Tier1 关键文件备份
 

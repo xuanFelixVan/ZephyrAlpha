@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_split_delete_ref_commit.py | §
+# [MODULE] scripts.governance.d4_paths.detect_split_delete_ref_commit
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d4_paths.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_split_delete_ref_commit.py — 删除引用分离提交检测
 

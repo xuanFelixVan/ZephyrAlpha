@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_scaffold_exit_gates.py | §
+# [MODULE] scripts.arch_guard.check_scaffold_exit_gates
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """check_scaffold_exit_gates.py — scaffold→experimental 安全门禁检查
 
 对标 architecture_endgame_locked.md §6 + 06-security_architecture.md §10.2。

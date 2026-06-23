@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/check_p0_status.py | §
+# [MODULE] scripts.governance._sync.check_p0_status
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance._sync.cleanup_p0_auto_bridged
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/adversarial_sys_master_test.py | §
+# [MODULE] scripts.governance.adversarial_sys_master_test
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.sys_master_compliance
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER-001 Integration Hardening
 

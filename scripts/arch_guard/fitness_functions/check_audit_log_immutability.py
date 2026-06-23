@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_audit_log_immutability.py | §
+# [MODULE] scripts.arch_guard.fitness_functions.check_audit_log_immutability
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 check_audit_log_immutability.py — 审计日志不可篡改检查 (INV-016)
 

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/registry_entry_count.py | §
+# [MODULE] scripts.governance._shared.registry_entry_count
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance._shared.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """登记表主条目计数——与 generate_registry_master_index 单一真源对齐。
 
 validate_registry_master_index 等门禁必须使用本模块，禁止用「YAML 中最长 list」启发式。

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/reset_cbg.py | §
+# [MODULE] scripts.governance.d1_structure.reset_cbg
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.circuit_breaker
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 #!/usr/bin/env python3
 """
 CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command)

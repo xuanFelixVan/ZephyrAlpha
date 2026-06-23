@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/mcp/generate_ide_config.py | §
+# [MODULE] scripts.mcp.generate_ide_config
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.mcp.status_all
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """从 config/mcp.json 生成各 IDE MCP 配置文件（MOD-INF-013 §5.3 Step 2）。"""
 
 from __future__ import annotations

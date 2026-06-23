@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_log_secret_leak.py | §
+# [MODULE] scripts.arch_guard.fitness_functions.check_log_secret_leak
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """check_log_secret_leak.py — R2 日志不写 secret 适应度函数
 
 对标 architecture_principles.md §1 R2（日志不写 secret）。

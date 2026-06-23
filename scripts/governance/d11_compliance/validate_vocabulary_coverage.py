@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_vocabulary_coverage.py | §
+# [MODULE] scripts.governance.d11_compliance.validate_vocabulary_coverage
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d11_compliance.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Module docstring — see module-level docstring for details."""
 
 from __future__ import annotations

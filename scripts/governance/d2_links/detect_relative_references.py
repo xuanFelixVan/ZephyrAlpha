@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d2_links/detect_relative_references.py | §
+# [MODULE] scripts.governance.d2_links.detect_relative_references
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d2_links.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_relative_references.py — 相对路径引用检测
 

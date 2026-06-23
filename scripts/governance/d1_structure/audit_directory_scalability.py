@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/audit_directory_scalability.py | §
+# [MODULE] scripts.governance.d1_structure.audit_directory_scalability
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d1_structure.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """audit_directory_scalability.py -- 物理结构可扩展性审计 [1500模块支撑能力检查]
 
 对标: Problem VII -- 新增物理容量/可扩展性审计维度

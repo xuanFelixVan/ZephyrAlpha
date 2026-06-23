@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §
 # [MODULE] scripts.governance.generate_project_path_tree
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] AI cold-start; depgraph generator; migration tasks
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] --write MUST preserve design-state nodes; output MUST be valid YAML
 # [MODIFY-GUARD] depgraph.db
-# [CONSUMERS] AI cold-start; depgraph generator; migration tasks
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

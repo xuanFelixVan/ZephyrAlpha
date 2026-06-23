@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_kill_switch.py | §
+# [MODULE] scripts.governance.meta.manage_kill_switch
+# [DOMAIN] D-AUTONOMY_PERM
+# [DEPENDENCIES] scripts.governance.meta.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """manage_kill_switch.py — Kill Switch 管理工具
 
 对标 B25（Kill Switch）+ ITIL 4 Emergency Change Management。

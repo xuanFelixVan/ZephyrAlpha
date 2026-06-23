@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_registry_master_index.py | §
+# [MODULE] scripts.governance.d3_metadata.validate_registry_master_index
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d3_metadata.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18).
 
 任务 T-V4-001：扫描 registry-master-index.yaml，校验登记表文件存在性、

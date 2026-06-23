@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/fix_orphan_exports.py | §
+# [MODULE] scripts.governance.fix_orphan_exports
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """fix_orphan_exports.py — 批量修复孤儿模块导出（RULE-TWO 防线 2 修复器）
 
 扫描 src/zephyr/ 下所有 .py 文件，检测未被父包 __init__.py 导出的孤儿模块，

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF-013 | layer=script | stability=stable | safety=M | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §14
 # [MODULE] scripts.mcp.launcher
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.__init__
+# [CONSUMERS] zephyr.trading.boot_hooks (MCP 自动启动); zephyr.trading.boot_cron_jobs (_mcp_health_check); scripts.governance.* (健康检查)
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] DAG_LAYERS 必须包含 10 个 Server 的 4 层结构（layer_0 空+layer_1~4）；SERVER_SCRIPTS 路径必须为 src/zephyr/integration/mcp/；所有进程必须通过 ProcessLifecycleGateway 管理；idle_timeout_s=600（10分钟空闲自动回收）；launch_all 必须注册 SIGINT/SIGTERM 信号处理；atexit 必须注册 _graceful_shutdown 兜底
 # [MODIFY-GUARD] 修改本文件 MUST 通过任务卡通道并获取文件锁；修改前 MUST 运行 test_mcp_launcher.py 验证无回归；修改后 MUST 运行 test_mcp_launcher.py 确认通过；禁止删除 check_server_health/restart_server/dry_run 函数；禁止修改 DAG_LAYERS 层级结构（10 Server / 4 非空层）除非通过蓝图变更审批
-# [CONSUMERS] zephyr.trading.boot_hooks (MCP 自动启动); zephyr.trading.boot_cron_jobs (_mcp_health_check); scripts.governance.* (健康检查)
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] launch_all 返回 dict[server_id, bool]；dry_run 返回 int (0=成功)；check_server_health 返回 dict[server_id, bool]；restart_server 返回 bool
 # [TESTS] tests/test_mcp_launcher.py
+# [A_module] module_id=MOD-INF-013 | layer=script | stability=stable | safety=M | ai_autonomy=human_gated
 
 """MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLifecycleGateway 管理）。
 

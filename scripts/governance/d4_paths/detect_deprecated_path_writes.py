@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_deprecated_path_writes.py | §
+# [MODULE] scripts.governance.d4_paths.detect_deprecated_path_writes
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d4_paths.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 detect_deprecated_path_writes.py — 废弃路径写入检测
 

@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction._e2e_deep
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.construction.check_statuses
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS]
 # [MODIFY-GUARD]
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

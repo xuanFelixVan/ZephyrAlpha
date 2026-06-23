@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_cron_monitor.py | §
+# [MODULE] scripts.governance.vms_cron_monitor
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
 ===============================================

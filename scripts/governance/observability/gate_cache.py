@@ -1,8 +1,12 @@
 # [BLUEPRINT] GOV-076 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.observability.gate_cache
+# [DOMAIN] D-OPS
+# [DEPENDENCIES]
+# [CONSUMERS] phase_manager.py;run_all.py
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] 缓存key必须包含文件哈希;缓存失效必须及时
 # [MODIFY-GUARD] 缓存格式变更需同步gate_engine.py
-# [CONSUMERS] phase_manager.py;run_all.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

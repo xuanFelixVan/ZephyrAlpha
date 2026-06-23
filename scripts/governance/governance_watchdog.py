@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] GOV-075 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.governance_watchdog
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] run_all.py;LifecycleManager
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] 服务不可用时必须尝试重启;重启次数超限必须通知Owner
 # [MODIFY-GUARD] 重启策略变更需同步escalation_engine
-# [CONSUMERS] run_all.py;LifecycleManager
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

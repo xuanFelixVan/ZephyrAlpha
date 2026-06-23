@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/d_init_task_system.py | §
+# [MODULE] scripts.construction.d_init_task_system
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.governance.persistence.task_repo; zephyr.shared.shared_services.models; zephyr.integration.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 初始化任务系统数据库 + 创建任务系统自身的施工任务卡（吃狗粮）
 ===========================================================

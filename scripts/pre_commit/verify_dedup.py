@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/pre_commit/verify_dedup.py | §
+# [MODULE] scripts.pre_commit.verify_dedup
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """pre_commit 验证脚本 — 委托给 code-dedup-engine CLI verify 子命令.
 
 在 pre_commit hook 中调用：

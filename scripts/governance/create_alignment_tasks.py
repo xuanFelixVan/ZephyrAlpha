@@ -2,9 +2,13 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/create_alignment_tasks.py | §7
 # [MODULE] scripts.governance.create_alignment_tasks
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.task_repo
+# [CONSUMERS] governance automation; alignment workflow
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] MUST NOT modify any file except task database; MUST create all tasks via TaskRepository
 # [MODIFY-GUARD] task database only
-# [CONSUMERS] governance automation; alignment workflow
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

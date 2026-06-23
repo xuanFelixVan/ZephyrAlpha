@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/thresholds.py | §
+# [MODULE] scripts.governance._shared.thresholds
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance._shared.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 thresholds.py — 阈值集中配置加载器
 

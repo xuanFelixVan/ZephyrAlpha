@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_e2e_verify.py | §
+# [MODULE] scripts.governance._e2e_verify
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared._cross_layer.__init__; zephyr.infrastructure.__init__; zephyr.ops.__init__; zephyr.governance.rule_enforcement.gate_engine
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Module docstring — see module-level docstring for details."""
 
 import sys

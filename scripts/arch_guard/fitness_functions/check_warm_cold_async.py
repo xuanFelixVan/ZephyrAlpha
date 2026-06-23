@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_warm_cold_async.py | §
+# [MODULE] scripts.arch_guard.fitness_functions.check_warm_cold_async
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """check_warm_cold_async.py — INV-019 Warm→Cold 异步通信检查
 
 对标 runtime_planes.yaml WARM_COLD_ASYNC_ONLY + invariants.yaml INV-019。

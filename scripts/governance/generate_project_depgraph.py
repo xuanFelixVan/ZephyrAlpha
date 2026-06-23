@@ -2,9 +2,13 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7
 # [MODULE] scripts.governance.generate_project_depgraph
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] CI pipeline; governance automation; system-dependency-map.md
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] --dry-run MUST NOT modify any file; output MUST be valid YAML + Mermaid
 # [MODIFY-GUARD] system-dependency-map.md; cross-module-dependency-registry.yaml
-# [CONSUMERS] CI pipeline; governance automation; system-dependency-map.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

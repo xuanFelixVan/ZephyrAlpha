@@ -2,9 +2,13 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py | §7
 # [MODULE] scripts.governance.diagnose_depgraph
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] governance automation; structural optimization planning
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] --dry-run MUST NOT modify any file; output MUST be valid YAML
 # [MODIFY-GUARD] system-dependency-map.md
-# [CONSUMERS] governance automation; structural optimization planning
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

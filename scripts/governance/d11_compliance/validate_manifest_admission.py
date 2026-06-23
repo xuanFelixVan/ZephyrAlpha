@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_manifest_admission.py | §
+# [MODULE] scripts.governance.d11_compliance.validate_manifest_admission
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d11_compliance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Module docstring — see module-level docstring for details."""
 
 from __future__ import annotations

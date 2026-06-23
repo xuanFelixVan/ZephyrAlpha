@@ -2,9 +2,13 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/add_file_headers.py | §7
 # [MODULE] scripts.governance.add_file_headers
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS] CI pipeline; governance automation
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] --dry-run MUST NOT modify any file; --apply MUST modify files atomically
 # [MODIFY-GUARD] file-header-standard.md; frontmatter-field-registry.md
-# [CONSUMERS] CI pipeline; governance automation
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-# [A_script] module_id=MOD-GOV_setup_git_guard_aliases | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback-system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.setup_git_guard_aliases
-# [INVARIANTS] 只修改本地 git config（--local）；不修改全局 config
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.git_guard
 # [CONSUMERS] AI session 冷启动序列；手动执行
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] 只修改本地 git config（--local）；不修改全局 config
+# [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=失败
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
-# [DOMAIN] D-GOVERNANCE
+# [A_script] module_id=MOD-GOV_setup_git_guard_aliases | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """
 Setup/Remove Git Aliases for Git Guard — 自动化集成入口。
 

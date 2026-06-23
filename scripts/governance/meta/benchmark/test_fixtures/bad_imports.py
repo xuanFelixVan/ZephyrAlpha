@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/benchmark/test_fixtures/bad_imports.py | §
+# [MODULE] scripts.governance.meta.benchmark.test_fixtures.bad_imports
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Module docstring — see module-level docstring for details."""
 
 

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/scaffold.py | §
+# [MODULE] scripts.scaffold
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.d3_metadata.check_naming_convention; zephyr.infrastructure.__init__; zephyr.integration.mcp.__init__; zephyr.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TWO 强制执行器）
 
 所有新文件 MUST 通过本脚本创建，禁止直接用 IDE Write/SearchReplace 写入新文件。

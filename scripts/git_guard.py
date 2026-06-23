@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-# [A_script] module_id=MOD-GOV_git_guard | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.git_guard
-# [INVARIANTS] 只读扫描 .ailocks/；不修改锁状态；BLOCKED 时 exit 1 不执行 git 命令
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.rollback.concurrency_guard
 # [CONSUMERS] AI session 执行 git reset/checkout/stash/revert 前调用
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] 只读扫描 .ailocks/；不修改锁状态；BLOCKED 时 exit 1 不执行 git 命令
+# [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=pass-through; exit 1=blocked; exit 2=internal error
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
-# [DOMAIN] D-GOVERNANCE
+# [A_script] module_id=MOD-GOV_git_guard | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """
 Git Guard — 拦截危险 git 命令，防止破坏其他 session 的文件锁。
 

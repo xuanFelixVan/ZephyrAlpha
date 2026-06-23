@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_naming_convention.py | §
 # [MODULE] scripts.governance.d3_metadata.check_naming_convention
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] .pre_commit-config.yaml GATE-11; .github/workflows/governance.yml; tests/unit/test_gate11_naming_convention.py
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] N-01~N-15 rules are append-only; whitelist changes require Owner approval
 # [MODIFY-GUARD] FILENAME_UPPERCASE_WHITELIST, _DATA_FILE_EXEMPT_NAMES, TECH_VERSION_TOKENS changes require Owner approval
-# [CONSUMERS] .pre_commit-config.yaml GATE-11; .github/workflows/governance.yml; tests/unit/test_gate11_naming_convention.py
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated

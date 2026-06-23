@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/sync_rule_registry.py | §
+# [MODULE] scripts.governance.sync_rule_registry
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 Checks that every RULE-ZERO through RULE-N in .trae/rules/project_rules.md
 has a corresponding TRAE-* entry in the _index.yaml TRAE domain.

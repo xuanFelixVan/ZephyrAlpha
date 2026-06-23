@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/vms_migrate.py | §
+# [MODULE] scripts.governance.vms_migrate
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 VMS Phase 2 数据迁移脚本 — MOD-INF-011
 =========================================

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/fix_orphan_deps.py | §
+# [MODULE] scripts.governance._sync.fix_orphan_deps
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance._sync.check_p0_status
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 fix_orphan_deps.py — 一次性修复孤儿依赖引用
 =============================================

@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/session_simulator.py | §
+# [MODULE] scripts.governance.session_simulator
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.ops.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
 =================================================================

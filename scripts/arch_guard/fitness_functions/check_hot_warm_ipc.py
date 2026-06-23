@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_hot_warm_ipc.py | §
+# [MODULE] scripts.arch_guard.fitness_functions.check_hot_warm_ipc
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """check_hot_warm_ipc.py — INV-018 Hot↔Warm IPC 协议检查
 
 对标 runtime_planes.yaml HOT_WARM_IPC_ONLY + invariants.yaml INV-018。

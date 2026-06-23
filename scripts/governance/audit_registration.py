@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/audit_registration.py | §
+# [MODULE] scripts.governance.audit_registration
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """audit_registration.py — 孤儿注册检测（RULE-TWO 防线 2）
 
 扫描 src/zephyr/ 和 scripts/ 中所有 .py/.yaml 文件，

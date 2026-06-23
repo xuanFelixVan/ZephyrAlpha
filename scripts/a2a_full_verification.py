@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/a2a_full_verification.py | §
+# [MODULE] scripts.a2a_full_verification
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.integration.__init__; zephyr.governance.audit_trail.__init__; zephyr.security.access_control.a2a_check
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """A2A Protocol 全链路满分验证脚本"""
 
 import sys
