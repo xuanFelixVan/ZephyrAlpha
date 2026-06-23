@@ -395,7 +395,8 @@ def collect_py_files(dir_filter: str) -> list[Path]:
     """Collect .py files from src/zephyr/ and scripts/, optionally filtered."""
     scan_dirs = [PROJECT_ROOT / "src" / "zephyr", PROJECT_ROOT / "scripts"]
     if dir_filter:
-        scan_dirs = [d for d in scan_dirs if dir_filter in str(d)]
+        norm_filter = dir_filter.replace("\\", "/")
+        scan_dirs = [d for d in scan_dirs if norm_filter in str(d).replace("\\", "/")]
 
     files = []
     for scan_dir in scan_dirs:
