@@ -30,6 +30,7 @@
   11. 并发：多线程同时触发 git_guard 检查
   12. 内部错误（registry.json 损坏）→ 安全透传
 """
+
 from __future__ import annotations
 
 import json
@@ -52,14 +53,12 @@ for _p in [str(_SRC), str(_PROJECT_ROOT)]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+# 导入 git_guard（scripts 包）
+from scripts.git_guard import _EXTRACTORS, DANGEROUS_SUBCOMMANDS, check_and_execute
 from zephyr.infrastructure.rollback.concurrency_guard import (
     DEFAULT_TTL_S,
     scan_active_locks,
 )
-
-# 导入 git_guard（scripts 包）
-from scripts.git_guard import check_and_execute, DANGEROUS_SUBCOMMANDS, _EXTRACTORS
-
 
 # ============================================================================
 # Fixtures
@@ -339,10 +338,11 @@ class TestEdgeCases:
 
     def test_no_ailocks_dir_allowed(self, temp_git_repo):
         """无 .ailocks 目录 → 允许透传"""
-        from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
-
         # 删除 .ailocks 目录
         import shutil
+
+        from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
+
         shutil.rmtree(temp_git_repo / ".ailocks", ignore_errors=True)
 
         with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
@@ -412,9 +412,7 @@ class TestConcurrentGuard:
                 }
             }
         }
-        (temp_git_repo / ".ailocks" / "registry.json").write_text(
-            json.dumps(registry), encoding="utf-8"
-        )
+        (temp_git_repo / ".ailocks" / "registry.json").write_text(json.dumps(registry), encoding="utf-8")
 
         results = {"blocked": 0, "allowed": 0}
         lock = threading.Lock()
@@ -560,14 +558,110 @@ class TestDefenseSummary:
         from zephyr.infrastructure.rollback.concurrency_guard import check_rollback_conflict
 
         # 本 session 检查 → 冲突
-        result = check_rollback_conflict(
-            ["src/important.py"], "session-me", temp_git_repo
-        )
+        result = check_rollback_conflict(["src/important.py"], "session-me", temp_git_repo)
         assert result.has_conflict
         assert "src/important.py" in result.blocked_files
 
         # 其他 session 检查自己的锁 → 无冲突
-        result2 = check_rollback_conflict(
-            ["src/important.py"], "session-other-123", temp_git_repo
-        )
+        result2 = check_rollback_conflict(["src/important.py"], "session-other-123", temp_git_repo)
         assert not result2.has_conflict
+
+
+# ============================================================================
+# Stash 专项防护验证（根因修复：stash push 会移走未提交修改）
+# ============================================================================
+
+
+class TestStashGuard:
+    """stash 专项测试：验证 stash push 默认阻断，pop/apply 检查锁冲突。
+
+    根因：原 git_guard 对 stash 只检查锁冲突，不阻止 push 移走自己的未提交修改。
+    修复后：push 有未提交修改 → 阻断；pop/apply → 检查锁冲突；list/show/drop → 透传。
+    """
+
+    def test_stash_push_blocked_with_uncommitted(self, temp_git_repo):
+        """stash push 有未提交修改 → 阻断（防止移走修改）"""
+        from scripts.git_guard import check_and_execute
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._run_git_silent") as mock_git:
+                mock_git.return_value = "src/uncommitted.py"
+                with patch("scripts.git_guard._passthrough", return_value=0):
+                    exit_code = check_and_execute(["stash"])
+        assert exit_code == 1, "有未提交修改时 stash 应被阻断"
+
+    def test_stash_push_allowed_no_uncommitted(self, temp_git_repo):
+        """stash push 无未提交修改 → 透传（stash 无操作）"""
+        from scripts.git_guard import check_and_execute
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._run_git_silent", return_value=""):
+                with patch("scripts.git_guard._passthrough", return_value=0):
+                    exit_code = check_and_execute(["stash"])
+        assert exit_code == 0, "无未提交修改时 stash 应透传"
+
+    def test_stash_push_force_env(self, temp_git_repo, monkeypatch):
+        """ZEPHYR_FORCE_STASH=1 → 强制 stash 透传（self_healer 等合法场景）"""
+        from scripts.git_guard import check_and_execute
+
+        monkeypatch.setenv("ZEPHYR_FORCE_STASH", "1")
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._run_git_silent") as mock_git:
+                mock_git.return_value = "src/uncommitted.py"
+                with patch("scripts.git_guard._passthrough", return_value=0):
+                    exit_code = check_and_execute(["stash"])
+        assert exit_code == 0, "ZEPHYR_FORCE_STASH=1 应强制透传"
+
+    def test_stash_list_readonly_passthrough(self, temp_git_repo):
+        """stash list → 透传（只读操作）"""
+        from scripts.git_guard import check_and_execute
+
+        with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+            exit_code = check_and_execute(["stash", "list"])
+        assert exit_code == 0, "stash list 应透传"
+        assert mock_pass.called, "stash list 应调用 _passthrough"
+
+    def test_stash_show_readonly_passthrough(self, temp_git_repo):
+        """stash show → 透传（只读操作）"""
+        from scripts.git_guard import check_and_execute
+
+        with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+            exit_code = check_and_execute(["stash", "show"])
+        assert exit_code == 0
+        assert mock_pass.called
+
+    def test_stash_pop_blocked_with_lock_conflict(self, temp_git_repo, other_session_lock):
+        """stash pop 有锁冲突 → 阻断（会覆盖工作区文件）"""
+        from scripts.git_guard import check_and_execute
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._get_session_id", return_value="session-me"):
+                with patch("scripts.git_guard._run_git_silent") as mock_git:
+                    mock_git.return_value = "src/important.py"
+                    with patch("scripts.git_guard._passthrough", return_value=0):
+                        exit_code = check_and_execute(["stash", "pop"])
+        assert exit_code == 1, "stash pop 有锁冲突应阻断"
+
+    def test_stash_pop_allowed_no_lock_conflict(self, temp_git_repo):
+        """stash pop 无锁冲突 → 透传"""
+        from scripts.git_guard import check_and_execute
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._get_session_id", return_value="session-me"):
+                with patch("scripts.git_guard._run_git_silent") as mock_git:
+                    mock_git.return_value = "src/free.py"
+                    with patch("scripts.git_guard._passthrough", return_value=0):
+                        exit_code = check_and_execute(["stash", "pop"])
+        assert exit_code == 0, "stash pop 无锁冲突应透传"
+
+    def test_stash_apply_blocked_with_lock_conflict(self, temp_git_repo, other_session_lock):
+        """stash apply 有锁冲突 → 阻断"""
+        from scripts.git_guard import check_and_execute
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._get_session_id", return_value="session-me"):
+                with patch("scripts.git_guard._run_git_silent") as mock_git:
+                    mock_git.return_value = "src/important.py"
+                    with patch("scripts.git_guard._passthrough", return_value=0):
+                        exit_code = check_and_execute(["stash", "apply"])
+        assert exit_code == 1, "stash apply 有锁冲突应阻断"

@@ -1,24 +1,18 @@
-# [BLUEPRINT] SRC-186 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.security.security_decision
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES]
-# [CONSUMERS] orchestration.agent_communication; l10-compliance; llm-security.protocol
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.security.__init__
+# [CONSUMERS] legacy imports via integration.shared_08.contracts
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] enum members are frozen; no additions without KBG decision
-# [MODIFY-GUARD] member changes require cross-package impact review
-# [STABILITY] stable
-# [SAFETY] M
-# [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] none
-# [TESTS] tests/test_shared_contracts_security.py
-# [A_module] module_id=MOD-SEC_security_decision | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.security.security_decision
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.security.security_decision
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] ImportError if source module missing
+# [TESTS] python -c "import zephyr.integration.shared_08.contracts.security.security_decision"
+# [A_module] module_id=MOD-INT_security_decision | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+"""Re-export shim — 真源已合并至 zephyr.shared.contracts.security.security_decision。"""
 
-from enum import Enum
-
-
-class SecurityDecision(Enum):
-    BLOCK = "block"
-    ALLOW = "allow"
-    DENY = "deny"
-    FLAG = "flag"
+from zephyr.shared.contracts.security.security_decision import *  # noqa: F401,F403

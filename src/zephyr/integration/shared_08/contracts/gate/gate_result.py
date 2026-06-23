@@ -1,30 +1,18 @@
-# [BLUEPRINT] SRC-179 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.gate.gate_result
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES]
-# [CONSUMERS] zephyr.integration.shared_08.contracts.gate
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.gate.__init__
+# [CONSUMERS] legacy imports via integration.shared_08.contracts
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] re-export only — canonical source is zephyr.governance.rule_enforcement.gate_types
-# [MODIFY-GUARD] do not add business logic here
-# [STABILITY] stable
+# [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.gate.gate_result
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.gate.gate_result
+# [STABILITY] evolving
 # [SAFETY] L
-# [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT]
-# [TESTS]
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] ImportError if source module missing
+# [TESTS] python -c "import zephyr.integration.shared_08.contracts.gate.gate_result"
 # [A_module] module_id=MOD-INT_gate_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+"""Re-export shim — 真源已合并至 zephyr.shared.contracts.gate.gate_result。"""
 
-import importlib as _importlib
-
-_mod = _importlib.import_module("zephyr.governance.rule_enforcement.gate_types")
-GateEngineError = _mod.GateEngineError
-GateResult = _mod.GateResult
-GateViolation = _mod.GateViolation
-GateViolationError = _mod.GateViolationError
-
-__all__ = [
-    "GateEngineError",
-    "GateResult",
-    "GateViolation",
-    "GateViolationError",
-]
+from zephyr.shared.contracts.gate.gate_result import *  # noqa: F401,F403

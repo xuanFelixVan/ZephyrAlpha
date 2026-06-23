@@ -13,6 +13,8 @@
 # [ERROR_CONTRACT] 缓存未命中返回空字典
 # [TESTS] tests/audit-orchestrator/test_cold_start.py
 # [A_module] module_id=MOD-GOV_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
 import json
 import logging
 from pathlib import Path

@@ -1,34 +1,18 @@
-# [BLUEPRINT] SRC-182 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.identity.permission
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES]
-# [CONSUMERS] zephyr.security.access_control.permission_guard;zephyr.infrastructure.escalation;zephyr.governance;zephyr.integration.mcp
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.identity.__init__
+# [CONSUMERS] legacy imports via integration.shared_08.contracts
 # [STARTUP] imported
-# [MATURITY] production
-# [INVARIANTS] 权限判定枚举不可扩展
-# [MODIFY-GUARD] none
-# [STABILITY] stable
-# [SAFETY] M
-# [AI_AUTONOMY] immutable_core
-# [ERROR_CONTRACT]
-# [TESTS] tests/test_agent_rbac.py
+# [MATURITY] prototype
+# [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.identity.permission
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.identity.permission
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] ImportError if source module missing
+# [TESTS] python -c "import zephyr.integration.shared_08.contracts.identity.permission"
 # [A_module] module_id=MOD-INT_permission | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+"""Re-export shim — 真源已合并至 zephyr.shared.contracts.identity.permission。"""
 
-from dataclasses import dataclass, field
-from enum import Enum
-
-
-class GuardDecision(str, Enum):
-    ALLOW = "ALLOW"
-    AUTO_GUARD = "AUTO_GUARD"
-    BLOCKED = "BLOCKED"
-
-
-@dataclass
-class GuardResult:
-    decision: GuardDecision = GuardDecision.ALLOW
-    layer: str = ""
-    reason: str = ""
-    rule_id: str = ""
-    audit_context: dict = field(default_factory=dict)
-    timing_ns: int = 0
+from zephyr.shared.contracts.identity.permission import *  # noqa: F401,F403

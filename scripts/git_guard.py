@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §concurrency_guard
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.git_guard
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.rollback.concurrency_guard
@@ -65,6 +65,14 @@ from zephyr.infrastructure.rollback.concurrency_guard import (
 
 # 危险子命令集合
 DANGEROUS_SUBCOMMANDS = {"reset", "checkout", "stash", "revert", "restore"}
+
+# stash 只读子命令（不影响工作区文件）
+STASH_READONLY = {"list", "show", "drop"}
+# stash 会覆盖工作区的子命令（pop/apply/branch 会写回文件）
+STASH_OVERWRITE = {"pop", "apply", "branch"}
+
+# 强制 stash 的环境变量（self_healer 等合法场景）
+FORCE_STASH_ENV = "ZEPHYR_FORCE_STASH"
 
 # 环境变量名，用于获取当前 session_id
 SESSION_ID_ENV = "ZEPHYR_SESSION_ID"
@@ -164,6 +172,70 @@ _EXTRACTORS = {
 }
 
 
+def _check_conflict_or_passthrough(git_args: list[str], files_in_scope: list[str]) -> int:
+    """检查锁冲突，无冲突则透传执行。"""
+    if not files_in_scope:
+        return _passthrough(git_args)
+    project_root = _get_project_root()
+    session_id = _get_session_id()
+    try:
+        conflict = check_rollback_conflict(files_in_scope, session_id, project_root)
+    except Exception as e:
+        print(f"[GIT-GUARD] 冲突检查内部错误: {e}", file=sys.stderr)
+        return _passthrough(git_args)
+    if conflict.has_conflict:
+        print("", file=sys.stderr)
+        print("=" * 70, file=sys.stderr)
+        print("[GIT-GUARD] 命令被阻断——检测到其他 session 持有文件锁", file=sys.stderr)
+        print(f"  命令: git {' '.join(git_args)}", file=sys.stderr)
+        print(f"  冲突文件 ({len(conflict.blocked_files)}):", file=sys.stderr)
+        for f in conflict.blocked_files:
+            owner = conflict.locked_by.get(f, "unknown")
+            print(f"    {f}  (locked by {owner})", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("  解决方案:", file=sys.stderr)
+        print("    1. 等待其他 session 释放锁（TTL 30分钟自动过期）", file=sys.stderr)
+        print("    2. 手动释放锁: python scripts/lock_files.py release <file> <session_id>", file=sys.stderr)
+        print("    3. 确认安全后强制执行: ZEPHYR_SESSION_ID=<owner> python scripts/git_guard.py ...", file=sys.stderr)
+        print("=" * 70, file=sys.stderr)
+        return 1
+    return _passthrough(git_args)
+
+
+def _handle_stash(git_args: list[str]) -> int:
+    """stash 特殊处理：push 移走修改，pop/apply 覆盖工作区。"""
+    args = git_args[1:]  # 去掉 'stash'
+    if args and args[0] in STASH_READONLY:
+        return _passthrough(git_args)
+    if args and args[0] in STASH_OVERWRITE:
+        files_in_scope = _extract_files_stash(args)
+        return _check_conflict_or_passthrough(git_args, files_in_scope)
+    if args and args[0] == "clear":
+        print("[GIT-GUARD] 警告：git stash clear 会删除所有 stash（含未恢复的修改）", file=sys.stderr)
+        return _passthrough(git_args)
+    # push（含无参数 git stash）：会移走未提交修改
+    files_in_scope = _extract_files_stash(args)
+    if not files_in_scope:
+        return _passthrough(git_args)
+    if os.environ.get(FORCE_STASH_ENV) == "1":
+        print(f"[GIT-GUARD] {FORCE_STASH_ENV}=1，强制 stash {len(files_in_scope)} 个未提交文件", file=sys.stderr)
+        return _passthrough(git_args)
+    print("", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+    print("[GIT-GUARD] git stash 被阻断——会移走未提交的修改", file=sys.stderr)
+    print(f"  未提交文件 ({len(files_in_scope)}):", file=sys.stderr)
+    for f in files_in_scope[:10]:
+        print(f"    {f}", file=sys.stderr)
+    if len(files_in_scope) > 10:
+        print(f"    ... 及其他 {len(files_in_scope) - 10} 个文件", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("  解决方案:", file=sys.stderr)
+    print("    1. 先 commit 你的修改：git add <file> && git commit -m '...'", file=sys.stderr)
+    print(f"    2. 强制 stash（self_healer 等合法场景）：{FORCE_STASH_ENV}=1 git stash", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+    return 1
+
+
 def check_and_execute(git_args: list[str]) -> int:
     """检查 git 命令是否安全，安全则透传执行。
 
@@ -185,6 +257,10 @@ def check_and_execute(git_args: list[str]) -> int:
     if subcommand not in DANGEROUS_SUBCOMMANDS:
         return _passthrough(git_args)
 
+    # stash 特殊处理：push 移走修改，pop/apply 覆盖工作区，list/show 只读
+    if subcommand == "stash":
+        return _handle_stash(git_args)
+
     # 危险命令，提取文件范围
     extractor = _EXTRACTORS.get(subcommand)
     if extractor is None:
@@ -194,43 +270,10 @@ def check_and_execute(git_args: list[str]) -> int:
         files_in_scope = extractor(git_args[1:])
     except Exception as e:
         print(f"[GIT-GUARD] 内部错误（文件提取失败）: {e}", file=sys.stderr)
-        # 内部错误时选择安全透传（不阻断正常工作）
         return _passthrough(git_args)
 
-    # 无文件需要检查（如 git stash list）
-    if not files_in_scope:
-        return _passthrough(git_args)
-
-    # 检查 .ailocks/ 冲突
-    project_root = _get_project_root()
-    session_id = _get_session_id()
-
-    try:
-        conflict = check_rollback_conflict(files_in_scope, session_id, project_root)
-    except Exception as e:
-        print(f"[GIT-GUARD] 冲突检查内部错误: {e}", file=sys.stderr)
-        return _passthrough(git_args)
-
-    if conflict.has_conflict:
-        # 阻断！
-        print("", file=sys.stderr)
-        print("=" * 70, file=sys.stderr)
-        print("[GIT-GUARD] 命令被阻断——检测到其他 session 持有文件锁", file=sys.stderr)
-        print(f"  命令: git {' '.join(git_args)}", file=sys.stderr)
-        print(f"  冲突文件 ({len(conflict.blocked_files)}):", file=sys.stderr)
-        for f in conflict.blocked_files:
-            owner = conflict.locked_by.get(f, "unknown")
-            print(f"    {f}  (locked by {owner})", file=sys.stderr)
-        print("", file=sys.stderr)
-        print("  解决方案:", file=sys.stderr)
-        print("    1. 等待其他 session 释放锁（TTL 30分钟自动过期）", file=sys.stderr)
-        print("    2. 手动释放锁: python scripts/lock_files.py release <file> <session_id>", file=sys.stderr)
-        print("    3. 确认安全后强制执行: ZEPHYR_SESSION_ID=<owner> python scripts/git_guard.py ...", file=sys.stderr)
-        print("=" * 70, file=sys.stderr)
-        return 1
-
-    # 无冲突，透传执行
-    return _passthrough(git_args)
+    # 检查 .ailocks/ 冲突，无冲突则透传
+    return _check_conflict_or_passthrough(git_args, files_in_scope)
 
 
 def _passthrough(git_args: list[str]) -> int:

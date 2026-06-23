@@ -1,37 +1,18 @@
-# [BLUEPRINT] SRC-181 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.identity.agent_identity
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.agent_identity_impl
-# [CONSUMERS] zephyr.security.access_control.identity;zephyr.infrastructure.escalation;zephyr.governance;zephyr.integration.mcp
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.identity.__init__
+# [CONSUMERS] legacy imports via integration.shared_08.contracts
 # [STARTUP] imported
-# [MATURITY] production
-# [INVARIANTS] contract_purity: re-export only; impl in zephyr.integration.shared_08.agent_identity_impl
-# [MODIFY-GUARD] zephyr.integration.shared_08.agent_identity_impl
-# [STABILITY] stable
-# [SAFETY] M
+# [MATURITY] prototype
+# [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.identity.agent_identity
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.identity.agent_identity
+# [STABILITY] evolving
+# [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if source module missing
-# [TESTS] python -c "from zephyr.integration.shared_08.contracts.identity.agent_identity import AgentIdentity, MaturityLevel, AgentRole, IDESource"
+# [TESTS] python -c "import zephyr.integration.shared_08.contracts.identity.agent_identity"
 # [A_module] module_id=MOD-INT_agent_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+"""Re-export shim — 真源已合并至 zephyr.shared.contracts.identity.agent_identity。"""
 
-from zephyr.integration.shared_08.agent_identity_impl import (
-    MATURITY_AUTO_GUARD_TIMEOUT,
-    MATURITY_TLB_LIMITS,
-    ROLE_DEFAULT_PERMISSIONS,
-    AgentIdentity,
-    AgentMaturity,
-    AgentRole,
-    IDESource,
-    MaturityLevel,
-)
-
-__all__ = [
-    "MATURITY_AUTO_GUARD_TIMEOUT",
-    "MATURITY_TLB_LIMITS",
-    "ROLE_DEFAULT_PERMISSIONS",
-    "AgentIdentity",
-    "AgentMaturity",
-    "AgentRole",
-    "IDESource",
-    "MaturityLevel",
-]
+from zephyr.shared.contracts.identity.agent_identity import *  # noqa: F401,F403
