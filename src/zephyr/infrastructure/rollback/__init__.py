@@ -94,7 +94,9 @@ from zephyr.infrastructure.rollback.concurrency_guard import (
 
 __all__ = [
     "AutoRollbackTrigger",
+    "BootResult",
     "KillSwitchManager",
+    "RollbackBootIntegration",
     "RollbackExecutor",
     "RollbackVerifier",
     "_manifest_",
