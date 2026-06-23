@@ -51,3 +51,12 @@
 *.so binary
 *.dll binary
 *.exe binary
+
+# Git LFS - Large model files (DM-100197)
+# Model weights and binaries in data/models/local_model/ are tracked via LFS
+# to avoid bloating the git repository with GB-scale files.
+data/models/local_model/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.bin filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.onnx filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.pt filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.pth filter=lfs diff=lfs merge=lfs -text

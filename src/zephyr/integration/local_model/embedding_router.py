@@ -113,6 +113,7 @@ class EmbeddingRouter:
         model_dir_bge_small: Path | str = MODEL_DIR_BGE_SMALL,
         *,
         backend: Literal["local", "ollama"] = "ollama",
+        max_loaded_models: int = 2,
     ) -> None:
         self._backend: str = backend
         self._model_dir_bge_m3 = Path(model_dir_bge_m3)
@@ -124,6 +125,12 @@ class EmbeddingRouter:
         self._bge_m3_available: bool = False
         self._bge_small_available: bool = False
         self._fallback_mode: str = "none"
+        self._max_loaded_models: int = max_loaded_models
+        self._model_last_used: dict[str, float] = {}
+
+    @property
+    def max_loaded_models(self) -> int:
+        return self._max_loaded_models
 
     @property
     def bge_m3_available(self) -> bool:
@@ -148,6 +155,48 @@ class EmbeddingRouter:
     @property
     def backend(self) -> str:
         return self._backend
+
+    def _loaded_model_count(self) -> int:
+        """当前已加载模型数。"""
+        count = 0
+        if self._bge_m3_model is not None:
+            count += 1
+        if self._bge_small_model is not None:
+            count += 1
+        return count
+
+    def _touch_model(self, model_key: str) -> None:
+        """更新模型最后使用时间戳。"""
+        self._model_last_used[model_key] = time.time()
+
+    def _evict_lru(self) -> None:
+        """当已加载模型数超过 max_loaded_models 时，淘汰最久未用的模型。"""
+        if self._loaded_model_count() <= self._max_loaded_models:
+            return
+
+        loaded_keys: list[str] = []
+        if self._bge_m3_model is not None:
+            loaded_keys.append("m3")
+        if self._bge_small_model is not None:
+            loaded_keys.append("small")
+
+        if not loaded_keys:
+            return
+
+        lru_key = min(loaded_keys, key=lambda k: self._model_last_used.get(k, 0.0))
+
+        if lru_key == "m3":
+            _logger.info("EmbeddingRouter: LRU 淘汰 BGE-M3 (释放显存)")
+            if hasattr(self._bge_m3_model, "shutdown"):
+                self._bge_m3_model.shutdown()
+            self._bge_m3_model = None
+            self._bge_m3_available = False
+        elif lru_key == "small":
+            _logger.info("EmbeddingRouter: LRU 淘汰 bge-small (释放显存)")
+            if hasattr(self._bge_small_model, "shutdown"):
+                self._bge_small_model.shutdown()
+            self._bge_small_model = None
+            self._bge_small_available = False
 
     def warmup(self) -> None:
         _logger.info("EmbeddingRouter: 开始预热双嵌入模型 (backend=%s)...", self._backend)
@@ -187,6 +236,11 @@ class EmbeddingRouter:
 
         if not self._bge_m3_available and not self._bge_small_available:
             self._fallback_mode = "in_memory"
+
+        if self._bge_m3_available:
+            self._touch_model("m3")
+        if self._bge_small_available:
+            self._touch_model("small")
 
     def _load_bge_m3(self) -> None:
         if self._backend == "ollama":
@@ -291,12 +345,15 @@ class EmbeddingRouter:
                     vec.shape[0],
                     elapsed,
                 )
+                self._touch_model("m3")
                 return vec
             elif self._bge_small_available:
                 _logger.warning(
                     "EmbeddingRouter: BGE-M3 不可用，降级为 bge-small (%dd) → %s", self._bge_small_dim, collection_name
                 )
-                return self._embed_bge_small(text)
+                vec = self._embed_bge_small(text)
+                self._touch_model("small")
+                return vec
             else:
                 raise RuntimeError("无可用嵌入模型")
 
@@ -312,6 +369,7 @@ class EmbeddingRouter:
                     vec.shape[0],
                     elapsed,
                 )
+                self._touch_model("small")
                 return vec
             else:
                 raise RuntimeError("bge-small 模型不可用")
@@ -327,10 +385,12 @@ class EmbeddingRouter:
             if model is None:
                 raise RuntimeError("无可用嵌入模型")
             embeddings = model.encode(texts, normalize_embeddings=True, batch_size=BGE_M3_BATCH_SIZE)
+            self._touch_model("m3" if self._bge_m3_model is model else "small")
         elif collection_name in BGE_SMALL_COLLECTIONS:
             if self._bge_small_model is None:
                 raise RuntimeError("bge-small 模型不可用")
             embeddings = self._bge_small_model.encode(texts, normalize_embeddings=True, batch_size=BGE_SMALL_BATCH_SIZE)
+            self._touch_model("small")
         else:
             raise KeyError(f"未知 Collection: {collection_name}")
 
@@ -344,6 +404,9 @@ class EmbeddingRouter:
             "backend": self._backend,
             "bge_m3_dim": self._bge_m3_dim,
             "bge_small_dim": self._bge_small_dim,
+            "max_loaded_models": self._max_loaded_models,
+            "loaded_model_count": self._loaded_model_count(),
+            "model_last_used": dict(self._model_last_used),
         }
 
     def shutdown(self) -> None:
@@ -355,4 +418,5 @@ class EmbeddingRouter:
         self._bge_small_model = None
         self._bge_m3_available = False
         self._bge_small_available = False
+        self._model_last_used.clear()
         _logger.info("EmbeddingRouter: 已关闭")
