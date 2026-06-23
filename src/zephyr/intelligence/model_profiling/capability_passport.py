@@ -27,8 +27,11 @@ CapabilityPassport --- AI 模型能力护照
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import logging
+import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -37,6 +40,35 @@ _log = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 PASSPORTS_DIR = PROJECT_ROOT / "data" / "brain" / "passports"
+
+# 默认开发环境签名密钥（生产环境应通过环境变量 ZEPHYR_PASSPORT_SIGNING_KEY 覆盖）
+_DEFAULT_SIGNING_KEY = b"zephyr-passport-dev-key-v1"
+
+
+class TamperError(Exception):
+    """护照篡改异常 — 签名验证失败或无签名字段时抛出。"""
+    pass
+
+
+def _get_signing_key() -> bytes:
+    """获取护照签名密钥（HMAC-SHA256）。
+
+    优先从环境变量 CAPABILITY_PASSPORT_KEY 读取；未设置时使用默认开发密钥。
+    """
+    env_key = os.environ.get("CAPABILITY_PASSPORT_KEY")
+    if env_key:
+        return env_key.encode("utf-8")
+    return _DEFAULT_SIGNING_KEY
+
+
+def _compute_signature(data: dict) -> str:
+    """计算护照数据的 HMAC-SHA256 签名。
+
+    签名覆盖除 "signature" 字段外的所有字段，确保任何字段篡改都会导致签名失效。
+    """
+    payload = {k: v for k, v in data.items() if k != "signature"}
+    canonical = json.dumps(payload, ensure_ascii=False, sort_keys=True)
+    return hmac.new(_get_signing_key(), canonical.encode("utf-8"), hashlib.sha256).hexdigest()
 
 DEPTH_THRESHOLDS: dict[str, float] = {
     "task_classification": 0.60,
@@ -142,22 +174,33 @@ class CapabilityPassport:
         PASSPORTS_DIR.mkdir(parents=True, exist_ok=True)
         safe_id = self.model_id.replace(":", "_").replace("/", "_")
         path = PASSPORTS_DIR / f"{safe_id}.json"
+        data = self.to_dict()
+        data["signature"] = _compute_signature(data)
         path.write_text(
-            json.dumps(self.to_dict(), ensure_ascii=False, indent=2),
+            json.dumps(data, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
         _log.info("CapabilityPassport saved: %s", path)
         return path
 
     @staticmethod
-    def load(model_id: str) -> CapabilityPassport | None:
+    def load(model_id: str, verify: bool = False) -> CapabilityPassport | None:
         safe_id = model_id.replace(":", "_").replace("/", "_")
         path = PASSPORTS_DIR / f"{safe_id}.json"
         if not path.exists():
             return None
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
+            if verify:
+                signature = data.get("signature")
+                if not signature:
+                    raise TamperError("无签名字段")
+                expected = _compute_signature(data)
+                if not hmac.compare_digest(signature, expected):
+                    raise TamperError("签名验证失败")
             return CapabilityPassport._from_dict(data)
+        except TamperError:
+            raise
         except Exception as exc:
             _log.warning("Failed to load passport for %s: %s", model_id, exc)
             return None

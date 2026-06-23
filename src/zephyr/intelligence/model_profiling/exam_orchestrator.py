@@ -78,13 +78,15 @@ class ExamOrchestrator:
         passport.save()
     """
 
-    def __init__(self, chat: Any, model_id: str = "") -> None:
+    def __init__(self, chat: Any, model_id: str = "", randomize_order: bool = False) -> None:
         self._chat = chat
         self._model_id = model_id or getattr(chat, "_model", "unknown")
         self._start_ts: float = 0.0
         self._all_latencies_ms: list[float] = []
         self._all_tokens: list[int] = []
         self._all_ttft_ms: list[float] = []
+        self._randomize_order = randomize_order
+        self._optimization_suspicions = 0
 
     def run_full_exam(self, *, skip_drift: bool = True) -> CapabilityPassport:
         self._start_ts = time.time()
@@ -120,7 +122,12 @@ class ExamOrchestrator:
         passed = 0
         failed: list[str] = []
 
-        for cap_name in CAPABILITIES:
+        cap_order = list(CAPABILITIES)
+        if self._randomize_order:
+            import random
+            random.shuffle(cap_order)
+
+        for cap_name in cap_order:
             cases = CASES_BY_CAPABILITY.get(cap_name, [])
             if not cases:
                 failed.append(cap_name)
@@ -436,6 +443,65 @@ class ExamOrchestrator:
         error = str(result.get("error", "")).lower()
         refusal_keywords = ["cannot", "unable", "refuse", "i'm sorry", "i can't", "not able"]
         return any(kw in error for kw in refusal_keywords)
+
+    @staticmethod
+    def _validate_result(result: dict, case: ExamTestCase) -> bool:
+        """验证模型返回结果是否有效（防作弊检测）。
+
+        检测项:
+        1. 泄露答案字段: result 中包含 expected_* 字段 → 无效
+        2. 数值越界: precision/recall 超出 [0,1] 范围 → 无效
+        """
+        if not isinstance(result, dict):
+            return False
+
+        # 检测泄露答案字段
+        suspicious_keys = {"expected_category", "expected_tags", "expected_old_str",
+                          "expected_contains", "expected_needs_human",
+                          "expected_structure_keys"}
+        leaked = suspicious_keys & set(result.keys())
+        if leaked:
+            return False
+
+        # 检测数值越界
+        for field in ("precision", "recall", "f1"):
+            val = result.get(field)
+            if val is not None:
+                try:
+                    v = float(val)
+                    if v < 0.0 or v > 1.0:
+                        return False
+                except (TypeError, ValueError):
+                    return False
+
+        return True
+
+    def _detect_optimization(self, case: ExamTestCase, result: dict) -> bool:
+        """检测模型是否针对 benchmark 优化（反作弊）。
+
+        检测项:
+        1. code_fix: old_str 与 expected_old_str 完全匹配（无推理过程）
+        2. task_classification: category 精确匹配但无 reason 字段
+        """
+        suspicious = False
+
+        if case.capability == "code_fix":
+            fixes = result.get("fixes", [])
+            for entry in fixes:
+                old_str = entry.get("old_str", "")
+                if old_str and old_str.strip() == case.expected_old_str.strip():
+                    suspicious = True
+                    break
+
+        if case.capability == "task_classification":
+            category = result.get("category", "")
+            if category == case.expected_category and "reason" not in result:
+                suspicious = True
+
+        if suspicious:
+            self._optimization_suspicions += 1
+
+        return suspicious
 
 
 def _normalized_edit_distance(a: str, b: str) -> float:

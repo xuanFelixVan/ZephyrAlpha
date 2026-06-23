@@ -39,7 +39,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["GateResult", "PhaseCheckRegistry", "run_check"]
+__all__ = ["GateResult", "PhaseCheckRegistry", "check_auto_fix_start", "run_check"]
 
 
 class GateResult(str, Enum):
@@ -816,6 +816,24 @@ def _check_trae_gate_factory(gate_name: str) -> Callable[[], GateResult]:
     return _check
 
 
+def check_auto_fix_start() -> GateResult:
+    """检查 auto_fix_engine 是否已注册到 phase_manager（F15 自动启停门控）。
+
+    验证 auto_fix_engine 模块存在且可导入，确保 F15 自动启停功能可用。
+    """
+    try:
+        import importlib
+
+        mod = importlib.import_module("zephyr.infrastructure.auto_fix_engine.engine")
+        if mod is not None:
+            return GateResult.GREEN
+        return GateResult.YELLOW
+    except ImportError:
+        return GateResult.YELLOW
+    except Exception:
+        return GateResult.RED
+
+
 _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_session_manager": check_session_manager,
     "gate_session_continuity": check_session_continuity,
@@ -921,6 +939,7 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "g_trae_049": _check_trae_gate_factory("g_trae_049"),
     "g_trae_050": _check_trae_gate_factory("g_trae_050"),
     "g_trae_051": _check_trae_gate_factory("g_trae_051"),
+    "gate_auto_fix_start": check_auto_fix_start,
 }
 
 

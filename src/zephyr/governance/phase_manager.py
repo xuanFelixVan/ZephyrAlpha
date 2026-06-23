@@ -187,6 +187,7 @@ PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
             "gate_escalation_protocol",
             "gate_lsg_security",
             "gate_budget_enforcer",
+            "gate_auto_fix_start",
         ],
     ),
     ConstructionPhase.PHASE_2_E2E: PhaseGate(
