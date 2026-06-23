@@ -1,4 +1,4 @@
-# 阶段D：19个AI完整提示词
+# 阶段D：34个AI完整提示词
 
 > 每个AI复制自己的提示词，在新对话中执行。
 > 工作流程：创建详细任务卡 → 审查任务卡 → 循环修复 → 执行任务卡
@@ -27,7 +27,7 @@
 
 **⚠️ 多 AI 并发提交协议（MUST 遵守）**:
 
-本阶段有 19 个 AI 并发工作。文件修改 MUST 走 StagingArea 草稿模式，禁止直接 `git commit`。
+本阶段有 34 个 AI 并发工作。文件修改 MUST 走 StagingArea 草稿模式，禁止直接 `git commit`。
 
 ```
 from zephyr.trading.staging_area import StagingArea
@@ -1004,4 +1004,628 @@ STEP 14 报告: 报告F20恢复状态 + F14/F19/F1/F11任务卡修复确认
 7. 三方对齐 PASS
 
 每张卡完成后transition(COMPLETED)，全部完成后向统筹AI报告F20整体状态+其他任务卡修复确认。
+```
+
+***
+
+## AI-21: F21 守护系统/IDE健康守护
+
+```
+你是AI-21，负责恢复F21 守护系统/IDE健康守护功能。
+
+## 你的元任务卡
+- task_id: DM-201021（已存在，状态COMPLETED）
+- 功能: F21 守护系统/IDE健康守护
+- 蓝图: MOD-INF-032 resource-optimization-engine
+- 源码包: scripts/ide_health_service.py + src/zephyr/trading/ide_health_daemon.py + scripts/lock_files.py
+- 包含子系统: IDE健康守护进程 + 幽灵窗口扫描 + 过期锁清理 + RULE-GUARDIAN守护
+
+## 背景
+冷启动STEP 0强制依赖。未运行则禁止执行任何后续步骤。每30s扫描TRAE IDE幽灵窗口(MainWindowHandle=0)并kill，清理TTL过期锁(TTL=30分钟)。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201021')
+2. 读蓝图: Grep "MOD-INF-032" docs/03_modules/
+3. 拆分详细任务卡（序号从202101开始）:
+   - DM-202101: ide_health_service.py恢复（守护进程启动/状态查询/后台运行）
+   - DM-202102: ide_health_daemon.py恢复（30s扫描循环+幽灵窗口kill）
+   - DM-202103: lock_files.py恢复（锁协议+TTL过期清理+cleanup/status/check-session）
+   - DM-202104: RULE-GUARDIAN守护逻辑恢复
+   - DM-202105: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁(deliverables≤1/files_in_scope≤3) + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+STEP 1  读蓝图: Read MOD-INF-032蓝图
+STEP 2  全量定位: Glob scripts/ide_health_service.py + Grep "ide_health_daemon" + Grep "lock_files" 全项目
+STEP 3  归属裁定: 判断守护进程归属（scripts/ vs src/zephyr/）
+STEP 4  蓝图设计: 设计守护进程启动方式+自动运行+自动结束
+STEP 5  位置校验: extract_depgraph.py --modules 查归属
+STEP 6  修复断链: python -c "import zephyr.trading.ide_health_daemon" 验证
+STEP 7  补全头部: 补全[BLUEPRINT]/[MODULE]/[INVARIANTS]等十字段
+STEP 8  运行测试: python -m pytest tests/ -k "ide_health or lock" -v
+STEP 9  修复失败: 修复失败测试直到通过
+STEP 10 红蓝对抗: 测试幽灵窗口未清理/锁TTL过期未清理/守护进程崩溃
+STEP 11 更新蓝图: 更新MOD-INF-032 frontmatter
+STEP 12 三方对齐: diagnose_depgraph.py + 蓝图↔代码 + 代码头部↔引用
+STEP 13 更新索引: 更新script-manifest.yaml + __init__.py
+STEP 14 报告: 报告F21恢复状态
+
+## 完成标准
+1. ide_health_service.py 可启动守护进程（--start-background）
+2. 幽灵窗口扫描功能正常（MainWindowHandle=0 检测+kill）
+3. 过期锁清理功能正常（TTL=30分钟）
+4. 三方对齐 PASS
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F21整体状态。
+```
+
+***
+
+## AI-22: F22 共享核心
+
+```
+你是AI-22，负责恢复F22 共享核心功能。
+
+## 你的元任务卡
+- task_id: DM-201022（已存在，状态COMPLETED）
+- 功能: F22 共享核心
+- 蓝图: MOD-INF-016 shared-core
+- 源码包: src/zephyr/shared/（100+文件）
+- 包含子系统: 事件总线 + 配置中心 + 模块生命周期 + 错误处理 + 契约总线 + 缓存 + 限流 + 锁 + 幂等性
+
+## 背景
+P0优先级，所有系统的地基。横切基础设施，100+文件覆盖事件总线/配置/契约/缓存/限流/锁等核心能力。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201022')
+2. 读蓝图: Grep "MOD-INF-016" docs/03_modules/
+3. 拆分详细任务卡（序号从202201开始）:
+   - DM-202201: 事件总线(event_bus)恢复
+   - DM-202202: 配置中心(config)恢复
+   - DM-202203: 模块生命周期(lifecycle)恢复
+   - DM-202204: 错误处理(errors)恢复
+   - DM-202205: 契约总线(contracts)恢复
+   - DM-202206: 缓存(cache)+限流(rate_limit)恢复
+   - DM-202207: 锁(lock)+幂等性(idempotency)恢复
+   - DM-202208: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Glob src/zephyr/shared/**/*.py（100+文件）+ Grep "event_bus" + Grep "config_center" 全项目
+- STEP 4重点: 设计 shared/ 横切基础设施的依赖关系（无向下依赖）
+- STEP 8重点: python -m pytest tests/ -k "shared or event_bus or config" -v
+- STEP 10重点: 测试事件丢失、配置篡改、锁泄漏、幂等性失效
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F22整体状态。
+```
+
+***
+
+## AI-23: F23 Agent编排器
+
+```
+你是AI-23，负责恢复F23 Agent编排器功能。
+
+## 你的元任务卡
+- task_id: DM-201023（已存在，状态COMPLETED）
+- 功能: F23 Agent编排器
+- 蓝图: MOD-INF-039 agent-orchestrator
+- 源码包: src/zephyr/trading/conductor.py + work_orchestrator.py + work_dag.py + verdict_engine.py + finalizer.py
+- 包含子系统: 工作DAG编排 + 判决引擎 + 终结器 + Agent全生命周期编排
+
+## 背景
+P0优先级，已完工。Agent全生命周期编排引擎。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201023')
+2. 读蓝图: Grep "MOD-INF-039" docs/03_modules/
+3. 拆分详细任务卡（序号从202301开始）:
+   - DM-202301: conductor.py恢复（Agent编排核心）
+   - DM-202302: work_orchestrator.py恢复（工作编排）
+   - DM-202303: work_dag.py恢复（工作DAG）
+   - DM-202304: verdict_engine.py恢复（判决引擎）
+   - DM-202305: finalizer.py恢复（终结器）
+   - DM-202306: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Grep "class Conductor" + Grep "WorkOrchestrator" + Grep "VerdictEngine" 全项目
+- STEP 8重点: python -m pytest tests/ -k "conductor or orchestrator or verdict" -v
+- STEP 10重点: 测试DAG死锁、判决冲突、终结器未触发
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F23整体状态。
+```
+
+***
+
+## AI-24: F24 Agent Spec/Skill系统
+
+```
+你是AI-24，负责恢复F24 Agent Spec/Skill系统功能。
+
+## 你的元任务卡
+- task_id: DM-201024（已存在，状态COMPLETED）
+- 功能: F24 Agent Spec/Skill系统
+- 蓝图: MOD-INF-019 agent-spec
+- 源码包: src/zephyr/autonomy_core/skill_*.py（100+模块）
+- 包含子系统: Skill KYA认证(Know Your Agent, 90天过期) + Skill全生命周期管理 + 蓝图→Skill升级引擎 + skill_model + skill_di
+
+## 背景
+P0优先级。Agent入职认证系统（与F10模型考试不同维度）。Agent能力认证90天过期需续期。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201024')
+2. 读蓝图: Grep "MOD-INF-019" docs/03_modules/
+3. 拆分详细任务卡（序号从202401开始）:
+   - DM-202401: skill_model.py恢复（Skill数据模型）
+   - DM-202402: skill_di恢复（Skill依赖注入）
+   - DM-202403: Skill KYA认证恢复（90天过期+续期）
+   - DM-202404: Skill全生命周期管理恢复
+   - DM-202405: 蓝图→Skill升级引擎恢复
+   - DM-202406: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Glob src/zephyr/autonomy_core/skill_*.py（100+模块）+ Grep "KYA" 全项目
+- STEP 8重点: python -m pytest tests/ -k "skill or kya" -v
+- STEP 10重点: 测试Skill过期未续期、KYA认证绕过、升级引擎失败
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F24整体状态。
+```
+
+***
+
+## AI-25: F25 数据库集成层
+
+```
+你是AI-25，负责恢复F25 数据库集成层功能。
+
+## 你的元任务卡
+- task_id: DM-201025（已存在，状态COMPLETED）
+- 功能: F25 数据库集成层
+- 蓝图: MOD-INF-012 database
+- 源码包: src/zephyr/infrastructure/db/（13文件）+ src/zephyr/governance/sqlite_schema.py
+- 包含子系统: SQLite核心运营 + DuckDB市场数据 + PostgreSQL容量升级 + 三库架构(governance.db/depgraph.db/market.duckdb)
+
+## 背景
+P1优先级。三库架构是全项目数据持久化基础。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201025')
+2. 读蓝图: Grep "MOD-INF-012" docs/03_modules/
+3. 拆分详细任务卡（序号从202501开始）:
+   - DM-202501: SQLite核心运营层恢复（governance.db）
+   - DM-202502: DuckDB市场数据层恢复（market.duckdb）
+   - DM-202503: PostgreSQL容量升级恢复
+   - DM-202504: sqlite_schema.py恢复（Schema管理）
+   - DM-202505: 三库架构集成恢复
+   - DM-202506: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Glob src/zephyr/infrastructure/db/**/*.py + Grep "sqlite_schema" 全项目
+- STEP 8重点: python -m pytest tests/ -k "db or sqlite or duckdb" -v
+- STEP 10重点: 测试数据库连接泄漏、Schema不一致、三库数据不同步
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F25整体状态。
+```
+
+***
+
+## AI-26: F26 运行时集成
+
+```
+你是AI-26，负责恢复F26 运行时集成功能。
+
+## 你的元任务卡
+- task_id: DM-201026（已存在，状态COMPLETED）
+- 功能: F26 运行时集成
+- 蓝图: MOD-INF-002 runtime-integration
+- 源码包: src/zephyr/integration/shared_08/ + src/zephyr/trading/boot_hooks.py + boot_cron_jobs.py
+- 包含子系统: 15核心RI模块跨层协同 + 运行时基础设施 + boot_hooks + boot_cron_jobs
+
+## 背景
+P0优先级，已完工。运行时基础设施跨层协同。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201026')
+2. 读蓝图: Grep "MOD-INF-002" docs/03_modules/
+3. 拆分详细任务卡（序号从202601开始）:
+   - DM-202601: shared_08/ 15核心RI模块恢复
+   - DM-202602: boot_hooks.py恢复（启动钩子）
+   - DM-202603: boot_cron_jobs.py恢复（定时任务）
+   - DM-202604: 运行时基础设施跨层协同恢复
+   - DM-202605: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Glob src/zephyr/integration/shared_08/**/*.py + Grep "boot_hooks" + Grep "boot_cron" 全项目
+- STEP 8重点: python -m pytest tests/ -k "integration or boot" -v
+- STEP 10重点: 测试启动钩子失败、定时任务泄漏、跨层协同断裂
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F26整体状态。
+```
+
+***
+
+## AI-27: F27 容量保障系统
+
+```
+你是AI-27，负责恢复F27 容量保障系统功能。
+
+## 你的元任务卡
+- task_id: DM-201027（已存在，状态COMPLETED）
+- 功能: F27 容量保障系统
+- 蓝图: MOD-INF-001 capacity-assurance
+- 源码包: src/zephyr/infrastructure/capacity_assurance/（含modules/20+文件、contracts/）
+- 包含子系统: SLI/SLO框架 + Error Budget五级响应 + Token Budget限流 + Kill Switch熔断 + 悬崖检测器 + 冷启动估算
+
+## 背景
+P2优先级。SLO体系是运营保障核心（F4是预算执行器，容量保障是更大的SLO体系）。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201027')
+2. 读蓝图: Grep "MOD-INF-001" docs/03_modules/
+3. 拆分详细任务卡（序号从202701开始）:
+   - DM-202701: SLI/SLO框架恢复
+   - DM-202702: Error Budget五级响应恢复
+   - DM-202703: Token Budget限流恢复
+   - DM-202704: Kill Switch熔断恢复
+   - DM-202705: 悬崖检测器恢复
+   - DM-202706: 冷启动估算恢复
+   - DM-202707: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Glob src/zephyr/infrastructure/capacity_assurance/**/*.py + Grep "SLI" + Grep "ErrorBudget" 全项目
+- STEP 8重点: python -m pytest tests/ -k "capacity or slo or error_budget" -v
+- STEP 10重点: 测试SLO违规未告警、Error Budget耗尽、Kill Switch失效、悬崖检测漏报
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F27整体状态。
+```
+
+***
+
+## AI-28: F28 资产盘点系统
+
+```
+你是AI-28，负责恢复F28 资产盘点系统功能。
+
+## 你的元任务卡
+- task_id: DM-201028（已存在，状态COMPLETED）
+- 功能: F28 资产盘点系统
+- 蓝图: MOD-INF-026 asset-inventory
+- 源码包: src/zephyr/infrastructure/asset_inventory/（14文件）
+- 包含子系统: 全量资产发现 + 自动分类 + 统一登记 + 持续对账 + 生命周期管理
+
+## 背景
+P1优先级，已完工。全量资产盘点是治理基础。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201028')
+2. 读蓝图: Grep "MOD-INF-026" docs/03_modules/
+3. 拆分详细任务卡（序号从202801开始）:
+   - DM-202801: 全量资产发现恢复
+   - DM-202802: 自动分类恢复
+   - DM-202803: 统一登记恢复
+   - DM-202804: 持续对账恢复
+   - DM-202805: 生命周期管理恢复
+   - DM-202806: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Glob src/zephyr/infrastructure/asset_inventory/**/*.py + Grep "asset_inventory" 全项目
+- STEP 8重点: python -m pytest tests/ -k "asset or inventory" -v
+- STEP 10重点: 测试资产漏发现、分类错误、对账不一致
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F28整体状态。
+```
+
+***
+
+## AI-29: F29 语义审计器
+
+```
+你是AI-29，负责恢复F29 语义审计器功能。
+
+## 你的元任务卡
+- task_id: DM-201029（已存在，状态COMPLETED）
+- 功能: F29 语义审计器
+- 蓝图: MOD-INF-028 semantic-auditor
+- 源码包: src/zephyr/governance/spec_auditor.py + semantic_cache.py
+- 包含子系统: 语义审计器 + 规则文档LLM桥接 + 语义缓存
+
+## 背景
+P1优先级，mostly_implemented。语义审计是规则文档与代码对齐的桥梁。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201029')
+2. 读蓝图: Grep "MOD-INF-028" docs/03_modules/
+3. 拆分详细任务卡（序号从202901开始）:
+   - DM-202901: spec_auditor.py恢复（语义审计核心）
+   - DM-202902: semantic_cache.py恢复（语义缓存）
+   - DM-202903: 规则文档LLM桥接恢复
+   - DM-202904: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Grep "class SpecAuditor" + Grep "semantic_cache" 全项目
+- STEP 8重点: python -m pytest tests/ -k "spec_auditor or semantic" -v
+- STEP 10重点: 测试语义缓存失效、LLM桥接超时、规则文档与代码不一致未检出
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F29整体状态。
+```
+
+***
+
+## AI-30: F30 红蓝对抗验证器
+
+```
+你是AI-30，负责恢复F30 红蓝对抗验证器功能。
+
+## 你的元任务卡
+- task_id: DM-201030（已存在，状态COMPLETED）
+- 功能: F30 红蓝对抗验证器
+- 蓝图: MOD-INF-030 red-blue-validator
+- 源码包: src/zephyr/governance/self_validator.py + infrastructure/auto_fix_engine/fix_safety.py
+- 包含子系统: 红蓝对抗验证器 + 修复有效性确认 + self_validator
+
+## 背景
+P1优先级。修复有效性验证（F16是审计编排/孤儿审判，非红蓝对抗）。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201030')
+2. 读蓝图: Grep "MOD-INF-030" docs/03_modules/
+3. 拆分详细任务卡（序号从203001开始）:
+   - DM-203001: self_validator.py恢复（红蓝对抗核心）
+   - DM-203002: fix_safety.py恢复（修复有效性确认）
+   - DM-203003: 红蓝对抗验证器集成恢复
+   - DM-203004: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Grep "class SelfValidator" + Grep "fix_safety" 全项目
+- STEP 8重点: python -m pytest tests/ -k "self_validator or red_blue or fix_safety" -v
+- STEP 10重点: 测试修复失效未检出、红蓝对抗绕过、安全修复误判
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F30整体状态。
+```
+
+***
+
+## AI-31: F31 注册表治理
+
+```
+你是AI-31，负责恢复F31 注册表治理功能。
+
+## 你的元任务卡
+- task_id: DM-201031（已存在，状态COMPLETED）
+- 功能: F31 注册表治理
+- 蓝图: MOD-INF-037 registry-governance
+- 源码包: src/zephyr/infrastructure/registry_governance.py + governance/ssot_registrar.py
+- 包含子系统: 注册表治理(48个注册表统一管理) + SSoT注册器
+
+## 背景
+P1优先级。48个注册表的统一管理是SSoT原则的落地。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201031')
+2. 读蓝图: Grep "MOD-INF-037" docs/03_modules/
+3. 拆分详细任务卡（序号从203101开始）:
+   - DM-203101: registry_governance.py恢复（48注册表统一管理）
+   - DM-203102: ssot_registrar.py恢复（SSoT注册器）
+   - DM-203103: 注册表治理集成恢复
+   - DM-203104: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Grep "class RegistryGovernance" + Grep "SSoTRegistrar" + Grep "registry_of_registries" 全项目
+- STEP 8重点: python -m pytest tests/ -k "registry or ssot" -v
+- STEP 10重点: 测试注册表不一致、SSoT违反、注册表孤儿
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F31整体状态。
+```
+
+***
+
+## AI-32: F32 状态机引擎
+
+```
+你是AI-32，负责恢复F32 状态机引擎功能。
+
+## 你的元任务卡
+- task_id: DM-201032（已存在，状态COMPLETED）
+- 功能: F32 状态机引擎
+- 蓝图: MOD-INF-038 state-machine-engine
+- 源码包: src/zephyr/shared/state_machine.py + governance/fsm_verifier.py
+- 包含子系统: 通用状态机引擎 + 全项目状态机实例治理 + FSM验证器
+
+## 背景
+P1优先级。全项目状态机实例的统一治理。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201032')
+2. 读蓝图: Grep "MOD-INF-038" docs/03_modules/
+3. 拆分详细任务卡（序号从203201开始）:
+   - DM-203201: state_machine.py恢复（通用状态机引擎）
+   - DM-203202: fsm_verifier.py恢复（FSM验证器）
+   - DM-203203: 全项目状态机实例治理恢复
+   - DM-203204: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Grep "class StateMachine" + Grep "FSMVerifier" 全项目
+- STEP 8重点: python -m pytest tests/ -k "state_machine or fsm" -v
+- STEP 10重点: 测试非法状态转换、状态机死锁、FSM验证绕过
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F32整体状态。
+```
+
+***
+
+## AI-33: F33 本地模型基础设施
+
+```
+你是AI-33，负责恢复F33 本地模型基础设施功能。
+
+## 你的元任务卡
+- task_id: DM-201033（已存在，状态COMPLETED）
+- 功能: F33 本地模型基础设施
+- 蓝图: MOD-INF-042 local-model
+- 源码包: data/capability_cards/local_model_scheduler.yaml + ollama_chat.yaml + embedding_router.yaml
+- 包含子系统: BGE-M3嵌入 + Ollama推理 + 调度 + 缓存
+
+## 背景
+P2优先级，scaffold。本地模型基础设施减少对外部API的依赖。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201033')
+2. 读蓝图: Grep "MOD-INF-042" docs/03_modules/
+3. 拆分详细任务卡（序号从203301开始）:
+   - DM-203301: local_model_scheduler.yaml恢复（本地模型调度）
+   - DM-203302: ollama_chat.yaml恢复（Ollama推理）
+   - DM-203303: embedding_router.yaml恢复（BGE-M3嵌入路由）
+   - DM-203304: 本地模型缓存恢复
+   - DM-203305: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Glob data/capability_cards/local_model*.yaml + Glob data/capability_cards/ollama*.yaml + Glob data/capability_cards/embedding*.yaml
+- STEP 8重点: python -m pytest tests/ -k "local_model or ollama or embedding" -v
+- STEP 10重点: 测试模型不可用降级、嵌入路由失败、缓存失效
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F33整体状态。
+```
+
+***
+
+## AI-34: F34 代码去重引擎
+
+```
+你是AI-34，负责恢复F34 代码去重引擎功能。
+
+## 你的元任务卡
+- task_id: DM-201034（已存在，状态COMPLETED）
+- 功能: F34 代码去重引擎
+- 蓝图: MOD-INF-017 code-dedup-engine
+- 源码包: src/zephyr/governance/atomic_fixer.py + diff_detector.py
+- 包含子系统: 代码去重 + 爆炸半径防护 + 原子修复
+
+## 背景
+P2优先级。代码去重防止重复造轮子。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201034')
+2. 读蓝图: Grep "MOD-INF-017" docs/03_modules/
+3. 拆分详细任务卡（序号从203401开始）:
+   - DM-203401: atomic_fixer.py恢复（原子修复）
+   - DM-203402: diff_detector.py恢复（差异检测+代码去重）
+   - DM-203403: 爆炸半径防护恢复
+   - DM-203404: 蓝图更新+三方对齐+索引更新
+
+## 阶段B：审查任务卡
+审查: 18项字段 + 粒度门禁 + 依赖顺序 + 结构词 + 14步覆盖
+
+## 阶段C：循环修复
+修复审查问题 → 重新审查 → 直到全部通过
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Grep "class AtomicFixer" + Grep "class DiffDetector" 全项目
+- STEP 8重点: python -m pytest tests/ -k "atomic_fixer or diff_detector or dedup" -v
+- STEP 10重点: 测试去重误判、原子修复回滚失败、爆炸半径超限
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F34整体状态。
 ```
