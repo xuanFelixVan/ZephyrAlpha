@@ -50,6 +50,7 @@ from . import (
     paper_live_transition,
     post_live_verification,
     right_to_be_forgotten,
+    rollback_boot_integration,
     rollback_bootstrap,
     rollback_budget,
     rollback_context_restorer,
@@ -81,8 +82,15 @@ __blueprint__ = "MOD-INF-021"
 
 from zephyr.infrastructure.rollback.auto_rollback_trigger import AutoRollbackTrigger
 from zephyr.infrastructure.rollback.kill_switch import KillSwitchManager
+from zephyr.infrastructure.rollback.rollback_boot_integration import BootResult, RollbackBootIntegration
 from zephyr.infrastructure.rollback.rollback_executor import RollbackExecutor
 from zephyr.infrastructure.rollback.rollback_verifier import RollbackVerifier
+from zephyr.infrastructure.rollback.concurrency_guard import (
+    ConcurrencyConflictError,
+    check_rollback_conflict,
+    classify_uncommitted_files,
+    scan_active_locks,
+)
 
 __all__ = [
     "AutoRollbackTrigger",

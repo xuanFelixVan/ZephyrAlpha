@@ -858,7 +858,7 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description="GATE-11 命名规范门禁")
-    parser.add_argument("path", nargs="?", default=".", help="要检查的文件或目录路径")
+    parser.add_argument("paths", nargs="*", help="要检查的文件或目录路径（可多个，pre-commit pass_filenames传入）")
     parser.add_argument("--scan", action="store_true", help="扫描整个项目目录")
     parser.add_argument("--staged", action="store_true", help="只检查git暂存区文件")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")
@@ -900,19 +900,22 @@ def main() -> int:
         # N-16: 全局检测——测试文件名唯一性
         all_violations.extend(check_test_name_uniqueness(project_root))
     else:
-        target = Path(args.path)
-        if target.is_dir():
-            project_root = target.resolve()
-            for root, dirs, files in os.walk(target):
-                dirs[:] = [d for d in dirs if not d.startswith(".") and d != "__pycache__"]
-                rel_root = str(root).replace(str(target), "").lstrip("\\/").lstrip("/")
-                for f in files:
-                    filepath = f"{rel_root}/{f}" if rel_root else f
-                    abspath = Path(root) / f
-                    all_violations.extend(check_file(filepath, abspath, project_root))
-        else:
-            filepath = args.path
-            all_violations.extend(check_file(filepath, target))
+        # 默认模式：检查传入的文件列表（pre-commit pass_filenames），或当前目录
+        targets = args.paths if args.paths else ["."]
+        for target_path in targets:
+            target = Path(target_path)
+            if target.is_dir():
+                project_root = target.resolve()
+                for root, dirs, files in os.walk(target):
+                    dirs[:] = [d for d in dirs if not d.startswith(".") and d != "__pycache__"]
+                    rel_root = str(root).replace(str(target), "").lstrip("\\/").lstrip("/")
+                    for f in files:
+                        filepath = f"{rel_root}/{f}" if rel_root else f
+                        abspath = Path(root) / f
+                        all_violations.extend(check_file(filepath, abspath, project_root))
+            else:
+                filepath = target_path
+                all_violations.extend(check_file(filepath, target))
 
     for v in all_violations:
         print(f"[{v.rule}] {v.message}")
