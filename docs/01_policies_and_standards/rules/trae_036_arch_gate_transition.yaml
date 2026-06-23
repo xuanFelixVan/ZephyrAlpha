@@ -41,8 +41,8 @@ sections:
       pass: 无冲突，继续评审
       fail: 必须先废弃或修改KB决策记录再实施变更，否则否决
     - type: constraint
-      check: 变更是否引入循环依赖
-      pass: 无循环，继续评审
+      check: 变更是否引入循环依赖（跨层循环 OR 同层循环）
+      pass: 无循环（跨层无循环 AND 同层无循环），继续评审
       fail: 必须重新设计消除循环，否则否决
     - type: constraint
       check: 变更是否降低系统可观测性
@@ -310,9 +310,9 @@ sections:
       command: 评审人逐项检查
       expected_exit: 无冲突
       on_fail: 必须先废弃或修改KB决策记录
-    - step: 检查无循环——变更是否引入循环依赖
+    - step: 检查无循环——变更是否引入循环依赖（跨层循环 OR 同层循环）
       command: python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
-      expected_exit: 无新循环依赖
+      expected_exit: 无新循环依赖（跨层无循环 AND 同层无循环）
       on_fail: 必须重新设计消除循环
     - step: 检查有明确回滚步骤
       command: 评审人逐项检查

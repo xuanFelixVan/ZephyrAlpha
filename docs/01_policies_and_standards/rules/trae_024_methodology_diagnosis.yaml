@@ -69,9 +69,9 @@ sections:
     - symptom: 修完文件后才发现目录缺文件
       root_cause: 诊断时跳过结构盘点直接修字段
       treatment: 先结构前置检查补全再修字段
-    - symptom: 误诊循环依赖实际是事件驱动
-      root_cause: 依赖图契约表未区分hard/soft/event类型
-      treatment: 声明循环依赖前MUST代码级验证import方向
+    - symptom: 误诊循环依赖实际是事件驱动或契约依赖
+      root_cause: 依赖图契约表未区分hard/soft/event/contract类型
+      treatment: 声明循环依赖前MUST代码级验证import方向，区分runtime(直接调用)/event(事件总线)/contract(抽象接口)三种依赖类型
     - symptom: 深挖后未发现逻辑问题
       root_cause: 写法表述制造了误解
       treatment: 修正写法使AI读者零歧义

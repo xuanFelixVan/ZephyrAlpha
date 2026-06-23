@@ -535,8 +535,8 @@ sections:
       fail: 编码不合规→REJECT
     - type: pre_condition
       check: INJ-008依赖方向合法
-      pass: 依赖方向符合GOV-ARCH-001跨层规则
-      fail: 违反跨层方向→REJECT
+      pass: 依赖方向符合GOV-ARCH-001跨层规则（DIP例外：编排器依赖下层抽象契约contract/event类型允许，详见trae_013 ARCH-001）
+      fail: 违反跨层方向（编排器依赖下层具体实现runtime类型）→REJECT
     actions:
     - type: mandatory
       step: 注入检查按序执行：INJ-001→INJ-002→INJ-007→INJ-003→INJ-004→INJ-005→INJ-006→INJ-008
