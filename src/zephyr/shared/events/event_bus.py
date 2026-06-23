@@ -38,6 +38,11 @@ Import 路径映射:
 
 from zephyr.shared.event_bus import (  # noqa: F401
     DomainEvent,
+    Event,
     EventBus,
+    EventBusBackpressure,
+    EventHandler,
+    EventPriority,
     EventType,
+    bus,
 )
