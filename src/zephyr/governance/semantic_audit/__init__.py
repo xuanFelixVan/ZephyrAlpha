@@ -64,6 +64,7 @@ __all__ = [
     "logger",
     "logger",
     "models",
+    "orchestrator",
     "privacy",
     "record_agent_spec",
     "reference_extractor",
