@@ -30,7 +30,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.persistence.olap_engine import OLAPEngine, OLAPEngineError
+from zephyr.infrastructure.db.olap_engine import OLAPEngine, OLAPEngineError
 from zephyr.governance.persistence.sqlite_schema import init_db
 
 # ---------------------------------------------------------------------------
