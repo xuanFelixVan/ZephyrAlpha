@@ -1,15 +1,15 @@
-# 自动生成于 2026-06-23T16:33:09Z
+# 自动生成于 2026-06-23T16:50:44Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-06-23T16:33:09Z'
+generated_at: '2026-06-23T16:50:44Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 338
-with_manifest: 214
-missing_manifest: 124
+with_manifest: 215
+missing_manifest: 123
 categories:
-  governance: 101
+  governance: 100
   governance:_sync: 4
   governance:d10_performance: 1
   governance:d11_compliance: 12
@@ -26,7 +26,7 @@ categories:
   governance:generators: 8
   governance:meta: 38
   governance:observability: 1
-  governance:repair: 4
+  governance:repair: 5
 scripts:
 - name: _audit_gate_registry.py
   owner: governance
@@ -163,16 +163,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags:
   - Disruptive
-- name: _test_concurrent_write.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: _verify_fle_gates.py
   owner: governance
   dimensions: []
@@ -3744,6 +3734,19 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: repair/concurrent_write_test.py
+  owner: governance:repair
+  dimensions:
+  - D5
+  - D6
+  priority: P2
+  timeout_seconds: 300
+  args: []
+  warn_only: true
+  description: 红蓝对抗测试：depgraph 并发写入极限测试（10场景）
+  tags:
+  - Critical
+  - Security
 - name: repair/red_blue_test.py
   owner: governance:repair
   dimensions: []
