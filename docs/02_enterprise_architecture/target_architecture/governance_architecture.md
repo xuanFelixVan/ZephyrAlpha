@@ -75,7 +75,7 @@ ttl: permanent
 | 边界 | 落在哪个视图 | 本视图如何引用 |
 |---|---|---|
 | docs/ 文档抽屉治理规则 | `information_architecture.md` | §4 A-01/A-03 引用 |
-| src/ 14 层代码分层规则 | `application_architecture.md` | §4 A-16 引用 |
+| src/ 代码域分层规则 | `application_architecture.md` | §4 A-16 引用 |
 | scripts/ 治理代码拓扑 | `application_architecture.md §5` | §2 Factory 层引用 |
 | 数据层治理（PIT / Survivorship / Lineage）| `data_architecture.md §8` | §4 A-07 F 函数引用 |
 | 集成契约治理 | `integration_architecture.md §6` | §4 A-15 OCP 引用 |
@@ -102,11 +102,11 @@ ttl: permanent
 
 ### 1.3 本视图的三层治理**管什么？**
 
-**核心澄清**：治理三层**横切整个系统的所有层**——业务层（src/ 14 层）、文档层（docs/ 21 抽屉）、前端层（frontend/）、治理层自己（scripts/ + .cursor/rules/）。治理三层和业务层是**平级正交**的"尺子 + 纪委 + 审计处"。
+**核心澄清**：治理三层**横切整个系统的所有域**——业务层（src/ 52 域）、文档层（docs/ 21 抽屉）、前端层（frontend/）、治理层自己（scripts/ + .cursor/rules/）。治理三层和业务域是**平级正交**的"尺子 + 纪委 + 审计处"。
 
 | 被管对象 | 管的规矩 | 涉及治理层 |
 |---|---|---|
-| `src/zephyr/l00-l14/*.py` 业务代码 | ruff/mypy/bandit/PIT/fitness functions | Policy→Factory→Runtime |
+| `src/zephyr/*/*.py` 业务代码（按 52 域组织） | ruff/mypy/bandit/PIT/fitness functions | Policy→Factory→Runtime |
 | `docs/**/*.md` 文档 | frontmatter schema/INDEX/孤儿检查 | Policy→Factory→Runtime |
 | `frontend/**/*.tsx` 前端代码 | ESLint/TypeScript strict/A11y | Policy→Factory→Runtime |
 | KB:decisions namespace 架构决策 | append-only/14 天实现 Gate | Policy→Factory→Runtime |
@@ -314,7 +314,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | **Policy** | AISG 红线过滤 | `.cursorignore` + `.cursorrules`（OQ-081 硬闸门）|
 | **Policy** | AISG 策略文档 | `docs/01_policies_and_standards/ai-security-gateway-policy.md`（Stage K 待建） |
 | **Policy** | Scout 抓取白名单 | `docs/01_policies_and_standards/scout-agent-whitelist.md`（Stage K 待建） |
-| **Factory** | AI Operator 命名空间 | `src/zephyr/{l00-l14}/_ai_operator/` · `vib/_ai_operator/` · `b01/_ai_operator/` |
+| **Factory** | AI Operator 命名空间 | `src/zephyr/{domain}/_ai_operator/` · `vib/_ai_operator/` · `b01/_ai_operator/` |
 | **Factory** | AI Operator 接口协议 | `shared/contracts/ai_operator_contract.py` |
 | **Factory** | AISG 脱敏编译器 | `scripts/governance/aisg/compile_desensitize_rules.py` |
 | **Factory** | Scout scraper 编译器 | `scripts/governance/scout/compile_scraper.py` |
@@ -322,7 +322,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | **Runtime** | AI 行为审计（VIB-14）| `scripts/audit_log/vib14_ai_behavior_audit.py` |
 | **Runtime** | AISG 六大模块 | `src/zephyr/compliance/ai_security/`（D-01 P0 红线）|
 | **Runtime** | Scout Agent 运行态 | `src/zephyr/ml_train/scout/` + `kms/daily_digest/` |
-| **Runtime** | 四大引擎 K2 占位 | `l08/decision_engine/` · `l05/capital_allocation/` · `l10/failure_learning/` · `l09/market_regime/` |
+| **Runtime** | 四大引擎 K2 占位 | `D-FRONTEND/decision_engine/` · `D-PF_CORE/capital_allocation/` · `D-GOV_AUDIT/failure_learning/` · `D-SIMULATION/market_regime/` |
 
 ### 5.3 AI 员工规划总数（v1.2.0：39→46 系统，~39 AI 员工）
 
@@ -393,7 +393,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 - [ ] 所有 `module_id` 在全库唯一（无重复）
 - [ ] 所有文件在 `directory-keep-whitelist.yaml` 或有明确 owner
 - [ ] `reference-remap-table.yaml` 审计日志完整（本次重组的 10+ 条 change_log）
-- [ ] 14 层分层无越界引用（L02 不得 import L05）
+- [ ] 域分层无越界引用（D-FACTOR 不得 import D-PF_CORE，域边界由 depgraph.db 定义）
 - [ ] 6 大核心服务接口规范已全部在 `docs/03_modules/_b_track_interfaces/` 就位
 
 ### 6.5 6 大核心服务的治理归属
@@ -414,7 +414,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 
 **本视图只做**：定义三层分层边界 + 承载 D1-D4 拍板 + 关闭 OQ-026 + 预留 AI 口子 + 锁定激活时间表 + 作为 KBG-0010 + KBG-0021 同源视图 + 定义 6 大核心服务治理归属。
 
-**本视图不做**：不新建目录、不写脚本、不激活检查器、不实施 D3-B 口子、不动 39 系统内部结构、不动 src/ 14 层、不动 KBG-0001~0009。
+**本视图不做**：不新建目录、不写脚本、不激活检查器、不实施 D3-B 口子、不动 39 系统内部结构、不动 src/ 52 域、不动 KBG-0001~0009。
 
 ### 6.7 CL-023 V-15 TruthSourceCascadeValidator 启动记录
 

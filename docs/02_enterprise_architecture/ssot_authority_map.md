@@ -2,9 +2,9 @@
 module_id: GOV-037
 title: ZephyrAlpha SSoT 权威图 (Single Source of Truth Authority Map)
 doc_type: reference
-version: 2.6.0
+version: 2.7.0
 status: Active
-date: "2026-05-06"
+date: "2026-06-23"
 owner: ZephyrAlpha-Owner
 layer: cross_layer
 classification: confidential
@@ -43,11 +43,13 @@ tags:
 >
 > **`AGENTS.md` §6.9** 中的泛称 `architecture_model/` → 必须先读 **SCOPE.yaml** 再判断改哪一棵树；单纯说「layers YAML」在未限定路径时默认指 **施工树根** + **并列扫描 docs 树**（与 `check_architecture_gates` / GATE-SC 行为一致）。
 
-**权威来源（层 ID / frontmatter `layer` 合法值）**：`docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml` + `layers/l{00..13}-*.yaml` + `layers/shared.yaml`（Stage D 后 14 层体系，L00~L13 + shared + cross_layer）
+> **⚠️ §2.1 裁定（2026-06-22）**：52 域是唯一物理分类体系，14 层（L00-L13）降级为域的 `layer_id` 属性，不再作为并行分类体系。本节 `layer` 字段的 `valid_values`（L00-L13 + shared + cross_layer）保留作为**域的属性枚举**，不是分类体系。物理分类由 `depgraph.db` 的 `domains` 表（52 域）定义。AI 找模块只有一条路：按域找。
+
+**权威来源（层 ID / frontmatter `layer` 合法值）**：`docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml` + `layers/l{00..13}-*.yaml` + `layers/shared.yaml`（Stage D 后 14 层体系，L00~L13 + shared + cross_layer，作为域属性枚举保留）
 
 > **大小写约定**：本节 `valid_values` 使用大写 `L00`~`L13`（架构标识符惯例）。`_index.yaml` 分区 `id` 使用小写 `l00`~`l13`（文件系统标识符惯例）。两者指代同一事物，大小写差异是有意设计：大写用于架构层 ID（受保护字段），小写用于 YAML 分区 id（文件系统路径组件）。（注：`_schema.yaml` v3.0.0 已移除 `layer` 字段——模块级 layer 冗余，层归属由 partition id 承载。此大小写约定仍适用于 frontmatter `layer` 字段。）
 
-> 本节 Layer 列表已升级为 14 层（L00-L13 + shared + cross_layer）视图，L12 (system-telemetry) / L13 (experiment-pipeline) / shared 已增补。原 Stage J 升级任务已完成。
+> 本节 Layer 列表为 14 层（L00-L13 + shared + cross_layer）属性枚举，L12 (system-telemetry) / L13 (experiment-pipeline) / shared 已增补。原 Stage J 升级任务已完成。**注意**：14 层是域的 `layer_id` 属性，不是物理分类体系。物理分类由 52 域定义。
 
 | 层 ID     | 层名（英文）              | 层名（中文）   | 权威状态 |
 |-----------|--------------------------|--------------|---------|
@@ -242,7 +244,7 @@ violation_severity: P2
 
 | ID | 矛盾描述 | 权威来源 | 修复方案 | 状态 | 执行阶段 | 负责人 |
 |:---|:---|:---|:---|:---:|:---|:---:|
-| SSoT-001 | 层编号双轨制（旧体系 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统 | beta 统一迁移，旧体系编号标记 deprecated alias | ⏳ | beta | Owner |
+| SSoT-001 | 层编号双轨制（旧体系 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统（§2.1 裁定后降级为域属性） | beta 统一迁移，旧体系编号标记 deprecated alias；14 层降级为域的 `layer_id` 属性，52 域为唯一物理分类 | 🔧 | §2.1 裁定 | Owner |
 | SSoT-002 | 模块数量不一致（MODULE_INVENTORY vs 候选池清单） | module_id_registry.yaml | experimental 填充时统一注册 | ⏳ | experimental | Owner |
 | SSoT-004 | pre-commit hooks 冗余（12→5） | 简化后 5 个核心 hooks | P0C5 执行简化 | 🔧 | scaffold | AI |
 | SSoT-006 | 依赖关系未声明 | _schema.yaml depends_on | experimental 填充时声明 | 🔧 | experimental | AI |
@@ -270,3 +272,4 @@ violation_severity: P2
 | 2.4.0 | 2026-05-02 | **审计修复批次 2**：(1) §二 新增 scope 声明——文档生命周期状态 ≠ 代码模块实现状态（_schema.yaml），消除字段名相同但枚举不同的歧义隐患；(2) §四 KB 决策记录 计数从模糊的"共 41 个编号"改为显式分解"41 编号 = 33 entry + 1 skipped + 7 reserved"，消除两个数字导致的困惑；(3) §八 新增 scope 声明——矛盾追踪是临时附加功能，非本文件 canonical 职责。 |
 | 2.5.0 | 2026-05-03 | **审计修复批次 3**：(1) §一 新增 `valid_values` 派生规则声明——明确此列表从 `_index.yaml` partitions 派生，新增层时必须先更新 `_index.yaml` 再据此更新本列表，消除独立维护导致的漂移风险；(2) 标记 `cross_layer` 为"架构级概念（非 partitions 直接条目）"，解释其为何不直接从 partitions 派生。 |
 | 2.6.0 | 2026-05-06 | **AUDIT-04 全量修复**：§一 增补双树（EA 树 vs 施工树）权威表 + 与 `SCOPE.yaml` / `AGENTS.md` §6.9 的读法约定，消除「单一路径」误读。 |
+| 2.7.0 | 2026-06-23 | **§2.1 裁定对齐**：§一 增补 §2.1 裁定声明——52 域为唯一物理分类体系，14 层（L00-L13）降级为域的 `layer_id` 属性；`valid_values` 保留作为域属性枚举；§八 SSoT-001 状态更新为 🔧（修复中），反映 14 层降级。 |
