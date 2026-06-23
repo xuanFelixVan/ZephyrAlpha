@@ -222,11 +222,11 @@ class StagingArea:
         if baseline_content is not None:
             original_text = baseline_content
             mtime = _file_mtime(target)
-            fhash = hashlib.sha256(original_text.encode("utf-8")).hexdigest()
+            fhash = _file_hash(target) if target.exists() else hashlib.sha256(original_text.encode("utf-8")).hexdigest()
         elif target.exists():
             original_text = _read_file_robust(target)
             mtime = _file_mtime(target)
-            fhash = hashlib.sha256(original_text.encode("utf-8")).hexdigest()
+            fhash = _file_hash(target)
         else:
             original_text = ""
             mtime = "0"

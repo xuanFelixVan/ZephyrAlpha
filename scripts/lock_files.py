@@ -93,7 +93,9 @@ def _pid_alive(pid: int) -> bool:
 def _is_stale(lock_dir: Path) -> bool:
     owner = _read_owner(lock_dir)
     if owner is None:
-        return True
+        # owner.json 不存在 — 锁可能正在创建中（makedirs 成功但 _write_owner 还没执行）
+        # 不判定为 stale，避免误清理正在创建的锁（race condition 修复）
+        return False
     ts = owner.get("timestamp", 0.0)
     if time.time() - ts > DEFAULT_TTL_S:
         return True
