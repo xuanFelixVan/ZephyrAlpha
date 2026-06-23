@@ -294,6 +294,115 @@ class TestCancelPendingRollback:
         assert "BREAK_GLASS" in result["reason"]
 
 
+class TestDiscardConcurrencyGuard:
+    """discard_changes() 并发安全守卫 — .ailocks 锁冲突检测（方案C）"""
+
+    def test_discard_blocked_by_other_session_lock(self):
+        """文件被其他 session 锁定 → BLOCKED_BY_OWNER"""
+        from zephyr.infrastructure.rollback.concurrency_guard import ConflictResult
+
+        exec = RollbackExecutor()
+        conflict = ConflictResult(
+            has_conflict=True,
+            blocked_files=["file.py"],
+            locked_by={"file.py": "session-OTHER"},
+            reason="locked",
+        )
+        with (
+            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch("zephyr.governance.rollback_executor.check_rollback_conflict", return_value=conflict),
+        ):
+            result = exec.discard_changes(["file.py"], force=False)
+            assert not result.success
+            assert result.decision == DiscardDecision.BLOCKED_BY_OWNER
+            assert "file.py" in result.files_blocked
+
+    def test_discard_no_lock_conflict_proceeds(self):
+        """无锁冲突 → 正常进入 discard 流程"""
+        from zephyr.infrastructure.rollback.concurrency_guard import ConflictResult
+
+        exec = RollbackExecutor()
+        conflict = ConflictResult(has_conflict=False, blocked_files=[])
+        with (
+            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch("zephyr.governance.rollback_executor.check_rollback_conflict", return_value=conflict),
+            patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
+            patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
+            patch.object(exec, "_run_git", return_value=""),
+            patch.object(exec, "_write_audit_log"),
+        ):
+            result = exec.discard_changes(["file.py"], force=False)
+            assert result.success
+            assert result.decision == DiscardDecision.DISCARD
+
+
+class TestExecuteConcurrencyGuard:
+    """_execute() 并发安全守卫 — 前置冲突检测 + stash 安全化（方案C）"""
+
+    def test_execute_blocked_by_concurrency_conflict(self):
+        """回滚文件被其他 session 锁定 → 返回失败"""
+        from zephyr.infrastructure.rollback.concurrency_guard import ConflictResult
+
+        exec = RollbackExecutor()
+        conflict = ConflictResult(
+            has_conflict=True,
+            blocked_files=["src/a.py"],
+            locked_by={"src/a.py": "session-OTHER"},
+            reason="locked",
+        )
+        with (
+            patch.object(exec, "_resolve_conflict_files", return_value=["src/a.py"]),
+            patch("zephyr.governance.rollback_executor.check_rollback_conflict", return_value=conflict),
+            patch.object(exec, "_write_in_flight"),
+            patch.object(exec, "_write_op_audit"),
+        ):
+            result = exec._execute(
+                operation=RollbackOp.FULL_REVERT,
+                commit_sha="abc123",
+                audit_session="test",
+            )
+            assert not result.success
+            assert "Concurrency conflict" in result.errors[0]
+
+    def test_execute_stash_blocked_other_session_files(self):
+        """stash 前发现其他 session 未提交文件 → 阻断"""
+        from zephyr.governance.rollback_executor import PreflightResult
+        from zephyr.infrastructure.rollback.concurrency_guard import StashPlan
+
+        exec = RollbackExecutor()
+        preflight = PreflightResult(
+            passed=False,
+            working_tree_clean=False,
+            not_detached_head=True,
+            remote_not_ahead=True,
+            not_in_rebase=True,
+            not_in_merge=True,
+            errors=["Working tree is dirty"],
+        )
+        stash_plan = StashPlan(
+            should_stash=True,
+            own_files=["own.py"],
+            other_files=["other.py"],
+            other_owners={"other.py": "session-OTHER"},
+        )
+        with (
+            patch.object(exec, "_resolve_conflict_files", return_value=[]),
+            patch.object(exec, "preflight_check", return_value=preflight),
+            patch.object(exec, "get_uncommitted_files", return_value=["own.py"]),
+            patch.object(exec, "get_staged_uncommitted_files", return_value=["other.py"]),
+            patch("zephyr.governance.rollback_executor.classify_uncommitted_files", return_value=stash_plan),
+            patch.object(exec, "_write_in_flight"),
+            patch.object(exec, "_write_op_audit"),
+        ):
+            result = exec._execute(
+                operation=RollbackOp.FULL_REVERT,
+                commit_sha="abc123",
+                audit_session="test",
+            )
+            assert not result.success
+            assert "Cannot stash" in result.errors[0]
+
+
 class TestInFlightLifecycle:
     """_write_in_flight / _read_in_flight / _delete_in_flight — 飞行记录"""
 
