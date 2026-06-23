@@ -1,28 +1,33 @@
+%% 重写时间: 2026-06-23 (DM-200913 Phase4-B)
+%% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
+%% 数据源: depgraph.db
+%% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
+%% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
+
 %%{init: {'theme': 'default'}}%%
 %% C4-L2 Container Diagram — ZephyrAlpha 2.0
-%% 升级记录：2026-05-04 — 显式标注 P0 跨层数据契约 CTR-001~CTR-006 作为架构承重墙
-%% 契约真源：architecture_model/contracts/cross_layer_contracts.yaml
+%% v2.0.0: 14层容器→52域容器，保留P0跨层契约标注
 
 C4Container
     title Container Diagram — ZephyrAlpha 2.0
-    title (with Cross-Layer Contracts / 含跨层数据契约标注)
+    title (with Cross-Domain Contracts / 含跨域数据契约标注)
 
     Person(operator, "Independent Operator", "独立操作者")
 
     System_Boundary(zephyr, "ZephyrAlpha 2.0") {
-        Container(data_pipeline, "Data Pipeline", "Python / L00", "Market data ingestion,<br/>standardization, quality gating<br/>行情数据接入、标准化、质量门禁")
+        Container(data_pipeline, "Data Pipeline", "Python / D-MKT_DATA", "Market data ingestion,<br/>standardization, quality gating<br/>行情数据接入、标准化、质量门禁")
 
-        Container(factor_engine, "Factor Engine", "Python / L02+L03", "Alpha factor calculation,<br/>signal generation<br/>Alpha 因子计算、信号生成")
+        Container(factor_engine, "Factor Engine", "Python / D-FACTOR+D-SIGNAL", "Alpha factor calculation,<br/>signal generation<br/>Alpha 因子计算、信号生成")
 
-        Container(risk_engine, "Risk Engine", "Python / L04", "Risk measurement,<br/>limits enforcement<br/>风险度量、限额执行")
+        Container(risk_engine, "Risk Engine", "Python / D-RISK", "Risk measurement,<br/>limits enforcement<br/>风险度量、限额执行")
 
-        Container(portfolio_engine, "Portfolio Engine", "Python / L05", "Portfolio optimization,<br/>backtesting<br/>组合优化、回测")
+        Container(portfolio_engine, "Portfolio Engine", "Python / D-PF_CORE", "Portfolio optimization,<br/>backtesting<br/>组合优化、回测")
 
-        Container(execution_engine, "Execution Engine", "Python / L06", "OMS, SOR,<br/>order routing<br/>OMS、SOR、委托路由")
+        Container(execution_engine, "Execution Engine", "Python / D-EX_CORE", "OMS, SOR,<br/>order routing<br/>OMS、SOR、委托路由")
 
-        Container(analytics, "Post-Trade Analytics", "Python / L07", "Performance attribution,<br/>reporting<br/>绩效归因、报告")
+        Container(analytics, "Post-Trade Analytics", "Python / D-TRADING", "Performance attribution,<br/>reporting<br/>绩效归因、报告")
 
-        Container(ai_ops, "AI Agent Ops", "Python / L08 + 08_ai", "Agent rules, memory,<br/>context management<br/>Agent 规则、记忆、上下文")
+        Container(ai_ops, "AI Agent Ops", "Python / D-FRONTEND + D-AUTONOMY_CORE", "Agent rules, memory,<br/>context management<br/>Agent 规则、记忆、上下文")
 
         ContainerDb(storage, "Data Storage", "PostgreSQL + TimescaleDB / DuckDB / Parquet", "Market data, factor signals,<br/>positions, trades<br/>行情、因子、持仓、交易数据")
 
@@ -37,25 +42,25 @@ C4Container
     Rel(market_data, data_pipeline, "Provides data", "行情数据")
     Rel(data_pipeline, storage, "Stores processed data", "写入")
 
-    %% P0 Cross-Layer Contracts / 跨层数据契约承重墙
-    %% 契约真源：cross_layer_contracts.yaml
-    %% CTR-001: NormalizedMarketData (frozen) — L00 → L02
+    %% P0 Cross-Domain Contracts / 跨域数据契约承重墙
+    %% 契约真源: cross_layer_contracts.yaml
+    %% CTR-001: NormalizedMarketData (frozen) — D-MKT_DATA → D-FACTOR
     Rel(data_pipeline, factor_engine, "CTR-001<br/>NormalizedMarketData<br/>[frozen]", "标准化行情数据")
 
-    %% CTR-002: FactorSignal (frozen) — L02 → L03/L04/L05
+    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGNAL/D-RISK/D-PF_CORE
     Rel(factor_engine, risk_engine, "CTR-002<br/>FactorSignal<br/>[frozen]", "因子信号")
     Rel(factor_engine, portfolio_engine, "CTR-002<br/>FactorSignal<br/>[frozen]", "因子信号")
 
-    %% CTR-003: RiskLimits (frozen) — L04 → L05
+    %% CTR-003: RiskLimits (frozen) — D-RISK → D-PF_CORE
     Rel(risk_engine, portfolio_engine, "CTR-003<br/>RiskLimits<br/>[frozen]", "风险限额")
 
-    %% CTR-004: Order (mutable) — L05 → L06
+    %% CTR-004: Order (mutable) — D-PF_CORE → D-EX_CORE
     Rel(portfolio_engine, execution_engine, "CTR-004<br/>Order<br/>[mutable]", "委托指令")
 
-    %% CTR-005: Fill (frozen) — L06 → L07
+    %% CTR-005: Fill (frozen) — D-EX_CORE → D-TRADING
     Rel(execution_engine, analytics, "CTR-005<br/>Fill<br/>[frozen]", "成交回报")
 
-    %% CTR-006: PositionSnapshot (frozen) — L06/L07 → L04/L11
+    %% CTR-006: PositionSnapshot (frozen) — D-EX_CORE/D-TRADING → D-RISK/D-ML_TRAIN
     Rel(execution_engine, risk_engine, "CTR-006<br/>PositionSnapshot<br/>[frozen]", "持仓快照")
 
     Rel(execution_engine, broker, "Routes orders", "发送委托")

@@ -1,7 +1,12 @@
+%% 重写时间: 2026-06-23 (DM-200913 Phase4-B)
+%% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
+%% 数据源: depgraph.db
+%% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
+%% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
+
 %% Source: integration_architecture.md §3
-%% 升级记录：2026-05-04 — 显式标注 P0 跨层数据契约 CTR-001~CTR-006 作为架构承重墙
-%% 契约真源：architecture_model/contracts/cross_layer_contracts.yaml
-%% 图例：🔒 = frozen (不可变契约)  |  🔓 = mutable (可变契约，状态机)
+%% v2.0.0: 14层节点→52域节点，保留P0跨层契约标注
+
 graph LR
     subgraph External["外部系统 External Systems"]
         MD["行情数据源<br/>Market Data Provider<br/>(EI-002)"]
@@ -12,21 +17,24 @@ graph LR
     end
 
     subgraph ACL_Layer["反腐层 Anti-Corruption Layer"]
-        CONN["l00_data_source/connectors/<br/>(ACL for market data)"]
-        BROKER_A["l06_trade_execution/adapters/<br/>(ACL for broker)"]
-        LLM_A["l08_human_ai_interface/<br/>(ACL for LLM)"]
+        CONN["D-MKT_DATA connectors/<br/>(ACL for market data)"]
+        BROKER_A["D-EX_CORE adapters/<br/>(ACL for broker)"]
+        LLM_A["D-FRONTEND/<br/>(ACL for LLM)"]
     end
 
-    subgraph Core["ZephyrAlpha Core Layers"]
-        L00["L00 Data Source"]
-        L02["L02 Alpha Factor"]
-        L04["L04 Risk Management"]
-        L05["L05 Portfolio Construction"]
-        L06["L06 Trade Execution"]
-        L07["L07 Post-Trade Analytics"]
-        L08["L08 Human-AI Interface"]
-        L11["L11 ML Platform"]
-        L12["L12 System Telemetry"]
+    subgraph Core["ZephyrAlpha Core Domains (depgraph.db派生)"]
+        D_MKT_DATA["D-MKT_DATA<br/>行情数据"]
+        D_ALT_DATA["D-ALT_DATA<br/>另类数据"]
+        D_FACTOR["D-FACTOR<br/>因子"]
+        D_SIGNAL["D-SIGNAL<br/>信号"]
+        D_RISK["D-RISK<br/>风控"]
+        D_PF_CORE["D-PF_CORE<br/>组合核心"]
+        D_EX_CORE["D-EX_CORE<br/>执行核心"]
+        D_TRADING["D-TRADING<br/>交易运营"]
+        D_REPORTING["D-REPORTING<br/>报告"]
+        D_FRONTEND["D-FRONTEND<br/>前端"]
+        D_ML_TRAIN["D-ML_TRAIN<br/>训练"]
+        D_OPS["D-OPS<br/>反馈循环"]
     end
 
     subgraph Notify["通知输出 Output"]
@@ -35,35 +43,36 @@ graph LR
 
     MD -- "REST/WebSocket<br/>行情数据" --> CONN
     ALT -- "REST/File<br/>另类数据" --> CONN
-    CONN --> L00
+    CONN --> D_MKT_DATA
     BK -- "REST/FIX<br/>订单/成交" --> BROKER_A
-    BROKER_A --> L06
+    BROKER_A --> D_EX_CORE
     LLM -- "REST<br/>OpenAI-compatible" --> LLM_A
-    LLM_A --> L08
-    L08 -- "决策/报告" --> FS2
+    LLM_A --> D_FRONTEND
+    D_FRONTEND -- "决策/报告" --> FS2
 
     %% P0 Cross-Layer Contracts / 跨层数据契约承重墙
-    %% 契约真源：cross_layer_contracts.yaml
-    %% CTR-001: NormalizedMarketData (frozen) — L00 → L02
-    L00 -- "🔒 CTR-001<br/>NormalizedMarketData<br/>L00 → L02" --> L02
+    %% 契约真源: cross_layer_contracts.yaml
+    %% CTR-001: NormalizedMarketData (frozen) — D-MKT_DATA → D-FACTOR
+    D_MKT_DATA -- "🔒 CTR-001<br/>NormalizedMarketData<br/>D-MKT_DATA → D-FACTOR" --> D_FACTOR
 
-    %% CTR-002: FactorSignal (frozen) — L02 → L03/L04/L05
-    L02 -- "🔒 CTR-002<br/>FactorSignal<br/>L02 → L04/L05" --> L04
-    L02 -- "🔒 CTR-002<br/>FactorSignal<br/>L02 → L05" --> L05
+    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGNAL/D-RISK/D-PF_CORE
+    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-SIGNAL" --> D_SIGNAL
+    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-RISK" --> D_RISK
+    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-PF_CORE" --> D_PF_CORE
 
-    %% CTR-003: RiskLimits (frozen) — L04 → L05
-    L04 -- "🔒 CTR-003<br/>RiskLimits<br/>L04 → L05" --> L05
+    %% CTR-003: RiskLimits (frozen) — D-RISK → D-PF_CORE
+    D_RISK -- "🔒 CTR-003<br/>RiskLimits<br/>D-RISK → D-PF_CORE" --> D_PF_CORE
 
-    %% CTR-004: Order (mutable) — L05 → L06
-    L05 -- "🔓 CTR-004<br/>Order<br/>L05 → L06" --> L06
+    %% CTR-004: Order (mutable) — D-PF_CORE → D-EX_CORE
+    D_PF_CORE -- "🔓 CTR-004<br/>Order<br/>D-PF_CORE → D-EX_CORE" --> D_EX_CORE
 
-    %% CTR-005: Fill (frozen) — L06 → L07
-    L06 -- "🔒 CTR-005<br/>Fill<br/>L06 → L07" --> L07
+    %% CTR-005: Fill (frozen) — D-EX_CORE → D-TRADING
+    D_EX_CORE -- "🔒 CTR-005<br/>Fill<br/>D-EX_CORE → D-TRADING" --> D_TRADING
 
-    %% CTR-006: PositionSnapshot (frozen) — L06/L07 → L04/L11
-    L06 -- "🔒 CTR-006<br/>PositionSnapshot<br/>L06 → L04" --> L04
-    L07 -- "🔒 CTR-006<br/>PositionSnapshot<br/>L07 → L11" --> L11
+    %% CTR-006: PositionSnapshot (frozen) — D-EX_CORE/D-TRADING → D-RISK/D-ML_TRAIN
+    D_EX_CORE -- "🔒 CTR-006<br/>PositionSnapshot<br/>D-EX_CORE → D-RISK" --> D_RISK
+    D_TRADING -- "🔒 CTR-006<br/>PositionSnapshot<br/>D-TRADING → D-ML_TRAIN" --> D_ML_TRAIN
 
-    L07 -- "PnL/Risk Metrics" --> L12
-    L11 -- "ModelPrediction" --> L02
-    L11 -- "ModelPrediction" --> L05
+    D_TRADING -- "PnL/Risk Metrics" --> D_OPS
+    D_ML_TRAIN -- "ModelPrediction" --> D_FACTOR
+    D_ML_TRAIN -- "ModelPrediction" --> D_PF_CORE
