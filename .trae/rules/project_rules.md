@@ -1330,7 +1330,7 @@ STEP 5   — 按需定位具体注册表 → 开工
 
 ## Session 开关门
 
-**进门**: 读 [registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) → 读 `docs/03_modules/_sys_master/blueprint.md` §0 → 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 记录 session 起点 commit（R1 防御：`python scripts/record_session_start_commit.py <session_id>`）
+**进门**: 读 [registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) → 读 `docs/03_modules/_sys_master/blueprint.md` §0 → 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 记录 session 起点 commit（R1 防御：`python scripts/record_session_start_commit.py <session_id>`）→ **启动大脑系统**（见 onboarding_detail.md §五 STEP 0.5）
 
 **关门**（缺一不可）:
 ```

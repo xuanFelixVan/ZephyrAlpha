@@ -29,9 +29,9 @@ import sys
 import time
 from pathlib import Path
 
-from zephyr.infrastructure.config.runtime_config import RuntimeConfig
-from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
-from zephyr.infrastructure.runtime.auto_task_generator import AutoTaskGenerator
+from zephyr.integration.shared_08.contracts.runtime_types import RuntimeConfig
+from zephyr.trading.auto_runtime_core import AutoRuntimeCore
+from zephyr.trading.auto_task_generator import AutoTaskGenerator
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 

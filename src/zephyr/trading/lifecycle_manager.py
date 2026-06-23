@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-ORC_lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-ORC_lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=immutable_core
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
@@ -7,7 +7,7 @@ from __future__ import annotations
 
 # [INVARIANTS] none
 
-# [MODIFY-GUARD] none
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md;并发修改需通过任务卡通道+Owner批准;已知接口漂移回归bug(4次):L134 retention.enforce(dry_run=True)非retention.dry_run;L139 tiered.migrate(dry_run=False)非tiered.auto_migrate;L247删除start_scheduler调用(SelfMonitor无此方法);禁止AI自主修改
 
 # [CONSUMERS]
 
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 # [SAFETY] L
 
-# [AI_AUTONOMY] ai_modifiable
+# [AI_AUTONOMY] immutable_core
 
 # [ERROR_CONTRACT]
 
@@ -131,12 +131,12 @@ class LifecycleManager:
 
         retention = RetentionEnforcer()
         circadian_scheduler.register_task(
-            hour=2, name="audit_retention_dry_run", layer="L1", callback=retention.dry_run
+            hour=2, name="audit_retention_dry_run", layer="L1", callback=lambda: retention.enforce(dry_run=True)
         )
 
         tiered = TieredStorageManager()
         circadian_scheduler.register_task(
-            hour=3, name="audit_tiered_storage_migrate", layer="L1", callback=tiered.auto_migrate
+            hour=3, name="audit_tiered_storage_migrate", layer="L1", callback=lambda: tiered.migrate(dry_run=False)
         )
 
         def _finding_lifecycle_cleanup() -> None:
@@ -244,12 +244,15 @@ class LifecycleManager:
         from zephyr.governance.audit_trail.self_monitor import SelfMonitor
 
         self._audit_self_monitor = SelfMonitor()
-        self._audit_self_monitor.start_scheduler(daemon=True)
 
     def _start_governance_watchdog(self) -> None:
-        import importlib as _importlib
+        import sys as _sys
+        from pathlib import Path as _Path
 
-        _GovernanceWatchdog = _importlib.import_module("scripts.governance.governance_watchdog").GovernanceWatchdog
+        _governance_dir = str(_Path(__file__).resolve().parent.parent.parent.parent / "scripts" / "governance")
+        if _governance_dir not in _sys.path:
+            _sys.path.insert(0, _governance_dir)
+        from governance_watchdog import GovernanceWatchdog as _GovernanceWatchdog
         self._governance_watchdog = _GovernanceWatchdog()
         self._governance_watchdog.run(daemon=True)
 
