@@ -1,58 +1,20 @@
-# [BLUEPRINT] SRC-172 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.experiment.model_serving_response
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES]
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.experiment.__init__
+# [CONSUMERS] legacy imports via integration.shared_08.contracts
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
-# [STABILITY] stable
+# [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.experiment.model_serving_response
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.experiment.model_serving_response
+# [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
+# [ERROR_CONTRACT] ImportError if source module missing
+# [TESTS] python -c "import zephyr.integration.shared_08.contracts.experiment.model_serving_response"
 # [A_module] module_id=MOD-INT_model_serving_response | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [MODIFY-GUARD] none
 
-# ==== BEGIN CODGEN:CTR-P1-005 ====
+"""Re-export shim — 真源已合并至 zephyr.shared.contracts.experiment.model_serving_response。"""
 
-from dataclasses import dataclass
-
-# ---
-# layer: cross_cutting
-# category: data_contract
-# status: auto_generated
-# created: "2026-05-04"
-# generated_by: codegen from cross_layer_contracts.yaml
-# ---
-"""
-ZephyrAlpha — shared/contracts/model_serving_response.py
-
-CTR-P1-005: ModelServingResponse / 模型推理响应
-
-跨层模型推理响应契约。L11 ML Platform 返回推理结果给 L03/L05。
-
-SSoT: cross_layer_contracts.yaml → CTR-P1-005
-Version: 1.0
-Status: AUTO-GENERATED — DO NOT EDIT BY HAND
-       Any manual changes will be overwritten by codegen.
-
-AI Prompt
----------
-
-"""
-
-
-@dataclass(frozen=True)
-class ModelServingResponse:
-    request_id: str
-    model_id: str
-    prediction: float
-    prediction_type: str
-    confidence: float
-    inference_ms: int
-    idempotency_key: str
-    schema_version: str = "1.0"
-
-
-# ==== END CODGEN:CTR-P1-005 ====
+from zephyr.shared.contracts.experiment.model_serving_response import *  # noqa: F401,F403

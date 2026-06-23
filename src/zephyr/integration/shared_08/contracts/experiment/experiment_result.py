@@ -1,72 +1,20 @@
-# [BLUEPRINT] SRC-171 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.experiment.experiment_result
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.experiment.__init__
+# [CONSUMERS] legacy imports via integration.shared_08.contracts
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
-# [STABILITY] stable
+# [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.experiment.experiment_result
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.experiment.experiment_result
+# [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
+# [ERROR_CONTRACT] ImportError if source module missing
+# [TESTS] python -c "import zephyr.integration.shared_08.contracts.experiment.experiment_result"
 # [A_module] module_id=MOD-INT_experiment_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# ==== BEGIN CODGEN:CTR-P1-014 ====
-from dataclasses import dataclass, field
-from datetime import datetime
+# [MODIFY-GUARD] none
 
-from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+"""Re-export shim — 真源已合并至 zephyr.shared.contracts.experiment.experiment_result。"""
 
-# ---
-# layer: cross_cutting
-# category: data_contract
-# status: auto_generated
-# created: "2026-05-05"
-# generated_by: codegen from cross_layer_contracts.yaml
-# ---
-"""
-ZephyrAlpha — shared/contracts/experiment_result.py
-
-CTR-P1-014: ExperimentResult / 实验结论
-
-L13 → L09/L11 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。
-
-SSoT: cross_layer_contracts.yaml -> CTR-P1-014
-Version: 1.0
-Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
-       Any manual changes will be overwritten by codegen.
-
-AI Prompt
----------
-    当 L13 的 Scout Agent 完成一个实验周期后，MUST 产出 ExperimentResult。 每个 ExperimentResult 代表一次完整的对照实验结论——包含实验设计、执行过程、结果指标和可操作建议。 confidence 用于衡量结论的统计可靠性：>0.9 = 高度可信，0.7-0.9 = 中等，<0.7 = 不发布。 L09 研究创新层读取历史实验结论指导研究方向。L11 ML Platform 读取实验结论调整模型策略。
-"""
-
-
-@dataclass(frozen=True)
-class ExperimentResult:
-    conclusion: str
-    confidence: float
-    end_timestamp: datetime
-    experiment_id: str
-    experiment_name: str
-    experiment_type: str
-    hypothesis: str
-    idempotency_key: str
-    p_value: float
-    sample_size: int
-    start_timestamp: datetime
-    variant_a_description: str
-    variant_b_description: str
-    variant_b_improvement: float
-    actionable_suggestions: list[str] = field(default_factory=list)
-    affected_factor_ids: list[str] = field(default_factory=list)
-    affected_strategy_ids: list[str] = field(default_factory=list)
-    archived_to_kms: bool = False
-    metrics: dict[str, float] = field(default_factory=dict)
-    schema_version: str = "1.0"
-    trace_context: TraceContext | None = None
-
-
-# ==== END CODGEN:CTR-P1-014 ====
+from zephyr.shared.contracts.experiment.experiment_result import *  # noqa: F401,F403
