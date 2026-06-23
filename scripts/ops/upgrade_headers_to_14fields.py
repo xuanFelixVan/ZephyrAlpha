@@ -257,13 +257,22 @@ def infer_startup(filepath: Path, content: str) -> str:
     return "imported"
 
 
+def _derive_module_path(filepath: Path) -> str:
+    """Derive dotted module path from file path."""
+    rel = str(filepath.relative_to(PROJECT_ROOT)).replace("\\", "/")
+    if rel.endswith(".py"):
+        rel = rel[:-3]
+    return rel.replace("/", ".")
+
+
 def build_header_block(
     fields: dict[str, str], node: NodeInfo | None, deps: list[str], filepath: Path, content: str
-) -> str:
-    """Build the canonical 14-field header block, preserving existing values."""
-    rel = str(filepath.relative_to(PROJECT_ROOT)).replace("\\", "/")
+) -> dict[str, str]:
+    """Build canonical 14-field values, filling defaults from depgraph or conventions.
 
-    # Derive values for new fields
+    Returns an ordered dict of FIELD -> value (value may be empty string).
+    """
+    # --- New fields (v1.1.0) ---
     domain_val = fields.get("DOMAIN", "")
     if not domain_val and node and node.domain_id:
         domain_val = node.domain_id
@@ -283,19 +292,51 @@ def build_header_block(
         else:
             maturity_val = "production"
 
-    # Build canonical 14-field block
+    # --- Existing fields: fill defaults from depgraph or conventions if empty ---
+    module_val = fields.get("MODULE", "")
+    if not module_val:
+        module_val = _derive_module_path(filepath)
+
+    stability_val = fields.get("STABILITY", "")
+    if not stability_val:
+        stability_val = (node.change_policy if node and node.change_policy else "evolving")
+
+    safety_val = fields.get("SAFETY", "")
+    if not safety_val:
+        safety_val = (node.impact_level if node and node.impact_level else "L")
+
+    autonomy_val = fields.get("AI_AUTONOMY", "")
+    if not autonomy_val:
+        autonomy_val = (
+            node.modification_permission
+            if node and node.modification_permission
+            else "ai_modifiable"
+        )
+
+    # Assemble ordered values
+    return {
+        "BLUEPRINT": fields.get("BLUEPRINT", ""),
+        "MODULE": module_val,
+        "DOMAIN": domain_val,
+        "DEPENDENCIES": deps_val,
+        "CONSUMERS": fields.get("CONSUMERS", ""),
+        "STARTUP": startup_val,
+        "MATURITY": maturity_val,
+        "INVARIANTS": fields.get("INVARIANTS", ""),
+        "MODIFY-GUARD": fields.get("MODIFY-GUARD", ""),
+        "STABILITY": stability_val,
+        "SAFETY": safety_val,
+        "AI_AUTONOMY": autonomy_val,
+        "ERROR_CONTRACT": fields.get("ERROR_CONTRACT", ""),
+        "TESTS": fields.get("TESTS", ""),
+    }
+
+
+def render_header(values: dict[str, str]) -> str:
+    """Render ordered field values into comment-line header block."""
     lines = []
     for fname in CANONICAL_FIELDS:
-        if fname == "DOMAIN":
-            val = domain_val
-        elif fname == "DEPENDENCIES":
-            val = deps_val
-        elif fname == "STARTUP":
-            val = startup_val
-        elif fname == "MATURITY":
-            val = maturity_val
-        else:
-            val = fields.get(fname, "")
+        val = values.get(fname, "")
         if val:
             lines.append(f"# [{fname}] {val}")
         else:
@@ -324,11 +365,6 @@ def upgrade_file(filepath: Path, loader: DepgraphLoader, dry_run: bool) -> Upgra
     if not header_lines:
         return UpgradeResult(path=rel, status="SKIPPED_NO_HEADER")
 
-    # Already has all 14 fields — skip (idempotent)
-    missing_new = NEW_FIELDS - set(fields.keys())
-    if not missing_new:
-        return UpgradeResult(path=rel, status="SKIPPED_14FIELD", detail="already 14 fields")
-
     # Get depgraph node info
     node = loader.get_node(rel)
     deps = loader.get_dependencies(node.node_id) if node else []
@@ -338,8 +374,9 @@ def upgrade_file(filepath: Path, loader: DepgraphLoader, dry_run: bool) -> Upgra
     if start < 0:
         return UpgradeResult(path=rel, status="ERROR", detail="cannot locate header region")
 
-    # Build new header
-    new_header = build_header_block(fields, node, deps, filepath, content)
+    # Build new header (always rebuild to canonical 14-field with defaults filled)
+    values = build_header_block(fields, node, deps, filepath, content)
+    new_header = render_header(values)
 
     # Preserve extra (non-standard) fields after canonical block
     if extra_lines:
@@ -351,8 +388,15 @@ def upgrade_file(filepath: Path, loader: DepgraphLoader, dry_run: bool) -> Upgra
     after = "".join(lines[end + 1 :])
     new_content = before + new_header + after
 
+    # Idempotent: skip if no change needed
     if new_content == content:
-        return UpgradeResult(path=rel, status="SKIPPED_14FIELD", detail="no change needed")
+        return UpgradeResult(path=rel, status="SKIPPED_14FIELD", detail="already canonical")
+
+    # Determine which new fields were added (for reporting)
+    missing_new = NEW_FIELDS - set(fields.keys())
+    if not missing_new:
+        # All 4 new fields existed but some existing fields needed defaults — still report
+        missing_new = sorted(NEW_FIELDS)
 
     if dry_run:
         return UpgradeResult(
