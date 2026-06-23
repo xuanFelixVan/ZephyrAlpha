@@ -339,21 +339,37 @@ class AutoRuntimeCore:
                 )
                 return
 
+        # 优先使用 DeepSeek API（更强、更快），降级到 OllamaChat
         try:
-            from zephyr.governance.vector_memory.ollama_chat import OllamaChat
+            from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
 
-            self._ollama_chat = OllamaChat()
-            if self._ollama_chat.available:
-                self._audit_logger.log_registration("ollama-chat", "VERIFY_OK")
-                report.components_started.append("08_ollama_chat_verify")
+            deepseek_chat = DeepSeekChat(model="deepseek-v4-flash")
+            if deepseek_chat.available:
+                self._ollama_chat = deepseek_chat  # 接口兼容，复用变量名
+                self._audit_logger.log_registration("deepseek-chat", "VERIFY_OK")
+                report.components_started.append("08_deepseek_chat_verify")
                 report.steps_completed += 1
-                import time
-
-                time.sleep(2.0)
+                logger.info("DeepSeekChat 已启用作为推理后端 (deepseek-v4-flash)")
             else:
-                report.errors.append("ollama_chat: not available (Ollama may not be running)")
+                logger.warning("DeepSeekChat 不可用，降级到 OllamaChat")
+                raise RuntimeError("DeepSeekChat not available")
         except Exception as e:
-            report.errors.append(f"ollama_chat_verify: {e}")
+            logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e)
+            try:
+                from zephyr.governance.vector_memory.ollama_chat import OllamaChat
+
+                self._ollama_chat = OllamaChat()
+                if self._ollama_chat.available:
+                    self._audit_logger.log_registration("ollama-chat", "VERIFY_OK")
+                    report.components_started.append("08_ollama_chat_verify")
+                    report.steps_completed += 1
+                    import time
+
+                    time.sleep(2.0)
+                else:
+                    report.errors.append("ollama_chat: not available (Ollama may not be running)")
+            except Exception as e2:
+                report.errors.append(f"ollama_chat_verify: {e2}")
 
         try:
             from zephyr.integration.local_model.embedding_router import EmbeddingRouter

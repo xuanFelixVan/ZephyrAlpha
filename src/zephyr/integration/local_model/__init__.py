@@ -14,6 +14,7 @@ from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
 from zephyr.integration.local_model.ollama_chat import OllamaChat
 from zephyr.integration.local_model.ollama_embedding import OllamaEmbedder
+from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
 
 __all__ = [
     "CacheLayer",
@@ -21,9 +22,11 @@ __all__ = [
     "LocalModelScheduler",
     "OllamaChat",
     "OllamaEmbedder",
+    "DeepSeekChat",
     "cache_layer",
     "embedding_router",
     "local_model_scheduler",
     "ollama_chat",
     "ollama_embedding",
+    "deepseek_chat",
 ]
