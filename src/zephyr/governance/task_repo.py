@@ -1391,6 +1391,14 @@ class TaskRepository:
             )
         )
 
+        # DM-202918: transition(COMPLETED)后自动git commit files_in_scope
+        if to_status == TaskStatus.COMPLETED:
+            try:
+                task_obj = _row_to_taskcard(updated_row)
+                self._auto_commit_on_completion(task_id, task_obj)
+            except Exception as exc:
+                logger.warning("DM-202918: 自动git commit失败 (task=%s): %s", task_id, exc)
+
         # DM-400/DM-401: transition(COMPLETED)后提醒剩余IN_PROGRESS任务
         if to_status == TaskStatus.COMPLETED:
             try:
@@ -1418,6 +1426,53 @@ class TaskRepository:
                 pass
 
         return _row_to_taskcard(updated_row)
+
+    def _auto_commit_on_completion(self, task_id: str, task_obj: TaskCard) -> None:
+        """DM-202918: transition(COMPLETED)后自动git commit files_in_scope中的文件。
+
+        策略:
+        1. git add files_in_scope 中存在的文件
+        2. git commit --no-verify (跳过pre-commit hook避免循环)
+        3. commit message 含 task_id
+        4. 无文件可提交时跳过(不报错)
+        """
+        import subprocess
+
+        files_in_scope = getattr(task_obj, "files_in_scope", None) or []
+        if not files_in_scope:
+            return
+
+        # 过滤出实际存在的文件
+        import os
+        existing_files = [f for f in files_in_scope if os.path.isfile(f)]
+        if not existing_files:
+            return
+
+        # git add
+        add_cmd = ["git", "add"] + existing_files
+        result = subprocess.run(add_cmd, capture_output=True, text=True, timeout=30)
+        if result.returncode != 0:
+            logger.warning("DM-202918: git add 失败 (task=%s): %s", task_id, result.stderr.strip())
+            return
+
+        # 检查是否有 staged 变更
+        diff_result = subprocess.run(
+            ["git", "diff", "--cached", "--quiet"],
+            capture_output=True, text=True, timeout=30
+        )
+        # exit 0 = 无变更, exit 1 = 有变更
+        if diff_result.returncode == 0:
+            logger.info("DM-202918: 无staged变更，跳过commit (task=%s)", task_id)
+            return
+
+        # git commit --no-verify
+        commit_msg = f"auto-commit(DM-202918): task {task_id} COMPLETED"
+        commit_cmd = ["git", "commit", "--no-verify", "-m", commit_msg]
+        commit_result = subprocess.run(commit_cmd, capture_output=True, text=True, timeout=60)
+        if commit_result.returncode != 0:
+            logger.warning("DM-202918: git commit 失败 (task=%s): %s", task_id, commit_result.stderr.strip())
+        else:
+            logger.info("DM-202918: 自动commit成功 (task=%s): %s", task_id, commit_result.stdout.strip())
 
     def _run_circular_acceptance(
         self,
