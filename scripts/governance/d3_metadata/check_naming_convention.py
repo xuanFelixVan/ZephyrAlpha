@@ -886,7 +886,7 @@ def main() -> int:
             if abspath.exists() and abspath.is_file():
                 all_violations.extend(check_file(rel_path.replace("\\", "/"), abspath, project_root))
     elif args.scan:
-        project_root = Path(args.path).resolve()
+        project_root = Path(__file__).resolve().parents[3]
         for root, dirs, files in os.walk(project_root):
             dirs[:] = [d for d in dirs if not d.startswith(".") and d != "__pycache__" and d != "node_modules"]
             rel_root = str(root).replace(str(project_root), "").lstrip("\\/").lstrip("/")
