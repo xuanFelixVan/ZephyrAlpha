@@ -289,6 +289,39 @@ def cmd_acquire(file_path: str, owner_id: str, task: str = "", skip_naming_check
     return 0
 
 
+def _warn_if_uncommitted(file_path: str) -> None:
+    """DM-202919: 释放锁前检查文件是否有未提交修改，有则打印WARNING。
+
+    不阻止释放，仅警告。防止AI释放锁后不提交导致修改丢失。
+    检查范围: 工作区修改未暂存 / 暂存未提交 / 未跟踪文件。
+    """
+    import subprocess
+
+    abs_path = Path(file_path).resolve()
+    if not abs_path.exists():
+        return  # 文件不存在（可能已删除），跳过检查
+
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain", "--", str(abs_path)],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=str(abs_path.parent),
+        )
+    except (subprocess.SubprocessError, OSError):
+        return  # git 命令失败（可能不在git仓库），跳过检查
+
+    if result.returncode != 0:
+        return  # git 命令失败，跳过检查
+
+    output = result.stdout.strip()
+    if output:
+        print(f"WARNING — 文件有未提交修改，请先 git commit：{file_path}")
+        for line in output.splitlines():
+            print(f"  git status: {line}")
+
+
 def cmd_release(file_path: str, owner_id: str) -> int:
     _ensure_lock_root()
     normalized = _normalize_path(file_path)
@@ -309,6 +342,9 @@ def cmd_release(file_path: str, owner_id: str) -> int:
         print(f"DENIED — {normalized} 被 {owner.get('owner_id')} 持有，你不能释放")
         return 1
 
+    # DM-202919: 释放锁前检查未提交修改（仅警告，不阻止）
+    _warn_if_uncommitted(file_path)
+
     shutil.rmtree(lock_dir, ignore_errors=True)
     _remove_from_registry(file_path)
     print(f"RELEASED — {normalized} 已释放")
@@ -323,6 +359,8 @@ def cmd_release_all(owner_id: str) -> int:
 
     for file_path, info in list(locks.items()):
         if info.get("owner_id") == owner_id:
+            # DM-202919: 释放锁前检查未提交修改（仅警告，不阻止）
+            _warn_if_uncommitted(file_path)
             lock_dir = _lock_dir(file_path)
             shutil.rmtree(lock_dir, ignore_errors=True)
             del locks[file_path]
