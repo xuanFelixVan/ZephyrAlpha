@@ -117,6 +117,29 @@ def _init_shared_monitoring_modules() -> None:
     except Exception as e:
         logger.warning("Shared monitoring: AutonomyMonitor init failed: %s", e)
 
+    # DM-201248: 事件订阅机制
+    try:
+        from zephyr.shared.observability_02.health import subscribe_monitoring_events
+        subscribe_monitoring_events()
+        logger.info("Shared monitoring: event subscription registered (health)")
+    except Exception as e:
+        logger.warning("Shared monitoring: health event subscription failed: %s", e)
+
+    try:
+        from zephyr.shared.observability_02.metrics import subscribe_metrics_events
+        subscribe_metrics_events()
+        logger.info("Shared monitoring: event subscription registered (metrics)")
+    except Exception as e:
+        logger.warning("Shared monitoring: metrics event subscription failed: %s", e)
+
+    # DM-201249: Finalizer 自动关闭
+    try:
+        from zephyr.trading.finalizer import register_monitoring_finalizers_auto
+        register_monitoring_finalizers_auto()
+        logger.info("Shared monitoring: finalizer registered (monitor-flush + monitor-health-snapshot)")
+    except Exception as e:
+        logger.warning("Shared monitoring: finalizer registration failed: %s", e)
+
 
 def _register_rbac_hooks() -> None:
     """注册RBAC事件钩子 — 在任务状态转换时检查权限."""
