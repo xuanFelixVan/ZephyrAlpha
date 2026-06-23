@@ -101,34 +101,33 @@ phases:
   # --- 门闸：阶段1 → 阶段2 切换条件 ---
   phase_gate:
     gate_name: "CONSTRUCTION_TO_MAINTENANCE_GATE"
-    description: "当以下条件全部满足时，从建设期切换到维护期"
-    conditions:
-      - id: "G1"
-        check: "大脑系统18步启动全部通过"
-        command: "python scripts/construction/start_brain.py --status"
-        expected: "all 18 steps OK"
-      
-      - id: "G2"
-        check: "AutoPilot 自动驾驶稳定运行24小时"
-        command: "检查 autopilot 日志无 ERROR"
-        expected: "0 errors in 24h"
-      
-      - id: "G3"
-        check: "无 P0/P1 级别未完成任务卡"
-        command: "查询 task_repository WHERE priority IN ('P0','P1') AND status != 'COMPLETED'"
-        expected: "0 rows"
-      
-      - id: "G4"
-        check: "46个门控检查全部通过"
-        command: "python scripts/governance/phase_manager.py --status"
-        expected: "all gates passed"
-      
-      - id: "G5"
-        check: "连续7天无系统级故障"
-        command: "检查 incident_log WHERE severity = 'system' AND timestamp > 7 days ago"
-        expected: "0 rows"
+    description: "建设期→维护期切换门闸"
     
-    switch_action: "将 phase_1_construction.active 设为 false，phase_2_maintenance.active 设为 true"
+    # 唯一硬条件：Owner 批准
+    condition: "owner_approval"
+    condition_description: "Owner 确认系统全部搭建完成 + 实盘测试已开始，批准切换到维护期"
+    
+    # 触发前提（Owner 批准前应已满足的状态，非机械硬条件）
+    prerequisites:
+      - "业务域全部搭建完成并正常运行"
+      - "实盘测试已开始（标志系统全部搭建完成）"
+    
+    # 日常监控指标（非门闸条件，仅作健康参考）
+    health_indicators:
+      - id: "H1"
+        name: "大脑系统18步启动"
+        command: "python scripts/construction/start_brain.py --status"
+      - id: "H2"
+        name: "AutoPilot 自动驾驶稳定性"
+        command: "检查 autopilot 日志"
+      - id: "H3"
+        name: "门控检查通过率"
+        command: "python scripts/governance/phase_manager.py --status"
+      - id: "H4"
+        name: "系统级故障频率"
+        command: "检查 incident_log"
+    
+    switch_action: "Owner 批准后，将 phase_1_construction.active 设为 false，phase_2_maintenance.active 设为 true"
 
 # ============================================================
 # 模型清单（完整数据）
