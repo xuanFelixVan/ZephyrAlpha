@@ -6,7 +6,7 @@
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
-# v3.0.0: §2.1裁定对齐——52域唯一物理分类体系，14层降级为域属性
+# v3.0.0: §2.1裁定对齐——43域唯一物理分类体系，14层降级为域属性
 module_id: MOD-023
 schema_version: '3.0.0'
 system:
@@ -15,16 +15,16 @@ system:
   architecture_style: domain_driven_event_driven_polyglot
 
 # === 分区管理约定（Partition Management Convention）===
-# §2.1裁定（2026-06-22）：52域是唯一物理分类体系，14层（L00-L13）降级为域的layer_id属性。
-# 物理分类由depgraph.db的domains表（52域）定义，AI找模块只有一条路：按域找。
+# §2.1裁定（2026-06-22）：43域是唯一物理分类体系，14层（L00-L13）降级为域的layer_id属性。
+# 物理分类由depgraph.db的domains表（43域）定义，AI找模块只有一条路：按域找。
 # 旧的layers/l00-l13-*.yaml文件已废弃，信息合并入depgraph.db域定义。
 
 partitions:
-# === 52域索引（物理分类唯一真源：depgraph.db domains表）===
+# === 43域索引（物理分类唯一真源：depgraph.db domains表）===
 - id: domains
   path: ../../../../data/databases/depgraph.db
   description: >
-    52域物理分类唯一真源（§2.1裁定）。
+    43域物理分类唯一真源（§2.1裁定）。
     查询命令: python scripts/governance/extract_depgraph.py --summary
     14层（L00-L13）降级为域的layer_id属性，不再作为并行分类体系。
 
@@ -61,17 +61,11 @@ partitions:
   path: ../../../../data/databases/depgraph.db
   description: 跨域共享基础设施（D-INFRA_OPS域）
 
-# === 52域清单（从depgraph.db派生，禁止手工编辑）===
+# === 43域清单（从depgraph.db派生，禁止手工编辑）===
 domains:
 - id: D-ALT_DATA
   name: 另类数据
   layer_id: L1_foundation
-- id: D-AUTONOMY-CORE
-  name: agent_communication
-  layer_id: 
-- id: D-AUTONOMY-PERM
-  name: escalation
-  layer_id: 
 - id: D-AUTONOMY_CORE
   name: 自治核心
   layer_id: L1_platform
@@ -117,15 +111,6 @@ domains:
 - id: D-FRONTEND
   name: 前端
   layer_id: L1_platform
-- id: D-GOV-ENFORCEMENT
-  name: rule_enforcement
-  layer_id: 
-- id: D-GOV-REPAIR
-  name: rollback
-  layer_id: 
-- id: D-GOV-SCRIPTS
-  name: code_dedup
-  layer_id: 
 - id: D-GOVERNANCE
   name: lifecycle_management
   layer_id: L2_domain
@@ -138,9 +123,6 @@ domains:
 - id: D-GOV_RULE
   name: 规则治理
   layer_id: L2_domain
-- id: D-INFRA-OPS
-  name: resource_optimization
-  layer_id: 
 - id: D-INFRA_OPS
   name: 基础设施运维
   layer_id: L0_infrastructure
@@ -150,9 +132,6 @@ domains:
 - id: D-INTEGRATION
   name: pipeline_routing
   layer_id: L1_platform
-- id: D-INTEGRATION-GATEWAY
-  name: mcp_servers
-  layer_id: 
 - id: D-INTELLIGENCE
   name: context_management
   layer_id: L2_domain
@@ -162,9 +141,6 @@ domains:
 - id: D-MKT_DATA
   name: 行情数据(接入+存储)
   layer_id: L1_foundation
-- id: D-ML-TRAIN
-  name: model_profiling
-  layer_id: 
 - id: D-ML_SERVE
   name: 推理
   layer_id: L2_domain
@@ -192,9 +168,6 @@ domains:
 - id: D-SECURITY
   name: adversarial_validation
   layer_id: L1_platform
-- id: D-SECURITY-LLM
-  name: llm_defense
-  layer_id: 
 - id: D-SELL_DECISION
   name: 卖出决策
   layer_id: L2_domain
@@ -219,17 +192,16 @@ domains:
 - id: D-TRADING
   name: 交易运营
   layer_id: L2_domain
-
 global_stats:
-  total_domains: 52
+  total_domains: 43
   total_partitions: 11
   notes: >
-    §2.1裁定（2026-06-22）：52域唯一物理分类体系，14层降级为域属性。
+    §2.1裁定（2026-06-22）：43域唯一物理分类体系，14层降级为域属性。
     结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-23'
 query_hints:
 - question: 系统有哪些域？
-  answer: 52域，见domains列表，真源为depgraph.db domains表
+  answer: 43域，见domains列表，真源为depgraph.db domains表
 - question: 某域有哪些模块？
   answer: '查询depgraph.db: python scripts/governance/extract_depgraph.py --domains <域ID>'
 - question: 模块间的依赖关系？
@@ -241,7 +213,7 @@ query_hints:
 - question: 运行平面分布？
   answer: 读cross-cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读cross-cutting/capability_heatmap.yaml（52域×10能力域矩阵）
+  answer: 读cross-cutting/capability_heatmap.yaml（43域×10能力域矩阵）
 - question: 前端有哪些模块？
   answer: '查询depgraph.db: SELECT path FROM nodes WHERE domain_id="D-FRONTEND"'
 - question: 治理/审计脚本有哪些？

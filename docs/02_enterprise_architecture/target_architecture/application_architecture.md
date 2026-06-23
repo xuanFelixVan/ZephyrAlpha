@@ -43,7 +43,7 @@ tags:
 - orthogonal-view
 - vibe-coding-2.0
 - 6-core-services
-summary: TOGAF Application Architecture 视图（v3.0.0 重组织版）。基于§2.1裁定，模块清单改为52域派生，数据源depgraph.db。原14层模块清单废弃。
+summary: TOGAF Application Architecture 视图（v3.0.0 重组织版）。基于§2.1裁定，模块清单改为43域派生，数据源depgraph.db。原14层模块清单废弃。
 date: '2026-06-23'
 ttl: permanent
 ---
@@ -54,11 +54,11 @@ The Application Architecture answers:
 
 - What applications / modules / services exist? (C4 views)
 - How do they interact? (Interfaces and protocols)
-- How is `src/zephyr/` structured? (52域物理分类，数据源depgraph.db)
+- How is `src/zephyr/` structured? (43域物理分类，数据源depgraph.db)
 - How is `scripts/` organized? (Governance code topology)
 - Where do future platform modules belong? (Module placement)
 
-> **v3.0.0 重组织说明**：基于§2.1裁定，模块清单改为52域派生。原14层模块清单废弃，14层降级为域的`layer_id`属性。模块属性详情见`generated/domains/*.md`（由`generate_domain_doc.py`派生）。
+> **v3.0.0 重组织说明**：基于§2.1裁定，模块清单改为43域派生。原14层模块清单废弃，14层降级为域的`layer_id`属性。模块属性详情见`generated/domains/*.md`（由`generate_domain_doc.py`派生）。
 
 ---
 
@@ -92,7 +92,7 @@ The Application Architecture answers:
 
 ---
 
-## 4. 域架构（52域，数据源：depgraph.db）
+## 4. 域架构（43域，数据源：depgraph.db）
 
 > 本节为v3.0.0重写。模块清单由`generated/domains/*.md`派生，禁止在本文硬编码。
 > 完整域索引见`generated/domain_index.md`。
@@ -212,6 +212,6 @@ The Application Architecture answers:
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-06-23 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——模块清单改为52域派生（数据源depgraph.db）；原14层模块清单废弃；新增§4域架构、§4.1域统计概览、§4.2域层级分布、§4.3域详细清单、§4.4跨域依赖矩阵；§6模块归属原则改为域归属判定。 |
+| 2026-06-23 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——模块清单改为43域派生（数据源depgraph.db）；原14层模块清单废弃；新增§4域架构、§4.1域统计概览、§4.2域层级分布、§4.3域详细清单、§4.4跨域依赖矩阵；§6模块归属原则改为域归属判定。 |
 | 2026-05-06 | v2.2.0：双树与 SCOPE/SSoT 地图对齐。 |
 | 2026-04-22 | v2.0.0：模块属性详情迁移至 architecture_model/ 联邦 YAML 模型。 |

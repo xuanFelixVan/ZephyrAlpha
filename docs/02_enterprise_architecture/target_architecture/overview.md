@@ -25,7 +25,7 @@ tags:
 - 6-core-services
 - domain-driven
 - depgraph-derived
-summary: 架构文档组的总览视图。v2.0.0：基于§2.1裁定，14层降级为域属性，52域成为唯一物理分类体系。结构化数据由depgraph.db全景图派生。
+summary: 架构文档组的总览视图。v2.0.0：基于§2.1裁定，14层降级为域属性，43域成为唯一物理分类体系。结构化数据由depgraph.db全景图派生。
 date: '2026-06-23'
 ttl: permanent
 ---
@@ -37,16 +37,16 @@ ttl: permanent
 
 ## 0. Executive Summary / 高管摘要
 
-**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI-native 重构，采用**52域唯一物理分类体系**（基于depgraph.db全景图），Python 全栈，Vibe Coding 驱动（Cursor + Trae 双 AI IDE）。
+**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI-native 重构，采用**43域唯一物理分类体系**（基于depgraph.db全景图），Python 全栈，Vibe Coding 驱动（Cursor + Trae 双 AI IDE）。
 
 **核心架构决策**（v2.0.0 基于§2.1裁定）：
-- **52域唯一分类**：原14层逻辑层(L00-L13)取消作为并行分类，降级为域的`layer_id`属性。两个并行分类=AI每次判断用哪个=幻觉温床，故14层信息保留方式改为域属性。
+- **43域唯一分类**：原14层逻辑层(L00-L13)取消作为并行分类，降级为域的`layer_id`属性。两个并行分类=AI每次判断用哪个=幻觉温床，故14层信息保留方式改为域属性。
 - **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）由`data/databases/depgraph.db`派生，禁止在MD中硬编码。
 - **运行时三平面**（引擎平面 / Vibe Coding 平面 / 治理平面）→ 正交划分开发态和运行态关注点
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ Phase 退出准入双门协议门禁
 - **安全红线**：4 条不可撤销（详见 [architecture_principles.md](architecture_principles.md) §1）
 - **技术栈**：Python >=3.11 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI 原型 + MCP 协议
-- **当前阶段**：experimental 启动，52域已定义，模块边界待定，6 大 Vibe Coding 2.0 核心服务施工中
+- **当前阶段**：experimental 启动，43域已定义，模块边界待定，6 大 Vibe Coding 2.0 核心服务施工中
 
 **System Identity**: ZephyrAlpha is an AI-native personal quantitative investment system. 52-domain unique physical classification (derived from depgraph.db panorama). Python full-stack, Vibe Coding driven. The legacy 14-layer (L00-L13) has been demoted to a domain attribute (`layer_id`) per §2.1 ruling — single classification eliminates AI hallucination from dual-taxonomy ambiguity.
 
@@ -66,11 +66,11 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 ### 1.2 唯一物理分类体系裁定（§2.1）
 
-**裁定**：52域是唯一物理分类体系。原14层逻辑层(L00-L13)取消作为并行分类，降级为域的`layer_id`属性。
+**裁定**：43域是唯一物理分类体系。原14层逻辑层(L00-L13)取消作为并行分类，降级为域的`layer_id`属性。
 
 | 裁定项 | 结论 | 理由 |
 |--------|------|------|
-| 14层 vs 52域 | **52域唯一** | 两个并行分类=AI每次判断用哪个=幻觉温床 |
+| 14层 vs 43域 | **43域唯一** | 两个并行分类=AI每次判断用哪个=幻觉温床 |
 | 14层信息保留方式 | 作为域的`layer_id`属性 | 属性不是分类，不产生二元性 |
 | L00-L13层YAML文件 | 废弃，信息合并入depgraph.db域定义 | 避免SSoT分裂 |
 
@@ -106,7 +106,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 | 维度 | 状态 | 说明 |
 |------|------|------|
-| **52域物理分类** | ✅ **已定义** | depgraph.db `domains` 表为SSoT |
+| **43域物理分类** | ✅ **已定义** | depgraph.db `domains` 表为SSoT |
 | **6 大核心服务（VMS/CE/Orc/FLE/LSG/KB）** | ✅ **已定稿** | 2026-04-24 产出；接口规范 6 份齐备 |
 | **17 项技术选型** | ✅ **已定稿** | 见 `technology_landscape.yaml`（SSoT）|
 | **模块内部边界** | ⏳ **讨论中** | experimental 落地时细化 |
@@ -138,7 +138,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 └────────────────────────────────────────────────────────────┘
 ```
 
-> **注**：TOGAF四层是**视图分类方法**，不是物理代码分层。物理代码组织以52域为准（见§1.2裁定）。
+> **注**：TOGAF四层是**视图分类方法**，不是物理代码分层。物理代码组织以43域为准（见§1.2裁定）。
 
 ---
 
@@ -249,7 +249,7 @@ Directory: `target_architecture/` (TOGAF term). File names: `NN-kebab-case.md`. 
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-06-23 | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——14层降级为域属性，52域成为唯一物理分类体系；结构化数据由depgraph.db全景图派生；新增§1.2唯一分类体系裁定、§1.3全景图派生机制、§6.4数据派生原则。 |
+| 2026-06-23 | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——14层降级为域属性，43域成为唯一物理分类体系；结构化数据由depgraph.db全景图派生；新增§1.2唯一分类体系裁定、§1.3全景图派生机制、§6.4数据派生原则。 |
 | 2026-05-02 | v1.4.1：§0 英文部分从中英完全重复精简为关键信息摘要。 |
 | 2026-04-24 | v1.2.0：追加§1.3当前阶段定位+§5A Vibe Coding 2.0基础设施。 |
 | 2026-04-17 | v1.0.0：从 DW-IA-DESIGN-001 拆分升格建立。 |

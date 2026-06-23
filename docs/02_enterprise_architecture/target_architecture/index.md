@@ -16,7 +16,7 @@ tags:
 - navigation
 - domain-driven
 - depgraph-derived
-summary: v3.0.0：基于§2.1裁定，导航改为52域索引+全景图派生视图说明。原14层分区导航废弃。
+summary: v3.0.0：基于§2.1裁定，导航改为43域索引+全景图派生视图说明。原14层分区导航废弃。
 ttl: permanent
 ---
 
@@ -41,11 +41,11 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 - **TOGAF** — 定四层视图：Business / Information / Application / Technology
 - **C4 Model** — 定应用视图的可视化：系统上下文（L1）和容器（L2）
 
-> **v3.0.0变更**：物理代码组织以52域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph.db派生。
+> **v3.0.0变更**：物理代码组织以43域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph.db派生。
 
 ---
 
-## 2. 域索引（52域，数据源：depgraph.db）
+## 2. 域索引（43域，数据源：depgraph.db）
 
 > 本索引由`scripts/governance/d5_architecture/generators/generate_domain_index.py`派生。
 > 完整域清单见`generated/domain_index.md`。
@@ -133,13 +133,13 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | 文件 | 说明 |
 |------|------|
-| overview.md | 架构总览（v2.0.0：52域+全景图派生）|
+| overview.md | 架构总览（v2.0.0：43域+全景图派生）|
 | business_architecture.md | BA 业务架构视图 |
 | information_architecture.md | IA 信息架构视图 |
 | application_architecture.md | AA 应用架构视图（v2.0.0：域派生模块清单）|
 | technology_architecture.md | TA 技术架构视图 |
 | runtime_planes.md | 运行时平面正交视图 |
-| capability_heatmap.md | 能力热力图正交视图（v2.0.0：52域×能力域）|
+| capability_heatmap.md | 能力热力图正交视图（v2.0.0：43域×能力域）|
 | data_architecture.md | DA 数据架构视图 |
 | security_architecture.md | SEC 安全架构视图 |
 | integration_architecture.md | INTEG 集成架构视图 |
@@ -158,7 +158,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | 派生视图 | 生成器 | 数据源 | 说明 |
 |---------|--------|--------|------|
-| `generated/domain_index.md` | generate_domain_index.py | domains+nodes | 52域总览索引 |
+| `generated/domain_index.md` | generate_domain_index.py | domains+nodes | 43域总览索引 |
 | `generated/cross_domain_matrix.md` | generate_cross_domain_matrix.py | edges | 跨域依赖矩阵 |
 | `generated/capacity_report.md` | generate_capacity_report.py | domains | 域容量报告 |
 | `generated/design_vs_production.md` | generate_design_vs_production.py | nodes | 设计态vs运营态统计 |
@@ -173,13 +173,13 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | File / 文件 | Layer / 层 | Answers / 回答的核心问题 | Primary audience / 主要读者 | Status / 状态 |
 |------------|-----------|------------------------|--------------------------|--------------|
 | `index.md`（本文） | — | 本文档组是什么？怎么读？ | 所有人 | active |
-| `overview.md` | Cross-layer | 整体架构哲学？52域如何组织？ | 架构师、新加入者 | active |
+| `overview.md` | Cross-layer | 整体架构哲学？43域如何组织？ | 架构师、新加入者 | active |
 | `business_architecture.md` | BA | 为谁服务？核心业务能力？ | 业务负责人 | active |
 | `information_architecture.md` | IA | `docs/` 有哪些抽屉？ | 文档维护者、AI 协作者 | active |
 | `application_architecture.md` | AA | 系统有哪些应用/模块？域如何划分？ | 开发者、架构师 | active |
 | `technology_architecture.md` | TA | 用什么技术栈？ | SRE、实施者 | active |
 | `runtime_planes.md` 🔷 **正交视图 1** | Orthogonal | 运行平面怎么切分？ | 架构师、SRE | active |
-| `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 52域能力成熟度热力图？ | 架构师、决策层 | active |
+| `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 43域能力成熟度热力图？ | 架构师、决策层 | active |
 | `data_architecture.md` | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
 | `security_architecture.md` | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
 | `integration_architecture.md` | INTEG | 集成风格？接口契约？ | 开发者、架构师、SRE | active |
@@ -194,7 +194,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 6. Reading order / 推荐阅读顺序
 
-**First time / 第一次读（5 分钟）**：`index.md`（本文）→ `overview.md` → `generated/domain_index.md`（52域总览）
+**First time / 第一次读（5 分钟）**：`index.md`（本文）→ `overview.md` → `generated/domain_index.md`（43域总览）
 
 **Architect / 架构师**：`overview.md` → `generated/domain_index.md` → 按域读`generated/domains/*.md`
 
@@ -226,7 +226,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 9. Provenance / 来源说明
 
-本文档组由 `DW-IA-DESIGN-001` 拆分升格而来。v3.0.0 基于§2.1裁定重写为52域索引+全景图派生。
+本文档组由 `DW-IA-DESIGN-001` 拆分升格而来。v3.0.0 基于§2.1裁定重写为43域索引+全景图派生。
 
 ---
 
@@ -236,7 +236,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-06-23 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——导航改为52域索引+派生视图说明；新增§2域索引、§4派生视图；废弃14层分区导航。 |
+| 2026-06-23 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——导航改为43域索引+派生视图说明；新增§2域索引、§4派生视图；废弃14层分区导航。 |
 | 2026-05-06 | v2.2.0：双树与 SCOPE/SSoT 地图对齐。 |
 | 2026-05-02 | v2.1.0：修复 4 项 SSoT 对齐问题。 |
 

@@ -29,7 +29,7 @@ tags:
 - orthogonal-view
 - domain-driven
 - depgraph-derived
-summary: ZephyrAlpha 2.0 能力成熟度热力图正交视图（v2.0.0）。基于§2.1裁定，热力图改为52域×10能力域二维矩阵。原14层×7能力域矩阵废弃。成熟度数据由depgraph.db派生。
+summary: ZephyrAlpha 2.0 能力成熟度热力图正交视图（v2.0.0）。基于§2.1裁定，热力图改为43域×10能力域二维矩阵。原14层×7能力域矩阵废弃。成熟度数据由depgraph.db派生。
 date: '2026-06-23'
 ttl: permanent
 ---
@@ -40,7 +40,7 @@ ttl: permanent
 
 | 问题 | 答案所在 |
 |---|---|
-| ZephyrAlpha 的核心业务能力是什么？每一项当前多成熟？| §3 52域×10能力域热力图 |
+| ZephyrAlpha 的核心业务能力是什么？每一项当前多成熟？| §3 43域×10能力域热力图 |
 | 哪些能力是"顶级机构标配但我们缺失"的 P0 短板？| §5 Gap-to-Target 差距表 |
 | 达到顶级机构对标水平还需要多少投入？| §6 投入估算 |
 | 能力成熟度何时刷新？谁负责？| §7 季度 review 机制 |
@@ -70,7 +70,7 @@ ttl: permanent
 ### 1.4 v2.0.0变更说明
 
 基于§2.1裁定：
-- 原14层×7能力域矩阵 → 改为52域×10能力域矩阵
+- 原14层×7能力域矩阵 → 改为43域×10能力域矩阵
 - 14层降级为域属性，不再作为热力图维度
 - 成熟度数据由depgraph.db `nodes.design_maturity`派生
 
@@ -96,7 +96,7 @@ ttl: permanent
 
 ---
 
-## 3. 52域×10能力域热力图
+## 3. 43域×10能力域热力图
 
 > 数据源：depgraph.db `domains` + `nodes` 表
 > 派生工具：`scripts/governance/d5_architecture/generators/generate_design_vs_production.py`
@@ -117,7 +117,7 @@ ttl: permanent
 | 基础设施（横切） | 横切 | D-INFRA_OPS, D-INFRA_RUNTIME, D-INTEGRATION, D-INTEGRATION-GATEWAY, D-SHARED, D-FRONTEND, D-REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D-AUTONOMY_CORE, D-OPS |
 
 
-### 3.2 域成熟度快照（52域）
+### 3.2 域成熟度快照（43域）
 
 > 完整域成熟度数据见 [`generated/design_vs_production.md`](../generated/design_vs_production.md)
 
@@ -254,5 +254,5 @@ ttl: permanent
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-06-23 | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——热力图改为52域×10能力域矩阵；原14层×7能力域矩阵废弃；成熟度数据由depgraph.db派生；新增§1.4 v2.0.0变更说明、§2.1五档成熟度depgraph.db映射、§3.2域成熟度快照、§3.3能力域成熟度汇总。 |
+| 2026-06-23 | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——热力图改为43域×10能力域矩阵；原14层×7能力域矩阵废弃；成熟度数据由depgraph.db派生；新增§1.4 v2.0.0变更说明、§2.1五档成熟度depgraph.db映射、§3.2域成熟度快照、§3.3能力域成熟度汇总。 |
 | 2026-04-22 | v1.0.0：建立能力热力图正交视图。 |
