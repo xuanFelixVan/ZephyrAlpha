@@ -95,9 +95,9 @@ def _register_rbac_hooks() -> None:
             if to_status.upper() != "FAILED":
                 return
             try:
-                from zephyr.security.access_control.kill_switch import KillSwitch, KillSwitchState
+                from zephyr.security.access_control.kill_switch import KillSwitchState, get_kill_switch
 
-                ks = KillSwitch()
+                ks = get_kill_switch()
                 if ks.status.state == KillSwitchState.NORMAL:
                     logger.info(
                         "Task %s failed — RBAC kill_switch still NORMAL (no systemic threat detected)",

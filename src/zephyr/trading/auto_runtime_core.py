@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-ORC_auto_runtime_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §6.2
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.2
 # [MODULE] zephyr.trading.auto_runtime_core
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
@@ -142,6 +142,7 @@ class AutoRuntimeCore:
             except Exception:
                 pass
 
+            self._bootstrap_rbac()
             self._register_task_system_cron_jobs()
             self._register_task_system_hooks()
             self._start_task_queue()
@@ -152,6 +153,45 @@ class AutoRuntimeCore:
 
         self._booted = report.success
         return report
+
+    def _bootstrap_rbac(self) -> None:
+        """启动RBAC系统 — Agent权限/身份/熔断器/superadmin."""
+        try:
+            from zephyr.security.access_control.genesis_bootstrap import (
+                get_genesis_bootstrap,
+            )
+
+            genesis = get_genesis_bootstrap()
+            state = genesis.bootstrap(config={"version": "0.14.0"})
+            if state.is_ready:
+                logger.info(
+                    "RBAC bootstrap COMPLETED: phase=%s checks=%d/%d progress=%.0f%%",
+                    state.phase.value,
+                    state.checks_passed,
+                    state.total_checks,
+                    state.progress * 100,
+                )
+            else:
+                logger.error(
+                    "RBAC bootstrap FAILED: phase=%s error=%s",
+                    state.phase.value,
+                    state.error,
+                )
+        except Exception as exc:
+            logger.error("RBAC bootstrap exception: %s", exc)
+
+    def _shutdown_rbac(self) -> None:
+        """关闭RBAC系统 — 清理资源."""
+        try:
+            from zephyr.security.access_control.genesis_bootstrap import (
+                get_genesis_bootstrap,
+            )
+
+            genesis = get_genesis_bootstrap()
+            genesis.shutdown()
+            logger.info("RBAC shutdown completed")
+        except Exception as exc:
+            logger.error("RBAC shutdown exception: %s", exc)
 
     def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
         import requests
@@ -429,6 +469,7 @@ class AutoRuntimeCore:
         return self._task_learner.summary()
 
     def shutdown(self) -> ShutdownReport:
+        self._shutdown_rbac()
         if self._local_scheduler is not None:
             try:
                 self._local_scheduler.stop()
