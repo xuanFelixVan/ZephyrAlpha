@@ -100,7 +100,7 @@ sections:
     - type: mandatory
       step: HC-7：禁止将 Cold Path 逻辑写入 Hot Path 模块（运行平面标签比对，ERROR级阻断提交）
     - type: mandatory
-      step: HC-8：禁止违反 L00→L02→L03 单向数据流（依赖方向分析，ERROR级阻断提交）
+      step: HC-8：禁止违反 L0←L1←L2←L3←L4←L5←L6 单向分层依赖（依赖方向分析，ERROR级阻断提交）。DIP例外——编排器(F1)依赖下层抽象契约(contract类型，如Protocol/ABC)或通过事件总线调度(event类型)不算逆向依赖，不触发告警。同层间允许单向依赖，禁止同层循环依赖（如A→B→A禁止）。对标K8s CRI/CSI、Netflix Conductor Worker API
     - type: mandatory
       step: HC-9：L06执行层代码必须包含幂等Key（AST解析+层标签比对，WARNING级标注）
     - type: mandatory
@@ -115,7 +115,7 @@ sections:
     - 禁止修改 frozen 契约
     - 禁止AI生成代码违反架构不变量
     - 禁止将 Cold Path 逻辑写入 Hot Path 模块
-    - 禁止违反 L00→L02→L03 单向数据流
+    - 禁止违反 L0←L1←L2←L3←L4←L5←L6 单向分层依赖（DIP例外：编排器依赖下层抽象契约contract/event类型允许；同层单向允许，同层循环禁止）
     - 禁止L06执行层代码缺少幂等Key
     - 禁止回测代码访问未来数据
     - 禁止同一commit跨2层修改契约文件

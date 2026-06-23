@@ -667,6 +667,33 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 
 > 详见 [onboarding_detail.md §15](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
 
+### 依赖方向铁律（DIP例外）
+
+**YAML真源**: → 参见 rules/trae_013_arch_cross_package_dep.yaml + [core_function_dependency_design.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/core_function_dependency_design.md)
+
+| # | 规则 | 说明 |
+|:---:|:---|:---|
+| 1 | 单向分层依赖 | 依赖方向只能从上层→下层（L6→L5→...→L0），禁止逆向。**同层间允许单向依赖，禁止同层循环依赖**（MTH-009裁定，对标K8s/Conductor同层协作模式） |
+| 2 | 依赖倒置(DIP)例外 | 编排器(F1)可依赖下层暴露的**抽象契约**(contract类型)，不可依赖具体实现(runtime类型)。对标K8s CRI/CSI、Netflix Conductor Worker API |
+| 3 | 事件解耦 | 跨层调度通过事件总线(F22)，不建立直接依赖边。对标Citadel/Two Sigma事件驱动核心 |
+| 4 | 控制平面/数据平面分离 | 编排器(控制平面)与执行器(数据平面)逻辑分离。编排器依赖抽象接口，执行器通过标准协议对接 |
+
+**四种依赖类型**：
+
+| 类型 | 含义 | 示例 |
+|:---:|:---|:---|
+| `contract` | 依赖抽象接口/Protocol，不依赖具体实现 | F1→F3（AutoPilot依赖TaskRepository Protocol） |
+| `event` | 通过事件总线通信，无直接依赖 | F1→F14（F1发布pipeline_start事件，F14订阅） |
+| `runtime` | 直接运行时调用（同层或向下层） | F1→F21（守护进程健康检查） |
+| `data` | 数据依赖（读写共享数据） | F3→F25（任务卡持久化到数据库） |
+
+**循环依赖检查规则**：
+1. 跨层循环：禁止。依赖方向只能从上层→下层，禁止逆向
+2. 同层循环：禁止。同层间允许单向依赖，但禁止形成环（如 F2→F4→F2 禁止）
+3. DIP例外：编排器→下层contract/event依赖不计入逆向依赖——contract依赖抽象接口，event通过事件总线解耦
+
+> 详见 [core_function_dependency_design.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/core_function_dependency_design.md)（37个功能依赖设计真源）
+
 ### 绝对禁止
 
 | # | 行为 | 后果 |
@@ -676,6 +703,8 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 | ❌ | 用"零消费者"判定删除 | 误删有价值的安全/治理组件 |
 | ❌ | 先补测试再重构 | 重构改代码，测试白写 |
 | ❌ | **新建功能域/子域未经 Owner 审批** | 域膨胀失控——模块应归入已有域（当前 43 域），新建域必须 Owner 书面同意 |
+| ❌ | **编排器直接依赖下层具体实现(runtime)** | 违反DIP，控制平面耦合数据平面（应改为contract依赖抽象接口） |
+| ❌ | **同层循环依赖** | 同层单向允许，但禁止形成环（如 F2→F4→F2） |
 
 ---
 

@@ -75,9 +75,11 @@ sections:
       step: 导入按4组排序：1.标准库 2.第三方 3.项目内绝对导入 4.同层相对导入
     - type: mandatory
       step: 同层模块使用相对导入（仅限同package内）
+    - type: exception
+      step: DIP例外——编排器(控制平面)可导入下层暴露的抽象契约(Protocol/ABC/接口类)，不可导入下层具体实现类。编排器导入下层抽象接口不算"下层导入上层"违规。对标K8s CRI/CSI、Netflix Conductor Worker API
     prohibitions:
     - 禁止import *——破坏静态分析，永远禁止
-    - 禁止下层导入上层——违反分层架构
+    - 禁止下层导入上层——违反分层架构（DIP例外：编排器导入下层抽象契约Protocol/ABC允许）
     - 禁止裸dict[str, Any]作为跨模块参数——使用冻结dataclass/Pydantic替代
   code_007:
     title: 依赖管理(SSoT守卫)
@@ -91,8 +93,8 @@ sections:
       fail: 直接修改Python文件
     - type: constraint
       check: 循环导入检测
-      pass: 无循环依赖
-      fail: CI阶段import-linter检测到循环导入
+      pass: 无循环依赖(跨层无循环 AND 同层无循环)
+      fail: CI阶段import-linter检测到循环导入(跨层循环 OR 同层循环)
     actions:
     - type: mandatory
       step: 修改数据结构时先修改SSoT YAML(cross_layer_contracts.yaml)
@@ -102,9 +104,12 @@ sections:
       step: 审计所有下游模块的适配需求
     - type: mandatory
       step: Breaking change创建KB决策记录
+    - type: clarification
+      step: 同层间允许单向导入(如门禁导入预算检查)，但禁止同层循环导入(如A→B→A禁止)。同层协作对标K8s/Conductor同层组件协作模式
     prohibitions:
     - 禁止跳过YAML直接修改Python数据结构定义
-    - 禁止循环导入
+    - 禁止循环导入(跨层循环)
+    - 禁止同层循环导入(同层形成环)
   gov_eng_011_type_prohibition_examples:
     title: 类型注解禁止写法示例
     section_type: examples

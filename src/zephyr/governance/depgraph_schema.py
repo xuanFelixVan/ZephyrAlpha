@@ -116,8 +116,8 @@ CREATE TABLE IF NOT EXISTS nodes (
 _DDL_EDGES = """
 CREATE TABLE IF NOT EXISTS edges (
     edge_id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-    from_node                TEXT    NOT NULL,
-    to_node                  TEXT    NOT NULL,
+    from_node_id             TEXT    NOT NULL,
+    to_node_id               TEXT    NOT NULL,
     dep_type                 TEXT    NOT NULL,
     architecture_direction   TEXT    DEFAULT 'downstream',
     coupling_strength        TEXT    DEFAULT 'critical',
@@ -339,8 +339,8 @@ _DDL_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_nodes_can_build    ON nodes(can_build)",
     "CREATE UNIQUE INDEX IF NOT EXISTS idx_nodes_path         ON nodes(path)",
     "CREATE INDEX IF NOT EXISTS idx_nodes_file_path    ON nodes(file_path)",
-    "CREATE INDEX IF NOT EXISTS idx_edges_from         ON edges(from_node)",
-    "CREATE INDEX IF NOT EXISTS idx_edges_to           ON edges(to_node)",
+    "CREATE INDEX IF NOT EXISTS idx_edges_from         ON edges(from_node_id)",
+    "CREATE INDEX IF NOT EXISTS idx_edges_to           ON edges(to_node_id)",
     "CREATE INDEX IF NOT EXISTS idx_edges_type         ON edges(dep_type)",
     "CREATE INDEX IF NOT EXISTS idx_edges_cross_domain ON edges(cross_domain)",
     "CREATE INDEX IF NOT EXISTS idx_domains_group      ON domains(domain_group)",

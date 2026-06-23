@@ -88,8 +88,8 @@ def load_depgraph(db_path):
         data["nodes"][nid] = node
     for row in conn.execute("SELECT * FROM edges"):
         edge = dict(row)
-        edge["from"] = edge.pop("from_node", "")
-        edge["to"] = edge.pop("to_node", "")
+        edge["from"] = edge.pop("from_node_id", "")
+        edge["to"] = edge.pop("to_node_id", "")
         data["edges"].append(edge)
     for row in conn.execute("SELECT * FROM domains"):
         domain = dict(row)

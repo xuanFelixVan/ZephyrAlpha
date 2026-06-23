@@ -1,7 +1,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-24'
-total_scripts: 517
+total_scripts: 518
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -4179,6 +4179,11 @@ scripts:
   dimensions: []
 - path: governance/d7_code/_stat_naming_violations.py
   description: governance/d7_code/_stat_naming_violations 脚本
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+- path: governance/d5_architecture/generators/generate_runtime_plane_mapping.py
+  description: G12 运行平面映射图生成器
   domain: governance
   execution_plane: warm-path
   status: registered

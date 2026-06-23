@@ -76,8 +76,8 @@ def load_depgraph_from_db(db_path: Path) -> dict:
         data["nodes"][nid] = node
     for row in conn.execute("SELECT * FROM edges"):
         edge = dict(row)
-        edge["from"] = edge.pop("from_node", "")
-        edge["to"] = edge.pop("to_node", "")
+        edge["from"] = edge.pop("from_node_id", "")
+        edge["to"] = edge.pop("to_node_id", "")
         data["edges"].append(edge)
     conn.close()
     return data

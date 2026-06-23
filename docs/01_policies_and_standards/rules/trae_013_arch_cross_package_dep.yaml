@@ -37,10 +37,13 @@ sections:
     actions:
     - type: mandatory
       step: 新增依赖前MUST推演依赖方向；专用包可依赖shared基础层；shared基础层禁止依赖业务层；跨包违规减少或不变为SAFE，增加向下依赖为CAUTION，增加向上依赖为BLOCKED
+    - type: exception
+      step: DIP例外——编排器(控制平面)可依赖下层暴露的抽象契约(contract类型，如Protocol/ABC)，不可依赖具体实现(runtime类型)；编排器通过事件总线(event类型)调度下层不算逆向依赖。对标K8s CRI/CSI、Netflix Conductor Worker API
     prohibitions:
     - 专用包向上依赖shared包
     - 基础层依赖业务层
     - 跨层向上依赖
+    - 编排器直接依赖下层具体实现(runtime类型)——应改为contract依赖抽象接口
   arch_002:
     section_type: rule
     title: 循环依赖禁止
@@ -49,13 +52,16 @@ sections:
     conditions:
     - type: trigger
       check: 新增或修改依赖时
-      pass: 无循环依赖
-      fail: 产生新循环依赖
+      pass: 无循环依赖(跨层无循环 AND 同层无循环)
+      fail: 产生新循环依赖(跨层循环 OR 同层循环)
     actions:
     - type: mandatory
       step: 移动模块/拆包/改标签前MUST执行依赖图推演(STEP 1)；推演发现新循环→BLOCKED，必须先解决循环再执行；验证命令python scripts/governance/diagnose_depgraph.py确认无循环
+    - type: clarification
+      step: 同层间允许单向依赖(如F2→F4门禁校验预算)，但禁止同层循环依赖(如F2→F4→F2禁止)。同层协作对标K8s/Conductor同层组件协作模式
     prohibitions:
-    - 引入循环依赖
+    - 引入循环依赖(跨层循环)
+    - 引入同层循环依赖(同层形成环)
     - 不推演直接移动模块导致新循环依赖
     - 系统堵塞后不回滚直接继续
   arch_003:

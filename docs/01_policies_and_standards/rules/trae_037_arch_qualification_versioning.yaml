@@ -118,6 +118,10 @@ sections:
       check: 跨层依赖边界——cross_layer模块间仅允许单向depends_on shared-core
       pass: 符合规则
       fail: 违规，需架构评审
+    - type: exception
+      check: DIP例外——编排器(控制平面)依赖下层抽象契约
+      pass: 编排器depends_on下层Protocol/ABC/接口类(contract类型)或通过EventBus调度(event类型)，不触发逆向依赖告警
+      fail: 编排器depends_on下层具体实现类(runtime类型)，触发违规告警
     actions:
     - type: mandatory
       step: 所有infra/cross_layer模块允许单向depends_on MOD-INF-019(shared-core)，不触发循环告警（ILDR-001）
@@ -129,10 +133,13 @@ sections:
       step: 跨层依赖边界4条规则：cross_layer间仅单向depends_on shared-core；禁止直接双向depends_on（除LEGAL-001）；infra_ops→cross_layer仅允许depends_on shared-core/pipeline/database（需架构评审）；cross_layer→infra_ops仅允许depends_on具体l01模块（需架构评审，优先EventBus）（ILDR-004）
     - type: mandatory
       step: detect_depends_on_cycles.py消费本规则，DEPTH_0白名单边不触发循环告警，DEPTH_1边仍触发告警但附带recommendation
+    - type: exception
+      step: DIP例外——编排器(F1/AutoPilot)depends_on下层抽象契约(contract类型，如TaskRepository Protocol)或通过EventBus调度(event类型)不算逆向依赖，不触发循环告警。对标K8s CRI/CSI、Netflix Conductor Worker API。编排器depends_on下层具体实现类(runtime类型)触发违规告警
     prohibitions:
     - cross_layer模块之间禁止直接双向depends_on（除白名单LEGAL-001）
     - 禁止在DEPTH_1边维持直接depends_on而不迁至EventBus（pending_refactor状态需逐步消除）
     - 合法循环必须收敛、有限步长、可证明无分歧
+    - 编排器禁止depends_on下层具体实现类(runtime类型)——应改为contract依赖抽象接口（DIP例外允许contract/event类型）
   gov_arch_003_scope:
     title: 架构版本化策略适用范围
     section_type: context

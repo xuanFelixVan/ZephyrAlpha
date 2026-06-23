@@ -72,10 +72,10 @@ def _load_from_db(db_path):
     for row in conn.execute("SELECT * FROM edges"):
         edge = dict(row)
         edge.pop("edge_id", None)
-        if "from_node" in edge:
-            edge["from"] = edge.pop("from_node")
-        if "to_node" in edge:
-            edge["to"] = edge.pop("to_node")
+        if "from_node_id" in edge:
+            edge["from"] = edge.pop("from_node_id")
+        if "to_node_id" in edge:
+            edge["to"] = edge.pop("to_node_id")
         # Parse JSON fields
         for json_field in ("api_contract_refs",):
             raw = edge.pop(json_field, None)
