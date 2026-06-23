@@ -2,16 +2,139 @@
 # 真源：data/brain/passports/*.json（8份护照）
 # 生成时间：2026-06-23
 # 生成依据：4本地模型 + 4 API模型入职考试结果
+# 策略原则：分两阶段——建设期速度优先，维护期成本优先
 
-version: "1.0.0"
+version: "2.0.0"
 generated_at: "2026-06-23"
 passport_source: "data/brain/passports/"
 
 # ============================================================
-# 模型清单
+# 两阶段策略
+# ============================================================
+phases:
+  # --- 阶段1：建设期（当前）—— 速度优先 ---
+  phase_1_construction:
+    name: "建设期"
+    principle: "速度优先"
+    description: "系统建设阶段，优先选择最快的模型，不考虑成本"
+    active: true
+    
+    # 模型选择规则：选最快的安全模型
+    selection_rule: "for each capability, pick the model with lowest P50 latency among safe models"
+    
+    # 模型职责分配
+    model_assignments:
+      deepseek-v4-flash-non-thinking:
+        role: "通用快速推理主力"
+        capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
+        p50_latency_ms: 1867
+        reason: "最快（1.9s）+ 4项安全能力"
+      
+      deepseek-v4-flash-thinking:
+        role: "深度推理专用"
+        capabilities: ["tag_completion", "naming_suggest"]
+        p50_latency_ms: 4568
+        reason: "tag_completion唯一安全模型；naming_suggest最快安全模型"
+      
+      qwen2.5-coder:14b:
+        role: "本地降级备选（网络不可用时）"
+        capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
+        p50_latency_ms: 2985
+        reason: "本地最佳，网络断时降级使用"
+      
+      claude_or_human:
+        role: "不可路由任务处理"
+        capabilities: ["task_classification", "anomaly_triage", "code_fix"]
+        reason: "8个模型全部F级，必须交给Claude Opus或人类"
+    
+    # 不使用的模型（建设期淘汰）
+    retired_models:
+      - model: "deepseek-v4-pro-thinking"
+        reason: "P50=7.8s慢于flash-thinking(4.6s)，费用高4倍，安全能力少2项"
+      - model: "deepseek-v4-pro-non-thinking"
+        reason: "P50=2.0s略慢于flash-non-thinking(1.9s)，费用高3倍，安全能力少1项"
+      - model: "qwen3:8b"
+        reason: "P50=9.3s过慢，仅2项安全能力"
+      - model: "deepseek-r1:8b"
+        reason: "P50=11.1s最慢，仅3项安全能力"
+      - model: "deepseek-r1:14b"
+        reason: "P50=10.9s过慢，仅2项安全能力"
+
+  # --- 阶段2：维护期 —— 成本优先 ---
+  phase_2_maintenance:
+    name: "维护期"
+    principle: "成本优先"
+    description: "系统稳定运行后，优先使用免费本地模型，API模型仅用于本地不安全的能力"
+    active: false
+    
+    # 模型选择规则：本地优先 → API flash → Claude
+    selection_rule: "local_safe_model → api_flash_model → claude_or_human"
+    
+    # 模型职责分配
+    model_assignments:
+      qwen2.5-coder:14b:
+        role: "本地主力"
+        capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
+        p50_latency_ms: 2985
+        cost_per_call: 0.0
+        reason: "本地免费+4项安全能力+P50=3s可接受"
+      
+      qwen3:8b:
+        role: "本地补充"
+        capabilities: ["naming_suggest", "dead_code_removal"]
+        p50_latency_ms: 9309
+        cost_per_call: 0.0
+        reason: "本地免费，覆盖qwen2.5-coder不安全的能力"
+      
+      deepseek-v4-flash-thinking:
+        role: "API补充（本地不安全的能力）"
+        capabilities: ["tag_completion"]
+        p50_latency_ms: 4568
+        cost_per_call: 0.056
+        reason: "tag_completion唯一安全模型，无法本地替代"
+      
+      claude_or_human:
+        role: "不可路由任务处理"
+        capabilities: ["task_classification", "anomaly_triage", "code_fix"]
+        reason: "8个模型全部F级"
+
+  # --- 门闸：阶段1 → 阶段2 切换条件 ---
+  phase_gate:
+    gate_name: "CONSTRUCTION_TO_MAINTENANCE_GATE"
+    description: "当以下条件全部满足时，从建设期切换到维护期"
+    conditions:
+      - id: "G1"
+        check: "大脑系统18步启动全部通过"
+        command: "python scripts/construction/start_brain.py --status"
+        expected: "all 18 steps OK"
+      
+      - id: "G2"
+        check: "AutoPilot 自动驾驶稳定运行24小时"
+        command: "检查 autopilot 日志无 ERROR"
+        expected: "0 errors in 24h"
+      
+      - id: "G3"
+        check: "无 P0/P1 级别未完成任务卡"
+        command: "查询 task_repository WHERE priority IN ('P0','P1') AND status != 'COMPLETED'"
+        expected: "0 rows"
+      
+      - id: "G4"
+        check: "46个门控检查全部通过"
+        command: "python scripts/governance/phase_manager.py --status"
+        expected: "all gates passed"
+      
+      - id: "G5"
+        check: "连续7天无系统级故障"
+        command: "检查 incident_log WHERE severity = 'system' AND timestamp > 7 days ago"
+        expected: "0 rows"
+    
+    switch_action: "将 phase_1_construction.active 设为 false，phase_2_maintenance.active 设为 true"
+
+# ============================================================
+# 模型清单（完整数据）
 # ============================================================
 models:
-  # --- 本地模型（Ollama，免费，数据不出域）---
+  # --- 本地模型（Ollama，免费）---
   qwen2.5-coder:14b:
     type: local
     provider: ollama
@@ -20,7 +143,7 @@ models:
     overall_grade: "B+"
     overall_score: 0.771
     max_concurrent_tasks: 4
-    role: "本地主力（代码类任务首选）"
+    safe_capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
 
   qwen3:8b:
     type: local
@@ -30,7 +153,7 @@ models:
     overall_grade: "C+"
     overall_score: 0.627
     max_concurrent_tasks: 2
-    role: "本地备选（仅命名建议+死代码识别）"
+    safe_capabilities: ["naming_suggest", "dead_code_removal"]
 
   deepseek-r1:8b:
     type: local
@@ -40,7 +163,7 @@ models:
     overall_grade: "C+"
     overall_score: 0.646
     max_concurrent_tasks: 3
-    role: "本地备选（摘要+命名+代码生成）"
+    safe_capabilities: ["summary_extraction", "naming_suggest", "code_generate"]
 
   deepseek-r1:14b:
     type: local
@@ -50,9 +173,9 @@ models:
     overall_grade: "B-"
     overall_score: 0.667
     max_concurrent_tasks: 2
-    role: "本地备选（仅摘要+死代码识别）"
+    safe_capabilities: ["summary_extraction", "dead_code_removal"]
 
-  # --- API模型（DeepSeek V4，按量付费）---
+  # --- API模型（DeepSeek V4）---
   deepseek-v4-flash-thinking:
     type: api
     provider: deepseek
@@ -61,7 +184,7 @@ models:
     overall_grade: "B+"
     overall_score: 0.793
     max_concurrent_tasks: 4
-    role: "API最佳（6项安全能力最多）"
+    safe_capabilities: ["tag_completion", "summary_extraction", "naming_suggest", "refactor", "code_generate", "dead_code_removal"]
 
   deepseek-v4-flash-non-thinking:
     type: api
@@ -71,7 +194,7 @@ models:
     overall_grade: "B+"
     overall_score: 0.781
     max_concurrent_tasks: 4
-    role: "大脑推理后端（最快+最便宜）"
+    safe_capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
 
   deepseek-v4-pro-thinking:
     type: api
@@ -81,7 +204,7 @@ models:
     overall_grade: "B+"
     overall_score: 0.751
     max_concurrent_tasks: 4
-    role: "不推荐（费用高4倍，安全能力反而更少）"
+    safe_capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
 
   deepseek-v4-pro-non-thinking:
     type: api
@@ -91,139 +214,96 @@ models:
     overall_grade: "B+"
     overall_score: 0.775
     max_concurrent_tasks: 3
-    role: "不推荐（费用高于flash，安全能力更少）"
+    safe_capabilities: ["summary_extraction", "code_generate", "dead_code_removal"]
 
 # ============================================================
-# 能力路由表 — 每个能力的首选和备选模型
+# 能力路由表 — 9项能力完整矩阵
 # ============================================================
 capability_routing:
-  task_classification:
-    primary: null
-    fallback: null
-    recommendation: "交给Claude Opus或人类"
-    reason: "所有8个模型都不安全（全部F级）"
-    safe_models: []
-
-  tag_completion:
-    primary: "deepseek-v4-flash-thinking"
-    fallback: null
-    recommendation: "唯一安全模型（API ¥0.056/次）"
-    reason: "仅v4-flash-thinking通过"
-    safe_models: ["deepseek-v4-flash-thinking"]
-
+  # --- 可路由能力（有安全模型）---
   summary_extraction:
-    primary: "qwen2.5-coder:14b"
-    fallback: "deepseek-v4-flash-non-thinking"
-    recommendation: "本地优先（免费+P50=3s）"
-    reason: "7个模型安全，本地qwen2.5-coder最快"
-    safe_models: ["qwen2.5-coder:14b", "deepseek-r1:8b", "deepseek-r1:14b", "deepseek-v4-flash-thinking", "deepseek-v4-flash-non-thinking", "deepseek-v4-pro-thinking", "deepseek-v4-pro-non-thinking"]
+    phase1_primary: "deepseek-v4-flash-non-thinking"
+    phase1_reason: "最快安全模型 P50=1.9s"
+    phase2_primary: "qwen2.5-coder:14b"
+    phase2_reason: "本地免费 P50=3s"
+    safe_models: ["qwen2.5-coder:14b", "deepseek-r1:8b", "deepseek-r1:14b", "v4-flash-thinking", "v4-flash-non-thinking", "v4-pro-thinking", "v4-pro-non-thinking"]
+
+  dead_code_removal:
+    phase1_primary: "deepseek-v4-flash-non-thinking"
+    phase1_reason: "最快安全模型 P50=1.9s"
+    phase2_primary: "qwen2.5-coder:14b"
+    phase2_reason: "本地免费 P50=3s"
+    safe_models: ["qwen3:8b", "qwen2.5-coder:14b", "deepseek-r1:14b", "v4-flash-thinking", "v4-flash-non-thinking", "v4-pro-thinking", "v4-pro-non-thinking"]
+
+  code_generate:
+    phase1_primary: "deepseek-v4-flash-non-thinking"
+    phase1_reason: "最快安全模型 P50=1.9s"
+    phase2_primary: "qwen2.5-coder:14b"
+    phase2_reason: "本地免费 P50=3s"
+    safe_models: ["qwen2.5-coder:14b", "deepseek-r1:8b", "v4-flash-thinking", "v4-flash-non-thinking", "v4-pro-thinking", "v4-pro-non-thinking"]
+
+  refactor:
+    phase1_primary: "deepseek-v4-flash-non-thinking"
+    phase1_reason: "最快安全模型 P50=1.9s"
+    phase2_primary: "qwen2.5-coder:14b"
+    phase2_reason: "本地免费 P50=3s"
+    safe_models: ["qwen2.5-coder:14b", "v4-flash-thinking", "v4-flash-non-thinking", "v4-pro-thinking"]
 
   naming_suggest:
-    primary: "qwen3:8b"
-    fallback: "deepseek-r1:8b"
-    recommendation: "本地优先（免费）"
-    reason: "3个模型安全，qwen3:8b本地免费"
-    safe_models: ["qwen3:8b", "deepseek-r1:8b", "deepseek-v4-flash-thinking"]
+    phase1_primary: "deepseek-v4-flash-thinking"
+    phase1_reason: "最快安全模型 P50=4.6s（qwen3:8b要9.3s）"
+    phase2_primary: "qwen3:8b"
+    phase2_reason: "本地免费（接受9.3s延迟）"
+    safe_models: ["qwen3:8b", "deepseek-r1:8b", "v4-flash-thinking"]
+
+  tag_completion:
+    phase1_primary: "deepseek-v4-flash-thinking"
+    phase1_reason: "唯一安全模型"
+    phase2_primary: "deepseek-v4-flash-thinking"
+    phase2_reason: "唯一安全模型，无法本地替代"
+    safe_models: ["v4-flash-thinking"]
+
+  # --- 不可路由能力（所有模型F级）---
+  task_classification:
+    phase1_primary: null
+    phase1_reason: "8个模型全部F级"
+    phase2_primary: null
+    phase2_reason: "8个模型全部F级"
+    action: "交给Claude Opus或人类"
+    safe_models: []
 
   anomaly_triage:
-    primary: null
-    fallback: null
-    recommendation: "交给Claude Opus或人类"
-    reason: "所有8个模型都不安全（全部F级）"
+    phase1_primary: null
+    phase1_reason: "8个模型全部F级"
+    phase2_primary: null
+    phase2_reason: "8个模型全部F级"
+    action: "交给Claude Opus或人类"
     safe_models: []
 
   code_fix:
-    primary: null
-    fallback: null
-    recommendation: "交给Claude Opus或人类"
-    reason: "所有8个模型都不安全（全部F级）"
+    phase1_primary: null
+    phase1_reason: "8个模型全部F级"
+    phase2_primary: null
+    phase2_reason: "8个模型全部F级"
+    action: "交给Claude Opus或人类"
     safe_models: []
 
-  refactor:
-    primary: "qwen2.5-coder:14b"
-    fallback: "deepseek-v4-flash-non-thinking"
-    recommendation: "本地优先（免费+P50=3s）"
-    reason: "4个模型安全，本地qwen2.5-coder最快"
-    safe_models: ["qwen2.5-coder:14b", "deepseek-v4-flash-thinking", "deepseek-v4-flash-non-thinking", "deepseek-v4-pro-thinking"]
-
-  code_generate:
-    primary: "qwen2.5-coder:14b"
-    fallback: "deepseek-v4-flash-non-thinking"
-    recommendation: "本地优先（免费+P50=3s）"
-    reason: "6个模型安全，本地qwen2.5-coder最快"
-    safe_models: ["qwen2.5-coder:14b", "deepseek-r1:8b", "deepseek-v4-flash-thinking", "deepseek-v4-flash-non-thinking", "deepseek-v4-pro-thinking", "deepseek-v4-pro-non-thinking"]
-
-  dead_code_removal:
-    primary: "qwen2.5-coder:14b"
-    fallback: "qwen3:8b"
-    recommendation: "本地优先（免费+P50=3s）"
-    reason: "7个模型安全，本地qwen2.5-coder最快"
-    safe_models: ["qwen3:8b", "qwen2.5-coder:14b", "deepseek-r1:14b", "deepseek-v4-flash-thinking", "deepseek-v4-flash-non-thinking", "deepseek-v4-pro-thinking", "deepseek-v4-pro-non-thinking"]
-
 # ============================================================
-# 全局策略
-# ============================================================
-global_strategy:
-  # 优先级链：本地安全模型 > API flash模型 > API pro模型 > Claude/人类
-  priority_chain:
-    - "local_safe_model"
-    - "api_flash_model"
-    - "api_pro_model"
-    - "claude_or_human"
-
-  # 本地模型优先原则
-  local_first: true
-  local_reason: "本地模型免费、无网络延迟、数据不出域"
-
-  # API模型选择原则
-  api_prefer_flash: true
-  api_reason: "flash费用低（¥0.013-0.056 vs pro ¥0.041-0.200），安全能力更多或相当"
-
-  # 不可路由能力（所有模型都不安全）
-  unroutable_capabilities:
-    - "task_classification"
-    - "anomaly_triage"
-    - "code_fix"
-  unroutable_action: "交给Claude Opus或人类处理"
-  unroutable_reason: "8个模型全部F级，无模型能胜任"
-
-# ============================================================
-# 大脑系统推理后端选择
+# 大脑系统推理后端
 # ============================================================
 brain_inference:
-  # 当前大脑系统使用的后端
-  current_backend: "deepseek-v4-flash-non-thinking"
-  current_reason: "最快（P50=1.9s）+ 最便宜（¥0.013/次）+ 4项安全能力"
-
-  # 推荐升级后端
-  recommended_backend: "deepseek-v4-flash-thinking"
-  recommended_reason: "6项安全能力最多，费用仅¥0.056/次，P50=4.6s可接受"
-
-  # 本地备选（网络不可用时）
-  local_fallback: "qwen2.5-coder:14b"
-  local_fallback_reason: "本地最佳模型，4项安全能力，P50=3s，免费"
-
-  # 不可路由的大脑任务
+  phase_1_backend:
+    model: "deepseek-v4-flash-non-thinking"
+    reason: "最快 P50=1.9s + 4项安全能力 + 费用低 ¥0.013"
+  
+  phase_2_backend:
+    model: "qwen2.5-coder:14b"
+    reason: "本地免费 + 4项安全能力 + P50=3s可接受"
+    api_fallback: "deepseek-v4-flash-non-thinking"
+    api_fallback_reason: "本地不可用时降级"
+  
   blocked_tasks:
     - "task_classification"
     - "anomaly_triage"
     - "code_fix"
-  blocked_action: "大脑系统遇到这三类任务时，必须升级到Claude或交给人类"
-
-# ============================================================
-# 成本控制
-# ============================================================
-cost_control:
-  # 单次调用费用上限
-  max_cost_per_call: 0.200
-  max_cost_model: "deepseek-v4-pro-thinking"
-
-  # 日费用预算（元）
-  daily_budget: 10.0
-
-  # 费用优化建议
-  optimization:
-    - "用v4-flash-non-thinking替代v4-pro-non-thinking（费用降68%，安全能力多1项）"
-    - "用v4-flash-thinking替代v4-pro-thinking（费用降72%，安全能力多2项）"
-    - "本地模型优先（qwen2.5-coder:14b覆盖4项能力，免费）"
-    - "不可路由能力交给Claude（避免低质量模型浪费token）"
+  blocked_action: "大脑遇到这三类任务时，必须升级到Claude或交给人类"
