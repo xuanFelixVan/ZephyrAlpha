@@ -53,7 +53,7 @@ class StatusDashboard:
         uptime_start: str = "",
     ) -> None:
         self._registry = registry
-        self._health = health - monitor
+        self._health = health_monitor
         self._nq = night_shift_queue
         self._wo = work_orchestrator
         self._cs = circadian_scheduler
