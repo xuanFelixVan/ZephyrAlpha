@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-ORC_boot_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 
 # [MODULE] zephyr.trading.boot_hooks
 
@@ -22,6 +22,8 @@
 from __future__ import annotations
 
 import logging
+import threading
+from pathlib import Path
 
 from zephyr.shared.event_bus import EventBus, EventType
 
@@ -45,6 +47,73 @@ def _subscribe_task_lifecycle_events() -> None:
         logger.info("EventBus task lifecycle subscriptions registered (TASK_CREATED, TASK_COMPLETED)")
     except Exception as e:
         logger.debug("EventBus task lifecycle subscription skipped: %s", e)
+
+
+def _register_rbac_hooks() -> None:
+    """注册RBAC事件钩子 — 在任务状态转换时检查权限."""
+    try:
+        from zephyr.governance.ops_governance.event_hook import hook_registry
+
+        def _on_task_in_progress_rbac_check(event: object) -> None:
+            """任务开始执行时验证RBAC系统就绪状态."""
+            to_status = getattr(event, "to_status", "")
+            if to_status.upper() != "IN_PROGRESS":
+                return
+            try:
+                from zephyr.security.access_control.genesis_bootstrap import (
+                    get_genesis_bootstrap,
+                )
+
+                genesis = get_genesis_bootstrap()
+                if not genesis.state.is_ready:
+                    logger.warning(
+                        "RBAC system not ready when task %s starting IN_PROGRESS — genesis phase=%s",
+                        getattr(event, "task_id", ""),
+                        genesis.state.phase.value,
+                    )
+            except Exception as exc:
+                logger.debug("hook rbac_readiness_check: %s", exc)
+
+        def _on_task_completed_rbac_audit(event: object) -> None:
+            """任务完成时记录RBAC审计条目."""
+            to_status = getattr(event, "to_status", "")
+            if to_status.upper() != "COMPLETED":
+                return
+            try:
+                from zephyr.security.access_control.non_repudiation import NonRepudiation
+
+                nr = NonRepudiation()
+                task_id = getattr(event, "task_id", "")
+                entry = nr.sign(f"task_completed:{task_id}", "auto_runtime_core")
+                logger.debug("RBAC audit entry signed for task %s: %s", task_id, entry.hmac_hash[:16])
+            except Exception as exc:
+                logger.debug("hook rbac_audit_sign: %s", exc)
+
+        def _on_task_failed_rbac_alert(event: object) -> None:
+            """任务失败时检查是否需要触发RBAC熔断器."""
+            to_status = getattr(event, "to_status", "")
+            if to_status.upper() != "FAILED":
+                return
+            try:
+                from zephyr.security.access_control.kill_switch import KillSwitch, KillSwitchState
+
+                ks = KillSwitch()
+                if ks.status.state == KillSwitchState.NORMAL:
+                    logger.info(
+                        "Task %s failed — RBAC kill_switch still NORMAL (no systemic threat detected)",
+                        getattr(event, "task_id", ""),
+                    )
+            except Exception as exc:
+                logger.debug("hook rbac_kill_switch_check: %s", exc)
+
+        hook_registry.register(_on_task_in_progress_rbac_check, priority=40, name="rbac_readiness_check")
+        hook_registry.register(_on_task_completed_rbac_audit, priority=46, name="rbac_audit_sign")
+        hook_registry.register(_on_task_failed_rbac_alert, priority=57, name="rbac_kill_switch_check")
+        logger.info(
+            "RBAC hooks registered: rbac_readiness_check / rbac_audit_sign / rbac_kill_switch_check"
+        )
+    except Exception as e:
+        logger.warning("Failed to register RBAC hooks: %s", e)
 
 
 def register_boot_hooks() -> None:
@@ -222,6 +291,34 @@ def register_boot_hooks() -> None:
             except Exception as exc:
                 logger.debug("hook budget_delta: %s", exc)
 
+        def _on_session_startup_init_budget(event: object) -> None:
+            try:
+                from zephyr.governance.budget_engine import BudgetEngine
+
+                engine = BudgetEngine.ensure_initialized()
+                snapshot = engine.get_snapshot()
+                logger.info(
+                    "session_startup: BudgetEngine initialized, health=%s, degradation=%s",
+                    snapshot.get("health", "UNKNOWN"),
+                    snapshot.get("degradation_level", "UNKNOWN"),
+                )
+            except Exception as exc:
+                logger.error("hook session_startup_init_budget FAILED: %s", exc)
+
+        def _on_session_shutdown_budget_close(event: object) -> None:
+            try:
+                from zephyr.governance.budget_engine import BudgetEngine
+
+                if BudgetEngine._instance is not None:
+                    result = BudgetEngine._instance.shutdown()
+                    logger.info(
+                        "session_shutdown: BudgetEngine closed, persisted=%s, health=%s",
+                        result.get("cleaned_up", False),
+                        result.get("snapshot", {}).get("health", "UNKNOWN"),
+                    )
+            except Exception as exc:
+                logger.error("hook session_shutdown_budget_close FAILED: %s", exc)
+
         def _on_blueprint_changed_triple_align(event: object) -> None:
             try:
                 from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
@@ -242,6 +339,8 @@ def register_boot_hooks() -> None:
         hook_registry.register(_on_task_blocked_escalation, priority=56, name="escalation_check_event")
         hook_registry.register(_on_task_in_progress_timeout, priority=56, name="timeout_check_event")
         hook_registry.register(_on_task_completed_budget_delta, priority=94, name="budget_delta_event")
+        hook_registry.register(_on_session_startup_init_budget, priority=10, name="session_startup_init_budget")
+        hook_registry.register(_on_session_shutdown_budget_close, priority=90, name="session_shutdown_budget_close")
         hook_registry.register(_on_blueprint_changed_triple_align, priority=72, name="triple_align_event")
 
         try:
@@ -253,7 +352,7 @@ def register_boot_hooks() -> None:
         except Exception:
             pass
 
-        logger.info("Event-driven hooks registered: escalation_check / timeout_check / budget_delta / triple_align")
+        logger.info("Event-driven hooks registered: escalation_check / timeout_check / budget_delta / session_startup_init_budget / session_shutdown_budget_close / triple_align")
     except Exception as e:
         logger.warning("Failed to register task system hooks: %s", e)
 
@@ -266,3 +365,30 @@ def register_boot_hooks() -> None:
         logger.warning("Failed to register IdeHealthDaemon: %s", e)
 
     _subscribe_task_lifecycle_events()
+    _register_rbac_hooks()
+
+    # MCP 集群自动启动（daemon 线程，不阻塞主流程）
+    def _start_mcp_cluster() -> None:
+        """启动 MCP 集群（10 个 Server 按 DAG 拓扑排序启动）。"""
+        try:
+            launcher_path = Path(__file__).resolve().parents[3] / "scripts" / "mcp" / "launcher.py"
+            if not launcher_path.exists():
+                logger.warning("MCP launcher not found: %s", launcher_path)
+                return
+
+            import importlib.util
+
+            spec = importlib.util.spec_from_file_location("launcher", launcher_path)
+            if spec is None or spec.loader is None:
+                logger.warning("MCP launcher spec creation failed")
+                return
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            logger.info("MCP cluster auto-start: launching 10 servers via DAG...")
+            mod.launch_all()
+        except Exception as exc:
+            logger.error("MCP cluster auto-start FAILED: %s", exc)
+
+    mcp_thread = threading.Thread(target=_start_mcp_cluster, name="mcp-cluster-launcher", daemon=True)
+    mcp_thread.start()
+    logger.info("MCP cluster auto-start thread launched (daemon=True)")

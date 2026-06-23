@@ -6,77 +6,32 @@
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
+# v3.0.0: §2.1裁定对齐——52域唯一物理分类体系，14层降级为域属性
 module_id: MOD-023
-schema_version: '2.0.0'
+schema_version: '3.0.0'
 system:
   name: ZephyrAlpha
   description: 个人量化交易系统
-  architecture_style: layered_event_driven_polyglot
+  architecture_style: domain_driven_event_driven_polyglot
 
 # === 分区管理约定（Partition Management Convention）===
-# 以下两条铁律定义了"分区"在架构模型中的生命期状态，是本次审计修复的根源性产出。
-#
-# 铁律 1（文件必须存在）：
-#   index.yaml 中枚举的每个 partition 必须有对应的物理 YAML 文件。
-#   不允许"仅 index.yaml 枚举而无文件"的虚分区——这会导致 CI GATE-01 失败 + 审计漂移。
-#
-# 铁律 2（骨架文件是合法状态）：
-#   允许创建 status: planned 的骨架 YAML 文件表示"计划中但尚未激活"的分区。
-#   骨架文件是最小合法内容：schema_version + partition 元数据 + 空 modules 列表 + summary。
-#   "planned" 不等于"broken"——骨架文件是 TOGAF 架构渐进式填充的标准做法。
-#   审计脚本不应将 status: planned 的文件报告为"缺失"或"不完整"。
-#
-# 大白话：
-#   房产证（index.yaml）里登记了的房间，必须真的存在（有对应的 YAML 文件）。
-#   但"存在"不等于"装修好了"——毛坯房（status: planned 的骨架文件）也是合法状态。
-#   不能登记了房间号但实际没有房间——这就是之前 infra/ 分区的问题，已修复。
+# §2.1裁定（2026-06-22）：52域是唯一物理分类体系，14层（L00-L13）降级为域的layer_id属性。
+# 物理分类由depgraph.db的domains表（52域）定义，AI找模块只有一条路：按域找。
+# 旧的layers/l00-l13-*.yaml文件已废弃，信息合并入depgraph.db域定义。
 
 partitions:
+# === 52域索引（物理分类唯一真源：depgraph.db domains表）===
+- id: domains
+  path: ../../../../data/databases/depgraph.db
+  description: >
+    52域物理分类唯一真源（§2.1裁定）。
+    查询命令: python scripts/governance/extract_depgraph.py --summary
+    14层（L00-L13）降级为域的layer_id属性，不再作为并行分类体系。
+
+# === 横切关注点分区（非业务分类，保留）===
 - id: shared
   path: layers/shared.yaml
-  description: 跨层公共契约与基础能力
-- id: l00
-  path: layers/l00_data_source.yaml
-  description: 数据接入、标准化、落库、缓存与质量门禁
-- id: l01
-  path: layers/l01_infrastructure.yaml
-  description: 配置、日志、异常与基础运行能力
-- id: l02
-  path: layers/l02_alpha_factor.yaml
-  description: Alpha 因子计算引擎、PIT 合规与因子库管理
-- id: l03
-  path: layers/l03_signal_generation.yaml
-  description: 交易信号生成、策略调度与信号合成
-- id: l04
-  path: layers/l04_risk_management.yaml
-  description: 实时风控、Kill Switch、压力测试与合规检查
-- id: l05
-  path: layers/l05_portfolio_construction.yaml
-  description: 组合构建、权重优化与再平衡决策
-- id: l06
-  path: layers/l06_trade_execution.yaml
-  description: 订单路由、执行引擎、Broker ACL 边界与成交管理
-- id: l07
-  path: layers/l07_post_trade_analytics.yaml
-  description: 交易后分析、绩效归因与报告生成
-- id: l08
-  path: layers/l08_human_ai_interface.yaml
-  description: 人机交互、API 网关、监控面板与告警通知
-- id: l09
-  path: layers/l09_research_innovation.yaml
-  description: 研究工作台、回测框架与策略实验室
-- id: l10
-  path: layers/l10_compliance.yaml
-  description: 合规治理、审计追踪与监管报告
-- id: l11
-  path: layers/l11_ml_platform.yaml
-  description: ML 平台、Scout Agent、战略决策与 AI 引擎
-- id: l12
-  path: layers/l12_system_telemetry.yaml
-  description: 系统遥测、可观测性、健康检查与 SLA 监控
-- id: l13
-  path: layers/l13_experimentation.yaml
-  description: 实验管线与 A/B 测试框架
+  description: 跨域公共契约与基础能力
 - id: frontend
   path: frontend/frontend_model.yaml
   description: 前端独立平台 FE-L1~L4
@@ -85,85 +40,223 @@ partitions:
   description: 治理/审计/部署脚本
 - id: cross_cutting
   path: cross_cutting/
-  description: 运行平面、不变量、能力成熟度（含 runtime_planes.yaml / invariants.yaml / capability_heatmap.yaml）
+  description: 运行平面、不变量、能力成熟度
 - id: contracts
   path: contracts/cross_layer_contracts.yaml
-  description: P0/P1 跨层数据契约、OCP 扩展点、外部系统契约、AI 治理接口签名
+  description: P0/P1跨域数据契约、OCP扩展点、外部系统契约、AI治理接口签名
 - id: events
   path: events/domain_events.yaml
-  description: 22 条领域事件（6 域）、事件链、频率等级与运行时声明
+  description: 22条领域事件（6域）、事件链、频率等级与运行时声明
 - id: ddd-model
   path: domain/ddd_model.yaml
-  description: DDD 战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
+  description: DDD战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
 - id: technology
   path: technology/
-  description: >
-    技术选型与版本治理 SSoT。
-    Partition A — `technology_landscape.yaml`：43 项技术雷达条目（Adopt/Trial/Assess/Hold/Build 五象限 + 5 数据源 + 4 LLM 供应商）。
-    Partition B — `vibe_coding_infrastructure_tech_stack.yaml`：Vibe Coding 2.0 基础设施层 6 大核心服务（LSG/CE/VMS/Orc/FLE/KB）的 17 项技术选型 + upgrade_watchboard 升级管控看板。
+  description: 技术选型与版本治理SSoT
 - id: core-services
   path: infra/core_services.yaml
-  description: >
-    Vibe Coding 2.0 6 大核心服务（代码位于 src/zephyr/ 根层级，架构归属 L12 跨层支撑层）。
-    包含 llm_security（LSG）、vector_memory（VMS）、context_engine（CE）、orchestrator（Orc）、feedback_loop（FLE）、kb（知识库）。
-    YAML 模型文件已创建（infra/core_services.yaml v2.0，status: planned），experimental 填充详细接口。
+  description: Vibe Coding 2.0 6大核心服务
 - id: shared-infra
   path: infra/shared_infra.yaml
-  description: >
-    跨层共享基础设施（代码位于 src/zephyr/ 根层级）。
-    包含 core（蓝图分解/核心模型）、db（原子事务/OLAP引擎/任务仓储）、gates（门禁引擎/断路器等治理基础设施）、
-    mcp（MCP协议服务器）、pipeline（流水线编排）。
-    YAML 模型文件已创建（infra/shared_infra.yaml v2.0，status: planned），experimental 填充子模块边界。
+  description: 跨域共享基础设施
+
+# === 52域清单（从depgraph.db派生，禁止手工编辑）===
+domains:
+- id: D-ALT_DATA
+  name: 另类数据
+  layer_id: L1_foundation
+- id: D-AUTONOMY-CORE
+  name: agent_communication
+  layer_id: 
+- id: D-AUTONOMY-PERM
+  name: escalation
+  layer_id: 
+- id: D-AUTONOMY_CORE
+  name: 自治核心
+  layer_id: L1_platform
+- id: D-AUTONOMY_PERM
+  name: 自治保护
+  layer_id: L2_domain
+- id: D-BACKTEST
+  name: 回测
+  layer_id: L2_domain
+- id: D-BEHAVIORAL_AUDIT
+  name: 行为审计
+  layer_id: L1_foundation
+- id: D-COMPLIANCE
+  name: 合规
+  layer_id: L2_domain
+- id: D-CROSS_ASSET
+  name: 跨资产
+  layer_id: L2_domain
+- id: D-DATA_ENG
+  name: 数据工程(增值+融合+知识)
+  layer_id: L1_foundation
+- id: D-DATA_GOV
+  name: 数据治理(质量+血缘+参考)
+  layer_id: L1_foundation
+- id: D-DATA_SEC
+  name: 数据安全与契约
+  layer_id: L1_foundation
+- id: D-DIGITAL_TWIN
+  name: 数字孪生
+  layer_id: L2_domain
+- id: D-EXEC_SIM
+  name: 执行仿真
+  layer_id: L2_domain
+- id: D-EX_CORE
+  name: 执行核心
+  layer_id: L2_domain
+- id: D-EX_SOR
+  name: 执行路由
+  layer_id: L2_domain
+- id: D-FACTOR
+  name: 因子
+  layer_id: L2_domain
+- id: D-FRONTEND
+  name: 前端
+  layer_id: L1_platform
+- id: D-GOV-ENFORCEMENT
+  name: rule_enforcement
+  layer_id: 
+- id: D-GOV-REPAIR
+  name: rollback
+  layer_id: 
+- id: D-GOV-SCRIPTS
+  name: code_dedup
+  layer_id: 
+- id: D-GOVERNANCE
+  name: lifecycle_management
+  layer_id: L2_domain
+- id: D-GOV_AUDIT
+  name: audit-trail
+  layer_id: L2_domain
+- id: D-GOV_DRIFT
+  name: drift_detection
+  layer_id: L2_domain
+- id: D-GOV_RULE
+  name: 规则治理
+  layer_id: L2_domain
+- id: D-INFRA-OPS
+  name: resource_optimization
+  layer_id: 
+- id: D-INFRA_OPS
+  name: 基础设施运维
+  layer_id: L0_infrastructure
+- id: D-INFRA_RUNTIME
+  name: runtime_integration
+  layer_id: L0_infrastructure
+- id: D-INTEGRATION
+  name: pipeline_routing
+  layer_id: L1_platform
+- id: D-INTEGRATION-GATEWAY
+  name: mcp_servers
+  layer_id: 
+- id: D-INTELLIGENCE
+  name: context_management
+  layer_id: L2_domain
+- id: D-KNOWLEDGE
+  name: knowledge_management
+  layer_id: L2_domain
+- id: D-MKT_DATA
+  name: 行情数据(接入+存储)
+  layer_id: L1_foundation
+- id: D-ML-TRAIN
+  name: model_profiling
+  layer_id: 
+- id: D-ML_SERVE
+  name: 推理
+  layer_id: L2_domain
+- id: D-ML_TRAIN
+  name: 训练
+  layer_id: L2_domain
+- id: D-OPS
+  name: feedback-loop
+  layer_id: L1_platform
+- id: D-PF_ALLOC
+  name: 组合分配
+  layer_id: L2_domain
+- id: D-PF_CORE
+  name: 组合核心
+  layer_id: L2_domain
+- id: D-POSITION
+  name: 仓位管理
+  layer_id: L2_domain
+- id: D-REPORTING
+  name: 报告
+  layer_id: L1_platform
+- id: D-RISK
+  name: 风控
+  layer_id: L2_domain
+- id: D-SECURITY
+  name: adversarial_validation
+  layer_id: L1_platform
+- id: D-SECURITY-LLM
+  name: llm_defense
+  layer_id: 
+- id: D-SELL_DECISION
+  name: 卖出决策
+  layer_id: L2_domain
+- id: D-SHARED
+  name: shared_services
+  layer_id: L1_platform
+- id: D-SIGNAL
+  name: 信号
+  layer_id: L2_domain
+- id: D-SIGNAL_ASHARE
+  name: A股特色信号
+  layer_id: L2_domain
+- id: D-SIGNAL_FUNDAMENTAL
+  name: 基本面信号
+  layer_id: L2_domain
+- id: D-SIGNAL_QUALITY
+  name: 信号质量
+  layer_id: L2_domain
+- id: D-SIMULATION
+  name: 仿真
+  layer_id: L2_domain
+- id: D-TRADING
+  name: 交易运营
+  layer_id: L2_domain
+
 global_stats:
-  total_partitions: 24
-  total_modules_p0: 34
-  total_modules_p1: 54
-  total_modules_p2: 17
-  total_modules_p3: 3
-  total_modules_deferred: 4
+  total_domains: 52
+  total_partitions: 11
   notes: >
-    2026-05-03 GATE-SUM 自动对账：含 infra/ 分区（core-services 6 模块 + shared-infra 5 模块）。
-    P0=34（layers 19 + infra 6 + scripts 6 + frontend 3 含 deferred），P1=54（含 core-kb + shared-runtime-plane-tag 升级 P0→P1）。
-    deferred=4（frontend/ 全部 4 模块）。
-    注意：shared-runtime-plane-tag 于 2026-05-03 从 P0 降为 P1（接口错误修复），P0/P1 计数已同步。
-  last_updated: '2026-05-03'
+    §2.1裁定（2026-06-22）：52域唯一物理分类体系，14层降级为域属性。
+    结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
+  last_updated: '2026-06-23'
 query_hints:
-- question: 系统有哪些层？
-  answer: 14层 + shared + frontend，见 partitions 列表
-- question: 某层有哪些模块？
-  answer: 读对应分区 YAML，如 layers/l04_risk_management.yaml
+- question: 系统有哪些域？
+  answer: 52域，见domains列表，真源为depgraph.db domains表
+- question: 某域有哪些模块？
+  answer: '查询depgraph.db: python scripts/governance/extract_depgraph.py --domains <域ID>'
 - question: 模块间的依赖关系？
-  answer: 各分区 YAML 的 modules[].interfaces 字段
-- question: 为什么这样分层？
-  answer: 读 L1 视图 03-application_architecture.md §2 Core Decisions
+  answer: '查询depgraph.db: python scripts/governance/extract_depgraph.py --paths'
+- question: 为什么这样分域？
+  answer: 读architecture_upgrade_discussion.md §2.1唯一分类体系裁定
 - question: 不变量/安全红线？
-  answer: 读 cross-cutting/invariants.yaml
-- question: 某模块的详细设计？
-  answer: 读 03_modules/L{XX}/ 对应 blueprint
-- question: 运行平面（Hot/Warm/Cold）分布？
-  answer: 读 cross-cutting/runtime_planes.yaml
+  answer: 读cross-cutting/invariants.yaml
+- question: 运行平面分布？
+  answer: 读cross-cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读 cross-cutting/capability_heatmap.yaml
+  answer: 读cross-cutting/capability_heatmap.yaml（52域×10能力域矩阵）
 - question: 前端有哪些模块？
-  answer: 读 frontend/frontend_model.yaml
+  answer: 读frontend/frontend_model.yaml
 - question: 治理/审计脚本有哪些？
-  answer: 读 scripts/scripts_model.yaml
-- question: 跨层公共契约？
-  answer: 读 layers/shared.yaml
-- question: 全系统概览？
-  answer: 读 index.yaml（本文件）+ README.md
-- question: P0 跨层数据契约有哪些？
-  answer: 读 contracts/cross_layer_contracts.yaml §p0_contracts
+  answer: 读scripts/scripts_model.yaml
+- question: 跨域公共契约？
+  answer: 读layers/shared.yaml
+- question: P0跨域数据契约有哪些？
+  answer: 读contracts/cross_layer_contracts.yaml §p0_contracts
 - question: 领域事件清单？
-  answer: 读 events/domain_events.yaml，22 条事件覆盖 6 个域
-- question: DDD 聚合/实体/值对象？
-  answer: 读 domain/ddd_model.yaml，含 8 AGG + 6 ENT + 12 VO
+  answer: 读events/domain_events.yaml
+- question: DDD聚合/实体/值对象？
+  answer: 读domain/ddd_model.yaml
 - question: 技术选型全景？
-  answer: 读 technology/technology_landscape.yaml（Technology Radar 风格）
-- question: Vibe Coding 2.0 基础设施运行时用了什么技术栈？
-  answer: 读 technology/vibe_coding_infrastructure_tech_stack.yaml（17 项选型 + upgrade_watchboard）
+  answer: 读technology/technology_landscape.yaml
 id_conventions:
-  description: 各分区 YAML 中实体 ID 的命名前缀规范（风险 4 修复）
+  description: 各分区YAML中实体ID的命名前缀规范
   prefixes:
   - prefix: CTR-{NNN}
     scope: contracts/cross_layer_contracts.yaml
@@ -172,33 +265,9 @@ id_conventions:
     scope: events/domain_events.yaml
     example: E-EX-01
   - prefix: AGG-{NNN}
-    scope: domain/ddd_model.yaml — aggregate_roots
+    scope: domain/ddd_model.yaml
     example: AGG-001
-  - prefix: ENT-{NNN}
-    scope: domain/ddd_model.yaml — entities
-    example: ENT-001
-  - prefix: VO-{NNN}
-    scope: domain/ddd_model.yaml — value_objects
-    example: VO-001
-  - prefix: T-{QUADRANT}{NN}
-    scope: technology/technology_landscape.yaml
-    example: T-A01
-    note: EA Technology Radar canonical；仓库根摘要使用 IMPL-T-*，不得与 T-* 混号等价
-  - prefix: IMPL-T-{QUADRANT}{NN}
-    scope: architecture_model/technology_landscape.yaml（repository root）
-    example: IMPL-T-A01
-    note: 施工树摘要专有 ID；可选用 mirrors_ea_id 指向 EA 同义项
-  - prefix: DS{NN}
-    scope: technology/technology_landscape.yaml — data_sources
-    example: DS01
-  - prefix: LLM{NN}
-    scope: technology/technology_landscape.yaml — llm_providers
-    example: LLM01
-  - prefix: CORE-{name}
-    scope: infra/core_services.yaml — services[].id
-    example: core-llm-security
-    note: "Vibe Coding 2.0 核心服务使用 services[].id（如 core-llm-security），非 MOD- 前缀"
-  - prefix: INFRA-{name}
-    scope: infra/shared_infra.yaml — modules[].id
-    example: infra-core
-    note: "跨层共享基础设施使用 modules[].id（如 infra-core），非 MOD- 前缀"
+  - prefix: D-{CATEGORY}-{NAME}
+    scope: depgraph.db domains表
+    example: D-MKT_DATA
+    note: "§2.1裁定后域ID为唯一物理分类标识"

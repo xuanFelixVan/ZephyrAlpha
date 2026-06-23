@@ -1,4 +1,227 @@
-# [A_config] module_id=CFG-capability-heatmap | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+"""生成3个YAML文件内容并直接写入（使用Write工具兼容方式）。"""
+import sqlite3
+import os
+from pathlib import Path
+
+BASE = Path(r"D:\ZephyrAlpha\docs\02_enterprise_architecture\target_architecture\architecture_model")
+DEPGRAPH_DB = Path(r"D:\ZephyrAlpha\data\databases\depgraph.db")
+
+# 查询52域
+conn = sqlite3.connect(DEPGRAPH_DB)
+conn.row_factory = sqlite3.Row
+rows = conn.execute("""
+    SELECT domain_id, domain_name, layer_id
+    FROM domains
+    ORDER BY domain_id
+""").fetchall()
+conn.close()
+
+domains = [(r["domain_id"], r["domain_name"], r["layer_id"] or "") for r in rows]
+print(f"域总数: {len(domains)}")
+
+# 生成 index.yaml 内容
+yaml_content = """# [A_config] module_id=CFG-index | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-023 | docs/03_modules/_domain_governance/blueprint.md | §
+# module_id: MOD-023
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# v3.0.0: §2.1裁定对齐——52域唯一物理分类体系，14层降级为域属性
+module_id: MOD-023
+schema_version: '3.0.0'
+system:
+  name: ZephyrAlpha
+  description: 个人量化交易系统
+  architecture_style: domain_driven_event_driven_polyglot
+
+# === 分区管理约定（Partition Management Convention）===
+# §2.1裁定（2026-06-22）：52域是唯一物理分类体系，14层（L00-L13）降级为域的layer_id属性。
+# 物理分类由depgraph.db的domains表（52域）定义，AI找模块只有一条路：按域找。
+# 旧的layers/l00-l13-*.yaml文件已废弃，信息合并入depgraph.db域定义。
+
+partitions:
+# === 52域索引（物理分类唯一真源：depgraph.db domains表）===
+- id: domains
+  path: ../../../../data/databases/depgraph.db
+  description: >
+    52域物理分类唯一真源（§2.1裁定）。
+    查询命令: python scripts/governance/extract_depgraph.py --summary
+    14层（L00-L13）降级为域的layer_id属性，不再作为并行分类体系。
+
+# === 横切关注点分区（非业务分类，保留）===
+- id: shared
+  path: layers/shared.yaml
+  description: 跨域公共契约与基础能力
+- id: frontend
+  path: frontend/frontend_model.yaml
+  description: 前端独立平台 FE-L1~L4
+- id: scripts
+  path: scripts/scripts_model.yaml
+  description: 治理/审计/部署脚本
+- id: cross_cutting
+  path: cross_cutting/
+  description: 运行平面、不变量、能力成熟度
+- id: contracts
+  path: contracts/cross_layer_contracts.yaml
+  description: P0/P1跨域数据契约、OCP扩展点、外部系统契约、AI治理接口签名
+- id: events
+  path: events/domain_events.yaml
+  description: 22条领域事件（6域）、事件链、频率等级与运行时声明
+- id: ddd-model
+  path: domain/ddd_model.yaml
+  description: DDD战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
+- id: technology
+  path: technology/
+  description: 技术选型与版本治理SSoT
+- id: core-services
+  path: infra/core_services.yaml
+  description: Vibe Coding 2.0 6大核心服务
+- id: shared-infra
+  path: infra/shared_infra.yaml
+  description: 跨域共享基础设施
+
+# === 52域清单（从depgraph.db派生，禁止手工编辑）===
+domains:
+"""
+for domain_id, domain_name, layer_id in domains:
+    yaml_content += f"- id: {domain_id}\n  name: {domain_name}\n  layer_id: {layer_id}\n"
+
+yaml_content += f"""
+global_stats:
+  total_domains: {len(domains)}
+  total_partitions: 11
+  notes: >
+    §2.1裁定（2026-06-22）：52域唯一物理分类体系，14层降级为域属性。
+    结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
+  last_updated: '2026-06-23'
+query_hints:
+- question: 系统有哪些域？
+  answer: 52域，见domains列表，真源为depgraph.db domains表
+- question: 某域有哪些模块？
+  answer: 查询depgraph.db: python scripts/governance/extract_depgraph.py --domains <域ID>
+- question: 模块间的依赖关系？
+  answer: 查询depgraph.db: python scripts/governance/extract_depgraph.py --paths
+- question: 为什么这样分域？
+  answer: 读architecture_upgrade_discussion.md §2.1唯一分类体系裁定
+- question: 不变量/安全红线？
+  answer: 读cross-cutting/invariants.yaml
+- question: 运行平面分布？
+  answer: 读cross-cutting/runtime_planes.yaml
+- question: 系统能力成熟度？
+  answer: 读cross-cutting/capability_heatmap.yaml（52域×10能力域矩阵）
+- question: 前端有哪些模块？
+  answer: 读frontend/frontend_model.yaml
+- question: 治理/审计脚本有哪些？
+  answer: 读scripts/scripts_model.yaml
+- question: 跨域公共契约？
+  answer: 读layers/shared.yaml
+- question: P0跨域数据契约有哪些？
+  answer: 读contracts/cross_layer_contracts.yaml §p0_contracts
+- question: 领域事件清单？
+  answer: 读events/domain_events.yaml
+- question: DDD聚合/实体/值对象？
+  answer: 读domain/ddd_model.yaml
+- question: 技术选型全景？
+  answer: 读technology/technology_landscape.yaml
+id_conventions:
+  description: 各分区YAML中实体ID的命名前缀规范
+  prefixes:
+  - prefix: CTR-{{NNN}}
+    scope: contracts/cross_layer_contracts.yaml
+    example: CTR-001
+  - prefix: E-{{DOMAIN}}-{{NN}}
+    scope: events/domain_events.yaml
+    example: E-EX-01
+  - prefix: AGG-{{NNN}}
+    scope: domain/ddd_model.yaml
+    example: AGG-001
+  - prefix: D-{{CATEGORY}}-{{NAME}}
+    scope: depgraph.db domains表
+    example: D-MKT_DATA
+    note: "§2.1裁定后域ID为唯一物理分类标识"
+"""
+
+# 直接写入（不使用os.replace）
+out_path = BASE / "index.yaml"
+with open(out_path, "w", encoding="utf-8", newline="\n") as f:
+    f.write(yaml_content)
+print(f"✅ index.yaml 写入完成 ({len(yaml_content)} 字符)")
+
+# 验证写入
+with open(out_path, "r", encoding="utf-8") as f:
+    first_line = f.readline()
+    f.seek(0, 2)
+    size = f.tell()
+print(f"✅ index.yaml 验证: 首行='{first_line.strip()}', 大小={size}")
+
+# === 写入 index.md ===
+md_content = """---
+module_id: GOV-043
+doc_type: index
+status: Active
+version: 3.0.0
+generated: '2026-06-23'
+depends_on:
+- target: EA-INDEX
+  at: §子目录
+  why: 顶层EA索引——architecture_model为EA抽屉子目录
+title: Architecture Model
+---
+
+# Architecture Model — 目录索引
+
+## 责任声明（Single Responsibility）
+
+本目录只存放：**架构模型YAML**——`domains`（52域索引，真源depgraph.db）、`contracts/`（跨域契约）、`events/`（领域事件）、`cross_cutting/`（横切）、`domain/`（DDD）、`frontend/`（前端）、`scripts/`（脚本）、`technology/`（技术栈）、`infra/`（基础设施骨架，planned）。
+
+> **§2.1裁定（2026-06-22）**：52域是唯一物理分类体系，14层（L00-L13）降级为域的`layer_id`属性。旧的`layers/l00-l13-*.yaml`文件已废弃，信息合并入depgraph.db域定义。结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
+
+## 分区管理约定
+
+**铁律**（定义在`index.yaml`顶部）：
+1. `index.yaml`中每个分区必须有对应的YAML文件——不允许"虚分区"
+2. `status: planned`的骨架文件是合法状态——不是bug，是TOGAF渐进式填充
+
+## 文件清单
+
+| 文件/目录 | 说明 |
+|-----------|------|
+| `index.yaml` | 全部分区的索引 + 52域清单 + 分区管理约定 + global_stats |
+| `module_id_registry.yaml` | 模块ID注册表 |
+| `domains` | **52域物理分类唯一真源**——depgraph.db domains表 |
+| `contracts/` | 跨域数据契约CTR-001~006（P0）+ CTR-P1-001~013（P1）+ OCP + EXT + AI-GOV |
+| `events/` | 22条领域事件 |
+| `cross_cutting/` | 运行平面 + 不变量 + 能力热力图（52域×10能力域矩阵） |
+| `domain/` | DDD战术模式 |
+| `frontend/` | 前端模型FE-L1~L4 |
+| `scripts/` | 治理/审计脚本模型 |
+| `technology/` | 技术雷达43条 + Vibe Coding基础设施17项 |
+| `infra/` | core-services（6模块）+ shared-infra（5模块），planned |
+
+## 废弃分区（§2.1裁定后移除）
+
+| 废弃分区 | 废弃原因 |
+|----------|---------|
+| `layers/l00-l13-*.yaml` | 14层降级为域属性，信息合并入depgraph.db域定义 |
+
+## 排除规则（不应放入本目录的内容）
+
+- ❌ .md架构视图文档 → `02_enterprise_architecture/target_architecture/（上层）`
+
+## 父级目录
+
+- 父级：[target_architecture](../index.md)
+"""
+
+out_md = BASE / "index.md"
+with open(out_md, "w", encoding="utf-8", newline="\n") as f:
+    f.write(md_content)
+print(f"✅ index.md 写入完成 ({len(md_content)} 字符)")
+
+# === 写入 capability_heatmap.yaml ===
+cap_content = """# [A_config] module_id=CFG-capability-heatmap | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-023 | docs/03_modules/_domain_governance/blueprint.md | §
 # module_id: MOD-023
@@ -429,3 +652,17 @@ summary:
     version: v3.0.0
     reviewer: session-20260623-001
     note: §2.1裁定对齐——从14层迁移到52域×10能力域矩阵
+"""
+
+out_cap = BASE / "cross_cutting" / "capability_heatmap.yaml"
+with open(out_cap, "w", encoding="utf-8", newline="\n") as f:
+    f.write(cap_content)
+print(f"✅ capability_heatmap.yaml 写入完成 ({len(cap_content)} 字符)")
+
+# 验证所有文件
+for name, path in [("index.yaml", out_path), ("index.md", out_md), ("capability_heatmap.yaml", out_cap)]:
+    with open(path, "r", encoding="utf-8") as f:
+        first_line = f.readline().strip()
+        f.seek(0, 2)
+        size = f.tell()
+    print(f"✅ {name} 验证: 首行='{first_line[:50]}', 大小={size}")
