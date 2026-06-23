@@ -1,0 +1,17 @@
+# Auto Fix Engine Configuration
+# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §5
+version: "1.0"
+engine:
+  max_workers: 8
+  max_retries: 3
+  timeout_seconds: 300
+budget:
+  daily_limit: 50
+  monthly_limit: 500
+  llm_token_daily_limit: 500000
+safety:
+  confidence_threshold: 0.95
+  cascade_threshold: 10
+  cascade_window_minutes: 5
+  storm_threshold: 150
+  storm_window_seconds: 60

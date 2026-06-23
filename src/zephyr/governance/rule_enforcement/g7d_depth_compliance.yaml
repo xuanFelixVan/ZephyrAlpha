@@ -1,0 +1,79 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §M
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# G7D — 深度合规门禁（形式+实质双重验证）
+# 蓝图: §M 深度合规——形式vs实质
+# 互补: G7通过后，G7D补充形式质量信号（覆盖率/CVE/回归/lint）
+
+module_id: MOD-INF-007
+gate_id: G7D
+title: G7D Depth Compliance Gate（深度合规——形式+实质双重验证）
+gate_name: depth_compliance
+description: >
+  G7交付门禁通过后的深度合规校验：单元测试覆盖率、依赖CVE、回归测试、lint检查。
+  与G7互补——G7验证交付完整性，G7D验证交付质量。
+  降级策略：tier_2_severe时G7D暂停（见蓝图§降级矩阵）。
+phase: task_delivery
+auto: true
+on_failure: warn
+on_pass: pass
+rule_ids:
+  - TRAE-002
+  - TRAE-005
+
+checks:
+  - id: G7D-C00
+    name: unit_test_coverage
+    type: script_execution
+    severity: warning
+    description: pytest --cov → coverage >= 80%
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      command: python -m pytest --cov=src/zephyr --cov-report=term-missing
+      min_coverage: 80
+      skip_if_missing: true
+
+  - id: G7D-C01
+    name: dependency_cve_check
+    type: security_artifact_scan
+    severity: error
+    description: pip-audit → 零 CRITICAL CVE
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      command: pip-audit --strict
+      block_on: CRITICAL
+      skip_if_missing: true
+
+  - id: G7D-C02
+    name: regression_test_pass
+    type: script_execution
+    severity: error
+    description: run_all_regression.py exit_code == 0
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      command: python scripts/governance/run_all_regression.py
+      expected_exit_code: 0
+      skip_if_missing: true
+
+  - id: G7D-C03
+    name: lint_pass
+    type: script_execution
+    severity: warning
+    description: ruff check → zero errors
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      command: ruff check src/zephyr/
+      expected_exit_code: 0
+      skip_if_missing: true

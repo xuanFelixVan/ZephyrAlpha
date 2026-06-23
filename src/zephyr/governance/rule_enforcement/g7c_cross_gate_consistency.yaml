@@ -1,0 +1,45 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §N
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# G7C — 跨门禁时序一致性门禁
+# 蓝图: §N 跨门禁时序一致性
+# 检测: G1快照的blueprint_version vs 当前module blueprint_version 不一致 → WARNING
+
+module_id: MOD-INF-007
+gate_id: G7C
+title: G7C Cross Gate Consistency Gate（跨门禁时序一致性）
+gate_name: cross_gate_consistency
+description: >
+  跨门禁时序一致性校验：检测任务执行期间蓝图版本是否发生变化。
+  FOR EACH module_id IN task.affected_modules:
+    G1_snapshot.blueprint_version == current_module_blueprint_version
+  不一致时severity=warning（不阻断——只告知）。
+  降级策略：tier_2_severe时G7C暂停（见蓝图§降级矩阵）。
+phase: task_delivery
+auto: true
+on_failure: warn
+on_pass: pass
+rule_ids:
+  - TRAE-002
+  - TRAE-005
+
+checks:
+  - id: G7C-C00
+    name: blueprint_version_consistency
+    type: contract_compatibility_check
+    severity: warning
+    description: >
+      检测任务执行期间蓝图版本变化：
+      G1快照时blueprint_version vs G7交付时blueprint_version 不一致 → WARNING
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      check_type: blueprint_version_drift
+      snapshot_gate: G1
+      delivery_gate: G7
+      skip_if_missing: true
