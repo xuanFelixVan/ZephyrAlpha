@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=无冲突或仅警告; 永不 exit 1（不阻断 checkout）
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
+# [DOMAIN] D-GOVERNANCE
 """
 Post-checkout Guard — 事后检测 checkout 是否覆盖了其他 session 的文件锁。
 

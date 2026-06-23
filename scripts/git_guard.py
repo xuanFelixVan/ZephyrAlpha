@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=pass-through; exit 1=blocked; exit 2=internal error
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
+# [DOMAIN] D-GOVERNANCE
 """
 Git Guard — 拦截危险 git 命令，防止破坏其他 session 的文件锁。
 

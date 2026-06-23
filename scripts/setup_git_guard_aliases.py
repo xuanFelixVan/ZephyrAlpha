@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=失败
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
+# [DOMAIN] D-GOVERNANCE
 """
 Setup/Remove Git Aliases for Git Guard — 自动化集成入口。
 
