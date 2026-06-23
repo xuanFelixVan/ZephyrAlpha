@@ -52,7 +52,7 @@ ttl: permanent
 | data/asset_index/archive/migration_registry.yaml |  | production | orphan | data/asset_index/archive/migration_registry.yaml |  | production | orphan |
 | docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml |  | production | orphan |
 | docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml |  | production | orphan |
-| docs/01_policies_and_standards/_registry/catalogs/business_streams.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/business_streams.yaml |  | production | orphan |
+| docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml |  | production | orphan |
 | ...licies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml |  | production | orphan | ...licies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml |  | production | orphan |
 | ...s_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml |  | production | orphan | ...s_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml |  | production | orphan |
 | docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml |  | production | orphan |
@@ -60,7 +60,7 @@ ttl: permanent
 | .../01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml |  | production | orphan | .../01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml |  | production | orphan |
 | .../01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml |  | production | orphan | .../01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml |  | production | orphan |
 | docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml |  | production | orphan |
-| docs/01_policies_and_standards/_registry/catalogs/hard_boundaries.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/hard_boundaries.yaml |  | production | orphan |
+| docs/01_policies_and_standards/_registry/catalogs/hard_boundaries_registry.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/hard_boundaries_registry.yaml |  | production | orphan |
 | docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml |  | production | orphan |
 | .../01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml |  | production | orphan | .../01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml |  | production | orphan |
 | ...cies_and_standards/_registry/catalogs/master_document_inventory_registry.yaml |  | production | orphan | ...cies_and_standards/_registry/catalogs/master_document_inventory_registry.yaml |  | production | orphan |
