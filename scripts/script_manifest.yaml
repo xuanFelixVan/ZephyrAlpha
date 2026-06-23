@@ -14,30 +14,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _batch_acquire_locks.py
-  path: _batch_acquire_locks.py
-  description: import subprocess
-  domain: _batch_acquire_locks.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _check_depgraph_rbac.py
-  path: _check_depgraph_rbac.py
-  description: import sqlite3
-  domain: rbac
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _check_dm201008.py
-  path: _check_dm201008.py
-  description: import sqlite3
-  domain: _check_dm201008.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: _complete_dm201008.py
   path: _complete_dm201008.py
   description: import sys
@@ -65,14 +41,6 @@ scripts:
 - name: _update_rbac_depgraph.py
   path: _update_rbac_depgraph.py
   description: import sqlite3
-  domain: rbac
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _verify_rbac_state.py
-  path: _verify_rbac_state.py
-  description: import sys
   domain: rbac
   execution_plane: warm-path
   status: registered
@@ -1870,14 +1838,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/d5_architecture/_query_domains.py
-  path: governance/d5_architecture/_query_domains.py
-  description: import sqlite3
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/d5_architecture/audit_agent_spec.py
   path: governance/d5_architecture/audit_agent_spec.py
   description: '[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §'
@@ -1913,46 +1873,6 @@ scripts:
 - name: governance/d5_architecture/dm200912_query_domains.py
   path: governance/d5_architecture/dm200912_query_domains.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.5'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/dm200912_rewrite_views.py
-  path: governance/d5_architecture/dm200912_rewrite_views.py
-  description: 将14层主框架改为43域+全景图(depgraph.db)派生。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/dm200913_rewrite_diagrams.py
-  path: governance/d5_architecture/dm200913_rewrite_diagrams.py
-  description: 基于§2.1裁定，将 diagrams/ 下9个图表从14层(L00-L13)节点改为43域节点。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/dm200916_write_direct.py
-  path: governance/d5_architecture/dm200916_write_direct.py
-  description: import sqlite3
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/dm200917_rewrite.py
-  path: governance/d5_architecture/dm200917_rewrite.py
-  description: import re
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/dm200920_rewrite.py
-  path: governance/d5_architecture/dm200920_rewrite.py
-  description: import re
   domain: governance
   execution_plane: warm-path
   status: registered
