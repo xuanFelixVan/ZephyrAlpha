@@ -1,141 +1,229 @@
-# 模型路由策略（临时文件，非规则文件）
-# 生命周期：模型更新后可删除。当 GLM 系列或国产模型在深度代码审查/大规模迁移上达到 Claude 水平时，本文件可删除。
-# 可删除条件：见 deletion_conditions
+# 模型路由策略 — 基于能力护照（CapabilityPassport）
+# 真源：data/brain/passports/*.json（8份护照）
+# 生成时间：2026-06-23
+# 生成依据：4本地模型 + 4 API模型入职考试结果
 
-file_type: temporary_strategy
-file_name: model_routing_strategy
-is_rule: false
-created: 2026-06-21
-last_updated: 2026-06-21
-next_evaluation: 2026-09-21
-evaluation_cycle: 3个月
+version: "1.0.0"
+generated_at: "2026-06-23"
+passport_source: "data/brain/passports/"
 
-lifecycle:
-  description: 模型更新后可删除。当 GLM 系列或国产模型在深度代码审查/大规模迁移上达到 Claude 水平时，本文件可删除。
-  deletion_conditions:
-    - id: 1
-      condition: GLM 系列在深度代码审查上达到 Claude 水平
-      verification: 用相同审查任务测试两个模型，GLM 能发现 Claude 发现的全部问题
-    - id: 2
-      condition: 国产模型在大规模物理迁移上达到 Claude 水平
-      verification: 用相同迁移任务测试，GLM 能无错误完成>100文件迁移
-    - id: 3
-      condition: 项目不再使用 Claude
-      verification: 项目配置中移除 Claude 路由
-    - id: 4
-      condition: 模型能力评估周期到期
-      verification: 每3个月重新评估一次（下次评估 2026-09-21）
-  deletion_process:
-    - 评估条件满足
-    - 删除本文件
-    - 从 project_memory.md 移除引用
-    - 记录删除原因到 git log
+# ============================================================
+# 模型清单
+# ============================================================
+models:
+  # --- 本地模型（Ollama，免费，数据不出域）---
+  qwen2.5-coder:14b:
+    type: local
+    provider: ollama
+    cost_per_call: 0.0
+    p50_latency_ms: 2985
+    overall_grade: "B+"
+    overall_score: 0.771
+    max_concurrent_tasks: 4
+    role: "本地主力（代码类任务首选）"
 
-trigger_conditions:
-  description: AI 在执行任务时，遇到以下任一情况 MUST 提醒用户考虑换 Claude
-  conditions:
-    - id: 1
-      name: 深度代码审查
-      judgment: 任务涉及审查>3个文件的逻辑一致性
-      reminder: 此任务涉及深度代码审查，建议换 Claude 执行（历史证据：Claude 发现过生成器DELETE安全问题）
-    - id: 2
-      name: 大规模物理迁移
-      judgment: 任务涉及迁移/重命名>100个文件
-      reminder: 此任务涉及大规模物理迁移（N个文件），建议换 Claude 执行（历史证据：Claude 成功执行485节点迁移）
-    - id: 3
-      name: depgraph.db SQL操作
-      judgment: 任务涉及直接操作 depgraph.db
-      reminder: 此任务涉及 depgraph.db SQL操作，建议换 Claude 执行（历史证据：Claude 熟悉DB结构）
-    - id: 4
-      name: 跨文件一致性验证
-      judgment: 任务涉及验证>5个文件的字段/路径一致性
-      reminder: 此任务涉及跨文件一致性验证，建议换 Claude 执行
-    - id: 5
-      name: 方案制定后的自审
-      judgment: AI制定的方案涉及>3个文件变更
-      reminder: 此方案涉及多文件变更，建议交 Claude 审查后再执行（历史证据：AI制定方案曾出现4个P1/P2错误）
+  qwen3:8b:
+    type: local
+    provider: ollama
+    cost_per_call: 0.0
+    p50_latency_ms: 9309
+    overall_grade: "C+"
+    overall_score: 0.627
+    max_concurrent_tasks: 2
+    role: "本地备选（仅命名建议+死代码识别）"
 
-decision_table:
-  principle: 执行类任务（迁移/审查/验证）用 Claude；制定类任务（规则/文档/讨论）用 GLM-5.2；Claude 执行后由 GLM-5.2 验证+记录
-  scenarios:
-    - scenario: 深度代码审查
-      recommended_model: Claude
-      reason: 历史证据：发现生成器安全问题
-    - scenario: 大规模物理迁移（>100文件）
-      recommended_model: Claude
-      reason: 历史证据：485节点迁移成功
-    - scenario: 跨文件一致性验证（>5文件）
-      recommended_model: Claude
-      reason: 历史证据：发现4个P1/P2矛盾
-    - scenario: depgraph.db 操作
-      recommended_model: Claude
-      reason: 历史证据：熟悉DB结构
-    - scenario: 规则文档制定/修改
-      recommended_model: GLM-5.2
-      reason: 参与制定，熟悉上下文
-    - scenario: 快速文件编辑/创建
-      recommended_model: GLM-5.2
-      reason: 直接工具调用，无需中转
-    - scenario: 中文讨论/裁定
-      recommended_model: GLM-5.2
-      reason: 中文原生
-    - scenario: 简单查询/验证命令
-      recommended_model: GLM-5.2
-      reason: 直接执行
-    - scenario: 方案制定后的审查
-      recommended_model: Claude
-      reason: AI制定方案需Claude审查
-    - scenario: 架构决策讨论
-      recommended_model: 两者皆可
-      reason: 都能提供专业视角
+  deepseek-r1:8b:
+    type: local
+    provider: ollama
+    cost_per_call: 0.0
+    p50_latency_ms: 11074
+    overall_grade: "C+"
+    overall_score: 0.646
+    max_concurrent_tasks: 3
+    role: "本地备选（摘要+命名+代码生成）"
 
-quantified_differences:
-  description: 基于本项目实测证据
-  dimensions:
-    - dimension: 深度代码审查
-      claude: 强
-      glm_5_2: 中
-      evidence: Claude发现生成器第2405行DELETE安全问题，GLM遗漏
-    - dimension: 跨文件一致性检查
-      claude: 强
-      glm_5_2: 中
-      evidence: Claude发现4个P1/P2级口径矛盾，这些是GLM造成的错误
-    - dimension: 大规模物理迁移
-      claude: 强
-      glm_5_2: 未验证
-      evidence: Claude成功执行485节点path更新
-    - dimension: 方案制定
-      claude: 中
-      glm_5_2: 中
-      evidence: GLM制定方案出现4个错误，Claude审查才发现
-    - dimension: 项目规则熟悉度
-      claude: 中
-      glm_5_2: 强
-      evidence: GLM参与制定trae_055/GOV-016/017
-    - dimension: 直接工具调用
-      claude: 需中转
-      glm_5_2: 直接
-      evidence: GLM能直接RunCommand/Edit/Write
-    - dimension: 中文理解
-      claude: 中
-      glm_5_2: 强
-      evidence: GLM中文原生
-    - dimension: 规则文档撰写
-      claude: 中
-      glm_5_2: 强
-      evidence: GLM参与制定多个规则文件
+  deepseek-r1:14b:
+    type: local
+    provider: ollama
+    cost_per_call: 0.0
+    p50_latency_ms: 10893
+    overall_grade: "B-"
+    overall_score: 0.667
+    max_concurrent_tasks: 2
+    role: "本地备选（仅摘要+死代码识别）"
 
-historical_evidence:
-  events:
-    - event: Claude 发现生成器DELETE安全问题
-      date: 2026-06-21
-      source: 记忆 session 6a36d528
-    - event: Claude 发现4个P1/P2口径矛盾
-      date: 2026-06-21
-      source: 记忆 session 6a37a6cc
-    - event: Claude 成功执行485节点迁移
-      date: 2026-06-21
-      source: 记忆 session 6a36d528
-    - event: GLM 制定方案出现4个错误
-      date: 2026-06-21
-      source: 记忆 session 6a37a6cc（P1-1/P1-2/P2-1/P2-2）
+  # --- API模型（DeepSeek V4，按量付费）---
+  deepseek-v4-flash-thinking:
+    type: api
+    provider: deepseek
+    cost_per_call: 0.056
+    p50_latency_ms: 4568
+    overall_grade: "B+"
+    overall_score: 0.793
+    max_concurrent_tasks: 4
+    role: "API最佳（6项安全能力最多）"
+
+  deepseek-v4-flash-non-thinking:
+    type: api
+    provider: deepseek
+    cost_per_call: 0.013
+    p50_latency_ms: 1867
+    overall_grade: "B+"
+    overall_score: 0.781
+    max_concurrent_tasks: 4
+    role: "大脑推理后端（最快+最便宜）"
+
+  deepseek-v4-pro-thinking:
+    type: api
+    provider: deepseek
+    cost_per_call: 0.200
+    p50_latency_ms: 7799
+    overall_grade: "B+"
+    overall_score: 0.751
+    max_concurrent_tasks: 4
+    role: "不推荐（费用高4倍，安全能力反而更少）"
+
+  deepseek-v4-pro-non-thinking:
+    type: api
+    provider: deepseek
+    cost_per_call: 0.041
+    p50_latency_ms: 1959
+    overall_grade: "B+"
+    overall_score: 0.775
+    max_concurrent_tasks: 3
+    role: "不推荐（费用高于flash，安全能力更少）"
+
+# ============================================================
+# 能力路由表 — 每个能力的首选和备选模型
+# ============================================================
+capability_routing:
+  task_classification:
+    primary: null
+    fallback: null
+    recommendation: "交给Claude Opus或人类"
+    reason: "所有8个模型都不安全（全部F级）"
+    safe_models: []
+
+  tag_completion:
+    primary: "deepseek-v4-flash-thinking"
+    fallback: null
+    recommendation: "唯一安全模型（API ¥0.056/次）"
+    reason: "仅v4-flash-thinking通过"
+    safe_models: ["deepseek-v4-flash-thinking"]
+
+  summary_extraction:
+    primary: "qwen2.5-coder:14b"
+    fallback: "deepseek-v4-flash-non-thinking"
+    recommendation: "本地优先（免费+P50=3s）"
+    reason: "7个模型安全，本地qwen2.5-coder最快"
+    safe_models: ["qwen2.5-coder:14b", "deepseek-r1:8b", "deepseek-r1:14b", "deepseek-v4-flash-thinking", "deepseek-v4-flash-non-thinking", "deepseek-v4-pro-thinking", "deepseek-v4-pro-non-thinking"]
+
+  naming_suggest:
+    primary: "qwen3:8b"
+    fallback: "deepseek-r1:8b"
+    recommendation: "本地优先（免费）"
+    reason: "3个模型安全，qwen3:8b本地免费"
+    safe_models: ["qwen3:8b", "deepseek-r1:8b", "deepseek-v4-flash-thinking"]
+
+  anomaly_triage:
+    primary: null
+    fallback: null
+    recommendation: "交给Claude Opus或人类"
+    reason: "所有8个模型都不安全（全部F级）"
+    safe_models: []
+
+  code_fix:
+    primary: null
+    fallback: null
+    recommendation: "交给Claude Opus或人类"
+    reason: "所有8个模型都不安全（全部F级）"
+    safe_models: []
+
+  refactor:
+    primary: "qwen2.5-coder:14b"
+    fallback: "deepseek-v4-flash-non-thinking"
+    recommendation: "本地优先（免费+P50=3s）"
+    reason: "4个模型安全，本地qwen2.5-coder最快"
+    safe_models: ["qwen2.5-coder:14b", "deepseek-v4-flash-thinking", "deepseek-v4-flash-non-thinking", "deepseek-v4-pro-thinking"]
+
+  code_generate:
+    primary: "qwen2.5-coder:14b"
+    fallback: "deepseek-v4-flash-non-thinking"
+    recommendation: "本地优先（免费+P50=3s）"
+    reason: "6个模型安全，本地qwen2.5-coder最快"
+    safe_models: ["qwen2.5-coder:14b", "deepseek-r1:8b", "deepseek-v4-flash-thinking", "deepseek-v4-flash-non-thinking", "deepseek-v4-pro-thinking", "deepseek-v4-pro-non-thinking"]
+
+  dead_code_removal:
+    primary: "qwen2.5-coder:14b"
+    fallback: "qwen3:8b"
+    recommendation: "本地优先（免费+P50=3s）"
+    reason: "7个模型安全，本地qwen2.5-coder最快"
+    safe_models: ["qwen3:8b", "qwen2.5-coder:14b", "deepseek-r1:14b", "deepseek-v4-flash-thinking", "deepseek-v4-flash-non-thinking", "deepseek-v4-pro-thinking", "deepseek-v4-pro-non-thinking"]
+
+# ============================================================
+# 全局策略
+# ============================================================
+global_strategy:
+  # 优先级链：本地安全模型 > API flash模型 > API pro模型 > Claude/人类
+  priority_chain:
+    - "local_safe_model"
+    - "api_flash_model"
+    - "api_pro_model"
+    - "claude_or_human"
+
+  # 本地模型优先原则
+  local_first: true
+  local_reason: "本地模型免费、无网络延迟、数据不出域"
+
+  # API模型选择原则
+  api_prefer_flash: true
+  api_reason: "flash费用低（¥0.013-0.056 vs pro ¥0.041-0.200），安全能力更多或相当"
+
+  # 不可路由能力（所有模型都不安全）
+  unroutable_capabilities:
+    - "task_classification"
+    - "anomaly_triage"
+    - "code_fix"
+  unroutable_action: "交给Claude Opus或人类处理"
+  unroutable_reason: "8个模型全部F级，无模型能胜任"
+
+# ============================================================
+# 大脑系统推理后端选择
+# ============================================================
+brain_inference:
+  # 当前大脑系统使用的后端
+  current_backend: "deepseek-v4-flash-non-thinking"
+  current_reason: "最快（P50=1.9s）+ 最便宜（¥0.013/次）+ 4项安全能力"
+
+  # 推荐升级后端
+  recommended_backend: "deepseek-v4-flash-thinking"
+  recommended_reason: "6项安全能力最多，费用仅¥0.056/次，P50=4.6s可接受"
+
+  # 本地备选（网络不可用时）
+  local_fallback: "qwen2.5-coder:14b"
+  local_fallback_reason: "本地最佳模型，4项安全能力，P50=3s，免费"
+
+  # 不可路由的大脑任务
+  blocked_tasks:
+    - "task_classification"
+    - "anomaly_triage"
+    - "code_fix"
+  blocked_action: "大脑系统遇到这三类任务时，必须升级到Claude或交给人类"
+
+# ============================================================
+# 成本控制
+# ============================================================
+cost_control:
+  # 单次调用费用上限
+  max_cost_per_call: 0.200
+  max_cost_model: "deepseek-v4-pro-thinking"
+
+  # 日费用预算（元）
+  daily_budget: 10.0
+
+  # 费用优化建议
+  optimization:
+    - "用v4-flash-non-thinking替代v4-pro-non-thinking（费用降68%，安全能力多1项）"
+    - "用v4-flash-thinking替代v4-pro-thinking（费用降72%，安全能力多2项）"
+    - "本地模型优先（qwen2.5-coder:14b覆盖4项能力，免费）"
+    - "不可路由能力交给Claude（避免低质量模型浪费token）"
