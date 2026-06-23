@@ -502,6 +502,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: construction/test_deepseek_api.py
+  path: construction/test_deepseek_api.py
+  description: 测试 DeepSeek API 连通性
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: context/generate_architecture_context.py
   path: context/generate_architecture_context.py
   description: generate_architecture_context.py — 预编译架构上下文包生成器

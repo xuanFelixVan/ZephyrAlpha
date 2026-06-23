@@ -49,6 +49,75 @@ def _subscribe_task_lifecycle_events() -> None:
         logger.debug("EventBus task lifecycle subscription skipped: %s", e)
 
 
+_monitoring_modules_initialized = False
+
+
+def _init_shared_monitoring_modules() -> None:
+    """实例化6个被动库监控模块 — DM-201246.
+
+    在系统启动时自动实例化，而非依赖手动调用：
+    1. LongevityMonitor — 长寿监控
+    2. HealthcheckService — 健康检查服务
+    3. AggregateHealth — 延迟到 observability_02 就绪（需 LifecycleManager）
+    4. HealthDiscovery — 注册系统健康检查
+    5. MetricsRegistry — 指标注册表（懒加载）
+    6. AutonomyMonitor — 自治监控
+    """
+    global _monitoring_modules_initialized
+    if _monitoring_modules_initialized:
+        logger.debug("Shared monitoring modules already initialized, skipping (idempotent)")
+        return
+    _monitoring_modules_initialized = True
+
+    project_root = Path(__file__).resolve().parents[3]
+
+    # 1. LongevityMonitor
+    try:
+        from zephyr.shared.longevity_monitor import LongevityMonitor
+        _monitor = LongevityMonitor()
+        logger.info("Shared monitoring: LongevityMonitor instantiated")
+    except Exception as e:
+        logger.warning("Shared monitoring: LongevityMonitor init failed: %s", e)
+
+    # 2. HealthcheckService
+    try:
+        from zephyr.shared.healthcheck_service import HealthcheckService
+        _healthcheck = HealthcheckService(project_root=project_root)
+        logger.info("Shared monitoring: HealthcheckService instantiated")
+    except Exception as e:
+        logger.warning("Shared monitoring: HealthcheckService init failed: %s", e)
+
+    # 3. AggregateHealth — 延迟到 observability_02 就绪（需 LifecycleManager）
+    # TODO DM-201247: 当 HealthMonitor 分钟级调度就绪后接入
+
+    # 4. HealthDiscovery — 注册系统健康检查
+    try:
+        from zephyr.shared.observability_02.health_discovery import register_system_health
+        def _boot_hooks_health_check() -> str:
+            return "healthy"
+        register_system_health("boot_hooks", _boot_hooks_health_check, source="boot_hooks")
+        logger.info("Shared monitoring: HealthDiscovery registered boot_hooks health check")
+    except Exception as e:
+        logger.warning("Shared monitoring: HealthDiscovery init failed: %s", e)
+
+    # 5. MetricsRegistry — 懒加载
+    try:
+        from zephyr.shared.observability_02.metrics import MetricsRegistry
+        _metrics = MetricsRegistry()
+        _metrics.observe("boot_hooks.init", 1.0, labels={"module": "shared_monitoring"})
+        logger.info("Shared monitoring: MetricsRegistry instantiated (lazy)")
+    except Exception as e:
+        logger.warning("Shared monitoring: MetricsRegistry init failed: %s", e)
+
+    # 6. AutonomyMonitor
+    try:
+        from zephyr.shared.maintenance.autonomy_monitor import AutonomyMonitor
+        _autonomy = AutonomyMonitor(data_dir=project_root / "data" / "autonomy")
+        logger.info("Shared monitoring: AutonomyMonitor instantiated")
+    except Exception as e:
+        logger.warning("Shared monitoring: AutonomyMonitor init failed: %s", e)
+
+
 def _register_rbac_hooks() -> None:
     """注册RBAC事件钩子 — 在任务状态转换时检查权限."""
     try:
@@ -366,6 +435,7 @@ def register_boot_hooks() -> None:
 
     _subscribe_task_lifecycle_events()
     _register_rbac_hooks()
+    _init_shared_monitoring_modules()
 
     # MCP 集群自动启动（daemon 线程，不阻塞主流程）
     def _start_mcp_cluster() -> None:
