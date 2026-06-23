@@ -1,7 +1,17 @@
+---
+doc_type: domain_architecture_doc
+title: D-TRADING 交易运营架构文档
+version: "1.0"
+status: active
+date: 2026-06-23
+owner: auto-generator
+ttl: permanent
+---
+
 # D-TRADING 交易运营架构文档
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-23 11:07:05
+> 最后更新: 2026-06-23 11:22:55
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域概览

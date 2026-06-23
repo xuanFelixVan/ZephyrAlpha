@@ -131,6 +131,17 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection) -> str:
     capacity_status = "正常" if info["current_modules"] <= info["max_modules"] else "超容"
 
     lines = []
+    # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
+    lines.append("---")
+    lines.append(f"doc_type: domain_architecture_doc")
+    lines.append(f"title: {domain_id} {info['domain_name']}架构文档")
+    lines.append(f"version: \"1.0\"")
+    lines.append(f"status: active")
+    lines.append(f"date: {now.split()[0]}")
+    lines.append(f"owner: auto-generator")
+    lines.append(f"ttl: permanent")
+    lines.append("---")
+    lines.append("")
     lines.append(f"# {domain_id} {info['domain_name']}架构文档")
     lines.append("")
     lines.append("> 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成")
@@ -241,7 +252,7 @@ def main() -> None:
                     # 文件名用下划线替换连字符（文件系统友好）
                     safe_name = did.replace("-", "_").lower()
                     out_path = output_dir / f"{safe_name}.md"
-                    out_path.write_text(content, encoding="utf-8")
+                    out_path.write_text(content, encoding="utf-8", newline="\n")
                     print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
                     success += 1
             print(f"\n共生成 {success}/{len(domain_ids)} 个域文档")
@@ -252,7 +263,7 @@ def main() -> None:
                 sys.exit(2)
             safe_name = args.domain_id.replace("-", "_").lower()
             out_path = output_dir / f"{safe_name}.md"
-            out_path.write_text(content, encoding="utf-8")
+            out_path.write_text(content, encoding="utf-8", newline="\n")
             print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
     finally:
         conn.close()
