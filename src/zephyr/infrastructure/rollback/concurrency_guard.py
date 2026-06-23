@@ -8,7 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConcurrencyConflictError on blocked; ConflictResult/StashPlan on check
 # [TESTS] tests/unit/test_concurrency_guard.py
-# [DOMAIN] D-INF
+# [DOMAIN] D-INFRA_RUNTIME
 
 """
 concurrency_guard — 回滚操作并发安全守卫。
