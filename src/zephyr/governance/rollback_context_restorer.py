@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-RES_rollback_context_restorer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.infrastructure.rollback.rollback_context_restorer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_rollback_context_restorer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 RollbackContextRestorer — 上下文恢复器。

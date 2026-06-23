@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_fix_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.fix_report
-
-# [INVARIANTS] 报告MUST包含所有修复结果;MUST包含预算状态
-
-# [MODIFY-GUARD] blueprint.md §3
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;__main__.py;MOD-INF-027(audit-orchestrator)
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 报告MUST包含所有修复结果;MUST包含预算状态
+# [MODIFY-GUARD] blueprint.md §3
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ReportError
-
 # [TESTS] tests/auto-fix-engine/test_fix_report.py
+# [A_module] module_id=MOD-INF_fix_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RES_cost_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-
 # [MODULE] zephyr.infrastructure.budget_enforcement.cost_budget
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.integration.shared_08.errors; zephyr.shared.shared_services.observability_02.metrics
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_cost_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲点 B26）

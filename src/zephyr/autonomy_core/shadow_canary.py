@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-ORC_shadow_canary | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
-
 # [MODULE] zephyr.autonomy_core.shadow_canary
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_shadow_canary | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """shadow_canary.py — 金丝雀部署 (B4, DD78, TASK-015 beta w)"""
 

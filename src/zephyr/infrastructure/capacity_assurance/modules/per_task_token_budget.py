@@ -1,20 +1,18 @@
-# [A_module] module_id=MOD-INF_per_task_token_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-
 # [MODULE] zephyr.infrastructure.capacity_assurance.per_task_token_budget
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] deprecated
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF_per_task_token_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Per-Task Token Budget — 任务级 Token 预算 (盲点 #18)

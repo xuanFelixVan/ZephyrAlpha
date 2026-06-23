@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RES_sqlite_dumper | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.infrastructure.rollback.sqlite_dumper
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.shared_08.utils.time_utils; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_sqlite_dumper | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / restore / verify。

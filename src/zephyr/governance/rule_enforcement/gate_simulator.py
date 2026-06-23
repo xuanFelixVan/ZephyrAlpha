@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-GOV_gate_simulator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.governance.rule_enforcement.gate_simulator
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_context; zephyr.governance.rule_enforcement.gate_pipeline
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_gate_simulator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """门禁模拟器——dry-run 全链路门禁演练，不修改任何状态（beta）"""
 

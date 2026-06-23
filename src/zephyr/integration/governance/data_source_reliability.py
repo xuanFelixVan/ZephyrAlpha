@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_data_source_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-146 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.data_source_reliability
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.governance.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_data_source_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from enum import Enum
 
 from pydantic import BaseModel, Field

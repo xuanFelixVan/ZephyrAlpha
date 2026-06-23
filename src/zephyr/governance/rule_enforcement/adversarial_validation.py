@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §adversarial_validation
 # [MODULE] zephyr.governance.rule_enforcement.adversarial_validation
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.rule_enforcement.check_types.adversarial_validation;zephyr.governance.rule_enforcement.gate_pipeline
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] validate() MUST return pass/fail with confidence; adversarial_test() MUST test all provided strategies
 # [MODIFY-GUARD] blueprint.md §adversarial_validation; _registry.yaml
-# [CONSUMERS] zephyr.governance.rule_enforcement.check_types.adversarial_validation;zephyr.governance.rule_enforcement.gate_pipeline
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AdversarialValidationError on invalid input
 # [TESTS] tests/test_adversarial_validation_gate.py
+# [A_module] module_id=MOD-GOV_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """AdversarialValidationGate — validates outputs against adversarial attacks."""
 

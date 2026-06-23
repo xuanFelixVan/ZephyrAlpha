@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_defense_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.defense_runner
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.governance.audit_trail.finding_model; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.task_types; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
+# [CONSUMERS] validator.py; game_day_runner.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] run_defense() MUST return DefenseResult with passed/gate_id/detail; MUST NOT raise on defense failure — return passed=False instead
 # [MODIFY-GUARD] Adding new defense gates MUST update GATE_MAP; DefenseResult contract per blueprint §4.4
-# [CONSUMERS] validator.py; game_day_runner.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] GateEvaluationError on unregistered gate; DefenseResult.passed=False on blocked attack
 # [TESTS] tests/red_blue/test_defense_runner.py
+# [A_module] module_id=MOD-SEC_defense_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

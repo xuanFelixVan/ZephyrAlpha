@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_shadow_workspace | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.shadow_workspace
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
+# [CONSUMERS] engine.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 预演失败MUST阻止应用;沙箱目录MUST在验证后清理
 # [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml shadow_workspace段
-# [CONSUMERS] engine.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ShadowWorkspaceError
 # [TESTS] tests/auto-fix-engine/test_shadow_workspace.py
+# [A_module] module_id=MOD-SEC_shadow_workspace | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 import os
 import shutil

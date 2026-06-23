@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-INF_scope_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-113 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.scope_guard
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_scope_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Scope Guard — 范围蔓延检测与阻断。

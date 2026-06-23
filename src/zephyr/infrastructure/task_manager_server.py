@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_task_manager_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md | §4.2
-
 # [MODULE] zephyr.infrastructure.task_manager_server
-
-# [INVARIANTS] claim_task uses SQLite UPDATE RETURNING for atomic claim; status transitions follow 10-state machine
-
-# [MODIFY-GUARD] claim_task/mark_task_done/mark_task_failed/batch_progress/list_dependents/write_draft/commit_draft/list_drafts/discard_draft — new tools must preserve atomic claim semantics
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.shared_services.blueprint_decomposer; zephyr.shared.shared_services.models; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.schemas
 # [CONSUMERS] zephyr.infrastructure.mcp_server; AI sessions via MCP protocol
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] claim_task uses SQLite UPDATE RETURNING for atomic claim; status transitions follow 10-state machine
+# [MODIFY-GUARD] claim_task/mark_task_done/mark_task_failed/batch_progress/list_dependents/write_draft/commit_draft/list_drafts/discard_draft — new tools must preserve atomic claim semantics
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] RuntimeError when task_repo is None; GateViolationError on invalid transitions
-
 # [TESTS] tests/test_mcp_task_claim.py
+# [A_module] module_id=MOD-INF_task_manager_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ZephyrAlpha MCP Task Manager Server

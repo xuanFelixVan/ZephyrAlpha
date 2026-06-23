@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SHR_skill_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.skill_protocol
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.infrastructure.mcp_servers; zephyr.governance.agent_spec; zephyr.infrastructure.rollback
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; all consumers of SkillLoader/SkillRouter
-# [CONSUMERS] zephyr.infrastructure.mcp_servers; zephyr.governance.agent_spec; zephyr.infrastructure.rollback
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError when orchestration layer unavailable; consumers MUST handle
 # [TESTS]
+# [A_module] module_id=MOD-SHR_skill_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

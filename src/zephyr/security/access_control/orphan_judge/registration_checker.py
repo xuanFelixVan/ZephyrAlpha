@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_registration_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §L0
 # [MODULE] zephyr.security.access_control.orphan_judge.registration_checker
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
+# [CONSUMERS] orphan-judge.judge._run_layer L0
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 检查文件是否出现在项目的注册表(yaml/__init__/manifest)中; 不修改任何文件
 # [MODIFY-GUARD] 修改注册表扫描范围必须同步 blueprint.md §3.1
-# [CONSUMERS] orphan-judge.judge._run_layer L0
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 注册表文件不可读时返回 is_registered=False,不抛异常
 # [TESTS] tests/orphan-judge/test_registration_checker.py
+# [A_module] module_id=MOD-SEC_registration_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-029 — L0 注册检查器
 

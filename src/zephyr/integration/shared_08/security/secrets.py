@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_secrets | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.security.secrets
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SEC_secrets | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12 修复）

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES__monitoring | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback._monitoring
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] zephyr.infrastructure.rollback.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from zephyr.infrastructure.rollback
 # [MODIFY-GUARD] zephyr.infrastructure.rollback.__init__
-# [CONSUMERS] zephyr.infrastructure.rollback.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.rollback"
+# [A_module] module_id=MOD-RES__monitoring | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 SUBMODULES = [
     "agent_cooldown",

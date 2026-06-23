@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RES_graceful_degradation_planner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.resilience.graceful_degradation_planner
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-OPS
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_graceful_degradation_planner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Graceful Degradation Planner — v0.40.0 R496
 

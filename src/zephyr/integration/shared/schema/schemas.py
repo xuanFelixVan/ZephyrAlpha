@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SHR_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.schema.schemas
-# [INVARIANTS] All public symbols MUST be re-exported; __all__ MUST match actual exports; Task types canonical source is gates.task_types; severity types canonical source is shared.schema.severity_types; base config canonical source is shared.schema.base_config
-# [MODIFY-GUARD]   GOV-TASK-004
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model; zephyr.governance.rule_enforcement.task_types
 # [CONSUMERS] gates; context-engine; orchestrator; kb; runtime; db; pipeline; mcp; core; shared.events; scripts; tests
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] All public symbols MUST be re-exported; __all__ MUST match actual exports; Task types canonical source is gates.task_types; severity types canonical source is shared.schema.severity_types; base config canonical source is shared.schema.base_config
+# [MODIFY-GUARD] GOV-TASK-004
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ImportError on missing sub-module
 # [TESTS] tests/unit/test_schemas.py; tests/unit/shared/test_schemas.py; tests/contract/test_schema_stability.py
+# [A_module] module_id=MOD-SHR_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SHR_token_utils | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
-
 # [MODULE] zephyr.ops.observability.token_utils
-
-# [INVARIANTS] re-export shim only; canonical source is zephyr.autonomy_core.token_budget
-
-# [MODIFY-GUARD] do not add logic here; modify zephyr.autonomy_core.token_budget instead
-
+# [DOMAIN] D-OPS
+# [DEPENDENCIES]
 # [CONSUMERS] external packages importing from shared.observability
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] re-export shim only; canonical source is zephyr.autonomy_core.token_budget
+# [MODIFY-GUARD] do not add logic here; modify zephyr.autonomy_core.token_budget instead
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SHR_token_utils | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 import importlib
 

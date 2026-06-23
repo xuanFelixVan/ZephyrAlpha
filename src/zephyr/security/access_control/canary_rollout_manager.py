@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_canary_rollout_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.canary_rollout_manager
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_permissions.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] register stores CanaryPermission; start_sampling transitions to SAMPLING state
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_permissions.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] register/start_sampling never raise
 # [TESTS] tests/agent_rbac/test_permissions.py
+# [A_module] module_id=MOD-SEC_canary_rollout_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """CanaryRolloutManager — 灰度发布管理器.
 
 依据蓝图 MOD-INF-018 §3:

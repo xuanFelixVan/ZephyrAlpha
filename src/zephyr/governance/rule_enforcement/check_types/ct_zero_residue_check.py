@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_ct_zero_residue_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
-
 # [MODULE] zephyr.governance.rule_enforcement.check_types.ct_zero_residue_check
-
-# [INVARIANTS] MOD-INF-007 门禁 exit code 不可伪造; 原子写入 temp-file+os.replace()
-
-# [MODIFY-GUARD] blueprint.md §4; _registry.yaml; __init__.py __all__
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.check_types.check_type_registry; zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.invariants.zero_residue_check
 # [CONSUMERS] blueprint.md §0; zephyr.governance.rule_enforcement 内部模块; zephyr.trading.orchestrator
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] MOD-INF-007 门禁 exit code 不可伪造; 原子写入 temp-file+os.replace()
+# [MODIFY-GUARD] blueprint.md §4; _registry.yaml; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] GateError
-
 # [TESTS] tests/gates/
+# [A_module] module_id=MOD-GOV_ct_zero_residue_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
 

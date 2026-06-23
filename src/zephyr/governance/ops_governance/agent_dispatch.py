@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_agent_dispatch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-055 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.agent_dispatch
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_agent_dispatch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from dataclasses import dataclass
 

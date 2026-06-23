@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-DAT_kb_gate_task | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
-
 # [MODULE] zephyr.data.knowledge_management.kb.kb_engine.kb_gate_task
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_kb_gate_task | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """KB 五阶段门禁 evaluate 用的最小合法 Task（对齐  / tasks 表）。"""
 

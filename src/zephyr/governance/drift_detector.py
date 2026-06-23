@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RES_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §8
-
 # [MODULE] zephyr.governance.drift_detector
-
-# [INVARIANTS] SSoT=zephyr.governance.drift_detection(MOD-INF-023);本文件为兼容别名;API保持不变
-
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
+# [DOMAIN] D-GOV_DRIFT
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.__init__
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] SSoT=zephyr.governance.drift_detection(MOD-INF-023);本文件为兼容别名;API保持不变
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] frozen
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] immutable_core
-
 # [ERROR_CONTRACT] establish_baseline();detect()->float;is_drifting()->bool
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Drift Detector — 兼容别名，SSoT已迁移至 zephyr.governance.drift_detection (MOD-INF-023).
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_phase_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-061 | docs/03_modules/_domain-governance/blueprint.md | §
-
 # [MODULE] zephyr.governance.phase_manager
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.ops_governance.phase_check_registry
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_phase_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Phase Manager — ZephyrAlpha 施工阶段门控引擎.
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_memory_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.memory_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_crosscut_d.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] privileged ops always blocked; size > MAX always blocked
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_crosscut_d.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_access never raises; returns {"allowed": bool}
 # [TESTS] tests/agent_rbac/test_crosscut_d.py
+# [A_module] module_id=MOD-SEC_memory_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """MemoryGuard — 内存访问守卫.
 
 依据蓝图 MOD-INF-018 §3:

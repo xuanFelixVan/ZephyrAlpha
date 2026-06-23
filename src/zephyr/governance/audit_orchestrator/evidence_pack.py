@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_evidence_pack | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §8
 # [MODULE] zephyr.governance.evidence_pack
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] audit-orchestrator.integrity; replay_engine
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 证据包不可变性; 签名后禁止修改
 # [MODIFY-GUARD] 证据格式变更必须同步 integrity.py
-# [CONSUMERS] audit-orchestrator.integrity; replay_engine
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 打包失败返回None
 # [TESTS] tests/audit-orchestrator/test_evidence_pack.py
+# [A_module] module_id=MOD-GOV_evidence_pack | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import hashlib
 import json
 import logging

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_context_rot_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
-
 # [MODULE] zephyr.autonomy_core.context_rot_model
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_context_rot_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 context_rot_model.py — n² Attention 衰减数学模型 (DD7, TASK-014 beta a)

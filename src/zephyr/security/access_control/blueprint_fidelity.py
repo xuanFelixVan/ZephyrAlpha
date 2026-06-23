@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_blueprint_fidelity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.blueprint_fidelity
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_crosscut_d.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] field count mismatch always detected; match=True only when expected==actual
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_crosscut_d.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_field_count never raises; returns FidelityCheck
 # [TESTS] tests/agent_rbac/test_crosscut_d.py
+# [A_module] module_id=MOD-SEC_blueprint_fidelity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """BlueprintFidelity — 蓝图保真度检查.
 
 依据蓝图 MOD-INF-018 §3:

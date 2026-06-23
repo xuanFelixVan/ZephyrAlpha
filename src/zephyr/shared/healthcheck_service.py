@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-INF_healthcheck_service | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-099 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.healthcheck_service
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_healthcheck_service | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Healthcheck Service — 运行时健康检查服务。

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.identity
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py; permission_guard; rbac_guard; abac_guard
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] AgentIdentity attributes immutable after construction; role+maturity determine permission baseline
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py; permission_guard; rbac_guard; abac_guard
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AgentIdentity construction never raises; missing kwargs use defaults
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Agent identity — 角色与成熟度定义.
 
 依据蓝图 MOD-INF-018 §3:

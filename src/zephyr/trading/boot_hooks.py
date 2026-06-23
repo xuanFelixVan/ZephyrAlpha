@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_boot_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
-
 # [MODULE] zephyr.trading.boot_hooks
-
-# [INVARIANTS] register_boot_hooks is idempotent; hook_registry deduplicates by name
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.integration.shared_08.event_bus; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.auto_runtime_core
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] register_boot_hooks is idempotent; hook_registry deduplicates by name
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] returns None; logs error on failure; writes hook_failure event on critical failure
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_boot_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

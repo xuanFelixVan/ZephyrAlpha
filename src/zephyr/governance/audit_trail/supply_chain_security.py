@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_supply_chain_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
 # [MODULE] zephyr.governance.audit_trail
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] MOD-INF-027;MOD-INF-015;MOD-INF-010
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 不可变审计记录;密码学完整性;只追加
 # [MODIFY-GUARD] docs/03_modules/_domain-governance/audit-trail/blueprint.md;src/zephyr/audit-trail/__init__.py
-# [CONSUMERS] MOD-INF-027;MOD-INF-015;MOD-INF-010
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
+# [A_module] module_id=MOD-GOV_supply_chain_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

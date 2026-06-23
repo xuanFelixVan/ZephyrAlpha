@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-UNK_path_index_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
-
 # [MODULE] zephyr.testing.code_dedup.path_index_validator
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_path_index_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """路径索引验证——验证 config 数据集相对路径表与实际文件系统同步."""
 

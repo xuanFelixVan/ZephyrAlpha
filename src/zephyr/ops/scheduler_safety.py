@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-UNK_scheduler_safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.scheduler_safety
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.__init__
+# [CONSUMERS] zephyr.observability.feedback_loop.scheduler
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] SafetyGateManager.run_safety_gates returns dict[str, bool]
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.scheduler
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-UNK_scheduler_safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import time
 from dataclasses import dataclass, field
 from pathlib import Path

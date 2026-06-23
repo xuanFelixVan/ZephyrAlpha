@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_import_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.import_fixer
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
+# [CONSUMERS] engine.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 只修复可确定正确路径的import;不确定则跳过
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml import_fixer段
-# [CONSUMERS] engine.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportFixError
 # [TESTS] tests/auto-fix-engine/test_import_fixer.py
+# [A_module] module_id=MOD-SEC_import_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import ast
 import logging
 import os

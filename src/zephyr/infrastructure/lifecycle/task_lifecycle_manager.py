@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_task_lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-114 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.task_lifecycle_manager
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_task_lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Task Lifecycle Manager — G0-G7 任务生命周期门禁。

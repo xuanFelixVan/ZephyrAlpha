@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-INF_prompt_version_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-084 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.adaptation.prompt_version_manager
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.adaptation.execution_tuner
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_prompt_version_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Prompt Version Manager — 版本化 Prompt 治理。

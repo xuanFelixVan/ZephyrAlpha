@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RSC_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.cli
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.__init__; zephyr.intelligence.model_profiling.results_writer
+# [CONSUMERS] MOD-INF-034
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] CLI入口;discover/quick/benchmark/drift/best/history六命令
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-034
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CLIError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-RSC_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 model-profiler.cli — 模型性能检测命令行入口

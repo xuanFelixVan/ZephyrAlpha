@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_cold_start_lock | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.cold_start_lock
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] is_locked=True on init; unlock requires load_config+verify_integrity+verify_static_constants all passed
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] load_config/verify_integrity/verify_static_constants never raise; attempt_unlock returns bool
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_cold_start_lock | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """ColdStartLock — 冷启动锁.
 
 依据蓝图 MOD-INF-018 §3:

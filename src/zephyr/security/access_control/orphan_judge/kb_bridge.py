@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_kb_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §6.4
 # [MODULE] zephyr.security.access_control.orphan_judge.kb_bridge
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.intelligence.model_evaluation.unified_memory_api
+# [CONSUMERS] orphan-judge.__main__._cmd_report; report_generator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现KB逻辑; 仅桥接UnifiedMemoryAPI.write()+search()
 # [MODIFY-GUARD] UnifiedMemoryAPI API变更时同步此桥接
-# [CONSUMERS] orphan-judge.__main__._cmd_report; report_generator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回 False
 # [TESTS] tests/orphan-judge/test_kb_bridge.py
+# [A_module] module_id=MOD-SEC_kb_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

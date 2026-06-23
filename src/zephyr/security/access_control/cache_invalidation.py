@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_cache_invalidation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.cache_invalidation
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_enhanced_security.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] push_invalidation returns event with processed=False; process marks processed=True
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_enhanced_security.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] push_invalidation/process never raise; return InvalidationEvent/dict
 # [TESTS] tests/agent_rbac/test_enhanced_security.py
+# [A_module] module_id=MOD-SEC_cache_invalidation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """CacheInvalidation — 缓存失效事件管理.
 
 依据蓝图 MOD-INF-018 §3:

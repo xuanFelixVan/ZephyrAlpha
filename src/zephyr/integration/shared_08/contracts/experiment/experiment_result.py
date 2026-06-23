@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-INT_experiment_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-171 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contracts.experiment.experiment_result
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INT_experiment_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-014 ====
 from dataclasses import dataclass, field
 from datetime import datetime

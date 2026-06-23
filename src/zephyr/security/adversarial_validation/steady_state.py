@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_steady_state | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.steady_state
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] validator.py; game_day_runner.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 35 metrics across 6 domains: compliance(6)/security(5)/performance(5)/risk(5)/operations(5)/resilience(5); drift threshold 5% per metric
 # [MODIFY-GUARD] Adding metrics MUST update DOMAIN_METRICS and SteadyStateSummary model
-# [CONSUMERS] validator.py; game_day_runner.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] SteadyStateDriftError if drift_rate > 50% after attack
 # [TESTS] tests/red_blue/test_steady_state.py
+# [A_module] module_id=MOD-SEC_steady_state | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

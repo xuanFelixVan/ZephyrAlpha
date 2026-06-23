@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_skill_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
-
 # [MODULE] src.zephyr.autonomy_core.skill_router
-
-# [INVARIANTS]
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.integration.local_model.embedding_router
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_skill_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 import logging
 import re

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RES_git_infra_snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.infrastructure.rollback.git_infra_snapshot
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_git_infra_snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 GitInfraSnapshot — Git 基础设施快照与污染防护。

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-DAT_context_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-CE-VMS-001
 # [MODULE] zephyr.data.knowledge_management.vector_memory.context_ingest
+# [DOMAIN] D-KNOWLEDGE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] zephyr.autonomy_core.vector_writer
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 批量写入ContextBlock records; VMS不可用时使用in-memory fallback; 写入计数精确
 # [MODIFY-GUARD] CT-CE-VMS-001 协议变更必须同步更新context_engine/vector_writer
-# [CONSUMERS] zephyr.autonomy_core.vector_writer
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] VMS不可用回退in-memory; 空records返回0
 # [TESTS] scripts/connect/ce_vms.py --trigger
+# [A_module] module_id=MOD-DAT_context_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """VMS 上下文注入器 — ingest_context() 消费者
 
 CT-CE-VMS-001: 接收 CE 投递的上下文块, 向量化存储到 ChromaDB（Current: in-memory fallback）。

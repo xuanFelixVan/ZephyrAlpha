@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-078 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_core.ports
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol
+# [CONSUMERS] zephyr.infrastructure.runtime_integration; zephyr.infrastructure.mcp_servers
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Protocol classes MUST NOT import from zephyr.data; only structural subtyping
 # [MODIFY-GUARD] Adding methods to Protocol requires updating all implementors in zephyr.data
-# [CONSUMERS] zephyr.infrastructure.runtime_integration; zephyr.infrastructure.mcp_servers
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError if runtime implementation does not satisfy Protocol
 # [TESTS] tests/unit/test_shared_core.py
+# [A_module] module_id=MOD-INF_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ports — D-DATA 服务的 Protocol 定义

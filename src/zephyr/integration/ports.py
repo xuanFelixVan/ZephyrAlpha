@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §ports
 # [MODULE] zephyr.integration.ports
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.__init__
+# [CONSUMERS] zephyr.integration.pipeline_orchestrator;zephyr.integration.layer_router
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.infrastructure.a2a_protocol.governance
 # [MODIFY-GUARD] blueprint.md §ports; pipeline/__init__.py __all__
-# [CONSUMERS] zephyr.integration.pipeline_orchestrator;zephyr.integration.layer_router
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_pipeline_ports.py
+# [A_module] module_id=MOD-ORC_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Protocol-based interface layer for pipeline→mcp dependency abstraction.
 

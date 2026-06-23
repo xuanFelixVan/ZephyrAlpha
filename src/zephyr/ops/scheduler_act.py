@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_scheduler_act | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.scheduler_act
-
-# [INVARIANTS] ActPhaseHandler.run_act returns ActResult; run_verify returns verification
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.__init__; zephyr.integration.shared_08.event_bus
 # [CONSUMERS] zephyr.observability.feedback_loop.scheduler
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] ActPhaseHandler.run_act returns ActResult; run_verify returns verification
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] _escalate_on_failure 不抛异常; _auto_rollback_on_escalation 不抛异常; run_act 返回 ActResult
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_scheduler_act | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

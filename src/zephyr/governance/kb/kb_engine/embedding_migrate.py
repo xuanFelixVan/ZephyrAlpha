@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-DAT_embedding_migrate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
-
 # [MODULE] zephyr.data.knowledge_management.kb.kb_engine.embedding_migrate
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_embedding_migrate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # AI-generated: T-4-06 Embedding Upgrade BGE-M3
 """

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_base_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
-
 # [MODULE] zephyr.data.persistence.base_repo
-
-# [INVARIANTS] _ALLOWED_TRANSITIONS 不可变; 异常类层次稳定; _row_to_taskcard 字段映射完整
-
-# [MODIFY-GUARD] task_repo.py;query.py;transition.py（三模块共享基础设施）
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types
 # [CONSUMERS] task_repo;query;transition
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] _ALLOWED_TRANSITIONS 不可变; 异常类层次稳定; _row_to_taskcard 字段映射完整
+# [MODIFY-GUARD] task_repo.py;query.py;transition.py（三模块共享基础设施）
 # [STABILITY] stable
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] TaskNotFoundError;InvalidTransitionError;DuplicateTaskError;DatabaseError;QueryError;DependencyError
-
 # [TESTS] tests/db/
+# [A_module] module_id=MOD-DAT_base_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
 

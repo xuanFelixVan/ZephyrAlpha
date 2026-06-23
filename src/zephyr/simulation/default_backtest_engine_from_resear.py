@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_default_backtest_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L09-001 | docs/03_modules/_domain-research/research-core/blueprint.md
-
 # [MODULE] zephyr.research.simulation.default_backtest_engine
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SIMULATION
+# [DEPENDENCIES] zephyr.simulation.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_default_backtest_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """L09 — Default Backtest Engine
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK__safety_gates | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.gates._safety_gates
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.gates.__init__
+# [CONSUMERS] zephyr.observability.feedback_loop.gates.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from feedback-loop.gates
 # [MODIFY-GUARD] zephyr.observability.feedback_loop.gates.__init__
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.ops.gates"
+# [A_module] module_id=MOD-UNK__safety_gates | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 SUBMODULES = [
     "parameterized_safety_gate",

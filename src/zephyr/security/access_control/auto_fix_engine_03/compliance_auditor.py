@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_compliance_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.compliance_auditor
-
-# [INVARIANTS] 每次修复MUST生成ComplianceEvidence;防篡改哈希MUST可验证
-
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml compliance段
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
 # [CONSUMERS] engine.py;MOD-INF-020(audit-trail)
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 每次修复MUST生成ComplianceEvidence;防篡改哈希MUST可验证
+# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml compliance段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ComplianceAuditError
-
 # [TESTS] tests/auto-fix-engine/test_compliance_auditor.py
+# [A_module] module_id=MOD-SEC_compliance_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

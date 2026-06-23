@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_state_machine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.state_machine
-
-# [INVARIANTS] 状态转换必须合法;DEAD_LETTER为终态;CLOSED为终态
-
-# [MODIFY-GUARD] blueprint.md §3; _fixer-registry.yaml
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.state_machine
 # [CONSUMERS] engine.py;fix_reliability.py;fix_health_check.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 状态转换必须合法;DEAD_LETTER为终态;CLOSED为终态
+# [MODIFY-GUARD] blueprint.md §3; _fixer-registry.yaml
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] InvalidFixTransitionError
-
 # [TESTS] tests/auto-fix-engine/test_state_machine.py
+# [A_module] module_id=MOD-INF_state_machine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

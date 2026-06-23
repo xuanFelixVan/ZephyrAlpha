@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
-
 # [MODULE] zephyr.autonomy_core.kill_switch
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # SRC-0041: Copy file -- keep independent implementation, pending future review
 #   shared/kill_switch.py is now the unified export SSoT; this file exported

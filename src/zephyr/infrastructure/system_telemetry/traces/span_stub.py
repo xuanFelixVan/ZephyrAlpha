@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_span_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | 蓝图特有§A
-
 # [MODULE] zephyr.infrastructure.system_telemetry.traces.span_stub
-
-# [INVARIANTS] Span命名MUST遵循gen_ai.component.operation风格;跨进程MUST携带traceparent(W3C);禁止手动传递trace_id
-
-# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] src/zephyr/system-telemetry/facade.py;src/zephyr/system-telemetry/logs/structured_sink.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] Span命名MUST遵循gen_ai.component.operation风格;跨进程MUST携带traceparent(W3C);禁止手动传递trace_id
+# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] 采样决策由TraceSampler控制;span结束自动flush到logs
-
 # [TESTS] tests/unit/telemetry/
+# [A_module] module_id=MOD-INF_span_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """L12 · traces/span_stub — W3C TraceContext 分布式追踪管道。
 

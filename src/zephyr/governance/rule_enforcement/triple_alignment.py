@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_triple_alignment | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §4
 # [MODULE] zephyr.governance.rule_enforcement.triple_alignment
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES]
+# [CONSUMERS] GateEngine;phase_manager;session_gate_checklist
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] 蓝图↔代码↔依赖图三方必须对齐;module_id/stability/safety/ai_autonomy三处一致;文件清单三方匹配
 # [MODIFY-GUARD] _registry.yaml;gate_engine.py;system-dependency-map.md
-# [CONSUMERS] GateEngine;phase_manager;session_gate_checklist
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TripleAlignmentError(list[AlignmentViolation])
 # [TESTS] tests/test_triple_alignment.py
+# [A_module] module_id=MOD-GOV_triple_alignment | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁

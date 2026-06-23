@@ -1,21 +1,18 @@
-# [A_module] module_id=MOD-INF_pipeline_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §4.1
-
 # [MODULE] zephyr.infrastructure.pipeline.pipeline_orchestrator
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.governance.__init__; zephyr.governance.audit_trail.writer; zephyr.integration.vector_memory.local_model_scheduler; zephyr.governance.persistence.task_repo; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra.observer; zephyr.integration.mcp.__init__; zephyr.integration.vector_memory.embedding_router
+# [CONSUMERS] zephyr.infrastructure.pipeline.__init__.py (re-export); legacy imports via infrastructure.pipeline.pipeline_orchestrator
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] re-export shim only; truth source is zephyr.integration.pipeline_orchestrator (DW-2026062403 去重裁定)
 # [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.integration.pipeline_orchestrator
-# [CONSUMERS] zephyr.infrastructure.pipeline.__init__.py (re-export); legacy imports via infrastructure.pipeline.pipeline_orchestrator
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ImportError if integration.pipeline_orchestrator symbols unavailable
-
 # [TESTS] tests/test_pipeline_orchestrator_auto.py; tests/unit/pipeline/test_pipeline_orchestrator.py
+# [A_module] module_id=MOD-INF_pipeline_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 PipelineOrchestrator re-export shim — 真源已合并至 zephyr.integration.pipeline_orchestrator (DW-2026062403)。

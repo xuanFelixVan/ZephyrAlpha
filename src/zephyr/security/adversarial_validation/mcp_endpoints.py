@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_mcp_endpoints | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §10.2 + §16 Phase 2c
 # [MODULE] zephyr.security.adversarial_validation.mcp_endpoints
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.scenario_loader; zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.convergence_checker
+# [CONSUMERS] MCP Server; external AI Agents
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 4 MCP Tools: run_adversarial / list_scenarios / get_report / check_convergence; all return JSON-serializable dicts
 # [MODIFY-GUARD] Adding tool MUST register in get_tools() and implement handler; tool schema per MCP Tool protocol
-# [CONSUMERS] MCP Server; external AI Agents
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] McpEndpointError on tool execution failure
 # [TESTS] tests/red_blue/test_mcp_endpoints.py
+# [A_module] module_id=MOD-SEC_mcp_endpoints | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

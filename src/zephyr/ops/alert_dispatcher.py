@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK_alert_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-FLE-ORC-001
 # [MODULE] zephyr.observability.feedback_loop.alert_dispatcher
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.trading.__init__
+# [CONSUMERS] zephyr.trading.orchestrator.alert_handler
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] severity 必须是 CRITICAL/HIGH/MEDIUM/LOW; 同一 event_id 不重复 dispatch
 # [MODIFY-GUARD] CT-FLE-ORC-001 协议变更必须同步更新 orchestrator/alert_handler
-# [CONSUMERS] zephyr.trading.orchestrator.alert_handler
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DispatchError 任务创建失败/DB 不可用
 # [TESTS] scripts/connect/fle_orc.py --trigger
+# [A_module] module_id=MOD-UNK_alert_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """FLE→Orc 告警分派器 — dispatch() 生产者
 
 CT-FLE-ORC-001: FLE 检测异常 → dispatch AlertEvent → Orc 创建修复任务。

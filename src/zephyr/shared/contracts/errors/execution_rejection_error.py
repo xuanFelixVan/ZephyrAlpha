@@ -1,5 +1,18 @@
-# [A_module] module_id=MOD-SHR_execution_rejection_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# [MODULE] src.zephyr.shared.contracts.errors.execution_rejection_error
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.contracts.errors.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SHR_execution_rejection_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.execution.execution_rejection_error."""
 
 import importlib

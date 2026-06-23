@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SHR_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
-
 # [MODULE] zephyr.shared.foundation.types
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SHR_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 types.py —— 共享类型别名 & 语义化 NewType（Phase 3 新增 | 盲点 #5 修复）

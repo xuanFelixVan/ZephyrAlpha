@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF__base_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
-
 # [MODULE] zephyr.infrastructure._base_server
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF__base_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # AI-generated: JSON-RPC 2.0 over stdio MCP base server (
 """

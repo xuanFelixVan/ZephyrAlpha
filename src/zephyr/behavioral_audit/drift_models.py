@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_drift_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.drift_models
-
-# [INVARIANTS] 数据模型不可破坏兼容性
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES]
 # [CONSUMERS] drift_engine;detector_dispatcher;correlation_engine
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 数据模型不可破坏兼容性
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] immutable_core
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_drift_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Drift Detector 数据模型 — drift_models.py

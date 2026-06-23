@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-DAT_event_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
 # [MODULE] zephyr.data.persistence.event_store
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [CONSUMERS] zephyr.data.persistence.projection_engine; zephyr.data.persistence.snapshot_manager; zephyr.data.persistence.task_repo
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] event_id is UUID4; timestamp is UTC ISO 8601; append_event is atomic within BEGIN IMMEDIATE
 # [MODIFY-GUARD] task_events schema changes MUST go through sqlite_schema migration
-# [CONSUMERS] zephyr.data.persistence.projection_engine; zephyr.data.persistence.snapshot_manager; zephyr.data.persistence.task_repo
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EventStoreError on write failure; IntegrityError on verify_integrity failure
 # [TESTS] tests/test_event_store_stress.py
+# [A_module] module_id=MOD-DAT_event_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 EventStore — Event Sourcing 事件追加与回放（DW-0002）

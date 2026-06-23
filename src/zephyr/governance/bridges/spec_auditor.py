@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-UNK_spec_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
-
 # [MODULE] zephyr.governance.audit_trail.bridges.spec_auditor
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.protocols
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_spec_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """G-CT-007 — Audit.record_agent_spec() 记录 Agent Spec 注册与变更."""
 

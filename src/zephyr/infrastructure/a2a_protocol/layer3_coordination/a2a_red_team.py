@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_a2a_red_team | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
-
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_red_team
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_a2a_red_team | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """A2A 红队测试 — 攻击向量定义与执行框架
 

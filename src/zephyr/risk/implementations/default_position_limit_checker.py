@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_default_position_limit_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
-
 # [MODULE] zephyr.risk.implementations.default_position_limit_checker
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-RISK
+# [DEPENDENCIES] zephyr.risk.risk_manager_base; zephyr.risk.risk_manager
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_default_position_limit_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # ---
 # domain: risk

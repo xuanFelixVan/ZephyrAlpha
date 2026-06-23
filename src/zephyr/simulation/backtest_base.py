@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_backtest_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L09-001 | docs/03_modules/_domain-research/research-core/blueprint.md
-
 # [MODULE] zephyr.research.simulation.backtest_base
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SIMULATION
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_backtest_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 L09 — Research & Innovation Layer

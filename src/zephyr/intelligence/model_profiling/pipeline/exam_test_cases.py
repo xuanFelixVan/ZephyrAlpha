@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RSC_exam_test_cases | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §
-
 # [MODULE] zephyr.intelligence.model_profiling.pipeline.exam_test_cases
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RSC_exam_test_cases | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ExamTestCases --- 入职考试 27 道标准题

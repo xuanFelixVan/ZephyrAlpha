@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_gate_persistence | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.gate_persistence
-
-# [INVARIANTS] 门禁结果不可篡改
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 门禁结果不可篡改
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_gate_persistence | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Gate Persistence — gate_persistence.py

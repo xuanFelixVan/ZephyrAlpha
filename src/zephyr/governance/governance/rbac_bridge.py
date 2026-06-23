@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-GOV_rbac_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
 # [MODULE] zephyr.governance.governance.rbac_bridge
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.identity.agent_identity; zephyr.integration.shared_08.contracts.identity.permission; zephyr.security.access_control.permission_guard; zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_rbac_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """G-CT-005 契约：Escalation → RBAC 权限升级 + Pipeline 前置 RBAC 检查."""
 

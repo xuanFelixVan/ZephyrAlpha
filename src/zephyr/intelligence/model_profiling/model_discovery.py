@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RSC_model_discovery | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.model_discovery
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.provider_data
+# [CONSUMERS] MOD-INF-034;MOD-INF-009
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 模型发现;Ollama本地模型;远程API模型
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-034;MOD-INF-009
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DiscoveryError;ConnectionError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-RSC_model_discovery | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_lazy_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-110 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.lazy_loader
-
-# [INVARIANTS] must be thread-safe; must not block main loop
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] must be thread-safe; must not block main loop
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] KeyError on unregistered module; RuntimeError on not-yet-loaded module; re-raises Exception on import failure
-
 # [TESTS] tests/lifecycle_manager/test_lazy_loader.py
+# [A_module] module_id=MOD-INF_lazy_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

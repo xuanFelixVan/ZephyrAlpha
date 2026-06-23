@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_pipeline_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.pipeline_runner
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.governance.audit_orchestrator.text_to_finding_adapter
+# [CONSUMERS] audit-orchestrator.cli; circadian_scheduler; audit_admission_controller
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] PipelineRunner executes scripts in dependency chain order; all findings collected as AuditFinding
 # [MODIFY-GUARD] Dimension chain order changes require blueprint update
-# [CONSUMERS] audit-orchestrator.cli; circadian_scheduler; audit_admission_controller
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] run() never raises; individual script failures are logged and skipped
 # [TESTS] tests/test_audit_orchestrator_e2e.py
+# [A_module] module_id=MOD-GOV_pipeline_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

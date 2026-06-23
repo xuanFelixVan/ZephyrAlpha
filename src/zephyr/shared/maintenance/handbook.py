@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-INF_handbook | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-118 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.maintenance.handbook
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.maintenance.zero_config
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_handbook | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Onboarding Handbook — AI Agent 施工手册生成。

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_context_rule_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md | §4.7
-
 # [MODULE] zephyr.autonomy_core.context_rule_registry
-
-# [INVARIANTS] rule_id 全局唯一; HOT 级别 ≤400 tokens; 注册后立即可 lookup
-
-# [MODIFY-GUARD] context_assembler.py; context_pipeline.py; __init__.py
-
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] MOD-INF-017; MOD-INF-018; MOD-INF-023; MOD-INF-033
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] rule_id 全局唯一; HOT 级别 ≤400 tokens; 注册后立即可 lookup
+# [MODIFY-GUARD] context_assembler.py; context_pipeline.py; __init__.py
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] register: rule_id 冲突→覆盖; lookup: 无匹配→空列表; load_yaml: 文件不存在→FileNotFoundError
-
 # [TESTS] tests/unit/test_context_rule_registry.py
+# [A_module] module_id=MOD-ORC_context_rule_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

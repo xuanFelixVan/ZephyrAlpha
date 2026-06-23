@@ -1,30 +1,18 @@
-# [A_module] module_id=MOD-SEC_duplicate_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §L2
-
-[MODULE] zephyr.security.access_control.orphan_judge.duplicate_detector
-
-[INVARIANTS] DuplicateDetector.detect returns DuplicateResult; AST parsing never raises; L2 failure degrades to "no duplicates"
-
-[MODIFY-GUARD] orphan-judge/blueprint.md; orphan-judge/__init__.py __all__
-
-[CONSUMERS] orphan-judge.five_layer_judge; decision_table; circadian_scheduler._code_dedup_scan
-
-[STABILITY] evolving
-
-[SAFETY] M
-
-[AI_AUTONOMY] ai_modifiable
-
-[ERROR_CONTRACT] OrphanJudgeError; returns empty DuplicateResult on AST parse failure
-
-[TESTS] tests/orphan-judge/test_duplicate_detector.py
-"""
+# [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.duplicate_detector
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SEC_duplicate_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

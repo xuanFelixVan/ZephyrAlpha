@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_verdict_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §3.1
 # [MODULE] zephyr.governance.behavioral_admission.verdict_engine
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-031(auto-fix-engine);zephyr.governance.behavioral_admission.admission_controller
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] VerdictLevel三态判定不可扩展；GraduatedLevel升级矩阵由protection_level+gate+violations联合决定
 # [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
-# [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-031(auto-fix-engine);zephyr.governance.behavioral_admission.admission_controller
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] evaluate: PermissionCheckTimeout→Verdict(RED); evaluate_batch: partial_failure→individual RED
 # [TESTS] tests/test_behavioral_audit/test_verdict_engine.py
+# [A_module] module_id=MOD-GOV_verdict_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

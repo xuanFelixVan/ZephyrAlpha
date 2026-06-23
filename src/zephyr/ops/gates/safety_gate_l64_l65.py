@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_safety_gate_l64_l65 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.gates.safety_gate_L64_L65
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN]
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_safety_gate_l64_l65 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Safety Gates L64-L65 — Financial Integrity + VibeOps:Solo
 

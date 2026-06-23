@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_drift_training | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.drift_training
-
-# [INVARIANTS] 训练模式提取不可遗漏
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES] zephyr.behavioral_audit.drift_models
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 训练模式提取不可遗漏
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_drift_training | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py

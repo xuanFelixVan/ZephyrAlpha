@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SHR_task_repository_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.task_repository_protocol
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.trading; zephyr.governance; zephyr.resilience
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Protocol MUST NOT import from zephyr.data; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; infrastructure/shared_core/ports.py; all 19 consumers
-# [CONSUMERS] zephyr.trading; zephyr.governance; zephyr.resilience
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError if runtime implementation does not satisfy Protocol
 # [TESTS] tests/unit/test_shared_core.py
+# [A_module] module_id=MOD-SHR_task_repository_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 TaskRepositoryProtocol — TaskRepository 的 Protocol 接口

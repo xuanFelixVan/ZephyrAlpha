@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.infrastructure.rollback.contracts
-
-# [INVARIANTS] 定义所有回滚异常类型和接口契约
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.governance.audit_trail.anomaly
 # [CONSUMERS] rollback包内所有模块
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 定义所有回滚异常类型和接口契约
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] 定义所有回滚异常类型
-
 # [TESTS] tests/rollback/
+# [A_module] module_id=MOD-INF_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 

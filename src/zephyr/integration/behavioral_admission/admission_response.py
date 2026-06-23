@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-INT_admission_response | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-145 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] zephyr.integration.behavioral_admission.admission_response
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.trading.__init__
+# [CONSUMERS] GovernanceServer;run_all.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 响应状态必须与AdmissionDecision一致;REJECTED必须包含原因
 # [MODIFY-GUARD] MCP协议格式变更需同步mcp/gateway_server.py
-# [CONSUMERS] GovernanceServer;run_all.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidDecisionError
 # [TESTS] tests/test_admission_response.py
+# [A_module] module_id=MOD-INT_admission_response | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from enum import Enum
 from typing import Any
 

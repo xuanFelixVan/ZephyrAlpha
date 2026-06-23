@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_exam_test_cases | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
-
 # [MODULE] zephyr.intelligence.model_profiling.exam_test_cases
-
-# [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
-
-# [MODIFY-GUARD] model-capability-exam/blueprint.md; model-capability-exam/__init__.py __all__
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.model_capability_exam.__init__
 # [CONSUMERS] 见蓝图 §4 接口契约
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
+# [MODIFY-GUARD] model-capability-exam/blueprint.md; model-capability-exam/__init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ExamError
-
 # [TESTS] tests/model-capability-exam/
+# [A_module] module_id=MOD-INF_exam_test_cases | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 

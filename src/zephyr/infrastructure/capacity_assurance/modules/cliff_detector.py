@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_cliff_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-
 # [MODULE] zephyr.infrastructure.capacity_assurance.cliff_detector
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_cliff_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Cliff Detector — 模块数悬崖检测 (盲点 #36)

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_drift_cron_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.drift_cron_scheduler
-
-# [INVARIANTS] 定期扫描不可禁用
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES] zephyr.shared.shared_services.lifecycle.daemon_registry; zephyr.behavioral_audit.drift_engine
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 定期扫描不可禁用
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_drift_cron_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Drift Cron Scheduler — 定期扫描调度器 v1.0.1
 

@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_genesis | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §3.1
 # [MODULE] zephyr.governance.audit_trail.genesis
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] audit-orchestrator.integrity; cold_start
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 创世块不可变; 建立后永不修改
 # [MODIFY-GUARD] 创世块格式变更需Owner审批
-# [CONSUMERS] audit-orchestrator.integrity; cold_start
 # [STABILITY] frozen
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 创世块损坏返回恢复失败
 # [TESTS] tests/audit-orchestrator/test_genesis.py
+# [A_module] module_id=MOD-GOV_genesis | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import hashlib
 import json
 import logging

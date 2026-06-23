@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_drift_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.drift_bridge
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] audit-orchestrator.self_monitor(自监控漂移检测)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现漂移检测逻辑; 仅桥接DriftDetector.establish_baseline()+detect()+is_drifting()
 # [MODIFY-GUARD] DriftDetector API变更时同步此桥接
-# [CONSUMERS] audit-orchestrator.self_monitor(自监控漂移检测)
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回无漂移(false)
 # [TESTS] tests/audit-orchestrator/test_drift_bridge.py
+# [A_module] module_id=MOD-GOV_drift_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

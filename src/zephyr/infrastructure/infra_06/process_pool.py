@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_process_pool | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.infra_06.process_pool
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.resource_optimization_models
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_process_pool | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 process_pool.py - Shared process pool for MCP servers and subprocess tasks

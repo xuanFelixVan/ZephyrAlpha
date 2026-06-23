@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_prompt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
-
 # [MODULE] zephyr.integration.mcp.prompt_provider
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_prompt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。
 

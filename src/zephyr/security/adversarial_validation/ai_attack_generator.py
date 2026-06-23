@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_ai_attack_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §5.2 + §16 Phase 2c
 # [MODULE] zephyr.security.adversarial_validation.ai_attack_generator
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] game_day_runner.py; cold_start.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Generates new attack payloads from bypass history; mutation strategies: payload_variation/scenario_combination/vector_permutation
 # [MODIFY-GUARD] Adding mutation strategies MUST update MUTATION_STRATEGIES; generated scenarios MUST validate against AttackScenario model
-# [CONSUMERS] game_day_runner.py; cold_start.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AttackGenerationError on invalid payload generation
 # [TESTS] tests/red_blue/test_ai_attack_generator.py
+# [A_module] module_id=MOD-SEC_ai_attack_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

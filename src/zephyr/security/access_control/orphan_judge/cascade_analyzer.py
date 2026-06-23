@@ -1,30 +1,18 @@
-# [A_module] module_id=MOD-SEC_cascade_analyzer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §cascade
-
-[MODULE] zephyr.security.access_control.orphan_judge.cascade_analyzer
-
-[INVARIANTS] CascadeResult.safe_to_delete=True only when cascade_risk=LOW and indirect_dependents empty; grep-based import scan never raises
-
-[MODIFY-GUARD] orphan-judge/blueprint.md; orphan-judge/__init__.py __all__
-
-[CONSUMERS] orphan-judge.orphan_collector; orphan-judge.five_layer_judge
-
-[STABILITY] evolving
-
-[SAFETY] M
-
-[AI_AUTONOMY] ai_modifiable
-
-[ERROR_CONTRACT] CascadeAnalyzerError on invalid path; returns empty dependents on grep failure
-
-[TESTS] tests/orphan-judge/test_cascade_analyzer.py
-"""
+# [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.cascade_analyzer
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SEC_cascade_analyzer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

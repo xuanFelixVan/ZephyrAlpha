@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §10 + §16 Phase 2c
 # [MODULE] zephyr.security.adversarial_validation.cli
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.scenario_loader; zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.game_day_runner; zephyr.security.adversarial_validation.game_day_scheduler; zephyr.security.adversarial_validation.convergence_checker; zephyr.security.adversarial_validation.cold_start
+# [CONSUMERS] End users; CI/CD; MCP tool wrappers
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] python -m zephyr.security.adversarial_validation is the ONLY entry point; subcommands: run/list/report/status
 # [MODIFY-GUARD] Adding subcommands MUST register in main() dispatch
-# [CONSUMERS] End users; CI/CD; MCP tool wrappers
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] SystemExit on invalid subcommand
 # [TESTS] tests/red_blue/test_cli.py
+# [A_module] module_id=MOD-SEC_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

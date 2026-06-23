@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_pipeline_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md | §
-
 # [MODULE] zephyr.data.vector_storage.pipeline_base
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.contracts.experiment.experiment_result
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_pipeline_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 L13 — Experimentation Pipeline Layer

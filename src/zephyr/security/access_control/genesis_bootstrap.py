@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_genesis_bootstrap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §genesis
 # [MODULE] zephyr.security.access_control.genesis_bootstrap
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] auto_runtime_core._bootstrap_rbac; boot_hooks._register_rbac_hooks
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] singleton; bootstrap is idempotent; 5-phase sequence; config must be non-empty
 # [MODIFY-GUARD] blueprint.md §genesis; phase sequence must align with ColdStartLock checks
-# [CONSUMERS] auto_runtime_core._bootstrap_rbac; boot_hooks._register_rbac_hooks
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] bootstrap() never raises; returns GenesisState with error detail on failure
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
+# [A_module] module_id=MOD-SEC_genesis_bootstrap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """GenesisBootstrap — RBAC系统启动引导器.
 
 依据蓝图 MOD-INF-018 §genesis:

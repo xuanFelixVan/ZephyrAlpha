@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-109 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.hooks
-
-# [INVARIANTS] must be thread-safe; must not block main loop; Protocol-based lightweight design
-
-# [MODIFY-GUARD] resource_optimization_engine.py; resource_optimization_models.py; daemon_registry.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.lifecycle.__init__
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] must be thread-safe; must not block main loop; Protocol-based lightweight design
+# [MODIFY-GUARD] resource_optimization_engine.py; resource_optimization_models.py; daemon_registry.py
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] re-raises Exception on init/startup failure
-
 # [TESTS] tests/lifecycle_manager/test_hooks.py
+# [A_module] module_id=MOD-INF_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 

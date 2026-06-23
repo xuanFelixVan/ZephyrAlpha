@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RES_merkle_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §8
-
 # [MODULE] zephyr.governance.merkle_audit
-
-# [INVARIANTS] SSoT=zephyr.governance.audit_trail(MOD-INF-020);本文件为兼容别名
-
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.integrity
 # [CONSUMERS] zephyr.governance.__init__
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] SSoT=zephyr.governance.audit_trail(MOD-INF-020);本文件为兼容别名
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] record()->str;get_root()->str
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_merkle_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.governance.audit_trail (MOD-INF-020).
 

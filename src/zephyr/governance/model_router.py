@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-RES_model_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.infrastructure.budget_enforcement.model_router
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.budget_models; zephyr.intelligence.model_profiling.provider_data; zephyr.intelligence.model_profiling.results_writer
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-RES_model_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from dataclasses import dataclass, field
 from enum import Enum

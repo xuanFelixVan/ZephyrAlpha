@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-EXE_risk_validation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain-ex_core/execution-core/blueprint.md
 # [MODULE] zephyr.execution.core.adapters.risk_validation_bridge
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.ex_core.execution_engine
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] RiskValidationBridge wraps RiskValidatorProtocol; execution_engine MUST NOT import trading-contracts.risk directly
 # [MODIFY-GUARD] blueprint.md §Cross-Layer; adapters/__init__.py __all__
-# [CONSUMERS] zephyr.ex_core.execution_engine
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] RiskValidationBridgeError on adapter failure
 # [TESTS] tests/unit/ex_core/test_execution_engine_unit.py
+# [A_module] module_id=MOD-EXE_risk_validation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # ---
 # domain: ex_core

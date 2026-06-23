@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_drift_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.drift_engine
-
-# [INVARIANTS] 39检测器必须全部执行;不可跳过检测器
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES] zephyr.behavioral_audit.drift_infrastructure; zephyr.behavioral_audit.drift_models; zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.__init__
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 39检测器必须全部执行;不可跳过检测器
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_drift_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Drift Engine — 编排器核心 (SRC-0030 精简后)

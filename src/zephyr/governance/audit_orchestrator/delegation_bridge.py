@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_delegation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.delegation_bridge
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] audit-orchestrator.delegation_auditor(委托审计时上报)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现委托逻辑; 仅桥接EscalationEngine.evaluate()/escalate()
 # [MODIFY-GUARD] EscalationEngine API变更时同步此桥接
-# [CONSUMERS] audit-orchestrator.delegation_auditor(委托审计时上报)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空事件列表
 # [TESTS] tests/audit-orchestrator/test_delegation_bridge.py
+# [A_module] module_id=MOD-GOV_delegation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

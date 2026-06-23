@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.bridge
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.drift_bridge; zephyr.governance.audit_trail.feedback_bridge; zephyr.governance.audit_trail.delegation_bridge; zephyr.governance.merkle_hourly; zephyr.governance.audit_trail.trust_bridge; zephyr.governance.audit_trail.tiered_storage_bridge
+# [CONSUMERS] audit-orchestrator.*; pipeline_runner
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 统一桥接入口; 所有外部依赖通过此桥接访问
 # [MODIFY-GUARD] 新增外部依赖必须在此注册
-# [CONSUMERS] audit-orchestrator.*; pipeline_runner
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 桥接失败返回None或空结果
 # [TESTS] tests/audit-orchestrator/test_bridge.py
+# [A_module] module_id=MOD-GOV_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

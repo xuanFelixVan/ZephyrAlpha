@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_batch_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.batch_fixer
-
-# [INVARIANTS] MUST使用ThreadPoolExecutor(max_workers=8);MUST通过冲突解决器
-
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml engine.max_concurrent_fixes
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.fix_budget; zephyr.security.access_control.auto_fix_engine_03.fix_reliability; zephyr.security.access_control.auto_fix_engine_03.models
 # [CONSUMERS] engine.py
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] MUST使用ThreadPoolExecutor(max_workers=8);MUST通过冲突解决器
+# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml engine.max_concurrent_fixes
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] BatchFixError
-
 # [TESTS] tests/auto-fix-engine/test_batch_fixer.py
+# [A_module] module_id=MOD-SEC_batch_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

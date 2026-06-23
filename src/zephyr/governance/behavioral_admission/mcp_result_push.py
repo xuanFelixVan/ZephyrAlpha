@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_mcp_result_push | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-022 | docs/03_modules/_domain-governance/blueprint.md | §3.11
 # [MODULE] zephyr.governance.mcp_result_push
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] GovernanceServer;run_all.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 推送结果不可丢失;推送失败必须可重试
 # [MODIFY-GUARD] 推送协议格式变更需同步MOD-INF-013
-# [CONSUMERS] GovernanceServer;run_all.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PushError;CallbackConnectionError
 # [TESTS] tests/test_mcp_result_push.py
+# [A_module] module_id=MOD-GOV_mcp_result_push | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import json
 import logging
 import os

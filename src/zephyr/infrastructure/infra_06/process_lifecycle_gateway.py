@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_process_lifecycle_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §2.10
 # [MODULE] zephyr.infrastructure.shared_services.infra_06.process_lifecycle_gateway
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.shared.shared_services.infra_06.process_pool
+# [CONSUMERS] zephyr.trading.auto_runtime_core (ollama serve) ; scripts.mcp.launcher (MCP Server DAG)
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 所有子进程创建必须经过此网关；所有池化进程必须在 DaemonRegistry 中注册；idle_timeout_s 后必须被回收；Gateway 不持有业务逻辑
 # [MODIFY-GUARD] ProcessPool 和 DaemonRegistry 的接口变更必须同步更新此网关
-# [CONSUMERS] zephyr.trading.auto_runtime_core (ollama serve) ; scripts.mcp.launcher (MCP Server DAG)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] launch 返回 None 表示启动失败（调用方处理）；launch_daemon 返回 bool 表示成功/失败
 # [TESTS] tests/zephyr/shared/infra/test_process_lifecycle_gateway.py
+# [A_module] module_id=MOD-INF_process_lifecycle_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ProcessLifecycleGateway — 进程生命周期统一入口

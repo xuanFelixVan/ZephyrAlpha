@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_knowledge_base_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
-
 # [MODULE] zephyr.integration.mcp.knowledge_base_server
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.governance.__init__; zephyr.integration.vector_memory.in_process_vector_memory
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_knowledge_base_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # AI-generated: knowledge_base MCP Server skeleton (ADR-0033, T-3-04)
 """

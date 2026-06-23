@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_adversarial_resilience | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.adversarial_resilience
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] get_owasp_coverage returns list with >=8 items; each item has category/name/covered keys
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_owasp_coverage never raises; always returns >=8 coverage entries
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_adversarial_resilience | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """AdversarialResilience — 对抗性韧性与 OWASP 覆盖.
 
 依据蓝图 MOD-INF-018 §3:

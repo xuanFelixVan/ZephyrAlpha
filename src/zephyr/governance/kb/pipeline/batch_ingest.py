@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_batch_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
-
 # [MODULE] zephyr.data.knowledge_management.kb.pipeline.batch_ingest
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_batch_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 批量入库 — scaffold P0/P1 知识候选批量入库（T-2-14）

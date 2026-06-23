@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_memory_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.memory_writer
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.autonomy_core.__init__
+# [CONSUMERS] zephyr.trading.orchestrator.work_orchestrator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 任务COMPLETED时归档; VMS不可用降级不阻塞
 # [MODIFY-GUARD] CT-ORC-VMS-001 必须同步更新VMS
-# [CONSUMERS] zephyr.trading.orchestrator.work_orchestrator
 # [STABILITY] evolving; [SAFETY] L; [AI_AUTONOMY] ai_modifiable
-# [TESTS] scripts/connect/orc_vms.py --trigger
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
+# [TESTS] scripts/connect/orc_vms.py --trigger
+# [A_module] module_id=MOD-ORC_memory_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Orc→VMS 记忆写入器"""
 
 import json

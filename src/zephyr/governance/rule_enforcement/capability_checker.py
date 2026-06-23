@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-GOV_capability_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.governance.rule_enforcement.capability_checker
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES] zephyr.governance.audit_trail.bridge; zephyr.governance.rule_enforcement.cbac_matrix
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_capability_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 能力检查器（Capability Checker）

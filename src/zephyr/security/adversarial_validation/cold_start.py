@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.cold_start
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] game_day_runner.py; validator.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] New module/MCP server joining MUST auto-register adversarial scenarios; bootstrap per §8.1 onboarding protocol
 # [MODIFY-GUARD] Registration writes to _scenario-registry.yaml with atomic os.replace; bootstrap phases: SCAN→MAP→REGISTER→VERIFY
-# [CONSUMERS] game_day_runner.py; validator.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] BootstrapVerificationError if bootstrap fails post-registration verification
 # [TESTS] tests/red_blue/test_cold_start.py
+# [A_module] module_id=MOD-SEC_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

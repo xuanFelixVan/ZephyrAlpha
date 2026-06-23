@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-GOV_end_to_end_walkthrough | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.governance.rule_enforcement.end_to_end_walkthrough
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_end_to_end_walkthrough | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """端到端场景走查验证器（End-to-End Walkthrough Validator）。"""
 

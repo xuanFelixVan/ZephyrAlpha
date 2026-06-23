@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_bridge_layer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md
-
 # [MODULE] zephyr.data.knowledge_management.vector_memory.bridge_layer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-KNOWLEDGE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_bridge_layer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接

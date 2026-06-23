@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-UNK_evolution_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.evolution_engine
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-UNK_evolution_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field

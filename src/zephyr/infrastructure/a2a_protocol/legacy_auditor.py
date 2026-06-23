@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_legacy_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.a2a_protocol.legacy_auditor
-
-# [INVARIANTS] 审计记录不可被修改; 审计条目必须包含 agent_id 和 timestamp
-
-# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.governance.audit_trail.contracts
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 审计记录不可被修改; 审计条目必须包含 agent_id 和 timestamp
+# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] 异常必须包含 agent_id 和 protocol_layer
-
 # [TESTS] tests/test_a2a_protocol.py
+# [A_module] module_id=MOD-INF_legacy_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md | §3
 

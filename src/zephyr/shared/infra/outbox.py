@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SHR_outbox | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
-
 # [MODULE] zephyr.shared.infra.outbox
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.contracts.core.base_event
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SHR_outbox | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 outbox.py —— 事务性 Outbox 模式（Phase 10 新增 | 盲点 B24 修复）

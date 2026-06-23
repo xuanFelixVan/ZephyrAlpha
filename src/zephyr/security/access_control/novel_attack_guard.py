@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_novel_attack_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §novel_attack_guard
 # [MODULE] zephyr.security.access_control.novel_attack_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] normal actions never increment score; suspicious keywords always increment
 # [MODIFY-GUARD] blueprint.md §novel_attack_guard
-# [CONSUMERS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] profile_action never raises; returns dict with suspicious/suspicion_score
 # [TESTS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
+# [A_module] module_id=MOD-SEC_novel_attack_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """NovelAttackGuard — 新型攻击行为画像.
 
 依据蓝图 MOD-INF-018 §novel_attack_guard:

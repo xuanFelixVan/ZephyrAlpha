@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_attack_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md
-
 # [MODULE] zephyr.security.adversarial_validation.attack_registry
-
-# [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
-
-# [MODIFY-GUARD] red-blue-validator/blueprint.md; red-blue-validator/__init__.py __all__
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
 # [CONSUMERS] 见蓝图 §4 接口契约
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
+# [MODIFY-GUARD] red-blue-validator/blueprint.md; red-blue-validator/__init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] RedBlueValidationError
-
 # [TESTS] tests/red-blue-validator/
+# [A_module] module_id=MOD-SEC_attack_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

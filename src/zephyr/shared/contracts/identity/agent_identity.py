@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SHR_agent_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 # [MODULE] zephyr.shared.contracts.identity.agent_identity
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.security.access_control.identity;zephyr.infrastructure.escalation;zephyr.governance;zephyr.integration.mcp
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Agent身份模型不可被篡改;成熟度分级不可扩展
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.security.access_control.identity;zephyr.infrastructure.escalation;zephyr.governance;zephyr.integration.mcp
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_agent_rbac.py
+# [A_module] module_id=MOD-SHR_agent_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 import hashlib
 import hmac

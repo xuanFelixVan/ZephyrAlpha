@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_toctou_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.toctou_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] snapshot returns non-None for valid files; verify never raises; unchanged file returns (True, "ok")
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] snapshot() returns None on missing file; verify() returns (False, detail) on error, never raises
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_toctou_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """TOCTOUGuard — TOCTOU (Time-of-Check to Time-of-Use) 防护.
 
 依据蓝图 MOD-INF-018 §3:

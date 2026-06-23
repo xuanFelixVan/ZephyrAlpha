@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_constants | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.integration.shared_08.foundation.constants
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.runtime_plane_tag; zephyr.shared.shared_services.infra_06.observer; zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_constants | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 constants.py —— 共享枚举 & 常量集中 re-export（Single Source of Truth）

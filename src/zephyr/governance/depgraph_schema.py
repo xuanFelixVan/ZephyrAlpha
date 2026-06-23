@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §depgraph
 # [MODULE] zephyr.data.persistence.depgraph_schema
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_depgraph.py
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] depgraph.db path = data/databases/depgraph.db; init_db must be idempotent
 # [MODIFY-GUARD] sqlite_schema.py; database_manager.py; depgraph generators
-# [CONSUMERS] generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_depgraph.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

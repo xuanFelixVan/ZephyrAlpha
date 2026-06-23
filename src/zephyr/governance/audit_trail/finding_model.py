@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK_finding_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.finding_model
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.integration.shared.schema.base_config
+# [CONSUMERS] finding_ingest.py; pipeline_runner.py; audit-trail.writer; _finding_lifecycle.py; create_task_from_finding.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] AuditFinding is the single unified data contract between 144 governance scripts and 7 audit modules; all fields MUST be compatible with Finding Schema JSONL
 # [MODIFY-GUARD] Field additions require blueprint update; field removals require migration plan
-# [CONSUMERS] finding_ingest.py; pipeline_runner.py; audit-trail.writer; _finding_lifecycle.py; create_task_from_finding.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] from_jsonl() raises ValueError on malformed input; to_jsonl() never raises
 # [TESTS] tests/test_audit_finding_model.py
+# [A_module] module_id=MOD-UNK_finding_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

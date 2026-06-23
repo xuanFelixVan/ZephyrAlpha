@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-RES_adversarial_tester | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.infrastructure.budget_enforcement.adversarial_tester
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.ipi_defense; zephyr.governance.stream_abort_guard; zephyr.governance.budget_engine; zephyr.governance.budget_models
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-RES_adversarial_tester | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import threading
 import time
 from dataclasses import dataclass, field

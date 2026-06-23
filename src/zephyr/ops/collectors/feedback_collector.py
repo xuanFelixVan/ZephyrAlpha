@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-UNK_feedback_collector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.collectors.feedback_collector
+# [DOMAIN] D-OPS
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-UNK_feedback_collector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum

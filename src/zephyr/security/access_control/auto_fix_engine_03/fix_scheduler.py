@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_fix_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_scheduler
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
+# [CONSUMERS] engine.py;__main__.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 双模式调度;批量模式MUST遵守间隔;事件驱动MUST即时响应
 # [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml scheduler段
-# [CONSUMERS] engine.py;__main__.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SchedulerError
 # [TESTS] tests/auto-fix-engine/test_fix_scheduler.py
+# [A_module] module_id=MOD-SEC_fix_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 import threading
 import time

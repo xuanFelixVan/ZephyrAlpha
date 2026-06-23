@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_ai_capability_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.governance.rule_enforcement.ai_capability_guard
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_ai_capability_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ZephyrAlpha — gates/ai_capability_guard.py

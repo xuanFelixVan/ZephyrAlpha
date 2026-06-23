@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-INT_durable_execution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-187 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.integration.shared_08.durable_execution
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] tests
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] tests
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/shared/test_durable_execution.py
+# [A_module] module_id=MOD-INT_durable_execution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import json
 import os
 import uuid

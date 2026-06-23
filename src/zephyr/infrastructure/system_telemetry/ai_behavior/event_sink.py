@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | 蓝图特有§A
-
 # [MODULE] zephyr.infrastructure.system_telemetry.ai_behavior.event_sink
-
-# [INVARIANTS] ai_behavior字段命名MUST可映射到OTel gen_ai.*属性;独立ring buffer+独立SQLite表;FeatureFlag控制
-
-# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] src/zephyr/system-telemetry/facade.py;src/zephyr/budget-enforcer/
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] ai_behavior字段命名MUST可映射到OTel gen_ai.*属性;独立ring buffer+独立SQLite表;FeatureFlag控制
+# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] FeatureFlag OFF→noop;ring buffer满→丢弃最旧
-
 # [TESTS] tests/unit/telemetry/
+# [A_module] module_id=MOD-INF_event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """L12 · ai_behavior/event_sink — AI 行为遥测事件管道。
 

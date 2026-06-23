@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-079 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_core.registry
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.__init__
+# [CONSUMERS] zephyr.infrastructure.runtime_integration; zephyr.infrastructure.mcp_servers
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] ServiceRegistry is process-singleton; register() MUST be called before get(); no import from zephyr.data
 # [MODIFY-GUARD] Adding service keys requires updating D-DATA registration and D-INFRA consumers
-# [CONSUMERS] zephyr.infrastructure.runtime_integration; zephyr.infrastructure.mcp_servers
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] KeyError on unregistered service; TypeError on factory returning wrong type
 # [TESTS] tests/unit/test_shared_core.py
+# [A_module] module_id=MOD-INF_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 registry — 运行时 DI 容器

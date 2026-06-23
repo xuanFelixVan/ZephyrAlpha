@@ -1,22 +1,18 @@
-# [A_module] module_id=MOD-ORC__pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
-from zephyr.autonomy_core.architecture_context_loader import (
-    DEFAULT_ARCH_CONTEXT_PATH,
-    format_architecture_context_excerpt,
-    load_architecture_context_dict,
-)
-
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core._pipeline
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.autonomy_core.__init__
+# [CONSUMERS] zephyr.autonomy_core.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
-# [CONSUMERS] zephyr.autonomy_core.__init__
 # [STABILITY] frozen
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_context_engine_imports.py
+# [A_module] module_id=MOD-ORC__pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from zephyr.autonomy_core.context_pipeline import (
     ContextFourStageResult,
     run_context_four_stage,

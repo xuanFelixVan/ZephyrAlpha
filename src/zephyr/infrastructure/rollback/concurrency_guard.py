@@ -1,14 +1,17 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §concurrency_guard
 # [MODULE] zephyr.infrastructure.rollback.concurrency_guard
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
+# [CONSUMERS] RollbackExecutor._execute; RollbackExecutor.discard_changes
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 只读扫描 .ailocks/；不修改锁状态；BLOCKED 时返回冲突不执行回滚
 # [MODIFY-GUARD] 修改需同步 governance/rollback_executor.py 副本（SSoT 违规待统一）
-# [CONSUMERS] RollbackExecutor._execute; RollbackExecutor.discard_changes
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConcurrencyConflictError on blocked; ConflictResult/StashPlan on check
 # [TESTS] tests/unit/test_concurrency_guard.py
-# [DOMAIN] D-INFRA_RUNTIME
 
 """
 concurrency_guard — 回滚操作并发安全守卫。

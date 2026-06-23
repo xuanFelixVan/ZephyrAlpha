@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_trust_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.trust_bridge
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.trust_engine
+# [CONSUMERS] audit-orchestrator.bridge; integrity
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 不实现信任逻辑; 仅桥接TrustEngine
 # [MODIFY-GUARD] TrustEngine API变更时同步此桥接
-# [CONSUMERS] audit-orchestrator.bridge; integrity
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回UNKNOWN信任级别
 # [TESTS] tests/audit-orchestrator/test_trust_bridge.py
+# [A_module] module_id=MOD-GOV_trust_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

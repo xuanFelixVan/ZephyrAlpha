@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-GOV_audit_chain_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.governance.rule_enforcement.audit_chain_verifier
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_context; zephyr.governance.audit_trail.writer
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_audit_chain_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta）
 同时将门禁审计事件写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链

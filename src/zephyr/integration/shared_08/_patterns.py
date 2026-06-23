@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT__patterns | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._patterns
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.deprecation; zephyr.integration.shared_08.flags; zephyr.integration.shared_08.idempotency; zephyr.integration.shared_08.limiter; zephyr.integration.shared_08.lock; zephyr.integration.shared_08.migration; zephyr.integration.shared_08.outbox; zephyr.integration.shared_08.pagination; zephyr.integration.shared_08.resilience.__init__; zephyr.integration.shared_08.schema_registry; zephyr.integration.shared_08.testing
+# [CONSUMERS] zephyr.shared.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from zephyr.shared
 # [MODIFY-GUARD] zephyr.shared.__init__
-# [CONSUMERS] zephyr.shared.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
+# [A_module] module_id=MOD-INT__patterns | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """_patterns — 设计模式 re-export 桥接层。
 
 从 resilience/foundation/utils 子包及 shared.infra_06、integration.shared.schema 重新导出符号，

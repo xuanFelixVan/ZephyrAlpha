@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_cost_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
-
 # [MODULE] zephyr.integration.cost_tracker
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_cost_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 CostTracker —— LLM 调用成本追踪器（SRC-0025）

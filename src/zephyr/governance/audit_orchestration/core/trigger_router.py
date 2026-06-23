@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_trigger_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
-
 # [MODULE] zephyr.governance.audit_orchestration.core.trigger_router
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_orchestration.blueprint_scorer; zephyr.governance.rule_enforcement.drift_detector
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_trigger_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）

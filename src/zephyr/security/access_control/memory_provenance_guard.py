@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_memory_provenance_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.memory_provenance_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_permissions.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] record_provenance returns MemoryProvenance with provenance_id; verify returns dict with verified key
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_permissions.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] record_provenance/verify never raise
 # [TESTS] tests/agent_rbac/test_permissions.py
+# [A_module] module_id=MOD-SEC_memory_provenance_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """MemoryProvenanceGuard — 记忆来源溯源守卫.
 
 依据蓝图 MOD-INF-018 §3:

@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_indexer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §3.1
 # [MODULE] zephyr.governance.audit_trail.indexer
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] audit-orchestrator.query; pipeline_runner
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 索引必须支持增量更新; 全量重建不丢数据
 # [MODIFY-GUARD] 索引格式变更必须同步 cold_start.py
-# [CONSUMERS] audit-orchestrator.query; pipeline_runner
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 索引构建失败返回None
 # [TESTS] tests/audit-orchestrator/test_indexer.py
+# [A_module] module_id=MOD-GOV_indexer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import json
 import logging
 from pathlib import Path

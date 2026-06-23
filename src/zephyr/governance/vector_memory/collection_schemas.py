@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_collection_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md
-
 # [MODULE] zephyr.data.knowledge_management.vector_memory.collection_schemas
-
-# [INVARIANTS] 8 collections; 2 dimensions (512, 1024); hot/cold separation; COLLECTION_SCHEMAS keys match COLLECTION_NAMES
-
-# [MODIFY-GUARD] collection_manager.py; design_principles.py; sqlite_metadata_store.py; in_process_vector_memory.py; faiss_collection_manager.py; bridge_layer.py; provenance_enforcer.py; index_health_monitor.py; migrate_chroma_to_faiss.py; mcp/vector_memory_server.py
-
+# [DOMAIN] D-KNOWLEDGE
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS] collection_manager; design_principles; sqlite_metadata_store; in_process_vector_memory; faiss_collection_manager; bridge_layer; provenance_enforcer; index_health_monitor; migrate_chroma_to_faiss; mcp/vector_memory_server; tests
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 8 collections; 2 dimensions (512, 1024); hot/cold separation; COLLECTION_SCHEMAS keys match COLLECTION_NAMES
+# [MODIFY-GUARD] collection_manager.py; design_principles.py; sqlite_metadata_store.py; in_process_vector_memory.py; faiss_collection_manager.py; bridge_layer.py; provenance_enforcer.py; index_health_monitor.py; migrate_chroma_to_faiss.py; mcp/vector_memory_server.py
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] COLLECTION_SCHEMAS keys match COLLECTION_NAMES; dimensions in ALLOWED_DIMENSIONS
-
 # [TESTS] tests/unit/vector-memory/test_vector_memory.py; tests/adversarial/test_cross_layer_systems_red_team.py
+# [A_module] module_id=MOD-DAT_collection_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_safety_boundary | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 3
 # [MODULE] zephyr.governance.semantic_audit.safety_boundary
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.semantic_audit.models
+# [CONSUMERS] issue_aggregator; alignment_engine
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 禁碰规则过滤; 置信度 < threshold → HOLD; FORBIDDEN 规则 100% 阻断
 # [MODIFY-GUARD] 修改过滤逻辑必须同步 forbidden_patterns.yaml
-# [CONSUMERS] issue_aggregator; alignment_engine
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 配置加载失败时默认 HOLD 所有 TriggerResult
 # [TESTS] tests/semantic-auditor/test_safety_boundary.py
+# [A_module] module_id=MOD-GOV_safety_boundary | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 — 安全边界 Stage 3
 

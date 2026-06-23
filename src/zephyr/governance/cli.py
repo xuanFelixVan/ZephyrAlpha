@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md | §4
-
 # [MODULE] zephyr.testing.code_dedup.cli
-
-# [INVARIANTS] exit codes: 0=PASS/1=WARN/2=ERROR/3=TOOL_ERROR/4=DEGRADED
-
-# [MODIFY-GUARD] exit code mapping change requires blueprint §6 update
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] pre-commit/verify_dedup.py; ct_deduplication.DeduplicationHandler; CI pipeline
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] exit codes: 0=PASS/1=WARN/2=ERROR/3=TOOL_ERROR/4=DEGRADED
+# [MODIFY-GUARD] exit code mapping change requires blueprint §6 update
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] sys.exit with ExitCode enum values only
-
 # [TESTS] tests/unit/test_code_dedup_engine.py
+# [A_module] module_id=MOD-UNK_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """code-dedup-engine CLI——子命令映射+退出码+扫描入口."""
 

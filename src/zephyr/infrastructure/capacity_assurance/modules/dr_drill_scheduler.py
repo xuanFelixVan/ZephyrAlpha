@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_dr_drill_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-
 # [MODULE] zephyr.infrastructure.capacity_assurance.dr_drill_scheduler
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_dr_drill_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 DR Drill Scheduler — DR 演练调度器 (盲点 #34)

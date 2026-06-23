@@ -1,20 +1,18 @@
-# [A_module] module_id=MOD-INF_sunk_cost_intervention | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-
 # [MODULE] zephyr.infrastructure.capacity_assurance.sunk_cost_intervention
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] deprecated
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF_sunk_cost_intervention | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Sunk Cost Intervention — 沉没成本干预 (盲点 #37)

@@ -1,17 +1,18 @@
-# [A_module] module_id=MOD-RES__circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.ops._circuit_breaker
 # [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] zephyr.governance.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
-# [CONSUMERS] zephyr.governance.__init__
 # [STABILITY] frozen
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_escalation_engine_imports.py
+# [A_module] module_id=MOD-RES__circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from zephyr.ops.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerConfig,

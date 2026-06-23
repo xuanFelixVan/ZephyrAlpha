@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_dedup_extractor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.dedup_extractor
-
-# [INVARIANTS] 只提取≥3处重复;提取后原位置调用共享函数;不改变语义
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml dedup_extractor段
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
 # [CONSUMERS] engine.py;MOD-INF-017(code-dedup-engine)
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 只提取≥3处重复;提取后原位置调用共享函数;不改变语义
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml dedup_extractor段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DedupExtractionError
-
 # [TESTS] tests/auto-fix-engine/test_dedup_extractor.py
+# [A_module] module_id=MOD-SEC_dedup_extractor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

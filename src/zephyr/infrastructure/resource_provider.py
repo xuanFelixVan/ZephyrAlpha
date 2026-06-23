@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_resource_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §[MODULE] zephyr.infrastructure.resource_provider
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [MODULE] src.zephyr.infrastructure.resource_provider
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.integration.shared_08.io.paths
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_resource_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。
 

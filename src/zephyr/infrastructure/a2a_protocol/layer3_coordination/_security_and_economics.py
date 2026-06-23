@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF__security_and_economics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination._security_and_economics
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_economics; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_forgetting; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_delegation_chain; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_idempotency; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_temporal_admission; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_idle_guard; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_red_team; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_security; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_anomaly_detector; zephyr.infrastructure.a2a_protocol.layer3_coordination.session_smuggling_defense
+# [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] backward_compat: all exports must remain available from layer3_coordination
 # [MODIFY-GUARD] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
-# [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
+# [A_module] module_id=MOD-INF__security_and_economics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Re-export bridge for layer3_coordination security and economics symbols.
 
 Aggregates 22 symbols from 10 source modules to preserve backward compatibility

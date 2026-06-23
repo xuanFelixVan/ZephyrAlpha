@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_event_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.event_hooks
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
+# [CONSUMERS] engine.py;fix_scheduler.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 钩子MUST不阻塞主流程;异常MUST被捕获不传播
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] engine.py;fix_scheduler.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EventHookError
 # [TESTS] tests/auto-fix-engine/test_event_hooks.py
+# [A_module] module_id=MOD-SEC_event_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from collections.abc import Callable
 from datetime import UTC, datetime

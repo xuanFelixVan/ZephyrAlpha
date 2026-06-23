@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES_f5_shutdown_manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §2
 # [MODULE] zephyr.governance.f5_shutdown_manager
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.f5_boot_integration; zephyr.trading.boot_hooks
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] shutdown is idempotent; signal handlers never raise; atexit hook safe to call multiple times; persist_state writes atomic; restore_state never raises
 # [MODIFY-GUARD] signal handler registration name must be "f5_shutdown_signal"; atexit registration name must be "f5_shutdown_atexit"; SQLite table must be "f5_state"
-# [CONSUMERS] zephyr.governance.f5_boot_integration; zephyr.trading.boot_hooks
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns ShutdownResult; logs error on failure; never raises during shutdown; signal handler swallows exceptions
 # [TESTS] tests/test_f5_auto_shutdown.py
+# [A_module] module_id=MOD-RES_f5_shutdown_manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """
 F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD-INF-022 §2).
 

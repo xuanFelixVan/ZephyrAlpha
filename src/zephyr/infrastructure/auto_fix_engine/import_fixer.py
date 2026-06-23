@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_import_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.import_fixer
-
-# [INVARIANTS] 只修复可确定正确路径的import;不确定则跳过
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml import_fixer段
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 只修复可确定正确路径的import;不确定则跳过
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml import_fixer段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ImportFixError
-
 # [TESTS] tests/auto-fix-engine/test_import_fixer.py
+# [A_module] module_id=MOD-INF_import_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

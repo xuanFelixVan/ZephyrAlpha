@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_cold_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | 蓝图特有§A
-
 # [MODULE] zephyr.infrastructure.system_telemetry.archive.cold_stub
-
-# [INVARIANTS] TTL分级策略严格执行;成本超限→三级降级(CRITICAL/SEVERE/WARNING);SQLite backup使用RULE-ONE原子写入
-
-# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.system_telemetry.archive.__init__
 # [CONSUMERS] src/zephyr/system-telemetry/facade.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] TTL分级策略严格执行;成本超限→三级降级(CRITICAL/SEVERE/WARNING);SQLite backup使用RULE-ONE原子写入
+# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] gzip失败→跳过压缩保留原文;SQLite backup失败→日志warning不阻塞
-
 # [TESTS] tests/unit/telemetry/
+# [A_module] module_id=MOD-INF_cold_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """L12 · archive/cold_stub — 冷存储归档管道。
 

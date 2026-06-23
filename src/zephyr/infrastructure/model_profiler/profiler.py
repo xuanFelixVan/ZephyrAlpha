@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_profiler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.profiler
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.model_profiler.__init__
+# [CONSUMERS] MOD-INF-009;MOD-INF-036
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 模型能力评测;7维度benchmark;评分排名
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-009;MOD-INF-036
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ProfilerError;EvaluationError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-INF_profiler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ModelProfiler — 核心性能分析引擎

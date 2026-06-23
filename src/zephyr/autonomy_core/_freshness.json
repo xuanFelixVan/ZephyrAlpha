@@ -1,0 +1,10 @@
+{
+  "test-skill-freshness-001": {
+    "last_validated": "2026-06-23T10:50:55.916950+00:00",
+    "boost": 100.0
+  },
+  "skill-k": {
+    "last_validated": "2026-06-23T11:11:56.828332+00:00",
+    "boost": 50.0
+  }
+}

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_llm_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
-
 # [MODULE] src.zephyr.integration.llm_gateway
-
-# [INVARIANTS]
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_llm_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 MOD-INF-019: Agent Spec — LLM Gateway

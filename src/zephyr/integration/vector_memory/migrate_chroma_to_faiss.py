@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_migrate_chroma_to_faiss | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
-
 # [MODULE] zephyr.integration.vector_memory.migrate_chroma_to_faiss
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.integration.vector_memory.faiss_collection_manager; zephyr.integration.vector_memory.sqlite_metadata_store; zephyr.integration.vector_memory.collection_manager
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_migrate_chroma_to_faiss | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ChromDB → FAISS + SQLite WAL 数据迁移脚本

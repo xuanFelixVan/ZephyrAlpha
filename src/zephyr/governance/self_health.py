@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEM_self_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1
 # [MODULE] zephyr.governance.semantic_audit.self_health
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] run_semantic_audit.py; blueprint.md §3.1 Stage 11
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 7 SLI + 5 容量 SLI 阈值不可违反; HealthReport/CapacityReport 结构不可变
 # [MODIFY-GUARD] blueprint.md §3.1 Stage 11; semantic-auditor/__init__.py __all__
-# [CONSUMERS] run_semantic_audit.py; blueprint.md §3.1 Stage 11
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] HealthCheckError on collector failure
 # [TESTS] tests/semantic-auditor/test_self_health.py
+# [A_module] module_id=MOD-SEM_self_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 semantic-auditor/self_health.py — MOD-INF-028 §3.1 Stage 11

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_activate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
-
 # [MODULE] zephyr.data.knowledge_management.kb.pipeline.activate
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.shared.contracts.gate.__init__; zephyr.shared.schema.schemas; zephyr.governance.__init__; docs.03_modules._cross_layer.agent_orchestrator.blueprint.md
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_activate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 G4 Activate 门禁 — 人工激活（T-2-13-D）

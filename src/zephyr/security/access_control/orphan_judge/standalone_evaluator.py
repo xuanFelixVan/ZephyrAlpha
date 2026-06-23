@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_standalone_evaluator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §L4
 # [MODULE] zephyr.security.access_control.orphan_judge.standalone_evaluator
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
+# [CONSUMERS] orphan-judge.judge._run_layer L4
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 六指标加权评分; score≥0.5 → has_value=True; 不修改任何文件
 # [MODIFY-GUARD] 修改评分权重必须同步 blueprint.md §3.1
-# [CONSUMERS] orphan-judge.judge._run_layer L4
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 文件不可读时返回 has_value=False+is_uncertain=True,不抛异常
 # [TESTS] tests/orphan-judge/test_standalone_evaluator.py
+# [A_module] module_id=MOD-SEC_standalone_evaluator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-029 — L4 独立价值评估器
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_exam_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md
-
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing.exam_orchestrator
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline_routing.capability_passport; zephyr.intelligence.model_profiling.pipeline_routing.exam_test_cases
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_exam_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ExamOrchestrator --- 五轴入职考试主控

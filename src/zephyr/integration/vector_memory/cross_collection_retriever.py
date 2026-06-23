@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_cross_collection_retriever | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
-
 # [MODULE] zephyr.integration.vector_memory.cross_collection_retriever
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.vector_memory.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_cross_collection_retriever | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索

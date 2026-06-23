@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_constitution_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §16 Phase 2a
 # [MODULE] zephyr.security.adversarial_validation.constitution_engine
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] constitution_guard.py; bypass_recorder.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] New articles auto-generated from bypass patterns; article_id auto-assigned CONST-NNN; registry written with atomic os.replace
 # [MODIFY-GUARD] Template categories: security_boundary/data_sovereignty/transaction_integrity/audit_immutability/agent_safety/knowledge_safety
-# [CONSUMERS] constitution_guard.py; bypass_recorder.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] RegistryWriteError on failed atomic write; DuplicateArticleError on same derived_from
 # [TESTS] tests/red_blue/test_constitution_engine.py
+# [A_module] module_id=MOD-SEC_constitution_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

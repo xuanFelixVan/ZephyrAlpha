@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_vector_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-CE-VMS-001
 # [MODULE] zephyr.autonomy_core.vector_writer
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] zephyr.autonomy_core.task_context_builder
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] context构建完成后MUST调用vectorize_and_store; VMS不可用时不阻塞主流程; 写入计数精确
 # [MODIFY-GUARD] CT-CE-VMS-001 协议变更必须同步更新vector_memory/context_ingest
-# [CONSUMERS] zephyr.autonomy_core.task_context_builder
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] VMS不可用返回status=degraded+stored_count=0; 空blocks返回0
 # [TESTS] scripts/connect/ce_vms.py --trigger
+# [A_module] module_id=MOD-ORC_vector_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """CE 向量写入器 — vectorize_and_store() 生产者
 
 CT-CE-VMS-001: Context Engine 构建完成后将上下文块向量化存储到 VMS。

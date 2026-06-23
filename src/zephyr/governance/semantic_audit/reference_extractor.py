@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_reference_extractor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §4.1
 # [MODULE] zephyr.governance.semantic_audit.reference_extractor
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.semantic_audit.models
+# [CONSUMERS] trigger_engine; alignment_engine; safety_boundary
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 提取 9 个维度的引用；AST 解析覆盖 import/call/inherit/BLUEPRINT 头部
 # [MODIFY-GUARD] 新增维度必须同步 models.ExtractedReferences 字段
-# [CONSUMERS] trigger_engine; alignment_engine; safety_boundary
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SyntaxError/OSError 时返回空 ExtractedReferences + 日志警告
 # [TESTS] tests/semantic-auditor/test_reference_extractor.py
+# [A_module] module_id=MOD-GOV_reference_extractor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 — 引用提取器 Stage 1
 

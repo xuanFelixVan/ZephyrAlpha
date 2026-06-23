@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_app | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
-
 # [MODULE] zephyr.security.llm_defense.llm_security.dashboard.app
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.__init__; zephyr.security.llm_defense.llm_security.self_protection.__init__; zephyr.security.llm_defense.llm_security.payloads.__init__; zephyr.security.llm_defense.llm_security.patterns.__init__; zephyr.security.llm_defense.llm_security.behavior_audit_logger; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.security.llm_defense.llm_security.protocol
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SEC_app | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """LLM Security Gateway - Streamlit Dashboard.
 

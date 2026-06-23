@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_default_security_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain-compliance/compliance-core/blueprint.md
-
 # [MODULE] zephyr.governance.implementations.default_security_gateway
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.security_gateway_base; zephyr.security.llm_defense.llm_security.gateway; zephyr.integration.shared_08.contracts.security.security_decision
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_default_security_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """L10 — Default Security Gateway
 

@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-UNK_behavioral_sampler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
-
 # [MODULE] zephyr.testing.code_dedup.behavioral_sampler
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_behavioral_sampler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """行为采样验证器 — Stage 0.25 低成本快速验证."""
 

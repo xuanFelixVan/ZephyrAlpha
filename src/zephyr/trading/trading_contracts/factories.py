@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK_factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TRADING-001 | docs/03_modules/_domain-ex_core/execution-core/blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.factories
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.order; zephyr.trading.trading_contracts.market.factor_signal; zephyr.trading.trading_contracts.market.synthesized_signal; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.trading.trading_contracts.risk.risk_limits; zephyr.trading.trading_contracts.risk.risk_metrics; zephyr.shared.contracts.core.factories
+# [CONSUMERS] shared/contracts/core/factories.py(已迁移)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 工厂方法仅创建trading_contracts内定义的类型实例
 # [MODIFY-GUARD] 新增工厂方法须同步更新__all__
-# [CONSUMERS] shared/contracts/core/factories.py(已迁移)
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError: 参数越界
 # [TESTS] tests/test_trading_contracts_factories.py
+# [A_module] module_id=MOD-UNK_factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """trading-contracts/factories.py — 交易域数据契约工厂方法
 

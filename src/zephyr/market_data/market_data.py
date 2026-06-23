@@ -1,17 +1,18 @@
-# [A_module] module_id=MOD-DAT_market_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.market.market_data
 # [DOMAIN] D-MKT_DATA
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] factor; _cross_layer
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] factor; _cross_layer
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-DAT_market_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-001 ====
 from dataclasses import dataclass, field
 from datetime import datetime

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_signal_synthesizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain-signal/signal-generation-core/blueprint.md
-
 # [MODULE] zephyr.signal_fundamental.synth.signal_synthesizer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SIGNAL_FUNDAMENTAL
+# [DEPENDENCIES] zephyr.trading.trading_contracts.market.factor_signal; zephyr.trading.trading_contracts.market.synthesized_signal
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_signal_synthesizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # ---
 # domain: signal

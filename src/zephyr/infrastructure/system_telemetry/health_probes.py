@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_health_probes | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.system_telemetry.health_probes
-
-# [INVARIANTS] 12-system triple-state probes; liveness/readiness/degraded contract; ProbeStatus enum stability
-
-# [MODIFY-GUARD] health_aggregator.py; watchdog.py; health.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.system_telemetry.__init__
 # [CONSUMERS] zephyr.security.access_control
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 12-system triple-state probes; liveness/readiness/degraded contract; ProbeStatus enum stability
+# [MODIFY-GUARD] health_aggregator.py; watchdog.py; health.py
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] ValueError; RuntimeError
-
 # [TESTS] tests/system-telemetry/test_health_probes.py
+# [A_module] module_id=MOD-INF_health_probes | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 三态健康探针协议（Health Probes — CT-HEALTH-001）

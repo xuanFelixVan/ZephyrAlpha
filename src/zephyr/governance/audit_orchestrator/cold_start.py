@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §3.1
 # [MODULE] zephyr.governance.audit_trail.cold_start
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] audit-orchestrator.cli; MCP governance_server
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 100 Session冷启动共享单例缓存; 缓存不可变
 # [MODIFY-GUARD] 缓存Key变更必须同步 indexer.py
-# [CONSUMERS] audit-orchestrator.cli; MCP governance_server
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 缓存未命中返回空字典
 # [TESTS] tests/audit-orchestrator/test_cold_start.py
+# [A_module] module_id=MOD-GOV_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import json
 import logging
 from pathlib import Path

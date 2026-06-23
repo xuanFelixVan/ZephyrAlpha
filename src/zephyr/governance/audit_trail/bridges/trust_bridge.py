@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_trust_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §
-
 # [MODULE] zephyr.governance.audit_trail.bridges.trust_bridge
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_trust_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Audit ↔ ContinuousTrust 信任分数桥接.
 

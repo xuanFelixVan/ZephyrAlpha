@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §
-
 # [MODULE] zephyr.governance.agent_spec.registry
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.contracts.skill_protocol
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """G-CT-003 契约：Agent Spec → RBAC 能力检查.
 

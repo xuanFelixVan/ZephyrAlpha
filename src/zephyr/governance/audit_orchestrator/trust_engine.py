@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_trust_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §8
 # [MODULE] zephyr.governance.audit_trail.trust_engine
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_orchestrator.__init__
+# [CONSUMERS] audit-orchestrator.integrity; pipeline_runner
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 信任评分基于历史审计结果和Merkle校验
 # [MODIFY-GUARD] 评分算法变更必须同步 trust_bridge.py
-# [CONSUMERS] audit-orchestrator.integrity; pipeline_runner
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 评分失败返回trust_level=UNKNOWN
 # [TESTS] tests/audit-orchestrator/test_trust_engine.py
+# [A_module] module_id=MOD-GOV_trust_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from enum import Enum
 from typing import Any

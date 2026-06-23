@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md | §
-
 # [MODULE] zephyr.data.asset_inventory.reconciler
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """ReconciliationEngine — MOD-INF-026 L4 注册表 vs 磁盘对账引擎
 

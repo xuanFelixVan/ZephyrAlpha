@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_llm_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
-
 # [MODULE] src.zephyr.infrastructure.pipeline.llm_gateway
-
-# [INVARIANTS]
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_llm_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 MOD-INF-019: Agent Spec — LLM Gateway

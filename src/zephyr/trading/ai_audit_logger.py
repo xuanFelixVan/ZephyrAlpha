@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-ORC_ai_audit_logger | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
-
 # [MODULE] zephyr.trading.ai_audit_logger
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_ai_audit_logger | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 AiAuditLogger — AI 行为审计日志

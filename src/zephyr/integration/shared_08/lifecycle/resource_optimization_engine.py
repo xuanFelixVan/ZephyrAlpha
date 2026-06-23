@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT_resource_optimization_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [STABILITY] stable
-# [AI_AUTONOMY] human_gated
 # [MODULE] zephyr.integration.shared_08.lifecycle.resource_optimization_engine
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
+# [STABILITY] stable
 # [SAFETY] L
-# [CONSUMERS]
+# [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INT_resource_optimization_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # Re-export shim — canonical location is now zephyr.trading.resource_optimization
 
 import importlib as _importlib

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEM_self_healer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 7
 # [MODULE] zephyr.governance.semantic_audit.self_healer
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] FixPrioritizer; AuditOrchestrator (MOD-INF-027)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 修复→自测→回滚闭环; 禁止修改 frozen/immutable_core 文件; 原子写入 tmp+replace
 # [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
-# [CONSUMERS] FixPrioritizer; AuditOrchestrator (MOD-INF-027)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] SelfHealError
 # [TESTS] tests/semantic-auditor/test_self_healer.py
+# [A_module] module_id=MOD-SEM_self_healer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 

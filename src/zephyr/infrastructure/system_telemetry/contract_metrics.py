@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_contract_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.system_telemetry.contract_metrics
-
-# [INVARIANTS] non-invasive trace-context-based measurement; statistical drift detection window; SSoT: cross_layer_contracts.yaml
-
-# [MODIFY-GUARD] schema.py; facade.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.behavioral_audit.contract_drift_detector
 # [CONSUMERS] zephyr.security.access_control
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] non-invasive trace-context-based measurement; statistical drift detection window; SSoT: cross_layer_contracts.yaml
+# [MODIFY-GUARD] schema.py; facade.py
 # [STABILITY] stable
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ValueError; RuntimeError
-
 # [TESTS] tests/system-telemetry/test_contract_metrics.py
+# [A_module] module_id=MOD-INF_contract_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ZephyrAlpha — system-telemetry/contract_metrics.py

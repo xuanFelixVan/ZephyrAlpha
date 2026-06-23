@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_drift_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.drift_fixer
-
-# [INVARIANTS] 漂移修复MUST通过DriftBudgetLink;修复后MUST验证
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml drift_fixer段
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;MOD-INF-023(drift-detector);MOD-INF-021(rollback)
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 漂移修复MUST通过DriftBudgetLink;修复后MUST验证
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml drift_fixer段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DriftFixError
-
 # [TESTS] tests/auto-fix-engine/test_drift_fixer.py
+# [A_module] module_id=MOD-INF_drift_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

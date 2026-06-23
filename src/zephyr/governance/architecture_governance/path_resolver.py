@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_path_resolver | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-016 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.path_resolver
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_path_resolver | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 PathResolver — 模块路径解析器

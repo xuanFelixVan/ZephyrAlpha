@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_dry_run | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.dry_run
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_dry_run_agent_rbac.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] DryRunResult.would_succeed defaults True when no guard; simulate never raises
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_dry_run_agent_rbac.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] simulate()/impact_analysis() never raise; return DryRunResult/ImpactAnalysis
 # [TESTS] tests/agent_rbac/test_dry_run_agent_rbac.py
+# [A_module] module_id=MOD-SEC_dry_run | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """DryRun — 权限模拟与影响分析.
 
 依据蓝图 MOD-INF-018 §3:

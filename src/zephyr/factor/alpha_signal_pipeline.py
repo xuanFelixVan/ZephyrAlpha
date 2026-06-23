@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_alpha_signal_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
-
 # [MODULE] zephyr.portfolio.factor.alpha_signal_pipeline
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-FACTOR
+# [DEPENDENCIES] zephyr.signal_fundamental.pipeline; 信号域-审计.D-SIGNAL-06
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_alpha_signal_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # Re-export from signal domain SSoT — zephyr.signal_fundamental.pipeline
 from zephyr.signal_fundamental.pipeline import (

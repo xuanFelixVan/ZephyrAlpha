@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-GOV_governance_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
-
 # [MODULE] zephyr.infrastructure.a2a_protocol.governance.governance_adapter
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.security.security_decision
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_governance_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """A2A GovernanceAdapter — Phase 4 治理集成桥接器
 

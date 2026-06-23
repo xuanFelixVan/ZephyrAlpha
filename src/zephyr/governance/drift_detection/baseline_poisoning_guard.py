@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md | §
-
 # [MODULE] zephyr.governance.drift_detection.baseline_poisoning_guard
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。
 

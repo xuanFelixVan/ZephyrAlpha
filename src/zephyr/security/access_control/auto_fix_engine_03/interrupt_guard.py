@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_interrupt_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.interrupt_guard
-
-# [INVARIANTS] SIGINT/SIGTERM MUST触发WAL恢复;零"半修复"状态
-
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml engine.wal_enabled
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
 # [CONSUMERS] engine.py;fix_scheduler.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] SIGINT/SIGTERM MUST触发WAL恢复;零"半修复"状态
+# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml engine.wal_enabled
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] InterruptGuardError
-
 # [TESTS] tests/auto-fix-engine/test_interrupt_guard.py
+# [A_module] module_id=MOD-SEC_interrupt_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

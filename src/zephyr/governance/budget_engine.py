@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES_budget_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | §2-4
 # [MODULE] zephyr.infrastructure.budget_enforcement.budget_engine
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.governance.budget_models; zephyr.behavioral_audit.drift_infrastructure
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-RES_budget_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 Budget Enforcer core engine — MOD-INF-024
 

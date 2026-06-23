@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_gate_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-SCRIPT-GATE-001
 # [MODULE] zephyr.infrastructure.script_system.gate_bridge
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.script_system.__init__
+# [CONSUMERS] zephyr.trading.orchestrator.script_runner; AutoRuntime Core post-scan phase
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 12维→gate_id 映射; 维度聚合后批量提交; gate不可用时仅日志不阻塞
 # [MODIFY-GUARD] CT-SCRIPT-GATE-001 维度映射表增删必须同步更新GateEngine注册表
-# [CONSUMERS] zephyr.trading.orchestrator.script_runner; AutoRuntime Core post-scan phase
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GateEngine不可用返回degraded不阻塞; 空findings返回空
 # [TESTS] scripts/connect/script_gate.py --trigger
+# [A_module] module_id=MOD-INF_gate_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Script→Gate 门禁桥接器 — submit_findings() 生产者
 
 CT-SCRIPT-GATE-001: 审计脚本执行完成后将 findings 按12维度聚合提交给 Gate Engine。

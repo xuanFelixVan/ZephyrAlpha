@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_tiered_storage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §5.2
 # [MODULE] zephyr.governance.audit_trail.tiered_storage
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] audit-orchestrator.writer; query
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 热数据在内存/SSD; 温数据在HDD; 冷数据仅索引; 不可跨层回迁
 # [MODIFY-GUARD] 存储策略变更必须同步 tiered_storage_bridge.py + retention.py
-# [CONSUMERS] audit-orchestrator.writer; query
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 存储失败返回False
 # [TESTS] tests/audit-orchestrator/test_tiered_storage.py
+# [A_module] module_id=MOD-GOV_tiered_storage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from datetime import datetime
 from pathlib import Path

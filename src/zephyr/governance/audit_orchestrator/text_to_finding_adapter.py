@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_text_to_finding_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_orchestrator.text_to_finding_adapter
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.finding_model; zephyr.integration.shared.schema.base_config
+# [CONSUMERS] pipeline_runner.py; run_all.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] TextToFindingAdapter is the sole bridge between text-output scripts and AuditFinding; it MUST handle all 15 common output patterns
 # [MODIFY-GUARD] Pattern additions require run_all.py compatibility verification
-# [CONSUMERS] pipeline_runner.py; run_all.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] parse() never raises; individual line parse failures are silently skipped
 # [TESTS] tests/test_audit_full_pipeline_e2e.py
+# [A_module] module_id=MOD-GOV_text_to_finding_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

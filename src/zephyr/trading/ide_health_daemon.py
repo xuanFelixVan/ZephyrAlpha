@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_ide_health_daemon | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.ide_health_daemon
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.governance.compliance_rule; docs.03_modules._cross_layer.mcp_servers.blueprint.md; zephyr.governance.kb.pipeline.activate; zephyr.ops.auto_evolution; zephyr.governance.rule_enforcement.adaptive_threshold; docs.03_modules._domain_governance.audit_trail.blueprint.md; docs.03_modules._domain_governance.drift_detector.blueprint.md; docs.03_modules._domain_autonomy_perm.budget_enforcer.blueprint.md; docs.03_modules._domain_autonomy_core.agent_spec.blueprint.md; zephyr.infrastructure.audit_logger
+# [CONSUMERS] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.trading.boot_hooks
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] scan_ghost_windows 必须零副作用（只读）；kill_ghost_windows 必须日志记录每个 killed PID；track_task_process 线程安全；kill_task_processes 幂等
 # [MODIFY-GUARD] MOD-INF-032 §new-IDE
-# [CONSUMERS] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.trading.boot_hooks
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] kill_task_processes 对已退出的 PID 不报错；cleanup_completed_tasks TaskRepository 不可用时返回空列表
 # [TESTS]
+# [A_module] module_id=MOD-ORC_ide_health_daemon | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_fault_tolerance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.fault_tolerance
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
+# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
-# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
 # [TESTS] tests/test_rollback/
+# [A_module] module_id=MOD-INF_fault_tolerance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

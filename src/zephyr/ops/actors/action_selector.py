@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-UNK_action_selector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.actors.action_selector
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-UNK_action_selector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import time
 from dataclasses import dataclass, field
 from typing import Any

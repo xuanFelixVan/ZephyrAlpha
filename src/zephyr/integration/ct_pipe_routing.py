@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_ct_pipe_routing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
-
 # [MODULE] zephyr.integration.ct_pipe_routing
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.__init__; zephyr.integration.shared.schema.schemas; zephyr.shared.shared_services.models
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_ct_pipe_routing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 CT-PIPE-ORC-001 — TaskCard → 管线入口节点路由

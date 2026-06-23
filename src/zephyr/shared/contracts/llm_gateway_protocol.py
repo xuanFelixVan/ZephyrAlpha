@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SHR_llm_gateway_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.llm_gateway_protocol
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine; zephyr.autonomy_core.llm_gateway
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; all consumers of LLMGateway
-# [CONSUMERS] zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine; zephyr.autonomy_core.llm_gateway
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] LLMGatewayProtocol.call returns LLMResponse; LLMResponse.error is set on failure
 # [TESTS] tests/unit/test_llm_gateway_protocol.py
+# [A_module] module_id=MOD-SHR_llm_gateway_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 LLMGatewayProtocol — LLM 网关抽象接口

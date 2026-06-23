@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.task_types
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
+# [CONSUMERS] gates.check_types.*; db.task_repo; db.base_repo; db.transition; db.query; pipeline.pipeline_orchestrator; pipeline.preemptionManager; orchestrator.file_task_mapper; orchestrator.state.file_task_mapper; kb.kb_gate_task; kb.migration.kb_gate_task; mcp.task_manager_server; core.blueprint_decomposer; shared.events.event_schemas; core.models
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] Task model fields MUST align with SQLite tasks table (KBG-0030 §4.2); Task=SSoT for all task card fields (was Task+TaskCard dual-source, merged 2026-05-28)
 # [MODIFY-GUARD] core/models.py; db/task_repo.py; sqlite_schema.py; PS-STD-001 §7.1~§7.1.1; task-card-standard.md
-# [CONSUMERS] gates.check_types.*; db.task_repo; db.base_repo; db.transition; db.query; pipeline.pipeline_orchestrator; pipeline.preemptionManager; orchestrator.file_task_mapper; orchestrator.state.file_task_mapper; kb.kb_gate_task; kb.migration.kb_gate_task; mcp.task_manager_server; core.blueprint_decomposer; shared.events.event_schemas; core.models
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValidationError on invalid task_id format or field constraint violation
 # [TESTS] tests/unit/test_schemas.py; tests/unit/gates/test_gate_engine.py; tests/unit/db/test_task_repo.py
+# [A_module] module_id=MOD-GOV_task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_fix_diff | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_diff
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
+# [CONSUMERS] engine.py;fix_report.py;compliance_auditor.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] diff MUST展示before/after;MUST可逆
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] engine.py;fix_report.py;compliance_auditor.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DiffError
 # [TESTS] tests/auto-fix-engine/test_fix_diff.py
+# [A_module] module_id=MOD-SEC_fix_diff | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import difflib
 import hashlib
 from typing import Any

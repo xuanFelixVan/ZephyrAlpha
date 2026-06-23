@@ -1,30 +1,18 @@
-# [A_module] module_id=MOD-SEC_safety_fence | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §L4
-
-[MODULE] zephyr.security.access_control.orphan_judge.safety_fence
-
-[INVARIANTS] frozen/immutable_core files MUST NEVER be deleted; SafetyFence.is_deletion_allowed returns False for protected files
-
-[MODIFY-GUARD] orphan-judge/blueprint.md; orphan-judge/__init__.py __all__
-
-[CONSUMERS] orphan-judge.orphan_collector; orphan-judge.five_layer_judge
-
-[STABILITY] evolving
-
-[SAFETY] H
-
-[AI_AUTONOMY] human_gated
-
-[ERROR_CONTRACT] SafetyFenceError on invalid path; SafetyCheckResult.allowed=False on parse failure
-
-[TESTS] tests/orphan-judge/test_safety_fence.py
-"""
+# [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.safety_fence
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SEC_safety_fence | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

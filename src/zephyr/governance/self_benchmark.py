@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_self_benchmark | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md | §W3-7
-
 # [MODULE] zephyr.testing.code_dedup.self_benchmark
-
-# [INVARIANTS] _KNOWN_PAIRS 长度=5; BenchmarkResult.status 枚举 passed/failed/degraded
-
-# [MODIFY-GUARD] 修改 _KNOWN_PAIRS 须同步更新测试
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] cli._cmd_benchmark
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] _KNOWN_PAIRS 长度=5; BenchmarkResult.status 枚举 passed/failed/degraded
+# [MODIFY-GUARD] 修改 _KNOWN_PAIRS 须同步更新测试
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] run_benchmark() 不抛异常; check_regression() 返回 None 或 RegressionAlert
-
 # [TESTS] tests/unit/test_code_dedup_engine.py::TestSelfBenchmark
+# [A_module] module_id=MOD-UNK_self_benchmark | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Self-Benchmark (W3-7) — 5 组已知对自验证 + 引擎退化告警.
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_delegated_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
-
 # [MODULE] zephyr.integration.vector_memory.delegated_vector_memory
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.integration.vector_memory.interface
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_delegated_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器

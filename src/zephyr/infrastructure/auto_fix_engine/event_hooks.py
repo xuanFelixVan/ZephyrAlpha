@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_event_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.event_hooks
-
-# [INVARIANTS] 钩子MUST不阻塞主流程;异常MUST被捕获不传播
-
-# [MODIFY-GUARD] blueprint.md §3
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;fix_scheduler.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 钩子MUST不阻塞主流程;异常MUST被捕获不传播
+# [MODIFY-GUARD] blueprint.md §3
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] EventHookError
-
 # [TESTS] tests/auto-fix-engine/test_event_hooks.py
+# [A_module] module_id=MOD-INF_event_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

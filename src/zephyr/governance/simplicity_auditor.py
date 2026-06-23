@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_simplicity_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
-
 # [MODULE] zephyr.testing.code_dedup.simplicity_auditor
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_simplicity_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """引擎成本效益自审计器 — SAS 0-100 月度审计 + Tax 报告.
 

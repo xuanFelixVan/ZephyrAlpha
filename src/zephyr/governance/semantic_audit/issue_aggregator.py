@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_issue_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §4.1
 # [MODULE] zephyr.governance.semantic_audit.issue_aggregator
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.semantic_audit.models
+# [CONSUMERS] cli
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 多源聚合去重；按 severity 排序；输出 UnifiedAuditReport
 # [MODIFY-GUARD] 修改排序/去重逻辑必须同步蓝图 §4.2 SemanticAuditReport
-# [CONSUMERS] cli
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入返回空 SemanticAuditReport
 # [TESTS] tests/semantic-auditor/test_issue_aggregator.py
+# [A_module] module_id=MOD-GOV_issue_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 — 问题聚合器 Stage 5
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_kb_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-SCRIPT-KB-001
 # [MODULE] zephyr.infrastructure.script_system.kb_bridge
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.__init__
+# [CONSUMERS] zephyr.trading.orchestrator.script_runner; AutoRuntime Core post-scan phase
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] findings→KB entry 1:1映射; KB不可用时仅日志不阻塞; timestamp带时区
 # [MODIFY-GUARD] CT-SCRIPT-KB-001 schema变更必须同步KB indexing规则
-# [CONSUMERS] zephyr.trading.orchestrator.script_runner; AutoRuntime Core post-scan phase
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] KB不可用返回degraded不阻塞; 空findings返回0
 # [TESTS] scripts/connect/script_kb.py --trigger
+# [A_module] module_id=MOD-INF_kb_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Script→KB 审计入库桥接器 — publish_to_kb() 生产者
 
 CT-SCRIPT-KB-001: 审计脚本执行完成后将 findings 写入 Knowledge Base。

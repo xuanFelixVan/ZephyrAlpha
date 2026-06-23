@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_blueprint_decomposer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-086 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.blueprint_decomposer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.integration.shared.schema.execution_model; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_blueprint_decomposer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ZephyrAlpha 蓝图拆解器

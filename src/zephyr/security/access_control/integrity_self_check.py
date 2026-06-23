@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_integrity_self_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §integrity_self_check
 # [MODULE] zephyr.security.access_control.integrity_self_check
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_integrity_agent_rbac.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] check_all returns >=55 results all passed; summary all_ok True when all passed
 # [MODIFY-GUARD] blueprint.md §integrity_self_check
-# [CONSUMERS] tests/agent_rbac/test_integrity_agent_rbac.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_all never raises; returns list of IntegrityCheck
 # [TESTS] tests/agent_rbac/test_integrity_agent_rbac.py
+# [A_module] module_id=MOD-SEC_integrity_self_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """IntegritySelfCheck — 完整性自检.
 
 依据蓝图 MOD-INF-018 §integrity_self_check:

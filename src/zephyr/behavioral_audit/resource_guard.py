@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_resource_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.resource_guard
-
-# [INVARIANTS] 硬限制不可突破
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES]
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 硬限制不可突破
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_resource_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。

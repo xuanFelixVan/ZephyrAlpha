@@ -1,24 +1,18 @@
-# [A_module] module_id=MOD-RES_circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §2.3
-
 # [MODULE] zephyr.ops.circuit_breaker
 # [DOMAIN] D-OPS
-
-# [INVARIANTS] SSoT=shared/resilience/circuit_breaker(MOD-INF-016);error_budget是022特有扩展;接口保持call()->bool兼容
-
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md;src/zephyr/shared/resilience/circuit_breaker.py
-
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.escalation_engine;zephyr.governance.__init__
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] SSoT=shared/resilience/circuit_breaker(MOD-INF-016);error_budget是022特有扩展;接口保持call()->bool兼容
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md;src/zephyr/shared/resilience/circuit_breaker.py
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] 熔断拒绝→call()返回False;error_budget耗尽→降级
-
 # [TESTS] tests/infrastructure/test_escalation_engine.py
+# [A_module] module_id=MOD-RES_circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Circuit Breaker — MOD-INF-022

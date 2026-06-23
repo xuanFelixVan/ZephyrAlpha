@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_path_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.path_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] FORBIDDEN_PATHS never writable; CRITICAL_FILES always blocked for write
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check() never raises; returns dict with allowed/reason/path
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_path_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """PathGuard — 路径守卫.
 
 依据蓝图 MOD-INF-018 §3:

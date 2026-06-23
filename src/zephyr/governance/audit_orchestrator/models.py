@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4.2
 # [MODULE] zephyr.governance.audit_trail.models
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_orchestrator.__init__
+# [CONSUMERS] audit-orchestrator.*; gates; pipeline
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] AuditType三分类不变; Severity三色红灯不变; Priority四级不变
 # [MODIFY-GUARD] 字段变更必须同步 contracts.py + cli.py
-# [CONSUMERS] audit-orchestrator.*; gates; pipeline
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 反序列化失败抛ValidationError
 # [TESTS] tests/audit-orchestrator/test_models.py
+# [A_module] module_id=MOD-GOV_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from datetime import datetime
 from enum import Enum
 

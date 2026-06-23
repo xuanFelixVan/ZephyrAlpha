@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_phase_check_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-060 | docs/03_modules/_domain-governance/blueprint.md | §
-
 # [MODULE] zephyr.governance.phase_check_registry
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.shared_services.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.governance.audit_orchestration.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.governance.audit_orchestration.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.governance.audit_orchestration.batch_orchestrator
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_phase_check_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """PhaseManager→GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
 

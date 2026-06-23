@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-UNK_spec_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
 # [MODULE] zephyr.governance.audit_trail.spec_auditor
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.protocols
+# [CONSUMERS] zephyr.governance.audit_trail
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] see blueprint MOD-INF-020
 # [MODIFY-GUARD] __init__.py
-# [CONSUMERS] zephyr.governance.audit_trail
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AuditTrailError
 # [TESTS]
+# [A_module] module_id=MOD-UNK_spec_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from datetime import UTC, datetime
 from typing import Any
 

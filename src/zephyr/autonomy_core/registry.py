@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §3
-
 # [MODULE] zephyr.autonomy_core.registry
-
-# [INVARIANTS] skill registration must be atomic; progressive_load must not exceed L3; keyword routing must be O(log N)
-
-# [MODIFY-GUARD] skill-registry.yaml; engine.py; __init__.py
-
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.trading; zephyr.integration
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] skill registration must be atomic; progressive_load must not exceed L3; keyword routing must be O(log N)
+# [MODIFY-GUARD] skill-registry.yaml; engine.py; __init__.py
 # [STABILITY] stable
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] module import failures degrade gracefully with _AVAILABLE flags; registry load failure returns empty dict
-
 # [TESTS] tests/agent-spec/test_registry.py
+# [A_module] module_id=MOD-ORC_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """G-CT-003: Agent Spec -> RBAC capability check.
 

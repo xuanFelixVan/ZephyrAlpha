@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_atomic_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
-
 # [MODULE] zephyr.testing.code_dedup.atomic_fixer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_atomic_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """原子性修复引擎 — WAL 式 PREFLIGHT → CHECKPOINT → APPLY → RECOVER.
 

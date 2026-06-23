@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_engine_degradation | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent_rbac/blueprint.md | §engine_degradation
 # [MODULE] zephyr.security.access_control.engine_degradation
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] genesis_bootstrap._phase_engine_degradation
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] default level is NORMAL; degradation only escalates; recovery requires explicit action
 # [MODIFY-GUARD] Owner approval required; changes require blueprint update
-# [CONSUMERS] genesis_bootstrap._phase_engine_degradation
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] trigger_degradation()/recover() never raise; return dict with success flag
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
+# [A_module] module_id=MOD-SEC_engine_degradation | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 """EngineDegradation — 引擎降级管理.
 
 依据蓝图 MOD-INF-018 §engine_degradation:

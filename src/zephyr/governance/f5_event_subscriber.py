@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES_f5_event_subscriber | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §3
 # [MODULE] zephyr.governance.f5_event_subscriber
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.f5_boot_integration; zephyr.trading.boot_hooks; zephyr.ops.scheduler
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] subscribe is idempotent; handle_event never raises; unsubscribe_all restores clean state; rule bindings are deterministic
 # [MODIFY-GUARD] F5 event topic names must be "f5.deadlock_detected" / "f5.escalation_needed" / "f5.conflict_detected"; rule binding map keys must match RuleCategory enum values
-# [CONSUMERS] zephyr.governance.f5_boot_integration; zephyr.trading.boot_hooks; zephyr.ops.scheduler
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns SubscriptionResult; handle_event swallows all exceptions and logs; never raises during event dispatch
 # [TESTS] tests/test_f5_event_startup.py
+# [A_module] module_id=MOD-RES_f5_event_subscriber | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """
 F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3).
 

@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_swid_tag | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §7.3
 # [MODULE] zephyr.security.access_control.orphan_judge.swid_tag
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.models
+# [CONSUMERS] orphan-judge.db.JudgmentDB; report_generator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 生成SWID标签记录文件来源和判决归属
 # [MODIFY-GUARD] SWID标签格式变更时同步blueprint.md §7.3
-# [CONSUMERS] orphan-judge.db.JudgmentDB; report_generator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 生成失败返回空标签
 # [TESTS] tests/orphan-judge/test_swid_tag.py
+# [A_module] module_id=MOD-SEC_swid_tag | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import hashlib
 import uuid
 from typing import Any

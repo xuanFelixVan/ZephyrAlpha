@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_chaos_injector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.chaos_injector
-
-# [INVARIANTS] 混沌注入必须金丝雀保护
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES] zephyr.behavioral_audit.drift_engine
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 混沌注入必须金丝雀保护
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_chaos_injector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。

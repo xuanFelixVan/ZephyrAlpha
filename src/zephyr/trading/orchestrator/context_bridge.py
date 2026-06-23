@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_context_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-ORC-CE-001
 # [MODULE] zephyr.trading.orchestrator.context_bridge
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security_01.context_scanner
+# [CONSUMERS] zephyr.trading.orchestrator.agent_orchestrator; zephyr.trading.orchestrator.work_orchestrator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] request_context 幂等; 异步模式: 发送后立即返回pending; CE不可用时降级不阻塞任务
 # [MODIFY-GUARD] CT-ORC-CE-001 协议变更必须同步更新context_engine/task_context_builder
-# [CONSUMERS] zephyr.trading.orchestrator.agent_orchestrator; zephyr.trading.orchestrator.work_orchestrator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError CE不可用返回degraded; 空task返回None
 # [TESTS] scripts/connect/orc_ce.py --trigger
+# [A_module] module_id=MOD-ORC_context_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Orc→CE 上下文桥接 — request_context() 生产者
 
 CT-ORC-CE-001: 任务启动时向 Context Engine 请求构建执行上下文。

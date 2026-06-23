@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.engine
-
-# [INVARIANTS] 修复MUST通过SafetyGate+FixBudget+CascadeBreaker;行为审计RED永不自动修复
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml;auto-fix-config.yaml
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.batch_fixer; zephyr.security.access_control.auto_fix_engine_03.compliance_auditor; zephyr.security.access_control.auto_fix_engine_03.escalation_bridge; zephyr.security.access_control.auto_fix_engine_03.fix_budget; zephyr.security.access_control.auto_fix_engine_03.fix_diff; zephyr.security.access_control.auto_fix_engine_03.fix_health_check; zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner; zephyr.security.access_control.auto_fix_engine_03.fix_reliability; zephyr.security.access_control.auto_fix_engine_03.fix_report; zephyr.security.access_control.auto_fix_engine_03.fix_safety; zephyr.security.access_control.auto_fix_engine_03.models; zephyr.security.access_control.auto_fix_engine_03.shadow_workspace; zephyr.security.access_control.auto_fix_engine_03.state_machine; zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.__init__; zephyr.integration.shared_08.event_bus
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-023(drift-detector);MOD-INF-029(orphan-judge);__main__.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 修复MUST通过SafetyGate+FixBudget+CascadeBreaker;行为审计RED永不自动修复
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml;auto-fix-config.yaml
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] AutoFixEngineError;FixBlockedError
-
 # [TESTS] tests/auto-fix-engine/test_engine.py
+# [A_module] module_id=MOD-SEC_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

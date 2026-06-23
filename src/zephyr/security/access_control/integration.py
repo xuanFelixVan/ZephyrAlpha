@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.integration
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_integration_agent_rbac.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] register_all registers 17 systems; health_check returns total_systems=17
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_integration_agent_rbac.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] register_all/health_check/verify_contracts never raise
 # [TESTS] tests/agent_rbac/test_integration_agent_rbac.py
+# [A_module] module_id=MOD-SEC_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """IntegrationManager — 系统集成注册与健康检查.
 
 依据蓝图 MOD-INF-018 §3:

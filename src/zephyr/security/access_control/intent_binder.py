@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_intent_binder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.intent_binder
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] declare is idempotent per agent_id (overwrites); check_drift returns bool
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_drift never raises; returns False when agent unknown or no actual operations recorded
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_intent_binder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """IntentBinder — 意图绑定与漂移检测.
 
 依据蓝图 MOD-INF-018 §3:

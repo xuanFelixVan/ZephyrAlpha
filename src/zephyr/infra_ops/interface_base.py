@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_interface_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
-
 # [MODULE] zephyr.frontend.interface_base
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_OPS
+# [DEPENDENCIES] zephyr.infra_ops.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_interface_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 L08 — Human-AI Interface Layer Skeleton

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_injection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §16 Phase 0 + §6.1
 # [MODULE] zephyr.security.adversarial_validation.injection_engine
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] validator.py; game_day_runner.py; chaos_engine.py (external)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] crash/exit_code injection points MUST have safety guard (blast_radius >= SYSTEM check); all injections MUST be recoverable
 # [MODIFY-GUARD] Adding injection types MUST update InjectionType enum in models.py; new injection logic MUST include recover/verify pair
-# [CONSUMERS] validator.py; game_day_runner.py; chaos_engine.py (external)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] PermissionError on SYSTEM-level crash injection without confirmation; ValueError on unknown injection type
 # [TESTS] tests/red_blue/test_injection_engine.py
+# [A_module] module_id=MOD-SEC_injection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_alignment_syncer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.alignment_syncer
-
-# [INVARIANTS] 蓝图为SSoT;只同步代码→蓝图方向;不自动修改蓝图
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml alignment_syncer段
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
 # [CONSUMERS] engine.py;MOD-INF-023(drift-detector)
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 蓝图为SSoT;只同步代码→蓝图方向;不自动修改蓝图
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml alignment_syncer段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] AlignmentSyncError
-
 # [TESTS] tests/auto-fix-engine/test_alignment_syncer.py
+# [A_module] module_id=MOD-SEC_alignment_syncer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

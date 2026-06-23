@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK_implementations | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md
 # [MODULE] zephyr.simulation.implementations
+# [DOMAIN] D-SIMULATION
+# [DEPENDENCIES] zephyr.simulation.implementations.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-UNK_implementations | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """L13 — Experimentation Concrete Implementations
 
 Phase C 具体实现包。

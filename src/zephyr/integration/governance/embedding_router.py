@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_embedding_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain-integration/local-model/blueprint.md | §3.1
-
 # [MODULE] zephyr.integration.local_model.embedding_router
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_embedding_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 EmbeddingRouter — MOD-INF-011 双嵌入维度路由

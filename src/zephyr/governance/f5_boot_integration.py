@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES_f5_boot_integration | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §2
 # [MODULE] zephyr.governance.f5_boot_integration
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.trading.boot_hooks; zephyr.trading.circadian_scheduler; zephyr.ops.scheduler
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] register_startup_hook is idempotent; on_startup initializes F5四组件; on_shutdown clears F5 state; run_periodic_checks never raises
 # [MODIFY-GUARD] boot_hooks registration name must be "f5_boot_init"; CircadianScheduler task names must be "f5_deadlock_scan" / "f5_escalation_queue_scan"
-# [CONSUMERS] zephyr.trading.boot_hooks; zephyr.trading.circadian_scheduler; zephyr.ops.scheduler
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns BootResult; logs error on failure; never raises during boot; run_periodic_checks returns dict
 # [TESTS] tests/test_f5_auto_startup.py
+# [A_module] module_id=MOD-RES_f5_boot_integration | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """
 F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §2).
 

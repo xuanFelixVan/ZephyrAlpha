@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_semantic_audit_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3,§4
 # [MODULE] zephyr.governance.semantic_audit.orchestrator
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] audit_orchestrator; cli; gates
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] 9阶段管道顺序执行; audit()返回SemanticAuditReport; audit_batch()使用ThreadPoolExecutor并行; health_check()返回HealthStatus
 # [MODIFY-GUARD] blueprint.md §3,§4; semantic_audit/__init__.py __all__
-# [CONSUMERS] audit_orchestrator; cli; gates
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] audit() never raises; individual stage failures are logged and skipped; returns partial report
 # [TESTS] tests/test_semantic_auditor.py
+# [A_module] module_id=MOD-GOV_semantic_audit_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """SemanticAuditor 编排器——9阶段管道统一调度.
 
 依据蓝图 MOD-INF-028 §3 架构设计:

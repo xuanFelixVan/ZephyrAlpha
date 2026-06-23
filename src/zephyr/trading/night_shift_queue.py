@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-ORC_night_shift_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
-
 # [MODULE] zephyr.trading.night_shift_queue
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_night_shift_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 NightShiftQueue — 夜班登记表持久化

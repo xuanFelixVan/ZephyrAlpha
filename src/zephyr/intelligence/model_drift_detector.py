@@ -1,24 +1,18 @@
-# [A_module] module_id=MOD-RES_model_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.infrastructure.rollback.model_drift_detector
 # [DOMAIN] D-INTELLIGENCE
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_model_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ModelDriftDetector — LLM 模型行为漂移检测。

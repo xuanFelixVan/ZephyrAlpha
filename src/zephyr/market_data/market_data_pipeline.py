@@ -1,17 +1,18 @@
-# [A_module] module_id=MOD-DAT_market_data_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-004 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.market_data.market_data_pipeline
 # [DOMAIN] D-MKT_DATA
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-DAT_market_data_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from dataclasses import dataclass
 from datetime import date

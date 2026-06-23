@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_feedback_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §5.1
 # [MODULE] zephyr.governance.audit_trail.feedback_policy
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.feedback_bridge
+# [CONSUMERS] audit-orchestrator.integrity(完整性校验后触发策略评估)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 反馈策略自动从审计发现中提取规则进化建议
 # [MODIFY-GUARD] FeedbackBridge API变更时同步此策略
-# [CONSUMERS] audit-orchestrator.integrity(完整性校验后触发策略评估)
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 策略评估失败返回保守策略
 # [TESTS] tests/audit-orchestrator/test_feedback_policy.py
+# [A_module] module_id=MOD-GOV_feedback_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT_contract_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-151 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contract_enforcer
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] none
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] CTR-ERR-006 运行时契约强制装饰器;尚未在生产代码中部署
 # [MODIFY-GUARD] zephyr.integration.shared_08.contracts.core.enforcer
-# [CONSUMERS] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError on missing types
 # [TESTS]
+# [A_module] module_id=MOD-INT_contract_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ZephyrAlpha — shared/contract_enforcer.py

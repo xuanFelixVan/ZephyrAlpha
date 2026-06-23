@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RSC_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §
-
 # [MODULE] zephyr.intelligence.model_profiling.pipeline.cli
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline.model_discovery; zephyr.intelligence.model_profiling.pipeline.profiler; zephyr.intelligence.model_profiling.pipeline.results_writer
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RSC_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 model-profiler.cli — 模型性能检测命令行入口

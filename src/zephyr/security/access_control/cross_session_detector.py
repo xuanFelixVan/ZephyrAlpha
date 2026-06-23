@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_cross_session_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.cross_session_detector
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py; tests/test_cross_session_detector.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] sign_token returns SignedToken with non-None signature; verify_token returns {"valid": bool, "reason"/"agent_id": ...}; agent_id mismatch on known session -> valid=False reason="cross_session_forgery"
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py; tests/test_cross_session_detector.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sign_token/verify_token never raise; verify_token returns {"valid": False, "reason": ...} on invalid input
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py; tests/test_cross_session_detector.py
+# [A_module] module_id=MOD-SEC_cross_session_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """CrossSessionDetector — 跨 Session 检测器.
 
 依据蓝图 MOD-INF-018 §3:

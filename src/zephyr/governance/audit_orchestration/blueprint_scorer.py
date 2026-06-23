@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_blueprint_scorer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
-
 # [MODULE] zephyr.governance.audit_orchestration.blueprint_scorer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.audit_orchestration.trigger_router; zephyr.governance.audit_orchestration.core.trigger_router; zephyr.shared.utils.blueprint_scorer (re-export); zephyr.shared.blueprint_scorer (re-export)
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_blueprint_scorer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 BlueprintScorer — 蓝图路由统一打分逻辑

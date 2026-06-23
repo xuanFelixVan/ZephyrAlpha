@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RSC_backtest_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
-
 # [MODULE] zephyr.intelligence.model_evaluation.backtest_base
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.intelligence.model_evaluation.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RSC_backtest_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 L09 — Research & Innovation Layer

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_model_discovery | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md
-
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing.model_discovery
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.provider_data
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_model_discovery | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型

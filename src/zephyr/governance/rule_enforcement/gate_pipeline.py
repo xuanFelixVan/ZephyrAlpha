@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_gate_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.governance.rule_enforcement.gate_pipeline
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_context
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_gate_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """门禁评估管线——排序解析、组合逻辑（AND/OR/NOT）、并行调度（beta）
 

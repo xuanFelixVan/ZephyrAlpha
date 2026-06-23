@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_skill_freshness_ext | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §3.2
 # [MODULE] zephyr.autonomy_core.skill_freshness_ext
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.integration.shared_08.event_bus
+# [CONSUMERS] auto_runtime_core.py (CircadianScheduler), event_bus subscribers
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] scan_all and auto_deprecate must not be inlined into skill_freshness.py — they get lost on file overwrite
 # [MODIFY-GUARD] skill_freshness.py, skill_lifecycle.py
-# [CONSUMERS] auto_runtime_core.py (CircadianScheduler), event_bus subscribers
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-ORC_skill_freshness_ext | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 MOD-INF-019: Agent Spec — Skill Freshness Extensions
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RSC_benchmark_suite | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.benchmark_suite
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES]
+# [CONSUMERS] MOD-INF-034
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 7维度26项标准化测试用例;BenchmarkCase数据模型
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-034
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] BenchmarkCaseValidationError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-RSC_benchmark_suite | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 BenchmarkSuite — 多维度模型性能测试用例集

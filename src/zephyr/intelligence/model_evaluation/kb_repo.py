@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RSC_kb_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
-
 # [MODULE] zephyr.intelligence.model_evaluation.kb_repo
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.time_utils; zephyr.integration.shared_08.utils.db_utils; zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RSC_kb_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 知识库仓库层（T-2-11-A）

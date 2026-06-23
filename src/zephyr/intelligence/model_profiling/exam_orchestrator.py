@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RSC_exam_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.exam_orchestrator
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport; zephyr.intelligence.model_profiling.exam_test_cases
+# [CONSUMERS] MOD-INF-034
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 五轴入职考试;横纵速幻稳;CapabilityPassport产出
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-034
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ExamError;InferenceError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-RSC_exam_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ExamOrchestrator --- 五轴入职考试主控

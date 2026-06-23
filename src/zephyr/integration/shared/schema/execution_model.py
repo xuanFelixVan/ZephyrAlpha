@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SHR_execution_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.schema.execution_model
-# [INVARIANTS] ExecutionModel values MUST match supported LLM providers
-# [MODIFY-GUARD]  §4.2; PS-STD-001 §7.1~§7.1.1
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
 # [CONSUMERS] gates.task_types; shared.schema.schemas; core.blueprint_decomposer; db.task_repo; orchestrator; mcp; kb
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] ExecutionModel values MUST match supported LLM providers
+# [MODIFY-GUARD] §4.2; PS-STD-001 §7.1~§7.1.1
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ValueError on invalid execution model string
 # [TESTS] tests/unit/test_schemas.py
+# [A_module] module_id=MOD-SHR_execution_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

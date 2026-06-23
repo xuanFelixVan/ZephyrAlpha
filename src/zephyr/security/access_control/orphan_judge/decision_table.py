@@ -1,30 +1,18 @@
-# [A_module] module_id=MOD-SEC_decision_table | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §L0-L4
-
-[MODULE] zephyr.security.access_control.orphan_judge.decision_table
-
-[INVARIANTS] DecisionTable.evaluate returns Verdict; 12-row decision table is exhaustive; unknown inputs yield ESCALATE
-
-[MODIFY-GUARD] orphan-judge/blueprint.md; orphan-judge/__init__.py __all__
-
-[CONSUMERS] orphan-judge.orphan_collector; orphan-judge.five_layer_judge
-
-[STABILITY] evolving
-
-[SAFETY] L
-
-[AI_AUTONOMY] ai_modifiable
-
-[ERROR_CONTRACT] OrphanJudgeError on invalid layer result type; ESCALATE on uncertain input
-
-[TESTS] tests/orphan-judge/test_decision_table.py
-"""
+# [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.decision_table
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SEC_decision_table | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

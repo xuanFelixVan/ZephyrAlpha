@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-ORC_system_snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.support.system_snapshot
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.integration.shared_08.io.paths
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-ORC_system_snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from typing import Self
 
 """

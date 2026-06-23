@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_transition | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
-
 # [MODULE] zephyr.infrastructure.db.transition
-
-# [INVARIANTS] _ALLOWED_TRANSITIONS 唯一转换表; 状态机不可绕过; 依赖重算幂等
-
-# [MODIFY-GUARD] base_repo.py 状态机表; task_repo.py 组合入口
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.shared.contracts.gate.__init__
 # [CONSUMERS] task_repo;pipeline
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] _ALLOWED_TRANSITIONS 唯一转换表; 状态机不可绕过; 依赖重算幂等
+# [MODIFY-GUARD] base_repo.py 状态机表; task_repo.py 组合入口
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] InvalidTransitionError;DependencyError
-
 # [TESTS] tests/db/
+# [A_module] module_id=MOD-INF_transition | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
 

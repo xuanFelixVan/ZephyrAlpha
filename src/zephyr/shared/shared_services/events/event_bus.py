@@ -1,21 +1,18 @@
-# [A_module] module_id=MOD-INF_event_bus | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-095 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.shared.shared_services.events.event_bus
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.events.event_bus
+# [CONSUMERS] zephyr.infrastructure.events.event_store; zephyr.shared.events.event_reactor; zephyr.shared.events.hook_dispatcher
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] re-export shim only; truth source is zephyr.shared.event_bus (trae_046 GOV-ENG-004)
 # [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.event_bus
-# [CONSUMERS] zephyr.infrastructure.events.event_store; zephyr.shared.events.event_reactor; zephyr.shared.events.hook_dispatcher
-
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ImportError if shared.event_bus symbols unavailable
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_event_bus | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 EventBus re-export shim — 真源已合并至 zephyr.shared.event_bus (trae_046 GOV-ENG-004)。
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_autopilot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-193 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
 # [MODULE] zephyr.trading.autopilot
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
+# [CONSUMERS] zephyr.trading.__init__; zephyr.trading.conductor
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] AutoPilot.run_cycle() MUST call claim_next() which uses Event Sourcing partial unique index for atomic claim; status_report() MUST reflect real DB state
 # [MODIFY-GUARD] claim_next uses idx_te_one_claim_per_task — do NOT change claim semantics without updating the partial unique index
-# [CONSUMERS] zephyr.trading.__init__; zephyr.trading.conductor
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Returns None when no tasks available; logs warnings on DB connection issues
 # [TESTS] tests/test_autopilot.py
+# [A_module] module_id=MOD-ORC_autopilot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """AutoPilot — AI session 自动找活干、认领任务。
 
 职责边界：

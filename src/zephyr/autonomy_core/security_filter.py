@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_security_filter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-CE-LSG-001
 # [MODULE] zephyr.autonomy_core.security_filter
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security_01.context_scanner
+# [CONSUMERS] zephyr.autonomy_core.task_context_builder
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 上下文构建完成后MUST经过此过滤器; blocked blocks不注入; warnings记录; 降级不阻塞
 # [MODIFY-GUARD] CT-CE-LSG-001 协议变更必须同步更新llm_security/context_scanner
-# [CONSUMERS] zephyr.autonomy_core.task_context_builder
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] LSG不可用返回original_blocks+degraded_warning; 空输入返回空
 # [TESTS] scripts/connect/ce_lsg.py --trigger
+# [A_module] module_id=MOD-ORC_security_filter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """CE 安全过滤器 — filter_context() 生产者
 
 CT-CE-LSG-001: 将构建好的上下文块送入 LSGSecurityGateway 扫描后返回安全的执行上下文。

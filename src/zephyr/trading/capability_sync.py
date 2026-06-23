@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-ORC_capability_sync | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
 # [MODULE] zephyr.trading.capability_sync
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__
+# [CONSUMERS] zephyr.trading.auto_runtime_core
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] sync_a2a and sync_skills are idempotent; existing cap_ids are skipped
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns int (count synced); never raises; logs on failure
 # [TESTS]
+# [A_module] module_id=MOD-ORC_capability_sync | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from pathlib import Path
 from typing import Any

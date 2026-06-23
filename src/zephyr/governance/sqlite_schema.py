@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_sqlite_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
-
 # [MODULE] zephyr.data.persistence.sqlite_schema
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] frozen
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_sqlite_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + MOD-INF-012 v2.0）

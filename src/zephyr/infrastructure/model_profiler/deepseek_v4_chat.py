@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_deepseek_v4_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.deepseek_v4_chat
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.model_profiler.__init__
+# [CONSUMERS] MOD-INF-034
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] DeepSeekV4API客户端;思考/非思考模式;费用追踪
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-034
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] APIError;RateLimitError;CostLimitError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-INF_deepseek_v4_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端

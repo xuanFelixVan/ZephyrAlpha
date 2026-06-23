@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-RES_drift_fix | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.infrastructure.rollback.drift_fix
-
-# [INVARIANTS] 漂移修复必须验证
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.behavioral_audit.events
 # [CONSUMERS] rollback_executor;auto_rollback_trigger
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 漂移修复必须验证
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] RollbackError;DriftFixError
-
 # [TESTS] tests/rollback/
+# [A_module] module_id=MOD-RES_drift_fix | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 

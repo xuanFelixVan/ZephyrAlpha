@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_rule_injection_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.rule_injection_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_forensic_b.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] injection patterns always detected; clean JSON never flagged
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_forensic_b.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check never raises; returns RuleInjectionCheck
 # [TESTS] tests/agent_rbac/test_forensic_b.py
+# [A_module] module_id=MOD-SEC_rule_injection_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """RuleInjectionGuard — 规则注入守卫.
 
 依据蓝图 MOD-INF-018 §3:

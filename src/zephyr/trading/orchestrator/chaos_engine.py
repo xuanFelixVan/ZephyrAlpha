@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_chaos_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §chaos_engine
 # [MODULE] zephyr.trading.orchestrator.chaos_engine
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.orchestrator.__init__
+# [CONSUMERS] red-blue-validator.injection_engine; game_day_runner; zephyr.trading.orchestrator.chaos_hooks
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] inject() MUST NOT leave system in degraded state; crash/exit_code injection requires CHAOS_CRASH_CONFIRMED=yes env var
 # [MODIFY-GUARD] Adding injection types MUST update INJECTION_POINTS and InjectType enum
-# [CONSUMERS] red-blue-validator.injection_engine; game_day_runner; zephyr.trading.orchestrator.chaos_hooks
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ChaosInjectError on injection failure; ChaosRecoverError on recovery failure
 # [TESTS] tests/test_chaos_engine.py
+# [A_module] module_id=MOD-ORC_chaos_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×月度执行。"""
 

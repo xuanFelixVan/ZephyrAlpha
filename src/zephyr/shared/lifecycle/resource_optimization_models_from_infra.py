@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_resource_optimization_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-112 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.resource_optimization_models
-
-# [INVARIANTS] must be thread-safe; must not block main loop; Pydantic ValidationError on invalid input
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.lifecycle.__init__
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] must be thread-safe; must not block main loop; Pydantic ValidationError on invalid input
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] Pydantic ValidationError on invalid input
-
 # [TESTS] tests/lifecycle_manager/test_resource_optimization_models.py
+# [A_module] module_id=MOD-INF_resource_optimization_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

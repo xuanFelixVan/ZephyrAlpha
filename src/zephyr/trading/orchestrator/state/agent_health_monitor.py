@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-ORC_agent_health_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.state.agent_health_monitor
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.time_utils
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-ORC_agent_health_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from typing import Self
 
 # AI-generated: T-3-11 Agent Health Monitor

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_watchdog | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.system_telemetry.watchdog
-
-# [INVARIANTS] triple-redundancy mutual-check; panic mode on 2+ peer misses; dead man's switch threshold 1800s
-
-# [MODIFY-GUARD] health_aggregator.py; health_probes.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.system_telemetry.__init__
 # [CONSUMERS] zephyr.security.access_control
-
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] triple-redundancy mutual-check; panic mode on 2+ peer misses; dead man's switch threshold 1800s
+# [MODIFY-GUARD] health_aggregator.py; health_probes.py
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] OSError; RuntimeError
-
 # [TESTS] tests/system-telemetry/test_watchdog.py
+# [A_module] module_id=MOD-INF_watchdog | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。
 

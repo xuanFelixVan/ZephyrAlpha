@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT__infrastructure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._infrastructure
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared.api_03.api_client; zephyr.integration.shared_08.cache; zephyr.integration.shared_08.diff_utils; zephyr.integration.shared_08.file_utils; zephyr.integration.shared_08.secrets; zephyr.integration.shared_08.serialization; zephyr.integration.shared_08.session_audit; zephyr.shared.config.__init__
+# [CONSUMERS] zephyr.shared.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from zephyr.shared
 # [MODIFY-GUARD] zephyr.shared.__init__
-# [CONSUMERS] zephyr.shared.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
+# [A_module] module_id=MOD-INT__infrastructure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """_infrastructure — 基础设施 re-export 桥接层。
 
 从 io/security/utils/session_audit/lifecycle 子包及 zephyr.shared 重新导出符号，

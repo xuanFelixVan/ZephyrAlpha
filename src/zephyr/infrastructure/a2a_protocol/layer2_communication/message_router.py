@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_message_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
-
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer2_communication.message_router
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_schemas
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_message_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Message Router — A2A 消息路由"""
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
 # [MODULE] zephyr.governance.rule_enforcement.check_types.adversarial_validation
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.adversarial_validation; zephyr.governance.rule_enforcement.adversarial_strategies; zephyr.governance.rule_enforcement.check_types.check_type_registry; zephyr.governance.rule_enforcement.task_types
+# [CONSUMERS] blueprint.md §0; zephyr.governance.rule_enforcement 内部模块; zephyr.trading.orchestrator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] MOD-INF-007 门禁 exit code 不可伪造; 原子写入 temp-file+os.replace()
 # [MODIFY-GUARD] blueprint.md §4; _registry.yaml; __init__.py __all__
-# [CONSUMERS] blueprint.md §0; zephyr.governance.rule_enforcement 内部模块; zephyr.trading.orchestrator
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] GateError
 # [TESTS] tests/test_adversarial_gate_integration.py
+# [A_module] module_id=MOD-GOV_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """AdversarialValidation check type handler — registers with check_type_registry."""
 

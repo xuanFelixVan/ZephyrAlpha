@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_finding_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
-
 # [MODULE] zephyr.governance.audit_orchestration.finding_bridge
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.persistence.task_repo; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.shared_services.models
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_finding_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 CT-ORC-SCRIPT-001 运行时桥接

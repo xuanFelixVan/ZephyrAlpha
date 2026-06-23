@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_in_memory_memory_backend | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md
-
 # [MODULE] zephyr.data.knowledge_management.vector_memory.in_memory_memory_backend
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-KNOWLEDGE
+# [DEPENDENCIES] zephyr.governance.vector_memory.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_in_memory_memory_backend | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 InMemoryMemoryBackend — MOD-INF-011 降级兜底

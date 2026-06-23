@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RSC_sync_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.sync_engine
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__; zephyr.autonomy_core.__init__
+# [CONSUMERS] zephyr.knowledge.kb.scheduler; AutoRuntime Core sync phase
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 增量按created_at > since检测; 全量since=None; VMS不可用降级不阻塞
 # [MODIFY-GUARD] CT-KB-VMS-001 集合映射变更同步更新collection_manager
-# [CONSUMERS] zephyr.knowledge.kb.scheduler; AutoRuntime Core sync phase
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] VMS不可用返回degraded; 空增量返回0
 # [TESTS] scripts/connect/kb_vms.py --trigger
+# [A_module] module_id=MOD-RSC_sync_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """KB→VMS 同步引擎 — sync_to_vms() 生产者"""
 
 from __future__ import annotations

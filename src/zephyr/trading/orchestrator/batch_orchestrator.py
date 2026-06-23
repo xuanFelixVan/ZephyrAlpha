@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_batch_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
-
 # [MODULE] zephyr.trading.orchestrator.batch_orchestrator
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.shared.contracts.orchestration_protocol; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.shared_services.models
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_batch_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）
 

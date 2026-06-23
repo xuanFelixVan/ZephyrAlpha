@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT_protocols | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-183 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contracts.protocols
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.gate.gate_result
+# [CONSUMERS] zephyr.governance.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.governance.audit_trail;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Protocols define structural interfaces only; no concrete implementations
 # [MODIFY-GUARD] contracts_blueprint.md §Protocols; __init__.py __all__
-# [CONSUMERS] zephyr.governance.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.governance.audit_trail;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INT_protocols | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Structural Protocol interfaces for cross-module contracts.
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_capability_passport | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md
-
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing.capability_passport
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.model_profiler.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_capability_passport | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 CapabilityPassport --- AI 模型能力护照

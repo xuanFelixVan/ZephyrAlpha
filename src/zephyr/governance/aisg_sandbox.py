@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_aisg_sandbox | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain-compliance/compliance-core/blueprint.md
-
 # [MODULE] zephyr.governance.aisg_sandbox
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_aisg_sandbox | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV-015 升级)

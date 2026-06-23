@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-080 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_core.task_types
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.data.persistence; zephyr.infrastructure; zephyr.trading (replaces shared_services.models imports)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] TaskCard = Task (PURE ALIAS — SSoT: governance.rule_enforcement.task_types.Task); 本模块禁止添加字段
 # [MODIFY-GUARD] governance.rule_enforcement.task_types (SSoT)
-# [CONSUMERS] zephyr.data.persistence; zephyr.infrastructure; zephyr.trading (replaces shared_services.models imports)
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS] tests/unit/test_schemas.py; tests/unit/db/test_task_repo.py
+# [A_module] module_id=MOD-INF_task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 task_types — 任务系统核心类型 re-export 层

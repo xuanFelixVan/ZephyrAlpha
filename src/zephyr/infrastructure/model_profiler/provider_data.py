@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_provider_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.provider_data
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.model_profiler.__init__
+# [CONSUMERS] src.zephyr.infrastructure.budget_enforcement.model_router;src.zephyr.intelligence.model_profiling.model_discovery;src.zephyr.infrastructure.budget_enforcement
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] DEFAULT_PROVIDERS和TIER_MODEL_MAP是纯数据常量;修改MUST同步更新model_router和model_discovery
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/budget-enforcer/model_router.py;src/zephyr/integration/zephyr/model_discovery.py
-# [CONSUMERS] src.zephyr.infrastructure.budget_enforcement.model_router;src.zephyr.intelligence.model_profiling.model_discovery;src.zephyr.infrastructure.budget_enforcement
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-INF_provider_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

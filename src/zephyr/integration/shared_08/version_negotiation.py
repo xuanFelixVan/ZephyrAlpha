@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-INT_version_negotiation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-192 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.integration.shared_08.version_negotiation
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] tests
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] tests
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/shared/test_version_negotiation.py
+# [A_module] module_id=MOD-INT_version_negotiation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import total_ordering

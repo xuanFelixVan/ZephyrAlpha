@@ -1,30 +1,18 @@
-# [A_module] module_id=MOD-SEC_judge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §4.1
-
-[MODULE] zephyr.security.access_control.orphan_judge.judge
-
-[INVARIANTS] 五层判定L0→L4顺序执行; 决策表12行路由; 安全围栏阻断frozen/H文件删除; dry_run=True时不执行任何操作; L4不可用→ESCALATE
-
-[MODIFY-GUARD] orphan-judge/blueprint.md; orphan-judge/__init__.py __all__
-
-[CONSUMERS] orphan-judge.__init__; auto_runtime_core; mcp.governance_server; governance.phase_check_registry
-
-[STABILITY] evolving
-
-[SAFETY] M
-
-[AI_AUTONOMY] ai_modifiable
-
-[ERROR_CONTRACT] OrphanJudgeError
-
-[TESTS] tests/orphan-judge/test_judge.py
-"""
+# [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.judge
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.duplicate_detector; zephyr.governance.rule_enforcement.gate_types
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SEC_judge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

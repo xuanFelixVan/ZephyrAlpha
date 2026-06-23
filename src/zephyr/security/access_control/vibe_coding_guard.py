@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_vibe_coding_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §vibe_coding_guard
 # [MODULE] zephyr.security.access_control.vibe_coding_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_vibe_coding.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] clean code never flagged; dangerous patterns always detected
 # [MODIFY-GUARD] blueprint.md §vibe_coding_guard
-# [CONSUMERS] tests/agent_rbac/test_vibe_coding.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan never raises; returns VibeCodingAudit
 # [TESTS] tests/agent_rbac/test_vibe_coding.py
+# [A_module] module_id=MOD-SEC_vibe_coding_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """VibeCodingGuard — Vibe Coding 攻击面检测.
 
 依据蓝图 MOD-INF-018 §vibe_coding_guard:

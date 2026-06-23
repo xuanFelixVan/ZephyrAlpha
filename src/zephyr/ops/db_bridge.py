@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK_db_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-DB-001
 # [MODULE] zephyr.ops.db_bridge
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; tests.test_db_bridge; tests.test_fl_db_bridge
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] fle_metrics表DDL与sqlite_schema.py规范DDL一致; INSERT列名匹配规范schema
 # [MODIFY-GUARD] CT-FLE-DB-001 DDL变更必须同步更新sqlite_schema.py; 已知schema漂移bug: db_bridge.py曾有独立冲突DDL(metric_type/metric_value/recorded_at)导致db_writer.py INSERT失败
-# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; tests.test_db_bridge; tests.test_fl_db_bridge
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DBConnectionError写入失败抛日志; 空输入返回0不报错
 # [TESTS] python -m pytest tests/test_db_bridge.py tests/test_fl_db_bridge.py -q
+# [A_module] module_id=MOD-UNK_db_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics
 
 CT-FLE-DB-001: FLE采集的指标 → Database持久化落地。

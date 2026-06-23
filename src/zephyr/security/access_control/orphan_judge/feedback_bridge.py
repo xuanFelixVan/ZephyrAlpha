@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_feedback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §7.1
 # [MODULE] zephyr.security.access_control.orphan_judge.feedback_bridge
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.trading.__init__
+# [CONSUMERS] orphan-judge.judge.OrphanJudge(误判反馈)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现反馈逻辑; 仅桥接FeedbackLoop.analyze_pending()+generate_proposals()
 # [MODIFY-GUARD] FeedbackLoop API变更时同步此桥接
-# [CONSUMERS] orphan-judge.judge.OrphanJudge(误判反馈)
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空proposals
 # [TESTS] tests/orphan-judge/test_feedback_bridge.py
+# [A_module] module_id=MOD-SEC_feedback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from pathlib import Path
 from tempfile import mkdtemp

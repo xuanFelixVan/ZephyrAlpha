@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT_deepseek_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain-integration/local-model/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.deepseek_chat
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 使用requests库绕过openai SSL问题;接口兼容OllamaChat
 # [MODIFY-GUARD] none
-# [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] API失败时抛RuntimeError;JSON解析失败返回空dict
 # [TESTS] tests/test_integration/test_deepseek_chat.py
+# [A_module] module_id=MOD-INT_deepseek_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理（requests 实现）

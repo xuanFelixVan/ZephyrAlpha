@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_config_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §5.1
 # [MODULE] zephyr.security.access_control.orphan_judge.config_loader
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.models
+# [CONSUMERS] orphan-judge.judge.OrphanJudge; 各checker初始化
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] OrphanJudgeConfig是配置SSoT; 不修改任何源文件
 # [MODIFY-GUARD] 修改默认值必须同步blueprint.md §5.1; 修改YAML schema必须同步此处
-# [CONSUMERS] orphan-judge.judge.OrphanJudge; 各checker初始化
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] YAMLError on bad config file; 返回默认配置
 # [TESTS] tests/orphan-judge/test_config_loader.py
+# [A_module] module_id=MOD-SEC_config_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

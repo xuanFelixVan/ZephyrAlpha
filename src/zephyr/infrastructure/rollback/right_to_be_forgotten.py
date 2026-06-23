@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_right_to_be_forgotten | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
-
 # [MODULE] zephyr.infrastructure.rollback.right_to_be_forgotten
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_right_to_be_forgotten | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Right to be Forgotten — GDPR 遗忘权合规检查器。

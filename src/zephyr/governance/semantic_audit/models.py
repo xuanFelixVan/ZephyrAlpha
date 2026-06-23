@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §4.2
 # [MODULE] zephyr.governance.semantic_audit.models
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] trigger_engine;fix_prioritizer;llm_bridge;reference_extractor;safety_boundary;alignment_engine;issue_aggregator;self_health
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] severity必须为RED/YELLOW/INFO; SafetyDecision必须为PROCEED/HOLD/FORBIDDEN; TriggerResult.severity与Severity枚举一致
 # [MODIFY-GUARD] blueprint.md §4.2; semantic_audit/__init__.py __all__
-# [CONSUMERS] trigger_engine;fix_prioritizer;llm_bridge;reference_extractor;safety_boundary;alignment_engine;issue_aggregator;self_health
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValidationError on invalid severity/SafetyDecision
 # [TESTS] tests/semantic-auditor/test_models.py
+# [A_module] module_id=MOD-GOV_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """语义审计管线数据模型 — MOD-INF-028 §4.2
 
 所有 Stage 共享的类型定义：Severity / SafetyDecision / TriggerResult /

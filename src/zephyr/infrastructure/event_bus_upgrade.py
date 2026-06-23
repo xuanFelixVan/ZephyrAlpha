@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_event_bus_upgrade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
-
 # [MODULE] zephyr.infrastructure.event_bus_upgrade
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.integration.shared.events.upgrade_strategy; zephyr.shared.events.upgrade_strategy
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] frozen
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_event_bus_upgrade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 DEPRECATED: 此文件已废弃。

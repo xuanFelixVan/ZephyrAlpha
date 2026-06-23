@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-120 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.models
-
-# [INVARIANTS] TaskCard = Task (PURE ALIAS — NOT a second model. SSoT: gates/task_types.py Task 70 fields. DO NOT add fields here.)
-
-# [MODIFY-GUARD] gates/task_types.py (SSoT for Task/GateLevel/TaskAuditFinding)
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
 # [CONSUMERS] db.task_repo; core.blueprint_decomposer; pipeline.*; orchestrator.*
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] TaskCard = Task (PURE ALIAS — NOT a second model. SSoT: gates/task_types.py Task 70 fields. DO NOT add fields here.)
+# [MODIFY-GUARD] gates/task_types.py (SSoT for Task/GateLevel/TaskAuditFinding)
 # [STABILITY] frozen
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS] tests/unit/test_schemas.py; tests/unit/db/test_task_repo.py; tests/unit/gates/test_gate_engine.py
+# [A_module] module_id=MOD-INF_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ZephyrAlpha 任务系统核心数据模型

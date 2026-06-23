@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_adversarial_strategies | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §adversarial_strategies
 # [MODULE] zephyr.governance.rule_enforcement.adversarial_strategies
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.rule_enforcement.adversarial_validation;zephyr.governance.rule_enforcement.check_types.adversarial_validation
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] Each strategy MUST have generate()/detect() methods; detect() MUST return bool
 # [MODIFY-GUARD] Adding strategies MUST update AdversarialSampleGenerator.STRATEGY_MAP
-# [CONSUMERS] zephyr.governance.rule_enforcement.adversarial_validation;zephyr.governance.rule_enforcement.check_types.adversarial_validation
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] StrategyError on invalid strategy usage
 # [TESTS] tests/test_adversarial_strategies.py
+# [A_module] module_id=MOD-GOV_adversarial_strategies | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Adversarial sample generator and 5 attack strategies for gate validation."""
 

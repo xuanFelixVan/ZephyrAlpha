@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.contracts
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [CONSUMERS] audit-orchestrator.*; pipeline_runner
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 所有审计组件必须实现对应契约; 契约方法签名不可变
 # [MODIFY-GUARD] 修改契约必须同步所有实现类
-# [CONSUMERS] audit-orchestrator.*; pipeline_runner
 # [STABILITY] frozen
 # [SAFETY] H
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] 违反契约抛ContractViolationError
 # [TESTS] tests/audit-orchestrator/test_contracts.py
+# [A_module] module_id=MOD-GOV_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any

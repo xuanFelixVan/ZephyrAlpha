@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_report_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §4.1
 # [MODULE] zephyr.security.access_control.orphan_judge.report_generator
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.db; zephyr.security.access_control.orphan_judge.models
+# [CONSUMERS] orphan-judge.__main__._cmd_report
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 三种输出格式(JSON/CSV/Markdown); 不修改任何源文件
 # [MODIFY-GUARD] 修改输出格式必须同步blueprint.md §4.1
-# [CONSUMERS] orphan-judge.__main__._cmd_report
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError on unsupported format
 # [TESTS] tests/orphan-judge/test_report_generator.py
+# [A_module] module_id=MOD-SEC_report_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import json
 import logging
 

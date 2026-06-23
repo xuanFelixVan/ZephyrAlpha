@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-ORC_ke_quality | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
-
 # [MODULE] zephyr.trading.orchestrator.ke_quality
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.orchestrator.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_ke_quality | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """知识质量评分契约（CT-KE-QUALITY）——KE完整性+准确性+时效性三维评分。"""
 

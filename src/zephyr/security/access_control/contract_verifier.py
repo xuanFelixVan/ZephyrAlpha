@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_contract_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.contract_verifier
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_integration_agent_rbac.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] verify_all returns 4 contracts G-CT-001/004/007/008; verify_gct001/004 return ContractResult
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_integration_agent_rbac.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] verify_all/verify_gct001/verify_gct004 never raise
 # [TESTS] tests/agent_rbac/test_integration_agent_rbac.py
+# [A_module] module_id=MOD-SEC_contract_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """ContractVerifier — 契约验证器.
 
 依据蓝图 MOD-INF-018 §3:

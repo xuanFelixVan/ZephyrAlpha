@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/governance/blueprint.md | §rule_engine
 # [MODULE] zephyr.governance.rule_engine
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES]
+# [CONSUMERS] SkillLoader; GateEngine; cold_start sequence; AI sessions
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] YAML files are content SSoT; depgraph.db is index only; sync direction YAML→DB
 # [MODIFY-GUARD] sync_rule_registry.py; verify_rule_yaml_migration.py
-# [CONSUMERS] SkillLoader; GateEngine; cold_start sequence; AI sessions
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

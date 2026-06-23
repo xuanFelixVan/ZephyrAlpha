@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT_contract_versions | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-152 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contract_versions
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.shared_services.infra_06.observer
+# [CONSUMERS] zephyr.integration.shared_08.contracts.__init__; zephyr.integration.shared_08._contracts
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] CTR-VER-001: 运行时契约版本注册与查询;VER-R1~R5 版本协商规则
 # [MODIFY-GUARD] zephyr.integration.shared_08.contracts.core.registry
-# [CONSUMERS] zephyr.integration.shared_08.contracts.__init__; zephyr.integration.shared_08._contracts
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if yaml not available
 # [TESTS]
+# [A_module] module_id=MOD-INT_contract_versions | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ZephyrAlpha — shared/contract_versions.py

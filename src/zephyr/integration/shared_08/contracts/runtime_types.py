@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT_runtime_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §6.1
 # [MODULE] zephyr.integration.shared_08.contracts.runtime_types
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [CONSUMERS] scripts.construction.start_brain;scripts.a2a_full_verification;scripts.construction.local_layer_daemon;zephyr.trading
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] RuntimeConfig是纯数据模型;由zephyr.trading.runtime_config重新导出以保持向后兼容
 # [MODIFY-GUARD] src/zephyr/runtime/runtime_config.py
-# [CONSUMERS] scripts.construction.start_brain;scripts.a2a_full_verification;scripts.construction.local_layer_daemon;zephyr.trading
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INT_runtime_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

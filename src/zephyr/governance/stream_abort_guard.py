@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES_stream_abort_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.infrastructure.budget_enforcement.stream_abort_guard
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-RES_stream_abort_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """StreamAbortGuard — 流式中断守卫
 =====================================
 蓝图 §2.13 · 流式输出中途预算二次确认

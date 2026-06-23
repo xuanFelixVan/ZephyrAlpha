@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_zero_residue_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.invariants.zero_residue_check
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_zero_residue_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import os
 import subprocess
 import sys

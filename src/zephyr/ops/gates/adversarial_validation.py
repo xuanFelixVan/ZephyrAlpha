@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §adversarial_validation
 # [MODULE] zephyr.observability.feedback_loop.gates.adversarial_validation
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.security.adversarial_validation.__init__
+# [CONSUMERS] feedback-loop.gates.__init__; _registry.yaml FLE-ADVERSARIAL-VALIDATION; RED-BLUE-GATE
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] challenge() maintains backward compat; run_adversarial_check() bridges to RedBlueValidator
 # [MODIFY-GUARD] challenge() return type MUST remain list[str] for backward compat
-# [CONSUMERS] feedback-loop.gates.__init__; _registry.yaml FLE-ADVERSARIAL-VALIDATION; RED-BLUE-GATE
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RedBlueImportError on import failure; returns degraded results
 # [TESTS] tests/test_adversarial_validation.py
+# [A_module] module_id=MOD-UNK_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Adversarial Validation Gate — FLE-ADVERSARIAL-VALIDATION + RED-BLUE-GATE bridge.
 

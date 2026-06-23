@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_task_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_domain-infra_runtime/task-system/blueprint.md
 # [MODULE] zephyr.trading.task_gate
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-ORC_task_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 TaskGate --- 任务门控
 

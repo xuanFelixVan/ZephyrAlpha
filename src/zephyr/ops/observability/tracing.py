@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SHR_tracing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
-
 # [MODULE] zephyr.ops.observability.tracing
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.observability.logging
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SHR_tracing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 tracing.py —— OpenTelemetry 分布式追踪（Phase B 补充 | 盲点 B1 修复）

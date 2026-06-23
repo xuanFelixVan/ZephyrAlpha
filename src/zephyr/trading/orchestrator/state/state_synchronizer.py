@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_state_synchronizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
-
 # [MODULE] zephyr.trading.orchestrator.state.state_synchronizer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.integration.shared_08.io.paths; zephyr.integration.shared_08.utils.time_utils; zephyr.trading.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_state_synchronizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（T-2-04）

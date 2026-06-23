@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_log_rotation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §5.1
 # [MODULE] zephyr.governance.audit_trail.log_rotation
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_orchestrator.__init__
+# [CONSUMERS] audit-orchestrator.writer; tiered_storage
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 按大小和时间双策略轮转; 不丢失审计日志
 # [MODIFY-GUARD] 轮转参数变更必须同步 retention.py
-# [CONSUMERS] audit-orchestrator.writer; tiered_storage
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 轮转失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_log_rotation.py
+# [A_module] module_id=MOD-GOV_log_rotation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import gzip
 import logging
 from datetime import datetime

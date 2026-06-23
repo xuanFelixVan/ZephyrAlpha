@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_kill_switch | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §kill_switch
 # [MODULE] zephyr.security.access_control.kill_switch
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] genesis_bootstrap._phase_kill_switch; tests/agent_rbac/test_kill_switch_agent_rbac.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] KillSwitch default state is NORMAL; trigger only on critical failure; reset requires owner approval
 # [MODIFY-GUARD] Owner approval required; changes require blueprint update
-# [CONSUMERS] genesis_bootstrap._phase_kill_switch; tests/agent_rbac/test_kill_switch_agent_rbac.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] trigger()/reset() never raise; return TriggerResult with success flag
 # [TESTS] tests/agent_rbac/test_kill_switch_agent_rbac.py
+# [A_module] module_id=MOD-SEC_kill_switch | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 """KillSwitch — 熔断器.
 
 依据蓝图 MOD-INF-018 §kill_switch:

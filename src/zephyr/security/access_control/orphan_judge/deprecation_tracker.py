@@ -1,30 +1,18 @@
-# [A_module] module_id=MOD-SEC_deprecation_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §deprecation
-
-[MODULE] zephyr.security.access_control.orphan_judge.deprecation_tracker
-
-[INVARIANTS] DeprecationRecord.expires_at = deprecated_at + ttl_days; storage in .aideprecations/ JSON; expired records eligible for removal
-
-[MODIFY-GUARD] orphan-judge/blueprint.md; orphan-judge/__init__.py __all__
-
-[CONSUMERS] orphan-judge.orphan_collector; circadian_scheduler._deprecation_scan
-
-[STABILITY] evolving
-
-[SAFETY] L
-
-[AI_AUTONOMY] ai_modifiable
-
-[ERROR_CONTRACT] DeprecationTrackerError on I/O failure; returns empty list on read failure
-
-[TESTS] tests/orphan-judge/test_deprecation_tracker.py
-"""
+# [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.deprecation_tracker
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SEC_deprecation_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

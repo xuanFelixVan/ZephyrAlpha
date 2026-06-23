@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_constitutional_update | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-025 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.constitutional_update
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES] zephyr.integration.shared_08.file_utils; zephyr.shared.shared_services.observability_02.session_audit
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_constitutional_update | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 constitutional_update.py —— 宪法自愈（Phase 14 | 盲点 B27）

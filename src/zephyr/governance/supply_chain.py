@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_supply_chain | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
-
 # [MODULE] zephyr.governance.audit_trail.supply_chain
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.audit_trail.models
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_supply_chain | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 audit-trail.supply_chain — MOD-INF-020 · 供应链审计

@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-SEC_events | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.events
-
-# [INVARIANTS] 事件定义不可修改
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
 # [CONSUMERS] behavioral_auditor包内所有模块
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 事件定义不可修改
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] immutable_core
-
 # [ERROR_CONTRACT] 定义所有漂移事件类型
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_events | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 G-CT-005 — DriftEvent Pydantic V2 BaseModel 漂移事件定义."""

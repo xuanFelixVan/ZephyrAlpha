@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §observability
 # [MODULE] zephyr.security.access_control.observability
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_observability_agent_rbac.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] metrics never lost before reset; anomaly detection deterministic for same inputs
 # [MODIFY-GUARD] blueprint.md §observability
-# [CONSUMERS] tests/agent_rbac/test_observability_agent_rbac.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] all methods never raise; detect_* return AnomalyResult
 # [TESTS] tests/agent_rbac/test_observability_agent_rbac.py
+# [A_module] module_id=MOD-SEC_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """ObservabilityReporter — 指标上报与异常检测.
 
 依据蓝图 MOD-INF-018 §observability:

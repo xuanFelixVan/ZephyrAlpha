@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_runtime_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
 # [MODULE] zephyr.trading.runtime_config
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.runtime_types
+# [CONSUMERS] zephyr.trading.auto_runtime_core;zephyr.trading.lifecycle_manager;zephyr.trading.windows_service;zephyr.trading.__main__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] RuntimeConfig真源在zephyr.integration.shared_08.contracts.runtime_types;本文件仅作向后兼容re-export
 # [MODIFY-GUARD] src/zephyr/shared/contracts/runtime_types.py
-# [CONSUMERS] zephyr.trading.auto_runtime_core;zephyr.trading.lifecycle_manager;zephyr.trading.windows_service;zephyr.trading.__main__
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-ORC_runtime_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from zephyr.integration.shared_08.contracts.runtime_types import DATA_DIR, RuntimeConfig
 

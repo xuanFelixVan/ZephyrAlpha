@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_anomaly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §6
 # [MODULE] zephyr.governance.audit_trail.anomaly
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_orchestrator.__init__
+# [CONSUMERS] audit-orchestrator.pipeline_runner; integrity
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 异常检测基于统计阈值; 误报率低于10%
 # [MODIFY-GUARD] 检测算法变更必须同步 self_monitor.py
-# [CONSUMERS] audit-orchestrator.pipeline_runner; integrity
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 检测失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_anomaly.py
+# [A_module] module_id=MOD-GOV_anomaly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

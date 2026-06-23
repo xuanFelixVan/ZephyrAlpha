@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_metrics_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-TELE-FLE-001
 # [MODULE] zephyr.infrastructure.system_telemetry.metrics_bridge
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.__init__
+# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; zephyr.trading.health_monitor
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] source_system 必须在枚举中; value 必须是 float; tag 值只允许 str/int/float/bool/None
 # [MODIFY-GUARD] CT-TELE-FLE-001 协议变更必须同步更新 FLE metrics_collector.collect_from_telemetry
-# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; zephyr.trading.health_monitor
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TelemetryWriteError 磁盘满/DB 锁超时; ValueError 参数非法
 # [TESTS] scripts/connect/tele_fle.py --trigger
+# [A_module] module_id=MOD-INF_metrics_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """TELE→FLE 指标桥接 — emit_metrics() 生产者
 
 CT-TELE-FLE-001: SystemTelemetry → FeedbackLoop 数据管道。

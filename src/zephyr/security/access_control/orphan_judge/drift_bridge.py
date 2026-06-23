@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_drift_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §6.1
 # [MODULE] zephyr.security.access_control.orphan_judge.drift_bridge
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.drift_detector
+# [CONSUMERS] orphan-judge.judge.OrphanJudge(starve/stale判定)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现漂移检测; 仅桥接DriftDetector.trigger_recovery()
 # [MODIFY-GUARD] DriftDetector API变更时同步此桥接
-# [CONSUMERS] orphan-judge.judge.OrphanJudge(starve/stale判定)
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回 {"status": "bridge_unavailable"}
 # [TESTS] tests/orphan-judge/test_drift_bridge.py
+# [A_module] module_id=MOD-SEC_drift_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

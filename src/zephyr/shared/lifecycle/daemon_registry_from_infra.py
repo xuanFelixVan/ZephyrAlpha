@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_daemon_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-108 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.daemon_registry
-
-# [INVARIANTS]
-
-# [MODIFY-GUARD] resource_optimization_engine.py; resource_optimization_models.py; daemon_registry.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.lifecycle.__init__
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD] resource_optimization_engine.py; resource_optimization_models.py; daemon_registry.py
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] logging on registration/state errors (no raises)
-
 # [TESTS] tests/lifecycle_manager/test_daemon_registry.py
+# [A_module] module_id=MOD-INF_daemon_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

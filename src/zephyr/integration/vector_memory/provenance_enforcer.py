@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_provenance_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
-
 # [MODULE] zephyr.integration.vector_memory.provenance_enforcer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.vector_memory.vms_schemas; zephyr.integration.vector_memory.collection_manager
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_provenance_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行

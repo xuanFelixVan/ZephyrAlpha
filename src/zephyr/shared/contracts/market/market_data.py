@@ -1,5 +1,18 @@
-# [A_module] module_id=MOD-SHR_market_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# [MODULE] src.zephyr.shared.contracts.market.market_data
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SHR_market_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.market.market_data."""
 
 import importlib

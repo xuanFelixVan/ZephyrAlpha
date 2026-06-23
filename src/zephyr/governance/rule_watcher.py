@@ -1,8 +1,12 @@
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/governance/blueprint.md | §rule_watcher
 # [MODULE] zephyr.governance.rule_watcher
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] cold_start sequence; AI sessions; governance pipeline
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] YAML files are content SSoT; mtime-based change detection; sync direction YAML→DB
 # [MODIFY-GUARD] sync_rule_registry.py; verify_rule_yaml_migration.py; rule_engine.py
-# [CONSUMERS] cold_start sequence; AI sessions; governance pipeline
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

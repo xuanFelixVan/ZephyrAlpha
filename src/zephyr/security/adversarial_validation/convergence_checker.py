@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_convergence_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §6.2 + §16 Phase 2a
 # [MODULE] zephyr.security.adversarial_validation.convergence_checker
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] validator.py; escalation-engine (external)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 3 consecutive rounds without improvement → EscalationEngine trigger; blocked_rate threshold 95%; bypass_count MUST decrease monotonically
 # [MODIFY-GUARD] Convergence thresholds per blueprint §6.2; escalation logic MUST NOT be bypassed
-# [CONSUMERS] validator.py; escalation-engine (external)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ConvergenceFailureError on 3-round stagnation; EscalationTriggerError on escalation failure
 # [TESTS] tests/red_blue/test_convergence_checker.py
+# [A_module] module_id=MOD-SEC_convergence_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-GOV_gate_override | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.governance.rule_enforcement.gate_override
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES] zephyr.governance.audit_trail.bridge
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_gate_override | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Owner 紧急旁路——时间限定的门禁临时绕过 + 审计追踪（beta）
 同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。"""

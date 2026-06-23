@@ -1,18 +1,18 @@
-# [A_module] module_id=MOD-INF__trace_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
-from collections.abc import Callable
-
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry._trace_bridge
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.system_telemetry.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF__trace_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from typing import Any
 
 _span_context_getter: Callable[[], Any] | None = None

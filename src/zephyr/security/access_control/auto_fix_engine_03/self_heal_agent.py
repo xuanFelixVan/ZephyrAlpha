@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_self_heal_agent | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.self_heal_agent
-
-# [INVARIANTS] OODA最大5轮;熔断器3次连续失败触发;不自动修复行为审计RED
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml self_heal_agent段
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
 # [CONSUMERS] engine.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] OODA最大5轮;熔断器3次连续失败触发;不自动修复行为审计RED
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml self_heal_agent段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] SelfHealMaxRoundsError;SelfHealCircuitOpenError
-
 # [TESTS] tests/auto-fix-engine/test_self_heal_agent.py
+# [A_module] module_id=MOD-SEC_self_heal_agent | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

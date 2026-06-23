@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_config_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.config_fixer
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
+# [CONSUMERS] engine.py;MOD-INF-023(drift-detector)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 配置为SSoT;只修复合并冲突标记和格式问题;不改变配置语义
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml config_fixer段
-# [CONSUMERS] engine.py;MOD-INF-023(drift-detector)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConfigFixError
 # [TESTS] tests/auto-fix-engine/test_config_fixer.py
+# [A_module] module_id=MOD-SEC_config_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 import os
 import re

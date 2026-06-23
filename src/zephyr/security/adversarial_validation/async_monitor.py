@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_async_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §8.1 + §16 Phase 2c
 # [MODULE] zephyr.security.adversarial_validation.async_monitor
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.circuit_breaker; zephyr.security.adversarial_validation.bypass_recorder; zephyr.security.adversarial_validation.cleanup
+# [CONSUMERS] cli.py; mcp_endpoints.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Background daemon monitors: circuit_breaker state / bypass_backlog / convergence_stagnation / cleanup_pending; 30s polling interval
 # [MODIFY-GUARD] Adding monitors MUST register in _MONITORS; polling_interval_s MUST NOT be below 5
-# [CONSUMERS] cli.py; mcp_endpoints.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] MonitorStallError on consecutive failures across all monitors
 # [TESTS] tests/red_blue/test_async_monitor.py
+# [A_module] module_id=MOD-SEC_async_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

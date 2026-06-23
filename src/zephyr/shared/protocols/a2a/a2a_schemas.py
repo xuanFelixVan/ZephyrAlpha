@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SHR_a2a_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_domain-shared/protocols/blueprint.md
 # [MODULE] zephyr.shared.protocols.a2a.a2a_schemas
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] no imports from zephyr.infrastructure or zephyr.trading; data contracts only
 # [MODIFY-GUARD] schema changes require consumer audit
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
 # [ERROR_CONTRACT] Pydantic validation errors on schema violation
 # [TESTS] tests/test_shared_protocols.py
+# [A_module] module_id=MOD-SHR_a2a_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """A2A data structure contracts — Message, Task, and StateMachine schemas.
 

@@ -1,18 +1,18 @@
-# [A_module] module_id=MOD-GOV_vibe_coding_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
-from collections.abc import Callable
-
 # [BLUEPRINT] SRC-024 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.vibe_coding_enforcer
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_vibe_coding_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from enum import Enum
 from functools import wraps
 from typing import Any, TypeVar

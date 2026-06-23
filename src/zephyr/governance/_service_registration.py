@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-DAT__service_registration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-001 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.data._service_registration
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__
+# [CONSUMERS] zephyr.trading.boot_hooks (startup); zephyr.__init__ (eager registration)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] register_services() MUST be called before any D-INFRA code uses ServiceRegistry.get(); idempotent
 # [MODIFY-GUARD] Adding registrations requires updating shared_core.registry._VALID_KEYS
-# [CONSUMERS] zephyr.trading.boot_hooks (startup); zephyr.__init__ (eager registration)
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if D-DATA modules unavailable; KeyError if registry key invalid
 # [TESTS] tests/unit/test_shared_core.py
+# [A_module] module_id=MOD-DAT__service_registration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 D-DATA → ServiceRegistry 注册模块

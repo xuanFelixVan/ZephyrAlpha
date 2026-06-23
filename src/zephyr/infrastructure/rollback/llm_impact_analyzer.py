@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_llm_impact_analyzer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
-
 # [MODULE] zephyr.infrastructure.rollback.llm_impact_analyzer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.rollback.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_llm_impact_analyzer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 LLMImpactAnalyzer — LLM-based commit 语义影响分析器。

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_fix_safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §5
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.fix_safety
-
-# [INVARIANTS] SafetyGate MUST check FixLevel+target;CascadeBreaker MUST熔断;SecretLeakGuard MUST 100%拦截
-
-# [MODIFY-GUARD] blueprint.md §5;auto-fix-config.yaml safety段
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;llm_fix_adapter.py;self_heal_agent.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] SafetyGate MUST check FixLevel+target;CascadeBreaker MUST熔断;SecretLeakGuard MUST 100%拦截
+# [MODIFY-GUARD] blueprint.md §5;auto-fix-config.yaml safety段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] SafetyGateDeniedError;CascadeBreakerTriggeredError
-
 # [TESTS] tests/auto-fix-engine/test_fix_safety.py
+# [A_module] module_id=MOD-INF_fix_safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

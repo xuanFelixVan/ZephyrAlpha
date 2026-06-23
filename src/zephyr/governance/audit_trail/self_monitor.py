@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_self_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §3.1
 # [MODULE] zephyr.governance.audit_trail.self_monitor
+# [DOMAIN] D-GOV_DRIFT
+# [DEPENDENCIES] zephyr.governance.audit_trail.drift_bridge
+# [CONSUMERS] audit-orchestrator.cli; MCP governance_server
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 自监控不引入外部依赖; 指标采集不阻塞主流程
 # [MODIFY-GUARD] 指标名称变更必须同步 CLI + MCP
-# [CONSUMERS] audit-orchestrator.cli; MCP governance_server
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 监控失败返回空指标
 # [TESTS] tests/audit-orchestrator/test_self_monitor.py
+# [A_module] module_id=MOD-GOV_self_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 import time
 from datetime import datetime

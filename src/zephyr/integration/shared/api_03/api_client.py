@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SHR_api_client | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.integration.shared.api_03.api_client
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors; zephyr.integration.shared_08.resilience.circuit_breaker; zephyr.integration.shared_08.resilience.retry; zephyr.integration.shared_08.io.serialization
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SHR_api_client | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 api_client.py —— 统一 API Client 基类（Phase 7 新增 | 盲点 B11 修复）

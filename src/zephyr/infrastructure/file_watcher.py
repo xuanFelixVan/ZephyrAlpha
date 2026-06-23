@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_file_watcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
-
 # [MODULE] zephyr.infrastructure.file_watcher
-
-# [INVARIANTS] 轮询间隔>=10s; 哈希比对用MD5; 变更事件必须包含path+event_type+timestamp
-
-# [MODIFY-GUARD] auto_runtime_core.py; blueprint_decomposer.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.shared_services.blueprint_decomposer; zephyr.shared.__init__
 # [CONSUMERS] auto_runtime_core.py; blueprint_decomposer.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 轮询间隔>=10s; 哈希比对用MD5; 变更事件必须包含path+event_type+timestamp
+# [MODIFY-GUARD] auto_runtime_core.py; blueprint_decomposer.py
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] FileWatcherError on invalid watch_dir; silent skip on permission denied
-
 # [TESTS] tests/unit/test_file_watcher.py
+# [A_module] module_id=MOD-INF_file_watcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

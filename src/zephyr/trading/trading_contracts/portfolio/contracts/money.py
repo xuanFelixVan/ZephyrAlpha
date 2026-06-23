@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-PRT_money | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-198 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.portfolio.contracts.money
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.governance.instrument
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-PRT_money | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from typing import Self
 
 """

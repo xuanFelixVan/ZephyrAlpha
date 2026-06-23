@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_query | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4.1
 # [MODULE] zephyr.governance.audit_trail.query
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [CONSUMERS] audit-orchestrator.cli; MCP governance_server
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 只读操作; 不修改任何审计数据
 # [MODIFY-GUARD] 查询接口签名变更必须同步 cli.py
-# [CONSUMERS] audit-orchestrator.cli; MCP governance_server
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 查询失败返回空结果而非抛异常
 # [TESTS] tests/audit-orchestrator/test_query.py
+# [A_module] module_id=MOD-GOV_query | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import json
 import logging
 from datetime import datetime, timedelta

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RSC_unified_memory_api | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
-
 # [MODULE] zephyr.intelligence.model_evaluation.unified_memory_api
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.integration.shared_08.security.capability
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RSC_unified_memory_api | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装）

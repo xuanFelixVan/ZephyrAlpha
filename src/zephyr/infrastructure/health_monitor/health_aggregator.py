@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_health_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_sys-master/blueprint.md
 # [MODULE] zephyr.infrastructure.health_monitor.health_aggregator
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.health_monitor.__init__
+# [CONSUMERS] AutoRuntime Core health check phase
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 12系统健康检查并行执行; 任一FAIL→整体WARN; 全部OK→OK; 任一项超时→SKIP
 # [MODIFY-GUARD] 新增系统必须同步添加check_函数
-# [CONSUMERS] AutoRuntime Core health check phase
 # [STABILITY] evolving; [SAFETY] L; [AI_AUTONOMY] ai_modifiable
-# [TESTS] scripts/connect/health_check.py --trigger
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
+# [TESTS] scripts/connect/health_check.py --trigger
+# [A_module] module_id=MOD-INF_health_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """全系统健康聚合 — check_all_systems()"""
 
 import logging

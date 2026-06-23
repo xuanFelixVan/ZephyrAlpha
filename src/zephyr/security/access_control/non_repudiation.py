@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_non_repudiation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.non_repudiation
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py; tests/agent_rbac/test_forensic_a.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] sign returns AuditEntry with non-None hmac_hash; verify(entry) returns dict-like with ["verified"] key; truthy when verified
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py; tests/agent_rbac/test_forensic_a.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sign/verify never raise; verify returns {"verified": False} on tampered data or missing hmac_hash
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py; tests/agent_rbac/test_forensic_a.py
+# [A_module] module_id=MOD-SEC_non_repudiation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """NonRepudiation — 不可抵赖性审计签名.
 
 依据蓝图 MOD-INF-018 §3:

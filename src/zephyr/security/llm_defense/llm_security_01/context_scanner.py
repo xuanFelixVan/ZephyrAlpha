@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_context_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-CE-LSG-001
 # [MODULE] zephyr.security.llm_defense.llm_security_01.context_scanner
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway
+# [CONSUMERS] zephyr.autonomy_core.security_filter
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 九层纵深扫描; fail-closed: 任一层DENY→整体DENY; 不可用时返回pass+degraded_marker
 # [MODIFY-GUARD] CT-CE-LSG-001 协议变更必须同步更新context_engine/security_filter
-# [CONSUMERS] zephyr.autonomy_core.security_filter
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] LSGSecurityGateway不可用返回status=degraded不阻断; 空blocks返回passed
 # [TESTS] scripts/connect/ce_lsg.py --trigger
+# [A_module] module_id=MOD-SEC_context_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """LSG 上下文扫描器 — scan_context() 消费者
 
 CT-CE-LSG-001: 接收 CE 投递的上下文块, 九层纵深防御扫描后返回安全判定。

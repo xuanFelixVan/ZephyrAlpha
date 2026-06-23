@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_incremental_review | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-018 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.incremental_review
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_incremental_review | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from dataclasses import dataclass
 
 

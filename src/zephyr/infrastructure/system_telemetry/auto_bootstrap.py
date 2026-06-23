@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_auto_bootstrap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.system_telemetry.auto_bootstrap
-
-# [INVARIANTS] lazy singleton creation; monkey-patch must be reversible; zero manual code required; register_module thread-safe
-
-# [MODIFY-GUARD] facade.py; __init__.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.shared_services.session_continuity; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading; zephyr.autonomy_core
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] lazy singleton creation; monkey-patch must be reversible; zero manual code required; register_module thread-safe
+# [MODIFY-GUARD] facade.py; __init__.py
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ImportError; RuntimeError
-
 # [TESTS] tests/system-telemetry/test_auto_bootstrap.py
+# [A_module] module_id=MOD-INF_auto_bootstrap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-DAT_projection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
 # [MODULE] zephyr.data.persistence.projection_engine
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema
+# [CONSUMERS] zephyr.data.persistence.task_repo; zephyr.data.persistence.snapshot_manager
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] fold_to_current_state returns deterministic state for same event sequence; unknown event_types are no-op
 # [MODIFY-GUARD] _HANDLERS registry — new event types MUST register a handler
-# [CONSUMERS] zephyr.data.persistence.task_repo; zephyr.data.persistence.snapshot_manager
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ProjectionError on handler failure
 # [TESTS] tests/test_event_store_stress.py
+# [A_module] module_id=MOD-DAT_projection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ProjectionEngine — 事件折叠为当前状态（DW-0003）

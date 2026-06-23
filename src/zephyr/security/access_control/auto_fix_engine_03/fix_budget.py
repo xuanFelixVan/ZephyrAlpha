@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_fix_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §5
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_budget
-
-# [INVARIANTS] FixBudget daily≤50;monthly≤500;LLM tokens≤500000;FixStormGuard MUST检测风暴
-
-# [MODIFY-GUARD] blueprint.md §5;auto-fix-config.yaml budget段
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
 # [CONSUMERS] engine.py;llm_fix_adapter.py;batch_fixer.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] FixBudget daily≤50;monthly≤500;LLM tokens≤500000;FixStormGuard MUST检测风暴
+# [MODIFY-GUARD] blueprint.md §5;auto-fix-config.yaml budget段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] FixBudgetExceededError;FixStormDetectedError
-
 # [TESTS] tests/auto-fix-engine/test_fix_budget.py
+# [A_module] module_id=MOD-SEC_fix_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

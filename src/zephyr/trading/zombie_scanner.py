@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_zombie_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.zombie_scanner
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__
+# [CONSUMERS] scripts/ide_health_service.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 扫描只读无副作用；kill 操作必须日志记录；模式计数器原子读写；分类判定仅基于进程指标；SUSPICIOUS 只上报不 kill；进程归属判定 = cmdline 或 cwd 任一包含项目根路径
 # [MODIFY-GUARD] MOD-INF-032 §new-IDE
-# [CONSUMERS] scripts/ide_health_service.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] psutil 不可用时返回空结果；kill 对已退出 PID 不报错；模式文件损坏时重置为空 dict
 # [TESTS]
+# [A_module] module_id=MOD-ORC_zombie_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 zombie_scanner.py — 僵尸 Python 进程检测与自动处置

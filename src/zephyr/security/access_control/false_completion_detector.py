@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_false_completion_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.false_completion_detector
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] check_false_completion returns non-None CompletionClaim with .detected/.reason; detected=True when actual_size < expected_size
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_false_completion never raises; returns CompletionClaim(detected=False) on equal/greater size
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_false_completion_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """FalseCompletionDetector — 虚假完成检测.
 
 依据蓝图 MOD-INF-018 §3:

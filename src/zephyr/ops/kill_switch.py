@@ -1,24 +1,18 @@
-# [A_module] module_id=MOD-RES_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.ops.kill_switch
 # [DOMAIN] D-OPS
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RES_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
 
 """
 KillSwitchManager — 三级 Kill Switch 管理器。

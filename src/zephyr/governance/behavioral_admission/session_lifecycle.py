@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_session_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §17
 # [MODULE] zephyr.governance.behavioral_admission.session_lifecycle
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] SESSION_TRANSITIONS定义的状态转换是唯一合法路径；max_active_sessions硬限制不可绕过
 # [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
-# [CONSUMERS] zephyr.governance.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] transition: InvalidTransition→ValueError; register_session: CapacityExceeded→RuntimeError
 # [TESTS] tests/test_behavioral_audit/test_session_lifecycle.py
+# [A_module] module_id=MOD-GOV_session_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

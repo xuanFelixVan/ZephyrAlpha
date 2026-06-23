@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §ports
 # [MODULE] zephyr.trading.ports
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__
+# [CONSUMERS] zephyr.trading.auto_runtime_core;zephyr.trading.work_orchestrator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.integration.pipeline_routing
 # [MODIFY-GUARD] blueprint.md §ports; runtime/__init__.py __all__
-# [CONSUMERS] zephyr.trading.auto_runtime_core;zephyr.trading.work_orchestrator
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_runtime_ports.py
+# [A_module] module_id=MOD-ORC_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Protocol-based interface layer for runtime→pipeline dependency abstraction.
 

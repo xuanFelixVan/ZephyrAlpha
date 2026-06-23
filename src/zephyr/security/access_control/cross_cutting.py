@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_cross_cutting | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.cross_cutting
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] topology adjacency list maintained; detect_cycles returns list; no edges = no cycles
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] add_node/detect_cycles never raise; detect_cycles returns list
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_cross_cutting | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """CrossCutting — 横切面权限组件.
 
 依据蓝图 MOD-INF-018 §3:

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_blueprint_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | 蓝图特有§A
-
 # [MODULE] zephyr.infrastructure.system_telemetry.metrics.blueprint_metrics
-
-# [INVARIANTS] 蓝图读取事件MUST通过此模块记录;输出JSONL格式;RULE-ONE原子写入
-
-# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.system_telemetry.metrics.__init__
 # [CONSUMERS] src/zephyr/system-telemetry/facade.py;src/zephyr/system-telemetry/auto_bootstrap.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 蓝图读取事件MUST通过此模块记录;输出JSONL格式;RULE-ONE原子写入
+# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] JSONL写入失败→日志warning;不阻塞调用方
-
 # [TESTS] tests/unit/telemetry/
+# [A_module] module_id=MOD-INF_blueprint_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 blueprint_metrics — 蓝图使用追踪 instrumentation

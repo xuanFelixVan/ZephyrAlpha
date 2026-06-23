@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.baseline_poisoning_guard
-
-# [INVARIANTS] 投毒防护不可禁用
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES]
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 投毒防护不可禁用
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] stable
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] immutable_core
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。

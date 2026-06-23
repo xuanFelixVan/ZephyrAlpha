@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_stochastic_diagnosis_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.verifiers.stochastic_diagnosis_verifier
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-OPS
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_stochastic_diagnosis_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Stochastic Diagnosis Verifier — v0.38.0 R483
 

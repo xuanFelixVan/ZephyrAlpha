@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_abac_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.abac_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] L0_INTERN never allowed modify:blueprint; temporal classification always returns valid category
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check() never raises; returns tuple[bool, str]; classify_temporal() never raises
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_abac_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """ABACGuard — 基于属性的权限守卫.
 
 依据蓝图 MOD-INF-018 §3:

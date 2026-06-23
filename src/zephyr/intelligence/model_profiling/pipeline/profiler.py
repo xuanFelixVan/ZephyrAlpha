@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RSC_profiler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §
-
 # [MODULE] zephyr.intelligence.model_profiling.pipeline.profiler
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline.benchmark_suite; zephyr.intelligence.model_profiling.pipeline.model_discovery
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-RSC_profiler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ModelProfiler — 核心性能分析引擎

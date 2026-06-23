@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_scaffold_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.scaffold_registrar
-
-# [INVARIANTS] 只注册不删除;注册到manifest/registry/__init__.py
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml scaffold_registrar段
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;MOD-INF-026(asset-inventory);MOD-INF-029(orphan-judge)
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 只注册不删除;注册到manifest/registry/__init__.py
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml scaffold_registrar段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ScaffoldRegistrationError
-
 # [TESTS] tests/auto-fix-engine/test_scaffold_registrar.py
+# [A_module] module_id=MOD-INF_scaffold_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

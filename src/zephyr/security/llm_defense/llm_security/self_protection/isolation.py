@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_isolation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md
-
 # [MODULE] zephyr.security.llm_defense.llm_security.self_protection.isolation
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.governance.audit_trail.bridge
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SEC_isolation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 import threading
 import time

@@ -1,20 +1,18 @@
-# [A_module] module_id=MOD-INF_token_value_attribution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-
 # [MODULE] zephyr.infrastructure.capacity_assurance.token_value_attribution
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] deprecated
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF_token_value_attribution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Token Value Attribution — Token 成本 vs 产出价值 ROI (盲点 #24, M-30)

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_sqlite_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
-
 # [MODULE] zephyr.infrastructure.db.sqlite_schema
-
-# [INVARIANTS] Re-export wrapper only; authoritative implementation at zephyr.data.persistence.sqlite_schema
-
-# [MODIFY-GUARD] Do not add logic here; all changes must go to zephyr.data.persistence.sqlite_schema
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] Backward-compatible import path for legacy consumers
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] Re-export wrapper only; authoritative implementation at zephyr.data.persistence.sqlite_schema
+# [MODIFY-GUARD] Do not add logic here; all changes must go to zephyr.data.persistence.sqlite_schema
 # [STABILITY] frozen
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] immutable_core
-
 # [ERROR_CONTRACT] Delegates to zephyr.data.persistence.sqlite_schema
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_sqlite_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Backward-compatible re-export wrapper.

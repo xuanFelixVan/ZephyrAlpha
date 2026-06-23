@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_parameterized_safety_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.gates.parameterized_safety_gate
-
-# [INVARIANTS] MOD-INF-010 检测-诊断-动作链不可绕过; GateQueue 全局串行; 原子写入 temp-file+os.replace()
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.gates.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.trading
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] MOD-INF-010 检测-诊断-动作链不可绕过; GateQueue 全局串行; 原子写入 temp-file+os.replace()
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] FeedbackLoopError
-
 # [TESTS] tests/feedback-loop/
+# [A_module] module_id=MOD-UNK_parameterized_safety_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §
 

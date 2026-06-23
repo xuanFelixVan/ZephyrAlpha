@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4.4
 # [MODULE] zephyr.governance.audit_trail.writer
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [CONSUMERS] audit-orchestrator.pipeline_runner; cli
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 报告写入必须原子操作(temp-file+os.replace)
 # [MODIFY-GUARD] 报告格式变更必须同步 cli.py + query.py
-# [CONSUMERS] audit-orchestrator.pipeline_runner; cli
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 写入失败抛IOError
 # [TESTS] tests/audit-orchestrator/test_writer.py
+# [A_module] module_id=MOD-GOV_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import json
 import logging
 import os

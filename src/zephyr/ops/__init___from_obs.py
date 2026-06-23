@@ -1,5 +1,18 @@
-# [A_module] module_id=MOD-UNK_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT]
 # [MODULE] zephyr.observability
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.__init__; zephyr.shared.adaptive_sampler; zephyr.shared.reasoning_spans
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-UNK_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 import importlib as _importlib
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_ollama_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain-integration/local-model/blueprint.md | §3.1
-
 # [MODULE] zephyr.integration.local_model.ollama_chat
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py; vector_memory_server.py
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] _budget_preflight DENY 时抛 RuntimeError; _chat 网络失败时抛异常
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_ollama_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理

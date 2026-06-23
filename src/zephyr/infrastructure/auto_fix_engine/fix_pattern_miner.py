@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_fix_pattern_miner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.fix_pattern_miner
-
-# [INVARIANTS] 只从成功修复学习;模式MUST持久化;频率MUST递增
-
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;MOD-INF-010(feedback-loop)
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 只从成功修复学习;模式MUST持久化;频率MUST递增
+# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] PatternMiningError
-
 # [TESTS] tests/auto-fix-engine/test_fix_pattern_miner.py
+# [A_module] module_id=MOD-INF_fix_pattern_miner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

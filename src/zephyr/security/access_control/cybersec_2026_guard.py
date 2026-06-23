@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_cybersec_2026_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §cybersec_2026_guard
 # [MODULE] zephyr.security.access_control.cybersec_2026_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] clean context never detected; known vectors always detected
 # [MODIFY-GUARD] blueprint.md §cybersec_2026_guard
-# [CONSUMERS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan never raises; returns CyberSecVerdict
 # [TESTS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
+# [A_module] module_id=MOD-SEC_cybersec_2026_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Cybersec2026Guard — 2026 网络安全威胁检测.
 
 依据蓝图 MOD-INF-018 §cybersec_2026_guard:

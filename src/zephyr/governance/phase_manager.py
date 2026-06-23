@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES_phase_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.phase_manager
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
-# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
 # [TESTS] tests/test_rollback/
+# [A_module] module_id=MOD-RES_phase_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Phase Manager — ZephyrAlpha 施工阶段门控引擎.
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_triage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
-
 # [MODULE] zephyr.data.knowledge_management.kb.pipeline.triage
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.shared.contracts.gate.__init__; zephyr.governance.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_triage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 G2 Triage 门禁 — 知识分类评分（T-2-13-B）

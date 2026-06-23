@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_scenario_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.2 + §16 Phase 0
 # [MODULE] zephyr.security.adversarial_validation.scenario_loader
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] validator.py; attack_registry.py; game_day_runner.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] MUST load from _scenario-registry.yaml; parsed scenarios MUST validate against AttackScenario model
 # [MODIFY-GUARD] Adding new fields to _scenario-registry.yaml MUST update AttackScenario model and this loader
-# [CONSUMERS] validator.py; attack_registry.py; game_day_runner.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] FileNotFoundError if _scenario-registry.yaml missing; Pydantic ValidationError on malformed scenarios
 # [TESTS] tests/red_blue/test_scenario_loader.py
+# [A_module] module_id=MOD-SEC_scenario_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

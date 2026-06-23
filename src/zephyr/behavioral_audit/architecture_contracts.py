@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_architecture_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md
 # [MODULE] zephyr.behavioral_audit.architecture_contracts
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] MOD-INF-007;MOD-INF-021;MOD-INF-020
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算
 # [MODIFY-GUARD] docs/03_modules/_domain-governance/drift-detector/blueprint.md;src/zephyr/behavioral-auditor/__init__.py
-# [CONSUMERS] MOD-INF-007;MOD-INF-021;MOD-INF-020
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_behavioral_auditor/
+# [A_module] module_id=MOD-SEC_architecture_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

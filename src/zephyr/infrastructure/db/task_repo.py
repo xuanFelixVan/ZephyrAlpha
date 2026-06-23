@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_task_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
-
 # [MODULE] zephyr.infrastructure.db.task_repo
-
-# [INVARIANTS] Re-export wrapper only; authoritative implementation at zephyr.data.persistence.task_repo
-
-# [MODIFY-GUARD] Do not add logic here; all changes must go to zephyr.data.persistence.task_repo
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.governance.persistence.task_repo
 # [CONSUMERS] Backward-compatible import path for legacy consumers
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] Re-export wrapper only; authoritative implementation at zephyr.data.persistence.task_repo
+# [MODIFY-GUARD] Do not add logic here; all changes must go to zephyr.data.persistence.task_repo
 # [STABILITY] frozen
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] immutable_core
-
 # [ERROR_CONTRACT] Delegates to zephyr.data.persistence.task_repo
-
 # [TESTS] tests/test_mcp_task_claim.py; tests/test_boot_hooks_unlock.py
+# [A_module] module_id=MOD-INF_task_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Backward-compatible re-export wrapper.

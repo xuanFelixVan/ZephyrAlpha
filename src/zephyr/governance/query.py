@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_query | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
-
 # [MODULE] zephyr.data.persistence.query
-
-# [INVARIANTS] 只读查询; 不修改任务状态; QueryMixin 无副作用
-
-# [MODIFY-GUARD] task_repo.py 组合入口; base_repo.py _row_to_taskcard
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.shared.__init__
 # [CONSUMERS] task_repo;pipeline;audit
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 只读查询; 不修改任务状态; QueryMixin 无副作用
+# [MODIFY-GUARD] task_repo.py 组合入口; base_repo.py _row_to_taskcard
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] QueryError;TaskNotFoundError
-
 # [TESTS] tests/db/
+# [A_module] module_id=MOD-DAT_query | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_auto_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.auto_dispatcher
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
+# [CONSUMERS] zephyr.trading.ide_health_service
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.ide_health_service
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-ORC_auto_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 AutoDispatcher — 守护进程内的轻量 PipelineDispatcher

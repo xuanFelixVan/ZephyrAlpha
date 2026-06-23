@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK_db_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-FLE-DB-001
 # [MODULE] zephyr.observability.feedback_loop.db_writer
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.ops.__init__; zephyr.infrastructure.__init__
+# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; zephyr.observability.feedback_loop.alert_dispatcher; zephyr.scheduler_collect_detect
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] fle_metrics/fle_alerts/fle_dispatch_log三张表幂等写入; 每次批量返回写入行数; 异常只抛日志不抛异常
 # [MODIFY-GUARD] CT-FLE-DB-001 DDL变更必须同步更新sqlite_schema.py
-# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; zephyr.observability.feedback_loop.alert_dispatcher; zephyr.scheduler_collect_detect
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DBConnectionError写入失败抛日志; 空输入返回0不报错
 # [TESTS] scripts/connect/fle_db.py --verify
+# [A_module] module_id=MOD-UNK_db_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQLite
 
 CT-FLE-DB-001: Feedback Loop 采集的指标和告警 → Database 持久化落地。

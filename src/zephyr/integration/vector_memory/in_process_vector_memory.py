@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_in_process_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
-
 # [MODULE] zephyr.integration.vector_memory.in_process_vector_memory
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.vector_memory.collection_manager; zephyr.integration.local_model.embedding_router; zephyr.integration.vector_memory.chunk_strategy_router; zephyr.integration.vector_memory.provenance_enforcer; zephyr.integration.vector_memory.retrieval_feedback; zephyr.integration.local_model.cache_layer; zephyr.integration.vector_memory.hybrid_retriever; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.bridge_layer; zephyr.integration.vector_memory.vector_bridge; zephyr.integration.vector_memory.in_memory_memory_backend
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_in_process_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 InProcessVectorMemory — MOD-INF-011 VMS 统一入口

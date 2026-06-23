@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT_agent_identity_impl | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-150 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.agent_identity_impl
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.integration.shared_08.contracts.identity.agent_identity
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Agent身份模型不可被篡改;成熟度分级不可扩展
 # [MODIFY-GUARD] zephyr.integration.shared_08.contracts.identity.agent_identity
-# [CONSUMERS] zephyr.integration.shared_08.contracts.identity.agent_identity
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_agent_rbac.py
+# [A_module] module_id=MOD-INT_agent_identity_impl | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 import hashlib
 import hmac

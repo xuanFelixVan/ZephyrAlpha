@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_task_context_builder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-ORC-CE-001
 # [MODULE] zephyr.autonomy_core.task_context_builder
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [CONSUMERS] zephyr.trading.orchestrator.context_bridge
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 四阶段流水线(build/compress/validate/inject); missing文件不阻塞返回partial; ContextAssembler不可用降级
 # [MODIFY-GUARD] CT-ORC-CE-001 必须同步更新orchestrator/context_bridge
-# [CONSUMERS] zephyr.trading.orchestrator.context_bridge
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 蓝图文件缺失返回status=partial; ContextAssembler不可用返回status=degraded
 # [TESTS] scripts/connect/orc_ce.py --trigger
+# [A_module] module_id=MOD-ORC_task_context_builder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """CE 任务上下文构建器 — build_from_task() 消费者
 
 CT-ORC-CE-001: 接收 Orc 的上下文请求, 四阶段构建可注入的执行上下文。

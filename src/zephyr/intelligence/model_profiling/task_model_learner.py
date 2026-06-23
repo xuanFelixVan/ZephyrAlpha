@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RSC_task_model_learner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.task_model_learner
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES]
+# [CONSUMERS] MOD-INF-034;MOD-INF-009
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 任务×模型增量学习;推荐引擎;composite_score算法
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-034;MOD-INF-009
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] LearningError;RecommendationError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-RSC_task_model_learner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ModelTaskMatrix — 任务×模型性能学习引擎

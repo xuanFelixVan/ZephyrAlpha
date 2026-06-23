@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_audit_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
-
 # [MODULE] zephyr.data.persistence.audit_schema
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_audit_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 audit_schema — 审计视图与查询入口（MOD-INF-012 v2.0）

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_dep_version_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.dep_version_fixer
-
-# [INVARIANTS] 只统一版本;不升级major版本;以最高minor/patch为准
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml dep_version_fixer段
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 只统一版本;不升级major版本;以最高minor/patch为准
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml dep_version_fixer段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] DepVersionFixError
-
 # [TESTS] tests/auto-fix-engine/test_dep_version_fixer.py
+# [A_module] module_id=MOD-INF_dep_version_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

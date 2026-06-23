@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_guard_layers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent_rbac/blueprint.md | §guard_layers
 # [MODULE] zephyr.security.access_control.guard_layers
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_permissions.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] ColdStartLock default _locked is True; escalate returns non-None
 # [MODIFY-GUARD] blueprint.md §guard_layers
-# [CONSUMERS] tests/agent_rbac/test_permissions.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] escalate never raises; returns list of action strings
 # [TESTS] tests/agent_rbac/test_permissions.py
+# [A_module] module_id=MOD-SEC_guard_layers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """GuardLayers — 权限守卫层组件.
 
 依据蓝图 MOD-INF-018 §guard_layers:

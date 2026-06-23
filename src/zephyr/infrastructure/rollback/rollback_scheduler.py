@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_rollback_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback-system/blueprint.md | §7 Phase 5.3
 # [MODULE] zephyr.infrastructure.rollback.rollback_scheduler
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.infrastructure.rollback.startup_shutdown; zephyr.trading.boot_hooks
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] start/stop are idempotent; daemon thread; never blocks boot/shutdown
 # [MODIFY-GUARD] WAL_GC_INTERVAL_SECONDS / DRILL_CHECK_INTERVAL_SECONDS / WAL_RETENTION_DAYS
-# [CONSUMERS] zephyr.infrastructure.rollback.startup_shutdown; zephyr.trading.boot_hooks
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns SchedulerResult; logs error on failure; never raises in daemon thread
 # [TESTS] tests/adversarial/test_rollback_scheduler.py
+# [A_module] module_id=MOD-INF_rollback_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 RollbackScheduler — 回滚系统自动运行调度器 (MOD-INF-021 §7 Phase 5.3).
 

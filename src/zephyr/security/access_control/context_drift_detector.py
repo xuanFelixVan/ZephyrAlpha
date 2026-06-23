@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_context_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.context_drift_detector
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] detect_scope_creep returns dict with "exceeded" bool key; window >= 1
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] detect_scope_creep never raises; returns {"exceeded": False} for unknown agent
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_context_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """ContextDriftDetector — 上下文漂移与范围蔓延检测.
 
 依据蓝图 MOD-INF-018 §3:

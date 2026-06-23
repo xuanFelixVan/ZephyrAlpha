@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF__intelligence | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination._intelligence
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_collusion_detector; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_blame_attribution; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_causal_trace; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_behavior_fingerprint; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_knowledge_distill; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_latent_comm; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_cross_agent_semantic_flow
+# [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] backward_compat: all exports must remain available from layer3_coordination
 # [MODIFY-GUARD] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
-# [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
+# [A_module] module_id=MOD-INF__intelligence | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Re-export bridge for layer3_coordination intelligence symbols.
 
 Aggregates 19 symbols from 7 source modules to preserve backward compatibility

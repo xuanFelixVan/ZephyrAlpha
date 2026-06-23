@@ -1,24 +1,18 @@
-# [A_module] module_id=MOD-RES_order_state_escalator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
 # [MODULE] zephyr.ex_core.order_state_escalator
 # [DOMAIN] D-EX_CORE
-
-# [INVARIANTS] 订单状态机升级不可跳过;超时必须触发升级
-
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.infrastructure.escalation
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 订单状态机升级不可跳过;超时必须触发升级
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
-
 # [TESTS] tests/test_escalation_engine.py
+# [A_module] module_id=MOD-RES_order_state_escalator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 

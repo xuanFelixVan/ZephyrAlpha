@@ -1,24 +1,18 @@
-# [A_module] module_id=MOD-RES_trading_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.infrastructure.rollback.trading_kill_switch
 # [DOMAIN] D-OPS
-
-# [INVARIANTS] 交易风险熔断器;五级KillSwitch;Pydantic数据模型
-
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
-
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] MOD-INF-022;MOD-INF-020;shared/kill_switch.py
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 交易风险熔断器;五级KillSwitch;Pydantic数据模型
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
 # [STABILITY] stable
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] ValueError;RuntimeError
-
 # [TESTS] tests/test_rollback/
+# [A_module] module_id=MOD-RES_trading_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # SRC-0041: Copy file -- keep independent implementation, pending future review
 #   shared/kill_switch.py is now the unified export SSoT; this file exported

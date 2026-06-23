@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_en_process_lifecycle_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §2.10
 # [MODULE] zephyr.governance.rule_enforcement.invariants.en_process_lifecycle_gateway
+# [DOMAIN] D-GOV_RULE
+# [DEPENDENCIES]
+# [CONSUMERS] CI Pipeline (phase_manager.py Gate 检查)
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] 检测裸 subprocess.Popen / multiprocessing.Process 调用；不误报 Gateway 自身内部使用
 # [MODIFY-GUARD] 白名单更新时必须同步此 Gate
-# [CONSUMERS] CI Pipeline (phase_manager.py Gate 检查)
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 违规 → GateResult(passed=False, violations=[...])
 # [TESTS] tests/zephyr/gates/invariants/test_en_process_lifecycle_gateway.py
+# [A_module] module_id=MOD-GOV_en_process_lifecycle_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 EN-process-lifecycle-gateway — 进程创建入口校验门禁

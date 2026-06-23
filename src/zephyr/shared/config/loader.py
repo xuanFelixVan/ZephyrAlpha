@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SHR_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
-
 # [MODULE] zephyr.shared.config.loader
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] infrastructure.runtime_integration.config
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SHR_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 loader.py —— 共享 YAML 配置加载与 Pydantic 校验（Phase 3 新增 | 盲点 #3/#15 修复）

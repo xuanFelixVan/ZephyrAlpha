@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES_gate_coordinator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.gate_coordinator
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] zephyr.infrastructure.rollback.rollback_engine
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] freeze → thaw 原子配对; 空操作不报错
 # [MODIFY-GUARD] freeze/thaw流程变更必须同步Pipeline+Orc
-# [CONSUMERS] zephyr.infrastructure.rollback.rollback_engine
 # [STABILITY] evolving; [SAFETY] M; [AI_AUTONOMY] ai_modifiable
-# [TESTS] scripts/connect/rbk_gate.py --trigger
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
+# [TESTS] scripts/connect/rbk_gate.py --trigger
+# [A_module] module_id=MOD-RES_gate_coordinator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """Rollback→Gate 协调器 — freeze_all / thaw_all"""
 
 import logging

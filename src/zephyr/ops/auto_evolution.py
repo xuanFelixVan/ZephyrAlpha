@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-UNK_auto_evolution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.auto_evolution
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.__init__; zephyr.shared.alert_manager; zephyr.shared.alert_precision_tracker; zephyr.shared.dual_channel_alert; zephyr.shared.error_budget_tracker; zephyr.integration.shared_08.lifecycle.resource_optimization_engine; zephyr.ops.collectors.__init__; scripts.governance.d5_architecture.detectors.__init__; zephyr.ops.diagnosers.__init__; D-FACTOR.FactorSignal 因子信号; zephyr.ops.verifiers.__init__; D-AUTONOMY-CORE.Evolution Agent 进化Agent; zephyr.behavioral_audit.forensics_engine; D-AUTONOMY-CORE.对抗性韧性 Adversarial Resilience; D-AUTONOMY-CORE.AWS Agentic AI安全范围矩阵 AWS Agentic AI Security Scope Matrix; architecture_model.layers.b_gates.yaml; zephyr.integration.shared_08.contracts.protocols; zephyr.ops.scheduler_act; zephyr.ops.scheduler_collect_detect; zephyr.ops.scheduler_health; zephyr.ops.scheduler_safety
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-UNK_auto_evolution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field

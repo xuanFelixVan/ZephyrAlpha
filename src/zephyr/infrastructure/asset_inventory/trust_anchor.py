@@ -1,25 +1,18 @@
-# [A_module] module_id=MOD-INF_trust_anchor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md
-
 # [MODULE] zephyr.infrastructure.asset_inventory.trust_anchor
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.asset_inventory.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_trust_anchor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """MOD-INF-026 §26 — 三重信任锚验证门 R20。
 

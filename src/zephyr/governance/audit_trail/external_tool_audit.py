@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_external_tool_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §9
 # [MODULE] zephyr.governance.audit_trail.external_tool_audit
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] audit-orchestrator.pipeline_runner
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 外部工具审计不阻塞主流程; 超时30s自动降级
 # [MODIFY-GUARD] 新增外部工具必须在此注册
-# [CONSUMERS] audit-orchestrator.pipeline_runner
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 审计失败返回降级结果
 # [TESTS] tests/audit-orchestrator/test_external_tool_audit.py
+# [A_module] module_id=MOD-GOV_external_tool_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 import subprocess
 from pathlib import Path

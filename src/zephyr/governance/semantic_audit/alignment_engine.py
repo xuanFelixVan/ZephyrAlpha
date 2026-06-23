@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_alignment_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §4.1
 # [MODULE] zephyr.governance.semantic_audit.alignment_engine
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.semantic_audit.models; zephyr.governance.semantic_audit.reference_extractor
+# [CONSUMERS] issue_aggregator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 对比蓝图声明 vs 磁盘文件 vs import 引用链三元对齐；输出 alignment_score + staleness_severity
 # [MODIFY-GUARD] 修改对齐规则必须同步蓝图 §4.3 对齐检测规则
-# [CONSUMERS] issue_aggregator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 蓝图不存在时返回空 AlignmentReport（aligned=0, zombie=0, orphan=0）
 # [TESTS] tests/semantic-auditor/test_alignment_engine.py
+# [A_module] module_id=MOD-GOV_alignment_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 — 对齐引擎 Stage 4
 

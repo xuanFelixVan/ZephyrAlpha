@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_runtime_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
 # [MODULE] zephyr.trading
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-ORC_runtime_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 AutoRuntime Core — 三层运行时运营中心（系统大脑）
 ==================================================

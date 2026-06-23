@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §17
 # [MODULE] zephyr.governance.behavioral_admission.admission_controller
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] TokenBucket全局桶50/s burst=100不可绕过；熔断器failure_threshold触发后所有请求CIRCUIT_OPEN
 # [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
-# [CONSUMERS] zephyr.governance.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] admit: RateLimited→retry_after_ms; admit: CircuitOpen→retry_after_cb_recovery
 # [TESTS] tests/test_behavioral_audit/test_admission_controller.py
+# [A_module] module_id=MOD-GOV_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

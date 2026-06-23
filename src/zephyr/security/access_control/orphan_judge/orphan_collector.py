@@ -1,30 +1,18 @@
-# [A_module] module_id=MOD-SEC_orphan_collector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §collector
-
-[MODULE] zephyr.security.access_control.orphan_judge.orphan_collector
-
-[INVARIANTS] OrphanCollector.execute_disposal MUST pass SafetyFence before any deletion; CollectionResult totals must be consistent
-
-[MODIFY-GUARD] orphan-judge/blueprint.md; orphan-judge/__init__.py __all__
-
-[CONSUMERS] circadian_scheduler._orphan_sweep; governance audit pipeline
-
-[STABILITY] evolving
-
-[SAFETY] L
-
-[AI_AUTONOMY] ai_modifiable
-
-[ERROR_CONTRACT] OrphanCollectorError on invalid judgment; returns False on disposal failure
-
-[TESTS] tests/orphan-judge/test_orphan_collector.py
-"""
+# [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.orphan_collector
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.cascade_analyzer; zephyr.security.access_control.orphan_judge.decision_table; zephyr.security.access_control.orphan_judge.safety_fence; zephyr.security.access_control.orphan_judge.deprecation_tracker
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-SEC_orphan_collector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

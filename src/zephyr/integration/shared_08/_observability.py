@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT__observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._observability
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.errors; zephyr.integration.shared.events.__init__; zephyr.integration.shared.events.dlq; zephyr.integration.shared_08.health; zephyr.integration.shared_08.lifecycle.__init__; zephyr.integration.shared_08.logging; zephyr.integration.shared_08.metrics; zephyr.integration.shared_08.context
+# [CONSUMERS] zephyr.shared.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from zephyr.shared
 # [MODIFY-GUARD] zephyr.shared.__init__
-# [CONSUMERS] zephyr.shared.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
+# [A_module] module_id=MOD-INT__observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """_observability — 可观测性 re-export 桥接层。
 
 从 foundation/lifecycle/contracts 子包及 ops/observability、integration/shared/events 重新导出符号，

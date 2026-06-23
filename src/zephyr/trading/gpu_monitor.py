@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_gpu_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md | §new-GPU
 # [MODULE] zephyr.trading.gpu_monitor
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__
+# [CONSUMERS] zephyr.trading.resource_optimization; zephyr.integration.shared_08.lifecycle.daemon_registry
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] collect_gpu_stats 必须在 nvidia-smi 不可用时优雅降级返回 available=False
 # [MODIFY-GUARD] MOD-INF-032 §new-GPU
-# [CONSUMERS] zephyr.trading.resource_optimization; zephyr.integration.shared_08.lifecycle.daemon_registry
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] collect_gpu_stats 返回 dict，异常时返回 {"available": False, "error": str}
 # [TESTS]
+# [A_module] module_id=MOD-ORC_gpu_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 gpu_monitor.py — NVIDIA GPU 状态采集器

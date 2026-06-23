@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_protection_index | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §17
 # [MODULE] zephyr.governance.behavioral_admission.protection_index
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.behavioral_admission.verdict_engine
+# [CONSUMERS] zephyr.governance.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] anchor路径永远返回anchor级别；Bloom Filter假阳性必须通过Trie精确二次验证
 # [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
-# [CONSUMERS] zephyr.governance.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] query: BloomFilterError→fallback to Trie-only; rebuild: IOError→return partial stats
 # [TESTS] tests/test_behavioral_audit/test_protection_index.py
+# [A_module] module_id=MOD-GOV_protection_index | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

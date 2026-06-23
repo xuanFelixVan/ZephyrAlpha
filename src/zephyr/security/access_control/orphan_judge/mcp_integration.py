@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_mcp_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §7.2
 # [MODULE] zephyr.governance.orphan_judgment.mcp_integration
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge; zephyr.governance.__init__
+# [CONSUMERS] MCP Server Tool Registry; FastMCP clients
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现MCP协议; 仅注册工具到MCP_TOOLS字典
 # [MODIFY-GUARD] MCP_TOOLS注册格式变更时同步此文件
-# [CONSUMERS] MCP Server Tool Registry; FastMCP clients
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 注册失败返回空dict
 # [TESTS] tests/orphan-judge/test_mcp_integration.py
+# [A_module] module_id=MOD-SEC_mcp_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from pathlib import Path
 from typing import Any

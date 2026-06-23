@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_ssot_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08.security.ssot_guard
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-SEC_ssot_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from typing import Self
 
 #!/usr/bin/env python3

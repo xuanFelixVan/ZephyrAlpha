@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.engine
-
-# [INVARIANTS] 修复MUST通过SafetyGate+FixBudget+CascadeBreaker;行为审计RED永不自动修复
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml;auto-fix-config.yaml
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-023(drift-detector);MOD-INF-029(orphan-judge);__main__.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 修复MUST通过SafetyGate+FixBudget+CascadeBreaker;行为审计RED永不自动修复
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml;auto-fix-config.yaml
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] AutoFixEngineError;FixBlockedError
-
 # [TESTS] tests/auto-fix-engine/test_engine.py
+# [A_module] module_id=MOD-INF_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

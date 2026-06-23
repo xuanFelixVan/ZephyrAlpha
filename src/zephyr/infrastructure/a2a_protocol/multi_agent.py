@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_multi_agent | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
-
 # [MODULE] zephyr.infrastructure.a2a_protocol.multi_agent
-
-# [INVARIANTS] core types imported from zephyr.shared.protocols.a2a where identical; local AgentRole/AgentCard are multi-agent-specific (different from shared versions)
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_coordination
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] core types imported from zephyr.shared.protocols.a2a where identical; local AgentRole/AgentCard are multi-agent-specific (different from shared versions)
+# [MODIFY-GUARD] none
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_multi_agent | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 multi_agent.py —— Multi-Agent 编排基座（Phase 14 | 盲点 B33）

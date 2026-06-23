@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_reference_graph_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §L1
 # [MODULE] zephyr.security.access_control.orphan_judge.reference_graph_engine
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
+# [CONSUMERS] orphan-judge.judge._run_layer L1
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] AST解析+import链遍历; 不修改任何文件; import扫描范围限 src/zephyr/ + scripts/
 # [MODIFY-GUARD] 修改引用检测逻辑必须同步 blueprint.md §3.1
-# [CONSUMERS] orphan-judge.judge._run_layer L1
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AST解析失败时返回 is_reachable=False,不抛异常
 # [TESTS] tests/orphan-judge/test_reference_graph_engine.py
+# [A_module] module_id=MOD-SEC_reference_graph_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-029 — L1 引用图引擎
 

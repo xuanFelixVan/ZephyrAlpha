@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-EXE_instrument | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.governance.instrument
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] data; factor; pf_core; ex_core; l10-compliance; shared.foundation.constants
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] data; factor; pf_core; ex_core; l10-compliance; shared.foundation.constants
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-EXE_instrument | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal

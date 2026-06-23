@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_circadian_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
-
 # [MODULE] zephyr.trading.circadian_scheduler
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.governance.audit_trail.__init__; zephyr.governance.audit_trail.finding_model; zephyr.trading.__init__; zephyr.behavioral_audit.drift_engine; zephyr.intelligence.model_evaluation.unified_memory_api; zephyr.security.access_control.orphan_judge.__init__; zephyr.infrastructure.__init__; zephyr.security.access_control.auto_fix_engine_03.__init__; zephyr.security.llm_defense.llm_security.patterns.secrets; zephyr.governance.__init__; zephyr.security.access_control.orphan_judge.judge; zephyr.security.adversarial_validation.game_day_runner; zephyr.governance.audit_trail.audit_admission_controller; zephyr.integration.shared_08.event_bus
 # [CONSUMERS] auto_runtime_core.py
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] _deep_drift_scan 不抛异常; _dream_cycle_kb_consolidate 不抛异常; _orphan_scan_and_fix 不抛异常; _llm_security_scan 不抛异常; _asset_inventory_refresh 不抛异常; _code_dedup_scan 不抛异常; _orphan_judge_deep 不抛异常; _semantic_audit_scan 不抛异常; _red_blue_daily_drill 不抛异常; _audit_orchestrator_health_check 不抛异常
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_circadian_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 CircadianScheduler — 内置生物钟

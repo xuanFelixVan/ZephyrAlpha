@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.2
 # [MODULE] zephyr.security.adversarial_validation.models
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] scenario_loader.py; validator.py; defense_runner.py; bypass_recorder.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] AttackScenario fields MUST align with _scenario-registry.yaml keys; RedBlueReport fields per blueprint §4.2 contract
 # [MODIFY-GUARD] Adding fields to RedBlueReport is BREAKING — must follow blueprint §4.6 contract version rules
-# [CONSUMERS] scenario_loader.py; validator.py; defense_runner.py; bypass_recorder.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] Pydantic ValidationError on malformed scenarios; ValueError on invalid tier/severity
 # [TESTS] tests/red_blue/test_models.py
+# [A_module] module_id=MOD-SEC_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

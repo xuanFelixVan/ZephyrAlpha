@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §4.2
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.models
-
-# [INVARIANTS] FixAction.fingerprint MUST be deterministic; FixStatus transitions MUST be legal
-
-# [MODIFY-GUARD] blueprint.md §4.2; __init__.py __all__; _fixer-registry.yaml
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-023(drift-detector);MOD-INF-029(orphan-judge);MOD-INF-028(semantic-auditor)
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] FixAction.fingerprint MUST be deterministic; FixStatus transitions MUST be legal
+# [MODIFY-GUARD] blueprint.md §4.2; __init__.py __all__; _fixer-registry.yaml
 # [STABILITY] frozen
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] FixActionValidationError;FixBudgetExceededError
-
 # [TESTS] tests/auto-fix-engine/test_models.py
+# [A_module] module_id=MOD-SEC_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

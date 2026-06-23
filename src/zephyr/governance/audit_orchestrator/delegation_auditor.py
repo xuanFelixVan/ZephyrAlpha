@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_delegation_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §8
 # [MODULE] zephyr.governance.audit_trail.delegation_auditor
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.delegation_bridge
+# [CONSUMERS] audit-orchestrator.integrity(完整性校验子流程)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 审计委托事件链完整性; 检测循环委托/深度溢出/死锁
 # [MODIFY-GUARD] DelegationEngine API变更时同步此审计器
-# [CONSUMERS] audit-orchestrator.integrity(完整性校验子流程)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 审计失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_delegation_auditor.py
+# [A_module] module_id=MOD-GOV_delegation_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

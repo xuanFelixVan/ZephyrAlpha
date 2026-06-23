@@ -1,24 +1,18 @@
-# [A_module] module_id=MOD-DAT_circuit_breaker_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
-
 # [MODULE] zephyr.data.persistence.circuit_breaker_repo
 # [DOMAIN] D-OPS
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.governance.persistence.circuit_breaker_types
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_circuit_breaker_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 circuit_breaker_repo.py — circuit_breaker_state 表持久化仓库（AUDIT-07 P1-5）

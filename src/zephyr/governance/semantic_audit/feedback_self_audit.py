@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_feedback_self_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
-
 # [MODULE] zephyr.governance.semantic_audit.feedback_self_audit
-
-# [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
-
-# [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.semantic_audit.__init__
 # [CONSUMERS] 见蓝图 §4 接口契约
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
+# [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] SemanticAuditError
-
 # [TESTS] tests/semantic-auditor/
+# [A_module] module_id=MOD-GOV_feedback_self_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 

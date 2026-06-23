@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_gpu_consensus_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §17
 # [MODULE] zephyr.governance.behavioral_admission.gpu_consensus_scheduler
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.behavioral_admission.verdict_engine
+# [CONSUMERS] zephyr.governance.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 2/2共识必须两个模型都返回一致verdict才PASS；P0_ANCHOR优先级最高不可被抢占
 # [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
-# [CONSUMERS] zephyr.governance.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] submit: GPUTimeout→LOCAL_GPU降级; submit: APIUnavailable→SINGLE_API降级; submit: AllFailed→ConsensusResult(failed)
 # [TESTS] tests/test_behavioral_audit/test_gpu_consensus_scheduler.py
+# [A_module] module_id=MOD-GOV_gpu_consensus_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_fix_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.fix_reliability
-
-# [INVARIANTS] IdempotencyGuard 24h TTL;DeadLetterQueue max 3 retries;ConflictResolver串行化同文件修复
-
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml reliability段
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;batch_fixer.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] IdempotencyGuard 24h TTL;DeadLetterQueue max 3 retries;ConflictResolver串行化同文件修复
+# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml reliability段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ConflictResolutionError;IdempotencyViolationError
-
 # [TESTS] tests/auto-fix-engine/test_fix_reliability.py
+# [A_module] module_id=MOD-INF_fix_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

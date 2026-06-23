@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF-007_phase_executor | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §phase-executor
 # [MODULE] zephyr.governance.rule_enforcement.phase_executor
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] PhaseManager; GateEngine; task_repo.transition; phase_check_registry
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] PhaseExecutor bridges PhaseManager and GateEngine; execute_phase stops on RED; execute_gate delegates to GateEngine.evaluate(); context propagation via ExecutionContext
 # [MODIFY-GUARD] execute_phase contract (stops on RED); execute_gate delegation to GateEngine; ExecutionContext immutability
-# [CONSUMERS] PhaseManager; GateEngine; task_repo.transition; phase_check_registry
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError on unknown phase; GateEngineError on gate evaluation failure; returns PhaseExecutionResult
 # [TESTS] tests/test_phase_executor_rule_enforcement.py
+# [A_module] module_id=MOD-INF-007_phase_executor | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 
 """PhaseExecutor — 阶段执行器，桥接 PhaseManager 和 GateEngine.
 

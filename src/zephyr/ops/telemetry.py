@@ -1,24 +1,18 @@
-# [A_module] module_id=MOD-DAT_telemetry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md | §
-
 # [MODULE] zephyr.data.asset_inventory.telemetry
 # [DOMAIN] D-OPS
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_telemetry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """AssetInventoryTelemetry — MOD-INF-026 自监控指标
 

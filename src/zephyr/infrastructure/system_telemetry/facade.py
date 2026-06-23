@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_facade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.system_telemetry.facade
-
-# [INVARIANTS] fail-closed on write; test_mode=True silences all outbound; shutdown() reverses init order; background scheduler daemon thread
-
-# [MODIFY-GUARD] __init__.py; health/; alerts/; profiles/; schema/; auto_bootstrap.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] auto_bootstrap.py; zephyr.security.access_control; zephyr.infrastructure.budget_enforcement
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] fail-closed on write; test_mode=True silences all outbound; shutdown() reverses init order; background scheduler daemon thread
+# [MODIFY-GUARD] __init__.py; health/; alerts/; profiles/; schema/; auto_bootstrap.py
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
-
 # [TESTS] tests/system-telemetry/test_facade.py
+# [A_module] module_id=MOD-INF_facade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）
 

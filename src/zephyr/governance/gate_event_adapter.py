@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-DAT_gate_event_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
 # [MODULE] zephyr.data.persistence.gate_event_adapter
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema
+# [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] gate events are appended to task_events atomically with gate persistence
 # [MODIFY-GUARD] event_type enum changes MUST update _GATE_EVENT_TYPE_MAP
-# [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GateEventAdapterError on write failure
 # [TESTS] tests/test_event_store_stress.py
+# [A_module] module_id=MOD-DAT_gate_event_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 GateEventAdapter — GateRepo 事件适配器（DW-0006）

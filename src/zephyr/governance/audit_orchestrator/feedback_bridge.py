@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_feedback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.feedback_bridge
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.shared.resilience.fallback; zephyr.trading.__init__
+# [CONSUMERS] audit-orchestrator.feedback_policy(策略引擎消费反馈)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现反馈逻辑; 仅桥接FeedbackLoop.analyze_pending()+generate_proposals()+apply_proposal()
 # [MODIFY-GUARD] FeedbackLoop API变更时同步此桥接
-# [CONSUMERS] audit-orchestrator.feedback_policy(策略引擎消费反馈)
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_feedback_bridge.py
+# [A_module] module_id=MOD-GOV_feedback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

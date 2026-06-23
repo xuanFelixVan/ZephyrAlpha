@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-
 # [MODULE] zephyr.infrastructure.rollback.auditor
-
-# [INVARIANTS] 审计记录不可篡改
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.governance.audit_trail.contracts
 # [CONSUMERS] rollback_executor;rollback_verifier;auto_rollback_trigger
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 审计记录不可篡改
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] RollbackError;AuditError
-
 # [TESTS] tests/rollback/
+# [A_module] module_id=MOD-INF_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 

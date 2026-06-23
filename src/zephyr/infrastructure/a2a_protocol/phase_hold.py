@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_phase_hold | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.a2a_protocol.phase_hold
-
-# [INVARIANTS] Phase4Hold 状态转换必须合法; hold 释放必须通过验证门禁
-
-# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.__init__
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] Phase4Hold 状态转换必须合法; hold 释放必须通过验证门禁
+# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] 异常必须包含 agent_id 和 protocol_layer
-
 # [TESTS] tests/test_a2a_protocol.py
+# [A_module] module_id=MOD-INF_phase_hold | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md | §3
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_baseline_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.baseline_manager
-
-# [INVARIANTS] 基线更新必须经过投毒防护
-
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES]
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 基线更新必须经过投毒防护
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] stable
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] DriftError;BaselineError
-
 # [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_baseline_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Baseline Manager — baseline_manager.py

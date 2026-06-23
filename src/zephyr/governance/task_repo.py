@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_task_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
-
 # [MODULE] zephyr.data.persistence.task_repo
-
-# [INVARIANTS] TEMPLATE_REQUIRED_FIELDS defines 18 business-required fields; _validate_template_fields() enforces GOV-TASK-001 v3.2.0 on every create(); claim_next uses SQLite UPDATE RETURNING for atomic claim; claim_next auto-blocks downstream dependents via _block_downstream_dependents (sets blocked_by); transition(COMPLETED/VERIFIED) auto-unblocks via _unblock_downstream_dependents; _auto_phase_cleanup_hook DISABLED (2026-06-10: 任务卡永久保留，禁止删除); cleanup_terminal_tasks() DISABLED; delete_completed_tasks_in_phase() DISABLED; DB trigger prevent_hard_delete enforces no-delete; CIRCULAR_ACCEPTANCE_ROUNDS=2 enforces consecutive zero-error verification on COMPLETED transition
-
-# [MODIFY-GUARD] TEMPLATE_REQUIRED_FIELDS and _validate_template_fields() — adding/removing template fields MUST update both; claim_next SQL MUST preserve atomic semantics; _auto_phase_cleanup_hook / cleanup_terminal_tasks / delete_completed_tasks_in_phase — DISABLED, do NOT re-enable deletion logic; DB trigger prevent_hard_delete is the hard enforcement layer
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.sqlite_schema; zephyr.governance.event_store; zephyr.governance.projection_engine; zephyr.governance.rule_enforcement.gate_engine; zephyr.integration.shared_08.contracts.gate.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared_08.utils.time_utils; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] zephyr.infrastructure.shared_services.blueprint_decomposer; zephyr.infrastructure.task_manager_server; zephyr.trading.boot_hooks; scripts/governance/*; scripts/lock_files.py (cleanup_terminal_tasks)
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] TEMPLATE_REQUIRED_FIELDS defines 18 business-required fields; _validate_template_fields() enforces GOV-TASK-001 v3.2.0 on every create(); claim_next uses SQLite UPDATE RETURNING for atomic claim; claim_next auto-blocks downstream dependents via _block_downstream_dependents (sets blocked_by); transition(COMPLETED/VERIFIED) auto-unblocks via _unblock_downstream_dependents; _auto_phase_cleanup_hook DISABLED (2026-06-10: 任务卡永久保留，禁止删除); cleanup_terminal_tasks() DISABLED; delete_completed_tasks_in_phase() DISABLED; DB trigger prevent_hard_delete enforces no-delete; CIRCULAR_ACCEPTANCE_ROUNDS=2 enforces consecutive zero-error verification on COMPLETED transition
+# [MODIFY-GUARD] TEMPLATE_REQUIRED_FIELDS and _validate_template_fields() — adding/removing template fields MUST update both; claim_next SQL MUST preserve atomic semantics; _auto_phase_cleanup_hook / cleanup_terminal_tasks / delete_completed_tasks_in_phase — DISABLED, do NOT re-enable deletion logic; DB trigger prevent_hard_delete is the hard enforcement layer
 # [STABILITY] frozen
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] ValueError on template validation failure; GateViolationError on invalid state transitions; StaleClaimError on timeout recovery
-
 # [TESTS] tests/test_mcp_task_claim.py; tests/test_boot_hooks_unlock.py
+# [A_module] module_id=MOD-DAT_task_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 TaskRepository — 任务登记表 CRUD + 状态机（T-1-04）

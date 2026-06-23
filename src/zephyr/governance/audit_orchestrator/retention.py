@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_retention | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §5.1
 # [MODULE] zephyr.governance.audit_trail.retention
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_orchestrator.__init__
+# [CONSUMERS] audit-orchestrator.tiered_storage; log_rotation
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 冷数据保留1年; 温数据保留90天; 热数据保留7天
 # [MODIFY-GUARD] 保留策略变更必须同步 log_rotation.py + tiered_storage.py
-# [CONSUMERS] audit-orchestrator.tiered_storage; log_rotation
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 清理失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_retention.py
+# [A_module] module_id=MOD-GOV_retention | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path

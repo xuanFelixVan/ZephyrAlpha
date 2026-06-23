@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_canary_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md | §
-
 # [MODULE] zephyr.governance.drift_detection.canary_controller
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_canary_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Detector Canary Controller — 检测器金丝雀部署 §6.11。
 

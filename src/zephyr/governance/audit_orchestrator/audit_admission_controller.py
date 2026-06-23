@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_audit_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.audit_admission_controller
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.__init__
+# [CONSUMERS] gates; orchestrator; pipeline
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 所有审计模块健康检查通过才允许操作; AdmissionResult为唯一准入判定结果
 # [MODIFY-GUARD] audit-orchestrator/blueprint.md; audit_admission_controller.py
-# [CONSUMERS] gates; orchestrator; pipeline
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure; ImportError→module marked unavailable
 # [TESTS] tests/audit-orchestrator/
+# [A_module] module_id=MOD-GOV_audit_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

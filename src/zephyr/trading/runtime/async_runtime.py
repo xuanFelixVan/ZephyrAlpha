@@ -1,27 +1,18 @@
-# [A_module] module_id=MOD-TRADING-RUNTIME-ASYNC | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] R1-1 | docs/02_enterprise_architecture/architecture_upgrade_discussion.md | §4.1
-
 # [MODULE] zephyr.trading.runtime.async_runtime
-
-# [INVARIANTS] 不持有 threading.Lock（避免与 asyncio 死锁，§4.1 风险表）；事件循环单例——同一进程只引导一次；优雅关闭——stop() 等待 pending 任务完成或超时
-
-# [MODIFY-GUARD] 修改本文件必须同步检查 __main__.py 同步入口是否仍可用；修改 run_in_executor 签名必须同步更新所有调用方
-
-# [CONSUMERS] R1-2 AsyncEventBus；R1-3 PipelineOrchestrator；R1-4 Conductor；__main__.py（未来迁移）
-
-# [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT] start() 复用已有循环或创建新循环；stop() 幂等（多次调用安全）；run_coroutine 在已运行循环中抛 RuntimeError；run_in_executor 无循环时直接同步调用
-
-# [TESTS] tests/trading/runtime/test_async_runtime.py
-
 # [DOMAIN] D-TRADING
+# [DEPENDENCIES]
+# [CONSUMERS] R1-2 AsyncEventBus；R1-3 PipelineOrchestrator；R1-4 Conductor；__main__.py（未来迁移）
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 不持有 threading.Lock（避免与 asyncio 死锁，§4.1 风险表）；事件循环单例——同一进程只引导一次；优雅关闭——stop() 等待 pending 任务完成或超时
+# [MODIFY-GUARD] 修改本文件必须同步检查 __main__.py 同步入口是否仍可用；修改 run_in_executor 签名必须同步更新所有调用方
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] start() 复用已有循环或创建新循环；stop() 幂等（多次调用安全）；run_coroutine 在已运行循环中抛 RuntimeError；run_in_executor 无循环时直接同步调用
+# [TESTS] tests/trading/runtime/test_async_runtime.py
+# [A_module] module_id=MOD-TRADING-RUNTIME-ASYNC | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """AsyncRuntime — 事件循环引导 + run_in_executor 桥接（R1-1）
 

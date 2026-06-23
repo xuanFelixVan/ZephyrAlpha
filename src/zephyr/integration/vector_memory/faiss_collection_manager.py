@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_faiss_collection_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
-
 # [MODULE] zephyr.integration.vector_memory.faiss_collection_manager
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.integration.vector_memory.collection_manager
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_faiss_collection_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 FAISSCollectionManager — FAISS HNSW/IVF+PQ 8 Collection 全生命周期管理

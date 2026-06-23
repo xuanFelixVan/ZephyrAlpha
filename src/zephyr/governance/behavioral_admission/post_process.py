@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_post_process | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-023 | docs/03_modules/_domain-governance/blueprint.md
-
 # [MODULE] zephyr.governance.post_process
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
 # [CONSUMERS] zephyr.shared (re-export)
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS] tests/unit/shared/test_post_process.py; tests/unit/test_post_process.py; tests/unit/shared/test_adversarial.py
+# [A_module] module_id=MOD-GOV_post_process | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # ---
 # layer: governance

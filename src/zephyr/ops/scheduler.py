@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
 # [MODULE] zephyr.observability.feedback_loop.scheduler
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.integrity; zephyr.behavioral_audit.drift_engine; zephyr.security.access_control.auto_fix_engine_03.__init__; zephyr.infrastructure.__init__; zephyr.integration.shared_08.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
 # [CONSUMERS] ide_health_service.py; auto_runtime_core.py
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] _run_drift_scan 不抛异常; _auto_fix_drifts 不抛异常; _periodic_checks 不抛异常; _audit_trail_check 不抛异常
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """FLE 全链路调度器 —— collect→detect→diagnose→act→verify 闭环。
 

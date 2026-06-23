@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
 # [MODULE] zephyr.governance.rule_enforcement.invariants.post_doc_review_check
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] gate_engine.py (ct=="post_doc_review_check"); project_rules.md 关门步骤12
+# [STARTUP] manual
+# [MATURITY] production
 # [INVARIANTS] 不立即删除待规格化项；标记数>=3触发规格化流程
 # [MODIFY-GUARD] trae_030_doc_numbering_metadata.yaml §1.2; post_doc_review.yaml
-# [CONSUMERS] gate_engine.py (ct=="post_doc_review_check"); project_rules.md 关门步骤12
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] modified_files.json不存在→PASS(无文档可审查); 解析失败→RED
 # [TESTS] tests/unit/test_post_doc_review.py
+# [A_module] module_id=MOD-GOV_post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 PostDocReviewScanner — Session 关门时文档内容审查扫描器。
 

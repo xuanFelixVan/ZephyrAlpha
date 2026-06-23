@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_game_day_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §8.3 + §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.game_day_runner
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.blast_radius; zephyr.security.adversarial_validation.convergence_checker
+# [CONSUMERS] game_day_scheduler.py; cli.py; CI/CD workflow
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 4 frequency levels: PER_COMMIT(FILE) / DAILY(MODULE) / WEEKLY(CROSS_MODULE) / MONTHLY(SYSTEM); each run produces GameDayResult with report
 # [MODIFY-GUARD] Adding frequency MUST add entry to GameDayFrequency enum and run_game_day() dispatch; report format per GameDayResult model
-# [CONSUMERS] game_day_scheduler.py; cli.py; CI/CD workflow
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] GameDayError on validation failure within game day session
 # [TESTS] tests/red_blue/test_game_day_runner.py
+# [A_module] module_id=MOD-SEC_game_day_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

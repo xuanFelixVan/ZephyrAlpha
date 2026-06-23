@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_sandbox_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
-
 # [MODULE] zephyr.integration.mcp.sandbox_server
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.mcp._base_server
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_sandbox_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。
 

@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-INT_timestamp_utils | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08.timestamp_utils
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.integration.shared_08.contracts.core.timestamp
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 所有时间戳强制UTC;Timestamp类型别名统一为pd.Timestamp
 # [MODIFY-GUARD] zephyr.integration.shared_08.contracts.core.timestamp
-# [CONSUMERS] zephyr.integration.shared_08.contracts.core.timestamp
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError on missing pandas
 # [TESTS]
+# [A_module] module_id=MOD-INT_timestamp_utils | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from datetime import datetime
 
 import pandas as pd

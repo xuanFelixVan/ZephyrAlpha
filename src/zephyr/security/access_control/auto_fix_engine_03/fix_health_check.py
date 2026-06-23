@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_fix_health_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_health_check
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
+# [CONSUMERS] engine.py;__main__.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] MUST检测所有关键组件;unhealthy MUST阻止新修复
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] engine.py;__main__.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] HealthCheckError
 # [TESTS] tests/auto-fix-engine/test_fix_health_check.py
+# [A_module] module_id=MOD-SEC_fix_health_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 import sqlite3
 from pathlib import Path

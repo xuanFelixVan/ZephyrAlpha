@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_llm_fix_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.llm_fix_adapter
-
-# [INVARIANTS] LLM输出MUST经SecretLeakGuard扫描;置信度<MEDIUM不自动应用
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml llm_fix_adapter段
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.fix_safety; zephyr.security.access_control.auto_fix_engine_03.models; zephyr.shared.contracts.llm_gateway_protocol
 # [CONSUMERS] engine.py;MOD-INF-028(semantic-auditor)
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] LLM输出MUST经SecretLeakGuard扫描;置信度<MEDIUM不自动应用
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml llm_fix_adapter段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] LLMFixError;SecretLeakDetectedError
-
 # [TESTS] tests/auto-fix-engine/test_llm_fix_adapter.py
+# [A_module] module_id=MOD-SEC_llm_fix_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

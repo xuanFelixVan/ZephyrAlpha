@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_llm_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 6
 # [MODULE] zephyr.governance.semantic_audit.llm_bridge
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.semantic_audit.models
+# [CONSUMERS] self_healer; fix_prioritizer
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] LLM 只做文本润色不判断; 不可用时降级为 detect-only; Token 使用追踪
 # [MODIFY-GUARD] 修改 prompt 必须同步 llm_bridge_prompt.yaml
-# [CONSUMERS] self_healer; fix_prioritizer
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] LLM 不可用时返回 success=False, error="LLM_UNAVAILABLE"
 # [TESTS] tests/semantic-auditor/test_llm_bridge.py
+# [A_module] module_id=MOD-GOV_llm_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 — LLM 桥接 Stage 6
 

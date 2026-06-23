@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_health_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.system_telemetry.health_aggregator
-
-# [INVARIANTS] 12-system probe contract; 15s poll interval; liveness/readiness/degraded triple-state
-
-# [MODIFY-GUARD] health_probes.py; watchdog.py; health.py
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.ops.observability.health_discovery; zephyr.shared.contracts.core.timestamp
 # [CONSUMERS] zephyr.security.access_control; zephyr.infrastructure.budget_enforcement
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 12-system probe contract; 15s poll interval; liveness/readiness/degraded triple-state
+# [MODIFY-GUARD] health_probes.py; watchdog.py; health.py
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] ValueError; RuntimeError
-
 # [TESTS] tests/system-telemetry/test_health_aggregator.py
+# [A_module] module_id=MOD-INF_health_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 健康聚合器（Health Aggregator）

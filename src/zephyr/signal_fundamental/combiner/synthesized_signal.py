@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-UNK_synthesized_signal | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.signal_fundamental.combiner.synthesized_signal
+# [DOMAIN] D-SIGNAL_FUNDAMENTAL
+# [DEPENDENCIES] zephyr.signal_fundamental.combiner.__init__
+# [CONSUMERS] signal; _cross_layer
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] signal; _cross_layer
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-UNK_synthesized_signal | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-P1-015 ====
 from dataclasses import dataclass, field
 from datetime import datetime

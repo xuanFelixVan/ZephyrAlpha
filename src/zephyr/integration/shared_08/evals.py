@@ -1,18 +1,18 @@
-# [A_module] module_id=MOD-INT_evals | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
-from collections.abc import Callable
-
 # [BLUEPRINT] SRC-188 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.integration.shared_08.evals
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] tests
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] tests
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/shared/test_evals.py
+# [A_module] module_id=MOD-INT_evals | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from dataclasses import dataclass, field
 from enum import Enum
 

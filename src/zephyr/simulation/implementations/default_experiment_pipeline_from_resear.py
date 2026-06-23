@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_default_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md
-
 # [MODULE] zephyr.research.simulation.implementations.default_experiment_pipeline
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SIMULATION
+# [DEPENDENCIES] zephyr.simulation.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_default_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """L13 — Default Experiment Pipeline
 

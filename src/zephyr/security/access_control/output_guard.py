@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_output_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent-rbac/blueprint.md | §output_guard
 # [MODULE] zephyr.security.access_control.output_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_output_guard_agent_rbac.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] check() never raises; PII/credentials always masked in output
 # [MODIFY-GUARD] blueprint.md §output_guard
-# [CONSUMERS] tests/agent_rbac/test_output_guard_agent_rbac.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check() never raises; returns OutputResult with decision
 # [TESTS] tests/agent_rbac/test_output_guard_agent_rbac.py
+# [A_module] module_id=MOD-SEC_output_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """OutputGuard — 输出内容守卫.
 
 依据蓝图 MOD-INF-018 §output_guard:

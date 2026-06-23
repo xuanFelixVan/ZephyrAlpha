@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_phase_check_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.shared_services.session_continuity; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.shared.contracts.identity.agent_identity; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.persistence.task_repo
+# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
-# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
 # [TESTS] tests/test_rollback/
+# [A_module] module_id=MOD-INF_phase_check_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """PhaseManager→GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
 

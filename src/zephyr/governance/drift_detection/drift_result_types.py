@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_drift_result_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md | §
-
 # [MODULE] zephyr.governance.drift_detection.drift_result_types
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.drift_detection.drift_models; zephyr.governance.drift_detection.drift_engine
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_drift_result_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Drift Detector 结果类型 + 专项检测函数 — drift_result_types.py

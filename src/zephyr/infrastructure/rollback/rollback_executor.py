@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_rollback_executor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
-
 # [MODULE] zephyr.infrastructure.rollback.rollback_executor
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.audit_trail.writer
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INF_rollback_executor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 RollbackExecutor — 回滚执行器核心封装。

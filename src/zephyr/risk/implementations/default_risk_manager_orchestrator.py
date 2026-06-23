@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_default_risk_manager_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
-
 # [MODULE] zephyr.risk.implementations.default_risk_manager_orchestrator
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-RISK
+# [DEPENDENCIES] zephyr.risk.risk_manager; zephyr.risk.risk_manager_base; zephyr.risk.implementations.default_risk_limits_calculator; zephyr.risk.implementations.default_risk_validator; zephyr.risk.implementations.default_position_limit_checker; zephyr.risk.implementations.default_stop_loss_engine
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_default_risk_manager_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # ---
 # domain: risk

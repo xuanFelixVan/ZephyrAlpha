@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RES_memory_poison_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
 # [MODULE] zephyr.governance.memory_poison_guard
-
-# [INVARIANTS] 记忆投毒检测不可禁用;存储前检测必须执行
-
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.infrastructure.escalation
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 记忆投毒检测不可禁用;存储前检测必须执行
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
-
 # [TESTS] tests/test_escalation_engine.py
+# [A_module] module_id=MOD-RES_memory_poison_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 

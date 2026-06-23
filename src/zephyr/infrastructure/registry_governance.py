@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_registry_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.registry_governance
-
-# [INVARIANTS] 功能域注册表是功能域声明的唯一真源;SSoT门禁检查不可跳过;注册表不可被AI直接修改
-
-# [MODIFY-GUARD] docs/03_modules/_domain-governance/registry-governance/blueprint.md;docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] scripts/scaffold.py;scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 功能域注册表是功能域声明的唯一真源;SSoT门禁检查不可跳过;注册表不可被AI直接修改
+# [MODIFY-GUARD] docs/03_modules/_domain-governance/registry-governance/blueprint.md;docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] FunctionalDomainOverlap→阻断创建;RegistryLoadError→降级为WARNING
-
 # [TESTS] tests/infrastructure/test_registry_governance.py
+# [A_module] module_id=MOD-INF_registry_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 

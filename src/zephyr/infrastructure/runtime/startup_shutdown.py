@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-INF_startup_shutdown | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-076 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.startup_shutdown
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.runtime.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF_startup_shutdown | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 import time
 from collections.abc import Callable

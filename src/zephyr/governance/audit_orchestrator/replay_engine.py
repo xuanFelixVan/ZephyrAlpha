@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_replay_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §9
 # [MODULE] zephyr.governance.audit_trail.replay_engine
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_orchestrator.__init__
+# [CONSUMERS] audit-orchestrator.pipeline_runner; integrity
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 重放不修改任何审计数据; 只读+比对
 # [MODIFY-GUARD] 重放格式变更必须同步 evidence_pack.py
-# [CONSUMERS] audit-orchestrator.pipeline_runner; integrity
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 重放失败返回mismatch
 # [TESTS] tests/audit-orchestrator/test_replay_engine.py
+# [A_module] module_id=MOD-GOV_replay_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import hashlib
 import json
 import logging

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_conductor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-194 | docs/03_modules/_cross_layer/database/blueprint.md | §conductor
 # [MODULE] zephyr.trading.conductor
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
+# [CONSUMERS] AI session conductor loop (replaces manual AutoPilot.run_cycle + serial execution)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] plan_cycle() MUST detect file conflicts before grouping; _group_by_conflict MUST guarantee no two tasks in same group share files_in_scope/allowed_touch
 # [MODIFY-GUARD] conflict detection uses files_in_scope + allowed_touch — adding new conflict dimensions requires updating _get_task_files
-# [CONSUMERS] AI session conductor loop (replaces manual AutoPilot.run_cycle + serial execution)
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] plan_cycle returns empty list when no tasks available; mark_completed/mark_failed propagate transition errors
 # [TESTS] tests/test_conductor.py
+# [A_module] module_id=MOD-ORC_conductor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 Conductor — AI session 全自动指挥官。
 

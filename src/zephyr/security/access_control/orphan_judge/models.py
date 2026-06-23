@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §4.2
 # [MODULE] zephyr.security.access_control.orphan_judge.models
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
+# [CONSUMERS] db.py; report_generator.py; config_loader.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 数据模型是orphan_judge的类型SSoT; 不修改任何文件
 # [MODIFY-GUARD] 修改字段必须同步blueprint.md §4.2; 已有模型(Judgment/Verdict/LayerResult)的真源在judge.py,此处仅re-export
-# [CONSUMERS] db.py; report_generator.py; config_loader.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Pydantic ValidationError on bad input
 # [TESTS] tests/orphan-judge/test_models.py
+# [A_module] module_id=MOD-SEC_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

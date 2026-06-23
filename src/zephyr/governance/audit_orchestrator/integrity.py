@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_integrity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §8
 # [MODULE] zephyr.governance.integrity
+# [DOMAIN] D-GOV_DRIFT
+# [DEPENDENCIES] zephyr.governance.audit_trail.models; zephyr.governance.audit_orchestrator.merkle_hourly; zephyr.governance.audit_trail.trust_bridge
+# [CONSUMERS] audit-orchestrator.pipeline_runner; cli
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 校验所有审计组件健康状态; 不通过则禁止审计操作
 # [MODIFY-GUARD] 新增审计组件必须在此注册健康检查
-# [CONSUMERS] audit-orchestrator.pipeline_runner; cli
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 校验失败返回pass=False
 # [TESTS] tests/audit-orchestrator/test_integrity.py
+# [A_module] module_id=MOD-GOV_integrity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

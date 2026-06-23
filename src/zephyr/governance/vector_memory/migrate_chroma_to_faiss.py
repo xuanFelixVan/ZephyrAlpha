@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_migrate_chroma_to_faiss | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md
-
 # [MODULE] zephyr.data.knowledge_management.vector_memory.migrate_chroma_to_faiss
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-KNOWLEDGE
+# [DEPENDENCIES] zephyr.integration.shared_08.io.paths; zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-DAT_migrate_chroma_to_faiss | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 ChromDB → FAISS + SQLite WAL 数据迁移脚本

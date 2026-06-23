@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-UNK_scheduler_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.scheduler_health
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.ops.__init__
+# [CONSUMERS] zephyr.observability.feedback_loop.scheduler
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] HealthReporter.report() returns dict with all 20 health keys
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.scheduler
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-UNK_scheduler_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from dataclasses import dataclass, field
 from typing import Any
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC_results_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md
-
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing.results_writer
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline_routing.profiler
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC_results_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测）

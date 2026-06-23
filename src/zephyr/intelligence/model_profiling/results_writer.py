@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RSC_results_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.results_writer
+# [DOMAIN] D-INTELLIGENCE
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.profiler
+# [CONSUMERS] MOD-INF-009;MOD-INF-036
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] benchmark结果持久化;JSONL格式;漂移检测
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-009;MOD-INF-036
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] WriteError;DriftDetectionError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-RSC_results_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测）

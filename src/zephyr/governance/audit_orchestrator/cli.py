@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.cli
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.audit_admission_controller; zephyr.governance.audit_trail.resource_aware_pool; zephyr.governance.integrity; zephyr.governance.audit_trail.kb_gate; zephyr.security.access_control.orphan_judge.judge; zephyr.security.adversarial_validation.validator; zephyr.behavioral_audit.drift_engine
+# [CONSUMERS] End users; CI/CD; MCP tool wrappers
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] CLI is the ONLY entry point for audit orchestrator; all subcommands output JSON
 # [MODIFY-GUARD] Adding subcommands MUST register in main() dispatch
-# [CONSUMERS] End users; CI/CD; MCP tool wrappers
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] SystemExit on invalid subcommand; ImportError→module unavailable in output
 # [TESTS] tests/audit-orchestrator/
+# [A_module] module_id=MOD-GOV_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

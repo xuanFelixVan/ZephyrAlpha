@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-RES_cost_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.infrastructure.budget_enforcement
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS] MOD-INF-020;MOD-INF-018;MOD-INF-027
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Token/Cost/Time三维预算;超预算拒绝
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md;src/zephyr/budget-enforcer/__init__.py
-# [CONSUMERS] MOD-INF-020;MOD-INF-018;MOD-INF-027
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] BudgetExceededError;CostLimitError
 # [TESTS] tests/test_budget_enforcer/
+# [A_module] module_id=MOD-RES_cost_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

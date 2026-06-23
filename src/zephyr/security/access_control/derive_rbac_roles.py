@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_derive_rbac_roles | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.derive_rbac_roles
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_cross_model_consistency.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] derive is deterministic — same input always produces same hash
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_cross_model_consistency.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] derive never raises; returns hash string for any input
 # [TESTS] tests/agent_rbac/test_cross_model_consistency.py
+# [A_module] module_id=MOD-SEC_derive_rbac_roles | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """RBACRoleDeriver — RBAC 角色派生器.
 
 依据蓝图 MOD-INF-018 §3:

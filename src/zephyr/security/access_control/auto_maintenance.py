@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_auto_maintenance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_maintenance
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] dashboard.active_rules >= 0; dashboard.total_rules >= active_rules; last_check is ISO8601 str
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_dashboard() never raises; returns OwnerDashboard with non-negative counts
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_auto_maintenance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """AutoMaintenance — 自动维护与规则健康仪表盘.
 
 依据蓝图 MOD-INF-018 §3:

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF_escalation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.escalation_bridge
-
-# [INVARIANTS] MUST桥接MOD-INF-022 EscalationProtocol;升级失败MUST记录
-
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml escalation段
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.__init__
 # [CONSUMERS] engine.py;fix_reliability.py
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] MUST桥接MOD-INF-022 EscalationProtocol;升级失败MUST记录
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml escalation段
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] EscalationBridgeError
-
 # [TESTS] tests/auto-fix-engine/test_escalation_bridge.py
+# [A_module] module_id=MOD-INF_escalation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

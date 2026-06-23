@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-
 # [MODULE] zephyr.governance.rule_enforcement.drift_detector
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_DRIFT
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.protocols; zephyr.behavioral_audit.drift_hotfix_bypass; zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.cascade_detector; zephyr.behavioral_audit.reconciler; zephyr.governance.__init__; zephyr.behavioral_audit.events
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Gate-side Drift Detector Recovery — zephyr.governance.rule_enforcement.drift_detector

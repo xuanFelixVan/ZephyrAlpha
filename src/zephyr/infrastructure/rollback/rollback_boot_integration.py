@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §1.2
 # [MODULE] zephyr.infrastructure.rollback.rollback_boot_integration
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.trading.boot_hooks
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] register_startup_hook is idempotent; on_startup initializes WAL+Verifier; on_shutdown flushes WAL+cleans temp
 # [MODIFY-GUARD] boot_hooks registration name must be "rollback_boot_init"
-# [CONSUMERS] zephyr.trading.boot_hooks
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns BootResult; logs error on failure; never raises during boot
 # [TESTS] tests/adversarial/test_rollback_boot_integration.py
+# [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """
 RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 §1.2).
 

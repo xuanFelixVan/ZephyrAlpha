@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_fault_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §fault_types
 # [MODULE] zephyr.trading.orchestrator.fault_types
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.orchestrator.__init__
+# [CONSUMERS] zephyr.trading.orchestrator.chaos_engine;zephyr.trading.orchestrator.chaos_hooks
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Registry entries MUST have inject()/recover() methods; preset templates are immutable
 # [MODIFY-GUARD] Adding fault templates MUST register in FaultTypeRegistry
-# [CONSUMERS] zephyr.trading.orchestrator.chaos_engine;zephyr.trading.orchestrator.chaos_hooks
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] FaultTypeNotFoundError on unknown type lookup
 # [TESTS] tests/test_fault_types.py
+# [A_module] module_id=MOD-ORC_fault_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Fault type registry and preset templates for chaos engineering."""
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_trigger_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §4.1
 # [MODULE] zephyr.governance.semantic_audit.trigger_engine
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.semantic_audit.models; zephyr.governance.semantic_audit.reference_extractor
+# [CONSUMERS] alignment_engine; audit-orchestrator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 增删改文件时判定是否触发审计；支持 cross_doc_ref_broken 和 dependson_chain_broken 两种触发类型
 # [MODIFY-GUARD] 添加触发类型必须同步 models.TriggerResult.trigger_type 枚举
-# [CONSUMERS] alignment_engine; audit-orchestrator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 无变更时返回 should_trigger=False, reason="no_changes"
 # [TESTS] tests/semantic-auditor/test_trigger_engine.py
+# [A_module] module_id=MOD-GOV_trigger_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 — 触发器引擎 Stage 2
 

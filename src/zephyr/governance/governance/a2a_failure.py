@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_a2a_failure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
 # [MODULE] zephyr.governance.governance.a2a_failure
-
-# [INVARIANTS] 不直接import A2A模块(Protocol接口);与主模块a2a_failure.py保持一致
-
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 不直接import A2A模块(Protocol接口);与主模块a2a_failure.py保持一致
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_a2a_failure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """G-CT-008 消费端 — Escalation.on_a2a_failure() 跨 agent 通信失败升级.
 

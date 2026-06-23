@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT__backend_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md | §
-
 # [MODULE] zephyr.data.knowledge_management.kb.storage._backend_protocol
-
-# [INVARIANTS] MemoryBackend Protocol signature must not change without updating all implementors
-
-# [MODIFY-GUARD] changes here affect unified_memory_api.py + vms_memory_backend.py + all backend implementors
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.kb.storage.__init__
 # [CONSUMERS] zephyr.knowledge.kb.storage.unified_memory_api; zephyr.knowledge.kb.vms_memory_backend
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] MemoryBackend Protocol signature must not change without updating all implementors
+# [MODIFY-GUARD] changes here affect unified_memory_api.py + vms_memory_backend.py + all backend implementors
 # [STABILITY] stable
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] MemoryBackendError on backend failure; WriteTraceMissing on missing provenance
-
 # [TESTS] tests/test_unified_memory_api.py; tests/test_vms_memory_backend.py
+# [A_module] module_id=MOD-DAT__backend_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 Backend protocol & shared data classes for the unified memory layer.

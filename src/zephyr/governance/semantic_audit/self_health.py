@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_self_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1
 # [MODULE] zephyr.governance.semantic_audit.self_health
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.semantic_audit.models; zephyr.governance.semantic_audit.__init__
+# [CONSUMERS] cli; audit-orchestrator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 7 SLI + 5 容量 SLI; HEALTHY/DEGRADED/CRITICAL 三级状态
 # [MODIFY-GUARD] 修改 SLI 定义必须同步蓝图 §3.1 组件 #11
-# [CONSUMERS] cli; audit-orchestrator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 自检异常时返回 CRITICAL 状态
 # [TESTS] tests/semantic-auditor/test_self_health.py
+# [A_module] module_id=MOD-GOV_self_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 — 自身健康监控
 

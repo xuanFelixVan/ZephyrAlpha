@@ -1,17 +1,18 @@
-# [A_module] module_id=MOD-ORC_speed_baseline_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.speed_baseline_checker
-# [INVARIANTS] script-manifest.yaml 是脚本基线唯一数据源; process_iter 必须同时检查 cmdline + cwd;
-#             _LONG_RUNNING_KEYWORDS 排除已知长期运行进程（守护/nanny/windows_service）;
-#             速度分类阈值硬编码在 SPEED_THRESHOLDS 中
-# [MODIFY-GUARD] 修改分类阈值前必须确认与 zombie_scanner 的分类不重叠冲突
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] scripts/ide_health_service.py
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] script-manifest.yaml 是脚本基线唯一数据源; process_iter 必须同时检查 cmdline + cwd;
+# [MODIFY-GUARD] 修改分类阈值前必须确认与 zombie_scanner 的分类不重叠冲突
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MANIFEST_NOT_FOUND: 记录错误并返回空结果，不阻断守护进程循环;
-#                  PERMISSION_DENIED: 静默跳过该进程
 # [TESTS] test_speed_baseline_checker.py
+# [A_module] module_id=MOD-ORC_speed_baseline_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 import time
 from dataclasses import dataclass, field

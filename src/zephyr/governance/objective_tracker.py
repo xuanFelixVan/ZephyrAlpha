@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-RES_objective_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
 # [MODULE] zephyr.governance.objective_tracker
-
-# [INVARIANTS] 目标漂移检测不可跳过;余弦相似度阈值不可手动覆盖
-
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.infrastructure.escalation
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 目标漂移检测不可跳过;余弦相似度阈值不可手动覆盖
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
-
 # [TESTS] tests/test_escalation_engine.py
+# [A_module] module_id=MOD-RES_objective_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 

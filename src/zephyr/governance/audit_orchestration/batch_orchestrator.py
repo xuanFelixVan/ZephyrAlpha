@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_batch_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
-
 # [MODULE] zephyr.governance.audit_orchestration.batch_orchestrator
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.shared.shared_services.models
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_batch_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）
 

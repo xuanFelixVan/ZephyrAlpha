@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_game_day_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §8.3 + §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.game_day_scheduler
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.game_day_runner
+# [CONSUMERS] cli.py; CI/CD workflow
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Dual trigger: timer-based (daily/weekly/monthly) + webhook-based (git push → per_commit); MUST NOT schedule overlapping game days
 # [MODIFY-GUARD] Adding triggers MUST update _TRIGGER_MAP; scheduler state persisted to data/red_blue/scheduler-state.yaml
-# [CONSUMERS] cli.py; CI/CD workflow
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ScheduleConflictError on overlapping schedules; SchedulerNotInitializedError if state file missing
 # [TESTS] tests/red_blue/test_game_day_scheduler.py
+# [A_module] module_id=MOD-SEC_game_day_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

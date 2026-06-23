@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_immutable_core | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §immutable_core
 # [MODULE] zephyr.security.access_control.immutable_core
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] genesis_bootstrap._phase_immutable_core
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] immutable core integrity always intact in normal operation; verify never raises
 # [MODIFY-GUARD] Owner approval required; changes require blueprint update
-# [CONSUMERS] genesis_bootstrap._phase_immutable_core
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] verify_immutable_core_integrity() never raises; returns IntegrityResult with intact flag
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
+# [A_module] module_id=MOD-SEC_immutable_core | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 """ImmutableCore — 不可变核心验证器.
 
 依据蓝图 MOD-INF-018 §immutable_core:

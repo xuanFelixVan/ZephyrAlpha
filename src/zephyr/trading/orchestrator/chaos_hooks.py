@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_chaos_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §chaos_hooks
 # [MODULE] zephyr.trading.orchestrator.chaos_hooks
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.orchestration_protocol
+# [CONSUMERS] zephyr.trading.orchestrator.core.agent_orchestrator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] pre_step_hook MUST NOT block orchestrator execution; post_step_hook MUST recover all injected faults
 # [MODIFY-GUARD] Adding hook behaviors MUST update ChaosHookPolicy
-# [CONSUMERS] zephyr.trading.orchestrator.core.agent_orchestrator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ChaosHookError on hook execution failure
 # [TESTS] tests/test_chaos_hooks.py
+# [A_module] module_id=MOD-ORC_chaos_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """ChaosHook — integrates ChaosEngine with the orchestrator execution loop."""
 

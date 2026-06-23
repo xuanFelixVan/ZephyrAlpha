@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-UNK_risk_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-
 # [MODULE] zephyr.execution.trading.trading_contracts.risk.risk_metrics
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-TRADING
+# [DEPENDENCIES]
 # [CONSUMERS] risk; pf_core; pf_core; ops; l10-compliance
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-UNK_risk_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # ==== BEGIN CODGEN:CTR-P1-011 ====
 

@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_spec_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §
-
 # [MODULE] zephyr.governance.audit_trail.spec_auditor
-
-# [INVARIANTS] see blueprint MOD-INF-020
-
-# [MODIFY-GUARD] __init__.py
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.agent_spec.registry
 # [CONSUMERS] zephyr.governance.audit_trail
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] see blueprint MOD-INF-020
+# [MODIFY-GUARD] __init__.py
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT] AuditTrailError
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_spec_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

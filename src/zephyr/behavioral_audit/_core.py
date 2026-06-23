@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC__core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
-from zephyr.behavioral_audit.detector_dispatcher import (
-    DetectorDispatcher,
-    DetectorResult,
-    ResultCache,
-    get_max_parallel_for_level,
-)
-
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._core
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.drift_models; zephyr.behavioral_audit.events; zephyr.behavioral_audit.state_machine; zephyr.behavioral_audit.detector_dispatcher
+# [CONSUMERS] zephyr.behavioral_audit.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
-# [CONSUMERS] zephyr.behavioral_audit.__init__
 # [STABILITY] frozen
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
+# [A_module] module_id=MOD-SEC__core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from zephyr.behavioral_audit.drift_engine import (
     build_report,
     load_detector_registry,

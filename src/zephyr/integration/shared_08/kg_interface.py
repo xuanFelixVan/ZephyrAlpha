@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-INT_kg_interface | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] SRC-189 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.integration.shared_08.kg_interface
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] tests
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] tests
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/test_kg_interface.py
+# [A_module] module_id=MOD-INT_kg_interface | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import threading
 import uuid
 from collections import deque

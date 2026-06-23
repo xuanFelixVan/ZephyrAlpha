@@ -1,33 +1,18 @@
-# [A_module] module_id=MOD-SEC__drift | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
-from zephyr.behavioral_audit.baseline_poisoning_guard import (
-    HashChainEntry,
-    MultiBaselineVote,
-    build_hash_chain,
-    cross_validate_baseline,
-    generate_integrity_manifest,
-    multi_baseline_vote,
-    verify_hash_chain,
-)
-from zephyr.behavioral_audit.cascade_detector import (
-    CascadeAlert,
-    CascadeConfig,
-    CascadeEvent,
-    detect_cascade,
-    dry_run_impact_analysis,
-    is_auto_fix_paused,
-)
-
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._drift
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.behavioral_audit.contract_drift_detector; zephyr.behavioral_audit.drift_result_types; zephyr.behavioral_audit.drift_training; zephyr.behavioral_audit.drift_infrastructure; zephyr.behavioral_audit.drift_hotfix_bypass; zephyr.behavioral_audit.cascade_detector; zephyr.behavioral_audit.baseline_poisoning_guard
+# [CONSUMERS] zephyr.behavioral_audit.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
-# [CONSUMERS] zephyr.behavioral_audit.__init__
 # [STABILITY] frozen
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
+# [TESTS]
+# [A_module] module_id=MOD-SEC__drift | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TESTS] tests/test_behavioral_auditor_imports.py
 from zephyr.behavioral_audit.contract_drift_detector import DriftAlert as ContractDriftAlert
 from zephyr.behavioral_audit.contract_drift_detector import detect_contract_drift

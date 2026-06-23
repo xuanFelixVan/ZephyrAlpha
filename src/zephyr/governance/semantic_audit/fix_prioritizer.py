@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_fix_prioritizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 8
 # [MODULE] zephyr.governance.semantic_audit.fix_prioritizer
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.semantic_audit.models
+# [CONSUMERS] self_healer; cli
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] RED > YELLOW > INFO; 高确定性 > 低确定性; 大 blast_radius > 小 blast_radius
 # [MODIFY-GUARD] 修改排序权重必须同步蓝图 §3.2 数据流
-# [CONSUMERS] self_healer; cli
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空列表返回空排序结果
 # [TESTS] tests/semantic-auditor/test_fix_prioritizer.py
+# [A_module] module_id=MOD-GOV_fix_prioritizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """[BLUEPRINT] MOD-INF-028 — 修复优先级排序 Stage 8
 

@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC_fix_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_report
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
+# [CONSUMERS] engine.py;__main__.py;MOD-INF-027(audit-orchestrator)
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 报告MUST包含所有修复结果;MUST包含预算状态
 # [MODIFY-GUARD] blueprint.md §3
-# [CONSUMERS] engine.py;__main__.py;MOD-INF-027(audit-orchestrator)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ReportError
 # [TESTS] tests/auto-fix-engine/test_fix_report.py
+# [A_module] module_id=MOD-SEC_fix_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import json
 import logging
 from datetime import UTC, datetime

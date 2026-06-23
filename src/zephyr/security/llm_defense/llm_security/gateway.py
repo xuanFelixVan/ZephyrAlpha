@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
-
 # [MODULE] zephyr.security.llm_defense.llm_security.gateway
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.protocol; zephyr.security.llm_defense.llm_security.layers.l0_supply_chain; zephyr.security.llm_defense.llm_security.layers.l1_input; zephyr.security.llm_defense.llm_security.layers.l2_prompt_protection; zephyr.security.llm_defense.llm_security.layers.l2a_process_sandbox; zephyr.security.llm_defense.llm_security.layers.l3_output; zephyr.security.llm_defense.llm_security.layers.l4_agent; zephyr.security.llm_defense.llm_security.layers.l5_resource_protection; zephyr.security.llm_defense.llm_security.layers.l6_observability; zephyr.security.llm_defense.llm_security.self_protection.l7_validation; zephyr.security.llm_defense.llm_security.layers.l8_multi_agent
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] human_gated
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-SEC_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
 
 import asyncio
 import time

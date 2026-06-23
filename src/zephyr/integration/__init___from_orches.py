@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-ORC_agent_communication | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_domain-shared/protocols/blueprint.md
 # [MODULE] zephyr.shared.protocols.a2a
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.shared.protocols.a2a.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] all symbols imported from zephyr.shared.protocols.a2a; no direct imports from zephyr.infrastructure
 # [MODIFY-GUARD] no direct infrastructure imports
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-ORC_agent_communication | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 L01 Orchestration — A2A Protocol 模块 (MOD-ORCH-xxx)
 

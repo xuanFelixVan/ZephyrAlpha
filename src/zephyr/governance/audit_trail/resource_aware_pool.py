@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-GOV_resource_aware_pool | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.resource_aware_pool
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] audit_admission_controller; orchestrator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 双池(CPU/GPU)互不干扰; GPU路由规则: llm_inference/semantic_analysis/embedding→gpu
 # [MODIFY-GUARD] audit-orchestrator/blueprint.md; resource_aware_pool.py
-# [CONSUMERS] audit_admission_controller; orchestrator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError on submit after shutdown; PoolStats always returns current snapshot
 # [TESTS] tests/audit-orchestrator/
+# [A_module] module_id=MOD-GOV_resource_aware_pool | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

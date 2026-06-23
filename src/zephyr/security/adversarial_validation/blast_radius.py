@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.blast_radius
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] validator.py; injection_engine.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 4-level progressive escalation: FILE(1)→MODULE(2)→CROSS_MODULE(3)→SYSTEM(4); auto-abort when bypass_count reaches threshold for current level
 # [MODIFY-GUARD] Threshold values per blueprint §7.2; adding levels MUST update BlastRadiusLevel enum in models.py
-# [CONSUMERS] validator.py; injection_engine.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AbortThresholdError when bypass_count >= threshold at SYSTEM level
 # [TESTS] tests/red_blue/test_blast_radius.py
+# [A_module] module_id=MOD-SEC_blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

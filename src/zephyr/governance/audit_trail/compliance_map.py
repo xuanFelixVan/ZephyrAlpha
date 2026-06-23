@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV_compliance_map | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §
-
 # [MODULE] zephyr.governance.audit_trail.compliance_map
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.models
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV_compliance_map | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 audit-trail.compliance_map — MOD-INF-020 · 合规框架映射

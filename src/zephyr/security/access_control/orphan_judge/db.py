@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_db | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §5.1
 # [MODULE] zephyr.security.access_control.orphan_judge.db
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.security.access_control.orphan_judge.models
+# [CONSUMERS] orphan-judge.__main__._cmd_report; report_generator
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 使用项目级SQLite连接(get_db_connection); 表judgment_records结构不可变
 # [MODIFY-GUARD] 修改表结构必须同步blueprint.md §5.1; 修改DB_PATH必须同步sqlite_schema.py
-# [CONSUMERS] orphan-judge.__main__._cmd_report; report_generator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] IntegrityError on duplicate path
 # [TESTS] tests/orphan-judge/test_db.py
+# [A_module] module_id=MOD-SEC_db | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

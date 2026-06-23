@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_bypass_recorder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.bypass_recorder
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] validator.py; convergence_checker.py; escalation-engine (external)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Bypass entries MUST be deduplicated by (scenario_id, gate_id); 3rd bypass on same scenario=gate pair triggers escalation
 # [MODIFY-GUARD] Bypass log format MUST match BypassEntry model; escalation trigger logic per blueprint §6.2
-# [CONSUMERS] validator.py; convergence_checker.py; escalation-engine (external)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] YAML write uses atomic os.replace; BypassLogNotFoundError if log dir missing
 # [TESTS] tests/red_blue/test_bypass_recorder.py
+# [A_module] module_id=MOD-SEC_bypass_recorder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

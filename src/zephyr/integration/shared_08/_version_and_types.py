@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INT__version_and_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._version_and_types
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.__version__; zephyr.integration.shared_08.types; zephyr.integration.shared_08.io.paths; zephyr.integration.shared.schema.schemas; zephyr.shared.shared_services.observability_02.token_utils; zephyr.integration.shared_08.time_utils; zephyr.integration.shared_08.env
+# [CONSUMERS] zephyr.shared.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from zephyr.shared
 # [MODIFY-GUARD] zephyr.shared.__init__
-# [CONSUMERS] zephyr.shared.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
+# [A_module] module_id=MOD-INT__version_and_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """_version_and_types — 版本与类型 re-export 桥接层。
 
 从 foundation/__version__/io/utils 子包及外部模块重新导出符号，

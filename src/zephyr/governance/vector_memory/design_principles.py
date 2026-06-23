@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-DAT_design_principles | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md
-
 # [MODULE] zephyr.data.knowledge_management.vector_memory.design_principles
-
-# [INVARIANTS] validate_dimension enforces ALLOWED_DIMENSIONS; validate_provenance enforces provenance metadata; hot/cold separation enforced
-
-# [MODIFY-GUARD] collection_manager.py; in_process_vector_memory.py; faiss_collection_manager.py
-
+# [DOMAIN] D-KNOWLEDGE
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] collection_manager; in_process_vector_memory; faiss_collection_manager; tests
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] validate_dimension enforces ALLOWED_DIMENSIONS; validate_provenance enforces provenance metadata; hot/cold separation enforced
+# [MODIFY-GUARD] collection_manager.py; in_process_vector_memory.py; faiss_collection_manager.py
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] raises DimensionError/ChunkStrategyError/TTLError/HotColdSeparationError/ProvenanceMissingError on validation failure
-
 # [TESTS] tests/unit/vector-memory/test_vector_memory.py
+# [A_module] module_id=MOD-DAT_design_principles | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

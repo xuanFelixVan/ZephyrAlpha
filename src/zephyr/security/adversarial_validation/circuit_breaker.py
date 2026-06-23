@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §7.2 + §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.circuit_breaker
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models
+# [CONSUMERS] game_day_runner.py; validator.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] Auto-pauses adversarial testing when defense stress exceeds threshold; 3 states: CLOSED→OPEN→HALF_OPEN→CLOSED; cool_down_ms = 30000
 # [MODIFY-GUARD] State transitions per blueprint §7.2 FSM; cool_down_ms MUST NOT be set below 10000
-# [CONSUMERS] game_day_runner.py; validator.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] CircuitBreakerOpenError when attempting to run while circuit is OPEN
 # [TESTS] tests/red_blue/test_circuit_breaker.py
+# [A_module] module_id=MOD-SEC_circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

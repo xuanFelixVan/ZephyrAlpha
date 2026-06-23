@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-SEC_contract_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-
 # [MODULE] zephyr.behavioral_audit.contract_drift_detector
-
-# [INVARIANTS] z-score>5.0判定为漂移;baseline_std==0时使用0.001防止除零;DriftAlert写入_drift_buffer
-
-# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md;src/zephyr/infra_ops/observability/contract_metrics.py
-
+# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DEPENDENCIES]
 # [CONSUMERS] src/zephyr/infra_ops/observability/contract_metrics.py(委托调用)
-
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] z-score>5.0判定为漂移;baseline_std==0时使用0.001防止除零;DriftAlert写入_drift_buffer
+# [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md;src/zephyr/infra_ops/observability/contract_metrics.py
 # [STABILITY] stable
-
 # [SAFETY] M
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] baseline不存在→返回None;z-score<=5.0→返回None
-
 # [TESTS] tests/unit/telemetry/
+# [A_module] module_id=MOD-SEC_contract_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """contract_drift_detector — 契约漂移检测器。
 

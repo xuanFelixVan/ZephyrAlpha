@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_constitution_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §16 Phase 2a
 # [MODULE] zephyr.security.adversarial_validation.constitution_guard
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.governance.rule_enforcement.gate_engine
+# [CONSUMERS] validator.py; convergence_checker.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 34 articles loaded from _constitution-registry.yaml; ALL must pass per adversarial session; single failure = BLOCKED session
 # [MODIFY-GUARD] Adding articles MUST update _constitution-registry.yaml; article_id format MUST be CONST-NNN
-# [CONSUMERS] validator.py; convergence_checker.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ConstitutionViolationError on any article failure; FileNotFoundError if registry missing
 # [TESTS] tests/red_blue/test_constitution_guard.py
+# [A_module] module_id=MOD-SEC_constitution_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

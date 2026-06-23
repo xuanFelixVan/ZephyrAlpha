@@ -295,7 +295,7 @@ STEP 0.5 — 🧠 大脑系统启动（后台持续运行，Trae AI 进入项目
            ⚠️ 大脑系统未运行 = AutoPilot/MAPE-K调和循环/MCP集群自愈 全部不可用
 STEP 1  — 读 docs/registry_of_registries.yaml → 了解全项目 48 个注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板（蓝图/任务卡/依赖图/策略/标准等）
-STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源 D:/ZephyrAlpha/data/databases/depgraph.db，禁止直接 Read）→ 项目域架构+模块归属+路径设计规则+capacity声明
+STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源 D:/ZephyrAlpha/data/databases/depgraph.db，禁止直接 Read）→ 项目域架构+模块归属+路径设计规则+capacity声明。⚠️ depgraph.db 对 LS/Glob 不可见（.db 过滤），存在性判断用 `python -c "import os; print(os.path.isfile(r'D:/ZephyrAlpha/data/databases/depgraph.db'))"`
 STEP 1.2.1 — 提取文件级依赖：`python scripts/governance/extract_depgraph.py --paths`（文件级依赖关系，含设计态和运营态，真源 depgraph.db）→ 文件依赖+迁移状态
 STEP 1.5 — 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 STEP 2  — 读 project_rules.md（即 L0 首关页面）→ 了解硬规则
@@ -384,6 +384,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 3 | `files.autoGuessEncoding` = `false`, `files.encoding` = `utf8` |
 | 4 | 禁止 Trae + Cursor 同时打开同一文件 |
 | 5 | 扫描器大量报错 → 先检查扫描器本身的逻辑 |
+| 6 | `.db` 文件存在性判断禁止用 LS/Glob（工具过滤 `.db` 扩展名会漏显示）。MUST 用 `python -c "import os; print(os.path.isfile(r'绝对路径'))"` 确认 |
 
 ---
 

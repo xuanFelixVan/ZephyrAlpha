@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_merkle_hourly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §8
 # [MODULE] zephyr.governance.merkle_hourly
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.merkle_hourly
+# [CONSUMERS] audit-orchestrator.integrity(完整性校验时验证小时根哈希)
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现Merkle逻辑; 仅桥接HourlyMerkleAggregator
 # [MODIFY-GUARD] HourlyMerkleAggregator API变更时同步此桥接
-# [CONSUMERS] audit-orchestrator.integrity(完整性校验时验证小时根哈希)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_merkle_hourly.py
+# [A_module] module_id=MOD-GOV_merkle_hourly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_bootstrap_superadmin_bridge | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §bootstrap_superadmin
 # [MODULE] zephyr.security.access_control.governance_bridges.bootstrap_superadmin
+# [DOMAIN] D-AUTONOMY_PERM
+# [DEPENDENCIES] zephyr.security.access_control.governance_bridges.__init__
+# [CONSUMERS] genesis_bootstrap._bootstrap_superadmin(); auto_runtime_core.boot()
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] bootstrap is idempotent; superadmin account created once; capabilities never include destructive ops
 # [MODIFY-GUARD] Owner approval required; changes require blueprint update
-# [CONSUMERS] genesis_bootstrap._bootstrap_superadmin(); auto_runtime_core.boot()
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] bootstrap() never raises; returns dict with bootstrapped flag and error detail
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
+# [A_module] module_id=MOD-SEC_bootstrap_superadmin_bridge | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 """BootstrapSuperadminBridge — Superadmin 账户启动桥接.
 
 依据蓝图 MOD-INF-018 §bootstrap_superadmin:

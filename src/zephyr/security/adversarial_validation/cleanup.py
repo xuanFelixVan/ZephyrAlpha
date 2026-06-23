@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC_cleanup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §8.2 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.cleanup
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] validator.py; injection_engine.py
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] MUST achieve zero residue per RULE-FIVE; cleanup patterns: _attack_* | *.rb_backup | _temp*.py | _check*.py | data/red_blue/_temp_* | data/red_blue/checkpoint_*.yaml
 # [MODIFY-GUARD] Adding cleanup patterns MUST update CLEANUP_PATTERNS; ensure_clean() MUST verify all patterns
-# [CONSUMERS] validator.py; injection_engine.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] CleanupVerificationError if residue remains after cleanup
 # [TESTS] tests/red_blue/test_cleanup.py
+# [A_module] module_id=MOD-SEC_cleanup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

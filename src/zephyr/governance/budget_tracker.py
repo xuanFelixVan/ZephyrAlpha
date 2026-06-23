@@ -1,18 +1,18 @@
-# [A_module] module_id=MOD-RES_budget_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
-import json
-
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.infrastructure.budget_enforcement.budget_tracker
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.governance.budget_models
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-RES_budget_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import time
 from dataclasses import dataclass, field
 from enum import Enum

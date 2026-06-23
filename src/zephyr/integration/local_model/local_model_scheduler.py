@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INT_local_model_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain-integration/local-model/blueprint.md | §3.1
-
 # [MODULE] zephyr.integration.local_model.local_model_scheduler
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.resource_optimization_engine; zephyr.integration.local_model.embedding_router; zephyr.integration.local_model.ollama_chat
 # [CONSUMERS]
-
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-INT_local_model_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 LocalModelScheduler — L2 本地模型 24/7 调度循环

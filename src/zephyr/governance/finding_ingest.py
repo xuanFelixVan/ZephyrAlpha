@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-UNK_finding_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §3
 # [MODULE] zephyr.governance.audit_trail.finding_ingest
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.writer; zephyr.integration.shared_08.event_bus
+# [CONSUMERS] pipeline_runner.py; run_all.py; circadian_scheduler
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] FindingIngest is the sole bridge between 144 governance scripts and audit-trail; every finding MUST pass through this class
 # [MODIFY-GUARD] Ingest format changes require Finding Schema JSONL compatibility verification
-# [CONSUMERS] pipeline_runner.py; run_all.py; circadian_scheduler
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ingest_file() never raises; individual finding parse failures are logged and skipped
 # [TESTS] tests/test_audit_finding_ingest.py
+# [A_module] module_id=MOD-UNK_finding_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

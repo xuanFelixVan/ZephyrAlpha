@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-GOV_tiered_storage_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.tiered_storage_bridge
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.tiered_storage
+# [CONSUMERS] audit-orchestrator.bridge; retention
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] 不实现存储逻辑; 仅桥接TieredStorage
 # [MODIFY-GUARD] TieredStorage API变更时同步此桥接
-# [CONSUMERS] audit-orchestrator.bridge; retention
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_tiered_storage_bridge.py
+# [A_module] module_id=MOD-GOV_tiered_storage_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 from typing import Any
 

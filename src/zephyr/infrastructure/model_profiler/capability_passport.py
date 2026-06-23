@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-INF_capability_passport | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.capability_passport
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.model_profiler.__init__
+# [CONSUMERS] MOD-INF-034;MOD-INF-009
+# [STARTUP] imported
+# [MATURITY] production
 # [INVARIANTS] 能力护照数据模型;五轴评测结果持久化
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
-# [CONSUMERS] MOD-INF-034;MOD-INF-009
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] PassportError;SerializationError
 # [TESTS] tests/test_model_profiler/
+# [A_module] module_id=MOD-INF_capability_passport | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 CapabilityPassport --- AI 模型能力护照

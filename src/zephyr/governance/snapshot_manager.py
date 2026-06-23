@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-DAT_snapshot_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
 # [MODULE] zephyr.data.persistence.snapshot_manager
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema
+# [CONSUMERS] zephyr.data.persistence.projection_engine; zephyr.data.persistence.event_store
+# [STARTUP] imported
+# [MATURITY] prototype
 # [INVARIANTS] snapshot_json is valid JSON; last_event_timestamp tracks replay cutoff; create_snapshot is atomic
 # [MODIFY-GUARD] task_snapshots schema changes MUST go through sqlite_schema migration
-# [CONSUMERS] zephyr.data.persistence.projection_engine; zephyr.data.persistence.event_store
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SnapshotError on write failure
 # [TESTS] tests/test_event_store_stress.py
+# [A_module] module_id=MOD-DAT_snapshot_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
 SnapshotManager — Event Sourcing 快照管理（DW-0005）
