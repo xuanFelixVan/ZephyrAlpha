@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_vector_memory_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md | §
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
 
 # [MODULE] zephyr.integration.mcp.vector_memory_server
 
@@ -221,3 +221,7 @@ class VectorMemoryServer(BaseMCPServer):
 
 def create_server() -> VectorMemoryServer:
     return VectorMemoryServer()
+
+
+if __name__ == "__main__":
+    create_server().run()

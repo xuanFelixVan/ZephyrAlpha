@@ -893,8 +893,4 @@ def create_server() -> GovernanceServer:
 
 
 if __name__ == "__main__":
-    import json as _json
-
-    server = GovernanceServer()
-    health = server._get_governance_health()
-    print(_json.dumps(health, indent=2, ensure_ascii=False))
+    create_server().run()

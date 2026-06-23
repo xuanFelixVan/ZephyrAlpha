@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_task_manager_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md | §
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
 
 # [MODULE] zephyr.integration.mcp.task_manager_server
 
@@ -978,3 +978,11 @@ autonomy_checklist:{_yaml_list(tc.autonomy_checklist)}
 *本文件由 MOD-INF-006 task_manager_server 自动同步生成。*"""
 
     return yaml_block
+
+
+def create_server() -> TaskManagerMCP:
+    return TaskManagerMCP()
+
+
+if __name__ == "__main__":
+    create_server().run()

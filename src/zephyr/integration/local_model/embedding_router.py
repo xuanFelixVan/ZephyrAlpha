@@ -112,7 +112,7 @@ class EmbeddingRouter:
         model_dir_bge_m3: Path | str = MODEL_DIR_BGE_M3,
         model_dir_bge_small: Path | str = MODEL_DIR_BGE_SMALL,
         *,
-        backend: Literal["local", "ollama"] = "local",
+        backend: Literal["local", "ollama"] = "ollama",
     ) -> None:
         self._backend: str = backend
         self._model_dir_bge_m3 = Path(model_dir_bge_m3)

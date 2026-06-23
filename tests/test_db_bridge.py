@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0704 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 
 # [MODULE] tests.test_db_bridge
 
@@ -19,7 +19,12 @@
 
 # [TESTS] python -m pytest tests/test_db_bridge.py -q
 
-"""Tests for zephyr.observability.feedback_loop.db_bridge — record_via_db_contract and bulk_record_via_db_contract."""
+"""Tests for zephyr.ops.db_bridge — record_via_db_contract and bulk_record_via_db_contract.
+
+Schema aligned with canonical DDL (sqlite_schema.py _DDL_FLE_METRICS):
+  timestamp, source_system, metric_name, value, unit, tags_json, collected_at
+Extra fields (session_id, task_id, cost_usd, token_count) embedded in tags_json.
+"""
 
 from __future__ import annotations
 
@@ -61,6 +66,11 @@ def _fetch_all(db_path: Path) -> list[dict[str, Any]]:
     return [dict(r) for r in rows]
 
 
+def _parse_tags_json(row: dict[str, Any]) -> dict[str, Any]:
+    """Parse tags_json and return the payload dict."""
+    return json.loads(row["tags_json"])
+
+
 class TestEnsureTable:
     def test_creates_table_idempotent(self, tmp_path: Path) -> None:
         db_path = tmp_path / "idem.db"
@@ -68,9 +78,9 @@ class TestEnsureTable:
         _ensure_table(conn)
         _ensure_table(conn)
         conn.execute(
-            "INSERT INTO fle_metrics (metric_type, metric_name, metric_value, recorded_at) "
-            "VALUES (?, ?, ?, datetime('now'))",
-            ("latency", "p99", 1.23),
+            "INSERT INTO fle_metrics (timestamp, source_system, metric_name, value) "
+            "VALUES (?, ?, ?, ?)",
+            ("2026-01-01T00:00:00Z", "latency", "p99", 1.23),
         )
         conn.commit()
         assert _count_rows(db_path) == 1
@@ -84,9 +94,8 @@ class TestEnsureTable:
             "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='fle_metrics'"
         ).fetchall()
         index_names = {r[0] for r in indexes}
-        assert "idx_fle_metrics_type" in index_names
-        assert "idx_fle_metrics_at" in index_names
-        assert "idx_fle_metrics_session" in index_names
+        assert "idx_fle_metrics_ts" in index_names
+        assert "idx_fle_metrics_collected" in index_names
         conn.close()
 
 
@@ -123,14 +132,15 @@ class TestRecordViaDbContract:
         rows = _fetch_all(db_path)
         assert len(rows) == 1
         r = rows[0]
-        assert r["metric_type"] == "cost"
+        assert r["source_system"] == "cost"
         assert r["metric_name"] == "total"
-        assert abs(r["metric_value"] - 9.99) < 1e-9
-        assert json.loads(r["tags"]) == ["layer:infra"]
-        assert r["session_id"] == "sess-002"
-        assert r["task_id"] == "task-002"
-        assert abs(r["cost_usd"] - 9.99) < 1e-9
-        assert r["token_count"] == 500
+        assert abs(r["value"] - 9.99) < 1e-9
+        payload = _parse_tags_json(r)
+        assert payload["tags"] == ["layer:infra"]
+        assert payload["session_id"] == "sess-002"
+        assert payload["task_id"] == "task-002"
+        assert abs(payload["cost_usd"] - 9.99) < 1e-9
+        assert payload["token_count"] == 500
 
     def test_default_optional_fields(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
@@ -138,31 +148,33 @@ class TestRecordViaDbContract:
         assert rowid >= 1
         rows = _fetch_all(db_path)
         r = rows[0]
-        assert json.loads(r["tags"]) == []
-        assert r["session_id"] == ""
-        assert r["task_id"] == ""
-        assert r["cost_usd"] == 0.0
-        assert r["token_count"] == 0
+        payload = _parse_tags_json(r)
+        assert payload["tags"] == []
+        assert payload["session_id"] == ""
+        assert payload["task_id"] == ""
+        assert payload["cost_usd"] == 0.0
+        assert payload["token_count"] == 0
 
     def test_tags_none_treated_as_empty_list(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
         record_via_db_contract("gauge", "heap", 3.14, tags=None, db_path=str(db_path))
         rows = _fetch_all(db_path)
-        assert json.loads(rows[0]["tags"]) == []
+        payload = _parse_tags_json(rows[0])
+        assert payload["tags"] == []
 
     def test_negative_metric_value(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
         rowid = record_via_db_contract("delta", "change", -5.5, db_path=str(db_path))
         assert rowid >= 1
         rows = _fetch_all(db_path)
-        assert abs(rows[0]["metric_value"] - (-5.5)) < 1e-9
+        assert abs(rows[0]["value"] - (-5.5)) < 1e-9
 
     def test_zero_metric_value(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
         rowid = record_via_db_contract("counter", "zero", 0.0, db_path=str(db_path))
         assert rowid >= 1
         rows = _fetch_all(db_path)
-        assert rows[0]["metric_value"] == 0.0
+        assert rows[0]["value"] == 0.0
 
     def test_invalid_db_path_raises(self, tmp_path: Path) -> None:
         with pytest.raises(sqlite3.OperationalError):
@@ -198,13 +210,14 @@ class TestBulkRecordViaDbContract:
         bulk_record_via_db_contract(records, db_path=str(db_path))
         rows = _fetch_all(db_path)
         r = rows[0]
-        assert r["metric_type"] == "tokens"
+        assert r["source_system"] == "tokens"
         assert r["metric_name"] == "input"
-        assert abs(r["metric_value"] - 100.0) < 1e-9
-        assert json.loads(r["tags"]) == ["model:gpt4"]
-        assert r["session_id"] == "sess-b1"
-        assert r["cost_usd"] == 1.0
-        assert r["token_count"] == 100
+        assert abs(r["value"] - 100.0) < 1e-9
+        payload = _parse_tags_json(r)
+        assert payload["tags"] == ["model:gpt4"]
+        assert payload["session_id"] == "sess-b1"
+        assert payload["cost_usd"] == 1.0
+        assert payload["token_count"] == 100
 
     def test_empty_list_returns_zero(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
@@ -218,12 +231,13 @@ class TestBulkRecordViaDbContract:
         bulk_record_via_db_contract(records, db_path=str(db_path))
         rows = _fetch_all(db_path)
         r = rows[0]
-        assert r["metric_value"] == 0.0
-        assert json.loads(r["tags"]) == []
-        assert r["session_id"] == ""
-        assert r["task_id"] == ""
-        assert r["cost_usd"] == 0.0
-        assert r["token_count"] == 0
+        assert r["value"] == 0.0
+        payload = _parse_tags_json(r)
+        assert payload["tags"] == []
+        assert payload["session_id"] == ""
+        assert payload["task_id"] == ""
+        assert payload["cost_usd"] == 0.0
+        assert payload["token_count"] == 0
 
     def test_invalid_db_path_raises(self, tmp_path: Path) -> None:
         records = [{"metric_type": "x", "metric_name": "y", "metric_value": 1.0}]
@@ -244,7 +258,7 @@ class TestDbBridgeEdgeCases:
         rowid = record_via_db_contract("", "", 0.0, tags=[], session_id="", task_id="", db_path=str(db_path))
         assert rowid >= 1
         rows = _fetch_all(db_path)
-        assert rows[0]["metric_type"] == ""
+        assert rows[0]["source_system"] == ""
         assert rows[0]["metric_name"] == ""
 
     def test_record_with_unicode_tags(self, tmp_path: Path) -> None:
@@ -252,7 +266,8 @@ class TestDbBridgeEdgeCases:
         tags = ["环境:生产", "层:基础设施"]
         record_via_db_contract("unicode", "test", 1.0, tags=tags, db_path=str(db_path))
         rows = _fetch_all(db_path)
-        assert json.loads(rows[0]["tags"]) == tags
+        payload = _parse_tags_json(rows[0])
+        assert payload["tags"] == tags
 
     def test_bulk_with_mixed_completeness(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
@@ -272,12 +287,14 @@ class TestDbBridgeEdgeCases:
         count = bulk_record_via_db_contract(records, db_path=str(db_path))
         assert count == 2
         rows = _fetch_all(db_path)
-        assert rows[0]["session_id"] == "s1"
-        assert rows[1]["session_id"] == ""
+        payload0 = _parse_tags_json(rows[0])
+        payload1 = _parse_tags_json(rows[1])
+        assert payload0["session_id"] == "s1"
+        assert payload1["session_id"] == ""
 
     def test_record_very_large_metric_value(self, tmp_path: Path) -> None:
         db_path = _make_db(tmp_path)
         large_val = 1e15
         record_via_db_contract("big", "huge", large_val, db_path=str(db_path))
         rows = _fetch_all(db_path)
-        assert abs(rows[0]["metric_value"] - large_val) < large_val * 1e-9
+        assert abs(rows[0]["value"] - large_val) < large_val * 1e-9

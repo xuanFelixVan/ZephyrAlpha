@@ -1,63 +1,74 @@
 # [A_module] module_id=MOD-UNK_db_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-
-# [MODULE] zephyr.observability.feedback_loop.db_bridge
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-DB-001
+# [MODULE] zephyr.ops.db_bridge
+# [INVARIANTS] fle_metrics表DDL与sqlite_schema.py规范DDL一致; INSERT列名匹配规范schema
+# [MODIFY-GUARD] CT-FLE-DB-001 DDL变更必须同步更新sqlite_schema.py; 已知schema漂移bug: db_bridge.py曾有独立冲突DDL(metric_type/metric_value/recorded_at)导致db_writer.py INSERT失败
+# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; tests.test_db_bridge; tests.test_fl_db_bridge
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] DBConnectionError写入失败抛日志; 空输入返回0不报错
+# [TESTS] python -m pytest tests/test_db_bridge.py tests/test_fl_db_bridge.py -q
+"""FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics
 
-# [ERROR_CONTRACT]
-
-# [TESTS]
-
-"""CT-FLE-DB-001: FLE -> zephyr.trading.db formal contract path adapter.
-
-Routes MetricsCollector writes through the canonical zephyr.trading.db connection
-instead of opening a separate raw sqlite3 connection.
+CT-FLE-DB-001: FLE采集的指标 → Database持久化落地。
+DDL与sqlite_schema.py的_DDL_FLE_METRICS保持一致（SSoT）。
 """
 
 from __future__ import annotations
 
+import json
 import logging
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
-__all__ = ["bulk_record_via_db_contract", "record_via_db_contract"]
+__all__ = ["FLE_METRICS_TABLE_DDL", "bulk_record_via_db_contract", "record_via_db_contract"]
 
 _logger = logging.getLogger(__name__)
 
+# 规范DDL — 与 sqlite_schema.py _DDL_FLE_METRICS 完全一致（SSoT）
 FLE_METRICS_TABLE_DDL = """
 CREATE TABLE IF NOT EXISTS fle_metrics (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    metric_type TEXT NOT NULL,
-    metric_name TEXT NOT NULL,
-    metric_value REAL NOT NULL,
-    tags TEXT DEFAULT '[]',
-    recorded_at TEXT NOT NULL DEFAULT (datetime('now')),
-    session_id TEXT DEFAULT '',
-    task_id TEXT DEFAULT '',
-    cost_usd REAL DEFAULT 0.0,
-    token_count INTEGER DEFAULT 0
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp       TEXT    NOT NULL,
+    source_system   TEXT    NOT NULL,
+    metric_name     TEXT    NOT NULL,
+    value           REAL    NOT NULL,
+    unit            TEXT    DEFAULT 'count',
+    tags_json       TEXT    DEFAULT '{}',
+    window_avg      REAL,
+    window_p99      REAL,
+    window_count    INTEGER,
+    collected_at    TEXT    DEFAULT (datetime('now'))
 );
-CREATE INDEX IF NOT EXISTS idx_fle_metrics_type ON fle_metrics(metric_type);
-CREATE INDEX IF NOT EXISTS idx_fle_metrics_at ON fle_metrics(recorded_at);
-CREATE INDEX IF NOT EXISTS idx_fle_metrics_session ON fle_metrics(session_id);
+CREATE INDEX IF NOT EXISTS idx_fle_metrics_ts ON fle_metrics(timestamp);
+CREATE INDEX IF NOT EXISTS idx_fle_metrics_collected ON fle_metrics(collected_at);
 """
 
 
 def _ensure_table(conn: Any) -> None:
     conn.executescript(FLE_METRICS_TABLE_DDL)
+
+
+def _build_tags_json(
+    tags: list[str] | None,
+    session_id: str,
+    task_id: str,
+    cost_usd: float,
+    token_count: int,
+) -> str:
+    """将tags列表和额外字段打包为tags_json（规范schema的JSON text字段）。"""
+    payload = {
+        "tags": tags or [],
+        "session_id": session_id,
+        "task_id": task_id,
+        "cost_usd": cost_usd,
+        "token_count": token_count,
+    }
+    return json.dumps(payload, ensure_ascii=False)
 
 
 def record_via_db_contract(
@@ -75,14 +86,13 @@ def record_via_db_contract(
     conn = get_db_connection(Path(db_path))
     try:
         _ensure_table(conn)
-        import json
-
-        tags_json = json.dumps(tags or [], ensure_ascii=False)
+        timestamp = datetime.now(UTC).isoformat()
+        tags_json = _build_tags_json(tags, session_id, task_id, cost_usd, token_count)
         cursor = conn.execute(
-            "INSERT INTO fle_metrics (metric_type, metric_name, metric_value, "
-            "tags, session_id, task_id, cost_usd, token_count) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            (metric_type, metric_name, metric_value, tags_json, session_id, task_id, cost_usd, token_count),
+            "INSERT INTO fle_metrics (timestamp, source_system, metric_name, "
+            "value, unit, tags_json) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (timestamp, metric_type, metric_name, metric_value, "count", tags_json),
         )
         conn.commit()
         return cursor.lastrowid or 0
@@ -102,24 +112,27 @@ def bulk_record_via_db_contract(
     conn = get_db_connection(Path(db_path))
     try:
         _ensure_table(conn)
-        import json
-
         count = 0
         for rec in records:
-            tags_json = json.dumps(rec.get("tags", []), ensure_ascii=False)
+            timestamp = datetime.now(UTC).isoformat()
+            tags_json = _build_tags_json(
+                rec.get("tags"),
+                rec.get("session_id", ""),
+                rec.get("task_id", ""),
+                rec.get("cost_usd", 0.0),
+                rec.get("token_count", 0),
+            )
             conn.execute(
-                "INSERT INTO fle_metrics (metric_type, metric_name, metric_value, "
-                "tags, session_id, task_id, cost_usd, token_count) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO fle_metrics (timestamp, source_system, metric_name, "
+                "value, unit, tags_json) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
                 (
+                    timestamp,
                     rec.get("metric_type", "unknown"),
                     rec.get("metric_name", ""),
                     rec.get("metric_value", 0.0),
+                    "count",
                     tags_json,
-                    rec.get("session_id", ""),
-                    rec.get("task_id", ""),
-                    rec.get("cost_usd", 0.0),
-                    rec.get("token_count", 0),
                 ),
             )
             count += 1
