@@ -362,7 +362,7 @@ class TestExecuteConcurrencyGuard:
                 audit_session="test",
             )
             assert not result.success
-            assert "Concurrency conflict" in result.errors[0]
+            assert "concurrency conflict" in result.errors[0].lower()
 
     def test_execute_stash_blocked_other_session_files(self):
         """stash 前发现其他 session 未提交文件 → 阻断"""
@@ -400,7 +400,7 @@ class TestExecuteConcurrencyGuard:
                 audit_session="test",
             )
             assert not result.success
-            assert "Cannot stash" in result.errors[0]
+            assert "blocked stash" in result.errors[0].lower()
 
 
 class TestInFlightLifecycle:
