@@ -29,15 +29,16 @@ partitions:
     14层（L00-L13）降级为域的layer_id属性，不再作为并行分类体系。
 
 # === 横切关注点分区（非业务分类，保留）===
+# 注: frontend/scripts/infra/layers 目录已删除，信息合并入 depgraph.db 对应域
 - id: shared
-  path: layers/shared.yaml
-  description: 跨域公共契约与基础能力
+  path: ../../../../data/databases/depgraph.db
+  description: 跨域公共契约与基础能力（D-SHARED域）
 - id: frontend
-  path: frontend/frontend_model.yaml
-  description: 前端独立平台 FE-L1~L4
+  path: ../../../../data/databases/depgraph.db
+  description: 前端独立平台 FE-L1~L4（D-FRONTEND域）
 - id: scripts
-  path: scripts/scripts_model.yaml
-  description: 治理/审计/部署脚本
+  path: ../../../../data/databases/depgraph.db
+  description: 治理/审计/部署脚本（D-GOV-SCRIPTS域）
 - id: cross_cutting
   path: cross_cutting/
   description: 运行平面、不变量、能力成熟度
@@ -54,11 +55,11 @@ partitions:
   path: technology/
   description: 技术选型与版本治理SSoT
 - id: core-services
-  path: infra/core_services.yaml
-  description: Vibe Coding 2.0 6大核心服务
+  path: ../../../../data/databases/depgraph.db
+  description: Vibe Coding 2.0 6大核心服务（depgraph.db派生）
 - id: shared-infra
-  path: infra/shared_infra.yaml
-  description: 跨域共享基础设施
+  path: ../../../../data/databases/depgraph.db
+  description: 跨域共享基础设施（D-INFRA_OPS域）
 
 # === 52域清单（从depgraph.db派生，禁止手工编辑）===
 domains:
@@ -242,11 +243,11 @@ query_hints:
 - question: 系统能力成熟度？
   answer: 读cross-cutting/capability_heatmap.yaml（52域×10能力域矩阵）
 - question: 前端有哪些模块？
-  answer: 读frontend/frontend_model.yaml
+  answer: '查询depgraph.db: SELECT path FROM nodes WHERE domain_id="D-FRONTEND"'
 - question: 治理/审计脚本有哪些？
-  answer: 读scripts/scripts_model.yaml
+  answer: '查询depgraph.db: SELECT path FROM nodes WHERE domain_id="D-GOV-SCRIPTS"'
 - question: 跨域公共契约？
-  answer: 读layers/shared.yaml
+  answer: '查询depgraph.db: SELECT path FROM nodes WHERE domain_id="D-SHARED"'
 - question: P0跨域数据契约有哪些？
   answer: 读contracts/cross_layer_contracts.yaml §p0_contracts
 - question: 领域事件清单？

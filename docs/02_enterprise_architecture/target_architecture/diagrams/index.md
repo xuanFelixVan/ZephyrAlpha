@@ -29,7 +29,6 @@ title: Diagrams
 | 文件 | 说明 |
 |------|------|
 | togaf_layer_stack.mmd | TOGAF 四层堆叠图（BA → IA → AA → TA）|
-| src_layer_stack.mmd | src/zephyr/ 14 层分层图（L00-L13）|
 | docs_drawer_topology.mmd | docs/ 抽屉拓扑图 |
 | scripts_topology.mmd | scripts/ 治理代码拓扑图 |
 | frontend_mfe_topology.mmd | 前端微前端拓扑（Module Federation Host + 4 Apps）|
