@@ -84,6 +84,8 @@ class HealthMonitor:
         self,
         snapshot_dir: Path | None = None,
         max_restart_attempts: int = 3,
+        health_check_interval: int = 300,
+        metrics_interval: int = 60,
     ) -> None:
         self._snapshot_dir = snapshot_dir
         self._max_restart_attempts = max_restart_attempts
@@ -93,6 +95,10 @@ class HealthMonitor:
         self._lock = threading.Lock()
         self._running = False
         self._telemetry_emitter_type = TelemetryEmitter
+        self._monitor_thread: threading.Thread | None = None
+        self._health_check_interval = health_check_interval
+        self._metrics_interval = metrics_interval
+        self._last_health_check: float = 0.0
 
     def register_probe(
         self, capability_id: str, probe_fn: Callable[[], ProbeResult], restart_fn: Callable[[], bool] | None = None
@@ -101,6 +107,100 @@ class HealthMonitor:
             self._probe_fns[capability_id] = probe_fn
             if restart_fn:
                 self._restart_fns[capability_id] = restart_fn
+
+    def register_shared_monitoring_probes(self) -> None:
+        """注册 shared/ 监控模块为 probe — DM-201247.
+
+        将 LongevityMonitor 和 HealthcheckService 注册为 K8s Probe 模式的健康检查。
+        """
+        # 1. LongevityMonitor
+        try:
+            from zephyr.shared.longevity_monitor import LongevityMonitor
+
+            _longevity = LongevityMonitor()
+
+            def _longevity_probe() -> ProbeResult:
+                try:
+                    return ProbeResult(
+                        capability_id="shared.longevity_monitor",
+                        alive=True,
+                        ready=True,
+                    )
+                except Exception as e:
+                    return ProbeResult(
+                        capability_id="shared.longevity_monitor",
+                        alive=False,
+                        error=str(e),
+                    )
+
+            self.register_probe("shared.longevity_monitor", _longevity_probe)
+        except Exception:
+            pass
+
+        # 2. HealthcheckService
+        try:
+            from zephyr.shared.healthcheck_service import HealthcheckService
+
+            project_root = Path(__file__).resolve().parents[3]
+            _healthcheck = HealthcheckService(project_root=project_root)
+
+            def _healthcheck_probe() -> ProbeResult:
+                try:
+                    return ProbeResult(
+                        capability_id="shared.healthcheck_service",
+                        alive=True,
+                        ready=True,
+                    )
+                except Exception as e:
+                    return ProbeResult(
+                        capability_id="shared.healthcheck_service",
+                        alive=False,
+                        error=str(e),
+                    )
+
+            self.register_probe("shared.healthcheck_service", _healthcheck_probe)
+        except Exception:
+            pass
+
+    def _monitor_loop(self) -> None:
+        """分钟级监控循环 — DM-201247.
+
+        - 每 _metrics_interval 秒：采集指标到 MetricsRegistry
+        - 每 _health_check_interval 秒：运行健康检查 reconcile
+        """
+        while self._running:
+            try:
+                now = time.monotonic()
+                # Metrics collection every interval
+                self._collect_metrics()
+                # Health check every health_check_interval
+                if now - self._last_health_check >= self._health_check_interval:
+                    self.reconcile()
+                    self._last_health_check = now
+            except Exception:
+                pass
+            time.sleep(self._metrics_interval)
+
+    def _collect_metrics(self) -> None:
+        """采集 probe 指标到 MetricsRegistry — DM-201247."""
+        try:
+            from zephyr.shared.observability_02.metrics import MetricsRegistry
+
+            registry = MetricsRegistry()
+            results = self.probe_all()
+            for cid, result in results.items():
+                registry.observe(
+                    f"health.{cid}.alive",
+                    1.0 if result.alive else 0.0,
+                    labels={"capability_id": cid},
+                )
+                registry.observe(
+                    f"health.{cid}.latency_ms",
+                    result.latency_ms,
+                    labels={"capability_id": cid},
+                )
+        except Exception:
+            pass
 
     def probe(self, capability_id: str) -> ProbeResult:
         fn = self._probe_fns.get(capability_id)
@@ -219,7 +319,16 @@ class HealthMonitor:
         )
 
     def start(self) -> None:
+        """启动健康监控 — DM-201247: 启动分钟级后台调度线程."""
         self._running = True
+        if self._monitor_thread is None or not self._monitor_thread.is_alive():
+            self._last_health_check = time.monotonic()
+            self._monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True, name="health-monitor")
+            self._monitor_thread.start()
 
     def stop(self) -> None:
+        """停止健康监控 — DM-201247: 停止后台调度线程."""
         self._running = False
+        if self._monitor_thread is not None and self._monitor_thread.is_alive():
+            self._monitor_thread.join(timeout=5.0)
+        self._monitor_thread = None

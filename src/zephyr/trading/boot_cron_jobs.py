@@ -410,8 +410,38 @@ def register_boot_cron_jobs(
             callback=_mcp_health_check,
         )
 
+        # DM-201247: SLA 每小时报告
+        def _sla_hourly_report() -> None:
+            """生成 SLA 报告 — DM-201247.
+
+            每小时收集健康状态 + 指标快照，输出到日志。
+            """
+            try:
+                from zephyr.trading.health_monitor import HealthMonitor
+
+                hm = HealthMonitor()
+                report = hm.reconcile()
+                logger.info(
+                    "SLA hourly report: active=%d degraded=%d inactive=%d orphan_rate=%.2f",
+                    report.active,
+                    report.degraded,
+                    report.inactive,
+                    report.orphan_rate,
+                )
+                if report.actions_taken:
+                    logger.info("SLA actions: %s", "; ".join(report.actions_taken))
+            except Exception as e:
+                logger.warning("SLA hourly report failed: %s", e)
+
+        circadian_scheduler.register_task(
+            hour=-1,
+            name="sla_hourly_report",
+            layer="L1",
+            callback=_sla_hourly_report,
+        )
+
         logger.info(
-            "Task system cron jobs registered: escalation/timeout/orphan_scan/daily_dedup/budget_health/budget_alignment/temp_cleanup/triple_alignment/escalation_self_test/stale_task_recovery/mcp_health_check"
+            "Task system cron jobs registered: escalation/timeout/orphan_scan/daily_dedup/budget_health/budget_alignment/temp_cleanup/triple_alignment/escalation_self_test/stale_task_recovery/mcp_health_check/sla_hourly_report"
         )
     except Exception as e:
         logger.warning("Failed to register task system cron jobs: %s", e)
