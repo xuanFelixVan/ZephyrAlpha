@@ -1,0 +1,643 @@
+%% D-TRADING 域全景依赖图
+%% 生成时间: 2026-06-23 23:25:24
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 249, 依赖边数: 884
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_TRADING[交易运营]
+        D_TRADING_7_Architecture_Decisions_架构决策7项["...ADING/7 Architecture Decisions 架构决策7项 [design]"]
+        D_TRADING_A_Share_Pre_Market_S___ardized_Workflow_A股盘前标准化工作流["...rket Standardized Workflow A股盘前标准化工作流 [design]"]
+        D_TRADING_Annual_Statistics_年度统计["D-TRADING/Annual Statistics 年度统计 [design]"]
+        D_TRADING_Approval_Flow_审批流["D-TRADING/Approval Flow 审批流 [design]"]
+        D_TRADING_Approval_Token_Verification_审批令牌验证["...NG/Approval Token Verification 审批令牌验证 [design]"]
+        D_TRADING_Autonomy_Core_Dependency_Edge_自治核心依赖边["...Autonomy Core Dependency Edge 自治核心依赖边 [design]"]
+        D_TRADING_Cash_Flow_Manager_现金流管理器["D-TRADING/Cash Flow Manager 现金流管理器 [design]"]
+        D_TRADING_Cash_Management_资金与现金管理["D-TRADING/Cash Management 资金与现金管理 [design]"]
+        D_TRADING_Chase_High_Prevention_踏空追高防范["D-TRADING/Chase High Prevention 踏空追高防范 [design]"]
+        D_TRADING_Closed_Loop_Optimization_15_Dimensions_闭环优化15维度["...p Optimization 15 Dimensions 闭环优化15维度 [design]"]
+        D_TRADING_Config_Signature_Verification_配置签名验证[".../Config Signature Verification 配置签名验证 [design]"]
+        D_TRADING_CorporateActionAdjusted_公司行为调整["D-TRADING/CorporateActionAdjusted 公司行为调整 [design]"]
+        D_TRADING_Cross_Layer_Runtime_Architecture_横切层运行时架构["...s Layer Runtime Architecture 横切层运行时架构 [design]"]
+        D_TRADING_D_TRADING["D-TRADING/D-TRADING [design]"]
+        D_TRADING_DORA_ICT_Event_Report_DORA_ICT事件报告["...NG/DORA ICT Event Report DORA ICT事件报告 [design]"]
+        D_TRADING_Data_Degradation_Processing_数据降级处理["...NG/Data Degradation Processing 数据降级处理 [design]"]
+        D_TRADING_Data_Signature_Verification_数据签名验证["...NG/Data Signature Verification 数据签名验证 [design]"]
+        D_TRADING_Deterministic_Validation_确定性校验["D-TRADING/Deterministic Validation 确定性校验 [design]"]
+        D_TRADING_EOD_Processor日终处理器["D-TRADING/EOD Processor日终处理器 [design]"]
+        D_TRADING_End_of_Day_Processor_日终处理器["D-TRADING/End-of-Day Processor 日终处理器 [design]"]
+        D_TRADING_Execution_Core_Dependency_Edge_执行核心依赖边["...xecution Core Dependency Edge 执行核心依赖边 [design]"]
+        D_TRADING_Fee_PnL_Data_费率PnL数据["D-TRADING/Fee PnL Data 费率PnL数据 [design]"]
+        D_TRADING_GOV_TRD_001_单票持仓集中度规则["D-TRADING/GOV-TRD-001 单票持仓集中度规则 [design]"]
+        D_TRADING_Gift_Declaration_Form_Engine_礼品申报表引擎[".../Gift Declaration Form Engine 礼品申报表引擎 [design]"]
+        D_TRADING_Global_State_Aggregator_全局状态聚合器["...ADING/Global State Aggregator 全局状态聚合器 [design]"]
+        D_TRADING_Hard_Boundary_Constraints_硬边界约束["...ADING/Hard Boundary Constraints 硬边界约束 [design]"]
+        D_TRADING_Infra_Runtime_Dependency_Edge_基础设施运行时依赖边["...ra Runtime Dependency Edge 基础设施运行时依赖边 [design]"]
+        D_TRADING_Intraday_Instant_Rea____Decision_Engine_盘中即时反应决策引擎["...t Reaction Decision Engine 盘中即时反应决策引擎 [design]"]
+        D_TRADING_Intraday_PnL_Monitor_日内盈亏监控["D-TRADING/Intraday PnL Monitor 日内盈亏监控 [design]"]
+        D_TRADING_Intraday_Trading_Agent_日内交易代理["D-TRADING/Intraday Trading Agent 日内交易代理 [design]"]
+        D_TRADING_L0_L1_L2_Data_Flow_Artery_L0→L1→L2数据流主动脉["...L1 L2 Data Flow Artery L0→L1→L2数据流主动脉 [design]"]
+        D_TRADING_L2数据流主动脉["D-TRADING/L2数据流主动脉 [design]"]
+        D_TRADING_LP_020_Trading_Opera___s_Domain_Substitute_交易运营域替代["... Operations Domain Substitute 交易运营域替代 [design]"]
+        D_TRADING_Log_Signature_日志签名["D-TRADING/Log Signature 日志签名 [design]"]
+        D_TRADING_Loss_Revenge_Prevention_亏损报复防范["D-TRADING/Loss Revenge Prevention 亏损报复防范 [design]"]
+        D_TRADING_Margin_Calculator保证金计算器["D-TRADING/Margin Calculator保证金计算器 [design]"]
+        D_TRADING_MarginAccount_保证金账户["D-TRADING/MarginAccount 保证金账户 [design]"]
+        D_TRADING_MarginUnavailable_保证金不可用["D-TRADING/MarginUnavailable 保证金不可用 [design]"]
+        D_TRADING_MarginWarning_保证金预警["D-TRADING/MarginWarning 保证金预警 [design]"]
+        D_TRADING_Market_Data_行情数据["D-TRADING/Market Data 行情数据 [design]"]
+        D_TRADING_MultiAccountAllocated_多账户分配完成["D-TRADING/MultiAccountAllocated 多账户分配完成 [design]"]
+        D_TRADING_Order_Status_订单状态["D-TRADING/Order Status 订单状态 [design]"]
+        D_TRADING_Portfolio_Core_Dependency_Edge_组合核心依赖边["...ortfolio Core Dependency Edge 组合核心依赖边 [design]"]
+        D_TRADING_Position_Accountant持仓会计["D-TRADING/Position Accountant持仓会计 [design]"]
+        D_TRADING_Position_Accounting_持仓会计["D-TRADING/Position Accounting 持仓会计 [design]"]
+        D_TRADING_Position_Data_持仓数据["D-TRADING/Position Data 持仓数据 [design]"]
+        D_TRADING_Post_Market_Review_盘后复盘["D-TRADING/Post-Market Review 盘后复盘 [design]"]
+        D_TRADING_Pre_Market_Checker盘前检查器["D-TRADING/Pre-Market Checker盘前检查器 [design]"]
+        D_TRADING_Pre_Market_Review_盘前复核["D-TRADING/Pre-Market Review 盘前复核 [design]"]
+        D_TRADING_Process_Level_Isolation_进程级隔离["D-TRADING/Process-Level Isolation 进程级隔离 [design]"]
+        D_TRADING_Profit_Pride_Warning_盈利骄傲警告["D-TRADING/Profit Pride Warning 盈利骄傲警告 [design]"]
+        D_TRADING_Reconciliation_Engine对账引擎["D-TRADING/Reconciliation Engine对账引擎 [design]"]
+        D_TRADING_ReconciliationCompleted_对账完成["D-TRADING/ReconciliationCompleted 对账完成 [design]"]
+        D_TRADING_Reference_Data_Manager_参考数据管理["D-TRADING/Reference Data Manager 参考数据管理 [design]"]
+        D_TRADING_Reporting_Dependency_Edge_报告域依赖边["...DING/Reporting Dependency Edge 报告域依赖边 [design]"]
+        D_TRADING_Risk_Dependency_Edge_风控依赖边["D-TRADING/Risk Dependency Edge 风控依赖边 [design]"]
+        D_TRADING_Settlement_Manager结算管理器["D-TRADING/Settlement Manager结算管理器 [design]"]
+        D_TRADING_Settlement_Reconciliation_结算与对账["...ADING/Settlement Reconciliation 结算与对账 [design]"]
+        D_TRADING_SettlementCompleted_结算完成["D-TRADING/SettlementCompleted 结算完成 [design]"]
+        D_TRADING_SettlementRecord_结算记录["D-TRADING/SettlementRecord 结算记录 [design]"]
+        D_TRADING_Signature_Chain_签名链["D-TRADING/Signature Chain 签名链 [design]"]
+        D_TRADING_Strategy_Capacity_Academic_Framework_策略容量学术框架["... Capacity Academic Framework 策略容量学术框架 [design]"]
+        D_TRADING_Strategy_Parameters_策略参数["D-TRADING/Strategy Parameters 策略参数 [design]"]
+        D_TRADING_Trader_交易员角色["D-TRADING/Trader 交易员角色 [design]"]
+        D_TRADING_Trading_Calendar_Engine交易日历引擎["D-TRADING/Trading Calendar Engine交易日历引擎 [design]"]
+        D_TRADING_Trading_Cost_Analyzer交易成本分析["D-TRADING/Trading Cost Analyzer交易成本分析 [design]"]
+        D_TRADING_Trading_Operations_Data_交易运营数据["D-TRADING/Trading Operations Data 交易运营数据 [design]"]
+        D_TRADING_Trading_Operations_Domain_交易运营域["...ADING/Trading Operations Domain 交易运营域 [design]"]
+        D_TRADING_Trading_Order_交易指令["D-TRADING/Trading Order 交易指令 [design]"]
+        D_TRADING_TradingOrder_交易订单["D-TRADING/TradingOrder 交易订单 [design]"]
+        D_TRADING_Trapped_Position_Adding_Prevention_被套补仓防范["...ped Position Adding Prevention 被套补仓防范 [design]"]
+        D_TRADING_Treasury_Manager_资金管理器["D-TRADING/Treasury Manager 资金管理器 [design]"]
+        D_TRADING_WeChat_Interaction_Hub_微信交互中心["D-TRADING/WeChat Interaction Hub 微信交互中心 [design]"]
+        D_TRADING_miniQMT_Connection_Credential_miniQMT连接凭证["...QMT Connection Credential miniQMT连接凭证 [design]"]
+        D_TRADING_不做高频交易_No_High_Frequency_Trading["...DING/不做高频交易 No High-Frequency Trading [design]"]
+        D_TRADING_交易决策约束_Trading_Decision_Constraints["...G/交易决策约束 Trading Decision Constraints [design]"]
+        D_TRADING_交易决策防漂移契约_Contract["D-TRADING/交易决策防漂移契约 Contract [design]"]
+        D_TRADING_交易域规则目录_Trading_Domain_Rule_Catalog["...G/交易域规则目录 Trading Domain Rule Catalog [design]"]
+        D_TRADING_交易执行流程_Execution_Workflow["D-TRADING/交易执行流程 Execution Workflow [design]"]
+        D_TRADING_交易运营_Trading_Operations["D-TRADING/交易运营 Trading Operations [design]"]
+        D_TRADING_延迟归因器_Latency_Attributor["D-TRADING/延迟归因器 Latency Attributor [design]"]
+        D_TRADING_延迟预算分配器_Latency_Budget_Allocator["...DING/延迟预算分配器 Latency Budget Allocator [design]"]
+        D_TRADING_架构决策引用_Architecture_Decision_Reference["...构决策引用 Architecture Decision Reference [design]"]
+        D_TRADING_禁止AI自主执行大额下单_No_AI_Auto_Execute_Large_Order["...执行大额下单 No AI Auto-Execute Large Order [design]"]
+        D_TRADING_禁止非交易时段提交订单_Order["D-TRADING/禁止非交易时段提交订单 Order [design]"]
+        D_TRADING_纳秒级关键路径分析器_Nanosecond_Critical_Path_Analyzer["...分析器 Nanosecond Critical Path Analyzer [design]"]
+        src_zephyr_trading___init___py["src/zephyr/trading/__init__.py [production]"]
+        src_zephyr_trading___init___from_orches_py["...ephyr/trading/__init___from_orches.py [prototype]"]
+        src_zephyr_trading___main___py["src/zephyr/trading/__main__.py [prototype]"]
+        src_zephyr_trading__extensions___init___py["...ephyr/trading/_extensions/__init__.py [scaffold_placeholder]"]
+        src_zephyr_trading_action_dispatcher_py["src/zephyr/trading/action_dispatcher.py [prototype]"]
+        src_zephyr_trading_admission_controller_py["...ephyr/trading/admission_controller.py [prototype]"]
+        src_zephyr_trading_ai_audit_logger_py["src/zephyr/trading/ai_audit_logger.py [prototype]"]
+        src_zephyr_trading_api___init___py["src/zephyr/trading/api/__init__.py [scaffold_placeholder]"]
+        src_zephyr_trading_auto_dispatcher_py["src/zephyr/trading/auto_dispatcher.py [prototype]"]
+        src_zephyr_trading_auto_integrator_py["src/zephyr/trading/auto_integrator.py [prototype]"]
+        src_zephyr_trading_auto_runtime_core_py["src/zephyr/trading/auto_runtime_core.py [production]"]
+        src_zephyr_trading_auto_task_generator_py["...zephyr/trading/auto_task_generator.py [prototype]"]
+        src_zephyr_trading_autopilot_py["src/zephyr/trading/autopilot.py [prototype]"]
+        src_zephyr_trading_boot_cron_jobs_py["src/zephyr/trading/boot_cron_jobs.py [prototype]"]
+        %% ... 还有 149 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_trading_auto_dispatcher_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_auto_integrator_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_boot_cron_jobs_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_boot_hooks_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_conductor_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_capability_registry_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_capability_sync_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_gpu_consensus_scheduler_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_health_monitor_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_module_onboarding_scanner_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_resource_optimization_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orphan_detector_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_protection_index_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_status_dashboard_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_windows_service_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_work_orchestrator_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading___main___py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_agent_health_monitor_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_chaos_hooks_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_contract_router_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_state_synchronizer_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_trigger_router_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_task_queue_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator___init___py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_core_trigger_router_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_core___init___py -->|import_depends| src_zephyr_trading_orchestrator_core_trigger_router_py
+    src_zephyr_trading_orchestrato___ate_agent_health_monitor_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_state___init___py -->|import_depends| src_zephyr_trading_orchestrator_state_session_manager_py
+    src_zephyr_trading_orchestrator_state_state_synchronizer_py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_orchestrator_resilience___init___py -->|import_depends| src_zephyr_trading_orchestrator_resilience_deferred_queue_py
+    src_zephyr_trading_orchestrator_resilience___init___py -->|import_depends| src_zephyr_trading_orchestrato___silience_failure_matcher_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_market_data_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___rket_macro_factor_signal_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___et_factor_monitor_report_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_validator_protocol_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___sk_limit_violation_error_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___ortfolio_contracts_money_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___strategy_lifecycle_event_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading___init___py
+    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
+    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_market_data_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_con___rket_macro_factor_signal_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_con___et_factor_monitor_report_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
+    src_zephyr_trading_trading_con___folio_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___ortfolio_contracts_money_py
+    src_zephyr_trading_trading_con___folio_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___strategy_lifecycle_event_py
+    src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
+    %% ... 还有 145 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-TRADING (2 条)
+    D_ALT_DATA[D-ALT_DATA] -->|event| D_TRADING_交易执行流程_Execution_Workflow
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_TRADING_Reference_Data_Manager_参考数据管理
+    %% D-AUTONOMY_CORE -> D-TRADING (17 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_TRADING_Risk_Dependency_Edge_风控依赖边
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_TRADING_WeChat_Interaction_Hub_微信交互中心
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_TRADING_A_Share_Pre_Market_S___ardized_Workflow_A股盘前标准化工作流
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_TRADING_Cash_Management_资金与现金管理
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_TRADING_Portfolio_Core_Dependency_Edge_组合核心依赖边
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_TRADING_MarginWarning_保证金预警
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_TRADING_交易运营_Trading_Operations
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_TRADING_纳秒级关键路径分析器_Nanosecond_Critical_Path_Analyzer
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_TRADING_Post_Market_Review_盘后复盘
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_TRADING_Autonomy_Core_Dependency_Edge_自治核心依赖边
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_TRADING_延迟归因器_Latency_Attributor
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_TRADING_Trader_交易员角色
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_TRADING_CorporateActionAdjusted_公司行为调整
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_TRADING_Position_Accountant持仓会计
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_TRADING_CorporateActionAdjusted_公司行为调整
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_TRADING_7_Architecture_Decisions_架构决策7项
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_TRADING_Strategy_Parameters_策略参数
+    %% D-AUTONOMY_PERM -> D-TRADING (2 条)
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_TRADING_Process_Level_Isolation_进程级隔离
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|config_depends| D_TRADING_Trader_交易员角色
+    %% D-COMPLIANCE -> D-TRADING (16 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_TRADING_Trading_Order_交易指令
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_TRADING_Pre_Market_Checker盘前检查器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_TRADING_延迟归因器_Latency_Attributor
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_TRADING_Reference_Data_Manager_参考数据管理
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_TRADING_Cash_Flow_Manager_现金流管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_TRADING_Risk_Dependency_Edge_风控依赖边
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_TRADING_CorporateActionAdjusted_公司行为调整
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_TRADING_Position_Accounting_持仓会计
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_TRADING_交易决策约束_Trading_Decision_Constraints
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_TRADING_交易执行流程_Execution_Workflow
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_TRADING_7_Architecture_Decisions_架构决策7项
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_TRADING_Log_Signature_日志签名
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_TRADING_Settlement_Manager结算管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_TRADING_交易运营_Trading_Operations
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_TRADING_Gift_Declaration_Form_Engine_礼品申报表引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_TRADING_Trading_Operations_Data_交易运营数据
+    %% D-CROSS_ASSET -> D-TRADING (5 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|import_depends| src_zephyr_trading_trading_con___sk_limit_violation_error_py
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| src_zephyr_trading_trading_contracts___init___py
+    %% D-DATA_GOV -> D-TRADING (1 条)
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_TRADING_Intraday_PnL_Monitor_日内盈亏监控
+    %% D-DATA_SEC -> D-TRADING (1 条)
+    D_DATA_SEC[D-DATA_SEC] -->|event| D_TRADING_Trading_Order_交易指令
+    %% D-EX_CORE -> D-TRADING (7 条)
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_EX_CORE[D-EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_EX_CORE[D-EX_CORE] -->|contract| D_TRADING_Post_Market_Review_盘后复盘
+    D_EX_CORE[D-EX_CORE] -->|data| D_TRADING_miniQMT_Connection_Credential_miniQMT连接凭证
+    D_EX_CORE[D-EX_CORE] -->|contract| D_TRADING_7_Architecture_Decisions_架构决策7项
+    D_EX_CORE[D-EX_CORE] -->|data| D_TRADING_Trapped_Position_Adding_Prevention_被套补仓防范
+    %% D-FACTOR -> D-TRADING (5 条)
+    D_FACTOR[D-FACTOR] -->|contract| D_TRADING_Intraday_Trading_Agent_日内交易代理
+    D_FACTOR[D-FACTOR] -->|data| D_TRADING_Deterministic_Validation_确定性校验
+    D_FACTOR[D-FACTOR] -->|event| D_TRADING_Loss_Revenge_Prevention_亏损报复防范
+    D_FACTOR[D-FACTOR] -->|data| D_TRADING_Trading_Order_交易指令
+    D_FACTOR[D-FACTOR] -->|contract| D_TRADING_Margin_Calculator保证金计算器
+    %% D-FRONTEND -> D-TRADING (4 条)
+    D_FRONTEND[D-FRONTEND] -->|event| D_TRADING_交易运营_Trading_Operations
+    D_FRONTEND[D-FRONTEND] -->|contract| D_TRADING_Treasury_Manager_资金管理器
+    D_FRONTEND[D-FRONTEND] -->|contract| D_TRADING_Fee_PnL_Data_费率PnL数据
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_TRADING_Margin_Calculator保证金计算器
+    %% D-GOVERNANCE -> D-TRADING (248 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_market_market_data_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___rket_macro_factor_signal_py
+    %% D-GOV_AUDIT -> D-TRADING (1 条)
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_trading___init___py
+    %% D-INFRA_OPS -> D-TRADING (12 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_TRADING_Trading_Operations_Domain_交易运营域
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_TRADING_Trading_Cost_Analyzer交易成本分析
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_TRADING_交易运营_Trading_Operations
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_TRADING_WeChat_Interaction_Hub_微信交互中心
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_TRADING_Reporting_Dependency_Edge_报告域依赖边
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_TRADING_Intraday_Trading_Agent_日内交易代理
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_TRADING_Data_Degradation_Processing_数据降级处理
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_TRADING_Data_Signature_Verification_数据签名验证
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_TRADING_Strategy_Capacity_Academic_Framework_策略容量学术框架
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_TRADING_Reconciliation_Engine对账引擎
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_TRADING_Treasury_Manager_资金管理器
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_TRADING_7_Architecture_Decisions_架构决策7项
+    %% D-INTEGRATION -> D-TRADING (10 条)
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_trading___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_trading___init___py
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_TRADING_架构决策引用_Architecture_Decision_Reference
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_TRADING_Trading_Cost_Analyzer交易成本分析
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_TRADING_Cross_Layer_Runtime_Architecture_横切层运行时架构
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_TRADING_LP_020_Trading_Opera___s_Domain_Substitute_交易运营域替代
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_TRADING_GOV_TRD_001_单票持仓集中度规则
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_TRADING_Closed_Loop_Optimization_15_Dimensions_闭环优化15维度
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_TRADING_Margin_Calculator保证金计算器
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_TRADING_DORA_ICT_Event_Report_DORA_ICT事件报告
+    %% D-INTELLIGENCE -> D-TRADING (3 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_TRADING_Closed_Loop_Optimization_15_Dimensions_闭环优化15维度
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_TRADING_Treasury_Manager_资金管理器
+    %% D-KNOWLEDGE -> D-TRADING (2 条)
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_TRADING_Risk_Dependency_Edge_风控依赖边
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_TRADING_7_Architecture_Decisions_架构决策7项
+    %% D-MKT_DATA -> D-TRADING (8 条)
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_TRADING_Position_Data_持仓数据
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_TRADING_Data_Degradation_Processing_数据降级处理
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_TRADING_Autonomy_Core_Dependency_Edge_自治核心依赖边
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_TRADING_Data_Signature_Verification_数据签名验证
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_TRADING_Order_Status_订单状态
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_TRADING_Execution_Core_Dependency_Edge_执行核心依赖边
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_TRADING_延迟预算分配器_Latency_Budget_Allocator
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_TRADING_Post_Market_Review_盘后复盘
+    %% D-ML_SERVE -> D-TRADING (2 条)
+    D_ML_SERVE[D-ML_SERVE] -->|config_depends| D_TRADING_MarginUnavailable_保证金不可用
+    D_ML_SERVE[D-ML_SERVE] -->|contract| D_TRADING_Settlement_Manager结算管理器
+    %% D-ML_TRAIN -> D-TRADING (6 条)
+    D_ML_TRAIN[D-ML_TRAIN] -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
+    D_ML_TRAIN[D-ML_TRAIN] -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
+    D_ML_TRAIN[D-ML_TRAIN] -->|contract| src_zephyr_trading_trading_contracts___init___py
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_TRADING_Strategy_Capacity_Academic_Framework_策略容量学术框架
+    D_ML_TRAIN[D-ML_TRAIN] -->|contract| D_TRADING_Infra_Runtime_Dependency_Edge_基础设施运行时依赖边
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_TRADING_Trading_Order_交易指令
+    %% D-OPS -> D-TRADING (10 条)
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_trading___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_OPS[D-OPS] -->|contract| D_TRADING_Position_Accountant持仓会计
+    D_OPS[D-OPS] -->|data| D_TRADING_延迟预算分配器_Latency_Budget_Allocator
+    D_OPS[D-OPS] -->|data| D_TRADING_架构决策引用_Architecture_Decision_Reference
+    D_OPS[D-OPS] -->|config_depends| D_TRADING_Loss_Revenge_Prevention_亏损报复防范
+    D_OPS[D-OPS] -->|config_depends| D_TRADING_Trading_Operations_Data_交易运营数据
+    D_OPS[D-OPS] -->|config_depends| D_TRADING_Profit_Pride_Warning_盈利骄傲警告
+    %% D-PF_ALLOC -> D-TRADING (4 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_TRADING_Fee_PnL_Data_费率PnL数据
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_TRADING_Reference_Data_Manager_参考数据管理
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_TRADING_Cross_Layer_Runtime_Architecture_横切层运行时架构
+    %% D-PF_CORE -> D-TRADING (4 条)
+    D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_PF_CORE[D-PF_CORE] -->|data| D_TRADING_WeChat_Interaction_Hub_微信交互中心
+    D_PF_CORE[D-PF_CORE] -->|event| D_TRADING_Trader_交易员角色
+    D_PF_CORE[D-PF_CORE] -->|contract| D_TRADING_Data_Degradation_Processing_数据降级处理
+    %% D-POSITION -> D-TRADING (7 条)
+    D_POSITION[D-POSITION] -->|contract| D_TRADING_Position_Accounting_持仓会计
+    D_POSITION[D-POSITION] -->|event| D_TRADING_Portfolio_Core_Dependency_Edge_组合核心依赖边
+    D_POSITION[D-POSITION] -->|data| D_TRADING_Process_Level_Isolation_进程级隔离
+    D_POSITION[D-POSITION] -->|data| D_TRADING_Order_Status_订单状态
+    D_POSITION[D-POSITION] -->|data| D_TRADING_交易运营_Trading_Operations
+    D_POSITION[D-POSITION] -->|contract| D_TRADING_Portfolio_Core_Dependency_Edge_组合核心依赖边
+    D_POSITION[D-POSITION] -->|domain_dependency| D_TRADING_D_TRADING
+    %% D-REPORTING -> D-TRADING (11 条)
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_REPORTING[D-REPORTING] -->|event| D_TRADING_Trading_Operations_Domain_交易运营域
+    D_REPORTING[D-REPORTING] -->|contract| D_TRADING_MarginUnavailable_保证金不可用
+    %% D-RISK -> D-TRADING (30 条)
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_con___sk_limit_violation_error_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_con___sk_limit_violation_error_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
+    D_RISK[D-RISK] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    D_RISK[D-RISK] -->|contract| src_zephyr_trading_trading_contracts___init___py
+    D_RISK[D-RISK] -->|contract| D_TRADING_Pre_Market_Checker盘前检查器
+    D_RISK[D-RISK] -->|contract| D_TRADING_交易运营_Trading_Operations
+    D_RISK[D-RISK] -->|contract| D_TRADING_延迟预算分配器_Latency_Budget_Allocator
+    D_RISK[D-RISK] -->|data| D_TRADING_Strategy_Parameters_策略参数
+    D_RISK[D-RISK] -->|data| D_TRADING_Intraday_Trading_Agent_日内交易代理
+    D_RISK[D-RISK] -->|data| D_TRADING_L0_L1_L2_Data_Flow_Artery_L0→L1→L2数据流主动脉
+    D_RISK[D-RISK] -->|event| D_TRADING_Intraday_Instant_Rea____Decision_Engine_盘中即时反应决策引擎
+    D_RISK[D-RISK] -->|data| D_TRADING_架构决策引用_Architecture_Decision_Reference
+    D_RISK[D-RISK] -->|contract| D_TRADING_Trading_Calendar_Engine交易日历引擎
+    D_RISK[D-RISK] -->|event| D_TRADING_End_of_Day_Processor_日终处理器
+    D_RISK[D-RISK] -->|event| D_TRADING_交易域规则目录_Trading_Domain_Rule_Catalog
+    D_RISK[D-RISK] -->|event| D_TRADING_SettlementCompleted_结算完成
+    D_RISK[D-RISK] -->|event| D_TRADING_L2数据流主动脉
+    D_RISK[D-RISK] -->|config_depends| D_TRADING_A_Share_Pre_Market_S___ardized_Workflow_A股盘前标准化工作流
+    D_RISK[D-RISK] -->|data| D_TRADING_End_of_Day_Processor_日终处理器
+    D_RISK[D-RISK] -->|data| D_TRADING_Closed_Loop_Optimization_15_Dimensions_闭环优化15维度
+    D_RISK[D-RISK] -->|contract| D_TRADING_Fee_PnL_Data_费率PnL数据
+    D_RISK[D-RISK] -->|event| D_TRADING_Market_Data_行情数据
+    D_RISK[D-RISK] -->|config_depends| D_TRADING_Autonomy_Core_Dependency_Edge_自治核心依赖边
+    %% D-SECURITY -> D-TRADING (23 条)
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_trading___init___py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_trading___init___py
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_Treasury_Manager_资金管理器
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_Trading_Calendar_Engine交易日历引擎
+    D_SECURITY[D-SECURITY] -->|data| D_TRADING_MarginWarning_保证金预警
+    D_SECURITY[D-SECURITY] -->|data| D_TRADING_miniQMT_Connection_Credential_miniQMT连接凭证
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_Trading_Cost_Analyzer交易成本分析
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_ReconciliationCompleted_对账完成
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_Deterministic_Validation_确定性校验
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_WeChat_Interaction_Hub_微信交互中心
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_7_Architecture_Decisions_架构决策7项
+    D_SECURITY[D-SECURITY] -->|data| D_TRADING_Intraday_Trading_Agent_日内交易代理
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_Trading_Calendar_Engine交易日历引擎
+    D_SECURITY[D-SECURITY] -->|data| D_TRADING_Trading_Cost_Analyzer交易成本分析
+    D_SECURITY[D-SECURITY] -->|data| D_TRADING_WeChat_Interaction_Hub_微信交互中心
+    D_SECURITY[D-SECURITY] -->|data| D_TRADING_Chase_High_Prevention_踏空追高防范
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_L0_L1_L2_Data_Flow_Artery_L0→L1→L2数据流主动脉
+    D_SECURITY[D-SECURITY] -->|data| D_TRADING_纳秒级关键路径分析器_Nanosecond_Critical_Path_Analyzer
+    D_SECURITY[D-SECURITY] -->|config_depends| D_TRADING_Trading_Calendar_Engine交易日历引擎
+    D_SECURITY[D-SECURITY] -->|event| D_TRADING_GOV_TRD_001_单票持仓集中度规则
+    D_SECURITY[D-SECURITY] -->|config_depends| D_TRADING_End_of_Day_Processor_日终处理器
+    D_SECURITY[D-SECURITY] -->|data| D_TRADING_架构决策引用_Architecture_Decision_Reference
+    D_SECURITY[D-SECURITY] -->|contract| D_TRADING_Approval_Flow_审批流
+    %% D-SIGNAL -> D-TRADING (14 条)
+    D_SIGNAL[D-SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    D_SIGNAL[D-SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    D_SIGNAL[D-SIGNAL] -->|contract| D_TRADING_交易运营_Trading_Operations
+    D_SIGNAL[D-SIGNAL] -->|contract| D_TRADING_Pre_Market_Review_盘前复核
+    D_SIGNAL[D-SIGNAL] -->|event| D_TRADING_Trading_Operations_Domain_交易运营域
+    D_SIGNAL[D-SIGNAL] -->|event| D_TRADING_纳秒级关键路径分析器_Nanosecond_Critical_Path_Analyzer
+    D_SIGNAL[D-SIGNAL] -->|event| D_TRADING_D_TRADING
+    D_SIGNAL[D-SIGNAL] -->|event| D_TRADING_Strategy_Capacity_Academic_Framework_策略容量学术框架
+    D_SIGNAL[D-SIGNAL] -->|contract| D_TRADING_延迟归因器_Latency_Attributor
+    D_SIGNAL[D-SIGNAL] -->|event| D_TRADING_Execution_Core_Dependency_Edge_执行核心依赖边
+    D_SIGNAL[D-SIGNAL] -->|config_depends| D_TRADING_Trading_Order_交易指令
+    D_SIGNAL[D-SIGNAL] -->|contract| D_TRADING_Cross_Layer_Runtime_Architecture_横切层运行时架构
+    D_SIGNAL[D-SIGNAL] -->|data| D_TRADING_Position_Data_持仓数据
+    D_SIGNAL[D-SIGNAL] -->|event| D_TRADING_Hard_Boundary_Constraints_硬边界约束
+    %% D-SIGNAL_FUNDAMENTAL -> D-TRADING (15 条)
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    D_SIGNAL_FUNDAMENTAL[D-SIGNAL_FUNDAMENTAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
+    %% D-SIMULATION -> D-TRADING (2 条)
+    D_SIMULATION[D-SIMULATION] -->|data| D_TRADING_TradingOrder_交易订单
+    D_SIMULATION[D-SIMULATION] -->|event| D_TRADING_MarginWarning_保证金预警
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-TRADING -> D-AUTONOMY_CORE (3 条)
+    src_zephyr_trading_boot_cron_jobs_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    src_zephyr_trading_orchestrator_context_bridge_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    src_zephyr_trading_orchestrator_memory_writer_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    %% D-TRADING -> D-BEHAVIORAL_AUDIT (1 条)
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    %% D-TRADING -> D-DATA_ENG (4 条)
+    D_TRADING_交易运营_Trading_Operations -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_TRADING_Infra_Runtime_Dependency_Edge_基础设施运行时依赖边 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_TRADING_Reference_Data_Manager_参考数据管理 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_TRADING_Approval_Token_Verification_审批令牌验证 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    %% D-TRADING -> D-EX_SOR (4 条)
+    D_TRADING_Pre_Market_Checker盘前检查器 -->|event| D_EX_SOR[D-EX_SOR]
+    D_TRADING_禁止AI自主执行大额下单_No_AI_Auto_Execute_Large_Order -->|data| D_EX_SOR[D-EX_SOR]
+    D_TRADING_A_Share_Pre_Market_S___ardized_Workflow_A股盘前标准化工作流 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_TRADING_D_TRADING -->|domain_dependency| D_EX_SOR[D-EX_SOR]
+    %% D-TRADING -> D-GOVERNANCE (36 条)
+    src_zephyr_trading_auto_dispatcher_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_autopilot_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_boot_cron_jobs_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_boot_cron_jobs_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_conductor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_orchestrator_failure_matcher_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_orchestrator_finding_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_orchestrator_memory_writer_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_orchestrator_trigger_router_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_orchestrator_core_trigger_router_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_orchestrato___silience_failure_matcher_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_trading_con___ortfolio_contracts_money_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_trading_con___folio_contracts___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_trading_ide_health_daemon_py -->|runtime| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-TRADING -> D-GOV_AUDIT (7 条)
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_trading_verdict_engine_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    %% D-TRADING -> D-GOV_DRIFT (2 条)
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    %% D-TRADING -> D-GOV_RULE (4 条)
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_trading_boot_cron_jobs_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOV_RULE[D-GOV_RULE]
+    src_zephyr_trading_ide_health_daemon_py -->|contract| D_GOV_RULE[D-GOV_RULE]
+    %% D-TRADING -> D-INFRA_RUNTIME (7 条)
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_trading_orchestrator_script_runner_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_TRADING_Portfolio_Core_Dependency_Edge_组合核心依赖边 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_TRADING_交易决策约束_Trading_Decision_Constraints -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_TRADING_ReconciliationCompleted_对账完成 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    src_zephyr_trading_ide_health_daemon_py -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-TRADING -> D-INTEGRATION (55 条)
+    src_zephyr_trading_ai_audit_logger_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_boot_cron_jobs_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_capability_card_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_dream_cycle_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_feedback_loop_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_health_monitor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_integration_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_night_shift_queue_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_runtime_config_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_work_dag_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_orchestrator_agent_health_monitor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_orchestrator_agent_health_monitor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_trading_orchestrator_file_task_mapper_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    %% D-TRADING -> D-INTELLIGENCE (6 条)
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    src_zephyr_trading_task_gate_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-TRADING -> D-OPS (3 条)
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_OPS[D-OPS]
+    src_zephyr_trading_orchestrator_trigger_router_py -->|import_depends| D_OPS[D-OPS]
+    src_zephyr_trading_ide_health_daemon_py -->|runtime| D_OPS[D-OPS]
+    %% D-TRADING -> D-SECURITY (12 条)
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_orchestrator_context_bridge_py -->|import_depends| D_SECURITY[D-SECURITY]
+    src_zephyr_trading_orchestrator_core_agent_orchestrator_py -->|import_depends| D_SECURITY[D-SECURITY]
+    %% D-TRADING -> D-SHARED (43 条)
+    src_zephyr_trading_auto_dispatcher_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_autopilot_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_autopilot_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_boot_cron_jobs_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_conductor_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_conductor_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_batch_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_batch_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_batch_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_contract_registry_py -->|import_depends| D_SHARED[D-SHARED]
+
+    %% 统计
+    %% 域内依赖: 225 条
+    %% 跨域入边: 472 条
+    %% 跨域出边: 187 条

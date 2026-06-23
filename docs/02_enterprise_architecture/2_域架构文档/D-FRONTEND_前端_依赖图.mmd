@@ -1,0 +1,628 @@
+%% D-FRONTEND 域全景依赖图
+%% 生成时间: 2026-06-23 23:25:23
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 237, 依赖边数: 655
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_FRONTEND[前端]
+        D_FRONTEND_3D_Force_Directed_Layout_3D力导向布局器["...END/3D Force-Directed Layout 3D力导向布局器 [design]"]
+        D_FRONTEND_4_Level_Risk_Decision_4级风控决策["D-FRONTEND/4-Level Risk Decision 4级风控决策 [design]"]
+        D_FRONTEND_AI_Agent调用链追踪器_AI_Agent_Call_Chain_Tracer["...gent调用链追踪器 AI Agent Call Chain Tracer [design]"]
+        D_FRONTEND_AI_Autonomy_Dashboard_AI自治仪表盘["D-FRONTEND/AI Autonomy Dashboard AI自治仪表盘 [design]"]
+        D_FRONTEND_AI_Collection_Result_Display_AI采集结果展示["...AI Collection Result Display AI采集结果展示 [design]"]
+        D_FRONTEND_AI_Model_HR_Dashboard_AI模型HR管理面板["...TEND/AI Model HR Dashboard AI模型HR管理面板 [design]"]
+        D_FRONTEND_AI_Role_AI角色["D-FRONTEND/AI Role AI角色 [design]"]
+        D_FRONTEND_AI_Driven_Dependency_Explorer_AI驱动依赖图探索器["...Driven Dependency Explorer AI驱动依赖图探索器 [design]"]
+        D_FRONTEND_API_Dependency_Visualizer_API依赖可视化器["...D/API Dependency Visualizer API依赖可视化器 [design]"]
+        D_FRONTEND_API_Gateway_Proxy_API网关代理["D-FRONTEND/API Gateway Proxy API网关代理 [design]"]
+        D_FRONTEND_API_Gateway_UI_API网关界面["D-FRONTEND/API Gateway UI API网关界面 [design]"]
+        D_FRONTEND_AST_Sandbox_Validation_Result_AST沙箱验证结果["...T Sandbox Validation Result AST沙箱验证结果 [design]"]
+        D_FRONTEND_Administrator_Role_管理员角色["D-FRONTEND/Administrator Role 管理员角色 [design]"]
+        D_FRONTEND_Adversarial_Test_Result_对抗性测试结果["...NTEND/Adversarial Test Result 对抗性测试结果 [design]"]
+        D_FRONTEND_Agent_Behavior_Monitoring_Agent行为监控["...D/Agent Behavior Monitoring Agent行为监控 [design]"]
+        D_FRONTEND_Agent_Dependency_Heatmap_Agent依赖热力图["...D/Agent Dependency Heatmap Agent依赖热力图 [design]"]
+        D_FRONTEND_Alert_Notification_UI_告警通知界面["D-FRONTEND/Alert Notification UI 告警通知界面 [design]"]
+        D_FRONTEND_Alert_Output_Alert产出["D-FRONTEND/Alert Output Alert产出 [design]"]
+        D_FRONTEND_AlertTriggered_告警已触发["D-FRONTEND/AlertTriggered 告警已触发 [design]"]
+        D_FRONTEND_AlertVisualization_告警可视化["D-FRONTEND/AlertVisualization 告警可视化 [design]"]
+        D_FRONTEND_Anomaly_Propagation_3D_Visualizer_异常传播3D可视化器["... Propagation 3D Visualizer 异常传播3D可视化器 [design]"]
+        D_FRONTEND_Approval_Interface_Security_审批界面安全约束[".../Approval Interface Security 审批界面安全约束 [design]"]
+        D_FRONTEND_Approval_Workflow_UI_审批流程界面["D-FRONTEND/Approval Workflow UI 审批流程界面 [design]"]
+        D_FRONTEND_ApprovalRequest_Output_ApprovalRequest产出["...rovalRequest Output ApprovalRequest产出 [design]"]
+        D_FRONTEND_ApprovalRequested_审批已请求["D-FRONTEND/ApprovalRequested 审批已请求 [design]"]
+        D_FRONTEND_ApprovalWorkflowUI_审批工作流UI["D-FRONTEND/ApprovalWorkflowUI 审批工作流UI [design]"]
+        D_FRONTEND_Architecture_Doc_Auto_Generator_架构文档自动生成器["...itecture Doc Auto-Generator 架构文档自动生成器 [design]"]
+        D_FRONTEND_Auto_Layout_Optimizer_自动布局优化器["D-FRONTEND/Auto-Layout Optimizer 自动布局优化器 [design]"]
+        D_FRONTEND_Backtest_Result_Summary_回测结果摘要["...ONTEND/Backtest Result Summary 回测结果摘要 [design]"]
+        D_FRONTEND_BacktestPassed_回测已通过["D-FRONTEND/BacktestPassed 回测已通过 [design]"]
+        D_FRONTEND_CLI_Interface_命令行交互入口["D-FRONTEND/CLI Interface 命令行交互入口 [design]"]
+        D_FRONTEND_CQRS_Visualization_CQRS可视化器["D-FRONTEND/CQRS Visualization CQRS可视化器 [design]"]
+        D_FRONTEND_CVaR_Conditional_VaR_条件风险价值["D-FRONTEND/CVaR Conditional VaR 条件风险价值 [design]"]
+        D_FRONTEND_Call_Graph_Visualizer_调用图可视化器["D-FRONTEND/Call Graph Visualizer 调用图可视化器 [design]"]
+        D_FRONTEND_Capacity_Dashboard_容量仪表盘["D-FRONTEND/Capacity Dashboard 容量仪表盘 [design]"]
+        D_FRONTEND_Chart_Engine_图表引擎["D-FRONTEND/Chart Engine 图表引擎 [design]"]
+        D_FRONTEND_Cluster_Heatmap_集群热力图["D-FRONTEND/Cluster Heatmap 集群热力图 [design]"]
+        D_FRONTEND_Code_Comparison_View_代码对比视图["D-FRONTEND/Code Comparison View 代码对比视图 [design]"]
+        D_FRONTEND_Code_Review_Panel_代码审查面板["D-FRONTEND/Code Review Panel 代码审查面板 [design]"]
+        D_FRONTEND_Collaboration_Annotation_协作批注["D-FRONTEND/Collaboration Annotation 协作批注 [design]"]
+        D_FRONTEND_Collaboration_Annotation_报告协作批注["...NTEND/Collaboration Annotation 报告协作批注 [design]"]
+        D_FRONTEND_Collaboration_Watermark_协作平台水印["...ONTEND/Collaboration Watermark 协作平台水印 [design]"]
+        D_FRONTEND_Collaboration_Watermark_协作版报告水印["...NTEND/Collaboration Watermark 协作版报告水印 [design]"]
+        D_FRONTEND_Collaborative_Dependency_Annotator_协作依赖图标注器["...orative Dependency Annotator 协作依赖图标注器 [design]"]
+        D_FRONTEND_Collaborative_Workspace_协作工作区["D-FRONTEND/Collaborative Workspace 协作工作区 [design]"]
+        D_FRONTEND_Collection_Progress_Tracking_采集进度追踪["...D/Collection Progress Tracking 采集进度追踪 [design]"]
+        D_FRONTEND_Collection_Strategy_Adjustment_Log_采集策略调整日志["...tion Strategy Adjustment Log 采集策略调整日志 [design]"]
+        D_FRONTEND_Conformal_VaR_共形VaR["D-FRONTEND/Conformal VaR 共形VaR [design]"]
+        D_FRONTEND_Convergence_Status_Indicator_收敛状态指示["...D/Convergence Status Indicator 收敛状态指示 [design]"]
+        D_FRONTEND_Coupling_Heatmap_耦合热力图["D-FRONTEND/Coupling Heatmap 耦合热力图 [design]"]
+        D_FRONTEND_Critic_Criticism_Display_Critic批评展示["...D/Critic Criticism Display Critic批评展示 [design]"]
+        D_FRONTEND_Critic_批评器["D-FRONTEND/Critic 批评器 [design]"]
+        D_FRONTEND_Cross_Service_Trace_Correlator_跨服务Trace关联器["...-Service Trace Correlator 跨服务Trace关联器 [design]"]
+        D_FRONTEND_Custom_Chart_Builder_自定义图表["D-FRONTEND/Custom Chart Builder 自定义图表 [design]"]
+        D_FRONTEND_D_FRONTEND_前端["D-FRONTEND/D-FRONTEND 前端 [design]"]
+        D_FRONTEND_D_PORTFOLIO_Domain_组合域["D-FRONTEND/D-PORTFOLIO Domain 组合域 [design]"]
+        D_FRONTEND_Daily_Risk_Report_日度风险报告["D-FRONTEND/Daily Risk Report 日度风险报告 [design]"]
+        D_FRONTEND_Daily_Risk_Summary_日度风险摘要["D-FRONTEND/Daily Risk Summary 日度风险摘要 [design]"]
+        D_FRONTEND_Dashboard_Framework_仪表盘框架["D-FRONTEND/Dashboard Framework 仪表盘框架 [design]"]
+        D_FRONTEND_Dashboard_Output_Dashboard产出["D-FRONTEND/Dashboard Output Dashboard产出 [design]"]
+        D_FRONTEND_Dashboard_仪表盘["D-FRONTEND/Dashboard 仪表盘 [design]"]
+        D_FRONTEND_DashboardUpdated_仪表盘已更新["D-FRONTEND/DashboardUpdated 仪表盘已更新 [design]"]
+        D_FRONTEND_Decision_Gate_Progress_决策门控进度["D-FRONTEND/Decision Gate Progress 决策门控进度 [design]"]
+        D_FRONTEND_Decision_Gate_State_Machine_决策门控状态机["...D/Decision Gate State Machine 决策门控状态机 [design]"]
+        D_FRONTEND_Decision_Tree_Visualizer_决策树可视化器["...TEND/Decision Tree Visualizer 决策树可视化器 [design]"]
+        D_FRONTEND_Degradation_Status_Dashboard_降级状态仪表盘[".../Degradation Status Dashboard 降级状态仪表盘 [design]"]
+        D_FRONTEND_Density_Aware_VaR_密度感知VaR["D-FRONTEND/Density-Aware VaR 密度感知VaR [design]"]
+        D_FRONTEND_Dependency_Diff_Viewer_依赖图差异查看器["...NTEND/Dependency Diff Viewer 依赖图差异查看器 [design]"]
+        D_FRONTEND_Dependency_Graph_LOD_Engine_依赖图LOD引擎[".../Dependency Graph LOD Engine 依赖图LOD引擎 [design]"]
+        D_FRONTEND_Dependency_Timeline_Player_依赖图时间线播放器[".../Dependency Timeline Player 依赖图时间线播放器 [design]"]
+        D_FRONTEND_Developer_Dashboard_开发者仪表盘["D-FRONTEND/Developer Dashboard 开发者仪表盘 [design]"]
+        D_FRONTEND_Drift_Detection_Status_Panel_漂移检测状态面板["...Drift Detection Status Panel 漂移检测状态面板 [design]"]
+        D_FRONTEND_E_SIM_04_BacktestPassed_回测通过["D-FRONTEND/E-SIM-04 BacktestPassed 回测通过 [design]"]
+        D_FRONTEND_Effect_Evaluation_Report_效果评估报告["...NTEND/Effect Evaluation Report 效果评估报告 [design]"]
+        D_FRONTEND_Effect_Metric_Trend_效果指标趋势["D-FRONTEND/Effect Metric Trend 效果指标趋势 [design]"]
+        D_FRONTEND_Email_SMTP_邮件SMTP["D-FRONTEND/Email SMTP 邮件SMTP [design]"]
+        D_FRONTEND_End_to_End_Trace_Visualizer_端到端追踪可视化[".../End-to-End Trace Visualizer 端到端追踪可视化 [design]"]
+        D_FRONTEND_EndToEndTraceVisualizer_端到端追踪可视化["...TEND/EndToEndTraceVisualizer 端到端追踪可视化 [design]"]
+        D_FRONTEND_Endpoint_Refiner_端点级细化器["D-FRONTEND/Endpoint Refiner 端点级细化器 [design]"]
+        D_FRONTEND_EscalationTriggered_升级已触发["D-FRONTEND/EscalationTriggered 升级已触发 [design]"]
+        D_FRONTEND_Event_Risk_Flash_事件风险快报["D-FRONTEND/Event Risk Flash 事件风险快报 [design]"]
+        D_FRONTEND_Event_Risk_Report_事件风险报告["D-FRONTEND/Event Risk Report 事件风险报告 [design]"]
+        D_FRONTEND_Execution_Agent_执行Agent["D-FRONTEND/Execution Agent 执行Agent [design]"]
+        D_FRONTEND_Explainable_Design_Display_可解释设计展示["...ND/Explainable Design Display 可解释设计展示 [design]"]
+        D_FRONTEND_Exporter_导出器["D-FRONTEND/Exporter 导出器 [design]"]
+        D_FRONTEND_ExternalCommand_外部指令["D-FRONTEND/ExternalCommand 外部指令 [design]"]
+        D_FRONTEND_Feature_Lineage_Visualizer_特征血缘可视化器["...D/Feature Lineage Visualizer 特征血缘可视化器 [design]"]
+        D_FRONTEND_Feishu_Bot_飞书机器人["D-FRONTEND/Feishu Bot 飞书机器人 [design]"]
+        D_FRONTEND_Feishu_REST_Webhook_飞书REST_Webhook["...ND/Feishu REST Webhook 飞书REST Webhook [design]"]
+        D_FRONTEND_Force_Directed_GPU_Accelerator_力导向GPU加速器["...ce-Directed GPU Accelerator 力导向GPU加速器 [design]"]
+        D_FRONTEND_Frontend_Domain_前端域["D-FRONTEND/Frontend Domain 前端域 [design]"]
+        D_FRONTEND_Frontend_Autonomy_Contract_01_前端_自治权限契约["...ontend-Autonomy Contract 01 前端-自治权限契约 [design]"]
+        D_FRONTEND_Frontend_Data_Contract_01_前端_数据契约["...END/Frontend-Data Contract 01 前端-数据契约 [design]"]
+        D_FRONTEND_Frontend_Governance_Contract_01_前端_治理契约["...ontend-Governance Contract 01 前端-治理契约 [design]"]
+        D_FRONTEND_Frontend_Infrastructure_Contract_01_前端_基础设施契约["...-Infrastructure Contract 01 前端-基础设施契约 [design]"]
+        D_FRONTEND_Frontend_Integration_Contract_01_前端_集成契约["...ntend-Integration Contract 01 前端-集成契约 [design]"]
+        D_FRONTEND_Frontend_Knowledge_Contract_01_前端_知识契约["...rontend-Knowledge Contract 01 前端-知识契约 [design]"]
+        D_FRONTEND_Frontend_ML_Contract_01_前端_ML契约["...NTEND/Frontend-ML Contract 01 前端-ML契约 [design]"]
+        D_FRONTEND_Frontend_Ops_Contract_01_前端_运维契约["...TEND/Frontend-Ops Contract 01 前端-运维契约 [design]"]
+        D_FRONTEND_Frontend_Report_Contract_01_前端_报告契约["...D/Frontend-Report Contract 01 前端-报告契约 [design]"]
+        %% ... 还有 137 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
+    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
+    src_zephyr_frontend___init___py -->|config_depends| src_zephyr_frontend_interface_base_py
+    src_zephyr_frontend_dashboard___init___py -->|config_depends| src_zephyr_frontend_dashboard_app_py
+    src_zephyr_frontend_dashboard_components___init___py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    frontend_knowledge_overview_py -->|config_depends| frontend_fitness_functions_py
+    frontend_olap_trend_py -->|config_depends| frontend_fitness_functions_py
+    frontend_interface_base_py -->|config_depends| frontend_fitness_functions_py
+    frontend_gate_statistics_py -->|config_depends| frontend_fitness_functions_py
+    frontend_task_progress_py -->|config_depends| frontend_fitness_functions_py
+    D_FRONTEND_Real_time_Dashboard_实时仪表盘 -->|import_depends| D_FRONTEND_M5_S07
+    D_FRONTEND_M5_S07 -->|import_depends| D_FRONTEND_M6_S07
+    D_FRONTEND_M6_S07 -->|import_depends| D_FRONTEND_M7_S06
+    D_FRONTEND_M7_S06 -->|import_depends| D_FRONTEND_M7_NEW_06
+    D_FRONTEND_M7_NEW_06 -->|import_depends| D_FRONTEND_M7_NEW_07
+    D_FRONTEND_M7_NEW_07 -->|import_depends| D_FRONTEND_M8_S08
+    D_FRONTEND_M8_S08 -->|import_depends| D_FRONTEND_Dashboard_Framework_仪表盘框架
+    D_FRONTEND_Dashboard_Framework_仪表盘框架 -->|import_depends| D_FRONTEND_Chart_Engine_图表引擎
+    D_FRONTEND_Chart_Engine_图表引擎 -->|import_depends| D_FRONTEND_Alert_Notification_UI_告警通知界面
+    D_FRONTEND_Alert_Notification_UI_告警通知界面 -->|import_depends| D_FRONTEND_Strategy_Management_UI_策略管理界面
+    D_FRONTEND_Strategy_Management_UI_策略管理界面 -->|import_depends| D_FRONTEND_Report_Visualization_报告可视化
+    D_FRONTEND_Report_Visualization_报告可视化 -->|import_depends| D_FRONTEND_Interactive_Analysis_交互式分析
+    D_FRONTEND_Interactive_Analysis_交互式分析 -->|import_depends| D_FRONTEND_AlertVisualization_告警可视化
+    D_FRONTEND_AlertVisualization_告警可视化 -->|import_depends| D_FRONTEND_SystemHealthVisualization_系统健康可视化
+    D_FRONTEND_SystemHealthVisualization_系统健康可视化 -->|import_depends| D_FRONTEND_Custom_Chart_Builder_自定义图表
+    D_FRONTEND_Custom_Chart_Builder_自定义图表 -->|import_depends| D_FRONTEND_API_Gateway_UI_API网关界面
+    D_FRONTEND_API_Gateway_UI_API网关界面 -->|import_depends| D_FRONTEND_Approval_Workflow_UI_审批流程界面
+    D_FRONTEND_Approval_Workflow_UI_审批流程界面 -->|import_depends| D_FRONTEND_NotificationRouter_通知路由
+    D_FRONTEND_NotificationRouter_通知路由 -->|import_depends| D_FRONTEND_Mobile_Dashboard_移动端仪表盘
+    D_FRONTEND_Mobile_Dashboard_移动端仪表盘 -->|import_depends| D_FRONTEND_End_to_End_Trace_Visualizer_端到端追踪可视化
+    D_FRONTEND_End_to_End_Trace_Visualizer_端到端追踪可视化 -->|import_depends| D_FRONTEND_Collaborative_Workspace_协作工作区
+    D_FRONTEND_Collaborative_Workspace_协作工作区 -->|import_depends| D_FRONTEND_Trading_Chatbot_交易智能客服
+    D_FRONTEND_Trading_Chatbot_交易智能客服 -->|import_depends| D_FRONTEND_Robo_Advisor_智能投顾
+    D_FRONTEND_Robo_Advisor_智能投顾 -->|import_depends| D_FRONTEND_One_Click_Quant_Interface_一键量化交易界面
+    D_FRONTEND_One_Click_Quant_Interface_一键量化交易界面 -->|import_depends| D_FRONTEND_AI_Model_HR_Dashboard_AI模型HR管理面板
+    D_FRONTEND_AI_Model_HR_Dashboard_AI模型HR管理面板 -->|import_depends| D_FRONTEND_API_Gateway_Proxy_API网关代理
+    D_FRONTEND_API_Gateway_Proxy_API网关代理 -->|import_depends| D_FRONTEND_Feishu_Bot_飞书机器人
+    D_FRONTEND_Feishu_Bot_飞书机器人 -->|import_depends| D_FRONTEND_WeChat_Bot_微信机器人
+    D_FRONTEND_WeChat_Bot_微信机器人 -->|import_depends| D_FRONTEND_WeChat_Webhook_微信Webhook
+    D_FRONTEND_WeChat_Webhook_微信Webhook -->|import_depends| D_FRONTEND_Email_SMTP_邮件SMTP
+    D_FRONTEND_Email_SMTP_邮件SMTP -->|import_depends| D_FRONTEND_Collaboration_Watermark_协作版报告水印
+    D_FRONTEND_Collaboration_Watermark_协作版报告水印 -->|import_depends| D_FRONTEND_Collaboration_Annotation_协作批注
+    D_FRONTEND_Collaboration_Annotation_协作批注 -->|import_depends| D_FRONTEND_PlantUML_Rendering_PlantUML渲染
+    D_FRONTEND_PlantUML_Rendering_PlantUML渲染 -->|import_depends| D_FRONTEND_Streamlit_Streamlit仪表盘
+    D_FRONTEND_Streamlit_Streamlit仪表盘 -->|import_depends| D_FRONTEND_Collaboration_Watermark_协作平台水印
+    D_FRONTEND_Collaboration_Watermark_协作平台水印 -->|import_depends| D_FRONTEND_Collaboration_Annotation_报告协作批注
+    D_FRONTEND_Collaboration_Annotation_报告协作批注 -->|import_depends| D_FRONTEND_仪表盘设计_仪表盘_Table
+    D_FRONTEND_仪表盘设计_仪表盘_Table -->|import_depends| D_FRONTEND_OTel追踪渲染器族_OTel_Trace_Renderers
+    D_FRONTEND_OTel追踪渲染器族_OTel_Trace_Renderers -->|import_depends| D_FRONTEND_运行时依赖可视化器_Runtime_Dependency_Visualizer
+    D_FRONTEND_运行时依赖可视化器_Runtime_Dependency_Visualizer -->|import_depends| D_FRONTEND_Trace到依赖图映射器_Trace_to_DepGraph_Mapper
+    D_FRONTEND_Trace到依赖图映射器_Trace_to_DepGraph_Mapper -->|import_depends| D_FRONTEND_AI_Agent调用链追踪器_AI_Agent_Call_Chain_Tracer
+    D_FRONTEND_AI_Agent调用链追踪器_AI_Agent_Call_Chain_Tracer -->|import_depends| D_FRONTEND_Impact_Visualizer_影响可视化器
+    D_FRONTEND_Impact_Visualizer_影响可视化器 -->|import_depends| D_FRONTEND_Graph_Rendering_Engine_图渲染引擎
+    D_FRONTEND_Graph_Rendering_Engine_图渲染引擎 -->|import_depends| D_FRONTEND_Interaction_Controller_交互控制器
+    D_FRONTEND_Interaction_Controller_交互控制器 -->|import_depends| D_FRONTEND_Search_Locator_搜索定位器
+    D_FRONTEND_Search_Locator_搜索定位器 -->|import_depends| D_FRONTEND_Exporter_导出器
+    D_FRONTEND_Exporter_导出器 -->|import_depends| D_FRONTEND_Real_time_Updater_实时更新器
+    D_FRONTEND_Real_time_Updater_实时更新器 -->|import_depends| D_FRONTEND_AI_Driven_Dependency_Explorer_AI驱动依赖图探索器
+    D_FRONTEND_AI_Driven_Dependency_Explorer_AI驱动依赖图探索器 -->|import_depends| D_FRONTEND_Large_Scale_Graph_Rendering_Engine_大规模图渲染引擎
+    D_FRONTEND_Large_Scale_Graph_Rendering_Engine_大规模图渲染引擎 -->|import_depends| D_FRONTEND_Dependency_Timeline_Player_依赖图时间线播放器
+    D_FRONTEND_Dependency_Timeline_Player_依赖图时间线播放器 -->|import_depends| D_FRONTEND_Dependency_Diff_Viewer_依赖图差异查看器
+    D_FRONTEND_Dependency_Diff_Viewer_依赖图差异查看器 -->|import_depends| D_FRONTEND_Collaborative_Dependency_Annotator_协作依赖图标注器
+    D_FRONTEND_Collaborative_Dependency_Annotator_协作依赖图标注器 -->|import_depends| D_FRONTEND_Auto_Layout_Optimizer_自动布局优化器
+    D_FRONTEND_Auto_Layout_Optimizer_自动布局优化器 -->|import_depends| D_FRONTEND_Architecture_Doc_Auto_Generator_架构文档自动生成器
+    D_FRONTEND_Architecture_Doc_Auto_Generator_架构文档自动生成器 -->|import_depends| D_FRONTEND_Saga_Visualizer_Saga可视化器
+    D_FRONTEND_Saga_Visualizer_Saga可视化器 -->|import_depends| D_FRONTEND_Risk_Contagion_Visualizer_风险传染可视化器
+    D_FRONTEND_Risk_Contagion_Visualizer_风险传染可视化器 -->|import_depends| D_FRONTEND_CQRS_Visualization_CQRS可视化器
+    D_FRONTEND_CQRS_Visualization_CQRS可视化器 -->|import_depends| D_FRONTEND_Trading_Architecture_Visualizer_交易架构可视化器
+    D_FRONTEND_Trading_Architecture_Visualizer_交易架构可视化器 -->|import_depends| D_FRONTEND_API_Dependency_Visualizer_API依赖可视化器
+    D_FRONTEND_API_Dependency_Visualizer_API依赖可视化器 -->|import_depends| D_FRONTEND_Security_Dependency_Visualizer_安全依赖可视化器
+    D_FRONTEND_Security_Dependency_Visualizer_安全依赖可视化器 -->|import_depends| D_FRONTEND_Call_Graph_Visualizer_调用图可视化器
+    D_FRONTEND_Call_Graph_Visualizer_调用图可视化器 -->|import_depends| D_FRONTEND_Coupling_Heatmap_耦合热力图
+    D_FRONTEND_Coupling_Heatmap_耦合热力图 -->|import_depends| D_FRONTEND_Traceability_Visualizer_追溯可视化器
+    D_FRONTEND_Traceability_Visualizer_追溯可视化器 -->|import_depends| D_FRONTEND_Agent_Dependency_Heatmap_Agent依赖热力图
+    D_FRONTEND_Agent_Dependency_Heatmap_Agent依赖热力图 -->|import_depends| D_FRONTEND_Trace_Visualizer_追踪可视化器
+    D_FRONTEND_Trace_Visualizer_追踪可视化器 -->|import_depends| D_FRONTEND_Result_Renderer_结果渲染器
+    D_FRONTEND_Result_Renderer_结果渲染器 -->|import_depends| D_FRONTEND_Mesh_Visualizer_网格可视化器
+    %% ... 还有 140 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-COMPLIANCE -> D-FRONTEND (52 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_Frontend_Data_Contract_01_前端_数据契约
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_M6_S07
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_Waterfall_Interaction_Engine_瀑布图交互引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_API_Gateway_UI_API网关界面
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_Security_Dependency_Visualizer_安全依赖可视化器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_Collaborative_Workspace_协作工作区
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_RealtimeDashboard_实时仪表盘
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_VR_Renderer_VR渲染器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_Integration_API_集成API契约
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_Time_Travel_Controller_时间旅行控制器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_Interactive_Analysis_交互式分析
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_HealthDegraded_健康已降级
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_FRONTEND_Code_Review_Panel_代码审查面板
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_CLI_Interface_命令行交互入口
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_FRONTEND_Agent_Dependency_Heatmap_Agent依赖热力图
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_FRONTEND_Real_time_Renderer_实时渲染器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_Streamlit_Streamlit仪表盘
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_OTel追踪渲染器族_OTel_Trace_Renderers
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_FRONTEND_Conformal_VaR_共形VaR
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_FRONTEND_Impact_Visualizer_影响可视化器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_FRONTEND_ApprovalRequested_审批已请求
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_Frontend_Integration_Contract_01_前端_集成契约
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_HITL_Trigger_Condition_HITL触发条件
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_Waterfall_Interaction_Engine_瀑布图交互引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_ApprovalRequested_审批已请求
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_Daily_Risk_Summary_日度风险摘要
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_FRONTEND_Event_Risk_Flash_事件风险快报
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_FRONTEND_VR_Renderer_VR渲染器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_FRONTEND_Cluster_Heatmap_集群热力图
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_FRONTEND_Trace_Topology_Auto_Extractor_Trace拓扑自动提取器
+    %% D-CROSS_ASSET -> D-FRONTEND (1 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_FRONTEND_OOS_Gate_OOS阶段门控
+    %% D-DATA_GOV -> D-FRONTEND (1 条)
+    D_DATA_GOV[D-DATA_GOV] -->|data| D_FRONTEND_Result_Renderer_结果渲染器
+    %% D-DATA_SEC -> D-FRONTEND (1 条)
+    D_DATA_SEC[D-DATA_SEC] -->|event| D_FRONTEND_Triple_Semantic_Consistency_Display_三重语义一致性展示
+    %% D-GOVERNANCE -> D-FRONTEND (11 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_app_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_app_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-FRONTEND -> D-ALT_DATA (1 条)
+    D_FRONTEND_Real_time_Rendering_Enhancer_实时渲染增强器 -->|contract| D_ALT_DATA[D-ALT_DATA]
+    %% D-FRONTEND -> D-AUTONOMY_CORE (25 条)
+    D_FRONTEND_E_SIM_04_BacktestPassed_回测通过 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Code_Comparison_View_代码对比视图 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_EscalationTriggered_升级已触发 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Collection_Progress_Tracking_采集进度追踪 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Judge_裁判器 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Interaction_Controller_交互控制器 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Trace_Visualizer_追踪可视化器 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Trace_Anomaly_ML_Detector_Trace异常ML检测器 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Triple_Semantic_Consistency_Display_三重语义一致性展示 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Dependency_Timeline_Player_依赖图时间线播放器 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Latency_Waterfall_Chart_延迟瀑布图 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Collection_Strategy_Adjustment_Log_采集策略调整日志 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_LP_021_Frontend_Domain_Substitute_前端域替代 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_CVaR_Conditional_VaR_条件风险价值 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Ultra_Large_Graph_I___action_Optimizer_超大规模图交互优化器 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Agent_Behavior_Monitoring_Agent行为监控 -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Triple_Semantic_Consistency_Display_三重语义一致性展示 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_XR_Collaborative_Explorer_XR协作探索器 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Administrator_Role_管理员角色 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Collaboration_Watermark_协作版报告水印 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_3D_Force_Directed_Layout_3D力导向布局器 -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Saga_Visualizer_Saga可视化器 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Critic_Criticism_Display_Critic批评展示 -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_Generator_生成器 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_FRONTEND_AlertTriggered_告警已触发 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    %% D-FRONTEND -> D-AUTONOMY_PERM (10 条)
+    D_FRONTEND_Collaboration_Watermark_协作平台水印 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_M5_S07 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_Report_Visualization_报告可视化 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_Frontend→Portfolio_Interface_01_前端→组合接口 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_Dependency_Timeline_Player_依赖图时间线播放器 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_Conformal_VaR_共形VaR -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_Code_Review_Panel_代码审查面板 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_Architecture_Doc_Auto_Generator_架构文档自动生成器 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_ApprovalWorkflowUI_审批工作流UI -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_FRONTEND_L08_HMI_CLI_人机交互CLI -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    %% D-FRONTEND -> D-DATA_ENG (5 条)
+    D_FRONTEND_Frontend_Knowledge_Contract_01_前端_知识契约 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_FRONTEND_Dependency_Graph_LOD_Engine_依赖图LOD引擎 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_FRONTEND_OOS_Gate_OOS阶段门控 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_FRONTEND_Real_time_Updater_实时更新器 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_FRONTEND_Generator_生成器 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    %% D-FRONTEND -> D-EX_CORE (5 条)
+    D_FRONTEND_Anomaly_Propagation_3D_Visualizer_异常传播3D可视化器 -->|event| D_EX_CORE[D-EX_CORE]
+    D_FRONTEND_Critic_Criticism_Display_Critic批评展示 -->|data| D_EX_CORE[D-EX_CORE]
+    D_FRONTEND_AI_Model_HR_Dashboard_AI模型HR管理面板 -->|event| D_EX_CORE[D-EX_CORE]
+    D_FRONTEND_Report_Visualization_报告可视化 -->|event| D_EX_CORE[D-EX_CORE]
+    D_FRONTEND_D_PORTFOLIO_Domain_组合域 -->|config_depends| D_EX_CORE[D-EX_CORE]
+    %% D-FRONTEND -> D-EX_SOR (7 条)
+    D_FRONTEND_Architecture_Doc_Auto_Generator_架构文档自动生成器 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_FRONTEND_Backtest_Result_Summary_回测结果摘要 -->|data| D_EX_SOR[D-EX_SOR]
+    D_FRONTEND_AI_Driven_Dependency_Explorer_AI驱动依赖图探索器 -->|data| D_EX_SOR[D-EX_SOR]
+    D_FRONTEND_AI_Driven_Dependency_Explorer_AI驱动依赖图探索器 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_FRONTEND_Dependency_Graph_LOD_Engine_依赖图LOD引擎 -->|data| D_EX_SOR[D-EX_SOR]
+    D_FRONTEND_Interactive_Analysis_交互式分析 -->|data| D_EX_SOR[D-EX_SOR]
+    D_FRONTEND_Force_Directed_GPU_Accelerator_力导向GPU加速器 -->|contract| D_EX_SOR[D-EX_SOR]
+    %% D-FRONTEND -> D-FACTOR (22 条)
+    D_FRONTEND_Daily_Risk_Summary_日度风险摘要 -->|contract| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Execution_Agent_执行Agent -->|contract| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Mobile_Dashboard_移动端仪表盘 -->|contract| D_FACTOR[D-FACTOR]
+    D_FRONTEND_WeChat_Webhook_微信Webhook -->|data| D_FACTOR[D-FACTOR]
+    D_FRONTEND_M5_S07 -->|event| D_FACTOR[D-FACTOR]
+    D_FRONTEND_ModelDriftDetected_模型漂移已检测 -->|event| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Mobile_Dashboard_移动端仪表盘 -->|data| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Module_Output_Monitoring_模块输出监控 -->|event| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Frontend_Governance_Contract_01_前端_治理契约 -->|contract| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Search_Locator_搜索定位器 -->|data| D_FACTOR[D-FACTOR]
+    D_FRONTEND_API_Gateway_Proxy_API网关代理 -->|event| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Feishu_REST_Webhook_飞书REST_Webhook -->|event| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Collaboration_Watermark_协作版报告水印 -->|data| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Call_Graph_Visualizer_调用图可视化器 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Chart_Engine_图表引擎 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_FRONTEND_HITL_Trigger_Condition_HITL触发条件 -->|contract| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Convergence_Status_Indicator_收敛状态指示 -->|contract| D_FACTOR[D-FACTOR]
+    D_FRONTEND_AI_Model_HR_Dashboard_AI模型HR管理面板 -->|contract| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Collaboration_Watermark_协作版报告水印 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Security_Dependency_Visualizer_安全依赖可视化器 -->|event| D_FACTOR[D-FACTOR]
+    D_FRONTEND_CQRS_Visualization_CQRS可视化器 -->|data| D_FACTOR[D-FACTOR]
+    D_FRONTEND_Mesh_Visualizer_网格可视化器 -->|event| D_FACTOR[D-FACTOR]
+    %% D-FRONTEND -> D-GOVERNANCE (23 条)
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    frontend_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    frontend_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Orchestration_Visualizer_编排可视化器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Traceability_Visualizer_追溯可视化器 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Developer_Dashboard_开发者仪表盘 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Adversarial_Test_Result_对抗性测试结果 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Robo_Advisor_智能投顾 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Saga_Visualizer_Saga可视化器 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Collaborative_Dependency_Annotator_协作依赖图标注器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Code_Comparison_View_代码对比视图 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Adversarial_Test_Result_对抗性测试结果 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Collection_Progress_Tracking_采集进度追踪 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_SystemDegraded_系统已降级 -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Effect_Metric_Trend_效果指标趋势 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Multi_Scale_Drift_Level_多尺度漂移等级 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Collaborative_Workspace_协作工作区 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_L08_HMI_CLI_人机交互CLI -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Natural_Language_Interface_自然语言界面 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Signal_Agent_信号Agent -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_DashboardUpdated_仪表盘已更新 -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    D_FRONTEND_Representation_Learning_Drift_Warning_表示学习漂移预警 -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-FRONTEND -> D-INFRA_OPS (23 条)
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_DashboardUpdated_仪表盘已更新 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_RealtimeDashboard_实时仪表盘 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Waterfall_Interaction_Engine_瀑布图交互引擎 -->|data| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_LP_021_Frontend_Domain_Substitute_前端域替代 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Frontend_Autonomy_Contract_01_前端_自治权限契约 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_WeChat_Bot_微信机器人 -->|data| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Frontend_Risk_Contract_03_前端_风控契约 -->|data| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Stress_Test_压力测试 -->|event| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_VaR_Value_at_Risk_风险价值 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Trading_Chatbot_交易智能客服 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Code_Comparison_View_代码对比视图 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Weekly_Risk_Deep_Dive_周度风险深度 -->|data| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Orchestration_Visualizer_编排可视化器 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_OTel追踪渲染器族_OTel_Trace_Renderers -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_仪表盘设计_仪表盘_Table -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Graph_Rendering_Engine_图渲染引擎 -->|config_depends| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_3D_Force_Directed_Layout_3D力导向布局器 -->|config_depends| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Approval_Interface_Security_审批界面安全约束 -->|data| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_OTel_Trace_Renderer_OTel追踪渲染器 -->|event| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_One_Click_Quant_Interface_一键量化交易界面 -->|config_depends| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_WebGPU_Large_Scale_Renderer_WebGPU大规模渲染器 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_FRONTEND_Agent_Behavior_Monitoring_Agent行为监控 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    %% D-FRONTEND -> D-INFRA_RUNTIME (6 条)
+    D_FRONTEND_Time_Dimension_Animator_时间维度动画器 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_FRONTEND_Security_Dependency_Visualizer_安全依赖可视化器 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_FRONTEND_Decision_Tree_Visualizer_决策树可视化器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_FRONTEND_Large_Scale_Graph_Rendering_Engine_大规模图渲染引擎 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_FRONTEND_Frontend_Simulation_Contract_01_前端_模拟契约 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_FRONTEND_AlertVisualization_告警可视化 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-FRONTEND -> D-INTEGRATION (34 条)
+    D_FRONTEND_Interaction_Controller_交互控制器 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Collaborative_Dependency_Annotator_协作依赖图标注器 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Decision_Gate_Progress_决策门控进度 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Adversarial_Test_Result_对抗性测试结果 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Feishu_REST_Webhook_飞书REST_Webhook -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_CQRS_Visualization_CQRS可视化器 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_HealthDegraded_健康已降级 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Real_time_P&L_实时P&L -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_AI_Collection_Result_Display_AI采集结果展示 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_AlertVisualization_告警可视化 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Frontend→Portfolio_Interface_01_前端→组合接口 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_ApprovalRequested_审批已请求 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_OTel追踪渲染器族_OTel_Trace_Renderers -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_AI_Role_AI角色 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Integration_API_集成API契约 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Administrator_Role_管理员角色 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_EscalationTriggered_升级已触发 -->|config_depends| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Trace_Anomaly_ML_Detector_Trace异常ML检测器 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Agent_Dependency_Heatmap_Agent依赖热力图 -->|config_depends| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_EndToEndTraceVisualizer_端到端追踪可视化 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_UserAction_用户操作 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Frontend_Ops_Contract_01_前端_运维契约 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_KGImpactAnalysis_知识图谱影响分析 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Weekly_Risk_Deep_Dive_周度风险深度 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_4_Level_Risk_Decision_4级风控决策 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Graph_Rendering_Engine_图渲染引擎 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_API_Gateway_UI_API网关界面 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Mathematical_Reflection_Optimization_数学反思优化结果 -->|config_depends| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_Frontend→Portfolio_Interface_01_前端→组合接口 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_FRONTEND_运行时依赖可视化器_Runtime_Dependency_Visualizer -->|contract| D_INTEGRATION[D-INTEGRATION]
+    %% D-FRONTEND -> D-INTELLIGENCE (9 条)
+    D_FRONTEND_Feature_Lineage_Visualizer_特征血缘可视化器 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_FRONTEND_Simulation_Observation_Data_模拟盘观察数据 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_FRONTEND_Collaboration_Watermark_协作版报告水印 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_FRONTEND_Convergence_Status_Indicator_收敛状态指示 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_FRONTEND_Mathematical_Reflection_Optimization_数学反思优化结果 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_FRONTEND_OTel_Trace_Renderer_OTel追踪渲染器 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_FRONTEND_API_Gateway_Proxy_API网关代理 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_FRONTEND_Trace_Reporter_追踪报告器 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_FRONTEND_Dashboard_Framework_仪表盘框架 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-FRONTEND -> D-KNOWLEDGE (6 条)
+    D_FRONTEND_Custom_Chart_Builder_自定义图表 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_FRONTEND_WeChat_Webhook_微信Webhook -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_FRONTEND_Dependency_Graph_LOD_Engine_依赖图LOD引擎 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_FRONTEND_Dependency_Graph_LOD_Engine_依赖图LOD引擎 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_FRONTEND_Approval_Workflow_UI_审批流程界面 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_FRONTEND_XR_Collaborative_Explorer_XR协作探索器 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    %% D-FRONTEND -> D-MKT_DATA (15 条)
+    D_FRONTEND_Frontend_Infrastructure_Contract_01_前端_基础设施契约 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_Manual_Review_Decision_人工审核决策 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_One_Click_Quant_Interface_一键量化交易界面 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_L08_HMI_Orchestration_人机交互编排 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_SystemHealthVisualization_系统健康可视化 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_Approval_Interface_Security_审批界面安全约束 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_Dashboard_Framework_仪表盘框架 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_Frontend_Infrastructure_Contract_01_前端_基础设施契约 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_AI_Model_HR_Dashboard_AI模型HR管理面板 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_AI_Agent调用链追踪器_AI_Agent_Call_Chain_Tracer -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_Exporter_导出器 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_OTel_Trace_Renderer_OTel追踪渲染器 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_Time_Travel_Controller_时间旅行控制器 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_RealtimeDashboard_实时仪表盘 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_FRONTEND_Adversarial_Test_Result_对抗性测试结果 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    %% D-FRONTEND -> D-ML_SERVE (4 条)
+    D_FRONTEND_KGImpactAnalysis_知识图谱影响分析 -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_FRONTEND_Event_Risk_Report_事件风险报告 -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_FRONTEND_XR_Collaborative_Explorer_XR协作探索器 -->|data| D_ML_SERVE[D-ML_SERVE]
+    D_FRONTEND_Interaction_Controller_交互控制器 -->|event| D_ML_SERVE[D-ML_SERVE]
+    %% D-FRONTEND -> D-ML_TRAIN (4 条)
+    D_FRONTEND_XR_Collaborative_Explorer_XR协作探索器 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_FRONTEND_EscalationTriggered_升级已触发 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_FRONTEND_HealthDegraded_健康已降级 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_FRONTEND_M7_S06 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-FRONTEND -> D-OPS (21 条)
+    src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
+    frontend_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
+    前端域_D_FRONTEND_06 -->|contract| D_OPS[D-OPS]
+    D_FRONTEND_OOS_Gate_OOS阶段门控 -->|contract| D_OPS[D-OPS]
+    D_FRONTEND_Judge_裁判器 -->|contract| D_OPS[D-OPS]
+    D_FRONTEND_Simulation_Observation_Data_模拟盘观察数据 -->|data| D_OPS[D-OPS]
+    D_FRONTEND_Security_Dependency_Visualizer_安全依赖可视化器 -->|data| D_OPS[D-OPS]
+    D_FRONTEND_Frontend_Infrastructure_Contract_01_前端_基础设施契约 -->|contract| D_OPS[D-OPS]
+    D_FRONTEND_Integration_API_集成API契约 -->|contract| D_OPS[D-OPS]
+    D_FRONTEND_Dashboard_Output_Dashboard产出 -->|data| D_OPS[D-OPS]
+    D_FRONTEND_Phase_5_Activation_Phase_5激活阶段 -->|event| D_OPS[D-OPS]
+    D_FRONTEND_Dependency_Diff_Viewer_依赖图差异查看器 -->|config_depends| D_OPS[D-OPS]
+    D_FRONTEND_Dependency_Timeline_Player_依赖图时间线播放器 -->|config_depends| D_OPS[D-OPS]
+    D_FRONTEND_Feishu_Bot_飞书机器人 -->|config_depends| D_OPS[D-OPS]
+    D_FRONTEND_M7_NEW_06 -->|contract| D_OPS[D-OPS]
+    D_FRONTEND_Multi_Scale_Drift_Level_多尺度漂移等级 -->|event| D_OPS[D-OPS]
+    D_FRONTEND_Degradation_Status_Dashboard_降级状态仪表盘 -->|config_depends| D_OPS[D-OPS]
+    D_FRONTEND_Stress_Test_压力测试 -->|config_depends| D_OPS[D-OPS]
+    D_FRONTEND_AI_Model_HR_Dashboard_AI模型HR管理面板 -->|event| D_OPS[D-OPS]
+    D_FRONTEND_Integration_API_集成API契约 -->|event| D_OPS[D-OPS]
+    D_FRONTEND_AI_Autonomy_Dashboard_AI自治仪表盘 -->|config_depends| D_OPS[D-OPS]
+    %% D-FRONTEND -> D-PF_ALLOC (5 条)
+    D_FRONTEND_Frontend_ML_Contract_01_前端_ML契约 -->|contract| D_PF_ALLOC[D-PF_ALLOC]
+    D_FRONTEND_ExternalCommand_外部指令 -->|contract| D_PF_ALLOC[D-PF_ALLOC]
+    D_FRONTEND_IS_Stability_Gate_IS阶段稳定性门控 -->|contract| D_PF_ALLOC[D-PF_ALLOC]
+    D_FRONTEND_Frontend_Simulation_Contract_01_前端_模拟契约 -->|config_depends| D_PF_ALLOC[D-PF_ALLOC]
+    D_FRONTEND_Frontend→Governance_Interface_01_前端→治理接口 -->|data| D_PF_ALLOC[D-PF_ALLOC]
+    %% D-FRONTEND -> D-PF_CORE (11 条)
+    D_FRONTEND_HealthDegraded_健康已降级 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_API_Dependency_Visualizer_API依赖可视化器 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_Collaboration_Watermark_协作版报告水印 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_Manual_Submit_Interface_手动提交界面 -->|data| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_ExternalCommand_外部指令 -->|event| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_Frontend_Infrastructure_Contract_01_前端_基础设施契约 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_D_PORTFOLIO_Domain_组合域 -->|data| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_Manual_Review_Panel_人工审核面板 -->|event| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_Stress_Test_压力测试 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_Latency_Waterfall_Chart_延迟瀑布图 -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_FRONTEND_KGImpactAnalysis_知识图谱影响分析 -->|data| D_PF_CORE[D-PF_CORE]
+    %% D-FRONTEND -> D-POSITION (2 条)
+    D_FRONTEND_4_Level_Risk_Decision_4级风控决策 -->|contract| D_POSITION[D-POSITION]
+    D_FRONTEND_WFA_Gate_WFA阶段门控 -->|config_depends| D_POSITION[D-POSITION]
+    %% D-FRONTEND -> D-REPORTING (10 条)
+    D_FRONTEND_Latency_Waterfall_Chart_延迟瀑布图 -->|contract| D_REPORTING[D-REPORTING]
+    D_FRONTEND_AlertVisualization_告警可视化 -->|event| D_REPORTING[D-REPORTING]
+    D_FRONTEND_Code_Review_Panel_代码审查面板 -->|data| D_REPORTING[D-REPORTING]
+    D_FRONTEND_AI_Agent调用链追踪器_AI_Agent_Call_Chain_Tracer -->|contract| D_REPORTING[D-REPORTING]
+    D_FRONTEND_Interactive_Analysis_交互式分析 -->|data| D_REPORTING[D-REPORTING]
+    D_FRONTEND_Event_Risk_Flash_事件风险快报 -->|config_depends| D_REPORTING[D-REPORTING]
+    D_FRONTEND_Monthly_Risk_Report_月度风险报告 -->|data| D_REPORTING[D-REPORTING]
+    D_FRONTEND_EscalationTriggered_升级已触发 -->|contract| D_REPORTING[D-REPORTING]
+    D_FRONTEND_CVaR_Conditional_VaR_条件风险价值 -->|config_depends| D_REPORTING[D-REPORTING]
+    D_FRONTEND_D_PORTFOLIO_Domain_组合域 -->|domain_dependency| D_REPORTING[D-REPORTING]
+    %% D-FRONTEND -> D-RISK (47 条)
+    D_FRONTEND_WeChat_Bot_微信机器人 -->|contract| D_RISK[D-RISK]
+    D_FRONTEND_Large_Scale_Graph_Rendering_Engine_大规模图渲染引擎 -->|data| D_RISK[D-RISK]
+    D_FRONTEND_Coupling_Heatmap_耦合热力图 -->|contract| D_RISK[D-RISK]
+    D_FRONTEND_System_Health_Dashboard_系统健康仪表盘 -->|data| D_RISK[D-RISK]
+    D_FRONTEND_Mathematical_Reflection_Optimization_数学反思优化结果 -->|data| D_RISK[D-RISK]
+    D_FRONTEND_DashboardUpdated_仪表盘已更新 -->|data| D_RISK[D-RISK]
+    D_FRONTEND_Frontend_Infrastructure_Contract_01_前端_基础设施契约 -->|contract| D_RISK[D-RISK]
+    D_FRONTEND_RealtimeDashboard_实时仪表盘 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_Judge_裁判器 -->|data| D_RISK[D-RISK]
+    D_FRONTEND_Dashboard_Framework_仪表盘框架 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_E_SIM_04_BacktestPassed_回测通过 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_Agent_Dependency_Heatmap_Agent依赖热力图 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_M7_NEW_07 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_Feishu_Bot_飞书机器人 -->|data| D_RISK[D-RISK]
+    D_FRONTEND_3D_Force_Directed_Layout_3D力导向布局器 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_Large_Scale_Graph_Rendering_Engine_大规模图渲染引擎 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_Gray_Release_Status_灰度发布状态 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_AI_Role_AI角色 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_WeChat_Webhook_微信Webhook -->|contract| D_RISK[D-RISK]
+    D_FRONTEND_Agent_Behavior_Monitoring_Agent行为监控 -->|contract| D_RISK[D-RISK]
+    D_FRONTEND_ApprovalWorkflowUI_审批工作流UI -->|data| D_RISK[D-RISK]
+    D_FRONTEND_VaR_Value_at_Risk_风险价值 -->|data| D_RISK[D-RISK]
+    D_FRONTEND_Force_Directed_GPU_Accelerator_力导向GPU加速器 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_One_Click_Quant_Interface_一键量化交易界面 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_Daily_Risk_Report_日度风险报告 -->|event| D_RISK[D-RISK]
+    D_FRONTEND_Signal_Agent_信号Agent -->|data| D_RISK[D-RISK]
+    D_FRONTEND_Monthly_Risk_Governance_月度风险治理 -->|config_depends| D_RISK[D-RISK]
+    D_FRONTEND_RealtimeDashboard_实时仪表盘 -->|contract| D_RISK[D-RISK]
+    D_FRONTEND_Result_Renderer_结果渲染器 -->|config_depends| D_RISK[D-RISK]
+    D_FRONTEND_Dashboard_Framework_仪表盘框架 -->|event| D_RISK[D-RISK]
+    %% D-FRONTEND -> D-SECURITY (29 条)
+    D_FRONTEND_WeChat_Webhook_微信Webhook -->|contract| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Simulation_Observation_Data_模拟盘观察数据 -->|contract| D_SECURITY[D-SECURITY]
+    D_FRONTEND_M7_NEW_06 -->|contract| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Weekly_Risk_Report_周度风险报告 -->|data| D_SECURITY[D-SECURITY]
+    D_FRONTEND_VR_Renderer_VR渲染器 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Monthly_Risk_Report_月度风险报告 -->|contract| D_SECURITY[D-SECURITY]
+    D_FRONTEND_L08_HMI_CLI_人机交互CLI -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_E_SIM_04_BacktestPassed_回测通过 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Security_Dependency_Visualizer_安全依赖可视化器 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Waterfall_Interaction_Engine_瀑布图交互引擎 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Exporter_导出器 -->|contract| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Mathematical_Reflection_Optimization_数学反思优化结果 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_System_Health_Dashboard_系统健康仪表盘 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_LP_021_Frontend_Domain_Substitute_前端域替代 -->|data| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Dependency_Diff_Viewer_依赖图差异查看器 -->|data| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Frontend_Autonomy_Contract_01_前端_自治权限契约 -->|data| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Convergence_Status_Indicator_收敛状态指示 -->|data| D_SECURITY[D-SECURITY]
+    D_FRONTEND_WFA_Gate_WFA阶段门控 -->|config_depends| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Weekly_Risk_Report_周度风险报告 -->|config_depends| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Effect_Evaluation_Report_效果评估报告 -->|data| D_SECURITY[D-SECURITY]
+    D_FRONTEND_CLI_Interface_命令行交互入口 -->|contract| D_SECURITY[D-SECURITY]
+    D_FRONTEND_ApprovalRequested_审批已请求 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Collaboration_Watermark_协作平台水印 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Effect_Evaluation_Report_效果评估报告 -->|config_depends| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Frontend_Data_Contract_01_前端_数据契约 -->|data| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Auto_Layout_Optimizer_自动布局优化器 -->|event| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Module_Output_Monitoring_模块输出监控 -->|data| D_SECURITY[D-SECURITY]
+    D_FRONTEND_OTel追踪渲染器族_OTel_Trace_Renderers -->|config_depends| D_SECURITY[D-SECURITY]
+    D_FRONTEND_Frontend_ML_Contract_01_前端_ML契约 -->|data| D_SECURITY[D-SECURITY]
+    %% D-FRONTEND -> D-SELL_DECISION (5 条)
+    D_FRONTEND_Report_Visualization_报告可视化 -->|contract| D_SELL_DECISION[D-SELL_DECISION]
+    D_FRONTEND_Traceability_Visualizer_追溯可视化器 -->|contract| D_SELL_DECISION[D-SELL_DECISION]
+    D_FRONTEND_Time_Travel_Controller_时间旅行控制器 -->|data| D_SELL_DECISION[D-SELL_DECISION]
+    D_FRONTEND_SystemHealthVisualization_系统健康可视化 -->|data| D_SELL_DECISION[D-SELL_DECISION]
+    D_FRONTEND_Collaboration_Annotation_协作批注 -->|config_depends| D_SELL_DECISION[D-SELL_DECISION]
+    %% D-FRONTEND -> D-SHARED (1 条)
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-FRONTEND -> D-SIGNAL (28 条)
+    D_FRONTEND_ModelDriftDetected_模型漂移已检测 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Signal_Agent_信号Agent -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Frontend_Risk_Contract_03_前端_风控契约 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Search_Locator_搜索定位器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Frontend_Knowledge_Contract_01_前端_知识契约 -->|data| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Dashboard_仪表盘 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Event_Risk_Flash_事件风险快报 -->|data| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Critic_批评器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Orchestration_Visualizer_编排可视化器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Decision_Tree_Visualizer_决策树可视化器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_L08_HMI_CLI_人机交互CLI -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Dependency_Timeline_Player_依赖图时间线播放器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Developer_Dashboard_开发者仪表盘 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Frontend_Autonomy_Contract_01_前端_自治权限契约 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Trader_Role_交易员角色 -->|event| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Integration_API_集成API契约 -->|data| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Frontend_Report_Contract_01_前端_报告契约 -->|event| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Triple_Semantic_Consistency_Display_三重语义一致性展示 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Frontend_Risk_Contract_03_前端_风控契约 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Cluster_Heatmap_集群热力图 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_BacktestPassed_回测已通过 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_OTel追踪渲染器族_OTel_Trace_Renderers -->|event| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Representation_Learning_Drift_Warning_表示学习漂移预警 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_EscalationTriggered_升级已触发 -->|data| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Search_Locator_搜索定位器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_AlertVisualization_告警可视化 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_M7_NEW_07 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_FRONTEND_Degradation_Status_Dashboard_降级状态仪表盘 -->|event| D_SIGNAL[D-SIGNAL]
+    %% D-FRONTEND -> D-SIMULATION (7 条)
+    D_FRONTEND_Impact_Visualizer_影响可视化器 -->|data| D_SIMULATION[D-SIMULATION]
+    D_FRONTEND_Search_Locator_搜索定位器 -->|data| D_SIMULATION[D-SIMULATION]
+    D_FRONTEND_Dependency_Diff_Viewer_依赖图差异查看器 -->|data| D_SIMULATION[D-SIMULATION]
+    D_FRONTEND_ExternalCommand_外部指令 -->|data| D_SIMULATION[D-SIMULATION]
+    D_FRONTEND_Frontend→Portfolio_Interface_01_前端→组合接口 -->|config_depends| D_SIMULATION[D-SIMULATION]
+    D_FRONTEND_Real_time_Updater_实时更新器 -->|data| D_SIMULATION[D-SIMULATION]
+    D_FRONTEND_E_SIM_04_BacktestPassed_回测通过 -->|contract| D_SIMULATION[D-SIMULATION]
+    %% D-FRONTEND -> D-TRADING (4 条)
+    D_FRONTEND_Integration_API_集成API契约 -->|event| D_TRADING[D-TRADING]
+    D_FRONTEND_Degradation_Status_Dashboard_降级状态仪表盘 -->|contract| D_TRADING[D-TRADING]
+    D_FRONTEND_AI_Driven_Dependency_Explorer_AI驱动依赖图探索器 -->|contract| D_TRADING[D-TRADING]
+    D_FRONTEND_Event_Risk_Report_事件风险报告 -->|config_depends| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 220 条
+    %% 跨域入边: 66 条
+    %% 跨域出边: 369 条

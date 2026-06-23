@@ -30,14 +30,69 @@ depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime
 import json
 import os
 import sqlite3
 import sys
+import threading
+import time
 from pathlib import Path
 
 DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+
+# 集成 lock_files.py 文件锁——堵住并发写入漏洞
+_SCRIPTS_DIR = Path(__file__).resolve().parent.parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+import lock_files as _lf  # noqa: E402
+
+# 进程内 DB 写入串行锁——防止同进程多线程并发获取文件锁
+_db_write_lock_lock = threading.Lock()
+
+
+@contextlib.contextmanager
+def _db_write_lock(owner_id: str | None = None, task: str = "depgraph write", db_path: Path | str | None = None, max_retries: int = 30, retry_interval: float = 1.0):
+    """depgraph.db 写入文件锁上下文管理器（跨进程互斥 + 进程内串行 + 重试）。
+
+    双重保护：
+    1. threading.Lock() — 进程内多线程串行化（避免同进程线程竞争文件锁）
+    2. lock_files.py 文件锁 — 跨进程互斥（原子目录创建，TTL 30分钟）
+
+    重试机制：acquire 失败时等待 retry_interval 秒后重试，最多 max_retries 次。
+    db_path: 指定要锁的数据库文件路径（默认 DEPGRAPH_PATH）。
+    """
+    oid = owner_id or f"depgraph-{os.getpid()}"
+    db_path_str = str(db_path if db_path is not None else DEPGRAPH_PATH)
+    _db_write_lock_lock.acquire()
+    try:
+        acquired = False
+        for attempt in range(max_retries):
+            rc = _lf.cmd_acquire(db_path_str, oid, task=task, skip_naming_check=True)
+            if rc == 0:
+                acquired = True
+                break
+            if attempt < max_retries - 1:
+                time.sleep(retry_interval)
+        if not acquired:
+            raise RuntimeError(f"无法获取 depgraph.db 写入锁 (owner={oid})，重试{max_retries}次后仍失败")
+        try:
+            yield
+        finally:
+            _lf.cmd_release(db_path_str, oid)
+    finally:
+        _db_write_lock_lock.release()
+
+
+@contextlib.contextmanager
+def _optional_db_lock(own_conn: bool, task: str = "depgraph write", db_path: Path | str | None = None):
+    """当 own_conn=True 时获取文件锁，否则不加锁（共享连接模式由调用方负责锁）。"""
+    if own_conn:
+        with _db_write_lock(task=task, db_path=db_path):
+            yield
+    else:
+        yield
 
 
 def _load_depgraph_from_db(db_path: Path) -> dict:
@@ -93,27 +148,28 @@ def _atomic_write(dep: dict, conn=None) -> None:
     如果未提供 conn，打开新连接（独立模式，commit+close）。
     """
     own_conn = conn is None
-    if own_conn:
-        conn = sqlite3.connect(str(DEPGRAPH_PATH))
-    try:
-        for node_id, node_data in dep.get("nodes", {}).items():
-            clean = {k: v for k, v in node_data.items() if not k.startswith("_")}
-            if "type" in clean:
-                clean["node_type"] = clean.pop("type")
-            set_clause = ", ".join(f"{k} = ?" for k in clean)
-            values = list(clean.values()) + [node_id]
-            conn.execute(f"UPDATE nodes SET {set_clause} WHERE node_id = ?", values)
+    with _optional_db_lock(own_conn, task="_atomic_write"):
         if own_conn:
-            conn.commit()
-        print("OK: depgraph DB updated", file=sys.stderr)
-    except Exception as e:
-        if own_conn:
-            conn.rollback()
-        print(f"ERROR: DB write failed: {e}", file=sys.stderr)
-        sys.exit(4)
-    finally:
-        if own_conn:
-            conn.close()
+            conn = sqlite3.connect(str(DEPGRAPH_PATH))
+        try:
+            for node_id, node_data in dep.get("nodes", {}).items():
+                clean = {k: v for k, v in node_data.items() if not k.startswith("_")}
+                if "type" in clean:
+                    clean["node_type"] = clean.pop("type")
+                set_clause = ", ".join(f"{k} = ?" for k in clean)
+                values = list(clean.values()) + [node_id]
+                conn.execute(f"UPDATE nodes SET {set_clause} WHERE node_id = ?", values)
+            if own_conn:
+                conn.commit()
+            print("OK: depgraph DB updated", file=sys.stderr)
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: DB write failed: {e}", file=sys.stderr)
+            sys.exit(4)
+        finally:
+            if own_conn:
+                conn.close()
 
 
 def cmd_update_module(dep: dict, module_id: str, field: str, value: str) -> None:
@@ -250,78 +306,79 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
         return
 
     # 非dry-run: 统一事务（所有操作共享一个连接，全部成功才commit）
-    conn = sqlite3.connect(str(DEPGRAPH_PATH))
-    domain_op_count = 0
-    try:
-        for i, change in enumerate(changes):
-            op = change.get("op", "update")
-            if op == "insert_domain":
-                ok = cmd_insert_domain(
-                    domain_id=change.get("domain_id", ""),
-                    domain_name=change.get("domain_name", ""),
-                    domain_group=change.get("domain_group", ""),
-                    layer_id=change.get("layer_id", ""),
-                    ssot_path=change.get("ssot_path", ""),
-                    max_modules=change.get("max_modules", 200),
-                    description=change.get("description", ""),
-                    dry_run=False,
-                    conn=conn,
-                )
-                if not ok:
-                    raise RuntimeError(f"change #{i}: insert_domain failed")
-                domain_op_count += 1
-            elif op == "update_domain_id":
-                count = cmd_update_domain_id(
-                    module_id=change.get("module_id", ""),
-                    new_domain_id=change.get("new_domain_id", ""),
-                    dry_run=False,
-                    conn=conn,
-                )
-                if count < 0:
-                    raise RuntimeError(f"change #{i}: update_domain_id failed")
-                domain_op_count += 1
-            elif op == "update_path":
-                count = cmd_update_path(
-                    module_id=change.get("module_id", ""), new_path=change.get("new_path", ""), dry_run=False, conn=conn
-                )
-                if count < 0:
-                    raise RuntimeError(f"change #{i}: update_path failed")
-                domain_op_count += 1
-            elif op == "migrate_dependencies":
-                count = cmd_migrate_dependencies(
-                    from_domain=change.get("from_domain", ""),
-                    to_domain=change.get("to_domain", ""),
-                    new_from_domain=change.get("new_from_domain", ""),
-                    new_to_domain=change.get("new_to_domain", ""),
-                    dry_run=False,
-                    conn=conn,
-                )
-                if count < 0:
-                    raise RuntimeError(f"change #{i}: migrate_dependencies failed")
-                domain_op_count += 1
-            elif op == "update_domain_layer":
-                ok = cmd_update_domain_layer(
-                    domain_id=change.get("domain_id", ""), layer_id=change.get("layer_id", ""), dry_run=False, conn=conn
-                )
-                if not ok:
-                    raise RuntimeError(f"change #{i}: update_domain_layer failed")
-                domain_op_count += 1
-            elif op in ("update", "add_physical_file", "remove_physical_file", "set_physical_files"):
-                _apply_node_op(dep, change, i)
-            else:
-                print(f"WARNING: Unknown op '{op}' for change #{i}", file=sys.stderr)
+    with _db_write_lock(task="cmd_batch"):
+        conn = sqlite3.connect(str(DEPGRAPH_PATH))
+        domain_op_count = 0
+        try:
+            for i, change in enumerate(changes):
+                op = change.get("op", "update")
+                if op == "insert_domain":
+                    ok = cmd_insert_domain(
+                        domain_id=change.get("domain_id", ""),
+                        domain_name=change.get("domain_name", ""),
+                        domain_group=change.get("domain_group", ""),
+                        layer_id=change.get("layer_id", ""),
+                        ssot_path=change.get("ssot_path", ""),
+                        max_modules=change.get("max_modules", 200),
+                        description=change.get("description", ""),
+                        dry_run=False,
+                        conn=conn,
+                    )
+                    if not ok:
+                        raise RuntimeError(f"change #{i}: insert_domain failed")
+                    domain_op_count += 1
+                elif op == "update_domain_id":
+                    count = cmd_update_domain_id(
+                        module_id=change.get("module_id", ""),
+                        new_domain_id=change.get("new_domain_id", ""),
+                        dry_run=False,
+                        conn=conn,
+                    )
+                    if count < 0:
+                        raise RuntimeError(f"change #{i}: update_domain_id failed")
+                    domain_op_count += 1
+                elif op == "update_path":
+                    count = cmd_update_path(
+                        module_id=change.get("module_id", ""), new_path=change.get("new_path", ""), dry_run=False, conn=conn
+                    )
+                    if count < 0:
+                        raise RuntimeError(f"change #{i}: update_path failed")
+                    domain_op_count += 1
+                elif op == "migrate_dependencies":
+                    count = cmd_migrate_dependencies(
+                        from_domain=change.get("from_domain", ""),
+                        to_domain=change.get("to_domain", ""),
+                        new_from_domain=change.get("new_from_domain", ""),
+                        new_to_domain=change.get("new_to_domain", ""),
+                        dry_run=False,
+                        conn=conn,
+                    )
+                    if count < 0:
+                        raise RuntimeError(f"change #{i}: migrate_dependencies failed")
+                    domain_op_count += 1
+                elif op == "update_domain_layer":
+                    ok = cmd_update_domain_layer(
+                        domain_id=change.get("domain_id", ""), layer_id=change.get("layer_id", ""), dry_run=False, conn=conn
+                    )
+                    if not ok:
+                        raise RuntimeError(f"change #{i}: update_domain_layer failed")
+                    domain_op_count += 1
+                elif op in ("update", "add_physical_file", "remove_physical_file", "set_physical_files"):
+                    _apply_node_op(dep, change, i)
+                else:
+                    print(f"WARNING: Unknown op '{op}' for change #{i}", file=sys.stderr)
 
-        # 节点级变更通过共享连接写入（不单独commit）
-        _atomic_write(dep, conn=conn)
-        # 统一提交所有变更（域级+节点级）
-        conn.commit()
-        print(f"Applied {len(changes)} changes to depgraph (domain_ops={domain_op_count})", file=sys.stderr)
-    except Exception as e:
-        conn.rollback()
-        print(f"ERROR: batch failed, all changes rolled back: {e}", file=sys.stderr)
-        sys.exit(4)
-    finally:
-        conn.close()
+            # 节点级变更通过共享连接写入（不单独commit）
+            _atomic_write(dep, conn=conn)
+            # 统一提交所有变更（域级+节点级）
+            conn.commit()
+            print(f"Applied {len(changes)} changes to depgraph (domain_ops={domain_op_count})", file=sys.stderr)
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: batch failed, all changes rolled back: {e}", file=sys.stderr)
+            sys.exit(4)
+        finally:
+            conn.close()
 
 
 # ===== P0-2 新增：设计态节点/边管理（§22.5）=====
@@ -351,53 +408,54 @@ def add_design_node(
         print(f"ERROR: build_status必须是{valid_status}之一: {build_status}", file=sys.stderr)
         return -1
 
-    conn = sqlite3.connect(db_path)
-    try:
-        # 校验domain_id存在
-        domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
-        if not domain:
-            print(f"ERROR: domain_id '{domain_id}' 不在domains表中", file=sys.stderr)
-            return -1
+    with _db_write_lock(db_path=db_path, task="add_design_node"):
+        conn = sqlite3.connect(db_path)
+        try:
+            # 校验domain_id存在
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            if not domain:
+                print(f"ERROR: domain_id '{domain_id}' 不在domains表中", file=sys.stderr)
+                return -1
 
-        # 校验blueprint_id指向存在的蓝图文件
-        if blueprint_id and not blueprint_id.startswith("PLACEHOLDER"):
-            bp_path = f"D:/ZephyrAlpha/docs/03_modules/{blueprint_id}/blueprint.md"
-            if not os.path.exists(bp_path):
-                print(f"WARNING: blueprint_id '{blueprint_id}' 对应的蓝图文件不存在: {bp_path}", file=sys.stderr)
+            # 校验blueprint_id指向存在的蓝图文件
+            if blueprint_id and not blueprint_id.startswith("PLACEHOLDER"):
+                bp_path = f"D:/ZephyrAlpha/docs/03_modules/{blueprint_id}/blueprint.md"
+                if not os.path.exists(bp_path):
+                    print(f"WARNING: blueprint_id '{blueprint_id}' 对应的蓝图文件不存在: {bp_path}", file=sys.stderr)
 
-        # 机械推导blueprint_path
-        blueprint_path = f"docs/03_modules/{blueprint_id}/" if blueprint_id else ""
+            # 机械推导blueprint_path
+            blueprint_path = f"docs/03_modules/{blueprint_id}/" if blueprint_id else ""
 
-        # 检查是否已存在同path的设计态节点
-        existing = conn.execute(
-            "SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)
-        ).fetchone()
-        if existing:
-            print(f"WARNING: path '{path}' 已有设计态节点 node_id={existing[0]}，执行UPDATE", file=sys.stderr)
-            conn.execute(
-                "UPDATE nodes SET blueprint_id=?, domain_id=?, build_status=?, blueprint_path=? WHERE node_id=?",
-                (blueprint_id, domain_id, build_status, blueprint_path, existing[0]),
+            # 检查是否已存在同path的设计态节点
+            existing = conn.execute(
+                "SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)
+            ).fetchone()
+            if existing:
+                print(f"WARNING: path '{path}' 已有设计态节点 node_id={existing[0]}，执行UPDATE", file=sys.stderr)
+                conn.execute(
+                    "UPDATE nodes SET blueprint_id=?, domain_id=?, build_status=?, blueprint_path=? WHERE node_id=?",
+                    (blueprint_id, domain_id, build_status, blueprint_path, existing[0]),
+                )
+                conn.commit()
+                return existing[0]
+
+            # 插入新节点
+            cur = conn.execute(
+                """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
+                   build_status, design_maturity, blueprint_path, module_lifecycle_state, can_build)
+                   VALUES (?, ?, 'directory', ?, ?, ?, 'design', ?, 'inactive', 1)""",
+                ("design_node", path, domain_id, blueprint_id, build_status, blueprint_path),
             )
+            node_id = cur.lastrowid
             conn.commit()
-            return existing[0]
-
-        # 插入新节点
-        cur = conn.execute(
-            """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
-               build_status, design_maturity, blueprint_path, module_lifecycle_state, can_build)
-               VALUES (?, ?, 'directory', ?, ?, ?, 'design', ?, 'inactive', 1)""",
-            ("design_node", path, domain_id, blueprint_id, build_status, blueprint_path),
-        )
-        node_id = cur.lastrowid
-        conn.commit()
-        print(f"[OK] 新增设计态节点 node_id={node_id} path={path}", file=sys.stderr)
-        return node_id
-    except Exception as e:
-        conn.rollback()
-        print(f"ERROR: add_design_node失败: {e}", file=sys.stderr)
-        return -1
-    finally:
-        conn.close()
+            print(f"[OK] 新增设计态节点 node_id={node_id} path={path}", file=sys.stderr)
+            return node_id
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: add_design_node失败: {e}", file=sys.stderr)
+            return -1
+        finally:
+            conn.close()
 
 
 def add_design_edge(
@@ -426,68 +484,69 @@ def add_design_edge(
     - 写入前执行 DFS 循环检测，检测到循环则拒绝写入
     写入字段：dep_maturity='design'
     """
-    conn = sqlite3.connect(db_path)
-    try:
-        # 校验from_node_id和to_node_id存在且为设计态
-        from_node = conn.execute(
-            "SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (from_node_id,)
-        ).fetchone()
-        if not from_node:
-            print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
-            return -1
-        if from_node[1] != "design":
-            print(f"ERROR: from_node_id={from_node_id} design_maturity={from_node[1]}（应为design）", file=sys.stderr)
-            return -1
+    with _db_write_lock(db_path=db_path, task="add_design_edge"):
+        conn = sqlite3.connect(db_path)
+        try:
+            # 校验from_node_id和to_node_id存在且为设计态
+            from_node = conn.execute(
+                "SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (from_node_id,)
+            ).fetchone()
+            if not from_node:
+                print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
+                return -1
+            if from_node[1] != "design":
+                print(f"ERROR: from_node_id={from_node_id} design_maturity={from_node[1]}（应为design）", file=sys.stderr)
+                return -1
 
-        to_node = conn.execute("SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (to_node_id,)).fetchone()
-        if not to_node:
-            print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
-            return -1
-        if to_node[1] != "design":
-            print(f"ERROR: to_node_id={to_node_id} design_maturity={to_node[1]}（应为design）", file=sys.stderr)
-            return -1
+            to_node = conn.execute("SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (to_node_id,)).fetchone()
+            if not to_node:
+                print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
+                return -1
+            if to_node[1] != "design":
+                print(f"ERROR: to_node_id={to_node_id} design_maturity={to_node[1]}（应为design）", file=sys.stderr)
+                return -1
 
-        # DFS循环检测：检查to_node_id是否能到达from_node_id
-        if _detect_cycle_dfs(conn, to_node_id, from_node_id):
-            print(f"ERROR: 检测到循环依赖: {to_node_id} -> ... -> {from_node_id}", file=sys.stderr)
-            return -1
+            # DFS循环检测：检查to_node_id是否能到达from_node_id
+            if _detect_cycle_dfs(conn, to_node_id, from_node_id):
+                print(f"ERROR: 检测到循环依赖: {to_node_id} -> ... -> {from_node_id}", file=sys.stderr)
+                return -1
 
-        # 插入边
-        cur = conn.execute(
-            """INSERT INTO edges (from_node_id, to_node_id, dep_type, architecture_direction,
-               coupling_strength, used_symbol, invocation_method, api_contract_refs,
-               event_ref, ddd_integration_pattern, failure_mode, fallback,
-               activation_condition, data_transfer_description, resource_impact,
-               relationship_type, cross_domain, verified, dep_maturity)
-               VALUES (?, ?, ?, 'downstream', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 'design')""",
-            (
-                from_node_id,
-                to_node_id,
-                dep_type,
-                coupling_strength,
-                used_symbol,
-                invocation_method,
-                api_contract_refs,
-                event_ref,
-                ddd_integration_pattern,
-                failure_mode,
-                fallback,
-                activation_condition,
-                data_transfer_description,
-                resource_impact,
-                relationship_type,
-            ),
-        )
-        edge_id = cur.lastrowid
-        conn.commit()
-        print(f"[OK] 新增设计态边 edge_id={edge_id} {from_node_id}->{to_node_id}", file=sys.stderr)
-        return edge_id
-    except Exception as e:
-        conn.rollback()
-        print(f"ERROR: add_design_edge失败: {e}", file=sys.stderr)
-        return -1
-    finally:
-        conn.close()
+            # 插入边
+            cur = conn.execute(
+                """INSERT INTO edges (from_node_id, to_node_id, dep_type, architecture_direction,
+                   coupling_strength, used_symbol, invocation_method, api_contract_refs,
+                   event_ref, ddd_integration_pattern, failure_mode, fallback,
+                   activation_condition, data_transfer_description, resource_impact,
+                   relationship_type, cross_domain, verified, dep_maturity)
+                   VALUES (?, ?, ?, 'downstream', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 'design')""",
+                (
+                    from_node_id,
+                    to_node_id,
+                    dep_type,
+                    coupling_strength,
+                    used_symbol,
+                    invocation_method,
+                    api_contract_refs,
+                    event_ref,
+                    ddd_integration_pattern,
+                    failure_mode,
+                    fallback,
+                    activation_condition,
+                    data_transfer_description,
+                    resource_impact,
+                    relationship_type,
+                ),
+            )
+            edge_id = cur.lastrowid
+            conn.commit()
+            print(f"[OK] 新增设计态边 edge_id={edge_id} {from_node_id}->{to_node_id}", file=sys.stderr)
+            return edge_id
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: add_design_edge失败: {e}", file=sys.stderr)
+            return -1
+        finally:
+            conn.close()
 
 
 def _detect_cycle_dfs(conn, start: int, target: int) -> bool:
@@ -529,26 +588,27 @@ def transition_build_status(node_id: int, to: str, db_path: str = str(DEPGRAPH_P
         ("stable", "deprecated"),
     }
 
-    conn = sqlite3.connect(db_path)
-    try:
-        row = conn.execute("SELECT build_status FROM nodes WHERE node_id=?", (node_id,)).fetchone()
-        if not row:
-            print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
+    with _db_write_lock(db_path=db_path, task="transition_build_status"):
+        conn = sqlite3.connect(db_path)
+        try:
+            row = conn.execute("SELECT build_status FROM nodes WHERE node_id=?", (node_id,)).fetchone()
+            if not row:
+                print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
+                return False
+            current = row[0]
+            if (current, to) not in valid_transitions:
+                print(f"ERROR: 非法状态转换: {current} -> {to}（合法转换: {valid_transitions}）", file=sys.stderr)
+                return False
+            conn.execute("UPDATE nodes SET build_status=? WHERE node_id=?", (to, node_id))
+            conn.commit()
+            print(f"[OK] node_id={node_id}: build_status {current} -> {to}", file=sys.stderr)
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: transition_build_status失败: {e}", file=sys.stderr)
             return False
-        current = row[0]
-        if (current, to) not in valid_transitions:
-            print(f"ERROR: 非法状态转换: {current} -> {to}（合法转换: {valid_transitions}）", file=sys.stderr)
-            return False
-        conn.execute("UPDATE nodes SET build_status=? WHERE node_id=?", (to, node_id))
-        conn.commit()
-        print(f"[OK] node_id={node_id}: build_status {current} -> {to}", file=sys.stderr)
-        return True
-    except Exception as e:
-        conn.rollback()
-        print(f"ERROR: transition_build_status失败: {e}", file=sys.stderr)
-        return False
-    finally:
-        conn.close()
+        finally:
+            conn.close()
 
 
 def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
@@ -560,43 +620,44 @@ def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     2. 通过后软删除（build_status='deprecated'）
     3. 拒绝硬删除（DELETE FROM nodes）
     """
-    conn = sqlite3.connect(db_path)
-    try:
-        # STEP 1: 登记检查 - 节点是否存在
-        row = conn.execute(
-            "SELECT node_id, path, design_maturity, build_status FROM nodes WHERE node_id=?", (node_id,)
-        ).fetchone()
-        if not row:
-            print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
+    with _db_write_lock(db_path=db_path, task="remove_design_node"):
+        conn = sqlite3.connect(db_path)
+        try:
+            # STEP 1: 登记检查 - 节点是否存在
+            row = conn.execute(
+                "SELECT node_id, path, design_maturity, build_status FROM nodes WHERE node_id=?", (node_id,)
+            ).fetchone()
+            if not row:
+                print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
+                return False
+            if row[2] != "design":
+                print(f"ERROR: node_id={node_id} design_maturity={row[2]}（非设计态节点，禁止删除）", file=sys.stderr)
+                return False
+
+            # STEP 2: 重复检查 - 是否有其他同path节点
+            duplicates = conn.execute(
+                "SELECT COUNT(*) FROM nodes WHERE path=? AND node_id!=?", (row[1], node_id)
+            ).fetchone()[0]
+
+            # STEP 3: 功能价值检查 - 检查是否有边引用此节点
+            edge_count = conn.execute(
+                "SELECT COUNT(*) FROM edges WHERE from_node_id=? OR to_node_id=?", (node_id, node_id)
+            ).fetchone()[0]
+            if edge_count > 0:
+                print(f"WARNING: node_id={node_id} 有{edge_count}条边引用，将先删除边", file=sys.stderr)
+                conn.execute("DELETE FROM edges WHERE from_node_id=? OR to_node_id=?", (node_id, node_id))
+
+            # 软删除（build_status='deprecated'）
+            conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=?", (node_id,))
+            conn.commit()
+            print(f"[OK] node_id={node_id}: 软删除（build_status='deprecated'）", file=sys.stderr)
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: remove_design_node失败: {e}", file=sys.stderr)
             return False
-        if row[2] != "design":
-            print(f"ERROR: node_id={node_id} design_maturity={row[2]}（非设计态节点，禁止删除）", file=sys.stderr)
-            return False
-
-        # STEP 2: 重复检查 - 是否有其他同path节点
-        duplicates = conn.execute(
-            "SELECT COUNT(*) FROM nodes WHERE path=? AND node_id!=?", (row[1], node_id)
-        ).fetchone()[0]
-
-        # STEP 3: 功能价值检查 - 检查是否有边引用此节点
-        edge_count = conn.execute(
-            "SELECT COUNT(*) FROM edges WHERE from_node_id=? OR to_node_id=?", (node_id, node_id)
-        ).fetchone()[0]
-        if edge_count > 0:
-            print(f"WARNING: node_id={node_id} 有{edge_count}条边引用，将先删除边", file=sys.stderr)
-            conn.execute("DELETE FROM edges WHERE from_node_id=? OR to_node_id=?", (node_id, node_id))
-
-        # 软删除（build_status='deprecated'）
-        conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=?", (node_id,))
-        conn.commit()
-        print(f"[OK] node_id={node_id}: 软删除（build_status='deprecated'）", file=sys.stderr)
-        return True
-    except Exception as e:
-        conn.rollback()
-        print(f"ERROR: remove_design_node失败: {e}", file=sys.stderr)
-        return False
-    finally:
-        conn.close()
+        finally:
+            conn.close()
 
 
 # ===== F5 合规豁免：域/路径/依赖迁移命令（ARCH-CAP-005 抽屉式扩展）=====
@@ -621,40 +682,41 @@ def cmd_insert_domain(
     返回：True=成功，False=失败
     """
     own_conn = conn is None
-    if own_conn:
-        conn = sqlite3.connect(db_path)
-    try:
-        existing = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
-        if existing:
-            print(f"ERROR: domain_id '{domain_id}' 已存在", file=sys.stderr)
-            return False
+    with _optional_db_lock(own_conn, task="cmd_insert_domain", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            existing = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            if existing:
+                print(f"ERROR: domain_id '{domain_id}' 已存在", file=sys.stderr)
+                return False
 
-        now = datetime.datetime.now().isoformat()
-        if dry_run:
-            print(
-                f"[DRY RUN] 将 INSERT 域 {domain_id} ({domain_name}) layer={layer_id} ssot_path={ssot_path} max_modules={max_modules}",
-                file=sys.stderr,
+            now = datetime.datetime.now().isoformat()
+            if dry_run:
+                print(
+                    f"[DRY RUN] 将 INSERT 域 {domain_id} ({domain_name}) layer={layer_id} ssot_path={ssot_path} max_modules={max_modules}",
+                    file=sys.stderr,
+                )
+                return True
+
+            conn.execute(
+                """INSERT INTO domains (domain_id, domain_name, domain_group, description, ssot_path,
+                   current_modules, max_modules, lifecycle, created_at, updated_at, build_status, layer_id)
+                   VALUES (?, ?, ?, ?, ?, 0, ?, 'design_only', ?, ?, 'unbuilt', ?)""",
+                (domain_id, domain_name, domain_group, description, ssot_path, max_modules, now, now, layer_id),
             )
+            if own_conn:
+                conn.commit()
+            print(f"[OK] INSERT 域 {domain_id} ({domain_name}) layer={layer_id}", file=sys.stderr)
             return True
-
-        conn.execute(
-            """INSERT INTO domains (domain_id, domain_name, domain_group, description, ssot_path,
-               current_modules, max_modules, lifecycle, created_at, updated_at, build_status, layer_id)
-               VALUES (?, ?, ?, ?, ?, 0, ?, 'design_only', ?, ?, 'unbuilt', ?)""",
-            (domain_id, domain_name, domain_group, description, ssot_path, max_modules, now, now, layer_id),
-        )
-        if own_conn:
-            conn.commit()
-        print(f"[OK] INSERT 域 {domain_id} ({domain_name}) layer={layer_id}", file=sys.stderr)
-        return True
-    except Exception as e:
-        if own_conn:
-            conn.rollback()
-        print(f"ERROR: cmd_insert_domain失败: {e}", file=sys.stderr)
-        return False
-    finally:
-        if own_conn:
-            conn.close()
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_insert_domain失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            if own_conn:
+                conn.close()
 
 
 def cmd_update_domain_id(
@@ -667,44 +729,45 @@ def cmd_update_domain_id(
     返回：受影响行数，-1=失败
     """
     own_conn = conn is None
-    if own_conn:
-        conn = sqlite3.connect(db_path)
-    try:
-        domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_domain_id,)).fetchone()
-        if not domain:
-            print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
+    with _optional_db_lock(own_conn, task="cmd_update_domain_id", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_domain_id,)).fetchone()
+            if not domain:
+                print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
+                return -1
+
+            rows = conn.execute(
+                "SELECT node_id, path, domain_id FROM nodes WHERE belongs_to=? OR blueprint_id=?", (module_id, module_id)
+            ).fetchall()
+            if not rows:
+                print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
+                return -1
+
+            if dry_run:
+                for r in rows:
+                    print(
+                        f"[DRY RUN] 将 UPDATE node_id={r[0]} domain_id: {r[2]} -> {new_domain_id} (path={r[1]})",
+                        file=sys.stderr,
+                    )
+                return len(rows)
+
+            cur = conn.execute(
+                "UPDATE nodes SET domain_id=? WHERE belongs_to=? OR blueprint_id=?", (new_domain_id, module_id, module_id)
+            )
+            if own_conn:
+                conn.commit()
+            print(f"[OK] UPDATE {cur.rowcount} 个节点 domain_id -> {new_domain_id}", file=sys.stderr)
+            return cur.rowcount
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_update_domain_id失败: {e}", file=sys.stderr)
             return -1
-
-        rows = conn.execute(
-            "SELECT node_id, path, domain_id FROM nodes WHERE belongs_to=? OR blueprint_id=?", (module_id, module_id)
-        ).fetchall()
-        if not rows:
-            print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
-            return -1
-
-        if dry_run:
-            for r in rows:
-                print(
-                    f"[DRY RUN] 将 UPDATE node_id={r[0]} domain_id: {r[2]} -> {new_domain_id} (path={r[1]})",
-                    file=sys.stderr,
-                )
-            return len(rows)
-
-        cur = conn.execute(
-            "UPDATE nodes SET domain_id=? WHERE belongs_to=? OR blueprint_id=?", (new_domain_id, module_id, module_id)
-        )
-        if own_conn:
-            conn.commit()
-        print(f"[OK] UPDATE {cur.rowcount} 个节点 domain_id -> {new_domain_id}", file=sys.stderr)
-        return cur.rowcount
-    except Exception as e:
-        if own_conn:
-            conn.rollback()
-        print(f"ERROR: cmd_update_domain_id失败: {e}", file=sys.stderr)
-        return -1
-    finally:
-        if own_conn:
-            conn.close()
+        finally:
+            if own_conn:
+                conn.close()
 
 
 def cmd_update_path(
@@ -717,36 +780,37 @@ def cmd_update_path(
     返回：受影响行数，-1=失败
     """
     own_conn = conn is None
-    if own_conn:
-        conn = sqlite3.connect(db_path)
-    try:
-        rows = conn.execute(
-            "SELECT node_id, path FROM nodes WHERE belongs_to=? OR blueprint_id=?", (module_id, module_id)
-        ).fetchall()
-        if not rows:
-            print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
+    with _optional_db_lock(own_conn, task="cmd_update_path", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            rows = conn.execute(
+                "SELECT node_id, path FROM nodes WHERE belongs_to=? OR blueprint_id=?", (module_id, module_id)
+            ).fetchall()
+            if not rows:
+                print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
+                return -1
+
+            if dry_run:
+                for r in rows:
+                    print(f"[DRY RUN] 将 UPDATE node_id={r[0]} path: {r[1]} -> {new_path}", file=sys.stderr)
+                return len(rows)
+
+            cur = conn.execute(
+                "UPDATE nodes SET path=? WHERE belongs_to=? OR blueprint_id=?", (new_path, module_id, module_id)
+            )
+            if own_conn:
+                conn.commit()
+            print(f"[OK] UPDATE {cur.rowcount} 个节点 path -> {new_path}", file=sys.stderr)
+            return cur.rowcount
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_update_path失败: {e}", file=sys.stderr)
             return -1
-
-        if dry_run:
-            for r in rows:
-                print(f"[DRY RUN] 将 UPDATE node_id={r[0]} path: {r[1]} -> {new_path}", file=sys.stderr)
-            return len(rows)
-
-        cur = conn.execute(
-            "UPDATE nodes SET path=? WHERE belongs_to=? OR blueprint_id=?", (new_path, module_id, module_id)
-        )
-        if own_conn:
-            conn.commit()
-        print(f"[OK] UPDATE {cur.rowcount} 个节点 path -> {new_path}", file=sys.stderr)
-        return cur.rowcount
-    except Exception as e:
-        if own_conn:
-            conn.rollback()
-        print(f"ERROR: cmd_update_path失败: {e}", file=sys.stderr)
-        return -1
-    finally:
-        if own_conn:
-            conn.close()
+        finally:
+            if own_conn:
+                conn.close()
 
 
 def cmd_migrate_dependencies(
@@ -771,77 +835,78 @@ def cmd_migrate_dependencies(
         return -1
 
     own_conn = conn is None
-    if own_conn:
-        conn = sqlite3.connect(db_path)
-    try:
-        rows = conn.execute(
-            "SELECT from_domain, to_domain, edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?",
-            (from_domain, to_domain),
-        ).fetchall()
-        if not rows:
-            print(f"ERROR: domain_dependencies ({from_domain} -> {to_domain}) 不存在", file=sys.stderr)
-            return -1
-
-        if new_from_domain:
-            d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_from_domain,)).fetchone()
-            if not d:
-                print(f"ERROR: new_from_domain '{new_from_domain}' 不在 domains 表中", file=sys.stderr)
-                return -1
-        if new_to_domain:
-            d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_to_domain,)).fetchone()
-            if not d:
-                print(f"ERROR: new_to_domain '{new_to_domain}' 不在 domains 表中", file=sys.stderr)
+    with _optional_db_lock(own_conn, task="cmd_migrate_dependencies", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            rows = conn.execute(
+                "SELECT from_domain, to_domain, edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?",
+                (from_domain, to_domain),
+            ).fetchall()
+            if not rows:
+                print(f"ERROR: domain_dependencies ({from_domain} -> {to_domain}) 不存在", file=sys.stderr)
                 return -1
 
-        final_from = new_from_domain or from_domain
-        final_to = new_to_domain or to_domain
+            if new_from_domain:
+                d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_from_domain,)).fetchone()
+                if not d:
+                    print(f"ERROR: new_from_domain '{new_from_domain}' 不在 domains 表中", file=sys.stderr)
+                    return -1
+            if new_to_domain:
+                d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_to_domain,)).fetchone()
+                if not d:
+                    print(f"ERROR: new_to_domain '{new_to_domain}' 不在 domains 表中", file=sys.stderr)
+                    return -1
 
-        if dry_run:
-            for r in rows:
+            final_from = new_from_domain or from_domain
+            final_to = new_to_domain or to_domain
+
+            if dry_run:
+                for r in rows:
+                    print(
+                        f"[DRY RUN] 将 UPDATE domain_dependencies: {r[0]} -> {r[1]} => {final_from} -> {final_to} (edge_count={r[2]})",
+                        file=sys.stderr,
+                    )
+                return len(rows)
+
+            existing = conn.execute(
+                "SELECT edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (final_from, final_to)
+            ).fetchone()
+
+            if existing and (final_from != from_domain or final_to != to_domain):
+                total = existing[0] + rows[0][2]
+                conn.execute(
+                    "DELETE FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (from_domain, to_domain)
+                )
+                conn.execute(
+                    "UPDATE domain_dependencies SET edge_count=? WHERE from_domain=? AND to_domain=?",
+                    (total, final_from, final_to),
+                )
                 print(
-                    f"[DRY RUN] 将 UPDATE domain_dependencies: {r[0]} -> {r[1]} => {final_from} -> {final_to} (edge_count={r[2]})",
+                    f"[OK] 合并 domain_dependencies: {from_domain}->{to_domain} 并入 {final_from}->{final_to} (edge_count={total})",
                     file=sys.stderr,
                 )
+            else:
+                conn.execute(
+                    "UPDATE domain_dependencies SET from_domain=?, to_domain=? WHERE from_domain=? AND to_domain=?",
+                    (final_from, final_to, from_domain, to_domain),
+                )
+                print(
+                    f"[OK] UPDATE domain_dependencies: {from_domain}->{to_domain} => {final_from}->{final_to}",
+                    file=sys.stderr,
+                )
+
+            if own_conn:
+                conn.commit()
             return len(rows)
-
-        existing = conn.execute(
-            "SELECT edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (final_from, final_to)
-        ).fetchone()
-
-        if existing and (final_from != from_domain or final_to != to_domain):
-            total = existing[0] + rows[0][2]
-            conn.execute(
-                "DELETE FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (from_domain, to_domain)
-            )
-            conn.execute(
-                "UPDATE domain_dependencies SET edge_count=? WHERE from_domain=? AND to_domain=?",
-                (total, final_from, final_to),
-            )
-            print(
-                f"[OK] 合并 domain_dependencies: {from_domain}->{to_domain} 并入 {final_from}->{final_to} (edge_count={total})",
-                file=sys.stderr,
-            )
-        else:
-            conn.execute(
-                "UPDATE domain_dependencies SET from_domain=?, to_domain=? WHERE from_domain=? AND to_domain=?",
-                (final_from, final_to, from_domain, to_domain),
-            )
-            print(
-                f"[OK] UPDATE domain_dependencies: {from_domain}->{to_domain} => {final_from}->{final_to}",
-                file=sys.stderr,
-            )
-
-        if own_conn:
-            conn.commit()
-        return len(rows)
-    except Exception as e:
-        if own_conn:
-            conn.rollback()
-        print(f"ERROR: cmd_migrate_dependencies失败: {e}", file=sys.stderr)
-        return -1
-    finally:
-        if own_conn:
-            conn.close()
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_migrate_dependencies失败: {e}", file=sys.stderr)
+            return -1
+        finally:
+            if own_conn:
+                conn.close()
 
 
 def cmd_update_domain_capacity(
@@ -866,35 +931,36 @@ def cmd_update_domain_capacity(
         return False
 
     own_conn = conn is None
-    if own_conn:
-        conn = sqlite3.connect(db_path)
-    try:
-        existing = conn.execute(
-            "SELECT domain_id, current_modules, max_modules FROM domains WHERE domain_id=?", (domain_id,)
-        ).fetchone()
-        if not existing:
-            print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
-            return False
+    with _optional_db_lock(own_conn, task="cmd_update_domain_capacity", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            existing = conn.execute(
+                "SELECT domain_id, current_modules, max_modules FROM domains WHERE domain_id=?", (domain_id,)
+            ).fetchone()
+            if not existing:
+                print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
+                return False
 
-        old_value = existing[1] if field == "current_modules" else existing[2]
-        if dry_run:
-            print(f"[DRY RUN] 将 UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
+            old_value = existing[1] if field == "current_modules" else existing[2]
+            if dry_run:
+                print(f"[DRY RUN] 将 UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
+                return True
+
+            now = datetime.datetime.now().isoformat()
+            conn.execute(f"UPDATE domains SET {field}=?, updated_at=? WHERE domain_id=?", (value, now, domain_id))
+            if own_conn:
+                conn.commit()
+            print(f"[OK] UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
             return True
-
-        now = datetime.datetime.now().isoformat()
-        conn.execute(f"UPDATE domains SET {field}=?, updated_at=? WHERE domain_id=?", (value, now, domain_id))
-        if own_conn:
-            conn.commit()
-        print(f"[OK] UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
-        return True
-    except Exception as e:
-        if own_conn:
-            conn.rollback()
-        print(f"ERROR: cmd_update_domain_capacity失败: {e}", file=sys.stderr)
-        return False
-    finally:
-        if own_conn:
-            conn.close()
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_update_domain_capacity失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            if own_conn:
+                conn.close()
 
 
 def cmd_update_domain_layer(
@@ -913,37 +979,38 @@ def cmd_update_domain_layer(
         return False
 
     own_conn = conn is None
-    if own_conn:
-        conn = sqlite3.connect(db_path)
-    try:
-        existing = conn.execute("SELECT domain_id, layer_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
-        if not existing:
-            print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
+    with _optional_db_lock(own_conn, task="cmd_update_domain_layer", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            existing = conn.execute("SELECT domain_id, layer_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            if not existing:
+                print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
+                return False
+
+            old_layer = existing[1]
+            if old_layer == layer_id:
+                print(f"WARNING: domain_id '{domain_id}' layer_id 已是 {layer_id}，无需更新", file=sys.stderr)
+                return True
+
+            if dry_run:
+                print(f"[DRY RUN] 将 UPDATE domains layer_id: {domain_id} {old_layer} -> {layer_id}", file=sys.stderr)
+                return True
+
+            now = datetime.datetime.now().isoformat()
+            conn.execute("UPDATE domains SET layer_id=?, updated_at=? WHERE domain_id=?", (layer_id, now, domain_id))
+            if own_conn:
+                conn.commit()
+            print(f"[OK] UPDATE domains layer_id: {domain_id} {old_layer} -> {layer_id}", file=sys.stderr)
+            return True
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_update_domain_layer失败: {e}", file=sys.stderr)
             return False
-
-        old_layer = existing[1]
-        if old_layer == layer_id:
-            print(f"WARNING: domain_id '{domain_id}' layer_id 已是 {layer_id}，无需更新", file=sys.stderr)
-            return True
-
-        if dry_run:
-            print(f"[DRY RUN] 将 UPDATE domains layer_id: {domain_id} {old_layer} -> {layer_id}", file=sys.stderr)
-            return True
-
-        now = datetime.datetime.now().isoformat()
-        conn.execute("UPDATE domains SET layer_id=?, updated_at=? WHERE domain_id=?", (layer_id, now, domain_id))
-        if own_conn:
-            conn.commit()
-        print(f"[OK] UPDATE domains layer_id: {domain_id} {old_layer} -> {layer_id}", file=sys.stderr)
-        return True
-    except Exception as e:
-        if own_conn:
-            conn.rollback()
-        print(f"ERROR: cmd_update_domain_layer失败: {e}", file=sys.stderr)
-        return False
-    finally:
-        if own_conn:
-            conn.close()
+        finally:
+            if own_conn:
+                conn.close()
 
 
 def main() -> None:

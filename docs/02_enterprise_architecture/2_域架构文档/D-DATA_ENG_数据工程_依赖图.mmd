@@ -1,0 +1,543 @@
+%% D-DATA_ENG 域全景依赖图
+%% 生成时间: 2026-06-23 23:25:23
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 147, 依赖边数: 434
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_DATA_ENG[数据工程(增值+融合+知识)]
+        D_DATA_ENG_ADWIN_Drift_Detection_ADWIN漂移检测["...A-ENG/ADWIN Drift Detection ADWIN漂移检测 [design]"]
+        D_DATA_ENG_AI_Auto_Feature_Discoverer_AI自动特征发现器[".../AI Auto Feature Discoverer AI自动特征发现器 [design]"]
+        D_DATA_ENG_Airflow_Pipeline_Airflow流水线["D-DATA-ENG/Airflow Pipeline Airflow流水线 [design]"]
+        D_DATA_ENG_Alternative_Data_另类数据["D-DATA-ENG/Alternative Data 另类数据 [design]"]
+        D_DATA_ENG_Apache_Beam["D-DATA-ENG/Apache Beam [design]"]
+        D_DATA_ENG_Apache_Iceberg_v3特性_Iceberg_v3_Features["...ache Iceberg v3特性 Iceberg v3 Features [design]"]
+        D_DATA_ENG_CI_CD门禁集成_CI_CD_Gate_Integration["...-ENG/CI/CD门禁集成 CI/CD Gate Integration [design]"]
+        D_DATA_ENG_CQRS_Dependency_Node_CQRS依赖图节点["...TA-ENG/CQRS Dependency Node CQRS依赖图节点 [design]"]
+        D_DATA_ENG_CQRS_Event_Sourcing_CQRS事件溯源["D-DATA-ENG/CQRS Event Sourcing CQRS事件溯源 [design]"]
+        D_DATA_ENG_CTR_TRACE_001_Data_____Chain_CTR_TRACE_001数据血缘链契约["...ta Lineage Chain CTR-TRACE-001数据血缘链契约 [design]"]
+        D_DATA_ENG_Cleaning_&_Anomaly_Engine_清洗与异常引擎["...ENG/Cleaning & Anomaly Engine 清洗与异常引擎 [design]"]
+        D_DATA_ENG_Column_Level_Lineage_列级血缘["D-DATA-ENG/Column-Level Lineage 列级血缘 [design]"]
+        D_DATA_ENG_Core_Pipeline_核心管线["D-DATA-ENG/Core Pipeline 核心管线 [design]"]
+        D_DATA_ENG_DDM_Drift_Detection_DDM漂移检测["D-DATA-ENG/DDM Drift Detection DDM漂移检测 [design]"]
+        D_DATA_ENG_Data_Fusion_数据融合["D-DATA-ENG/Data Fusion 数据融合 [design]"]
+        D_DATA_ENG_Data_Lifecycle_Management_数据生命周期管理["...NG/Data Lifecycle Management 数据生命周期管理 [design]"]
+        D_DATA_ENG_Data_Lineage_&_Traceability_数据血缘与可追溯性["...Data Lineage & Traceability 数据血缘与可追溯性 [design]"]
+        D_DATA_ENG_Data_Lineage_Runtime_Discovery_数据血缘运行时发现["...a Lineage Runtime Discovery 数据血缘运行时发现 [design]"]
+        D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪["D-DATA-ENG/Data Lineage Tracking 数据血缘追踪 [design]"]
+        D_DATA_ENG_Data_Observability_Platform_数据可观测性平台[".../Data Observability Platform 数据可观测性平台 [design]"]
+        D_DATA_ENG_Data_Quality_Report_数据质量报告["D-DATA-ENG/Data Quality Report 数据质量报告 [design]"]
+        D_DATA_ENG_Data_Scheduler_数据调度器["D-DATA-ENG/Data Scheduler 数据调度器 [design]"]
+        D_DATA_ENG_Data_Source_Approval_数据源审批["D-DATA-ENG/Data Source Approval 数据源审批 [design]"]
+        D_DATA_ENG_Data_Source_Development_数据源开发["D-DATA-ENG/Data Source Development 数据源开发 [design]"]
+        D_DATA_ENG_Data_Source_Evaluation_数据源评估["D-DATA-ENG/Data Source Evaluation 数据源评估 [design]"]
+        D_DATA_ENG_Data_Source_Full_Rollout_数据源全量["...TA-ENG/Data Source Full Rollout 数据源全量 [design]"]
+        D_DATA_ENG_Data_Source_Grayscale_数据源灰度["D-DATA-ENG/Data Source Grayscale 数据源灰度 [design]"]
+        D_DATA_ENG_Data_Source_Validation_数据源验证["D-DATA-ENG/Data Source Validation 数据源验证 [design]"]
+        D_DATA_ENG_Data_Vendor_SLA_Monitor_数据供应商SLA监控["...NG/Data Vendor SLA Monitor 数据供应商SLA监控 [design]"]
+        D_DATA_ENG_DataCatalogSync_数据目录同步["D-DATA-ENG/DataCatalogSync 数据目录同步 [design]"]
+        D_DATA_ENG_DataCompressionArchive_数据压缩归档["D-DATA-ENG/DataCompressionArchive 数据压缩归档 [design]"]
+        D_DATA_ENG_DataHub_Data_Catalog_DataHub数据目录["...-ENG/DataHub Data Catalog DataHub数据目录 [design]"]
+        D_DATA_ENG_DataLakeManager_数据湖管理器["D-DATA-ENG/DataLakeManager 数据湖管理器 [design]"]
+        D_DATA_ENG_DataLineageTracker_Dependency_数据血缘追踪依赖["...ataLineageTracker Dependency 数据血缘追踪依赖 [design]"]
+        D_DATA_ENG_DataLineageTracker_数据血缘追踪器["D-DATA-ENG/DataLineageTracker 数据血缘追踪器 [design]"]
+        D_DATA_ENG_DataMesh_Dependency_Node_数据网格依赖图节点["...NG/DataMesh Dependency Node 数据网格依赖图节点 [design]"]
+        D_DATA_ENG_DataMeshIntegrator_Data_Mesh集成器["...A-ENG/DataMeshIntegrator Data Mesh集成器 [design]"]
+        D_DATA_ENG_DataPipeline_数据管线["D-DATA-ENG/DataPipeline 数据管线 [design]"]
+        D_DATA_ENG_DataProductManager_数据产品管理器["D-DATA-ENG/DataProductManager 数据产品管理器 [design]"]
+        D_DATA_ENG_DataProfiler_数据画像器["D-DATA-ENG/DataProfiler 数据画像器 [design]"]
+        D_DATA_ENG_DataQualityAlert_数据质量告警["D-DATA-ENG/DataQualityAlert 数据质量告警 [design]"]
+        D_DATA_ENG_DataQualityMonitor_Dependency_数据质量监控依赖["...ataQualityMonitor Dependency 数据质量监控依赖 [design]"]
+        D_DATA_ENG_DataReplicationSync_数据复制同步["D-DATA-ENG/DataReplicationSync 数据复制同步 [design]"]
+        D_DATA_ENG_Debezium_CDC_Debezium变更数据捕获["D-DATA-ENG/Debezium CDC Debezium变更数据捕获 [design]"]
+        D_DATA_ENG_Decision_10_TrainingDataManager独立子模块[".../Decision 10 TrainingDataManager独立子模块 [design]"]
+        D_DATA_ENG_Decision_11_知识清洗流水线入数据工程域["D-DATA-ENG/Decision 11 知识清洗流水线入数据工程域 [design]"]
+        D_DATA_ENG_Decision_12_SyntheticDataGenerator为P2["...Decision 12 SyntheticDataGenerator为P2 [design]"]
+        D_DATA_ENG_Decision_13_CQRS_Event_Sourcing为P3["...NG/Decision 13 CQRS/Event Sourcing为P3 [design]"]
+        D_DATA_ENG_Decision_3_FeatureStore从D_DATA_03拆出独立["...Decision 3 FeatureStore从D-DATA-03拆出独立 [design]"]
+        D_DATA_ENG_Decision_4_调度器从D_DATA_01拆出["D-DATA-ENG/Decision 4 调度器从D-DATA-01拆出 [design]"]
+        D_DATA_ENG_Decision_5_StreamProcessing入骨架["...TA-ENG/Decision 5 StreamProcessing入骨架 [design]"]
+        D_DATA_ENG_Decision_6_DataMesh暂不入骨架["D-DATA-ENG/Decision 6 DataMesh暂不入骨架 [design]"]
+        D_DATA_ENG_Decision_7_血缘追踪从D_DATA_05拆出["D-DATA-ENG/Decision 7 血缘追踪从D-DATA-05拆出 [design]"]
+        D_DATA_ENG_Decision_8_漂移感知调度独立子模块["D-DATA-ENG/Decision 8 漂移感知调度独立子模块 [design]"]
+        D_DATA_ENG_Decision_9_PIT_Manager独立于FeatureStore["...Decision 9 PIT Manager独立于FeatureStore [design]"]
+        D_DATA_ENG_Deduplication_去重["D-DATA-ENG/Deduplication 去重 [design]"]
+        D_DATA_ENG_Denoising_去噪["D-DATA-ENG/Denoising 去噪 [design]"]
+        D_DATA_ENG_DriftAwareScheduler_Dependency_漂移感知调度器依赖["...ftAwareScheduler Dependency 漂移感知调度器依赖 [design]"]
+        D_DATA_ENG_DriftDetected_数据分布漂移检测["D-DATA-ENG/DriftDetected 数据分布漂移检测 [design]"]
+        D_DATA_ENG_ETL_Pipeline_ETL管线["D-DATA-ENG/ETL Pipeline ETL管线 [design]"]
+        D_DATA_ENG_ETLPipeline_Dependency_ETL管线依赖["...TA-ENG/ETLPipeline Dependency ETL管线依赖 [design]"]
+        D_DATA_ENG_Event_Triggered_Collection_事件触发采集["...ENG/Event-Triggered Collection 事件触发采集 [design]"]
+        D_DATA_ENG_Factor_Formula_因子公式["D-DATA-ENG/Factor Formula 因子公式 [design]"]
+        D_DATA_ENG_Feast_Feature_Store_Feast特征存储["D-DATA-ENG/Feast Feature Store Feast特征存储 [design]"]
+        D_DATA_ENG_Feature_Store_Architecture_特征存储架构["...ENG/Feature Store Architecture 特征存储架构 [design]"]
+        D_DATA_ENG_Feature_Store_Offline_离线特征存储["D-DATA-ENG/Feature Store Offline 离线特征存储 [design]"]
+        D_DATA_ENG_FeatureStore_Dependency_特征存储依赖["...TA-ENG/FeatureStore Dependency 特征存储依赖 [design]"]
+        D_DATA_ENG_FeatureStoreUpdated_特征存储更新完成["D-DATA-ENG/FeatureStoreUpdated 特征存储更新完成 [design]"]
+        D_DATA_ENG_Format_Conversion_格式转换["D-DATA-ENG/Format Conversion 格式转换 [design]"]
+        D_DATA_ENG_GPUResourceManager_Dependency_GPU资源管理器依赖["...ResourceManager Dependency GPU资源管理器依赖 [design]"]
+        D_DATA_ENG_GPUResourceManager_GPU资源管理器["D-DATA-ENG/GPUResourceManager GPU资源管理器 [design]"]
+        D_DATA_ENG_Get_Feature_Lineage_获取特征血缘["D-DATA-ENG/Get Feature Lineage 获取特征血缘 [design]"]
+        D_DATA_ENG_Get_Features_获取特征["D-DATA-ENG/Get Features 获取特征 [design]"]
+        D_DATA_ENG_Great_Expectations____gine_Great_Expectations质量引擎["...Quality Engine Great Expectations质量引擎 [design]"]
+        D_DATA_ENG_Human_AI_Collaboration_人机协作模式["D-DATA-ENG/Human-AI Collaboration 人机协作模式 [design]"]
+        D_DATA_ENG_Information_Value_Scoring_信息价值评分["...-ENG/Information Value Scoring 信息价值评分 [design]"]
+        D_DATA_ENG_Kappa_Architecture_Kappa架构["D-DATA-ENG/Kappa Architecture Kappa架构 [design]"]
+        D_DATA_ENG_KnowledgeCleaningPipeline_Dependency_知识清洗流水线依赖["...CleaningPipeline Dependency 知识清洗流水线依赖 [design]"]
+        D_DATA_ENG_KnowledgeCleaningPipeline_知识清洗流水线["...ENG/KnowledgeCleaningPipeline 知识清洗流水线 [design]"]
+        D_DATA_ENG_L0_to_L1_Data_Flow_L0→L1数据流["D-DATA-ENG/L0 to L1 Data Flow L0→L1数据流 [design]"]
+        D_DATA_ENG_LLM_Extraction_LLM提取["D-DATA-ENG/LLM Extraction LLM提取 [design]"]
+        D_DATA_ENG_Lambda_Architecture_Lambda架构["D-DATA-ENG/Lambda Architecture Lambda架构 [design]"]
+        D_DATA_ENG_Lightweight_GAN_轻量GAN["D-DATA-ENG/Lightweight GAN 轻量GAN [design]"]
+        D_DATA_ENG_LineageGapDetected_血缘链断裂检测["D-DATA-ENG/LineageGapDetected 血缘链断裂检测 [design]"]
+        D_DATA_ENG_Manual_Submission_手动提交["D-DATA-ENG/Manual Submission 手动提交 [design]"]
+        D_DATA_ENG_Marquez_Lineage_Backend_Marquez血缘后端["...G/Marquez Lineage Backend Marquez血缘后端 [design]"]
+        D_DATA_ENG_Memory_Consolidation_记忆巩固["D-DATA-ENG/Memory Consolidation 记忆巩固 [design]"]
+        D_DATA_ENG_Memory_Forgetting_记忆遗忘["D-DATA-ENG/Memory Forgetting 记忆遗忘 [design]"]
+        D_DATA_ENG_Memory_Retrieval_记忆检索["D-DATA-ENG/Memory Retrieval 记忆检索 [design]"]
+        D_DATA_ENG_MinHash_Similarity_MinHash相似度["D-DATA-ENG/MinHash Similarity MinHash相似度 [design]"]
+        D_DATA_ENG_Model_Training_Pipeline_管线["D-DATA-ENG/Model Training Pipeline 管线 [design]"]
+        D_DATA_ENG_Multi_Source_Cross_Validator_多源交叉验证器[".../Multi-Source Cross Validator 多源交叉验证器 [design]"]
+        D_DATA_ENG_Multi_Timeframe_Data_Fusion_多时间尺度数据融合["...Multi-Timeframe Data Fusion 多时间尺度数据融合 [design]"]
+        D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程["... Data Source Onboarding Flow 新数据源接入流程 [design]"]
+        D_DATA_ENG_OpenLineage_Lineage_Standard_OpenLineage血缘标准["...eage Lineage Standard OpenLineage血缘标准 [design]"]
+        D_DATA_ENG_OpenLineage_Standard_Adaptation_OpenLineage标准适配["...e Standard Adaptation OpenLineage标准适配 [design]"]
+        D_DATA_ENG_OpenLineage_Standard_OpenLineage标准["...NG/OpenLineage Standard OpenLineage标准 [design]"]
+        D_DATA_ENG_PIT_Data_PIT数据["D-DATA-ENG/PIT Data PIT数据 [design]"]
+        D_DATA_ENG_PITManager_Dependency_PIT管理器依赖["...TA-ENG/PITManager Dependency PIT管理器依赖 [design]"]
+        D_DATA_ENG_PITManager_PIT管理器["D-DATA-ENG/PITManager PIT管理器 [design]"]
+        %% ... 还有 47 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    D_DATA_ENG_Model_Training_Pipeline_管线 -->|import_depends| D_DATA_ENG_清洗去重_Clean_&_Deduplicate
+    D_DATA_ENG_清洗去重_Clean_&_Deduplicate -->|import_depends| D_DATA_ENG_DataLineageTracker_数据血缘追踪器
+    D_DATA_ENG_DataLineageTracker_数据血缘追踪器 -->|import_depends| D_DATA_ENG_Pre_Post_Market_Pipeline_盘前盘后管线
+    D_DATA_ENG_Pre_Post_Market_Pipeline_盘前盘后管线 -->|import_depends| D_DATA_ENG_Smart_Scheduler_智能调度器
+    D_DATA_ENG_Smart_Scheduler_智能调度器 -->|import_depends| D_DATA_ENG_Quality_Gate_Full_P___Executor_Quality_Gate全流程执行器
+    D_DATA_ENG_Quality_Gate_Full_P___Executor_Quality_Gate全流程执行器 -->|import_depends| D_DATA_ENG_Multi_Timeframe_Data_Fusion_多时间尺度数据融合
+    D_DATA_ENG_Multi_Timeframe_Data_Fusion_多时间尺度数据融合 -->|import_depends| D_DATA_ENG_ETL_Pipeline_ETL管线
+    D_DATA_ENG_ETL_Pipeline_ETL管线 -->|import_depends| D_DATA_ENG_Pipeline_Orchestrator_数据管线编排
+    D_DATA_ENG_Pipeline_Orchestrator_数据管线编排 -->|import_depends| D_DATA_ENG_Data_Scheduler_数据调度器
+    D_DATA_ENG_Data_Scheduler_数据调度器 -->|import_depends| D_DATA_ENG_Schema_Evolution_Manager_Schema演进管理
+    D_DATA_ENG_Schema_Evolution_Manager_Schema演进管理 -->|import_depends| D_DATA_ENG_Data_Observability_Platform_数据可观测性平台
+    D_DATA_ENG_Data_Observability_Platform_数据可观测性平台 -->|import_depends| D_DATA_ENG_PipelineOrchestrator_管线编排器
+    D_DATA_ENG_PipelineOrchestrator_管线编排器 -->|import_depends| D_DATA_ENG_StreamProcessingEngine_流处理引擎
+    D_DATA_ENG_StreamProcessingEngine_流处理引擎 -->|import_depends| D_DATA_ENG_PITManager_PIT管理器
+    D_DATA_ENG_PITManager_PIT管理器 -->|import_depends| D_DATA_ENG_KnowledgeCleaningPipeline_知识清洗流水线
+    D_DATA_ENG_KnowledgeCleaningPipeline_知识清洗流水线 -->|import_depends| D_DATA_ENG_GPUResourceManager_GPU资源管理器
+    D_DATA_ENG_GPUResourceManager_GPU资源管理器 -->|import_depends| D_DATA_ENG_DataLakeManager_数据湖管理器
+    D_DATA_ENG_DataLakeManager_数据湖管理器 -->|import_depends| D_DATA_ENG_DataCompressionArchive_数据压缩归档
+    D_DATA_ENG_DataCompressionArchive_数据压缩归档 -->|import_depends| D_DATA_ENG_DataReplicationSync_数据复制同步
+    D_DATA_ENG_DataReplicationSync_数据复制同步 -->|import_depends| D_DATA_ENG_DataProfiler_数据画像器
+    D_DATA_ENG_DataProfiler_数据画像器 -->|import_depends| D_DATA_ENG_DataCatalogSync_数据目录同步
+    D_DATA_ENG_DataCatalogSync_数据目录同步 -->|import_depends| D_DATA_ENG_DataProductManager_数据产品管理器
+    D_DATA_ENG_DataProductManager_数据产品管理器 -->|import_depends| D_DATA_ENG_DataMeshIntegrator_Data_Mesh集成器
+    D_DATA_ENG_DataMeshIntegrator_Data_Mesh集成器 -->|import_depends| D_DATA_ENG_CQRS_Event_Sourcing_CQRS事件溯源
+    D_DATA_ENG_CQRS_Event_Sourcing_CQRS事件溯源 -->|import_depends| D_DATA_ENG_AI_Auto_Feature_Discoverer_AI自动特征发现器
+    D_DATA_ENG_AI_Auto_Feature_Discoverer_AI自动特征发现器 -->|import_depends| D_DATA_ENG_Cleaning_&_Anomaly_Engine_清洗与异常引擎
+    D_DATA_ENG_Cleaning_&_Anomaly_Engine_清洗与异常引擎 -->|import_depends| D_DATA_ENG_Multi_Source_Cross_Validator_多源交叉验证器
+    D_DATA_ENG_Multi_Source_Cross_Validator_多源交叉验证器 -->|import_depends| D_DATA_ENG_Airflow_Pipeline_Airflow流水线
+    D_DATA_ENG_Airflow_Pipeline_Airflow流水线 -->|import_depends| D_DATA_ENG_OpenLineage_Standard_OpenLineage标准
+    D_DATA_ENG_OpenLineage_Standard_OpenLineage标准 -->|import_depends| D_DATA_ENG_Data_Lineage_&_Traceability_数据血缘与可追溯性
+    D_DATA_ENG_Data_Lineage_&_Traceability_数据血缘与可追溯性 -->|import_depends| D_DATA_ENG_OpenLineage_Standard_Adaptation_OpenLineage标准适配
+    D_DATA_ENG_OpenLineage_Standard_Adaptation_OpenLineage标准适配 -->|import_depends| D_DATA_ENG_Column_Level_Lineage_列级血缘
+    D_DATA_ENG_Column_Level_Lineage_列级血缘 -->|import_depends| D_DATA_ENG_Feature_Store_Architecture_特征存储架构
+    D_DATA_ENG_Feature_Store_Architecture_特征存储架构 -->|import_depends| D_DATA_ENG_DataPipeline_数据管线
+    D_DATA_ENG_DataPipeline_数据管线 -->|import_depends| D_DATA_ENG_ETLPipeline_Dependency_ETL管线依赖
+    D_DATA_ENG_ETLPipeline_Dependency_ETL管线依赖 -->|import_depends| D_DATA_ENG_PipelineOrchestrator_Dependency_管线编排器依赖
+    D_DATA_ENG_PipelineOrchestrator_Dependency_管线编排器依赖 -->|import_depends| D_DATA_ENG_FeatureStore_Dependency_特征存储依赖
+    D_DATA_ENG_FeatureStore_Dependency_特征存储依赖 -->|import_depends| D_DATA_ENG_DataQualityMonitor_Dependency_数据质量监控依赖
+    D_DATA_ENG_DataQualityMonitor_Dependency_数据质量监控依赖 -->|import_depends| D_DATA_ENG_DataLineageTracker_Dependency_数据血缘追踪依赖
+    D_DATA_ENG_DataLineageTracker_Dependency_数据血缘追踪依赖 -->|import_depends| D_DATA_ENG_StreamProcessingEngine_Dependency_流处理引擎依赖
+    D_DATA_ENG_StreamProcessingEngine_Dependency_流处理引擎依赖 -->|import_depends| D_DATA_ENG_DriftAwareScheduler_Dependency_漂移感知调度器依赖
+    D_DATA_ENG_DriftAwareScheduler_Dependency_漂移感知调度器依赖 -->|import_depends| D_DATA_ENG_PITManager_Dependency_PIT管理器依赖
+    D_DATA_ENG_PITManager_Dependency_PIT管理器依赖 -->|import_depends| D_DATA_ENG_TrainingDataManager_Dependency_训练数据管理器依赖
+    D_DATA_ENG_TrainingDataManager_Dependency_训练数据管理器依赖 -->|import_depends| D_DATA_ENG_KnowledgeCleaningPipeline_Dependency_知识清洗流水线依赖
+    D_DATA_ENG_KnowledgeCleaningPipeline_Dependency_知识清洗流水线依赖 -->|import_depends| D_DATA_ENG_GPUResourceManager_Dependency_GPU资源管理器依赖
+    D_DATA_ENG_GPUResourceManager_Dependency_GPU资源管理器依赖 -->|import_depends| D_DATA_ENG_Format_Conversion_格式转换
+    D_DATA_ENG_Format_Conversion_格式转换 -->|import_depends| D_DATA_ENG_Deduplication_去重
+    D_DATA_ENG_Deduplication_去重 -->|import_depends| D_DATA_ENG_Denoising_去噪
+    D_DATA_ENG_Denoising_去噪 -->|import_depends| D_DATA_ENG_Terminology_Normalization_术语标准化
+    D_DATA_ENG_Terminology_Normalization_术语标准化 -->|import_depends| D_DATA_ENG_Speaker_Diarization_说话人分离
+    D_DATA_ENG_Speaker_Diarization_说话人分离 -->|import_depends| D_DATA_ENG_Information_Value_Scoring_信息价值评分
+    D_DATA_ENG_Information_Value_Scoring_信息价值评分 -->|import_depends| D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪
+    D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪 -->|import_depends| D_DATA_ENG_ADWIN_Drift_Detection_ADWIN漂移检测
+    D_DATA_ENG_ADWIN_Drift_Detection_ADWIN漂移检测 -->|import_depends| D_DATA_ENG_DDM_Drift_Detection_DDM漂移检测
+    D_DATA_ENG_DDM_Drift_Detection_DDM漂移检测 -->|import_depends| D_DATA_ENG_Representation_Learning_Drift_Detection_表示学习漂移检测
+    D_DATA_ENG_Representation_Learning_Drift_Detection_表示学习漂移检测 -->|import_depends| D_DATA_ENG_Feature_Store_Offline_离线特征存储
+    D_DATA_ENG_Feature_Store_Offline_离线特征存储 -->|import_depends| D_DATA_ENG_Great_Expectations____gine_Great_Expectations质量引擎
+    D_DATA_ENG_Great_Expectations____gine_Great_Expectations质量引擎 -->|import_depends| D_DATA_ENG_OpenLineage_Lineage_Standard_OpenLineage血缘标准
+    D_DATA_ENG_OpenLineage_Lineage_Standard_OpenLineage血缘标准 -->|import_depends| D_DATA_ENG_Marquez_Lineage_Backend_Marquez血缘后端
+    D_DATA_ENG_Marquez_Lineage_Backend_Marquez血缘后端 -->|import_depends| D_DATA_ENG_DataHub_Data_Catalog_DataHub数据目录
+    D_DATA_ENG_DataHub_Data_Catalog_DataHub数据目录 -->|import_depends| D_DATA_ENG_Debezium_CDC_Debezium变更数据捕获
+    D_DATA_ENG_Debezium_CDC_Debezium变更数据捕获 -->|import_depends| D_DATA_ENG_Feast_Feature_Store_Feast特征存储
+    D_DATA_ENG_Feast_Feature_Store_Feast特征存储 -->|import_depends| D_DATA_ENG_SimHash_Similarity_SimHash相似度
+    D_DATA_ENG_SimHash_Similarity_SimHash相似度 -->|import_depends| D_DATA_ENG_MinHash_Similarity_MinHash相似度
+    D_DATA_ENG_MinHash_Similarity_MinHash相似度 -->|import_depends| D_DATA_ENG_SMOTE_Oversampling_SMOTE过采样
+    D_DATA_ENG_SMOTE_Oversampling_SMOTE过采样 -->|import_depends| D_DATA_ENG_Lightweight_GAN_轻量GAN
+    D_DATA_ENG_Lightweight_GAN_轻量GAN -->|import_depends| D_DATA_ENG_Human_AI_Collaboration_人机协作模式
+    D_DATA_ENG_Human_AI_Collaboration_人机协作模式 -->|import_depends| D_DATA_ENG_Scheduled_Collection_定时采集
+    D_DATA_ENG_Scheduled_Collection_定时采集 -->|import_depends| D_DATA_ENG_Event_Triggered_Collection_事件触发采集
+    D_DATA_ENG_Event_Triggered_Collection_事件触发采集 -->|import_depends| D_DATA_ENG_Manual_Submission_手动提交
+    D_DATA_ENG_Manual_Submission_手动提交 -->|import_depends| D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程
+    D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程 -->|import_depends| D_DATA_ENG_Schema_Evolution_Strategy_Schema演进策略
+    D_DATA_ENG_Schema_Evolution_Strategy_Schema演进策略 -->|import_depends| D_DATA_ENG_Storage_Expansion_Path_存储扩展路径
+    D_DATA_ENG_Storage_Expansion_Path_存储扩展路径 -->|import_depends| D_DATA_ENG_Tech_Stack_Evolution_技术栈演进
+    D_DATA_ENG_Tech_Stack_Evolution_技术栈演进 -->|import_depends| D_DATA_ENG_Data_Source_Evaluation_数据源评估
+    D_DATA_ENG_Data_Source_Evaluation_数据源评估 -->|import_depends| D_DATA_ENG_Data_Source_Approval_数据源审批
+    D_DATA_ENG_Data_Source_Approval_数据源审批 -->|import_depends| D_DATA_ENG_Data_Source_Development_数据源开发
+    D_DATA_ENG_Data_Source_Development_数据源开发 -->|import_depends| D_DATA_ENG_Data_Source_Validation_数据源验证
+    D_DATA_ENG_Data_Source_Validation_数据源验证 -->|import_depends| D_DATA_ENG_Data_Source_Grayscale_数据源灰度
+    D_DATA_ENG_Data_Source_Grayscale_数据源灰度 -->|import_depends| D_DATA_ENG_Data_Source_Full_Rollout_数据源全量
+    %% ... 还有 45 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-DATA_ENG (4 条)
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_DATA_ENG_Core_Pipeline_核心管线
+    D_ALT_DATA[D-ALT_DATA] -->|event| D_DATA_ENG_Format_Conversion_格式转换
+    D_ALT_DATA[D-ALT_DATA] -->|event| D_DATA_ENG_AI_Auto_Feature_Discoverer_AI自动特征发现器
+    D_ALT_DATA[D-ALT_DATA] -->|domain_dependency| D_DATA_ENG_Data_Fusion_数据融合
+    %% D-AUTONOMY_CORE -> D-DATA_ENG (20 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_DATA_ENG_PipelineCompleted_管线执行成功
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_DATA_ENG_SimHash_Similarity_SimHash相似度
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_DATA_ENG_TrainingDataVersioned_训练数据集版本化完成
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_DATA_ENG_Human_AI_Collaboration_人机协作模式
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_DATA_ENG_DataQualityAlert_数据质量告警
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_DATA_ENG_Raw_Market_Data_原始行情
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_DATA_ENG_Get_Feature_Lineage_获取特征血缘
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_DATA_ENG_Storage_Expansion_Path_存储扩展路径
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_DATA_ENG_Model_Training_Pipeline_管线
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_DATA_ENG_PipelineOrchestrator_Dependency_管线编排器依赖
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_DATA_ENG_Storage_Expansion_Path_存储扩展路径
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_DATA_ENG_Great_Expectations____gine_Great_Expectations质量引擎
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_DATA_ENG_Information_Value_Scoring_信息价值评分
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_DATA_ENG_OpenLineage_Standard_OpenLineage标准
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_DATA_ENG_质量门禁执行器_Quality_Gate_Executor
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_DATA_ENG_MinHash_Similarity_MinHash相似度
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_DATA_ENG_Storage_Expansion_Phase_2_存储扩展阶段2
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_DATA_ENG_DataQualityMonitor_Dependency_数据质量监控依赖
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_DATA_ENG_DataMesh_Dependency_Node_数据网格依赖图节点
+    %% D-AUTONOMY_PERM -> D-DATA_ENG (5 条)
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_DATA_ENG_Memory_Forgetting_记忆遗忘
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_DATA_ENG_Information_Value_Scoring_信息价值评分
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_DATA_ENG_Data_Vendor_SLA_Monitor_数据供应商SLA监控
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_DATA_ENG_Multi_Source_Cross_Validator_多源交叉验证器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_DATA_ENG_Cleaning_&_Anomaly_Engine_清洗与异常引擎
+    %% D-COMPLIANCE -> D-DATA_ENG (29 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_FeatureStore_Dependency_特征存储依赖
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_CQRS_Dependency_Node_CQRS依赖图节点
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_Multi_Source_Cross_Validator_多源交叉验证器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_KnowledgeCleaningPipeline_知识清洗流水线
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_Signal_Logic_信号逻辑
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_DATA_ENG_Decision_13_CQRS_Event_Sourcing为P3
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_DATA_ENG_KnowledgeCleaningPipeline_知识清洗流水线
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_DATA_ENG_LineageGapDetected_血缘链断裂检测
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_DATA_ENG_PipelineOrchestrator_Dependency_管线编排器依赖
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_ENG_KnowledgeCleaningPipeline_知识清洗流水线
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_ENG_Pre_Post_Market_Pipeline_盘前盘后管线
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_架构不变量验证器_Architecture_Invariant_Validator
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_ENG_Memory_Forgetting_记忆遗忘
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_ENG_Kappa_Architecture_Kappa架构
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_ENG_Feature_Store_Architecture_特征存储架构
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_SimHash_Similarity_SimHash相似度
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_ENG_Apache_Beam
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_Human_AI_Collaboration_人机协作模式
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_ENG_Cleaning_&_Anomaly_Engine_清洗与异常引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_DataHub_Data_Catalog_DataHub数据目录
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_ENG_DataMesh_Dependency_Node_数据网格依赖图节点
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_Data_Lineage_&_Traceability_数据血缘与可追溯性
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_ENG_DataReplicationSync_数据复制同步
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_ENG_Factor_Formula_因子公式
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_ENG_Schema_Evolution_Strategy_Schema演进策略
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_ENG_Lightweight_GAN_轻量GAN
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_ENG_Storage_Expansion_Phase_3_存储扩展阶段3
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_ENG_CQRS_Event_Sourcing_CQRS事件溯源
+    %% D-CROSS_ASSET -> D-DATA_ENG (5 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_DATA_ENG_PipelineOrchestrator_管线编排器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_DATA_ENG_TrainingDataManager_Dependency_训练数据管理器依赖
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_DATA_ENG_Apache_Beam
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_DATA_ENG_ETL_Pipeline_ETL管线
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_DATA_ENG_Manual_Submission_手动提交
+    %% D-DATA_GOV -> D-DATA_ENG (2 条)
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_DATA_ENG_StreamProcessingEngine_Dependency_流处理引擎依赖
+    D_DATA_GOV[D-DATA_GOV] -->|contract| D_DATA_ENG_Smart_Scheduler_智能调度器
+    %% D-EX_CORE -> D-DATA_ENG (4 条)
+    D_EX_CORE[D-EX_CORE] -->|contract| D_DATA_ENG_ETL_Pipeline_ETL管线
+    D_EX_CORE[D-EX_CORE] -->|contract| D_DATA_ENG_Data_Source_Approval_数据源审批
+    D_EX_CORE[D-EX_CORE] -->|contract| D_DATA_ENG_DataReplicationSync_数据复制同步
+    D_EX_CORE[D-EX_CORE] -->|data| D_DATA_ENG_SyntheticDataGenera___ependency_Node_合成数据生成器依赖图节点
+    %% D-FACTOR -> D-DATA_ENG (14 条)
+    D_FACTOR[D-FACTOR] -->|contract| D_DATA_ENG_Data_Fusion_数据融合
+    D_FACTOR[D-FACTOR] -->|event| D_DATA_ENG_ETL_Pipeline_ETL管线
+    D_FACTOR[D-FACTOR] -->|data| D_DATA_ENG_DataCompressionArchive_数据压缩归档
+    D_FACTOR[D-FACTOR] -->|data| D_DATA_ENG_Data_Lifecycle_Management_数据生命周期管理
+    D_FACTOR[D-FACTOR] -->|contract| D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪
+    D_FACTOR[D-FACTOR] -->|data| D_DATA_ENG_CQRS_Event_Sourcing_CQRS事件溯源
+    D_FACTOR[D-FACTOR] -->|event| D_DATA_ENG_Feature_Store_Offline_离线特征存储
+    D_FACTOR[D-FACTOR] -->|contract| D_DATA_ENG_DataMeshIntegrator_Data_Mesh集成器
+    D_FACTOR[D-FACTOR] -->|event| D_DATA_ENG_DriftAwareScheduler_Dependency_漂移感知调度器依赖
+    D_FACTOR[D-FACTOR] -->|event| D_DATA_ENG_DataCompressionArchive_数据压缩归档
+    D_FACTOR[D-FACTOR] -->|event| D_DATA_ENG_CI_CD门禁集成_CI_CD_Gate_Integration
+    D_FACTOR[D-FACTOR] -->|data| D_DATA_ENG_Data_Scheduler_数据调度器
+    D_FACTOR[D-FACTOR] -->|config_depends| D_DATA_ENG_DataProfiler_数据画像器
+    D_FACTOR[D-FACTOR] -->|domain_dependency| D_DATA_ENG_Data_Fusion_数据融合
+    %% D-FRONTEND -> D-DATA_ENG (5 条)
+    D_FRONTEND[D-FRONTEND] -->|data| D_DATA_ENG_PipelineOrchestrator_管线编排器
+    D_FRONTEND[D-FRONTEND] -->|event| D_DATA_ENG_FeatureStoreUpdated_特征存储更新完成
+    D_FRONTEND[D-FRONTEND] -->|data| D_DATA_ENG_Terminology_Normalization_术语标准化
+    D_FRONTEND[D-FRONTEND] -->|event| D_DATA_ENG_Data_Source_Validation_数据源验证
+    D_FRONTEND[D-FRONTEND] -->|contract| D_DATA_ENG_Data_Vendor_SLA_Monitor_数据供应商SLA监控
+    %% D-GOVERNANCE -> D-DATA_ENG (26 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_ADWIN_Drift_Detection_ADWIN漂移检测
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_FeatureStore_Dependency_特征存储依赖
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_PipelineFailed_管线执行失败
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_DATA_ENG_Raw_Market_Data_原始行情
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_Deduplication_去重
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_DriftAwareScheduler_Dependency_漂移感知调度器依赖
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_DATA_ENG_Lambda_Architecture_Lambda架构
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_Signal_Logic_信号逻辑
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_DATA_ENG_Denoising_去噪
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_DATA_ENG_Schema_Evolution_Manager_Schema演进管理
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_DataProfiler_数据画像器
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_DATA_ENG_Core_Pipeline_核心管线
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_DATA_ENG_Marquez_Lineage_Backend_Marquez血缘后端
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_DATA_ENG_Data_Lifecycle_Management_数据生命周期管理
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_Lambda_Architecture_Lambda架构
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_DATA_ENG_DriftAwareScheduler_Dependency_漂移感知调度器依赖
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_DATA_ENG_Core_Pipeline_核心管线
+    D_GOVERNANCE[D-GOVERNANCE] -->|config_depends| D_DATA_ENG_L0_to_L1_Data_Flow_L0→L1数据流
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_AI_Auto_Feature_Discoverer_AI自动特征发现器
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_DATA_ENG_测试报告器_Test_Reporter
+    D_GOVERNANCE[D-GOVERNANCE] -->|config_depends| D_DATA_ENG_Column_Level_Lineage_列级血缘
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_DATA_ENG_Pre_Post_Market_Pipeline_盘前盘后管线
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_DATA_ENG_Scheduled_Collection_定时采集
+    D_GOVERNANCE[D-GOVERNANCE] -->|config_depends| D_DATA_ENG_LLM_Extraction_LLM提取
+    %% D-INFRA_OPS -> D-DATA_ENG (6 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_DATA_ENG_Get_Features_获取特征
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_DATA_ENG_Lightweight_GAN_轻量GAN
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_DATA_ENG_LineageGapDetected_血缘链断裂检测
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_DATA_ENG_Memory_Retrieval_记忆检索
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_DATA_ENG_PITManager_Dependency_PIT管理器依赖
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_DATA_ENG_Deduplication_去重
+    %% D-INTEGRATION -> D-DATA_ENG (16 条)
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_DATA_ENG_Pipeline_Orchestrator_数据管线编排
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_DATA_ENG_Apache_Beam
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_DATA_ENG_DataProfiler_数据画像器
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_DATA_ENG_Schema_Evolution_Manager_Schema演进管理
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_DATA_ENG_DataLakeManager_数据湖管理器
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_DATA_ENG_Raw_Market_Data_原始行情
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_DATA_ENG_DataMeshIntegrator_Data_Mesh集成器
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_DATA_ENG_Storage_Expansion_Path_存储扩展路径
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_DATA_ENG_PipelineOrchestrator_管线编排器
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_DATA_ENG_Factor_Formula_因子公式
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_DATA_ENG_Multi_Timeframe_Data_Fusion_多时间尺度数据融合
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_DATA_ENG_LLM_Extraction_LLM提取
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_DATA_ENG_清洗去重_Clean_&_Deduplicate
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_DATA_ENG_PIT_Data_PIT数据
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_DATA_ENG_Column_Level_Lineage_列级血缘
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_DATA_ENG_ETL_Pipeline_ETL管线
+    %% D-INTELLIGENCE -> D-DATA_ENG (4 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_DATA_ENG_MinHash_Similarity_MinHash相似度
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_DATA_ENG_TrainingDataVersioned_训练数据集版本化完成
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_DATA_ENG_DataHub_Data_Catalog_DataHub数据目录
+    %% D-KNOWLEDGE -> D-DATA_ENG (8 条)
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_DATA_ENG_Data_Scheduler_数据调度器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_DATA_ENG_Denoising_去噪
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_DATA_ENG_DriftDetected_数据分布漂移检测
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_DATA_ENG_KnowledgeCleaningPipeline_知识清洗流水线
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_DATA_ENG_Pre_Post_Market_Pipeline_盘前盘后管线
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_DATA_ENG_Debezium_CDC_Debezium变更数据捕获
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_DATA_ENG_Column_Level_Lineage_列级血缘
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|domain_dependency| D_DATA_ENG_Data_Fusion_数据融合
+    %% D-MKT_DATA -> D-DATA_ENG (21 条)
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_DATA_ENG_DataCompressionArchive_数据压缩归档
+    D_MKT_DATA[D-MKT_DATA] -->|event| D_DATA_ENG_SMOTE_Oversampling_SMOTE过采样
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_FeatureStoreUpdated_特征存储更新完成
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_DATA_ENG_TrainingDataVersioned_训练数据集版本化完成
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_DATA_ENG_Apache_Beam
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_DATA_ENG_Schema_Evolution_Strategy_Schema演进策略
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程
+    D_MKT_DATA[D-MKT_DATA] -->|event| D_DATA_ENG_Lightweight_GAN_轻量GAN
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_SMOTE_Oversampling_SMOTE过采样
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_AI_Auto_Feature_Discoverer_AI自动特征发现器
+    D_MKT_DATA[D-MKT_DATA] -->|event| D_DATA_ENG_DataPipeline_数据管线
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_DATA_ENG_ETLPipeline_Dependency_ETL管线依赖
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_Column_Level_Lineage_列级血缘
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_MinHash_Similarity_MinHash相似度
+    D_MKT_DATA[D-MKT_DATA] -->|event| D_DATA_ENG_Feature_Store_Architecture_特征存储架构
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_Storage_Expansion_Phase_2_存储扩展阶段2
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_Apache_Beam
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_Quality_Gate_Full_P___Executor_Quality_Gate全流程执行器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_DATA_ENG_FeatureStore_Dependency_特征存储依赖
+    D_MKT_DATA[D-MKT_DATA] -->|domain_dependency| D_DATA_ENG_Data_Fusion_数据融合
+    %% D-ML_SERVE -> D-DATA_ENG (3 条)
+    D_ML_SERVE[D-ML_SERVE] -->|contract| D_DATA_ENG_Raw_Knowledge_Packet_原始知识包
+    D_ML_SERVE[D-ML_SERVE] -->|data| D_DATA_ENG_Feature_Store_Offline_离线特征存储
+    D_ML_SERVE[D-ML_SERVE] -->|data| D_DATA_ENG_DDM_Drift_Detection_DDM漂移检测
+    %% D-ML_TRAIN -> D-DATA_ENG (5 条)
+    D_ML_TRAIN[D-ML_TRAIN] -->|contract| D_DATA_ENG_Factor_Formula_因子公式
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_DATA_ENG_DataLineageTracker_Dependency_数据血缘追踪依赖
+    D_ML_TRAIN[D-ML_TRAIN] -->|contract| D_DATA_ENG_Storage_Expansion_Phase_1_存储扩展阶段1
+    D_ML_TRAIN[D-ML_TRAIN] -->|config_depends| D_DATA_ENG_CI_CD门禁集成_CI_CD_Gate_Integration
+    D_ML_TRAIN[D-ML_TRAIN] -->|domain_dependency| D_DATA_ENG_Data_Fusion_数据融合
+    %% D-OPS -> D-DATA_ENG (9 条)
+    D_OPS[D-OPS] -->|data| D_DATA_ENG_Debezium_CDC_Debezium变更数据捕获
+    D_OPS[D-OPS] -->|data| D_DATA_ENG_DataMeshIntegrator_Data_Mesh集成器
+    D_OPS[D-OPS] -->|data| D_DATA_ENG_Data_Observability_Platform_数据可观测性平台
+    D_OPS[D-OPS] -->|event| D_DATA_ENG_PIT_Data_PIT数据
+    D_OPS[D-OPS] -->|contract| D_DATA_ENG_DataCompressionArchive_数据压缩归档
+    D_OPS[D-OPS] -->|contract| D_DATA_ENG_Data_Vendor_SLA_Monitor_数据供应商SLA监控
+    D_OPS[D-OPS] -->|data| D_DATA_ENG_SimHash_Similarity_SimHash相似度
+    D_OPS[D-OPS] -->|config_depends| D_DATA_ENG_Data_Source_Development_数据源开发
+    D_OPS[D-OPS] -->|contract| D_DATA_ENG_GPUResourceManager_Dependency_GPU资源管理器依赖
+    %% D-PF_ALLOC -> D-DATA_ENG (4 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_DATA_ENG_Data_Source_Full_Rollout_数据源全量
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_DATA_ENG_Data_Lineage_Runtime_Discovery_数据血缘运行时发现
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_DATA_ENG_PipelineOrchestrator_Dependency_管线编排器依赖
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_DATA_ENG_架构不变量验证器_Architecture_Invariant_Validator
+    %% D-PF_CORE -> D-DATA_ENG (9 条)
+    D_PF_CORE[D-PF_CORE] -->|contract| D_DATA_ENG_Apache_Beam
+    D_PF_CORE[D-PF_CORE] -->|data| D_DATA_ENG_DataHub_Data_Catalog_DataHub数据目录
+    D_PF_CORE[D-PF_CORE] -->|event| D_DATA_ENG_Memory_Consolidation_记忆巩固
+    D_PF_CORE[D-PF_CORE] -->|event| D_DATA_ENG_TrainingDataManager_Dependency_训练数据管理器依赖
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_DATA_ENG_PITManager_PIT管理器
+    D_PF_CORE[D-PF_CORE] -->|contract| D_DATA_ENG_Multi_Timeframe_Data_Fusion_多时间尺度数据融合
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_DATA_ENG_Data_Source_Evaluation_数据源评估
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_DATA_ENG_DataCompressionArchive_数据压缩归档
+    D_PF_CORE[D-PF_CORE] -->|event| D_DATA_ENG_Pipeline_Orchestrator_数据管线编排
+    %% D-POSITION -> D-DATA_ENG (4 条)
+    D_POSITION[D-POSITION] -->|contract| D_DATA_ENG_Data_Scheduler_数据调度器
+    D_POSITION[D-POSITION] -->|config_depends| D_DATA_ENG_Pipeline_Orchestrator_数据管线编排
+    D_POSITION[D-POSITION] -->|data| D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪
+    D_POSITION[D-POSITION] -->|contract| D_DATA_ENG_Debezium_CDC_Debezium变更数据捕获
+    %% D-REPORTING -> D-DATA_ENG (8 条)
+    D_REPORTING[D-REPORTING] -->|contract| D_DATA_ENG_TrainingDataManager_Dependency_训练数据管理器依赖
+    D_REPORTING[D-REPORTING] -->|event| D_DATA_ENG_SyntheticDataGenera___ependency_Node_合成数据生成器依赖图节点
+    D_REPORTING[D-REPORTING] -->|data| D_DATA_ENG_Event_Triggered_Collection_事件触发采集
+    D_REPORTING[D-REPORTING] -->|contract| D_DATA_ENG_Data_Observability_Platform_数据可观测性平台
+    D_REPORTING[D-REPORTING] -->|event| D_DATA_ENG_TrainingDataVersioned_训练数据集版本化完成
+    D_REPORTING[D-REPORTING] -->|contract| D_DATA_ENG_DataQualityMonitor_Dependency_数据质量监控依赖
+    D_REPORTING[D-REPORTING] -->|config_depends| D_DATA_ENG_Tech_Stack_Evolution_技术栈演进
+    D_REPORTING[D-REPORTING] -->|domain_dependency| D_DATA_ENG_Data_Fusion_数据融合
+    %% D-RISK -> D-DATA_ENG (26 条)
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_测试报告器_Test_Reporter
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_Debezium_CDC_Debezium变更数据捕获
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_SMOTE_Oversampling_SMOTE过采样
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_CI_CD门禁集成_CI_CD_Gate_Integration
+    D_RISK[D-RISK] -->|data| D_DATA_ENG_Memory_Retrieval_记忆检索
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_ETLPipeline_Dependency_ETL管线依赖
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_Core_Pipeline_核心管线
+    D_RISK[D-RISK] -->|data| D_DATA_ENG_ETLPipeline_Dependency_ETL管线依赖
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_Manual_Submission_手动提交
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_Decision_13_CQRS_Event_Sourcing为P3
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_TrainingDataVersioned_训练数据集版本化完成
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_Marquez_Lineage_Backend_Marquez血缘后端
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_DataLakeManager_数据湖管理器
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_LLM_Extraction_LLM提取
+    D_RISK[D-RISK] -->|data| D_DATA_ENG_PipelineFailed_管线执行失败
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_Data_Quality_Report_数据质量报告
+    D_RISK[D-RISK] -->|config_depends| D_DATA_ENG_Raw_Market_Data_原始行情
+    D_RISK[D-RISK] -->|config_depends| D_DATA_ENG_Data_Fusion_数据融合
+    D_RISK[D-RISK] -->|config_depends| D_DATA_ENG_ADWIN_Drift_Detection_ADWIN漂移检测
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_PITManager_PIT管理器
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_StreamProcessingEngine_Dependency_流处理引擎依赖
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_DriftDetected_数据分布漂移检测
+    D_RISK[D-RISK] -->|contract| D_DATA_ENG_CI_CD门禁集成_CI_CD_Gate_Integration
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_Lambda_Architecture_Lambda架构
+    D_RISK[D-RISK] -->|data| D_DATA_ENG_GPUResourceManager_Dependency_GPU资源管理器依赖
+    D_RISK[D-RISK] -->|event| D_DATA_ENG_OpenLineage_Lineage_Standard_OpenLineage血缘标准
+    %% D-SECURITY -> D-DATA_ENG (17 条)
+    D_SECURITY[D-SECURITY] -->|contract| D_DATA_ENG_DataPipeline_数据管线
+    D_SECURITY[D-SECURITY] -->|contract| D_DATA_ENG_清洗去重_Clean_&_Deduplicate
+    D_SECURITY[D-SECURITY] -->|event| D_DATA_ENG_清洗去重_Clean_&_Deduplicate
+    D_SECURITY[D-SECURITY] -->|event| D_DATA_ENG_DataHub_Data_Catalog_DataHub数据目录
+    D_SECURITY[D-SECURITY] -->|data| D_DATA_ENG_Storage_Expansion_Phase_2_存储扩展阶段2
+    D_SECURITY[D-SECURITY] -->|data| D_DATA_ENG_Data_Fusion_数据融合
+    D_SECURITY[D-SECURITY] -->|event| D_DATA_ENG_Airflow_Pipeline_Airflow流水线
+    D_SECURITY[D-SECURITY] -->|event| D_DATA_ENG_PITManager_PIT管理器
+    D_SECURITY[D-SECURITY] -->|data| D_DATA_ENG_CTR_TRACE_001_Data_____Chain_CTR_TRACE_001数据血缘链契约
+    D_SECURITY[D-SECURITY] -->|event| D_DATA_ENG_Decision_13_CQRS_Event_Sourcing为P3
+    D_SECURITY[D-SECURITY] -->|config_depends| D_DATA_ENG_DataLineageTracker_Dependency_数据血缘追踪依赖
+    D_SECURITY[D-SECURITY] -->|contract| D_DATA_ENG_StreamProcessingEngine_流处理引擎
+    D_SECURITY[D-SECURITY] -->|config_depends| D_DATA_ENG_Factor_Formula_因子公式
+    D_SECURITY[D-SECURITY] -->|config_depends| D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程
+    D_SECURITY[D-SECURITY] -->|event| D_DATA_ENG_OpenLineage_Lineage_Standard_OpenLineage血缘标准
+    D_SECURITY[D-SECURITY] -->|config_depends| D_DATA_ENG_Manual_Submission_手动提交
+    D_SECURITY[D-SECURITY] -->|config_depends| D_DATA_ENG_SimHash_Similarity_SimHash相似度
+    %% D-SELL_DECISION -> D-DATA_ENG (6 条)
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_DATA_ENG_DataProfiler_数据画像器
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_DATA_ENG_Get_Features_获取特征
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_DATA_ENG_PipelineFailed_管线执行失败
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_DATA_ENG_Core_Pipeline_核心管线
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_DATA_ENG_Data_Source_Grayscale_数据源灰度
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_DATA_ENG_Feature_Store_Offline_离线特征存储
+    %% D-SIGNAL -> D-DATA_ENG (13 条)
+    D_SIGNAL[D-SIGNAL] -->|data| D_DATA_ENG_Data_Source_Evaluation_数据源评估
+    D_SIGNAL[D-SIGNAL] -->|data| D_DATA_ENG_DataLakeManager_数据湖管理器
+    D_SIGNAL[D-SIGNAL] -->|data| D_DATA_ENG_Memory_Consolidation_记忆巩固
+    D_SIGNAL[D-SIGNAL] -->|data| D_DATA_ENG_Scheduled_Collection_定时采集
+    D_SIGNAL[D-SIGNAL] -->|event| D_DATA_ENG_Storage_Expansion_Phase_1_存储扩展阶段1
+    D_SIGNAL[D-SIGNAL] -->|contract| D_DATA_ENG_Kappa_Architecture_Kappa架构
+    D_SIGNAL[D-SIGNAL] -->|event| D_DATA_ENG_KnowledgeCleaningPipeline_知识清洗流水线
+    D_SIGNAL[D-SIGNAL] -->|event| D_DATA_ENG_PIT_Data_PIT数据
+    D_SIGNAL[D-SIGNAL] -->|contract| D_DATA_ENG_Apache_Beam
+    D_SIGNAL[D-SIGNAL] -->|contract| D_DATA_ENG_Apache_Beam
+    D_SIGNAL[D-SIGNAL] -->|data| D_DATA_ENG_Data_Lineage_Tracking_数据血缘追踪
+    D_SIGNAL[D-SIGNAL] -->|data| D_DATA_ENG_DataHub_Data_Catalog_DataHub数据目录
+    D_SIGNAL[D-SIGNAL] -->|event| D_DATA_ENG_Scheduled_Collection_定时采集
+    %% D-SIMULATION -> D-DATA_ENG (4 条)
+    D_SIMULATION[D-SIMULATION] -->|data| D_DATA_ENG_Schema_Evolution_Manager_Schema演进管理
+    D_SIMULATION[D-SIMULATION] -->|contract| D_DATA_ENG_Apache_Beam
+    D_SIMULATION[D-SIMULATION] -->|event| D_DATA_ENG_Tech_Stack_Evolution_技术栈演进
+    D_SIMULATION[D-SIMULATION] -->|contract| D_DATA_ENG_Storage_Expansion_Phase_1_存储扩展阶段1
+    %% D-TRADING -> D-DATA_ENG (4 条)
+    D_TRADING[D-TRADING] -->|data| D_DATA_ENG_CQRS_Event_Sourcing_CQRS事件溯源
+    D_TRADING[D-TRADING] -->|contract| D_DATA_ENG_Lambda_Architecture_Lambda架构
+    D_TRADING[D-TRADING] -->|config_depends| D_DATA_ENG_Pre_Post_Market_Pipeline_盘前盘后管线
+    D_TRADING[D-TRADING] -->|contract| D_DATA_ENG_Cleaning_&_Anomaly_Engine_清洗与异常引擎
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-DATA_ENG -> D-EX_SOR (4 条)
+    D_DATA_ENG_SimHash_Similarity_SimHash相似度 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_DATA_ENG_Event_Triggered_Collection_事件触发采集 -->|data| D_EX_SOR[D-EX_SOR]
+    D_DATA_ENG_Data_Observability_Platform_数据可观测性平台 -->|event| D_EX_SOR[D-EX_SOR]
+    D_DATA_ENG_PipelineCompleted_管线执行成功 -->|event| D_EX_SOR[D-EX_SOR]
+    %% D-DATA_ENG -> D-INFRA_RUNTIME (20 条)
+    D_DATA_ENG_Information_Value_Scoring_信息价值评分 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_New_Data_Source_Onboarding_Flow_新数据源接入流程 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_DriftAwareScheduler_Dependency_漂移感知调度器依赖 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_SimHash_Similarity_SimHash相似度 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Feature_Store_Offline_离线特征存储 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Storage_Expansion_Phase_1_存储扩展阶段1 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Data_Vendor_SLA_Monitor_数据供应商SLA监控 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Pipeline_Orchestrator_数据管线编排 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_SMOTE_Oversampling_SMOTE过采样 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Multi_Source_Cross_Validator_多源交叉验证器 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_DataLakeManager_数据湖管理器 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_LineageGapDetected_血缘链断裂检测 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Factor_Formula_因子公式 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Representation_Learning_Drift_Detection_表示学习漂移检测 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Kappa_Architecture_Kappa架构 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Data_Source_Grayscale_数据源灰度 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_DriftDetected_数据分布漂移检测 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_FeatureStore_Dependency_特征存储依赖 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Great_Expectations____gine_Great_Expectations质量引擎 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_DATA_ENG_Data_Fusion_数据融合 -->|domain_dependency| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-DATA_ENG -> D-SHARED (4 条)
+    数据域_L0数据接入_D_DATA_67 -->|contract| D_SHARED[D-SHARED]
+    D_DATA_ENG_Human_AI_Collaboration_人机协作模式 -->|contract| D_SHARED[D-SHARED]
+    D_DATA_ENG_L0_to_L1_Data_Flow_L0→L1数据流 -->|event| D_SHARED[D-SHARED]
+    D_DATA_ENG_LLM_Extraction_LLM提取 -->|data| D_SHARED[D-SHARED]
+
+    %% 统计
+    %% 域内依赖: 125 条
+    %% 跨域入边: 281 条
+    %% 跨域出边: 28 条

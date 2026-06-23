@@ -1,0 +1,443 @@
+%% D-ML_TRAIN 域全景依赖图
+%% 生成时间: 2026-06-23 23:25:24
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 118, 依赖边数: 317
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_ML_TRAIN[训练]
+        D_ML_TRAIN_AIFactorMiningEngine_AI因子挖掘引擎["D-ML-TRAIN/AIFactorMiningEngine AI因子挖掘引擎 [design]"]
+        D_ML_TRAIN_AI认知流_AI_Cognitive_Stream["D-ML-TRAIN/AI认知流 AI Cognitive Stream [design]"]
+        D_ML_TRAIN_AST沙箱三层安全_AST_Sandbox_Three_layer_Security["...三层安全 AST Sandbox Three-layer Security [design]"]
+        D_ML_TRAIN_ArchitectureOptimizer_Agent_架构优化器代理["...N/ArchitectureOptimizer Agent 架构优化器代理 [design]"]
+        D_ML_TRAIN_AutoMLEngine_自动机器学习引擎["D-ML-TRAIN/AutoMLEngine 自动机器学习引擎 [design]"]
+        D_ML_TRAIN_AutoSkill_自动技能发现["D-ML-TRAIN/AutoSkill 自动技能发现 [design]"]
+        D_ML_TRAIN_Barra_Risk_Factor_Model_Barra多因子风险模型[".../Barra Risk Factor Model Barra多因子风险模型 [design]"]
+        D_ML_TRAIN_Bayesian_Model_Averaging_BMA_模型["...TRAIN/Bayesian Model Averaging BMA 模型 [design]"]
+        D_ML_TRAIN_C_029_模型工厂_Model_Factory["D-ML-TRAIN/C-029 模型工厂 Model Factory [design]"]
+        D_ML_TRAIN_CART_CART决策树["D-ML-TRAIN/CART CART决策树 [design]"]
+        D_ML_TRAIN_CCP_Cost_Complexity_Pruning_CCP成本复杂度剪枝["...CP Cost-Complexity Pruning CCP成本复杂度剪枝 [design]"]
+        D_ML_TRAIN_CNN_GNN_Transformer系列_CNN_GNN_Transformer_Series["...nsformer系列 CNN/GNN/Transformer Series [design]"]
+        D_ML_TRAIN_Causal_Reinforcement_Learning_Causal_RL_因果强化学习["...inforcement Learning Causal RL 因果强化学习 [design]"]
+        D_ML_TRAIN_CausalDiscoveryEngine_因果发现引擎["D-ML-TRAIN/CausalDiscoveryEngine 因果发现引擎 [design]"]
+        D_ML_TRAIN_CodeGenerator_Agent_代码生成器代理["D-ML-TRAIN/CodeGenerator Agent 代码生成器代理 [design]"]
+        D_ML_TRAIN_Concept_Drift_Adapter_概念漂移适配器["D-ML-TRAIN/Concept Drift Adapter 概念漂移适配器 [design]"]
+        D_ML_TRAIN_Continual_Learning____getting_Framework_持续学习抗遗忘框架["...g Anti-Forgetting Framework 持续学习抗遗忘框架 [design]"]
+        D_ML_TRAIN_DSR_CPCV_v2_Deflate___2_DSR_CPCV_v2缩减夏普比率_CPCV_v2["...tio/CPCV v2 DSR/CPCV v2缩减夏普比率/CPCV v2 [design]"]
+        D_ML_TRAIN_Decision_Tree_Learning_决策树学习["D-ML-TRAIN/Decision Tree Learning 决策树学习 [design]"]
+        D_ML_TRAIN_Diffusion_Model_Scene_Generation_扩散模型场景生成["...usion Model Scene Generation 扩散模型场景生成 [design]"]
+        D_ML_TRAIN_DriftAdapter_漂移适配器["D-ML-TRAIN/DriftAdapter 漂移适配器 [design]"]
+        D_ML_TRAIN_Dynamic_Conditional_Correlation_动态条件相关性["...namic Conditional Correlation 动态条件相关性 [design]"]
+        D_ML_TRAIN_ExperimentPipeline_实验管线["D-ML-TRAIN/ExperimentPipeline 实验管线 [design]"]
+        D_ML_TRAIN_ExperimentTracker_实验追踪器["D-ML-TRAIN/ExperimentTracker 实验追踪器 [design]"]
+        D_ML_TRAIN_FactorMAD_辩论式因子精炼["D-ML-TRAIN/FactorMAD 辩论式因子精炼 [design]"]
+        D_ML_TRAIN_FeatureDiscovery_特征发现["D-ML-TRAIN/FeatureDiscovery 特征发现 [design]"]
+        D_ML_TRAIN_FeatureEngineeringAutomation_特征工程自动化[".../FeatureEngineeringAutomation 特征工程自动化 [design]"]
+        D_ML_TRAIN_Federated_Model_Trainer_联邦模型训练器["...TRAIN/Federated Model Trainer 联邦模型训练器 [design]"]
+        D_ML_TRAIN_FinRLDeepRL_FinRL深度强化学习["D-ML-TRAIN/FinRLDeepRL FinRL深度强化学习 [design]"]
+        D_ML_TRAIN_GATE_FCFT_金融宪法微调汇总["D-ML-TRAIN/GATE-FCFT 金融宪法微调汇总 [design]"]
+        D_ML_TRAIN_GATE_FCFT_01_自托管LLM["D-ML-TRAIN/GATE-FCFT-01 自托管LLM [design]"]
+        D_ML_TRAIN_GATE_FCFT_02_GPU算力["D-ML-TRAIN/GATE-FCFT-02 GPU算力 [design]"]
+        D_ML_TRAIN_GATE_FCFT_03_金融安全数据集["D-ML-TRAIN/GATE-FCFT-03 金融安全数据集 [design]"]
+        D_ML_TRAIN_GATE_FCFT_04_FinJailbreak基准["D-ML-TRAIN/GATE-FCFT-04 FinJailbreak基准 [design]"]
+        D_ML_TRAIN_GPU_MPS_Multi_Process_Concurrency_GPU_MPS多进程并发["...ulti-Process Concurrency GPU MPS多进程并发 [design]"]
+        D_ML_TRAIN_GPU_Resource_Feed_GPU资源供给["D-ML-TRAIN/GPU Resource Feed GPU资源供给 [design]"]
+        D_ML_TRAIN_GPU资源争抢_GPU_Resource_Contention["...TRAIN/GPU资源争抢 GPU Resource Contention [design]"]
+        D_ML_TRAIN_Gradient_Boosting_Gradient_Boosting梯度提升["...adient Boosting Gradient Boosting梯度提升 [design]"]
+        D_ML_TRAIN_HMM_聚类算法["D-ML-TRAIN/HMM 聚类算法 [design]"]
+        D_ML_TRAIN_HyperparameterOptimizer_超参数优化器["...-TRAIN/HyperparameterOptimizer 超参数优化器 [design]"]
+        D_ML_TRAIN_ICL元学习_In_context_Learning["D-ML-TRAIN/ICL元学习 In-context Learning [design]"]
+        D_ML_TRAIN_Isotonic_Regression_等渗回归["D-ML-TRAIN/Isotonic Regression 等渗回归 [design]"]
+        D_ML_TRAIN_KAN_Kolmogorov_Arno___ork_KAN_Kolmogorov_Arnold网络["...rnold Network KAN Kolmogorov-Arnold网络 [design]"]
+        D_ML_TRAIN_Kinlay_RL_for_Optimal_Execution_Kinlay_RL最优执行["...L for Optimal Execution Kinlay RL最优执行 [design]"]
+        D_ML_TRAIN_LOBSTER_LOBSTER数据集["D-ML-TRAIN/LOBSTER LOBSTER数据集 [design]"]
+        D_ML_TRAIN_MC_Dropout_MC_Dropout蒙特卡洛丢弃["D-ML-TRAIN/MC Dropout MC Dropout蒙特卡洛丢弃 [design]"]
+        D_ML_TRAIN_ML_Training_ML训练["D-ML-TRAIN/ML Training ML训练 [design]"]
+        D_ML_TRAIN_ML_Training_Process_ML训练进程["D-ML-TRAIN/ML Training Process ML训练进程 [design]"]
+        D_ML_TRAIN_ML训练_模型训练["D-ML-TRAIN/ML训练 模型训练 [design]"]
+        D_ML_TRAIN_Machine_Learning_机器学习域["D-ML-TRAIN/Machine Learning 机器学习域 [design]"]
+        D_ML_TRAIN_Man_Group_AlphaGPT["D-ML-TRAIN/Man Group AlphaGPT [design]"]
+        D_ML_TRAIN_Meta_Harness_元优化器["D-ML-TRAIN/Meta-Harness 元优化器 [design]"]
+        D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理["...AIN/MethodologyLearner Agent 方法论学习器代理 [design]"]
+        D_ML_TRAIN_Model_Deployment_Saga_模型上线Saga["...-TRAIN/Model Deployment Saga 模型上线Saga [design]"]
+        D_ML_TRAIN_Model_Quantization____ence_Acceleration_模型量化与推理加速["...tion Inference Acceleration 模型量化与推理加速 [design]"]
+        D_ML_TRAIN_ModelLineageTracker_模型血缘追踪器["D-ML-TRAIN/ModelLineageTracker 模型血缘追踪器 [design]"]
+        D_ML_TRAIN_ModelServingRequest_模型服务请求["D-ML-TRAIN/ModelServingRequest 模型服务请求 [design]"]
+        D_ML_TRAIN_ModelServingResponse_模型服务响应["D-ML-TRAIN/ModelServingResponse 模型服务响应 [design]"]
+        D_ML_TRAIN_ModelValidated_Interface_模型验证接口["...TRAIN/ModelValidated Interface 模型验证接口 [design]"]
+        D_ML_TRAIN_ModelValidated_模型验证完成["D-ML-TRAIN/ModelValidated 模型验证完成 [design]"]
+        D_ML_TRAIN_ModelVersion_模型版本["D-ML-TRAIN/ModelVersion 模型版本 [design]"]
+        D_ML_TRAIN_NewFactorDiscovered_新因子发现["D-ML-TRAIN/NewFactorDiscovered 新因子发现 [design]"]
+        D_ML_TRAIN_PPO_PPO策略梯度方法["D-ML-TRAIN/PPO PPO策略梯度方法 [design]"]
+        D_ML_TRAIN_Platt_Scaling_Platt缩放["D-ML-TRAIN/Platt Scaling Platt缩放 [design]"]
+        D_ML_TRAIN_PromptOptimizer_Agent_提示词优化器代理["...-TRAIN/PromptOptimizer Agent 提示词优化器代理 [design]"]
+        D_ML_TRAIN_Prompt自优化循环_STOP模式["D-ML-TRAIN/Prompt自优化循环 STOP模式 [design]"]
+        D_ML_TRAIN_QlibAIFactorMining_QlibAI因子挖掘["D-ML-TRAIN/QlibAIFactorMining QlibAI因子挖掘 [design]"]
+        D_ML_TRAIN_Quant_Beckman_2025["D-ML-TRAIN/Quant Beckman 2025 [design]"]
+        D_ML_TRAIN_RSI架构4维度_RSI_Architecture_4_Dimensions["...SI架构4维度 RSI Architecture 4 Dimensions [design]"]
+        D_ML_TRAIN_Random_Forest_Random_Forest随机森林["...TRAIN/Random Forest Random Forest随机森林 [design]"]
+        D_ML_TRAIN_Reinforcement_Learning_Optimization_强化学习优化["...orcement Learning Optimization 强化学习优化 [design]"]
+        D_ML_TRAIN_RetrainTriggered_重训触发["D-ML-TRAIN/RetrainTriggered 重训触发 [design]"]
+        D_ML_TRAIN_Run_ai_GPU_Hot_Swap_Run_ai式GPU热交换["...AIN/Run ai GPU Hot Swap Run:ai式GPU热交换 [design]"]
+        D_ML_TRAIN_SAC_SAC策略梯度方法["D-ML-TRAIN/SAC SAC策略梯度方法 [design]"]
+        D_ML_TRAIN_Spearman相关系数["D-ML-TRAIN/Spearman相关系数 [design]"]
+        D_ML_TRAIN_SyntheticDataGenerator_合成数据生成器["...-TRAIN/SyntheticDataGenerator 合成数据生成器 [design]"]
+        D_ML_TRAIN_TSFM_Time_Series_Foundation_Model_TSFM时序基础模型["...me Series Foundation Model TSFM时序基础模型 [design]"]
+        D_ML_TRAIN_TWAP_TWAP基准["D-ML-TRAIN/TWAP TWAP基准 [design]"]
+        D_ML_TRAIN_Training_Dataset_Manager_训练数据集管理["...RAIN/Training Dataset Manager 训练数据集管理 [design]"]
+        D_ML_TRAIN_TrainingDataManager_训练数据管理器["D-ML-TRAIN/TrainingDataManager 训练数据管理器 [design]"]
+        D_ML_TRAIN_TrainingPipeline_训练管线["D-ML-TRAIN/TrainingPipeline 训练管线 [design]"]
+        D_ML_TRAIN_World_Model_Market_Simulation_世界模型市场推演["...orld Model Market Simulation 世界模型市场推演 [design]"]
+        D_ML_TRAIN_bootstrap统计显著性检验["D-ML-TRAIN/bootstrap统计显著性检验 [design]"]
+        D_ML_TRAIN_ml_pipeline_ML管线进程["D-ML-TRAIN/ml_pipeline ML管线进程 [design]"]
+        D_ML_TRAIN_wandb_实验追踪系列_wandb_Experiment_Tracking_Series["...追踪系列 wandb/Experiment Tracking Series [design]"]
+        D_ML_TRAIN_xLSTM_Extended_Long____Term_Memory_xLSTM扩展长短期记忆网络["...Long Short-Term Memory xLSTM扩展长短期记忆网络 [design]"]
+        D_ML_TRAIN_代码自纠正循环_RISE模式["D-ML-TRAIN/代码自纠正循环 RISE模式 [design]"]
+        D_ML_TRAIN_信号预测力评估_Signal_Predictive_Power_Evaluation["...评估 Signal Predictive Power Evaluation [design]"]
+        D_ML_TRAIN_决策树与强化学习交易决策架构_Deci___ading_Decision_Architecture["...ee & RL Trading Decision Architecture [design]"]
+        D_ML_TRAIN_分析师Agent反馈循环_Analyst_Agent_Feedback_Loop["...Agent反馈循环 Analyst Agent Feedback Loop [design]"]
+        D_ML_TRAIN_动态信号权重模型_Dynamic_Signal_Weighting_Model["...信号权重模型 Dynamic Signal Weighting Model [design]"]
+        D_ML_TRAIN_动态权重分配_Dynamic_Weight_Allocation["...RAIN/动态权重分配 Dynamic Weight Allocation [design]"]
+        D_ML_TRAIN_可解释性保障_Explainability_Guarantee["...TRAIN/可解释性保障 Explainability Guarantee [design]"]
+        D_ML_TRAIN_因子DSL约束_Factor_DSL_Constraint["D-ML-TRAIN/因子DSL约束 Factor DSL Constraint [design]"]
+        D_ML_TRAIN_学习系统7阶段流水线_Learning_System_7_stage_Pipeline["...段流水线 Learning System 7-stage Pipeline [design]"]
+        D_ML_TRAIN_强化学习优化_Reinforcement_Learning_Optimization["...化 Reinforcement Learning Optimization [design]"]
+        D_ML_TRAIN_技能三元组匹配_Skill_Triple_Matching["D-ML-TRAIN/技能三元组匹配 Skill Triple Matching [design]"]
+        D_ML_TRAIN_技能依赖解析_Skill_Dependency_Resolution["...IN/技能依赖解析 Skill Dependency Resolution [design]"]
+        D_ML_TRAIN_技能库_Skill_Library["D-ML-TRAIN/技能库 Skill Library [design]"]
+        D_ML_TRAIN_技能库积累_Voyager模式["D-ML-TRAIN/技能库积累 Voyager模式 [design]"]
+        %% ... 还有 18 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_ml_train_inference_base_py -->|import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations___init___py -->|import_depends| src_zephyr_ml_train_implementa___default_inference_engine_py
+    src_zephyr_ml_train___init___py -->|config_depends| src_zephyr_ml_train_trainer_base_py
+    D_ML_TRAIN_Training_Dataset_Manager_训练数据集管理 -->|import_depends| D_ML_TRAIN_ModelLineageTracker_模型血缘追踪器
+    D_ML_TRAIN_ModelLineageTracker_模型血缘追踪器 -->|import_depends| D_ML_TRAIN_C_029_模型工厂_Model_Factory
+    D_ML_TRAIN_C_029_模型工厂_Model_Factory -->|import_depends| D_ML_TRAIN_TrainingPipeline_训练管线
+    D_ML_TRAIN_TrainingPipeline_训练管线 -->|import_depends| D_ML_TRAIN_ExperimentTracker_实验追踪器
+    D_ML_TRAIN_ExperimentTracker_实验追踪器 -->|import_depends| D_ML_TRAIN_AutoMLEngine_自动机器学习引擎
+    D_ML_TRAIN_AutoMLEngine_自动机器学习引擎 -->|import_depends| D_ML_TRAIN_FeatureDiscovery_特征发现
+    D_ML_TRAIN_FeatureDiscovery_特征发现 -->|import_depends| D_ML_TRAIN_DriftAdapter_漂移适配器
+    D_ML_TRAIN_DriftAdapter_漂移适配器 -->|import_depends| D_ML_TRAIN_SyntheticDataGenerator_合成数据生成器
+    D_ML_TRAIN_SyntheticDataGenerator_合成数据生成器 -->|import_depends| D_ML_TRAIN_KAN_Kolmogorov_Arno___ork_KAN_Kolmogorov_Arnold网络
+    D_ML_TRAIN_KAN_Kolmogorov_Arno___ork_KAN_Kolmogorov_Arnold网络 -->|import_depends| D_ML_TRAIN_xLSTM_Extended_Long____Term_Memory_xLSTM扩展长短期记忆网络
+    D_ML_TRAIN_xLSTM_Extended_Long____Term_Memory_xLSTM扩展长短期记忆网络 -->|import_depends| D_ML_TRAIN_Continual_Learning____getting_Framework_持续学习抗遗忘框架
+    D_ML_TRAIN_Continual_Learning____getting_Framework_持续学习抗遗忘框架 -->|import_depends| D_ML_TRAIN_Causal_Reinforcement_Learning_Causal_RL_因果强化学习
+    D_ML_TRAIN_Causal_Reinforcement_Learning_Causal_RL_因果强化学习 -->|import_depends| D_ML_TRAIN_Concept_Drift_Adapter_概念漂移适配器
+    D_ML_TRAIN_Concept_Drift_Adapter_概念漂移适配器 -->|import_depends| D_ML_TRAIN_Barra_Risk_Factor_Model_Barra多因子风险模型
+    D_ML_TRAIN_Barra_Risk_Factor_Model_Barra多因子风险模型 -->|import_depends| D_ML_TRAIN_ExperimentPipeline_实验管线
+    D_ML_TRAIN_ExperimentPipeline_实验管线 -->|import_depends| D_ML_TRAIN_HyperparameterOptimizer_超参数优化器
+    D_ML_TRAIN_HyperparameterOptimizer_超参数优化器 -->|import_depends| D_ML_TRAIN_TrainingDataManager_训练数据管理器
+    D_ML_TRAIN_TrainingDataManager_训练数据管理器 -->|import_depends| D_ML_TRAIN_CausalDiscoveryEngine_因果发现引擎
+    D_ML_TRAIN_CausalDiscoveryEngine_因果发现引擎 -->|import_depends| D_ML_TRAIN_QlibAIFactorMining_QlibAI因子挖掘
+    D_ML_TRAIN_QlibAIFactorMining_QlibAI因子挖掘 -->|import_depends| D_ML_TRAIN_FinRLDeepRL_FinRL深度强化学习
+    D_ML_TRAIN_FinRLDeepRL_FinRL深度强化学习 -->|import_depends| D_ML_TRAIN_AIFactorMiningEngine_AI因子挖掘引擎
+    D_ML_TRAIN_AIFactorMiningEngine_AI因子挖掘引擎 -->|import_depends| D_ML_TRAIN_FeatureEngineeringAutomation_特征工程自动化
+    D_ML_TRAIN_FeatureEngineeringAutomation_特征工程自动化 -->|import_depends| D_ML_TRAIN_因子DSL约束_Factor_DSL_Constraint
+    D_ML_TRAIN_因子DSL约束_Factor_DSL_Constraint -->|import_depends| D_ML_TRAIN_进化式代码生成_Evolutionary_Code_Generation
+    D_ML_TRAIN_进化式代码生成_Evolutionary_Code_Generation -->|import_depends| D_ML_TRAIN_分析师Agent反馈循环_Analyst_Agent_Feedback_Loop
+    D_ML_TRAIN_分析师Agent反馈循环_Analyst_Agent_Feedback_Loop -->|import_depends| D_ML_TRAIN_技能库_Skill_Library
+    D_ML_TRAIN_技能库_Skill_Library -->|import_depends| D_ML_TRAIN_强化学习优化_Reinforcement_Learning_Optimization
+    D_ML_TRAIN_强化学习优化_Reinforcement_Learning_Optimization -->|import_depends| D_ML_TRAIN_技能依赖解析_Skill_Dependency_Resolution
+    D_ML_TRAIN_技能依赖解析_Skill_Dependency_Resolution -->|import_depends| D_ML_TRAIN_策略退化检测_Strategy_Degradation_Detection
+    D_ML_TRAIN_策略退化检测_Strategy_Degradation_Detection -->|import_depends| D_ML_TRAIN_Decision_Tree_Learning_决策树学习
+    D_ML_TRAIN_Decision_Tree_Learning_决策树学习 -->|import_depends| D_ML_TRAIN_Reinforcement_Learning_Optimization_强化学习优化
+    D_ML_TRAIN_Reinforcement_Learning_Optimization_强化学习优化 -->|import_depends| D_ML_TRAIN_动态信号权重模型_Dynamic_Signal_Weighting_Model
+    D_ML_TRAIN_动态信号权重模型_Dynamic_Signal_Weighting_Model -->|import_depends| D_ML_TRAIN_信号预测力评估_Signal_Predictive_Power_Evaluation
+    D_ML_TRAIN_信号预测力评估_Signal_Predictive_Power_Evaluation -->|import_depends| D_ML_TRAIN_动态权重分配_Dynamic_Weight_Allocation
+    D_ML_TRAIN_动态权重分配_Dynamic_Weight_Allocation -->|import_depends| D_ML_TRAIN_矛盾信号处理_Contradictory_Signal_Processing
+    D_ML_TRAIN_矛盾信号处理_Contradictory_Signal_Processing -->|import_depends| D_ML_TRAIN_Bayesian_Model_Averaging_BMA_模型
+    D_ML_TRAIN_Bayesian_Model_Averaging_BMA_模型 -->|import_depends| D_ML_TRAIN_Man_Group_AlphaGPT
+    D_ML_TRAIN_Man_Group_AlphaGPT -->|import_depends| D_ML_TRAIN_Quant_Beckman_2025
+    D_ML_TRAIN_Quant_Beckman_2025 -->|import_depends| D_ML_TRAIN_模型一致性_Model_Uniformity
+    D_ML_TRAIN_模型一致性_Model_Uniformity -->|import_depends| D_ML_TRAIN_Platt_Scaling_Platt缩放
+    D_ML_TRAIN_Platt_Scaling_Platt缩放 -->|import_depends| D_ML_TRAIN_Isotonic_Regression_等渗回归
+    D_ML_TRAIN_Isotonic_Regression_等渗回归 -->|import_depends| D_ML_TRAIN_MC_Dropout_MC_Dropout蒙特卡洛丢弃
+    D_ML_TRAIN_MC_Dropout_MC_Dropout蒙特卡洛丢弃 -->|import_depends| D_ML_TRAIN_HMM_聚类算法
+    D_ML_TRAIN_HMM_聚类算法 -->|import_depends| D_ML_TRAIN_Spearman相关系数
+    D_ML_TRAIN_Spearman相关系数 -->|import_depends| D_ML_TRAIN_bootstrap统计显著性检验
+    D_ML_TRAIN_bootstrap统计显著性检验 -->|import_depends| D_ML_TRAIN_Dynamic_Conditional_Correlation_动态条件相关性
+    D_ML_TRAIN_Dynamic_Conditional_Correlation_动态条件相关性 -->|import_depends| D_ML_TRAIN_ml_pipeline_ML管线进程
+    D_ML_TRAIN_ml_pipeline_ML管线进程 -->|import_depends| D_ML_TRAIN_ML训练_模型训练
+    D_ML_TRAIN_ML训练_模型训练 -->|import_depends| D_ML_TRAIN_ML_Training_Process_ML训练进程
+    D_ML_TRAIN_ML_Training_Process_ML训练进程 -->|import_depends| D_ML_TRAIN_wandb_实验追踪系列_wandb_Experiment_Tracking_Series
+    D_ML_TRAIN_wandb_实验追踪系列_wandb_Experiment_Tracking_Series -->|import_depends| D_ML_TRAIN_CNN_GNN_Transformer系列_CNN_GNN_Transformer_Series
+    D_ML_TRAIN_CNN_GNN_Transformer系列_CNN_GNN_Transformer_Series -->|import_depends| D_ML_TRAIN_Federated_Model_Trainer_联邦模型训练器
+    D_ML_TRAIN_Federated_Model_Trainer_联邦模型训练器 -->|import_depends| D_ML_TRAIN_可解释性保障_Explainability_Guarantee
+    D_ML_TRAIN_可解释性保障_Explainability_Guarantee -->|import_depends| D_ML_TRAIN_PromptOptimizer_Agent_提示词优化器代理
+    D_ML_TRAIN_PromptOptimizer_Agent_提示词优化器代理 -->|import_depends| D_ML_TRAIN_ArchitectureOptimizer_Agent_架构优化器代理
+    D_ML_TRAIN_ArchitectureOptimizer_Agent_架构优化器代理 -->|import_depends| D_ML_TRAIN_CodeGenerator_Agent_代码生成器代理
+    D_ML_TRAIN_CodeGenerator_Agent_代码生成器代理 -->|import_depends| D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理
+    D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理 -->|import_depends| D_ML_TRAIN_FactorMAD_辩论式因子精炼
+    D_ML_TRAIN_FactorMAD_辩论式因子精炼 -->|import_depends| D_ML_TRAIN_DSR_CPCV_v2_Deflate___2_DSR_CPCV_v2缩减夏普比率_CPCV_v2
+    D_ML_TRAIN_DSR_CPCV_v2_Deflate___2_DSR_CPCV_v2缩减夏普比率_CPCV_v2 -->|import_depends| D_ML_TRAIN_学习系统7阶段流水线_Learning_System_7_stage_Pipeline
+    D_ML_TRAIN_学习系统7阶段流水线_Learning_System_7_stage_Pipeline -->|import_depends| D_ML_TRAIN_AST沙箱三层安全_AST_Sandbox_Three_layer_Security
+    D_ML_TRAIN_AST沙箱三层安全_AST_Sandbox_Three_layer_Security -->|import_depends| D_ML_TRAIN_Prompt自优化循环_STOP模式
+    D_ML_TRAIN_Prompt自优化循环_STOP模式 -->|import_depends| D_ML_TRAIN_代码自纠正循环_RISE模式
+    D_ML_TRAIN_代码自纠正循环_RISE模式 -->|import_depends| D_ML_TRAIN_技能库积累_Voyager模式
+    D_ML_TRAIN_技能库积累_Voyager模式 -->|import_depends| D_ML_TRAIN_Meta_Harness_元优化器
+    D_ML_TRAIN_Meta_Harness_元优化器 -->|import_depends| D_ML_TRAIN_经验记忆结构化索引_Experience_Memory_Structured_Index
+    D_ML_TRAIN_经验记忆结构化索引_Experience_Memory_Structured_Index -->|import_depends| D_ML_TRAIN_技能结构化三元组格式_Skill_Structured_Triple_Format
+    D_ML_TRAIN_技能结构化三元组格式_Skill_Structured_Triple_Format -->|import_depends| D_ML_TRAIN_AutoSkill_自动技能发现
+    D_ML_TRAIN_AutoSkill_自动技能发现 -->|import_depends| D_ML_TRAIN_ICL元学习_In_context_Learning
+    D_ML_TRAIN_ICL元学习_In_context_Learning -->|import_depends| D_ML_TRAIN_决策树与强化学习交易决策架构_Deci___ading_Decision_Architecture
+    D_ML_TRAIN_决策树与强化学习交易决策架构_Deci___ading_Decision_Architecture -->|import_depends| D_ML_TRAIN_技能三元组匹配_Skill_Triple_Matching
+    D_ML_TRAIN_技能三元组匹配_Skill_Triple_Matching -->|import_depends| D_ML_TRAIN_Model_Quantization____ence_Acceleration_模型量化与推理加速
+    D_ML_TRAIN_Model_Quantization____ence_Acceleration_模型量化与推理加速 -->|import_depends| D_ML_TRAIN_TSFM_Time_Series_Foundation_Model_TSFM时序基础模型
+    D_ML_TRAIN_TSFM_Time_Series_Foundation_Model_TSFM时序基础模型 -->|import_depends| D_ML_TRAIN_Diffusion_Model_Scene_Generation_扩散模型场景生成
+    D_ML_TRAIN_Diffusion_Model_Scene_Generation_扩散模型场景生成 -->|import_depends| D_ML_TRAIN_World_Model_Market_Simulation_世界模型市场推演
+    %% ... 还有 29 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-ML_TRAIN (1 条)
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_ML_TRAIN_TSFM_Time_Series_Foundation_Model_TSFM时序基础模型
+    %% D-AUTONOMY_CORE -> D-ML_TRAIN (15 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_ML_TRAIN_因子DSL约束_Factor_DSL_Constraint
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_ML_TRAIN_Prompt自优化循环_STOP模式
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_ML_TRAIN_wandb_实验追踪系列_wandb_Experiment_Tracking_Series
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_ML_TRAIN_经验记忆结构化索引_Experience_Memory_Structured_Index
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_ML_TRAIN_Federated_Model_Trainer_联邦模型训练器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_ML_TRAIN_GATE_FCFT_01_自托管LLM
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_ML_TRAIN_ExperimentPipeline_实验管线
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_ML_TRAIN_TWAP_TWAP基准
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_ML_TRAIN_CodeGenerator_Agent_代码生成器代理
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_ML_TRAIN_GPU_Resource_Feed_GPU资源供给
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_ML_TRAIN_技能依赖解析_Skill_Dependency_Resolution
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_ML_TRAIN_DSR_CPCV_v2_Deflate___2_DSR_CPCV_v2缩减夏普比率_CPCV_v2
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_ML_TRAIN_ExperimentPipeline_实验管线
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_ML_TRAIN_策略退化检测_Strategy_Degradation_Detection
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_ML_TRAIN_ExperimentTracker_实验追踪器
+    %% D-AUTONOMY_PERM -> D-ML_TRAIN (3 条)
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_ML_TRAIN_ModelLineageTracker_模型血缘追踪器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_ML_TRAIN_NewFactorDiscovered_新因子发现
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|config_depends| D_ML_TRAIN_AutoSkill_自动技能发现
+    %% D-COMPLIANCE -> D-ML_TRAIN (18 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_ML_TRAIN_ModelVersion_模型版本
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_ML_TRAIN_Meta_Harness_元优化器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_ML_TRAIN_CCP_Cost_Complexity_Pruning_CCP成本复杂度剪枝
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_ML_TRAIN_Training_Dataset_Manager_训练数据集管理
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_ML_TRAIN_Dynamic_Conditional_Correlation_动态条件相关性
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_ML_TRAIN_GATE_FCFT_01_自托管LLM
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_ML_TRAIN_FinRLDeepRL_FinRL深度强化学习
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_ML_TRAIN_AIFactorMiningEngine_AI因子挖掘引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_ML_TRAIN_ML训练_模型训练
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_ML_TRAIN_ModelServingResponse_模型服务响应
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_ML_TRAIN_动态权重分配_Dynamic_Weight_Allocation
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_ML_TRAIN_技能库积累_Voyager模式
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_ML_TRAIN_FinRLDeepRL_FinRL深度强化学习
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_ML_TRAIN_bootstrap统计显著性检验
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_ML_TRAIN_信号预测力评估_Signal_Predictive_Power_Evaluation
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_ML_TRAIN_CausalDiscoveryEngine_因果发现引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_ML_TRAIN_MC_Dropout_MC_Dropout蒙特卡洛丢弃
+    %% D-CROSS_ASSET -> D-ML_TRAIN (2 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_ML_TRAIN_Concept_Drift_Adapter_概念漂移适配器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_ML_TRAIN_FeatureEngineeringAutomation_特征工程自动化
+    %% D-DATA_GOV -> D-ML_TRAIN (1 条)
+    D_DATA_GOV[D-DATA_GOV] -->|contract| D_ML_TRAIN_动态信号权重模型_Dynamic_Signal_Weighting_Model
+    %% D-DATA_SEC -> D-ML_TRAIN (1 条)
+    D_DATA_SEC[D-DATA_SEC] -->|config_depends| D_ML_TRAIN_ExperimentTracker_实验追踪器
+    %% D-FRONTEND -> D-ML_TRAIN (4 条)
+    D_FRONTEND[D-FRONTEND] -->|contract| D_ML_TRAIN_Random_Forest_Random_Forest随机森林
+    D_FRONTEND[D-FRONTEND] -->|contract| D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理
+    D_FRONTEND[D-FRONTEND] -->|event| D_ML_TRAIN_进化式代码生成_Evolutionary_Code_Generation
+    D_FRONTEND[D-FRONTEND] -->|contract| D_ML_TRAIN_Run_ai_GPU_Hot_Swap_Run_ai式GPU热交换
+    %% D-GOVERNANCE -> D-ML_TRAIN (8 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_ML_TRAIN_AST沙箱三层安全_AST_Sandbox_Three_layer_Security
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_ML_TRAIN_Random_Forest_Random_Forest随机森林
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_ML_TRAIN_动态信号权重模型_Dynamic_Signal_Weighting_Model
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_ML_TRAIN_Causal_Reinforcement_Learning_Causal_RL_因果强化学习
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_ML_TRAIN_C_029_模型工厂_Model_Factory
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_ML_TRAIN_动态信号权重模型_Dynamic_Signal_Weighting_Model
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_ML_TRAIN_KAN_Kolmogorov_Arno___ork_KAN_Kolmogorov_Arnold网络
+    D_GOVERNANCE[D-GOVERNANCE] -->|config_depends| D_ML_TRAIN_ML训练_模型训练
+    %% D-INFRA_OPS -> D-ML_TRAIN (8 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_ML_TRAIN_Training_Dataset_Manager_训练数据集管理
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_ML_TRAIN_FinRLDeepRL_FinRL深度强化学习
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_ML_TRAIN_Platt_Scaling_Platt缩放
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_ML_TRAIN_HyperparameterOptimizer_超参数优化器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_ML_TRAIN_Causal_Reinforcement_Learning_Causal_RL_因果强化学习
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_ML_TRAIN_Dynamic_Conditional_Correlation_动态条件相关性
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_ML_TRAIN_DriftAdapter_漂移适配器
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_ML_TRAIN_DSR_CPCV_v2_Deflate___2_DSR_CPCV_v2缩减夏普比率_CPCV_v2
+    %% D-INTEGRATION -> D-ML_TRAIN (10 条)
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_ML_TRAIN_TrainingPipeline_训练管线
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_ML_TRAIN_信号预测力评估_Signal_Predictive_Power_Evaluation
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_ML_TRAIN_FinRLDeepRL_FinRL深度强化学习
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_ML_TRAIN_Run_ai_GPU_Hot_Swap_Run_ai式GPU热交换
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_ML_TRAIN_Spearman相关系数
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_ML_TRAIN_Continual_Learning____getting_Framework_持续学习抗遗忘框架
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_ML_TRAIN_因子DSL约束_Factor_DSL_Constraint
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_ML_TRAIN_AST沙箱三层安全_AST_Sandbox_Three_layer_Security
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_ML_TRAIN_ModelLineageTracker_模型血缘追踪器
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_ML_TRAIN_技能库_Skill_Library
+    %% D-INTELLIGENCE -> D-ML_TRAIN (13 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_ML_TRAIN_GATE_FCFT_04_FinJailbreak基准
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_ML_TRAIN_Model_Quantization____ence_Acceleration_模型量化与推理加速
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_ML_TRAIN_ML训练_模型训练
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_ML_TRAIN_GPU资源争抢_GPU_Resource_Contention
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_ML_TRAIN_TrainingDataManager_训练数据管理器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_ML_TRAIN_GPU资源争抢_GPU_Resource_Contention
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_ML_TRAIN_QlibAIFactorMining_QlibAI因子挖掘
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_ML_TRAIN_Bayesian_Model_Averaging_BMA_模型
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_ML_TRAIN_AutoMLEngine_自动机器学习引擎
+    %% D-KNOWLEDGE -> D-ML_TRAIN (5 条)
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_ML_TRAIN_GPU_Resource_Feed_GPU资源供给
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_ML_TRAIN_DriftAdapter_漂移适配器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_ML_TRAIN_Model_Deployment_Saga_模型上线Saga
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_ML_TRAIN_Dynamic_Conditional_Correlation_动态条件相关性
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_ML_TRAIN_ExperimentTracker_实验追踪器
+    %% D-ML_SERVE -> D-ML_TRAIN (4 条)
+    D_ML_SERVE[D-ML_SERVE] -->|contract| D_ML_TRAIN_TrainingPipeline_训练管线
+    D_ML_SERVE[D-ML_SERVE] -->|event| D_ML_TRAIN_学习系统7阶段流水线_Learning_System_7_stage_Pipeline
+    D_ML_SERVE[D-ML_SERVE] -->|data| D_ML_TRAIN_LOBSTER_LOBSTER数据集
+    D_ML_SERVE[D-ML_SERVE] -->|domain_dependency| D_ML_TRAIN_Machine_Learning_机器学习域
+    %% D-OPS -> D-ML_TRAIN (5 条)
+    D_OPS[D-OPS] -->|contract| D_ML_TRAIN_ModelLineageTracker_模型血缘追踪器
+    D_OPS[D-OPS] -->|config_depends| D_ML_TRAIN_SyntheticDataGenerator_合成数据生成器
+    D_OPS[D-OPS] -->|config_depends| D_ML_TRAIN_CausalDiscoveryEngine_因果发现引擎
+    D_OPS[D-OPS] -->|contract| D_ML_TRAIN_Prompt自优化循环_STOP模式
+    D_OPS[D-OPS] -->|contract| D_ML_TRAIN_CCP_Cost_Complexity_Pruning_CCP成本复杂度剪枝
+    %% D-PF_ALLOC -> D-ML_TRAIN (2 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_ML_TRAIN_Reinforcement_Learning_Optimization_强化学习优化
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_ML_TRAIN_Decision_Tree_Learning_决策树学习
+    %% D-PF_CORE -> D-ML_TRAIN (2 条)
+    D_PF_CORE[D-PF_CORE] -->|data| D_ML_TRAIN_强化学习优化_Reinforcement_Learning_Optimization
+    D_PF_CORE[D-PF_CORE] -->|data| D_ML_TRAIN_经验记忆结构化索引_Experience_Memory_Structured_Index
+    %% D-REPORTING -> D-ML_TRAIN (4 条)
+    D_REPORTING[D-REPORTING] -->|data| D_ML_TRAIN_决策树与强化学习交易决策架构_Deci___ading_Decision_Architecture
+    D_REPORTING[D-REPORTING] -->|contract| D_ML_TRAIN_Model_Quantization____ence_Acceleration_模型量化与推理加速
+    D_REPORTING[D-REPORTING] -->|config_depends| D_ML_TRAIN_经验记忆结构化索引_Experience_Memory_Structured_Index
+    D_REPORTING[D-REPORTING] -->|data| D_ML_TRAIN_PPO_PPO策略梯度方法
+    %% D-RISK -> D-ML_TRAIN (23 条)
+    D_RISK[D-RISK] -->|contract| D_ML_TRAIN_ML_Training_Process_ML训练进程
+    D_RISK[D-RISK] -->|contract| D_ML_TRAIN_分析师Agent反馈循环_Analyst_Agent_Feedback_Loop
+    D_RISK[D-RISK] -->|data| D_ML_TRAIN_C_029_模型工厂_Model_Factory
+    D_RISK[D-RISK] -->|contract| D_ML_TRAIN_FeatureDiscovery_特征发现
+    D_RISK[D-RISK] -->|event| D_ML_TRAIN_信号预测力评估_Signal_Predictive_Power_Evaluation
+    D_RISK[D-RISK] -->|contract| D_ML_TRAIN_AI认知流_AI_Cognitive_Stream
+    D_RISK[D-RISK] -->|event| D_ML_TRAIN_World_Model_Market_Simulation_世界模型市场推演
+    D_RISK[D-RISK] -->|event| D_ML_TRAIN_Meta_Harness_元优化器
+    D_RISK[D-RISK] -->|data| D_ML_TRAIN_CCP_Cost_Complexity_Pruning_CCP成本复杂度剪枝
+    D_RISK[D-RISK] -->|event| D_ML_TRAIN_Isotonic_Regression_等渗回归
+    D_RISK[D-RISK] -->|event| D_ML_TRAIN_信号预测力评估_Signal_Predictive_Power_Evaluation
+    D_RISK[D-RISK] -->|config_depends| D_ML_TRAIN_Random_Forest_Random_Forest随机森林
+    D_RISK[D-RISK] -->|contract| D_ML_TRAIN_决策树与强化学习交易决策架构_Deci___ading_Decision_Architecture
+    D_RISK[D-RISK] -->|data| D_ML_TRAIN_分析师Agent反馈循环_Analyst_Agent_Feedback_Loop
+    D_RISK[D-RISK] -->|config_depends| D_ML_TRAIN_AIFactorMiningEngine_AI因子挖掘引擎
+    D_RISK[D-RISK] -->|config_depends| D_ML_TRAIN_Isotonic_Regression_等渗回归
+    D_RISK[D-RISK] -->|contract| D_ML_TRAIN_AutoMLEngine_自动机器学习引擎
+    D_RISK[D-RISK] -->|event| D_ML_TRAIN_ml_pipeline_ML管线进程
+    D_RISK[D-RISK] -->|event| D_ML_TRAIN_PromptOptimizer_Agent_提示词优化器代理
+    D_RISK[D-RISK] -->|contract| D_ML_TRAIN_Dynamic_Conditional_Correlation_动态条件相关性
+    D_RISK[D-RISK] -->|data| D_ML_TRAIN_GATE_FCFT_01_自托管LLM
+    D_RISK[D-RISK] -->|config_depends| D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理
+    D_RISK[D-RISK] -->|contract| D_ML_TRAIN_学习系统7阶段流水线_Learning_System_7_stage_Pipeline
+    %% D-SECURITY -> D-ML_TRAIN (13 条)
+    D_SECURITY[D-SECURITY] -->|contract| D_ML_TRAIN_bootstrap统计显著性检验
+    D_SECURITY[D-SECURITY] -->|contract| D_ML_TRAIN_TrainingPipeline_训练管线
+    D_SECURITY[D-SECURITY] -->|data| D_ML_TRAIN_TWAP_TWAP基准
+    D_SECURITY[D-SECURITY] -->|data| D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理
+    D_SECURITY[D-SECURITY] -->|data| D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理
+    D_SECURITY[D-SECURITY] -->|data| D_ML_TRAIN_LOBSTER_LOBSTER数据集
+    D_SECURITY[D-SECURITY] -->|event| D_ML_TRAIN_TWAP_TWAP基准
+    D_SECURITY[D-SECURITY] -->|data| D_ML_TRAIN_分析师Agent反馈循环_Analyst_Agent_Feedback_Loop
+    D_SECURITY[D-SECURITY] -->|contract| D_ML_TRAIN_ML训练_模型训练
+    D_SECURITY[D-SECURITY] -->|contract| D_ML_TRAIN_分析师Agent反馈循环_Analyst_Agent_Feedback_Loop
+    D_SECURITY[D-SECURITY] -->|event| D_ML_TRAIN_ModelServingRequest_模型服务请求
+    D_SECURITY[D-SECURITY] -->|event| D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理
+    D_SECURITY[D-SECURITY] -->|event| D_ML_TRAIN_Concept_Drift_Adapter_概念漂移适配器
+    %% D-SELL_DECISION -> D-ML_TRAIN (3 条)
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_ML_TRAIN_GPU_Resource_Feed_GPU资源供给
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_ML_TRAIN_Isotonic_Regression_等渗回归
+    D_SELL_DECISION[D-SELL_DECISION] -->|config_depends| D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理
+    %% D-SHARED -> D-ML_TRAIN (2 条)
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_ml_train_inference_base_py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_ml_train_trainer_base_py
+    %% D-SIGNAL -> D-ML_TRAIN (11 条)
+    D_SIGNAL[D-SIGNAL] -->|contract| D_ML_TRAIN_ICL元学习_In_context_Learning
+    D_SIGNAL[D-SIGNAL] -->|data| D_ML_TRAIN_Model_Deployment_Saga_模型上线Saga
+    D_SIGNAL[D-SIGNAL] -->|data| D_ML_TRAIN_FinRLDeepRL_FinRL深度强化学习
+    D_SIGNAL[D-SIGNAL] -->|data| D_ML_TRAIN_CCP_Cost_Complexity_Pruning_CCP成本复杂度剪枝
+    D_SIGNAL[D-SIGNAL] -->|contract| D_ML_TRAIN_技能三元组匹配_Skill_Triple_Matching
+    D_SIGNAL[D-SIGNAL] -->|event| D_ML_TRAIN_ModelLineageTracker_模型血缘追踪器
+    D_SIGNAL[D-SIGNAL] -->|event| D_ML_TRAIN_bootstrap统计显著性检验
+    D_SIGNAL[D-SIGNAL] -->|event| D_ML_TRAIN_ModelValidated_模型验证完成
+    D_SIGNAL[D-SIGNAL] -->|data| D_ML_TRAIN_Federated_Model_Trainer_联邦模型训练器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_ML_TRAIN_ml_pipeline_ML管线进程
+    D_SIGNAL[D-SIGNAL] -->|event| D_ML_TRAIN_技能库积累_Voyager模式
+    %% D-SIMULATION -> D-ML_TRAIN (2 条)
+    D_SIMULATION[D-SIMULATION] -->|event| D_ML_TRAIN_Training_Dataset_Manager_训练数据集管理
+    D_SIMULATION[D-SIMULATION] -->|data| D_ML_TRAIN_技能库_Skill_Library
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-ML_TRAIN -> D-DATA_ENG (5 条)
+    D_ML_TRAIN_矛盾信号处理_Contradictory_Signal_Processing -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_ML_TRAIN_CNN_GNN_Transformer系列_CNN_GNN_Transformer_Series -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_ML_TRAIN_Decision_Tree_Learning_决策树学习 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_ML_TRAIN_经验记忆结构化索引_Experience_Memory_Structured_Index -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_ML_TRAIN_Machine_Learning_机器学习域 -->|domain_dependency| D_DATA_ENG[D-DATA_ENG]
+    %% D-ML_TRAIN -> D-EX_SOR (3 条)
+    D_ML_TRAIN_ModelServingRequest_模型服务请求 -->|event| D_EX_SOR[D-EX_SOR]
+    D_ML_TRAIN_xLSTM_Extended_Long____Term_Memory_xLSTM扩展长短期记忆网络 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_ML_TRAIN_GATE_FCFT_金融宪法微调汇总 -->|contract| D_EX_SOR[D-EX_SOR]
+    %% D-ML_TRAIN -> D-FACTOR (15 条)
+    D_ML_TRAIN_Model_Deployment_Saga_模型上线Saga -->|contract| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_Decision_Tree_Learning_决策树学习 -->|event| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_RSI架构4维度_RSI_Architecture_4_Dimensions -->|data| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_ML训练_模型训练 -->|data| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_C_029_模型工厂_Model_Factory -->|event| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_ArchitectureOptimizer_Agent_架构优化器代理 -->|contract| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_技能三元组匹配_Skill_Triple_Matching -->|config_depends| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_MethodologyLearner_Agent_方法论学习器代理 -->|contract| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_GPU_MPS_Multi_Process_Concurrency_GPU_MPS多进程并发 -->|data| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_AutoMLEngine_自动机器学习引擎 -->|event| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_Dynamic_Conditional_Correlation_动态条件相关性 -->|data| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_CCP_Cost_Complexity_Pruning_CCP成本复杂度剪枝 -->|event| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_xLSTM_Extended_Long____Term_Memory_xLSTM扩展长短期记忆网络 -->|event| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_技能库积累_Voyager模式 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_ML_TRAIN_Machine_Learning_机器学习域 -->|domain_dependency| D_FACTOR[D-FACTOR]
+    %% D-ML_TRAIN -> D-INFRA_RUNTIME (11 条)
+    D_ML_TRAIN_wandb_实验追踪系列_wandb_Experiment_Tracking_Series -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_ml_pipeline_ML管线进程 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_Isotonic_Regression_等渗回归 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_动态权重分配_Dynamic_Weight_Allocation -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_AutoSkill_自动技能发现 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_TrainingPipeline_训练管线 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_动态信号权重模型_Dynamic_Signal_Weighting_Model -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_Continual_Learning____getting_Framework_持续学习抗遗忘框架 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_动态权重分配_Dynamic_Weight_Allocation -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_KAN_Kolmogorov_Arno___ork_KAN_Kolmogorov_Arnold网络 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_ML_TRAIN_RSI架构4维度_RSI_Architecture_4_Dimensions -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-ML_TRAIN -> D-MKT_DATA (3 条)
+    D_ML_TRAIN_Isotonic_Regression_等渗回归 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_ML_TRAIN_RSI架构4维度_RSI_Architecture_4_Dimensions -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_ML_TRAIN_SAC_SAC策略梯度方法 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    %% D-ML_TRAIN -> D-POSITION (3 条)
+    D_ML_TRAIN_分析师Agent反馈循环_Analyst_Agent_Feedback_Loop -->|contract| D_POSITION[D-POSITION]
+    D_ML_TRAIN_LOBSTER_LOBSTER数据集 -->|config_depends| D_POSITION[D-POSITION]
+    D_ML_TRAIN_信号预测力评估_Signal_Predictive_Power_Evaluation -->|data| D_POSITION[D-POSITION]
+    %% D-ML_TRAIN -> D-SHARED (2 条)
+    src_zephyr_ml_train_inference_base_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-ML_TRAIN -> D-TRADING (6 条)
+    src_zephyr_ml_train_inference_base_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_TRADING[D-TRADING]
+    训练域_D_ML_106 -->|contract| D_TRADING[D-TRADING]
+    D_ML_TRAIN_SyntheticDataGenerator_合成数据生成器 -->|event| D_TRADING[D-TRADING]
+    D_ML_TRAIN_LOBSTER_LOBSTER数据集 -->|contract| D_TRADING[D-TRADING]
+    D_ML_TRAIN_KAN_Kolmogorov_Arno___ork_KAN_Kolmogorov_Arnold网络 -->|event| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 109 条
+    %% 跨域入边: 160 条
+    %% 跨域出边: 48 条

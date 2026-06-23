@@ -1,0 +1,273 @@
+%% D-SELL_DECISION 域全景依赖图
+%% 生成时间: 2026-06-23 23:25:24
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 64, 依赖边数: 163
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_SELL_DECISION[卖出决策]
+        D_SELL_DECISION_Adjusted_Stop_Level_调整后止损位["...L-DECISION/Adjusted Stop Level 调整后止损位 [design]"]
+        D_SELL_DECISION_Average_True_Range_ATR动态止损["...L-DECISION/Average True Range ATR动态止损 [design]"]
+        D_SELL_DECISION_Breakout_Failure_Detector突破成败检测器["...SION/Breakout Failure Detector突破成败检测器 [design]"]
+        D_SELL_DECISION_Breakout_Result_突破成败结果["D-SELL-DECISION/Breakout Result 突破成败结果 [design]"]
+        D_SELL_DECISION_Buy_Sell_Conflict_Arbitrator买卖冲突仲裁器["...N/Buy-Sell Conflict Arbitrator买卖冲突仲裁器 [design]"]
+        D_SELL_DECISION_D_SELL["D-SELL-DECISION/D-SELL [design]"]
+        D_SELL_DECISION_Day_Trade_Agent_做T_Agent["D-SELL-DECISION/Day Trade Agent 做T Agent [design]"]
+        D_SELL_DECISION_Exit_Scenario_Plan_卖出情景预案["...LL-DECISION/Exit Scenario Plan 卖出情景预案 [design]"]
+        D_SELL_DECISION_Exit_Scenario_Planner卖出情景预案器["...DECISION/Exit Scenario Planner卖出情景预案器 [design]"]
+        D_SELL_DECISION_Fused_Sell_Decision_融合卖出决策["...L-DECISION/Fused Sell Decision 融合卖出决策 [design]"]
+        D_SELL_DECISION_LimitDownBlock_跌停板拦截事件["D-SELL-DECISION/LimitDownBlock 跌停板拦截事件 [design]"]
+        D_SELL_DECISION_Opportunity_Cost_Analyzer_机会成本分析器["...ION/Opportunity Cost Analyzer 机会成本分析器 [design]"]
+        D_SELL_DECISION_Position_Triage_Result_持仓分级结果["...ECISION/Position Triage Result 持仓分级结果 [design]"]
+        D_SELL_DECISION_Position_Triage持仓分级器["D-SELL-DECISION/Position Triage持仓分级器 [design]"]
+        D_SELL_DECISION_Replacement_&_Rebalance_Sell置换与再平衡卖出[".../Replacement & Rebalance Sell置换与再平衡卖出 [design]"]
+        D_SELL_DECISION_Risk_Based_Sell_Trigger_风险驱动卖出触发器["...ION/Risk-Based Sell Trigger 风险驱动卖出触发器 [design]"]
+        D_SELL_DECISION_Scaling_Out_Architect分批退出架构师["...DECISION/Scaling Out Architect分批退出架构师 [design]"]
+        D_SELL_DECISION_Scaling_Out_Plan_分批退出计划["D-SELL-DECISION/Scaling Out Plan 分批退出计划 [design]"]
+        D_SELL_DECISION_Self_Reflection_Agent_自反Agent["...ECISION/Self-Reflection Agent 自反Agent [design]"]
+        D_SELL_DECISION_Sell_A_B_Test_Result_卖出A_B测试结果["...CISION/Sell A/B Test Result 卖出A/B测试结果 [design]"]
+        D_SELL_DECISION_Sell_Audit_Report_卖出审计报告["D-SELL-DECISION/Sell Audit Report 卖出审计报告 [design]"]
+        D_SELL_DECISION_Sell_Convergence_Result_多策略卖出共振结果["...ION/Sell Convergence Result 多策略卖出共振结果 [design]"]
+        D_SELL_DECISION_Sell_Decision_Domain_卖出决策域["...L-DECISION/Sell Decision Domain 卖出决策域 [design]"]
+        D_SELL_DECISION_Sell_Decision____on_Arbitration_卖出决策必须经过融合仲裁["... Pass Fusion Arbitration 卖出决策必须经过融合仲裁 [design]"]
+        D_SELL_DECISION_Sell_Execution_Optimizer_卖出执行优化器["...SION/Sell Execution Optimizer 卖出执行优化器 [design]"]
+        D_SELL_DECISION_Sell_Execution_Quality_Tracker卖出执行质量追踪["...ell Execution Quality Tracker卖出执行质量追踪 [design]"]
+        D_SELL_DECISION_Sell_Execution_Quality_卖出执行质量["...ECISION/Sell Execution Quality 卖出执行质量 [design]"]
+        D_SELL_DECISION_Sell_Signal_Accuracy_Monitor卖出信号准确率监控["...Sell Signal Accuracy Monitor卖出信号准确率监控 [design]"]
+        D_SELL_DECISION_Sell_Signal_Collector卖出信号收集器["...DECISION/Sell Signal Collector卖出信号收集器 [design]"]
+        D_SELL_DECISION_Sell_Signal_Fusion_Engine卖出信号融合引擎["...ION/Sell Signal Fusion Engine卖出信号融合引擎 [design]"]
+        D_SELL_DECISION_Sell_Signal_Score_卖出信号评分["D-SELL-DECISION/Sell Signal Score 卖出信号评分 [design]"]
+        D_SELL_DECISION_Sell_Signal_Scorer卖出信号评分器["...LL-DECISION/Sell Signal Scorer卖出信号评分器 [design]"]
+        D_SELL_DECISION_Sell_Signal_卖出信号["D-SELL-DECISION/Sell Signal 卖出信号 [design]"]
+        D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试["...ION/Sell Strategy A/B Tester卖出策略A/B测试 [design]"]
+        D_SELL_DECISION_Sell_Urgency_Score_卖出紧迫度评分["...L-DECISION/Sell Urgency Score 卖出紧迫度评分 [design]"]
+        D_SELL_DECISION_Sell_Urgency_Scorer卖出紧迫度评分器["...-DECISION/Sell Urgency Scorer卖出紧迫度评分器 [design]"]
+        D_SELL_DECISION_SellArbitrated_卖出仲裁完成事件["D-SELL-DECISION/SellArbitrated 卖出仲裁完成事件 [design]"]
+        D_SELL_DECISION_SellArbitration_卖出仲裁["D-SELL-DECISION/SellArbitration 卖出仲裁 [design]"]
+        D_SELL_DECISION_SellDecided_卖出决策事件["D-SELL-DECISION/SellDecided 卖出决策事件 [design]"]
+        D_SELL_DECISION_SellDecision_Contract_SellDecision_卖出决策契约["...Decision Contract SellDecision 卖出决策契约 [design]"]
+        D_SELL_DECISION_SellExecuted_卖出执行完成事件["D-SELL-DECISION/SellExecuted 卖出执行完成事件 [design]"]
+        D_SELL_DECISION_SellLoopFeedback_卖出闭环反馈事件["...LL-DECISION/SellLoopFeedback 卖出闭环反馈事件 [design]"]
+        D_SELL_DECISION_SellSignalFuse___ent_SellSignalFused_卖出信号已融合["...alFused Event SellSignalFused 卖出信号已融合 [design]"]
+        D_SELL_DECISION_Signal_Reversal_Detector_信号反转检测器["...SION/Signal Reversal Detector 信号反转检测器 [design]"]
+        D_SELL_DECISION_Stop_Cost_Estimate_止损成本估计["...LL-DECISION/Stop Cost Estimate 止损成本估计 [design]"]
+        D_SELL_DECISION_Stop_Loss_Strategy_Family止损策略族["...CISION/Stop Loss Strategy Family止损策略族 [design]"]
+        D_SELL_DECISION_Stop_Option_Pricer止损期权定价器["...LL-DECISION/Stop Option Pricer止损期权定价器 [design]"]
+        D_SELL_DECISION_Stop_Paradigm_Selection_止损范式选择["...CISION/Stop Paradigm Selection 止损范式选择 [design]"]
+        D_SELL_DECISION_Stop_Hunting_Protector止损猎杀防护器["...ECISION/Stop-Hunting Protector止损猎杀防护器 [design]"]
+        D_SELL_DECISION_Stop_Loss_Decision_Engine_止损决策引擎["...SION/Stop-Loss Decision Engine 止损决策引擎 [design]"]
+        D_SELL_DECISION_StopLossTriggerReversalDetector_猎杀止损保护器["...opLossTriggerReversalDetector 猎杀止损保护器 [design]"]
+        D_SELL_DECISION_Strategy_Specific_Stop_Framework策略类型→止损范式映射["...gy-Specific Stop Framework策略类型→止损范式映射 [design]"]
+        D_SELL_DECISION_T_Trade_Coordinator做T决策协调器["...L-DECISION/T-Trade Coordinator做T决策协调器 [design]"]
+        D_SELL_DECISION_T_Trade_Instruction_做T指令["D-SELL-DECISION/T-Trade Instruction 做T指令 [design]"]
+        D_SELL_DECISION_TTradeExecuted_做T执行完成事件["D-SELL-DECISION/TTradeExecuted 做T执行完成事件 [design]"]
+        D_SELL_DECISION_Take_Profit_Strategy_Family止盈策略族["...SION/Take Profit Strategy Family止盈策略族 [design]"]
+        D_SELL_DECISION_Take_Profit_Decision_Engine_止盈决策引擎["...ON/Take-Profit Decision Engine 止盈决策引擎 [design]"]
+        src_zephyr_sell_decision___init___py["src/zephyr/sell_decision/__init__.py [prototype]"]
+        src_zephyr_sell_decision__extensions___init___py["...sell_decision/_extensions/__init__.py [scaffold_placeholder]"]
+        src_zephyr_sell_decision_api___init___py["src/zephyr/sell_decision/api/__init__.py [scaffold_placeholder]"]
+        src_zephyr_sell_decision_core___init___py["...zephyr/sell_decision/core/__init__.py [scaffold_placeholder]"]
+        src_zephyr_sell_decision_infrastructure___init___py["...l_decision/infrastructure/__init__.py [scaffold_placeholder]"]
+        src_zephyr_sell_decision_models___init___py["...phyr/sell_decision/models/__init__.py [scaffold_placeholder]"]
+        src_zephyr_sell_decision_services___init___py["...yr/sell_decision/services/__init__.py [scaffold_placeholder]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    D_SELL_DECISION_Position_Triage持仓分级器 -->|import_depends| D_SELL_DECISION_Sell_Signal_Collector卖出信号收集器
+    D_SELL_DECISION_Sell_Signal_Collector卖出信号收集器 -->|import_depends| D_SELL_DECISION_Sell_Signal_Scorer卖出信号评分器
+    D_SELL_DECISION_Sell_Signal_Scorer卖出信号评分器 -->|import_depends| D_SELL_DECISION_Breakout_Failure_Detector突破成败检测器
+    D_SELL_DECISION_Breakout_Failure_Detector突破成败检测器 -->|import_depends| D_SELL_DECISION_Take_Profit_Strategy_Family止盈策略族
+    D_SELL_DECISION_Take_Profit_Strategy_Family止盈策略族 -->|import_depends| D_SELL_DECISION_Stop_Loss_Strategy_Family止损策略族
+    D_SELL_DECISION_Stop_Loss_Strategy_Family止损策略族 -->|import_depends| D_SELL_DECISION_Replacement_&_Rebalance_Sell置换与再平衡卖出
+    D_SELL_DECISION_Replacement_&_Rebalance_Sell置换与再平衡卖出 -->|import_depends| D_SELL_DECISION_Sell_Signal_Fusion_Engine卖出信号融合引擎
+    D_SELL_DECISION_Sell_Signal_Fusion_Engine卖出信号融合引擎 -->|import_depends| D_SELL_DECISION_Buy_Sell_Conflict_Arbitrator买卖冲突仲裁器
+    D_SELL_DECISION_Buy_Sell_Conflict_Arbitrator买卖冲突仲裁器 -->|import_depends| D_SELL_DECISION_Sell_Urgency_Scorer卖出紧迫度评分器
+    D_SELL_DECISION_Sell_Urgency_Scorer卖出紧迫度评分器 -->|import_depends| D_SELL_DECISION_Sell_Signal_Accuracy_Monitor卖出信号准确率监控
+    D_SELL_DECISION_Sell_Signal_Accuracy_Monitor卖出信号准确率监控 -->|import_depends| D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试
+    D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试 -->|import_depends| D_SELL_DECISION_Sell_Execution_Quality_Tracker卖出执行质量追踪
+    D_SELL_DECISION_Sell_Execution_Quality_Tracker卖出执行质量追踪 -->|import_depends| D_SELL_DECISION_Exit_Scenario_Planner卖出情景预案器
+    D_SELL_DECISION_Exit_Scenario_Planner卖出情景预案器 -->|import_depends| D_SELL_DECISION_Strategy_Specific_Stop_Framework策略类型→止损范式映射
+    D_SELL_DECISION_Strategy_Specific_Stop_Framework策略类型→止损范式映射 -->|import_depends| D_SELL_DECISION_Stop_Hunting_Protector止损猎杀防护器
+    D_SELL_DECISION_Stop_Hunting_Protector止损猎杀防护器 -->|import_depends| D_SELL_DECISION_Stop_Option_Pricer止损期权定价器
+    D_SELL_DECISION_Stop_Option_Pricer止损期权定价器 -->|import_depends| D_SELL_DECISION_Scaling_Out_Architect分批退出架构师
+    D_SELL_DECISION_Scaling_Out_Architect分批退出架构师 -->|import_depends| D_SELL_DECISION_T_Trade_Coordinator做T决策协调器
+    D_SELL_DECISION_T_Trade_Coordinator做T决策协调器 -->|import_depends| D_SELL_DECISION_Stop_Loss_Decision_Engine_止损决策引擎
+    D_SELL_DECISION_Stop_Loss_Decision_Engine_止损决策引擎 -->|import_depends| D_SELL_DECISION_Take_Profit_Decision_Engine_止盈决策引擎
+    D_SELL_DECISION_Take_Profit_Decision_Engine_止盈决策引擎 -->|import_depends| D_SELL_DECISION_Signal_Reversal_Detector_信号反转检测器
+    D_SELL_DECISION_Signal_Reversal_Detector_信号反转检测器 -->|import_depends| D_SELL_DECISION_Risk_Based_Sell_Trigger_风险驱动卖出触发器
+    D_SELL_DECISION_Risk_Based_Sell_Trigger_风险驱动卖出触发器 -->|import_depends| D_SELL_DECISION_Opportunity_Cost_Analyzer_机会成本分析器
+    D_SELL_DECISION_Opportunity_Cost_Analyzer_机会成本分析器 -->|import_depends| D_SELL_DECISION_Sell_Execution_Optimizer_卖出执行优化器
+    D_SELL_DECISION_Sell_Execution_Optimizer_卖出执行优化器 -->|import_depends| D_SELL_DECISION_StopLossTriggerReversalDetector_猎杀止损保护器
+    D_SELL_DECISION_StopLossTriggerReversalDetector_猎杀止损保护器 -->|import_depends| D_SELL_DECISION_Average_True_Range_ATR动态止损
+    D_SELL_DECISION_Opportunity_Cost_Analyzer_机会成本分析器 -->|import_depends| D_SELL_DECISION_SellArbitration_卖出仲裁
+    D_SELL_DECISION_Opportunity_Cost_Analyzer_机会成本分析器 -->|import_depends| D_SELL_DECISION_Position_Triage_Result_持仓分级结果
+    D_SELL_DECISION_Take_Profit_Strategy_Family止盈策略族 -->|import_depends| D_SELL_DECISION_Breakout_Result_突破成败结果
+    D_SELL_DECISION_Exit_Scenario_Planner卖出情景预案器 -->|import_depends| D_SELL_DECISION_Stop_Paradigm_Selection_止损范式选择
+    D_SELL_DECISION_Take_Profit_Decision_Engine_止盈决策引擎 -->|import_depends| D_SELL_DECISION_Adjusted_Stop_Level_调整后止损位
+    D_SELL_DECISION_Breakout_Failure_Detector突破成败检测器 -->|import_depends| D_SELL_DECISION_Stop_Cost_Estimate_止损成本估计
+    D_SELL_DECISION_Average_True_Range_ATR动态止损 -->|import_depends| D_SELL_DECISION_Scaling_Out_Plan_分批退出计划
+    D_SELL_DECISION_Stop_Hunting_Protector止损猎杀防护器 -->|import_depends| D_SELL_DECISION_Exit_Scenario_Plan_卖出情景预案
+    D_SELL_DECISION_Stop_Loss_Decision_Engine_止损决策引擎 -->|import_depends| D_SELL_DECISION_Fused_Sell_Decision_融合卖出决策
+    D_SELL_DECISION_Exit_Scenario_Planner卖出情景预案器 -->|import_depends| D_SELL_DECISION_Sell_Urgency_Score_卖出紧迫度评分
+    D_SELL_DECISION_Buy_Sell_Conflict_Arbitrator买卖冲突仲裁器 -->|import_depends| D_SELL_DECISION_T_Trade_Instruction_做T指令
+    D_SELL_DECISION_Sell_Signal_Collector卖出信号收集器 -->|import_depends| D_SELL_DECISION_Sell_A_B_Test_Result_卖出A_B测试结果
+    D_SELL_DECISION_Risk_Based_Sell_Trigger_风险驱动卖出触发器 -->|import_depends| D_SELL_DECISION_Sell_Execution_Quality_卖出执行质量
+    D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试 -->|import_depends| D_SELL_DECISION_Sell_Audit_Report_卖出审计报告
+    D_SELL_DECISION_Replacement_&_Rebalance_Sell置换与再平衡卖出 -->|import_depends| D_SELL_DECISION_Sell_Convergence_Result_多策略卖出共振结果
+    D_SELL_DECISION_Strategy_Specific_Stop_Framework策略类型→止损范式映射 -->|import_depends| D_SELL_DECISION_Sell_Signal_卖出信号
+    D_SELL_DECISION_Strategy_Specific_Stop_Framework策略类型→止损范式映射 -->|import_depends| D_SELL_DECISION_Sell_Signal_Score_卖出信号评分
+    D_SELL_DECISION_Sell_Signal_Fusion_Engine卖出信号融合引擎 -->|event| D_SELL_DECISION_SellDecided_卖出决策事件
+    D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试 -->|event| D_SELL_DECISION_SellSignalFuse___ent_SellSignalFused_卖出信号已融合
+    D_SELL_DECISION_Breakout_Failure_Detector突破成败检测器 -->|event| D_SELL_DECISION_SellArbitrated_卖出仲裁完成事件
+    D_SELL_DECISION_Signal_Reversal_Detector_信号反转检测器 -->|event| D_SELL_DECISION_SellExecuted_卖出执行完成事件
+    D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试 -->|event| D_SELL_DECISION_SellLoopFeedback_卖出闭环反馈事件
+    D_SELL_DECISION_Scaling_Out_Architect分批退出架构师 -->|event| D_SELL_DECISION_TTradeExecuted_做T执行完成事件
+    D_SELL_DECISION_Take_Profit_Decision_Engine_止盈决策引擎 -->|event| D_SELL_DECISION_LimitDownBlock_跌停板拦截事件
+    D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试 -->|contract| D_SELL_DECISION_SellDecision_Contract_SellDecision_卖出决策契约
+    D_SELL_DECISION_Sell_Signal_Collector卖出信号收集器 -->|config_depends| D_SELL_DECISION_Sell_Decision____on_Arbitration_卖出决策必须经过融合仲裁
+    D_SELL_DECISION_Sell_Execution_Quality_Tracker卖出执行质量追踪 -->|import_depends| D_SELL_DECISION_Day_Trade_Agent_做T_Agent
+    D_SELL_DECISION_Buy_Sell_Conflict_Arbitrator买卖冲突仲裁器 -->|import_depends| D_SELL_DECISION_Self_Reflection_Agent_自反Agent
+    D_SELL_DECISION_D_SELL -->|import_depends| D_SELL_DECISION_Position_Triage持仓分级器
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-COMPLIANCE -> D-SELL_DECISION (9 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SELL_DECISION_LimitDownBlock_跌停板拦截事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_SELL_DECISION_Sell_Signal_Fusion_Engine卖出信号融合引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SELL_DECISION_SellExecuted_卖出执行完成事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_SELL_DECISION_Day_Trade_Agent_做T_Agent
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SELL_DECISION_Sell_Audit_Report_卖出审计报告
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_SELL_DECISION_Strategy_Specific_Stop_Framework策略类型→止损范式映射
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_SELL_DECISION_Adjusted_Stop_Level_调整后止损位
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_SELL_DECISION_SellLoopFeedback_卖出闭环反馈事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_SELL_DECISION_Stop_Loss_Decision_Engine_止损决策引擎
+    %% D-DATA_GOV -> D-SELL_DECISION (1 条)
+    D_DATA_GOV[D-DATA_GOV] -->|event| D_SELL_DECISION_SellExecuted_卖出执行完成事件
+    %% D-FRONTEND -> D-SELL_DECISION (5 条)
+    D_FRONTEND[D-FRONTEND] -->|contract| D_SELL_DECISION_Sell_Signal_卖出信号
+    D_FRONTEND[D-FRONTEND] -->|contract| D_SELL_DECISION_Sell_Signal_Scorer卖出信号评分器
+    D_FRONTEND[D-FRONTEND] -->|data| D_SELL_DECISION_SellSignalFuse___ent_SellSignalFused_卖出信号已融合
+    D_FRONTEND[D-FRONTEND] -->|data| D_SELL_DECISION_Sell_Signal_Scorer卖出信号评分器
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_SELL_DECISION_SellDecided_卖出决策事件
+    %% D-INFRA_OPS -> D-SELL_DECISION (6 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_SELL_DECISION_Take_Profit_Decision_Engine_止盈决策引擎
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_SELL_DECISION_Sell_Convergence_Result_多策略卖出共振结果
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_SELL_DECISION_Take_Profit_Strategy_Family止盈策略族
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_SELL_DECISION_Stop_Loss_Decision_Engine_止损决策引擎
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_SELL_DECISION_Sell_Signal_Accuracy_Monitor卖出信号准确率监控
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_SELL_DECISION_Day_Trade_Agent_做T_Agent
+    %% D-OPS -> D-SELL_DECISION (1 条)
+    D_OPS[D-OPS] -->|config_depends| D_SELL_DECISION_Sell_Urgency_Scorer卖出紧迫度评分器
+    %% D-PF_ALLOC -> D-SELL_DECISION (2 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_SELL_DECISION_Sell_Urgency_Score_卖出紧迫度评分
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_SELL_DECISION_StopLossTriggerReversalDetector_猎杀止损保护器
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-SELL_DECISION -> D-AUTONOMY_CORE (6 条)
+    D_SELL_DECISION_Position_Triage_Result_持仓分级结果 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_SELL_DECISION_Sell_Signal_Accuracy_Monitor卖出信号准确率监控 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_SELL_DECISION_Sell_Convergence_Result_多策略卖出共振结果 -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_SELL_DECISION_SellSignalFuse___ent_SellSignalFused_卖出信号已融合 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_SELL_DECISION_Strategy_Specific_Stop_Framework策略类型→止损范式映射 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_SELL_DECISION_Buy_Sell_Conflict_Arbitrator买卖冲突仲裁器 -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    %% D-SELL_DECISION -> D-AUTONOMY_PERM (2 条)
+    D_SELL_DECISION_SellDecision_Contract_SellDecision_卖出决策契约 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_SELL_DECISION_SellExecuted_卖出执行完成事件 -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    %% D-SELL_DECISION -> D-DATA_ENG (6 条)
+    D_SELL_DECISION_Exit_Scenario_Planner卖出情景预案器 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_SELL_DECISION_Buy_Sell_Conflict_Arbitrator买卖冲突仲裁器 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_SELL_DECISION_Scaling_Out_Plan_分批退出计划 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_SELL_DECISION_Adjusted_Stop_Level_调整后止损位 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_SELL_DECISION_Breakout_Result_突破成败结果 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_SELL_DECISION_Sell_A_B_Test_Result_卖出A_B测试结果 -->|event| D_DATA_ENG[D-DATA_ENG]
+    %% D-SELL_DECISION -> D-EX_CORE (2 条)
+    D_SELL_DECISION_Self_Reflection_Agent_自反Agent -->|data| D_EX_CORE[D-EX_CORE]
+    D_SELL_DECISION_D_SELL -->|event| D_EX_CORE[D-EX_CORE]
+    %% D-SELL_DECISION -> D-EX_SOR (4 条)
+    D_SELL_DECISION_Self_Reflection_Agent_自反Agent -->|contract| D_EX_SOR[D-EX_SOR]
+    D_SELL_DECISION_Strategy_Specific_Stop_Framework策略类型→止损范式映射 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_SELL_DECISION_TTradeExecuted_做T执行完成事件 -->|event| D_EX_SOR[D-EX_SOR]
+    D_SELL_DECISION_Sell_Signal_Scorer卖出信号评分器 -->|event| D_EX_SOR[D-EX_SOR]
+    %% D-SELL_DECISION -> D-FACTOR (2 条)
+    D_SELL_DECISION_SellLoopFeedback_卖出闭环反馈事件 -->|contract| D_FACTOR[D-FACTOR]
+    D_SELL_DECISION_Sell_Audit_Report_卖出审计报告 -->|event| D_FACTOR[D-FACTOR]
+    %% D-SELL_DECISION -> D-GOVERNANCE (7 条)
+    D_SELL_DECISION_Stop_Loss_Strategy_Family止损策略族 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_SELL_DECISION_Position_Triage持仓分级器 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_SELL_DECISION_Position_Triage_Result_持仓分级结果 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_SELL_DECISION_Sell_Signal_Score_卖出信号评分 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_SELL_DECISION_Sell_Convergence_Result_多策略卖出共振结果 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_SELL_DECISION_D_SELL -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_SELL_DECISION_Sell_Execution_Quality_Tracker卖出执行质量追踪 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-SELL_DECISION -> D-INTEGRATION (5 条)
+    D_SELL_DECISION_Sell_Convergence_Result_多策略卖出共振结果 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_SELL_DECISION_StopLossTriggerReversalDetector_猎杀止损保护器 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_SELL_DECISION_Stop_Option_Pricer止损期权定价器 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_SELL_DECISION_Signal_Reversal_Detector_信号反转检测器 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_SELL_DECISION_Sell_Signal_Accuracy_Monitor卖出信号准确率监控 -->|data| D_INTEGRATION[D-INTEGRATION]
+    %% D-SELL_DECISION -> D-INTELLIGENCE (2 条)
+    D_SELL_DECISION_SellDecision_Contract_SellDecision_卖出决策契约 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SELL_DECISION_Take_Profit_Decision_Engine_止盈决策引擎 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-SELL_DECISION -> D-KNOWLEDGE (3 条)
+    D_SELL_DECISION_Stop_Cost_Estimate_止损成本估计 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_SELL_DECISION_SellSignalFuse___ent_SellSignalFused_卖出信号已融合 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_SELL_DECISION_Self_Reflection_Agent_自反Agent -->|config_depends| D_KNOWLEDGE[D-KNOWLEDGE]
+    %% D-SELL_DECISION -> D-MKT_DATA (2 条)
+    D_SELL_DECISION_Sell_Signal_Fusion_Engine卖出信号融合引擎 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_SELL_DECISION_Exit_Scenario_Plan_卖出情景预案 -->|data| D_MKT_DATA[D-MKT_DATA]
+    %% D-SELL_DECISION -> D-ML_TRAIN (3 条)
+    D_SELL_DECISION_Stop_Cost_Estimate_止损成本估计 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_SELL_DECISION_Sell_A_B_Test_Result_卖出A_B测试结果 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_SELL_DECISION_SellArbitrated_卖出仲裁完成事件 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-SELL_DECISION -> D-PF_CORE (3 条)
+    D_SELL_DECISION_SellDecision_Contract_SellDecision_卖出决策契约 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_SELL_DECISION_Signal_Reversal_Detector_信号反转检测器 -->|data| D_PF_CORE[D-PF_CORE]
+    D_SELL_DECISION_Sell_Decision____on_Arbitration_卖出决策必须经过融合仲裁 -->|event| D_PF_CORE[D-PF_CORE]
+    %% D-SELL_DECISION -> D-POSITION (5 条)
+    D_SELL_DECISION_Stop_Paradigm_Selection_止损范式选择 -->|contract| D_POSITION[D-POSITION]
+    D_SELL_DECISION_Sell_Signal_Score_卖出信号评分 -->|event| D_POSITION[D-POSITION]
+    D_SELL_DECISION_T_Trade_Instruction_做T指令 -->|data| D_POSITION[D-POSITION]
+    D_SELL_DECISION_SellDecided_卖出决策事件 -->|data| D_POSITION[D-POSITION]
+    D_SELL_DECISION_Sell_Decision_Domain_卖出决策域 -->|domain_dependency| D_POSITION[D-POSITION]
+    %% D-SELL_DECISION -> D-REPORTING (4 条)
+    D_SELL_DECISION_T_Trade_Coordinator做T决策协调器 -->|contract| D_REPORTING[D-REPORTING]
+    D_SELL_DECISION_Sell_Signal_Score_卖出信号评分 -->|contract| D_REPORTING[D-REPORTING]
+    D_SELL_DECISION_Stop_Hunting_Protector止损猎杀防护器 -->|config_depends| D_REPORTING[D-REPORTING]
+    D_SELL_DECISION_Stop_Option_Pricer止损期权定价器 -->|data| D_REPORTING[D-REPORTING]
+    %% D-SELL_DECISION -> D-RISK (14 条)
+    D_SELL_DECISION_Buy_Sell_Conflict_Arbitrator买卖冲突仲裁器 -->|event| D_RISK[D-RISK]
+    D_SELL_DECISION_Self_Reflection_Agent_自反Agent -->|data| D_RISK[D-RISK]
+    D_SELL_DECISION_SellArbitration_卖出仲裁 -->|contract| D_RISK[D-RISK]
+    D_SELL_DECISION_T_Trade_Instruction_做T指令 -->|data| D_RISK[D-RISK]
+    D_SELL_DECISION_Sell_Decision____on_Arbitration_卖出决策必须经过融合仲裁 -->|contract| D_RISK[D-RISK]
+    D_SELL_DECISION_TTradeExecuted_做T执行完成事件 -->|event| D_RISK[D-RISK]
+    D_SELL_DECISION_SellDecision_Contract_SellDecision_卖出决策契约 -->|event| D_RISK[D-RISK]
+    D_SELL_DECISION_Sell_Execution_Quality_Tracker卖出执行质量追踪 -->|data| D_RISK[D-RISK]
+    D_SELL_DECISION_SellArbitration_卖出仲裁 -->|contract| D_RISK[D-RISK]
+    D_SELL_DECISION_Sell_Execution_Quality_Tracker卖出执行质量追踪 -->|config_depends| D_RISK[D-RISK]
+    D_SELL_DECISION_Sell_Signal_卖出信号 -->|contract| D_RISK[D-RISK]
+    D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试 -->|config_depends| D_RISK[D-RISK]
+    D_SELL_DECISION_Scaling_Out_Architect分批退出架构师 -->|data| D_RISK[D-RISK]
+    D_SELL_DECISION_Sell_Decision_Domain_卖出决策域 -->|domain_dependency| D_RISK[D-RISK]
+    %% D-SELL_DECISION -> D-SECURITY (9 条)
+    D_SELL_DECISION_Stop_Option_Pricer止损期权定价器 -->|contract| D_SECURITY[D-SECURITY]
+    D_SELL_DECISION_Exit_Scenario_Planner卖出情景预案器 -->|data| D_SECURITY[D-SECURITY]
+    D_SELL_DECISION_Adjusted_Stop_Level_调整后止损位 -->|event| D_SECURITY[D-SECURITY]
+    D_SELL_DECISION_SellArbitrated_卖出仲裁完成事件 -->|contract| D_SECURITY[D-SECURITY]
+    D_SELL_DECISION_Take_Profit_Decision_Engine_止盈决策引擎 -->|event| D_SECURITY[D-SECURITY]
+    D_SELL_DECISION_Sell_Signal_Accuracy_Monitor卖出信号准确率监控 -->|data| D_SECURITY[D-SECURITY]
+    D_SELL_DECISION_Sell_Signal_Fusion_Engine卖出信号融合引擎 -->|data| D_SECURITY[D-SECURITY]
+    D_SELL_DECISION_Sell_Execution_Quality_Tracker卖出执行质量追踪 -->|data| D_SECURITY[D-SECURITY]
+    D_SELL_DECISION_Sell_Strategy_A_B_Tester卖出策略A_B测试 -->|event| D_SECURITY[D-SECURITY]
+    %% D-SELL_DECISION -> D-SHARED (1 条)
+    src_zephyr_sell_decision_api___init___py -->|contract| D_SHARED[D-SHARED]
+    %% D-SELL_DECISION -> D-SIGNAL (4 条)
+    D_SELL_DECISION_SellDecided_卖出决策事件 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_SELL_DECISION_SellLoopFeedback_卖出闭环反馈事件 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_SELL_DECISION_Stop_Loss_Decision_Engine_止损决策引擎 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_SELL_DECISION_Sell_Signal_Collector卖出信号收集器 -->|contract| D_SIGNAL[D-SIGNAL]
+
+    %% 统计
+    %% 域内依赖: 55 条
+    %% 跨域入边: 24 条
+    %% 跨域出边: 84 条

@@ -1,0 +1,228 @@
+%% D-GOV_RULE 域全景依赖图
+%% 生成时间: 2026-06-23 23:25:23
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 175, 依赖边数: 332
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_GOV_RULE[规则治理]
+        config_alert_rules_yaml["config/alert_rules.yaml [production]"]
+        config_budget_policy_yaml["config/budget_policy.yaml [production]"]
+        config_capacity_ai_context_policy_yaml["config/capacity/ai_context_policy.yaml [production]"]
+        config_capacity_sandbox_policy_yaml["config/capacity/sandbox_policy.yaml [production]"]
+        config_compression_policy_yaml["config/compression/policy.yaml [production]"]
+        config_context_rules_yaml["config/context_rules.yaml [production]"]
+        config_context_rules_v1_yaml["config/context_rules_v1.yaml [production]"]
+        config_data_survivorship_policy_yaml["config/data/survivorship_policy.yaml [production]"]
+        config_embedding_model_registry_yaml["config/embedding_model_registry.yaml [production]"]
+        config_feature_activation_policy_yaml["config/feature_activation_policy.yaml [production]"]
+        config_sli_registry_yaml["config/sli_registry.yaml [production]"]
+        data_asset_index_archive_migration_registry_yaml["...index/archive/migration_registry.yaml [production]"]
+        docs_01_policies_and_standards___alogs_ai_risk_register_yaml["...gistry/catalogs/ai_risk_register.yaml [production]"]
+        docs_01_policies_and_standards___gs_ai_session_registry_yaml["...try/catalogs/ai_session_registry.yaml [production]"]
+        docs_01_policies_and_standards___alogs_business_streams_yaml["...gistry/catalogs/business_streams.yaml [production]"]
+        docs_01_policies_and_standards___le_dependency_registry_yaml["...cross_module_dependency_registry.yaml [production]"]
+        docs_01_policies_and_standards___tract_tracker_registry_yaml["...rative_contract_tracker_registry.yaml [production]"]
+        docs_01_policies_and_standards___ogs_directory_registry_yaml["...stry/catalogs/directory_registry.yaml [production]"]
+        docs_01_policies_and_standards___etadata_index_registry_yaml["...document_metadata_index_registry.yaml [production]"]
+        docs_01_policies_and_standards___tmatter_field_registry_yaml["...alogs/frontmatter_field_registry.yaml [production]"]
+        docs_01_policies_and_standards___tional_domain_registry_yaml["...alogs/functional_domain_registry.yaml [production]"]
+        docs_01_policies_and_standards___catalogs_gate_registry_yaml["..._registry/catalogs/gate_registry.yaml [production]"]
+        docs_01_policies_and_standards___talogs_hard_boundaries_yaml["...egistry/catalogs/hard_boundaries.yaml [production]"]
+        docs_01_policies_and_standards___nfrastructure_registry_yaml["...catalogs/infrastructure_registry.yaml [production]"]
+        docs_01_policies_and_standards___ledge_article_registry_yaml["...alogs/knowledge_article_registry.yaml [production]"]
+        docs_01_policies_and_standards___ent_inventory_registry_yaml["...ster_document_inventory_registry.yaml [production]"]
+        docs_01_policies_and_standards___logs_project_path_tree_yaml["...istry/catalogs/project_path_tree.yaml [production]"]
+        docs_01_policies_and_standards____registry_master_index_yaml["...y/catalogs/registry_master_index.yaml [production]"]
+        docs_01_policies_and_standards___registry_of_registries_yaml[".../catalogs/registry_of_registries.yaml [production]"]
+        docs_01_policies_and_standards____rule_catalog_registry_yaml["...y/catalogs/rule_catalog_registry.yaml [production]"]
+        docs_01_policies_and_standards___ask_card_meta_registry_yaml["...catalogs/task_card_meta_registry.yaml [production]"]
+        docs_01_policies_and_standards____architecture_contract_yaml[".../contracts/architecture_contract.yaml [production]"]
+        docs_01_policies_and_standards___contract_mapping_table_yaml["...contracts/contract_mapping_table.yaml [production]"]
+        docs_01_policies_and_standards___el_capability_contract_yaml["...tracts/model_capability_contract.yaml [production]"]
+        docs_01_policies_and_standards___mas_frontmatter_schema_json["...istry/schemas/frontmatter_schema.json [production]"]
+        docs_01_policies_and_standards__registry_schemas_index_md["..._standards/_registry/schemas/index.md [production]"]
+        docs_01_policies_and_standards___mas_session_log_schema_yaml["...istry/schemas/session_log_schema.yaml [production]"]
+        docs_01_policies_and_standards___vel_planned_vocabulary_yaml["...utonomy_level_planned_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___ai_autonomy_vocabulary_yaml["...abularies/ai_autonomy_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___bility_slot_vocabulary_yaml["...es/ai_capability_slot_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___refs_status_vocabulary_yaml["...blueprint_refs_status_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___es_category_vocabulary_yaml["...vocabularies/category_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___ssification_vocabulary_yaml["...laries/classification_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards____created_by_vocabulary_yaml["...cabularies/created_by_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___elationship_vocabulary_yaml["...ved_from_relationship_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___es_doc_type_vocabulary_yaml["...vocabularies/doc_type_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___ries_domain_vocabulary_yaml["...y/vocabularies/domain_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___tion_policy_vocabulary_yaml["...ries/evolution_policy_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___ance_family_vocabulary_yaml["...ies/governance_family_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___es_language_vocabulary_yaml["...vocabularies/language_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___aries_layer_vocabulary_yaml["...ry/vocabularies/layer_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___view_status_vocabulary_yaml["...ularies/review_status_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___s_rule_form_vocabulary_yaml["...ocabularies/rule_form_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___afety_level_vocabulary_yaml["...bularies/safety_level_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___aries_scope_vocabulary_yaml["...ry/vocabularies/scope_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___s_stability_vocabulary_yaml["...ocabularies/stability_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___ries_status_vocabulary_yaml["...y/vocabularies/status_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___ularies_ttl_vocabulary_yaml["...stry/vocabularies/ttl_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards___rifiability_vocabulary_yaml["...ularies/verifiability_vocabulary.yaml [production]"]
+        docs_01_policies_and_standards_rules__index_yaml["...icies_and_standards/rules/_index.yaml [production]"]
+        docs_01_policies_and_standards___ile_operation_security_yaml["...trae_001_file_operation_security.yaml [production]"]
+        docs_01_policies_and_standards___ti_orphan_search_first_yaml["...rae_002_anti_orphan_search_first.yaml [production]"]
+        docs_01_policies_and_standards____granularity_threshold_yaml["...e_003_task_granularity_threshold.yaml [production]"]
+        docs_01_policies_and_standards___lel_atomic_transaction_yaml["..._004_parallel_atomic_transaction.yaml [production]"]
+        docs_01_policies_and_standards___odification_governance_yaml["...trae_005_modification_governance.yaml [production]"]
+        docs_01_policies_and_standards___allucination_structure_yaml["...006_anti_hallucination_structure.yaml [production]"]
+        docs_01_policies_and_standards___hallucination_behavior_yaml["..._007_anti_hallucination_behavior.yaml [production]"]
+        docs_01_policies_and_standards___i_hallucination_output_yaml["...ae_008_anti_hallucination_output.yaml [production]"]
+        docs_01_policies_and_standards___i_hallucination_safety_yaml["...ae_009_anti_hallucination_safety.yaml [production]"]
+        docs_01_policies_and_standards___de_naming_organization_yaml["...rae_010_code_naming_organization.yaml [production]"]
+        docs_01_policies_and_standards___e_011_code_type_import_yaml[".../rules/trae_011_code_type_import.yaml [production]"]
+        docs_01_policies_and_standards___012_code_test_security_yaml["...ules/trae_012_code_test_security.yaml [production]"]
+        docs_01_policies_and_standards___arch_cross_package_dep_yaml[".../trae_013_arch_cross_package_dep.yaml [production]"]
+        docs_01_policies_and_standards___ch_blueprint_alignment_yaml["...rae_014_arch_blueprint_alignment.yaml [production]"]
+        docs_01_policies_and_standards___arch_path_registration_yaml[".../trae_015_arch_path_registration.yaml [production]"]
+        docs_01_policies_and_standards____arch_governance_order_yaml["...s/trae_017_arch_governance_order.yaml [production]"]
+        docs_01_policies_and_standards___avior_code_prohibition_yaml["...ae_018_behavior_code_prohibition.yaml [production]"]
+        docs_01_policies_and_standards___r_security_prohibition_yaml["...19_behavior_security_prohibition.yaml [production]"]
+        docs_01_policies_and_standards___governance_prohibition_yaml["..._behavior_governance_prohibition.yaml [production]"]
+        docs_01_policies_and_standards___vior_other_prohibition_yaml["...e_021_behavior_other_prohibition.yaml [production]"]
+        docs_01_policies_and_standards___avior_conditional_code_yaml["...ae_022_behavior_conditional_code.yaml [production]"]
+        docs_01_policies_and_standards___conditional_governance_yaml["..._behavior_conditional_governance.yaml [production]"]
+        docs_01_policies_and_standards____methodology_diagnosis_yaml["...s/trae_024_methodology_diagnosis.yaml [production]"]
+        docs_01_policies_and_standards___5_methodology_decision_yaml["...es/trae_025_methodology_decision.yaml [production]"]
+        docs_01_policies_and_standards___26_methodology_quality_yaml["...les/trae_026_methodology_quality.yaml [production]"]
+        docs_01_policies_and_standards___hodology_collaboration_yaml["...ae_027_methodology_collaboration.yaml [production]"]
+        docs_01_policies_and_standards___8_doc_structure_naming_yaml["...es/trae_028_doc_structure_naming.yaml [production]"]
+        docs_01_policies_and_standards___doc_operation_security_yaml[".../trae_029_doc_operation_security.yaml [production]"]
+        docs_01_policies_and_standards___doc_numbering_metadata_yaml[".../trae_030_doc_numbering_metadata.yaml [production]"]
+        docs_01_policies_and_standards___31_security_key_access_yaml["...les/trae_031_security_key_access.yaml [production]"]
+        docs_01_policies_and_standards___e_032_module_lifecycle_yaml[".../rules/trae_032_module_lifecycle.yaml [production]"]
+        docs_01_policies_and_standards___dule_registration_sync_yaml["...rae_033_module_registration_sync.yaml [production]"]
+        docs_01_policies_and_standards___034_task_card_standard_yaml["...ules/trae_034_task_card_standard.yaml [production]"]
+        docs_01_policies_and_standards___6_arch_gate_transition_yaml["...es/trae_036_arch_gate_transition.yaml [production]"]
+        docs_01_policies_and_standards___alification_versioning_yaml["...37_arch_qualification_versioning.yaml [production]"]
+        docs_01_policies_and_standards___038_arch_ctr_injection_yaml["...ules/trae_038_arch_ctr_injection.yaml [production]"]
+        docs_01_policies_and_standards___e_040_ai_model_routing_yaml[".../rules/trae_040_ai_model_routing.yaml [production]"]
+        docs_01_policies_and_standards___ta_rule_classification_yaml["...rae_041_meta_rule_classification.yaml [production]"]
+        docs_01_policies_and_standards___042_meta_rule_standard_yaml["...ules/trae_042_meta_rule_standard.yaml [production]"]
+        docs_01_policies_and_standards___043_meta_rule_metadata_yaml["...ules/trae_043_meta_rule_metadata.yaml [production]"]
+        %% ... 还有 75 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_governance_rule_enforcement_capability_checker_py -->|import_depends| src_zephyr_governance_rule_enforcement_cbac_matrix_py
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_gate_types_py
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_risk_ssot_py
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enf____001_circular_dependency_py
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enf___3_contract_compatibility_py
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enf___iants_zero_residue_check_py
+    src_zephyr_governance_rule_enforcement_gate_pipeline_py -->|import_depends| src_zephyr_governance_rule_enforcement_gate_context_py
+    src_zephyr_governance_rule_enforcement_gate_simulator_py -->|import_depends| src_zephyr_governance_rule_enforcement_gate_context_py
+    src_zephyr_governance_rule_enforcement_gate_simulator_py -->|import_depends| src_zephyr_governance_rule_enforcement_gate_pipeline_py
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enf___ment_ai_capability_guard_py
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enf___t_end_to_end_walkthrough_py
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enforcement_gate_override_py
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enforcement_gate_simulator_py
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enf____integration_test_runner_py
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enforcement_kiss_enforcer_py
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enforcement_secrets_guard_py
+    src_zephyr_governance_rule_enf___ypes_check_type_registry_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___ypes_check_type_registry_py -->|import_depends| src_zephyr_governance_rule_enforcement___init___py
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-AUTONOMY_CORE -> D-GOV_RULE (1 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    %% D-GOVERNANCE -> D-GOV_RULE (269 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_constitu___te_constitutional_update_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enf___t_adversarial_validation_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enf___t_adversarial_strategies_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    %% D-GOV_AUDIT -> D-GOV_RULE (1 条)
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_context_py
+    %% D-INTEGRATION -> D-GOV_RULE (2 条)
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    %% D-INTELLIGENCE -> D-GOV_RULE (2 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
+    %% D-SECURITY -> D-GOV_RULE (4 条)
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_types_py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    %% D-TRADING -> D-GOV_RULE (4 条)
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_triple_alignment_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_rule_enf___ent_task_completion_gate_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_triple_alignment_py
+    D_TRADING[D-TRADING] -->|contract| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-GOV_RULE -> D-BEHAVIORAL_AUDIT (1 条)
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    %% D-GOV_RULE -> D-GOVERNANCE (2 条)
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_governance_rule_enf___01_circular_dependency_yaml -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-GOV_RULE -> D-GOV_AUDIT (2 条)
+    src_zephyr_governance_rule_enforcement_capability_checker_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_governance_rule_enforcement_gate_override_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    %% D-GOV_RULE -> D-GOV_DRIFT (4 条)
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
+    %% D-GOV_RULE -> D-INTEGRATION (10 条)
+    src_zephyr_governance_constitu___te_constitutional_update_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enf___ontract_template_manager_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enforcement_gate_types_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enforcement_task_types_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enforcement_task_types_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_governance_rule_enforcement_task_types_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    %% D-GOV_RULE -> D-SHARED (9 条)
+    src_zephyr_governance_constitu___te_constitutional_update_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_rule_enf___ent_task_completion_gate_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_governance_rule_enf___3_contract_compatibility_py -->|import_depends| D_SHARED[D-SHARED]
+
+    %% 统计
+    %% 域内依赖: 21 条
+    %% 跨域入边: 283 条
+    %% 跨域出边: 28 条
