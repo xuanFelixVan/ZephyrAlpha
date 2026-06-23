@@ -33,7 +33,7 @@ from zephyr.integration.shared_08.contracts.runtime_types import RuntimeConfig
 from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 from zephyr.trading.auto_task_generator import AutoTaskGenerator
 
-PROJECT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def main() -> None:
