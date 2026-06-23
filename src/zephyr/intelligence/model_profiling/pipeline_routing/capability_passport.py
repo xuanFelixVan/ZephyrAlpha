@@ -44,7 +44,7 @@ from typing import Any
 
 _log = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
 PASSPORTS_DIR = PROJECT_ROOT / "data" / "brain" / "passports"
 
 # 各能力类型的精度及格线

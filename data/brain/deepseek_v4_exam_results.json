@@ -1,0 +1,178 @@
+[
+  {
+    "variant": "deepseek-v4-flash-thinking",
+    "model": "deepseek-v4-flash",
+    "thinking": true,
+    "exam_timestamp": "2026-06-23T13:20:37.150603+00:00",
+    "exam_duration_seconds": 315.9,
+    "overall_grade": "B+",
+    "overall_score": 0.793,
+    "breadth_score": 1.0,
+    "breadth_passed": 9,
+    "breadth_total": 9,
+    "breadth_failed": [],
+    "depth_score": 0.63,
+    "hallucination_rate": 0.111,
+    "fabrication_rate": 0.111,
+    "inconsistency_rate": 0.778,
+    "refusal_rate": 0.0,
+    "speed_avg_latency_ms": 5728.8,
+    "speed_p50_ms": 4568.3,
+    "speed_p95_ms": 11986.4,
+    "safe_capabilities": [
+      "tag_completion",
+      "summary_extraction",
+      "naming_suggest",
+      "refactor",
+      "code_generate",
+      "dead_code_removal"
+    ],
+    "unsafe_capabilities": [
+      "task_classification",
+      "anomaly_triage",
+      "code_fix"
+    ],
+    "recommendations_note": "code_fix 精度不足, 建议使用更强模型做代码修改类任务",
+    "cost": {
+      "total_cost_rmb": 0.056041,
+      "input_tokens": 5027,
+      "output_tokens": 25507,
+      "total_tokens": 30534,
+      "api_calls": 54,
+      "pricing_input_per_1M_rmb": 1.0,
+      "pricing_output_per_1M_rmb": 2.0
+    }
+  },
+  {
+    "variant": "deepseek-v4-flash-non-thinking",
+    "model": "deepseek-v4-flash",
+    "thinking": false,
+    "exam_timestamp": "2026-06-23T13:25:53.087600+00:00",
+    "exam_duration_seconds": 113.8,
+    "overall_grade": "B+",
+    "overall_score": 0.781,
+    "breadth_score": 1.0,
+    "breadth_passed": 9,
+    "breadth_total": 9,
+    "breadth_failed": [],
+    "depth_score": 0.5623333333333334,
+    "hallucination_rate": 0.0,
+    "fabrication_rate": 0.0,
+    "inconsistency_rate": 0.0,
+    "refusal_rate": 0.0,
+    "speed_avg_latency_ms": 2092.2,
+    "speed_p50_ms": 1867.3,
+    "speed_p95_ms": 2960.1,
+    "safe_capabilities": [
+      "summary_extraction",
+      "refactor",
+      "code_generate",
+      "dead_code_removal"
+    ],
+    "unsafe_capabilities": [
+      "task_classification",
+      "tag_completion",
+      "naming_suggest",
+      "anomaly_triage",
+      "code_fix"
+    ],
+    "recommendations_note": "code_fix 精度不足, 建议使用更强模型做代码修改类任务",
+    "cost": {
+      "total_cost_rmb": 0.012753,
+      "input_tokens": 5027,
+      "output_tokens": 3863,
+      "total_tokens": 8890,
+      "api_calls": 54,
+      "pricing_input_per_1M_rmb": 1.0,
+      "pricing_output_per_1M_rmb": 2.0
+    }
+  },
+  {
+    "variant": "deepseek-v4-pro-thinking",
+    "model": "deepseek-v4-pro",
+    "thinking": true,
+    "exam_timestamp": "2026-06-23T13:27:46.932698+00:00",
+    "exam_duration_seconds": 460.8,
+    "overall_grade": "B+",
+    "overall_score": 0.751,
+    "breadth_score": 1.0,
+    "breadth_passed": 9,
+    "breadth_total": 9,
+    "breadth_failed": [],
+    "depth_score": 0.5022222222222222,
+    "hallucination_rate": 0.0,
+    "fabrication_rate": 0.0,
+    "inconsistency_rate": 0.778,
+    "refusal_rate": 0.0,
+    "speed_avg_latency_ms": 8849.4,
+    "speed_p50_ms": 7798.6,
+    "speed_p95_ms": 19911.0,
+    "safe_capabilities": [
+      "summary_extraction",
+      "refactor",
+      "code_generate",
+      "dead_code_removal"
+    ],
+    "unsafe_capabilities": [
+      "task_classification",
+      "tag_completion",
+      "naming_suggest",
+      "anomaly_triage",
+      "code_fix"
+    ],
+    "recommendations_note": "code_fix 精度不足, 建议使用更强模型做代码修改类任务",
+    "cost": {
+      "total_cost_rmb": 0.199809,
+      "input_tokens": 5027,
+      "output_tokens": 30788,
+      "total_tokens": 35815,
+      "api_calls": 54,
+      "pricing_input_per_1M_rmb": 3.0,
+      "pricing_output_per_1M_rmb": 6.0
+    }
+  },
+  {
+    "variant": "deepseek-v4-pro-non-thinking",
+    "model": "deepseek-v4-pro",
+    "thinking": false,
+    "exam_timestamp": "2026-06-23T13:35:27.755634+00:00",
+    "exam_duration_seconds": 133.2,
+    "overall_grade": "B+",
+    "overall_score": 0.775,
+    "breadth_score": 1.0,
+    "breadth_passed": 9,
+    "breadth_total": 9,
+    "breadth_failed": [],
+    "depth_score": 0.5493333333333333,
+    "hallucination_rate": 0.0,
+    "fabrication_rate": 0.0,
+    "inconsistency_rate": 0.444,
+    "refusal_rate": 0.0,
+    "speed_avg_latency_ms": 2488.4,
+    "speed_p50_ms": 1959.0,
+    "speed_p95_ms": 4691.2,
+    "safe_capabilities": [
+      "summary_extraction",
+      "code_generate",
+      "dead_code_removal"
+    ],
+    "unsafe_capabilities": [
+      "task_classification",
+      "tag_completion",
+      "naming_suggest",
+      "anomaly_triage",
+      "code_fix",
+      "refactor"
+    ],
+    "recommendations_note": "code_fix, refactor 精度不足, 建议使用更强模型做代码修改类任务",
+    "cost": {
+      "total_cost_rmb": 0.040617,
+      "input_tokens": 5027,
+      "output_tokens": 4256,
+      "total_tokens": 9283,
+      "api_calls": 54,
+      "pricing_input_per_1M_rmb": 3.0,
+      "pricing_output_per_1M_rmb": 6.0
+    }
+  }
+]
