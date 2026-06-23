@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_mcp | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md
 """ZephyrAlpha MCP (Model Context Protocol) 子包。
 
 八个 MCP 服务端通过 stdio 协议对外暴露内部系统能力：

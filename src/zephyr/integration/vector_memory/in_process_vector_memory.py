@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_in_process_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
 
 # [MODULE] zephyr.integration.vector_memory.in_process_vector_memory
 
@@ -149,12 +149,12 @@ class InProcessVectorMemory:
         self._index_health_monitor = IndexHealthMonitor(self._collection_manager)
 
         from zephyr.integration.vector_memory.bridge_layer import BridgeLayer
-        from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
         from zephyr.integration.vector_memory.vector_bridge import VectorBridge
 
         self._bridge_layer = BridgeLayer(self._collection_manager)
         self._vector_bridge = VectorBridge(self)
-        self._in_memory_backend = InMemoryMemoryBackend()
+        # InMemoryMemoryBackend 惰性创建——仅在所有检索路径失败时才实例化（对标 Netflix Hystrix fallback 按需触发）
+        self._in_memory_backend: Any | None = None
 
         self._started = True
         _logger.info(
@@ -234,6 +234,19 @@ class InProcessVectorMemory:
             metadata=meta,
         )
 
+    def _get_in_memory_backend(self) -> Any:
+        """惰性创建 InMemoryMemoryBackend——仅在所有检索路径失败时才实例化。
+
+        对标 Netflix Hystrix：fallback 按需触发，不预先创建。
+        蓝图 §6.2 退化矩阵 L3 级别：双嵌入模型全不可用 → InMemory 零向量检索。
+        """
+        if self._in_memory_backend is None:
+            from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+
+            self._in_memory_backend = InMemoryMemoryBackend()
+            _logger.warning("VMS: 所有检索路径失败，降级到 InMemoryMemoryBackend (L3)")
+        return self._in_memory_backend
+
     def search(
         self,
         collection_name: str,
@@ -267,31 +280,35 @@ class InProcessVectorMemory:
                 _logger.debug("HybridRetriever 检索失败，降级为原始 EmbeddingRouter 检索")
 
         try:
-            if (
-                self._started and self._embedding_router.bge_m3_available
-            ) or self._embedding_router.bge_small_available:
-                query_embedding = self._embedding_router.embed(query, collection_name)
-                results = col.query(
-                    query_embeddings=[query_embedding.tolist()],
-                    n_results=min(k, col.count()),
-                )
-            else:
+            try:
+                if (
+                    self._started and self._embedding_router.bge_m3_available
+                ) or self._embedding_router.bge_small_available:
+                    query_embedding = self._embedding_router.embed(query, collection_name)
+                    results = col.query(
+                        query_embeddings=[query_embedding.tolist()],
+                        n_results=min(k, col.count()),
+                    )
+                else:
+                    results = col.query(query_texts=[query], n_results=min(k, col.count()))
+            except Exception:
                 results = col.query(query_texts=[query], n_results=min(k, col.count()))
-        except Exception:
-            results = col.query(query_texts=[query], n_results=min(k, col.count()))
 
-        hits: list[dict[str, Any]] = []
-        if results.get("ids") and results["ids"][0]:
-            for i, doc_id in enumerate(results["ids"][0]):
-                hit: dict[str, Any] = {"id": doc_id}
-                if results.get("documents") and results["documents"][0]:
-                    hit["content"] = results["documents"][0][i]
-                if results.get("distances") and results["distances"][0]:
-                    hit["distance"] = results["distances"][0][i]
-                if results.get("metadatas") and results["metadatas"][0]:
-                    hit["metadata"] = results["metadatas"][0][i]
-                hits.append(hit)
-        return hits
+            hits: list[dict[str, Any]] = []
+            if results.get("ids") and results["ids"][0]:
+                for i, doc_id in enumerate(results["ids"][0]):
+                    hit: dict[str, Any] = {"id": doc_id}
+                    if results.get("documents") and results["documents"][0]:
+                        hit["content"] = results["documents"][0][i]
+                    if results.get("distances") and results["distances"][0]:
+                        hit["distance"] = results["distances"][0][i]
+                    if results.get("metadatas") and results["metadatas"][0]:
+                        hit["metadata"] = results["metadatas"][0][i]
+                    hits.append(hit)
+            return hits
+        except Exception:
+            _logger.warning("VMS: ChromaDB 检索全部失败，降级到 InMemoryMemoryBackend (L3)")
+            return self._get_in_memory_backend().search(query, k=k)
 
     def recall(
         self,

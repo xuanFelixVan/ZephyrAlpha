@@ -1,9 +1,7 @@
 # [A_module] module_id=MOD-INF_resource_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
-
-# [MODULE] zephyr.infrastructure.resource_provider
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §[MODULE] zephyr.infrastructure.resource_provider
 
 # [INVARIANTS] none
 
@@ -126,7 +124,7 @@ class ResourceProvider:
         return {"contents": contents}
 
     def _blueprint_handler(self) -> str:
-        path = REPO_ROOT / "docs/03_modules/_cross_layer/mcp-servers/blueprint.md"
+        path = REPO_ROOT / "docs/03_modules/_cross_layer/mcp_servers/blueprint.md"
         if path.exists():
             return path.read_text(encoding="utf-8")
         return "# Blueprint not found"

@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_in_memory_memory_backend | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
 
 # [MODULE] zephyr.integration.vector_memory.in_memory_memory_backend
 
