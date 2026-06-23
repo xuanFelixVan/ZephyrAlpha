@@ -96,9 +96,13 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("")
     lines.append("> 这是你查看 ZephyrAlpha 架构的入口。从这里出发，你能找到所有架构相关的文档和图。")
     lines.append(">")
-    lines.append("> **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph.db），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。")
+    lines.append(
+        "> **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph.db），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。"
+    )
     lines.append(">")
-    lines.append(f"> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：{now}")
+    lines.append(
+        f"> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：{now}"
+    )
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -106,12 +110,12 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     # 文档库结构
     lines.append("## 文档库结构")
     lines.append("")
-    lines.append("| 文件夹 | 是什么 | 文件数 | 维护方式 |")
-    lines.append("|--------|--------|:---:|--------|")
-    lines.append("| `0_总览入口/` | 你现在看的这个文件，整个文档库的导航地图 | 1 | 自动生成 |")
-    lines.append(f"| `1_全局架构图/` | 全局视图（路径树、跨域矩阵、集成拓扑图） | {len(global_files)} | 自动生成 |")
-    lines.append(f"| `2_域架构文档/` | 每个功能域的详细文档和依赖图 | {len(domain_files)} | 自动生成 |")
-    lines.append(f"| `3_治理报告/` | 容量报告、约束违规报告、设计态vs运营态报告 | {len(report_files)} | 自动生成 |")
+    lines.append("| 文件夹 | 是什么 | 谁维护 | 什么时候变 |")
+    lines.append("|--------|--------|--------|-----------|")
+    lines.append("| `0_总览入口/` | 你现在看的这个文件，整个文档库的导航地图 | 自动生成 | 全景图更新时 |")
+    lines.append(f"| `1_全局架构图/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 {len(global_files)} 个文件 | 自动生成 | 全景图更新时 |")
+    lines.append(f"| `2_域架构文档/` | 每个功能域的详细文档和依赖图，共 {len(domain_files)} 个文件 | 自动生成 | 全景图更新时 |")
+    lines.append(f"| `3_治理报告/` | 容量报告、约束违规报告、设计态vs运营态报告，共 {len(report_files)} 个文件 | 自动生成 | 全景图更新时 |")
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -162,18 +166,6 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("---")
     lines.append("")
 
-    # 全景图统计
-    lines.append("## 全景图统计")
-    lines.append("")
-    lines.append("| 指标 | 数值 |")
-    lines.append("|------|------|")
-    lines.append(f"| 功能域总数 | {stats['domain_count']} |")
-    lines.append(f"| 节点总数 | {stats['node_count']:,} |")
-    lines.append(f"| 依赖边总数 | {stats['edge_count']:,} |")
-    lines.append("")
-    lines.append("---")
-    lines.append("")
-
     # 功能域速览
     lines.append("## 功能域速览")
     lines.append("")
@@ -205,32 +197,7 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("---")
     lines.append("")
 
-    # 文件清单
-    lines.append("## 当前文件清单")
-    lines.append("")
-
-    lines.append("### 1_全局架构图/")
-    lines.append("")
-    for f in global_files:
-        lines.append(f"- `{f}`")
-    lines.append("")
-
-    lines.append("### 2_域架构文档/（前20个）")
-    lines.append("")
-    for f in domain_files[:20]:
-        lines.append(f"- `{f}`")
-    if len(domain_files) > 20:
-        lines.append(f"- ... 共 {len(domain_files)} 个文件")
-    lines.append("")
-
-    lines.append("### 3_治理报告/")
-    lines.append("")
-    for f in report_files:
-        lines.append(f"- `{f}`")
-    lines.append("")
-
-    lines.append("---")
-    lines.append("")
+    # 修订记录
     lines.append("## 修订记录")
     lines.append("")
     lines.append("| 日期 | 说明 |")
