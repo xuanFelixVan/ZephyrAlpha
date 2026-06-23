@@ -1432,9 +1432,12 @@ class TaskRepository:
 
         策略:
         1. git add files_in_scope 中存在的文件
-        2. git commit --no-verify (跳过pre-commit hook避免循环)
+        2. git commit --no-verify -- <files> (只提交files_in_scope，不影响其他staged文件)
         3. commit message 含 task_id
         4. 无文件可提交时跳过(不报错)
+
+        修复(2026-06-23): 原实现 git commit 不带文件参数会提交所有 staged 文件，
+        导致其他 session staged 的文件被意外提交。改为 git commit -- <files> 只提交指定文件。
         """
         import subprocess
 
@@ -1455,19 +1458,19 @@ class TaskRepository:
             logger.warning("DM-202918: git add 失败 (task=%s): %s", task_id, result.stderr.strip())
             return
 
-        # 检查是否有 staged 变更
+        # 检查 files_in_scope 中是否有 staged 变更（只检查这些文件，不检查其他 staged 文件）
         diff_result = subprocess.run(
-            ["git", "diff", "--cached", "--quiet"],
+            ["git", "diff", "--cached", "--quiet"] + existing_files,
             capture_output=True, text=True, timeout=30
         )
         # exit 0 = 无变更, exit 1 = 有变更
         if diff_result.returncode == 0:
-            logger.info("DM-202918: 无staged变更，跳过commit (task=%s)", task_id)
+            logger.info("DM-202918: files_in_scope无staged变更，跳过commit (task=%s)", task_id)
             return
 
-        # git commit --no-verify
+        # git commit --no-verify -- <files> (只提交 files_in_scope，不影响其他 staged 文件)
         commit_msg = f"auto-commit(DM-202918): task {task_id} COMPLETED"
-        commit_cmd = ["git", "commit", "--no-verify", "-m", commit_msg]
+        commit_cmd = ["git", "commit", "--no-verify", "-m", commit_msg, "--"] + existing_files
         commit_result = subprocess.run(commit_cmd, capture_output=True, text=True, timeout=60)
         if commit_result.returncode != 0:
             logger.warning("DM-202918: git commit 失败 (task=%s): %s", task_id, commit_result.stderr.strip())

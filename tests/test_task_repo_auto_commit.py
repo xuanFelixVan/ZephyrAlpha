@@ -51,16 +51,26 @@ class TestAutoCommitOnCompletion:
 
             assert mock_run.call_count == 3
             add_call = mock_run.call_args_list[0]
+            diff_call = mock_run.call_args_list[1]
             commit_call = mock_run.call_args_list[2]
 
             assert "git" in add_call.args[0]
             assert "add" in add_call.args[0]
             assert "/fake/path/file1.py" in add_call.args[0]
 
+            # 修复验证: git diff --cached --quiet 应包含文件路径（只检查 files_in_scope）
+            assert "diff" in diff_call.args[0]
+            assert "--cached" in diff_call.args[0]
+            assert "--quiet" in diff_call.args[0]
+            assert "/fake/path/file1.py" in diff_call.args[0]
+
             assert "git" in commit_call.args[0]
             assert "commit" in commit_call.args[0]
             assert "--no-verify" in commit_call.args[0]
             assert any("DM-TEST-001" in str(arg) for arg in commit_call.args[0])
+            # 修复验证: commit 命令应包含 -- 和文件路径（只提交 files_in_scope）
+            assert "--" in commit_call.args[0]
+            assert "/fake/path/file1.py" in commit_call.args[0]
 
     def test_auto_commit_skips_when_no_files_in_scope(self):
         """验证 files_in_scope 为空时跳过。"""
@@ -151,6 +161,72 @@ class TestAutoCommitOnCompletion:
             commit_msg = commit_args[msg_idx]
             assert "DM-TEST-006" in commit_msg
             assert "COMPLETED" in commit_msg
+
+    def test_auto_commit_only_commits_files_in_scope(self):
+        """修复验证: git commit 命令必须带 -- <files>，只提交 files_in_scope 中的文件。
+
+        根因: 原实现 git commit 不带文件参数，会提交所有 staged 文件，
+        导致其他 session staged 的文件被意外提交（commit 725022881 的 bug）。
+        修复: git commit --no-verify -m <msg> -- <files> 只提交指定文件。
+        """
+        repo = TaskRepository()
+
+        task_obj = MagicMock()
+        task_obj.files_in_scope = ["/fake/path/target_file.py"]
+        task_obj.task_id = "DM-TEST-007"
+
+        with patch("os.path.isfile", return_value=True), \
+             patch("subprocess.run") as mock_run:
+            mock_run.side_effect = [
+                MagicMock(returncode=0, stdout="", stderr=""),  # git add
+                MagicMock(returncode=1, stdout="", stderr=""),  # git diff --cached (有变更)
+                MagicMock(returncode=0, stdout="ok", stderr=""),  # git commit
+            ]
+
+            repo._auto_commit_on_completion("DM-TEST-007", task_obj)
+
+            commit_call = mock_run.call_args_list[2]
+            commit_args = commit_call.args[0]
+
+            # 验证 commit 命令以 -- 分隔文件路径
+            assert "--" in commit_args
+            dash_idx = commit_args.index("--")
+            files_after_dash = commit_args[dash_idx + 1:]
+            # 验证 -- 后面只有 files_in_scope 中的文件
+            assert "/fake/path/target_file.py" in files_after_dash
+            # 验证 -- 后面没有其他文件（只有 files_in_scope 中的文件）
+            assert len(files_after_dash) == 1, f"应只提交1个文件，实际: {files_after_dash}"
+
+    def test_auto_commit_diff_checks_only_files_in_scope(self):
+        """修复验证: git diff --cached --quiet 只检查 files_in_scope 中的文件。
+
+        根因: 原实现 git diff --cached --quiet 不带文件参数，会检查所有 staged 文件，
+        如果其他 session staged 了文件，会误判为"有变更"并触发 commit。
+        修复: git diff --cached --quiet -- <files> 只检查 files_in_scope。
+        """
+        repo = TaskRepository()
+
+        task_obj = MagicMock()
+        task_obj.files_in_scope = ["/fake/path/my_file.py"]
+        task_obj.task_id = "DM-TEST-008"
+
+        with patch("os.path.isfile", return_value=True), \
+             patch("subprocess.run") as mock_run:
+            mock_run.side_effect = [
+                MagicMock(returncode=0, stdout="", stderr=""),  # git add
+                MagicMock(returncode=0, stdout="", stderr=""),  # git diff --cached (无变更)
+            ]
+
+            repo._auto_commit_on_completion("DM-TEST-008", task_obj)
+
+            diff_call = mock_run.call_args_list[1]
+            diff_args = diff_call.args[0]
+
+            # 验证 diff 命令包含文件路径
+            assert "/fake/path/my_file.py" in diff_args
+            # 验证没有触发 commit（因为 files_in_scope 无变更）
+            commit_calls = [c for c in mock_run.call_args_list if "commit" in c.args[0]]
+            assert len(commit_calls) == 0, "files_in_scope 无变更时不应触发 commit"
 
 
 class TestTransitionIntegration:
