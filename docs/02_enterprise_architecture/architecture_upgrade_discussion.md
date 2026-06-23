@@ -1148,7 +1148,7 @@ STEP 3: 规则文件渐进加载 — 只加载相关规则子集
 
 > T2/T3/T4/T5 已解决（阶段1 STEP 1-2已完成）：T2 market.duckdb DDL见§18.7；T3 governance.db合并见§18.3.1已完成✅；T4 depgraph.db DDL见§18.5；T5 45能力→域映射已由D44-D46裁定。
 > T10-T13 已裁定删除：T10过时(D38/D41/D42)、T11已由D44给出、T12已裁定(D45/D46)、T13已裁定(D48)。
-> T6/T7/T17 已裁定（2026-06-22 客观架构师裁定，详见 architecture_decisions_pending.md）：
+> T6/T7/T17 已裁定（2026-06-22 客观架构师裁定，详见 _归档/architecture_decisions_pending.md（已归档））：
 > - **T6 事件类型体系** ✅已裁定：任务治理域事件已实施（选项B Enum类，11事件）；交易链事件延后阶段8（简化为4-5个业界标准事件）；DomainEventRegistry 注册表永不实施（过度设计）；R1-2 AsyncEventBus 延后阶段2
 > - **T7 三级配置结构** ✅已裁定：蓝图内联配置✅ + config/按功能分目录✅ 已满足需求；`config/global.yaml` 全局配置永不实施（当前，单机单环境无需求）；`config/domains/` 域级配置永不实施（61个域配置文件=过度抽象，违反"少一层抽象=少一个幻觉源"原则）
 > - **T17 模块级[DOMAIN]字段声明** ✅已完成：STEP 1-4 已完成（生成器支持[DOMAIN]字段+22个跨域文件已标注），STEP 5 待阶段5物理搬家后清理
