@@ -128,26 +128,26 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("### 想快速了解系统")
     lines.append("")
     lines.append("1. 看本文件了解文档库结构")
-    lines.append("2. 看 `1_全局架构图/物理路径树_中文.md` 了解项目物理结构（文件怎么组织的）")
-    lines.append("3. 看 `1_全局架构图/集成拓扑图.mmd` 了解43个域之间怎么互相依赖")
-    lines.append("4. 看 `1_全局架构图/跨域依赖矩阵.md` 了解域间依赖的详细数据")
+    lines.append("2. 看 `1_全局架构图/path_tree_zh.md` 了解项目物理结构（文件怎么组织的）")
+    lines.append("3. 看 `1_全局架构图/integration_topology.md` 了解43个域之间怎么互相依赖")
+    lines.append("4. 看 `1_全局架构图/cross_domain_matrix.md` 了解域间依赖的详细数据")
     lines.append("")
 
     # 了解某个功能域
     lines.append("### 想了解某个功能域")
     lines.append("")
-    lines.append("1. 去 `2_域架构文档/` 找到对应域的文档（如 `D-TRADING_交易运营.md`）")
+    lines.append("1. 去 `2_域架构文档/` 找到对应域的文档（如 `53_d_trading.md`）")
     lines.append("2. 看域文档了解这个域有哪些模块、每个模块干什么")
-    lines.append("3. 看对应的 `_依赖图.mmd` 了解这个域内部怎么依赖、跟其他域怎么依赖")
-    lines.append("4. 看 `2_域架构文档/域索引总览.md` 了解所有域的清单")
+    lines.append("3. 看域文档内嵌的 Mermaid 依赖图了解这个域内部怎么依赖、跟其他域怎么依赖")
+    lines.append("4. 看 `2_域架构文档/domain_index.md` 了解所有域的清单")
     lines.append("")
 
     # 看系统健康度
     lines.append("### 想看系统健康度")
     lines.append("")
-    lines.append("1. 看 `3_治理报告/容量报告.md` 了解各域模块数（有没有超标）")
-    lines.append("2. 看 `3_治理报告/约束违规报告.md` 了解有哪些违规")
-    lines.append("3. 看 `3_治理报告/设计态vs运营态.md` 了解设计态到运营态的迁移进度")
+    lines.append("1. 看 `3_治理报告/capacity_report.md` 了解各域模块数（有没有超标）")
+    lines.append("2. 看 `3_治理报告/constraint_violations.md` 了解有哪些违规")
+    lines.append("3. 看 `3_治理报告/design_vs_production.md` 了解设计态到运营态的迁移进度")
     lines.append("")
 
     lines.append("---")
@@ -169,7 +169,7 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     # 功能域速览
     lines.append("## 功能域速览")
     lines.append("")
-    lines.append("> 完整列表见 `2_域架构文档/域索引总览.md`")
+    lines.append("> 完整列表见 `2_域架构文档/domain_index.md`")
     lines.append("")
     lines.append("| 层级 | 域数量 | 代表域 |")
     lines.append("|------|:---:|--------|")
@@ -211,7 +211,7 @@ def main() -> None:
     """入口：生成导航总览。"""
     parser = argparse.ArgumentParser(description="G10: 自动生成架构文档库导航总览")
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
-    parser.add_argument("--output-name", type=str, default="架构文档库总览.md", help="输出文件名")
+    parser.add_argument("--output-name", type=str, default="navigation_index.md", help="输出文件名")
     args = parser.parse_args()
 
     if not DEPGRAPH_DB.exists():

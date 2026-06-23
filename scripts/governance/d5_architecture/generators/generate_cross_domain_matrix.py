@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated/cross_domain_matrix.md")
+OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/1_全局架构图/cross_domain_matrix.md")
 
 
 def get_cross_domain_edges(conn: sqlite3.Connection) -> list[dict]:

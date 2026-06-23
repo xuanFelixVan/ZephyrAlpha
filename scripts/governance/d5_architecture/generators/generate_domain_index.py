@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated/domain_index.md")
+OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/2_域架构文档/domain_index.md")
 
 
 def get_all_domains(conn: sqlite3.Connection) -> list[dict]:

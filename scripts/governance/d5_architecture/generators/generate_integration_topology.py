@@ -22,7 +22,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated")
+OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/1_全局架构图")
 
 
 def get_cross_domain_deps(conn: sqlite3.Connection) -> list[dict]:
@@ -74,6 +74,16 @@ def generate_integration_topology(conn: sqlite3.Connection) -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     lines = []
+    # Markdown 头部
+    lines.append("# 集成拓扑图")
+    lines.append("")
+    lines.append(f"> 自动生成时间: {now}")
+    lines.append("> 数据源: depgraph.db edges表（跨域依赖）")
+    lines.append(f"> 跨域依赖对数: {len(deps)}")
+    lines.append("")
+    lines.append("```mermaid")
+    lines.append("")
+
     lines.append("%% 所有功能域集成依赖关系图")
     lines.append(f"%% 生成时间: {now}")
     lines.append("%% 数据源: depgraph.db edges表（跨域依赖）")
@@ -134,6 +144,8 @@ def generate_integration_topology(conn: sqlite3.Connection) -> str:
     for i, d in enumerate(sorted_deps[:10], 1):
         lines.append(f"    %% {i}. {d['from_domain']} -> {d['to_domain']}: {d['count']} 条")
     lines.append("")
+    lines.append("```")
+    lines.append("")
 
     return "\n".join(lines)
 
@@ -142,7 +154,7 @@ def main() -> None:
     """入口：生成集成依赖关系图。"""
     parser = argparse.ArgumentParser(description="G4: 生成所有功能域集成依赖关系图(.mmd)")
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
-    parser.add_argument("--output-name", type=str, default="integration_topology.mmd", help="输出文件名")
+    parser.add_argument("--output-name", type=str, default="integration_topology.md", help="输出文件名")
     args = parser.parse_args()
 
     if not DEPGRAPH_DB.exists():

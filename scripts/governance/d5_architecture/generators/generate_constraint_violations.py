@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated/constraint_violations.md")
+OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/3_治理报告/constraint_violations.md")
 
 
 def get_all_constraints(conn: sqlite3.Connection) -> list[dict]:

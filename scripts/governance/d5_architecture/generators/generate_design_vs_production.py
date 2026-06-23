@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated/design_vs_production.md")
+OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/3_治理报告/design_vs_production.md")
 
 
 def get_maturity_stats(conn: sqlite3.Connection) -> list[dict]:

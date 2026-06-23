@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated/capacity_report.md")
+OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/3_治理报告/capacity_report.md")
 
 
 def get_domain_capacity(conn: sqlite3.Connection) -> list[dict]:

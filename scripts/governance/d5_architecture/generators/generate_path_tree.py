@@ -23,7 +23,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated")
+OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/1_全局架构图")
 
 
 def build_tree_rows(conn: sqlite3.Connection) -> list[dict]:
