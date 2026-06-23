@@ -141,6 +141,33 @@ python scripts/lock_files.py status     # 确认清理结果
 | ❌ | 用 Write 工具绕过 lock_files.py | 锁协议完全失效 |
 | ❌ | 写完后不执行 release | 死锁——其他对话永远抢不到锁 |
 
+### 多 AI 并发提交协议（StagingArea）
+
+**触发**：≥2 个 AI session 并发工作时，文件修改 MUST 走 StagingArea 草稿模式，禁止直接 `git commit`。
+
+**根因**：多 AI 直接 `git commit` 会导致：(1) pre-commit hook 卡住 (2) git checkout/restore 互相覆盖 (3) commit 期间文件被其他 AI 覆盖。
+
+**已有实现**: src/zephyr/trading/staging_area.py — StagingArea 类
+
+**强制流程**:
+```
+1. DRAFT  → sa.write_draft(session_id, file_path, content)
+2. COMMIT → sa.commit(session_id, file_path)  # 获取锁+冲突检测+原子搬入
+3. 冲突?  → sa.try_auto_merge(session_id, file_path)
+```
+
+**判定标准**:
+| 场景 | 模式 | 入口 |
+|------|------|------|
+| 单 AI 对话 | 模式 A（直接锁） | lock_files.py acquire/release |
+| ≥2 AI 并发 | 模式 B（草稿模式）MUST | StagingArea.write_draft/commit |
+
+**绝对禁止**:
+| # | 行为 | 后果 |
+|---|------|------|
+| ❌ | 多 AI 并发时直接 git commit 绕过 StagingArea | 文件被覆盖、pre-commit 卡死 |
+| ❌ | 使用 git commit --no-verify 绕过 pre-commit | 违反 trae_029 |
+
 ---
 
 ## RULE-ONE：Python 脚本并发写入安全
