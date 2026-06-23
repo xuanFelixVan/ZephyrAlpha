@@ -54,6 +54,9 @@ DEFAULT_DEGRADATION_STEPS: list[DegradationStep] = [
 
 
 class BudgetEngine:
+    _instance: "BudgetEngine | None" = None
+    _instance_lock = threading.Lock()
+
     DEFAULT_POLICIES = {
         BudgetDimension.TOKEN: BudgetPolicy(
             policy_id="BP-TOKEN-001",
@@ -93,7 +96,91 @@ class BudgetEngine:
         self._consumption_version: dict[str, int] = {}
         self._provider_claims: dict[str, dict[str, float]] = {}
         self._on_consumption_recorded: Callable[[str, int, float, float], None] | None = None
+        self._ipi_defense = None
+        self._spiral_ews = None
+        self._closed = False
         self._init_consumption()
+
+    @classmethod
+    def ensure_initialized(cls) -> "BudgetEngine":
+        """确保 BudgetEngine 已初始化并返回实例（幂等）。"""
+        if cls._instance is not None:
+            return cls._instance
+        with cls._instance_lock:
+            if cls._instance is not None:
+                return cls._instance
+            engine = cls()
+            engine.pre_flight_check("baseline", 0, 0.0)
+            cls._instance = engine
+            return cls._instance
+
+    def get_snapshot(self) -> dict:
+        """获取当前预算快照。不持有锁，由子方法各自加锁。"""
+        return {
+            "consumption": self.get_consumption_summary(),
+            "degradation_level": self._current_degradation_level.value,
+            "active_step_idx": self._active_step_idx,
+            "hash": self.compute_hash(),
+            "health": "HEALTHY" if self._active_step_idx == 0 else "DEGRADED",
+        }
+
+    def shutdown(self) -> dict:
+        """关闭 BudgetEngine——资源清理+状态持久化+单例重置。幂等。"""
+        import json
+        import os
+
+        if self._closed:
+            return {"persisted_to": None, "snapshot": self.get_snapshot(), "cleaned_up": True}
+
+        snapshot = self.get_snapshot()
+        persist_path = os.path.join("data", "budget", "shutdown_snapshot.json")
+        try:
+            os.makedirs(os.path.dirname(persist_path), exist_ok=True)
+            tmp_path = f"{persist_path}.{os.getpid()}.tmp"
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(snapshot, f, ensure_ascii=False, indent=2)
+            os.replace(tmp_path, persist_path)
+        except Exception:
+            pass
+
+        with self._lock:
+            self._ipi_defense = None
+            self._spiral_ews = None
+            self._gate_history.clear()
+            self._closed = True
+
+        BudgetEngine._instance = None
+        return {"persisted_to": persist_path, "snapshot": snapshot, "cleaned_up": True}
+
+    @classmethod
+    def recover_from_snapshot(cls, snapshot_path: str = "") -> "BudgetEngine":
+        """从快照文件恢复 BudgetEngine 状态。
+
+        读取 shutdown() 持久化的 JSON 快照，恢复消费数据和降级级别。
+        用于 session 重启后恢复预算状态。
+        """
+        import json
+        import os
+
+        if not snapshot_path:
+            snapshot_path = os.path.join("data", "budget", "shutdown_snapshot.json")
+
+        engine = cls()
+        try:
+            with open(snapshot_path, encoding="utf-8") as f:
+                snapshot = json.load(f)
+            consumption = snapshot.get("consumption", {})
+            for policy_id, data in consumption.items():
+                cons = engine._consumption.get(policy_id)
+                if cons and isinstance(data, dict):
+                    cons.consumed_daily = data.get("daily", 0.0)
+                    cons.consumed_hourly = data.get("hourly", 0.0)
+            step_idx = snapshot.get("active_step_idx", 0)
+            for _ in range(step_idx):
+                engine.advance_degradation()
+        except Exception:
+            pass
+        return engine
 
     def _init_consumption(self) -> None:
         for policy in self._policies.values():
@@ -211,7 +298,23 @@ class BudgetEngine:
                 return -1
             return self._consumption_version.get(policy.policy_id, 0)
 
-    def pre_flight_check(self, request_id: str, estimated_tokens: int = 0, estimated_cost: float = 0.0) -> GateResult:
+    def pre_flight_check(self, request_id: str, estimated_tokens: int = 0, estimated_cost: float = 0.0, prompt: str = "") -> GateResult:
+        if self._closed:
+            raise RuntimeError("BudgetEngine已关闭")
+
+        # IPI 检查——若 prompt 含注入攻击，直接 DENY 并触发隔离
+        if prompt:
+            if self._check_ipi_attack(prompt):
+                return GateResult(
+                    request_id=request_id,
+                    decision=GateDecision.DENY,
+                    reason="IPI attack detected — request blocked and isolation triggered",
+                    remaining_daily=0.0,
+                    remaining_hourly=0.0,
+                    estimated_tokens=estimated_tokens,
+                    estimated_cost=estimated_cost,
+                )
+
         with self._lock:
             token_result = self._check_dimension(BudgetDimension.TOKEN, request_id, estimated_tokens, estimated_cost)
             cost_result = self._check_dimension(BudgetDimension.COST, request_id, estimated_tokens, estimated_cost)
@@ -251,6 +354,9 @@ class BudgetEngine:
             return worst
 
     def record_consumption(self, policy_id: str, tokens: int, cost: float, time_minutes: float) -> None:
+        if self._closed:
+            raise RuntimeError("BudgetEngine已关闭")
+
         with self._lock:
             cons = self._consumption.get(policy_id)
             if cons is None:
@@ -292,6 +398,11 @@ class BudgetEngine:
                 gt.metrics.gauge(f"budget.{policy_id}.cost_usd", cost)
         except Exception:
             pass
+
+        # 事件驱动响应链 1: 预算超限 → 自动降级
+        self._check_budget_exceeded()
+        # 事件驱动响应链 3: 螺旋预警 → 自动告警/降级
+        self._check_spiral_warning(tokens, cost)
 
     def get_model_router_recommendation(self) -> tuple[ModelTier, int]:
         step = self._degradation_steps[self._active_step_idx]
@@ -450,3 +561,147 @@ class BudgetEngine:
         if result.decision == GateDecision.NARROW:
             return BudgetLevel.L1_WARNING
         return BudgetLevel.L0_NORMAL
+
+    # ── 事件驱动响应链 (DM-201503) ──────────────────────────────
+
+    def subscribe_events(self) -> None:
+        """订阅 EventBus 的 TASK_COMPLETED 和 TASK_FAILED 事件。
+
+        幂等：重复调用安全。EventBus 不可用时静默跳过。
+        """
+        try:
+            from zephyr.shared.event_bus import EventBus, EventType
+
+            bus = EventBus.get_instance()
+            bus.subscribe(EventType.TASK_COMPLETED, self._on_task_completed_budget)
+            bus.subscribe(EventType.TASK_FAILED, self._on_task_failed_budget)
+        except Exception:
+            pass
+
+    def _on_task_completed_budget(self, event: object) -> None:
+        """TASK_COMPLETED 事件：检查预算状态。"""
+        try:
+            self._check_budget_exceeded()
+        except Exception:
+            pass
+
+    def _on_task_failed_budget(self, event: object) -> None:
+        """TASK_FAILED 事件：检查重试预算。"""
+        try:
+            self._check_budget_exceeded()
+        except Exception:
+            pass
+
+    def _check_budget_exceeded(self) -> None:
+        """响应链 1: 预算超限 → 自动降级。
+
+        消费达到 hard_stop_threshold * 80% 或 emergency_threshold 时自动推进降级。
+        """
+        import uuid
+
+        for dim, policy in self._policies.items():
+            cons = self._consumption.get(policy.policy_id)
+            if cons is None:
+                continue
+            ratio = cons.consumed_daily / policy.daily_limit if policy.daily_limit > 0 else 0.0
+
+            if ratio >= policy.hard_stop_threshold * 0.8:
+                while self._active_step_idx < 3:
+                    if not self.advance_degradation():
+                        break
+                alert = BudgetAlert(
+                    alert_id=f"BUDGET-EXCEEDED-{uuid.uuid4().hex[:8]}",
+                    policy_id=policy.policy_id,
+                    dimension=dim,
+                    level=BudgetLevel.L3_DEGRADED,
+                    message=f"Budget exceeded: {dim.name} daily ratio={ratio:.0%}",
+                    triggered_at=datetime.now(UTC),
+                    acknowledged=False,
+                )
+                with self._lock:
+                    self._alerts.append(alert)
+            elif ratio >= policy.emergency_threshold:
+                while self._active_step_idx < 2:
+                    if not self.advance_degradation():
+                        break
+                alert = BudgetAlert(
+                    alert_id=f"BUDGET-EMERGENCY-{uuid.uuid4().hex[:8]}",
+                    policy_id=policy.policy_id,
+                    dimension=dim,
+                    level=BudgetLevel.L2_THROTTLED,
+                    message=f"Budget emergency: {dim.name} daily ratio={ratio:.0%}",
+                    triggered_at=datetime.now(UTC),
+                    acknowledged=False,
+                )
+                with self._lock:
+                    self._alerts.append(alert)
+
+    def _check_ipi_attack(self, prompt: str) -> bool:
+        """响应链 2: IPI 攻击 → 自动隔离。
+
+        检测到 IPI 攻击时，降级强制推进到 L4_EMERGENCY。
+        返回 True 表示检测到攻击。
+        """
+        import uuid
+
+        if self._ipi_defense is None:
+            try:
+                from zephyr.governance.ipi_defense import IPIDefense
+
+                self._ipi_defense = IPIDefense()
+            except ImportError:
+                return False
+
+        report = self._ipi_defense.scan(prompt)
+        if report.blocked:
+            while self._active_step_idx < 4:
+                if not self.advance_degradation():
+                    break
+            alert = BudgetAlert(
+                alert_id=f"IPI-ATTACK-{uuid.uuid4().hex[:8]}",
+                policy_id="BP-SECURITY-001",
+                dimension=BudgetDimension.TOKEN,
+                level=BudgetLevel.L4_EMERGENCY,
+                message=f"IPI attack blocked: {report.attack_type} confidence={report.confidence:.0%}",
+                triggered_at=datetime.now(UTC),
+                acknowledged=False,
+            )
+            with self._lock:
+                self._alerts.append(alert)
+            return True
+        return False
+
+    def _check_spiral_warning(self, tokens: int, cost: float) -> None:
+        """响应链 3: 螺旋预警 → 自动告警/降级。
+
+        喂入消费数据到 SpiralEWS，检测到 WARNING/CRITICAL 时创建告警。
+        """
+        import uuid
+
+        if self._spiral_ews is None:
+            try:
+                from zephyr.governance.spiral_ews import SpiralEarlyWarningSystem
+
+                self._spiral_ews = SpiralEarlyWarningSystem()
+            except ImportError:
+                return
+
+        self._spiral_ews.feed(tokens, cost, depth=1)
+        signal = self._spiral_ews.check()
+
+        if signal.level in ("WARNING", "CRITICAL"):
+            level = BudgetLevel.L2_THROTTLED if signal.level == "WARNING" else BudgetLevel.L3_DEGRADED
+            alert = BudgetAlert(
+                alert_id=f"SPIRAL-{signal.level}-{uuid.uuid4().hex[:8]}",
+                policy_id="BP-SPIRAL-001",
+                dimension=BudgetDimension.TOKEN,
+                level=level,
+                message=f"Spiral {signal.level}: composite_score={signal.composite_score:.2f}",
+                triggered_at=datetime.now(UTC),
+                acknowledged=False,
+            )
+            with self._lock:
+                self._alerts.append(alert)
+
+            if signal.level == "CRITICAL" and self._spiral_ews.is_spiraling():
+                self.advance_degradation()

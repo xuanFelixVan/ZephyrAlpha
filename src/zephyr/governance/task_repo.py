@@ -623,6 +623,16 @@ class TaskRepository:
                 self._conn.execute("ROLLBACK")
                 raise
 
+    @contextmanager
+    def _read_tx(self) -> Iterator[sqlite3.Connection]:
+        """读事务上下文：WAL 模式下并发读安全。
+
+        当从 _write_tx 内部调用时，锁已持有（RLock 可重入），直接 yield 连接。
+        独立调用时加锁保证读一致性。
+        """
+        with self._lock:
+            yield self._conn
+
     # ------------------------------------------------------------------
     # 模板校验（GOV-TASK-001 v3.2.0）
     # ------------------------------------------------------------------
@@ -1481,7 +1491,7 @@ class TaskRepository:
                     continue
                 checked_rounds.add(rnd)
                 round_rows = [x for x in rows if x[0] == rnd]
-                if round_rows and all(x[2] == 1 for x in round_rows):
+                if round_rows and all(x[1] == 1 for x in round_rows):
                     consecutive_zero += 1
                 else:
                     break
