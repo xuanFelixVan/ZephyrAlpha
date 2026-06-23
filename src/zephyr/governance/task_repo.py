@@ -1581,6 +1581,19 @@ class TaskRepository:
 
         issues: list[str] = []
 
+        def _blocked_by_list() -> list[str]:
+            """Normalize blocked_by to list (handles both list[str] and JSON string)."""
+            if not task.blocked_by:
+                return []
+            if isinstance(task.blocked_by, list):
+                return task.blocked_by
+            if isinstance(task.blocked_by, str):
+                try:
+                    return json.loads(task.blocked_by)
+                except (json.JSONDecodeError, TypeError):
+                    return []
+            return []
+
         if dimension == "checklist_completeness":
             if not task.files_in_scope:
                 issues.append("files_in_scope为空")
@@ -1600,16 +1613,12 @@ class TaskRepository:
                 issues.append(f"description过短({len(task.description)}<100字)")
 
         elif dimension == "code_correctness":
-            try:
-                json.loads(task.blocked_by) if task.blocked_by else []
-            except (json.JSONDecodeError, TypeError):
+            bl = _blocked_by_list()
+            if task.blocked_by and not bl:
                 issues.append("blocked_by不是有效JSON")
 
         elif dimension == "causal_chain_validity":
-            try:
-                bl = json.loads(task.blocked_by) if task.blocked_by else []
-            except (json.JSONDecodeError, TypeError):
-                bl = []
+            bl = _blocked_by_list()
             for dep_id in bl:
                 try:
                     with self._write_tx() as conn:
@@ -1620,10 +1629,7 @@ class TaskRepository:
                     issues.append(f"无法验证依赖任务: {dep_id}")
 
         elif dimension == "data_consistency":
-            try:
-                bl = json.loads(task.blocked_by) if task.blocked_by else []
-            except (json.JSONDecodeError, TypeError):
-                bl = []
+            bl = _blocked_by_list()
             if bl and task.status != TaskStatus.BLOCKED:
                 issues.append(f"有blocked_by但status={task.status}(应BLOCKED)")
             if not bl and task.status == TaskStatus.BLOCKED:
