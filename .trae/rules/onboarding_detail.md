@@ -284,7 +284,7 @@ except PermissionError:
 STEP 0  — 🛡️ RULE-GUARDIAN 守护进程启动 + 过期锁清理（非协商，任何平台进入必做第一步）:
            python scripts/lock_files.py cleanup
            python scripts/ide_health_service.py --status
-           running=false → python scripts/ide_health_service.py --start
+           running=false → python scripts/ide_health_service.py --start-background
            running=true  → 继续
            ⚠️ 守护进程未运行 = 禁止执行任何后续步骤（含 STEP 1 及写操作）
 STEP 0.5 — 🧠 大脑系统启动（后台持续运行，Trae AI 进入项目时必做）:
