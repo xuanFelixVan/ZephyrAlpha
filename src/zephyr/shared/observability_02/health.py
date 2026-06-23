@@ -263,3 +263,82 @@ async def collect_health(
         dummy_mgr.register(m)
     agg = AggregateHealth(dummy_mgr)
     return await agg.check(timeout=timeout)
+
+
+# ── DM-201248: 事件订阅机制 ──────────────────────────────────────────────
+
+_monitoring_events_subscribed = False
+_event_health_log: list[dict[str, Any]] = []
+
+
+def subscribe_monitoring_events() -> None:
+    """订阅统一 EventBus 事件 — DM-201248.
+
+    监控模块通过事件订阅实现事件驱动启动，而非轮询：
+    1. f5.deadlock_detected — 记录健康状态为 DEGRADED
+    2. fle.anomaly — 记录异常
+    3. audit.finding_created — 记录审计发现
+
+    幂等：重复调用不会重复订阅。
+    安全：handler 永不抛异常。
+    """
+    global _monitoring_events_subscribed
+    if _monitoring_events_subscribed:
+        return
+    _monitoring_events_subscribed = True
+
+    try:
+        from zephyr.shared.event_bus import bus
+
+        def _on_f5_deadlock(payload: Any) -> None:
+            try:
+                entry = {
+                    "event": "f5.deadlock_detected",
+                    "payload": str(payload)[:200],
+                    "status": "DEGRADED",
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+                _event_health_log.append(entry)
+                if len(_event_health_log) > 1000:
+                    _event_health_log.pop(0)
+            except Exception:
+                pass
+
+        def _on_fle_anomaly(payload: Any) -> None:
+            try:
+                entry = {
+                    "event": "fle.anomaly",
+                    "payload": str(payload)[:200],
+                    "status": "ANOMALY",
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+                _event_health_log.append(entry)
+                if len(_event_health_log) > 1000:
+                    _event_health_log.pop(0)
+            except Exception:
+                pass
+
+        def _on_audit_finding(payload: Any) -> None:
+            try:
+                entry = {
+                    "event": "audit.finding_created",
+                    "payload": str(payload)[:200],
+                    "status": "AUDIT",
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+                _event_health_log.append(entry)
+                if len(_event_health_log) > 1000:
+                    _event_health_log.pop(0)
+            except Exception:
+                pass
+
+        bus.subscribe("f5.deadlock_detected", _on_f5_deadlock)
+        bus.subscribe("fle.anomaly", _on_fle_anomaly)
+        bus.subscribe("audit.finding_created", _on_audit_finding)
+    except Exception:
+        pass
+
+
+def get_event_health_log() -> list[dict[str, Any]]:
+    """返回事件健康日志 — DM-201248."""
+    return list(_event_health_log)

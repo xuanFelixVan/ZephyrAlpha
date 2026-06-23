@@ -271,3 +271,54 @@ def get_registry() -> Self:
     if _global_registry is None:
         _global_registry = MetricsRegistry()
     return _global_registry
+
+
+# ── DM-201248: 事件订阅指标记录 ──────────────────────────────────────────
+
+_metrics_events_subscribed = False
+
+
+def subscribe_metrics_events() -> None:
+    """订阅统一 EventBus 事件并记录指标 — DM-201248.
+
+    当事件发生时，自动递增 counter 指标：
+    - zephyr_event_f5_deadlock_total
+    - zephyr_event_fle_anomaly_total
+    - zephyr_event_audit_finding_total
+
+    幂等：重复调用不会重复订阅。
+    安全：handler 永不抛异常。
+    """
+    global _metrics_events_subscribed
+    if _metrics_events_subscribed:
+        return
+    _metrics_events_subscribed = True
+
+    try:
+        from zephyr.shared.event_bus import bus
+
+        registry = get_registry()
+
+        def _on_f5_deadlock(payload: Any) -> None:
+            try:
+                registry.inc("zephyr_event_f5_deadlock_total")
+            except Exception:
+                pass
+
+        def _on_fle_anomaly(payload: Any) -> None:
+            try:
+                registry.inc("zephyr_event_fle_anomaly_total")
+            except Exception:
+                pass
+
+        def _on_audit_finding(payload: Any) -> None:
+            try:
+                registry.inc("zephyr_event_audit_finding_total")
+            except Exception:
+                pass
+
+        bus.subscribe("f5.deadlock_detected", _on_f5_deadlock)
+        bus.subscribe("fle.anomaly", _on_fle_anomaly)
+        bus.subscribe("audit.finding_created", _on_audit_finding)
+    except Exception:
+        pass
