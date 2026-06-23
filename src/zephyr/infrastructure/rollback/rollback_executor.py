@@ -604,13 +604,69 @@ class RollbackExecutor:
         db_rows_restored = 0
         g0_passed = False
         execution_id = self._generate_execution_id()
+        stashed = False
+
+        # === 并发安全守卫（方案C）：检测回滚文件是否与活跃文件锁冲突 ===
+        files_to_check = self._resolve_conflict_files(operation, commit_sha, file_globs, file_list)
+        if files_to_check:
+            conflict = check_rollback_conflict(
+                files_to_check,
+                self._owner_session_id or audit_session or "auto",
+                self._project_root,
+            )
+            if conflict.has_conflict:
+                self._write_in_flight(execution_id, "concurrency_check", "BLOCKED", conflict.locked_by)
+                self._write_op_audit(
+                    operation=operation.value,
+                    commit_sha=commit_sha,
+                    success=False,
+                    details={"error": "concurrency_conflict", "blocked_files": conflict.blocked_files, "execution_id": execution_id},
+                    audit_session=audit_session,
+                )
+                return RollbackResult(
+                    success=False,
+                    operation=operation,
+                    commit_sha=commit_sha,
+                    files_reverted=0,
+                    db_tables_restored=0,
+                    db_rows_restored=0,
+                    execution_id=execution_id,
+                    errors=[f"Blocked by concurrency conflict: {conflict.locked_by}"],
+                )
 
         self._write_in_flight(execution_id, "preflight", "PENDING")
 
         preflight = self.preflight_check()
         if not preflight.passed and operation != RollbackOp.HARD_RESET:
             if preflight.errors and "Working tree is dirty" in str(preflight.errors):
+                # === stash 安全化（方案C）：只 stash 本 session 的文件，其他 session 文件阻断 ===
+                uncommitted = self.get_uncommitted_files() + self.get_staged_uncommitted_files()
+                stash_plan = classify_uncommitted_files(
+                    uncommitted,
+                    self._owner_session_id or audit_session or "auto",
+                    self._project_root,
+                )
+                if stash_plan.other_files:
+                    self._write_in_flight(execution_id, "stash_check", "BLOCKED", {"other_files": stash_plan.other_files})
+                    self._write_op_audit(
+                        operation=operation.value,
+                        commit_sha=commit_sha,
+                        success=False,
+                        details={"error": "other_session_uncommitted", "other_files": stash_plan.other_files, "execution_id": execution_id},
+                        audit_session=audit_session,
+                    )
+                    return RollbackResult(
+                        success=False,
+                        operation=operation,
+                        commit_sha=commit_sha,
+                        files_reverted=0,
+                        db_tables_restored=0,
+                        db_rows_restored=0,
+                        execution_id=execution_id,
+                        errors=[f"Other session uncommitted files blocked stash: {stash_plan.other_files}"],
+                    )
                 self._run_git(["stash"])
+                stashed = True
                 self._write_in_flight(execution_id, "preflight", "SUCCESS", {"stashed": True})
             else:
                 self._write_in_flight(execution_id, "preflight", "FAILED", {"errors": preflight.errors})
@@ -772,7 +828,39 @@ class RollbackExecutor:
             )
         finally:
             self._lock.release(lock_result.lock_id)
+            if stashed:
+                try:
+                    self._run_git(["stash", "pop"])
+                    self._write_in_flight(execution_id, "stash_pop", "SUCCESS")
+                except Exception as e:
+                    self._write_in_flight(execution_id, "stash_pop", "FAILED", {"error": str(e)})
             self._delete_in_flight(execution_id)
+
+    def _resolve_conflict_files(
+        self,
+        operation: RollbackOp,
+        commit_sha: str,
+        file_globs: list[str] | None = None,
+        file_list: list[str] | None = None,
+    ) -> list[str]:
+        """根据 operation 类型确定冲突检查的文件范围。"""
+        if operation == RollbackOp.DISCARD:
+            return list(file_list or [])
+        if operation == RollbackOp.PARTIAL_REVERT:
+            return list(file_globs or [])
+        if operation == RollbackOp.FULL_REVERT:
+            try:
+                preview = self.preview(commit_sha)
+                return list(preview.changed_files)
+            except Exception:
+                return []
+        if operation == RollbackOp.HARD_RESET:
+            try:
+                output = self._run_git(["ls-files"])
+                return [f for f in output.strip().split("\n") if f]
+            except Exception:
+                return []
+        return []
 
     def _git_revert(self, commit_sha: str) -> dict[str, Any]:
         output = self._run_git(["revert", "--no-edit", commit_sha])
