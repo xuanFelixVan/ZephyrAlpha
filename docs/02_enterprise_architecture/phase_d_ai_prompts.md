@@ -25,6 +25,32 @@
 - 阶段C：循环修复任务卡（直到全部通过）
 - 阶段D：执行任务卡（按14步流程逐张执行）
 
+**⚠️ 多 AI 并发提交协议（MUST 遵守）**:
+
+本阶段有 19 个 AI 并发工作。文件修改 MUST 走 StagingArea 草稿模式，禁止直接 `git commit`。
+
+```
+from zephyr.trading.staging_area import StagingArea
+sa = StagingArea()
+
+# 1. 写草稿（不获取排他锁，不影响原文件）
+sa.write_draft("<你的session_id>", "<文件路径>", "<文件内容>")
+
+# 2. 提交草稿（获取锁+冲突检测+原子搬入+释放锁）
+result = sa.commit("<你的session_id>", "<文件路径>")
+# result = OK / CONFLICT / CONFLICT_NEEDS_OWNER
+
+# 3. 冲突时尝试自动合并
+if result == "CONFLICT":
+    sa.try_auto_merge("<你的session_id>", "<文件路径>")
+```
+
+**禁止**：
+- ❌ 多 AI 并发时直接 `git commit`（会导致 pre-commit hook 卡死+文件互相覆盖）
+- ❌ 使用 `git commit --no-verify` 绕过 pre-commit（违反 trae_029）
+
+**session_id 格式**: `session-YYYYMMDD-NNN`（从 session_logs/ 目录找编号）
+
 ***
 
 ## AI-01: F1 自动驾驶/运行时大脑
