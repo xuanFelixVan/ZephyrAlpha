@@ -1205,6 +1205,37 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 
 ---
 
+## RULE-TWENTY：写完即提交（防丢失铁律）
+
+**核心**：AI 完成文件修改后 MUST 在 session 结束前 git commit。未提交的代码 = 不存在 = 会被 git reset/checkout 冲掉。
+
+### 触发条件
+
+任何文件修改完成后——包括代码、配置、规则、测试文件。
+
+### 强制流程
+
+| 时机 | 动作 |
+|------|------|
+| 文件修改完成 | `git add <具体文件>`（禁止 `git add -A`） |
+| 任务卡 transition(COMPLETED) | 自动 `git add files_in_scope` + `git commit`（DM-202918 实现） |
+| 释放文件锁前 | 检查 `git status`，有未提交修改则 WARNING（DM-202919 实现） |
+| session 结束前 | 确认 `git status` 干净（无未提交修改） |
+
+### 绝对禁止
+
+| # | 行为 | 后果 |
+|---|------|------|
+| ❌ | 写完代码不提交，留到"下次再说" | git 操作冲掉工作区，代码丢失 |
+| ❌ | 用 `git add -A` 或 `git add .` 批量添加 | 混入敏感文件或无关变更 |
+| ❌ | 释放文件锁前不检查 git status | 锁释放后忘记提交 |
+
+### 根因
+
+2026-06-23 调查：AI session 写完代码不提交 git，另一 session 做 git reset 时工作区未提交修改丢失。6 个现有机制（文件锁/StagingArea/transition/规则/定时器/worktree）均不防 git 层丢失。
+
+---
+
 ## 规则本身的规则
 
 | # | 规则 |

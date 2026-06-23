@@ -1,0 +1,27 @@
+# TRAE 规则登记表
+# 每条 RULE-* 必须在此表登记，sync_rule_registry.py 校验一致性
+# 格式: | TRAE-ID | 含 RULE-XXX 的描述 |
+
+| TRAE-ID | Description |
+|---------|-------------|
+| TRAE-001 | RULE-ZERO 文件锁协议（写入前加锁） |
+| TRAE-002 | RULE-ONE Python 脚本并发写入安全（原子写入） |
+| TRAE-003 | RULE-TWO 反孤儿功能（创建即注册） |
+| TRAE-004 | RULE-THREE 删除前置确认（三步审判） |
+| TRAE-005 | RULE-FOUR 创建即注册（scaffold.py） |
+| TRAE-006 | RULE-FIVE 临时文件零残留 |
+| TRAE-007 | RULE-SIX 任务粒度边界（八指标机械门） |
+| TRAE-008 | RULE-SEVEN 脚本并行化+创建即自测 |
+| TRAE-009 | RULE-EIGHT 搜索先行协议 |
+| TRAE-010 | RULE-NINE 强制资产认知 |
+| TRAE-011 | RULE-TEN 治理施工流程（14步统一流程） |
+| TRAE-012 | RULE-ELEVEN 跨蓝图变更通知 |
+| TRAE-013 | RULE-TWELVE 项目瘦身与自动清理 |
+| TRAE-014 | RULE-THIRTEEN 任务卡粒度铁律 |
+| TRAE-015 | RULE-FOURTEEN 根目录清爽铁律 |
+| TRAE-016 | RULE-FIFTEEN 自动化双轨判定 |
+| TRAE-017 | RULE-SIXTEEN depgraph 程序化访问协议 |
+| TRAE-018 | RULE-SEVENTEEN 禁止 PowerShell 语法 |
+| TRAE-019 | RULE-EIGHTEEN 连续两次审查零问题 |
+| TRAE-020 | RULE-NINETEEN 先裁定后确认（MTH-009 显化） |
+| TRAE-021 | RULE-TWENTY 写完即提交（防丢失铁律） |
