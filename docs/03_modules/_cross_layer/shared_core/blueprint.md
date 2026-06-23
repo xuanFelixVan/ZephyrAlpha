@@ -17,8 +17,8 @@ ttl: permanent
 construction_progress: completed
 actual_disk_path: "src/zephyr/shared/ + src/zephyr/core/"
 belongs_to: "MOD-MASTER-001"
-summary: "跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现) + F20 监控系统恢复(16文件: health/longevity/metrics/observability/quality/sla/contracts)"
-tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.17.0]
+summary: "跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现) + F20 监控系统恢复(16文件: health/longevity/metrics/observability/quality/sla/contracts) + F21 自动化集成(EventBus合并+自动启动+事件订阅+分钟级监控+Finalizer自动关闭)"
+tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.20.0, f21-automation]
 priority: P0
 runtime_plane: hot
 codification_level: L2
