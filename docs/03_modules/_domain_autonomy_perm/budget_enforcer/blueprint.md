@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-024
-submodule_path: src/zephyr/integration/budget_enforcer
+submodule_path: src/zephyr/governance/budget_engine.py
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
 doc_type: blueprint
 status: Active
@@ -24,7 +24,7 @@ depends_on:
 ---
 ssot_claims:
   - claim: "Token/Cost/Time 三维预算策略唯一真源"
-    scope: "config/budget_policy.yaml + src/zephyr/budget-enforcer/"
+    scope: "config/budget_policy.yaml + src/zephyr/governance/budget_engine.py"
     negative: "MOD-INF-001 token_budget.yaml 为 deprecated 引用，非 SSoT"
   - claim: "预算降级链唯一执行者"
     scope: "degradation_manager.py + pre_flight_gate.py"
@@ -39,7 +39,7 @@ consumer_registry:
     consumers: ["MOD-INF-008 Context Engine", "MOD-INF-006 Task System", "MOD-INF-015 System Telemetry"]
   - tier: "optional"
     consumers: ["MOD-INF-032 Resource Optimization", "MOD-INF-034 Model Capability Exam"]
-actual_disk_path: "src/zephyr/integration/budget_enforcer/"
+actual_disk_path: "src/zephyr/governance/budget_engine.py"
 last_updated: "2026-05-18"
 last_verified: "2026-05-18"
 generation: 3
@@ -69,7 +69,7 @@ stability: evolving
 | 属性 | 值 |
 |------|-----|
 | module_id | MOD-INF-024 |
-| 代码落位 | `src/zephyr/budget-enforcer/` |
+| 代码落位 | `src/zephyr/governance/budget_engine.py` |
 | 运行时平面 | Hot memory（Pre-flight Gate + In-flight Stream Abort Guard + 调用后 Runtime Enforcer——覆盖调用前→调用中→调用后全生命周期） |
 | 核心职责 | 强制执行 Token/Cost 预算——超预算自动降级，零人工介入；事后成本归因 + ROI 分析 |
 
@@ -1399,13 +1399,13 @@ solo_maintainer_optimizations:
 | 维度 | 状态 |
 |------|------|
 | construction_progress | phase_1_partial→phase_1_加固中（Phase 0 Skeleton + Phase 1 治理桥接已通过，P1 核心模块 4/4 已落盘，Phase 1.5/2 待施工） |
-| 源码路径 | `src/zephyr/budget-enforcer/ (8 文件) + governance/budget-enforcer/ (3 文件)` |
+| 源码路径 | `src/zephyr/governance/budget_engine.py` |
 | 源码文件数 | **11 个 .py**（蓝图 §4 计划 31 文件，完成率 **35.5%** ← 修复前 22.6%） |
 | 新增 P1 模块 | `budget_tracker.py`, `degradation_manager.py`, `model_router.py`, `timeout_guard.py` |
 | 配置文件 | `config/capacity/token_budget.yaml`（Capacity Assurance——**deprecated，SSoT 已迁移至 024**）+ ✅ `config/budget_policy.yaml`（Budget Policy SSoT 种子版 v0.1.0-seed） |
 | 门禁 | ✅ GCT-024 `gates/gct-024-budget-enforcer.yaml`（7 checks: 硬4 + 软2 + info1） |
-| 关键入口 | `governance/budget-enforcer/alerts.py` |
+| 关键入口 | `governance/budget_engine.py` |
 
 
 ## Consumers
-- zephyr.budget_enforcer (internal)
+- zephyr.governance.budget_engine (internal)
