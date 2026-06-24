@@ -546,6 +546,195 @@ class ExamOrchestrator:
             score = max(em, kw_rate)
             return (score, score, 0.0, em)
 
+        # K类: 影响分析能力评分
+        if cap in ("impact_analysis",):
+            affected = result.get("affected_files", [])
+            if not affected:
+                return (0.0, 0.0, 1.0, 0)
+            pred_files = set()
+            for f in affected:
+                if isinstance(f, dict):
+                    pred_files.add(str(f.get("file", "")).lower())
+                elif isinstance(f, str):
+                    pred_files.add(f.lower())
+            gold_files = set(f.lower() for f in case.expected_affected_files_k)
+            if not gold_files:
+                text = json.dumps(result)
+                kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+                rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+                return (rate, rate, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+            tp = len(pred_files & gold_files)
+            p = tp / len(pred_files) if pred_files else 0.0
+            r = tp / len(gold_files) if gold_files else 0.0
+            em = 1 if pred_files == gold_files else 0
+            return (p, r, 0.0, em)
+
+        if cap in ("circular_dependency_detect",):
+            has_cycle = result.get("has_cycle")
+            cycle_path = result.get("cycle_path", [])
+            if has_cycle is None:
+                return (0.0, 0.0, 1.0, 0)
+            correct = 1 if has_cycle == case.expected_has_cycle else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            # 检查循环路径是否匹配
+            path_score = 0.0
+            if case.expected_cycle_path and isinstance(cycle_path, list):
+                pred_path = set()
+                for node in cycle_path:
+                    if isinstance(node, str):
+                        pred_path.add(node.lower())
+                    elif isinstance(node, dict):
+                        pred_path.add(str(node.get("module", node.get("node", ""))).lower())
+                gold_path = set(n.lower() for n in case.expected_cycle_path)
+                if gold_path:
+                    path_score = len(pred_path & gold_path) / len(gold_path)
+            score = max(correct, kw_rate, path_score)
+            return (score, score, 0.0, correct)
+
+        if cap in ("rollback_boundary_design",):
+            rollback_points = result.get("rollback_points", [])
+            boundaries = result.get("boundaries", [])
+            if not rollback_points and not boundaries:
+                return (0.0, 0.0, 1.0, 0)
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            # 检查回滚点是否匹配
+            point_score = 0.0
+            if case.expected_rollback_points:
+                pred_points = set()
+                for pt in rollback_points:
+                    if isinstance(pt, str):
+                        pred_points.add(pt.lower())
+                    elif isinstance(pt, dict):
+                        pred_points.add(str(pt.get("name", pt.get("point", ""))).lower())
+                gold_points = set(p.lower() for p in case.expected_rollback_points)
+                if gold_points:
+                    point_score = len(pred_points & gold_points) / len(gold_points)
+            score = max(kw_rate, point_score)
+            return (score, score, 0.0, 1 if point_score >= 0.8 else 0)
+
+        # L类: 任务规划能力评分
+        if cap in ("task_decomposition",):
+            tasks = result.get("tasks", [])
+            if not tasks:
+                return (0.0, 0.0, 1.0, 0)
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            # 检查任务名称是否匹配
+            task_score = 0.0
+            if case.expected_tasks:
+                pred_tasks = set()
+                for task in tasks:
+                    if isinstance(task, dict):
+                        name = str(task.get("name", "")).lower()
+                        if name:
+                            pred_tasks.add(name)
+                    elif isinstance(task, str):
+                        pred_tasks.add(task.lower())
+                gold_tasks = set(t.lower() for t in case.expected_tasks)
+                if gold_tasks:
+                    task_score = len(pred_tasks & gold_tasks) / len(gold_tasks)
+            score = max(kw_rate, task_score)
+            return (score, score, 0.0, 1 if task_score >= 0.8 else 0)
+
+        if cap in ("parallel_planning",):
+            parallel_groups = result.get("parallel_groups", [])
+            if not parallel_groups:
+                return (0.0, 0.0, 1.0, 0)
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            # 检查并行组是否匹配
+            group_score = 0.0
+            if case.expected_parallel_groups:
+                pred_groups = set()
+                for group in parallel_groups:
+                    if isinstance(group, list):
+                        for item in group:
+                            if isinstance(item, str):
+                                pred_groups.add(item.lower())
+                    elif isinstance(group, str):
+                        pred_groups.add(group.lower())
+                gold_groups = set()
+                for group in case.expected_parallel_groups:
+                    for item in group:
+                        gold_groups.add(item.lower())
+                if gold_groups:
+                    group_score = len(pred_groups & gold_groups) / len(gold_groups)
+            score = max(kw_rate, group_score)
+            return (score, score, 0.0, 1 if group_score >= 0.8 else 0)
+
+        if cap in ("dependency_ordering",):
+            order = result.get("order", [])
+            if not order:
+                return (0.0, 0.0, 1.0, 0)
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            # 检查排序是否匹配
+            order_score = 0.0
+            if case.expected_order and isinstance(order, list):
+                pred_order = [str(o).lower() for o in order]
+                gold_order = [o.lower() for o in case.expected_order]
+                if gold_order:
+                    # 计算前N个匹配率
+                    min_len = min(len(pred_order), len(gold_order))
+                    matches = sum(1 for i in range(min_len) if pred_order[i] == gold_order[i])
+                    order_score = matches / len(gold_order)
+            score = max(kw_rate, order_score)
+            return (score, score, 0.0, 1 if order_score >= 0.8 else 0)
+
+        # M类: 上下文管理能力评分
+        if cap in ("cross_file_hallucination_detect",):
+            has_hallucination = result.get("has_hallucination")
+            hallucinated_items = result.get("hallucinated_items", [])
+            if has_hallucination is None:
+                return (0.0, 0.0, 1.0, 0)
+            correct = 1 if has_hallucination == case.expected_has_hallucination else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            # 检查幻觉项是否匹配
+            item_score = 0.0
+            if case.expected_hallucinated_items:
+                pred_items = set()
+                for item in hallucinated_items:
+                    if isinstance(item, dict):
+                        pred_items.add(str(item.get("item", item.get("name", ""))).lower())
+                    elif isinstance(item, str):
+                        pred_items.add(item.lower())
+                gold_items = set(i.lower() for i in case.expected_hallucinated_items)
+                if gold_items:
+                    item_score = len(pred_items & gold_items) / len(gold_items)
+            score = max(correct, kw_rate, item_score)
+            return (score, score, 0.0, correct)
+
+        if cap in ("context_freshness_awareness",):
+            context_degraded = result.get("context_degraded")
+            if context_degraded is None:
+                return (0.0, 0.0, 1.0, 0)
+            correct = 1 if context_degraded == case.expected_context_degraded else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = max(correct, kw_rate)
+            return (score, score, 0.0, correct)
+
+        if cap in ("context_window_management",):
+            should_start_new_session = result.get("should_start_new_session")
+            if should_start_new_session is None:
+                return (0.0, 0.0, 1.0, 0)
+            correct = 1 if should_start_new_session == case.expected_new_session else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = max(correct, kw_rate)
+            return (score, score, 0.0, correct)
+
         return (0.0, 0.0, 1.0, 0)
 
     # ── 速轴 ────────────────────────────────────────────

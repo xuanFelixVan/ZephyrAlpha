@@ -91,6 +91,21 @@ class ExamTestCase:
     # J类: 工具选择
     expected_tool: str = ""
 
+    # K类: 影响分析能力
+    expected_affected_files_k: list[str] = field(default_factory=list)  # impact_analysis预期受影响文件
+    expected_has_cycle: bool = False  # circular_dependency_detect预期是否有循环
+    expected_cycle_path: list[str] = field(default_factory=list)  # 预期循环路径
+    expected_rollback_points: list[str] = field(default_factory=list)  # 预期回滚点
+    # L类: 任务规划能力
+    expected_tasks: list[str] = field(default_factory=list)  # 预期任务列表
+    expected_parallel_groups: list[list[str]] = field(default_factory=list)  # 预期并行组
+    expected_order: list[str] = field(default_factory=list)  # 预期排序
+    # M类: 上下文管理能力
+    expected_has_hallucination: bool = False  # 预期是否有幻觉
+    expected_hallucinated_items: list[str] = field(default_factory=list)  # 预期幻觉项
+    expected_context_degraded: bool = False  # 预期上下文是否退化
+    expected_new_session: bool = False  # 预期是否需要新会话
+
 
 # ══════════════════════════════════════════════════════════
 # task_classification (3 题)
@@ -1112,7 +1127,744 @@ EX_TS_003 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
-# 全集 — 72 题
+# K类: 影响分析能力 (15 题)
+# ══════════════════════════════════════════════════════════
+
+# impact_analysis (5 题) — 影响分析
+EX_IA_001 = ExamTestCase(
+    case_id="EX-IA-001",
+    capability="impact_analysis",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "impact analysis: If I modify the helper function in utils.py, which files will be affected?\n"
+        "Project structure:\n"
+        "  utils.py: def helper(): return 42\n"
+        "  main.py: from utils import helper; print(helper())\n"
+        "  test_utils.py: from utils import helper; assert helper() == 42\n"
+        "List all affected files."
+    ),
+    expected_structure_keys=["affected_files"],
+    expected_affected_files_k=["utils.py", "main.py", "test_utils.py"],
+    expected_contains=["main.py", "test_utils"],
+)
+
+EX_IA_002 = ExamTestCase(
+    case_id="EX-IA-002",
+    capability="impact_analysis",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "impact analysis: If I change the config value in config.py, which files will be affected?\n"
+        "Project structure:\n"
+        "  config.py: MAX_RETRIES = 3\n"
+        "  retry.py: from config import MAX_RETRIES\n"
+        "  handler.py: from config import MAX_RETRIES\n"
+        "List all affected files."
+    ),
+    expected_structure_keys=["affected_files"],
+    expected_affected_files_k=["config.py", "retry.py", "handler.py"],
+    expected_contains=["retry", "handler"],
+)
+
+EX_IA_003 = ExamTestCase(
+    case_id="EX-IA-003",
+    capability="impact_analysis",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "impact analysis: If I modify the interface in interface.py, which files will be affected?\n"
+        "Project structure (10 files):\n"
+        "  interface.py: class IDataService: def get(self, id): pass\n"
+        "  impl1.py: class Service1(IDataService): def get(self, id): return data1\n"
+        "  impl2.py: class Service2(IDataService): def get(self, id): return data2\n"
+        "  impl3.py: class Service3(IDataService): def get(self, id): return data3\n"
+        "  factory.py: def create_service(name): return services[name]\n"
+        "  client1.py: from factory import create_service; s = create_service('s1')\n"
+        "  client2.py: from factory import create_service; s = create_service('s2')\n"
+        "  client3.py: from factory import create_service; s = create_service('s3')\n"
+        "  test_impl1.py: from impl1 import Service1\n"
+        "  test_impl2.py: from impl2 import Service2\n"
+        "List all affected files."
+    ),
+    expected_structure_keys=["affected_files"],
+    expected_affected_files_k=["interface.py", "impl1.py", "impl2.py", "impl3.py", "factory.py", "client1.py", "client2.py", "client3.py", "test_impl1.py", "test_impl2.py"],
+    expected_contains=["impl1", "impl2", "factory", "client"],
+)
+
+EX_IA_004 = ExamTestCase(
+    case_id="EX-IA-004",
+    capability="impact_analysis",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "impact analysis: If I change the data model in model.py, which files will be affected?\n"
+        "Project structure (10 files):\n"
+        "  model.py: class User: def __init__(self, name, email): pass\n"
+        "  dao1.py: from model import User; def create_user(u): save(u)\n"
+        "  dao2.py: from model import User; def get_user(id): return User(...)\n"
+        "  dao3.py: from model import User; def update_user(u): save(u)\n"
+        "  service1.py: from dao1 import create_user\n"
+        "  service2.py: from dao2 import get_user\n"
+        "  service3.py: from dao3 import update_user\n"
+        "  api1.py: from service1 import create_user\n"
+        "  api2.py: from service2 import get_user\n"
+        "  api3.py: from service3 import update_user\n"
+        "List all affected files."
+    ),
+    expected_structure_keys=["affected_files"],
+    expected_affected_files_k=["model.py", "dao1.py", "dao2.py", "dao3.py", "service1.py", "service2.py", "service3.py", "api1.py", "api2.py", "api3.py"],
+    expected_contains=["dao", "service", "api"],
+)
+
+EX_IA_005 = ExamTestCase(
+    case_id="EX-IA-005",
+    capability="impact_analysis",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "impact analysis: If I modify the core service in core_service.py, which files will be affected?\n"
+        "Project structure (25 files):\n"
+        "  core_service.py: class CoreService: def process(data): pass\n"
+        "  adapter1.py, adapter2.py, adapter3.py, adapter4.py, adapter5.py: all import CoreService\n"
+        "  handler1.py, handler2.py, handler3.py, handler4.py, handler5.py: all import adapters\n"
+        "  controller1.py, controller2.py, controller3.py, controller4.py, controller5.py: all import handlers\n"
+        "  view1.py, view2.py, view3.py, view4.py, view5.py: all import controllers\n"
+        "  route1.py, route2.py, route3.py, route4.py, route5.py: all import views\n"
+        "List all affected files."
+    ),
+    expected_structure_keys=["affected_files"],
+    expected_affected_files_k=["core_service.py", "adapter1.py", "adapter2.py", "adapter3.py", "adapter4.py", "adapter5.py", "handler1.py", "handler2.py", "handler3.py", "handler4.py", "handler5.py", "controller1.py", "controller2.py", "controller3.py", "controller4.py", "controller5.py", "view1.py", "view2.py", "view3.py", "view4.py", "view5.py", "route1.py", "route2.py", "route3.py", "route4.py", "route5.py"],
+    expected_contains=["adapter", "handler", "controller", "view", "route"],
+)
+
+# circular_dependency_detect (5 题) — 循环依赖检测
+EX_CDD_001 = ExamTestCase(
+    case_id="EX-CDD-001",
+    capability="circular_dependency_detect",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "circular dependency check: Does this code have a circular dependency?\n"
+        "  module_a.py: from module_b import func_b\n"
+        "  module_b.py: from module_a import func_a\n"
+        "Analyze and report if there is a cycle."
+    ),
+    expected_structure_keys=["has_cycle", "cycle_path"],
+    expected_has_cycle=True,
+    expected_cycle_path=["module_a", "module_b"],
+    expected_contains=["cycle", "module_a", "module_b"],
+)
+
+EX_CDD_002 = ExamTestCase(
+    case_id="EX-CDD-002",
+    capability="circular_dependency_detect",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "circular dependency check: Does this code have a circular dependency?\n"
+        "  a.py: from b import b_func\n"
+        "  b.py: from c import c_func\n"
+        "  c.py: from a import a_func\n"
+        "Analyze and report if there is a cycle."
+    ),
+    expected_structure_keys=["has_cycle", "cycle_path"],
+    expected_has_cycle=True,
+    expected_cycle_path=["a", "b", "c"],
+    expected_contains=["cycle", "a", "b", "c"],
+)
+
+EX_CDD_003 = ExamTestCase(
+    case_id="EX-CDD-003",
+    capability="circular_dependency_detect",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "circular dependency check: Analyze these 10 modules for circular dependencies.\n"
+        "  m1.py: from m2 import f2\n"
+        "  m2.py: from m3 import f3\n"
+        "  m3.py: from m4 import f4\n"
+        "  m4.py: from m5 import f5\n"
+        "  m5.py: from m1 import f1  # cycle here\n"
+        "  m6.py: from m7 import f7\n"
+        "  m7.py: from m8 import f8\n"
+        "  m8.py: from m9 import f9\n"
+        "  m9.py: from m10 import f10\n"
+        "  m10.py: import os  # no cycle here\n"
+        "Report all cycles found."
+    ),
+    expected_structure_keys=["has_cycle", "cycle_path"],
+    expected_has_cycle=True,
+    expected_cycle_path=["m1", "m2", "m3", "m4", "m5"],
+    expected_contains=["cycle", "m1", "m5"],
+)
+
+EX_CDD_004 = ExamTestCase(
+    case_id="EX-CDD-004",
+    capability="circular_dependency_detect",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "circular dependency check: Analyze these 10 modules for circular dependencies.\n"
+        "  service.py: from repository import Repository\n"
+        "  repository.py: from model import User\n"
+        "  model.py: from validator import validate\n"
+        "  validator.py: from service import Service  # hidden cycle through service\n"
+        "  config.py: from model import User\n"
+        "  cache.py: from config import Config\n"
+        "  logger.py: import logging\n"
+        "  utils.py: from logger import log\n"
+        "  auth.py: from service import Service\n"
+        "  api.py: from auth import Auth\n"
+        "Report all cycles found."
+    ),
+    expected_structure_keys=["has_cycle", "cycle_path"],
+    expected_has_cycle=True,
+    expected_cycle_path=["service", "repository", "model", "validator"],
+    expected_contains=["cycle", "service", "validator"],
+)
+
+EX_CDD_005 = ExamTestCase(
+    case_id="EX-CDD-005",
+    capability="circular_dependency_detect",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "circular dependency check: Analyze these 25 modules for circular dependencies.\n"
+        "  core1.py: from core2 import f2\n"
+        "  core2.py: from core3 import f3\n"
+        "  core3.py: from core1 import f1  # cycle 1\n"
+        "  data1.py: from data2 import f2\n"
+        "  data2.py: from data3 import f3\n"
+        "  data3.py: from data4 import f4\n"
+        "  data4.py: from data1 import f1  # cycle 2\n"
+        "  ui1.py: from ui2 import f2\n"
+        "  ui2.py: from ui3 import f3\n"
+        "  ui3.py: from ui1 import f1  # cycle 3\n"
+        "  util1.py: from util2 import f2\n"
+        "  util2.py: from util3 import f3\n"
+        "  util3.py: import os  # no cycle\n"
+        "  helper1.py: from helper2 import f2\n"
+        "  helper2.py: from helper3 import f3\n"
+        "  helper3.py: from helper4 import f4\n"
+        "  helper4.py: from helper5 import f5\n"
+        "  helper5.py: from helper1 import f1  # cycle 4\n"
+        "  base1.py: from base2 import f2\n"
+        "  base2.py: from base3 import f3\n"
+        "  base3.py: from base4 import f4\n"
+        "  base4.py: from base5 import f5\n"
+        "  base5.py: import sys  # no cycle\n"
+        "  main.py: from core1 import f1\n"
+        "Report all cycles found."
+    ),
+    expected_structure_keys=["has_cycle", "cycle_path"],
+    expected_has_cycle=True,
+    expected_cycle_path=["core1", "core2", "core3"],
+    expected_contains=["cycle", "core1", "data1", "ui1", "helper1"],
+)
+
+# rollback_boundary_design (5 题) — 回滚边界设计
+EX_RBD_001 = ExamTestCase(
+    case_id="EX-RBD-001",
+    capability="rollback_boundary_design",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "rollback design: We are modifying 3 files to add a new feature.\n"
+        "  database.py: add new table schema\n"
+        "  model.py: add new model class\n"
+        "  api.py: add new endpoint\n"
+        "Design safe rollback points and boundaries."
+    ),
+    expected_structure_keys=["rollback_points", "boundaries"],
+    expected_rollback_points=["database", "model", "api"],
+    expected_contains=["backup", "database", "model", "api"],
+)
+
+EX_RBD_002 = ExamTestCase(
+    case_id="EX-RBD-002",
+    capability="rollback_boundary_design",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "rollback design: We are refactoring 3 files to change the authentication system.\n"
+        "  auth.py: change token validation logic\n"
+        "  middleware.py: update auth middleware\n"
+        "  routes.py: add new auth routes\n"
+        "Design safe rollback points and boundaries."
+    ),
+    expected_structure_keys=["rollback_points", "boundaries"],
+    expected_rollback_points=["auth", "middleware", "routes"],
+    expected_contains=["backup", "auth", "middleware"],
+)
+
+EX_RBD_003 = ExamTestCase(
+    case_id="EX-RBD-003",
+    capability="rollback_boundary_design",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "rollback design: We are migrating 10 files from REST to GraphQL.\n"
+        "  schema.py, resolvers.py, types.py, models.py, db.py\n"
+        "  api_v1.py, api_v2.py, middleware.py, auth.py, cache.py\n"
+        "Design safe rollback points and boundaries for this migration."
+    ),
+    expected_structure_keys=["rollback_points", "boundaries"],
+    expected_rollback_points=["schema", "resolvers", "types", "models", "db"],
+    expected_contains=["backup", "schema", "resolvers", "migration"],
+)
+
+EX_RBD_004 = ExamTestCase(
+    case_id="EX-RBD-004",
+    capability="rollback_boundary_design",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "rollback design: We are splitting a monolithic 10-file module into microservices.\n"
+        "  monolith.py, database.py, auth.py, users.py, orders.py\n"
+        "  products.py, payments.py, notifications.py, logging.py, config.py\n"
+        "Design safe rollback points and boundaries for this split."
+    ),
+    expected_structure_keys=["rollback_points", "boundaries"],
+    expected_rollback_points=["monolith", "database", "auth", "users", "orders"],
+    expected_contains=["backup", "monolith", "database", "split"],
+)
+
+EX_RBD_005 = ExamTestCase(
+    case_id="EX-RBD-005",
+    capability="rollback_boundary_design",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "rollback design: We are doing a major architecture upgrade across 25 files.\n"
+        "  core1-5.py: core logic changes\n"
+        "  data1-5.py: data layer migration\n"
+        "  ui1-5.py: UI framework upgrade\n"
+        "  api1-5.py: API versioning\n"
+        "  config1-5.py: configuration restructuring\n"
+        "Design safe rollback points and boundaries for this major upgrade."
+    ),
+    expected_structure_keys=["rollback_points", "boundaries"],
+    expected_rollback_points=["core", "data", "ui", "api", "config"],
+    expected_contains=["backup", "core", "data", "upgrade", "boundary"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# L类: 任务规划能力 (11 题)
+# ══════════════════════════════════════════════════════════
+
+# task_decomposition (5 题) — 任务分解
+EX_TD_001 = ExamTestCase(
+    case_id="EX-TD-001",
+    capability="task_decomposition",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "task decomposition: Break down this task into subtasks.\n"
+        "Task: Add user registration feature\n"
+        "Files to modify: models.py (add User model), views.py (add register view), urls.py (add route)\n"
+        "Decompose into executable subtasks."
+    ),
+    expected_structure_keys=["tasks"],
+    expected_tasks=["models", "views", "urls"],
+    expected_contains=["model", "view", "url", "register"],
+)
+
+EX_TD_002 = ExamTestCase(
+    case_id="EX-TD-002",
+    capability="task_decomposition",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "task decomposition: Break down this task into subtasks.\n"
+        "Task: Implement password reset\n"
+        "Files: auth.py (reset logic), email.py (send email), templates.py (reset form)\n"
+        "Decompose into executable subtasks."
+    ),
+    expected_structure_keys=["tasks"],
+    expected_tasks=["auth", "email", "templates"],
+    expected_contains=["auth", "email", "template", "reset"],
+)
+
+EX_TD_003 = ExamTestCase(
+    case_id="EX-TD-003",
+    capability="task_decomposition",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "task decomposition: Break down this complex task into subtasks.\n"
+        "Task: Migrate from monolith to microservices\n"
+        "Files: monolith.py, db.py, auth.py, users.py, orders.py, products.py, payments.py, notifications.py, api_gateway.py, config.py\n"
+        "Decompose into executable subtasks."
+    ),
+    expected_structure_keys=["tasks"],
+    expected_tasks=["monolith", "db", "auth", "users", "orders"],
+    expected_contains=["monolith", "database", "auth", "users", "orders", "microservice"],
+)
+
+EX_TD_004 = ExamTestCase(
+    case_id="EX-TD-004",
+    capability="task_decomposition",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "task decomposition: Break down this complex task into subtasks.\n"
+        "Task: Add real-time chat feature\n"
+        "Files: websocket.py, chat_model.py, chat_service.py, chat_ui.py, notification.py, presence.py, history.py, file_upload.py, encryption.py, config.py\n"
+        "Decompose into executable subtasks."
+    ),
+    expected_structure_keys=["tasks"],
+    expected_tasks=["websocket", "chat_model", "chat_service", "chat_ui", "notification"],
+    expected_contains=["websocket", "chat", "service", "notification", "presence"],
+)
+
+EX_TD_005 = ExamTestCase(
+    case_id="EX-TD-005",
+    capability="task_decomposition",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "task decomposition: Break down this major task into subtasks.\n"
+        "Task: Complete architecture upgrade\n"
+        "Files: core1-5.py, data1-5.py, ui1-5.py, api1-5.py, config1-5.py (25 files total)\n"
+        "Decompose into executable subtasks with clear dependencies."
+    ),
+    expected_structure_keys=["tasks"],
+    expected_tasks=["core", "data", "ui", "api", "config"],
+    expected_contains=["core", "data", "ui", "api", "config", "upgrade"],
+)
+
+# parallel_planning (3 题) — 并行规划
+EX_PP_001 = ExamTestCase(
+    case_id="EX-PP-001",
+    capability="parallel_planning",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "parallel planning: Which of these tasks can run in parallel?\n"
+        "Tasks:\n"
+        "  A: Update models.py (no dependencies)\n"
+        "  B: Update views.py (depends on A)\n"
+        "  C: Update tests.py (depends on A and B)\n"
+        "Identify parallel groups."
+    ),
+    expected_structure_keys=["parallel_groups"],
+    expected_parallel_groups=[["A"], ["B"], ["C"]],
+    expected_contains=["parallel", "sequential", "A", "B", "C"],
+)
+
+EX_PP_002 = ExamTestCase(
+    case_id="EX-PP-002",
+    capability="parallel_planning",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "parallel planning: Which of these 10 tasks can run in parallel?\n"
+        "Tasks:\n"
+        "  T1: Update database schema (no deps)\n"
+        "  T2: Update models (depends on T1)\n"
+        "  T3: Update auth (no deps)\n"
+        "  T4: Update users API (depends on T2, T3)\n"
+        "  T5: Update orders API (depends on T2)\n"
+        "  T6: Update products API (depends on T2)\n"
+        "  T7: Update payments (depends on T4)\n"
+        "  T8: Update notifications (depends on T3)\n"
+        "  T9: Update logging (no deps)\n"
+        "  T10: Update config (no deps)\n"
+        "Identify parallel groups."
+    ),
+    expected_structure_keys=["parallel_groups"],
+    expected_parallel_groups=[["T1", "T3", "T9", "T10"], ["T2", "T8"], ["T4", "T5", "T6"], ["T7"]],
+    expected_contains=["parallel", "T1", "T3", "T9", "T10"],
+)
+
+EX_PP_003 = ExamTestCase(
+    case_id="EX-PP-003",
+    capability="parallel_planning",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "parallel planning: Which of these 25 tasks can run in parallel?\n"
+        "Tasks (25 total):\n"
+        "  Core layer: C1-C5 (C1 no deps, C2 depends C1, C3 depends C2, C4 depends C3, C5 depends C4)\n"
+        "  Data layer: D1-D5 (D1 no deps, D2-D5 depend on D1)\n"
+        "  UI layer: U1-U5 (U1-U5 all depend on C5)\n"
+        "  API layer: A1-A5 (A1-A5 all depend on C5 and D5)\n"
+        "  Config layer: F1-F5 (F1-F5 no deps, can all run in parallel)\n"
+        "Identify parallel groups."
+    ),
+    expected_structure_keys=["parallel_groups"],
+    expected_parallel_groups=[["C1", "D1", "F1", "F2", "F3", "F4", "F5"]],
+    expected_contains=["parallel", "C1", "D1", "F1", "F2"],
+)
+
+# dependency_ordering (3 题) — 依赖排序
+EX_DO_001 = ExamTestCase(
+    case_id="EX-DO-001",
+    capability="dependency_ordering",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "dependency ordering: Sort these tasks by dependency.\n"
+        "Tasks:\n"
+        "  A: Write tests (depends on B)\n"
+        "  B: Implement feature\n"
+        "  C: Deploy (depends on A)\n"
+        "Provide the correct execution order."
+    ),
+    expected_structure_keys=["order"],
+    expected_order=["B", "A", "C"],
+    expected_contains=["B", "A", "C", "order"],
+)
+
+EX_DO_002 = ExamTestCase(
+    case_id="EX-DO-002",
+    capability="dependency_ordering",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "dependency ordering: Sort these 10 tasks by dependency.\n"
+        "Tasks:\n"
+        "  T1: Database migration (no deps)\n"
+        "  T2: Update models (depends on T1)\n"
+        "  T3: Update services (depends on T2)\n"
+        "  T4: Update controllers (depends on T3)\n"
+        "  T5: Update views (depends on T4)\n"
+        "  T6: Update API routes (depends on T5)\n"
+        "  T7: Write unit tests (depends on T3)\n"
+        "  T8: Write integration tests (depends on T6)\n"
+        "  T9: Update documentation (depends on T6)\n"
+        "  T10: Deploy (depends on T8, T9)\n"
+        "Provide the correct execution order."
+    ),
+    expected_structure_keys=["order"],
+    expected_order=["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10"],
+    expected_contains=["T1", "T2", "T3", "order"],
+)
+
+EX_DO_003 = ExamTestCase(
+    case_id="EX-DO-003",
+    capability="dependency_ordering",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "dependency ordering: Sort these 25 tasks by dependency.\n"
+        "Tasks:\n"
+        "  Phase 1 (Foundation): F1-F5 (F1 no deps, F2 depends F1, F3 depends F2, F4 depends F3, F5 depends F4)\n"
+        "  Phase 2 (Core): C1-C5 (C1 depends F5, C2 depends C1, C3 depends C2, C4 depends C3, C5 depends C4)\n"
+        "  Phase 3 (Features): P1-P5 (P1 depends C5, P2 depends C5, P3 depends C5, P4 depends C5, P5 depends C5)\n"
+        "  Phase 4 (Integration): I1-I5 (I1 depends P1, I2 depends P2, I3 depends P3, I4 depends P4, I5 depends P5)\n"
+        "  Phase 5 (Deployment): D1-D5 (D1 depends I1, D2 depends I2, D3 depends I3, D4 depends I4, D5 depends I5)\n"
+        "Provide the correct execution order."
+    ),
+    expected_structure_keys=["order"],
+    expected_order=["F1", "F2", "F3", "F4", "F5", "C1", "C2", "C3", "C4", "C5"],
+    expected_contains=["F1", "F2", "C1", "C2", "order"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# M类: 上下文管理能力 (11 题)
+# ══════════════════════════════════════════════════════════
+
+# cross_file_hallucination_detect (5 题) — 跨文件幻觉检测
+EX_CFHD_001 = ExamTestCase(
+    case_id="EX-CFHD-001",
+    capability="cross_file_hallucination_detect",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "hallucination check: A developer claims these 3 files exist and were modified:\n"
+        "  utils.py: contains helper() function\n"
+        "  main.py: imports helper from utils\n"
+        "  fake_module.py: imports nonexistent_func from utils  # THIS FILE DOES NOT EXIST\n"
+        "Detect any hallucinated/nonexistent files or functions."
+    ),
+    expected_structure_keys=["has_hallucination", "hallucinated_items"],
+    expected_has_hallucination=True,
+    expected_hallucinated_items=["fake_module.py", "nonexistent_func"],
+    expected_contains=["hallucination", "fake_module", "nonexistent"],
+)
+
+EX_CFHD_002 = ExamTestCase(
+    case_id="EX-CFHD-002",
+    capability="cross_file_hallucination_detect",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "hallucination check: An AI assistant made these claims about 3 files:\n"
+        "  config.py: has MAX_RETRIES = 3\n"
+        "  retry.py: imports MAX_RETRIES from config\n"
+        "  cache.py: imports REDIS_URL from config  # config.py does NOT contain REDIS_URL\n"
+        "Detect any hallucinated/nonexistent imports or functions."
+    ),
+    expected_structure_keys=["has_hallucination", "hallucinated_items"],
+    expected_has_hallucination=True,
+    expected_hallucinated_items=["REDIS_URL"],
+    expected_contains=["hallucination", "REDIS_URL", "cache"],
+)
+
+EX_CFHD_003 = ExamTestCase(
+    case_id="EX-CFHD-003",
+    capability="cross_file_hallucination_detect",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "hallucination check: An AI assistant analyzed 10 files and made these claims:\n"
+        "  model.py: has User class\n"
+        "  dao.py: has save_user() function\n"
+        "  service.py: has process_user() function\n"
+        "  api.py: has /users endpoint\n"
+        "  auth.py: has authenticate() function\n"
+        "  fake_service.py: has validate_user()  # DOES NOT EXIST\n"
+        "  phantom.py: has send_email()  # DOES NOT EXIST\n"
+        "  ghost.py: has log_event()  # DOES NOT EXIST\n"
+        "  real_helper.py: has format_date()\n"
+        "  utils.py: has helper()\n"
+        "Detect all hallucinated/nonexistent files or functions."
+    ),
+    expected_structure_keys=["has_hallucination", "hallucinated_items"],
+    expected_has_hallucination=True,
+    expected_hallucinated_items=["fake_service.py", "phantom.py", "ghost.py", "validate_user", "send_email", "log_event"],
+    expected_contains=["hallucination", "fake_service", "phantom", "ghost"],
+)
+
+EX_CFHD_004 = ExamTestCase(
+    case_id="EX-CFHD-004",
+    capability="cross_file_hallucination_detect",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "hallucination check: An AI assistant claimed to have read 10 files and found these imports:\n"
+        "  main.py: from database import Database  # database.py exists\n"
+        "  models.py: from database import User  # database.py does NOT have User class\n"
+        "  views.py: from models import UserView  # models.py does NOT have UserView\n"
+        "  controllers.py: from views import UserView  # views.py does NOT have UserView\n"
+        "  services.py: from controllers import UserController  # controllers.py does NOT have UserController\n"
+        "  auth.py: from services import AuthService  # services.py does NOT have AuthService\n"
+        "  api.py: from auth import AuthMiddleware  # auth.py does NOT have AuthMiddleware\n"
+        "  config.py: from api import APIClient  # api.py does NOT have APIClient\n"
+        "  utils.py: from config import ConfigManager  # config.py does NOT have ConfigManager\n"
+        "  helpers.py: from utils import format_date  # utils.py exists and has format_date\n"
+        "Detect all hallucinated/nonexistent imports."
+    ),
+    expected_structure_keys=["has_hallucination", "hallucinated_items"],
+    expected_has_hallucination=True,
+    expected_hallucinated_items=["User", "UserView", "UserController", "AuthService", "AuthMiddleware", "APIClient", "ConfigManager"],
+    expected_contains=["hallucination", "UserView", "AuthService", "ConfigManager"],
+)
+
+EX_CFHD_005 = ExamTestCase(
+    case_id="EX-CFHD-005",
+    capability="cross_file_hallucination_detect",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "hallucination check: An AI assistant analyzed a 25-file project and made these claims:\n"
+        "  core1-5.py: all exist and have correct functions\n"
+        "  data1-5.py: all exist, but data3.py claims to import 'validate_schema' from data1.py which does NOT exist\n"
+        "  ui1-5.py: all exist, but ui2.py claims to import 'render_component' from ui1.py which does NOT exist\n"
+        "  api1-5.py: all exist, but api4.py claims to import 'authenticate_request' from api1.py which does NOT exist\n"
+        "  config1-5.py: all exist, but config5.py claims to import 'load_env' from config1.py which does NOT exist\n"
+        "  Also, the AI claimed there's a file 'phantom_module.py' that does NOT exist in the project\n"
+        "Detect all hallucinated/nonexistent files and functions."
+    ),
+    expected_structure_keys=["has_hallucination", "hallucinated_items"],
+    expected_has_hallucination=True,
+    expected_hallucinated_items=["validate_schema", "render_component", "authenticate_request", "load_env", "phantom_module.py"],
+    expected_contains=["hallucination", "validate_schema", "render_component", "phantom"],
+)
+
+# context_freshness_awareness (3 题) — 上下文新鲜度感知
+# 注: 使用 EX_CFAW 前缀避免与 cross_file_analysis 的 EX_CFA 冲突
+EX_CFAW_001 = ExamTestCase(
+    case_id="EX-CFAW-001",
+    capability="context_freshness_awareness",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "context freshness: Analyze this conversation for context degradation.\n"
+        "Conversation (5 turns):\n"
+        "  Turn 1: User asks about file A\n"
+        "  Turn 2: AI reads file A and responds\n"
+        "  Turn 3: User asks about file B\n"
+        "  Turn 4: AI reads file B and responds\n"
+        "  Turn 5: User asks 'what did we discuss in turn 1?'\n"
+        "Is the context degraded? What's your recommendation?"
+    ),
+    expected_structure_keys=["context_degraded", "reason"],
+    expected_context_degraded=False,
+    expected_contains=["fresh", "no", "degradation"],
+)
+
+EX_CFAW_002 = ExamTestCase(
+    case_id="EX-CFAW-002",
+    capability="context_freshness_awareness",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "context freshness: Analyze this conversation for context degradation.\n"
+        "Conversation (20 turns):\n"
+        "  Turns 1-5: Discussion about database schema\n"
+        "  Turns 6-10: Discussion about API design\n"
+        "  Turns 11-15: Discussion about UI components\n"
+        "  Turns 16-20: User asks 'based on our earlier discussion, what should the schema look like?'\n"
+        "The AI responds with a schema that contradicts what was discussed in turns 1-5.\n"
+        "Is the context degraded? What's your recommendation?"
+    ),
+    expected_structure_keys=["context_degraded", "reason"],
+    expected_context_degraded=True,
+    expected_contains=["degraded", "new session", "contradiction"],
+)
+
+EX_CFAW_003 = ExamTestCase(
+    case_id="EX-CFAW-003",
+    capability="context_freshness_awareness",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "context freshness: Analyze this conversation for context degradation.\n"
+        "Conversation (35 turns):\n"
+        "  Turns 1-10: Initial architecture discussion\n"
+        "  Turns 11-20: Implementation details\n"
+        "  Turns 21-30: Bug fixing and testing\n"
+        "  Turn 31: User asks 'what was our original architecture decision?'\n"
+        "  Turn 32: AI gives an answer that partially contradicts turns 1-10\n"
+        "  Turn 33: User asks 'are you sure?'\n"
+        "  Turn 34: AI changes its answer\n"
+        "  Turn 35: User asks 'what should we do next?'\n"
+        "Is the context degraded? What's your recommendation?"
+    ),
+    expected_structure_keys=["context_degraded", "reason"],
+    expected_context_degraded=True,
+    expected_contains=["degraded", "new session", "contradiction", "inconsistency"],
+)
+
+# context_window_management (3 题) — 上下文窗口管理
+EX_CWM_001 = ExamTestCase(
+    case_id="EX-CWM-001",
+    capability="context_window_management",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "context management: Should we start a new session?\n"
+        "Current session: 45 turns, discussing 3 different unrelated topics\n"
+        "  Topic 1: Database migration (turns 1-15)\n"
+        "  Topic 2: UI redesign (turns 16-30)\n"
+        "  Topic 3: API refactoring (turns 31-45)\n"
+        "The AI has started giving generic answers and forgetting earlier context.\n"
+        "Should we start a new session? What's your context strategy?"
+    ),
+    expected_structure_keys=["should_start_new_session", "reason"],
+    expected_new_session=True,
+    expected_contains=["new session", "yes", "degraded"],
+)
+
+EX_CWM_002 = ExamTestCase(
+    case_id="EX-CWM-002",
+    capability="context_window_management",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "context management: Should we start a new session?\n"
+        "Current session: 25 turns, all focused on the same feature implementation\n"
+        "  Turns 1-10: Design discussion\n"
+        "  Turns 11-20: Implementation\n"
+        "  Turns 21-25: Testing and bug fixes\n"
+        "The AI is still performing well and remembering all context.\n"
+        "Should we start a new session? What's your context strategy?"
+    ),
+    expected_structure_keys=["should_start_new_session", "reason"],
+    expected_new_session=False,
+    expected_contains=["no", "continue", "fresh"],
+)
+
+EX_CWM_003 = ExamTestCase(
+    case_id="EX-CWM-003",
+    capability="context_window_management",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "context management: Should we start a new session?\n"
+        "Current session: 30 turns\n"
+        "  Turns 1-15: Complex architecture discussion with many decisions\n"
+        "  Turns 16-25: Implementation that partially contradicts earlier decisions\n"
+        "  Turns 26-30: User is confused about which decisions are final\n"
+        "The AI is giving contradictory answers and seems confused.\n"
+        "Should we start a new session? What's your context strategy?"
+    ),
+    expected_structure_keys=["should_start_new_session", "reason"],
+    expected_new_session=True,
+    expected_contains=["new session", "yes", "contradiction", "degraded"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# 全集 — 109 题
 # ══════════════════════════════════════════════════════════
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
@@ -1212,6 +1964,52 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_TS_001,
     EX_TS_002,
     EX_TS_003,
+    # impact_analysis
+    EX_IA_001,
+    EX_IA_002,
+    EX_IA_003,
+    EX_IA_004,
+    EX_IA_005,
+    # circular_dependency_detect
+    EX_CDD_001,
+    EX_CDD_002,
+    EX_CDD_003,
+    EX_CDD_004,
+    EX_CDD_005,
+    # rollback_boundary_design
+    EX_RBD_001,
+    EX_RBD_002,
+    EX_RBD_003,
+    EX_RBD_004,
+    EX_RBD_005,
+    # task_decomposition
+    EX_TD_001,
+    EX_TD_002,
+    EX_TD_003,
+    EX_TD_004,
+    EX_TD_005,
+    # parallel_planning
+    EX_PP_001,
+    EX_PP_002,
+    EX_PP_003,
+    # dependency_ordering
+    EX_DO_001,
+    EX_DO_002,
+    EX_DO_003,
+    # cross_file_hallucination_detect
+    EX_CFHD_001,
+    EX_CFHD_002,
+    EX_CFHD_003,
+    EX_CFHD_004,
+    EX_CFHD_005,
+    # context_freshness_awareness
+    EX_CFAW_001,
+    EX_CFAW_002,
+    EX_CFAW_003,
+    # context_window_management
+    EX_CWM_001,
+    EX_CWM_002,
+    EX_CWM_003,
 ]
 
 CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}

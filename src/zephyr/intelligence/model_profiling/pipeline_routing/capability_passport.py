@@ -77,6 +77,18 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "ambiguity_detect": 0.55,
     # J类: 工具选择
     "tool_selection": 0.60,
+    # K类: 影响分析能力
+    "impact_analysis": 0.55,
+    "circular_dependency_detect": 0.55,
+    "rollback_boundary_design": 0.50,
+    # L类: 任务规划能力
+    "task_decomposition": 0.55,
+    "parallel_planning": 0.50,
+    "dependency_ordering": 0.55,
+    # M类: 上下文管理能力
+    "cross_file_hallucination_detect": 0.55,
+    "context_freshness_awareness": 0.55,
+    "context_window_management": 0.55,
 }
 
 
