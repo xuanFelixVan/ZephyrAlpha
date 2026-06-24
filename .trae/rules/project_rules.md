@@ -1349,7 +1349,7 @@ STEP 4.11 — Rollback System 激活: preflight + AutoTrigger + Kill Switch
 STEP 4.12 — Budget Enforcer 激活: Token/Cost/Time 三维预算
 STEP 4.13 — Audit Trail: 审计链完整性 + 最近 50 条事件注入
 STEP 4.14 — A2A Protocol: 发现→通信→调度→防护 四段检查
-STEP 4.15 — DepMap 依赖图: ⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db）。用 `python scripts/governance/extract_depgraph.py --summary` 替代。正常期: `python scripts/governance/generate_project_depgraph.py --max-workers 8` → 文件级+包级依赖
+STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py（删除运营态节点后重建，但 build_status/module_lifecycle_state 不从文件头部解析，全用默认值 draft/inactive，导致911个节点手工维护数据丢失）。用 `python scripts/governance/extract_depgraph.py --summary` 替代
 STEP 4.16 — 三方对齐验证: ①全景图对齐: `diagnose_depgraph.py`（depgraph.db↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。exit≠0 → 漂移，禁止开工，先修复对齐
 STEP 5   — 按需定位具体注册表 → 开工
 ```

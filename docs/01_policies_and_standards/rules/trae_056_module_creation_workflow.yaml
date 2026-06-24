@@ -153,7 +153,7 @@ sections:
     prohibitions:
     - 禁止跳过STEP1守护进程启动直接执行写操作
     - 禁止直接Read depgraph.db（必须通过extract_depgraph.py）
-    - 架构升级期间禁止运行generate_project_depgraph.py（会覆盖depgraph.db设计态）
+    - 禁止运行generate_project_depgraph.py（删除运营态节点后重建，但build_status/module_lifecycle_state不从文件头部解析，全用默认值draft/inactive，导致手工维护数据丢失）
 
   phase_1_search:
     section_type: procedure
@@ -241,7 +241,7 @@ sections:
       fail: 升级失败 → 修复
     prohibitions:
     - 禁止跳过设计态直接创建实体文件
-    - 架构升级期间禁止运行generate_project_depgraph.py（会覆盖depgraph.db设计态）
+    - 禁止运行generate_project_depgraph.py（删除运营态节点后重建，但build_status/module_lifecycle_state不从文件头部解析，全用默认值draft/inactive，导致手工维护数据丢失）
     - 禁止直接SQL写入depgraph.db——使用apply_depgraph.py --add-design-node
 
   phase_3_admission:

@@ -58,7 +58,7 @@ sections:
     - type: mandatory
       step: 价值判定：零消费者≠无价值，看功能价值不看消费者数量
     - type: mandatory
-      step: 'STEP 5 验证时：架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db），用 extract_depgraph.py --summary 替代；正常期可运行 generate_project_depgraph.py'
+      step: 'STEP 5 验证时：禁止运行 generate_project_depgraph.py（删除运营态节点后重建，但 build_status/module_lifecycle_state 不从文件头部解析，全用默认值 draft/inactive，导致911个节点手工维护数据丢失），用 extract_depgraph.py --summary 替代'
     prohibitions:
     - 不推演直接移动模块
     - 按数量从大到小治理
