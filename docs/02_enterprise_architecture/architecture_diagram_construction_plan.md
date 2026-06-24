@@ -446,8 +446,8 @@ Phase 4: 架构视图重写
 ```
 docs/02_enterprise_architecture/
 ├── generated/                          # 新目录:所有生成器输出(给人看)
-│   ├── path_tree_zh.md                 # G1: 中文物理路径树
-│   ├── path_tree_en.md                 # G1: 英文物理路径树
+│   ├── full_project_tree_zh.md         # G1: 中文物理路径树
+│   ├── full_project_tree_en.md         # G1: 英文物理路径树
 │   ├── domains/                        # G2+G3: 每个域一个MD
 │   │   ├── D_TRADING.md               #   含模块清单+该域全景依赖图
 │   │   ├── D_RESEARCH.md
@@ -673,7 +673,7 @@ SELECT from_domain, to_domain, edge_count FROM (
 
 ```
 Phase 3-A: 样板开发
-  ├─ G1: generate_path_tree.py → path_tree_zh.md + path_tree_en.md
+  ├─ G1: generate_path_tree.py → full_project_tree_zh.md + full_project_tree_en.md
   ├─ G2: generate_domain_doc.py → domains/D_TRADING.md
   ├─ G3: generate_domain_dependency_diagram.py → domains/D_TRADING_dependency.mmd
   └─ G4: generate_integration_topology.py → integration_topology.mmd
@@ -760,7 +760,7 @@ STEP 4: 将生成器节点从design升级为production
 
 | # | 生成器 | 输入(depgraph.db) | 输出文件 | 给谁看 | 优先级 | 状态 |
 |---|--------|------------------|---------|--------|:---:|:---:|
-| G1 | generate_path_tree.py | arch_directory_tree表 | generated/path_tree_zh.md + path_tree_en.md | 人 | **高(样板)** | 待开发 |
+| G1 | generate_path_tree.py | arch_directory_tree表 | generated/full_project_tree_zh.md + full_project_tree_en.md | 人 | **高(样板)** | 待开发 |
 | G2 | generate_domain_doc.py | nodes表+edges表(指定域) | generated/domains/{domain}.md (39个) | 人 | **高(样板)** | 待开发 |
 | G3 | generate_domain_dependency_diagram.py | edges表(指定域依赖) | generated/domains/{domain}_dependency.mmd (39个) | 人 | **高(样板)** | 待开发 |
 | G4 | generate_integration_topology.py | edges表(所有跨域依赖) | generated/integration_topology.mmd | 人 | **高(样板)** | 待开发 |
@@ -774,8 +774,8 @@ STEP 4: 将生成器节点从design升级为production
 
 ```
 docs/02_enterprise_architecture/generated/
-├── path_tree_zh.md                     # G1: 中文物理路径树
-├── path_tree_en.md                     # G1: 英文物理路径树
+├── full_project_tree_zh.md             # G1: 中文物理路径树
+├── full_project_tree_en.md             # G1: 英文物理路径树
 ├── domains/                            # G2+G3: 每个域一个MD+依赖图
 │   ├── D_TRADING.md                   #   域文档(模块清单+元数据)
 │   ├── D_TRADING_dependency.mmd       #   该域全景依赖图
@@ -798,7 +798,7 @@ docs/02_enterprise_architecture/generated/
 
 #### G1: 物理路径树(中英文)
 
-**输出**:`path_tree_zh.md` + `path_tree_en.md`
+**输出**:`full_project_tree_zh.md` + `full_project_tree_en.md`
 
 **内容结构**:
 ```

@@ -26,7 +26,7 @@
 ### 想快速了解系统
 
 1. 看本文件了解文档库结构
-2. 看 `01_global_architecture_diagram/path_tree_zh.md` 了解项目物理结构（文件怎么组织的）
+2. 看 `01_global_architecture_diagram/full_project_tree_zh.md` 了解项目物理结构（文件怎么组织的）
 3. 看 `01_global_architecture_diagram/integration_topology.md` 了解43个域之间怎么互相依赖
 4. 看 `01_global_architecture_diagram/cross_domain_matrix.md` 了解域间依赖的详细数据
 

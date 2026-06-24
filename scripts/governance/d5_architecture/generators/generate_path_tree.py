@@ -16,9 +16,9 @@
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_path_tree
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db+文件系统;输出到generated/目录;仅展示 docs/02_enterprise_architecture/ 子树
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db+文件系统;输出到01_global_architecture_diagram/目录;全项目概览(过滤噪声目录)
 [MODIFY-GUARD] 修改需通过DM-200910任务卡或后续维护任务卡
-[CONSUMERS] CI自动触发;人工查看generated/path_tree_zh.md+path_tree_en.md
+[CONSUMERS] CI自动触发;人工查看full_project_tree_zh.md+full_project_tree_en.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
@@ -385,8 +385,8 @@ FILE_DESC_ZH = {
     "capability_heatmap.md": "能力热图",
     "cross_domain_matrix.md": "跨域矩阵",
     "integration_topology.md": "集成拓扑",
-    "path_tree_en.md": "路径树(英文)",
-    "path_tree_zh.md": "路径树(中文)",
+    "full_project_tree_en.md": "路径树(英文)",
+    "full_project_tree_zh.md": "路径树(中文)",
     "runtime_plane_mapping.md": "运行时平面映射",
     # 03_governance_reports
     "capacity_report.md": "容量报告",
@@ -457,8 +457,8 @@ FILE_DESC_EN = {
     "capability_heatmap.md": "Capability heatmap",
     "cross_domain_matrix.md": "Cross-domain matrix",
     "integration_topology.md": "Integration topology",
-    "path_tree_en.md": "Path tree (English)",
-    "path_tree_zh.md": "Path tree (Chinese)",
+    "full_project_tree_en.md": "Path tree (English)",
+    "full_project_tree_zh.md": "Path tree (Chinese)",
     "runtime_plane_mapping.md": "Runtime plane mapping",
     "capacity_report.md": "Capacity report",
     "constraint_violations.md": "Constraint violations",
@@ -812,12 +812,10 @@ def generate_path_tree(lang: str, conn: sqlite3.Connection, scope: str = "arch")
 
 
 def main() -> None:
-    """入口：生成中英文物理路径树。"""
+    """入口：生成中英文物理路径树(全项目)。"""
     parser = argparse.ArgumentParser(description="G1: 生成项目物理路径树(中英文)")
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
     parser.add_argument("--lang", type=str, choices=["zh", "en", "both"], default="both", help="生成语言")
-    parser.add_argument("--scope", type=str, choices=["arch", "full"], default="arch",
-                        help="范围: arch=仅架构文档目录, full=全项目概览")
     args = parser.parse_args()
 
     if not DEPGRAPH_DB.exists():
@@ -827,24 +825,19 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # 全项目模式输出文件名不同
-    if args.scope == "full":
-        zh_name = "full_project_tree_zh.md"
-        en_name = "full_project_tree_en.md"
-    else:
-        zh_name = "path_tree_zh.md"
-        en_name = "path_tree_en.md"
+    zh_name = "full_project_tree_zh.md"
+    en_name = "full_project_tree_en.md"
 
     conn = sqlite3.connect(str(DEPGRAPH_DB))
     try:
         if args.lang in ("zh", "both"):
-            content = generate_path_tree("zh", conn, args.scope)
+            content = generate_path_tree("zh", conn, "full")
             out_path = output_dir / zh_name
             out_path.write_text(content, encoding="utf-8")
             print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
 
         if args.lang in ("en", "both"):
-            content = generate_path_tree("en", conn, args.scope)
+            content = generate_path_tree("en", conn, "full")
             out_path = output_dir / en_name
             out_path.write_text(content, encoding="utf-8")
             print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
