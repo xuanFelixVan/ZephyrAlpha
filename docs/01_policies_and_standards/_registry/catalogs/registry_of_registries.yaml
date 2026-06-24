@@ -274,10 +274,10 @@ registries:
 
   - id: "REG-017"
     name: "project-path-tree"
-    title: "物理路径树快照"
-    path: "docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml"
-    version: "1.0.0"
-    description: "项目当前物理目录/文件结构快照，自动生成禁止手写"
+    title: "物理路径树"
+    path: "data/databases/depgraph.db (arch_directory_tree 表)"
+    version: "2.0.0"
+    description: "项目物理目录/文件结构，真源已迁移至 depgraph.db arch_directory_tree 表"
     ssoT_for:
       - "physical_path"
       - "directory_structure"

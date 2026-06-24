@@ -48,7 +48,6 @@ ai_autonomy: human_gated
 | `rule_catalog_registry.yaml` | 登记表 | 规则目录——全部规则的分类索引与交叉引用 | manual |
 | `functional_domain_registry.yaml` | 登记表 | 功能域登记表——按功能域组织的模块注册 | manual |
 | `master_document_inventory_registry.yaml` | 注册表 | 主文档清单——全项目文档的集中索引 | manual |
-| `project_path_tree.yaml` | 登记表 | 项目物理路径树——磁盘目录结构快照 | manual |
 | `business_streams.yaml` | 登记表 | 业务流定义 | manual |
 | `depgraph_scan_exclusions.yaml` | 登记表 | depgraph 扫描排除规则 | manual |
 | `hard_boundaries.yaml` | 登记表 | 硬边界定义 | manual |

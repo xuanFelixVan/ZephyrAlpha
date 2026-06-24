@@ -50,9 +50,9 @@ except ImportError:
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 PANORAMA_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
-MIGRATION_REGISTRY_PATH = PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml"
+MIGRATION_REGISTRY_PATH = PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration_registry.yaml"
 FUNC_DOMAIN_REGISTRY_PATH = (
-    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "functional-domain-registry.yaml"
+    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "functional_domain_registry.yaml"
 )
 OUTPUT_PATH = PROJECT_ROOT / "data" / "asset_index" / "target-path-tree.yaml"
 
