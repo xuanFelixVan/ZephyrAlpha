@@ -56,26 +56,52 @@ _DEPGRAPH_CONFIG = _SCAN_CONFIG.get("depgraph", {})
 
 # Fallback defaults (used only if config file is missing or incomplete)
 _FALLBACK_EXEMPT_DIRS = {
-    "__pycache__", ".git", ".ailocks", "node_modules",
-    ".mypy_cache", ".pytest_cache", ".ruff_cache",
-    "_backups", "_temp", ".audit_cache", "session_logs",
+    "__pycache__",
+    ".git",
+    ".ailocks",
+    "node_modules",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    "_backups",
+    "_temp",
+    ".audit_cache",
+    "session_logs",
 }
 # 白名单准入（裁定#184）：nodes表只收录4种node_type
 # module(.py代码) / script(.py脚本) / test(.py测试) / config(.yaml运行时配置)
 # 新类型默认不进nodes，天然安全（对齐dependency-cruiser/madge/Bazel实践）
 NODES_WHITELIST = {"module", "script", "test", "config"}
 _FALLBACK_SCAN_DIRS = [
-    "src/zephyr", "scripts", "data/asset_index", "data/config",
-    "data/metrics", "config", "schemas", "docs/03_modules",
-    "docs/01_policies_and_standards", "docs/02_enterprise_architecture",
-    "frontend", "architecture_model", "infra", "tools", "specs",
+    "src/zephyr",
+    "scripts",
+    "data/asset_index",
+    "data/config",
+    "data/metrics",
+    "config",
+    "schemas",
+    "docs/03_modules",
+    "docs/01_policies_and_standards",
+    "docs/02_enterprise_architecture",
+    "frontend",
+    "architecture_model",
+    "infra",
+    "tools",
+    "specs",
 ]
 _FALLBACK_KNOWLEDGE_DOC_PATHS = ["docs/08_knowledge/", "docs/09_audit/"]
 _FALLBACK_TYPE_PREFIXES = {
-    "policy": ["docs/01_policies_and_standards/governance/", "docs/01_policies_and_standards/domains/", "docs/01_policies_and_standards/operational/"],
+    "policy": [
+        "docs/01_policies_and_standards/governance/",
+        "docs/01_policies_and_standards/domains/",
+        "docs/01_policies_and_standards/operational/",
+    ],
     "standard": ["docs/01_policies_and_standards/rules/"],
     "template": ["docs/01_policies_and_standards/templates/"],
-    "registry": ["docs/01_policies_and_standards/_registry/catalogs/", "docs/01_policies_and_standards/_registry/vocabularies/"],
+    "registry": [
+        "docs/01_policies_and_standards/_registry/catalogs/",
+        "docs/01_policies_and_standards/_registry/vocabularies/",
+    ],
     "contract": ["docs/01_policies_and_standards/_registry/contracts/"],
     "schema": ["docs/01_policies_and_standards/_registry/schemas/", "schemas/"],
 }
@@ -796,6 +822,41 @@ def derive_build_status(design_maturity: str, has_test: bool = False) -> str:
     if has_test:
         return "stable"
     return "generated"
+
+
+def realization_detection(depgraph: dict) -> int:
+    """检测设计态节点的实现状态（裁定#189-193）。
+
+    扫描 design_maturity='design' 且有 blueprint_id 的节点，
+    检测同 blueprint_id 的 production 节点是否存在，
+    存在则 UPDATE build_status='stable'（表示设计已实现）。
+
+    返回：更新的节点数
+    """
+    nodes = depgraph.get("nodes", {})
+    # 收集每个 blueprint_id 对应的 production 节点
+    blueprint_has_production = set()
+    for node in nodes.values():
+        bp_id = node.get("blueprint_id")
+        if bp_id and node.get("design_maturity") == "production":
+            blueprint_has_production.add(bp_id)
+
+    # 更新 design 节点
+    updated = 0
+    for node in nodes.values():
+        bp_id = node.get("blueprint_id")
+        if (
+            bp_id
+            and node.get("design_maturity") == "design"
+            and bp_id in blueprint_has_production
+            and node.get("build_status") == "planned"
+        ):
+            node["build_status"] = "stable"
+            updated += 1
+
+    if updated > 0:
+        print(f"[DEPGRAPH] realization_detection: {updated} 个设计态节点已实现（build_status=stable）")
+    return updated
 
 
 def derive_trust_zone(rel_path: str) -> str:
@@ -2929,7 +2990,7 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
 
 
 class GenerationReport:
-    """生成器执行报告（§14.10 格式）— 7项统计"""
+    """生成器执行报告（§14.10 格式）— 8项统计"""
 
     def __init__(self):
         self.start_time = 0.0
@@ -2940,6 +3001,7 @@ class GenerationReport:
         self.arch_count = 0
         self.cycle_count = 0
         self.invalid_blueprint_count = 0
+        self.realized_count = 0
 
     def print_report(self):
         duration = self.end_time - self.start_time if self.end_time > self.start_time else 0
@@ -2951,6 +3013,7 @@ class GenerationReport:
         print(f"架构全景图行数: {self.arch_count}")
         print(f"循环依赖数: {self.cycle_count}")
         print(f"无效 blueprint_id 数: {self.invalid_blueprint_count}")
+        print(f"已实现设计态节点数: {self.realized_count}")
         print(f"执行时间: {duration:.2f}s")
         print("=" * 60)
 
@@ -2962,6 +3025,7 @@ class GenerationReport:
             "arch_count": self.arch_count,
             "cycle_count": self.cycle_count,
             "invalid_blueprint_count": self.invalid_blueprint_count,
+            "realized_count": self.realized_count,
             "duration": round(self.end_time - self.start_time, 2) if self.end_time > self.start_time else 0,
         }
 
@@ -3417,6 +3481,10 @@ def main():
     if cycles:
         for i, cycle in enumerate(cycles[:5], 1):
             print(f"  循环{i}: {' -> '.join(cycle[:5])}{'...' if len(cycle) > 5 else ''}")
+
+    # 步骤10: realization detection（裁定#189-193）- 检测设计态节点实现状态
+    realized_count = realization_detection(depgraph)
+    report.realized_count = realized_count
 
     # 填充报告统计
     report.node_count = meta["total_nodes"]
