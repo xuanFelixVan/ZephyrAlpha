@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 因子（D-FACTOR）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:53
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D-FACTOR | Domain ID | D-FACTOR |
 | 域名称 | 因子 | Domain Name | 因子 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 320 | Module Count | 320 |
-| 域内依赖 | 309 | Internal Dependencies | 309 |
+| 模块数 | 318 | Module Count | 318 |
+| 域内依赖 | 308 | Internal Dependencies | 308 |
 | 跨域入边 | 519 | Cross-domain Incoming | 519 |
 | 跨域出边 | 76 | Cross-domain Outgoing | 76 |
-| 设计态模块 | 302 | Design Modules | 302 |
+| 设计态模块 | 301 | Design Modules | 301 |
 | 原型态模块 | 10 | Prototype Modules | 10 |
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 320/150 (超容) | Capacity | 320/150 (超容) |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 320 个模块（按路径排序，全部显示）
+共 318 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -182,7 +182,6 @@ ttl: permanent
 | D-FACTOR/Volume Profile量能分布 Volume Profile | Volume Profile量能分布 Volume Profile | design | design_only |
 | D-FACTOR/compute返回类型统一为list FactorSignal | compute返回类型统一为list FactorSignal | design | design_only |
 | D-FACTOR/consistency_check 一致性引擎 | consistency_check 一致性引擎 | design | design_only |
-| D-FACTOR/factor_base.py为唯一SSoT删除base.py | factor_base.py为唯一SSoT删除base.py | design | design_only |
 | D-FACTOR/incremental_compute 增量因子计算 | incremental_compute 增量因子计算 | design | design_only |
 | D-FACTOR/qwen3:8b模型权重需下载部署 | qwen3:8b模型权重需下载部署 | design | design_only |
 | D-FACTOR/一致性引擎 Consistency Engine | 一致性引擎 Consistency Engine | design | design_only |
@@ -356,7 +355,6 @@ ttl: permanent
 | src/zephyr/factor/factors/momentum_factor.py |  | prototype | draft |
 | src/zephyr/factor/factors/value_factor.py |  | prototype | draft |
 | src/zephyr/factor/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/factor/models/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/factor/momentum_factor.py |  | prototype | draft |
 | src/zephyr/factor/services/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/factor/value_factor.py |  | prototype | draft |
@@ -748,7 +746,6 @@ graph TD
         D_FACTOR_Volume_Profile_Volume_Profile["Volume Profile量能分布 Volume Profile design"]
         D_FACTOR_compute_list_FactorSignal["compute返回类型统一为list FactorSignal design"]
         D_FACTOR_consistency_check["consistency_check 一致性引擎 design"]
-        D_FACTOR_factor_base_py_SSoT_base_py["factor_base.py为唯一SSoT删除base.py design"]
         D_FACTOR_incremental_compute["incremental_compute 增量因子计算 design"]
         D_FACTOR_qwen3_8b["qwen3:8b模型权重需下载部署 design"]
         D_FACTOR_Consistency_Engine["一致性引擎 Consistency Engine design"]
@@ -756,6 +753,7 @@ graph TD
         D_FACTOR_Down_Strength_Classification["下跌强度分级 Down Strength Classification design"]
         D_FACTOR_Institutional_Net_Inflow_Factor["主力净流入 Institutional Net Inflow Factor design"]
         D_FACTOR_Accumulation_Factor["主力吸筹 Accumulation Factor design"]
+        D_FACTOR_Shakeout_Factor["主力洗盘 Shakeout Factor design"]
     end
     D_FACTOR_incremental_compute -.->|import_depends| D_FACTOR_consistency_check
     D_FACTOR_consistency_check -.->|import_depends| D_FACTOR_Volume_Profile_Volume_Profile
@@ -797,7 +795,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_FACTOR_Parameter_Config_Manager,D_FACTOR_Pastor_Stambaugh_Liquidity_Factor_PS,D_FACTOR_Pastor_Stambaugh_Liquidity_Factor_Pastor_Stambaugh,D_FACTOR_Pattern_to_Signal_Converter,D_FACTOR_Pipeline,D_FACTOR_Pipeline_1,D_FACTOR_RankNormalized,D_FACTOR_Registry,D_FACTOR_SMC_SMC,D_FACTOR_SMC_Smart_Money_Concept_SMC,D_FACTOR_Sector_Factor,D_FACTOR_Smart_Money_Concept,D_FACTOR_Technical_Indicator_Factor,D_FACTOR_Tecton_Databricks_Tecton_Acquisition_Impact,D_FACTOR_Timing_Engine,D_FACTOR_Timing_Engine_1,D_FACTOR_UFL_Deterministic_Fact_Layer_UFL,D_FACTOR_VPIN_VPIN,D_FACTOR_Value_Area,D_FACTOR_Volume_Profile_Volume_Profile,D_FACTOR_compute_list_FactorSignal,D_FACTOR_consistency_check,D_FACTOR_factor_base_py_SSoT_base_py,D_FACTOR_incremental_compute,D_FACTOR_qwen3_8b,D_FACTOR_Consistency_Engine,D_FACTOR_Volume_Profile_HVN_LVN,D_FACTOR_Down_Strength_Classification,D_FACTOR_Institutional_Net_Inflow_Factor,D_FACTOR_Accumulation_Factor design
+    class D_FACTOR_Parameter_Config_Manager,D_FACTOR_Pastor_Stambaugh_Liquidity_Factor_PS,D_FACTOR_Pastor_Stambaugh_Liquidity_Factor_Pastor_Stambaugh,D_FACTOR_Pattern_to_Signal_Converter,D_FACTOR_Pipeline,D_FACTOR_Pipeline_1,D_FACTOR_RankNormalized,D_FACTOR_Registry,D_FACTOR_SMC_SMC,D_FACTOR_SMC_Smart_Money_Concept_SMC,D_FACTOR_Sector_Factor,D_FACTOR_Smart_Money_Concept,D_FACTOR_Technical_Indicator_Factor,D_FACTOR_Tecton_Databricks_Tecton_Acquisition_Impact,D_FACTOR_Timing_Engine,D_FACTOR_Timing_Engine_1,D_FACTOR_UFL_Deterministic_Fact_Layer_UFL,D_FACTOR_VPIN_VPIN,D_FACTOR_Value_Area,D_FACTOR_Volume_Profile_Volume_Profile,D_FACTOR_compute_list_FactorSignal,D_FACTOR_consistency_check,D_FACTOR_incremental_compute,D_FACTOR_qwen3_8b,D_FACTOR_Consistency_Engine,D_FACTOR_Volume_Profile_HVN_LVN,D_FACTOR_Down_Strength_Classification,D_FACTOR_Institutional_Net_Inflow_Factor,D_FACTOR_Accumulation_Factor,D_FACTOR_Shakeout_Factor design
     class D_EX_SOR,D_INFRA_RUNTIME,D_MKT_DATA,D_INTEGRATION,D_KNOWLEDGE,D_COMPLIANCE,D_INTELLIGENCE,D_SECURITY,D_INFRA_OPS,D_SIGNAL,D_AUTONOMY_CORE,D_DATA_GOV,D_PF_CORE,D_GOVERNANCE external_design
 ```
 
@@ -806,7 +804,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_FACTOR["D-FACTOR 因子"]
-        D_FACTOR_Shakeout_Factor["主力洗盘 Shakeout Factor design"]
         D_FACTOR_Distribution_Factor["主力派发 Distribution Factor design"]
         D_FACTOR_Institutional_Behavior_Factor["主力行为因子 Institutional Behavior Factor design"]
         D_FACTOR_Level_2["买卖价差估算需Level-2数据 design"]
@@ -836,12 +833,12 @@ graph TD
         D_FACTOR_IC_0_03["因子IC大于0.03是有效性最低门槛 design"]
         D_FACTOR_DAG_Factor_Dependency_DAG_Manager["因子依赖DAG管理器 Factor Dependency DAG Manager design"]
         D_FACTOR_DAG_Factor_Dependency_DAG["因子依赖图DAG Factor Dependency DAG design"]
+        D_FACTOR_Factor_1["因子分类八大类 Factor design"]
     end
     D_FACTOR_DAG_Factor_Dependency_DAG -.->|import_depends| D_FACTOR_Parameter_Config_Manager
     D_FACTOR_Parameter_Config_Manager -.->|import_depends| D_FACTOR_DAG_Factor_Dependency_DAG_Manager
     D_FACTOR_D_FACTOR_03 -.->|runtime| D_FACTOR_Northbound_Holding_Change_Factor
     D_FACTOR_Institutional_Behavior_Factor -.->|import_depends| D_FACTOR_Alternative_Factor
-    D_FACTOR_Distribution_Factor -.->|import_depends| D_FACTOR_Shakeout_Factor
     D_FACTOR_Distribution_Signal_Factor -.->|import_depends| D_FACTOR_Accumulation_Distribution_Phase_Detection
     D_FACTOR_Interaction_Feature_Construction -.->|import_depends| D_FACTOR_Distribution_Shape_Statistics
     D_FACTOR_Distribution_Shape_Statistics -.->|import_depends| D_FACTOR_Dual_Storage_Architecture
@@ -879,14 +876,13 @@ graph TD
     D_GOVERNANCE -.->|event| D_FACTOR_D_FACTOR_03
     D_SIGNAL["D-SIGNAL design"]
     D_SIGNAL -.->|contract| D_FACTOR_IC_0_03
-    D_ALT_DATA["D-ALT_DATA design"]
-    D_ALT_DATA -.->|data| D_FACTOR_Dual_Mode_Operation
+    D_SECURITY -.->|contract| D_FACTOR_Factor_1
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_FACTOR_Shakeout_Factor,D_FACTOR_Distribution_Factor,D_FACTOR_Institutional_Behavior_Factor,D_FACTOR_Level_2,D_FACTOR_Factor,D_FACTOR_Interaction_Feature_Construction,D_FACTOR_Price_Deviation,D_FACTOR_Cross_Market_Transmission_Coefficient,D_FACTOR_Regime_Conditional_Factor_Effectiveness,D_FACTOR_Regime_Conditional_Factor_Decay,D_FACTOR_Agent_Signal_Gen_Agent,D_FACTOR_Probation_Pool,D_FACTOR_Iceberg_Order_Ratio,D_FACTOR_Hidden_Order_Detection_Factor,D_FACTOR_Distribution_Signal_Factor,D_FACTOR_Distribution_Shape_Statistics,D_FACTOR_D_FACTOR_03,D_FACTOR_Northbound_Holding_Change_Factor,D_FACTOR_Ten_stage_Lifecycle,D_FACTOR_Single_Definition_Principle,D_FACTOR_Parameter_Config_Manager,D_FACTOR_Dual_Storage_Architecture,D_FACTOR_Dual_Mode_Operation,D_FACTOR_Alternative_Factor,D_FACTOR_Accumulation_Distribution_Phase_Detection,D_FACTOR_R_D_Agent_Quant,D_FACTOR_IC_IC_Threshold_Tiered,D_FACTOR_IC_0_03,D_FACTOR_DAG_Factor_Dependency_DAG_Manager,D_FACTOR_DAG_Factor_Dependency_DAG design
-    class D_TRADING,D_INFRA_RUNTIME,D_DATA_ENG,D_MKT_DATA,D_GOVERNANCE,D_INTELLIGENCE,D_OPS,D_RISK,D_INFRA_OPS,D_SECURITY,D_EX_CORE,D_COMPLIANCE,D_SIGNAL,D_ALT_DATA external_design
+    class D_FACTOR_Distribution_Factor,D_FACTOR_Institutional_Behavior_Factor,D_FACTOR_Level_2,D_FACTOR_Factor,D_FACTOR_Interaction_Feature_Construction,D_FACTOR_Price_Deviation,D_FACTOR_Cross_Market_Transmission_Coefficient,D_FACTOR_Regime_Conditional_Factor_Effectiveness,D_FACTOR_Regime_Conditional_Factor_Decay,D_FACTOR_Agent_Signal_Gen_Agent,D_FACTOR_Probation_Pool,D_FACTOR_Iceberg_Order_Ratio,D_FACTOR_Hidden_Order_Detection_Factor,D_FACTOR_Distribution_Signal_Factor,D_FACTOR_Distribution_Shape_Statistics,D_FACTOR_D_FACTOR_03,D_FACTOR_Northbound_Holding_Change_Factor,D_FACTOR_Ten_stage_Lifecycle,D_FACTOR_Single_Definition_Principle,D_FACTOR_Parameter_Config_Manager,D_FACTOR_Dual_Storage_Architecture,D_FACTOR_Dual_Mode_Operation,D_FACTOR_Alternative_Factor,D_FACTOR_Accumulation_Distribution_Phase_Detection,D_FACTOR_R_D_Agent_Quant,D_FACTOR_IC_IC_Threshold_Tiered,D_FACTOR_IC_0_03,D_FACTOR_DAG_Factor_Dependency_DAG_Manager,D_FACTOR_DAG_Factor_Dependency_DAG,D_FACTOR_Factor_1 design
+    class D_TRADING,D_INFRA_RUNTIME,D_DATA_ENG,D_MKT_DATA,D_GOVERNANCE,D_INTELLIGENCE,D_OPS,D_RISK,D_INFRA_OPS,D_SECURITY,D_EX_CORE,D_COMPLIANCE,D_SIGNAL external_design
 ```
 
 ### 第 7 页 / 共 11 页 / Page 7 of 11
@@ -894,7 +890,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_FACTOR["D-FACTOR 因子"]
-        D_FACTOR_Factor["因子分类八大类 Factor design"]
         D_FACTOR_Factor_Performance_Audit["因子性能审计 Factor Performance Audit design"]
         D_FACTOR_Feature_Store["因子批量计算→Feature Store检查点 design"]
         D_FACTOR_Factor_Data_Lineage_Tracking["因子数据血缘追踪 Factor Data Lineage Tracking design"]
@@ -906,7 +901,7 @@ graph TD
         D_FACTOR_Factor_Version_Management["因子版本管理 Factor Version Management design"]
         D_FACTOR_Factor_Portfolio_Optimizer["因子组合优化 Factor Portfolio Optimizer design"]
         D_FACTOR_Factor_Lineage_Compliance["因子血缘合规 Factor Lineage Compliance design"]
-        D_FACTOR_Factor_1["因子衰减三级自动处置 Factor design"]
+        D_FACTOR_Factor["因子衰减三级自动处置 Factor design"]
         D_FACTOR_MILD_MODERATE_SEVERE["因子衰减三级自动处置MILD MODERATE SEVERE design"]
         D_FACTOR_Factor_Incremental["因子计算 增量因子计算 Factor Incremental design"]
         D_FACTOR_Factor_Compute_Audit_Log["因子计算审计日志 Factor Compute Audit Log design"]
@@ -924,6 +919,7 @@ graph TD
         D_FACTOR_Market_Down_State_Detection["大盘下跌状态检测 Market Down State Detection design"]
         D_FACTOR_Macro_Factor["宏观因子 Macro Factor design"]
         D_FACTOR_Real_time_Feature_Pipeline["实时特征计算管道 Real-time Feature Pipeline design"]
+        D_FACTOR_Limit_Order_Fill_Rate_Factor["封单率 Limit Order Fill Rate Factor design"]
     end
     D_FACTOR_Factor_Registry_Compliance -.->|import_depends| D_FACTOR_Factor_Lineage_Compliance
     D_FACTOR_Factor_Lineage_Compliance -.->|import_depends| D_FACTOR_Factor_Exposure_Compliance
@@ -968,13 +964,13 @@ graph TD
     D_COMPLIANCE -.->|data| D_FACTOR_Factor_Portfolio_Optimizer
     D_GOVERNANCE -.->|data| D_FACTOR_D_DATA_02
     D_SECURITY["D-SECURITY design"]
-    D_SECURITY -.->|contract| D_FACTOR_Factor
-    D_RISK -.->|contract| D_FACTOR_Factor
+    D_SECURITY -.->|event| D_FACTOR_MILD_MODERATE_SEVERE
+    D_GOVERNANCE -.->|data| D_FACTOR_MILD_MODERATE_SEVERE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_FACTOR_Factor,D_FACTOR_Factor_Performance_Audit,D_FACTOR_Feature_Store,D_FACTOR_Factor_Data_Lineage_Tracking,D_FACTOR_Factor_Exposure_Compliance,D_FACTOR_Factor_Exposure_Audit,D_FACTOR_Factor_Weight_Change_Approval_Tier,D_FACTOR_Factor_Management,D_FACTOR_Factor_Registry_Compliance,D_FACTOR_Factor_Version_Management,D_FACTOR_Factor_Portfolio_Optimizer,D_FACTOR_Factor_Lineage_Compliance,D_FACTOR_Factor_1,D_FACTOR_MILD_MODERATE_SEVERE,D_FACTOR_Factor_Incremental,D_FACTOR_Factor_Compute_Audit_Log,D_FACTOR_Factor_Retirement_Audit,D_FACTOR_D_DATA_02,D_FACTOR_dowhy_causalml,D_FACTOR_Pattern_Library,D_FACTOR_Chart_Pattern_Recognition,D_FACTOR_Online_Store,D_FACTOR_Fundamental_Factor,D_FACTOR_YAML_DSL,D_FACTOR_Agent_3_5_CPU_2GB_Agent,D_FACTOR_Multi_Factor_Synthesis_Validator,D_FACTOR_Multi_Timeframe_Recognition,D_FACTOR_Market_Down_State_Detection,D_FACTOR_Macro_Factor,D_FACTOR_Real_time_Feature_Pipeline design
+    class D_FACTOR_Factor_Performance_Audit,D_FACTOR_Feature_Store,D_FACTOR_Factor_Data_Lineage_Tracking,D_FACTOR_Factor_Exposure_Compliance,D_FACTOR_Factor_Exposure_Audit,D_FACTOR_Factor_Weight_Change_Approval_Tier,D_FACTOR_Factor_Management,D_FACTOR_Factor_Registry_Compliance,D_FACTOR_Factor_Version_Management,D_FACTOR_Factor_Portfolio_Optimizer,D_FACTOR_Factor_Lineage_Compliance,D_FACTOR_Factor,D_FACTOR_MILD_MODERATE_SEVERE,D_FACTOR_Factor_Incremental,D_FACTOR_Factor_Compute_Audit_Log,D_FACTOR_Factor_Retirement_Audit,D_FACTOR_D_DATA_02,D_FACTOR_dowhy_causalml,D_FACTOR_Pattern_Library,D_FACTOR_Chart_Pattern_Recognition,D_FACTOR_Online_Store,D_FACTOR_Fundamental_Factor,D_FACTOR_YAML_DSL,D_FACTOR_Agent_3_5_CPU_2GB_Agent,D_FACTOR_Multi_Factor_Synthesis_Validator,D_FACTOR_Multi_Timeframe_Recognition,D_FACTOR_Market_Down_State_Detection,D_FACTOR_Macro_Factor,D_FACTOR_Real_time_Feature_Pipeline,D_FACTOR_Limit_Order_Fill_Rate_Factor design
     class D_DATA_ENG,D_MKT_DATA,D_INFRA_RUNTIME,D_RISK,D_KNOWLEDGE,D_GOVERNANCE,D_SIMULATION,D_AUTONOMY_CORE,D_FRONTEND,D_INTELLIGENCE,D_ML_TRAIN,D_OPS,D_PF_CORE,D_COMPLIANCE,D_SECURITY external_design
 ```
 
@@ -983,7 +979,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_FACTOR["D-FACTOR 因子"]
-        D_FACTOR_Limit_Order_Fill_Rate_Factor["封单率 Limit Order Fill Rate Factor design"]
         D_FACTOR_Market_Breadth_Factors["市场宽度因子 Market Breadth Factors design"]
         D_FACTOR_Market_Structure_Factor["市场结构因子 Market Structure Factor design"]
         D_FACTOR_Market_Manipulation_Pattern_Detection["庄家行为模式识别 Market Manipulation Pattern Detection design"]
@@ -1013,15 +1008,14 @@ graph TD
         D_FACTOR_Feature_Registry_Schema["特征注册表 Feature Registry Schema design"]
         D_FACTOR_Feature_Lifecycle["特征生命周期 Feature Lifecycle design"]
         D_FACTOR_Feature_Lifecycle_State_Machine["特征生命周期十阶段状态机 Feature Lifecycle State Machine design"]
+        D_FACTOR_SW_Industry_Classification_Data_Requires_Paid_Data_Source["申万行业分类数据需付费数据源 SW Industry Classification Data ... design"]
     end
     D_FACTOR_SQLite_Registry_via_SQLite -.->|runtime| D_FACTOR_Volatility_Factor
     D_FACTOR_Feature_Discovery_Catalog -.->|import_depends| D_FACTOR_Lag_Feature_Construction
     D_FACTOR_Technical_Indicator_Factor -.->|import_depends| D_FACTOR_Pattern_to_Signal
     D_FACTOR_Volatility_Factor -.->|import_depends| D_FACTOR_Volume_Factor
     D_FACTOR_Volume_Factor -.->|import_depends| D_FACTOR_Market_Structure_Factor
-    D_FACTOR_D_AUTONOMY -.->|config_depends| D_FACTOR_Limit_Order_Fill_Rate_Factor
     D_FACTOR_Opening_Gap_Factor -.->|import_depends| D_FACTOR_Downside_Resistance_Factor
-    D_FACTOR_Limit_Order_Fill_Rate_Factor -.->|import_depends| D_FACTOR_Market_Breadth_Factors
     D_FACTOR_Late_Order_Ratio -.->|import_depends| D_FACTOR_Cancel_Rate
     D_TRADING["D-TRADING design"]
     D_FACTOR_Feature_Store_Dual_Storage -.->|contract| D_TRADING
@@ -1063,14 +1057,13 @@ graph TD
     D_INTELLIGENCE -.->|event| D_FACTOR_Sector_Style_Factor
     D_OPS["D-OPS design"]
     D_OPS -.->|config_depends| D_FACTOR_Sector_Style_Factor
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE design"]
-    D_AUTONOMY_CORE -.->|data| D_FACTOR_D_AUTONOMY
+    D_INTEGRATION -.->|event| D_FACTOR_SW_Industry_Classification_Data_Requires_Paid_Data_Source
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_FACTOR_Limit_Order_Fill_Rate_Factor,D_FACTOR_Market_Breadth_Factors,D_FACTOR_Market_Structure_Factor,D_FACTOR_Market_Manipulation_Pattern_Detection,D_FACTOR_Opening_Gap_Factor,D_FACTOR_Pattern_to_Signal,D_FACTOR_Volume_Factor,D_FACTOR_Batch_Factor_Pruning,D_FACTOR_Technical_Indicator_Factor,D_FACTOR_Downside_Resistance_Factor,D_FACTOR_Cancel_Rate,D_FACTOR_Support_Resistance_Level_Detection,D_FACTOR_Late_Order_Arrival_Factor,D_FACTOR_Late_Order_Ratio,D_FACTOR_DCC_GARCH,D_FACTOR_Sector_Strength_Factor,D_FACTOR_Sector_Style_Factor,D_FACTOR_E_FT_01_FactorComputed,D_FACTOR_FactorSignal_CTR_002,D_FACTOR_D_AUTONOMY,D_FACTOR_Volatility_Factor,D_FACTOR_SQLite_Registry_via_SQLite,D_FACTOR_Streaming_Feature_Computation,D_FACTOR_Lag_Feature_Construction,D_FACTOR_Feature_Discovery_Catalog,D_FACTOR_Feature_Store_Dual_Storage,D_FACTOR_Feature_Registry,D_FACTOR_Feature_Registry_Schema,D_FACTOR_Feature_Lifecycle,D_FACTOR_Feature_Lifecycle_State_Machine design
-    class D_TRADING,D_INFRA_RUNTIME,D_DATA_ENG,D_MKT_DATA,D_INTEGRATION,D_COMPLIANCE,D_PF_CORE,D_SIMULATION,D_RISK,D_SIGNAL,D_ALT_DATA,D_ML_TRAIN,D_SECURITY,D_INFRA_OPS,D_INTELLIGENCE,D_OPS,D_AUTONOMY_CORE external_design
+    class D_FACTOR_Market_Breadth_Factors,D_FACTOR_Market_Structure_Factor,D_FACTOR_Market_Manipulation_Pattern_Detection,D_FACTOR_Opening_Gap_Factor,D_FACTOR_Pattern_to_Signal,D_FACTOR_Volume_Factor,D_FACTOR_Batch_Factor_Pruning,D_FACTOR_Technical_Indicator_Factor,D_FACTOR_Downside_Resistance_Factor,D_FACTOR_Cancel_Rate,D_FACTOR_Support_Resistance_Level_Detection,D_FACTOR_Late_Order_Arrival_Factor,D_FACTOR_Late_Order_Ratio,D_FACTOR_DCC_GARCH,D_FACTOR_Sector_Strength_Factor,D_FACTOR_Sector_Style_Factor,D_FACTOR_E_FT_01_FactorComputed,D_FACTOR_FactorSignal_CTR_002,D_FACTOR_D_AUTONOMY,D_FACTOR_Volatility_Factor,D_FACTOR_SQLite_Registry_via_SQLite,D_FACTOR_Streaming_Feature_Computation,D_FACTOR_Lag_Feature_Construction,D_FACTOR_Feature_Discovery_Catalog,D_FACTOR_Feature_Store_Dual_Storage,D_FACTOR_Feature_Registry,D_FACTOR_Feature_Registry_Schema,D_FACTOR_Feature_Lifecycle,D_FACTOR_Feature_Lifecycle_State_Machine,D_FACTOR_SW_Industry_Classification_Data_Requires_Paid_Data_Source design
+    class D_TRADING,D_INFRA_RUNTIME,D_DATA_ENG,D_MKT_DATA,D_INTEGRATION,D_COMPLIANCE,D_PF_CORE,D_SIMULATION,D_RISK,D_SIGNAL,D_ALT_DATA,D_ML_TRAIN,D_SECURITY,D_INFRA_OPS,D_INTELLIGENCE,D_OPS external_design
 ```
 
 ### 第 9 页 / 共 11 页 / Page 9 of 11
@@ -1078,7 +1071,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_FACTOR["D-FACTOR 因子"]
-        D_FACTOR_SW_Industry_Classification_Data_Requires_Paid_Data_Source["申万行业分类数据需付费数据源 SW Industry Classification Data ... design"]
         D_FACTOR_3_Intraday_Snapshot_3_Months["盘中快照仅保留3个月 Intraday Snapshot 3 Months design"]
         D_FACTOR_Correlation_Redundancy_Remover["相关性去冗余 Correlation Redundancy Remover design"]
         D_FACTOR_Agent_Researcher_Agent["研究Agent Researcher Agent design"]
@@ -1108,8 +1100,10 @@ graph TD
         D_FACTOR_Contrarian_Capital_Flow_Factor["逆向资金买点 Contrarian Capital Flow Factor design"]
         D_FACTOR_Contrarian_Return_Factor["逆涨因子 Contrarian Return Factor design"]
         D_FACTOR_Price_Volume_Factor["量价因子 Price-Volume Factor design"]
+        D_FACTOR_Volume_Regime_Classification["量能体制分类 Volume Regime Classification design"]
     end
     D_FACTOR_3_Intraday_Snapshot_3_Months -.->|runtime| D_FACTOR_Order_Imbalance
+    D_FACTOR_Volume_Regime_Classification -.->|import_depends| D_FACTOR_Breakout_Retest_Momentum_Factor
     D_FACTOR_Game_Theoretic_Agent_Simulation -.->|import_depends| D_FACTOR_Ownership_Concentration_Factor
     D_FACTOR_Contrarian_Strength_Ratio -.->|import_depends| D_FACTOR_Contrarian_Persistence
     D_FACTOR_Contrarian_Persistence -.->|import_depends| D_FACTOR_Contrarian_Stock_Ranking
@@ -1149,7 +1143,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_FACTOR_SW_Industry_Classification_Data_Requires_Paid_Data_Source,D_FACTOR_3_Intraday_Snapshot_3_Months,D_FACTOR_Correlation_Redundancy_Remover,D_FACTOR_Agent_Researcher_Agent,D_FACTOR_Offline_Online_Dual_Storage,D_FACTOR_Offline_Store,D_FACTOR_Breakout_Retest_Momentum_Factor,D_FACTOR_Narrow_Table_Factor_Storage,D_FACTOR_Ownership_Concentration_Factor,D_FACTOR_Unified_Pattern_Recognition_Engine,D_FACTOR_Unified_Technical_Pattern_Recognition_Engine,D_FACTOR_Unified_Recognition_Algorithm,D_FACTOR_Statistical_Consolidation_Zone,D_FACTOR_Game_Theoretic_Agent_Simulation,D_FACTOR_Feature_Store_Feast_Self_built_over_Feast,D_FACTOR_Feature_Store_Feast_Self_built_over_Feast_1,D_FACTOR_Virtual_Match_Volume,D_FACTOR_Virtual_Open_Price_Trajectory,D_FACTOR_Order_Imbalance,D_FACTOR_Training_Serving_Consistency,D_FACTOR_Training_Serving_Consistency_Engine,D_FACTOR_Cross_Market_Factor,D_FACTOR_3_D_FACTOR_03,D_FACTOR_ST_D_DATA_01,D_FACTOR_Contrarian_Stock_Ranking,D_FACTOR_Contrarian_Strength_Ratio,D_FACTOR_Contrarian_Persistence,D_FACTOR_Contrarian_Capital_Flow_Factor,D_FACTOR_Contrarian_Return_Factor,D_FACTOR_Price_Volume_Factor design
+    class D_FACTOR_3_Intraday_Snapshot_3_Months,D_FACTOR_Correlation_Redundancy_Remover,D_FACTOR_Agent_Researcher_Agent,D_FACTOR_Offline_Online_Dual_Storage,D_FACTOR_Offline_Store,D_FACTOR_Breakout_Retest_Momentum_Factor,D_FACTOR_Narrow_Table_Factor_Storage,D_FACTOR_Ownership_Concentration_Factor,D_FACTOR_Unified_Pattern_Recognition_Engine,D_FACTOR_Unified_Technical_Pattern_Recognition_Engine,D_FACTOR_Unified_Recognition_Algorithm,D_FACTOR_Statistical_Consolidation_Zone,D_FACTOR_Game_Theoretic_Agent_Simulation,D_FACTOR_Feature_Store_Feast_Self_built_over_Feast,D_FACTOR_Feature_Store_Feast_Self_built_over_Feast_1,D_FACTOR_Virtual_Match_Volume,D_FACTOR_Virtual_Open_Price_Trajectory,D_FACTOR_Order_Imbalance,D_FACTOR_Training_Serving_Consistency,D_FACTOR_Training_Serving_Consistency_Engine,D_FACTOR_Cross_Market_Factor,D_FACTOR_3_D_FACTOR_03,D_FACTOR_ST_D_DATA_01,D_FACTOR_Contrarian_Stock_Ranking,D_FACTOR_Contrarian_Strength_Ratio,D_FACTOR_Contrarian_Persistence,D_FACTOR_Contrarian_Capital_Flow_Factor,D_FACTOR_Contrarian_Return_Factor,D_FACTOR_Price_Volume_Factor,D_FACTOR_Volume_Regime_Classification design
     class D_INFRA_RUNTIME,D_MKT_DATA,D_SIGNAL,D_RISK,D_COMPLIANCE,D_ML_TRAIN,D_GOVERNANCE,D_INFRA_OPS,D_AUTONOMY_CORE,D_PF_CORE,D_INTEGRATION,D_SIMULATION external_design
 ```
 
@@ -1158,7 +1152,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_FACTOR["D-FACTOR 因子"]
-        D_FACTOR_Volume_Regime_Classification["量能体制分类 Volume Regime Classification design"]
         D_FACTOR_01_Engine_10["需01 Engine+因子池大于10因子就绪 design"]
         D_FACTOR_05_Mining_Agent["需05 Mining Agent就绪 design"]
         D_FACTOR_06_Barra_Risk_Model["需06 Barra Risk Model就绪 design"]
@@ -1188,6 +1181,7 @@ graph TD
         D_FACTOR_5_70_Factor["需大于5因子+70就绪 Factor design"]
         D_FACTOR_Execution["需实盘交易执行数据计算换手成本 Execution design"]
         D_FACTOR_DTW_CNN["需统一图形识别引擎DTW CNN就绪 design"]
+        D_FACTOR_Risk_Factor["风险因子 Risk Factor design"]
     end
     D_INFRA_RUNTIME["D-INFRA_RUNTIME design"]
     D_FACTOR_Execution -.->|contract| D_INFRA_RUNTIME
@@ -1200,11 +1194,16 @@ graph TD
     D_FACTOR_09_Correlation_Analyzer -.->|data| D_DATA_ENG
     D_FACTOR_Requires_Regime_Conversion_Detection_Algorithm -.->|data| D_MKT_DATA
     D_FACTOR_06_12_Requires_06_12_Ready -.->|event| D_DATA_ENG
+    D_COMPLIANCE["D-COMPLIANCE design"]
+    D_COMPLIANCE -.->|event| D_FACTOR_Risk_Factor
+    D_RISK["D-RISK design"]
+    D_RISK -.->|contract| D_FACTOR_Risk_Factor
+    D_SECURITY["D-SECURITY design"]
+    D_SECURITY -.->|data| D_FACTOR_Risk_Factor
     D_SIGNAL["D-SIGNAL design"]
     D_SIGNAL -.->|contract| D_FACTOR_5_Factor
     D_INFRA_OPS["D-INFRA_OPS design"]
     D_INFRA_OPS -.->|event| D_FACTOR_5_Factor
-    D_SECURITY["D-SECURITY design"]
     D_SECURITY -.->|event| D_FACTOR_Execution
     D_SECURITY -.->|contract| D_FACTOR_06_Barra_Risk_Model
     D_CROSS_ASSET["D-CROSS_ASSET design"]
@@ -1213,26 +1212,19 @@ graph TD
     D_INTELLIGENCE -.->|event| D_FACTOR_06_11_Requires_06_11_Ready
     D_PF_ALLOC["D-PF_ALLOC design"]
     D_PF_ALLOC -.->|event| D_FACTOR_06_11_Requires_06_11_Ready
-    D_COMPLIANCE["D-COMPLIANCE design"]
     D_COMPLIANCE -.->|config_depends| D_FACTOR_06_11_Requires_06_11_Ready
     D_PF_CORE["D-PF_CORE design"]
     D_PF_CORE -.->|event| D_FACTOR_D_RISK
     D_COMPLIANCE -.->|data| D_FACTOR_Level_2_2
-    D_RISK["D-RISK design"]
     D_RISK -.->|data| D_FACTOR_Level_2_2
     D_POSITION["D-POSITION design"]
     D_POSITION -.->|data| D_FACTOR_Level_2
-    D_REPORTING["D-REPORTING design"]
-    D_REPORTING -.->|contract| D_FACTOR_87_WorldQuant_Alpha
-    D_OPS["D-OPS design"]
-    D_OPS -.->|contract| D_FACTOR_87_WorldQuant_Alpha
-    D_SIGNAL -.->|contract| D_FACTOR_87_WorldQuant_Alpha
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_FACTOR_Volume_Regime_Classification,D_FACTOR_01_Engine_10,D_FACTOR_05_Mining_Agent,D_FACTOR_06_Barra_Risk_Model,D_FACTOR_06_11_Requires_06_11_Ready,D_FACTOR_06_12_Requires_06_12_Ready,D_FACTOR_06_Requires_06_Ready,D_FACTOR_07_Governance_Engine,D_FACTOR_07_Requires_07_Ready,D_FACTOR_08_Decay_Monitor,D_FACTOR_08_Requires_08_Ready,D_FACTOR_09_Correlation_Analyzer,D_FACTOR_3_Tick,D_FACTOR_70_101_Requires_70_101_Ready,D_FACTOR_84_D_PORTFOLIO,D_FACTOR_87_WorldQuant_Alpha,D_FACTOR_D_RISK,D_FACTOR_D_SIGNAL,D_FACTOR_ESG,D_FACTOR_Level_2,D_FACTOR_Level_2_1,D_FACTOR_Level_2_2,D_FACTOR_iFind,D_FACTOR_iFind_1,D_FACTOR_iFind_2,D_FACTOR_Requires_Regime_Conversion_Detection_Algorithm,D_FACTOR_5_Factor,D_FACTOR_5_70_Factor,D_FACTOR_Execution,D_FACTOR_DTW_CNN design
-    class D_INFRA_RUNTIME,D_EX_SOR,D_MKT_DATA,D_DATA_ENG,D_SIGNAL,D_INFRA_OPS,D_SECURITY,D_CROSS_ASSET,D_INTELLIGENCE,D_PF_ALLOC,D_COMPLIANCE,D_PF_CORE,D_RISK,D_POSITION,D_REPORTING,D_OPS external_design
+    class D_FACTOR_01_Engine_10,D_FACTOR_05_Mining_Agent,D_FACTOR_06_Barra_Risk_Model,D_FACTOR_06_11_Requires_06_11_Ready,D_FACTOR_06_12_Requires_06_12_Ready,D_FACTOR_06_Requires_06_Ready,D_FACTOR_07_Governance_Engine,D_FACTOR_07_Requires_07_Ready,D_FACTOR_08_Decay_Monitor,D_FACTOR_08_Requires_08_Ready,D_FACTOR_09_Correlation_Analyzer,D_FACTOR_3_Tick,D_FACTOR_70_101_Requires_70_101_Ready,D_FACTOR_84_D_PORTFOLIO,D_FACTOR_87_WorldQuant_Alpha,D_FACTOR_D_RISK,D_FACTOR_D_SIGNAL,D_FACTOR_ESG,D_FACTOR_Level_2,D_FACTOR_Level_2_1,D_FACTOR_Level_2_2,D_FACTOR_iFind,D_FACTOR_iFind_1,D_FACTOR_iFind_2,D_FACTOR_Requires_Regime_Conversion_Detection_Algorithm,D_FACTOR_5_Factor,D_FACTOR_5_70_Factor,D_FACTOR_Execution,D_FACTOR_DTW_CNN,D_FACTOR_Risk_Factor design
+    class D_INFRA_RUNTIME,D_EX_SOR,D_MKT_DATA,D_DATA_ENG,D_COMPLIANCE,D_RISK,D_SECURITY,D_SIGNAL,D_INFRA_OPS,D_CROSS_ASSET,D_INTELLIGENCE,D_PF_ALLOC,D_PF_CORE,D_POSITION external_design
 ```
 
 ### 第 11 页 / 共 11 页 / Page 11 of 11
@@ -1240,7 +1232,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_FACTOR["D-FACTOR 因子"]
-        D_FACTOR_Risk_Factor["风险因子 Risk Factor design"]
         D_FACTOR_Dragon_Tiger_List_Institutional_Ratio["龙虎榜机构占比 Dragon-Tiger List Institutional Ratio design"]
         src_zephyr_factor_init_py["src/zephyr/factor/__init__.py prototype"]
         src_zephyr_factor_extensions_init_py["src/zephyr/factor/_extensions/__init__.py scaffold_placeholder"]
@@ -1256,7 +1247,6 @@ graph TD
         src_zephyr_factor_factors_momentum_factor_py["src/zephyr/factor/factors/momentum_factor.py prototype"]
         src_zephyr_factor_factors_value_factor_py["src/zephyr/factor/factors/value_factor.py prototype"]
         src_zephyr_factor_infrastructure_init_py["src/zephyr/factor/infrastructure/__init__.py scaffold_placeholder"]
-        src_zephyr_factor_models_init_py["src/zephyr/factor/models/__init__.py scaffold_placeholder"]
         src_zephyr_factor_momentum_factor_py["src/zephyr/factor/momentum_factor.py prototype"]
         src_zephyr_factor_services_init_py["src/zephyr/factor/services/__init__.py scaffold_placeholder"]
         src_zephyr_factor_value_factor_py["src/zephyr/factor/value_factor.py prototype"]
@@ -1278,20 +1268,14 @@ graph TD
     D_GOVERNANCE -.->|test_depends| src_zephyr_factor_factor_base_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_factor_factor_base_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_factor_base_py
-    D_COMPLIANCE["D-COMPLIANCE design"]
-    D_COMPLIANCE -.->|event| D_FACTOR_Risk_Factor
-    D_RISK["D-RISK design"]
-    D_RISK -.->|contract| D_FACTOR_Risk_Factor
-    D_SECURITY["D-SECURITY design"]
-    D_SECURITY -.->|data| D_FACTOR_Risk_Factor
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_factor_base_py,src_zephyr_factor_factor_base_py production
-    class D_FACTOR_Risk_Factor,D_FACTOR_Dragon_Tiger_List_Institutional_Ratio,src_zephyr_factor_init_py,src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_core_init_py,src_zephyr_factor_ctr_001_consumer_init_py,src_zephyr_factor_engine_init_py,src_zephyr_factor_factors_init_py,src_zephyr_factor_factors_momentum_factor_py,src_zephyr_factor_factors_value_factor_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_models_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
+    class D_FACTOR_Dragon_Tiger_List_Institutional_Ratio,src_zephyr_factor_init_py,src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_core_init_py,src_zephyr_factor_ctr_001_consumer_init_py,src_zephyr_factor_engine_init_py,src_zephyr_factor_factors_init_py,src_zephyr_factor_factors_momentum_factor_py,src_zephyr_factor_factors_value_factor_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
     class D_SIGNAL,D_GOVERNANCE external_prod
-    class D_SHARED,D_COMPLIANCE,D_RISK,D_SECURITY external_design
+    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

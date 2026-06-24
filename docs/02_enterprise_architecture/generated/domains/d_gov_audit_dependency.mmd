@@ -1,7 +1,7 @@
 %% D-GOV_AUDIT 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:12
+%% 生成时间: 2026-06-24 23:01:57
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 268, 依赖边数: 584
+%% 模块数: 217, 依赖边数: 527
 
 graph TD
 
@@ -17,64 +17,13 @@ graph TD
         docs_02_enterprise_architectur____layers_l10_compliance_yaml["...ture_model/layers/l10_compliance.yaml [production]"]
         docs_03_modules__cross_layer_audit_orchestrator_blueprint_md["...layer/audit_orchestrator/blueprint.md [design]"]
         docs_03_modules__domain_governance_audit_trail_blueprint_md["...n_governance/audit_trail/blueprint.md [design]"]
+        scripts__archive_governance_repair_ensure_dep_cycles_view_py["...ance/repair/ensure_dep_cycles_view.py [prototype]"]
+        scripts__archive_governance_repair_list_source_md_files_py["...rnance/repair/list_source_md_files.py [prototype]"]
         scripts_governance_meta_compliance_framework_map_yaml["...ce/meta/compliance_framework_map.yaml [production]"]
-        scripts_governance_repair__gen_unregistered_registry_py[".../repair/_gen_unregistered_registry.py [prototype]"]
         scripts_governance_repair_audit_design_completeness_py["...e/repair/audit_design_completeness.py [prototype]"]
-        scripts_governance_repair_audit_task_cards_py["...governance/repair/audit_task_cards.py [prototype]"]
         scripts_governance_repair_backup_db_py["scripts/governance/repair/backup_db.py [prototype]"]
-        scripts_governance_repair_backup_depgraph_py[".../governance/repair/backup_depgraph.py [prototype]"]
-        scripts_governance_repair_backup_depgraph_migration_py["...e/repair/backup_depgraph_migration.py [prototype]"]
-        scripts_governance_repair_backup_depgraph_v5_py["...vernance/repair/backup_depgraph_v5.py [prototype]"]
-        scripts_governance_repair_check_arch_tables_py["...overnance/repair/check_arch_tables.py [prototype]"]
-        scripts_governance_repair_check_depgraph_schema_py["...nance/repair/check_depgraph_schema.py [prototype]"]
-        scripts_governance_repair_check_dm200_and_mig_py["...ernance/repair/check_dm200_and_mig.py [prototype]"]
-        scripts_governance_repair_check_dm_ids_py["...pts/governance/repair/check_dm_ids.py [prototype]"]
-        scripts_governance_repair_check_governance_db_py["...ernance/repair/check_governance_db.py [prototype]"]
-        scripts_governance_repair_check_migration_state_py["...nance/repair/check_migration_state.py [prototype]"]
-        scripts_governance_repair_check_tasks_constraints_py["...nce/repair/check_tasks_constraints.py [prototype]"]
-        scripts_governance_repair_check_tasks_schema_py["...vernance/repair/check_tasks_schema.py [prototype]"]
-        scripts_governance_repair_cleanup_migration_residue_py["...e/repair/cleanup_migration_residue.py [prototype]"]
-        scripts_governance_repair_create_all_task_cards_py["...nance/repair/create_all_task_cards.py [prototype]"]
-        scripts_governance_repair_create_shared_services_proxies_py["...air/create_shared_services_proxies.py [prototype]"]
-        scripts_governance_repair_ensure_dep_cycles_view_py["...ance/repair/ensure_dep_cycles_view.py [prototype]"]
-        scripts_governance_repair_extract_design_nodes_py["...rnance/repair/extract_design_nodes.py [prototype]"]
-        scripts_governance_repair_fix_acceptance_commands_py["...nce/repair/fix_acceptance_commands.py [prototype]"]
-        scripts_governance_repair_fix_blueprint_path_py["...vernance/repair/fix_blueprint_path.py [prototype]"]
-        scripts_governance_repair_fix_data_v3_4_py["...ts/governance/repair/fix_data_v3.4.py [prototype]"]
-        scripts_governance_repair_import_design_edges_py["...ernance/repair/import_design_edges.py [prototype]"]
-        scripts_governance_repair_import_design_nodes_py["...ernance/repair/import_design_nodes.py [prototype]"]
-        scripts_governance_repair_list_source_md_files_py["...rnance/repair/list_source_md_files.py [prototype]"]
-        scripts_governance_repair_mig5_fill_gaps_py["...s/governance/repair/mig5_fill_gaps.py [prototype]"]
-        scripts_governance_repair_migrate_arch_constraints_v1_py["...repair/migrate_arch_constraints_v1.py [prototype]"]
-        scripts_governance_repair_migrate_schema_v3_4_py["...ernance/repair/migrate_schema_v3.4.py [prototype]"]
-        scripts_governance_repair_migrate_schema_v5_py["...overnance/repair/migrate_schema_v5.py [prototype]"]
-        scripts_governance_repair_query_p0_3_py["scripts/governance/repair/query_p0_3.py [prototype]"]
-        scripts_governance_repair_query_p0_4_py["scripts/governance/repair/query_p0_4.py [prototype]"]
-        scripts_governance_repair_query_p0_5_py["scripts/governance/repair/query_p0_5.py [prototype]"]
-        scripts_governance_repair_query_p0_6_py["scripts/governance/repair/query_p0_6.py [prototype]"]
         scripts_governance_repair_red_blue_test_py["...ts/governance/repair/red_blue_test.py [prototype]"]
-        scripts_governance_repair_reimport_design_edges_py["...nance/repair/reimport_design_edges.py [prototype]"]
-        scripts_governance_repair_reimport_design_edges_v2_py["...ce/repair/reimport_design_edges_v2.py [prototype]"]
-        scripts_governance_repair_review_p0_1_py["scripts/governance/repair/review_p0_1.py [prototype]"]
-        scripts_governance_repair_review_p0_2_py["scripts/governance/repair/review_p0_2.py [prototype]"]
-        scripts_governance_repair_review_p0_3_py["scripts/governance/repair/review_p0_3.py [prototype]"]
-        scripts_governance_repair_review_p0_4_py["scripts/governance/repair/review_p0_4.py [prototype]"]
-        scripts_governance_repair_review_p0_5_py["scripts/governance/repair/review_p0_5.py [prototype]"]
-        scripts_governance_repair_review_p0_6_py["scripts/governance/repair/review_p0_6.py [prototype]"]
-        scripts_governance_repair_review_p0_7_py["scripts/governance/repair/review_p0_7.py [prototype]"]
         scripts_governance_repair_rollback_depgraph_py["...overnance/repair/rollback_depgraph.py [prototype]"]
-        scripts_governance_repair_task_manager_py["...pts/governance/repair/task_manager.py [prototype]"]
-        scripts_governance_repair_verify_mig_1_py["...pts/governance/repair/verify_mig_1.py [prototype]"]
-        scripts_governance_repair_verify_mig_prereq_py["...overnance/repair/verify_mig_prereq.py [prototype]"]
-        scripts_governance_repair_verify_migration_py["...governance/repair/verify_migration.py [prototype]"]
-        scripts_governance_repair_verify_p0_1_py["scripts/governance/repair/verify_p0_1.py [prototype]"]
-        scripts_governance_repair_verify_p0_2_py["scripts/governance/repair/verify_p0_2.py [prototype]"]
-        scripts_governance_repair_verify_p0_3_py["scripts/governance/repair/verify_p0_3.py [prototype]"]
-        scripts_governance_repair_verify_p0_4_py["scripts/governance/repair/verify_p0_4.py [prototype]"]
-        scripts_governance_repair_verify_p0_5_py["scripts/governance/repair/verify_p0_5.py [prototype]"]
-        scripts_governance_repair_verify_p0_6_py["scripts/governance/repair/verify_p0_6.py [prototype]"]
-        scripts_governance_repair_verify_p0_7_py["scripts/governance/repair/verify_p0_7.py [prototype]"]
-        scripts_governance_repair_verify_task_cards_py["...overnance/repair/verify_task_cards.py [prototype]"]
         src_zephyr_governance_audit_orchestration___init___py["...nance/audit_orchestration/__init__.py [prototype]"]
         src_zephyr_governance_audit_or___ion_agent_health_monitor_py["...orchestration/agent_health_monitor.py [prototype]"]
         src_zephyr_governance_audit_or___ation_agent_orchestrator_py["...t_orchestration/agent_orchestrator.py [prototype]"]
@@ -107,7 +56,58 @@ graph TD
         src_zephyr_governance_audit_orchestration_disk_guard_py["...nce/audit_orchestration/disk_guard.py [prototype]"]
         src_zephyr_governance_audit_orchestration_dlq_manager_py["...ce/audit_orchestration/dlq_manager.py [prototype]"]
         src_zephyr_governance_audit_orchestration_failure_matcher_py["...udit_orchestration/failure_matcher.py [prototype]"]
-        %% ... 还有 168 个模块未显示
+        src_zephyr_governance_audit_orchestration_feature_flag_py["...e/audit_orchestration/feature_flag.py [prototype]"]
+        src_zephyr_governance_audit_or___tration_file_task_mapper_py["...dit_orchestration/file_task_mapper.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_finding_bridge_py["...audit_orchestration/finding_bridge.py [prototype]"]
+        src_zephyr_governance_audit_or___n_hallucination_detector_py["...chestration/hallucination_detector.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_housekeeping_py["...e/audit_orchestration/housekeeping.py [prototype]"]
+        src_zephyr_governance_audit_or___tion_incident_postmortem_py["..._orchestration/incident_postmortem.py [prototype]"]
+        src_zephyr_governance_audit_or___ation_incremental_review_py["...t_orchestration/incremental_review.py [production]"]
+        src_zephyr_governance_audit_orchestration_ke_quality_py["...nce/audit_orchestration/ke_quality.py [prototype]"]
+        src_zephyr_governance_audit_or___tion_knowledge_freshness_py["..._orchestration/knowledge_freshness.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_lean_scanner_py["...e/audit_orchestration/lean_scanner.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_model_registry_py["...audit_orchestration/model_registry.py [prototype]"]
+        src_zephyr_governance_audit_or___ration_network_partition_py["...it_orchestration/network_partition.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_path_index_py["...nce/audit_orchestration/path_index.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_phase_executor_py["...audit_orchestration/phase_executor.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_prompt_version_py["...audit_orchestration/prompt_version.py [prototype]"]
+        src_zephyr_governance_audit_or___tion_reconciliation_loop_py["..._orchestration/reconciliation_loop.py [prototype]"]
+        src_zephyr_governance_audit_or___tion_resilience___init___py["..._orchestration/resilience/__init__.py [prototype]"]
+        src_zephyr_governance_audit_or___esilience_deferred_queue_py["...stration/resilience/deferred_queue.py [prototype]"]
+        src_zephyr_governance_audit_or___silience_failure_matcher_py["...tration/resilience/failure_matcher.py [prototype]"]
+        src_zephyr_governance_audit_or___e_hallucination_detector_py[".../resilience/hallucination_detector.py [prototype]"]
+        src_zephyr_governance_audit_or___ilience_rollback_manager_py["...ration/resilience/rollback_manager.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_risk_registry_py[".../audit_orchestration/risk_registry.py [prototype]"]
+        src_zephyr_governance_audit_or___tration_rollback_manager_py["...dit_orchestration/rollback_manager.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_rolling_upgrade_py["...udit_orchestration/rolling_upgrade.py [prototype]"]
+        src_zephyr_governance_audit_or___tration_schema_migration_py["...dit_orchestration/schema_migration.py [prototype]"]
+        src_zephyr_governance_audit_or___tration_session_conflict_py["...dit_orchestration/session_conflict.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_session_handoff_py["...udit_orchestration/session_handoff.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_session_manager_py["...udit_orchestration/session_manager.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_stability_guard_py["...udit_orchestration/stability_guard.py [prototype]"]
+        src_zephyr_governance_audit_or___ration_startup_sequencer_py["...it_orchestration/startup_sequencer.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_state___init___py["...audit_orchestration/state/__init__.py [prototype]"]
+        src_zephyr_governance_audit_or___ate_agent_health_monitor_py["...tration/state/agent_health_monitor.py [prototype]"]
+        src_zephyr_governance_audit_or___n_state_file_task_mapper_py["...chestration/state/file_task_mapper.py [prototype]"]
+        src_zephyr_governance_audit_or___on_state_session_manager_py["...rchestration/state/session_manager.py [prototype]"]
+        src_zephyr_governance_audit_or___state_state_synchronizer_py["...estration/state/state_synchronizer.py [prototype]"]
+        src_zephyr_governance_audit_or___ration_state_propagation_py["...it_orchestration/state_propagation.py [prototype]"]
+        src_zephyr_governance_audit_or___ation_state_synchronizer_py["...t_orchestration/state_synchronizer.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_system_transfer_py["...udit_orchestration/system_transfer.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_task_queue_py["...nce/audit_orchestration/task_queue.py [prototype]"]
+        src_zephyr_governance_audit_or___tration_teardown_manager_py["...dit_orchestration/teardown_manager.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_trigger_router_py["...audit_orchestration/trigger_router.py [prototype]"]
+        src_zephyr_governance_audit_or___tration_version_manifest_py["...dit_orchestration/version_manifest.py [prototype]"]
+        src_zephyr_governance_audit_orchestration_wave_generator_py["...audit_orchestration/wave_generator.py [prototype]"]
+        src_zephyr_governance_audit_orchestrator___init___py["...rnance/audit_orchestrator/__init__.py [prototype]"]
+        src_zephyr_governance_audit_orchestrator___main___py["...rnance/audit_orchestrator/__main__.py [prototype]"]
+        src_zephyr_governance_audit_orchestrator_anomaly_py["...ernance/audit_orchestrator/anomaly.py [prototype]"]
+        src_zephyr_governance_audit_or___dit_admission_controller_py["...strator/audit_admission_controller.py [prototype]"]
+        src_zephyr_governance_audit_orchestrator_bridge_py["...vernance/audit_orchestrator/bridge.py [prototype]"]
+        src_zephyr_governance_audit_orchestrator_cli_py[".../governance/audit_orchestrator/cli.py [prototype]"]
+        src_zephyr_governance_audit_orchestrator_cold_start_py["...ance/audit_orchestrator/cold_start.py [production]"]
+        src_zephyr_governance_audit_orchestrator_contracts_py["...nance/audit_orchestrator/contracts.py [prototype]"]
+        %% ... 还有 117 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_models_py
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_integrity_py
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_query_py
-    %% ... 还有 169 条域内依赖未显示
+    %% ... 还有 113 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-AUTONOMY_CORE -> D-GOV_AUDIT (4 条)
@@ -280,8 +280,7 @@ graph TD
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance_rule_enf___nt_sys_master_compliance_py
-    %% D-OPS -> D-GOV_AUDIT (3 条)
-    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    %% D-OPS -> D-GOV_AUDIT (2 条)
     D_OPS[D-OPS] -->|test_depends| src_zephyr_governance_audit_trail_observability_dashboard_py
     D_OPS[D-OPS] -->|domain_dependency| D_GOVERNANCE_Audit_Chain_Domain_审计链域
     %% D-SECURITY -> D-GOV_AUDIT (5 条)
@@ -429,6 +428,6 @@ graph TD
     src_zephyr_governance_audit_trail_feedback_bridge_py -->|import_depends| D_TRADING[D-TRADING]
 
     %% 统计
-    %% 域内依赖: 249 条
-    %% 跨域入边: 216 条
+    %% 域内依赖: 193 条
+    %% 跨域入边: 215 条
     %% 跨域出边: 119 条

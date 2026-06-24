@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示执行核心（D-EX_CORE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 21:40:10
+> 最后更新 / Last Updated: 2026-06-24 23:01:56
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 执行核心（D-EX_CORE）的模块分布。共 135 个模块 / 135 modules。
+> 按 architecture_layer 分层显示 执行核心（D-EX_CORE）的模块分布。共 134 个模块 / 134 modules。
 
 ```
 
@@ -32,7 +32,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (13 modules)               │
+│              L2 领域层 / Domain Layer (12 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   AGG-002  [design]                                              │
 │   src/zephyr/ex_core/__init__.py  [production]                   │
@@ -45,7 +45,6 @@ ttl: permanent
 │   src/zephyr/ex_core/broker_interface.py  [prototype]            │
 │   src/zephyr/ex_core/core/__init__.py  [scaffold_placeholder]    │
 │   src/zephyr/ex_core/infrastructure/__init__.py  [scaffold_pl... │
-│   src/zephyr/ex_core/models/__init__.py  [scaffold_placeholder]  │
 │   src/zephyr/ex_core/services/__init__.py  [scaffold_placehol... │
 └──────────────────────────────────────────────────────────────────┘
                                   │
@@ -78,7 +77,7 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 135 个模块 / 135 modules）。
+> 按 architecture_layer 分组的模块清单（共 134 个模块 / 134 modules）。
 
 ### L1 基础层 / Foundation Layer (3 modules)
 
@@ -88,7 +87,7 @@ ttl: permanent
 | 2 | src/zephyr/ex_core/order_manager.py | src/zephyr/ex_core/order_manager.py | prototype | draft |
 | 3 | src/zephyr/ex_core/order_state_escalator.py | src/zephyr/ex_core/order_state_escala... | prototype | draft |
 
-### L2 领域层 / Domain Layer (13 modules)
+### L2 领域层 / Domain Layer (12 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -103,8 +102,7 @@ ttl: permanent
 | 9 | src/zephyr/ex_core/broker_interface.py | src/zephyr/ex_core/broker_interface.py | prototype | draft |
 | 10 | src/zephyr/ex_core/core/__init__.py | src/zephyr/ex_core/core/__init__.py | scaffold_placeholder | orphan |
 | 11 | src/zephyr/ex_core/infrastructure/__init__.py | src/zephyr/ex_core/infrastructure/__i... | scaffold_placeholder | orphan |
-| 12 | src/zephyr/ex_core/models/__init__.py | src/zephyr/ex_core/models/__init__.py | scaffold_placeholder | orphan |
-| 13 | src/zephyr/ex_core/services/__init__.py | src/zephyr/ex_core/services/__init__.py | scaffold_placeholder | orphan |
+| 12 | src/zephyr/ex_core/services/__init__.py | src/zephyr/ex_core/services/__init__.py | scaffold_placeholder | orphan |
 
 ### 未分类 / Unclassified (119 modules)
 

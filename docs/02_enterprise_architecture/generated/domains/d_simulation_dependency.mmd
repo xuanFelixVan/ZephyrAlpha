@@ -1,7 +1,7 @@
 %% D-SIMULATION 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:13
+%% 生成时间: 2026-06-24 23:01:58
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 128, 依赖边数: 344
+%% 模块数: 128, 依赖边数: 343
 
 graph TD
 
@@ -243,10 +243,9 @@ graph TD
     D_FRONTEND[D-FRONTEND] -->|config_depends| D_SIMULATION_回测仿真_Walk_Forward回测
     D_FRONTEND[D-FRONTEND] -->|data| D_SIMULATION_SimulationCompleted_仿真完成
     D_FRONTEND[D-FRONTEND] -->|contract| D_SIMULATION_Walk_Forward_Analyzer_Walk_Forward分析
-    %% D-GOVERNANCE -> D-SIMULATION (28 条)
+    %% D-GOVERNANCE -> D-SIMULATION (27 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_simulation___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_backtest_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
@@ -460,5 +459,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 114 条
-    %% 跨域入边: 92 条
+    %% 跨域入边: 91 条
     %% 跨域出边: 138 条

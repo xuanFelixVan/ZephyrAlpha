@@ -1,7 +1,7 @@
 %% D-OPS 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:13
+%% 生成时间: 2026-06-24 23:01:58
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 697, 依赖边数: 1667
+%% 模块数: 679, 依赖边数: 1613
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         D_OPS_External_Dependency_SLA_Monitor_外部依赖SLA监控["...rnal Dependency SLA Monitor 外部依赖SLA监控 [design]"]
         D_OPS_Fault_Injector_故障注入器["D-OPS/Fault Injector 故障注入器 [design]"]
         D_OPS_Fault_Scenario_Definer_故障场景定义器["D-OPS/Fault Scenario Definer 故障场景定义器 [design]"]
-        %% ... 还有 597 个模块未显示
+        %% ... 还有 579 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_ops_forensic___init___py -->|import_depends| src_zephyr_ops_forensic_guard_configuration_drift_monitor_py
     src_zephyr_ops_forensic___init___py -->|import_depends| src_zephyr_ops_forensic_interrupt_coherence_validator_py
     src_zephyr_ops_forensic___init___py -->|import_depends| src_zephyr_ops_forensic_knowle___tion_pre_flight_verifier_py
-    %% ... 还有 522 条域内依赖未显示
+    %% ... 还有 504 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-COMPLIANCE -> D-OPS (62 条)
@@ -259,7 +259,7 @@ graph TD
     D_FRONTEND[D-FRONTEND] -->|event| D_OPS_Green_Deployment_Strategist_绿色部署策略器
     D_FRONTEND[D-FRONTEND] -->|event| D_OPS_Dependency_Criticality_Scorer_依赖关键度评分器
     D_FRONTEND[D-FRONTEND] -->|config_depends| D_OPS_Paper_Live_Transition_模拟实盘转换
-    %% D-GOVERNANCE -> D-OPS (425 条)
+    %% D-GOVERNANCE -> D-OPS (391 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_engine_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
@@ -291,8 +291,8 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ops___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ops___init___py
     %% D-GOV_AUDIT -> D-OPS (3 条)
-    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_ops_observability_token_utils_py
-    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_ops_observability_token_utils_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_shared_shared_servi___rvability_02_token_utils_py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_shared_shared_servi___rvability_02_token_utils_py
     D_GOV_AUDIT[D-GOV_AUDIT] -->|test_depends| src_zephyr_ops___init___py
     %% D-INFRA_OPS -> D-OPS (26 条)
     D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_ops___init___py
@@ -486,13 +486,12 @@ graph TD
     D_GOVERNANCE_GAAT_Governance_Aware_Agent_Telemetry_治理感知遥测 -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     D_GOVERNANCE_Trusted_Telemetry_Plane_可信遥测平面 -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     D_GOVERNANCE_GAAT_Governance_Aware_Telemetry_GAAT治理感知遥测 -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-OPS -> D-GOV_AUDIT (3 条)
-    src_zephyr_ops_gates_safety_gate_l67_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    %% D-OPS -> D-GOV_AUDIT (2 条)
     tests_test_audit_observability_dashboard_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     D_OPS_D_OPS -->|domain_dependency| D_GOV_AUDIT[D-GOV_AUDIT]
     %% D-OPS -> D-GOV_DRIFT (1 条)
     src_zephyr_ops_scheduler_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    %% D-OPS -> D-INFRA_RUNTIME (58 条)
+    %% D-OPS -> D-INFRA_RUNTIME (57 条)
     src_zephyr_ops_telemetry_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     src_zephyr_ops_auto_bootstrap_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     src_zephyr_ops_db_writer_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
@@ -768,6 +767,6 @@ graph TD
     D_OPS_Bulkhead_Modeler_舱壁建模器 -->|config_depends| D_TRADING[D-TRADING]
 
     %% 统计
-    %% 域内依赖: 602 条
-    %% 跨域入边: 558 条
-    %% 跨域出边: 507 条
+    %% 域内依赖: 584 条
+    %% 跨域入边: 524 条
+    %% 跨域出边: 505 条

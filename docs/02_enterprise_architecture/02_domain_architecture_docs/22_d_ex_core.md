@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 执行核心（D-EX_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:53
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,9 +24,9 @@ ttl: permanent
 | 域ID | D-EX_CORE | Domain ID | D-EX_CORE |
 | 域名称 | 执行核心 | Domain Name | 执行核心 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 135 | Module Count | 135 |
+| 模块数 | 134 | Module Count | 134 |
 | 域内依赖 | 116 | Internal Dependencies | 116 |
-| 跨域入边 | 191 | Cross-domain Incoming | 191 |
+| 跨域入边 | 189 | Cross-domain Incoming | 189 |
 | 跨域出边 | 62 | Cross-domain Outgoing | 62 |
 | 设计态模块 | 120 | Design Modules | 120 |
 | 原型态模块 | 6 | Prototype Modules | 6 |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 135 个模块（按路径排序，全部显示）
+共 134 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -171,7 +171,6 @@ ttl: permanent
 | src/zephyr/ex_core/core/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/ex_core/execution_engine.py |  | prototype | draft |
 | src/zephyr/ex_core/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/ex_core/models/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/ex_core/order_manager.py |  | prototype | draft |
 | src/zephyr/ex_core/order_state_escalator.py |  | prototype | draft |
 | src/zephyr/ex_core/services/__init__.py |  | scaffold_placeholder | orphan |
@@ -577,7 +576,6 @@ graph TD
         src_zephyr_ex_core_core_init_py["src/zephyr/ex_core/core/__init__.py scaffold_placeholder"]
         src_zephyr_ex_core_execution_engine_py["src/zephyr/ex_core/execution_engine.py prototype"]
         src_zephyr_ex_core_infrastructure_init_py["src/zephyr/ex_core/infrastructure/__init__.py scaffold_placeholder"]
-        src_zephyr_ex_core_models_init_py["src/zephyr/ex_core/models/__init__.py scaffold_placeholder"]
         src_zephyr_ex_core_order_manager_py["src/zephyr/ex_core/order_manager.py prototype"]
         src_zephyr_ex_core_order_state_escalator_py["src/zephyr/ex_core/order_state_escalator.py prototype"]
         src_zephyr_ex_core_services_init_py["src/zephyr/ex_core/services/__init__.py scaffold_placeholder"]
@@ -600,8 +598,6 @@ graph TD
     src_zephyr_ex_core_order_state_escalator_py -.->|config_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|import_depends| src_zephyr_ex_core_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
@@ -612,7 +608,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_core_init_py,src_zephyr_ex_core_adapters_broker_interface_py,src_zephyr_ex_core_adapters_simulation_broker_py production
-    class src_zephyr_ex_core_extensions_init_py,src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_api_init_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_core_init_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_infrastructure_init_py,src_zephyr_ex_core_models_init_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_order_state_escalator_py,src_zephyr_ex_core_services_init_py design
+    class src_zephyr_ex_core_extensions_init_py,src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_api_init_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_core_init_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_infrastructure_init_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_order_state_escalator_py,src_zephyr_ex_core_services_init_py design
     class D_TRADING external_prod
     class D_GOVERNANCE external_design
 ```
@@ -635,8 +631,8 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 23 | import_depends,test_depends,config_depends,data,contract,event |
 | D-COMPLIANCE | 23 | event,config_depends,contract,data |
+| D-GOVERNANCE | 21 | import_depends,test_depends,config_depends,data,contract,event |
 | D-RISK | 20 | data,event,contract,config_depends |
 | D-SECURITY | 16 | contract,data,event,config_depends |
 | D-SIGNAL | 15 | data,contract,event,config_depends |

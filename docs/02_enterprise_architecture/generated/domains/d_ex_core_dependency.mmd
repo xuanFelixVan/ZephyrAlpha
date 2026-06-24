@@ -1,7 +1,7 @@
 %% D-EX_CORE 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:12
+%% 生成时间: 2026-06-24 23:01:57
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 135, 依赖边数: 369
+%% 模块数: 134, 依赖边数: 367
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         D_EX_CORE_Slippage_Model_3_Level_Progressive_滑点模型3级渐进["...ge Model 3 Level Progressive 滑点模型3级渐进 [design]"]
         D_EX_CORE_Subjective_Trading_E___Transformation_主观交易经验量化框架转化["...Framework Transformation 主观交易经验量化框架转化 [design]"]
         D_EX_CORE_Subjective_to_Quanti___sformation_Record_主观到量化转化记录["...ative Transformation Record 主观到量化转化记录 [design]"]
-        %% ... 还有 35 个模块未显示
+        %% ... 还有 34 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -248,10 +248,8 @@ graph TD
     D_FRONTEND[D-FRONTEND] -->|event| D_EX_CORE_RL_Optimal_Executor_RL最优执行器
     D_FRONTEND[D-FRONTEND] -->|event| D_EX_CORE_miniQMT_Trading_Channel_miniQMT交易通道
     D_FRONTEND[D-FRONTEND] -->|config_depends| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    %% D-GOVERNANCE -> D-EX_CORE (23 条)
+    %% D-GOVERNANCE -> D-EX_CORE (21 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_ex_core___init___py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core___init___py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
@@ -479,5 +477,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 116 条
-    %% 跨域入边: 191 条
+    %% 跨域入边: 189 条
     %% 跨域出边: 62 条

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D-ML_TRAIN）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:54
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 32 | Number | 32 |
 | 域ID | D-ML_TRAIN | Domain ID | D-ML_TRAIN |
-| 域名称 | 训练 | Domain Name | 训练 |
+| 域名称 | 训练 | Domain Name | model_profiling |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 119 | Module Count | 119 |
 | 域内依赖 | 109 | Internal Dependencies | 109 |
@@ -32,7 +32,7 @@ ttl: permanent
 | 原型态模块 | 5 | Prototype Modules | 5 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 119/150 (正常) | Capacity | 119/150 (正常) |
-| 描述 | 机器学习训练域。负责ML模型训练管线，包括数据预处理、特征选择、超参优化、模型训练、交叉验证。 | Description | 机器学习训练域。负责ML模型训练管线，包括数据预处理、特征选择、超参优化、模型训练、交叉验证。 |
+| 描述 | 模型性能画像 | Description | 模型性能画像 |
 
 ## 模块清单 / Module List
 

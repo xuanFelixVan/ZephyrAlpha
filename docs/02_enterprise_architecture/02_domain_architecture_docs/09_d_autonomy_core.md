@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D-AUTONOMY_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:53
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 09 | Number | 09 |
 | 域ID | D-AUTONOMY_CORE | Domain ID | D-AUTONOMY_CORE |
-| 域名称 | 自治核心 | Domain Name | 自治核心 |
+| 域名称 | 自治核心 | Domain Name | agent_communication |
 | 层级 | L1_platform | Layer | L1_platform |
 | 模块数 | 650 | Module Count | 650 |
 | 域内依赖 | 643 | Internal Dependencies | 643 |
@@ -32,7 +32,7 @@ ttl: permanent
 | 原型态模块 | 168 | Prototype Modules | 168 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 650/150 (超容) | Capacity | 650/150 (超容) |
-| 描述 | 自治核心域。负责Agent自治运行时核心，包括AutoRuntime Core、PipelineOrchestrator、AgentOrchestrator、Task状态机。 | Description | 自治核心域。负责Agent自治运行时核心，包括AutoRuntime Core、PipelineOrchestrator、AgentOrchestrator、Task状态机。 |
+| 描述 | A2A Card注册与发现(card_registry) | Description | A2A Card注册与发现(card_registry) |
 
 ## 模块清单 / Module List
 

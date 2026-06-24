@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仿真（D-SIMULATION）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:09
+> 最后更新: 2026-06-24 23:01:54
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 128 | Module Count | 128 |
 | 域内依赖 | 114 | Internal Dependencies | 114 |
-| 跨域入边 | 92 | Cross-domain Incoming | 92 |
+| 跨域入边 | 91 | Cross-domain Incoming | 91 |
 | 跨域出边 | 138 | Cross-domain Outgoing | 138 |
 | 设计态模块 | 110 | Design Modules | 110 |
 | 原型态模块 | 8 | Prototype Modules | 8 |
@@ -562,7 +562,6 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_backtest_base_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_backtest_base_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_backtest_base_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
@@ -576,13 +575,15 @@ graph TD
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
     D_GOVERNANCE -.->|data| D_SIMULATION_Execution_Backtest_Query
+    D_COMPLIANCE["D-COMPLIANCE design"]
+    D_COMPLIANCE -.->|data| D_SIMULATION_Backtest_Management_Cache
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_simulation_backtest_base_py,src_zephyr_simulation_default_backtest_engine_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py production
     class D_SIMULATION_vectorbt_Vectorized_Backtest_Integrator_vectorbt,D_SIMULATION_Adapter_Monitoring_Simulation,D_SIMULATION_Adapter_Simulation_Config,D_SIMULATION_Analyzer_Parameter,D_SIMULATION_Walk_Forward,D_SIMULATION_Backtest,D_SIMULATION_Data_Quality_Backtest,D_SIMULATION_Execution_Backtest_Query,D_SIMULATION_Backtest_1,D_SIMULATION_Backtest_2,D_SIMULATION_Backtest_Management_Cache,D_SIMULATION_NaN,D_SIMULATION_Automated_Overfitting_Detection,D_SIMULATION_Integration_Task,D_SIMULATION_Acceptance_Criteria_Automated_Testing_and_Judger,src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_init_from_resear_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_backtest_base_from_resear_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_default_backtest_engine_from_resear_py,src_zephyr_simulation_engine,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_implementations_init_from_resear_py,src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py design
-    class D_INTEGRATION,D_INFRA_RUNTIME,D_AUTONOMY_PERM,D_SIGNAL,D_FACTOR,D_PF_CORE,D_INTELLIGENCE,D_EX_CORE,D_ML_SERVE,D_GOVERNANCE,D_SHARED external_design
+    class D_INTEGRATION,D_INFRA_RUNTIME,D_AUTONOMY_PERM,D_SIGNAL,D_FACTOR,D_PF_CORE,D_INTELLIGENCE,D_EX_CORE,D_ML_SERVE,D_GOVERNANCE,D_SHARED,D_COMPLIANCE external_design
 ```
 
 ### 第 5 页 / 共 5 页 / Page 5 of 5
@@ -644,7 +645,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 28 | test_depends,import_depends,event,contract,data |
+| D-GOVERNANCE | 27 | test_depends,import_depends,event,contract,data |
 | D-COMPLIANCE | 20 | config_depends,contract,data,event |
 | D-AUTONOMY_CORE | 8 | contract,data,config_depends |
 | D-OPS | 7 | contract,event,data |

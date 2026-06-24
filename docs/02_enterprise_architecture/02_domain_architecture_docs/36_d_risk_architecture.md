@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示风控（D-RISK）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 21:40:10
+> 最后更新 / Last Updated: 2026-06-24 23:01:56
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 风控（D-RISK）的模块分布。共 775 个模块 / 775 modules。
+> 按 architecture_layer 分层显示 风控（D-RISK）的模块分布。共 774 个模块 / 774 modules。
 
 ```
 
@@ -30,7 +30,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (82 modules)               │
+│              L2 领域层 / Domain Layer (81 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/risk/__init__.py  [prototype]                       │
 │   src/zephyr/risk/_extensions/__init__.py  [scaffold_placehol... │
@@ -50,7 +50,7 @@ ttl: permanent
 │   src/zephyr/risk/implementations/default_risk_validator.py  ... │
 │   src/zephyr/risk/implementations/default_stop_loss_engine.py... │
 │   src/zephyr/risk/infrastructure/__init__.py  [scaffold_place... │
-│   ...还有 64 个模块 / 64 more modules                            │
+│   ...还有 63 个模块 / 63 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -82,7 +82,7 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 775 个模块 / 775 modules）。
+> 按 architecture_layer 分组的模块清单（共 774 个模块 / 774 modules）。
 
 ### L1 基础层 / Foundation Layer (1 modules)
 
@@ -90,7 +90,7 @@ ttl: permanent
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/risk/oms_risk_engine.py | src/zephyr/risk/oms_risk_engine.py | prototype | draft |
 
-### L2 领域层 / Domain Layer (82 modules)
+### L2 领域层 / Domain Layer (81 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -112,70 +112,69 @@ ttl: permanent
 | 16 | src/zephyr/risk/implementations/default_risk_validator.py | src/zephyr/risk/implementations/defau... | production | draft |
 | 17 | src/zephyr/risk/implementations/default_stop_loss_engine.py | src/zephyr/risk/implementations/defau... | production | draft |
 | 18 | src/zephyr/risk/infrastructure/__init__.py | src/zephyr/risk/infrastructure/__init... | scaffold_placeholder | orphan |
-| 19 | src/zephyr/risk/models/__init__.py | src/zephyr/risk/models/__init__.py | scaffold_placeholder | orphan |
-| 20 | src/zephyr/risk/risk_limits.py | src/zephyr/risk/risk_limits.py | prototype | draft |
-| 21 | src/zephyr/risk/risk_manager.py | src/zephyr/risk/risk_manager.py | production | draft |
-| 22 | src/zephyr/risk/risk_manager_base.py | src/zephyr/risk/risk_manager_base.py | production | draft |
-| 23 | src/zephyr/risk/risk_validator.py | src/zephyr/risk/risk_validator.py | production | draft |
-| 24 | src/zephyr/risk/services/__init__.py | src/zephyr/risk/services/__init__.py | scaffold_placeholder | orphan |
-| 25 | src/zephyr/risk/stop_loss.py | src/zephyr/risk/stop_loss.py | production | draft |
-| 26 | 风控-策略管理/D-RISK-01 | Risk Policy Manager | design | design_only |
-| 27 | 风控-组合监控/D-RISK-03 | Portfolio Risk Monitor | design | design_only |
-| 28 | 风控域-A股特色/D-RISK-27 | A-Share Stop-Loss Rule Engine | design | design_only |
-| 29 | 风控域-A股特色/D-RISK-29 | A-Share PDF Tail Risk Auto-Hedger | design | design_only |
-| 30 | 风控域-A股特色/D-RISK-30 | A-Share Loss Limit Enforcer | design | design_only |
-| 31 | 风控域-A股特色/D-RISK-32 | A-Share Contrarian Dedicated Stop-Loss | design | design_only |
-| 32 | 风控域-A股特色/D-RISK-34 | A-Share First-Minute Stop-Loss Executor | design | design_only |
-| 33 | 风控域-A股特色/D-RISK-36 | A-Share Multi-Level Loss Circuit Breaker | design | design_only |
-| 34 | 风控域-A股特色/D-RISK-39 | A-Share Cascading Circuit Breaker | design | design_only |
-| 35 | 风控域-Kill Switch/D-RISK-54 | Kill Switch Cooldown Manager | design | design_only |
-| 36 | 风控域-Kill Switch/D-RISK-66 | Kill Switch Multi-Domain Notifier | design | design_only |
-| 37 | 风控域-Kill Switch/D-RISK-83 | Kill Switch New Order Rejector | design | design_only |
-| 38 | 风控域-VaR/D-RISK-07 | VaR Calculator | design | design_only |
-| 39 | 风控域-VaR/D-RISK-41 | Historical Data Representativeness Va... | design | design_only |
-| 40 | 风控域-VaR/D-RISK-43 | VaR Fast Pre-Screen Alerter | design | design_only |
-| 41 | 风控域-VaR/D-RISK-45 | Two-Tier Alert Strategy Engine | design | design_only |
-| 42 | 风控域-VaR/D-RISK-47 | VaR Cross-Validation Engine | design | design_only |
-| 43 | 风控域-VaR/D-RISK-71 | VaR Phase Independence Guarantor | design | design_only |
-| 44 | 风控域-VaR/D-RISK-73 | Monte Carlo Precision Level Manager | design | design_only |
-| 45 | 风控域-分析引擎/D-RISK-06 | Scenario Analyzer | design | design_only |
-| 46 | 风控域-分析引擎/D-RISK-103 | 风险预算调整器 | design | design_only |
-| 47 | 风控域-分析引擎/D-RISK-16 | Counterfactual Analyzer | design | design_only |
-| 48 | 风控域-回测/D-RISK-24 | Risk Policy Backtester | design | design_only |
-| 49 | 风控域-基础设施/D-RISK-121 | 风控域仓储接口 | design | design_only |
-| 50 | 风控域-基础设施/D-RISK-21 | Risk Rule DSL Compiler | design | design_only |
-| 51 | 风控域-基础设施/D-RISK-50 | Position Write Authority Arbiter | design | design_only |
-| 52 | 风控域-基础设施/D-RISK-56 | Rule Engine vs Statistical Engine Router | design | design_only |
-| 53 | 风控域-基础设施/D-RISK-77 | Risk Policy SQLite Schema Designer | design | design_only |
-| 54 | 风控域-契约/D-RISK-80 | CTR-006 PositionSnapshot Provider | design | design_only |
-| 55 | 风控域-契约/D-RISK-87 | CTR-004 Order Consumer | design | design_only |
-| 56 | 风控域-审计/D-RISK-15 | Risk Breach Logger | design | design_only |
-| 57 | 风控域-报告/D-RISK-23 | Risk Report Auto-Generator | design | design_only |
-| 58 | 风控域-止损/D-RISK-64 | ATR Dynamic Stop Loss Calculator | design | design_only |
-| 59 | 风控域-盘中监控/D-RISK-08 | Liquidity Risk Monitor | design | design_only |
-| 60 | 风控域-盘中监控/D-RISK-13 | Concentration Risk Monitor | design | design_only |
-| 61 | 风控域-盘中监控/D-RISK-18 | Crowding Risk Monitor | design | design_only |
-| 62 | 风控域-盘中监控/D-RISK-63 | Sector Concentration Real-Time Calcul... | design | design_only |
-| 63 | 风控域-盘中监控/D-RISK-70 | Enforcement 3-Level Executor | design | design_only |
-| 64 | 风控域-盘中监控/D-RISK-97 | 保证金比例安全检查器 | design | design_only |
-| 65 | 风控域-盘中监控/D-RISK-99 | 动态仓位调整器 | design | design_only |
-| 66 | 风控域-盘前拦截/D-RISK-53 | Pre-Trade Idempotency Guarantor | design | design_only |
-| 67 | 风控域-盘前拦截/D-RISK-78 | Pre-Trade 50ms SLA Monitor | design | design_only |
-| 68 | 风控域-规则引擎/D-RISK-105 | 风险规则用户配置器 | design | design_only |
-| 69 | 风控域-规则引擎/D-RISK-109 | 风控规则验证与压力测试器 | design | design_only |
-| 70 | 风控域-规则引擎/D-RISK-113 | 风控规则DSL引擎 | design | design_only |
-| 71 | 风控域-规则引擎/D-RISK-117 | 风控规则版本化与热更新器 | design | design_only |
-| 72 | 风控域-迁移/D-RISK-86 | DefaultRiskValidator to Configurable ... | design | design_only |
-| 73 | 风控域-远期❌/D-RISK-09 | Counterparty Risk Manager | design | design_only |
-| 74 | 风控域-远期❌/D-RISK-19 | Climate Risk Engine | design | design_only |
-| 75 | 风控域-远期❌/D-RISK-48 | Monte Carlo Batch Backtester | design | design_only |
-| 76 | 风控域-远期❌/D-RISK-95 | AI增强风控引擎 | design | design_only |
-| 77 | 风控域-门禁/D-RISK-92 | Strategy Correlation Gate Checker | design | design_only |
-| 78 | 风控域-预测/D-RISK-25 | Limit Consumption Predictor | design | design_only |
-| 79 | 风控域-风险报告/D-RISK-101 | 每日风险报告生成器 | design | design_only |
-| 80 | 风控域-风险报告/D-RISK-22 | Risk Dashboard Generator | design | design_only |
-| 81 | 风控域-风险报告/D-RISK-90 | RiskDashboardSnapshot CTR-P1-008 Builder | design | design_only |
-| 82 | 风控域-风险治理/D-RISK-49 | Risk Policy Persister | design | design_only |
+| 19 | src/zephyr/risk/risk_limits.py | src/zephyr/risk/risk_limits.py | prototype | draft |
+| 20 | src/zephyr/risk/risk_manager.py | src/zephyr/risk/risk_manager.py | production | draft |
+| 21 | src/zephyr/risk/risk_manager_base.py | src/zephyr/risk/risk_manager_base.py | production | draft |
+| 22 | src/zephyr/risk/risk_validator.py | src/zephyr/risk/risk_validator.py | production | draft |
+| 23 | src/zephyr/risk/services/__init__.py | src/zephyr/risk/services/__init__.py | scaffold_placeholder | orphan |
+| 24 | src/zephyr/risk/stop_loss.py | src/zephyr/risk/stop_loss.py | production | draft |
+| 25 | 风控-策略管理/D-RISK-01 | Risk Policy Manager | design | design_only |
+| 26 | 风控-组合监控/D-RISK-03 | Portfolio Risk Monitor | design | design_only |
+| 27 | 风控域-A股特色/D-RISK-27 | A-Share Stop-Loss Rule Engine | design | design_only |
+| 28 | 风控域-A股特色/D-RISK-29 | A-Share PDF Tail Risk Auto-Hedger | design | design_only |
+| 29 | 风控域-A股特色/D-RISK-30 | A-Share Loss Limit Enforcer | design | design_only |
+| 30 | 风控域-A股特色/D-RISK-32 | A-Share Contrarian Dedicated Stop-Loss | design | design_only |
+| 31 | 风控域-A股特色/D-RISK-34 | A-Share First-Minute Stop-Loss Executor | design | design_only |
+| 32 | 风控域-A股特色/D-RISK-36 | A-Share Multi-Level Loss Circuit Breaker | design | design_only |
+| 33 | 风控域-A股特色/D-RISK-39 | A-Share Cascading Circuit Breaker | design | design_only |
+| 34 | 风控域-Kill Switch/D-RISK-54 | Kill Switch Cooldown Manager | design | design_only |
+| 35 | 风控域-Kill Switch/D-RISK-66 | Kill Switch Multi-Domain Notifier | design | design_only |
+| 36 | 风控域-Kill Switch/D-RISK-83 | Kill Switch New Order Rejector | design | design_only |
+| 37 | 风控域-VaR/D-RISK-07 | VaR Calculator | design | design_only |
+| 38 | 风控域-VaR/D-RISK-41 | Historical Data Representativeness Va... | design | design_only |
+| 39 | 风控域-VaR/D-RISK-43 | VaR Fast Pre-Screen Alerter | design | design_only |
+| 40 | 风控域-VaR/D-RISK-45 | Two-Tier Alert Strategy Engine | design | design_only |
+| 41 | 风控域-VaR/D-RISK-47 | VaR Cross-Validation Engine | design | design_only |
+| 42 | 风控域-VaR/D-RISK-71 | VaR Phase Independence Guarantor | design | design_only |
+| 43 | 风控域-VaR/D-RISK-73 | Monte Carlo Precision Level Manager | design | design_only |
+| 44 | 风控域-分析引擎/D-RISK-06 | Scenario Analyzer | design | design_only |
+| 45 | 风控域-分析引擎/D-RISK-103 | 风险预算调整器 | design | design_only |
+| 46 | 风控域-分析引擎/D-RISK-16 | Counterfactual Analyzer | design | design_only |
+| 47 | 风控域-回测/D-RISK-24 | Risk Policy Backtester | design | design_only |
+| 48 | 风控域-基础设施/D-RISK-121 | 风控域仓储接口 | design | design_only |
+| 49 | 风控域-基础设施/D-RISK-21 | Risk Rule DSL Compiler | design | design_only |
+| 50 | 风控域-基础设施/D-RISK-50 | Position Write Authority Arbiter | design | design_only |
+| 51 | 风控域-基础设施/D-RISK-56 | Rule Engine vs Statistical Engine Router | design | design_only |
+| 52 | 风控域-基础设施/D-RISK-77 | Risk Policy SQLite Schema Designer | design | design_only |
+| 53 | 风控域-契约/D-RISK-80 | CTR-006 PositionSnapshot Provider | design | design_only |
+| 54 | 风控域-契约/D-RISK-87 | CTR-004 Order Consumer | design | design_only |
+| 55 | 风控域-审计/D-RISK-15 | Risk Breach Logger | design | design_only |
+| 56 | 风控域-报告/D-RISK-23 | Risk Report Auto-Generator | design | design_only |
+| 57 | 风控域-止损/D-RISK-64 | ATR Dynamic Stop Loss Calculator | design | design_only |
+| 58 | 风控域-盘中监控/D-RISK-08 | Liquidity Risk Monitor | design | design_only |
+| 59 | 风控域-盘中监控/D-RISK-13 | Concentration Risk Monitor | design | design_only |
+| 60 | 风控域-盘中监控/D-RISK-18 | Crowding Risk Monitor | design | design_only |
+| 61 | 风控域-盘中监控/D-RISK-63 | Sector Concentration Real-Time Calcul... | design | design_only |
+| 62 | 风控域-盘中监控/D-RISK-70 | Enforcement 3-Level Executor | design | design_only |
+| 63 | 风控域-盘中监控/D-RISK-97 | 保证金比例安全检查器 | design | design_only |
+| 64 | 风控域-盘中监控/D-RISK-99 | 动态仓位调整器 | design | design_only |
+| 65 | 风控域-盘前拦截/D-RISK-53 | Pre-Trade Idempotency Guarantor | design | design_only |
+| 66 | 风控域-盘前拦截/D-RISK-78 | Pre-Trade 50ms SLA Monitor | design | design_only |
+| 67 | 风控域-规则引擎/D-RISK-105 | 风险规则用户配置器 | design | design_only |
+| 68 | 风控域-规则引擎/D-RISK-109 | 风控规则验证与压力测试器 | design | design_only |
+| 69 | 风控域-规则引擎/D-RISK-113 | 风控规则DSL引擎 | design | design_only |
+| 70 | 风控域-规则引擎/D-RISK-117 | 风控规则版本化与热更新器 | design | design_only |
+| 71 | 风控域-迁移/D-RISK-86 | DefaultRiskValidator to Configurable ... | design | design_only |
+| 72 | 风控域-远期❌/D-RISK-09 | Counterparty Risk Manager | design | design_only |
+| 73 | 风控域-远期❌/D-RISK-19 | Climate Risk Engine | design | design_only |
+| 74 | 风控域-远期❌/D-RISK-48 | Monte Carlo Batch Backtester | design | design_only |
+| 75 | 风控域-远期❌/D-RISK-95 | AI增强风控引擎 | design | design_only |
+| 76 | 风控域-门禁/D-RISK-92 | Strategy Correlation Gate Checker | design | design_only |
+| 77 | 风控域-预测/D-RISK-25 | Limit Consumption Predictor | design | design_only |
+| 78 | 风控域-风险报告/D-RISK-101 | 每日风险报告生成器 | design | design_only |
+| 79 | 风控域-风险报告/D-RISK-22 | Risk Dashboard Generator | design | design_only |
+| 80 | 风控域-风险报告/D-RISK-90 | RiskDashboardSnapshot CTR-P1-008 Builder | design | design_only |
+| 81 | 风控域-风险治理/D-RISK-49 | Risk Policy Persister | design | design_only |
 
 ### 未分类 / Unclassified (692 modules)
 

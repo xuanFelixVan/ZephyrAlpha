@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D-TRADING）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:09
+> 最后更新: 2026-06-24 23:01:54
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 249 | Module Count | 249 |
 | 域内依赖 | 225 | Internal Dependencies | 225 |
-| 跨域入边 | 472 | Cross-domain Incoming | 472 |
+| 跨域入边 | 461 | Cross-domain Incoming | 461 |
 | 跨域出边 | 187 | Cross-domain Outgoing | 187 |
 | 设计态模块 | 89 | Design Modules | 89 |
 | 原型态模块 | 137 | Prototype Modules | 137 |
@@ -979,7 +979,6 @@ graph TD
     src_zephyr_trading_work_dag_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1015,7 +1014,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 247 | import_depends,test_depends,data,contract,event,config_depends |
+| D-GOVERNANCE | 236 | import_depends,test_depends,data,contract,event,config_depends |
 | D-RISK | 30 | contract,import_depends,config_depends,event,data |
 | D-SECURITY | 23 | import_depends,contract,config_depends,data,event |
 | D-AUTONOMY_CORE | 17 | contract,event,data,config_depends |

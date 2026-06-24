@@ -1,7 +1,7 @@
 %% D-TRADING 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:14
+%% 生成时间: 2026-06-24 23:01:59
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 249, 依赖边数: 884
+%% 模块数: 249, 依赖边数: 873
 
 graph TD
 
@@ -264,7 +264,7 @@ graph TD
     D_FRONTEND[D-FRONTEND] -->|contract| D_TRADING_Treasury_Manager_资金管理器
     D_FRONTEND[D-FRONTEND] -->|contract| D_TRADING_Fee_PnL_Data_费率PnL数据
     D_FRONTEND[D-FRONTEND] -->|config_depends| D_TRADING_Margin_Calculator保证金计算器
-    %% D-GOVERNANCE -> D-TRADING (247 条)
+    %% D-GOVERNANCE -> D-TRADING (236 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
@@ -646,5 +646,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 225 条
-    %% 跨域入边: 472 条
+    %% 跨域入边: 461 条
     %% 跨域出边: 187 条

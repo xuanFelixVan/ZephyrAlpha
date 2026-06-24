@@ -1,7 +1,7 @@
 %% D-FRONTEND 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:12
+%% 生成时间: 2026-06-24 23:01:57
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 237, 依赖边数: 655
+%% 模块数: 236, 依赖边数: 652
 
 graph TD
 
@@ -107,23 +107,23 @@ graph TD
         D_FRONTEND_Frontend_ML_Contract_01_前端_ML契约["...NTEND/Frontend-ML Contract 01 前端-ML契约 [design]"]
         D_FRONTEND_Frontend_Ops_Contract_01_前端_运维契约["...TEND/Frontend-Ops Contract 01 前端-运维契约 [design]"]
         D_FRONTEND_Frontend_Report_Contract_01_前端_报告契约["...D/Frontend-Report Contract 01 前端-报告契约 [design]"]
-        %% ... 还有 137 个模块未显示
+        %% ... 还有 136 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
-    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
-    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
-    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    frontend_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend___init___py -->|config_depends| src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_dashboard___init___py -->|config_depends| src_zephyr_frontend_dashboard_app_py
     src_zephyr_frontend_dashboard_components___init___py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
-    frontend_knowledge_overview_py -->|config_depends| frontend_fitness_functions_py
-    frontend_olap_trend_py -->|config_depends| frontend_fitness_functions_py
-    frontend_interface_base_py -->|config_depends| frontend_fitness_functions_py
-    frontend_gate_statistics_py -->|config_depends| frontend_fitness_functions_py
-    frontend_task_progress_py -->|config_depends| frontend_fitness_functions_py
+    src_zephyr_frontend_dashboard____nents_knowledge_overview_py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    src_zephyr_frontend_dashboard_components_olap_trend_py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    src_zephyr_frontend_interface_base_py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    src_zephyr_frontend_dashboard_components_gate_statistics_py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    src_zephyr_frontend_dashboard_components_task_progress_py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
     D_FRONTEND_Real_time_Dashboard_实时仪表盘 -->|import_depends| D_FRONTEND_M5_S07
     D_FRONTEND_M5_S07 -->|import_depends| D_FRONTEND_M6_S07
     D_FRONTEND_M6_S07 -->|import_depends| D_FRONTEND_M7_S06
@@ -231,8 +231,7 @@ graph TD
     D_DATA_GOV[D-DATA_GOV] -->|data| D_FRONTEND_Result_Renderer_结果渲染器
     %% D-DATA_SEC -> D-FRONTEND (1 条)
     D_DATA_SEC[D-DATA_SEC] -->|event| D_FRONTEND_Triple_Semantic_Consistency_Display_三重语义一致性展示
-    %% D-GOVERNANCE -> D-FRONTEND (11 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
+    %% D-GOVERNANCE -> D-FRONTEND (8 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_app_py
@@ -241,8 +240,6 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_app_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-FRONTEND -> D-ALT_DATA (1 条)
@@ -330,8 +327,8 @@ graph TD
     %% D-FRONTEND -> D-GOVERNANCE (23 条)
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    frontend_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    frontend_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     D_FRONTEND_Orchestration_Visualizer_编排可视化器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
     D_FRONTEND_Traceability_Visualizer_追溯可视化器 -->|data| D_GOVERNANCE[D-GOVERNANCE]
     D_FRONTEND_Developer_Dashboard_开发者仪表盘 -->|data| D_GOVERNANCE[D-GOVERNANCE]
@@ -458,7 +455,7 @@ graph TD
     D_FRONTEND_M7_S06 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
     %% D-FRONTEND -> D-OPS (21 条)
     src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
-    frontend_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
+    src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
     前端域_D_FRONTEND_06 -->|contract| D_OPS[D-OPS]
     D_FRONTEND_OOS_Gate_OOS阶段门控 -->|contract| D_OPS[D-OPS]
     D_FRONTEND_Judge_裁判器 -->|contract| D_OPS[D-OPS]
@@ -624,5 +621,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 220 条
-    %% 跨域入边: 66 条
+    %% 跨域入边: 63 条
     %% 跨域出边: 369 条

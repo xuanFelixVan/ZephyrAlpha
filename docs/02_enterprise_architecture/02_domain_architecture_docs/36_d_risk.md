@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 风控（D-RISK）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:54
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,9 +24,9 @@ ttl: permanent
 | 域ID | D-RISK | Domain ID | D-RISK |
 | 域名称 | 风控 | Domain Name | 风控 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 775 | Module Count | 775 |
+| 模块数 | 774 | Module Count | 774 |
 | 域内依赖 | 770 | Internal Dependencies | 770 |
-| 跨域入边 | 874 | Cross-domain Incoming | 874 |
+| 跨域入边 | 870 | Cross-domain Incoming | 870 |
 | 跨域出边 | 477 | Cross-domain Outgoing | 477 |
 | 设计态模块 | 749 | Design Modules | 749 |
 | 原型态模块 | 11 | Prototype Modules | 11 |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 775 个模块（按路径排序，全部显示）
+共 774 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -750,7 +750,6 @@ ttl: permanent
 | src/zephyr/risk/implementations/default_risk_validator.py |  | production | draft |
 | src/zephyr/risk/implementations/default_stop_loss_engine.py |  | production | draft |
 | src/zephyr/risk/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/risk/models/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/risk/oms_risk_engine.py |  | prototype | draft |
 | src/zephyr/risk/risk_limits.py |  | prototype | draft |
 | src/zephyr/risk/risk_manager.py |  | production | draft |
@@ -3030,7 +3029,6 @@ graph TD
         src_zephyr_risk_implementations_default_risk_validator_py["src/zephyr/risk/implementations/default_risk_va... production"]
         src_zephyr_risk_implementations_default_stop_loss_engine_py["src/zephyr/risk/implementations/default_stop_lo... production"]
         src_zephyr_risk_infrastructure_init_py["src/zephyr/risk/infrastructure/__init__.py scaffold_placeholder"]
-        src_zephyr_risk_models_init_py["src/zephyr/risk/models/__init__.py scaffold_placeholder"]
         src_zephyr_risk_oms_risk_engine_py["src/zephyr/risk/oms_risk_engine.py prototype"]
         src_zephyr_risk_risk_limits_py["src/zephyr/risk/risk_limits.py prototype"]
         src_zephyr_risk_risk_manager_py["src/zephyr/risk/risk_manager.py production"]
@@ -3040,6 +3038,7 @@ graph TD
         src_zephyr_risk_stop_loss_py["src/zephyr/risk/stop_loss.py production"]
         D_RISK_01["Risk Policy Manager design"]
         D_RISK_03["Portfolio Risk Monitor design"]
+        A_D_RISK_27["A-Share Stop-Loss Rule Engine design"]
     end
     src_zephyr_risk_cross_asset_init_py -.->|import_depends| src_zephyr_risk_cross_asset_risk_manager_py
     src_zephyr_risk_cross_asset_init_py -.->|import_depends| src_zephyr_risk_cross_asset_risk_manager_base_py
@@ -3079,23 +3078,23 @@ graph TD
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_base_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_risk_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_risk_stop_loss_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_stop_loss_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_stop_loss_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_stop_loss_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_validator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py production
-    class D_RISK_T_1_Black_Swan_with_T_1_Lock,D_RISK_Black_Swan_Pattern_Library_and_Prediction,src_zephyr_risk_init_py,src_zephyr_risk_extensions_init_py,src_zephyr_risk_api_init_py,src_zephyr_risk_core_init_py,src_zephyr_risk_cross_asset_init_py,src_zephyr_risk_cross_asset_cross_asset_risk_decomposer_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_cross_asset_currency_hedger_and_fixed_income_init_py,src_zephyr_risk_cross_asset_risk_manager_py,src_zephyr_risk_cross_asset_risk_manager_base_py,src_zephyr_risk_implementations_init_py,src_zephyr_risk_infrastructure_init_py,src_zephyr_risk_models_init_py,src_zephyr_risk_oms_risk_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_services_init_py,D_RISK_01,D_RISK_03 design
+    class D_RISK_T_1_Black_Swan_with_T_1_Lock,D_RISK_Black_Swan_Pattern_Library_and_Prediction,src_zephyr_risk_init_py,src_zephyr_risk_extensions_init_py,src_zephyr_risk_api_init_py,src_zephyr_risk_core_init_py,src_zephyr_risk_cross_asset_init_py,src_zephyr_risk_cross_asset_cross_asset_risk_decomposer_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_cross_asset_currency_hedger_and_fixed_income_init_py,src_zephyr_risk_cross_asset_risk_manager_py,src_zephyr_risk_cross_asset_risk_manager_base_py,src_zephyr_risk_implementations_init_py,src_zephyr_risk_infrastructure_init_py,src_zephyr_risk_oms_risk_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_services_init_py,D_RISK_01,D_RISK_03,A_D_RISK_27 design
     class D_GOVERNANCE,D_TRADING external_prod
     class D_SHARED,D_INFRA_RUNTIME external_design
 ```
@@ -3105,7 +3104,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_RISK["D-RISK 风控"]
-        A_D_RISK_27["A-Share Stop-Loss Rule Engine design"]
         A_D_RISK_29["A-Share PDF Tail Risk Auto-Hedger design"]
         A_D_RISK_30["A-Share Loss Limit Enforcer design"]
         A_D_RISK_32["A-Share Contrarian Dedicated Stop-Loss design"]
@@ -3135,6 +3133,7 @@ graph TD
         D_RISK_87["CTR-004 Order Consumer design"]
         D_RISK_15["Risk Breach Logger design"]
         D_RISK_23["Risk Report Auto-Generator design"]
+        D_RISK_64["ATR Dynamic Stop Loss Calculator design"]
     end
     D_TRADING["D-TRADING prototype"]
     D_RISK_06 -.->|contract| D_TRADING
@@ -3142,7 +3141,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class A_D_RISK_27,A_D_RISK_29,A_D_RISK_30,A_D_RISK_32,A_D_RISK_34,A_D_RISK_36,A_D_RISK_39,Kill_Switch_D_RISK_54,Kill_Switch_D_RISK_66,Kill_Switch_D_RISK_83,VaR_D_RISK_07,VaR_D_RISK_41,VaR_D_RISK_43,VaR_D_RISK_45,VaR_D_RISK_47,VaR_D_RISK_71,VaR_D_RISK_73,D_RISK_06,D_RISK_103,D_RISK_16,D_RISK_24,D_RISK_121,D_RISK_21,D_RISK_50,D_RISK_56,D_RISK_77,D_RISK_80,D_RISK_87,D_RISK_15,D_RISK_23 design
+    class A_D_RISK_29,A_D_RISK_30,A_D_RISK_32,A_D_RISK_34,A_D_RISK_36,A_D_RISK_39,Kill_Switch_D_RISK_54,Kill_Switch_D_RISK_66,Kill_Switch_D_RISK_83,VaR_D_RISK_07,VaR_D_RISK_41,VaR_D_RISK_43,VaR_D_RISK_45,VaR_D_RISK_47,VaR_D_RISK_71,VaR_D_RISK_73,D_RISK_06,D_RISK_103,D_RISK_16,D_RISK_24,D_RISK_121,D_RISK_21,D_RISK_50,D_RISK_56,D_RISK_77,D_RISK_80,D_RISK_87,D_RISK_15,D_RISK_23,D_RISK_64 design
     class D_TRADING external_design
 ```
 
@@ -3151,7 +3150,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_RISK["D-RISK 风控"]
-        D_RISK_64["ATR Dynamic Stop Loss Calculator design"]
         D_RISK_08["Liquidity Risk Monitor design"]
         D_RISK_13["Concentration Risk Monitor design"]
         D_RISK_18["Crowding Risk Monitor design"]
@@ -3181,7 +3179,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_RISK_64,D_RISK_08,D_RISK_13,D_RISK_18,D_RISK_63,D_RISK_70,D_RISK_97,D_RISK_99,D_RISK_53,D_RISK_78,D_RISK_105,D_RISK_109,D_RISK_113,D_RISK_117,D_RISK_86,D_RISK_09,D_RISK_19,D_RISK_48,D_RISK_95,D_RISK_92,D_RISK_25,D_RISK_101,D_RISK_22,D_RISK_90,D_RISK_49 design
+    class D_RISK_08,D_RISK_13,D_RISK_18,D_RISK_63,D_RISK_70,D_RISK_97,D_RISK_99,D_RISK_53,D_RISK_78,D_RISK_105,D_RISK_109,D_RISK_113,D_RISK_117,D_RISK_86,D_RISK_09,D_RISK_19,D_RISK_48,D_RISK_95,D_RISK_92,D_RISK_25,D_RISK_101,D_RISK_22,D_RISK_90,D_RISK_49 design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -3209,7 +3207,7 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D-COMPLIANCE | 166 | domain_dependency,event,contract,config_depends,data |
-| D-GOVERNANCE | 128 | import_depends,test_depends,data,contract,config_depends,event |
+| D-GOVERNANCE | 124 | import_depends,test_depends,data,contract,config_depends,event |
 | D-AUTONOMY_CORE | 87 | contract,event,data,config_depends |
 | D-INTEGRATION | 69 | event,config_depends,contract,data |
 | D-INFRA_OPS | 68 | event,data,contract,config_depends |

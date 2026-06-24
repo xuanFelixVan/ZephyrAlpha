@@ -1,7 +1,7 @@
 %% D-RISK 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:13
+%% 生成时间: 2026-06-24 23:01:58
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 775, 依赖边数: 2121
+%% 模块数: 774, 依赖边数: 2117
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         D_RISK_Credit_Risk_Engine信用风险引擎["D-RISK/Credit Risk Engine信用风险引擎 [design]"]
         D_RISK_Credit_Risk_信用风险["D-RISK/Credit Risk 信用风险 [design]"]
         D_RISK_Cross_Market_Contagion_跨市场传导["D-RISK/Cross-Market Contagion 跨市场传导 [design]"]
-        %% ... 还有 675 个模块未显示
+        %% ... 还有 674 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -356,14 +356,10 @@ graph TD
     D_FRONTEND[D-FRONTEND] -->|contract| D_RISK_抵押_Collateral
     D_FRONTEND[D-FRONTEND] -->|config_depends| D_RISK_Stop_Loss_Engine止损引擎
     D_FRONTEND[D-FRONTEND] -->|event| D_RISK_L4审计隔离_L4_Audit_Isolation
-    %% D-GOVERNANCE -> D-RISK (128 条)
+    %% D-GOVERNANCE -> D-RISK (124 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_risk___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_risk_stop_loss_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_manager_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_manager_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_validator_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_stop_loss_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
@@ -387,6 +383,10 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_A_Share_Systemic_Risk_3_Level_Alerter_A股系统性风险三级告警器
     D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_VaR_Concurrent_Compute_Orchestrator_VaR并发计算编排器
     D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_Fee_Track费用轨道_Fee_Track
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_Agent_Boundary_Violation_Agent越界行为
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_RISK_L3_5_to_L4_Risk_Approval_L3_5→L4风控审批
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_Phase_2_QNN量子神经网络_Phase_2_QNN
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_RISK_Kill_Switch_紧急停止开关
     %% D-GOV_AUDIT -> D-RISK (1 条)
     D_GOV_AUDIT[D-GOV_AUDIT] -->|data| D_RISK_D_FACTOR_Readiness_D_FACTOR就绪前提
     %% D-INFRA_OPS -> D-RISK (68 条)
@@ -967,5 +967,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 770 条
-    %% 跨域入边: 874 条
+    %% 跨域入边: 870 条
     %% 跨域出边: 477 条

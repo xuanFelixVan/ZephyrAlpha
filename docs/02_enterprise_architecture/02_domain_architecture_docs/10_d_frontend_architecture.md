@@ -13,26 +13,25 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示前端（D-FRONTEND）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 21:40:10
+> 最后更新 / Last Updated: 2026-06-24 23:01:56
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 前端（D-FRONTEND）的模块分布。共 237 个模块 / 237 modules。
+> 按 architecture_layer 分层显示 前端（D-FRONTEND）的模块分布。共 236 个模块 / 236 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│         L0 基础设施层 / Infrastructure Layer (8 modules)         │
+│         L0 基础设施层 / Infrastructure Layer (7 modules)         │
 ├──────────────────────────────────────────────────────────────────┤
-│   frontend/app.py  [prototype]                                   │
-│   frontend/fitness_functions.py  [prototype]                     │
-│   frontend/gate_statistics.py  [prototype]                       │
-│   frontend/interface_base.py  [prototype]                        │
-│   frontend/knowledge_overview.py  [prototype]                    │
-│   frontend/olap_trend.py  [prototype]                            │
-│   frontend/real_time_dashboard/__init__.py  [prototype]          │
-│   frontend/task_progress.py  [prototype]                         │
+│   src/zephyr/frontend/dashboard/app.py  [prototype]              │
+│   src/zephyr/frontend/dashboard/components/fitness_functions.... │
+│   src/zephyr/frontend/dashboard/components/gate_statistics.py... │
+│   src/zephyr/frontend/dashboard/components/knowledge_overview... │
+│   src/zephyr/frontend/dashboard/components/olap_trend.py  [pr... │
+│   src/zephyr/frontend/dashboard/components/task_progress.py  ... │
+│   src/zephyr/frontend/interface_base.py  [prototype]             │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -102,20 +101,19 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 237 个模块 / 237 modules）。
+> 按 architecture_layer 分组的模块清单（共 236 个模块 / 236 modules）。
 
-### L0 基础设施层 / Infrastructure Layer (8 modules)
+### L0 基础设施层 / Infrastructure Layer (7 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | frontend/app.py | frontend/app.py | prototype | draft |
-| 2 | frontend/fitness_functions.py | frontend/fitness_functions.py | prototype | draft |
-| 3 | frontend/gate_statistics.py | frontend/gate_statistics.py | prototype | draft |
-| 4 | frontend/interface_base.py | frontend/interface_base.py | prototype | draft |
-| 5 | frontend/knowledge_overview.py | frontend/knowledge_overview.py | prototype | draft |
-| 6 | frontend/olap_trend.py | frontend/olap_trend.py | prototype | draft |
-| 7 | frontend/real_time_dashboard/__init__.py | frontend/real_time_dashboard/__init__.py | prototype | orphan |
-| 8 | frontend/task_progress.py | frontend/task_progress.py | prototype | draft |
+| 1 | src/zephyr/frontend/dashboard/app.py | src/zephyr/frontend/dashboard/app.py | prototype | draft |
+| 2 | src/zephyr/frontend/dashboard/components/fitness_function... | src/zephyr/frontend/dashboard/compone... | prototype | draft |
+| 3 | src/zephyr/frontend/dashboard/components/gate_statistics.py | src/zephyr/frontend/dashboard/compone... | prototype | draft |
+| 4 | src/zephyr/frontend/dashboard/components/knowledge_overvi... | src/zephyr/frontend/dashboard/compone... | prototype | draft |
+| 5 | src/zephyr/frontend/dashboard/components/olap_trend.py | src/zephyr/frontend/dashboard/compone... | prototype | draft |
+| 6 | src/zephyr/frontend/dashboard/components/task_progress.py | src/zephyr/frontend/dashboard/compone... | prototype | draft |
+| 7 | src/zephyr/frontend/interface_base.py | src/zephyr/frontend/interface_base.py | prototype | draft |
 
 ### L1 基础层 / Foundation Layer (16 modules)
 

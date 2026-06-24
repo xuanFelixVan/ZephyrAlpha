@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示运行时集成（D-INFRA_RUNTIME）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 21:40:10
+> 最后更新 / Last Updated: 2026-06-24 23:01:56
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
@@ -35,6 +35,7 @@ ttl: permanent
 │            L1 基础层 / Foundation Layer (415 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/__init__.py  [production]                           │
+│   src/zephyr/autonomy_core/pipeline_orchestrator.py  [product... │
 │   src/zephyr/infrastructure/__init__.py  [production]            │
 │   src/zephyr/infrastructure/__init___from_infra.py  [production] │
 │   src/zephyr/infrastructure/_base_server.py  [production]        │
@@ -45,7 +46,6 @@ ttl: permanent
 │   src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a2a... │
 │   src/zephyr/infrastructure/a2a_protocol/layer1_discovery/age... │
 │   src/zephyr/infrastructure/a2a_protocol/layer1_discovery/ide... │
-│   src/zephyr/infrastructure/a2a_protocol/layer2_communication... │
 │   src/zephyr/infrastructure/a2a_protocol/layer2_communication... │
 │   src/zephyr/infrastructure/a2a_protocol/layer2_communication... │
 │   src/zephyr/infrastructure/a2a_protocol/layer2_communication... │
@@ -99,17 +99,17 @@ ttl: permanent
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/__init__.py | src/zephyr/__init__.py | production | draft |
-| 2 | src/zephyr/infrastructure/__init__.py | src/zephyr/infrastructure/__init__.py | production | draft |
-| 3 | src/zephyr/infrastructure/__init___from_infra.py | src/zephyr/infrastructure/__init___fr... | production | draft |
-| 4 | src/zephyr/infrastructure/_base_server.py | src/zephyr/infrastructure/_base_serve... | production | draft |
-| 5 | src/zephyr/infrastructure/_extensions/__init__.py | src/zephyr/infrastructure/_extensions... | scaffold_placeholder | orphan |
-| 6 | src/zephyr/infrastructure/a2a_protocol/__init__.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 7 | src/zephyr/infrastructure/a2a_protocol/a2a_card_registry.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 8 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/_... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 9 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 2 | src/zephyr/autonomy_core/pipeline_orchestrator.py | src/zephyr/autonomy_core/pipeline_orc... | production | draft |
+| 3 | src/zephyr/infrastructure/__init__.py | src/zephyr/infrastructure/__init__.py | production | draft |
+| 4 | src/zephyr/infrastructure/__init___from_infra.py | src/zephyr/infrastructure/__init___fr... | production | draft |
+| 5 | src/zephyr/infrastructure/_base_server.py | src/zephyr/infrastructure/_base_serve... | production | draft |
+| 6 | src/zephyr/infrastructure/_extensions/__init__.py | src/zephyr/infrastructure/_extensions... | scaffold_placeholder | orphan |
+| 7 | src/zephyr/infrastructure/a2a_protocol/__init__.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 8 | src/zephyr/infrastructure/a2a_protocol/a2a_card_registry.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 9 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/_... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 10 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 11 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/i... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 12 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 11 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 12 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/i... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 13 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 14 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 15 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
@@ -118,7 +118,7 @@ ttl: permanent
 | 18 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 19 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 20 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 21 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 21 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 22 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 23 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 24 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
@@ -170,134 +170,134 @@ ttl: permanent
 | 70 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 71 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
 | 72 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 73 | src/zephyr/infrastructure/a2a_protocol/legacy_auditor.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 74 | src/zephyr/infrastructure/a2a_protocol/legacy_protocol.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 75 | src/zephyr/infrastructure/a2a_protocol/local_first_arch.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 76 | src/zephyr/infrastructure/a2a_protocol/market_data_pipeli... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 77 | src/zephyr/infrastructure/a2a_protocol/migration_strategy.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 78 | src/zephyr/infrastructure/a2a_protocol/multi_agent.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 79 | src/zephyr/infrastructure/a2a_protocol/multi_model_consen... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 80 | src/zephyr/infrastructure/a2a_protocol/offline_autonomy.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 81 | src/zephyr/infrastructure/a2a_protocol/offline_resilience.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 82 | src/zephyr/infrastructure/a2a_protocol/phase_hold.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 83 | src/zephyr/infrastructure/a2a_protocol/prompt_lifecycle.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 84 | src/zephyr/infrastructure/a2a_protocol/realtime_streaming.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
-| 85 | src/zephyr/infrastructure/adaptation/__init__.py | src/zephyr/infrastructure/adaptation/... | production | draft |
-| 86 | src/zephyr/infrastructure/api/__init__.py | src/zephyr/infrastructure/api/__init_... | scaffold_placeholder | orphan |
-| 87 | src/zephyr/infrastructure/asset_inventory/__init__.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 88 | src/zephyr/infrastructure/asset_inventory/__main__.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 89 | src/zephyr/infrastructure/asset_inventory/classifier.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 90 | src/zephyr/infrastructure/asset_inventory/dashboard.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 91 | src/zephyr/infrastructure/asset_inventory/dependency.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 92 | src/zephyr/infrastructure/asset_inventory/index_generator.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 93 | src/zephyr/infrastructure/asset_inventory/lifecycle.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 94 | src/zephyr/infrastructure/asset_inventory/mcp_server.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 95 | src/zephyr/infrastructure/asset_inventory/metadata.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 96 | src/zephyr/infrastructure/asset_inventory/models.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 97 | src/zephyr/infrastructure/asset_inventory/reconciler.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 98 | src/zephyr/infrastructure/asset_inventory/registry_adapte... | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 99 | src/zephyr/infrastructure/asset_inventory/scanner.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 100 | src/zephyr/infrastructure/asset_inventory/telemetry.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 101 | src/zephyr/infrastructure/asset_inventory/trust_anchor.py | src/zephyr/infrastructure/asset_inven... | production | draft |
-| 102 | src/zephyr/infrastructure/audit_logger.py | src/zephyr/infrastructure/audit_logge... | production | draft |
-| 103 | src/zephyr/infrastructure/auto_diagnostics.py | src/zephyr/infrastructure/auto_diagno... | production | draft |
-| 104 | src/zephyr/infrastructure/auto_fix_engine/__init__.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 105 | src/zephyr/infrastructure/auto_fix_engine/__main__.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 106 | src/zephyr/infrastructure/auto_fix_engine/alignment_synce... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 107 | src/zephyr/infrastructure/auto_fix_engine/all_completer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 108 | src/zephyr/infrastructure/auto_fix_engine/batch_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 109 | src/zephyr/infrastructure/auto_fix_engine/compliance_audi... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 110 | src/zephyr/infrastructure/auto_fix_engine/config_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 111 | src/zephyr/infrastructure/auto_fix_engine/dedup_extractor.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 112 | src/zephyr/infrastructure/auto_fix_engine/dep_version_fix... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 113 | src/zephyr/infrastructure/auto_fix_engine/drift_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 114 | src/zephyr/infrastructure/auto_fix_engine/engine.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 115 | src/zephyr/infrastructure/auto_fix_engine/escalation_brid... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 116 | src/zephyr/infrastructure/auto_fix_engine/event_hooks.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 117 | src/zephyr/infrastructure/auto_fix_engine/fix_budget.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 118 | src/zephyr/infrastructure/auto_fix_engine/fix_diff.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 119 | src/zephyr/infrastructure/auto_fix_engine/fix_health_chec... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 120 | src/zephyr/infrastructure/auto_fix_engine/fix_pattern_min... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 121 | src/zephyr/infrastructure/auto_fix_engine/fix_reliability.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 122 | src/zephyr/infrastructure/auto_fix_engine/fix_report.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 123 | src/zephyr/infrastructure/auto_fix_engine/fix_safety.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 124 | src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 125 | src/zephyr/infrastructure/auto_fix_engine/import_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 126 | src/zephyr/infrastructure/auto_fix_engine/interrupt_guard.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 127 | src/zephyr/infrastructure/auto_fix_engine/llm_fix_adapter.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 128 | src/zephyr/infrastructure/auto_fix_engine/models.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 129 | src/zephyr/infrastructure/auto_fix_engine/scaffold_regist... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 130 | src/zephyr/infrastructure/auto_fix_engine/self_heal_agent.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 131 | src/zephyr/infrastructure/auto_fix_engine/shadow_workspac... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 132 | src/zephyr/infrastructure/auto_fix_engine/state_machine.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 133 | src/zephyr/infrastructure/auto_fix_engine/zombie_cleaner.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
-| 134 | src/zephyr/infrastructure/blueprint_code_sync.py | src/zephyr/infrastructure/blueprint_c... | production | draft |
-| 135 | src/zephyr/infrastructure/blueprint_search_server.py | src/zephyr/infrastructure/blueprint_s... | production | draft |
-| 136 | src/zephyr/infrastructure/capacity_assurance/__init__.py | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 137 | src/zephyr/infrastructure/capacity_assurance/contracts/__... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 138 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 73 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 74 | src/zephyr/infrastructure/a2a_protocol/legacy_auditor.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 75 | src/zephyr/infrastructure/a2a_protocol/legacy_protocol.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 76 | src/zephyr/infrastructure/a2a_protocol/local_first_arch.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 77 | src/zephyr/infrastructure/a2a_protocol/market_data_pipeli... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 78 | src/zephyr/infrastructure/a2a_protocol/migration_strategy.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 79 | src/zephyr/infrastructure/a2a_protocol/multi_agent.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 80 | src/zephyr/infrastructure/a2a_protocol/multi_model_consen... | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 81 | src/zephyr/infrastructure/a2a_protocol/offline_autonomy.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 82 | src/zephyr/infrastructure/a2a_protocol/offline_resilience.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 83 | src/zephyr/infrastructure/a2a_protocol/phase_hold.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 84 | src/zephyr/infrastructure/a2a_protocol/prompt_lifecycle.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 85 | src/zephyr/infrastructure/a2a_protocol/realtime_streaming.py | src/zephyr/infrastructure/a2a_protoco... | production | draft |
+| 86 | src/zephyr/infrastructure/adaptation/__init__.py | src/zephyr/infrastructure/adaptation/... | production | draft |
+| 87 | src/zephyr/infrastructure/api/__init__.py | src/zephyr/infrastructure/api/__init_... | scaffold_placeholder | orphan |
+| 88 | src/zephyr/infrastructure/asset_inventory/__init__.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 89 | src/zephyr/infrastructure/asset_inventory/__main__.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 90 | src/zephyr/infrastructure/asset_inventory/classifier.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 91 | src/zephyr/infrastructure/asset_inventory/dashboard.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 92 | src/zephyr/infrastructure/asset_inventory/dependency.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 93 | src/zephyr/infrastructure/asset_inventory/index_generator.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 94 | src/zephyr/infrastructure/asset_inventory/lifecycle.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 95 | src/zephyr/infrastructure/asset_inventory/mcp_server.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 96 | src/zephyr/infrastructure/asset_inventory/metadata.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 97 | src/zephyr/infrastructure/asset_inventory/models.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 98 | src/zephyr/infrastructure/asset_inventory/reconciler.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 99 | src/zephyr/infrastructure/asset_inventory/registry_adapte... | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 100 | src/zephyr/infrastructure/asset_inventory/scanner.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 101 | src/zephyr/infrastructure/asset_inventory/telemetry.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 102 | src/zephyr/infrastructure/asset_inventory/trust_anchor.py | src/zephyr/infrastructure/asset_inven... | production | draft |
+| 103 | src/zephyr/infrastructure/audit_logger.py | src/zephyr/infrastructure/audit_logge... | production | draft |
+| 104 | src/zephyr/infrastructure/auto_diagnostics.py | src/zephyr/infrastructure/auto_diagno... | production | draft |
+| 105 | src/zephyr/infrastructure/auto_fix_engine/__init__.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 106 | src/zephyr/infrastructure/auto_fix_engine/__main__.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 107 | src/zephyr/infrastructure/auto_fix_engine/alignment_synce... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 108 | src/zephyr/infrastructure/auto_fix_engine/all_completer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 109 | src/zephyr/infrastructure/auto_fix_engine/batch_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 110 | src/zephyr/infrastructure/auto_fix_engine/compliance_audi... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 111 | src/zephyr/infrastructure/auto_fix_engine/config_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 112 | src/zephyr/infrastructure/auto_fix_engine/dedup_extractor.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 113 | src/zephyr/infrastructure/auto_fix_engine/dep_version_fix... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 114 | src/zephyr/infrastructure/auto_fix_engine/drift_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 115 | src/zephyr/infrastructure/auto_fix_engine/engine.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 116 | src/zephyr/infrastructure/auto_fix_engine/escalation_brid... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 117 | src/zephyr/infrastructure/auto_fix_engine/event_hooks.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 118 | src/zephyr/infrastructure/auto_fix_engine/fix_budget.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 119 | src/zephyr/infrastructure/auto_fix_engine/fix_diff.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 120 | src/zephyr/infrastructure/auto_fix_engine/fix_health_chec... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 121 | src/zephyr/infrastructure/auto_fix_engine/fix_pattern_min... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 122 | src/zephyr/infrastructure/auto_fix_engine/fix_reliability.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 123 | src/zephyr/infrastructure/auto_fix_engine/fix_report.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 124 | src/zephyr/infrastructure/auto_fix_engine/fix_safety.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 125 | src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 126 | src/zephyr/infrastructure/auto_fix_engine/import_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 127 | src/zephyr/infrastructure/auto_fix_engine/interrupt_guard.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 128 | src/zephyr/infrastructure/auto_fix_engine/llm_fix_adapter.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 129 | src/zephyr/infrastructure/auto_fix_engine/models.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 130 | src/zephyr/infrastructure/auto_fix_engine/scaffold_regist... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 131 | src/zephyr/infrastructure/auto_fix_engine/self_heal_agent.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 132 | src/zephyr/infrastructure/auto_fix_engine/shadow_workspac... | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 133 | src/zephyr/infrastructure/auto_fix_engine/state_machine.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 134 | src/zephyr/infrastructure/auto_fix_engine/zombie_cleaner.py | src/zephyr/infrastructure/auto_fix_en... | production | draft |
+| 135 | src/zephyr/infrastructure/blueprint_code_sync.py | src/zephyr/infrastructure/blueprint_c... | production | draft |
+| 136 | src/zephyr/infrastructure/blueprint_search_server.py | src/zephyr/infrastructure/blueprint_s... | production | draft |
+| 137 | src/zephyr/infrastructure/capacity_assurance/__init__.py | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 138 | src/zephyr/infrastructure/capacity_assurance/contracts/__... | src/zephyr/infrastructure/capacity_as... | production | draft |
 | 139 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 140 | src/zephyr/infrastructure/capacity_assurance/contracts/co... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 141 | src/zephyr/infrastructure/capacity_assurance/cross_module... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 142 | src/zephyr/infrastructure/capacity_assurance/modules/__in... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 143 | src/zephyr/infrastructure/capacity_assurance/modules/ai_s... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 144 | src/zephyr/infrastructure/capacity_assurance/modules/capa... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 145 | src/zephyr/infrastructure/capacity_assurance/modules/clif... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 146 | src/zephyr/infrastructure/capacity_assurance/modules/cold... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 147 | src/zephyr/infrastructure/capacity_assurance/modules/conf... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 148 | src/zephyr/infrastructure/capacity_assurance/modules/cont... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 149 | src/zephyr/infrastructure/capacity_assurance/modules/degr... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 150 | src/zephyr/infrastructure/capacity_assurance/modules/dr_d... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 151 | src/zephyr/infrastructure/capacity_assurance/modules/grac... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 152 | src/zephyr/infrastructure/capacity_assurance/modules/hawt... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 153 | src/zephyr/infrastructure/capacity_assurance/modules/mult... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 154 | src/zephyr/infrastructure/capacity_assurance/modules/obse... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 155 | src/zephyr/infrastructure/capacity_assurance/modules/owne... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 156 | src/zephyr/infrastructure/capacity_assurance/modules/per_... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 157 | src/zephyr/infrastructure/capacity_assurance/modules/star... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 158 | src/zephyr/infrastructure/capacity_assurance/modules/sunk... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 159 | src/zephyr/infrastructure/capacity_assurance/modules/time... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 160 | src/zephyr/infrastructure/capacity_assurance/modules/toke... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 161 | src/zephyr/infrastructure/capacity_assurance/modules/trac... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 162 | src/zephyr/infrastructure/capacity_assurance/modules/winf... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 163 | src/zephyr/infrastructure/capacity_assurance/risk_mitigat... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 164 | src/zephyr/infrastructure/capacity_assurance/schema.py | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 165 | src/zephyr/infrastructure/capacity_assurance/sli_instrume... | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 166 | src/zephyr/infrastructure/capacity_assurance/tech_stack.py | src/zephyr/infrastructure/capacity_as... | production | draft |
-| 167 | src/zephyr/infrastructure/compensation/__init__.py | src/zephyr/infrastructure/compensatio... | production | draft |
-| 168 | src/zephyr/infrastructure/config/__init__.py | src/zephyr/infrastructure/config/__in... | production | draft |
-| 169 | src/zephyr/infrastructure/config/shared/config/__init__.py | src/zephyr/infrastructure/config/shar... | production | draft |
-| 170 | src/zephyr/infrastructure/config/shared/config/loader.py | src/zephyr/infrastructure/config/shar... | production | draft |
-| 171 | src/zephyr/infrastructure/config_validator.py | src/zephyr/infrastructure/config_vali... | production | draft |
-| 172 | src/zephyr/infrastructure/contract_tester.py | src/zephyr/infrastructure/contract_te... | production | draft |
-| 173 | src/zephyr/infrastructure/core/__init__.py | src/zephyr/infrastructure/core/__init... | scaffold_placeholder | orphan |
-| 174 | src/zephyr/infrastructure/cost_tracker.py | src/zephyr/infrastructure/cost_tracke... | production | draft |
-| 175 | src/zephyr/infrastructure/dashboard/__init__.py | src/zephyr/infrastructure/dashboard/_... | production | orphan |
-| 176 | src/zephyr/infrastructure/dashboard/components/__init__.py | src/zephyr/infrastructure/dashboard/c... | production | orphan |
-| 177 | src/zephyr/infrastructure/db/__init__.py | src/zephyr/infrastructure/db/__init__.py | production | draft |
-| 178 | src/zephyr/infrastructure/db/atomic_transaction_manager.py | src/zephyr/infrastructure/db/atomic_t... | production | draft |
-| 179 | src/zephyr/infrastructure/db/audit_schema.py | src/zephyr/infrastructure/db/audit_sc... | production | draft |
-| 180 | src/zephyr/infrastructure/db/base_repo.py | src/zephyr/infrastructure/db/base_rep... | production | draft |
-| 181 | src/zephyr/infrastructure/db/circuit_breaker_repo.py | src/zephyr/infrastructure/db/circuit_... | production | draft |
-| 182 | src/zephyr/infrastructure/db/circuit_breaker_types.py | src/zephyr/infrastructure/db/circuit_... | production | draft |
-| 183 | src/zephyr/infrastructure/db/database_manager.py | src/zephyr/infrastructure/db/database... | production | draft |
-| 184 | src/zephyr/infrastructure/db/gate_repo.py | src/zephyr/infrastructure/db/gate_rep... | production | draft |
-| 185 | src/zephyr/infrastructure/db/olap_engine.py | src/zephyr/infrastructure/db/olap_eng... | production | draft |
-| 186 | src/zephyr/infrastructure/db/query.py | src/zephyr/infrastructure/db/query.py | production | draft |
-| 187 | src/zephyr/infrastructure/db/query_metrics.py | src/zephyr/infrastructure/db/query_me... | production | draft |
-| 188 | src/zephyr/infrastructure/db/sqlite_schema.py | src/zephyr/infrastructure/db/sqlite_s... | production | draft |
-| 189 | src/zephyr/infrastructure/db/task_repo.py | src/zephyr/infrastructure/db/task_rep... | production | draft |
-| 190 | src/zephyr/infrastructure/db/transition.py | src/zephyr/infrastructure/db/transiti... | production | draft |
-| 191 | src/zephyr/infrastructure/dependency/__init__.py | src/zephyr/infrastructure/dependency/... | production | draft |
-| 192 | src/zephyr/infrastructure/doc_guard_server.py | src/zephyr/infrastructure/doc_guard_s... | production | draft |
-| 193 | src/zephyr/infrastructure/draft/__init__.py | src/zephyr/infrastructure/draft/__ini... | production | draft |
-| 194 | src/zephyr/infrastructure/dry_run_simulator.py | src/zephyr/infrastructure/dry_run_sim... | production | draft |
-| 195 | src/zephyr/infrastructure/error_codes.py | src/zephyr/infrastructure/error_codes.py | production | draft |
-| 196 | src/zephyr/infrastructure/event_bus_upgrade.py | src/zephyr/infrastructure/event_bus_u... | production | draft |
-| 197 | src/zephyr/infrastructure/event_store.py | src/zephyr/infrastructure/event_store.py | production | draft |
-| 198 | src/zephyr/infrastructure/events/__init__.py | src/zephyr/infrastructure/events/__in... | production | draft |
-| 199 | src/zephyr/infrastructure/events/event_store.py | src/zephyr/infrastructure/events/even... | production | draft |
-| 200 | src/zephyr/infrastructure/file_watcher.py | src/zephyr/infrastructure/file_watche... | production | draft |
+| 140 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 141 | src/zephyr/infrastructure/capacity_assurance/contracts/co... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 142 | src/zephyr/infrastructure/capacity_assurance/cross_module... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 143 | src/zephyr/infrastructure/capacity_assurance/modules/__in... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 144 | src/zephyr/infrastructure/capacity_assurance/modules/ai_s... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 145 | src/zephyr/infrastructure/capacity_assurance/modules/capa... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 146 | src/zephyr/infrastructure/capacity_assurance/modules/clif... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 147 | src/zephyr/infrastructure/capacity_assurance/modules/cold... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 148 | src/zephyr/infrastructure/capacity_assurance/modules/conf... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 149 | src/zephyr/infrastructure/capacity_assurance/modules/cont... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 150 | src/zephyr/infrastructure/capacity_assurance/modules/degr... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 151 | src/zephyr/infrastructure/capacity_assurance/modules/dr_d... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 152 | src/zephyr/infrastructure/capacity_assurance/modules/grac... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 153 | src/zephyr/infrastructure/capacity_assurance/modules/hawt... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 154 | src/zephyr/infrastructure/capacity_assurance/modules/mult... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 155 | src/zephyr/infrastructure/capacity_assurance/modules/obse... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 156 | src/zephyr/infrastructure/capacity_assurance/modules/owne... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 157 | src/zephyr/infrastructure/capacity_assurance/modules/per_... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 158 | src/zephyr/infrastructure/capacity_assurance/modules/star... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 159 | src/zephyr/infrastructure/capacity_assurance/modules/sunk... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 160 | src/zephyr/infrastructure/capacity_assurance/modules/time... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 161 | src/zephyr/infrastructure/capacity_assurance/modules/toke... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 162 | src/zephyr/infrastructure/capacity_assurance/modules/trac... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 163 | src/zephyr/infrastructure/capacity_assurance/modules/winf... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 164 | src/zephyr/infrastructure/capacity_assurance/risk_mitigat... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 165 | src/zephyr/infrastructure/capacity_assurance/schema.py | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 166 | src/zephyr/infrastructure/capacity_assurance/sli_instrume... | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 167 | src/zephyr/infrastructure/capacity_assurance/tech_stack.py | src/zephyr/infrastructure/capacity_as... | production | draft |
+| 168 | src/zephyr/infrastructure/compensation/__init__.py | src/zephyr/infrastructure/compensatio... | production | draft |
+| 169 | src/zephyr/infrastructure/config/__init__.py | src/zephyr/infrastructure/config/__in... | production | draft |
+| 170 | src/zephyr/infrastructure/config/shared/config/__init__.py | src/zephyr/infrastructure/config/shar... | production | draft |
+| 171 | src/zephyr/infrastructure/config/shared/config/loader.py | src/zephyr/infrastructure/config/shar... | production | draft |
+| 172 | src/zephyr/infrastructure/config_validator.py | src/zephyr/infrastructure/config_vali... | production | draft |
+| 173 | src/zephyr/infrastructure/contract_tester.py | src/zephyr/infrastructure/contract_te... | production | draft |
+| 174 | src/zephyr/infrastructure/core/__init__.py | src/zephyr/infrastructure/core/__init... | scaffold_placeholder | orphan |
+| 175 | src/zephyr/infrastructure/cost_tracker.py | src/zephyr/infrastructure/cost_tracke... | production | draft |
+| 176 | src/zephyr/infrastructure/dashboard/__init__.py | src/zephyr/infrastructure/dashboard/_... | production | orphan |
+| 177 | src/zephyr/infrastructure/dashboard/components/__init__.py | src/zephyr/infrastructure/dashboard/c... | production | orphan |
+| 178 | src/zephyr/infrastructure/db/__init__.py | src/zephyr/infrastructure/db/__init__.py | production | draft |
+| 179 | src/zephyr/infrastructure/db/atomic_transaction_manager.py | src/zephyr/infrastructure/db/atomic_t... | production | draft |
+| 180 | src/zephyr/infrastructure/db/audit_schema.py | src/zephyr/infrastructure/db/audit_sc... | production | draft |
+| 181 | src/zephyr/infrastructure/db/base_repo.py | src/zephyr/infrastructure/db/base_rep... | production | draft |
+| 182 | src/zephyr/infrastructure/db/circuit_breaker_repo.py | src/zephyr/infrastructure/db/circuit_... | production | draft |
+| 183 | src/zephyr/infrastructure/db/circuit_breaker_types.py | src/zephyr/infrastructure/db/circuit_... | production | draft |
+| 184 | src/zephyr/infrastructure/db/database_manager.py | src/zephyr/infrastructure/db/database... | production | draft |
+| 185 | src/zephyr/infrastructure/db/gate_repo.py | src/zephyr/infrastructure/db/gate_rep... | production | draft |
+| 186 | src/zephyr/infrastructure/db/olap_engine.py | src/zephyr/infrastructure/db/olap_eng... | production | draft |
+| 187 | src/zephyr/infrastructure/db/query.py | src/zephyr/infrastructure/db/query.py | production | draft |
+| 188 | src/zephyr/infrastructure/db/query_metrics.py | src/zephyr/infrastructure/db/query_me... | production | draft |
+| 189 | src/zephyr/infrastructure/db/sqlite_schema.py | src/zephyr/infrastructure/db/sqlite_s... | production | draft |
+| 190 | src/zephyr/infrastructure/db/task_repo.py | src/zephyr/infrastructure/db/task_rep... | production | draft |
+| 191 | src/zephyr/infrastructure/db/transition.py | src/zephyr/infrastructure/db/transiti... | production | draft |
+| 192 | src/zephyr/infrastructure/dependency/__init__.py | src/zephyr/infrastructure/dependency/... | production | draft |
+| 193 | src/zephyr/infrastructure/doc_guard_server.py | src/zephyr/infrastructure/doc_guard_s... | production | draft |
+| 194 | src/zephyr/infrastructure/draft/__init__.py | src/zephyr/infrastructure/draft/__ini... | production | draft |
+| 195 | src/zephyr/infrastructure/dry_run_simulator.py | src/zephyr/infrastructure/dry_run_sim... | production | draft |
+| 196 | src/zephyr/infrastructure/error_codes.py | src/zephyr/infrastructure/error_codes.py | production | draft |
+| 197 | src/zephyr/infrastructure/event_bus_upgrade.py | src/zephyr/infrastructure/event_bus_u... | production | draft |
+| 198 | src/zephyr/infrastructure/event_store.py | src/zephyr/infrastructure/event_store.py | production | draft |
+| 199 | src/zephyr/infrastructure/events/__init__.py | src/zephyr/infrastructure/events/__in... | production | draft |
+| 200 | src/zephyr/infrastructure/events/event_store.py | src/zephyr/infrastructure/events/even... | production | draft |
 
 > (仅显示前 200 个模块，共 415 个)
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 跨资产（D-CROSS_ASSET）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:53
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,19 +24,19 @@ ttl: permanent
 | 域ID | D-CROSS_ASSET | Domain ID | D-CROSS_ASSET |
 | 域名称 | 跨资产 | Domain Name | 跨资产 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 79 | Module Count | 79 |
-| 域内依赖 | 63 | Internal Dependencies | 63 |
+| 模块数 | 76 | Module Count | 76 |
+| 域内依赖 | 62 | Internal Dependencies | 62 |
 | 跨域入边 | 16 | Cross-domain Incoming | 16 |
 | 跨域出边 | 119 | Cross-domain Outgoing | 119 |
 | 设计态模块 | 66 | Design Modules | 66 |
-| 原型态模块 | 6 | Prototype Modules | 6 |
+| 原型态模块 | 3 | Prototype Modules | 3 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 79/150 (正常) | Capacity | 79/150 (正常) |
 | 描述 | 跨资产策略与配置 | Description | 跨资产策略与配置 |
 
 ## 模块清单 / Module List
 
-共 79 个模块（按路径排序，全部显示）
+共 76 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -108,17 +108,14 @@ ttl: permanent
 | src/zephyr/cross_asset/api/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/cross_asset/core/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/cross_asset/correlation/ | 跨资产相关性 | design | design_only |
-| src/zephyr/cross_asset/cross_asset_risk_decomposer/__init__.py |  | prototype | orphan |
-| src/zephyr/cross_asset/cross_market_data_adapter/__init__.py |  | prototype | draft |
-| src/zephyr/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py |  | production | draft |
-| src/zephyr/cross_asset/currency_hedger_and_fixed_income/__init__.py |  | prototype | orphan |
 | src/zephyr/cross_asset/hedger/ | 跨资产对冲 | design | design_only |
 | src/zephyr/cross_asset/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/cross_asset/models/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/cross_asset/risk_manager.py |  | prototype | draft |
-| src/zephyr/cross_asset/risk_manager_base.py |  | prototype | draft |
 | src/zephyr/cross_asset/services/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/cross_asset/strategy/ | 跨资产策略引擎 | design | design_only |
+| src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py |  | production | draft |
+| src/zephyr/risk/risk_manager.py |  | prototype | draft |
+| src/zephyr/risk/risk_manager_base.py |  | prototype | draft |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -331,39 +328,35 @@ graph TD
         src_zephyr_cross_asset_api_init_py["src/zephyr/cross_asset/api/__init__.py scaffold_placeholder"]
         src_zephyr_cross_asset_core_init_py["src/zephyr/cross_asset/core/__init__.py scaffold_placeholder"]
         src_zephyr_cross_asset_correlation["跨资产相关性 design"]
-        src_zephyr_cross_asset_cross_asset_risk_decomposer_init_py["src/zephyr/cross_asset/cross_asset_risk_decompo... prototype"]
-        src_zephyr_cross_asset_cross_market_data_adapter_init_py["src/zephyr/cross_asset/cross_market_data_adapte... prototype"]
-        src_zephyr_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py["src/zephyr/cross_asset/cross_market_data_adapte... production"]
-        src_zephyr_cross_asset_currency_hedger_and_fixed_income_init_py["src/zephyr/cross_asset/currency_hedger_and_fixe... prototype"]
         src_zephyr_cross_asset_hedger["跨资产对冲 design"]
         src_zephyr_cross_asset_infrastructure_init_py["src/zephyr/cross_asset/infrastructure/__init__.py scaffold_placeholder"]
         src_zephyr_cross_asset_models_init_py["src/zephyr/cross_asset/models/__init__.py scaffold_placeholder"]
-        src_zephyr_cross_asset_risk_manager_py["src/zephyr/cross_asset/risk_manager.py prototype"]
-        src_zephyr_cross_asset_risk_manager_base_py["src/zephyr/cross_asset/risk_manager_base.py prototype"]
         src_zephyr_cross_asset_services_init_py["src/zephyr/cross_asset/services/__init__.py scaffold_placeholder"]
         src_zephyr_cross_asset_strategy["跨资产策略引擎 design"]
+        src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py["src/zephyr/risk/cross_asset/cross_market_data_a... production"]
+        src_zephyr_risk_risk_manager_py["src/zephyr/risk/risk_manager.py prototype"]
+        src_zephyr_risk_risk_manager_base_py["src/zephyr/risk/risk_manager_base.py prototype"]
     end
-    src_zephyr_cross_asset_risk_manager_base_py -.->|config_depends| src_zephyr_cross_asset_init_py
-    src_zephyr_cross_asset_cross_market_data_adapter_init_py -.->|config_depends| src_zephyr_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
+    src_zephyr_risk_risk_manager_base_py -.->|config_depends| src_zephyr_cross_asset_init_py
     D_TRADING["D-TRADING prototype"]
     src_zephyr_cross_asset -.->|contract| D_TRADING
-    src_zephyr_cross_asset_risk_manager_py -.->|import_depends| D_TRADING
-    src_zephyr_cross_asset_risk_manager_py -.->|import_depends| D_TRADING
-    src_zephyr_cross_asset_risk_manager_py -.->|import_depends| D_TRADING
-    src_zephyr_cross_asset_risk_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     D_SHARED["D-SHARED prototype"]
-    src_zephyr_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
+    src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
     D_EX_SOR["D-EX_SOR design"]
     D_CROSS_ASSET_Adapter_Mechanism -.->|data| D_EX_SOR
     D_GOVERNANCE["D-GOVERNANCE prototype"]
-    D_GOVERNANCE -.->|test_depends| src_zephyr_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py production
-    class D_CROSS_ASSET_Adapter_Mechanism,src_zephyr_cross_asset,src_zephyr_cross_asset_init_py,src_zephyr_cross_asset_extensions_init_py,src_zephyr_cross_asset_allocator,src_zephyr_cross_asset_api_init_py,src_zephyr_cross_asset_core_init_py,src_zephyr_cross_asset_correlation,src_zephyr_cross_asset_cross_asset_risk_decomposer_init_py,src_zephyr_cross_asset_cross_market_data_adapter_init_py,src_zephyr_cross_asset_currency_hedger_and_fixed_income_init_py,src_zephyr_cross_asset_hedger,src_zephyr_cross_asset_infrastructure_init_py,src_zephyr_cross_asset_models_init_py,src_zephyr_cross_asset_risk_manager_py,src_zephyr_cross_asset_risk_manager_base_py,src_zephyr_cross_asset_services_init_py,src_zephyr_cross_asset_strategy design
+    class src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py production
+    class D_CROSS_ASSET_Adapter_Mechanism,src_zephyr_cross_asset,src_zephyr_cross_asset_init_py,src_zephyr_cross_asset_extensions_init_py,src_zephyr_cross_asset_allocator,src_zephyr_cross_asset_api_init_py,src_zephyr_cross_asset_core_init_py,src_zephyr_cross_asset_correlation,src_zephyr_cross_asset_hedger,src_zephyr_cross_asset_infrastructure_init_py,src_zephyr_cross_asset_models_init_py,src_zephyr_cross_asset_services_init_py,src_zephyr_cross_asset_strategy,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py design
     class D_TRADING,D_SHARED,D_EX_SOR,D_GOVERNANCE external_design
 ```
 

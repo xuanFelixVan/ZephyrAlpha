@@ -1,7 +1,7 @@
 %% D-PF_CORE 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:13
+%% 生成时间: 2026-06-24 23:01:58
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 202, 依赖边数: 473
+%% 模块数: 201, 依赖边数: 470
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         D_PF_CORE_Portfolio_Risk_Decomposer_组合风险分解器["...ORE/Portfolio Risk Decomposer 组合风险分解器 [design]"]
         D_PF_CORE_Portfolio_State_组合状态检查点["D-PF-CORE/Portfolio State 组合状态检查点 [design]"]
         D_PF_CORE_Portfolio_Stress_Tester组合压力测试器["D-PF-CORE/Portfolio Stress Tester组合压力测试器 [design]"]
-        %% ... 还有 102 个模块未显示
+        %% ... 还有 101 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -268,10 +268,7 @@ graph TD
     D_FRONTEND[D-FRONTEND] -->|contract| D_PF_CORE_Portfolio_Risk_Decomposer_组合风险分解器
     D_FRONTEND[D-FRONTEND] -->|config_depends| D_PF_CORE_Cash_Flow_Manager资金流管理器
     D_FRONTEND[D-FRONTEND] -->|data| D_PF_CORE_多账户多策略_Strategy
-    %% D-GOVERNANCE -> D-PF_CORE (30 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_pf_core_strategy_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_pf_core_analytics_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_pf_core_performance_attribution_report_py
+    %% D-GOVERNANCE -> D-PF_CORE (27 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_pf_core_default_attribution_engine_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_pf_core_default_tca_engine_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_pf_core_default_tca_engine_py
@@ -552,5 +549,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 152 条
-    %% 跨域入边: 168 条
+    %% 跨域入边: 165 条
     %% 跨域出边: 153 条

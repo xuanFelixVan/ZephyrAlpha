@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示跨资产（D-CROSS_ASSET）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 21:40:10
+> 最后更新 / Last Updated: 2026-06-24 23:01:56
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 跨资产（D-CROSS_ASSET）的模块分布。共 79 个模块 / 79 modules。
+> 按 architecture_layer 分层显示 跨资产（D-CROSS_ASSET）的模块分布。共 76 个模块 / 76 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (18 modules)               │
+│              L2 领域层 / Domain Layer (15 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   跨资产域  [design]                                             │
 │   src/zephyr/cross_asset/__init__.py  [prototype]                │
@@ -32,17 +32,14 @@ ttl: permanent
 │   src/zephyr/cross_asset/api/__init__.py  [scaffold_placeholder] │
 │   src/zephyr/cross_asset/core/__init__.py  [scaffold_placehol... │
 │   跨资产相关性  [design]                                         │
-│   src/zephyr/cross_asset/cross_asset_risk_decomposer/__init__... │
-│   src/zephyr/cross_asset/cross_market_data_adapter/__init__.p... │
-│   src/zephyr/cross_asset/cross_market_data_adapter/ml_experim... │
-│   src/zephyr/cross_asset/currency_hedger_and_fixed_income/__i... │
 │   跨资产对冲  [design]                                           │
 │   src/zephyr/cross_asset/infrastructure/__init__.py  [scaffol... │
 │   src/zephyr/cross_asset/models/__init__.py  [scaffold_placeh... │
-│   src/zephyr/cross_asset/risk_manager.py  [prototype]            │
-│   src/zephyr/cross_asset/risk_manager_base.py  [prototype]       │
 │   src/zephyr/cross_asset/services/__init__.py  [scaffold_plac... │
 │   跨资产策略引擎  [design]                                       │
+│   src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_ex... │
+│   src/zephyr/risk/risk_manager.py  [prototype]                   │
+│   src/zephyr/risk/risk_manager_base.py  [prototype]              │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -74,9 +71,9 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 79 个模块 / 79 modules）。
+> 按 architecture_layer 分组的模块清单（共 76 个模块 / 76 modules）。
 
-### L2 领域层 / Domain Layer (18 modules)
+### L2 领域层 / Domain Layer (15 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -87,17 +84,14 @@ ttl: permanent
 | 5 | src/zephyr/cross_asset/api/__init__.py | src/zephyr/cross_asset/api/__init__.py | scaffold_placeholder | orphan |
 | 6 | src/zephyr/cross_asset/core/__init__.py | src/zephyr/cross_asset/core/__init__.py | scaffold_placeholder | orphan |
 | 7 | src/zephyr/cross_asset/correlation/ | 跨资产相关性 | design | design_only |
-| 8 | src/zephyr/cross_asset/cross_asset_risk_decomposer/__init... | src/zephyr/cross_asset/cross_asset_ri... | prototype | orphan |
-| 9 | src/zephyr/cross_asset/cross_market_data_adapter/__init__.py | src/zephyr/cross_asset/cross_market_d... | prototype | draft |
-| 10 | src/zephyr/cross_asset/cross_market_data_adapter/ml_exper... | src/zephyr/cross_asset/cross_market_d... | production | draft |
-| 11 | src/zephyr/cross_asset/currency_hedger_and_fixed_income/_... | src/zephyr/cross_asset/currency_hedge... | prototype | orphan |
-| 12 | src/zephyr/cross_asset/hedger/ | 跨资产对冲 | design | design_only |
-| 13 | src/zephyr/cross_asset/infrastructure/__init__.py | src/zephyr/cross_asset/infrastructure... | scaffold_placeholder | orphan |
-| 14 | src/zephyr/cross_asset/models/__init__.py | src/zephyr/cross_asset/models/__init_... | scaffold_placeholder | orphan |
-| 15 | src/zephyr/cross_asset/risk_manager.py | src/zephyr/cross_asset/risk_manager.py | prototype | draft |
-| 16 | src/zephyr/cross_asset/risk_manager_base.py | src/zephyr/cross_asset/risk_manager_b... | prototype | draft |
-| 17 | src/zephyr/cross_asset/services/__init__.py | src/zephyr/cross_asset/services/__ini... | scaffold_placeholder | orphan |
-| 18 | src/zephyr/cross_asset/strategy/ | 跨资产策略引擎 | design | design_only |
+| 8 | src/zephyr/cross_asset/hedger/ | 跨资产对冲 | design | design_only |
+| 9 | src/zephyr/cross_asset/infrastructure/__init__.py | src/zephyr/cross_asset/infrastructure... | scaffold_placeholder | orphan |
+| 10 | src/zephyr/cross_asset/models/__init__.py | src/zephyr/cross_asset/models/__init_... | scaffold_placeholder | orphan |
+| 11 | src/zephyr/cross_asset/services/__init__.py | src/zephyr/cross_asset/services/__ini... | scaffold_placeholder | orphan |
+| 12 | src/zephyr/cross_asset/strategy/ | 跨资产策略引擎 | design | design_only |
+| 13 | src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_... | src/zephyr/risk/cross_asset/cross_mar... | production | draft |
+| 14 | src/zephyr/risk/risk_manager.py | src/zephyr/risk/risk_manager.py | prototype | draft |
+| 15 | src/zephyr/risk/risk_manager_base.py | src/zephyr/risk/risk_manager_base.py | prototype | draft |
 
 ### 未分类 / Unclassified (61 modules)
 
@@ -167,18 +161,18 @@ ttl: permanent
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 63 条 / 63 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 62 条 / 62 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│       依赖关系图 / Dependency Graph (共 63 条 / 63 edges)        │
+│       依赖关系图 / Dependency Graph (共 62 条 / 62 edges)        │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 5                               │
 │   [import_depends]: 54 条 / edges                                │
 │   [event]: 4 条 / edges                                          │
-│   [config_depends]: 2 条 / edges                                 │
 │   [contract]: 2 条 / edges                                       │
+│   [config_depends]: 1 条 / edges                                 │
 │   [data]: 1 条 / edges                                           │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -239,13 +233,13 @@ ttl: permanent
 
 **[event]** (4 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[config_depends]** (2 条 / edges) — 已达显示上限，省略 / limit reached
-
 **[contract]** (2 条 / edges) — 已达显示上限，省略 / limit reached
+
+**[config_depends]** (1 条 / edges) — 已达显示上限，省略 / limit reached
 
 **[data]** (1 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 63 条)
+> (最多显示前 50 条依赖边，共 62 条)
 
 ```
 

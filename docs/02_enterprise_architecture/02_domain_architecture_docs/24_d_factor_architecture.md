@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示因子（D-FACTOR）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 21:40:10
+> 最后更新 / Last Updated: 2026-06-24 23:01:56
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 因子（D-FACTOR）的模块分布。共 320 个模块 / 320 modules。
+> 按 architecture_layer 分层显示 因子（D-FACTOR）的模块分布。共 318 个模块 / 318 modules。
 
 ```
 
@@ -30,7 +30,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (17 modules)               │
+│              L2 领域层 / Domain Layer (16 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/factor/__init__.py  [prototype]                     │
 │   src/zephyr/factor/_extensions/__init__.py  [scaffold_placeh... │
@@ -45,7 +45,6 @@ ttl: permanent
 │   src/zephyr/factor/factors/momentum_factor.py  [prototype]      │
 │   src/zephyr/factor/factors/value_factor.py  [prototype]         │
 │   src/zephyr/factor/infrastructure/__init__.py  [scaffold_pla... │
-│   src/zephyr/factor/models/__init__.py  [scaffold_placeholder]   │
 │   src/zephyr/factor/momentum_factor.py  [prototype]              │
 │   src/zephyr/factor/services/__init__.py  [scaffold_placeholder] │
 │   src/zephyr/factor/value_factor.py  [prototype]                 │
@@ -53,7 +52,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               未分类 / Unclassified (302 modules)                │
+│               未分类 / Unclassified (301 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   10风格+28行业因子完整实现+验证 Factor  [design]                │
 │   3-Level Judgment 三级判断  [design]                            │
@@ -73,14 +72,14 @@ ttl: permanent
 │   Barra Risk Model 模型风险  [design]                            │
 │   Barra因子权重方法论需MSCI参考实现  [design]                    │
 │   Barra风险模型归D-FACTOR-06  [design]                           │
-│   ...还有 284 个模块 / 284 more modules                          │
+│   ...还有 283 个模块 / 283 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 320 个模块 / 320 modules）。
+> 按 architecture_layer 分组的模块清单（共 318 个模块 / 318 modules）。
 
 ### L1 基础层 / Foundation Layer (1 modules)
 
@@ -88,7 +87,7 @@ ttl: permanent
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/factor/bus_factor_defense.py | src/zephyr/factor/bus_factor_defense.py | prototype | draft |
 
-### L2 领域层 / Domain Layer (17 modules)
+### L2 领域层 / Domain Layer (16 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -105,12 +104,11 @@ ttl: permanent
 | 11 | src/zephyr/factor/factors/momentum_factor.py | src/zephyr/factor/factors/momentum_fa... | prototype | draft |
 | 12 | src/zephyr/factor/factors/value_factor.py | src/zephyr/factor/factors/value_facto... | prototype | draft |
 | 13 | src/zephyr/factor/infrastructure/__init__.py | src/zephyr/factor/infrastructure/__in... | scaffold_placeholder | orphan |
-| 14 | src/zephyr/factor/models/__init__.py | src/zephyr/factor/models/__init__.py | scaffold_placeholder | orphan |
-| 15 | src/zephyr/factor/momentum_factor.py | src/zephyr/factor/momentum_factor.py | prototype | draft |
-| 16 | src/zephyr/factor/services/__init__.py | src/zephyr/factor/services/__init__.py | scaffold_placeholder | orphan |
-| 17 | src/zephyr/factor/value_factor.py | src/zephyr/factor/value_factor.py | prototype | draft |
+| 14 | src/zephyr/factor/momentum_factor.py | src/zephyr/factor/momentum_factor.py | prototype | draft |
+| 15 | src/zephyr/factor/services/__init__.py | src/zephyr/factor/services/__init__.py | scaffold_placeholder | orphan |
+| 16 | src/zephyr/factor/value_factor.py | src/zephyr/factor/value_factor.py | prototype | draft |
 
-### 未分类 / Unclassified (302 modules)
+### 未分类 / Unclassified (301 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -256,80 +254,80 @@ ttl: permanent
 | 140 | D-FACTOR/Volume Profile量能分布 Volume Profile | Volume Profile量能分布 Volume Profile | design | design_only |
 | 141 | D-FACTOR/compute返回类型统一为list FactorSignal | compute返回类型统一为list FactorSignal | design | design_only |
 | 142 | D-FACTOR/consistency_check 一致性引擎 | consistency_check 一致性引擎 | design | design_only |
-| 143 | D-FACTOR/factor_base.py为唯一SSoT删除base.py | factor_base.py为唯一SSoT删除base.py | design | design_only |
-| 144 | D-FACTOR/incremental_compute 增量因子计算 | incremental_compute 增量因子计算 | design | design_only |
-| 145 | D-FACTOR/qwen3:8b模型权重需下载部署 | qwen3:8b模型权重需下载部署 | design | design_only |
-| 146 | D-FACTOR/一致性引擎 Consistency Engine | 一致性引擎 Consistency Engine | design | design_only |
-| 147 | D-FACTOR/一高七矮 Volume Profile HVN LVN | 一高七矮 Volume Profile HVN LVN | design | design_only |
-| 148 | D-FACTOR/下跌强度分级 Down Strength Classification | 下跌强度分级 Down Strength Classifica... | design | design_only |
-| 149 | D-FACTOR/主力净流入 Institutional Net Inflow Factor | 主力净流入 Institutional Net Inflow F... | design | design_only |
-| 150 | D-FACTOR/主力吸筹 Accumulation Factor | 主力吸筹 Accumulation Factor | design | design_only |
-| 151 | D-FACTOR/主力洗盘 Shakeout Factor | 主力洗盘 Shakeout Factor | design | design_only |
-| 152 | D-FACTOR/主力派发 Distribution Factor | 主力派发 Distribution Factor | design | design_only |
-| 153 | D-FACTOR/主力行为因子 Institutional Behavior Factor | 主力行为因子 Institutional Behavior F... | design | design_only |
-| 154 | D-FACTOR/买卖价差估算需Level-2数据 | 买卖价差估算需Level-2数据 | design | design_only |
-| 155 | D-FACTOR/五层筛选漏斗因子支撑 Factor | 五层筛选漏斗因子支撑 Factor | design | design_only |
-| 156 | D-FACTOR/交互项构造 Interaction Feature Construction | 交互项构造 Interaction Feature Constr... | design | design_only |
-| 157 | D-FACTOR/价格偏离度 Price Deviation | 价格偏离度 Price Deviation | design | design_only |
-| 158 | D-FACTOR/传导系数 Cross-Market Transmission Coefficient | 传导系数 Cross-Market Transmission Co... | design | design_only |
-| 159 | D-FACTOR/体制条件因子有效性 Regime-Conditional Factor Eff... | 体制条件因子有效性 Regime-Conditional... | design | design_only |
-| 160 | D-FACTOR/体制条件因子衰减 Regime-Conditional Factor Decay | 体制条件因子衰减 Regime-Conditional F... | design | design_only |
-| 161 | D-FACTOR/信号Agent Signal Gen Agent | 信号Agent Signal Gen Agent | design | design_only |
-| 162 | D-FACTOR/入池观察池 Probation Pool | 入池观察池 Probation Pool | design | design_only |
-| 163 | D-FACTOR/冰山单占比 Iceberg Order Ratio | 冰山单占比 Iceberg Order Ratio | design | design_only |
-| 164 | D-FACTOR/冰山单检测 Hidden Order Detection Factor | 冰山单检测 Hidden Order Detection Factor | design | design_only |
-| 165 | D-FACTOR/出货信号因子 Distribution Signal Factor | 出货信号因子 Distribution Signal Factor | design | design_only |
-| 166 | D-FACTOR/分布形态统计量 Distribution Shape Statistics | 分布形态统计量 Distribution Shape Sta... | design | design_only |
-| 167 | D-FACTOR/前视偏差检测归D-FACTOR-03 | 前视偏差检测归D-FACTOR-03 | design | design_only |
-| 168 | D-FACTOR/北向持仓变化 Northbound Holding Change Factor | 北向持仓变化 Northbound Holding Chang... | design | design_only |
-| 169 | D-FACTOR/十阶段生命周期状态机 Ten-stage Lifecycle | 十阶段生命周期状态机 Ten-stage Lifecycle | design | design_only |
-| 170 | D-FACTOR/单一定义原则消除偏差 Single Definition Principle | 单一定义原则消除偏差 Single Definitio... | design | design_only |
-| 171 | D-FACTOR/参数配置管理器 Parameter Config Manager | 参数配置管理器 Parameter Config Manager | design | design_only |
-| 172 | D-FACTOR/双存储架构 Dual Storage Architecture | 双存储架构 Dual Storage Architecture | design | design_only |
-| 173 | D-FACTOR/双模运行 Dual-Mode Operation | 双模运行 Dual-Mode Operation | design | design_only |
-| 174 | D-FACTOR/另类因子 Alternative Factor | 另类因子 Alternative Factor | design | design_only |
-| 175 | D-FACTOR/吸筹出货期检测 Accumulation Distribution Phase D... | 吸筹出货期检测 Accumulation Distribut... | design | design_only |
-| 176 | D-FACTOR/因子-模型联合优化R&D-Agent-Quant | 因子-模型联合优化R&D-Agent-Quant | design | design_only |
-| 177 | D-FACTOR/因子IC入池阈值分级 IC Threshold Tiered | 因子IC入池阈值分级 IC Threshold Tiered | design | design_only |
-| 178 | D-FACTOR/因子IC大于0.03是有效性最低门槛 | 因子IC大于0.03是有效性最低门槛 | design | design_only |
-| 179 | D-FACTOR/因子依赖DAG管理器 Factor Dependency DAG Manager | 因子依赖DAG管理器 Factor Dependency D... | design | design_only |
-| 180 | D-FACTOR/因子依赖图DAG Factor Dependency DAG | 因子依赖图DAG Factor Dependency DAG | design | design_only |
-| 181 | D-FACTOR/因子分类八大类 Factor | 因子分类八大类 Factor | design | design_only |
-| 182 | D-FACTOR/因子性能审计 Factor Performance Audit | 因子性能审计 Factor Performance Audit | design | design_only |
-| 183 | D-FACTOR/因子批量计算→Feature Store检查点 | 因子批量计算→Feature Store检查点 | design | design_only |
-| 184 | D-FACTOR/因子数据血缘追踪 Factor Data Lineage Tracking | 因子数据血缘追踪 Factor Data Lineage ... | design | design_only |
-| 185 | D-FACTOR/因子暴露合规 Factor Exposure Compliance | 因子暴露合规 Factor Exposure Compliance | design | design_only |
-| 186 | D-FACTOR/因子暴露审计 Factor Exposure Audit | 因子暴露审计 Factor Exposure Audit | design | design_only |
-| 187 | D-FACTOR/因子权重变更审批分级 Factor Weight Change Approv... | 因子权重变更审批分级 Factor Weight Ch... | design | design_only |
-| 188 | D-FACTOR/因子池容量管理 Factor Management | 因子池容量管理 Factor Management | design | design_only |
-| 189 | D-FACTOR/因子注册表合规 Factor Registry Compliance | 因子注册表合规 Factor Registry Compli... | design | design_only |
-| 190 | D-FACTOR/因子版本管理 Factor Version Management | 因子版本管理 Factor Version Management | design | design_only |
-| 191 | D-FACTOR/因子组合优化 Factor Portfolio Optimizer | 因子组合优化 Factor Portfolio Optimizer | design | design_only |
-| 192 | D-FACTOR/因子血缘合规 Factor Lineage Compliance | 因子血缘合规 Factor Lineage Compliance | design | design_only |
-| 193 | D-FACTOR/因子衰减三级自动处置 Factor | 因子衰减三级自动处置 Factor | design | design_only |
-| 194 | D-FACTOR/因子衰减三级自动处置MILD MODERATE SEVERE | 因子衰减三级自动处置MILD MODERATE SEVERE | design | design_only |
-| 195 | D-FACTOR/因子计算 增量因子计算 Factor Incremental | 因子计算 增量因子计算 Factor Incremental | design | design_only |
-| 196 | D-FACTOR/因子计算审计日志 Factor Compute Audit Log | 因子计算审计日志 Factor Compute Audit... | design | design_only |
-| 197 | D-FACTOR/因子退役审计 Factor Retirement Audit | 因子退役审计 Factor Retirement Audit | design | design_only |
-| 198 | D-FACTOR/因子预处理管线归D-DATA-02 | 因子预处理管线归D-DATA-02 | design | design_only |
-| 199 | D-FACTOR/因果推断库dowhy causalml | 因果推断库dowhy causalml | design | design_only |
-| 200 | D-FACTOR/图形模式库 Pattern Library | 图形模式库 Pattern Library | design | design_only |
+| 143 | D-FACTOR/incremental_compute 增量因子计算 | incremental_compute 增量因子计算 | design | design_only |
+| 144 | D-FACTOR/qwen3:8b模型权重需下载部署 | qwen3:8b模型权重需下载部署 | design | design_only |
+| 145 | D-FACTOR/一致性引擎 Consistency Engine | 一致性引擎 Consistency Engine | design | design_only |
+| 146 | D-FACTOR/一高七矮 Volume Profile HVN LVN | 一高七矮 Volume Profile HVN LVN | design | design_only |
+| 147 | D-FACTOR/下跌强度分级 Down Strength Classification | 下跌强度分级 Down Strength Classifica... | design | design_only |
+| 148 | D-FACTOR/主力净流入 Institutional Net Inflow Factor | 主力净流入 Institutional Net Inflow F... | design | design_only |
+| 149 | D-FACTOR/主力吸筹 Accumulation Factor | 主力吸筹 Accumulation Factor | design | design_only |
+| 150 | D-FACTOR/主力洗盘 Shakeout Factor | 主力洗盘 Shakeout Factor | design | design_only |
+| 151 | D-FACTOR/主力派发 Distribution Factor | 主力派发 Distribution Factor | design | design_only |
+| 152 | D-FACTOR/主力行为因子 Institutional Behavior Factor | 主力行为因子 Institutional Behavior F... | design | design_only |
+| 153 | D-FACTOR/买卖价差估算需Level-2数据 | 买卖价差估算需Level-2数据 | design | design_only |
+| 154 | D-FACTOR/五层筛选漏斗因子支撑 Factor | 五层筛选漏斗因子支撑 Factor | design | design_only |
+| 155 | D-FACTOR/交互项构造 Interaction Feature Construction | 交互项构造 Interaction Feature Constr... | design | design_only |
+| 156 | D-FACTOR/价格偏离度 Price Deviation | 价格偏离度 Price Deviation | design | design_only |
+| 157 | D-FACTOR/传导系数 Cross-Market Transmission Coefficient | 传导系数 Cross-Market Transmission Co... | design | design_only |
+| 158 | D-FACTOR/体制条件因子有效性 Regime-Conditional Factor Eff... | 体制条件因子有效性 Regime-Conditional... | design | design_only |
+| 159 | D-FACTOR/体制条件因子衰减 Regime-Conditional Factor Decay | 体制条件因子衰减 Regime-Conditional F... | design | design_only |
+| 160 | D-FACTOR/信号Agent Signal Gen Agent | 信号Agent Signal Gen Agent | design | design_only |
+| 161 | D-FACTOR/入池观察池 Probation Pool | 入池观察池 Probation Pool | design | design_only |
+| 162 | D-FACTOR/冰山单占比 Iceberg Order Ratio | 冰山单占比 Iceberg Order Ratio | design | design_only |
+| 163 | D-FACTOR/冰山单检测 Hidden Order Detection Factor | 冰山单检测 Hidden Order Detection Factor | design | design_only |
+| 164 | D-FACTOR/出货信号因子 Distribution Signal Factor | 出货信号因子 Distribution Signal Factor | design | design_only |
+| 165 | D-FACTOR/分布形态统计量 Distribution Shape Statistics | 分布形态统计量 Distribution Shape Sta... | design | design_only |
+| 166 | D-FACTOR/前视偏差检测归D-FACTOR-03 | 前视偏差检测归D-FACTOR-03 | design | design_only |
+| 167 | D-FACTOR/北向持仓变化 Northbound Holding Change Factor | 北向持仓变化 Northbound Holding Chang... | design | design_only |
+| 168 | D-FACTOR/十阶段生命周期状态机 Ten-stage Lifecycle | 十阶段生命周期状态机 Ten-stage Lifecycle | design | design_only |
+| 169 | D-FACTOR/单一定义原则消除偏差 Single Definition Principle | 单一定义原则消除偏差 Single Definitio... | design | design_only |
+| 170 | D-FACTOR/参数配置管理器 Parameter Config Manager | 参数配置管理器 Parameter Config Manager | design | design_only |
+| 171 | D-FACTOR/双存储架构 Dual Storage Architecture | 双存储架构 Dual Storage Architecture | design | design_only |
+| 172 | D-FACTOR/双模运行 Dual-Mode Operation | 双模运行 Dual-Mode Operation | design | design_only |
+| 173 | D-FACTOR/另类因子 Alternative Factor | 另类因子 Alternative Factor | design | design_only |
+| 174 | D-FACTOR/吸筹出货期检测 Accumulation Distribution Phase D... | 吸筹出货期检测 Accumulation Distribut... | design | design_only |
+| 175 | D-FACTOR/因子-模型联合优化R&D-Agent-Quant | 因子-模型联合优化R&D-Agent-Quant | design | design_only |
+| 176 | D-FACTOR/因子IC入池阈值分级 IC Threshold Tiered | 因子IC入池阈值分级 IC Threshold Tiered | design | design_only |
+| 177 | D-FACTOR/因子IC大于0.03是有效性最低门槛 | 因子IC大于0.03是有效性最低门槛 | design | design_only |
+| 178 | D-FACTOR/因子依赖DAG管理器 Factor Dependency DAG Manager | 因子依赖DAG管理器 Factor Dependency D... | design | design_only |
+| 179 | D-FACTOR/因子依赖图DAG Factor Dependency DAG | 因子依赖图DAG Factor Dependency DAG | design | design_only |
+| 180 | D-FACTOR/因子分类八大类 Factor | 因子分类八大类 Factor | design | design_only |
+| 181 | D-FACTOR/因子性能审计 Factor Performance Audit | 因子性能审计 Factor Performance Audit | design | design_only |
+| 182 | D-FACTOR/因子批量计算→Feature Store检查点 | 因子批量计算→Feature Store检查点 | design | design_only |
+| 183 | D-FACTOR/因子数据血缘追踪 Factor Data Lineage Tracking | 因子数据血缘追踪 Factor Data Lineage ... | design | design_only |
+| 184 | D-FACTOR/因子暴露合规 Factor Exposure Compliance | 因子暴露合规 Factor Exposure Compliance | design | design_only |
+| 185 | D-FACTOR/因子暴露审计 Factor Exposure Audit | 因子暴露审计 Factor Exposure Audit | design | design_only |
+| 186 | D-FACTOR/因子权重变更审批分级 Factor Weight Change Approv... | 因子权重变更审批分级 Factor Weight Ch... | design | design_only |
+| 187 | D-FACTOR/因子池容量管理 Factor Management | 因子池容量管理 Factor Management | design | design_only |
+| 188 | D-FACTOR/因子注册表合规 Factor Registry Compliance | 因子注册表合规 Factor Registry Compli... | design | design_only |
+| 189 | D-FACTOR/因子版本管理 Factor Version Management | 因子版本管理 Factor Version Management | design | design_only |
+| 190 | D-FACTOR/因子组合优化 Factor Portfolio Optimizer | 因子组合优化 Factor Portfolio Optimizer | design | design_only |
+| 191 | D-FACTOR/因子血缘合规 Factor Lineage Compliance | 因子血缘合规 Factor Lineage Compliance | design | design_only |
+| 192 | D-FACTOR/因子衰减三级自动处置 Factor | 因子衰减三级自动处置 Factor | design | design_only |
+| 193 | D-FACTOR/因子衰减三级自动处置MILD MODERATE SEVERE | 因子衰减三级自动处置MILD MODERATE SEVERE | design | design_only |
+| 194 | D-FACTOR/因子计算 增量因子计算 Factor Incremental | 因子计算 增量因子计算 Factor Incremental | design | design_only |
+| 195 | D-FACTOR/因子计算审计日志 Factor Compute Audit Log | 因子计算审计日志 Factor Compute Audit... | design | design_only |
+| 196 | D-FACTOR/因子退役审计 Factor Retirement Audit | 因子退役审计 Factor Retirement Audit | design | design_only |
+| 197 | D-FACTOR/因子预处理管线归D-DATA-02 | 因子预处理管线归D-DATA-02 | design | design_only |
+| 198 | D-FACTOR/因果推断库dowhy causalml | 因果推断库dowhy causalml | design | design_only |
+| 199 | D-FACTOR/图形模式库 Pattern Library | 图形模式库 Pattern Library | design | design_only |
+| 200 | D-FACTOR/图表形态识别 Chart Pattern Recognition | 图表形态识别 Chart Pattern Recognition | design | design_only |
 
-> (仅显示前 200 个模块，共 302 个)
+> (仅显示前 200 个模块，共 301 个)
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 309 条 / 309 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 308 条 / 308 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 309 条 / 309 edges)       │
+│      依赖关系图 / Dependency Graph (共 308 条 / 308 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 6                               │
 │   [import_depends]: 203 条 / edges                               │
 │   [config_depends]: 49 条 / edges                                │
-│   [runtime]: 30 条 / edges                                       │
+│   [runtime]: 29 条 / edges                                       │
 │   [event]: 13 条 / edges                                         │
 │   [contract]: 9 条 / edges                                       │
 │   [data]: 5 条 / edges                                           │
@@ -392,7 +390,7 @@ ttl: permanent
 
 **[config_depends]** (49 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[runtime]** (30 条 / edges) — 已达显示上限，省略 / limit reached
+**[runtime]** (29 条 / edges) — 已达显示上限，省略 / limit reached
 
 **[event]** (13 条 / edges) — 已达显示上限，省略 / limit reached
 
@@ -400,7 +398,7 @@ ttl: permanent
 
 **[data]** (5 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 309 条)
+> (最多显示前 50 条依赖边，共 308 条)
 
 ```
 

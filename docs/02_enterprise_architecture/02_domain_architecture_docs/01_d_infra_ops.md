@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D-INFRA_OPS）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:54
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 01 | Number | 01 |
 | 域ID | D-INFRA_OPS | Domain ID | D-INFRA_OPS |
-| 域名称 | 基础设施运维 | Domain Name | 基础设施运维 |
+| 域名称 | 基础设施运维 | Domain Name | resource_optimization |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 418 | Module Count | 418 |
 | 域内依赖 | 417 | Internal Dependencies | 417 |
@@ -32,7 +32,7 @@ ttl: permanent
 | 原型态模块 | 20 | Prototype Modules | 20 |
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 418/150 (超容) | Capacity | 418/150 (超容) |
-| 描述 | 基础设施运维与监控 | Description | 基础设施运维与监控 |
+| 描述 | 资源优化引擎 | Description | 资源优化引擎 |
 
 ## 模块清单 / Module List
 

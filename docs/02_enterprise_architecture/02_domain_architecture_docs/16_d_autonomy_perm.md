@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D-AUTONOMY_PERM）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:53
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 16 | Number | 16 |
 | 域ID | D-AUTONOMY_PERM | Domain ID | D-AUTONOMY_PERM |
-| 域名称 | 自治保护 | Domain Name | 自治保护 |
+| 域名称 | 自治保护 | Domain Name | escalation |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 270 | Module Count | 270 |
 | 域内依赖 | 181 | Internal Dependencies | 181 |
@@ -32,7 +32,7 @@ ttl: permanent
 | 原型态模块 | 63 | Prototype Modules | 63 |
 | 生产态模块 | 4 | Production Modules | 4 |
 | 容量 | 270/150 (超容) | Capacity | 270/150 (超容) |
-| 描述 | 自治保护域。负责自治系统的安全边界保护，包括权限守卫、升级引擎、预算执行器、回滚系统。 | Description | 自治保护域。负责自治系统的安全边界保护，包括权限守卫、升级引擎、预算执行器、回滚系统。 |
+| 描述 | 规则驱动升级(EscalationEngine) | Description | 规则驱动升级(EscalationEngine) |
 
 ## 模块清单 / Module List
 

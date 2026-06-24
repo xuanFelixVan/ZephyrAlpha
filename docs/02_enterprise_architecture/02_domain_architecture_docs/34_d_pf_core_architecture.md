@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示组合核心（D-PF_CORE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 21:40:10
+> 最后更新 / Last Updated: 2026-06-24 23:01:56
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 组合核心（D-PF_CORE）的模块分布。共 202 个模块 / 202 modules。
+> 按 architecture_layer 分层显示 组合核心（D-PF_CORE）的模块分布。共 201 个模块 / 201 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (49 modules)               │
+│              L2 领域层 / Domain Layer (48 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   A-001  [design]                                                │
 │   MS-02  [design]                                                │
@@ -43,7 +43,7 @@ ttl: permanent
 │   D-ALT-DATA-13  [design]                                        │
 │   D-ALT-DATA-15  [design]                                        │
 │   D-ALT-DATA-17  [design]                                        │
-│   ...还有 31 个模块 / 31 more modules                            │
+│   ...还有 30 个模块 / 30 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -75,9 +75,9 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 202 个模块 / 202 modules）。
+> 按 architecture_layer 分组的模块清单（共 201 个模块 / 201 modules）。
 
-### L2 领域层 / Domain Layer (49 modules)
+### L2 领域层 / Domain Layer (48 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -116,20 +116,19 @@ ttl: permanent
 | 33 | src/zephyr/pf_core/default_attribution_engine.py | src/zephyr/pf_core/default_attributio... | production | draft |
 | 34 | src/zephyr/pf_core/default_tca_engine.py | src/zephyr/pf_core/default_tca_engine.py | production | draft |
 | 35 | src/zephyr/pf_core/infrastructure/__init__.py | src/zephyr/pf_core/infrastructure/__i... | scaffold_placeholder | orphan |
-| 36 | src/zephyr/pf_core/models/__init__.py | src/zephyr/pf_core/models/__init__.py | scaffold_placeholder | orphan |
-| 37 | src/zephyr/pf_core/performance_attribution_engine/__init_... | src/zephyr/pf_core/performance_attrib... | prototype | draft |
-| 38 | src/zephyr/pf_core/performance_attribution_report.py | src/zephyr/pf_core/performance_attrib... | production | draft |
-| 39 | src/zephyr/pf_core/risk_limits.py | src/zephyr/pf_core/risk_limits.py | prototype | draft |
-| 40 | src/zephyr/pf_core/services/__init__.py | src/zephyr/pf_core/services/__init__.py | scaffold_placeholder | orphan |
-| 41 | src/zephyr/pf_core/strategies/__init__.py | src/zephyr/pf_core/strategies/__init_... | prototype | draft |
-| 42 | src/zephyr/pf_core/strategies/default_equity_strategy.py | src/zephyr/pf_core/strategies/default... | prototype | draft |
-| 43 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | draft |
-| 44 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | draft |
-| 45 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | draft |
-| 46 | 另类数据域缩写，D-ALT-02=SentimentEngine | D-ALT-DATA-02 | design | design_only |
-| 47 | 推理域缩写，D-ML-02=ModelRegistry→归入MS-01 | MS-01 | design | design_only |
-| 48 | 训练域缩写，D-ML-01=TrainingPipeline→归入MT-01 | MT-01 | design | design_only |
-| 49 | 跨资产域缩写，D-XA=D-CROSS-ASSET(CA) | D-CROSS-ASSET-01 | design | design_only |
+| 36 | src/zephyr/pf_core/performance_attribution_engine/__init_... | src/zephyr/pf_core/performance_attrib... | prototype | draft |
+| 37 | src/zephyr/pf_core/performance_attribution_report.py | src/zephyr/pf_core/performance_attrib... | production | draft |
+| 38 | src/zephyr/pf_core/risk_limits.py | src/zephyr/pf_core/risk_limits.py | prototype | draft |
+| 39 | src/zephyr/pf_core/services/__init__.py | src/zephyr/pf_core/services/__init__.py | scaffold_placeholder | orphan |
+| 40 | src/zephyr/pf_core/strategies/__init__.py | src/zephyr/pf_core/strategies/__init_... | prototype | draft |
+| 41 | src/zephyr/pf_core/strategies/default_equity_strategy.py | src/zephyr/pf_core/strategies/default... | prototype | draft |
+| 42 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | draft |
+| 43 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | draft |
+| 44 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | draft |
+| 45 | 另类数据域缩写，D-ALT-02=SentimentEngine | D-ALT-DATA-02 | design | design_only |
+| 46 | 推理域缩写，D-ML-02=ModelRegistry→归入MS-01 | MS-01 | design | design_only |
+| 47 | 训练域缩写，D-ML-01=TrainingPipeline→归入MT-01 | MT-01 | design | design_only |
+| 48 | 跨资产域缩写，D-XA=D-CROSS-ASSET(CA) | D-CROSS-ASSET-01 | design | design_only |
 
 ### 未分类 / Unclassified (153 modules)
 

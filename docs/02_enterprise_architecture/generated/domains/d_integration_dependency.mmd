@@ -1,7 +1,7 @@
 %% D-INTEGRATION 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:13
+%% 生成时间: 2026-06-24 23:01:57
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 706, 依赖边数: 2044
+%% 模块数: 705, 依赖边数: 2043
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         D_INTEGRATION_Data_Desensitization_数据脱敏["D-INTEGRATION/Data Desensitization 数据脱敏 [design]"]
         D_INTEGRATION_Data_Fetch_Pool_数据拉取池["D-INTEGRATION/Data Fetch Pool 数据拉取池 [design]"]
         D_INTEGRATION_Data_Format_Transformer_数据格式转换器["...ATION/Data Format Transformer 数据格式转换器 [design]"]
-        %% ... 还有 606 个模块未显示
+        %% ... 还有 605 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -329,7 +329,7 @@ graph TD
     D_FRONTEND[D-FRONTEND] -->|config_depends| D_INTEGRATION_Lightweight_API_Gateway_轻量级API网关
     D_FRONTEND[D-FRONTEND] -->|contract| D_INTEGRATION_Market_Data_Pool_行情接收池
     D_FRONTEND[D-FRONTEND] -->|contract| D_INTEGRATION_API_Lifecycle_API生命周期
-    %% D-GOVERNANCE -> D-INTEGRATION (326 条)
+    %% D-GOVERNANCE -> D-INTEGRATION (325 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_integration_shared_08_event_bus_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_integration_shared_08_contracts_approval_types_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_integration_shared_schema_severity_types_py
@@ -958,5 +958,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 730 条
-    %% 跨域入边: 825 条
+    %% 跨域入边: 824 条
     %% 跨域出边: 489 条

@@ -1,7 +1,7 @@
 %% D-CROSS_ASSET 域全景依赖图
-%% 生成时间: 2026-06-24 21:40:12
+%% 生成时间: 2026-06-24 23:01:57
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 79, 依赖边数: 198
+%% 模块数: 76, 依赖边数: 197
 
 graph TD
 
@@ -75,22 +75,18 @@ graph TD
         src_zephyr_cross_asset_api___init___py["src/zephyr/cross_asset/api/__init__.py [scaffold_placeholder]"]
         src_zephyr_cross_asset_core___init___py["src/zephyr/cross_asset/core/__init__.py [scaffold_placeholder]"]
         src_zephyr_cross_asset_correlation_["src/zephyr/cross_asset/correlation/ [design]"]
-        src_zephyr_cross_asset_cross_a___risk_decomposer___init___py["...oss_asset_risk_decomposer/__init__.py [prototype]"]
-        src_zephyr_cross_asset_cross_market_data_adapter___init___py["...cross_market_data_adapter/__init__.py [prototype]"]
-        src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py["...ata_adapter/ml_experiment_pipeline.py [production]"]
-        src_zephyr_cross_asset_currenc___nd_fixed_income___init___py["...y_hedger_and_fixed_income/__init__.py [prototype]"]
         src_zephyr_cross_asset_hedger_["src/zephyr/cross_asset/hedger/ [design]"]
         src_zephyr_cross_asset_infrastructure___init___py["...ross_asset/infrastructure/__init__.py [scaffold_placeholder]"]
         src_zephyr_cross_asset_models___init___py["...zephyr/cross_asset/models/__init__.py [scaffold_placeholder]"]
-        src_zephyr_cross_asset_risk_manager_py["src/zephyr/cross_asset/risk_manager.py [prototype]"]
-        src_zephyr_cross_asset_risk_manager_base_py["...phyr/cross_asset/risk_manager_base.py [prototype]"]
         src_zephyr_cross_asset_services___init___py["...phyr/cross_asset/services/__init__.py [scaffold_placeholder]"]
         src_zephyr_cross_asset_strategy_["src/zephyr/cross_asset/strategy/ [design]"]
+        src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py["...ata_adapter/ml_experiment_pipeline.py [production]"]
+        src_zephyr_risk_risk_manager_py["src/zephyr/risk/risk_manager.py [prototype]"]
+        src_zephyr_risk_risk_manager_base_py["src/zephyr/risk/risk_manager_base.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_cross_asset_risk_manager_base_py -->|config_depends| src_zephyr_cross_asset___init___py
-    src_zephyr_cross_asset_cross_market_data_adapter___init___py -->|config_depends| src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py
+    src_zephyr_risk_risk_manager_base_py -->|config_depends| src_zephyr_cross_asset___init___py
     D_CROSS_ASSET_Multi_Market_Data_Router_多市场数据路由 -->|import_depends| D_CROSS_ASSET_CurrencyHedger_货币对冲器
     D_CROSS_ASSET_CurrencyHedger_货币对冲器 -->|import_depends| D_CROSS_ASSET_CorrelationRegimeDetector_相关性体制检测器
     D_CROSS_ASSET_CorrelationRegimeDetector_相关性体制检测器 -->|import_depends| D_CROSS_ASSET_FixedIncomeAnalyzer_固收分析器
@@ -170,8 +166,8 @@ graph TD
     D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_CROSS_ASSET_RealEstateAnalyzer_房地产分析器
     D_COMPLIANCE[D-COMPLIANCE] -->|data| D_CROSS_ASSET_Health_Checker_健康检查器
     %% D-GOVERNANCE -> D-CROSS_ASSET (2 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-CROSS_ASSET -> D-AUTONOMY_CORE (6 条)
@@ -297,7 +293,7 @@ graph TD
     D_CROSS_ASSET_跨市场情感传导检测_Cross_Market_Sentiment_Propagation -->|contract| D_SECURITY[D-SECURITY]
     D_CROSS_ASSET_跨市场制度知识_Cross_Market_Regime_Knowledge -->|event| D_SECURITY[D-SECURITY]
     %% D-CROSS_ASSET -> D-SHARED (1 条)
-    src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py -->|import_depends| D_SHARED[D-SHARED]
     %% D-CROSS_ASSET -> D-SIGNAL (10 条)
     D_CROSS_ASSET_CreditRiskAnalyzer_信用风险分析器 -->|contract| D_SIGNAL[D-SIGNAL]
     D_CROSS_ASSET_跨资产MLOps管线_Cross_Asset_MLOps_Pipeline -->|event| D_SIGNAL[D-SIGNAL]
@@ -314,13 +310,13 @@ graph TD
     D_CROSS_ASSET_港股A股传导_HK_A_Share_Propagation -->|contract| D_SIMULATION[D-SIMULATION]
     D_CROSS_ASSET_CreditRiskAnalyzer_信用风险分析器 -->|data| D_SIMULATION[D-SIMULATION]
     %% D-CROSS_ASSET -> D-TRADING (5 条)
-    src_zephyr_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
-    src_zephyr_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
-    src_zephyr_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
-    src_zephyr_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_cross_asset_ -->|contract| D_TRADING[D-TRADING]
 
     %% 统计
-    %% 域内依赖: 63 条
+    %% 域内依赖: 62 条
     %% 跨域入边: 16 条
     %% 跨域出边: 119 条

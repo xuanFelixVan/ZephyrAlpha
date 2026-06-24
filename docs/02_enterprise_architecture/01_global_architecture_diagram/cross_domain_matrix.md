@@ -13,36 +13,36 @@ ttl: permanent
 > **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。
 
 > 本文档由 generate_cross_domain_matrix.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:24:53
+> 最后更新: 2026-06-24 23:01:39
 > 数据源: depgraph.db edges表 + nodes表
 
 ## 统计概览
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 域总数 | 53 |
+| 域总数 | 58 |
 | 跨域依赖对数 | 603 |
-| 跨域依赖边总数 | 10915 |
+| 跨域依赖边总数 | 10843 |
 
 ## 跨域依赖 Top 20（按边数降序）
 
 | 源域 / From Domain | 目标域 / To Domain | 边数 / Edges | 依赖类型 / Dep Types |
 |------|--------|:---:|---------|
-| D-GOVERNANCE | D-OPS | 425 | import_depends,test_depends,config_depends,runtime |
-| D-GOVERNANCE | D-INTEGRATION | 326 | import_depends,test_depends,contract,data,event,config_depends |
+| D-GOVERNANCE | D-OPS | 391 | import_depends,test_depends,config_depends,runtime |
+| D-GOVERNANCE | D-INTEGRATION | 325 | import_depends,test_depends,contract,data,event,config_depends |
 | D-GOVERNANCE | D-SECURITY | 283 | import_depends,test_depends,contract,data,event,config_depends,runtime |
 | D-GOVERNANCE | D-GOV_RULE | 264 | import_depends,test_depends,config_depends,runtime |
-| D-GOVERNANCE | D-TRADING | 247 | import_depends,test_depends,contract,event,data,config_depends |
-| D-GOVERNANCE | D-SHARED | 221 | import_depends,test_depends,contract,event,data |
+| D-GOVERNANCE | D-TRADING | 236 | import_depends,test_depends,contract,event,data,config_depends |
 | D-GOVERNANCE | D-AUTONOMY_CORE | 213 | import_depends,test_depends,contract,runtime |
-| D-GOVERNANCE | D-INFRA_RUNTIME | 194 | import_depends,test_depends,config_depends,contract,data,event,runtime,import |
+| D-GOVERNANCE | D-SHARED | 211 | import_depends,test_depends,contract,event,data |
+| D-GOVERNANCE | D-INFRA_RUNTIME | 194 | import_depends,test_depends,config_depends,contract,data,event,import,runtime |
 | D-AUTONOMY_PERM | D-SECURITY | 171 | import_depends,test_depends,contract,event,data,config_depends,domain_dependency |
 | D-COMPLIANCE | D-RISK | 166 | contract,event,data,config_depends,domain_dependency |
 | D-GOVERNANCE | D-GOV_AUDIT | 150 | import_depends,test_depends,contract,runtime |
 | D-COMPLIANCE | D-GOVERNANCE | 131 | import_depends,contract,event,data,config_depends |
 | D-COMPLIANCE | D-SECURITY | 130 | contract,data,event,config_depends |
-| D-GOVERNANCE | D-RISK | 128 | import_depends,test_depends,contract,data,event,config_depends |
 | D-COMPLIANCE | D-AUTONOMY_CORE | 126 | contract,data,event,config_depends |
+| D-GOVERNANCE | D-RISK | 124 | import_depends,test_depends,contract,data,event,config_depends |
 | D-COMPLIANCE | D-INTEGRATION | 118 | contract,data,event,config_depends |
 | D-RISK | D-SECURITY | 98 | contract,data,event,config_depends |
 | D-COMPLIANCE | D-SIGNAL | 93 | contract,data,event,config_depends |
@@ -53,21 +53,21 @@ ttl: permanent
 
 | # / No. | 源域 / From Domain | 目标域 / To Domain | 边数 / Edges | 依赖类型 / Dep Types |
 |:---:|------|--------|:---:|---------|
-| 1 | D-GOVERNANCE | D-OPS | 425 | import_depends,test_depends,config_depends,runtime |
-| 2 | D-GOVERNANCE | D-INTEGRATION | 326 | import_depends,test_depends,contract,data,event,config_depends |
+| 1 | D-GOVERNANCE | D-OPS | 391 | import_depends,test_depends,config_depends,runtime |
+| 2 | D-GOVERNANCE | D-INTEGRATION | 325 | import_depends,test_depends,contract,data,event,config_depends |
 | 3 | D-GOVERNANCE | D-SECURITY | 283 | import_depends,test_depends,contract,data,event,config_depends,runtime |
 | 4 | D-GOVERNANCE | D-GOV_RULE | 264 | import_depends,test_depends,config_depends,runtime |
-| 5 | D-GOVERNANCE | D-TRADING | 247 | import_depends,test_depends,contract,event,data,config_depends |
-| 6 | D-GOVERNANCE | D-SHARED | 221 | import_depends,test_depends,contract,event,data |
-| 7 | D-GOVERNANCE | D-AUTONOMY_CORE | 213 | import_depends,test_depends,contract,runtime |
-| 8 | D-GOVERNANCE | D-INFRA_RUNTIME | 194 | import_depends,test_depends,config_depends,contract,data,event,runtime,import |
+| 5 | D-GOVERNANCE | D-TRADING | 236 | import_depends,test_depends,contract,event,data,config_depends |
+| 6 | D-GOVERNANCE | D-AUTONOMY_CORE | 213 | import_depends,test_depends,contract,runtime |
+| 7 | D-GOVERNANCE | D-SHARED | 211 | import_depends,test_depends,contract,event,data |
+| 8 | D-GOVERNANCE | D-INFRA_RUNTIME | 194 | import_depends,test_depends,config_depends,contract,data,event,import,runtime |
 | 9 | D-AUTONOMY_PERM | D-SECURITY | 171 | import_depends,test_depends,contract,event,data,config_depends,domain_dependency |
 | 10 | D-COMPLIANCE | D-RISK | 166 | contract,event,data,config_depends,domain_dependency |
 | 11 | D-GOVERNANCE | D-GOV_AUDIT | 150 | import_depends,test_depends,contract,runtime |
 | 12 | D-COMPLIANCE | D-GOVERNANCE | 131 | import_depends,contract,event,data,config_depends |
 | 13 | D-COMPLIANCE | D-SECURITY | 130 | contract,data,event,config_depends |
-| 14 | D-GOVERNANCE | D-RISK | 128 | import_depends,test_depends,contract,data,event,config_depends |
-| 15 | D-COMPLIANCE | D-AUTONOMY_CORE | 126 | contract,data,event,config_depends |
+| 14 | D-COMPLIANCE | D-AUTONOMY_CORE | 126 | contract,data,event,config_depends |
+| 15 | D-GOVERNANCE | D-RISK | 124 | import_depends,test_depends,contract,data,event,config_depends |
 | 16 | D-COMPLIANCE | D-INTEGRATION | 118 | contract,data,event,config_depends |
 | 17 | D-RISK | D-SECURITY | 98 | contract,data,event,config_depends |
 | 18 | D-COMPLIANCE | D-SIGNAL | 93 | contract,data,event,config_depends |
@@ -82,7 +82,7 @@ ttl: permanent
 | 27 | D-INTEGRATION | D-RISK | 69 | contract,data,event,config_depends |
 | 28 | D-INFRA_OPS | D-RISK | 68 | contract,event,data,config_depends |
 | 29 | D-AUTONOMY_CORE | D-SECURITY | 67 | import_depends,contract,data,event,config_depends |
-| 30 | D-INFRA_RUNTIME | D-SHARED | 67 | import_depends,contract,event,data |
+| 30 | D-INFRA_RUNTIME | D-SHARED | 66 | import_depends,contract,event,data |
 | 31 | D-COMPLIANCE | D-FACTOR | 65 | contract,data,event,config_depends |
 | 32 | D-RISK | D-INFRA_RUNTIME | 63 | contract,data,event,config_depends |
 | 33 | D-COMPLIANCE | D-INFRA_RUNTIME | 62 | contract,data,event,config_depends |
@@ -91,7 +91,7 @@ ttl: permanent
 | 36 | D-INFRA_OPS | D-GOVERNANCE | 61 | import_depends,test_depends,config_depends,contract,data,event |
 | 37 | D-COMPLIANCE | D-INTELLIGENCE | 60 | contract,data,event,config_depends |
 | 38 | D-INTEGRATION | D-SECURITY | 60 | import_depends,contract,data,event,config_depends |
-| 39 | D-OPS | D-INFRA_RUNTIME | 58 | import_depends,test_depends,contract,event,data,config_depends,domain_dependency |
+| 39 | D-OPS | D-INFRA_RUNTIME | 57 | import_depends,test_depends,contract,event,data,config_depends,domain_dependency |
 | 40 | D-GOVERNANCE | D-SIGNAL | 56 | import_depends,test_depends,contract,data,event,config_depends |
 | 41 | D-TRADING | D-INTEGRATION | 55 | import_depends |
 | 42 | D-RISK | D-FACTOR | 54 | contract,data,event,config_depends |
@@ -136,16 +136,16 @@ ttl: permanent
 | 81 | D-INFRA_OPS | D-INFRA_RUNTIME | 31 | import_depends,contract,event,data,config_depends |
 | 82 | D-INTEGRATION | D-INFRA_RUNTIME | 31 | contract,event,data,config_depends,domain_dependency |
 | 83 | D-COMPLIANCE | D-PF_CORE | 30 | contract,data,event,config_depends |
-| 84 | D-GOVERNANCE | D-PF_CORE | 30 | test_depends,contract,data,event,config_depends |
-| 85 | D-INFRA_OPS | D-INTELLIGENCE | 30 | contract,data,event,config_depends |
-| 86 | D-RISK | D-TRADING | 30 | import_depends,contract,data,event,config_depends |
-| 87 | D-COMPLIANCE | D-DATA_ENG | 29 | contract,data,event,config_depends |
-| 88 | D-FRONTEND | D-SECURITY | 29 | contract,data,event,config_depends |
-| 89 | D-KNOWLEDGE | D-RISK | 29 | contract,data,event,config_depends |
-| 90 | D-OPS | D-INTEGRATION | 29 | import_depends,data,event,contract,config_depends,runtime |
-| 91 | D-TRADING | D-GOVERNANCE | 29 | import_depends,runtime,contract |
-| 92 | D-FRONTEND | D-SIGNAL | 28 | contract,data,event,config_depends |
-| 93 | D-GOVERNANCE | D-SIMULATION | 28 | import_depends,test_depends,contract,data,event |
+| 84 | D-INFRA_OPS | D-INTELLIGENCE | 30 | contract,data,event,config_depends |
+| 85 | D-RISK | D-TRADING | 30 | import_depends,contract,data,event,config_depends |
+| 86 | D-COMPLIANCE | D-DATA_ENG | 29 | contract,data,event,config_depends |
+| 87 | D-FRONTEND | D-SECURITY | 29 | contract,data,event,config_depends |
+| 88 | D-KNOWLEDGE | D-RISK | 29 | contract,data,event,config_depends |
+| 89 | D-OPS | D-INTEGRATION | 29 | import_depends,data,event,contract,config_depends,runtime |
+| 90 | D-TRADING | D-GOVERNANCE | 29 | import_depends,runtime,contract |
+| 91 | D-FRONTEND | D-SIGNAL | 28 | contract,data,event,config_depends |
+| 92 | D-GOVERNANCE | D-PF_CORE | 27 | test_depends,contract,data,event,config_depends |
+| 93 | D-GOVERNANCE | D-SIMULATION | 27 | import_depends,test_depends,contract,data,event |
 | 94 | D-INFRA_OPS | D-FACTOR | 27 | contract,event,data,config_depends |
 | 95 | D-PF_CORE | D-RISK | 27 | contract,event,data,config_depends |
 | 96 | D-SIGNAL | D-INFRA_RUNTIME | 27 | contract,data,event,config_depends |
@@ -165,20 +165,20 @@ ttl: permanent
 | 110 | D-FACTOR | D-MKT_DATA | 23 | contract,event,data,config_depends,domain_dependency |
 | 111 | D-FRONTEND | D-GOVERNANCE | 23 | import_depends,contract,data,event,config_depends |
 | 112 | D-FRONTEND | D-INFRA_OPS | 23 | import_depends,contract,data,event,config_depends |
-| 113 | D-GOVERNANCE | D-EX_CORE | 23 | import_depends,test_depends,contract,data,event,config_depends |
-| 114 | D-INTELLIGENCE | D-SECURITY | 23 | contract,data,event,config_depends |
-| 115 | D-RISK | D-ML_TRAIN | 23 | contract,data,event,config_depends |
-| 116 | D-SECURITY | D-EX_SOR | 23 | contract,data,event,config_depends |
-| 117 | D-SECURITY | D-TRADING | 23 | import_depends,contract,data,config_depends,event |
-| 118 | D-COMPLIANCE | D-EX_SOR | 22 | contract,data,event,config_depends |
-| 119 | D-FRONTEND | D-FACTOR | 22 | contract,data,event,config_depends |
-| 120 | D-INTELLIGENCE | D-FACTOR | 22 | contract,event,data,config_depends |
-| 121 | D-INTELLIGENCE | D-SIGNAL | 22 | contract,data,event,config_depends |
-| 122 | D-PF_CORE | D-SECURITY | 22 | contract,data,event |
-| 123 | D-PF_CORE | D-SIGNAL | 22 | contract,event,data,config_depends |
-| 124 | D-REPORTING | D-RISK | 22 | contract,data,event,config_depends |
-| 125 | D-COMPLIANCE | D-ML_SERVE | 21 | contract,event,data,config_depends |
-| 126 | D-FRONTEND | D-OPS | 21 | import_depends,contract,data,event,config_depends |
+| 113 | D-INTELLIGENCE | D-SECURITY | 23 | contract,data,event,config_depends |
+| 114 | D-RISK | D-ML_TRAIN | 23 | contract,data,event,config_depends |
+| 115 | D-SECURITY | D-EX_SOR | 23 | contract,data,event,config_depends |
+| 116 | D-SECURITY | D-TRADING | 23 | import_depends,contract,data,config_depends,event |
+| 117 | D-COMPLIANCE | D-EX_SOR | 22 | contract,data,event,config_depends |
+| 118 | D-FRONTEND | D-FACTOR | 22 | contract,data,event,config_depends |
+| 119 | D-INTELLIGENCE | D-FACTOR | 22 | contract,event,data,config_depends |
+| 120 | D-INTELLIGENCE | D-SIGNAL | 22 | contract,data,event,config_depends |
+| 121 | D-PF_CORE | D-SECURITY | 22 | contract,data,event |
+| 122 | D-PF_CORE | D-SIGNAL | 22 | contract,event,data,config_depends |
+| 123 | D-REPORTING | D-RISK | 22 | contract,data,event,config_depends |
+| 124 | D-COMPLIANCE | D-ML_SERVE | 21 | contract,event,data,config_depends |
+| 125 | D-FRONTEND | D-OPS | 21 | import_depends,contract,data,event,config_depends |
+| 126 | D-GOVERNANCE | D-EX_CORE | 21 | import_depends,test_depends,contract,data,event,config_depends |
 | 127 | D-INFRA_OPS | D-MKT_DATA | 21 | contract,data,event,config_depends |
 | 128 | D-MKT_DATA | D-DATA_ENG | 21 | contract,event,data,domain_dependency |
 | 129 | D-AUTONOMY_CORE | D-DATA_ENG | 20 | contract,data,event,config_depends |
@@ -261,67 +261,67 @@ ttl: permanent
 | 206 | D-REPORTING | D-SECURITY | 12 | contract,data,event,config_depends |
 | 207 | D-TRADING | D-SECURITY | 12 | import_depends |
 | 208 | D-FRONTEND | D-PF_CORE | 11 | contract,data,event,config_depends |
-| 209 | D-GOVERNANCE | D-FRONTEND | 11 | test_depends |
-| 210 | D-GOV_AUDIT | D-SECURITY | 11 | import_depends,test_depends,data |
-| 211 | D-GOV_DRIFT | D-BEHAVIORAL_AUDIT | 11 | import_depends,test_depends |
-| 212 | D-INFRA_OPS | D-ALT_DATA | 11 | data,contract,event,config_depends |
-| 213 | D-INFRA_OPS | D-PF_ALLOC | 11 | contract,event,config_depends |
-| 214 | D-INTEGRATION | D-EX_SOR | 11 | contract,config_depends,event,data |
-| 215 | D-INTEGRATION | D-GOVERNANCE | 11 | import_depends,config_depends |
-| 216 | D-KNOWLEDGE | D-FACTOR | 11 | event,data,contract,config_depends |
-| 217 | D-KNOWLEDGE | D-MKT_DATA | 11 | contract,data,event |
-| 218 | D-ML_SERVE | D-SECURITY | 11 | data,event,config_depends,contract |
-| 219 | D-ML_TRAIN | D-INFRA_RUNTIME | 11 | data,event,contract,config_depends |
-| 220 | D-OPS | D-ML_SERVE | 11 | contract,event,config_depends,data |
-| 221 | D-REPORTING | D-GOVERNANCE | 11 | import_depends,contract |
-| 222 | D-REPORTING | D-SIGNAL | 11 | contract,data,event |
-| 223 | D-REPORTING | D-TRADING | 11 | import_depends,event,contract |
-| 224 | D-SIGNAL | D-ML_TRAIN | 11 | contract,data,event |
-| 225 | D-TRADING | D-GOV_AUDIT | 11 | import_depends,contract |
-| 226 | D-ALT_DATA | D-GOVERNANCE | 10 | data,event,contract,config_depends |
-| 227 | D-ALT_DATA | D-RISK | 10 | contract,data,event |
-| 228 | D-ALT_DATA | D-SECURITY | 10 | contract,event,data,config_depends |
-| 229 | D-AUTONOMY_CORE | D-REPORTING | 10 | contract,data,event,config_depends |
-| 230 | D-AUTONOMY_PERM | D-FACTOR | 10 | contract,data,event,config_depends |
-| 231 | D-AUTONOMY_PERM | D-INFRA_RUNTIME | 10 | test_depends,data,event,contract,config_depends |
-| 232 | D-AUTONOMY_PERM | D-INTELLIGENCE | 10 | data,contract,config_depends |
-| 233 | D-CROSS_ASSET | D-SIGNAL | 10 | contract,event,data,config_depends,domain_dependency |
-| 234 | D-EX_CORE | D-GOVERNANCE | 10 | import_depends,config_depends |
-| 235 | D-EX_CORE | D-INFRA_RUNTIME | 10 | contract,data,event,config_depends |
-| 236 | D-FRONTEND | D-AUTONOMY_PERM | 10 | contract,data,event |
-| 237 | D-FRONTEND | D-REPORTING | 10 | contract,event,data,config_depends,domain_dependency |
-| 238 | D-GOV_RULE | D-INTEGRATION | 10 | import_depends |
-| 239 | D-INTEGRATION | D-ML_TRAIN | 10 | event,contract,data,config_depends |
-| 240 | D-INTEGRATION | D-TRADING | 10 | import_depends,data,contract,event,config_depends |
-| 241 | D-INTELLIGENCE | D-INFRA_RUNTIME | 10 | import_depends,data,event,contract,config_depends |
-| 242 | D-KNOWLEDGE | D-INFRA_RUNTIME | 10 | data,contract,event |
-| 243 | D-KNOWLEDGE | D-SIGNAL | 10 | contract,event,config_depends,data |
-| 244 | D-OPS | D-EX_CORE | 10 | contract,event,data |
-| 245 | D-OPS | D-TRADING | 10 | import_depends,contract,data,config_depends |
-| 246 | D-PF_ALLOC | D-INFRA_RUNTIME | 10 | contract,data,event,config_depends |
-| 247 | D-REPORTING | D-INFRA_RUNTIME | 10 | contract,data,event,config_depends |
-| 248 | D-SIMULATION | D-MKT_DATA | 10 | contract,event,data,domain_dependency |
-| 249 | D-ALT_DATA | D-AUTONOMY_CORE | 9 | contract,data,config_depends |
-| 250 | D-COMPLIANCE | D-SELL_DECISION | 9 | contract,config_depends,event |
-| 251 | D-CROSS_ASSET | D-INFRA_RUNTIME | 9 | contract,event,data,config_depends |
-| 252 | D-CROSS_ASSET | D-INTEGRATION | 9 | contract,data,event,config_depends |
-| 253 | D-EX_CORE | D-MKT_DATA | 9 | data,contract,event |
-| 254 | D-FRONTEND | D-INTELLIGENCE | 9 | data,contract,event |
-| 255 | D-GOVERNANCE | D-ML_SERVE | 9 | contract,event,data,config_depends |
-| 256 | D-GOVERNANCE | D-ML_TRAIN | 9 | event,data,contract,config_depends |
-| 257 | D-GOV_RULE | D-SHARED | 9 | import_depends |
-| 258 | D-OPS | D-DATA_ENG | 9 | data,event,contract,config_depends |
-| 259 | D-PF_CORE | D-DATA_ENG | 9 | contract,data,event,config_depends |
-| 260 | D-PF_CORE | D-EX_CORE | 9 | event,config_depends,contract |
-| 261 | D-SECURITY | D-SHARED | 9 | import_depends,contract,event,data |
-| 262 | D-SELL_DECISION | D-SECURITY | 9 | contract,data,event |
-| 263 | D-SHARED | D-INTEGRATION | 9 | import_depends,contract |
-| 264 | D-SIMULATION | D-INTELLIGENCE | 9 | contract,data,event |
-| 265 | D-ALT_DATA | D-SIGNAL | 8 | contract,data,event |
-| 266 | D-AUTONOMY_CORE | D-SIMULATION | 8 | contract,data,config_depends |
-| 267 | D-AUTONOMY_PERM | D-EX_SOR | 8 | contract,data,event,config_depends |
-| 268 | D-AUTONOMY_PERM | D-GOVERNANCE | 8 | test_depends,config_depends,import_depends |
-| 269 | D-COMPLIANCE | D-POSITION | 8 | data,contract,event,config_depends |
+| 209 | D-GOV_AUDIT | D-SECURITY | 11 | import_depends,test_depends,data |
+| 210 | D-GOV_DRIFT | D-BEHAVIORAL_AUDIT | 11 | import_depends,test_depends |
+| 211 | D-INFRA_OPS | D-ALT_DATA | 11 | data,contract,event,config_depends |
+| 212 | D-INFRA_OPS | D-PF_ALLOC | 11 | contract,event,config_depends |
+| 213 | D-INTEGRATION | D-EX_SOR | 11 | contract,config_depends,event,data |
+| 214 | D-INTEGRATION | D-GOVERNANCE | 11 | import_depends,config_depends |
+| 215 | D-KNOWLEDGE | D-FACTOR | 11 | event,data,contract,config_depends |
+| 216 | D-KNOWLEDGE | D-MKT_DATA | 11 | contract,data,event |
+| 217 | D-ML_SERVE | D-SECURITY | 11 | data,event,config_depends,contract |
+| 218 | D-ML_TRAIN | D-INFRA_RUNTIME | 11 | data,event,contract,config_depends |
+| 219 | D-OPS | D-ML_SERVE | 11 | contract,event,config_depends,data |
+| 220 | D-REPORTING | D-GOVERNANCE | 11 | import_depends,contract |
+| 221 | D-REPORTING | D-SIGNAL | 11 | contract,data,event |
+| 222 | D-REPORTING | D-TRADING | 11 | import_depends,event,contract |
+| 223 | D-SIGNAL | D-ML_TRAIN | 11 | contract,data,event |
+| 224 | D-TRADING | D-GOV_AUDIT | 11 | import_depends,contract |
+| 225 | D-ALT_DATA | D-GOVERNANCE | 10 | data,event,contract,config_depends |
+| 226 | D-ALT_DATA | D-RISK | 10 | contract,data,event |
+| 227 | D-ALT_DATA | D-SECURITY | 10 | contract,event,data,config_depends |
+| 228 | D-AUTONOMY_CORE | D-REPORTING | 10 | contract,data,event,config_depends |
+| 229 | D-AUTONOMY_PERM | D-FACTOR | 10 | contract,data,event,config_depends |
+| 230 | D-AUTONOMY_PERM | D-INFRA_RUNTIME | 10 | test_depends,data,event,contract,config_depends |
+| 231 | D-AUTONOMY_PERM | D-INTELLIGENCE | 10 | data,contract,config_depends |
+| 232 | D-CROSS_ASSET | D-SIGNAL | 10 | contract,event,data,config_depends,domain_dependency |
+| 233 | D-EX_CORE | D-GOVERNANCE | 10 | import_depends,config_depends |
+| 234 | D-EX_CORE | D-INFRA_RUNTIME | 10 | contract,data,event,config_depends |
+| 235 | D-FRONTEND | D-AUTONOMY_PERM | 10 | contract,data,event |
+| 236 | D-FRONTEND | D-REPORTING | 10 | contract,event,data,config_depends,domain_dependency |
+| 237 | D-GOV_RULE | D-INTEGRATION | 10 | import_depends |
+| 238 | D-INTEGRATION | D-ML_TRAIN | 10 | event,contract,data,config_depends |
+| 239 | D-INTEGRATION | D-TRADING | 10 | import_depends,data,contract,event,config_depends |
+| 240 | D-INTELLIGENCE | D-INFRA_RUNTIME | 10 | import_depends,data,event,contract,config_depends |
+| 241 | D-KNOWLEDGE | D-INFRA_RUNTIME | 10 | data,contract,event |
+| 242 | D-KNOWLEDGE | D-SIGNAL | 10 | contract,event,config_depends,data |
+| 243 | D-OPS | D-EX_CORE | 10 | contract,event,data |
+| 244 | D-OPS | D-TRADING | 10 | import_depends,contract,data,config_depends |
+| 245 | D-PF_ALLOC | D-INFRA_RUNTIME | 10 | contract,data,event,config_depends |
+| 246 | D-REPORTING | D-INFRA_RUNTIME | 10 | contract,data,event,config_depends |
+| 247 | D-SIMULATION | D-MKT_DATA | 10 | contract,event,data,domain_dependency |
+| 248 | D-ALT_DATA | D-AUTONOMY_CORE | 9 | contract,data,config_depends |
+| 249 | D-COMPLIANCE | D-SELL_DECISION | 9 | contract,config_depends,event |
+| 250 | D-CROSS_ASSET | D-INFRA_RUNTIME | 9 | contract,event,data,config_depends |
+| 251 | D-CROSS_ASSET | D-INTEGRATION | 9 | contract,data,event,config_depends |
+| 252 | D-EX_CORE | D-MKT_DATA | 9 | data,contract,event |
+| 253 | D-FRONTEND | D-INTELLIGENCE | 9 | data,contract,event |
+| 254 | D-GOVERNANCE | D-ML_SERVE | 9 | contract,event,data,config_depends |
+| 255 | D-GOVERNANCE | D-ML_TRAIN | 9 | event,data,contract,config_depends |
+| 256 | D-GOV_RULE | D-SHARED | 9 | import_depends |
+| 257 | D-OPS | D-DATA_ENG | 9 | data,event,contract,config_depends |
+| 258 | D-PF_CORE | D-DATA_ENG | 9 | contract,data,event,config_depends |
+| 259 | D-PF_CORE | D-EX_CORE | 9 | event,config_depends,contract |
+| 260 | D-SECURITY | D-SHARED | 9 | import_depends,contract,event,data |
+| 261 | D-SELL_DECISION | D-SECURITY | 9 | contract,data,event |
+| 262 | D-SHARED | D-INTEGRATION | 9 | import_depends,contract |
+| 263 | D-SIMULATION | D-INTELLIGENCE | 9 | contract,data,event |
+| 264 | D-ALT_DATA | D-SIGNAL | 8 | contract,data,event |
+| 265 | D-AUTONOMY_CORE | D-SIMULATION | 8 | contract,data,config_depends |
+| 266 | D-AUTONOMY_PERM | D-EX_SOR | 8 | contract,data,event,config_depends |
+| 267 | D-AUTONOMY_PERM | D-GOVERNANCE | 8 | test_depends,config_depends,import_depends |
+| 268 | D-COMPLIANCE | D-POSITION | 8 | data,contract,event,config_depends |
+| 269 | D-GOVERNANCE | D-FRONTEND | 8 | test_depends |
 | 270 | D-GOV_DRIFT | D-GOV_AUDIT | 8 | import_depends,runtime |
 | 271 | D-INFRA_OPS | D-ML_TRAIN | 8 | data,event,contract,config_depends |
 | 272 | D-INFRA_OPS | D-POSITION | 8 | data,contract,event,config_depends |
@@ -507,61 +507,61 @@ ttl: permanent
 | 452 | D-ML_TRAIN | D-MKT_DATA | 3 | event,contract |
 | 453 | D-ML_TRAIN | D-POSITION | 3 | contract,config_depends,data |
 | 454 | D-OPS | D-BEHAVIORAL_AUDIT | 3 | import_depends,runtime |
-| 455 | D-OPS | D-GOV_AUDIT | 3 | import_depends,test_depends,domain_dependency |
-| 456 | D-PF_ALLOC | D-KNOWLEDGE | 3 | event,config_depends,contract |
-| 457 | D-PF_ALLOC | D-REPORTING | 3 | contract,data |
-| 458 | D-PF_ALLOC | D-SIMULATION | 3 | event,config_depends |
-| 459 | D-POSITION | D-EX_CORE | 3 | contract,event,data |
-| 460 | D-POSITION | D-EX_SOR | 3 | contract,event |
-| 461 | D-REPORTING | D-INTELLIGENCE | 3 | data,event |
-| 462 | D-SECURITY | D-INTEGRATION | 3 | import_depends |
-| 463 | D-SELL_DECISION | D-KNOWLEDGE | 3 | data,event,config_depends |
-| 464 | D-SELL_DECISION | D-ML_TRAIN | 3 | data,event,config_depends |
-| 465 | D-SELL_DECISION | D-PF_CORE | 3 | contract,data,event |
-| 466 | D-SHARED | D-GOVERNANCE | 3 | import_depends |
-| 467 | D-SIMULATION | D-EX_SOR | 3 | data |
-| 468 | D-TRADING | D-AUTONOMY_CORE | 3 | import_depends |
-| 469 | D-TRADING | D-OPS | 3 | import_depends,runtime |
-| 470 | D-ALT_DATA | D-KNOWLEDGE | 2 | contract,event |
-| 471 | D-ALT_DATA | D-ML_SERVE | 2 | data,event |
-| 472 | D-ALT_DATA | D-POSITION | 2 | data,contract |
-| 473 | D-ALT_DATA | D-REPORTING | 2 | contract,data |
-| 474 | D-ALT_DATA | D-SIMULATION | 2 | contract,config_depends |
-| 475 | D-ALT_DATA | D-TRADING | 2 | event,contract |
-| 476 | D-AUTONOMY_PERM | D-TRADING | 2 | contract,config_depends |
-| 477 | D-BEHAVIORAL_AUDIT | D-GOVERNANCE | 2 | import_depends |
-| 478 | D-BEHAVIORAL_AUDIT | D-GOV_AUDIT | 2 | import_depends |
-| 479 | D-COMPLIANCE | D-GOV_DRIFT | 2 | import_depends |
-| 480 | D-CROSS_ASSET | D-EX_CORE | 2 | config_depends,contract |
-| 481 | D-CROSS_ASSET | D-KNOWLEDGE | 2 | event,config_depends |
-| 482 | D-CROSS_ASSET | D-ML_TRAIN | 2 | data,event |
-| 483 | D-CROSS_ASSET | D-OPS | 2 | data,event |
-| 484 | D-CROSS_ASSET | D-PF_ALLOC | 2 | data,event |
-| 485 | D-DATA_GOV | D-DATA_ENG | 2 | config_depends,contract |
-| 486 | D-DATA_GOV | D-INFRA_OPS | 2 | config_depends,event |
-| 487 | D-DATA_GOV | D-INFRA_RUNTIME | 2 | event |
-| 488 | D-DATA_SEC | D-AUTONOMY_CORE | 2 | contract,data |
-| 489 | D-DATA_SEC | D-INFRA_OPS | 2 | contract |
-| 490 | D-DATA_SEC | D-INFRA_RUNTIME | 2 | data,config_depends |
-| 491 | D-DATA_SEC | D-INTEGRATION | 2 | event,contract |
-| 492 | D-FACTOR | D-SIGNAL | 2 | import_depends,contract |
-| 493 | D-FRONTEND | D-POSITION | 2 | contract,config_depends |
-| 494 | D-GOVERNANCE | D-CROSS_ASSET | 2 | test_depends |
-| 495 | D-GOV_AUDIT | D-BEHAVIORAL_AUDIT | 2 | import_depends |
-| 496 | D-GOV_AUDIT | D-TRADING | 2 | import_depends |
-| 497 | D-GOV_RULE | D-GOV_AUDIT | 2 | import_depends |
-| 498 | D-INFRA_OPS | D-GOV_AUDIT | 2 | import_depends |
-| 499 | D-INFRA_RUNTIME | D-OPS | 2 | import_depends |
-| 500 | D-INTEGRATION | D-AUTONOMY_CORE | 2 | import_depends |
-| 501 | D-INTEGRATION | D-GOV_RULE | 2 | import_depends |
-| 502 | D-INTEGRATION | D-ML_SERVE | 2 | contract,config_depends |
-| 503 | D-INTELLIGENCE | D-GOV_RULE | 2 | import_depends,contract |
-| 504 | D-KNOWLEDGE | D-TRADING | 2 | data,contract |
-| 505 | D-MKT_DATA | D-GOVERNANCE | 2 | config_depends |
-| 506 | D-ML_SERVE | D-EX_SOR | 2 | data,contract |
-| 507 | D-ML_SERVE | D-MKT_DATA | 2 | config_depends,contract |
-| 508 | D-ML_SERVE | D-TRADING | 2 | config_depends,contract |
-| 509 | D-ML_TRAIN | D-SHARED | 2 | import_depends |
+| 455 | D-PF_ALLOC | D-KNOWLEDGE | 3 | event,config_depends,contract |
+| 456 | D-PF_ALLOC | D-REPORTING | 3 | contract,data |
+| 457 | D-PF_ALLOC | D-SIMULATION | 3 | event,config_depends |
+| 458 | D-POSITION | D-EX_CORE | 3 | contract,event,data |
+| 459 | D-POSITION | D-EX_SOR | 3 | contract,event |
+| 460 | D-REPORTING | D-INTELLIGENCE | 3 | data,event |
+| 461 | D-SECURITY | D-INTEGRATION | 3 | import_depends |
+| 462 | D-SELL_DECISION | D-KNOWLEDGE | 3 | data,event,config_depends |
+| 463 | D-SELL_DECISION | D-ML_TRAIN | 3 | data,event,config_depends |
+| 464 | D-SELL_DECISION | D-PF_CORE | 3 | contract,data,event |
+| 465 | D-SHARED | D-GOVERNANCE | 3 | import_depends |
+| 466 | D-SIMULATION | D-EX_SOR | 3 | data |
+| 467 | D-TRADING | D-AUTONOMY_CORE | 3 | import_depends |
+| 468 | D-TRADING | D-OPS | 3 | import_depends,runtime |
+| 469 | D-ALT_DATA | D-KNOWLEDGE | 2 | contract,event |
+| 470 | D-ALT_DATA | D-ML_SERVE | 2 | data,event |
+| 471 | D-ALT_DATA | D-POSITION | 2 | data,contract |
+| 472 | D-ALT_DATA | D-REPORTING | 2 | contract,data |
+| 473 | D-ALT_DATA | D-SIMULATION | 2 | contract,config_depends |
+| 474 | D-ALT_DATA | D-TRADING | 2 | event,contract |
+| 475 | D-AUTONOMY_PERM | D-TRADING | 2 | contract,config_depends |
+| 476 | D-BEHAVIORAL_AUDIT | D-GOVERNANCE | 2 | import_depends |
+| 477 | D-BEHAVIORAL_AUDIT | D-GOV_AUDIT | 2 | import_depends |
+| 478 | D-COMPLIANCE | D-GOV_DRIFT | 2 | import_depends |
+| 479 | D-CROSS_ASSET | D-EX_CORE | 2 | config_depends,contract |
+| 480 | D-CROSS_ASSET | D-KNOWLEDGE | 2 | event,config_depends |
+| 481 | D-CROSS_ASSET | D-ML_TRAIN | 2 | data,event |
+| 482 | D-CROSS_ASSET | D-OPS | 2 | data,event |
+| 483 | D-CROSS_ASSET | D-PF_ALLOC | 2 | data,event |
+| 484 | D-DATA_GOV | D-DATA_ENG | 2 | config_depends,contract |
+| 485 | D-DATA_GOV | D-INFRA_OPS | 2 | config_depends,event |
+| 486 | D-DATA_GOV | D-INFRA_RUNTIME | 2 | event |
+| 487 | D-DATA_SEC | D-AUTONOMY_CORE | 2 | contract,data |
+| 488 | D-DATA_SEC | D-INFRA_OPS | 2 | contract |
+| 489 | D-DATA_SEC | D-INFRA_RUNTIME | 2 | data,config_depends |
+| 490 | D-DATA_SEC | D-INTEGRATION | 2 | event,contract |
+| 491 | D-FACTOR | D-SIGNAL | 2 | import_depends,contract |
+| 492 | D-FRONTEND | D-POSITION | 2 | contract,config_depends |
+| 493 | D-GOVERNANCE | D-CROSS_ASSET | 2 | test_depends |
+| 494 | D-GOV_AUDIT | D-BEHAVIORAL_AUDIT | 2 | import_depends |
+| 495 | D-GOV_AUDIT | D-TRADING | 2 | import_depends |
+| 496 | D-GOV_RULE | D-GOV_AUDIT | 2 | import_depends |
+| 497 | D-INFRA_OPS | D-GOV_AUDIT | 2 | import_depends |
+| 498 | D-INFRA_RUNTIME | D-OPS | 2 | import_depends |
+| 499 | D-INTEGRATION | D-AUTONOMY_CORE | 2 | import_depends |
+| 500 | D-INTEGRATION | D-GOV_RULE | 2 | import_depends |
+| 501 | D-INTEGRATION | D-ML_SERVE | 2 | contract,config_depends |
+| 502 | D-INTELLIGENCE | D-GOV_RULE | 2 | import_depends,contract |
+| 503 | D-KNOWLEDGE | D-TRADING | 2 | data,contract |
+| 504 | D-MKT_DATA | D-GOVERNANCE | 2 | config_depends |
+| 505 | D-ML_SERVE | D-EX_SOR | 2 | data,contract |
+| 506 | D-ML_SERVE | D-MKT_DATA | 2 | config_depends,contract |
+| 507 | D-ML_SERVE | D-TRADING | 2 | config_depends,contract |
+| 508 | D-ML_TRAIN | D-SHARED | 2 | import_depends |
+| 509 | D-OPS | D-GOV_AUDIT | 2 | test_depends,domain_dependency |
 | 510 | D-PF_ALLOC | D-ALT_DATA | 2 | data,event |
 | 511 | D-PF_ALLOC | D-ML_TRAIN | 2 | data,event |
 | 512 | D-PF_ALLOC | D-POSITION | 2 | contract,config_depends |

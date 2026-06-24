@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示生命周期管理（D-GOVERNANCE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 21:40:10
+> 最后更新 / Last Updated: 2026-06-24 23:01:56
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 生命周期管理（D-GOVERNANCE）的模块分布。共 3908 个模块 / 3908 modules。
+> 按 architecture_layer 分层显示 生命周期管理（D-GOVERNANCE）的模块分布。共 3860 个模块 / 3860 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│           L1 基础层 / Foundation Layer (3360 modules)            │
+│           L1 基础层 / Foundation Layer (3312 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   §8.1  [design]                                                 │
 │   architecture_model/architecture_lock.yaml  [production]        │
@@ -43,7 +43,7 @@ ttl: permanent
 │   architecture_model/layers/schema.yaml  [production]            │
 │   architecture_model/scope.yaml  [production]                    │
 │   architecture_model/technology_landscape.yaml  [production]     │
-│   ...还有 3342 个模块 / 3342 more modules                        │
+│   ...还有 3294 个模块 / 3294 more modules                        │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -88,9 +88,9 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 3908 个模块 / 3908 modules）。
+> 按 architecture_layer 分组的模块清单（共 3860 个模块 / 3860 modules）。
 
-### L1 基础层 / Foundation Layer (3360 modules)
+### L1 基础层 / Foundation Layer (3312 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -257,45 +257,45 @@ ttl: permanent
 | 161 | docs/03_modules/_sys_master/blueprint.md | docs__03_modules___sys_master__bluepr... | design | design_only |
 | 162 | docs/03_modules/path_ownership_map.yaml | docs/03_modules/path_ownership_map.yaml | production | orphan |
 | 163 | scripts/__init__.py | scripts/__init__.py | prototype | draft |
-| 164 | scripts/_archive/migration/_migration_shared.py | scripts/_archive/migration/_migration... | prototype | draft |
-| 165 | scripts/_archive/migration/_verify_manifest.py | scripts/_archive/migration/_verify_ma... | prototype | draft |
-| 166 | scripts/_archive/migration/_verify_step4.py | scripts/_archive/migration/_verify_st... | prototype | draft |
-| 167 | scripts/_archive/migration/apply_rulings.py | scripts/_archive/migration/apply_ruli... | prototype | draft |
-| 168 | scripts/_archive/migration/check_coverage.py | scripts/_archive/migration/check_cove... | prototype | draft |
-| 169 | scripts/_archive/migration/comprehensive_import_fix.py | scripts/_archive/migration/comprehens... | prototype | draft |
-| 170 | scripts/_archive/migration/create_target_dirs.py | scripts/_archive/migration/create_tar... | prototype | draft |
-| 171 | scripts/_archive/migration/cross_domain_import_fix.py | scripts/_archive/migration/cross_doma... | prototype | draft |
-| 172 | scripts/_archive/migration/domain_prefix_import_fix.py | scripts/_archive/migration/domain_pre... | prototype | draft |
-| 173 | scripts/_archive/migration/execute_move.py | scripts/_archive/migration/execute_mo... | prototype | draft |
-| 174 | scripts/_archive/migration/generate_migration_registry.py | scripts/_archive/migration/generate_m... | prototype | draft |
-| 175 | scripts/_archive/migration/generate_path_migration_mappin... | scripts/_archive/migration/generate_p... | prototype | draft |
-| 176 | scripts/_archive/migration/inject_domain_fields.py | scripts/_archive/migration/inject_dom... | prototype | draft |
-| 177 | scripts/_archive/migration/lock_batch.py | scripts/_archive/migration/lock_batch.py | prototype | draft |
-| 178 | scripts/_archive/migration/migrate_security_split.py | scripts/_archive/migration/migrate_se... | prototype | draft |
-| 179 | scripts/_archive/migration/preflight_check.py | scripts/_archive/migration/preflight_... | prototype | draft |
-| 180 | scripts/_archive/migration/rollback_batch.py | scripts/_archive/migration/rollback_b... | prototype | draft |
-| 181 | scripts/_archive/migration/safe_delete_operational.py | scripts/_archive/migration/safe_delet... | prototype | draft |
-| 182 | scripts/_archive/migration/scan_import_impact.py | scripts/_archive/migration/scan_impor... | prototype | draft |
-| 183 | scripts/_archive/migration/shared_import_fix.py | scripts/_archive/migration/shared_imp... | prototype | draft |
-| 184 | scripts/_archive/migration/test_import_fix.py | scripts/_archive/migration/test_impor... | prototype | draft |
-| 185 | scripts/_archive/migration/unnest_from_mcp_server.py | scripts/_archive/migration/unnest_fro... | prototype | draft |
-| 186 | scripts/_archive/migration/update_imports.py | scripts/_archive/migration/update_imp... | prototype | draft |
-| 187 | scripts/_archive/migration/update_non_import_refs.py | scripts/_archive/migration/update_non... | prototype | draft |
-| 188 | scripts/_archive/migration/verify_batch.py | scripts/_archive/migration/verify_bat... | prototype | draft |
-| 189 | scripts/_archive/migration/verify_migration_alignment.py | scripts/_archive/migration/verify_mig... | prototype | draft |
-| 190 | scripts/a2a_full_verification.py | scripts/a2a_full_verification.py | prototype | draft |
-| 191 | scripts/arch_guard/__init__.py | scripts/arch_guard/__init__.py | prototype | draft |
-| 192 | scripts/arch_guard/_arch_ssot.py | scripts/arch_guard/_arch_ssot.py | prototype | draft |
-| 193 | scripts/arch_guard/_tools/build_ocp_manifest.py | scripts/arch_guard/_tools/build_ocp_m... | prototype | draft |
-| 194 | scripts/arch_guard/_tools/inject_idempotency.py | scripts/arch_guard/_tools/inject_idem... | prototype | draft |
-| 195 | scripts/arch_guard/_tools/patch_p1_paths.py | scripts/arch_guard/_tools/patch_p1_pa... | prototype | draft |
-| 196 | scripts/arch_guard/check_acl_boundary.py | scripts/arch_guard/check_acl_boundary.py | prototype | draft |
-| 197 | scripts/arch_guard/check_cross_plane_communication.py | scripts/arch_guard/check_cross_plane_... | prototype | draft |
-| 198 | scripts/arch_guard/check_fe_acl_boundary.py | scripts/arch_guard/check_fe_acl_bound... | prototype | draft |
-| 199 | scripts/arch_guard/check_hot_path_purity.py | scripts/arch_guard/check_hot_path_pur... | prototype | draft |
-| 200 | scripts/arch_guard/check_scaffold_exit_gates.py | scripts/arch_guard/check_scaffold_exi... | prototype | draft |
+| 164 | scripts/_archive/construction/create_db_alignment_tasks.py | scripts/_archive/construction/create_... | prototype | draft |
+| 165 | scripts/_archive/construction/create_dm_phase9_tasks.py | scripts/_archive/construction/create_... | prototype | draft |
+| 166 | scripts/_archive/construction/dm014_orphan_edge_repair.py | scripts/_archive/construction/dm014_o... | prototype | draft |
+| 167 | scripts/_archive/governance/create_depgraph_task_cards.py | scripts/_archive/governance/create_de... | prototype | draft |
+| 168 | scripts/_archive/governance/d3_metadata/assign_module_id.py | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 169 | scripts/_archive/governance/d3_metadata/check_frontmatter... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 170 | scripts/_archive/governance/d3_metadata/check_template_co... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 171 | scripts/_archive/governance/d3_metadata/detect_deprecated... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 172 | scripts/_archive/governance/d3_metadata/detect_skip_activ... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 173 | scripts/_archive/governance/d3_metadata/detect_stale_vers... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 174 | scripts/_archive/governance/d3_metadata/fix_dm411_bare_re... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 175 | scripts/_archive/governance/d3_metadata/fix_dm413_duplica... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 176 | scripts/_archive/governance/d3_metadata/fix_n06_module_id... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 177 | scripts/_archive/governance/d3_metadata/generate_rule_cat... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 178 | scripts/_archive/governance/d3_metadata/scan_deep_content.py | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 179 | scripts/_archive/governance/d3_metadata/validate_blueprin... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 180 | scripts/_archive/governance/d3_metadata/validate_cross_mo... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 181 | scripts/_archive/governance/d3_metadata/validate_derived_... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 182 | scripts/_archive/governance/d3_metadata/validate_enum_con... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 183 | scripts/_archive/governance/d3_metadata/validate_frontmat... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 184 | scripts/_archive/governance/d3_metadata/validate_no_dupli... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 185 | scripts/_archive/governance/d3_metadata/validate_ssot_sta... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 186 | scripts/_archive/governance/d3_metadata/validate_supersed... | scripts/_archive/governance/d3_metada... | prototype | draft |
+| 187 | scripts/_archive/governance/dm101_blueprint_domain_mappin... | scripts/_archive/governance/dm101_blu... | prototype | draft |
+| 188 | scripts/_archive/governance/merge_domain_nodes.py | scripts/_archive/governance/merge_dom... | prototype | draft |
+| 189 | scripts/_archive/migration/_migration_shared.py | scripts/_archive/migration/_migration... | prototype | draft |
+| 190 | scripts/_archive/migration/_verify_manifest.py | scripts/_archive/migration/_verify_ma... | prototype | draft |
+| 191 | scripts/_archive/migration/_verify_step4.py | scripts/_archive/migration/_verify_st... | prototype | draft |
+| 192 | scripts/_archive/migration/apply_rulings.py | scripts/_archive/migration/apply_ruli... | prototype | draft |
+| 193 | scripts/_archive/migration/check_coverage.py | scripts/_archive/migration/check_cove... | prototype | draft |
+| 194 | scripts/_archive/migration/comprehensive_import_fix.py | scripts/_archive/migration/comprehens... | prototype | draft |
+| 195 | scripts/_archive/migration/create_target_dirs.py | scripts/_archive/migration/create_tar... | prototype | draft |
+| 196 | scripts/_archive/migration/cross_domain_import_fix.py | scripts/_archive/migration/cross_doma... | prototype | draft |
+| 197 | scripts/_archive/migration/domain_prefix_import_fix.py | scripts/_archive/migration/domain_pre... | prototype | draft |
+| 198 | scripts/_archive/migration/execute_move.py | scripts/_archive/migration/execute_mo... | prototype | draft |
+| 199 | scripts/_archive/migration/generate_migration_registry.py | scripts/_archive/migration/generate_m... | prototype | draft |
+| 200 | scripts/_archive/migration/generate_path_migration_mappin... | scripts/_archive/migration/generate_p... | prototype | draft |
 
-> (仅显示前 200 个模块，共 3360 个)
+> (仅显示前 200 个模块，共 3312 个)
 
 ### L2 领域层 / Domain Layer (7 modules)
 

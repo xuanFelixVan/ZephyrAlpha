@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D-PF_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:54
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,9 +24,9 @@ ttl: permanent
 | 域ID | D-PF_CORE | Domain ID | D-PF_CORE |
 | 域名称 | 组合核心 | Domain Name | 组合核心 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 202 | Module Count | 202 |
+| 模块数 | 201 | Module Count | 201 |
 | 域内依赖 | 152 | Internal Dependencies | 152 |
-| 跨域入边 | 168 | Cross-domain Incoming | 168 |
+| 跨域入边 | 165 | Cross-domain Incoming | 165 |
 | 跨域出边 | 153 | Cross-domain Outgoing | 153 |
 | 设计态模块 | 183 | Design Modules | 183 |
 | 原型态模块 | 7 | Prototype Modules | 7 |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 202 个模块（按路径排序，全部显示）
+共 201 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -228,7 +228,6 @@ ttl: permanent
 | src/zephyr/pf_core/default_attribution_engine.py |  | production | draft |
 | src/zephyr/pf_core/default_tca_engine.py |  | production | draft |
 | src/zephyr/pf_core/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/pf_core/models/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/pf_core/performance_attribution_engine/__init__.py |  | prototype | draft |
 | src/zephyr/pf_core/performance_attribution_report.py |  | production | draft |
 | src/zephyr/pf_core/risk_limits.py |  | prototype | draft |
@@ -862,7 +861,6 @@ graph TD
         src_zephyr_pf_core_default_attribution_engine_py["src/zephyr/pf_core/default_attribution_engine.py production"]
         src_zephyr_pf_core_default_tca_engine_py["src/zephyr/pf_core/default_tca_engine.py production"]
         src_zephyr_pf_core_infrastructure_init_py["src/zephyr/pf_core/infrastructure/__init__.py scaffold_placeholder"]
-        src_zephyr_pf_core_models_init_py["src/zephyr/pf_core/models/__init__.py scaffold_placeholder"]
         src_zephyr_pf_core_performance_attribution_engine_init_py["src/zephyr/pf_core/performance_attribution_engi... prototype"]
         src_zephyr_pf_core_performance_attribution_report_py["src/zephyr/pf_core/performance_attribution_repo... production"]
         src_zephyr_pf_core_risk_limits_py["src/zephyr/pf_core/risk_limits.py prototype"]
@@ -896,18 +894,15 @@ graph TD
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_attribution_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_compliance_rule_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_analytics_base_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_analytics_base_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_performance_attribution_report_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_strategy_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_analytics_base_py,src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_default_attribution_engine_py,src_zephyr_pf_core_default_tca_engine_py,src_zephyr_pf_core_performance_attribution_report_py,src_zephyr_pf_core_strategy_base_py production
-    class src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py,src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_models_init_py,src_zephyr_pf_core_performance_attribution_engine_init_py,src_zephyr_pf_core_risk_limits_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategies_default_equity_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py,D_ALT_02_SentimentEngine,D_ML_02_ModelRegistry_MS_01,D_ML_01_TrainingPipeline_MT_01,D_XA_D_CROSS_ASSET_CA design
+    class src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py,src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_performance_attribution_engine_init_py,src_zephyr_pf_core_risk_limits_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategies_default_equity_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py,D_ALT_02_SentimentEngine,D_ML_02_ModelRegistry_MS_01,D_ML_01_TrainingPipeline_MT_01,D_XA_D_CROSS_ASSET_CA design
     class D_TRADING external_prod
     class D_GOVERNANCE,D_REPORTING external_design
 ```
@@ -939,8 +934,8 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 30 | test_depends,data,event,contract,config_depends |
 | D-COMPLIANCE | 30 | event,data,config_depends,contract |
+| D-GOVERNANCE | 27 | test_depends,data,event,contract,config_depends |
 | D-INFRA_OPS | 19 | contract,config_depends,event,data |
 | D-INTEGRATION | 18 | contract,data,config_depends,event |
 | D-AUTONOMY_CORE | 15 | contract,data,event,config_depends |

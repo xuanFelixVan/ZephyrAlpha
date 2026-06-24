@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈循环（D-OPS）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 21:40:08
+> 最后更新: 2026-06-24 23:01:54
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,19 +24,19 @@ ttl: permanent
 | 域ID | D-OPS | Domain ID | D-OPS |
 | 域名称 | 反馈循环 | Domain Name | feedback-loop |
 | 层级 | L1_platform | Layer | L1_platform |
-| 模块数 | 697 | Module Count | 697 |
-| 域内依赖 | 602 | Internal Dependencies | 602 |
-| 跨域入边 | 558 | Cross-domain Incoming | 558 |
-| 跨域出边 | 507 | Cross-domain Outgoing | 507 |
+| 模块数 | 679 | Module Count | 679 |
+| 域内依赖 | 584 | Internal Dependencies | 584 |
+| 跨域入边 | 524 | Cross-domain Incoming | 524 |
+| 跨域出边 | 505 | Cross-domain Outgoing | 505 |
 | 设计态模块 | 264 | Design Modules | 264 |
-| 原型态模块 | 422 | Prototype Modules | 422 |
+| 原型态模块 | 404 | Prototype Modules | 404 |
 | 生产态模块 | 5 | Production Modules | 5 |
 | 容量 | 697/150 (超容) | Capacity | 697/150 (超容) |
 | 描述 | 反馈收集器(collectors) | Description | 反馈收集器(collectors) |
 
 ## 模块清单 / Module List
 
-共 697 个模块（按路径排序，全部显示）
+共 679 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -592,23 +592,6 @@ ttl: permanent
 | src/zephyr/ops/gates/meta_performance_gate.py |  | prototype | draft |
 | src/zephyr/ops/gates/parameterized_safety_gate.py |  | prototype | draft |
 | src/zephyr/ops/gates/safety_gate_l1_l27.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l29.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l37.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l39.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l41.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l43.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l45.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l47.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l49.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l51.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l53.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l55.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l57.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l59.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l61.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l63.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l65.py |  | prototype | draft |
-| src/zephyr/ops/gates/safety_gate_l67.py |  | prototype | draft |
 | src/zephyr/ops/gates/scope_creep_monitor.py |  | prototype | draft |
 | src/zephyr/ops/generator.py |  | prototype | draft |
 | src/zephyr/ops/health/__init__.py |  | prototype | draft |
@@ -630,7 +613,6 @@ ttl: permanent
 | src/zephyr/ops/observability/logging.py |  | prototype | draft |
 | src/zephyr/ops/observability/metrics.py |  | prototype | draft |
 | src/zephyr/ops/observability/session_audit.py |  | prototype | draft |
-| src/zephyr/ops/observability/token_utils.py |  | prototype | draft |
 | src/zephyr/ops/observability/tracing.py |  | prototype | draft |
 | src/zephyr/ops/profiles/__init__.py |  | prototype | draft |
 | src/zephyr/ops/protocols.py |  | prototype | draft |
@@ -695,6 +677,7 @@ ttl: permanent
 | src/zephyr/ops/verifiers/toctou_revalidation.py |  | prototype | draft |
 | src/zephyr/ops/verifiers/verification_engine.py |  | prototype | draft |
 | src/zephyr/ops/watchdog.py |  | prototype | draft |
+| src/zephyr/shared/shared_services/observability_02/token_utils.py |  | prototype | draft |
 | tests/adversarial/test_telemetry_red_team.py |  | prototype | draft |
 | tests/integration/test_auto_telemetry_bootstrap.py |  | prototype | draft |
 | tests/llm_security/test_l6_observability.py |  | prototype | draft |
@@ -717,15 +700,14 @@ ttl: permanent
 | tests/test_skill_observability.py |  | prototype | draft |
 | tests/test_skill_telemetry.py |  | prototype | draft |
 | tests/test_telemetry.py |  | prototype | draft |
+| tests/test_telemetry.py |  | prototype | draft |
 | tests/test_token_budget_root.py |  | prototype | draft |
 | tests/unit/budget_enforcer/test_budget_engine_budget_enforcer.py |  | prototype | draft |
 | tests/unit/shared/test_cost_budget_shared.py |  | prototype | draft |
 | tests/unit/telemetry/__init__.py |  | prototype | orphan |
 | tests/unit/telemetry/test_contract_metrics_telemetry.py |  | prototype | draft |
-| tests/unit/telemetry/test_telemetry.py |  | prototype | draft |
 | tests/unit/test_cost_budget_unit.py |  | prototype | draft |
 | tests/unit/test_telemetry_facade.py |  | prototype | draft |
-| tests/unit/test_telemetry_unit.py |  | prototype | draft |
 | tests/unit/test_token_budget_unit.py |  | prototype | draft |
 | ✅已有 | Health Monitor | design | design_only |
 | ✅部分在system-telemetry | Telemetry Engine | design | design_only |
@@ -748,7 +730,7 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
 
-### 第 1 页 / 共 24 页 / Page 1 of 24
+### 第 1 页 / 共 23 页 / Page 1 of 23
 
 ```mermaid
 graph TD
@@ -839,7 +821,7 @@ graph TD
     class D_ML_SERVE,D_RISK,D_AUTONOMY_CORE,D_DATA_ENG,D_GOVERNANCE,D_TRADING,D_INFRA_RUNTIME,D_SIGNAL,D_INTEGRATION,D_FRONTEND,D_COMPLIANCE,D_DATA_GOV external_design
 ```
 
-### 第 2 页 / 共 24 页 / Page 2 of 24
+### 第 2 页 / 共 23 页 / Page 2 of 23
 
 ```mermaid
 graph TD
@@ -928,7 +910,7 @@ graph TD
     class D_GOV_AUDIT,D_INFRA_RUNTIME,D_AUTONOMY_CORE,D_DATA_ENG,D_PF_ALLOC,D_RISK,D_INTELLIGENCE,D_SECURITY,D_MKT_DATA,D_GOVERNANCE,D_AUTONOMY_PERM,D_INFRA_OPS,D_COMPLIANCE,D_FRONTEND external_design
 ```
 
-### 第 3 页 / 共 24 页 / Page 3 of 24
+### 第 3 页 / 共 23 页 / Page 3 of 23
 
 ```mermaid
 graph TD
@@ -1021,7 +1003,7 @@ graph TD
     class D_SIGNAL,D_SECURITY,D_INFRA_RUNTIME,D_INTEGRATION,D_AUTONOMY_CORE,D_GOVERNANCE,D_ALT_DATA,D_FACTOR,D_ML_TRAIN,D_MKT_DATA,D_DATA_GOV,D_INFRA_OPS,D_FRONTEND,D_COMPLIANCE external_design
 ```
 
-### 第 4 页 / 共 24 页 / Page 4 of 24
+### 第 4 页 / 共 23 页 / Page 4 of 23
 
 ```mermaid
 graph TD
@@ -1110,7 +1092,7 @@ graph TD
     class D_GOVERNANCE,D_SIGNAL,D_RISK,D_INTEGRATION,D_AUTONOMY_CORE,D_EX_SOR,D_PF_ALLOC,D_INFRA_RUNTIME,D_INTELLIGENCE,D_ML_SERVE,D_FRONTEND,D_COMPLIANCE,D_INFRA_OPS external_design
 ```
 
-### 第 5 页 / 共 24 页 / Page 5 of 24
+### 第 5 页 / 共 23 页 / Page 5 of 23
 
 ```mermaid
 graph TD
@@ -1194,7 +1176,7 @@ graph TD
     class D_GOVERNANCE,D_AUTONOMY_CORE,D_RISK,D_INTEGRATION,D_INTELLIGENCE,D_EX_SOR,D_PF_CORE,D_DATA_ENG,D_TRADING,D_EX_CORE,D_SECURITY,D_REPORTING,D_POSITION,D_COMPLIANCE,D_INFRA_OPS,D_DATA_GOV external_design
 ```
 
-### 第 6 页 / 共 24 页 / Page 6 of 24
+### 第 6 页 / 共 23 页 / Page 6 of 23
 
 ```mermaid
 graph TD
@@ -1287,7 +1269,7 @@ graph TD
     class D_AUTONOMY_CORE,D_SIGNAL,D_MKT_DATA,D_KNOWLEDGE,D_FACTOR,D_SECURITY,D_GOVERNANCE,D_RISK,D_EX_CORE,D_ML_SERVE,D_FRONTEND,D_COMPLIANCE,D_INFRA_OPS external_design
 ```
 
-### 第 7 页 / 共 24 页 / Page 7 of 24
+### 第 7 页 / 共 23 页 / Page 7 of 23
 
 ```mermaid
 graph TD
@@ -1379,7 +1361,7 @@ graph TD
     class D_MKT_DATA,D_AUTONOMY_CORE,D_REPORTING,D_RISK,D_ML_TRAIN,D_SECURITY,D_PF_CORE,D_INTELLIGENCE,D_INTEGRATION,D_COMPLIANCE,D_INFRA_OPS,D_FRONTEND,D_DATA_GOV external_design
 ```
 
-### 第 8 页 / 共 24 页 / Page 8 of 24
+### 第 8 页 / 共 23 页 / Page 8 of 23
 
 ```mermaid
 graph TD
@@ -1467,7 +1449,7 @@ graph TD
     class D_INFRA_RUNTIME,D_ML_SERVE,D_AUTONOMY_CORE,D_EX_CORE,D_SECURITY,D_RISK,D_AUTONOMY_PERM,D_INTEGRATION,D_SIGNAL,D_COMPLIANCE,D_INFRA_OPS external_design
 ```
 
-### 第 9 页 / 共 24 页 / Page 9 of 24
+### 第 9 页 / 共 23 页 / Page 9 of 23
 
 ```mermaid
 graph TD
@@ -1560,7 +1542,7 @@ graph TD
     class D_ML_SERVE,D_RISK,D_PF_ALLOC,D_ML_TRAIN,D_SIGNAL,D_INFRA_OPS,D_COMPLIANCE,D_CROSS_ASSET external_design
 ```
 
-### 第 10 页 / 共 24 页 / Page 10 of 24
+### 第 10 页 / 共 23 页 / Page 10 of 23
 
 ```mermaid
 graph TD
@@ -1658,7 +1640,7 @@ graph TD
     class D_INFRA_OPS,D_INTEGRATION external_design
 ```
 
-### 第 11 页 / 共 24 页 / Page 11 of 24
+### 第 11 页 / 共 23 页 / Page 11 of 23
 
 ```mermaid
 graph TD
@@ -1754,7 +1736,7 @@ graph TD
     class D_FACTOR,D_AUTONOMY_CORE,D_DATA_SEC,D_TRADING external_design
 ```
 
-### 第 12 页 / 共 24 页 / Page 12 of 24
+### 第 12 页 / 共 23 页 / Page 12 of 23
 
 ```mermaid
 graph TD
@@ -1827,7 +1809,7 @@ graph TD
     class D_GOVERNANCE,D_INFRA_RUNTIME external_prod
 ```
 
-### 第 13 页 / 共 24 页 / Page 13 of 24
+### 第 13 页 / 共 23 页 / Page 13 of 23
 
 ```mermaid
 graph TD
@@ -1870,7 +1852,7 @@ graph TD
     class src_zephyr_ops_detectors_ebpf_monitor_py,src_zephyr_ops_detectors_emergent_behavior_detector_py,src_zephyr_ops_detectors_ensemble_detector_py,src_zephyr_ops_detectors_ensemble_drift_py,src_zephyr_ops_detectors_external_health_py,src_zephyr_ops_detectors_external_validation_checkpoint_py,src_zephyr_ops_detectors_flag_lifecycle_py,src_zephyr_ops_detectors_flapping_detector_py,src_zephyr_ops_detectors_fle_performance_regression_detector_py,src_zephyr_ops_detectors_gradual_poisoning_detector_py,src_zephyr_ops_detectors_guard_cascade_detector_py,src_zephyr_ops_detectors_guard_oscillation_detector_py,src_zephyr_ops_detectors_heisenbug_detector_py,src_zephyr_ops_detectors_infinite_loop_detector_py,src_zephyr_ops_detectors_intermittent_failure_pattern_py,src_zephyr_ops_detectors_log_anomaly_py,src_zephyr_ops_detectors_maintenance_coordinator_py,src_zephyr_ops_detectors_metric_cardinality_guard_py,src_zephyr_ops_detectors_multi_signal_correlator_py,src_zephyr_ops_detectors_openfeature_py,src_zephyr_ops_detectors_otel_adapter_py,src_zephyr_ops_detectors_placebo_action_detector_py,src_zephyr_ops_detectors_positive_feedback_defense_py,src_zephyr_ops_detectors_recursive_diagnosis_trust_evaluator_py,src_zephyr_ops_detectors_regime_detector_py,src_zephyr_ops_detectors_regulatory_audit_py,src_zephyr_ops_detectors_resolution_tracker_py,src_zephyr_ops_detectors_rumor_noise_filter_py,src_zephyr_ops_detectors_runbook_executor_py,src_zephyr_ops_detectors_self_audit_py design
 ```
 
-### 第 14 页 / 共 24 页 / Page 14 of 24
+### 第 14 页 / 共 23 页 / Page 14 of 23
 
 ```mermaid
 graph TD
@@ -1932,7 +1914,7 @@ graph TD
     class src_zephyr_ops_detectors_self_diagnosis_data_leak_detector_py,src_zephyr_ops_detectors_self_ha_py,src_zephyr_ops_detectors_silent_corruption_detector_py,src_zephyr_ops_detectors_synthetic_anomaly_generator_py,src_zephyr_ops_detectors_temporal_coherence_of_self_model_py,src_zephyr_ops_detectors_temporal_pattern_py,src_zephyr_ops_detectors_trace_causal_bridge_py,src_zephyr_ops_detectors_traffic_replay_validator_py,src_zephyr_ops_detectors_trend_cycle_separator_py,src_zephyr_ops_detectors_version_migrator_py,src_zephyr_ops_diagnosers_init_py,src_zephyr_ops_diagnosers_cognitive_py,src_zephyr_ops_diagnosers_diagnosis_py,src_zephyr_ops_diagnosers_health_py,src_zephyr_ops_diagnosers_reliability_py,src_zephyr_ops_diagnosers_action_composition_health_monitor_py,src_zephyr_ops_diagnosers_adaptive_param_tuning_py,src_zephyr_ops_diagnosers_amplification_guard_py,src_zephyr_ops_diagnosers_api_dependency_metrics_py,src_zephyr_ops_diagnosers_auto_diagnosis_py,src_zephyr_ops_diagnosers_burn_rate_alerter_py,src_zephyr_ops_diagnosers_burnout_alarm_py,src_zephyr_ops_diagnosers_capacity_aware_repair_py,src_zephyr_ops_diagnosers_causal_inference_engine_py,src_zephyr_ops_diagnosers_cognitive_load_py,src_zephyr_ops_diagnosers_cognitive_load_budget_py,src_zephyr_ops_diagnosers_cold_start_conservative_mode_py,src_zephyr_ops_diagnosers_collaborative_learning_py,src_zephyr_ops_diagnosers_confidence_decomposer_py,src_zephyr_ops_diagnosers_context_truncation_py design
 ```
 
-### 第 15 页 / 共 24 页 / Page 15 of 24
+### 第 15 页 / 共 23 页 / Page 15 of 23
 
 ```mermaid
 graph TD
@@ -1975,7 +1957,7 @@ graph TD
     class src_zephyr_ops_diagnosers_context_window_pressure_manager_py,src_zephyr_ops_diagnosers_counterfactual_py,src_zephyr_ops_diagnosers_cross_guard_conflict_detector_py,src_zephyr_ops_diagnosers_cross_session_consistency_validator_py,src_zephyr_ops_diagnosers_data_volume_growth_monitor_py,src_zephyr_ops_diagnosers_diagnosis_engine_py,src_zephyr_ops_diagnosers_diagnosis_kpi_py,src_zephyr_ops_diagnosers_dr_resilience_metrics_py,src_zephyr_ops_diagnosers_e2e_integration_health_py,src_zephyr_ops_diagnosers_feedback_delay_compensator_py,src_zephyr_ops_diagnosers_fle_dogfood_monitor_py,src_zephyr_ops_diagnosers_fle_self_slo_metrics_py,src_zephyr_ops_diagnosers_gamification_py,src_zephyr_ops_diagnosers_global_health_map_py,src_zephyr_ops_diagnosers_guard_interaction_topology_mapper_py,src_zephyr_ops_diagnosers_guard_self_consistency_auditor_py,src_zephyr_ops_diagnosers_human_anomaly_flood_detector_py,src_zephyr_ops_diagnosers_impact_predictor_py,src_zephyr_ops_diagnosers_incident_knowledge_injector_py,src_zephyr_ops_diagnosers_interactive_diagnosis_py,src_zephyr_ops_diagnosers_knowledge_bus_factor_monitor_py,src_zephyr_ops_diagnosers_knowledge_market_py,src_zephyr_ops_diagnosers_latency_slo_py,src_zephyr_ops_diagnosers_llm_provider_integrity_py,src_zephyr_ops_diagnosers_llm_quality_regression_py,src_zephyr_ops_diagnosers_memory_self_check_py,src_zephyr_ops_diagnosers_meta_guard_latency_budget_py,src_zephyr_ops_diagnosers_model_health_py,src_zephyr_ops_diagnosers_model_rotation_py,src_zephyr_ops_diagnosers_model_rotation_v2_py design
 ```
 
-### 第 16 页 / 共 24 页 / Page 16 of 24
+### 第 16 页 / 共 23 页 / Page 16 of 23
 
 ```mermaid
 graph TD
@@ -2019,7 +2001,7 @@ graph TD
     class src_zephyr_ops_diagnosers_model_version_semantic_drift_py,src_zephyr_ops_diagnosers_mtti_tracker_py,src_zephyr_ops_diagnosers_nonstationary_effectiveness_py,src_zephyr_ops_diagnosers_numerical_stability_guard_py,src_zephyr_ops_diagnosers_operational_seasonality_py,src_zephyr_ops_diagnosers_prompt_fingerprint_py,src_zephyr_ops_diagnosers_prompt_sanitizer_py,src_zephyr_ops_diagnosers_recovery_time_stats_py,src_zephyr_ops_diagnosers_regime_gain_scheduling_py,src_zephyr_ops_diagnosers_retirement_planner_py,src_zephyr_ops_diagnosers_self_benchmark_py,src_zephyr_ops_diagnosers_self_bottleneck_detector_py,src_zephyr_ops_diagnosers_self_health_monitor_py,src_zephyr_ops_diagnosers_self_llm_observability_py,src_zephyr_ops_diagnosers_slo_capacity_metrics_py,src_zephyr_ops_diagnosers_socratic_questions_py,src_zephyr_ops_diagnosers_statistical_hygiene_auditor_py,src_zephyr_ops_diagnosers_system_entropy_monitor_py,src_zephyr_ops_diagnosers_temporal_integrity_guard_py,src_zephyr_ops_diagnosers_timezone_semantic_reasoner_py,src_zephyr_ops_diagnosers_toil_quantification_py,src_zephyr_ops_diagnosers_tone_adapter_py,src_zephyr_ops_diagnosers_tone_adapter_v2_py,src_zephyr_ops_diagnosers_value_added_baseline_py,src_zephyr_ops_diagnosers_vertical_self_assessment_py,src_zephyr_ops_diagnosers_zombie_fle_detector_py,src_zephyr_ops_docs_init_py,src_zephyr_ops_docs_cold_start_manual_py,src_zephyr_ops_error_budget_py,src_zephyr_ops_eval_harness_py design
 ```
 
-### 第 17 页 / 共 24 页 / Page 17 of 24
+### 第 17 页 / 共 23 页 / Page 17 of 23
 
 ```mermaid
 graph TD
@@ -2095,7 +2077,7 @@ graph TD
     class D_GOVERNANCE external_design
 ```
 
-### 第 18 页 / 共 24 页 / Page 18 of 24
+### 第 18 页 / 共 23 页 / Page 18 of 23
 
 ```mermaid
 graph TD
@@ -2159,7 +2141,7 @@ graph TD
     class D_SECURITY,D_GOVERNANCE external_design
 ```
 
-### 第 19 页 / 共 24 页 / Page 19 of 24
+### 第 19 页 / 共 23 页 / Page 19 of 23
 
 ```mermaid
 graph TD
@@ -2176,40 +2158,7 @@ graph TD
         src_zephyr_ops_gates_meta_performance_gate_py["src/zephyr/ops/gates/meta_performance_gate.py prototype"]
         src_zephyr_ops_gates_parameterized_safety_gate_py["src/zephyr/ops/gates/parameterized_safety_gate.py prototype"]
         src_zephyr_ops_gates_safety_gate_l1_l27_py["src/zephyr/ops/gates/safety_gate_l1_l27.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l29_py["src/zephyr/ops/gates/safety_gate_l29.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l37_py["src/zephyr/ops/gates/safety_gate_l37.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l39_py["src/zephyr/ops/gates/safety_gate_l39.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l41_py["src/zephyr/ops/gates/safety_gate_l41.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l43_py["src/zephyr/ops/gates/safety_gate_l43.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l45_py["src/zephyr/ops/gates/safety_gate_l45.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l47_py["src/zephyr/ops/gates/safety_gate_l47.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l49_py["src/zephyr/ops/gates/safety_gate_l49.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l51_py["src/zephyr/ops/gates/safety_gate_l51.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l53_py["src/zephyr/ops/gates/safety_gate_l53.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l55_py["src/zephyr/ops/gates/safety_gate_l55.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l57_py["src/zephyr/ops/gates/safety_gate_l57.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l59_py["src/zephyr/ops/gates/safety_gate_l59.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l61_py["src/zephyr/ops/gates/safety_gate_l61.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l63_py["src/zephyr/ops/gates/safety_gate_l63.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l65_py["src/zephyr/ops/gates/safety_gate_l65.py prototype"]
-        src_zephyr_ops_gates_safety_gate_l67_py["src/zephyr/ops/gates/safety_gate_l67.py prototype"]
         src_zephyr_ops_gates_scope_creep_monitor_py["src/zephyr/ops/gates/scope_creep_monitor.py prototype"]
-    end
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
-    src_zephyr_ops_gates_safety_gate_l67_py -.->|import_depends| D_GOV_AUDIT
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_ops_gates_db_integrity_py,src_zephyr_ops_gates_deployment_suppression_py,src_zephyr_ops_gates_dynamic_llm_cost_router_py,src_zephyr_ops_gates_emergency_takeover_py,src_zephyr_ops_gates_federated_security_py,src_zephyr_ops_gates_flag_lifecycle_manager_py,src_zephyr_ops_gates_license_compliance_py,src_zephyr_ops_gates_llm_cost_router_py,src_zephyr_ops_gates_merkle_audit_root_py,src_zephyr_ops_gates_meta_performance_gate_py,src_zephyr_ops_gates_parameterized_safety_gate_py,src_zephyr_ops_gates_safety_gate_l1_l27_py,src_zephyr_ops_gates_safety_gate_l29_py,src_zephyr_ops_gates_safety_gate_l37_py,src_zephyr_ops_gates_safety_gate_l39_py,src_zephyr_ops_gates_safety_gate_l41_py,src_zephyr_ops_gates_safety_gate_l43_py,src_zephyr_ops_gates_safety_gate_l45_py,src_zephyr_ops_gates_safety_gate_l47_py,src_zephyr_ops_gates_safety_gate_l49_py,src_zephyr_ops_gates_safety_gate_l51_py,src_zephyr_ops_gates_safety_gate_l53_py,src_zephyr_ops_gates_safety_gate_l55_py,src_zephyr_ops_gates_safety_gate_l57_py,src_zephyr_ops_gates_safety_gate_l59_py,src_zephyr_ops_gates_safety_gate_l61_py,src_zephyr_ops_gates_safety_gate_l63_py,src_zephyr_ops_gates_safety_gate_l65_py,src_zephyr_ops_gates_safety_gate_l67_py,src_zephyr_ops_gates_scope_creep_monitor_py design
-    class D_GOV_AUDIT external_prod
-```
-
-### 第 20 页 / 共 24 页 / Page 20 of 24
-
-```mermaid
-graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
         src_zephyr_ops_generator_py["src/zephyr/ops/generator.py prototype"]
         src_zephyr_ops_health_init_py["src/zephyr/ops/health/__init__.py prototype"]
         src_zephyr_ops_health_aggregator_py["src/zephyr/ops/health_aggregator.py prototype"]
@@ -2227,31 +2176,11 @@ graph TD
         src_zephyr_ops_observability_failure_matcher_py["src/zephyr/ops/observability/failure_matcher.py prototype"]
         src_zephyr_ops_observability_health_py["src/zephyr/ops/observability/health.py prototype"]
         src_zephyr_ops_observability_health_discovery_py["src/zephyr/ops/observability/health_discovery.py prototype"]
-        src_zephyr_ops_observability_logging_py["src/zephyr/ops/observability/logging.py prototype"]
-        src_zephyr_ops_observability_metrics_py["src/zephyr/ops/observability/metrics.py prototype"]
-        src_zephyr_ops_observability_session_audit_py["src/zephyr/ops/observability/session_audit.py prototype"]
-        src_zephyr_ops_observability_token_utils_py["src/zephyr/ops/observability/token_utils.py prototype"]
-        src_zephyr_ops_observability_tracing_py["src/zephyr/ops/observability/tracing.py prototype"]
-        src_zephyr_ops_profiles_init_py["src/zephyr/ops/profiles/__init__.py prototype"]
-        src_zephyr_ops_protocols_py["src/zephyr/ops/protocols.py prototype"]
-        src_zephyr_ops_resilience_init_py["src/zephyr/ops/resilience/__init__.py prototype"]
-        src_zephyr_ops_resilience_config_hot_reload_guard_py["src/zephyr/ops/resilience/config_hot_reload_gua... prototype"]
-        src_zephyr_ops_resilience_deadman_switch_py["src/zephyr/ops/resilience/deadman_switch.py prototype"]
-        src_zephyr_ops_resilience_dr_automation_py["src/zephyr/ops/resilience/dr_automation.py prototype"]
-        src_zephyr_ops_resilience_graceful_degradation_planner_py["src/zephyr/ops/resilience/graceful_degradation_... prototype"]
-        src_zephyr_ops_resilience_multi_instance_coord_py["src/zephyr/ops/resilience/multi_instance_coord.py prototype"]
     end
-    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_deadman_switch_py
-    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_dr_automation_py
-    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_config_hot_reload_guard_py
-    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_multi_instance_coord_py
-    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_graceful_degradation_planner_py
     src_zephyr_ops_observability_cli_summary_py -.->|config_depends| src_zephyr_ops_observability_init_py
     src_zephyr_ops_observability_cost_tracker_py -.->|config_depends| src_zephyr_ops_observability_init_py
     src_zephyr_ops_observability_failure_matcher_py -.->|config_depends| src_zephyr_ops_observability_init_py
     src_zephyr_ops_observability_init_py -.->|import_depends| src_zephyr_ops_observability_health_discovery_py
-    src_zephyr_ops_observability_init_py -.->|import_depends| src_zephyr_ops_observability_session_audit_py
-    src_zephyr_ops_observability_tracing_py -.->|import_depends| src_zephyr_ops_observability_logging_py
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_ops_kill_switch_py -.->|config_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
@@ -2261,34 +2190,36 @@ graph TD
     src_zephyr_ops_health_init_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_metrics_blueprint_metrics_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_metrics_init_py -.->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_ops_profiles_init_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_observability_health_py -.->|import_depends| D_INFRA_RUNTIME
-    D_SHARED["D-SHARED prototype"]
-    src_zephyr_ops_observability_session_audit_py -.->|import_depends| D_SHARED
+    D_SHARED["D-SHARED production"]
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_health_py
-    D_SHARED -.->|import_depends| src_zephyr_ops_observability_metrics_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_ops_observability_health_discovery_py
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_ops_observability_token_utils_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_ops_observability_token_utils_py
-    D_SHARED -.->|import_depends| src_zephyr_ops_observability_logging_py
-    D_SHARED -.->|import_depends| src_zephyr_ops_observability_logging_py
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_init_py
-    D_SHARED -.->|import_depends| src_zephyr_ops_observability_tracing_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_ops_generator_py,src_zephyr_ops_health_init_py,src_zephyr_ops_health_aggregator_py,src_zephyr_ops_health_probes_py,src_zephyr_ops_infrastructure_init_py,src_zephyr_ops_kill_switch_py,src_zephyr_ops_metrics_init_py,src_zephyr_ops_metrics_blueprint_metrics_py,src_zephyr_ops_metrics_collector_py,src_zephyr_ops_models_init_py,src_zephyr_ops_monitoring_stack_init_py,src_zephyr_ops_observability_init_py,src_zephyr_ops_observability_cli_summary_py,src_zephyr_ops_observability_cost_tracker_py,src_zephyr_ops_observability_failure_matcher_py,src_zephyr_ops_observability_health_py,src_zephyr_ops_observability_health_discovery_py,src_zephyr_ops_observability_logging_py,src_zephyr_ops_observability_metrics_py,src_zephyr_ops_observability_session_audit_py,src_zephyr_ops_observability_token_utils_py,src_zephyr_ops_observability_tracing_py,src_zephyr_ops_profiles_init_py,src_zephyr_ops_protocols_py,src_zephyr_ops_resilience_init_py,src_zephyr_ops_resilience_config_hot_reload_guard_py,src_zephyr_ops_resilience_deadman_switch_py,src_zephyr_ops_resilience_dr_automation_py,src_zephyr_ops_resilience_graceful_degradation_planner_py,src_zephyr_ops_resilience_multi_instance_coord_py design
-    class D_GOVERNANCE,D_INFRA_RUNTIME external_prod
-    class D_SHARED,D_GOV_AUDIT external_design
+    class src_zephyr_ops_gates_db_integrity_py,src_zephyr_ops_gates_deployment_suppression_py,src_zephyr_ops_gates_dynamic_llm_cost_router_py,src_zephyr_ops_gates_emergency_takeover_py,src_zephyr_ops_gates_federated_security_py,src_zephyr_ops_gates_flag_lifecycle_manager_py,src_zephyr_ops_gates_license_compliance_py,src_zephyr_ops_gates_llm_cost_router_py,src_zephyr_ops_gates_merkle_audit_root_py,src_zephyr_ops_gates_meta_performance_gate_py,src_zephyr_ops_gates_parameterized_safety_gate_py,src_zephyr_ops_gates_safety_gate_l1_l27_py,src_zephyr_ops_gates_scope_creep_monitor_py,src_zephyr_ops_generator_py,src_zephyr_ops_health_init_py,src_zephyr_ops_health_aggregator_py,src_zephyr_ops_health_probes_py,src_zephyr_ops_infrastructure_init_py,src_zephyr_ops_kill_switch_py,src_zephyr_ops_metrics_init_py,src_zephyr_ops_metrics_blueprint_metrics_py,src_zephyr_ops_metrics_collector_py,src_zephyr_ops_models_init_py,src_zephyr_ops_monitoring_stack_init_py,src_zephyr_ops_observability_init_py,src_zephyr_ops_observability_cli_summary_py,src_zephyr_ops_observability_cost_tracker_py,src_zephyr_ops_observability_failure_matcher_py,src_zephyr_ops_observability_health_py,src_zephyr_ops_observability_health_discovery_py design
+    class D_GOVERNANCE,D_INFRA_RUNTIME,D_SHARED external_prod
 ```
 
-### 第 21 页 / 共 24 页 / Page 21 of 24
+### 第 20 页 / 共 23 页 / Page 20 of 23
 
 ```mermaid
 graph TD
     subgraph D_OPS["D-OPS 反馈循环"]
+        src_zephyr_ops_observability_logging_py["src/zephyr/ops/observability/logging.py prototype"]
+        src_zephyr_ops_observability_metrics_py["src/zephyr/ops/observability/metrics.py prototype"]
+        src_zephyr_ops_observability_session_audit_py["src/zephyr/ops/observability/session_audit.py prototype"]
+        src_zephyr_ops_observability_tracing_py["src/zephyr/ops/observability/tracing.py prototype"]
+        src_zephyr_ops_profiles_init_py["src/zephyr/ops/profiles/__init__.py prototype"]
+        src_zephyr_ops_protocols_py["src/zephyr/ops/protocols.py prototype"]
+        src_zephyr_ops_resilience_init_py["src/zephyr/ops/resilience/__init__.py prototype"]
+        src_zephyr_ops_resilience_config_hot_reload_guard_py["src/zephyr/ops/resilience/config_hot_reload_gua... prototype"]
+        src_zephyr_ops_resilience_deadman_switch_py["src/zephyr/ops/resilience/deadman_switch.py prototype"]
+        src_zephyr_ops_resilience_dr_automation_py["src/zephyr/ops/resilience/dr_automation.py prototype"]
+        src_zephyr_ops_resilience_graceful_degradation_planner_py["src/zephyr/ops/resilience/graceful_degradation_... prototype"]
+        src_zephyr_ops_resilience_multi_instance_coord_py["src/zephyr/ops/resilience/multi_instance_coord.py prototype"]
         src_zephyr_ops_resilience_oscillation_damping_py["src/zephyr/ops/resilience/oscillation_damping.py prototype"]
         src_zephyr_ops_resilience_resource_starvation_aware_py["src/zephyr/ops/resilience/resource_starvation_a... prototype"]
         src_zephyr_ops_resilience_self_api_throttle_defense_py["src/zephyr/ops/resilience/self_api_throttle_def... prototype"]
@@ -2307,6 +2238,61 @@ graph TD
         src_zephyr_ops_security_secret_rotation_py["src/zephyr/ops/security/secret_rotation.py prototype"]
         src_zephyr_ops_security_wireheading_prevention_py["src/zephyr/ops/security/wireheading_prevention.py prototype"]
         src_zephyr_ops_services_init_py["src/zephyr/ops/services/__init__.py scaffold_placeholder"]
+    end
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_deadman_switch_py
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_dr_automation_py
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_config_hot_reload_guard_py
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_multi_instance_coord_py
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_oscillation_damping_py
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_graceful_degradation_planner_py
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_resource_starvation_aware_py
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_self_api_throttle_defense_py
+    src_zephyr_ops_resilience_init_py -.->|import_depends| src_zephyr_ops_resilience_split_brain_quorum_py
+    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_agent_skill_guard_py
+    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_dep_cve_correlator_py
+    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_metric_prompt_scanner_py
+    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_remote_attestation_py
+    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_secret_rotation_py
+    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_wireheading_prevention_py
+    src_zephyr_ops_observability_tracing_py -.->|import_depends| src_zephyr_ops_observability_logging_py
+    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    src_zephyr_ops_scheduler_py -.->|import_depends| D_GOV_DRIFT
+    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    src_zephyr_ops_scheduler_py -.->|import_depends| D_BEHAVIORAL_AUDIT
+    D_SECURITY["D-SECURITY prototype"]
+    src_zephyr_ops_scheduler_py -.->|import_depends| D_SECURITY
+    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    src_zephyr_ops_scheduler_py -.->|import_depends| D_INFRA_RUNTIME
+    D_INTEGRATION["D-INTEGRATION production"]
+    src_zephyr_ops_scheduler_py -.->|import_depends| D_INTEGRATION
+    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    src_zephyr_ops_scheduler_py -.->|import_depends| D_AUTONOMY_CORE
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    src_zephyr_ops_scheduler_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ops_scheduler_act_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ops_scheduler_act_py -.->|import_depends| D_INTEGRATION
+    src_zephyr_ops_profiles_init_py -.->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_ops_schema_init_py -.->|import_depends| D_INFRA_RUNTIME
+    D_SHARED["D-SHARED prototype"]
+    src_zephyr_ops_observability_session_audit_py -.->|import_depends| D_SHARED
+    D_SHARED -.->|import_depends| src_zephyr_ops_observability_metrics_py
+    D_SHARED -.->|import_depends| src_zephyr_ops_observability_logging_py
+    D_SHARED -.->|import_depends| src_zephyr_ops_observability_logging_py
+    D_SHARED -.->|import_depends| src_zephyr_ops_observability_tracing_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_ops_observability_logging_py,src_zephyr_ops_observability_metrics_py,src_zephyr_ops_observability_session_audit_py,src_zephyr_ops_observability_tracing_py,src_zephyr_ops_profiles_init_py,src_zephyr_ops_protocols_py,src_zephyr_ops_resilience_init_py,src_zephyr_ops_resilience_config_hot_reload_guard_py,src_zephyr_ops_resilience_deadman_switch_py,src_zephyr_ops_resilience_dr_automation_py,src_zephyr_ops_resilience_graceful_degradation_planner_py,src_zephyr_ops_resilience_multi_instance_coord_py,src_zephyr_ops_resilience_oscillation_damping_py,src_zephyr_ops_resilience_resource_starvation_aware_py,src_zephyr_ops_resilience_self_api_throttle_defense_py,src_zephyr_ops_resilience_split_brain_quorum_py,src_zephyr_ops_scheduler_py,src_zephyr_ops_scheduler_act_py,src_zephyr_ops_scheduler_collect_detect_py,src_zephyr_ops_scheduler_health_py,src_zephyr_ops_scheduler_safety_py,src_zephyr_ops_schema_init_py,src_zephyr_ops_security_init_py,src_zephyr_ops_security_agent_skill_guard_py,src_zephyr_ops_security_dep_cve_correlator_py,src_zephyr_ops_security_metric_prompt_scanner_py,src_zephyr_ops_security_remote_attestation_py,src_zephyr_ops_security_secret_rotation_py,src_zephyr_ops_security_wireheading_prevention_py,src_zephyr_ops_services_init_py design
+    class D_GOV_DRIFT,D_BEHAVIORAL_AUDIT,D_INFRA_RUNTIME,D_INTEGRATION,D_AUTONOMY_CORE,D_GOVERNANCE external_prod
+    class D_SECURITY,D_SHARED external_design
+```
+
+### 第 21 页 / 共 23 页 / Page 21 of 23
+
+```mermaid
+graph TD
+    subgraph D_OPS["D-OPS 反馈循环"]
         src_zephyr_ops_slo_manager_py["src/zephyr/ops/slo_manager.py prototype"]
         src_zephyr_ops_span_stub_py["src/zephyr/ops/span_stub.py prototype"]
         src_zephyr_ops_subdir_init_py["src/zephyr/ops/subdir/__init__.py prototype"]
@@ -2319,51 +2305,6 @@ graph TD
         src_zephyr_ops_traces_span_stub_py["src/zephyr/ops/traces/span_stub.py prototype"]
         src_zephyr_ops_trading_kill_switch_py["src/zephyr/ops/trading_kill_switch.py prototype"]
         src_zephyr_ops_validator_py["src/zephyr/ops/validator.py prototype"]
-    end
-    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_agent_skill_guard_py
-    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_dep_cve_correlator_py
-    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_metric_prompt_scanner_py
-    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_remote_attestation_py
-    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_secret_rotation_py
-    src_zephyr_ops_security_init_py -.->|import_depends| src_zephyr_ops_security_wireheading_prevention_py
-    src_zephyr_ops_subdir_init_py -.->|config_depends| src_zephyr_ops_subdir_test_file_py
-    src_zephyr_ops_tests_e2e_init_py -.->|import_depends| src_zephyr_ops_tests_e2e_integration_test_pipeline_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
-    src_zephyr_ops_telemetry_py -.->|import_depends| D_INFRA_RUNTIME
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_ops_trading_kill_switch_py -.->|config_depends| D_GOVERNANCE
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
-    src_zephyr_ops_scheduler_py -.->|import_depends| D_GOV_DRIFT
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
-    src_zephyr_ops_scheduler_py -.->|import_depends| D_BEHAVIORAL_AUDIT
-    D_SECURITY["D-SECURITY prototype"]
-    src_zephyr_ops_scheduler_py -.->|import_depends| D_SECURITY
-    src_zephyr_ops_scheduler_py -.->|import_depends| D_INFRA_RUNTIME
-    D_INTEGRATION["D-INTEGRATION production"]
-    src_zephyr_ops_scheduler_py -.->|import_depends| D_INTEGRATION
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
-    src_zephyr_ops_scheduler_py -.->|import_depends| D_AUTONOMY_CORE
-    src_zephyr_ops_scheduler_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ops_scheduler_act_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ops_scheduler_act_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_ops_span_stub_py -.->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_ops_schema_init_py -.->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_ops_traces_span_stub_py -.->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_ops_traces_init_py -.->|import_depends| D_INFRA_RUNTIME
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_ops_resilience_oscillation_damping_py,src_zephyr_ops_resilience_resource_starvation_aware_py,src_zephyr_ops_resilience_self_api_throttle_defense_py,src_zephyr_ops_resilience_split_brain_quorum_py,src_zephyr_ops_scheduler_py,src_zephyr_ops_scheduler_act_py,src_zephyr_ops_scheduler_collect_detect_py,src_zephyr_ops_scheduler_health_py,src_zephyr_ops_scheduler_safety_py,src_zephyr_ops_schema_init_py,src_zephyr_ops_security_init_py,src_zephyr_ops_security_agent_skill_guard_py,src_zephyr_ops_security_dep_cve_correlator_py,src_zephyr_ops_security_metric_prompt_scanner_py,src_zephyr_ops_security_remote_attestation_py,src_zephyr_ops_security_secret_rotation_py,src_zephyr_ops_security_wireheading_prevention_py,src_zephyr_ops_services_init_py,src_zephyr_ops_slo_manager_py,src_zephyr_ops_span_stub_py,src_zephyr_ops_subdir_init_py,src_zephyr_ops_subdir_test_file_py,src_zephyr_ops_telemetry_py,src_zephyr_ops_template_py,src_zephyr_ops_tests_e2e_init_py,src_zephyr_ops_tests_e2e_integration_test_pipeline_py,src_zephyr_ops_traces_init_py,src_zephyr_ops_traces_span_stub_py,src_zephyr_ops_trading_kill_switch_py,src_zephyr_ops_validator_py design
-    class D_INFRA_RUNTIME,D_GOVERNANCE,D_GOV_DRIFT,D_BEHAVIORAL_AUDIT,D_INTEGRATION,D_AUTONOMY_CORE external_prod
-    class D_SECURITY external_design
-```
-
-### 第 22 页 / 共 24 页 / Page 22 of 24
-
-```mermaid
-graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
         src_zephyr_ops_verifiers_init_py["src/zephyr/ops/verifiers/__init__.py prototype"]
         src_zephyr_ops_verifiers_ab_test_py["src/zephyr/ops/verifiers/ab_test.py prototype"]
         src_zephyr_ops_verifiers_action_explainability_py["src/zephyr/ops/verifiers/action_explainability.py prototype"]
@@ -2382,19 +2323,9 @@ graph TD
         src_zephyr_ops_verifiers_golden_test_external_py["src/zephyr/ops/verifiers/golden_test_external.py prototype"]
         src_zephyr_ops_verifiers_no_llm_degradation_py["src/zephyr/ops/verifiers/no_llm_degradation.py prototype"]
         src_zephyr_ops_verifiers_pre_flight_simulator_py["src/zephyr/ops/verifiers/pre_flight_simulator.py prototype"]
-        src_zephyr_ops_verifiers_preventive_repair_py["src/zephyr/ops/verifiers/preventive_repair.py prototype"]
-        src_zephyr_ops_verifiers_rollback_integrity_py["src/zephyr/ops/verifiers/rollback_integrity.py prototype"]
-        src_zephyr_ops_verifiers_sim2real_calibration_py["src/zephyr/ops/verifiers/sim2real_calibration.py prototype"]
-        src_zephyr_ops_verifiers_stochastic_diagnosis_verifier_py["src/zephyr/ops/verifiers/stochastic_diagnosis_v... prototype"]
-        src_zephyr_ops_verifiers_toctou_revalidation_py["src/zephyr/ops/verifiers/toctou_revalidation.py prototype"]
-        src_zephyr_ops_verifiers_verification_engine_py["src/zephyr/ops/verifiers/verification_engine.py prototype"]
-        src_zephyr_ops_watchdog_py["src/zephyr/ops/watchdog.py prototype"]
-        tests_adversarial_test_telemetry_red_team_py["tests/adversarial/test_telemetry_red_team.py prototype"]
-        tests_integration_test_auto_telemetry_bootstrap_py["tests/integration/test_auto_telemetry_bootstrap.py prototype"]
-        tests_llm_security_test_l6_observability_py["tests/llm_security/test_l6_observability.py prototype"]
-        tests_test_agent_observability_py["tests/test_agent_observability.py prototype"]
-        tests_test_audit_observability_dashboard_py["tests/test_audit_observability_dashboard.py prototype"]
     end
+    src_zephyr_ops_subdir_init_py -.->|config_depends| src_zephyr_ops_subdir_test_file_py
+    src_zephyr_ops_tests_e2e_init_py -.->|import_depends| src_zephyr_ops_tests_e2e_integration_test_pipeline_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_ab_test_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_auto_rollback_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_action_explainability_py
@@ -2409,43 +2340,42 @@ graph TD
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_cross_session_knowledge_integrity_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_federated_protocol_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_cross_module_integration_py
-    src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_preventive_repair_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_no_llm_degradation_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_golden_test_external_py
-    src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_rollback_integrity_py
-    src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_sim2real_calibration_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_pre_flight_simulator_py
-    src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_verification_engine_py
-    src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_toctou_revalidation_py
-    src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_stochastic_diagnosis_verifier_py
     D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
-    src_zephyr_ops_watchdog_py -.->|import_depends| D_INFRA_RUNTIME
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
-    tests_test_agent_observability_py -.->|test_depends| D_AUTONOMY_CORE
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
-    tests_test_audit_observability_dashboard_py -.->|test_depends| D_GOV_AUDIT
-    tests_adversarial_test_telemetry_red_team_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_integration_test_auto_telemetry_bootstrap_py -.->|test_depends| D_INFRA_RUNTIME
-    D_SHARED["D-SHARED production"]
-    tests_integration_test_auto_telemetry_bootstrap_py -.->|test_depends| D_SHARED
+    src_zephyr_ops_telemetry_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D-GOVERNANCE production"]
-    tests_integration_test_auto_telemetry_bootstrap_py -.->|test_depends| D_GOVERNANCE
-    D_SECURITY["D-SECURITY production"]
-    tests_llm_security_test_l6_observability_py -.->|test_depends| D_SECURITY
-    tests_llm_security_test_l6_observability_py -.->|test_depends| D_INFRA_RUNTIME
+    src_zephyr_ops_trading_kill_switch_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_ops_span_stub_py -.->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_ops_traces_span_stub_py -.->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_ops_traces_init_py -.->|import_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_ops_verifiers_init_py,src_zephyr_ops_verifiers_ab_test_py,src_zephyr_ops_verifiers_action_explainability_py,src_zephyr_ops_verifiers_ai_comment_veracity_py,src_zephyr_ops_verifiers_attack_simulator_py,src_zephyr_ops_verifiers_auto_rollback_py,src_zephyr_ops_verifiers_build_reproducibility_verifier_py,src_zephyr_ops_verifiers_canary_repair_py,src_zephyr_ops_verifiers_cascading_rollback_analyzer_py,src_zephyr_ops_verifiers_cross_blueprint_contract_drift_py,src_zephyr_ops_verifiers_cross_module_integration_py,src_zephyr_ops_verifiers_cross_session_knowledge_integrity_py,src_zephyr_ops_verifiers_digital_twin_sandbox_py,src_zephyr_ops_verifiers_dry_run_sandbox_py,src_zephyr_ops_verifiers_federated_protocol_py,src_zephyr_ops_verifiers_golden_test_external_py,src_zephyr_ops_verifiers_no_llm_degradation_py,src_zephyr_ops_verifiers_pre_flight_simulator_py,src_zephyr_ops_verifiers_preventive_repair_py,src_zephyr_ops_verifiers_rollback_integrity_py,src_zephyr_ops_verifiers_sim2real_calibration_py,src_zephyr_ops_verifiers_stochastic_diagnosis_verifier_py,src_zephyr_ops_verifiers_toctou_revalidation_py,src_zephyr_ops_verifiers_verification_engine_py,src_zephyr_ops_watchdog_py,tests_adversarial_test_telemetry_red_team_py,tests_integration_test_auto_telemetry_bootstrap_py,tests_llm_security_test_l6_observability_py,tests_test_agent_observability_py,tests_test_audit_observability_dashboard_py design
-    class D_INFRA_RUNTIME,D_AUTONOMY_CORE,D_GOV_AUDIT,D_SHARED,D_GOVERNANCE,D_SECURITY external_prod
+    class src_zephyr_ops_slo_manager_py,src_zephyr_ops_span_stub_py,src_zephyr_ops_subdir_init_py,src_zephyr_ops_subdir_test_file_py,src_zephyr_ops_telemetry_py,src_zephyr_ops_template_py,src_zephyr_ops_tests_e2e_init_py,src_zephyr_ops_tests_e2e_integration_test_pipeline_py,src_zephyr_ops_traces_init_py,src_zephyr_ops_traces_span_stub_py,src_zephyr_ops_trading_kill_switch_py,src_zephyr_ops_validator_py,src_zephyr_ops_verifiers_init_py,src_zephyr_ops_verifiers_ab_test_py,src_zephyr_ops_verifiers_action_explainability_py,src_zephyr_ops_verifiers_ai_comment_veracity_py,src_zephyr_ops_verifiers_attack_simulator_py,src_zephyr_ops_verifiers_auto_rollback_py,src_zephyr_ops_verifiers_build_reproducibility_verifier_py,src_zephyr_ops_verifiers_canary_repair_py,src_zephyr_ops_verifiers_cascading_rollback_analyzer_py,src_zephyr_ops_verifiers_cross_blueprint_contract_drift_py,src_zephyr_ops_verifiers_cross_module_integration_py,src_zephyr_ops_verifiers_cross_session_knowledge_integrity_py,src_zephyr_ops_verifiers_digital_twin_sandbox_py,src_zephyr_ops_verifiers_dry_run_sandbox_py,src_zephyr_ops_verifiers_federated_protocol_py,src_zephyr_ops_verifiers_golden_test_external_py,src_zephyr_ops_verifiers_no_llm_degradation_py,src_zephyr_ops_verifiers_pre_flight_simulator_py design
+    class D_INFRA_RUNTIME,D_GOVERNANCE external_prod
 ```
 
-### 第 23 页 / 共 24 页 / Page 23 of 24
+### 第 22 页 / 共 23 页 / Page 22 of 23
 
 ```mermaid
 graph TD
     subgraph D_OPS["D-OPS 反馈循环"]
+        src_zephyr_ops_verifiers_preventive_repair_py["src/zephyr/ops/verifiers/preventive_repair.py prototype"]
+        src_zephyr_ops_verifiers_rollback_integrity_py["src/zephyr/ops/verifiers/rollback_integrity.py prototype"]
+        src_zephyr_ops_verifiers_sim2real_calibration_py["src/zephyr/ops/verifiers/sim2real_calibration.py prototype"]
+        src_zephyr_ops_verifiers_stochastic_diagnosis_verifier_py["src/zephyr/ops/verifiers/stochastic_diagnosis_v... prototype"]
+        src_zephyr_ops_verifiers_toctou_revalidation_py["src/zephyr/ops/verifiers/toctou_revalidation.py prototype"]
+        src_zephyr_ops_verifiers_verification_engine_py["src/zephyr/ops/verifiers/verification_engine.py prototype"]
+        src_zephyr_ops_watchdog_py["src/zephyr/ops/watchdog.py prototype"]
+        src_zephyr_shared_shared_services_observability_02_token_utils_py["src/zephyr/shared/shared_services/observability... prototype"]
+        tests_adversarial_test_telemetry_red_team_py["tests/adversarial/test_telemetry_red_team.py prototype"]
+        tests_integration_test_auto_telemetry_bootstrap_py["tests/integration/test_auto_telemetry_bootstrap.py prototype"]
+        tests_llm_security_test_l6_observability_py["tests/llm_security/test_l6_observability.py prototype"]
+        tests_test_agent_observability_py["tests/test_agent_observability.py prototype"]
+        tests_test_audit_observability_dashboard_py["tests/test_audit_observability_dashboard.py prototype"]
         tests_test_budget_engine_root_py["tests/test_budget_engine_root.py prototype"]
         tests_test_budget_telemetry_bridge_py["tests/test_budget_telemetry_bridge.py prototype"]
         tests_test_cost_budget_root_py["tests/test_cost_budget_root.py prototype"]
@@ -2463,25 +2393,17 @@ graph TD
         tests_test_skill_observability_py["tests/test_skill_observability.py prototype"]
         tests_test_skill_telemetry_py["tests/test_skill_telemetry.py prototype"]
         tests_test_telemetry_py["tests/test_telemetry.py prototype"]
-        tests_test_token_budget_root_py["tests/test_token_budget_root.py prototype"]
-        tests_unit_budget_enforcer_test_budget_engine_budget_enforcer_py["tests/unit/budget_enforcer/test_budget_engine_b... prototype"]
-        tests_unit_shared_test_cost_budget_shared_py["tests/unit/shared/test_cost_budget_shared.py prototype"]
-        tests_unit_telemetry_init_py["tests/unit/telemetry/__init__.py prototype"]
-        tests_unit_telemetry_test_contract_metrics_telemetry_py["tests/unit/telemetry/test_contract_metrics_tele... prototype"]
-        tests_unit_telemetry_test_telemetry_py["tests/unit/telemetry/test_telemetry.py prototype"]
-        tests_unit_test_cost_budget_unit_py["tests/unit/test_cost_budget_unit.py prototype"]
-        tests_unit_test_telemetry_facade_py["tests/unit/test_telemetry_facade.py prototype"]
-        tests_unit_test_telemetry_unit_py["tests/unit/test_telemetry_unit.py prototype"]
-        tests_unit_test_token_budget_unit_py["tests/unit/test_token_budget_unit.py prototype"]
-        node["Health Monitor design"]
-        system_telemetry["Telemetry Engine design"]
-        node_1["Incident Response design"]
     end
+    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    src_zephyr_ops_watchdog_py -.->|import_depends| D_INFRA_RUNTIME
+    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    tests_test_agent_observability_py -.->|test_depends| D_AUTONOMY_CORE
+    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    tests_test_audit_observability_dashboard_py -.->|test_depends| D_GOV_AUDIT
     D_GOVERNANCE["D-GOVERNANCE production"]
     tests_test_budget_engine_root_py -.->|test_depends| D_GOVERNANCE
     tests_test_cost_budget_root_py -.->|test_depends| D_GOVERNANCE
     tests_test_meta_observability_py -.->|test_depends| D_GOVERNANCE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
     tests_test_observability_health_py -.->|test_depends| D_INFRA_RUNTIME
     D_SHARED["D-SHARED production"]
     tests_test_observability_health_py -.->|test_depends| D_SHARED
@@ -2491,25 +2413,35 @@ graph TD
     D_SECURITY["D-SECURITY production"]
     tests_test_observability_root_py -.->|test_depends| D_SECURITY
     tests_test_observability_metrics_py -.->|test_depends| D_INFRA_RUNTIME
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_test_skill_observability_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_telemetry_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_test_telemetry_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_test_token_budget_root_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_unit_test_cost_budget_unit_py -.->|test_depends| D_GOVERNANCE
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_shared_services_observability_02_token_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_shared_services_observability_02_token_utils_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_test_budget_engine_root_py,tests_test_budget_telemetry_bridge_py,tests_test_cost_budget_root_py,tests_test_fle_metrics_collector_py,tests_test_meta_observability_py,tests_test_metrics_collector_py,tests_test_observability_dashboard_py,tests_test_observability_health_py,tests_test_observability_logging_py,tests_test_observability_metrics_py,tests_test_observability_root_py,tests_test_observability_tracing_py,tests_test_per_task_token_budget_py,tests_test_self_llm_observability_py,tests_test_skill_observability_py,tests_test_skill_telemetry_py,tests_test_telemetry_py,tests_test_token_budget_root_py,tests_unit_budget_enforcer_test_budget_engine_budget_enforcer_py,tests_unit_shared_test_cost_budget_shared_py,tests_unit_telemetry_init_py,tests_unit_telemetry_test_contract_metrics_telemetry_py,tests_unit_telemetry_test_telemetry_py,tests_unit_test_cost_budget_unit_py,tests_unit_test_telemetry_facade_py,tests_unit_test_telemetry_unit_py,tests_unit_test_token_budget_unit_py,node,system_telemetry,node_1 design
-    class D_GOVERNANCE,D_INFRA_RUNTIME,D_SHARED,D_SECURITY,D_AUTONOMY_CORE external_prod
+    class src_zephyr_ops_verifiers_preventive_repair_py,src_zephyr_ops_verifiers_rollback_integrity_py,src_zephyr_ops_verifiers_sim2real_calibration_py,src_zephyr_ops_verifiers_stochastic_diagnosis_verifier_py,src_zephyr_ops_verifiers_toctou_revalidation_py,src_zephyr_ops_verifiers_verification_engine_py,src_zephyr_ops_watchdog_py,src_zephyr_shared_shared_services_observability_02_token_utils_py,tests_adversarial_test_telemetry_red_team_py,tests_integration_test_auto_telemetry_bootstrap_py,tests_llm_security_test_l6_observability_py,tests_test_agent_observability_py,tests_test_audit_observability_dashboard_py,tests_test_budget_engine_root_py,tests_test_budget_telemetry_bridge_py,tests_test_cost_budget_root_py,tests_test_fle_metrics_collector_py,tests_test_meta_observability_py,tests_test_metrics_collector_py,tests_test_observability_dashboard_py,tests_test_observability_health_py,tests_test_observability_logging_py,tests_test_observability_metrics_py,tests_test_observability_root_py,tests_test_observability_tracing_py,tests_test_per_task_token_budget_py,tests_test_self_llm_observability_py,tests_test_skill_observability_py,tests_test_skill_telemetry_py,tests_test_telemetry_py design
+    class D_INFRA_RUNTIME,D_AUTONOMY_CORE,D_GOV_AUDIT,D_GOVERNANCE,D_SHARED,D_SECURITY external_prod
 ```
 
-### 第 24 页 / 共 24 页 / Page 24 of 24
+### 第 23 页 / 共 23 页 / Page 23 of 23
 
 ```mermaid
 graph TD
     subgraph D_OPS["D-OPS 反馈循环"]
+        tests_test_telemetry_py["tests/test_telemetry.py prototype"]
+        tests_test_token_budget_root_py["tests/test_token_budget_root.py prototype"]
+        tests_unit_budget_enforcer_test_budget_engine_budget_enforcer_py["tests/unit/budget_enforcer/test_budget_engine_b... prototype"]
+        tests_unit_shared_test_cost_budget_shared_py["tests/unit/shared/test_cost_budget_shared.py prototype"]
+        tests_unit_telemetry_init_py["tests/unit/telemetry/__init__.py prototype"]
+        tests_unit_telemetry_test_contract_metrics_telemetry_py["tests/unit/telemetry/test_contract_metrics_tele... prototype"]
+        tests_unit_test_cost_budget_unit_py["tests/unit/test_cost_budget_unit.py prototype"]
+        tests_unit_test_telemetry_facade_py["tests/unit/test_telemetry_facade.py prototype"]
+        tests_unit_test_token_budget_unit_py["tests/unit/test_token_budget_unit.py prototype"]
+        node["Health Monitor design"]
+        system_telemetry["Telemetry Engine design"]
+        node_1["Incident Response design"]
         D_OPS_07["Alert Manager design"]
         D_OPS_09["Log Aggregator design"]
         D_OPS_11["Backup Manager design"]
@@ -2520,13 +2452,24 @@ graph TD
     end
     D_GOVERNANCE["D-GOVERNANCE design"]
     D_OPS_07 -.->|contract| D_GOVERNANCE
+    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    tests_test_token_budget_root_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_unit_test_cost_budget_unit_py -.->|test_depends| D_GOVERNANCE
+    tests_unit_test_token_budget_unit_py -.->|test_depends| D_AUTONOMY_CORE
+    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    tests_unit_test_telemetry_facade_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_unit_test_telemetry_facade_py -.->|test_depends| D_GOVERNANCE
+    tests_unit_budget_enforcer_test_budget_engine_budget_enforcer_py -.->|test_depends| D_GOVERNANCE
+    tests_unit_shared_test_cost_budget_shared_py -.->|test_depends| D_GOVERNANCE
+    tests_test_telemetry_py -.->|test_depends| D_INFRA_RUNTIME
     D_FRONTEND["D-FRONTEND design"]
     D_FRONTEND -.->|contract| D_OPS_07
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_OPS_07,D_OPS_09,D_OPS_11,D_OPS_13,D_OPS_15,D_OPS_17,D_OPS_19 design
+    class tests_test_telemetry_py,tests_test_token_budget_root_py,tests_unit_budget_enforcer_test_budget_engine_budget_enforcer_py,tests_unit_shared_test_cost_budget_shared_py,tests_unit_telemetry_init_py,tests_unit_telemetry_test_contract_metrics_telemetry_py,tests_unit_test_cost_budget_unit_py,tests_unit_test_telemetry_facade_py,tests_unit_test_token_budget_unit_py,node,system_telemetry,node_1,D_OPS_07,D_OPS_09,D_OPS_11,D_OPS_13,D_OPS_15,D_OPS_17,D_OPS_19 design
+    class D_AUTONOMY_CORE,D_INFRA_RUNTIME external_prod
     class D_GOVERNANCE,D_FRONTEND external_design
 ```
 
@@ -2537,7 +2480,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 72 | contract,config_depends,import_depends,runtime,test_depends,event,data |
-| D-INFRA_RUNTIME | 58 | import_depends,test_depends,domain_dependency,event,contract,data,config_depends |
+| D-INFRA_RUNTIME | 57 | import_depends,test_depends,domain_dependency,event,contract,data,config_depends |
 | D-RISK | 51 | event,contract,data,config_depends |
 | D-AUTONOMY_CORE | 42 | runtime,import_depends,test_depends,data,contract,event,config_depends |
 | D-SECURITY | 36 | import_depends,test_depends,data,contract,config_depends,event |
@@ -2561,8 +2504,8 @@ graph TD
 | D-ML_TRAIN | 5 | contract,config_depends |
 | D-POSITION | 4 | contract,event,config_depends |
 | D-ALT_DATA | 4 | contract,event |
-| D-GOV_AUDIT | 3 | import_depends,test_depends,domain_dependency |
 | D-BEHAVIORAL_AUDIT | 3 | import_depends,runtime |
+| D-GOV_AUDIT | 2 | test_depends,domain_dependency |
 | D-SELL_DECISION | 1 | config_depends |
 | D-GOV_DRIFT | 1 | import_depends |
 
@@ -2570,7 +2513,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 425 | import_depends,runtime,test_depends,config_depends |
+| D-GOVERNANCE | 391 | import_depends,runtime,test_depends,config_depends |
 | D-COMPLIANCE | 62 | contract,data,config_depends,event |
 | D-INFRA_OPS | 26 | import_depends,data,config_depends,contract,event |
 | D-FRONTEND | 21 | contract,import_depends,data,config_depends,event |

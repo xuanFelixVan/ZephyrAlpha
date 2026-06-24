@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-06-24 21:39:37
+> 自动生成时间: 2026-06-24 23:01:39
 > 数据源: depgraph.db edges表（跨域依赖）
 > 跨域依赖对数: 603
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-06-24 21:39:37
+%% 生成时间: 2026-06-24 23:01:39
 %% 数据源: depgraph.db edges表（跨域依赖）
 %% 跨域依赖对数: 603
 
@@ -77,23 +77,30 @@ graph LR
         D_T9_PREREQ["D-T9-PREREQ<br/>T9前置域<br/>(0模块)"]
         D_TRADING["D-TRADING<br/>交易运营<br/>(249模块)"]
     end
+    subgraph unknown[unknown]
+        D_GOV_ENFORCEMENT["D-GOV-ENFORCEMENT<br/>rule_enforcement<br/>(0模块)"]
+        D_GOV_REPAIR["D-GOV-REPAIR<br/>rollback<br/>(0模块)"]
+        D_GOV_SCRIPTS["D-GOV-SCRIPTS<br/>code_dedup<br/>(0模块)"]
+        D_INTEGRATION_GATEWAY["D-INTEGRATION-GATEWAY<br/>mcp_servers<br/>(0模块)"]
+        D_SECURITY_LLM["D-SECURITY-LLM<br/>llm_defense<br/>(0模块)"]
+    end
 
     %% 跨域依赖（按依赖数排序，最多显示 100 条）
-    D_GOVERNANCE -->|425条 import_depends| D_OPS
-    D_GOVERNANCE -->|326条 import_depends| D_INTEGRATION
+    D_GOVERNANCE -->|391条 import_depends| D_OPS
+    D_GOVERNANCE -->|325条 import_depends| D_INTEGRATION
     D_GOVERNANCE -->|283条 import_depends| D_SECURITY
     D_GOVERNANCE -->|264条 import_depends| D_GOV_RULE
-    D_GOVERNANCE -->|247条 import_depends| D_TRADING
-    D_GOVERNANCE -->|221条 import_depends| D_SHARED
+    D_GOVERNANCE -->|236条 import_depends| D_TRADING
     D_GOVERNANCE -->|213条 import_depends| D_AUTONOMY_CORE
+    D_GOVERNANCE -->|211条 import_depends| D_SHARED
     D_GOVERNANCE -->|194条 import_depends| D_INFRA_RUNTIME
     D_AUTONOMY_PERM -->|171条 import_depends| D_SECURITY
     D_COMPLIANCE -->|166条 contract| D_RISK
     D_GOVERNANCE -->|150条 import_depends| D_GOV_AUDIT
     D_COMPLIANCE -->|131条 import_depends| D_GOVERNANCE
     D_COMPLIANCE -->|130条 contract| D_SECURITY
-    D_GOVERNANCE -->|128条 import_depends| D_RISK
     D_COMPLIANCE -->|126条 contract| D_AUTONOMY_CORE
+    D_GOVERNANCE -->|124条 import_depends| D_RISK
     D_COMPLIANCE -->|118条 contract| D_INTEGRATION
     D_RISK -->|98条 contract| D_SECURITY
     D_COMPLIANCE -->|93条 contract| D_SIGNAL
@@ -108,7 +115,7 @@ graph LR
     D_INTEGRATION -->|69条 contract| D_RISK
     D_INFRA_OPS -->|68条 contract| D_RISK
     D_AUTONOMY_CORE -->|67条 import_depends| D_SECURITY
-    D_INFRA_RUNTIME -->|67条 import_depends| D_SHARED
+    D_INFRA_RUNTIME -->|66条 import_depends| D_SHARED
     D_COMPLIANCE -->|65条 contract| D_FACTOR
     D_RISK -->|63条 contract| D_INFRA_RUNTIME
     D_COMPLIANCE -->|62条 contract| D_INFRA_RUNTIME
@@ -117,7 +124,7 @@ graph LR
     D_INFRA_OPS -->|61条 import_depends| D_GOVERNANCE
     D_COMPLIANCE -->|60条 contract| D_INTELLIGENCE
     D_INTEGRATION -->|60条 import_depends| D_SECURITY
-    D_OPS -->|58条 import_depends| D_INFRA_RUNTIME
+    D_OPS -->|57条 import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE -->|56条 import_depends| D_SIGNAL
     D_TRADING -->|55条 import_depends| D_INTEGRATION
     D_RISK -->|54条 contract| D_FACTOR
@@ -162,7 +169,6 @@ graph LR
     D_INFRA_OPS -->|31条 import_depends| D_INFRA_RUNTIME
     D_INTEGRATION -->|31条 contract| D_INFRA_RUNTIME
     D_COMPLIANCE -->|30条 contract| D_PF_CORE
-    D_GOVERNANCE -->|30条 test_depends| D_PF_CORE
     D_INFRA_OPS -->|30条 contract| D_INTELLIGENCE
     D_RISK -->|30条 import_depends| D_TRADING
     D_COMPLIANCE -->|29条 contract| D_DATA_ENG
@@ -171,7 +177,8 @@ graph LR
     D_OPS -->|29条 import_depends| D_INTEGRATION
     D_TRADING -->|29条 import_depends| D_GOVERNANCE
     D_FRONTEND -->|28条 contract| D_SIGNAL
-    D_GOVERNANCE -->|28条 import_depends| D_SIMULATION
+    D_GOVERNANCE -->|27条 test_depends| D_PF_CORE
+    D_GOVERNANCE -->|27条 import_depends| D_SIMULATION
     D_INFRA_OPS -->|27条 contract| D_FACTOR
     D_PF_CORE -->|27条 contract| D_RISK
     D_SIGNAL -->|27条 contract| D_INFRA_RUNTIME
@@ -182,18 +189,18 @@ graph LR
     %% ... 还有 503 条跨域依赖未显示
 
     %% 统计
-    %% 域总数: 53
+    %% 域总数: 58
     %% 跨域依赖对数: 603
-    %% 跨域依赖边总数: 10915
+    %% 跨域依赖边总数: 10843
 
     %% Top 10 依赖对
-    %% 1. D-GOVERNANCE -> D-OPS: 425 条
-    %% 2. D-GOVERNANCE -> D-INTEGRATION: 326 条
+    %% 1. D-GOVERNANCE -> D-OPS: 391 条
+    %% 2. D-GOVERNANCE -> D-INTEGRATION: 325 条
     %% 3. D-GOVERNANCE -> D-SECURITY: 283 条
     %% 4. D-GOVERNANCE -> D-GOV_RULE: 264 条
-    %% 5. D-GOVERNANCE -> D-TRADING: 247 条
-    %% 6. D-GOVERNANCE -> D-SHARED: 221 条
-    %% 7. D-GOVERNANCE -> D-AUTONOMY_CORE: 213 条
+    %% 5. D-GOVERNANCE -> D-TRADING: 236 条
+    %% 6. D-GOVERNANCE -> D-AUTONOMY_CORE: 213 条
+    %% 7. D-GOVERNANCE -> D-SHARED: 211 条
     %% 8. D-GOVERNANCE -> D-INFRA_RUNTIME: 194 条
     %% 9. D-AUTONOMY_PERM -> D-SECURITY: 171 条
     %% 10. D-COMPLIANCE -> D-RISK: 166 条
