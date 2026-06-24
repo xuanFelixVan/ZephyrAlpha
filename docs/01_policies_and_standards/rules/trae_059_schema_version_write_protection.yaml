@@ -1,0 +1,78 @@
+rule_id: TRAE-059
+title: _schema_version 写入保护规范
+version: 1.0.0
+layer: L0
+module_id: TRAE-059
+depends_on:
+- TRAE-054
+tags:
+- TRAE
+- schema_version_protection
+- L0
+- depgraph
+- migration_framework
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-SCHEMA-VERSION-PROTECTION
+- schema_version只读保护
+- 迁移框架写入独占
+severity: critical
+scope: schema_version_write_protection
+domain: TRAE
+triggers:
+- operation: schema_version_write
+- operation: schema_version_read
+- operation: depgraph_migration
+sections:
+  schema_version_write_protection:
+    section_type: procedure
+    title: _schema_version 写入保护规范
+    original_rules:
+    - RULE-SCHEMA-VERSION-PROTECTION
+    conditions:
+    - type: constraint
+      check: _schema_version 表记录 depgraph.db 的 schema 迁移版本历史，是重建能力的核心元数据
+      pass: 仅通过 depgraph_schema.py 的 _run_migration 函数写入
+      fail: 其他脚本通过 INSERT/UPDATE/REPLACE 覆写 → 版本记录丢失 → 重建能力断裂
+    - type: constraint
+      check: depgraph_schema.py 的 init_db 函数是 _schema_version 的唯一合法写入入口
+      pass: init_db → _get_current_version → _run_migration → INSERT OR IGNORE INTO _schema_version
+      fail: generate_project_path_tree.py / dm106_p2b_verification.py 等脚本直接 INSERT OR REPLACE → 覆写历史版本记录
+    - type: constraint
+      check: _run_migration 使用 INSERT OR IGNORE（幂等），不允许 INSERT OR REPLACE（覆写）
+      pass: 已存在的版本记录被跳过，不会覆写
+      fail: INSERT OR REPLACE 覆写已有版本记录的 description 字段 → 历史信息丢失
+    actions:
+    - type: mandatory
+      step: '_schema_version 写入唯一入口：depgraph_schema.py → init_db() → _run_migration() → INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)'
+    - type: mandatory
+      step: '禁止行为：任何非 depgraph_schema.py 的脚本执行 INSERT/UPDATE/REPLACE INTO _schema_version。已修复的违规脚本：generate_project_path_tree.py（DM-202947 止血）、dm106_p2b_verification.py（DM-202947 止血）'
+    - type: mandatory
+      step: '版本一致性校验：G_TRAE_059 gate 通过 AST 扫描检测代码中是否存在非 depgraph_schema.py 对 _schema_version 的写入操作。扫描范围：src/zephyr/、scripts/、tests/'
+    - type: mandatory
+      step: 'DB 状态校验：G_TRAE_059 gate 校验 _schema_version 表中 MAX(version) 等于 _MIGRATIONS 列表的最大版本号。不一致则报错（可能是手动 INSERT 或迁移未完成）'
+    - type: advisory
+      step: '新增迁移版本时：在 depgraph_schema.py 的 _MIGRATIONS 列表追加 (version, description, statements) 元组 → init_db 自动执行 → _run_migration 写入 _schema_version。禁止手动 SQL INSERT'
+    prohibitions:
+    - 非 depgraph_schema.py 的脚本执行 INSERT INTO _schema_version
+    - 非 depgraph_schema.py 的脚本执行 UPDATE _schema_version
+    - 非 depgraph_schema.py 的脚本执行 REPLACE INTO _schema_version
+    - 使用 INSERT OR REPLACE 覆写已有版本记录
+    - 手动通过 sqlite3 命令行或 DB 工具修改 _schema_version 表
+    - 删除 _schema_version 表中的历史版本记录
+    exceptions:
+    - depgraph_schema.py 的 _run_migration 函数（唯一合法写入入口）
+    - init_db 的 bootstrap 逻辑（legacy DB 迁移，使用 INSERT OR IGNORE）
+    enforcement:
+      gate_id: G_TRAE_059
+      gate_type: ast_scan + db_state_check
+      scan_targets:
+      - src/zephyr/
+      - scripts/
+      - tests/
+      scan_pattern: '_schema_version.*INSERT|INSERT.*_schema_version|UPDATE.*_schema_version|REPLACE.*_schema_version'
+      whitelist:
+      - src/zephyr/governance/depgraph_schema.py
+      db_check: "SELECT MAX(version) FROM _schema_version == max(v for v,_,_ in _MIGRATIONS)"
