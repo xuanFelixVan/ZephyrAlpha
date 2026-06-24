@@ -18,8 +18,13 @@ from pathlib import Path
 
 SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 
-REQUIRED_FIELDS = ["BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD", "STABILITY", "SAFETY", "AI_AUTONOMY"]
-OPTIONAL_FIELDS = ["CONSUMERS", "ERROR_CONTRACT", "TESTS"]
+REQUIRED_FIELDS = [
+    "BLUEPRINT", "MODULE", "DOMAIN", "DEPENDENCIES",
+    "CONSUMERS", "STARTUP", "MATURITY",
+    "INVARIANTS", "MODIFY-GUARD",
+    "STABILITY", "SAFETY", "AI_AUTONOMY",
+]
+OPTIONAL_FIELDS = ["ERROR_CONTRACT", "TESTS"]
 ALL_FIELDS = REQUIRED_FIELDS + OPTIONAL_FIELDS
 
 HEADER_PATTERN = re.compile(r"^#\s*\[(\w[\w-]*)\]")
@@ -70,7 +75,7 @@ def main():
         scan_file(fp)
 
     print("=" * 70)
-    print("HEADER TEN-FIELD COMPLETENESS VERIFICATION")
+    print("HEADER FOURTEEN-FIELD COMPLETENESS VERIFICATION")
     print("=" * 70)
     print(f"Files scanned:           {files_scanned}")
     print(f"Files complete (all req): {files_complete}")

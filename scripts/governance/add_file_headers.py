@@ -308,20 +308,24 @@ def generate_py_header(result: ScanResult) -> str:
         return (
             f"# [BLUEPRINT] {result.blueprint_id} | {result.blueprint_path} | §\n"
             f"# [MODULE] {module_path}\n"
-            f"# [CHANGE_POLICY] evolving\n"
+            f"# [STABILITY] evolving\n"
             f"# [SAFETY] L\n"
-            f"# [MODIFICATION_PERMISSION] ai_modifiable\n"
+            f"# [AI_AUTONOMY] ai_modifiable\n"
             f"# [TESTS] —\n"
         )
     return (
         f"# [BLUEPRINT] {result.blueprint_id} | {result.blueprint_path} | §\n"
         f"# [MODULE] {module_path}\n"
+        f"# [DOMAIN] \n"
+        f"# [DEPENDENCIES] \n"
+        f"# [CONSUMERS] \n"
+        f"# [STARTUP] imported\n"
+        f"# [MATURITY] production\n"
         f"# [INVARIANTS] \n"
         f"# [MODIFY-GUARD] \n"
-        f"# [CONSUMERS] \n"
-        f"# [CHANGE_POLICY] evolving\n"
+        f"# [STABILITY] evolving\n"
         f"# [SAFETY] M\n"
-        f"# [MODIFICATION_PERMISSION] ai_modifiable\n"
+        f"# [AI_AUTONOMY] ai_modifiable\n"
         f"# [ERROR_CONTRACT] \n"
         f"# [TESTS] \n"
     )
@@ -342,9 +346,9 @@ def generate_yaml_header(result: ScanResult) -> str:
 def generate_shell_header(result: ScanResult) -> str:
     return (
         f"# [BLUEPRINT] {result.blueprint_id} | {result.blueprint_path} | §\n"
-        f"# [CHANGE_POLICY] evolving\n"
+        f"# [STABILITY] evolving\n"
         f"# [SAFETY] L\n"
-        f"# [MODIFICATION_PERMISSION] ai_modifiable\n"
+        f"# [AI_AUTONOMY] ai_modifiable\n"
     )
 
 

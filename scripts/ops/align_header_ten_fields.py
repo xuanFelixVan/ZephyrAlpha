@@ -23,6 +23,11 @@ SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
 REQUIRED_FIELDS = {
     "BLUEPRINT": None,
     "MODULE": None,
+    "DOMAIN": "D-GOVERNANCE",
+    "DEPENDENCIES": None,
+    "CONSUMERS": None,
+    "STARTUP": "imported",
+    "MATURITY": "production",
     "INVARIANTS": "none",
     "MODIFY-GUARD": "none",
     "STABILITY": "evolving",
@@ -31,7 +36,6 @@ REQUIRED_FIELDS = {
 }
 
 OPTIONAL_FIELDS = {
-    "CONSUMERS": None,
     "ERROR_CONTRACT": None,
     "TESTS": None,
 }
@@ -39,9 +43,13 @@ OPTIONAL_FIELDS = {
 ALL_FIELDS_ORDER = [
     "BLUEPRINT",
     "MODULE",
+    "DOMAIN",
+    "DEPENDENCIES",
+    "CONSUMERS",
+    "STARTUP",
+    "MATURITY",
     "INVARIANTS",
     "MODIFY-GUARD",
-    "CONSUMERS",
     "STABILITY",
     "SAFETY",
     "AI_AUTONOMY",
@@ -49,7 +57,7 @@ ALL_FIELDS_ORDER = [
     "TESTS",
 ]
 
-HEADER_PATTERN = re.compile(r"^#\s*\[(\w+)\]\s*(.*)")
+HEADER_PATTERN = re.compile(r"^#\s*\[([\w-]+)\]\s*(.*)")
 
 missing_stats = defaultdict(int)
 fixed_stats = defaultdict(int)
@@ -59,8 +67,8 @@ files_complete = 0
 files_skipped_init = 0
 
 
-def scan_file(filepath: Path):
-    global files_scanned
+def scan_file(filepath: Path, dry_run: bool = False):
+    global files_scanned, files_complete, files_fixed
     files_scanned += 1
 
     rel = filepath.relative_to(SRC_ROOT.parent.parent)
@@ -113,6 +121,13 @@ def scan_file(filepath: Path):
     if not insert_lines:
         return
 
+    if dry_run:
+        files_fixed += 1
+        for f in missing_required:
+            fixed_stats[f] += 1
+        print(f"  WOULD FIX: {filepath.relative_to(SRC_ROOT)} — add: {', '.join(missing_required)}")
+        return
+
     new_lines = list(lines)
 
     if header_lines:
@@ -141,7 +156,6 @@ def scan_file(filepath: Path):
         print(f"  ERROR: Permission denied writing {filepath}", file=sys.stderr)
         return
 
-    global files_fixed
     files_fixed += 1
     for f in missing_required:
         fixed_stats[f] += 1
@@ -159,10 +173,10 @@ def main():
             global files_skipped_init
             files_skipped_init += 1
             continue
-        scan_file(fp)
+        scan_file(fp, dry_run=dry_run)
 
     print("\n" + "=" * 70)
-    print("HEADER TEN-FIELD COMPLETENESS REPORT")
+    print("HEADER FOURTEEN-FIELD COMPLETENESS REPORT")
     print("=" * 70)
     print(f"Files scanned:    {files_scanned}")
     print(f"Files skipped (__init__.py): {files_skipped_init}")
@@ -178,6 +192,9 @@ def main():
     print()
     if files_fixed > 0:
         print("Defaults applied for missing required fields:")
+        print("  [DOMAIN]        D-GOVERNANCE")
+        print("  [STARTUP]       imported")
+        print("  [MATURITY]      production")
         print("  [STABILITY]     evolving")
         print("  [SAFETY]        L")
         print("  [AI_AUTONOMY]   ai_modifiable")
