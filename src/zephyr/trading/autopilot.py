@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.shared.shared_services.models import TaskCard
 
 logger = logging.getLogger(__name__)
@@ -42,10 +43,10 @@ class AutoPilot:
     def __init__(self, session_id: str, db_path: str | Path | None = None) -> None:
         self.session_id = session_id
         self._db_path = db_path
-        self._repo = None
+        self._repo: TaskRepositoryProtocol | None = None
 
     @property
-    def repo(self):
+    def repo(self) -> TaskRepositoryProtocol:
         if self._repo is None:
             from zephyr.governance.persistence.task_repo import TaskRepository
 

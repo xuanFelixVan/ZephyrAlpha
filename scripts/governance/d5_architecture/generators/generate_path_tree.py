@@ -495,7 +495,50 @@ FILE_DESC_EN = {
 }
 
 
-def get_file_description(filename: str, lang: str) -> str:
+def _extract_file_brief(file_path: Path) -> str:
+    """从文件内容提取功能简介（docstring 第一行 / title 字段 / 标题）。
+
+    返回空字符串表示未提取到。最多返回100字符。
+    """
+    try:
+        content = file_path.read_text(encoding="utf-8", errors="ignore")[:4096]
+    except OSError:
+        return ""
+
+    suffix = file_path.suffix.lower()
+
+    if suffix == ".py":
+        # 提取 docstring 第一行（""" 或 '''）
+        m = re.search(r'"""(.+?)"""', content, re.DOTALL)
+        if not m:
+            m = re.search(r"'''(.+?)'''", content, re.DOTALL)
+        if m:
+            first_line = m.group(1).strip().split("\n")[0].strip()
+            # 去掉模块ID引用（如 "（MOD-INF-013 §5.3）"）
+            first_line = re.sub(r"（[^）]*MOD-[^）]*）", "", first_line).strip()
+            if first_line:
+                return first_line[:100]
+
+    elif suffix in (".yaml", ".yml"):
+        # 提取 title: 字段
+        m = re.search(r"^title:\s*(.+)$", content, re.MULTILINE)
+        if m:
+            return m.group(1).strip()[:100]
+
+    elif suffix == ".md":
+        # 优先 frontmatter title
+        m = re.search(r"^title:\s*(.+)$", content, re.MULTILINE)
+        if m:
+            return m.group(1).strip()[:100]
+        # 回退到第一个 # 标题
+        m = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
+        if m:
+            return m.group(1).strip()[:100]
+
+    return ""
+
+
+def get_file_description(filename: str, lang: str, file_path: str = "") -> str:
     """获取文件的中文/英文功能描述。
 
     对于域文档（如 01_d_infra_ops.md），自动从域名映射表生成中文。
@@ -551,7 +594,13 @@ def get_file_description(filename: str, lang: str) -> str:
     if filename == "domain_index.md":
         return "域索引" if lang == "zh" else "Domain index"
 
-    # 通用后缀推断
+    # 从文件内容提取功能简介（docstring / title / 标题）
+    if file_path:
+        brief = _extract_file_brief(Path(file_path))
+        if brief:
+            return brief
+
+    # 通用后缀推断（回退）
     if filename.endswith("_sample.md"):
         base = filename.replace("_sample.md", "")
         return f"{base}样板" if lang == "zh" else f"{base} sample"
@@ -632,7 +681,8 @@ def _render_children(tree: dict, parent_path: str, prefix: str, lines: list[str]
                 lines.append(f"{prefix}{connector}{item}")
             else:
                 # 文件名后添加中文功能描述
-                file_desc = get_file_description(item, lang)
+                full_path = str(PROJECT_ROOT / parent_path / item)
+                file_desc = get_file_description(item, lang, full_path)
                 desc_tag = f"  — {file_desc}" if file_desc else ""
                 lines.append(f"{prefix}{connector}{item}{desc_tag}")
 
