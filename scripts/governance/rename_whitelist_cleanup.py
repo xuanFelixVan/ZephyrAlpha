@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import os
 import re
+import sqlite3
 import subprocess
 import sys
 from pathlib import Path
@@ -213,11 +214,88 @@ def verify_residual(file_path: Path) -> list[str]:
     return residuals
 
 
+def update_depgraph(dry_run: bool = False) -> int:
+    """更新 depgraph.db 中的路径记录（Phase 5）。
+
+    执行 4 条 SQL UPDATE，将 nodes 表中的旧路径替换为新路径。
+    依据施工方案 §3.4。
+    """
+    db_path = REPO_ROOT / "data" / "databases" / "depgraph.db"
+    if not db_path.exists():
+        print(f"[ERROR] depgraph.db not found: {db_path}", file=sys.stderr)
+        return 1
+
+    # SQL UPDATE 语句（按施工方案 §3.4）
+    # 注意: SCOPE.yaml 排除 REGISTRY_SCOPE.yaml
+    updates = [
+        (
+            "ARCHITECTURE_LOCK.yaml -> architecture_lock.yaml",
+            "UPDATE nodes SET path = REPLACE(path, 'ARCHITECTURE_LOCK.yaml', 'architecture_lock.yaml') WHERE path LIKE '%ARCHITECTURE_LOCK.yaml%'",
+        ),
+        (
+            "SHARED-QUICKREF.yml -> shared_quickref.yaml",
+            "UPDATE nodes SET path = REPLACE(path, 'SHARED-QUICKREF.yml', 'shared_quickref.yaml') WHERE path LIKE '%SHARED-QUICKREF.yml%'",
+        ),
+        (
+            "session-logs -> session_logs",
+            "UPDATE nodes SET path = REPLACE(path, 'session-logs', 'session_logs') WHERE path LIKE '%session-logs%'",
+        ),
+        (
+            "SCOPE.yaml -> scope.yaml (excluding REGISTRY_SCOPE.yaml)",
+            "UPDATE nodes SET path = REPLACE(path, 'SCOPE.yaml', 'scope.yaml') WHERE path LIKE '%SCOPE.yaml%' AND path NOT LIKE '%REGISTRY_SCOPE.yaml%'",
+        ),
+    ]
+
+    mode = "[DRY-RUN] " if dry_run else ""
+    total_changes = 0
+
+    if dry_run:
+        # dry-run: 只查询受影响的行数，不执行 UPDATE
+        conn = sqlite3.connect(str(db_path))
+        try:
+            for desc, sql in updates:
+                # 将 UPDATE ... REPLACE ... WHERE ... 转为 SELECT COUNT(*)
+                # 提取 WHERE 子句
+                where_idx = sql.find("WHERE")
+                where_clause = sql[where_idx:] if where_idx >= 0 else ""
+                select_sql = f"SELECT COUNT(*) FROM nodes {where_clause}"
+                cur = conn.execute(select_sql)
+                count = cur.fetchone()[0]
+                print(f"  {mode}{desc}: {count} rows affected")
+                total_changes += count
+        finally:
+            conn.close()
+        print(f"\n{mode}总计: {total_changes} rows would be updated")
+        return 0
+
+    conn = sqlite3.connect(str(db_path))
+    try:
+        for desc, sql in updates:
+            cur = conn.execute(sql)
+            changes = cur.rowcount
+            print(f"  {desc}: {changes} rows updated")
+            total_changes += changes
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"[ERROR] SQL failed: {e}", file=sys.stderr)
+        return 1
+    finally:
+        conn.close()
+
+    print(f"\n总计: {total_changes} rows updated")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="命名规范白名单清理替换脚本")
     parser.add_argument("--dry-run", action="store_true", help="预览替换结果，不修改文件")
     parser.add_argument("--verify", action="store_true", help="验证残留检查")
+    parser.add_argument("--update-depgraph", action="store_true", help="更新 depgraph.db 路径记录 (Phase 5)")
     args = parser.parse_args()
+
+    if args.update_depgraph:
+        return update_depgraph(dry_run=args.dry_run)
 
     if args.verify:
         # 跳过自身（脚本包含旧名用于验证）
