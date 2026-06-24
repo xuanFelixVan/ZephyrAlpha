@@ -96,13 +96,13 @@ def generate_capacity_report() -> str:
 
     # 统计概览
     total_domains = len(domains)
-    over_capacity = [d for d in domains if d["actual_nodes"] > d["max_modules"]]
+    over_capacity = [d for d in domains if d["production_nodes"] > d["max_modules"]]
     near_capacity = [
         d
         for d in domains
-        if d["max_modules"] > 0 and d["actual_nodes"] / d["max_modules"] > 0.8 and d["actual_nodes"] <= d["max_modules"]
+        if d["max_modules"] > 0 and d["production_nodes"] / d["max_modules"] > 0.8 and d["production_nodes"] <= d["max_modules"]
     ]
-    empty_domains = [d for d in domains if d["actual_nodes"] == 0]
+    empty_domains = [d for d in domains if d["production_nodes"] == 0]
 
     lines.append("## 统计概览")
     lines.append("")
@@ -121,9 +121,9 @@ def generate_capacity_report() -> str:
         lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |")
         lines.append("|------|--------|:---:|:---:|:---:|")
         for d in over_capacity:
-            over = d["actual_nodes"] - d["max_modules"]
+            over = d["production_nodes"] - d["max_modules"]
             lines.append(
-                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['actual_nodes']} | "
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['production_nodes']} | "
                 f"{d['max_modules']} | +{over} |"
             )
         lines.append("")
@@ -135,9 +135,9 @@ def generate_capacity_report() -> str:
         lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage |")
         lines.append("|------|--------|:---:|:---:|:---:|")
         for d in near_capacity:
-            usage = d["actual_nodes"] / d["max_modules"] * 100
+            usage = d["production_nodes"] / d["max_modules"] * 100
             lines.append(
-                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['actual_nodes']} | "
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['production_nodes']} | "
                 f"{d['max_modules']} | {usage:.1f}% |"
             )
         lines.append("")
@@ -159,12 +159,12 @@ def generate_capacity_report() -> str:
     lines.append("|------|--------|--------|:---:|:---:|:---:|------|")
     for d in domains:
         if d["max_modules"] > 0:
-            usage = d["actual_nodes"] / d["max_modules"] * 100
-            if d["actual_nodes"] > d["max_modules"]:
+            usage = d["production_nodes"] / d["max_modules"] * 100
+            if d["production_nodes"] > d["max_modules"]:
                 status = "超容"
             elif usage > 80:
                 status = "接近超容"
-            elif d["actual_nodes"] == 0:
+            elif d["production_nodes"] == 0:
                 status = "空"
             else:
                 status = "正常"
@@ -173,7 +173,7 @@ def generate_capacity_report() -> str:
             status = "无上限"
         lines.append(
             f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['layer_id']} | "
-            f"{d['actual_nodes']} | {d['max_modules']} | {usage:.1f}% | {status} |"
+            f"{d['production_nodes']} | {d['max_modules']} | {usage:.1f}% | {status} |"
         )
     lines.append("")
 

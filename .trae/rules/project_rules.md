@@ -1252,6 +1252,19 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 | 释放文件锁前 | 检查 `git status`，有未提交修改则 WARNING（DM-202919 实现） |
 | session 结束前 | 确认 `git status` 干净（无未提交修改） |
 
+### commit message 格式（裁定2：2026-06-25）
+
+PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规则选择提交方式：
+
+| 场景 | 命令 | 理由 |
+|------|------|------|
+| 单行、无特殊字符 | `git commit -m "type(scope): desc"` | 简单快捷 |
+| 多行、含特殊字符、含中文括号 | `git commit -F <file>` | 避免 PowerShell 解析风险 |
+
+**流程**：写消息到临时文件 → `git commit -F <file>` → 删除临时文件（RULE-FIVE）。
+
+**根因**：2026-06-25 排查 `git commit -m "fix: clean test domain pollution..."` 在 PowerShell 中因特殊字符解析失败。`-F` 文件方式绕过 shell 解析，是跨平台安全方案。
+
 ### 绝对禁止
 
 | # | 行为 | 后果 |

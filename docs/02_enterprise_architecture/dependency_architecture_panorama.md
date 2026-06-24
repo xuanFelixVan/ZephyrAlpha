@@ -94,7 +94,7 @@
 | `invariants` | 不变量 | 约束检查引用 |
 | `rule_bindings` | 规则绑定 | 门禁检查引用 |
 
-### 4.4 表归属矩阵（P0-1 后 15 张业务表 + P0-6 后新增 9 张 = 24 张；系统表 _schema_version 由迁移脚本管理 / sqlite_sequence 由 SQLite 自动管理）
+### 4.4 表归属矩阵（P0-1 后 15 张业务表 + P0-6 后新增 9 张 + v6/v8 新增 domain_mapping/governance_audit_logs = 25 张；系统表 _schema_version 由迁移脚本管理 / sqlite_sequence 由 SQLite 自动管理）
 
 | 管理方 | 表 | 生成器每次运行会怎样 | AI能手动改吗 |
 |--------|---|---------------------|:---:|
@@ -1804,7 +1804,106 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | 脚本 | 当前能力 |
 |------|---------|
-| apply_depgraph.py | --update-module / --batch / --add-design-node / --add-design-edge / --transition-build-status / --remove-design-node / --insert-domain / --migrate-dependencies |
+| apply_depgraph.py | --update-module / --batch / --add-design-node / --add-design-edge / --transition-build-status / --remove-design-node / --insert-domain / --migrate-dependencies / --insert-domain-mapping |
 | generate_project_depgraph.py | 12 步流程 + 异常处理 + 执行报告 + 循环检测 + blueprint_id 校验 |
 | audit_domain_nodes.py | 4 类检测 + 写入 arch_constraints |
 | sync_yaml_to_depgraph.py | 17 项规则/契约/门禁从 YAML 单向同步到 DB |
+
+### 20.11 架构债：worktree vs StagingArea 评估（裁定C，2026-06-25）
+
+> **背景**：项目采用 100% AI 开发，Trae 多对话窗口并发执行。并发写入隔离方案有两个选择：
+> - **git worktree**（业界标准）：每个 AI 分支级隔离，多 worktree 独立工作目录
+> - **StagingArea 草稿模式**（项目自定义）：文件级隔离，`.aidrafts/{session_id}/` 草稿区
+>
+> **当前选择**：StagingArea 草稿模式（文件级隔离）。已在 `staging_area.py` 中修复跨进程锁缺陷（裁定A，`threading.Lock` → `os.open(O_CREAT|O_EXCL)` 文件锁）。
+>
+> **评估结论**：StagingArea 当前满足需求，worktree 评估标记为**条件触发架构债**——仅在以下条件满足时重新评估：
+>
+> | 触发条件 | 说明 |
+> |---------|------|
+> | StagingArea 冲突率 > 20% | 草稿提交冲突频繁，自动合并失败率高 |
+> | 并发 AI 数 > 50 | 当前 37 个 AI，超过 50 时文件级隔离可能成为瓶颈 |
+> | 跨分支依赖需求 | AI 需要并行开发不同分支特性（worktree 天然支持） |
+>
+> **worktree 优势**（若未来切换）：
+> - 分支级隔离，天然无冲突
+> - 业界标准（GitHub Copilot Worktree、Cursor 多分支）
+> - git 原生支持，无自定义代码维护成本
+>
+> **StagingArea 优势**（当前保持）：
+> - 文件级粒度更细，同一文件不同部分可并发修改
+> - 不需要 git branch 管理，AI 学习成本低
+> - 已有跨进程锁修复，PoC 验证通过
+>
+> **债务状态**：⏳ 条件触发——当前不评估，仅在触发条件满足时重新评估。
+
+### 20.12 V4.4 容量治理体系重构裁定（#194-199，2026-06-25）
+
+> **背景**：domains 表 max_modules=150 容量治理存在三大问题：
+> 1. **高度耦合放宽机制**（ARCH-CAP-003）允许 5 个域上限放宽到 200，但 AI 无法可靠判断"高度耦合"，100% AI 开发项目不应有模糊地带
+> 2. **统计口径混淆**：current_modules 字段混用全节点数和 production 节点数，H7 fix 错误地把 production 口径写入 current_modules
+> 3. **装饰字段堆积**：22 个字段中 7 个无区分度或全空（can_build 全=1、gate_reason 全 NULL、growth_pattern 全='linear' 等），无治理价值
+>
+> **裁定结果**（6 条决策记录已写入 KE，topic=`domain_capacity::<domain_id>`）：
+
+#### 裁定#194：废除高度耦合放宽，统一 150 硬上限（二元规则）
+
+- **ARCH-CAP-003 废除**：trae_055 v1.0.8 移除 aliases 中的 ARCH-CAP-003
+- **ARCH-CAP-002 重写为二元规则**：≤150 通过，>150 必须拆分，无例外
+- **5 个 max=200 域统一改为 150**：D-GOVERNANCE / D-GOV_AUDIT / D-GOV_DRIFT / D-GOV_RULE / D-SECURITY
+- **理由**：100% AI 开发项目不应有模糊地带。"高度耦合"是拆分信号，不是放宽上限的理由
+
+#### 裁定#195：修复统计口径，新增 production_nodes 字段（v9 migration）
+
+- **current_modules** = 全节点数（含 design + prototype + production + scaffold_placeholder）
+- **production_nodes** = production 节点数（design_maturity='production' 的真实代码文件）——**容量判定口径**
+- **v9 migration**：`ALTER TABLE domains ADD COLUMN production_nodes INTEGER DEFAULT 0`
+- **H7 口径修复**：生成器分离 current_modules（全节点）和 production_nodes（production only）的统计逻辑
+- **48 个域 production_nodes 已填充**
+
+#### 裁定#196：容量门禁统一 production_nodes 口径
+
+- **audit_domain_nodes.py**：`detect_hard_limit_violations` 硬上限从 200 改为 150，使用 production_nodes 口径
+- **generate_domain_doc.py**：`capacity_status` 改用 `production_nodes` 判定（≤max_modules 正常，>max_modules 超容）
+- **generate_capacity_report.py**：`actual_nodes` 全部替换为 `production_nodes`，查询从子查询改为直接读 DB 字段
+- **generate_domain_architecture_diagram.py**：SELECT 添加 production_nodes，默认 max 200→150
+
+#### 裁定#197：清理 7 个无区分度装饰字段（v10 migration）
+
+- **v10 migration**：DROP COLUMN can_build / gate_reason / hard_boundary_ref / growth_pattern / feasibility / bottleneck_description / last_capacity_check
+- **domains 表 22 列 → 15 列**
+- **清理依据**：
+  - `can_build`：全=1（无区分度，所有域都是可构建的）
+  - `gate_reason`：全 NULL（从未使用）
+  - `hard_boundary_ref`：全 NULL（从未使用）
+  - `growth_pattern`：全='linear'（无区分度）
+  - `feasibility`：2 种值 feasible/stable 语义混乱（可行性 vs 稳定性不是同一维度），与 build_status 重复
+  - `bottleneck_description`：全 NULL 或空（从未使用）
+  - `last_capacity_check`：39 个域为同一时间戳（批量更新写入，无实际区分意义）
+- **nodes 表的 can_build/gate_reason/hard_boundary_ref 保留**（节点级有治理价值）
+
+#### 裁定#198：决策记录统一到 KE（UnifiedMemoryAPI）
+
+- **不使用 ADR**：100% AI 开发项目决策变化快，ADR 的不可变性成为束缚
+- **决策记录写入 KE**：topic 命名约定 `domain_capacity::<domain_id>`
+- **recall bug 修复**：VMSMemoryBackend.list_by_topic 未按 topic 过滤，导致 recall 返回所有 topic 的记录（commit c1dea1b595）
+
+#### 裁定#199：4 个超限域拆分作为后续任务
+
+- **4 个超限域**（production_nodes > 150）：
+  - D-INFRA_RUNTIME：412（超限 262，2.7x）
+  - D-GOV_AUDIT：230（超限 80，1.5x）
+  - D-GOVERNANCE：185（超限 35，1.2x）
+  - D-GOV_RULE：177（超限 27，1.2x）
+- **拆分作为后续任务**，本次只修复统计口径和字段
+
+#### 施工记录
+
+| 阶段 | 内容 | Commit |
+|------|------|--------|
+| 阶段1 | 统一决策记录到 KE + recall bug 修复 | c1dea1b595 |
+| 阶段2 | trae_055 v1.0.8 废除高度耦合 + 5 域 max 200→150 | a41e34ff8f, 1c23ab00e3, 953d6b9064 |
+| 阶段3 | v9 migration + production_nodes 填充 + H7 口径修复 | bd4c500822, 2325b98283 |
+| 阶段4 | 容量门禁统一 production_nodes 口径 + 硬上限 200→150 | 575e51abe2 |
+| 阶段5 | v10 migration 清理 7 个装饰字段 | 9a06b0a8b2 |
+| 阶段6 | 文档对齐（本节） | — |

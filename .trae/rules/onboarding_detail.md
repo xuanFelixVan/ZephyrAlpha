@@ -25,12 +25,16 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 
 **模式 B：草稿模式（多 AI 并发推荐）**:
 ```
-1. DRAFT  → python scripts/lock_files.py draft <file> <session_id>
-            写草稿到 .aidrafts/{session_id}/{file}（不获取排他锁）
+1. DRAFT  → from zephyr.trading.staging_area import StagingArea
+            sa = StagingArea()
+            sa.write_draft("<session_id>", "<file_path>", "<content>")
+            # 写草稿到 .aidrafts/{session_id}/{file}（不获取排他锁）
 2. EDIT   → 修改草稿内容（在 .aidrafts/ 下操作，不影响原文件）
-3. COMMIT → python scripts/lock_files.py commit <file> <session_id>
-            提交时获取锁+冲突检测+原子搬入+释放锁
-4. 冲突?  → 自动 rebase（简单冲突）或 CONFLICT_NEEDS_OWNER（复杂冲突）
+3. COMMIT → result = sa.commit("<session_id>", "<file_path>")
+            # 提交时获取锁+冲突检测+原子搬入+释放锁
+            # result = OK / CONFLICT / CONFLICT_NEEDS_OWNER
+4. 冲突?  → sa.try_auto_merge("<session_id>", "<file_path>")
+            # 自动 rebase（简单冲突）或 CONFLICT_NEEDS_OWNER（复杂冲突）
 ```
 
 **模式 B 实现**: `src/zephyr/trading/staging_area.py` — StagingArea 类。

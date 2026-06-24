@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """
-validate_commit_message.py — Conventional Commits 校验（commit-msg hook）
+validate_commit_message.py — Conventional Commits 校验（commit-msg hook）+ AI 归因 trailer 检测（warn-only）
 
 
 
@@ -23,6 +23,13 @@ validate_commit_message.py — Conventional Commits 校验（commit-msg hook）
 合法格式:
   type(scope): description
   type: description
+
+AI 归因 trailer（裁定4：2026-06-25，warn-only）:
+  检测 commit message 是否包含 AI 归因 trailer，缺失时仅警告不阻断。
+  合法 trailer 格式（git trailer convention）:
+    Co-Authored-By: Trae AI <trae@example.com>
+    AI-Generated-By: GLM-5.2
+  目的: AI 生成 commit 的可追溯性——100% AI 开发项目需区分人工与 AI commit。
 
 exit codes: 0=合法, 1=不合法
 """
@@ -61,6 +68,16 @@ PATTERN = re.compile(
     r"^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)" r"(\([a-zA-Z0-9_.-]+\))?" r": .{1,200}$"
 )
 
+# AI 归因 trailer 模式（git trailer convention: Key: Value）
+AI_TRAILER_PATTERN = re.compile(
+    r"^(Co-Authored-By|AI-Generated-By|Generated-By):\s*.+", re.MULTILINE
+)
+
+
+def check_ai_attribution(full_msg: str) -> bool:
+    """检查 commit message 是否包含 AI 归因 trailer。返回 True=存在。"""
+    return bool(AI_TRAILER_PATTERN.search(full_msg))
+
 
 def main() -> None:
     """入口函数."""
@@ -83,7 +100,8 @@ def main() -> None:
 
     try:
         with open(args.msg_file, encoding="utf-8") as f:
-            msg = f.readline().strip()
+            full_msg = f.read()
+        msg = full_msg.splitlines()[0].strip() if full_msg.strip() else ""
     except (OSError, FileNotFoundError):
         print(f"[ERROR] 无法读取 commit message: {args.msg_file}", file=sys.stderr)
         sys.exit(EXIT_FINDINGS)
@@ -103,6 +121,13 @@ def main() -> None:
             print("⚠ --warn-only 模式: 仅报告，不阻断", file=sys.stderr)
             sys.exit(EXIT_PASS)
         sys.exit(EXIT_FINDINGS)
+
+    # AI 归因 trailer 检测（裁定4：warn-only，不阻断 commit）
+    if not check_ai_attribution(full_msg):
+        print("[COMMIT-MSG] ⚠ 缺少 AI 归因 trailer", file=sys.stderr)
+        print("  建议在 commit message 末尾添加:", file=sys.stderr)
+        print("    Co-Authored-By: Trae AI <trae@example.com>", file=sys.stderr)
+        print("  目的: 100% AI 开发项目的 commit 可追溯性\n", file=sys.stderr)
 
     sys.exit(EXIT_PASS)
 
