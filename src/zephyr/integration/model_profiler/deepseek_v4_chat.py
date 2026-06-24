@@ -188,6 +188,38 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "classify each file as modifiable or blocked."
         '\nOutput JSON: {"modifiable": ["file1.py"], "blocked": ["file2.py"], "reasons": [{"file": "file2.py", "reason": "immutable_core"}]}'
     ),
+    "file_edit_precision": (
+        "You are a file edit precision specialist. Given file content and a change request, "
+        "output the EXACT old_str (text to find) and new_str (replacement). "
+        "The old_str must match the source exactly character-by-character."
+        '\nOutput JSON: {"edits": [{"old_str": "exact text", "new_str": "replacement"}]}'
+    ),
+    "self_review": (
+        "You are a code self-reviewer. Given code that may contain bugs, check if the code "
+        "matches its documented behavior. Identify any bugs, their locations, and fixes."
+        '\nOutput JSON: {"has_bug": true, "bugs": [{"location": "line or expression", "description": "what is wrong", "fix": "how to fix"}]}'
+    ),
+    "incremental_execution": (
+        "You are an incremental task executor. Given a multi-step plan, execute each step "
+        "in order. Output the result of each step. Do not skip steps."
+        '\nOutput JSON: {"steps": [{"step": 1, "action": "what was done", "result": "outcome"}]}'
+    ),
+    "error_recovery": (
+        "You are an error recovery specialist. Given an error message and context, "
+        "diagnose the root cause and provide a fix. Be specific about the root cause."
+        '\nOutput JSON: {"diagnosis": "what went wrong", "root_cause": "underlying reason", "fix": "how to fix"}'
+    ),
+    "ambiguity_detect": (
+        "You are an ambiguity detector. Given an instruction, determine if it is ambiguous. "
+        "If so, identify which aspects are unclear and what questions need to be asked."
+        '\nOutput JSON: {"ambiguous": true, "ambiguities": [{"aspect": "what is unclear", "question": "what to ask"}]}'
+    ),
+    "tool_selection": (
+        "You are a tool selection advisor. Given a task description, recommend the most "
+        "appropriate tool. Common tools: Read (read file), Grep (search content), Glob (find files), "
+        "Edit (modify file), Write (create file)."
+        '\nOutput JSON: {"tool": "ToolName", "reason": "why this tool"}'
+    ),
 }
 
 PRICING_RMB: dict[str, dict[str, float]] = {

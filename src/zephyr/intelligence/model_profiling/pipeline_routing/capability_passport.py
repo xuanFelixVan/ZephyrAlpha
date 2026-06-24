@@ -65,6 +65,18 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     # D类: 规则理解能力
     "rule_comprehension": 0.55,
     "safety_judgment": 0.60,
+    # E类: 执行精度
+    "file_edit_precision": 0.60,
+    # F类: 自审自纠
+    "self_review": 0.55,
+    # G类: 增量执行
+    "incremental_execution": 0.55,
+    # H类: 错误恢复
+    "error_recovery": 0.50,
+    # I类: 歧义识别
+    "ambiguity_detect": 0.55,
+    # J类: 工具选择
+    "tool_selection": 0.60,
 }
 
 

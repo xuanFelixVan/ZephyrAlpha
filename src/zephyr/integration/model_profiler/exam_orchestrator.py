@@ -447,6 +447,105 @@ class ExamOrchestrator:
             em = 1 if (pred_modifiable == gold_modifiable and pred_blocked == gold_blocked) else 0
             return (p, r, 0.0, em)
 
+        # E类: 执行精度评分
+        if cap in ("file_edit_precision",):
+            edits = result.get("edits", [])
+            if not edits:
+                return (0.0, 0.0, 1.0, 0)
+            best_old_score = 0.0
+            best_new_score = 0.0
+            for edit in edits:
+                if not isinstance(edit, dict):
+                    continue
+                old_s = edit.get("old_str", "")
+                new_s = edit.get("new_str", "")
+                if case.expected_edit_old and old_s:
+                    old_ed = _normalized_edit_distance(old_s, case.expected_edit_old)
+                    best_old_score = max(best_old_score, 1 - old_ed)
+                if case.expected_edit_new and new_s:
+                    new_ed = _normalized_edit_distance(new_s, case.expected_edit_new)
+                    best_new_score = max(best_new_score, 1 - new_ed)
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = max(best_old_score, best_new_score, kw_rate)
+            em = 1 if (best_old_score >= 0.9 and best_new_score >= 0.9) else 0
+            return (score, score, 0.0, em)
+
+        # F类: 自审自纠评分
+        if cap in ("self_review",):
+            has_bug = result.get("has_bug")
+            bugs = result.get("bugs", [])
+            if has_bug is None:
+                return (0.0, 0.0, 1.0, 0)
+            correct = 1 if has_bug == case.expected_has_bug else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            bug_found = 0
+            if case.expected_bug_location and isinstance(bugs, list):
+                for bug in bugs:
+                    if isinstance(bug, dict):
+                        loc = str(bug.get("location", "")).lower()
+                        if case.expected_bug_location.lower() in loc:
+                            bug_found = 1
+                            break
+            score = max(correct, kw_rate, bug_found)
+            return (score, score, 0.0, correct)
+
+        # G类: 增量执行评分
+        if cap in ("incremental_execution",):
+            steps = result.get("steps", [])
+            if not steps:
+                return (0.0, 0.0, 1.0, 0)
+            actual_count = len(steps) if isinstance(steps, list) else 0
+            expected_count = case.expected_step_count
+            count_score = min(actual_count / expected_count, 1.0) if expected_count > 0 else 0.0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            em = 1 if actual_count == expected_count else 0
+            score = max(count_score, kw_rate)
+            return (score, score, 0.0, em)
+
+        # H类: 错误恢复评分
+        if cap in ("error_recovery",):
+            diagnosis = result.get("diagnosis", "")
+            root_cause = result.get("root_cause", "")
+            fix = result.get("fix", "")
+            if not diagnosis and not root_cause:
+                return (0.0, 0.0, 1.0, 0)
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            return (kw_rate, kw_rate, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+
+        # I类: 歧义识别评分
+        if cap in ("ambiguity_detect",):
+            ambiguous = result.get("ambiguous")
+            ambiguities = result.get("ambiguities", [])
+            if ambiguous is None:
+                return (0.0, 0.0, 1.0, 0)
+            correct = 1 if ambiguous == case.expected_ambiguous else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = max(correct, kw_rate)
+            return (score, score, 0.0, correct)
+
+        # J类: 工具选择评分
+        if cap in ("tool_selection",):
+            tool = str(result.get("tool", "")).lower()
+            if not tool:
+                return (0.0, 0.0, 1.0, 0)
+            expected = case.expected_tool.lower()
+            em = 1 if expected in tool else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = max(em, kw_rate)
+            return (score, score, 0.0, em)
+
         return (0.0, 0.0, 1.0, 0)
 
     # ── 速轴 ────────────────────────────────────────────

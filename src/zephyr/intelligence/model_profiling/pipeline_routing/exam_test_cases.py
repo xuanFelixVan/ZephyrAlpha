@@ -76,6 +76,21 @@ class ExamTestCase:
     expected_modifiable: list[str] = field(default_factory=list)
     expected_blocked: list[str] = field(default_factory=list)
 
+    # E类: 执行精度
+    expected_edit_old: str = ""
+    expected_edit_new: str = ""
+    # F类: 自审自纠
+    expected_has_bug: bool = False
+    expected_bug_location: str = ""
+    # G类: 增量执行
+    expected_step_count: int = 0
+    # H类: 错误恢复
+    expected_root_cause: str = ""
+    # I类: 歧义识别
+    expected_ambiguous: bool = False
+    # J类: 工具选择
+    expected_tool: str = ""
+
 
 # ══════════════════════════════════════════════════════════
 # task_classification (3 题)
@@ -874,7 +889,230 @@ EX_SJ_003 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
-# 全集 — 54 题
+# E类: 执行精度能力 (3 题)
+# ══════════════════════════════════════════════════════════
+
+# file_edit_precision (3 题) — 执行精度
+EX_FEP_001 = ExamTestCase(
+    case_id="EX-FEP-001",
+    capability="file_edit_precision",
+    difficulty=Difficulty.EASY,
+    prompt="给定文件内容 `x = 10\ny = 20\nz = x + y`，要求把x的值从10改为100。输出精确的old_str和new_str。",
+    expected_structure_keys=["edits"],
+    expected_edit_old="x = 10",
+    expected_edit_new="x = 100",
+    expected_contains=["x = 100"],
+)
+
+EX_FEP_002 = ExamTestCase(
+    case_id="EX-FEP-002",
+    capability="file_edit_precision",
+    difficulty=Difficulty.MEDIUM,
+    prompt="给定文件内容 `def calc(a, b):\n    return a - b`，要求修复bug把减法改成加法。输出精确的old_str和new_str。",
+    expected_structure_keys=["edits"],
+    expected_edit_old="return a - b",
+    expected_edit_new="return a + b",
+    expected_contains=["a + b"],
+)
+
+EX_FEP_003 = ExamTestCase(
+    case_id="EX-FEP-003",
+    capability="file_edit_precision",
+    difficulty=Difficulty.HARD,
+    prompt="给定文件内容 `class User:\n    def __init__(self, name):\n        self.name = name\n    def get_info(self):\n        return self.name`，要求把get_info方法重命名为get_name。输出精确的old_str和new_str。",
+    expected_structure_keys=["edits"],
+    expected_edit_old="def get_info(self):",
+    expected_edit_new="def get_name(self):",
+    expected_contains=["get_name"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# F类: 自审自纠能力 (3 题)
+# ══════════════════════════════════════════════════════════
+
+# self_review (3 题) — 自审自纠
+EX_SR_001 = ExamTestCase(
+    case_id="EX-SR-001",
+    capability="self_review",
+    difficulty=Difficulty.EASY,
+    prompt="审查以下代码是否有bug：\ndef add(a, b):\n    return a - b\n# 注释说这个函数做加法\n请检查代码是否与注释一致。",
+    expected_structure_keys=["has_bug", "bugs"],
+    expected_has_bug=True,
+    expected_bug_location="return a - b",
+    expected_contains=["bug", "a - b", "subtraction"],
+)
+
+EX_SR_002 = ExamTestCase(
+    case_id="EX-SR-002",
+    capability="self_review",
+    difficulty=Difficulty.MEDIUM,
+    prompt="审查以下代码是否有bug：\ndef divide(a, b):\n    return a / b\n# 这个函数没有处理除零错误\n请检查是否有潜在问题。",
+    expected_structure_keys=["has_bug", "bugs"],
+    expected_has_bug=True,
+    expected_bug_location="a / b",
+    expected_contains=["zero", "division", "ZeroDivisionError"],
+)
+
+EX_SR_003 = ExamTestCase(
+    case_id="EX-SR-003",
+    capability="self_review",
+    difficulty=Difficulty.HARD,
+    prompt="审查以下代码是否有bug：\ndef process_items(items):\n    result = []\n    for i in range(len(items)):\n        result.append(items[i+1])  # 获取下一个元素\n    return result\n请检查是否有越界问题。",
+    expected_structure_keys=["has_bug", "bugs"],
+    expected_has_bug=True,
+    expected_bug_location="items[i+1]",
+    expected_contains=["index", "out of range", "越界", "i+1"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# G类: 增量执行能力 (3 题)
+# ══════════════════════════════════════════════════════════
+
+# incremental_execution (3 题) — 增量执行
+EX_IE_001 = ExamTestCase(
+    case_id="EX-IE-001",
+    capability="incremental_execution",
+    difficulty=Difficulty.EASY,
+    prompt="执行以下3步任务计划：\n1. 读取config.yaml\n2. 提取database_url字段\n3. 返回database_url的值\n请按顺序执行每一步。",
+    expected_structure_keys=["steps"],
+    expected_step_count=3,
+    expected_contains=["config", "database_url", "3"],
+)
+
+EX_IE_002 = ExamTestCase(
+    case_id="EX-IE-002",
+    capability="incremental_execution",
+    difficulty=Difficulty.MEDIUM,
+    prompt="执行以下5步任务计划：\n1. 搜索所有.py文件\n2. 过滤出包含'import os'的文件\n3. 统计文件数量\n4. 输出文件列表\n5. 生成报告\n请按顺序执行每一步。",
+    expected_structure_keys=["steps"],
+    expected_step_count=5,
+    expected_contains=["import os", "5", "report"],
+)
+
+EX_IE_003 = ExamTestCase(
+    case_id="EX-IE-003",
+    capability="incremental_execution",
+    difficulty=Difficulty.HARD,
+    prompt="执行以下4步任务计划：\n1. 读取用户输入的SQL\n2. 检查是否有DROP/DELETE语句\n3. 如果有则要求确认\n4. 执行SQL并返回结果\n请按顺序执行每一步，注意第3步是条件分支。",
+    expected_structure_keys=["steps"],
+    expected_step_count=4,
+    expected_contains=["DROP", "DELETE", "confirm", "4"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# H类: 错误恢复能力 (3 题)
+# ══════════════════════════════════════════════════════════
+
+# error_recovery (3 题) — 错误恢复
+EX_ER_001 = ExamTestCase(
+    case_id="EX-ER-001",
+    capability="error_recovery",
+    difficulty=Difficulty.EASY,
+    prompt="执行 `python script.py` 时报错：`ModuleNotFoundError: No module named 'requests'`。请诊断根因并提供修复方案。",
+    expected_structure_keys=["diagnosis", "root_cause", "fix"],
+    expected_root_cause="requests模块未安装",
+    expected_contains=["pip install", "requests", "install"],
+)
+
+EX_ER_002 = ExamTestCase(
+    case_id="EX-ER-002",
+    capability="error_recovery",
+    difficulty=Difficulty.MEDIUM,
+    prompt="执行 `import json; json.loads('invalid')` 时报错：`json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)`。请诊断根因并提供修复方案。",
+    expected_structure_keys=["diagnosis", "root_cause", "fix"],
+    expected_root_cause="JSON格式无效",
+    expected_contains=["JSON", "invalid", "parse", "format"],
+)
+
+EX_ER_003 = ExamTestCase(
+    case_id="EX-ER-003",
+    capability="error_recovery",
+    difficulty=Difficulty.HARD,
+    prompt="执行 `for i in range(10): subprocess.run(['cmd'])` 时卡死40分钟无响应。请诊断根因并提供修复方案。",
+    expected_structure_keys=["diagnosis", "root_cause", "fix"],
+    expected_root_cause="for循环中串行调用subprocess",
+    expected_contains=["ThreadPoolExecutor", "serial", "subprocess", "parallel"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# I类: 歧义识别能力 (3 题)
+# ══════════════════════════════════════════════════════════
+
+# ambiguity_detect (3 题) — 歧义识别
+# 注: 使用 EX_AMB 前缀避免与 architecture_design 的 EX_AD 冲突
+EX_AMB_001 = ExamTestCase(
+    case_id="EX-AMB-001",
+    capability="ambiguity_detect",
+    difficulty=Difficulty.EASY,
+    prompt="指令：'优化这个函数'。这个指令是否有歧义？如果有，指出哪些方面不明确。",
+    expected_structure_keys=["ambiguous", "ambiguities"],
+    expected_ambiguous=True,
+    expected_contains=["ambiguous", "optimize", "unclear"],
+)
+
+EX_AMB_002 = ExamTestCase(
+    case_id="EX-AMB-002",
+    capability="ambiguity_detect",
+    difficulty=Difficulty.MEDIUM,
+    prompt="指令：'修复bug'。这个指令是否有歧义？如果有，指出哪些方面不明确。",
+    expected_structure_keys=["ambiguous", "ambiguities"],
+    expected_ambiguous=True,
+    expected_contains=["ambiguous", "bug", "which", "where"],
+)
+
+EX_AMB_003 = ExamTestCase(
+    case_id="EX-AMB-003",
+    capability="ambiguity_detect",
+    difficulty=Difficulty.HARD,
+    prompt="指令：'重构代码并添加测试'。这个指令是否有歧义？如果有，指出哪些方面不明确。",
+    expected_structure_keys=["ambiguous", "ambiguities"],
+    expected_ambiguous=True,
+    expected_contains=["ambiguous", "refactor", "test", "scope", "which"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# J类: 工具选择能力 (3 题)
+# ══════════════════════════════════════════════════════════
+
+# tool_selection (3 题) — 工具选择
+EX_TS_001 = ExamTestCase(
+    case_id="EX-TS-001",
+    capability="tool_selection",
+    difficulty=Difficulty.EASY,
+    prompt="任务：在项目中查找所有包含'TODO'的文件。应该用什么工具？",
+    expected_structure_keys=["tool", "reason"],
+    expected_tool="Grep",
+    expected_contains=["Grep", "grep", "search"],
+)
+
+EX_TS_002 = ExamTestCase(
+    case_id="EX-TS-002",
+    capability="tool_selection",
+    difficulty=Difficulty.MEDIUM,
+    prompt="任务：读取config.yaml文件的内容。应该用什么工具？",
+    expected_structure_keys=["tool", "reason"],
+    expected_tool="Read",
+    expected_contains=["Read", "read", "file"],
+)
+
+EX_TS_003 = ExamTestCase(
+    case_id="EX-TS-003",
+    capability="tool_selection",
+    difficulty=Difficulty.HARD,
+    prompt="任务：在项目中查找所有名为'*.py'的文件。应该用什么工具？",
+    expected_structure_keys=["tool", "reason"],
+    expected_tool="Glob",
+    expected_contains=["Glob", "glob", "pattern"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# 全集 — 72 题
 # ══════════════════════════════════════════════════════════
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
@@ -950,6 +1188,30 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_SJ_001,
     EX_SJ_002,
     EX_SJ_003,
+    # file_edit_precision
+    EX_FEP_001,
+    EX_FEP_002,
+    EX_FEP_003,
+    # self_review
+    EX_SR_001,
+    EX_SR_002,
+    EX_SR_003,
+    # incremental_execution
+    EX_IE_001,
+    EX_IE_002,
+    EX_IE_003,
+    # error_recovery
+    EX_ER_001,
+    EX_ER_002,
+    EX_ER_003,
+    # ambiguity_detect
+    EX_AMB_001,
+    EX_AMB_002,
+    EX_AMB_003,
+    # tool_selection
+    EX_TS_001,
+    EX_TS_002,
+    EX_TS_003,
 ]
 
 CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}
