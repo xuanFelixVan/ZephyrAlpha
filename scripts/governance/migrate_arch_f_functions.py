@@ -32,7 +32,7 @@ DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
-import apply_depgraph as _ad  # noqa: E402
+import apply_depgraph as _ad  # noqa: E402, I001
 
 
 # ===== §8.4 + §11.5: 37个F功能设计态节点定义 =====
@@ -184,9 +184,7 @@ def _get_f_node_id(conn: sqlite3.Connection, f_id: str) -> int | None:
     path = next((f[2] for f in F_FUNCTIONS if f[0] == f_id), None)
     if not path:
         return None
-    row = conn.execute(
-        "SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)
-    ).fetchone()
+    row = conn.execute("SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)).fetchone()
     return row[0] if row else None
 
 
@@ -207,9 +205,7 @@ def _edge_exists(conn: sqlite3.Connection, from_id: int, to_id: int, dep_type: s
 
 def _event_exists(conn: sqlite3.Connection, event_name: str) -> bool:
     """检查事件是否已注册（幂等）。"""
-    row = conn.execute(
-        "SELECT 1 FROM domain_events WHERE name=?", (event_name,)
-    ).fetchone()
+    row = conn.execute("SELECT 1 FROM domain_events WHERE name=?", (event_name,)).fetchone()
     return row is not None
 
 
@@ -335,12 +331,8 @@ def run_migration(dry_run: bool = True) -> int:
                 if _event_exists(conn, event_name):
                     skipped_events += 1
                     continue
-                pub_domain = next(
-                    (f[4] for f in F_FUNCTIONS if f[0] == publisher_f), ""
-                )
-                sub_domains = ", ".join(
-                    next((f[4] for f in F_FUNCTIONS if f[0] == s), "") for s in subscriber_list
-                )
+                pub_domain = next((f[4] for f in F_FUNCTIONS if f[0] == publisher_f), "")
+                sub_domains = ", ".join(next((f[4] for f in F_FUNCTIONS if f[0] == s), "") for s in subscriber_list)
                 event_id = f"E-ARCH-{event_name.upper()}"
                 conn.execute(
                     """INSERT OR IGNORE INTO domain_events
@@ -403,7 +395,9 @@ def _run_checks(conn: sqlite3.Connection, print_preview: bool) -> list[str]:
                 "SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)
             ).fetchone()
             status = f"已存在node_id={existing[0]}" if existing else "新建"
-            print(f"  {f_id:4s} {name:20s}  domain={domain_id:20s}  build={build_status:10s}  layer={layer:8s}  {status}")
+            print(
+                f"  {f_id:4s} {name:20s}  domain={domain_id:20s}  build={build_status:10s}  layer={layer:8s}  {status}"
+            )
 
         print(f"\n=== 边预览 ({len(F_EDGES)}条) ===")
         for from_f, to_f, dep_type, desc in F_EDGES:
@@ -414,7 +408,7 @@ def _run_checks(conn: sqlite3.Connection, print_preview: bool) -> list[str]:
             print(f"  {event_name:25s}  {pub:4s} -> {','.join(subs):15s}  {desc}")
 
         # 统计
-        print(f"\n=== 统计 ===")
+        print("\n=== 统计 ===")
         print(f"  节点: {len(F_FUNCTIONS)} (含F17归档)")
         print(f"  边: {len(F_EDGES)}")
         print(f"  事件: {len(F_EVENTS)}")
@@ -427,9 +421,7 @@ def _run_checks(conn: sqlite3.Connection, print_preview: bool) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="阶段1迁移: 创建F1-F37设计态节点+依赖边+事件注册"
-    )
+    parser = argparse.ArgumentParser(description="阶段1迁移: 创建F1-F37设计态节点+依赖边+事件注册")
     parser.add_argument("--dry-run", action="store_true", help="仅预览，不写入")
     args = parser.parse_args()
     sys.exit(run_migration(dry_run=args.dry_run))
