@@ -293,6 +293,27 @@ def _limit_files(files: list[str], lang: str) -> list[str]:
     return list(files)
 
 
+# 文件折叠阈值：超过此数量的目录只显示统计，不逐个列出文件名
+COLLAPSE_THRESHOLD = 200
+
+
+def _should_collapse_files(dir_path: str, files: list[str]) -> bool:
+    """判断目录下的文件是否应折叠（只显示数量统计，不逐个列出）。
+
+    判定标准：
+    1. __pycache__ 目录 → 总是折叠（.pyc 缓存文件无独立意义）
+    2. 文件数量 > COLLAPSE_THRESHOLD → 折叠（大量同类数据文件）
+    """
+    if not files:
+        return False
+    dir_name = dir_path.rsplit("/", 1)[-1] if "/" in dir_path else dir_path
+    if dir_name == "__pycache__":
+        return True
+    if len(files) > COLLAPSE_THRESHOLD:
+        return True
+    return False
+
+
 # 文件名 → 中文功能描述映射
 FILE_DESC_ZH = {
     # 通用文件
@@ -511,11 +532,22 @@ def _render_children(tree: dict, parent_path: str, prefix: str, lines: list[str]
     node = tree[parent_path]
     child_dirs = sorted(node["children"], key=lambda c: _sort_children_key(c, parent_path))
     files = get_dir_files(parent_path)
-    files_display = _limit_files(files, lang)
 
-    all_items: list[tuple[str, bool]] = [(d, True) for d in child_dirs] + [
-        (f, False) for f in files_display
-    ]
+    # 判断是否折叠文件列表（大量同类数据文件只显示统计）
+    if _should_collapse_files(parent_path, files):
+        file_summary = get_file_summary(files, lang)
+        if lang == "zh":
+            collapse_line = f"[文件列表已折叠] {file_summary}"
+        else:
+            collapse_line = f"[file list collapsed] {file_summary}"
+        all_items: list[tuple[str, bool]] = [(d, True) for d in child_dirs] + [
+            (collapse_line, False)
+        ]
+    else:
+        files_display = _limit_files(files, lang)
+        all_items = [(d, True) for d in child_dirs] + [
+            (f, False) for f in files_display
+        ]
     total = len(all_items)
 
     for i, (item, is_dir) in enumerate(all_items):
@@ -535,10 +567,14 @@ def _render_children(tree: dict, parent_path: str, prefix: str, lines: list[str]
             if depth < max_depth:
                 _render_children(tree, item, child_prefix, lines, lang, depth + 1, scope)
         else:
-            # 文件名后添加中文功能描述
-            file_desc = get_file_description(item, lang)
-            desc_tag = f"  — {file_desc}" if file_desc else ""
-            lines.append(f"{prefix}{connector}{item}{desc_tag}")
+            # 折叠行直接输出，不添加文件描述
+            if item.startswith("["):
+                lines.append(f"{prefix}{connector}{item}")
+            else:
+                # 文件名后添加中文功能描述
+                file_desc = get_file_description(item, lang)
+                desc_tag = f"  — {file_desc}" if file_desc else ""
+                lines.append(f"{prefix}{connector}{item}{desc_tag}")
 
 
 def find_roots(tree: dict) -> list[str]:

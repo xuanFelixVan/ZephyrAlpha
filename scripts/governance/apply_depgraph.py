@@ -619,6 +619,76 @@ def add_design_node(
             conn.close()
 
 
+def add_file_node(
+    path: str, blueprint_id: str, domain_id: str, db_path: str = str(DEPGRAPH_PATH)
+) -> int:
+    """
+    新增文件级 production 节点（补注册孤儿文件）。
+    返回：新分配的 node_id
+    校验：
+    - path 必须不以 / 结尾（文件路径）
+    - 文件必须存在于磁盘
+    - domain_id 必须在 domains 表中存在
+    写入字段：design_maturity='production', granularity='file', build_status='draft'
+    """
+    if path.endswith("/"):
+        print(f"ERROR: path必须不以/结尾（文件路径）: {path}", file=sys.stderr)
+        return -1
+
+    project_root = DEPGRAPH_PATH.parent.parent.parent
+    full_path = project_root / path
+    if not full_path.exists():
+        print(f"ERROR: 文件不存在: {full_path}", file=sys.stderr)
+        return -1
+
+    with _db_write_lock(db_path=db_path, task="add_file_node"):
+        conn = sqlite3.connect(db_path)
+        try:
+            domain = conn.execute(
+                "SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)
+            ).fetchone()
+            if not domain:
+                print(f"ERROR: domain_id '{domain_id}' 不在domains表中", file=sys.stderr)
+                return -1
+
+            existing = conn.execute(
+                "SELECT node_id FROM nodes WHERE path=? AND design_maturity='production'",
+                (path,),
+            ).fetchone()
+            if existing:
+                print(
+                    f"WARNING: path '{path}' 已有production节点 node_id={existing[0]}",
+                    file=sys.stderr,
+                )
+                return existing[0]
+
+            blueprint_path = (
+                f"docs/03_modules/{blueprint_id}/"
+                if blueprint_id and not blueprint_id.startswith("PENDING")
+                else None
+            )
+
+            cur = conn.execute(
+                """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
+                   build_status, design_maturity, blueprint_path, module_lifecycle_state, can_build)
+                   VALUES (?, ?, 'file', ?, ?, 'draft', 'production', ?, 'inactive', 0)""",
+                ("module", path, domain_id, blueprint_id, blueprint_path),
+            )
+            node_id = cur.lastrowid
+            conn.commit()
+            print(
+                f"[OK] 新增文件级production节点 node_id={node_id} path={path}",
+                file=sys.stderr,
+            )
+            return node_id
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: add_file_node失败: {e}", file=sys.stderr)
+            return -1
+        finally:
+            conn.close()
+
+
 def add_design_edge(
     from_node_id: int,
     to_node_id: int,
@@ -1215,6 +1285,13 @@ def main() -> None:
         help="转换build_status: NODE_ID TO_STATUS",
     )
     parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID", help="软删除设计态节点: NODE_ID")
+    parser.add_argument(
+        "--add-file-node",
+        type=str,
+        nargs="+",
+        metavar="ARG",
+        help="新增文件级production节点（补注册孤儿文件）: PATH BLUEPRINT_ID DOMAIN_ID",
+    )
     # F5 合规豁免：域/路径/依赖迁移命令（ARCH-CAP-005）
     parser.add_argument(
         "--insert-domain",
@@ -1293,6 +1370,20 @@ def main() -> None:
         ok = remove_design_node(args.remove_design_node)
         if not ok:
             sys.exit(4)
+        return
+
+    if args.add_file_node:
+        parts = args.add_file_node
+        if len(parts) < 3:
+            print("ERROR: --add-file-node 需要 PATH BLUEPRINT_ID DOMAIN_ID", file=sys.stderr)
+            sys.exit(3)
+        path = parts[0]
+        blueprint_id = parts[1]
+        domain_id = parts[2]
+        node_id = add_file_node(path, blueprint_id, domain_id)
+        if node_id < 0:
+            sys.exit(4)
+        print(f"node_id={node_id}")
         return
 
     # F5 合规豁免：域/路径/依赖迁移命令处理
