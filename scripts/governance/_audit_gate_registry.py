@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance._audit_gate_registry
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """DM-201204 STEP 2: 对比磁盘YAML文件和_registry.yaml注册情况.
 
 找出未注册的门禁YAML文件。

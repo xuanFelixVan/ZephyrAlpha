@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SHR_capacity_calibrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SHARED
+# [MODULE] zephyr.shared.capacity_calibrator
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.trading.resource_optimization; tests.unit.shared.test_orphan_integration
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance._check_all_status
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """检查DM-201201和DM-201202的状态，了解它们如何成功transition."""
 import sys
 import sqlite3

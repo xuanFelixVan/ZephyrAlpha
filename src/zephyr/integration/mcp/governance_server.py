@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-INT_governance_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOVERNANCE
+# [MODULE] zephyr.integration.mcp.governance_server
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_trail.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__
+# [CONSUMERS] zephyr.integration.mcp.gateway_server; zephyr.integration.mcp.__init__
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """GovernanceServer: 治理域统一MCP入口
 ========================================
 Server   : governance

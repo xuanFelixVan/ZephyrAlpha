@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
-# [MODULE] src.zephyr.autonomy_core.skill_router
+# [MODULE] zephyr.autonomy_core.skill_router
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.local_model.embedding_router
 # [CONSUMERS]

@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-GOV_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOVERNANCE
+# [MODULE] zephyr.integration.governance.__init___from_orches
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_protocol; zephyr.integration.governance.auditor; zephyr.integration.governance.governance_adapter; zephyr.integration.governance.phase_hold; zephyr.integration.governance.protocol
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Re-export from shared protocols
 from zephyr.shared.protocols.a2a.a2a_protocol import *  # noqa: F403
 

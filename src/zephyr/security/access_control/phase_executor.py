@@ -1,3 +1,16 @@
-# [A_module] module_id=MOD-SEC_phase_executor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.phase_executor
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Module stub: zephyr.security.access_control.phase_executor
 # This module is a placeholder. Implementation pending.

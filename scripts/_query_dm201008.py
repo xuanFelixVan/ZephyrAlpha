@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts._query_dm201008
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """查询DM-201008任务卡状态."""
 import sqlite3
 

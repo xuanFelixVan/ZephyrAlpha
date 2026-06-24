@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-SHARED
+# [MODULE] zephyr.shared.shared_services.observability_02.metrics
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.observability_02.metrics
+# [CONSUMERS] zephyr.governance.cost_budget; zephyr.integration.shared_08.metrics
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Proxy module - redirects to actual location
 # Created by create_shared_services_proxies.py
 # Actual source: zephyr.shared.observability_02.metrics

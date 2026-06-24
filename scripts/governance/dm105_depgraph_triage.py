@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.dm105_depgraph_triage
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 DM-105: depgraph 未分配节点三策略处理脚本
 策略1: 归入(Assimilate) — 匹配已有 blueprint_id

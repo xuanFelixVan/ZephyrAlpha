@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-AUT_bypass_recorder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-AUTONOMY_PERM
+# [MODULE] zephyr.autonomy_perm.red_blue_validator.bypass_recorder
+# [DOMAIN] D-AUTONOMY_PERM
+# [DEPENDENCIES] zephyr.security.adversarial_validation.bypass_recorder
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Re-export wrapper: bypass_recorder has migrated to zephyr.security.adversarial_validation.bypass_recorder"""
 
 from zephyr.security.adversarial_validation.bypass_recorder import *  # noqa: F403

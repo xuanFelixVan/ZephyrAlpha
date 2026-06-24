@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance._list_gate_ids
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Get all gate IDs from the gate_engine._GATE_FILES."""
 import sys
 from pathlib import Path

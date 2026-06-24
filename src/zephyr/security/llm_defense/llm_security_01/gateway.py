@@ -1,3 +1,16 @@
-# [A_module] module_id=MOD-SEC_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY-LLM
+# [MODULE] zephyr.security.llm_defense.llm_security_01.gateway
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Re-export from authoritative location
 from zephyr.security.llm_defense.llm_security.gateway import *  # noqa: F403

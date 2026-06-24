@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_l7_runtime | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY-LLM
+# [MODULE] zephyr.security.llm_defense.llm_security.layers.l7_runtime
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 class RuntimeSecurityLayer:
     def __init__(self, config=None):
         self.config = config or {}

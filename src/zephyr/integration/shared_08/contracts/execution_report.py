@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-INT_execution_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INTEGRATION
+# [MODULE] zephyr.integration.shared_08.contracts.execution_report
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # ==== BEGIN CODGEN:CTR-P1-007 ====
 from dataclasses import dataclass
 from decimal import Decimal

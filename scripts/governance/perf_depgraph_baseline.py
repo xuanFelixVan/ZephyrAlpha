@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance.perf_depgraph_baseline
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 [BLUEPRINT] | scripts/governance/perf_depgraph_baseline.py | §1
 [MODULE] scripts.governance.perf_depgraph_baseline

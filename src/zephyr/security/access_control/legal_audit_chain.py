@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_legal_audit_chain | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.legal_audit_chain
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests.test_legal_audit_chain; tests.agent_rbac.test_forensic_c
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.legal_audit_chain — implementation pending."""
 
 

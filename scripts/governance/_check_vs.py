@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance._check_vs
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """查看已完成任务卡的verification_status."""
 import sys
 sys.path.insert(0, "src")

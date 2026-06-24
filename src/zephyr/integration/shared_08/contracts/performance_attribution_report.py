@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-INT_performance_attribution_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INTEGRATION
+# [MODULE] zephyr.integration.shared_08.contracts.performance_attribution_report
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] tests.integration.test_phase_f_layers
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # ==== BEGIN CODGEN:CTR-P1-009 ====
 from dataclasses import dataclass, field
 

@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-GOV__base_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOVERNANCE
+# [MODULE] zephyr.infrastructure.a2a_protocol.governance._base_server
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.governance.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 import logging
 
 logger = logging.getLogger(__name__)

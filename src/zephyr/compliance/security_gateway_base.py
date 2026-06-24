@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-CMP_security_gateway_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-COMPLIANCE
+# [MODULE] zephyr.compliance.security_gateway_base
+# [DOMAIN] D-COMPLIANCE
+# [DEPENDENCIES] zephyr.governance.security_gateway_base
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Re-export wrapper: security_gateway_base has migrated to zephyr.governance.security_gateway_base"""
 
 from zephyr.governance.security_gateway_base import *  # noqa: F403

@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance._check_task
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """查看DM-201203任务卡的post_sync_standard和acceptance."""
 import sys
 sys.path.insert(0, "src")

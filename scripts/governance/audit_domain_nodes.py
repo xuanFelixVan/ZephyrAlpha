@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.audit_domain_nodes
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """SRC-100200: Audit 13 over-capacity domains granularity distribution.
 P0-4升级：4类检测（跨域违规+容量超限+孤儿节点+层级违规）
 """

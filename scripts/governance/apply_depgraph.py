@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.apply_depgraph
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 [BLUEPRINT] | scripts/governance/apply_depgraph.py | §1
 [MODULE] scripts.governance.apply_depgraph

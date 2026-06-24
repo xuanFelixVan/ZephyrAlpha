@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance.d5_architecture.generators.generate_domain_doc
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """G2: 从 depgraph.db nodes+edges 表生成指定域的 MD 文档(含模块清单+内嵌Mermaid依赖图)
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4

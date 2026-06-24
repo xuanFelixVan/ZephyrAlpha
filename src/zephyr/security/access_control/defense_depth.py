@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_defense_depth | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.defense_depth
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests.test_defense_depth
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.defense_depth — implementation pending."""
 
 DEFENSE_DEPTH = None  # stub constant

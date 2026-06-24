@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance.repair.concurrent_write_test
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 [BLUEPRINT] | scripts/governance/repair/concurrent_write_test.py | §1
 [MODULE] 无（独立测试脚本）

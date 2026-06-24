@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-INT_experiment_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INTEGRATION
+# [MODULE] zephyr.integration.shared_08.contracts.experiment_result
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
+# [CONSUMERS] zephyr.integration.contracts.experiment_result; tests.integration.test_phase_f_layers
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # ==== BEGIN CODGEN:CTR-P1-014 ====
 from dataclasses import dataclass, field
 from datetime import datetime

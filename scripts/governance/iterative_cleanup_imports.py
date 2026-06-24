@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance.iterative_cleanup_imports
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """自动迭代移除 governance/__init__.py 中导入失败的模块。
 
 策略:

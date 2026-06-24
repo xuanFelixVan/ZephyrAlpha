@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [MODULE] src.zephyr.knowledge.vector_memory.bm25_index
+# [MODULE] zephyr.knowledge.vector_memory.bm25_index
 # [DOMAIN] D-KNOWLEDGE
 # [DEPENDENCIES] zephyr.governance.vector_memory.__init__
 # [CONSUMERS]

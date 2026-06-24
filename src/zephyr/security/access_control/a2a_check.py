@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_a2a_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.a2a_check
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] scripts.a2a_full_verification; tests.test_a2a_check; tests.test_governance_a2a_check; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_008_a2a_to_rbac_escalation; tests.governance.test_gct_integration; tests.governance.test_p0_u1_contract_smoke
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.a2a_check — implementation pending."""
 
 ALLOWED_TALK_PAIRS = None  # stub constant

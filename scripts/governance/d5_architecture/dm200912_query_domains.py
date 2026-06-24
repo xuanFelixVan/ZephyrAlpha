@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance.d5_architecture.dm200912_query_domains
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """DM-200912 Phase4-A: 查询 depgraph.db 域+模块统计，输出 JSON 供视图重写使用
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.5

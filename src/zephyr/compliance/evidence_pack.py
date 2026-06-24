@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-CMP_evidence_pack | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-COMPLIANCE
+# [MODULE] zephyr.compliance.evidence_pack
+# [DOMAIN] D-COMPLIANCE
+# [DEPENDENCIES] zephyr.governance.evidence_pack
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Re-export wrapper: evidence_pack has migrated to zephyr.governance.evidence_pack"""
 
 from zephyr.governance.evidence_pack import *  # noqa: F403

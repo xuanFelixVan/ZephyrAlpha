@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_post_action_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.post_action_verifier
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests.test_post_action_verifier
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.post_action_verifier — implementation pending."""
 
 

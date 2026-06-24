@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SHR_slo_review_assistant | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SHARED
+# [MODULE] zephyr.shared.slo_review_assistant
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine; zephyr.infrastructure.capacity_assurance.modules.__init__; tests.unit.shared.test_orphan_integration
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 from __future__ import annotations
 
 from dataclasses import dataclass

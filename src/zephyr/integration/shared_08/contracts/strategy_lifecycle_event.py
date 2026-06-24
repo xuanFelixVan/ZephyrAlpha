@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-INT_strategy_lifecycle_event | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INTEGRATION
+# [MODULE] zephyr.integration.shared_08.contracts.strategy_lifecycle_event
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES]
+# [CONSUMERS] tests.integration.test_phase_f_layers
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # ==== BEGIN CODGEN:CTR-P1-006 ====
 from dataclasses import dataclass
 

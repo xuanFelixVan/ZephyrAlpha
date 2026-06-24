@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.check_naming_convention
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 FILENAME_UPPERCASE_WHITELIST = [
     "README",
     "LICENSE",

@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts._update_rbac_depgraph
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """更新depgraph.db中RBAC核心节点从prototype升级为production."""
 import sqlite3
 import sys

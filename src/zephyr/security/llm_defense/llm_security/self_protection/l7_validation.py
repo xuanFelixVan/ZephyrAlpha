@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_l7_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY-LLM
+# [MODULE] zephyr.security.llm_defense.llm_security.self_protection.l7_validation
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.self_protection.code_integrity
+# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security_01.self_protection.l7_validation; zephyr.security.llm_defense.llm_security_01.self_protection.__init__; tests.llm_security.test_l7_validation
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 class ValidationLayer:
     def __init__(self, config=None):
         self.config = config or {}

@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_approver_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.approver_check
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests.test_approver_check; tests.test_governance_approver_check; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_004_escalation_to_rbac; tests.governance.test_p0_u1_contract_smoke
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.approver_check — implementation pending."""
 
 RESTRICTED_ACTIONS = None  # stub constant

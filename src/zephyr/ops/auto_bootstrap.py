@@ -1,3 +1,16 @@
-# [A_module] module_id=MOD-UNK_auto_bootstrap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-OPS
+# [MODULE] zephyr.ops.auto_bootstrap
+# [DOMAIN] D-OPS
+# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Re-export from authoritative location
 from zephyr.infrastructure.system_telemetry.auto_bootstrap import *  # noqa: F403

@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.verify_final_delivery
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/verify_final_delivery.py | §11最终交付验证
 [MODULE] 无（独立脚本）

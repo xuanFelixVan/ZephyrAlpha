@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-SHARED
+# [MODULE] zephyr.shared.shared_services.infra_06.observer
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.infra_06.observer
+# [CONSUMERS] zephyr.autonomy_core.context_budget_tracker; zephyr.autonomy_core.pipeline_orchestrator; zephyr.autonomy_core.management.context_budget_tracker; zephyr.integration.pipeline_orchestrator; zephyr.integration.shared.events.dlq; zephyr.integration.shared.events.event_schemas; zephyr.integration.shared_08.contract_versions; zephyr.integration.shared_08.observer; zephyr.integration.shared_08.foundation.constants; zephyr.trading.orchestrator.deferred_queue; zephyr.trading.orchestrator.resilience.deferred_queue; tests.test_deferred_queue; tests.test_infra_observer; tests.test_mgmt_context_budget_tracker
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Proxy module - redirects to actual location
 # Created by create_shared_services_proxies.py
 # Actual source: zephyr.shared.infra_06.observer

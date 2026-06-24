@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_continuous_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.continuous_verifier
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests.test_continuous_verifier
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.continuous_verifier — implementation pending."""
 
 

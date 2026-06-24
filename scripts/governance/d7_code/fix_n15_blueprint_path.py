@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_n15_blueprint_path.py | §
 # [MODULE] scripts.governance.d7_code.fix_n15_blueprint_path
 # [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
 # [CONSUMERS] OPS-2026062104
 # [STARTUP] manual
 # [MATURITY] prototype

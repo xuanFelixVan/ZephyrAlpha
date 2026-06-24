@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance._shared.frontmatter
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] scripts.governance.d5_architecture.validators.validate_ssot; tests.unit.test_drafts_zone_archiver_unit; tests.unit.test_validate_blueprint_overlap_unit; tests.unit.test_validate_ssot_unit; tests.unit.governance.test_drafts_zone_archiver_governance; tests.unit.governance.test_validate_ssot_governance
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 import yaml
 
 

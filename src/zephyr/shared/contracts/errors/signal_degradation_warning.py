@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
-# [MODULE] src.zephyr.shared.contracts.errors.signal_degradation_warning
+# [MODULE] zephyr.shared.contracts.errors.signal_degradation_warning
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.errors.__init__
 # [CONSUMERS]

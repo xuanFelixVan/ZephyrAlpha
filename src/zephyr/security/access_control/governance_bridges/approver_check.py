@@ -1,3 +1,16 @@
-# [A_module] module_id=MOD-SEC_approver_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOVERNANCE
+# [MODULE] zephyr.security.access_control.governance_bridges.approver_check
+# [DOMAIN] D-AUTONOMY_PERM
+# [DEPENDENCIES] zephyr.security.access_control.governance_bridges.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Module stub: zephyr.security.access_control.governance_bridges.approver_check
 # This module is a placeholder. Implementation pending.

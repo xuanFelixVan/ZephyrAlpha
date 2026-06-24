@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SHR_execution_rejection_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INTEGRATION
+# [MODULE] zephyr.integration.shared.contracts.errors.execution_rejection_error
+# [DOMAIN] D-INTEGRATION
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
+# [CONSUMERS] zephyr.integration.shared.contracts.errors.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # ==== BEGIN CODGEN:CTR-ERR-005 ====
 from dataclasses import dataclass
 

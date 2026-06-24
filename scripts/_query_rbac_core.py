@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts._query_rbac_core
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """查询并更新depgraph.db中RBAC核心节点的design_maturity状态."""
 import sqlite3
 import sys

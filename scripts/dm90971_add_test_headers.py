@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.dm90971_add_test_headers
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """DM-90971: Batch add module_id scope prefix + governance anchor headers to test files.
 
 Usage:

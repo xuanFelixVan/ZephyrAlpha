@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_shell_dialect_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.shell_dialect_detector
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests.test_shell_dialect_detector; tests.agent_rbac.test_forensic_b
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.shell_dialect_detector — implementation pending."""
 
 DANGEROUS_SHELL_PATTERNS = None  # stub constant

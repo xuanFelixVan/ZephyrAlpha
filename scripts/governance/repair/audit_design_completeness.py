@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-REPAIR
+# [MODULE] scripts.governance.repair.audit_design_completeness
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES]
+# [CONSUMERS] scripts.governance.repair.backup_depgraph
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 r"""
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/audit_design_completeness.py | §5.2.4 MIG-4
 [MODULE] 无（独立脚本）

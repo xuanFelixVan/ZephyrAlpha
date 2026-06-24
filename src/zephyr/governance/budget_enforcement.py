@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md
+# [MODULE] zephyr.governance.budget_enforcement
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # 代理模块：将 zephyr.governance.budget_enforcement 重定向到实际模块
 from zephyr.autonomy_core.skill_executor import BudgetEnforcer
 from zephyr.governance.budget_models import BudgetDimension

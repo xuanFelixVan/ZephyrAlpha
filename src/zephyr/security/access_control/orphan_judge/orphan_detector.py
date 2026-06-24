@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_orphan_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md
+# [MODULE] zephyr.security.access_control.orphan_judge.orphan_detector
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.trading.__init__
+# [CONSUMERS] zephyr.security.access_control.orphan_judge.__init__; tests.test_orphan_detector
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md
 
 

@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_dependency_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.dependency_auditor
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.phase_check_registry; tests.test_dependency_auditor
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.dependency_auditor — implementation pending."""
 
 RESTRICTED_LICENSES = None  # stub constant

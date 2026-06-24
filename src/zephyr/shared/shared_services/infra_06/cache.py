@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-SHARED
+# [MODULE] zephyr.shared.shared_services.infra_06.cache
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.infra.cache
+# [CONSUMERS] zephyr.integration.shared_08.cache; tests.test_infra_cache; zephyr.shared.shared_services.infra_06.__init__
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Proxy module - redirects to actual location
 # Created by create_shared_services_proxies.py
 # Actual source: zephyr.shared.infra.cache

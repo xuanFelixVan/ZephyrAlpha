@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_decision_explainer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.decision_explainer
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests.test_decision_explainer_root; tests.agent_rbac.test_decision_explainer_agent_rbac; tests.unit.agent_rbac.test_rbac_core
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.decision_explainer — implementation pending."""
 
 

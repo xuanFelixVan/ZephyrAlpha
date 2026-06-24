@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.d1_structure.archive_drafts_zone
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] tests.unit.test_drafts_zone_archiver_unit; tests.unit.governance.test_drafts_zone_archiver_governance
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 STATUS_ARBITRATED = "ARBITRATED"
 STATUS_PENDING = "PENDING"
 STATUS_RESOLVED = "RESOLVED"

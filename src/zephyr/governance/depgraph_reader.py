@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOVERNANCE
+# [MODULE] zephyr.governance.depgraph_reader
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 depgraph_reader.py — 依赖图数据库查询工具模块
 

@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_l6_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY-LLM
+# [MODULE] zephyr.security.llm_defense.llm_security.layers.l6_observability
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.shared.alert_manager
+# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security_01.layers.__init__; zephyr.security.llm_defense.llm_security_01.layers.l6_observability; tests.llm_security.test_l6_observability
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """L6 Observability Layer — security event logging, alerting, and reporting."""
 
 from __future__ import annotations

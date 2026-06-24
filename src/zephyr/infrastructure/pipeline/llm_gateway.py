@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
-# [MODULE] src.zephyr.infrastructure.pipeline.llm_gateway
+# [MODULE] zephyr.infrastructure.pipeline.llm_gateway
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

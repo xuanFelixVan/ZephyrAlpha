@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH
+# [MODULE] scripts.governance.d5_architecture.validators.validate_authority_registry
+# [DOMAIN] D-GOV_DRIFT
+# [DEPENDENCIES]
+# [CONSUMERS] tests.unit.test_validate_authority_registry_unit; tests.unit.governance.test_validate_authority_registry_governance
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 class AuthorityEntry:
     def __init__(self, name="", role="", scope="", level=0, description=""):
         self.name = name

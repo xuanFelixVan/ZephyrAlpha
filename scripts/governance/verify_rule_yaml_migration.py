@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.verify_rule_yaml_migration
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML migration.
 
 NOTE: MD→YAML migration is complete. source_files field has been removed from

@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance.d5_architecture.dm200913_rewrite_diagrams
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """DM-200913 Phase4-B: 重写9个14层相关图表为52域派生
 
 基于§2.1裁定，将 diagrams/ 下9个图表从14层(L00-L13)节点改为52域节点。

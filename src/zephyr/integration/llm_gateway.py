@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
-# [MODULE] src.zephyr.integration.llm_gateway
+# [MODULE] zephyr.integration.llm_gateway
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__
 # [CONSUMERS]

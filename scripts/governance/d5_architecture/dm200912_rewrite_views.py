@@ -1,3 +1,17 @@
+# [BLUEPRINT]
+# [MODULE] scripts.governance.d5_architecture.dm200912_rewrite_views
+# [DOMAIN]
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """DM-200912 Phase4-A: 重写4个核心架构视图(overview/index/application_architecture/capability_heatmap)
 
 将14层主框架改为52域+全景图(depgraph.db)派生。

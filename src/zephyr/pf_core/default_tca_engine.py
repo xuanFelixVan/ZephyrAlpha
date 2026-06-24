@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-PRT_default_tca_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-PF_CORE
+# [MODULE] zephyr.pf_core.default_tca_engine
+# [DOMAIN] D-PF_CORE
+# [DEPENDENCIES] zephyr.governance.default_tca_engine
+# [CONSUMERS] tests.integration.test_e2e_pipeline; tests.integration.test_phase_g_perf; tests.integration.test_phase_e_main_flow
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Re-export wrapper: default_tca_engine has migrated to zephyr.portfolio.core.default_tca_engine"""
 
 from zephyr.governance.default_tca_engine import *  # noqa: F403

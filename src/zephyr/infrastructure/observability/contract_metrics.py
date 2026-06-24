@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-INF_contract_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INFRA_RUNTIME
+# [MODULE] zephyr.infrastructure.observability.contract_metrics
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.observability.__init__
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # ==== BEGIN CODGEN:CT-TEL-001 ====
 from dataclasses import dataclass, field
 from datetime import datetime

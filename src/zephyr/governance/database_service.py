@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOVERNANCE
+# [MODULE] zephyr.governance.database_service
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 DatabaseService: 统一管理三个数据库的连接池、生命周期、健康检查
 

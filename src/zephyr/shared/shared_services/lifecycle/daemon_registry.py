@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-SHARED
+# [MODULE] zephyr.shared.shared_services.lifecycle.daemon_registry
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.lifecycle.daemon_registry
+# [CONSUMERS] zephyr.behavioral_audit.drift_cron_scheduler; tests.test_daemon_registry; tests.test_resource_optimization_engine
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Proxy module - redirects to actual location
 # Created by create_shared_services_proxies.py
 # Actual source: zephyr.shared.lifecycle.daemon_registry

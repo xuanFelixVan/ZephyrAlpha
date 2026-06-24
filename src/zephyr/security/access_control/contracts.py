@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY
+# [MODULE] zephyr.security.access_control.contracts
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests.test_contracts; tests.test_governance_contracts; tests.test_rbac_audit_bridge; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_001_rbac_to_audit; tests.governance.test_p0_i2_construction_order; tests.governance.test_p0_u1_contract_smoke
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Stub module: zephyr.security.access_control.contracts — implementation pending."""
 
 

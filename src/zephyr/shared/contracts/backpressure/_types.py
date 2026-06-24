@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SHR_backpressure_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SHARECONTRACTS
+# [MODULE] zephyr.shared.contracts.backpressure._types
+# [DOMAIN] D-SHARED
+# [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
+# [CONSUMERS] zephyr.shared.contracts.backpressure.resume; zephyr.shared.contracts.backpressure.pause; zephyr.shared.contracts.backpressure.throttle
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # Re-homed type definitions — eliminates circular import from shared -> infrastructure
 """Shared internal backpressure type definitions.
 Previously re-exported from infrastructure_runtime_integration.pipeline.backpressure_types.

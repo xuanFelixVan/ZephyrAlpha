@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_injection_patterns | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY-LLM
+# [MODULE] zephyr.security.llm_defense.llm_security.patterns.injection_patterns
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.security.llm_defense.llm_security_01.patterns.__init__; zephyr.security.llm_defense.llm_security_01.patterns.injection_patterns; tests.llm_security.test_injection_patterns
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 class InjectionPattern:
     def __init__(self, pattern_type="", regex="", severity="medium"):
         self.pattern_type = pattern_type

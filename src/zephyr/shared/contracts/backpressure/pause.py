@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
-# [MODULE] src.zephyr.shared.contracts.backpressure.pause
+# [MODULE] zephyr.shared.contracts.backpressure.pause
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.backpressure._types
 # [CONSUMERS]

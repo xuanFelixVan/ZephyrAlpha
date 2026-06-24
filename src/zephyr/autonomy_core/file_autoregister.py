@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
-# [MODULE] src.zephyr.autonomy_core.file_autoregister
+# [MODULE] zephyr.autonomy_core.file_autoregister
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]

@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-EXE_broker_interface | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-EX_CORE
+# [MODULE] zephyr.ex_core.adapters.broker_interface
+# [DOMAIN] D-EX_CORE
+# [DEPENDENCIES] zephyr.governance.adapters.broker_interface
+# [CONSUMERS] tests.test_trade_execution; tests.integration.test_e2e_pipeline
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Re-export wrapper: broker_interface has migrated to zephyr.execution.core.adapters.broker_interface"""
 
 from zephyr.governance.adapters.broker_interface import *  # noqa: F403

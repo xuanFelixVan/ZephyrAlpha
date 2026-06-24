@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH
+# [MODULE] scripts.governance.d5_architecture.validators.validate_ssot
+# [DOMAIN] D-GOV_DRIFT
+# [DEPENDENCIES] scripts.governance._shared.frontmatter
+# [CONSUMERS] tests.unit.test_validate_ssot_unit; tests.unit.governance.test_validate_ssot_governance
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 VALID_PRIORITIES = ["P0", "P1", "P2", "P3"]
 VALID_DOCUMENT_STATUSES = ["draft", "approved", "deprecated", "superseded"]
 

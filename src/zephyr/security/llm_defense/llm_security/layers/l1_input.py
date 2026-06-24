@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_l1_input | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY-LLM
+# [MODULE] zephyr.security.llm_defense.llm_security.layers.l1_input
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security_01.layers.l1_input; zephyr.security.llm_defense.llm_security_01.layers.__init__; tests.llm_security.test_l1_input_defense
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 class InputDefense:
     def __init__(self, config=None):
         self.config = config or {}

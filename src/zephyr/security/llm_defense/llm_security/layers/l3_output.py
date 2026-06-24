@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_l3_output | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY-LLM
+# [MODULE] zephyr.security.llm_defense.llm_security.layers.l3_output
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security_01.layers.l3_output; zephyr.security.llm_defense.llm_security_01.layers.__init__; tests.adversarial.test_cross_layer_systems_red_team; tests.llm_security.test_l3_output_security
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 class OutputFilterLayer:
     def __init__(self, config=None):
         self.config = config or {}

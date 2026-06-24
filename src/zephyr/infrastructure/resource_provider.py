@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §[MODULE] zephyr.infrastructure.resource_provider
-# [MODULE] src.zephyr.infrastructure.resource_provider
+# [MODULE] zephyr.infrastructure.resource_provider
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.integration.shared_08.io.paths
 # [CONSUMERS]

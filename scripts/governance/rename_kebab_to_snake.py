@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.rename_kebab_to_snake
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """rename_kebab_to_snake.py — 全项目文件名/目录名 kebab-case → snake_case 批量重命名。
 
 操作流程：

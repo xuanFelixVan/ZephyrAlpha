@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.dm106_p2b_verification
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """
 DM-106: P2-B 迁移全量验证脚本
 验证 depgraph 所有 P2-B 输出的完整性和一致性

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
-# [MODULE] src.zephyr.shared.contracts.execution.model_serving_request
+# [MODULE] zephyr.shared.contracts.execution.model_serving_request
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.execution.__init__
 # [CONSUMERS]

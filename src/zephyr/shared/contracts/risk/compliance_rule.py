@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
-# [MODULE] src.zephyr.shared.contracts.risk.compliance_rule
+# [MODULE] zephyr.shared.contracts.risk.compliance_rule
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]
 # [CONSUMERS]

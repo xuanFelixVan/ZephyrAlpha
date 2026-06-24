@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.d11_compliance.validate_truth_source_cascade
+# [DOMAIN] D-GOV_DRIFT
+# [DEPENDENCIES]
+# [CONSUMERS] tests.unit.test_validate_truth_source_cascade_unit; tests.unit.governance.test_validate_truth_source_cascade_governance
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 class RationaleDecision:
     def __init__(self, decision_id="", source="", target="", rationale="", confidence=0.0):
         self.decision_id = decision_id

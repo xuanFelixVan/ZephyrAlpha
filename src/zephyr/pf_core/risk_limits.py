@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-PRT_risk_limits | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-PF_CORE
+# [MODULE] zephyr.pf_core.risk_limits
+# [DOMAIN] D-PF_CORE
+# [DEPENDENCIES] zephyr.governance.risk_limits
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """Re-export wrapper: risk_limits has migrated to zephyr.portfolio.core.risk_limits"""
 
 from zephyr.governance.risk_limits import *  # noqa: F403

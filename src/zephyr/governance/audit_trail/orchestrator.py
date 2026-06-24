@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-GOV_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md
+# [MODULE] zephyr.governance.audit_trail.orchestrator
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit_trail.writer; zephyr.governance.audit_trail.models; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.audit_trail.anomaly; zephyr.governance.audit_trail.indexer; zephyr.governance.audit_trail.self_monitor; zephyr.governance.audit_trail.bridge; zephyr.governance.audit_trail.contracts
+# [CONSUMERS] tests.test_orchestrator
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 """[BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md
 
 [MODULE] zephyr.governance.audit_trail.orchestrator

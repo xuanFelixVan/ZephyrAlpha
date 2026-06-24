@@ -1,4 +1,17 @@
-# [A_module] module_id=MOD-SEC_l0_supply_chain | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-SECURITY-LLM
+# [MODULE] zephyr.security.llm_defense.llm_security.layers.l0_supply_chain
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security_01.layers.l0_supply_chain; zephyr.security.llm_defense.llm_security_01.layers.__init__; tests.adversarial.test_cross_layer_systems_red_team; tests.llm_security.test_l0_supply_chain
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 class SupplyChainValidator:
     def __init__(self, config=None):
         self.config = config or {}

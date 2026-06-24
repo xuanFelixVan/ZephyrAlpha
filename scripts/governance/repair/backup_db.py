@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-GOV-REPAIR
+# [MODULE] scripts.governance.repair.backup_db
+# [DOMAIN] D-GOV_AUDIT
+# [DEPENDENCIES] scripts.governance.repair.backup_depgraph
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # D:\ZephyrAlpha\scripts\governance\repair\backup_db.py
 import shutil
 import sys
