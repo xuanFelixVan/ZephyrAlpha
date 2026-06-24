@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示漂移检测（D-GOV_DRIFT）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 漂移检测（D-GOV_DRIFT）的模块分布。共 38 个模块 / 38 modules。
+> 按 architecture_layer 分层显示 漂移检测（D-GOV_DRIFT）的模块分布。共 39 个模块 / 39 modules。
 
 ```
 
@@ -45,12 +45,19 @@ ttl: permanent
 │   src/zephyr/governance/drift_detector.py  [prototype]           │
 │   ...还有 20 个模块 / 20 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                未分类 / Unclassified (1 modules)                 │
+├──────────────────────────────────────────────────────────────────┤
+│   F6-drift-detector/  [design]                                   │
+└──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 38 个模块 / 38 modules）。
+> 按 architecture_layer 分组的模块清单（共 39 个模块 / 39 modules）。
 
 ### L1 基础层 / Foundation Layer (38 modules)
 
@@ -94,6 +101,12 @@ ttl: permanent
 | 36 | tests/unit/drift_detector/__init__.py | tests/unit/drift_detector/__init__.py | prototype | draft |
 | 37 | tests/unit/drift_detector/conftest.py | tests/unit/drift_detector/conftest.py | prototype | draft |
 | 38 | tests/unit/drift_detector/test_drift_core.py | tests/unit/drift_detector/test_drift_... | prototype | draft |
+
+### 未分类 / Unclassified (1 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | F6-drift-detector/ | F6-drift-detector/ | design | stable |
 
 ## 依赖关系图 / Dependency Graph
 

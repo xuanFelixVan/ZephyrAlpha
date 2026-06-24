@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示上下文管理（D-INTELLIGENCE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 上下文管理（D-INTELLIGENCE）的模块分布。共 273 个模块 / 273 modules。
+> 按 architecture_layer 分层显示 上下文管理（D-INTELLIGENCE）的模块分布。共 274 个模块 / 274 modules。
 
 ```
 
@@ -48,7 +48,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               未分类 / Unclassified (217 modules)                │
+│               未分类 / Unclassified (218 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   3阶段决策门控 3-Stage Decision Gate  [design]                  │
 │   4 Level Risk Control Decision Gating 4级风控决策门控  [design] │
@@ -68,14 +68,14 @@ ttl: permanent
 │   AutoML Engine 自动ML引擎  [design]                             │
 │   AutoSkill自动技能发现 AutoSkill Automatic Skill Discovery  ... │
 │   A股特色数据 A-Share Special Data  [design]                     │
-│   ...还有 199 个模块 / 199 more modules                          │
+│   ...还有 200 个模块 / 200 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 273 个模块 / 273 modules）。
+> 按 architecture_layer 分组的模块清单（共 274 个模块 / 274 modules）。
 
 ### L1 基础层 / Foundation Layer (56 modules)
 
@@ -138,7 +138,7 @@ ttl: permanent
 | 55 | src/zephyr/intelligence/models/__init__.py | src/zephyr/intelligence/models/__init... | scaffold_placeholder | orphan |
 | 56 | src/zephyr/intelligence/services/__init__.py | src/zephyr/intelligence/services/__in... | scaffold_placeholder | orphan |
 
-### 未分类 / Unclassified (217 modules)
+### 未分类 / Unclassified (218 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -343,7 +343,7 @@ ttl: permanent
 | 199 | D-INTELLIGENCE/模块工厂 Module Factory | 模块工厂 Module Factory | design | design_only |
 | 200 | D-INTELLIGENCE/流动性知识 Liquidity Knowledge | 流动性知识 Liquidity Knowledge | design | design_only |
 
-> (仅显示前 200 个模块，共 217 个)
+> (仅显示前 200 个模块，共 218 个)
 
 ## 依赖关系图 / Dependency Graph
 

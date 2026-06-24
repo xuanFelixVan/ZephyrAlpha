@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 漂移检测（D-GOV_DRIFT）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:54
+> 最后更新: 2026-06-24 23:56:40
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D-GOV_DRIFT | Domain ID | D-GOV_DRIFT |
 | 域名称 | 漂移检测 | Domain Name | drift_detection |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 38 | Module Count | 38 |
+| 模块数 | 39 | Module Count | 39 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 65 | Cross-domain Incoming | 65 |
-| 跨域出边 | 39 | Cross-domain Outgoing | 39 |
-| 设计态模块 | 1 | Design Modules | 1 |
+| 跨域入边 | 66 | Cross-domain Incoming | 66 |
+| 跨域出边 | 42 | Cross-domain Outgoing | 42 |
+| 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 15 | Prototype Modules | 15 |
 | 生产态模块 | 22 | Production Modules | 22 |
 | 容量 | 38/200 (正常) | Capacity | 38/200 (正常) |
@@ -36,10 +36,11 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 38 个模块（按路径排序，全部显示）
+共 39 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
+| F6-drift-detector/ |  | design | stable |
 | docs/01_policies_and_standards/_registry/catalogs/script_health_registry.yaml |  | production | orphan |
 | docs/01_policies_and_standards/rules/trae_016_arch_drift_detection.yaml |  | production | orphan |
 | .../01_policies_and_standards/rules/trae_035_task_construction_verification.yaml |  | production | orphan |
@@ -94,6 +95,7 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_GOV_DRIFT["D-GOV_DRIFT 漂移检测"]
+        F6_drift_detector["F6-drift-detector/ design"]
         docs_01_policies_and_standards_registry_catalogs_script_health_registry_yaml["docs/01_policies_and_standards/_registry/catalo... production"]
         docs_01_policies_and_standards_rules_trae_016_arch_drift_detection_yaml["docs/01_policies_and_standards/rules/trae_016_a... production"]
         docs_01_policies_and_standards_rules_trae_035_task_construction_verification_yaml["docs/01_policies_and_standards/rules/trae_035_t... production"]
@@ -123,7 +125,6 @@ graph TD
         src_zephyr_governance_rule_enforcement_truth_source_validator_py["src/zephyr/governance/rule_enforcement/truth_so... production"]
         tests_test_ba_chaos_injector_py["tests/test_ba_chaos_injector.py prototype"]
         tests_test_baseline_manager_py["tests/test_baseline_manager.py prototype"]
-        tests_test_chaos_injector_py["tests/test_chaos_injector.py prototype"]
     end
     src_zephyr_governance_audit_trail_self_monitor_py -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
     D_GOVERNANCE["D-GOVERNANCE design"]
@@ -167,7 +168,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_registry_catalogs_script_health_registry_yaml,docs_01_policies_and_standards_rules_trae_016_arch_drift_detection_yaml,docs_01_policies_and_standards_rules_trae_035_task_construction_verification_yaml,docs_01_policies_and_standards_rules_trae_039_ai_hallucination_detection_yaml,scripts_governance_d11_compliance_validate_blueprint_overlap_py,scripts_governance_d11_compliance_validate_truth_source_cascade_py,scripts_governance_d5_architecture_validators_validate_authority_registry_py,scripts_governance_d5_architecture_validators_validate_ssot_py,src_zephyr_governance_artifact_scanner_py,src_zephyr_governance_audit_orchestrator_integrity_py,src_zephyr_governance_audit_trail_drift_bridge_py,src_zephyr_governance_audit_trail_self_monitor_py,src_zephyr_governance_drift_detection_detector_registry_yaml,src_zephyr_governance_drift_detection_migration_plan_yaml,src_zephyr_governance_integrity_py,src_zephyr_governance_red_blue_validator_ai_self_diagnosis_py,src_zephyr_governance_rule_enforcement_breaking_change_detector_py,src_zephyr_governance_rule_enforcement_gate_health_py,src_zephyr_governance_rule_enforcement_gate_integrity_guard_py,src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py,src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_yaml,src_zephyr_governance_rule_enforcement_truth_source_validator_py production
-    class docs_03_modules_domain_governance_drift_detector_blueprint_md,src_zephyr_governance_drift_detection_baseline_manager_py,src_zephyr_governance_drift_detection_chaos_injector_py,src_zephyr_governance_drift_detector_py,src_zephyr_governance_rule_enforcement_drift_detector_py,tests_test_ba_chaos_injector_py,tests_test_baseline_manager_py,tests_test_chaos_injector_py design
+    class F6_drift_detector,docs_03_modules_domain_governance_drift_detector_blueprint_md,src_zephyr_governance_drift_detection_baseline_manager_py,src_zephyr_governance_drift_detection_chaos_injector_py,src_zephyr_governance_drift_detector_py,src_zephyr_governance_rule_enforcement_drift_detector_py,tests_test_ba_chaos_injector_py,tests_test_baseline_manager_py design
     class D_GOV_RULE external_prod
     class D_GOVERNANCE,D_GOV_AUDIT,D_AUTONOMY_PERM,D_TRADING,D_COMPLIANCE external_design
 ```
@@ -177,6 +178,7 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_GOV_DRIFT["D-GOV_DRIFT 漂移检测"]
+        tests_test_chaos_injector_py["tests/test_chaos_injector.py prototype"]
         tests_test_context_drift_detector_py["tests/test_context_drift_detector.py prototype"]
         tests_test_contract_drift_detector_py["tests/test_contract_drift_detector.py prototype"]
         tests_test_drift_detector_ee_py["tests/test_drift_detector_ee.py prototype"]
@@ -187,9 +189,10 @@ graph TD
         tests_unit_drift_detector_test_drift_core_py["tests/unit/drift_detector/test_drift_core.py prototype"]
     end
     tests_unit_drift_detector_conftest_py -.->|config_depends| tests_unit_drift_detector_init_py
+    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    tests_test_chaos_injector_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     D_SECURITY["D-SECURITY production"]
     tests_test_context_drift_detector_py -.->|test_depends| D_SECURITY
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
     tests_test_contract_drift_detector_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     D_GOVERNANCE["D-GOVERNANCE production"]
     tests_test_drift_detector_gate_py -.->|test_depends| D_GOVERNANCE
@@ -203,8 +206,8 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_test_context_drift_detector_py,tests_test_contract_drift_detector_py,tests_test_drift_detector_ee_py,tests_test_drift_detector_gate_py,tests_test_model_drift_detector_py,tests_unit_drift_detector_init_py,tests_unit_drift_detector_conftest_py,tests_unit_drift_detector_test_drift_core_py design
-    class D_SECURITY,D_BEHAVIORAL_AUDIT,D_GOVERNANCE external_prod
+    class tests_test_chaos_injector_py,tests_test_context_drift_detector_py,tests_test_contract_drift_detector_py,tests_test_drift_detector_ee_py,tests_test_drift_detector_gate_py,tests_test_model_drift_detector_py,tests_unit_drift_detector_init_py,tests_unit_drift_detector_conftest_py,tests_unit_drift_detector_test_drift_core_py design
+    class D_BEHAVIORAL_AUDIT,D_SECURITY,D_GOVERNANCE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -215,9 +218,10 @@ graph TD
 |--------|:---:|---------|
 | D-GOVERNANCE | 12 | runtime,config_depends,import_depends,test_depends |
 | D-BEHAVIORAL_AUDIT | 11 | import_depends,test_depends |
-| D-GOV_AUDIT | 8 | runtime,import_depends |
+| D-GOV_AUDIT | 9 | runtime,import_depends,data |
+| D-INTEGRATION | 4 | import_depends,data |
 | D-SECURITY | 3 | import_depends,test_depends |
-| D-INTEGRATION | 3 | import_depends |
+| D-INFRA_OPS | 1 | data |
 | D-GOV_RULE | 1 | runtime |
 | D-AUTONOMY_PERM | 1 | runtime |
 
@@ -225,7 +229,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 36 | runtime,contract,test_depends,import_depends,config_depends |
+| D-GOVERNANCE | 37 | runtime,contract,test_depends,import_depends,config_depends,data |
 | D-GOV_AUDIT | 16 | runtime,import_depends,test_depends |
 | D-TRADING | 5 | runtime,import_depends |
 | D-GOV_RULE | 4 | import_depends |

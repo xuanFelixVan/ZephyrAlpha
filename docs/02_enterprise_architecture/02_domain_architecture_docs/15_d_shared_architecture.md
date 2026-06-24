@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示共享服务（D-SHARED）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 共享服务（D-SHARED）的模块分布。共 289 个模块 / 289 modules。
+> 按 architecture_layer 分层显示 共享服务（D-SHARED）的模块分布。共 308 个模块 / 308 modules。
 
 ```
 
@@ -80,18 +80,34 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (3 modules)                 │
+│                未分类 / Unclassified (22 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   14条知识注入路径 14 Knowledge Injection Paths  [design]        │
 │   Event Schema Versioning 事件Schema版本管理  [design]           │
 │   权重中心接口 Weight-Centric Interface  [design]                │
+│   F11-context-engine/  [design]                                  │
+│   F22-event-bus/  [design]                                       │
+│   src/zephyr/shared/adaptation/__init__.py  [production]         │
+│   src/zephyr/shared/compensation/__init__.py  [production]       │
+│   src/zephyr/shared/dependency/__init__.py  [production]         │
+│   src/zephyr/shared/draft/__init__.py  [production]              │
+│   src/zephyr/shared/infra_06/__init__.py  [production]           │
+│   src/zephyr/shared/knowledge/__init__.py  [production]          │
+│   src/zephyr/shared/lifecycle/scope_guard.py  [production]       │
+│   src/zephyr/shared/lifecycle/task_lifecycle_manager.py  [pro... │
+│   src/zephyr/shared/maintenance/__init__.py  [production]        │
+│   src/zephyr/shared/observability_02/__init__.py  [production]   │
+│   src/zephyr/shared/quality/__init__.py  [production]            │
+│   src/zephyr/shared/queue/__init__.py  [production]              │
+│   src/zephyr/shared/queue/task_scheduler.py  [production]        │
+│   ...还有 4 个模块 / 4 more modules                              │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 289 个模块 / 289 modules）。
+> 按 architecture_layer 分组的模块清单（共 308 个模块 / 308 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (73 modules)
 
@@ -384,13 +400,32 @@ ttl: permanent
 |:--:|---------|---------|:---:|:---:|
 | 1 | tools/_gen_dedup_tests.py | tools/_gen_dedup_tests.py | prototype | orphan |
 
-### 未分类 / Unclassified (3 modules)
+### 未分类 / Unclassified (22 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | D-SHARED/14条知识注入路径 14 Knowledge Injection Paths | 14条知识注入路径 14 Knowledge Injecti... | design | design_only |
 | 2 | D-SHARED/Event Schema Versioning 事件Schema版本管理 | Event Schema Versioning 事件Schema版... | design | design_only |
 | 3 | D-SHARED/权重中心接口 Weight-Centric Interface | 权重中心接口 Weight-Centric Interface | design | design_only |
+| 4 | F11-context-engine/ | F11-context-engine/ | design | stable |
+| 5 | F22-event-bus/ | F22-event-bus/ | design | stable |
+| 6 | src/zephyr/shared/adaptation/__init__.py | src/zephyr/shared/adaptation/__init__.py | production | draft |
+| 7 | src/zephyr/shared/compensation/__init__.py | src/zephyr/shared/compensation/__init... | production | draft |
+| 8 | src/zephyr/shared/dependency/__init__.py | src/zephyr/shared/dependency/__init__.py | production | draft |
+| 9 | src/zephyr/shared/draft/__init__.py | src/zephyr/shared/draft/__init__.py | production | draft |
+| 10 | src/zephyr/shared/infra_06/__init__.py | src/zephyr/shared/infra_06/__init__.py | production | draft |
+| 11 | src/zephyr/shared/knowledge/__init__.py | src/zephyr/shared/knowledge/__init__.py | production | draft |
+| 12 | src/zephyr/shared/lifecycle/scope_guard.py | src/zephyr/shared/lifecycle/scope_gua... | production | draft |
+| 13 | src/zephyr/shared/lifecycle/task_lifecycle_manager.py | src/zephyr/shared/lifecycle/task_life... | production | draft |
+| 14 | src/zephyr/shared/maintenance/__init__.py | src/zephyr/shared/maintenance/__init_... | production | draft |
+| 15 | src/zephyr/shared/observability_02/__init__.py | src/zephyr/shared/observability_02/__... | production | draft |
+| 16 | src/zephyr/shared/quality/__init__.py | src/zephyr/shared/quality/__init__.py | production | draft |
+| 17 | src/zephyr/shared/queue/__init__.py | src/zephyr/shared/queue/__init__.py | production | draft |
+| 18 | src/zephyr/shared/queue/task_scheduler.py | src/zephyr/shared/queue/task_schedule... | production | draft |
+| 19 | src/zephyr/shared/reliability/__init__.py | src/zephyr/shared/reliability/__init_... | production | draft |
+| 20 | src/zephyr/shared/reliability/context_guard.py | src/zephyr/shared/reliability/context... | production | draft |
+| 21 | src/zephyr/shared/session/__init__.py | src/zephyr/shared/session/__init__.py | production | draft |
+| 22 | src/zephyr/shared/sla/__init__.py | src/zephyr/shared/sla/__init__.py | production | draft |
 
 ## 依赖关系图 / Dependency Graph
 

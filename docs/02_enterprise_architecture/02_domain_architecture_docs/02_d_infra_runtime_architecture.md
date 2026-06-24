@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示运行时集成（D-INFRA_RUNTIME）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 运行时集成（D-INFRA_RUNTIME）的模块分布。共 727 个模块 / 727 modules。
+> 按 architecture_layer 分层显示 运行时集成（D-INFRA_RUNTIME）的模块分布。共 729 个模块 / 729 modules。
 
 ```
 
@@ -57,7 +57,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               未分类 / Unclassified (309 modules)                │
+│               未分类 / Unclassified (311 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   A-Share Diffusion Model Data Augmentation A股扩散模型数据增... │
 │   AB Test Dependency Mapper AB测试依赖映射器  [design]           │
@@ -77,14 +77,14 @@ ttl: permanent
 │   Base 基础  [design]                                            │
 │   Batch Data Processor 批量数据处理器  [design]                  │
 │   Blue-Green Dependency Mapper 蓝绿依赖映射器  [design]          │
-│   ...还有 291 个模块 / 291 more modules                          │
+│   ...还有 293 个模块 / 293 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 727 个模块 / 727 modules）。
+> 按 architecture_layer 分组的模块清单（共 729 个模块 / 729 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (3 modules)
 
@@ -301,7 +301,7 @@ ttl: permanent
 
 > (仅显示前 200 个模块，共 415 个)
 
-### 未分类 / Unclassified (309 modules)
+### 未分类 / Unclassified (311 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -506,7 +506,7 @@ ttl: permanent
 | 199 | D-INFRA-RUNTIME/Plugin System Manager 插件系统管理器 | Plugin System Manager 插件系统管理器 | design | design_only |
 | 200 | D-INFRA-RUNTIME/Policy Conflict Auto Detector 策略冲突自... | Policy Conflict Auto Detector 策略冲... | design | design_only |
 
-> (仅显示前 200 个模块，共 309 个)
+> (仅显示前 200 个模块，共 311 个)
 
 ## 依赖关系图 / Dependency Graph
 

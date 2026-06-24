@@ -1,6 +1,6 @@
 ---
 doc_type: domain_architecture_doc
-title: D-T5-W1 读写并发T5-1架构文档
+title: D-INTEGRATION-GATEWAY mcp_servers架构文档
 version: "1.0"
 status: active
 date: 2026-06-24
@@ -8,22 +8,22 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 49_d_t5_w1 / 读写并发T5-1
+# 47_d_integration_gateway / mcp_servers
 
-> **文档作用 / Purpose**: 展示 读写并发T5-1（D-T5-W1）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 mcp_servers（D-INTEGRATION-GATEWAY）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:54
+> 最后更新: 2026-06-24 23:56:40
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 编号 | 49 | Number | 49 |
-| 域ID | D-T5-W1 | Domain ID | D-T5-W1 |
-| 域名称 | 读写并发T5-1 | Domain Name | 读写并发T5-1 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 编号 | 47 | Number | 47 |
+| 域ID | D-INTEGRATION-GATEWAY | Domain ID | D-INTEGRATION-GATEWAY |
+| 域名称 | mcp_servers | Domain Name | mcp_servers |
+| 层级 |  | Layer |  |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -32,6 +32,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/200 (正常) | Capacity | 0/200 (正常) |
+| 描述 | 11个MCP服务端 + 1 Gateway | Description | 11个MCP服务端 + 1 Gateway |
 
 ## 模块清单 / Module List
 
@@ -52,7 +53,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_T5_W1["D-T5-W1 读写并发T5-1"]
+    subgraph D_INTEGRATION_GATEWAY["D-INTEGRATION-GATEWAY mcp_servers"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

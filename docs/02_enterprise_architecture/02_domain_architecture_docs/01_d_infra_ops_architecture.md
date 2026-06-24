@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示基础设施运维（D-INFRA_OPS）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基础设施运维（D-INFRA_OPS）的模块分布。共 418 个模块 / 418 modules。
+> 按 architecture_layer 分层显示 基础设施运维（D-INFRA_OPS）的模块分布。共 430 个模块 / 430 modules。
 
 ```
 
@@ -59,7 +59,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               未分类 / Unclassified (384 modules)                │
+│               未分类 / Unclassified (396 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   12层架构与九大平台映射分析器 Analyzer  [design]                │
 │   12层架构健康检查与故障隔离器 12-Layer Architecture Health C... │
@@ -79,14 +79,14 @@ ttl: permanent
 │   AlertFired 告警触发事件  [design]                              │
 │   Ant Design+ECharts可视化组件集成器  [design]                   │
 │   Backup Manager 备份管理器  [design]                            │
-│   ...还有 366 个模块 / 366 more modules                          │
+│   ...还有 378 个模块 / 378 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 418 个模块 / 418 modules）。
+> 按 architecture_layer 分组的模块清单（共 430 个模块 / 430 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (5 modules)
 
@@ -132,7 +132,7 @@ ttl: permanent
 | 28 | tests/test_rollback_simulator.py | tests/test_rollback_simulator.py | prototype | draft |
 | 29 | tests/test_rollback_wal.py | tests/test_rollback_wal.py | prototype | draft |
 
-### 未分类 / Unclassified (384 modules)
+### 未分类 / Unclassified (396 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -337,23 +337,23 @@ ttl: permanent
 | 199 | D-INFRA-OPS/密钥轮换模块 Key Rotation Module | 密钥轮换模块 Key Rotation Module | design | design_only |
 | 200 | D-INFRA-OPS/导航使用热力图生成器 Generator | 导航使用热力图生成器 Generator | design | design_only |
 
-> (仅显示前 200 个模块，共 384 个)
+> (仅显示前 200 个模块，共 396 个)
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 417 条 / 417 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 419 条 / 419 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 417 条 / 417 edges)       │
+│      依赖关系图 / Dependency Graph (共 419 条 / 419 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 6                               │
 │   [import_depends]: 361 条 / edges                               │
 │   [config_depends]: 18 条 / edges                                │
 │   [contract]: 15 条 / edges                                      │
 │   [event]: 12 条 / edges                                         │
-│   [data]: 8 条 / edges                                           │
+│   [data]: 10 条 / edges                                          │
 │   [runtime]: 3 条 / edges                                        │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -418,11 +418,11 @@ ttl: permanent
 
 **[event]** (12 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[data]** (8 条 / edges) — 已达显示上限，省略 / limit reached
+**[data]** (10 条 / edges) — 已达显示上限，省略 / limit reached
 
 **[runtime]** (3 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 417 条)
+> (最多显示前 50 条依赖边，共 419 条)
 
 ```
 

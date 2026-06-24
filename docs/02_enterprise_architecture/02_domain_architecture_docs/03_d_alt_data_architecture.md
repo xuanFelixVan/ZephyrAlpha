@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示另类数据（D-ALT_DATA）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:55
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 另类数据（D-ALT_DATA）的模块分布。共 68 个模块 / 68 modules。
+> 按 architecture_layer 分层显示 另类数据（D-ALT_DATA）的模块分布。共 69 个模块 / 69 modules。
 
 ```
 
@@ -36,7 +36,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (61 modules)                │
+│                未分类 / Unclassified (62 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   3-second Contrarian Capital Flow Identification Module 3秒...  │
 │   A-011 tushare账号开通 tushare Account  [design]                │
@@ -56,14 +56,14 @@ ttl: permanent
 │   AltDataConnector 另类数据连接器  [design]                      │
 │   AltDataCostOptimizer 另类数据成本优化器  [design]              │
 │   AltDataFeed 另类数据流  [design]                               │
-│   ...还有 43 个模块 / 43 more modules                            │
+│   ...还有 44 个模块 / 44 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 68 个模块 / 68 modules）。
+> 按 architecture_layer 分组的模块清单（共 69 个模块 / 69 modules）。
 
 ### L2 领域层 / Domain Layer (7 modules)
 
@@ -77,7 +77,7 @@ ttl: permanent
 | 6 | src/zephyr/alt_data/models/__init__.py | src/zephyr/alt_data/models/__init__.py | scaffold_placeholder | orphan |
 | 7 | src/zephyr/alt_data/services/__init__.py | src/zephyr/alt_data/services/__init__.py | scaffold_placeholder | orphan |
 
-### 未分类 / Unclassified (61 modules)
+### 未分类 / Unclassified (62 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -142,6 +142,7 @@ ttl: permanent
 | 59 | D-ALT-DATA/tushare新闻为新闻主力源 tushare as News Source | tushare新闻为新闻主力源 tushare as Ne... | design | design_only |
 | 60 | D-ALT-DATA/另类数据PIT保障 Alternative Data PIT | 另类数据PIT保障 Alternative Data PIT | design | design_only |
 | 61 | D-ALT-DATA/另类数据集成框架缺失 Alternative Data Framewor... | 另类数据集成框架缺失 Alternative Data... | design | design_only |
+| 62 | src/zephyr/data/__init__.py | src/zephyr/data/__init__.py | production | draft |
 
 ## 依赖关系图 / Dependency Graph
 

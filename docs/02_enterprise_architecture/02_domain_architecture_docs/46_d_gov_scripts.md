@@ -1,6 +1,6 @@
 ---
 doc_type: domain_architecture_doc
-title: D-T5-W0 读写并发T5-0架构文档
+title: D-GOV-SCRIPTS code_dedup架构文档
 version: "1.0"
 status: active
 date: 2026-06-24
@@ -8,22 +8,22 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 48_d_t5_w0 / 读写并发T5-0
+# 46_d_gov_scripts / code_dedup
 
-> **文档作用 / Purpose**: 展示 读写并发T5-0（D-T5-W0）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 code_dedup（D-GOV-SCRIPTS）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:54
+> 最后更新: 2026-06-24 23:56:40
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 编号 | 48 | Number | 48 |
-| 域ID | D-T5-W0 | Domain ID | D-T5-W0 |
-| 域名称 | 读写并发T5-0 | Domain Name | 读写并发T5-0 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 编号 | 46 | Number | 46 |
+| 域ID | D-GOV-SCRIPTS | Domain ID | D-GOV-SCRIPTS |
+| 域名称 | code_dedup | Domain Name | code_dedup |
+| 层级 |  | Layer |  |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -32,6 +32,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/200 (正常) | Capacity | 0/200 (正常) |
+| 描述 | 代码去重检测 | Description | 代码去重检测 |
 
 ## 模块清单 / Module List
 
@@ -52,7 +53,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_T5_W0["D-T5-W0 读写并发T5-0"]
+    subgraph D_GOV_SCRIPTS["D-GOV-SCRIPTS code_dedup"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

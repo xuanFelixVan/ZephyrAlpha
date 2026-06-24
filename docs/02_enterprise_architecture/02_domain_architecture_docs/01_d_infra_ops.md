@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D-INFRA_OPS）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:54
+> 最后更新: 2026-06-24 23:56:40
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,19 +24,19 @@ ttl: permanent
 | 域ID | D-INFRA_OPS | Domain ID | D-INFRA_OPS |
 | 域名称 | 基础设施运维 | Domain Name | resource_optimization |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 418 | Module Count | 418 |
-| 域内依赖 | 417 | Internal Dependencies | 417 |
-| 跨域入边 | 122 | Cross-domain Incoming | 122 |
-| 跨域出边 | 595 | Cross-domain Outgoing | 595 |
-| 设计态模块 | 389 | Design Modules | 389 |
+| 模块数 | 430 | Module Count | 430 |
+| 域内依赖 | 419 | Internal Dependencies | 419 |
+| 跨域入边 | 133 | Cross-domain Incoming | 133 |
+| 跨域出边 | 603 | Cross-domain Outgoing | 603 |
+| 设计态模块 | 397 | Design Modules | 397 |
 | 原型态模块 | 20 | Prototype Modules | 20 |
-| 生产态模块 | 3 | Production Modules | 3 |
+| 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 418/150 (超容) | Capacity | 418/150 (超容) |
 | 描述 | 资源优化引擎 | Description | 资源优化引擎 |
 
 ## 模块清单 / Module List
 
-共 418 个模块（按路径排序，全部显示）
+共 430 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -422,9 +422,19 @@ ttl: permanent
 | D-INFRA-OPS/验收标准量化器 Acceptance Criteria Quantifier | 验收标准量化器 Acceptance Criteria Quantifier | design | design_only |
 | D-INFRA-OPS/验证流程定制化编辑器 Workflow | 验证流程定制化编辑器 Workflow | design | design_only |
 | D-INFRA-OPS/验证流程耗时基准器 Workflow | 验证流程耗时基准器 Workflow | design | design_only |
+| F15-auto-fix/ |  | design | stable |
+| F19-telemetry/ |  | design | stable |
+| F21-ide-health/ |  | design | stable |
+| F25-db-integration/ |  | design | stable |
+| F27-capacity/ |  | design | stable |
+| F33-local-model/ |  | design | stable |
+| F37-resource-opt/ |  | design | stable |
+| F9-rollback/ |  | design | stable |
 | config/infra/grafana/dashboards/provider.yml |  | production | orphan |
 | config/infra/grafana/datasources/prometheus.yml |  | production | orphan |
 | config/infra/prometheus/prometheus.yml |  | production | orphan |
+| scripts/construction/test_deepseek_api.py |  | production | draft |
+| scripts/ide_health_service.py |  | production | draft |
 | src/test_rb_t1_same/ |  | design | unbuilt |
 | src/test_rb_t1_same/ |  | design | unbuilt |
 | src/zephyr/governance/auto_rollback_trigger.py |  | prototype | draft |
@@ -437,7 +447,9 @@ ttl: permanent
 | src/zephyr/infra_ops/api/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/infra_ops/capacity/ | 容量管理 | design | design_only |
 | src/zephyr/infra_ops/core/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/infra_ops/dashboard/__init__.py |  | production | draft |
 | src/zephyr/infra_ops/dashboard/app.py |  | prototype | draft |
+| src/zephyr/infra_ops/dashboard/components/__init__.py |  | production | draft |
 | src/zephyr/infra_ops/dashboard/components/fitness_functions.py |  | prototype | draft |
 | src/zephyr/infra_ops/dashboard/components/gate_statistics.py |  | prototype | draft |
 | src/zephyr/infra_ops/dashboard/components/knowledge_overview.py |  | prototype | draft |
@@ -469,7 +481,7 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
 
-### 第 1 页 / 共 14 页 / Page 1 of 14
+### 第 1 页 / 共 15 页 / Page 1 of 15
 
 ```mermaid
 graph TD
@@ -559,7 +571,7 @@ graph TD
     class D_AUTONOMY_CORE,D_INFRA_RUNTIME,D_RISK,D_FACTOR,D_OPS,D_SECURITY,D_PF_CORE,D_SIGNAL,D_SELL_DECISION,D_MKT_DATA,D_COMPLIANCE,D_FRONTEND,D_DATA_GOV external_design
 ```
 
-### 第 2 页 / 共 14 页 / Page 2 of 14
+### 第 2 页 / 共 15 页 / Page 2 of 15
 
 ```mermaid
 graph TD
@@ -641,7 +653,7 @@ graph TD
     class D_OPS,D_AUTONOMY_CORE,D_SECURITY,D_INTEGRATION,D_KNOWLEDGE,D_GOVERNANCE,D_RISK,D_INTELLIGENCE,D_FACTOR,D_PF_CORE,D_COMPLIANCE,D_FRONTEND external_design
 ```
 
-### 第 3 页 / 共 14 页 / Page 3 of 14
+### 第 3 页 / 共 15 页 / Page 3 of 15
 
 ```mermaid
 graph TD
@@ -732,7 +744,7 @@ graph TD
     class D_RISK,D_SIGNAL,D_SELL_DECISION,D_MKT_DATA,D_GOVERNANCE,D_INTEGRATION,D_TRADING,D_FACTOR,D_PF_CORE,D_AUTONOMY_CORE,D_SIMULATION,D_SECURITY,D_CROSS_ASSET,D_FRONTEND,D_COMPLIANCE external_design
 ```
 
-### 第 4 页 / 共 14 页 / Page 4 of 14
+### 第 4 页 / 共 15 页 / Page 4 of 15
 
 ```mermaid
 graph TD
@@ -823,7 +835,7 @@ graph TD
     class D_INTEGRATION,D_ML_SERVE,D_INTELLIGENCE,D_AUTONOMY_PERM,D_GOVERNANCE,D_AUTONOMY_CORE,D_MKT_DATA,D_SECURITY,D_SIGNAL,D_INFRA_RUNTIME,D_RISK,D_COMPLIANCE,D_DATA_GOV external_design
 ```
 
-### 第 5 页 / 共 14 页 / Page 5 of 14
+### 第 5 页 / 共 15 页 / Page 5 of 15
 
 ```mermaid
 graph TD
@@ -911,7 +923,7 @@ graph TD
     class D_KNOWLEDGE,D_RISK,D_OPS,D_POSITION,D_ML_TRAIN,D_SECURITY,D_INFRA_RUNTIME,D_AUTONOMY_CORE,D_SIMULATION,D_PF_CORE,D_FRONTEND,D_COMPLIANCE external_design
 ```
 
-### 第 6 页 / 共 14 页 / Page 6 of 14
+### 第 6 页 / 共 15 页 / Page 6 of 15
 
 ```mermaid
 graph TD
@@ -998,7 +1010,7 @@ graph TD
     class D_KNOWLEDGE,D_SIGNAL,D_INTELLIGENCE,D_GOVERNANCE,D_RISK,D_AUTONOMY_PERM,D_INFRA_RUNTIME,D_EX_SOR,D_INTEGRATION,D_SECURITY,D_DATA_SEC,D_COMPLIANCE,D_FRONTEND,D_CROSS_ASSET external_design
 ```
 
-### 第 7 页 / 共 14 页 / Page 7 of 14
+### 第 7 页 / 共 15 页 / Page 7 of 15
 
 ```mermaid
 graph TD
@@ -1083,7 +1095,7 @@ graph TD
     class D_INTEGRATION,D_GOVERNANCE,D_AUTONOMY_PERM,D_FACTOR,D_EX_SOR,D_AUTONOMY_CORE,D_KNOWLEDGE,D_EX_CORE,D_REPORTING,D_COMPLIANCE,D_CROSS_ASSET,D_FRONTEND external_design
 ```
 
-### 第 8 页 / 共 14 页 / Page 8 of 14
+### 第 8 页 / 共 15 页 / Page 8 of 15
 
 ```mermaid
 graph TD
@@ -1172,7 +1184,7 @@ graph TD
     class D_EX_SOR,D_RISK,D_ALT_DATA,D_SECURITY,D_SIGNAL,D_MKT_DATA,D_GOVERNANCE,D_INFRA_RUNTIME,D_OPS,D_AUTONOMY_CORE,D_INTELLIGENCE,D_COMPLIANCE,D_FRONTEND external_design
 ```
 
-### 第 9 页 / 共 14 页 / Page 9 of 14
+### 第 9 页 / 共 15 页 / Page 9 of 15
 
 ```mermaid
 graph TD
@@ -1254,7 +1266,7 @@ graph TD
     class D_DATA_ENG,D_SELL_DECISION,D_REPORTING,D_INFRA_RUNTIME,D_MKT_DATA,D_PF_ALLOC,D_GOVERNANCE,D_PF_CORE,D_SIGNAL,D_ALT_DATA,D_SECURITY,D_EX_SOR,D_AUTONOMY_CORE,D_COMPLIANCE external_design
 ```
 
-### 第 10 页 / 共 14 页 / Page 10 of 14
+### 第 10 页 / 共 15 页 / Page 10 of 15
 
 ```mermaid
 graph TD
@@ -1342,7 +1354,7 @@ graph TD
     class D_RISK,D_INFRA_RUNTIME,D_KNOWLEDGE,D_GOVERNANCE,D_EX_CORE,D_ML_TRAIN,D_PF_ALLOC,D_TRADING,D_FACTOR,D_INTEGRATION,D_SECURITY,D_COMPLIANCE,D_CROSS_ASSET external_design
 ```
 
-### 第 11 页 / 共 14 页 / Page 11 of 14
+### 第 11 页 / 共 15 页 / Page 11 of 15
 
 ```mermaid
 graph TD
@@ -1433,7 +1445,7 @@ graph TD
     class D_AUTONOMY_PERM,D_KNOWLEDGE,D_FACTOR,D_GOVERNANCE,D_SECURITY,D_REPORTING,D_OPS,D_ML_SERVE,D_AUTONOMY_CORE,D_RISK,D_INFRA_RUNTIME,D_INTELLIGENCE,D_DATA_SEC,D_COMPLIANCE,D_FRONTEND external_design
 ```
 
-### 第 12 页 / 共 14 页 / Page 12 of 14
+### 第 12 页 / 共 15 页 / Page 12 of 15
 
 ```mermaid
 graph TD
@@ -1521,7 +1533,7 @@ graph TD
     class D_SIMULATION,D_MKT_DATA,D_SELL_DECISION,D_INTELLIGENCE,D_SECURITY,D_INTEGRATION,D_RISK,D_GOVERNANCE,D_SIGNAL,D_EX_SOR,D_AUTONOMY_PERM,D_COMPLIANCE,D_FRONTEND,D_CROSS_ASSET external_design
 ```
 
-### 第 13 页 / 共 14 页 / Page 13 of 14
+### 第 13 页 / 共 15 页 / Page 13 of 15
 
 ```mermaid
 graph TD
@@ -1548,14 +1560,14 @@ graph TD
         D_INFRA_OPS_Acceptance_Criteria_Quantifier["验收标准量化器 Acceptance Criteria Quantifier design"]
         D_INFRA_OPS_Workflow["验证流程定制化编辑器 Workflow design"]
         D_INFRA_OPS_Workflow_1["验证流程耗时基准器 Workflow design"]
-        config_infra_grafana_dashboards_provider_yml["config/infra/grafana/dashboards/provider.yml production"]
-        config_infra_grafana_datasources_prometheus_yml["config/infra/grafana/datasources/prometheus.yml production"]
-        config_infra_prometheus_prometheus_yml["config/infra/prometheus/prometheus.yml production"]
-        src_test_rb_t1_same["src/test_rb_t1_same/ design"]
-        src_test_rb_t1_same_1["src/test_rb_t1_same/ design"]
-        src_zephyr_governance_auto_rollback_trigger_py["src/zephyr/governance/auto_rollback_trigger.py prototype"]
-        src_zephyr_governance_rollback_simulator_py["src/zephyr/governance/rollback_simulator.py prototype"]
-        src_zephyr_governance_rollback_wal_py["src/zephyr/governance/rollback_wal.py prototype"]
+        F15_auto_fix["F15-auto-fix/ design"]
+        F19_telemetry["F19-telemetry/ design"]
+        F21_ide_health["F21-ide-health/ design"]
+        F25_db_integration["F25-db-integration/ design"]
+        F27_capacity["F27-capacity/ design"]
+        F33_local_model["F33-local-model/ design"]
+        F37_resource_opt["F37-resource-opt/ design"]
+        F9_rollback["F9-rollback/ design"]
     end
     D_INFRA_OPS_Acceptance_Criteria_Quantifier -.->|import_depends| D_INFRA_OPS_Risk
     D_INFRA_OPS_Risk -.->|import_depends| D_INFRA_OPS_Phase_Deliverable_Checker
@@ -1563,10 +1575,8 @@ graph TD
     D_INFRA_OPS_Generator_1 -.->|import_depends| D_INFRA_OPS_Scheduler
     D_INFRA_OPS_Scheduler -.->|import_depends| D_INFRA_OPS_Phase_Transition_Trigger
     D_INFRA_OPS_Workflow -.->|import_depends| D_INFRA_OPS_Workflow_1
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_governance_auto_rollback_trigger_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_governance_rollback_simulator_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_governance_rollback_wal_py -.->|config_depends| D_GOVERNANCE
+    F27_capacity -.->|data| F19_telemetry
+    F37_resource_opt -.->|data| F19_telemetry
     D_SIGNAL["D-SIGNAL design"]
     D_INFRA_OPS_Canary_Verification -.->|contract| D_SIGNAL
     D_OPS["D-OPS design"]
@@ -1587,6 +1597,10 @@ graph TD
     D_INFRA_OPS_Milestone_Health_Check -.->|data| D_OPS
     D_SECURITY["D-SECURITY design"]
     D_INFRA_OPS_Milestone_Health_Check -.->|event| D_SECURITY
+    D_INFRA_OPS_Config -.->|contract| D_SECURITY
+    D_ML_SERVE["D-ML_SERVE design"]
+    D_INFRA_OPS_Risk -.->|contract| D_ML_SERVE
+    D_INFRA_OPS_Phase_Deliverable_Checker -.->|event| D_INTEGRATION
     D_COMPLIANCE["D-COMPLIANCE design"]
     D_COMPLIANCE -.->|data| D_INFRA_OPS_Canary_Verification
     D_COMPLIANCE -.->|contract| D_INFRA_OPS_Milestone_Health_Check
@@ -1596,21 +1610,39 @@ graph TD
     D_COMPLIANCE -.->|data| D_INFRA_OPS_Validator
     D_COMPLIANCE -.->|contract| D_INFRA_OPS_Phase_Transition_Trigger
     D_COMPLIANCE -.->|config_depends| D_INFRA_OPS_Workflow_1
+    D_GOVERNANCE["D-GOVERNANCE design"]
+    D_GOVERNANCE -.->|data| F25_db_integration
+    D_INTEGRATION -.->|data| F25_db_integration
+    D_GOVERNANCE -.->|data| F25_db_integration
+    D_GOVERNANCE -.->|data| F25_db_integration
+    D_GOV_AUDIT["D-GOV_AUDIT design"]
+    D_GOV_AUDIT -.->|data| F25_db_integration
+    D_TRADING["D-TRADING design"]
+    D_TRADING -.->|runtime| F21_ide_health
+    D_GOVERNANCE -.->|runtime| F33_local_model
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class config_infra_grafana_dashboards_provider_yml,config_infra_grafana_datasources_prometheus_yml,config_infra_prometheus_prometheus_yml production
-    class D_INFRA_OPS_Generator_Config,D_INFRA_OPS_Config,D_INFRA_OPS_Config_Utils,D_INFRA_OPS_Generator,D_INFRA_OPS_Milestone_Health_Check,D_INFRA_OPS_Risk,D_INFRA_OPS_Canary_Verification,D_INFRA_OPS_Phase_Deliverable_Definer,D_INFRA_OPS_Phase_Deliverable_Checker,D_INFRA_OPS_Generator_1,D_INFRA_OPS_Scheduler,D_INFRA_OPS_Phase_Transition_Trigger,D_INFRA_OPS_Phase_Gate_Checker,D_INFRA_OPS_Validator,D_INFRA_OPS_Sync_State,D_INFRA_OPS_Resilience_Score_Standardizer,D_INFRA_OPS_Generator_Directory,D_INFRA_OPS_Predictive_Maintenance_and_Self_Healing_Repairer,D_INFRA_OPS_Risk_Control_Alerting_Event,D_INFRA_OPS_Acceptance_Criteria_Quantifier,D_INFRA_OPS_Workflow,D_INFRA_OPS_Workflow_1,src_test_rb_t1_same,src_test_rb_t1_same_1,src_zephyr_governance_auto_rollback_trigger_py,src_zephyr_governance_rollback_simulator_py,src_zephyr_governance_rollback_wal_py design
-    class D_GOVERNANCE external_prod
-    class D_SIGNAL,D_OPS,D_AUTONOMY_CORE,D_REPORTING,D_INTEGRATION,D_AUTONOMY_PERM,D_RISK,D_SECURITY,D_COMPLIANCE external_design
+    class D_INFRA_OPS_Generator_Config,D_INFRA_OPS_Config,D_INFRA_OPS_Config_Utils,D_INFRA_OPS_Generator,D_INFRA_OPS_Milestone_Health_Check,D_INFRA_OPS_Risk,D_INFRA_OPS_Canary_Verification,D_INFRA_OPS_Phase_Deliverable_Definer,D_INFRA_OPS_Phase_Deliverable_Checker,D_INFRA_OPS_Generator_1,D_INFRA_OPS_Scheduler,D_INFRA_OPS_Phase_Transition_Trigger,D_INFRA_OPS_Phase_Gate_Checker,D_INFRA_OPS_Validator,D_INFRA_OPS_Sync_State,D_INFRA_OPS_Resilience_Score_Standardizer,D_INFRA_OPS_Generator_Directory,D_INFRA_OPS_Predictive_Maintenance_and_Self_Healing_Repairer,D_INFRA_OPS_Risk_Control_Alerting_Event,D_INFRA_OPS_Acceptance_Criteria_Quantifier,D_INFRA_OPS_Workflow,D_INFRA_OPS_Workflow_1,F15_auto_fix,F19_telemetry,F21_ide_health,F25_db_integration,F27_capacity,F33_local_model,F37_resource_opt,F9_rollback design
+    class D_SIGNAL,D_OPS,D_AUTONOMY_CORE,D_REPORTING,D_INTEGRATION,D_AUTONOMY_PERM,D_RISK,D_SECURITY,D_ML_SERVE,D_COMPLIANCE,D_GOVERNANCE,D_GOV_AUDIT,D_TRADING external_design
 ```
 
-### 第 14 页 / 共 14 页 / Page 14 of 14
+### 第 14 页 / 共 15 页 / Page 14 of 15
 
 ```mermaid
 graph TD
     subgraph D_INFRA_OPS["D-INFRA_OPS 基础设施运维"]
+        config_infra_grafana_dashboards_provider_yml["config/infra/grafana/dashboards/provider.yml production"]
+        config_infra_grafana_datasources_prometheus_yml["config/infra/grafana/datasources/prometheus.yml production"]
+        config_infra_prometheus_prometheus_yml["config/infra/prometheus/prometheus.yml production"]
+        scripts_construction_test_deepseek_api_py["scripts/construction/test_deepseek_api.py production"]
+        scripts_ide_health_service_py["scripts/ide_health_service.py production"]
+        src_test_rb_t1_same["src/test_rb_t1_same/ design"]
+        src_test_rb_t1_same_1["src/test_rb_t1_same/ design"]
+        src_zephyr_governance_auto_rollback_trigger_py["src/zephyr/governance/auto_rollback_trigger.py prototype"]
+        src_zephyr_governance_rollback_simulator_py["src/zephyr/governance/rollback_simulator.py prototype"]
+        src_zephyr_governance_rollback_wal_py["src/zephyr/governance/rollback_wal.py prototype"]
         src_zephyr_infra_ops["基础设施运维域 design"]
         src_zephyr_infra_ops_init_py["src/zephyr/infra_ops/__init__.py prototype"]
         src_zephyr_infra_ops_extensions_init_py["src/zephyr/infra_ops/_extensions/__init__.py scaffold_placeholder"]
@@ -1618,7 +1650,9 @@ graph TD
         src_zephyr_infra_ops_api_init_py["src/zephyr/infra_ops/api/__init__.py scaffold_placeholder"]
         src_zephyr_infra_ops_capacity["容量管理 design"]
         src_zephyr_infra_ops_core_init_py["src/zephyr/infra_ops/core/__init__.py scaffold_placeholder"]
+        src_zephyr_infra_ops_dashboard_init_py["src/zephyr/infra_ops/dashboard/__init__.py production"]
         src_zephyr_infra_ops_dashboard_app_py["src/zephyr/infra_ops/dashboard/app.py prototype"]
+        src_zephyr_infra_ops_dashboard_components_init_py["src/zephyr/infra_ops/dashboard/components/__ini... production"]
         src_zephyr_infra_ops_dashboard_components_fitness_functions_py["src/zephyr/infra_ops/dashboard/components/fitne... prototype"]
         src_zephyr_infra_ops_dashboard_components_gate_statistics_py["src/zephyr/infra_ops/dashboard/components/gate_... prototype"]
         src_zephyr_infra_ops_dashboard_components_knowledge_overview_py["src/zephyr/infra_ops/dashboard/components/knowl... prototype"]
@@ -1629,6 +1663,40 @@ graph TD
         src_zephyr_infra_ops_interface_base_py["src/zephyr/infra_ops/interface_base.py prototype"]
         src_zephyr_infra_ops_models_init_py["src/zephyr/infra_ops/models/__init__.py scaffold_placeholder"]
         src_zephyr_infra_ops_monitoring["基础设施监控 design"]
+    end
+    src_zephyr_infra_ops_interface_base_py -.->|config_depends| src_zephyr_infra_ops_init_py
+    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| src_zephyr_infra_ops_init_py
+    src_zephyr_infra_ops_dashboard_components_gate_statistics_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_fitness_functions_py
+    src_zephyr_infra_ops_dashboard_components_task_progress_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
+    src_zephyr_infra_ops_dashboard_components_knowledge_overview_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
+    src_zephyr_infra_ops_dashboard_components_olap_trend_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    src_zephyr_governance_auto_rollback_trigger_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_governance_rollback_simulator_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_governance_rollback_wal_py -.->|config_depends| D_GOVERNANCE
+    D_SHARED["D-SHARED prototype"]
+    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
+    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
+    D_OPS["D-OPS production"]
+    src_zephyr_infra_ops_dashboard_components_fitness_functions_py -.->|import_depends| D_OPS
+    D_FRONTEND["D-FRONTEND production"]
+    D_FRONTEND -.->|import_depends| src_zephyr_infra_ops_init_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class config_infra_grafana_dashboards_provider_yml,config_infra_grafana_datasources_prometheus_yml,config_infra_prometheus_prometheus_yml,scripts_construction_test_deepseek_api_py,scripts_ide_health_service_py,src_zephyr_infra_ops_dashboard_init_py,src_zephyr_infra_ops_dashboard_components_init_py production
+    class src_test_rb_t1_same,src_test_rb_t1_same_1,src_zephyr_governance_auto_rollback_trigger_py,src_zephyr_governance_rollback_simulator_py,src_zephyr_governance_rollback_wal_py,src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_extensions_init_py,src_zephyr_infra_ops_alerting,src_zephyr_infra_ops_api_init_py,src_zephyr_infra_ops_capacity,src_zephyr_infra_ops_core_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_deployment,src_zephyr_infra_ops_infrastructure_init_py,src_zephyr_infra_ops_interface_base_py,src_zephyr_infra_ops_models_init_py,src_zephyr_infra_ops_monitoring design
+    class D_GOVERNANCE,D_OPS,D_FRONTEND external_prod
+    class D_SHARED external_design
+```
+
+### 第 15 页 / 共 15 页 / Page 15 of 15
+
+```mermaid
+graph TD
+    subgraph D_INFRA_OPS["D-INFRA_OPS 基础设施运维"]
         src_zephyr_infra_ops_services_init_py["src/zephyr/infra_ops/services/__init__.py scaffold_placeholder"]
         src_zephyr_infrastructure_rollback_governance_init_py["src/zephyr/infrastructure/rollback/governance/_... prototype"]
         src_zephyr_infrastructure_rollback_governance_auditor_py["src/zephyr/infrastructure/rollback/governance/a... prototype"]
@@ -1640,39 +1708,25 @@ graph TD
         tests_test_rollback_simulator_py["tests/test_rollback_simulator.py prototype"]
         tests_test_rollback_wal_py["tests/test_rollback_wal.py prototype"]
     end
-    src_zephyr_infra_ops_interface_base_py -.->|config_depends| src_zephyr_infra_ops_init_py
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| src_zephyr_infra_ops_init_py
-    src_zephyr_infra_ops_dashboard_components_gate_statistics_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_fitness_functions_py
-    src_zephyr_infra_ops_dashboard_components_task_progress_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
-    src_zephyr_infra_ops_dashboard_components_knowledge_overview_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
-    src_zephyr_infra_ops_dashboard_components_olap_trend_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
     src_zephyr_infrastructure_rollback_governance_budget_tracker_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
     src_zephyr_infrastructure_rollback_governance_drift_fix_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
     src_zephyr_infrastructure_rollback_governance_result_types_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
-    D_SHARED["D-SHARED prototype"]
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
-    D_OPS["D-OPS production"]
-    src_zephyr_infra_ops_dashboard_components_fitness_functions_py -.->|import_depends| D_OPS
     D_GOV_AUDIT["D-GOV_AUDIT prototype"]
     src_zephyr_infrastructure_rollback_governance_auditor_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_governance_contracts_py -.->|import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
     src_zephyr_infrastructure_rollback_governance_init_py -.->|import_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["D-GOVERNANCE production"]
     tests_test_auto_rollback_trigger_py -.->|test_depends| D_GOVERNANCE
     tests_test_rollback_simulator_py -.->|test_depends| D_GOVERNANCE
     tests_test_rollback_wal_py -.->|test_depends| D_GOVERNANCE
-    D_FRONTEND["D-FRONTEND production"]
-    D_FRONTEND -.->|import_depends| src_zephyr_infra_ops_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_extensions_init_py,src_zephyr_infra_ops_alerting,src_zephyr_infra_ops_api_init_py,src_zephyr_infra_ops_capacity,src_zephyr_infra_ops_core_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_deployment,src_zephyr_infra_ops_infrastructure_init_py,src_zephyr_infra_ops_interface_base_py,src_zephyr_infra_ops_models_init_py,src_zephyr_infra_ops_monitoring,src_zephyr_infra_ops_services_init_py,src_zephyr_infrastructure_rollback_governance_init_py,src_zephyr_infrastructure_rollback_governance_auditor_py,src_zephyr_infrastructure_rollback_governance_budget_tracker_py,src_zephyr_infrastructure_rollback_governance_contracts_py,src_zephyr_infrastructure_rollback_governance_drift_fix_py,src_zephyr_infrastructure_rollback_governance_result_types_py,tests_test_auto_rollback_trigger_py,tests_test_rollback_simulator_py,tests_test_rollback_wal_py design
-    class D_GOVERNANCE,D_OPS,D_INFRA_RUNTIME,D_FRONTEND external_prod
-    class D_SHARED,D_GOV_AUDIT external_design
+    class src_zephyr_infra_ops_services_init_py,src_zephyr_infrastructure_rollback_governance_init_py,src_zephyr_infrastructure_rollback_governance_auditor_py,src_zephyr_infrastructure_rollback_governance_budget_tracker_py,src_zephyr_infrastructure_rollback_governance_contracts_py,src_zephyr_infrastructure_rollback_governance_drift_fix_py,src_zephyr_infrastructure_rollback_governance_result_types_py,tests_test_auto_rollback_trigger_py,tests_test_rollback_simulator_py,tests_test_rollback_wal_py design
+    class D_INFRA_RUNTIME,D_GOVERNANCE external_prod
+    class D_GOV_AUDIT external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -1683,10 +1737,10 @@ graph TD
 |--------|:---:|---------|
 | D-RISK | 68 | data,contract,event,config_depends |
 | D-GOVERNANCE | 61 | config_depends,import_depends,test_depends,contract,data,event |
-| D-SECURITY | 53 | contract,config_depends,event,data |
+| D-SECURITY | 55 | contract,config_depends,event,data,runtime |
 | D-AUTONOMY_CORE | 43 | data,contract,event,config_depends |
 | D-SIGNAL | 39 | event,contract,data,config_depends |
-| D-INTEGRATION | 38 | contract,data,config_depends,event |
+| D-INTEGRATION | 39 | contract,data,config_depends,event |
 | D-INFRA_RUNTIME | 31 | import_depends,contract,config_depends,event,data |
 | D-INTELLIGENCE | 30 | event,config_depends,contract,data |
 | D-FACTOR | 27 | event,contract,data,config_depends |
@@ -1704,11 +1758,11 @@ graph TD
 | D-ML_TRAIN | 8 | config_depends,contract,data,event |
 | D-EX_CORE | 7 | contract,data,event |
 | D-SIMULATION | 6 | contract,event,data |
+| D-SHARED | 6 | import_depends,runtime |
 | D-SELL_DECISION | 6 | event,contract,data |
 | D-ML_SERVE | 6 | event,data,contract |
 | D-DATA_ENG | 6 | event,contract,data |
 | D-GOV_AUDIT | 2 | import_depends |
-| D-SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -1716,9 +1770,15 @@ graph TD
 |------|:---:|---------|
 | D-COMPLIANCE | 90 | event,contract,config_depends,data |
 | D-FRONTEND | 23 | import_depends,contract,config_depends,event,data |
+| D-GOVERNANCE | 6 | data,runtime |
 | D-CROSS_ASSET | 5 | event,contract,data |
 | D-DATA_SEC | 2 | contract |
 | D-DATA_GOV | 2 | config_depends,event |
+| D-TRADING | 1 | runtime |
+| D-OPS | 1 | data |
+| D-INTEGRATION | 1 | data |
+| D-GOV_DRIFT | 1 | data |
+| D-GOV_AUDIT | 1 | data |
 
 ## 说明 / Notes
 

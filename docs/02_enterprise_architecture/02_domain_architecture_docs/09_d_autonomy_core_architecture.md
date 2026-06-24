@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示自治核心（D-AUTONOMY_CORE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:55
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 自治核心（D-AUTONOMY_CORE）的模块分布。共 650 个模块 / 650 modules。
+> 按 architecture_layer 分层显示 自治核心（D-AUTONOMY_CORE）的模块分布。共 654 个模块 / 654 modules。
 
 ```
 
@@ -56,7 +56,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               未分类 / Unclassified (473 modules)                │
+│               未分类 / Unclassified (477 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   11 Agents Full MVP 11个Agent全部MVP实现  [design]              │
 │   8-Collection Unified Schema Manager 8大Collection统一Schema... │
@@ -76,14 +76,14 @@ ttl: permanent
 │   AI自治行为审计 AI Autonomous Behavior Audit  [design]          │
 │   AI自治运维是闭环而非开环 Closed-Loop Autonomy  [design]        │
 │   AI自治运维闭环 AI自治运维  [design]                            │
-│   ...还有 455 个模块 / 455 more modules                          │
+│   ...还有 459 个模块 / 459 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 650 个模块 / 650 modules）。
+> 按 architecture_layer 分组的模块清单（共 654 个模块 / 654 modules）。
 
 ### L1 基础层 / Foundation Layer (175 modules)
 
@@ -272,7 +272,7 @@ ttl: permanent
 | 1 | 自治-向量库验证/D-AUTONOMY-125 | ChromaDB Runtime Validator | design | design_only |
 | 2 | 自治-记忆溯源/D-AUTONOMY-73 | Memory Provenance Enforcer | design | design_only |
 
-### 未分类 / Unclassified (473 modules)
+### 未分类 / Unclassified (477 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -477,22 +477,22 @@ ttl: permanent
 | 199 | D-AUTONOMY-CORE/GPU Management GPU管理 | GPU Management GPU管理 | design | design_only |
 | 200 | D-AUTONOMY-CORE/GPU Memory Insufficient GPU显存不足 | GPU Memory Insufficient GPU显存不足 | design | design_only |
 
-> (仅显示前 200 个模块，共 473 个)
+> (仅显示前 200 个模块，共 477 个)
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 643 条 / 643 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 644 条 / 644 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 643 条 / 643 edges)       │
+│      依赖关系图 / Dependency Graph (共 644 条 / 644 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 6                               │
 │   [import_depends]: 446 条 / edges                               │
 │   [config_depends]: 136 条 / edges                               │
 │   [contract]: 22 条 / edges                                      │
-│   [runtime]: 18 条 / edges                                       │
+│   [runtime]: 19 条 / edges                                       │
 │   [event]: 16 条 / edges                                         │
 │   [data]: 5 条 / edges                                           │
 └──────────────────────────────────────────────────────────────────┘
@@ -556,13 +556,13 @@ ttl: permanent
 
 **[contract]** (22 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[runtime]** (18 条 / edges) — 已达显示上限，省略 / limit reached
+**[runtime]** (19 条 / edges) — 已达显示上限，省略 / limit reached
 
 **[event]** (16 条 / edges) — 已达显示上限，省略 / limit reached
 
 **[data]** (5 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 643 条)
+> (最多显示前 50 条依赖边，共 644 条)
 
 ```
 

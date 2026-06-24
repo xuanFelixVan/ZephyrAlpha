@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示反馈循环（D-OPS）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 反馈循环（D-OPS）的模块分布。共 679 个模块 / 679 modules。
+> 按 architecture_layer 分层显示 反馈循环（D-OPS）的模块分布。共 701 个模块 / 701 modules。
 
 ```
 
@@ -48,7 +48,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               未分类 / Unclassified (253 modules)                │
+│               未分类 / Unclassified (275 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   GAAT Governance-Aware Agent Telemetry 治理感知遥测  [design]   │
 │   GAAT Governance-Aware Telemetry GAAT治理感知遥测  [design]     │
@@ -68,14 +68,14 @@ ttl: permanent
 │   Anomaly Propagation GNN Predictor 异常传播GNN预测器  [design]  │
 │   Anomaly Propagation Tracker 异常传播追踪器  [design]           │
 │   Application Layer Dependency Supplementer 应用层依赖补充器 ... │
-│   ...还有 235 个模块 / 235 more modules                          │
+│   ...还有 257 个模块 / 257 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 679 个模块 / 679 modules）。
+> 按 architecture_layer 分组的模块清单（共 701 个模块 / 701 modules）。
 
 ### L1 基础层 / Foundation Layer (426 modules)
 
@@ -284,7 +284,7 @@ ttl: permanent
 
 > (仅显示前 200 个模块，共 426 个)
 
-### 未分类 / Unclassified (253 modules)
+### 未分类 / Unclassified (275 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -489,7 +489,7 @@ ttl: permanent
 | 199 | D-OPS/SNN Dependency Anomaly Detector SNN依赖异常检测器 | SNN Dependency Anomaly Detector SNN依... | design | design_only |
 | 200 | D-OPS/STDP Dynamic Weight Engine STDP脉冲学习动态权重引擎 | STDP Dynamic Weight Engine STDP脉冲学... | design | design_only |
 
-> (仅显示前 200 个模块，共 253 个)
+> (仅显示前 200 个模块，共 275 个)
 
 ## 依赖关系图 / Dependency Graph
 

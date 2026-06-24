@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示报告（D-REPORTING）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 报告（D-REPORTING）的模块分布。共 132 个模块 / 132 modules。
+> 按 architecture_layer 分层显示 报告（D-REPORTING）的模块分布。共 133 个模块 / 133 modules。
 
 ```
 
@@ -54,7 +54,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               未分类 / Unclassified (113 modules)                │
+│               未分类 / Unclassified (114 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   A-Share Performance Audit & Optimization Trigger A股绩效审...  │
 │   A-Share Trading Record Template Engine A股交易记录模板引擎 ... │
@@ -74,14 +74,14 @@ ttl: permanent
 │   Audit Log Query & Verification 审计日志查询与校验  [design]    │
 │   A股交易记录模板引擎 A-Share Trade Record Template Engine  [... │
 │   BacktestCompleted 回测完成  [design]                           │
-│   ...还有 95 个模块 / 95 more modules                            │
+│   ...还有 96 个模块 / 96 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 132 个模块 / 132 modules）。
+> 按 architecture_layer 分组的模块清单（共 133 个模块 / 133 modules）。
 
 ### L1 基础层 / Foundation Layer (4 modules)
 
@@ -112,7 +112,7 @@ ttl: permanent
 | 14 | src/zephyr/reporting/models/__init__.py | src/zephyr/reporting/models/__init__.py | scaffold_placeholder | orphan |
 | 15 | src/zephyr/reporting/services/__init__.py | src/zephyr/reporting/services/__init_... | scaffold_placeholder | orphan |
 
-### 未分类 / Unclassified (113 modules)
+### 未分类 / Unclassified (114 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -229,6 +229,7 @@ ttl: permanent
 | 111 | D-REPORTING/交易绩效归因模型 Performance Attribution Model | 交易绩效归因模型 Performance Attribut... | design | design_only |
 | 112 | D-REPORTING/因子归因 Factor Attribution | 因子归因 Factor Attribution | design | design_only |
 | 113 | D-REPORTING/风险归因 Risk Attribution | 风险归因 Risk Attribution | design | design_only |
+| 114 | scripts/demos/demo_e2e_pipeline.py | scripts/demos/demo_e2e_pipeline.py | production | draft |
 
 ## 依赖关系图 / Dependency Graph
 

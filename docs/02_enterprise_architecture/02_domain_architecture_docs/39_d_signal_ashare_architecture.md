@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示A股特色信号（D-SIGNAL_ASHARE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview

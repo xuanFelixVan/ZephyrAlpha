@@ -8,19 +8,19 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 54_d_gov_enforcement / rule_enforcement
+# 44_d_gov_enforcement / rule_enforcement
 
 > **文档作用 / Purpose**: 展示 rule_enforcement（D-GOV-ENFORCEMENT）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:53
+> 最后更新: 2026-06-24 23:56:40
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 编号 | 54 | Number | 54 |
+| 编号 | 44 | Number | 44 |
 | 域ID | D-GOV-ENFORCEMENT | Domain ID | D-GOV-ENFORCEMENT |
 | 域名称 | rule_enforcement | Domain Name | rule_enforcement |
 | 层级 |  | Layer |  |

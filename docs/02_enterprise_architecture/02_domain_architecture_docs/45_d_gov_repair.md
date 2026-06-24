@@ -1,6 +1,6 @@
 ---
 doc_type: domain_architecture_doc
-title: D-T5-W3 读写并发T5-3架构文档
+title: D-GOV-REPAIR rollback架构文档
 version: "1.0"
 status: active
 date: 2026-06-24
@@ -8,22 +8,22 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 51_d_t5_w3 / 读写并发T5-3
+# 45_d_gov_repair / rollback
 
-> **文档作用 / Purpose**: 展示 读写并发T5-3（D-T5-W3）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 rollback（D-GOV-REPAIR）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:54
+> 最后更新: 2026-06-24 23:56:40
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 编号 | 51 | Number | 51 |
-| 域ID | D-T5-W3 | Domain ID | D-T5-W3 |
-| 域名称 | 读写并发T5-3 | Domain Name | 读写并发T5-3 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 编号 | 45 | Number | 45 |
+| 域ID | D-GOV-REPAIR | Domain ID | D-GOV-REPAIR |
+| 域名称 | rollback | Domain Name | rollback |
+| 层级 |  | Layer |  |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -32,6 +32,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/200 (正常) | Capacity | 0/200 (正常) |
+| 描述 | 双轨Checkpoint(git commit + SQLite JSONL dump) | Description | 双轨Checkpoint(git commit + SQLite JSONL dump) |
 
 ## 模块清单 / Module List
 
@@ -52,7 +53,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_T5_W3["D-T5-W3 读写并发T5-3"]
+    subgraph D_GOV_REPAIR["D-GOV-REPAIR rollback"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

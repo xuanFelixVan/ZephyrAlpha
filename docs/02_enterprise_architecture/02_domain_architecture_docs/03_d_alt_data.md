@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 另类数据（D-ALT_DATA）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:53
+> 最后更新: 2026-06-24 23:56:39
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,19 +24,19 @@ ttl: permanent
 | 域ID | D-ALT_DATA | Domain ID | D-ALT_DATA |
 | 域名称 | 另类数据 | Domain Name | 另类数据 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 68 | Module Count | 68 |
+| 模块数 | 69 | Module Count | 69 |
 | 域内依赖 | 61 | Internal Dependencies | 61 |
 | 跨域入边 | 37 | Cross-domain Incoming | 37 |
 | 跨域出边 | 91 | Cross-domain Outgoing | 91 |
 | 设计态模块 | 61 | Design Modules | 61 |
 | 原型态模块 | 1 | Prototype Modules | 1 |
-| 生产态模块 | 0 | Production Modules | 0 |
+| 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 68/150 (正常) | Capacity | 68/150 (正常) |
 | 描述 | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 | Description | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 |
 
 ## 模块清单 / Module List
 
-共 68 个模块（按路径排序，全部显示）
+共 69 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -108,6 +108,7 @@ ttl: permanent
 | src/zephyr/alt_data/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/alt_data/models/__init__.py |  | scaffold_placeholder | orphan |
 | src/zephyr/alt_data/services/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/data/__init__.py |  | production | draft |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -338,6 +339,7 @@ graph TD
         src_zephyr_alt_data_infrastructure_init_py["src/zephyr/alt_data/infrastructure/__init__.py scaffold_placeholder"]
         src_zephyr_alt_data_models_init_py["src/zephyr/alt_data/models/__init__.py scaffold_placeholder"]
         src_zephyr_alt_data_services_init_py["src/zephyr/alt_data/services/__init__.py scaffold_placeholder"]
+        src_zephyr_data_init_py["src/zephyr/data/__init__.py production"]
     end
     D_SHARED["D-SHARED design"]
     src_zephyr_alt_data_init_py -.->|contract| D_SHARED
@@ -351,6 +353,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_data_init_py production
     class D_ALT_DATA_Alternative_Data_Framework_Gap,src_zephyr_alt_data_init_py,src_zephyr_alt_data_extensions_init_py,src_zephyr_alt_data_api_init_py,src_zephyr_alt_data_core_init_py,src_zephyr_alt_data_infrastructure_init_py,src_zephyr_alt_data_models_init_py,src_zephyr_alt_data_services_init_py design
     class D_SHARED,D_GOVERNANCE,D_AUTONOMY_CORE,D_INFRA_OPS external_design
 ```

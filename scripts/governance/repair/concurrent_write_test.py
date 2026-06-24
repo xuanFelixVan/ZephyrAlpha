@@ -102,6 +102,31 @@ def teardown():
     print("[TEARDOWN] 测试数据库已清理")
 
 
+def verify_prod_db_clean() -> bool:
+    """防再犯断言：验证生产库 depgraph.db 未被测试域污染（OPS-2026062401）。
+
+    测试域前缀：D-T2-/D-T3-/D-T4-/D-T5-/D-T9-/D-TEST-RB-
+    如果生产库包含任何测试域，说明测试隔离失败，立即报错。
+    """
+    conn = sqlite3.connect(str(PROD_DB))
+    try:
+        rows = conn.execute(
+            "SELECT domain_id FROM domains WHERE "
+            "domain_id LIKE 'D-T2-%' OR domain_id LIKE 'D-T3-%' OR "
+            "domain_id LIKE 'D-T4-%' OR domain_id LIKE 'D-T5-%' OR "
+            "domain_id LIKE 'D-T9-%' OR domain_id LIKE 'D-TEST-RB%'"
+        ).fetchall()
+    finally:
+        conn.close()
+    if rows:
+        polluted = [r[0] for r in rows]
+        print(f"\n[FATAL] 生产库被测试域污染！发现 {len(polluted)} 个测试域: {polluted}", file=sys.stderr)
+        print("[FATAL] 测试隔离失败，请检查 db_path 参数传递和 monkey-patch 逻辑", file=sys.stderr)
+        return False
+    print("[VERIFY] 生产库无测试域污染（PASS）")
+    return True
+
+
 def _get_apply_depgraph():
     """import apply_depgraph 并 monkey-patch DEPGRAPH_PATH 指向测试数据库"""
     scripts_gov = REPO_ROOT / "scripts" / "governance"
@@ -618,6 +643,14 @@ def main():
                 all_results.append({"test": tf.__name__, "passed": False, "error": str(e)})
     finally:
         teardown()
+
+    # 防再犯断言：验证生产库未被测试域污染（OPS-2026062401）
+    prod_clean = verify_prod_db_clean()
+    if not prod_clean:
+        print("\n" + "=" * 60)
+        print("[FATAL] 生产库污染检测失败 — 测试隔离缺陷需修复")
+        print("=" * 60)
+        return 1
 
     # 汇总报告
     print("\n" + "=" * 60)

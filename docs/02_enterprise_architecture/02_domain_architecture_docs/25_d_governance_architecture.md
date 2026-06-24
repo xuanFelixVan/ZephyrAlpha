@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示生命周期管理（D-GOVERNANCE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 生命周期管理（D-GOVERNANCE）的模块分布。共 3860 个模块 / 3860 modules。
+> 按 architecture_layer 分层显示 生命周期管理（D-GOVERNANCE）的模块分布。共 3921 个模块 / 3921 modules。
 
 ```
 
@@ -61,7 +61,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               未分类 / Unclassified (541 modules)                │
+│               未分类 / Unclassified (602 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   45 Capability List 45项能力清单  [design]                      │
 │   5 Drift Detection 5类漂移检测  [design]                        │
@@ -81,14 +81,14 @@ ttl: permanent
 │   AI Autonomy Boundary AI自治边界  [design]                      │
 │   AI Autonomy Boundary Manager AI自治边界管理器  [design]        │
 │   AI Code Review AI代码审查  [design]                            │
-│   ...还有 523 个模块 / 523 more modules                          │
+│   ...还有 584 个模块 / 584 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 3860 个模块 / 3860 modules）。
+> 按 architecture_layer 分组的模块清单（共 3921 个模块 / 3921 modules）。
 
 ### L1 基础层 / Foundation Layer (3312 modules)
 
@@ -309,7 +309,7 @@ ttl: permanent
 | 6 | src/zephyr/data_governance/models/__init__.py | src/zephyr/data_governance/models/__i... | scaffold_placeholder | orphan |
 | 7 | src/zephyr/data_governance/services/__init__.py | src/zephyr/data_governance/services/_... | scaffold_placeholder | orphan |
 
-### 未分类 / Unclassified (541 modules)
+### 未分类 / Unclassified (602 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -514,16 +514,16 @@ ttl: permanent
 | 199 | D-GOVERNANCE/Fan-In/Fan-Out Analyzer 扇入扇出分析器 | Fan-In/Fan-Out Analyzer 扇入扇出分析器 | design | design_only |
 | 200 | D-GOVERNANCE/Fault Tolerance 容错 | Fault Tolerance 容错 | design | design_only |
 
-> (仅显示前 200 个模块，共 541 个)
+> (仅显示前 200 个模块，共 602 个)
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 2158 条 / 2158 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 2160 条 / 2160 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│     依赖关系图 / Dependency Graph (共 2158 条 / 2158 edges)      │
+│     依赖关系图 / Dependency Graph (共 2160 条 / 2160 edges)      │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 9                               │
 │   [config_depends]: 797 条 / edges                               │
@@ -531,8 +531,8 @@ ttl: permanent
 │   [test_depends]: 489 条 / edges                                 │
 │   [contract]: 52 条 / edges                                      │
 │   [event]: 44 条 / edges                                         │
-│   [runtime]: 30 条 / edges                                       │
-│   [data]: 14 条 / edges                                          │
+│   [runtime]: 31 条 / edges                                       │
+│   [data]: 15 条 / edges                                          │
 │   [invoke]: 1 条 / edges                                         │
 │   [import]: 1 条 / edges                                         │
 └──────────────────────────────────────────────────────────────────┘
@@ -600,15 +600,15 @@ ttl: permanent
 
 **[event]** (44 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[runtime]** (30 条 / edges) — 已达显示上限，省略 / limit reached
+**[runtime]** (31 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[data]** (14 条 / edges) — 已达显示上限，省略 / limit reached
+**[data]** (15 条 / edges) — 已达显示上限，省略 / limit reached
 
 **[invoke]** (1 条 / edges) — 已达显示上限，省略 / limit reached
 
 **[import]** (1 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 2158 条)
+> (最多显示前 50 条依赖边，共 2160 条)
 
 ```
 

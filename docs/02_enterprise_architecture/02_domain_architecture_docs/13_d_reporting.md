@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 报告（D-REPORTING）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:54
+> 最后更新: 2026-06-24 23:56:40
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,19 +24,19 @@ ttl: permanent
 | 域ID | D-REPORTING | Domain ID | D-REPORTING |
 | 域名称 | 报告 | Domain Name | 报告 |
 | 层级 | L1_platform | Layer | L1_platform |
-| 模块数 | 132 | Module Count | 132 |
+| 模块数 | 133 | Module Count | 133 |
 | 域内依赖 | 114 | Internal Dependencies | 114 |
 | 跨域入边 | 110 | Cross-domain Incoming | 110 |
 | 跨域出边 | 144 | Cross-domain Outgoing | 144 |
 | 设计态模块 | 118 | Design Modules | 118 |
 | 原型态模块 | 8 | Prototype Modules | 8 |
-| 生产态模块 | 0 | Production Modules | 0 |
+| 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 132/150 (正常) | Capacity | 132/150 (正常) |
 | 描述 | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 | Description | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 |
 
 ## 模块清单 / Module List
 
-共 132 个模块（按路径排序，全部显示）
+共 133 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -154,6 +154,7 @@ ttl: permanent
 | D-REPORTING/交易绩效归因模型 Performance Attribution Model | 交易绩效归因模型 Performance Attribution Model | design | design_only |
 | D-REPORTING/因子归因 Factor Attribution | 因子归因 Factor Attribution | design | design_only |
 | D-REPORTING/风险归因 Risk Attribution | 风险归因 Risk Attribution | design | design_only |
+| scripts/demos/demo_e2e_pipeline.py |  | production | draft |
 | src/zephyr/reporting/__init__.py |  | prototype | draft |
 | src/zephyr/reporting/__init___from_obs.py |  | prototype | draft |
 | src/zephyr/reporting/_extensions/__init__.py |  | scaffold_placeholder | orphan |
@@ -512,12 +513,12 @@ graph TD
         D_REPORTING_Performance_Attribution_Model["交易绩效归因模型 Performance Attribution Model design"]
         D_REPORTING_Factor_Attribution["因子归因 Factor Attribution design"]
         D_REPORTING_Risk_Attribution["风险归因 Risk Attribution design"]
+        scripts_demos_demo_e2e_pipeline_py["scripts/demos/demo_e2e_pipeline.py production"]
         src_zephyr_reporting_init_py["src/zephyr/reporting/__init__.py prototype"]
         src_zephyr_reporting_init_from_obs_py["src/zephyr/reporting/__init___from_obs.py prototype"]
         src_zephyr_reporting_extensions_init_py["src/zephyr/reporting/_extensions/__init__.py scaffold_placeholder"]
         src_zephyr_reporting_analytics_base_py["src/zephyr/reporting/analytics_base.py prototype"]
         src_zephyr_reporting_api_init_py["src/zephyr/reporting/api/__init__.py scaffold_placeholder"]
-        src_zephyr_reporting_core_init_py["src/zephyr/reporting/core/__init__.py scaffold_placeholder"]
     end
     src_zephyr_reporting_init_from_obs_py -.->|config_depends| src_zephyr_reporting_init_py
     D_REPORTING_Submodule_Skeleton_Thickness -.->|runtime| D_REPORTING_Temporal_Consistency_Verification
@@ -576,7 +577,8 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_REPORTING_SQLite_report_archive_SQLite,D_REPORTING_Sentinel_Hallucination_Detector_Sentinel,D_REPORTING_Soft_Dependency_D_INFRA_RUNTIME,D_REPORTING_SpectralGuardrails,D_REPORTING_Strategy_Degradation_Detection,D_REPORTING_Strategy_Explainability_Reporter,D_REPORTING_Strategy_Health_Score,D_REPORTING_Submodule_Skeleton_Thickness,D_REPORTING_TCA_Engine_TCA,D_REPORTING_TCA_Engine,D_REPORTING_Tax_Report,D_REPORTING_Temporal_Consistency_Verification,D_REPORTING_Three_Layer_Audit_Architecture,D_REPORTING_TraceCompleteness_Indicator_TraceCompleteness,D_REPORTING_VCP_v1_1_Crypto_Shredding_PoC_VCP_v1_1_Crypto_Shredding,D_REPORTING_VCP_v1_1_VCP_v1_1,D_REPORTING_VeNRA_Double_Lock_Zero_Hallucination_VeNRA,D_REPORTING_attribution_analysis,D_REPORTING_strategic_attributor_Agent_Card_strategic_attributor_Agent,D_REPORTING_strategy_health_score,D_REPORTING_v4_0_Success_Criteria_v4_0,D_REPORTING_Performance_Attribution_Model,D_REPORTING_Factor_Attribution,D_REPORTING_Risk_Attribution,src_zephyr_reporting_init_py,src_zephyr_reporting_init_from_obs_py,src_zephyr_reporting_extensions_init_py,src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_api_init_py,src_zephyr_reporting_core_init_py design
+    class scripts_demos_demo_e2e_pipeline_py production
+    class D_REPORTING_SQLite_report_archive_SQLite,D_REPORTING_Sentinel_Hallucination_Detector_Sentinel,D_REPORTING_Soft_Dependency_D_INFRA_RUNTIME,D_REPORTING_SpectralGuardrails,D_REPORTING_Strategy_Degradation_Detection,D_REPORTING_Strategy_Explainability_Reporter,D_REPORTING_Strategy_Health_Score,D_REPORTING_Submodule_Skeleton_Thickness,D_REPORTING_TCA_Engine_TCA,D_REPORTING_TCA_Engine,D_REPORTING_Tax_Report,D_REPORTING_Temporal_Consistency_Verification,D_REPORTING_Three_Layer_Audit_Architecture,D_REPORTING_TraceCompleteness_Indicator_TraceCompleteness,D_REPORTING_VCP_v1_1_Crypto_Shredding_PoC_VCP_v1_1_Crypto_Shredding,D_REPORTING_VCP_v1_1_VCP_v1_1,D_REPORTING_VeNRA_Double_Lock_Zero_Hallucination_VeNRA,D_REPORTING_attribution_analysis,D_REPORTING_strategic_attributor_Agent_Card_strategic_attributor_Agent,D_REPORTING_strategy_health_score,D_REPORTING_v4_0_Success_Criteria_v4_0,D_REPORTING_Performance_Attribution_Model,D_REPORTING_Factor_Attribution,D_REPORTING_Risk_Attribution,src_zephyr_reporting_init_py,src_zephyr_reporting_init_from_obs_py,src_zephyr_reporting_extensions_init_py,src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_api_init_py design
     class D_TRADING external_prod
     class D_GOVERNANCE,D_EX_CORE,D_EX_SOR,D_ML_TRAIN,D_INFRA_RUNTIME,D_POSITION,D_PF_CORE,D_SECURITY,D_INFRA_OPS,D_COMPLIANCE,D_CROSS_ASSET,D_AUTONOMY_CORE external_design
 ```
@@ -586,6 +588,7 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_REPORTING["D-REPORTING 报告"]
+        src_zephyr_reporting_core_init_py["src/zephyr/reporting/core/__init__.py scaffold_placeholder"]
         src_zephyr_reporting_default_attribution_engine_py["src/zephyr/reporting/default_attribution_engine.py prototype"]
         src_zephyr_reporting_default_tca_engine_py["src/zephyr/reporting/default_tca_engine.py prototype"]
         src_zephyr_reporting_implementations_init_py["src/zephyr/reporting/implementations/__init__.py prototype"]
@@ -620,7 +623,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_implementations_init_py,src_zephyr_reporting_implementations_default_attribution_engine_py,src_zephyr_reporting_implementations_default_tca_engine_py,src_zephyr_reporting_infrastructure_init_py,src_zephyr_reporting_models_init_py,src_zephyr_reporting_services_init_py,D_REPORTING_17,D_REPORTING_03,D_REPORTING_08,D_REPORTING_06 design
+    class src_zephyr_reporting_core_init_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_implementations_init_py,src_zephyr_reporting_implementations_default_attribution_engine_py,src_zephyr_reporting_implementations_default_tca_engine_py,src_zephyr_reporting_infrastructure_init_py,src_zephyr_reporting_models_init_py,src_zephyr_reporting_services_init_py,D_REPORTING_17,D_REPORTING_03,D_REPORTING_08,D_REPORTING_06 design
     class D_TRADING external_prod
     class D_GOVERNANCE external_design
 ```

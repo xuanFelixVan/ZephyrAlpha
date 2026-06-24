@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示规则治理（D-GOV_RULE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 规则治理（D-GOV_RULE）的模块分布。共 178 个模块 / 178 modules。
+> 按 architecture_layer 分层显示 规则治理（D-GOV_RULE）的模块分布。共 179 个模块 / 179 modules。
 
 ```
 
@@ -45,12 +45,19 @@ ttl: permanent
 │   docs/01_policies_and_standards/_registry/catalogs/directory... │
 │   ...还有 160 个模块 / 160 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                未分类 / Unclassified (1 modules)                 │
+├──────────────────────────────────────────────────────────────────┤
+│   F2-gate-engine/  [design]                                      │
+└──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 178 个模块 / 178 modules）。
+> 按 architecture_layer 分组的模块清单（共 179 个模块 / 179 modules）。
 
 ### L1 基础层 / Foundation Layer (178 modules)
 
@@ -234,6 +241,12 @@ ttl: permanent
 | 176 | src/zephyr/governance/rule_enforcement/triple_alignment.py | src/zephyr/governance/rule_enforcemen... | production | draft |
 | 177 | src/zephyr/governance/rule_enforcement/zero_residue.yaml | src/zephyr/governance/rule_enforcemen... | production | orphan |
 | 178 | src/zephyr/governance/rule_engine.py | src/zephyr/governance/rule_engine.py | production | draft |
+
+### 未分类 / Unclassified (1 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | F2-gate-engine/ | F2-gate-engine/ | design | stable |
 
 ## 依赖关系图 / Dependency Graph
 

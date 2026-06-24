@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示审计追踪（D-GOV_AUDIT）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 审计追踪（D-GOV_AUDIT）的模块分布。共 217 个模块 / 217 modules。
+> 按 architecture_layer 分层显示 审计追踪（D-GOV_AUDIT）的模块分布。共 379 个模块 / 379 modules。
 
 ```
 
@@ -48,19 +48,34 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (4 modules)                 │
+│               未分类 / Unclassified (166 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   Audit Chain Domain 审计链域  [design]                          │
 │   Audit Orchestrator 审计编排器  [design]                        │
 │   Decision Audit Trail 决策审计追踪  [design]                    │
 │   审计链6W模型 Audit Chain 6W Model  [design]                    │
+│   F36-audit-trail/  [design]                                     │
+│   tests/adversarial/test_f3_extreme.py  [production]             │
+│   tests/adversarial/test_rollback_concurrent_extreme.py  [pro... │
+│   tests/adversarial/test_rollback_partial_extreme.py  [produc... │
+│   tests/adversarial/test_rollback_scheduler.py  [production]     │
+│   tests/agent_rbac/test_rbac_auto_lifecycle.py  [production]     │
+│   tests/e2e/test_mcp_full_lifecycle_e2e.py  [production]         │
+│   tests/red_blue/__init__.py  [production]                       │
+│   tests/red_blue/_test_lock_target.py  [production]              │
+│   tests/red_blue/test_async_monitor.py  [production]             │
+│   tests/red_blue/test_circuit_breaker.py  [production]           │
+│   tests/red_blue/test_constitution_engine.py  [production]       │
+│   tests/red_blue/test_context_pipeline_red_blue.py  [production] │
+│   tests/red_blue/test_defense_runner.py  [production]            │
+│   ...还有 148 个模块 / 148 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 217 个模块 / 217 modules）。
+> 按 architecture_layer 分组的模块清单（共 379 个模块 / 379 modules）。
 
 ### L1 基础层 / Foundation Layer (213 modules)
 
@@ -269,7 +284,7 @@ ttl: permanent
 
 > (仅显示前 200 个模块，共 213 个)
 
-### 未分类 / Unclassified (4 modules)
+### 未分类 / Unclassified (166 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -277,6 +292,168 @@ ttl: permanent
 | 2 | D-GOVERNANCE/Audit Orchestrator 审计编排器 | Audit Orchestrator 审计编排器 | design | design_only |
 | 3 | D-GOVERNANCE/Decision Audit Trail 决策审计追踪 | Decision Audit Trail 决策审计追踪 | design | design_only |
 | 4 | D-GOVERNANCE/审计链6W模型 Audit Chain 6W Model | 审计链6W模型 Audit Chain 6W Model | design | design_only |
+| 5 | F36-audit-trail/ | F36-audit-trail/ | design | stable |
+| 6 | tests/adversarial/test_f3_extreme.py | tests/adversarial/test_f3_extreme.py | production | draft |
+| 7 | tests/adversarial/test_rollback_concurrent_extreme.py | tests/adversarial/test_rollback_concu... | production | draft |
+| 8 | tests/adversarial/test_rollback_partial_extreme.py | tests/adversarial/test_rollback_parti... | production | draft |
+| 9 | tests/adversarial/test_rollback_scheduler.py | tests/adversarial/test_rollback_sched... | production | draft |
+| 10 | tests/agent_rbac/test_rbac_auto_lifecycle.py | tests/agent_rbac/test_rbac_auto_lifec... | production | draft |
+| 11 | tests/e2e/test_mcp_full_lifecycle_e2e.py | tests/e2e/test_mcp_full_lifecycle_e2e.py | production | draft |
+| 12 | tests/red_blue/__init__.py | tests/red_blue/__init__.py | production | draft |
+| 13 | tests/red_blue/_test_lock_target.py | tests/red_blue/_test_lock_target.py | production | draft |
+| 14 | tests/red_blue/test_async_monitor.py | tests/red_blue/test_async_monitor.py | production | draft |
+| 15 | tests/red_blue/test_circuit_breaker.py | tests/red_blue/test_circuit_breaker.py | production | draft |
+| 16 | tests/red_blue/test_constitution_engine.py | tests/red_blue/test_constitution_engi... | production | draft |
+| 17 | tests/red_blue/test_context_pipeline_red_blue.py | tests/red_blue/test_context_pipeline_... | production | draft |
+| 18 | tests/red_blue/test_defense_runner.py | tests/red_blue/test_defense_runner.py | production | draft |
+| 19 | tests/red_blue/test_event_integration.py | tests/red_blue/test_event_integration.py | production | draft |
+| 20 | tests/red_blue/test_f14_pipeline_extreme.py | tests/red_blue/test_f14_pipeline_extr... | production | draft |
+| 21 | tests/red_blue/test_f18_governance_adversarial.py | tests/red_blue/test_f18_governance_ad... | production | draft |
+| 22 | tests/red_blue/test_f1_extreme.py | tests/red_blue/test_f1_extreme.py | production | draft |
+| 23 | tests/red_blue/test_game_day_scheduler.py | tests/red_blue/test_game_day_schedule... | production | draft |
+| 24 | tests/red_blue/test_injection_engine.py | tests/red_blue/test_injection_engine.py | production | draft |
+| 25 | tests/red_blue/test_phase_manager_integration.py | tests/red_blue/test_phase_manager_int... | production | draft |
+| 26 | tests/red_blue/test_red_blue_validator.py | tests/red_blue/test_red_blue_validato... | production | draft |
+| 27 | tests/test_adversarial_extreme.py | tests/test_adversarial_extreme.py | production | draft |
+| 28 | tests/test_arbiter.py | tests/test_arbiter.py | production | draft |
+| 29 | tests/test_auto_fix_autopilot.py | tests/test_auto_fix_autopilot.py | production | draft |
+| 30 | tests/test_auto_fix_phase_manager.py | tests/test_auto_fix_phase_manager.py | production | draft |
+| 31 | tests/test_auto_fix_red_blue.py | tests/test_auto_fix_red_blue.py | production | draft |
+| 32 | tests/test_auto_runtime_e2e.py | tests/test_auto_runtime_e2e.py | production | draft |
+| 33 | tests/test_auto_runtime_fle_integration.py | tests/test_auto_runtime_fle_integrati... | production | draft |
+| 34 | tests/test_budget_event_driven.py | tests/test_budget_event_driven.py | production | draft |
+| 35 | tests/test_budget_lifecycle_e2e.py | tests/test_budget_lifecycle_e2e.py | production | draft |
+| 36 | tests/test_budget_shutdown.py | tests/test_budget_shutdown.py | production | draft |
+| 37 | tests/test_circadian_red_blue_drill.py | tests/test_circadian_red_blue_drill.py | production | draft |
+| 38 | tests/test_conductor.py | tests/test_conductor.py | production | draft |
+| 39 | tests/test_f10_red_blue.py | tests/test_f10_red_blue.py | production | draft |
+| 40 | tests/test_f18_automation.py | tests/test_f18_automation.py | production | draft |
+| 41 | tests/test_f18_redblue.py | tests/test_f18_redblue.py | production | draft |
+| 42 | tests/test_f1_event_trigger.py | tests/test_f1_event_trigger.py | production | draft |
+| 43 | tests/test_f21_auto_run.py | tests/test_f21_auto_run.py | production | draft |
+| 44 | tests/test_f21_auto_shutdown.py | tests/test_f21_auto_shutdown.py | production | draft |
+| 45 | tests/test_f21_auto_startup.py | tests/test_f21_auto_startup.py | production | draft |
+| 46 | tests/test_f21_event_driven.py | tests/test_f21_event_driven.py | production | draft |
+| 47 | tests/test_f5_auto_shutdown.py | tests/test_f5_auto_shutdown.py | production | draft |
+| 48 | tests/test_f5_auto_startup.py | tests/test_f5_auto_startup.py | production | draft |
+| 49 | tests/test_f5_e2e_lifecycle.py | tests/test_f5_e2e_lifecycle.py | production | draft |
+| 50 | tests/test_f5_event_startup.py | tests/test_f5_event_startup.py | production | draft |
+| 51 | tests/test_f5_red_team_extreme.py | tests/test_f5_red_team_extreme.py | production | draft |
+| 52 | tests/test_fl_safety_gate_l28_l29.py | tests/test_fl_safety_gate_l28_l29.py | production | draft |
+| 53 | tests/test_fl_safety_gate_l36_l37.py | tests/test_fl_safety_gate_l36_l37.py | production | draft |
+| 54 | tests/test_fl_safety_gate_l38_l39.py | tests/test_fl_safety_gate_l38_l39.py | production | draft |
+| 55 | tests/test_fl_safety_gate_l40_l41.py | tests/test_fl_safety_gate_l40_l41.py | production | draft |
+| 56 | tests/test_fl_safety_gate_l42_l43.py | tests/test_fl_safety_gate_l42_l43.py | production | draft |
+| 57 | tests/test_fl_safety_gate_l44_l45.py | tests/test_fl_safety_gate_l44_l45.py | production | draft |
+| 58 | tests/test_fl_safety_gate_l46_l47.py | tests/test_fl_safety_gate_l46_l47.py | production | draft |
+| 59 | tests/test_fl_safety_gate_l48_l49.py | tests/test_fl_safety_gate_l48_l49.py | production | draft |
+| 60 | tests/test_fl_safety_gate_l50_l51.py | tests/test_fl_safety_gate_l50_l51.py | production | draft |
+| 61 | tests/test_fl_safety_gate_l52_l53.py | tests/test_fl_safety_gate_l52_l53.py | production | draft |
+| 62 | tests/test_fl_safety_gate_l54_l55.py | tests/test_fl_safety_gate_l54_l55.py | production | draft |
+| 63 | tests/test_fl_safety_gate_l56_l57.py | tests/test_fl_safety_gate_l56_l57.py | production | draft |
+| 64 | tests/test_fl_safety_gate_l58_l59.py | tests/test_fl_safety_gate_l58_l59.py | production | draft |
+| 65 | tests/test_fl_safety_gate_l60_l61.py | tests/test_fl_safety_gate_l60_l61.py | production | draft |
+| 66 | tests/test_fl_safety_gate_l62_l63.py | tests/test_fl_safety_gate_l62_l63.py | production | draft |
+| 67 | tests/test_fl_safety_gate_l64_l65.py | tests/test_fl_safety_gate_l64_l65.py | production | draft |
+| 68 | tests/test_fl_safety_gate_l66_l67.py | tests/test_fl_safety_gate_l66_l67.py | production | draft |
+| 69 | tests/test_g_trae_003.py | tests/test_g_trae_003.py | production | draft |
+| 70 | tests/test_g_trae_004.py | tests/test_g_trae_004.py | production | draft |
+| 71 | tests/test_g_trae_006.py | tests/test_g_trae_006.py | production | draft |
+| 72 | tests/test_g_trae_007.py | tests/test_g_trae_007.py | production | draft |
+| 73 | tests/test_g_trae_008.py | tests/test_g_trae_008.py | production | draft |
+| 74 | tests/test_g_trae_009.py | tests/test_g_trae_009.py | production | draft |
+| 75 | tests/test_g_trae_010.py | tests/test_g_trae_010.py | production | draft |
+| 76 | tests/test_g_trae_011.py | tests/test_g_trae_011.py | production | draft |
+| 77 | tests/test_g_trae_012.py | tests/test_g_trae_012.py | production | draft |
+| 78 | tests/test_g_trae_016.py | tests/test_g_trae_016.py | production | draft |
+| 79 | tests/test_g_trae_017.py | tests/test_g_trae_017.py | production | draft |
+| 80 | tests/test_g_trae_018.py | tests/test_g_trae_018.py | production | draft |
+| 81 | tests/test_g_trae_020.py | tests/test_g_trae_020.py | production | draft |
+| 82 | tests/test_g_trae_021.py | tests/test_g_trae_021.py | production | draft |
+| 83 | tests/test_g_trae_022.py | tests/test_g_trae_022.py | production | draft |
+| 84 | tests/test_g_trae_023.py | tests/test_g_trae_023.py | production | draft |
+| 85 | tests/test_g_trae_024.py | tests/test_g_trae_024.py | production | draft |
+| 86 | tests/test_g_trae_025.py | tests/test_g_trae_025.py | production | draft |
+| 87 | tests/test_g_trae_026.py | tests/test_g_trae_026.py | production | draft |
+| 88 | tests/test_g_trae_027.py | tests/test_g_trae_027.py | production | draft |
+| 89 | tests/test_g_trae_028.py | tests/test_g_trae_028.py | production | draft |
+| 90 | tests/test_g_trae_029.py | tests/test_g_trae_029.py | production | draft |
+| 91 | tests/test_g_trae_030.py | tests/test_g_trae_030.py | production | draft |
+| 92 | tests/test_g_trae_031.py | tests/test_g_trae_031.py | production | draft |
+| 93 | tests/test_g_trae_032.py | tests/test_g_trae_032.py | production | draft |
+| 94 | tests/test_g_trae_033.py | tests/test_g_trae_033.py | production | draft |
+| 95 | tests/test_g_trae_034.py | tests/test_g_trae_034.py | production | draft |
+| 96 | tests/test_g_trae_035.py | tests/test_g_trae_035.py | production | draft |
+| 97 | tests/test_g_trae_036.py | tests/test_g_trae_036.py | production | draft |
+| 98 | tests/test_g_trae_037.py | tests/test_g_trae_037.py | production | draft |
+| 99 | tests/test_g_trae_038.py | tests/test_g_trae_038.py | production | draft |
+| 100 | tests/test_g_trae_039.py | tests/test_g_trae_039.py | production | draft |
+| 101 | tests/test_g_trae_040.py | tests/test_g_trae_040.py | production | draft |
+| 102 | tests/test_g_trae_041.py | tests/test_g_trae_041.py | production | draft |
+| 103 | tests/test_g_trae_042.py | tests/test_g_trae_042.py | production | draft |
+| 104 | tests/test_g_trae_043.py | tests/test_g_trae_043.py | production | draft |
+| 105 | tests/test_g_trae_044.py | tests/test_g_trae_044.py | production | draft |
+| 106 | tests/test_g_trae_045.py | tests/test_g_trae_045.py | production | draft |
+| 107 | tests/test_g_trae_046.py | tests/test_g_trae_046.py | production | draft |
+| 108 | tests/test_g_trae_047.py | tests/test_g_trae_047.py | production | draft |
+| 109 | tests/test_g_trae_048.py | tests/test_g_trae_048.py | production | draft |
+| 110 | tests/test_g_trae_049.py | tests/test_g_trae_049.py | production | draft |
+| 111 | tests/test_g_trae_050.py | tests/test_g_trae_050.py | production | draft |
+| 112 | tests/test_g_trae_051.py | tests/test_g_trae_051.py | production | draft |
+| 113 | tests/test_g_trae_052.py | tests/test_g_trae_052.py | production | draft |
+| 114 | tests/test_g_trae_053.py | tests/test_g_trae_053.py | production | draft |
+| 115 | tests/test_g_trae_054.py | tests/test_g_trae_054.py | production | draft |
+| 116 | tests/test_g_trae_055.py | tests/test_g_trae_055.py | production | draft |
+| 117 | tests/test_ide_health_daemon.py | tests/test_ide_health_daemon.py | production | draft |
+| 118 | tests/test_l00_data_source.py | tests/test_l00_data_source.py | production | draft |
+| 119 | tests/test_l02_alpha_factor.py | tests/test_l02_alpha_factor.py | production | draft |
+| 120 | tests/test_l03_signal_generation.py | tests/test_l03_signal_generation.py | production | draft |
+| 121 | tests/test_l04_risk_management.py | tests/test_l04_risk_management.py | production | draft |
+| 122 | tests/test_l05_portfolio_construction.py | tests/test_l05_portfolio_construction.py | production | draft |
+| 123 | tests/test_l06_trade_execution.py | tests/test_l06_trade_execution.py | production | draft |
+| 124 | tests/test_l07_post_trade_analytics.py | tests/test_l07_post_trade_analytics.py | production | draft |
+| 125 | tests/test_l08_human_ai_interface.py | tests/test_l08_human_ai_interface.py | production | draft |
+| 126 | tests/test_l09_research_innovation.py | tests/test_l09_research_innovation.py | production | draft |
+| 127 | tests/test_l10_compliance.py | tests/test_l10_compliance.py | production | draft |
+| 128 | tests/test_l11_ml_platform.py | tests/test_l11_ml_platform.py | production | draft |
+| 129 | tests/test_l13_experimentation.py | tests/test_l13_experimentation.py | production | draft |
+| 130 | tests/test_lock_release_uncommitted.py | tests/test_lock_release_uncommitted.py | production | draft |
+| 131 | tests/test_mcp_launcher.py | tests/test_mcp_launcher.py | production | draft |
+| 132 | tests/test_phase_executor_rule_enforcement.py | tests/test_phase_executor_rule_enforc... | production | draft |
+| 133 | tests/test_pipeline_orchestrator_auto.py | tests/test_pipeline_orchestrator_auto.py | production | draft |
+| 134 | tests/test_post_doc_review.py | tests/test_post_doc_review.py | production | draft |
+| 135 | tests/test_red_blue_validator_tests.py | tests/test_red_blue_validator_tests.py | production | draft |
+| 136 | tests/test_safety_gate_l28_l29.py | tests/test_safety_gate_l28_l29.py | production | draft |
+| 137 | tests/test_safety_gate_l36_l37.py | tests/test_safety_gate_l36_l37.py | production | draft |
+| 138 | tests/test_safety_gate_l38_l39.py | tests/test_safety_gate_l38_l39.py | production | draft |
+| 139 | tests/test_safety_gate_l40_l41.py | tests/test_safety_gate_l40_l41.py | production | draft |
+| 140 | tests/test_safety_gate_l42_l43.py | tests/test_safety_gate_l42_l43.py | production | draft |
+| 141 | tests/test_safety_gate_l44_l45.py | tests/test_safety_gate_l44_l45.py | production | draft |
+| 142 | tests/test_safety_gate_l46_l47.py | tests/test_safety_gate_l46_l47.py | production | draft |
+| 143 | tests/test_safety_gate_l48_l49.py | tests/test_safety_gate_l48_l49.py | production | draft |
+| 144 | tests/test_safety_gate_l50_l51.py | tests/test_safety_gate_l50_l51.py | production | draft |
+| 145 | tests/test_safety_gate_l52_l53.py | tests/test_safety_gate_l52_l53.py | production | draft |
+| 146 | tests/test_safety_gate_l54_l55.py | tests/test_safety_gate_l54_l55.py | production | draft |
+| 147 | tests/test_safety_gate_l56_l57.py | tests/test_safety_gate_l56_l57.py | production | draft |
+| 148 | tests/test_safety_gate_l58_l59.py | tests/test_safety_gate_l58_l59.py | production | draft |
+| 149 | tests/test_safety_gate_l60_l61.py | tests/test_safety_gate_l60_l61.py | production | draft |
+| 150 | tests/test_safety_gate_l62_l63.py | tests/test_safety_gate_l62_l63.py | production | draft |
+| 151 | tests/test_safety_gate_l64_l65.py | tests/test_safety_gate_l64_l65.py | production | draft |
+| 152 | tests/test_safety_gate_l66_l67.py | tests/test_safety_gate_l66_l67.py | production | draft |
+| 153 | tests/test_task_repo_auto_commit.py | tests/test_task_repo_auto_commit.py | production | draft |
+| 154 | tests/test_trading_session_lifecycle.py | tests/test_trading_session_lifecycle.py | production | draft |
+| 155 | tests/test_validate_rule_frontmatter_red_blue.py | tests/test_validate_rule_frontmatter_... | production | draft |
+| 156 | tests/unit/feedback_loop/test_scheduler_integration.py | tests/unit/feedback_loop/test_schedul... | production | draft |
+| 157 | tests/unit/pipeline/conftest.py | tests/unit/pipeline/conftest.py | production | draft |
+| 158 | tests/unit/telemetry/test_l12_telemetry.py | tests/unit/telemetry/test_l12_telemet... | production | draft |
+| 159 | tests/unit/test_concurrency_guard.py | tests/unit/test_concurrency_guard.py | production | draft |
+| 160 | tests/unit/test_context_pipeline_auto.py | tests/unit/test_context_pipeline_auto.py | production | draft |
+| 161 | tests/unit/test_l08_interface.py | tests/unit/test_l08_interface.py | production | draft |
+| 162 | tests/unit/test_l12_telemetry_unit.py | tests/unit/test_l12_telemetry_unit.py | production | draft |
+| 163 | tests/unit/vector_memory/test_vms_adversarial_hijack.py | tests/unit/vector_memory/test_vms_adv... | production | draft |
+| 164 | tests/unit/vector_memory/test_vms_adversarial_injection.py | tests/unit/vector_memory/test_vms_adv... | production | draft |
+| 165 | tests/unit/vector_memory/test_vms_automation.py | tests/unit/vector_memory/test_vms_aut... | production | draft |
+| 166 | tests/unit/vector_memory/test_vms_lifecycle.py | tests/unit/vector_memory/test_vms_lif... | production | draft |
 
 ## 依赖关系图 / Dependency Graph
 

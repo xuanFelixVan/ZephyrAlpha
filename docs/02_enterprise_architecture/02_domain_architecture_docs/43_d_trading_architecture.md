@@ -8,17 +8,17 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 53_d_trading / 交易运营 架构图
+# 43_d_trading / 交易运营 架构图
 
 > **文档作用 / Purpose**: 以ASCII art可视化展示交易运营（D-TRADING）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-24 23:01:56
+> 最后更新 / Last Updated: 2026-06-24 23:57:37
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 交易运营（D-TRADING）的模块分布。共 249 个模块 / 249 modules。
+> 按 architecture_layer 分层显示 交易运营（D-TRADING）的模块分布。共 255 个模块 / 255 modules。
 
 ```
 
@@ -48,7 +48,7 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (86 modules)                │
+│                未分类 / Unclassified (92 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   7 Architecture Decisions 架构决策7项  [design]                 │
 │   A-Share Pre-Market Standardized Workflow A股盘前标准化工作...  │
@@ -68,14 +68,14 @@ ttl: permanent
 │   Data Degradation Processing 数据降级处理  [design]             │
 │   Data Signature Verification 数据签名验证  [design]             │
 │   Deterministic Validation 确定性校验  [design]                  │
-│   ...还有 68 个模块 / 68 more modules                            │
+│   ...还有 74 个模块 / 74 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 249 个模块 / 249 modules）。
+> 按 architecture_layer 分组的模块清单（共 255 个模块 / 255 modules）。
 
 ### L2 领域层 / Domain Layer (163 modules)
 
@@ -245,7 +245,7 @@ ttl: permanent
 | 162 | 交易域-资金/D-TRADING-12 | Cash Flow Manager | design | design_only |
 | 163 | 交易运营域/D-TRADING-04 | EOD Processor | design | design_only |
 
-### 未分类 / Unclassified (86 modules)
+### 未分类 / Unclassified (92 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -335,6 +335,12 @@ ttl: permanent
 | 84 | D-TRADING/禁止AI自主执行大额下单 No AI Auto-Execute Large... | 禁止AI自主执行大额下单 No AI Auto-Exe... | design | design_only |
 | 85 | D-TRADING/禁止非交易时段提交订单 Order | 禁止非交易时段提交订单 Order | design | design_only |
 | 86 | D-TRADING/纳秒级关键路径分析器 Nanosecond Critical Path A... | 纳秒级关键路径分析器 Nanosecond Criti... | design | design_only |
+| 87 | F1-autopilot/ | F1-autopilot/ | design | stable |
+| 88 | F17-archived/ | F17-archived/ | design | deprecated |
+| 89 | F26-runtime-integration/ | F26-runtime-integration/ | design | stable |
+| 90 | src/zephyr/trading/runtime/__init__.py | src/zephyr/trading/runtime/__init__.py | production | draft |
+| 91 | src/zephyr/trading/runtime/async_runtime.py | src/zephyr/trading/runtime/async_runt... | production | draft |
+| 92 | tests/trading/runtime/test_async_runtime.py | tests/trading/runtime/test_async_runt... | production | draft |
 
 ## 依赖关系图 / Dependency Graph
 
@@ -425,5 +431,5 @@ ttl: permanent
 - **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
 - **生成器 / Generator**: `generate_domain_architecture_diagram.py`
 - **维护方式 / Maintenance**: 自动生成，depgraph.db 变更时 CI 自动刷新
-- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}_architecture.md`，如 `53_d_trading_architecture.md`
+- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}_architecture.md`，如 `43_d_trading_architecture.md`
 - **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
