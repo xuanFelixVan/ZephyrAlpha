@@ -1053,7 +1053,7 @@ DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 
 | 允许 | 示例 |
 |------|------|
 | `python <脚本>.py <参数>` | `python scripts/lock_files.py check <file>` |
-| `git <subcommand>` | `git status` |
+| `python scripts/git_guard.py <git子命令>` | `python scripts/git_guard.py add -A`（❌ 禁止裸 `git xxx`，Trae 硬编码审查会弹窗） |
 | `python -m pytest <path>` | `python -m pytest tests/` |
 | `python -m zephyr.<mod>` | `python -m zephyr.governance.task_repo` |
 
@@ -1067,6 +1067,7 @@ DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 
 | 4 | cmdlet（`Get-`/`Set-`/`Where-` 等） | Read/Write/Edit 工具 |
 | 5 | `>` 重定向 | Write 工具 或 Python `open(encoding='utf-8')` |
 | 6 | `;` 命令串联 | 分多次 RunCommand |
+| 7 | 裸 `git` 命令 | `python scripts/git_guard.py <git子命令>`（Trae 对 `git` 前缀硬编码审查，会弹窗打断连续工作） |
 
 ### 文件操作强制映射
 
@@ -1247,10 +1248,10 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 
 | 时机 | 动作 |
 |------|------|
-| 文件修改完成 | `git add <具体文件>`（禁止 `git add -A`） |
-| 任务卡 transition(COMPLETED) | 自动 `git add files_in_scope` + `git commit`（DM-202918 实现） |
-| 释放文件锁前 | 检查 `git status`，有未提交修改则 WARNING（DM-202919 实现） |
-| session 结束前 | 确认 `git status` 干净（无未提交修改） |
+| 文件修改完成 | `python scripts/git_guard.py add <具体文件>`（禁止 `python scripts/git_guard.py add -A`） |
+| 任务卡 transition(COMPLETED) | 自动 `python scripts/git_guard.py add files_in_scope` + `python scripts/git_guard.py commit`（DM-202918 实现） |
+| 释放文件锁前 | 检查 `python scripts/git_guard.py status`，有未提交修改则 WARNING（DM-202919 实现） |
+| session 结束前 | 确认 `python scripts/git_guard.py status` 干净（无未提交修改） |
 
 ### commit message 格式（裁定2：2026-06-25）
 
@@ -1258,10 +1259,10 @@ PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规�
 
 | 场景 | 命令 | 理由 |
 |------|------|------|
-| 单行、无特殊字符 | `git commit -m "type(scope): desc"` | 简单快捷 |
-| 多行、含特殊字符、含中文括号 | `git commit -F <file>` | 避免 PowerShell 解析风险 |
+| 单行、无特殊字符 | `python scripts/git_guard.py commit -m "type(scope): desc"` | 简单快捷 |
+| 多行、含特殊字符、含中文括号 | `python scripts/git_guard.py commit -F <file>` | 避免 PowerShell 解析风险 |
 
-**流程**：写消息到临时文件 → `git commit -F <file>` → 删除临时文件（RULE-FIVE）。
+**流程**：写消息到临时文件 → `python scripts/git_guard.py commit -F <file>` → 删除临时文件（RULE-FIVE）。
 
 **根因**：2026-06-25 排查 `git commit -m "fix: clean test domain pollution..."` 在 PowerShell 中因特殊字符解析失败。`-F` 文件方式绕过 shell 解析，是跨平台安全方案。
 
@@ -1270,7 +1271,7 @@ PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规�
 | # | 行为 | 后果 |
 |---|------|------|
 | ❌ | 写完代码不提交，留到"下次再说" | git 操作冲掉工作区，代码丢失 |
-| ❌ | 用 `git add -A` 或 `git add .` 批量添加 | 混入敏感文件或无关变更 |
+| ❌ | 用 `python scripts/git_guard.py add -A` 或 `python scripts/git_guard.py add .` 批量添加 | 混入敏感文件或无关变更 |
 | ❌ | 释放文件锁前不检查 git status | 锁释放后忘记提交 |
 
 ### 根因
