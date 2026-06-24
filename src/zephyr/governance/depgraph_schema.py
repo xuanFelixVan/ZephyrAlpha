@@ -25,7 +25,7 @@ Safety  : M（DDL 定义，init_db 幂等执行）
 ------
  1. nodes                 — 依赖图节点（28列，v3对齐模板受控词表）
  2. edges                 — 依赖图边（19列）
- 3. domains               — 域定义（14列，v3新增can_build等4字段）
+ 3. domains               — 域定义（15列，v10清理装饰字段后）
  4. domain_dependencies   — 域间依赖（5列）
  5. domain_events         — 域事件（6列）
  6. contracts             — 域间契约（7列）
@@ -40,6 +40,8 @@ Safety  : M（DDL 定义，init_db 幂等执行）
 
 v6变更: arch_domain_capacity + arch_domain_layers 已合并入 domains 表
         domains 表新增6字段: layer_id/growth_pattern/target_modules/feasibility/bottleneck_description/last_capacity_check
+v9变更: domains 表新增 production_nodes 字段（ARCH-CAP-001 口径修复）
+v10变更: domains 表清理7个无区分度装饰字段（can_build/gate_reason/hard_boundary_ref/growth_pattern/feasibility/bottleneck_description/last_capacity_check）
 
 PRAGMA 基线（与 governance.db 一致）
 -----------------------------------
@@ -158,16 +160,10 @@ CREATE TABLE IF NOT EXISTS domains (
     created_at       TEXT    NOT NULL,
     updated_at       TEXT    NOT NULL,
     build_status     TEXT    DEFAULT 'unbuilt',
-    can_build        INTEGER DEFAULT 1,
-    gate_reason      TEXT,
-    hard_boundary_ref TEXT,
     modification_permission TEXT,
     layer_id         TEXT,
-    growth_pattern   TEXT    DEFAULT 'linear',
     target_modules   INTEGER,
-    feasibility      TEXT    DEFAULT 'feasible',
-    bottleneck_description TEXT,
-    last_capacity_check TEXT
+    production_nodes INTEGER DEFAULT 0
 )
 """
 
@@ -775,6 +771,20 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "v9: Add production_nodes column to domains（ARCH-CAP-001 口径修复）",
         [
             "ALTER TABLE domains ADD COLUMN production_nodes INTEGER DEFAULT 0",
+        ],
+    ),
+    (
+        10,
+        "v10: Drop 7 decorative fields from domains（无区分度/无值字段清理）",
+        [
+            "DROP INDEX IF EXISTS idx_domains_can_build",
+            "ALTER TABLE domains DROP COLUMN can_build",
+            "ALTER TABLE domains DROP COLUMN gate_reason",
+            "ALTER TABLE domains DROP COLUMN hard_boundary_ref",
+            "ALTER TABLE domains DROP COLUMN growth_pattern",
+            "ALTER TABLE domains DROP COLUMN feasibility",
+            "ALTER TABLE domains DROP COLUMN bottleneck_description",
+            "ALTER TABLE domains DROP COLUMN last_capacity_check",
         ],
     ),
 ]

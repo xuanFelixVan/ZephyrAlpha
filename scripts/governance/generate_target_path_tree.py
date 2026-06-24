@@ -130,7 +130,8 @@ def load_panorama_from_db(db_path: Path) -> dict:
             if entry.get("domain_group"):
                 data["domains"][did]["parent_domain"] = entry["domain_group"]
     # v6: arch_domain_capacity已合并入domains，capacity字段已在domains中
-    # domains表已含 current_modules/max_modules/growth_pattern/target_modules/feasibility/bottleneck_description/last_capacity_check
+    # v10: 清理7个无区分度装饰字段（can_build/gate_reason/hard_boundary_ref/growth_pattern/feasibility/bottleneck_description/last_capacity_check）
+    # domains表现含 current_modules/max_modules/target_modules/production_nodes
     conn.close()
     return data
 
