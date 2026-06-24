@@ -500,11 +500,17 @@ class DeepSeekV4Chat:
                 "token_count": self.cumulative_output_tokens,
                 "eval_count": self.cumulative_output_tokens,
             }
-        return {
+        # 通用JSON解析逻辑（适用于B/C/D/E/F/G/H/I/J/K/L/M类等所有新增能力）
+        raw = self._ask_with_retry(text, system, work_type, temperature=0.0)
+        parsed = self._parse_json(raw)
+        result: dict[str, Any] = {
             "work_type": work_type,
             "model": self.model,
-            "error": f"unknown work_type: {work_type}",
         }
+        result.update(parsed)
+        result["token_count"] = self.cumulative_output_tokens
+        result["eval_count"] = self.cumulative_output_tokens
+        return result
 
     def _ask_with_retry(
         self,
