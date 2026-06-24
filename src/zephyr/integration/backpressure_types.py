@@ -32,7 +32,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+    from zephyr.shared.contracts.core.trace_context import TraceContext
 
 __all__ = [
     "BackpressurePause",

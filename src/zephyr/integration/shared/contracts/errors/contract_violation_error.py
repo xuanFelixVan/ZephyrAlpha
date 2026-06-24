@@ -17,7 +17,7 @@
 # ==== BEGIN CODGEN:CTR-ERR-006 ====
 from dataclasses import dataclass
 
-from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+from zephyr.shared.contracts.core.trace_context import TraceContext
 
 # ---
 # layer: cross_cutting

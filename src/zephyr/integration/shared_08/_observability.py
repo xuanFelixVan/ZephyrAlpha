@@ -48,7 +48,7 @@ from zephyr.integration.shared_08.context import (
 from zephyr.integration.shared_08.contract_versions import get_registry
 
 # === TraceContext（shared_08 内部 SSoT） ===
-from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+from zephyr.shared.contracts.core.trace_context import TraceContext
 from zephyr.integration.shared_08.foundation.errors import (
     ConfigError,
     ContextError,
