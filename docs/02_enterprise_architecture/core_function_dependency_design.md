@@ -3,7 +3,7 @@ module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
 doc_type: architecture_design
 status: draft
-version: 0.3.8
+version: 0.3.9
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -663,6 +663,152 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 阶段3代码修改失败 | `git checkout <文件>`（恢复到修改前）或 `python scripts/rollback.py preflight` → `rollback.py <cmd>` |
 | 三方对齐不一致 | 定位不一致项→回到对应阶段修复→重新对齐 |
 
+### 11.5 功能实现状态盘点（v0.3.9）
+
+> 阶段0.5盘点的完整结果。37个功能按实现状态分为：运营态33个（有代码）、设计态2个（仅蓝图）、未发现1个、已归档1个。
+
+#### 11.5.1 功能实现状态汇总表
+
+| 功能 | 名称 | 状态 | 主要实现位置 | 文件数 |
+|:---:|------|:---:|------|:---:|
+| **L0 基础设施层** | | | | |
+| F22 | 事件总线+共享核心 | 运营态 | `src/zephyr/shared/events/event_bus.py` + `src/zephyr/shared/shared_services/` | 35+ |
+| F25 | 数据库集成层 | 运营态 | `src/zephyr/infrastructure/db/` | 17 |
+| F26 | 运行时集成 | 运营态 ⚠️ | `src/zephyr/trading/boot_hooks.py` + `boot_cron_jobs.py`（蓝图声明`governance/lifecycle_manager/`，实际在`trading/`） | 7 |
+| **L1 守护层** | | | | |
+| F21 | IDE健康守护 | 运营态 | `src/zephyr/trading/ide_health_daemon.py` | 1+ |
+| **L2 调度层** | | | | |
+| F1 | 自动驾驶/大脑 | 运营态 | `src/zephyr/trading/autopilot.py` | 4 |
+| F23 | Agent编排器 | 运营态 | `src/zephyr/trading/orchestrator/core/agent_orchestrator.py` | 5+ |
+| **L3 控制层** | | | | |
+| F2 | 门禁引擎 | 运营态 | `src/zephyr/governance/rule_enforcement/gate_engine.py` | 50+ |
+| F4 | 预算执行器 | 运营态 | `src/zephyr/governance/budget_engine.py` | 20+ |
+| F7 | LLM安全网关 | 运营态 | `src/zephyr/security/llm_defense/llm_security_01/gateway.py` | 50+ |
+| F8 | RBAC权限 | 运营态 | `src/zephyr/security/access_control/rbac_guard.py` | 11 |
+| F27 | 容量保障 | 运营态 | `src/zephyr/infrastructure/capacity_assurance/` | 31+ |
+| F32 | 状态机引擎 | 运营态 | `src/zephyr/shared/state_machine.py` | 11 |
+| **L4 执行层** | | | | |
+| F3 | 任务系统 | 运营态 | `src/zephyr/governance/task_repo.py` | 20+ |
+| F11 | 上下文引擎 | 运营态 | `src/zephyr/shared/context_engine.py` | 6 |
+| F12 | 知识库 | 运营态 | `src/zephyr/integration/mcp/knowledge_base_server.py` | 15+ |
+| F13 | MCP集群 | 运营态 | `src/zephyr/integration/mcp_server.py` + `src/zephyr/integration/mcp/` | 25+ |
+| F14 | 管线编排 | 运营态 | `src/zephyr/integration/pipeline_orchestrator.py` | 3 |
+| F24 | Agent Spec/Skill | 运营态 | `src/zephyr/autonomy_core/skill_*.py` | 60+ |
+| F33 | 本地模型 | 运营态 | `src/zephyr/integration/local_model/` | 7 |
+| **L5 治理层** | | | | |
+| F6 | 漂移检测 | 运营态 | `src/zephyr/governance/drift_detector.py` | 30+ |
+| F15 | 自动修复 | 运营态 | `src/zephyr/infrastructure/auto_fix_engine/` | 30+ |
+| F16 | 孤儿审判 | 运营态 | `src/zephyr/security/access_control/orphan_judge/` | 25+ |
+| F18 | 治理脚本 | 运营态 | `src/zephyr/governance/phase_manager.py` | 3+ |
+| F19 | 系统遥测 | 运营态 | `src/zephyr/infrastructure/system_telemetry/` | 25+ |
+| F20 | 监控统一 | ❌ 未发现 | 搜索`unified_monitor`/`monitor_unified`无匹配，存在分散monitor文件但无统一聚合器 | 0 |
+| F28 | 资产盘点 | 运营态 | `src/zephyr/infrastructure/asset_inventory/` | 15 |
+| F29 | 语义审计 | 运营态 | `src/zephyr/governance/semantic_audit/` | 25 |
+| F30 | 红蓝对抗 | 运营态 | `src/zephyr/security/adversarial_validation/` | 32 |
+| F31 | 注册表治理 | 运营态 ⚠️ | `src/zephyr/infrastructure/registry_governance.py`（蓝图声明`governance/registry_governance/`，实际在`infrastructure/`） | 1 |
+| F34 | 代码去重 | 设计态 | 蓝图声明`src/zephyr/governance/code_dedup_engine/`目录不存在，仅有其他模块相关去重文件 | 0 |
+| F35 | 文件结构治理 | 设计态 | 无蓝图无代码，完全未实现 | 0 |
+| F36 | 审计追踪链 | 运营态 | `src/zephyr/governance/audit_trail/` | 60+ |
+| F37 | 资源优化 | 运营态 | `src/zephyr/shared/lifecycle/resource_optimization_engine.py` | 7 |
+| **L6 应急层** | | | | |
+| F5 | 升级/A2A | 运营态 | `src/zephyr/governance/escalation_engine.py` | 13 |
+| F9 | 回滚系统 | 运营态 | `src/zephyr/infrastructure/rollback/rollback_executor.py` | 30+ |
+| F10 | 模型考试 | 运营态 | `src/zephyr/intelligence/model_profiling/exam_orchestrator.py` | 30+ |
+| **已归档** | | | | |
+| F17 | 交易骨架清理 | 已归档 | 一次性任务已完成，骨架代码已删除，保留6个蓝图（MOD-L02~L07） | 0 |
+
+**统计**：运营态33个 | 设计态2个（F34/F35） | 未发现1个（F20） | 已归档1个（F17）
+
+#### 11.5.2 运营态功能代码文件清单
+
+> 以下列出每个运营态功能的主要代码文件完整路径。文件数>10的功能仅列出主入口文件+核心目录，完整清单可通过`Glob src/zephyr/<目录>/**/*.py`获取。
+
+**L0 基础设施层**
+
+| 功能 | 代码文件完整路径 |
+|:---:|------|
+| F22 | `src/zephyr/shared/events/event_bus.py`（主入口）<br>`src/zephyr/shared/shared_services/`（目录：配置中心+契约总线+缓存+限流+锁+幂等性，35+文件） |
+| F25 | `src/zephyr/infrastructure/db/`（目录：SQLite核心运营+DuckDB市场数据+PostgreSQL容量升级，17文件） |
+| F26 | `src/zephyr/trading/boot_hooks.py`（启动钩子）<br>`src/zephyr/trading/boot_cron_jobs.py`（定时任务）<br>`src/zephyr/trading/lifecycle_manager.py`（跨层协同）<br>⚠️ **路径漂移**：蓝图声明`src/zephyr/governance/lifecycle_manager/`，实际在`src/zephyr/trading/` |
+
+**L1 守护层**
+
+| 功能 | 代码文件完整路径 |
+|:---:|------|
+| F21 | `src/zephyr/trading/ide_health_daemon.py`（IDE幽灵窗口扫描+过期锁清理+RULE-GUARDIAN守护） |
+
+**L2 调度层**
+
+| 功能 | 代码文件完整路径 |
+|:---:|------|
+| F1 | `src/zephyr/trading/autopilot.py`（主入口：自动领取任务→执行→完成循环）<br>`src/zephyr/trading/orchestrator/`（编排器辅助模块） |
+| F23 | `src/zephyr/trading/orchestrator/core/agent_orchestrator.py`（主入口：工作DAG编排+判决引擎+终结器）<br>`src/zephyr/trading/orchestrator/core/`（Agent全生命周期编排模块，5+文件） |
+
+**L3 控制层**
+
+| 功能 | 代码文件完整路径 |
+|:---:|------|
+| F2 | `src/zephyr/governance/rule_enforcement/gate_engine.py`（主入口：所有操作安检口）<br>`src/zephyr/governance/rule_enforcement/`（目录：50+门禁定义与执行器） |
+| F4 | `src/zephyr/governance/budget_engine.py`（主入口：Token/成本/时间三维预算）<br>`src/zephyr/governance/budget/`（预算管控辅助模块，20+文件） |
+| F7 | `src/zephyr/security/llm_defense/llm_security_01/gateway.py`（主入口：LLM API安全防护）<br>`src/zephyr/security/llm_defense/`（目录：50+安全防护文件） |
+| F8 | `src/zephyr/security/access_control/rbac_guard.py`（主入口：身份注册+权限校验）<br>`src/zephyr/security/access_control/`（目录：11文件） |
+| F27 | `src/zephyr/infrastructure/capacity_assurance/`（目录：SLI/SLO框架+Error Budget五级响应+Kill Switch熔断，31+文件） |
+| F32 | `src/zephyr/shared/state_machine.py`（主入口：通用状态机引擎+FSM验证器）<br>`src/zephyr/shared/state_machine/`（多实例模块，11文件） |
+
+**L4 执行层**
+
+| 功能 | 代码文件完整路径 |
+|:---:|------|
+| F3 | `src/zephyr/governance/task_repo.py`（主入口：任务卡增删改查+状态机流转）<br>`src/zephyr/governance/task/`（任务系统辅助模块，20+文件） |
+| F11 | `src/zephyr/shared/context_engine.py`（主入口：AI对话上下文压缩和传递）<br>`src/zephyr/shared/context/`（上下文引擎辅助模块，6文件） |
+| F12 | `src/zephyr/integration/mcp/knowledge_base_server.py`（主入口：AI长期记忆存取）<br>`src/zephyr/integration/mcp/knowledge_base/`（知识库辅助模块，15+文件） |
+| F13 | `src/zephyr/integration/mcp_server.py`（主入口：10个MCP服务器统一管理）<br>`src/zephyr/integration/mcp/`（目录：19个MCP服务器实现文件，25+文件） |
+| F14 | `src/zephyr/integration/pipeline_orchestrator.py`（主入口：串联处理阶段形成闭环）<br>`src/zephyr/integration/pipeline/`（管线辅助模块，3文件） |
+| F24 | `src/zephyr/autonomy_core/skill_*.py`（Skill KYA认证+全生命周期管理，60+文件）<br>`src/zephyr/autonomy_core/`（目录：Skill定义与执行器） |
+| F33 | `src/zephyr/integration/local_model/`（目录：Ollama推理+BGE-M3嵌入+本地模型调度，7文件） |
+
+**L5 治理层**
+
+| 功能 | 代码文件完整路径 |
+|:---:|------|
+| F6 | `src/zephyr/governance/drift_detector.py`（主入口：监控代码/配置偏离蓝图）<br>`src/zephyr/governance/drift/`（漂移检测辅助模块，30+文件） |
+| F15 | `src/zephyr/infrastructure/auto_fix_engine/`（目录：发现问题自动修复，30+文件） |
+| F16 | `src/zephyr/security/access_control/orphan_judge/`（目录：定期审计+判断文件该不该删，25+文件） |
+| F18 | `src/zephyr/governance/phase_manager.py`（主入口：12维度治理脚本自动执行）<br>`src/zephyr/governance/phase/`（治理脚本辅助模块，3+文件） |
+| F19 | `src/zephyr/infrastructure/system_telemetry/`（目录：采集系统运行指标，25+文件） |
+| F28 | `src/zephyr/infrastructure/asset_inventory/`（目录：全量资产发现+自动分类+统一登记，15文件） |
+| F29 | `src/zephyr/governance/semantic_audit/`（目录：规则文档LLM桥接+语义缓存，25文件） |
+| F30 | `src/zephyr/security/adversarial_validation/`（目录：红蓝对抗验证器+修复有效性确认，32文件） |
+| F31 | `src/zephyr/infrastructure/registry_governance.py`（主入口：48个注册表统一管理+SSoT注册器）<br>⚠️ **路径漂移**：蓝图声明`src/zephyr/governance/registry_governance/`，实际在`src/zephyr/infrastructure/` |
+| F36 | `src/zephyr/governance/audit_trail/`（目录：不可变审计链+哈希链防篡改+签名，60+文件） |
+| F37 | `src/zephyr/shared/lifecycle/resource_optimization_engine.py`（主入口：MAPE-K闭环+进程池化+I/O缓存+GPU监控）<br>`src/zephyr/shared/lifecycle/`（资源优化辅助模块，7文件） |
+
+**L6 应急层**
+
+| 功能 | 代码文件完整路径 |
+|:---:|------|
+| F5 | `src/zephyr/governance/escalation_engine.py`（主入口：AI间互相委托任务安全网）<br>`src/zephyr/governance/escalation/`（升级/A2A辅助模块，13文件） |
+| F9 | `src/zephyr/infrastructure/rollback/rollback_executor.py`（主入口：一键撤销）<br>`src/zephyr/infrastructure/rollback/`（目录：回滚系统，30+文件） |
+| F10 | `src/zephyr/intelligence/model_profiling/exam_orchestrator.py`（主入口：新模型上线前自动考试+能力画像）<br>`src/zephyr/intelligence/model_profiling/`（目录：模型考试系统，30+文件） |
+
+#### 11.5.3 非运营态功能说明
+
+| 功能 | 状态 | 说明 | 后续处置 |
+|:---:|:---:|------|------|
+| F17 | 已归档 | 交易核心链路骨架代码清理（一次性任务），骨架代码已删除，保留6个蓝图（MOD-L02~L07） | 不参与依赖设计和调度，保留历史记录 |
+| F20 | 未发现 | 搜索`unified_monitor`/`monitor_unified`无匹配，存在分散的monitor文件但无统一监控聚合器 | 阶段1需新建设计态节点，阶段3需实现代码 |
+| F34 | 设计态 | 蓝图声明`src/zephyr/governance/code_dedup_engine/`目录不存在，仅有其他模块相关去重文件 | 阶段1需新建设计态节点，阶段3需实现代码 |
+| F35 | 设计态 | 无蓝图无代码，完全未实现 | 阶段1需新建设计态节点+蓝图，阶段3需实现代码 |
+
+#### 11.5.4 路径漂移警示
+
+> 以下功能存在蓝图声明路径与实际代码路径不一致的问题，阶段2（修改蓝图）和阶段3（修改代码）需同步修正。
+
+| 功能 | 蓝图声明路径 | 实际代码路径 | 漂移类型 | 修正方向 |
+|:---:|------|------|------|------|
+| F26 | `src/zephyr/governance/lifecycle_manager/` | `src/zephyr/trading/lifecycle_manager.py` | 目录→单文件+跨包 | 阶段2更新蓝图frontmatter或阶段3迁移代码到声明路径 |
+| F31 | `src/zephyr/governance/registry_governance/` | `src/zephyr/infrastructure/registry_governance.py` | 目录→单文件+跨包 | 阶段2更新蓝图frontmatter或阶段3迁移代码到声明路径 |
+
 ***
 
 ## 十二、变更历史
@@ -680,3 +826,4 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 0.3.6 | 2026-06-24 | 功能域审查修复：①P1域ID命名格式统一为下划线（D-INFRA_OPS/D-AUTONOMY_CORE/D-GOV_AUDIT，共8处连字符→下划线，与depgraph.db真源对齐）②P2添加规划差异说明（F28/F32/F33/F36/F37共5个功能设计域归属与depgraph现状不一致，本文档为规划目标，depgraph需迁移） |
 | 0.3.7 | 2026-06-24 | 新增§十一实施工作流程：6阶段（前置→全景图→蓝图→代码→三方对齐→测试验证），含详细步骤表、关键约束6项、回滚方案3类 |
 | 0.3.8 | 2026-06-24 | §十一新增阶段0.5：盘点37个功能实现状态（代码vs蓝图）。区分运营态（有代码，granularity=runtime）和设计态（仅蓝图，granularity=design），影响阶段1节点创建策略。新增4个盘点步骤+1项关键约束 |
+| 0.3.9 | 2026-06-24 | §十一新增§11.5功能实现状态盘点表：①汇总表（37个功能按7层分组，标注运营态/设计态/未发现/已归档+主要实现位置+文件数）②运营态功能代码文件清单（33个功能的主入口文件+核心目录完整路径）③非运营态功能说明（F17已归档/F20未发现/F34设计态/F35设计态）④路径漂移警示（F26蓝图声明governance/lifecycle_manager/实际在trading/、F31蓝图声明governance/registry_governance/实际在infrastructure/）。统计：运营态33个\|设计态2个\|未发现1个\|已归档1个 |
