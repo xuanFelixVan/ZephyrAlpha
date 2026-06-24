@@ -275,7 +275,7 @@ entries:
   - M1-M11
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-AUTONOMY-CORE
+- domain: D-AUTONOMY_CORE
   subdomain: agent_lifecycle
   ssot_module: MOD-INF-019
   ssot_path: src/zephyr/autonomy_core/
@@ -295,7 +295,7 @@ entries:
   - Agent生命周期
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-AUTONOMY-CORE
+- domain: D-AUTONOMY_CORE
   subdomain: agent_communication
   ssot_module: MOD-INF-025
   ssot_path: src/zephyr/autonomy_core/
@@ -395,7 +395,7 @@ entries:
   - kill switch
   stability: stable
   ai_autonomy: human_gated
-- domain: D-AUTONOMY-PERM
+- domain: D-AUTONOMY_PERM
   subdomain: budget_enforcement
   ssot_module: MOD-INF-024
   ssot_path: src/zephyr/autonomy_perm/
@@ -417,7 +417,7 @@ entries:
   - token budget
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-AUTONOMY-PERM
+- domain: D-AUTONOMY_PERM
   subdomain: escalation
   ssot_module: MOD-INF-022
   ssot_path: src/zephyr/autonomy_perm/
@@ -479,7 +479,7 @@ entries:
   - 信任链
   stability: stable
   ai_autonomy: immutable_core
-- domain: D-INFRA-OPS
+- domain: D-INFRA_OPS
   subdomain: asset-inventory
   ssot_module: MOD-INF-026
   ssot_path: src/zephyr/infra_ops/
@@ -549,7 +549,7 @@ entries:
   - policy evolution
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-INFRA-OPS
+- domain: D-INFRA_OPS
   subdomain: capacity-assurance
   ssot_module: MOD-INF-001
   ssot_path: src/zephyr/infra_ops/
@@ -644,7 +644,7 @@ entries:
   - 知识管理
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-ML-TRAIN
+- domain: D-ML_TRAIN
   subdomain: model_evaluation
   ssot_module: MOD-INF-036
   ssot_path: src/zephyr/intelligence/model_evaluation/
@@ -660,7 +660,7 @@ entries:
   - model capability
   stability: evolving
   ai_autonomy: human_gated
-- domain: D-ML-TRAIN
+- domain: D-ML_TRAIN
   subdomain: model_profiling
   ssot_module: MOD-INF-034
   ssot_path: src/zephyr/intelligence/model_profiling/
@@ -714,7 +714,7 @@ entries:
   - 重试
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-INFRA-OPS
+- domain: D-INFRA_OPS
   subdomain: resource_optimization
   ssot_module: MOD-INF-032
   ssot_path: src/zephyr/infra_ops/
