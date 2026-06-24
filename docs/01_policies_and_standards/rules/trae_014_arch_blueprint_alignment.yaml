@@ -1,6 +1,6 @@
 rule_id: TRAE-014
 title: 架构约束-蓝图对齐
-version: 1.0.0
+version: 1.2.0
 layer: L1
 module_id: TRAE-014
 depends_on:
@@ -86,41 +86,54 @@ sections:
     prohibitions:
     - 绕过变更门控直接修改蓝图
   arch_011:
-    title: 蓝图模板合规
+    title: 蓝图模板合规（含颗粒度标准+精简原则）
     section_type: rule
     original_rules:
     - ARCH-011
     conditions:
     - type: trigger
       check: 创建新蓝图时
-      pass: 蓝图遵循blueprint_construction_template.md模板
-      fail: 蓝图结构不合规
+      pass: 蓝图遵循blueprint_construction_template.md模板+颗粒度合规+精简合规
+      fail: 蓝图结构不合规或颗粒度超限或含与全景图重叠信息
     actions:
     - type: mandatory
-      step: 新蓝图必须遵循blueprint_construction_template.md模板；L2设计模板包含§1-§11架构设计+§12施工指引；蓝图frontmatter必须包含belongs_to字段(PS-STD-005 §6)
+      step: 新蓝图必须遵循blueprint_construction_template.md模板；蓝图frontmatter必须包含belongs_to字段(PS-STD-005 §6)
+    - type: mandatory
+      step: 蓝图颗粒度标准——模块级蓝图覆盖1-10个production节点/50-300行；域级蓝图≤500行；系统级蓝图≤1000行。超过上限必须拆分为子蓝图；低于下限合并到父蓝图
+    - type: mandatory
+      step: 蓝图精简原则——蓝图只存全景图没有的独有信息（设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理）。禁止存储与全景图重叠的信息（文件清单/依赖关系/域归属/物理路径），这些信息委托全景图(depgraph.db)作为SSoT
+    - type: mandatory
+      step: 蓝图创建顺序遵循混合模式——先在全景图创建设计态节点(phase_2)→再创建蓝图(phase_4)→再创建代码文件(phase_5)。蓝图是设计态的叙事化补充，不是结构态真源
     prohibitions:
     - 创建不遵循模板的蓝图
     - 创建不含belongs_to字段的蓝图
+    - 创建超过颗粒度上限的蓝图（不拆分）
+    - 在蓝图中存储与全景图重叠的结构态信息（文件清单/依赖关系/域归属/物理路径）
+    - 跳过全景图设计态直接创建蓝图
   arch_012:
-    title: 蓝图-代码-路径树三方对齐
+    title: 全景图-代码-蓝图三方对齐（精简版）
     section_type: rule
     original_rules:
     - ARCH-012
     conditions:
     - type: trigger
       check: 结构变更后
-      pass: 蓝图§4↔代码[BLUEPRINT]↔路径树三方一致
-      fail: 任一方过时导致AI看到幻影或漏掉真实文件
+      pass: 全景图↔代码[BLUEPRINT]↔蓝图三方通过module_id一致对齐
+      fail: 任一方module_id不一致导致AI看到幻影或漏掉真实文件
     actions:
     - type: mandatory
-      step: 结构变更后MUST同步刷新：1.python scripts/governance/generate_project_depgraph.py(写入depgraph.db)→2.python scripts/governance/generate_project_path_tree.py --write→3.蓝图§4文件清单；任一步失败=回滚变更
+      step: 结构变更后MUST同步刷新：1.python scripts/governance/generate_project_depgraph.py(写入depgraph.db，架构升级期禁止)→2.python scripts/governance/generate_project_path_tree.py --write→3.代码头部[BLUEPRINT]字段更新module_id引用；任一步失败=回滚变更
+    - type: mandatory
+      step: 三方对齐关系——全景图(depgraph.db)是结构态真源(依赖边/路径/域归属)；代码头部[BLUEPRINT]引用全景图节点ID+蓝图module_id；蓝图是设计态真源(设计意图/职责边界/施工指引)，通过frontmatter.module_id与代码头部对齐。蓝图不再存文件清单/依赖关系/域归属(委托全景图)
     prohibitions:
     - 结构变更后不重新生成depgraph和path-tree
     - 路径树过时状态下关闭任务
+    - 蓝图中存储文件清单/依赖关系/域归属等结构态信息(应委托全景图)
+    - 代码头部[BLUEPRINT]的module_id与全景图nodes.blueprint_id不一致
   arch_scope:
-    title: 蓝图对齐约束的目的与范围
+    title: 蓝图对齐约束的目的与范围（精简版）
     section_type: context
-    summary: 管理ZephyrAlpha项目蓝图与代码的双向对齐、蓝图§4文件清单完整性、版本同步、变更门控、模板合规、蓝图-代码-路径树三方对齐
+    summary: 管理ZephyrAlpha项目全景图-代码-蓝图三方对齐。全景图(depgraph.db)是结构态真源(依赖边/路径/域归属)，蓝图是设计态真源(设计意图/职责边界/施工指引)，代码头部[BLUEPRINT]引用两者。蓝图精简为只存独有信息，不再存文件清单/依赖关系/域归属(委托全景图)。含蓝图颗粒度标准(模块级1-10文件/50-300行)和混合模式创建顺序(先设计态后蓝图)
     applies_to:
     - docs/03_modules/ 下所有蓝图文件
     - 代码头部[BLUEPRINT]字段
@@ -137,6 +150,9 @@ sections:
     title: 修订记录
     section_type: examples
     items:
+    - version: "1.2.0"
+      date: "2026-06-24"
+      change: "蓝图精简方案B落地：ARCH-011新增颗粒度标准(模块级1-10文件/50-300行)+精简原则(去掉与全景图重叠的文件清单/依赖关系/域归属)+混合模式创建顺序(先设计态后蓝图)；ARCH-012从三方对齐改为精简版三方对齐(蓝图不再存结构态信息，通过module_id引用)；arch_scope更新summary"
     - version: "1.1.0"
       date: "2026-06-19"
       change: "RQ-01~RQ-14审查修复：删除错误的bb_scope/bb_normative_refs段落(行为边界内容混入蓝图对齐文件，违反RQ-01内部矛盾)；修复provenance源文件(原blueprint_architecture_standard.md不存在，改为onboarding_detail.md+project_rules.md)；修复references.scripts路径(validate_blueprint_code_sync.py实际路径在d5_architecture/validators/blueprint/下)；补充enforcement.executors；新增arch_scope；修正change_history内容；全量审查修复kebab-case引用(blueprint-construction-template.md→blueprint_construction_template.md，落地§2.2 snake_case裁定，修复RQ-04引用断裂+RQ-05裁定落地)"
