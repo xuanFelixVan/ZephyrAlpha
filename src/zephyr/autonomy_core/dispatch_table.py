@@ -195,7 +195,7 @@ DISPATCH_TABLE: dict[str, SystemDispatch] = {
             "CT-DEPS",
             "CT-KNOWLEDGE-FRESHNESS",
             "CT-HOUSEKEEPING",
-            "CT-SESSION-HANDOFF",
+            "CT-SESSION-handoff",
             "CT-STABILITY",
             "CT-CANARY",
             "CT-INCIDENT",

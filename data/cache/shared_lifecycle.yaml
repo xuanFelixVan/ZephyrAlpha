@@ -5,7 +5,7 @@ functions:
   function_name: func_a
   grace_period_start: ''
   graveyard_fingerprint: ''
-  lifecycle_stage: !!python/object/apply:zephyr.infrastructure.runtime_integration.code_dedup_engine.shared_lifecycle_manager.LifecycleStage
+  lifecycle_stage: !!python/object/apply:zephyr.infrastructure_runtime_integration.code_dedup_engine.shared_lifecycle_manager.LifecycleStage
   - deprecated
   migration_diff: null
   module_path: module_a

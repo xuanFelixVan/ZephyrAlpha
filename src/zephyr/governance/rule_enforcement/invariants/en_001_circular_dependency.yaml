@@ -39,7 +39,7 @@ checks:
         - "zephyr.simulation"
         - "zephyr.compliance"
         - "zephyr.ml_train"
-        - "zephyr.infrastructure.runtime_integration.system_telemetry"
+        - "zephyr.infrastructure_runtime_integration.system_telemetry"
         - "zephyr.research"
         - "zephyr.shared.contracts"
       max_layers: 15

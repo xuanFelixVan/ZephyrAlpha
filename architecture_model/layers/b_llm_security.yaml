@@ -9,7 +9,7 @@ partition:
 
 modules:
   - id: lsg-core
-    module_id: MOD_INF_014
+    module_id: mod_inf_014
     name: LLM Security Gateway
     submodule_path: src/zephyr/llm_security/
     status: implemented

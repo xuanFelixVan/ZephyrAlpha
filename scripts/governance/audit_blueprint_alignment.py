@@ -67,13 +67,13 @@ description: >
 ROOT = Path(__file__).resolve().parents[2]
 
 TC_DIRS = {
-    "MOD-INF-017": ROOT / "docs/03_modules/infrastructure.runtime_integration/code-dedup-engine/changes/MOD-INF-017",
-    "MOD-INF-018": ROOT / "docs/03_modules/infrastructure.runtime_integration/agent-rbac/changes/MOD-INF-018",
+    "MOD-INF-017": ROOT / "docs/03_modules/infrastructure_runtime_integration/code-dedup-engine/changes/MOD-INF-017",
+    "MOD-INF-018": ROOT / "docs/03_modules/infrastructure_runtime_integration/agent-rbac/changes/MOD-INF-018",
     "DOM-GOV-001": ROOT / "docs/03_modules/_domain-governance/_domain-governance/changes/DOM-GOV-001",
 }
 BP = {
-    "MOD-INF-017": ROOT / "docs/03_modules/infrastructure.runtime_integration/code-dedup-engine/blueprint.md",
-    "MOD-INF-018": ROOT / "docs/03_modules/infrastructure.runtime_integration/agent-rbac/blueprint.md",
+    "MOD-INF-017": ROOT / "docs/03_modules/infrastructure_runtime_integration/code-dedup-engine/blueprint.md",
+    "MOD-INF-018": ROOT / "docs/03_modules/infrastructure_runtime_integration/agent-rbac/blueprint.md",
     "DOM-GOV-001": ROOT / "docs/03_modules/_domain-governance/blueprint.md",
 }
 SRC = {

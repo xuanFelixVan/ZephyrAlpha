@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-INF___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §4.5
-
 # [MODULE] zephyr.infrastructure.auto_fix_engine.__main__
-
-# [INVARIANTS] CLI MUST可用;子命令MUST返回正确退出码
-
-# [MODIFY-GUARD] blueprint.md §4.5
-
+# [DOMAIN] D-INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] CLI用户;CI/CD pipeline
-
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] CLI MUST可用;子命令MUST返回正确退出码
+# [MODIFY-GUARD] blueprint.md §4.5
 # [STABILITY] evolving
-
 # [SAFETY] H
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT] CLIError
-
 # [TESTS] tests/auto-fix-engine/test_cli.py
+# [A_module] module_id=MOD-INF___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

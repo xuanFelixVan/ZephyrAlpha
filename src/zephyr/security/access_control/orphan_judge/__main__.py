@@ -1,14 +1,18 @@
-# [A_module] module_id=MOD-SEC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §4.1
 # [MODULE] zephyr.security.access_control.orphan_judge.__main__
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
+# [CONSUMERS] python -m zephyr.security.access_control.orphan_judge; audit-orchestrator.cli
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] CLI是orphan_judge的唯一入口; judge/scan/report三条子命令
 # [MODIFY-GUARD] 新增子命令必须注册到__init__.py __all__; 修改参数必须同步blueprint.md §4.1
-# [CONSUMERS] python -m zephyr.security.access_control.orphan_judge; audit-orchestrator.cli
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SystemExit(1) on FileNotFound/invalid subcommand; exit 0 on success
 # [TESTS] tests/orphan-judge/test_main.py
+# [A_module] module_id=MOD-SEC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 from __future__ import annotations
 

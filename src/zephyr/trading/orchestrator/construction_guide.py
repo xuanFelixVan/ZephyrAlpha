@@ -66,7 +66,7 @@ MOCK_STRATEGIES: dict[str, MockStrategy] = {
     "CT-DEPS": MockStrategy.PARTIAL,
     "CT-KNOWLEDGE-FRESHNESS": MockStrategy.STUB,
     "CT-HOUSEKEEPING": MockStrategy.PARTIAL,
-    "CT-SESSION-HANDOFF": MockStrategy.PARTIAL,
+    "CT-SESSION-handoff": MockStrategy.PARTIAL,
     "CT-STABILITY": MockStrategy.STUB,
     "CT-CANARY": MockStrategy.STUB,
     "CT-INCIDENT": MockStrategy.STUB,

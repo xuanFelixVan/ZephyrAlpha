@@ -63323,7 +63323,7 @@ nodes:
     - zephyr.intelligence.model_evaluation.implementations.default_inference_engine
     - zephyr.integration.contracts.model_serving_request
     - zephyr.integration.zephyr.default_experiment_pipeline
-    - zephyr.integration.zephyr.infrastructure.runtime_integration.pipeline_base
+    - zephyr.integration.zephyr.infrastructure_runtime_integration.pipeline_base
     decision: KEEP
   scripts__construction__dm014_orphan_edge_repair_py:
     id: scripts__construction__dm014_orphan_edge_repair_py
@@ -65798,7 +65798,7 @@ nodes:
     design_maturity: prototype
     deployment_lifecycle: stable
     imports:
-    - zephyr.infrastructure.runtime_integration.finding
+    - zephyr.infrastructure_runtime_integration.finding
     decision: KEEP
   scripts__governance__d3_metadata__deep_content_scanner_py:
     id: scripts__governance__d3_metadata__deep_content_scanner_py
@@ -91405,7 +91405,7 @@ nodes:
     decision: KEEP
   tests__test_red_blue_validator_py:
     id: tests__test_red_blue_validator_py
-    path: tests/test_red_blue_validator.py
+    path: tests/test_red_blue_validator_tests.py
     type: test
     blueprint_id: MOD-INF-030
     domain_id: D-GOVERNANCE
@@ -110104,9 +110104,9 @@ nodes:
     id: config__capacity__asset_inventory_yaml
     path: config/capacity/asset_inventory.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110121,9 +110121,9 @@ nodes:
     id: config__capacity__ai_context_policy_yaml
     path: config/capacity/ai_context_policy.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110137,9 +110137,9 @@ nodes:
     id: config__capacity__capacity_slo_yaml
     path: config/capacity/capacity_slo.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110153,9 +110153,9 @@ nodes:
     id: config__capacity__error_budget_config_yaml
     path: config/capacity/error_budget_config.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110169,9 +110169,9 @@ nodes:
     id: config__capacity__external_watchdog_yaml
     path: config/capacity/external_watchdog.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110185,9 +110185,9 @@ nodes:
     id: config__capacity__degradation_chain_yaml
     path: config/capacity/degradation_chain.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110201,9 +110201,9 @@ nodes:
     id: config__capacity__owner_offline_protocol_yaml
     path: config/capacity/owner_offline_protocol.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110217,9 +110217,9 @@ nodes:
     id: config__capacity__sandbox_policy_yaml
     path: config/capacity/sandbox_policy.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110233,9 +110233,9 @@ nodes:
     id: config__capacity__risk_register_yaml
     path: config/capacity/risk_register.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110250,9 +110250,9 @@ nodes:
     id: config__capacity__token_budget_yaml
     path: config/capacity/token_budget.yaml
     type: config
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: frozen
     impact_level: M
     modification_permission: immutable_core
@@ -110267,9 +110267,9 @@ nodes:
     id: config__capacity__tech_stack_manifest_yaml
     path: config/capacity/tech_stack_manifest.yaml
     type: registry
-    blueprint_id: MOD_INF_001
+    blueprint_id: mod_inf_001
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_001
+    belongs_to: mod_inf_001
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110300,9 +110300,9 @@ nodes:
     id: config__data__survivorship_policy_yaml
     path: config/data/survivorship_policy.yaml
     type: config
-    blueprint_id: MOD_INF_016
+    blueprint_id: mod_inf_016
     domain_id: D-GOVERNANCE
-    belongs_to: MOD_INF_016
+    belongs_to: mod_inf_016
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -110759,9 +110759,9 @@ nodes:
     - DOM-GOV-001
     - MOD-INF-019
     decision: KEEP
-  docs__03_modules___cross_layer__mcp_servers__changes__MOD_INF_013__decomposition_completeness_yaml:
-    id: docs__03_modules___cross_layer__mcp_servers__changes__MOD_INF_013__decomposition_completeness_yaml
-    path: docs/03_modules/_cross_layer/mcp_servers/changes/MOD_INF_013/decomposition_completeness.yaml
+  docs__03_modules___cross_layer__mcp_servers__changes__mod_inf_013__decomposition_completeness_yaml:
+    id: docs__03_modules___cross_layer__mcp_servers__changes__mod_inf_013__decomposition_completeness_yaml
+    path: docs/03_modules/_cross_layer/mcp_servers/changes/mod_inf_013/decomposition_completeness.yaml
     type: config
     blueprint_id: DOM-GOV-001
     domain_id: D-GOV-DOCS
@@ -338608,7 +338608,7 @@ edges:
   contract_anchor: MOD-001
   failure_mode: timeout
   fallback: circuit_break
-- from: docs__03_modules___cross_layer__mcp_servers__changes__MOD_INF_013__decomposition_completeness_yaml
+- from: docs__03_modules___cross_layer__mcp_servers__changes__mod_inf_013__decomposition_completeness_yaml
   to: docs__03_modules___alpha_signal_domain__blueprint_md
   dep_type: blueprint_depends
   architecture_direction: downstream
@@ -353082,7 +353082,7 @@ adjacency_lists:
     - tests__contract____init___py
     docs__03_modules__template_registry_yaml:
     - docs__03_modules___alpha_signal_domain__blueprint_md
-    docs__03_modules___cross_layer__mcp_servers__changes__MOD_INF_013__decomposition_completeness_yaml:
+    docs__03_modules___cross_layer__mcp_servers__changes__mod_inf_013__decomposition_completeness_yaml:
     - docs__03_modules___alpha_signal_domain__blueprint_md
     docs__01_policies_and_standards__rules__trae_002_anti_orphan_search_first_yaml:
     - docs__03_modules___alpha_signal_domain__blueprint_md
@@ -362910,7 +362910,7 @@ adjacency_lists:
     - src__zephyr__governance__rule_enforcement__invariants__en_001_circular_dependency_yaml
     docs__03_modules___alpha_signal_domain__blueprint_md:
     - docs__03_modules__template_registry_yaml
-    - docs__03_modules___cross_layer__mcp_servers__changes__MOD_INF_013__decomposition_completeness_yaml
+    - docs__03_modules___cross_layer__mcp_servers__changes__mod_inf_013__decomposition_completeness_yaml
     - docs__01_policies_and_standards__rules__trae_002_anti_orphan_search_first_yaml
     - docs__01_policies_and_standards__rules__trae_003_task_granularity_threshold_yaml
     - docs__01_policies_and_standards__rules__trae_004_parallel_atomic_transaction_yaml
@@ -368595,7 +368595,7 @@ blueprint_file_map:
   - src/zephyr/security/adversarial_validation/__init__.py
   - src/zephyr/security/adversarial_validation/__main__.py
   - tests/test_audit_red_blue_e2e.py
-  - tests/test_red_blue_validator.py
+  - tests/test_red_blue_validator_tests.py
   MOD-INF-014:
   - src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py
   - src/zephyr/security/llm_defense/llm_security/gateway.py
@@ -368991,7 +368991,7 @@ blueprint_file_map:
   - docs/03_modules/path_ownership_map.yaml
   - docs/03_modules/template_registry.yaml
   - docs/03_modules/_domain_autonomy_core/agent_spec/blind_spot_tracker.yaml
-  - docs/03_modules/_cross_layer/mcp_servers/changes/MOD_INF_013/decomposition_completeness.yaml
+  - docs/03_modules/_cross_layer/mcp_servers/changes/mod_inf_013/decomposition_completeness.yaml
   - docs/03_modules/_domain_autonomy_core/agent_rbac/adversarial_test_report.yaml
   - docs/03_modules/_domain_autonomy_core/agent_spec/decision_tracker.yaml
   - docs/03_modules/_domain_autonomy_core/agent_spec/phase_tracker.yaml
@@ -369886,7 +369886,7 @@ blueprint_file_map:
   - config/metrics_schema.yaml
   docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md §7.3:
   - config/sli_registry.yaml
-  MOD_INF_001:
+  mod_inf_001:
   - config/capacity/asset_inventory.yaml
   - config/capacity/ai_context_policy.yaml
   - config/capacity/capacity_slo.yaml
@@ -369900,7 +369900,7 @@ blueprint_file_map:
   - config/capacity/tech_stack_manifest.yaml
   GOV-DOC-011:
   - config/compression/policy.yaml
-  MOD_INF_016:
+  mod_inf_016:
   - config/data/survivorship_policy.yaml
   PS-REG-007:
   - docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml
@@ -370070,9 +370070,9 @@ blueprint_file_map:
   MOD-INF-080:
   - docs/03_modules/_domain_infra_runtime/task_system/changes/index.md
   MOD-INF-081:
-  - docs/03_modules/_domain_infra_runtime/task_system/changes/MOD_INF_006/index.md
+  - docs/03_modules/_domain_infra_runtime/task_system/changes/mod_inf_006/index.md
   MOD-INF-082:
-  - docs/03_modules/_domain_infra_runtime/task_system/changes/MOD_INF_006_MCP/index.md
+  - docs/03_modules/_domain_infra_runtime/task_system/changes/mod_inf_006_MCP/index.md
   MOD-INF-083:
   - docs/03_modules/_domain_infra_runtime/task_system/changes/shadows/index.md
   MOD-INF-075:

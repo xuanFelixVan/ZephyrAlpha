@@ -465,7 +465,7 @@ def check_asset_inventory() -> GateResult:
 
 
 def check_observability_baseline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/infrastructure.runtime_integration/system-telemetry"
+    mod = _PROJECT_ROOT / "src/zephyr/infrastructure_runtime_integration/system-telemetry"
     return GateResult.GREEN if mod.is_dir() else GateResult.YELLOW
 
 

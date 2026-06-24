@@ -54,7 +54,7 @@ class DraftInput:
     idea_text: str
     author: str = "AI_AGENT"
     suggested_module: str = ""
-    suggested_layer: str = "infrastructure.runtime_integration"
+    suggested_layer: str = "infrastructure_runtime_integration"
 
 
 class DraftAssistant:
@@ -144,7 +144,7 @@ class DraftAssistant:
     def _infer_layer(self, input_data: DraftInput) -> str:
         if input_data.suggested_layer:
             return input_data.suggested_layer
-        return "infrastructure.runtime_integration"
+        return "infrastructure_runtime_integration"
 
     def _extract_targets(self, text: str) -> list[str]:
         targets: list[str] = []

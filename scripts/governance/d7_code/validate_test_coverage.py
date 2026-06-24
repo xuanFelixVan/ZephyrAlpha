@@ -64,7 +64,7 @@ TESTS_DIR = REPO_ROOT / "tests"
 
 SKIP_MODULES = {
     "data",
-    "infrastructure.runtime_integration",
+    "infrastructure_runtime_integration",
     "factor",
     "signal",
     "risk",

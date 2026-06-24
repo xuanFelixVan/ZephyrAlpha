@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.events.dlq_bridge
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.events.dlq
-# [CONSUMERS] infrastructure.runtime_integration.pipeline.dead_letter_queue
+# [CONSUMERS] infrastructure_runtime_integration.pipeline.dead_letter_queue
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

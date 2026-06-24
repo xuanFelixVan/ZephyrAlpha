@@ -52,7 +52,7 @@ INVARIANTS_YAML = REPO_ROOT / (
 LAYERS_DIR = REPO_ROOT / ("docs/02_enterprise_architecture/target-architecture/architecture-model/layers")
 ADR_DIR = REPO_ROOT / "docs/02_enterprise_architecture/adr"
 OUTPUT_PATH = REPO_ROOT / "src/zephyr/context-engine/architecture-context.json"
-HANDOFF_DIR = REPO_ROOT / "docs/19_development_workspace/handoff-logs"
+handoff_DIR = REPO_ROOT / "docs/19_development_workspace/handoff-logs"
 CAPACITY_SLO_YAML = REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
 GATE_REGISTRY_YAML = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"
 MODULE_REGISTRY_YAML = REPO_ROOT / "docs/03_modules/module-registry.yaml"
@@ -325,10 +325,10 @@ def _extract_session_logs(context: dict) -> None:
 
 
 def _extract_handoff_logs(context: dict) -> None:
-    if not HANDOFF_DIR.is_dir():
+    if not handoff_DIR.is_dir():
         context["handoffs"] = {"recent": [], "total": 0}
         return
-    all_md = sorted(HANDOFF_DIR.glob("handoff-*.md"))
+    all_md = sorted(handoff_DIR.glob("handoff-*.md"))
     tail = all_md[-10:] if len(all_md) > 10 else all_md
     recent = [{"file": str(p.relative_to(REPO_ROOT)).replace("\\", "/")} for p in tail]
     context["handoffs"] = {

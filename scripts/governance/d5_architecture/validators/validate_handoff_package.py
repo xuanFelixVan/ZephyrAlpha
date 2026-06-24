@@ -54,7 +54,7 @@ ensure_utf8_stdout()
 
 import argparse
 
-REQUIRED_HANDOFF_FIELDS = {
+REQUIRED_handoff_FIELDS = {
     "session_id",
     "timestamp",
     "context_summary",
@@ -89,7 +89,7 @@ def check_handoff_package(filepath: Path) -> list[dict]:
             if isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
                 class_fields.add(item.target.id)
 
-        missing = REQUIRED_HANDOFF_FIELDS - class_fields
+        missing = REQUIRED_handoff_FIELDS - class_fields
         if missing:
             findings.append(
                 {
@@ -112,7 +112,7 @@ def main() -> None:
 
     src_dir = REPO_ROOT / "src" / "zephyr"
     if not src_dir.exists():
-        print("[HANDOFF] src/zephyr/ 不存在，跳过", file=sys.stderr)
+        print("[handoff] src/zephyr/ 不存在，跳过", file=sys.stderr)
         sys.exit(EXIT_PASS)
 
     all_findings = []
@@ -121,12 +121,12 @@ def main() -> None:
         all_findings.extend(findings)
 
     if all_findings:
-        print(f"\n[HANDOFF] {len(all_findings)} 个 HandoffPackage 缺少字段:", file=sys.stderr)
+        print(f"\n[handoff] {len(all_findings)} 个 HandoffPackage 缺少字段:", file=sys.stderr)
         for f in all_findings:
             print(f"  [{f['severity']}] {f['file']}:{f['line']}", file=sys.stderr)
             print(f"    缺少: {', '.join(f['missing'])}", file=sys.stderr)
     else:
-        print("[HANDOFF] HandoffPackage 完整性合规", file=sys.stderr)
+        print("[handoff] HandoffPackage 完整性合规", file=sys.stderr)
 
     if args.warn_only:
         sys.exit(EXIT_PASS)

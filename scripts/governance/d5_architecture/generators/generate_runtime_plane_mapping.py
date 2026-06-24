@@ -2,9 +2,9 @@
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.12
 [MODULE] scripts.governance.d5_architecture.generators.generate_runtime_plane_mapping
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到1_全局架构图/
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到01_global_architecture_diagram/
 [MODIFY-GUARD] 修改需通过任务卡
-[CONSUMERS] CI自动触发;人工查看1_全局架构图/runtime_plane_mapping.md
+[CONSUMERS] CI自动触发;人工查看01_global_architecture_diagram/runtime_plane_mapping.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/1_全局架构图/runtime_plane_mapping.md")
+OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/runtime_plane_mapping.md")
 
 # 运行平面中英文对照（数据库 runtime_plane 字段值 → 中文名/英文名/描述）
 PLANE_META = {

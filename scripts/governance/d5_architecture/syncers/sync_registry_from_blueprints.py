@@ -73,7 +73,7 @@ def find_all_blueprints() -> list[Path]:
 
 LAYER_DIR_MAP = {
     "data": "L00",
-    "infrastructure.runtime_integration": "L01",
+    "infrastructure_runtime_integration": "L01",
     "factor": "L02",
     "signal": "L03",
     "risk": "L04",

@@ -925,7 +925,7 @@ _FILE_DIMENSION_MAP: tuple[tuple[str, str], ...] = (
     ("scripts/governance/d11_infrastructure/", "D11"),
     ("scripts/governance/d12_feedback/", "D12"),
     ("scripts/governance/", "D1"),
-    ("src/zephyr/infrastructure.runtime_integration/", "D11"),
+    ("src/zephyr/infrastructure_runtime_integration/", "D11"),
     ("src/zephyr/", "D6"),
     ("src/", "D7"),
     ("config/", "D4"),

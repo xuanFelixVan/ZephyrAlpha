@@ -9,7 +9,7 @@ partition:
 
 modules:
   - id: orc-core
-    module_id: MOD_INF_006
+    module_id: mod_inf_006
     name: Agent Orchestrator Core
     submodule_path: src/zephyr/orchestrator/
     status: implemented
@@ -29,7 +29,7 @@ modules:
     interfaces:
       - contract_id: CT-ORC-SCRIPT-001
         role: both
-        description: 任务阻塞�?Finding↔任务卡（MOD_MASTER_001 §2.2�?
+        description: 任务阻塞�?Finding↔任务卡（mod_master_001 §2.2�?
       - contract_id: CT-ORC-CE-001
         role: consumer
         description: 上下文构建请�?

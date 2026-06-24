@@ -46,7 +46,7 @@ ensure_utf8_stdout()
 
 C_TRACK_LAYERS = [
     "data",
-    "infrastructure.runtime_integration",
+    "infrastructure_runtime_integration",
     "factor",
     "signal",
     "risk",

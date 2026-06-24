@@ -71,7 +71,7 @@ TASK_CARDS_DIR = (
     REPO_ROOT
     / "docs"
     / "03_modules"
-    / "infrastructure.runtime_integration"
+    / "infrastructure_runtime_integration"
     / "script-system"
     / "changes"
     / "MOD-INF-005"
@@ -164,7 +164,7 @@ blocked_by:
 status: "{tc.status.value if hasattr(tc.status, "value") else tc.status}"
 tags_fn:
   - finding-fix
-tags_ly: "infrastructure.runtime_integration"
+tags_ly: "infrastructure_runtime_integration"
 tags_md: "deepseek"
 tags_st: "active"
 tags_mo:

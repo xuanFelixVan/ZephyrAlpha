@@ -76,8 +76,8 @@ RULE_FILES: list[Path] = [
     _SCRIPTS_DIR / "meta" / "error_budget_state.yaml",
     _SCRIPTS_DIR / "quality_standard.md",
     _SCRIPTS_DIR / "script_manifest.yaml",
-    _REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "script-system" / "blueprint.md",
-    _REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "script-system" / "index.md",
+    _REPO_ROOT / "docs" / "03_modules" / "infrastructure_runtime_integration" / "script-system" / "blueprint.md",
+    _REPO_ROOT / "docs" / "03_modules" / "infrastructure_runtime_integration" / "script-system" / "index.md",
 ]
 
 # Unicode 不可见控制字符危险集

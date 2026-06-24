@@ -71,7 +71,7 @@ def main() -> None:
     for feature, module in NON_COVERED_MODULES.items():
         print(f"  → {feature:<25s} → {module}")
 
-    readme = PROJECT_ROOT / "docs/03_modules/infrastructure.runtime_integration/runtime-integration/README.md"
+    readme = PROJECT_ROOT / "docs/03_modules/infrastructure_runtime_integration/runtime-integration/README.md"
     if readme.exists():
         print(f"\n✅ README.md 存在: {readme}")
     else:

@@ -16,7 +16,7 @@
 [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | S10.2
 [MODULE] scripts.governance.d5_architecture.check_blueprint_code_alignment
 [INVARIANTS] blueprint-code alignment check cannot be skipped; drift must be reported
-[MODIFY-GUARD] docs/03_modules/infrastructure.runtime_integration/budget-enforcer/blueprint.md
+[MODIFY-GUARD] docs/03_modules/infrastructure_runtime_integration/budget-enforcer/blueprint.md
 [CONSUMERS] CI pipeline; gct_024 gate; CircadianScheduler
 [STABILITY] evolving
 [SAFETY] L
@@ -35,7 +35,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 BLUEPRINT_PATH = (
-    REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "budget-enforcer" / "blueprint.md"
+    REPO_ROOT / "docs" / "03_modules" / "infrastructure_runtime_integration" / "budget-enforcer" / "blueprint.md"
 )
 CODE_DIR = REPO_ROOT / "src" / "zephyr" / "budget-enforcer"
 

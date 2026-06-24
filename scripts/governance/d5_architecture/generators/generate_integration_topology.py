@@ -22,7 +22,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/1_全局架构图")
+OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram")
 
 
 def get_cross_domain_deps(conn: sqlite3.Connection) -> list[dict]:

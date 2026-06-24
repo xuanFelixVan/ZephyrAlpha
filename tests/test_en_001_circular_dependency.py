@@ -83,7 +83,7 @@ class TestParseImports:
     def test_parse_mixed_imports(self, tmp_path):
         py = tmp_path / "mod.py"
         py.write_text(
-            "import os\nfrom zephyr.infrastructure.runtime_integration import X\n",
+            "import os\nfrom zephyr.infrastructure_runtime_integration import X\n",
             encoding="utf-8",
         )
         result = _parse_imports(py)

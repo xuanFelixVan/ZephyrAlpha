@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.shared_core.registry
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.__init__
-# [CONSUMERS] zephyr.infrastructure.runtime_integration; zephyr.infrastructure.mcp_servers
+# [CONSUMERS] zephyr.infrastructure_runtime_integration; zephyr.infrastructure.mcp_servers
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] ServiceRegistry is process-singleton; register() MUST be called before get(); no import from zephyr.data

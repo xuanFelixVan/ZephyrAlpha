@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.config.loader
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors
-# [CONSUMERS] infrastructure.runtime_integration.config
+# [CONSUMERS] infrastructure_runtime_integration.config
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -17,7 +17,7 @@
 """
 loader.py —— 共享 YAML 配置加载与 Pydantic 校验（Phase 3 新增 | 盲点 #3/#15 修复）
 
-痛点修复：infrastructure.runtime_integration/config.py 是 STUB，contracts/registry.py
+痛点修复：infrastructure_runtime_integration/config.py 是 STUB，contracts/registry.py
 有自己的 load_config。缺少统一的 Pydantic-validated 配置加载基座。
 
 设计对标：

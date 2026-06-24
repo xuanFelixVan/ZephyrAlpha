@@ -16,7 +16,7 @@
 
 """
 MOD-INF-019: Agent Spec — LLM Gateway
-Blueprint: docs/03_modules/infrastructure.runtime_integration/agent-spec/blueprint.md
+Blueprint: docs/03_modules/infrastructure_runtime_integration/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.2.0
 

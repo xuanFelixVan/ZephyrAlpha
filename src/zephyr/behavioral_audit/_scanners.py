@@ -10,13 +10,9 @@
 # [STABILITY] frozen
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-SEC__scanners | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [SAFETY] M
-# [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
+# [A_module] module_id=MOD-SEC__scanners | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from zephyr.behavioral_audit.incremental_scanner import (
     ChangeSet,
     DetectorFileMapping,

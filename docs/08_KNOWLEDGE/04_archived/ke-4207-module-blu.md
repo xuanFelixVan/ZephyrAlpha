@@ -29,7 +29,7 @@ category: module_blueprint
 | D5-GATE-YAML | 门禁 YAML 合规 | validate_gate_yaml | HIGH | ✅ |
 | D5-P0-CONTRACTS | P0 模块契约 | validate_p0_module_contracts | HIGH | ✅ |
 | D5-ARCH-CONTRACTS | 架构内部契约 | validate_architecture_contract_internal | HIGH | ✅ |
-| D5-HANDOFF | 交接包完整性 | validate_handoff_package | MEDIUM | ✅ |
+| D5-handoff | 交接包完整性 | validate_handoff_package | MEDIUM | ✅ |
 | D5-CONTRACT-IMPL | 蓝图接口 vs 代码实现 | contract_implementation_detector | HIGH | 📋 |
 | D5-SEMANTIC | YAML 间语义一致性 | semantic_drift | HIGH | 📋 |
 | D5-DB-SCHEMA | DB Schema 三方对账 | db_schema_drift | HIGH | 📋 |

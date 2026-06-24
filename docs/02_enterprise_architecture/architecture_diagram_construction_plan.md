@@ -321,7 +321,7 @@ docs/02_enterprise_architecture/
 |------|------|------|
 | architecture_upgrade_discussion.md | 保留,更新状态 | 项目导航图,核心文档 |
 | 依赖与架构全景图能力定位书.md | 保留 | 能力定位真源 |
-| architecture_decisions_pending.md | 已归档到_归档/ | 决策记录(T6/T7/T17已裁定,T18暂缓) |
+| architecture_decisions_pending.md | 已归档到_archive/ | 决策记录(T6/T7/T17已裁定,T18暂缓) |
 | ssot_authority_map.md | 保留,更新 | SSoT映射,需对齐43域 |
 | t18_implementation_plan.md | 归档到archive | T18暂缓转阶段8 |
 | migration_registry.yaml | 保留 | 迁移注册表 |

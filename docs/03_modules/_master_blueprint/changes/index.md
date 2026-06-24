@@ -19,7 +19,7 @@ updated: "2026-06-22"
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [index.md](index.md) | Markdown | changes — 目录索引 |
-| [MOD_MASTER_001/](MOD_MASTER_001/index.md) | 目录 | MOD-MASTER-001 — 目录索引 |
+| [mod_master_001/](mod_master_001/index.md) | 目录 | MOD-MASTER-001 — 目录索引 |
 
 ## 导航
 

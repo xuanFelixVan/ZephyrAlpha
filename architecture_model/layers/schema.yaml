@@ -1,6 +1,6 @@
 # ZephyrAlpha 根目?architecture_model/layers/*.yaml 字段约束
 
-# 真源：与 MOD_MASTER_001（CT-* 集成契约）及 docs/03_modules/module_registry.yaml 对齐校验?
+# 真源：与 mod_master_001（CT-* 集成契约）及 docs/03_modules/module_registry.yaml 对齐校验?
 
 # 注意：与企业架构?docs/02_enterprise_architecture/.../layers/schema.yaml 并存时，
 

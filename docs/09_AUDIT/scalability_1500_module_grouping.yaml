@@ -19,7 +19,7 @@ trigger_condition: "modules_per_layer >= 15 时启动二级分组"
 
 strategy:
   principle: >
-    当前 docs/03_modules/_domain-infra_ops/ 等目录扁平放置子模块目录（如 script-system/、
+    当前 docs/03_modules/_domain-infra_ops/ 等目录扁平放置子模块目录（如 script_system/、
     task-system/、knowledge-base/ 等并列）。在 ~40 模块规模下这是最优结构——无冗余层级，
     AI session 查找成本 O(N) = N，N 小。当模块数增长至 100+ 时，扁平目录会退化：
     - AI session 在 docs/03_modules/_domain-infra_ops/ 下 ls 返回 100+ 条目，噪声淹没信号

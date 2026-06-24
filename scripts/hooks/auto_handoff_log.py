@@ -51,7 +51,7 @@ REPO_ROOT = SCRIPT_DIR.parent.parent
 # 常量
 # ---------------------------------------------------------------------------
 
-HANDOFF_DIR: Path = REPO_ROOT / "docs" / "19_development_workspace" / "handoff-logs"
+handoff_DIR: Path = REPO_ROOT / "docs" / "19_development_workspace" / "handoff-logs"
 TIMEZONE_CST = timezone(timedelta(hours=8))
 
 # ---------------------------------------------------------------------------
@@ -239,11 +239,11 @@ def main() -> None:
     markdown: str = build_handoff_markdown(changed_files, diff_stat, now)
 
     # 3. 确保输出目录存在
-    HANDOFF_DIR.mkdir(parents=True, exist_ok=True)
+    handoff_DIR.mkdir(parents=True, exist_ok=True)
 
     # 4. 写入文件
     filename: str = f"handoff-{now.strftime('%Y%m%d-%H%M%S')}.md"
-    output_path: Path = HANDOFF_DIR / filename
+    output_path: Path = handoff_DIR / filename
     tmp_path = f"{output_path}.{os.getpid()}.tmp"
 
     try:

@@ -3,7 +3,7 @@
 # 每项风险 ≥ 1 条缓解策略 + ≥ 1 个可运行的缓解脚本
 
 generated_at: "2026-05-07T00:00:00Z"
-source: "docs/03_modules/l01-infrastructure/script-system/blueprint.md §12.1 + §26"
+source: "docs/03_modules/l01-infrastructure/script_system/blueprint.md §12.1 + §26"
 total_risks: 12
 
 matrix:

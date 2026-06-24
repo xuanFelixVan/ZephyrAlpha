@@ -904,7 +904,7 @@ def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
 
     # 检查 4: 声明的嵌套/特殊路径也必须有 index.md
     extra_check_dirs = [
-        "03_modules/infrastructure.runtime_integration",
+        "03_modules/infrastructure_runtime_integration",
     ]
     for rel_path in extra_check_dirs:
         check_path = DOCS_ROOT / rel_path

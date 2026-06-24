@@ -43,7 +43,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 VMS_DIR = PROJECT_ROOT / "src" / "zephyr" / "vector-memory"
 BLUEPRINT = (
-    PROJECT_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "vector-memory" / "blueprint.md"
+    PROJECT_ROOT / "docs" / "03_modules" / "infrastructure_runtime_integration" / "vector-memory" / "blueprint.md"
 )
 
 EXPECTED_BLUEPRINT_VERSION = "v0.7.0"

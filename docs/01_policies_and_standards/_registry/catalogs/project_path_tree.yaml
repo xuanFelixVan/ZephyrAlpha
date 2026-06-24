@@ -12923,7 +12923,7 @@ tree:
     - test_recovery_manifest_writer.py
     - test_recovery_time_stats.py
     - test_recursive_diagnosis_trust_evaluator.py
-    - test_red_blue_validator.py
+    - test_red_blue_validator_tests.py
     - test_regime_detector.py
     - test_regime_gain_scheduling.py
     - test_registry.py
@@ -22158,7 +22158,7 @@ tree:
       - adversarial_test_sys_master_20260507.json
       - index.md
       - scalability-1500-module-grouping.yaml
-      HANDOFF/:
+      handoff/:
         __files__:
         - index.md
         - session-crash.yaml

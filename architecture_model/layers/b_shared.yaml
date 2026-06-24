@@ -8,7 +8,7 @@ partition:
 
 modules:
   - id: shared-contracts
-    module_id: MOD_INF_016
+    module_id: mod_inf_016
     name: Shared Contracts
     submodule_path: src/zephyr/shared/contracts/
     status: implemented
@@ -105,7 +105,7 @@ modules:
         description: "从 MOD-MASTER-002 §2.1 同步"
         status: planned
         source: blueprint-baseline-sync-2026-05-12
-      - contract_id: CT-SESSION-HANDOFF-001
+      - contract_id: CT-SESSION-handoff-001
         description: "从 MOD-MASTER-002 §2.1 同步"
         status: planned
         source: blueprint-baseline-sync-2026-05-12
@@ -189,7 +189,7 @@ modules:
       - KBG-0040
 
   - id: shared-infra
-    module_id: MOD_INF_016
+    module_id: mod_inf_016
     name: Shared Infrastructure
     submodule_path: src/zephyr/shared/
     status: implemented

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.shared_core.ports
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol
-# [CONSUMERS] zephyr.infrastructure.runtime_integration; zephyr.infrastructure.mcp_servers
+# [CONSUMERS] zephyr.infrastructure_runtime_integration; zephyr.infrastructure.mcp_servers
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Protocol classes MUST NOT import from zephyr.data; only structural subtyping

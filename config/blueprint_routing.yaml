@@ -9,7 +9,7 @@
 #
 # 创建日期   : 2026-05-04
 # 关联标准   : PS-STD-005 §7（AI Agent 蓝图定位规则）
-# 关联蓝图   : MOD_INF_009（Task Pipeline, §触发式路由表）
+# 关联蓝图   : mod_inf_009（Task Pipeline, §触发式路由表）
 # 关联决策   : R90（蓝图三级金字塔架构决策）
 # 权限层级   : Human-Gated（路由映射变更 = 关键架构变更）
 # 真源声明   : 本文件是蓝图路由分派的 SSoT —— AI Agent 在决定"读哪份蓝图"时 MUST 查询本表
@@ -39,12 +39,12 @@ doc_type: rule
 title: "Blueprint Routing Table"
 status: active
 ttl: permanent
-belongs_to: "MOD_INF_009"
+belongs_to: "mod_inf_009"
 
 # _______________________________________________________________________------
 # AUDIT-08 / route_manifest task_dual_pipeline — routing SSoT boundary
 # - M1-M11 entry decision tree: TaskCard + ct_pipe_routing + PipelineOrchestrator (CT-PIPE-ORC-001)
-# - This file (MOD_INF_009): keywords + path_pattern -> blueprint docs for humans/agents
+# - This file (mod_inf_009): keywords + path_pattern -> blueprint docs for humans/agents
 #   (incl. blueprint_search MCP). It does NOT select Mx module execution order.
 # _______________________________________________________________________------
 
@@ -56,7 +56,7 @@ routes:
 
   # ---- Level 1: 域蓝图（先于模块蓝图加载） ---
   - route_id: "R001"
-    blueprint_id: "MOD_MASTER_001"
+    blueprint_id: "mod_master_001"
     blueprint_level: domain
     path_patterns:
       - "src/zephyr/orchestration/runtime_core/orchestrator/**"
@@ -82,7 +82,7 @@ routes:
 
   # -- INF-001 容量保障体系 --
   - route_id: "R002"
-    blueprint_id: "MOD_INF_001"
+    blueprint_id: "mod_inf_001"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/orchestration/runtime_core/orchestrator/capacity_budget.py"
@@ -189,7 +189,7 @@ routes:
 
   # -- INF-006 任务系统 --
   - route_id: "R007"
-    blueprint_id: "MOD_INF_006"
+    blueprint_id: "mod_inf_006"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/orchestration/runtime_core/orchestrator/**"
@@ -242,7 +242,7 @@ routes:
 
   # -- INF-007 Gate Engine --
   - route_id: "R009"
-    blueprint_id: "MOD_INF_007"
+    blueprint_id: "mod_inf_007"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/observability/feedback_loop/gates/**"
@@ -277,11 +277,11 @@ routes:
     scope: pre_change
     safety: "H"
     priority: 92
-    cross_read_hint: "跨模块任务时 ALSO read MOD_INF_014 (LLM Security) if modifying fail-closed logic"
+    cross_read_hint: "跨模块任务时 ALSO read mod_inf_014 (LLM Security) if modifying fail-closed logic"
 
   # -- INF-008 Context Engine --
   - route_id: "R010"
-    blueprint_id: "MOD_INF_008"
+    blueprint_id: "mod_inf_008"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/orchestration/context_management/**"
@@ -306,7 +306,7 @@ routes:
 
   # -- INF-009 Pipeline --
   - route_id: "R011"
-    blueprint_id: "MOD_INF_009"
+    blueprint_id: "mod_inf_009"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/infrastructure/runtime_integration/pipeline/**"
@@ -333,7 +333,7 @@ routes:
 
   # -- INF-010 Feedback Loop --
   - route_id: "R012"
-    blueprint_id: "MOD_INF_010"
+    blueprint_id: "mod_inf_010"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/observability/feedback_loop/**"
@@ -386,7 +386,7 @@ routes:
 
   # -- INF-012 Database --
   - route_id: "R014"
-    blueprint_id: "MOD_INF_012"
+    blueprint_id: "mod_inf_012"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/data/persistence/**"
@@ -411,7 +411,7 @@ routes:
 
   # -- INF-013 MCP Servers --
   - route_id: "R015"
-    blueprint_id: "MOD_INF_013"
+    blueprint_id: "mod_inf_013"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/integration/mcp/**"
@@ -431,7 +431,7 @@ routes:
 
   # -- INF-014 LLM Security --
   - route_id: "R016"
-    blueprint_id: "MOD_INF_014"
+    blueprint_id: "mod_inf_014"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/security/**"
@@ -461,7 +461,7 @@ routes:
     scope: pre_change
     safety: "H"
     priority: 93
-    cross_read_hint: "跨模块任务时 ALSO read MOD_INF_007 (Gate Engine) if modifying gate/fail-closed logic, ALSO read MOD-INF-015 (Telemetry) if modifying audit log format"
+    cross_read_hint: "跨模块任务时 ALSO read mod_inf_007 (Gate Engine) if modifying gate/fail-closed logic, ALSO read MOD-INF-015 (Telemetry) if modifying audit log format"
 
   # -- INF-015 System Telemetry --
   - route_id: "R017"
@@ -492,7 +492,7 @@ routes:
 
   # -- INF-016 Shared+Core --
   - route_id: "R018"
-    blueprint_id: "MOD_INF_016"
+    blueprint_id: "mod_inf_016"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/shared/**"
@@ -760,7 +760,7 @@ routes:
 
   # -- INF-032 Resource Optimization Engine --
   - route_id: "R030"
-    blueprint_id: "MOD_INF_032"
+    blueprint_id: "mod_inf_032"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/infrastructure/shared_services/lifecycle/resource_optimization_engine.py"

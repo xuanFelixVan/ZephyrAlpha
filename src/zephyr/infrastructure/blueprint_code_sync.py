@@ -93,7 +93,7 @@ class BlueprintCodeSync:
     def _collect_entries(self) -> list[SyncEntry]:
         entries: list[SyncEntry] = []
 
-        task_dir = self._project_root / "docs" / "03_modules" / "infrastructure.runtime_integration" / "task-system"
+        task_dir = self._project_root / "docs" / "03_modules" / "infrastructure_runtime_integration" / "task-system"
         changes_dir = task_dir / "changes" / "MOD-INF-006"
 
         if not changes_dir.exists():

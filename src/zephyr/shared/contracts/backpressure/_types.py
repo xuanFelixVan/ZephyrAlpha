@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-SHR_backpressure_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # Re-homed type definitions — eliminates circular import from shared -> infrastructure
 """Shared internal backpressure type definitions.
-Previously re-exported from infrastructure.runtime_integration.pipeline.backpressure_types.
+Previously re-exported from infrastructure_runtime_integration.pipeline.backpressure_types.
 Now canonical for shared layer, keeping infrastructure free of shared->infra reverses."""
 
 from __future__ import annotations

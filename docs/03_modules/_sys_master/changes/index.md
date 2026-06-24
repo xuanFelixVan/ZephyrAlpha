@@ -19,7 +19,7 @@ updated: "2026-06-22"
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [index.md](index.md) | Markdown | changes — 目录索引 |
-| [SYS_MASTER_001/](SYS_MASTER_001/index.md) | 目录 | SYS-MASTER-001 — 目录索引 |
+| [sys_master_001/](sys_master_001/index.md) | 目录 | SYS-MASTER-001 — 目录索引 |
 
 ## 导航
 

@@ -8,7 +8,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
-# [TESTS] test_red_blue_validator.py
+# [TESTS] test_red_blue_validator_tests.py
 
 import pytest
 from datetime import UTC, datetime

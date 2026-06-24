@@ -103,7 +103,7 @@ contracts:
   risk: 无——Immutable Core 字段有 CompressionInvariantError 运行时防护
   last_reviewed: '2026-05-02'
 - contract_id: CT-007
-  source: MOD-INF-005 §13.1 (script-system/blueprint.md V3.0.0)
+  source: MOD-INF-005 §13.1 (script_system/blueprint.md V3.0.0)
   promise: 脚本系统自我监控——Meta 维度脚本检查系统自身健康状态（6 项自检：run_all.py 可执行性、全脚本可运行性、manifest 一致性、输出格式合规、依赖完整性、磁盘空间）
   actual_consumer: scripts/governance/meta/validate_script_system_health.py
   gap: 已兑现——脚本执行 `python scripts/governance/meta/validate_script_system_health.py` 运行自检项
@@ -113,7 +113,7 @@ contracts:
   risk: 持续维护 manifest 与 run_all 入口同步
   last_reviewed: '2026-05-06'
 - contract_id: CT-008
-  source: MOD-INF-005 §13.2 (script-system/blueprint.md V3.0.0)
+  source: MOD-INF-005 §13.2 (script_system/blueprint.md V3.0.0)
   promise: 应急回退绕过审计——紧急情况下可绕过脚本系统提交代码，但每次绕过需 Session Log 记录 + 事后审计
   actual_consumer: scripts/governance/meta/validate_emergency_bypass_log.py
   gap: 已兑现——审计脚本已创建，检查 Session Log 中的绕过记录
@@ -123,7 +123,7 @@ contracts:
   last_reviewed: '2026-05-06'
   resolution: '2026-05-06: CT-008 resolved by session-20260506-012'
 - contract_id: CT-009
-  source: MOD-INF-005 §3.6 + §5.2 (script-system/blueprint.md V3.0.0)
+  source: MOD-INF-005 §3.6 + §5.2 (script_system/blueprint.md V3.0.0)
   promise: --tags 标签选择参数——允许按标签（Security/Quick/Disruptive/Critical/AI-Generated/Periodic）选择脚本执行
   actual_consumer: scripts/governance/run_all.py --tags
   gap: 已兑现——run_all.py 添加 --tags 参数（6 个标签过滤）
@@ -133,7 +133,7 @@ contracts:
   last_reviewed: '2026-05-06'
   resolution: '2026-05-06: CT-009 resolved by session-20260506-012'
 - contract_id: CT-010
-  source: MOD-INF-005 §5.2 (script-system/blueprint.md V3.0.0)
+  source: MOD-INF-005 §5.2 (script_system/blueprint.md V3.0.0)
   promise: --depth 验证深度参数——quick（快速扫描<5s）/ full（标准）/ deep（深度含知识分析）三级渐进验证
   actual_consumer: scripts/governance/run_all.py --depth
   gap: 已兑现——run_all.py 添加 --depth 参数（quick/full/deep）
@@ -143,7 +143,7 @@ contracts:
   last_reviewed: '2026-05-06'
   resolution: '2026-05-06: CT-010 resolved by session-20260506-012'
 - contract_id: CT-011
-  source: MOD-INF-005 §6.5 (script-system/blueprint.md V3.0.0)
+  source: MOD-INF-005 §6.5 (script_system/blueprint.md V3.0.0)
   promise: Finding Schema 新增 recommendation 字段——MEDIUM+ Finding 包含修复建议（recommendation + recommendation_type + recommended_action）
   actual_consumer: src/zephyr/infra_ops/script_system/finding.py
   gap: 已兑现——finding.py 已包含 recommendation/recommendation_type/recommended_action 字段

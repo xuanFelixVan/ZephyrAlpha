@@ -244,7 +244,7 @@ def resume_workflow(
         }
 
     context_lines: list[str] = [
-        f"[HANDOFF] Resuming drift: {pkg.drift_event_id}",
+        f"[handoff] Resuming drift: {pkg.drift_event_id}",
         f"Detector: {pkg.detector_id}  Severity: {pkg.severity}",
         f"Runbook: {pkg.runbook_summary[:200]}",
         f"Related drifts: {pkg.related_drift_ids}",

@@ -3,7 +3,7 @@
 # [MODULE] zephyr.integration.shared_08.contracts.security
 # [INVARIANTS] SecurityDecision enum values are frozen; no additions without KBG decision
 # [MODIFY-GUARD] enum member changes require cross-package impact review
-# [CONSUMERS] infrastructure.runtime_integration; l10-compliance; llm-security
+# [CONSUMERS] infrastructure_runtime_integration; l10-compliance; llm-security
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated

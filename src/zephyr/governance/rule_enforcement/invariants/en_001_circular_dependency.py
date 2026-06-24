@@ -39,7 +39,7 @@ SRC_ROOT = PROJECT_ROOT / "src" / "zephyr"
 LAYER_MODULE_NAMES = [
     "zephyr.data",
     "zephyr.data",
-    "zephyr.infrastructure.runtime_integration",
+    "zephyr.infrastructure_runtime_integration",
     "zephyr.factor",
     "zephyr.signal_gen",
     "zephyr.signal_quality",

@@ -83,7 +83,7 @@ SCOPE_YAML = IMPL_TREE / "SCOPE.yaml"
 # 这是有意设计差异——SCOPE.yaml R3 明确允许同一 partition.id 两侧各有不同文件名的 YAML
 FILENAME_MAP: dict[str, str] = {
     "data.yaml": "l00_data_source.yaml",
-    "infrastructure.runtime_integration.yaml": "l01_infrastructure.yaml",
+    "infrastructure_runtime_integration.yaml": "l01_infrastructure.yaml",
     "factor.yaml": "l02_alpha_factor.yaml",
     "signal.yaml": "l03_signal_generation.yaml",
     "risk.yaml": "l04_risk_management.yaml",

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.ops.observability.health_discovery
 # [DOMAIN] D-OPS
 # [DEPENDENCIES]
-# [CONSUMERS] infrastructure.runtime_integration.system_telemetry.health_aggregator
+# [CONSUMERS] infrastructure_runtime_integration.system_telemetry.health_aggregator
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

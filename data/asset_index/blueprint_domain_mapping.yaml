@@ -30,8 +30,8 @@ mappings:
     ssot_path: ''
     match_method: functional_domain_fallback
     confidence: medium
-  DOM_GOV_001::_domain_governance:
-    blueprint_id: DOM_GOV_001
+  dom_gov_001::_domain_governance:
+    blueprint_id: dom_gov_001
     name: _domain_governance
     title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
     layer: cross_layer
@@ -114,8 +114,8 @@ mappings:
     ssot_path: src/zephyr/governance/script_governance/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_006::task_system:
-    blueprint_id: MOD_INF_006
+  mod_inf_006::task_system:
+    blueprint_id: mod_inf_006
     name: task_system
     title: Task System 蓝图 — 全链路任务卡生命周期管理
     layer: L01
@@ -128,8 +128,8 @@ mappings:
     ssot_path: src/zephyr/infrastructure/task_management/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_007::gate_engine:
-    blueprint_id: MOD_INF_007
+  mod_inf_007::gate_engine:
+    blueprint_id: mod_inf_007
     name: gate_engine
     title: Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器
     layer: cross_layer
@@ -142,8 +142,8 @@ mappings:
     ssot_path: src/zephyr/governance/rule_enforcement/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_008::context_engine:
-    blueprint_id: MOD_INF_008
+  mod_inf_008::context_engine:
+    blueprint_id: mod_inf_008
     name: context_engine
     title: Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引
     layer: cross_layer
@@ -156,8 +156,8 @@ mappings:
     ssot_path: src/zephyr/orchestration/context_management/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_009::pipeline:
-    blueprint_id: MOD_INF_009
+  mod_inf_009::pipeline:
+    blueprint_id: mod_inf_009
     name: pipeline
     title: Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
     layer: cross_layer
@@ -170,8 +170,8 @@ mappings:
     ssot_path: src/zephyr/orchestration/pipeline_routing/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_010::feedback_loop:
-    blueprint_id: MOD_INF_010
+  mod_inf_010::feedback_loop:
+    blueprint_id: mod_inf_010
     name: feedback_loop
     title: Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心
     layer: cross_layer
@@ -184,8 +184,8 @@ mappings:
     ssot_path: src/zephyr/observability/feedback_loop/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_010-CAPUP::capacity_upgrade:
-    blueprint_id: MOD_INF_010-CAPUP
+  mod_inf_010-CAPUP::capacity_upgrade:
+    blueprint_id: mod_inf_010-CAPUP
     name: capacity_upgrade
     title: FLE 容量升级附录 — 从S级到L级扩容方案
     layer: cross_layer
@@ -212,8 +212,8 @@ mappings:
     ssot_path: src/zephyr/data/vector_storage/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_012::database:
-    blueprint_id: MOD_INF_012
+  mod_inf_012::database:
+    blueprint_id: mod_inf_012
     name: database
     title: Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
     layer: cross_layer
@@ -226,8 +226,8 @@ mappings:
     ssot_path: src/zephyr/data/persistence/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_014::llm_security:
-    blueprint_id: MOD_INF_014
+  mod_inf_014::llm_security:
+    blueprint_id: mod_inf_014
     name: llm_security
     title: LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则
     layer: cross_layer
@@ -268,8 +268,8 @@ mappings:
     ssot_path: src/zephyr/observability/telemetry/
     match_method: panorama_ssot_module
     confidence: high
-  MOD_INF_016::shared_core:
-    blueprint_id: MOD_INF_016
+  mod_inf_016::shared_core:
+    blueprint_id: mod_inf_016
     name: shared_core
     title: Shared+Core 蓝图
     layer: cross_layer
@@ -518,8 +518,8 @@ mappings:
     ssot_path: ''
     match_method: functional_domain_fallback
     confidence: medium
-  MOD_INF_032::resource_optimization_engine:
-    blueprint_id: MOD_INF_032
+  mod_inf_032::resource_optimization_engine:
+    blueprint_id: mod_inf_032
     name: resource_optimization_engine
     title: 资源优化引擎蓝图
     layer: cross_layer
@@ -826,8 +826,8 @@ mappings:
     ssot_path: src/zephyr/simulation/
     match_method: business_layer_mapping
     confidence: high
-  MOD_MASTER_001::_master_blueprint:
-    blueprint_id: MOD_MASTER_001
+  mod_master_001::_master_blueprint:
+    blueprint_id: mod_master_001
     name: _master_blueprint
     title: Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图
     layer: cross_layer
@@ -840,8 +840,8 @@ mappings:
     ssot_path: ''
     match_method: functional_domain_fallback
     confidence: medium
-  SYS_MASTER_001::_sys_master:
-    blueprint_id: SYS_MASTER_001
+  sys_master_001::_sys_master:
+    blueprint_id: sys_master_001
     name: _sys_master
     title: System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
     layer: cross_layer

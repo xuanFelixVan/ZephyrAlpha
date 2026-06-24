@@ -38,7 +38,7 @@ python scripts/governance/run_all.py --diff-ref HEAD~1
 
 | 看什么 | 去哪里 |
 |--------|--------|
-| 蓝图全文 | `docs/03_modules/infrastructure/script-system/blueprint.md` |
+| 蓝图全文 | `docs/03_modules/infrastructure/script_system/blueprint.md` |
 | 脚本注册表 | `scripts/governance/script_manifest.yaml` |
 | 质量铁律 | `scripts/governance/quality_standard.md` |
 | 所有阈值 | `scripts/governance/_shared/thresholds.yaml` |

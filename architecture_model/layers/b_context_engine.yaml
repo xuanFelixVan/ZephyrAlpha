@@ -9,7 +9,7 @@ partition:
 
 modules:
   - id: ce-core
-    module_id: MOD_INF_008
+    module_id: mod_inf_008
     name: Context Engine Core
     submodule_path: src/zephyr/context_engine/
     status: implemented

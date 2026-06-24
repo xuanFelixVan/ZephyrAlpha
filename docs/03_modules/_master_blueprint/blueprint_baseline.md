@@ -178,7 +178,7 @@ codification_at: "2026-05-15"
 | **Asset Inventory** | — | — | ~200 | `src/zephyr/asset-inventory/` | 部分实现 |
 | **Shared Core** | — | — | ~300 | `src/zephyr/shared/` + `src/zephyr/core/` | 已实现 |
 | **Auto Runtime Core** | — | — | ~300 | `src/zephyr/runtime/` | 部分实现 |
-| 跨系统管控（横向） | CT-HEALTH, CT-CBAC, CT-CDC, CT-CONFIG, CT-FEATUREFLAG, CT-CHAOS, CT-RECONCILE, CT-STARTUP, CT-TEARDOWN, CT-MODEL-REGISTRY, CT-DEPS, CT-KNOWLEDGE-FRESHNESS, CT-HOUSEKEEPING, CT-SESSION-HANDOFF, CT-STABILITY, CT-CANARY, CT-INCIDENT, CT-RACE-CONDITIONS, CT-COST-BUDGET, CT-DISK-GUARD, CT-NETWORK-PARTITION, CT-BENCH, CT-DEPLOY, CT-SCHEMA-MIGRATE, CT-DEGRADE-CASCADE, CT-AUTONOMY, CT-AGENT-QUALITY, CT-PROMPT-VERSION, CT-SESSION-CONFLICT, CT-LEAN, CT-BLUEPRINT-HEALTH, CT-TRANSFER, CT-KE-QUALITY | — | ~1600 | — | 设计中 |
+| 跨系统管控（横向） | CT-HEALTH, CT-CBAC, CT-CDC, CT-CONFIG, CT-FEATUREFLAG, CT-CHAOS, CT-RECONCILE, CT-STARTUP, CT-TEARDOWN, CT-MODEL-REGISTRY, CT-DEPS, CT-KNOWLEDGE-FRESHNESS, CT-HOUSEKEEPING, CT-SESSION-handoff, CT-STABILITY, CT-CANARY, CT-INCIDENT, CT-RACE-CONDITIONS, CT-COST-BUDGET, CT-DISK-GUARD, CT-NETWORK-PARTITION, CT-BENCH, CT-DEPLOY, CT-SCHEMA-MIGRATE, CT-DEGRADE-CASCADE, CT-AUTONOMY, CT-AGENT-QUALITY, CT-PROMPT-VERSION, CT-SESSION-CONFLICT, CT-LEAN, CT-BLUEPRINT-HEALTH, CT-TRANSFER, CT-KE-QUALITY | — | ~1600 | — | 设计中 |
 
 ---
 ---
@@ -309,7 +309,7 @@ codification_at: "2026-05-15"
 | CT-DEPS-001 | 全系统 | 规划 | DO_NOT_CALL |
 | CT-KNOWLEDGE-FRESHNESS-001 | 全系统 | 规划 | DO_NOT_CALL |
 | CT-HOUSEKEEPING-001 | 全系统 | 规划 | DO_NOT_CALL |
-| CT-SESSION-HANDOFF-001 | 全系统 | 规划 | DO_NOT_CALL |
+| CT-SESSION-handoff-001 | 全系统 | 规划 | DO_NOT_CALL |
 | CT-STABILITY-001 | 全系统 | 规划 | DO_NOT_CALL |
 | CT-CANARY-001 | 全系统 | 规划 | DO_NOT_CALL |
 | CT-INCIDENT-001 | 全系统 | 规划 | DO_NOT_CALL |
@@ -2303,10 +2303,10 @@ disk_watermark:
   critical_action: "暂停所有非P0任务→通知Owner→手动清淤→恢复后自动运行housekeeping"
 ```
 
-### 22.3 AI会话手递手协议 (CT-SESSION-HANDOFF-001)
+### 22.3 AI会话手递手协议 (CT-SESSION-handoff-001)
 
 ```yaml
-contract: CT-SESSION-HANDOFF-001
+contract: CT-SESSION-handoff-001
 title: "AI会话手递手协议——Session A→Session B的无损上下文转移"
 principle: "这是100%AI施工下最独特的契约——传统Jira追踪进度，AI只有chat history（不跨session）。
 AI agent的工作状态MUST持久化到磁盘——下一个AI session MUST能恢复上级session的上下文。"
@@ -2383,7 +2383,7 @@ stability_matrix:
     - {ct_id: CT-CHAOS-001}
     - {ct_id: CT-MODEL-REGISTRY-001}
     - {ct_id: CT-KNOWLEDGE-FRESHNESS-001}
-    - {ct_id: CT-SESSION-HANDOFF-001}
+    - {ct_id: CT-SESSION-handoff-001}
     - {ct_id: CT-CANARY-001}
   deprecated: []
 
@@ -3075,7 +3075,7 @@ cross_ct_conflict:
   action: "若A已经改了context_engine→B读取最新状态→若A还未完成→B wait或仅写测试"
 
 session_cleanup:
-  on_complete: "session更新handoff manifest(CT-SESSION-HANDOFF-001)→从active_sessions/中删除自身"
+  on_complete: "session更新handoff manifest(CT-SESSION-handoff-001)→从active_sessions/中删除自身"
   on_timeout: "estimated_duration过期+15分钟→标记STALE→提醒Owner→Owner未回复→标记FORCE_CLOSE"
   orphan_detection: "housekeeping扫描active_sessions/→>12h未更新→标记ORPHAN→通知Owner"
 

@@ -19,7 +19,7 @@ updated: "2026-06-22"
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [index.md](index.md) | Markdown | changes — 目录索引 |
-| [MOD_INF_032/](MOD_INF_032/index.md) | 目录 | MOD-INF-032 — 目录索引 |
+| [mod_inf_032/](mod_inf_032/index.md) | 目录 | MOD-INF-032 — 目录索引 |
 
 ## 导航
 

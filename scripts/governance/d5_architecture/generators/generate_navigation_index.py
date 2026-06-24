@@ -4,7 +4,7 @@
 [MODULE] scripts.governance.d5_architecture.generators.generate_navigation_index
 [INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;扫描实际文件
 [MODIFY-GUARD] 修改需通过任务卡
-[CONSUMERS] 人工查看 0_总览入口/架构文档库总览.md
+[CONSUMERS] 人工查看 00_overview_entry/架构文档库总览.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
@@ -23,7 +23,7 @@ from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 BASE_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture")
-OUTPUT_DIR = BASE_DIR / "0_总览入口"
+OUTPUT_DIR = BASE_DIR / "00_overview_entry"
 
 # 层级中文名映射
 LAYER_NAME_ZH = {
@@ -112,10 +112,10 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("")
     lines.append("| 文件夹 | 是什么 | 谁维护 | 什么时候变 |")
     lines.append("|--------|--------|--------|-----------|")
-    lines.append("| `0_总览入口/` | 你现在看的这个文件，整个文档库的导航地图 | 自动生成 | 全景图更新时 |")
-    lines.append(f"| `1_全局架构图/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 {len(global_files)} 个文件 | 自动生成 | 全景图更新时 |")
-    lines.append(f"| `2_域架构文档/` | 每个功能域的详细文档和依赖图，共 {len(domain_files)} 个文件 | 自动生成 | 全景图更新时 |")
-    lines.append(f"| `3_治理报告/` | 容量报告、约束违规报告、设计态vs运营态报告，共 {len(report_files)} 个文件 | 自动生成 | 全景图更新时 |")
+    lines.append("| `00_overview_entry/` | 你现在看的这个文件，整个文档库的导航地图 | 自动生成 | 全景图更新时 |")
+    lines.append(f"| `01_global_architecture_diagram/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 {len(global_files)} 个文件 | 自动生成 | 全景图更新时 |")
+    lines.append(f"| `02_domain_architecture_docs/` | 每个功能域的详细文档和依赖图，共 {len(domain_files)} 个文件 | 自动生成 | 全景图更新时 |")
+    lines.append(f"| `03_governance_reports/` | 容量报告、约束违规报告、设计态vs运营态报告，共 {len(report_files)} 个文件 | 自动生成 | 全景图更新时 |")
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -128,26 +128,26 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("### 想快速了解系统")
     lines.append("")
     lines.append("1. 看本文件了解文档库结构")
-    lines.append("2. 看 `1_全局架构图/path_tree_zh.md` 了解项目物理结构（文件怎么组织的）")
-    lines.append("3. 看 `1_全局架构图/integration_topology.md` 了解43个域之间怎么互相依赖")
-    lines.append("4. 看 `1_全局架构图/cross_domain_matrix.md` 了解域间依赖的详细数据")
+    lines.append("2. 看 `01_global_architecture_diagram/path_tree_zh.md` 了解项目物理结构（文件怎么组织的）")
+    lines.append("3. 看 `01_global_architecture_diagram/integration_topology.md` 了解43个域之间怎么互相依赖")
+    lines.append("4. 看 `01_global_architecture_diagram/cross_domain_matrix.md` 了解域间依赖的详细数据")
     lines.append("")
 
     # 了解某个功能域
     lines.append("### 想了解某个功能域")
     lines.append("")
-    lines.append("1. 去 `2_域架构文档/` 找到对应域的文档（如 `53_d_trading.md`）")
+    lines.append("1. 去 `02_domain_architecture_docs/` 找到对应域的文档（如 `53_d_trading.md`）")
     lines.append("2. 看域文档了解这个域有哪些模块、每个模块干什么")
     lines.append("3. 看域文档内嵌的 Mermaid 依赖图了解这个域内部怎么依赖、跟其他域怎么依赖")
-    lines.append("4. 看 `2_域架构文档/domain_index.md` 了解所有域的清单")
+    lines.append("4. 看 `02_domain_architecture_docs/domain_index.md` 了解所有域的清单")
     lines.append("")
 
     # 看系统健康度
     lines.append("### 想看系统健康度")
     lines.append("")
-    lines.append("1. 看 `3_治理报告/capacity_report.md` 了解各域模块数（有没有超标）")
-    lines.append("2. 看 `3_治理报告/constraint_violations.md` 了解有哪些违规")
-    lines.append("3. 看 `3_治理报告/design_vs_production.md` 了解设计态到运营态的迁移进度")
+    lines.append("1. 看 `03_governance_reports/capacity_report.md` 了解各域模块数（有没有超标）")
+    lines.append("2. 看 `03_governance_reports/constraint_violations.md` 了解有哪些违规")
+    lines.append("3. 看 `03_governance_reports/design_vs_production.md` 了解设计态到运营态的迁移进度")
     lines.append("")
 
     lines.append("---")
@@ -169,7 +169,7 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     # 功能域速览
     lines.append("## 功能域速览")
     lines.append("")
-    lines.append("> 完整列表见 `2_域架构文档/domain_index.md`")
+    lines.append("> 完整列表见 `02_domain_architecture_docs/domain_index.md`")
     lines.append("")
     lines.append("| 层级 | 域数量 | 代表域 |")
     lines.append("|------|:---:|--------|")
@@ -222,9 +222,9 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # 扫描实际文件
-    global_files = scan_directory(BASE_DIR / "1_全局架构图")
-    domain_files = scan_directory(BASE_DIR / "2_域架构文档")
-    report_files = scan_directory(BASE_DIR / "3_治理报告")
+    global_files = scan_directory(BASE_DIR / "01_global_architecture_diagram")
+    domain_files = scan_directory(BASE_DIR / "02_domain_architecture_docs")
+    report_files = scan_directory(BASE_DIR / "03_governance_reports")
 
     # 获取统计数据
     conn = sqlite3.connect(str(DEPGRAPH_DB))

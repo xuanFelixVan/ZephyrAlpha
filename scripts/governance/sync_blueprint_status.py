@@ -121,9 +121,9 @@ def analyze() -> list[dict]:
         cp_status = cp.get("status", "")
         mod_id = mod.get("module_id", "?")
         mod_name = mod.get("name", "?")
-        bp_dir = _PROJECT_ROOT / "docs" / "03_modules" / (mod.get("layer", "") or "infrastructure.runtime_integration")
+        bp_dir = _PROJECT_ROOT / "docs" / "03_modules" / (mod.get("layer", "") or "infrastructure_runtime_integration")
         name = mod.get("path", "").split("/")[-1] if mod.get("path") else mod_name
-        blueprint_dir = _PROJECT_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / name
+        blueprint_dir = _PROJECT_ROOT / "docs" / "03_modules" / "infrastructure_runtime_integration" / name
 
         expected = (
             "Active"

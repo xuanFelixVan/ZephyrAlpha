@@ -519,7 +519,7 @@ repos:
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
       # 对标：盲点 C2 — AI 改 YAML 忘 codegen → 契约与代码漂移 → 硬阻断
 
-      # ── GATE-MCP: MCP Tool Contract 一致性校验（MOD_INF_013 §9 R3）──
+      # ── GATE-MCP: MCP Tool Contract 一致性校验（mod_inf_013 §9 R3）──
       # 检测 tool_contracts.yaml ↔ 代码 register_tool 声明不一致
       - id: gate-mcp-contract-consistency
         name: "GATE-MCP: Tool Contract 一致性（R3）"
@@ -529,7 +529,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^(src/zephyr/mcp/tool-contracts\\.yaml|src/zephyr/mcp/.*\\.py)$"
-        description: "tool_contracts.yaml ↔ 代码 register_tool 一致性校验（MOD_INF_013 §9 R3 契约漂移缓解）"
+        description: "tool_contracts.yaml ↔ 代码 register_tool 一致性校验（mod_inf_013 §9 R3 契约漂移缓解）"
 
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
       # 检测范围：cross_layer_contracts.yaml 或 contracts/*.py 变更时触发

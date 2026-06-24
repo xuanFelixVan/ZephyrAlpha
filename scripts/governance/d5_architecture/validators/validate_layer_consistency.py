@@ -18,7 +18,7 @@
      与物理目录名交叉比对，检测不一致并报告。
 
 检测逻辑：
-- 物理路径包含 `infrastructure.runtime_integration/` → 期望 layer=L01
+- 物理路径包含 `infrastructure_runtime_integration/` → 期望 layer=L01
 - 物理路径包含 `data/`   → 期望 layer=L00
 - 物理路径包含 `factor/`  → 期望 layer=L02
 - ...
@@ -62,7 +62,7 @@ import argparse
 
 LAYER_DIR_MAP = {
     "data": "L00",
-    "infrastructure.runtime_integration": "L01",
+    "infrastructure_runtime_integration": "L01",
     "factor": "L02",
     "signal": "L03",
     "risk": "L04",

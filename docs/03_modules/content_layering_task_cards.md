@@ -191,7 +191,7 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 | 5 | `physical_files` | list[str] | `[src/zephyr/agent_rbac/__init__.py, ...]` |
 | 6 | `path` | str | `src/zephyr/agent_rbac/` |
 | 7 | `domain` | str | `D-AUTONOMY-CORE` |
-| 8 | `blueprint_id` | str | `""` 或 `MOD_INF_007` |
+| 8 | `blueprint_id` | str | `""` 或 `mod_inf_007` |
 | 9 | `stability` | enum | `stable` |
 | 10 | `safety_level` | enum | `H` |
 | 11 | `ai_autonomy` | enum | `immutable_core` |

@@ -171,7 +171,7 @@ EXPECTED_FILES: list[dict[str, Any]] = [
     },
     # Card 22: KB index
     {
-        "path": "docs/03_modules/infrastructure.runtime_integration/knowledge-base/index.md",
+        "path": "docs/03_modules/infrastructure_runtime_integration/knowledge-base/index.md",
         "card": "TASK-KB-0001",
         "new": True,
         "check": "has_blueprint_ref",

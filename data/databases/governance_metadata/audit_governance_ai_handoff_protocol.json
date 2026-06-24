@@ -5,7 +5,7 @@
   "module_id": "GOV-AI-008",
   "scan_date": "2026-06-13",
   "rules_extracted": {
-    "HANDOFF_8_FIELDS": {
+    "handoff_8_FIELDS": {
       "rule": "HandoffPackage必须包含8个字段：session_id/completed_tasks/in_progress_tasks/blocked_items/decisions_made/next_actions/context_summary/open_questions",
       "type": "mandatory",
       "status": "COVERED"

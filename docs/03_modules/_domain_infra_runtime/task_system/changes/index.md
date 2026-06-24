@@ -19,8 +19,8 @@ updated: "2026-06-22"
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [index.md](index.md) | Markdown | changes — 目录索引 |
-| [MOD_INF_006/](MOD_INF_006/index.md) | 目录 | MOD-INF-006 — 目录索引 |
-| [MOD_INF_006_MCP/](MOD_INF_006_MCP/index.md) | 目录 | MOD-INF-006-MCP — 目录索引 |
+| [mod_inf_006/](mod_inf_006/index.md) | 目录 | MOD-INF-006 — 目录索引 |
+| [mod_inf_006_MCP/](mod_inf_006_MCP/index.md) | 目录 | MOD-INF-006-MCP — 目录索引 |
 | [shadows/](shadows/index.md) | 目录 | shadows — 目录索引 |
 
 ## 导航

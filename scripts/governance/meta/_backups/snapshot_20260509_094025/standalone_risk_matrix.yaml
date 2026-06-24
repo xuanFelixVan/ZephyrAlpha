@@ -2,7 +2,7 @@
 # 蓝图尾部独立风险节 — 与 §12.1 主风险矩阵互补（不同维度）
 
 generated_at: "2026-05-07T00:00:00Z"
-source: "docs/03_modules/l01-infrastructure/script-system/blueprint.md"
+source: "docs/03_modules/l01-infrastructure/script_system/blueprint.md"
 
 standalone_risks:
   R1:

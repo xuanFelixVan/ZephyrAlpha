@@ -2,9 +2,9 @@
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_domain_doc
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到2_域架构文档/
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到02_domain_architecture_docs/
 [MODIFY-GUARD] 修改需通过DM-200910任务卡或后续维护任务卡
-[CONSUMERS] CI自动触发;人工查看2_域架构文档/{编号}_{domain}.md
+[CONSUMERS] CI自动触发;人工查看02_domain_architecture_docs/{编号}_{domain}.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
@@ -23,7 +23,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/2_域架构文档")
+OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/02_domain_architecture_docs")
 
 # 层级排序：编号按此顺序分组分配
 LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]

@@ -24,7 +24,7 @@ modules:
   interfaces:
   - contract_id: CT-TELE-FLE-001
     role: producer
-    description: 为 FLE 输出可消费遥测序列（MOD_MASTER_001 2.1 总表）
+    description: 为 FLE 输出可消费遥测序列（mod_master_001 2.1 总表）
   kb_ref: []
 - id: l12-ai-behavior
   module_id: MOD-INF-015

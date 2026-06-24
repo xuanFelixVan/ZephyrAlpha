@@ -63,7 +63,7 @@ from . import (
 
 [INVARIANTS] 漂移检测结果不可伪造;基线不可被污染;检测器注册表不可绕过
 
-[MODIFY-GUARD] docs/03_modules/infrastructure.runtime_integration/drift-detector/blueprint.md
+[MODIFY-GUARD] docs/03_modules/infrastructure_runtime_integration/drift-detector/blueprint.md
 
 [CONSUMERS] zephyr.integration.runtime_core; zephyr.security.access_control; zephyr.infrastructure.pipeline
 

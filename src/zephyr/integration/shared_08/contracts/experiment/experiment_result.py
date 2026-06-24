@@ -6,14 +6,13 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.experiment.experiment_result
-# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.experiment.experiment_result
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.integration.shared_08.contracts.experiment.experiment_result"
 # [A_module] module_id=MOD-INT_experiment_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [MODIFY-GUARD] none
 
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.experiment.experiment_result。"""
 

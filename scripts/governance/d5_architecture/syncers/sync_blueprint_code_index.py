@@ -257,7 +257,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "script-system": {
         "module_id": "MOD-INF-005",
-        "source_dirs": ["src/zephyr/infrastructure.runtime_integration/script_system"],
+        "source_dirs": ["src/zephyr/infrastructure_runtime_integration/script_system"],
         "extra_source_files": [],
         "test_patterns": [],
         "config_files": [],

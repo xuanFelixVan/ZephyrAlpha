@@ -92,7 +92,7 @@ class PathResolver:
         根据模块名查找其在项目中的实际目录。
         module_name 可以是简称（"rollback"）、完整名（"governance/rollback"）、
         或模块ID（"MOD-INF-021"）。
-        返回所有匹配的目录路径列表，governance/ 和 infrastructure.runtime_integration/ 下的优先。
+        返回所有匹配的目录路径列表，governance/ 和 infrastructure_runtime_integration/ 下的优先。
         """
         normalized = module_name.lower().replace("_", "-").replace(" ", "-")
 
@@ -109,10 +109,10 @@ class PathResolver:
                 if normalized in dir_basename or dir_basename in normalized:
                     matches.append(dir_path)
 
-        # Sort: governance/ and infrastructure.runtime_integration/ first (they're the canonical locations)
+        # Sort: governance/ and infrastructure_runtime_integration/ first (they're the canonical locations)
         def _priority(p):
             rel = os.path.relpath(p, self.src_root)
-            if "governance" in rel or "infrastructure.runtime_integration" in rel:
+            if "governance" in rel or "infrastructure_runtime_integration" in rel:
                 return 0
             return 1
 
@@ -121,7 +121,7 @@ class PathResolver:
     def resolve_path(self, module_name: str, filename: str) -> str | None:
         """
         给定模块名 + 文件名，返回应该落盘的完整路径。
-        模块有多处存在时优先 governance/ 或 infrastructure.runtime_integration/。
+        模块有多处存在时优先 governance/ 或 infrastructure_runtime_integration/。
         """
         dirs = self.resolve_module(module_name)
         if not dirs:

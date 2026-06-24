@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.state_machine
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors
-# [CONSUMERS] MOD-INF-006(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-INF-032(resource);MOD-INF-015(telemetry);governance.drift_detection.state_machine;infrastructure.runtime_integration.auto_fix_engine.state_machine
+# [CONSUMERS] MOD-INF-006(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-INF-032(resource);MOD-INF-015(telemetry);governance.drift_detection.state_machine;infrastructure_runtime_integration.auto_fix_engine.state_machine
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 状态转换必须合法;转换守卫必须同步;命名冲突必须注册

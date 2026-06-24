@@ -149,8 +149,8 @@ class CausalConflictDetector:
         self._load_depgraph()
         conflicts: list[dict[str, Any]] = []
         layer_order = {
-            "infrastructure.runtime_integration": 1,
-            "infrastructure.runtime_integration": 2,
+            "infrastructure_runtime_integration": 1,
+            "infrastructure_runtime_integration": 2,
             "governance": 3,
             "governance": 4,
         }

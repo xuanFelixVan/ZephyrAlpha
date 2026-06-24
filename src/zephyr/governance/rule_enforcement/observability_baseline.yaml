@@ -19,7 +19,7 @@ entry_conditions:
     severity: error
     on_failure: reject
     verifiable: true
-    verification_method: "from zephyr.infrastructure.runtime_integration.system_telemetry import Telemetry; t = Telemetry('gate_test', test_mode=True)"
+    verification_method: "from zephyr.infrastructure_runtime_integration.system_telemetry import Telemetry; t = Telemetry('gate_test', test_mode=True)"
     rule_ids:
       - TRAE-002
 

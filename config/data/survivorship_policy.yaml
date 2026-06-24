@@ -1,12 +1,12 @@
 # --- 治理锚定 ---
-# blueprint: MOD_INF_016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
-# module_id: MOD_INF_016
+# blueprint: mod_inf_016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
+# module_id: mod_inf_016
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
 # INV-014 — Survivorship Bias 声明级门禁（数据集具备完整退市/停牌历史前保持为 policy gate）
-module_id: MOD_INF_016
+module_id: mod_inf_016
 schema_version: "1.0"
 last_updated: "2026-05-05"
 

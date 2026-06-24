@@ -294,7 +294,7 @@ DOMAIN_LAYER_MAP = {
 
 MODULE_LAYER_MAP = {
     "data": "L00 数据接入层 — 数据源连接器 / 行情 / 基本面 / 另类数据",
-    "infrastructure.runtime_integration": "L01 基础设施层 — AI 基础设施（容量保障 / 运行时集成 / KMS / Vibe Coding 管线 / 触发器路由）",
+    "infrastructure_runtime_integration": "L01 基础设施层 — AI 基础设施（容量保障 / 运行时集成 / KMS / Vibe Coding 管线 / 触发器路由）",
     "factor": "L02 因子层 — 多频段因子计算 / 衍生因子",
     "signal": "L03 信号生成层 — 因子融合 / 信号聚合 / Alpha 组合优化",
     "risk": "L04 风控层 — 头寸限额 / 组合风控 / 实时止损",

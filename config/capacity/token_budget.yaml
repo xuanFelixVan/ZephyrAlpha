@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD_INF_001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md | §5.1
-# module_id: MOD_INF_001
+# blueprint: mod_inf_001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md | §5.1
+# module_id: mod_inf_001
 # stability: deprecated
 # safety_level: M
 # ai_autonomy: immutable_core
@@ -11,7 +11,7 @@
 # 预算执行策略以 config/budget_policy.yaml 为唯一真源
 # 版本：v2.6.0 (frozen)
 
-module_id: MOD_INF_001
+module_id: mod_inf_001
 config_version: "2.6.0"
 
 token_budget:

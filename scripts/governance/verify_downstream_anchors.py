@@ -39,7 +39,7 @@ REQUIRED_ANCHOR = "DOM-GOV-001"
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     results: dict[str, bool] = {}
-    base = Path("docs/03_modules/infrastructure.runtime_integration")
+    base = Path("docs/03_modules/infrastructure_runtime_integration")
 
     for mod_id, mod_dir in EXPECTED_MODULES.items():
         bp = base / mod_dir / "blueprint.md"

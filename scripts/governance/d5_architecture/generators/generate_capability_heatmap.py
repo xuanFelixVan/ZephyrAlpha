@@ -2,9 +2,9 @@
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.11
 [MODULE] scripts.governance.d5_architecture.generators.generate_capability_heatmap
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到1_全局架构图/
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到01_global_architecture_diagram/
 [MODIFY-GUARD] 修改需通过任务卡
-[CONSUMERS] CI自动触发;人工查看1_全局架构图/capability_heatmap.md
+[CONSUMERS] CI自动触发;人工查看01_global_architecture_diagram/capability_heatmap.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/1_全局架构图/capability_heatmap.md")
+OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/capability_heatmap.md")
 
 # 10 capability domains (能力域) - 7 business + 3 cross-cutting
 # Source: capability_heatmap.yaml v3.0.0 + capability_heatmap.md §3.1

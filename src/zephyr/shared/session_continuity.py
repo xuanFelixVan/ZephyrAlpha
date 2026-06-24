@@ -80,7 +80,7 @@ def _get_default_db() -> Path:
     return _DEFAULT_DB
 
 
-_DDL_HANDOFFS = """
+_DDL_handoffS = """
 CREATE TABLE IF NOT EXISTS handoffs (
     handoff_id       TEXT PRIMARY KEY,
     session_id       TEXT NOT NULL,
@@ -118,7 +118,7 @@ class SessionContinuity:
 
     def _init_schema(self) -> None:
         conn = self._get_conn()
-        conn.execute(_DDL_HANDOFFS)
+        conn.execute(_DDL_handoffS)
         conn.commit()
         conn.close()
 

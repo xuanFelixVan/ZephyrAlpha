@@ -14,7 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_session_handoff | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""AI Session 手递手（CT-SESSION-HANDOFF）——session状态保存+下一个AI加载。"""
+"""AI Session 手递手（CT-SESSION-handoff）——session状态保存+下一个AI加载。"""
 
 from __future__ import annotations
 

@@ -69,12 +69,12 @@ RULES_MANIFEST: list[dict] = [
     {"path": "scripts/governance/quality_standard.md", "critical": True, "desc": "脚本质量标准"},
     {"path": "scripts/governance/script_manifest.yaml", "critical": True, "desc": "脚本注册表"},
     {
-        "path": "docs/03_modules/infrastructure.runtime_integration/script-system/blueprint.md",
+        "path": "docs/03_modules/infrastructure_runtime_integration/script_system/blueprint.md",
         "critical": True,
         "desc": "脚本系统蓝图",
     },
     {
-        "path": "docs/03_modules/infrastructure.runtime_integration/script-system/index.md",
+        "path": "docs/03_modules/infrastructure_runtime_integration/script_system/index.md",
         "critical": False,
         "desc": "模块索引",
     },
@@ -206,7 +206,7 @@ def show_diff() -> str:
             "--",
             "AGENTS.md",
             "scripts/governance/",
-            "docs/03_modules/infrastructure.runtime_integration/script-system/",
+            "docs/03_modules/infrastructure_runtime_integration/script_system/",
         ],
         capture_output=True,
         text=True,

@@ -1,16 +1,18 @@
-# [A_module] module_id=MOD-SEC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §4.5
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.__main__
+# [DOMAIN] D-SECURITY
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.engine
+# [CONSUMERS] CLI用户;CI/CD pipeline
+# [STARTUP] manual
+# [MATURITY] prototype
 # [INVARIANTS] CLI MUST可用;子命令MUST返回正确退出码
 # [MODIFY-GUARD] blueprint.md §4.5
-# [CONSUMERS] CLI用户;CI/CD pipeline
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CLIError
 # [TESTS] tests/auto-fix-engine/test_cli.py
+# [A_module] module_id=MOD-SEC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import argparse
 import json
 import sys

@@ -58,7 +58,7 @@ MODULES_ROOT = REPO_ROOT / "docs" / "03_modules"
 
 LAYER_ORDER = {
     "data": 0,
-    "infrastructure.runtime_integration": 1,
+    "infrastructure_runtime_integration": 1,
     "factor": 2,
     "signal": 3,
     "risk": 4,

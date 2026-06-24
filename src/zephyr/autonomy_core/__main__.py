@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-ORC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
-
 # [MODULE] zephyr.autonomy_core.__main__
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-AUTONOMY_CORE
+# [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-ORC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """agent-spec MOD-INF-019 CLI — 蓝图→Skill 升级引擎入口.
 

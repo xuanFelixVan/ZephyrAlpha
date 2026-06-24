@@ -624,7 +624,7 @@ CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\docs\\03_modules\\infrastructure.runtime_integration\\capacity-assurance\\blueprint.md",
+        file_path="D:\\ZephyrAlpha\\docs\\03_modules\\infrastructure_runtime_integration\\capacity-assurance\\blueprint.md",
         sync_content="Kill Switch + Token Budget 集成契约",
         last_synced="2026-05-07",
     ),
@@ -634,7 +634,7 @@ CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\docs\\03_modules\\infrastructure.runtime_integration\\rbac\\blueprint.md",
+        file_path="D:\\ZephyrAlpha\\docs\\03_modules\\infrastructure_runtime_integration\\rbac\\blueprint.md",
         sync_content="MOD-INF-008 RBAC SoD 集成契约 v0.8.0 B137",
         last_synced="2026-05-07",
     ),

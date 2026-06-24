@@ -1,7 +1,7 @@
 {
   "$schema": "./mcp.schema.json",
   "version": "1.0.0",
-  "description": "MCP Gateway + 10 Server 集中式配置（MOD_INF_013 §12 SSoT）",
+  "description": "MCP Gateway + 10 Server 集中式配置（mod_inf_013 §12 SSoT）",
 
   "gateway": {
     "server_id": "mcp_gateway",

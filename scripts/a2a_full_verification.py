@@ -174,8 +174,8 @@ from zephyr.integration.a2a_protocol.spec_sync import SpecSync
 ss = SpecSync()
 ss.register(
     "a2a-protocol",
-    "docs/03_modules/infrastructure.runtime_integration/a2a-protocol/blueprint.md",
-    ["src/zephyr/infrastructure.runtime_integration/a2a_protocol/"],
+    "docs/03_modules/infrastructure_runtime_integration/a2a-protocol/blueprint.md",
+    ["src/zephyr/infrastructure_runtime_integration/a2a_protocol/"],
 )
 sync_result = ss.check("a2a-protocol")
 check("SpecSync a2a-protocol 注册成功", sync_result["status"] == "synced")

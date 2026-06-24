@@ -27,7 +27,7 @@ hard_interrupt:
 
   # === 硬中断后的行为 ===
   post_interrupt:
-    state_save: "中断点状态写入 HANDOFF/INTERRUPT-{timestamp}.yaml"
+    state_save: "中断点状态写入 handoff/INTERRUPT-{timestamp}.yaml"
     escalation_reset: "中断后恢复时，升级级别重置为 autonomous（信任重建）"
     require_explicit_continue: "Owner 必须明确说'继续'/'继续做'才能恢复AI操作"
 

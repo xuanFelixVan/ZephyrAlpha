@@ -16,7 +16,7 @@
 """
 check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
 
-依据: MOD-MASTER-001 §22.3 CT-SESSION-HANDOFF-001
+依据: MOD-MASTER-001 §22.3 CT-SESSION-handoff-001
 验证 .trae/session_state/ 目录下所有 CT-*_progress.yaml 是否存在且不超过 30 天未更新.
 
 用法:

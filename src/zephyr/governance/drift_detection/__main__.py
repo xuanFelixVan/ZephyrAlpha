@@ -1,23 +1,18 @@
-# [A_module] module_id=MOD-GOV___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md | §
-
 # [MODULE] zephyr.governance.drift_detection.__main__
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.drift_detection.drift_engine; zephyr.governance.drift_detection.self_test_verifier; zephyr.governance.drift_detection.drift_infrastructure; zephyr.governance.drift_detection.self_check
 # [CONSUMERS]
-
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
-
 # [SAFETY] L
-
 # [AI_AUTONOMY] ai_modifiable
-
 # [ERROR_CONTRACT]
-
 # [TESTS]
+# [A_module] module_id=MOD-GOV___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """Drift Detector MOD-INF-023 CLI — 漂移扫描入口。
 

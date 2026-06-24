@@ -1,7 +1,7 @@
 ---
 doc_type: index
 status: active
-title: "SYS_MASTER_001 — 目录索引"
+title: "sys_master_001 — 目录索引"
 module_id: ""
 blueprint_id: "MOD-073"
 version: "1.0.0"
@@ -9,7 +9,7 @@ created: "2026-06-22"
 updated: "2026-06-22"
 ---
 
-# SYS_MASTER_001
+# sys_master_001
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
 > 生成日期：2026-06-22

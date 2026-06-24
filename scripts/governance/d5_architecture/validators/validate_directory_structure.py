@@ -79,7 +79,7 @@ DOCS = REPO_ROOT / "docs"
 
 C_TRACK_DIRS: set[str] = {
     "data",
-    "infrastructure.runtime_integration",
+    "infrastructure_runtime_integration",
     "factor",
     "signal",
     "risk",

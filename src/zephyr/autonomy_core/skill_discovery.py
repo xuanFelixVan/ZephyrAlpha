@@ -222,7 +222,7 @@ class SkillDiscovery:
                     if p not in (
                         "docs",
                         "03_modules",
-                        "infrastructure.runtime_integration",
+                        "infrastructure_runtime_integration",
                         "factor",
                         "blueprints",
                         "module",

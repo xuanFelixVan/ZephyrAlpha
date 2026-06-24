@@ -286,8 +286,8 @@ CONTRACTS: dict[str, Contract] = {
         ai_prompt="CDC 消费者驱动契约 → 预部署验证 → Can-I-Deploy",
         route_target="gate-engine",
     ),
-    "CT-SESSION-HANDOFF-001": Contract(
-        contract_id="CT-SESSION-HANDOFF-001",
+    "CT-SESSION-handoff-001": Contract(
+        contract_id="CT-SESSION-handoff-001",
         producer="全系统",
         consumer="AI Session",
         status="新建",

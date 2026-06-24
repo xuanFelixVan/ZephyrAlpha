@@ -14,13 +14,13 @@
 # ============================================================================
 # module_id: CFG-CAP-001
 # version: 1.0.0
-# belongs_to: MOD_MASTER_001
+# belongs_to: mod_master_001
 # references:
-#   - MOD_INF_009 (Pipeline) §0.6
-#   - MOD_INF_001 (Capacity Assurance) §13
+#   - mod_inf_009 (Pipeline) §0.6
+#   - mod_inf_001 (Capacity Assurance) §13
 #   - MOD-INF-005 (Script System) §36
-#   - MOD_INF_032 (Resource Optimization) §0.3
-#   - MOD_INF_014 (LLM Security) §0.3
+#   - mod_inf_032 (Resource Optimization) §0.3
+#   - mod_inf_014 (LLM Security) §0.3
 # ============================================================================
 
 module_id: MOD-INF-002

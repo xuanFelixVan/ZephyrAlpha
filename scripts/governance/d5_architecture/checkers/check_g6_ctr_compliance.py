@@ -104,7 +104,7 @@ ALLOWED_CONTRACT_DIR = "shared/contracts"
 ALLOWED_SHARED_DIR = "shared"
 LAYER_DIRS = [
     "data",
-    "infrastructure.runtime_integration",
+    "infrastructure_runtime_integration",
     "factor",
     "signal",
     "risk",

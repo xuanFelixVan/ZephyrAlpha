@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.core.timestamp
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] infrastructure.runtime_integration.system_telemetry.health_aggregator
+# [CONSUMERS] infrastructure_runtime_integration.system_telemetry.health_aggregator
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

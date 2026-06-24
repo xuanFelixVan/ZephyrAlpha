@@ -3,7 +3,7 @@
 > **文档ID**: ARCH-T18-IMPL-001
 > **创建时间**: 2026-06-21
 > **最后更新**: 2026-06-21（Owner讨论后更新状态）
-> **关联决策**: _归档/architecture_decisions_pending.md 决策4 (T18)
+> **关联决策**: _archive/architecture_decisions_pending.md 决策4 (T18)
 > **状态**: ⏸ **暂缓** — 转为阶段8业务层建设的"生产环节"，当前不执行
 > **风险等级**: 极高（涉及全景图核心数据，数据量比预估大66倍）
 > **AI_AUTONOMY**: human_gated（需Owner审批）
@@ -54,7 +54,7 @@
 ### 关联文档变更
 
 - T18_design_state_yaml_assessment.md — **已删除**（数据过时，边数预估230 vs 实际15295，差66倍）
-- _归档/architecture_decisions_pending.md — T18状态更新为"暂缓"
+- _archive/architecture_decisions_pending.md — T18状态更新为"暂缓"
 - 本文档（T18_implementation_plan.md）— 保留，添加暂缓声明
 
 ---
@@ -194,7 +194,7 @@ edges表已有3个设计态保护触发器：
 
 | # | 前置条件 | 状态 | 验证方式 |
 |---|---------|:---:|---------|
-| 1 | Owner审批T18裁定 | ⏸ 待审批 | _归档/architecture_decisions_pending.md决策4签字 |
+| 1 | Owner审批T18裁定 | ⏸ 待审批 | _archive/architecture_decisions_pending.md决策4签字 |
 | 2 | 阶段5物理搬家完成 | ⏸ 未开始 | 文件结构稳定，路径不再变化 |
 | 3 | depgraph.db备份 | ⏸ 待做 | 复制到backup目录 |
 | 4 | 无其他session操作depgraph.db | ⏸ 待验证 | lock_files.py status |
@@ -451,7 +451,7 @@ def add_design_node(path, ...):
 
 **操作**：
 1. 更新onboarding_detail.md STEP 1.2/4.15
-2. 更新_归档/architecture_decisions_pending.md T18状态
+2. 更新_archive/architecture_decisions_pending.md T18状态
 3. 更新architecture_upgrade_discussion.md §18.3
 
 **更新内容**：
@@ -629,7 +629,7 @@ python -c "import sqlite3; c=sqlite3.connect('data/databases/depgraph.db'); c.ex
 | scripts/governance/export_design_state_to_yaml.py | 新增 | export脚本 |
 | scripts/governance/validate_design_state_yaml.py | 新增 | validate脚本 |
 | .trae/rules/onboarding_detail.md | 修改 | 真源声明 |
-| docs/02_enterprise_architecture/_归档/architecture_decisions_pending.md | 修改 | T18状态 |
+| docs/02_enterprise_architecture/_archive/architecture_decisions_pending.md | 修改 | T18状态 |
 | data/asset_index/design_state/*.yaml | 新增 | 设计态YAML文件 |
 
 ### 9.2 受影响流程
@@ -727,7 +727,7 @@ STEP 1 (Schema核实) → STEP 2 (数据导出) → STEP 3 (Sync脚本)
 
 | 文件 | 路径 | 用途 |
 |------|------|------|
-| T18决策文档 | docs/02_enterprise_architecture/_归档/architecture_decisions_pending.md | T18裁定原文（含暂缓结论） |
+| T18决策文档 | docs/02_enterprise_architecture/_archive/architecture_decisions_pending.md | T18裁定原文（含暂缓结论） |
 | ~~T18评估报告~~ | ~~已删除~~ | 数据过时（边数预估230 vs 实际15295），实际数据见本文档§1 |
 | 本施工方案 | docs/02_enterprise_architecture/T18_implementation_plan.md | 本文档（暂缓，保留作未来参考） |
 | Schema DDL | src/zephyr/governance/depgraph_schema.py | DB schema定义（需更新） |

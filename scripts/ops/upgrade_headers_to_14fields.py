@@ -87,7 +87,7 @@ EXEMPT_DIRS = {
     "_backups",
     "_archive",
 }
-EXEMPT_FILES = {"__init__.py", "__main__.py", "conftest.py"}
+EXEMPT_FILES = {"__init__.py", "conftest.py"}
 
 
 @dataclass

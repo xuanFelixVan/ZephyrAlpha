@@ -3,31 +3,31 @@ source: DM-101
 blueprint_id_to_domain:
   ALPHA-SIGNAL-DOMAIN-001: pipeline_routing
   DOC-BLUEPRINT_BASELINE: registry_management
-  DOM_GOV_001: registry_management
+  dom_gov_001: registry_management
   DOM-GOV-CAP-001: capacity_assurance
   GOV-DOC-011: script_governance
   GOV-FSTR-001: rule_enforcement
   ML-EXPERIMENT-DOMAIN-001: model_evaluation
   MOD-BIZ-002: pipeline_routing
-  MOD_INF_001: capacity_assurance
+  mod_inf_001: capacity_assurance
   MOD-INF-002: runtime_integration
   MOD-INF-005: script_governance
-  MOD_INF_006: task_management
-  MOD_INF_007: rule_enforcement
-  MOD_INF_008: context_management
-  MOD_INF_009: pipeline_routing
-  MOD_INF_010: feedback_loop
-  MOD_INF_010-CAPUP: feedback_loop
+  mod_inf_006: task_management
+  mod_inf_007: rule_enforcement
+  mod_inf_008: context_management
+  mod_inf_009: pipeline_routing
+  mod_inf_010: feedback_loop
+  mod_inf_010-CAPUP: feedback_loop
   MOD-INF-011: vector_storage
-  MOD_INF_012: persistence
-  MOD_INF_012B: persistence
-  MOD_INF_013: mcp_servers
-  MOD_INF_014: llm_defense
+  mod_inf_012: persistence
+  mod_inf_012B: persistence
+  mod_inf_013: mcp_servers
+  mod_inf_014: llm_defense
   MOD-INF-015: telemetry
-  MOD_INF_016: lifecycle_management
-  MOD_INF_016-CONTRACTS: lifecycle_management
-  MOD_INF_016-CORE: lifecycle_management
-  MOD_INF_016-SHARED: lifecycle_management
+  mod_inf_016: lifecycle_management
+  mod_inf_016-CONTRACTS: lifecycle_management
+  mod_inf_016-CORE: lifecycle_management
+  mod_inf_016-SHARED: lifecycle_management
   MOD-INF-017: code_dedup
   MOD-INF-018: access_control
   MOD-INF-019: agent_lifecycle
@@ -55,7 +55,7 @@ blueprint_id_to_domain:
   MOD-INF-029 — L4 独立价值评估器: orphan_judgment
   MOD-INF-030: adversarial_validation
   MOD-INF-031: capacity_assurance
-  MOD_INF_032: resource_optimization
+  mod_inf_032: resource_optimization
   MOD-INF-033: capacity_assurance
   MOD-INF-034: model_profiling
   MOD-INF-035: runtime_core
@@ -78,14 +78,14 @@ blueprint_id_to_domain:
   MOD-L10-001: rule_enforcement
   MOD-L11-001: model_profiling
   MOD-L13-001: audit_trail
-  MOD_MASTER_001: registry_management
+  mod_master_001: registry_management
   MOD-MASTER-003: capacity_assurance
   MOD-MASTER-004: registry_management
   MOD-TRADING-001: pipeline_routing
   PS-001: script_governance
   PS-REG-007: registry_management
   PS-REG-012: registry_management
-  SYS_MASTER_001: registry_management
+  sys_master_001: registry_management
   docs/03_modules/_cross_layer/feedback_loop/blueprint.md: feedback_loop
   docs/03_modules/_sys_master/blueprint.md: registry_management
   docs/03_modules/infrastructure/system_telemetry/blueprint.md §5.1: telemetry

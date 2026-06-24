@@ -46,7 +46,7 @@ class Priority(str, Enum):
 
 
 class CircuitBreakerState(str, Enum):
-    """Circuit breaker states — re-homed from infrastructure.runtime_integration.db.circuit_breaker_types
+    """Circuit breaker states — re-homed from infrastructure_runtime_integration.db.circuit_breaker_types
     to eliminate shared->infrastructure circular import."""
 
     CLOSED = "CLOSED"

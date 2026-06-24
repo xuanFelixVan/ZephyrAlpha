@@ -243,7 +243,7 @@ def generate_runbook(event: DriftEvent) -> str:
     sections.append("")
     sections.append("## References")
     sections.append("")
-    sections.append("- Blueprint: `docs/03_modules/infrastructure.runtime_integration/drift-detector/blueprint.md`")
+    sections.append("- Blueprint: `docs/03_modules/infrastructure_runtime_integration/drift-detector/blueprint.md`")
     sections.append("- Detector Registry: `src/zephyr/drift-detector/_detector-registry.yaml`")
     sections.append("- State Machine: `src/zephyr/drift-detector/state_machine.py`")
     sections.append("- Incident Postmortem: check `src/zephyr/drift-detector/incident_postmortem.py`")

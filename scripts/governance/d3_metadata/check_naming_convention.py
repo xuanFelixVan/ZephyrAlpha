@@ -467,6 +467,8 @@ def _check_n10_dir_naming(dirpath: str) -> list[NamingViolation]:
     # Exempt egg-info directories (Python packaging convention)
     if name.endswith(".egg-info"):
         return []
+    if name.endswith(".egg_info"):
+        return []
     # Exempt L0x_ prefixed directories (layer naming convention)
     if re.match(r"^L\d{2}_", name):
         return []

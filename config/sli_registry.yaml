@@ -78,7 +78,7 @@ slis:
 
   resource_optimization:
     name: "Resource Optimization Engine"
-    description: "资源优化引擎健康指标——MOD_INF_032"
+    description: "资源优化引擎健康指标——mod_inf_032"
     indicators:
       - name: "resource_optimization_success_rate"
         target: 0.95
