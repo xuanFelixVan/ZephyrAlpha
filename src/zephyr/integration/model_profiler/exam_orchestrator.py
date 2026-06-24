@@ -59,6 +59,17 @@ _log = logging.getLogger(__name__)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 CAPABILITIES = list(CASES_BY_CAPABILITY.keys())
 
+
+def _kw_capped(kw_rate: float, cap: float = 0.5) -> float:
+    """限制关键词匹配分数上限，防止假阳性。
+
+    kw_rate 只能作为辅助证据，不能单独决定分数。
+    cap=0.5 意味着即使关键词全匹配，最多也只能得 0.5 分。
+    布尔判断/结构匹配正确时通过 max() 取较高分；
+    布尔判断/结构匹配错误时 kw_rate 最多贡献 0.5 分。
+    """
+    return min(kw_rate, cap)
+
 _EXAM_CAPABILITY_NAMES = {
     "task_classification",
     "tag_completion",
@@ -281,8 +292,8 @@ class ExamOrchestrator:
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw in text)
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            recall_rate = max(1 - best_ed, kw_rate, new_str_score)
-            precision_rate = max(em, kw_rate, new_str_score)
+            recall_rate = max(1 - best_ed, new_str_score, _kw_capped(kw_rate))
+            precision_rate = max(em, new_str_score, _kw_capped(kw_rate))
 
             return (precision_rate, recall_rate, best_ed, em)
 
@@ -290,9 +301,17 @@ class ExamOrchestrator:
             content = result.get("content", result.get("codegen", {}).get("content", ""))
             if not content:
                 return (0.0, 0.0, 1.0, 0)
+            struct_score = 0.0
+            if "def " in content or "class " in content:
+                struct_score += 0.5
+            if "import " in content or "from " in content:
+                struct_score += 0.25
+            if len(content) > 100:
+                struct_score += 0.25
             hits = sum(1 for kw in case.expected_contains if kw in content)
             rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
-            return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
+            score = max(struct_score, _kw_capped(rate))
+            return (score, score, 0.0, 1 if hits == len(case.expected_contains) else 0)
 
         # B类: 多文件联动能力评分
         if cap in ("cross_file_analysis",):
@@ -318,10 +337,20 @@ class ExamOrchestrator:
             return (p, r, 0.0, em)
 
         if cap in ("architecture_design",):
+            files = result.get("files", [])
+            dependencies = result.get("dependencies", [])
+            if not files:
+                return (0.0, 0.0, 1.0, 0)
+            struct_score = 0.0
+            if files:
+                struct_score += 0.5
+            if dependencies:
+                struct_score += 0.5
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            return (rate, rate, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+            score = max(struct_score, _kw_capped(rate))
+            return (score, score, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
 
         if cap in ("cross_file_refactor",):
             changes = result.get("changes", [])
@@ -336,7 +365,7 @@ class ExamOrchestrator:
                     pred_files.add(str(c.get("file", "")).lower())
             gold_files = set(f.lower() for f in case.input_files.keys())
             file_coverage = len(pred_files & gold_files) / len(gold_files) if gold_files else 0.0
-            score = max(kw_rate, file_coverage)
+            score = max(file_coverage, _kw_capped(kw_rate))
             return (score, score, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
 
         if cap in ("dependency_trace",):
@@ -410,7 +439,7 @@ class ExamOrchestrator:
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(em, kw_rate)
+            score = max(em, _kw_capped(kw_rate))
             return (score, score, 0.0, em)
 
         # D类: 规则理解能力评分
@@ -425,7 +454,7 @@ class ExamOrchestrator:
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(correct, kw_rate)
+            score = max(correct, _kw_capped(kw_rate))
             return (score, score, 0.0, correct)
 
         if cap in ("safety_judgment",):
@@ -468,7 +497,7 @@ class ExamOrchestrator:
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(best_old_score, best_new_score, kw_rate)
+            score = max(best_old_score, best_new_score, _kw_capped(kw_rate))
             em = 1 if (best_old_score >= 0.9 and best_new_score >= 0.9) else 0
             return (score, score, 0.0, em)
 
@@ -490,7 +519,7 @@ class ExamOrchestrator:
                         if case.expected_bug_location.lower() in loc:
                             bug_found = 1
                             break
-            score = max(correct, kw_rate, bug_found)
+            score = max(correct, bug_found, _kw_capped(kw_rate))
             return (score, score, 0.0, correct)
 
         # G类: 增量执行评分
@@ -505,7 +534,7 @@ class ExamOrchestrator:
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
             em = 1 if actual_count == expected_count else 0
-            score = max(count_score, kw_rate)
+            score = max(count_score, _kw_capped(kw_rate))
             return (score, score, 0.0, em)
 
         # H类: 错误恢复评分
@@ -515,10 +544,18 @@ class ExamOrchestrator:
             fix = result.get("fix", "")
             if not diagnosis and not root_cause:
                 return (0.0, 0.0, 1.0, 0)
+            struct_score = 0.0
+            if diagnosis:
+                struct_score += 1 / 3
+            if root_cause:
+                struct_score += 1 / 3
+            if fix:
+                struct_score += 1 / 3
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            return (kw_rate, kw_rate, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+            score = max(struct_score, _kw_capped(kw_rate))
+            return (score, score, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
 
         # I类: 歧义识别评分
         if cap in ("ambiguity_detect",):
@@ -530,7 +567,7 @@ class ExamOrchestrator:
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(correct, kw_rate)
+            score = max(correct, _kw_capped(kw_rate))
             return (score, score, 0.0, correct)
 
         # J类: 工具选择评分
@@ -543,7 +580,7 @@ class ExamOrchestrator:
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(em, kw_rate)
+            score = max(em, _kw_capped(kw_rate))
             return (score, score, 0.0, em)
 
         # K类: 影响分析能力评分
@@ -590,7 +627,7 @@ class ExamOrchestrator:
                 gold_path = set(n.lower() for n in case.expected_cycle_path)
                 if gold_path:
                     path_score = len(pred_path & gold_path) / len(gold_path)
-            score = max(correct, kw_rate, path_score)
+            score = max(correct, path_score, _kw_capped(kw_rate))
             return (score, score, 0.0, correct)
 
         if cap in ("rollback_boundary_design",):
@@ -613,7 +650,7 @@ class ExamOrchestrator:
                 gold_points = set(p.lower() for p in case.expected_rollback_points)
                 if gold_points:
                     point_score = len(pred_points & gold_points) / len(gold_points)
-            score = max(kw_rate, point_score)
+            score = max(point_score, _kw_capped(kw_rate))
             return (score, score, 0.0, 1 if point_score >= 0.8 else 0)
 
         # L类: 任务规划能力评分
@@ -638,7 +675,7 @@ class ExamOrchestrator:
                 gold_tasks = set(t.lower() for t in case.expected_tasks)
                 if gold_tasks:
                     task_score = len(pred_tasks & gold_tasks) / len(gold_tasks)
-            score = max(kw_rate, task_score)
+            score = max(task_score, _kw_capped(kw_rate))
             return (score, score, 0.0, 1 if task_score >= 0.8 else 0)
 
         if cap in ("parallel_planning",):
@@ -665,7 +702,7 @@ class ExamOrchestrator:
                         gold_groups.add(item.lower())
                 if gold_groups:
                     group_score = len(pred_groups & gold_groups) / len(gold_groups)
-            score = max(kw_rate, group_score)
+            score = max(group_score, _kw_capped(kw_rate))
             return (score, score, 0.0, 1 if group_score >= 0.8 else 0)
 
         if cap in ("dependency_ordering",):
@@ -685,7 +722,7 @@ class ExamOrchestrator:
                     min_len = min(len(pred_order), len(gold_order))
                     matches = sum(1 for i in range(min_len) if pred_order[i] == gold_order[i])
                     order_score = matches / len(gold_order)
-            score = max(kw_rate, order_score)
+            score = max(order_score, _kw_capped(kw_rate))
             return (score, score, 0.0, 1 if order_score >= 0.8 else 0)
 
         # M类: 上下文管理能力评分
@@ -710,7 +747,7 @@ class ExamOrchestrator:
                 gold_items = set(i.lower() for i in case.expected_hallucinated_items)
                 if gold_items:
                     item_score = len(pred_items & gold_items) / len(gold_items)
-            score = max(correct, kw_rate, item_score)
+            score = max(correct, item_score, _kw_capped(kw_rate))
             return (score, score, 0.0, correct)
 
         if cap in ("context_freshness_awareness",):
@@ -721,7 +758,7 @@ class ExamOrchestrator:
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(correct, kw_rate)
+            score = max(correct, _kw_capped(kw_rate))
             return (score, score, 0.0, correct)
 
         if cap in ("context_window_management",):
@@ -732,7 +769,7 @@ class ExamOrchestrator:
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(correct, kw_rate)
+            score = max(correct, _kw_capped(kw_rate))
             return (score, score, 0.0, correct)
 
         return (0.0, 0.0, 1.0, 0)
