@@ -99,7 +99,7 @@ blueprints:
   version: 0.4.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _alpha-signal-domain/blueprint.md
+  file_path: _alpha_signal_domain/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-023
   name: _domain-governance
@@ -112,7 +112,7 @@ blueprints:
   version: 0.13.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-governance/blueprint.md
+  file_path: _domain_governance/blueprint.md
   construction_progress: partially_implemented
 - module_id: DOM-GOV-CAP-001
   name: capacity-upgrade
@@ -125,7 +125,7 @@ blueprints:
   version: 0.1.0
   generation: 2
   last_updated: '2026-05-16'
-  file_path: _domain-governance/capacity-upgrade/blueprint.md
+  file_path: _domain_governance/capacity_upgrade/blueprint.md
   construction_progress: partially_implemented
 - module_id: GOV-FSTR-001
   name: _restructuring
@@ -151,7 +151,7 @@ blueprints:
   version: 0.4.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _ml-experiment-domain/blueprint.md
+  file_path: _ml_experiment_domain/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-002
   name: runtime-integration
@@ -164,7 +164,7 @@ blueprints:
   version: 6.1.1
   generation: 7
   last_updated: '2026-05-15'
-  file_path: _domain-infra_runtime/runtime-integration/blueprint.md
+  file_path: _domain_infra_runtime/runtime_integration/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-005
   name: governance-automation
@@ -177,7 +177,7 @@ blueprints:
   version: 5.5.0
   generation: 1
   last_updated: '2026-05-15'
-  file_path: _domain-governance/governance-automation/blueprint.md
+  file_path: _domain_governance/governance_automation/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-006
   name: task-system
@@ -190,7 +190,7 @@ blueprints:
   version: 0.9.5
   generation: 1
   last_updated: '2026-05-16'
-  file_path: _domain-infra_runtime/task-system/blueprint.md
+  file_path: _domain_infra_runtime/task_system/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-007
   name: gate-engine
@@ -203,7 +203,7 @@ blueprints:
   version: 0.8.2
   generation: 1
   last_updated: '2026-05-18'
-  file_path: _cross_layer/gate-engine/blueprint.md
+  file_path: _cross_layer/gate_engine/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-008
   name: context-engine
@@ -216,7 +216,7 @@ blueprints:
   version: 1.0.1
   generation: 1
   last_updated: 2026-05-19
-  file_path: _cross_layer/context-engine/blueprint.md
+  file_path: _cross_layer/context_engine/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-009
   name: pipeline
@@ -242,7 +242,7 @@ blueprints:
   version: 0.35.1
   generation: 1
   last_updated: '2026-05-19'
-  file_path: _cross_layer/feedback-loop/blueprint.md
+  file_path: _cross_layer/feedback_loop/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-010-CAPUP
   name: capacity-upgrade
@@ -255,7 +255,7 @@ blueprints:
   version: 0.1.0
   generation: 1
   last_updated: '2026-05-19'
-  file_path: _cross_layer/feedback-loop/capacity-upgrade/blueprint.md
+  file_path: _cross_layer/feedback_loop/capacity_upgrade/blueprint.md
   construction_progress: design_only
 - module_id: MOD-INF-011
   name: vector-memory
@@ -268,7 +268,7 @@ blueprints:
   version: 0.12.1
   generation: 1
   last_updated: '2026-05-18'
-  file_path: _domain-knowledge/vector-memory/blueprint.md
+  file_path: _domain_knowledge/vector_memory/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-012
   name: database
@@ -294,7 +294,7 @@ blueprints:
   version: 2.0.1
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _cross_layer/llm-security/blueprint.md
+  file_path: _cross_layer/llm_security/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-013
   name: mcp-servers
@@ -307,7 +307,7 @@ blueprints:
   version: 0.3.39
   generation: 2
   last_updated: '2026-05-13'
-  file_path: _cross_layer/mcp-servers/blueprint.md
+  file_path: _cross_layer/mcp_servers/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-015
   name: system-telemetry
@@ -320,7 +320,7 @@ blueprints:
   version: 2.0.2
   generation: 3
   last_updated: '2026-05-15'
-  file_path: _domain-infra_ops/system-telemetry/blueprint.md
+  file_path: _domain_infra_ops/system_telemetry/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-016
   name: shared-core
@@ -333,7 +333,7 @@ blueprints:
   version: 0.18.0
   generation: 2
   last_updated: '2026-05-17'
-  file_path: _cross_layer/shared-core/blueprint.md
+  file_path: _cross_layer/shared_core/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-017
   name: code-dedup-engine
@@ -346,7 +346,7 @@ blueprints:
   version: 0.15.0
   generation: 3
   last_updated: '2026-05-14'
-  file_path: _domain-governance/code-dedup-engine/blueprint.md
+  file_path: _domain_governance/code_dedup_engine/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-018
   name: agent-rbac
@@ -359,7 +359,7 @@ blueprints:
   version: 1.1.0
   generation: 3
   last_updated: '2026-05-14'
-  file_path: _domain-autonomy_core/agent-rbac/blueprint.md
+  file_path: _domain_autonomy_core/agent_rbac/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-019
   name: agent-spec
@@ -372,7 +372,7 @@ blueprints:
   version: 0.19.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-autonomy_core/agent-spec/blueprint.md
+  file_path: _domain_autonomy_core/agent_spec/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-020
   name: audit-trail
@@ -385,7 +385,7 @@ blueprints:
   version: 2.1.0
   generation: 9
   last_updated: '2026-05-15'
-  file_path: _domain-governance/audit-trail/blueprint.md
+  file_path: _domain_governance/audit_trail/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-021
   name: rollback-system
@@ -398,7 +398,7 @@ blueprints:
   version: 9.0.0
   generation: 7
   last_updated: '2026-05-15'
-  file_path: _domain-autonomy_core/rollback-system/blueprint.md
+  file_path: _domain_autonomy_core/rollback_system/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-022
   name: escalation-protocol
@@ -411,7 +411,7 @@ blueprints:
   version: 2.1.0
   generation: 3
   last_updated: '2026-05-15'
-  file_path: _domain-autonomy_perm/escalation-protocol/blueprint.md
+  file_path: _domain_autonomy_perm/escalation_protocol/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-023
   name: drift-detector
@@ -424,7 +424,7 @@ blueprints:
   version: 3.1.0
   generation: 4
   last_updated: '2026-05-15'
-  file_path: _domain-governance/drift-detector/blueprint.md
+  file_path: _domain_governance/drift_detector/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-024
   name: budget-enforcer
@@ -437,7 +437,7 @@ blueprints:
   version: 0.7.0
   generation: 7
   last_updated: 2026-05-05
-  file_path: _domain-autonomy_perm/budget-enforcer/blueprint.md
+  file_path: _domain_autonomy_perm/budget_enforcer/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-001
   name: capacity-assurance
@@ -450,7 +450,7 @@ blueprints:
   version: 3.1.0
   generation: 3
   last_updated: '2026-05-15'
-  file_path: _domain-infra_ops/capacity-assurance/blueprint.md
+  file_path: _domain_infra_ops/capacity_assurance/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-025
   name: a2a-protocol
@@ -463,7 +463,7 @@ blueprints:
   version: 0.12.0
   generation: 3
   last_updated: '2026-05-14'
-  file_path: _domain-infra_ops/a2a-protocol/blueprint.md
+  file_path: _domain_infra_ops/a2a_protocol/blueprint.md
   construction_progress: scaffold
 - module_id: MOD-INF-026
   name: asset-inventory
@@ -476,7 +476,7 @@ blueprints:
   version: 3.1.0
   generation: 3
   last_updated: '2026-05-15'
-  file_path: _domain-infra_ops/asset-inventory/blueprint.md
+  file_path: _domain_infra_ops/asset_inventory/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-027
   name: audit-orchestrator
@@ -489,7 +489,7 @@ blueprints:
   version: 6.1.0
   generation: 6
   last_updated: '2026-05-14'
-  file_path: _cross_layer/audit-orchestrator/blueprint.md
+  file_path: _cross_layer/audit_orchestrator/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-028
   name: semantic-auditor
@@ -502,7 +502,7 @@ blueprints:
   version: 6.1.0
   generation: 5
   last_updated: '2026-05-14'
-  file_path: _cross_layer/semantic-auditor/blueprint.md
+  file_path: _cross_layer/semantic_auditor/blueprint.md
   construction_progress: mostly_implemented
 - module_id: MOD-INF-029
   name: orphan-judge
@@ -515,7 +515,7 @@ blueprints:
   version: 2.1.0
   generation: 3
   last_updated: '2026-05-14'
-  file_path: _cross_layer/orphan-judge/blueprint.md
+  file_path: _cross_layer/orphan_judge/blueprint.md
   construction_progress: scaffold
 - module_id: MOD-INF-035
   name: auto-runtime-core
@@ -528,7 +528,7 @@ blueprints:
   version: 6.0.0
   generation: 2
   last_updated: '2026-05-14'
-  file_path: _cross_layer/auto-runtime-core/blueprint.md
+  file_path: _cross_layer/auto_runtime_core/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-030
   name: red-blue-validator
@@ -541,7 +541,7 @@ blueprints:
   version: 2.2.0
   generation: 17
   last_updated: '2026-05-23'
-  file_path: _cross_layer/red-blue-validator/blueprint.md
+  file_path: _cross_layer/red_blue_validator/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-031
   name: auto-fix-engine
@@ -554,7 +554,7 @@ blueprints:
   version: 5.1.0
   generation: 5
   last_updated: '2026-05-14'
-  file_path: _cross_layer/auto-fix-engine/blueprint.md
+  file_path: _cross_layer/auto_fix_engine/blueprint.md
   construction_progress: design_only
 - module_id: MOD-INF-032
   name: resource-optimization-engine
@@ -567,7 +567,7 @@ blueprints:
   version: 5.4.0
   generation: 2
   last_updated: '2026-05-22'
-  file_path: _cross_layer/resource-optimization-engine/blueprint.md
+  file_path: _cross_layer/resource_optimization_engine/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-033
   name: behavioral-auditor
@@ -580,7 +580,7 @@ blueprints:
   version: 3.3.0
   generation: 3
   last_updated: '2026-05-14'
-  file_path: _cross_layer/behavioral-auditor/blueprint.md
+  file_path: _cross_layer/behavioral_auditor/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-034
   name: model-profiler
@@ -593,7 +593,7 @@ blueprints:
   version: 2.2.0
   generation: 2
   last_updated: '2026-05-23'
-  file_path: _cross_layer/model-profiler/blueprint.md
+  file_path: _cross_layer/model_profiler/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-036
   name: model-capability-exam
@@ -606,7 +606,7 @@ blueprints:
   version: 2.2.0
   generation: 2
   last_updated: '2026-05-23'
-  file_path: _cross_layer/model-capability-exam/blueprint.md
+  file_path: _cross_layer/model_capability_exam/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-037
   name: registry-governance
@@ -619,7 +619,7 @@ blueprints:
   version: 0.2.0
   generation: 1
   last_updated: '2026-05-16'
-  file_path: _domain-governance/registry-governance/blueprint.md
+  file_path: _domain_governance/registry_governance/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-038
   name: state-machine-engine
@@ -632,7 +632,7 @@ blueprints:
   version: 0.1.0
   generation: 1
   last_updated: '2026-05-16'
-  file_path: _domain-infra_runtime/state-machine-engine/blueprint.md
+  file_path: _domain_infra_runtime/state_machine_engine/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-039
   name: agent-orchestrator
@@ -645,7 +645,7 @@ blueprints:
   version: 1.0.0
   generation: 1
   last_updated: '2026-05-19'
-  file_path: _cross_layer/agent-orchestrator/blueprint.md
+  file_path: _cross_layer/agent_orchestrator/blueprint.md
   construction_progress: completed
   module_id: MOD-INF-042
   name: local-model
@@ -658,7 +658,7 @@ blueprints:
   version: 0.1.0
   generation: 1
   last_updated: '2026-05-19'
-  file_path: _domain-integration/local-model/blueprint.md
+  file_path: _domain_integration/local_model/blueprint.md
   construction_progress: scaffold
 - module_id: MOD-KB-001
   name: knowledge-base
@@ -671,7 +671,7 @@ blueprints:
   version: 0.12.1
   generation: 1
   last_updated: '2026-05-15'
-  file_path: _domain-knowledge/knowledge-base/blueprint.md
+  file_path: _domain_knowledge/knowledge_base/blueprint.md
   construction_progress: completed
 - module_id: MOD-L00-001
   name: datasource-core
@@ -684,7 +684,7 @@ blueprints:
   version: 3.0.0
   generation: 3
   last_updated: '2026-05-15'
-  file_path: _domain-data/datasource-core/blueprint.md
+  file_path: _domain_data/datasource_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L02-001
   name: alpha-factor-core
@@ -697,7 +697,7 @@ blueprints:
   version: 3.0.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-factor/alpha-factor-core/blueprint.md
+  file_path: _domain_factor/alpha_factor_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L03-001
   name: signal-generation-core
@@ -710,7 +710,7 @@ blueprints:
   version: 2.2.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-signal/signal-generation-core/blueprint.md
+  file_path: _domain_signal/signal_generation_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L04-001
   name: risk-management-core
@@ -723,7 +723,7 @@ blueprints:
   version: 2.2.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-risk/risk-management-core/blueprint.md
+  file_path: _domain_risk/risk_management_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L05-001
   name: portfolio-core
@@ -736,7 +736,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-pf_core/portfolio-core/blueprint.md
+  file_path: _domain_pf_core/portfolio_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L06-001
   name: execution-core
@@ -749,7 +749,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-ex_core/execution-core/blueprint.md
+  file_path: _domain_ex_core/execution_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L07-001
   name: analytics-core
@@ -762,7 +762,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-reporting/analytics-core/blueprint.md
+  file_path: _domain_reporting/analytics_core/blueprint.md
   construction_progress: not_started
 - module_id: MOD-L08-001
   name: hmi-core
@@ -775,7 +775,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-frontend/hmi-core/blueprint.md
+  file_path: _domain_frontend/hmi_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L09-001
   name: research-core
@@ -788,7 +788,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-research/research-core/blueprint.md
+  file_path: _domain_research/research_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L10-001
   name: compliance-core
@@ -801,7 +801,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-compliance/compliance-core/blueprint.md
+  file_path: _domain_compliance/compliance_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L11-001
   name: ml-core
@@ -814,7 +814,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-ml_train/ml-core/blueprint.md
+  file_path: _domain_ml_train/ml_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L13-001
   name: experiment-core
@@ -827,7 +827,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _domain-simulation/experiment-core/blueprint.md
+  file_path: _domain_simulation/experiment_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-MASTER-001
   name: _master-blueprint
@@ -840,7 +840,7 @@ blueprints:
   version: 1.3.1
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _master-blueprint/blueprint.md
+  file_path: _master_blueprint/blueprint.md
   construction_progress: partially_implemented
 - module_id: SYS-MASTER-001
   name: _sys-master
@@ -853,7 +853,7 @@ blueprints:
   version: 0.17.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: _sys-master/blueprint.md
+  file_path: _sys_master/blueprint.md
   construction_progress: completed
 summary:
   total: 60
