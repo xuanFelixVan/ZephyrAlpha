@@ -290,6 +290,7 @@ EX_CF_001 = ExamTestCase(
     expected_structure_keys=["fixes"],
     expected_old_str="a - b",
     expected_new_str="a + b",
+    expected_contains=["a + b", "return"],
 )
 
 EX_CF_002 = ExamTestCase(
@@ -306,6 +307,7 @@ EX_CF_002 = ExamTestCase(
     expected_structure_keys=["fixes"],
     expected_old_str="if user_input == stored_hash",
     expected_new_str="if hash(user_input) == stored_hash",
+    expected_contains=["hash", "user_input"],
 )
 
 EX_CF_003 = ExamTestCase(

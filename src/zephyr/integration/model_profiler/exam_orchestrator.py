@@ -262,20 +262,27 @@ class ExamOrchestrator:
 
             best_ed = 1.0
             em = 0
+            new_str_score = 0.0
             for entry in entries:
                 old_s = entry.get("old_str", "")
+                new_s = entry.get("new_str", "")
                 ed_val = _normalized_edit_distance(old_s, case.expected_old_str)
                 if ed_val < best_ed:
                     best_ed = ed_val
-                if old_s.strip() == case.expected_old_str.strip():
+                # FIX-3: 改精确匹配为子串包含（模型输出通常包含更多上下文）
+                if case.expected_old_str.strip() and case.expected_old_str.strip() in old_s.strip():
                     em = 1
+                # FIX-1: 增加 new_str 评分（之前只评 old_str 不评 new_str）
+                if case.expected_new_str and new_s:
+                    new_ed = _normalized_edit_distance(new_s, case.expected_new_str)
+                    new_str_score = max(new_str_score, 1 - new_ed)
 
             # 也对 expected_contains 做关键词匹配
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw in text)
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            recall_rate = max(1 - best_ed, kw_rate)
-            precision_rate = max(em, kw_rate)
+            recall_rate = max(1 - best_ed, kw_rate, new_str_score)
+            precision_rate = max(em, kw_rate, new_str_score)
 
             return (precision_rate, recall_rate, best_ed, em)
 
