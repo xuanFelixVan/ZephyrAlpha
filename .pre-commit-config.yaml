@@ -71,9 +71,11 @@ repos:
     rev: v4.6.0
     hooks:
       - id: trailing-whitespace
-        name: "修剪行尾空格"
+        name: "修剪行尾空格（manual—避免pre-commit stash冲突）"
+        stages: [manual]
       - id: end-of-file-fixer
-        name: "确保文件末尾换行"
+        name: "确保文件末尾换行（manual—避免pre-commit stash冲突）"
+        stages: [manual]
       - id: check-yaml
         name: "YAML 语法检查"
         args: ["--unsafe"]
@@ -101,8 +103,8 @@ repos:
         types: [python]
         require_serial: true
       - id: ruff-format
-        name: "Ruff Format"
-        entry: python -m ruff format --no-cache
+        name: "Ruff Format Check (只检查不修复—避免pre-commit stash冲突)"
+        entry: python -m ruff format --check --no-cache
         language: system
         types: [python]
         require_serial: true
@@ -528,7 +530,7 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
-        files: "^(src/zephyr/mcp/tool-contracts\\.yaml|src/zephyr/mcp/.*\\.py)$"
+        files: "^(src/zephyr/integration/mcp/tool_contracts\\.yaml|src/zephyr/integration/mcp/.*\\.py)$"
         description: "tool_contracts.yaml ↔ 代码 register_tool 一致性校验（mod_inf_013 §9 R3 契约漂移缓解）"
 
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──

@@ -660,7 +660,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | Feedback Loop | MOD-INF-010 | 95% | 系统自调节闭环 | `src/zephyr/feedback-loop/` | 已实现 |
 | Vector Memory | MOD-INF-011 | 95% | 向量化存储检索 | `src/zephyr/vector-memory/` | 已实现 |
 | Database | MOD-INF-012 | 95% | SQLite+DuckDB双引擎元数据 | `src/zephyr/db/` | 已实现 |
-| MCP Servers | MOD-INF-013 | 95% | MCP协议服务端 | `src/zephyr/mcp/` | 已实现 |
+| MCP Servers | MOD-INF-013 | 95% | MCP协议服务端 | `src/zephyr/integration/mcp/` | 已实现 |
 | LLM Security | MOD-INF-014 | 95% | L0-L8九层纵深防御 | `src/zephyr/llm-security/` | 部分实现 |
 | System Telemetry | MOD-INF-015 | 95% | 全系统遥测采集 | `src/zephyr/system-telemetry/` | 已实现 |
 | Shared Core | MOD-INF-016 | **100%** | 跨层共享基础设施 | `src/zephyr/shared/` | 已实现 |

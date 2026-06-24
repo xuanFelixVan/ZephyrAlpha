@@ -12,7 +12,7 @@ modules:
   - id: mcp_servers
     module_id: MOD-INF-013
     name: MCP Protocol Servers
-    submodule_path: src/zephyr/mcp/
+    submodule_path: src/zephyr/integration/mcp/
     status: implemented
     priority: P1
     runtime_plane: warm

@@ -163,7 +163,7 @@ codification_at: "2026-05-15"
 | **Database** (db) | CT-FLE-DB, CT-ORC-DB, CT-DLQ, CT-BACKUP | — | ~700 | `src/zephyr/db/` | 部分实现 |
 | **LLM Security** (LSG) | CT-CE-LSG, CT-SECRETS | — | ~500 | `src/zephyr/llm-security/` | 部分实现 |
 | **System Telemetry** | CT-TELE-FLE, CT-WATCHDOG | — | ~400 | `src/zephyr/system-telemetry/` | 部分实现 |
-| **MCP Servers** | CT-MCP-* | — | ~300 | `src/zephyr/mcp/` | 部分实现 |
+| **MCP Servers** | CT-MCP-* | — | ~300 | `src/zephyr/integration/mcp/` | 部分实现 |
 | **Agent RBAC** | G-CT-001~008 | — | ~800 | `src/zephyr/agent-rbac/` | 部分实现 |
 | **Audit Trail** | G-CT-002 | — | ~400 | `src/zephyr/audit-trail/` | 部分实现 |
 | **Rollback System** | G-CT-003, G-CT-005 | — | ~400 | `src/zephyr/rollback/` | 部分实现 |
@@ -198,7 +198,7 @@ codification_at: "2026-05-15"
 | **Feedback Loop Engine (FLE)** | `src/zephyr/feedback-loop/` | MOD-INF-010 feedback-loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
 | **Vector Memory Service (VMS)** | `src/zephyr/vector-memory/` | MOD-INF-011 vector-memory蓝图 | ChromaDB 8 Collection 统一向量持久化 |
 | **Database (db)** | `src/zephyr/db/` | MOD-INF-012 database蓝图 | SQLite元数据 + ATM原子事务管理器 |
-| **MCP Servers** | `src/zephyr/mcp/` | MOD-INF-013 mcp-servers蓝图 | stdio协议——向外部IDE/Agent暴露系统能力 |
+| **MCP Servers** | `src/zephyr/integration/mcp/` | MOD-INF-013 mcp_servers蓝图 | stdio协议——向外部IDE/Agent暴露系统能力 |
 | **LLM Security Gateway (LSG)** | `src/zephyr/llm-security/` | MOD-INF-014 llm-security蓝图 | 四层安全防御——输入/输出/上下文/工具调用校验 |
 | **System Telemetry (l12)** | `src/zephyr/system-telemetry/` | MOD-INF-015 telemetry蓝图 | metrics/logs/traces/ai_behavior 全系统可观测性 |
 
