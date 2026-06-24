@@ -136,6 +136,30 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "Do NOT include reasoning or thinking. Output ONLY the JSON."
         '\nOutput JSON: {"dead_sections": [{"old_str": "exact dead code", "reason": "why it\'s dead"}]}'
     ),
+    "cross_file_analysis": (
+        "You are a cross-file dependency analyzer. Given multiple source files and a proposed change, "
+        "determine which files need to be modified. Consider imports, function calls, class usage, "
+        "and variable references. List every affected file with the reason."
+        '\nOutput JSON: {"affected_files": [{"file": "filename.py", "reason": "why it needs changes"}]}'
+    ),
+    "architecture_design": (
+        "You are a software architect. Given a requirement, design the file structure and dependencies. "
+        "List each file with its responsibility and which other files it depends on. "
+        "Be specific about module separation and dependency direction."
+        '\nOutput JSON: {"files": [{"name": "filename.py", "responsibility": "what it does", "depends_on": ["other.py"]}], "dependencies": [{"from": "a.py", "to": "b.py", "type": "import"}]}'
+    ),
+    "cross_file_refactor": (
+        "You are a cross-file refactoring specialist. Given multiple source files and a rename operation, "
+        "output the exact changes needed for EACH file. Include old_str and new_str for every modification. "
+        "Do NOT miss any call site."
+        '\nOutput JSON: {"changes": [{"file": "filename.py", "old_str": "exact source", "new_str": "replacement", "reason": "brief"}]}'
+    ),
+    "dependency_trace": (
+        "You are a dependency chain tracer. Given multiple source files and a starting function, "
+        "trace the complete call chain through all files. List every function call in order, "
+        "including the file where each function is defined."
+        '\nOutput JSON: {"call_chain": [{"step": 1, "function": "func_name", "file": "filename.py", "calls": "next_func"}]}'
+    ),
 }
 
 PRICING_RMB: dict[str, dict[str, float]] = {

@@ -62,6 +62,11 @@ class ExamTestCase:
     expected_needs_human: bool = False
     expected_contains: list[str] = field(default_factory=list)
 
+    # B类: 多文件联动能力
+    input_files: dict[str, str] = field(default_factory=dict)
+    expected_affected_files: list[str] = field(default_factory=list)
+    expected_call_chain: list[str] = field(default_factory=list)
+
 
 # ══════════════════════════════════════════════════════════
 # task_classification (3 题)
@@ -467,7 +472,182 @@ EX_DC_003 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
-# 全集 — 27 题
+# B类: 多文件联动能力 (12 题)
+# ══════════════════════════════════════════════════════════
+
+# cross_file_analysis (3 题) — 跨文件依赖分析
+EX_CFA_001 = ExamTestCase(
+    case_id="EX-CFA-001",
+    capability="cross_file_analysis",
+    difficulty=Difficulty.EASY,
+    prompt="如果将 calc.py 的 add 函数签名改为 add(a, b, c=0)，哪些文件需要修改？",
+    expected_structure_keys=["affected_files"],
+    input_files={
+        "calc.py": "def add(a, b):\n    return a + b\n",
+        "main.py": "from calc import add\nresult = add(1, 2)\nprint(result)\n",
+        "test_calc.py": "from calc import add\ndef test_add():\n    assert add(1, 2) == 3\n",
+    },
+    expected_affected_files=["main.py", "test_calc.py"],
+    expected_contains=["main.py", "test_calc.py"],
+)
+
+EX_CFA_002 = ExamTestCase(
+    case_id="EX-CFA-002",
+    capability="cross_file_analysis",
+    difficulty=Difficulty.MEDIUM,
+    prompt="如果从 User 类中删除 email 字段，哪些文件需要修改？",
+    expected_structure_keys=["affected_files"],
+    input_files={
+        "models.py": "class User:\n    def __init__(self, name, email):\n        self.name = name\n        self.email = email\n",
+        "api.py": "from models import User\ndef create_user(name, email):\n    return User(name, email)\n",
+        "serializer.py": "from models import User\ndef serialize(user):\n    return {'name': user.name, 'email': user.email}\n",
+        "tests.py": "from models import User\ndef test_user():\n    u = User('test', 'test@test.com')\n    assert u.email == 'test@test.com'\n",
+    },
+    expected_affected_files=["api.py", "serializer.py", "tests.py"],
+    expected_contains=["api.py", "serializer.py", "tests.py"],
+)
+
+EX_CFA_003 = ExamTestCase(
+    case_id="EX-CFA-003",
+    capability="cross_file_analysis",
+    difficulty=Difficulty.HARD,
+    prompt="如果将 config.py 的 DATABASE_URL 改名为 DB_CONNECTION_STRING，哪些文件需要修改？",
+    expected_structure_keys=["affected_files"],
+    input_files={
+        "config.py": "DATABASE_URL = 'localhost:5432'\nCACHE_URL = 'localhost:6379'\n",
+        "db.py": "from config import DATABASE_URL\nclass Database:\n    def __init__(self):\n        self.url = DATABASE_URL\n",
+        "cache.py": "from config import CACHE_URL\nclass Cache:\n    def __init__(self):\n        self.url = CACHE_URL\n",
+        "api.py": "from db import Database\nfrom cache import Cache\ndb = Database()\ncache = Cache()\n",
+        "utils.py": "from config import DATABASE_URL\ndef get_db_url():\n    return DATABASE_URL\n",
+    },
+    expected_affected_files=["db.py", "utils.py"],
+    expected_contains=["db.py", "utils.py"],
+)
+
+# architecture_design (3 题) — 架构方案设计
+EX_AD_001 = ExamTestCase(
+    case_id="EX-AD-001",
+    capability="architecture_design",
+    difficulty=Difficulty.EASY,
+    prompt="设计一个用户注册功能，需要：1.用户输入验证 2.数据库存储 3.发送欢迎邮件。请设计文件结构和依赖关系。",
+    expected_structure_keys=["files", "dependencies"],
+    expected_contains=["validate", "database", "email", "user"],
+)
+
+EX_AD_002 = ExamTestCase(
+    case_id="EX-AD-002",
+    capability="architecture_design",
+    difficulty=Difficulty.MEDIUM,
+    prompt="设计一个API网关，需要：1.路由转发 2.认证中间件 3.限流 4.日志记录。请设计文件结构和依赖关系。",
+    expected_structure_keys=["files", "dependencies"],
+    expected_contains=["router", "auth", "rate_limit", "logger", "middleware"],
+)
+
+EX_AD_003 = ExamTestCase(
+    case_id="EX-AD-003",
+    capability="architecture_design",
+    difficulty=Difficulty.HARD,
+    prompt="设计一个事件驱动架构，需要：1.事件发布 2.事件订阅 3.事件存储 4.事件回放。请设计文件结构和依赖关系。",
+    expected_structure_keys=["files", "dependencies"],
+    expected_contains=["publisher", "subscriber", "event_store", "replay", "event"],
+)
+
+# cross_file_refactor (3 题) — 跨文件重构
+EX_CFR_001 = ExamTestCase(
+    case_id="EX-CFR-001",
+    capability="cross_file_refactor",
+    difficulty=Difficulty.EASY,
+    prompt="将 calc.py 的 add 函数重命名为 sum_values，更新所有调用方。输出每个文件需要的修改。",
+    expected_structure_keys=["changes"],
+    input_files={
+        "calc.py": "def add(a, b):\n    return a + b\n",
+        "main.py": "from calc import add\nresult = add(1, 2)\n",
+        "test.py": "from calc import add\nassert add(1, 2) == 3\n",
+    },
+    expected_contains=["sum_values", "calc.py", "main.py", "test.py"],
+)
+
+EX_CFR_002 = ExamTestCase(
+    case_id="EX-CFR-002",
+    capability="cross_file_refactor",
+    difficulty=Difficulty.MEDIUM,
+    prompt="将 User 类重命名为 Account，更新所有文件。输出每个文件需要的修改。",
+    expected_structure_keys=["changes"],
+    input_files={
+        "models.py": "class User:\n    def __init__(self, name):\n        self.name = name\n",
+        "api.py": "from models import User\ndef create(name):\n    return User(name)\n",
+        "serializer.py": "from models import User\ndef serialize(u):\n    return u.name\n",
+    },
+    expected_contains=["Account", "models.py", "api.py", "serializer.py"],
+)
+
+EX_CFR_003 = ExamTestCase(
+    case_id="EX-CFR-003",
+    capability="cross_file_refactor",
+    difficulty=Difficulty.HARD,
+    prompt="将 Database.query 方法重命名为 execute，更新所有调用链。输出每个文件需要的修改。",
+    expected_structure_keys=["changes"],
+    input_files={
+        "db.py": "class Database:\n    def query(self, sql):\n        pass\n",
+        "repo.py": "from db import Database\nclass UserRepo:\n    def __init__(self):\n        self.db = Database()\n    def find(self, id):\n        return self.db.query(f'SELECT * FROM users WHERE id={id}')\n",
+        "service.py": "from repo import UserRepo\nclass UserService:\n    def __init__(self):\n        self.repo = UserRepo()\n    def get_user(self, id):\n        return self.repo.find(id)\n",
+        "api.py": "from service import UserService\nsvc = UserService()\nuser = svc.get_user(1)\n",
+    },
+    expected_contains=["execute", "db.py", "repo.py"],
+)
+
+# dependency_trace (3 题) — 依赖链追踪
+EX_DT_001 = ExamTestCase(
+    case_id="EX-DT-001",
+    capability="dependency_trace",
+    difficulty=Difficulty.EASY,
+    prompt="追踪 func_a 的完整调用链，列出所有涉及的函数和文件。",
+    expected_structure_keys=["call_chain"],
+    input_files={
+        "a.py": "from b import func_b\ndef func_a():\n    return func_b()\n",
+        "b.py": "from c import func_c\ndef func_b():\n    return func_c()\n",
+        "c.py": "def func_c():\n    return 'result'\n",
+    },
+    expected_call_chain=["func_a", "func_b", "func_c"],
+    expected_contains=["func_a", "func_b", "func_c", "a.py", "b.py", "c.py"],
+)
+
+EX_DT_002 = ExamTestCase(
+    case_id="EX-DT-002",
+    capability="dependency_trace",
+    difficulty=Difficulty.MEDIUM,
+    prompt="追踪 handler() 的完整调用链，从API层到数据库层，列出所有涉及的函数和文件。",
+    expected_structure_keys=["call_chain"],
+    input_files={
+        "api.py": "from service import UserService\ndef handler():\n    svc = UserService()\n    return svc.get_user(1)\n",
+        "service.py": "from repo import UserRepo\nclass UserService:\n    def get_user(self, id):\n        return UserRepo().find(id)\n",
+        "repo.py": "from db import Database\nclass UserRepo:\n    def find(self, id):\n        return Database().query(f'SELECT * FROM users WHERE id={id}')\n",
+        "db.py": "class Database:\n    def query(self, sql):\n        return sql\n",
+    },
+    expected_call_chain=["handler", "get_user", "find", "query"],
+    expected_contains=["handler", "get_user", "find", "query", "api.py", "service.py", "repo.py", "db.py"],
+)
+
+EX_DT_003 = ExamTestCase(
+    case_id="EX-DT-003",
+    capability="dependency_trace",
+    difficulty=Difficulty.HARD,
+    prompt="追踪 main() 的完整调用链，包括所有分支，列出所有涉及的函数和文件。",
+    expected_structure_keys=["call_chain"],
+    input_files={
+        "main.py": "from controller import Controller\ndef main():\n    Controller().run()\n",
+        "controller.py": "from service import ServiceA, ServiceB\nclass Controller:\n    def run(self):\n        a = ServiceA().process()\n        b = ServiceB().process()\n        return a + b\n",
+        "service.py": "from repo import Repo\nclass ServiceA:\n    def process(self):\n        return Repo().fetch_a()\nclass ServiceB:\n    def process(self):\n        return Repo().fetch_b()\n",
+        "repo.py": "from db import Database\nclass Repo:\n    def fetch_a(self):\n        return Database().query('SELECT a')\n    def fetch_b(self):\n        return Database().query('SELECT b')\n",
+        "db.py": "class Database:\n    def query(self, sql):\n        return sql\n",
+    },
+    expected_call_chain=["main", "run", "process", "fetch_a", "fetch_b", "query"],
+    expected_contains=["main", "run", "process", "fetch_a", "fetch_b", "query"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# 全集 — 39 题
 # ══════════════════════════════════════════════════════════
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
@@ -507,6 +687,22 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_DC_001,
     EX_DC_002,
     EX_DC_003,
+    # cross_file_analysis
+    EX_CFA_001,
+    EX_CFA_002,
+    EX_CFA_003,
+    # architecture_design
+    EX_AD_001,
+    EX_AD_002,
+    EX_AD_003,
+    # cross_file_refactor
+    EX_CFR_001,
+    EX_CFR_002,
+    EX_CFR_003,
+    # dependency_trace
+    EX_DT_001,
+    EX_DT_002,
+    EX_DT_003,
 ]
 
 CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}

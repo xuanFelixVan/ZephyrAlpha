@@ -53,6 +53,11 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "refactor": 0.55,
     "code_generate": 0.55,
     "dead_code_removal": 0.55,
+    # B类: 多文件联动能力
+    "cross_file_analysis": 0.55,
+    "architecture_design": 0.50,
+    "cross_file_refactor": 0.55,
+    "dependency_trace": 0.55,
 }
 
 

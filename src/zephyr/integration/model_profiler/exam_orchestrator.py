@@ -294,6 +294,73 @@ class ExamOrchestrator:
             rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
             return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
 
+        # B类: 多文件联动能力评分
+        if cap in ("cross_file_analysis",):
+            affected = result.get("affected_files", [])
+            if not affected:
+                return (0.0, 0.0, 1.0, 0)
+            pred_files = set()
+            for f in affected:
+                if isinstance(f, dict):
+                    pred_files.add(str(f.get("file", "")).lower())
+                elif isinstance(f, str):
+                    pred_files.add(f.lower())
+            gold_files = set(f.lower() for f in case.expected_affected_files)
+            if not gold_files:
+                text = json.dumps(result)
+                kw_hits = sum(1 for kw in case.expected_contains if kw in text)
+                rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+                return (rate, rate, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+            tp = len(pred_files & gold_files)
+            p = tp / len(pred_files) if pred_files else 0.0
+            r = tp / len(gold_files) if gold_files else 0.0
+            em = 1 if pred_files == gold_files else 0
+            return (p, r, 0.0, em)
+
+        if cap in ("architecture_design",):
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            return (rate, rate, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+
+        if cap in ("cross_file_refactor",):
+            changes = result.get("changes", [])
+            if not changes:
+                return (0.0, 0.0, 1.0, 0)
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw in text)
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            pred_files = set()
+            for c in changes:
+                if isinstance(c, dict):
+                    pred_files.add(str(c.get("file", "")).lower())
+            gold_files = set(f.lower() for f in case.input_files.keys())
+            file_coverage = len(pred_files & gold_files) / len(gold_files) if gold_files else 0.0
+            score = max(kw_rate, file_coverage)
+            return (score, score, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+
+        if cap in ("dependency_trace",):
+            chain = result.get("call_chain", [])
+            if not chain:
+                return (0.0, 0.0, 1.0, 0)
+            pred_funcs = set()
+            for step in chain:
+                if isinstance(step, dict):
+                    pred_funcs.add(str(step.get("function", "")).lower())
+                elif isinstance(step, str):
+                    pred_funcs.add(step.lower())
+            gold_funcs = set(f.lower() for f in case.expected_call_chain)
+            if not gold_funcs:
+                text = json.dumps(result)
+                kw_hits = sum(1 for kw in case.expected_contains if kw in text)
+                rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+                return (rate, rate, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+            tp = len(pred_funcs & gold_funcs)
+            p = tp / len(pred_funcs) if pred_funcs else 0.0
+            r = tp / len(gold_funcs) if gold_funcs else 0.0
+            em = 1 if pred_funcs == gold_funcs else 0
+            return (p, r, 0.0, em)
+
         return (0.0, 0.0, 1.0, 0)
 
     # ── 速轴 ────────────────────────────────────────────
