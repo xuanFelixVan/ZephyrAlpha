@@ -60,12 +60,12 @@ FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "README.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "ARCHITECTURE_LOCK.yaml",
-    "SCOPE.yaml",
+    "architecture_lock.yaml",
+    "scope.yaml",
     "LICENSE",
     "PKG_INFO",
     "SOURCES.txt",
-    "SHARED-QUICKREF.yml",
+    "shared_quickref.yaml",
 ]
 
 TECH_VERSION_TOKENS: list[str] = [
@@ -423,7 +423,7 @@ _DIR_EXEMPT_NAMES: set[str] = {
 }
 _DIR_MODULE_ID_RE = re.compile(r"^[A-Z]+-[A-Z]+[0-9]*-\d+(-[A-Z]+)?$|^[A-Z]+-\d+$|^[A-Z]+-[A-Z]+-\d+$")
 _DIR_ROOT_KEBAB_EXEMPT: set[str] = {
-    "session-logs",
+    "session_logs",
 }
 _DIR_KEBAB_PATH_PREFIXES: list[str] = [
     "src/zephyr/",
@@ -609,12 +609,12 @@ _DATA_FILE_EXEMPT_NAMES: set[str] = {
     "README.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "ARCHITECTURE_LOCK.yaml",
-    "SCOPE.yaml",
+    "architecture_lock.yaml",
+    "scope.yaml",
     "LICENSE",
     "PKG-INFO",
     "SOURCES.txt",
-    "SHARED-QUICKREF.yml",
+    "shared_quickref.yaml",
     ".pre_commit-config.yaml",
     "docker-compose.yml",
     "docker-compose.yaml",
@@ -649,7 +649,7 @@ def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
     for prefix in (".trae/", "config/", ".github/", "models/", "logs/"):
         if prefix in rel:
             return []
-    # 知识条目 ke-* / KE-* 和 session-logs 豁免（不区分大小写）
+    # 知识条目 ke-* / KE-* 和 session_logs 豁免（不区分大小写）
     lower_name = name.lower()
     if lower_name.startswith("ke-") or lower_name.startswith("session-"):
         return []
@@ -828,11 +828,11 @@ def _is_path_exempt(filepath: str) -> bool:
     if SESSION_LOG_PATTERN.match(name):
         return True
     rel = filepath.replace("\\", "/").lower()
-    if "session-logs/" in rel:
+    if "session_logs/" in rel:
         return True
     if "session_logs/" in rel:
         return True
-    if "docs/19_development_workspace/session-logs/" in rel:
+    if "docs/19_development_workspace/session_logs/" in rel:
         return True
     if "_archive/" in rel:
         return True

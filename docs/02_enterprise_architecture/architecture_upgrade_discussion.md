@@ -652,7 +652,7 @@ STEP 4 废墟影响检查 → 删除后有无代码引用此路径？
 | P1 | `docs/03_modules/` 所有蓝图 | 蓝图文档 |
 | P2 | `data/databases/` | 全部数据库 |
 
-**可跳过备份**：`__pycache__/` / `.pytest_cache/` / `*.pyc` / `data/vector_storage/chroma_db/` / `.ailocks/` / `.aidrafts/` / `session-logs/`
+**可跳过备份**：`__pycache__/` / `.pytest_cache/` / `*.pyc` / `data/vector_storage/chroma_db/` / `.ailocks/` / `.aidrafts/` / `session_logs/`
 
 **删除后废墟验证（三层）**：
 

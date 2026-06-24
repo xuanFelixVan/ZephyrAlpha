@@ -22,7 +22,7 @@
 
 功能
 ----
-1. 全项目文档扫描：AGENTS.md, KBG/, blueprints/, session-logs/, project_rules.md
+1. 全项目文档扫描：AGENTS.md, KBG/, blueprints/, session_logs/, project_rules.md
 2. 按标题分段 + 碎片隔离（PII/hash/时间 → 无向脱敏）
 3. 知识信号识别（排除目录/导航/样板文本）
 4. 管道注入：G1→G2→G3→G4→G5 全链路
@@ -335,8 +335,8 @@ def discover_document_sources(
             "docs/02_enterprise_architecture/**/KBG-*.md",
             "docs/04_decisions/**/*.md",
             "docs/03_modules/**/*.md",
-            "session-logs/**/*.yaml",
-            "session-logs/**/*.md",
+            "session_logs/**/*.yaml",
+            "session_logs/**/*.md",
             "AGENTS.md",
             ".trae/rules/*.md",
         ]

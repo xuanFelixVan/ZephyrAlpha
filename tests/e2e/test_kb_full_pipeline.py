@@ -91,7 +91,7 @@ class TestBootstrapColdStart:
         assert "adr_decision" in classify_category(Path("docs/ADR/adr-0001.md"))
         assert "module_blueprint" in classify_category(Path("docs/03_modules/foo/blueprint.md"))
         assert "governance_rule" in classify_category(Path(".trae/rules/project_rules.md"))
-        assert "session_log" in classify_category(Path("session-logs/2026/05/session-001.yaml"))
+        assert "session_log" in classify_category(Path("session_logs/2026/05/session-001.yaml"))
         assert "agent_instruction" in classify_category(Path("AGENTS.md"))
         assert "documentation" in classify_category(Path("README.md"))
 

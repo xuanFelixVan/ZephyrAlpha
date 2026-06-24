@@ -147,7 +147,7 @@ depends_on:
 | §2.4 | 韧性组件（resilience） | CircuitBreaker + Retry + FallbackChain | 4 |
 | §2.5 | 生命周期（lifecycle） | 模块 start/stop/health_check 钩子 + 优雅关闭 | 3 |
 | §2.6 | 配置管理（config） | YAML 配置加载 + 校验 | 3 |
-| §2.7 | 通用工具（utilities） | 类型别名 + diff/patch + 文件操作 + 常量 + FeatureFlag + 能力 + API索引 + 错误层次 + 枚举 + 日志 + SHARED-QUICKREF + 测试夹具 + Schema迁移 + 废弃策略 + 版本协商 + 健康聚合 | 24 |
+| §2.7 | 通用工具（utilities） | 类型别名 + diff/patch + 文件操作 + 常量 + FeatureFlag + 能力 + API索引 + 错误层次 + 枚举 + 日志 + shared_quickref + 测试夹具 + Schema迁移 + 废弃策略 + 版本协商 + 健康聚合 | 24 |
 | §2.8 | 生产基础设施（production） | 序列化 + API Client + Secrets + 缓存 + 速率限制 + 幂等性 + 上下文 + Metrics + 分页 + 时间工具 + 环境检测 + 分布式锁 + Outbox + Schema Registry | 14 |
 | §2.9 | AI 专属基础设施（planned） | AI 成本预算与熔断 + Token/上下文预算管理 + Evals 框架 + Durable Execution + 后处理管道 + Session 审计轨迹 + Multi-Agent 编排 + Skill/Prompt 注册表 + Model Provider 抽象 + 上下文压缩 + 输出质量评分 + 宪法自更新 + DI 容器 + 代码沙箱 + 配置覆盖链 | 0（待施工） |
 | §2.10 | 进程生命周期网关（shared-infra） | ProcessLifecycleGateway — 统一进程创建入口 + idle_timeout 空闲回收 + DaemonRegistry 自动注册 + Gate 防绕过 | 2（已实现） |
@@ -177,7 +177,7 @@ depends_on:
 | `frontmatter_utils.py` | Markdown/YAML frontmatter 解析 SSoT——parse/extract 统一接口 |
 | `API_INDEX.py` | Shared API 索引——AI 冷启动时的"员工通讯录"，列出所有 shared 公开符号 |
 | `logging.py` | **结构化日志系统**——ZephyrLogger + contextvars trace_id 传播 + 双模式输出（控制台人类可读 / 文件 JSON） |
-| `SHARED-QUICKREF.yml` | **AI 零歧义快速参考**——按消费场景组织的 YAML canonical 索引 |
+| `shared_quickref.yaml` | **AI 零歧义快速参考**——按消费场景组织的 YAML canonical 索引 |
 | `testing.py` | **测试夹具/工厂**——Make valid Task/AuditReport/KnowledgeEntry/FailurePattern/HandoffPackage。AI 无需记忆必填字段 |
 | `migration.py` | **Schema 版本化迁移**——BFS 最短路径自动迁移 Task dict 版本链 + 双向支持 |
 | `deprecation.py` | **API 废弃策略**——@deprecated 装饰器 + warn/strict/silent 三模式 |
@@ -415,7 +415,7 @@ depends_on:
 | `src/zephyr/shared/file_utils.py` | ✅ 已实现 | Phase 3 新增：原子写/备份/rollback |
 | `src/zephyr/shared/config/loader.py` | ✅ 已实现 | Phase 3 新增：YAML加载+Pydantic校验 |
 | `src/zephyr/shared/logging.py` | ✅ 已实现 | Phase 4 新增：结构化日志 ZephyrLogger + trace_id 传播 |
-| `src/zephyr/shared/SHARED-QUICKREF.yml` | ✅ 已实现 | Phase 4 新增：AI 零歧义快速参考 canonical YAML |
+| `src/zephyr/shared/api/shared_quickref.yaml` | ✅ 已实现 | Phase 4 新增：AI 零歧义快速参考 canonical YAML |
 | `src/zephyr/shared/testing.py` | ✅ 已实现 | Phase 5 新增：测试夹具/工厂——7个工厂函数 |
 | `src/zephyr/shared/migration.py` | ✅ 已实现 | Phase 5 新增：版本化 Schema 迁移系统 |
 | `src/zephyr/shared/deprecation.py` | ✅ 已实现 | Phase 5 新增：@deprecated 装饰器 + 三模式 |
@@ -642,7 +642,7 @@ depends_on:
 > 修改 `types.py` 的 NewType → 影响 **所有使用这些别名的函数签名**（mypy 会报错）。
 > 修改 `config/loader.py` 的加载逻辑 → 影响 **所有模块的配置加载链路**。
 > 修改 `logging.py` 的 ZephyrLogger 接口 → 影响 **所有使用 get_logger() 的模块**。新增日志方法安全，修改/删除已有方法谨慎。
-> 修改 `SHARED-QUICKREF.yml` → **AI 可自由更新**——本文件是 AI 导航用的派生文件，无消费者依赖。
+> 修改 `shared_quickref.yaml` → **AI 可自由更新**——本文件是 AI 导航用的派生文件，无消费者依赖。
 > 修改 `testing.py` 工厂函数签名 → 影响 **所有使用工厂函数的测试**。新增参数需向后兼容（keyword-only + 默认值）。
 > 修改 `migration.py` 迁移路径 → 影响 **所有依赖 migrate_task() 的模块**。必须注册双向迁移 + 更新 latest_schema_version。
 > 修改 `deprecation.py` 的 DeprecatedAPIError → 异常层次变更，影响 **所有 catch 该异常的地方**。
@@ -650,7 +650,7 @@ depends_on:
 > 修改 `__version__.py` → 影响 **所有调用 check_shared_version() 的模块**。版本号递增安全，格式变更谨慎。
 > 修改 `health.py` 的 HealthStatus 枚举 → 影响 **所有 health check consumer**。新增状态值安全，删除/重命名谨慎。
 
-**漂移防护**：修改 Shared Core 接口 MUST 同步更新所有消费者蓝图的 depends_on（§7.1 表）；新增 shared/ 模块 MUST 更新 API_INDEX.py + SHARED-QUICKREF.yml + §5 文件清单；修改 schemas.py Task 31字段 MUST 更新 test_schema_stability.py 快照。
+**漂移防护**：修改 Shared Core 接口 MUST 同步更新所有消费者蓝图的 depends_on（§7.1 表）；新增 shared/ 模块 MUST 更新 API_INDEX.py + shared_quickref.yaml + §5 文件清单；修改 schemas.py Task 31字段 MUST 更新 test_schema_stability.py 快照。
 
 ---
 
@@ -956,12 +956,12 @@ depends_on:
 | **原因** | ① Prompt 模板与业务语义紧耦合（"为 Task 生成执行计划" vs "为 KB entry 生成摘要"）——不适合作为 shared/ 通用抽象 ② Skill 注册与 Agent Identity 强绑定——归属 agent-rbac 或 context-engine ③ shared/ 只提供通用 PromplTemplate/Skill Schema（Pydantic 模型），具体注册表由业务模块承载 |
 | **shared/ 职责** | 当 context-engine 和 agent-rbac 和 feedback-loop 三个模块都需要 `PromptTemplate` / `SkillDefinition` 数据模型时，将其提升到 shared/ |
 
-### AD-005: SHARED-QUICKREF.yml 是 AI 派生文件（非 SSoT）
+### AD-005: shared_quickref.yaml 是 AI 派生文件（非 SSoT）
 
 | 项目 | 内容 |
 |------|------|
 | **状态** | accepted |
-| **决策** | `SHARED-QUICKREF.yml` 是从 `__init__.py` `__all__` 派生出的 AI 快速导航文件，无消费者依赖 |
+| **决策** | `shared_quickref.yaml` 是从 `__init__.py` `__all__` 派生出的 AI 快速导航文件，无消费者依赖 |
 | **原因** | ① AI session 冷启动时读 QUICKREF 比 grep `__all__` 快 ② 包含 anti_patterns / entry_point 等 AI 专属信息——`__all__` 不承载 ③ 是 blueprint.md 的速览版本——AI 读完 blueprint 后对照 QUICKREF 快速定位 |
 | **更新策略** | 每次新增 shared/ 模块 → `__init__.py` `__all__` → QUICKREF（两步更新）。QUICKREF 落后 `__all__` ≤1 个 session 可接受（AI 查 QUICKREF 后仍会 verify `__init__.py`） |
 
@@ -1139,7 +1139,7 @@ logger = get_logger(__name__)
 | 2 | AD-001 | 跨层数据契约基座 | Pydantic V2 / dataclasses / TypedDict / Protocol Buffers | Pydantic V2 | 自动校验/序列化/AI友好 | 2026-05-05 |
 | 3 | AD-002 | Shared+Core 蓝图合并 vs 拆分 | 合并 / 拆分独立蓝图 | 合并 | 体积均<80文件+强耦合 | 2026-05-05 |
 | 4 | AD-003 | Resilience 持久化策略 | 纯内存 / SQLite持久化 | 纯内存 | 零DB依赖+gates已有持久化版 | 2026-05-05 |
-| 5 | AD-005 | SHARED-QUICKREF 派生文件定位 | AI派生文件 / SSoT | AI派生文件 | 从__all__派生，无消费者依赖 | 2026-05-05 |
+| 5 | AD-005 | shared_quickref 派生文件定位 | AI派生文件 / SSoT | AI派生文件 | 从__all__派生，无消费者依赖 | 2026-05-05 |
 | 6 | AD-004 | Skill/Prompt注册表归属 | shared/ / context-engine/ | context-engine | Prompt模板与业务语义紧耦合 | 2026-05-05 |
 
 > AD-001~AD-005 详细决策记录 → [§16 KB 决策记录](#16-adr--架构决策记录architecture-decision-records)

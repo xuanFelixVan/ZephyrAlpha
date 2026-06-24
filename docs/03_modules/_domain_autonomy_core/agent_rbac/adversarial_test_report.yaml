@@ -104,7 +104,7 @@ root_cause_analysis:
     - finding_id: RCA-04
       severity: P1
       issue: "多注册表 status 字段不一致 (Active vs Draft)"
-      resolution: "统一 blueprint.md / blueprint_registry.yaml / index.md / SHARED-QUICKREF.yml → Active"
+      resolution: "统一 blueprint.md / blueprint_registry.yaml / index.md / shared_quickref.yaml → Active"
       verified: true
       fix_commit: "多文件同步 (2026-05-08)"
 

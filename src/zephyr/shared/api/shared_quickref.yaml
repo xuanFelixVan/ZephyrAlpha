@@ -1251,12 +1251,12 @@ audit_trail:
       note: 保留期清理——需 Owner 审批 token
   cold_start:
     file: audit_trail/lifecycle.py
-    description: 审计系统首次启动——扫?git log + session-logs/ ?生成历史审计基线。Beta 阶段落位
+    description: 审计系统首次启动——扫?git log + session_logs/ ?生成历史审计基线。Beta 阶段落位
     key_exports:
     - symbol: ColdStartBootstrapper.scan_git_log()
       note: 扫描 git log ?生成历史审计基线 (confidence=low)
     - symbol: ColdStartBootstrapper.scan_session_logs()
-      note: 扫描 session-logs/ 目录 ?标准化为审计条目
+      note: 扫描 session_logs/ 目录 ?标准化为审计条目
     - symbol: ColdStartBootstrapper.merge_to_baseline()
       note: 合并 ?bootstrap_audit_baseline.jsonl
   self_monitor:
@@ -1350,5 +1350,5 @@ audit_trail:
   - id: D-020-12
     summary: 保留期自动执行——dry-run 先行 + Owner 审批 + 元审计记
   - id: D-020-13
-    summary: Cold Start——git log + session-logs 回溯生成历史基线
+    summary: Cold Start——git log + session_logs 回溯生成历史基线
 consumer_count: 130

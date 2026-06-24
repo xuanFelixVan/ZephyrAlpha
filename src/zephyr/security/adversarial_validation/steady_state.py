@@ -58,7 +58,7 @@ DOMAIN_METRICS: dict[str, list[dict]] = {
         {"metric": "orphan_count", "check": "script:audit_registration.py:orphan_count", "baseline": 9},
     ],
     "operations": [
-        {"metric": "session_count", "check": "dir_count:session-logs:", "baseline": 10},
+        {"metric": "session_count", "check": "dir_count:session_logs:", "baseline": 10},
         {"metric": "temp_file_count", "check": "glob_count:_temp*.py", "baseline": 0},
         {"metric": "backup_count", "check": "dir_count:data/red_blue/backups:", "baseline": 0},
         {"metric": "log_size_kb", "check": "file_size:logs/", "baseline": 1024},

@@ -50,7 +50,7 @@ EXPECTED_FILES: list[str] = [
     "config/mcp.json",
     "config/blueprint_routing.yaml",
     # 集成依赖
-    "src/zephyr/shared/SHARED-QUICKREF.yml",
+    "src/zephyr/shared/api/shared_quickref.yaml",
     "AGENTS.md",
     "pyproject.toml",
     "requirements.txt",

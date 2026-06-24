@@ -38,10 +38,10 @@ depends_on:
 # Session Log 存放位置
 # ============================================================
 storage:
-  path: "session-logs/YYYY/MM/session-YYYYMMDD-NNN.yaml"
+  path: "session_logs/YYYY/MM/session-YYYYMMDD-NNN.yaml"
   naming_format: "session-YYYYMMDD-NNN.yaml"
   naming_example: "session-20260505-001.yaml"
-  note: "NNN 为当日序号，从 001 开始。如果 session-logs/ 目录不存在，AI 必须先创建目录再写文件。"
+  note: "NNN 为当日序号，从 001 开始。如果 session_logs/ 目录不存在，AI 必须先创建目录再写文件。"
 
 # ============================================================
 # 字段间关系说明（AI 必读）
@@ -68,7 +68,7 @@ storage:
 #    - blind_spots_discovered：本次 session 发现的盲点
 #    - 必须写入 session log YAML 文件——禁止直接写入 index.yaml 的 blind_spot_timeline
 #    - index.yaml 中的 by_module/by_contract/by_date 由脚本从 session log YAML 自动派生
-#    - 自动汇总输出：session-logs/_auto/blind_spot_timeline.yaml
+#    - 自动汇总输出：session_logs/_auto/blind_spot_timeline.yaml
 #
 # 5. construction_deviations.recommended_action 的 4 个选项
 #    - extract_ke：提取为知识条目（KE），写入 docs/08_knowledge/

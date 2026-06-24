@@ -202,7 +202,7 @@ class KnowledgeTransferGate:
         return "\n".join(lines)
 
     def write_handoff(self, output_path: Path | None = None) -> Path:
-        target = output_path or (self._root / "session-logs" / "_asset_handoff.txt")
+        target = output_path or (self._root / "session_logs" / "_asset_handoff.txt")
         target.parent.mkdir(parents=True, exist_ok=True)
 
         tmp = f"{target}.{os.getpid()}.tmp"

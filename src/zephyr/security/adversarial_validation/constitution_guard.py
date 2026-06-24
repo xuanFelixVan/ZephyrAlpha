@@ -179,7 +179,7 @@ class ConstitutionGuard:
             "budget_engine.pre_flight": "src/zephyr/budget-enforcer",
             "freeze_manifest.validate": "src/zephyr/governance/contracts.py",
             "mcp_auth.verify_tool_access": "src/zephyr/infrastructure_runtime_integration/mcp_server",
-            "session_audit.verify": "session-logs",
+            "session_audit.verify": "session_logs",
             "kb.verify_provenance": "src/zephyr/kb",
             "gates_registry.verify_all": "src/zephyr/gates",
             "route_manifest.validate": "src/zephyr/orchestrator",

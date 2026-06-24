@@ -66,7 +66,7 @@ DEFAULT_EXCLUDES = {
     "build",
     "egg-info",
     ".ailocks",
-    "session-logs",
+    "session_logs",
     "_backup",
     "_archive",
 }
@@ -406,7 +406,7 @@ SECRET_FILENAME_PATTERNS: list[str] = [
 
 MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024
 
-EXCLUDED_DIR_PARTS: set[str] = {".ailocks", "session-logs", ".git", "__pycache__", "node_modules"}
+EXCLUDED_DIR_PARTS: set[str] = {".ailocks", "session_logs", ".git", "__pycache__", "node_modules"}
 
 
 def _match_pattern(name: str, pattern: str) -> bool:

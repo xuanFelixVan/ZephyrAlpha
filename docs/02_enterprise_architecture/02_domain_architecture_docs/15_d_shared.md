@@ -41,7 +41,7 @@ ttl: permanent
 | D-SHARED/14条知识注入路径 14 Knowledge Injection Paths | 14条知识注入路径 14 Knowledge Injection Paths | design | design_only | D-SHARED/14条知识注入路径 14 Knowledge Injection Paths | 14条知识注入路径 14 Knowledge Injection Paths | design | design_only |
 | D-SHARED/Event Schema Versioning 事件Schema版本管理 | Event Schema Versioning 事件Schema版本管理 | design | design_only | D-SHARED/Event Schema Versioning 事件Schema版本管理 | Event Schema Versioning 事件Schema版本管理 | design | design_only |
 | D-SHARED/权重中心接口 Weight-Centric Interface | 权重中心接口 Weight-Centric Interface | design | design_only | D-SHARED/权重中心接口 Weight-Centric Interface | 权重中心接口 Weight-Centric Interface | design | design_only |
-| src/zephyr/shared/SHARED-QUICKREF.yml |  | production | orphan | src/zephyr/shared/SHARED-QUICKREF.yml |  | production | orphan |
+| src/zephyr/shared/api/shared_quickref.yaml |  | production | orphan | src/zephyr/shared/api/shared_quickref.yaml |  | production | orphan |
 | src/zephyr/shared/__init__.py |  | production | draft | src/zephyr/shared/__init__.py |  | production | draft |
 | src/zephyr/shared/__version__.py |  | prototype | draft | src/zephyr/shared/__version__.py |  | prototype | draft |
 | src/zephyr/shared/_cross_layer/__init__.py |  | prototype | draft | src/zephyr/shared/_cross_layer/__init__.py |  | prototype | draft |
@@ -257,7 +257,7 @@ graph TD
         D_SHARED_14_14_Knowledge_Injection_Paths["14条知识注入路径 14 Knowledge Injection Paths design"]
         D_SHARED_Event_Schema_Versioning_Schema["Event Schema Versioning 事件Schema版本管理 design"]
         D_SHARED_Weight_Centric_Interface["权重中心接口 Weight-Centric Interface design"]
-        src_zephyr_shared_SHARED_QUICKREF_yml["src/zephyr/shared/SHARED-QUICKREF.yml production"]
+        src_zephyr_shared_SHARED_QUICKREF_yml["src/zephyr/shared/api/shared_quickref.yaml production"]
         src_zephyr_shared_init_py["src/zephyr/shared/__init__.py production"]
         src_zephyr_shared_version_py["src/zephyr/shared/__version__.py prototype"]
         src_zephyr_shared_cross_layer_init_py["src/zephyr/shared/_cross_layer/__init__.py prototype"]

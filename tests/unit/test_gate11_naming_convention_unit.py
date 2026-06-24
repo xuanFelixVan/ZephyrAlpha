@@ -162,7 +162,7 @@ class TestPathExemption:
         assert check_file(".ruff_cache/CACHEDIR.TAG") == []
 
     def test_session_logs_exempt(self) -> None:
-        assert check_file("docs/19_development_workspace/session-logs/session-20260422-001.md") == []
+        assert check_file("docs/19_development_workspace/session_logs/session-20260422-001.md") == []
 
 
 class TestIntegration:

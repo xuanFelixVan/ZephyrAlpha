@@ -8,7 +8,7 @@ module_id: MOD-069---
 总计: 217 个文件
 
 - API_INDEX.py
-- SHARED-QUICKREF.yml
+- shared_quickref.yaml
 - __init__.py
 - __version__.py
 - adaptive_sampler.py

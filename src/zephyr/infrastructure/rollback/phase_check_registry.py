@@ -94,7 +94,7 @@ def _check_dir_exists(path: str, label: str) -> GateResult:
 
 
 def check_session_manager() -> GateResult:
-    log_dir = _PROJECT_ROOT / "session-logs"
+    log_dir = _PROJECT_ROOT / "session_logs"
     index = log_dir / "index.yaml"
     if log_dir.is_dir() and index.exists():
         return GateResult.GREEN

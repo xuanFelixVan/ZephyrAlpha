@@ -70,7 +70,7 @@ class TestSessionContinuity:
     def test_init_with_project_root(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
         assert sc._project_root == tmp_path
-        assert sc._sessions_dir == tmp_path / "session-logs"
+        assert sc._sessions_dir == tmp_path / "session_logs"
 
     def test_init_default_root(self):
         sc = SessionContinuity()
@@ -109,7 +109,7 @@ class TestSessionContinuity:
             timestamp_utc="2026-01-01T00:00:00+00:00",
         )
         path = sc.save_session_state(state)
-        assert (tmp_path / "session-logs").is_dir()
+        assert (tmp_path / "session_logs").is_dir()
         assert path.exists()
 
     def test_load_session_state_existing(self, tmp_path):
@@ -142,7 +142,7 @@ class TestSessionContinuity:
 
     def test_load_session_state_corrupt_json(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        sessions_dir = tmp_path / "session-logs"
+        sessions_dir = tmp_path / "session_logs"
         sessions_dir.mkdir(parents=True, exist_ok=True)
         corrupt = sessions_dir / "corrupt.json"
         corrupt.write_text("not valid json{{{", encoding="utf-8")
@@ -151,7 +151,7 @@ class TestSessionContinuity:
 
     def test_load_session_state_missing_key(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        sessions_dir = tmp_path / "session-logs"
+        sessions_dir = tmp_path / "session_logs"
         sessions_dir.mkdir(parents=True, exist_ok=True)
         bad = sessions_dir / "badkey.json"
         bad.write_text(json.dumps({"session_id": "badkey"}), encoding="utf-8")

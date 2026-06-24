@@ -372,7 +372,7 @@ path_facts:
       - ".trae/rules/project_rules.md"
     must_not_appear_as:
       - file: ".trae/rules/project_rules.md"
-        pattern: "session-logs/"
+        pattern: "session_logs/"
         reason: "连字符写法错误，实际目录名用下划线 session_logs/"
 
   - id: blueprint_construction_template_underscore

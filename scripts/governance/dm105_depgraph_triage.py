@@ -250,7 +250,7 @@ EXACT_FILE_HINTS = {
         "D-GOV-SCRIPT_GOVERNANCE",
     ),
     "docs/02_enterprise_architecture/migration-registry.yaml": ("MOD-INF-026", "D-OBS", "D-OBS-ASSET_INVENTORY"),
-    "src/zephyr/shared/SHARED-QUICKREF.yml": ("MOD-INF-016", "D-INFRA", "D-INFRA-LIFECYCLE_MANAGEMENT"),
+    "src/zephyr/shared/api/shared_quickref.yaml": ("MOD-INF-016", "D-INFRA", "D-INFRA-LIFECYCLE_MANAGEMENT"),
     "scripts/governance/test_concurrent_safety.ps1": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),
     "scripts/governance/d5_architecture/pre_commit_hook.ps1": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),
     "scripts/hooks/contract_fingerprint_hook.sh": ("MOD-INF-002", "D-INFRA", "D-INFRA-RUNTIME_INTEGRATION"),

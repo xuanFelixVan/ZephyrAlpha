@@ -146,9 +146,9 @@ modification_protocol:
 
   bypass_detection: |
     以下行为视为绕过架构锁（与 RULE-TEN 违规同级）：
-    - 修改锁定文件但不检查 ARCHITECTURE_LOCK.yaml
+    - 修改锁定文件但不检查 architecture_lock.yaml
     - 通过间接方式改变锁定决策（如：不改 schema 但改调用方绕过约束）
-    - 删除或修改 ARCHITECTURE_LOCK.yaml 本身（仅 Owner 可修改）
+    - 删除或修改 architecture_lock.yaml 本身（仅 Owner 可修改）
 
 industry_practices: |
   ## Vibe Coding 社区做法
@@ -164,7 +164,7 @@ industry_practices: |
   - SOC 2 Change Management：CC8.1 要求所有变更经授权审批
 
   ## 本项目的做法
-  - ARCHITECTURE_LOCK.yaml = 轻量级 CAB（1人版）
+  - architecture_lock.yaml = 轻量级 CAB（1人版）
   - RULE-TEN = AI 行为层面的准入控制器
   - project_rules.md = AI 行为的宪法级约束
   - 与现有 RULE-ZERO（文件锁）互补：RULE-ZERO 防并发，RULE-TEN 防越权

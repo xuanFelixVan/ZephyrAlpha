@@ -152,7 +152,7 @@ body: '
 
   | 可能出坏事的事 | Risk | 已识别的威胁，需要缓解或接受 | `_registry/catalogs/ai-risk-register.yaml` |
 
-  | 记笔记 / 会议纪要 | Session Log / Meeting Notes | 一次会话/会议的记录 | `governance/ai/handoff-protocol.md`、`docs/19_development_workspace/session-logs/` |
+  | 记笔记 / 会议纪要 | Session Log / Meeting Notes | 一次会话/会议的记录 | `governance/ai/handoff-protocol.md`、`docs/19_development_workspace/session_logs/` |
 
   | 事后复盘 | Post-Mortem / Retrospective | 事件/阶段结束后的回顾 | （未启用） |
 

@@ -73,7 +73,7 @@ class TestSaveAndLoad:
 
     def test_load_corrupt_json_returns_none(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        sessions_dir = tmp_path / "session-logs"
+        sessions_dir = tmp_path / "session_logs"
         sessions_dir.mkdir(parents=True, exist_ok=True)
         (sessions_dir / "bad.json").write_text("not json", encoding="utf-8")
         assert sc.load_session_state("bad") is None

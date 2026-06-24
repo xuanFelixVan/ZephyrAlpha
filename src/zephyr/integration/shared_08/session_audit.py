@@ -28,7 +28,7 @@ session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B32）
 AI 施工约定：
   - 每个 session MUST 通过 SessionAuditTrail 记录
   - JSONL 格式追加写入——不可变审计
-  - 与 session-logs/ YAML 互补（此模块负责运行时实时记录）
+  - 与 session_logs/ YAML 互补（此模块负责运行时实时记录）
 
 SSoT: MOD-INF-016 §12 盲点 B32 + GOV-AI-007 Session Log Schema
 """

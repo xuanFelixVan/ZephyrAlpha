@@ -73,7 +73,7 @@ class TestClassifyCategory:
         assert classify_category(Path("project_rules.md")) == "governance_rule"
 
     def test_session_category(self):
-        assert classify_category(Path("session-logs/session-001.yaml")) == "session_log"
+        assert classify_category(Path("session_logs/session-001.yaml")) == "session_log"
 
     def test_agents_category(self):
         assert classify_category(Path("AGENTS.md")) == "agent_instruction"

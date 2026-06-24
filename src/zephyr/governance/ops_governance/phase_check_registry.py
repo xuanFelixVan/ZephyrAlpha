@@ -102,8 +102,8 @@ def _check_dir_exists(path: str, label: str) -> GateResult:
 
 
 def check_session_manager() -> GateResult:
-    """验证 session-logs/ 目录和 index.yaml 存在."""
-    log_dir = _PROJECT_ROOT / "session-logs"
+    """验证 session_logs/ 目录和 index.yaml 存在."""
+    log_dir = _PROJECT_ROOT / "session_logs"
     index = log_dir / "index.yaml"
     if log_dir.is_dir() and index.exists():
         return GateResult.GREEN

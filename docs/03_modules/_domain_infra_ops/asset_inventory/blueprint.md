@@ -152,7 +152,7 @@ Asset Inventory 是 ZephyrAlpha 的资产盘点系统——解决"不知道有�
 
 | # | 禁止 | 原因 |
 |---|------|------|
-| 1 | 禁止扫描 `session-logs/` `.ailocks/` `_backup/` `_archive/` | 安全+性能 |
+| 1 | 禁止扫描 `session_logs/` `.ailocks/` `_backup/` `_archive/` | 安全+性能 |
 | 2 | 禁止扫描 `.env*` `*_key*` `*_token*` `*.pem` 内容 | 安全 |
 | 3 | 禁止分类器调用 LLM/语义推断 | 确定性 100% |
 | 4 | 禁止蓝图阶段物理删除任何文件 | 蓝图只做决策 |
@@ -1151,7 +1151,7 @@ class TripleTrustAnchorGate:
 | 5 | 大文件 SHA256 DoS | 低 | 50MB 上限，超过跳过 | MAX_FILE_SIZE_BYTES 常量检查 |
 | 6 | SHA256 指纹泄露 | 低 | 日志分级：DEBUG 可见 SHA256，INFO 只显示 count | 日志级别测试 |
 | 7 | .ailocks/ 目录信息泄露 | 中 | 目录级排除 | DEFAULT_EXCLUDES 包含 .ailocks |
-| 8 | session-logs/ 敏感对话 | 中 | 目录级排除 | DEFAULT_EXCLUDES 包含 session-logs |
+| 8 | session_logs/ 敏感对话 | 中 | 目录级排除 | DEFAULT_EXCLUDES 包含 session_logs |
 
 ---
 
@@ -1430,7 +1430,7 @@ EXCLUDE_DIRS: set[str] = {
     "__pycache__", ".pytest_cache", ".mypy_cache",
     "node_modules", ".git", ".venv", "venv", "env",
     "dist", "build", "egg-info", ".ailocks",
-    "session-logs", "_backup", "_archive"
+    "session_logs", "_backup", "_archive"
 }
 ```
 
@@ -1764,7 +1764,7 @@ F: 孤儿率≥20% 或 幽灵率≥10%  — 触发 Escalation
 | **D-026-11** | 注册表适配器模式（ABC + 7 格式） | 硬编码/适配器 | 适配器 | ETL 管道——异构数据源统一为 `list[RegistryEntry]` | 2026-04 |
 | **D-026-12** | ast 提取依赖图 + 环路检测 | 正则/AST | AST | HRT Tangle Tools 经验——在 100 万行代码上验证过的方案 | 2026-04 |
 | **D-026-13** | CircuitBreaker + 6 组件退化矩阵 | 无/熔断 | 熔断 | Netflix Hystrix——熔断后快速失败，60s 自动恢复 | 2026-04 |
-| **D-026-14** | 六不得铁律——安全扫描边界 | 无限制/限制 | 限制 | 最小权限 + 防御性编程——不读取 .env / .ailocks / session-logs | 2026-04 |
+| **D-026-14** | 六不得铁律——安全扫描边界 | 无限制/限制 | 限制 | 最小权限 + 防御性编程——不读取 .env / .ailocks / session_logs | 2026-04 |
 | **D-026-15** | MCP Server: 6 tool + 2 resource | 无/有 | 有 | IDE 内直接查询资产——AI agent 不需要离开 IDE | 2026-04 |
 | **D-026-16** | TIME-DECAY / ZERO-REF / DIR-CONVENTION | 手动/自动 | 自动 | ITIL 自动化退役规则——从 active 到 archived 全自动 | 2026-04 |
 | **D-026-17** | 多 IDE 规则文件映射（5 IDE） | 单IDE/多IDE | 多IDE | Trae .trae/rules/ + Cursor .cursor/rules/ + Claude CLAUDE.md | 2026-04 |
@@ -2488,7 +2488,7 @@ class CircuitBreaker:
 |---|------|------|---------|
 | 1 | **不得读取 .env / .secrets / *_key* 文件** | 密钥泄露——扫描器的 SHA256 计算需要读取文件内容 | 文件名匹配 `SECRET_FILENAME_PATTERNS` → 跳过 |
 | 2 | **不得读取 `.ailocks/` 目录内容** | 锁系统的 owner.json 包含 session task 信息 | 目录级排除 |
-| 3 | **不得扫描 `session-logs/` 目录** | Session 日志可能包含敏感对话摘要 | 目录级排除 |
+| 3 | **不得扫描 `session_logs/` 目录** | Session 日志可能包含敏感对话摘要 | 目录级排除 |
 | 4 | **不得读取超过 50MB 的文件** | 大文件（数据库、模型权重）SHA256 计算耗时 + 不合理的输入 | 大小上限检查 |
 | 5 | **不得将 SHA256 输出到 stdout 的 info 级别以上** | SHA256 可作为文件内容的指纹——不应大面积曝光 | 日志分级（DEBUG 可见 SHA256，INFO 只显示 count） |
 | 6 | **不得递归符号链接** | 符号链接可能指向项目外目录 → 越权扫描 | `os.path.islink()` 检查 |
@@ -2506,7 +2506,7 @@ class SecurityFilter:
 每次全量扫描产出 `security_access_log.jsonl`：
 ```json
 {"ts": "2026-05-07T15:30:00Z", "action": "SCAN_SKIP", "path": ".env", "reason": "matches_secret_pattern"}
-{"ts": "2026-05-07T15:30:01Z", "action": "SCAN_SKIP", "path": "session-logs/2026/05/session-*.yaml", "reason": "session_logs_dir"}
+{"ts": "2026-05-07T15:30:01Z", "action": "SCAN_SKIP", "path": "session_logs/2026/05/session-*.yaml", "reason": "session_logs_dir"}
 {"ts": "2026-05-07T15:30:05Z", "action": "SCAN_OK", "path": "src/zephyr/data/asset-inventory/scanner.py", "sha256": "a1b2...", "size": 12456}
 ```
 
@@ -3027,7 +3027,7 @@ inventory = AssetInventory(config_path="config/capacity/asset-inventory.yaml")
 # config/capacity/asset-inventory.yaml — 关键字段约束
 scanner:
   directories: [src/zephyr/, scripts/, docs/, config/, tests/, data/]
-  exclude_dirs: [__pycache__, .pytest_cache, .mypy_cache, .git, .venv, .ailocks, session-logs]
+  exclude_dirs: [__pycache__, .pytest_cache, .mypy_cache, .git, .venv, .ailocks, session_logs]
   max_workers: 8; timeout_seconds: 300; max_file_size_mb: 50; max_depth: 15; glide_window_seconds: 60
 classifier:
   type_mapping: {目录前缀+扩展名→asset_type}; registry_patterns: [*_registry.yaml, *manifest.yaml]
@@ -3503,7 +3503,7 @@ scanner:
     - "build"
     - "egg-info"
     - ".ailocks"
-    - "session-logs"
+    - "session_logs"
     - "_backup"
     - "_archive"
   max_workers: 8

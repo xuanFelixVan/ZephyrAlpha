@@ -27,12 +27,12 @@ docs/02_enterprise_architecture/target-architecture/architecture-model/（企业
 - P0: partition.id 在施工树存在但企业架构树缺失（C 轨层）
 - P0: 同一 partition.id 两侧文件名不一致（如 integration vs l13-experiment-pipeline）
 - P1: 施工树 technology_landscape.yaml 未声明 deprecated（企业架构树已有完整版）
-- P2: B 轨分区在施工树存在但企业架构树缺失（SCOPE.yaml R3 允许，仅提醒）
+- P2: B 轨分区在施工树存在但企业架构树缺失（scope.yaml R3 允许，仅提醒）
 - P2: 两侧 YAML 的 module_id 集合差异（同名 partition 下模块不一致）
 
 对标：
 - AGENTS.md §6.9 双树分工
-- architecture-model/SCOPE.yaml R1/R2/R3
+- architecture-model/scope.yaml R1/R2/R3
 - AUDIT-04 D-ALIGN 维度
 
 用法：
@@ -76,11 +76,11 @@ ensure_utf8_stdout()
 # 双树路径常量
 IMPL_TREE = REPO_ROOT / "architecture-model"
 EA_TREE = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model"
-SCOPE_YAML = IMPL_TREE / "SCOPE.yaml"
+SCOPE_YAML = IMPL_TREE / "scope.yaml"
 
 # 文件名映射：施工树文件名 -> 企业架构树文件名（处理连字符/下划线差异）
 # 施工树使用下划线（与 src/ 目录命名一致），企业架构树使用连字符（与视图文档命名一致）
-# 这是有意设计差异——SCOPE.yaml R3 明确允许同一 partition.id 两侧各有不同文件名的 YAML
+# 这是有意设计差异——scope.yaml R3 明确允许同一 partition.id 两侧各有不同文件名的 YAML
 FILENAME_MAP: dict[str, str] = {
     "data.yaml": "l00_data_source.yaml",
     "infrastructure_runtime_integration.yaml": "l01_infrastructure.yaml",
@@ -158,7 +158,7 @@ def check_p0_c_track_sync() -> list[str]:
         if not c_track_pattern.match(pid):
             continue
         if pid not in ea_ids:
-            errs.append(f"P0: C 轨 partition `{pid}` 在施工树存在（{impl_fname}）但企业架构树缺失 — 违反 SCOPE.yaml R3")
+            errs.append(f"P0: C 轨 partition `{pid}` 在施工树存在（{impl_fname}）但企业架构树缺失 — 违反 scope.yaml R3")
             continue
         ea_fname = ea_ids[pid]
         # 检查文件名映射
@@ -170,13 +170,13 @@ def check_p0_c_track_sync() -> list[str]:
         if not c_track_pattern.match(pid):
             continue
         if pid not in impl_ids:
-            errs.append(f"P0: C 轨 partition `{pid}` 在企业架构树存在（{ea_fname}）但施工树缺失 — 违反 SCOPE.yaml R3")
+            errs.append(f"P0: C 轨 partition `{pid}` 在企业架构树存在（{ea_fname}）但施工树缺失 — 违反 scope.yaml R3")
 
     return errs
 
 
 def check_p0_b_track_sync() -> list[str]:
-    """P0: B 轨分区不应出现在 EA 树中（SCOPE.yaml R4）。"""
+    """P0: B 轨分区不应出现在 EA 树中（scope.yaml R4）。"""
     errs: list[str] = []
     impl_layers = IMPL_TREE / "layers"
     if not impl_layers.exists():
@@ -202,7 +202,7 @@ def check_p0_b_track_sync() -> list[str]:
         if pid in ea_ids:
             errs.append(
                 f"P0: B 轨 partition `{pid}` 在 EA 树中出现（{ea_ids[pid]}）"
-                f"— SCOPE.yaml R4 禁止 EA 树镜像 B 轨。"
+                f"— scope.yaml R4 禁止 EA 树镜像 B 轨。"
                 f"施工树对应文件: {impl_fname}。请删除 EA 树中的此文件。"
             )
 
@@ -260,7 +260,7 @@ def check_p2_schema_version_alignment() -> list[str]:
         if impl_sv and ea_sv and impl_sv != ea_sv:
             errs.append(
                 f"P2: partition `{pid}` schema_version 差异 — "
-                f"施工树: {impl_sv}, 企业架构树: {ea_sv}（有意设计，SCOPE.yaml R3 允许）"
+                f"施工树: {impl_sv}, 企业架构树: {ea_sv}（有意设计，scope.yaml R3 允许）"
             )
     return errs
 
@@ -281,7 +281,7 @@ def _get_schema_version(tree_root: Path, partition_id: str) -> str | None:
 
 
 def check_scope_yaml_exists() -> list[str]:
-    """P0: SCOPE.yaml 必须存在。"""
+    """P0: scope.yaml 必须存在。"""
     errs: list[str] = []
     if not SCOPE_YAML.exists():
         errs.append(f"P0: {SCOPE_YAML.relative_to(REPO_ROOT)} 不存在 — 双树边界真源缺失，违反 AGENTS.md §6.9")
@@ -305,7 +305,7 @@ def main() -> int:
     all_errors: list[str] = []
 
     checks = [
-        ("SCOPE.yaml 存在性", check_scope_yaml_exists),
+        ("scope.yaml 存在性", check_scope_yaml_exists),
         ("C 轨层同步", check_p0_c_track_sync),
         ("B 轨层同步", check_p0_b_track_sync),
         ("technology-landscape 弃用声明", check_p1_tech_landscape_deprecated),

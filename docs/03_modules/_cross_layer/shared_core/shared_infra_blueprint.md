@@ -44,7 +44,7 @@ depends_on:
 
 | # | 子目录 | 文件数 | 关键文件 |
 |---|--------|:---:|------|
-| 1 | shared/ (root) | 43 | `schemas.py`, `observer.py`, `ssot_guard.py`, `paths.py`, `logging.py`, `testing.py`, `migration.py`, `deprecation.py`, `constants.py`, `errors.py`, `types.py`, `diff_utils.py`, `file_utils.py`, `flags.py`, `frontmatter_utils.py`, `token_utils.py`, `time_utils.py`, `health.py`, `API_INDEX.py`, `capability.py`, `content_fingerprint.py`, `dos_launcher.py`, `SHARED-QUICKREF.yml`, `contract_bus.py`, `event_bus.py`, `blueprint_scorer.py`, `__version__.py`, `tracing.py`, `serialization.py`, `api_client.py`, `secrets.py`, `cache.py`, `limiter.py`, `idempotency.py`, `context.py`, `metrics.py`, `pagination.py`, `env.py`, `lock.py`, `outbox.py`, `schema_registry.py`, `cost_budget.py`, `context_budget.py`, ... |
+| 1 | shared/ (root) | 43 | `schemas.py`, `observer.py`, `ssot_guard.py`, `paths.py`, `logging.py`, `testing.py`, `migration.py`, `deprecation.py`, `constants.py`, `errors.py`, `types.py`, `diff_utils.py`, `file_utils.py`, `flags.py`, `frontmatter_utils.py`, `token_utils.py`, `time_utils.py`, `health.py`, `API_INDEX.py`, `capability.py`, `content_fingerprint.py`, `dos_launcher.py`, `shared_quickref.yaml`, `contract_bus.py`, `event_bus.py`, `blueprint_scorer.py`, `__version__.py`, `tracing.py`, `serialization.py`, `api_client.py`, `secrets.py`, `cache.py`, `limiter.py`, `idempotency.py`, `context.py`, `metrics.py`, `pagination.py`, `env.py`, `lock.py`, `outbox.py`, `schema_registry.py`, `cost_budget.py`, `context_budget.py`, ... |
 | 2 | api/ | 4 | `api_client`, `api_index`, `dos_launcher` |
 | 3 | config/ | 2 | `loader` |
 | 4 | events/ | 6 | `event_schemas`, `dlq`, `dlq_bridge`, `event_bus_upgrade`, `upgrade_strategy` |

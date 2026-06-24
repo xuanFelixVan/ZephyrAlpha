@@ -1005,7 +1005,7 @@ AI查询模式：
 | 5 | `scripts/governance/_archive/` | 归档脚本，非活跃代码 | 保留排除 |
 | 6 | `scripts/governance/repair/` | 修复脚本，临时性 | 保留排除 |
 | 7 | `scripts/governance/_shared/` | 共享内部，非 depgraph 相关 | 保留排除 |
-| 8 | `session-logs/` | 会话日志，历史记录无代码依赖 | 新增排除 |
+| 8 | `session_logs/` | 会话日志，历史记录无代码依赖 | 新增排除 |
 | 9 | `reports/` | 报告输出，非代码 | 新增排除 |
 | 10 | `logs/` | 运行时日志，非代码 | 新增排除 |
 

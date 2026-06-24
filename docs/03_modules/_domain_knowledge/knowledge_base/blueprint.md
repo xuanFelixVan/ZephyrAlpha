@@ -721,7 +721,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | 上下文引擎 KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0015-context-engine-architecture.md` |
 | VMS KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vector-memory-chromadb-bge-m3.md` |
 | ChromaDB KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` |
-| Session Log | `D:\ZephyrAlpha\docs\19_development_workspace\session-logs\` |
+| Session Log | `D:\ZephyrAlpha\docs\19_development_workspace\session_logs\` |
 
 ### 2.3 depends_on 声明
 
@@ -884,7 +884,7 @@ domain: "infra"
 layer: "L01"
 
 source_type: "session_log"
-source_path: "docs/19_development_workspace/session-logs/session-047.md"
+source_path: "docs/19_development_workspace/session_logs/session-047.md"
 
 status: "VERIFIED"
 quality_score: 0.92
@@ -1342,7 +1342,7 @@ domain: "infra"
 layer: "L01"
 
 source_type: "session_log"
-source_path: "docs/19_development_workspace/session-logs/session-047.md"
+source_path: "docs/19_development_workspace/session_logs/session-047.md"
 
 status: "OBSERVED"
 priority: "MID"
@@ -1668,7 +1668,7 @@ src/zephyr/db/chroma/
 
 | 步骤 | 操作 | 产出 |
 |:---:|------|------|
-| S1 | 存量文档全量扫描：AGENTS.md + KB 决策记录/ + blueprints/ + session-logs/ | ~200-500 文档片段 |
+| S1 | 存量文档全量扫描：AGENTS.md + KB 决策记录/ + blueprints/ + session_logs/ | ~200-500 文档片段 |
 | S2 | 语义分段 + 三元判定（🟢知识信号/🟡纯流程/🔵半信号）→ 仅保留🟢 → §3.8 三轨分类 | ~80-120 候选 |
 | S3 | G1-G5 标准门禁流水线（与常规 KE 同路径），来源标记 = `bootstrap` | ~50-80 VERIFIED KE |
 

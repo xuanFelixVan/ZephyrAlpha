@@ -69,7 +69,7 @@ class TestSessionContinuity:
     def test_instantiation_with_path(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
         assert sc._project_root == tmp_path
-        assert sc._sessions_dir == tmp_path / "session-logs"
+        assert sc._sessions_dir == tmp_path / "session_logs"
 
     def test_instantiation_default(self):
         sc = SessionContinuity()
@@ -122,7 +122,7 @@ class TestSessionContinuity:
 
     def test_load_session_state_malformed_json(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        sessions_dir = tmp_path / "session-logs"
+        sessions_dir = tmp_path / "session_logs"
         sessions_dir.mkdir(parents=True, exist_ok=True)
         bad_file = sessions_dir / "bad-session.json"
         bad_file.write_text("not valid json{{{", encoding="utf-8")
@@ -131,7 +131,7 @@ class TestSessionContinuity:
 
     def test_load_session_state_missing_key(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        sessions_dir = tmp_path / "session-logs"
+        sessions_dir = tmp_path / "session_logs"
         sessions_dir.mkdir(parents=True, exist_ok=True)
         partial_file = sessions_dir / "partial-session.json"
         partial_file.write_text(json.dumps({"session_id": "partial"}), encoding="utf-8")

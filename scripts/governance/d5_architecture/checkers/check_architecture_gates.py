@@ -933,11 +933,11 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
     3. 新建代码目录 → architecture-model YAML 应登记
     """
     errors = []
-    logs_dir = REPO_ROOT / "session-logs"
+    logs_dir = REPO_ROOT / "session_logs"
     DOCS_ROOT = REPO_ROOT / "docs"
 
     if not logs_dir.exists():
-        errors.append("session-logs/ 目录不存在")
+        errors.append("session_logs/ 目录不存在")
         return False, errors
 
     log_files = sorted(logs_dir.rglob("session-*.yaml"), reverse=True)
@@ -946,7 +946,7 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
     recent = log_files[:3]
 
     if not recent:
-        errors.append("session-logs/ 存在但未找到任何 session log 文件")
+        errors.append("session_logs/ 存在但未找到任何 session log 文件")
         return False, errors
 
     for log_path in recent:

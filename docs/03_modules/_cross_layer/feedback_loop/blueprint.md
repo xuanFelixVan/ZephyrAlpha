@@ -723,7 +723,7 @@ STEP 3: 拆分后验证
 | 变更本蓝图时 | 必须同步更新 |
 |-------------|------------|
 | 版本号变更 | `blueprint_registry.yaml` + `b_feedback_loop.yaml` |
-| 接口契约变更 | 消费者模块蓝图 + `SHARED-QUICKREF.yml` |
+| 接口契约变更 | 消费者模块蓝图 + `shared_quickref.yaml` |
 | 新增/删除文件 | `module-registry.yaml` + `__init__.py` |
 | 安全层变更 | `quality-standard.md` + gate注册表 |
 

@@ -72,7 +72,7 @@ def main() -> int:
         return 1
 
     # 写入 session_logs/<session_id>/session_start_commit.txt
-    session_dir = PROJECT_ROOT / "session-logs" / session_id
+    session_dir = PROJECT_ROOT / "session_logs" / session_id
     session_dir.mkdir(parents=True, exist_ok=True)
     commit_file = session_dir / "session_start_commit.txt"
     commit_file.write_text(commit_hash, encoding="utf-8")

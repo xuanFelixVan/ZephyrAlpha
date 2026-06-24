@@ -1725,7 +1725,7 @@ CACHE_WARM（预热缓存）和 MEMORY_COMPACT（释放内存）可能同时触�
 
 #### 跨 Session 优化知识传递
 
-优化历史持久化到 SQLite（跨 session 保留），Session 交接时 SelfMonitor 写入资源状态到 session-logs，新 session 冷启动时自动加载最近优化历史。
+优化历史持久化到 SQLite（跨 session 保留），Session 交接时 SelfMonitor 写入资源状态到 session_logs，新 session 冷启动时自动加载最近优化历史。
 
 #### 优化策略的进化
 

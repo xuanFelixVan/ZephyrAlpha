@@ -20,7 +20,7 @@
               COND-17（session log 必须包含"做了什么+为什么这样做+下一步"三段论）
 
 检测内容：
-- .runtime/session-logs/ 目录下是否有最新 session log
+- .runtime/session_logs/ 目录下是否有最新 session log
 - 最新 session log 是否在 24 小时内更新
 - session log 是否包含三段论结构（做了什么 / 为什么这样做 / 下一步）
 - 如果项目处于活跃开发，无近 7 天内的 session log 则告警
@@ -57,7 +57,7 @@ from typing import Any
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-SESSION_LOG_DIR = REPO_ROOT / ".runtime" / "session-logs"
+SESSION_LOG_DIR = REPO_ROOT / ".runtime" / "session_logs"
 REQUIRED_SECTIONS = [
     ("(?:做了什么|做了什么|完成[了的]|完成[了的]|做了什么|DONE|Completed|Accomplished)", "三段论 — 做了什么"),
     ("(?:为什么|原因|理由|为什么这样做|WHY|Rationale|Reason)", "三段论 — 为什么这样做"),
@@ -107,7 +107,7 @@ def main() -> None:
     latest_log = find_latest_session_log()
     if latest_log is None:
         print(f"\n[SESSION-LOG] 无 Session Log 目录或文件: {SESSION_LOG_DIR}", file=sys.stderr)
-        print("  项目可能尚未开始活跃 AI 施工，或 .runtime/session-logs/ 路径不存在", file=sys.stderr)
+        print("  项目可能尚未开始活跃 AI 施工，或 .runtime/session_logs/ 路径不存在", file=sys.stderr)
         if args.warn_only:
             sys.exit(EXIT_PASS)
         sys.exit(EXIT_PASS)

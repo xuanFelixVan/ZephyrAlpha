@@ -53,7 +53,7 @@ depgraph:
     - _backups
     - _temp
     - .audit_cache
-    - session-logs
+    - session_logs
 
   # 节点类型过滤 — 以下类型的节点不进入依赖图
   # 排除原因: node_type (零 import_depends 边，只有噪音引用)

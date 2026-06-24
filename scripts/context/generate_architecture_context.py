@@ -281,7 +281,7 @@ def _extract_governance_rules(context: dict) -> None:
 
 
 def _extract_session_logs(context: dict) -> None:
-    session_dir = REPO_ROOT / "session-logs"
+    session_dir = REPO_ROOT / "session_logs"
     if not session_dir.exists():
         context["sessions"] = {"recent": [], "total": 0}
         return

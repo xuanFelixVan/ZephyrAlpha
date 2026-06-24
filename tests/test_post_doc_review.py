@@ -70,7 +70,7 @@ def _setup_session_with_git(
         self_reported_files: modified_files.json 中的自报告列表。
             None=不创建 modified_files.json（模拟篡改）
     """
-    session_dir = tmp_path / "session-logs" / session_id
+    session_dir = tmp_path / "session_logs" / session_id
     session_dir.mkdir(parents=True, exist_ok=True)
     (session_dir / "session_start_commit.txt").write_text(start_commit, encoding="utf-8")
 
@@ -286,7 +286,7 @@ class TestR1TamperingDefense:
 
     def test_git_unavailable_no_degradation(self, tmp_path):
         """R1 防御：git 不可用不降级 → RED。"""
-        session_dir = tmp_path / "session-logs" / "no-git"
+        session_dir = tmp_path / "session_logs" / "no-git"
         session_dir.mkdir(parents=True)
         (tmp_path / "docs").mkdir()
         (tmp_path / "docs" / "test.md").write_text("对标 K8s。\n", encoding="utf-8")
@@ -300,7 +300,7 @@ class TestR1TamperingDefense:
     def test_commit_hash_injection_blocked(self, tmp_path):
         """R1 防御：commit hash 注入被校验拦截。"""
         _init_git_repo(tmp_path)
-        session_dir = tmp_path / "session-logs" / "inject"
+        session_dir = tmp_path / "session_logs" / "inject"
         session_dir.mkdir(parents=True)
         (session_dir / "session_start_commit.txt").write_text(
             "abc; rm -rf /; def0000000000000000000000000000000000000",

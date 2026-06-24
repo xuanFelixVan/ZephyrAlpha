@@ -2293,7 +2293,7 @@ tasks:
   - {target: ".pytest_cache/ __pycache__/ .mypy_cache/ .ruff_cache/", action: "recursive rm -rf"}
   - {target: "ChromaDB orphaned segments", action: "chromadb vacuum"}
   - {target: "SQLite WAL files > 100MB", action: "PRAGMA wal_checkpoint(TRUNCATE)"}
-  - {target: "session-logs older than 90d", action: "tar.gz → archive/session-logs/ → delete original"}
+  - {target: "session_logs older than 90d", action: "tar.gz → archive/session_logs/ → delete original"}
   - {target: "git objects", action: "git gc --aggressive --prune=now (monthly only)"}
   - {target: "Codegen intermediate outputs older than 7d", action: "rm"}
 

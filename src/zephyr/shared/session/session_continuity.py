@@ -54,7 +54,7 @@ class ContinuityContext:
 class SessionContinuity:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
-        self._sessions_dir = self._project_root / "session-logs"
+        self._sessions_dir = self._project_root / "session_logs"
 
     def save_session_state(self, state: SessionState) -> Path:
         self._sessions_dir.mkdir(parents=True, exist_ok=True)

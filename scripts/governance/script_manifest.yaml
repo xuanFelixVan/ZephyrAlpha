@@ -1838,7 +1838,7 @@ scripts:
   - --generate
   - --warn-only
   warn_only: false
-  description: session-logs/index.yaml 与磁盘对账 + 自动生成盲点时间线
+  description: session_logs/index.yaml 与磁盘对账 + 自动生成盲点时间线
   tags:
   - Critical
   - Security

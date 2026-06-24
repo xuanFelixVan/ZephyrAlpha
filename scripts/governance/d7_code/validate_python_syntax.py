@@ -53,7 +53,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 _TARGET_DIRS = ["src/zephyr", "tests"]
-_EXCLUDE_DIRS = ["__pycache__", ".git", ".ailocks", ".trae", "session-logs"]
+_EXCLUDE_DIRS = ["__pycache__", ".git", ".ailocks", ".trae", "session_logs"]
 
 
 def _find_py_files() -> list[Path]:

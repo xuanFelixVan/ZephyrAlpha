@@ -15,7 +15,7 @@ generated_at: '2026-05-07T06:52:14Z'
 generated_from: generate_rule_catalog.py（与 rule-catalog-registry.yaml 同批同步�?
 scope_note: 本文件仅索引 docs/01_policies_and_standards/ 下带治理 frontmatter �?Markdown（及本树登记引用）�?
   docs/02_enterprise_architecture/、docs/09_audit/findings/、architecture_model 施工树等不在此表——见各目�?
-  index.md �?architecture_model/SCOPE.yaml�?
+  index.md �?architecture_model/scope.yaml�?
 total_files: 154
 files:
 - path: docs/01_policies_and_standards/index.md

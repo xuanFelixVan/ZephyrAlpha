@@ -5820,7 +5820,7 @@ tree:
       - secrets.py
       - serialization.py
       - session_audit.py
-      - SHARED-QUICKREF.yml
+      - shared_quickref.yaml
       - slo_review_assistant.py
       - ssot_guard.py
       - state_machine.py
@@ -14380,7 +14380,7 @@ tree:
           __files__:
           - frontmatter-schema.json
           - index.md
-          - session-logschema.yaml
+          - session_logschema.yaml
           __state__: operational
           __domain_id__: ''
           __subdomain_id__: ''

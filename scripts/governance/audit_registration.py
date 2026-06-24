@@ -78,7 +78,7 @@ EXCLUDE_PATTERNS = {
     "build",
     "egg-info",
     ".ailocks",
-    "session-logs",
+    "session_logs",
     "_backup",
     "_archive",
 }

@@ -216,7 +216,7 @@ class PostDocReviewScanner:
         if session_id and not _SESSION_ID_PATTERN.match(session_id):
             raise ValueError(f"session_id 含非法字符（只允许字母/数字/下划线/连字符）: {session_id!r}")
         self._session_id = session_id
-        self._session_log_dir = project_root / "session-logs"
+        self._session_log_dir = project_root / "session_logs"
 
     def scan(self) -> DocReviewReport:
         """执行文档内容审查，返回报告。
@@ -328,10 +328,10 @@ class PostDocReviewScanner:
             untracked_files = [f for f in untracked_result.stdout.strip().splitlines() if f]
             all_files = list(dict.fromkeys(tracked_files + untracked_files))
 
-            # 过滤掉 session-logs/ 目录下的辅助文件——这些是门禁自身管理的文件
+            # 过滤掉 session_logs/ 目录下的辅助文件——这些是门禁自身管理的文件
             # （modified_files.json / session_start_commit.txt / doc_review_report.json），
             # 不属于被审查的文档修改范围。
-            all_files = [f for f in all_files if not f.replace("\\", "/").startswith("session-logs/")]
+            all_files = [f for f in all_files if not f.replace("\\", "/").startswith("session_logs/")]
             return all_files
 
         except subprocess.TimeoutExpired as exc:

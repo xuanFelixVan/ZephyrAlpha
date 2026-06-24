@@ -5,7 +5,7 @@ generated_at: "2026-05-06"
 #（如 T-A01 = Cursor）隔离，禁止跨文件按同号对齐�?
 #
 # ThoughtWorks Radar 条目真源仍为 EA YAML；语义对账字段（runtime/语言类等）必须与 EA 条目一致，
-# ID 不参与对账——参�?architecture_model/SCOPE.yaml�?
+# ID 不参与对账——参�?architecture_model/scope.yaml�?
 #
 technology_radar:
   adopt:

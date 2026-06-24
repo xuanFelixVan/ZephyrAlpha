@@ -20,7 +20,7 @@ from __future__ import annotations
 import os
 
 """
-validate_session_log_index_integrity.py — session-logs 索引 ↔ 磁盘对账 + 自动汇总
+validate_session_log_index_integrity.py — session_logs 索引 ↔ 磁盘对账 + 自动汇总
 =====================================================================================
 依据：GOV-AI-007（session-log-schema.yaml v2.2.0）+ PS-REG-011
 对标：AGENTS.md §5.2 审计协议 + RULE-ZERO 锁协议
@@ -34,7 +34,7 @@ validate_session_log_index_integrity.py — session-logs 索引 ↔ 磁盘对账
 
 2. generate 模式（--generate）：
    - 扫描所有 session log YAML → 提取 blind_spots_discovered
-   - 自动生成 session-logs/_auto/blind_spot_timeline.yaml
+   - 自动生成 session_logs/_auto/blind_spot_timeline.yaml
    - 自动更新 index.yaml 的 by_date / total_sessions / stats
 
 设计原则
@@ -51,7 +51,7 @@ Usage:
 
 __manifest__ = {
     "args": ["--generate", "--warn-only"],
-    "description": "session-logs/index.yaml 与磁盘对账 + 自动生成盲点时间线",
+    "description": "session_logs/index.yaml 与磁盘对账 + 自动生成盲点时间线",
     "dimensions": ["D5", "D11"],
     "priority": "P0",
     "timeout_seconds": 30,
@@ -75,7 +75,7 @@ ensure_utf8_stdout()
 
 import yaml
 
-SESSION_LOGS_DIR = REPO_ROOT / "session-logs"
+SESSION_LOGS_DIR = REPO_ROOT / "session_logs"
 INDEX_FILE = SESSION_LOGS_DIR / "index.yaml"
 AUTO_DIR = SESSION_LOGS_DIR / "_auto"
 BLIND_SPOT_FILE = AUTO_DIR / "blind_spot_timeline.yaml"
@@ -326,7 +326,7 @@ def validate(index_data: dict, disk_sessions: dict[str, Path], warn_only: bool) 
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="session-logs 索引 ↔ 磁盘对账 + 自动汇总（GOV-AI-007 v2.2）")
+    parser = argparse.ArgumentParser(description="session_logs 索引 ↔ 磁盘对账 + 自动汇总（GOV-AI-007 v2.2）")
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻断）")
     parser.add_argument(
         "--generate", action="store_true", help="自动从 session log YAML 汇总生成 blind_spot_timeline + by_date"

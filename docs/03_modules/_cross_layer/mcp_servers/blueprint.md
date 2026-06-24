@@ -351,7 +351,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | 文件 | 更新内容 | 优先级 |
 |------|---------|:---:|
-| `SHARED-QUICKREF.yml` | MCP Server 消费者注册（当前 consumer_count 已从 9→17） | 🔴 |
+| `shared_quickref.yaml` | MCP Server 消费者注册（当前 consumer_count 已从 9→17） | 🔴 |
 | `AGENTS.md` | MCP 施工硬约束（6 条）| 🔴 |
 | `pyproject.toml` | 追加 `mcp>=1.0.0` 依赖 | 🔴 |
 | `requirements.txt` | 追加 `mcp>=1.0.0` 依赖 | 🔴 |

@@ -59,7 +59,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_PASS, REPO_ROOT
 
-SESSION_LOGS_DIR = REPO_ROOT / "session-logs"
+SESSION_LOGS_DIR = REPO_ROOT / "session_logs"
 BYPASS_PATTERNS = [
     re.compile(r"--no-verify", re.IGNORECASE),
     re.compile(r"--skip-gate", re.IGNORECASE),
@@ -180,7 +180,7 @@ def main() -> int:
                 dimension=Dimension.D11,
                 severity=Severity.CRITICAL,
                 category="合规完整性 — 绕过频率超标",
-                target_file="session-logs/",
+                target_file="session_logs/",
                 description=f"7 天内绕过 {recent_bypass_count} 次，超过阈值 {MAX_BYPASSES_PER_7D}",
                 evidence=f"近期绕过事件数: {recent_bypass_count}",
                 remediation_action=RemediationAction.INVESTIGATE,

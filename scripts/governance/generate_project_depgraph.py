@@ -58,7 +58,7 @@ _DEPGRAPH_CONFIG = _SCAN_CONFIG.get("depgraph", {})
 _FALLBACK_EXEMPT_DIRS = {
     "__pycache__", ".git", ".ailocks", "node_modules",
     ".mypy_cache", ".pytest_cache", ".ruff_cache",
-    "_backups", "_temp", ".audit_cache", "session-logs",
+    "_backups", "_temp", ".audit_cache", "session_logs",
 }
 _FALLBACK_EXCLUDED_NODE_TYPES = {"doc", "policy", "standard", "template", "diagram", "data"}
 _FALLBACK_SCAN_DIRS = [

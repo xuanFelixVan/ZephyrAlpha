@@ -193,7 +193,7 @@ This view is **driven by** the Business Architecture (what capabilities determin
 - `18_audit_and_evidence` — Audit and evidence: inspection results, trails, evidence chains / 审计与证据：检查结果、留痕与证据链
   - `audit-reports` — Audit reports / 审计报告
   - `scan-results` — Scan results / 扫描结果
-  - `session-logs` — Session logs / 会话日志
+  - `session_logs` — Session logs / 会话日志
   - `evidence-packs` — Evidence packs / 证据包
   - `state-and-tracking` — State and tracking / 状态与追踪
 - `19_development_workspace` — Development workspace: ongoing discussion, task books, working drafts / 开发工作区：持续讨论、任务书、工作草稿与待升格文档
@@ -205,7 +205,7 @@ This view is **driven by** the Business Architecture (what capabilities determin
   - `adr-drafts` — KB 决策记录 drafts / KB 决策记录 草稿区
   - `roadmaps` — Roadmaps / 路线图
   - `risk-registers` — Risk registers / 风险登记簿
-  - `session-logs` — Session log cache / 会话日志缓存
+  - `session_logs` — Session log cache / 会话日志缓存
   - `archive` — Workspace archive / 工作区本地归档
 - `99_archive` — Archive: inactive but retained assets / 归档：非活跃但需保留的资产
   - `retired-docs` — Retired documents / 退役文档
