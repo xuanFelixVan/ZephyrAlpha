@@ -309,6 +309,52 @@ def sync_gate_registry(cur):
     print(f"  同步 {synced}/{len(gates)} 个门禁")
 
 
+def normalize_domain_id(domain_id: str) -> str:
+    """归一化域ID: 保留 D- 前缀,将其余连字符替换为下划线。
+
+    D-AUTONOMY-CORE → D-AUTONOMY_CORE
+    D-INFRA-OPS    → D-INFRA_OPS
+    D-AUTONOMY_CORE → D-AUTONOMY_CORE (无变化)
+    """
+    if not domain_id.startswith("D-"):
+        return domain_id
+    return "D-" + domain_id[2:].replace("-", "_")
+
+
+def validate_domain_id_consistency(cur, entries):
+    """校验 YAML 域ID与 DB 现有域ID的归一化一致性,防止连字符/下划线重复。
+
+    检查: YAML 中的 domain_id 归一化后是否与 DB 现有 domain_id 不同但归一化相同。
+    如果 YAML 用 D-AUTONOMY-CORE 而 DB 已有 D-AUTONOMY_CORE,会报警并跳过。
+    """
+    cur.execute("SELECT domain_id FROM domains")
+    existing_ids = {row[0] for row in cur.fetchall()}
+
+    issues = []
+    for d in entries:
+        yaml_id = d.get("domain", "")
+        if not yaml_id.startswith("D-"):
+            continue
+        normalized = normalize_domain_id(yaml_id)
+        # YAML 用连字符但 DB 已有下划线版本 → 会产生重复
+        if normalized != yaml_id and normalized in existing_ids:
+            issues.append((yaml_id, normalized))
+        # DB 已有连字符版本但 YAML 改为下划线 → 需要清理 DB 旧连字符行
+        # 仅当 yaml_id 中间有下划线时才检查(单词域如 D-GOVERNANCE 无连字符变体)
+        if normalized == yaml_id and "_" in yaml_id[2:]:
+            hyphen_variant = "D-" + yaml_id[2:].replace("_", "-")
+            if hyphen_variant != yaml_id and hyphen_variant in existing_ids:
+                issues.append((hyphen_variant, yaml_id))
+
+    if issues:
+        print("  [WARNING] 发现域ID归一化冲突,可能导致重复:")
+        for yaml_id, db_id in issues:
+            print(f"    YAML={yaml_id} vs DB={db_id} (归一化后相同)")
+        print("  [ACTION] 跳过这些域的同步,请先清理 DB 中的冲突域")
+        return issues
+    return []
+
+
 def sync_functional_domain_registry(cur):
     """#156: 功能域注册表 → domains + arch_path_mappings 表"""
     print("同步 #156: 功能域注册表 → domains + arch_path_mappings...")
@@ -317,6 +363,11 @@ def sync_functional_domain_registry(cur):
         return
 
     entries = data.get("entries", [])
+
+    # 校验: 检查 YAML 域ID与 DB 现有域ID的归一化一致性
+    conflict_domains = validate_domain_id_consistency(cur, entries)
+    conflict_set = {yaml_id for yaml_id, _ in conflict_domains}
+
     synced = 0
     from datetime import datetime
 
@@ -324,6 +375,13 @@ def sync_functional_domain_registry(cur):
     skipped = 0
     for d in entries:
         domain_id = d.get("domain", "")
+        # 跳过有归一化冲突的域(防止产生重复)
+        if domain_id in conflict_set:
+            print(
+                f"  SKIP: 跳过冲突域 '{domain_id}'——归一化后与 DB 现有域冲突,请先清理"
+            )
+            skipped += 1
+            continue
         # DM-100252: 跳过小写类别域（非 D-XXX 格式），防止 UPSERT 折叠产生脏数据
         # YAML 将在 DM-100256 重构为 D-XXX 子域描述表
         if not domain_id.startswith("D-"):
