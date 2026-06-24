@@ -24,13 +24,13 @@ _logger = logging.getLogger(__name__)
 
 _AGENT_RBAC_AVAILABLE = False
 try:
-    from zephyr.integration.shared_08.contracts.identity.agent_identity import (
+    from zephyr.shared.contracts.identity.agent_identity import (
         AgentIdentity,
         AgentRole,
         IDESource,
         MaturityLevel,
     )
-    from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision, GuardResult
+    from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
     from zephyr.security.access_control.permission_guard import PermissionGuard
 
     _AGENT_RBAC_AVAILABLE = True

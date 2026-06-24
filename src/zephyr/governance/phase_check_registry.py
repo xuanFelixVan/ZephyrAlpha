@@ -351,7 +351,7 @@ def check_blueprint_compliance() -> GateResult:
 
 def check_agent_rbac() -> GateResult:
     try:
-        from zephyr.integration.shared_08.contracts.identity.agent_identity import (
+        from zephyr.shared.contracts.identity.agent_identity import (
             AgentIdentity,
             AgentRole,
             IDESource,

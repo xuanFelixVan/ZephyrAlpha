@@ -634,7 +634,7 @@ class GovernanceServer(BaseMCPServer):
         self, session_id: str, operation: str, maturity: str = "L2_REGULAR", role: str = "executor"
     ) -> dict[str, Any]:
         try:
-            from zephyr.integration.shared_08.contracts.identity.agent_identity import (
+            from zephyr.shared.contracts.identity.agent_identity import (
                 AgentIdentity,
                 AgentRole,
                 IDESource,
