@@ -85,10 +85,10 @@ def detect_capacity_violations(cur) -> list:
 
 
 def detect_hard_limit_violations(cur) -> list:
-    """检测2b: 硬上限违规（production 节点数 > 200，ARCH-CAP-002 硬上限）
+    """检测2b: 硬上限违规（production 节点数 > 150，ARCH-CAP-002 硬上限）
 
     独立于 domains.max_modules 字段判定——即使 max_modules 被设为过高的旧口径反推值，
-    也能检出超过 200 硬上限的域。200 是 AI 可维护性硬上限（trae_055 ARCH-CAP-002）。
+    也能检出超过 150 硬上限的域。150 是 AI 可维护性硬上限（trae_055 ARCH-CAP-002 v1.0.8 二元规则）。
     """
     cur.execute("""
     SELECT n.domain_id, COUNT(*) as production_count, d.max_modules
@@ -96,10 +96,10 @@ def detect_hard_limit_violations(cur) -> list:
     JOIN domains d ON n.domain_id = d.domain_id
     WHERE n.design_maturity = 'production'
     GROUP BY n.domain_id
-    HAVING COUNT(*) > 200
+    HAVING COUNT(*) > 150
     """)
     return [
-        {"type": "hard_limit_exceeded", "domain_id": r[0], "production_nodes": r[1], "hard_limit": 200, "max": r[2]}
+        {"type": "hard_limit_exceeded", "domain_id": r[0], "production_nodes": r[1], "hard_limit": 150, "max": r[2]}
         for r in cur.fetchall()
     ]
 
@@ -207,7 +207,7 @@ def run_4class_check():
             print(f"  {v['domain_id']}: production_nodes={v['production_nodes']}, max={v['max']}")
 
         # 检测2b: 硬上限违规（ARCH-CAP-002，独立于 max_modules）
-        print("\n--- 检测2b: 硬上限违规（production 节点 > 200，ARCH-CAP-002）---")
+        print("\n--- 检测2b: 硬上限违规（production 节点 > 150，ARCH-CAP-002）---")
         hard_limit_violations = detect_hard_limit_violations(cur)
         print(f"硬上限违规域数: {len(hard_limit_violations)}")
         for v in hard_limit_violations:
@@ -243,7 +243,7 @@ def run_4class_check():
         print(f"=== 检测汇总: 共{total}个违规 ===")
         print(f"  跨域违规: {len(cross_violations)}")
         print(f"  容量超限: {len(capacity_violations)}")
-        print(f"  硬上限违规(>200): {len(hard_limit_violations)}")
+        print(f"  硬上限违规(>150): {len(hard_limit_violations)}")
         print(f"  孤儿节点: {len(orphan_violations)}")
         print(f"  层级违规: {len(layer_violations)}")
         print("=" * 60)

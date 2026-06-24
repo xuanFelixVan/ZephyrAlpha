@@ -48,7 +48,7 @@ LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]
 def get_domain_info(conn: sqlite3.Connection, domain_id: str) -> dict | None:
     """查询域基本信息。"""
     cur = conn.execute(
-        "SELECT domain_id, domain_name, current_modules, max_modules, layer_id, description "
+        "SELECT domain_id, domain_name, current_modules, max_modules, production_nodes, layer_id, description "
         "FROM domains WHERE domain_id=?",
         (domain_id,),
     )
@@ -59,9 +59,10 @@ def get_domain_info(conn: sqlite3.Connection, domain_id: str) -> dict | None:
         "domain_id": row[0],
         "domain_name": row[1] or "",
         "current_modules": row[2] or 0,
-        "max_modules": row[3] or 200,
-        "layer_id": row[4] or "",
-        "description": row[5] or "",
+        "max_modules": row[3] or 150,
+        "production_nodes": row[4] or 0,
+        "layer_id": row[5] or "",
+        "description": row[6] or "",
     }
 
 
@@ -436,7 +437,7 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     design_count = sum(1 for n in nodes if n["design_maturity"] == "design")
     production_count = sum(1 for n in nodes if n["design_maturity"] == "production")
     prototype_count = sum(1 for n in nodes if n["design_maturity"] == "prototype")
-    capacity_status = "正常" if info["current_modules"] <= info["max_modules"] else "超容"
+    capacity_status = "正常" if info["production_nodes"] <= info["max_modules"] else "超容"
     total_outgoing = sum(d["count"] for d in outgoing_agg)
     total_incoming = sum(d["count"] for d in incoming_agg)
 
@@ -478,8 +479,8 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     lines.append(f"| 原型态模块 | {prototype_count} | Prototype Modules | {prototype_count} |")
     lines.append(f"| 生产态模块 | {production_count} | Production Modules | {production_count} |")
     lines.append(
-        f"| 容量 | {info['current_modules']}/{info['max_modules']} ({capacity_status}) | "
-        f"Capacity | {info['current_modules']}/{info['max_modules']} ({capacity_status}) |"
+        f"| 容量 | {info['production_nodes']}/{info['max_modules']} ({capacity_status}) | "
+        f"Capacity | {info['production_nodes']}/{info['max_modules']} ({capacity_status}) |"
     )
     if info["description"]:
         lines.append(f"| 描述 | {info['description']} | Description | {info['description']} |")

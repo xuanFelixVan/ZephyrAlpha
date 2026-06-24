@@ -41,11 +41,10 @@ OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/03_governance
 
 
 def get_domain_capacity(conn: sqlite3.Connection) -> list[dict]:
-    """查询所有域的容量信息。"""
+    """查询所有域的容量信息（ARCH-CAP-001: production_nodes 口径）。"""
     cur = conn.execute(
         """SELECT d.domain_id, d.domain_name, d.layer_id, d.current_modules,
-                  d.max_modules, d.target_modules, d.description,
-                  (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id) as actual_nodes
+                  d.max_modules, d.target_modules, d.description, d.production_nodes
            FROM domains d
            ORDER BY d.domain_id"""
     )
@@ -55,10 +54,10 @@ def get_domain_capacity(conn: sqlite3.Connection) -> list[dict]:
             "domain_name": r[1] or "",
             "layer_id": r[2] or "",
             "current_modules": r[3] or 0,
-            "max_modules": r[4] or 200,
+            "max_modules": r[4] or 150,
             "target_modules": r[5],
             "description": r[6] or "",
-            "actual_nodes": r[7],
+            "production_nodes": r[7] or 0,
         }
         for r in cur.fetchall()
     ]

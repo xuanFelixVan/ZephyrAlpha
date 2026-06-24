@@ -65,7 +65,7 @@ BOX_WIDTH = 64
 def get_domain_info(conn: sqlite3.Connection, domain_id: str) -> dict | None:
     """查询域基本信息。"""
     cur = conn.execute(
-        "SELECT domain_id, domain_name, current_modules, max_modules, layer_id, description "
+        "SELECT domain_id, domain_name, current_modules, max_modules, production_nodes, layer_id, description "
         "FROM domains WHERE domain_id=?",
         (domain_id,),
     )
@@ -76,9 +76,10 @@ def get_domain_info(conn: sqlite3.Connection, domain_id: str) -> dict | None:
         "domain_id": row[0],
         "domain_name": row[1] or "",
         "current_modules": row[2] or 0,
-        "max_modules": row[3] or 200,
-        "layer_id": row[4] or "",
-        "description": row[5] or "",
+        "max_modules": row[3] or 150,
+        "production_nodes": row[4] or 0,
+        "layer_id": row[5] or "",
+        "description": row[6] or "",
     }
 
 
