@@ -561,7 +561,8 @@ repos:
       # 权威依据：encoding_safety_standard.md (GOV-DOC-005) + DM-379 根因修复
       # 检测范围：src/zephyr/**/*.py + docs/**/*.md 变更时触发
       # 检测内容：UTF-8 BOM / CRLF / autoGuessEncoding / GBK-as-UTF-8 mojibake
-      # 模式：硬阻断（mojibake检测到即拒绝提交）
+      # 模式：BOM/autoGuessEncoding/mojibake 硬阻断；CRLF 为 WARNING 不阻断（OPS-2026062501 语义修复）
+      #       CRLF 应靠 .gitattributes + git add --renormalize 在仓库层解决，不靠每次提交阻断
       - id: gate-encoding-safety
         name: "GATE-ENCODING: 编码安全+mojibake检测"
         entry: python scripts/governance/d7_code/check_encoding.py
@@ -570,7 +571,21 @@ repos:
         pass_filenames: false
         always_run: false
         files: "\\.(py|md|yaml|yml|json|toml)$"
-        description: "编码安全门禁——UTF-8 BOM/CRLF/autoGuessEncoding/mojibake检测，mojibake硬阻断"
+        description: "编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）"
+
+      # ── GATE-STASH: stash 堆积治理（OPS-2026062501 病根3 治本）──
+      # 权威依据：OPS-2026062501 调研报告——81天堆积41个stash无清理机制
+      # 检测范围：每次提交时触发
+      # 检测内容：stash 数量，超过 MAX_STASHES(5) 时 WARNING，超过 CRITICAL_STASHES(10) 时建议清理
+      # 模式：WARNING 不阻断（exit=0），仅提示 AI 清理 stash
+      - id: gate-stash-count
+        name: "GATE-STASH: stash 堆积治理（OPS-2026062501）"
+        entry: python scripts/governance/cleanup_stash.py
+        args: ["--check"]
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: "stash 堆积治理——检查 stash 数量，超过5个WARNING，超过10个建议清理。对标GitHub/Linux实践：stash是临时栈非备份"
 
       # ── GATE-DRIFT: 漂移检测 LIGHT scan（MOD-INF-023 §1.7 post-commit 自动化）──
       # 权威依据：MOD-INF-023 蓝图 §1.7 典型场景 + §10.4 自动化规格
