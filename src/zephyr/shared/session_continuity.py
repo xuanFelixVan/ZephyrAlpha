@@ -39,6 +39,7 @@ Vibe Coding 最大痛点：AI 每次新 session 是零记忆的。
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -52,19 +53,21 @@ __all__ = ["ContinuityContext", "SessionContinuity", "SessionState"]
 class SessionState:
     session_id: str = ""
     dialogue_number: int = 0
-    current_layer: str = ""
+    current_layer: int = 0
     cards_completed: list[str] = field(default_factory=list)
     cards_failed: list[str] = field(default_factory=list)
     last_checkpoint_json: str = ""
-    last_journal_line: str = ""
+    last_journal_line: int = 0
     timestamp_utc: str = ""
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class ContinuityContext:
+    task_id: str = ""
     progress_summary: str = ""
     remaining_cards: list[str] = field(default_factory=list)
+    key_state: dict[str, Any] = field(default_factory=dict)
     next_action: str = ""
 
 
@@ -74,9 +77,12 @@ _DEFAULT_DB: Path | None = None
 def _get_default_db() -> Path:
     global _DEFAULT_DB
     if _DEFAULT_DB is None:
-        from zephyr.shared.registry import ServiceRegistry
+        try:
+            from zephyr.shared.registry import ServiceRegistry
 
-        _DEFAULT_DB = ServiceRegistry.get("db_path")
+            _DEFAULT_DB = ServiceRegistry.get("db_path")
+        except KeyError:
+            _DEFAULT_DB = Path.cwd() / "data" / "databases" / "session_continuity.db"
     return _DEFAULT_DB
 
 
@@ -101,13 +107,23 @@ class SessionContinuity:
     """Session 交接包自动生成与恢复"""
 
     def __init__(self, db_path: str | Path | None = None, project_root: str | Path | None = None) -> None:
+        if project_root:
+            self._project_root = Path(project_root)
+        else:
+            self._project_root = Path.cwd()
+        self._sessions_dir = self._project_root / "session_logs"
         if db_path:
             self._db_path = Path(db_path)
         else:
-            self._db_path = _get_default_db()
-        self._project_root = self._db_path.parent.parent
-        if project_root:
-            self._project_root = Path(project_root)
+            try:
+                from zephyr.shared.registry import ServiceRegistry
+
+                if ServiceRegistry.is_registered("db_path"):
+                    self._db_path = ServiceRegistry.get("db_path")
+                else:
+                    self._db_path = self._project_root / "data" / "databases" / "session_continuity.db"
+            except Exception:
+                self._db_path = self._project_root / "data" / "databases" / "session_continuity.db"
         self._init_schema()
 
     def _get_conn(self) -> sqlite3.Connection:
@@ -129,7 +145,7 @@ class SessionContinuity:
     def save_session_state(self, state: SessionState) -> Path:
         if not state.timestamp_utc:
             state.timestamp_utc = datetime.now(UTC).isoformat()
-        state_dir = self._project_root / "data" / "session_states"
+        state_dir = self._sessions_dir
         state_dir.mkdir(parents=True, exist_ok=True)
         state_path = state_dir / f"{state.session_id}.json"
         state_path.write_text(
@@ -172,19 +188,31 @@ class SessionContinuity:
         return state_path
 
     def load_session_state(self, session_id: str) -> SessionState | None:
-        state_path = self._project_root / "data" / "session_states" / f"{session_id}.json"
+        state_path = self._sessions_dir / f"{session_id}.json"
         if not state_path.exists():
             return None
         try:
             data = json.loads(state_path.read_text(encoding="utf-8"))
+            required_keys = {
+                "session_id",
+                "dialogue_number",
+                "current_layer",
+                "cards_completed",
+                "cards_failed",
+                "last_checkpoint_json",
+                "last_journal_line",
+                "timestamp_utc",
+            }
+            if not required_keys.issubset(data.keys()):
+                return None
             return SessionState(
                 session_id=data.get("session_id", ""),
                 dialogue_number=data.get("dialogue_number", 0),
-                current_layer=data.get("current_layer", ""),
+                current_layer=data.get("current_layer", 0),
                 cards_completed=data.get("cards_completed", []),
                 cards_failed=data.get("cards_failed", []),
                 last_checkpoint_json=data.get("last_checkpoint_json", ""),
-                last_journal_line=data.get("last_journal_line", ""),
+                last_journal_line=data.get("last_journal_line", 0),
                 timestamp_utc=data.get("timestamp_utc", ""),
                 metadata=data.get("metadata", {}),
             )
@@ -194,17 +222,23 @@ class SessionContinuity:
     def generate_continuity_context(self, state: SessionState) -> ContinuityContext:
         completed = len(state.cards_completed)
         failed = len(state.cards_failed)
-        total = completed + failed
-        summary = f"Completed {completed} cards, failed {failed} cards out of {total} total."
+        summary = f"{completed} cards completed, {failed} failed"
         remaining = list(state.cards_failed)
-        next_action = ""
-        if state.cards_completed:
+        if state.last_checkpoint_json:
+            next_action = "Continue from checkpoint"
+        elif not completed and not failed:
+            next_action = "Start fresh"
+        elif state.cards_completed:
             next_action = f"Continue from last completed: {state.cards_completed[-1]}"
         elif state.cards_failed:
             next_action = f"Retry failed: {state.cards_failed[0]}"
+        else:
+            next_action = "Start fresh"
         return ContinuityContext(
+            task_id=f"SESSION-{state.session_id}",
             progress_summary=summary,
             remaining_cards=remaining,
+            key_state={"layer": state.current_layer, "last_journal_line": state.last_journal_line},
             next_action=next_action,
         )
 
@@ -215,6 +249,7 @@ class SessionContinuity:
         *,
         cards_completed: list[str] | None = None,
         cards_failed: list[str] | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> Any:
         if cards_completed is not None or cards_failed is not None:
             state = SessionState(
@@ -222,6 +257,7 @@ class SessionContinuity:
                 cards_completed=cards_completed or [],
                 cards_failed=cards_failed or [],
                 timestamp_utc=datetime.now(UTC).isoformat(),
+                metadata=metadata or {},
             )
             path = self.save_session_state(state)
             return path
@@ -229,6 +265,56 @@ class SessionContinuity:
             return self._generate_and_save_legacy(session_id, task_repo)
         state = SessionState(session_id=session_id, timestamp_utc=datetime.now(UTC).isoformat())
         return self.save_session_state(state)
+
+    def load_checkpoint(self, step: int) -> dict | None:
+        """从 _journals 目录加载检查点"""
+        cp_path = self._project_root / "_journals" / f"checkpoint_{step}.json"
+        if not cp_path.exists():
+            return None
+        try:
+            return json.loads(cp_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return None
+
+    def validate_sys_master_dispatch(self) -> dict:
+        """验证 _sys_master 蓝图的分派表"""
+        bp_path = self._project_root / "docs" / "03_modules" / "_sys-master" / "blueprint.md"
+        if not bp_path.exists():
+            return {"valid": False, "error": "missing: docs/03_modules/_sys-master/blueprint.md"}
+        try:
+            content = bp_path.read_text(encoding="utf-8")
+        except OSError:
+            return {"valid": False, "error": "missing: docs/03_modules/_sys-master/blueprint.md"}
+        if not content.startswith("---"):
+            return {"valid": False, "error": "no frontmatter found"}
+        fm_end = content.find("---", 3)
+        if fm_end == -1:
+            return {"valid": False, "error": "no frontmatter found"}
+        fm_text = content[3:fm_end]
+        fm = {}
+        for line in fm_text.strip().splitlines():
+            if ":" in line:
+                k, _, v = line.partition(":")
+                fm[k.strip()] = v.strip().strip("'\"")
+        version = fm.get("version", "")
+        construction_progress = fm.get("construction_progress", "")
+        ai_role = fm.get("ai_role_instruction", "")
+        rule_count = len(re.findall(r"\(\d+\)", ai_role))
+        # 解析分派表数据行数
+        body = content[fm_end + 3 :]
+        table_lines = [
+            line
+            for line in body.splitlines()
+            if line.strip().startswith("|") and "---" not in line
+        ]
+        dispatch_domains = max(0, len(table_lines) - 1)
+        return {
+            "valid": True,
+            "version": version,
+            "construction_progress": construction_progress,
+            "ai_rules_count": rule_count,
+            "dispatch_domains": dispatch_domains,
+        }
 
     def _generate_and_save_legacy(self, session_id: str, task_repo: object) -> dict:
         """从 task_repo 汇总当前状态 → 生成 HandoffPackage → 写 SQLite + YAML
@@ -590,7 +676,7 @@ class SessionContinuity:
 
         if handoff is None:
             print(f"\n{'=' * 60}")
-            print("  [Session Continuity] 这是第一次 session——没有历史交接包。")
+            print("  [Session Continuity] 冷启动——没有发现历史交接包。")
             print("  开始新的工作吧！")
             print("=" * 60 + "\n")
             return
