@@ -1,6 +1,6 @@
 rule_id: TRAE-056
 title: 操作-模块/蓝图/代码创建完整工作流程
-version: 2.0.0
+version: 2.1.0
 layer: L1
 module_id: TRAE-056
 depends_on:
@@ -287,31 +287,72 @@ sections:
 
   phase_4_blueprint:
     section_type: procedure
-    title: 阶段4-蓝图创建
+    title: 阶段4-蓝图创建（混合模式：先设计态后蓝图）
     rule_ref:
       rule_id: TRAE-014
       section: arch_011
       alias: ARCH-011
-    purpose: 蓝图是模块的设计真源，必须先于代码创建
+    purpose: 蓝图是设计态的叙事化补充。全景图(depgraph.db)是结构态真源（依赖边/路径/域归属），蓝图只存全景图没有的独有信息（设计意图/职责边界/施工指引/验收标准）。创建顺序：先在全景图创建设计态→再创建蓝图→再创建代码
     applies_when: 创建新模块（脚本/门禁可跳过）
+    prerequisite: 全景图设计态已创建（phase_2_design_node已完成）
+    blueprint_granularity_standard:
+      description: 蓝图颗粒度由AI一次工作范围决定
+      module_level:
+        min_files: 1
+        max_files: 10
+        min_lines: 50
+        max_lines: 300
+        description: 模块级蓝图覆盖1-10个production节点，50-300行。超过10个文件必须拆分为子蓝图
+      domain_level:
+        max_lines: 500
+        description: 域级蓝图覆盖一个功能域，≤500行
+      system_level:
+        max_lines: 1000
+        description: 系统级蓝图唯一，≤1000行
+    blueprint_simplification_principle:
+      description: 蓝图只存全景图没有的独有信息，去掉重叠部分
+      keep:
+        - 设计意图(why)
+        - 职责边界(不做什么)
+        - 接口契约(函数签名/数据模型)
+        - 施工指引(步骤/前置/回滚)
+        - 验收标准(如何判定完成)
+        - 决策记录(考虑过但放弃的方案)
+        - 约束条件(SLI/SLO/NFR)
+        - 错误处理(异常场景/退化矩阵)
+      remove:
+        - 文件清单(委托全景图nodes表)
+        - 依赖关系(委托全景图edges表)
+        - 域归属(委托全景图domains表)
+        - 物理路径(委托全景图arch_directory_tree表)
     steps:
+    - order: 0
+      action: 确认全景图设计态已创建
+      check: 全景图nodes表有对应的design_node节点
+      command: "python scripts/governance/extract_depgraph.py --modules <module_id>"
+      pass: 设计态节点存在
+      fail: 设计态不存在 → 先执行phase_2_design_node创建设计态
     - order: 1
-      action: 遵循蓝图模板
+      action: 遵循蓝图模板（精简版——只含独有信息）
       template: docs/01_policies_and_standards/templates/blueprint_construction_template.md
-      pass: 蓝图结构合规
-      fail: 结构不合规 → 重新按模板创建
+      pass: 蓝图结构合规，不含与全景图重叠的文件清单/依赖关系/域归属
+      fail: 结构不合规或含重叠信息 → 重新按精简模板创建
     - order: 2
       action: frontmatter必含belongs_to字段
       rule_ref: ARCH-011
       pass: belongs_to字段存在
       fail: 缺失 → 补充
     - order: 3
-      action: §4文件清单完整性
-      rule_ref: ARCH-008
-      check: §4列出覆盖范围内所有已实现代码的完整路径
-      pass: 文件清单完整
-      fail: 不完整 → 补全
+      action: 蓝图颗粒度检查
+      check: 模块级蓝图覆盖1-10个文件/50-300行；域级≤500行；系统级≤1000行
+      pass: 颗粒度合规
+      fail: 超过上限 → 拆分为子蓝图；低于下限 → 合并到父蓝图
     - order: 4
+      action: 蓝图精简检查
+      check: 蓝图不含与全景图重叠的信息（文件清单/依赖关系/域归属/物理路径）
+      pass: 蓝图已精简
+      fail: 含重叠信息 → 删除重叠部分，委托全景图
+    - order: 5
       action: 蓝图注册
       command: "注册到 blueprint_registry.yaml"
       pass: 注册成功
