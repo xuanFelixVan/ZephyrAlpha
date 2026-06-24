@@ -962,6 +962,17 @@ def _get_current_version(conn: sqlite3.Connection) -> int:
     return row[0] if row else 0
 
 
+def _should_skip_v28_cleanup(conn: sqlite3.Connection) -> bool:
+    """检查 tasks 表是否存在 domain_id 列。
+
+    v28 statement #0 是为清洗生产库脏数据而写（tasks.domain_id 引用不存在的 domains），
+    但全新库的 tasks 表从未创建 domain_id 列，执行会抛 OperationalError。
+    返回 True 表示当前库无 domain_id 列，应跳过该清洗语句。
+    """
+    cols = conn.execute("PRAGMA table_info(tasks)").fetchall()
+    return not any(c[1] == "domain_id" for c in cols)
+
+
 def _run_migration(
     conn: sqlite3.Connection,
     version: int,
@@ -975,6 +986,9 @@ def _run_migration(
     for i, stmt in enumerate(statements):
         stmt = stmt.strip()
         if not stmt:
+            continue
+        # v28 statement #0 是生产库脏数据清洗，全新库无 domain_id 列需跳过
+        if version == 28 and i == 0 and _should_skip_v28_cleanup(conn):
             continue
         try:
             conn.execute(stmt)
