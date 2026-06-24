@@ -77,7 +77,7 @@ def _find_repo_root() -> Path:
 DB_PATH: Path = _find_repo_root() / "data" / "databases" / "depgraph.db"
 
 # ---------------------------------------------------------------------------
-# DDL — nodes 表（完整29列）
+# DDL — nodes 表（28列，v11删除module_lifecycle_state+添加CHECK约束）
 # ---------------------------------------------------------------------------
 
 _DDL_NODES = """
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     file_header_score        INTEGER DEFAULT 0,
     tags                     TEXT,
     architecture_layer       TEXT,
-    design_maturity          TEXT    DEFAULT 'production',
+    design_maturity          TEXT    DEFAULT 'production' CHECK(design_maturity IN ('design','production','prototype')),
     deployment_lifecycle     TEXT    DEFAULT 'stable',
     trust_zone               TEXT    DEFAULT 'trusted_core',
     license                  TEXT    DEFAULT 'Internal',
@@ -106,8 +106,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     last_verified            TEXT,
     node_name                TEXT    DEFAULT '',
     file_path                TEXT    DEFAULT '',
-    build_status             TEXT    DEFAULT 'unbuilt',
-    module_lifecycle_state   TEXT    DEFAULT 'planned',
+    build_status             TEXT    DEFAULT 'generated' CHECK(build_status IN ('planned','generated','testing','stable','deprecated')),
     can_build                INTEGER DEFAULT 1,
     gate_reason              TEXT    NOT NULL DEFAULT '',
     hard_boundary_ref        TEXT,

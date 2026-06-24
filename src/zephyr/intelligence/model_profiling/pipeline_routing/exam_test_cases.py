@@ -715,18 +715,19 @@ EX_DT_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # context_consistency (3 题) — 上下文一致性检测
+# FIX L3.5: 从字面矛盾改为语义矛盾（旧题int vs string、SQLite vs PostgreSQL太明显）
 EX_CC_001 = ExamTestCase(
     case_id="EX-CC-001",
     capability="context_consistency",
     difficulty=Difficulty.EASY,
     prompt=(
         "检查以下技术文档是否存在矛盾：\n"
-        "函数 add(a, b) 的返回类型在类型注解中标注为 int，"
-        "但在文档字符串中说明返回 string 类型。"
+        "系统设计为无状态服务，所有API请求相互独立。"
+        "用户会话状态存储在服务器内存中，用于维持登录状态。"
         "请分析文档是否存在不一致。"
     ),
     expected_structure_keys=["consistent", "conflicts"],
-    expected_contains=["inconsistent", "int", "string"],
+    expected_contains=["stateless", "session", "in-memory", "memory"],
 )
 
 EX_CC_002 = ExamTestCase(
@@ -735,12 +736,12 @@ EX_CC_002 = ExamTestCase(
     difficulty=Difficulty.MEDIUM,
     prompt=(
         "检查以下项目文档是否存在矛盾：\n"
-        "本项目使用 SQLite 数据库存储用户数据，配置文件指向 db.sqlite3。"
-        "数据库连接模块中使用 PostgreSQL 连接字符串 postgres://localhost。"
+        "本系统采用事件驱动架构，组件间通过消息队列异步通信。"
+        "所有组件每5秒轮询一次数据库，检查是否有新任务需要处理。"
         "请分析文档是否存在不一致。"
     ),
     expected_structure_keys=["consistent", "conflicts"],
-    expected_contains=["inconsistent", "SQLite", "PostgreSQL"],
+    expected_contains=["event-driven", "polling", "轮询", "asynchronous"],
 )
 
 EX_CC_003 = ExamTestCase(
@@ -749,13 +750,14 @@ EX_CC_003 = ExamTestCase(
     difficulty=Difficulty.HARD,
     prompt=(
         "检查以下架构文档是否存在矛盾：\n"
-        "用户管理模块名为 user_manager，在服务层中被称为 account_service。"
-        "service 层依赖 repository 层，repository 层依赖 service 层。"
-        "User.id 字段类型在模型中为 int，在序列化器中为 str。"
+        "系统采用微服务架构，每个服务拥有独立的数据库实例，服务间通过API通信。"
+        "订单服务和库存服务共享同一个MySQL数据库的orders和inventory表。"
+        "所有服务必须独立部署和扩展。"
+        "订单服务在部署时需要先启动库存服务，否则无法访问共享数据。"
         "请分析文档是否存在不一致。"
     ),
     expected_structure_keys=["consistent", "conflicts"],
-    expected_contains=["inconsistent"],
+    expected_contains=["microservice", "shared", "database", "independent"],
 )
 
 # hallucination_detect (3 题) — 幻觉检测
@@ -863,6 +865,7 @@ EX_LCR_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # rule_comprehension (3 题) — 规则理解
+# FIX L3.5: 精确化expected_contains（旧值包含修复建议而非违反点）
 EX_RC_001 = ExamTestCase(
     case_id="EX-RC-001",
     capability="rule_comprehension",
@@ -870,7 +873,7 @@ EX_RC_001 = ExamTestCase(
     prompt="规则集：1.所有Python文件必须使用UTF-8编码 2.禁止使用eval()函数 3.所有函数必须有类型注解。场景：代码中有 `def process(data):\n    result = eval(data)\n    with open('output.txt', 'w') as f:\n        f.write(result)`。这段代码违反了哪些规则？",
     expected_structure_keys=["compliant", "violations"],
     expected_compliant=False,
-    expected_contains=["encoding", "utf-8", "eval", "type"],
+    expected_contains=["eval", "type", "encoding"],
 )
 
 EX_RC_002 = ExamTestCase(
@@ -880,7 +883,7 @@ EX_RC_002 = ExamTestCase(
     prompt="规则集：1.禁止在for循环中使用subprocess.run() 2.所有HTTP请求必须设置timeout 3.异常必须记录日志。场景：代码中有 `for url in urls:\n    resp = subprocess.run(['curl', url])\n    print(resp)`。这段代码违反了哪些规则？",
     expected_structure_keys=["compliant", "violations"],
     expected_compliant=False,
-    expected_contains=["ThreadPoolExecutor", "subprocess", "timeout", "log"],
+    expected_contains=["subprocess", "timeout", "log"],
 )
 
 EX_RC_003 = ExamTestCase(
@@ -890,7 +893,7 @@ EX_RC_003 = ExamTestCase(
     prompt="规则集：1.文件名必须snake_case 2.禁止PowerShell语法 3.复杂逻辑必须落盘为.py脚本 4.禁止在代码中使用中文变量名 5.所有配置必须从YAML读取。场景：开发者编写了 `ValidateConfig.py` 文件（注意大小写），其中包含一个100行的数据校验函数，用Python标准库实现，配置硬编码在代码中。这段代码违反了哪些规则？",
     expected_structure_keys=["compliant", "violations"],
     expected_compliant=False,
-    expected_contains=["snake_case", "ValidateConfig", "yaml", "config"],
+    expected_contains=["snake_case", "yaml", "hardcoded", "config"],
 )
 
 # safety_judgment (3 题) — 安全判断
@@ -972,37 +975,38 @@ EX_FEP_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # self_review (3 题) — 自审自纠
+# FIX L3.5: 把明显bug改为隐蔽的逻辑错误（旧题add返回减法、divide除零太明显）
 EX_SR_001 = ExamTestCase(
     case_id="EX-SR-001",
     capability="self_review",
     difficulty=Difficulty.EASY,
-    prompt="审查以下代码是否有bug：\ndef add(a, b):\n    return a - b\n\n请检查代码是否有问题。",
+    prompt="审查以下代码是否有bug：\ndef calculate_discount(price, discount):\n    return price * (1 + discount)\n\n请检查代码是否有问题。",
     expected_structure_keys=["has_bug", "bugs"],
     expected_has_bug=True,
-    expected_bug_location="return a - b",
-    expected_contains=["bug", "a - b", "subtraction"],
+    expected_bug_location="1 + discount",
+    expected_contains=["1 + discount", "addition", "subtraction"],
 )
 
 EX_SR_002 = ExamTestCase(
     case_id="EX-SR-002",
     capability="self_review",
     difficulty=Difficulty.MEDIUM,
-    prompt="审查以下代码是否有bug：\ndef divide(a, b):\n    return a / b\n\n请检查是否有潜在问题。",
+    prompt="审查以下代码是否有bug：\ndef get_last_item(lst):\n    return lst[len(lst)]\n\n请检查是否有潜在问题。",
     expected_structure_keys=["has_bug", "bugs"],
     expected_has_bug=True,
-    expected_bug_location="a / b",
-    expected_contains=["zero", "division", "ZeroDivisionError"],
+    expected_bug_location="len(lst)",
+    expected_contains=["index", "out of range", "len(lst)", "off-by-one"],
 )
 
 EX_SR_003 = ExamTestCase(
     case_id="EX-SR-003",
     capability="self_review",
     difficulty=Difficulty.HARD,
-    prompt="审查以下代码是否有bug：\ndef process_items(items):\n    result = []\n    for i in range(len(items)):\n        result.append(items[i+1])\n    return result\n\n请检查代码是否有问题。",
+    prompt="审查以下代码是否有bug：\ndef find_max(numbers):\n    max_val = 0\n    for n in numbers:\n        if n > max_val:\n            max_val = n\n    return max_val\n\n请检查代码是否有问题。",
     expected_structure_keys=["has_bug", "bugs"],
     expected_has_bug=True,
-    expected_bug_location="items[i+1]",
-    expected_contains=["index", "out of range", "越界", "i+1"],
+    expected_bug_location="max_val = 0",
+    expected_contains=["negative", "zero", "initial", "max_val = 0"],
 )
 
 
@@ -1120,34 +1124,35 @@ EX_AMB_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # tool_selection (3 题) — 工具选择
+# FIX L3.5: 增加干扰选项，expected_contains改为理由关键词（旧题场景太简单）
 EX_TS_001 = ExamTestCase(
     case_id="EX-TS-001",
     capability="tool_selection",
     difficulty=Difficulty.EASY,
-    prompt="项目中有200个Python文件，你需要定位所有包含'DEPRECATED'标记的代码行，以便进行技术债清理。应该用什么工具？",
+    prompt="项目中有200个Python文件和50个配置文件，你需要定位所有包含'DEPRECATED'标记的代码行，以便进行技术债清理。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Grep",
-    expected_contains=["Grep", "grep"],
+    expected_contains=["search", "pattern", "content", "regex"],
 )
 
 EX_TS_002 = ExamTestCase(
     case_id="EX-TS-002",
     capability="tool_selection",
     difficulty=Difficulty.MEDIUM,
-    prompt="部署前需要确认 docker-compose.yml 中数据库服务的端口映射是否正确，你需要查看该文件的完整内容。应该用什么工具？",
+    prompt="部署前需要确认 docker-compose.yml 中数据库服务的端口映射是否正确，你需要查看该文件的完整内容以核对配置。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Read",
-    expected_contains=["Read", "read"],
+    expected_contains=["full", "content", "complete", "view"],
 )
 
 EX_TS_003 = ExamTestCase(
     case_id="EX-TS-003",
     capability="tool_selection",
     difficulty=Difficulty.HARD,
-    prompt="CI流水线需要收集 src/ 目录下所有Python模块的文件路径列表，用于批量执行lint检查。应该用什么工具？",
+    prompt="CI流水线需要收集 src/ 目录下所有Python模块的文件路径列表，用于批量执行lint检查，但需要排除 __pycache__ 目录和测试文件。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Glob",
-    expected_contains=["Glob", "glob"],
+    expected_contains=["pattern", "file paths", "list", "match"],
 )
 
 

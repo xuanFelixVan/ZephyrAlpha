@@ -555,9 +555,14 @@ class ExamOrchestrator:
             expected_inconsistent = len(case.expected_contains) > 0
             if expected_inconsistent:
                 correct = 1 if not consistent else 0
-                conflict_count = len(conflicts) if isinstance(conflicts, list) else 0
-                score = max(correct, min(conflict_count / 2, 1.0))
-                return (score, score, 0.0, correct)
+                # FIX L3.5: 检查conflicts内容是否包含expected_contains关键词
+                # 旧逻辑只数conflicts数量（列2个就得满分），不验证内容正确性
+                text = json.dumps(result)
+                kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+                kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+                score = correct * 0.5 + kw_rate * 0.5  # consistent判断50% + 矛盾内容50%
+                em = 1 if correct and kw_rate >= 0.8 else 0
+                return (score, score, 0.0, em)
             else:
                 correct = 1 if consistent else 0
                 return (correct, correct, 0.0, correct)
@@ -601,13 +606,13 @@ class ExamOrchestrator:
                 return (0.0, 0.0, 1.0, 0)
             expected_compliant = case.expected_compliant
             correct = 1 if compliant == expected_compliant else 0
-            # FIX L3: 检查violations内容是否包含expected_contains关键词
-            # 旧逻辑只检查compliant布尔值，模型猜对True/False就得满分
+            # FIX L3.5: 改为加权评分（旧逻辑max导致猜对compliant就满分）
+            # compliant判断50% + violations内容匹配50%
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(correct, kw_rate * 0.5)  # violations内容匹配占50%
-            em = 1 if correct and kw_rate >= 0.5 else 0
+            score = correct * 0.5 + kw_rate * 0.5
+            em = 1 if correct and kw_rate >= 0.8 else 0
             return (score, score, 0.0, em)
 
         if cap in ("safety_judgment",):
@@ -661,9 +666,8 @@ class ExamOrchestrator:
             if has_bug is None:
                 return (0.0, 0.0, 1.0, 0)
             correct = 1 if has_bug == case.expected_has_bug else 0
-            text = json.dumps(result)
-            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
-            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            # FIX L3.5: 要求bug_location准确匹配（旧逻辑max导致猜对has_bug就满分）
+            # has_bug判断50% + bug_location准确50%
             bug_found = 0
             if case.expected_bug_location and isinstance(bugs, list):
                 for bug in bugs:
@@ -672,8 +676,9 @@ class ExamOrchestrator:
                         if case.expected_bug_location.lower() in loc:
                             bug_found = 1
                             break
-            score = max(correct, bug_found, _kw_capped(kw_rate))
-            return (score, score, 0.0, correct)
+            score = correct * 0.5 + bug_found * 0.5
+            em = 1 if correct and bug_found else 0
+            return (score, score, 0.0, em)
 
         # G类: 增量执行评分
         if cap in ("incremental_execution",):
@@ -730,6 +735,7 @@ class ExamOrchestrator:
         # J类: 工具选择评分
         if cap in ("tool_selection",):
             tool = str(result.get("tool", "")).lower().strip()
+            reason = str(result.get("reason", "")).lower().strip()
             if not tool:
                 return (0.0, 0.0, 1.0, 0)
             expected = case.expected_tool.lower().strip()
@@ -737,8 +743,12 @@ class ExamOrchestrator:
             # 如 expected="grep", tool="grep tool" 应该匹配
             import re
             word_match = bool(re.search(r'\b' + re.escape(expected) + r'\b', tool))
-            em = 1 if word_match else 0
-            score = em  # kw_capped已废弃
+            # FIX L3.5: 检查reason内容是否包含expected_contains关键词
+            # 旧逻辑只检查tool名，模型只说"Grep"就得满分，不验证理由正确性
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in reason)
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = (1.0 if word_match else 0.0) * 0.5 + kw_rate * 0.5  # tool名50% + reason内容50%
+            em = 1 if word_match and kw_rate >= 0.8 else 0
             return (score, score, 0.0, em)
 
         # K类: 影响分析能力评分
