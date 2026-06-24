@@ -134,21 +134,13 @@ def _load_from_db(db_path):
 
 
 def _update_db_metadata(db_path, metadata_updates):
-    """Update metadata fields in the depgraph SQLite database."""
-    conn = sqlite3.connect(str(db_path))
-    try:
-        # Store metadata as key-value in a simple approach using _schema_version description
-        # For now, just update the schema version description with verification status
-        desc = "; ".join(f"{k}={v}" for k, v in metadata_updates.items())
-        conn.execute(
-            "INSERT OR REPLACE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
-            (metadata_updates.get("version_num", 4), datetime.now(UTC).isoformat(), desc),
-        )
-        conn.commit()
-    except Exception as e:
-        print(f"WARN: Could not update DB metadata: {e}")
-    finally:
-        conn.close()
+    """Update metadata fields in the depgraph SQLite database.
+
+    DM-202947 止血修复：_schema_version 表仅允许 depgraph_schema.py 的 _run_migration 写入，
+    禁止其他脚本通过 INSERT OR REPLACE 覆写版本记录。此函数现为空操作（仅打印日志）。
+    """
+    desc = "; ".join(f"{k}={v}" for k, v in metadata_updates.items())
+    print(f"[DM106] 元数据更新已跳过（_schema_version 只读保护）: {desc}")
 
 
 def load_yaml(path):

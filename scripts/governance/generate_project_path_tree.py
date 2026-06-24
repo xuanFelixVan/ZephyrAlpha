@@ -182,13 +182,6 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
             if isinstance(root_data, dict):
                 _insert_tree_node(conn, root_name, root_data)
 
-        # Update metadata in _schema_version
-        desc = f"path_tree_update; total_files={total_files}; total_directories={total_dirs}"
-        conn.execute(
-            "INSERT OR REPLACE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
-            (4, datetime.now(UTC).isoformat(), desc),
-        )
-
         conn.commit()
         count = conn.execute("SELECT COUNT(*) FROM arch_directory_tree").fetchone()[0]
         print(f"[PATH-TREE-DB] Updated {count} directory tree nodes")
