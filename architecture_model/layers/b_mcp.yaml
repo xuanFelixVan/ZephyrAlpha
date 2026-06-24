@@ -6,11 +6,11 @@ partition:
   bounded_context: false
   status: implemented
   note: >
-    mod_master_001 §0.2：MCP 无独立CT-*；能力由各宿主系统契约暴露。传输与工具规范见KBG-0033。
+    MOD-MASTER-001 §0.2：MCP 无独立CT-*；能力由各宿主系统契约暴露。传输与工具规范见KBG-0033。
 
 modules:
   - id: mcp_servers
-    module_id: mod_inf_013
+    module_id: MOD-INF-013
     name: MCP Protocol Servers
     submodule_path: src/zephyr/mcp/
     status: implemented

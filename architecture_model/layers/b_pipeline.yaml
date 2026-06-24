@@ -8,7 +8,7 @@ partition:
 
 modules:
   - id: pipeline-core
-    module_id: mod_inf_009
+    module_id: MOD-INF-009
     name: Pipeline Orchestrator
     submodule_path: src/zephyr/pipeline/
     status: implemented

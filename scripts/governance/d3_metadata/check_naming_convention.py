@@ -255,12 +255,12 @@ def _check_n05_adr_missing_suffix(filepath: str) -> list[NamingViolation]:
 # ---------------------------------------------------------------------------
 
 _MODULE_ID_SCOPE_RE = re.compile(
-    r"^\s*module_id:\s*(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN)(?:-[A-Z]+[0-9]*)*-\d+",
+    r"^\s*module_id:[ \t]*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM)(?:[-_][A-Za-z0-9_]+)+[\"']?",
     re.MULTILINE,
 )
 # Relaxed regex for inline module_id: inside .py comment headers (e.g. "# [A_test] module_id: SRC-TST-0212 | ...")
 _INLINE_MODULE_ID_SCOPE_RE = re.compile(
-    r"module_id:\s*(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN)(?:-[A-Z]+[0-9]*)*-\d+\b"
+    r"module_id:\s*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM)(?:[-_][A-Za-z0-9_]+)+[\"']?\b"
 )
 
 
@@ -294,7 +294,7 @@ def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> li
     # Remove code blocks first for efficiency
     clean = re.sub(r"```[\s\S]*?```", "", content)
     # Find module_id declarations that are real values (not null/placeholder)
-    _REAL_MID_RE = re.compile(r"^\s*module_id:\s*(.+)", re.MULTILINE)
+    _REAL_MID_RE = re.compile(r"^\s*module_id:[ \t]*(.+)", re.MULTILINE)
     for m in _REAL_MID_RE.finditer(clean):
         value = m.group(1).strip().strip('"').strip("'")
         if not value or value in ("null", "~", "None") or value.startswith("{") or value.startswith("<"):

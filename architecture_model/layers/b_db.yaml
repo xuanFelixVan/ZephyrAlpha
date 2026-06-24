@@ -12,7 +12,7 @@ partition:
 
 modules:
   - id: db-persistence
-    module_id: mod_inf_012
+    module_id: MOD-INF-012
     name: Metadata Persistence Layer
     submodule_path: src/zephyr/db/
     status: implemented

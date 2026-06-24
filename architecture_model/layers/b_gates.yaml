@@ -8,7 +8,7 @@ partition:
 
 modules:
   - id: gates-engine
-    module_id: mod_inf_007
+    module_id: MOD-INF-007
     name: Gate Engine
     submodule_path: src/zephyr/gates/
     status: implemented
