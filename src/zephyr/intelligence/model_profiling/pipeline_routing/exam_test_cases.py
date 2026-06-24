@@ -328,7 +328,7 @@ EX_AT_003 = ExamTestCase(
 
 EX_CF_001 = ExamTestCase(
     case_id="EX-CF-001",
-    capability="code_fix",
+    capability="code_edit_precision",
     difficulty=Difficulty.EASY,
     prompt=("fix bug: calc\ndef add(a, b):\n    return a - b  # BUG: should be a + b"),
     expected_structure_keys=["fixes"],
@@ -339,7 +339,7 @@ EX_CF_001 = ExamTestCase(
 
 EX_CF_002 = ExamTestCase(
     case_id="EX-CF-002",
-    capability="code_fix",
+    capability="code_edit_precision",
     difficulty=Difficulty.MEDIUM,
     prompt=(
         "fix bug: login\n"
@@ -356,7 +356,7 @@ EX_CF_002 = ExamTestCase(
 
 EX_CF_003 = ExamTestCase(
     case_id="EX-CF-003",
-    capability="code_fix",
+    capability="code_edit_precision",
     difficulty=Difficulty.HARD,
     prompt=(
         "fix bug: fetcher\n"
@@ -517,7 +517,7 @@ EX_DC_003 = ExamTestCase(
 # cross_file_analysis (3 题) — 跨文件依赖分析
 EX_CFA_001 = ExamTestCase(
     case_id="EX-CFA-001",
-    capability="cross_file_analysis",
+    capability="impact_analysis",
     difficulty=Difficulty.EASY,
     prompt="如果将 calc.py 的 add 函数签名改为 add(a, b, c=0)，哪些文件需要修改？",
     expected_structure_keys=["affected_files"],
@@ -532,7 +532,7 @@ EX_CFA_001 = ExamTestCase(
 
 EX_CFA_002 = ExamTestCase(
     case_id="EX-CFA-002",
-    capability="cross_file_analysis",
+    capability="impact_analysis",
     difficulty=Difficulty.MEDIUM,
     prompt="如果从 User 类中删除 email 字段，哪些文件需要修改？",
     expected_structure_keys=["affected_files"],
@@ -548,7 +548,7 @@ EX_CFA_002 = ExamTestCase(
 
 EX_CFA_003 = ExamTestCase(
     case_id="EX-CFA-003",
-    capability="cross_file_analysis",
+    capability="impact_analysis",
     difficulty=Difficulty.HARD,
     prompt="如果将 config.py 的 DATABASE_URL 改名为 DB_CONNECTION_STRING，哪些文件需要修改？",
     expected_structure_keys=["affected_files"],
@@ -910,7 +910,7 @@ EX_SJ_003 = ExamTestCase(
 # file_edit_precision (3 题) — 执行精度
 EX_FEP_001 = ExamTestCase(
     case_id="EX-FEP-001",
-    capability="file_edit_precision",
+    capability="code_edit_precision",
     difficulty=Difficulty.EASY,
     prompt="给定文件内容 `x = 10\ny = 20\nz = x + y`，要求把x的值从10改为100。输出精确的old_str和new_str。",
     expected_structure_keys=["edits"],
@@ -921,7 +921,7 @@ EX_FEP_001 = ExamTestCase(
 
 EX_FEP_002 = ExamTestCase(
     case_id="EX-FEP-002",
-    capability="file_edit_precision",
+    capability="code_edit_precision",
     difficulty=Difficulty.MEDIUM,
     prompt="给定文件内容 `def calc(a, b):\n    return a - b`，要求修复bug把减法改成加法。输出精确的old_str和new_str。",
     expected_structure_keys=["edits"],
@@ -932,7 +932,7 @@ EX_FEP_002 = ExamTestCase(
 
 EX_FEP_003 = ExamTestCase(
     case_id="EX-FEP-003",
-    capability="file_edit_precision",
+    capability="code_edit_precision",
     difficulty=Difficulty.HARD,
     prompt="给定文件内容 `class User:\n    def __init__(self, name):\n        self.name = name\n    def get_info(self):\n        return self.name`，要求把get_info方法重命名为get_name。输出精确的old_str和new_str。",
     expected_structure_keys=["edits"],
@@ -1645,7 +1645,7 @@ EX_DO_003 = ExamTestCase(
 # cross_file_hallucination_detect (5 题) — 跨文件幻觉检测
 EX_CFHD_001 = ExamTestCase(
     case_id="EX-CFHD-001",
-    capability="cross_file_hallucination_detect",
+    capability="hallucination_detect",
     difficulty=Difficulty.EASY,
     prompt=(
         "hallucination check: A developer claims these 3 files exist and were modified:\n"
@@ -1662,7 +1662,7 @@ EX_CFHD_001 = ExamTestCase(
 
 EX_CFHD_002 = ExamTestCase(
     case_id="EX-CFHD-002",
-    capability="cross_file_hallucination_detect",
+    capability="hallucination_detect",
     difficulty=Difficulty.EASY,
     prompt=(
         "hallucination check: An AI assistant made these claims about 3 files:\n"
@@ -1679,7 +1679,7 @@ EX_CFHD_002 = ExamTestCase(
 
 EX_CFHD_003 = ExamTestCase(
     case_id="EX-CFHD-003",
-    capability="cross_file_hallucination_detect",
+    capability="hallucination_detect",
     difficulty=Difficulty.MEDIUM,
     prompt=(
         "hallucination check: An AI assistant analyzed 10 files and made these claims:\n"
@@ -1703,7 +1703,7 @@ EX_CFHD_003 = ExamTestCase(
 
 EX_CFHD_004 = ExamTestCase(
     case_id="EX-CFHD-004",
-    capability="cross_file_hallucination_detect",
+    capability="hallucination_detect",
     difficulty=Difficulty.MEDIUM,
     prompt=(
         "hallucination check: An AI assistant claimed to have read 10 files and found these imports:\n"
@@ -1727,7 +1727,7 @@ EX_CFHD_004 = ExamTestCase(
 
 EX_CFHD_005 = ExamTestCase(
     case_id="EX-CFHD-005",
-    capability="cross_file_hallucination_detect",
+    capability="hallucination_detect",
     difficulty=Difficulty.HARD,
     prompt=(
         "hallucination check: An AI assistant analyzed a 25-file project and made these claims:\n"
@@ -1749,7 +1749,7 @@ EX_CFHD_005 = ExamTestCase(
 # 注: 使用 EX_CFAW 前缀避免与 cross_file_analysis 的 EX_CFA 冲突
 EX_CFAW_001 = ExamTestCase(
     case_id="EX-CFAW-001",
-    capability="context_freshness_awareness",
+    capability="context_management",
     difficulty=Difficulty.EASY,
     prompt=(
         "context freshness: Analyze this conversation for context degradation.\n"
@@ -1768,7 +1768,7 @@ EX_CFAW_001 = ExamTestCase(
 
 EX_CFAW_002 = ExamTestCase(
     case_id="EX-CFAW-002",
-    capability="context_freshness_awareness",
+    capability="context_management",
     difficulty=Difficulty.MEDIUM,
     prompt=(
         "context freshness: Analyze this conversation for context degradation.\n"
@@ -1787,7 +1787,7 @@ EX_CFAW_002 = ExamTestCase(
 
 EX_CFAW_003 = ExamTestCase(
     case_id="EX-CFAW-003",
-    capability="context_freshness_awareness",
+    capability="context_management",
     difficulty=Difficulty.HARD,
     prompt=(
         "context freshness: Analyze this conversation for context degradation.\n"
@@ -1810,7 +1810,7 @@ EX_CFAW_003 = ExamTestCase(
 # context_window_management (3 题) — 上下文窗口管理
 EX_CWM_001 = ExamTestCase(
     case_id="EX-CWM-001",
-    capability="context_window_management",
+    capability="context_management",
     difficulty=Difficulty.EASY,
     prompt=(
         "context management: Should we start a new session?\n"
@@ -1828,7 +1828,7 @@ EX_CWM_001 = ExamTestCase(
 
 EX_CWM_002 = ExamTestCase(
     case_id="EX-CWM-002",
-    capability="context_window_management",
+    capability="context_management",
     difficulty=Difficulty.MEDIUM,
     prompt=(
         "context management: Should we start a new session?\n"
@@ -1846,7 +1846,7 @@ EX_CWM_002 = ExamTestCase(
 
 EX_CWM_003 = ExamTestCase(
     case_id="EX-CWM-003",
-    capability="context_window_management",
+    capability="context_management",
     difficulty=Difficulty.HARD,
     prompt=(
         "context management: Should we start a new session?\n"

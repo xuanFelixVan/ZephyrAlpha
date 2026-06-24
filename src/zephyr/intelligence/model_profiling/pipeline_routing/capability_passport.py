@@ -49,12 +49,11 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "summary_extraction": 0.55,
     "naming_suggest": 0.50,
     "anomaly_triage": 0.50,
-    "code_fix": 0.60,
+    "code_edit_precision": 0.60,
     "refactor": 0.55,
     "code_generate": 0.55,
     "dead_code_removal": 0.55,
     # B类: 多文件联动能力
-    "cross_file_analysis": 0.55,
     "architecture_design": 0.50,
     "cross_file_refactor": 0.55,
     "dependency_trace": 0.55,
@@ -65,8 +64,6 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     # D类: 规则理解能力
     "rule_comprehension": 0.55,
     "safety_judgment": 0.60,
-    # E类: 执行精度
-    "file_edit_precision": 0.60,
     # F类: 自审自纠
     "self_review": 0.55,
     # G类: 增量执行
@@ -86,9 +83,7 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "parallel_planning": 0.50,
     "dependency_ordering": 0.55,
     # M类: 上下文管理能力
-    "cross_file_hallucination_detect": 0.55,
-    "context_freshness_awareness": 0.55,
-    "context_window_management": 0.55,
+    "context_management": 0.55,
 }
 
 

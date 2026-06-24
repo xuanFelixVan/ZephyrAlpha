@@ -241,6 +241,16 @@ class ExamOrchestrator:
     ) -> tuple[float, float, float, int]:
         cap = case.capability
 
+        # P1合并：合并后的能力名称 → 原始评分逻辑
+        if cap == "code_edit_precision":
+            cap = "file_edit_precision" if result.get("edits") else "code_fix"
+        elif cap == "context_management":
+            cap = "context_window_management" if result.get("should_start_new_session") is not None else "context_freshness_awareness"
+        elif cap == "hallucination_detect" and result.get("has_hallucination") is not None:
+            cap = "cross_file_hallucination_detect"
+        elif cap == "impact_analysis" and case.expected_affected_files:
+            cap = "cross_file_analysis"
+
         if cap in ("task_classification",):
             cat = str(result.get("category", "")).lower()
             exp = case.expected_category.lower()
