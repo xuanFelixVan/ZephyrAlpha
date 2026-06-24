@@ -380,11 +380,30 @@ class ExamOrchestrator:
             r = len(pred & gold) / len(gold) if gold else 0.0
             return (p, r, 0.0, 1 if pred == gold else 0)
 
-        if cap in ("summary_extraction", "naming_suggest"):
-            text = str(result)
-            hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+        if cap in ("summary_extraction",):
+            points = result.get("points", [])
+            if not points:
+                return (0.0, 0.0, 1.0, 0)
+            # FIX L3: 检查points内容是否包含expected_contains关键词
+            # 旧逻辑检查整个result文本，关键词可能在prompt中已出现
+            text = " ".join(str(p) for p in points).lower()
+            hits = sum(1 for kw in case.expected_contains if kw.lower() in text)
             rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
-            return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
+            count_score = min(len(points) / 2, 1.0)  # 至少2个要点
+            score = max(rate, count_score * 0.5)
+            return (min(score, 1.0), min(score, 1.0), 0.0, 1 if rate >= 0.8 else 0)
+
+        if cap in ("naming_suggest",):
+            names = result.get("names", [])
+            if not names:
+                return (0.0, 0.0, 1.0, 0)
+            # FIX L3: 检查names内容是否包含expected_contains关键词
+            text = " ".join(str(n) for n in names).lower()
+            hits = sum(1 for kw in case.expected_contains if kw.lower() in text)
+            rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
+            count_score = min(len(names) / 2, 1.0)  # 至少2个建议
+            score = max(rate, count_score * 0.5)
+            return (min(score, 1.0), min(score, 1.0), 0.0, 1 if rate >= 0.8 else 0)
 
         if cap in ("anomaly_triage",):
             nh = bool(result.get("needs_human"))
@@ -473,16 +492,20 @@ class ExamOrchestrator:
             dependencies = result.get("dependencies", [])
             if not files:
                 return (0.0, 0.0, 1.0, 0)
-            struct_score = 0.0
-            if files:
-                struct_score += 0.5
-            if dependencies:
-                struct_score += 0.5
+            # FIX L3: 检查文件数量、依赖数量、关键词匹配
+            # 旧逻辑只检查字段存在性，模型输出空列表就得满分
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
-            rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(struct_score, _kw_capped(rate))
-            return (score, score, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            struct_score = 0.0
+            if len(files) >= 3:  # 至少3个文件
+                struct_score += 0.3
+            if len(dependencies) >= 2:  # 至少2个依赖关系
+                struct_score += 0.3
+            struct_score += kw_rate * 0.4  # 关键词匹配占40%
+            score = min(struct_score, 1.0)
+            em = 1 if kw_rate >= 0.8 and len(files) >= 3 and len(dependencies) >= 2 else 0
+            return (score, score, 0.0, em)
 
         if cap in ("cross_file_refactor",):
             changes = result.get("changes", [])
@@ -578,7 +601,14 @@ class ExamOrchestrator:
                 return (0.0, 0.0, 1.0, 0)
             expected_compliant = case.expected_compliant
             correct = 1 if compliant == expected_compliant else 0
-            return (correct, correct, 0.0, correct)
+            # FIX L3: 检查violations内容是否包含expected_contains关键词
+            # 旧逻辑只检查compliant布尔值，模型猜对True/False就得满分
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = max(correct, kw_rate * 0.5)  # violations内容匹配占50%
+            em = 1 if correct and kw_rate >= 0.5 else 0
+            return (score, score, 0.0, em)
 
         if cap in ("safety_judgment",):
             modifiable = result.get("modifiable", [])
@@ -667,18 +697,22 @@ class ExamOrchestrator:
             fix = result.get("fix", "")
             if not diagnosis and not root_cause:
                 return (0.0, 0.0, 1.0, 0)
+            # FIX L3: 检查fix内容是否包含expected_contains关键词（验证修复方案正确性）
+            # 旧逻辑只检查字段存在性，模型输出任意文本就得满分
+            fix_text = str(fix).lower()
+            fix_kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in fix_text)
+            fix_kw_rate = fix_kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
             struct_score = 0.0
             if diagnosis:
-                struct_score += 1 / 3
+                struct_score += 0.2
             if root_cause:
-                struct_score += 1 / 3
+                struct_score += 0.2
             if fix:
-                struct_score += 1 / 3
-            text = json.dumps(result)
-            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
-            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(struct_score, _kw_capped(kw_rate))
-            return (score, score, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+                struct_score += 0.2
+            struct_score += fix_kw_rate * 0.4  # 修复方案内容匹配占40%
+            score = min(struct_score, 1.0)
+            em = 1 if fix_kw_rate >= 0.5 else 0
+            return (score, score, 0.0, em)
 
         # I类: 歧义识别评分
         if cap in ("ambiguity_detect",):
@@ -695,15 +729,16 @@ class ExamOrchestrator:
 
         # J类: 工具选择评分
         if cap in ("tool_selection",):
-            tool = str(result.get("tool", "")).lower()
+            tool = str(result.get("tool", "")).lower().strip()
             if not tool:
                 return (0.0, 0.0, 1.0, 0)
-            expected = case.expected_tool.lower()
-            em = 1 if expected in tool else 0
-            text = json.dumps(result)
-            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
-            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(em, _kw_capped(kw_rate))
+            expected = case.expected_tool.lower().strip()
+            # FIX L3: 改为单词级匹配（旧逻辑用子串匹配太宽松）
+            # 如 expected="grep", tool="grep tool" 应该匹配
+            import re
+            word_match = bool(re.search(r'\b' + re.escape(expected) + r'\b', tool))
+            em = 1 if word_match else 0
+            score = em  # kw_capped已废弃
             return (score, score, 0.0, em)
 
         # K类: 影响分析能力评分
@@ -735,10 +770,7 @@ class ExamOrchestrator:
             if has_cycle is None:
                 return (0.0, 0.0, 1.0, 0)
             correct = 1 if has_cycle == case.expected_has_cycle else 0
-            text = json.dumps(result)
-            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
-            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            # 检查循环路径是否匹配
+            # FIX L3: 要求准确找出循环路径（旧逻辑只检查has_cycle布尔值）
             path_score = 0.0
             if case.expected_cycle_path and isinstance(cycle_path, list):
                 pred_path = set()
@@ -750,8 +782,10 @@ class ExamOrchestrator:
                 gold_path = set(n.lower() for n in case.expected_cycle_path)
                 if gold_path:
                     path_score = len(pred_path & gold_path) / len(gold_path)
-            score = max(correct, path_score, _kw_capped(kw_rate))
-            return (score, score, 0.0, correct)
+            # 评分：has_cycle正确占40%，循环路径匹配占60%
+            score = correct * 0.4 + path_score * 0.6
+            em = 1 if correct and path_score >= 0.8 else 0
+            return (score, score, 0.0, em)
 
         if cap in ("rollback_boundary_design",):
             rollback_points = result.get("rollback_points", [])

@@ -720,10 +720,10 @@ EX_CC_001 = ExamTestCase(
     capability="context_consistency",
     difficulty=Difficulty.EASY,
     prompt=(
-        "检查以下两段描述是否一致：\n"
-        "描述1: 函数 add(a, b) 返回 int 类型。\n"
-        "描述2: 函数 add(a, b) 返回 string 类型。\n"
-        "判断两段描述是否存在矛盾。"
+        "检查以下技术文档是否存在矛盾：\n"
+        "函数 add(a, b) 的返回类型在类型注解中标注为 int，"
+        "但在文档字符串中说明返回 string 类型。"
+        "请分析文档是否存在不一致。"
     ),
     expected_structure_keys=["consistent", "conflicts"],
     expected_contains=["inconsistent", "int", "string"],
@@ -734,10 +734,10 @@ EX_CC_002 = ExamTestCase(
     capability="context_consistency",
     difficulty=Difficulty.MEDIUM,
     prompt=(
-        "检查以下代码分析报告是否一致：\n"
-        "前文: 本项目使用 SQLite 数据库存储用户数据，配置在 db.sqlite3。\n"
-        "后文: 本项目使用 PostgreSQL 数据库存储用户数据，连接字符串为 postgres://localhost。\n"
-        "判断报告中是否存在矛盾。"
+        "检查以下项目文档是否存在矛盾：\n"
+        "本项目使用 SQLite 数据库存储用户数据，配置文件指向 db.sqlite3。"
+        "数据库连接模块中使用 PostgreSQL 连接字符串 postgres://localhost。"
+        "请分析文档是否存在不一致。"
     ),
     expected_structure_keys=["consistent", "conflicts"],
     expected_contains=["inconsistent", "SQLite", "PostgreSQL"],
@@ -748,14 +748,11 @@ EX_CC_003 = ExamTestCase(
     capability="context_consistency",
     difficulty=Difficulty.HARD,
     prompt=(
-        "检查以下架构描述是否存在矛盾（找出所有矛盾）：\n"
-        "1. 模块名称: 用户管理模块名为 user_manager。\n"
-        "2. 模块名称: 用户管理模块名为 account_service。\n"
-        "3. 依赖方向: service 层依赖 repository 层。\n"
-        "4. 依赖方向: repository 层依赖 service 层。\n"
-        "5. 数据类型: User.id 字段类型为 int。\n"
-        "6. 数据类型: User.id 字段类型为 str。\n"
-        "判断描述中是否存在矛盾。"
+        "检查以下架构文档是否存在矛盾：\n"
+        "用户管理模块名为 user_manager，在服务层中被称为 account_service。"
+        "service 层依赖 repository 层，repository 层依赖 service 层。"
+        "User.id 字段类型在模型中为 int，在序列化器中为 str。"
+        "请分析文档是否存在不一致。"
     ),
     expected_structure_keys=["consistent", "conflicts"],
     expected_contains=["inconsistent"],
@@ -767,13 +764,14 @@ EX_HD_001 = ExamTestCase(
     capability="hallucination_detect",
     difficulty=Difficulty.EASY,
     prompt=(
-        "以下代码分析报告引用了一些模块，请识别哪些是编造的（不存在的）：\n"
-        "报告: 本项目使用了 nonexistent_module.py 进行数据处理，"
-        "同时使用了标准的 os 模块进行系统操作。"
+        "项目文件列表：main.py, utils.py, config.py, os（标准库）\n"
+        "代码分析报告：本项目使用了 utils.py 进行工具函数管理，"
+        "使用了 phantom_module.py 进行数据处理，同时使用了标准的 os 模块。\n"
+        "请对比文件列表，识别报告中哪些模块是编造的。"
     ),
     expected_structure_keys=["hallucinations"],
-    expected_hallucinations=["nonexistent_module.py"],
-    expected_contains=["nonexistent_module"],
+    expected_hallucinations=["phantom_module.py"],
+    expected_contains=["phantom_module"],
 )
 
 EX_HD_002 = ExamTestCase(
@@ -781,9 +779,10 @@ EX_HD_002 = ExamTestCase(
     capability="hallucination_detect",
     difficulty=Difficulty.MEDIUM,
     prompt=(
-        "以下 API 文档引用了一些函数，请识别哪些是编造的：\n"
-        "文档: 本库提供了 fetch_all_users() 函数获取所有用户，"
-        "同时封装了 requests.get() 进行 HTTP 请求。"
+        "项目API列表：get_user(id), create_user(data), update_user(id, data)\n"
+        "API文档声称：本库提供了 fetch_all_users() 函数获取所有用户，"
+        "同时封装了 requests.get() 进行 HTTP 请求。\n"
+        "请对比API列表，识别文档中哪些函数是编造的。"
     ),
     expected_structure_keys=["hallucinations"],
     expected_hallucinations=["fetch_all_users"],
@@ -795,9 +794,10 @@ EX_HD_003 = ExamTestCase(
     capability="hallucination_detect",
     difficulty=Difficulty.HARD,
     prompt=(
-        "以下架构分析引用了一些模块，请识别所有编造的模块：\n"
-        "分析: 系统由 phantom_service、ghost_repository、mirage_controller 三个核心模块组成，"
-        "同时依赖标准的 logging 和 json 模块。"
+        "项目模块列表：logging, json, auth_service.py, user_repo.py, api_controller.py\n"
+        "架构分析声称：系统由 phantom_service、ghost_repository、mirage_controller 三个核心模块组成，"
+        "同时依赖标准的 logging 和 json 模块。\n"
+        "请对比模块列表，识别分析中哪些模块是编造的。"
     ),
     expected_structure_keys=["hallucinations"],
     expected_hallucinations=["phantom_service", "ghost_repository", "mirage_controller"],
@@ -867,30 +867,30 @@ EX_RC_001 = ExamTestCase(
     case_id="EX-RC-001",
     capability="rule_comprehension",
     difficulty=Difficulty.EASY,
-    prompt="规则：所有Python文件必须使用UTF-8编码。场景：一个文件用了open(path, 'w')没有指定encoding。这个文件符合规则吗？",
+    prompt="规则集：1.所有Python文件必须使用UTF-8编码 2.禁止使用eval()函数 3.所有函数必须有类型注解。场景：代码中有 `def process(data):\n    result = eval(data)\n    with open('output.txt', 'w') as f:\n        f.write(result)`。这段代码违反了哪些规则？",
     expected_structure_keys=["compliant", "violations"],
     expected_compliant=False,
-    expected_contains=["encoding", "utf-8", "violat"],
+    expected_contains=["encoding", "utf-8", "eval", "type"],
 )
 
 EX_RC_002 = ExamTestCase(
     case_id="EX-RC-002",
     capability="rule_comprehension",
     difficulty=Difficulty.MEDIUM,
-    prompt="规则：禁止在for循环中使用subprocess.run()，必须用ThreadPoolExecutor。场景：代码中有 `for url in urls: subprocess.run(['curl', url])`。这符合规则吗？",
+    prompt="规则集：1.禁止在for循环中使用subprocess.run() 2.所有HTTP请求必须设置timeout 3.异常必须记录日志。场景：代码中有 `for url in urls:\n    resp = subprocess.run(['curl', url])\n    print(resp)`。这段代码违反了哪些规则？",
     expected_structure_keys=["compliant", "violations"],
     expected_compliant=False,
-    expected_contains=["ThreadPoolExecutor", "subprocess", "violat"],
+    expected_contains=["ThreadPoolExecutor", "subprocess", "timeout", "log"],
 )
 
 EX_RC_003 = ExamTestCase(
     case_id="EX-RC-003",
     capability="rule_comprehension",
     difficulty=Difficulty.HARD,
-    prompt="规则：1.文件名必须snake_case 2.禁止PowerShell语法 3.复杂逻辑必须落盘为.py脚本。场景：开发者编写了 `validate_config.py` 文件，其中包含一个100行的数据校验函数，用Python标准库实现，文件名为snake_case。这符合规则吗？",
+    prompt="规则集：1.文件名必须snake_case 2.禁止PowerShell语法 3.复杂逻辑必须落盘为.py脚本 4.禁止在代码中使用中文变量名 5.所有配置必须从YAML读取。场景：开发者编写了 `ValidateConfig.py` 文件（注意大小写），其中包含一个100行的数据校验函数，用Python标准库实现，配置硬编码在代码中。这段代码违反了哪些规则？",
     expected_structure_keys=["compliant", "violations"],
-    expected_compliant=True,
-    expected_contains=["compliant", "no violation", "follows"],
+    expected_compliant=False,
+    expected_contains=["snake_case", "ValidateConfig", "yaml", "config"],
 )
 
 # safety_judgment (3 题) — 安全判断
@@ -976,7 +976,7 @@ EX_SR_001 = ExamTestCase(
     case_id="EX-SR-001",
     capability="self_review",
     difficulty=Difficulty.EASY,
-    prompt="审查以下代码是否有bug：\ndef add(a, b):\n    return a - b\n# 注释说这个函数做加法\n请检查代码是否与注释一致。",
+    prompt="审查以下代码是否有bug：\ndef add(a, b):\n    return a - b\n\n请检查代码是否有问题。",
     expected_structure_keys=["has_bug", "bugs"],
     expected_has_bug=True,
     expected_bug_location="return a - b",
@@ -987,7 +987,7 @@ EX_SR_002 = ExamTestCase(
     case_id="EX-SR-002",
     capability="self_review",
     difficulty=Difficulty.MEDIUM,
-    prompt="审查以下代码是否有bug：\ndef divide(a, b):\n    return a / b\n# 这个函数没有处理除零错误\n请检查是否有潜在问题。",
+    prompt="审查以下代码是否有bug：\ndef divide(a, b):\n    return a / b\n\n请检查是否有潜在问题。",
     expected_structure_keys=["has_bug", "bugs"],
     expected_has_bug=True,
     expected_bug_location="a / b",
@@ -998,7 +998,7 @@ EX_SR_003 = ExamTestCase(
     case_id="EX-SR-003",
     capability="self_review",
     difficulty=Difficulty.HARD,
-    prompt="审查以下代码是否有bug：\ndef process_items(items):\n    result = []\n    for i in range(len(items)):\n        result.append(items[i+1])  # 获取下一个元素\n    return result\n请检查是否有越界问题。",
+    prompt="审查以下代码是否有bug：\ndef process_items(items):\n    result = []\n    for i in range(len(items)):\n        result.append(items[i+1])\n    return result\n\n请检查代码是否有问题。",
     expected_structure_keys=["has_bug", "bugs"],
     expected_has_bug=True,
     expected_bug_location="items[i+1]",
@@ -1015,30 +1015,30 @@ EX_IE_001 = ExamTestCase(
     case_id="EX-IE-001",
     capability="incremental_execution",
     difficulty=Difficulty.EASY,
-    prompt="执行以下3步任务计划：\n1. 读取config.yaml\n2. 提取database_url字段\n3. 返回database_url的值\n请按顺序执行每一步。",
+    prompt="任务：读取config.yaml文件，提取database_url字段的值并返回。\n请分解任务步骤并按顺序执行。",
     expected_structure_keys=["steps"],
     expected_step_count=3,
-    expected_contains=["config.yaml", "database_url", "3 steps"],
+    expected_contains=["config.yaml", "database_url"],
 )
 
 EX_IE_002 = ExamTestCase(
     case_id="EX-IE-002",
     capability="incremental_execution",
     difficulty=Difficulty.MEDIUM,
-    prompt="执行以下5步任务计划：\n1. 搜索所有.py文件\n2. 过滤出包含'import os'的文件\n3. 统计文件数量\n4. 输出文件列表\n5. 生成报告\n请按顺序执行每一步。",
+    prompt="任务：搜索项目中所有.py文件，过滤出包含'import os'的文件，统计数量并生成报告。\n请分解任务步骤并按顺序执行。",
     expected_structure_keys=["steps"],
     expected_step_count=5,
-    expected_contains=["import os", "5 steps", "report"],
+    expected_contains=["import os", "report"],
 )
 
 EX_IE_003 = ExamTestCase(
     case_id="EX-IE-003",
     capability="incremental_execution",
     difficulty=Difficulty.HARD,
-    prompt="执行以下4步任务计划：\n1. 读取用户输入的SQL\n2. 检查是否有DROP/DELETE语句\n3. 如果有则要求确认\n4. 执行SQL并返回结果\n请按顺序执行每一步，注意第3步是条件分支。",
+    prompt="任务：读取用户输入的SQL，检查是否有DROP/DELETE语句，如果有则要求确认，最后执行SQL并返回结果。\n请分解任务步骤并按顺序执行，注意条件分支。",
     expected_structure_keys=["steps"],
     expected_step_count=4,
-    expected_contains=["DROP", "DELETE", "confirm", "4 steps"],
+    expected_contains=["DROP", "DELETE", "confirm"],
 )
 
 
@@ -1313,15 +1313,18 @@ EX_CDD_001 = ExamTestCase(
     capability="circular_dependency_detect",
     difficulty=Difficulty.EASY,
     prompt=(
-        "circular dependency check: Does this code have a circular dependency?\n"
+        "circular dependency check: 分析以下模块是否存在循环依赖。\n"
         "  module_a.py: from module_b import func_b\n"
-        "  module_b.py: from module_a import func_a\n"
-        "Analyze and report if there is a cycle."
+        "  module_b.py: from module_c import func_c\n"
+        "  module_c.py: from module_a import func_a\n"
+        "  module_d.py: from module_e import func_e\n"
+        "  module_e.py: import os\n"
+        "请分析并报告是否存在循环依赖。"
     ),
     expected_structure_keys=["has_cycle", "cycle_path"],
     expected_has_cycle=True,
-    expected_cycle_path=["module_a", "module_b"],
-    expected_contains=["cycle", "module_a", "module_b"],
+    expected_cycle_path=["module_a", "module_b", "module_c"],
+    expected_contains=["cycle", "module_a", "module_b", "module_c"],
 )
 
 EX_CDD_002 = ExamTestCase(
@@ -1329,11 +1332,18 @@ EX_CDD_002 = ExamTestCase(
     capability="circular_dependency_detect",
     difficulty=Difficulty.EASY,
     prompt=(
-        "circular dependency check: Does this code have a circular dependency?\n"
+        "circular dependency check: 分析以下10个模块是否存在循环依赖。\n"
         "  a.py: from b import b_func\n"
         "  b.py: from c import c_func\n"
         "  c.py: from a import a_func\n"
-        "Analyze and report if there is a cycle."
+        "  d.py: from e import e_func\n"
+        "  e.py: from f import f_func\n"
+        "  f.py: import os\n"
+        "  g.py: from h import h_func\n"
+        "  h.py: import sys\n"
+        "  i.py: from j import j_func\n"
+        "  j.py: import json\n"
+        "请分析并报告所有循环依赖。"
     ),
     expected_structure_keys=["has_cycle", "cycle_path"],
     expected_has_cycle=True,
@@ -2015,8 +2025,7 @@ EX_SR_004 = ExamTestCase(
         "            result.append(items[i] * 2)\n"
         "        if items[i] > 100:\n"
         "            result.append(items[i] * 3)\n"
-        "    return result\n"
-        "# BUG: items[i] > 100 also triggers items[i] > 0, causing double append"
+        "    return result"
     ),
     expected_structure_keys=["has_bug", "bugs"],
     expected_has_bug=True,
@@ -2059,15 +2068,15 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
 
     # ── P1 重要8个能力 (各2题) ──────────────────────────
     # summary_extraction
-    EX_SE_001, EX_SE_002,
+    EX_SE_001, EX_SE_002, EX_SE_003,
     # architecture_design
-    EX_AD_001, EX_AD_002,
+    EX_AD_001, EX_AD_002, EX_AD_003,
     # context_consistency
-    EX_CC_001, EX_CC_002,
+    EX_CC_001, EX_CC_002, EX_CC_003,
     # hallucination_detect
-    EX_HD_001, EX_HD_002,
+    EX_HD_001, EX_HD_002, EX_HD_003,
     # ambiguity_detect
-    EX_AMB_001, EX_AMB_002,
+    EX_AMB_001, EX_AMB_002, EX_AMB_003,
     # tool_selection
     EX_TS_001, EX_TS_002, EX_TS_003,
     # dependency_ordering
@@ -2081,15 +2090,15 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     # tag_completion
     EX_TG_001,
     # naming_suggest
-    EX_NS_001,
+    EX_NS_001, EX_NS_002, EX_NS_003,
     # anomaly_triage
-    EX_AT_001,
+    EX_AT_001, EX_AT_002, EX_AT_003,
     # dead_code_removal
-    EX_DC_001,
+    EX_DC_001, EX_DC_002, EX_DC_003,
     # cross_file_refactor
     EX_CFR_001,
     # long_context_recall
-    EX_LCR_001,
+    EX_LCR_001, EX_LCR_002,
     # file_edit_precision
     EX_FEP_001,
     # rollback_boundary_design (原5题保留前1题)
