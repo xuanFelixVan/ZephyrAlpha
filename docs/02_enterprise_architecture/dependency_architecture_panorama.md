@@ -1593,6 +1593,51 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 ---
 
+### 20.9 V4.3 build_status 枚举统一裁定（#178-183）
+
+> **背景**：DB 实际值与 §12.6 定义严重不一致——build_status 有 10 种值（合法 4 种仅占 0.6%），module_lifecycle_state 有 5 种值（55% NULL），design_maturity 有 4 种值（合法 3 种）。五个病根导致脏值自循环：R1 字段重命名后代码未同步（生成器 L2635-2636 仍写 draft/inactive）；R2 生成器不从文件头部解析（parse_blueprint_header 只解析 6 字段）；R3 extract_depgraph.py L270 字段混淆（把 deployment_lifecycle 当 build_status 显示）；R4 merge_design_fields L311-313 永久保留脏值 design_only；R5 无 DB CHECK 约束。
+>
+> **业界对标**：K8s Pod Phase（5 值单调推进 + Conditions 正交布尔向量）；Backstage lifecycle（3 值极简，AI 场景最优）；Netflix Service Topology（部署状态与拓扑状态正交分离）；dependency-cruiser/madge/ArchUnit（纯依赖工具不维护状态）。
+>
+> **100% AI 开发场景特殊性**：需显式"生成态"（generated）标记 AI 生成但未验证的代码；测试是升级门禁；状态值 ≤5 防 AI 幻觉；双字段语义重叠导致 AI 困惑。
+
+| # | 裁定 | 理由 |
+|---|------|------|
+| 178 | **合并双字段为单一 build_status（5 态枚举）**：删除 module_lifecycle_state，合并到 build_status，统一为 `planned`→`generated`→`testing`→`stable`→`deprecated` 单调推进状态机。planned=设计态未实现；generated=AI 已生成未验证；testing=测试中；stable=已验证；deprecated=已废弃 | Backstage 3 值太简（无法区分 AI 生成态），K8s 5 值正合适。`generated` 态是 100% AI 开发场景必需——标记 AI 生成但未验证的代码，防止下游 AI 基于未验证代码做决策。合并双字段消除语义重叠 |
+| 179 | **design_maturity 保留 3 值**：`design`/`production`/`prototype`；`scaffold_placeholder`（216 个）归一化为 `prototype`（空 __init__.py 是 prototype 的一种）；design_maturity 作为独立字段保留（不从文件派生），因设计态节点是规划记录需持久化 | scaffold_placeholder 是 phase4b 清理脚本临时引入的非标准值，不在 §12.6 定义中。空 __init__.py 本质是"有文件但无实现"= prototype |
+| 180 | **build_status 由生成器从文件特征推导，不新增文件头部字段**：不新增 [BUILD_STATUS]/[LIFECYCLE_STATE] 头部字段；推导规则：design→planned；production+test→stable；production 无 test→generated；prototype→generated。少数需手工标记的状态（deprecated）通过 apply_depgraph.py --transition-build-status 写入 | 从文件特征推导=数据从代码派生=代码变则状态变=永远准确。文件头部手工字段=维护负担+生成器覆盖风险（R2 病根）。推导规则机械可执行，AI 零歧义 |
+| 181 | **orphan 为计算属性，不作为 build_status 字段值**：orphan 是零边节点的计算属性（由 audit 脚本实时计算），不持久化到 build_status；697 个 build_status='orphan' 节点执行 RULE-THREE 审判，有价值=planned，无价值=deprecated | orphan 是依赖关系属性（零边），不是生命周期属性。把 orphan 塞进 build_status 是概念混淆——一个节点可以同时是 orphan 和 stable。正交分离：build_status 管生命周期，orphan 由 edges 表计算 |
+| 182 | **添加 DB CHECK 约束**：nodes 表 build_status CHECK(5 值) + design_maturity CHECK(3 值)，堵住多入口写入漏洞 | R5 病根（无 CHECK 约束）是多入口写入脏值的根本原因。CHECK 约束是 DB 层最后防线——无论哪个入口写入非法值，DB 直接拒绝。对齐 K8s admission controller 实践 |
+| 183 | **删除 module_lifecycle_state 字段**：字段废弃（先标记 deprecated 停止写入，数据归档到 _archive 表后 DROP）；所有写入该字段的代码删除 | 7647 个 NULL（55% 空值）+ 6834 个 inactive（与 build_status 重叠）= 字段形同虚设。合并到 build_status 后无存在意义。保留只会继续制造脏值 |
+
+#### 治本施工方案（7 步，按因果链执行）
+
+> **核心原则**：先堵漏洞（防新脏值），再清旧账（洗历史脏值），最后加防御（DB 约束）。
+
+| 步骤 | 施工内容 | 修复病根 | 验证 |
+|:---:|---------|:---:|------|
+| 1 | 修复生成器 derive 函数：新增 derive_build_status()，删除 derive_deployment_lifecycle()，修改 L2635-2636 | R1+R2 | `--dry-run` 确认输出 5 种合法值 |
+| 2 | 删除 merge_design_fields L311-313 的 design_only 保留逻辑 | R4 | 运行后 design_only=0 |
+| 3 | 修复 extract_depgraph.py L270 字段混淆 | R3 | `--summary` 显示正确 build_status |
+| 4 | 添加 DB CHECK 约束 + 归档 module_lifecycle_state | R5 | INSERT 非法值被 DB 拒绝 |
+| 5 | 数据清洗：design_only→planned，draft→按文件推导，orphan→RULE-THREE 审判，production/active→stable，path_invalid→删除，scaffold_placeholder→prototype | 全部 | `SELECT DISTINCT build_status` 只返回 5 种合法值 |
+| 6 | 修复 apply_depgraph.py：transition 状态机更新 5 态，add_file_node 默认 generated，add_design_node 默认 planned | R1 | `--transition-build-status` 成功 |
+| 7 | 更新文档与规则：§12.6 更新 5 态，trae_056 解除生成器禁用，trae_054 更新合法值列表 | — | 文档与 DB 值一致 |
+
+#### 为什么治本
+
+| 病根 | 治本措施 | 治本逻辑 |
+|------|---------|---------|
+| R1 代码未同步 | Step 1 修复 derive 函数 | 生成器从文件特征推导，不再用旧默认值 |
+| R2 不从文件头部解析 | 裁定#180 不新增头部字段，改用文件特征推导 | 数据从代码派生，代码变则状态变，永远准确 |
+| R3 extract 字段混淆 | Step 3 修复字段名 | AI 读到的 build_status 就是 DB 里的 build_status |
+| R4 merge 保留脏值 | Step 2 删除保留逻辑 | 脏值被新推导值覆盖，不再锁死 |
+| R5 无 CHECK 约束 | Step 4 添加 DB 约束 | DB 层最后防线，任何入口写非法值都被拒绝 |
+
+**治本核心**：从"生成器写默认值 + 手工维护 + merge 保留脏值"的脏值自循环，转变为"生成器从文件特征推导 + apply_depgraph 手工标记 + CHECK 约束防御"的干净数据自循环。
+
+---
+
 ## 二十一、已知数据质量问题与教训
 
 > 详细问题清单见 `archive/depgraph_issue_registry.md`。生成器 9 个 Bug 已修复，数据质量已验证（2026-06-16）。
