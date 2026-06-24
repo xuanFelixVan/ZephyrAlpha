@@ -176,11 +176,25 @@ def _check_n02_version_suffix(filepath: str) -> list[NamingViolation]:
 
 _DATE_SUFFIX_RE = re.compile(r"[-_]\d{8}(?![-_]LATEST)")
 
+# N-03 豁免模式：任务ID文件(日期是ID一部分)、自动生成时间戳文件、ISO 8601格式
+_N03_TASK_ID_RE = re.compile(r"^TASK-[A-Z]+-\d{8}\d*\.md$", re.IGNORECASE)
+_N03_HEALTH_SNAPSHOT_RE = re.compile(r"^health_\d{14}\.json$")
+_N03_SEC_LEAK_RE = re.compile(r"^sec_leak_\d{8}T\d{6}Z\.json$")
+
 
 def _check_n03_date_suffix(filepath: str) -> list[NamingViolation]:
     """_check_n03_date_suffix implementation."""
     name = Path(filepath).name
     if "LATEST" in name.upper():
+        return []
+    # 豁免：任务ID文件(日期是任务ID一部分，如TASK-OPS-2026062103.md)
+    if _N03_TASK_ID_RE.match(name):
+        return []
+    # 豁免：健康快照时间戳文件(YYYYMMDDHHMMSS格式，如health_20260623142754.json)
+    if _N03_HEALTH_SNAPSHOT_RE.match(name):
+        return []
+    # 豁免：安全扫描输出(ISO 8601格式，如sec_leak_20260611T212859Z.json)
+    if _N03_SEC_LEAK_RE.match(name):
         return []
     stem = Path(filepath).stem
     if re.search(r"\d{4}-\d{2}-\d{2}", stem):
@@ -476,26 +490,25 @@ def _check_n10_dir_naming(dirpath: str) -> list[NamingViolation]:
 # ---------------------------------------------------------------------------
 
 _DOC_TYPE_SUFFIX_MAP: dict[str, list[str]] = {
-    "policy": ["-policy.md", "-policy.yaml", "-policy.yml", "-rules.yaml", "-rules.yml"],
-    "standard": ["-standard.md", "-standard.yaml", "-standard.yml"],
-    "protocol": ["-protocol.md"],
-    "operational_rule": ["-runbook.md", "-playbook.md", "-procedure.md", "-checklist.md"],
-    "register": ["-registry.md", "-register.md", "-registry.yaml", "-registry.yml", "-register.yaml", "-register.yml"],
+    "policy": ["_policy.md", "_policy.yaml", "_policy.yml", "_rules.yaml", "_rules.yml"],
+    "standard": ["_standard.md", "_standard.yaml", "_standard.yml"],
+    "protocol": ["_protocol.md"],
+    "operational_rule": ["_runbook.md", "_playbook.md", "_procedure.md", "_checklist.md"],
+    "register": ["_registry.md", "_register.md", "_registry.yaml", "_registry.yml", "_register.yaml", "_register.yml"],
     "index": ["index.md"],
-    "template": ["-template.md"],
+    "template": ["_template.md"],
     "terminology": [
-        "-_registry/vocabularies/glossary.yaml",
-        "-terminology.md",
-        "-mapping.md",
         "_registry/vocabularies/glossary.yaml",
+        "_terminology.md",
+        "_mapping.md",
         "_registry/vocabularies/terminology_mapping.yaml",
     ],
     "blueprint": ["blueprint.md"],
-    "catalog": ["-catalog.md", "-catalog.yaml", "-catalog.yml", "-ranking.md"],
-    "guide": ["-guide.md"],
-    "reference": ["-reference.md", "-ref.md"],
-    "log": ["-log.md"],
-    "report": ["-report.md"],
+    "catalog": ["_catalog.md", "_catalog.yaml", "_catalog.yml", "_ranking.md", "_ranking.yaml"],
+    "guide": ["_guide.md"],
+    "reference": ["_reference.md", "_ref.md", "_reference.yaml"],
+    "log": ["_log.md"],
+    "report": ["_report.md"],
 }
 
 _DOC_TYPE_RE = re.compile(r"^doc_type:\s*(\S+)", re.MULTILINE)
@@ -504,7 +517,8 @@ _DOC_TYPE_RE = re.compile(r"^doc_type:\s*(\S+)", re.MULTILINE)
 def _check_n11_doctype_suffix(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
     """01_policies_and_standards/ 下文件名后缀必须匹配 frontmatter doc_type。
     强化: 扩展 doc_type 映射表(terminology/blueprint/catalog/guide/reference/log/report);
-          YAML 文件也检查 doc_type 与后缀一致性
+          YAML 文件也检查 doc_type 与后缀一致性;
+          支持路径型后缀(如 _registry/vocabularies/glossary.yaml)
     """
     rel = filepath.replace("\\", "/")
     if "01_policies_and_standards/" not in rel:
@@ -524,7 +538,11 @@ def _check_n11_doctype_suffix(filepath: str, abspath: Path | None = None) -> lis
         return []
     name = Path(filepath).name
     for suffix in allowed_suffixes:
+        # 先检查文件名后缀
         if name.endswith(suffix):
+            return []
+        # 再检查相对路径后缀（支持路径型后缀如 _registry/vocabularies/glossary.yaml）
+        if "/" in suffix and rel.endswith(suffix):
             return []
     return [
         NamingViolation(
@@ -802,7 +820,13 @@ def _is_path_exempt(filepath: str) -> bool:
     rel = filepath.replace("\\", "/").lower()
     if "session-logs/" in rel:
         return True
+    if "session_logs/" in rel:
+        return True
     if "docs/19_development_workspace/session-logs/" in rel:
+        return True
+    if "_archive/" in rel:
+        return True
+    if "_backups/" in rel:
         return True
     return False
 
