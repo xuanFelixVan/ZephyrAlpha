@@ -2,8 +2,8 @@
 module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
 doc_type: architecture_design
-status: draft
-version: 0.3.10
+status: implemented
+version: 0.4.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
