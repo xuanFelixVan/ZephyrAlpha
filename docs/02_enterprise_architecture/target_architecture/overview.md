@@ -78,14 +78,14 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 | layer_id | 域数量 | 说明 |
 |----------|:---:|------|
-| `L0_infrastructure` | 2 | D-INFRA_OPS, D-INFRA_RUNTIME |
+| `L0_infrastructure` | 5 | D-INFRA_A2A, D-INFRA_OPS, D-INFRA_RECOVERY, D-INFRA_RUNTIME, D-INFRA_TELEMETRY |
 | `L1_foundation` | 6 | D-ALT_DATA, D-BEHAVIORAL_AUDIT, D-DATA_ENG, D-DATA_GOV, D-DATA_SEC... |
 | `L1_platform` | 7 | D-AUTONOMY_CORE, D-FRONTEND, D-INTEGRATION, D-OPS, D-REPORTING... |
-| `L2_domain` | 28 | D-AUTONOMY_PERM, D-BACKTEST, D-COMPLIANCE, D-CROSS_ASSET, D-DIGITAL_TWIN... |
+| `L2_domain` | 32 | D-AUTONOMY_PERM, D-BACKTEST, D-COMPLIANCE, D-CROSS_ASSET, D-DIGITAL_TWIN, D-GOV-DOCS, D-GOV-ENFORCEMENT, D-GOV-SCRIPTS, D-GOV_AUDIT_TESTS... |
 | `unassigned` | 9 | D-AUTONOMY-CORE, D-AUTONOMY-PERM, D-GOV-ENFORCEMENT, D-GOV-REPAIR, D-GOV-SCRIPTS... |
 
 
-**域总数**：52 | **节点总数**：14388 | **依赖边总数**：22605
+**域总数**：53 | **节点总数**：14388 | **依赖边总数**：22605
 
 ### 1.3 全景图派生机制
 

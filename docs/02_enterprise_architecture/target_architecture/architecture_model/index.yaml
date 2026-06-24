@@ -7,6 +7,7 @@
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
 # v3.0.0: §2.1裁定对齐——43域唯一物理分类体系，14层降级为域属性
+# v3.1.0: 2026-06-25 4域拆分（ARCH-CAP-002 v1.0.8）→ 53域，新增D-INFRA_A2A/D-INFRA_RECOVERY/D-INFRA_TELEMETRY/D-GOV_AUDIT_TESTS/D-GOV-DOCS
 module_id: MOD-023
 schema_version: '3.0.0'
 system:
@@ -61,7 +62,7 @@ partitions:
   path: ../../../../data/databases/depgraph.db
   description: 跨域共享基础设施（D-INFRA_OPS域）
 
-# === 43域清单（从depgraph.db派生，禁止手工编辑）===
+# === 53域清单（从depgraph.db派生，禁止手工编辑）===
 domains:
 - id: D-ALT_DATA
   name: 另类数据
@@ -111,11 +112,23 @@ domains:
 - id: D-FRONTEND
   name: 前端
   layer_id: L1_platform
+- id: D-GOV-DOCS
+  name: 架构文档
+  layer_id: L2_domain
+- id: D-GOV-ENFORCEMENT
+  name: 规则执行
+  layer_id: L2_domain
+- id: D-GOV-SCRIPTS
+  name: 治理脚本
+  layer_id: L2_domain
 - id: D-GOVERNANCE
   name: lifecycle_management
   layer_id: L2_domain
 - id: D-GOV_AUDIT
   name: audit-trail
+  layer_id: L2_domain
+- id: D-GOV_AUDIT_TESTS
+  name: audit_test_suite
   layer_id: L2_domain
 - id: D-GOV_DRIFT
   name: drift_detection
@@ -123,11 +136,20 @@ domains:
 - id: D-GOV_RULE
   name: 规则治理
   layer_id: L2_domain
+- id: D-INFRA_A2A
+  name: a2a_communication
+  layer_id: L0_infrastructure
 - id: D-INFRA_OPS
   name: 基础设施运维
   layer_id: L0_infrastructure
+- id: D-INFRA_RECOVERY
+  name: rollback_recovery
+  layer_id: L0_infrastructure
 - id: D-INFRA_RUNTIME
   name: runtime_integration
+  layer_id: L0_infrastructure
+- id: D-INFRA_TELEMETRY
+  name: observability_profiling
   layer_id: L0_infrastructure
 - id: D-INTEGRATION
   name: pipeline_routing

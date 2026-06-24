@@ -50,19 +50,22 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 > 本索引由`scripts/governance/d5_architecture/generators/generate_domain_index.py`派生。
 > 完整域清单见`generated/domain_index.md`。
 
-### `L0_infrastructure` (2域)
+### `L0_infrastructure` (5域)
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-INFRA_OPS` | 基础设施运维 | 404 | 基础设施运维与监控 |
-| `D-INFRA_RUNTIME` | runtime_integration | 726 | 运行时集成层 |
+| `D-INFRA_A2A` | a2a_communication | 114 | A2A通信与管线（从D-INFRA_RUNTIME拆分） |
+| `D-INFRA_OPS` | 基础设施运维 | 46 | 基础设施运维与监控 |
+| `D-INFRA_RECOVERY` | rollback_recovery | 107 | 回滚与自愈（从D-INFRA_RUNTIME拆分） |
+| `D-INFRA_RUNTIME` | runtime_integration | 148 | 运行时集成层 |
+| `D-INFRA_TELEMETRY` | observability_profiling | 51 | 可观测与画像（从D-INFRA_RUNTIME拆分） |
 
 ### `L1_foundation` (6域)
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
 | `D-ALT_DATA` | 另类数据 | 68 | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 |
-| `D-BEHAVIORAL_AUDIT` | 行为审计 | 60 | 行为审计域(从D-SECURITY拆出,behavioral_auditor) |
+| `D-BEHAVIORAL_AUDIT` | 行为审计 | 79 | 行为审计域(从D-SECURITY拆出,behavioral_auditor)。2026-06-25扩充红蓝对抗测试节点。 |
 | `D-DATA_ENG` | 数据工程(增值+融合+知识) | 147 | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图 |
 | `D-DATA_GOV` | 数据治理(质量+血缘+参考) | 38 | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数 |
 | `D-DATA_SEC` | 数据安全与契约 | 30 | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验 |
@@ -80,7 +83,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | `D-SECURITY` | adversarial_validation | 849 | 红蓝对抗验证 |
 | `D-SHARED` | shared_services | 288 | 事件总线(event_bus) |
 
-### `L2_domain` (28域)
+### `L2_domain` (32域)
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
@@ -93,10 +96,14 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | `D-EX_CORE` | 执行核心 | 135 | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行 |
 | `D-EX_SOR` | 执行路由 | 131 | 执行路由域。负责智能订单路由(SOR)，包括多交易通道选择、流动性聚合、最优执行路径规划。 |
 | `D-FACTOR` | 因子 | 320 | 因子计算、因子库、因子评价、因子正交化。Alpha挖掘引擎。 |
-| `D-GOVERNANCE` | lifecycle_management | 4289 | 模块生命周期钩子(hooks) |
-| `D-GOV_AUDIT` | audit-trail | 69 | Merkle小时级完整性(merkle_hourly) |
+| `D-GOV-DOCS` | 架构文档 | 151 | 架构文档与规则文档域（2026-06-25从D-GOVERNANCE/D-GOV_RULE拆分） |
+| `D-GOV-ENFORCEMENT` | 规则执行 | 107 | 规则执行代码域（2026-06-25从D-GOV_RULE/D-GOV_AUDIT扩充） |
+| `D-GOV-SCRIPTS` | 治理脚本 | 416 | 治理脚本域（2026-06-25从D-GOVERNANCE/D-GOV_RULE扩充） |
+| `D-GOVERNANCE` | lifecycle_management | 2843 | 模块生命周期钩子(hooks)。2026-06-25拆出文档/脚本域。 |
+| `D-GOV_AUDIT` | audit-trail | 189 | Merkle小时级完整性(merkle_hourly)。2026-06-25拆出测试节点。 |
+| `D-GOV_AUDIT_TESTS` | audit_test_suite | 152 | 审计测试套件（2026-06-25从D-GOV_AUDIT拆分） |
 | `D-GOV_DRIFT` | drift_detection | 22 | 39个漂移检测器注册与调度 |
-| `D-GOV_RULE` | 规则治理 | 175 | 规则执行、注册表管理、策略同步、标准定义。从 D-GOVERNANCE 拆分。 |
+| `D-GOV_RULE` | 规则治理 | 12 | 规则执行、注册表管理、策略同步、标准定义。从 D-GOVERNANCE 拆分。2026-06-25拆出错位节点。 |
 | `D-INTELLIGENCE` | context_management | 273 | 上下文预算管理(context_budget/token_budget) |
 | `D-KNOWLEDGE` | knowledge_management | 160 | 知识管线(ingest/triage/extract/activate/analyze) |
 | `D-ML_SERVE` | 推理 | 69 | 机器学习推理域。负责ML模型推理服务，包括模型部署、在线推理、批推理、模型版本管理、A/B测试。 |

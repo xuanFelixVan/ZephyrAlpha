@@ -4,7 +4,7 @@
 >
 > **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph.db），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。
 >
-> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：2026-06-24 23:01:39
+> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：2026-06-25 03:28:23
 
 ---
 
@@ -13,8 +13,8 @@
 | 文件夹 | 是什么 | 谁维护 | 什么时候变 |
 |--------|--------|--------|-----------|
 | `00_overview_entry/` | 你现在看的这个文件，整个文档库的导航地图 | 自动生成 | 全景图更新时 |
-| `01_global_architecture_diagram/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 8 个文件 | 自动生成 | 全景图更新时 |
-| `02_domain_architecture_docs/` | 每个功能域的详细文档和依赖图，共 107 个文件 | 自动生成 | 全景图更新时 |
+| `01_global_architecture_diagram/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 6 个文件 | 自动生成 | 全景图更新时 |
+| `02_domain_architecture_docs/` | 每个功能域的详细文档和依赖图，共 109 个文件 | 自动生成 | 全景图更新时 |
 | `03_governance_reports/` | 容量报告、约束违规报告、设计态vs运营态报告，共 5 个文件 | 自动生成 | 全景图更新时 |
 
 ---
@@ -60,11 +60,11 @@
 
 | 层级 | 域数量 | 代表域 |
 |------|:---:|--------|
-| 基础设施层 | 2 | D-INFRA_OPS（基础设施运维）、D-INFRA_RUNTIME（运行时集成） |
+| 基础设施层 | 5 | D-INFRA_A2A（a2a_communication）、D-INFRA_OPS（基础设施运维）、D-INFRA_RECOVERY（rollback_recovery） 等 |
 | 基础层 | 6 | D-ALT_DATA（另类数据）、D-BEHAVIORAL_AUDIT（行为审计）、D-DATA_ENG（数据工程） 等 |
 | 平台层 | 7 | D-AUTONOMY_CORE（自治核心）、D-FRONTEND（前端）、D-INTEGRATION（管线路由） 等 |
-| 业务域层 | 38 | D-AUTONOMY_PERM（自治保护）、D-BACKTEST（回测）、D-COMPLIANCE（合规） 等 |
-| 未分层 | 5 | D-GOV-ENFORCEMENT（rule_enforcement）、D-GOV-REPAIR（rollback）、D-GOV-SCRIPTS（code_dedup） 等 |
+| 业务域层 | 32 | D-AUTONOMY_PERM（自治保护）、D-BACKTEST（回测）、D-COMPLIANCE（合规） 等 |
+| 未分层 | 3 | D-GOV-REPAIR（rollback）、D-INTEGRATION-GATEWAY（mcp_servers）、D-SECURITY-LLM（llm_defense） |
 
 ---
 
@@ -72,4 +72,4 @@
 
 | 日期 | 说明 |
 |------|------|
-| 2026-06-24 23:01:39 | 自动生成 |
+| 2026-06-25 03:28:23 | 自动生成 |
