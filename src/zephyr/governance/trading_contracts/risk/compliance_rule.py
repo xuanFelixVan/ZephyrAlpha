@@ -5,39 +5,13 @@
 # [CONSUMERS] l10-compliance
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.risk.compliance_rule
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.risk.compliance_rule
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_compliance_rule | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-
-# ==== BEGIN CODGEN:CTR-P1-012 ====
-
-from dataclasses import dataclass
-from datetime import datetime
-
-
-@dataclass(frozen=True)
-class ComplianceRule:
-    created_at: datetime
-    description: str
-    enforcement_action: str
-    idempotency_key: str
-    is_active: bool
-    jurisdiction: str
-    rule_id: str
-    rule_logic: str
-    rule_name: str
-    rule_type: str
-    severity: str
-    updated_at: datetime
-    version: str
-    schema_version: str = "1.0"
-
-
-# ==== END CODGEN:CTR-P1-012 ====
-
-__all__ = ["ComplianceRule"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.risk.compliance_rule。"""
+from zephyr.trading.trading_contracts.risk.compliance_rule import *  # noqa: F401,F403

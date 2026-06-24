@@ -5,56 +5,13 @@
 # [CONSUMERS] risk; pf_core
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.risk.risk_limit_violation_error
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.risk.risk_limit_violation_error
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_risk_limit_violation_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-
-
-from __future__ import annotations
-class RiskLimitViolationError(Exception):
-    __slots__ = (
-        "actual_value",
-        "error_id",
-        "idempotency_key",
-        "limit_value",
-        "portfolio_id",
-        "recovery_hint",
-        "schema_version",
-        "trace_context",
-        "violated_constraint",
-        "violation_detail",
-    )
-
-    def __init__(
-        self,
-        *,
-        error_id: str,
-        portfolio_id: str,
-        violated_constraint: str,
-        violation_detail: str,
-        limit_value: float,
-        actual_value: float,
-        recovery_hint: str,
-        idempotency_key: str,
-        schema_version: str = "1.0",
-        trace_context: TraceContext | None = None,
-    ) -> None:
-        super().__init__(violation_detail)
-        self.actual_value = actual_value
-        self.error_id = error_id
-        self.idempotency_key = idempotency_key
-        self.limit_value = limit_value
-        self.portfolio_id = portfolio_id
-        self.recovery_hint = recovery_hint
-        self.violated_constraint = violated_constraint
-        self.violation_detail = violation_detail
-        self.schema_version = schema_version
-        self.trace_context = trace_context
-
-
-__all__ = ["RiskLimitViolationError"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.risk.risk_limit_violation_error。"""
+from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import *  # noqa: F401,F403

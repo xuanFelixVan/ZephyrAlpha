@@ -5,38 +5,13 @@
 # [CONSUMERS] ex_core; pf_core
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.execution.fill
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.execution.fill
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_fill | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# ==== BEGIN CODGEN:CTR-005 ====
-from __future__ import annotations
-from dataclasses import dataclass
-from datetime import datetime
-from decimal import Decimal
-
-
-@dataclass(frozen=True)
-class Fill:
-    fill_id: str
-    fill_price: Decimal
-    fill_timestamp: datetime
-    filled_quantity: Decimal
-    idempotency_key: str
-    order_id: str
-    strategy_id: str
-    symbol: str
-    broker_fill_id: str | None = None
-    commission: Decimal = Decimal("0")
-    schema_version: str = "1.0"
-    slippage: Decimal | None = None
-    trace_context: TraceContext | None = None
-
-
-# ==== END CODGEN:CTR-005 ====
-
-__all__ = ["Fill"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.execution.fill。"""
+from zephyr.trading.trading_contracts.execution.fill import *  # noqa: F401,F403

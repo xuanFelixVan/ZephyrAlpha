@@ -5,40 +5,13 @@
 # [CONSUMERS] pf_core
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.execution.execution_report
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.execution.execution_report
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_execution_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-
-# ==== BEGIN CODGEN:CTR-P1-007 ====
-
-from dataclasses import dataclass
-from decimal import Decimal
-
-
-@dataclass(frozen=True)
-class ExecutionReport:
-    order_id: str
-    symbol: str
-    direction: str
-    intended_quantity: int
-    actual_quantity: int
-    intended_price: Decimal
-    vwap_price: Decimal
-    slippage_bps: float
-    commission: Decimal
-    execution_start: str
-    execution_end: str
-    broker_id: str
-    idempotency_key: str
-    algo_type: str = "NONE"
-    schema_version: str = "1.0"
-
-
-# ==== END CODGEN:CTR-P1-007 ====
-
-__all__ = ["ExecutionReport"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.execution.execution_report。"""
+from zephyr.trading.trading_contracts.execution.execution_report import *  # noqa: F401,F403

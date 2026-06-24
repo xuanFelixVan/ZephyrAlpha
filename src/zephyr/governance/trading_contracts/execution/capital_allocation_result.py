@@ -5,29 +5,13 @@
 # [CONSUMERS] signal
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.execution.capital_allocation_result
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.execution.capital_allocation_result
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_capital_allocation_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# ==== BEGIN CODGEN:CTR-P1-003 ====
-from dataclasses import dataclass, field
-
-
-@dataclass(frozen=True)
-class CapitalAllocationResult:
-    allocation_date: str
-    total_allocated_weight: float
-    allocation_method: str
-    idempotency_key: str
-    strategy_allocations: dict[str, float] = field(default_factory=dict)
-    rebalance_threshold: float = 0.05
-    schema_version: str = "1.0"
-
-
-# ==== END CODGEN:CTR-P1-003 ====
-
-__all__ = ["CapitalAllocationResult"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.execution.capital_allocation_result。"""
+from zephyr.trading.trading_contracts.execution.capital_allocation_result import *  # noqa: F401,F403

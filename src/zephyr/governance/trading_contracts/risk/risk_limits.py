@@ -5,47 +5,13 @@
 # [CONSUMERS] risk; pf_core
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.risk.risk_limits
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.risk.risk_limits
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_risk_limits | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# ==== BEGIN CODGEN:CTR-003 ====
-from __future__ import annotations
-from dataclasses import dataclass, field
-from datetime import datetime
-
-
-@dataclass(frozen=True)
-class RiskLimits:
-    as_of_date: datetime
-    idempotency_key: str
-    max_drawdown_limit: float | None = None
-    max_gross_leverage: float = 1.0
-    max_portfolio_var_1d: float | None = None
-    max_sector_concentration: float = 0.3
-    max_single_position: float = 0.1
-    min_single_position: float = 0.0
-    schema_version: str = "1.0"
-    symbol_overrides: dict[str, float] = field(default_factory=dict)
-    trace_context: TraceContext | None = None
-
-
-# ==== END CODGEN:CTR-003 ====
-
-
-class RiskLimitsCalculator:
-    def __init__(self, limits: RiskLimits | None = None) -> None:
-        self._limits = limits or RiskLimits(
-            as_of_date=datetime.now(),
-            idempotency_key="default",
-        )
-
-    def check(self, position_value: float, portfolio_value: float) -> dict:
-        return {"within_limits": True, "position_ratio": position_value / portfolio_value if portfolio_value else 0.0}
-
-
-__all__ = ["RiskLimits", "RiskLimitsCalculator"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.risk.risk_limits。"""
+from zephyr.trading.trading_contracts.risk.risk_limits import *  # noqa: F401,F403

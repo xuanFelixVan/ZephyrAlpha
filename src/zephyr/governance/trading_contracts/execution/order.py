@@ -5,67 +5,13 @@
 # [CONSUMERS] pf_core; ex_core; pf_core
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.execution.order
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.execution.order
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_order | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from __future__ import annotations
-from enum import Enum
-
-
-class OrderSide(Enum):
-    BUY = "BUY"
-    SELL = "SELL"
-
-
-class OrderType(Enum):
-    LIMIT = "LIMIT"
-    MARKET = "MARKET"
-    STOP = "STOP"
-    STOP_LIMIT = "STOP_LIMIT"
-    TRAILING_STOP = "TRAILING_STOP"
-
-
-class OrderStatus(Enum):
-    PENDING = "PENDING"
-    SUBMITTED = "SUBMITTED"
-    PARTIAL = "PARTIAL"
-    FILLED = "FILLED"
-    CANCELLED = "CANCELLED"
-    REJECTED = "REJECTED"
-    EXPIRED = "EXPIRED"
-
-
-# ==== BEGIN CODGEN:CTR-004 ====
-from dataclasses import dataclass
-from datetime import datetime
-from decimal import Decimal
-
-
-@dataclass
-class Order:
-    idempotency_key: str
-    order_id: str
-    order_type: OrderType
-    quantity: Decimal
-    side: OrderSide
-    strategy_id: str
-    symbol: str
-    avg_fill_price: Decimal | None = None
-    broker_order_id: str | None = None
-    created_at: datetime | None = None
-    filled_quantity: Decimal = Decimal("0")
-    limit_price: Decimal | None = None
-    schema_version: str = "1.0"
-    status: OrderStatus = OrderStatus.PENDING
-    trace_context: TraceContext | None = None
-    updated_at: datetime | None = None
-
-
-# ==== END CODGEN:CTR-004 ====
-
-__all__ = ["Order", "OrderSide", "OrderStatus", "OrderType"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.execution.order。"""
+from zephyr.trading.trading_contracts.execution.order import *  # noqa: F401,F403

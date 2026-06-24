@@ -5,33 +5,13 @@
 # [CONSUMERS] ex_core
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.execution.execution_rejection_error
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.execution.execution_rejection_error
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_execution_rejection_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# ==== BEGIN CODGEN:CTR-ERR-005 ====
-from __future__ import annotations
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
-class ExecutionRejectionError:
-    error_id: str
-    idempotency_key: str
-    order_id: str
-    recovery_hint: str
-    rejection_reason: str
-    rejection_source: str
-    symbol: str
-    broker_message: str | None = None
-    schema_version: str = "1.0"
-    trace_context: TraceContext | None = None
-
-
-# ==== END CODGEN:CTR-ERR-005 ====
-
-__all__ = ["ExecutionRejectionError"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.execution.execution_rejection_error。"""
+from zephyr.trading.trading_contracts.execution.execution_rejection_error import *  # noqa: F401,F403

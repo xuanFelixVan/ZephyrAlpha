@@ -5,43 +5,13 @@
 # [CONSUMERS] risk; pf_core; pf_core; ops; l10-compliance
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.risk.risk_metrics
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.risk.risk_metrics
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_risk_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-
-# ==== BEGIN CODGEN:CTR-P1-011 ====
-
-from dataclasses import dataclass
-from datetime import datetime
-
-
-@dataclass(frozen=True)
-class RiskMetricsReport:
-    as_of_date: datetime
-    beta: float
-    calculation_method: str
-    confidence_level: float
-    current_drawdown: float
-    cvar_1d_95: float
-    cvar_1d_99: float
-    idempotency_key: str
-    lookback_period: int
-    max_drawdown: float
-    portfolio_id: str
-    sharpe_ratio: float
-    sortino_ratio: float
-    var_1d_95: float
-    var_1d_99: float
-    volatility_1d: float
-    volatility_1m: float
-    schema_version: str = "1.0"
-
-
-# ==== END CODGEN:CTR-P1-011 ====
-
-__all__ = ["RiskMetricsReport"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.risk.risk_metrics。"""
+from zephyr.trading.trading_contracts.risk.risk_metrics import *  # noqa: F401,F403

@@ -5,47 +5,13 @@
 # [CONSUMERS] factor; _cross_layer
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] re-export shim only; truth source is zephyr.trading.trading_contracts.market.market_data
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.trading.trading_contracts.market.market_data
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_market_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# ==== BEGIN CODGEN:CTR-001 ====
-from __future__ import annotations
-from dataclasses import dataclass, field
-from datetime import datetime
-from decimal import Decimal
-
-
-@dataclass(frozen=True)
-class NormalizedMarketData:
-    close: Decimal
-    data_source: str
-    high: Decimal
-    idempotency_key: str
-    low: Decimal
-    open: Decimal
-    symbol: str
-    timestamp: datetime
-    volume: Decimal
-    adj_factor: Decimal | None = None
-    amount: Decimal | None = None
-    config_load_retry_policy: str = "linear"
-    config_load_timeout_ms: int = 1000
-    exceptions: list[str] = field(default_factory=list)
-    ingested_at: datetime | None = None
-    is_suspended: bool = False
-    max_retries: int = 3
-    quality_score: float = 1.0
-    retry_policy: str = "exponential_backoff"
-    schema_version: str = "1.0"
-    timeout_ms: int = 5000
-    trace_context: TraceContext | None = None
-
-
-# ==== END CODGEN:CTR-001 ====
-
-__all__ = ["NormalizedMarketData"]
+"""Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.market.market_data。"""
+from zephyr.trading.trading_contracts.market.market_data import *  # noqa: F401,F403
