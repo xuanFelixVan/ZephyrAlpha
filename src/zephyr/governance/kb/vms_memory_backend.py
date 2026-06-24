@@ -125,10 +125,13 @@ class VMSMemoryBackend:
                 records: list[MemoryRecord] = []
                 for item in raw_results:
                     meta = item.get("metadata", {}) or {}
+                    rec_topic = meta.get("topic", topic)
+                    if rec_topic != topic:
+                        continue
                     records.append(
                         MemoryRecord(
                             chunk_id=item.get("id", ""),
-                            topic=meta.get("topic", topic),
+                            topic=rec_topic,
                             content=item.get("content", item.get("document", "")),
                             score=1.0,
                             written_at=meta.get("written_at", ""),
