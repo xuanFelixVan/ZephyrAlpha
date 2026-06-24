@@ -13,11 +13,11 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_signal_degradation_warning | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.market.signal_degradation_warning."""
+"""Backward-compat shim — canonical location is zephyr.trading.trading_contracts.market.signal_degradation_warning."""
 
 import importlib
 
-_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.market.signal_degradation_warning"
+_TARGET_MODULE = "zephyr.trading.trading_contracts.market.signal_degradation_warning"
 
 
 def __getattr__(name):

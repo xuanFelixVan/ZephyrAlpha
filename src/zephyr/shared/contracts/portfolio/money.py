@@ -51,7 +51,7 @@ from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN, Decimal, getcontext
 
 # Lazy import for CurrencyCode (upward dependency from L0 shared → L3 trading)
-_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.market.instrument"
+_TARGET_MODULE = "zephyr.trading.trading_contracts.market.instrument"
 
 
 def __getattr__(name):

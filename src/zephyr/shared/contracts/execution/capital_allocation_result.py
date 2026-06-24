@@ -13,11 +13,11 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_capital_allocation_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.execution.capital_allocation_result."""
+"""Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.capital_allocation_result."""
 
 import importlib
 
-_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.execution.capital_allocation_result"
+_TARGET_MODULE = "zephyr.trading.trading_contracts.execution.capital_allocation_result"
 
 
 def __getattr__(name):

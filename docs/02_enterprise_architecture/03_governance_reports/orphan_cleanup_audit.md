@@ -588,7 +588,7 @@
 
 ### 5.1 DB DELETE 清单（僵尸节点）
 
-共 117 项。
+共 128 项（原 117 项 + 11 项 __init__.py 误判修正：原 §5.2 错误映射到 scripts/__init__.py，实际磁盘不存在，改为 DELETE）。
 
 ```sql
 -- 分批执行（每批≤20项），执行前必须git备份depgraph.db
@@ -604,29 +604,25 @@ DELETE FROM nodes WHERE node_id IN (51656, 51653, 51657, 51659, 51663, 51660, 51
 DELETE FROM nodes WHERE node_id IN (51679, 51677, 51678, 51681, 51683, 51682, 51684, 51686, 51688, 51690, 51687, 51689, 51691, 51693, 51692, 51694, 51699, 51695, 51698, 50234);
 -- 批次 6: 17项
 DELETE FROM nodes WHERE node_id IN (50236, 50238, 50241, 50240, 50239, 50235, 50237, 50242, 50246, 50248, 50247, 50245, 50244, 50249, 50243, 50253, 53663);
+-- 批次 7: 11项（__init__.py 误判修正：原 §5.2 错误映射到 scripts/__init__.py，磁盘不存在，改为 DELETE）
+DELETE FROM nodes WHERE node_id IN (47973, 47977, 47981, 48041, 48059, 53892, 48913, 49638, 50333, 50395, 50843);
 ```
 
 ### 5.2 UPDATE path 清单（僵尸节点路径更新）
 
-共 69 项。
+共 57 项（原 69 项 - 12 项 __init__.py 误判修正：11 项磁盘不存在移至 §5.1 DELETE，1 项磁盘存在保留原路径无需操作）。
 
 | node_id | 旧路径 | 新路径 |
 |:---:|------|------|
-| 47973 | `src/zephyr/cross_asset/cross_asset_risk_decomposer/__init__.py` | `scripts/__init__.py` |
-| 47977 | `src/zephyr/cross_asset/cross_market_data_adapter/__init__.py` | `scripts/__init__.py` |
 | 47975 | `src/zephyr/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py` | `src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py` |
-| 47981 | `src/zephyr/cross_asset/currency_hedger_and_fixed_income/__init__.py` | `scripts/__init__.py` |
 | 47971 | `src/zephyr/cross_asset/risk_manager.py` | `src/zephyr/risk/risk_manager.py` |
 | 47967 | `src/zephyr/cross_asset/risk_manager_base.py` | `src/zephyr/risk/risk_manager_base.py` |
-| 48041 | `src/zephyr/ex_core/models/__init__.py` | `scripts/__init__.py` |
-| 48059 | `src/zephyr/factor/models/__init__.py` | `scripts/__init__.py` |
 | 53886 | `frontend/app.py` | `src/zephyr/frontend/dashboard/app.py` |
 | 53884 | `frontend/fitness_functions.py` | `src/zephyr/frontend/dashboard/components/fitness_functions.py` |
 | 53890 | `frontend/gate_statistics.py` | `src/zephyr/frontend/dashboard/components/gate_statistics.py` |
 | 53889 | `frontend/interface_base.py` | `src/zephyr/frontend/interface_base.py` |
 | 53887 | `frontend/knowledge_overview.py` | `src/zephyr/frontend/dashboard/components/knowledge_overview.py` |
 | 53888 | `frontend/olap_trend.py` | `src/zephyr/frontend/dashboard/components/olap_trend.py` |
-| 53892 | `frontend/real_time_dashboard/__init__.py` | `scripts/__init__.py` |
 | 53891 | `frontend/task_progress.py` | `src/zephyr/frontend/dashboard/components/task_progress.py` |
 | 51274 | `scripts/construction/create_db_alignment_tasks.py` | `scripts/_archive/construction/create_db_alignment_tasks.py` |
 | 51273 | `scripts/construction/create_dm_phase9_tasks.py` | `scripts/_archive/construction/create_dm_phase9_tasks.py` |
@@ -656,7 +652,6 @@ DELETE FROM nodes WHERE node_id IN (50236, 50238, 50241, 50240, 50239, 50235, 50
 | 51313 | `scripts/governance/dm101_blueprint_domain_mapping.py` | `scripts/_archive/governance/dm101_blueprint_domain_mapping.py` |
 | 51328 | `scripts/governance/merge_domain_nodes.py` | `scripts/_archive/governance/merge_domain_nodes.py` |
 | 51721 | `scripts/ops/fill_blueprint_ids.py` | `scripts/_archive/ops/fill_blueprint_ids.py` |
-| 48913 | `src/zephyr/governance/models/__init__.py` | `scripts/__init__.py` |
 | 48312 | `src/zephyr/governance/momentum_factor.py` | `src/zephyr/factor/momentum_factor.py` |
 | 48316 | `src/zephyr/governance/olap_engine.py` | `src/zephyr/infrastructure/db/olap_engine.py` |
 | 48311 | `src/zephyr/governance/orchestrator.py` | `src/zephyr/governance/audit_trail/orchestrator.py` |
@@ -666,17 +661,11 @@ DELETE FROM nodes WHERE node_id IN (50236, 50238, 50241, 50240, 50239, 50235, 50
 | 51658 | `scripts/governance/repair/ensure_dep_cycles_view.py` | `scripts/_archive/governance/repair/ensure_dep_cycles_view.py` |
 | 51664 | `scripts/governance/repair/list_source_md_files.py` | `scripts/_archive/governance/repair/list_source_md_files.py` |
 | 49424 | `src/zephyr/infrastructure/pipeline/pipeline_orchestrator.py` | `src/zephyr/autonomy_core/pipeline_orchestrator.py` |
-| 49638 | `src/zephyr/integration/models/__init__.py` | `scripts/__init__.py` |
-| 49786 | `src/zephyr/integration/shared_08/contracts/gate/__init__.py` | `scripts/__init__.py` |
-| 49703 | `src/zephyr/integration/shared_08/event_bus.py` | `src/zephyr/shared/event_bus.py` |
 | 49724 | `src/zephyr/integration/shared_08/token_utils.py` | `src/zephyr/shared/shared_services/observability_02/token_utils.py` |
 | 50930 | `src/zephyr/ops/observability/token_utils.py` | `src/zephyr/shared/shared_services/observability_02/token_utils.py` |
 | 53858 | `tests/unit/telemetry/test_telemetry.py` | `tests/test_telemetry.py` |
-| 50333 | `src/zephyr/pf_core/models/__init__.py` | `scripts/__init__.py` |
-| 50395 | `src/zephyr/risk/models/__init__.py` | `scripts/__init__.py` |
 | 50710 | `src/zephyr/shared/api_index.py` | `src/zephyr/integration/shared/api_03/api_index.py` |
 | 50727 | `src/zephyr/shared/context.py` | `src/zephyr/integration/shared_08/context.py` |
-| 50843 | `src/zephyr/shared/contracts/gate/__init__.py` | `scripts/__init__.py` |
 | 50841 | `src/zephyr/shared/contracts/gate/gate_result.py` | `src/zephyr/integration/shared_08/contracts/gate/gate_result.py` |
 | 50940 | `src/zephyr/shared/observability_02/token_utils.py` | `src/zephyr/shared/shared_services/observability_02/token_utils.py` |
 | 50971 | `src/zephyr/shared/shared_services/events/event_bus.py` | `src/zephyr/shared/event_bus.py` |

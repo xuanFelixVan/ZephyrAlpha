@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] backward-compat shim — canonical: zephyr.execution.trading.trading_contracts.market.factor_monitor_report
+# [INVARIANTS] backward-compat shim — canonical: zephyr.trading.trading_contracts.market.factor_monitor_report
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,11 +14,11 @@
 # [TESTS]
 # [A_module] module_id=MOD-SHR_factor_monitor_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.market.factor_monitor_report."""
+"""Backward-compat shim — canonical location is zephyr.trading.trading_contracts.market.factor_monitor_report."""
 
 import importlib
 
-_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.market.factor_monitor_report"
+_TARGET_MODULE = "zephyr.trading.trading_contracts.market.factor_monitor_report"
 
 
 def __getattr__(name):

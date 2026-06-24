@@ -13,11 +13,11 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_model_serving_request | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.execution.model_serving_request."""
+"""Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.model_serving_request."""
 
 import importlib
 
-_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.execution.model_serving_request"
+_TARGET_MODULE = "zephyr.trading.trading_contracts.execution.model_serving_request"
 
 
 def __getattr__(name):

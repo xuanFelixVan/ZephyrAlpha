@@ -13,11 +13,11 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_compliance_rule | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.risk.compliance_rule."""
+"""Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.compliance_rule."""
 
 import importlib
 
-_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.risk.compliance_rule"
+_TARGET_MODULE = "zephyr.trading.trading_contracts.risk.compliance_rule"
 
 
 def __getattr__(name):

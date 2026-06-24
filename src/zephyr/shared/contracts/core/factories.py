@@ -63,7 +63,7 @@ def make_risk_limits(
     symbol_overrides: dict[str, float] | None = None,
 ):
     """创建 RiskLimits 实例——与 CTR-003（float VaR 上限）对齐。"""
-    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_limits")
+    _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_limits")
     _RiskLimits = _mod.RiskLimits
     mpv: float | None = None
     if max_portfolio_var_1d is not None:
@@ -98,7 +98,7 @@ def make_risk_dashboard_snapshot(
     idempotency_key: str = "",
 ):
     """创建 RiskDashboardSnapshot——用于 L04→L08 监控面板推送。"""
-    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_dashboard_snapshot")
+    _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot")
     _RiskDashboardSnapshot = _mod.RiskDashboardSnapshot
     return _RiskDashboardSnapshot(
         snapshot_time=datetime.now(UTC).isoformat(),
@@ -139,7 +139,7 @@ def make_risk_metrics_report(
     as_of_date: datetime | None = None,
 ):
     """创建 RiskMetricsReport——用于 L04→L05/L07/L08/L10 风险指标推送。"""
-    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_metrics")
+    _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_metrics")
     _RiskMetricsReport = _mod.RiskMetricsReport
     return _RiskMetricsReport(
         portfolio_id=portfolio_id,
@@ -178,7 +178,7 @@ def make_factor_signal(
     idempotency_key: str = "",
 ):
     """创建 FactorSignal 实例——因子信号标准化入口。"""
-    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.market.factor_signal")
+    _mod = importlib.import_module("zephyr.trading.trading_contracts.market.factor_signal")
     _FactorSignal = _mod.FactorSignal
     return _FactorSignal(
         as_of_date=as_of_date or datetime.now(UTC),
@@ -212,7 +212,7 @@ def make_synthesized_signal(
     as_of_timestamp: datetime | None = None,
 ):
     """创建 SynthesizedSignal 实例——L03 合成信号标准化入口。"""
-    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.market.synthesized_signal")
+    _mod = importlib.import_module("zephyr.trading.trading_contracts.market.synthesized_signal")
     _SynthesizedSignal = _mod.SynthesizedSignal
     return _SynthesizedSignal(
         signal_id=signal_id,
@@ -246,7 +246,7 @@ def make_order(
     idempotency_key: str = "",
 ):
     """创建 Order 实例——L05 委托指令标准化入口。"""
-    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.execution.order")
+    _mod = importlib.import_module("zephyr.trading.trading_contracts.execution.order")
     _Order = _mod.Order
     return _Order(
         idempotency_key=idempotency_key or f"ord-{order_id}",

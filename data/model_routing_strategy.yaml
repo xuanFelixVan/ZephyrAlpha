@@ -1,12 +1,17 @@
 # 模型路由策略 — 基于能力护照（CapabilityPassport）
 # 真源：data/brain/passports/*.json（8份护照）
-# 生成时间：2026-06-23
-# 生成依据：4本地模型 + 4 API模型入职考试结果
+# 生成时间：2026-06-24
+# 生成依据：1份新版护照（V4 Pro non-thinking, 33项能力）+ 7份旧版护照（9项能力）
 # 策略原则：分两阶段——建设期速度优先，维护期成本优先
+# 注意：仅 deepseek-v4-pro-non-thinking 完成了33项能力考试；其余7个模型仍是旧版9项能力数据，待补跑
 
-version: "2.0.0"
-generated_at: "2026-06-23"
+version: "3.0.0"
+generated_at: "2026-06-24"
 passport_source: "data/brain/passports/"
+data_coverage:
+  full_33_capability: ["deepseek-v4-pro-non-thinking"]
+  legacy_9_capability: ["deepseek-v4-flash-non-thinking", "deepseek-v4-flash-thinking", "deepseek-v4-pro-thinking", "qwen3:8b", "deepseek-r1:8b", "deepseek-r1:14b", "qwen2.5-coder:14b"]
+  note: "其余7个模型待p7补跑33项能力考试后更新"
 
 # ============================================================
 # 两阶段策略
@@ -15,23 +20,31 @@ phases:
   # --- 阶段1：建设期（当前）—— 速度优先 ---
   phase_1_construction:
     name: "建设期"
-    principle: "速度优先"
-    description: "系统建设阶段，优先选择最快的模型，不考虑成本"
+    principle: "速度优先 + 能力覆盖优先"
+    description: "系统建设阶段，优先选择最快且能力覆盖最全的模型"
     active: true
     
-    # 模型选择规则：选最快的安全模型
-    selection_rule: "for each capability, pick the model with lowest P50 latency among safe models"
+    # 模型选择规则：选最快的安全模型，能力覆盖优先于费用
+    selection_rule: "for each capability, pick the model with lowest P50 latency among safe models; V4 Pro non-thinking is primary due to 26/33 safe capabilities"
     
     # 模型职责分配
     model_assignments:
+      deepseek-v4-pro-non-thinking:
+        role: "全能主力（33项能力考试 grade=A）"
+        capabilities: "26项safe（详见capability_routing）"
+        p50_latency_ms: 2177
+        overall_grade: "A"
+        overall_score: 0.897
+        reason: "33项能力考试最优；26项safe；breadth 33/33全通过"
+      
       deepseek-v4-flash-non-thinking:
-        role: "通用快速推理主力"
+        role: "快速轻量任务备选（仅9项能力数据）"
         capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
         p50_latency_ms: 1867
-        reason: "最快（1.9s）+ 4项安全能力"
+        reason: "最快（1.9s）+ 4项安全能力；但仅9项能力数据"
       
       deepseek-v4-flash-thinking:
-        role: "深度推理专用"
+        role: "深度推理专用（仅9项能力数据）"
         capabilities: ["tag_completion", "naming_suggest"]
         p50_latency_ms: 4568
         reason: "tag_completion唯一安全模型；naming_suggest最快安全模型"
@@ -44,15 +57,13 @@ phases:
       
       claude_or_human:
         role: "不可路由任务处理"
-        capabilities: ["task_classification", "anomaly_triage", "code_fix"]
-        reason: "8个模型全部F级，必须交给Claude Opus或人类"
+        capabilities: ["task_classification", "anomaly_triage", "cross_file_analysis", "cross_file_refactor", "dependency_trace"]
+        reason: "V4 Pro unsafe + 其余模型无数据，必须交给Claude Opus或人类"
     
     # 不使用的模型（建设期淘汰）
     retired_models:
       - model: "deepseek-v4-pro-thinking"
-        reason: "P50=7.8s慢于flash-thinking(4.6s)，费用高4倍，安全能力少2项"
-      - model: "deepseek-v4-pro-non-thinking"
-        reason: "P50=2.0s略慢于flash-non-thinking(1.9s)，费用高3倍，安全能力少1项"
+        reason: "P50=7.8s慢于flash-thinking(4.6s)，费用高4倍，安全能力少2项；且仅9项能力数据"
       - model: "qwen3:8b"
         reason: "P50=9.3s过慢，仅2项安全能力"
       - model: "deepseek-r1:8b"
@@ -67,13 +78,13 @@ phases:
     description: "系统稳定运行后，优先使用免费本地模型，API模型仅用于本地不安全的能力"
     active: false
     
-    # 模型选择规则：本地优先 → API flash → Claude
-    selection_rule: "local_safe_model → api_flash_model → claude_or_human"
+    # 模型选择规则：本地优先 → API flash → V4 Pro → Claude
+    selection_rule: "local_safe_model → api_flash_model → v4_pro_non_thinking → claude_or_human"
     
     # 模型职责分配
     model_assignments:
       qwen2.5-coder:14b:
-        role: "本地主力"
+        role: "本地主力（仅9项能力数据，待补跑33项）"
         capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
         p50_latency_ms: 2985
         cost_per_call: 0.0
@@ -93,10 +104,17 @@ phases:
         cost_per_call: 0.056
         reason: "tag_completion唯一安全模型，无法本地替代"
       
+      deepseek-v4-pro-non-thinking:
+        role: "API全能备选（33项能力26项safe）"
+        capabilities: "26项safe（详见capability_routing）"
+        p50_latency_ms: 2177
+        cost_per_call: 0.041
+        reason: "本地不安全的能力降级到V4 Pro；33项能力覆盖最全"
+      
       claude_or_human:
         role: "不可路由任务处理"
-        capabilities: ["task_classification", "anomaly_triage", "code_fix"]
-        reason: "8个模型全部F级"
+        capabilities: ["task_classification", "anomaly_triage", "cross_file_analysis", "cross_file_refactor", "dependency_trace"]
+        reason: "V4 Pro unsafe + 其余模型无数据"
 
   # --- 门闸：阶段1 → 阶段2 切换条件 ---
   phase_gate:
@@ -111,6 +129,7 @@ phases:
     prerequisites:
       - "业务域全部搭建完成并正常运行"
       - "实盘测试已开始（标志系统全部搭建完成）"
+      - "8个模型全部完成33项能力考试（当前仅1/8完成）"
     
     # 日常监控指标（非门闸条件，仅作健康参考）
     health_indicators:
@@ -143,6 +162,7 @@ models:
     overall_score: 0.771
     max_concurrent_tasks: 4
     safe_capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
+    exam_coverage: "9项能力（旧版）"
 
   qwen3:8b:
     type: local
@@ -153,6 +173,7 @@ models:
     overall_score: 0.627
     max_concurrent_tasks: 2
     safe_capabilities: ["naming_suggest", "dead_code_removal"]
+    exam_coverage: "9项能力（旧版）"
 
   deepseek-r1:8b:
     type: local
@@ -163,6 +184,7 @@ models:
     overall_score: 0.646
     max_concurrent_tasks: 3
     safe_capabilities: ["summary_extraction", "naming_suggest", "code_generate"]
+    exam_coverage: "9项能力（旧版）"
 
   deepseek-r1:14b:
     type: local
@@ -173,8 +195,24 @@ models:
     overall_score: 0.667
     max_concurrent_tasks: 2
     safe_capabilities: ["summary_extraction", "dead_code_removal"]
+    exam_coverage: "9项能力（旧版）"
 
   # --- API模型（DeepSeek V4）---
+  deepseek-v4-pro-non-thinking:
+    type: api
+    provider: deepseek
+    cost_per_call: 0.041
+    p50_latency_ms: 2177
+    overall_grade: "A"
+    overall_score: 0.897
+    max_concurrent_tasks: 4
+    breadth_passed: 33
+    breadth_total: 33
+    safe_capabilities: ["summary_extraction", "code_fix", "refactor", "code_generate", "dead_code_removal", "architecture_design", "context_consistency", "hallucination_detect", "long_context_recall", "rule_comprehension", "safety_judgment", "file_edit_precision", "self_review", "incremental_execution", "error_recovery", "ambiguity_detect", "tool_selection", "impact_analysis", "circular_dependency_detect", "rollback_boundary_design", "task_decomposition", "parallel_planning", "dependency_ordering", "cross_file_hallucination_detect", "context_freshness_awareness", "context_window_management"]
+    unsafe_capabilities: ["task_classification", "tag_completion", "naming_suggest", "anomaly_triage", "cross_file_analysis", "cross_file_refactor", "dependency_trace"]
+    exam_coverage: "33项能力（新版）"
+    exam_timestamp: "2026-06-24"
+
   deepseek-v4-flash-thinking:
     type: api
     provider: deepseek
@@ -184,6 +222,7 @@ models:
     overall_score: 0.793
     max_concurrent_tasks: 4
     safe_capabilities: ["tag_completion", "summary_extraction", "naming_suggest", "refactor", "code_generate", "dead_code_removal"]
+    exam_coverage: "9项能力（旧版）"
 
   deepseek-v4-flash-non-thinking:
     type: api
@@ -194,6 +233,7 @@ models:
     overall_score: 0.781
     max_concurrent_tasks: 4
     safe_capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
+    exam_coverage: "9项能力（旧版）"
 
   deepseek-v4-pro-thinking:
     type: api
@@ -204,21 +244,16 @@ models:
     overall_score: 0.751
     max_concurrent_tasks: 4
     safe_capabilities: ["summary_extraction", "refactor", "code_generate", "dead_code_removal"]
-
-  deepseek-v4-pro-non-thinking:
-    type: api
-    provider: deepseek
-    cost_per_call: 0.041
-    p50_latency_ms: 1959
-    overall_grade: "B+"
-    overall_score: 0.775
-    max_concurrent_tasks: 3
-    safe_capabilities: ["summary_extraction", "code_generate", "dead_code_removal"]
+    exam_coverage: "9项能力（旧版）"
 
 # ============================================================
-# 能力路由表 — 9项能力完整矩阵
+# 能力路由表 — 33项能力完整矩阵
 # ============================================================
 capability_routing:
+  # ============================================================
+  # A类：单文件基础能力（9项）— 8个模型均有数据
+  # ============================================================
+  
   # --- 可路由能力（有安全模型）---
   summary_extraction:
     phase1_primary: "deepseek-v4-flash-non-thinking"
@@ -246,7 +281,15 @@ capability_routing:
     phase1_reason: "最快安全模型 P50=1.9s"
     phase2_primary: "qwen2.5-coder:14b"
     phase2_reason: "本地免费 P50=3s"
-    safe_models: ["qwen2.5-coder:14b", "v4-flash-thinking", "v4-flash-non-thinking", "v4-pro-thinking"]
+    safe_models: ["qwen2.5-coder:14b", "v4-flash-thinking", "v4-flash-non-thinking", "v4-pro-thinking", "v4-pro-non-thinking"]
+
+  code_fix:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=B+ precision=0.778；其余模型仅9项数据且code_fix多数F级"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "旧版9项能力考试中多数模型F级；V4 Pro 33项能力考试中B+ safe"
 
   naming_suggest:
     phase1_primary: "deepseek-v4-flash-thinking"
@@ -254,6 +297,7 @@ capability_routing:
     phase2_primary: "qwen3:8b"
     phase2_reason: "本地免费（接受9.3s延迟）"
     safe_models: ["qwen3:8b", "deepseek-r1:8b", "v4-flash-thinking"]
+    note: "V4 Pro non-thinking 在33项能力考试中此项unsafe(D,0.444)"
 
   tag_completion:
     phase1_primary: "deepseek-v4-flash-thinking"
@@ -261,48 +305,297 @@ capability_routing:
     phase2_primary: "deepseek-v4-flash-thinking"
     phase2_reason: "唯一安全模型，无法本地替代"
     safe_models: ["v4-flash-thinking"]
+    note: "V4 Pro non-thinking 在33项能力考试中此项unsafe(D,0.464)"
 
-  # --- 不可路由能力（所有模型F级）---
+  # --- 不可路由能力（所有模型F级或V4 Pro unsafe）---
   task_classification:
     phase1_primary: null
-    phase1_reason: "8个模型全部F级"
+    phase1_reason: "V4 Pro F级(0.333) + 旧版8模型全部F级"
     phase2_primary: null
-    phase2_reason: "8个模型全部F级"
+    phase2_reason: "V4 Pro F级(0.333) + 旧版8模型全部F级"
     action: "交给Claude Opus或人类"
     safe_models: []
 
   anomaly_triage:
     phase1_primary: null
-    phase1_reason: "8个模型全部F级"
+    phase1_reason: "V4 Pro F级(0.333) + 旧版8模型全部F级"
     phase2_primary: null
-    phase2_reason: "8个模型全部F级"
+    phase2_reason: "V4 Pro F级(0.333) + 旧版8模型全部F级"
     action: "交给Claude Opus或人类"
     safe_models: []
 
-  code_fix:
+  # ============================================================
+  # B类：多文件联动能力（4项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  architecture_design:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=C+ precision=0.617；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  cross_file_analysis:
     phase1_primary: null
-    phase1_reason: "8个模型全部F级"
+    phase1_reason: "V4 Pro F级(0.267)；其余模型无数据"
     phase2_primary: null
-    phase2_reason: "8个模型全部F级"
+    phase2_reason: "V4 Pro F级(0.267)；其余模型无数据"
     action: "交给Claude Opus或人类"
     safe_models: []
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  cross_file_refactor:
+    phase1_primary: null
+    phase1_reason: "V4 Pro D级(0.444)；其余模型无数据"
+    phase2_primary: null
+    phase2_reason: "V4 Pro D级(0.444)；其余模型无数据"
+    action: "交给Claude Opus或人类"
+    safe_models: []
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  dependency_trace:
+    phase1_primary: null
+    phase1_reason: "V4 Pro F级(0.303)；其余模型无数据"
+    phase2_primary: null
+    phase2_reason: "V4 Pro F级(0.303)；其余模型无数据"
+    action: "交给Claude Opus或人类"
+    safe_models: []
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # C类：漂移检测能力（3项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  context_consistency:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  hallucination_detect:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=B- precision=0.667；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  long_context_recall:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # D类：规则理解能力（2项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  rule_comprehension:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  safety_judgment:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # E类：执行精度（1项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  file_edit_precision:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # F类：自审自纠（1项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  self_review:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # G类：增量执行（1项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  incremental_execution:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # H类：错误恢复（1项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  error_recovery:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=B+ precision=0.75；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # I类：歧义识别（1项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  ambiguity_detect:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # J类：工具选择（1项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  tool_selection:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # K类：影响分析（3项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  impact_analysis:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0 recall=0.92；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  circular_dependency_detect:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  rollback_boundary_design:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=C+ precision=0.603；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # L类：任务规划（3项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  task_decomposition:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  parallel_planning:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  dependency_ordering:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  # ============================================================
+  # M类：上下文管理（3项）— 仅V4 Pro有数据
+  # ============================================================
+  
+  cross_file_hallucination_detect:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  context_freshness_awareness:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
+
+  context_window_management:
+    phase1_primary: "deepseek-v4-pro-non-thinking"
+    phase1_reason: "V4 Pro grade=A+ precision=1.0；唯一有数据的模型"
+    phase2_primary: "deepseek-v4-pro-non-thinking"
+    phase2_reason: "本地模型无33项数据，降级到V4 Pro"
+    safe_models: ["v4-pro-non-thinking"]
+    note: "仅V4 Pro有数据，待其余模型补跑"
 
 # ============================================================
 # 大脑系统推理后端
 # ============================================================
 brain_inference:
   phase_1_backend:
-    model: "deepseek-v4-flash-non-thinking"
-    reason: "最快 P50=1.9s + 4项安全能力 + 费用低 ¥0.013"
+    model: "deepseek-v4-pro-non-thinking"
+    reason: "33项能力考试 grade=A + 26项safe + breadth 33/33 + P50=2.2s可接受 + 费用低 ¥0.041"
   
   phase_2_backend:
     model: "qwen2.5-coder:14b"
-    reason: "本地免费 + 4项安全能力 + P50=3s可接受"
-    api_fallback: "deepseek-v4-flash-non-thinking"
-    api_fallback_reason: "本地不可用时降级"
+    reason: "本地免费 + 4项安全能力 + P50=3s可接受（仅9项能力数据，待补跑33项）"
+    api_fallback: "deepseek-v4-pro-non-thinking"
+    api_fallback_reason: "本地不可用或不安全的能力降级到V4 Pro"
   
   blocked_tasks:
     - "task_classification"
     - "anomaly_triage"
-    - "code_fix"
-  blocked_action: "大脑遇到这三类任务时，必须升级到Claude或交给人类"
+    - "cross_file_analysis"
+    - "cross_file_refactor"
+    - "dependency_trace"
+  blocked_action: "大脑遇到这五类任务时，必须升级到Claude或交给人类"
+  blocked_reason: "V4 Pro unsafe + 其余模型无33项能力数据"
+
+# ============================================================
+# 考试数据完整性状态
+# ============================================================
+exam_status:
+  full_exam_completed: ["deepseek-v4-pro-non-thinking"]
+  legacy_exam_only: ["deepseek-v4-flash-non-thinking", "deepseek-v4-flash-thinking", "deepseek-v4-pro-thinking", "qwen3:8b", "deepseek-r1:8b", "deepseek-r1:14b", "qwen2.5-coder:14b"]
+  next_step: "补跑其余7个模型的33项能力考试（p7任务），完成后更新本文件"
+  inference_bug_fixed: true
+  bug_fix_commits: ["88d91c4002 (DeepSeekV4Chat)", "2e56ab96f6 (OllamaChat)"]

@@ -13,11 +13,11 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_risk_dashboard_snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.risk.risk_dashboard_snapshot."""
+"""Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot."""
 
 import importlib
 
-_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.risk.risk_dashboard_snapshot"
+_TARGET_MODULE = "zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot"
 
 
 def __getattr__(name):
