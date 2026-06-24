@@ -852,11 +852,22 @@ gates:
   scope: global
   execution_plane: warm
   note: 2026-06-22 落地 — trae_XXX.yaml frontmatter 7标准字段+顺序+枚举值校验（配合 scaffold.py rule 模式双重保险）
+- gate_id: G_FWD_REF
+  gate_name: forward_reference_detection
+  title: G_FWD_REF Forward Reference Detection Gate
+  category: compliance
+  file: g_forward_reference.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-06-24 落地 — 前向引用检测门禁，检测 class X 内部引用 X 自身且缺少 from __future__ import annotations
+    的文件。扫描器 scripts/governance/d7_code/detect_forward_reference.py。exit 0=clean, exit 1=findings(阻断),
+    exit 2=error
 summary:
-  total: 93
+  total: 94
   by_category:
     kms: 5
-    compliance: 54
+    compliance: 55
     lifecycle: 1
     trading: 3
     residue: 1
@@ -866,6 +877,6 @@ summary:
     invariants: 3
     admission: 5
   by_status:
-    active: 87
+    active: 88
     implemented: 4
     draft: 1

@@ -3,7 +3,7 @@ module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
 doc_type: architecture_design
 status: draft
-version: 0.3.6
+version: 0.3.7
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -590,7 +590,75 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 
 ***
 
-## 十一、变更历史
+## 十一、实施工作流程
+
+> 本设计文档定稿后，从设计到实现的完整施工流程。参考 RULE-TEN 14步流程，针对37个功能依赖修改具体化。
+
+### 11.1 流程总览
+
+```
+阶段0：设计定稿（已完成 v0.3.7）
+    ↓
+阶段1：修改全景图（depgraph.db）
+    ↓
+阶段2：修改蓝图（frontmatter）
+    ↓
+阶段3：修改代码（import/依赖/头部）
+    ↓
+阶段4：三方对齐（验证）
+    ↓
+阶段5：测试验证（§十验证清单）
+```
+
+### 11.2 各阶段详细步骤
+
+| 阶段 | STEP | 操作 | 命令/工具 | 验证 | 失败处置 |
+|:---:|:---:|------|---------|------|---------|
+| **0 前置** | 0.1 | 备份 depgraph.db | `git add data/databases/depgraph.db` + `git commit -m "backup: depgraph before arch upgrade"` | `git log -1` 确认备份存在 | 禁止继续 |
+| | 0.2 | 确认设计文档版本 | Read frontmatter `version: 0.3.6` | 版本=0.3.6 | 回到设计审查 |
+| **1 全景图** | 1.1 | 删除循环依赖边（§8.1） | `python scripts/governance/apply_depgraph.py --delete-edges` | §10第1项：循环依赖=0 | 回滚depgraph.db |
+| | 1.2 | 新增依赖边（§8.2） | `python scripts/governance/apply_depgraph.py --add-edges` | §10第5项：孤立功能=0 | 回滚depgraph.db |
+| | 1.3 | 修改依赖类型（§8.3 DIP） | `python scripts/governance/apply_depgraph.py --update-types` | §10第9项：F1→F3=contract, F1→F14=event | 回滚depgraph.db |
+| | 1.4 | 新建设计态节点（§8.4） | `python scripts/governance/apply_depgraph.py --add-nodes` | §10第8项：37个功能全覆盖 | 回滚depgraph.db |
+| | 1.5 | 迁移5个功能域归属（§8.4 P2） | `python scripts/governance/apply_depgraph.py --migrate-domains` | F28/F32/F33/F36/F37域ID正确 | 回滚depgraph.db |
+| | 1.6 | 诊断全景图 | `python scripts/governance/diagnose_depgraph.py` | exit 0 | 按诊断报告修复 |
+| **2 蓝图** | 2.1 | 更新相关蓝图 frontmatter `file_manifest` | Edit工具 | frontmatter↔§4.1边清单一致 | 手动修正 |
+| | 2.2 | 更新蓝图 `dependency_graph` | Edit工具 | dependency_graph↔§4.1边清单一致 | 手动修正 |
+| **3 代码** | 3.1 | 修改 import 路径（断链修复） | Edit工具 | `python scripts/governance/verify_key_imports.py` exit 0 | 逐个修复import |
+| | 3.2 | 修改依赖类型实现（F1→F3 Protocol, F1→F14 event） | Edit工具 | 代码中F1调用F3通过Protocol抽象接口 | 回退到runtime+重新设计 |
+| | 3.3 | 补全文件头部十一字段 | Edit工具 | `[BLUEPRINT]`/`[MODULE]`/`[CONSUMERS]`等字段完整 | 逐个补全 |
+| | 3.4 | 语法检查 | `python -m pytest tests/ --collect-only -q` | exit 0 | 修复语法错误 |
+| **4 三方对齐** | 4.1 | 全景图对齐 | `python scripts/governance/diagnose_depgraph.py` | depgraph.db↔磁盘文件一致 | 回到阶段1 |
+| | 4.2 | 蓝图对齐 | 手动核对 | 蓝图frontmatter.file_manifest↔实际代码 | 回到阶段2 |
+| | 4.3 | 代码头部对齐 | Grep `[BLUEPRINT]`/`[CONSUMERS]`/`[MODULE]` | 代码头部↔实际引用 | 回到阶段3 |
+| **5 测试验证** | 5.1 | §十验证清单10项 | 逐项查询depgraph.db | 全部✅ | 回到对应阶段 |
+| | 5.2 | 功能测试 | `python -m pytest tests/ -q` | 全部通过 | 修复失败用例 |
+| | 5.3 | 红蓝对抗 | 罗列极限测试清单+执行 | 漏洞=0 | 修复漏洞 |
+| | 5.4 | 注册审计 | `python scripts/governance/audit_registration.py` | exit 0（CLEAN） | 补注册 |
+| | 5.5 | 路径树更新 | `python scripts/governance/generate_project_path_tree.py --write` | exit 0 | 重新生成 |
+
+### 11.3 关键约束
+
+| # | 约束 | 原因 |
+|:---:|------|------|
+| 1 | depgraph.db 修改必须用 `apply_depgraph.py`，禁止直接改 .db 文件 | 原子性+冲突检测 |
+| 2 | 改 depgraph.db 前必须 `git commit` 备份（trae_054 STEP0） | 回滚基准 |
+| 3 | ⚠️ 架构升级期间禁止运行 `generate_project_depgraph.py` | 会覆盖depgraph.db全景图 |
+| 4 | 三方对齐是验证步骤，不是修改步骤 | 不一致则回到对应阶段修复 |
+| 5 | 每阶段完成后必须验证通过才进下一阶段 | 步骤验证门（防错误累积） |
+| 6 | 阶段1失败→回滚depgraph.db到阶段0备份 | `git checkout data/databases/depgraph.db` |
+
+### 11.4 回滚方案
+
+| 回滚场景 | 操作 |
+|---------|------|
+| 阶段1全景图修改失败 | `git checkout data/databases/depgraph.db`（恢复到阶段0备份） |
+| 阶段3代码修改失败 | `git checkout <文件>`（恢复到修改前）或 `python scripts/rollback.py preflight` → `rollback.py <cmd>` |
+| 三方对齐不一致 | 定位不一致项→回到对应阶段修复→重新对齐 |
+
+***
+
+## 十二、变更历史
 
 |   版本  | 日期         | 变更                                                                                                                                                                                                                             |
 | :---: | :--------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -603,3 +671,4 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 0.3.4 | 2026-06-24 | 第6轮审查修复4个问题：①设计原则2与§4.3规则3同步（添加业务调度限定+健康检查/同层协作例外）②F12说明删除"入度最高"（F22入度11才是最高）③§10第4项F5/F9/F10入度=0→跨层入度=0（F9入度1来自L6内部F5→F9）④§7.2事件方向图添加L2（pipeline_start发布者F1在L2） |
 | 0.3.5 | 2026-06-24 | 第7轮审查修复4个问题：①frontmatter version 0.3.2→0.3.5（与变更历史同步）②§二末尾事件方向L4/L5→L2/L3/L4/L5（F1在L2、F4/F2/F27在L3发布事件）③§7.2事件方向图L1/L2/L3/L4/L5→L2/L3/L4/L5（L1的F21不发布事件）④§7.2禁止说明同步去除L1 |
 | 0.3.6 | 2026-06-24 | 功能域审查修复：①P1域ID命名格式统一为下划线（D-INFRA_OPS/D-AUTONOMY_CORE/D-GOV_AUDIT，共8处连字符→下划线，与depgraph.db真源对齐）②P2添加规划差异说明（F28/F32/F33/F36/F37共5个功能设计域归属与depgraph现状不一致，本文档为规划目标，depgraph需迁移） |
+| 0.3.7 | 2026-06-24 | 新增§十一实施工作流程：6阶段（前置→全景图→蓝图→代码→三方对齐→测试验证），含详细步骤表、关键约束6项、回滚方案3类 |

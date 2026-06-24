@@ -1,0 +1,32 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: MOD-INF-007
+gate_id: "G_FWD_REF"
+name: "G_FWD_REF Forward Reference Detection"
+description: >
+  前向引用检测门禁——检测 class X 定义内部引用 X 自身的模式（前向引用 bug）。
+  当 class 定义体内引用了自身类名且文件缺少 from __future__ import annotations 时，
+  运行时会抛出 NameError。触发时自动运行 detect_forward_reference.py 扫描器。
+  根因：表头升级（TRAE-047）大规模修改文件时引入此类 bug。治根：本门禁在代码变更时自动检测。
+phase: "治理"
+auto: true
+on_failure: "reject"
+on_pass: "pass"
+rule_ids:
+  - TRAE-047
+checks:
+  - id: "G_FWD_REF-C01"
+    name: "forward_reference_scan"
+    type: "ast_scan"
+    severity: "error"
+    rule_ids:
+      - TRAE-047
+    description: >
+      全量前向引用扫描——检测 class 定义体内引用自身类名且缺少 from __future__ import annotations 的文件。
+      扫描器: scripts/governance/d7_code/detect_forward_reference.py
+      exit 0=clean, exit 1=findings(阻断), exit 2=error
