@@ -29,24 +29,21 @@ template_for: blueprint
 title: Blueprint Construction Template
 ttl: permanent
 verifiability: manual
-version: 0.9.0
-# === 结构化数据字段（v0.9.0 新增）===
-# 文件清单：从 §0.1 正文表格迁移到 frontmatter，支持机器校验和三方对齐
-file_manifest: []
-#  - path: "src/zephyr/{pkg}/{file}.py"    # 文件绝对路径
-#    section: "§3.N"                        # 对应蓝图章节
-#    responsibility: "一句话职责"            # 职责描述
-#    exists: true                           # true=已实现 / false=未实现
-#    ownership: "本模块"                     # 本模块 / ⚠️建议迁移至{模块} / ⚠️与{文件}重叠
-#    blueprint_ref: "MOD-XXX §N"            # 蓝图引用
-# 依赖图：从 §10 正文表格迁移到 frontmatter，文件级粒度 + symbols
-dependency_graph:
-  internal: []   # 蓝图范围内的文件间依赖
-  #  - from: "module_a.py"                  # 源文件
-  #    to: "module_b.py"                    # 目标文件
-  #    symbols: ["ClassName", "func_name"]  # 导入/调用的符号列表
-  #    dep_type: "calls"                    # calls / import / implements / emits_event
-  external: []   # 对其他蓝图/域的依赖
+version: 1.0.0
+# === 蓝图精简方案B（v1.0.0）===
+# 蓝图只存全景图(depgraph.db)没有的独有信息：设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理
+# 禁止存储与全景图重叠的结构态信息：文件清单/依赖关系/域归属/物理路径（委托全景图作为SSoT）
+# 蓝图颗粒度标准：模块级1-10个文件/50-300行；域级≤500行；系统级≤1000行
+# 蓝图创建顺序（混合模式）：先在全景图创建设计态(phase_2)→再创建蓝图(phase_4)→再创建代码文件(phase_5)
+# === 以下结构化字段已委托全景图，蓝图不再存储（v0.9.0定义但未落地，v1.0.0正式废弃）===
+# file_manifest: 委托全景图 nodes 表 code_path 字段
+# dependency_graph: 委托全景图 edges 表
+# 查询文件清单：python scripts/governance/extract_depgraph.py --modules <module_id>
+# 查询依赖关系：python scripts/governance/extract_depgraph.py --paths
+file_manifest: []  # DEPRECATED v1.0.0 - 委托全景图，禁止填写
+dependency_graph:  # DEPRECATED v1.0.0 - 委托全景图，禁止填写
+  internal: []
+  external: []
   #  - from: "module_a.py"                  # 源文件
   #    to: "zephyr.other_pkg.module_b"      # 目标模块全限定名
   #    blueprint: "MOD-XXX"                 # 目标蓝图ID
