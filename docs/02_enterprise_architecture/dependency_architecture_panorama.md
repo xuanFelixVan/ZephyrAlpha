@@ -255,7 +255,7 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 | 设计态 | 功能级节点，目录 path | 目录节点，design_maturity='design' |
 | 运营态 | 文件级节点，文件 path | 文件/目录节点，design_maturity='production'/'prototype' |
 | design_maturity | design / production / prototype | design / production / prototype |
-| build_status | unbuilt / testing / stable / deprecated | unbuilt / testing / stable / deprecated |
+| build_status | planned / generated / testing / stable / deprecated | planned / generated / testing / stable / deprecated |
 
 **V3.3 E16 修正：删除 state 字段，统一用 design_maturity**
 
@@ -276,13 +276,13 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 | ~~state~~ | ~~TEXT~~ | ~~`design`/`operational`~~ | ~~—~~ | ~~V3.4 删除（与 design_maturity 冗余）~~ |
 | node_id | INTEGER FK | NULL（设计态节点不在 nodes 表） | nodes.node_id | V3.4 #147 新增，替换 state，关联依赖全景图 |
 | design_maturity | TEXT | `design` | `production`/`prototype` | 拓扑状态（单一判定信号，删除 state） |
-| build_status | TEXT | `unbuilt`/`testing`/`stable`/`deprecated` | `stable` | 生命周期状态（与 nodes 对齐） |
+| build_status | TEXT | `planned`/`generated`/`testing`/`stable`/`deprecated` | `stable` | 生命周期状态（与 nodes 对齐，裁定#178 5态） |
 | blueprint_id | TEXT | 用户指定 | 代码头部解析 | 关联蓝图 |
 | change_policy | TEXT | — | 人工 | 变更策略 |
 | modification_permission | TEXT | — | 人工 | 修改权限 |
 | last_scanned | TEXT | — | 时间戳 | 最后扫描时间 |
 
-**A-Blind-4 修复**：删除 state 后，build_status 和 design_maturity 正交化。design_maturity 是拓扑状态（design/production/prototype），build_status 是生命周期状态（unbuilt/testing/stable/deprecated）。禁止 `build_status='unbuilt'` 且 `design_maturity='production'` 的矛盾组合。
+**A-Blind-4 修复**：删除 state 后，build_status 和 design_maturity 正交化。design_maturity 是拓扑状态（design/production/prototype），build_status 是生命周期状态（planned/generated/testing/stable/deprecated，裁定#178 5态）。禁止 `build_status='planned'` 且 `design_maturity='production'` 的矛盾组合。
 
 ---
 
@@ -474,35 +474,54 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 | AI 能看到"设计态模块未来会依赖运营态模块" | AI 看不到全局 |
 | 从设计态→运营态的过渡是自然的状态流转 | 需要手动同步 |
 
-**裁定**：放在一起，用字段区分。`design_maturity` 字段标记拓扑状态（design/production/prototype），`build_status` 字段标记生命周期状态（unbuilt/testing/stable/deprecated）。两个正交维度，分离定义（见 §12.6）。edges 表用 `dep_maturity` 字段标记 'design'（规划依赖）或 'active'（实际依赖）。
+**裁定**：放在一起，用字段区分。`design_maturity` 字段标记拓扑状态（design/production/prototype），`build_status` 字段标记生命周期状态（planned/generated/testing/stable/deprecated，裁定#178 5态）。两个正交维度，分离定义（见 §12.6）。edges 表用 `dep_maturity` 字段标记 'design'（规划依赖）或 'active'（实际依赖）。
 
-### 12.6 设计态升级为运营态（双正交状态机）
+### 12.6 设计态实现检测（双正交状态机）
 
 **两个正交维度，分离定义**：
 
 | 维度 | 字段 | 含义 | 状态机 |
 |------|------|------|--------|
 | 拓扑状态 | `design_maturity` | 节点在依赖图中的身份 | `design` → `production`（单向不可逆） |
-| 生命周期状态 | `build_status` | 节点的实现进度 | `unbuilt` → `testing` → `stable` → `deprecated` |
+| 生命周期状态 | `build_status` | 节点的实现进度 | `planned` → `generated` → `testing` → `stable` → `deprecated` |
 
-**design_maturity 状态机**（拓扑状态）：
-- `design`：规划中，功能级节点，目录 path
+**design_maturity 状态机**（拓扑状态，3 值，裁定#179）：
+- `design`：规划中，功能级节点，目录 path（人工通过 apply_depgraph.py 写入，生成器不得创建）
 - `production`：已实现，文件级节点，文件 path（由生成器产生）
-- **单向不可逆**：设计态一旦实现为运营态，设计态节点保留 `design_maturity='design'`（作为规划记录），运营态节点由生成器产生 `design_maturity='production'`。两者通过 blueprint_id 关联，不互相转换。
+- `prototype`：原型占位（如空 __init__.py），文件级节点
+- **单向不可逆**：设计态节点是规划记录，保留 `design_maturity='design'`；运营态节点由生成器产生 `design_maturity='production'`。两者通过 blueprint_id 关联，不互相转换。
 
-**build_status 状态机**（生命周期，4 态简化）：
-- `unbuilt`：未实现（设计态节点默认值）
+**build_status 状态机**（生命周期，5 态单调推进，裁定#178）：
+- `planned`：规划中，未实现（设计态节点默认值）
+- `generated`：AI 已生成未验证（生产节点无对应 test 时推导值）
 - `testing`：开发中/测试中
-- `stable`：已上线运行
+- `stable`：已验证/已上线运行
 - `deprecated`：已废弃/已退役
 
-**升级流程**：
-1. 设计态节点保留 `design_maturity='design'`，`build_status` 从 `unbuilt` → `testing` → `stable`
-2. 运营态文件节点由生成器扫描产生，`design_maturity='production'`，`build_status='stable'`
-3. 两者通过 `blueprint_id` 关联
-4. design edge 保留作为规划记录，active edge 由生成器扫描产生
+**设计态节点的 build_status 子集**（3 态，裁定#190）：
+- 设计态节点只使用 `planned`/`stable`/`deprecated`，不使用 `generated`/`testing`——后两个状态只适用于有代码文件的生产节点。
+- `planned`：规划中，尚未被实现（无同 blueprint_id 的 production 节点）
+- `stable`：规划已落地（生成器检测到同 blueprint_id 的 production 节点）
+- `deprecated`：规划已废弃
 
-**业界依据**：Netflix Service Topology 明确分离"部署状态"（canary/stable/deprecated）和"拓扑状态"（是否存在依赖）。ZephyrAlpha 的 `design_maturity` 是拓扑状态，`build_status` 是生命周期状态，两者正交。原 V3.0 的 6 态 build_status（unbuilt/draft/testing/stable/deprecated/retired）过度设计——在 100% AI 开发场景下，AI 无法可靠区分 6 个状态，简化为 4 态对齐 Netflix 实践。
+**设计态→运营态不是"迁移"而是"实现"**（裁定#193）：
+- 设计态节点不会变成生产节点——它们是不同的行，通过 `blueprint_id` 关联。
+- "实现"= 生成器扫描到代码文件，创建 production 节点，同时更新设计态节点 `build_status='stable'`。
+- 设计节点本身不变，只是被生产节点"伴随"（对齐 K8s：desired state manifest 不会变成 pod）。
+
+**realization detection（实现检测）**（裁定#191）：
+- 由生成器每次运行时自动执行，无需人工干预。
+- 流程：查询所有 `design_maturity='design'` 且有 blueprint_id 的节点，检测是否有同 blueprint_id 的 production 节点——有则设 `build_status='stable'`，无则设 `build_status='planned'`。
+- 对齐 K8s reconciliation controller：自动对比 desired/actual，AI 无需写复杂 JOIN 查询。
+
+**build_status 推导规则**（生成器从文件特征推导，不新增文件头部字段，裁定#180）：
+- design → `planned`
+- production + 有 test → `stable`
+- production 无 test → `generated`
+- prototype → `generated`
+- `deprecated` 通过 apply_depgraph.py --transition-build-status 手工写入
+
+**业界依据**：Netflix Service Topology 明确分离"部署状态"（canary/stable/deprecated）和"拓扑状态"（是否存在依赖）。ZephyrAlpha 的 `design_maturity` 是拓扑状态，`build_status` 是生命周期状态，两者正交。V4.3 将原 4 态 build_status（unbuilt/testing/stable/deprecated）扩展为 5 态（planned/generated/testing/stable/deprecated），新增 `generated` 态标记 AI 生成但未验证的代码——这是 100% AI 开发场景必需（对齐 K8s Pod Phase 5 值实践）。合并原 module_lifecycle_state 字段到 build_status，消除双字段语义重叠（裁定#178/#183）。
 
 ### 12.7 设计态写入流程（唯一入口）
 
@@ -514,9 +533,9 @@ python scripts/governance/apply_depgraph.py --add-design-node \
   --path "src/zephyr/trading/order_center/" \
   --blueprint-id "bp-trading-order-center" \
   --domain-id D-TRADING \
-  [--build-status unbuilt]
+  [--build-status planned]
 ```
-写入时 `design_maturity='design'`，`build_status` 默认 `unbuilt`（可通过 `--build-status` 指定 testing/stable/deprecated，但需符合 §12.6 状态机转换规则）。`blueprint_path` 由脚本按 §12.1 机械推导规则自动填充。node_id 由数据库自增分配。
+写入时 `design_maturity='design'`，`build_status` 默认 `planned`（可通过 `--build-status` 指定 stable/deprecated，但需符合 §12.6 状态机转换规则，裁定#190 设计态只用3态子集 planned/stable/deprecated）。`blueprint_path` 由脚本按 §12.1 机械推导规则自动填充。node_id 由数据库自增分配。
 
 **设计态边写入**：
 ```bash
@@ -566,12 +585,13 @@ python scripts/governance/apply_depgraph.py --transition-build-status \
   --node-id 1001 \
   --to testing
 ```
-转换规则（机械判定）：
-- `unbuilt → testing`：允许（开始开发）
+转换规则（机械判定，裁定#178 5态状态机）：
+- `planned → generated`：允许（AI生成代码）
+- `generated → testing`：允许（开始测试）
 - `testing → stable`：允许（测试通过）
 - `stable → deprecated`：允许（废弃）
 - `deprecated → stable`：禁止（不可复活，需新建节点）
-- 任何跳转（如 `unbuilt → stable`）：禁止（必须逐步转换）
+- 任何跳转（如 `planned → stable`）：禁止（必须逐步转换）
 
 **设计态节点删除**：
 ```bash
@@ -882,7 +902,7 @@ AI查询模式：
 
 | 字段 | 类型 | 含义 | 为什么不覆盖 |
 |------|------|------|------------|
-| module_lifecycle_state | TEXT | 模块生命周期状态 | 设计态节点的详细生命周期 |
+| module_lifecycle_state | TEXT | ~~模块生命周期状态~~（裁定#183 已废弃，合并到 build_status） | V4.3 已合并到 build_status，字段废弃 |
 | subdomain_id | TEXT | 子域 ID | 设计态定义的子域归属 |
 | owner | TEXT | 负责人 | 设计态定义的负责人 |
 
@@ -892,7 +912,7 @@ AI查询模式：
 |------|------|------------|------------------------|------|
 | design_maturity | TEXT | production / prototype | design | 生成器只写运营态值，apply_depgraph.py 只写设计态值。生成器 DELETE 运营态时用 `WHERE design_maturity != 'design' OR design_maturity IS NULL`，保留设计态行 |
 | blueprint_id | TEXT | 从代码头部 [BLUEPRINT] 字段解析 | 用户指定 | 设计态节点由用户写入 blueprint_id；运营态节点由生成器从代码头部解析。两者通过相同 blueprint_id 关联（一对多） |
-| build_status | TEXT | stable | unbuilt/testing/stable/deprecated | 设计态节点由 apply_depgraph.py --transition-build-status 更新；运营态节点由生成器填充为 stable |
+| build_status | TEXT | 从文件特征推导（见下） | planned/stable/deprecated（3 态子集） | 生成器从文件特征推导（裁定#180）：design→planned, production+test→stable, production无test→generated, prototype→generated；设计态节点由 apply_depgraph.py --transition-build-status 更新（3 态子集 planned/stable/deprecated，裁定#190） |
 
 **V3.4 新增共享字段（1 列）**：
 
@@ -903,7 +923,7 @@ AI查询模式：
 **字段归属说明**：
 - `design_maturity`：生成器只写运营态值（production/prototype），设计态值（design）由 apply_depgraph.py 写入。生成器 DELETE 运营态时用 `WHERE design_maturity != 'design' OR design_maturity IS NULL`，保留设计态行。
 - `blueprint_id`：设计态节点由用户指定，运营态节点由生成器从代码头部解析。两者通过相同 blueprint_id 关联（一对多）。
-- `build_status`：设计态节点由 apply_depgraph.py 更新，运营态节点由生成器填充为 stable。
+- `build_status`：生成器从文件特征推导（裁定#180，不用默认值 draft/stable）——推导规则：design→planned, production+test→stable, production无test→generated, prototype→generated；`deprecated` 通过 apply_depgraph.py --transition-build-status 手工写入。设计态节点使用 3 态子集（planned/stable/deprecated，裁定#190），realization detection 自动更新（裁定#191）。
 - `blueprint_path`：设计态节点由 apply_depgraph.py 按 §12.1 机械推导规则写入，运营态节点由生成器从代码头部解析（如有 [BLUEPRINT] 字段则填充，否则 NULL）。
 
 **人工/脚本管理的字段（13 列）**——生成器不碰：
@@ -973,26 +993,25 @@ AI查询模式：
 | .sql | ❌ | 无解析器，不扫 |
 | 其他 | ❌ | 无解析器，不扫 |
 
-**扫描白名单（16 个目录）**——生成器扫描这些目录下的 .py/.yaml/.yml/.md 文件：
+**扫描白名单（15 个目录，裁定#186 移除 tests/）**——生成器扫描这些目录下的 .py/.yaml/.yml/.md 文件：
 
 | # | 目录 | 扫描内容 | 域归属 | 裁定 |
 |---|------|---------|--------|:---:|
 | 1 | `src/zephyr/` | 核心业务代码 | 35 个功能域（动态推导） | 保留 |
 | 2 | `scripts/` | 治理脚本 | D-GOV-SCRIPTS | 保留 |
-| 3 | `tests/` | 测试代码 | D-TEST | 已废止（2026-06-22，测试文件无依赖关系，不需要功能域管理） |
-| 4 | `data/asset_index/` | 资产索引 YAML | D-DATA-ASSET | 保留 |
-| 5 | `data/config/` | 数据配置 | D-DATA-CONFIG | 保留 |
-| 6 | `data/metrics/` | 指标定义 | D-DATA-METRICS | 保留 |
-| 7 | `config/` | 项目配置 YAML | D-INFRA-CONFIG | 保留 |
-| 8 | `schemas/` | Schema 定义 | D-DATA-SCHEMA | 保留 |
-| 9 | `docs/03_modules/` | 模块蓝图 | D-GOV-DOCS | 保留 |
-| 10 | `docs/01_policies_and_standards/` | 政策标准 | D-GOV-DOCS | 保留 |
-| 11 | `docs/02_enterprise_architecture/` | 企业架构 | D-GOV-DOCS | 保留 |
-| 12 | `frontend/` | 前端代码 | D-FRONTEND | 保留 |
-| 13 | `architecture_model/` | 架构模型 | D-ARCH-MODEL | 保留 |
-| 14 | `infra/` | 基础设施 | D-INFRA | 保留 |
-| 15 | `tools/` | 工具脚本 | D-TOOLS | 保留 |
-| 16 | `specs/` | 规格文档 | D-SPECS | 保留 |
+| 3 | `data/asset_index/` | 资产索引 YAML | D-DATA-ASSET | 保留 |
+| 4 | `data/config/` | 数据配置 | D-DATA-CONFIG | 保留 |
+| 5 | `data/metrics/` | 指标定义 | D-DATA-METRICS | 保留 |
+| 6 | `config/` | 项目配置 YAML | D-INFRA-CONFIG | 保留 |
+| 7 | `schemas/` | Schema 定义 | D-DATA-SCHEMA | 保留 |
+| 8 | `docs/03_modules/` | 模块蓝图 | D-GOV-DOCS | 保留 |
+| 9 | `docs/01_policies_and_standards/` | 政策标准 | D-GOV-DOCS | 保留 |
+| 10 | `docs/02_enterprise_architecture/` | 企业架构 | D-GOV-DOCS | 保留 |
+| 11 | `frontend/` | 前端代码 | D-FRONTEND | 保留 |
+| 12 | `architecture_model/` | 架构模型 | D-ARCH-MODEL | 保留 |
+| 13 | `infra/` | 基础设施 | D-INFRA | 保留 |
+| 14 | `tools/` | 工具脚本 | D-TOOLS | 保留 |
+| 15 | `specs/` | 规格文档 | D-SPECS | 保留 |
 
 **排除黑名单（10 个目录）**——生成器不扫描：
 
@@ -1009,18 +1028,18 @@ AI查询模式：
 | 9 | `reports/` | 报告输出，非代码 | 新增排除 |
 | 10 | `logs/` | 运行时日志，非代码 | 新增排除 |
 
-**节点类型排除（6 种）**——从依赖图（nodes 表）排除，但保留在架构全景图（arch_directory_tree 表）：
+**节点类型白名单准入（4 种，裁定#184）**——只有这 4 种 node_type 进入依赖图（nodes 表），其余类型保留在架构全景图（arch_directory_tree 表）：
 
-| # | node_type | 排除理由 | 节点数 | 裁定 |
-|---|-----------|---------|:---:|:---:|
-| 1 | `doc` | 文档文件，0 import 边 | 1183 | 保留排除 |
-| 2 | `policy` | 政策文档，0 import 边 | 89 | 保留排除 |
-| 3 | `standard` | 标准文档，0 import 边 | 5 | 保留排除 |
-| 4 | `template` | 模板文档，0 import 边 | 11 | 保留排除 |
-| 5 | `diagram` | Mermaid 图，0 import 边 | 31 | 保留排除 |
-| 6 | `data` | 数据文件，0 import 边 | 26 | 保留排除 |
+| # | node_type | 准入理由 | 文件类型 | 裁定 |
+|---|-----------|---------|---------|:---:|
+| 1 | `module` | Python 代码模块，有 import 依赖 | .py | 准入 |
+| 2 | `script` | Python 脚本，有 import 依赖 | .py | 准入 |
+| 3 | `test` | Python 测试，有 import 依赖 | .py | 准入 |
+| 4 | `config` | 运行时配置，有配置依赖 | .yaml/.yml | 准入 |
 
-**关键边界**：依赖全景图只管有 import 依赖的代码节点；架构全景图管所有文件（包括文档/数据/模板）。这 6 种类型在 arch_directory_tree 中有记录，在 nodes 表中无记录。
+**白名单机制**（裁定#184）：删除原 EXCLUDED_NODE_TYPES 黑名单，改为 `if node_type not in NODES_WHITELIST: skip`。黑名单已证明不可靠（漏掉 gate/contract/registry/schema 共 561 个非代码节点污染 nodes 表）；白名单天然安全——新类型默认不进 nodes。gate/contract/registry/schema/blueprint/doc/policy/standard/template/diagram/data 等类型不进 nodes，保留在 arch_directory_tree。
+
+**关键边界**：依赖全景图只管有 import 依赖的代码节点（4 种白名单类型）；架构全景图管所有文件（包括文档/数据/模板）。非白名单类型在 arch_directory_tree 中有记录，在 nodes 表中无记录。
 
 **业界依据**：Google Bazel 显式声明 BUILD 文件位置；Jane Street 显式声明模块路径。扫描范围必须显式文档化，否则 AI 不知道哪些目录被扫、哪些不被扫。
 
@@ -1265,30 +1284,40 @@ SSoT = Single Source of Truth = 唯一真源。
 一个模块从"只是一个想法"到"退休"，经历这些状态（与 §12.6 双正交状态机一致）：
 
 ```
-概念（design + unbuilt）→ 规划中（design + unbuilt）→ 设计完成（design + unbuilt）
-  → 开发中（design + testing）→ 测试中（design + testing）
+概念（design + planned）→ 规划中（design + planned）→ 设计完成（design + planned）
+  → 已生成（production + generated）→ 测试中（production + testing）
   → 运行中（production + stable）→ 废弃（保留 + deprecated）
 ```
 
 **两个正交维度**：
 - `design_maturity`（拓扑状态）：design → production（单向不可逆）
-- `build_status`（生命周期状态）：unbuilt → testing → stable → deprecated
+- `build_status`（生命周期状态）：planned → generated → testing → stable → deprecated（5 态单调推进，裁定#178）
 
-不是所有模块都走完——有些可能永远停在"规划中"（design + unbuilt），这没关系。全景图允许"占位"。
+不是所有模块都走完——有些可能永远停在"规划中"（design + planned），这没关系。全景图允许"占位"。
 
 ### 17.2 生命周期与design_maturity映射
 
-**与 §12.6 双正交状态机一致**。build_status 简化为 4 态（V3.3 E10 修正：合并废弃/退役）：
+**与 §12.6 双正交状态机一致**。build_status 为 5 态单调推进（V4.3 裁定#178：planned→generated→testing→stable→deprecated）。设计态节点使用 3 态子集（裁定#190）。
+
+**生产节点（5 态完整推进）**：
 
 | 生命周期状态 | design_maturity | build_status | 说明 |
 |------------|----------------|-------------|------|
-| 概念 | design | unbuilt | 只有名字 |
-| 规划中 | design | unbuilt | 蓝图已定义 |
-| 设计完成 | design | unbuilt | 蓝图+依赖关系完整 |
-| 开发中 | design | testing | 代码开始写（设计态节点标记） |
-| 测试中 | design | testing | 代码写完在测（设计态节点标记） |
-| 运行中 | production | stable | 代码上线运行（运营态节点由生成器产生） |
-| 废弃/退役 | 保留原值 | deprecated | 不再使用但保留（合并为一行，V3.3 E10） |
+| 概念/规划中 | design | planned | 蓝图已定义，设计态占位 |
+| 已生成 | production | generated | AI 已生成代码未验证（无对应 test） |
+| 测试中 | production | testing | 代码测试中 |
+| 运行中 | production | stable | 代码已验证上线（运营态节点由生成器产生） |
+| 废弃 | 保留原值 | deprecated | 不再使用但保留 |
+
+**设计态节点（3 态子集，裁定#190）**：
+
+| 生命周期状态 | design_maturity | build_status | 说明 |
+|------------|----------------|-------------|------|
+| 规划中 | design | planned | 尚未实现（无同 blueprint_id 的 production 节点） |
+| 规划已落地 | design | stable | 生成器 realization detection 检测到实现（裁定#191） |
+| 废弃 | design | deprecated | 规划已废弃 |
+
+设计态节点不使用 `generated`/`testing`——这两个状态只适用于有代码文件的生产节点。
 
 ### 17.3 依赖关系生命周期
 
@@ -1298,9 +1327,17 @@ SSoT = Single Source of Truth = 唯一真源。
 
 design edge和active edge可以同时存在。design edge是规划记录，active edge是实际状态。两者不冲突。
 
-### 17.4 设计态节点删除流程
+### 17.4 设计态实现检测流程
 
-**禁止直接 SQL 删除设计态节点**。删除流程：
+**realization detection（实现检测）**——生成器自动执行（裁定#191）：
+
+1. 生成器每次运行时，查询所有 `design_maturity='design'` 且有 blueprint_id 的设计态节点
+2. 检测是否存在同 blueprint_id 的 production 节点
+3. 有 → 设 `build_status='stable'`（规划已落地）
+4. 无 → 设 `build_status='planned'`（尚未实现）
+5. 对齐 K8s reconciliation controller：自动对比 desired/actual，AI 无需写复杂 JOIN 查询
+
+**设计态节点删除流程**（禁止直接 SQL 删除设计态节点）：
 
 1. 蓝图 §4 文件清单移除该节点
 2. 运行 `apply_depgraph.py --remove-design-node --node-id 1001`（node_id 为 INTEGER，通过 `SELECT node_id FROM nodes WHERE path='...'` 查询获得）
@@ -1308,7 +1345,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 4. 审判通过 → 软删除（`build_status='deprecated'`，保留记录）
 5. 生成器下次运行时自动清理关联的 design edge
 
-**业界依据**：Google 删除 BUILD 目标 = 删除整个包（有明确流程）；Netflix 下线服务 = 状态转 deprecated（软删除）。ZephyrAlpha 对齐 RULE-THREE 三步审判，禁止硬删除。
+**业界依据**：Google 删除 BUILD 目标 = 删除整个包（有明确流程）；Netflix 下线服务 = 状态转 deprecated（软删除）；K8s controller 做 reconciliation（自动检测 desired/actual）。ZephyrAlpha 对齐三者：realization detection 自动检测实现状态 + RULE-THREE 三步审判禁止硬删除。
 
 ---
 
@@ -1412,7 +1449,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 10 | 蓝图路径记录 | **新增 blueprint_path 字段**（V3.4 新增） | ✅ |
 | 25 | edges 关联字段 | **from_node_id / to_node_id（INTEGER FK），不用 path**（V3.4 P0-1） | ⏳ |
 | 34 | 判定信号单一化 | **design_maturity 字段为唯一判定依据**，禁止 os.path.exists() 或 path 末尾 / | ✅ |
-| 37 | build_status 4 态 | **unbuilt → testing → stable → deprecated** | ✅ |
+| 37 | build_status 5 态 | **planned → generated → testing → stable → deprecated**（裁定#178） | ✅ |
 | 55 | 动态 import 标记 | **nodes 表加 has_dynamic_import 字段**（V3.4 新增） | ⏳ |
 | 67 | node_id 稳定性 | **node_id 改为 INTEGER PK AUTOINCREMENT，与 path 解耦**（V3.4 P0-1） | ⏳ |
 | 80 | 8 种 node_type | **module/package/script/test/config/schema/doc_template/data_template** | ✅ |
@@ -1721,2097 +1758,53 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 ---
 
-## 二十二、施工优先级（V3.3 E10 新增，V4.1 扩展为七批次）
+## 二十二、施工记录（已落盘，折叠归档）
 
-> 施工必须按因果链从根到叶执行，不能按数量从大到小。
+> 以下施工已于 V5.8 完成，详细 SQL 脚本和验收命令见 git 历史。本节仅保留因果链和批次概要供 AI 理解施工逻辑。
 
-### 22.1 七批次施工顺序
+### 22.1 七批次因果链
 
-| 批次 | 施工内容 | 前置条件 | 验收命令 |
-|:---:|---------|---------|---------|
-| **P0-1** | Schema 迁移：node_id 改 INTEGER PK + edges 字段重命名 + edges 新增 dep_maturity + arch_directory_tree 删 state 新增 node_id 外键 + nodes 新增 5 字段 | 无 | `python -c "import sqlite3; c=sqlite3.connect('data/databases/depgraph.db'); cur=c.cursor(); cur.execute('PRAGMA table_info(nodes)'); print(len(cur.fetchall()))"` 确认 36 列 |
-| **P0-2** | apply_depgraph.py 扩展：新增 --add-design-node / --add-design-edge / --transition-build-status / --remove-design-node | P0-1 完成 | `python scripts/governance/apply_depgraph.py --help` 确认 4 命令 |
-| **P0-3** | 生成器升级：12 步流程 + 异常处理 + 执行报告 + 循环检测 + blueprint_id 校验 | P0-1 完成 | `python scripts/governance/generate_project_depgraph.py --dry-run` |
-| **P0-4** | audit_domain_nodes.py 升级：4 类检测 + 写入 arch_constraints | P0-3 完成 | `python scripts/governance/audit_domain_nodes.py --check` |
-| **P0-5** | dep_cycles 视图创建 + 数据修复（I7）+ I8 验证（I8 已在 P0-1 完成） | P0-1 完成 | `python -c "import sqlite3; c=sqlite3.connect('data/databases/depgraph.db'); cur=c.cursor(); cur.execute('SELECT COUNT(*) FROM dep_cycles'); print(cur.fetchone()[0])"` 确认视图存在 |
-| **P0-6** | Schema v5 迁移：新建 9 表（gates/field_vocabularies/registries/cross_registry_rules/infrastructure_components/model_capabilities/hard_boundaries/business_streams/blueprint_links）+ 扩展 4 表（contracts/edges/domains/nodes）+ CHECK 约束 + 只读触发器 | **P0-1 + P0-3 完成**（规则表要和 nodes 表 JOIN，nodes 必须先有数据） | `python scripts/governance/repair/migrate_schema_v5.py` + `python -c "import sqlite3; c=sqlite3.connect('data/databases/depgraph.db'); cur=c.cursor(); cur.execute('SELECT COUNT(*) FROM gates'); print(cur.fetchone()[0])"` 确认 gates 表存在 |
-| **P0-7** | YAML→DB 同步：17 项规则/契约/门禁/词汇表从 YAML 同步到 depgraph.db（#152-164 原始 14 项 + #170-172 V4.2 追加 3 项） | **P0-3 + P0-6 完成**（需要新表已建好 + nodes 数据） | `python scripts/governance/sync_yaml_to_depgraph.py` + 确认各表数据非零 |
+| 批次 | 施工内容 | 状态 |
+|:---:|---------|:---:|
+| P0-1 | Schema 迁移：node_id 改 INTEGER PK + edges 字段重命名 + nodes 新增 5 字段 | ✅ 已完成 |
+| P0-2 | apply_depgraph.py 扩展：--add-design-node / --transition-build-status 等 4 命令 | ✅ 已完成 |
+| P0-3 | 生成器升级：12 步流程 + 异常处理 + 执行报告 + 循环检测 | ✅ 已完成 |
+| P0-4 | audit_domain_nodes.py 升级：4 类检测 + 写入 arch_constraints | ✅ 已完成 |
+| P0-5 | dep_cycles 视图创建 + 数据修复 | ✅ 已完成 |
+| P0-6 | Schema v5 迁移：新建 9 表 + 扩展 4 表 + CHECK 约束 + 只读触发器 | ✅ 已完成 |
+| P0-7 | YAML→DB 同步：17 项规则/契约/门禁从 YAML 同步到 depgraph.db | ✅ 已完成 |
 
-### 22.2 因果链说明
+### 22.2 因果链原则
 
-> **核心原则**：必须先做好生成器和依赖全景图（核心架构），才能做规则统一合并（P0-6/P0-7）。
-> **原因**：规则表是"约束"，nodes/edges 是"被约束的对象"。必须先有被约束的对象，约束才有意义。就像先有交通（车流），才能装红绿灯（规则）。
+- **先核心架构后规则合并**：P0-1~P0-5（核心架构）→ P0-6/P0-7（规则合并）
+- **原因**：规则表是"约束"，nodes/edges 是"被约束的对象"。必须先有被约束的对象，约束才有意义
+- **回滚**：施工前已备份 depgraph.db.backup.V5.7，脚本可通过 git checkout 回滚
 
-```
-第一阶段：核心架构（必须先完成）
-  P0-1（Schema 迁移）  ← 根因：所有脚本依赖 schema
-    ↓
-  P0-2（apply_depgraph.py）  ← 依赖 P0-1 的新字段
-  P0-3（生成器升级）  ← 依赖 P0-1 的新字段，扫描代码填充 nodes/edges（7,590 个节点）
-    ↓
-  P0-4（audit_domain_nodes.py）  ← 依赖 P0-3 的生成器输出
-  P0-5（dep_cycles + 数据修复）  ← 依赖 P0-1 的 schema
-
-第二阶段：规则统一合并（核心架构完成后才能做）
-  P0-6（Schema v5 迁移）  ← 依赖 P0-1 schema + P0-3 生成器（规则表要和 nodes 表 JOIN）
-    ↓
-  P0-7（YAML→DB 同步）  ← 依赖 P0-6 的新表 + P0-3 的 nodes 数据（规则要约束真实节点）
-```
-
-**为什么 P0-6/P0-7 必须在 P0-3 之后？**
-
-| 规则表 | 依赖的核心架构 | 为什么必须先有 |
-|--------|--------------|--------------|
-| gates | nodes.path（P0-3 填充） | 门禁的 files_trigger 要和 nodes.path 做 JOIN，nodes 空就没意义 |
-| field_vocabularies | nodes.change_policy（P0-3 填充） | 枚举校验要校验 nodes 表的值，nodes 空就校验空气 |
-| contracts | nodes（provider/consumer，P0-3 填充） | 契约要关联到节点，nodes 空就关联不到 |
-| hard_boundaries | nodes（P0-3 填充） | 硬边界约束要检查节点，nodes 空就检查空气 |
-| business_streams | nodes.business_stream（P0-6 新增字段） | 业务流归属要和节点关联 |
-
-**禁止**：在 P0-3 生成器升级完成前，提前做 P0-6/P0-7。否则规则表同步进来，但 nodes 表是空的，所有 SQL JOIN 都返回空结果，规则约束形同虚设。
-
-**禁止跳序**：P0-2/P0-3 必须在 P0-1 完成后才能开始。P0-4 必须在 P0-3 完成后才能开始。P0-5 必须在 P0-1 完成后才能开始（需要新 schema 的 from_node_id/to_node_id 字段）。P0-6 必须在 P0-1 + P0-3 完成后才能开始（规则表要和 nodes 表 JOIN，nodes 必须先有数据）。P0-7 必须在 P0-3 + P0-6 完成后才能开始（需要新表已建好 + nodes 数据）。
-
-### 22.3 回滚方案
-
-- **施工前**：`cp data/databases/depgraph.db data/databases/depgraph.db.backup.V5.7`
-- **失败回滚**：`cp data/databases/depgraph.db.backup.V5.7 data/databases/depgraph.db`
-- **脚本回滚**：`git checkout scripts/governance/apply_depgraph.py scripts/governance/generate_project_depgraph.py scripts/governance/audit_domain_nodes.py scripts/governance/sync_yaml_to_depgraph.py scripts/governance/repair/migrate_schema_v3.4.py scripts/governance/repair/migrate_schema_v5.py scripts/governance/repair/fix_data_v3.4.py`
-
-### 22.4 P0-1 完整 SQL 迁移脚本
-
-> **执行前**：必须先备份 `cp data/databases/depgraph.db data/databases/depgraph.db.backup.V5.7`
-> **执行方式**：`python scripts/governance/repair/migrate_schema_v3.4.py`
-> **脚本路径**：`scripts/governance/repair/migrate_schema_v3.4.py`
-
-```python
-#!/usr/bin/env python3
-"""P0-1 Schema 迁移脚本：node_id 改 INTEGER PK + edges 字段重命名 + 新增 dep_maturity + arch_directory_tree 删 state 新增 node_id + nodes 新增 5 字段"""
-import sqlite3
-import os
-import sys
-
-DB_PATH = "data/databases/depgraph.db"
-
-def migrate():
-    if not os.path.exists(DB_PATH):
-        print(f"ERROR: {DB_PATH} not found")
-        sys.exit(1)
-
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # 开启外键约束
-    cur.execute("PRAGMA foreign_keys = OFF")
-
-    # ========== 步骤 1: 创建新 nodes 表 ==========
-    cur.execute("""
-    CREATE TABLE nodes_new (
-        node_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        node_type TEXT, path TEXT, granularity TEXT, domain_id TEXT,
-        subdomain_id TEXT, blueprint_id TEXT, belongs_to TEXT, owner TEXT,
-        change_policy TEXT, impact_level TEXT, modification_permission TEXT,
-        file_header_score INTEGER, tags TEXT, architecture_layer TEXT,
-        design_maturity TEXT, deployment_lifecycle TEXT, trust_zone TEXT,
-        license TEXT, drive_direction TEXT, type_specific_data TEXT,
-        last_verified TEXT, node_name TEXT, file_path TEXT, build_status TEXT,
-        module_lifecycle_state TEXT, can_build INTEGER, gate_reason TEXT,
-        hard_boundary_ref TEXT, consumed_interfaces TEXT, implementation_ref TEXT,
-        -- V3.4 新增 5 字段
-        has_dynamic_import INTEGER DEFAULT 0,
-        blueprint_id_invalid INTEGER DEFAULT 0,
-        in_degree INTEGER DEFAULT 0,
-        out_degree INTEGER DEFAULT 0,
-        blueprint_path TEXT
-    )
-    """)
-
-    # ========== 步骤 2: 复制数据 ==========
-    cur.execute("""
-    INSERT INTO nodes_new (
-        node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
-        belongs_to, owner, change_policy, impact_level, modification_permission,
-        file_header_score, tags, architecture_layer, design_maturity,
-        deployment_lifecycle, trust_zone, license, drive_direction,
-        type_specific_data, last_verified, node_name, file_path, build_status,
-        module_lifecycle_state, can_build, gate_reason, hard_boundary_ref,
-        consumed_interfaces, implementation_ref
-    )
-    SELECT
-        node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
-        belongs_to, owner, change_policy, impact_level, modification_permission,
-        file_header_score, tags, architecture_layer, design_maturity,
-        deployment_lifecycle, trust_zone, license, drive_direction,
-        type_specific_data, last_verified, node_name, file_path, build_status,
-        module_lifecycle_state, can_build, gate_reason, hard_boundary_ref,
-        consumed_interfaces, implementation_ref
-    FROM nodes
-    """)
-
-    # ========== 步骤 3: 创建 node_id_mapping 临时表（按 path 去重，防止重复 path 产生笛卡尔积） ==========
-    cur.execute("""
-    CREATE TABLE node_id_mapping AS
-    SELECT n.node_id AS old_node_id, MIN(n_new.node_id) AS new_node_id, n.path
-    FROM nodes n
-    JOIN nodes_new n_new ON n.path = n_new.path
-    GROUP BY n.node_id, n.path
-    """)
-
-    # ========== 步骤 3.5: 清理孤儿 edge（from_node/to_node 在 node_id_mapping 中不存在） ==========
-    cur.execute("""
-    DELETE FROM edges
-    WHERE from_node NOT IN (SELECT old_node_id FROM node_id_mapping)
-       OR to_node NOT IN (SELECT old_node_id FROM node_id_mapping)
-    """)
-    print(f"清理孤儿 edge: {cur.rowcount} 条")
-
-    # ========== 步骤 4: edges 表新增 from_node_id/to_node_id ==========
-    cur.execute("ALTER TABLE edges ADD COLUMN from_node_id INTEGER")
-    cur.execute("ALTER TABLE edges ADD COLUMN to_node_id INTEGER")
-
-    cur.execute("""
-    UPDATE edges SET from_node_id = (
-        SELECT new_node_id FROM node_id_mapping WHERE old_node_id = edges.from_node
-    )
-    WHERE EXISTS (SELECT 1 FROM node_id_mapping WHERE old_node_id = edges.from_node)
-    """)
-    cur.execute("""
-    UPDATE edges SET to_node_id = (
-        SELECT new_node_id FROM node_id_mapping WHERE old_node_id = edges.to_node
-    )
-    WHERE EXISTS (SELECT 1 FROM node_id_mapping WHERE old_node_id = edges.to_node)
-    """)
-
-    # ========== 步骤 5: edges 表新增 dep_maturity ==========
-    cur.execute("ALTER TABLE edges ADD COLUMN dep_maturity TEXT DEFAULT 'active'")
-
-    # ========== 步骤 6: 删除 edges 旧字段 ==========
-    # SQLite 不支持 DROP COLUMN（旧版本），需要重建表
-    cur.execute("""
-    CREATE TABLE edges_new (
-        edge_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        from_node_id INTEGER NOT NULL,
-        to_node_id INTEGER NOT NULL,
-        dep_type TEXT, architecture_direction TEXT, coupling_strength TEXT,
-        used_symbol TEXT, invocation_method TEXT, api_contract_refs TEXT,
-        event_ref TEXT, ddd_integration_pattern TEXT, failure_mode TEXT,
-        fallback TEXT, activation_condition TEXT, data_transfer_description TEXT,
-        resource_impact TEXT, relationship_type TEXT, cross_domain INTEGER,
-        verified INTEGER, dep_maturity TEXT DEFAULT 'active',
-        FOREIGN KEY (from_node_id) REFERENCES nodes_new(node_id),
-        FOREIGN KEY (to_node_id) REFERENCES nodes_new(node_id)
-    )
-    """)
-
-    cur.execute("""
-    INSERT INTO edges_new (
-        from_node_id, to_node_id, dep_type, architecture_direction,
-        coupling_strength, used_symbol, invocation_method, api_contract_refs,
-        event_ref, ddd_integration_pattern, failure_mode, fallback,
-        activation_condition, data_transfer_description, resource_impact,
-        relationship_type, cross_domain, verified, dep_maturity
-    )
-    SELECT
-        from_node_id, to_node_id, dep_type, architecture_direction,
-        coupling_strength, used_symbol, invocation_method, api_contract_refs,
-        event_ref, ddd_integration_pattern, failure_mode, fallback,
-        activation_condition, data_transfer_description, resource_impact,
-        relationship_type, cross_domain, verified, dep_maturity
-    FROM edges
-    """)
-
-    # ========== 步骤 7: arch_directory_tree 删 state，新增 node_id ==========
-    cur.execute("ALTER TABLE arch_directory_tree ADD COLUMN node_id INTEGER")
-    cur.execute("""
-    UPDATE arch_directory_tree SET node_id = (
-        SELECT new_node_id FROM node_id_mapping
-        WHERE path = arch_directory_tree.path
-    )
-    """)
-    # SQLite 3.35+ 支持 DROP COLUMN
-    try:
-        cur.execute("ALTER TABLE arch_directory_tree DROP COLUMN state")
-    except sqlite3.OperationalError:
-        # 旧版本 SQLite 需要重建表
-        cur.execute("""
-        CREATE TABLE arch_directory_tree_new (
-            path TEXT PRIMARY KEY, parent_path TEXT, path_type TEXT,
-            domain_id TEXT, node_id INTEGER, blueprint_id TEXT,
-            change_policy TEXT, modification_permission TEXT,
-            last_scanned TEXT, build_status TEXT, design_maturity TEXT,
-            FOREIGN KEY (node_id) REFERENCES nodes_new(node_id)
-        )
-        """)
-        cur.execute("""
-        INSERT INTO arch_directory_tree_new
-        SELECT path, parent_path, path_type, domain_id, node_id, blueprint_id,
-               change_policy, modification_permission, last_scanned,
-               build_status, design_maturity
-        FROM arch_directory_tree
-        """)
-        cur.execute("DROP TABLE arch_directory_tree")
-        cur.execute("ALTER TABLE arch_directory_tree_new RENAME TO arch_directory_tree")
-
-    # ========== 步骤 8: 删除旧表，重命名新表 ==========
-    cur.execute("DROP TABLE edges")
-    cur.execute("ALTER TABLE edges_new RENAME TO edges")
-
-    cur.execute("DROP TABLE nodes")
-    cur.execute("ALTER TABLE nodes_new RENAME TO nodes")
-
-    # ========== 步骤 9: 重建外键约束和索引 ==========
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_nodes_path ON nodes(path)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_nodes_domain ON nodes(domain_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_nodes_blueprint ON nodes(blueprint_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_edges_from ON edges(from_node_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_edges_to ON edges(to_node_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_edges_dep_maturity ON edges(dep_maturity)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_arch_tree_domain ON arch_directory_tree(domain_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_arch_tree_node_id ON arch_directory_tree(node_id)")
-
-    # 清理临时表
-    cur.execute("DROP TABLE IF EXISTS node_id_mapping")
-
-    # 重新开启外键约束
-    cur.execute("PRAGMA foreign_keys = ON")
-
-    # 更新 schema 版本号（确保表存在）
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS _schema_version (
-        id INTEGER PRIMARY KEY,
-        version TEXT NOT NULL,
-        applied_at TEXT NOT NULL
-    )
-    """)
-    cur.execute("INSERT OR REPLACE INTO _schema_version (id, version, applied_at) VALUES (1, 'v3.4', datetime('now'))")
-
-    conn.commit()
-    conn.close()
-    print("P0-1 Schema 迁移完成")
-
-if __name__ == "__main__":
-    migrate()
-```
-
-### 22.5 P0-2 apply_depgraph.py 函数签名
-
-> **执行方式**：扩展 `scripts/governance/apply_depgraph.py`，新增 4 个命令
-> **当前能力**：`--update-module`、`--batch`
-> **扩展后**：`--add-design-node`、`--add-design-edge`、`--transition-build-status`、`--remove-design-node`
-
-```python
-# scripts/governance/apply_depgraph.py 扩展函数签名
-
-def add_design_node(
-    path: str,
-    blueprint_id: str,
-    domain_id: str,
-    build_status: str = "unbuilt",
-    db_path: str = "data/databases/depgraph.db"
-) -> int:
-    """
-    新增设计态节点（功能级，目录 path）。
-    返回：新分配的 node_id
-    校验：
-    - path 必须以 / 结尾（目录路径）
-    - blueprint_id 必须指向存在的蓝图文件
-    - domain_id 必须在 domains 表中存在
-    - build_status 必须符合 §12.6 状态机规则
-    写入字段：design_maturity='design', blueprint_path=机械推导
-    """
-
-def add_design_edge(
-    from_node_id: int,
-    to_node_id: int,
-    dep_type: str = "import",
-    coupling_strength: str = "medium",
-    used_symbol: str = "",
-    invocation_method: str = "direct",
-    api_contract_refs: str = "",
-    event_ref: str = "",
-    ddd_integration_pattern: str = "",
-    failure_mode: str = "runtime_error",
-    fallback: str = "no_fallback",
-    activation_condition: str = "always",
-    data_transfer_description: str = "",
-    relationship_type: str = "",
-    resource_impact: str = "low",
-    db_path: str = "data/databases/depgraph.db"
-) -> int:
-    """
-    新增设计态边（规划依赖）。
-    返回：新分配的 edge_id
-    校验：
-    - from_node_id 和 to_node_id 必须在 nodes 表中存在且 design_maturity='design'
-    - 写入前执行 DFS 循环检测，检测到循环则拒绝写入
-    写入字段：dep_maturity='design'
-    """
-
-def transition_build_status(
-    node_id: int,
-    to: str,
-    db_path: str = "data/databases/depgraph.db"
-) -> bool:
-    """
-    转换 build_status 状态。
-    返回：True=成功，False=失败
-    转换规则（机械判定）：
-    - unbuilt → testing：允许
-    - testing → stable：允许
-    - stable → deprecated：允许
-    - deprecated → stable：禁止（不可复活）
-    - 任何跳转：禁止
-    """
-
-def remove_design_node(
-    node_id: int,
-    db_path: str = "data/databases/depgraph.db"
-) -> bool:
-    """
-    删除设计态节点（软删除）。
-    返回：True=成功，False=失败
-    流程：
-    1. RULE-THREE 三步审判（登记检查/重复检查/功能价值检查）
-    2. 通过后软删除（build_status='deprecated'）
-    3. 拒绝硬删除（DELETE FROM nodes）
-    """
-```
-
-### 22.6 P0-3 生成器代码骨架
-
-> **执行方式**：升级 `scripts/governance/generate_project_depgraph.py`，从 9 步升级到 12 步
-> **当前流程**：9 步
-> **升级后**：12 步（新增并发锁/设计态加载/循环检测/audit 调用/执行报告）
-> **V5.5 裁定**：arch_directory_tree 由 path_tree 独立管理，生成器不处理
-
-```python
-# scripts/governance/generate_project_depgraph.py 12 步流程骨架
-
-import sqlite3
-import os
-import time
-from concurrent.futures import ThreadPoolExecutor
-from typing import Dict, List, Tuple
-
-DB_PATH = "data/databases/depgraph.db"
-LOCK_FILE = "data/databases/depgraph.db.lock"
-SCAN_WHITELIST = [
-    "src/zephyr/", "scripts/", "tests/", "config/",
-    # ... 16 个白名单目录（见 §14.8）
-]
-SCAN_BLACKLIST = [".git", "__pycache__", ".venv", "node_modules", ".aidrafts"]
-
-def generate():
-    """生成器主函数：12 步完整流程"""
-    report = GenerationReport()
-    conn = None  # V5.1 第9轮修复：预初始化，防止 connect 失败时 except/finally 块 NameError
-
-    # 步骤 1: 获取写锁
-    if not acquire_lock(LOCK_FILE):
-        raise RuntimeError("depgraph.db 已被锁定，禁止并发写入")
-    report.start_time = time.time()
-
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
-
-        # 步骤 2: 加载设计态数据到内存
-        design_nodes = cur.execute(
-            "SELECT * FROM nodes WHERE design_maturity='design'"
-        ).fetchall()
-        design_edges = cur.execute(
-            "SELECT * FROM edges WHERE dep_maturity='design'"
-        ).fetchall()
-
-        # 步骤 3: DELETE 运营态数据（保留 design 态，处理 NULL）
-        # V4.8 裁定：sync 写入 design_maturity='design'/dep_maturity='design' 的数据被保留（对标 GitOps selfHeal）
-        cur.execute("DELETE FROM nodes WHERE design_maturity != 'design' OR design_maturity IS NULL")
-        cur.execute("DELETE FROM edges WHERE dep_maturity != 'design' OR dep_maturity IS NULL")
-
-        # 步骤 4: 扫描白名单目录
-        scanned_files = scan_files(SCAN_WHITELIST, SCAN_BLACKLIST)
-        report.scanned_count = len(scanned_files)
-
-        # 步骤 5: 生成运营态数据（并行）
-        with ThreadPoolExecutor(max_workers=8) as executor:
-            nodes_data = list(executor.map(parse_node, scanned_files))
-            edges_data = list(executor.map(parse_imports, scanned_files))
-
-        # 写入运营态数据
-        write_nodes(cur, nodes_data)
-        write_edges(cur, edges_data)
-
-        # 步骤 6: 合并设计态数据（从内存恢复）
-        restore_design_data(cur, design_nodes, design_edges)
-
-        # 步骤 7: 冲突时设计态优先（SSoT 分层）
-        resolve_conflicts(cur)
-
-        # 步骤 8: 校验 blueprint_id 存在性
-        invalid_count = validate_blueprint_ids(cur)
-        report.invalid_blueprint_count = invalid_count
-
-        # 步骤 9: 检测循环依赖（Tarjan SCC）
-        cycles = detect_cycles_tarjan(cur)
-        report.cycle_count = len(cycles)
-
-        # 步骤 10: 调用 audit_domain_nodes.py（检查返回码）
-        import subprocess
-        result = subprocess.run(
-            ["python", "scripts/governance/audit_domain_nodes.py", "--check"],
-            capture_output=True, text=True
-        )
-        if result.returncode != 0:
-            print(f"警告: audit_domain_nodes.py 失败 (exit {result.returncode}): {result.stderr}")
-
-        # 步骤 11: 输出执行报告
-        report.end_time = time.time()
-        report.node_count = cur.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
-        report.edge_count = cur.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
-        report.print_report()  # §14.10 格式
-
-        conn.commit()
-
-    except Exception as e:
-        # 异常时回滚事务，防止半提交状态
-        if conn is not None:
-            conn.rollback()
-        raise
-    finally:
-        # 步骤 12: 关闭连接 + 释放写锁
-        if conn is not None:
-            conn.close()
-        release_lock(LOCK_FILE)
-
-def detect_cycles_tarjan(cur) -> List[List[int]]:
-    """Tarjan SCC 算法检测强连通分量（循环依赖）
-    完整实现见 §14.9，施工时从 §14.9 复制 DDL + Python 实现。
-    """
-    raise NotImplementedError("Tarjan 实现见 §14.9，施工时从 §14.9 复制")
-
-class GenerationReport:
-    """生成器执行报告（§14.10 格式）"""
-    def print_report(self):
-        duration = self.end_time - self.start_time
-        print(f"=== 生成器执行报告 ===")
-        print(f"扫描文件数: {self.scanned_count}")
-        print(f"节点总数: {self.node_count}")
-        print(f"边总数: {self.edge_count}")
-        print(f"循环依赖数: {self.cycle_count}")
-        print(f"无效 blueprint_id 数: {self.invalid_blueprint_count}")
-        print(f"执行时间: {duration:.2f}s")
-```
-
-### 22.7 P0-4 audit_domain_nodes.py 检测逻辑
-
-> **执行方式**：升级 `scripts/governance/audit_domain_nodes.py`，从容量审计升级为 4 类检测
-> **当前能力**：容量审计
-> **升级后**：跨域违规 + 容量超限 + 孤儿节点 + 层级违规
-
-```python
-# scripts/governance/audit_domain_nodes.py 4 类检测逻辑
-
-import sqlite3
-
-DB_PATH = "data/databases/depgraph.db"
-
-def check_all():
-    """执行 4 类检测，结果写入 arch_constraints 表"""
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # 清空旧检测结果
-    cur.execute("DELETE FROM arch_constraints WHERE violation_status='open'")
-
-    # 检测 1: 跨域违规
-    cross_domain_violations = detect_cross_domain_violations(cur)
-
-    # 检测 2: 容量超限
-    capacity_violations = detect_capacity_violations(cur)
-
-    # 检测 3: 孤儿节点
-    orphan_violations = detect_orphan_nodes(cur)
-
-    # 检测 4: 层级违规
-    layer_violations = detect_layer_violations(cur)
-
-    # 写入 arch_constraints 表
-    write_violations(cur, cross_domain_violations + capacity_violations
-                     + orphan_violations + layer_violations)
-
-    conn.commit()
-    conn.close()
-
-def detect_cross_domain_violations(cur) -> list:
-    """检测 1: 跨域违规（import 跨越域边界但未在 domain_dependencies 中声明）"""
-    cur.execute("""
-    SELECT e.from_node_id, e.to_node_id, n1.domain_id, n2.domain_id
-    FROM edges e
-    JOIN nodes n1 ON e.from_node_id = n1.node_id
-    JOIN nodes n2 ON e.to_node_id = n2.node_id
-    WHERE n1.domain_id != n2.domain_id
-    AND e.dep_maturity = 'active'
-    AND NOT EXISTS (
-        SELECT 1 FROM domain_dependencies dd
-        WHERE dd.from_domain = n1.domain_id
-        AND dd.to_domain = n2.domain_id
-    )
-    """)
-    return [{"type": "cross_domain", "from": r[0], "to": r[1],
-             "from_domain": r[2], "to_domain": r[3]} for r in cur.fetchall()]
-
-def detect_capacity_violations(cur) -> list:
-    """检测 2: 容量超限（domains.current_modules > arch_domain_capacity.max_modules）"""
-    cur.execute("""
-    SELECT d.domain_id, d.current_modules, c.max_modules
-    FROM domains d
-    JOIN arch_domain_capacity c ON d.domain_id = c.domain_id
-    WHERE d.current_modules > c.max_modules
-    """)
-    return [{"type": "capacity_exceeded", "domain_id": r[0],
-             "current": r[1], "max": r[2]} for r in cur.fetchall()]
-
-def detect_orphan_nodes(cur) -> list:
-    """检测 3: 孤儿节点（nodes 有 path 但 arch_directory_tree 无对应记录）"""
-    cur.execute("""
-    SELECT n.node_id, n.path
-    FROM nodes n
-    LEFT JOIN arch_directory_tree a ON n.path = a.path
-    WHERE a.path IS NULL AND (n.design_maturity != 'design' OR n.design_maturity IS NULL)
-    """)
-    return [{"type": "orphan_node", "node_id": r[0], "path": r[1]}
-            for r in cur.fetchall()]
-
-def detect_layer_violations(cur) -> list:
-    """检测 4: 层级违规（低层域依赖高层域）"""
-    cur.execute("""
-    SELECT e.from_node_id, e.to_node_id, n1.domain_id, n2.domain_id,
-           al1.layer_name, al2.layer_name
-    FROM edges e
-    JOIN nodes n1 ON e.from_node_id = n1.node_id
-    JOIN nodes n2 ON e.to_node_id = n2.node_id
-    JOIN arch_domain_layers adl1 ON n1.domain_id = adl1.domain_id
-    JOIN arch_domain_layers adl2 ON n2.domain_id = adl2.domain_id
-    JOIN arch_layers al1 ON adl1.layer_id = al1.layer_id
-    JOIN arch_layers al2 ON adl2.layer_id = al2.layer_id
-    WHERE al1.layer_level < al2.layer_level
-    AND e.dep_maturity = 'active'
-    """)
-    return [{"type": "layer_violation", "from": r[0], "to": r[1],
-             "from_domain": r[2], "to_domain": r[3],
-             "from_layer": r[4], "to_layer": r[5]} for r in cur.fetchall()]
-
-def write_violations(cur, violations: list):
-    """写入 arch_constraints 表"""
-    for v in violations:
-        cur.execute("""
-        INSERT INTO arch_constraints
-        (constraint_type, violation_status, details, detected_at)
-        VALUES (?, 'open', ?, datetime('now'))
-        """, (v["type"], str(v)))
-```
-
-### 22.8 P0-5 数据修复步骤
-
-> **执行方式**：`python scripts/governance/repair/fix_data_v3.4.py`
-> **修复内容**：dep_cycles 视图创建 + I7 空 domain_id 修复 + I8 state 字段清理
-
-```python
-#!/usr/bin/env python3
-"""P0-5 数据修复脚本：dep_cycles 视图 + I7 空 domain_id + I8 state 清理"""
-import sqlite3
-import os
-
-DB_PATH = "data/databases/depgraph.db"
-
-def fix_all():
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # ========== 修复 1: 创建 dep_cycles 视图 ==========
-    # 视图定义与 §14.9 一致（返回节点列表，支持 AI 查询 domain_id/node_id）
-    cur.execute("""
-    CREATE VIEW IF NOT EXISTS dep_cycles AS
-    WITH RECURSIVE
-    cycle_nodes AS (
-      SELECT DISTINCT from_node_id AS node_id FROM edges e1
-      WHERE EXISTS (
-        SELECT 1 FROM edges e2
-        WHERE e2.from_node_id = e1.to_node_id
-        AND e2.to_node_id = e1.from_node_id
-      )
-      UNION
-      SELECT DISTINCT to_node_id AS node_id FROM edges e1
-      WHERE EXISTS (
-        SELECT 1 FROM edges e2
-        WHERE e2.from_node_id = e1.to_node_id
-        AND e2.to_node_id = e1.from_node_id
-      )
-    )
-    SELECT
-      n.node_id,
-      n.path,
-      n.domain_id,
-      n.design_maturity
-    FROM cycle_nodes c
-    JOIN nodes n ON c.node_id = n.node_id
-    ORDER BY n.domain_id, n.node_id
-    """)
-
-    # ========== 修复 2: I7 空 domain_id 修复 ==========
-    # 统计空 domain_id
-    empty_count = cur.execute("""
-    SELECT COUNT(*) FROM arch_directory_tree
-    WHERE domain_id IS NULL OR domain_id = ''
-    """).fetchone()[0]
-
-    if empty_count > 0:
-        print(f"I7 修复：发现 {empty_count} 个空 domain_id，开始修复...")
-
-        # 根据 arch_path_mappings 推导 domain_id
-        cur.execute("""
-        UPDATE arch_directory_tree
-        SET domain_id = (
-            SELECT pm.domain_id
-            FROM arch_path_mappings pm
-            WHERE arch_directory_tree.path LIKE pm.path_pattern || '%'
-            ORDER BY LENGTH(pm.path_pattern) DESC
-            LIMIT 1
-        )
-        WHERE (domain_id IS NULL OR domain_id = '')
-        AND EXISTS (
-            SELECT 1 FROM arch_path_mappings pm
-            WHERE arch_directory_tree.path LIKE pm.path_pattern || '%'
-        )
-        """)
-
-        # 验证修复结果
-        remaining = cur.execute("""
-        SELECT COUNT(*) FROM arch_directory_tree
-        WHERE domain_id IS NULL OR domain_id = ''
-        """).fetchone()[0]
-        print(f"I7 修复完成：剩余 {remaining} 个空 domain_id")
-
-    # ========== 修复 3: I8 state 字段清理（已在 P0-1 完成） ==========
-    # P0-1 已删除 state 字段，这里只做验证
-    cols = [r[1] for r in cur.execute("PRAGMA table_info(arch_directory_tree)").fetchall()]
-    if "state" in cols:
-        print("I8 警告：arch_directory_tree 仍有 state 字段，P0-1 未完成")
-    else:
-        print("I8 验证：arch_directory_tree 已删除 state 字段")
-
-    # ========== 修复 4: 验证 dep_cycles 视图 ==========
-    cycle_count = cur.execute("SELECT COUNT(*) FROM dep_cycles").fetchone()[0]
-    print(f"dep_cycles 视图创建完成，当前循环依赖数：{cycle_count}")
-
-    # ========== 修复 5: 更新 domains.current_modules ==========
-    cur.execute("""
-    UPDATE domains
-    SET current_modules = (
-        SELECT COUNT(*) FROM nodes
-        WHERE nodes.domain_id = domains.domain_id
-        AND (nodes.design_maturity != 'design' OR nodes.design_maturity IS NULL)
-    )
-    """)
-    print("domains.current_modules 已更新")
-
-    conn.commit()
-    conn.close()
-    print("P0-5 数据修复完成")
-
-if __name__ == "__main__":
-    fix_all()
-```
-
-### 22.9 P0-6 Schema v5 迁移脚本（规则统一合并）
-
-> **执行前**：必须先完成 P0-1 到 P0-5，并备份 `cp data/databases/depgraph.db data/databases/depgraph.db.backup.V5.7`
-> **执行方式**：`python scripts/governance/repair/migrate_schema_v5.py`
-> **脚本路径**：`scripts/governance/repair/migrate_schema_v5.py`
-> **裁定依据**：§20.7 #151-164（14 项合并 + 唯一真源+只读缓存裁定）+ §20.8 #165-172（模板字段对齐裁定）
-
-```python
-#!/usr/bin/env python3
-"""P0-6 Schema v5 迁移：新建 9 表 + 扩展 4 表 + CHECK 约束 + 只读触发器（规则统一合并）"""
-import sqlite3
-import os
-import sys
-
-DB_PATH = "data/databases/depgraph.db"
-
-def migrate():
-    if not os.path.exists(DB_PATH):
-        print(f"ERROR: {DB_PATH} not found")
-        sys.exit(1)
-
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # ========== 新建表 1: gates（门禁注册表，#155） ==========
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS gates (
-        gate_id        TEXT PRIMARY KEY,
-        name           TEXT NOT NULL,
-        entry          TEXT NOT NULL,
-        description    TEXT,
-        files_trigger  TEXT,
-        always_run     INTEGER DEFAULT 0,
-        category       TEXT NOT NULL,
-        status         TEXT DEFAULT 'active',
-        source         TEXT DEFAULT '.pre-commit-config.yaml',
-        CHECK (status IN ('active', 'deprecated', 'disabled'))
-    )
-    """)
-
-    # ========== 新建表 2: field_vocabularies（词汇表，#157） ==========
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS field_vocabularies (
-        field_name     TEXT NOT NULL,
-        value          TEXT NOT NULL,
-        definition     TEXT,
-        ai_consumption TEXT,
-        source_yaml    TEXT,
-        PRIMARY KEY (field_name, value)
-    )
-    """)
-
-    # ========== 新建表 3: registries（注册表之注册表，#161） ==========
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS registries (
-        registry_id    TEXT PRIMARY KEY,
-        name           TEXT NOT NULL,
-        title          TEXT,
-        path           TEXT NOT NULL,
-        version        TEXT,
-        description    TEXT,
-        ssot_for       TEXT
-    )
-    """)
-
-    # ========== 新建表 4: cross_registry_rules（跨注册表规则，#161） ==========
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS cross_registry_rules (
-        rule_id         TEXT PRIMARY KEY,
-        title           TEXT NOT NULL,
-        fields          TEXT,
-        ssot            TEXT NOT NULL,
-        consistency     TEXT,
-        violation_action TEXT,
-        CHECK (consistency IN ('exact', 'derived', 'independent')),
-        CHECK (violation_action IN ('block', 'warn', 'log'))
-    )
-    """)
-
-    # ========== 新建表 5: infrastructure_components（基础设施，#164） ==========
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS infrastructure_components (
-        component_id    TEXT PRIMARY KEY,
-        component_type  TEXT NOT NULL,
-        address         TEXT,
-        health_check    TEXT,
-        dependencies    TEXT,
-        sla             TEXT,
-        status          TEXT DEFAULT 'active',
-        CHECK (component_type IN ('event_bus', 'message_queue', 'relational_db',
-                                   'vector_db', 'cache', 'object_storage',
-                                   'config_center', 'service_registry', 'ci_pipeline'))
-    )
-    """)
-
-    # ========== 新建表 6: model_capabilities（AI 模型能力，#164） ==========
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS model_capabilities (
-        model_name              TEXT PRIMARY KEY,
-        tier                    TEXT NOT NULL,
-        max_files_per_session   INTEGER,
-        allowed_paths           TEXT,
-        forbidden_paths         TEXT,
-        recommended_tasks       TEXT,
-        forbidden_tasks         TEXT,
-        CHECK (tier IN ('premium', 'standard', 'free', 'api'))
-    )
-    """)
-
-    # ========== 扩展表 1: contracts（+6 字段，#159） ==========
-    # SQLite ALTER TABLE ADD COLUMN 不支持 IF NOT EXISTS，需要检查
-    cols = [r[1] for r in cur.execute("PRAGMA table_info(contracts)").fetchall()]
-    new_cols = {
-        'promise': 'TEXT',
-        'actual_consumer': 'TEXT',
-        'fulfillment_status': "TEXT DEFAULT 'unresolved'",
-        'gap': 'TEXT',
-        'target_phase': 'TEXT',
-        'last_reviewed': 'TEXT'
-    }
-    for col, col_type in new_cols.items():
-        if col not in cols:
-            cur.execute(f"ALTER TABLE contracts ADD COLUMN {col} {col_type}")
-
-    # ========== 扩展表 2: edges（+3 字段，#152） ==========
-    cols = [r[1] for r in cur.execute("PRAGMA table_info(edges)").fetchall()]
-    new_cols = {
-        'valid_since': 'TEXT',
-        'migration_status': "TEXT DEFAULT 'active'",
-        'is_legal_cycle': 'INTEGER DEFAULT 0'
-    }
-    for col, col_type in new_cols.items():
-        if col not in cols:
-            cur.execute(f"ALTER TABLE edges ADD COLUMN {col} {col_type}")
-
-    # ========== 扩展表 3: domains（+1 字段，#156） ==========
-    cols = [r[1] for r in cur.execute("PRAGMA table_info(domains)").fetchall()]
-    if 'modification_permission' not in cols:
-        cur.execute("ALTER TABLE domains ADD COLUMN modification_permission TEXT")
-
-    # ========== 添加 CHECK 约束（#157，枚举校验） ==========
-    # SQLite 不支持 ALTER TABLE ADD CONSTRAINT，需要重建表
-    # 这里采用触发器方式实现枚举校验（兼容性更好）
-
-    # nodes.change_policy 枚举校验
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_nodes_change_policy
-    AFTER INSERT ON nodes
-    FOR EACH ROW
-    WHEN NEW.change_policy IS NOT NULL
-        AND NEW.change_policy NOT IN ('frozen', 'stable', 'evolving', 'volatile')
-    BEGIN
-        SELECT RAISE(ABORT, 'change_policy 枚举值非法: 必须是 frozen/stable/evolving/volatile');
-    END;
-    """)
-
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_nodes_change_policy_update
-    AFTER UPDATE OF change_policy ON nodes
-    FOR EACH ROW
-    WHEN NEW.change_policy IS NOT NULL
-        AND NEW.change_policy NOT IN ('frozen', 'stable', 'evolving', 'volatile')
-    BEGIN
-        SELECT RAISE(ABORT, 'change_policy 枚举值非法: 必须是 frozen/stable/evolving/volatile');
-    END;
-    """)
-
-    # nodes.impact_level 枚举校验
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_nodes_impact_level
-    AFTER INSERT ON nodes
-    FOR EACH ROW
-    WHEN NEW.impact_level IS NOT NULL
-        AND NEW.impact_level NOT IN ('H', 'M', 'L')
-    BEGIN
-        SELECT RAISE(ABORT, 'impact_level 枚举值非法: 必须是 H/M/L');
-    END;
-    """)
-
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_nodes_impact_level_update
-    AFTER UPDATE OF impact_level ON nodes
-    FOR EACH ROW
-    WHEN NEW.impact_level IS NOT NULL
-        AND NEW.impact_level NOT IN ('H', 'M', 'L')
-    BEGIN
-        SELECT RAISE(ABORT, 'impact_level 枚举值非法: 必须是 H/M/L');
-    END;
-    """)
-
-    # nodes.modification_permission 枚举校验
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_nodes_modification_permission
-    AFTER INSERT ON nodes
-    FOR EACH ROW
-    WHEN NEW.modification_permission IS NOT NULL
-        AND NEW.modification_permission NOT IN ('immutable_core', 'human_gated', 'ai_modifiable')
-    BEGIN
-        SELECT RAISE(ABORT, 'modification_permission 枚举值非法: 必须是 immutable_core/human_gated/ai_modifiable');
-    END;
-    """)
-
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_nodes_modification_permission_update
-    AFTER UPDATE OF modification_permission ON nodes
-    FOR EACH ROW
-    WHEN NEW.modification_permission IS NOT NULL
-        AND NEW.modification_permission NOT IN ('immutable_core', 'human_gated', 'ai_modifiable')
-    BEGIN
-        SELECT RAISE(ABORT, 'modification_permission 枚举值非法: 必须是 immutable_core/human_gated/ai_modifiable');
-    END;
-    """)
-
-    # edges.migration_status 枚举校验（INSERT）
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_edges_migration_status
-    AFTER INSERT ON edges
-    FOR EACH ROW
-    WHEN NEW.migration_status IS NOT NULL
-        AND NEW.migration_status NOT IN ('active', 'pending_refactor', 'resolved')
-    BEGIN
-        SELECT RAISE(ABORT, 'migration_status 枚举值非法: 必须是 active/pending_refactor/resolved');
-    END;
-    """)
-
-    # edges.migration_status 枚举校验（UPDATE）
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_edges_migration_status_update
-    AFTER UPDATE OF migration_status ON edges
-    FOR EACH ROW
-    WHEN NEW.migration_status IS NOT NULL
-        AND NEW.migration_status NOT IN ('active', 'pending_refactor', 'resolved')
-    BEGIN
-        SELECT RAISE(ABORT, 'migration_status 枚举值非法: 必须是 active/pending_refactor/resolved');
-    END;
-    """)
-
-    # ========== 模板字段对齐（#165-172，V4.2 追加） ==========
-    # 必须在 CHECK 触发器创建之前添加字段（否则触发器引用不存在的列会报错）
-
-    # #165-169: nodes 表扩展 5 个域级字段
-    cols = [r[1] for r in cur.execute("PRAGMA table_info(nodes)").fetchall()]
-    template_cols = {
-        'business_stream': 'TEXT',
-        'stream_role': 'TEXT',
-        'runtime_plane': 'TEXT',
-        'ddd_aggregate': 'TEXT',
-        'provided_interfaces': 'TEXT'
-    }
-    for col, col_type in template_cols.items():
-        if col not in cols:
-            cur.execute(f"ALTER TABLE nodes ADD COLUMN {col} {col_type}")
-
-    # nodes.runtime_plane 枚举校验（INSERT + UPDATE，与 business_streams 表 CHECK 约束对齐）
-    # V5.0 裁定：runtime_plane 跨表一致性要求 nodes 和 business_streams 使用相同枚举值
-    # 注意：必须在 runtime_plane 列添加之后创建（V5.1 第9轮修复）
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_nodes_runtime_plane
-    AFTER INSERT ON nodes
-    FOR EACH ROW
-    WHEN NEW.runtime_plane IS NOT NULL
-        AND NEW.runtime_plane NOT IN ('data_plane', 'control_plane', 'management_plane')
-    BEGIN
-        SELECT RAISE(ABORT, 'runtime_plane 枚举值非法: 必须是 data_plane/control_plane/management_plane');
-    END;
-    """)
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS chk_nodes_runtime_plane_update
-    AFTER UPDATE OF runtime_plane ON nodes
-    FOR EACH ROW
-    WHEN NEW.runtime_plane IS NOT NULL
-        AND NEW.runtime_plane NOT IN ('data_plane', 'control_plane', 'management_plane')
-    BEGIN
-        SELECT RAISE(ABORT, 'runtime_plane 枚举值非法: 必须是 data_plane/control_plane/management_plane');
-    END;
-    """)
-
-    # ========== 创建索引 ==========
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_gates_category ON gates(category)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_gates_files_trigger ON gates(files_trigger)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_field_vocab_field ON field_vocabularies(field_name)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_edges_valid_since ON edges(valid_since)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_edges_migration ON edges(migration_status)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_edges_legal_cycle ON edges(is_legal_cycle)")
-
-    # #170: 新建 hard_boundaries 表
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS hard_boundaries (
-        boundary_id    TEXT PRIMARY KEY,
-        category       TEXT NOT NULL,
-        constraint_def TEXT NOT NULL,
-        parameters     TEXT,
-        impact         TEXT,
-        CHECK (category IN ('architectural', 'domain', 'data', 'security', 'operational'))
-    )
-    """)
-
-    # #171: 新建 business_streams 表
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS business_streams (
-        stream_id      TEXT PRIMARY KEY,
-        name           TEXT NOT NULL,
-        goal           TEXT,
-        input          TEXT,
-        output         TEXT,
-        runtime_plane  TEXT,
-        CHECK (runtime_plane IN ('data_plane', 'control_plane', 'management_plane'))
-    )
-    """)
-
-    # #172: 新建 blueprint_links 表
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS blueprint_links (
-        blueprint_id       TEXT PRIMARY KEY,
-        blueprint_path     TEXT NOT NULL,
-        alignment_verified INTEGER DEFAULT 0,
-        last_verified      TEXT
-    )
-    """)
-
-    # ========== 创建索引（模板字段） ==========
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_nodes_business_stream ON nodes(business_stream)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_nodes_runtime_plane ON nodes(runtime_plane)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_hard_boundaries_category ON hard_boundaries(category)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_business_streams_plane ON business_streams(runtime_plane)")
-
-    # ========== 只读触发器（#151 V4.3，保证唯一真源） ==========
-    # 9 张规则表全部安装只读触发器，禁止任何直接 INSERT/UPDATE/DELETE
-    # 只有 sync_yaml_to_depgraph.py 能通过 DROP TRIGGER + 重新 CREATE 实现临时禁用
-    # V4.8 裁定：9 张表都是 YAML 派生物，应一视同仁只读保护（对标 Claude Code deny 优先）
-    readonly_tables = [
-        'gates', 'field_vocabularies', 'registries',
-        'cross_registry_rules', 'hard_boundaries', 'business_streams',
-        'infrastructure_components', 'model_capabilities', 'blueprint_links'
-    ]
-
-    for table in readonly_tables:
-        # 拦截 INSERT
-        cur.execute(f"""
-        CREATE TRIGGER IF NOT EXISTS readonly_{table}_insert
-        BEFORE INSERT ON {table}
-        FOR EACH ROW
-        BEGIN
-            SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-        END;
-        """)
-
-        # 拦截 UPDATE
-        cur.execute(f"""
-        CREATE TRIGGER IF NOT EXISTS readonly_{table}_update
-        BEFORE UPDATE ON {table}
-        FOR EACH ROW
-        BEGIN
-            SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-        END;
-        """)
-
-        # 拦截 DELETE
-        cur.execute(f"""
-        CREATE TRIGGER IF NOT EXISTS readonly_{table}_delete
-        BEFORE DELETE ON {table}
-        FOR EACH ROW
-        BEGIN
-            SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-        END;
-        """)
-
-    # ========== 更新 _schema_version（与 §22.4 P0-1 方式统一：INSERT OR REPLACE） ==========
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS _schema_version (
-        id INTEGER PRIMARY KEY,
-        version TEXT NOT NULL,
-        applied_at TEXT NOT NULL
-    )
-    """)
-    cur.execute("INSERT OR REPLACE INTO _schema_version (id, version, applied_at) VALUES (1, 'v5', datetime('now'))")
-
-    conn.commit()
-    conn.close()
-    print("P0-6 Schema v5 迁移完成（新建 9 表 + 扩展 4 表 + CHECK 约束 + 9 表只读触发器）")
-
-if __name__ == "__main__":
-    migrate()
-```
-
-### 22.10 P0-7 YAML→DB 同步脚本（唯一真源→只读缓存单向同步）
-
-> **执行方式**：`python scripts/governance/sync_yaml_to_depgraph.py`
-> **脚本路径**：`scripts/governance/sync_yaml_to_depgraph.py`
-> **裁定依据**：§20.7 #151 V4.3 修订（唯一真源+只读缓存，YAML 是唯一真源，DB 是只读缓存）
-> **同步方向**：YAML → DB 单向（禁止 DB → YAML 反向同步）
-
-```python
-#!/usr/bin/env python3
-"""P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph.db"""
-import sqlite3
-import os
-import sys
-import yaml
-from pathlib import Path
-from typing import Dict, List, Any
-
-DB_PATH = "data/databases/depgraph.db"
-RULES_DIR = "docs/01_policies_and_standards"
-
-def sync_all():
-    """主同步函数：按优先级同步所有 YAML 源"""
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    print("=== YAML→DB 同步开始 ===")
-
-    # V5.0 裁定：9 张表全部保护（与 P0-6 创建触发器列表一致）
-    readonly_tables = [
-        'gates', 'field_vocabularies', 'registries',
-        'cross_registry_rules', 'hard_boundaries', 'business_streams',
-        'infrastructure_components', 'model_capabilities', 'blueprint_links'
-    ]
-
-    try:
-        # ========== 临时禁用只读触发器（sync 脚本的"通行证"） ==========
-        # 只有这个脚本能临时禁用触发器，写入完成后立即恢复
-        for table in readonly_tables:
-            cur.execute(f"DROP TRIGGER IF EXISTS readonly_{table}_insert")
-            cur.execute(f"DROP TRIGGER IF EXISTS readonly_{table}_update")
-            cur.execute(f"DROP TRIGGER IF EXISTS readonly_{table}_delete")
-        conn.commit()
-        print("  只读触发器已临时禁用（sync 通行证）")
-
-        # P0 优先级同步
-        sync_cross_module_dependencies(cur)      # #152
-        sync_architecture_contract(cur)          # #153
-        sync_contract_mapping_table(cur)         # #154
-
-        # P1 优先级同步
-        sync_gate_registry(cur)                  # #155
-        sync_functional_domain_registry(cur)     # #156
-        sync_vocabularies(cur)                   # #157
-        sync_architecture_rules(cur)             # #158
-
-        # P2 优先级同步
-        sync_declarative_contract_tracker(cur)   # #159
-        sync_frontmatter_field_registry(cur)     # #160
-        sync_registry_of_registries(cur)         # #161
-        sync_directory_registry(cur)             # #162
-        sync_rule_catalog_registry(cur)          # #163
-
-        # P3 优先级同步
-        sync_infrastructure_registry(cur)        # #164
-        sync_model_capability_contract(cur)      # #164
-
-        # P4 优先级同步（V4.2 新增表，#170-172）
-        sync_hard_boundaries(cur)                # #170
-        sync_business_streams(cur)               # #171
-        sync_blueprint_links(cur)                # #172
-
-        conn.commit()
-    except Exception as e:
-        conn.rollback()
-        print(f"[SYNC ERROR] 同步失败，已回滚: {e}")
-        raise
-    finally:
-        # ========== 恢复只读触发器（无论成功失败必须恢复） ==========
-        # V4.8 裁定：try/finally 保护，确保异常时触发器也能恢复（对标 GitOps reconciliation 恢复）
-        # V5.1 第9轮修复：finally 内加 try/except 防止 conn.commit 失败导致 conn.close 不执行
-        try:
-            for table in readonly_tables:
-                cur.execute(f"""
-                CREATE TRIGGER IF NOT EXISTS readonly_{table}_insert
-                BEFORE INSERT ON {table}
-                FOR EACH ROW
-                BEGIN
-                    SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-                END;
-                """)
-                cur.execute(f"""
-                CREATE TRIGGER IF NOT EXISTS readonly_{table}_update
-                BEFORE UPDATE ON {table}
-                FOR EACH ROW
-                BEGIN
-                    SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-                END;
-                """)
-                cur.execute(f"""
-                CREATE TRIGGER IF NOT EXISTS readonly_{table}_delete
-                BEFORE DELETE ON {table}
-                FOR EACH ROW
-                BEGIN
-                    SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-                END;
-                """)
-            conn.commit()
-            print("  只读触发器已恢复（唯一真源保护激活）")
-        except Exception as e:
-            print(f"[WARNING] 触发器恢复失败: {e}")
-        finally:
-            conn.close()
-            print("=== YAML→DB 同步完成 ===")
-
-def load_yaml(path: str) -> Dict:
-    """加载 YAML 文件"""
-    full_path = os.path.join(RULES_DIR, path)
-    if not os.path.exists(full_path):
-        print(f"  警告: {full_path} 不存在，跳过")
-        return {}
-    with open(full_path, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f) or {}
-
-def sync_cross_module_dependencies(cur):
-    """#152: 跨模块依赖注册表 → edges 表"""
-    print("同步 #152: 跨模块依赖注册表 → edges...")
-    data = load_yaml("_registry/catalogs/cross_module_dependency_registry.yaml")
-    if not data:
-        return
-
-    # 先删除旧的 YAML 同步的 design edge（避免重复运行产生重复行）
-    # 注意：只删除 valid_since IS NOT NULL 的 design edge（YAML 同步的才有 valid_since）
-    # 保留 apply_depgraph.py --add-design-edge 写入的 design edge（valid_since IS NULL）
-    cur.execute("DELETE FROM edges WHERE dep_maturity = 'design' AND valid_since IS NOT NULL")
-
-    deps = data.get('dependencies', [])
-    synced = 0
-    for dep in deps:
-        # 查找 from_node_id 和 to_node_id
-        cur.execute("SELECT node_id FROM nodes WHERE path = ? OR file_path = ?",
-                    (dep.get('source', ''), dep.get('source_name', '')))
-        from_row = cur.fetchone()
-        cur.execute("SELECT node_id FROM nodes WHERE path = ? OR file_path = ?",
-                    (dep.get('target', ''), dep.get('target_name', '')))
-        to_row = cur.fetchone()
-
-        if from_row and to_row:
-            # is_legal_cycle：YAML 中标记为合法循环的依赖（如事件总线双向订阅）
-            # 默认 0（非合法循环）；YAML is_legal_cycle=true 时设为 1
-            is_legal = 1 if dep.get('is_legal_cycle', False) else 0
-            cur.execute("""
-            INSERT INTO edges
-            (from_node_id, to_node_id, dep_type, coupling_strength,
-             architecture_direction, api_contract_refs, data_transfer_description,
-             dep_maturity, valid_since, is_legal_cycle)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'design', ?, ?)
-            """, (
-                from_row[0], to_row[0],
-                dep.get('type', 'import'),
-                dep.get('strength', 'medium'),
-                dep.get('direction', 'downstream'),
-                dep.get('contract_anchor', ''),
-                dep.get('description', ''),
-                dep.get('valid_since', ''),
-                is_legal
-            ))
-            synced += 1
-
-    print(f"  同步 {synced}/{len(deps)} 条依赖（dep_maturity='design'，生成器保留不删）")
-
-def sync_architecture_contract(cur):
-    """#153: 架构契约 VR 规则 → arch_constraints 表"""
-    print("同步 #153: 架构契约 VR 规则 → arch_constraints...")
-    data = load_yaml("_registry/contracts/architecture_contract.yaml")
-    if not data:
-        return
-
-    rules = data.get('validation_rules', [])
-    synced = 0
-    for rule in rules:
-        rule_id = rule.get('rule_id', '')
-        cur.execute("""
-        INSERT OR REPLACE INTO arch_constraints
-        (constraint_id, constraint_type, rule_definition, severity, enforcement)
-        VALUES (?, 'architecture_contract', ?, ?, 'code')
-        """, (
-            rule_id,
-            str(rule.get('conditions', [])),
-            rule.get('severity', 'error')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced}/{len(rules)} 条 VR 规则")
-
-def sync_contract_mapping_table(cur):
-    """#154: 契约映射表 → contracts 表"""
-    print("同步 #154: 契约映射表 → contracts...")
-    data = load_yaml("_registry/contracts/contract_mapping_table.yaml")
-    if not data:
-        return
-
-    synced = 0
-    # 域契约（V5.3 第11轮修复：INSERT OR REPLACE → UPSERT，只更新基础字段，保留扩展字段）
-    for domain_key, contracts in data.get('domain_contracts', {}).items():
-        for contract in contracts:
-            cur.execute("""
-            INSERT INTO contracts
-            (contract_id, name, provider_domain, consumer_domain, contract_type)
-            VALUES (?, ?, ?, ?, 'domain_contract')
-            ON CONFLICT(contract_id) DO UPDATE SET
-                name=excluded.name,
-                provider_domain=excluded.provider_domain,
-                consumer_domain=excluded.consumer_domain,
-                contract_type=excluded.contract_type
-            """, (
-                contract.get('contract_id', ''),
-                contract.get('description', ''),
-                domain_key,
-                contract.get('domain_mapping', '')
-            ))
-            synced += 1
-
-    # 层契约
-    for contract in data.get('layer_contracts', []):
-        cur.execute("""
-        INSERT INTO contracts
-        (contract_id, name, provider_domain, consumer_domain, contract_type)
-        VALUES (?, ?, ?, ?, 'layer_contract')
-        ON CONFLICT(contract_id) DO UPDATE SET
-            name=excluded.name,
-            provider_domain=excluded.provider_domain,
-            consumer_domain=excluded.consumer_domain,
-            contract_type=excluded.contract_type
-        """, (
-            contract.get('contract_id', ''),
-            contract.get('description', ''),
-            contract.get('layer', ''),
-            contract.get('domain_mapping', '')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced} 条契约")
-
-def sync_gate_registry(cur):
-    """#155: 门禁注册表 → gates 表"""
-    print("同步 #155: 门禁注册表 → gates...")
-    data = load_yaml("_registry/catalogs/gate_registry.yaml")
-    if not data:
-        return
-
-    gates = data.get('gates', [])
-    synced = 0
-    for gate in gates:
-        cur.execute("""
-        INSERT OR REPLACE INTO gates
-        (gate_id, name, entry, description, files_trigger, always_run, category, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            gate.get('gate_id', ''),
-            gate.get('name', ''),
-            gate.get('entry', ''),
-            gate.get('description', ''),
-            gate.get('files_trigger', ''),
-            1 if gate.get('always_run', False) else 0,
-            gate.get('category', ''),
-            gate.get('status', 'active')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced}/{len(gates)} 个门禁")
-
-def sync_functional_domain_registry(cur):
-    """#156: 功能域注册表 → domains + arch_path_mappings 表
-
-    V4.8 裁定：字段名映射（YAML 业务名 → DB 物理名）
-    - YAML 'domain' → DB 'domain_id'
-    - YAML 'subdomain' → DB 'domain_name'
-    - YAML 'covers[0]' → DB 'description'
-    - YAML 'ai_autonomy' → DB 'modification_permission'（字段名映射，对标 ORM column mapping）
-    - YAML 'ssot_path' → DB 'path_pattern'（路径映射）
-
-    YAML 实际字段（functional_domain_registry.yaml 已验证）：
-    domain/subdomain/ssot_module/ssot_path/covers/aliases/stability/ai_autonomy
-    """
-    print("同步 #156: 功能域注册表 → domains + arch_path_mappings...")
-    data = load_yaml("_registry/catalogs/functional_domain_registry.yaml")
-    if not data:
-        return
-
-    # 实际 YAML 用 'entries' 列表（不是 'domains'）
-    entries = data.get('entries', [])
-    synced = 0
-    for d in entries:
-        # 字段名映射：YAML ai_autonomy → DB modification_permission
-        ai_autonomy = d.get('ai_autonomy', 'ai_modifiable')
-        # covers 是列表，取第一个作为 description
-        covers = d.get('covers', [])
-        description = covers[0] if covers else ''
-
-        # 使用 UPSERT（ON CONFLICT DO UPDATE）只更新指定字段，保留 current_modules 等其他字段
-        cur.execute("""
-        INSERT INTO domains (domain_id, domain_name, description, modification_permission)
-        VALUES (?, ?, ?, ?)
-        ON CONFLICT(domain_id) DO UPDATE SET
-            domain_name=excluded.domain_name,
-            description=excluded.description,
-            modification_permission=excluded.modification_permission
-        """, (
-            d.get('domain', ''),           # YAML 'domain' → DB 'domain_id'
-            d.get('subdomain', ''),        # YAML 'subdomain' → DB 'domain_name'
-            description,                   # YAML 'covers[0]' → DB 'description'
-            ai_autonomy                    # YAML 'ai_autonomy' → DB 'modification_permission'
-        ))
-        synced += 1
-
-        # 路径映射：从 ssot_path 生成 path_pattern
-        ssot_path = d.get('ssot_path', '')
-        if ssot_path:
-            cur.execute("""
-            INSERT OR REPLACE INTO arch_path_mappings
-            (path_pattern, domain_id)
-            VALUES (?, ?)
-            """, (
-                ssot_path,
-                d.get('domain', '')
-            ))
-
-    print(f"  同步 {synced} 个功能域（含 modification_permission 字段映射）+ {synced} 条路径映射")
-
-def sync_vocabularies(cur):
-    """#157: 词汇表 → field_vocabularies 表"""
-    print("同步 #157: 词汇表 → field_vocabularies...")
-    vocab_dir = os.path.join(RULES_DIR, "_registry/vocabularies")
-    if not os.path.exists(vocab_dir):
-        return
-
-    synced = 0
-    for yaml_file in Path(vocab_dir).glob("*.yaml"):
-        data = load_yaml(f"_registry/vocabularies/{yaml_file.name}")
-        field_name = data.get('field_name', yaml_file.stem)
-        values = data.get('values', [])
-
-        for value in values:
-            if isinstance(value, dict):
-                v = value.get('value', '')
-                definition = value.get('definition', '')
-            else:
-                v = value
-                definition = ''
-
-            cur.execute("""
-            INSERT OR REPLACE INTO field_vocabularies
-            (field_name, value, definition, source_yaml)
-            VALUES (?, ?, ?, ?)
-            """, (field_name, v, definition, yaml_file.name))
-            synced += 1
-
-    print(f"  同步 {synced} 个词汇值")
-
-def sync_architecture_rules(cur):
-    """#158: 架构规则 TRAE-013~017/036~038 → arch_constraints 表"""
-    print("同步 #158: 架构规则 → arch_constraints...")
-    rule_files = [
-        "rules/trae_013_arch_cross_package_dep.yaml", "rules/trae_014_arch_blueprint_alignment.yaml", "rules/trae_015_arch_path_registration.yaml",
-        "rules/trae_016_arch_drift_detection.yaml", "rules/trae_017_arch_governance_order.yaml",
-        "rules/trae_036_arch_gate_transition.yaml", "rules/trae_037_arch_qualification_versioning.yaml", "rules/trae_038_arch_ctr_injection.yaml"
-    ]
-
-    synced = 0
-    for rule_file in rule_files:
-        data = load_yaml(rule_file)
-        rules = data.get('rules', [])
-
-        for rule in rules:
-            rule_id = rule.get('rule_id', '')
-            aliases = rule.get('aliases', [])
-            name = aliases[0] if aliases else rule_id
-            conditions = rule.get('conditions', [])
-
-            cur.execute("""
-            INSERT OR REPLACE INTO arch_constraints
-            (constraint_id, constraint_type, rule_definition, severity, enforcement)
-            VALUES (?, 'architecture_rule', ?, ?, 'code')
-            """, (
-                rule_id,
-                name + ': ' + str(conditions),
-                rule.get('severity', 'error')
-            ))
-            synced += 1
-
-    print(f"  同步 {synced} 条架构规则")
-
-def sync_declarative_contract_tracker(cur):
-    """#159: 声明式契约追踪 → contracts 表扩展"""
-    print("同步 #159: 声明式契约追踪 → contracts...")
-    data = load_yaml("_registry/catalogs/declarative_contract_tracker_registry.yaml")
-    if not data:
-        return
-
-    contracts = data.get('contracts', [])
-    synced = 0
-    for contract in contracts:
-        # 使用 UPSERT 只更新扩展字段，保留 sync_contract_mapping_table 写入的基础字段
-        cur.execute("""
-        INSERT INTO contracts
-        (contract_id, name, contract_type, promise, actual_consumer,
-         fulfillment_status, gap, target_phase, last_reviewed)
-        VALUES (?, ?, 'declarative', ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(contract_id) DO UPDATE SET
-            promise=excluded.promise,
-            actual_consumer=excluded.actual_consumer,
-            fulfillment_status=excluded.fulfillment_status,
-            gap=excluded.gap,
-            target_phase=excluded.target_phase,
-            last_reviewed=excluded.last_reviewed
-        """, (
-            contract.get('contract_id', ''),
-            contract.get('source', ''),
-            contract.get('promise', ''),
-            contract.get('actual_consumer', ''),
-            contract.get('status', 'unresolved'),
-            contract.get('gap', ''),
-            contract.get('target_phase', ''),
-            contract.get('last_reviewed', '')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced} 条声明式契约")
-
-def sync_frontmatter_field_registry(cur):
-    """#160: Frontmatter 字段注册表 → field_vocabularies 表"""
-    print("同步 #160: Frontmatter 字段注册表 → field_vocabularies...")
-    data = load_yaml("_registry/catalogs/frontmatter_field_registry.yaml")
-    if not data:
-        return
-
-    fields = data.get('fields', [])
-    synced = 0
-    for field in fields:
-        field_name = field.get('field_name', '')
-        enum_values = field.get('enum_values', [])
-
-        for value in enum_values:
-            cur.execute("""
-            INSERT OR REPLACE INTO field_vocabularies
-            (field_name, value, definition, source_yaml)
-            VALUES (?, ?, ?, 'frontmatter_field_registry.yaml')
-            """, (field_name, value, field.get('description', '')))
-            synced += 1
-
-    print(f"  同步 {synced} 个字段枚举值")
-
-def sync_registry_of_registries(cur):
-    """#161: 注册表之注册表 → registries + cross_registry_rules 表"""
-    print("同步 #161: 注册表之注册表 → registries...")
-    data = load_yaml("_registry/catalogs/registry_of_registries.yaml")
-    if not data:
-        return
-
-    registries = data.get('registries', [])
-    synced = 0
-    for reg in registries:
-        cur.execute("""
-        INSERT OR REPLACE INTO registries
-        (registry_id, name, title, path, version, description, ssot_for)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            reg.get('id', ''),
-            reg.get('name', ''),
-            reg.get('title', ''),
-            reg.get('path', ''),
-            reg.get('version', ''),
-            reg.get('description', ''),
-            str(reg.get('ssot_for', []))
-        ))
-        synced += 1
-
-    # 跨注册表规则
-    rules = data.get('cross_registry_rules', [])
-    for rule in rules:
-        cur.execute("""
-        INSERT OR REPLACE INTO cross_registry_rules
-        (rule_id, title, fields, ssot, consistency, violation_action)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            rule.get('rule_id', ''),
-            rule.get('title', ''),
-            str(rule.get('fields', [])),
-            rule.get('ssot', ''),
-            rule.get('consistency', 'exact'),
-            rule.get('violation_action', 'warn')
-        ))
-
-    print(f"  同步 {synced} 个注册表 + {len(rules)} 条跨表规则")
-
-def sync_directory_registry(cur):
-    """#162: 目录注册表 → arch_directory_tree 表"""
-    print("同步 #162: 目录注册表 → arch_directory_tree...")
-    data = load_yaml("_registry/catalogs/directory_registry.yaml")
-    if not data:
-        return
-
-    dirs = data.get('directories', [])
-    synced = 0
-    for d in dirs:
-        # 使用 UPSERT 只更新指定字段，保留 node_id/build_status 等其他字段
-        cur.execute("""
-        INSERT INTO arch_directory_tree
-        (path, parent_path, path_type, domain_id, blueprint_id, design_maturity)
-        VALUES (?, ?, 'directory', ?, ?, 'design')
-        ON CONFLICT(path) DO UPDATE SET
-            parent_path=excluded.parent_path,
-            domain_id=excluded.domain_id,
-            blueprint_id=excluded.blueprint_id,
-            design_maturity='design'
-        WHERE arch_directory_tree.design_maturity = 'design'
-        """, (
-            d.get('path', ''),
-            d.get('parent_path', ''),
-            d.get('domain_id', ''),
-            d.get('module_id', '')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced} 个目录（design_maturity='design'，生成器保留不删）")
-
-def sync_rule_catalog_registry(cur):
-    """#163: 规则路径目录 → arch_directory_tree 表（文档节点归属位置表）
-
-    V4.8 裁定：文档节点不写入 nodes 表（§14.8 排除文档节点），
-    只写入 arch_directory_tree 表（位置管理），node_type='document' 不在
-    §14.7 的 8 种类型中，写入 nodes 会触发 CHECK 约束失败。
-    对标 Bazel：不同实体进不同表，文档节点属于"位置"不属于"依赖节点"。
-    """
-    print("同步 #163: 规则路径目录 → arch_directory_tree（文档节点位置）...")
-    data = load_yaml("_registry/catalogs/rule_catalog_registry.yaml")
-    if not data:
-        return
-
-    rules = data.get('rules', [])
-    synced = 0
-    for rule in rules:
-        path = rule.get('path', '')
-        if not path:
-            continue
-
-        # 文档节点只进 arch_directory_tree（位置表），不进 nodes（依赖表）
-        # design_maturity='design'：YAML 派生数据，生成器保留不删
-        # 使用 UPSERT 只更新指定字段，保留 node_id/build_status 等其他字段
-        cur.execute("""
-        INSERT INTO arch_directory_tree
-        (path, parent_path, path_type, domain_id, blueprint_id, design_maturity)
-        VALUES (?, ?, 'file', 'D-GOV-DOCS', ?, 'design')
-        ON CONFLICT(path) DO UPDATE SET
-            parent_path=excluded.parent_path,
-            domain_id=excluded.domain_id,
-            blueprint_id=excluded.blueprint_id,
-            design_maturity='design'
-        WHERE arch_directory_tree.design_maturity = 'design'
-        """, (
-            path,
-            rule.get('parent_path', ''),
-            rule.get('module_id', '')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced} 个文档节点到 arch_directory_tree（design_maturity='design'）")
-
-def sync_infrastructure_registry(cur):
-    """#164: 基础设施注册表 → infrastructure_components 表"""
-    print("同步 #164: 基础设施注册表 → infrastructure_components...")
-    data = load_yaml("_registry/catalogs/infrastructure_registry.yaml")
-    if not data:
-        return
-
-    components = data.get('components', [])
-    synced = 0
-    for comp in components:
-        cur.execute("""
-        INSERT OR REPLACE INTO infrastructure_components
-        (component_id, component_type, address, health_check, dependencies, sla, status)
-        VALUES (?, ?, ?, ?, ?, ?, 'active')
-        """, (
-            comp.get('component_id', comp.get('type', '')),
-            comp.get('type', ''),
-            comp.get('address', ''),
-            comp.get('health_check', ''),
-            str(comp.get('dependencies', [])),
-            comp.get('sla', '')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced} 个基础设施组件")
-
-def sync_model_capability_contract(cur):
-    """#164: 模型能力契约 → model_capabilities 表"""
-    print("同步 #164: 模型能力契约 → model_capabilities...")
-    data = load_yaml("_registry/contracts/model_capability_contract.yaml")
-    if not data:
-        return
-
-    models = data.get('models', [])
-    synced = 0
-    for model in models:
-        cur.execute("""
-        INSERT OR REPLACE INTO model_capabilities
-        (model_name, tier, max_files_per_session, allowed_paths,
-         forbidden_paths, recommended_tasks, forbidden_tasks)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            model.get('name', ''),
-            model.get('tier', 'standard'),
-            model.get('max_files_per_session', 0),
-            str(model.get('allowed_paths', [])),
-            str(model.get('forbidden_paths', [])),
-            str(model.get('recommended_tasks', [])),
-            str(model.get('forbidden_tasks', []))
-        ))
-        synced += 1
-
-    print(f"  同步 {synced} 个 AI 模型")
-
-def sync_hard_boundaries(cur):
-    """#170: 硬边界 → hard_boundaries 表
-    V4.2 裁定：8 条硬边界是架构核心约束。
-    YAML 源：_registry/catalogs/hard_boundaries_registry.yaml（待创建，当前散落在模板中）。
-    """
-    print("同步 #170: 硬边界 → hard_boundaries...")
-    data = load_yaml("_registry/catalogs/hard_boundaries_registry.yaml")
-    if not data:
-        print("  警告: hard_boundaries_registry.yaml 不存在，跳过（待创建 YAML 源）")
-        return
-
-    # 先清空旧数据（避免 YAML 删除条目后旧数据残留）
-    cur.execute("DELETE FROM hard_boundaries")
-
-    boundaries = data.get('boundaries', [])
-    synced = 0
-    for b in boundaries:
-        cur.execute("""
-        INSERT OR REPLACE INTO hard_boundaries
-        (boundary_id, category, constraint_def, parameters, impact)
-        VALUES (?, ?, ?, ?, ?)
-        """, (
-            b.get('id', ''),
-            b.get('category', ''),
-            b.get('constraint', ''),
-            str(b.get('parameters', {})),
-            b.get('impact', '')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced} 条硬边界")
-
-def sync_business_streams(cur):
-    """#171: 业务流定义 → business_streams 表
-    V4.2 裁定：业务流定义是跨域分析的基础。
-    YAML 源：_registry/catalogs/business_streams_registry.yaml（待创建，当前散落在模板中）。
-    """
-    print("同步 #171: 业务流定义 → business_streams...")
-    data = load_yaml("_registry/catalogs/business_streams_registry.yaml")
-    if not data:
-        print("  警告: business_streams_registry.yaml 不存在，跳过（待创建 YAML 源）")
-        return
-
-    # 先清空旧数据（避免 YAML 删除条目后旧数据残留）
-    cur.execute("DELETE FROM business_streams")
-
-    streams = data.get('streams', [])
-    synced = 0
-    for s in streams:
-        cur.execute("""
-        INSERT OR REPLACE INTO business_streams
-        (stream_id, name, goal, input, output, runtime_plane)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            s.get('id', ''),
-            s.get('name', ''),
-            s.get('goal', ''),
-            str(s.get('input', [])),
-            str(s.get('output', [])),
-            s.get('runtime_plane', 'data_plane')
-        ))
-        synced += 1
-
-    print(f"  同步 {synced} 个业务流")
-
-def sync_blueprint_links(cur):
-    """#172: 蓝图→文件映射 → blueprint_links 表
-    V4.2 裁定：蓝图-代码双向对齐的核心。
-    数据源：从 nodes 表派生（blueprint_id + path → blueprint_links）。
-    不需要独立 YAML 源——nodes 表的 blueprint_id 由生成器从代码头部 [BLUEPRINT] 字段解析。
-    """
-    print("同步 #172: 蓝图→文件映射 → blueprint_links...")
-    # 清空旧数据
-    cur.execute("DELETE FROM blueprint_links")
-
-    # 从 nodes 表派生：每个有 blueprint_id 的节点都是一条映射记录
-    # 使用 GROUP BY 防止同一 blueprint_id 对应多个 blueprint_path 时 PK 冲突
-    cur.execute("""
-    INSERT INTO blueprint_links (blueprint_id, blueprint_path, alignment_verified)
-    SELECT blueprint_id, MIN(blueprint_path), 0
-    FROM nodes
-    WHERE blueprint_id IS NOT NULL AND blueprint_id != ''
-    GROUP BY blueprint_id
-    """)
-    synced = cur.rowcount
-
-    print(f"  同步 {synced} 条蓝图→文件映射")
-
-if __name__ == "__main__":
-    sync_all()
-```
-
-**同步策略说明**（§20.7 #151 V4.3 修订裁定落地）：
-
-| 维度 | 规则 |
-|------|------|
-| 真源数量 | **1 个**（YAML 文件，唯一真源、唯一责任） |
-| DB 角色 | 只读缓存（派生物，不是真源） |
-| 同步方向 | YAML → DB 单向（禁止反向） |
-| 同步触发 | P0-7 独立运行（两阶段施工：先生成器 P0-1~P0-5，后规则合并 P0-6/P0-7）。生成器不调用 sync 脚本 |
-| 冲突解决 | YAML 是 SSoT，DB 数据被 YAML 覆盖 |
-| 修改规则 | 改 YAML 文件，运行 sync 脚本同步到 DB |
-| 禁止操作 | 禁止直接修改 DB 中的规则数据（触发器拦截） |
-| 重建能力 | DB 可随时从 YAML 完全重建（DROP TABLE + 重新同步） |
-| 只读保护 | 9 张规则表安装只读触发器，只有 sync 脚本能临时禁用 |
-
-### 22.11 裁定备注（2026-06-18）
-
-> 以下规格要求在实际实现中被替代，原因如下。不是"未实现"——是"有更好的实现方式"。
+### 22.3 裁定备注
 
 | 规格要求 | 裁定 | 原因 |
 |---------|------|------|
-| 生成器调用 write_cycles_to_view | 不需要 | dep_cycles 递归 CTE 视图自动计算，主动写入冗余 |
-| 生成器 DELETE arch_directory_tree | 不需要 | 生成器不写 arch，由 path_tree 脚本自行 DELETE+INSERT |
-| 生成器内置 parse_arch_tree/write_arch_tree | 不需要 | 职责分离：path_tree 独立承担物理位置生成 |
-| _schema_version 单行 TEXT 模式 | 不需要 | 当前 INTEGER 递增 + description 更灵活，支持多次迁移 |
-
----
-
-## 二十三、验收标准（V3.3 E21 新增）
-
-> 每个施工批次完成后必须运行验收命令，exit 0 才算通过。
-
-### 23.1 P0-1 验收（Schema 迁移）
-
-```bash
-# 验收命令
-python -c "
-import sqlite3
-c = sqlite3.connect('data/databases/depgraph.db')
-cur = c.cursor()
-
-# 1. nodes 表 41 列（31 + 5 P0-1新增 + 5 P0-6扩展）
-cur.execute('PRAGMA table_info(nodes)')
-cols = [r[1] for r in cur.fetchall()]
-assert len(cols) == 41, f'nodes 表列数错误: {len(cols)}'
-assert 'has_dynamic_import' in cols
-assert 'blueprint_id_invalid' in cols
-assert 'in_degree' in cols
-assert 'out_degree' in cols
-assert 'blueprint_path' in cols
-
-# 2. edges 表 23 列（19 + 1 dep_maturity + from_node_id/to_node_id + 3 P0-6扩展）
-cur.execute('PRAGMA table_info(edges)')
-cols = [r[1] for r in cur.fetchall()]
-assert len(cols) == 23, f'edges 表列数错误: {len(cols)}'
-assert 'from_node_id' in cols, 'edges 缺少 from_node_id'
-assert 'to_node_id' in cols, 'edges 缺少 to_node_id'
-assert 'dep_maturity' in cols, 'edges 缺少 dep_maturity'
-
-# 3. arch_directory_tree 11 列（删除 state，新增 node_id，列数不变）
-cur.execute('PRAGMA table_info(arch_directory_tree)')
-cols = [r[1] for r in cur.fetchall()]
-assert len(cols) == 11, f'arch_directory_tree 列数错误: {len(cols)}'
-assert 'state' not in cols, 'arch_directory_tree 仍有 state 字段'
-assert 'node_id' in cols, 'arch_directory_tree 缺少 node_id 外键'
-
-print('P0-1 验收通过')
-"
-```
-**预期输出**：`P0-1 验收通过` | **exit code**: 0
-
-### 23.2 P0-2 验收（apply_depgraph.py 扩展）
-
-```bash
-python scripts/governance/apply_depgraph.py --help
-```
-**预期输出**：包含 `--add-design-node`、`--add-design-edge`、`--transition-build-status`、`--remove-design-node` 四个命令 | **exit code**: 0
-
-### 23.3 P0-3 验收（生成器升级）
-
-```bash
-python scripts/governance/generate_project_depgraph.py --dry-run
-```
-**预期输出**：输出执行报告（§14.10 格式），包含扫描统计/节点统计/边统计/架构全景图统计/循环依赖检测/blueprint_id 校验/执行时间 | **exit code**: 0
-
-### 23.4 P0-4 验收（audit_domain_nodes.py 升级）
-
-```bash
-python scripts/governance/audit_domain_nodes.py --check
-```
-**预期输出**：输出 4 类检测报告（跨域违规/容量超限/孤儿节点/层级违规） | **exit code**: 0
-
-### 23.5 P0-5 验收（dep_cycles + 数据修复）
-
-```bash
-python -c "
-import sqlite3
-c = sqlite3.connect('data/databases/depgraph.db')
-cur = c.cursor()
-
-# 1. dep_cycles 视图存在
-cur.execute(chr(83)+chr(69)+chr(76)+chr(69)+chr(67)+chr(84)+chr(32)+chr(110)+chr(97)+chr(109)+chr(101)+chr(32)+chr(70)+chr(82)+chr(79)+chr(77)+chr(32)+chr(115)+chr(113)+chr(108)+chr(105)+chr(116)+chr(101)+chr(95)+chr(109)+chr(97)+chr(115)+chr(116)+chr(101)+chr(114)+chr(32)+chr(87)+chr(72)+chr(69)+chr(82)+chr(69)+chr(32)+chr(116)+chr(121)+chr(112)+chr(101)+chr(61)+chr(39)+chr(118)+chr(105)+chr(101)+chr(119)+chr(39)+chr(32)+chr(65)+chr(78)+chr(68)+chr(32)+chr(110)+chr(97)+chr(109)+chr(101)+chr(61)+chr(39)+chr(100)+chr(101)+chr(112)+chr(95)+chr(99)+chr(121)+chr(99)+chr(108)+chr(101)+chr(115)+chr(39))
-assert cur.fetchone() is not None, 'dep_cycles 视图不存在'
-
-# 2. arch_directory_tree 无空 domain_id（I7 修复）
-cur.execute('SELECT COUNT(*) FROM arch_directory_tree WHERE domain_id IS NULL OR domain_id = ' + chr(39) + chr(39))
-assert cur.fetchone()[0] == 0, 'arch_directory_tree 仍有空 domain_id'
-
-# 3. arch_directory_tree 无 state 字段（I8 修复，与 E16 一致）
-cur.execute('PRAGMA table_info(arch_directory_tree)')
-cols = [r[1] for r in cur.fetchall()]
-assert 'state' not in cols
-
-print('P0-5 验收通过')
-"
-```
-**预期输出**：`P0-5 验收通过` | **exit code**: 0
-
-**注意**：上述脚本使用 `chr()` 函数拼接 SQL 字符串，避免 PowerShell 引号转义问题。在 cmd 或 bash 中可直接用引号。
-
-### 23.6 P0-6 验收（Schema v5 迁移）
-
-```bash
-python -c "
-import sqlite3
-c = sqlite3.connect('data/databases/depgraph.db')
-cur = c.cursor()
-
-# 1. 9 张新表全部存在
-new_tables = ['gates', 'field_vocabularies', 'registries', 'cross_registry_rules',
-              'infrastructure_components', 'model_capabilities',
-              'hard_boundaries', 'business_streams', 'blueprint_links']
-for t in new_tables:
-    cur.execute(chr(83)+chr(69)+chr(76)+chr(69)+chr(67)+chr(84)+chr(32)+chr(110)+chr(97)+chr(109)+chr(101)+chr(32)+chr(70)+chr(82)+chr(79)+chr(77)+chr(32)+chr(115)+chr(113)+chr(108)+chr(105)+chr(116)+chr(101)+chr(95)+chr(109)+chr(97)+chr(115)+chr(116)+chr(101)+chr(114)+chr(32)+chr(87)+chr(72)+chr(69)+chr(82)+chr(69)+chr(32)+chr(116)+chr(121)+chr(112)+chr(101)+chr(61)+chr(39)+chr(116)+chr(97)+chr(98)+chr(108)+chr(101)+chr(39)+chr(32)+chr(65)+chr(78)+chr(68)+chr(32)+chr(110)+chr(97)+chr(109)+chr(101)+chr(61)+chr(39)+t+chr(39))
-    assert cur.fetchone() is not None, t + ' 表不存在'
-
-# 2. nodes 表扩展 5 字段
-cur.execute('PRAGMA table_info(nodes)')
-cols = [r[1] for r in cur.fetchall()]
-for f in ['business_stream', 'stream_role', 'runtime_plane', 'ddd_aggregate', 'provided_interfaces']:
-    assert f in cols, 'nodes 缺少 ' + f
-
-# 3. contracts 表扩展 6 字段
-cur.execute('PRAGMA table_info(contracts)')
-cols = [r[1] for r in cur.fetchall()]
-for f in ['promise', 'actual_consumer', 'fulfillment_status', 'gap', 'target_phase', 'last_reviewed']:
-    assert f in cols, 'contracts 缺少 ' + f
-
-# 4. edges 表扩展 3 字段
-cur.execute('PRAGMA table_info(edges)')
-cols = [r[1] for r in cur.fetchall()]
-for f in ['valid_since', 'migration_status', 'is_legal_cycle']:
-    assert f in cols, 'edges 缺少 ' + f
-
-# 5. domains 表扩展 1 字段
-cur.execute('PRAGMA table_info(domains)')
-cols = [r[1] for r in cur.fetchall()]
-assert 'modification_permission' in cols, 'domains 缺少 modification_permission'
-
-# 6. 只读触发器存在（9 张规则表 × 3 个触发器 = 27 个）
-cur.execute(chr(83)+chr(69)+chr(76)+chr(69)+chr(67)+chr(84)+chr(32)+chr(67)+chr(79)+chr(85)+chr(78)+chr(84)+chr(40)+chr(42)+chr(41)+chr(32)+chr(70)+chr(82)+chr(79)+chr(77)+chr(32)+chr(115)+chr(113)+chr(108)+chr(105)+chr(116)+chr(101)+chr(95)+chr(109)+chr(97)+chr(115)+chr(116)+chr(101)+chr(114)+chr(32)+chr(87)+chr(72)+chr(69)+chr(82)+chr(69)+chr(32)+chr(116)+chr(121)+chr(112)+chr(101)+chr(61)+chr(39)+chr(116)+chr(114)+chr(105)+chr(103)+chr(103)+chr(101)+chr(114)+chr(39)+chr(32)+chr(65)+chr(78)+chr(68)+chr(32)+chr(110)+chr(97)+chr(109)+chr(101)+chr(32)+chr(76)+chr(73)+chr(75)+chr(69)+chr(32)+chr(39)+chr(114)+chr(101)+chr(97)+chr(100)+chr(111)+chr(110)+chr(108)+chr(121)+chr(95)+chr(37)+chr(39))
-trigger_count = cur.fetchone()[0]
-assert trigger_count >= 27, '只读触发器数量不足: ' + str(trigger_count)
-
-# 7. CHECK 枚举校验触发器存在（10 个：nodes INSERT 4[change_policy/impact_level/modification_permission/runtime_plane] + nodes UPDATE 4 + edges INSERT 1[migration_status] + edges UPDATE 1）
-cur.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'chk_%'")
-chk_count = cur.fetchone()[0]
-assert chk_count >= 10, 'CHECK 触发器数量不足: ' + str(chk_count)
-
-print('P0-6 验收通过')
-"
-```
-**预期输出**：`P0-6 验收通过` | **exit code**: 0
-
-### 23.7 P0-7 验收（YAML→DB 同步）
-
-```bash
-python -c "
-import sqlite3
-c = sqlite3.connect('data/databases/depgraph.db')
-cur = c.cursor()
-
-# 1. gates 表数据非零（25 个门禁）
-cur.execute('SELECT COUNT(*) FROM gates')
-assert cur.fetchone()[0] > 0, 'gates 表为空'
-
-# 2. field_vocabularies 表数据非零
-cur.execute('SELECT COUNT(*) FROM field_vocabularies')
-assert cur.fetchone()[0] > 0, 'field_vocabularies 表为空'
-
-# 3. registries 表数据非零（18 个注册表）
-cur.execute('SELECT COUNT(*) FROM registries')
-assert cur.fetchone()[0] > 0, 'registries 表为空'
-
-# 4. infrastructure_components 表数据非零
-cur.execute('SELECT COUNT(*) FROM infrastructure_components')
-assert cur.fetchone()[0] > 0, 'infrastructure_components 表为空'
-
-# 5. model_capabilities 表数据非零
-cur.execute('SELECT COUNT(*) FROM model_capabilities')
-assert cur.fetchone()[0] > 0, 'model_capabilities 表为空'
-
-# 6. hard_boundaries 表数据非零（8 条硬边界）
-cur.execute('SELECT COUNT(*) FROM hard_boundaries')
-assert cur.fetchone()[0] > 0, 'hard_boundaries 表为空'
-
-# 7. contracts 表扩展字段有数据
-cur.execute('SELECT COUNT(*) FROM contracts WHERE promise IS NOT NULL')
-assert cur.fetchone()[0] > 0, 'contracts 表扩展字段为空'
-
-# 8. cross_registry_rules 表数据非零（6 条跨表规则）
-cur.execute('SELECT COUNT(*) FROM cross_registry_rules')
-assert cur.fetchone()[0] > 0, 'cross_registry_rules 表为空'
-
-# 9. business_streams 表数据非零
-cur.execute('SELECT COUNT(*) FROM business_streams')
-assert cur.fetchone()[0] > 0, 'business_streams 表为空'
-
-# 10. blueprint_links 表数据非零
-cur.execute('SELECT COUNT(*) FROM blueprint_links')
-assert cur.fetchone()[0] > 0, 'blueprint_links 表为空'
-
-# 11. edges 表扩展字段有数据（valid_since/migration_status/is_legal_cycle）
-cur.execute('SELECT COUNT(*) FROM edges WHERE valid_since IS NOT NULL')
-assert cur.fetchone()[0] > 0, 'edges 表扩展字段为空'
-
-# 12. domains 表扩展字段有数据（modification_permission）
-cur.execute('SELECT COUNT(*) FROM domains WHERE modification_permission IS NOT NULL')
-assert cur.fetchone()[0] > 0, 'domains 表扩展字段为空'
-
-print('P0-7 验收通过')
-"
-```
-**预期输出**：`P0-7 验收通过` | **exit code**: 0
-
----
-
-## 二十四、实际 schema 对齐表（V3.3 新增）
-
-> 本节记录数据库实际 schema 与文档定义的差异，施工时按此表对齐。
-
-### 24.1 nodes 表（当前 31 列 → V3.4 后 36 列）
-
-| 字段 | 当前 schema | V3.4 后 | 变更 |
-|------|:---:|:---:|------|
-| node_id | TEXT | INTEGER PK AUTOINCREMENT | 类型变更（E1） |
-| has_dynamic_import | ❌ 不存在 | INTEGER | 新增（G-Blind-3，运营态） |
-| blueprint_id_invalid | ❌ 不存在 | INTEGER | 新增（D-Blind-3，运营态） |
-| in_degree | ❌ 不存在 | INTEGER | 新增（运营态） |
-| out_degree | ❌ 不存在 | INTEGER | 新增（运营态） |
-| blueprint_path | ❌ 不存在 | TEXT | 新增（§12.1 机械推导，共享字段） |
-| 其余 30 字段 | ✅ 存在 | ✅ 保留 | 不变（31-1=30，1 个 node_id 类型变更已列出） |
-
-**字段数**：当前 31 列，V3.4 后 36 列。
-
-### 24.2 edges 表（当前 19 列 → V3.4 后 20 列，字段重命名 + 新增）
-
-| 字段 | 当前 schema | V3.4 后 | 变更 |
-|------|:---:|:---:|------|
-| from_node | TEXT | from_node_id INTEGER FK | 重命名+类型变更（E1） |
-| to_node | TEXT | to_node_id INTEGER FK | 重命名+类型变更（E1） |
-| dep_maturity | ❌ 不存在 | TEXT | 新增（共享字段，生成器写 active，apply_depgraph.py 写 design） |
-| 其余 17 字段 | ✅ 存在 | ✅ 保留 | 不变（19-2=17，2 个重命名已列出） |
-
-**字段数**：当前 19 列，V3.4 后 20 列。
-
-### 24.3 arch_directory_tree 表（当前 11 列 → V3.4 后 11 列，字段替换）
-
-| 字段 | 当前 schema | V3.4 后 | 变更 |
-|------|:---:|:---:|------|
-| state | TEXT | ❌ 删除 | 删除（E16，与 design_maturity 冗余） |
-| node_id | ❌ 不存在 | INTEGER FK → nodes.node_id | 新增（V3.4 #147，替换删除的 state 字段） |
-| design_maturity | ✅ 存在 | ✅ 保留 | 成为单一判定信号 |
-| build_status | ✅ 存在 | ✅ 保留 | 与 design_maturity 正交 |
-| 其余 8 字段 | ✅ 存在 | ✅ 保留 | 不变（11-3=8，3 个已列出：state/design_maturity/build_status） |
-
-**字段数**：当前 11 列（含 state，无 node_id），V3.4 后 11 列（删除 state，新增 node_id，净变化 -1+1=0，列数不变）。
-
-> **注**：V3.4 #147 裁定新增 node_id 外键**替换**删除的 state 字段（不是额外新增），所以列数保持 11 列不变。
-
-### 24.4 视图/临时表
-
-| 名称 | 当前 | V3.4 后 | 变更 |
-|------|:---:|:---:|------|
-| dep_cycles | ❌ 不存在 | ✅ 视图 | 新增（E19） |
-| dep_cycles_report | ❌ 不存在 | ✅ 临时表 | 新增（生成器运行时创建） |
-
-### 24.5 脚本能力对齐
-
-| 脚本 | 当前能力 | V3.4 后能力 | 变更 |
-|------|---------|-----------|------|
-| apply_depgraph.py | --update-module / --batch | + --add-design-node / --add-design-edge / --transition-build-status / --remove-design-node | 扩展（E4/E18） |
-| generate_project_depgraph.py | 9 步流程 | 12 步流程 + 异常处理 + 执行报告 + 循环检测 + blueprint_id 校验 | 升级（E17） |
-| audit_domain_nodes.py | 容量审计 | 4 类检测 + 写入 arch_constraints | 升级（E17） |
+| 生成器调用 write_cycles_to_view | 不需要 | dep_cycles 递归 CTE 视图自动计算 |
+| 生成器 DELETE arch_directory_tree | 不需要 | path_tree 脚本自行 DELETE+INSERT |
+| 生成器内置 parse_arch_tree | 不需要 | 职责分离：path_tree 独立承担 |
+| _schema_version 单行 TEXT 模式 | 不需要 | INTEGER 递增 + description 更灵活 |
+
+### 22.4 验收标准（已通过）
+
+所有 P0-1~P0-7 批次验收命令已通过（exit 0），详细验收命令见 git 历史。
+
+### 22.5 Schema 对齐（当前状态）
+
+| 表 | 列数 | 关键字段 |
+|------|:---:|---------|
+| nodes | 36 | node_id(INTEGER PK) / path / node_type / domain_id / design_maturity / build_status / blueprint_id |
+| edges | 20 | from_node_id / to_node_id / dep_maturity / edge_type |
+| arch_directory_tree | 11 | node_id(外键) / path / path_type / domain_id |
+| domains | 15+ | domain_id / domain_name / ssot_path / layer_id / max_modules |
+
+| 脚本 | 当前能力 |
+|------|---------|
+| apply_depgraph.py | --update-module / --batch / --add-design-node / --add-design-edge / --transition-build-status / --remove-design-node / --insert-domain / --migrate-dependencies |
+| generate_project_depgraph.py | 12 步流程 + 异常处理 + 执行报告 + 循环检测 + blueprint_id 校验 |
+| audit_domain_nodes.py | 4 类检测 + 写入 arch_constraints |
+| sync_yaml_to_depgraph.py | 17 项规则/契约/门禁从 YAML 单向同步到 DB |
