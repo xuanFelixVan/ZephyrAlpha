@@ -181,7 +181,7 @@ def check_triple_alignment(
         result.checked_modules += 1
 
         bp_path_str = bp.get("file_path", "")
-        bp_path = BLUEPRINTS_DIR.parent / bp_path_str if bp_path_str else None
+        bp_path = BLUEPRINTS_DIR / bp_path_str if bp_path_str else None
         bp_frontmatter: dict[str, Any] = {}
         if bp_path and bp_path.exists():
             try:

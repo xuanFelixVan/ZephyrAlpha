@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
-construction_progress: partially_implemented
+construction_progress: design_only
 actual_disk_path: "src/zephyr/orchestration/runtime_core/lifecycle_manager.py"
 belongs_to: "MOD-MASTER-001"
 submodule_path: src/zephyr/runtime/

@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-022
-submodule_path: src/zephyr/governance/escalation_engine
+submodule_path: src/zephyr/governance/escalation
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-14"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: D:\ZephyrAlpha\src\zephyr\governance\escalation_engine\
+actual_disk_path: D:\ZephyrAlpha\src\zephyr\governance\escalation\
 last_updated: "2026-06-23"
 last_verified: "2026-06-23"
 generation: 3

@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-06"
 valid_from: "2026-05-03"
 ttl: permanent
-construction_progress: completed
+construction_progress: design_only
 actual_disk_path: "src/zephyr/mcp/"
 codification_level: L1
 codification_at: "2026-05-13"

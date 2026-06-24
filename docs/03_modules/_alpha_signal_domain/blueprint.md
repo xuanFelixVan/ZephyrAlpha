@@ -16,7 +16,7 @@ ttl: permanent
 last_updated: "2026-05-15"
 last_verified: "2026-05-14"
 construction_progress: partially_implemented
-actual_disk_path: "D:\\ZephyrAlpha\\src\\zephyr\\factor\\ + D:\\ZephyrAlpha\\src\\zephyr\\signal\\"
+actual_disk_path: "D:\\ZephyrAlpha\\src\\zephyr\\factor\\ + D:\\ZephyrAlpha\\src\\zephyr\\signal_ashare\\ + D:\\ZephyrAlpha\\src\\zephyr\\signal_fundamental\\ + D:\\ZephyrAlpha\\src\\zephyr\\signal_quality\\"
 template_for: blueprint
 generation: 2
 functional_domain: alpha_signal
@@ -68,7 +68,7 @@ tags:
 # Alpha-Signal Domain 蓝图 — L02因子→L03信号跨层集成
 
 > module_id: ALPHA-SIGNAL-DOMAIN-001 | version: 0.4.0 | status: active | layer: cross_layer | blueprint_level: domain
-> actual_disk_path: D:\ZephyrAlpha\src\zephyr\factor\ + D:\ZephyrAlpha\src\zephyr\signal\ | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: D:\ZephyrAlpha\src\zephyr\factor\ + D:\ZephyrAlpha\src\zephyr\signal_ashare\ + D:\ZephyrAlpha\src\zephyr\signal_fundamental\ + D:\ZephyrAlpha\src\zephyr\signal_quality\ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 

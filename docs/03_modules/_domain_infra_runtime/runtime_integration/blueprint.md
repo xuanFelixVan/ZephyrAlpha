@@ -16,7 +16,7 @@ valid_from: 2026-05-01
 date: "2026-05-01"
 ttl: permanent
 construction_progress: completed
-actual_disk_path: "src/zephyr/shared/ + src/zephyr/infrastructure/ + src/zephyr/governance/lifecycle_manager/"
+actual_disk_path: "src/zephyr/shared/ + src/zephyr/infrastructure/ + src/zephyr/governance/lifecycle_governance/"
 belongs_to: "MOD-MASTER-001"
 parent_module: ""
 codification_level: L2

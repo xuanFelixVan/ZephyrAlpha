@@ -1,4 +1,3 @@
-# [A_config] module_id=CFG-blueprint-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 registry:
   version: 2.7.0
   created: '2026-05-02'
@@ -217,7 +216,7 @@ blueprints:
   generation: 1
   last_updated: 2026-05-19
   file_path: _cross_layer/context_engine/blueprint.md
-  construction_progress: completed
+  construction_progress: design_only
 - module_id: MOD-INF-009
   name: pipeline
   title: Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -230,7 +229,7 @@ blueprints:
   generation: 2
   last_updated: '2026-05-14'
   file_path: _cross_layer/pipeline/blueprint.md
-  construction_progress: partially_implemented
+  construction_progress: design_only
 - module_id: MOD-INF-010
   name: feedback-loop
   title: Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心
@@ -243,7 +242,7 @@ blueprints:
   generation: 1
   last_updated: '2026-05-19'
   file_path: _cross_layer/feedback_loop/blueprint.md
-  construction_progress: completed
+  construction_progress: design_only
 - module_id: MOD-INF-010-CAPUP
   name: capacity-upgrade
   title: FLE 容量升级附录 — 从S级到L级扩容方案
@@ -308,7 +307,7 @@ blueprints:
   generation: 2
   last_updated: '2026-05-13'
   file_path: _cross_layer/mcp_servers/blueprint.md
-  construction_progress: completed
+  construction_progress: design_only
 - module_id: MOD-INF-015
   name: system-telemetry
   title: System Telemetry 蓝图+施工图 — 全系统可观测性
@@ -334,7 +333,7 @@ blueprints:
   generation: 2
   last_updated: '2026-05-17'
   file_path: _cross_layer/shared_core/blueprint.md
-  construction_progress: completed
+  construction_progress: design_only
 - module_id: MOD-INF-017
   name: code-dedup-engine
   title: Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复
@@ -347,7 +346,7 @@ blueprints:
   generation: 3
   last_updated: '2026-05-14'
   file_path: _domain_governance/code_dedup_engine/blueprint.md
-  construction_progress: partially_implemented
+  construction_progress: design_only
 - module_id: MOD-INF-018
   name: agent-rbac
   title: Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限
@@ -360,7 +359,7 @@ blueprints:
   generation: 3
   last_updated: '2026-05-14'
   file_path: _domain_autonomy_core/agent_rbac/blueprint.md
-  construction_progress: completed
+  construction_progress: design_only
 - module_id: MOD-INF-019
   name: agent-spec
   title: 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎
@@ -568,7 +567,7 @@ blueprints:
   generation: 2
   last_updated: '2026-05-22'
   file_path: _cross_layer/resource_optimization_engine/blueprint.md
-  construction_progress: partially_implemented
+  construction_progress: design_only
 - module_id: MOD-INF-033
   name: behavioral-auditor
   title: Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控
@@ -634,20 +633,7 @@ blueprints:
   last_updated: '2026-05-16'
   file_path: _domain_infra_runtime/state_machine_engine/blueprint.md
   construction_progress: partially_implemented
-- module_id: MOD-INF-039
-  name: agent-orchestrator
-  title: Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎
-  layer: cross_layer
-  functional_domain: operations
-  blueprint_status: Active
-  blueprint_level: module
-  priority: P0
-  version: 1.0.0
-  generation: 1
-  last_updated: '2026-05-19'
-  file_path: _cross_layer/agent_orchestrator/blueprint.md
-  construction_progress: completed
-  module_id: MOD-INF-042
+- module_id: MOD-INF-042
   name: local-model
   title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
   layer: L01
@@ -763,7 +749,7 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: _domain_reporting/analytics_core/blueprint.md
-  construction_progress: not_started
+  construction_progress: partially_implemented
 - module_id: MOD-L08-001
   name: hmi-core
   title: Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止施工）
@@ -789,7 +775,7 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: _domain_research/research_core/blueprint.md
-  construction_progress: partially_implemented
+  construction_progress: design_only
 - module_id: MOD-L10-001
   name: compliance-core
   title: Compliance Core 蓝图+施工图 — 合规引擎
@@ -890,10 +876,13 @@ changelog:
   changes:
   - DM-369 断链修复——33条 file_path 从旧目录结构更新为 _domain-* 规范路径
   - 21条 infra_ops/ 旧路径 → _domain-governance/_domain-infra_ops/_domain-infra_runtime/_domain-autonomy_core/_domain-autonomy_perm/_domain-knowledge/_domain-integration/
-  - 12条业务域短名路径（data/factor/signal/risk/pf_core/ex_core/reporting/frontend/research/compliance/ml_train/simulation）→ _domain-* 路径
-  - 重复 module_id 修复：mcp-servers MOD-INF-015→MOD-INF-013, capacity-assurance MOD-INF-024→MOD-INF-001, auto-runtime-core MOD-INF-030→MOD-INF-035
+  - 12条业务域短名路径（data/factor/signal/risk/pf_core/ex_core/reporting/frontend/research/compliance/ml_train/simulation）→
+    _domain-* 路径
+  - 重复 module_id 修复：mcp-servers MOD-INF-015→MOD-INF-013, capacity-assurance MOD-INF-024→MOD-INF-001,
+    auto-runtime-core MOD-INF-030→MOD-INF-035
   - 空字段补全（从物理 frontmatter 同步）：mcp-servers/agent-rbac/auto-runtime-core/capacity-assurance/budget-enforcer/depmap-engine/local-model
-  - summary 重算：Active 49→52, Draft 11→8, 空 layer 4→0, completed 12→16, not_started 6→2
+  - summary 重算：Active 49→52, Draft 11→8, 空 layer 4→0, completed 12→16, not_started
+    6→2
 - version: 2.5.4
   date: '2026-05-25'
   changes:
