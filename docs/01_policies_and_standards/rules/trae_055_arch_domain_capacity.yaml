@@ -298,7 +298,7 @@ sections:
     - order: 2
       action: 创建 domain_mapping 表并迁移 NON_SRC_DOMAIN_MAP 硬编码
       pre_condition: generate_project_depgraph.py 中 NON_SRC_DOMAIN_MAP 字典（全部条目，以代码实际为准）
-      expected_result: 创建 domain_mapping(old_domain_id/new_domain_id/mapping_type/mapped_at/mapped_by/note) 表，全部映射 INSERT，生成器从 domain_mapping 表动态加载
+      expected_result: 创建 domain_mapping(mapping_id/path_prefix/domain_id/subdomain_id/mapping_type/mapped_at/mapped_by/note) 表，全部映射 INSERT，生成器从 domain_mapping 表动态加载
       on_failure: 同上
     - order: 3
       action: 迁移 UNREGISTERED_SRC_MAP 硬编码到 domain_mapping 表
