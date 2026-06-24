@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-009
-submodule_path: src/zephyr/pipeline
+submodule_path: src/zephyr/integration/pipeline_orchestrator.py
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
@@ -14,7 +14,7 @@ date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/pipeline/"
+actual_disk_path: "src/zephyr/integration/pipeline_orchestrator.py"
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 2
@@ -44,7 +44,7 @@ references:
 ---
 
 > module_id: MOD-INF-009 | version: 0.39.1 | status: active | layer: cross_layer
-> actual_disk_path: src/zephyr/pipeline/ | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/integration/pipeline_orchestrator.py | generation: 2 | construction_progress: partially_implemented
 
 # Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
 
@@ -1015,8 +1015,8 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_roadmap.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime_integration/pipeline/preemption_manager.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/route-manifest.yaml` | ✅ 已实现 | |
-| `src/zephyr/pipeline/routemanifest.yaml` | ✅ 已实现 | |
+| `src/zephyr/integration/route-manifest.yaml` | ✅ 已实现 | |
+| `src/zephyr/integration/routemanifest.yaml` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime_integration/pipeline/routing_plugins.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
@@ -1061,7 +1061,7 @@ STEP 3: 拆分后验证
 |:----:|--------|---------|
 | Tier 1 | MOD-INF-003 Orchestrator | §4 接口契约、CT-PIPE-ORC-001 |
 | Tier 2 | MOD-INF-007 Gate Engine | §4 PipelineResult |
-| Tier 3 | `src/zephyr/pipeline/*.py` | §4 数据模型、§11 产出物路径 |
+| Tier 3 | `src/zephyr/integration/pipeline_orchestrator.py` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则
 

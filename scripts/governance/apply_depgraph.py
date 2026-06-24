@@ -456,6 +456,22 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                 )
                 if ok:
                     domain_op_count += 1
+            elif op == "migrate_nodes":
+                count = cmd_migrate_nodes(
+                    node_ids=change.get("node_ids", []),
+                    new_domain_id=change.get("new_domain_id", ""),
+                    dry_run=True,
+                )
+                if count >= 0:
+                    domain_op_count += 1
+            elif op == "update_domain_ssot_path":
+                ok = cmd_update_domain_ssot_path(
+                    domain_id=change.get("domain_id", ""),
+                    ssot_path=change.get("ssot_path", ""),
+                    dry_run=True,
+                )
+                if ok:
+                    domain_op_count += 1
             elif op in ("update", "add_physical_file", "remove_physical_file", "set_physical_files"):
                 _apply_node_op(dep, change, i)
             else:
@@ -527,6 +543,24 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     if not ok:
                         raise RuntimeError(f"change #{i}: update_domain_layer failed")
                     domain_op_count += 1
+                elif op == "migrate_nodes":
+                    count = cmd_migrate_nodes(
+                        node_ids=change.get("node_ids", []),
+                        new_domain_id=change.get("new_domain_id", ""),
+                        dry_run=False,
+                        conn=conn,
+                    )
+                    if count >= 0:
+                        domain_op_count += 1
+                elif op == "update_domain_ssot_path":
+                    ok = cmd_update_domain_ssot_path(
+                        domain_id=change.get("domain_id", ""),
+                        ssot_path=change.get("ssot_path", ""),
+                        dry_run=False,
+                        conn=conn,
+                    )
+                    if ok:
+                        domain_op_count += 1
                 elif op in ("update", "add_physical_file", "remove_physical_file", "set_physical_files"):
                     _apply_node_op(dep, change, i)
                 else:
@@ -1043,7 +1077,12 @@ def cmd_insert_domain(
 
 
 def cmd_update_domain_id(
-    module_id: str, new_domain_id: str, dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH), conn=None
+    module_id: str,
+    new_domain_id: str,
+    dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH),
+    conn=None,
+    force_cross_domain: bool = False,
 ) -> int:
     """UPDATE 模块的 domain_id（域拆分时迁移模块归属）。
 
@@ -1069,6 +1108,13 @@ def cmd_update_domain_id(
                 print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
                 return -1
 
+            # 跨域共享防御检查（附录D裁定3）
+            domain_ids_in_match = set(r[2] for r in rows)
+            if len(domain_ids_in_match) > 1 and not force_cross_domain:
+                print(f"WARNING: module_id '{module_id}' 匹配 {len(rows)} 个节点，分布在 {len(domain_ids_in_match)} 个域: {domain_ids_in_match}", file=sys.stderr)
+                print(f"  跨域匹配可能导致误迁。使用 --force-cross-domain 确认，或改用 --migrate-nodes 按节点精确迁移。", file=sys.stderr)
+                return -1
+
             if dry_run:
                 for r in rows:
                     print(
@@ -1089,6 +1135,56 @@ def cmd_update_domain_id(
             if own_conn:
                 conn.rollback()
             print(f"ERROR: cmd_update_domain_id失败: {e}", file=sys.stderr)
+            return -1
+        finally:
+            if own_conn:
+                conn.close()
+
+
+def cmd_migrate_nodes(
+    node_ids: list[int], new_domain_id: str, dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH), conn=None
+) -> int:
+    """按 node_id 列表精确迁移 domain_id（不依赖 blueprint_id/belongs_to 匹配）。
+    解决跨域共享 blueprint_id 误迁问题（附录D裁定1）。
+    返回：受影响行数，-1=失败
+    """
+    if not node_ids:
+        print("ERROR: node_ids 列表为空", file=sys.stderr)
+        return -1
+    own_conn = conn is None
+    with _optional_db_lock(own_conn, task="cmd_migrate_nodes", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_domain_id,)).fetchone()
+            if not domain:
+                print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
+                return -1
+            placeholders = ",".join("?" * len(node_ids))
+            rows = conn.execute(
+                f"SELECT node_id, path, domain_id FROM nodes WHERE node_id IN ({placeholders})",
+                node_ids,
+            ).fetchall()
+            if not rows:
+                print(f"ERROR: node_ids {node_ids} 未找到匹配节点", file=sys.stderr)
+                return -1
+            if dry_run:
+                for r in rows:
+                    print(f"[DRY RUN] 将 UPDATE node_id={r[0]} domain_id: {r[2]} -> {new_domain_id} (path={r[1]})", file=sys.stderr)
+                return len(rows)
+            cur = conn.execute(
+                f"UPDATE nodes SET domain_id=? WHERE node_id IN ({placeholders})",
+                [new_domain_id] + node_ids,
+            )
+            if own_conn:
+                conn.commit()
+            print(f"[OK] UPDATE {cur.rowcount} 个节点 domain_id -> {new_domain_id}", file=sys.stderr)
+            return cur.rowcount
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_migrate_nodes失败: {e}", file=sys.stderr)
             return -1
         finally:
             if own_conn:
@@ -1342,6 +1438,48 @@ def cmd_update_domain_layer(
                 conn.close()
 
 
+def cmd_update_domain_ssot_path(
+    domain_id: str, ssot_path: str, dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH), conn=None
+) -> bool:
+    """UPDATE domains 表的 ssot_path 字段（附录D裁定2）。
+    解决已存在域无法修正 ssot_path 的工具设计遗漏。
+    返回：True=成功，False=失败
+    """
+    if not ssot_path.endswith("/"):
+        print(f"ERROR: ssot_path 必须以 / 结尾（目录路径）: {ssot_path}", file=sys.stderr)
+        return False
+    own_conn = conn is None
+    with _optional_db_lock(own_conn, task="cmd_update_domain_ssot_path", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            existing = conn.execute(
+                "SELECT domain_id, ssot_path FROM domains WHERE domain_id=?", (domain_id,)
+            ).fetchone()
+            if not existing:
+                print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
+                return False
+            old_path = existing[1]
+            if dry_run:
+                print(f"[DRY RUN] 将 UPDATE domains ssot_path: {domain_id} {old_path} -> {ssot_path}", file=sys.stderr)
+                return True
+            now = datetime.datetime.now().isoformat()
+            conn.execute("UPDATE domains SET ssot_path=?, updated_at=? WHERE domain_id=?", (ssot_path, now, domain_id))
+            if own_conn:
+                conn.commit()
+            print(f"[OK] UPDATE domains ssot_path: {domain_id} {old_path} -> {ssot_path}", file=sys.stderr)
+            return True
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_update_domain_ssot_path失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            if own_conn:
+                conn.close()
+
+
 def cmd_insert_domain_mapping(
     path_prefix: str,
     domain_id: str,
@@ -1512,6 +1650,25 @@ def main() -> None:
         help="UPDATE domains layer_id: DOMAIN_ID L0_infrastructure|L1_foundation|L1_platform|L2_domain",
     )
     parser.add_argument(
+        "--migrate-nodes",
+        type=str,
+        nargs=2,
+        metavar=("NODE_IDS_FILE", "NEW_DOMAIN_ID"),
+        help="按 node_id 列表精确迁移 domain_id（JSON文件: [id1, id2, ...]）",
+    )
+    parser.add_argument(
+        "--update-domain-ssot-path",
+        type=str,
+        nargs=2,
+        metavar=("DOMAIN_ID", "SSOT_PATH"),
+        help="UPDATE domains ssot_path: DOMAIN_ID SSOT_PATH（必须以/结尾）",
+    )
+    parser.add_argument(
+        "--force-cross-domain",
+        action="store_true",
+        help="强制执行跨域匹配的 --update-domain-id（需确认跨域迁移为期望行为）",
+    )
+    parser.add_argument(
         "--insert-domain-mapping",
         type=str,
         nargs="+",
@@ -1619,7 +1776,7 @@ def main() -> None:
 
     if args.update_domain_id:
         module_id, new_domain_id = args.update_domain_id
-        count = cmd_update_domain_id(module_id, new_domain_id, dry_run=args.dry_run)
+        count = cmd_update_domain_id(module_id, new_domain_id, dry_run=args.dry_run, force_cross_domain=args.force_cross_domain)
         if count < 0:
             sys.exit(4)
         print(f"affected={count}")
@@ -1669,6 +1826,18 @@ def main() -> None:
         if not ok:
             sys.exit(4)
         return
+
+    if args.migrate_nodes:
+        node_ids_file, new_domain_id = args.migrate_nodes
+        with open(node_ids_file) as f:
+            node_ids = json.load(f)
+        count = cmd_migrate_nodes(node_ids=node_ids, new_domain_id=new_domain_id, dry_run=args.dry_run)
+        sys.exit(0 if count >= 0 else 4)
+
+    if args.update_domain_ssot_path:
+        domain_id, ssot_path = args.update_domain_ssot_path
+        ok = cmd_update_domain_ssot_path(domain_id=domain_id, ssot_path=ssot_path, dry_run=args.dry_run)
+        sys.exit(0 if ok else 4)
 
     if args.insert_domain_mapping:
         parts = args.insert_domain_mapping

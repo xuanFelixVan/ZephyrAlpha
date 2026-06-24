@@ -1,6 +1,6 @@
 ---
 module_id: "MOD-INF-013"
-submodule_path: src/zephyr/mcp
+submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
 doc_type: blueprint
 status: Draft
@@ -14,7 +14,7 @@ date: "2026-05-06"
 valid_from: "2026-05-03"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/mcp/"
+actual_disk_path: "src/zephyr/integration/mcp/"
 codification_level: L1
 codification_at: "2026-05-13"
 last_verified: "2026-05-13"
@@ -121,7 +121,7 @@ END_REQUIRED_SECTIONS
 ---
 
 > module_id: MOD-INF-013 | version: 0.3.37 | status: draft | layer: cross_layer
-> actual_disk_path: src/zephyr/mcp/ | generation: 2 | construction_progress: completed
+> actual_disk_path: src/zephyr/integration/mcp/ | generation: 2 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
@@ -130,7 +130,7 @@ END_REQUIRED_SECTIONS
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 > 真源声明：本蓝图的 canonical SSoT 为 `architecture_model/layers/b_mcp.yaml`。
-> 代码落位：`src/zephyr/mcp/`（19 个 .py 文件，其中 task_manager / blueprint_search / telemetry / governance / vector-memory 已实现，gateway / audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader 已实现，knowledge_base / gate_engine / doc_guard / sentinel / sandbox 为 skeleton）。
+> 代码落位：`src/zephyr/integration/mcp/`（19 个 .py 文件，其中 task_manager / blueprint_search / telemetry / governance / vector-memory 已实现，gateway / audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader 已实现，knowledge_base / gate_engine / doc_guard / sentinel / sandbox 为 skeleton）。
 ---
 
 ## §0 代码对齐验证
@@ -168,7 +168,7 @@ END_REQUIRED_SECTIONS
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/mcp/` 逐文件核对 | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/integration/mcp/` 逐文件核对 | ☐ |
 | 蓝图描述的 server_id = 代码中的 server_id | `grep "server_id" *.py` | ☐ |
 | tool-contracts.yaml 工具名 = 代码中注册的工具名 | `grep "def .*_tool" *.py` | ☐ |
 
@@ -186,7 +186,7 @@ END_REQUIRED_SECTIONS
 | 属性 | 值 |
 |------|-----|
 | module_id | MOD-INF-013 |
-| 代码落位 | `src/zephyr/mcp/` |
+| 代码落位 | `src/zephyr/integration/mcp/` |
 | 核心职责 | 向外部 IDE/Agent 暴露内部系统能力的统一接口 |
 
 ### 核心职能
@@ -242,7 +242,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 ### 3.2 契约定义
 
-- **契约 SSoT**：`src/zephyr/mcp/tool-contracts.yaml`
+- **契约 SSoT**：`src/zephyr/integration/mcp/tool-contracts.yaml`
 - **版本**：1.2.0
 - **工具命名约定**：`{server_id}.{action}`（如 `task_manager.decompose_blueprint`）
 - **工具稳定性生命周期**：experimental → beta → stable → frozen
@@ -369,7 +369,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | 交付物 | 路径 | 状态 |
 |------|------|:---:|
-| 工具契约 SSoT | `src/zephyr/mcp/tool-contracts.yaml` | ✅ |
+| 工具契约 SSoT | `src/zephyr/integration/mcp/tool-contracts.yaml` | ✅ |
 | MCP 路由配置 | `config/blueprint_routing.yaml` | ✅ |
 | IDE MCP 配置 SSoT | `config/mcp.json` | ❌ |
 | 启动脚本 | `scripts/mcp/start_all.py` | ❌ |
@@ -781,7 +781,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | `src/zephyr/integration/mcp/sentinel_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/task_manager_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/telemetry_server.py` | ✅ 已实现 | |
-| `src/zephyr/mcp/tool-contracts.yaml` | ✅ 已实现 | |
+| `src/zephyr/integration/mcp/tool-contracts.yaml` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/vector_memory_server.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
@@ -828,7 +828,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 |:----:|--------|---------|
 | Tier 1 | MOD-INF-006 task-repo 蓝图 | §3 接口契约 |
 | Tier 2 | MOD-INF-005 agent-orchestrator | §3 MCP 通信协议 |
-| Tier 3 | `src/zephyr/mcp/*.py` 代码文件 | §3 数据模型、§11 产出物路径 |
+| Tier 3 | `src/zephyr/integration/mcp/*.py` 代码文件 | §3 数据模型、§11 产出物路径 |
 
 ### 变更同步规则
 
@@ -865,17 +865,17 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 ```
 新 AI → registry_of_registries.yaml → MOD-INF-013 → 本蓝图
      → AGENTS.md §8.2 MCP 任务菜单 → 本蓝图 §11 施工指引
-     → src/zephyr/mcp/tool-contracts.yaml → 本蓝图 §3 契约定义
+     → src/zephyr/integration/mcp/tool-contracts.yaml → 本蓝图 §3 契约定义
 ```
 
 ### 漂移防护
 
 | 修改本蓝图 | MUST 同步更新 |
 |-----------|-------------|
-| §3 接口契约 | `src/zephyr/mcp/tool-contracts.yaml` + 下游消费者蓝图 |
+| §3 接口契约 | `src/zephyr/integration/mcp/tool-contracts.yaml` + 下游消费者蓝图 |
 | §2 MCP 服务端列表 | `src/zephyr/integration/mcp/__init__.py` + `architecture_model/layers/b_mcp.yaml` |
 | §11 施工步骤 | `AGENTS.md` §8.2 MCP 任务菜单 |
-| §0 代码对齐验证 | `src/zephyr/mcp/` 对应代码文件 `[BLUEPRINT]` 头部 |
+| §0 代码对齐验证 | `src/zephyr/integration/mcp/` 对应代码文件 `[BLUEPRINT]` 头部 |
 | §17 容量升级 | `config/capacity/capacity_slo.yaml` + capacity-assurance 蓝图 |
 
 ---

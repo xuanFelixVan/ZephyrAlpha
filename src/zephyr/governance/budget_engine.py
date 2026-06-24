@@ -709,3 +709,36 @@ class BudgetEngine:
 
             if signal.level == "CRITICAL" and self._spiral_ews.is_spiraling():
                 self.advance_degradation()
+
+
+# ── EventBusBackpressure 订阅 (DM-2507-B) ──────────────────────────────
+
+_bus_subscribed = False
+
+
+def subscribe_eventbus() -> None:
+    """订阅 EventBusBackpressure 的 slo_violation 事件。
+
+    幂等：重复调用安全。Backpressure 总线不可用时静默跳过。
+    供 boot_hooks 统一调用。
+    """
+    global _bus_subscribed
+    if _bus_subscribed:
+        return
+    try:
+        from zephyr.shared.event_bus import EventBusBackpressure
+
+        bus = EventBusBackpressure()
+        bus.subscribe("slo_violation", _on_slo_violation)
+        _bus_subscribed = True
+    except Exception:
+        pass
+
+
+def _on_slo_violation(payload: object) -> None:
+    """slo_violation 事件：SLO违规触发预算降级。轻量handler——日志+调用已有方法。"""
+    try:
+        engine = BudgetEngine.ensure_initialized()
+        engine._check_budget_exceeded()
+    except Exception:
+        pass
