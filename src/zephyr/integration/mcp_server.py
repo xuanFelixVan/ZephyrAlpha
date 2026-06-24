@@ -221,6 +221,22 @@ def dispatch_tool(name: str, **kwargs: str) -> str:
         return func()
     except Exception as exc:
         logger.exception("MCP tool '%s' failed", name)
+        try:
+            from datetime import UTC, datetime
+
+            from zephyr.shared.event_bus import EventBusBackpressure
+
+            EventBusBackpressure().emit(
+                "mcp_call_failed",
+                payload={
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "mcp_server": name,
+                    "error_type": type(exc).__name__,
+                    "error_detail": str(exc),
+                },
+            )
+        except Exception:
+            pass
         return json.dumps({"error": str(exc)})
 
 

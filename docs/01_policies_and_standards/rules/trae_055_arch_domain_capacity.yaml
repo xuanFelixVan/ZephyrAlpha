@@ -1,6 +1,6 @@
 rule_id: TRAE-055
 title: 架构容量与域治理规则
-version: 1.0.7
+version: 1.0.8
 layer: L0
 module_id: TRAE-055
 depends_on: []
@@ -15,7 +15,6 @@ aliases:
 - ARCH-CAP-000
 - ARCH-CAP-001
 - ARCH-CAP-002
-- ARCH-CAP-003
 - ARCH-CAP-004
 - ARCH-CAP-005
 - ARCH-CAP-006
@@ -111,55 +110,22 @@ sections:
     conditions:
     - type: constraint
       check: 单域 production 节点数
-      pass: 80-150（默认安全区间）
-      fail: "<80（域过小，考虑合并）或 >200（必须拆分）"
-    - type: constraint
-      check: 高度耦合域放宽
-      pass: 150-200（需满足"高度耦合"判定标准，见 ARCH-CAP-003）
-      fail: ">200 任何情况都必须拆分"
-    - type: constraint
-      check: 拆分硬上限
-      pass: 单域 production 节点 ≤200
-      fail: 单域 production 节点 >200 禁止继续分配，MUST 立即拆分
+      pass: ≤150（通过，可继续分配）
+      fail: ">150（必须拆分，无例外）"
     actions:
     - type: mandatory
-      step: 新增模块前 MUST 检查目标域 production 节点数；>150 时评估是否高度耦合；>200 时 MUST 先拆分再分配
+      step: 新增模块前 MUST 检查目标域 production 节点数；>150 时 MUST 先拆分再分配，禁止以"高度耦合"为由放宽
     - type: mandatory
       step: 容量检查命令 python scripts/governance/extract_depgraph.py --summary 输出各域 production_nodes 字段（每域 production 节点数）
     - type: mandatory
-      step: 单域达 150 时 MUST 提交 KB 决策记录评估是否需要拆分；达 200 时 MUST 立即启动拆分流程（ARCH-CAP-006）
+      step: 单域达 150 时 MUST 提交 KB 决策记录（topic=domain_capacity::<domain_id>）评估是否需要拆分；>150 时 MUST 立即启动拆分流程（ARCH-CAP-006）
     prohibitions:
-    - 单域 production 节点 >200 继续分配模块
-    - 不评估耦合度直接按 80 硬拆（违反 ARCH-CAP-003 二元规则）
+    - 单域 production 节点 >150 继续分配模块
+    - 以"高度耦合"为由放宽上限（高度耦合是拆分信号，不是放宽理由）
     - 使用 current_modules（含三态）做容量判定
     rationale:
-      why_80_150: 基于 AI 单次上下文可导航极限。80-150 个 production 节点 = AI 一次装入后能完整理解域内全部模块关系，幻觉率低。>150 时 AI 开始丢失细节，>200 时幻觉率显著上升。
-      why_200_hard_limit: 200 是 AI 可维护性的硬上限。超过 200 = AI 无法在一次会话中完整审查该域 = 漂移和幻觉不可避免。
-  arch_cap_003_binary_rule:
-    section_type: rule
-    title: 二元规则-默认拆分与耦合放宽 (ARCH-CAP-003)
-    original_rules:
-    - ARCH-CAP-003
-    conditions:
-    - type: decision
-      check: 选 A（默认 80-150 拆分）
-      pass: 不同功能域够数就拆（80+ 即可考虑拆分）
-      fail: 高度耦合但强行拆分 → 上下文断裂 → 幻觉
-    - type: decision
-      check: 选 B（150-200 高度耦合放宽）
-      pass: 域内模块高度耦合（共享状态/频繁互调/共同不变量），拆分会破坏内聚
-      fail: 非高度耦合但放宽到 200 → 域过大 → 幻觉
-    actions:
-    - type: mandatory
-      step: 评估域是否高度耦合四标准（任一满足即认定高度耦合）：1.域内模块共享核心不变量 2.域内模块频繁互调（日均调用>10次/对）3.拆分后需跨域传递大量上下文 4.共同实现单一业务能力
-    - type: mandatory
-      step: 选 B（150-200）MUST 提交 KB 决策记录说明高度耦合理由；选 A（80-150）无需额外理由
-    prohibitions:
-    - 非高度耦合域放宽到 200（违反二元规则）
-    - 高度耦合域强行拆分到 80（破坏内聚，制造跨域上下文传递负担）
-    - 不评估耦合度直接套用任一区间
-    rationale:
-      design_intent: 二元规则平衡"防幻觉"（A：小域）与"防上下文断裂"（B：大域保持内聚）。一刀切任一极端都会产生反效果。
+      why_150_hard_limit: 150 是 AI 可维护性的硬上限。基于 AI 单次上下文可导航极限，≤150 个 production 节点 = AI 一次装入后能完整理解域内全部模块关系，幻觉率低。>150 时 AI 开始丢失细节，漂移和幻觉不可避免。
+      why_no_exception: 100%AI开发项目不应有模糊地带。AI 无法可靠判断"高度耦合"（四标准主观且不可量化），耦合度高应作为拆分信号而非放宽理由。二元规则（≤150通过，>150拆分）消除判断歧义，AI 可机械执行。
   arch_cap_004_parallel_domain_principle:
     section_type: rule
     title: 平行域原则与路径平铺 (ARCH-CAP-004)
@@ -264,7 +230,7 @@ sections:
       fail: 设置固定总容量上限（如 1500、3000、10000）
     - type: constraint
       check: 实际约束
-      pass: 实际约束是硬件资源（CPU/内存/磁盘）+ AI 可维护性（单域≤200）
+      pass: 实际约束是硬件资源（CPU/内存/磁盘）+ AI 可维护性（单域≤150）
       fail: 设置固定软件总容量上限
     - type: constraint
       check: 下限
@@ -272,7 +238,7 @@ sections:
       fail: 将 1500 作为上限
     actions:
     - type: mandatory
-      step: 项目总容量计算公式：总容量 = 域数 × 单域硬上限(200)。域数通过 extract_depgraph.py --summary 查询；新增域即扩展总容量
+      step: 项目总容量计算公式：总容量 = 域数 × 单域硬上限(150)。域数通过 extract_depgraph.py --summary 查询；新增域即扩展总容量
     - type: mandatory
       step: 新增域只需 INSERT domains 表（ARCH-CAP-005），总容量自动扩展
     - type: mandatory
@@ -282,7 +248,7 @@ sections:
     - 将 1500 作为上限（1500 是下限）
     - 限制新增域数量（域数受硬件约束，不受软件约束）
     rationale:
-      why_no_fixed_limit: 域是功能单元，功能可以无限细分。抽屉式扩展（ARCH-CAP-005）保证新增域不修改代码，因此域数无软件上限。硬件资源在可预见未来不是约束（具体硬件容量通过运行时查询获取，不固化数字）。真实约束是 AI 可维护性（单域 ≤200），已由 ARCH-CAP-002 约束。
+      why_no_fixed_limit: 域是功能单元，功能可以无限细分。抽屉式扩展（ARCH-CAP-005）保证新增域不修改代码，因此域数无软件上限。硬件资源在可预见未来不是约束（具体硬件容量通过运行时查询获取，不固化数字）。真实约束是 AI 可维护性（单域 ≤150），已由 ARCH-CAP-002 约束。
       why_1500_floor: 1500 是基于预计功能完善的增长预估下限。项目完整后预计 1500+ 模块。
       why_hardware_threshold: 50000 节点阈值基于 SQLite 单表 B+树索引性能基准（百万行级前查询性能线性）+ depgraph 当前增长速率推算。500MB 基于 SQLite 内存映射读取的合理工作集上限（超过后 mmap 效率下降）。两者均为评估触发线，非硬阻断。
   arch_cap_008_integration_sync:
@@ -294,12 +260,12 @@ sections:
     - order: 1
       action: 更新 trae_028 gov_doc_001_1500_module_naming section 为新规则
       pre_condition: trae_028 中该 section
-      expected_result: 拆分阈值改为 80-150 默认 + 150-200 高度耦合 + 200 硬上限；模块定义改为 production 节点口径；总容量改为无限大
+      expected_result: 拆分阈值改为 ≤150 通过 + >150 必须拆分（二元规则，无高度耦合放宽）；模块定义改为 production 节点口径；总容量改为无限大
       on_failure: 修复后重新验证 YAML 格式
     - order: 2
       action: 更新 architecture_upgrade_discussion.md 为新规则
       pre_condition: 该文档 D43/§17.5/§17.6/§1.5/D1 条目
-      expected_result: D43 容量标准改为 80-150/150-200/200 硬上限；§17.5 容量标准改为新规则；§17.6 域方案标注域数可无限拓展；§1.5 设计上限改为无固定上限；D1 模块容量目标改为无固定上限
+      expected_result: D43 容量标准改为 ≤150 通过 + >150 拆分（二元规则）；§17.5 容量标准改为新规则；§17.6 域方案标注域数可无限拓展；§1.5 设计上限改为无固定上限；D1 模块容量目标改为无固定上限
       on_failure: 修复后重新验证
     - order: 3
       action: 同步 _index.yaml
@@ -376,6 +342,10 @@ sections:
       date: '2026-06-21'
       by: session-20260621-001
       changes: '修复未来日期——v1.0.2的date从2026-06-22(未来日期)修正为2026-06-21(当天日期)'
+    - version: '1.0.8'
+      date: '2026-06-25'
+      by: session-20260625-002
+      changes: '废除高度耦合放宽——删除ARCH-CAP-003（高度耦合四标准+AB选择），aliases移除ARCH-CAP-003；ARCH-CAP-002改为二元规则（≤150通过，>150必须拆分，无例外）；ARCH-CAP-007单域上限200→150；ARCH-CAP-008集成同步引用更新。裁定依据：100%AI开发项目不应有模糊地带，AI无法可靠判断高度耦合，二元规则可机械执行。决策记录存KE（topic=arch_cap_adjudication::ARCH-CAP-003_abolish）。'
 references:
   rule_ids:
   - TRAE-055

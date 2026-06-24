@@ -798,8 +798,24 @@ class PipelineOrchestrator:
                 ),
                 night_shift_log=night_shift_log,
             )
-        except Exception:
+        except Exception as exc:
             self._log("ERROR", f"dispatch[{task_card.task_id}] failed with exception")
+            try:
+                from datetime import UTC, datetime
+
+                from zephyr.shared.event_bus import EventBusBackpressure
+
+                EventBusBackpressure().emit(
+                    "pipeline_failed",
+                    payload={
+                        "timestamp": datetime.now(UTC).isoformat(),
+                        "pipeline_id": task_card.task_id,
+                        "error_type": type(exc).__name__,
+                        "error_detail": f"dispatch[{task_card.task_id}] failed: {exc}",
+                    },
+                )
+            except Exception:
+                pass
             self._release_pipeline_lock(task_card.task_id)
             self._active_dispatches.discard(task_card.task_id)
             tw = self._transition(task_card.task_id, TaskStatus.FAILED)
