@@ -109,6 +109,23 @@ class RedBlueValidator:
         report.cleanup_verified = cleanup_ok
 
         logger.info("session_complete session_id=%s blocked=%d bypassed=%d", session_id, blocked, bypassed)
+
+        # F30 RedBlueValidator 验证完成时发布 validation_result 事件 (F30→F15)
+        try:
+            from zephyr.shared.event_bus import EventBusBackpressure
+
+            EventBusBackpressure().emit(
+                "validation_result",
+                payload={
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "source_function": "RedBlueValidator.run_adversarial_session",
+                    "severity": "info" if bypassed == 0 else "high",
+                    "detail": f"session_id={session_id} blocked={blocked} bypassed={bypassed} total={len(scene_results)}",
+                },
+            )
+        except Exception:
+            pass
+
         return report
 
     def _load_and_filter(self, tier: AttackTier | None = None) -> list[AttackScenario]:

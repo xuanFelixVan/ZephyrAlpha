@@ -40,6 +40,10 @@ depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   python scripts/governance/apply_depgraph.py --update-path D-FACTOR-01 src/zephyr/new_domain/module.py --dry-run
   python scripts/governance/apply_depgraph.py --migrate-dependencies D-OLD D-TARGET --new-from-domain D-NEW --dry-run
 
+  # domain_mapping 表管理（schema 盲区修复）
+  python scripts/governance/apply_depgraph.py --insert-domain-mapping scripts/new_tool/ D-GOVERNANCE non_src --mapped-by session-xxx
+  python scripts/governance/apply_depgraph.py --insert-domain-mapping src/zephyr/new/ D-NEW unregistered_src D-NEW-SUB --dry-run
+
 GIT 备份门禁（project_memory 强制规则）：
   修改 depgraph.db 前必须先 git 备份当前状态，以便回滚：
     git add data/databases/depgraph.db
@@ -1252,6 +1256,86 @@ def cmd_update_domain_layer(
                 conn.close()
 
 
+def cmd_insert_domain_mapping(
+    path_prefix: str,
+    domain_id: str,
+    mapping_type: str,
+    subdomain_id: str = "",
+    mapped_by: str = "",
+    note: str = "",
+    dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH),
+    conn=None,
+) -> bool:
+    """INSERT 路径前缀→域映射到 domain_mapping 表（schema 盲区修复）。
+
+    domain_mapping 表记录非 src/ 目录和未注册 src/ 路径的域归属，
+    用于 generate_project_depgraph.py 将物理路径归入正确域。
+    如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
+    返回：True=成功，False=失败
+    """
+    ALLOWED_TYPES = {"non_src", "unregistered_src"}
+    if mapping_type not in ALLOWED_TYPES:
+        print(
+            f"ERROR: mapping_type 必须是 {ALLOWED_TYPES} 之一，实际: {mapping_type}",
+            file=sys.stderr,
+        )
+        return False
+
+    own_conn = conn is None
+    with _optional_db_lock(own_conn, task="cmd_insert_domain_mapping", db_path=db_path):
+        if own_conn:
+            conn = sqlite3.connect(db_path)
+        try:
+            # 校验 domain_id 存在
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            if not domain:
+                print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
+                return False
+
+            # 查重：path_prefix 已存在则拒绝（避免重复映射）
+            existing = conn.execute(
+                "SELECT mapping_id, domain_id FROM domain_mapping WHERE path_prefix=?", (path_prefix,)
+            ).fetchone()
+            if existing:
+                print(
+                    f"ERROR: path_prefix '{path_prefix}' 已存在映射 (mapping_id={existing[0]}, domain_id={existing[1]})",
+                    file=sys.stderr,
+                )
+                return False
+
+            if dry_run:
+                print(
+                    f"[DRY RUN] 将 INSERT domain_mapping: path_prefix={path_prefix} domain_id={domain_id} "
+                    f"subdomain_id={subdomain_id or '(空)'} mapping_type={mapping_type}",
+                    file=sys.stderr,
+                )
+                return True
+
+            now = datetime.datetime.now().isoformat()
+            conn.execute(
+                """INSERT INTO domain_mapping
+                   (path_prefix, domain_id, subdomain_id, mapping_type, mapped_at, mapped_by, note)
+                   VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                (path_prefix, domain_id, subdomain_id or None, mapping_type, now, mapped_by, note or None),
+            )
+            if own_conn:
+                conn.commit()
+            print(
+                f"[OK] INSERT domain_mapping: {path_prefix} -> {domain_id} ({mapping_type})",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            print(f"ERROR: cmd_insert_domain_mapping失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            if own_conn:
+                conn.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="depgraph 变更写入工具（禁止AI直接Write 157MB文件）",
@@ -1331,10 +1415,19 @@ def main() -> None:
         metavar=("DOMAIN_ID", "LAYER_ID"),
         help="UPDATE domains layer_id: DOMAIN_ID L0_infrastructure|L1_foundation|L1_platform|L2_domain",
     )
+    parser.add_argument(
+        "--insert-domain-mapping",
+        type=str,
+        nargs="+",
+        metavar="ARG",
+        help="INSERT domain_mapping: PATH_PREFIX DOMAIN_ID MAPPING_TYPE(non_src|unregistered_src) [SUBDOMAIN_ID]",
+    )
     parser.add_argument("--new-from-domain", type=str, default="", help="migrate-dependencies 的新 from_domain")
     parser.add_argument("--new-to-domain", type=str, default="", help="migrate-dependencies 的新 to_domain")
     parser.add_argument("--max-modules", type=int, default=200, help="insert-domain 的 max_modules（默认 200）")
     parser.add_argument("--description", type=str, default="", help="insert-domain 的 description")
+    parser.add_argument("--mapped-by", type=str, default="", help="insert-domain-mapping 的 mapped_by 字段")
+    parser.add_argument("--note", type=str, default="", help="insert-domain-mapping 的 note 字段")
     args = parser.parse_args()
 
     # P0-2 新增命令处理
@@ -1463,6 +1556,32 @@ def main() -> None:
     if args.update_domain_layer:
         domain_id, layer_id = args.update_domain_layer
         ok = cmd_update_domain_layer(domain_id, layer_id, dry_run=args.dry_run)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.insert_domain_mapping:
+        parts = args.insert_domain_mapping
+        if len(parts) < 3:
+            print(
+                "ERROR: --insert-domain-mapping 需要 3 个参数: PATH_PREFIX DOMAIN_ID MAPPING_TYPE "
+                "[SUBDOMAIN_ID]",
+                file=sys.stderr,
+            )
+            sys.exit(3)
+        path_prefix = parts[0]
+        domain_id = parts[1]
+        mapping_type = parts[2]
+        subdomain_id = parts[3] if len(parts) > 3 else ""
+        ok = cmd_insert_domain_mapping(
+            path_prefix,
+            domain_id,
+            mapping_type,
+            subdomain_id=subdomain_id,
+            mapped_by=args.mapped_by,
+            note=args.note,
+            dry_run=args.dry_run,
+        )
         if not ok:
             sys.exit(4)
         return

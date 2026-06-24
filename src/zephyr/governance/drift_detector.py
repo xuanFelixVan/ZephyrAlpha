@@ -40,7 +40,25 @@ class DriftDetector:
         return math.sqrt(sum(d * d for d in diffs)) / max(1, len(diffs))
 
     def is_drifting(self, current: dict[str, float], threshold: float = 0.3) -> bool:
-        return self.detect(current) > threshold
+        drifting = self.detect(current) > threshold
+        if drifting:
+            try:
+                from datetime import UTC, datetime
+
+                from zephyr.shared.event_bus import EventBusBackpressure
+
+                EventBusBackpressure().emit(
+                    "drift_detected",
+                    payload={
+                        "timestamp": datetime.now(UTC).isoformat(),
+                        "source_function": "DriftDetector.is_drifting",
+                        "severity": "high",
+                        "detail": f"Drift detected: score={self.detect(current):.4f} > threshold={threshold}",
+                    },
+                )
+            except Exception:
+                pass
+        return drifting
 
 
 def trigger_recovery(drift_event, strategy=None):

@@ -71,6 +71,22 @@ class EventHooks:
         self._event_log.append(record)
         if len(self._event_log) > 1000:
             self._event_log = self._event_log[-500:]
+        # 桥接 fix_completed/fix_failed 到主 EventBus (F15→F5/F30)
+        if event in (FixEvent.FIX_COMPLETED, FixEvent.FIX_FAILED):
+            try:
+                from zephyr.shared.event_bus import EventBusBackpressure
+
+                EventBusBackpressure().emit(
+                    event.value,
+                    payload={
+                        "timestamp": record["timestamp"],
+                        "source_function": "EventHooks.emit",
+                        "severity": "info" if event == FixEvent.FIX_COMPLETED else "error",
+                        "detail": f"action_id={action.action_id if action else None} target={action.target if action else None}",
+                    },
+                )
+            except Exception:
+                pass
         callbacks = self._hooks.get(event, [])
         for callback in callbacks:
             try:
