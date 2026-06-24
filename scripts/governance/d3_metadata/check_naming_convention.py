@@ -56,7 +56,6 @@ from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "AGENTS.md",
-    "MAKEFILE",
     "Dockerfile",
     "README.md",
     "CONTRIBUTING.md",
@@ -64,8 +63,6 @@ FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "ARCHITECTURE_LOCK.yaml",
     "SCOPE.yaml",
     "LICENSE",
-    "AGENT.md",
-    "SKILL.md",
     "PKG_INFO",
     "SOURCES.txt",
     "SHARED-QUICKREF.yml",
@@ -426,11 +423,7 @@ _DIR_EXEMPT_NAMES: set[str] = {
 }
 _DIR_MODULE_ID_RE = re.compile(r"^[A-Z]+-[A-Z]+[0-9]*-\d+(-[A-Z]+)?$|^[A-Z]+-\d+$|^[A-Z]+-[A-Z]+-\d+$")
 _DIR_ROOT_KEBAB_EXEMPT: set[str] = {
-    "architecture-model",
     "session-logs",
-    "test_dir",
-    "target-architecture",
-    "cross-cutting",
 }
 _DIR_KEBAB_PATH_PREFIXES: list[str] = [
     "src/zephyr/",
@@ -619,8 +612,6 @@ _DATA_FILE_EXEMPT_NAMES: set[str] = {
     "ARCHITECTURE_LOCK.yaml",
     "SCOPE.yaml",
     "LICENSE",
-    "AGENT.md",
-    "SKILL.md",
     "PKG-INFO",
     "SOURCES.txt",
     "SHARED-QUICKREF.yml",

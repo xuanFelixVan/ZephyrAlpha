@@ -75,7 +75,6 @@ UPPERCASE_WHITELIST = {
     "ARCHITECTURE_LOCK.yaml",
     "SHARED-QUICKREF.yml",
     "SCOPE.yaml",
-    "MAKEFILE",
     "Dockerfile",
     "LICENSE",
 }
