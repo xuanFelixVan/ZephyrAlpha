@@ -641,9 +641,9 @@ def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
     for prefix in (".trae/", "config/", ".github/", "models/", "logs/"):
         if prefix in rel:
             return []
-    # 知识条目 ke-* / KE-* 和 session_logs 豁免（不区分大小写）
+    # 知识条目 ke-* / KE-*、session_logs、kbg-* (KBG决策记录) 豁免（不区分大小写）
     lower_name = name.lower()
-    if lower_name.startswith("ke-") or lower_name.startswith("session-"):
+    if lower_name.startswith("ke-") or lower_name.startswith("session-") or lower_name.startswith("kbg-"):
         return []
     # 任务ID文件豁免（TASK-OPS-2026062103.md 等格式）
     if lower_name.startswith("task-"):
