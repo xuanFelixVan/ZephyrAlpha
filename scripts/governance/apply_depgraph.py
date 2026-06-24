@@ -347,7 +347,6 @@ def cmd_update_module(dep: dict, module_id: str, field: str, value: str) -> None
         "stability",
         "build_status",
         "blueprint_status",
-        "module_lifecycle_state",
         "priority",
     ):
         module[field] = value
@@ -550,7 +549,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 
 
 def add_design_node(
-    path: str, blueprint_id: str, domain_id: str, build_status: str = "unbuilt", db_path: str = str(DEPGRAPH_PATH)
+    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned", db_path: str = str(DEPGRAPH_PATH)
 ) -> int:
     """
     新增设计态节点（功能级，目录 path）。
@@ -559,7 +558,7 @@ def add_design_node(
     - path 必须以 / 结尾（目录路径）
     - blueprint_id 必须指向存在的蓝图文件
     - domain_id 必须在 domains 表中存在
-    - build_status 必须符合 §12.6 状态机规则
+    - build_status 必须符合 §12.6 状态机规则（5态：planned/generated/testing/stable/deprecated）
     写入字段：design_maturity='design', blueprint_path=机械推导
     """
     # 校验path以/结尾
@@ -567,8 +566,8 @@ def add_design_node(
         print(f"ERROR: path必须以/结尾（目录路径）: {path}", file=sys.stderr)
         return -1
 
-    # 校验build_status
-    valid_status = {"unbuilt", "testing", "stable", "deprecated"}
+    # 校验build_status（5态枚举）
+    valid_status = {"planned", "generated", "testing", "stable", "deprecated"}
     if build_status not in valid_status:
         print(f"ERROR: build_status必须是{valid_status}之一: {build_status}", file=sys.stderr)
         return -1
@@ -607,8 +606,8 @@ def add_design_node(
             # 插入新节点
             cur = conn.execute(
                 """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
-                   build_status, design_maturity, blueprint_path, module_lifecycle_state, can_build)
-                   VALUES (?, ?, 'directory', ?, ?, ?, 'design', ?, 'inactive', 1)""",
+                   build_status, design_maturity, blueprint_path, can_build)
+                   VALUES (?, ?, 'directory', ?, ?, ?, 'design', ?, 1)""",
                 ("design_node", path, domain_id, blueprint_id, build_status, blueprint_path),
             )
             node_id = cur.lastrowid
@@ -623,9 +622,7 @@ def add_design_node(
             conn.close()
 
 
-def add_file_node(
-    path: str, blueprint_id: str, domain_id: str, db_path: str = str(DEPGRAPH_PATH)
-) -> int:
+def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = str(DEPGRAPH_PATH)) -> int:
     """
     新增文件级 production 节点（补注册孤儿文件）。
     返回：新分配的 node_id
@@ -633,7 +630,7 @@ def add_file_node(
     - path 必须不以 / 结尾（文件路径）
     - 文件必须存在于磁盘
     - domain_id 必须在 domains 表中存在
-    写入字段：design_maturity='production', granularity='file', build_status='draft'
+    写入字段：design_maturity='production', granularity='file', build_status='generated'
     """
     if path.endswith("/"):
         print(f"ERROR: path必须不以/结尾（文件路径）: {path}", file=sys.stderr)
@@ -648,9 +645,7 @@ def add_file_node(
     with _db_write_lock(db_path=db_path, task="add_file_node"):
         conn = sqlite3.connect(db_path)
         try:
-            domain = conn.execute(
-                "SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)
-            ).fetchone()
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: domain_id '{domain_id}' 不在domains表中", file=sys.stderr)
                 return -1
@@ -667,15 +662,13 @@ def add_file_node(
                 return existing[0]
 
             blueprint_path = (
-                f"docs/03_modules/{blueprint_id}/"
-                if blueprint_id and not blueprint_id.startswith("PENDING")
-                else None
+                f"docs/03_modules/{blueprint_id}/" if blueprint_id and not blueprint_id.startswith("PENDING") else None
             )
 
             cur = conn.execute(
                 """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
-                   build_status, design_maturity, blueprint_path, module_lifecycle_state, can_build)
-                   VALUES (?, ?, 'file', ?, ?, 'draft', 'production', ?, 'inactive', 0)""",
+                   build_status, design_maturity, blueprint_path, can_build)
+                   VALUES (?, ?, 'file', ?, ?, 'generated', 'production', ?, 0)""",
                 ("module", path, domain_id, blueprint_id, blueprint_path),
             )
             node_id = cur.lastrowid
@@ -811,18 +804,20 @@ def _detect_cycle_dfs(conn, start: int, target: int) -> bool:
 
 def transition_build_status(node_id: int, to: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     """
-    转换 build_status 状态。
+    转换 build_status 状态（5态单调推进）。
     返回：True=成功，False=失败
-    转换规则（机械判定）：
-    - unbuilt → testing：允许
-    - testing → stable：允许
-    - stable → deprecated：允许
+    转换规则（机械判定，裁定#178-183）：
+    - planned → generated：允许（代码已生成）
+    - generated → testing：允许（进入测试）
+    - testing → stable：允许（测试通过）
+    - stable → deprecated：允许（废弃）
     - deprecated → stable：禁止（不可复活）
     - 任何跳转：禁止
     """
-    # 合法状态转换
+    # 合法状态转换（5态单调推进）
     valid_transitions = {
-        ("unbuilt", "testing"),
+        ("planned", "generated"),
+        ("generated", "testing"),
         ("testing", "stable"),
         ("stable", "deprecated"),
     }
@@ -894,6 +889,95 @@ def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
         except Exception as e:
             conn.rollback()
             print(f"ERROR: remove_design_node失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            conn.close()
+
+
+def delete_design_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+    """
+    删除设计态边（硬删除，因边无软删除语义）。
+    返回：True=成功，False=失败
+    校验：
+    - edge_id 必须存在
+    - dep_maturity 必须为 'design'（禁止删除运营态边）
+    """
+    with _db_write_lock(db_path=db_path, task="delete_design_edge"):
+        conn = sqlite3.connect(db_path)
+        try:
+            row = conn.execute(
+                "SELECT edge_id, from_node_id, to_node_id, dep_maturity FROM edges WHERE edge_id=?", (edge_id,)
+            ).fetchone()
+            if not row:
+                print(f"ERROR: edge_id={edge_id} 不存在", file=sys.stderr)
+                return False
+            if row[3] != "design":
+                print(
+                    f"ERROR: edge_id={edge_id} dep_maturity={row[3]}（非设计态边，禁止删除）",
+                    file=sys.stderr,
+                )
+                return False
+            conn.execute("DELETE FROM edges WHERE edge_id=?", (edge_id,))
+            conn.commit()
+            print(
+                f"[OK] 删除设计态边 edge_id={edge_id} ({row[1]}->{row[2]})",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: delete_design_edge失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            conn.close()
+
+
+def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+    """
+    修改边的 dep_type（依赖类型）。
+    返回：True=成功，False=失败
+    校验：
+    - edge_id 必须存在
+    - new_dep_type 必须为合法值（contract/event/runtime/data/import_depends/test_depends/config_depends）
+    用途：§8.3 DIP裁定——F1→F3从import_depends改为contract，F1→F14改为event
+    """
+    valid_types = {
+        "contract",
+        "event",
+        "runtime",
+        "data",
+        "import_depends",
+        "test_depends",
+        "config_depends",
+    }
+    if new_dep_type not in valid_types:
+        print(
+            f"ERROR: dep_type '{new_dep_type}' 不合法（合法值: {valid_types}）",
+            file=sys.stderr,
+        )
+        return False
+
+    with _db_write_lock(db_path=db_path, task="update_edge_type"):
+        conn = sqlite3.connect(db_path)
+        try:
+            row = conn.execute(
+                "SELECT edge_id, from_node_id, to_node_id, dep_type FROM edges WHERE edge_id=?",
+                (edge_id,),
+            ).fetchone()
+            if not row:
+                print(f"ERROR: edge_id={edge_id} 不存在", file=sys.stderr)
+                return False
+            old_type = row[3]
+            conn.execute("UPDATE edges SET dep_type=? WHERE edge_id=?", (new_dep_type, edge_id))
+            conn.commit()
+            print(
+                f"[OK] edge_id={edge_id}: dep_type {old_type} -> {new_dep_type} ({row[1]}->{row[2]})",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: update_edge_type失败: {e}", file=sys.stderr)
             return False
         finally:
             conn.close()
@@ -1177,7 +1261,8 @@ def cmd_update_domain_capacity(
             conn = sqlite3.connect(db_path)
         try:
             existing = conn.execute(
-                "SELECT domain_id, current_modules, max_modules, production_nodes FROM domains WHERE domain_id=?", (domain_id,)
+                "SELECT domain_id, current_modules, max_modules, production_nodes FROM domains WHERE domain_id=?",
+                (domain_id,),
             ).fetchone()
             if not existing:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
@@ -1371,6 +1456,16 @@ def main() -> None:
     )
     parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID", help="软删除设计态节点: NODE_ID")
     parser.add_argument(
+        "--delete-design-edge", type=int, metavar="EDGE_ID", help="删除设计态边（仅限dep_maturity=design）: EDGE_ID"
+    )
+    parser.add_argument(
+        "--update-edge-type",
+        type=str,
+        nargs=2,
+        metavar=("EDGE_ID", "NEW_TYPE"),
+        help="修改边dep_type: EDGE_ID NEW_TYPE(contract/event/runtime/data/import_depends/test_depends/config_depends)",
+    )
+    parser.add_argument(
         "--add-file-node",
         type=str,
         nargs="+",
@@ -1462,6 +1557,20 @@ def main() -> None:
 
     if args.remove_design_node is not None:
         ok = remove_design_node(args.remove_design_node)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.delete_design_edge is not None:
+        ok = delete_design_edge(args.delete_design_edge)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.update_edge_type:
+        edge_id_str, new_type = args.update_edge_type
+        edge_id = int(edge_id_str)
+        ok = update_edge_type(edge_id, new_type)
         if not ok:
             sys.exit(4)
         return
@@ -1565,8 +1674,7 @@ def main() -> None:
         parts = args.insert_domain_mapping
         if len(parts) < 3:
             print(
-                "ERROR: --insert-domain-mapping 需要 3 个参数: PATH_PREFIX DOMAIN_ID MAPPING_TYPE "
-                "[SUBDOMAIN_ID]",
+                "ERROR: --insert-domain-mapping 需要 3 个参数: PATH_PREFIX DOMAIN_ID MAPPING_TYPE [SUBDOMAIN_ID]",
                 file=sys.stderr,
             )
             sys.exit(3)

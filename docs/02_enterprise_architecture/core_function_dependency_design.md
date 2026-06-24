@@ -2,8 +2,8 @@
 module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
 doc_type: architecture_design
-status: implemented
-version: 0.4.0
+status: draft
+version: 0.4.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -701,13 +701,13 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | F16 | 孤儿审判 | 运营态 | `src/zephyr/security/access_control/orphan_judge/` | 25+ |
 | F18 | 治理脚本 | 运营态 | `src/zephyr/governance/phase_manager.py` | 3+ |
 | F19 | 系统遥测 | 运营态 | `src/zephyr/infrastructure/system_telemetry/` | 25+ |
-| F20 | 监控统一 | ❌ 未发现 | 搜索`unified_monitor`/`monitor_unified`无匹配，存在分散monitor文件但无统一聚合器 | 0 |
+| F20 | 监控统一 | ⚠️ 已吸收 | 已被吸收进shared_core蓝图(MOD-INF-016)，存在分散monitor文件但无独立统一聚合器 | 0 |
 | F28 | 资产盘点 | 运营态 | `src/zephyr/infrastructure/asset_inventory/` | 15 |
 | F29 | 语义审计 | 运营态 | `src/zephyr/governance/semantic_audit/` | 18 |
 | F30 | 红蓝对抗 | 运营态 | `src/zephyr/security/adversarial_validation/` | 23 |
 | F31 | 注册表治理 | 运营态 ⚠️ | `src/zephyr/infrastructure/registry_governance.py`（蓝图声明`governance/registry_governance/`，实际在`infrastructure/`） | 1 |
-| F34 | 代码去重 | 设计态 | 蓝图声明`src/zephyr/governance/code_dedup_engine/`目录不存在，仅有其他模块相关去重文件 | 0 |
-| F35 | 文件结构治理 | 设计态 | 无蓝图无代码，完全未实现 | 0 |
+| F34 | 代码去重 | 运营态 ⚠️ | `src/zephyr/governance/`扁平存在70个代码文件（蓝图声明`code_dedup_engine/`子目录不存在，路径漂移） | 70 |
+| F35 | 文件结构治理 | 有蓝图 | 蓝图GOV-FSTR-001(v4.2.0)存在，代码实现待核实 | 待核实 |
 | F36 | 审计追踪链 | 运营态 | `src/zephyr/governance/audit_trail/` | 60+ |
 | F37 | 资源优化 | 运营态 | `src/zephyr/shared/lifecycle/resource_optimization_engine.py` | 11 |
 | **L6 应急层** | | | | |
@@ -717,7 +717,8 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | **已归档** | | | | |
 | F17 | 交易骨架清理 | 已归档 | 一次性任务已完成，骨架代码已删除，保留6个蓝图（MOD-L02~L07） | 0 |
 
-**统计**：运营态33个 | 设计态2个（F34/F35） | 未发现1个（F20） | 已归档1个（F17）
+**统计**：运营态34个(F34修正为运营态) | 设计态0个 | 已吸收1个(F20) | 有蓝图待核实1个(F35) | 已归档1个(F17)
+> **v0.4.1修正**：F34原标记"设计态/0文件"为误判，实测70个代码文件；F35原标记"无蓝图"为误判，蓝图GOV-FSTR-001存在；F20原标记"未发现"修正为"已吸收进shared_core"
 
 #### 11.5.2 运营态功能代码文件清单
 
@@ -796,9 +797,8 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 功能 | 状态 | 说明 | 后续处置 |
 |:---:|:---:|------|------|
 | F17 | 已归档 | 交易核心链路骨架代码清理（一次性任务），骨架代码已删除，保留6个蓝图（MOD-L02~L07） | 不参与依赖设计和调度，保留历史记录 |
-| F20 | 未发现 | 搜索`unified_monitor`/`monitor_unified`无匹配，存在分散的monitor文件但无统一监控聚合器 | 阶段1需新建设计态节点，阶段3需实现代码 |
-| F34 | 设计态 | 蓝图声明`src/zephyr/governance/code_dedup_engine/`目录不存在，仅有其他模块相关去重文件 | 阶段1需新建设计态节点，阶段3需实现代码 |
-| F35 | 设计态 | 无蓝图无代码，完全未实现 | 阶段1需新建设计态节点+蓝图，阶段3需实现代码 |
+| F20 | 已吸收 | 已被吸收进shared_core蓝图(MOD-INF-016)，存在分散monitor文件但无独立统一聚合器 | 不需独立设计态节点，监控统一逻辑归入shared_core |
+| F35 | 有蓝图 | 蓝图GOV-FSTR-001(v4.2.0)存在，代码实现待核实 | 需核实代码是否存在，若存在则修正为运营态 |
 
 #### 11.5.4 路径漂移警示
 
@@ -808,6 +808,69 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 |:---:|------|------|------|------|
 | F26 | `src/zephyr/governance/lifecycle_manager/` | `src/zephyr/trading/lifecycle_manager.py` | 目录→单文件+跨包 | 阶段2更新蓝图frontmatter或阶段3迁移代码到声明路径 |
 | F31 | `src/zephyr/governance/registry_governance/` | `src/zephyr/infrastructure/registry_governance.py` | 目录→单文件+跨包 | 阶段2更新蓝图frontmatter或阶段3迁移代码到声明路径 |
+
+***
+
+## 十一点五、调研发现与工具能力缺口（v0.4.1）
+
+> 2026-06-25 三方对齐调研（全景图/蓝图/代码）的完整发现，以及实施阶段被工具能力阻塞的记录。
+
+### 11.6.1 §10验证清单实测结果
+
+对 depgraph.db 执行§10验证清单10项，结果：
+
+| # | 验证项 | 设计要求 | 实测结果 | 判定 |
+|:-:|:------|:---------|:---------|:---:|
+| 1 | 循环依赖=0 | 0条 | 6条2节点环(design态蓝图节点间) | ❌ FAIL |
+| 2 | F1出度≥4 | 4(2runtime+1contract+1event) | 3(全import_depends) | ❌ FAIL |
+| 3 | F22/F25/F26出度=0 | 0 | F26=9 | ❌ FAIL |
+| 4 | F5/F9/F10跨层入度=0 | 0 | 代码节点=0✅ | ⚠️ PARTIAL |
+| 5 | 孤立功能=0 | 0 | F1→F14无边 | ❌ FAIL |
+| 6 | 12个事件注册 | pipeline_start等 | 118行但事件名不匹配 | ⚠️ PARTIAL |
+| 7 | L0层节点齐全 | F22/F25/F26设计态 | 仅运营态存在 | ⚠️ PARTIAL |
+| 8 | 37功能全覆盖 | 18个设计态节点 | 多数已运营态无需建 | ⚠️ 需重评 |
+| 9 | DIP边类型正确 | F1→F3=contract | F1→F3=import_depends | ❌ FAIL |
+| 10 | 同层无循环 | 0 | 6个2节点环 | ❌ FAIL |
+
+### 11.6.2 §8.4设计态节点清单重评
+
+§8.4原列18个需新建设计态节点，基于v0.3.10状态盘点（有误判）。v0.4.1修正后重评：
+
+| 功能 | §8.4原判定 | v0.4.1修正 | 是否需建设计态节点 |
+|:---:|:---:|:---:|:---:|
+| F3 | 需建 | 运营态(protocol已存在) | ❌ 不需要 |
+| F7 | 需建 | 运营态(gateway.py 50+文件) | ❌ 不需要 |
+| F18 | 需建 | 运营态(phase_manager.py) | ❌ 不需要 |
+| F20 | 需建 | 已吸收进shared_core | ❌ 不需要 |
+| F21 | 需建 | 运营态(ide_health_daemon.py) | ❌ 不需要 |
+| F23 | 需建 | 运营态(agent_orchestrator.py) | ❌ 不需要 |
+| F24 | 需建 | 运营态(skill_*.py 60+文件) | ❌ 不需要 |
+| F27-F32 | 需建 | 运营态 | ❌ 不需要 |
+| F33 | 需建 | 运营态(local_model/) | ❌ 不需要 |
+| F34 | 需建 | 运营态⚠️(70文件，路径漂移) | ❌ 不需要 |
+| F35 | 需建 | 有蓝图(GOV-FSTR-001)，代码待核实 | ⚠️ 待核实 |
+| F36 | 需建 | 运营态(audit_trail/ 60+文件) | ❌ 不需要 |
+| F37 | 需建 | 运营态(resource_optimization_engine.py) | ❌ 不需要 |
+
+**结论**：§8.4的18个设计态节点中，17个功能实际已运营态（有代码），无需建设计态节点。仅F35待核实。§8.4清单基于v0.3.10错误盘点，需以v0.4.1修正为准。
+
+### 11.6.3 工具能力缺口（apply_depgraph.py）
+
+§11.2实施步骤引用的命令与 apply_depgraph.py 实际能力对比：
+
+| §11.2引用命令 | apply_depgraph.py实际 | 状态 | 影响 |
+|:------|:------|:---:|------|
+| `--delete-edges` | 不存在 | ❌ | §8.1删除23条循环边无法执行 |
+| `--add-edges` | `--add-design-edge`（仅限design→design） | ⚠️ | §8.2多数边涉及production节点，无法添加 |
+| `--update-types` | 不存在 | ❌ | §8.3 DIP边类型修改无法执行 |
+| `--add-nodes` | `--add-design-node`（需path/结尾+blueprint_id+domain_id） | ✅ | §8.4可执行，但v0.4.1重评后多数不需要 |
+
+**阻塞项**：
+1. **§8.1删边**：apply_depgraph.py 无 `--delete-edge` 命令，23条循环边无法通过工具删除
+2. **§8.3 DIP改类型**：apply_depgraph.py 无 `--update-edge-type` 命令，F1→F3(contract)/F1→F14(event)无法修改
+3. **§8.2加边**：`--add-design-edge` 要求两端节点均为 design_maturity='design'，但F1等多数功能是production节点，无法添加design边
+
+**待办**：需增强 apply_depgraph.py 支持：①删除design态边 ②修改边dep_type ③支持production→design混合边
 
 ***
 
@@ -828,3 +891,5 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 0.3.8 | 2026-06-24 | §十一新增阶段0.5：盘点37个功能实现状态（代码vs蓝图）。区分运营态（有代码，granularity=runtime）和设计态（仅蓝图，granularity=design），影响阶段1节点创建策略。新增4个盘点步骤+1项关键约束 |
 | 0.3.9 | 2026-06-24 | §十一新增§11.5功能实现状态盘点表：①汇总表（37个功能按7层分组，标注运营态/设计态/未发现/已归档+主要实现位置+文件数）②运营态功能代码文件清单（33个功能的主入口文件+核心目录完整路径）③非运营态功能说明（F17已归档/F20未发现/F34设计态/F35设计态）④路径漂移警示（F26蓝图声明governance/lifecycle_manager/实际在trading/、F31蓝图声明governance/registry_governance/实际在infrastructure/）。统计：运营态33个\|设计态2个\|未发现1个\|已归档1个 |
 | 0.3.10 | 2026-06-24 | 循环审查§11.5功能实现状态盘点表修正7项：①F26文件数7→3（Glob验证boot*.py+lifecycle_manager.py=3文件）②F1文件数4→2（autopilot.py+start_brain.py，移除错误归属的orchestrator/目录，该目录属F23）③F5文件数8→7（Glob验证escalation*.py=7文件）④F8目录说明澄清（access_control/目录80+文件，其中RBAC相关11文件，非目录仅11文件）⑤F6目录说明澄清（drift_detection/目录51文件，其中7个核心文件，非目录仅7文件）⑥§11.5.2 F1路径修正（orchestrator/→start_brain.py）⑦§11.5.2 F5文件数8→7 |
+| 0.4.0 | 2026-06-24 | frontmatter标注status=implemented（v0.4.1调研发现为误标，实施未完成） |
+| 0.4.1 | 2026-06-25 | 三方对齐调研修正：①status: implemented→draft（§10验证清单6项FAIL，实施未完成）②F34: 设计态→运营态⚠️（实测70个代码文件，路径漂移）③F35: 设计态→有蓝图（GOV-FSTR-001 v4.2.0存在）④F20: 未发现→已吸收（吸收进shared_core MOD-INF-016）⑤§11.5.3同步修正⑥新增§11.6调研发现与工具能力缺口⑦标记phase_d_full_test_construction_plan.md为Superseded（F编号体系B过时）⑧phase_d_ai_prompts.md引用修正 |
