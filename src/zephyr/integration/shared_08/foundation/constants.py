@@ -52,7 +52,7 @@ from zephyr.integration.shared.schema.schemas import (
     TaskNamespace,
     TaskStatus,
 )
-from zephyr.integration.shared_08.contracts.core.runtime_plane_tag import (
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS,
     COLD_PATH_PARTIAL_ACTIVATED,
     HOT_PATH_ACTIVATED,

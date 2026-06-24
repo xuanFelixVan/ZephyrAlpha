@@ -192,8 +192,8 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 #
 # from zephyr.shared.contracts.portfolio.money import Money, MoneyCurrencyMismatchError, MoneyPrecisionError
 # from zephyr.governance.instrument import Instrument, Stock, ETF, Future, Option, Bond, FX, Crypto
-# from zephyr.integration.shared_08.contracts.core.runtime_plane_tag import RuntimePlaneTag
-# from zephyr.integration.shared_08.contracts.core.timestamp import utc_now_iso, parse_iso_timestamp
+# from zephyr.shared.contracts.core.runtime_plane_tag import RuntimePlaneTag
+# from zephyr.shared.contracts.core.timestamp import utc_now_iso, parse_iso_timestamp
 
 # ═══════════════════════════════════════════════════════════════════════════
 # errors.py — 统一错误层次（Phase 1 新增）v0.1.0

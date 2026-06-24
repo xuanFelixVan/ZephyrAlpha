@@ -19,14 +19,14 @@
 """
 
 from zephyr.integration.shared_08.contracts.approval_types import ApprovalRequest
-from zephyr.integration.shared_08.contracts.core.enforcer import (
+from zephyr.shared.contracts.core.enforcer import (
     ContractViolationError,
     EnforcementMode,
     enforce,
     enforce_input,
     enforce_output,
 )
-from zephyr.integration.shared_08.contracts.core.runtime_plane_tag import (
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS,
     COLD_PATH_PARTIAL_ACTIVATED,
     HOT_PATH_ACTIVATED,
@@ -34,7 +34,7 @@ from zephyr.integration.shared_08.contracts.core.runtime_plane_tag import (
     WARM_PATH_LATENCY_BUDGET_MS,
     RuntimePlane,
 )
-from zephyr.integration.shared_08.contracts.core.timestamp import (
+from zephyr.shared.contracts.core.timestamp import (
     Timestamp,
     ensure_utc,
     utcnow,
