@@ -267,7 +267,7 @@ class DefaultSecurityGateway(SecurityGateway):
         try:
             import asyncio
 
-            from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+            from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
             result = asyncio.run(gw.scan_input(content, source="l10-compliance", metadata=metadata or {}))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
@@ -280,7 +280,7 @@ class DefaultSecurityGateway(SecurityGateway):
                 result = loop.run_until_complete(
                     gw.scan_input(content, source="l10-compliance", metadata=metadata or {})
                 )
-                from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+                from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
                 if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                     return result.blocked_by or "lsg_input_scan"
