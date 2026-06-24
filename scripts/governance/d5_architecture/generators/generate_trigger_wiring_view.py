@@ -57,7 +57,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 CT_TRACKER_PATH = (
-    REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.md"
+    REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml"
 )
 TRIGGER_ROUTER_PATH = REPO_ROOT / "config/trigger_router.yaml"
 MARKER_START = "# --- AUTO-GENERATED WIRING STATUS START ---"
