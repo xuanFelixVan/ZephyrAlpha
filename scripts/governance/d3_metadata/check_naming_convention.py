@@ -144,6 +144,13 @@ def _check_n01_uppercase(filepath: str) -> list[NamingViolation]:
         return []
     if name.startswith("."):
         return []
+    # ID格式文件豁免（大写字母是ID一部分）
+    lower_name = name.lower()
+    if lower_name.startswith("task-") or lower_name.startswith("ke-") or lower_name.startswith("dm-"):
+        return []
+    # 安全扫描输出豁免（ISO 8601时间戳含T/Z大写）
+    if lower_name.startswith("sec_leak_") and re.search(r"\d{8}T\d{6}Z", name):
+        return []
     if _UPPERCASE_RE.search(name):
         return [NamingViolation(rule="N-01", message=f"文件名含连续大写字母: {name}", filepath=filepath)]
     return []
