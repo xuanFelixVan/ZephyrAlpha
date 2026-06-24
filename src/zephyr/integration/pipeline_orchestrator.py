@@ -1664,19 +1664,21 @@ class PipelineOrchestrator:
         from_status: str,
         to_status: str,
     ) -> None:
-        """通过 Observer 发布 TASK_EVENT。"""
-        if self._observer is None:
-            return
+        """直接调用 EventBusBackpressure 发布 TASK_EVENT（F14 统一，不再走 Observer 抽象层）。"""
         try:
+            from datetime import UTC, datetime
+
+            from zephyr.shared.event_bus import EventBusBackpressure
+
             payload: dict[str, Any] = {
                 "task_id": task_id,
                 "event_type": "TASK_EVENT",
                 "from_status": from_status,
                 "to_status": to_status,
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "source": "PipelineOrchestrator",
             }
-            self._observer.emit("TASK_EVENT", payload)
+            EventBusBackpressure().emit("TASK_EVENT", payload=payload)
         except Exception:
             pass
 
