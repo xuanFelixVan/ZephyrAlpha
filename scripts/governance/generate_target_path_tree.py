@@ -5,25 +5,25 @@
 # [CONSUMERS] DM-107; 迁移执行脚本; depgraph对齐验证
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 输出MUST覆盖35域; 每个模块MUST有target_path; target_path MUST按ssot_path推导
-# [MODIFY-GUARD] target-path-tree.yaml结构变更需同步panorama/depgraph
+# [INVARIANTS] 输出MUST覆盖所有域; 每个模块MUST有target_path; target_path MUST按ssot_path推导
+# [MODIFY-GUARD] target_path_tree.yaml结构变更需同步panorama/depgraph
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DepgraphLoadError; PanoramaLoadError; MigrationRegistryLoadError
 # [TESTS]
-"""从最新depgraph重新生成target-path-tree.yaml全量目标路径树。
+"""从最新depgraph重新生成target_path_tree.yaml全量目标路径树。
 
-DM-107: 确保模块的path字段与35域新命名规则对齐。
+DM-107: 确保模块的path字段与新命名规则对齐。
 
 核心逻辑:
   1. 从depgraph读取所有模块节点（含domain_id, path, type等）
-  2. 从panorama读取35域定义（domain_id→ssot_path映射）
-  3. 从migration-registry读取旧路径→新路径映射
+  2. 从panorama读取域定义（domain_id→ssot_path映射）
+  3. 从migration_registry读取旧路径→新路径映射
   4. 对每个模块计算target_path:
      - 有migration entry → 使用new_path + subdomain_id
-     - 无migration entry → 通过路径前缀匹配35子域ssot_path推导
-  5. 生成树形结构输出到target-path-tree.yaml
+     - 无migration entry → 通过路径前缀匹配子域ssot_path推导
+  5. 生成树形结构输出到target_path_tree.yaml
 
 用法:
     python scripts/governance/generate_target_path_tree.py            # stdout
@@ -54,7 +54,7 @@ MIGRATION_REGISTRY_PATH = PROJECT_ROOT / "docs" / "02_enterprise_architecture" /
 FUNC_DOMAIN_REGISTRY_PATH = (
     PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "functional_domain_registry.yaml"
 )
-OUTPUT_PATH = PROJECT_ROOT / "data" / "asset_index" / "target-path-tree.yaml"
+OUTPUT_PATH = PROJECT_ROOT / "data" / "asset_index" / "target_path_tree.yaml"
 
 
 def load_yaml(path: Path) -> dict:
@@ -252,7 +252,7 @@ def derive_target_path(
     depgraph_domain_id: str,
     domain_to_subdomain: dict,
 ) -> tuple[str, str, str]:
-    """Derive target path for a module based on 35-domain naming rules.
+    """Derive target path for a module based on domain naming rules.
 
     Priority:
       1. Migration registry entry
@@ -357,10 +357,10 @@ def build_target_tree(depgraph: dict, domain_ssot_map: dict, migration_map: dict
 def generate_yaml_output(
     subdomain_modules: dict, all_modules: list, domain_ssot_map: dict, depgraph_meta: dict
 ) -> dict:
-    """Generate the YAML structure for target-path-tree.yaml."""
+    """Generate the YAML structure for target_path_tree.yaml."""
     domains_output = {}
 
-    # All 35 domains from ssot_map (even if no modules yet)
+    # All domains from ssot_map (even if no modules yet)
     for subdomain_id in sorted(domain_ssot_map.keys()):
         domain_info = domain_ssot_map[subdomain_id]
         modules = subdomain_modules.get(subdomain_id, [])
@@ -447,11 +447,12 @@ def generate_yaml_output(
             "task_id": "DM-107",
             "source_depgraph": "data/databases/depgraph.db",
             "source_panorama": "data/databases/depgraph.db",
-            "source_migration_registry": "docs/02_enterprise_architecture/migration-registry.yaml",
+            "source_migration_registry": "docs/02_enterprise_architecture/migration_registry.yaml",
             "depgraph_version": depgraph_meta.get("version", ""),
             "depgraph_generated_at": depgraph_meta.get("generated_at", ""),
             "total_modules": total_modules,
             "total_subdomains": len(domains_output),
+            "expected_subdomains": len(domain_ssot_map),
             "subdomain_coverage": subdomain_coverage,
             "empty_subdomain_count": empty_subdomain,
             "needs_migration_count": needs_migration,
@@ -511,7 +512,7 @@ def build_directory_tree(all_modules: list) -> dict:
 
 
 def cmd_write() -> None:
-    """Generate and write target-path-tree.yaml."""
+    """Generate and write target_path_tree.yaml."""
     print("[DM-107] Loading data sources...")
 
     depgraph = load_depgraph_from_db(DEPGRAPH_PATH)
@@ -541,12 +542,13 @@ def cmd_write() -> None:
     output = generate_yaml_output(subdomain_modules, all_modules, domain_ssot_map, depgraph_meta)
 
     total_subdomains = output["meta"]["total_subdomains"]
+    expected_subdomains = output["meta"]["expected_subdomains"]
     subdomain_coverage = output["meta"]["subdomain_coverage"]
     print(f"[DM-107] Total subdomains in output: {total_subdomains}")
     print(f"[DM-107] Subdomain coverage (with modules): {subdomain_coverage}")
 
-    if total_subdomains < 35:
-        print(f"[WARN] Expected 35 subdomains, got {total_subdomains}")
+    if total_subdomains < expected_subdomains:
+        print(f"[WARN] Expected {expected_subdomains} subdomains, got {total_subdomains}")
 
     tmp_path = f"{OUTPUT_PATH}.{os.getpid()}.tmp"
     try:
@@ -565,9 +567,9 @@ def cmd_write() -> None:
 
 
 def cmd_check() -> None:
-    """Verify target-path-tree.yaml is aligned with depgraph."""
+    """Verify target_path_tree.yaml is aligned with depgraph."""
     if not OUTPUT_PATH.exists():
-        print("[FAIL] target-path-tree.yaml not found")
+        print("[FAIL] target_path_tree.yaml not found")
         sys.exit(1)
 
     with open(OUTPUT_PATH, encoding="utf-8") as f:
@@ -576,13 +578,14 @@ def cmd_check() -> None:
     meta = target_tree.get("meta", {})
     total_modules = meta.get("total_modules", 0)
     total_subdomains = meta.get("total_subdomains", 0)
+    expected_subdomains = meta.get("expected_subdomains", 0)
     needs_migration = meta.get("needs_migration_count", 0)
     empty_subdomain = meta.get("empty_subdomain_count", 0)
 
     errors = []
 
-    if total_subdomains < 35:
-        errors.append(f"Total subdomains {total_subdomains} < 35")
+    if expected_subdomains and total_subdomains < expected_subdomains:
+        errors.append(f"Total subdomains {total_subdomains} < expected {expected_subdomains}")
 
     domains = target_tree.get("domains", {})
     missing_target = 0
@@ -608,9 +611,9 @@ def cmd_check() -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate target-path-tree.yaml from depgraph")
+    parser = argparse.ArgumentParser(description="Generate target_path_tree.yaml from depgraph")
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--write", action="store_true", help="Write target-path-tree.yaml")
+    group.add_argument("--write", action="store_true", help="Write target_path_tree.yaml")
     group.add_argument("--check", action="store_true", help="Verify alignment")
     args = parser.parse_args()
 

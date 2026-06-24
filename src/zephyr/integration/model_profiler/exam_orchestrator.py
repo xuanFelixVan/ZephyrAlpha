@@ -63,14 +63,13 @@ CAPABILITIES = list(CASES_BY_CAPABILITY.keys())
 
 
 def _kw_capped(kw_rate: float, cap: float = 0.3) -> float:
-    """限制关键词匹配分数上限，防止假阳性。
+    """已废弃：关键词匹配兜底已去除，返回0.0。
 
-    kw_rate 只能作为辅助证据，不能单独决定分数。
-    cap=0.3 意味着即使关键词全匹配，最多也只能得 0.3 分。
-    布尔判断/结构匹配正确时通过 max() 取较高分；
-    布尔判断/结构匹配错误时 kw_rate 最多贡献 0.3 分。
+    第2层改造：去除所有能力的kw_capped兜底，防止"提到关键词"就得0.3分。
+    评分应基于布尔判断/结构匹配/执行测试，不基于关键词命中。
+    保留函数签名以避免19处调用点报错，但返回0.0使所有兜底失效。
     """
-    return min(kw_rate, cap)
+    return 0.0
 
 
 def _verify_code_syntax(code: str) -> bool:

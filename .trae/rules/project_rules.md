@@ -35,7 +35,7 @@
 
 **绝对禁止**：
 - ❌ 引用 `project-entity-depgraph-v3-domain-draft.yaml`（已合并入真源，保留为副本）
-- ❌ 引用 `target-path-tree.yaml`（不存在，path_design 在 depgraph 内）
+- ❌ 引用 `target_path_tree.yaml` 作为真源（它是验证工具输出，非真源；path_design 在 depgraph 内）
 - ❌ 引用 `archive/` 下的任何旧版 depgraph 文件作为真源
 - ❌ 把 `project-path-tree.yaml` 当作独立真源修改（已合并至架构全景图）
 - ❌ 把 `functional_domain_registry.yaml` 当作域定义唯一真源（域定义已合并至架构全景图，registry 保留为兼容副本）

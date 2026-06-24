@@ -1124,30 +1124,30 @@ EX_TS_001 = ExamTestCase(
     case_id="EX-TS-001",
     capability="tool_selection",
     difficulty=Difficulty.EASY,
-    prompt="任务：在项目中查找所有包含'TODO'的文件。应该用什么工具？",
+    prompt="项目中有200个Python文件，你需要定位所有包含'DEPRECATED'标记的代码行，以便进行技术债清理。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Grep",
-    expected_contains=["Grep", "grep", "TODO"],
+    expected_contains=["Grep", "grep"],
 )
 
 EX_TS_002 = ExamTestCase(
     case_id="EX-TS-002",
     capability="tool_selection",
     difficulty=Difficulty.MEDIUM,
-    prompt="任务：读取config.yaml文件的内容。应该用什么工具？",
+    prompt="部署前需要确认 docker-compose.yml 中数据库服务的端口映射是否正确，你需要查看该文件的完整内容。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Read",
-    expected_contains=["Read", "config.yaml", "content"],
+    expected_contains=["Read", "read"],
 )
 
 EX_TS_003 = ExamTestCase(
     case_id="EX-TS-003",
     capability="tool_selection",
     difficulty=Difficulty.HARD,
-    prompt="任务：在项目中查找所有名为'*.py'的文件。应该用什么工具？",
+    prompt="CI流水线需要收集 src/ 目录下所有Python模块的文件路径列表，用于批量执行lint检查。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Glob",
-    expected_contains=["Glob", "glob", "*.py"],
+    expected_contains=["Glob", "glob"],
 )
 
 
@@ -2069,7 +2069,7 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     # ambiguity_detect
     EX_AMB_001, EX_AMB_002,
     # tool_selection
-    EX_TS_001, EX_TS_002,
+    EX_TS_001, EX_TS_002, EX_TS_003,
     # dependency_ordering
     EX_DO_001, EX_DO_002,
     # cross_file_analysis
@@ -2077,7 +2077,7 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
 
     # ── P2 辅助9个能力 (各1题) ──────────────────────────
     # task_classification
-    EX_CL_001,
+    EX_CL_001, EX_CL_002, EX_CL_003,
     # tag_completion
     EX_TG_001,
     # naming_suggest

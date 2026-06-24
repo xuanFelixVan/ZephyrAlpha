@@ -75,7 +75,7 @@ TIER0_FILES: list[str] = [
 # Tier1 specific files (explicit list, in addition to registries)
 # ============================================================
 TIER1_SPECIFIC_FILES: list[str] = [
-    "data/asset_index/target-path-tree.yaml",
+    "data/asset_index/target_path_tree.yaml",
     "data/asset_index/depgraph-diagnosis.yaml",
     "data/asset_index/blueprint-domain-mapping.yaml",
 ]

@@ -1462,7 +1462,7 @@ scripts/  (25 files: .py(22), .yaml(2), .csv(1))
 │   ├── generate_path_ownership_map.py  — 从蓝图§0.1聚合生成 path-ownership-map.yaml 路径归属声明。  
 │   ├── generate_project_depgraph.py  — # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7  
 │   ├── generate_project_path_tree.py  — 从磁盘扫描生成架构全景图的tree段（运营态目录结构）。  
-│   ├── generate_target_path_tree.py  — 从最新depgraph重新生成target-path-tree.yaml全量目标路径树。  
+│   ├── generate_target_path_tree.py  — 从最新depgraph重新生成target_path_tree.yaml全量目标路径树。  
 │   ├── governance_watchdog.py  — governance_watchdog script  
 │   ├── group_orphan_modules.py  — 按域分组统计 ORPHAN MODULES — 用于建任务卡批量处理。  
 │   ├── human_memory_card.md  — 脚本系统 — 人类维护者速览卡片  
