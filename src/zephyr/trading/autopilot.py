@@ -146,6 +146,20 @@ class AutoPilot:
         Returns:
             认领到的 TaskCard 列表（AI session 应逐一执行并 transition(COMPLETED)）
         """
+        from datetime import UTC, datetime
+
+        from zephyr.shared.event_bus import EventBusBackpressure
+
+        bus = EventBusBackpressure()
+        bus.emit(
+            "pipeline_start",
+            payload={
+                "session_id": self.session_id,
+                "task_count": max_tasks,
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+        )
+
         grouped = self.scan()
         if not grouped:
             logger.info("AutoPilot: 没有 READY 任务")
