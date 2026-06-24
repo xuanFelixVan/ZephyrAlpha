@@ -1,6 +1,6 @@
 ---
 module_id: "MOD-INF-035"
-submodule_path: src/zephyr/infrastructure/autopilot
+submodule_path: src/zephyr/trading/autopilot
 title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
 template_for: blueprint
@@ -15,7 +15,7 @@ date: "2026-05-10"
 valid_from: "2026-05-10"
 ttl: permanent
 construction_progress: completed
-actual_disk_path: "src/zephyr/infrastructure/runtime/"
+actual_disk_path: "src/zephyr/trading/"
 belongs_to: "SYS-MASTER-001"
 generation: 2
 functional_domain: operations
@@ -64,7 +64,7 @@ ssot_ref: "specs/auto-runtime-core/spec.md"
 本蓝图描述 AutoRuntime Core——ZephyrAlpha 的系统大脑。它解决了 1500 模块/10000 脚本/100 AI 并发下的全局运行时编排问题。核心职责包括：三层运行时编排、MAPE-K 调和循环、节律调度、健康监控、工作编排、自动接入。当前规模 51 模块/268 脚本/0 AI 并发，目标容量 1500 模块/10000 脚本/100 AI 并发。上游依赖 Pipeline/Gate Engine/Audit Trail，下游被所有模块消费。
 
 > module_id: MOD-INF-035 | version: 6.0.0 | status: active | layer: cross_layer
-> actual_disk_path: src/zephyr/runtime/ | generation: 2 | construction_progress: completed
+> actual_disk_path: src/zephyr/trading/ | generation: 2 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
@@ -126,8 +126,8 @@ ssot_ref: "specs/auto-runtime-core/spec.md"
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/runtime/` 逐文件核对 | ☐ |
-| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/runtime/*.py` | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/trading/` 逐文件核对 | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/trading/autopilot.py` | ☐ |
 | actual_disk_path 与 §11 产出物路径一致 | 对比 frontmatter 与 §11 | ☐ |
 | §17 容量升级组件代码覆盖 | 按升级组件清单核对 | ☐ |
 
@@ -967,7 +967,7 @@ STEP 3: 拆分后验证
 | Tier 2 | MOD-INF-020 AuditTrail | §4.1 AiAuditLogger 接口 |
 | Tier 2 | MOD-INF-007 GateEngine | §4.1 TaskGate 接口 |
 | Tier 2 | MOD-INF-013 MCP Servers | §4.5 MCP 接口 |
-| Tier 3 | src/zephyr/runtime/*.py | §4 数据模型、§11 产出物路径 |
+| Tier 3 | src/zephyr/trading/autopilot.py | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则
 

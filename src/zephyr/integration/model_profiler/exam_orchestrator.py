@@ -88,6 +88,57 @@ def _verify_code_syntax(code: str) -> bool:
         return False
 
 
+def _run_code_with_tests(code: str, test_cases: list[str]) -> tuple[float, int, int]:
+    """执行式评测：运行模型生成的代码 + 测试断言（参考HumanEval pass@1）。
+
+    在隔离的子进程中执行，防止主进程崩溃。
+    返回 (pass_rate, passed_count, total_count)。
+    - pass_rate = passed / total（0.0 ~ 1.0）
+    - 语法错误/超时/异常 → pass_rate = 0.0
+    """
+    if not test_cases:
+        return (1.0, 0, 0)  # 无测试用例时不扣分
+
+    # 先检查语法
+    if not _verify_code_syntax(code):
+        return (0.0, 0, len(test_cases))
+
+    # 拼接代码 + 测试断言
+    test_code = code + "\n\n" + "\n".join(test_cases) + "\nprint('ALL_TESTS_PASSED')"
+
+    try:
+        import subprocess
+        import sys
+
+        result = subprocess.run(
+            [sys.executable, "-c", test_code],
+            capture_output=True,
+            text=True,
+            timeout=10,  # 10秒超时
+        )
+        if result.returncode == 0 and "ALL_TESTS_PASSED" in result.stdout:
+            return (1.0, len(test_cases), len(test_cases))
+        else:
+            # 部分通过：逐个运行测试断言
+            passed = 0
+            for tc in test_cases:
+                try:
+                    single_test = code + "\n\n" + tc
+                    r = subprocess.run(
+                        [sys.executable, "-c", single_test],
+                        capture_output=True,
+                        text=True,
+                        timeout=5,
+                    )
+                    if r.returncode == 0:
+                        passed += 1
+                except Exception:
+                    pass
+            return (passed / len(test_cases), passed, len(test_cases))
+    except Exception:
+        return (0.0, 0, len(test_cases))
+
+
 _EXAM_CAPABILITY_NAMES = {
     "task_classification",
     "tag_completion",
@@ -223,8 +274,10 @@ class ExamOrchestrator:
             cap_result.grade = compute_grade(max(cap_result.f1, cap_result.exact_match_rate))
             capabilities[cap_name] = cap_result
 
-        scores = [max(c.f1, c.exact_match_rate) for c in capabilities.values() if c.samples_tested > 0]
-        overall = statistics.mean(scores) if scores else 0.0
+        # FIX B4: breadth失败项按0分计入depth均值（不再排除samples_tested=0的能力）
+        # 旧逻辑 `if c.samples_tested > 0` 会剔除breadth失败的能力，导致depth虚高（反向激励）
+        all_scores = [max(c.f1, c.exact_match_rate) for c in capabilities.values()]
+        overall = statistics.mean(all_scores) if all_scores else 0.0
         return DepthResult(overall_score=overall, capabilities=capabilities)
 
     def _score_capability(
@@ -375,6 +428,13 @@ class ExamOrchestrator:
             content = result.get("content", result.get("codegen", {}).get("content", ""))
             if not content:
                 return (0.0, 0.0, 1.0, 0)
+            # FIX B1: 执行式评测 — 用单元测试验证算法正确性（参考HumanEval pass@1）
+            # 旧逻辑只检查def/class/import/长度/AST，模型输出形似代码即A+，不验证算法对错
+            if case.expected_test_cases:
+                pass_rate, passed, total = _run_code_with_tests(content, case.expected_test_cases)
+                em = 1 if pass_rate == 1.0 else 0
+                return (pass_rate, pass_rate, 0.0, em)
+            # 无测试用例时回退到结构检查（兼容旧题）
             struct_score = 0.0
             if "def " in content or "class " in content:
                 struct_score += 0.5
@@ -382,13 +442,9 @@ class ExamOrchestrator:
                 struct_score += 0.25
             if len(content) > 100:
                 struct_score += 0.25
-            hits = sum(1 for kw in case.expected_contains if kw in content)
-            rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
-            # P3: AST语法验证 — 语法正确加分
             if _verify_code_syntax(content):
                 struct_score = min(struct_score + 0.2, 1.0)
-            score = max(struct_score, _kw_capped(rate))
-            return (score, score, 0.0, 1 if hits == len(case.expected_contains) else 0)
+            return (struct_score, struct_score, 0.0, 1 if struct_score >= 0.9 else 0)
 
         # B类: 多文件联动能力评分
         if cap in ("cross_file_analysis",):

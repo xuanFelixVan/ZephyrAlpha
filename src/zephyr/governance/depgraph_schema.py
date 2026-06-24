@@ -798,9 +798,11 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             )""",
             # 2. 复制module_lifecycle_state数据到归档表
             "INSERT INTO nodes_archive_module_lifecycle (node_id, module_lifecycle_state, archived_at) SELECT node_id, module_lifecycle_state, datetime('now') FROM nodes WHERE module_lifecycle_state IS NOT NULL",
-            # 3. 创建新nodes表（带CHECK约束，无module_lifecycle_state列）
+            # 3. 删除依赖nodes表的视图（重建nodes表前必须先删除视图）
+            "DROP VIEW IF EXISTS dep_cycles",
+            # 4. 创建新nodes表（带CHECK约束，无module_lifecycle_state列）
             _DDL_NODES_V5.replace("CREATE TABLE IF NOT EXISTS nodes", "CREATE TABLE nodes_new"),
-            # 4. 从旧表复制数据到新表（排除module_lifecycle_state列）
+            # 5. 从旧表复制数据到新表（排除module_lifecycle_state列）
             """INSERT INTO nodes_new (
                 node_id, node_type, path, granularity, domain_id, subdomain_id, blueprint_id, belongs_to, owner,
                 change_policy, impact_level, modification_permission, file_header_score, tags, architecture_layer,
@@ -817,12 +819,41 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
                 consumed_interfaces, implementation_ref, has_dynamic_import, blueprint_id_invalid, in_degree,
                 out_degree, blueprint_path, business_stream, stream_role, runtime_plane, ddd_aggregate, provided_interfaces
             FROM nodes""",
-            # 5. 删除旧nodes表（FK已禁用，不会触发edges/arch_directory_tree的FK检查）
+            # 6. 删除旧nodes表（FK已禁用，不会触发edges/arch_directory_tree的FK检查）
             "DROP TABLE nodes",
-            # 6. 重命名新表为nodes（SQLite会自动更新edges/arch_directory_tree的FK引用）
+            # 7. 重命名新表为nodes（SQLite会自动更新edges/arch_directory_tree的FK引用）
             "ALTER TABLE nodes_new RENAME TO nodes",
-            # 7. 重建索引
-            *_DDL_INDEXES,
+            # 8. 重建索引（path使用非UNIQUE索引，因当前数据存在重复path值，待后续清理后再升级为UNIQUE）
+            *[
+                stmt.replace("CREATE UNIQUE INDEX", "CREATE INDEX") if "idx_nodes_path" in stmt else stmt
+                for stmt in _DDL_INDEXES
+            ],
+            # 9. 重建dep_cycles视图
+            """CREATE VIEW IF NOT EXISTS dep_cycles AS
+        WITH RECURSIVE
+        cycle_nodes AS (
+          SELECT DISTINCT from_node_id AS node_id FROM edges e1
+          WHERE EXISTS (
+            SELECT 1 FROM edges e2
+            WHERE e2.from_node_id = e1.to_node_id
+            AND e2.to_node_id = e1.from_node_id
+          )
+          UNION
+          SELECT DISTINCT to_node_id AS node_id FROM edges e1
+          WHERE EXISTS (
+            SELECT 1 FROM edges e2
+            WHERE e2.from_node_id = e1.to_node_id
+            AND e2.to_node_id = e1.from_node_id
+          )
+        )
+        SELECT
+          n.node_id,
+          n.path,
+          n.domain_id,
+          n.design_maturity
+        FROM cycle_nodes c
+        JOIN nodes n ON c.node_id = n.node_id
+        ORDER BY n.domain_id, n.node_id""",
         ],
     ),
 ]

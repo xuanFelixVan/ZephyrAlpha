@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-030
-submodule_path: src/zephyr/governance/red_blue_validator
+submodule_path: src/zephyr/security/adversarial_validation
 title: "Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认"
 doc_type: blueprint
 status: Active
@@ -17,7 +17,7 @@ valid_from: "2026-05-08"
 date: "2026-05-08"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/governance/red_blue_validator/"
+actual_disk_path: "src/zephyr/security/adversarial_validation/"
 belongs_to: "MOD-INF-027"
 parent_module: "MOD-INF-027"
 codification_level: L2
@@ -67,7 +67,7 @@ references:
 > **自动化宿主**: CircadianScheduler `hour=5` → `_red_blue_validation()` + FLE `_periodic_checks()` → `_red_blue_score_check()`
 
 > module_id: MOD-INF-030 | version: 2.0.0 | status: active | layer: cross_layer
-> actual_disk_path: src/zephyr/red-blue-validator/ | generation: 17 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/security/adversarial_validation/ | generation: 17 | construction_progress: partially_implemented
 
 ## 概述
 
@@ -340,7 +340,7 @@ references:
 | 4 | 条款生命周期 | 活跃→观察→废弃→归档（4 阶段） |
 | 5 | 冲突检测 | 4 条优先级规则解决条款冲突 |
 
-Constitution 条款示例（完整列表见 `D:\ZephyrAlpha\src\zephyr\red-blue-validator\_constitution-registry.yaml`）：
+Constitution 条款示例（完整列表见 `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\_constitution-registry.yaml`）：
 
 | 条款 ID | 标题 | 来源 | 置信度 |
 |---------|------|------|:---:|
@@ -397,7 +397,7 @@ Constitution 条款示例（完整列表见 `D:\ZephyrAlpha\src\zephyr\red-blue-
 | Semantic | 95~98% | 重点验证——语义断裂点场景 |
 | Behavioral | N/A | 边界验证——稳态恢复验证 |
 
-19 维度结构审计对抗映射（DIM-PATH~ORPHAN）→ 完整映射见 `D:\ZephyrAlpha\src\zephyr\red-blue-validator\_scenario-registry.yaml`。
+19 维度结构审计对抗映射（DIM-PATH~ORPHAN）→ 完整映射见 `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\_scenario-registry.yaml`。
 
 ---
 
@@ -769,9 +769,9 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red-blue-validator\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\` | Python 源码 |
-| 攻击场景注册表 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\_scenario-registry.yaml` | REG-RB-001 |
-| Constitution 注册表 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\_constitution-registry.yaml` | REG-RB-002 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` | Python 源码 |
+| 攻击场景注册表 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\_scenario-registry.yaml` | REG-RB-001 |
+| Constitution 注册表 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\_constitution-registry.yaml` | REG-RB-002 |
 | 攻击场景配置 | `D:\ZephyrAlpha\data\red_blue\attack_scenarios.yaml` | 39 场景配置 |
 | 稳态指标配置 | `D:\ZephyrAlpha\data\red_blue\steady_state_metrics.yaml` | 35 指标配置 |
 | Constitution 配置 | `D:\ZephyrAlpha\data\red_blue\constitution.yaml` | 23 条款配置 |
@@ -913,7 +913,7 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 + §4.2 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` |
 | 验收标准 | 数据模型定义完整 + 攻击场景加载成功 |
 | 验证命令 | `python -m pytest tests/red_blue/ -k "test_models or test_scenario_loader" -v` |
 | G7 检查项 | 上游依赖全部列出？下游产出物路径精确？回滚方案可执行？ |
@@ -922,16 +922,16 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 
 | module_id | 文件名 | doc_type | 完整绝对路径 |
 |-----------|--------|----------|------------|
-| MOD-INF-030 | models.py | code | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\models.py` |
-| MOD-INF-030 | scenario_loader.py | code | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\scenario_loader.py` |
-| MOD-INF-030 | injection_engine.py | code | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\injection_engine.py` |
+| MOD-INF-030 | models.py | code | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\models.py` |
+| MOD-INF-030 | scenario_loader.py | code | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\scenario_loader.py` |
+| MOD-INF-030 | injection_engine.py | code | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\injection_engine.py` |
 
 #### 步骤 2：核心引擎（Phase 1）
 
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` |
 | 验收标准 | 防御验证+绕过记录+稳态验证+清理+爆炸半径全部实现 |
 | 验证命令 | `python -m pytest tests/red_blue/ -k "test_defense or test_bypass or test_steady or test_cleanup or test_blast" -v` |
 | G7 检查项 | 同上 |
@@ -952,7 +952,7 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 + §4.5 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` |
 | 验收标准 | Constitution + 零信任 + AI 生成 + Game Day + CircuitBreaker + 冷启动 + MCP + CLI + Skill |
 | 验证命令 | `python -m pytest tests/red_blue/ -v` |
 | G7 检查项 | 同上 |
@@ -980,9 +980,9 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 
 | # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
 |---|--------|---------------|:---:|:---:|:---:|
-| 1 | models.py | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\models.py` | ☐ | ☐ | ☐ |
-| 2 | validator.py | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\validator.py` | ☐ | ☐ | ☐ |
-| 3 | 全部 22 个代码文件 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\` | ☐ | ☐ | ☐ |
+| 1 | models.py | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\models.py` | ☐ | ☐ | ☐ |
+| 2 | validator.py | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\validator.py` | ☐ | ☐ | ☐ |
+| 3 | 全部 22 个代码文件 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` | ☐ | ☐ | ☐ |
 | 4 | 全部 12 个测试文件 | `D:\ZephyrAlpha\tests\red_blue\` | ☐ | ☐ | ☐ |
 
 ### 16.6 施工状态
@@ -1205,7 +1205,7 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | red-blue-validator 包 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\` | 业务代码 | 修改（stub→实现） |
+| 1 | red-blue-validator 包 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` | 业务代码 | 修改（stub→实现） |
 | 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red-blue-validator\blueprint.md` | 本文件 | 修改 |
 | 3 | 测试目录 | `D:\ZephyrAlpha\tests\red_blue\` | 测试代码 | 新建 |
 | 4 | 数据目录 | `D:\ZephyrAlpha\data\red_blue\` | 配置/日志 | 新建 |
@@ -1379,8 +1379,8 @@ python -m zephyr.red_blue_validator [OPTIONS]
 
 | 注册表 ID | 名称 | 路径 | 说明 |
 |-----------|------|------|------|
-| REG-RB-001 | 攻击场景注册表 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\_scenario-registry.yaml` | 39 攻击场景 |
-| REG-RB-002 | Constitution 条款注册表 | `D:\ZephyrAlpha\src\zephyr\red-blue-validator\_constitution-registry.yaml` | 23 Constitution 条款 |
+| REG-RB-001 | 攻击场景注册表 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\_scenario-registry.yaml` | 39 攻击场景 |
+| REG-RB-002 | Constitution 条款注册表 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\_constitution-registry.yaml` | 23 Constitution 条款 |
 
 ### 错误码目录
 

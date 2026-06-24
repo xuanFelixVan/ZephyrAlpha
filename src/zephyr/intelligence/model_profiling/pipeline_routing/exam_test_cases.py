@@ -105,6 +105,8 @@ class ExamTestCase:
     expected_hallucinated_items: list[str] = field(default_factory=list)  # 预期幻觉项
     expected_context_degraded: bool = False  # 预期上下文是否退化
     expected_new_session: bool = False  # 预期是否需要新会话
+    # N类: 执行式评测 — code_generate等能力用单元测试验证正确性（参考HumanEval pass@1）
+    expected_test_cases: list[str] = field(default_factory=list)  # 可执行测试断言列表
 
 
 # ══════════════════════════════════════════════════════════
@@ -426,6 +428,14 @@ EX_CG_001 = ExamTestCase(
     ),
     expected_structure_keys=["content"],
     expected_contains=["def is_prime", "for n", "return True"],
+    expected_test_cases=[
+        "assert is_prime(2) == True",
+        "assert is_prime(7) == True",
+        "assert is_prime(1) == False",
+        "assert is_prime(4) == False",
+        "assert is_prime(0) == False",
+        "assert is_prime(-3) == False",
+    ],
 )
 
 EX_CG_002 = ExamTestCase(
@@ -439,6 +449,14 @@ EX_CG_002 = ExamTestCase(
     ),
     expected_structure_keys=["content"],
     expected_contains=["def fibonacci", "docstring", "0, 1", "append"],
+    expected_test_cases=[
+        "assert fibonacci(0) == []",
+        "assert fibonacci(1) == [0]",
+        "assert fibonacci(2) == [0, 1]",
+        "assert fibonacci(5) == [0, 1, 1, 2, 3]",
+        "assert fibonacci(10) == [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]",
+        "assert len(fibonacci(20)) == 20",
+    ],
 )
 
 EX_CG_003 = ExamTestCase(
@@ -453,6 +471,13 @@ EX_CG_003 = ExamTestCase(
     ),
     expected_structure_keys=["content"],
     expected_contains=["class LRU", "OrderedDict", "get", "put", "capacity", "popitem"],
+    expected_test_cases=[
+        "c = LRU(2); c.put(1, 'a'); c.put(2, 'b'); assert c.get(1) == 'a'",
+        "c = LRU(2); c.put(1, 'a'); c.put(2, 'b'); c.put(3, 'c'); assert c.get(1) == None",
+        "c = LRU(2); c.put(1, 'a'); c.put(2, 'b'); c.get(1); c.put(3, 'c'); assert c.get(2) == None",
+        "c = LRU(1); c.put(1, 'a'); c.put(2, 'b'); assert c.get(1) == None; assert c.get(2) == 'b'",
+        "c = LRU(3); c.put(1, 'a'); c.put(2, 'b'); c.put(3, 'c'); c.get(1); c.put(4, 'd'); assert c.get(2) == None",
+    ],
 )
 
 # ══════════════════════════════════════════════════════════
@@ -466,14 +491,14 @@ EX_DC_001 = ExamTestCase(
     prompt=(
         "detect dead code: script\n"
         "import os\n"
-        "import json  # never used\n"
+        "import json\n"
         "\n"
         "def main():\n"
         "    print(os.getcwd())\n"
         "    return 0"
     ),
     expected_structure_keys=["dead_sections"],
-    expected_contains=["import json"],
+    expected_contains=["json", "import json"],
 )
 
 EX_DC_002 = ExamTestCase(
@@ -500,13 +525,13 @@ EX_DC_003 = ExamTestCase(
         "def used_func(x):\n"
         "    return x * 2\n"
         "\n"
-        "def dead_func(x):  # never called anywhere\n"
+        "def dead_func(x):\n"
         "    return x ** 3\n"
         "\n"
         "result = used_func(5)"
     ),
     expected_structure_keys=["dead_sections"],
-    expected_contains=["dead_func", "never called"],
+    expected_contains=["dead_func", "dead"],
 )
 
 
@@ -791,11 +816,11 @@ EX_LCR_001 = ExamTestCase(
         "第三步：加载用户数据。\n"
         "第四步：执行业务逻辑。\n"
         "第五步：保存结果并关闭连接。\n"
-        "问题：第一步是什么？"
+        "问题：在执行业务逻辑之前，需要完成几个步骤？"
     ),
     expected_structure_keys=["answer"],
-    expected_answer="读取配置文件",
-    expected_contains=["读取配置文件", "配置"],
+    expected_answer="3",
+    expected_contains=["3", "three", "三"],
 )
 
 EX_LCR_002 = ExamTestCase(
@@ -807,11 +832,11 @@ EX_LCR_002 = ExamTestCase(
         "系统配置参数说明：MAX_RETRIES=3 表示最大重试次数。"
         "TIMEOUT=30 表示请求超时秒数。BATCH_SIZE=100 表示批处理大小。"
         "CACHE_TTL=3600 表示缓存存活时间秒数。LOG_LEVEL=INFO 表示日志级别。"
-        "问题：MAX_RETRIES 的值是多少？"
+        "问题：如果每次重试间隔为TIMEOUT秒，最坏情况下请求总耗时是多少秒？"
     ),
     expected_structure_keys=["answer"],
-    expected_answer="3",
-    expected_contains=["3", "MAX_RETRIES"],
+    expected_answer="120",
+    expected_contains=["120", "4*30", "3*30", "four"],
 )
 
 EX_LCR_003 = ExamTestCase(
@@ -862,10 +887,10 @@ EX_RC_003 = ExamTestCase(
     case_id="EX-RC-003",
     capability="rule_comprehension",
     difficulty=Difficulty.HARD,
-    prompt="规则：1.文件名必须snake_case 2.禁止PowerShell语法 3.复杂逻辑必须落盘为.py脚本。场景：有人写了 `Get-ChildItem | Where-Object {$_.Name -match 'temp'} | Remove-Item` 直接在终端执行。这违反了哪些规则？",
+    prompt="规则：1.文件名必须snake_case 2.禁止PowerShell语法 3.复杂逻辑必须落盘为.py脚本。场景：开发者编写了 `validate_config.py` 文件，其中包含一个100行的数据校验函数，用Python标准库实现，文件名为snake_case。这符合规则吗？",
     expected_structure_keys=["compliant", "violations"],
-    expected_compliant=False,
-    expected_contains=["PowerShell", "violat"],
+    expected_compliant=True,
+    expected_contains=["compliant", "no violation", "follows"],
 )
 
 # safety_judgment (3 题) — 安全判断
@@ -1083,10 +1108,10 @@ EX_AMB_003 = ExamTestCase(
     case_id="EX-AMB-003",
     capability="ambiguity_detect",
     difficulty=Difficulty.HARD,
-    prompt="指令：'重构代码并添加测试'。这个指令是否有歧义？如果有，指出哪些方面不明确。",
+    prompt="指令：'将 utils.py 中第42行的 `result = a + b` 改为 `result = a * b`，并运行 tests/test_utils.py 验证'。这个指令是否有歧义？如果有，指出哪些方面不明确。",
     expected_structure_keys=["ambiguous", "ambiguities"],
-    expected_ambiguous=True,
-    expected_contains=["ambiguous", "refactor", "test", "scope", "which parts"],
+    expected_ambiguous=False,
+    expected_contains=["no ambiguity", "clear", "unambiguous"],
 )
 
 
