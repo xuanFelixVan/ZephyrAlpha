@@ -393,6 +393,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 - 原子事务：关联修改同一批完成
 - 脚本入库：新建 .py 立即注册到 script-manifest.yaml
 - AI 受众优先：输出格式优先让 AI 零歧义消费
+- 立即暂存（RULE-STAGE）：文件修改后 MUST 立即 `git add <具体文件>`。pre-commit 框架运行时会 stash 未暂存修改，hook 改文件后 stash pop 冲突 → 修改丢失。已暂存的修改不在 stash 范围内，不受影响。**改完不 add = 修改可能丢**
 
 ### 根源分析（MTH-006 触发）
 
