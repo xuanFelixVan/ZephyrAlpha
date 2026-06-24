@@ -42,24 +42,56 @@ PROJECT_ROOT = Path("D:/ZephyrAlpha")
 OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram")
 TARGET_SUBTREE = "docs/02_enterprise_architecture"
 
+# 全项目顶级目录及中文描述
+TOP_LEVEL_DIRS_ZH = {
+    "src": "源代码",
+    "scripts": "脚本",
+    "tests": "测试",
+    "docs": "文档",
+    "config": "配置",
+    "data": "数据",
+}
 
-def build_tree_rows(conn: sqlite3.Connection) -> list[dict]:
-    """从 arch_directory_tree 表查询 docs/02_enterprise_architecture 下的目录记录，按 path 排序。
+# 全项目模式下需要跳过的目录（噪声/缓存/构建产物）
+SKIP_DIRS_FULL = {
+    "__pycache__", ".git", ".ailocks", ".audit_cache", "node_modules",
+    ".mypy_cache", ".pytest_cache", ".ruff_cache", ".tox", ".venv", "venv",
+    ".idea", ".vs", ".eggs", "cache", "telemetry", ".trae",
+}
 
-    过滤掉带尾斜杠的设计态噪声条目（path 以 '/' 结尾且 parent_path 为空）。
+
+def build_tree_rows(conn: sqlite3.Connection, scope: str = "arch") -> list[dict]:
+    """从 arch_directory_tree 表查询目录记录，按 path 排序。
+
+    scope='arch': 仅 docs/02_enterprise_architecture 下的目录
+    scope='full': 全项目所有目录（过滤噪声目录）
     """
-    cur = conn.execute(
-        "SELECT path, parent_path, path_type, domain_id, build_status, design_maturity "
-        "FROM arch_directory_tree "
-        "WHERE (path = ? OR path LIKE ?) AND path NOT LIKE '%/' "
-        "ORDER BY path",
-        (TARGET_SUBTREE, TARGET_SUBTREE + "/%"),
-    )
+    if scope == "full":
+        cur = conn.execute(
+            "SELECT path, parent_path, path_type, domain_id, build_status, design_maturity "
+            "FROM arch_directory_tree "
+            "WHERE path NOT LIKE '%/' "
+            "ORDER BY path",
+        )
+    else:
+        cur = conn.execute(
+            "SELECT path, parent_path, path_type, domain_id, build_status, design_maturity "
+            "FROM arch_directory_tree "
+            "WHERE (path = ? OR path LIKE ?) AND path NOT LIKE '%/' "
+            "ORDER BY path",
+            (TARGET_SUBTREE, TARGET_SUBTREE + "/%"),
+        )
     rows = []
     for r in cur.fetchall():
+        path = r[0] or ""
+        # 全项目模式下过滤噪声目录
+        if scope == "full":
+            parts = path.split("/")
+            if any(p in SKIP_DIRS_FULL for p in parts):
+                continue
         rows.append(
             {
-                "path": r[0] or "",
+                "path": path,
                 "parent_path": r[1] or "",
                 "path_type": r[2] or "",
                 "domain_id": r[3] or "",
@@ -70,7 +102,7 @@ def build_tree_rows(conn: sqlite3.Connection) -> list[dict]:
     return rows
 
 
-def build_tree_structure(rows: list[dict]) -> dict:
+def build_tree_structure(rows: list[dict], scope: str = "arch") -> dict:
     """将扁平记录列表构建为嵌套树结构，并从文件系统补充缺失的目录。
 
     返回: {path: {"children": set(), "domain_id": str, "data": dict}}
@@ -88,8 +120,14 @@ def build_tree_structure(rows: list[dict]) -> dict:
             "domain_id": row["domain_id"],
             "data": row,
         }
-    # 从文件系统补充数据库中缺失的目录（如 generated/）
-    _supplement_from_filesystem(tree, TARGET_SUBTREE)
+    # 从文件系统补充数据库中缺失的目录
+    if scope == "full":
+        # 全项目模式：补充所有顶级目录
+        for top_dir in TOP_LEVEL_DIRS_ZH:
+            if (PROJECT_ROOT / top_dir).is_dir():
+                _supplement_from_filesystem(tree, top_dir)
+    else:
+        _supplement_from_filesystem(tree, TARGET_SUBTREE)
     # 建立 parent->children 关系
     for path, node in tree.items():
         parent = node["data"]["parent_path"]
@@ -247,16 +285,202 @@ def get_file_summary(files: list[str], lang: str) -> str:
 
 
 def _limit_files(files: list[str], lang: str) -> list[str]:
-    """限制文件显示数量：超过10个则显示前8个并追加省略提示。"""
-    if len(files) <= 10:
-        return list(files)
-    displayed = list(files[:8])
-    remaining = len(files) - 8
+    """显示所有文件，不截断。"""
+    return list(files)
+
+
+# 文件名 → 中文功能描述映射
+FILE_DESC_ZH = {
+    # 通用文件
+    "index.md": "索引",
+    "readme.md": "说明",
+    "navigation_index.md": "导航索引",
+    ".gitkeep": "占位文件",
+    # 01_global_architecture_diagram
+    "capability_heatmap.md": "能力热图",
+    "cross_domain_matrix.md": "跨域矩阵",
+    "integration_topology.md": "集成拓扑",
+    "path_tree_en.md": "路径树(英文)",
+    "path_tree_zh.md": "路径树(中文)",
+    "runtime_plane_mapping.md": "运行时平面映射",
+    # 03_governance_reports
+    "capacity_report.md": "容量报告",
+    "constraint_violations.md": "约束违规",
+    "design_vs_production.md": "设计态vs运营态",
+    "orphan_cleanup_audit.md": "孤儿清理审计",
+    "_update_audit_doc.py": "审计文档更新脚本",
+    # sample
+    "00_overview_entry_sample.md": "总览入口样板",
+    "04_architecture_principles_decisions_sample.md": "架构原则样板",
+    "05_manual_architecture_views_sample.md": "手工架构图样板",
+    "16_d_trading_sample.md": "交易域样板",
+    "6_手工架构图_样板.mmd": "手工架构图样板",
+    "integration_topology_sample.md": "集成拓扑样板",
+    "path_tree_sample.md": "路径树样板",
+    # target_architecture 根目录文件
+    "application_architecture.md": "应用架构",
+    "architecture_endgame_locked.md": "架构终态锁定",
+    "architecture_principles.md": "架构原则",
+    "business_architecture.md": "业务架构",
+    "data_architecture.md": "数据架构",
+    "dimension_audit_matrix.md": "维度审计矩阵",
+    "frontend_architecture.md": "前端架构",
+    "governance_architecture.md": "治理架构",
+    "information_architecture.md": "信息架构",
+    "integration_architecture.md": "集成架构",
+    "operations_architecture.md": "运营架构",
+    "overview.md": "概览",
+    "revision_history.md": "修订历史",
+    "runtime_planes.md": "运行时平面",
+    "security_architecture.md": "安全架构",
+    "technology_architecture.md": "技术架构",
+    "session_carryover_schema.md": "会话延续Schema",
+    "ai_team_mode_full_config.md": "AI团队模式配置",
+    "architecture_diagram_construction_plan.md": "架构图施工计划",
+    "architecture_upgrade_discussion.md": "架构升级讨论",
+    "contract_dedup_analysis.md": "契约去重分析",
+    "contract_dedup_integration_analysis.md": "契约去重集成分析",
+    "core_function_dependency_design.md": "核心功能依赖设计",
+    "dependency_architecture_panorama.md": "依赖架构全景",
+    "migration_registry.yaml": "迁移注册表",
+    "phase_d_ai_prompts.md": "Phase D AI提示词",
+    "phase_d_full_test_construction_plan.md": "Phase D全量测试施工计划",
+    "ssot_authority_map.md": "SSoT权威映射",
+    "t18_implementation_plan.md": "T18实施计划",
+    # architecture_model
+    "module_id_registry.yaml": "模块ID注册表",
+    "ddd_model.yaml": "DDD领域模型",
+    "domain_events.yaml": "领域事件",
+    "consumer_registry.yaml": "消费者注册表",
+    "cross_layer_contracts.yaml": "跨层契约",
+    "invariants.yaml": "不变量",
+    "runtime_planes.yaml": "运行时平面配置",
+    "capability_heatmap.yaml": "能力热图配置",
+    "technology_landscape.yaml": "技术全景",
+    "vibe_coding_infrastructure_tech_stack.yaml": "Vibe Coding技术栈",
+    # _archive
+    "architecture_decisions_pending.md": "待定架构决策",
+    "phase4b_cleanup_construction_plan.md": "Phase4b清理施工计划",
+}
+
+# 文件名 → 英文功能描述映射
+FILE_DESC_EN = {
+    "index.md": "Index",
+    "readme.md": "README",
+    "navigation_index.md": "Navigation index",
+    ".gitkeep": "Placeholder",
+    "capability_heatmap.md": "Capability heatmap",
+    "cross_domain_matrix.md": "Cross-domain matrix",
+    "integration_topology.md": "Integration topology",
+    "path_tree_en.md": "Path tree (English)",
+    "path_tree_zh.md": "Path tree (Chinese)",
+    "runtime_plane_mapping.md": "Runtime plane mapping",
+    "capacity_report.md": "Capacity report",
+    "constraint_violations.md": "Constraint violations",
+    "design_vs_production.md": "Design vs production",
+    "orphan_cleanup_audit.md": "Orphan cleanup audit",
+    "_update_audit_doc.py": "Audit doc update script",
+    "application_architecture.md": "Application architecture",
+    "architecture_endgame_locked.md": "Architecture endgame locked",
+    "architecture_principles.md": "Architecture principles",
+    "business_architecture.md": "Business architecture",
+    "data_architecture.md": "Data architecture",
+    "dimension_audit_matrix.md": "Dimension audit matrix",
+    "frontend_architecture.md": "Frontend architecture",
+    "governance_architecture.md": "Governance architecture",
+    "information_architecture.md": "Information architecture",
+    "integration_architecture.md": "Integration architecture",
+    "operations_architecture.md": "Operations architecture",
+    "overview.md": "Overview",
+    "revision_history.md": "Revision history",
+    "runtime_planes.md": "Runtime planes",
+    "security_architecture.md": "Security architecture",
+    "technology_architecture.md": "Technology architecture",
+    "session_carryover_schema.md": "Session carryover schema",
+    "module_id_registry.yaml": "Module ID registry",
+    "ddd_model.yaml": "DDD domain model",
+    "domain_events.yaml": "Domain events",
+    "consumer_registry.yaml": "Consumer registry",
+    "cross_layer_contracts.yaml": "Cross-layer contracts",
+    "invariants.yaml": "Invariants",
+    "runtime_planes.yaml": "Runtime planes config",
+    "capability_heatmap.yaml": "Capability heatmap config",
+    "technology_landscape.yaml": "Technology landscape",
+    "vibe_coding_infrastructure_tech_stack.yaml": "Vibe Coding tech stack",
+}
+
+
+def get_file_description(filename: str, lang: str) -> str:
+    """获取文件的中文/英文功能描述。
+
+    对于域文档（如 01_d_infra_ops.md），自动从域名映射表生成中文。
+    对于其他文件，从 FILE_DESC_ZH/EN 映射表获取。
+    """
+    # 先查固定映射表
     if lang == "zh":
-        displayed.append(f"...还有{remaining}个")
+        desc = FILE_DESC_ZH.get(filename, "")
     else:
-        displayed.append(f"...{remaining} more")
-    return displayed
+        desc = FILE_DESC_EN.get(filename, "")
+    if desc:
+        return desc
+
+    # 域文档自动生成：01_d_infra_ops.md → 基础设施运维
+    import re
+    # 先匹配 _architecture.md 后缀（避免贪婪匹配吞掉域名）
+    m = re.match(r"^\d+_d_([a-z_]+?)_architecture\.md$", filename)
+    if m:
+        domain_key = "D-" + m.group(1).upper()
+        try:
+            from domain_name_mapping import get_domain_name_zh
+            domain_zh = get_domain_name_zh(domain_key, "")
+            if domain_zh:
+                return f"{domain_zh}架构图" if lang == "zh" else f"{domain_zh} architecture"
+        except ImportError:
+            pass
+
+    # 再匹配普通域文档 .md
+    m = re.match(r"^\d+_d_([a-z_]+)\.md$", filename)
+    if m:
+        domain_key = "D-" + m.group(1).upper()
+        try:
+            from domain_name_mapping import get_domain_name_zh
+            domain_zh = get_domain_name_zh(domain_key, "")
+            if domain_zh:
+                return domain_zh if lang == "zh" else domain_zh
+        except ImportError:
+            pass
+
+    # 域依赖图：d_infra_ops_dependency.mmd
+    m = re.match(r"^d_([a-z_]+)_dependency\.mmd$", filename)
+    if m:
+        domain_key = "D-" + m.group(1).upper()
+        try:
+            from domain_name_mapping import get_domain_name_zh
+            domain_zh = get_domain_name_zh(domain_key, "")
+            if domain_zh:
+                return f"{domain_zh}依赖图" if lang == "zh" else f"{domain_zh} dependency"
+        except ImportError:
+            pass
+
+    # domain_index.md
+    if filename == "domain_index.md":
+        return "域索引" if lang == "zh" else "Domain index"
+
+    # 通用后缀推断
+    if filename.endswith("_sample.md"):
+        base = filename.replace("_sample.md", "")
+        return f"{base}样板" if lang == "zh" else f"{base} sample"
+    if filename.endswith(".mmd"):
+        base = filename.replace(".mmd", "")
+        return f"{base}图" if lang == "zh" else f"{base} diagram"
+    if filename.endswith(".yaml"):
+        base = filename.replace(".yaml", "")
+        return f"{base}配置" if lang == "zh" else f"{base} config"
+    if filename.endswith(".py"):
+        base = filename.replace(".py", "")
+        return f"{base}脚本" if lang == "zh" else f"{base} script"
+
+    return ""
 
 
 def render_tree(tree: dict, root_path: str, prefix: str, lines: list[str], lang: str, depth: int = 0) -> None:
@@ -306,7 +530,10 @@ def _render_children(tree: dict, parent_path: str, prefix: str, lines: list[str]
             if depth < MAX_DISPLAY_DEPTH:
                 _render_children(tree, item, child_prefix, lines, lang, depth + 1)
         else:
-            lines.append(f"{prefix}{connector}{item}")
+            # 文件名后添加中文功能描述
+            file_desc = get_file_description(item, lang)
+            desc_tag = f"  — {file_desc}" if file_desc else ""
+            lines.append(f"{prefix}{connector}{item}{desc_tag}")
 
 
 def find_roots(tree: dict) -> list[str]:
@@ -363,6 +590,8 @@ def generate_path_tree(lang: str, conn: sqlite3.Connection) -> str:
 
     lines = [header.rstrip()]
 
+    # 树形图平铺在文档中（不用代码块），每行末尾加两个空格实现硬换行
+    # 前导空格用 &nbsp; 替代，防止 Markdown 压缩缩进
     for root in roots:
         render_tree(tree, root, "", lines, lang)
         lines.append("")
@@ -380,7 +609,20 @@ def generate_path_tree(lang: str, conn: sqlite3.Connection) -> str:
     lines.append(f"- {total_domains_label}: {len(domains_involved)}")
     lines.append("")
 
-    return "\n".join(lines)
+    # 后处理：每行末尾加两个空格（硬换行），前导空格用 &nbsp; 替代
+    processed_lines = []
+    for line in lines:
+        if line and not line.startswith("#") and not line.startswith(">") and not line.startswith("-"):
+            # 替换前导空格为 &nbsp;（保留树形缩进）
+            stripped = line.lstrip(" ")
+            leading_spaces = len(line) - len(stripped)
+            if leading_spaces > 0:
+                line = "&nbsp;" * leading_spaces + stripped
+            # 末尾加两个空格（硬换行）
+            line = line + "  "
+        processed_lines.append(line)
+
+    return "\n".join(processed_lines)
 
 
 def main() -> None:
